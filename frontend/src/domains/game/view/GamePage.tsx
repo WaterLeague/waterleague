@@ -785,6 +785,19 @@ export function GamePage() {
           account={g.account}
           lab={lab}
           initialLeague={!!activeLeague}
+          busy={working}
+          onReference={(plan) => {
+            g.newDesign();
+            g.change(plan.placements.map((p) => ({ ...p })));
+            g.setTitle(won(plan.budget) + ' 상한 CPU 배치에서 시작');
+            g.setNote('CPU 기준안 ' + plan.id + ' 배치 복사. 개인 계산·검토 예정.');
+            setActiveLeague(null);
+            setSelected(null);
+            setTab('studio');
+            g.setNotice(
+              'CPU 배치를 새 개인 설계로 복사했습니다. 저장 후 현재 강우에서 계산해 보세요.'
+            );
+          }}
           onDesign={(l) => {
             void g.action(async () => {
               if (!(await g.selectModel(l.rules.modelHash, false))) return;

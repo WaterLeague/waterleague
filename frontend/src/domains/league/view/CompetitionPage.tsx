@@ -4,16 +4,22 @@ import type { Lab } from '../../game/entity/game';
 import type { League } from '../entity/league';
 import { Leaderboard } from '../../game/view/Leaderboard';
 import { LeaguePage } from './LeaguePage';
+import { ReferencePage } from '../../reference/view/ReferencePage';
+import type { ReferencePlan } from '../../reference/entity/reference';
 export function CompetitionPage({
   account,
   lab,
   onDesign,
   initialLeague = false,
+  busy,
+  onReference,
 }: {
   account: Account | null;
   lab: Lab;
   onDesign: (l: League) => void;
   initialLeague?: boolean;
+  busy: boolean;
+  onReference: (plan: ReferencePlan) => void;
 }) {
   const [mode, setMode] = useState(initialLeague ? 'leagues' : 'general');
   useEffect(() => {
@@ -36,9 +42,18 @@ export function CompetitionPage({
         >
           기관 리그
         </button>
+        <button
+          className={mode === 'reference' ? 'active' : ''}
+          aria-pressed={mode === 'reference'}
+          onClick={() => setMode('reference')}
+        >
+          CPU 기준안
+        </button>
       </div>
       {mode === 'general' ? (
         <Leaderboard key={lab.modelHash} lab={lab} />
+      ) : mode === 'reference' ? (
+        <ReferencePage lab={lab} busy={busy} onCopy={onReference} />
       ) : (
         <LeaguePage key={account?.id ?? 'guest'} account={account} lab={lab} onDesign={onDesign} />
       )}

@@ -12,6 +12,9 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("local")
 class ApiSecurityTests {
+  @org.springframework.beans.factory.annotation.Autowired
+  io.waterleague.common.service.JsonService json;
+
   @Value("${local.server.port}")
   int port;
 
@@ -60,5 +63,28 @@ class ApiSecurityTests {
             HttpResponse.BodyHandlers.ofString());
     assertThat(response.statusCode()).isEqualTo(403);
     assertThat(response.body()).contains("ACCESS_DENIED");
+  }
+
+  @Test
+  void publishesCpuEvidenceWithoutAddingHumanRecords() throws Exception {
+    var response = get("/api/v1/references");
+    assertThat(response.statusCode()).isEqualTo(200);
+    var view = json.tree(response.body());
+    var report = view.path("report");
+    var source = get("/api/v1/references/source");
+    var ledger = get("/api/v1/references/ledger");
+    assertThat(source.statusCode()).isEqualTo(200);
+    assertThat(ledger.statusCode()).isEqualTo(200);
+    assertThat(source.headers().firstValue("Content-Disposition").orElse(""))
+        .contains("attachment");
+    assertThat(json.hash(source.body())).isEqualTo(view.path("reportHash").asString());
+    assertThat(json.hash(ledger.body())).isEqualTo(report.path("ledgerSha256").asString());
+    assertThat(report.path("official").asBoolean()).isFalse();
+    assertThat(report.path("validationLevel").asString()).isEqualTo("EXPLORATORY");
+    assertThat(report.path("plans").size()).isEqualTo(3);
+    assertThat(json.tree(ledger.body()).size())
+        .isEqualTo(report.path("uniqueCandidateEvaluations").asInt());
+    assertThat(get("/api/v1/leaderboard").body()).doesNotContain("cpu-", "CPU 기준안");
+    assertThat(get("/api/v1/references/private").statusCode()).isEqualTo(401);
   }
 }
