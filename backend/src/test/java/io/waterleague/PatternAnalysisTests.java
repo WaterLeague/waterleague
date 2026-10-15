@@ -5,13 +5,17 @@ import static org.assertj.core.api.Assertions.*;
 import io.waterleague.analysis.entity.PatternSample;
 import io.waterleague.analysis.service.PatternAnalysisService;
 import io.waterleague.common.exception.DomainException;
+import io.waterleague.common.service.JsonService;
 import io.waterleague.strategy.entity.*;
+import io.waterleague.strategy.service.PlacementIdentityService;
 import java.math.BigDecimal;
 import java.util.*;
 import org.junit.jupiter.api.Test;
 
 class PatternAnalysisTests {
-  final PatternAnalysisService service = new PatternAnalysisService();
+  final PatternAnalysisService service =
+      new PatternAnalysisService(
+          new PlacementIdentityService(new JsonService(new tools.jackson.databind.ObjectMapper())));
 
   Placement p(String cell, FacilityType type, String area) {
     return new Placement(cell, type, new BigDecimal(area));
@@ -44,7 +48,7 @@ class PatternAnalysisTests {
     assertThat(result.includedCount()).isEqualTo(3);
     assertThat(result.designs())
         .extracting(d -> d.jobId())
-        .containsExactly(a.jobId(), b.jobId(), c.jobId());
+        .containsExactlyInAnyOrder(a.jobId(), b.jobId(), c.jobId());
     var garden = result.placements().get(0);
     assertThat(garden.designCount()).isEqualTo(2);
     assertThat(garden.frequencyPercent()).isEqualByComparingTo("66.67");
@@ -64,11 +68,18 @@ class PatternAnalysisTests {
   @Test
   void preservesNegativeScoresZeroPlacementAndInsufficientPopulation() {
     var r =
-        service.analyze("m", List.of(sample(1, "a", "-3", "0"), sample(2, "b", "-2", "100")), 20);
+        service.analyze(
+            "m",
+            List.of(
+                sample(1, "a", "-3", "0"),
+                sample(2, "b", "-2", "100", p("G1", FacilityType.RAIN_GARDEN, "10"))),
+            20);
     assertThat(r.includedCount()).isEqualTo(2);
     assertThat(r.minimumScore()).isEqualByComparingTo("-3");
     assertThat(r.maximumScore()).isEqualByComparingTo("-2");
-    assertThat(r.placements()).isEmpty();
+    assertThat(r.placements())
+        .singleElement()
+        .satisfies(p -> assertThat(p.frequencyPercent()).isEqualByComparingTo("50"));
     assertThat(r.facilityPairs()).allSatisfy(p -> assertThat(p.designCount()).isZero());
   }
 
@@ -84,5 +95,55 @@ class PatternAnalysisTests {
                 service.analyze(
                     "m", List.of(sample(1, "a", "1", "0"), sample(2, "a", "1", "1")), 2))
         .isInstanceOf(DomainException.class);
+  }
+
+  @Test
+  void deduplicatesNumericNotationAndCellOrderWithoutReplacingOriginalHashes() {
+    var a =
+        sample(
+            1,
+            "original-a",
+            "10",
+            "100",
+            p("G1", FacilityType.RAIN_GARDEN, "20"),
+            p("R1", FacilityType.GREEN_ROOF, "10"));
+    var duplicate =
+        sample(
+            2,
+            "original-b",
+            "10",
+            "100",
+            p("R1", FacilityType.GREEN_ROOF, "10.00"),
+            p("G1", FacilityType.RAIN_GARDEN, "20.0"));
+    var result = service.analyze("model", List.of(duplicate, a), 2);
+    assertThat(result.method()).isEqualTo("SELECTED_UNIQUE_PHYSICAL_TOP_K_WITH_TIES_V2");
+    assertThat(result.uniqueInputCount()).isEqualTo(1);
+    assertThat(result.includedCount()).isEqualTo(1);
+    assertThat(result.duplicateInputCount()).isEqualTo(1);
+    assertThat(result.designs())
+        .singleElement()
+        .satisfies(
+            d -> {
+              assertThat(d.inputHash()).isEqualTo("original-a");
+              assertThat(d.physicalHash()).matches("[a-f0-9]{64}");
+            });
+    assertThat(result.placements()).allSatisfy(p -> assertThat(p.designCount()).isEqualTo(1));
+    var conflict =
+        sample(
+            2,
+            "original-b",
+            "11",
+            "100",
+            p("R1", FacilityType.GREEN_ROOF, "10.00"),
+            p("G1", FacilityType.RAIN_GARDEN, "20.0"));
+    assertThatThrownBy(() -> service.analyze("model", List.of(a, conflict), 2))
+        .isInstanceOf(DomainException.class);
+    assertThat(
+            service
+                .analyze("other-model", List.of(a, duplicate), 2)
+                .designs()
+                .getFirst()
+                .physicalHash())
+        .isNotEqualTo(result.designs().getFirst().physicalHash());
   }
 }

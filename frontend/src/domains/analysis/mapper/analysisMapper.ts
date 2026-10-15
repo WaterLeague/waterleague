@@ -44,6 +44,7 @@ export function mapPatternAnalysis(input: unknown): PatternAnalysis {
     d.includedCount < Math.min(d.topK, d.uniqueInputCount) ||
     new Set(d.designs.map((v) => v.jobId)).size !== d.includedCount ||
     new Set(d.designs.map((v) => v.inputHash)).size !== d.includedCount ||
+    new Set(d.designs.map((v) => v.physicalHash)).size !== d.includedCount ||
     d.cutoffScore !== Math.min(...d.designs.map((v) => v.score)) ||
     d.minimumScore !== d.cutoffScore ||
     d.maximumScore !== Math.max(...d.designs.map((v) => v.score)) ||

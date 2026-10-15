@@ -10,7 +10,7 @@ const hash = (n: number) => n.toString().padStart(64, '0');
 function pattern() {
   return {
     modelHash: hash(1),
-    method: 'SELECTED_UNIQUE_INPUT_TOP_K_WITH_TIES_V1',
+    method: 'SELECTED_UNIQUE_PHYSICAL_TOP_K_WITH_TIES_V2',
     requestedCount: 4,
     uniqueInputCount: 3,
     duplicateInputCount: 1,
@@ -20,6 +20,7 @@ function pattern() {
     designs: [1, 2, 3].map((n) => ({
       jobId: id(n),
       inputHash: hash(n),
+      physicalHash: hash(n + 10),
       score: n === 1 ? 1 : -2,
       costKrw: n * 100,
     })),
@@ -63,6 +64,9 @@ it('표본 수·동점 경계·입력 중복·면적 분모·빈도 불일치 �
     },
     (d: ReturnType<typeof pattern>) => {
       d.designs[1].inputHash = d.designs[0].inputHash;
+    },
+    (d: ReturnType<typeof pattern>) => {
+      d.designs[1].physicalHash = d.designs[0].physicalHash;
     },
     (d: ReturnType<typeof pattern>) => {
       d.placements[0].frequencyPercent = 50;

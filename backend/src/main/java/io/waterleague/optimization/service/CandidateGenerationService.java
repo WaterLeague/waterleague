@@ -7,6 +7,7 @@ import io.waterleague.optimization.entity.*;
 import io.waterleague.optimization.entity.SearchGeneration.*;
 import io.waterleague.optimization.exception.SearchGenerationException;
 import io.waterleague.strategy.entity.*;
+import io.waterleague.strategy.service.PlacementIdentityService;
 import io.waterleague.strategy.service.PlacementValidationService;
 import java.math.*;
 import java.util.*;
@@ -19,10 +20,13 @@ public class CandidateGenerationService {
   public static final int DRAW_LIMIT = 128;
   private final JsonService json;
   private final PlacementValidationService validation;
+  private final PlacementIdentityService identity;
 
-  public CandidateGenerationService(JsonService json, PlacementValidationService validation) {
+  public CandidateGenerationService(
+      JsonService json, PlacementValidationService validation, PlacementIdentityService identity) {
     this.json = json;
     this.validation = validation;
+    this.identity = identity;
   }
 
   public SearchGeneration generate(
@@ -70,12 +74,13 @@ public class CandidateGenerationService {
         throw new SearchGenerationException(ErrorCode.REQUEST_INVALID);
       if (!json.hash(model.hash() + "\n" + s.placementsSource()).equals(s.inputHash()))
         throw new SearchGenerationException(ErrorCode.RESULT_QUALITY_FAILED);
-      var placements = canonical(List.of(json.read(s.placementsSource(), Placement[].class)));
+      var placements =
+          identity.canonical(List.of(json.read(s.placementsSource(), Placement[].class)));
       BigDecimal cost =
           validation.validate(placements, cells, unitCosts, settings.budgetKrw(), maxPlacements);
       if (cost.compareTo(s.costKrw()) != 0)
         throw new SearchGenerationException(ErrorCode.RESULT_QUALITY_FAILED);
-      String physical = inputHash(model.hash(), placements);
+      String physical = identity.physicalHash(model.hash(), placements);
       var source = new Source(s, physical, placements, false);
       var previous = unique.putIfAbsent(physical, source);
       if (previous != null
@@ -161,8 +166,8 @@ public class CandidateGenerationService {
             remaining = remaining.subtract(picked.costKrw());
           }
         }
-        var canonical = canonical(placements);
-        String hash = inputHash(model.hash(), canonical);
+        var canonical = identity.canonical(placements);
+        String hash = identity.physicalHash(model.hash(), canonical);
         if (canonical.isEmpty()) {
           empty++;
           continue;
@@ -293,24 +298,8 @@ public class CandidateGenerationService {
     return values;
   }
 
-  private List<Placement> canonical(List<Placement> input) {
-    // 숫자 표기만 다른 저장본도 같은 물리 배치로 학습한다. 원본 hash는 별도로 보존한다.
-    if (input.stream()
-        .anyMatch(
-            p -> p == null || p.cellId() == null || p.facilityType() == null || p.areaM2() == null))
-      throw new SearchGenerationException(ErrorCode.RESULT_QUALITY_FAILED);
-    return input.stream()
-        .map(p -> new Placement(p.cellId(), p.facilityType(), normalized(p.areaM2())))
-        .sorted(Comparator.comparing(Placement::cellId))
-        .toList();
-  }
-
   private BigDecimal normalized(BigDecimal value) {
     return new BigDecimal(value.stripTrailingZeros().toPlainString());
-  }
-
-  private String inputHash(String modelHash, List<Placement> placements) {
-    return json.hash(modelHash + "\n" + json.write(placements));
   }
 
   private int weight(SearchArm arm, Option option) {

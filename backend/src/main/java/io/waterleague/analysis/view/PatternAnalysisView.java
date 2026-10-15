@@ -22,7 +22,7 @@ public record PatternAnalysisView(
     BigDecimal maximumScore,
     List<String> limitations) {
   public record SelectedDesign(
-      UUID jobId, String inputHash, BigDecimal score, BigDecimal costKrw) {}
+      UUID jobId, String inputHash, String physicalHash, BigDecimal score, BigDecimal costKrw) {}
 
   public record PlacementFrequency(
       String cellId,

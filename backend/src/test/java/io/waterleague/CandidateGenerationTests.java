@@ -10,6 +10,7 @@ import io.waterleague.model.service.LabModelService;
 import io.waterleague.optimization.entity.*;
 import io.waterleague.optimization.service.CandidateGenerationService;
 import io.waterleague.strategy.entity.*;
+import io.waterleague.strategy.service.PlacementIdentityService;
 import io.waterleague.strategy.service.PlacementValidationService;
 import java.math.BigDecimal;
 import java.nio.file.*;
@@ -20,7 +21,8 @@ import tools.jackson.databind.ObjectMapper;
 class CandidateGenerationTests {
   final JsonService json = new JsonService(new ObjectMapper());
   final PlacementValidationService validation = new PlacementValidationService();
-  final CandidateGenerationService generator = new CandidateGenerationService(json, validation);
+  final CandidateGenerationService generator =
+      new CandidateGenerationService(json, validation, new PlacementIdentityService(json));
   final LabModelRepository repository;
   final LabModelService models;
   final LabModel model;

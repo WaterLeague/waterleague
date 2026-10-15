@@ -525,6 +525,73 @@ class ResearchAnalysisWorkflowTests {
   }
 
   @Test
+  void countsEquivalentDecimalPlacementsOnceAndPreservesStoredSources() throws Exception {
+    var owner = actor(null);
+    var org = institution();
+    var jobs = new ArrayList<JsonNode>();
+    for (var area : List.of(new java.math.BigDecimal("20"), new java.math.BigDecimal("20.00"))) {
+      var job =
+          successfulJob(
+              owner,
+              90,
+              List.of(Map.of("cellId", "G1", "facilityType", "RAIN_GARDEN", "areaM2", area)));
+      ok(owner, "POST", "/submissions", Map.of("jobId", job.path("id").asString()), 200);
+      jobs.add(job);
+    }
+    var ids = jobs.stream().map(j -> j.path("id").asString()).toList();
+    var originals =
+        db.queryForList(
+            "SELECT j.id,j.input_hash AS job_hash,v.input_hash AS version_hash,v.placements FROM"
+                + " simulation_jobs j JOIN strategy_versions v ON v.id=j.version_id WHERE"
+                + " j.owner_id=? ORDER BY j.id",
+            owner.id());
+    assertThat(originals).hasSize(2);
+    assertThat(originals.get(0).get("job_hash")).isNotEqualTo(originals.get(1).get("job_hash"));
+    share(owner, org, true);
+    var result = ok(org, "POST", "/research/patterns", Map.of("jobIds", ids, "topK", 2), 200);
+    assertThat(result.path("method").asString())
+        .isEqualTo("SELECTED_UNIQUE_PHYSICAL_TOP_K_WITH_TIES_V2");
+    assertThat(result.path("requestedCount").asInt()).isEqualTo(2);
+    assertThat(result.path("uniqueInputCount").asInt()).isEqualTo(1);
+    assertThat(result.path("duplicateInputCount").asInt()).isEqualTo(1);
+    assertThat(result.path("includedCount").asInt()).isEqualTo(1);
+    var chosen = result.path("designs").get(0);
+    assertThat(chosen.path("jobId").asString())
+        .isEqualTo(ids.stream().sorted().findFirst().orElseThrow());
+    assertThat(chosen.path("inputHash").asString())
+        .isEqualTo(
+            originals.stream()
+                .filter(row -> row.get("id").toString().equals(chosen.path("jobId").asString()))
+                .findFirst()
+                .orElseThrow()
+                .get("job_hash"));
+    assertThat(chosen.path("physicalHash").asString()).matches("[a-f0-9]{64}");
+    var single =
+        ok(
+            org,
+            "POST",
+            "/research/patterns",
+            Map.of("jobIds", List.of(ids.get(1)), "topK", 1),
+            200);
+    assertThat(single.path("designs").get(0).path("physicalHash"))
+        .isEqualTo(chosen.path("physicalHash"));
+    assertThat(result.path("placements").get(0).path("frequencyPercent").decimalValue())
+        .isEqualByComparingTo("100");
+    assertThat(
+            db.queryForList(
+                "SELECT j.id,j.input_hash AS job_hash,v.input_hash AS version_hash,v.placements"
+                    + " FROM simulation_jobs j JOIN strategy_versions v ON v.id=j.version_id WHERE"
+                    + " j.owner_id=? ORDER BY j.id",
+                owner.id()))
+        .isEqualTo(originals);
+    assertThat(versions(owner)).isEqualTo(2);
+    share(owner, org, false);
+    assertThat(
+            call(org, "POST", "/research/patterns", Map.of("jobIds", ids, "topK", 2)).statusCode())
+        .isEqualTo(404);
+  }
+
+  @Test
   void restrictsPatternPopulationAndUsesVerifiedScoresInsteadOfClaimedScores() throws Exception {
     var owner = actor(null);
     var org = institution();

@@ -17,14 +17,20 @@ export interface ResearchComparison {
 }
 export interface PatternAnalysis {
   modelHash: string;
-  method: 'SELECTED_UNIQUE_INPUT_TOP_K_WITH_TIES_V1';
+  method: 'SELECTED_UNIQUE_PHYSICAL_TOP_K_WITH_TIES_V2';
   requestedCount: number;
   uniqueInputCount: number;
   duplicateInputCount: number;
   topK: number;
   includedCount: number;
   cutoffScore: number;
-  designs: { jobId: string; inputHash: string; score: number; costKrw: number }[];
+  designs: {
+    jobId: string;
+    inputHash: string;
+    physicalHash: string;
+    score: number;
+    costKrw: number;
+  }[];
   placements: {
     cellId: string;
     facilityType: FacilityType;

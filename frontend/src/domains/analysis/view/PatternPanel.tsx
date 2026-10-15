@@ -182,7 +182,8 @@ export function PatternPanel({ entries }: { entries: ResearchEntry[] }) {
                     {d.score.toFixed(8)}점 · {won(d.costKrw)}
                   </b>
                   <code className="hash-value">계산 {d.jobId}</code>
-                  <code className="hash-value">입력 {d.inputHash}</code>
+                  <code className="hash-value">원본 입력 {d.inputHash}</code>
+                  <code className="hash-value">물리 배치 {d.physicalHash}</code>
                 </li>
               ))}
             </ul>

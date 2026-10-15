@@ -5,12 +5,19 @@ import io.waterleague.analysis.view.PatternAnalysisView;
 import io.waterleague.analysis.view.PatternAnalysisView.*;
 import io.waterleague.common.exception.*;
 import io.waterleague.strategy.entity.*;
+import io.waterleague.strategy.service.PlacementIdentityService;
 import java.math.*;
 import java.util.*;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PatternAnalysisService {
+  private final PlacementIdentityService identity;
+
+  public PatternAnalysisService(PlacementIdentityService identity) {
+    this.identity = identity;
+  }
+
   private record Key(String cell, FacilityType type) implements Comparable<Key> {
     public int compareTo(Key other) {
       int order = cell.compareTo(other.cell);
@@ -26,7 +33,8 @@ public class PatternAnalysisService {
         .sorted(Comparator.comparing(s -> s.jobId().toString()))
         .forEach(
             s -> {
-              var previous = unique.putIfAbsent(s.inputHash(), s);
+              var previous =
+                  unique.putIfAbsent(identity.physicalHash(modelHash, s.placements()), s);
               if (previous != null
                   && (previous.score().compareTo(s.score()) != 0
                       || previous.cost().compareTo(s.cost()) != 0))
@@ -37,7 +45,7 @@ public class PatternAnalysisService {
             .sorted(
                 Comparator.comparing(PatternSample::score)
                     .reversed()
-                    .thenComparing(PatternSample::inputHash))
+                    .thenComparing(s -> identity.physicalHash(modelHash, s.placements())))
             .toList();
     BigDecimal cutoff = ranked.get(Math.min(topK, ranked.size()) - 1).score();
     var selected = ranked.stream().filter(s -> s.score().compareTo(cutoff) >= 0).toList();
@@ -83,7 +91,7 @@ public class PatternAnalysisService {
       }
     return new PatternAnalysisView(
         modelHash,
-        "SELECTED_UNIQUE_INPUT_TOP_K_WITH_TIES_V1",
+        "SELECTED_UNIQUE_PHYSICAL_TOP_K_WITH_TIES_V2",
         source.size(),
         unique.size(),
         source.size() - unique.size(),
@@ -91,7 +99,14 @@ public class PatternAnalysisService {
         selected.size(),
         cutoff,
         selected.stream()
-            .map(s -> new SelectedDesign(s.jobId(), s.inputHash(), s.score(), s.cost()))
+            .map(
+                s ->
+                    new SelectedDesign(
+                        s.jobId(),
+                        s.inputHash(),
+                        identity.physicalHash(modelHash, s.placements()),
+                        s.score(),
+                        s.cost()))
             .toList(),
         frequencies,
         pairs,

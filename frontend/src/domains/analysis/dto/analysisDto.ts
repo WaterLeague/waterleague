@@ -22,7 +22,7 @@ export const researchComparisonDto = z.object({
 });
 export const patternAnalysisDto = z.object({
   modelHash: hash,
-  method: z.literal('SELECTED_UNIQUE_INPUT_TOP_K_WITH_TIES_V1'),
+  method: z.literal('SELECTED_UNIQUE_PHYSICAL_TOP_K_WITH_TIES_V2'),
   requestedCount: count.min(1),
   uniqueInputCount: count.min(1),
   duplicateInputCount: count,
@@ -30,7 +30,7 @@ export const patternAnalysisDto = z.object({
   includedCount: count.min(1),
   cutoffScore: score,
   designs: z
-    .array(z.object({ jobId: z.uuid(), inputHash: hash, score, costKrw: cost }))
+    .array(z.object({ jobId: z.uuid(), inputHash: hash, physicalHash: hash, score, costKrw: cost }))
     .min(1)
     .max(50),
   placements: z
