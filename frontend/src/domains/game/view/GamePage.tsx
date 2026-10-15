@@ -919,8 +919,10 @@ export function GamePage() {
         />
       ) : tab === 'research' ? (
         <ResearchPage
+          key={(g.account?.id ?? 'guest') + ':' + lab.modelHash}
           account={g.account}
           lab={lab}
+          catalog={g.rainfallCatalog}
           onReplay={(p) => {
             g.newDesign();
             setActiveLeague(null);

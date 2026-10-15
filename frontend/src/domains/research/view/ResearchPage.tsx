@@ -1,10 +1,11 @@
 import { Download, LockKeyhole, ArrowRight, ShieldCheck } from 'lucide-react';
 import { useState } from 'react';
 import { ResearchSharing } from './ResearchSharing';
+import { ResearchAnalysisWorkspace } from '../../analysis/view/ResearchAnalysisWorkspace';
 import { UtilizationInbox } from '../../utilization/view/UtilizationInbox';
 import { ReviewWorkspace } from '../../utilization/view/ReviewWorkspace';
 import type { Account } from '../../account/entity/account';
-import type { Placement, Lab } from '../../game/entity/game';
+import type { Placement, Lab, RainfallCatalog } from '../../game/entity/game';
 import { useResearch } from '../controller/useResearch';
 import { CostPerformance, MetricsComparison } from './ResearchComparison';
 import { format, facilities } from '../../game/service/gameService';
@@ -12,10 +13,12 @@ import { Hydrograph } from '../../game/view/Hydrograph';
 export function ResearchPage({
   account,
   lab,
+  catalog,
   onReplay,
 }: {
   account: Account | null;
   lab: Lab;
+  catalog: RainfallCatalog | null;
   onReplay: (p: Placement[]) => void;
 }) {
   const { consents, entries, detail, error, revision, setRevision, inspect, consent } = useResearch(
@@ -155,6 +158,12 @@ export function ResearchPage({
               )}
             </div>
           </div>
+          <ResearchAnalysisWorkspace
+            key={account.id + ':' + lab.modelHash}
+            source={detail}
+            entries={entries}
+            catalog={catalog}
+          />
         </>
       )}
       {account?.role === 'MEMBER' && (

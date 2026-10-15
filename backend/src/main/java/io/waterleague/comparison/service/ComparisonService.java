@@ -77,6 +77,30 @@ public class ComparisonService {
 
   @Transactional
   public ComparisonView create(UUID owner, CreateComparisonRequest dto) {
+    return create(owner, dto, Map.of());
+  }
+
+  @Transactional
+  public ComparisonView createForResearch(
+      UUID owner,
+      CreateComparisonRequest dto,
+      UUID organizationId,
+      UUID researchComparisonId,
+      UUID sourceJobId) {
+    return create(
+        owner,
+        dto,
+        Map.of(
+            "organizationId",
+            organizationId,
+            "researchComparisonId",
+            researchComparisonId,
+            "sourceJobId",
+            sourceJobId));
+  }
+
+  private ComparisonView create(
+      UUID owner, CreateComparisonRequest dto, Map<String, Object> context) {
     if (dto.modelHashes().size() < 2
         || dto.modelHashes().size() > 3
         || new HashSet<>(dto.modelHashes()).size() != dto.modelHashes().size())
@@ -118,6 +142,14 @@ public class ComparisonService {
     for (var hash : hashes) {
       UUID strategyId = UUID.randomUUID();
       strategies.create(strategyId, owner, c.title());
+      var event = new LinkedHashMap<String, Object>(context);
+      event.put(
+          "kind",
+          context.isEmpty() ? "RAINFALL_COMPARISON_COPY" : "RESEARCH_RAINFALL_COMPARISON_COPY");
+      event.put("comparisonId", c.id());
+      event.put("sourceVersionId", source.id());
+      event.put("before", List.of());
+      event.put("after", placements);
       var version =
           new StrategyVersion(
               UUID.randomUUID(),
@@ -126,18 +158,7 @@ public class ComparisonService {
               hash,
               json.hash(hash + "\n" + source.placements()),
               source.placements(),
-              json.write(
-                  Map.of(
-                      "kind",
-                      "RAINFALL_COMPARISON_COPY",
-                      "comparisonId",
-                      c.id(),
-                      "sourceVersionId",
-                      source.id(),
-                      "before",
-                      List.of(),
-                      "after",
-                      placements)),
+              json.write(event),
               source.designNote(),
               source.cost(),
               source.currency(),

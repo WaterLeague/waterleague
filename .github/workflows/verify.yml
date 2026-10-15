@@ -34,7 +34,7 @@ jobs:
           cache: maven
       - run: ./mvnw --batch-mode verify
         working-directory: backend
-      - run: ./mvnw --batch-mode -Dtest=LeagueParticipationWorkflowTests -Dwaterleague.integration.jdbc=jdbc:postgresql://127.0.0.1:5432/waterleague_test test
+      - run: ./mvnw --batch-mode -Dtest=LeagueParticipationWorkflowTests,ResearchAnalysisWorkflowTests -Dwaterleague.integration.jdbc=jdbc:postgresql://127.0.0.1:5432/waterleague_test test
         working-directory: backend
         env:
           WL_INTEGRATION_USER: waterleague_test

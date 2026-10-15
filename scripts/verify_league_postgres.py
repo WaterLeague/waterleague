@@ -1,10 +1,11 @@
-"""임시 PostgreSQL DB에서 리그 참가·초대·팀 경합 API 시험."""
+"""임시 PostgreSQL DB에서 참가·연구 분석 API와 경합 시험."""
 from pathlib import Path
 import json
 import os
 import subprocess
 import sys
 import uuid
+import argparse
 import psycopg
 from psycopg import sql
 from psycopg.conninfo import conninfo_to_dict
@@ -12,6 +13,12 @@ from local_config import ROOT, load
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--suite', choices=['league', 'analysis', 'all'], default='league')
+    suite = parser.parse_args().suite
+    test_class = {'league': 'LeagueParticipationWorkflowTests',
+                  'analysis': 'ResearchAnalysisWorkflowTests',
+                  'all': 'LeagueParticipationWorkflowTests,ResearchAnalysisWorkflowTests'}[suite]
     load()
     config = conninfo_to_dict(os.environ['DATABASE_URL'])
     if config.get('host') not in {'127.0.0.1', 'localhost', '::1'}:
@@ -40,7 +47,7 @@ def main():
         with path.open('x') as log:
             path.chmod(0o600)
             result = subprocess.run(
-                [str(ROOT / 'backend/mvnw'), '--batch-mode', '-Dtest=LeagueParticipationWorkflowTests',
+                [str(ROOT / 'backend/mvnw'), '--batch-mode', '-Dtest=' + test_class,
                  '-Dwaterleague.integration.jdbc=' + jdbc, 'test'],
                 cwd=ROOT / 'backend', env=env, stdout=log, stderr=subprocess.STDOUT, timeout=180)
         with psycopg.connect(**config) as db:

@@ -2,6 +2,8 @@
 
 UUID, UTC timestamptz, 비용·면적 고정 정밀도. FK·CHECK·UNIQUE·트랜잭션으로 불변식 보호. JSON은 불변 스냅샷·메타데이터 용도, 소유·권한·검증 상태는 관계형 컬럼.
 
+아래 표는 초기 개념 모델이며 실제 테이블/컬럼 계약은 `backend/src/main/resources/db/migration/`의 적용 순서와 기능별 문서 참조. 사용자 정정 이후 회원은 `accounts`와 조직 유형/승인 상태로 구현하고, 관리자는 단일 계정. 비용은 KRW.
+
 | 엔티티 | 주요 필드·제약 |
 | --- | --- |
 | users | id, 정규화 email unique, nickname, password_hash, status |
@@ -13,7 +15,7 @@ UUID, UTC timestamptz, 비용·면적 고정 정밀도. FK·CHECK·UNIQUE·트�
 | model_assumptions | parameter, value/unit, source_type, evidence, range |
 | validation_reports | model_version_id, report_hash, reviewer, metrics, scope, approved/revoked_at |
 | placement_cells | geometry, subcatchment_id, surface, max_area_m2, feasibility |
-| facility_versions | type, parameter_hash, allowed_surfaces, point_cost, physical_constraints |
+| facility_versions | type, parameter_hash, allowed_surfaces, unit_cost_krw, physical_constraints |
 | rainfall_scenarios | source_id, station_id, start/end, interval_seconds, quality_status, data_hash |
 | leagues | org_id(nullable general), state, starts/ends_at, published_rules_hash |
 | league_rules | model_version, rainfall_hash, initial_state_hash, weights, budget, submission_limit |
@@ -49,3 +51,7 @@ UUID, UTC timestamptz, 비용·면적 고정 정밀도. FK·CHECK·UNIQUE·트�
 기관 조회는 org_id·active membership·permission scope 필수. 공개 랭킹은 닉네임·허용 결과 요약만 반환. 전략 ID만 알면 열람 가능한 구조 금지.
 
 개인정보와 실험 데이터 분리. 탈퇴·동의 철회 처리와 보존기간은 운영 전 확정. 참조 무결성을 이유로 개인정보 무기한 보존 금지.
+
+## V9 기관 분석 연결
+
+`research_comparisons`는 organization_id, requested_by, source_job_id, comparison_id FK와 (organization_id, request_key) 유일성, comparison_id 유일성, request_hash, created_at 보존. 기존 `rainfall_comparisons`/`rainfall_comparison_jobs`와 원래 플레이어의 `strategies`/`strategy_versions`/`simulation_jobs`를 연결. 기관 소유 전략 복사·자동 제출·자동 동의 없음. 원본 동의 철회 후에도 소유자의 개인 기록은 보존하되 기관용 API가 현재 권한을 재검사. 패턴 집계는 현재 동의된 입력으로 매 요청 계산하며 공유 캐시/영속 집계 테이블 없음. [기관 분석 계약](26-institution-analysis.md) 참조.

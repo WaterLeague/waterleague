@@ -24,6 +24,10 @@
 | GET /research/strategies | MFA 인증 승인 기관, 동의된 현재 모델 제출 최대 100건 |
 | GET /research/strategies/{jobId} | 승인 기관·동의, 제출 버전까지 이력과 계산 당시 모델 |
 | GET /research/strategies/{jobId}/bundle | 승인 기관·동의, 재인가 후 재현 ZIP |
+| GET/POST /research/comparisons | MFA 승인 조직의 동의된 제출 다강우 재계산 목록·생성, 기관별 멱등키 |
+| GET /research/comparisons/{id} | 현재 원본 동의·조직 승인 재검사, 원본과 파생 계산 결과 |
+| GET /research/comparisons/{id}/jobs/{jobId}/bundle | 현재 동의·기관 분석 그룹 연결 검사, 목적과 원본 연결 포함 ZIP |
+| POST /research/patterns | 동일 모델의 동의 제출 1~50개, 상위 고유 설계 1~20개와 경계 동점의 배치 기술 통계 |
 
 모델 검증·배포 권한은 조직 회원의 리그 운영과 분리. 내부 워커 endpoint 외부 노출 금지. 공식 맵 상세·강우 선택은 후속 구현 대상. 관리자 역할은 ADMIN, 모든 일반/조직 회원 역할은 MEMBER. 조직 회원의 연구·리그 권한은 승인 상태·회원 유형·소속·MFA로 검사한다.
 
@@ -77,6 +81,8 @@ schema 3은 초안에 `participation: {access, admission, entryMode, teamSizeLim
 ## 사업 활용 동의·기관 검토
 
 계산별 불변 요청, 소유자 승인/거절/철회, 기관 검토 이력, 커서 목록·목적별 재현 ZIP은 [활용 계약](17-utilization-consent.md) 참조. 연구 동의와 사업 활용 검토 동의는 독립 범위이며, 사업용 다운로드는 지정 요청의 승인 상태·계산·기관·소유자 상태를 준비 전후 확인한다. 관리자에게 자료 접근 권한을 부여하지 않는다.
+
+기관 재계산·패턴 통계의 요청/응답·권한·원본 소유권·한도·철회 계약은 [기관 분석 계약](26-institution-analysis.md) 참조. 서로 다른 모델의 패턴 혼합은 `ANALYSIS_INCOMPATIBLE` 422, 원본 미동의·타 조직 그룹은 404. 생성은 202, 동일 키/다른 내용 409, 활성 계산 한도 초과 429. 모든 분석 응답은 no-store.
 
 ## 배치 입력
 

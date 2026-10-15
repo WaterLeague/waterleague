@@ -161,6 +161,12 @@ public class ResearchService {
         requestId);
   }
 
+  public byte[] comparisonBundle(
+      Account a, UUID jobId, UUID comparisonId, Map<String, Object> scope, Runnable authorization)
+      throws IOException {
+    return buildBundle(a, jobId, scope, authorization, "RESEARCH_COMPARISON_EXPORT", comparisonId);
+  }
+
   private byte[] buildBundle(
       Account a,
       UUID id,
