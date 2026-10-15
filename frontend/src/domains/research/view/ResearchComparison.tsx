@@ -76,6 +76,11 @@ export function MetricsComparison({ detail }: { detail: ResearchDetail }) {
   return (
     <section>
       <h3>물의 이동 · m³</h3>
+      {result.execution?.mode === 'REUSED' && (
+        <p className="micro-note">
+          동일 조건 계산의 재사용 결과입니다. 독립적인 검증 횟수로 집계하지 마세요.
+        </p>
+      )}
       <table className="metrics-table">
         <thead>
           <tr>

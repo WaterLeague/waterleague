@@ -107,6 +107,11 @@ export interface Metrics {
   seriesM3s: number[];
 }
 export interface SimulationResult {
+  execution?: {
+    schema: 1;
+    mode: 'COMPUTED' | 'REUSED';
+    computationKey: string;
+  };
   score: number;
   official: false;
   validationLevel: 'EXPLORATORY';

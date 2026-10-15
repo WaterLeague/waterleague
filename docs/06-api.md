@@ -82,3 +82,7 @@ RFC 9457 `application/problem+json`: type, title, status, detail, instance, code
 - `GET /api/v1/research/strategies?modelHash=…`: 선택 조건의 동의된 연구 기록. 조직 승인·MFA 조건 유지
 - 기관 리그 초안 요청 `modelHash` 필수. 공개 후 불변, 카탈로그에 수록된 모든 조건의 신규 실행 지원
 - 전략의 기존 ID에 다른 모델 버전 추가 시 409. 다른 강우 비교는 새 전략 생성. 미등록 모델은 404
+
+## 계산 재사용 메타데이터
+
+신규 성공 결과의 `result.execution`은 `schema: 1`, `mode: COMPUTED | REUSED`, 64자 SHA-256 `computationKey` 제공. 이전 결과에는 없을 수 있음. 재사용 여부는 평가 점수·리그 제출 자격·기관 동의를 변경하지 않음. 원본 다른 회원의 식별자·작업 ID는 제공하지 않으며 재현 ZIP도 현재 소유자/버전의 요청·이력으로 구성.

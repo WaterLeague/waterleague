@@ -19,3 +19,7 @@ python3 scripts/run_local.py worker
 작업당 90초 제한, CPU 75초, 파일당 64 MiB, lease 180초·최대 3회 획득·fencing. 운영 시 컨테이너 메모리·프로세스·디스크 한도 추가 필수. 결과 디렉터리는 `data/runs/<job UUID>/<lease UUID>`에 입력·출력·빌더·manifest 보존. `.env.local`의 키와 DB 비밀번호는 자식 실행 환경에서 제거.
 
 엔진 테스트는 API/CLI 물수지 일치, 반복 재현, 3종 LID, 5초/10초 시간간격 민감도, 무강우 평가 거부를 확인한다. 현장 관측과의 독립 검증을 대체하지 않는다.
+
+동일 조건의 성공 산출물은 `data/private/simulation-cache`에 최대 128개·2 GiB·7일 보관한다. 모델·배치·엔진·빌더·실행 정책·플랫폼이 일치하고 파일 해시를 통과한 경우에만 대상 작업의 새 산출물 경로에 복사한다. `request.json`·회원·메모·이력은 공유하지 않는다. `result.json.execution.mode`의 `REUSED`는 새로운 독립 검증이 아니다.
+
+`.env.local`의 `SIMULATION_CACHE_PATH`는 비어 있는 전용 경로 사용, `SIMULATION_CACHE_ENABLED=false`로 비활성화. 캐시 삭제·손상·만료·잠금 경합은 재계산으로 처리한다. 계산 중에는 캐시 잠금을 보유하지 않아 동시 미스는 각각 실행할 수 있다. 워커 설정 변경 후 처리 중 작업이 없는 시점에 재시작. 캐시는 영구 재현 산출물 백업을 대신하지 않는다. 상세 계약은 `docs/24-simulation-cache.md` 참조.

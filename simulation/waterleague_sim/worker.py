@@ -29,7 +29,7 @@ def process(conn,job):
  state='REJECTED';error='INPUT_HASH_MISMATCH';result=None
  if expected==job['input_hash'] and model_hash==job['model_hash']:
   (path/'request.json').write_text(json.dumps(payload,ensure_ascii=False));(path/'model-source.json').write_bytes(model_bytes)
-  env={k:v for k,v in os.environ.items() if k in ['PATH','LANG','LC_ALL','SWMM_LIBRARY']};env['PYTHONPATH']=str(ROOT/'simulation')
+  env={k:v for k,v in os.environ.items() if k in ['PATH','LANG','LC_ALL','SWMM_LIBRARY','SIMULATION_CACHE_PATH','SIMULATION_CACHE_ENABLED']};env['PYTHONPATH']=str(ROOT/'simulation')
   child=subprocess.Popen([sys.executable,'-m','waterleague_sim.run_job',str(path)],env=env,start_new_session=True,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
   try:
    code=child.wait(timeout=90)

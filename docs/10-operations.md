@@ -42,3 +42,7 @@ PG_BIN=/Applications/Postgres.app/Contents/Versions/18/bin \
 이 검사는 오프사이트 암호화 백업·WAL/PITR·MFA 암호화 키 복구·Oracle 성능 측정을 대체하지 않음. PostgreSQL의 논리 덤프는 한 DB만 포함하며 role·tablespace는 별도 관리. 운영용 백업은 실행 산출물·원본자료·고정 모델과 코드 버전을 포함한 암호화 사본 및 별도 키 보관 필요.
 
 근거: [PostgreSQL pg_dump](https://www.postgresql.org/docs/18/app-pgdump.html), [pg_restore](https://www.postgresql.org/docs/18/app-pgrestore.html). 임의 외부 덤프는 SQL 실행 위험으로 자동 복원하지 않음.
+
+## 계산 캐시 운영
+
+`docs/24-simulation-cache.md`의 비공개 전용 디렉터리·128개/2 GiB/7일 상한 적용. 캐시는 재계산 가능한 임시 자료, `data/runs`의 작업별 재현 산출물과 다른 볼륨 경로 사용. 캐시 삭제는 기존 작업·순위·동의·다운로드 권한을 바꾸지 않음. 비활성화/경로 변경은 워커 설정으로만 수행. 로컬 파일 잠금·원자적 게시 범위이며 NFS·다중 호스트 공유나 동시 미스 계산 병합은 지원하지 않음. 실제 Oracle에서 캐시 읽기/쓰기 시간·적중률·보관량·큐 지연 실측 필요.
