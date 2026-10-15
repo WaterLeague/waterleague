@@ -173,6 +173,35 @@ class WorkerQueueTests(unittest.TestCase):
         self.assertEqual(self.row('RESEARCH_CANDIDATE', job_id)['state'], 'RUNNING')
         self.assertEqual(self.conn.execute('SELECT COUNT(*) n FROM accounts').fetchone()['n'], 1)
 
+    def test_lock_wait_crossing_lease_deadline_cannot_publish(self):
+        for kind in queue.TABLES:
+            with self.subTest(kind=kind):
+                job_id = self.add(kind)
+                job = queue.claim(self.conn)
+                self.conn.execute(psycopg.sql.SQL("UPDATE {} SET lease_until=clock_timestamp()+interval '300 milliseconds' WHERE id=%s")
+                                  .format(queue.table(kind)), (job_id,))
+                started = threading.Event()
+
+                def finish():
+                    with self.connection() as conn:
+                        started.set()
+                        return queue.finish(conn, job, 'SUCCEEDED', {'late': True}, None)
+
+                with self.connection() as blocker, ThreadPoolExecutor(max_workers=1) as pool:
+                    with blocker.transaction():
+                        blocker.execute(psycopg.sql.SQL('SELECT id FROM {} WHERE id=%s FOR UPDATE')
+                                        .format(queue.table(kind)), (job_id,))
+                        future = pool.submit(finish)
+                        self.assertTrue(started.wait(timeout=2))
+                        with self.assertRaises(TimeoutError):
+                            future.result(timeout=0.5)
+                    self.assertFalse(future.result(timeout=3))
+                self.assertEqual(self.row(kind, job_id)['state'], 'RUNNING')
+                self.assertIsNone(self.row(kind, job_id)['result'])
+                # 다음 하위 시험의 claim 대상과 겹치지 않도록 시험 행만 종료한다.
+                self.conn.execute(psycopg.sql.SQL("UPDATE {} SET state='FAILED',lease_until=NULL WHERE id=%s")
+                                  .format(queue.table(kind)), (job_id,))
+
     def test_bad_hash_and_invalid_json_are_rejected_before_engine(self):
         job_id = self.add('RESEARCH_CANDIDATE')
         with patch.object(worker, 'ARTIFACTS', self.artifacts), patch.object(worker.subprocess, 'Popen') as child:
