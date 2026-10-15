@@ -1,0 +1,836 @@
+{
+  "schemaVersion": 1,
+  "purpose": "공개 성동구 수위 자료의 확보·품질 조사",
+  "calibrationEligible": false,
+  "source": {
+    "provider": "서울특별시",
+    "sourcePage": "https://data.seoul.go.kr/dataList/OA-2527/F/1/datasetView.do",
+    "endpoint": "https://datafile.seoul.go.kr/bigfile/iot/inf/nio_download.do?&useCache=false",
+    "method": "POST",
+    "parameters": {
+      "infId": "OA-2527",
+      "seqNo": "",
+      "seq": "17",
+      "infSeq": "3"
+    },
+    "filename": "seoul-sewer-2024.zip",
+    "sha256": "a1499be45fab2798375b75050acd0f826e34dd462c646747be043dc862a082e4",
+    "bytes": 727913789,
+    "acquiredAt": "2026-10-15T18:53:59.404527+00:00"
+  },
+  "measurementUnit": "UNVERIFIED",
+  "verticalDatum": "NOT_PROVIDED",
+  "locationInHistoricalCsv": "NOT_PROVIDED",
+  "timeZone": "UNVERIFIED_SOURCE_HAS_NO_OFFSET",
+  "codeSha256": "eb9fbff9ed54db4fc6adb10dcc773ef9bf5d7aa31455bf77aa3c18fe8d3ad6c4",
+  "limitations": [
+    "위치·수위 단위·기준면·관측 단면·실제 유역 연결 미검증",
+    "통신양호는 계측값의 검보정 완료를 의미하지 않음",
+    "정시 1분 격자는 관측 패턴에 대한 점검 기준이며 공급자의 품질 승인 기준이 아님",
+    "수위를 유량으로 변환하거나 결측을 0으로 대체하지 않음"
+  ],
+  "members": [
+    {
+      "filename": "하수관로_수위_현황_202406.csv",
+      "sha256": "88ed59fa63d5e645de80d247ea1316bb37bb7e8b822e081d1626c433b0aa25d6",
+      "bytes": 657427507,
+      "physicalDataLines": 12407930,
+      "selectedRows": 14400
+    },
+    {
+      "filename": "하수관로_수위_현황_202407.csv",
+      "sha256": "375acc1a7c3e9e30137446bf07ecb7b0cd1ff5498d50072eb78243960b57f4b3",
+      "bytes": 703339943,
+      "physicalDataLines": 13265236,
+      "selectedRows": 31680
+    }
+  ],
+  "stations": [
+    {
+      "stationId": "04-0001",
+      "windows": [
+        {
+          "dateLabel": "2024-06-22",
+          "rowCount": 1440,
+          "uniqueTimestamps": 1440,
+          "duplicateTimestampRows": 0,
+          "nominalOneMinuteGridSize": 1440,
+          "missingOnOneMinuteGrid": 0,
+          "longestMissingMinutes": 0,
+          "irregularTimestampRows": 0,
+          "malformedTimestampRows": 0,
+          "invalidValueRows": 0,
+          "negativeValueRows": 0,
+          "communicationStatusCounts": {
+            "통신양호": 1440
+          },
+          "distinctFiniteValues": 6,
+          "constantFiniteValues": false,
+          "minimumRawValue": "0.1",
+          "maximumRawValue": "0.15",
+          "firstLabel": "2024-06-22T00:00:00",
+          "lastLabel": "2024-06-22T23:59:00"
+        },
+        {
+          "dateLabel": "2024-07-02",
+          "rowCount": 1440,
+          "uniqueTimestamps": 1440,
+          "duplicateTimestampRows": 0,
+          "nominalOneMinuteGridSize": 1440,
+          "missingOnOneMinuteGrid": 0,
+          "longestMissingMinutes": 0,
+          "irregularTimestampRows": 0,
+          "malformedTimestampRows": 0,
+          "invalidValueRows": 0,
+          "negativeValueRows": 0,
+          "communicationStatusCounts": {
+            "통신양호": 1440
+          },
+          "distinctFiniteValues": 24,
+          "constantFiniteValues": false,
+          "minimumRawValue": "0.11",
+          "maximumRawValue": "0.34",
+          "firstLabel": "2024-07-02T00:00:00",
+          "lastLabel": "2024-07-02T23:59:00"
+        },
+        {
+          "dateLabel": "2024-07-18",
+          "rowCount": 1440,
+          "uniqueTimestamps": 1440,
+          "duplicateTimestampRows": 0,
+          "nominalOneMinuteGridSize": 1440,
+          "missingOnOneMinuteGrid": 0,
+          "longestMissingMinutes": 0,
+          "irregularTimestampRows": 0,
+          "malformedTimestampRows": 0,
+          "invalidValueRows": 0,
+          "negativeValueRows": 0,
+          "communicationStatusCounts": {
+            "통신양호": 1440
+          },
+          "distinctFiniteValues": 36,
+          "constantFiniteValues": false,
+          "minimumRawValue": "0.12",
+          "maximumRawValue": "0.47",
+          "firstLabel": "2024-07-18T00:00:00",
+          "lastLabel": "2024-07-18T23:59:00"
+        }
+      ]
+    },
+    {
+      "stationId": "04-0002",
+      "windows": [
+        {
+          "dateLabel": "2024-06-22",
+          "rowCount": 1440,
+          "uniqueTimestamps": 1440,
+          "duplicateTimestampRows": 0,
+          "nominalOneMinuteGridSize": 1440,
+          "missingOnOneMinuteGrid": 0,
+          "longestMissingMinutes": 0,
+          "irregularTimestampRows": 0,
+          "malformedTimestampRows": 0,
+          "invalidValueRows": 0,
+          "negativeValueRows": 0,
+          "communicationStatusCounts": {
+            "통신양호": 1440
+          },
+          "distinctFiniteValues": 1,
+          "constantFiniteValues": true,
+          "minimumRawValue": "0.21",
+          "maximumRawValue": "0.21",
+          "firstLabel": "2024-06-22T00:00:00",
+          "lastLabel": "2024-06-22T23:59:00"
+        },
+        {
+          "dateLabel": "2024-07-02",
+          "rowCount": 1440,
+          "uniqueTimestamps": 1440,
+          "duplicateTimestampRows": 0,
+          "nominalOneMinuteGridSize": 1440,
+          "missingOnOneMinuteGrid": 0,
+          "longestMissingMinutes": 0,
+          "irregularTimestampRows": 0,
+          "malformedTimestampRows": 0,
+          "invalidValueRows": 0,
+          "negativeValueRows": 0,
+          "communicationStatusCounts": {
+            "통신양호": 1440
+          },
+          "distinctFiniteValues": 44,
+          "constantFiniteValues": false,
+          "minimumRawValue": "0.16",
+          "maximumRawValue": "0.66",
+          "firstLabel": "2024-07-02T00:00:00",
+          "lastLabel": "2024-07-02T23:59:00"
+        },
+        {
+          "dateLabel": "2024-07-18",
+          "rowCount": 1440,
+          "uniqueTimestamps": 1440,
+          "duplicateTimestampRows": 0,
+          "nominalOneMinuteGridSize": 1440,
+          "missingOnOneMinuteGrid": 0,
+          "longestMissingMinutes": 0,
+          "irregularTimestampRows": 0,
+          "malformedTimestampRows": 0,
+          "invalidValueRows": 0,
+          "negativeValueRows": 0,
+          "communicationStatusCounts": {
+            "통신양호": 1440
+          },
+          "distinctFiniteValues": 66,
+          "constantFiniteValues": false,
+          "minimumRawValue": "0.17",
+          "maximumRawValue": "0.93",
+          "firstLabel": "2024-07-18T00:00:00",
+          "lastLabel": "2024-07-18T23:59:00"
+        }
+      ]
+    },
+    {
+      "stationId": "04-0003",
+      "windows": [
+        {
+          "dateLabel": "2024-06-22",
+          "rowCount": 1440,
+          "uniqueTimestamps": 1440,
+          "duplicateTimestampRows": 0,
+          "nominalOneMinuteGridSize": 1440,
+          "missingOnOneMinuteGrid": 0,
+          "longestMissingMinutes": 0,
+          "irregularTimestampRows": 0,
+          "malformedTimestampRows": 0,
+          "invalidValueRows": 0,
+          "negativeValueRows": 0,
+          "communicationStatusCounts": {
+            "통신양호": 1440
+          },
+          "distinctFiniteValues": 13,
+          "constantFiniteValues": false,
+          "minimumRawValue": "0",
+          "maximumRawValue": "0.12",
+          "firstLabel": "2024-06-22T00:00:00",
+          "lastLabel": "2024-06-22T23:59:00"
+        },
+        {
+          "dateLabel": "2024-07-02",
+          "rowCount": 1440,
+          "uniqueTimestamps": 1440,
+          "duplicateTimestampRows": 0,
+          "nominalOneMinuteGridSize": 1440,
+          "missingOnOneMinuteGrid": 0,
+          "longestMissingMinutes": 0,
+          "irregularTimestampRows": 0,
+          "malformedTimestampRows": 0,
+          "invalidValueRows": 0,
+          "negativeValueRows": 0,
+          "communicationStatusCounts": {
+            "통신양호": 1440
+          },
+          "distinctFiniteValues": 52,
+          "constantFiniteValues": false,
+          "minimumRawValue": "0.01",
+          "maximumRawValue": "0.58",
+          "firstLabel": "2024-07-02T00:00:00",
+          "lastLabel": "2024-07-02T23:59:00"
+        },
+        {
+          "dateLabel": "2024-07-18",
+          "rowCount": 1440,
+          "uniqueTimestamps": 1440,
+          "duplicateTimestampRows": 0,
+          "nominalOneMinuteGridSize": 1440,
+          "missingOnOneMinuteGrid": 0,
+          "longestMissingMinutes": 0,
+          "irregularTimestampRows": 0,
+          "malformedTimestampRows": 0,
+          "invalidValueRows": 0,
+          "negativeValueRows": 0,
+          "communicationStatusCounts": {
+            "통신양호": 1440
+          },
+          "distinctFiniteValues": 84,
+          "constantFiniteValues": false,
+          "minimumRawValue": "0",
+          "maximumRawValue": "0.94",
+          "firstLabel": "2024-07-18T00:00:00",
+          "lastLabel": "2024-07-18T23:59:00"
+        }
+      ]
+    },
+    {
+      "stationId": "04-0004",
+      "windows": [
+        {
+          "dateLabel": "2024-06-22",
+          "rowCount": 1440,
+          "uniqueTimestamps": 1440,
+          "duplicateTimestampRows": 0,
+          "nominalOneMinuteGridSize": 1440,
+          "missingOnOneMinuteGrid": 0,
+          "longestMissingMinutes": 0,
+          "irregularTimestampRows": 0,
+          "malformedTimestampRows": 0,
+          "invalidValueRows": 0,
+          "negativeValueRows": 0,
+          "communicationStatusCounts": {
+            "통신양호": 1440
+          },
+          "distinctFiniteValues": 22,
+          "constantFiniteValues": false,
+          "minimumRawValue": "0.13",
+          "maximumRawValue": "0.34",
+          "firstLabel": "2024-06-22T00:00:00",
+          "lastLabel": "2024-06-22T23:59:00"
+        },
+        {
+          "dateLabel": "2024-07-02",
+          "rowCount": 1440,
+          "uniqueTimestamps": 1440,
+          "duplicateTimestampRows": 0,
+          "nominalOneMinuteGridSize": 1440,
+          "missingOnOneMinuteGrid": 0,
+          "longestMissingMinutes": 0,
+          "irregularTimestampRows": 0,
+          "malformedTimestampRows": 0,
+          "invalidValueRows": 0,
+          "negativeValueRows": 0,
+          "communicationStatusCounts": {
+            "통신양호": 1440
+          },
+          "distinctFiniteValues": 73,
+          "constantFiniteValues": false,
+          "minimumRawValue": "0.12",
+          "maximumRawValue": "0.89",
+          "firstLabel": "2024-07-02T00:00:00",
+          "lastLabel": "2024-07-02T23:59:00"
+        },
+        {
+          "dateLabel": "2024-07-18",
+          "rowCount": 1440,
+          "uniqueTimestamps": 1440,
+          "duplicateTimestampRows": 0,
+          "nominalOneMinuteGridSize": 1440,
+          "missingOnOneMinuteGrid": 0,
+          "longestMissingMinutes": 0,
+          "irregularTimestampRows": 0,
+          "malformedTimestampRows": 0,
+          "invalidValueRows": 0,
+          "negativeValueRows": 0,
+          "communicationStatusCounts": {
+            "통신양호": 1440
+          },
+          "distinctFiniteValues": 107,
+          "constantFiniteValues": false,
+          "minimumRawValue": "0.14",
+          "maximumRawValue": "1.28",
+          "firstLabel": "2024-07-18T00:00:00",
+          "lastLabel": "2024-07-18T23:59:00"
+        }
+      ]
+    },
+    {
+      "stationId": "04-0005",
+      "windows": [
+        {
+          "dateLabel": "2024-06-22",
+          "rowCount": 1440,
+          "uniqueTimestamps": 1440,
+          "duplicateTimestampRows": 0,
+          "nominalOneMinuteGridSize": 1440,
+          "missingOnOneMinuteGrid": 0,
+          "longestMissingMinutes": 0,
+          "irregularTimestampRows": 0,
+          "malformedTimestampRows": 0,
+          "invalidValueRows": 0,
+          "negativeValueRows": 0,
+          "communicationStatusCounts": {
+            "통신양호": 1440
+          },
+          "distinctFiniteValues": 21,
+          "constantFiniteValues": false,
+          "minimumRawValue": "0.06",
+          "maximumRawValue": "0.26",
+          "firstLabel": "2024-06-22T00:00:00",
+          "lastLabel": "2024-06-22T23:59:00"
+        },
+        {
+          "dateLabel": "2024-07-02",
+          "rowCount": 1440,
+          "uniqueTimestamps": 1440,
+          "duplicateTimestampRows": 0,
+          "nominalOneMinuteGridSize": 1440,
+          "missingOnOneMinuteGrid": 0,
+          "longestMissingMinutes": 0,
+          "irregularTimestampRows": 0,
+          "malformedTimestampRows": 0,
+          "invalidValueRows": 0,
+          "negativeValueRows": 0,
+          "communicationStatusCounts": {
+            "통신양호": 1440
+          },
+          "distinctFiniteValues": 66,
+          "constantFiniteValues": false,
+          "minimumRawValue": "0.07",
+          "maximumRawValue": "0.72",
+          "firstLabel": "2024-07-02T00:00:00",
+          "lastLabel": "2024-07-02T23:59:00"
+        },
+        {
+          "dateLabel": "2024-07-18",
+          "rowCount": 1440,
+          "uniqueTimestamps": 1440,
+          "duplicateTimestampRows": 0,
+          "nominalOneMinuteGridSize": 1440,
+          "missingOnOneMinuteGrid": 0,
+          "longestMissingMinutes": 0,
+          "irregularTimestampRows": 0,
+          "malformedTimestampRows": 0,
+          "invalidValueRows": 0,
+          "negativeValueRows": 0,
+          "communicationStatusCounts": {
+            "통신양호": 1440
+          },
+          "distinctFiniteValues": 93,
+          "constantFiniteValues": false,
+          "minimumRawValue": "0.08",
+          "maximumRawValue": "1.11",
+          "firstLabel": "2024-07-18T00:00:00",
+          "lastLabel": "2024-07-18T23:59:00"
+        }
+      ]
+    },
+    {
+      "stationId": "04-0007",
+      "windows": [
+        {
+          "dateLabel": "2024-06-22",
+          "rowCount": 1440,
+          "uniqueTimestamps": 1440,
+          "duplicateTimestampRows": 0,
+          "nominalOneMinuteGridSize": 1440,
+          "missingOnOneMinuteGrid": 0,
+          "longestMissingMinutes": 0,
+          "irregularTimestampRows": 0,
+          "malformedTimestampRows": 0,
+          "invalidValueRows": 0,
+          "negativeValueRows": 0,
+          "communicationStatusCounts": {
+            "통신양호": 1440
+          },
+          "distinctFiniteValues": 6,
+          "constantFiniteValues": false,
+          "minimumRawValue": "0.04",
+          "maximumRawValue": "0.09",
+          "firstLabel": "2024-06-22T00:00:00",
+          "lastLabel": "2024-06-22T23:59:00"
+        },
+        {
+          "dateLabel": "2024-07-02",
+          "rowCount": 1440,
+          "uniqueTimestamps": 1440,
+          "duplicateTimestampRows": 0,
+          "nominalOneMinuteGridSize": 1440,
+          "missingOnOneMinuteGrid": 0,
+          "longestMissingMinutes": 0,
+          "irregularTimestampRows": 0,
+          "malformedTimestampRows": 0,
+          "invalidValueRows": 0,
+          "negativeValueRows": 0,
+          "communicationStatusCounts": {
+            "통신양호": 1440
+          },
+          "distinctFiniteValues": 15,
+          "constantFiniteValues": false,
+          "minimumRawValue": "0.05",
+          "maximumRawValue": "0.19",
+          "firstLabel": "2024-07-02T00:00:00",
+          "lastLabel": "2024-07-02T23:59:00"
+        },
+        {
+          "dateLabel": "2024-07-18",
+          "rowCount": 1440,
+          "uniqueTimestamps": 1440,
+          "duplicateTimestampRows": 0,
+          "nominalOneMinuteGridSize": 1440,
+          "missingOnOneMinuteGrid": 0,
+          "longestMissingMinutes": 0,
+          "irregularTimestampRows": 0,
+          "malformedTimestampRows": 0,
+          "invalidValueRows": 0,
+          "negativeValueRows": 0,
+          "communicationStatusCounts": {
+            "통신양호": 1440
+          },
+          "distinctFiniteValues": 22,
+          "constantFiniteValues": false,
+          "minimumRawValue": "0.08",
+          "maximumRawValue": "0.33",
+          "firstLabel": "2024-07-18T00:00:00",
+          "lastLabel": "2024-07-18T23:59:00"
+        }
+      ]
+    },
+    {
+      "stationId": "04-0008",
+      "windows": [
+        {
+          "dateLabel": "2024-06-22",
+          "rowCount": 1440,
+          "uniqueTimestamps": 1440,
+          "duplicateTimestampRows": 0,
+          "nominalOneMinuteGridSize": 1440,
+          "missingOnOneMinuteGrid": 0,
+          "longestMissingMinutes": 0,
+          "irregularTimestampRows": 0,
+          "malformedTimestampRows": 0,
+          "invalidValueRows": 0,
+          "negativeValueRows": 0,
+          "communicationStatusCounts": {
+            "통신양호": 1440
+          },
+          "distinctFiniteValues": 7,
+          "constantFiniteValues": false,
+          "minimumRawValue": "0.04",
+          "maximumRawValue": "0.1",
+          "firstLabel": "2024-06-22T00:00:00",
+          "lastLabel": "2024-06-22T23:59:00"
+        },
+        {
+          "dateLabel": "2024-07-02",
+          "rowCount": 1440,
+          "uniqueTimestamps": 1440,
+          "duplicateTimestampRows": 0,
+          "nominalOneMinuteGridSize": 1440,
+          "missingOnOneMinuteGrid": 0,
+          "longestMissingMinutes": 0,
+          "irregularTimestampRows": 0,
+          "malformedTimestampRows": 0,
+          "invalidValueRows": 0,
+          "negativeValueRows": 0,
+          "communicationStatusCounts": {
+            "통신양호": 1440
+          },
+          "distinctFiniteValues": 24,
+          "constantFiniteValues": false,
+          "minimumRawValue": "0.03",
+          "maximumRawValue": "0.27",
+          "firstLabel": "2024-07-02T00:00:00",
+          "lastLabel": "2024-07-02T23:59:00"
+        },
+        {
+          "dateLabel": "2024-07-18",
+          "rowCount": 1440,
+          "uniqueTimestamps": 1440,
+          "duplicateTimestampRows": 0,
+          "nominalOneMinuteGridSize": 1440,
+          "missingOnOneMinuteGrid": 0,
+          "longestMissingMinutes": 0,
+          "irregularTimestampRows": 0,
+          "malformedTimestampRows": 0,
+          "invalidValueRows": 0,
+          "negativeValueRows": 0,
+          "communicationStatusCounts": {
+            "통신양호": 1440
+          },
+          "distinctFiniteValues": 38,
+          "constantFiniteValues": false,
+          "minimumRawValue": "0.07",
+          "maximumRawValue": "0.52",
+          "firstLabel": "2024-07-18T00:00:00",
+          "lastLabel": "2024-07-18T23:59:00"
+        }
+      ]
+    },
+    {
+      "stationId": "04-0009",
+      "windows": [
+        {
+          "dateLabel": "2024-06-22",
+          "rowCount": 1440,
+          "uniqueTimestamps": 1440,
+          "duplicateTimestampRows": 0,
+          "nominalOneMinuteGridSize": 1440,
+          "missingOnOneMinuteGrid": 0,
+          "longestMissingMinutes": 0,
+          "irregularTimestampRows": 0,
+          "malformedTimestampRows": 0,
+          "invalidValueRows": 0,
+          "negativeValueRows": 0,
+          "communicationStatusCounts": {
+            "통신양호": 1440
+          },
+          "distinctFiniteValues": 11,
+          "constantFiniteValues": false,
+          "minimumRawValue": "0.07",
+          "maximumRawValue": "0.17",
+          "firstLabel": "2024-06-22T00:00:00",
+          "lastLabel": "2024-06-22T23:59:00"
+        },
+        {
+          "dateLabel": "2024-07-02",
+          "rowCount": 1440,
+          "uniqueTimestamps": 1440,
+          "duplicateTimestampRows": 0,
+          "nominalOneMinuteGridSize": 1440,
+          "missingOnOneMinuteGrid": 0,
+          "longestMissingMinutes": 0,
+          "irregularTimestampRows": 0,
+          "malformedTimestampRows": 0,
+          "invalidValueRows": 0,
+          "negativeValueRows": 0,
+          "communicationStatusCounts": {
+            "통신양호": 1440
+          },
+          "distinctFiniteValues": 41,
+          "constantFiniteValues": false,
+          "minimumRawValue": "0.08",
+          "maximumRawValue": "0.49",
+          "firstLabel": "2024-07-02T00:00:00",
+          "lastLabel": "2024-07-02T23:59:00"
+        },
+        {
+          "dateLabel": "2024-07-18",
+          "rowCount": 1440,
+          "uniqueTimestamps": 1440,
+          "duplicateTimestampRows": 0,
+          "nominalOneMinuteGridSize": 1440,
+          "missingOnOneMinuteGrid": 0,
+          "longestMissingMinutes": 0,
+          "irregularTimestampRows": 0,
+          "malformedTimestampRows": 0,
+          "invalidValueRows": 0,
+          "negativeValueRows": 0,
+          "communicationStatusCounts": {
+            "통신양호": 1440
+          },
+          "distinctFiniteValues": 64,
+          "constantFiniteValues": false,
+          "minimumRawValue": "0.08",
+          "maximumRawValue": "0.82",
+          "firstLabel": "2024-07-18T00:00:00",
+          "lastLabel": "2024-07-18T23:59:00"
+        }
+      ]
+    },
+    {
+      "stationId": "04-0010",
+      "windows": [
+        {
+          "dateLabel": "2024-06-22",
+          "rowCount": 1440,
+          "uniqueTimestamps": 1440,
+          "duplicateTimestampRows": 0,
+          "nominalOneMinuteGridSize": 1440,
+          "missingOnOneMinuteGrid": 0,
+          "longestMissingMinutes": 0,
+          "irregularTimestampRows": 0,
+          "malformedTimestampRows": 0,
+          "invalidValueRows": 0,
+          "negativeValueRows": 0,
+          "communicationStatusCounts": {
+            "통신양호": 1440
+          },
+          "distinctFiniteValues": 14,
+          "constantFiniteValues": false,
+          "minimumRawValue": "0.35",
+          "maximumRawValue": "0.48",
+          "firstLabel": "2024-06-22T00:00:00",
+          "lastLabel": "2024-06-22T23:59:00"
+        },
+        {
+          "dateLabel": "2024-07-02",
+          "rowCount": 1440,
+          "uniqueTimestamps": 1440,
+          "duplicateTimestampRows": 0,
+          "nominalOneMinuteGridSize": 1440,
+          "missingOnOneMinuteGrid": 0,
+          "longestMissingMinutes": 0,
+          "irregularTimestampRows": 0,
+          "malformedTimestampRows": 0,
+          "invalidValueRows": 0,
+          "negativeValueRows": 0,
+          "communicationStatusCounts": {
+            "통신양호": 1440
+          },
+          "distinctFiniteValues": 33,
+          "constantFiniteValues": false,
+          "minimumRawValue": "0.35",
+          "maximumRawValue": "0.67",
+          "firstLabel": "2024-07-02T00:00:00",
+          "lastLabel": "2024-07-02T23:59:00"
+        },
+        {
+          "dateLabel": "2024-07-18",
+          "rowCount": 1440,
+          "uniqueTimestamps": 1440,
+          "duplicateTimestampRows": 0,
+          "nominalOneMinuteGridSize": 1440,
+          "missingOnOneMinuteGrid": 0,
+          "longestMissingMinutes": 0,
+          "irregularTimestampRows": 0,
+          "malformedTimestampRows": 0,
+          "invalidValueRows": 0,
+          "negativeValueRows": 0,
+          "communicationStatusCounts": {
+            "통신양호": 1440
+          },
+          "distinctFiniteValues": 53,
+          "constantFiniteValues": false,
+          "minimumRawValue": "0.37",
+          "maximumRawValue": "0.98",
+          "firstLabel": "2024-07-18T00:00:00",
+          "lastLabel": "2024-07-18T23:59:00"
+        }
+      ]
+    },
+    {
+      "stationId": "04-0011",
+      "windows": [
+        {
+          "dateLabel": "2024-06-22",
+          "rowCount": 1440,
+          "uniqueTimestamps": 1440,
+          "duplicateTimestampRows": 0,
+          "nominalOneMinuteGridSize": 1440,
+          "missingOnOneMinuteGrid": 0,
+          "longestMissingMinutes": 0,
+          "irregularTimestampRows": 0,
+          "malformedTimestampRows": 0,
+          "invalidValueRows": 0,
+          "negativeValueRows": 0,
+          "communicationStatusCounts": {
+            "통신양호": 1440
+          },
+          "distinctFiniteValues": 11,
+          "constantFiniteValues": false,
+          "minimumRawValue": "0.02",
+          "maximumRawValue": "0.12",
+          "firstLabel": "2024-06-22T00:00:00",
+          "lastLabel": "2024-06-22T23:59:00"
+        },
+        {
+          "dateLabel": "2024-07-02",
+          "rowCount": 1440,
+          "uniqueTimestamps": 1440,
+          "duplicateTimestampRows": 0,
+          "nominalOneMinuteGridSize": 1440,
+          "missingOnOneMinuteGrid": 0,
+          "longestMissingMinutes": 0,
+          "irregularTimestampRows": 0,
+          "malformedTimestampRows": 0,
+          "invalidValueRows": 0,
+          "negativeValueRows": 0,
+          "communicationStatusCounts": {
+            "통신양호": 1440
+          },
+          "distinctFiniteValues": 32,
+          "constantFiniteValues": false,
+          "minimumRawValue": "0.02",
+          "maximumRawValue": "0.34",
+          "firstLabel": "2024-07-02T00:00:00",
+          "lastLabel": "2024-07-02T23:59:00"
+        },
+        {
+          "dateLabel": "2024-07-18",
+          "rowCount": 1440,
+          "uniqueTimestamps": 1440,
+          "duplicateTimestampRows": 0,
+          "nominalOneMinuteGridSize": 1440,
+          "missingOnOneMinuteGrid": 0,
+          "longestMissingMinutes": 0,
+          "irregularTimestampRows": 0,
+          "malformedTimestampRows": 0,
+          "invalidValueRows": 0,
+          "negativeValueRows": 0,
+          "communicationStatusCounts": {
+            "통신양호": 1440
+          },
+          "distinctFiniteValues": 42,
+          "constantFiniteValues": false,
+          "minimumRawValue": "0.03",
+          "maximumRawValue": "0.56",
+          "firstLabel": "2024-07-18T00:00:00",
+          "lastLabel": "2024-07-18T23:59:00"
+        }
+      ]
+    },
+    {
+      "stationId": "04-0012",
+      "windows": [
+        {
+          "dateLabel": "2024-06-22",
+          "rowCount": 0,
+          "uniqueTimestamps": 0,
+          "duplicateTimestampRows": 0,
+          "nominalOneMinuteGridSize": 1440,
+          "missingOnOneMinuteGrid": 1440,
+          "longestMissingMinutes": 1440,
+          "irregularTimestampRows": 0,
+          "malformedTimestampRows": 0,
+          "invalidValueRows": 0,
+          "negativeValueRows": 0,
+          "communicationStatusCounts": {},
+          "distinctFiniteValues": 0,
+          "constantFiniteValues": false,
+          "minimumRawValue": null,
+          "maximumRawValue": null,
+          "firstLabel": null,
+          "lastLabel": null
+        },
+        {
+          "dateLabel": "2024-07-02",
+          "rowCount": 1440,
+          "uniqueTimestamps": 1440,
+          "duplicateTimestampRows": 0,
+          "nominalOneMinuteGridSize": 1440,
+          "missingOnOneMinuteGrid": 0,
+          "longestMissingMinutes": 0,
+          "irregularTimestampRows": 0,
+          "malformedTimestampRows": 0,
+          "invalidValueRows": 0,
+          "negativeValueRows": 0,
+          "communicationStatusCounts": {
+            "통신양호": 1440
+          },
+          "distinctFiniteValues": 38,
+          "constantFiniteValues": false,
+          "minimumRawValue": "0.24",
+          "maximumRawValue": "0.65",
+          "firstLabel": "2024-07-02T00:00:00",
+          "lastLabel": "2024-07-02T23:59:00"
+        },
+        {
+          "dateLabel": "2024-07-18",
+          "rowCount": 1440,
+          "uniqueTimestamps": 1440,
+          "duplicateTimestampRows": 0,
+          "nominalOneMinuteGridSize": 1440,
+          "missingOnOneMinuteGrid": 0,
+          "longestMissingMinutes": 0,
+          "irregularTimestampRows": 0,
+          "malformedTimestampRows": 0,
+          "invalidValueRows": 0,
+          "negativeValueRows": 0,
+          "communicationStatusCounts": {
+            "통신양호": 1440
+          },
+          "distinctFiniteValues": 84,
+          "constantFiniteValues": false,
+          "minimumRawValue": "0.22",
+          "maximumRawValue": "1.19",
+          "firstLabel": "2024-07-18T00:00:00",
+          "lastLabel": "2024-07-18T23:59:00"
+        }
+      ]
+    }
+  ],
+  "selectedCsv": {
+    "filename": "seoul-sewer-seongdong-selected.csv",
+    "encoding": "UTF-8",
+    "sha256": "01ed0b142651bd05412fb8c2dfa9c46ea5131a4d661fe829ec51ce6610138373",
+    "bytes": 2668276,
+    "rows": 46080
+  }
+}

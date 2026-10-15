@@ -1,0 +1,37 @@
+{
+  "sourceSha256": "d61fc1791b1fc39c166925fbc19185c318ec484b42dfce8081a565e40653a548",
+  "reportedQueryRows": 1320,
+  "sampleSize": 5,
+  "locations": [
+    {
+      "stationId": "04-0001",
+      "locationText": "성동구 용답중앙13길1옆 맨홀(용답중앙13길1옆~용답중앙길54 옆)",
+      "observationTimeLabel": "2024-07-18 01:59:00.0",
+      "historicalLocationStatus": "UNVERIFIED"
+    },
+    {
+      "stationId": "04-0002",
+      "locationText": "성동구 고산자로10길 13앞 맨홀(동수도사업소 정문앞)",
+      "observationTimeLabel": "2024-07-18 01:59:00.0",
+      "historicalLocationStatus": "UNVERIFIED"
+    },
+    {
+      "stationId": "04-0003",
+      "locationText": "성동구 왕십리로 280 행당동삼부아파트105동옆 맨홀       \n(중앙선 철도횡단 행당지하보차도앞 차도측 맨홀)",
+      "observationTimeLabel": "2024-07-18 01:59:00.0",
+      "historicalLocationStatus": "UNVERIFIED"
+    },
+    {
+      "stationId": "04-0004",
+      "locationText": "성동구 왕십리로241 서울숲더샵 101동앞 맨홀    \n(101동 사가동앞 교통섬부근 1차로측, 한양대병원교차로 남측)",
+      "observationTimeLabel": "2024-07-18 01:59:00.0",
+      "historicalLocationStatus": "UNVERIFIED"
+    },
+    {
+      "stationId": "04-0005",
+      "locationText": "성동구 성수일로 17-1 연우유통 앞 도로내 맨홀",
+      "observationTimeLabel": "2024-07-18 01:59:00.0",
+      "historicalLocationStatus": "UNVERIFIED"
+    }
+  ]
+}

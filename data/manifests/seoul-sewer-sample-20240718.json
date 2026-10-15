@@ -1,0 +1,11 @@
+{
+  "provider": "서울특별시 물재생계획과",
+  "sourcePage": "https://data.seoul.go.kr/dataList/OA-2527/S/1/datasetView.do?tab=A",
+  "url": "http://openAPI.seoul.go.kr:8088/sample/json/DrainpipeMonitoringInfo/1/5/04/2024071800/2024071801",
+  "requestAuthentication": "PUBLIC_SAMPLE",
+  "responseLimit": 5,
+  "sha256": "d61fc1791b1fc39c166925fbc19185c318ec484b42dfce8081a565e40653a548",
+  "bytes": 1362,
+  "recordedAt": "2026-10-15T18:58:26.192759+00:00",
+  "limitation": "공식 HTTP 공개 샘플 응답. 샘플 5건의 위치 문자열만 확인; 전체 위치·시점별 변경 이력 증명 아님"
+}
