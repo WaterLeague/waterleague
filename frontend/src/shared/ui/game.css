@@ -2173,6 +2173,121 @@ a:focus-visible {
   background: #36533b;
   color: #fff;
 }
+.comparison-create {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 50px;
+  padding: 30px 0;
+  border-block: 1px solid #cdd7c6;
+}
+.comparison-create p {
+  font-size: 13px;
+  line-height: 1.8;
+  margin: 14px 0 8px;
+}
+.comparison-create small {
+  display: block;
+  font-size: 11px;
+  line-height: 1.7;
+  color: #62715a;
+}
+.comparison-create .text-button {
+  margin-top: 18px;
+}
+.comparison-create fieldset {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  min-width: 0;
+}
+.comparison-create legend {
+  font-weight: 600;
+  font-size: 13px;
+  margin-bottom: 18px;
+}
+.comparison-create fieldset label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 0;
+  font-size: 13px;
+  cursor: pointer;
+}
+.comparison-create input {
+  accent-color: #41633c;
+  width: 17px;
+  height: 17px;
+}
+.comparison-create fieldset .outline-button {
+  margin: 18px 0 12px;
+}
+.comparison-history {
+  padding: 28px 0;
+  border-bottom: 1px solid #cdd7c6;
+  margin-bottom: 30px;
+}
+.comparison-history label {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  font-size: 12px;
+}
+.comparison-history select {
+  min-width: 0;
+  flex: 1;
+  max-width: 640px;
+  padding: 12px;
+  border: 1px solid #c4cfbb;
+  border-radius: 4px;
+  background: #fafbf6;
+  color: inherit;
+}
+.comparison-detail .page-heading p {
+  font-size: 12px;
+  color: #62715a;
+  margin: 10px 0 20px;
+}
+.comparison-scope {
+  font-size: 12px;
+  line-height: 1.9;
+  color: #62715a;
+  margin-top: 24px;
+}
+.comparison-empty {
+  font-size: 13px;
+  color: #62715a;
+  padding: 24px 0;
+}
+.comparison-error {
+  color: #8b4037;
+  font-size: 12px;
+  line-height: 1.7;
+  margin: 15px 0;
+}
+.comparison-bundle {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 10px;
+  white-space: nowrap;
+  font-size: 11px;
+}
+.comparison-detail .reference-results {
+  min-width: 940px;
+}
+@media (max-width: 650px) {
+  .comparison-create {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .comparison-history label {
+    display: grid;
+    gap: 10px;
+  }
+  .comparison-history select {
+    width: 100%;
+  }
+}
 .league-layout {
   display: grid;
   grid-template-columns: minmax(220px, 0.75fr) minmax(0, 1.5fr);

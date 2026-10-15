@@ -786,6 +786,16 @@ export function GamePage() {
           lab={lab}
           initialLeague={!!activeLeague}
           busy={working}
+          version={g.version}
+          catalog={g.rainfallCatalog}
+          onStudio={() => setTab('studio')}
+          onOpen={(id) => {
+            void g.open(id).then(() => {
+              setActiveLeague(null);
+              setSelected(null);
+              setTab('studio');
+            });
+          }}
           onReference={(plan) => {
             g.newDesign();
             g.change(plan.placements.map((p) => ({ ...p })));
