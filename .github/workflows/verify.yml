@@ -32,7 +32,7 @@ jobs:
       - run: npm install --global pnpm@11.25.0 --ignore-scripts
       - run: pnpm install --frozen-lockfile
         working-directory: frontend
-      - run: pnpm test && pnpm build && pnpm audit --audit-level=high
+      - run: pnpm format:check && pnpm test && pnpm build && pnpm audit --audit-level=high
         working-directory: frontend
   data:
     runs-on: ubuntu-latest

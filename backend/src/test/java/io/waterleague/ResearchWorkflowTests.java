@@ -30,6 +30,10 @@ class ResearchWorkflowTests {
   @Autowired PasswordEncoder passwords;
   @Autowired LabModelService model;
   @Autowired io.waterleague.account.service.InstitutionMfaService mfa;
+  @Autowired io.waterleague.common.service.JsonService documentJson;
+
+  @Value("${waterleague.artifacts}")
+  String artifactRoot;
 
   record Actor(UUID id, HttpClient client) {}
 
@@ -221,7 +225,39 @@ class ResearchWorkflowTests {
         200);
     var details = ok(a, "GET", "/research/strategies/" + id, null, 200);
     assertThat(details.get("history").size()).isEqualTo(1);
+    assertThat(details.get("lab").get("modelHash").asString()).isEqualTo(model.hash());
     assertThat(details.toString()).doesNotContain("미제출 비공개 후속 메모", "passwordHash", "username");
+    // 이전 계산은 현재 강우로 대체하지 않고 해시가 일치하는 보관 모델을 사용한다.
+    var archived =
+        (tools.jackson.databind.node.ObjectNode) json.valueToTree(model.view().get("model"));
+    ((tools.jackson.databind.node.ObjectNode) archived.get("rainfall")).put("source", "이전 시험 강우");
+    String source = json.writeValueAsString(archived);
+    String archiveHash = documentJson.hash(source);
+    UUID artifactToken = UUID.randomUUID();
+    var storedResult = new HashMap<String, Object>(result);
+    storedResult.put("modelHash", archiveHash);
+    storedResult.put("artifactToken", artifactToken.toString());
+    db.update(
+        "UPDATE simulation_jobs SET model_hash=?,result=? WHERE id=?",
+        archiveHash,
+        json.writeValueAsString(storedResult),
+        id);
+    var folder = java.nio.file.Path.of(artifactRoot, id.toString(), artifactToken.toString());
+    java.nio.file.Files.createDirectories(folder);
+    var modelFile = folder.resolve("model-source.json");
+    try {
+      java.nio.file.Files.writeString(modelFile, source);
+      var oldDetails = ok(a, "GET", "/research/strategies/" + id, null, 200);
+      assertThat(oldDetails.get("lab").get("modelHash").asString()).isEqualTo(archiveHash);
+      assertThat(oldDetails.get("lab").get("model").get("rainfall").get("source").asString())
+          .isEqualTo("이전 시험 강우");
+      java.nio.file.Files.writeString(modelFile, source + " ");
+      assertThat(call(a, "GET", "/research/strategies/" + id, null).statusCode()).isEqualTo(422);
+    } finally {
+      java.nio.file.Files.deleteIfExists(modelFile);
+      java.nio.file.Files.deleteIfExists(folder);
+      java.nio.file.Files.deleteIfExists(folder.getParent());
+    }
     assertThat(call(b, "GET", "/research/strategies/" + id, null).statusCode()).isEqualTo(404);
     assertThat(call(player, "PUT", "/consents/" + orgA, Map.of("granted", false)).statusCode())
         .isEqualTo(200);

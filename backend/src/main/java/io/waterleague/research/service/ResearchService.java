@@ -85,6 +85,8 @@ public class ResearchService {
     var job = jobs.get(id).orElseThrow();
     var version = strategies.version(job.versionId(), job.ownerId()).orElseThrow();
     return Map.of(
+        "lab",
+        snapshot(job),
         "simulation",
         mapper.view(job),
         "version",
@@ -94,6 +96,26 @@ public class ResearchService {
             .filter(v -> v.revision() <= version.revision())
             .map(versions::view)
             .toList());
+  }
+
+  private Object snapshot(io.waterleague.simulation.entity.SimulationJob job) {
+    if (job.modelHash().equals(model.hash())) return model.view();
+    var token = UUID.fromString(json.tree(job.result()).path("artifactToken").asString());
+    Path source =
+        artifacts
+            .resolve(job.id().toString())
+            .resolve(token.toString())
+            .resolve("model-source.json");
+    try {
+      if (!Files.isRegularFile(source, LinkOption.NOFOLLOW_LINKS)
+          || Files.size(source) > 2 * 1024 * 1024) missing();
+      String content = Files.readString(source);
+      if (!json.hash(content).equals(job.modelHash()))
+        throw new DomainException(ErrorCode.RESULT_QUALITY_FAILED);
+      return Map.of("modelHash", job.modelHash(), "model", json.tree(content));
+    } catch (IOException e) {
+      throw new DomainException(ErrorCode.RESOURCE_NOT_FOUND);
+    }
   }
 
   private void authorize(Account a, UUID id) {
