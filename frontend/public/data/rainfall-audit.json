@@ -1,0 +1,23 @@
+{
+  "id": "noaa-seoul-2024",
+  "provider": "NOAA NCEI",
+  "stationId": "47108099999",
+  "stationName": "SEOUL CITY, KS",
+  "sourceUrl": "https://noaa-global-hourly-pds.s3.amazonaws.com/2024/47108099999.csv",
+  "sourceHash": "f8586d857a3ae59584c535867eb1e594daea9402315fd569321ebd9ffcd19064",
+  "acquiredAt": "2026-10-15T13:48:25.912022+00:00",
+  "sizeBytes": 2969340,
+  "rowCount": 8430,
+  "periodCounts": {
+    "01": 794,
+    "03": 184,
+    "06": 2,
+    "12": 7,
+    "24": 2181,
+    "99": 977
+  },
+  "status": "REJECTED_FOR_SIMULATION",
+  "reason": "누적기간 혼합·결측·품질코드의 이벤트별 검증 미완료",
+  "intervalInterpretation": "AA1~AA4의 첫 필드는 누적 시간, 99는 결측 코드. 자료 상세는 ISD 명세 확인 필요.",
+  "usableRainfallEventCount": 0
+}
