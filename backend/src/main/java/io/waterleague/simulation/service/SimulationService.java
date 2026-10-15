@@ -29,12 +29,17 @@ public class SimulationService {
 
   @Transactional
   public Object enqueue(UUID owner, RunRequest dto) {
+    return mapper.view(enqueueJob(owner, dto));
+  }
+
+  @Transactional
+  public SimulationJob enqueueJob(UUID owner, RunRequest dto) {
     jobs.lockOwner(owner);
     var existing = jobs.byKey(owner, dto.requestKey());
     if (existing.isPresent()) {
       if (!existing.get().versionId().equals(dto.versionId()))
         throw new DomainException(ErrorCode.CONFLICT);
-      return mapper.view(existing.get());
+      return existing.get();
     }
     var version =
         strategies
@@ -57,7 +62,7 @@ public class SimulationService {
             null,
             Instant.now());
     jobs.add(job, dto.requestKey());
-    return mapper.view(job);
+    return job;
   }
 
   public Object get(UUID id, UUID owner) {
