@@ -22,3 +22,16 @@ python3 scripts/prepare_public_data.py
 OSM 원본 및 파생 형상은 © OpenStreetMap contributors, [ODbL 1.0](https://opendatacommons.org/licenses/odbl/1-0/). 파생 데이터 전체는 `frontend/public/data/seongsu.json`에 포함하며 같은 라이선스로 제공. [출처 표시](https://www.openstreetmap.org/copyright) 유지.
 
 NOAA 자료의 항목·품질코드는 [NCEI ISD 안내](https://www.ncei.noaa.gov/products/land-based-station/integrated-surface-database)와 [ISD 명세](https://www.ncei.noaa.gov/pub/data/noaa/isd-format-document.pdf) 참조. 연구 입력 채택 전 이용조건·변수 정의·품질코드·누락을 별도 검토.
+
+## 기상청 분자료
+
+비밀 설정은 프로젝트 루트 `.env.local` 한 곳 사용. `.env.example`을 복사하고 `KMA_API_KEY` 설정. 실제 파일은 Git 제외. 환경변수가 파일보다 우선. AWS 매분자료 API 활용신청 필요.
+
+```sh
+simulation/.venv/bin/python scripts/fetch_kma.py
+simulation/.venv/bin/python scripts/prepare_kma_event.py
+```
+
+서울 108 관측소, 2024-07-18 05:00~23:59 KST의 1,140개 누적 관측에서 1,139개 분당 강우 깊이 추출. 총 109.7 mm, 마지막 강우 15:40. 15분·60분 이동 누적과 교차 검증. 자정 리셋·결측·음수·불연속 거부. 출처: 기상청 AWS 매분자료. 원자료 해시는 `data/manifests/kma-108-202407180500-202407182359.json`, 파생자료는 `data/derived/kma-event.json`.
+
+AWS 응답은 별도 QC 플래그를 포함하지 않으므로 자체 검사 결과를 기상청의 최종 품질 승인으로 표현하지 않음. 서울 관측소와 성수동의 거리·공간 대표성, 선행 함수 상태는 검증 전. 실제 강우를 사용한 EXPLORATORY 계산만 허용.

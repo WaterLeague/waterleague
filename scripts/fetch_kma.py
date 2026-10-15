@@ -1,0 +1,25 @@
+"""승인된 기상청 AWS 매분자료 수집. 인증 URL과 키 출력 금지."""
+from local_config import ROOT,load
+from urllib.request import urlopen
+from urllib.parse import urlencode
+from urllib.error import HTTPError
+from datetime import datetime,timezone
+import os,json,hashlib,argparse
+load()
+p=argparse.ArgumentParser();p.add_argument('--start',default='202407180500');p.add_argument('--end',default='202407182359');p.add_argument('--station',default='108');args=p.parse_args()
+if not all(x.isdigit() for x in [args.start,args.end,args.station]):raise SystemExit('숫자 요청 인자 필요')
+key=os.environ.get('KMA_API_KEY')
+if not key:raise SystemExit('.env.local KMA_API_KEY 설정 필요')
+base='https://apihub.kma.go.kr/api/typ01/cgi-bin/url/nph-aws2_min'
+params={'tm1':args.start,'tm2':args.end,'stn':args.station,'disp':'0','help':'1'}
+try:
+ data=urlopen(base+'?'+urlencode(params|{'authKey':key}),timeout=50).read(4000001)
+except HTTPError as e:raise SystemExit(f'기상청 HTTP {e.code}; API 활용 승인 확인 필요') from None
+except Exception:raise SystemExit('기상청 통신 오류') from None
+if len(data)>4000000 or b'#START7777' not in data or b'#7777END' not in data:raise SystemExit('응답 형식·길이 검사 실패')
+if key.encode() in data:raise SystemExit('응답에 비밀값 포함; 저장 중단')
+prefix=f'kma-{args.station}-{args.start}-{args.end}'
+out=ROOT/'data/raw'/f'{prefix}.txt';out.parent.mkdir(exist_ok=True);out.write_bytes(data)
+manifest={'provider':'기상청','endpoint':base,'parameters':params,'acquiredAt':datetime.now(timezone.utc).isoformat(),'sha256':hashlib.sha256(data).hexdigest(),'bytes':len(data),'sourceTimezone':'Asia/Seoul','sourceNotice':'AWS 원본의 -50 이하 값은 결측·오류. 별도 품질 플래그 미포함.'}
+(ROOT/'data/manifests'/f'{prefix}.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n')
+print('기상청 원본 저장:',out.name,'바이트:',len(data))
