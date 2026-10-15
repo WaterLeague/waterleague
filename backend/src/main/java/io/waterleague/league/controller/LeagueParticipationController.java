@@ -38,6 +38,11 @@ public class LeagueParticipationController {
     return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(body);
   }
 
+  @GetMapping("/api/v1/leagues/participations")
+  public Object applications(Principal p) {
+    return participation.applications(read(p));
+  }
+
   @GetMapping("/api/v1/leagues/joined")
   public Object joined(Principal p) {
     return participation.joined(read(p));

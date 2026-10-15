@@ -2837,6 +2837,11 @@ a:focus-visible {
 .league-table-scroll {
   overflow-x: auto;
 }
+.league-table-scroll .data-table th:last-child,
+.league-table-scroll .data-table td:last-child {
+  display: table-cell;
+  white-space: nowrap;
+}
 .active-league-banner {
   display: flex;
   gap: 18px;
@@ -2995,5 +3000,263 @@ a:focus-visible {
 @media (max-width: 360px) {
   .facility-dock button > span {
     display: none;
+  }
+}
+
+.league-invite-entry,
+.league-applications,
+.participation-panel,
+.league-participant-manager {
+  margin: 28px 0;
+  padding: 24px;
+  border: 1px solid #d6dfce;
+  border-radius: 4px;
+  background: #fbfcf7;
+  min-width: 0;
+}
+.league-invite-entry h2,
+.league-applications h2 {
+  font-size: 20px;
+}
+.league-invite-entry p,
+.participation-panel p,
+.league-participant-manager p {
+  line-height: 1.7;
+}
+.invitation-input,
+.team-create {
+  display: flex;
+  align-items: end;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 20px 0;
+}
+.invitation-input label,
+.team-create label {
+  flex: 1;
+  min-width: 200px;
+}
+.league-page label:has(input:not([type='checkbox'])),
+.league-page label:has(select),
+.league-page label:has(textarea) {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 13px;
+}
+.league-page input:not([type='checkbox']),
+.league-page textarea,
+.league-page select {
+  max-width: 100%;
+  min-width: 0;
+}
+.invitation-input input {
+  font-family: ui-monospace, monospace;
+  letter-spacing: 0.02em;
+}
+.invitation-code {
+  border-left: 3px solid #47713b;
+  background: #edf2e7;
+  padding: 20px;
+  margin: 18px 0;
+  overflow-wrap: anywhere;
+}
+.invitation-code code {
+  display: block;
+  font-size: 17px;
+  letter-spacing: 0.04em;
+  margin: 16px 0;
+  white-space: normal;
+  user-select: all;
+}
+.invitation-preview {
+  border-top: 1px solid #d6dfce;
+  padding-top: 20px;
+  margin-top: 20px;
+}
+.application-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.application-list article {
+  padding: 18px;
+  border: 1px solid #dde4d7;
+  background: white;
+  overflow-wrap: anywhere;
+}
+.application-list h3 {
+  font-size: 17px;
+  margin: 10px 0;
+}
+.application-list p,
+.application-list small {
+  font-size: 12px;
+  color: #53694c;
+}
+.participation-panel .state {
+  white-space: nowrap;
+}
+.team-panel {
+  border-top: 1px solid #d6dfce;
+  margin-top: 24px;
+  padding-top: 16px;
+}
+.team-panel h4,
+.league-participant-manager h4 {
+  font-size: 17px;
+  margin: 12px 0;
+}
+.team-members {
+  list-style: none;
+  padding: 0;
+}
+.team-members li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid #e1e7dc;
+  padding: 12px 0;
+  overflow-wrap: anywhere;
+}
+.team-members span {
+  font-size: 12px;
+  flex-shrink: 0;
+  color: #53694c;
+}
+.team-invitation,
+.team-preview,
+.participant-review,
+.league-code-management {
+  background: #f1f5eb;
+  padding: 18px;
+  margin: 18px 0;
+}
+.team-invitation small,
+.league-code-management small {
+  font-size: 12px;
+  line-height: 1.6;
+  color: #53694c;
+}
+.participant-history,
+.participation-withdraw {
+  border-top: 1px solid #d6dfce;
+  margin-top: 20px;
+  padding-top: 16px;
+}
+.participant-history summary,
+.participation-withdraw summary {
+  cursor: pointer;
+  line-height: 1.7;
+}
+.participant-history ol {
+  padding-left: 20px;
+}
+.participant-history li {
+  margin: 16px 0;
+  overflow-wrap: anywhere;
+}
+.participant-history time {
+  display: block;
+  color: #53694c;
+  font-size: 12px;
+  margin-top: 4px;
+}
+.participant-history p,
+.review-reason {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.review-reason {
+  margin: 14px 0;
+  border-left: 2px solid #779466;
+  padding-left: 14px;
+  font-size: 13px;
+}
+.participant-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.participant-row {
+  text-align: left;
+  padding: 16px;
+  border: 1px solid #d6dfce;
+  background: white;
+  display: grid;
+  gap: 8px;
+  color: #2d4527;
+  overflow-wrap: anywhere;
+}
+.participant-row[aria-pressed='true'] {
+  border-color: #4b703c;
+  background: #eaf1e1;
+}
+.participant-row span,
+.participant-row small {
+  font-size: 12px;
+}
+.participant-review form {
+  display: grid;
+  gap: 16px;
+  margin-top: 18px;
+}
+.league-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+  font-size: 12px;
+}
+.league-entry-rules legend {
+  font-weight: 600;
+}
+.league-page .league-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  line-height: 1.7;
+  margin: 16px 0;
+  font-size: 13px;
+}
+.league-page .league-check input {
+  margin-top: 5px;
+  flex-shrink: 0;
+}
+@media (max-width: 680px) {
+  .league-invite-entry,
+  .league-applications,
+  .participation-panel,
+  .league-participant-manager {
+    padding: 16px;
+    margin: 20px 0;
+  }
+  .application-list,
+  .participant-list {
+    grid-template-columns: 1fr;
+  }
+  .invitation-input,
+  .team-create {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .invitation-input label,
+  .team-create label {
+    min-width: 0;
+  }
+  .team-members li {
+    flex-direction: column;
+    gap: 4px;
+  }
+  .invitation-code {
+    padding: 14px;
+  }
+  .invitation-code code {
+    font-size: 14px;
+  }
+  .league-page .league-actions {
+    flex-wrap: wrap;
   }
 }

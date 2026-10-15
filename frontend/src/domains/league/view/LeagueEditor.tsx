@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import type { League, LeagueDraft } from '../entity/league';
+import type { League, LeagueDraft, LeagueParticipationRules } from '../entity/league';
 import { loadRainfallCatalog } from '../../game/repository/gameRepository';
 import type { Lab, RainfallCatalog, FacilityType } from '../../game/entity/game';
 import { facilities, won } from '../../game/service/gameService';
@@ -30,6 +30,14 @@ export function LeagueEditor({
     [types, setTypes] = useState<FacilityType[]>(
       league?.rules.allowedTypes ?? ['RAIN_GARDEN', 'PERMEABLE_PAVEMENT', 'GREEN_ROOF']
     );
+  const [participation, setParticipation] = useState<LeagueParticipationRules>(
+    league?.rules.participation ?? {
+      access: 'PUBLIC',
+      admission: 'OPEN',
+      entryMode: 'INDIVIDUAL',
+      teamSizeLimit: null,
+    }
+  );
   const maximum = availableLimits(lab, types);
   const [placementLimit, setPlacementLimit] = useState(
     league?.rules.placementLimit ?? maximum.placementLimit
@@ -78,6 +86,17 @@ export function LeagueEditor({
           setDateError('접수 종료는 시작 이후로 설정해 주세요.');
           return;
         }
+        const now = Date.now();
+        if (
+          start.getTime() < now - 600000 ||
+          end.getTime() <= now ||
+          end.getTime() > now + 366 * 86400000
+        ) {
+          setDateError(
+            '접수 시작은 현재보다 10분 이전일 수 없으며, 종료는 현재 이후 366일 이내로 설정해 주세요.'
+          );
+          return;
+        }
         setDateError('');
         onSave({
           modelHash,
@@ -92,12 +111,13 @@ export function LeagueEditor({
           placementLimit,
           areaLimitM2: areaLimit,
           award,
+          participation,
         });
       }}
     >
       <div className="page-heading">
         <h2>{league ? '리그 초안 수정' : '새 리그 초안'}</h2>
-        <button type="button" className="text-button" onClick={onClose}>
+        <button type="button" className="text-button" disabled={busy} onClick={onClose}>
           닫기
         </button>
       </div>
@@ -154,7 +174,7 @@ export function LeagueEditor({
           <small>최대 {won(chosen?.budget ?? lab.model.budget)}, 공개 사업계획 참고 단가</small>
         </label>
         <label>
-          회원별 제출 한도
+          {participation.entryMode === 'TEAM' ? '팀 전체 제출 한도' : '회원별 제출 한도'}
           <input
             type="number"
             required
@@ -197,6 +217,77 @@ export function LeagueEditor({
           {dateError}
         </p>
       )}
+      <fieldset className="league-entry-rules">
+        <legend>참가 방식</legend>
+        <div className="league-form-grid">
+          <label>
+            리그 공개 범위
+            <select
+              value={participation.access}
+              onChange={(e) =>
+                setParticipation((p) => ({
+                  ...p,
+                  access: e.target.value as LeagueParticipationRules['access'],
+                }))
+              }
+            >
+              <option value="PUBLIC">전체 공개</option>
+              <option value="INVITE">초대 전용</option>
+            </select>
+          </label>
+          <label>
+            참가 승인 방식
+            <select
+              value={participation.admission}
+              onChange={(e) =>
+                setParticipation((p) => ({
+                  ...p,
+                  admission: e.target.value as LeagueParticipationRules['admission'],
+                }))
+              }
+            >
+              <option value="OPEN">즉시 참가</option>
+              <option value="APPROVAL">주최자 승인 후 참가</option>
+            </select>
+          </label>
+          <label>
+            경쟁 단위
+            <select
+              value={participation.entryMode}
+              onChange={(e) =>
+                setParticipation((p) => ({
+                  ...p,
+                  entryMode: e.target.value as LeagueParticipationRules['entryMode'],
+                  teamSizeLimit: e.target.value === 'TEAM' ? (p.teamSizeLimit ?? 4) : null,
+                }))
+              }
+            >
+              <option value="INDIVIDUAL">개인전</option>
+              <option value="TEAM">팀전</option>
+            </select>
+          </label>
+          {participation.entryMode === 'TEAM' && (
+            <label>
+              팀 최대 인원
+              <input
+                required
+                type="number"
+                min={2}
+                max={10}
+                step={1}
+                value={participation.teamSizeLimit ?? 4}
+                onChange={(e) =>
+                  setParticipation((p) => ({ ...p, teamSizeLimit: Number(e.target.value) }))
+                }
+              />
+            </label>
+          )}
+        </div>
+        <p className="footnote">
+          초대 전용 리그는 공개 목록에 표시되지 않습니다. 발행 후 리그 코드를 발급합니다. 팀전은
+          제출 한도를 공유하며 첫 제출 후 팀원이 고정됩니다.
+        </p>
+      </fieldset>
       <fieldset>
         <legend>허용 시설</legend>
         {(Object.keys(facilities) as FacilityType[]).map((t) => (
@@ -260,8 +351,8 @@ export function LeagueEditor({
         </p>
       </fieldset>
       <p className="footnote">
-        저장은 비공개 초안입니다. 공개 단계에서 모델·강우·시설·배치 제한·점수·예산·기간·상금 안내를
-        고정합니다.
+        저장은 비공개 초안입니다. 공개 단계에서 모델·강우·시설·배치 제한·점수·예산·기간·상금 안내와
+        참가 방식을 고정합니다.
       </p>
       <button
         className="primary-button"

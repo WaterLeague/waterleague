@@ -51,11 +51,12 @@
 
 ## 리그 참가·팀전 서버 API
 
-schema 3은 초안에 `participation: {access, admission, entryMode, teamSizeLimit}`를 포함. 값·이전 규칙 호환·개인/팀 한도는 [참가 계약](25-league-participation.md) 참조. 신규 화면 연결은 후속 단계이며 현재 초안 화면은 schema 2 유지.
+schema 3은 초안에 `participation: {access, admission, entryMode, teamSizeLimit}`를 포함. 값·이전 규칙 호환·개인/팀 한도는 [참가 계약](25-league-participation.md) 참조. 신규 초안 화면은 schema 3 참가 방식을 명시하며 기존 schema 1/2 규칙은 그대로 열람·제출.
 
 | API | 입력·권한 |
 | --- | --- |
 | GET /leagues/joined | 플레이어, 신청 대기/승인 리그 최근 100개 |
+| GET /leagues/participations | 플레이어 본인의 모든 참가 상태 요약 최근 100개. 규칙·모델·다른 회원 정보 제외 |
 | POST /leagues/invitations/preview | 플레이어, code 본문; 유효한 초대의 고정 규칙만 반환 |
 | GET/POST /leagues/{id}/participation | 플레이어 본인 상태·이벤트·팀·누적 횟수 / rulesHash·선택 code로 참가 |
 | POST /leagues/{id}/participation/withdraw | 본인, revision; 참가 철회, 제출 이력·횟수 보존 |

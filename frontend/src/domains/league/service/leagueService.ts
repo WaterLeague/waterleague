@@ -1,4 +1,4 @@
-import type { League } from '../entity/league';
+import type { League, OwnSubmission } from '../entity/league';
 import type { Job, Lab, Placement, FacilityType } from '../../game/entity/game';
 import type { LeagueRules } from '../entity/league';
 export function availableLimits(lab: Lab, types: FacilityType[]) {
@@ -37,9 +37,15 @@ export const leagueTime = (value: string) =>
     hour: '2-digit',
     minute: '2-digit',
   });
-export function eligibleJobs(league: League, jobs: Job[]) {
+export function eligibleJobs(
+  league: Pick<League, 'publishedAt'> & { rules: Pick<LeagueRules, 'modelHash'> },
+  jobs: Job[],
+  submitted: Pick<OwnSubmission, 'jobId'>[] = []
+) {
+  const submittedIds = new Set(submitted.map((s) => s.jobId));
   return jobs.filter(
     (j) =>
+      !submittedIds.has(j.id) &&
       j.state === 'SUCCEEDED' &&
       j.modelHash === league.rules.modelHash &&
       league.publishedAt !== null &&

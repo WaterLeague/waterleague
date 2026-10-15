@@ -57,6 +57,29 @@ public class LeagueParticipationRepository {
             after);
   }
 
+  public List<Map<String, Object>> applications(UUID owner) {
+    return db.query(
+        "SELECT p.league_id,l.title,o.name,p.state,p.updated_at,l.access_mode FROM"
+            + " league_participants p JOIN leagues l ON l.id=p.league_id JOIN organizations o ON"
+            + " o.id=l.organization_id WHERE p.owner_id=? AND o.approved=true AND l.state<>'DRAFT'"
+            + " ORDER BY p.updated_at DESC,p.league_id LIMIT 100",
+        (rs, n) ->
+            Map.of(
+                "leagueId",
+                rs.getObject("league_id", UUID.class),
+                "title",
+                rs.getString("title"),
+                "organizationName",
+                rs.getString("name"),
+                "access",
+                rs.getString("access_mode"),
+                "state",
+                rs.getString("state"),
+                "updatedAt",
+                rs.getTimestamp("updated_at").toInstant()),
+        owner);
+  }
+
   public List<UUID> joined(UUID owner) {
     return db.query(
         "SELECT p.league_id FROM league_participants p JOIN leagues l ON l.id=p.league_id JOIN"

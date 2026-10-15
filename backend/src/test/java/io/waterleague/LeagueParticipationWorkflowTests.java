@@ -852,4 +852,30 @@ class LeagueParticipationWorkflowTests {
     assertThat(decision(org, a, l, 5, "APPROVED").path("reviewRequired").asBoolean()).isFalse();
     ok(a, "POST", path(l) + "/submissions", leagueSubmission(l, job), 200);
   }
+
+  @Test
+  void retainsPrivateRejectionSummaryWithoutGrantingRules() throws Exception {
+    var org = institution();
+    var a = actor(null);
+    var b = actor(null);
+    var l = league(org, "INVITE", "OPEN", false, 2, 0);
+    String code = ok(org, "POST", manage(l) + "/invitation", Map.of(), 200).path("code").asString();
+    join(a, l, code);
+    decision(org, a, l, 1, "REJECTED");
+    var summary = ok(a, "GET", "/leagues/participations", null, 200);
+    assertThat(summary.size()).isEqualTo(1);
+    assertThat(summary.get(0).path("state").asString()).isEqualTo("REJECTED");
+    assertThat(summary.toString()).doesNotContain("rulesHash", "rules", "model", "ownerId");
+    assertThat(call(a, "GET", path(l), null).statusCode()).isEqualTo(404);
+    assertThat(
+            ok(a, "GET", path(l) + "/participation", null, 200)
+                .path("events")
+                .get(0)
+                .path("reason")
+                .asString())
+        .isEqualTo("참가 자격 검토");
+    assertThat(ok(b, "GET", "/leagues/participations", null, 200).isEmpty()).isTrue();
+    var guest = new Actor(UUID.randomUUID(), HttpClient.newHttpClient());
+    assertThat(call(guest, "GET", "/leagues/participations", null).statusCode()).isEqualTo(401);
+  }
 }

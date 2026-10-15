@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Plus, ArrowRight, RefreshCw, Trophy } from 'lucide-react';
 import { isOrganizationMember, type Account } from '../../account/entity/account';
 import type { Lab } from '../../game/entity/game';
@@ -8,6 +8,11 @@ import { eligibleJobs, leagueTime, phaseNames } from '../service/leagueService';
 import type { League } from '../entity/league';
 import { LeagueEditor } from './LeagueEditor';
 import { LeagueRulesPanel } from './LeagueRulesPanel';
+import { LeagueInviteForm } from './LeagueInviteForm';
+import { LeagueApplications } from './LeagueApplications';
+import { ParticipationPanel } from './ParticipationPanel';
+import { LeagueParticipantManager } from './LeagueParticipantManager';
+import { canSubmit } from '../service/participationService';
 export function LeaguePage({
   account,
   lab,
@@ -25,7 +30,21 @@ export function LeaguePage({
     [accepted, setAccepted] = useState(false);
   const detail = l.detail,
     selected = detail?.league,
-    candidates = selected ? eligibleJobs(selected, l.jobs) : [];
+    candidates = selected ? eligibleJobs(selected, l.jobs, l.own) : [];
+  const selectedJob = candidates.some((j) => j.id === jobId) ? jobId : '';
+  const eligible = selected ? canSubmit(selected, l.participation) : false;
+  const used = selected?.rules.participation
+    ? (l.participation?.submissionCount ?? 0)
+    : l.own.length;
+  function choose(id: string) {
+    setJobId('');
+    setAccepted(false);
+    void l.inspect(id);
+  }
+  useEffect(() => {
+    setReview((old) => (old ? (l.managed.find((v) => v.id === old.id) ?? old) : old));
+  }, [l.managed]);
+
   return (
     <section className="full-page league-page">
       <div className="page-eyebrow">
@@ -58,6 +77,7 @@ export function LeaguePage({
             <h2>우리 조직의 리그</h2>
             <button
               className="outline-button"
+              disabled={l.busy}
               onClick={() => {
                 setEditing(null);
                 setReview(null);
@@ -71,6 +91,7 @@ export function LeaguePage({
             {l.managed.map((v) => (
               <button
                 key={v.id}
+                disabled={l.busy}
                 aria-pressed={review?.id === v.id}
                 onClick={() => {
                   setReview(v);
@@ -124,10 +145,10 @@ export function LeaguePage({
                       if (v) setReview(v);
                     }}
                   >
-                    이 규칙으로 공개
+                    이 규칙으로 발행
                   </button>
                   <p>
-                    공개 후에는 수정할 수 없습니다. 오류가 있으면 사유를 남겨 취소하고 새 리그를
+                    발행 후에는 수정할 수 없습니다. 오류가 있으면 사유를 남겨 취소하고 새 리그를
                     만드세요.
                   </p>
                 </div>
@@ -159,9 +180,33 @@ export function LeaguePage({
                   </button>
                 </form>
               ) : null}
+              {review.state !== 'DRAFT' && review.rules.participation && (
+                <LeagueParticipantManager
+                  key={review.id + ':' + review.revision}
+                  league={review}
+                  onInspect={() => choose(review.id)}
+                />
+              )}
             </div>
           )}
         </section>
+      )}
+      {account?.memberType === 'PLAYER' && (
+        <>
+          <LeagueApplications items={l.applications} owner={account.id} onSelect={choose} />
+          <LeagueInviteForm
+            onJoined={(id) => {
+              l.refreshLists();
+              choose(id);
+            }}
+          />
+        </>
+      )}
+      {!account && (
+        <p className="scope-note">
+          공개 규칙과 순위는 누구나 볼 수 있습니다. 참가 신청과 초대 코드 확인은 로그인 후
+          이용하세요.
+        </p>
       )}
       <div className="league-layout">
         <div className="league-list">
@@ -173,11 +218,8 @@ export function LeaguePage({
               className="league-card"
               key={v.id}
               aria-pressed={selected?.id === v.id}
-              onClick={() => {
-                setJobId('');
-                setAccepted(false);
-                void l.inspect(v.id);
-              }}
+              disabled={l.busy}
+              onClick={() => choose(v.id)}
             >
               <span className="state">{phaseNames[v.phase]}</span>
               <h3>{v.title}</h3>
@@ -207,6 +249,14 @@ export function LeaguePage({
                 {detail.lab.model.rainfall.stationName} ·{' '}
                 {leagueTime(detail.lab.model.rainfall.start)}
               </p>
+              {account?.memberType === 'PLAYER' && selected.rules.participation && (
+                <ParticipationPanel
+                  key={selected.id}
+                  league={selected}
+                  data={l.participation}
+                  onChanged={(hide) => l.changed(selected.id, hide)}
+                />
+              )}
               {selected.playable && ['OPEN', 'SCHEDULED'].includes(selected.phase) ? (
                 <button className="primary-button" onClick={() => onDesign(selected)}>
                   이 조건으로 새 설계 시작 <ArrowRight size={16} />
@@ -217,22 +267,32 @@ export function LeaguePage({
                   있습니다.
                 </p>
               ) : null}
-              {account?.memberType === 'PLAYER' && selected.phase === 'OPEN' && (
+              {account?.memberType === 'PLAYER' && eligible && (
                 <form
                   className="league-submit"
                   onSubmit={(e) => {
                     e.preventDefault();
-                    void l.submit(jobId);
+                    if (selectedJob) void l.submit(selectedJob);
                   }}
                 >
                   <h3>계산한 설계 제출</h3>
                   <p>
-                    내 제출 {l.own.length} / {selected.rules.submissionLimit}회. 리그 공개 이후
-                    계산한 동일 모델의 결과를 선택하세요.
+                    {selected.rules.participation?.entryMode === 'TEAM'
+                      ? '팀 전체 제출'
+                      : '내 제출'}{' '}
+                    {used} / {selected.rules.submissionLimit}회. 리그 발행 이후 계산한 동일 모델의
+                    결과를 선택하세요.
                   </p>
                   <label>
                     완료된 계산
-                    <select required value={jobId} onChange={(e) => setJobId(e.target.value)}>
+                    <select
+                      required
+                      value={selectedJob}
+                      onChange={(e) => {
+                        setJobId(e.target.value);
+                        setAccepted(false);
+                      }}
+                    >
                       <option value="">제출할 계산 선택</option>
                       {candidates.map((j) => (
                         <option value={j.id} key={j.id}>
@@ -243,7 +303,10 @@ export function LeaguePage({
                     </select>
                   </label>
                   {!candidates.length && (
-                    <p className="footnote">설계실에서 저장·계산을 마친 뒤 새로고침하세요.</p>
+                    <p className="footnote">
+                      아직 제출하지 않은 계산이 없습니다. 설계실에서 새 계산을 마친 뒤
+                      새로고침하세요.
+                    </p>
                   )}
                   <label className="league-check">
                     <input
@@ -251,15 +314,22 @@ export function LeaguePage({
                       checked={accepted}
                       onChange={(e) => setAccepted(e.target.checked)}
                     />
-                    위 고정 규칙과 공개 닉네임·점수·비용의 순위 게시 확인
+                    위 고정 규칙과{' '}
+                    {selected.rules.participation?.entryMode === 'TEAM' ? '팀 이름' : '닉네임'}
+                    ·점수·비용의{' '}
+                    {selected.rules.participation?.access === 'INVITE'
+                      ? '참가자 대상'
+                      : '공개'}{' '}
+                    순위 게시 확인
                   </label>
                   <button
                     className="outline-button"
                     disabled={
                       l.busy ||
                       !accepted ||
-                      !jobId ||
-                      l.own.length >= selected.rules.submissionLimit
+                      !selectedJob ||
+                      used >= selected.rules.submissionLimit ||
+                      l.inspecting
                     }
                     type="submit"
                   >
@@ -271,13 +341,27 @@ export function LeaguePage({
                   </p>
                 </form>
               )}
+              {account?.memberType === 'PLAYER' &&
+                selected.phase === 'OPEN' &&
+                !eligible &&
+                selected.rules.participation && (
+                  <p className="scope-note">
+                    {used >= selected.rules.submissionLimit
+                      ? '이 리그의 제출 한도를 모두 사용했습니다.'
+                      : selected.rules.participation.entryMode === 'TEAM'
+                        ? '참가 승인과 팀 구성을 확인하면 계산한 설계를 제출할 수 있습니다.'
+                        : '리그에 참가하면 계산한 설계를 제출할 수 있습니다.'}
+                  </p>
+                )}
               <h3>리그 순위</h3>
               <div className="league-table-scroll">
                 <table className="data-table">
                   <thead>
                     <tr>
                       <th>순위</th>
-                      <th>플레이어</th>
+                      <th>
+                        {selected.rules.participation?.entryMode === 'TEAM' ? '팀' : '플레이어'}
+                      </th>
                       <th>점수</th>
                       <th>추정 비용</th>
                     </tr>
@@ -295,7 +379,11 @@ export function LeaguePage({
                 </table>
               </div>
               {!detail.entries.length && (
-                <p className="empty-state">아직 검증을 통과한 제출 기록이 없습니다.</p>
+                <p className="empty-state">
+                  {detail.boardVisible === false
+                    ? '초대 전용 리그의 순위는 참가 승인 후 볼 수 있습니다.'
+                    : '아직 검증을 통과한 제출 기록이 없습니다.'}
+                </p>
               )}
               {l.own.length > 0 && (
                 <details>
@@ -311,7 +399,11 @@ export function LeaguePage({
           ) : (
             <div className="empty-state">
               <Trophy size={32} />
-              <p>리그를 선택해 규칙과 기록을 확인하세요.</p>
+              <p role="status">
+                {l.inspecting
+                  ? '리그 정보를 불러오는 중입니다.'
+                  : '리그를 선택해 규칙과 기록을 확인하세요.'}
+              </p>
             </div>
           )}
         </div>

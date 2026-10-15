@@ -151,6 +151,11 @@ public class LeagueParticipationService {
       missing();
   }
 
+  public Object applications(Account a) {
+    player(a);
+    return people.applications(a.id());
+  }
+
   public Object joined(Account a) {
     player(a);
     return people.joined(a.id()).stream()

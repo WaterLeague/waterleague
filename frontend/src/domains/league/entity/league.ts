@@ -64,6 +64,7 @@ export interface LeagueDraft {
   placementLimit: number;
   areaLimitM2: number;
   award: LeagueAward;
+  participation: LeagueParticipationRules;
 }
 export interface OwnSubmission {
   jobId: string;
