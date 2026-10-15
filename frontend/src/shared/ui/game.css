@@ -2,6 +2,9 @@
   min-height: 100vh;
   background: #f7f8f2;
 }
+.compact-model-context {
+  display: none;
+}
 .game-shell .topbar {
   position: sticky;
   top: 0;
@@ -1316,6 +1319,23 @@ a:focus-visible {
   }
 }
 @media (max-width: 980px) {
+  .compact-model-context {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 12px;
+    padding: 12px 18px;
+    background: #eef2e7;
+    color: #41583d;
+    font-size: 11px;
+    line-height: 1.6;
+  }
+  .compact-model-context p {
+    flex-basis: 100%;
+  }
+  .compact-model-context .text-button {
+    font-size: 11px;
+  }
   .studio-layout {
     grid-template-columns: minmax(300px, 1fr) 290px;
   }

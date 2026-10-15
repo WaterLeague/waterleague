@@ -293,6 +293,14 @@ export function GamePage() {
                 </button>
               </div>
             </div>
+            <div className="compact-model-context">
+              <b>성수 · 탐색 모델</b>
+              <span>2024.07.18 · 실측 {lab.model.rainfall.totalDepthMm} mm</span>
+              <p>지형·관망·토양 미검증. 실제 침수·공사 효과 예측 불가.</p>
+              <button className="text-button" onClick={() => setTab('data')}>
+                자료와 가정 확인 <ArrowUpRight size={13} />
+              </button>
+            </div>
             <section className="design-stage" aria-label="시설 배치 3D 지도">
               <div className="scene-overline">
                 <span>
