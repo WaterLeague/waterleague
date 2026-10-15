@@ -1,5 +1,5 @@
 """PostgreSQL lease 큐. 작업마다 별도 프로세스·한정 경로·fencing 적용."""
-import os,sys,time,json,uuid,subprocess,hashlib,signal
+import os,sys,time,json,subprocess,hashlib,signal
 from pathlib import Path
 import psycopg
 from psycopg.rows import dict_row
@@ -9,25 +9,23 @@ from local_config import load
 load()
 os.umask(0o077)
 from waterleague_sim.model_catalog import read_catalog
+from waterleague_sim.queue import claim, finish, TABLES
 MODELS=read_catalog(ROOT/'data/models')
 ARTIFACTS=Path(os.environ.get('ARTIFACTS_PATH',ROOT/'data/runs')).resolve()
 
-def claim(conn):
- with conn.transaction():
-  conn.execute("UPDATE simulation_jobs SET state='FAILED',error_code='WORKER_RETRY_EXHAUSTED',finished_at=now() WHERE state='RUNNING' AND lease_until<now() AND attempts>=3")
-  job=conn.execute("SELECT j.*,v.placements FROM simulation_jobs j JOIN strategy_versions v ON v.id=j.version_id WHERE (j.state='QUEUED' OR (j.state='RUNNING' AND j.lease_until<now())) AND j.attempts<3 ORDER BY j.created_at FOR UPDATE OF j SKIP LOCKED LIMIT 1").fetchone()
-  if not job:return None
-  token=uuid.uuid4();conn.execute("UPDATE simulation_jobs SET state='RUNNING',attempts=attempts+1,lease_token=%s,lease_until=now()+interval '180 seconds' WHERE id=%s",(token,job['id']))
-  return job|{'lease_token':token}
-
 def process(conn,job):
- path=ARTIFACTS/str(job['id'])/str(job['lease_token']);path.mkdir(parents=True,exist_ok=False)
+ if job['queue_kind'] not in TABLES:raise ValueError('지원하지 않는 계산 큐')
+ root=ARTIFACTS/'research-candidates' if job['queue_kind']=='RESEARCH_CANDIDATE' else ARTIFACTS
+ path=root/str(job['id'])/str(job['lease_token']);path.mkdir(parents=True,exist_ok=False)
  model_bytes=MODELS.get(job['model_hash']);model_hash=hashlib.sha256(model_bytes).hexdigest() if model_bytes else None
- payload={'placements':json.loads(job['placements']),'modelHash':job['model_hash'],'inputHash':job['input_hash']}
  # Java가 정렬·직렬화한 원문 그대로 해시 비교한다.
  expected=hashlib.sha256((job['model_hash']+'\n'+job['placements']).encode()).hexdigest()
  state='REJECTED';error='INPUT_HASH_MISMATCH';result=None
  if expected==job['input_hash'] and model_hash==job['model_hash']:
+  try:
+   payload={'placements':json.loads(job['placements']),'modelHash':job['model_hash'],'inputHash':job['input_hash']}
+  except (ValueError,TypeError):
+   return finish(conn,job,'REJECTED',None,'INPUT_INVALID')
   (path/'request.json').write_text(json.dumps(payload,ensure_ascii=False));(path/'model-source.json').write_bytes(model_bytes)
   env={k:v for k,v in os.environ.items() if k in ['PATH','LANG','LC_ALL','SWMM_LIBRARY','SIMULATION_CACHE_PATH','SIMULATION_CACHE_ENABLED']};env['PYTHONPATH']=str(ROOT/'simulation')
   child=subprocess.Popen([sys.executable,'-m','waterleague_sim.run_job',str(path)],env=env,start_new_session=True,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
@@ -38,10 +36,9 @@ def process(conn,job):
    else:state='FAILED';error='SIMULATION_QUALITY_OR_ENGINE_FAILURE'
   except subprocess.TimeoutExpired:
    os.killpg(child.pid,signal.SIGKILL);child.wait();state='FAILED';error='SIMULATION_TIMEOUT'
- with conn.transaction():
-  # 만료된 워커는 새 lease의 결과를 덮어쓸 수 없다.
-  conn.execute("UPDATE simulation_jobs SET state=%s,result=%s,error_code=%s,finished_at=now(),lease_until=NULL WHERE id=%s AND state='RUNNING' AND lease_token=%s AND lease_until>now()",(state,json.dumps(result,ensure_ascii=False,allow_nan=False) if result else None,error,job['id'],job['lease_token']))
- print('계산 작업',job['id'],state,flush=True)
+ saved=finish(conn,job,state,result,error)
+ print('계산 작업',job['queue_kind'],job['id'],state if saved else 'LEASE_DISCARDED',flush=True)
+ return saved
 
 def main():
  with psycopg.connect(os.environ['DATABASE_URL'],autocommit=True,row_factory=dict_row) as conn:

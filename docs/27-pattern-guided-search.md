@@ -79,4 +79,16 @@ simulation/.venv/bin/python scripts/verify_search.py \
   --model data/models/seongsu-lab.json
 ```
 
-현재 단계 2~4 미완료. 운영 API·V10·워커·화면에 연결하지 않은 상태이며, 사용자에게 후보 생성 기능이 제공됐다고 표시하지 않음.
+단계 1 완료 당시 운영 API·V10·워커·화면 미연결. 이후 상태는 아래 단계 2 결과로 갱신하며, 사용자에게 후보 생성 기능 전체가 제공됐다고 표시하지 않음.
+
+## 단계 2: 저장·공용 워커
+
+2026-10-16 V10 검색 그룹·원본 연결·후보 테이블, 후보의 모델/그룹 외래키·범주/순번/시도/상태 제약 추가. 전체 활성 500개와 기관 활성 9개 집계에 후보 포함. 개인 활성 3개와 개인 계산 조회는 개인 작업만 유지.
+
+공용 입장 잠금 아래 두 큐의 가장 오래된 처리 가능 작업을 claim. 잠긴 작업 제외·생성 시각 동률의 결정적 정렬·180초 lease·3회 한도·만료/교체 token의 쓰기 차단. 후보의 독립 경로와 동일 SWMM·캐시 연결. 잘못된 입력 hash·손상된 JSON을 엔진 실행 전에 거부.
+
+서버 전체 84개·기존 Python 35개 통과. 별도 PostgreSQL 18.4에 실제 Flyway V1~V10 적용 후 큐 상한/조회 격리 1개와 워커 통합 7개 통과. 8개 동시 claim의 중복 없음, 두 큐 FIFO/잠금/3회 만료 처리 검증. 공개 모델의 실제 SWMM 개인 계산·후보 계산 모두 성공, 캐시 재사용 전후 물수지/점수/민감도/엔진 동일, 각 산출물 18개 hash 검증. 이 사례의 같은 입력은 캐시·소유권 분리 시험이며 실제 생성 알고리즘 성과 사례가 아님.
+
+원본 로컬 DB 계산·제출·리그 수 보존, 시험 DB·임시 산출물 제거. GitHub CI에 같은 격리 PostgreSQL·SWMM 검사 추가. 기관 생성/조회 API·계보/ZIP 권한과 철회·화면 연결·시민 표본 기반 end-to-end 검증은 계속 미완료.
+
+잠금 구현 참고: [PostgreSQL 18 SELECT/행 잠금](https://www.postgresql.org/docs/18/sql-select.html), [Psycopg 트랜잭션](https://www.psycopg.org/psycopg3/docs/basic/transactions.html). `SKIP LOCKED`는 일반 일관 조회가 아닌 작업 큐의 경합 회피에 한정.

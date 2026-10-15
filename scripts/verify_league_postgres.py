@@ -8,22 +8,29 @@ import uuid
 import argparse
 import psycopg
 from psycopg import sql
-from psycopg.conninfo import conninfo_to_dict
+from psycopg.conninfo import conninfo_to_dict, make_conninfo
 from local_config import ROOT, load
+
+
+def source_counts(db):
+    if db.execute("SELECT to_regclass('public.simulation_jobs')").fetchone()[0] is None:
+        return ('UNINITIALIZED',)
+    return db.execute('SELECT (SELECT count(*) FROM simulation_jobs),(SELECT count(*) FROM submissions),(SELECT count(*) FROM leagues)').fetchone()
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--suite', choices=['league', 'analysis', 'all'], default='league')
+    parser.add_argument('--suite', choices=['league', 'analysis', 'queue', 'all'], default='league')
     suite = parser.parse_args().suite
     test_class = {'league': 'LeagueParticipationWorkflowTests',
                   'analysis': 'ResearchAnalysisWorkflowTests',
+                  'queue': 'QueueCapacityTests',
                   'all': 'LeagueParticipationWorkflowTests,ResearchAnalysisWorkflowTests'}[suite]
     load()
     config = conninfo_to_dict(os.environ['DATABASE_URL'])
     if config.get('host') not in {'127.0.0.1', 'localhost', '::1'}:
         raise SystemExit('로컬 PostgreSQL만 허용')
-    test_name = 'waterleague_league_test_' + uuid.uuid4().hex
+    test_name = ('waterleague_queue_test_' if suite == 'queue' else 'waterleague_league_test_') + uuid.uuid4().hex
     path = ROOT / 'tmp' / (test_name + '.log')
     path.parent.mkdir(exist_ok=True)
     env = {k: v for k, v in os.environ.items() if k in {'PATH', 'HOME', 'JAVA_HOME', 'TMPDIR', 'LANG', 'LC_ALL'}}
@@ -41,7 +48,7 @@ def main():
     created = False
     try:
         with psycopg.connect(**config, autocommit=True) as db:
-            before = db.execute('SELECT (SELECT count(*) FROM simulation_jobs),(SELECT count(*) FROM submissions),(SELECT count(*) FROM leagues)').fetchone()
+            before = source_counts(db)
             db.execute(sql.SQL('CREATE DATABASE {}').format(sql.Identifier(test_name)))
             created = True
         with path.open('x') as log:
@@ -50,8 +57,13 @@ def main():
                 [str(ROOT / 'backend/mvnw'), '--batch-mode', '-Dtest=' + test_class,
                  '-Dwaterleague.integration.jdbc=' + jdbc, 'test'],
                 cwd=ROOT / 'backend', env=env, stdout=log, stderr=subprocess.STDOUT, timeout=180)
+            if suite == 'queue' and result.returncode == 0:
+                worker_env = env | {'WL_WORKER_TEST_DSN': make_conninfo(**(config | {'dbname': test_name})),
+                                    'PYTHONPATH': str(ROOT / 'simulation')}
+                result = subprocess.run([sys.executable, '-m', 'unittest', 'discover', '-s', 'integration', '-v'],
+                    cwd=ROOT / 'simulation', env=worker_env, stdout=log, stderr=subprocess.STDOUT, timeout=240)
         with psycopg.connect(**config) as db:
-            after = db.execute('SELECT (SELECT count(*) FROM simulation_jobs),(SELECT count(*) FROM submissions),(SELECT count(*) FROM leagues)').fetchone()
+            after = source_counts(db)
         if before != after:
             raise RuntimeError('원본 자료 수 변경 확인 필요')
         print(json.dumps({'passed': result.returncode == 0, 'sourceCountsUnchanged': True, 'log': str(path)}, ensure_ascii=False))

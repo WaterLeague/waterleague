@@ -65,10 +65,13 @@ public class ResearchAnalysisRepository {
 
   public int active(UUID org) {
     return db.queryForObject(
-        "SELECT COUNT(*) FROM research_comparisons r JOIN rainfall_comparison_jobs c ON"
+        "SELECT (SELECT COUNT(*) FROM research_comparisons r JOIN rainfall_comparison_jobs c ON"
             + " c.comparison_id=r.comparison_id JOIN simulation_jobs j ON j.id=c.job_id WHERE"
-            + " r.organization_id=? AND j.state IN ('QUEUED','RUNNING')",
+            + " r.organization_id=? AND j.state IN ('QUEUED','RUNNING'))"
+            + " + (SELECT COUNT(*) FROM research_candidates c JOIN research_searches s ON"
+            + " s.id=c.search_id WHERE s.organization_id=? AND c.state IN ('QUEUED','RUNNING'))",
         Integer.class,
+        org,
         org);
   }
 

@@ -69,7 +69,9 @@ public class SimulationRepository {
 
   public int totalActive() {
     return db.queryForObject(
-        "SELECT COUNT(*) FROM simulation_jobs WHERE state IN ('QUEUED','RUNNING')", Integer.class);
+        "SELECT (SELECT COUNT(*) FROM simulation_jobs WHERE state IN ('QUEUED','RUNNING'))"
+            + " + (SELECT COUNT(*) FROM research_candidates WHERE state IN ('QUEUED','RUNNING'))",
+        Integer.class);
   }
 
   public void add(SimulationJob j, UUID key) {
