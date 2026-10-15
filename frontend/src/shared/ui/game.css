@@ -331,11 +331,17 @@
   background: #e7eee0;
   color: #466e4b;
 }
+.facility-dock .history-button {
+  padding: 10px;
+}
 .facility-dock .undo-button {
   border-left: 1px solid #dee4d7;
   border-radius: 0;
   margin-left: 5px;
-  padding: 10px;
+}
+.design-stage:focus-visible {
+  outline: 2px solid #466e4b;
+  outline-offset: -3px;
 }
 .cell-marker {
   font-size: 9px;
@@ -2820,6 +2826,7 @@ a:focus-visible {
 }
 .rainfall-context label {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 5px;
   font-size: 11px;
   font-weight: 700;
@@ -2827,6 +2834,7 @@ a:focus-visible {
 }
 .rainfall-context select,
 .league-editor select {
+  min-width: 0;
   max-width: 100%;
   padding: 8px 32px 8px 10px;
   border: 1px solid #bbc8bd;
@@ -2898,4 +2906,9 @@ a:focus-visible {
   flex-direction: column;
   gap: 8px;
   margin-top: 16px;
+}
+@media (max-width: 360px) {
+  .facility-dock button > span {
+    display: none;
+  }
 }

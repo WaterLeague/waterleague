@@ -10,6 +10,7 @@ import {
   Box,
   Plus,
   Undo2,
+  Redo2,
   Save,
   Play,
   Check,
@@ -78,6 +79,12 @@ export function GamePage() {
     activeLeague?.rules.allowedTypes ?? (Object.keys(facilities) as FacilityType[]);
   const cell = lab?.model.cells.find((c) => c.id === selected);
   const placement = g.placements.find((p) => p.cellId === selected);
+  useEffect(() => {
+    if (placement) {
+      setType(placement.facilityType);
+      setArea(placement.areaM2);
+    }
+  }, [selected, placement?.facilityType, placement?.areaM2]);
   const placementLimits = {
     placementLimit: activeLeague?.rules.placementLimit ?? lab?.model.maxPlacements ?? 0,
     areaLimitM2: activeLeague?.rules.areaLimitM2,
@@ -389,7 +396,32 @@ export function GamePage() {
                 자료와 가정 확인 <ArrowUpRight size={13} />
               </button>
             </div>
-            <section className="design-stage" aria-label="시설 배치 3D 지도">
+            <section
+              className="design-stage"
+              aria-label="시설 배치 3D 지도"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (
+                  g.busy ||
+                  e.altKey ||
+                  (!e.ctrlKey && !e.metaKey) ||
+                  (e.target instanceof Element &&
+                    e.target.closest(
+                      'input,textarea,select,[contenteditable]:not([contenteditable="false"]),[role="textbox"]'
+                    ))
+                )
+                  return;
+                const key = e.key.toLowerCase();
+                const redo = (key === 'z' && e.shiftKey) || (key === 'y' && e.ctrlKey);
+                if (redo && g.canRedo) {
+                  e.preventDefault();
+                  g.redo();
+                } else if (key === 'z' && !e.shiftKey && g.canUndo) {
+                  e.preventDefault();
+                  g.undo();
+                }
+              }}
+            >
               <div className="scene-overline">
                 <span>
                   <i />
@@ -520,6 +552,8 @@ export function GamePage() {
                     <button
                       key={t}
                       className={type === t ? 'selected' : ''}
+                      aria-label={facilities[t].name}
+                      title={facilities[t].name}
                       onClick={() => {
                         setType(t);
                         if (!cell?.allowedTypes.includes(t)) {
@@ -537,12 +571,24 @@ export function GamePage() {
                   );
                 })}
                 <button
-                  className="undo-button"
+                  className="history-button undo-button"
                   aria-label="마지막 배치 변경 되돌리기"
-                  disabled={!g.canUndo}
+                  aria-keyshortcuts="Control+Z Meta+Z"
+                  title="배치 되돌리기 · Ctrl/⌘ Z"
+                  disabled={g.busy || !g.canUndo}
                   onClick={g.undo}
                 >
                   <Undo2 size={18} />
+                </button>
+                <button
+                  className="history-button"
+                  aria-label="되돌린 배치 변경 다시 실행"
+                  aria-keyshortcuts="Control+Shift+Z Meta+Shift+Z Control+Y"
+                  title="배치 다시 실행 · Ctrl/⌘ Shift Z"
+                  disabled={g.busy || !g.canRedo}
+                  onClick={g.redo}
+                >
+                  <Redo2 size={18} />
                 </button>
               </div>
             </section>

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useReducer } from 'react';
 import * as repo from '../repository/gameRepository';
 import * as auth from '../../account/repository/accountRepository';
 import type { Account } from '../../account/entity/account';
@@ -12,14 +12,19 @@ import type {
 } from '../entity/game';
 import { errorMessage } from '../../../shared/exception/ApiError';
 import { onSessionExpired } from '../../../shared/repository/apiClient';
+import { placementHistoryReducer } from '../service/placementHistoryService';
 
 export function useGame() {
   const [lab, setLab] = useState<Lab | null>(null);
   const [rainfallCatalog, setRainfallCatalog] = useState<RainfallCatalog | null>(null);
   const modelRequest = useRef(0);
   const [account, setAccount] = useState<Account | null>(null);
-  const [placements, setPlacements] = useState<Placement[]>([]);
-  const [undoStack, setUndo] = useState<Placement[][]>([]);
+  const [history, dispatchHistory] = useReducer(placementHistoryReducer, {
+    past: [],
+    present: [],
+    future: [],
+  });
+  const placements = history.present;
   const [title, setTitle] = useState('성수의 빗물 설계');
   const [note, setNote] = useState('');
   const [version, setVersion] = useState<Version | null>(null);
@@ -124,15 +129,16 @@ export function useGame() {
   }, [job]);
 
   function change(next: Placement[]) {
-    setUndo((old) => [...old.slice(-49), placements]);
-    setPlacements(next);
+    dispatchHistory({ type: 'CHANGE', placements: next });
     setNotice('');
   }
   function undo() {
-    if (undoStack.length) {
-      setPlacements(undoStack[undoStack.length - 1]);
-      setUndo((s) => s.slice(0, -1));
-    }
+    dispatchHistory({ type: 'UNDO' });
+    setNotice('');
+  }
+  function redo() {
+    dispatchHistory({ type: 'REDO' });
+    setNotice('');
   }
   async function action<T>(work: () => Promise<T>): Promise<T | undefined> {
     const id = owner.current;
@@ -188,8 +194,7 @@ export function useGame() {
       setVersion(v);
       setTitle(s.title);
       setNote(v.designNote);
-      setPlacements(v.placements);
-      setUndo([]);
+      dispatchHistory({ type: 'RESET', placements: v.placements });
       setJob(jobs.find((j) => j.versionId === v.id && j.modelHash === nextLab.modelHash) ?? null);
       setNotice('저장된 설계 불러오기 완료');
     });
@@ -207,8 +212,9 @@ export function useGame() {
     setLab(next);
     setVersion(null);
     setJob(null);
-    setUndo([]);
-    if (!copy || !compatible) setPlacements([]);
+    dispatchHistory(
+      copy && compatible ? { type: 'CLEAR_HISTORY' } : { type: 'RESET', placements: [] }
+    );
     setNotice(
       copy && compatible
         ? '배치를 새 강우 조건으로 복사했습니다. 저장·계산 결과는 조건별로 남습니다.'
@@ -218,8 +224,7 @@ export function useGame() {
   }
   function newDesign() {
     setVersion(null);
-    setPlacements([]);
-    setUndo([]);
+    dispatchHistory({ type: 'RESET', placements: [] });
     setTitle('새 빗물 설계');
     setNote('');
     setJob(null);
@@ -233,7 +238,9 @@ export function useGame() {
     placements,
     change,
     undo,
-    canUndo: undoStack.length > 0,
+    redo,
+    canUndo: history.past.length > 0,
+    canRedo: history.future.length > 0,
     title,
     setTitle,
     note,
