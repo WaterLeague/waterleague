@@ -9,6 +9,7 @@
 | POST /auth/logout, GET /auth/me | 인증, 세션 폐기·본인 요약 |
 | GET /catalog, /maps | 공개 자료 목록·승인된 공식 맵 목록 |
 | GET /lab | 탐색 모델·셀·분강우·단가 근거·모델 해시 |
+| GET /spatial/buildings | 인증, 고정 성수 영역 브이월드 건물 대조; no-store·호출 제한 |
 | GET /strategies | 본인 저장 설계 목록 |
 | POST /strategies | 인증, 첫 불변 버전 저장 |
 | POST /strategies/{id}/versions | 소유자, 불변 배치·이력 저장 |

@@ -55,6 +55,8 @@ public class SecurityConfiguration {
                         "/api/v1/submissions",
                         "/api/v1/consents/**")
                     .authenticated()
+                    .requestMatchers(HttpMethod.GET, "/api/v1/spatial/buildings")
+                    .authenticated()
                     .anyRequest()
                     .denyAll())
         .exceptionHandling(

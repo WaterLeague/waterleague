@@ -12,3 +12,10 @@
 - 연구 모델에 편입하려면 개별 자료의 이용허락, CRS·수직기준·시점·해상도, 결측과 부지 대표성 확인 필요. 재현 묶음에 포함 가능한 원본을 별도 확보한 후 모델 해시 갱신. 기관별 동의와 별개로 자료 제공자의 이용 조건 준수.
 
 근거: [2D 데이터 레퍼런스](https://www.vworld.kr/dev/v4dv_2ddataguide2_s002.do?svcIde=spbd&apiVer=2), [API 목록](https://www.vworld.kr/dev/v4apiRefer.do), [이용약관](https://www.vworld.kr/v4po_prcint_a001.do), [저작권정책](https://www.vworld.kr/v4po_prcint_a006.do).
+
+## 화면 연결 설계
+
+- 고정 성수 bbox 조회에서 129개 건물 반환, 122개 지상 층수 양수 확인. OSM 94개는 중심점 기준 선택이므로 건수 차이를 누락 건물 수로 해석하지 않음.
+- 인증 회원의 명시적 조회에만 서버가 고정 HTTPS endpoint 호출. 키는 서버 환경변수, 임의 주소·bbox·컬럼 입력 불가. 리다이렉트 금지, 응답 2MB·15초·동시 2개 상한, 회원별·전체 호출 제한.
+- 공간 도메인 controller → service → repository / mapper → entity / view. 공통 예외 handler 사용. 좌표·도형·페이지 누락 검사 후 필요한 건물명·층수·경계만 브라우저에 반환. `Cache-Control: no-store`, DB·원본 파일·로그·로컬 스토리지 보관 없음.
+- 데이터 화면에서 OSM과 브이월드 경계 대조. 2024년 강우 당시 형상과 현재 조회 형상의 시점 차이, 높이·표고 미제공 명시. 층수×상수의 임의 높이 치환 금지. 시뮬레이션 모델·점수·재현 묶음은 변경하지 않음.

@@ -35,7 +35,10 @@ class ApiSecurityTests {
 
   @Test
   void protectsInstitutionAndManagementEndpoints() throws Exception {
-    for (String path : new String[] {"/api/v1/organizations/private/strategies", "/actuator/env"}) {
+    for (String path :
+        new String[] {
+          "/api/v1/organizations/private/strategies", "/actuator/env", "/api/v1/spatial/buildings"
+        }) {
       var response = get(path);
       assertThat(response.statusCode()).isEqualTo(401);
       assertThat(response.headers().firstValue("Content-Type").orElse(""))

@@ -4,6 +4,15 @@ import os,sys,subprocess
 from pathlib import Path
 load()
 mode=sys.argv[1] if len(sys.argv)>1 else ''
+private_names={'DB_URL','DB_USER','DB_PASSWORD','DATABASE_URL','KMA_API_KEY','VWORLD_API_KEY','VWORLD_DOMAIN','MFA_ENCRYPTION_KEY'}
+required_names={
+ 'api':{'DB_URL','DB_USER','DB_PASSWORD','VWORLD_API_KEY','VWORLD_DOMAIN','MFA_ENCRYPTION_KEY'},
+ 'provision':{'DB_URL','DB_USER','DB_PASSWORD','MFA_ENCRYPTION_KEY'},
+ 'worker':{'DATABASE_URL'},
+ 'frontend':set(),
+}
+# 각 프로세스에 필요한 비밀 설정만 상속한다.
+for name in private_names-required_names.get(mode,set()):os.environ.pop(name,None)
 if mode in ['api','provision']:
  if not os.environ.get('DB_PASSWORD'):raise SystemExit('.env.local DB_PASSWORD 설정 필요')
  if not os.environ.get('JAVA_HOME') and sys.platform=='darwin':

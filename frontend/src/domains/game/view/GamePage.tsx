@@ -37,6 +37,7 @@ import { AuthDialog } from '../../account/view/AuthDialog';
 import { Hydrograph } from './Hydrograph';
 import { Leaderboard } from './Leaderboard';
 import { ResearchPage } from '../../research/view/ResearchPage';
+import { SpatialComparison } from '../../spatial/view/SpatialComparison';
 import { ErrorBoundary } from '../../../shared/exception/ErrorBoundary';
 const MapScene = lazy(() => import('../../catalog/view/MapScene'));
 const icons = { RAIN_GARDEN: Leaf, PERMEABLE_PAVEMENT: Grid2X2, GREEN_ROOF: House };
@@ -95,7 +96,10 @@ export function GamePage() {
               key={id}
               aria-current={tab === id ? 'page' : undefined}
               className={tab === id ? 'active' : ''}
-              onClick={() => setTab(id)}
+              onClick={() => {
+                setTab(id);
+                g.setNotice('');
+              }}
             >
               {label}
             </button>
@@ -753,6 +757,13 @@ export function GamePage() {
               검증이 필요합니다. 현재 점수로 공사 효과나 홍수위험을 결정할 수 없습니다.
             </p>
           </div>
+          {catalog.data && (
+            <SpatialComparison
+              key={g.account?.id ?? 'guest'}
+              map={catalog.data.map}
+              authenticated={!!g.account}
+            />
+          )}
           <h2>이 계산에 들어간 가정</h2>
           <ol className="assumption-list">
             {lab.model.assumptions.map((s) => (
