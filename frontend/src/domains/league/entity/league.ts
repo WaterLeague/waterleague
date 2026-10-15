@@ -36,6 +36,7 @@ export interface LeagueDetail {
   entries: Board['entries'];
 }
 export interface LeagueDraft {
+  modelHash: string;
   baseRevision: number;
   title: string;
   question: string;

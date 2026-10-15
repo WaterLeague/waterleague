@@ -6,6 +6,7 @@ import java.time.Instant;
 import java.util.Set;
 
 public record LeagueDraftRequest(
+    @NotBlank @Pattern(regexp = "[a-f0-9]{64}") String modelHash,
     @Min(0) int baseRevision,
     @NotBlank @Size(max = 100) String title,
     @NotBlank @Size(max = 2000) String question,

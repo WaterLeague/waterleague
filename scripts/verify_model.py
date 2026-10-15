@@ -29,3 +29,23 @@ assert model['unitCosts']==reference['unitCosts'] and model['costModel']==refere
 for row in reference['sourceRows']:
  assert row['thousandKrwPerM2']*1000==model['unitCosts'][row['facility']]
  assert row['thousandKrwPerM2']*row['sourceAreaM2']==row['sourceTotalThousandKrw']
+
+import sys
+sys.path.insert(0, str(root/'simulation'))
+from waterleague_sim.model_catalog import read_catalog
+models=read_catalog(root/'data/models')
+assert (root/'data/models/catalog.json').read_bytes()==(root/'backend/src/main/resources/models/catalog.json').read_bytes()
+for entry in json.loads((root/'data/models/catalog.json').read_text())['models']:
+ data=models[entry['sha256']]
+ assert data==(root/'backend/src/main/resources/models'/entry['file']).read_bytes()
+ item=json.loads(data); rain=item['rainfall']
+ assert item['cells']==model['cells'] and item['unitCosts']==model['unitCosts']
+ assert item['generatorSha256']==model['generatorSha256']
+ assert rain['transformSha256']==model['rainfall']['transformSha256']
+ assert len(rain['depthsMm'])>60 and all(x>=0 for x in rain['depthsMm'])
+ assert sum(Decimal(str(x)) for x in rain['depthsMm'])==Decimal(str(rain['totalDepthMm']))
+ assert (datetime.fromisoformat(rain['end'])-datetime.fromisoformat(rain['start'])).total_seconds()==len(rain['depthsMm'])*60
+ if rain.get('sourceManifest'):
+  assert rain['sourceHash']==json.loads((root/'data/manifests'/rain['sourceManifest']).read_text())['sha256']
+  assert rain==json.loads((root/'data/derived/rainfall'/f"{rain['id']}.json").read_text())
+print(f'모델 카탈로그 {len(models)}개·서버 원문·파생 강우 계보 검증 통과')

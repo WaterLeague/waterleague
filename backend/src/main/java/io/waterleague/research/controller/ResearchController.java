@@ -40,8 +40,8 @@ public class ResearchController {
   }
 
   @GetMapping("/api/v1/research/strategies")
-  public Object list(Principal p) {
-    return research.list(accounts.current(p.getName()));
+  public Object list(Principal p, @RequestParam(required = false) String modelHash) {
+    return research.list(accounts.current(p.getName()), modelHash);
   }
 
   @GetMapping("/api/v1/research/strategies/{id}")

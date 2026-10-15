@@ -301,8 +301,101 @@ class ResearchWorkflowTests {
         .isInstanceOf(io.waterleague.common.exception.DomainException.class);
   }
 
+  @Test
+  void separatesRainfallVersionsBoardsAndLeagueModels() throws Exception {
+    var player = actor(null);
+    var catalog = ok(player, "GET", "/lab/catalog", null, 200).get("models");
+    assertThat(catalog.size()).isEqualTo(4);
+    String first = catalog.get(1).get("modelHash").asString();
+    String second = catalog.get(2).get("modelHash").asString();
+    assertThat(
+            ok(player, "GET", "/lab?modelHash=" + first, null, 200)
+                .get("model")
+                .get("rainfall")
+                .get("totalDepthMm")
+                .decimalValue())
+        .isEqualByComparingTo("18.5");
+    assertThat(call(player, "GET", "/lab?modelHash=" + "0".repeat(64), null).statusCode())
+        .isEqualTo(404);
+    var input = new HashMap<>(draft(0, "강우 분리 검사"));
+    input.put("modelHash", first);
+    var version = ok(player, "POST", "/strategies", input, 200);
+    input.put("modelHash", second);
+    input.put("baseRevision", 1);
+    assertThat(
+            call(
+                    player,
+                    "POST",
+                    "/strategies/" + version.get("strategyId").asString() + "/versions",
+                    input)
+                .statusCode())
+        .isEqualTo(409);
+    var job =
+        ok(
+            player,
+            "POST",
+            "/simulations",
+            Map.of("versionId", version.get("id").asString(), "requestKey", UUID.randomUUID()),
+            202);
+    assertThat(job.get("modelHash").asString()).isEqualTo(first);
+    UUID id = UUID.fromString(job.get("id").asString());
+    // H2 통합 검사 전용 고정값. 운영 순위에 사용하지 않는다.
+    db.update(
+        "UPDATE simulation_jobs SET state='SUCCEEDED',result=? WHERE id=?",
+        json.writeValueAsString(
+            Map.of(
+                "modelHash",
+                first,
+                "inputHash",
+                version.get("inputHash").asString(),
+                "validationLevel",
+                "EXPLORATORY",
+                "official",
+                false,
+                "baseline",
+                Map.of("runoffContinuityPercent", 0, "accountedDischargeM3", 100),
+                "strategy",
+                Map.of("runoffContinuityPercent", 0, "accountedDischargeM3", 90))),
+        id);
+    ok(player, "POST", "/submissions", Map.of("jobId", id), 200);
+    assertThat(
+            db.queryForObject(
+                "SELECT model_hash FROM submissions WHERE job_id=?", String.class, id))
+        .isEqualTo(first);
+    String name = accounts.byId(player.id()).orElseThrow().displayName();
+    assertThat(call(player, "GET", "/leaderboard?modelHash=" + first, null).body()).contains(name);
+    assertThat(call(player, "GET", "/leaderboard?modelHash=" + second, null).body())
+        .doesNotContain(name);
+    var org = institution();
+    var rules = new HashMap<>(leagueDraft(0, 10, 30000000));
+    rules.put("modelHash", second);
+    var league = ok(org, "POST", "/institution/leagues", rules, 200);
+    assertThat(league.get("rules").get("modelHash").asString()).isEqualTo(second);
+    assertThat(league.get("playable").asBoolean()).isTrue();
+    var published =
+        ok(
+            org,
+            "POST",
+            "/institution/leagues/" + league.get("id").asString() + "/publish",
+            Map.of("revision", 1, "rulesHash", league.get("rulesHash").asString()),
+            200);
+    assertThat(published.get("playable").asBoolean()).isTrue();
+    ok(
+        player,
+        "PUT",
+        "/consents/" + accounts.byId(org.id()).orElseThrow().organizationId(),
+        Map.of("granted", true),
+        200);
+    assertThat(call(org, "GET", "/research/strategies?modelHash=" + first, null).body())
+        .contains(id.toString());
+    assertThat(call(org, "GET", "/research/strategies?modelHash=" + second, null).body())
+        .doesNotContain(id.toString());
+  }
+
   Map<String, Object> leagueDraft(int revision, int limit, long budget) {
     return Map.of(
+        "modelHash",
+        model.hash(),
         "baseRevision",
         revision,
         "title",

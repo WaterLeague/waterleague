@@ -50,14 +50,41 @@ export const labDto = z.object({
       stationName: z.string(),
       stationId: z.string(),
       quality: z.string(),
-      sourceHash: z.string(),
+      sourceHash: z.string().regex(/^[a-f0-9]{64}$/),
       sourceUrl: z.url({ protocol: /^https$/ }),
       checks: z.array(z.string()),
       limitations: z.array(z.string()),
       attribution: z.string(),
+      stationDistanceKm: z.number().finite().nonnegative().optional(),
+      stationDistanceEvidence: z.string().optional(),
+      windowStatistics: z
+        .object({
+          peak15MinuteMm: z.number().finite().nonnegative(),
+          peak60MinuteMm: z.number().finite().nonnegative(),
+          observedDryLeadMinutes: z.number().int().nonnegative(),
+          observedDryTailMinutes: z.number().int().nonnegative(),
+        })
+        .optional(),
     }),
     assumptions: z.array(z.string()),
     scoreRule: z.literal('VOLUME_WITH_FINAL_STORAGE_V1'),
   }),
 });
 export type LabDto = z.infer<typeof labDto>;
+
+export const rainfallCatalogDto = z.object({
+  defaultModelHash: z.string().regex(/^[a-f0-9]{64}$/),
+  models: z
+    .array(
+      z.object({
+        modelHash: z.string().regex(/^[a-f0-9]{64}$/),
+        title: z.string(),
+        budget: positive,
+        validationLevel: z.literal('EXPLORATORY'),
+        official: z.literal(false),
+        rainfall: labDto.shape.model.shape.rainfall.omit({ depthsMm: true }),
+      })
+    )
+    .min(1)
+    .max(100),
+});

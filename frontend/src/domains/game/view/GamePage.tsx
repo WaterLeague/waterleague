@@ -36,6 +36,7 @@ import { logout } from '../../account/repository/accountRepository';
 import { ApprovalPage } from '../../administration/view/ApprovalPage';
 import { memberTypeNames } from '../../account/entity/account';
 import { AuthDialog } from '../../account/view/AuthDialog';
+import { RainfallSelector, rainDate, rainTime } from './RainfallSelector';
 import { Hydrograph } from './Hydrograph';
 import { CompetitionPage } from '../../league/view/CompetitionPage';
 import type { League } from '../../league/entity/league';
@@ -67,6 +68,10 @@ export function GamePage() {
   }, [tab]);
   const [activeLeague, setActiveLeague] = useState<League | null>(null);
   const lab = g.lab;
+  useEffect(() => {
+    if (activeLeague && lab && activeLeague.rules.modelHash !== lab.modelHash)
+      setActiveLeague(null);
+  }, [lab?.modelHash, activeLeague]);
   const budget = activeLeague?.rules.budget ?? lab?.model.budget ?? 0;
   const allowedTypes =
     activeLeague?.rules.allowedTypes ?? (Object.keys(facilities) as FacilityType[]);
@@ -158,6 +163,19 @@ export function GamePage() {
           )}
         </div>
       </header>
+      {lab && g.rainfallCatalog && g.account?.role !== 'ADMIN' && (
+        <RainfallSelector
+          lab={lab}
+          catalog={g.rainfallCatalog}
+          disabled={working || !!activeLeague}
+          onChange={(hash) =>
+            void g.action(async () => {
+              await g.selectModel(hash);
+              setSelected(null);
+            })
+          }
+        />
+      )}
       {activeLeague && tab === 'studio' && (
         <div className="active-league-banner">
           <div>
@@ -246,8 +264,10 @@ export function GamePage() {
             <div className="mission-rain">
               <CloudRain size={22} />
               <div>
-                <b>2024. 07. 18.</b>
-                <span>서울 108 관측소 · 1분 자료</span>
+                <b>{rainDate(lab.model.rainfall.start)}</b>
+                <span>
+                  {lab.model.rainfall.stationName} {lab.model.rainfall.stationId} · 1분 자료
+                </span>
               </div>
               <strong>
                 {lab.model.rainfall.totalDepthMm}
@@ -339,7 +359,9 @@ export function GamePage() {
             </div>
             <div className="compact-model-context">
               <b>성수 · 탐색 모델</b>
-              <span>2024.07.18 · 실측 {lab.model.rainfall.totalDepthMm} mm</span>
+              <span>
+                {rainDate(lab.model.rainfall.start)} · 실측 {lab.model.rainfall.totalDepthMm} mm
+              </span>
               <p>지형·관망·토양 미검증. 실제 침수·공사 효과 예측 불가.</p>
               <button className="text-button" onClick={() => setTab('data')}>
                 자료와 가정 확인 <ArrowUpRight size={13} />
@@ -764,12 +786,15 @@ export function GamePage() {
           lab={lab}
           initialLeague={!!activeLeague}
           onDesign={(l) => {
-            g.newDesign();
-            setActiveLeague(l);
-            setSelected(null);
-            setType(l.rules.allowedTypes[0]);
-            g.setTitle(l.title.slice(0, 76) + ' 설계');
-            setTab('studio');
+            void g.action(async () => {
+              if (!(await g.selectModel(l.rules.modelHash, false))) return;
+              g.newDesign();
+              setActiveLeague(l);
+              setSelected(null);
+              setType(l.rules.allowedTypes[0]);
+              g.setTitle(l.title.slice(0, 76) + ' 설계');
+              setTab('studio');
+            });
           }}
         />
       ) : tab === 'research' ? (
@@ -802,16 +827,31 @@ export function GamePage() {
             <article>
               <CloudRain />
               <span className="state done">실제 관측 · 자체 QC 통과</span>
-              <h2>기상청 서울 분강우</h2>
+              <h2>기상청 {lab.model.rainfall.stationName} 분강우</h2>
               <strong>
                 {lab.model.rainfall.totalDepthMm}
                 <small> mm</small>
               </strong>
               <p>
-                2024.07.18 05:00~23:59 KST. 1,140개 누적 관측에서 1,139분 깊이 추출. 결측·음수·자정
-                경계 검사와 이동누적 교차 확인.
+                {rainTime(lab.model.rainfall.start)} ~ {rainTime(lab.model.rainfall.end)} KST.
+                {lab.model.rainfall.depthsMm.length + 1}개 누적 관측에서{' '}
+                {lab.model.rainfall.depthsMm.length}분 깊이 추출. 결측·음수·자정 경계 검사와
+                이동누적 교차 확인.
               </p>
-              <a href="/data/kma-event.json" download>
+              {lab.model.rainfall.stationDistanceKm !== undefined && (
+                <p>
+                  구역 중심과 약 {lab.model.rainfall.stationDistanceKm.toFixed(2)} km.{' '}
+                  {lab.model.rainfall.stationDistanceEvidence}
+                </p>
+              )}
+              {lab.model.rainfall.windowStatistics && (
+                <p>
+                  최대 15분 {lab.model.rainfall.windowStatistics.peak15MinuteMm} mm · 최대 60분{' '}
+                  {lab.model.rainfall.windowStatistics.peak60MinuteMm} mm. 마지막 강우 후 관측
+                  무강우 {lab.model.rainfall.windowStatistics.observedDryTailMinutes}분.
+                </p>
+              )}
+              <a href={`/api/v1/lab?modelHash=${lab.modelHash}`} download>
                 관측 파생자료 <Download size={14} />
               </a>
             </article>

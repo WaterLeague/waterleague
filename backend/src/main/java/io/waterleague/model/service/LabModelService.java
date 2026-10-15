@@ -23,21 +23,57 @@ public class LabModelService {
   }
 
   public void requireHash(String hash) {
-    if (!hash().equals(hash)) throw new DomainException(ErrorCode.CONFLICT);
+    models.require(hash);
   }
 
-  public void requireRunnable() {
-    if (!models.model().path("simulationAvailable").asBoolean())
+  public void requireRunnable(String hash) {
+    if (!models.require(hash).model().path("simulationAvailable").asBoolean())
       throw new DomainException(ErrorCode.MODEL_NOT_ELIGIBLE);
   }
 
   public Map<String, Object> view() {
-    return Map.of("modelHash", hash(), "model", models.model());
+    return view(hash());
   }
 
-  public BigDecimal validate(List<Placement> values) {
+  public Map<String, Object> view(String hash) {
+    var item = models.require(hash);
+    return Map.of("modelHash", item.hash(), "model", item.model());
+  }
+
+  public boolean contains(String hash) {
+    return models.contains(hash);
+  }
+
+  public Object catalog() {
+    return Map.of(
+        "defaultModelHash",
+        hash(),
+        "models",
+        models.all().stream()
+            .map(
+                item ->
+                    Map.of(
+                        "modelHash",
+                        item.hash(),
+                        "title",
+                        item.model().path("title").asString(),
+                        "rainfall",
+                        ((tools.jackson.databind.node.ObjectNode)
+                                item.model().path("rainfall").deepCopy())
+                            .without("depthsMm"),
+                        "budget",
+                        item.model().path("budget").longValue(),
+                        "validationLevel",
+                        "EXPLORATORY",
+                        "official",
+                        false))
+            .toList());
+  }
+
+  public BigDecimal validate(String hash, List<Placement> values) {
+    var model = models.require(hash).model();
     Map<String, PlacementCell> cells = new HashMap<>();
-    for (var c : models.model().path("cells")) {
+    for (var c : model.path("cells")) {
       Set<FacilityType> types = new HashSet<>();
       for (var t : c.path("allowedTypes")) types.add(FacilityType.valueOf(t.asString()));
       cells.put(
@@ -47,12 +83,12 @@ public class LabModelService {
     }
     Map<FacilityType, BigDecimal> costs = new EnumMap<>(FacilityType.class);
     for (var t : FacilityType.values())
-      costs.put(t, models.model().path("unitCosts").path(t.name()).decimalValue());
+      costs.put(t, model.path("unitCosts").path(t.name()).decimalValue());
     return placements.validate(
         values,
         cells,
         costs,
-        models.model().path("budget").decimalValue(),
-        models.model().path("maxPlacements").asInt());
+        model.path("budget").decimalValue(),
+        model.path("maxPlacements").asInt());
   }
 }

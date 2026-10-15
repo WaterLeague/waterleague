@@ -14,8 +14,10 @@ export function ResearchPage({
   lab: Lab;
   onReplay: (p: Placement[]) => void;
 }) {
-  const { consents, entries, detail, error, revision, setRevision, inspect, consent } =
-    useResearch(account);
+  const { consents, entries, detail, error, revision, setRevision, inspect, consent } = useResearch(
+    account,
+    lab.modelHash
+  );
   return (
     <section className="full-page">
       <div className="page-eyebrow">

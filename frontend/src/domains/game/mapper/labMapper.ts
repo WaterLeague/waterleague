@@ -1,6 +1,6 @@
-import { labDto } from '../dto/labDto';
+import { labDto, rainfallCatalogDto } from '../dto/labDto';
 import { GameDataError } from '../exception/GameDataError';
-import type { Lab } from '../entity/game';
+import type { Lab, RainfallCatalog } from '../entity/game';
 export function mapLab(value: unknown): Lab {
   const parsed = labDto.safeParse(value);
   if (!parsed.success) throw new GameDataError();
@@ -19,4 +19,16 @@ export function mapLab(value: unknown): Lab {
   )
     throw new GameDataError();
   return lab;
+}
+
+export function mapRainfallCatalog(value: unknown): RainfallCatalog {
+  const parsed = rainfallCatalogDto.safeParse(value);
+  if (!parsed.success) throw new GameDataError();
+  const result = parsed.data;
+  if (
+    new Set(result.models.map((m) => m.modelHash)).size !== result.models.length ||
+    !result.models.some((m) => m.modelHash === result.defaultModelHash)
+  )
+    throw new GameDataError();
+  return result;
 }

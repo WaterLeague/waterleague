@@ -1,34 +1,82 @@
 package io.waterleague.model.repository;
 
+import io.waterleague.common.exception.*;
 import io.waterleague.common.service.JsonService;
+import io.waterleague.model.entity.LabModel;
 import java.nio.charset.StandardCharsets;
+import java.util.*;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Repository;
 import tools.jackson.databind.JsonNode;
 
 @Repository
 public class LabModelRepository {
-  private final String hash;
-  private final String source;
-  private final JsonNode model;
+  private final Map<String, LabModel> models;
+  private final String defaultHash;
 
   public LabModelRepository(JsonService json) throws java.io.IOException {
-    String text =
-        new ClassPathResource("models/seongsu-lab.json").getContentAsString(StandardCharsets.UTF_8);
-    source = text;
-    model = json.tree(text);
-    hash = json.hash(text);
+    var catalog = json.tree(read("catalog.json"));
+    if (catalog.path("schemaVersion").asInt() != 1
+        || !catalog.path("models").isArray()
+        || catalog.path("models").size() < 1
+        || catalog.path("models").size() > 100) throw new IllegalStateException("모델 카탈로그 형식 오류");
+    Map<String, LabModel> entries = new LinkedHashMap<>();
+    Set<String> ids = new HashSet<>(), files = new HashSet<>();
+    for (var entry : catalog.path("models")) {
+      String name = entry.path("file").asString(), hash = entry.path("sha256").asString();
+      String id = entry.path("id").asString();
+      if (!name.matches("[a-z0-9][a-z0-9-]{0,100}\\.json")
+          || name.equals("catalog.json")
+          || !hash.matches("[a-f0-9]{64}")
+          || entries.containsKey(hash)
+          || !ids.add(id)
+          || !files.add(name)) throw new IllegalStateException("모델 식별자 오류");
+      String source = read(name);
+      var model = json.tree(source);
+      if (!json.hash(source).equals(hash)
+          || !id.equals(model.path("id").asString())
+          || !model.path("simulationAvailable").asBoolean()
+          || model.path("officialEvaluationAvailable").asBoolean()
+          || !model.path("validationLevel").asString().equals("EXPLORATORY"))
+        throw new IllegalStateException("모델 등록 계약 불일치");
+      entries.put(hash, new LabModel(hash, source, model));
+    }
+    defaultHash = catalog.path("defaultModelHash").asString();
+    if (!entries.containsKey(defaultHash)) throw new IllegalStateException("기본 모델 누락");
+    models = Collections.unmodifiableMap(entries);
+  }
+
+  private static String read(String name) throws java.io.IOException {
+    try (var stream = new ClassPathResource("models/" + name).getInputStream()) {
+      byte[] bytes = stream.readNBytes(2 * 1024 * 1024 + 1);
+      if (bytes.length > 2 * 1024 * 1024) throw new IllegalStateException("모델 크기 초과");
+      return new String(bytes, StandardCharsets.UTF_8);
+    }
+  }
+
+  public LabModel require(String hash) {
+    var item = models.get(hash == null ? defaultHash : hash);
+    if (item == null) throw new DomainException(ErrorCode.RESOURCE_NOT_FOUND);
+    return item;
+  }
+
+  public boolean contains(String hash) {
+    return models.containsKey(hash);
+  }
+
+  public List<LabModel> all() {
+    return List.copyOf(models.values());
   }
 
   public String source() {
-    return source;
+    return require(defaultHash).source();
   }
 
   public String hash() {
-    return hash;
+    return defaultHash;
   }
 
   public JsonNode model() {
-    return model;
+    return require(defaultHash).model();
   }
 }

@@ -71,9 +71,10 @@ public class ResearchService {
       throw new DomainException(ErrorCode.ACCESS_DENIED);
   }
 
-  public Object list(Account a) {
+  public Object list(Account a, String hash) {
     organization(a);
-    return research.list(a.organizationId(), model.hash());
+    model.requireHash(hash == null ? model.hash() : hash);
+    return research.list(a.organizationId(), hash == null ? model.hash() : hash);
   }
 
   public Object detail(Account a, UUID id) {
@@ -102,7 +103,7 @@ public class ResearchService {
   }
 
   private Object snapshot(io.waterleague.simulation.entity.SimulationJob job) {
-    if (job.modelHash().equals(model.hash())) return model.view();
+    if (model.contains(job.modelHash())) return model.view(job.modelHash());
     var token = UUID.fromString(json.tree(job.result()).path("artifactToken").asString());
     Path source =
         artifacts

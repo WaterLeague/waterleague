@@ -38,7 +38,7 @@ export function CompetitionPage({
         </button>
       </div>
       {mode === 'general' ? (
-        <Leaderboard />
+        <Leaderboard key={lab.modelHash} lab={lab} />
       ) : (
         <LeaguePage key={account?.id ?? 'guest'} account={account} lab={lab} onDesign={onDesign} />
       )}

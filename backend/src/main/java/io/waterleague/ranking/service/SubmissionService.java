@@ -39,12 +39,14 @@ public class SubmissionService {
     model.requireHash(job.modelHash());
     BigDecimal score = results.score(job);
     var version = strategies.version(job.versionId(), owner).orElseThrow();
-    if (!rankings.exists(jobId)) rankings.add(jobId, owner, model.hash(), score, version.cost());
+    if (!rankings.exists(jobId)) rankings.add(jobId, owner, job.modelHash(), score, version.cost());
     return Map.of("score", score, "official", false, "validationLevel", "EXPLORATORY");
   }
 
-  public Object leaderboard() {
-    var rows = rankings.board(model.hash());
+  public Object leaderboard(String modelHash) {
+    String hash = modelHash == null ? model.hash() : modelHash;
+    model.requireHash(hash);
+    var rows = rankings.board(hash);
     List<Map<String, Object>> ranked = new ArrayList<>();
     BigDecimal previous = null;
     int rank = 0;
@@ -57,7 +59,6 @@ public class SubmissionService {
       ranked.add(row);
       previous = score;
     }
-    return Map.of(
-        "modelHash", model.hash(), "official", false, "title", "성수 탐색 기록", "entries", ranked);
+    return Map.of("modelHash", hash, "official", false, "title", "성수 탐색 기록", "entries", ranked);
   }
 }

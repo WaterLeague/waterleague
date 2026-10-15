@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { League, LeagueDraft } from '../entity/league';
-import type { Lab, FacilityType } from '../../game/entity/game';
+import { loadRainfallCatalog } from '../../game/repository/gameRepository';
+import type { Lab, RainfallCatalog, FacilityType } from '../../game/entity/game';
 import { facilities, won } from '../../game/service/gameService';
 import { localDateTime } from '../service/leagueService';
 export function LeagueEditor({
@@ -30,6 +31,22 @@ export function LeagueEditor({
       league?.rules.allowedTypes ?? ['RAIN_GARDEN', 'PERMEABLE_PAVEMENT', 'GREEN_ROOF']
     );
   const [dateError, setDateError] = useState('');
+  const [modelHash, setModelHash] = useState(league?.rules.modelHash ?? lab.modelHash);
+  const [catalog, setCatalog] = useState<RainfallCatalog | null>(null);
+  useEffect(() => {
+    let alive = true;
+    loadRainfallCatalog()
+      .then((v) => {
+        if (alive) setCatalog(v);
+      })
+      .catch(() => {
+        if (alive) setDateError('강우 목록을 불러오지 못했습니다. 잠시 후 다시 열어 주세요.');
+      });
+    return () => {
+      alive = false;
+    };
+  }, []);
+  const chosen = catalog?.models.find((m) => m.modelHash === modelHash);
   return (
     <form
       className="league-editor"
@@ -44,6 +61,7 @@ export function LeagueEditor({
         }
         setDateError('');
         onSave({
+          modelHash,
           baseRevision: league?.revision ?? 0,
           title,
           question,
@@ -61,10 +79,21 @@ export function LeagueEditor({
           닫기
         </button>
       </div>
-      <p>
-        현재 모델 · {lab.model.title} / 실측 {lab.model.rainfall.totalDepthMm} mm. 지형·관망·토양
-        미검증 상태의 탐색 리그입니다.
-      </p>
+      <p>지형·관망·토양 미검증 상태의 탐색 리그입니다. 공개 후 강우 조건이 고정됩니다.</p>
+      <label>
+        고정할 관측 강우
+        <select
+          value={modelHash}
+          onChange={(e) => setModelHash(e.target.value)}
+          disabled={!catalog}
+        >
+          {catalog?.models.map((m) => (
+            <option key={m.modelHash} value={m.modelHash}>
+              {m.title} · {m.rainfall.totalDepthMm} mm
+            </option>
+          ))}
+        </select>
+      </label>
       <label>
         리그 이름
         <input required maxLength={100} value={title} onChange={(e) => setTitle(e.target.value)} />
@@ -95,12 +124,12 @@ export function LeagueEditor({
             type="number"
             required
             min={1}
-            max={lab.model.budget}
+            max={chosen?.budget ?? lab.model.budget}
             step={1}
             value={budget}
             onChange={(e) => setBudget(Number(e.target.value))}
           />
-          <small>최대 {won(lab.model.budget)}, 공개 사업계획 참고 단가</small>
+          <small>최대 {won(chosen?.budget ?? lab.model.budget)}, 공개 사업계획 참고 단가</small>
         </label>
         <label>
           회원별 제출 한도
@@ -138,7 +167,11 @@ export function LeagueEditor({
       <p className="footnote">
         저장은 비공개 초안입니다. 공개 단계에서 모델·강우·시설 제원·점수·예산·기간을 고정합니다.
       </p>
-      <button className="primary-button" disabled={busy || types.length === 0} type="submit">
+      <button
+        className="primary-button"
+        disabled={busy || types.length === 0 || !chosen}
+        type="submit"
+      >
         비공개 초안 저장
       </button>
     </form>

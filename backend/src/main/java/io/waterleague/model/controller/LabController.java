@@ -13,7 +13,12 @@ public class LabController {
   }
 
   @GetMapping("/api/v1/lab")
-  public Map<String, Object> lab() {
-    return model.view();
+  public Map<String, Object> lab(@RequestParam(required = false) String modelHash) {
+    return model.view(modelHash);
+  }
+
+  @GetMapping("/api/v1/lab/catalog")
+  public Object catalog() {
+    return model.catalog();
   }
 }

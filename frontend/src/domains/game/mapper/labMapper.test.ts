@@ -26,3 +26,22 @@ describe('실험 계약', () => {
     expect(() => mapLab(b)).toThrow();
   });
 });
+
+it('카탈로그의 중복 해시·기본 모델 누락 거부', async () => {
+  const { mapRainfallCatalog } = await import('./labMapper');
+  const entry = {
+    modelHash: 'a'.repeat(64),
+    title: model.title,
+    budget: model.budget,
+    validationLevel: 'EXPLORATORY',
+    official: false,
+    rainfall: model.rainfall,
+  };
+  expect(
+    mapRainfallCatalog({ defaultModelHash: entry.modelHash, models: [entry] }).models
+  ).toHaveLength(1);
+  expect(() =>
+    mapRainfallCatalog({ defaultModelHash: entry.modelHash, models: [entry, entry] })
+  ).toThrow();
+  expect(() => mapRainfallCatalog({ defaultModelHash: 'b'.repeat(64), models: [entry] })).toThrow();
+});

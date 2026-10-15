@@ -16,7 +16,7 @@ public class LeagueMapper {
     this.json = json;
   }
 
-  public LeagueView view(League l, String currentHash, Instant now) {
+  public LeagueView view(League l, boolean playable, Instant now) {
     String phase = l.state();
     if (phase.equals("PUBLISHED"))
       phase =
@@ -35,7 +35,7 @@ public class LeagueMapper {
         l.executionHash(),
         l.publishedAt(),
         l.cancellationReason(),
-        l.modelHash().equals(currentHash));
+        playable);
   }
 
   public List<Map<String, Object>> ranks(List<Map<String, Object>> rows) {

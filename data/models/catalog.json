@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "defaultModelHash": "3af2362021b1678b743a54d82ec1cd1e40cc3b1bfaf594a39858843b35fafaee",
+  "models": [
+    {
+      "id": "seongsu-exploratory-v1",
+      "file": "seongsu-lab.json",
+      "sha256": "3af2362021b1678b743a54d82ec1cd1e40cc3b1bfaf594a39858843b35fafaee"
+    },
+    {
+      "id": "seongsu-421-20240622",
+      "file": "seongsu-421-20240622.json",
+      "sha256": "eb5b6e36c3a161f5f4ea4b61921a5960cf9104b0c899d3afb551a87d4bc2d3f3"
+    },
+    {
+      "id": "seongsu-421-20240702",
+      "file": "seongsu-421-20240702.json",
+      "sha256": "00991b8d0823ac4d977a8e3a6f16c240720e9334396edccec7e4aa3a13dffbff"
+    },
+    {
+      "id": "seongsu-421-20240718",
+      "file": "seongsu-421-20240718.json",
+      "sha256": "fff031781cebc7f1b1f8e6cd0ed284c2166f688d80a2c70a2e4c24ee2df438c3"
+    }
+  ]
+}

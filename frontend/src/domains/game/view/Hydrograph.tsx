@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { Job, Rainfall } from '../entity/game';
+import { rainDate } from './RainfallSelector';
 import { format } from '../service/gameService';
 export function Hydrograph({ job, rainfall }: { job: Job | null; rainfall: Rainfall }) {
   const [minute, setMinute] = useState(0);
@@ -11,20 +12,27 @@ export function Hydrograph({ job, rainfall }: { job: Job | null; rainfall: Rainf
     arr
       .map((n, i) => `${i ? 'L' : 'M'}${(i / (arr.length - 1)) * 860},${100 - (n / max) * 85}`)
       .join(' ');
-  const time = new Date(
-    new Date(rainfall.start).getTime() + (minute + 1) * 60000
-  ).toLocaleTimeString('ko-KR', {
-    hour: '2-digit',
-    minute: '2-digit',
-    timeZone: 'Asia/Seoul',
-    hour12: false,
-  });
+  const selectedMinute = Math.min(minute, values.length - 1);
+  const labelTime = (index: number) =>
+    new Date(
+      new Date(rainfall.start).getTime() + (index + 1) * rainfall.intervalSeconds * 1000
+    ).toLocaleTimeString('ko-KR', {
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZone: 'Asia/Seoul',
+      hour12: false,
+    });
+  const time = labelTime(selectedMinute);
   return (
     <section className="hydrograph" aria-label="관측 강우와 계산 시계열">
       <div className="chart-heading">
         <div>
           <b>{r ? '유출 흐름 비교' : '기상청 실제 관측 강우'}</b>
-          <span>{r ? '같은 시각의 표면 단위 유량 합 · m³/s' : '분당 깊이 · mm · 2024.07.18'}</span>
+          <span>
+            {r
+              ? '같은 시각의 표면 단위 유량 합 · m³/s'
+              : `분당 깊이 · mm · ${rainDate(rainfall.start)}`}
+          </span>
         </div>
         <div className="chart-key">
           {r && (
@@ -48,14 +56,15 @@ export function Hydrograph({ job, rainfall }: { job: Job | null; rainfall: Rainf
         <path d="M0 100H860 M0 55H860 M0 12H860" className="chart-grid" />
         {base && <path d={path(base)} className="chart-base" />}
         <path d={path(values)} className="chart-design" />
-        <path d={`M${(minute / (values.length - 1)) * 860} 8V100`} className="chart-cursor" />
+        <path
+          d={`M${(selectedMinute / (values.length - 1)) * 860} 8V100`}
+          className="chart-cursor"
+        />
       </svg>
       <div className="chart-time">
-        <span>05:00</span>
-        <span>10:00</span>
-        <span>15:00</span>
-        <span>20:00</span>
-        <span>23:59</span>
+        {[0, 0.25, 0.5, 0.75, 1].map((f) => (
+          <span key={f}>{labelTime(Math.round(f * (values.length - 1)))}</span>
+        ))}
       </div>
       <label className="chart-scrub">
         <span>
@@ -69,7 +78,7 @@ export function Hydrograph({ job, rainfall }: { job: Job | null; rainfall: Rainf
           type="range"
           min="0"
           max={values.length - 1}
-          value={minute}
+          value={selectedMinute}
           onChange={(e) => setMinute(Number(e.target.value))}
         />
       </label>

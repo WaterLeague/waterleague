@@ -39,6 +39,7 @@ public class SecurityConfiguration {
                         "/api/v1/catalog",
                         "/api/v1/maps",
                         "/api/v1/lab",
+                        "/api/v1/lab/catalog",
                         "/api/v1/leaderboard",
                         "/api/v1/leagues",
                         "/api/v1/leagues/{id}",

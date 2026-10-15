@@ -1,5 +1,5 @@
 import { api } from '../../../shared/repository/apiClient';
-import { mapLab } from '../mapper/labMapper';
+import { mapLab, mapRainfallCatalog } from '../mapper/labMapper';
 import type {
   Placement,
   Version,
@@ -8,7 +8,10 @@ import type {
   Job,
   Board,
 } from '../entity/game';
-export const loadLab = async () => mapLab(await api<unknown>('/lab'));
+export const loadLab = async (hash?: string) =>
+  mapLab(await api<unknown>('/lab' + (hash ? '?modelHash=' + encodeURIComponent(hash) : '')));
+export const loadRainfallCatalog = async () =>
+  mapRainfallCatalog(await api<unknown>('/lab/catalog'));
 export const loadStrategies = () => api<StrategySummary[]>('/strategies');
 export const loadStrategy = (id: string) => api<StrategyDetail>('/strategies/' + id);
 export const saveStrategy = (
@@ -31,4 +34,5 @@ export const enqueue = (versionId: string, requestKey: string) =>
 export const loadJob = (id: string) => api<Job>('/simulations/' + id);
 export const loadJobs = () => api<Job[]>('/simulations');
 export const submit = (jobId: string) => api<{ score: number }>('/submissions', 'POST', { jobId });
-export const loadBoard = () => api<Board>('/leaderboard');
+export const loadBoard = (hash: string) =>
+  api<Board>('/leaderboard?modelHash=' + encodeURIComponent(hash));

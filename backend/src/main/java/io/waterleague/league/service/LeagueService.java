@@ -80,14 +80,14 @@ public class LeagueService {
 
   public Object list() {
     return leagues.list(null).stream()
-        .map(l -> mapper.view(l, model.hash(), Instant.now()))
+        .map(l -> mapper.view(l, model.contains(l.modelHash()), Instant.now()))
         .toList();
   }
 
   public Object managedList(Account a) {
     institution(a);
     return leagues.list(a.organizationId()).stream()
-        .map(l -> mapper.view(l, model.hash(), Instant.now()))
+        .map(l -> mapper.view(l, model.contains(l.modelHash()), Instant.now()))
         .toList();
   }
 
@@ -98,7 +98,7 @@ public class LeagueService {
       throw new DomainException(ErrorCode.RESULT_QUALITY_FAILED);
     return Map.of(
         "league",
-        mapper.view(l, model.hash(), Instant.now()),
+        mapper.view(l, model.contains(l.modelHash()), Instant.now()),
         "lab",
         Map.of("modelHash", l.modelHash(), "model", json.tree(l.modelSource())),
         "entries",
@@ -107,20 +107,21 @@ public class LeagueService {
 
   private League draft(Account a, UUID id, LeagueDraftRequest d, Instant created) {
     Instant now = Instant.now();
+    var selected = model.require(d.modelHash());
     if (!d.closesAt().isAfter(d.opensAt())
         || !d.closesAt().isAfter(now)
         || d.opensAt().isBefore(now.minus(Duration.ofMinutes(10)))
         || d.closesAt().isAfter(now.plus(Duration.ofDays(366)))
-        || d.budget() > model.model().path("budget").longValue())
+        || d.budget() > selected.model().path("budget").longValue())
       throw new DomainException(ErrorCode.REQUEST_INVALID);
-    if (!model.model().path("simulationAvailable").asBoolean())
+    if (!selected.model().path("simulationAvailable").asBoolean())
       throw new DomainException(ErrorCode.MODEL_NOT_ELIGIBLE);
     var rules =
         new LeagueRules(
             1,
-            model.hash(),
-            model.model().path("engineRevision").asString(),
-            model.model().path("generatorSha256").asString(),
+            selected.hash(),
+            selected.model().path("engineRevision").asString(),
+            selected.model().path("generatorSha256").asString(),
             "ACCOUNTED_DISCHARGE_REDUCTION_V1",
             "KRW",
             d.budget(),
@@ -141,8 +142,8 @@ public class LeagueService {
         d.question().strip(),
         d.opensAt(),
         d.closesAt(),
-        model.hash(),
-        model.source(),
+        selected.hash(),
+        selected.source(),
         rulesText,
         json.hash(rulesText),
         null,
@@ -161,7 +162,7 @@ public class LeagueService {
     var l = draft(a, UUID.randomUUID(), d, Instant.now());
     leagues.create(l, a.id());
     research.audit(a.id(), "LEAGUE_CREATED", l.id());
-    return mapper.view(get(l.id(), false), model.hash(), Instant.now());
+    return mapper.view(get(l.id(), false), model.contains(l.modelHash()), Instant.now());
   }
 
   @Transactional
@@ -171,7 +172,7 @@ public class LeagueService {
       throw new LeagueException(ErrorCode.LEAGUE_IMMUTABLE);
     leagues.update(draft(a, id, d, l.createdAt()));
     research.audit(a.id(), "LEAGUE_EDITED", id);
-    return mapper.view(get(id, false), model.hash(), Instant.now());
+    return mapper.view(get(id, false), model.contains(get(id, false).modelHash()), Instant.now());
   }
 
   @Transactional
@@ -180,12 +181,12 @@ public class LeagueService {
     if (!l.state().equals("DRAFT")
         || l.revision() != revision
         || !l.rulesHash().equals(hash)
-        || !l.modelHash().equals(model.hash())
+        || !model.contains(l.modelHash())
         || !l.closesAt().isAfter(Instant.now()))
       throw new LeagueException(ErrorCode.LEAGUE_IMMUTABLE);
     leagues.publish(id, Instant.now());
     research.audit(a.id(), "LEAGUE_PUBLISHED", id);
-    return mapper.view(get(id, false), model.hash(), Instant.now());
+    return mapper.view(get(id, false), model.contains(get(id, false).modelHash()), Instant.now());
   }
 
   @Transactional
@@ -194,7 +195,7 @@ public class LeagueService {
     if (!l.state().equals("PUBLISHED")) throw new LeagueException(ErrorCode.LEAGUE_IMMUTABLE);
     leagues.cancel(id, reason.strip());
     research.audit(a.id(), "LEAGUE_CANCELLED", id);
-    return mapper.view(get(id, false), model.hash(), Instant.now());
+    return mapper.view(get(id, false), model.contains(get(id, false).modelHash()), Instant.now());
   }
 
   public Object mine(Account a, UUID id) {

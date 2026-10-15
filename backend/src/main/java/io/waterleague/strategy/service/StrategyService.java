@@ -54,9 +54,11 @@ public class StrategyService {
     if (!repo.own(id, owner, true)) missing();
     model.requireHash(dto.modelHash());
     var history = repo.versions(id);
+    if (!history.isEmpty() && !history.getLast().modelHash().equals(dto.modelHash()))
+      throw new DomainException(ErrorCode.CONFLICT);
     if (dto.baseRevision() != history.size() || history.size() >= 500)
       throw new DomainException(ErrorCode.CONFLICT);
-    var cost = model.validate(dto.placements());
+    var cost = model.validate(dto.modelHash(), dto.placements());
     var placements =
         dto.placements().stream().sorted(Comparator.comparing(Placement::cellId)).toList();
     String body = json.write(placements);
@@ -66,8 +68,8 @@ public class StrategyService {
             UUID.randomUUID(),
             id,
             history.size() + 1,
-            model.hash(),
-            json.hash(model.hash() + "\n" + body),
+            dto.modelHash(),
+            json.hash(dto.modelHash() + "\n" + body),
             body,
             json.write(
                 Map.of(

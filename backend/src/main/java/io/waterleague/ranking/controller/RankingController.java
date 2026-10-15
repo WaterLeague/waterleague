@@ -21,8 +21,8 @@ public class RankingController {
   public record Submission(@NotNull UUID jobId) {}
 
   @GetMapping("/api/v1/leaderboard")
-  public Object board() {
-    return submissions.leaderboard();
+  public Object board(@RequestParam(required = false) String modelHash) {
+    return submissions.leaderboard(modelHash);
   }
 
   @PostMapping("/api/v1/submissions")

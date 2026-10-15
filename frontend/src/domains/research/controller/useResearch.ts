@@ -3,7 +3,7 @@ import { isOrganizationMember, type Account } from '../../account/entity/account
 import type { Consent, ResearchEntry, ResearchDetail } from '../entity/research';
 import * as repo from '../repository/researchRepository';
 import { errorMessage } from '../../../shared/exception/ApiError';
-export function useResearch(account: Account | null) {
+export function useResearch(account: Account | null, modelHash: string) {
   const [consents, setConsents] = useState<Consent[]>([]),
     [entries, setEntries] = useState<ResearchEntry[]>([]),
     [detail, setDetail] = useState<ResearchDetail | null>(null),
@@ -30,7 +30,7 @@ export function useResearch(account: Account | null) {
         });
       if (isOrganizationMember(account))
         repo
-          .loadResearch()
+          .loadResearch(modelHash)
           .then((v) => {
             if (active) setEntries(v);
           })
@@ -41,7 +41,7 @@ export function useResearch(account: Account | null) {
     return () => {
       active = false;
     };
-  }, [account]);
+  }, [account, modelHash]);
   async function inspect(id: string) {
     const request = ++selection.current;
     setError('');

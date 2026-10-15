@@ -8,7 +8,8 @@ sys.path.insert(0,str(ROOT/'scripts'))
 from local_config import load
 load()
 os.umask(0o077)
-MODEL_PATH=ROOT/'data/models/seongsu-lab.json'
+from waterleague_sim.model_catalog import read_catalog
+MODELS=read_catalog(ROOT/'data/models')
 ARTIFACTS=Path(os.environ.get('ARTIFACTS_PATH',ROOT/'data/runs')).resolve()
 
 def claim(conn):
@@ -21,7 +22,7 @@ def claim(conn):
 
 def process(conn,job):
  path=ARTIFACTS/str(job['id'])/str(job['lease_token']);path.mkdir(parents=True,exist_ok=False)
- model_bytes=MODEL_PATH.read_bytes();model_hash=hashlib.sha256(model_bytes).hexdigest()
+ model_bytes=MODELS.get(job['model_hash']);model_hash=hashlib.sha256(model_bytes).hexdigest() if model_bytes else None
  payload={'placements':json.loads(job['placements']),'modelHash':job['model_hash'],'inputHash':job['input_hash']}
  # Java가 정렬·직렬화한 원문 그대로 해시 비교한다.
  expected=hashlib.sha256((job['model_hash']+'\n'+job['placements']).encode()).hexdigest()

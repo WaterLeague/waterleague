@@ -1,0 +1,61 @@
+{
+  "purpose": "강우 창·관측소 차이의 탐색 비교",
+  "officialValidation": false,
+  "sameWindowComparison": {
+    "start": "2024-07-17T20:00:00+00:00",
+    "end": "2024-07-18T14:59:00+00:00",
+    "seoul108": {
+      "totalDepthMm": 109.7,
+      "peak15MinuteMm": 8.5,
+      "peak60MinuteMm": 20.2,
+      "firstWetIntervalStart": "2024-07-17T20:02:00+00:00",
+      "lastWetIntervalEnd": "2024-07-18T06:40:00+00:00",
+      "observedDryLeadMinutes": 2,
+      "observedDryTailMinutes": 499
+    },
+    "seongdong421": {
+      "id": "kma-421-202407180500-202407182359",
+      "totalDepthMm": 104.0,
+      "peak15MinuteMm": 8.0,
+      "peak60MinuteMm": 21.5,
+      "firstWetIntervalStart": "2024-07-17T20:03:00+00:00",
+      "lastWetIntervalEnd": "2024-07-18T07:28:00+00:00",
+      "observedDryLeadMinutes": 3,
+      "observedDryTailMinutes": 451
+    },
+    "totalDepthDifferenceMm421Minus108": -5.7,
+    "limitation": "두 지점 차이의 관측 사례이며 성수 현장 오차 추정·공간 보정 계수 아님"
+  },
+  "windows": [
+    {
+      "id": "kma-421-202406220001-202406222359",
+      "totalDepthMm": 18.5,
+      "peak15MinuteMm": 2.0,
+      "peak60MinuteMm": 6.0,
+      "firstWetIntervalStart": "2024-06-22T01:05:00+00:00",
+      "lastWetIntervalEnd": "2024-06-22T14:41:00+00:00",
+      "observedDryLeadMinutes": 604,
+      "observedDryTailMinutes": 18
+    },
+    {
+      "id": "kma-421-202407020001-202407022359",
+      "totalDepthMm": 55.0,
+      "peak15MinuteMm": 5.5,
+      "peak60MinuteMm": 16.5,
+      "firstWetIntervalStart": "2024-07-01T23:34:00+00:00",
+      "lastWetIntervalEnd": "2024-07-02T14:40:00+00:00",
+      "observedDryLeadMinutes": 513,
+      "observedDryTailMinutes": 19
+    },
+    {
+      "id": "kma-421-202407180500-202407182359",
+      "totalDepthMm": 104.0,
+      "peak15MinuteMm": 8.0,
+      "peak60MinuteMm": 21.5,
+      "firstWetIntervalStart": "2024-07-17T20:03:00+00:00",
+      "lastWetIntervalEnd": "2024-07-18T07:28:00+00:00",
+      "observedDryLeadMinutes": 3,
+      "observedDryTailMinutes": 451
+    }
+  ]
+}

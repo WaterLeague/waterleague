@@ -2,11 +2,20 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import * as repo from '../repository/gameRepository';
 import * as auth from '../../account/repository/accountRepository';
 import type { Account } from '../../account/entity/account';
-import type { Lab, Placement, Version, Job, StrategySummary } from '../entity/game';
+import type {
+  Lab,
+  Placement,
+  Version,
+  Job,
+  StrategySummary,
+  RainfallCatalog,
+} from '../entity/game';
 import { errorMessage } from '../../../shared/exception/ApiError';
 
 export function useGame() {
   const [lab, setLab] = useState<Lab | null>(null);
+  const [rainfallCatalog, setRainfallCatalog] = useState<RainfallCatalog | null>(null);
+  const modelRequest = useRef(0);
   const [account, setAccount] = useState<Account | null>(null);
   const [placements, setPlacements] = useState<Placement[]>([]);
   const [undoStack, setUndo] = useState<Placement[][]>([]);
@@ -34,6 +43,14 @@ export function useGame() {
       })
       .finally(() => {
         if (alive) setLoading(false);
+      });
+    repo
+      .loadRainfallCatalog()
+      .then((v) => {
+        if (alive) setRainfallCatalog(v);
+      })
+      .catch((e) => {
+        if (alive) setError(errorMessage(e));
       });
     auth
       .currentAccount()
@@ -150,17 +167,39 @@ export function useGame() {
       const [s, jobs] = await Promise.all([repo.loadStrategy(id), repo.loadJobs()]);
       if (accountId !== owner.current) return;
       const v = s.versions[s.versions.length - 1];
-      // 다른 모델·설계의 결과를 현재 편집안의 계산 결과로 표시하지 않는다.
-      if (v.modelHash !== lab?.modelHash)
-        throw new Error('이 설계는 이전 실험 조건입니다. 새 설계에서 다시 배치해 주세요.');
+      const nextLab = v.modelHash === lab?.modelHash ? lab : await repo.loadLab(v.modelHash);
+      if (accountId !== owner.current) return;
+      setLab(nextLab);
       setVersion(v);
       setTitle(s.title);
       setNote(v.designNote);
       setPlacements(v.placements);
       setUndo([]);
-      setJob(jobs.find((j) => j.versionId === v.id && j.modelHash === lab.modelHash) ?? null);
+      setJob(jobs.find((j) => j.versionId === v.id && j.modelHash === nextLab.modelHash) ?? null);
       setNotice('저장된 설계 불러오기 완료');
     });
+  }
+  async function selectModel(hash: string, copy = true) {
+    const request = ++modelRequest.current,
+      id = owner.current;
+    const next = await repo.loadLab(hash);
+    if (request !== modelRequest.current || id !== owner.current) return undefined;
+    const compatible =
+      lab &&
+      JSON.stringify(lab.model.cells) === JSON.stringify(next.model.cells) &&
+      JSON.stringify(lab.model.unitCosts) === JSON.stringify(next.model.unitCosts) &&
+      lab.model.budget === next.model.budget;
+    setLab(next);
+    setVersion(null);
+    setJob(null);
+    setUndo([]);
+    if (!copy || !compatible) setPlacements([]);
+    setNotice(
+      copy && compatible
+        ? '배치를 새 강우 조건으로 복사했습니다. 저장·계산 결과는 조건별로 남습니다.'
+        : '새 강우 조건을 선택했습니다.'
+    );
+    return next;
   }
   function newDesign() {
     setVersion(null);
@@ -172,6 +211,8 @@ export function useGame() {
   }
   return {
     lab,
+    rainfallCatalog,
+    selectModel,
     account,
     setAccount,
     placements,

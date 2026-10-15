@@ -41,7 +41,7 @@ public class SimulationService {
             .version(dto.versionId(), owner)
             .orElseThrow(() -> new DomainException(ErrorCode.RESOURCE_NOT_FOUND));
     model.requireHash(version.modelHash());
-    model.requireRunnable();
+    model.requireRunnable(version.modelHash());
     jobs.lockAdmission();
     if (jobs.active(owner) >= 3 || jobs.totalActive() >= 500)
       throw new DomainException(ErrorCode.RATE_LIMITED);

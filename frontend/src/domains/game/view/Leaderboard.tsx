@@ -1,19 +1,19 @@
 import { useEffect, useState } from 'react';
 import { Trophy, ArrowUpRight } from 'lucide-react';
 import { loadBoard } from '../repository/gameRepository';
-import type { Board } from '../entity/game';
+import type { Board, Lab } from '../entity/game';
 import { format, won } from '../service/gameService';
 import { errorMessage } from '../../../shared/exception/ApiError';
-export function Leaderboard() {
+export function Leaderboard({ lab }: { lab: Lab }) {
   const [board, setBoard] = useState<Board | null>(null),
     [error, setError] = useState('');
   const refresh = () =>
-    loadBoard()
+    loadBoard(lab.modelHash)
       .then(setBoard)
       .catch((e) => setError(errorMessage(e)));
   useEffect(() => {
     void refresh();
-  }, []);
+  }, [lab.modelHash]);
   return (
     <section className="full-page">
       <div className="page-eyebrow">
@@ -29,8 +29,15 @@ export function Leaderboard() {
       <div className="scope-note">
         <Trophy size={20} />
         <p>
-          <b>성수 탐색 기록</b> · 검증 전 모델의 연습 경쟁입니다. 공식 현장 평가·실제 공사효과
-          순위가 아닙니다. 점수가 같으면 같은 순위입니다.
+          <b>
+            {lab.model.rainfall.stationName} {lab.model.rainfall.stationId} ·{' '}
+            {new Date(lab.model.rainfall.start).toLocaleDateString('ko-KR', {
+              timeZone: 'Asia/Seoul',
+            })}{' '}
+            · {lab.model.rainfall.totalDepthMm} mm
+          </b>{' '}
+          · 검증 전 모델의 연습 경쟁입니다. 공식 현장 평가·실제 공사효과 순위가 아닙니다. 점수가
+          같으면 같은 순위입니다.
         </p>
       </div>
       {error && <p role="alert">{error}</p>}

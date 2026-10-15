@@ -33,6 +33,14 @@ export interface Rainfall {
   checks: string[];
   limitations: string[];
   attribution: string;
+  stationDistanceKm?: number;
+  stationDistanceEvidence?: string;
+  windowStatistics?: {
+    peak15MinuteMm: number;
+    peak60MinuteMm: number;
+    observedDryLeadMinutes: number;
+    observedDryTailMinutes: number;
+  };
 }
 export interface Lab {
   modelHash: string;
@@ -128,5 +136,17 @@ export interface Board {
     score: number;
     cost: number;
     submittedAt: string;
+  }[];
+}
+
+export interface RainfallCatalog {
+  defaultModelHash: string;
+  models: {
+    modelHash: string;
+    title: string;
+    budget: number;
+    validationLevel: 'EXPLORATORY';
+    official: false;
+    rainfall: Omit<Rainfall, 'depthsMm'>;
   }[];
 }
