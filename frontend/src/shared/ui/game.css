@@ -223,9 +223,86 @@
   flex: 1;
   overflow: hidden;
 }
-.design-stage > div:has(canvas) {
-  position: absolute !important;
+.map-viewport {
+  position: absolute;
   inset: 0;
+}
+.map-credit {
+  position: absolute;
+  right: 20px;
+  bottom: 5px;
+  color: #4d6448;
+  font-size: 9px;
+}
+.map-display-options {
+  position: absolute;
+  top: 45px;
+  left: 20px;
+  display: flex;
+  padding: 3px;
+  border: 1px solid #b9c8ad;
+  border-radius: 5px;
+  background: #f9fbf3;
+  z-index: 13;
+}
+.map-display-options button {
+  padding: 6px 10px;
+  font-size: 11px;
+  border-radius: 3px;
+}
+.map-display-options button[aria-pressed='true'] {
+  color: #fff;
+  background: #365e43;
+}
+.map-feedback {
+  position: absolute;
+  top: 86px;
+  left: 20px;
+  right: 20px;
+  font-size: 11px;
+  line-height: 1.6;
+  color: #435338;
+  background: #f9fbf3;
+  border-left: 3px solid #7e9065;
+  padding: 7px 10px;
+}
+.plan-map {
+  position: absolute;
+  top: 84px;
+  left: 20px;
+  width: calc(100% - 40px);
+  height: calc(100% - 165px);
+  overflow: hidden;
+}
+.map-unavailable .plan-map {
+  top: 144px;
+  height: calc(100% - 225px);
+}
+.plan-cell {
+  cursor: pointer;
+}
+.plan-surface {
+  fill: #b4cfb3;
+  stroke: #51765a;
+  stroke-width: 1;
+}
+.plan-cell.selected .plan-surface,
+.plan-cell:focus-visible .plan-surface {
+  stroke: #183d2a;
+  stroke-width: 3;
+}
+.plan-cell-label {
+  fill: #f9fff4;
+  stroke: #51765a;
+  stroke-width: 0.6;
+}
+.plan-cell text {
+  font-weight: 700;
+  fill: #1b432e;
+}
+.plan-cell:focus-visible {
+  outline: 2px solid #183d2a;
+  outline-offset: 3px;
 }
 .scene-overline {
   position: absolute;
@@ -300,6 +377,9 @@
 }
 .scene-controls button + button {
   border-top: 1px solid #e1e6d8;
+}
+.scene-controls.camera-controls {
+  bottom: 126px;
 }
 .facility-dock {
   position: absolute;
@@ -378,9 +458,14 @@
   box-shadow: 0 10px 30px #29412716;
   padding: 14px;
 }
-.cell-list > b,
+.cell-list-heading,
 .saved-list > div > b {
   font-size: 12px;
+}
+.cell-list-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 .cell-list > button {
   display: flex;

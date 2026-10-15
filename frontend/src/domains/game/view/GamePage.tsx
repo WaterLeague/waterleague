@@ -1,13 +1,10 @@
-import { lazy, Suspense, useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   ArrowRight,
   ArrowUpRight,
   MapPin,
   CloudRain,
   Layers3,
-  RotateCcw,
-  Scan,
-  Box,
   Plus,
   Undo2,
   Redo2,
@@ -44,8 +41,7 @@ import type { League } from '../../league/entity/league';
 import { exceedsLeagueLimits, totalArea } from '../../league/service/leagueService';
 import { ResearchPage } from '../../research/view/ResearchPage';
 import { SpatialComparison } from '../../spatial/view/SpatialComparison';
-import { ErrorBoundary } from '../../../shared/exception/ErrorBoundary';
-const MapScene = lazy(() => import('../../catalog/view/MapScene'));
+import { MapViewport } from '../../catalog/view/MapViewport';
 const icons = { RAIN_GARDEN: Leaf, PERMEABLE_PAVEMENT: Grid2X2, GREEN_ROOF: House };
 export function GamePage() {
   const g = useGame();
@@ -57,10 +53,31 @@ export function GamePage() {
     [type, setType] = useState<FacilityType>('RAIN_GARDEN'),
     [area, setArea] = useState(40);
   const [auth, setAuth] = useState(false),
-    [top, setTop] = useState(false),
-    [reset, setReset] = useState(0),
     [showList, setShowList] = useState(false),
     [showSaves, setShowSaves] = useState(false);
+  const listToggle = useRef<HTMLButtonElement>(null);
+  const listPanel = useRef<HTMLDivElement>(null);
+  const areaInput = useRef<HTMLInputElement>(null);
+  const [focusEditor, setFocusEditor] = useState(false);
+  useEffect(() => {
+    if (showList) {
+      const panel = listPanel.current;
+      (
+        panel?.querySelector<HTMLButtonElement>('[aria-pressed="true"]') ??
+        panel?.querySelector<HTMLButtonElement>('[aria-pressed]')
+      )?.focus();
+    }
+  }, [showList]);
+  useEffect(() => {
+    if (focusEditor && areaInput.current) {
+      areaInput.current.focus();
+      setFocusEditor(false);
+    }
+  }, [focusEditor, selected]);
+  function closeList() {
+    setShowList(false);
+    listToggle.current?.focus();
+  }
   useEffect(() => {
     if (g.account?.role === 'ADMIN') setTab('admin');
     else setTab((t) => (t === 'admin' ? 'studio' : t));
@@ -398,7 +415,7 @@ export function GamePage() {
             </div>
             <section
               className="design-stage"
-              aria-label="시설 배치 3D 지도"
+              aria-label="시설 배치 지도"
               tabIndex={0}
               onKeyDown={(e) => {
                 if (
@@ -435,70 +452,61 @@ export function GamePage() {
                   <button onClick={catalog.retry}>다시 시도</button>
                 </div>
               ) : catalog.data ? (
-                <ErrorBoundary
-                  fallback={
-                    <div className="empty-state">
-                      <p>3D 표시를 사용할 수 없습니다. 아래 목록에서 시설을 선택할 수 있습니다.</p>
-                      <button onClick={() => setShowList(true)}>구역 목록 열기</button>
-                    </div>
-                  }
-                >
-                  <Suspense fallback={<div className="empty-state">3D 장면 구성 중</div>}>
-                    <MapScene
-                      map={catalog.data.map}
-                      selected={cell?.buildingId ?? null}
-                      onSelect={select}
-                      topView={top}
-                      reset={reset}
-                      cells={lab.model.cells}
-                      placements={g.placements}
-                      selectedCell={selected}
-                      onCellSelect={select}
-                    />
-                  </Suspense>
-                </ErrorBoundary>
+                <MapViewport
+                  map={catalog.data.map}
+                  cells={lab.model.cells}
+                  placements={g.placements}
+                  selectedCell={selected}
+                  onSelect={(id) => {
+                    select(id);
+                    if (id) setFocusEditor(true);
+                  }}
+                />
               ) : (
                 <div className="empty-state">실제 건물 경계 불러오는 중</div>
               )}
-              <div className="scene-labels">
-                <b>
-                  SEONGSU
-                  <br />
-                  <span>RAIN LAB</span>
-                </b>
-                <small>
-                  회전 · 드래그
-                  <br />
-                  확대 · 스크롤
-                </small>
-              </div>
               <div className="scene-controls">
                 <button
-                  aria-label={top ? '입체 보기' : '위에서 보기'}
-                  aria-pressed={top}
-                  onClick={() => setTop((v) => !v)}
-                >
-                  {top ? <Box size={18} /> : <Scan size={18} />}
-                </button>
-                <button aria-label="시점 초기화" onClick={() => setReset((v) => v + 1)}>
-                  <RotateCcw size={17} />
-                </button>
-                <button
+                  ref={listToggle}
                   aria-label="구역 목록"
-                  aria-pressed={showList}
+                  aria-expanded={showList}
+                  aria-controls="design-cell-list"
                   onClick={() => setShowList((v) => !v)}
                 >
                   <Menu size={18} />
                 </button>
               </div>
               {showList && (
-                <div className="cell-list">
-                  <b>실험 구역 선택</b>
+                <div
+                  id="design-cell-list"
+                  className="cell-list"
+                  ref={listPanel}
+                  role="region"
+                  aria-label="실험 구역 선택"
+                  onKeyDown={(event) => {
+                    if (event.key === 'Escape') {
+                      event.preventDefault();
+                      closeList();
+                    }
+                  }}
+                >
+                  <div className="cell-list-heading">
+                    <b>실험 구역 선택</b>
+                    <button className="icon-button" aria-label="구역 목록 닫기" onClick={closeList}>
+                      <X size={15} />
+                    </button>
+                  </div>
                   {lab.model.cells.map((c) => (
                     <button
                       key={c.id}
                       className={c.id === selected ? 'selected' : ''}
-                      onClick={() => select(c.id)}
+                      aria-pressed={c.id === selected}
+                      aria-label={`${c.id} · ${c.name} · ${g.placements.some((p) => p.cellId === c.id) ? '배치됨' : '미배치'}`}
+                      onClick={() => {
+                        select(c.id);
+                        setShowList(false);
+                        setFocusEditor(true);
+                      }}
                     >
                       <span>
                         {c.id} · {c.name}
@@ -647,6 +655,7 @@ export function GamePage() {
                   설치 면적{' '}
                   <span>
                     <input
+                      ref={areaInput}
                       type="number"
                       min="1"
                       max={cell.maxAreaM2}

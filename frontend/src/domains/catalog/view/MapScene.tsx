@@ -6,6 +6,21 @@ import type { Building, CandidateMap } from '../entity/catalog';
 import { buildingLabel } from '../service/catalogService';
 import type { Cell, Placement } from '../../game/entity/game';
 import { facilities } from '../../game/service/gameService';
+import { watchContextLoss } from '../service/sceneLifecycleService';
+import { useReducedMotion } from '../controller/useReducedMotion';
+
+function SceneLifecycle({ onUnavailable }: { onUnavailable?: () => void }) {
+  const { gl } = useThree();
+  useEffect(() => {
+    const stop = watchContextLoss(gl.domElement, () => onUnavailable?.());
+    if (gl.getContext().isContextLost()) onUnavailable?.();
+    return () => {
+      stop();
+      document.body.style.cursor = 'auto';
+    };
+  }, [gl, onUnavailable]);
+  return null;
+}
 
 function LabelMarker({
   text,
@@ -269,6 +284,7 @@ export default function MapScene({
   placements = [],
   selectedCell,
   onCellSelect,
+  onUnavailable,
 }: {
   map: CandidateMap;
   selected: string | null;
@@ -279,12 +295,15 @@ export default function MapScene({
   placements?: Placement[];
   selectedCell?: string | null;
   onCellSelect?: (id: string) => void;
+  onUnavailable?: () => void;
 }) {
+  const reducedMotion = useReducedMotion();
   return (
     <Canvas
       key={`${topView}-${reset}`}
       shadows="percentage"
       dpr={[1, 1.7]}
+      frameloop="demand"
       orthographic
       camera={{
         position: topView ? [0, 460, 0.1] : [310, 320, 380],
@@ -295,6 +314,7 @@ export default function MapScene({
       onPointerMissed={cells.length ? undefined : () => onSelect(null)}
       gl={{ antialias: true, powerPreference: 'high-performance' }}
     >
+      <SceneLifecycle onUnavailable={onUnavailable} />
       <color attach="background" args={['#e6eae1']} />
       <hemisphereLight args={['#f7f7ec', '#78917f', 2.1]} />
       <directionalLight
@@ -340,7 +360,7 @@ export default function MapScene({
       ))}
       <OrbitControls
         makeDefault
-        enableDamping
+        enableDamping={!reducedMotion}
         dampingFactor={0.12}
         minZoom={0.3}
         maxZoom={6}

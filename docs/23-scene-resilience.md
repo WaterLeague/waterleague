@@ -4,7 +4,7 @@
 
 ## 표시와 상태
 
-3D 기본 표시, 사용자가 언제든 2D 평면도로 전환 가능. 두 화면은 같은 공개 건물·도로 경계와 현재 모델의 구역 좌표·시설 배치를 사용. 2D는 지형·침수 결과가 아니며 설치 가능성 가정 표시 유지. 구역 이름·배치 시설·면적을 텍스트로 제공.
+3D 기본 표시, 사용자가 언제든 2D 평면도로 전환 가능. 두 화면은 같은 공개 건물·도로 경계와 현재 모델의 구역 좌표·시설 배치를 사용. 2D는 지형·침수 결과가 아니며 설치 가능성 가정 표시 유지. 구역 이름·배치 시설·면적을 텍스트로 제공. 표식은 화면에서 32×24px·11px 글자 유지, 겹침 시 표식만 이동하고 실제 구역과 연결선 표시. 작은 화면에도 OpenStreetMap 출처 링크 제공.
 
 WebGL 초기화 실패·실행 중 context loss·장면 오류 시 2D 대안 제공. 설계 이름·메모·선택·배치·undo/redo·계산 결과는 지도 렌더러 밖에 유지. 재시도는 렌더러만 다시 생성하며 자동 무한 재시도 금지. 오류 내부 정보·스택은 화면에 노출하지 않음. 수동 2D 전환은 오류로 표현하지 않음.
 
@@ -25,3 +25,12 @@ WebGL 초기화 실패·실행 중 context loss·장면 오류 시 2D 대안 제
 - [R3F demand 렌더링과 Drei 제어 연동](https://r3f.docs.pmnd.rs/advanced/scaling-performance)
 - [R3F Canvas 오류 대안과 렌더러 소유권](https://r3f.docs.pmnd.rs/api/canvas)
 - [MDN WebGL context loss 이벤트](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/webglcontextlost_event)
+
+## 로컬 장애·성능 재현
+
+`pnpm --dir frontend dev`와 API 실행 후 `http://127.0.0.1:5173/qa/scene.html` 사용. 동일 GamePage와 공개자료를 불러오는 별도 개발 화면이며 로그인·저장·계산은 검증에 필요하지 않음. 실제 환경 계정으로 테스트 데이터를 저장하지 않음.
+
+1. 시설 배치·메모 입력 → 그래픽 연결 강제 손실 → 2D 구역·비용·메모·undo/redo 확인.
+2. 다음 3D 초기화 차단 → 3D 다시 시도 → 대안 유지. 초기화 허용 → 다시 시도 → 같은 배치의 3D 복구 확인.
+3. 정지 상태의 3초 실제 GL draw 포함 프레임 수 기록. 10초 연속 렌더 버튼은 R3F invalidate로 동일 장면을 연속 재그리는 부하. 실제 GL draw가 있는 루프만 집계. 사용자 조작 지연·발열·전력·실기기 모바일 시험과 구분.
+4. QA는 개발 모드·loopback 호스트에서만 실행. Vite 기본 빌드 진입점에 포함하지 않으며 `dist`의 QA HTML·장애 주입 UI·측정 후크 부재 확인. Three.js 자체의 정상 정리용 WebGL 확장 사용과 구분.
