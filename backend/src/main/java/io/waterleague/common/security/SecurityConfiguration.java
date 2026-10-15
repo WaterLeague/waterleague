@@ -12,6 +12,7 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 
+@org.springframework.session.jdbc.config.annotation.web.http.EnableJdbcHttpSession
 @Configuration
 public class SecurityConfiguration {
     @Bean
@@ -24,7 +25,10 @@ public class SecurityConfiguration {
             .logout(logout -> logout.disable())
             .requestCache(cache -> cache.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(HttpMethod.GET, "/api/v1/catalog", "/api/v1/maps", "/actuator/health").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/catalog", "/api/v1/maps", "/api/v1/lab", "/api/v1/leaderboard", "/api/v1/organizations", "/api/v1/auth/csrf", "/actuator/health").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/auth/register", "/api/v1/auth/login").permitAll()
+                .requestMatchers("/api/v1/research/**").hasRole("INSTITUTION")
+                .requestMatchers("/api/v1/auth/**", "/api/v1/strategies/**", "/api/v1/simulations/**", "/api/v1/submissions", "/api/v1/consents/**").authenticated()
                 .anyRequest().denyAll())
             .exceptionHandling(errors -> errors
                 .authenticationEntryPoint((request, response, error) -> write(json, request, response, ErrorCode.AUTHENTICATION_REQUIRED))
@@ -35,6 +39,8 @@ public class SecurityConfiguration {
                 .referrerPolicy(ref -> ref.policy(org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER)))
             .build();
     }
+    @Bean
+    org.springframework.security.crypto.password.PasswordEncoder encoder(){return new org.springframework.security.crypto.argon2.Argon2PasswordEncoder(16,32,1,19456,2);}
     @Bean
     UserDetailsService users() {
         // 회원 저장소 연결 전 기본 계정 생성과 인증 우회를 차단한다.

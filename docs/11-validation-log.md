@@ -19,3 +19,11 @@
 브라우저: 실제 건물 94개 렌더링, 목록 선택→세부 정보·원본 링크, 탑뷰, 데이터 검증·연구 원칙 전환, 안내창 Escape·포커스 복원 확인. 넓은 화면·좁은 패널 레이아웃 확인. THREE.Clock 사용 중단 예정 경고는 R3F 내부 의존성에서 발생하며 렌더링 실패는 관측되지 않음. PCFSoftShadowMap 경고는 명시적 PCF 설정으로 수정.
 
 npm 10의 dependency resolver 내부 오류로 설치 실패 후 pnpm으로 고정. 외부 폰트 요청 제거. 실제 기기별 fps·완전한 WCAG 감사·WebGL context loss 강제 검증은 미수행.
+
+## 회원·세션 영속 구현
+
+- PostgreSQL Flyway 스키마, Argon2id, CSRF 회전, JDBC 세션, 가입 역할 고정, 요청 제한 추가.
+- `JAVA_HOME=<JDK25> ./backend/mvnw -q -f backend/pom.xml test` 성공: 기존 25개 + 회원 흐름 2개.
+- 로그인·가입·로그아웃, 세션 DB 저장, 이전 CSRF 거부, 역할 주입 거부, 기관 접근 차단 확인.
+- 외부 기상청 키는 `.env` 권한 0600으로 저장. 1차 AWS 조회 403 활용신청 필요 응답 확인; 키 값·인증 URL 기록 제외.
+- EPA 공식 소스 ARM64 빌드 성공, 실행 버전 52004 확인. Python 배포 wheel의 macOS 서명 문제로 공식 소스 빌드 채택.

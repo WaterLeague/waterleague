@@ -3,6 +3,10 @@ package io.waterleague.common.exception;
 import org.springframework.http.HttpStatus;
 
 public enum ErrorCode {
+    CREDENTIALS_INVALID(HttpStatus.UNAUTHORIZED, "아이디 또는 비밀번호를 확인해 주세요"),
+    ACCOUNT_UNAVAILABLE(HttpStatus.CONFLICT, "사용할 수 없는 아이디입니다"),
+    RATE_LIMITED(HttpStatus.TOO_MANY_REQUESTS, "요청이 많습니다. 잠시 후 다시 시도해 주세요"),
+    CONFLICT(HttpStatus.CONFLICT, "현재 상태에서 처리할 수 없습니다"),
     REQUEST_INVALID(HttpStatus.BAD_REQUEST, "요청 형식을 확인해 주세요"),
     AUTHENTICATION_REQUIRED(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다"),
     ACCESS_DENIED(HttpStatus.FORBIDDEN, "접근 권한이 없습니다"),
