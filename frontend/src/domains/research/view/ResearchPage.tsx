@@ -1,4 +1,8 @@
 import { Download, LockKeyhole, ArrowRight, ShieldCheck } from 'lucide-react';
+import { useState } from 'react';
+import { ResearchSharing } from './ResearchSharing';
+import { UtilizationInbox } from '../../utilization/view/UtilizationInbox';
+import { ReviewWorkspace } from '../../utilization/view/ReviewWorkspace';
 import type { Account } from '../../account/entity/account';
 import type { Placement, Lab } from '../../game/entity/game';
 import { useResearch } from '../controller/useResearch';
@@ -18,6 +22,7 @@ export function ResearchPage({
     account,
     lab.modelHash
   );
+  const [utilizationRefresh, setUtilizationRefresh] = useState(0);
   return (
     <section className="full-page">
       <div className="page-eyebrow">
@@ -45,36 +50,7 @@ export function ResearchPage({
           <p>플레이어는 공유할 기관을 선택하고, 승인된 기관은 동의된 기록을 분석합니다.</p>
         </div>
       ) : account.memberType === 'PLAYER' ? (
-        <>
-          <div className="scope-note">
-            <ShieldCheck />
-            <p>
-              동의한 기관에는 제출한 전략과 그 버전까지의 변경 이력·계산 결과를 제공합니다. 철회하면
-              이후 열람과 다운로드가 즉시 차단됩니다. 이미 내려받은 파일은 자동 회수되지 않습니다.
-            </p>
-          </div>
-          <h2>내 기록을 공유할 기관</h2>
-          {consents.length ? (
-            consents.map((c) => (
-              <label className="consent-row" key={c.organizationId}>
-                <span>
-                  <b>{c.name}</b>
-                  <small>제출 전략 · 배치 이력 · 계산 입력과 결과</small>
-                </span>
-                <input
-                  type="checkbox"
-                  checked={c.granted}
-                  onChange={(e) => void consent(c.organizationId, e.target.checked)}
-                />
-              </label>
-            ))
-          ) : (
-            <div className="empty-state">
-              <p>아직 승인된 연구기관이 없습니다.</p>
-              <small>기관 등록 전에는 누구에게도 상세 플레이 기록이 공유되지 않습니다.</small>
-            </div>
-          )}
-        </>
+        <ResearchSharing key={account.id} consents={consents} onChange={consent} />
       ) : (
         <>
           <CostPerformance entries={entries} onSelect={(id) => void inspect(id)} />
@@ -167,12 +143,33 @@ export function ResearchPage({
                     INP·RPT·OUT·시계열·모델·빌더·해시·변경 이력 포함. 다운로드 시 기관 소속과 동의
                     재확인.
                   </p>
+                  <ReviewWorkspace
+                    key={account.id + ':' + detail.simulation.id}
+                    jobId={detail.simulation.id}
+                    onRequested={() => setUtilizationRefresh((v) => v + 1)}
+                  />
                 </>
               ) : (
                 <div className="empty-state">기록을 선택하면 상세 분석이 열립니다.</div>
               )}
             </div>
           </div>
+        </>
+      )}
+      {account?.role === 'MEMBER' && (
+        <>
+          {account.memberType !== 'PLAYER' && (
+            <details className="own-research-sharing">
+              <summary>내가 플레이한 기록의 연구 공유 설정</summary>
+              <ResearchSharing key={account.id} consents={consents} onChange={consent} />
+            </details>
+          )}
+          <UtilizationInbox
+            key={account.id}
+            accountId={account.id}
+            institution={account.memberType !== 'PLAYER'}
+            refresh={utilizationRefresh}
+          />
         </>
       )}
     </section>

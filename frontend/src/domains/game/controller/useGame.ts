@@ -11,6 +11,7 @@ import type {
   RainfallCatalog,
 } from '../entity/game';
 import { errorMessage } from '../../../shared/exception/ApiError';
+import { onSessionExpired } from '../../../shared/repository/apiClient';
 
 export function useGame() {
   const [lab, setLab] = useState<Lab | null>(null);
@@ -30,6 +31,20 @@ export function useGame() {
   const [loading, setLoading] = useState(true);
   const owner = useRef<string | undefined>(undefined);
   owner.current = account?.id;
+
+  useEffect(
+    () =>
+      onSessionExpired(() => {
+        const hadAccount = !!owner.current;
+        owner.current = undefined;
+        setAccount(null);
+        setStrategies([]);
+        setVersion(null);
+        setJob(null);
+        if (hadAccount) setError('로그인이 만료되었습니다. 다시 로그인해 주세요.');
+      }),
+    []
+  );
 
   useEffect(() => {
     let alive = true;

@@ -1,4 +1,5 @@
-import { api, refreshCsrf } from '../../../shared/repository/apiClient';
+import { api, refreshCsrf, resetSessionToken } from '../../../shared/repository/apiClient';
+import { ApiError } from '../../../shared/exception/ApiError';
 import type { Account, MemberType } from '../entity/account';
 export const currentAccount = () => api<Account>('/auth/me');
 export async function authenticate(
@@ -8,21 +9,29 @@ export async function authenticate(
   otp?: string,
   registration?: { memberType: MemberType; organizationName: string; purpose: string }
 ) {
+  resetSessionToken();
   await refreshCsrf();
   const account = await api<Account>('/auth/' + mode, 'POST', {
     username,
     password,
     ...(mode === 'register' ? registration : otp ? { otp } : {}),
   });
-  await refreshCsrf();
+  resetSessionToken();
   return account;
 }
 export async function logout() {
-  await api('/auth/logout', 'POST', {});
+  resetSessionToken();
   await refreshCsrf();
+  try {
+    await api('/auth/logout', 'POST', {});
+  } catch (error) {
+    if (!(error instanceof ApiError && error.code === 'AUTHENTICATION_REQUIRED')) throw error;
+  }
+  resetSessionToken();
 }
 
 export async function beginEnrollment(username: string, password: string) {
+  resetSessionToken();
   await refreshCsrf();
   const enrollment = await api<{
     secret: string;
@@ -30,11 +39,11 @@ export async function beginEnrollment(username: string, password: string) {
     accountName: string;
     expiresInSeconds: number;
   }>('/auth/mfa/enrollment', 'POST', { username, password });
-  await refreshCsrf();
+  resetSessionToken();
   return enrollment;
 }
 export async function confirmEnrollment(otp: string) {
   const account = await api<Account>('/auth/mfa/confirm', 'POST', { otp });
-  await refreshCsrf();
+  resetSessionToken();
   return account;
 }
