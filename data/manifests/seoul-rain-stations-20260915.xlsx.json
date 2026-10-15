@@ -1,0 +1,16 @@
+{
+  "provider": "서울특별시",
+  "sourcePage": "https://data.seoul.go.kr/dataList/OA-22824/F/1/datasetView.do",
+  "endpoint": "https://datafile.seoul.go.kr/bigfile/iot/inf/nio_download.do?&useCache=false",
+  "method": "POST",
+  "parameters": {
+    "infId": "OA-22824",
+    "seqNo": "",
+    "seq": "2",
+    "infSeq": "1"
+  },
+  "filename": "seoul-rain-stations-20260915.xlsx",
+  "sha256": "4fcab24fd5803fde5620a682cd1260b59a0046888fbdb5c3594ea2018c73b5ba",
+  "bytes": 14512,
+  "acquiredAt": "2026-10-15T18:43:14.787504+00:00"
+}
