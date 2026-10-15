@@ -7,6 +7,13 @@ public final class AccountMapper {
   private AccountMapper() {}
 
   public static AccountView view(Account a) {
-    return new AccountView(a.id(), a.username(), a.displayName(), a.role(), a.organizationId());
+    return new AccountView(
+        a.id(),
+        a.username(),
+        a.displayName(),
+        a.role(),
+        a.memberType(),
+        a.approvalStatus(),
+        a.organizationId());
   }
 }

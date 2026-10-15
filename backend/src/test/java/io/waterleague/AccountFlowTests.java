@@ -43,7 +43,18 @@ class AccountFlowTests {
   void persistsSessionProtectsRoleAndRotatesCsrf() throws Exception {
     String name = "player_" + UUID.randomUUID().toString().substring(0, 8);
     String body =
-        json.writeValueAsString(Map.of("username", name, "password", "safe-test-password-142"));
+        json.writeValueAsString(
+            Map.of(
+                "username",
+                name,
+                "password",
+                "safe-test-password-142",
+                "memberType",
+                "PLAYER",
+                "organizationName",
+                "",
+                "purpose",
+                ""));
     var token = csrf();
     var before = call("/auth/register", body, token);
     assertThat(before.statusCode()).isEqualTo(200);
@@ -57,7 +68,14 @@ class AccountFlowTests {
     assertThat(call("/research/strategies", null, null).statusCode()).isEqualTo(403);
     assertThat(call("/auth/logout", "{}", csrf()).statusCode()).isEqualTo(200);
     assertThat(call("/auth/me", null, null).statusCode()).isEqualTo(401);
-    assertThat(call("/auth/login", body, csrf()).statusCode()).isEqualTo(200);
+    assertThat(
+            call(
+                    "/auth/login",
+                    json.writeValueAsString(
+                        Map.of("username", name, "password", "safe-test-password-142")),
+                    csrf())
+                .statusCode())
+        .isEqualTo(200);
   }
 
   @Test

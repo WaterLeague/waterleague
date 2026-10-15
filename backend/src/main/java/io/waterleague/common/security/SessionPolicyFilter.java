@@ -25,7 +25,7 @@ public class SessionPolicyFilter extends OncePerRequestFilter {
       Object at = session == null ? null : session.getAttribute("authenticatedAt");
       boolean valid =
           account.isPresent()
-              && account.get().enabled()
+              && account.get().usable()
               && at instanceof Long since
               && System.currentTimeMillis() - since < 8 * 60 * 60 * 1000L;
       if (valid) {
@@ -33,8 +33,10 @@ public class SessionPolicyFilter extends OncePerRequestFilter {
         valid =
             auth.getAuthorities().stream()
                     .anyMatch(r -> r.getAuthority().equals("ROLE_" + a.role()))
-                && (!a.role().equals("INSTITUTION")
-                    || Boolean.TRUE.equals(session.getAttribute("institutionMfa")));
+                && (a.organizationMember()
+                    == auth.getAuthorities().stream()
+                        .anyMatch(r -> r.getAuthority().equals("ORGANIZATION_MEMBER")))
+                && (!a.requiresMfa() || Boolean.TRUE.equals(session.getAttribute("mfaVerified")));
       }
       if (!valid) {
         if (session != null) session.invalidate();

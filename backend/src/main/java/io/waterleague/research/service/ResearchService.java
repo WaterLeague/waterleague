@@ -64,7 +64,8 @@ public class ResearchService {
   }
 
   private void organization(Account a) {
-    if (!a.role().equals("INSTITUTION")
+    if (!a.usable()
+        || !a.organizationMember()
         || a.organizationId() == null
         || !research.approved(a.organizationId()))
       throw new DomainException(ErrorCode.ACCESS_DENIED);
@@ -85,6 +86,8 @@ public class ResearchService {
     var job = jobs.get(id).orElseThrow();
     var version = strategies.version(job.versionId(), job.ownerId()).orElseThrow();
     return Map.of(
+        "leagueContexts",
+        research.leagueContexts(id),
         "lab",
         snapshot(job),
         "simulation",

@@ -38,4 +38,20 @@ public class MfaRepository {
         id,
         encrypted);
   }
+
+  public void lock(UUID id) {
+    db.queryForObject("SELECT id FROM accounts WHERE id=? FOR UPDATE", UUID.class, id);
+  }
+
+  public boolean confirmed(UUID id) {
+    return db.queryForObject(
+            "SELECT COUNT(*) FROM account_mfa WHERE account_id=? AND confirmed=true",
+            Integer.class,
+            id)
+        > 0;
+  }
+
+  public void confirm(UUID id, boolean confirmed) {
+    db.update("UPDATE account_mfa SET confirmed=? WHERE account_id=?", confirmed, id);
+  }
 }

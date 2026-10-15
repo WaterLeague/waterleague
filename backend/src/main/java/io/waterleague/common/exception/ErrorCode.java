@@ -4,6 +4,8 @@ import org.springframework.http.HttpStatus;
 
 public enum ErrorCode {
   CREDENTIALS_INVALID(HttpStatus.UNAUTHORIZED, "아이디 또는 비밀번호를 확인해 주세요"),
+  ACCOUNT_NOT_APPROVED(HttpStatus.FORBIDDEN, "가입 승인 대기·반려 또는 이용 정지 상태입니다. 관리자 검토 후 이용할 수 있습니다"),
+  MFA_ENROLLMENT_REQUIRED(HttpStatus.FORBIDDEN, "인증 앱 등록을 완료해 주세요"),
   ACCOUNT_UNAVAILABLE(HttpStatus.CONFLICT, "사용할 수 없는 아이디입니다"),
   RATE_LIMITED(HttpStatus.TOO_MANY_REQUESTS, "요청이 많습니다. 잠시 후 다시 시도해 주세요"),
   CONFLICT(HttpStatus.CONFLICT, "현재 상태에서 처리할 수 없습니다"),
@@ -19,6 +21,10 @@ public enum ErrorCode {
   SPATIAL_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "공간자료를 조회하지 못했습니다. 잠시 후 다시 시도해 주세요"),
   SPATIAL_ACCESS_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "공간자료 서비스의 인증 설정 확인이 필요합니다"),
   SPATIAL_DATA_INVALID(HttpStatus.SERVICE_UNAVAILABLE, "공간자료의 좌표·응답 품질 검사를 통과하지 못했습니다"),
+  LEAGUE_IMMUTABLE(HttpStatus.CONFLICT, "공개 상태 또는 규칙 버전을 확인해 주세요"),
+  LEAGUE_CLOSED(HttpStatus.CONFLICT, "현재 제출을 받지 않는 리그입니다"),
+  LEAGUE_RULES_MISMATCH(HttpStatus.UNPROCESSABLE_ENTITY, "리그의 모델·시설·실행 조건과 일치하지 않습니다"),
+  LEAGUE_SUBMISSION_LIMIT(HttpStatus.CONFLICT, "이 리그의 제출 한도를 사용했습니다"),
   INTERNAL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "요청을 처리하지 못했습니다");
 
   private final HttpStatus status;

@@ -21,6 +21,8 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler({
     MethodArgumentNotValidException.class,
+    org.springframework.web.method.annotation.HandlerMethodValidationException.class,
+    jakarta.validation.ConstraintViolationException.class,
     HttpMessageNotReadableException.class,
     MethodArgumentTypeMismatchException.class
   })

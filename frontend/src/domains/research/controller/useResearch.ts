@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import type { Account } from '../../account/entity/account';
+import { isOrganizationMember, type Account } from '../../account/entity/account';
 import type { Consent, ResearchEntry, ResearchDetail } from '../entity/research';
 import * as repo from '../repository/researchRepository';
 import { errorMessage } from '../../../shared/exception/ApiError';
@@ -19,7 +19,7 @@ export function useResearch(account: Account | null) {
     setConsents([]);
     setError('');
     selection.current++;
-    if (account) {
+    if (account && account.role === 'MEMBER') {
       repo
         .loadConsents()
         .then((v) => {
@@ -28,7 +28,7 @@ export function useResearch(account: Account | null) {
         .catch((e) => {
           if (active) setError(errorMessage(e));
         });
-      if (account.role === 'INSTITUTION')
+      if (isOrganizationMember(account))
         repo
           .loadResearch()
           .then((v) => {

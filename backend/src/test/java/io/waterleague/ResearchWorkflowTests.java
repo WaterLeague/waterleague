@@ -46,8 +46,12 @@ class ResearchWorkflowTests {
             name,
             name,
             passwords.encode("test-password-1234"),
+            "MEMBER",
             org == null ? "PLAYER" : "INSTITUTION",
+            "APPROVED",
             org,
+            "",
+            "",
             true));
     String secret = org == null ? null : mfa.provision(id);
     var a =
@@ -295,5 +299,416 @@ class ResearchWorkflowTests {
         "UPDATE account_mfa SET encrypted_secret=? WHERE account_id=?", encrypted, other.id());
     assertThatThrownBy(() -> mfa.verify(other.id(), code))
         .isInstanceOf(io.waterleague.common.exception.DomainException.class);
+  }
+
+  Map<String, Object> leagueDraft(int revision, int limit, long budget) {
+    return Map.of(
+        "baseRevision",
+        revision,
+        "title",
+        "동일 강우 실험",
+        "question",
+        "같은 비용에서 배치 효과 비교",
+        "opensAt",
+        java.time.Instant.now().minusSeconds(10).toString(),
+        "closesAt",
+        java.time.Instant.now().plusSeconds(3600).toString(),
+        "budget",
+        budget,
+        "allowedTypes",
+        List.of("RAIN_GARDEN"),
+        "submissionLimit",
+        limit);
+  }
+
+  Actor institution() throws Exception {
+    UUID org = UUID.randomUUID();
+    db.update("INSERT INTO organizations(id,name,approved) VALUES(?,?,true)", org, "리그 시험 기관");
+    return actor(org);
+  }
+
+  JsonNode publishedLeague(Actor org, int limit, long budget) throws Exception {
+    var l = ok(org, "POST", "/institution/leagues", leagueDraft(0, limit, budget), 200);
+    return ok(
+        org,
+        "POST",
+        "/institution/leagues/" + l.get("id").asString() + "/publish",
+        Map.of("revision", 1, "rulesHash", l.get("rulesHash").asString()),
+        200);
+  }
+
+  JsonNode successfulJob(Actor player, int discharge) throws Exception {
+    var v = create(player);
+    var j =
+        ok(
+            player,
+            "POST",
+            "/simulations",
+            Map.of("versionId", v.get("id").asString(), "requestKey", UUID.randomUUID()),
+            202);
+    var m = (JsonNode) model.view().get("model");
+    var result =
+        Map.of(
+            "modelHash",
+            model.hash(),
+            "inputHash",
+            v.get("inputHash").asString(),
+            "validationLevel",
+            "EXPLORATORY",
+            "official",
+            false,
+            "baseline",
+            Map.of("runoffContinuityPercent", 0, "accountedDischargeM3", 100),
+            "strategy",
+            Map.of("runoffContinuityPercent", 0, "accountedDischargeM3", discharge),
+            "engine",
+            Map.of(
+                "revision",
+                m.path("engineRevision").asString(),
+                "generatorSha256",
+                m.path("generatorSha256").asString(),
+                "binarySha256",
+                "a".repeat(64)));
+    db.update(
+        "UPDATE simulation_jobs SET state='SUCCEEDED',result=? WHERE id=?",
+        json.writeValueAsString(result),
+        UUID.fromString(j.get("id").asString()));
+    return j;
+  }
+
+  Map<String, Object> leagueSubmission(JsonNode league, JsonNode job) {
+    return Map.of(
+        "jobId", job.get("id").asString(), "rulesHash", league.get("rulesHash").asString());
+  }
+
+  @Test
+  void isolatesDraftsAndFreezesPublishedRules() throws Exception {
+    var org = institution();
+    var other = institution();
+    var player = actor(null);
+    assertThat(
+            call(player, "POST", "/institution/leagues", leagueDraft(0, 2, 300000000)).statusCode())
+        .isEqualTo(403);
+    var l = ok(org, "POST", "/institution/leagues", leagueDraft(0, 2, 300000000), 200);
+    String id = l.get("id").asString();
+    assertThat(call(player, "GET", "/leagues/" + id, null).statusCode()).isEqualTo(404);
+    assertThat(ok(other, "GET", "/institution/leagues", null, 200).toString()).doesNotContain(id);
+    assertThat(
+            call(other, "PUT", "/institution/leagues/" + id, leagueDraft(1, 2, 300000000))
+                .statusCode())
+        .isEqualTo(404);
+    var edited = ok(org, "PUT", "/institution/leagues/" + id, leagueDraft(1, 3, 300000000), 200);
+    assertThat(
+            call(
+                    org,
+                    "POST",
+                    "/institution/leagues/" + id + "/publish",
+                    Map.of("revision", 1, "rulesHash", l.get("rulesHash").asString()))
+                .statusCode())
+        .isEqualTo(409);
+    var pub =
+        ok(
+            org,
+            "POST",
+            "/institution/leagues/" + id + "/publish",
+            Map.of("revision", 2, "rulesHash", edited.get("rulesHash").asString()),
+            200);
+    assertThat(pub.get("phase").asString()).isEqualTo("OPEN");
+    assertThat(
+            call(org, "PUT", "/institution/leagues/" + id, leagueDraft(3, 4, 300000000))
+                .statusCode())
+        .isEqualTo(409);
+    var detail = ok(player, "GET", "/leagues/" + id, null, 200);
+    assertThat(detail.get("league").get("rules").get("official").asBoolean()).isFalse();
+    assertThat(detail.get("lab").get("modelHash").asString()).isEqualTo(model.hash());
+    var rulesText =
+        db.queryForObject(
+            "SELECT rules FROM leagues WHERE id=?", String.class, UUID.fromString(id));
+    assertThat(documentJson.hash(rulesText)).isEqualTo(pub.get("rulesHash").asString());
+    ok(org, "POST", "/institution/leagues/" + id + "/cancel", Map.of("reason", "검증 목적 취소"), 200);
+    assertThat(
+            ok(player, "GET", "/leagues/" + id, null, 200)
+                .get("league")
+                .get("cancellationReason")
+                .asString())
+        .isEqualTo("검증 목적 취소");
+  }
+
+  @Test
+  void ranksBestRecordsPreservesTiesAndSeparatesResearchConsent() throws Exception {
+    var org = institution();
+    var other = institution();
+    var a = actor(null);
+    var b = actor(null);
+    var l = publishedLeague(org, 3, 300000000);
+    String path = "/leagues/" + l.get("id").asString();
+    var j1 = successfulJob(a, 90);
+    var j2 = successfulJob(a, 80);
+    var j3 = successfulJob(b, 80);
+    ok(a, "POST", path + "/submissions", leagueSubmission(l, j1), 200);
+    ok(a, "POST", path + "/submissions", leagueSubmission(l, j2), 200);
+    ok(a, "POST", path + "/submissions", leagueSubmission(l, j2), 200);
+    ok(b, "POST", path + "/submissions", leagueSubmission(l, j3), 200);
+    var board = ok(a, "GET", path, null, 200).get("entries");
+    assertThat(board.size()).isEqualTo(2);
+    assertThat(board.get(0).get("score").decimalValue()).isEqualByComparingTo("20");
+    assertThat(board.get(0).get("rank").asInt()).isEqualTo(1);
+    assertThat(board.get(1).get("rank").asInt()).isEqualTo(1);
+    assertThat(board.toString()).doesNotContain("jobId", "ownerId", "designNote");
+    assertThat(ok(a, "GET", path + "/mine", null, 200).size()).isEqualTo(2);
+    String jobId = j2.get("id").asString();
+    assertThat(call(org, "GET", "/research/strategies/" + jobId, null).statusCode()).isEqualTo(404);
+    UUID orgId =
+        db.queryForObject("SELECT organization_id FROM accounts WHERE id=?", UUID.class, org.id());
+    UUID otherId =
+        db.queryForObject(
+            "SELECT organization_id FROM accounts WHERE id=?", UUID.class, other.id());
+    ok(a, "PUT", "/consents/" + orgId, Map.of("granted", true), 200);
+    ok(a, "PUT", "/consents/" + otherId, Map.of("granted", true), 200);
+    assertThat(
+            ok(org, "GET", "/research/strategies/" + jobId, null, 200).get("leagueContexts").size())
+        .isEqualTo(1);
+    assertThat(ok(org, "GET", "/research/strategies", null, 200).toString()).contains(jobId);
+    assertThat(call(other, "GET", "/research/strategies/" + jobId, null).statusCode())
+        .isEqualTo(404);
+    ok(a, "PUT", "/consents/" + orgId, Map.of("granted", false), 200);
+    assertThat(call(org, "GET", "/research/strategies/" + jobId, null).statusCode()).isEqualTo(404);
+  }
+
+  @Test
+  void rejectsInvalidLeagueConditionsAndSerializesSubmissionLimit() throws Exception {
+    var org = institution();
+    var a = actor(null);
+    var b = actor(null);
+    var old = successfulJob(a, 90);
+    var l = publishedLeague(org, 1, 300000000);
+    String path = "/leagues/" + l.get("id").asString() + "/submissions";
+    assertThat(call(a, "POST", path, leagueSubmission(l, old)).statusCode()).isEqualTo(422);
+    var j1 = successfulJob(a, 90);
+    var j2 = successfulJob(a, 80);
+    assertThat(call(b, "POST", path, leagueSubmission(l, j1)).statusCode()).isEqualTo(404);
+    assertThat(
+            call(
+                    a,
+                    "POST",
+                    path,
+                    Map.of("jobId", j1.get("id").asString(), "rulesHash", "f".repeat(64)))
+                .statusCode())
+        .isEqualTo(422);
+    try (var pool = java.util.concurrent.Executors.newFixedThreadPool(2)) {
+      var f1 = pool.submit(() -> call(a, "POST", path, leagueSubmission(l, j1)).statusCode());
+      var f2 = pool.submit(() -> call(a, "POST", path, leagueSubmission(l, j2)).statusCode());
+      assertThat(List.of(f1.get(), f2.get())).containsExactlyInAnyOrder(200, 409);
+    }
+    var cheap = publishedLeague(org, 3, 1);
+    var job = successfulJob(a, 90);
+    assertThat(
+            call(
+                    a,
+                    "POST",
+                    "/leagues/" + cheap.get("id").asString() + "/submissions",
+                    leagueSubmission(cheap, job))
+                .statusCode())
+        .isEqualTo(422);
+    var closed = publishedLeague(org, 3, 300000000);
+    var late = successfulJob(a, 90);
+    db.update(
+        "UPDATE leagues SET opens_at=?,closes_at=? WHERE id=?",
+        java.sql.Timestamp.from(java.time.Instant.now().minusSeconds(60)),
+        java.sql.Timestamp.from(java.time.Instant.now().minusSeconds(1)),
+        UUID.fromString(closed.get("id").asString()));
+    assertThat(
+            call(
+                    a,
+                    "POST",
+                    "/leagues/" + closed.get("id").asString() + "/submissions",
+                    leagueSubmission(closed, late))
+                .statusCode())
+        .isEqualTo(409);
+  }
+
+  @Test
+  void rejectsChangedEngineAndUnavailableOrganization() throws Exception {
+    var org = institution();
+    var a = actor(null);
+    var l = publishedLeague(org, 3, 300000000);
+    String path = "/leagues/" + l.get("id").asString() + "/submissions";
+    var first = successfulJob(a, 90);
+    ok(a, "POST", path, leagueSubmission(l, first), 200);
+    var changed = successfulJob(a, 80);
+    UUID id = UUID.fromString(changed.get("id").asString());
+    var result =
+        (tools.jackson.databind.node.ObjectNode)
+            json.readTree(
+                db.queryForObject(
+                    "SELECT result FROM simulation_jobs WHERE id=?", String.class, id));
+    ((tools.jackson.databind.node.ObjectNode) result.get("engine"))
+        .put("binarySha256", "b".repeat(64));
+    db.update(
+        "UPDATE simulation_jobs SET result=? WHERE id=?", json.writeValueAsString(result), id);
+    assertThat(call(a, "POST", path, leagueSubmission(l, changed)).statusCode()).isEqualTo(422);
+    UUID orgId =
+        db.queryForObject("SELECT organization_id FROM accounts WHERE id=?", UUID.class, org.id());
+    db.update("UPDATE organizations SET approved=false WHERE id=?", orgId);
+    assertThat(call(a, "GET", "/leagues/" + l.get("id").asString(), null).statusCode())
+        .isEqualTo(404);
+    assertThat(call(a, "POST", path, leagueSubmission(l, changed)).statusCode()).isEqualTo(404);
+    assertThat(call(org, "GET", "/institution/leagues", null).statusCode()).isEqualTo(403);
+  }
+
+  @Test
+  void separatesSingleAdminFromMembersAndEnforcesApprovalAndMfaEnrollment() throws Exception {
+    var member = actor(null);
+    var adminId = UUID.randomUUID();
+    String adminName = "admin_" + adminId.toString().substring(0, 8);
+    accounts.add(
+        new Account(
+            adminId,
+            adminName,
+            "관리자 시험",
+            passwords.encode("test-password-1234"),
+            "ADMIN",
+            null,
+            "APPROVED",
+            null,
+            "",
+            "",
+            true));
+    String secret = mfa.provision(adminId);
+    var admin =
+        new Actor(
+            adminId,
+            HttpClient.newBuilder()
+                .cookieHandler(new CookieManager(null, CookiePolicy.ACCEPT_ALL))
+                .build());
+    ok(
+        admin,
+        "POST",
+        "/auth/login",
+        Map.of(
+            "username", adminName, "password", "test-password-1234", "otp", MfaTests.otp(secret)),
+        200);
+    assertThat(call(admin, "GET", "/research/strategies", null).statusCode()).isEqualTo(403);
+    assertThat(
+            call(admin, "POST", "/institution/leagues", leagueDraft(0, 2, 300000000)).statusCode())
+        .isEqualTo(403);
+    assertThat(call(member, "GET", "/admin/members", null).statusCode()).isEqualTo(403);
+    assertThatThrownBy(
+            () ->
+                accounts.add(
+                    new Account(
+                        UUID.randomUUID(),
+                        "admin_second",
+                        "관리자 중복",
+                        passwords.encode("test-password-1234"),
+                        "ADMIN",
+                        null,
+                        "APPROVED",
+                        null,
+                        "",
+                        "",
+                        true)))
+        .isInstanceOf(org.springframework.dao.DataIntegrityViolationException.class);
+    var applicant =
+        new Actor(
+            UUID.randomUUID(),
+            HttpClient.newBuilder()
+                .cookieHandler(new CookieManager(null, CookiePolicy.ACCEPT_ALL))
+                .build());
+    String username = "biz_" + UUID.randomUUID().toString().substring(0, 8);
+    var registration =
+        Map.of(
+            "username",
+            username,
+            "password",
+            "test-password-1234",
+            "memberType",
+            "BUSINESS",
+            "organizationName",
+            "가입 검토 시험 기업",
+            "purpose",
+            "빗물 설계 연구");
+    var pending = ok(applicant, "POST", "/auth/register", registration, 200);
+    assertThat(pending.get("role").asString()).isEqualTo("MEMBER");
+    assertThat(pending.get("approvalStatus").asString()).isEqualTo("PENDING");
+    assertThat(call(applicant, "GET", "/auth/me", null).statusCode()).isEqualTo(401);
+    var credentials = Map.of("username", username, "password", "test-password-1234");
+    assertThat(call(applicant, "POST", "/auth/login", credentials).statusCode()).isEqualTo(403);
+    assertThat(call(applicant, "POST", "/auth/mfa/enrollment", credentials).statusCode())
+        .isEqualTo(403);
+    String id = pending.get("id").asString(), path = "/admin/members/" + id + "/reviews";
+    assertThat(ok(admin, "GET", "/admin/members", null, 200).toString())
+        .contains(id, "가입 검토 시험 기업")
+        .doesNotContain("password_hash", "encrypted_secret");
+    assertThat(call(admin, "GET", "/admin/members?status=INVALID", null).statusCode())
+        .isEqualTo(400);
+    assertThat(
+            call(
+                    member,
+                    "POST",
+                    path,
+                    Map.of("decision", "APPROVE", "expectedStatus", "PENDING", "reason", "위조 승인"))
+                .statusCode())
+        .isEqualTo(403);
+    ok(
+        admin,
+        "POST",
+        path,
+        Map.of("decision", "REJECT", "expectedStatus", "PENDING", "reason", "소속 확인 자료 보완"),
+        200);
+    assertThat(call(applicant, "POST", "/auth/login", credentials).statusCode()).isEqualTo(403);
+    assertThat(
+            call(
+                    admin,
+                    "POST",
+                    path,
+                    Map.of(
+                        "decision", "APPROVE", "expectedStatus", "PENDING", "reason", "이전 상태 충돌"))
+                .statusCode())
+        .isEqualTo(409);
+    ok(
+        admin,
+        "POST",
+        path,
+        Map.of("decision", "APPROVE", "expectedStatus", "REJECTED", "reason", "소속 및 이용 목적 확인"),
+        200);
+    assertThat(ok(admin, "GET", path, null, 200).size()).isEqualTo(2);
+    var blocked = call(applicant, "POST", "/auth/login", credentials);
+    assertThat(blocked.statusCode()).isEqualTo(403);
+    assertThat(blocked.body()).contains("MFA_ENROLLMENT_REQUIRED");
+    var enrollment = ok(applicant, "POST", "/auth/mfa/enrollment", credentials, 200);
+    assertThat(call(applicant, "GET", "/research/strategies", null).statusCode()).isEqualTo(401);
+    String code = MfaTests.otp(enrollment.get("secret").asString());
+    var approved = ok(applicant, "POST", "/auth/mfa/confirm", Map.of("otp", code), 200);
+    assertThat(approved.get("memberType").asString()).isEqualTo("BUSINESS");
+    ok(applicant, "GET", "/research/strategies", null, 200);
+    assertThat(call(applicant, "GET", "/admin/members", null).statusCode()).isEqualTo(403);
+    assertThat(call(applicant, "POST", "/auth/mfa/enrollment", credentials).statusCode())
+        .isEqualTo(409);
+    assertThat(
+            call(
+                    applicant,
+                    "POST",
+                    "/auth/login",
+                    Map.of("username", username, "password", "test-password-1234", "otp", code))
+                .statusCode())
+        .isEqualTo(401);
+    ok(
+        admin,
+        "POST",
+        path,
+        Map.of("decision", "SUSPEND", "expectedStatus", "APPROVED", "reason", "검토 중 접근 중지"),
+        200);
+    assertThat(call(applicant, "GET", "/research/strategies", null).statusCode()).isEqualTo(401);
+    assertThat(call(applicant, "POST", "/auth/login", credentials).statusCode()).isEqualTo(403);
+    assertThat(
+            call(
+                    admin,
+                    "POST",
+                    "/admin/members/" + adminId + "/reviews",
+                    Map.of(
+                        "decision", "SUSPEND", "expectedStatus", "APPROVED", "reason", "자기 권한 변경"))
+                .statusCode())
+        .isEqualTo(403);
   }
 }

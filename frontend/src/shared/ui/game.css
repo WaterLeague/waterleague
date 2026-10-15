@@ -1766,3 +1766,104 @@ a:focus-visible {
   background: #fffdf8;
   border-radius: 4px;
 }
+
+.auth-dialog select,
+.auth-dialog textarea,
+.approval-page select,
+.approval-page textarea {
+  width: 100%;
+  border: 1px solid var(--border, #d8ded5);
+  border-radius: 8px;
+  padding: 11px 12px;
+  background: #fff;
+  color: inherit;
+  font: inherit;
+}
+.auth-dialog {
+  max-height: 90dvh;
+  overflow: auto;
+}
+.mfa-enrollment {
+  padding: 16px;
+  background: #edf2e8;
+  border-radius: 10px;
+}
+.mfa-enrollment code {
+  display: block;
+  margin: 14px 0;
+  padding: 12px;
+  background: #fff;
+  overflow-wrap: anywhere;
+  user-select: all;
+  font-size: 15px;
+  letter-spacing: 0.04em;
+}
+.approval-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 1fr);
+  gap: 32px;
+  align-items: start;
+  margin-top: 24px;
+}
+.approval-detail {
+  background: #fff;
+  padding: 26px;
+  border: 1px solid #d8ded5;
+  border-radius: 12px;
+  min-width: 0;
+}
+.approval-detail form,
+.approval-detail label {
+  display: grid;
+  gap: 10px;
+}
+.approval-detail form {
+  gap: 18px;
+  margin-top: 25px;
+}
+.approval-detail dl div {
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  padding: 8px 0;
+}
+.approval-detail dd {
+  margin: 0;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+.application-purpose,
+.approval-review p {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.approval-review {
+  border-top: 1px solid #d8ded5;
+  padding: 14px 0;
+}
+.approval-review time {
+  display: block;
+  font-size: 12px;
+  color: #697767;
+  margin-top: 5px;
+}
+.filter-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 320px;
+  white-space: nowrap;
+}
+@media (max-width: 850px) {
+  .approval-layout {
+    grid-template-columns: 1fr;
+  }
+  .approval-detail {
+    padding: 20px;
+  }
+}
+
+.approval-detail h3 {
+  margin-top: 28px;
+  margin-bottom: 12px;
+}

@@ -40,21 +40,32 @@ public class SecurityConfiguration {
                         "/api/v1/maps",
                         "/api/v1/lab",
                         "/api/v1/leaderboard",
+                        "/api/v1/leagues",
+                        "/api/v1/leagues/{id}",
                         "/api/v1/organizations",
                         "/api/v1/auth/csrf",
                         "/actuator/health")
                     .permitAll()
-                    .requestMatchers(HttpMethod.POST, "/api/v1/auth/register", "/api/v1/auth/login")
-                    .permitAll()
-                    .requestMatchers("/api/v1/research/**")
-                    .hasRole("INSTITUTION")
                     .requestMatchers(
-                        "/api/v1/auth/**",
+                        HttpMethod.POST,
+                        "/api/v1/auth/register",
+                        "/api/v1/auth/login",
+                        "/api/v1/auth/mfa/enrollment",
+                        "/api/v1/auth/mfa/confirm")
+                    .permitAll()
+                    .requestMatchers("/api/v1/research/**", "/api/v1/institution/**")
+                    .hasAuthority("ORGANIZATION_MEMBER")
+                    .requestMatchers("/api/v1/admin/**")
+                    .hasRole("ADMIN")
+                    .requestMatchers("/api/v1/auth/**")
+                    .authenticated()
+                    .requestMatchers(
                         "/api/v1/strategies/**",
                         "/api/v1/simulations/**",
                         "/api/v1/submissions",
-                        "/api/v1/consents/**")
-                    .authenticated()
+                        "/api/v1/consents/**",
+                        "/api/v1/leagues/**")
+                    .hasRole("MEMBER")
                     .requestMatchers(HttpMethod.GET, "/api/v1/spatial/buildings")
                     .authenticated()
                     .anyRequest()

@@ -30,13 +30,19 @@ export function ResearchPage({
           {error}
         </p>
       )}
-      {!account ? (
+      {account?.role === 'ADMIN' ? (
+        <div className="empty-state">
+          <ShieldCheck size={34} />
+          <h3>관리자는 회원 승인을 담당합니다.</h3>
+          <p>연구 자료는 동의된 조직 회원만 열람할 수 있습니다.</p>
+        </div>
+      ) : !account ? (
         <div className="empty-state">
           <LockKeyhole size={34} />
           <h3>로그인 후 연구 공유 설정</h3>
           <p>플레이어는 공유할 기관을 선택하고, 승인된 기관은 동의된 기록을 분석합니다.</p>
         </div>
-      ) : account.role === 'PLAYER' ? (
+      ) : account.memberType === 'PLAYER' ? (
         <>
           <div className="scope-note">
             <ShieldCheck />

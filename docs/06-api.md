@@ -5,7 +5,7 @@
 | API | 권한·역할 |
 | --- | --- |
 | GET /auth/csrf | 공개, CSRF 발급 |
-| POST /auth/register, /auth/login | 공개+CSRF, PLAYER 가입·세션 회전 |
+| POST /auth/register, /auth/login | 공개+CSRF, 유형별 가입·승인 상태·세션 회전 |
 | POST /auth/logout, GET /auth/me | 인증, 세션 폐기·본인 요약 |
 | GET /catalog, /maps | 공개 자료 목록·승인된 공식 맵 목록 |
 | GET /lab | 탐색 모델·셀·분강우·단가 근거·모델 해시 |
@@ -25,7 +25,27 @@
 | GET /research/strategies/{jobId} | 승인 기관·동의, 제출 버전까지 이력과 계산 당시 모델 |
 | GET /research/strategies/{jobId}/bundle | 승인 기관·동의, 재인가 후 재현 ZIP |
 
-모델 승인 권한은 기관 관리자와 분리. 내부 워커 endpoint 외부 노출 금지. 공식 맵 상세·강우 선택·기관별 리그 개설/참가/공개 API는 후속 구현 대상이며 현재 제공 경로로 안내하지 않음.
+모델 검증·배포 권한은 조직 회원의 리그 운영과 분리. 내부 워커 endpoint 외부 노출 금지. 공식 맵 상세·강우 선택은 후속 구현 대상. 관리자 역할은 ADMIN, 모든 일반/조직 회원 역할은 MEMBER. 조직 회원의 연구·리그 권한은 승인 상태·회원 유형·소속·MFA로 검사한다.
+
+## 회원 승인·리그
+
+| API | 권한·역할 |
+| --- | --- |
+| POST /auth/mfa/enrollment | 승인된 관리자·조직 회원 비밀번호 확인, 미등록 MFA 연결 시작; no-store·5분 등록 세션 |
+| POST /auth/mfa/confirm | 등록 세션·CSRF·OTP 확인 후 업무 세션 발급 |
+| GET /admin/members?status=PENDING&after=UUID | 단일 ADMIN, 상태 필터·100건 커서 목록 |
+| GET/POST /admin/members/{id}/reviews | ADMIN, 검토 이력·승인/반려/정지·상태 경합 확인 |
+| GET /leagues, /leagues/{id} | 공개 리그·고정 규칙·모델 원문·리그 순위, 초안은 비공개 |
+| GET /leagues/{id}/mine | 본인 리그 제출 기록 |
+| POST /leagues/{id}/submissions | 플레이어, jobId·rulesHash 확인·한도·기간·실행 지문 검사 |
+| GET/POST /institution/leagues | 승인된 기업·기관·정부 회원, 소속 조직 초안 목록·생성 |
+| PUT /institution/leagues/{id} | 동일 소속, 공개 전 초안만 수정·revision 경합 검사 |
+| POST /institution/leagues/{id}/publish | 동일 소속, 규칙 해시 확인 후 공개·불변 |
+| POST /institution/leagues/{id}/cancel | 동일 소속, 사유 기록·신규 제출 중지 |
+
+가입 입력: username, password, memberType, organizationName, purpose. PLAYER는 조직명·이용 목적 빈 값. 조직 유형은 둘 다 필수. 승인 입력: decision(APPROVE/REJECT/SUSPEND), expectedStatus, reason, 선택 organizationId. role·승인 상태·조직 ID를 가입 입력으로 받지 않는다.
+
+리그 참가만으로 연구 동의를 부여하지 않는다. 조직 리그 결과는 주최 조직에 대한 별도 동의가 있는 경우에만 연구 열람·내보내기에 포함한다.
 
 ## 배치 입력
 

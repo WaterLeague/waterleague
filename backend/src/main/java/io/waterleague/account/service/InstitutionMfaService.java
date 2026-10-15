@@ -64,6 +64,35 @@ public class InstitutionMfaService {
     }
   }
 
+  public boolean enrolled(UUID account) {
+    return repo.confirmed(account);
+  }
+
+  @org.springframework.transaction.annotation.Transactional
+  public String begin(UUID account) {
+    repo.lock(account);
+    if (repo.confirmed(account)) throw new DomainException(ErrorCode.CONFLICT);
+    if (repo.encrypted(account).isEmpty()) {
+      String value = provision(account);
+      repo.confirm(account, false);
+      return value;
+    }
+    byte[] secret = decrypt(account, repo.encrypted(account).orElseThrow());
+    try {
+      return base32(secret);
+    } finally {
+      Arrays.fill(secret, (byte) 0);
+    }
+  }
+
+  @org.springframework.transaction.annotation.Transactional
+  public void confirm(UUID account, String otp) {
+    repo.lock(account);
+    if (repo.confirmed(account)) throw new DomainException(ErrorCode.CONFLICT);
+    verify(account, otp);
+    repo.confirm(account, true);
+  }
+
   private SecretKeySpec master() {
     try {
       byte[] bytes = Base64.getDecoder().decode(key);

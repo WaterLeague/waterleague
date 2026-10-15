@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState } from 'react';
+import { lazy, Suspense, useState, useEffect } from 'react';
 import {
   ArrowRight,
   ArrowUpRight,
@@ -33,6 +33,8 @@ import type { FacilityType } from '../entity/game';
 import { facilities, format, won, totalCost } from '../service/gameService';
 import * as repo from '../repository/gameRepository';
 import { logout } from '../../account/repository/accountRepository';
+import { ApprovalPage } from '../../administration/view/ApprovalPage';
+import { memberTypeNames } from '../../account/entity/account';
 import { AuthDialog } from '../../account/view/AuthDialog';
 import { Hydrograph } from './Hydrograph';
 import { Leaderboard } from './Leaderboard';
@@ -44,7 +46,9 @@ const icons = { RAIN_GARDEN: Leaf, PERMEABLE_PAVEMENT: Grid2X2, GREEN_ROOF: Hous
 export function GamePage() {
   const g = useGame();
   const catalog = useCatalog();
-  const [tab, setTab] = useState<'studio' | 'leaderboard' | 'research' | 'data'>('studio');
+  const [tab, setTab] = useState<'studio' | 'leaderboard' | 'research' | 'data' | 'admin'>(
+    'studio'
+  );
   const [selected, setSelected] = useState<string | null>(null),
     [type, setType] = useState<FacilityType>('RAIN_GARDEN'),
     [area, setArea] = useState(40);
@@ -53,6 +57,10 @@ export function GamePage() {
     [reset, setReset] = useState(0),
     [showList, setShowList] = useState(false),
     [showSaves, setShowSaves] = useState(false);
+  useEffect(() => {
+    if (g.account?.role === 'ADMIN') setTab('admin');
+    else setTab((t) => (t === 'admin' ? 'studio' : t));
+  }, [g.account?.id, g.account?.role]);
   const lab = g.lab;
   const cell = lab?.model.cells.find((c) => c.id === selected);
   const placement = g.placements.find((p) => p.cellId === selected);
@@ -84,13 +92,17 @@ export function GamePage() {
           </span>
         </a>
         <nav aria-label="주요 화면">
-          {(
-            [
-              ['studio', '설계실'],
-              ['leaderboard', '기록 경쟁'],
-              ['research', '연구실'],
-              ['data', '데이터'],
-            ] as const
+          {(g.account?.role === 'ADMIN'
+            ? ([
+                ['admin', '회원 관리'],
+                ['data', '데이터'],
+              ] as const)
+            : ([
+                ['studio', '설계실'],
+                ['leaderboard', '기록 경쟁'],
+                ['research', '연구실'],
+                ['data', '데이터'],
+              ] as const)
           ).map(([id, label]) => (
             <button
               key={id}
@@ -110,7 +122,9 @@ export function GamePage() {
             <>
               <span className="account-name">
                 {g.account.displayName}
-                <small>{g.account.role === 'INSTITUTION' ? '기관' : '플레이어'}</small>
+                <small>
+                  {g.account.role === 'ADMIN' ? '관리자' : memberTypeNames[g.account.memberType!]}
+                </small>
               </span>
               <button
                 className="icon-button"
@@ -165,6 +179,8 @@ export function GamePage() {
             </button>
           )}
         </div>
+      ) : tab === 'admin' && g.account?.role === 'ADMIN' ? (
+        <ApprovalPage key={g.account.id} />
       ) : tab === 'studio' ? (
         <div className="studio-layout">
           <aside className="mission-panel">

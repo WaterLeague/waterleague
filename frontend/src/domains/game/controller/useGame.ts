@@ -57,7 +57,7 @@ export function useGame() {
     setStrategies([]);
     setJob(null);
     setVersion(null);
-    if (account) {
+    if (account?.role === 'MEMBER') {
       repo
         .loadStrategies()
         .then((rows) => {

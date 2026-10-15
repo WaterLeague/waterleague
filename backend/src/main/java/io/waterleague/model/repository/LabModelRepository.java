@@ -9,13 +9,19 @@ import tools.jackson.databind.JsonNode;
 @Repository
 public class LabModelRepository {
   private final String hash;
+  private final String source;
   private final JsonNode model;
 
   public LabModelRepository(JsonService json) throws java.io.IOException {
     String text =
         new ClassPathResource("models/seongsu-lab.json").getContentAsString(StandardCharsets.UTF_8);
+    source = text;
     model = json.tree(text);
     hash = json.hash(text);
+  }
+
+  public String source() {
+    return source;
   }
 
   public String hash() {
