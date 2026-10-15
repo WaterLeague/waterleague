@@ -108,6 +108,22 @@ export function ResearchPage({
                     <b>EXPLORATORY</b>
                     <span>현장 검증 전 · 실제 효과 추정 불가</span>
                   </div>
+                  {!!detail.leagueContexts?.length && (
+                    <details className="research-league-context">
+                      <summary>이 계산을 제출한 리그 {detail.leagueContexts.length}개</summary>
+                      {detail.leagueContexts.map((l) => (
+                        <div key={l.id}>
+                          <b>{l.title}</b>
+                          <p>
+                            {l.state === 'CANCELLED'
+                              ? '취소된 리그 · ' + l.cancellationReason
+                              : '고정 조건 제출 기록'}
+                          </p>
+                          <code className="hash-value">규칙 SHA-256: {l.rulesHash}</code>
+                        </div>
+                      ))}
+                    </details>
+                  )}
                   <Hydrograph job={detail.simulation} rainfall={detail.lab.model.rainfall} />
                   <MetricsComparison detail={detail} />
                   <h3>서버에 저장된 변경 이력</h3>

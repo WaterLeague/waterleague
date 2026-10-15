@@ -17,4 +17,11 @@ export interface ResearchDetail {
   simulation: Job;
   version: Version;
   history: Version[];
+  leagueContexts?: {
+    id: string;
+    title: string;
+    state: string;
+    rulesHash: string;
+    cancellationReason: string;
+  }[];
 }

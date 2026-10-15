@@ -37,7 +37,8 @@ import { ApprovalPage } from '../../administration/view/ApprovalPage';
 import { memberTypeNames } from '../../account/entity/account';
 import { AuthDialog } from '../../account/view/AuthDialog';
 import { Hydrograph } from './Hydrograph';
-import { Leaderboard } from './Leaderboard';
+import { CompetitionPage } from '../../league/view/CompetitionPage';
+import type { League } from '../../league/entity/league';
 import { ResearchPage } from '../../research/view/ResearchPage';
 import { SpatialComparison } from '../../spatial/view/SpatialComparison';
 import { ErrorBoundary } from '../../../shared/exception/ErrorBoundary';
@@ -61,7 +62,14 @@ export function GamePage() {
     if (g.account?.role === 'ADMIN') setTab('admin');
     else setTab((t) => (t === 'admin' ? 'studio' : t));
   }, [g.account?.id, g.account?.role]);
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [tab]);
+  const [activeLeague, setActiveLeague] = useState<League | null>(null);
   const lab = g.lab;
+  const budget = activeLeague?.rules.budget ?? lab?.model.budget ?? 0;
+  const allowedTypes =
+    activeLeague?.rules.allowedTypes ?? (Object.keys(facilities) as FacilityType[]);
   const cell = lab?.model.cells.find((c) => c.id === selected);
   const placement = g.placements.find((p) => p.cellId === selected);
   const cost = lab ? totalCost(lab, g.placements) : 0;
@@ -70,7 +78,9 @@ export function GamePage() {
     setSelected(c?.id ?? null);
     if (c) {
       const p = g.placements.find((p) => p.cellId === c.id);
-      setType(p?.facilityType ?? c.allowedTypes[0]);
+      setType(
+        p?.facilityType ?? c.allowedTypes.find((t) => allowedTypes.includes(t)) ?? c.allowedTypes[0]
+      );
       setArea(p?.areaM2 ?? Math.min(40, c.maxAreaM2));
     }
   }
@@ -134,6 +144,7 @@ export function GamePage() {
                     await logout();
                     g.setAccount(null);
                     g.newDesign();
+                    setActiveLeague(null);
                   })
                 }
               >
@@ -147,6 +158,23 @@ export function GamePage() {
           )}
         </div>
       </header>
+      {activeLeague && tab === 'studio' && (
+        <div className="active-league-banner">
+          <div>
+            <span>기관 리그 설계</span>
+            <b>{activeLeague.title}</b>
+            <small>
+              예산 {won(budget)} · {allowedTypes.map((t) => facilities[t].name).join(' · ')}
+            </small>
+          </div>
+          <button className="outline-button" onClick={() => setTab('leaderboard')}>
+            고정 규칙·제출
+          </button>
+          <button className="text-button" onClick={() => setActiveLeague(null)}>
+            일반 설계로 전환
+          </button>
+        </div>
+      )}
       {g.error && (
         <div role="alert" className="global-message error">
           {g.error}
@@ -240,7 +268,7 @@ export function GamePage() {
               </div>
               <div>
                 <dt>설계 예산</dt>
-                <dd>{won(lab.model.budget)}</dd>
+                <dd>{won(budget)}</dd>
               </div>
               <div>
                 <dt>평가 대상</dt>
@@ -442,7 +470,7 @@ export function GamePage() {
                 </div>
               )}
               <div className="facility-dock">
-                {(Object.keys(facilities) as FacilityType[]).map((t) => {
+                {allowedTypes.map((t) => {
                   const Icon = icons[t];
                   return (
                     <button
@@ -502,20 +530,27 @@ export function GamePage() {
                   </span>
                   <b>현장 적합성 미확인</b>
                 </div>
+                {activeLeague && !cell.allowedTypes.some((t) => allowedTypes.includes(t)) && (
+                  <p className="form-error">
+                    이 구역에는 리그에서 허용한 시설을 설치할 수 없습니다. 다른 구역을 선택하세요.
+                  </p>
+                )}
                 <div className="facility-options">
-                  {cell.allowedTypes.map((t) => {
-                    const Icon = icons[t];
-                    return (
-                      <button
-                        key={t}
-                        className={type === t ? 'active' : ''}
-                        onClick={() => setType(t)}
-                      >
-                        <Icon size={18} />
-                        {facilities[t].name}
-                      </button>
-                    );
-                  })}
+                  {cell.allowedTypes
+                    .filter((t) => allowedTypes.includes(t))
+                    .map((t) => {
+                      const Icon = icons[t];
+                      return (
+                        <button
+                          key={t}
+                          className={type === t ? 'active' : ''}
+                          onClick={() => setType(t)}
+                        >
+                          <Icon size={18} />
+                          {facilities[t].name}
+                        </button>
+                      );
+                    })}
                 </div>
                 <p className="facility-description">{facilities[type].description}</p>
                 <label className="area-input">
@@ -558,12 +593,13 @@ export function GamePage() {
                     area <= 0 ||
                     area > cell.maxAreaM2 ||
                     !cell.allowedTypes.includes(type) ||
+                    !allowedTypes.includes(type) ||
                     cost -
                       (placement
                         ? placement.areaM2 * lab.model.unitCosts[placement.facilityType]
                         : 0) +
                       area * lab.model.unitCosts[type] >
-                      lab.model.budget
+                      budget
                   }
                   onClick={() =>
                     g.change([
@@ -617,11 +653,11 @@ export function GamePage() {
                 <span>추정 비용</span>
                 <b>
                   {won(cost)}
-                  <small> / {won(lab.model.budget)}</small>
+                  <small> / {won(budget)}</small>
                 </b>
               </div>
               <div className="budget-track">
-                <i style={{ width: Math.min(100, (cost / lab.model.budget) * 100) + '%' }} />
+                <i style={{ width: Math.min(100, (cost / budget) * 100) + '%' }} />
               </div>
               <span>{g.placements.length}개 시설 · 공개계획 참고 단가 · 부대비용 별도</span>
             </div>
@@ -637,7 +673,12 @@ export function GamePage() {
             </label>
             <button
               className="simulate-button"
-              disabled={working || !lab.model.simulationAvailable}
+              disabled={
+                working ||
+                !lab.model.simulationAvailable ||
+                cost > budget ||
+                g.placements.some((p) => !allowedTypes.includes(p.facilityType))
+              }
               onClick={() => (g.account ? void g.run() : setAuth(true))}
             >
               <Play size={17} />
@@ -697,13 +738,17 @@ export function GamePage() {
                   disabled={g.busy}
                   onClick={() =>
                     void g.action(async () => {
+                      if (activeLeague) {
+                        setTab('leaderboard');
+                        return;
+                      }
                       await repo.submit(g.job!.id);
                       g.setNotice('탐색 기록 제출 완료');
                     })
                   }
                 >
                   <Trophy size={15} />
-                  탐색 기록 제출
+                  {activeLeague ? '리그 규칙·제출로 이동' : '탐색 기록 제출'}
                 </button>
                 <a className="text-button" href={`/api/v1/simulations/${g.job?.id}/bundle`}>
                   <Download size={14} />
@@ -714,13 +759,26 @@ export function GamePage() {
           </aside>
         </div>
       ) : tab === 'leaderboard' ? (
-        <Leaderboard />
+        <CompetitionPage
+          account={g.account}
+          lab={lab}
+          initialLeague={!!activeLeague}
+          onDesign={(l) => {
+            g.newDesign();
+            setActiveLeague(l);
+            setSelected(null);
+            setType(l.rules.allowedTypes[0]);
+            g.setTitle(l.title.slice(0, 76) + ' 설계');
+            setTab('studio');
+          }}
+        />
       ) : tab === 'research' ? (
         <ResearchPage
           account={g.account}
           lab={lab}
           onReplay={(p) => {
             g.newDesign();
+            setActiveLeague(null);
             g.change(p);
             g.setTitle('연구 기록 배치 검토');
             setTab('studio');
