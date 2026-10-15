@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-10-15T19:46:19.796599+00:00",
+  "bbox": [
+    127.0525,
+    37.543,
+    127.0555,
+    37.5455
+  ],
+  "crs": "EPSG:4326",
+  "endpoint": "https://api.vworld.kr/req/data",
+  "layers": [
+    {
+      "layer": "LT_C_ASITSOILDRA",
+      "title": "배수등급",
+      "status": "OK",
+      "total": 2,
+      "returned": 2,
+      "completeResponse": true,
+      "attributeNames": [
+        "code_dc",
+        "label"
+      ],
+      "geometryTypes": [
+        "MultiPolygon"
+      ],
+      "referenceUrl": "https://www.vworld.kr/dev/v4dv_2ddataguide2_s002.do?svcIde=asitsoildra&apiVer=2"
+    },
+    {
+      "layer": "LT_C_ASITSOILDEP",
+      "title": "유효토심",
+      "status": "OK",
+      "total": 1,
+      "returned": 1,
+      "completeResponse": true,
+      "attributeNames": [
+        "code_ad",
+        "label"
+      ],
+      "geometryTypes": [
+        "MultiPolygon"
+      ],
+      "referenceUrl": "https://www.vworld.kr/dev/v4dv_2ddataguide2_s002.do?svcIde=asitsoildep&apiVer=2"
+    },
+    {
+      "layer": "LT_C_ASITDEEPSOIL",
+      "title": "심토토성",
+      "status": "OK",
+      "total": 2,
+      "returned": 2,
+      "completeResponse": true,
+      "attributeNames": [
+        "code_st",
+        "label"
+      ],
+      "geometryTypes": [
+        "MultiPolygon"
+      ],
+      "referenceUrl": "https://www.vworld.kr/dev/v4dv_2ddataguide2_s002.do?svcIde=asitdeepsoil&apiVer=2"
+    },
+    {
+      "layer": "LT_C_GIMSSCS",
+      "title": "토양도",
+      "status": "NOT_FOUND",
+      "total": 0,
+      "returned": 0,
+      "completeResponse": true,
+      "attributeNames": [],
+      "geometryTypes": [],
+      "referenceUrl": "https://www.vworld.kr/dev/v4dv_2ddataguide2_s002.do?svcIde=gimsscs&apiVer=2"
+    }
+  ],
+  "spatialRawSaved": false,
+  "includedInHydrology": false,
+  "additionalKeyRequired": false,
+  "script": "scripts/probe_vworld_soil.py",
+  "scriptSha256": "ce72be23f0af85e3b2aa7fc68cd5e99d14d577d51c0a70435688af07b655507a",
+  "limitations": [
+    "조회 성공은 원자료 저장·재배포 허락이 아님",
+    "API 갱신일은 토양 조사 시점의 증명이 아님",
+    "등급·토성·토심만으로 현장 침투율·지하수위·성토 상태 확정 불가",
+    "도시 포장 아래 원지반 및 실제 배수유역 대표성 미검증"
+  ]
+}
