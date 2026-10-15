@@ -22,4 +22,5 @@ public record LeagueRules(
     boolean official,
     @JsonInclude(JsonInclude.Include.NON_NULL) Integer placementLimit,
     @JsonInclude(JsonInclude.Include.NON_NULL) BigDecimal areaLimitM2,
-    @JsonInclude(JsonInclude.Include.NON_NULL) LeagueAward award) {}
+    @JsonInclude(JsonInclude.Include.NON_NULL) LeagueAward award,
+    @JsonInclude(JsonInclude.Include.NON_NULL) LeagueParticipationRules participation) {}

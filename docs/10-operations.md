@@ -46,3 +46,10 @@ PG_BIN=/Applications/Postgres.app/Contents/Versions/18/bin \
 ## 계산 캐시 운영
 
 `docs/24-simulation-cache.md`의 비공개 전용 디렉터리·128개/2 GiB/7일 상한 적용. 캐시는 재계산 가능한 임시 자료, `data/runs`의 작업별 재현 산출물과 다른 볼륨 경로 사용. 캐시 삭제는 기존 작업·순위·동의·다운로드 권한을 바꾸지 않음. 비활성화/경로 변경은 워커 설정으로만 수행. 로컬 파일 잠금·원자적 게시 범위이며 NFS·다중 호스트 공유나 동시 미스 계산 병합은 지원하지 않음. 실제 Oracle에서 캐시 읽기/쓰기 시간·적중률·보관량·큐 지연 실측 필요.
+
+
+## 리그 참가 PostgreSQL 통합 검사
+
+`simulation/.venv/bin/python scripts/verify_league_postgres.py`는 `.env.local`을 값 출력 없이 읽고 로컬 PostgreSQL에 UUID 이름의 독립 시험 DB를 생성. Java 25의 실제 HTTP·MFA·CSRF·트랜잭션 시험 후 성공/실패와 관계없이 자신이 생성한 DB를 삭제. 로컬 시험 계정의 CREATEDB 권한 필요; 운영 서비스 계정에 해당 권한을 부여하는 배포 지침이 아님. 원본 계산·공개 제출·리그 수 변화 검사, 0600 로그 경로와 통과 여부만 출력. 과학 모델 검증이나 기존 원본 DB의 쓰기 시험이 아님.
+
+CI도 별도 PostgreSQL 18.4 서비스 DB에서 같은 참가 통합 검사를 실행. CI의 공개 시험용 비밀번호는 서비스 컨테이너 전용이며 로컬·운영 비밀과 분리. 실제 Oracle 처리량·자원 제한은 별도 검증.

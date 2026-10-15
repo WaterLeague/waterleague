@@ -16,7 +16,7 @@ export const leagueDto = z.object({
   cancellationReason: z.string().max(500).nullable(),
   playable: z.boolean(),
   rules: z.object({
-    schemaVersion: z.union([z.literal(1), z.literal(2)]),
+    schemaVersion: z.union([z.literal(1), z.literal(2), z.literal(3)]),
     modelHash: hash,
     engineRevision: z.string().regex(/^[a-f0-9]{40}$/),
     generatorSha256: hash,
@@ -32,6 +32,15 @@ export const leagueDto = z.object({
     closesAt: time,
     validationLevel: z.literal('EXPLORATORY'),
     official: z.literal(false),
+    participation: z
+      .object({
+        access: z.enum(['PUBLIC', 'INVITE']),
+        admission: z.enum(['OPEN', 'APPROVAL']),
+        entryMode: z.enum(['INDIVIDUAL', 'TEAM']),
+        teamSizeLimit: z.number().int().min(2).max(10).nullable(),
+      })
+      .nullable()
+      .optional(),
     placementLimit: z.number().int().min(1).max(1000).nullable().optional(),
     areaLimitM2: z.number().positive().max(1000000).multipleOf(0.01).nullable().optional(),
     award: z

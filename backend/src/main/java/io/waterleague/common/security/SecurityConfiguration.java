@@ -34,7 +34,9 @@ public class SecurityConfiguration {
         .requestCache(cache -> cache.disable())
         .authorizeHttpRequests(
             auth ->
-                auth.requestMatchers(
+                auth.requestMatchers(HttpMethod.GET, "/api/v1/leagues/joined")
+                    .hasRole("MEMBER")
+                    .requestMatchers(
                         HttpMethod.GET,
                         "/api/v1/catalog",
                         "/api/v1/maps",

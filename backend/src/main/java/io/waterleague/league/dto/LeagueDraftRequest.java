@@ -20,4 +20,5 @@ public record LeagueDraftRequest(
     @Min(1) @Max(1000) Integer placementLimit,
     @DecimalMin("0.01") @DecimalMax("1000000") @Digits(integer = 7, fraction = 2)
         BigDecimal areaLimitM2,
-    @Valid LeagueAwardRequest award) {}
+    @Valid LeagueAwardRequest award,
+    @Valid LeagueParticipationRequest participation) {}

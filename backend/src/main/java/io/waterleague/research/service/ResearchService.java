@@ -83,15 +83,15 @@ public class ResearchService {
   public Object detail(Account a, UUID id) {
     authorize(a, id);
     research.audit(a.id(), "RESEARCH_READ", id);
-    return detailData(id);
+    return detailData(a, id);
   }
 
-  private Object detailData(UUID id) {
+  private Object detailData(Account a, UUID id) {
     var job = jobs.get(id).orElseThrow();
     var version = strategies.version(job.versionId(), job.ownerId()).orElseThrow();
     return Map.of(
         "leagueContexts",
-        research.leagueContexts(id),
+        research.leagueContexts(id, a.id(), a.organizationId()),
         "lab",
         snapshot(job),
         "simulation",
@@ -208,7 +208,7 @@ public class ResearchService {
         zip.closeEntry();
       }
       zip.putNextEntry(new ZipEntry("strategy-history.json"));
-      zip.write(json.write(detailData(id)).getBytes(java.nio.charset.StandardCharsets.UTF_8));
+      zip.write(json.write(detailData(a, id)).getBytes(java.nio.charset.StandardCharsets.UTF_8));
       zip.closeEntry();
       zip.putNextEntry(new ZipEntry("access-scope.json"));
       var exportScope = new LinkedHashMap<String, Object>(scope);

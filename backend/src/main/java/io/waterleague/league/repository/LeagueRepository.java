@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class LeagueRepository {
   private final JdbcTemplate db;
+  private final io.waterleague.common.service.JsonService json;
   private final RowMapper<League> mapper =
       (rs, n) ->
           new League(
@@ -37,8 +38,9 @@ public class LeagueRepository {
       "SELECT l.*,o.name organization_name FROM leagues l JOIN organizations o ON"
           + " o.id=l.organization_id ";
 
-  public LeagueRepository(JdbcTemplate db) {
+  public LeagueRepository(JdbcTemplate db, io.waterleague.common.service.JsonService json) {
     this.db = db;
+    this.json = json;
   }
 
   public Optional<League> get(UUID id, boolean lock) {
@@ -52,7 +54,9 @@ public class LeagueRepository {
       return db.query(
           SELECT + "WHERE l.organization_id=? ORDER BY l.created_at DESC LIMIT 100", mapper, org);
     return db.query(
-        SELECT + "WHERE l.state<>'DRAFT' AND o.approved=true ORDER BY l.created_at DESC LIMIT 100",
+        SELECT
+            + "WHERE l.state<>'DRAFT' AND o.approved=true AND l.access_mode='PUBLIC' ORDER BY"
+            + " l.created_at DESC LIMIT 100",
         mapper);
   }
 
@@ -86,6 +90,7 @@ public class LeagueRepository {
         l.rules(),
         l.rulesHash(),
         Timestamp.from(l.createdAt()));
+    access(l);
   }
 
   public void update(League l) {
@@ -102,6 +107,13 @@ public class LeagueRepository {
         l.rules(),
         l.rulesHash(),
         l.id());
+    access(l);
+  }
+
+  private void access(League l) {
+    boolean invite =
+        json.tree(l.rules()).path("participation").path("access").asString().equals("INVITE");
+    db.update("UPDATE leagues SET access_mode=? WHERE id=?", invite ? "INVITE" : "PUBLIC", l.id());
   }
 
   public void publish(UUID id, Instant at) {
@@ -155,31 +167,40 @@ public class LeagueRepository {
       BigDecimal score,
       BigDecimal cost,
       String fingerprint,
-      Instant now) {
+      Instant now,
+      UUID team) {
     db.update(
         "UPDATE leagues SET execution_hash=? WHERE id=? AND execution_hash IS NULL",
         fingerprint,
         league);
     db.update(
-        "INSERT INTO league_submissions(id,league_id,job_id,owner_id,score,cost,created_at)"
-            + " VALUES(?,?,?,?,?,?,?)",
+        "INSERT INTO league_submissions(id,league_id,job_id,owner_id,score,cost,created_at,team_id)"
+            + " VALUES(?,?,?,?,?,?,?,?)",
         UUID.randomUUID(),
         league,
         job,
         owner,
         score,
         cost,
-        Timestamp.from(now));
+        Timestamp.from(now),
+        team);
   }
 
   public List<Map<String, Object>> board(UUID league) {
     return db.query(
-        "SELECT display_name,score,cost,created_at FROM (SELECT"
-            + " a.display_name,s.score,s.cost,s.created_at,s.id,ROW_NUMBER() OVER(PARTITION BY"
-            + " s.owner_id ORDER BY s.score DESC,s.created_at,s.id) choice FROM league_submissions"
-            + " s JOIN accounts a ON a.id=s.owner_id WHERE s.league_id=? AND a.enabled=true AND"
-            + " a.approval_status='APPROVED') ranked WHERE choice=1 ORDER BY score"
-            + " DESC,created_at,id LIMIT 100",
+        "SELECT display_name,score,cost,created_at FROM (SELECT COALESCE(t.name,a.display_name)"
+            + " display_name,s.score,s.cost,s.created_at,s.id,ROW_NUMBER() OVER(PARTITION BY"
+            + " s.team_id,CASE WHEN s.team_id IS NULL THEN s.owner_id ELSE NULL END ORDER BY"
+            + " s.score DESC,s.created_at,s.id) choice FROM league_submissions s JOIN accounts a ON"
+            + " a.id=s.owner_id LEFT JOIN league_teams t ON t.id=s.team_id LEFT JOIN"
+            + " league_participants p ON p.league_id=s.league_id AND p.owner_id=s.owner_id WHERE"
+            + " s.league_id=? AND a.enabled=true AND a.approval_status='APPROVED' AND (p.owner_id"
+            + " IS NULL OR p.state='APPROVED') AND (s.team_id IS NULL OR NOT EXISTS(SELECT 1 FROM"
+            + " league_team_members m JOIN league_participants mp ON mp.league_id=m.league_id AND"
+            + " mp.owner_id=m.owner_id JOIN accounts ma ON ma.id=m.owner_id WHERE"
+            + " m.team_id=s.team_id AND (mp.state<>'APPROVED' OR ma.enabled=false OR"
+            + " ma.approval_status<>'APPROVED' OR ma.role<>'MEMBER' OR ma.member_type<>'PLAYER')))"
+            + " ) ranked WHERE choice=1 ORDER BY score DESC,created_at,id LIMIT 100",
         (rs, n) ->
             Map.of(
                 "displayName",

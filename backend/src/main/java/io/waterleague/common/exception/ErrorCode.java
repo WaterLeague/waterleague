@@ -26,6 +26,7 @@ public enum ErrorCode {
   LEAGUE_IMMUTABLE(HttpStatus.CONFLICT, "공개 상태 또는 규칙 버전을 확인해 주세요"),
   LEAGUE_CLOSED(HttpStatus.CONFLICT, "현재 제출을 받지 않는 리그입니다"),
   LEAGUE_RULES_MISMATCH(HttpStatus.UNPROCESSABLE_ENTITY, "리그의 모델·시설·실행 조건과 일치하지 않습니다"),
+  LEAGUE_PARTICIPATION_CONFLICT(HttpStatus.CONFLICT, "참가 승인·팀 구성·최신 상태를 확인해 주세요"),
   LEAGUE_SUBMISSION_LIMIT(HttpStatus.CONFLICT, "이 리그의 제출 한도를 사용했습니다"),
   INTERNAL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "요청을 처리하지 못했습니다");
 

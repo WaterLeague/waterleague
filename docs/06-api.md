@@ -35,7 +35,7 @@
 | POST /auth/mfa/confirm | 등록 세션·CSRF·OTP 확인 후 업무 세션 발급 |
 | GET /admin/members?status=PENDING&after=UUID | 단일 ADMIN, 상태 필터·100건 커서 목록 |
 | GET/POST /admin/members/{id}/reviews | ADMIN, 검토 이력·승인/반려/정지·상태 경합 확인 |
-| GET /leagues, /leagues/{id} | 공개 리그·고정 규칙·모델 원문·리그 순위, 초안은 비공개 |
+| GET /leagues, /leagues/{id} | 공개 목록·권한별 상세·고정 규칙·모델 원문·순위, 초안은 비공개 |
 | GET /leagues/{id}/mine | 본인 리그 제출 기록 |
 | POST /leagues/{id}/submissions | 플레이어, jobId·rulesHash 확인·한도·기간·실행 지문 검사 |
 | GET/POST /institution/leagues | 승인된 기업·기관·정부 회원, 소속 조직 초안 목록·생성 |
@@ -48,6 +48,30 @@
 리그 참가만으로 연구 동의를 부여하지 않는다. 조직 리그 결과는 주최 조직에 대한 별도 동의가 있는 경우에만 연구 열람·내보내기에 포함한다.
 
 리그 초안 추가 입력: `placementLimit`(배치 구역 수), `areaLimitM2`(합산 면적, 소수 두 자리), `award`(`prizeKrw`, `winnerCount`, `notice`). 새 규칙 버전 2에 포함하며 공개 후 고정. 필드 생략 시 모델 상한·상금 없음 적용, 기존 버전 1 규칙 원문·hash 유지. 제출은 저장 배치의 개수·면적을 서버에서 재검사하며 초과 시 422 `LEAGUE_RULES_MISMATCH`. [제한·상금 계약](20-league-limits-awards.md) 참조.
+
+## 리그 참가·팀전 서버 API
+
+schema 3은 초안에 `participation: {access, admission, entryMode, teamSizeLimit}`를 포함. 값·이전 규칙 호환·개인/팀 한도는 [참가 계약](25-league-participation.md) 참조. 신규 화면 연결은 후속 단계이며 현재 초안 화면은 schema 2 유지.
+
+| API | 입력·권한 |
+| --- | --- |
+| GET /leagues/joined | 플레이어, 신청 대기/승인 리그 최근 100개 |
+| POST /leagues/invitations/preview | 플레이어, code 본문; 유효한 초대의 고정 규칙만 반환 |
+| GET/POST /leagues/{id}/participation | 플레이어 본인 상태·이벤트·팀·누적 횟수 / rulesHash·선택 code로 참가 |
+| POST /leagues/{id}/participation/withdraw | 본인, revision; 참가 철회, 제출 이력·횟수 보존 |
+| GET /institution/leagues/{id}/participants?after=UUID | MFA 주최 조직, 100건 items·nextCursor |
+| GET /institution/leagues/{id}/participants/{owner}/events | 주최 조직, 해당 참가자의 최근 상태 이력 100건 |
+| POST /institution/leagues/{id}/participants/{owner}/decisions | 주최 조직, revision·state(APPROVED/REJECTED)·reason |
+| GET/POST/DELETE /institution/leagues/{id}/invitation | 주최 조직, 유효 여부·만료 조회 / 코드 신규 발급·회전 / 폐기 |
+| POST /leagues/{id}/teams | 승인 참가자, name; 팀 생성·초대 코드 한 번 반환 |
+| POST /leagues/{id}/teams/preview | 승인 참가자, code; 팀 이름·정원·규칙 확인 |
+| POST /leagues/{id}/teams/join | 승인 참가자, code·teamId·rulesHash; 팀 정원·기존 소속 검사 |
+| POST /leagues/{id}/teams/leave | 첫 제출 전 본인 탈퇴; 팀장은 혼자일 때 해산 |
+| POST/DELETE /leagues/{id}/teams/invitation | 첫 제출 전 팀장, 팀 코드 회전 / 폐기 |
+
+코드는 URL-safe 43자·POST 본문 전용, DB 해시 저장, 코드 반환 no-store. 변경·코드 검증은 회원별 시간당 120회 제한과 CSRF 적용. 비공개 리그는 공개 목록 제외; 상세 GET은 주최·대기/승인 참가자만, 대기자는 `boardVisible=false`·빈 순위. 참가 반려/탈퇴 후 본인 `/participation` 이력은 계속 조회 가능하나 비공개 상세는 차단. 일반 연구/사업 ZIP에서도 다른 조직의 비공개 리그 맥락 제외. 본인 ZIP에는 자신의 전체 제출 맥락 유지.
+
+`reviewRequired=true`는 OPEN 리그의 재신청도 주최자 검토가 필요함을 뜻함. 승인 변경과 팀 정원·첫 제출 구성 고정·공유 한도는 서버 트랜잭션에서 처리. 불가능한 참가·팀 변경은 409 `LEAGUE_PARTICIPATION_CONFLICT`. 연구 상세와 ZIP의 `leagueContexts[].teamName`은 제출 팀 이름이며 팀원 개인 자료 열람 권한을 부여하지 않음.
 
 ## 사업 활용 동의·기관 검토
 

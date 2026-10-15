@@ -36,8 +36,8 @@ public class LeagueController {
   }
 
   @GetMapping("/api/v1/leagues/{id}")
-  public Object detail(@PathVariable UUID id) {
-    return leagues.detail(id);
+  public Object detail(@PathVariable UUID id, Principal p) {
+    return leagues.detail(id, p == null ? null : accounts.current(p.getName()));
   }
 
   @GetMapping("/api/v1/leagues/{id}/mine")

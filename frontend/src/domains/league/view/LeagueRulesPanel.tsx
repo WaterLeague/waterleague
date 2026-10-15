@@ -22,8 +22,23 @@ export function LeagueRulesPanel({ league: l }: { league: League }) {
         </div>
         <div>
           <dt>제출 한도</dt>
-          <dd>회원별 {l.rules.submissionLimit}회 · 최고 점수 반영</dd>
+          <dd>
+            {l.rules.participation?.entryMode === 'TEAM' ? '팀 전체' : '회원별'}{' '}
+            {l.rules.submissionLimit}회 · 최고 점수 반영
+          </dd>
         </div>
+        {l.rules.participation && (
+          <div>
+            <dt>참가 방식</dt>
+            <dd>
+              {l.rules.participation.access === 'INVITE' ? '초대 전용' : '전체 공개'} ·{' '}
+              {l.rules.participation.admission === 'APPROVAL' ? '주최자 승인' : '즉시 참가'} ·{' '}
+              {l.rules.participation.entryMode === 'TEAM'
+                ? `팀전 · 최대 ${l.rules.participation.teamSizeLimit}명`
+                : '개인전'}
+            </dd>
+          </div>
+        )}
         {l.rules.placementLimit != null && l.rules.areaLimitM2 != null && (
           <div>
             <dt>배치 제한</dt>

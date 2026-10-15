@@ -23,5 +23,6 @@ export interface ResearchDetail {
     state: string;
     rulesHash: string;
     cancellationReason: string;
+    teamName?: string;
   }[];
 }

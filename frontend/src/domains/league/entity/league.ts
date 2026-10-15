@@ -1,6 +1,6 @@
 import type { FacilityType, Lab, Board } from '../../game/entity/game';
 export interface LeagueRules {
-  schemaVersion: 1 | 2;
+  schemaVersion: 1 | 2 | 3;
   modelHash: string;
   engineRevision: string;
   generatorSha256: string;
@@ -16,6 +16,13 @@ export interface LeagueRules {
   placementLimit?: number | null;
   areaLimitM2?: number | null;
   award?: LeagueAward | null;
+  participation?: LeagueParticipationRules | null;
+}
+export interface LeagueParticipationRules {
+  access: 'PUBLIC' | 'INVITE';
+  admission: 'OPEN' | 'APPROVAL';
+  entryMode: 'INDIVIDUAL' | 'TEAM';
+  teamSizeLimit: number | null;
 }
 export interface LeagueAward {
   prizeKrw: number;
@@ -42,6 +49,7 @@ export interface LeagueDetail {
   league: League;
   lab: Lab;
   entries: Board['entries'];
+  boardVisible?: boolean;
 }
 export interface LeagueDraft {
   modelHash: string;

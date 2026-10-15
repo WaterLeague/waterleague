@@ -29,6 +29,7 @@ public class LeagueService {
   private final ExploratoryResultService results;
   private final JsonService json;
   private final LeagueMapper mapper;
+  private final LeagueParticipationService participation;
 
   public LeagueService(
       LeagueRepository l,
@@ -38,7 +39,8 @@ public class LeagueService {
       StrategyRepository s,
       ExploratoryResultService e,
       JsonService x,
-      LeagueMapper v) {
+      LeagueMapper v,
+      LeagueParticipationService p) {
     leagues = l;
     research = r;
     model = m;
@@ -47,6 +49,7 @@ public class LeagueService {
     results = e;
     json = x;
     mapper = v;
+    participation = p;
   }
 
   private void institution(Account a) {
@@ -64,6 +67,7 @@ public class LeagueService {
   }
 
   private League managed(Account a, UUID id) {
+    a = participation.lockAccount(a);
     institution(a);
     var l = get(id, true);
     if (!a.organizationId().equals(l.organizationId()))
@@ -71,10 +75,11 @@ public class LeagueService {
     return l;
   }
 
-  private League visible(UUID id) {
+  private League visible(UUID id, Account a) {
     var l = get(id, false);
     if (l.state().equals("DRAFT") || !research.approved(l.organizationId()))
       throw new DomainException(ErrorCode.RESOURCE_NOT_FOUND);
+    participation.requireView(l, a);
     return l;
   }
 
@@ -91,18 +96,21 @@ public class LeagueService {
         .toList();
   }
 
-  public Object detail(UUID id) {
-    var l = visible(id);
+  public Object detail(UUID id, Account a) {
+    var l = visible(id, a);
     if (!json.hash(l.modelSource()).equals(l.modelHash())
         || !json.hash(l.rules()).equals(l.rulesHash()))
       throw new DomainException(ErrorCode.RESULT_QUALITY_FAILED);
+    boolean boardVisible = participation.boardVisible(l, a);
     return Map.of(
         "league",
         mapper.view(l, model.contains(l.modelHash()), Instant.now()),
         "lab",
         Map.of("modelHash", l.modelHash(), "model", json.tree(l.modelSource())),
         "entries",
-        mapper.ranks(leagues.board(id)));
+        boardVisible ? mapper.ranks(leagues.board(id)) : List.of(),
+        "boardVisible",
+        boardVisible);
   }
 
   private League draft(Account a, UUID id, LeagueDraftRequest d, Instant created) {
@@ -144,9 +152,17 @@ public class LeagueService {
     if ((award.prizeKrw() == 0 && award.winnerCount() != 0)
         || (award.prizeKrw() > 0 && (award.winnerCount() < 1 || award.notice().length() < 10)))
       throw new DomainException(ErrorCode.REQUEST_INVALID);
+    LeagueParticipationRules entry = null;
+    if (d.participation() != null) {
+      var p = d.participation();
+      if ((p.entryMode() == LeagueParticipationRules.EntryMode.TEAM) != (p.teamSizeLimit() != null))
+        throw new DomainException(ErrorCode.REQUEST_INVALID);
+      entry =
+          new LeagueParticipationRules(p.access(), p.admission(), p.entryMode(), p.teamSizeLimit());
+    }
     var rules =
         new LeagueRules(
-            2,
+            entry == null ? 2 : 3,
             selected.hash(),
             selected.model().path("engineRevision").asString(),
             selected.model().path("generatorSha256").asString(),
@@ -161,7 +177,8 @@ public class LeagueService {
             false,
             placementLimit,
             areaLimit,
-            award);
+            award,
+            entry);
     String rulesText = json.write(rules);
     return new League(
         id,
@@ -185,6 +202,7 @@ public class LeagueService {
 
   @Transactional
   public Object create(Account a, LeagueDraftRequest d) {
+    a = participation.lockAccount(a);
     institution(a);
     if (d.baseRevision() != 0) throw new DomainException(ErrorCode.CONFLICT);
     leagues.lockOrganization(a.organizationId());
@@ -230,7 +248,7 @@ public class LeagueService {
   }
 
   public Object mine(Account a, UUID id) {
-    visible(id);
+    visible(id, a);
     return leagues.own(id, a.id());
   }
 
@@ -238,19 +256,21 @@ public class LeagueService {
   public Object submit(Account a, UUID id, UUID jobId, String rulesHash) {
     if (!a.usable() || !a.role().equals("MEMBER") || !a.memberType().equals("PLAYER"))
       throw new DomainException(ErrorCode.ACCESS_DENIED);
-    jobs.lockOwner(a.id());
+    a = participation.lockPlayer(a);
     var l = get(id, true);
     if (l.state().equals("DRAFT") || !research.approved(l.organizationId()))
       throw new DomainException(ErrorCode.RESOURCE_NOT_FOUND);
     if (!l.rulesHash().equals(rulesHash) || !json.hash(l.rules()).equals(rulesHash))
       throw new LeagueException(ErrorCode.LEAGUE_RULES_MISMATCH);
+    participation.requireView(l, a);
+    UUID team = participation.submissionTeam(l, a);
     var existing = leagues.existing(id, jobId, a.id());
     if (existing.isPresent()) return existing.get();
     Instant now = Instant.now();
     if (!l.state().equals("PUBLISHED") || now.isBefore(l.opensAt()) || !now.isBefore(l.closesAt()))
       throw new LeagueException(ErrorCode.LEAGUE_CLOSED);
     var rules = json.read(l.rules(), LeagueRules.class);
-    if (leagues.count(id, a.id()) >= rules.submissionLimit())
+    if (participation.submissions(id, a.id(), team) >= rules.submissionLimit())
       throw new LeagueException(ErrorCode.LEAGUE_SUBMISSION_LIMIT);
     var job =
         jobs.get(jobId, a.id())
@@ -290,7 +310,9 @@ public class LeagueService {
                 + engine.path("binarySha256").asString());
     if (l.executionHash() != null && !l.executionHash().equals(fingerprint))
       throw new LeagueException(ErrorCode.LEAGUE_RULES_MISMATCH);
-    leagues.submit(id, jobId, a.id(), score, version.cost(), fingerprint, now);
+    leagues.submit(id, jobId, a.id(), score, version.cost(), fingerprint, now, team);
+    // 첫 유효 제출과 팀 구성 고정을 같은 트랜잭션에서 기록한다.
+    participation.freeze(team);
     research.audit(a.id(), "LEAGUE_SUBMITTED", id);
     return leagues.existing(id, jobId, a.id()).orElseThrow();
   }

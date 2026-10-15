@@ -92,6 +92,7 @@ export function ResearchPage({
                       {detail.leagueContexts.map((l) => (
                         <div key={l.id}>
                           <b>{l.title}</b>
+                          {l.teamName && <p>제출 팀: {l.teamName}</p>}
                           <p>
                             {l.state === 'CANCELLED'
                               ? '취소된 리그 · ' + l.cancellationReason

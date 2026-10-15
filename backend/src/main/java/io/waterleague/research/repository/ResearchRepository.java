@@ -9,9 +9,17 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class ResearchRepository {
   private final JdbcTemplate db;
+  private final String ownerLockClause;
 
   public ResearchRepository(JdbcTemplate d) {
     db = d;
+    boolean postgres =
+        Boolean.TRUE.equals(
+            d.execute(
+                (org.springframework.jdbc.core.ConnectionCallback<Boolean>)
+                    connection ->
+                        connection.getMetaData().getDatabaseProductName().equals("PostgreSQL")));
+    ownerLockClause = postgres ? " FOR NO KEY UPDATE" : " FOR UPDATE";
   }
 
   public List<Map<String, Object>> organizations() {
@@ -27,7 +35,8 @@ public class ResearchRepository {
   }
 
   public void ownerLock(UUID owner) {
-    db.queryForObject("SELECT id FROM accounts WHERE id=? FOR UPDATE", UUID.class, owner);
+    // 외래키 확인의 KEY SHARE는 허용하고 계정 변경·경쟁 작업만 직렬화한다.
+    db.queryForObject("SELECT id FROM accounts WHERE id=?" + ownerLockClause, UUID.class, owner);
   }
 
   public void consent(UUID owner, UUID org, boolean value) {
@@ -113,10 +122,12 @@ public class ResearchRepository {
         hash);
   }
 
-  public List<Map<String, Object>> leagueContexts(UUID job) {
+  public List<Map<String, Object>> leagueContexts(UUID job, UUID viewer, UUID organization) {
     return db.query(
-        "SELECT l.id,l.title,l.rules,l.rules_hash,l.state,l.cancellation_reason FROM leagues l JOIN"
-            + " league_submissions s ON s.league_id=l.id WHERE s.job_id=? ORDER BY s.created_at",
+        "SELECT l.id,l.title,l.rules,l.rules_hash,l.state,l.cancellation_reason,t.name team_name"
+            + " FROM leagues l JOIN league_submissions s ON s.league_id=l.id LEFT JOIN league_teams"
+            + " t ON t.id=s.team_id WHERE s.job_id=? AND (s.owner_id=? OR l.access_mode='PUBLIC' OR"
+            + " l.organization_id=?) ORDER BY s.created_at",
         (rs, n) ->
             Map.of(
                 "id",
@@ -129,11 +140,15 @@ public class ResearchRepository {
                 rs.getString("rules_hash"),
                 "state",
                 rs.getString("state"),
+                "teamName",
+                rs.getString("team_name") == null ? "" : rs.getString("team_name"),
                 "cancellationReason",
                 rs.getString("cancellation_reason") == null
                     ? ""
                     : rs.getString("cancellation_reason")),
-        job);
+        job,
+        viewer,
+        organization);
   }
 
   public void audit(UUID actor, String action, UUID object) {

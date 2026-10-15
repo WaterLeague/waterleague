@@ -6,7 +6,14 @@ export function mapLeague(value: unknown): League {
   if (!p.success) throw new LeagueDataError();
   const l = p.data;
   const r = l.rules;
-  if (r.schemaVersion === 2 && (!r.placementLimit || !r.areaLimitM2 || !r.award))
+  if (r.schemaVersion >= 2 && (!r.placementLimit || !r.areaLimitM2 || !r.award))
+    throw new LeagueDataError();
+  if (
+    (r.schemaVersion === 3 && !r.participation) ||
+    (r.schemaVersion < 3 && r.participation) ||
+    (r.participation &&
+      (r.participation.entryMode === 'TEAM') !== (r.participation.teamSizeLimit !== null))
+  )
     throw new LeagueDataError();
   if (
     r.award &&

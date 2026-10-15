@@ -74,3 +74,24 @@ it('면적 정밀도와 상금·수상 인원·안내 불일치 거부', () => {
   none.rules.award = { prizeKrw: 0, winnerCount: 0, notice: '' };
   expect(mapLeague(none).rules.award?.prizeKrw).toBe(0);
 });
+
+it('참가 규칙 버전과 팀 정원 일치 검사', () => {
+  const l = fixture();
+  l.rules.schemaVersion = 3;
+  expect(() => mapLeague(l)).toThrow();
+  l.rules.participation = {
+    access: 'INVITE',
+    admission: 'APPROVAL',
+    entryMode: 'TEAM',
+    teamSizeLimit: 4,
+  };
+  expect(mapLeague(l).rules.participation?.teamSizeLimit).toBe(4);
+  l.rules.participation.teamSizeLimit = null;
+  expect(() => mapLeague(l)).toThrow();
+  l.rules.participation.entryMode = 'INDIVIDUAL';
+  expect(mapLeague(l).rules.participation?.entryMode).toBe('INDIVIDUAL');
+  l.rules.participation.teamSizeLimit = 2;
+  expect(() => mapLeague(l)).toThrow();
+  l.rules.schemaVersion = 2;
+  expect(() => mapLeague(l)).toThrow();
+});
