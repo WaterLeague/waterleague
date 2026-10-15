@@ -1,62 +1,114 @@
 package io.waterleague.common.security;
 
 import io.waterleague.common.exception.*;
-import org.springframework.context.annotation.*;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.config.Customizer;
-import org.springframework.security.core.userdetails.*;
-import org.springframework.http.HttpMethod;
-import tools.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.util.LinkedHashMap;
+import org.springframework.context.annotation.*;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.core.userdetails.*;
+import org.springframework.security.web.SecurityFilterChain;
+import tools.jackson.databind.ObjectMapper;
 
 @org.springframework.session.jdbc.config.annotation.web.http.EnableJdbcHttpSession
 @Configuration
 public class SecurityConfiguration {
-    @Bean
-    SecurityFilterChain security(HttpSecurity http, ObjectMapper json) throws Exception {
-        return http
-            .csrf(Customizer.withDefaults())
-            .cors(cors -> cors.disable())
-            .httpBasic(basic -> basic.disable())
-            .formLogin(form -> form.disable())
-            .logout(logout -> logout.disable())
-            .requestCache(cache -> cache.disable())
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers(HttpMethod.GET, "/api/v1/catalog", "/api/v1/maps", "/api/v1/lab", "/api/v1/leaderboard", "/api/v1/organizations", "/api/v1/auth/csrf", "/actuator/health").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/v1/auth/register", "/api/v1/auth/login").permitAll()
-                .requestMatchers("/api/v1/research/**").hasRole("INSTITUTION")
-                .requestMatchers("/api/v1/auth/**", "/api/v1/strategies/**", "/api/v1/simulations/**", "/api/v1/submissions", "/api/v1/consents/**").authenticated()
-                .anyRequest().denyAll())
-            .exceptionHandling(errors -> errors
-                .authenticationEntryPoint((request, response, error) -> write(json, request, response, ErrorCode.AUTHENTICATION_REQUIRED))
-                .accessDeniedHandler((request, response, error) -> write(json, request, response, ErrorCode.ACCESS_DENIED)))
-            .headers(headers -> headers
-                .contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'none'; frame-ancestors 'none'; base-uri 'none'"))
-                .frameOptions(frame -> frame.deny())
-                .referrerPolicy(ref -> ref.policy(org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER)))
-            .build();
-    }
-    @Bean
-    org.springframework.security.crypto.password.PasswordEncoder encoder(){return new org.springframework.security.crypto.argon2.Argon2PasswordEncoder(16,32,1,19456,2);}
-    @Bean
-    UserDetailsService users() {
-        // 회원 저장소 연결 전 기본 계정 생성과 인증 우회를 차단한다.
-        return username -> { throw new UsernameNotFoundException("인증 정보 없음"); };
-    }
-    private void write(ObjectMapper json, HttpServletRequest request, HttpServletResponse response, ErrorCode code) throws IOException {
-        var problem = ProblemFactory.create(code, request);
-        var body = new LinkedHashMap<String, Object>();
-        body.put("type", problem.getType().toString());
-        body.put("title", problem.getTitle());
-        body.put("status", problem.getStatus());
-        body.put("detail", problem.getDetail());
-        body.putAll(problem.getProperties());
-        response.setStatus(code.status().value());
-        response.setContentType("application/problem+json");
-        response.setCharacterEncoding("UTF-8");
-        json.writeValue(response.getWriter(), body);
-    }
+  @Bean
+  SecurityFilterChain security(
+      HttpSecurity http,
+      ObjectMapper json,
+      io.waterleague.account.repository.AccountRepository accounts)
+      throws Exception {
+    return http.addFilterAfter(
+            new SessionPolicyFilter(accounts),
+            org.springframework.security.web.context.SecurityContextHolderFilter.class)
+        .addFilterBefore(
+            new RequestSizeFilter(json), org.springframework.security.web.csrf.CsrfFilter.class)
+        .csrf(Customizer.withDefaults())
+        .cors(cors -> cors.disable())
+        .httpBasic(basic -> basic.disable())
+        .formLogin(form -> form.disable())
+        .logout(logout -> logout.disable())
+        .requestCache(cache -> cache.disable())
+        .authorizeHttpRequests(
+            auth ->
+                auth.requestMatchers(
+                        HttpMethod.GET,
+                        "/api/v1/catalog",
+                        "/api/v1/maps",
+                        "/api/v1/lab",
+                        "/api/v1/leaderboard",
+                        "/api/v1/organizations",
+                        "/api/v1/auth/csrf",
+                        "/actuator/health")
+                    .permitAll()
+                    .requestMatchers(HttpMethod.POST, "/api/v1/auth/register", "/api/v1/auth/login")
+                    .permitAll()
+                    .requestMatchers("/api/v1/research/**")
+                    .hasRole("INSTITUTION")
+                    .requestMatchers(
+                        "/api/v1/auth/**",
+                        "/api/v1/strategies/**",
+                        "/api/v1/simulations/**",
+                        "/api/v1/submissions",
+                        "/api/v1/consents/**")
+                    .authenticated()
+                    .anyRequest()
+                    .denyAll())
+        .exceptionHandling(
+            errors ->
+                errors
+                    .authenticationEntryPoint(
+                        (request, response, error) ->
+                            write(json, request, response, ErrorCode.AUTHENTICATION_REQUIRED))
+                    .accessDeniedHandler(
+                        (request, response, error) ->
+                            write(json, request, response, ErrorCode.ACCESS_DENIED)))
+        .headers(
+            headers ->
+                headers
+                    .contentSecurityPolicy(
+                        csp ->
+                            csp.policyDirectives(
+                                "default-src 'none'; frame-ancestors 'none'; base-uri 'none'"))
+                    .frameOptions(frame -> frame.deny())
+                    .referrerPolicy(
+                        ref ->
+                            ref.policy(
+                                org.springframework.security.web.header.writers
+                                    .ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER)))
+        .build();
+  }
+
+  @Bean
+  org.springframework.security.crypto.password.PasswordEncoder encoder() {
+    return new org.springframework.security.crypto.argon2.Argon2PasswordEncoder(
+        16, 32, 1, 19456, 2);
+  }
+
+  @Bean
+  UserDetailsService users() {
+    // 회원 저장소 연결 전 기본 계정 생성과 인증 우회를 차단한다.
+    return username -> {
+      throw new UsernameNotFoundException("인증 정보 없음");
+    };
+  }
+
+  private void write(
+      ObjectMapper json, HttpServletRequest request, HttpServletResponse response, ErrorCode code)
+      throws IOException {
+    var problem = ProblemFactory.create(code, request);
+    var body = new LinkedHashMap<String, Object>();
+    body.put("type", problem.getType().toString());
+    body.put("title", problem.getTitle());
+    body.put("status", problem.getStatus());
+    body.put("detail", problem.getDetail());
+    body.putAll(problem.getProperties());
+    response.setStatus(code.status().value());
+    response.setContentType("application/problem+json");
+    response.setCharacterEncoding("UTF-8");
+    json.writeValue(response.getWriter(), body);
+  }
 }

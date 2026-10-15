@@ -7,6 +7,7 @@ ROOT=Path(__file__).resolve().parents[2]
 sys.path.insert(0,str(ROOT/'scripts'))
 from local_config import load
 load()
+os.umask(0o077)
 MODEL_PATH=ROOT/'data/models/seongsu-lab.json'
 ARTIFACTS=Path(os.environ.get('ARTIFACTS_PATH',ROOT/'data/runs')).resolve()
 
@@ -27,7 +28,7 @@ def process(conn,job):
  state='REJECTED';error='INPUT_HASH_MISMATCH';result=None
  if expected==job['input_hash'] and model_hash==job['model_hash']:
   (path/'request.json').write_text(json.dumps(payload,ensure_ascii=False));(path/'model-source.json').write_bytes(model_bytes)
-  env={k:v for k,v in os.environ.items() if k not in ['DATABASE_URL','DB_PASSWORD','KMA_API_KEY']};env['PYTHONPATH']=str(ROOT/'simulation')
+  env={k:v for k,v in os.environ.items() if k in ['PATH','LANG','LC_ALL','SWMM_LIBRARY']};env['PYTHONPATH']=str(ROOT/'simulation')
   child=subprocess.Popen([sys.executable,'-m','waterleague_sim.run_job',str(path)],env=env,start_new_session=True,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
   try:
    code=child.wait(timeout=90)

@@ -8,6 +8,10 @@
 
 Argon2id 최소 m=19MiB·t=2·p=1에서 성능 측정·상향. 비밀번호 길이 12~128자, 인증 실패 메시지 일반화, 가입·로그인·복구 rate limit. 이메일 검증·재설정·유출 비밀번호 검사·기관 MFA/IdP는 공개 운영 전 게이트. [OWASP 비밀번호 지침](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html) 참고.
 
+기관 인증 구현: [RFC 6238](https://www.rfc-editor.org/rfc/rfc6238) TOTP 6자리·30초·인접 1구간 허용, 사용 카운터 조건부 갱신으로 재사용 거부. 기관별 비밀은 계정 ID를 AAD로 한 AES-256-GCM 암호화 저장, `MFA_ENCRYPTION_KEY`는 DB와 분리. 키·등록 정보 부재 시 기관 로그인 거부. 공개 가입에서 등록·역할 변경 불가, 로컬 운영 명령에서 소속 확인 후 기존 계정 승격. 기관 MFA는 피싱 저항성을 제공하지 않으므로 운영 IdP/WebAuthn 도입 전 위험 검토 필요.
+
+로그인 세션 절대 만료 8시간, 유휴 만료 30분. 매 요청 계정 활성 상태·현재 역할·기관 MFA 확인. 권한 변경·재등록 시 기존 세션 삭제. JSON 본문 64 KiB 상한, 전역 작업 입장 잠금으로 큐 상한 경합 차단.
+
 상태 변경 CSRF 검사, SameSite만으로 대체 금지. 동일 출처 기본, wildcard CORS+credentials 금지. HTTPS·운영 HSTS·CSP·frame-ancestors none·nosniff·Referrer-Policy. 개발 HMR 예외를 운영에 복사 금지. DTO 검증·과대 본문·unknown field·비유한 수 거부, 매개변수 쿼리·sort allowlist, HTML 원문 렌더링 금지.
 
 ## 객체 권한

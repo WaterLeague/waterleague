@@ -9,11 +9,11 @@
   "budget": 300000000,
   "maxPlacements": 13,
   "unitCosts": {
-    "RAIN_GARDEN": 180000,
-    "PERMEABLE_PAVEMENT": 120000,
-    "GREEN_ROOF": 220000
+    "RAIN_GARDEN": 560000,
+    "PERMEABLE_PAVEMENT": 110000,
+    "GREEN_ROOF": 260000
   },
-  "costEvidence": "ASSUMED_UNVERIFIED_KRW_ESTIMATE",
+  "costEvidence": "PUBLIC_PLAN_REFERENCE_SITE_TRANSFER_UNVERIFIED",
   "geometrySourceHash": "df5ff0d7c4d81517d4fdd55f73f6b0cb37cd4bacf8af2bb883251b03010a94e0",
   "cells": [
     {
@@ -1760,6 +1760,9 @@
     "불투수율 100%, 경사 1%, 유출 폭 면적 제곱근 가정",
     "시설 제원·토양·초기 함수 상태·설치 가능성 가정; 현장 조사·보정 없음",
     "실제 건물 경계와 실측 강우가 포함되어도 현장 예측 검증을 의미하지 않음",
+    "선정 표면의 잔여 불투수면 유출 전량을 해당 LID로 유입시키는 가정; 실제 유입 동선 미검증",
+    "증발 0 가정·최종 잔여저류는 평가체적에 포함; 녹화지붕의 일시 저류·장기 증발편익을 점수로 산정하지 않음",
+    "유량 시계열은 1분 보고시각 보간값이며 분 평균값이 아님; 실제 관망 합류 첨두·침수깊이 산정 불가",
     "2024-07-18 05:00~23:59 KST 고정 비교; 마지막 강우 15:40 이후 8시간 19분 관측 무강우 포함"
   ],
   "hydrology": {
@@ -1775,24 +1778,34 @@
   },
   "scoreRule": "VOLUME_WITH_FINAL_STORAGE_V1",
   "rainfallSource": "기상청 서울 108 관측소 · 2024.07.18",
-  "generatorSha256": "d710290db2c7828d13fccad894068459d71418f902f8f37ff45a74d7c412633e",
+  "generatorSha256": "1754562f19f0860daa127f34e35c6336e2884d5779b9cd531d1811088f702823",
   "currency": "KRW",
   "costModel": {
     "currency": "KRW",
     "unit": "KRW_PER_SQUARE_METRE",
-    "evidence": "ASSUMED_UNVERIFIED",
+    "evidence": "PUBLIC_PLAN_REFERENCE_SITE_TRANSFER_UNVERIFIED",
     "priceBaseYear": null,
-    "source": null,
-    "scope": "INITIAL_INSTALLATION_ONLY",
+    "documentYear": 2022,
+    "source": {
+      "title": "진주상평 일반산업단지 저탄소 그린산업단지 조성사업 사업계획서",
+      "publisher": "진주시 / 진주상공회의소 공개본",
+      "url": "https://jinjucci.korcham.net/file/dext5uploaddata/2022/0718_%EC%A7%84%EC%A3%BC%EC%8B%9C_%EC%A0%80%ED%83%84%EC%86%8C%20%EA%B7%B8%EB%A6%B0%EC%82%B0%EC%97%85%EB%8B%A8%EC%A7%80%20%EC%A1%B0%EC%84%B1%EC%82%AC%EC%97%85_%EC%82%AC%EC%97%85%EA%B3%84%ED%9A%8D%EC%84%9C%20(%EC%9E%85%EC%A3%BC%EA%B8%B0%EC%97%85%ED%98%91%EC%9D%98%EC%B2%B4).pdf",
+      "page": 12,
+      "sha256": "0efc54c3c884441d810ce28abb8928d758d98eb152fb71aac38791327b2d7414"
+    },
+    "scope": "REFERENCE_FACILITY_INSTALLATION_ONLY",
     "exclusions": [
-      "부가세",
-      "설계·감리",
+      "실시설계·감리",
+      "별도 토공",
       "철거·폐기",
       "토지",
       "구조보강",
-      "유지관리",
+      "유지관리·모니터링",
       "예비비"
     ],
-    "note": "출처 미확보 가정 단가. 현장 공사비·사업 타당성 산정에 사용 불가."
-  }
+    "taxTreatment": "원자료 단가의 부가세 포함 여부 미확인",
+    "adjustments": "서울 지역·현재 시점 물가·시설 규격 차이 미보정",
+    "note": "공개 사업계획의 참고 단가를 적용한 추정 비용. 성수동 실공사비·발주 단가로 검증되지 않음."
+  },
+  "budgetEvidence": "EXPERIMENT_RULE_NOT_PUBLIC_PROJECT_APPROPRIATION"
 }

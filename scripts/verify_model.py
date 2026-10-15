@@ -10,7 +10,7 @@ source = root / 'data/models/seongsu-lab.json'
 assert source.read_bytes() == (root / 'backend/src/main/resources/models/seongsu-lab.json').read_bytes()
 model = json.loads(source.read_text())
 assert model['validationLevel'] == 'EXPLORATORY' and not model['officialEvaluationAvailable']
-assert model['currency'] == 'KRW' and model['costModel']['evidence'] == 'ASSUMED_UNVERIFIED'
+assert model['currency'] == 'KRW' and model['costModel']['evidence'] == 'PUBLIC_PLAN_REFERENCE_SITE_TRANSFER_UNVERIFIED'
 assert model['generatorSha256'] == hashlib.sha256((root / 'simulation/waterleague_sim/engine/swmm.py').read_bytes()).hexdigest()
 rain = json.loads((root / 'data/derived/kma-event.json').read_text())
 assert rain == model['rainfall'] == json.loads((root / 'frontend/public/data/kma-event.json').read_text())
@@ -23,3 +23,9 @@ assert (datetime.fromisoformat(rain['end']) - datetime.fromisoformat(rain['start
 assert len({c['id'] for c in model['cells']}) == len(model['cells'])
 assert all(0 < c['maxAreaM2'] <= c['areaM2'] for c in model['cells'])
 print('실험 모델·관측 강우·원화 비용 근거·엔진 빌더 계보 검증 통과')
+
+reference=json.loads((root / 'data/costs/lid-reference.json').read_text())
+assert model['unitCosts']==reference['unitCosts'] and model['costModel']==reference['costModel']
+for row in reference['sourceRows']:
+ assert row['thousandKrwPerM2']*1000==model['unitCosts'][row['facility']]
+ assert row['thousandKrwPerM2']*row['sourceAreaM2']==row['sourceTotalThousandKrw']

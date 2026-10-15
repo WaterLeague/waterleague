@@ -106,7 +106,7 @@ def experiment(model,placements,directory):
  (directory/'model.json').write_text(json.dumps(model,ensure_ascii=False,indent=2)+'\n')
  (directory/'placements.json').write_text(json.dumps(placements,ensure_ascii=False,indent=2)+'\n')
  result={'validationLevel':'EXPLORATORY','official':False,'scoreRule':model['scoreRule'],'score':score(baseline,strategy),'baseline':baseline,'strategy':strategy,'sensitivity':sensitivity,'assumptions':model['assumptions'],
-  'engine':{'version':'5.2.4','revision':REVISION,'binarySha256':hashlib.sha256(library_path().read_bytes()).hexdigest(),'generatorSha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),'platform':platform.platform()},'reportPrecision':'보고서 깊이 0.001 mm; 시계열은 1분 평균 유량'}
+  'engine':{'version':'5.2.4','revision':REVISION,'binarySha256':hashlib.sha256(library_path().read_bytes()).hexdigest(),'generatorSha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),'platform':platform.platform()},'reportPrecision':'보고서 깊이 0.001 mm; 시계열은 1분 보고시각 보간 유량; 적분은 품질 대조용 근사'}
  (directory/'builder.py').write_bytes(Path(__file__).read_bytes())
  (directory/'result.json').write_text(json.dumps(result,ensure_ascii=False,allow_nan=False)+'\n')
  manifest={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(directory.iterdir()) if p.is_file()}

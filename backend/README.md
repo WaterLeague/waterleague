@@ -1,16 +1,43 @@
-# API 기반
+# WATER LEAGUE API
 
-Java 25·Spring Boot 4.1.1·Maven Wrapper.
+Java 25·Spring Boot 4.1.1·PostgreSQL·Flyway·Spring Session JDBC. 계정·자료·모델·전략·계산·순위·연구 도메인, 내부 controller/dto/entity/repository/service/mapper/view와 공통 예외 핸들러.
 
 ```sh
-./mvnw test
-./mvnw spring-boot:run -Dspring-boot.run.profiles=local
+# 저장소 루트, .env.local에 DB 설정 후
+python3 scripts/run_local.py api
+./backend/mvnw -f backend/pom.xml verify
 ```
 
-JDK 25가 필요하다. macOS에서 여러 JDK를 사용하는 경우 `JAVA_HOME=$(/usr/libexec/java_home -v 25)` 설정. 기본 바인딩 127.0.0.1:8080. 운영 HTTPS 쿠키 설정과 local HTTP 설정 분리.
+기본 127.0.0.1:8080. local 프로필은 HTTP 쿠키, 기본 프로필은 `__Host-waterleague` Secure·HttpOnly·SameSite. Java 25 필수. 테스트는 H2 PostgreSQL 모드이고 운영 큐는 실제 PostgreSQL의 SKIP LOCKED 사용.
 
-구현: 공개 출처 카탈로그, 빈 승인 맵 목록, 도메인 배치·예산 검증, 모델 등급·검증 범위 게이트, 수치 품질·점수 산식, 공통 Problem Details·보안 기본 거부.
+| API | 권한·기능 |
+| --- | --- |
+| GET `/api/v1/lab` | 고정 실험 모델·해시 |
+| GET `/api/v1/catalog`, `/api/v1/maps` | 출처·승인 맵; 현장 승인 맵 없음 |
+| GET `/api/v1/auth/csrf` | CSRF 토큰 |
+| POST `/api/v1/auth/register`, `/login`, `/logout` | 회원 인증·세션 회전 |
+| GET `/api/v1/auth/me` | 현재 회원 |
+| GET/POST `/api/v1/strategies` | 내 설계 목록·생성 |
+| GET `/api/v1/strategies/{id}` | 내 불변 버전 이력 |
+| POST `/api/v1/strategies/{id}/versions` | baseRevision 충돌 검사·저장 |
+| POST `/api/v1/simulations` | versionId·requestKey 멱등 큐 등록 |
+| GET `/api/v1/simulations`, `/{id}`, `/{id}/bundle` | 내 계산·재현 파일 |
+| GET `/api/v1/leaderboard` | 현재 모델의 제출 최고 기록 |
+| POST `/api/v1/submissions` | 서버 품질·해시·점수 검증 |
+| GET `/api/v1/organizations`, `/api/v1/consents` | 승인 기관·내 동의 |
+| PUT `/api/v1/consents/{id}` | 기관별 동의·철회 |
+| GET `/api/v1/research/strategies`, `/{id}`, `/{id}/bundle` | 기관 MFA·소속·동의·제출 버전 검증 |
 
-공개 API: GET /api/v1/catalog, GET /api/v1/maps, GET /actuator/health. 회원·저장·SWMM·공식 제출 API는 아직 제공하지 않는다. 기본 테스트 계정이나 관리자 우회 없음. 현재 카탈로그는 출처 안내이며 승인된 실제 맵을 생성하지 않는다.
+모든 상태 변경은 CSRF 검사, unknown 필드·본문 64 KiB 초과 거부. 계산 사용자당 동시 3개·전역 500개, 시설당 서버 단가, 원화 비용 저장. 기관 상세에는 계정명·비밀번호·미제출 후속 버전 제외.
 
-점수 서비스는 검증 계약의 단위 구현이며 운영 SWMM 결과 연결·실험 문맥 해시 일치·DB 권한 검증은 후속 단계다.
+## 기관 계정 승인
+
+공개 가입은 PLAYER 고정. 먼저 해당 담당자가 가입한다. 운영자가 소속을 확인한 후 로컬 명령으로만 승인한다. `MFA_ENCRYPTION_KEY`에 Base64 32바이트 난수 키를 안전하게 설정하고 DB 백업과 별도 보관한다. 키 손실 시 MFA 재등록 필요.
+
+```sh
+./backend/mvnw -f backend/pom.xml package -DskipTests
+# 대화형 터미널·DB 설정·MFA 키 필요. 인증 앱 등록 주소는 터미널에만 표시.
+python3 scripts/run_local.py provision
+```
+
+명령은 기존 회원·기관을 확인하고 역할 승인, TOTP 비밀 AES-GCM 저장, 기존 세션 폐기, 감사 이벤트를 기록한다. 기본 기관이나 테스트 비밀번호를 제공하지 않는다. 로그인 시 기관은 비밀번호와 인증 앱 6자리 OTP가 모두 필요하다.
