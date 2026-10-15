@@ -2867,3 +2867,35 @@ a:focus-visible {
     padding-left: 31px;
   }
 }
+
+.league-award {
+  margin: 24px 0;
+  padding: 20px 0;
+  border-top: 1px solid var(--line, #dedfd9);
+  border-bottom: 1px solid var(--line, #dedfd9);
+}
+.league-award h3 {
+  font-size: 14px;
+  margin: 0 0 12px;
+}
+.league-award strong {
+  font-size: 16px;
+}
+.league-award p {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 13px;
+  line-height: 1.9;
+}
+.league-award small {
+  display: block;
+  margin-top: 12px;
+  font-size: 11px;
+  line-height: 1.8;
+}
+.league-award-editor > label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+}

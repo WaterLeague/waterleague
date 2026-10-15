@@ -1,5 +1,26 @@
 import type { League } from '../entity/league';
-import type { Job } from '../../game/entity/game';
+import type { Job, Lab, Placement, FacilityType } from '../../game/entity/game';
+import type { LeagueRules } from '../entity/league';
+export function availableLimits(lab: Lab, types: FacilityType[]) {
+  const cells = lab.model.cells.filter((c) => c.allowedTypes.some((t) => types.includes(t)));
+  return {
+    placementLimit: Math.min(lab.model.maxPlacements, cells.length),
+    areaLimitM2: cells.reduce((sum, c) => sum + Math.round(c.maxAreaM2 * 100), 0) / 100,
+  };
+}
+export function totalArea(placements: Placement[]) {
+  return placements.reduce((sum, p) => sum + Math.round(p.areaM2 * 100), 0) / 100;
+}
+export function exceedsLeagueLimits(
+  placements: Placement[],
+  rules: Pick<LeagueRules, 'placementLimit' | 'areaLimitM2'>
+) {
+  return (
+    (rules.placementLimit != null && placements.length > rules.placementLimit) ||
+    (rules.areaLimitM2 != null &&
+      Math.round(totalArea(placements) * 100) > Math.round(rules.areaLimitM2 * 100))
+  );
+}
 export const phaseNames = {
   DRAFT: '비공개 초안',
   SCHEDULED: '접수 예정',

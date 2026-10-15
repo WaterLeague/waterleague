@@ -40,6 +40,7 @@ import { RainfallSelector, rainDate, rainTime } from './RainfallSelector';
 import { Hydrograph } from './Hydrograph';
 import { CompetitionPage } from '../../league/view/CompetitionPage';
 import type { League } from '../../league/entity/league';
+import { exceedsLeagueLimits, totalArea } from '../../league/service/leagueService';
 import { ResearchPage } from '../../research/view/ResearchPage';
 import { SpatialComparison } from '../../spatial/view/SpatialComparison';
 import { ErrorBoundary } from '../../../shared/exception/ErrorBoundary';
@@ -77,6 +78,20 @@ export function GamePage() {
     activeLeague?.rules.allowedTypes ?? (Object.keys(facilities) as FacilityType[]);
   const cell = lab?.model.cells.find((c) => c.id === selected);
   const placement = g.placements.find((p) => p.cellId === selected);
+  const placementLimits = {
+    placementLimit: activeLeague?.rules.placementLimit ?? lab?.model.maxPlacements ?? 0,
+    areaLimitM2: activeLeague?.rules.areaLimitM2,
+  };
+  const currentExceedsLimits = exceedsLeagueLimits(g.placements, placementLimits);
+  const proposedExceedsLimits = cell
+    ? exceedsLeagueLimits(
+        [
+          ...g.placements.filter((p) => p.cellId !== cell.id),
+          { cellId: cell.id, facilityType: type, areaM2: area },
+        ],
+        placementLimits
+      )
+    : false;
   const cost = lab ? totalCost(lab, g.placements) : 0;
   function select(id: string | null) {
     const c = lab?.model.cells.find((c) => c.id === id || c.buildingId === id);
@@ -183,6 +198,13 @@ export function GamePage() {
             <b>{activeLeague.title}</b>
             <small>
               예산 {won(budget)} · {allowedTypes.map((t) => facilities[t].name).join(' · ')}
+              {activeLeague.rules.placementLimit != null && (
+                <>
+                  {' '}
+                  · 최대 {activeLeague.rules.placementLimit}개 구역 ·{' '}
+                  {format.format(activeLeague.rules.areaLimitM2 ?? 0)} m²
+                </>
+              )}
             </small>
           </div>
           <button className="outline-button" onClick={() => setTab('leaderboard')}>
@@ -616,6 +638,7 @@ export function GamePage() {
                     area > cell.maxAreaM2 ||
                     !cell.allowedTypes.includes(type) ||
                     !allowedTypes.includes(type) ||
+                    proposedExceedsLimits ||
                     cost -
                       (placement
                         ? placement.areaM2 * lab.model.unitCosts[placement.facilityType]
@@ -633,6 +656,15 @@ export function GamePage() {
                   {placement ? '배치 변경' : '이 구역에 배치'}
                   <Plus size={16} />
                 </button>
+                {proposedExceedsLimits && (
+                  <p className="form-error" role="status">
+                    배치 제한은 {placementLimits.placementLimit}개 구역
+                    {placementLimits.areaLimitM2 != null && (
+                      <> · 합계 {format.format(placementLimits.areaLimitM2)} m²</>
+                    )}
+                    입니다. 면적을 줄이거나 다른 시설을 제거해 주세요.
+                  </p>
+                )}
                 {placement && (
                   <button
                     className="text-button remove-button"
@@ -681,7 +713,10 @@ export function GamePage() {
               <div className="budget-track">
                 <i style={{ width: Math.min(100, (cost / budget) * 100) + '%' }} />
               </div>
-              <span>{g.placements.length}개 시설 · 공개계획 참고 단가 · 부대비용 별도</span>
+              <span>
+                {g.placements.length}개 시설 · 합계 {format.format(totalArea(g.placements))} m² ·
+                공개계획 참고 단가 · 부대비용 별도
+              </span>
             </div>
             <label className="design-note">
               설계 메모
@@ -699,6 +734,7 @@ export function GamePage() {
                 working ||
                 !lab.model.simulationAvailable ||
                 cost > budget ||
+                currentExceedsLimits ||
                 g.placements.some((p) => !allowedTypes.includes(p.facilityType))
               }
               onClick={() => (g.account ? void g.run() : setAuth(true))}

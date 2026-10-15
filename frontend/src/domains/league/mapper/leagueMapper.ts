@@ -5,6 +5,15 @@ export function mapLeague(value: unknown): League {
   const p = leagueDto.safeParse(value);
   if (!p.success) throw new LeagueDataError();
   const l = p.data;
+  const r = l.rules;
+  if (r.schemaVersion === 2 && (!r.placementLimit || !r.areaLimitM2 || !r.award))
+    throw new LeagueDataError();
+  if (
+    r.award &&
+    ((r.award.prizeKrw === 0 && r.award.winnerCount !== 0) ||
+      (r.award.prizeKrw > 0 && (r.award.winnerCount < 1 || r.award.notice.trim().length < 10)))
+  )
+    throw new LeagueDataError();
   if (
     Date.parse(l.rules.closesAt) <= Date.parse(l.rules.opensAt) ||
     new Set(l.rules.allowedTypes).size !== l.rules.allowedTypes.length ||

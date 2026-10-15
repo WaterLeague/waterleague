@@ -1,6 +1,6 @@
 import type { FacilityType, Lab, Board } from '../../game/entity/game';
 export interface LeagueRules {
-  schemaVersion: 1;
+  schemaVersion: 1 | 2;
   modelHash: string;
   engineRevision: string;
   generatorSha256: string;
@@ -13,6 +13,14 @@ export interface LeagueRules {
   closesAt: string;
   validationLevel: 'EXPLORATORY';
   official: false;
+  placementLimit?: number | null;
+  areaLimitM2?: number | null;
+  award?: LeagueAward | null;
+}
+export interface LeagueAward {
+  prizeKrw: number;
+  winnerCount: number;
+  notice: string;
 }
 export interface League {
   id: string;
@@ -45,6 +53,9 @@ export interface LeagueDraft {
   budget: number;
   allowedTypes: FacilityType[];
   submissionLimit: number;
+  placementLimit: number;
+  areaLimitM2: number;
+  award: LeagueAward;
 }
 export interface OwnSubmission {
   jobId: string;

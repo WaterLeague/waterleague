@@ -116,9 +116,37 @@ public class LeagueService {
       throw new DomainException(ErrorCode.REQUEST_INVALID);
     if (!selected.model().path("simulationAvailable").asBoolean())
       throw new DomainException(ErrorCode.MODEL_NOT_ELIGIBLE);
+    int availableCells = 0;
+    BigDecimal availableArea = BigDecimal.ZERO;
+    for (var cell : selected.model().path("cells")) {
+      boolean allowed = false;
+      for (var type : cell.path("allowedTypes"))
+        if (d.allowedTypes().stream().anyMatch(t -> t.name().equals(type.asString())))
+          allowed = true;
+      if (allowed) {
+        availableCells++;
+        availableArea = availableArea.add(cell.path("maxAreaM2").decimalValue());
+      }
+    }
+    int maximum = Math.min(availableCells, selected.model().path("maxPlacements").asInt());
+    int placementLimit = d.placementLimit() == null ? maximum : d.placementLimit();
+    BigDecimal areaLimit = d.areaLimitM2() == null ? availableArea : d.areaLimitM2();
+    if (placementLimit < 1
+        || placementLimit > maximum
+        || areaLimit.signum() <= 0
+        || areaLimit.compareTo(availableArea) > 0)
+      throw new DomainException(ErrorCode.REQUEST_INVALID);
+    var award =
+        d.award() == null
+            ? new LeagueAward(0, 0, "")
+            : new LeagueAward(
+                d.award().prizeKrw(), d.award().winnerCount(), d.award().notice().strip());
+    if ((award.prizeKrw() == 0 && award.winnerCount() != 0)
+        || (award.prizeKrw() > 0 && (award.winnerCount() < 1 || award.notice().length() < 10)))
+      throw new DomainException(ErrorCode.REQUEST_INVALID);
     var rules =
         new LeagueRules(
-            1,
+            2,
             selected.hash(),
             selected.model().path("engineRevision").asString(),
             selected.model().path("generatorSha256").asString(),
@@ -130,7 +158,10 @@ public class LeagueService {
             d.opensAt(),
             d.closesAt(),
             "EXPLORATORY",
-            false);
+            false,
+            placementLimit,
+            areaLimit,
+            award);
     String rulesText = json.write(rules);
     return new League(
         id,
@@ -234,6 +265,13 @@ public class LeagueService {
       throw new LeagueException(ErrorCode.LEAGUE_RULES_MISMATCH);
     if (version.cost().compareTo(BigDecimal.valueOf(rules.budget())) > 0)
       throw new DomainException(ErrorCode.BUDGET_EXCEEDED);
+    var placements = json.tree(version.placements());
+    if (rules.placementLimit() != null && placements.size() > rules.placementLimit())
+      throw new LeagueException(ErrorCode.LEAGUE_RULES_MISMATCH);
+    BigDecimal totalArea = BigDecimal.ZERO;
+    for (var p : placements) totalArea = totalArea.add(p.path("areaM2").decimalValue());
+    if (rules.areaLimitM2() != null && totalArea.compareTo(rules.areaLimitM2()) > 0)
+      throw new LeagueException(ErrorCode.LEAGUE_RULES_MISMATCH);
     for (var p : json.tree(version.placements()))
       if (rules.allowedTypes().stream()
           .noneMatch(t -> t.name().equals(p.path("facilityType").asString())))

@@ -8,6 +8,7 @@ import io.waterleague.model.service.LabModelService;
 import java.net.*;
 import java.net.http.*;
 import java.util.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,7 +19,10 @@ import org.springframework.test.context.ActiveProfiles;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+    properties =
+        "spring.datasource.url=jdbc:h2:mem:research;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE")
 @ActiveProfiles("local")
 class ResearchWorkflowTests {
   @Value("${local.server.port}")
@@ -36,6 +40,12 @@ class ResearchWorkflowTests {
   String artifactRoot;
 
   record Actor(UUID id, HttpClient client) {}
+
+  @BeforeEach
+  void resetTestRateBuckets() {
+    // 각 시나리오의 로그인 시도가 다른 시험의 횟수 제한에 영향을 주지 않도록 분리한다.
+    db.update("DELETE FROM rate_limits");
+  }
 
   Actor actor(UUID org) throws Exception {
     UUID id = UUID.randomUUID();
@@ -431,7 +441,17 @@ class ResearchWorkflowTests {
   }
 
   JsonNode successfulJob(Actor player, int discharge) throws Exception {
-    var v = create(player);
+    return successfulJob(
+        player,
+        discharge,
+        List.of(Map.of("cellId", "G1", "facilityType", "RAIN_GARDEN", "areaM2", 40)));
+  }
+
+  JsonNode successfulJob(Actor player, int discharge, List<Map<String, Object>> placements)
+      throws Exception {
+    var body = new HashMap<>(draft(0, "검증 계산"));
+    body.put("placements", placements);
+    var v = ok(player, "POST", "/strategies", body, 200);
     var j =
         ok(
             player,
@@ -472,6 +492,146 @@ class ResearchWorkflowTests {
   Map<String, Object> leagueSubmission(JsonNode league, JsonNode job) {
     return Map.of(
         "jobId", job.get("id").asString(), "rulesHash", league.get("rulesHash").asString());
+  }
+
+  @Test
+  void validatesPlacementLimitsAndAwardTerms() throws Exception {
+    var org = institution();
+    var basic = ok(org, "POST", "/institution/leagues", leagueDraft(0, 10, 300000000), 200);
+    var rules = basic.path("rules");
+    assertThat(rules.path("schemaVersion").asInt()).isEqualTo(2);
+    assertThat(rules.path("placementLimit").asInt()).isPositive();
+    assertThat(rules.path("award").path("prizeKrw").asLong()).isZero();
+    var input = new HashMap<>(leagueDraft(0, 10, 300000000));
+    for (var patch :
+        List.of(
+            Map.of("placementLimit", rules.path("placementLimit").asInt() + 1),
+            Map.of(
+                "areaLimitM2",
+                rules.path("areaLimitM2").decimalValue().add(new java.math.BigDecimal("0.01"))),
+            Map.of("areaLimitM2", 1.001),
+            Map.of("award", Map.of("prizeKrw", -1, "winnerCount", 0, "notice", "")),
+            Map.of(
+                "award", Map.of("prizeKrw", 100000, "winnerCount", 0, "notice", "선정 기준과 지급 일정 안내")),
+            Map.of("award", Map.of("prizeKrw", 0, "winnerCount", 1, "notice", "")),
+            Map.of("award", Map.of("prizeKrw", 100000, "winnerCount", 1, "notice", "짧음")))) {
+      var invalid = new HashMap<>(input);
+      invalid.putAll(patch);
+      assertThat(call(org, "POST", "/institution/leagues", invalid).statusCode()).isEqualTo(400);
+    }
+    input.put("placementLimit", 2);
+    input.put("areaLimitM2", 40.03);
+    input.put(
+        "award", Map.of("prizeKrw", 100000, "winnerCount", 1, "notice", "로컬 시험 선정 기준과 지급 일정 안내"));
+    var created = ok(org, "POST", "/institution/leagues", input, 200);
+    input.put("baseRevision", 1);
+    input.put(
+        "award",
+        Map.of("prizeKrw", 200000, "winnerCount", 2, "notice", "수정된 로컬 시험 선정 기준과 지급 일정 안내"));
+    var updated =
+        ok(org, "PUT", "/institution/leagues/" + created.path("id").asString(), input, 200);
+    assertThat(updated.path("rulesHash").asString())
+        .isNotEqualTo(created.path("rulesHash").asString());
+    var path = "/institution/leagues/" + created.path("id").asString();
+    assertThat(
+            call(
+                    org,
+                    "POST",
+                    path + "/publish",
+                    Map.of("revision", 2, "rulesHash", created.path("rulesHash").asString()))
+                .statusCode())
+        .isEqualTo(409);
+    ok(
+        org,
+        "POST",
+        path + "/publish",
+        Map.of("revision", 2, "rulesHash", updated.path("rulesHash").asString()),
+        200);
+    input.put("baseRevision", 3);
+    assertThat(call(org, "PUT", path, input).statusCode()).isEqualTo(409);
+  }
+
+  @Test
+  void enforcesCountAndDecimalAreaAtSubmission() throws Exception {
+    var org = institution();
+    var player = actor(null);
+    var input = new HashMap<>(leagueDraft(0, 10, 300000000));
+    input.put("placementLimit", 1);
+    input.put("areaLimitM2", 40);
+    var draft = ok(org, "POST", "/institution/leagues", input, 200);
+    var league =
+        ok(
+            org,
+            "POST",
+            "/institution/leagues/" + draft.path("id").asString() + "/publish",
+            Map.of("revision", 1, "rulesHash", draft.path("rulesHash").asString()),
+            200);
+    var endpoint = "/leagues/" + league.path("id").asString() + "/submissions";
+    var exact = successfulJob(player, 90);
+    ok(player, "POST", endpoint, leagueSubmission(league, exact), 200);
+    var area =
+        successfulJob(
+            player,
+            90,
+            List.of(Map.of("cellId", "G1", "facilityType", "RAIN_GARDEN", "areaM2", 40.01)));
+    var count =
+        successfulJob(
+            player,
+            90,
+            List.of(
+                Map.of("cellId", "G1", "facilityType", "RAIN_GARDEN", "areaM2", 20),
+                Map.of("cellId", "G2", "facilityType", "RAIN_GARDEN", "areaM2", 20)));
+    assertThat(call(player, "POST", endpoint, leagueSubmission(league, area)).statusCode())
+        .isEqualTo(422);
+    assertThat(call(player, "POST", endpoint, leagueSubmission(league, count)).statusCode())
+        .isEqualTo(422);
+    input.put("placementLimit", 2);
+    input.put("areaLimitM2", 40.03);
+    var other = ok(org, "POST", "/institution/leagues", input, 200);
+    other =
+        ok(
+            org,
+            "POST",
+            "/institution/leagues/" + other.path("id").asString() + "/publish",
+            Map.of("revision", 1, "rulesHash", other.path("rulesHash").asString()),
+            200);
+    var decimal =
+        successfulJob(
+            player,
+            90,
+            List.of(
+                Map.of("cellId", "G1", "facilityType", "RAIN_GARDEN", "areaM2", 10.01),
+                Map.of("cellId", "G2", "facilityType", "RAIN_GARDEN", "areaM2", 30.02)));
+    ok(
+        player,
+        "POST",
+        "/leagues/" + other.path("id").asString() + "/submissions",
+        leagueSubmission(other, decimal),
+        200);
+  }
+
+  @Test
+  void preservesLegacyRulesWithoutRewritingTheirHash() throws Exception {
+    var org = institution();
+    var player = actor(null);
+    var league = publishedLeague(org, 2, 300000000);
+    UUID id = UUID.fromString(league.path("id").asString());
+    var old = (tools.jackson.databind.node.ObjectNode) league.path("rules").deepCopy();
+    old.put("schemaVersion", 1);
+    old.remove("placementLimit");
+    old.remove("areaLimitM2");
+    old.remove("award");
+    String original = json.writeValueAsString(old);
+    String hash = documentJson.hash(original);
+    db.update("UPDATE leagues SET rules=?,rules_hash=? WHERE id=?", original, hash, id);
+    var viewed = ok(player, "GET", "/leagues/" + id, null, 200).path("league");
+    assertThat(viewed.path("rules").has("placementLimit")).isFalse();
+    assertThat(viewed.path("rules").has("award")).isFalse();
+    assertThat(viewed.path("rulesHash").asString()).isEqualTo(hash);
+    var job = successfulJob(player, 90);
+    ok(player, "POST", "/leagues/" + id + "/submissions", leagueSubmission(viewed, job), 200);
+    assertThat(db.queryForObject("SELECT rules FROM leagues WHERE id=?", String.class, id))
+        .isEqualTo(original);
   }
 
   @Test

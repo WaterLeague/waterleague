@@ -3,7 +3,7 @@ import type { League, LeagueDraft } from '../entity/league';
 import { loadRainfallCatalog } from '../../game/repository/gameRepository';
 import type { Lab, RainfallCatalog, FacilityType } from '../../game/entity/game';
 import { facilities, won } from '../../game/service/gameService';
-import { localDateTime } from '../service/leagueService';
+import { localDateTime, availableLimits } from '../service/leagueService';
 export function LeagueEditor({
   league,
   lab,
@@ -30,6 +30,11 @@ export function LeagueEditor({
     [types, setTypes] = useState<FacilityType[]>(
       league?.rules.allowedTypes ?? ['RAIN_GARDEN', 'PERMEABLE_PAVEMENT', 'GREEN_ROOF']
     );
+  const maximum = availableLimits(lab, types);
+  const [placementLimit, setPlacementLimit] = useState(
+    league?.rules.placementLimit ?? maximum.placementLimit
+  );
+  const [areaLimit, setAreaLimit] = useState(league?.rules.areaLimitM2 ?? maximum.areaLimitM2);
   const [dateError, setDateError] = useState('');
   const [modelHash, setModelHash] = useState(league?.rules.modelHash ?? lab.modelHash);
   const [catalog, setCatalog] = useState<RainfallCatalog | null>(null);
@@ -53,6 +58,20 @@ export function LeagueEditor({
       onSubmit={(e) => {
         e.preventDefault();
         const values = new FormData(e.currentTarget);
+        const award = {
+          prizeKrw: Number(values.get('prizeKrw')),
+          winnerCount: Number(values.get('winnerCount')),
+          notice: String(values.get('awardNotice')).trim(),
+        };
+        if (
+          (award.prizeKrw === 0 && award.winnerCount !== 0) ||
+          (award.prizeKrw > 0 && (award.winnerCount < 1 || award.notice.length < 10))
+        ) {
+          setDateError(
+            '상금이 있으면 수상 예정 인원과 10자 이상의 안내가 필요합니다. 상금이 없으면 인원도 0으로 설정해 주세요.'
+          );
+          return;
+        }
         const start = new Date(String(values.get('opensAt'))),
           end = new Date(String(values.get('closesAt')));
         if (!Number.isFinite(start.getTime()) || !Number.isFinite(end.getTime()) || end <= start) {
@@ -70,6 +89,9 @@ export function LeagueEditor({
           budget,
           allowedTypes: types,
           submissionLimit: limit,
+          placementLimit,
+          areaLimitM2: areaLimit,
+          award,
         });
       }}
     >
@@ -143,6 +165,32 @@ export function LeagueEditor({
             onChange={(e) => setLimit(Number(e.target.value))}
           />
         </label>
+        <label>
+          시설 배치 구역 수 상한
+          <input
+            type="number"
+            required
+            min={1}
+            max={maximum.placementLimit}
+            step={1}
+            value={placementLimit}
+            onChange={(e) => setPlacementLimit(Number(e.target.value))}
+          />
+          <small>시설을 배치한 구역 한 곳을 1개로 계산합니다.</small>
+        </label>
+        <label>
+          전체 설치 면적 상한 · m²
+          <input
+            type="number"
+            required
+            min={0.01}
+            max={maximum.areaLimitM2}
+            step={0.01}
+            value={areaLimit}
+            onChange={(e) => setAreaLimit(Number(e.target.value))}
+          />
+          <small>각 구역의 설치 가능 면적도 함께 적용합니다.</small>
+        </label>
       </div>
       {dateError && (
         <p role="alert" className="form-error">
@@ -156,16 +204,64 @@ export function LeagueEditor({
             <input
               type="checkbox"
               checked={types.includes(t)}
-              onChange={(e) =>
-                setTypes((old) => (e.target.checked ? [...old, t] : old.filter((v) => v !== t)))
-              }
+              onChange={(e) => {
+                const next = e.target.checked ? [...types, t] : types.filter((v) => v !== t);
+                setTypes(next);
+                const upper = availableLimits(lab, next);
+                setPlacementLimit((old) => Math.min(Math.max(old, 1), upper.placementLimit));
+                setAreaLimit((old) => Math.min(Math.max(old, 0.01), upper.areaLimitM2));
+              }}
             />
             {facilities[t].name}
           </label>
         ))}
       </fieldset>
+      <fieldset className="league-award-editor">
+        <legend>상금·심사 안내</legend>
+        <div className="league-form-grid">
+          <label>
+            총상금 · 원
+            <input
+              name="prizeKrw"
+              type="number"
+              required
+              min={0}
+              max={1000000000}
+              step={1}
+              defaultValue={league?.rules.award?.prizeKrw ?? 0}
+            />
+          </label>
+          <label>
+            수상 예정 인원
+            <input
+              name="winnerCount"
+              type="number"
+              required
+              min={0}
+              max={1000}
+              step={1}
+              defaultValue={league?.rules.award?.winnerCount ?? 0}
+            />
+          </label>
+        </div>
+        <label>
+          선정 기준·동점 처리·지급 일정 안내
+          <textarea
+            name="awardNotice"
+            rows={4}
+            maxLength={2000}
+            defaultValue={league?.rules.award?.notice ?? ''}
+            placeholder="상금이 있으면 10자 이상으로 선정 기준과 지급 계획을 설명하세요."
+          />
+        </label>
+        <p className="footnote">
+          상금이 없으면 금액과 인원을 0으로 설정합니다. 수상 선정·지급은 주최 기관이 담당하며
+          계좌·연락처 등 개인정보는 입력하지 마세요. 게임 순위는 고정 점수로 계산됩니다.
+        </p>
+      </fieldset>
       <p className="footnote">
-        저장은 비공개 초안입니다. 공개 단계에서 모델·강우·시설 제원·점수·예산·기간을 고정합니다.
+        저장은 비공개 초안입니다. 공개 단계에서 모델·강우·시설·배치 제한·점수·예산·기간·상금 안내를
+        고정합니다.
       </p>
       <button
         className="primary-button"
