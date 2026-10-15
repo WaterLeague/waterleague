@@ -42,6 +42,10 @@
 
 개인 데이터가 없는 동일 물리 입력의 캐시만 재사용. 후보별 request/result·manifest는 독립. 원본과 같은 입력을 새 성과로 세지 않음. 원본 18개 파일의 검증·동일 엔진 재실행, `search-provenance.json`에 학습 입력/분포/seed/추첨 규약/시도 수/전체 후보, `access-scope.json`에 연구 목적·기관·검색/후보 ID·원본 연결·조건 해시. 모델/입력/파일 해시와 생성 계보를 별도로 검증할 재생 도구 제공.
 
+후보 산출물은 `ARTIFACTS_PATH/research-candidates/{candidateId}/{leaseToken}`에 저장. 개인 작업의 기존 `{jobId}/{leaseToken}` 경로와 분리. 큐 종류는 코드의 고정 목록만 허용하며 요청 데이터로 테이블명·경로 종류를 지정하지 않음. 같은 생성 시각의 claim 순서는 큐 종류·UUID로 고정. 만료 작업의 최종 결과도 lease token·유효 시간으로 조건부 기록하고, 갱신 행이 없으면 완료로 보고하지 않음.
+
+단계 2는 저장·공용 워커·큐 상한을 먼저 연결하고, 이후 기관 API·재현 묶음까지 확장. 워커 시험은 별도 임시 PostgreSQL DB에 실제 마이그레이션을 적용해 두 큐 경쟁·재시도·만료 결과 차단·공개 모델의 실제 SWMM 처리를 검증. 운영 원본에 시험 큐를 넣지 않음. API와 화면 연결 전에는 사용자 기능 완료로 표시하지 않음.
+
 ## API·화면
 
 - POST `/api/v1/research/searches`: jobIds, topK, budgetKrw, seed, candidatesPerArm, requestKey. 202/no-store
