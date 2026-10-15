@@ -18,6 +18,8 @@ Argon2id 최소 m=19MiB·t=2·p=1에서 성능 측정·상향. 비밀번호 길�
 
 소유자·기관 소속·리그 소유·동의 범위 매 요청 검증. URL ID나 클라이언트 role 불신. 가입은 MEMBER 역할 고정. PLAYER는 즉시 승인, BUSINESS·INSTITUTION·GOVERNMENT는 관리자 승인 전 이용 차단. ADMIN은 DB 유일 제약으로 한 계정만 허용하며 조직 회원과 분리. 회원의 모델 승인·플랫폼 권한 부여 금지. 권한 철회 시 세션·캐시 무효화. export 다운로드에도 동의 재검사.
 
+사업 활용 검토는 계산·기관·목적 hash와 정책 버전에 묶인 별도 소유자 동의. 요청 상태와 결정 이벤트 원자적 저장, 예상 revision·내용 hash 불일치 거부. 연구 동의를 철회해도 별도로 승인한 사업 동의는 유지되므로 각 활성 동의의 관리 화면 제공. [상태·검증 계약](17-utilization-consent.md) 참조.
+
 ## 계산·수집
 
 외부 INP·Python·셸·임의 URL 실행 금지. 승인된 모델, 서버 생성 UUID 경로. 워커 비root·read-only rootfs·작업 임시 공간·CPU/메모리/시간/결과크기 제한, 자식 process group 종료. lease·재시도 상한·fencing token·해시 검증. 사용자 쿼터·큐 상한·역압·중복 캐시.

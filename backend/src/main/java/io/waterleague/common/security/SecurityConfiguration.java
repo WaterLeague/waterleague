@@ -67,6 +67,7 @@ public class SecurityConfiguration {
                         "/api/v1/strategies/**",
                         "/api/v1/simulations/**",
                         "/api/v1/comparisons/**",
+                        "/api/v1/utilization/**",
                         "/api/v1/submissions",
                         "/api/v1/consents/**",
                         "/api/v1/leagues/**")

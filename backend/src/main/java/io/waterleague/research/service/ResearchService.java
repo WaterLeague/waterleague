@@ -27,6 +27,7 @@ public class ResearchService {
   private final LabModelService model;
   private final JsonService json;
   private final Path artifacts;
+  private final io.waterleague.utilization.service.UtilizationService utilization;
 
   public ResearchService(
       ResearchRepository r,
@@ -36,6 +37,7 @@ public class ResearchService {
       SimulationMapper m,
       LabModelService l,
       JsonService x,
+      io.waterleague.utilization.service.UtilizationService utilization,
       @Value("${waterleague.artifacts}") String path) {
     research = r;
     jobs = j;
@@ -44,6 +46,7 @@ public class ResearchService {
     mapper = m;
     model = l;
     json = x;
+    this.utilization = utilization;
     artifacts = Path.of(path).toAbsolutePath().normalize();
   }
 
@@ -128,9 +131,46 @@ public class ResearchService {
   }
 
   public byte[] bundle(Account a, UUID id, boolean institution) throws IOException {
+    Runnable authorization =
+        () -> {
+          if (institution) authorize(a, id);
+          else if (jobs.get(id, a.id()).isEmpty()) missing();
+        };
+    authorization.run();
+    return buildBundle(
+        a,
+        id,
+        Map.of(
+            "purpose",
+            "EXPLORATORY_ONLY",
+            "organizationId",
+            institution ? a.organizationId().toString() : "OWNER"),
+        authorization,
+        "RESEARCH_EXPORT",
+        id);
+  }
+
+  public byte[] applicationBundle(Account a, UUID requestId) throws IOException {
+    var grant = utilization.grant(a, requestId);
+    return buildBundle(
+        a,
+        grant.jobId(),
+        utilization.exportScope(grant),
+        () -> utilization.requireSameGrant(a, grant),
+        "APPLICATION_EXPORT",
+        requestId);
+  }
+
+  private byte[] buildBundle(
+      Account a,
+      UUID id,
+      Map<String, Object> scope,
+      Runnable authorization,
+      String auditAction,
+      UUID auditObject)
+      throws IOException {
+    authorization.run();
     var job = jobs.get(id).orElseThrow(() -> new DomainException(ErrorCode.RESOURCE_NOT_FOUND));
-    if (institution) authorize(a, id);
-    else if (!job.ownerId().equals(a.id())) missing();
     if (!job.state().equals("SUCCEEDED")) throw new DomainException(ErrorCode.CONFLICT);
     var token = UUID.fromString(json.tree(job.result()).path("artifactToken").asString());
     Path dir = artifacts.resolve(id.toString()).resolve(token.toString());
@@ -171,22 +211,14 @@ public class ResearchService {
       zip.write(json.write(detailData(id)).getBytes(java.nio.charset.StandardCharsets.UTF_8));
       zip.closeEntry();
       zip.putNextEntry(new ZipEntry("access-scope.json"));
-      zip.write(
-          json.write(
-                  Map.of(
-                      "purpose",
-                      "EXPLORATORY_ONLY",
-                      "organizationId",
-                      institution ? a.organizationId().toString() : "OWNER",
-                      "exportedAt",
-                      java.time.Instant.now().toString(),
-                      "notice",
-                      "현장 검증 전 가정 기반 결과. 동의 철회는 이후 접근에 적용."))
-              .getBytes(java.nio.charset.StandardCharsets.UTF_8));
+      var exportScope = new LinkedHashMap<String, Object>(scope);
+      exportScope.put("exportedAt", java.time.Instant.now().toString());
+      exportScope.put("notice", "현장 검증 전 가정 기반 결과. 동의 철회는 이후 접근에 적용. 실제 시공·안전 승인 아님.");
+      zip.write(json.write(exportScope).getBytes(java.nio.charset.StandardCharsets.UTF_8));
       zip.closeEntry();
     }
-    if (institution) authorize(a, id);
-    research.audit(a.id(), "RESEARCH_EXPORT", id);
+    authorization.run();
+    research.audit(a.id(), auditAction, auditObject);
     return bytes.toByteArray();
   }
 

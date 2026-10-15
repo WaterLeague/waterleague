@@ -89,7 +89,7 @@ public class AuthController {
     SecurityContextHolder.clearContext();
     req.getSession().setAttribute("mfaEnrollmentUser", a.username());
     req.getSession().setAttribute("mfaEnrollmentAt", System.currentTimeMillis());
-    new HttpSessionCsrfTokenRepository().saveToken(null, req, res);
+    rotateCsrf(req, res);
     return org.springframework.http.ResponseEntity.ok()
         .cacheControl(org.springframework.http.CacheControl.noStore())
         .body(
@@ -149,6 +149,12 @@ public class AuthController {
         UsernamePasswordAuthenticationToken.authenticated(a.username(), null, authorities));
     SecurityContextHolder.setContext(context);
     new HttpSessionSecurityContextRepository().saveContext(context, req, res);
-    new HttpSessionCsrfTokenRepository().saveToken(null, req, res);
+    rotateCsrf(req, res);
+  }
+
+  private void rotateCsrf(HttpServletRequest req, HttpServletResponse res) {
+    // 인증 직후 병렬 조회가 세션 토큰을 중복 생성하지 않도록 먼저 저장한다.
+    var repository = new HttpSessionCsrfTokenRepository();
+    repository.saveToken(repository.generateToken(req), req, res);
   }
 }
