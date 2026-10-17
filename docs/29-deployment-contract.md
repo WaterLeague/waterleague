@@ -32,6 +32,8 @@ Corretto 빌드 단계에 unzip 설치: 미설치 시 Maven Wrapper가 URL을 ta
 
 네이티브 보조 검증: 별도 임시 PostgreSQL 18 클러스터·임의 포트에서 관리자/소유자/API/워커 역할 생성, 실제 패키지의 `container,migrate` 비웹 실행과 전체 마이그레이션·정상 종료, 명시적 권한 목록 부여 통과. API/워커 DDL·Flyway 열람 및 워커 MFA 열람 거부, 공용 큐 잠금·배치 읽기·상태 갱신 허용 확인. 시험 클러스터 종료·삭제, 기존 55432 개발 DB 미접속. 컨테이너 파일 권한·HTTPS·네트워크 확인을 대체하지 않음.
 
+CI 중간 검사: Linux amd64/arm64의 이미지 빌드·초기화·마이그레이션·API 준비·DB 권한 거부·읽기 전용 root/산출물·내부망·워커 외부 연결 차단 통과. HTTPS 경로 검사에서 `respond`가 `handle` 기본 페이지 처리보다 늦게 실행되는 Caddy 순서 문제 확인. 금지 경로는 별도 `handle`의 404로 처리하여 SPA fallback과 배타적으로 분리. 전체 HTTPS 계산·재현·재시작 검사는 수정 후 재실행.
+
 ## HTTPS와 웹 응답
 
 정적 앱과 `/api`는 동일 출처. API로 전달하는 Forwarded/X-Forwarded-*는 프록시에서 덮어쓰고 API에 직접 외부 접근 불가. 운영 세션은 `__Host-waterleague; Secure; HttpOnly; SameSite=Lax; Path=/`, Domain 미설정. HTTPS·CSRF·본문 한도·오류 비노출·CSP·HSTS 확인. 원격 도메인/인증서 확인 전 공개 바인딩 금지.

@@ -7,7 +7,9 @@ header {
     Strict-Transport-Security "max-age=31536000"
 }
 @private path /.env* /.git* /actuator* /run/*
-respond @private 404
+handle @private {
+    respond 404
+}
 handle /api/* {
     request_body {
         max_size 64KiB
