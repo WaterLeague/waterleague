@@ -1,5 +1,5 @@
-import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
-import { Canvas, useThree, useFrame } from '@react-three/fiber';
+import { useEffect, useLayoutEffect, useMemo } from 'react';
+import { Canvas, useThree } from '@react-three/fiber';
 import { OrbitControls, Edges } from '@react-three/drei';
 import * as THREE from 'three';
 import type { Building, CandidateMap, Transport } from '../entity/catalog';
@@ -7,6 +7,7 @@ import { buildingPolygons, polygonShapes } from '../service/mapGeometryService';
 import { buildingLabel } from '../service/catalogService';
 import type { Cell, Placement } from '../../game/entity/game';
 import { FacilityMesh } from './FacilityMesh';
+import { CellLabels, LabelMarker } from './SceneLabels';
 import { watchContextLoss } from '../service/sceneLifecycleService';
 import { useReducedMotion } from '../controller/useReducedMotion';
 
@@ -21,63 +22,6 @@ function SceneLifecycle({ onUnavailable }: { onUnavailable?: () => void }) {
     };
   }, [gl, onUnavailable]);
   return null;
-}
-
-function LabelMarker({
-  text,
-  position,
-  selected = false,
-  onSelect,
-}: {
-  text: string;
-  position: [number, number, number];
-  selected?: boolean;
-  onSelect?: () => void;
-}) {
-  const ref = useRef<THREE.Sprite>(null);
-  const width = Math.max(28, Math.min(220, text.length * 7 + 14)),
-    height = 23;
-  const texture = useMemo(() => {
-    const canvas = document.createElement('canvas');
-    canvas.width = width * 4;
-    canvas.height = height * 4;
-    const context = canvas.getContext('2d');
-    if (!context) throw new Error('지도 표식 렌더링 불가');
-    context.scale(4, 4);
-    context.fillStyle = selected ? '#284e3c' : '#fafdf4';
-    context.strokeStyle = selected ? '#284e3c' : '#aabb9b';
-    context.lineWidth = 1;
-    context.beginPath();
-    context.roundRect(0.5, 0.5, width - 1, height - 1, 3);
-    context.fill();
-    context.stroke();
-    context.font = '600 11px system-ui';
-    context.textAlign = 'center';
-    context.textBaseline = 'middle';
-    context.fillStyle = selected ? '#fff' : '#48623d';
-    context.fillText(text, width / 2, height / 2, width - 6);
-    const map = new THREE.CanvasTexture(canvas);
-    map.colorSpace = THREE.SRGBColorSpace;
-    return map;
-  }, [text, width, selected]);
-  useEffect(() => () => texture.dispose(), [texture]);
-  // 별도 DOM 루트 없이 표식을 그려 지도 전환 시 React 루트 정리 충돌 방지.
-  useFrame(({ camera }) => {
-    if (ref.current) ref.current.scale.set(width / camera.zoom, height / camera.zoom, 1);
-  });
-  return (
-    <sprite
-      ref={ref}
-      position={position}
-      renderOrder={100}
-      onClick={(e) => {
-        e.stopPropagation();
-        onSelect?.();
-      }}
-    >
-      <spriteMaterial map={texture} depthTest={false} depthWrite={false} toneMapped={false} />
-    </sprite>
-  );
 }
 
 function FitDistrict({ map }: { map: CandidateMap }) {
@@ -107,10 +51,12 @@ function FitDistrict({ map }: { map: CandidateMap }) {
 function BuildingMesh({
   building,
   selected,
+  showLabel,
   onSelect,
 }: {
   building: Building;
   selected: boolean;
+  showLabel: boolean;
   onSelect: () => void;
 }) {
   const geometry = useMemo(() => {
@@ -142,7 +88,7 @@ function BuildingMesh({
         <meshStandardMaterial color={selected ? '#719d82' : '#e5e6db'} roughness={0.85} />
         <Edges threshold={25} color={selected ? '#255d43' : '#b7c1b2'} linewidth={0.55} />
       </mesh>
-      {selected && (
+      {selected && showLabel && (
         <LabelMarker
           text={buildingLabel(building)}
           position={[building.center[0], building.heightM + 7, -building.center[1]]}
@@ -268,12 +214,6 @@ function Surface({
       {displayed && (
         <FacilityMesh cell={cell} placement={displayed} preview={!!preview} onSelect={onSelect} />
       )}
-      <LabelMarker
-        text={(preview ? '··· ' : placement ? '✓ ' : '') + cell.id}
-        position={[cell.center[0], cell.heightM + 4, -cell.center[1]]}
-        selected={selected}
-        onSelect={onSelect}
-      />
     </group>
   );
 }
@@ -354,6 +294,7 @@ export default function MapScene({
           key={building.id}
           building={building}
           selected={selected === building.id}
+          showLabel={!cells.length}
           onSelect={() => onSelect(building.id)}
         />
       ))}
@@ -367,6 +308,13 @@ export default function MapScene({
           onSelect={() => onCellSelect?.(cell.id)}
         />
       ))}
+      <CellLabels
+        cells={cells}
+        placements={placements}
+        preview={preview}
+        selectedCell={selectedCell}
+        onSelect={onCellSelect}
+      />
       <OrbitControls
         makeDefault
         enableDamping={!reducedMotion}
