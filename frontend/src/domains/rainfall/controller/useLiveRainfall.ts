@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { LiveRainfall } from '../entity/liveRainfall';
 import { loadLiveRainfall } from '../repository/liveRainfallRepository';
 import { errorMessage } from '../../../shared/exception/ApiError';
-export function useLiveRainfall() {
+export function useLiveRainfall(enabled = true) {
   const [value, setValue] = useState<LiveRainfall | null>(null),
     [busy, setBusy] = useState(false),
     [error, setError] = useState(''),
@@ -34,6 +34,11 @@ export function useLiveRainfall() {
     }
   }, []);
   useEffect(() => {
+    if (!enabled) {
+      const onVisibility = () => setVisible(!document.hidden);
+      document.addEventListener('visibilitychange', onVisibility);
+      return () => document.removeEventListener('visibilitychange', onVisibility);
+    }
     alive.current = true;
     generation.current++;
     pending.current = null;
@@ -54,7 +59,7 @@ export function useLiveRainfall() {
       window.clearInterval(timer);
       document.removeEventListener('visibilitychange', onVisibility);
     };
-  }, [refresh]);
+  }, [refresh, enabled]);
   useEffect(() => {
     const expiry = Math.min(
       ...(value?.districts.flatMap((d) =>

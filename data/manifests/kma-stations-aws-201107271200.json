@@ -1,0 +1,14 @@
+{
+  "provider": "기상청",
+  "endpoint": "https://apihub.kma.go.kr/api/typ01/url/stn_inf.php",
+  "parameters": {
+    "inf": "AWS",
+    "stn": "",
+    "tm": "201107271200",
+    "help": "1"
+  },
+  "acquiredAt": "2026-10-17T13:57:10.779292+00:00",
+  "sha256": "48a496b27a6f66b95edd941db954251a865f44163a4d06fa6b52881ba2e7c5d2",
+  "bytes": 133935,
+  "sourceTimezone": "Asia/Seoul"
+}

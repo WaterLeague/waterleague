@@ -12,11 +12,13 @@ from waterleague_sim.model_catalog import read_catalog
 from waterleague_sim.queue import claim, finish, TABLES
 from waterleague_sim.runtime import database_url
 from waterleague_sim.shared_physics import run_once as run_shared_physics
+from waterleague_sim.historical import process as process_historical
 MODELS=read_catalog(ROOT/'data/models')
 ARTIFACTS=Path(os.environ.get('ARTIFACTS_PATH',ROOT/'data/runs')).resolve()
 
 def process(conn,job):
  if job['queue_kind'] not in TABLES:raise ValueError('지원하지 않는 계산 큐')
+ if job['queue_kind']=='HISTORICAL':return process_historical(conn,job,ARTIFACTS)
  root=ARTIFACTS/'research-candidates' if job['queue_kind']=='RESEARCH_CANDIDATE' else ARTIFACTS
  path=root/str(job['id'])/str(job['lease_token']);path.mkdir(parents=True,exist_ok=False)
  model_bytes=MODELS.get(job['model_hash']);model_hash=hashlib.sha256(model_bytes).hexdigest() if model_bytes else None

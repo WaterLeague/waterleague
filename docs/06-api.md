@@ -120,3 +120,12 @@ RFC 9457 `application/problem+json`: type, title, status, detail, instance, code
 ## 계산 재사용 메타데이터
 
 신규 성공 결과의 `result.execution`은 `schema: 1`, `mode: COMPUTED | REUSED`, 64자 SHA-256 `computationKey` 제공. 이전 결과에는 없을 수 있음. 재사용 여부는 평가 점수·리그 제출 자격·기관 동의를 변경하지 않음. 원본 다른 회원의 식별자·작업 ID는 제공하지 않으며 재현 ZIP도 현재 소유자/버전의 요청·이력으로 구성.
+
+## 재해 모드 API 추가
+
+- `GET /api/v1/disasters`: 공개 재해 3건과 각 사건의 25개 구 강우 모델·시각·관측소·분량 제공.
+- `POST /api/v1/historical`: 로그인 회원의 선택 구·등록 재해 모델·공개 후보 1~50곳 검사 후 계산 요청. 요청 키 재사용은 같은 입력에만 허용. 다른 구 연구 허용, 공동 위치 점유 변경 없음.
+- `GET /api/v1/historical`, `GET /api/v1/historical/{id}`: 요청자 본인의 비공개 작업 목록·상태·결과.
+- `GET /api/v1/historical/{id}/bundle`: 본인 성공 작업의 해시 검증된 재현 묶음. 경로 이탈·심볼릭 링크·파일 변조 차단.
+
+원화 3억 연구 예산은 현재 실험 규칙이며 서울시 실제 예산으로 표시하지 않음. 결과는 선택 표면의 기준 대비 유출·배수·순저류 체적 비교. 관망·실제 침수 복원 결과로 확대 해석 금지.

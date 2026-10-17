@@ -42,7 +42,6 @@ import { exceedsLeagueLimits, totalArea } from '../../league/service/leagueServi
 import { ResearchPage } from '../../research/view/ResearchPage';
 import { SpatialComparison } from '../../spatial/view/SpatialComparison';
 import { MapViewport } from '../../catalog/view/MapViewport';
-import { ChallengeLobby } from './ChallengeLobby';
 import { RoundReport } from './RoundReport';
 import { matchesEvaluatedDesign } from '../service/roundService';
 import { assessPlacementDraft } from '../service/placementDraftService';
@@ -188,9 +187,7 @@ export function GamePage() {
           ? 1
           : 0;
   return (
-    <div
-      className={`game-shell${tab === 'missions' ? ' in-challenge' : ''}${tab === 'studio' ? ' in-play' : ''}`}
-    >
+    <div className={`game-shell${tab === 'studio' ? ' in-play' : ''}`}>
       <header className="topbar">
         <a className="wordmark" href="/" aria-label="WATER LEAGUE 홈">
           <svg width="31" height="31" viewBox="0 0 32 32" fill="none" aria-hidden="true">
@@ -212,7 +209,7 @@ export function GamePage() {
               ] as const)
             : ([
                 ['city', '서울 지도'],
-                ['missions', '과거 강우 연구'],
+                ['missions', '재해 모드'],
                 ...(tab === 'studio' ? ([['studio', '플레이']] as const) : []),
                 ['leaderboard', '기록 경쟁'],
                 ['research', '연구실'],
@@ -323,7 +320,12 @@ export function GamePage() {
         </div>
       )}
       {tab === 'city' ? (
-        <CityExplorer account={g.account} onLogin={() => setAuth(true)} onAccount={g.setAccount} />
+        <CityExplorer
+          key="shared"
+          account={g.account}
+          onLogin={() => setAuth(true)}
+          onAccount={g.setAccount}
+        />
       ) : !lab ? (
         <div className="empty-state">
           <CloudRain size={38} />
@@ -342,26 +344,12 @@ export function GamePage() {
       ) : tab === 'admin' && g.account?.role === 'ADMIN' ? (
         <ApprovalPage key={g.account.id} />
       ) : tab === 'missions' ? (
-        <ChallengeLobby
-          lab={lab}
-          catalog={g.rainfallCatalog}
-          map={activeMap}
-          busy={working}
-          hasDesign={g.placements.length > 0}
-          league={activeLeague}
-          onFreePlay={() => setActiveLeague(null)}
-          onSelect={(hash) => {
-            if (hash !== lab.modelHash)
-              void g.action(async () => {
-                await g.selectModel(hash);
-                setSelected(null);
-                setActiveLeague(null);
-                setFeedback('');
-              });
-          }}
-          onPlay={() => setTab('studio')}
-          onCompetition={() => setTab('leaderboard')}
-          onEvidence={() => setTab('data')}
+        <CityExplorer
+          key="historical"
+          mode="historical"
+          account={g.account}
+          onLogin={() => setAuth(true)}
+          onAccount={g.setAccount}
         />
       ) : tab === 'studio' ? (
         <div className="studio-layout play-layout">

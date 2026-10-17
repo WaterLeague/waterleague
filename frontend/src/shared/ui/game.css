@@ -3446,10 +3446,6 @@ a:focus-visible {
   font-size: 9px;
   pointer-events: none;
 }
-.challenge-city .map-context-note {
-  top: auto;
-  bottom: 66px;
-}
 .replay-map .map-context-note {
   top: 124px;
 }

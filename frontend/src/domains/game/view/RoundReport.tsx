@@ -136,7 +136,7 @@ export function RoundReport({
         </div>
       )}
       <div className="round-actions">
-        <button className="challenge-start" onClick={onRetry}>
+        <button className="play-primary-button" onClick={onRetry}>
           <RotateCcw size={18} /> 배치 수정·재도전 <ArrowRight size={18} />
         </button>
         <button className="outline-button" disabled={busy} onClick={onSubmit}>

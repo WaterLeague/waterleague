@@ -4,9 +4,17 @@ from datetime import datetime, timedelta, timezone
 
 from waterleague_sim.engine.evapotranspiration import solar_hour, hourly
 from waterleague_sim.ingestion.evaporation import KST, derive, append_evaporation, LiveSourceError
+from waterleague_sim.ingestion.daily_evaporation import daily
 
 
 class EvapotranspirationTests(unittest.TestCase):
+    def test_fao56_example18_daily(self):
+        result = daily(datetime(2001, 7, 6), 50.8, 100, 12.3, 21.5, 1.409, 10/3.6, 1001, 10, 22.07)
+        self.assertAlmostEqual(result['referenceEtMmDay'], 3.88, delta=.02)
+        self.assertAlmostEqual(result['extraterrestrialMjM2'], 41.09, delta=.02)
+        with self.assertRaises(LiveSourceError):
+            daily(datetime(2001, 7, 6), 50.8, 100, 12.3, 21.5, 1.409, 10/3.6, 1001, 10, -9)
+
     def test_fao56_example19_daytime(self):
         at = datetime(2001, 10, 1, 15, tzinfo=timezone(timedelta(hours=-1)))
         solar = solar_hour(at, 16+13/60, -16.25, 8)

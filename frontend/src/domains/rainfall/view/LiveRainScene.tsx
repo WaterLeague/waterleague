@@ -35,12 +35,16 @@ export function LiveRainScene({
   }, [districts, center, distance]);
   const geometry = useMemo(() => {
     const value = new THREE.BufferGeometry();
-    value.setAttribute(
-      'position',
-      new THREE.BufferAttribute(new Float32Array(seeds.length * 6), 3)
-    );
+    const height = Math.max(120, Math.min(1800, distance * 0.3));
+    const length = Math.max(3.5, Math.min(height * 0.2, distance * 0.018));
+    const initial = new Float32Array(seeds.length * 6);
+    seeds.forEach(({ point: [x, y], phase }, i) => {
+      const top = height * (1 - phase);
+      initial.set([x, top + length, -y, x, top, -y], i * 6);
+    });
+    value.setAttribute('position', new THREE.BufferAttribute(initial, 3));
     return value;
-  }, [seeds]);
+  }, [seeds, distance]);
   useEffect(() => () => geometry.dispose(), [geometry]);
   useEffect(() => {
     if (!animate || !seeds.length) return;
@@ -60,7 +64,7 @@ export function LiveRainScene({
     });
     positions.needsUpdate = true;
   });
-  return animate && seeds.length ? (
+  return seeds.length ? (
     <lineSegments geometry={geometry} frustumCulled={false} raycast={() => {}}>
       <lineBasicMaterial color="#365f75" transparent opacity={0.65} depthWrite={false} />
     </lineSegments>

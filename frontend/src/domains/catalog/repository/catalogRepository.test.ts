@@ -31,7 +31,7 @@ it('모든 모델을 해시가 검증된 자기 지도에 연결', async () => {
   expect(catalog.maps.slice(0, 2).map((entry) => entry.map.buildings.length)).toEqual([94, 246]);
   expect(catalog.maps).toHaveLength(27);
   expect(catalog.maps.slice(2).every((entry) => entry.map.buildings.length >= 8)).toBe(true);
-  expect(catalog.maps.flatMap((entry) => entry.modelHashes)).toHaveLength(152);
+  expect(catalog.maps.flatMap((entry) => entry.modelHashes)).toHaveLength(227);
 });
 it('지도 원문 변조를 조용히 다른 지도에 대체하지 않고 거부', async () => {
   vi.stubGlobal(

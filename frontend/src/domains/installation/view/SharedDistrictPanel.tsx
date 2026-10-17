@@ -256,7 +256,7 @@ export function SharedDistrictPanel({
       <p className="shared-evidence-note">
         공개 도형 기반 실험 후보 · 현장 시공 적합성 미확인
         <br />
-        예산과 면적 상한은 게임 설계 조건
+        예산은 게임 설계 조건 · 면적 한계는 공개 도형 기준
       </p>
     </aside>
   );

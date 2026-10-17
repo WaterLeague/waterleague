@@ -22,12 +22,13 @@ def source_counts(db):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--suite', choices=['league', 'analysis', 'queue', 'physics', 'search', 'restore', 'all'], default='league')
+    parser.add_argument('--suite', choices=['league', 'analysis', 'queue', 'physics', 'historical', 'search', 'restore', 'all'], default='league')
     suite = parser.parse_args().suite
     test_class = {'league': 'LeagueParticipationWorkflowTests',
                   'analysis': 'ResearchAnalysisWorkflowTests',
                   'queue': 'QueueCapacityTests',
-                  'physics': 'PhysicsWorkflowTests',
+                  'physics': 'PhysicsWorkflowTests,SharedInstallationTests',
+                  'historical': 'HistoricalWorkflowTests',
                   'search': 'ResearchSearchWorkflowTests',
                   'restore': 'ResearchSearchWorkflowTests#replaysActualSwmmSourcesAndGeneratedCandidateBundleOnIsolatedPostgres',
                   'all': 'LeagueParticipationWorkflowTests,ResearchAnalysisWorkflowTests,ResearchSearchWorkflowTests'}[suite]
@@ -35,7 +36,7 @@ def main():
     config = conninfo_to_dict(os.environ['DATABASE_URL'])
     if config.get('host') not in {'127.0.0.1', 'localhost', '::1'}:
         raise SystemExit('로컬 PostgreSQL만 허용')
-    prefix = {'queue': 'waterleague_queue_test_', 'physics': 'waterleague_queue_test_', 'search': 'waterleague_search_test_',
+    prefix = {'queue': 'waterleague_queue_test_', 'physics': 'waterleague_queue_test_', 'historical': 'waterleague_queue_test_', 'search': 'waterleague_search_test_',
               'restore': 'waterleague_search_test_'}
     test_name = prefix.get(suite, 'waterleague_league_test_') + uuid.uuid4().hex
     path = ROOT / 'tmp' / (test_name + '.log')
@@ -67,10 +68,10 @@ def main():
                 [str(ROOT / 'backend/mvnw'), '--batch-mode', '-Dtest=' + test_class,
                  '-Dwaterleague.integration.jdbc=' + jdbc, *physical, 'test'],
                 cwd=ROOT / 'backend', env=env, stdout=log, stderr=subprocess.STDOUT, timeout=180)
-            if suite in {'queue', 'physics'} and result.returncode == 0:
+            if suite in {'queue', 'physics', 'historical'} and result.returncode == 0:
                 worker_env = env | {'WL_WORKER_TEST_DSN': make_conninfo(**(config | {'dbname': test_name})),
                                     'PYTHONPATH': str(ROOT / 'simulation')}
-                pattern = ['-p', 'test_shared_physics.py'] if suite == 'physics' else []
+                pattern = ['-p', {'physics':'test_shared_physics.py','historical':'test_historical.py'}[suite]] if suite in {'physics','historical'} else []
                 result = subprocess.run([sys.executable, '-m', 'unittest', 'discover', '-s', 'integration', *pattern, '-v'],
                     cwd=ROOT / 'simulation', env=worker_env, stdout=log, stderr=subprocess.STDOUT, timeout=240)
         with psycopg.connect(**config) as db:

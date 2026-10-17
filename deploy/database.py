@@ -12,7 +12,7 @@ TABLES = (
     'utilization_requests utilization_decisions strategy_reviews league_participants '
     'league_participant_events league_invitations league_teams league_team_members '
     'research_comparisons research_searches research_search_sources research_candidates shared_installations '
-    'shared_physics_jobs'
+    'shared_physics_jobs historical_experiments'
 ).split()
 MUTABLE_QUEUE_COLUMNS = 'state attempts lease_token lease_until finished_at error_code result'.split()
 
@@ -68,10 +68,10 @@ def grant():
         db.execute('GRANT UPDATE(id) ON shared_installations TO wl_worker')
         db.execute('GRANT SELECT,INSERT ON shared_physics_jobs TO wl_worker')
         db.execute('GRANT UPDATE(state,lease_until,finished_at,input_hash,result,error_code) ON shared_physics_jobs TO wl_worker')
-        db.execute('GRANT SELECT ON simulation_jobs,research_candidates,queue_admission TO wl_worker')
+        db.execute('GRANT SELECT ON simulation_jobs,research_candidates,historical_experiments,queue_admission TO wl_worker')
         db.execute('GRANT SELECT(id,placements) ON strategy_versions TO wl_worker')
         db.execute('GRANT UPDATE(id) ON queue_admission TO wl_worker')
-        for table in ('simulation_jobs', 'research_candidates'):
+        for table in ('simulation_jobs', 'research_candidates', 'historical_experiments'):
             db.execute(sql.SQL('GRANT UPDATE({}) ON {} TO wl_worker').format(
                 sql.SQL(',').join(map(sql.Identifier, MUTABLE_QUEUE_COLUMNS)), sql.Identifier(table)))
 
