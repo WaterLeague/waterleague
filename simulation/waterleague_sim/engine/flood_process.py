@@ -8,6 +8,9 @@ from waterleague_sim.engine.flood_errors import FloodModelError, require
 _METHODS = {
     'network': frozenset(('snapshot', 'advance', 'set_inflow', 'set_outfall_head', 'finish', 'run')),
     'surface': frozenset(('snapshot', 'advance', 'set_rainfall', 'finish')),
+    'network_exchange': frozenset(('snapshot', 'port_state', 'exchange_step', 'set_inflow', 'finish')),
+    'surface_exchange': frozenset(('snapshot', 'port_state', 'apply_exchange', 'advance_exchange',
+                                   'set_rainfall', 'store_frame', 'finish')),
 }
 
 
@@ -20,13 +23,19 @@ def _serve(connection, engine, model, directory, evaluation_seconds):
                                      'MKL_NUM_THREADS': '1', 'MPLBACKEND': 'Agg'})
     session = None
     try:
-        if engine == 'network':
-            from waterleague_sim.engine.network import NetworkSession
+        if engine in ('network', 'network_exchange'):
+            if engine == 'network_exchange':
+                from waterleague_sim.engine.network_exchange import ExchangeNetworkSession as NetworkSession
+            else:
+                from waterleague_sim.engine.network import NetworkSession
             session = NetworkSession(model, directory, evaluation_seconds=evaluation_seconds)
             session.__enter__()
             extra = {'durationSeconds': session.duration_seconds, 'evaluationSeconds': session.evaluation_seconds}
         else:
-            from waterleague_sim.engine.surface import SurfaceSession
+            if engine == 'surface_exchange':
+                from waterleague_sim.engine.surface_exchange import ExchangeSurfaceSession as SurfaceSession
+            else:
+                from waterleague_sim.engine.surface import SurfaceSession
             session = SurfaceSession(model, directory)
             extra = {'gravityMps2': session.gravity_mps2}
         connection.send({'ok': True, 'value': extra | {'engine': session.engine, 'initial': session.initial}})
@@ -47,7 +56,7 @@ def _serve(connection, engine, model, directory, evaluation_seconds):
         except (EOFError, BrokenPipeError, OSError):
             pass
     finally:
-        if engine == 'network' and session is not None:
+        if engine in ('network', 'network_exchange') and session is not None:
             session.close()
         connection.close()
 

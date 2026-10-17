@@ -82,7 +82,7 @@ class NetworkSession:
         self.result = None
 
     def __enter__(self):
-        self.engine = identity()
+        self.engine = self.engine_identity()
         require(_LOCK.acquire(blocking=False), 'NETWORK_SESSION_ALREADY_OPEN')
         self.locked = True
         try:
@@ -92,7 +92,7 @@ class NetworkSession:
             self.directory.mkdir(parents=True)
             self.input_path = self.directory / 'network.inp'
             self.input_path.write_text(self.input_text)
-            self.lib = C.CDLL(str(library_path()))
+            self.lib = C.CDLL(str(self.engine_path()))
             self.lib.swmm_open.argtypes = [C.c_char_p] * 3
             self.lib.swmm_getValue.argtypes = [C.c_int, C.c_int]
             self.lib.swmm_getValue.restype = C.c_double
@@ -136,6 +136,9 @@ class NetworkSession:
         except BaseException:
             self.close()
             raise
+
+    engine_identity = staticmethod(identity)
+    engine_path = staticmethod(library_path)
 
     @staticmethod
     def _check(code):

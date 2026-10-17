@@ -1,4 +1,5 @@
 """관망 누적 수지를 읽는 별도 EPA 빌드. 기존 LID 바이너리 보존."""
+import argparse
 import hashlib
 import json
 import platform
@@ -11,6 +12,9 @@ from build_live_swmm import ROOT, REVISION, ARCHIVE_HASH
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--exchange', action='store_true')
+    args = parser.parse_args()
     archive = ROOT / 'tmp/swmm/source.tar.gz'
     if not archive.exists():
         with urlopen(f'https://api.github.com/repos/USEPA/Stormwater-Management-Model/tarball/{REVISION}',
@@ -22,7 +26,8 @@ def main():
         archive.write_bytes(raw)
     if hashlib.sha256(archive.read_bytes()).hexdigest() != ARCHIVE_HASH:
         raise ValueError('EPA_SOURCE_HASH_MISMATCH')
-    source, build = ROOT / 'tmp/network-swmm-source', ROOT / 'tmp/network-swmm-build'
+    name = 'network-exchange-swmm' if args.exchange else 'network-swmm'
+    source, build = ROOT / f'tmp/{name}-source', ROOT / f'tmp/{name}-build'
     source.mkdir(parents=True, exist_ok=True)
     with tarfile.open(archive) as bundle:
         prefix = bundle.getmembers()[0].name.split('/')[0]
@@ -39,6 +44,9 @@ def main():
     observer = ROOT / 'simulation/native/network_snapshot.inc'
     solver = source / 'src/solver/swmm5.c'
     solver.write_bytes(solver.read_bytes() + b'\n' + observer.read_bytes())
+    extension = ROOT / 'simulation/native/network_exchange.inc'
+    if args.exchange:
+        solver.write_bytes(solver.read_bytes() + b'\n' + extension.read_bytes())
     options = ['-DCMAKE_BUILD_TYPE=Release', '-DCMAKE_INSTALL_RPATH=$ORIGIN']
     if platform.system() == 'Darwin':
         omp = subprocess.check_output(['brew', '--prefix', 'libomp'], text=True).strip()
@@ -55,6 +63,9 @@ def main():
         'observerSha256': hashlib.sha256(observer.read_bytes()).hexdigest(),
         'binarySha256': hashlib.sha256(library.read_bytes()).hexdigest(),
         'modification': 'READ_ONLY_OBSERVER_NO_SOLVER_CHANGES',
+        **({'exchangeVersion': 1, 'exchangeSha256': hashlib.sha256(extension.read_bytes()).hexdigest(),
+            'modification': 'OBSERVER_AND_MILLISECOND_STRIDE_NO_SOLVER_EQUATION_CHANGES'}
+           if args.exchange else {}),
     }, indent=2) + '\n')
 
 
