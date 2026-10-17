@@ -5,7 +5,15 @@ import type { FacilityFootprint } from '../entity/facilityFootprint';
 import { facilityFootprint, plantingMarkers } from '../service/facilityGeometryService';
 import { CatalogError } from '../exception/CatalogError';
 
-function Planting({ footprint, roof }: { footprint: FacilityFootprint; roof: boolean }) {
+function Planting({
+  footprint,
+  roof,
+  opacity,
+}: {
+  footprint: FacilityFootprint;
+  roof: boolean;
+  opacity: number;
+}) {
   const points = useMemo(() => plantingMarkers(footprint), [footprint]);
   const ref = useRef<THREE.InstancedMesh>(null);
   useLayoutEffect(() => {
@@ -27,7 +35,12 @@ function Planting({ footprint, roof }: { footprint: FacilityFootprint; roof: boo
   return (
     <instancedMesh ref={ref} args={[undefined, undefined, points.length]} castShadow receiveShadow>
       <coneGeometry args={[0.65, roof ? 0.55 : 1.35, 5]} />
-      <meshStandardMaterial roughness={1} />
+      <meshStandardMaterial
+        roughness={1}
+        transparent={opacity < 1}
+        opacity={opacity}
+        depthWrite={opacity === 1}
+      />
     </instancedMesh>
   );
 }
@@ -37,11 +50,13 @@ export function FacilityMesh({
   placement,
   preview,
   onSelect,
+  opacity = 1,
 }: {
-  cell: Cell;
+  cell: Pick<Cell, 'coordinates' | 'areaM2' | 'heightM'>;
   placement: Placement;
   preview: boolean;
   onSelect: () => void;
+  opacity?: number;
 }) {
   const footprint = useMemo(
     () => facilityFootprint(cell.coordinates, placement.areaM2 / cell.areaM2),
@@ -132,8 +147,8 @@ export function FacilityMesh({
         <meshStandardMaterial
           color={paved ? '#4d7078' : '#827251'}
           roughness={1}
-          transparent={preview}
-          opacity={preview ? 0.45 : 1}
+          transparent={preview || opacity < 1}
+          opacity={(preview ? 0.45 : 1) * opacity}
           side={THREE.DoubleSide}
         />
       </mesh>
@@ -141,9 +156,9 @@ export function FacilityMesh({
         <meshStandardMaterial
           map={texture}
           roughness={1}
-          transparent={preview}
-          opacity={preview ? 0.55 : 1}
-          depthWrite={!preview}
+          transparent={preview || opacity < 1}
+          opacity={(preview ? 0.55 : 1) * opacity}
+          depthWrite={!preview && opacity === 1}
         />
       </mesh>
       <lineSegments ref={outline} geometry={resources.outline}>
@@ -153,7 +168,7 @@ export function FacilityMesh({
           <lineBasicMaterial color={paved ? '#4d7078' : '#5e633d'} />
         )}
       </lineSegments>
-      {!preview && !paved && <Planting footprint={footprint} roof={roof} />}
+      {!preview && !paved && <Planting footprint={footprint} roof={roof} opacity={opacity} />}
     </group>
   );
 }

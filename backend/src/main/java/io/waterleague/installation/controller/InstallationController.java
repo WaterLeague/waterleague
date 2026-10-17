@@ -1,7 +1,6 @@
 package io.waterleague.installation.controller;
 
 import io.waterleague.installation.dto.InstallRequest;
-import io.waterleague.installation.mapper.InstallationMapper;
 import io.waterleague.installation.service.InstallationService;
 import io.waterleague.installation.view.InstallationView;
 import jakarta.validation.Valid;
@@ -28,19 +27,37 @@ public class InstallationController {
 
   @GetMapping
   public List<InstallationView> list() {
-    return service.active().stream().map(InstallationMapper::view).toList();
+    return service.active().stream().map(service::view).toList();
   }
 
   @GetMapping("/sites")
-  public List<io.waterleague.installation.view.SiteView> sites() {
-    return service.sites();
+  public io.waterleague.installation.view.SitePageView sites(
+      @RequestParam(required = false) String districtId,
+      @RequestParam(defaultValue = "0") double x,
+      @RequestParam(defaultValue = "0") double y,
+      @RequestParam(defaultValue = "0") int offset,
+      @RequestParam(required = false) io.waterleague.strategy.entity.FacilityType type,
+      @RequestParam(defaultValue = "false") boolean vacant) {
+    return service.sites(districtId, x, y, offset, type, vacant);
+  }
+
+  @GetMapping("/sites/{districtId}/building")
+  public io.waterleague.installation.view.SiteView building(
+      @PathVariable String districtId, @RequestParam String sourceId) {
+    return service.building(districtId, sourceId);
+  }
+
+  @GetMapping("/sites/{districtId}/{cellId}")
+  public io.waterleague.installation.view.SiteView site(
+      @PathVariable String districtId, @PathVariable String cellId) {
+    return service.site(districtId, cellId);
   }
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   public InstallationView install(Principal p, @Valid @RequestBody InstallRequest dto) {
     rates.check("shared-install:" + json.hash(p.getName()), 60, 60);
-    return InstallationMapper.view(service.install(p.getName(), dto));
+    return service.view(service.install(p.getName(), dto));
   }
 
   @DeleteMapping("/{id}")

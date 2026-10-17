@@ -11,8 +11,10 @@ public record SiteView(
     List<List<Double>> coordinates,
     List<Double> center,
     double heightM,
+    double areaM2,
     BigDecimal maxAreaM2,
     List<String> allowedTypes,
     Map<String, BigDecimal> unitCosts,
     BigDecimal budget,
-    String modelHash) {}
+    String modelHash,
+    List<String> sourceIds) {}

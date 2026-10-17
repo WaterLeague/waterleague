@@ -54,3 +54,16 @@ export async function loadCityTile(entry: TileEntry, signal: AbortSignal) {
   }
   return data;
 }
+
+import { cityEligibilityDto } from '../dto/cityEligibilityDto';
+export async function loadCityEligibility(signal: AbortSignal) {
+  const value = cityEligibilityDto.parse(
+    await read(
+      '/data/seoul-site-eligibility-v1.json',
+      '2699d3067b4a9dfcded5d41e960ab184761bc00139401ec8318b28742b337dc6',
+      signal,
+      4000000
+    )
+  );
+  return { roofIds: new Set(value.roofSourceIds), legacySiteSources: value.legacySiteSources };
+}

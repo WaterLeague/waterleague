@@ -13,4 +13,6 @@ public record InstallationView(
     String facilityType,
     BigDecimal areaM2,
     BigDecimal cost,
-    Instant installedAt) {}
+    Instant installedAt,
+    java.util.List<Double> center,
+    double heightM) {}

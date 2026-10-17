@@ -6,7 +6,8 @@ import io.waterleague.installation.view.InstallationView;
 public final class InstallationMapper {
   private InstallationMapper() {}
 
-  public static InstallationView view(SharedInstallation i) {
+  public static InstallationView view(
+      SharedInstallation i, io.waterleague.installation.view.SiteView site) {
     return new InstallationView(
         i.id(),
         i.districtId(),
@@ -16,6 +17,8 @@ public final class InstallationMapper {
         i.facilityType().name(),
         i.areaM2(),
         i.cost(),
-        i.installedAt());
+        i.installedAt(),
+        site.center(),
+        site.heightM());
   }
 }

@@ -158,15 +158,52 @@ class SharedInstallationTests {
                     new InstallRequest(
                         "2410520", "G1", FacilityType.PERMEABLE_PAVEMENT, new BigDecimal("20.01"))))
         .isInstanceOf(DomainException.class);
-    var sites = service.sites();
-    assertThat(sites).hasSize(325);
-    assertThat(sites.stream().map(s -> s.districtId()).distinct().count()).isEqualTo(25);
-    var site =
-        sites.stream()
-            .filter(s -> s.districtId().equals("2410520") && s.cellId().equals("G5"))
-            .findFirst()
-            .orElseThrow();
+    var overview = service.sites(null, 0, 0, 0, null, false);
+    assertThat(overview.districtCounts()).hasSize(25);
+    assertThat(overview.districtCounts().values().stream().mapToInt(Integer::intValue).sum())
+        .isEqualTo(154784);
+    var page = service.sites("2410520", 7239.5, -7741.5, 0, null, false);
+    assertThat(page.sites()).hasSize(200);
+    assertThat(page.matchedCount()).isGreaterThan(1000);
+    var site = service.site("2410520", "G5");
     assertThat(site.center()).containsExactly(7239.5, -7741.5);
     assertThat(service.active()).isEmpty();
+  }
+
+  @Test
+  void expandedSitesUseFrozenCatalogAndShareBudgetAndOccupancy() {
+    var a = account("2410520");
+    var page = service.sites("2410520", 7239.5, -7741.5, 0, FacilityType.GREEN_ROOF, true);
+    var site =
+        page.sites().stream().filter(s -> s.cellId().startsWith("RW")).findFirst().orElseThrow();
+    var installed =
+        service.install(
+            a.username(),
+            new InstallRequest(
+                site.districtId(), site.cellId(), FacilityType.GREEN_ROOF, BigDecimal.TEN));
+    assertThat(installed.modelHash()).isEqualTo(site.modelHash());
+    assertThat(service.building(site.districtId(), site.sourceIds().getFirst()).cellId())
+        .isEqualTo(site.cellId());
+    var legacy = service.site("2410520", "R1");
+    assertThat(service.building(legacy.districtId(), legacy.sourceIds().getFirst()).cellId())
+        .isEqualTo("R1");
+    assertThat(service.view(installed).center()).isEqualTo(site.center());
+    assertThat(
+            service
+                .sites("2410520", 7239.5, -7741.5, 0, FacilityType.GREEN_ROOF, true)
+                .matchedCount())
+        .isEqualTo(page.matchedCount() - 1);
+    assertThatThrownBy(
+            () ->
+                service.install(
+                    a.username(),
+                    new InstallRequest(
+                        site.districtId(),
+                        site.cellId(),
+                        FacilityType.RAIN_GARDEN,
+                        BigDecimal.ONE)))
+        .isInstanceOf(DomainException.class);
+    assertThatThrownBy(() -> service.sites("2410520", Double.NaN, 0, 0, null, false))
+        .isInstanceOf(DomainException.class);
   }
 }

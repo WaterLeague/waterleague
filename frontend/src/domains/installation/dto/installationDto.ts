@@ -11,6 +11,8 @@ export const installationDto = z.object({
   areaM2: z.number().positive(),
   cost: z.number().nonnegative(),
   installedAt: z.iso.datetime(),
+  center: point,
+  heightM: z.number().nonnegative(),
 });
 export const siteDto = z.object({
   districtId: z.string(),
@@ -20,9 +22,19 @@ export const siteDto = z.object({
   coordinates: z.array(point).min(4),
   center: point,
   heightM: z.number().nonnegative(),
+  areaM2: z.number().positive(),
   maxAreaM2: z.number().positive(),
   allowedTypes: z.array(facility).min(1),
   unitCosts: z.record(facility, z.number().positive()),
   budget: z.number().positive(),
+  sourceIds: z.array(z.string()),
   modelHash: z.string().regex(/^[a-f0-9]{64}$/),
+});
+
+export const sitePageDto = z.object({
+  sites: z.array(siteDto).max(200),
+  districtCounts: z.record(z.string(), z.number().int().nonnegative()),
+  matchedCount: z.number().int().nonnegative(),
+  offset: z.number().int().nonnegative(),
+  limit: z.number().int().positive(),
 });

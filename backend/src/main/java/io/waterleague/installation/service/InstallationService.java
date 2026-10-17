@@ -8,7 +8,6 @@ import io.waterleague.installation.dto.InstallRequest;
 import io.waterleague.installation.entity.SharedInstallation;
 import io.waterleague.installation.exception.InstallationException;
 import io.waterleague.installation.repository.InstallationRepository;
-import io.waterleague.model.service.LabModelService;
 import io.waterleague.strategy.entity.Placement;
 import java.time.Instant;
 import java.util.*;
@@ -22,63 +21,77 @@ public class InstallationService {
   private final DistrictRepository districts;
   private final AccountRepository accounts;
   private final AccountService auth;
-  private final LabModelService models;
-  private final io.waterleague.model.repository.LabModelRepository registry;
+  private final io.waterleague.installation.repository.SiteCatalogRepository sites;
+  private final io.waterleague.strategy.service.PlacementValidationService validation;
 
   public InstallationService(
       InstallationRepository i,
       DistrictRepository d,
       AccountRepository a,
       AccountService auth,
-      LabModelService m,
-      io.waterleague.model.repository.LabModelRepository registry) {
+      io.waterleague.installation.repository.SiteCatalogRepository sites,
+      io.waterleague.strategy.service.PlacementValidationService validation) {
     installations = i;
     districts = d;
     accounts = a;
     this.auth = auth;
-    models = m;
-    this.registry = registry;
+    this.sites = sites;
+    this.validation = validation;
   }
 
   public List<SharedInstallation> active() {
     return installations.active();
   }
 
-  public List<io.waterleague.installation.view.SiteView> sites() {
-    var sites = new ArrayList<io.waterleague.installation.view.SiteView>();
-    for (var district : districts.all()) {
-      var model = registry.require(district.modelHash()).model();
-      var costs = new LinkedHashMap<String, java.math.BigDecimal>();
-      for (var f : io.waterleague.strategy.entity.FacilityType.values())
-        costs.put(f.name(), model.path("unitCosts").path(f.name()).decimalValue());
-      for (var cell : model.path("cells")) {
-        var coordinates = new ArrayList<List<Double>>();
-        for (var p : cell.path("coordinates"))
-          coordinates.add(
-              List.of(
-                  p.get(0).asDouble() + district.center().get(0),
-                  p.get(1).asDouble() + district.center().get(1)));
-        var types = new ArrayList<String>();
-        for (var t : cell.path("allowedTypes")) types.add(t.asString());
-        sites.add(
-            new io.waterleague.installation.view.SiteView(
-                district.id(),
-                cell.path("id").asString(),
-                cell.path("name").asString(),
-                cell.path("kind").asString(),
-                coordinates,
-                List.of(
-                    cell.path("center").get(0).asDouble() + district.center().get(0),
-                    cell.path("center").get(1).asDouble() + district.center().get(1)),
-                cell.path("heightM").asDouble(),
-                cell.path("maxAreaM2").decimalValue(),
-                types,
-                costs,
-                model.path("budget").decimalValue(),
-                district.modelHash()));
-      }
-    }
-    return List.copyOf(sites);
+  public io.waterleague.installation.view.SitePageView sites(
+      String districtId,
+      double x,
+      double y,
+      int offset,
+      io.waterleague.strategy.entity.FacilityType type,
+      boolean vacant) {
+    if (!Double.isFinite(x)
+        || !Double.isFinite(y)
+        || Math.abs(x) > 100000
+        || Math.abs(y) > 100000
+        || offset < 0
+        || offset > 300000) throw new InstallationException(ErrorCode.REQUEST_INVALID);
+    if (districtId == null || districtId.isEmpty())
+      return new io.waterleague.installation.view.SitePageView(
+          List.of(), sites.counts(), 0, 0, 200);
+    var occupied = new HashSet<String>();
+    if (vacant)
+      for (var i : installations.active())
+        if (i.districtId().equals(districtId)) occupied.add(i.cellId());
+    var matched =
+        sites.district(districtId).values().stream()
+            .filter(v -> type == null || v.allowedTypes().contains(type.name()))
+            .filter(v -> !occupied.contains(v.cellId()))
+            .sorted(
+                Comparator.comparingDouble(
+                        (io.waterleague.installation.view.SiteView v) ->
+                            Math.hypot(v.center().get(0) - x, v.center().get(1) - y))
+                    .thenComparing(v -> v.cellId()))
+            .toList();
+    return new io.waterleague.installation.view.SitePageView(
+        matched.stream().skip(offset).limit(200).toList(),
+        sites.counts(),
+        matched.size(),
+        offset,
+        200);
+  }
+
+  public io.waterleague.installation.view.SiteView building(String districtId, String sourceId) {
+    return sites.building(districtId, sourceId);
+  }
+
+  public io.waterleague.installation.view.SiteView site(String districtId, String cellId) {
+    return sites.require(districtId, cellId);
+  }
+
+  public io.waterleague.installation.view.InstallationView view(SharedInstallation i) {
+    return io.waterleague.installation.mapper.InstallationMapper.view(
+        i, sites.require(i.districtId(), i.cellId()));
   }
 
   @Transactional
@@ -97,8 +110,24 @@ public class InstallationService {
     var all = new ArrayList<Placement>();
     for (var i : own) all.add(new Placement(i.cellId(), i.facilityType(), i.areaM2()));
     all.add(placement);
-    models.validate(district.modelHash(), all);
-    var cost = models.validate(district.modelHash(), List.of(placement));
+    var site = sites.require(district.id(), request.cellId());
+    var cells = new HashMap<String, io.waterleague.strategy.entity.PlacementCell>();
+    for (var p : all) {
+      var c = sites.require(district.id(), p.cellId());
+      var types = new HashSet<io.waterleague.strategy.entity.FacilityType>();
+      for (var t : c.allowedTypes())
+        types.add(io.waterleague.strategy.entity.FacilityType.valueOf(t));
+      cells.put(
+          c.cellId(),
+          new io.waterleague.strategy.entity.PlacementCell(c.cellId(), types, c.maxAreaM2(), true));
+    }
+    var costs =
+        new EnumMap<io.waterleague.strategy.entity.FacilityType, java.math.BigDecimal>(
+            io.waterleague.strategy.entity.FacilityType.class);
+    site.unitCosts()
+        .forEach((t, c) -> costs.put(io.waterleague.strategy.entity.FacilityType.valueOf(t), c));
+    validation.validate(all, cells, costs, site.budget(), sites.counts().get(district.id()));
+    var cost = validation.validate(List.of(placement), cells, costs, site.budget(), 1);
     var value =
         new SharedInstallation(
             UUID.randomUUID(),
@@ -106,7 +135,7 @@ public class InstallationService {
             request.cellId(),
             account.id(),
             account.displayName(),
-            district.modelHash(),
+            site.modelHash(),
             request.facilityType(),
             request.areaM2(),
             cost,
