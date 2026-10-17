@@ -1,0 +1,27 @@
+{
+  "datasetId": "OA-15636",
+  "year": 2010,
+  "sourceUrl": "https://data.seoul.go.kr/dataList/OA-15636/F/1/datasetView.do",
+  "downloadUrl": "https://datafile.seoul.go.kr/bigfile/iot/inf/nio_download.do?&useCache=false",
+  "downloadForm": {
+    "infId": "OA-15636",
+    "infSeq": "1",
+    "seq": "4"
+  },
+  "retrievedAt": "2026-10-17T22:05:10.452312+00:00",
+  "fileModifiedAt": "2023-04-13",
+  "portalUpdatedAt": "2026-04-27",
+  "license": "KOGL_TYPE_1",
+  "sha256": "5f9fef91baa8dd509a7f498da12b93e1ca99a0c3396a011f547b4d48061bcb20",
+  "bytes": 1216887,
+  "path": "data/raw/seoul-flood-traces-2010-5f9fef91baa8dd509a7f498da12b93e1ca99a0c3396a011f547b4d48061bcb20.zip",
+  "archiveMembers": [
+    "╝¡┐∩╜├_2010.shx",
+    "╝¡┐∩╜├_2010.dbf",
+    "╝¡┐∩╜├_2010.prj",
+    "╝¡┐∩╜├_2010.sbn",
+    "╝¡┐∩╜├_2010.sbx",
+    "╝¡┐∩╜├_2010.shp",
+    "╝¡┐∩╜├_2010.shp.xml"
+  ]
+}

@@ -47,6 +47,8 @@ import { useInfrastructure } from '../../infrastructure/controller/useInfrastruc
 import { visibleInfrastructure } from '../../infrastructure/service/infrastructureService';
 import { InfrastructurePanel } from '../../infrastructure/view/InfrastructurePanel';
 import type { InfrastructureAsset } from '../../infrastructure/entity/infrastructure';
+import { useFloodTraces } from '../../floodtrace/controller/useFloodTraces';
+import { FloodTraceControls } from '../../floodtrace/view/FloodTraceControls';
 const CityScene = lazy(() => import('./CityScene'));
 type PlayProps = {
   account: Account | null;
@@ -74,6 +76,10 @@ function Explorer({
   const infrastructure = useInfrastructure();
   const [infrastructureOpen, setInfrastructureOpen] = useState(false);
   const [assetsEnabled, setAssetsEnabled] = useState(true);
+  const [tracesEnabled, setTracesEnabled] = useState(false);
+  const [referenceTraceEvent, setReferenceTraceEvent] = useState('seoul-20220808');
+  const [traceRenderError, setTraceRenderError] = useState(false);
+  const traceFailed = useCallback(() => setTraceRenderError(true), []);
   const [selectedAssetId, setSelectedAssetId] = useState('');
   const [budgetRevision, setBudgetRevision] = useState(0);
   const budget = useBudget(budgetRevision, account?.id ?? null);
@@ -149,6 +155,8 @@ function Explorer({
     distance: 35000,
   });
   const navigationCamera = useRef(camera);
+  const traceEventId = researchMode ? eventId : referenceTraceEvent;
+  const traces = useFloodTraces(tracesEnabled, traceEventId, camera);
   const publicAssets = useMemo(
     () =>
       assetsEnabled && infrastructure.catalog
@@ -373,6 +381,7 @@ function Explorer({
   );
   const plan = (
     <CityPlan
+      traceTiles={traces.tiles}
       publicAssets={publicAssets}
       selectedAssetId={selectedAssetId}
       onAsset={selectAsset}
@@ -495,6 +504,22 @@ function Explorer({
             )}
           </div>
         </div>
+        <FloodTraceControls
+          enabled={tracesEnabled}
+          onEnabled={(value) => {
+            setTracesEnabled(value);
+            setTraceRenderError(false);
+          }}
+          eventId={traceEventId}
+          onEvent={setReferenceTraceEvent}
+          fixedEvent={researchMode}
+          catalog={traces.catalog}
+          event={traces.event}
+          loading={traces.loading}
+          error={traces.error}
+          renderError={traceRenderError}
+          retry={traces.retry}
+        />
         <section ref={stage} className="city-stage" aria-label="서울 전역 3D 지도">
           {flat ? (
             plan
@@ -508,6 +533,8 @@ function Explorer({
                 }
               >
                 <CityScene
+                  traceTiles={traces.tiles}
+                  onTraceError={traceFailed}
                   publicAssets={publicAssets}
                   selectedAssetId={selectedAssetId}
                   onAsset={selectAsset}

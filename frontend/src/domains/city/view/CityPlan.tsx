@@ -14,8 +14,11 @@ import { usePlanNavigation } from '../controller/usePlanNavigation';
 import type { PlanView } from '../service/planNavigationService';
 import type { InfrastructureAsset } from '../../infrastructure/entity/infrastructure';
 import { infrastructureColor } from '../../infrastructure/service/infrastructureService';
+import type { TraceTile } from '../../floodtrace/entity/floodTrace';
+import { FloodTracePlan } from '../../floodtrace/view/FloodTraceLayer';
 
 type Props = {
+  traceTiles: TraceTile[];
   publicAssets: InfrastructureAsset[];
   selectedAssetId: string;
   onAsset: (asset: InfrastructureAsset) => void;
@@ -44,6 +47,7 @@ type Props = {
   rainAmounts: ReadonlyMap<string, number | null>;
 };
 export const CityPlan = memo(function CityPlan({
+  traceTiles,
   publicAssets,
   selectedAssetId,
   onAsset,
@@ -232,6 +236,7 @@ export const CityPlan = memo(function CityPlan({
           </path>
         );
       })}
+      <FloodTracePlan tiles={traceTiles} />
       {installations.map((i) => (
         <circle
           key={i.id}

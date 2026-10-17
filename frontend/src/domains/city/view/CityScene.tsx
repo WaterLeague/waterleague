@@ -32,6 +32,8 @@ import { terrainHeight, terrainLine } from '../../terrain/service/terrainService
 import { TerrainSurface } from '../../terrain/view/TerrainSurface';
 import type { InfrastructureAsset } from '../../infrastructure/entity/infrastructure';
 import { InfrastructureMarkers } from '../../infrastructure/view/InfrastructureMarkers';
+import type { TraceTile } from '../../floodtrace/entity/floodTrace';
+import { FloodTraceLayer } from '../../floodtrace/view/FloodTraceLayer';
 const TerrainContext = createContext<Terrain | null>(null);
 const mapEvents: Parameters<typeof Canvas>[0]['events'] = (state) => ({
   ...events(state),
@@ -334,6 +336,8 @@ function ProjectedLabels({
   return null;
 }
 const CityScene = memo(function CityScene({
+  traceTiles,
+  onTraceError,
   publicAssets,
   selectedAssetId,
   onAsset,
@@ -362,6 +366,8 @@ const CityScene = memo(function CityScene({
   facilityType,
   viewerId,
 }: {
+  traceTiles: TraceTile[];
+  onTraceError: () => void;
   publicAssets: InfrastructureAsset[];
   selectedAssetId: string;
   onAsset: (asset: InfrastructureAsset) => void;
@@ -400,6 +406,7 @@ const CityScene = memo(function CityScene({
       gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
     >
       <TerrainContext.Provider value={terrain}>
+        <FloodTraceLayer tiles={traceTiles} terrain={terrain} onError={onTraceError} />
         <InfrastructureMarkers
           assets={publicAssets}
           selectedId={selectedAssetId}
