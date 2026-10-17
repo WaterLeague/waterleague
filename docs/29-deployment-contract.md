@@ -20,7 +20,9 @@ API는 Spring config tree, 워커는 `_FILE` 설정으로 DB 연결 비밀을 �
 
 로컬 검증 명령: 저장소 루트에서 `python3 scripts/verify_containers.py`. Docker 엔진과 비root 계정 필요. 임의 프로젝트 이름·비공개 임시 폴더·loopback 임의 포트를 사용하고 기존 `.env.local`은 읽거나 수정하지 않음. `deploy/compose.yml`은 로컬 검증 구성. `Caddyfile.public`은 도메인 확보 후 검증할 초안이며 공개 포트/인증서 설정은 아직 운영 완료 범위 아님.
 
-워커 Python 3.14 의존성은 `deploy/requirements.lock`에 직접·전이 패키지 버전과 Linux amd64/arm64 wheel 해시 고정, `pip --require-hashes --only-binary` 사용. SWMM은 EPA 고정 commit tarball SHA256 확인 후 빌드, 워커당 단일 작업에 맞춰 OpenMP 비활성화. 베이스 이미지 digest·Python wheel·Maven/pnpm 버전은 고정하되 빌드 단계 Debian 도구 패키지까지 비트 단위 재현을 보장하지는 않음.
+워커 Python 3.14 의존성은 `deploy/requirements.lock`에 직접·전이 패키지 버전과 Linux amd64/arm64 wheel 해시 고정, `pip --require-hashes --only-binary` 사용. SWMM은 EPA 고정 commit tarball SHA256 확인 후 빌드, 워커당 단일 작업에 맞춰 OpenMP 비활성화. 베이스 이미지 digest·Python wheel·Maven/pnpm 버전은 고정하되 빌드 단계 OS 도구 패키지까지 비트 단위 재현을 보장하지는 않음.
+
+Corretto 빌드 단계에 unzip 설치: 미설치 시 Maven Wrapper가 URL을 tar.gz로 바꾸지만 저장소에 고정한 ZIP SHA256과는 달라 첫 CI 빌드 실패. 압축 형식을 ZIP으로 유지하며 해시 검증은 제거하지 않음. 런타임 이미지는 빌드 단계의 추가 패키지를 복사하지 않음.
 
 초기 확인: 보안/가입/컨테이너 정책 Java 시험 8건, 파일 비밀 Python 시험 4건, Compose 문법 검사 통과. macOS Docker 엔진 연결 실패로 실제 컨테이너 검증은 아직 미완료. CI에 Linux amd64/arm64 독립 실행을 추가하여 결과 확인 예정. 아래 완료 증거는 실행 성공 후 갱신.
 
