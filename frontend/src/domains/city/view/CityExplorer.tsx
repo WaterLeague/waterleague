@@ -5,6 +5,7 @@ import type { City, CityFocus } from '../entity/city';
 import type { CityPlayRegion } from '../dto/cityPlayDto';
 import { ErrorBoundary } from '../../../shared/exception/ErrorBoundary';
 import { polygonPath } from '../../catalog/service/mapGeometryService';
+import { LiveRainfallPanel } from '../../rainfall/view/LiveRainfallPanel';
 const CityScene = lazy(() => import('./CityScene'));
 type PlayProps = { busy: boolean; onPlay: (modelHash?: string) => void };
 function Explorer({
@@ -143,6 +144,7 @@ function Explorer({
             onChange={(e) => setQuery(e.target.value)}
           />
         </label>
+        <LiveRainfallPanel districtId={selected} />
         <p className="city-play-count">{regions.length}개 구 · 대표 블록 플레이 가능</p>
         <div className="city-districts" aria-label="플레이할 서울 자치구 선택">
           {city.districts

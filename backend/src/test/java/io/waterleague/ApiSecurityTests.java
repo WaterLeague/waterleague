@@ -37,7 +37,10 @@ class ApiSecurityTests {
   void protectsInstitutionAndManagementEndpoints() throws Exception {
     for (String path :
         new String[] {
-          "/api/v1/organizations/private/strategies", "/actuator/env", "/api/v1/spatial/buildings"
+          "/api/v1/references",
+          "/api/v1/organizations/private/strategies",
+          "/actuator/env",
+          "/api/v1/spatial/buildings"
         }) {
       var response = get(path);
       assertThat(response.statusCode()).isEqualTo(401);
@@ -61,5 +64,4 @@ class ApiSecurityTests {
     assertThat(response.statusCode()).isEqualTo(403);
     assertThat(response.body()).contains("ACCESS_DENIED");
   }
-
 }

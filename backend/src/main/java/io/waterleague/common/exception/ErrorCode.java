@@ -32,6 +32,9 @@ public enum ErrorCode {
   LEAGUE_RULES_MISMATCH(HttpStatus.UNPROCESSABLE_ENTITY, "리그의 모델·시설·실행 조건과 일치하지 않습니다"),
   LEAGUE_PARTICIPATION_CONFLICT(HttpStatus.CONFLICT, "참가 승인·팀 구성·최신 상태를 확인해 주세요"),
   LEAGUE_SUBMISSION_LIMIT(HttpStatus.CONFLICT, "이 리그의 제출 한도를 사용했습니다"),
+  RAINFALL_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "실시간 강우를 조회하지 못했습니다. 잠시 후 다시 시도해 주세요"),
+  RAINFALL_ACCESS_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "실시간 강우 API 인증 설정 확인이 필요합니다"),
+  RAINFALL_DATA_INVALID(HttpStatus.SERVICE_UNAVAILABLE, "실시간 강우 응답의 관측 시각·형식을 확인하지 못했습니다"),
   INTERNAL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "요청을 처리하지 못했습니다");
 
   private final HttpStatus status;

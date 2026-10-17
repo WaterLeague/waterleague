@@ -6,7 +6,7 @@ load()
 mode=sys.argv[1] if len(sys.argv)>1 else ''
 private_names={'DB_URL','DB_USER','DB_PASSWORD','DATABASE_URL','KMA_API_KEY','VWORLD_API_KEY','VWORLD_DOMAIN','MFA_ENCRYPTION_KEY'}
 required_names={
- 'api':{'DB_URL','DB_USER','DB_PASSWORD','MFA_ENCRYPTION_KEY'},
+ 'api':{'DB_URL','DB_USER','DB_PASSWORD','MFA_ENCRYPTION_KEY','KMA_API_KEY'},
  'provision':{'DB_URL','DB_USER','DB_PASSWORD','MFA_ENCRYPTION_KEY'},
  'worker':{'DATABASE_URL'},
  'frontend':set(),
