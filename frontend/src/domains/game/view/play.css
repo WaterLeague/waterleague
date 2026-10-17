@@ -352,6 +352,127 @@
   color: #e1f59c;
   font-weight: 700;
 }
+.play-help {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: #e2eadc;
+  border: 1px solid #607a73;
+  border-radius: 3px;
+  padding: 9px 11px;
+  font-size: 11px;
+}
+.play-help:focus-visible {
+  outline: 2px solid #d7f28c;
+  outline-offset: 3px;
+}
+.play-guide {
+  grid-column: 1/-1;
+  background: #edf2e4;
+  color: #294c3d;
+  border-bottom: 1px solid #c8d5bd;
+  padding: 15px 28px;
+  display: grid;
+  grid-template-columns: 140px minmax(250px, 0.8fr) minmax(240px, 1.2fr);
+  align-items: center;
+  gap: 20px;
+}
+.play-guide-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+}
+.play-guide ol {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.play-guide li {
+  display: grid;
+  gap: 6px;
+  color: #536552;
+  font-size: 11px;
+}
+.play-guide li > span {
+  display: flex;
+  height: 17px;
+  align-items: center;
+  font-size: 10px;
+}
+.play-guide li[aria-current='step'] {
+  color: #244e34;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.play-guide-next {
+  border-left: 1px solid #c8d5bd;
+  padding-left: 20px;
+}
+.play-guide-next p {
+  margin: 0 0 7px;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.play-guide-next .text-button {
+  font-size: 11px;
+  color: #315638;
+}
+.draft-cost,
+.draft-note {
+  font-size: 11px;
+  line-height: 1.7;
+  color: #42603e;
+}
+.draft-cost {
+  border-top: 1px solid #d4deca;
+  padding-top: 10px;
+}
+.facility-primer {
+  display: grid;
+  gap: 18px;
+  margin: 25px 0;
+}
+.facility-primer b {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #34533c;
+}
+.facility-primer p {
+  font-size: 11px;
+  line-height: 1.8;
+  margin: 6px 0 0 26px;
+  color: #586a52;
+}
+@media (max-width: 1000px) {
+  .play-guide {
+    grid-template-columns: 120px minmax(0, 1fr);
+  }
+  .play-guide-next {
+    grid-column: 1/-1;
+    padding: 0;
+    border: 0;
+  }
+}
+@media (max-width: 520px) {
+  .play-guide {
+    padding: 14px 20px;
+    gap: 12px;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .play-guide ol {
+    justify-content: flex-start;
+    gap: 25px;
+  }
+}
 .play-layout .design-main {
   min-width: 0;
   display: flex;

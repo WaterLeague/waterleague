@@ -22,6 +22,7 @@ import {
   Menu,
   X,
   Database,
+  CircleHelp,
 } from 'lucide-react';
 import { useGame } from '../controller/useGame';
 import { useCatalog } from '../../catalog/controller/useCatalog';
@@ -43,6 +44,8 @@ import { MapViewport } from '../../catalog/view/MapViewport';
 import { ChallengeLobby } from './ChallengeLobby';
 import { RoundReport } from './RoundReport';
 import { matchesEvaluatedDesign } from '../service/roundService';
+import { assessPlacementDraft } from '../service/placementDraftService';
+import { PlayGuide } from './PlayGuide';
 const icons = { RAIN_GARDEN: Leaf, PERMEABLE_PAVEMENT: Grid2X2, GREEN_ROOF: House };
 export function GamePage() {
   const g = useGame();
@@ -53,6 +56,9 @@ export function GamePage() {
   const [report, setReport] = useState(false);
   const [feedback, setFeedback] = useState('');
   const playHeading = useRef<HTMLHeadingElement>(null);
+  const [showGuide, setShowGuide] = useState(true);
+  const guideToggle = useRef<HTMLButtonElement>(null);
+  const calculateButton = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     setReport(g.job?.state === 'SUCCEEDED');
   }, [g.job?.id, g.job?.state]);
@@ -114,31 +120,16 @@ export function GamePage() {
     areaLimitM2: activeLeague?.rules.areaLimitM2,
   };
   const currentExceedsLimits = exceedsLeagueLimits(g.placements, placementLimits);
-  const draftArea = Math.round(area * 100) / 100;
-  const proposedExceedsLimits = cell
-    ? exceedsLeagueLimits(
-        [
-          ...g.placements.filter((p) => p.cellId !== cell.id),
-          { cellId: cell.id, facilityType: type, areaM2: draftArea },
-        ],
-        placementLimits
-      )
-    : false;
+  const draft = lab
+    ? assessPlacementDraft(lab, g.placements, selected, type, area, {
+        ...placementLimits,
+        budget,
+        allowedTypes,
+      })
+    : null;
+  const draftArea = draft?.areaM2 ?? 0;
   const cost = lab ? totalCost(lab, g.placements) : 0;
-  const canPlace =
-    !!cell &&
-    !!lab &&
-    !g.busy &&
-    Number.isFinite(draftArea) &&
-    draftArea > 0 &&
-    draftArea <= cell.maxAreaM2 &&
-    cell.allowedTypes.includes(type) &&
-    allowedTypes.includes(type) &&
-    !proposedExceedsLimits &&
-    cost -
-      (placement ? placement.areaM2 * lab.model.unitCosts[placement.facilityType] : 0) +
-      draftArea * lab.model.unitCosts[type] <=
-      budget;
+  const canPlace = !!draft?.placement && !g.busy;
   const preview =
     canPlace && cell && (placement?.facilityType !== type || placement?.areaM2 !== draftArea)
       ? { cellId: cell.id, facilityType: type, areaM2: draftArea }
@@ -152,6 +143,7 @@ export function GamePage() {
     setFeedback('배치 변경을 다시 적용했습니다.');
   }
   function select(id: string | null) {
+    setFeedback('');
     const c = lab?.model.cells.find((c) => c.id === id || c.buildingId === id);
     setSelected(c?.id ?? null);
     if (c) {
@@ -167,6 +159,21 @@ export function GamePage() {
     ? matchesEvaluatedDesign(g.job, g.evaluatedVersion, lab.modelHash, g.placements)
     : false;
   const working = g.busy || g.job?.state === 'QUEUED' || g.job?.state === 'RUNNING';
+  const showCurrentResult =
+    !!result &&
+    g.job?.state === 'SUCCEEDED' &&
+    currentResult &&
+    !preview &&
+    (!cell || !draft?.issue);
+  const guideStep = working
+    ? 2
+    : cell && (preview || draft?.issue)
+      ? 1
+      : g.placements.length
+        ? 2
+        : cell
+          ? 1
+          : 0;
   return (
     <div
       className={`game-shell${tab === 'missions' ? ' in-challenge' : ''}${tab === 'studio' ? ' in-play' : ''}`}
@@ -374,7 +381,43 @@ export function GamePage() {
               <ArrowRight size={12} />
               <span className={report ? 'active' : ''}>03 결과</span>
             </div>
+            <button
+              ref={guideToggle}
+              className="play-help"
+              aria-expanded={showGuide && !report}
+              aria-controls="play-guide"
+              onClick={() => {
+                setReport(false);
+                setShowGuide((value) => report || !value);
+              }}
+            >
+              <CircleHelp size={16} /> 플레이 안내
+            </button>
           </header>
+          {!report && showGuide && (
+            <PlayGuide
+              step={guideStep}
+              pending={
+                g.job?.state === 'QUEUED' || g.job?.state === 'RUNNING'
+                  ? g.job.state
+                  : g.busy
+                    ? 'REQUEST'
+                    : null
+              }
+              signedIn={!!g.account}
+              currentResult={showCurrentResult}
+              onChoose={() => setShowList(true)}
+              onEdit={() => setFocusEditor(true)}
+              onCalculate={() => {
+                if (showCurrentResult) setReport(true);
+                else calculateButton.current?.focus();
+              }}
+              onClose={() => {
+                setShowGuide(false);
+                guideToggle.current?.focus();
+              }}
+            />
+          )}
           {report && g.job?.state === 'SUCCEEDED' && result ? (
             <RoundReport
               job={g.job}
@@ -593,9 +636,11 @@ export function GamePage() {
                         <button
                           key={t}
                           className={type === t ? 'selected' : ''}
+                          aria-pressed={type === t}
                           aria-label={facilities[t].name}
                           title={facilities[t].name}
                           onClick={() => {
+                            setFeedback('');
                             setType(t);
                             if (!cell?.allowedTypes.includes(t)) {
                               const c = lab.model.cells.find((c) => c.allowedTypes.includes(t));
@@ -695,7 +740,11 @@ export function GamePage() {
                             <button
                               key={t}
                               className={type === t ? 'active' : ''}
-                              onClick={() => setType(t)}
+                              aria-pressed={type === t}
+                              onClick={() => {
+                                setType(t);
+                                setFeedback('');
+                              }}
                             >
                               <Icon size={18} />
                               {facilities[t].name}
@@ -710,11 +759,16 @@ export function GamePage() {
                         <input
                           ref={areaInput}
                           type="number"
-                          min="1"
+                          min="0.01"
                           max={cell.maxAreaM2}
                           step="0.01"
                           value={area}
-                          onChange={(e) => setArea(Number(e.target.value))}
+                          aria-invalid={!!draft?.issue}
+                          aria-describedby="placement-draft-note"
+                          onChange={(e) => {
+                            setArea(Number(e.target.value));
+                            setFeedback('');
+                          }}
                         />{' '}
                         m²
                       </span>
@@ -723,20 +777,43 @@ export function GamePage() {
                       className="area-slider"
                       aria-label="설치 면적 조절"
                       type="range"
-                      min="1"
+                      min="0.01"
                       max={cell.maxAreaM2}
-                      step="1"
+                      step="0.01"
                       value={area}
-                      onChange={(e) => setArea(Number(e.target.value))}
+                      aria-describedby="placement-draft-note"
+                      onChange={(e) => {
+                        setArea(Number(e.target.value));
+                        setFeedback('');
+                      }}
                     />
                     <div className="area-range">
-                      <span>1 m²</span>
+                      <span>0.01 m²</span>
                       <span>최대 {format.format(cell.maxAreaM2)} m²</span>
                     </div>
                     <div className="placement-cost">
                       <span>추정 설치비</span>
-                      <strong>{won(draftArea * lab.model.unitCosts[type])}</strong>
+                      <strong>
+                        {Number.isFinite(draftArea) && draftArea > 0
+                          ? won(draftArea * lab.model.unitCosts[type])
+                          : '—'}
+                      </strong>
                     </div>
+                    {preview && draft?.projectedCost != null && (
+                      <p className="draft-cost">
+                        확정하면 총 {won(draft.projectedCost)} · 아직 반영 전
+                      </p>
+                    )}
+                    <p
+                      id="placement-draft-note"
+                      className={draft?.issue ? 'form-error' : 'draft-note'}
+                      role="status"
+                    >
+                      {draft?.message ||
+                        (preview
+                          ? '미리보기 중입니다. 배치 버튼을 눌러 확정하세요.'
+                          : '이 구역의 확정 배치와 같은 설정입니다.')}
+                    </p>
                     <button
                       className="primary-button"
                       disabled={!canPlace}
@@ -757,15 +834,6 @@ export function GamePage() {
                       {placement ? '배치 변경' : '이 구역에 배치'}
                       <Plus size={16} />
                     </button>
-                    {proposedExceedsLimits && (
-                      <p className="form-error" role="status">
-                        배치 제한은 {placementLimits.placementLimit}개 구역
-                        {placementLimits.areaLimitM2 != null && (
-                          <> · 합계 {format.format(placementLimits.areaLimitM2)} m²</>
-                        )}
-                        입니다. 면적을 줄이거나 다른 시설을 제거해 주세요.
-                      </p>
-                    )}
                     {placement && (
                       <button
                         className="text-button remove-button"
@@ -779,31 +847,19 @@ export function GamePage() {
                     )}
                   </>
                 ) : (
-                  <div className="intro-steps">
-                    <div>
-                      <span>01</span>
-                      <p>
-                        시설을 고르고
-                        <br />
-                        <b>설치할 구역을 선택</b>
-                      </p>
-                    </div>
-                    <div>
-                      <span>02</span>
-                      <p>
-                        면적과 예산을 맞춰
-                        <br />
-                        <b>나만의 배치 완성</b>
-                      </p>
-                    </div>
-                    <div>
-                      <span>03</span>
-                      <p>
-                        같은 강우로 계산하고
-                        <br />
-                        <b>다른 설계와 기록 비교</b>
-                      </p>
-                    </div>
+                  <div className="facility-primer">
+                    {allowedTypes.map((facilityType) => {
+                      const Icon = icons[facilityType];
+                      return (
+                        <div key={facilityType}>
+                          <b>
+                            <Icon size={17} />
+                            {facilities[facilityType].name}
+                          </b>
+                          <p>{facilities[facilityType].intro}</p>
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
                 <div className="budget-box">
@@ -836,6 +892,7 @@ export function GamePage() {
                   </label>
                 </details>
                 <button
+                  ref={calculateButton}
                   className="simulate-button"
                   disabled={
                     working ||
@@ -853,7 +910,9 @@ export function GamePage() {
                       : '서버에서 계산 중'
                     : preview
                       ? '확정된 배치로 도전'
-                      : '이 배치로 도전'}
+                      : g.placements.length
+                        ? '이 배치로 도전'
+                        : '시설 없는 기준안 계산'}
                   <ArrowRight size={16} />
                 </button>
                 {g.job?.state === 'FAILED' || g.job?.state === 'REJECTED' ? (
