@@ -14,7 +14,7 @@ import type { SharedSite, SharedInstallation } from '../../installation/entity/i
 import { siteKey } from '../../installation/entity/installation';
 import { buildingOpacity, otherDistrictOpacity } from '../service/siteVisibilityService';
 import { buildingFaceIndex } from '../service/buildingSelectionService';
-import type { Placement } from '../../game/entity/game';
+import type { FacilityType, Placement } from '../../game/entity/game';
 import { FacilityMesh } from '../../catalog/view/FacilityMesh';
 import { LiveRainScene } from '../../rainfall/view/LiveRainScene';
 type CameraState = { center: [number, number]; distance: number };
@@ -295,6 +295,8 @@ export default function CityScene({
   onBuilding,
   eligibleRoofs,
   occupiedRoofs,
+  facilityType,
+  viewerId,
 }: {
   city: City;
   regions: CityPlayRegion[];
@@ -317,6 +319,8 @@ export default function CityScene({
   onBuilding: (districtId: string, b: CityBuilding) => void;
   eligibleRoofs: ReadonlySet<string>;
   occupiedRoofs: ReadonlySet<string>;
+  facilityType: FacilityType | '';
+  viewerId: string | null;
 }) {
   const overview = useMemo(() => {
     const loaded = new Set(tiles.flatMap((t) => t.buildings.map((b) => b.id)));
@@ -354,6 +358,7 @@ export default function CityScene({
         />
       ))}
       <DistrictBuildings
+        facilityType={facilityType}
         eligibleRoofs={eligibleRoofs}
         occupiedRoofs={occupiedRoofs}
         buildings={overview}
@@ -363,6 +368,7 @@ export default function CityScene({
       />
       {tiles.map((t) => (
         <DistrictBuildings
+          facilityType={facilityType}
           key={t.id}
           eligibleRoofs={eligibleRoofs}
           occupiedRoofs={occupiedRoofs}
@@ -392,6 +398,11 @@ export default function CityScene({
         )
         .map((site) => {
           const installed = installations.find((i) => siteKey(i) === siteKey(site));
+          const opacity = buildingOpacity(
+            (!facilityType || site.allowedTypes.includes(facilityType)) &&
+              (!installed || installed.ownerId === viewerId),
+            !!ownDistrictId && site.districtId !== ownDistrictId
+          );
           return (
             <group key={siteKey(site)}>
               <SiteSurface
@@ -405,9 +416,7 @@ export default function CityScene({
                         ? '#d9d8cb'
                         : '#b6c3ab'
                 }
-                opacity={
-                  !ownDistrictId || site.districtId === ownDistrictId ? 1 : otherDistrictOpacity
-                }
+                opacity={opacity}
                 onClick={() => onSite(siteKey(site))}
               />
               {installed && (
@@ -415,9 +424,7 @@ export default function CityScene({
                   cell={{ ...site, heightM: Math.max(4.2, site.heightM) }}
                   placement={installed}
                   preview={false}
-                  opacity={
-                    !ownDistrictId || site.districtId === ownDistrictId ? 1 : otherDistrictOpacity
-                  }
+                  opacity={opacity}
                   onSelect={() => onSite(siteKey(site))}
                 />
               )}
@@ -450,7 +457,10 @@ export default function CityScene({
             <meshStandardMaterial
               color="#327b4f"
               transparent
-              opacity={!ownDistrictId || i.districtId === ownDistrictId ? 1 : otherDistrictOpacity}
+              opacity={buildingOpacity(
+                (!facilityType || i.facilityType === facilityType) && i.ownerId === viewerId,
+                !!ownDistrictId && i.districtId !== ownDistrictId
+              )}
             />
           </mesh>
         ))}
@@ -515,6 +525,7 @@ function DistrictBuildings({
   onBuilding,
   eligibleRoofs,
   occupiedRoofs,
+  facilityType,
 }: {
   buildings: CityBuilding[];
   city: City;
@@ -522,6 +533,7 @@ function DistrictBuildings({
   onBuilding: (districtId: string, b: CityBuilding) => void;
   eligibleRoofs: ReadonlySet<string>;
   occupiedRoofs: ReadonlySet<string>;
+  facilityType: FacilityType | '';
 }) {
   function selectBuilding(b: CityBuilding) {
     const district = city.districts.find((d) =>
@@ -540,12 +552,17 @@ function DistrictBuildings({
         !district.polygons.some(
           (p) => inRing(b.center, p[0]) && !p.slice(1).some((h) => inRing(b.center, h))
         );
-      const opacity = buildingOpacity(eligibleRoofs.has(b.id) && !occupiedRoofs.has(b.id), other);
+      const opacity = buildingOpacity(
+        (!facilityType || facilityType === 'GREEN_ROOF') &&
+          eligibleRoofs.has(b.id) &&
+          !occupiedRoofs.has(b.id),
+        other
+      );
       if (!buckets.has(opacity)) buckets.set(opacity, []);
       buckets.get(opacity)!.push(b);
     }
     return [...buckets.entries()];
-  }, [buildings, city, ownDistrictId, eligibleRoofs, occupiedRoofs]);
+  }, [buildings, city, ownDistrictId, eligibleRoofs, occupiedRoofs, facilityType]);
   return (
     <>
       {groups.map(([opacity, values]) => (

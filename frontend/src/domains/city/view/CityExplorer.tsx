@@ -264,7 +264,9 @@ function Explorer({
               d={polygonPath(b.polygons)}
               fill="#c6ccba"
               opacity={buildingOpacity(
-                eligibility.roofIds.has(b.id) && !occupiedRoofs.has(b.id),
+                (!type || type === 'GREEN_ROOF') &&
+                  eligibility.roofIds.has(b.id) &&
+                  !occupiedRoofs.has(b.id),
                 otherBuilding(b)
               )}
               stroke="#9eac96"
@@ -284,7 +286,7 @@ function Explorer({
             </path>
           ))}
       {visibleSites.map((site) => {
-        const installed = shared.installations.some((i) => siteKey(i) === siteKey(site));
+        const installed = shared.installations.find((i) => siteKey(i) === siteKey(site));
         return (
           <path
             key={siteKey(site)}
@@ -302,11 +304,11 @@ function Explorer({
               site.districtId === selected && site.cellId === selectedSite ? '#b87a13' : '#6c8069'
             }
             strokeWidth={site.districtId === selected && site.cellId === selectedSite ? 2 : 0.5}
-            opacity={
-              !account?.districtId || account.districtId === site.districtId
-                ? 1
-                : otherDistrictOpacity
-            }
+            opacity={buildingOpacity(
+              (!type || site.allowedTypes.includes(type)) &&
+                (!installed || installed.ownerId === account?.id),
+              !!account?.districtId && account.districtId !== site.districtId
+            )}
             onClick={() => selectSite(siteKey(site))}
           >
             <title>
@@ -322,9 +324,10 @@ function Explorer({
           cy={-i.center[1]}
           r={focus.overview ? 95 : Math.max(2, focus.distance * 0.008)}
           fill="#327b4f"
-          opacity={
-            !account?.districtId || i.districtId === account.districtId ? 1 : otherDistrictOpacity
-          }
+          opacity={buildingOpacity(
+            (!type || i.facilityType === type) && i.ownerId === account?.id,
+            !!account?.districtId && i.districtId !== account.districtId
+          )}
           onClick={() => void selectSite(siteKey(i))}
         >
           <title>
@@ -435,6 +438,8 @@ function Explorer({
                 }
               >
                 <CityScene
+                  facilityType={type}
+                  viewerId={account?.id ?? null}
                   city={city}
                   eligibleRoofs={eligibility.roofIds}
                   occupiedRoofs={occupiedRoofs}
@@ -555,11 +560,11 @@ function Explorer({
           <div className="shared-map-legend">
             <span>
               <i className="available" />
-              설치 후보
+              {type ? facilities[type].name + ' 후보' : '설치 후보'}
             </span>
             <span>
               <i className="unavailable" />
-              후보 제외·다른 회원 점유
+              {type ? '선택 시설 설치 불가·점유' : '후보 제외·다른 회원 점유'}
             </span>
             {ownDistrict && (
               <span>
