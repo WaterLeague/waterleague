@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import {
   ArrowRight,
   ArrowUpRight,
-  MapPin,
   CloudRain,
   Layers3,
   Plus,
@@ -22,7 +21,6 @@ import {
   FolderOpen,
   Menu,
   X,
-  ShieldCheck,
   Database,
 } from 'lucide-react';
 import { useGame } from '../controller/useGame';
@@ -42,13 +40,22 @@ import { exceedsLeagueLimits, totalArea } from '../../league/service/leagueServi
 import { ResearchPage } from '../../research/view/ResearchPage';
 import { SpatialComparison } from '../../spatial/view/SpatialComparison';
 import { MapViewport } from '../../catalog/view/MapViewport';
+import { ChallengeLobby } from './ChallengeLobby';
+import { RoundReport } from './RoundReport';
+import { matchesEvaluatedDesign } from '../service/roundService';
 const icons = { RAIN_GARDEN: Leaf, PERMEABLE_PAVEMENT: Grid2X2, GREEN_ROOF: House };
 export function GamePage() {
   const g = useGame();
   const catalog = useCatalog();
-  const [tab, setTab] = useState<'studio' | 'leaderboard' | 'research' | 'data' | 'admin'>(
-    'studio'
-  );
+  const [tab, setTab] = useState<
+    'missions' | 'studio' | 'leaderboard' | 'research' | 'data' | 'admin'
+  >('missions');
+  const [report, setReport] = useState(false);
+  const [feedback, setFeedback] = useState('');
+  const playHeading = useRef<HTMLHeadingElement>(null);
+  useEffect(() => {
+    setReport(g.job?.state === 'SUCCEEDED');
+  }, [g.job?.id, g.job?.state]);
   const [selected, setSelected] = useState<string | null>(null),
     [type, setType] = useState<FacilityType>('RAIN_GARDEN'),
     [area, setArea] = useState(40);
@@ -80,7 +87,7 @@ export function GamePage() {
   }
   useEffect(() => {
     if (g.account?.role === 'ADMIN') setTab('admin');
-    else setTab((t) => (t === 'admin' ? 'studio' : t));
+    else setTab((t) => (t === 'admin' ? 'missions' : t));
   }, [g.account?.id, g.account?.role]);
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
@@ -117,6 +124,14 @@ export function GamePage() {
       )
     : false;
   const cost = lab ? totalCost(lab, g.placements) : 0;
+  function undo() {
+    g.undo();
+    setFeedback('배치 변경을 되돌렸습니다.');
+  }
+  function redo() {
+    g.redo();
+    setFeedback('배치 변경을 다시 적용했습니다.');
+  }
   function select(id: string | null) {
     const c = lab?.model.cells.find((c) => c.id === id || c.buildingId === id);
     setSelected(c?.id ?? null);
@@ -129,9 +144,14 @@ export function GamePage() {
     }
   }
   const result = g.job?.result;
+  const currentResult = lab
+    ? matchesEvaluatedDesign(g.job, g.evaluatedVersion, lab.modelHash, g.placements)
+    : false;
   const working = g.busy || g.job?.state === 'QUEUED' || g.job?.state === 'RUNNING';
   return (
-    <div className="game-shell">
+    <div
+      className={`game-shell${tab === 'missions' ? ' in-challenge' : ''}${tab === 'studio' ? ' in-play' : ''}`}
+    >
       <header className="topbar">
         <a className="wordmark" href="/" aria-label="WATER LEAGUE 홈">
           <svg width="31" height="31" viewBox="0 0 32 32" fill="none" aria-hidden="true">
@@ -152,7 +172,8 @@ export function GamePage() {
                 ['data', '데이터'],
               ] as const)
             : ([
-                ['studio', '설계실'],
+                ['missions', '도전'],
+                ...(tab === 'studio' ? ([['studio', '플레이']] as const) : []),
                 ['leaderboard', '기록 경쟁'],
                 ['research', '연구실'],
                 ['data', '데이터'],
@@ -202,19 +223,23 @@ export function GamePage() {
           )}
         </div>
       </header>
-      {lab && g.rainfallCatalog && g.account?.role !== 'ADMIN' && (
-        <RainfallSelector
-          lab={lab}
-          catalog={g.rainfallCatalog}
-          disabled={working || !!activeLeague}
-          onChange={(hash) =>
-            void g.action(async () => {
-              await g.selectModel(hash);
-              setSelected(null);
-            })
-          }
-        />
-      )}
+      {lab &&
+        g.rainfallCatalog &&
+        g.account?.role !== 'ADMIN' &&
+        tab !== 'missions' &&
+        tab !== 'studio' && (
+          <RainfallSelector
+            lab={lab}
+            catalog={g.rainfallCatalog}
+            disabled={working || !!activeLeague}
+            onChange={(hash) =>
+              void g.action(async () => {
+                await g.selectModel(hash);
+                setSelected(null);
+              })
+            }
+          />
+        )}
       {activeLeague && tab === 'studio' && (
         <div className="active-league-banner">
           <div>
@@ -273,609 +298,581 @@ export function GamePage() {
         </div>
       ) : tab === 'admin' && g.account?.role === 'ADMIN' ? (
         <ApprovalPage key={g.account.id} />
+      ) : tab === 'missions' ? (
+        <ChallengeLobby
+          lab={lab}
+          catalog={g.rainfallCatalog}
+          map={catalog.data?.map ?? null}
+          busy={working}
+          hasDesign={g.placements.length > 0}
+          league={activeLeague}
+          onFreePlay={() => setActiveLeague(null)}
+          onSelect={(hash) => {
+            if (hash !== lab.modelHash)
+              void g.action(async () => {
+                await g.selectModel(hash);
+                setSelected(null);
+                setActiveLeague(null);
+                setFeedback('');
+              });
+          }}
+          onPlay={() => setTab('studio')}
+          onCompetition={() => setTab('leaderboard')}
+          onEvidence={() => setTab('data')}
+        />
       ) : tab === 'studio' ? (
-        <div className="studio-layout">
-          <aside className="mission-panel">
-            <div className="eyebrow">
-              SEONGSU CHALLENGE <span>01</span>
+        <div className="studio-layout play-layout">
+          <header className="play-hud">
+            <div className="play-objective">
+              <span>SEONGSU / {activeLeague ? '기관 리그' : '일반 도전'}</span>
+              <h1 ref={playHeading} tabIndex={-1}>
+                {activeLeague?.title ?? '빗물이 머물 자리를 만드세요'}
+              </h1>
+              <small>
+                {rainDate(lab.model.rainfall.start)} · {lab.model.rainfall.stationName} ·{' '}
+                {lab.model.rainfall.totalDepthMm} mm
+              </small>
             </div>
-            <h1>
-              도시의 빈틈에,
-              <br />
-              빗물이 머물 자리.
-            </h1>
-            <p className="mission-intro">
-              시설을 배치하고, 실제로 내린 비가
-              <br />
-              어떻게 달라지는지 계산해 보세요.
-            </p>
-            <div className="location">
-              <MapPin size={13} /> 서울 성동구 · 연무장길 일대
-            </div>
-            <div className="mission-map" aria-hidden="true">
-              <svg viewBox="-155 -160 310 320">
-                {catalog.data?.map.buildings.map((b) => (
-                  <polygon
-                    key={b.id}
-                    points={b.coordinates.map(([x, y]) => `${x},${-y}`).join(' ')}
-                  />
-                ))}
-              </svg>
+            <div className="play-resources">
               <span>
-                REAL FOOTPRINTS
-                <br />
-                37.54425° N · 127.05400° E
+                {report ? '계산한 배치 비용' : '남은 예산'}{' '}
+                <b>{won(report && g.evaluatedVersion ? g.evaluatedVersion.cost : budget - cost)}</b>
+              </span>
+              <span>
+                배치 구역{' '}
+                <b>
+                  {report && g.evaluatedVersion
+                    ? g.evaluatedVersion.placements.length
+                    : g.placements.length}
+                  <small> / {placementLimits.placementLimit}</small>
+                </b>
               </span>
             </div>
-            <div className="mission-rain">
-              <CloudRain size={22} />
-              <div>
-                <b>{rainDate(lab.model.rainfall.start)}</b>
-                <span>
-                  {lab.model.rainfall.stationName} {lab.model.rainfall.stationId} · 1분 자료
-                </span>
-              </div>
-              <strong>
-                {lab.model.rainfall.totalDepthMm}
-                <small>mm</small>
-              </strong>
+            <div className="play-phase" aria-label="도전 진행 단계">
+              <span className={!working && !report ? 'active' : ''}>01 배치</span>
+              <ArrowRight size={12} />
+              <span className={working ? 'active' : ''}>02 계산</span>
+              <ArrowRight size={12} />
+              <span className={report ? 'active' : ''}>03 결과</span>
             </div>
-            <div className="section-label">
-              실험 조건 <span>고정</span>
-            </div>
-            <dl className="mission-facts">
-              <div>
-                <dt>계산 엔진</dt>
-                <dd>EPA SWMM 5.2.4</dd>
-              </div>
-              <div>
-                <dt>실험 단위</dt>
-                <dd>{lab.model.cells.length}개 표면</dd>
-              </div>
-              <div>
-                <dt>설계 예산</dt>
-                <dd>{won(budget)}</dd>
-              </div>
-              <div>
-                <dt>평가 대상</dt>
-                <dd>유출·잔여저류 총량</dd>
-              </div>
-            </dl>
-            <div className="scope-badge">
-              <ShieldCheck size={18} />
-              <div>
-                <b>탐색 모델 · EXPLORATORY</b>
-                <p>
-                  지형·관망·현장 보정 전.
-                  <br />
-                  실제 침수나 공사 효과를 예측하지 않습니다.
-                </p>
-              </div>
-            </div>
-            <button className="text-button" onClick={() => setTab('data')}>
-              자료와 가정 확인 <ArrowRight size={14} />
-            </button>
-            <a
-              className="source-credit"
-              href="https://www.openstreetmap.org/copyright"
-              target="_blank"
-              rel="noreferrer"
-            >
-              © OpenStreetMap contributors <ArrowUpRight size={12} />
-            </a>
-          </aside>
-          <main className="design-main">
-            <div className="design-toolbar">
-              <div className="design-title">
-                <input
-                  aria-label="설계 이름"
-                  maxLength={80}
-                  value={g.title}
-                  onChange={(e) => g.setTitle(e.target.value)}
-                />
-                <span>{g.version ? `저장 버전 ${g.version.revision}` : '새 설계'}</span>
-              </div>
-              <div>
-                <button
-                  className="icon-button"
-                  aria-label="새 설계"
-                  onClick={() => {
-                    g.newDesign();
-                    select(null);
-                  }}
-                >
-                  <Plus size={18} />
-                </button>
-                <button
-                  className="icon-button"
-                  aria-label="저장한 설계"
-                  onClick={() => setShowSaves((v) => !v)}
-                >
-                  <FolderOpen size={18} />
-                </button>
-                <button
-                  className="outline-button compact"
-                  disabled={g.busy}
-                  onClick={() => (g.account ? void g.action(g.save) : setAuth(true))}
-                >
-                  <Save size={14} />
-                  저장
-                </button>
-              </div>
-            </div>
-            <div className="compact-model-context">
-              <b>성수 · 탐색 모델</b>
-              <span>
-                {rainDate(lab.model.rainfall.start)} · 실측 {lab.model.rainfall.totalDepthMm} mm
-              </span>
-              <p>지형·관망·토양 미검증. 실제 침수·공사 효과 예측 불가.</p>
-              <button className="text-button" onClick={() => setTab('data')}>
-                자료와 가정 확인 <ArrowUpRight size={13} />
-              </button>
-            </div>
-            <section
-              className="design-stage"
-              aria-label="시설 배치 지도"
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (
-                  g.busy ||
-                  e.altKey ||
-                  (!e.ctrlKey && !e.metaKey) ||
-                  (e.target instanceof Element &&
-                    e.target.closest(
-                      'input,textarea,select,[contenteditable]:not([contenteditable="false"]),[role="textbox"]'
-                    ))
-                )
-                  return;
-                const key = e.key.toLowerCase();
-                const redo = (key === 'z' && e.shiftKey) || (key === 'y' && e.ctrlKey);
-                if (redo && g.canRedo) {
-                  e.preventDefault();
-                  g.redo();
-                } else if (key === 'z' && !e.shiftKey && g.canUndo) {
-                  e.preventDefault();
-                  g.undo();
-                }
+          </header>
+          {report && g.job?.state === 'SUCCEEDED' && result ? (
+            <RoundReport
+              job={g.job}
+              lab={lab}
+              evaluated={g.evaluatedVersion}
+              current={currentResult}
+              busy={g.busy}
+              league={!!activeLeague}
+              onRetry={() => {
+                setReport(false);
+                requestAnimationFrame(() => playHeading.current?.focus());
               }}
-            >
-              <div className="scene-overline">
-                <span>
-                  <i />
-                  공개 건물 경계
-                </span>
-                <span>표고 평탄화 · 설치 가능성 가정</span>
-              </div>
-              {catalog.error ? (
-                <div className="empty-state">
-                  <p>{catalog.error}</p>
-                  <button onClick={catalog.retry}>다시 시도</button>
+              onSubmit={() =>
+                void g.action(async () => {
+                  if (activeLeague) {
+                    setTab('leaderboard');
+                    return;
+                  }
+                  await repo.submit(g.job!.id);
+                  g.setNotice('탐색 기록 제출 완료');
+                })
+              }
+              onBoard={() => setTab('leaderboard')}
+            />
+          ) : (
+            <>
+              <main className="design-main">
+                <div className="design-toolbar">
+                  <div className="design-title">
+                    <input
+                      aria-label="설계 이름"
+                      maxLength={80}
+                      value={g.title}
+                      onChange={(e) => g.setTitle(e.target.value)}
+                    />
+                    <span>{g.version ? `저장 버전 ${g.version.revision}` : '새 설계'}</span>
+                  </div>
+                  <div>
+                    <button
+                      className="icon-button"
+                      aria-label="새 설계"
+                      onClick={() => {
+                        g.newDesign();
+                        select(null);
+                        setFeedback('');
+                      }}
+                    >
+                      <Plus size={18} />
+                    </button>
+                    <button
+                      className="icon-button"
+                      aria-label="저장한 설계"
+                      onClick={() => setShowSaves((v) => !v)}
+                    >
+                      <FolderOpen size={18} />
+                    </button>
+                    <button
+                      className="outline-button compact"
+                      disabled={g.busy}
+                      onClick={() => (g.account ? void g.action(g.save) : setAuth(true))}
+                    >
+                      <Save size={14} />
+                      저장
+                    </button>
+                  </div>
                 </div>
-              ) : catalog.data ? (
-                <MapViewport
-                  map={catalog.data.map}
-                  cells={lab.model.cells}
-                  placements={g.placements}
-                  selectedCell={selected}
-                  onSelect={(id) => {
-                    select(id);
-                    if (id) setFocusEditor(true);
-                  }}
-                />
-              ) : (
-                <div className="empty-state">실제 건물 경계 불러오는 중</div>
-              )}
-              <div className="scene-controls">
-                <button
-                  ref={listToggle}
-                  aria-label="구역 목록"
-                  aria-expanded={showList}
-                  aria-controls="design-cell-list"
-                  onClick={() => setShowList((v) => !v)}
-                >
-                  <Menu size={18} />
-                </button>
-              </div>
-              {showList && (
-                <div
-                  id="design-cell-list"
-                  className="cell-list"
-                  ref={listPanel}
-                  role="region"
-                  aria-label="실험 구역 선택"
-                  onKeyDown={(event) => {
-                    if (event.key === 'Escape') {
-                      event.preventDefault();
-                      closeList();
+                <section
+                  className="design-stage"
+                  aria-label="시설 배치 지도"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (
+                      g.busy ||
+                      e.altKey ||
+                      (!e.ctrlKey && !e.metaKey) ||
+                      (e.target instanceof Element &&
+                        e.target.closest(
+                          'input,textarea,select,[contenteditable]:not([contenteditable="false"]),[role="textbox"]'
+                        ))
+                    )
+                      return;
+                    const key = e.key.toLowerCase();
+                    const isRedo = (key === 'z' && e.shiftKey) || (key === 'y' && e.ctrlKey);
+                    if (isRedo && g.canRedo) {
+                      e.preventDefault();
+                      redo();
+                    } else if (key === 'z' && !e.shiftKey && g.canUndo) {
+                      e.preventDefault();
+                      undo();
                     }
                   }}
                 >
-                  <div className="cell-list-heading">
-                    <b>실험 구역 선택</b>
-                    <button className="icon-button" aria-label="구역 목록 닫기" onClick={closeList}>
-                      <X size={15} />
-                    </button>
+                  <div className="scene-overline">
+                    <span>
+                      <i />
+                      공개 건물 경계
+                    </span>
+                    <span>표고 평탄화 · 설치 가능성 가정</span>
                   </div>
-                  {lab.model.cells.map((c) => (
-                    <button
-                      key={c.id}
-                      className={c.id === selected ? 'selected' : ''}
-                      aria-pressed={c.id === selected}
-                      aria-label={`${c.id} · ${c.name} · ${g.placements.some((p) => p.cellId === c.id) ? '배치됨' : '미배치'}`}
-                      onClick={() => {
-                        select(c.id);
-                        setShowList(false);
-                        setFocusEditor(true);
+                  {catalog.error ? (
+                    <div className="empty-state">
+                      <p>{catalog.error}</p>
+                      <button onClick={catalog.retry}>다시 시도</button>
+                    </div>
+                  ) : catalog.data ? (
+                    <MapViewport
+                      map={catalog.data.map}
+                      cells={lab.model.cells}
+                      placements={g.placements}
+                      selectedCell={selected}
+                      onSelect={(id) => {
+                        select(id);
+                        if (id) setFocusEditor(true);
                       }}
-                    >
-                      <span>
-                        {c.id} · {c.name}
-                      </span>
-                      {g.placements.some((p) => p.cellId === c.id) ? (
-                        <Check size={14} />
-                      ) : (
-                        <ArrowRight size={14} />
-                      )}
-                    </button>
-                  ))}
-                </div>
-              )}
-              {showSaves && (
-                <div className="saved-list">
-                  <div>
-                    <b>저장한 설계</b>
-                    <button
-                      className="icon-button"
-                      aria-label="저장 목록 닫기"
-                      onClick={() => setShowSaves(false)}
-                    >
-                      <X size={15} />
-                    </button>
-                  </div>
-                  {g.strategies.map((s) => (
-                    <button
-                      key={s.id}
-                      onClick={() => {
-                        void g.open(s.id);
-                        setShowSaves(false);
-                      }}
-                    >
-                      <b>{s.title}</b>
-                      <span>버전 {s.revision}</span>
-                    </button>
-                  ))}
-                  {!g.strategies.length && (
-                    <p>
-                      {g.account
-                        ? '저장한 설계가 없습니다.'
-                        : '로그인하면 설계를 저장할 수 있습니다.'}
-                    </p>
+                    />
+                  ) : (
+                    <div className="empty-state">실제 건물 경계 불러오는 중</div>
                   )}
-                </div>
-              )}
-              <div className="facility-dock">
-                {allowedTypes.map((t) => {
-                  const Icon = icons[t];
-                  return (
+                  <div className="scene-controls">
                     <button
-                      key={t}
-                      className={type === t ? 'selected' : ''}
-                      aria-label={facilities[t].name}
-                      title={facilities[t].name}
-                      onClick={() => {
-                        setType(t);
-                        if (!cell?.allowedTypes.includes(t)) {
-                          const c = lab.model.cells.find((c) => c.allowedTypes.includes(t));
-                          if (c) {
-                            select(c.id);
-                            setType(t);
-                          }
+                      ref={listToggle}
+                      aria-label="구역 목록"
+                      aria-expanded={showList}
+                      aria-controls="design-cell-list"
+                      onClick={() => setShowList((v) => !v)}
+                    >
+                      <Menu size={18} />
+                    </button>
+                  </div>
+                  {showList && (
+                    <div
+                      id="design-cell-list"
+                      className="cell-list"
+                      ref={listPanel}
+                      role="region"
+                      aria-label="실험 구역 선택"
+                      onKeyDown={(event) => {
+                        if (event.key === 'Escape') {
+                          event.preventDefault();
+                          closeList();
                         }
                       }}
                     >
-                      <Icon size={20} />
-                      <span>{facilities[t].name}</span>
-                    </button>
-                  );
-                })}
-                <button
-                  className="history-button undo-button"
-                  aria-label="마지막 배치 변경 되돌리기"
-                  aria-keyshortcuts="Control+Z Meta+Z"
-                  title="배치 되돌리기 · Ctrl/⌘ Z"
-                  disabled={g.busy || !g.canUndo}
-                  onClick={g.undo}
-                >
-                  <Undo2 size={18} />
-                </button>
-                <button
-                  className="history-button"
-                  aria-label="되돌린 배치 변경 다시 실행"
-                  aria-keyshortcuts="Control+Shift+Z Meta+Shift+Z Control+Y"
-                  title="배치 다시 실행 · Ctrl/⌘ Shift Z"
-                  disabled={g.busy || !g.canRedo}
-                  onClick={g.redo}
-                >
-                  <Redo2 size={18} />
-                </button>
-              </div>
-            </section>
-            <Hydrograph job={g.job} rainfall={lab.model.rainfall} />
-            <div className="studio-footnote">
-              <span>
-                <i />
-                실측 강우 · 명시적 가정 · 서버 계산
-              </span>
-              <span>3D 물 표현은 침수 결과를 의미하지 않음</span>
-            </div>
-          </main>
-          <aside className="inspector">
-            <div className="inspector-top">
-              <span className="eyebrow">{cell ? 'DESIGN A SURFACE' : 'YOUR DESIGN'}</span>
-              <Layers3 size={17} />
-            </div>
-            <h2>{cell ? cell.name : '빗물의 다음 목적지'}</h2>
-            <p className="panel-intro">
-              {cell
-                ? '설치할 시설과 면적을 선택하세요. 공개 사업계획 참고 단가로 비용을 계산합니다.'
-                : '지도에서 표시된 구역을 선택하거나, 시설 도구로 첫 배치를 시작하세요.'}
-            </p>
-            {cell ? (
-              <>
-                <div className="cell-tag">
-                  <span>
-                    {cell.id} · {cell.kind === 'ROOF' ? '옥상' : '지상'} 실험 단위
-                  </span>
-                  <b>현장 적합성 미확인</b>
-                </div>
-                {activeLeague && !cell.allowedTypes.some((t) => allowedTypes.includes(t)) && (
-                  <p className="form-error">
-                    이 구역에는 리그에서 허용한 시설을 설치할 수 없습니다. 다른 구역을 선택하세요.
-                  </p>
-                )}
-                <div className="facility-options">
-                  {cell.allowedTypes
-                    .filter((t) => allowedTypes.includes(t))
-                    .map((t) => {
+                      <div className="cell-list-heading">
+                        <b>실험 구역 선택</b>
+                        <button
+                          className="icon-button"
+                          aria-label="구역 목록 닫기"
+                          onClick={closeList}
+                        >
+                          <X size={15} />
+                        </button>
+                      </div>
+                      {lab.model.cells.map((c) => (
+                        <button
+                          key={c.id}
+                          className={c.id === selected ? 'selected' : ''}
+                          aria-pressed={c.id === selected}
+                          aria-label={`${c.id} · ${c.name} · ${g.placements.some((p) => p.cellId === c.id) ? '배치됨' : '미배치'}`}
+                          onClick={() => {
+                            select(c.id);
+                            setShowList(false);
+                            setFocusEditor(true);
+                          }}
+                        >
+                          <span>
+                            {c.id} · {c.name}
+                          </span>
+                          {g.placements.some((p) => p.cellId === c.id) ? (
+                            <Check size={14} />
+                          ) : (
+                            <ArrowRight size={14} />
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  {showSaves && (
+                    <div className="saved-list">
+                      <div>
+                        <b>저장한 설계</b>
+                        <button
+                          className="icon-button"
+                          aria-label="저장 목록 닫기"
+                          onClick={() => setShowSaves(false)}
+                        >
+                          <X size={15} />
+                        </button>
+                      </div>
+                      {g.strategies.map((s) => (
+                        <button
+                          key={s.id}
+                          onClick={() => {
+                            void g.open(s.id);
+                            setShowSaves(false);
+                          }}
+                        >
+                          <b>{s.title}</b>
+                          <span>버전 {s.revision}</span>
+                        </button>
+                      ))}
+                      {!g.strategies.length && (
+                        <p>
+                          {g.account
+                            ? '저장한 설계가 없습니다.'
+                            : '로그인하면 설계를 저장할 수 있습니다.'}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                  <div className="facility-dock">
+                    {allowedTypes.map((t) => {
                       const Icon = icons[t];
                       return (
                         <button
                           key={t}
-                          className={type === t ? 'active' : ''}
-                          onClick={() => setType(t)}
+                          className={type === t ? 'selected' : ''}
+                          aria-label={facilities[t].name}
+                          title={facilities[t].name}
+                          onClick={() => {
+                            setType(t);
+                            if (!cell?.allowedTypes.includes(t)) {
+                              const c = lab.model.cells.find((c) => c.allowedTypes.includes(t));
+                              if (c) {
+                                select(c.id);
+                                setType(t);
+                              }
+                            }
+                          }}
                         >
-                          <Icon size={18} />
-                          {facilities[t].name}
+                          <Icon size={20} />
+                          <span>{facilities[t].name}</span>
                         </button>
                       );
                     })}
-                </div>
-                <p className="facility-description">{facilities[type].description}</p>
-                <label className="area-input">
-                  설치 면적{' '}
+                    <button
+                      className="history-button undo-button"
+                      aria-label="마지막 배치 변경 되돌리기"
+                      aria-keyshortcuts="Control+Z Meta+Z"
+                      title="배치 되돌리기 · Ctrl/⌘ Z"
+                      disabled={g.busy || !g.canUndo}
+                      onClick={undo}
+                    >
+                      <Undo2 size={18} />
+                    </button>
+                    <button
+                      className="history-button"
+                      aria-label="되돌린 배치 변경 다시 실행"
+                      aria-keyshortcuts="Control+Shift+Z Meta+Shift+Z Control+Y"
+                      title="배치 다시 실행 · Ctrl/⌘ Shift Z"
+                      disabled={g.busy || !g.canRedo}
+                      onClick={redo}
+                    >
+                      <Redo2 size={18} />
+                    </button>
+                  </div>
+                </section>
+                <details className="play-chart">
+                  <summary>관측 강우·계산 흐름 확인</summary>
+                  <Hydrograph job={g.job} rainfall={lab.model.rainfall} />
+                </details>
+                <div className="studio-footnote">
                   <span>
+                    <i />
+                    탐색 모델 · 현장 미검증
+                  </span>
+                  <button className="text-button" onClick={() => setTab('data')}>
+                    자료·가정 확인 <ArrowUpRight size={12} />
+                  </button>
+                </div>
+              </main>
+              <aside className="inspector" aria-label="시설 편집과 도전 실행">
+                <p className="placement-feedback" role="status">
+                  {feedback ||
+                    (cell
+                      ? '시설과 면적을 정한 뒤 배치하세요.'
+                      : '시설을 고르거나 지도에서 구역을 선택하세요.')}
+                </p>
+                <div className="inspector-top">
+                  <span className="eyebrow">
+                    {cell ? 'DESIGN A SURFACE' : 'BUILD YOUR STRATEGY'}
+                  </span>
+                  <Layers3 size={17} />
+                </div>
+                <h2>
+                  {cell
+                    ? cell.name
+                    : g.placements.length
+                      ? '다음 수를 선택하세요'
+                      : '첫 시설을 배치하세요'}
+                </h2>
+                <p className="panel-intro">
+                  {cell
+                    ? '설치할 시설과 면적을 선택하세요. 공개 사업계획 참고 단가로 비용을 계산합니다.'
+                    : '지도에서 표시된 구역을 선택하거나, 시설 도구로 첫 배치를 시작하세요.'}
+                </p>
+                {cell ? (
+                  <>
+                    <div className="cell-tag">
+                      <span>
+                        {cell.id} · {cell.kind === 'ROOF' ? '옥상' : '지상'} 실험 단위
+                      </span>
+                      <b>현장 적합성 미확인</b>
+                    </div>
+                    {activeLeague && !cell.allowedTypes.some((t) => allowedTypes.includes(t)) && (
+                      <p className="form-error">
+                        이 구역에는 리그에서 허용한 시설을 설치할 수 없습니다. 다른 구역을
+                        선택하세요.
+                      </p>
+                    )}
+                    <div className="facility-options">
+                      {cell.allowedTypes
+                        .filter((t) => allowedTypes.includes(t))
+                        .map((t) => {
+                          const Icon = icons[t];
+                          return (
+                            <button
+                              key={t}
+                              className={type === t ? 'active' : ''}
+                              onClick={() => setType(t)}
+                            >
+                              <Icon size={18} />
+                              {facilities[t].name}
+                            </button>
+                          );
+                        })}
+                    </div>
+                    <p className="facility-description">{facilities[type].description}</p>
+                    <label className="area-input">
+                      설치 면적{' '}
+                      <span>
+                        <input
+                          ref={areaInput}
+                          type="number"
+                          min="1"
+                          max={cell.maxAreaM2}
+                          step="0.01"
+                          value={area}
+                          onChange={(e) => setArea(Number(e.target.value))}
+                        />{' '}
+                        m²
+                      </span>
+                    </label>
                     <input
-                      ref={areaInput}
-                      type="number"
+                      className="area-slider"
+                      aria-label="설치 면적 조절"
+                      type="range"
                       min="1"
                       max={cell.maxAreaM2}
-                      step="0.01"
+                      step="1"
                       value={area}
                       onChange={(e) => setArea(Number(e.target.value))}
-                    />{' '}
-                    m²
-                  </span>
-                </label>
-                <input
-                  className="area-slider"
-                  aria-label="설치 면적 조절"
-                  type="range"
-                  min="1"
-                  max={cell.maxAreaM2}
-                  step="1"
-                  value={area}
-                  onChange={(e) => setArea(Number(e.target.value))}
-                />
-                <div className="area-range">
-                  <span>1 m²</span>
-                  <span>최대 {format.format(cell.maxAreaM2)} m²</span>
-                </div>
-                <div className="placement-cost">
-                  <span>추정 설치비</span>
-                  <strong>{won(area * lab.model.unitCosts[type])}</strong>
-                </div>
-                <button
-                  className="primary-button"
-                  disabled={
-                    g.busy ||
-                    !Number.isFinite(area) ||
-                    area <= 0 ||
-                    area > cell.maxAreaM2 ||
-                    !cell.allowedTypes.includes(type) ||
-                    !allowedTypes.includes(type) ||
-                    proposedExceedsLimits ||
-                    cost -
-                      (placement
-                        ? placement.areaM2 * lab.model.unitCosts[placement.facilityType]
-                        : 0) +
-                      area * lab.model.unitCosts[type] >
-                      budget
-                  }
-                  onClick={() =>
-                    g.change([
-                      ...g.placements.filter((p) => p.cellId !== cell.id),
-                      { cellId: cell.id, facilityType: type, areaM2: Math.round(area * 100) / 100 },
-                    ])
-                  }
-                >
-                  {placement ? '배치 변경' : '이 구역에 배치'}
-                  <Plus size={16} />
-                </button>
-                {proposedExceedsLimits && (
-                  <p className="form-error" role="status">
-                    배치 제한은 {placementLimits.placementLimit}개 구역
-                    {placementLimits.areaLimitM2 != null && (
-                      <> · 합계 {format.format(placementLimits.areaLimitM2)} m²</>
+                    />
+                    <div className="area-range">
+                      <span>1 m²</span>
+                      <span>최대 {format.format(cell.maxAreaM2)} m²</span>
+                    </div>
+                    <div className="placement-cost">
+                      <span>추정 설치비</span>
+                      <strong>{won(area * lab.model.unitCosts[type])}</strong>
+                    </div>
+                    <button
+                      className="primary-button"
+                      disabled={
+                        g.busy ||
+                        !Number.isFinite(area) ||
+                        area <= 0 ||
+                        area > cell.maxAreaM2 ||
+                        !cell.allowedTypes.includes(type) ||
+                        !allowedTypes.includes(type) ||
+                        proposedExceedsLimits ||
+                        cost -
+                          (placement
+                            ? placement.areaM2 * lab.model.unitCosts[placement.facilityType]
+                            : 0) +
+                          area * lab.model.unitCosts[type] >
+                          budget
+                      }
+                      onClick={() => {
+                        g.change([
+                          ...g.placements.filter((p) => p.cellId !== cell.id),
+                          {
+                            cellId: cell.id,
+                            facilityType: type,
+                            areaM2: Math.round(area * 100) / 100,
+                          },
+                        ]);
+                        setFeedback(
+                          `${cell.id} · ${facilities[type].name} ${format.format(Math.round(area * 100) / 100)} m² ${placement ? '변경' : '배치'} 완료`
+                        );
+                      }}
+                    >
+                      {placement ? '배치 변경' : '이 구역에 배치'}
+                      <Plus size={16} />
+                    </button>
+                    {proposedExceedsLimits && (
+                      <p className="form-error" role="status">
+                        배치 제한은 {placementLimits.placementLimit}개 구역
+                        {placementLimits.areaLimitM2 != null && (
+                          <> · 합계 {format.format(placementLimits.areaLimitM2)} m²</>
+                        )}
+                        입니다. 면적을 줄이거나 다른 시설을 제거해 주세요.
+                      </p>
                     )}
-                    입니다. 면적을 줄이거나 다른 시설을 제거해 주세요.
+                    {placement && (
+                      <button
+                        className="text-button remove-button"
+                        onClick={() => {
+                          g.change(g.placements.filter((p) => p.cellId !== cell.id));
+                          setFeedback(`${cell.id} 시설 제거 완료`);
+                        }}
+                      >
+                        <Trash2 size={14} />이 시설 제거
+                      </button>
+                    )}
+                  </>
+                ) : (
+                  <div className="intro-steps">
+                    <div>
+                      <span>01</span>
+                      <p>
+                        시설을 고르고
+                        <br />
+                        <b>설치할 구역을 선택</b>
+                      </p>
+                    </div>
+                    <div>
+                      <span>02</span>
+                      <p>
+                        면적과 예산을 맞춰
+                        <br />
+                        <b>나만의 배치 완성</b>
+                      </p>
+                    </div>
+                    <div>
+                      <span>03</span>
+                      <p>
+                        같은 강우로 계산하고
+                        <br />
+                        <b>다른 설계와 기록 비교</b>
+                      </p>
+                    </div>
+                  </div>
+                )}
+                <div className="budget-box">
+                  <div>
+                    <span>추정 비용</span>
+                    <b>
+                      {won(cost)}
+                      <small> / {won(budget)}</small>
+                    </b>
+                  </div>
+                  <div className="budget-track">
+                    <i style={{ width: Math.min(100, (cost / budget) * 100) + '%' }} />
+                  </div>
+                  <span>
+                    {g.placements.length}개 시설 · 합계 {format.format(totalArea(g.placements))} m²
+                    · 공개계획 참고 단가 · 부대비용 별도
+                  </span>
+                </div>
+                <details className="play-note">
+                  <summary>이 선택을 한 이유 남기기</summary>
+                  <label className="design-note">
+                    설계 메모
+                    <textarea
+                      maxLength={2000}
+                      rows={2}
+                      value={g.note}
+                      onChange={(e) => g.setNote(e.target.value)}
+                      placeholder="어떤 선택을 했고, 왜 그렇게 배치했나요?"
+                    />
+                  </label>
+                </details>
+                <button
+                  className="simulate-button"
+                  disabled={
+                    working ||
+                    !lab.model.simulationAvailable ||
+                    cost > budget ||
+                    currentExceedsLimits ||
+                    g.placements.some((p) => !allowedTypes.includes(p.facilityType))
+                  }
+                  onClick={() => (g.account ? void g.run() : setAuth(true))}
+                >
+                  <Play size={17} />
+                  {working
+                    ? g.job?.state === 'QUEUED'
+                      ? '계산 순서 대기'
+                      : '서버에서 계산 중'
+                    : '이 배치로 도전'}
+                  <ArrowRight size={16} />
+                </button>
+                {g.job?.state === 'FAILED' || g.job?.state === 'REJECTED' ? (
+                  <p className="form-error" role="alert">
+                    계산이 품질 검사를 통과하지 못했습니다. 코드: {g.job.errorCode}
+                  </p>
+                ) : null}
+                {working && (
+                  <p className="play-computing" role="status">
+                    {g.job?.state === 'QUEUED'
+                      ? '앞선 계산이 끝나면 시작합니다.'
+                      : '실제 관측 강우로 SWMM을 실행하고 품질을 확인합니다.'}{' '}
+                    완료되면 결과 화면으로 이동합니다.
                   </p>
                 )}
-                {placement && (
+                {result && (
                   <button
-                    className="text-button remove-button"
-                    onClick={() => g.change(g.placements.filter((p) => p.cellId !== cell.id))}
+                    className="outline-button previous-result"
+                    onClick={() => setReport(true)}
                   >
-                    <Trash2 size={14} />이 시설 제거
+                    <Trophy size={15} />{' '}
+                    {currentResult ? '계산 결과 다시 보기' : '이전 배치의 결과 보기'}
                   </button>
                 )}
-              </>
-            ) : (
-              <div className="intro-steps">
-                <div>
-                  <span>01</span>
-                  <p>
-                    시설을 고르고
-                    <br />
-                    <b>설치할 구역을 선택</b>
-                  </p>
-                </div>
-                <div>
-                  <span>02</span>
-                  <p>
-                    면적과 예산을 맞춰
-                    <br />
-                    <b>나만의 배치 완성</b>
-                  </p>
-                </div>
-                <div>
-                  <span>03</span>
-                  <p>
-                    같은 강우로 계산하고
-                    <br />
-                    <b>다른 설계와 기록 비교</b>
-                  </p>
-                </div>
-              </div>
-            )}
-            <div className="budget-box">
-              <div>
-                <span>추정 비용</span>
-                <b>
-                  {won(cost)}
-                  <small> / {won(budget)}</small>
-                </b>
-              </div>
-              <div className="budget-track">
-                <i style={{ width: Math.min(100, (cost / budget) * 100) + '%' }} />
-              </div>
-              <span>
-                {g.placements.length}개 시설 · 합계 {format.format(totalArea(g.placements))} m² ·
-                공개계획 참고 단가 · 부대비용 별도
-              </span>
-            </div>
-            <label className="design-note">
-              설계 메모
-              <textarea
-                maxLength={2000}
-                rows={2}
-                value={g.note}
-                onChange={(e) => g.setNote(e.target.value)}
-                placeholder="어떤 선택을 했고, 왜 그렇게 배치했나요?"
-              />
-            </label>
-            <button
-              className="simulate-button"
-              disabled={
-                working ||
-                !lab.model.simulationAvailable ||
-                cost > budget ||
-                currentExceedsLimits ||
-                g.placements.some((p) => !allowedTypes.includes(p.facilityType))
-              }
-              onClick={() => (g.account ? void g.run() : setAuth(true))}
-            >
-              <Play size={17} />
-              {working
-                ? g.job?.state === 'QUEUED'
-                  ? '계산 순서 대기'
-                  : '서버에서 계산 중'
-                : '강우 시뮬레이션'}
-              <ArrowRight size={16} />
-            </button>
-            {g.job?.state === 'FAILED' || g.job?.state === 'REJECTED' ? (
-              <p className="form-error" role="alert">
-                계산이 품질 검사를 통과하지 못했습니다. 코드: {g.job.errorCode}
-              </p>
-            ) : null}
-            {result && (
-              <div className="result-card">
-                <div>
-                  <span>계산한 설계의 탐색 점수</span>
-                  <strong>
-                    {format.format(result.score)}
-                    <small>점</small>
-                  </strong>
-                </div>
-                <dl>
-                  <div>
-                    <dt>기간 유출</dt>
-                    <dd>{format.format(result.strategy.runoffM3)} m³</dd>
-                  </div>
-                  <div>
-                    <dt>최종 잔여저류</dt>
-                    <dd>{format.format(result.strategy.finalStorageM3)} m³</dd>
-                  </div>
-                  <div>
-                    <dt>물수지 오차</dt>
-                    <dd>{format.format(result.strategy.runoffContinuityPercent)}%</dd>
-                  </div>
-                  <div>
-                    <dt>가정 변화 점수 범위</dt>
-                    <dd>
-                      {format.format(
-                        Math.min(result.score, ...result.sensitivity.map((s) => s.score))
-                      )}{' '}
-                      ~{' '}
-                      {format.format(
-                        Math.max(result.score, ...result.sensitivity.map((s) => s.score))
-                      )}
-                    </dd>
-                  </div>
-                </dl>
-                {result.execution?.mode === 'REUSED' && (
-                  <p>
-                    동일 조건에서 계산한 결과를 재사용했습니다. 새로운 관측이나 독립 검증 결과가
-                    아닙니다.
-                  </p>
-                )}
-                <p>
-                  현재 편집 중인 배치와 다를 수 있습니다. 계산한 버전의 결과입니다. 범위는 투수계수
-                  가정 비교이며 신뢰구간이 아닙니다.
-                </p>
-                <button
-                  className="outline-button"
-                  disabled={g.busy}
-                  onClick={() =>
-                    void g.action(async () => {
-                      if (activeLeague) {
-                        setTab('leaderboard');
-                        return;
-                      }
-                      await repo.submit(g.job!.id);
-                      g.setNotice('탐색 기록 제출 완료');
-                    })
-                  }
-                >
-                  <Trophy size={15} />
-                  {activeLeague ? '리그 규칙·제출로 이동' : '탐색 기록 제출'}
-                </button>
-                <a className="text-button" href={`/api/v1/simulations/${g.job?.id}/bundle`}>
-                  <Download size={14} />
-                  입력·결과 재현 묶음
-                </a>
-              </div>
-            )}
-          </aside>
+              </aside>
+            </>
+          )}
         </div>
       ) : tab === 'leaderboard' ? (
         <CompetitionPage

@@ -29,6 +29,7 @@ export function useGame() {
   const [note, setNote] = useState('');
   const [version, setVersion] = useState<Version | null>(null);
   const [job, setJob] = useState<Job | null>(null);
+  const [evaluatedVersion, setEvaluatedVersion] = useState<Version | null>(null);
   const [strategies, setStrategies] = useState<StrategySummary[]>([]);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
@@ -46,6 +47,7 @@ export function useGame() {
         setStrategies([]);
         setVersion(null);
         setJob(null);
+        setEvaluatedVersion(null);
         if (hadAccount) setError('로그인이 만료되었습니다. 다시 로그인해 주세요.');
       }),
     []
@@ -93,6 +95,7 @@ export function useGame() {
     let alive = true;
     setStrategies([]);
     setJob(null);
+    setEvaluatedVersion(null);
     setVersion(null);
     if (account?.role === 'MEMBER') {
       repo
@@ -116,7 +119,11 @@ export function useGame() {
       repo
         .loadJob(job.id)
         .then((j) => {
-          if (alive) setJob(j);
+          if (alive) {
+            setJob(j);
+            if (j.state === 'SUCCEEDED')
+              setNotice((message) => (message.startsWith('계산 요청 완료.') ? '' : message));
+          }
         })
         .catch((e) => {
           if (alive) setError(errorMessage(e));
@@ -178,6 +185,7 @@ export function useGame() {
         const j = await repo.enqueue(saved.id, crypto.randomUUID());
         if (id !== owner.current) return;
         setJob(j);
+        setEvaluatedVersion(saved);
         setNotice('계산 요청 완료. 화면을 나가도 서버에서 계속 계산합니다.');
       }
     });
@@ -196,6 +204,7 @@ export function useGame() {
       setNote(v.designNote);
       dispatchHistory({ type: 'RESET', placements: v.placements });
       setJob(jobs.find((j) => j.versionId === v.id && j.modelHash === nextLab.modelHash) ?? null);
+      setEvaluatedVersion(v);
       setNotice('저장된 설계 불러오기 완료');
     });
   }
@@ -212,6 +221,7 @@ export function useGame() {
     setLab(next);
     setVersion(null);
     setJob(null);
+    setEvaluatedVersion(null);
     dispatchHistory(
       copy && compatible ? { type: 'CLEAR_HISTORY' } : { type: 'RESET', placements: [] }
     );
@@ -228,6 +238,7 @@ export function useGame() {
     setTitle('새 빗물 설계');
     setNote('');
     setJob(null);
+    setEvaluatedVersion(null);
   }
   return {
     lab,
@@ -247,6 +258,7 @@ export function useGame() {
     setNote,
     version,
     job,
+    evaluatedVersion,
     strategies,
     error,
     setError,
