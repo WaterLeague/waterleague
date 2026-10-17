@@ -257,12 +257,23 @@ export function SharedDistrictPanel({
       {occupied && <PhysicsPanel key={occupied.id} installationId={occupied.id} />}
       {budget && (
         <div className="budget-box">
-          <span>서울 공동 배치예산 잔액</span>
+          <span>
+            {districtId ? `${districtName} 공동 잔액 · 배정 8천만 원` : '서울 25개 구 잔액 합계'}
+          </span>
           <strong>{won(remaining)}</strong>
           <div className="shared-budget-track">
             <span
               style={{
-                width: Math.max(0, Math.min(100, (remaining / budget.policy.limitKrw) * 100)) + '%',
+                width:
+                  Math.max(
+                    0,
+                    Math.min(
+                      100,
+                      (remaining /
+                        (districtId ? budget.policy.districtLimitKrw : budget.policy.limitKrw)) *
+                        100
+                    )
+                  ) + '%',
               }}
             />
           </div>

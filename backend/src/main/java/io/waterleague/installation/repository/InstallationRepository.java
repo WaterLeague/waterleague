@@ -58,11 +58,11 @@ public class InstallationRepository {
         .findFirst();
   }
 
-  public void add(SharedInstallation i) {
+  public void add(SharedInstallation i, String budgetPolicy) {
     db.update(
         "INSERT INTO"
-            + " shared_installations(id,occupied_site,district_id,cell_id,owner_id,model_hash,facility_type,area_m2,cost,installed_at)"
-            + " VALUES(?,?,?,?,?,?,?,?,?,?)",
+            + " shared_installations(id,occupied_site,district_id,cell_id,owner_id,model_hash,facility_type,area_m2,cost,installed_at,budget_policy)"
+            + " VALUES(?,?,?,?,?,?,?,?,?,?,?)",
         i.id(),
         i.districtId() + ":" + i.cellId(),
         i.districtId(),
@@ -72,7 +72,8 @@ public class InstallationRepository {
         i.facilityType().name(),
         i.areaM2(),
         i.cost(),
-        Timestamp.from(i.installedAt()));
+        Timestamp.from(i.installedAt()),
+        budgetPolicy);
   }
 
   public boolean remove(UUID id, UUID owner, Instant at) {

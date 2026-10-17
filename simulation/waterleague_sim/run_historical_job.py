@@ -25,7 +25,8 @@ def calculate(request, directory):
     results, frames = [], []
     for index, placement in enumerate(placements):
         model, _, _ = resolve({'district_id': placement['districtId'], 'cell_id': placement['cellId'],
-                               'model_hash': placement['siteModelHash']})
+                               'model_hash': placement['siteModelHash'],
+                               'budget_policy': placement.get('budgetPolicy')})
         if observed['mapId'] != 'seoul-osm-v1-'+placement['districtId']:
             raise ValueError('HISTORICAL_DISTRICT_INVALID')
         model['rainfall'] = observed['rainfall']

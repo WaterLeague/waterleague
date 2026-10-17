@@ -2,6 +2,8 @@ import { z } from 'zod';
 export const budgetDto = z.object({
   policy: z.object({
     limitKrw: z.number().positive(),
+    districtLimitKrw: z.number().positive(),
+    districtCount: z.number().int().positive(),
     referenceYear: z.number().int(),
     sourceTitle: z.string(),
     sourceUrl: z.url().startsWith('https://'),
@@ -9,6 +11,16 @@ export const budgetDto = z.object({
     ruleVersion: z.string(),
     note: z.string(),
   }),
+  districts: z
+    .array(
+      z.object({
+        districtId: z.string(),
+        districtName: z.string(),
+        allocatedKrw: z.number().nonnegative(),
+        remainingKrw: z.number().nonnegative(),
+      })
+    )
+    .length(25),
   allocatedKrw: z.number().nonnegative(),
   remainingKrw: z.number().nonnegative(),
 });

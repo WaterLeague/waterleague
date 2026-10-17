@@ -22,6 +22,7 @@ public class InstallationService {
   private final DistrictRepository districts;
   private final AccountRepository accounts;
   private final AccountService auth;
+  private final io.waterleague.common.service.JsonService json;
   private final io.waterleague.installation.repository.SiteCatalogRepository sites;
   private final io.waterleague.strategy.service.PlacementValidationService validation;
 
@@ -31,6 +32,7 @@ public class InstallationService {
       DistrictRepository d,
       AccountRepository a,
       AccountService auth,
+      io.waterleague.common.service.JsonService json,
       io.waterleague.installation.repository.SiteCatalogRepository sites,
       io.waterleague.strategy.service.PlacementValidationService validation) {
     installations = i;
@@ -38,6 +40,7 @@ public class InstallationService {
     districts = d;
     accounts = a;
     this.auth = auth;
+    this.json = json;
     this.sites = sites;
     this.validation = validation;
   }
@@ -127,7 +130,7 @@ public class InstallationService {
     site.unitCosts()
         .forEach((t, c) -> costs.put(io.waterleague.strategy.entity.FacilityType.valueOf(t), c));
     var cost = validation.validate(List.of(placement), cells, costs, budget.limit(), 1);
-    budget.requireAvailable(cost);
+    budget.requireAvailable(district.id(), cost);
     var value =
         new SharedInstallation(
             UUID.randomUUID(),
@@ -143,7 +146,7 @@ public class InstallationService {
             null);
     // 공동 예산 잠금과 위치 고유 제약으로 초과 배정·중복 점유를 차단한다.
     try {
-      installations.add(value);
+      installations.add(value, json.write(budget.policy()));
     } catch (DuplicateKeyException e) {
       throw new InstallationException(ErrorCode.SITE_OCCUPIED);
     }
@@ -161,7 +164,7 @@ public class InstallationService {
         || !value.ownerId().equals(account.id())
         || !value.districtId().equals(account.districtId()))
       throw new InstallationException(ErrorCode.ACCESS_DENIED);
-    budget.lock();
+    budget.lock(value.districtId());
     if (!installations.remove(id, account.id(), Instant.now()))
       throw new InstallationException(ErrorCode.CONFLICT);
   }

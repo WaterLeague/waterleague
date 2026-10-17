@@ -60,6 +60,15 @@ def resolve(installation):
         source=candidate_snapshot(district['districtId'],version)
         for key in ('unitCosts','costModel','costSourceSha256','budget','budgetPolicy'):
             model[key]=copy.deepcopy(source[key])
+    if installation.get('budget_policy') is not None:
+        policy = installation['budget_policy']
+        if isinstance(policy,str): policy = json.loads(policy)
+        if (policy.get('ruleVersion') != 'SEOUL_DISTRICT_EQUAL_2026_V2'
+                or policy.get('districtCount') != 25 or policy.get('districtLimitKrw') != 80000000
+                or policy.get('limitKrw') != 2000000000):
+            raise ValueError('LIVE_BUDGET_POLICY_INVALID')
+        model['budget'] = policy['districtLimitKrw']
+        model['budgetPolicy'] = copy.deepcopy(policy)
     model.pop('rainfall',None)
     station=district.get('defaultRainfall') or {}
     return model,str(station.get('stationId','110')),station.get('stationName','강서')

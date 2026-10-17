@@ -106,7 +106,9 @@ public class HistoricalService {
                   "facilityType",
                   p.facilityType(),
                   "areaM2",
-                  p.areaM2())));
+                  p.areaM2(),
+                  "budgetPolicy",
+                  budget.policy())));
     }
     validation.validate(physical, cells, costs, budget.limit(), 50);
     String body = json.write(frozen), hash = json.hash(dto.modelHash() + "\n" + body);

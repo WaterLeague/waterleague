@@ -143,7 +143,12 @@ function Explorer({
     );
   }
   const ownInstallations = shared.installations.filter((i) => i.ownerId === viewerId);
-  const remaining = researchMode ? research.remaining : (budget.value?.remainingKrw ?? 0);
+  const districtBudget = budget.value?.districts.find((d) => d.districtId === selected);
+  const remaining = researchMode
+    ? research.remaining
+    : selected
+      ? (districtBudget?.remainingKrw ?? 0)
+      : (budget.value?.remainingKrw ?? 0);
   const occupied = site
     ? shared.installations.find((i) => siteKey(i) === siteKey(site))
     : undefined;
@@ -439,7 +444,11 @@ function Explorer({
         </div>
         <div className="play-resources">
           <span>
-            {researchMode ? '연구 남은 예산' : '서울 공동 잔액'}
+            {researchMode
+              ? '연구 남은 예산'
+              : districtBudget
+                ? `${districtBudget.districtName} 공동 잔액`
+                : '서울 25개 구 잔액 합계'}
             <b>{budget.value ? won(remaining) : '조회 중'}</b>
           </span>
           <span>

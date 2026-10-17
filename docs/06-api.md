@@ -128,7 +128,7 @@ RFC 9457 `application/problem+json`: type, title, status, detail, instance, code
 - `GET /api/v1/historical`, `GET /api/v1/historical/{id}`: 요청자 본인의 비공개 작업 목록·상태·결과.
 - `GET /api/v1/historical/{id}/bundle`: 본인 성공 작업의 해시 검증된 재현 묶음. 경로 이탈·심볼릭 링크·파일 변조 차단.
 
-원화 3억 연구 예산은 현재 실험 규칙이며 서울시 실제 예산으로 표시하지 않음. 결과는 선택 표면의 기준 대비 유출·배수·순저류 체적 비교. 관망·실제 침수 복원 결과로 확대 해석 금지.
+구별 원화 8천만 원 연구 예산은 게임의 균등 배분 규칙이며 서울시 실제 구별 배정액으로 표시하지 않음. 결과는 선택 표면의 기준 대비 유출·배수·순저류 체적 비교. 관망·실제 침수 복원 결과로 확대 해석 금지.
 
 ## 공동 주간 순위
 
@@ -136,4 +136,4 @@ RFC 9457 `application/problem+json`: type, title, status, detail, instance, code
 
 ## 공동 배치예산·시설 비용
 
-`GET /api/v1/budget` 공개 조회: `policy`(총한도·참고연도·출처·원문 해시·규칙 버전·범위), `allocatedKrw`, `remainingKrw`. 서울 전체 활성 설치의 저장 비용을 합산. 설치·철거 트랜잭션의 동일 DB advisory lock으로 회원 간 초과 배정 차단. 후보의 미사용 `budget` 필드는 제거하고 별도 예산 응답 사용. 후보에는 `costModel`(시설별 단가·범위·포함/제외 항목·참고연도·출처·원문 해시), `costSourceSha256` 제공. 신규 후보 v3의 단가·예산 출처는 계산 재현 입력에 고정. 과거 후보 v1/v2와 저장 설치 비용은 변경하지 않음.
+`GET /api/v1/budget` 공개 조회: `policy`(서울 총한도 20억 원·구별 한도 8천만 원·25개 구·참고연도·출처·원문 해시·규칙 버전·범위), 서울 합계 `allocatedKrw`, `remainingKrw`, 25개 구별 `districts`(구 ID·이름·사용액·잔액). 각 구 활성 설치의 저장 비용을 합산. 설치·철거 트랜잭션의 구별 DB advisory lock으로 같은 구 회원 간 초과 배정 차단, 다른 구 예산 사용 금지. 후보의 미사용 `budget` 필드는 제거하고 별도 예산 응답 사용. 후보에는 `costModel`(시설별 단가·범위·포함/제외 항목·참고연도·출처·원문 해시), `costSourceSha256` 제공. 신규 후보 v3의 단가 출처와 설치/연구 요청 시의 예산 정책을 계산 재현 입력에 고정. 균등 배분 규칙 `SEOUL_DISTRICT_EQUAL_2026_V2`는 설치 행 `budget_policy`와 재해 요청에 별도 보존. 과거 후보 v1/v2/v3와 저장 설치 비용·예산 입력은 변경하지 않음.

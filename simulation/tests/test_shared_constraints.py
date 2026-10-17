@@ -37,3 +37,16 @@ class SharedConstraintTests(unittest.TestCase):
         self.assertEqual(old['unitCosts']['GREEN_ROOF'],260000)
         self.assertEqual(new['unitCosts']['GREEN_ROOF'],350000)
         self.assertEqual(new['costModel']['facilities']['GREEN_ROOF']['includes'],['구조안전진단','설계','공사'])
+
+    def test_budget_policy_is_frozen_without_changing_old_candidate_input(self):
+        policy=json.loads((ROOT/'backend/src/main/resources/budget/seoul-2026.json').read_text())
+        installation={'district_id':'2410520','cell_id':'G1','model_hash':site_catalog(3)['2410520']['sha256']}
+        old,_,_=resolve(installation)
+        new,_,_=resolve(installation|{'budget_policy':json.dumps(policy)})
+        self.assertEqual(old['budget'],2000000000)
+        self.assertEqual(new['budget'],80000000)
+        self.assertEqual(new['budgetPolicy'],policy)
+        self.assertEqual(new['cells'],old['cells'])
+        self.assertEqual(new['hydrology'],old['hydrology'])
+        with self.assertRaises(ValueError):
+            resolve(installation|{'budget_policy':policy|{'districtLimitKrw':80000001}})

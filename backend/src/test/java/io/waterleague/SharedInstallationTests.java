@@ -140,14 +140,14 @@ class SharedInstallationTests {
   }
 
   @Test
-  void concurrentMembersShareOneCityBudgetAndRemovalReleasesAllocation() throws Exception {
+  void concurrentMembersShareDistrictBudgetWithoutSpendingOtherDistricts() throws Exception {
     String district = "2410520";
     var roofs =
         sites.district(district).values().stream()
             .filter(
                 v ->
                     v.allowedTypes().contains("GREEN_ROOF")
-                        && v.maxAreaM2().compareTo(new BigDecimal("2000")) >= 0)
+                        && v.maxAreaM2().compareTo(new BigDecimal("100")) >= 0)
             .limit(3)
             .toList();
     assertThat(roofs).hasSize(3);
@@ -168,7 +168,7 @@ class SharedInstallationTests {
                             district,
                             roofs.get(index).cellId(),
                             FacilityType.GREEN_ROOF,
-                            new BigDecimal("2000")));
+                            new BigDecimal("100")));
                     return "INSTALLED";
                   } catch (DomainException e) {
                     return e.code().name();
@@ -180,13 +180,48 @@ class SharedInstallationTests {
       for (var f : futures) outcomes.add(f.get(10, TimeUnit.SECONDS));
       assertThat(outcomes).containsExactlyInAnyOrder("INSTALLED", "INSTALLED", "BUDGET_EXCEEDED");
     }
-    assertThat(budget.view().allocatedKrw()).isEqualByComparingTo("1400000000");
-    assertThat(budget.view().remainingKrw()).isEqualByComparingTo("600000000");
-    var installed = service.active().getFirst();
+    assertThat(budget.view().allocatedKrw()).isEqualByComparingTo("70000000");
+    assertThat(budget.view().remainingKrw()).isEqualByComparingTo("1930000000");
+    var row =
+        budget.view().districts().stream()
+            .filter(d -> d.districtId().equals(district))
+            .findFirst()
+            .orElseThrow();
+    assertThat(row.remainingKrw()).isEqualByComparingTo("10000000");
+    assertThat(budget.view().districts()).hasSize(25);
+    assertThat(budget.view().districts().stream().filter(d -> !d.districtId().equals(district)))
+        .allSatisfy(d -> assertThat(d.remainingKrw()).isEqualByComparingTo("80000000"));
+    var other = account("2414774");
+    service.install(other.username(), placement("2414774"));
+    assertThat(
+            budget.view().districts().stream()
+                .filter(d -> d.districtId().equals("2414774"))
+                .findFirst()
+                .orElseThrow()
+                .remainingKrw())
+        .isEqualByComparingTo("77800000");
+    var installed =
+        service.active().stream()
+            .filter(i -> i.districtId().equals(district))
+            .findFirst()
+            .orElseThrow();
+    assertThat(
+            db.queryForObject(
+                "SELECT budget_policy FROM shared_installations WHERE id=?",
+                String.class,
+                installed.id()))
+        .contains("SEOUL_DISTRICT_EQUAL_2026_V2");
     var owner =
         actors.stream().filter(a -> a.id().equals(installed.ownerId())).findFirst().orElseThrow();
     service.remove(owner.username(), installed.id());
-    assertThat(budget.view().remainingKrw()).isEqualByComparingTo("1300000000");
+    assertThat(
+            budget.view().districts().stream()
+                .filter(d -> d.districtId().equals(district))
+                .findFirst()
+                .orElseThrow()
+                .remainingKrw())
+        .isEqualByComparingTo("45000000");
+    assertThat(budget.view().remainingKrw()).isEqualByComparingTo("1962800000");
   }
 
   @Test
