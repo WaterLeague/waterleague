@@ -27,5 +27,7 @@ public record PhysicsView(
       Double storageDepthMm,
       double runoffContinuityPercent,
       String evaporationMethod,
-      String initialState) {}
+      String initialState,
+      String inflowPolicy,
+      String areaLimitBasis) {}
 }

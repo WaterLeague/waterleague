@@ -17,4 +17,7 @@ public record SiteView(
     Map<String, BigDecimal> unitCosts,
     BigDecimal budget,
     String modelHash,
-    List<String> sourceIds) {}
+    List<String> sourceIds,
+    String areaLimitBasis,
+    String siteEligibility,
+    String inflowPolicy) {}

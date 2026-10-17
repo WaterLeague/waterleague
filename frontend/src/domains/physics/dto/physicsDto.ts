@@ -25,6 +25,8 @@ export const physicsDto = z.object({
       runoffContinuityPercent: value,
       evaporationMethod: z.string(),
       initialState: z.string(),
+      inflowPolicy: z.enum(['DIRECT_RAINFALL_ONLY', 'LEGACY_ALL_IMPERVIOUS_RUNOFF']).nullish(),
+      areaLimitBasis: z.string().nullish(),
     })
     .nullable(),
 });

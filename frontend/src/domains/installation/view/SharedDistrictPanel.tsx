@@ -201,8 +201,14 @@ export function SharedDistrictPanel({
                 onChange={(e) => onArea(e.target.value)}
               />
               <div className="shared-area-limit">
-                최대 {site.maxAreaM2.toLocaleString('ko-KR')} m² · 설계 상한
+                최대 {site.maxAreaM2.toLocaleString('ko-KR')} m² · 공개 도형 면적
               </div>
+              <p className="micro-note">
+                도형 밖 면적 배치만 제한합니다. 실제 시공 가능 면적과 구조안전은 확인되지
+                않았습니다.
+                {site.inflowPolicy === 'DIRECT_RAINFALL_ONLY' &&
+                  ' 시설 자체에 내리는 비만 계산하며, 주변 유출의 시설 유입은 가산하지 않습니다.'}
+              </p>
               <div className="placement-cost">
                 <span>설치 비용</span>
                 <strong>{won(cost)}</strong>

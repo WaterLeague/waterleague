@@ -73,6 +73,11 @@ export function PhysicsPanel({ installationId }: { installationId: string }) {
               {amount(result.precipitationM3)} m³
             </p>
             <p>
+              {result.inflowPolicy === 'DIRECT_RAINFALL_ONLY'
+                ? '시설 자체 강우만 처리하며, 배수 연결이 확인되지 않은 주변 표면의 유출은 가산하지 않습니다.'
+                : '기존 설치 당시의 유입 조건을 보존한 계산입니다.'}
+            </p>
+            <p>
               공개 관측 강우에 따른 모델 결과입니다. 시설 재료·초기 수분·토양·경사는 미확인 설계
               조건입니다.
             </p>

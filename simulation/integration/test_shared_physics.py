@@ -62,6 +62,18 @@ class SharedPhysicsTests(unittest.TestCase):
             'overlapObservations': rows(start-timedelta(minutes=60), start),
             'sourceHashes': [sha], 'evidence': 'SYNTHETIC_TEST_ONLY'}, [(raw, {'sha256': sha, 'purpose': 'SYNTHETIC_TEST_ONLY'})]
 
+    def test_new_footprint_boundary_runs_without_unverified_external_inflow(self):
+        new_hash=catalog()[1]['2419953']['sha256']
+        self.conn.execute('UPDATE shared_installations SET model_hash=%s,area_m2=25 WHERE id=%s',(new_hash,self.installation))
+        job=physics.claim(self.conn)
+        with tempfile.TemporaryDirectory() as root, patch.object(physics,'observed_forcing',side_effect=self.forcing):
+            self.assertTrue(physics.process(self.conn,job,root))
+            row=self.conn.execute('SELECT * FROM shared_physics_jobs WHERE id=%s',(job['id'],)).fetchone()
+            self.assertEqual(row['state'],'SUCCEEDED',row['error_code'])
+            result=json.loads(row['result'])
+            self.assertEqual(result['inflowPolicy'],'DIRECT_RAINFALL_ONLY')
+            self.assertEqual(result['areaLimitBasis'],'PUBLIC_FOOTPRINT_GEOMETRY')
+
     def test_real_child_replays_preserved_input_and_refuses_revised_overlap(self):
         first = physics.claim(self.conn)
         full_end = first['end']

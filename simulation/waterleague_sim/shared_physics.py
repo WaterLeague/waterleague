@@ -80,7 +80,7 @@ def process(conn, job, root):
     try:
         model, station, station_name = resolve(job['installation'])
         engine = engine_identity()
-        observations, source_hashes, previous_ref = [], [], None
+        observations, source_hashes, previous_ref, previous_result = [], [], None, None
         covered = job['start']
         if previous := job['previous']:
             old = Path(root)/'shared-physics'/str(previous['id'])/str(previous['lease_token'])
@@ -89,10 +89,12 @@ def process(conn, job, root):
             req = json.loads(req_raw)
             forcing = json.loads(raw)
             if (digest(req_raw) != previous['input_hash'] or digest(raw) != req['forcingSha256']
-                    or req['engine'] != engine or req['installationId'] != str(job['installation']['id'])
+                    or {k:v for k,v in req['engine'].items() if k!='adapterSha256'} != {k:v for k,v in engine.items() if k!='adapterSha256'}
+                    or req['installationId'] != str(job['installation']['id'])
                     or forcing['stationId'] != station or datetime.fromisoformat(forcing['start']) != job['start']
                     or datetime.fromisoformat(forcing['end']) != previous['requested_through']):
                 raise ValueError('LIVE_PREVIOUS_INPUT_INVALID')
+            previous_result = json.loads((old/'result.json').read_text())
             observations, source_hashes = forcing['observations'], forcing['sourceHashes']
             covered = previous['requested_through']
             previous_ref = {'jobId': str(previous['id']), 'leaseToken': str(previous['lease_token']),
@@ -133,6 +135,12 @@ def process(conn, job, root):
             child.wait()
             raise ValueError('LIVE_ENGINE_TIMEOUT') from None
         result = json.loads((path/'result.json').read_text())
+        if previous_result is not None:
+            # 어댑터 수정 후에도 기존 관측 구간의 최종 상태가 같아야 연속 결과를 게시한다.
+            prefix_index = int((covered-job['start']).total_seconds()/60)-1
+            for run in ('baseline','strategy'):
+                if result[run]['samples'][prefix_index] != previous_result[run]['final']:
+                    raise ValueError('LIVE_PREVIOUS_STATE_CHANGED')
         state = result['strategy']['final']
         public = {'stationId': station, 'stationName': station_name, 'simulationStart': job['start'].isoformat(),
                   'simulatedThrough': job['end'].isoformat(), 'engineVersion': '5.2.4', 'validationLevel': 'EXPLORATORY',
@@ -140,7 +148,9 @@ def process(conn, job, root):
                                           'surfaceDepthMm', 'soilMoisture', 'storageDepthMm')},
                   'runoffM3': state['surfaceRunoffM3']+state['lidDrainageM3'],
                   'runoffContinuityPercent': result['strategy']['runoffContinuityPercent'],
-                  'evaporationMethod': result['evaporation']['method'], 'initialState': 'ASSUMED_DESIGN_START'}
+                  'evaporationMethod': result['evaporation']['method'], 'initialState': 'ASSUMED_DESIGN_START',
+                  'inflowPolicy': result['inflowPolicy'],
+                  'areaLimitBasis': model['cells'][0].get('areaLimitBasis','LEGACY_DESIGN_RATIO')}
         saved = finish(conn, job, public, digest(request_raw), None)
     except Exception as e:
         code = str(e)

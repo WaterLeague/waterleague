@@ -28,6 +28,9 @@ export const siteDto = z.object({
   unitCosts: z.record(facility, z.number().positive()),
   budget: z.number().positive(),
   sourceIds: z.array(z.string()),
+  areaLimitBasis: z.literal('PUBLIC_FOOTPRINT_GEOMETRY').optional(),
+  siteEligibility: z.literal('UNKNOWN').optional(),
+  inflowPolicy: z.literal('DIRECT_RAINFALL_ONLY').optional(),
   modelHash: z.string().regex(/^[a-f0-9]{64}$/),
 });
 

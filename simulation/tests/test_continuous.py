@@ -67,6 +67,23 @@ class ContinuousTests(unittest.TestCase):
             self.assertEqual(result['contribution'][-1]['cumulativeM3'], 0)
             self.assertEqual(result['strategy']['final']['soilMoisture'], result['strategy']['initial']['soilMoisture'])
 
+    def test_direct_rain_does_not_capture_unconnected_runoff_and_accepts_full_footprint(self):
+        with tempfile.TemporaryDirectory() as d:
+            for facility in ('RAIN_GARDEN','PERMEABLE_PAVEMENT','GREEN_ROOF'):
+                model, placement = model_for(facility,[1]*120)
+                model['sharedSiteSource']={'inflowPolicy':'DIRECT_RAINFALL_ONLY'}
+                cell=model['cells'][0]
+                cell['maxAreaM2']=cell['areaM2']
+                small=placement|{'areaM2':cell['areaM2']*.1}
+                direct=continuous.replay(model,[small],d,facility+'_direct')
+                # 외부 집수가 없으면 LID 총 유입량은 자체 면적의 강우 체적만 포함한다.
+                self.assertAlmostEqual(direct['final']['lidInflowM3'],small['areaM2']*.12,delta=max(1e-5,small['areaM2']*.12*1e-6))
+                full=placement|{'areaM2':cell['maxAreaM2']}
+                covered=continuous.replay(model,[full],d,facility+'_full')
+                self.assertAlmostEqual(covered['final']['precipitationM3'],cell['areaM2']*.12,delta=max(1e-5,cell['areaM2']*.12*1e-6))
+                with self.assertRaises(swmm.SimulationQualityError):
+                    continuous.replay(model,[full|{'areaM2':cell['areaM2']+.01}],d,facility+'_over')
+
     def test_time_varying_evaporation_changes_moisture_without_reset(self):
         model, placement = model_for('GREEN_ROOF', [0]*1440)
         model['hydrology']['initialSaturationPercent'] = 50

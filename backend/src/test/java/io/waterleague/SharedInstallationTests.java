@@ -157,7 +157,7 @@ class SharedInstallationTests {
                 service.install(
                     a.username(),
                     new InstallRequest(
-                        "2410520", "G1", FacilityType.PERMEABLE_PAVEMENT, new BigDecimal("20.01"))))
+                        "2410520", "G1", FacilityType.PERMEABLE_PAVEMENT, new BigDecimal("25.01"))))
         .isInstanceOf(DomainException.class);
     var overview = service.sites(null, 0, 0, 0, null, false);
     assertThat(overview.districtCounts()).hasSize(25);

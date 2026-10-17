@@ -66,6 +66,20 @@ def input_source(model, placements, evaporation):
     normalized = model | {'rainfall': model['rainfall'] | {
         'start': start.isoformat(), 'end': (start+timedelta(minutes=count, seconds=1)).isoformat()}}
     source = make_input(normalized, placements)
+    if model.get('sharedSiteSource', {}).get('inflowPolicy') == 'DIRECT_RAINFALL_ONLY':
+        # 배수 연결 근거가 없는 표면의 유출을 시설에 임의 배분하지 않는다.
+        lines, in_usage = [], False
+        for line in source.splitlines():
+            if line.startswith('['):
+                in_usage = line == '[LID_USAGE]'
+            elif in_usage and line.strip():
+                fields = line.split()
+                if len(fields) != 11:
+                    raise SimulationQualityError('LIVE_INFLOW_FORMAT_INVALID')
+                fields[6] = '0'
+                line = ' '.join(fields)
+            lines.append(line)
+        source = '\n'.join(lines)+'\n'
     if evaporation is not None:
         values = evaporation['ratesMmDay']
         if (len(values) != count or not evaporation.get('method') or not evaporation.get('sourceHashes')
@@ -91,7 +105,8 @@ def replay(model, placements, directory, label, evaporation=None):
     if not label.isidentifier():
         raise SimulationQualityError('LIVE_OUTPUT_LABEL_INVALID')
     cell = model['cells'][0]
-    if (len(placements) > 1 or any(p['cellId'] != cell['id']
+    if (not math.isfinite(cell['areaM2']) or not 0 < cell['maxAreaM2'] <= cell['areaM2']
+            or len(placements) > 1 or any(p['cellId'] != cell['id']
             or p['facilityType'] not in cell['allowedTypes']
             or isinstance(p['areaM2'], bool) or not math.isfinite(p['areaM2'])
             or not 0 < p['areaM2'] <= cell['maxAreaM2'] for p in placements)):
@@ -172,6 +187,7 @@ def experiment(model, placement, directory, evaporation=None):
                            'cumulativeM3': cumulative})
         previous = cumulative
     result = {'schemaVersion': 1, 'validationLevel': 'EXPLORATORY', 'official': False,
+              'inflowPolicy': model.get('sharedSiteSource', {}).get('inflowPolicy', 'LEGACY_ALL_IMPERVIOUS_RUNOFF'),
               'continuity': 'FULL_HISTORY_REPLAY_NO_LID_STATE_RESET',
               'baseline': baseline, 'strategy': strategy, 'contribution': increments,
               'evaporation': evaporation or {'method': 'ASSUMED_MODEL_CONSTANT',
