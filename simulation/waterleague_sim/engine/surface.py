@@ -41,7 +41,8 @@ class SurfaceSession:
         import anuga
         self.np = np
         self.gravity_mps2 = anuga.g
-        require(model.get('schemaVersion') == 1 and model.get('coordinateSystem')
+        require(type(model.get('schemaVersion')) is int and model['schemaVersion'] in (1, 2)
+                and model.get('coordinateSystem')
                 and model.get('verticalDatum') and model.get('evidence'), 'SURFACE_REFERENCE_REQUIRED')
         max_step = model.get('maxStepSeconds')
         require(type(max_step) in (float, int) and math.isfinite(max_step) and 0 < max_step <= 60,
@@ -91,7 +92,8 @@ class SurfaceSession:
         self.directory = path
         (path / 'surface-input.json').write_text(json.dumps(model, allow_nan=False) + '\n')
         anuga.set_omp_num_threads(1, verbose=False)
-        self.domain = domain = anuga.Domain(points, triangles, boundaries, verbose=False)
+        self.domain = domain = anuga.Domain(points, triangles, boundaries, verbose=False,
+                                           use_inscribed_circle=model['schemaVersion'] == 2)
         domain.set_compute_mode('legacy')
         domain.set_flow_algorithm('DE0')
         # 건조 격자의 초기 CFL만으로 큰 단계를 택하면 강우가 마지막에 한꺼번에 들어간다.
@@ -118,6 +120,14 @@ class SurfaceSession:
         domain.set_name('surface')
         domain.set_store(True)
         domain.set_store_centroids(True)
+        self.numerics = {'policyVersion': ('ANUGA_DE0_INSCRIBED_RADIUS_v2' if model['schemaVersion'] == 2
+                         else 'ANUGA_DE0_LEGACY_RADIUS_v1'),
+            'meshRadiusMethod': ('INSCRIBED_CIRCLE_2_AREA_OVER_PERIMETER' if domain.mesh.use_inscribed_circle
+                                 else 'CENTROID_TO_NEAREST_EDGE_MIDPOINT'),
+            'minimumRadiusM': float(np.min(domain.radii)), 'maximumRadiusM': float(np.max(domain.radii)),
+            'cfl': float(domain.get_cfl()), 'configuredMaximumStepSeconds': max_step,
+            'algorithm': domain.get_algorithm_parameters()}
+        (path / 'surface-numerics.json').write_text(json.dumps(self.numerics, allow_nan=False, indent=2) + '\n')
         self.owners = owners
         self.station_indices = None
         if model.get('rainfallStationIds') is not None:
@@ -135,6 +145,11 @@ class SurfaceSession:
             from waterleague_sim.engine.flood_metrics import DepthMetrics
             self.metrics = DepthMetrics(domain, model['evaluationMetrics'])
         self.initial_volume = float(np.dot(depths, domain.areas))
+        self.quality = None
+        if model['schemaVersion'] == 2:
+            from waterleague_sim.engine.surface_quality import SurfaceQuality
+            self.quality = SurfaceQuality(domain, self.initial_volume, path)
+            self.engine['qualityAdapterSha256'] = self.quality.source_hash
         self.finished = False
         self.initial = self.snapshot()
 
@@ -194,10 +209,14 @@ class SurfaceSession:
         require(not self.finished, 'SURFACE_SESSION_FINISHED')
         final = self.snapshot()
         self.finished = True
+        if self.quality is not None:
+            self.quality.observe(float(self.domain.get_time()))
+            self.quality.save()
         # 수심/운동량은 그대로 보존하며 초기 수치 시험의 잔차 허용치만 별도 판정한다.
         scale = max(self.initial_volume + max(0, final['sourceNetInflowM3'])
                     + max(0, final['boundaryNetInflowM3']), final['storageM3'])
         result = {'schemaVersion': 1, 'engine': self.engine, 'algorithm': self.domain.get_algorithm_parameters(),
+                  'numericalConfiguration': self.numerics,
                   'computeMode': self.domain.compute_mode, 'threads': 1,
                   'gravityMps2': self.gravity_mps2,
                   'maximumStepSeconds': self.domain.get_evolve_max_timestep(),
@@ -208,5 +227,7 @@ class SurfaceSession:
                             for p in sorted(self.directory.iterdir()) if p.is_file()}}
         if self.metrics is not None:
             result['evaluationMetrics'] = self.metrics.snapshot()
+        if self.quality is not None:
+            result['numericalQuality'] = self.quality.snapshot()
         (self.directory / 'surface-result.json').write_text(json.dumps(result, allow_nan=False, indent=2) + '\n')
         return result

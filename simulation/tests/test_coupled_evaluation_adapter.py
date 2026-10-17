@@ -53,6 +53,65 @@ class CoupledEvaluationAdapterTests(unittest.TestCase):
     def read(self):
         return read_coupled_record(self.root, self.expected, self.context)
 
+    def add_surface_quality(self):
+        self.model.update(surface={'schemaVersion': 2}, durationSeconds=120)
+        self.surface['numericalConfiguration'] = {'policyVersion': 'ANUGA_DE0_INSCRIBED_RADIUS_v2',
+                                                  'configuredMaximumStepSeconds': 30}
+        self.result['surfaceNumericalConfiguration'] = deepcopy(self.surface['numericalConfiguration'])
+        self.surface['engine']['qualityAdapterSha256'] = digest('quality observer')
+        quality = {'policyVersion': 'SURFACE_NATIVE_BALANCE_v1', 'status': 'PASSED', 'failureCode': None,
+                   'sourceSha256': self.surface['engine']['qualityAdapterSha256'],
+                   'lastInternalTimeSeconds': 120}
+        self.surface['numericalQuality'] = quality
+        self.result['surfaceNumericalQuality'] = deepcopy(quality)
+        path = self.root / 'surface/surface-quality.json'
+        path.write_text(json.dumps(quality))
+        self.surface['files']['surface-quality.json'] = file_digest(path)
+        self.context['engineSha256'] = engine_signature(self.network, self.surface, self.result)
+        self.refresh()
+
+    def test_surface_numerical_policy_is_bound_to_engine_context(self):
+        previous = self.context['engineSha256']
+        self.add_surface_quality()
+        self.assertNotEqual(previous, self.context['engineSha256'])
+        self.assertTrue(self.read()['complete'])
+        self.result['surfaceNumericalConfiguration']['configuredMaximumStepSeconds'] = 1
+        self.refresh()
+        with self.assertRaisesRegex(EvaluationError, 'CONTEXT_MISMATCH'):
+            self.read()
+        self.surface['numericalConfiguration']['configuredMaximumStepSeconds'] = 1
+        self.refresh()
+        with self.assertRaisesRegex(EvaluationError, 'CONTEXT_MISMATCH'):
+            self.read()
+
+    def test_version_two_requires_quality_artifact_and_matching_observer(self):
+        self.add_surface_quality()
+        saved = self.surface.pop('numericalQuality')
+        self.refresh()
+        with self.assertRaisesRegex(EvaluationError, 'SURFACE_QUALITY_MISMATCH'):
+            self.read()
+        self.surface['numericalQuality'] = saved
+        self.surface['engine']['qualityAdapterSha256'] = digest('different observer')
+        self.context['engineSha256'] = engine_signature(self.network, self.surface, self.result)
+        self.refresh()
+        with self.assertRaisesRegex(EvaluationError, 'SURFACE_QUALITY_MISMATCH'):
+            self.read()
+
+    def test_failed_or_incomplete_quality_cannot_be_promoted_to_passed(self):
+        self.add_surface_quality()
+        for change, code in (({'status': 'FAILED'}, 'ENGINE_STATUS_MISMATCH'),
+                             ({'lastInternalTimeSeconds': 119}, 'SURFACE_TIME_MISMATCH')):
+            original = deepcopy(self.surface['numericalQuality'])
+            quality = self.surface['numericalQuality'] | change
+            self.surface['numericalQuality'] = self.result['surfaceNumericalQuality'] = quality
+            path = self.root / 'surface/surface-quality.json'
+            path.write_text(json.dumps(quality))
+            self.surface['files']['surface-quality.json'] = file_digest(path)
+            self.refresh()
+            with self.assertRaisesRegex(EvaluationError, code):
+                self.read()
+            self.surface['numericalQuality'] = original
+
     def test_verified_raw_values_and_engine_policy_binding(self):
         record = self.read()
         self.assertEqual(record['raw'], self.result['evaluationMetrics']['raw'])

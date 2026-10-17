@@ -104,6 +104,8 @@ class ExchangeSurfaceSession(SurfaceSession):
                             'roundoffM3': actual - volume})
         if self.metrics is not None:
             self.metrics.reset_at_instant()
+        if self.quality is not None:
+            self.quality.observe(float(domain.get_time()))
         with (self.directory / 'surface-exchange.jsonl').open('a') as stream:
             stream.write(json.dumps({'timeSeconds': domain.get_time(), 'transfers': records},
                                     allow_nan=False) + '\n')

@@ -1,6 +1,7 @@
 """고정 작업 해시와 원 산출물을 확인한 연결 계산 결과 읽기."""
 import hashlib
 import json
+import math
 from pathlib import Path, PurePosixPath
 
 from .exception import EvaluationError, require
@@ -30,9 +31,40 @@ def _read(path):
 
 
 def engine_signature(network_result, surface_result, coupled_result):
-    return digest({'network': network_result['engine'], 'surface': surface_result['engine'],
-                   'couplingCodeSha256': coupled_result['codeSha256'],
-                   'numericalConfiguration': coupled_result['networkNumericalConfiguration']})
+    identity = {'network': network_result['engine'], 'surface': surface_result['engine'],
+                'couplingCodeSha256': coupled_result['codeSha256'],
+                'numericalConfiguration': coupled_result['networkNumericalConfiguration']}
+    # 새 지표 설정을 고정하되 기존 보관 결과의 식별자는 소급 변경하지 않는다.
+    if 'surfaceNumericalConfiguration' in coupled_result:
+        identity['surfaceNumericalConfiguration'] = coupled_result['surfaceNumericalConfiguration']
+    return digest(identity)
+
+
+def _verify_surface_policy(model, surface, result, root):
+    configuration = surface.get('numericalConfiguration')
+    require(configuration == result.get('surfaceNumericalConfiguration'), 'EVALUATION_CONTEXT_MISMATCH')
+    if model.get('surface', {}).get('schemaVersion') != 2:
+        return
+    require(isinstance(configuration, dict)
+            and configuration.get('policyVersion') == 'ANUGA_DE0_INSCRIBED_RADIUS_v2',
+            'EVALUATION_SURFACE_POLICY_MISMATCH')
+    quality = surface.get('numericalQuality')
+    require(isinstance(quality, dict) and quality == result.get('surfaceNumericalQuality')
+            and quality.get('policyVersion') == 'SURFACE_NATIVE_BALANCE_v1'
+            and is_hash(quality.get('sourceSha256'))
+            and quality['sourceSha256'] == surface['engine'].get('qualityAdapterSha256')
+            and 'surface-quality.json' in surface['files']
+            and _read(root / 'surface/surface-quality.json') == quality,
+            'EVALUATION_SURFACE_QUALITY_MISMATCH')
+    require(quality.get('status') in ('PASSED', 'FAILED')
+            and (surface['numericalStatus'] != 'PASSED'
+                 or quality['status'] == 'PASSED' and quality.get('failureCode') is None),
+            'EVALUATION_ENGINE_STATUS_MISMATCH')
+    if surface['evaluationMetrics']['complete']:
+        time = quality.get('lastInternalTimeSeconds')
+        require(type(time) in (int, float) and math.isfinite(time)
+                and math.isclose(time, model['durationSeconds'], abs_tol=1e-8, rel_tol=0),
+                'EVALUATION_SURFACE_TIME_MISMATCH')
 
 
 def _verify_files(root, files):
@@ -64,6 +96,7 @@ def read_coupled_record(directory, expected_result_sha256, context):
         model, network, surface = [_read(root / name) for name in required]
         _verify_files(root / 'network', network['files'])
         _verify_files(root / 'surface', surface['files'])
+        _verify_surface_policy(model, surface, result, root)
         metrics = result['evaluationMetrics']
         require(metrics['specificationSha256'] == context['metricSpecificationSha256']
                 and digest(model['evaluationMetrics']) == context['metricSpecificationSha256']

@@ -219,6 +219,7 @@ def run_coupled(model, directory):
                     'networkNumericalQuality': nresult['numericalQuality'],
                     'networkNumericalStatus': nresult['numericalStatus'],
                     'surfaceNumericalStatus': sresult['numericalStatus'],
+                    'surfaceNumericalConfiguration': sresult['numericalConfiguration'],
                     'numericalStatus': 'PASSED' if passed else 'FAILED',
                     'codeSha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
                     'limitations': ['명시적 분할 오차의 교환 간격 세분 비교 필요',
@@ -231,6 +232,8 @@ def run_coupled(model, directory):
                     result['observedRainfall'] = observed.summary | {
                         'appliedSurfaceRainfallM3': state['externalSourceNetInflowM3'],
                         'volumeResidualM3': state['externalSourceNetInflowM3'] - expected_rain}
+                if 'numericalQuality' in sresult:
+                    result['surfaceNumericalQuality'] = sresult['numericalQuality']
                 if metric_spec is not None:
                     nm, sm = nresult['evaluationMetrics'], sresult['evaluationMetrics']
                     spec_hash = specification_hash(metric_spec)

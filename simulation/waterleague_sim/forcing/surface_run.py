@@ -49,6 +49,8 @@ def run_observed_surface(model, specification, directory):
                 'OBSERVED_RAIN_VOLUME_MISMATCH')
         result = {'schemaVersion': 1, 'classification': model['evidence'],
                   'numericalStatus': result['numericalStatus'], 'rankingEligible': False,
+                  'numericalConfiguration': result['numericalConfiguration'],
+                  'numericalQuality': result.get('numericalQuality'),
                   'maximumForcingBoundaryBalanceResidualM3': maximum_balance_residual,
                   'observedRainfall': schedule.summary | {'appliedSurfaceRainfallM3': actual,
                       'volumeResidualM3': actual - expected},
