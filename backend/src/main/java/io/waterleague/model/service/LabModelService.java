@@ -61,6 +61,8 @@ public class LabModelService {
                         item.model().path("mapId").asString("seongsu-candidate-01"),
                         "mapTitle",
                         item.model().path("mapTitle").asString("OSM 초기 지도"),
+                        "regionalRainfallUse",
+                        item.model().path("regionalRainfallUse").asString("OBSERVED_REPLAY"),
                         "rainfall",
                         ((tools.jackson.databind.node.ObjectNode)
                                 item.model().path("rainfall").deepCopy())

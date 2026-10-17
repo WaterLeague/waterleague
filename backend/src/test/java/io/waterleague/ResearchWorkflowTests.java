@@ -338,7 +338,16 @@ class ResearchWorkflowTests {
   void separatesRainfallVersionsBoardsAndLeagueModels() throws Exception {
     var player = actor(null);
     var catalog = ok(player, "GET", "/lab/catalog", null, 200).get("models");
-    assertThat(catalog.size()).isEqualTo(8 + 25 * 3);
+    assertThat(catalog.size()).isEqualTo(152);
+    assertThat(
+            java.util.stream.StreamSupport.stream(catalog.spliterator(), false)
+                .filter(
+                    m ->
+                        m.path("regionalRainfallUse")
+                            .asString()
+                            .equals("NEAREST_AWS_OBSERVED_REPLAY"))
+                .count())
+        .isEqualTo(69);
     String first = catalog.get(1).get("modelHash").asString();
     String second = catalog.get(2).get("modelHash").asString();
     assertThat(

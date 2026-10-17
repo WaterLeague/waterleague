@@ -132,7 +132,10 @@ function Explorer({
           <h2>{region ? `${region.districtName} · 대표 블록` : '성수 · 연무장길'}</h2>
           <p>
             {region ? '옥상 8곳 · 지상 5곳' : '관측 강우와 3종 시설로'}
-            <br />첫 번째 설계에 도전하세요.
+            <br />
+            {region?.defaultRainfall
+              ? `${region.defaultRainfall.stationName} 관측소 · ${region.defaultRainfall.distanceKm} km`
+              : '성동 관측 강우로 설계에 도전하세요.'}
           </p>
           <button disabled={busy} onClick={() => onPlay(region?.defaultModelHash)}>
             {busy ? '도전 준비 중' : '이 지역에서 도전'} <ArrowRight size={18} />
@@ -151,8 +154,8 @@ function Explorer({
           </button>
         </div>
         <small className="city-model-note">
-          25개 구의 대표 블록에서 플레이할 수 있습니다. 구 전체 유역 계산은 아니며, 성동 관측 강우를
-          공통 조건으로 재생합니다.
+          25개 구의 대표 블록에서 플레이할 수 있습니다. 인근 관측 강우와 성동 공통 강우를 선택하며,
+          구 전체 유역 계산은 아닙니다.
         </small>
       </aside>
       <section className="city-stage" aria-label="서울 전역 3D 지도">

@@ -27,8 +27,8 @@ export async function loadCity(signal: AbortSignal) {
 export async function loadCityPlayRegions(signal: AbortSignal) {
   const result = cityPlayDto.safeParse(
     await read(
-      '/data/seoul-play-v1.json',
-      '64ef3940d12a6b629b1549ab908f3158293df4f51b36e7035c90c28bfe21f944',
+      '/data/seoul-play-v2.json',
+      '4187dbcf06bbcf0cb36212ae6d983969098ab9d947afe083702487e3ec910121',
       signal,
       100000
     )

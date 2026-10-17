@@ -1,6 +1,11 @@
 import { z } from 'zod';
 const positive = z.number().finite().positive();
 const coordinate = z.tuple([z.number().finite(), z.number().finite()]);
+const rainfallUse = z.enum([
+  'COMMON_OBSERVED_REPLAY_NOT_LOCAL_OBSERVATION',
+  'NEAREST_AWS_OBSERVED_REPLAY',
+  'OBSERVED_REPLAY',
+]);
 const facility = z.enum(['RAIN_GARDEN', 'PERMEABLE_PAVEMENT', 'GREEN_ROOF']);
 export const labDto = z.object({
   modelHash: z.string().regex(/^[a-f0-9]{64}$/),
@@ -9,7 +14,7 @@ export const labDto = z.object({
     title: z.string(),
     mapId: z.string().optional(),
     mapTitle: z.string().optional(),
-    regionalRainfallUse: z.literal('COMMON_OBSERVED_REPLAY_NOT_LOCAL_OBSERVATION').optional(),
+    regionalRainfallUse: rainfallUse.optional(),
     validationLevel: z.literal('EXPLORATORY'),
     officialEvaluationAvailable: z.literal(false),
     simulationAvailable: z.boolean(),
@@ -84,6 +89,7 @@ export const rainfallCatalogDto = z.object({
         title: z.string(),
         mapId: z.string().optional(),
         mapTitle: z.string().optional(),
+        regionalRainfallUse: rainfallUse.optional(),
         budget: positive,
         validationLevel: z.literal('EXPLORATORY'),
         official: z.literal(false),
@@ -91,5 +97,5 @@ export const rainfallCatalogDto = z.object({
       })
     )
     .min(1)
-    .max(100),
+    .max(256),
 });

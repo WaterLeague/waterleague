@@ -24,6 +24,7 @@ import {
   Database,
   CircleHelp,
 } from 'lucide-react';
+import { rainfallLabel } from '../service/modelFamilyService';
 import { useGame } from '../controller/useGame';
 import { useCatalog } from '../../catalog/controller/useCatalog';
 import type { FacilityType } from '../entity/game';
@@ -391,7 +392,8 @@ export function GamePage() {
               <small>
                 {rainDate(lab.model.rainfall.start)} · {lab.model.rainfall.stationName} ·{' '}
                 {lab.model.rainfall.totalDepthMm} mm
-                {lab.model.regionalRainfallUse && ' · 공통 비교 강우'}
+                {lab.model.regionalRainfallUse &&
+                  ` · ${rainfallLabel(lab.model.regionalRainfallUse)}`}
               </small>
             </div>
             <div className="play-resources">
@@ -1091,7 +1093,14 @@ export function GamePage() {
               <p>
                 {activeMap?.snapshot.title} · {activeMap?.snapshot.subtitle}
               </p>
-              <p>{activeMap?.snapshot.limitations.join(' · ')}</p>
+              <p>
+                {activeMap?.snapshot.limitations
+                  .filter(
+                    (text) =>
+                      !lab.model.regionalRainfallUse || !text.includes('성동 관측 강우 공통 재생')
+                  )
+                  .join(' · ')}
+              </p>
               <a href={mapEntry ? `/data/${mapEntry.file}` : undefined} download>
                 공간 파생자료 <Download size={14} />
               </a>

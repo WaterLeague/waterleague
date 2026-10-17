@@ -8,7 +8,7 @@ import re
 def read_catalog(directory: Path):
     root = directory.resolve()
     document = json.loads((root/'catalog.json').read_text())
-    if document.get('schemaVersion') != 1 or not 1 <= len(document.get('models', [])) <= 100:
+    if document.get('schemaVersion') != 1 or not 1 <= len(document.get('models', [])) <= 256:
         raise ValueError('모델 카탈로그 형식 오류')
     models = {}
     ids = set()

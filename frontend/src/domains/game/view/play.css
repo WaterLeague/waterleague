@@ -193,6 +193,15 @@
   grid-template-columns: repeat(4, minmax(0, 1fr));
   border-block: 1px solid #58706c;
 }
+.challenge-event-list.regional-events {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.challenge-event-list.regional-events > button:nth-child(3n) {
+  border-right: 0;
+}
+.challenge-event-list.regional-events > button:nth-child(n + 4) {
+  border-top: 1px solid #58706c;
+}
 .challenge-event-list > button {
   color: #eff4e9;
   text-align: left;
@@ -839,13 +848,24 @@
     height: 360px;
     min-height: 360px;
   }
-  .challenge-event-list {
+  .challenge-event-list,
+  .challenge-event-list.regional-events {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .challenge-event-list > button {
     padding: 18px;
   }
-  .challenge-event-list > button:nth-child(2) {
+  .challenge-event-list.regional-events > button:nth-child(3n) {
+    border-right: 1px solid #58706c;
+  }
+  .challenge-event-list.regional-events > button:nth-child(n + 3) {
+    border-top: 1px solid #58706c;
+  }
+  .challenge-event-list.regional-events > button:nth-child(-n + 2) {
+    border-bottom: 0;
+  }
+  .challenge-event-list > button:nth-child(2n),
+  .challenge-event-list.regional-events > button:nth-child(2n) {
     border-right: 0;
   }
   .challenge-event-list > button:nth-child(-n + 2) {

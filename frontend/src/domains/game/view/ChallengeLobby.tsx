@@ -4,7 +4,7 @@ import type { CandidateMap } from '../../catalog/entity/catalog';
 import { MapViewport } from '../../catalog/view/MapViewport';
 import type { League } from '../../league/entity/league';
 import { facilities, format, won } from '../service/gameService';
-import { sameMapModels } from '../service/modelFamilyService';
+import { sameMapModels, rainfallLabel, rainfallNote } from '../service/modelFamilyService';
 import { rainDate } from './RainfallSelector';
 
 export function ChallengeLobby({
@@ -113,11 +113,7 @@ export function ChallengeLobby({
       <section className="challenge-events" aria-labelledby="challenge-events-title">
         <div className="challenge-section-title">
           <h2 id="challenge-events-title">어떤 비에 도전할까요?</h2>
-          <span>
-            {lab.model.regionalRainfallUse
-              ? '성동 관측 강우 공통 재생 · 지역 실측 강우 아님'
-              : '기상청 실제 관측 · 선택한 조건으로 계산·순위 구분'}
-          </span>
+          <span>{rainfallNote(lab.model.regionalRainfallUse)}</span>
         </div>
         <label className="challenge-map-choice">
           지도 버전
@@ -151,7 +147,9 @@ export function ChallengeLobby({
             </button>
           </p>
         )}
-        <div className="challenge-event-list">
+        <div
+          className={`challenge-event-list${lab.model.regionalRainfallUse ? ' regional-events' : ''}`}
+        >
           {sameMapModels(catalog, lab.modelHash).map((item, index) => (
             <button
               key={item.modelHash}
@@ -164,7 +162,9 @@ export function ChallengeLobby({
               </span>
               <b>{rainDate(item.rainfall.start)}</b>
               <span>
-                {item.rainfall.stationName} 관측소 · {item.rainfall.stationId}
+                {rainfallLabel(item.regionalRainfallUse)} · {item.rainfall.stationName}
+                {item.rainfall.stationDistanceKm != null &&
+                  ` · ${item.rainfall.stationDistanceKm} km`}
               </span>
               <strong>
                 {format.format(item.rainfall.totalDepthMm)}

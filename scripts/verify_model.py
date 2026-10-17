@@ -52,7 +52,10 @@ for entry in json.loads((root/'data/models/catalog.json').read_text())['models']
   assert item['mapSnapshotHash']==hashlib.sha256((root/'frontend/public/data'/f"{item['mapId']}.json").read_bytes()).hexdigest()
   assert item['geometrySourceHash']==json.loads((root/'data/manifests/seoul-city-v1.json').read_text())['sourceSha256']
   assert item['geometryModelGeneratorSha256']==hashlib.sha256((root/'scripts/prepare_seoul_play_models.py').read_bytes()).hexdigest()
-  assert item['regionalRainfallUse']=='COMMON_OBSERVED_REPLAY_NOT_LOCAL_OBSERVATION'
+  assert item['regionalRainfallUse'] in ('COMMON_OBSERVED_REPLAY_NOT_LOCAL_OBSERVATION', 'NEAREST_AWS_OBSERVED_REPLAY')
+  if item['regionalRainfallUse']=='NEAREST_AWS_OBSERVED_REPLAY':
+   assert item['rainfallModelGeneratorSha256']==hashlib.sha256((root/'scripts/prepare_seoul_regional_rainfall_models.py').read_bytes()).hexdigest()
+   assert item['rainfallSelectionManifestSha256']==hashlib.sha256((root/'data/manifests/seoul-regional-rainfall-v1.json').read_bytes()).hexdigest()
  assert item['generatorSha256']==model['generatorSha256']
  assert rain['transformSha256']==model['rainfall']['transformSha256']
  assert len(rain['depthsMm'])>60 and all(x>=0 for x in rain['depthsMm'])

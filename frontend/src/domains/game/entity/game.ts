@@ -1,3 +1,7 @@
+export type RainfallUse =
+  | 'COMMON_OBSERVED_REPLAY_NOT_LOCAL_OBSERVATION'
+  | 'NEAREST_AWS_OBSERVED_REPLAY'
+  | 'OBSERVED_REPLAY';
 export type FacilityType = 'RAIN_GARDEN' | 'PERMEABLE_PAVEMENT' | 'GREEN_ROOF';
 export interface Placement {
   cellId: string;
@@ -49,7 +53,7 @@ export interface Lab {
     title: string;
     mapId?: string;
     mapTitle?: string;
-    regionalRainfallUse?: 'COMMON_OBSERVED_REPLAY_NOT_LOCAL_OBSERVATION';
+    regionalRainfallUse?: RainfallUse;
     validationLevel: 'EXPLORATORY';
     officialEvaluationAvailable: false;
     simulationAvailable: boolean;
@@ -157,6 +161,7 @@ export interface RainfallCatalog {
     budget: number;
     validationLevel: 'EXPLORATORY';
     official: false;
+    regionalRainfallUse?: RainfallUse;
     rainfall: Omit<Rainfall, 'depthsMm'>;
   }[];
 }

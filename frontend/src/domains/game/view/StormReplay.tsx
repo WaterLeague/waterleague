@@ -1,3 +1,4 @@
+import { rainfallNote } from '../service/modelFamilyService';
 import { memo, useCallback, useMemo, useState } from 'react';
 import { CloudRain, Pause, Play, RotateCcw } from 'lucide-react';
 import type { Cell, Job, Lab, Placement, Version } from '../entity/game';
@@ -215,7 +216,7 @@ function ReplayView({
           </div>
           <p className="replay-live-note">
             1분 보고시각의 계산값입니다. 실제 관망 유량이나 분 평균값이 아닙니다.
-            {lab.model.regionalRainfallUse && ' 성동 관측 강우를 공통 재생합니다.'}
+            {lab.model.regionalRainfallUse && ` ${rainfallNote(lab.model.regionalRainfallUse)}.`}
           </p>
         </aside>
       </div>

@@ -3,7 +3,10 @@ const hash = z.string().regex(/^[a-f0-9]{64}$/);
 export const cityPlayDto = z
   .object({
     schemaVersion: z.literal(1),
-    rainfallUse: z.literal('COMMON_OBSERVED_REPLAY_NOT_LOCAL_OBSERVATION'),
+    rainfallUse: z.enum([
+      'COMMON_OBSERVED_REPLAY_NOT_LOCAL_OBSERVATION',
+      'COMMON_AND_NEAREST_AWS_OBSERVED_REPLAY',
+    ]),
     regions: z
       .array(
         z.object({
@@ -11,7 +14,15 @@ export const cityPlayDto = z
           districtName: z.string(),
           mapId: z.string().regex(/^seoul-osm-v1-\d+$/),
           defaultModelHash: hash,
-          modelHashes: z.array(hash).length(3),
+          modelHashes: z.array(hash).min(3).max(6),
+          defaultRainfall: z
+            .object({
+              stationId: z.string(),
+              stationName: z.string(),
+              distanceKm: z.number().finite().nonnegative().max(10),
+              use: z.literal('NEAREST_AWS_OBSERVED_REPLAY'),
+            })
+            .optional(),
           center: z.tuple([z.number().finite(), z.number().finite()]),
           roofCount: z.literal(8),
           groundCount: z.literal(5),

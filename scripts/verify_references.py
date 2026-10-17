@@ -121,9 +121,10 @@ def verify(rerun=False, rerun_candidates=False):
         all_hashes.extend(entry['modelHashes'])
         verify_family(*config, rerun, rerun_candidates)
     models = read_catalog(ROOT/'data/models')
-    regions = json.loads((ROOT/'data/manifests/seoul-play-v1.json').read_text())['regions']
+    regions = json.loads((ROOT/'data/manifests/seoul-play-v2.json').read_text())['regions']
     pending = [h for region in regions for h in region['modelHashes']]
-    require(len(regions) == 25 and len(pending) == 75 and len(set(pending)) == 75, '미생성 지역 목록 오류')
+    accepted = sum(s['status'] == 'ACCEPTED' for s in json.loads((ROOT/'data/manifests/seoul-regional-rainfall-v1.json').read_text())['selections'])
+    require(len(regions) == 25 and len(pending) == 75 + accepted and len(set(pending)) == len(pending), '미생성 지역 목록 오류')
     for region in regions:
         for h in region['modelHashes']:
             require(h in models and json.loads(models[h])['mapId'] == region['mapId'], '미생성 지역 모델 연결 오류')

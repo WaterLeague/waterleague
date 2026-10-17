@@ -19,7 +19,7 @@ public class LabModelRepository {
     if (catalog.path("schemaVersion").asInt() != 1
         || !catalog.path("models").isArray()
         || catalog.path("models").size() < 1
-        || catalog.path("models").size() > 100) throw new IllegalStateException("모델 카탈로그 형식 오류");
+        || catalog.path("models").size() > 256) throw new IllegalStateException("모델 카탈로그 형식 오류");
     Map<String, LabModel> entries = new LinkedHashMap<>();
     Set<String> ids = new HashSet<>(), files = new HashSet<>();
     for (var entry : catalog.path("models")) {
