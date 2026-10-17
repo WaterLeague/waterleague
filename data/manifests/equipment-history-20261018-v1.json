@@ -1,0 +1,8 @@
+{
+  "version": "equipment-history-20261018-v1",
+  "path": "backend/src/main/resources/infrastructure/equipment-history-20261018-v1.json",
+  "sha256": "5efcc339dbe4796ef27e367f39a0b14a0409923c233364cffd64a789acb4d3e6",
+  "generatorSha256": "d648ac8b7e05d34c9a888f5edb1f3e5146b0ad5ba8df704d9103185e5d261cc5",
+  "sourceManifestSha256": "1b34c24556d0f51be71e101c2963cf803687da37aa45aa562e91e5e2bf5bb517",
+  "recordCount": 9
+}

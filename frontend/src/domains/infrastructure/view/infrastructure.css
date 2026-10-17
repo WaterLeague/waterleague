@@ -154,3 +154,28 @@
 .infrastructure-legend {
   background: #244a78 !important;
 }
+.infrastructure-history {
+  border-top: 1px solid var(--line, #d9e0df);
+  padding-block: 16px;
+  font-size: 12px;
+}
+.infrastructure-history h4 {
+  margin: 0 0 8px;
+  font-size: 14px;
+}
+.infrastructure-history ol {
+  padding-left: 20px;
+}
+.infrastructure-history li {
+  padding-block: 8px;
+}
+.infrastructure-history li > *,
+.infrastructure-history > small {
+  display: block;
+  margin-top: 5px;
+  overflow-wrap: anywhere;
+}
+.infrastructure-history .equipment-excluded {
+  color: #a33b21;
+  font-weight: 600;
+}

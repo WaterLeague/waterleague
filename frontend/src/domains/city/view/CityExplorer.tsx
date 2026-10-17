@@ -880,6 +880,7 @@ function Explorer({
           onClose={() => setInfrastructureOpen(false)}
           districtId={selected}
           historical={researchMode}
+          eventId={researchMode ? eventId : ''}
           enabled={assetsEnabled}
           onToggle={() => setAssetsEnabled((value) => !value)}
         />

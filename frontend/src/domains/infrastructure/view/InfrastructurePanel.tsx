@@ -6,6 +6,8 @@ import type {
   InfrastructureSource,
 } from '../entity/infrastructure';
 import { infrastructureNames } from '../service/infrastructureService';
+import { useEquipmentHistory } from '../controller/useEquipmentHistory';
+import { EquipmentHistoryPanel } from './EquipmentHistoryPanel';
 import './infrastructure.css';
 const number = new Intl.NumberFormat('ko-KR');
 export function InfrastructureEvidence({
@@ -104,6 +106,7 @@ export function InfrastructurePanel({
   historical,
   enabled,
   onToggle,
+  eventId = '',
 }: {
   catalog: InfrastructureCatalog | null;
   error: boolean;
@@ -115,7 +118,9 @@ export function InfrastructurePanel({
   historical: boolean;
   enabled: boolean;
   onToggle: () => void;
+  eventId?: string;
 }) {
+  const history = useEquipmentHistory(eventId);
   const [search, setSearch] = useState('');
   const [allDistricts, setAllDistricts] = useState(false);
   const selected = catalog?.assets.find((a) => a.id === selectedId);
@@ -166,6 +171,14 @@ export function InfrastructurePanel({
             {selected && source && (
               <InfrastructureEvidence asset={selected} source={source} historical={historical} />
             )}
+            {history.error && (
+              <p role="alert">
+                설비 이력 조회 실패 <button onClick={history.retry}>다시 조회</button>
+              </p>
+            )}
+            {selected && history.value && (
+              <EquipmentHistoryPanel catalog={history.value} assetId={selected.id} />
+            )}
             <label className="infrastructure-search">
               <Search size={15} />
               <input
@@ -194,7 +207,11 @@ export function InfrastructurePanel({
                   <span>
                     {a.name}
                     <small>
-                      {a.pumpSpecs ? '호기별 제원 있음 · 2025 자료' : '위치점 · 운영 상태 미확인'}
+                      {history.value?.records.some((row) => row.record.assetId === a.id)
+                        ? '설치·증설 연도 있음 · 2022 자료'
+                        : a.pumpSpecs
+                          ? '호기별 제원 있음 · 2025 자료'
+                          : '위치점 · 운영 상태 미확인'}
                     </small>
                   </span>
                 </button>

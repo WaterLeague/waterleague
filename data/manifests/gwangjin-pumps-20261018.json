@@ -1,0 +1,13 @@
+{
+  "datasetId": "15021421",
+  "sourceUrl": "https://www.data.go.kr/data/15021421/fileData.do",
+  "downloadUrl": "https://www.data.go.kr/cmm/cmm/fileDownload.do?atchFileId=FILE_000000002504278&fileDetailSn=1&insertDataPrcus=N",
+  "retrievedAt": "2026-10-17T23:11:11.498526+00:00",
+  "sha256": "2a089877d75d24cbe88d4a43bfe920e5e243be13efdfe448a3f88b006f91c32d",
+  "bytes": 2121,
+  "path": "data/raw/gwangjin-pumps-2a089877d75d24cbe88d4a43bfe920e5e243be13efdfe448a3f88b006f91c32d.csv",
+  "referenceDate": "2022-01-18",
+  "portalModifiedAt": "2025-08-01",
+  "license": "UNRESTRICTED_USE",
+  "encoding": "cp949"
+}
