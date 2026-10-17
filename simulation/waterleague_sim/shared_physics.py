@@ -36,6 +36,8 @@ def claim(conn):
                     THEN interval '0 minutes' ELSE interval '1 minute' END
               AND NOT EXISTS(SELECT 1 FROM shared_physics_jobs j WHERE j.installation_id=i.id AND j.state='RUNNING')
               AND NOT EXISTS(SELECT 1 FROM shared_physics_jobs j WHERE j.installation_id=i.id AND j.created_at>clock_timestamp()-interval '60 seconds')
+              AND NOT EXISTS(SELECT 1 FROM shared_physics_jobs j WHERE j.installation_id=i.id AND j.state='FAILED'
+                AND COALESCE(j.finished_at,j.created_at)>clock_timestamp()-interval '5 minutes')
               AND NOT EXISTS(SELECT 1 FROM shared_physics_jobs j WHERE j.installation_id=i.id AND j.state='SUCCEEDED'
                 AND j.requested_through>=date_trunc('minute',LEAST(COALESCE(i.removed_at,clock_timestamp()),clock_timestamp()-interval '2 minutes')))
             ORDER BY (SELECT max(j.created_at) FROM shared_physics_jobs j WHERE j.installation_id=i.id) NULLS FIRST,i.installed_at,i.id
@@ -44,7 +46,9 @@ def claim(conn):
         if not installation:
             return None
         # 설치 행 잠금 뒤 새 스냅샷으로 중복 임대 여부를 다시 확인한다.
-        if conn.execute("SELECT 1 FROM shared_physics_jobs WHERE installation_id=%s AND (state='RUNNING' OR created_at>clock_timestamp()-interval '60 seconds')",
+        if conn.execute("""SELECT 1 FROM shared_physics_jobs WHERE installation_id=%s AND
+                        (state='RUNNING' OR created_at>clock_timestamp()-interval '60 seconds'
+                         OR (state='FAILED' AND COALESCE(finished_at,created_at)>clock_timestamp()-interval '5 minutes'))""",
                         (installation['id'],)).fetchone():
             return None
         previous = conn.execute("""SELECT * FROM shared_physics_jobs WHERE installation_id=%s AND state='SUCCEEDED'

@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "provider": "KMA",
+  "stationId": "421",
+  "purpose": "ANTECEDENT_MISSING_DATA_AUDIT",
+  "sourceDocumentation": "https://apihub.kma.go.kr/apiList.do?seqApi=2&seqApiSub=239",
+  "sources": [
+    {
+      "path": "data/raw/kma-aws-421-20261013-day.txt",
+      "sha256": "eed69db6417a98d2dbf1560af1a33acf7425bf621960dc4db263982ee9b378dc",
+      "bytes": 696,
+      "endpoint": "https://apihub.kma.go.kr/api/typ01/url/sfc_aws_day.php",
+      "parameters": {
+        "tm1": "20261013",
+        "tm2": "20261013",
+        "obs": "rn_day",
+        "stn": "421",
+        "disp": "0",
+        "help": "1"
+      },
+      "fetchedAt": "2026-10-17T19:19:03.908381+00:00",
+      "encoding": "EUC-KR"
+    },
+    {
+      "path": "data/raw/kma-aws-421-20261013-sensor.txt",
+      "sha256": "47b2e7b92aa7e4a650426945db6e015e456dc0476ca73395917bf1d2059a0ba0",
+      "bytes": 67,
+      "endpoint": "https://apihub.kma.go.kr/api/typ01/cgi-bin/url/nph-aws2_min_o",
+      "parameters": {
+        "tm1": "202610131330",
+        "tm2": "202610131410",
+        "stn": "421",
+        "disp": "0",
+        "help": "1"
+      },
+      "fetchedAt": "2026-10-17T19:19:04.033132+00:00",
+      "encoding": "EUC-KR"
+    }
+  ],
+  "finding": {
+    "dailyPrecipitationMm": 18.0,
+    "minuteGapStart": "2026-10-13T13:40:00+09:00",
+    "minuteGapEnd": "2026-10-14T00:00:00+09:00",
+    "rawMissingMinutes": 621,
+    "sensorResponse": "STATION_NOT_IN_OBSERVATION_LIST",
+    "dailyCoverage": "NO_VALID_OBSERVATION_COUNT_OR_COMPLETENESS_FLAG",
+    "simulationUse": "NOT_USED_TO_FILL_MISSING_MINUTES"
+  }
+}

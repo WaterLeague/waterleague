@@ -69,12 +69,30 @@ class SharedPhysicsTests(unittest.TestCase):
         self.conn.execute("UPDATE shared_physics_jobs SET lease_until=now()-interval '1 second',created_at=now()-interval '61 seconds' WHERE id=%s", (old['id'],))
         with self.assertRaisesRegex(ValueError,'LIVE_LEASE_LOST'):
             physics.renew(self.conn,old)
+        self.assertIsNone(physics.claim(self.conn))
+        self.conn.execute("UPDATE shared_physics_jobs SET finished_at=now()-interval '301 seconds' WHERE id=%s", (old['id'],))
         new = physics.claim(self.conn)
         self.assertIsNotNone(new)
         self.assertNotEqual(old['lease_token'], new['lease_token'])
         self.assertFalse(physics.finish(self.conn, old, {'stale': True}, 'a'*64, None))
         self.assertTrue(physics.finish(self.conn, new, None, None, 'KMA_UNAVAILABLE'))
         self.assertEqual(self.conn.execute('SELECT error_code FROM shared_physics_jobs WHERE id=%s', (old['id'],)).fetchone()['error_code'], 'LIVE_LEASE_EXPIRED')
+
+    def test_long_failed_fetch_waits_after_finish_without_delaying_other_installations(self):
+        job = physics.claim(self.conn)
+        self.conn.execute("UPDATE shared_physics_jobs SET created_at=now()-interval '20 minutes' WHERE id=%s", (job['id'],))
+        self.assertTrue(physics.finish(self.conn,job,None,None,'AWS_REQUIRED_MINUTE_MISSING'))
+        self.assertIsNone(physics.claim(self.conn))
+        second = uuid.uuid4()
+        self.conn.execute("""INSERT INTO shared_installations(id,occupied_site,district_id,cell_id,
+            owner_id,model_hash,facility_type,area_m2,cost,installed_at)
+            SELECT %s,'2419953:G2',district_id,'G2',owner_id,model_hash,facility_type,area_m2,cost,installed_at
+            FROM shared_installations WHERE id=%s""", (second,self.installation))
+        ready = physics.claim(self.conn)
+        self.assertEqual(ready['installation']['id'],second)
+        self.conn.execute("UPDATE shared_physics_jobs SET finished_at=now()-interval '301 seconds' WHERE id=%s", (job['id'],))
+        retry = physics.claim(self.conn)
+        self.assertEqual(retry['installation']['id'],self.installation)
 
     def forcing(self, station, start, end, key, heartbeat=None):
         if heartbeat is not None: heartbeat()
