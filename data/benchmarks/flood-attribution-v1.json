@@ -1,0 +1,617 @@
+{
+  "schemaVersion": 1,
+  "classification": "NUMERICAL_EVIDENCE_NOT_SEOUL_VALIDATION",
+  "status": "ESTIMATED_DIAGNOSTIC",
+  "requestedPermutations": 256,
+  "completedPermutations": 256,
+  "actualEngineRuns": 4,
+  "coalitionEvaluationCalls": 4,
+  "replayNewEvaluations": 0,
+  "policySha256": "8a077882b84af66ed5bda3e2a02696228c4a6f43e981abfe8f9ef35b4a72b020",
+  "memberEstimates": {
+    "numerical-b": {
+      "improvement:depthAreaTimeM3Hours": {
+        "mean": {
+          "exact": "37997496738631052051/25600000000000000000000",
+          "value": 0.0014842772163527755
+        },
+        "sampleVariance": {
+          "exact": "300604421933604975242998557790389171677/217600000000000000000000000000000000000000000",
+          "value": 1.381454144915464e-06
+        },
+        "standardError": 7.34595484166356e-05
+      },
+      "score:depthAreaTimeM3Hours": {
+        "mean": {
+          "exact": "37997496738631052051/2560000000000000000",
+          "value": 14.842772163527755
+        },
+        "sampleVariance": {
+          "exact": "300604421933604975242998557790389171677/2176000000000000000000000000000000000",
+          "value": 138.1454144915464
+        },
+        "standardError": 0.7345954841663561
+      },
+      "improvement:outwardVolumeM3": {
+        "mean": {
+          "exact": "-3595749520381893/64000000000000000",
+          "value": -0.05618358625596708
+        },
+        "sampleVariance": {
+          "exact": "110181954282989932294816314429/80000000000000000000000000000000",
+          "value": 0.0013772744285373742
+        },
+        "standardError": 0.0023194780094827625
+      },
+      "score:outwardVolumeM3": {
+        "mean": {
+          "exact": "-1198583173460631/640000000000000",
+          "value": -1.872786208532236
+        },
+        "sampleVariance": {
+          "exact": "12242439364776659143868479381/8000000000000000000000000000",
+          "value": 1.5303049205970825
+        },
+        "standardError": 0.07731593364942542
+      },
+      "improvement:peakOutwardM3s": {
+        "mean": {
+          "exact": "-551947661998624113/25600000000000000000",
+          "value": -0.021560455546821254
+        },
+        "sampleVariance": {
+          "exact": "33262214918262682189194326433333933/5440000000000000000000000000000000000000",
+          "value": 6.114377742327699e-06
+        },
+        "standardError": 0.00015454542392438403
+      },
+      "score:peakOutwardM3s": {
+        "mean": {
+          "exact": "-551947661998624113/25600000000000000",
+          "value": -21.560455546821256
+        },
+        "sampleVariance": {
+          "exact": "33262214918262682189194326433333933/5440000000000000000000000000000000",
+          "value": 6.114377742327699
+        },
+        "standardError": 0.15454542392438403
+      },
+      "total": {
+        "mean": {
+          "exact": "54003391322188220853/12800000000000000000",
+          "value": 4.219014947045955
+        },
+        "sampleVariance": {
+          "exact": "2519143439758955942295536955359301200813/54400000000000000000000000000000000000",
+          "value": 46.307783819098454
+        },
+        "standardError": 0.4253113924448219
+      }
+    },
+    "numerical-a": {
+      "improvement:depthAreaTimeM3Hours": {
+        "mean": {
+          "exact": "72881722593535859949/25600000000000000000000",
+          "value": 0.0028469422888099945
+        },
+        "sampleVariance": {
+          "exact": "300604421933604975242998557790389171677/217600000000000000000000000000000000000000000",
+          "value": 1.381454144915464e-06
+        },
+        "standardError": 7.34595484166356e-05
+      },
+      "score:depthAreaTimeM3Hours": {
+        "mean": {
+          "exact": "72881722593535859949/2560000000000000000",
+          "value": 28.469422888099945
+        },
+        "sampleVariance": {
+          "exact": "300604421933604975242998557790389171677/2176000000000000000000000000000000000",
+          "value": 138.1454144915464
+        },
+        "standardError": 0.7345954841663561
+      },
+      "improvement:outwardVolumeM3": {
+        "mean": {
+          "exact": "5264312054347301/64000000000000000",
+          "value": 0.08225487584917658
+        },
+        "sampleVariance": {
+          "exact": "110181954282989932294816314429/80000000000000000000000000000000",
+          "value": 0.0013772744285373742
+        },
+        "standardError": 0.0023194780094827625
+      },
+      "score:outwardVolumeM3": {
+        "mean": {
+          "exact": "5264312054347301/1920000000000000",
+          "value": 2.7418291949725524
+        },
+        "sampleVariance": {
+          "exact": "12242439364776659143868479381/8000000000000000000000000000",
+          "value": 1.5303049205970825
+        },
+        "standardError": 0.07731593364942542
+      },
+      "improvement:peakOutwardM3s": {
+        "mean": {
+          "exact": "1165988942153101877/128000000000000000000",
+          "value": 0.009109288610571108
+        },
+        "sampleVariance": {
+          "exact": "33262214918262682189194326433333933/5440000000000000000000000000000000000000",
+          "value": 6.114377742327699e-06
+        },
+        "standardError": 0.00015454542392438403
+      },
+      "score:peakOutwardM3s": {
+        "mean": {
+          "exact": "1165988942153101877/128000000000000000",
+          "value": 9.109288610571108
+        },
+        "sampleVariance": {
+          "exact": "33262214918262682189194326433333933/5440000000000000000000000000000000",
+          "value": 6.114377742327699
+        },
+        "standardError": 0.15454542392438403
+      },
+      "total": {
+        "mean": {
+          "exact": "746952088088398056161/38400000000000000000",
+          "value": 19.4518772939687
+        },
+        "sampleVariance": {
+          "exact": "2519143439758955942295536955359301200813/54400000000000000000000000000000000000",
+          "value": 46.307783819098454
+        },
+        "standardError": 0.4253113924448219
+      }
+    }
+  },
+  "districtEstimates": {
+    "11200": {
+      "improvement:depthAreaTimeM3Hours": {
+        "mean": {
+          "exact": "37997496738631052051/25600000000000000000000",
+          "value": 0.0014842772163527755
+        },
+        "sampleVariance": {
+          "exact": "300604421933604975242998557790389171677/217600000000000000000000000000000000000000000",
+          "value": 1.381454144915464e-06
+        },
+        "standardError": 7.34595484166356e-05
+      },
+      "score:depthAreaTimeM3Hours": {
+        "mean": {
+          "exact": "37997496738631052051/2560000000000000000",
+          "value": 14.842772163527755
+        },
+        "sampleVariance": {
+          "exact": "300604421933604975242998557790389171677/2176000000000000000000000000000000000",
+          "value": 138.1454144915464
+        },
+        "standardError": 0.7345954841663561
+      },
+      "improvement:outwardVolumeM3": {
+        "mean": {
+          "exact": "-3595749520381893/64000000000000000",
+          "value": -0.05618358625596708
+        },
+        "sampleVariance": {
+          "exact": "110181954282989932294816314429/80000000000000000000000000000000",
+          "value": 0.0013772744285373742
+        },
+        "standardError": 0.0023194780094827625
+      },
+      "score:outwardVolumeM3": {
+        "mean": {
+          "exact": "-1198583173460631/640000000000000",
+          "value": -1.872786208532236
+        },
+        "sampleVariance": {
+          "exact": "12242439364776659143868479381/8000000000000000000000000000",
+          "value": 1.5303049205970825
+        },
+        "standardError": 0.07731593364942542
+      },
+      "improvement:peakOutwardM3s": {
+        "mean": {
+          "exact": "-551947661998624113/25600000000000000000",
+          "value": -0.021560455546821254
+        },
+        "sampleVariance": {
+          "exact": "33262214918262682189194326433333933/5440000000000000000000000000000000000000",
+          "value": 6.114377742327699e-06
+        },
+        "standardError": 0.00015454542392438403
+      },
+      "score:peakOutwardM3s": {
+        "mean": {
+          "exact": "-551947661998624113/25600000000000000",
+          "value": -21.560455546821256
+        },
+        "sampleVariance": {
+          "exact": "33262214918262682189194326433333933/5440000000000000000000000000000000",
+          "value": 6.114377742327699
+        },
+        "standardError": 0.15454542392438403
+      },
+      "total": {
+        "mean": {
+          "exact": "54003391322188220853/12800000000000000000",
+          "value": 4.219014947045955
+        },
+        "sampleVariance": {
+          "exact": "2519143439758955942295536955359301200813/54400000000000000000000000000000000000",
+          "value": 46.307783819098454
+        },
+        "standardError": 0.4253113924448219
+      }
+    },
+    "11110": {
+      "improvement:depthAreaTimeM3Hours": {
+        "mean": {
+          "exact": "72881722593535859949/25600000000000000000000",
+          "value": 0.0028469422888099945
+        },
+        "sampleVariance": {
+          "exact": "300604421933604975242998557790389171677/217600000000000000000000000000000000000000000",
+          "value": 1.381454144915464e-06
+        },
+        "standardError": 7.34595484166356e-05
+      },
+      "score:depthAreaTimeM3Hours": {
+        "mean": {
+          "exact": "72881722593535859949/2560000000000000000",
+          "value": 28.469422888099945
+        },
+        "sampleVariance": {
+          "exact": "300604421933604975242998557790389171677/2176000000000000000000000000000000000",
+          "value": 138.1454144915464
+        },
+        "standardError": 0.7345954841663561
+      },
+      "improvement:outwardVolumeM3": {
+        "mean": {
+          "exact": "5264312054347301/64000000000000000",
+          "value": 0.08225487584917658
+        },
+        "sampleVariance": {
+          "exact": "110181954282989932294816314429/80000000000000000000000000000000",
+          "value": 0.0013772744285373742
+        },
+        "standardError": 0.0023194780094827625
+      },
+      "score:outwardVolumeM3": {
+        "mean": {
+          "exact": "5264312054347301/1920000000000000",
+          "value": 2.7418291949725524
+        },
+        "sampleVariance": {
+          "exact": "12242439364776659143868479381/8000000000000000000000000000",
+          "value": 1.5303049205970825
+        },
+        "standardError": 0.07731593364942542
+      },
+      "improvement:peakOutwardM3s": {
+        "mean": {
+          "exact": "1165988942153101877/128000000000000000000",
+          "value": 0.009109288610571108
+        },
+        "sampleVariance": {
+          "exact": "33262214918262682189194326433333933/5440000000000000000000000000000000000000",
+          "value": 6.114377742327699e-06
+        },
+        "standardError": 0.00015454542392438403
+      },
+      "score:peakOutwardM3s": {
+        "mean": {
+          "exact": "1165988942153101877/128000000000000000",
+          "value": 9.109288610571108
+        },
+        "sampleVariance": {
+          "exact": "33262214918262682189194326433333933/5440000000000000000000000000000000",
+          "value": 6.114377742327699
+        },
+        "standardError": 0.15454542392438403
+      },
+      "total": {
+        "mean": {
+          "exact": "746952088088398056161/38400000000000000000",
+          "value": 19.4518772939687
+        },
+        "sampleVariance": {
+          "exact": "2519143439758955942295536955359301200813/54400000000000000000000000000000000000",
+          "value": 46.307783819098454
+        },
+        "standardError": 0.4253113924448219
+      }
+    }
+  },
+  "conservation": {
+    "improvement:depthAreaTimeM3Hours": {
+      "totalEffect": {
+        "exact": "433121950516277/100000000000000000",
+        "value": 0.00433121950516277
+      },
+      "memberSum": {
+        "exact": "433121950516277/100000000000000000",
+        "value": 0.00433121950516277
+      },
+      "districtSum": {
+        "exact": "433121950516277/100000000000000000",
+        "value": 0.00433121950516277
+      },
+      "residual": {
+        "exact": "0/1",
+        "value": 0.0
+      }
+    },
+    "score:depthAreaTimeM3Hours": {
+      "totalEffect": {
+        "exact": "433121950516277/10000000000000",
+        "value": 43.3121950516277
+      },
+      "memberSum": {
+        "exact": "433121950516277/10000000000000",
+        "value": 43.3121950516277
+      },
+      "districtSum": {
+        "exact": "433121950516277/10000000000000",
+        "value": 43.3121950516277
+      },
+      "residual": {
+        "exact": "0/1",
+        "value": 0.0
+      }
+    },
+    "improvement:outwardVolumeM3": {
+      "totalEffect": {
+        "exact": "52142579186419/2000000000000000",
+        "value": 0.0260712895932095
+      },
+      "memberSum": {
+        "exact": "52142579186419/2000000000000000",
+        "value": 0.0260712895932095
+      },
+      "districtSum": {
+        "exact": "52142579186419/2000000000000000",
+        "value": 0.0260712895932095
+      },
+      "residual": {
+        "exact": "0/1",
+        "value": 0.0
+      }
+    },
+    "score:outwardVolumeM3": {
+      "totalEffect": {
+        "exact": "52142579186419/60000000000000",
+        "value": 0.8690429864403166
+      },
+      "memberSum": {
+        "exact": "52142579186419/60000000000000",
+        "value": 0.8690429864403166
+      },
+      "districtSum": {
+        "exact": "52142579186419/60000000000000",
+        "value": 0.8690429864403166
+      },
+      "residual": {
+        "exact": "0/1",
+        "value": 0.0
+      }
+    },
+    "improvement:peakOutwardM3s": {
+      "totalEffect": {
+        "exact": "-6225583468125073/500000000000000000",
+        "value": -0.012451166936250146
+      },
+      "memberSum": {
+        "exact": "-6225583468125073/500000000000000000",
+        "value": -0.012451166936250146
+      },
+      "districtSum": {
+        "exact": "-6225583468125073/500000000000000000",
+        "value": -0.012451166936250146
+      },
+      "residual": {
+        "exact": "0/1",
+        "value": 0.0
+      }
+    },
+    "score:peakOutwardM3s": {
+      "totalEffect": {
+        "exact": "-6225583468125073/500000000000000",
+        "value": -12.451166936250146
+      },
+      "memberSum": {
+        "exact": "-6225583468125073/500000000000000",
+        "value": -12.451166936250146
+      },
+      "districtSum": {
+        "exact": "-6225583468125073/500000000000000",
+        "value": -12.451166936250146
+      },
+      "residual": {
+        "exact": "0/1",
+        "value": 0.0
+      }
+    },
+    "total": {
+      "totalEffect": {
+        "exact": "88765845903804953/3750000000000000",
+        "value": 23.670892241014656
+      },
+      "memberSum": {
+        "exact": "88765845903804953/3750000000000000",
+        "value": 23.670892241014656
+      },
+      "districtSum": {
+        "exact": "88765845903804953/3750000000000000",
+        "value": 23.670892241014656
+      },
+      "residual": {
+        "exact": "0/1",
+        "value": 0.0
+      }
+    }
+  },
+  "wholeGroupComparison": {
+    "schemaVersion": 1,
+    "policySha256": "8a077882b84af66ed5bda3e2a02696228c4a6f43e981abfe8f9ef35b4a72b020",
+    "context": {
+      "scopeId": "NUMERICAL_CONDUIT_ATTRIBUTION_v1",
+      "modelGrade": "DRAFT",
+      "evidenceClass": "NUMERICAL_TEST_ONLY",
+      "comparisonKind": "CURRENT",
+      "effectAreaId": "REFERENCE_BASIN",
+      "scenarioSnapshotSha256": "eb00adbea49d0ddb6265f8dd394aba6af011b9f54fedc48ae07f948de4930d87",
+      "forcingSha256": "423d9009a0fd79a471dc3df129dc3c0c5912ea81d1593a23905f49f0f4e72cdb",
+      "engineSha256": "bd51ba14f5342dda2ef6d249088a3e1d59c3f7b3e6b07e9e0510dd6ce41b89ef",
+      "metricSpecificationSha256": "39cf490dc210569d96fc26528e33382125b8505cfbb18ed7395b789d911cc529"
+    },
+    "baselineResultSha256": "be6f9a1826a8f6e1414f34f4394cfd8f54b599da08db3c86639fe3a926e0f972",
+    "alternativeResultSha256": "0408f382edc9617170cd9c4e08655d31c5d9e2e4708145a8483623f08a717e87",
+    "status": "COMPUTED_DIAGNOSTIC",
+    "rankingEligible": false,
+    "blockers": [],
+    "effects": {
+      "outwardVolumeM3": {
+        "unit": "m3",
+        "baseline": 2.9329849617430215,
+        "alternative": 2.906913672149812,
+        "improvement": {
+          "exact": "52142579186419/2000000000000000",
+          "value": 0.0260712895932095
+        },
+        "score": {
+          "exact": "52142579186419/60000000000000",
+          "value": 0.8690429864403166
+        }
+      },
+      "peakOutwardM3s": {
+        "unit": "m3/s",
+        "baseline": 0.053721996998807184,
+        "alternative": 0.06617316393505733,
+        "improvement": {
+          "exact": "-6225583468125073/500000000000000000",
+          "value": -0.012451166936250146
+        },
+        "score": {
+          "exact": "-6225583468125073/500000000000000",
+          "value": -12.451166936250146
+        }
+      },
+      "depthAreaTimeM3Hours": {
+        "unit": "m3*h",
+        "baseline": 0.00433121950516277,
+        "alternative": 0.0,
+        "improvement": {
+          "exact": "433121950516277/100000000000000000",
+          "value": 0.00433121950516277
+        },
+        "score": {
+          "exact": "433121950516277/10000000000000",
+          "value": 43.3121950516277
+        }
+      }
+    },
+    "total": {
+      "exact": "88765845903804953/3750000000000000",
+      "value": 23.670892241014656
+    }
+  },
+  "limitations": [
+    "합성 설계 조합·기준량이며 서울 자산·시즌 점수 정책 아님",
+    "실제 공개 연결 유역·회원 소유권/동의·운영 순위 게시 연결 미완료",
+    "표준오차는 순열 표본의 오차 추정이며 현장 정확도나 보장 신뢰구간 아님"
+  ],
+  "files": {
+    "attribution.json": "315971e512a00a248c6f619851e44270367b4b9aa2d5babc209e9b7f144257c8",
+    "baseline/coupled-input.json": "b883e30ac5bd21b810696b3dbf54d010537ea9947bc82637e3a1f0ec8e7b12a2",
+    "baseline/coupled-result.json": "be6f9a1826a8f6e1414f34f4394cfd8f54b599da08db3c86639fe3a926e0f972",
+    "baseline/exchange-ledger.jsonl": "7605d173447b2c474087368ce2b543f43d3e4daa2145fa2487e87405adc3cf92",
+    "baseline/network/network-result.json": "1076835468c1c73bf63dc0b73aec12d513bdf1b59f18e68aeb761b27aa331560",
+    "baseline/network/network.inp": "e163302b76cf3dd52ba0022f815e27b74725fd6647babe667b0b8f989a638243",
+    "baseline/network/network.out": "6ea7b33dc0c5638fb84ebd3b4e7fd173210db121a76770e81fe852fa7da6a142",
+    "baseline/network/network.rpt": "9bef694983530c0015db8e7c6e9a36ca9208e638cf5d9f7ccf260afbae28b333",
+    "baseline/network-frames.jsonl": "03c3d5912faf76dca6a8610a3f0fda81c8c15d1eb0b81167f00190b9c5b7317a",
+    "baseline/surface/exchange-ports.json": "ef6570c07de503c27854118d2a2b7ff0a6dba40de6e1a105310f9b721ef5c3bc",
+    "baseline/surface/surface-exchange.jsonl": "e712652ef5f05a5241ac3791fb32bc4bad0d061ff66ce0ca032aa1c2b95d7695",
+    "baseline/surface/surface-input.json": "e74cf54d4bdd31f10c5c3bb03293cb6ce6758fef6db94712ec802671176f39bb",
+    "baseline/surface/surface-result.json": "24e2814d6690db935f8d49a330f9f14ac8822dd95975f524adfa0ce50029b319",
+    "baseline/surface/surface.sww": "e6424156d92d81565296bb40f83a70d45b466fa25753ddf2b045b97f96e9c0ef",
+    "coalition-cache.json": "853fb0d69ee8c49d45b2744a1d9aff589f34826a739b5fc66163c673c514c1b7",
+    "experiment.json": "6d3c9ade0d2dbf89738230939ef9e17ae9ed7f6f980e4aeddb3f5a2a6c407401",
+    "numerical-a/coupled-input.json": "5a951f83f5e3e5064f2f80edcbed6bd5ecc8320c4a3304c4b695610721ffc9e1",
+    "numerical-a/coupled-result.json": "bc51738e603687b6abb7fdfedcae20f4157ee42fccde7aa9350b0bf19a195036",
+    "numerical-a/exchange-ledger.jsonl": "8e3f117f64e085753779218c480a918834afaed65532a3a4889816f31c6be0f1",
+    "numerical-a/network/network-result.json": "5c7f14e41edd1d31b1f96700a301ce06b4bd691015ac9482cb297b6fe8f9245c",
+    "numerical-a/network/network.inp": "7a4e80fcf4f632c4bb19d3410ef8ab3f02719d900b2c8a34fcc4216847527d23",
+    "numerical-a/network/network.out": "b53b9121c9bc44e5d8f0fab02d8cd674b812fbea9116d2de8de7891cac6c9a21",
+    "numerical-a/network/network.rpt": "bca28c011aee2cbb1197ab85bea4dd1196132661f054dafff6d3f5e3517ba5e8",
+    "numerical-a/network-frames.jsonl": "1a8b902bdae81d637f79d2416ae2fae1a68d8085920b498f657b85ada61fa67f",
+    "numerical-a/surface/exchange-ports.json": "ef6570c07de503c27854118d2a2b7ff0a6dba40de6e1a105310f9b721ef5c3bc",
+    "numerical-a/surface/surface-exchange.jsonl": "d3929e21c59d9a7755eb914a57b76ace71a92ba4a46cc67327a7021a0dc7444d",
+    "numerical-a/surface/surface-input.json": "e74cf54d4bdd31f10c5c3bb03293cb6ce6758fef6db94712ec802671176f39bb",
+    "numerical-a/surface/surface-result.json": "93d45a4b6750f4c025df3eed6a3062620845ceed7f496e42ff0431cb644c3276",
+    "numerical-a/surface/surface.sww": "403c77ce6a5cc57e17f747ca7e3a91548cc51ee55eabcf59155dde740a72eeda",
+    "numerical-a+numerical-b/coupled-input.json": "ebb156ff77020722d5a72d28fb60b3f27eac17f46cc9d7adb616bba750d30fd1",
+    "numerical-a+numerical-b/coupled-result.json": "0408f382edc9617170cd9c4e08655d31c5d9e2e4708145a8483623f08a717e87",
+    "numerical-a+numerical-b/exchange-ledger.jsonl": "75952532a104e676ffe80e8f790cf94bb1bc7007b05c27889c3f35fc66e260f9",
+    "numerical-a+numerical-b/network/network-result.json": "f3316c17321da09300d3094043a30debcaae6708307d55335a74d974997255af",
+    "numerical-a+numerical-b/network/network.inp": "e111dd04172e1958a30f04035acfa7b5aeb6f47fdd9f8bf45bc942916bfc710f",
+    "numerical-a+numerical-b/network/network.out": "0c2d06114c97b8e0feb1532b3f2514032a65cad5466d1e5e50bdaf4de334ebb5",
+    "numerical-a+numerical-b/network/network.rpt": "60f055442ec5bdf689ceede14bba0d58980d27afddf3c252bd31e810ce480c19",
+    "numerical-a+numerical-b/network-frames.jsonl": "8d05d2384275e0d694a0208212f908611f7158bb1e6a5641b5f6105b6d935469",
+    "numerical-a+numerical-b/surface/exchange-ports.json": "ef6570c07de503c27854118d2a2b7ff0a6dba40de6e1a105310f9b721ef5c3bc",
+    "numerical-a+numerical-b/surface/surface-exchange.jsonl": "c0e0f61e4e2e7f9c45f7d418cd17102d6f7b29f4f9515e445792b62fa67b9f1d",
+    "numerical-a+numerical-b/surface/surface-input.json": "e74cf54d4bdd31f10c5c3bb03293cb6ce6758fef6db94712ec802671176f39bb",
+    "numerical-a+numerical-b/surface/surface-result.json": "aef77a3f1f7f94833761cfed2dbfe2adf0573b899e84c6b8b47c4f8ea1f3ce42",
+    "numerical-a+numerical-b/surface/surface.sww": "ee134a81e9e479ccc3c6d6f1db64be85fd9f1aad3730d45c048f0aa106fbff95",
+    "numerical-b/coupled-input.json": "a289da13a1dd2c84a46fbb0742b78d07ec35667d4e7b0123321817420f7bd8e1",
+    "numerical-b/coupled-result.json": "0753f249ccfd309d590246e131c37868d53be4e7ea4ab4cd791a96bb1587cb6d",
+    "numerical-b/exchange-ledger.jsonl": "5130381cabd5c43c36d593291fcc868fcdb305d5c2cdf24059dd53d5500ef27f",
+    "numerical-b/network/network-result.json": "2ee4b23a4346e33433e3b57b4ca4f857084759b60cfefa54c53ffe647b201073",
+    "numerical-b/network/network.inp": "082e0725a2888b865b348a428c9fe3e236696bb37e23e12acfd1cee25b2e7c37",
+    "numerical-b/network/network.out": "5a3169fd8f3fcfd01b48ee3285b396363597ee4866544050042f78bec0d68597",
+    "numerical-b/network/network.rpt": "b5c03ca287ae7575587be87d5826a3233c79553fdf2d1aee4415cb82a99eebaf",
+    "numerical-b/network-frames.jsonl": "dafbd21ef5c55570314a095a25cddc9b0d6ed215005402f1d068a2bff6cda6bf",
+    "numerical-b/surface/exchange-ports.json": "ef6570c07de503c27854118d2a2b7ff0a6dba40de6e1a105310f9b721ef5c3bc",
+    "numerical-b/surface/surface-exchange.jsonl": "1c36af74a10dbfb0b97685a7b14e07098c3db49e1b97962046dabdd8bb2392af",
+    "numerical-b/surface/surface-input.json": "e74cf54d4bdd31f10c5c3bb03293cb6ce6758fef6db94712ec802671176f39bb",
+    "numerical-b/surface/surface-result.json": "1323131ba878bcb37e5bc02cbf04a603919e8798bfc5f8dce9f6f3ae819a82fa",
+    "numerical-b/surface/surface.sww": "5994ae8a8c91d31d8c5d54d4fbcde56f521d7b187278c42fcd14427e689c8105",
+    "policy.json": "69baadf1da9239bcbe0f035e1c77ef15e2bae5d9751aecde42cf2bcba7f05e4e",
+    "replay.json": "81cfca5471e1ba4cc726d7c0de4ae7b6a508988b9f48364a7d8a5944708c7f01",
+    "source/data/manifests/anuga-4.0.1.json": "3002d98f0fc84a8e3384033b52795c056931f6db6cf8f5b513074c56e7e10a20",
+    "source/scripts/build_live_swmm.py": "f4bd6124c6a4c83796babe33c7c9de10003e4be1876a4ab3cba7d2f4b73fdf35",
+    "source/scripts/build_network_swmm.py": "8f8062ac4293207ed7b09282c3e71b7c74b63dfa752a0c358d434431c9e6a197",
+    "source/scripts/verify_flood_attribution.py": "6421cf1e04e316da1eafbdc810c7f1a7607627bf51e2d62e227816e93c5faf89",
+    "source/simulation/native/network_exchange.inc": "ec7c05a52024831efc07657f823146351c70196181dc1e3e6358202ad05ef14f",
+    "source/simulation/native/network_metrics.inc": "9a90e94998318db8bc2e25997d4c076bd8b5f09b171df768de98c4ba1c6bd28d",
+    "source/simulation/native/network_snapshot.inc": "c320fa1849cb4b03254167b107d1a9fefc7171b10c6ce397a0b82bb5c08c53e7",
+    "source/simulation/pyproject.toml": "49f1b8276a2e9e8b66f3bfdd8dda08303211669ed1c2ad938ba472d597a34cb2",
+    "source/simulation/uv.lock": "d2ffd1c9a11f47d3f3e4b9a39762c7ceff9b424171bc913c98672f759036e09e",
+    "source/simulation/waterleague_sim/engine/coupled_flood.py": "76f6ef0e5baa48216b2a532f30c6faed251ef1932c02f09446c913257576e8ab",
+    "source/simulation/waterleague_sim/engine/flood_errors.py": "59e70440df55df54e83aa7a2787f12ef14b2541ac5c05f67a10e9addbe229155",
+    "source/simulation/waterleague_sim/engine/flood_metrics.py": "30f830d17bcd174129dcdb79e3b85f684d08dee5337b8e7a964f340902da6f3c",
+    "source/simulation/waterleague_sim/engine/flood_process.py": "ee2123e539d2cecb0576d6c22b35bcf2308450fede9ee4d8c3afc39059e7e36a",
+    "source/simulation/waterleague_sim/engine/network.py": "a4f6dd28e02dc6360f90b86eff8c1a6d7a5a4832535e98ac4b0c87d4464720d2",
+    "source/simulation/waterleague_sim/engine/network_exchange.py": "36c1b650c0c642c828c5f118addf6a4f3baa9f791eff79a53a483fc2ebc0fb43",
+    "source/simulation/waterleague_sim/engine/network_metrics.py": "f0219c6affedd4b95b049815c4242b7fe8f56abe917b97f8c2d55ca2c65802df",
+    "source/simulation/waterleague_sim/engine/network_quality.py": "c78323b383d37be56c34b8cc2d5084e4a92e3de6bbc2a818d914acbabf3eb930",
+    "source/simulation/waterleague_sim/engine/surface.py": "8d4620a0750201cfc8acebd61429b930d4a5591181e9f9828fb86fb89454f589",
+    "source/simulation/waterleague_sim/engine/surface_exchange.py": "1ecf775e0caf4a61b66c3b04a2479faebca32d5f40b711c67ab55e4bd90e0080",
+    "source/simulation/waterleague_sim/engine/swmm.py": "1754562f19f0860daa127f34e35c6336e2884d5779b9cd531d1811088f702823",
+    "source/simulation/waterleague_sim/evaluation/__init__.py": "b00686d692dd348fb4ad9eac061dd28151ce9a0e504acc8952f54a1161d23df1",
+    "source/simulation/waterleague_sim/evaluation/attribution.py": "72c52baabd3457a245f39b188d9055e42cea3552a422b6853f8d7dbb556d28d3",
+    "source/simulation/waterleague_sim/evaluation/coupled_adapter.py": "41987c2ca6a6ef35a6f65c3be1c17b9eae14e742d2739cfaf3ea4347136605d5",
+    "source/simulation/waterleague_sim/evaluation/exception.py": "654f665575d7c102e8215dffe2f85eb6b0471d777667885adf92261bd7523658",
+    "source/simulation/waterleague_sim/evaluation/service.py": "c70a9ba227056369bfe4d94cc1f94f033467d1e643d978108cf5896db3d514fa",
+    "source/simulation/waterleague_sim/evaluation/values.py": "47876a36a3bf1d2c2afe93b1fc0e10652b06afd606f2555c8440d7a5ac3d8479",
+    "source/simulation/waterleague_sim/reference/flood_cases.py": "de7fd2be4e51317d0fac94d3b2bceb59cd940fb4469210947eeb94019ef2563b"
+  },
+  "artifactDirectory": "data/runs/flood-attribution-20261018-v1-complete",
+  "manifestSha256": "2913feff2e036363669a88da70bd0e0b86dd431ec0faee56d9fe2eedde8d85e1"
+}

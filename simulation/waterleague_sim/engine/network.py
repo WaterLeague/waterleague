@@ -268,8 +268,10 @@ class NetworkSession:
                        'warningCount': self.lib.swmm_getWarnings(),
                        'convergence': convergence, 'numericalQuality': quality,
                        'numericalConfiguration': self.configuration,
-                       'numericalStatus': quality['status'],
-                       'files': {p.name: sha256(p) for p in sorted(self.directory.iterdir()) if p.is_file()}}
+                       'numericalStatus': quality['status']}
+        # swmm_close가 보고서 종료 내용을 기록하므로 파일을 닫은 뒤 해시를 확정한다.
+        self.close()
+        self.result['files'] = {p.name: sha256(p) for p in sorted(self.directory.iterdir()) if p.is_file()}
         (self.directory / 'network-result.json').write_text(json.dumps(self.result, allow_nan=False, indent=2) + '\n')
         return self.result
 

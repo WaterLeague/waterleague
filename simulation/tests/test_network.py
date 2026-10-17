@@ -15,6 +15,19 @@ from waterleague_sim.reference.flood_cases import tank_input
 
 @unittest.skipUnless(network.library_path().exists(), '관망 엔진 빌드 필요')
 class NetworkTests(unittest.TestCase):
+    def test_result_hashes_include_report_close_footer(self):
+        with tempfile.TemporaryDirectory() as root:
+            directory = Path(root) / 'finished'
+            with network.NetworkSession(tank_input(), directory, evaluation_seconds=120) as s:
+                s.advance(120)
+                result = s.finish()
+                self.assertFalse(s.opened)
+                self.assertFalse(s.locked)
+                for name, expected in result['files'].items():
+                    self.assertEqual(network.sha256(directory / name), expected)
+            for name, expected in result['files'].items():
+                self.assertEqual(network.sha256(directory / name), expected)
+
     def test_boundary_reversal_and_exact_si_inflow_preserve_volume(self):
         with tempfile.TemporaryDirectory() as root:
             with network.NetworkSession(tank_input(), Path(root) / 'reverse', evaluation_seconds=120) as s:
