@@ -58,6 +58,8 @@ simulation/.venv/bin/python scripts/prepare_topography_buildings.py --check
 
 API 서버는 시작 시 SHA-256·도형·메타데이터를 검사하고 불변 데이터를 재사용. 기상청·서울시 자료도 수집기에서 원본을 보관하고 검증한 파생자료를 게임·워커가 사용. 서비스 요청별 공공 API 호출 없음. 기존 브이월드 실시간 건물 조회 제거, 외부 API 키는 수집·진단 도구 전용. 새 자료는 별도 취득·검사 후 버전 갱신하며 과거 실행에 사용된 원본과 모델은 보존.
 
+차기 모델의 실제 경계 후보는 `derived/seongsu-topography-candidates-v2.json`. `scripts/prepare_topography_candidates.py --check`가 원본 4개 도엽을 다시 읽어 같은 결과인지 검사한다. 건물 경계 기반 옥상 8개와 도로면 내부의 25m² 지상 5개, 건물·철도·교량 접촉 제외. 원본 ID/CRS/좌표/파생 면적/선정 정책 보존. 현재 운영 모델에 연결 전이며 실제 지붕·구조 하중·시공 허가·투수율·배수 연결을 검증했다는 의미가 아니다.
+
 ## EPA 참조 사례
 
 `benchmarks/epa-applications-example1.json`은 EPA Applications Manual의 Example 1 원본·인쇄 수치·충돌·판정 계약이다. `benchmarks/epa-applications-example1-result.json`은 고정 SWMM 5.2.4 실행의 공개 요약. 원본은 공식 주소에서 hash 검증 후 로컬/CI로 재취득한다. 미국 설계강우 교육 사례이며 서울 관측이나 시설 효과 자료로 혼용하지 않는다. 국제단위 변환·인쇄 참조 차이는 검토 필요 상태로 보존. 재현 명령과 판정 범위는 [문서 32](../docs/32-epa-reference-validation.md) 참조.
