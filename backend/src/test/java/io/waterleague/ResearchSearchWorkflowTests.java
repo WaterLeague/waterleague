@@ -964,6 +964,19 @@ class ResearchSearchWorkflowTests {
               download(org, path(search) + "/candidates/" + candidates.getFirst() + "/bundle")
                   .statusCode())
           .isEqualTo(404);
+      if (Boolean.getBoolean("waterleague.integration.restore")) {
+        python(
+            work,
+            List.of(
+                "simulation/integration/restore_workflow.py",
+                "--jdbc",
+                System.getProperty("waterleague.integration.jdbc"),
+                "--artifacts",
+                java.nio.file.Path.of(artifactRoot).toRealPath().toString(),
+                "--work",
+                work.toString()));
+        assertThat(call(org, "GET", path(search), null).statusCode()).isEqualTo(404);
+      }
     } finally {
       List<java.nio.file.Path> roots = new ArrayList<>();
       roots.add(work);

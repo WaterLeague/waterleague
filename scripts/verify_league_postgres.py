@@ -15,23 +15,27 @@ from local_config import ROOT, load
 def source_counts(db):
     if db.execute("SELECT to_regclass('public.simulation_jobs')").fetchone()[0] is None:
         return ('UNINITIALIZED',)
-    return db.execute('SELECT (SELECT count(*) FROM simulation_jobs),(SELECT count(*) FROM submissions),(SELECT count(*) FROM leagues)').fetchone()
+    return db.execute('SELECT (SELECT count(*) FROM simulation_jobs),(SELECT count(*) FROM submissions),'
+                      '(SELECT count(*) FROM leagues),(SELECT count(*) FROM research_searches),'
+                      '(SELECT count(*) FROM research_candidates)').fetchone()
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--suite', choices=['league', 'analysis', 'queue', 'search', 'all'], default='league')
+    parser.add_argument('--suite', choices=['league', 'analysis', 'queue', 'search', 'restore', 'all'], default='league')
     suite = parser.parse_args().suite
     test_class = {'league': 'LeagueParticipationWorkflowTests',
                   'analysis': 'ResearchAnalysisWorkflowTests',
                   'queue': 'QueueCapacityTests',
                   'search': 'ResearchSearchWorkflowTests',
+                  'restore': 'ResearchSearchWorkflowTests#replaysActualSwmmSourcesAndGeneratedCandidateBundleOnIsolatedPostgres',
                   'all': 'LeagueParticipationWorkflowTests,ResearchAnalysisWorkflowTests,ResearchSearchWorkflowTests'}[suite]
     load()
     config = conninfo_to_dict(os.environ['DATABASE_URL'])
     if config.get('host') not in {'127.0.0.1', 'localhost', '::1'}:
         raise SystemExit('로컬 PostgreSQL만 허용')
-    prefix = {'queue': 'waterleague_queue_test_', 'search': 'waterleague_search_test_'}
+    prefix = {'queue': 'waterleague_queue_test_', 'search': 'waterleague_search_test_',
+              'restore': 'waterleague_search_test_'}
     test_name = prefix.get(suite, 'waterleague_league_test_') + uuid.uuid4().hex
     path = ROOT / 'tmp' / (test_name + '.log')
     path.parent.mkdir(exist_ok=True)
@@ -55,7 +59,9 @@ def main():
             created = True
         with path.open('x') as log:
             path.chmod(0o600)
-            physical = ['-Dwaterleague.integration.python=' + sys.executable] if suite == 'search' else []
+            physical = ['-Dwaterleague.integration.python=' + sys.executable] if suite in {'search', 'restore'} else []
+            if suite == 'restore':
+                physical.append('-Dwaterleague.integration.restore=true')
             result = subprocess.run(
                 [str(ROOT / 'backend/mvnw'), '--batch-mode', '-Dtest=' + test_class,
                  '-Dwaterleague.integration.jdbc=' + jdbc, *physical, 'test'],
