@@ -41,6 +41,7 @@ class SharedInstallationTests {
 
   @BeforeEach
   void clear() {
+    db.update("DELETE FROM shared_physics_jobs");
     db.update("DELETE FROM shared_installations");
   }
 

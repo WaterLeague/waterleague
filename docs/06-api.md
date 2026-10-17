@@ -19,6 +19,7 @@
 | GET /simulations/{id}/bundle | 소유자, 계산 성공 시 재현 ZIP |
 | POST /submissions | 소유자, 성공한 현재 모델 계산의 탐색 제출 |
 | GET /leaderboard | 현재 모델별 공개 최고기록, 서버 재계산 점수 |
+| GET /installations/{id}/physics | 공개 공동 시설의 계산 상태·마지막 성공 요약, no-store |
 | GET /organizations | 승인된 기관 목록 |
 | GET /consents, PUT /consents/{organizationId} | 본인 기관별 동의 조회·부여·철회 |
 | GET /research/strategies | MFA 인증 승인 기관, 동의된 현재 모델 제출 최대 100건 |
@@ -30,6 +31,8 @@
 | POST /research/patterns | 동일 모델의 동의 제출 1~50개, 상위 고유 설계 1~20개와 경계 동점의 배치 기술 통계 |
 
 모델 검증·배포 권한은 조직 회원의 리그 운영과 분리. 내부 워커 endpoint 외부 노출 금지. 공식 맵 상세·강우 선택은 후속 구현 대상. 관리자 역할은 ADMIN, 모든 일반/조직 회원 역할은 MEMBER. 조직 회원의 연구·리그 권한은 승인 상태·회원 유형·소속·MFA로 검사한다.
+
+공동 시설 물리 상태는 `WAITING/RUNNING/READY/DELAYED/UNAVAILABLE`. `attemptedAt`과 `simulatedThrough` 구분, 실패 시 이전 성공 결과와 그 시각 유지. 무결과는 `result:null`이며 강우·수분·유출 0 대입 없음. 마지막 계산이 5분을 넘으면 지연 표시, 실행 작업이 240초를 넘으면 보류 표시. 결과는 관측소·계산 구간·EPA 버전·EXPLORATORY·누적 강우 체적/침투/증발/유출·현재 수분/저류·시설 표면 수심·토양수분·물수지 오차·증발/초기상태 가정만 공개. 원문·파일 경로·입력 hash·임대 토큰 미노출. 철거·미등록 시설 404. 분별 재현 입력은 별도 접근 통제 대상이며 이 공개 요약에서 제공하지 않음.
 
 ## 회원 승인·리그
 

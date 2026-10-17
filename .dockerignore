@@ -16,8 +16,11 @@ frontend/qa/
 !simulation/tests/fixtures/pattern-search-v1.json
 !simulation/waterleague_sim/
 !simulation/waterleague_sim/**
+!simulation/native/
+!simulation/native/lid_snapshot.inc
 !scripts/
 !scripts/local_config.py
+!scripts/build_live_swmm.py
 !data/
 !data/models/
 !data/models/**

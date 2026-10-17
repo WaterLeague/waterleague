@@ -38,6 +38,8 @@ UUID, UTC timestamptz, 비용·면적 고정 정밀도. FK·CHECK·UNIQUE·트�
 
 ## 해시
 
+`shared_physics_jobs`는 공동 설치 ID, 전체 계산 시작·끝, 작업 상태, 임대 토큰·만료, 생성·완료 시각, 요청 hash, 공개 결과 요약, 통제된 오류 코드를 보존. 새 관측 계산마다 새 행 생성, 성공 결과 수정 없음. 설치 행 잠금으로 작업 중복 방지, 결과 게시 시 유효 토큰·임대 시각 재검사. 원자료·분별 상태·요청·manifest는 작업/토큰별 비공개 산출물 경로 보관. 이전 입력을 해시로 연결하며 사용된 전체 관측을 재생. API DB 역할은 이 테이블 읽기만 허용.
+
 규약 버전 포함 SHA-256. 키 정렬·셀 ID 정렬·enum 고정·면적 정밀도 고정·UTF-8·UTC·비유한 수 거부. 저자·닉네임·메모·동의는 물리 해시에서 제외하되 접근 권한·기록은 분리.
 
 `evaluation_hash = hash(schema, model, engine_build, rainfall, initial_state, facility, placements, evaluation_boundary, time_settings, numerical_policy)`.

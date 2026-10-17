@@ -8,7 +8,7 @@ private_names={'DB_URL','DB_USER','DB_PASSWORD','DATABASE_URL','KMA_API_KEY','VW
 required_names={
  'api':{'DB_URL','DB_USER','DB_PASSWORD','MFA_ENCRYPTION_KEY','KMA_API_KEY'},
  'provision':{'DB_URL','DB_USER','DB_PASSWORD','MFA_ENCRYPTION_KEY'},
- 'worker':{'DATABASE_URL'},
+ 'worker':{'DATABASE_URL','KMA_API_KEY'},
  'frontend':set(),
 }
 # 각 프로세스에 필요한 비밀 설정만 상속한다.

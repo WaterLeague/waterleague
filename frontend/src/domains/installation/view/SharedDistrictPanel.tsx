@@ -8,6 +8,7 @@ import { DistrictFields } from '../../district/view/DistrictFields';
 import type { AffiliationType } from '../../district/entity/district';
 import { selectAccountDistrict } from '../../account/repository/accountRepository';
 import { errorMessage } from '../../../shared/exception/ApiError';
+import { PhysicsPanel } from '../../physics/view/PhysicsPanel';
 const icons = { RAIN_GARDEN: Leaf, PERMEABLE_PAVEMENT: Grid2X2, GREEN_ROOF: House };
 const won = (n: number) =>
   new Intl.NumberFormat('ko-KR', { maximumFractionDigits: 0 }).format(n) + '원';
@@ -234,6 +235,7 @@ export function SharedDistrictPanel({
           {error}
         </p>
       )}
+      {occupied && <PhysicsPanel key={occupied.id} installationId={occupied.id} />}
       {account?.districtId && (
         <div className="budget-box">
           <span>내 남은 예산</span>

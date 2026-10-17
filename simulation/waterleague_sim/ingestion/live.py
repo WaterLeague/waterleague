@@ -61,7 +61,7 @@ def parse(raw, station, start, end):
         raise RainfallQualityError('AWS_SOURCE_INVALID') from None
 
 
-def normalized(rows, start, end):
+def normalized(rows, start, end, allow_gaps=False):
     derived = {}
     methods = {}
     minute = timedelta(minutes=1)
@@ -91,13 +91,16 @@ def normalized(rows, start, end):
     at = start+minute
     while at <= end:
         if at not in derived:
+            if allow_gaps:
+                at += minute
+                continue
             raise RainfallQualityError('AWS_REQUIRED_MINUTE_MISSING')
         result.append({'end': at.isoformat(), 'depthMm': float(derived[at]),
                        'method': methods[at], 'weather': {
                            k: float(v) if v is not None else None for k, v in rows[at].items()
                            if k in ('temperatureC', 'humidityPercent', 'windSpeedMs', 'pressureHpa')}})
         at += minute
-    if not result or at != end+minute:
+    if (not result and not allow_gaps) or at != end+minute:
         raise RainfallQualityError('AWS_INTERVAL_INVALID')
     return result
 
@@ -141,5 +144,6 @@ def observed_forcing(station, start, end, key):
         cursor = limit
     return {'stationId': station, 'start': start.isoformat(), 'end': end.isoformat(),
             'intervalSeconds': 60, 'observations': normalized(rows, start, end),
+            'overlapObservations': normalized(rows, start-timedelta(minutes=60), start, allow_gaps=True),
             'sourceHashes': [meta['sha256'] for _, meta in sources],
             'evidence': 'OBSERVED_AWS_DERIVED_INTERVAL_DEPTH'}, sources

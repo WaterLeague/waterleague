@@ -11,6 +11,7 @@ os.umask(0o077)
 from waterleague_sim.model_catalog import read_catalog
 from waterleague_sim.queue import claim, finish, TABLES
 from waterleague_sim.runtime import database_url
+from waterleague_sim.shared_physics import run_once as run_shared_physics
 MODELS=read_catalog(ROOT/'data/models')
 ARTIFACTS=Path(os.environ.get('ARTIFACTS_PATH',ROOT/'data/runs')).resolve()
 
@@ -47,6 +48,7 @@ def main():
   while True:
    job=claim(conn)
    if job:process(conn,job)
-   elif '--once' in sys.argv:return
-   else:time.sleep(2)
+   shared=run_shared_physics(conn,ARTIFACTS)
+   if '--once' in sys.argv:return
+   if not job and not shared:time.sleep(2)
 if __name__=='__main__':main()
