@@ -18,6 +18,9 @@ def _write(path, value):
 def _validate(model):
     require(model.get('schemaVersion') == 1 and model.get('evidence'), 'COUPLED_REFERENCE_REQUIRED')
     surface, network = model['surface'], model['network']
+    if 'terrainProvenance' in surface:
+        require(surface['terrainProvenance'].get('absoluteVerticalReferenceVerified') is True,
+                'COUPLED_VERTICAL_REFERENCE_UNVERIFIED')
     for key in ('coordinateSystem', 'verticalDatum'):
         require(surface.get(key) and network.get(key) == surface[key], 'COUPLED_REFERENCE_MISMATCH')
     for key in ('durationSeconds', 'maximumExchangeMilliseconds', 'frameIntervalMilliseconds'):

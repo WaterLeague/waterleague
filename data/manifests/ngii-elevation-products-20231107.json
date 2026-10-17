@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "provider": "국토지리정보원",
+  "sourceUrl": "https://www.data.go.kr/data/15067637/fileData.do",
+  "downloadUrl": "https://www.data.go.kr/cmm/cmm/fileDownload.do?atchFileId=FILE_000000002836928&fileDetailSn=1&insertDataPrcus=N",
+  "acquiredAt": "2026-10-17T23:43:52.016601+00:00",
+  "sourceDate": "2023-11-07",
+  "license": "이용허락범위 제한 없음",
+  "encoding": "cp949",
+  "rowCount": 23190,
+  "files": {
+    "data/raw/ngii-elevation-products-20231107.csv": "10e46e3c749e91c4aa6a9de41dff1d724b09dd355cd9c90e63c7f4181e62fe3e",
+    "data/raw/ngii-elevation-products-20231107-page.html": "1410a49489d553bc35e0d6f426602a231aae144756de25d6317711cc390bad36"
+  },
+  "status": "SOURCE_CATALOG_NOT_DEM_IDENTITY_CONFIRMATION"
+}
