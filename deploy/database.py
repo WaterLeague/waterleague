@@ -11,7 +11,7 @@ TABLES = (
     'queue_admission account_reviews leagues league_submissions rainfall_comparisons rainfall_comparison_jobs '
     'utilization_requests utilization_decisions strategy_reviews league_participants '
     'league_participant_events league_invitations league_teams league_team_members '
-    'research_comparisons research_searches research_search_sources research_candidates'
+    'research_comparisons research_searches research_search_sources research_candidates shared_installations'
 ).split()
 MUTABLE_QUEUE_COLUMNS = 'state attempts lease_token lease_until finished_at error_code result'.split()
 
