@@ -1,4 +1,5 @@
 import type { City } from '../entity/city';
+export const detailLabelDistance = 2400;
 export function nearbyTiles(city: City, center: [number, number], distance: number) {
   if (!Number.isFinite(distance) || distance > 6500 || !center.every(Number.isFinite)) return [];
   const radius = Math.max(900, distance * 0.75);

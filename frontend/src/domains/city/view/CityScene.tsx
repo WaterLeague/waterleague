@@ -23,6 +23,7 @@ import type { SharedSite, SharedInstallation } from '../../installation/entity/i
 import { siteKey } from '../../installation/entity/installation';
 import { buildingOpacity, otherDistrictOpacity } from '../service/siteVisibilityService';
 import { buildingFaceIndex } from '../service/buildingSelectionService';
+import { detailLabelDistance } from '../service/cityService';
 import type { FacilityType, Placement } from '../../game/entity/game';
 import { FacilityMesh } from '../../catalog/view/FacilityMesh';
 import { LiveRainScene } from '../../rainfall/view/LiveRainScene';
@@ -260,22 +261,21 @@ function ProjectedLabels({
   city,
   regions,
   labels,
-  near,
   selected,
 }: {
   city: City;
   regions: CityPlayRegion[];
   labels: Map<string, HTMLElement>;
-  near: boolean;
   selected: string;
 }) {
   const terrain = useContext(TerrainContext);
+  const controls = useThree((s) => s.controls) as ComponentRef<typeof OrbitControls> | null;
   const point = useMemo(() => new THREE.Vector3(), []);
   const last = useRef('');
   const dirty = useRef(true);
   useEffect(() => {
     dirty.current = true;
-  }, [city, regions, labels, near, selected, terrain]);
+  }, [city, regions, labels, selected, terrain, controls]);
   useFrame(({ camera, size }) => {
     const signature = `${camera.matrixWorld.elements.join(',')}:${camera.projectionMatrix.elements.join(',')}:${size.width}:${size.height}:${labels.size}`;
     if (!dirty.current && last.current === signature) return;
@@ -283,6 +283,9 @@ function ProjectedLabels({
     last.current = signature;
     const candidates = [];
     for (const element of labels.values()) element.style.display = 'none';
+    const distance = controls ? camera.position.distanceTo(controls.target) : Infinity;
+    if (distance < detailLabelDistance) return;
+    const near = distance < 9000;
     const locations = near
       ? regions.map((r) => ({ id: r.mapId, districtId: r.districtId, center: r.center }))
       : city.districts.map((d) => ({ ...d, districtId: d.id }));
@@ -321,7 +324,6 @@ const CityScene = memo(function CityScene({
   tiles,
   focus,
   selected,
-  near,
   onCamera,
   labels,
   onUnavailable,
@@ -346,7 +348,6 @@ const CityScene = memo(function CityScene({
   tiles: CityTile[];
   focus: CityFocus;
   selected: string;
-  near: boolean;
   onCamera: (state: CameraState) => void;
   labels: Map<string, HTMLElement>;
   onUnavailable: () => void;
@@ -540,13 +541,7 @@ const CityScene = memo(function CityScene({
           animate={animateRain}
           terrain={terrain}
         />
-        <ProjectedLabels
-          city={city}
-          regions={regions}
-          labels={labels}
-          near={near}
-          selected={selected}
-        />
+        <ProjectedLabels city={city} regions={regions} labels={labels} selected={selected} />
         <Controls
           focus={focus}
           bounds={city.bounds}

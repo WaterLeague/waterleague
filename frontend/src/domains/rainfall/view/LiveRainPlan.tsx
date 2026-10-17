@@ -1,4 +1,4 @@
-import { useId } from 'react';
+import { useId, useMemo } from 'react';
 import type { City } from '../../city/entity/city';
 import { polygonPath } from '../../catalog/service/mapGeometryService';
 
@@ -12,6 +12,10 @@ export function LiveRainPlan({
   animate: boolean;
 }) {
   const id = useId().replace(/:/g, '');
+  const paths = useMemo(
+    () => districts.map((d) => ({ id: d.id, path: polygonPath(d.polygons) })),
+    [districts]
+  );
   const spacing = Math.max(10, scale * 0.016);
   return (
     <g pointerEvents="none" aria-hidden="true">
@@ -33,8 +37,8 @@ export function LiveRainPlan({
           </g>
         </pattern>
       </defs>
-      {districts.map((d) => (
-        <path key={d.id} d={polygonPath(d.polygons)} fill={`url(#${id})`} fillRule="evenodd" />
+      {paths.map((d) => (
+        <path key={d.id} d={d.path} fill={`url(#${id})`} fillRule="evenodd" />
       ))}
     </g>
   );

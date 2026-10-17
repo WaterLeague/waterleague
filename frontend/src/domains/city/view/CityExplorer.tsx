@@ -13,6 +13,7 @@ import {
   ArrowLeft,
 } from 'lucide-react';
 import { useCity, useCityTiles } from '../controller/useCity';
+import { useMapLabelWheel } from '../controller/useMapLabelWheel';
 import type { City, CityFocus, CityBuilding } from '../entity/city';
 import type { CityEligibility } from '../dto/cityEligibilityDto';
 import { occupiedRoofSource } from '../service/siteVisibilityService';
@@ -170,6 +171,8 @@ function Explorer({
   }, [shared.sites, site, camera]);
   const details = useCityTiles(city, camera);
   const labels = useRef(new Map<string, HTMLElement>());
+  const labelLayer = useRef<HTMLDivElement>(null);
+  useMapLabelWheel(labelLayer, flat);
   const onCamera = useCallback(
     (value: typeof camera) =>
       setCamera((previous) => {
@@ -330,6 +333,7 @@ function Explorer({
       onDistrict={select}
       onSite={selectSite}
       onBuilding={selectBuilding}
+      onCamera={onCamera}
     />
   );
 
@@ -442,7 +446,6 @@ function Explorer({
                   tiles={details.tiles}
                   focus={focus}
                   selected={selected}
-                  near={camera.distance < 9000}
                   onCamera={onCamera}
                   labels={labels.current}
                   onUnavailable={unavailable}
@@ -461,7 +464,7 @@ function Explorer({
             </ErrorBoundary>
           )}
           {!flat && (
-            <div className="city-map-labels" aria-label="지도에서 자치구 선택">
+            <div ref={labelLayer} className="city-map-labels" aria-label="지도에서 자치구 선택">
               {city.districts.map((d) => (
                 <button
                   key={d.id}

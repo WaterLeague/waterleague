@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useMemo } from 'react';
 import type { City, CityBuilding, CityFocus, CityTile } from '../entity/city';
 import type { CityPlayRegion } from '../dto/cityPlayDto';
 import type { SharedSite, SharedInstallation } from '../../installation/entity/installation';
@@ -9,6 +9,9 @@ import { polygonPath } from '../../catalog/service/mapGeometryService';
 import { buildingOpacity, otherDistrictOpacity } from '../service/siteVisibilityService';
 import { inBuildingRing } from '../service/buildingSelectionService';
 import { LiveRainPlan } from '../../rainfall/view/LiveRainPlan';
+import { detailLabelDistance } from '../service/cityService';
+import { usePlanNavigation } from '../controller/usePlanNavigation';
+import type { PlanView } from '../service/planNavigationService';
 
 type Props = {
   city: City;
@@ -30,10 +33,11 @@ type Props = {
   onDistrict: (id: string) => void;
   onSite: (key: string) => void;
   onBuilding: (districtId: string, building: CityBuilding) => void;
+  onCamera: (view: PlanView) => void;
 };
 export const CityPlan = memo(function CityPlan({
   city,
-  focus,
+  focus: requestedFocus,
   regions,
   tiles,
   selected,
@@ -51,9 +55,36 @@ export const CityPlan = memo(function CityPlan({
   onDistrict,
   onSite,
   onBuilding,
+  onCamera,
 }: Props) {
-  const [west, south, east, north] = city.bounds;
+  const {
+    svg,
+    view: focus,
+    dragging,
+    handlers,
+  } = usePlanNavigation(requestedFocus, city.bounds, onCamera);
+  const overview = focus.distance >= 9000;
+  const paths = useMemo(
+    () => ({
+      boundary: polygonPath(city.boundary),
+      districts: new Map(city.districts.map((d) => [d.id, polygonPath(d.polygons)])),
+      water: city.surfaces.filter((s) => s.kind === 'water').map((s) => polygonPath(s.polygons)),
+    }),
+    [city]
+  );
+  const buildings = useMemo(
+    () =>
+      tiles
+        .flatMap((t) => t.buildings)
+        .map((b) => ({ building: b, path: polygonPath(b.polygons) })),
+    [tiles]
+  );
+  const sitePaths = useMemo(
+    () => new Map(sites.map((s) => [siteKey(s), polygonPath([[s.coordinates]])])),
+    [sites]
+  );
   const ownDistrict = city.districts.find((d) => d.id === ownDistrictId);
+  const showLabels = focus.distance >= detailLabelDistance;
   function otherBuilding(b: CityBuilding) {
     return (
       !!ownDistrict &&
@@ -65,20 +96,19 @@ export const CityPlan = memo(function CityPlan({
   }
   return (
     <svg
+      ref={svg}
+      {...handlers}
+      style={{ touchAction: 'none', userSelect: 'none', cursor: dragging ? 'grabbing' : 'grab' }}
       className="city-plan"
-      viewBox={
-        focus.overview
-          ? `${west - 1000} ${-north - 1000} ${east - west + 2000} ${north - south + 2000}`
-          : `${focus.center[0] - focus.distance} ${-focus.center[1] - focus.distance} ${focus.distance * 2} ${focus.distance * 2}`
-      }
+      viewBox={`${focus.center[0] - focus.distance} ${-focus.center[1] - focus.distance} ${focus.distance * 2} ${focus.distance * 2}`}
       role="group"
       aria-label="서울 25개 구 플레이 지도"
     >
-      <path d={polygonPath(city.boundary)} fill="#eef0e6" />
+      <path d={paths.boundary} fill="#eef0e6" />
       {city.districts.map((d) => (
         <path
           key={d.id}
-          d={polygonPath(d.polygons)}
+          d={paths.districts.get(d.id)}
           fill={ownDistrictId === d.id ? '#a3c884' : d.id === selected ? '#c4d6b4' : '#cbd5be'}
           opacity={!ownDistrictId || ownDistrictId === d.id ? 1 : otherDistrictOpacity}
           stroke="#809478"
@@ -88,40 +118,38 @@ export const CityPlan = memo(function CityPlan({
           <title>{d.name}</title>
         </path>
       ))}
-      {city.surfaces
-        .filter((s) => s.kind === 'water')
-        .map((s, i) => (
-          <path key={i} d={polygonPath(s.polygons)} fill="#81b1ba" />
-        ))}
-      {city.districts.map((d) => (
-        <text
-          key={d.id}
-          x={d.center[0]}
-          y={-d.center[1]}
-          textAnchor="middle"
-          fontSize={focus.overview ? 420 : focus.distance * 0.035}
-          fill="#233c35"
-        >
-          <tspan x={d.center[0]}>{d.name}</tspan>
-          {districtScores && (
-            <tspan x={d.center[0]} dy="1.3em" fontSize="0.72em">
-              {districtScores.get(d.id) ?? '평가 대기'}
-            </tspan>
-          )}
-        </text>
+      {paths.water.map((path, i) => (
+        <path key={i} d={path} fill="#81b1ba" />
       ))}
-      {!focus.overview &&
-        tiles
-          .flatMap((t) => t.buildings)
+      {showLabels &&
+        city.districts.map((d) => (
+          <text
+            key={d.id}
+            x={d.center[0]}
+            y={-d.center[1]}
+            textAnchor="middle"
+            fontSize={overview ? 420 : focus.distance * 0.035}
+            fill="#233c35"
+          >
+            <tspan x={d.center[0]}>{d.name}</tspan>
+            {districtScores && (
+              <tspan x={d.center[0]} dy="1.3em" fontSize="0.72em">
+                {districtScores.get(d.id) ?? '평가 대기'}
+              </tspan>
+            )}
+          </text>
+        ))}
+      {!overview &&
+        buildings
           .filter(
-            (b) =>
+            ({ building: b }) =>
               Math.abs(b.center[0] - focus.center[0]) < focus.distance * 1.2 &&
               Math.abs(b.center[1] - focus.center[1]) < focus.distance * 1.2
           )
-          .map((b) => (
+          .map(({ building: b, path }) => (
             <path
               key={b.id}
-              d={polygonPath(b.polygons)}
+              d={path}
               fill="#c6ccba"
               opacity={buildingOpacity(
                 (!facilityType || facilityType === 'GREEN_ROOF') &&
@@ -150,7 +178,7 @@ export const CityPlan = memo(function CityPlan({
         return (
           <path
             key={siteKey(site)}
-            d={polygonPath([[site.coordinates]])}
+            d={sitePaths.get(siteKey(site))}
             fill={
               site.districtId === selected && site.cellId === selectedSite
                 ? '#ffd56d'
@@ -182,7 +210,7 @@ export const CityPlan = memo(function CityPlan({
           key={i.id}
           cx={i.center[0]}
           cy={-i.center[1]}
-          r={focus.overview ? 95 : Math.max(2, focus.distance * 0.008)}
+          r={overview ? 95 : Math.max(2, focus.distance * 0.008)}
           fill="#327b4f"
           opacity={buildingOpacity(
             (!facilityType || i.facilityType === facilityType) && i.ownerId === viewerId,
@@ -195,38 +223,35 @@ export const CityPlan = memo(function CityPlan({
           </title>
         </circle>
       ))}
-      <LiveRainPlan
-        districts={wetDistricts}
-        scale={focus.overview ? east - west : focus.distance * 2}
-        animate={animateRain}
-      />
-      {regions.map((r) => (
-        <g
-          key={r.mapId}
-          role="button"
-          tabIndex={0}
-          aria-label={`${r.districtName} 대표 블록 선택`}
-          aria-pressed={r.districtId === selected}
-          className="city-plan-pin"
-          onClick={() => onDistrict(r.districtId)}
-          onKeyDown={(event) => {
-            if (event.key === 'Enter' || event.key === ' ') {
-              event.preventDefault();
-              onDistrict(r.districtId);
-            }
-          }}
-        >
-          <circle
-            cx={r.center[0]}
-            cy={-r.center[1]}
-            r={focus.overview ? 160 : 8}
-            fill={r.districtId === selected ? '#173d29' : '#52734b'}
-            stroke="#fffdf2"
-            strokeWidth={focus.overview ? 60 : 2}
-          />
-          <title>{r.districtName} · 대표 블록 플레이 가능</title>
-        </g>
-      ))}
+      <LiveRainPlan districts={wetDistricts} scale={focus.distance * 2} animate={animateRain} />
+      {showLabels &&
+        regions.map((r) => (
+          <g
+            key={r.mapId}
+            role="button"
+            tabIndex={0}
+            aria-label={`${r.districtName} 대표 블록 선택`}
+            aria-pressed={r.districtId === selected}
+            className="city-plan-pin"
+            onClick={() => onDistrict(r.districtId)}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                onDistrict(r.districtId);
+              }
+            }}
+          >
+            <circle
+              cx={r.center[0]}
+              cy={-r.center[1]}
+              r={overview ? 160 : 8}
+              fill={r.districtId === selected ? '#173d29' : '#52734b'}
+              stroke="#fffdf2"
+              strokeWidth={overview ? 60 : 2}
+            />
+            <title>{r.districtName} · 대표 블록 플레이 가능</title>
+          </g>
+        ))}
     </svg>
   );
 });
