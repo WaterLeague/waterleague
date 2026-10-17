@@ -182,7 +182,7 @@ class Client:
         token = self.api('/auth/csrf')['token'] if body is not None else None
         raw, headers = self.call('/api/v1' + path, body, token, expected)
         assert 'no-store' in headers['Cache-Control']
-        return json.loads(raw)
+        return json.loads(raw) if raw else None
 
 
 def check_http(stack, state):
