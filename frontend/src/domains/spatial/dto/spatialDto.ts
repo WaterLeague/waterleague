@@ -10,13 +10,15 @@ const ring = z
     return first[0] === last[0] && first[1] === last[1];
   });
 export const spatialDto = z.object({
-  provider: z.string(),
-  layer: z.literal('LT_C_SPBD'),
+  provider: z.literal('국토지리정보원'),
+  layer: z.literal('N1A_B0010000'),
   requestedCrs: z.literal('EPSG:4326'),
-  sourceUrl: z.literal('https://www.vworld.kr/dev/v4dv_2ddataguide2_s002.do?svcIde=spbd&apiVer=2'),
+  sourceUrl: z.literal('https://www.data.go.kr/data/15059719/fileData.do'),
   retrievedAt: z.iso.datetime(),
+  dataYear: z.literal(2025),
+  snapshotHash: z.string().regex(/^[a-f0-9]{64}$/),
   use: z.literal('DISPLAY_COMPARISON_ONLY'),
-  rawRetained: z.literal(false),
+  rawRetained: z.literal(true),
   bounds: z.tuple([
     z.literal(127.0525),
     z.literal(37.543),

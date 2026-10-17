@@ -10,6 +10,8 @@ public record SpatialView(
     String requestedCrs,
     String sourceUrl,
     Instant retrievedAt,
+    int dataYear,
+    String snapshotHash,
     String use,
     boolean rawRetained,
     List<Double> bounds,

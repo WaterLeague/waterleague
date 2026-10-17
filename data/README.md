@@ -44,6 +44,18 @@ DEM은 90m 격자이며 수직 기준·표고 단위 필드 미제공. 토지피
 
 별도 `scripts/diagnose_landcover_topology.py`로 원본을 보존한 두 보정 후보 진단. 오류 도로 2개를 포함하면 구역 내 175개 도형, 부동소수 오차 범위에서 전체 영역 포함. 두 방식의 분류별 대칭차 0m², 현장 정확성·불투수율·침투율 검증은 아님. 좌표를 제외한 요약은 `manifests/seongsu-topology-diagnostic.json`. 운영 모델 채택 없음.
 
+## 수치지형도와 서비스용 저장 자료
+
+2025년 1:1,000 수치지형도 4개 ZIP·4개 XML 및 추가 DXF·XML을 `private/seongsu-topography-20261017/originals/`에 복사하고 다운로드 원본과 해시 대조. 파일 10개의 출처·크기·SHA-256은 `manifests/seongsu-topography-sources.json`. 원본은 프로젝트에 보관하며 Git 제외, 서비스용 가공본과 출처 목록은 Git 포함.
+
+```sh
+simulation/.venv/bin/python scripts/prepare_topography_buildings.py --check
+```
+
+국토지리정보원 [수치지도V2.0](https://www.data.go.kr/data/15059719/fileData.do), 공공누리 제1유형(출처표시). 건물 `N1A_B0010000` 레이어 2,737도형 중 연구 영역과 양의 면적으로 교차하는 246도형을 선택. EPSG:5186 원문 PRJ와 CP949 속성을 읽고 검증한 EPSG:4326 경계·명칭·층수를 `backend/src/main/resources/spatial/seongsu-buildings.json`에 보관. 도형을 영역 경계로 자르거나 도엽별 조각을 병합하지 않음. 좌표 변환 근거와 해시는 `manifests/seongsu-topography-buildings.json`.
+
+API 서버는 시작 시 SHA-256·도형·메타데이터를 검사하고 불변 데이터를 재사용. 기상청·서울시 자료도 수집기에서 원본을 보관하고 검증한 파생자료를 게임·워커가 사용. 서비스 요청별 공공 API 호출 없음. 기존 브이월드 실시간 건물 조회 제거, 외부 API 키는 수집·진단 도구 전용. 새 자료는 별도 취득·검사 후 버전 갱신하며 과거 실행에 사용된 원본과 모델은 보존.
+
 ## EPA 참조 사례
 
 `benchmarks/epa-applications-example1.json`은 EPA Applications Manual의 Example 1 원본·인쇄 수치·충돌·판정 계약이다. `benchmarks/epa-applications-example1-result.json`은 고정 SWMM 5.2.4 실행의 공개 요약. 원본은 공식 주소에서 hash 검증 후 로컬/CI로 재취득한다. 미국 설계강우 교육 사례이며 서울 관측이나 시설 효과 자료로 혼용하지 않는다. 국제단위 변환·인쇄 참조 차이는 검토 필요 상태로 보존. 재현 명령과 판정 범위는 [문서 32](../docs/32-epa-reference-validation.md) 참조.

@@ -2134,14 +2134,14 @@ a:focus-visible {
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
-.vworld-outline {
+.reference-outline {
   fill: #497f5c18;
   stroke: #387550;
   stroke-width: 1.2;
   vector-effect: non-scaling-stroke;
   cursor: pointer;
 }
-.vworld-outline.selected {
+.reference-outline.selected {
   fill: #458e6155;
   stroke: #173f27;
   stroke-width: 2.5;

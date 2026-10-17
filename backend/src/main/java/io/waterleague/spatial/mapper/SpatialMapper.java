@@ -2,6 +2,7 @@ package io.waterleague.spatial.mapper;
 
 import io.waterleague.common.exception.*;
 import io.waterleague.spatial.entity.ReferenceBuilding;
+import io.waterleague.spatial.entity.SpatialSnapshot;
 import io.waterleague.spatial.view.SpatialView;
 import java.time.Instant;
 import java.util.*;
@@ -16,40 +17,48 @@ public class SpatialMapper {
     this.json = json;
   }
 
-  public SpatialView map(String raw) {
+  public SpatialView map(SpatialSnapshot snapshot) {
     try {
-      var response = json.readTree(raw).path("response");
-      if (!response.path("status").asString().equals("OK")) {
-        var code = response.path("error").path("code").asString();
-        if (Set.of("INCORRECT_KEY", "INVALID_KEY", "UNAVAILABLE_KEY").contains(code))
-          throw new DomainException(ErrorCode.SPATIAL_ACCESS_UNAVAILABLE);
-        throw new DomainException(ErrorCode.SPATIAL_UNAVAILABLE);
+      var root = json.readTree(snapshot.json());
+      if (!snapshot.sha256().matches("[a-f0-9]{64}")
+          || root.path("schemaVersion").asInt(-1) != 1
+          || !root.path("provider").asString().equals("국토지리정보원")
+          || !root.path("layer").asString().equals("N1A_B0010000")
+          || !root.path("requestedCrs").asString().equals("EPSG:4326")
+          || !root.path("sourceUrl")
+              .asString()
+              .equals("https://www.data.go.kr/data/15059719/fileData.do")
+          || root.path("dataYear").asInt(-1) != 2025
+          || !root.path("use").asString().equals("DISPLAY_COMPARISON_ONLY")
+          || !root.path("rawRetained").isBoolean()
+          || !root.path("rawRetained").asBoolean()) invalid();
+      var acquired = Instant.parse(root.path("retrievedAt").asString());
+      var bounds = List.of(127.0525, 37.543, 127.0555, 37.5455);
+      var extent = root.path("bounds");
+      if (!extent.isArray() || extent.size() != 4) invalid();
+      for (int i = 0; i < 4; i++) {
+        if (!extent.get(i).isNumber() || extent.get(i).asDouble() != bounds.get(i)) invalid();
       }
-      var features = response.path("result").path("featureCollection").path("features");
-      int count = features.size();
-      if (!features.isArray()
-          || count < 1
-          || count > 1000
-          || response.path("record").path("total").asInt(-1) != count
-          || response.path("record").path("current").asInt(-1) != count) invalid();
+      var features = root.path("buildings");
+      if (!features.isArray() || features.isEmpty() || features.size() > 1000) invalid();
       var result = new ArrayList<ReferenceBuilding>();
       var ids = new HashSet<String>();
       int points = 0;
       for (var feature : features) {
+        if (!feature.path("id").isString() || !feature.path("name").isString()) invalid();
         String id = feature.path("id").asString();
-        if (id.isBlank() || id.length() > 100 || !ids.add(id)) invalid();
-        var properties = feature.path("properties");
-        String name = properties.path("buld_nm").asString("");
-        if (name.length() > 200) invalid();
-        String floors = properties.path("gro_flo_co").asString("");
+        if (!id.matches("[A-Za-z0-9_:-]{1,100}") || !ids.add(id)) invalid();
+        String name = feature.path("name").asString();
+        if (name.length() > 200 || name.contains("\ufffd")) invalid();
+        var floors = feature.path("aboveGroundFloors");
         Integer floorCount = null;
-        if (floors.matches("[0-9]{1,3}")) {
-          int value = Integer.parseInt(floors);
-          if (value > 0 && value <= 200) floorCount = value;
+        if (!floors.isNull()) {
+          if (!floors.isIntegralNumber() || !floors.canConvertToInt()) invalid();
+          int value = floors.asInt();
+          if (value < 1 || value > 200) invalid();
+          floorCount = value;
         }
-        var geometry = feature.path("geometry");
-        if (!geometry.path("type").asString().equals("MultiPolygon")) invalid();
-        var coordinates = geometry.path("coordinates");
+        var coordinates = feature.path("polygons");
         if (!coordinates.isArray() || coordinates.isEmpty() || coordinates.size() > 100) invalid();
         var polygons = new ArrayList<List<List<List<Double>>>>();
         for (var polygon : coordinates) {
@@ -81,14 +90,16 @@ public class SpatialMapper {
         result.add(new ReferenceBuilding(id, name, floorCount, List.copyOf(polygons)));
       }
       return new SpatialView(
-          "행정안전부 · 브이월드",
-          "LT_C_SPBD",
+          "국토지리정보원",
+          "N1A_B0010000",
           "EPSG:4326",
-          "https://www.vworld.kr/dev/v4dv_2ddataguide2_s002.do?svcIde=spbd&apiVer=2",
-          Instant.now(),
+          "https://www.data.go.kr/data/15059719/fileData.do",
+          acquired,
+          2025,
+          snapshot.sha256(),
           "DISPLAY_COMPARISON_ONLY",
-          false,
-          List.of(127.0525, 37.5430, 127.0555, 37.5455),
+          true,
+          bounds,
           List.copyOf(result));
     } catch (DomainException e) {
       throw e;

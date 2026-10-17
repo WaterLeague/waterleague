@@ -13,7 +13,7 @@ export function SpatialComparison({
 }) {
   const spatial = useSpatial();
   const [osm, setOsm] = useState(true),
-    [vworld, setVworld] = useState(true),
+    [reference, setReference] = useState(true),
     [selected, setSelected] = useState('');
   const data = spatial.data,
     building = data?.buildings.find((b) => b.id === selected);
@@ -31,12 +31,12 @@ export function SpatialComparison({
           onClick={() => void spatial.load()}
         >
           {data ? <RefreshCw size={15} /> : <Layers3 size={15} />}
-          {spatial.busy ? '공간자료 조회 중' : data ? '자료 다시 조회' : '브이월드 건물 조회'}
+          {spatial.busy ? '공간자료 조회 중' : data ? '자료 다시 조회' : '저장된 수치지형도 보기'}
         </button>
       </div>
       <p>
-        도로명주소 건물 경계·지상 층수와 현재 게임의 OSM 경계를 대조합니다. 이 조회 자료는
-        시뮬레이션 입력에 포함되지 않습니다.
+        2025년 수치지형도의 건물 경계·지상 층수와 게임의 OSM 경계를 대조합니다. 보관한 자료를
+        불러오며, 외부 API를 호출하지 않습니다. 이 대조 자료는 시뮬레이션 입력에 포함되지 않습니다.
       </p>
       {!authenticated && <p className="micro-note">로그인 후 조회할 수 있습니다.</p>}
       {spatial.error && (
@@ -54,10 +54,10 @@ export function SpatialComparison({
             <label>
               <input
                 type="checkbox"
-                checked={vworld}
-                onChange={(e) => setVworld(e.target.checked)}
+                checked={reference}
+                onChange={(e) => setReference(e.target.checked)}
               />
-              브이월드 {data.buildings.length}개
+              수치지형도 {data.buildings.length}도형
             </label>
             <span>
               지상 층수 있음 {data.buildings.filter((b) => b.aboveGroundFloors !== null).length}개
@@ -67,7 +67,7 @@ export function SpatialComparison({
             className="spatial-map"
             viewBox={`${-widthM / 2} ${-depthM / 2} ${widthM} ${depthM}`}
             role="img"
-            aria-label="성수 지역 OSM과 브이월드 건물 경계 대조 지도"
+            aria-label="성수 지역 OSM과 수치지형도 건물 경계 대조 지도"
           >
             {osm &&
               map.buildings.map((b) => (
@@ -77,7 +77,7 @@ export function SpatialComparison({
                   className="osm-outline"
                 />
               ))}
-            {vworld &&
+            {reference &&
               data.buildings.map((b) => (
                 <path
                   key={b.id}
@@ -95,7 +95,7 @@ export function SpatialComparison({
                         .join(' ')
                     )
                     .join(' ')}
-                  className={`vworld-outline ${selected === b.id ? 'selected' : ''}`}
+                  className={`reference-outline ${selected === b.id ? 'selected' : ''}`}
                   fillRule="evenodd"
                   onClick={() => setSelected(b.id)}
                 >
@@ -128,15 +128,18 @@ export function SpatialComparison({
             </p>
           )}
           <p className="micro-note">
-            OSM은 중심점, 브이월드는 영역 교차 기준 조회입니다. 건수 차이는 누락 수가 아닙니다. 현재
-            제공 자료와 2024년 강우 당시 형상의 일치 여부는 확인되지 않았습니다. 층수를 높이나
-            지표고로 환산하지 않습니다.
+            OSM은 중심점, 수치지형도는 영역 교차 기준으로 선택했습니다. 도엽 경계의 분할 도형을
+            합치지 않았으므로 건수 차이는 누락 건물 수가 아닙니다. 2025년 자료와 2024년 강우 당시
+            형상의 일치 여부는 확인되지 않았습니다. 층수를 높이나 지표고로 환산하지 않습니다.
           </p>
           <p className="footnote">
-            출처: {data.provider} · {data.layer} · 요청 좌표계 {data.requestedCrs}
+            출처: {data.provider} · {data.layer} · 표시 좌표계 {data.requestedCrs}
             <br />
-            조회 {new Date(data.retrievedAt).toLocaleString('ko-KR')} · 원본 서버 저장·연구 내보내기
-            없음 · 화면 이탈 시 조회 내용 해제
+            제작 {data.dataYear}년 · 취득 {new Date(data.retrievedAt).toLocaleString('ko-KR')} ·
+            원본 보관
+            <br />
+            고정 자료 버전 <code title={data.snapshotHash}>{data.snapshotHash.slice(0, 12)}</code>
+            {' · '}공공누리 제1유형 · 수문 모델 입력과 별도
             <br />
             <a href={data.sourceUrl} target="_blank" rel="noreferrer">
               제공 항목과 이용 안내 <ArrowUpRight size={12} />

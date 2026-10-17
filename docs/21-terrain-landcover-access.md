@@ -59,6 +59,12 @@
 
 보간으로 원자료 해상도가 높아졌다고 주장하지 않음. 지도 분류를 현장 불투수율·침투율 측정치로 취급하지 않음. 적용 가능한 새 자료는 별도 모델 버전과 재현 근거로 연결하며 기존 계산·리그 조건 보존. 지형 원본 확보만으로 관망 연결·배수 유역·현장 유출 검증이 완료되지는 않음.
 
+## 수치지형도 취득·저장 연결
+
+2026-10-17 사용자 제공 2025년 1:1,000 수치지형도 4개 도엽 `377052201·377052202·377052211·377052212` ZIP 4개·XML 4개와 추가 DXF·XML 2개를 `data/private/seongsu-topography-20261017/originals/`에 복사. Downloads와 복사본의 SHA-256 일치 확인. 공개 등록 목록은 `data/manifests/seongsu-topography-sources.json`.
+
+SHP 건물 레이어 `N1A_B0010000`의 원문 PRJ는 EPSG:5186, 속성 CP949. 전체 2,737도형 중 성수 연구 영역과 양의 면적으로 교차하는 246도형 선택, 내부 구멍과 원래 경계 보존. 원본 좌표계·변환 파이프라인·소스 및 생성기 해시는 `data/manifests/seongsu-topography-buildings.json`. 서버는 저장 JSON과 SHA-256 검사 후 같은 취득시각·제작연도·해시를 반환, 외부 API 요청 없음. 층수는 높이·표고가 아니며 2024 강우 당시 형상이나 수문 입력으로 자동 채택하지 않음.
+
 ## 공식 출처
 
 - [국토정보맵](https://map.ngii.go.kr/ms/map/NlipMap.do), [국토정보플랫폼 메인](https://map.ngii.go.kr/mn/mainPage.do)
