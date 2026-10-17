@@ -1,14 +1,17 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ArrowRight, Download, RotateCcw, Trophy } from 'lucide-react';
 import type { Job, Lab, Version } from '../entity/game';
 import { facilities, format, won } from '../service/gameService';
 import { Hydrograph } from './Hydrograph';
 import { rainDate } from './RainfallSelector';
+import { StormReplay } from './StormReplay';
+import type { CandidateMap } from '../../catalog/entity/catalog';
 
 export function RoundReport({
   job,
   lab,
   evaluated,
+  map,
   current,
   busy,
   league,
@@ -19,6 +22,7 @@ export function RoundReport({
   job: Job;
   lab: Lab;
   evaluated: Version | null;
+  map: CandidateMap | null;
   current: boolean;
   busy: boolean;
   league: boolean;
@@ -27,6 +31,7 @@ export function RoundReport({
   onBoard: () => void;
 }) {
   const heading = useRef<HTMLHeadingElement>(null);
+  const [view, setView] = useState<'summary' | 'replay'>('summary');
   useEffect(() => {
     heading.current?.focus();
   }, [job.id]);
@@ -47,74 +52,89 @@ export function RoundReport({
           현재 배치가 계산한 버전과 다릅니다. 이 화면의 결과·제출 대상은 이전에 계산한 배치입니다.
         </p>
       )}
-      <div className="round-report-overview">
-        <div className="round-score">
-          <span>계산한 설계의 탐색 점수</span>
-          <h1 ref={heading} tabIndex={-1}>
-            {format.format(result.score)}
-            <small>점</small>
-          </h1>
-          <p>
-            {reduced > 0
-              ? '시설이 없는 기준안보다\n초기저류를 보정한 평가량이 줄었습니다.'
-              : reduced < 0
-                ? '시설이 없는 기준안보다\n초기저류를 보정한 평가량이 늘었습니다.'
-                : '시설이 없는 기준안과\n초기저류를 보정한 평가량이 같습니다.'}
-          </p>
-          <strong>
-            {format.format(Math.abs(reduced))} m³{' '}
-            <small>{reduced > 0 ? '감소' : reduced < 0 ? '증가' : '차이'}</small>
-          </strong>
-          <p className="round-scope">
-            모델 안의 계산 결과 · 현장 효과 미검증
-            <br />
-            유출과 마지막 남은 물을 함께 평가하고, 시작 전에 있던 물은 제외합니다.
-          </p>
-        </div>
-        <div className="round-comparison">
-          <h2>무엇이 달라졌나요?</h2>
-          <table>
-            <thead>
-              <tr>
-                <th scope="col">계산 항목</th>
-                <th scope="col">시설 없음</th>
-                <th scope="col">계산한 설계</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <th scope="row">
-                  기간 유출 <small>m³</small>
-                </th>
-                <td>{format.format(result.baseline.runoffM3)}</td>
-                <td>{format.format(result.strategy.runoffM3)}</td>
-              </tr>
-              <tr>
-                <th scope="row">
-                  최종 잔여저류 <small>m³</small>
-                </th>
-                <td>{format.format(result.baseline.finalStorageM3)}</td>
-                <td>{format.format(result.strategy.finalStorageM3)}</td>
-              </tr>
-              <tr>
-                <th scope="row">
-                  초기저류 · 차감 <small>m³</small>
-                </th>
-                <td>{format.format(result.baseline.initialStorageM3)}</td>
-                <td>{format.format(result.strategy.initialStorageM3)}</td>
-              </tr>
-              <tr className="round-total">
-                <th scope="row">
-                  보정 평가량 <small>m³</small>
-                </th>
-                <td>{format.format(result.baseline.accountedDischargeM3)}</td>
-                <td>{format.format(result.strategy.accountedDischargeM3)}</td>
-              </tr>
-            </tbody>
-          </table>
-          <Hydrograph job={job} rainfall={lab.model.rainfall} designLabel="계산한 설계" />
-        </div>
+      <div className="round-view-nav" role="group" aria-label="계산 결과 보기">
+        <button aria-pressed={view === 'summary'} onClick={() => setView('summary')}>
+          결과 요약
+        </button>
+        <button aria-pressed={view === 'replay'} onClick={() => setView('replay')}>
+          시간별 재생 <ArrowRight size={15} />
+        </button>
+        <span>
+          최종 탐색 점수 <b>{format.format(result.score)}점</b>
+        </span>
       </div>
+      {view === 'replay' ? (
+        <StormReplay job={job} lab={lab} evaluated={evaluated} map={map} />
+      ) : (
+        <div className="round-report-overview">
+          <div className="round-score">
+            <span>계산한 설계의 탐색 점수</span>
+            <h1 ref={heading} tabIndex={-1}>
+              {format.format(result.score)}
+              <small>점</small>
+            </h1>
+            <p>
+              {reduced > 0
+                ? '시설이 없는 기준안보다\n초기저류를 보정한 평가량이 줄었습니다.'
+                : reduced < 0
+                  ? '시설이 없는 기준안보다\n초기저류를 보정한 평가량이 늘었습니다.'
+                  : '시설이 없는 기준안과\n초기저류를 보정한 평가량이 같습니다.'}
+            </p>
+            <strong>
+              {format.format(Math.abs(reduced))} m³{' '}
+              <small>{reduced > 0 ? '감소' : reduced < 0 ? '증가' : '차이'}</small>
+            </strong>
+            <p className="round-scope">
+              모델 안의 계산 결과 · 현장 효과 미검증
+              <br />
+              유출과 마지막 남은 물을 함께 평가하고, 시작 전에 있던 물은 제외합니다.
+            </p>
+          </div>
+          <div className="round-comparison">
+            <h2>무엇이 달라졌나요?</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">계산 항목</th>
+                  <th scope="col">시설 없음</th>
+                  <th scope="col">계산한 설계</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">
+                    기간 유출 <small>m³</small>
+                  </th>
+                  <td>{format.format(result.baseline.runoffM3)}</td>
+                  <td>{format.format(result.strategy.runoffM3)}</td>
+                </tr>
+                <tr>
+                  <th scope="row">
+                    최종 잔여저류 <small>m³</small>
+                  </th>
+                  <td>{format.format(result.baseline.finalStorageM3)}</td>
+                  <td>{format.format(result.strategy.finalStorageM3)}</td>
+                </tr>
+                <tr>
+                  <th scope="row">
+                    초기저류 · 차감 <small>m³</small>
+                  </th>
+                  <td>{format.format(result.baseline.initialStorageM3)}</td>
+                  <td>{format.format(result.strategy.initialStorageM3)}</td>
+                </tr>
+                <tr className="round-total">
+                  <th scope="row">
+                    보정 평가량 <small>m³</small>
+                  </th>
+                  <td>{format.format(result.baseline.accountedDischargeM3)}</td>
+                  <td>{format.format(result.strategy.accountedDischargeM3)}</td>
+                </tr>
+              </tbody>
+            </table>
+            <Hydrograph job={job} rainfall={lab.model.rainfall} designLabel="계산한 설계" />
+          </div>
+        </div>
+      )}
       <div className="round-actions">
         <button className="challenge-start" onClick={onRetry}>
           <RotateCcw size={18} /> 배치 수정·재도전 <ArrowRight size={18} />

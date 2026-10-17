@@ -455,8 +455,10 @@ export function GamePage() {
           )}
           {report && g.job?.state === 'SUCCEEDED' && result ? (
             <RoundReport
+              key={g.job.id}
               job={g.job}
               lab={lab}
+              map={activeMap}
               evaluated={g.evaluatedVersion}
               current={currentResult}
               busy={g.busy}
