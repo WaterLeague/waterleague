@@ -13,6 +13,7 @@ from .engine.continuous import ROOT, digest, engine_identity
 from .ingestion.live import observed_forcing
 from .ingestion.evaporation import observed_evaporation, append_evaporation
 from .shared_model import resolve
+from .weekly import aggregate as weekly_aggregate, publish as publish_weekly
 
 
 def encode(value):
@@ -65,14 +66,19 @@ def claim(conn):
         return job
 
 
-def finish(conn, job, result, input_hash, error):
+def finish(conn, job, result, input_hash, error, weeks=None):
     with conn.transaction():
         conn.execute('SELECT id FROM shared_physics_jobs WHERE id=%s FOR UPDATE', (job['id'],)).fetchone()
-        return conn.execute("""UPDATE shared_physics_jobs SET state=%s,result=%s,input_hash=%s,error_code=%s,
+        saved = conn.execute("""UPDATE shared_physics_jobs SET state=%s,result=%s,input_hash=%s,error_code=%s,
             finished_at=clock_timestamp(),lease_until=NULL WHERE id=%s AND state='RUNNING'
             AND lease_token=%s AND lease_until>clock_timestamp()""",
             ('SUCCEEDED' if result is not None else 'FAILED', json.dumps(result, ensure_ascii=False, allow_nan=False) if result else None,
              input_hash, error, job['id'], job['lease_token'])).rowcount == 1
+        if saved and result is not None:
+            if weeks is None:
+                raise ValueError('LIVE_WEEKLY_INPUT_MISSING')
+            publish_weekly(conn, job, weeks)
+        return saved
 
 
 def process(conn, job, root):
@@ -124,12 +130,14 @@ def process(conn, job, root):
         source, forcing_raw = encode(model), encode(forcing)
         request = {'schemaVersion': 1, 'installationId': str(job['installation']['id']),
                    'modelSha256': digest(source), 'forcingSha256': digest(forcing_raw),
-                   'siteModelHash': job['installation']['model_hash'], 'placement': placement, 'engine': engine}
+                   'siteModelHash': job['installation']['model_hash'], 'placement': placement, 'engine': engine,
+                   'weeklyRuleVersion': 'OBSERVED_ACCOUNTED_VOLUME_V1',
+                   'weeklyCodeSha256': digest((Path(__file__).parent/'weekly.py').read_bytes())}
         request_raw = encode(request)
         (path/'model-source.json').write_bytes(source)
         (path/'forcing.json').write_bytes(forcing_raw)
         (path/'request.json').write_bytes(request_raw)
-        for module in ('engine/evapotranspiration.py', 'ingestion/evaporation.py'):
+        for module in ('engine/evapotranspiration.py', 'ingestion/evaporation.py', 'weekly.py'):
             (path/Path(module).name).write_bytes((Path(__file__).parent/module).read_bytes())
         env = {k: v for k, v in os.environ.items() if k in ('PATH', 'LANG', 'LC_ALL', 'LIVE_SWMM_LIBRARY')}
         env['PYTHONPATH'] = str(ROOT/'simulation')
@@ -159,7 +167,8 @@ def process(conn, job, root):
                   'evaporationMethod': result['evaporation']['method'], 'initialState': 'ASSUMED_DESIGN_START',
                   'inflowPolicy': result['inflowPolicy'],
                   'areaLimitBasis': model['cells'][0].get('areaLimitBasis','LEGACY_DESIGN_RATIO')}
-        saved = finish(conn, job, public, digest(request_raw), None)
+        weeks = weekly_aggregate(result['contribution'], job['start'], job['end'], covered)
+        saved = finish(conn, job, public, digest(request_raw), None, weeks)
     except Exception as e:
         code = str(e)
         if not re.fullmatch(r'(AWS|KMA|LIVE)_[A-Z_]{1,48}', code):

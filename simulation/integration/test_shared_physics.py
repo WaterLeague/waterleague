@@ -102,6 +102,15 @@ class SharedPhysicsTests(unittest.TestCase):
             prefix = artifact(first, 'result.json')['strategy']['samples']
             self.assertEqual(prefix, artifact(second, 'result.json')['strategy']['samples'][:len(prefix)])
             self.assertEqual(artifact(second, 'forcing.json')['previousInput']['jobId'], str(first['id']))
+            score=self.conn.execute('SELECT SUM(score_m3) AS score,SUM(evaluated_minutes) AS minutes FROM shared_weekly_scores WHERE installation_id=%s',(self.installation,)).fetchone()
+            self.assertEqual(score['minutes'],len(artifact(second,'result.json')['contribution']))
+            self.assertAlmostEqual(float(score['score']),artifact(second,'result.json')['contribution'][-1]['cumulativeM3'],places=8)
+            with self.conn.transaction():
+                from waterleague_sim.weekly import aggregate,publish
+                # 동일 결과의 재게시에도 분 수와 점수가 늘어나지 않는다.
+                replay=aggregate(artifact(second,'result.json')['contribution'],second['start'],second['end'],second['end'])
+                publish(self.conn,second,replay)
+            self.assertEqual(self.conn.execute('SELECT SUM(evaluated_minutes) AS n FROM shared_weekly_scores WHERE installation_id=%s',(self.installation,)).fetchone()['n'],score['minutes'])
             # 과거 분량의 수정은 재현 입력을 바꾸지 않고 새 결과 게시를 차단한다.
             third = dict(second, id=uuid.uuid4(), lease_token=uuid.uuid4(), previous=row,
                          end=second['end']+timedelta(minutes=1))

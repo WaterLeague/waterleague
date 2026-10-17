@@ -12,7 +12,7 @@ TABLES = (
     'utilization_requests utilization_decisions strategy_reviews league_participants '
     'league_participant_events league_invitations league_teams league_team_members '
     'research_comparisons research_searches research_search_sources research_candidates shared_installations '
-    'shared_physics_jobs historical_experiments'
+    'shared_physics_jobs shared_weekly_scores historical_experiments'
 ).split()
 MUTABLE_QUEUE_COLUMNS = 'state attempts lease_token lease_until finished_at error_code result'.split()
 
@@ -62,8 +62,10 @@ def grant():
         db.execute('REVOKE ALL ON SCHEMA public FROM PUBLIC, wl_api, wl_worker')
         db.execute('GRANT USAGE ON SCHEMA public TO wl_api, wl_worker')
         db.execute(sql.SQL('GRANT SELECT,INSERT,UPDATE,DELETE ON {} TO wl_api')
-                   .format(sql.SQL(',').join(map(sql.Identifier, (t for t in TABLES if t != 'shared_physics_jobs')))))
-        db.execute('GRANT SELECT ON shared_physics_jobs TO wl_api')
+                   .format(sql.SQL(',').join(map(sql.Identifier, (t for t in TABLES if t not in ('shared_physics_jobs','shared_weekly_scores'))))))
+        db.execute('GRANT SELECT ON shared_physics_jobs,shared_weekly_scores TO wl_api')
+        db.execute('GRANT SELECT,INSERT ON shared_weekly_scores TO wl_worker')
+        db.execute('GRANT UPDATE(score_m3,evaluated_minutes,evaluated_through,source_job_id) ON shared_weekly_scores TO wl_worker')
         db.execute('GRANT SELECT ON shared_installations TO wl_worker')
         db.execute('GRANT UPDATE(id) ON shared_installations TO wl_worker')
         db.execute('GRANT SELECT,INSERT ON shared_physics_jobs TO wl_worker')

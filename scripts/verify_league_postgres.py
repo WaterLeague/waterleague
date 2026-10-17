@@ -22,12 +22,13 @@ def source_counts(db):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--suite', choices=['league', 'analysis', 'queue', 'physics', 'historical', 'search', 'restore', 'all'], default='league')
+    parser.add_argument('--suite', choices=['league', 'analysis', 'queue', 'physics', 'weekly', 'historical', 'search', 'restore', 'all'], default='league')
     suite = parser.parse_args().suite
     test_class = {'league': 'LeagueParticipationWorkflowTests',
                   'analysis': 'ResearchAnalysisWorkflowTests',
                   'queue': 'QueueCapacityTests',
                   'physics': 'PhysicsWorkflowTests,SharedInstallationTests',
+                  'weekly': 'WeeklyWorkflowTests',
                   'historical': 'HistoricalWorkflowTests',
                   'search': 'ResearchSearchWorkflowTests',
                   'restore': 'ResearchSearchWorkflowTests#replaysActualSwmmSourcesAndGeneratedCandidateBundleOnIsolatedPostgres',

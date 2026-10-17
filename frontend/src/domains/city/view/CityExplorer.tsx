@@ -29,6 +29,8 @@ import { useLiveRainfall } from '../../rainfall/controller/useLiveRainfall';
 import { isRaining, observationFresh } from '../../rainfall/service/rainEffectService';
 import { LiveRainPlan } from '../../rainfall/view/LiveRainPlan';
 import { useReducedMotion } from '../../catalog/controller/useReducedMotion';
+import { useWeekly } from '../../weekly/controller/useWeekly';
+import { WeeklyBoard, scoreFormat } from '../../weekly/view/WeeklyBoard';
 const CityScene = lazy(() => import('./CityScene'));
 type PlayProps = {
   account: Account | null;
@@ -46,6 +48,12 @@ function Explorer({
   mode = 'shared',
 }: { city: City; regions: CityPlayRegion[]; eligibility: CityEligibility } & PlayProps) {
   const researchMode = mode === 'historical';
+  const weekly = useWeekly(!researchMode, account?.id ?? null);
+  const districtScore = (id: string) => {
+    if (weekly.error) return '순위 갱신 지연';
+    const score = weekly.value?.current.districts.find((d) => d.districtId === id);
+    return score?.rank ? `${score.rank}위 · ${scoreFormat.format(score.scoreM3)}m³` : '평가 대기';
+  };
   const [selected, setSelected] = useState(researchMode ? (account?.districtId ?? '2419953') : '');
   const research = useHistorical(researchMode, selected, account);
   const ownDistrictId = researchMode ? null : account?.districtId;
@@ -289,7 +297,12 @@ function Explorer({
           fontSize={focus.overview ? 420 : focus.distance * 0.035}
           fill="#233c35"
         >
-          {d.name}
+          <tspan x={d.center[0]}>{d.name}</tspan>
+          {!researchMode && (
+            <tspan x={d.center[0]} dy="1.3em" fontSize="0.72em">
+              {districtScore(d.id)}
+            </tspan>
+          )}
         </text>
       ))}
       {!focus.overview &&
@@ -549,6 +562,7 @@ function Explorer({
                   )}
                   <small>
                     {shared.installations.filter((i) => i.districtId === d.id).length}곳
+                    {!researchMode && ` · ${districtScore(d.id)}`}
                   </small>
                 </button>
               ))}
@@ -565,6 +579,7 @@ function Explorer({
                 >
                   ● {r.districtName} ·{' '}
                   {shared.installations.filter((i) => i.districtId === r.districtId).length}곳
+                  {!researchMode && ` · ${districtScore(r.districtId)}`}
                 </button>
               ))}
             </div>
@@ -853,6 +868,14 @@ function Explorer({
           onLocate={() => {
             if (ownDistrictId) select(ownDistrictId);
           }}
+        />
+      )}
+      {!researchMode && (
+        <WeeklyBoard
+          value={weekly.value}
+          error={weekly.error}
+          ownDistrictId={ownDistrictId ?? null}
+          onDistrict={select}
         />
       )}
       <footer className="city-source-note">

@@ -81,6 +81,7 @@
   font-size: 8px;
 }
 .shared-play-layout .shared-inspector {
+  position: static;
   min-height: 100%;
   padding: 20px;
 }
