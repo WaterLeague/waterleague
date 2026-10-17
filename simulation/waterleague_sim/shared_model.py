@@ -7,11 +7,12 @@ from .engine.continuous import ROOT, digest
 from .model_catalog import read_catalog
 
 CATALOG_HASHES={1:'f26b639dbdb2fee3c1aff172a19153868a07aa70735a6dfcfda863c3a38e8b64',
-                2:'009fcd085f476bbc96a41888646f284942cd69aae0b9405defcb2764a8d6d5ea'}
+                2:'009fcd085f476bbc96a41888646f284942cd69aae0b9405defcb2764a8d6d5ea',
+                3:'80e46a9c3821cdeff4b9acd839b264d810ba559202da828cdb8a6b45c04b15e4'}
 
-@lru_cache(maxsize=2)
-def site_catalog(version=2):
-    path=ROOT/'backend/src/main/resources/shared-sites'/('catalog.json' if version==1 else 'catalog-v2.json')
+@lru_cache(maxsize=3)
+def site_catalog(version=3):
+    path=ROOT/'backend/src/main/resources/shared-sites'/('catalog.json' if version==1 else f'catalog-v{version}.json')
     raw=path.read_bytes()
     if digest(raw)!=CATALOG_HASHES[version]:raise ValueError('LIVE_CATALOG_INVALID')
     return {s['districtId']:s for s in json.loads(raw)['entries']}
@@ -24,7 +25,7 @@ def catalog():
     return ({d['districtId']:d for d in json.loads(districts)['regions']},site_catalog(),read_catalog(ROOT/'data/models'))
 
 @lru_cache(maxsize=4)
-def candidates(district, version=2):
+def candidate_snapshot(district, version=3):
     districts,_,_=catalog();entry=site_catalog(version)[district]
     if entry['file']!=f'{district}-v{version}.json.gz':raise ValueError('LIVE_CATALOG_INVALID')
     raw=(ROOT/'backend/src/main/resources/shared-sites'/entry['file']).read_bytes()
@@ -33,7 +34,10 @@ def candidates(district, version=2):
     if digest(decoded)!=entry['sha256']:raise ValueError('LIVE_CATALOG_INVALID')
     snapshot=json.loads(decoded)
     if snapshot['baseModelHash']!=districts[district]['defaultModelHash']:raise ValueError('LIVE_MODEL_LINK_INVALID')
-    return {c['id']:c for c in snapshot['cells']}
+    return snapshot
+
+def candidates(district, version=3):
+    return {c['id']:c for c in candidate_snapshot(district, version)['cells']}
 
 def resolve(installation):
     districts,sites,models=catalog();district=districts[installation['district_id']]
@@ -41,17 +45,21 @@ def resolve(installation):
     if installation['model_hash']==district['defaultModelHash']:
         cell=next(c for c in model['cells'] if c['id']==installation['cell_id'])
     else:
-        version=next((v for v in (2,1) if site_catalog(v)[district['districtId']]['sha256']==installation['model_hash']),None)
+        version=next((v for v in (3,2,1) if site_catalog(v)[district['districtId']]['sha256']==installation['model_hash']),None)
         if version is None:raise ValueError('LIVE_INSTALLATION_MODEL_INVALID')
         cell=candidates(district['districtId'],version)[installation['cell_id']]
     model['cells']=[copy.deepcopy(cell)]
     model['sharedSiteSource']={'districtId':district['districtId'],'siteCatalogHash':installation['model_hash'],
         'baseModelHash':district['defaultModelHash'],'constraintVersion':version,
-        'inflowPolicy':'DIRECT_RAINFALL_ONLY' if version==2 else 'LEGACY_ALL_IMPERVIOUS_RUNOFF'}
-    if version==2:
+        'inflowPolicy':'DIRECT_RAINFALL_ONLY' if version>=2 else 'LEGACY_ALL_IMPERVIOUS_RUNOFF'}
+    if version>=2:
         model['assumptions']=[s for s in model['assumptions'] if '60%' not in s and '80%' not in s]
         model['assumptions']+=['공개 도형 면적 기준의 계산 경계; 실제 시공 가능 면적 미확인',
             '배수 연결 미확인으로 시설 자체 강우만 처리; 외부 유입 없음']
+    if version>=3:
+        source=candidate_snapshot(district['districtId'],version)
+        for key in ('unitCosts','costModel','costSourceSha256','budget','budgetPolicy'):
+            model[key]=copy.deepcopy(source[key])
     model.pop('rainfall',None)
     station=district.get('defaultRainfall') or {}
     return model,str(station.get('stationId','110')),station.get('stationName','강서')

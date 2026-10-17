@@ -8,9 +8,15 @@ import type { SharedSite } from '../../installation/entity/installation';
 import { siteKey } from '../../installation/entity/installation';
 import { errorMessage } from '../../../shared/exception/ApiError';
 import type { HistoricalDraft, HistoricalJob } from '../entity/historical';
+import type { Budget } from '../../budget/dto/budgetDto';
 import { loadHistorical, runHistorical } from '../repository/historicalRepository';
 
-export function useHistorical(enabled: boolean, districtId: string, account: Account | null) {
+export function useHistorical(
+  enabled: boolean,
+  districtId: string,
+  account: Account | null,
+  budget: Budget | null
+) {
   const [catalog, setCatalog] = useState<DisasterCatalog | null>(null);
   const [eventId, setEventId] = useState('seoul-20220808');
   const [lab, setLab] = useState<Lab | null>(null);
@@ -123,7 +129,8 @@ export function useHistorical(enabled: boolean, districtId: string, account: Acc
   }, [job?.id, job?.state]);
   const current = drafts.filter((d) => d.site.districtId === districtId);
   const remaining =
-    300000000 - current.reduce((n, d) => n + d.areaM2 * d.site.unitCosts[d.facilityType], 0);
+    (budget?.policy.limitKrw ?? 0) -
+    current.reduce((n, d) => n + d.areaM2 * d.site.unitCosts[d.facilityType], 0);
   function add(site: SharedSite, type: FacilityType, area: number) {
     if (
       !site.allowedTypes.includes(type) ||
@@ -207,6 +214,7 @@ export function useHistorical(enabled: boolean, districtId: string, account: Acc
     drafts,
     current,
     remaining,
+    budget,
     add,
     remove,
     job,

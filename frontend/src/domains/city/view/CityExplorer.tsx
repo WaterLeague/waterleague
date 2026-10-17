@@ -29,6 +29,7 @@ import { useLiveRainfall } from '../../rainfall/controller/useLiveRainfall';
 import { isRaining, observationFresh } from '../../rainfall/service/rainEffectService';
 import { LiveRainPlan } from '../../rainfall/view/LiveRainPlan';
 import { useReducedMotion } from '../../catalog/controller/useReducedMotion';
+import { useBudget } from '../../budget/controller/useBudget';
 import { useWeekly } from '../../weekly/controller/useWeekly';
 import { WeeklyBoard, scoreFormat } from '../../weekly/view/WeeklyBoard';
 const CityScene = lazy(() => import('./CityScene'));
@@ -48,6 +49,8 @@ function Explorer({
   mode = 'shared',
 }: { city: City; regions: CityPlayRegion[]; eligibility: CityEligibility } & PlayProps) {
   const researchMode = mode === 'historical';
+  const [budgetRevision, setBudgetRevision] = useState(0);
+  const budget = useBudget(budgetRevision);
   const weekly = useWeekly(!researchMode, account?.id ?? null);
   const districtScore = (id: string) => {
     if (weekly.error) return '순위 갱신 지연';
@@ -55,7 +58,7 @@ function Explorer({
     return score?.rank ? `${score.rank}위 · ${scoreFormat.format(score.scoreM3)}m³` : '평가 대기';
   };
   const [selected, setSelected] = useState(researchMode ? (account?.districtId ?? '2419953') : '');
-  const research = useHistorical(researchMode, selected, account);
+  const research = useHistorical(researchMode, selected, account, budget.value);
   const ownDistrictId = researchMode ? null : account?.districtId;
   const viewerId = researchMode
     ? (account?.id ?? '00000000-0000-0000-0000-000000000000')
@@ -140,9 +143,7 @@ function Explorer({
     );
   }
   const ownInstallations = shared.installations.filter((i) => i.ownerId === viewerId);
-  const remaining = researchMode
-    ? research.remaining
-    : 300000000 - ownInstallations.reduce((n, i) => n + i.cost, 0);
+  const remaining = researchMode ? research.remaining : (budget.value?.remainingKrw ?? 0);
   const occupied = site
     ? shared.installations.find((i) => siteKey(i) === siteKey(site))
     : undefined;
@@ -438,8 +439,8 @@ function Explorer({
         </div>
         <div className="play-resources">
           <span>
-            {account ? '내 남은 예산' : '시작 예산'}
-            <b>{won(remaining)}</b>
+            {researchMode ? '연구 남은 예산' : '서울 공동 잔액'}
+            <b>{budget.value ? won(remaining) : '조회 중'}</b>
           </span>
           <span>
             {researchMode ? '연구 배치' : account ? '내 시설' : '서울 공유 시설'}
@@ -836,7 +837,7 @@ function Explorer({
           onArea={setArea}
           onLogin={onLogin}
           authenticated={!!account}
-          error={selectionError}
+          error={selectionError || budget.error}
         />
       ) : (
         <SharedDistrictPanel
@@ -850,16 +851,20 @@ function Explorer({
           onType={setType}
           onArea={setArea}
           remaining={remaining}
+          budget={budget.value}
+          budgetReady={!!budget.value && !budget.error}
           busy={shared.busy}
-          error={shared.error || selectionError}
+          error={shared.error || selectionError || budget.error}
           feedback={feedback}
           onInstall={async (s, t, a) => {
             const ok = await shared.install(s, t, a);
+            setBudgetRevision((v) => v + 1);
             if (ok) setFeedback('설치 완료 · 모두의 지도에 반영됐습니다');
             return ok;
           }}
           onRemove={async (id) => {
             const ok = await shared.remove(id);
+            setBudgetRevision((v) => v + 1);
             if (ok) setFeedback('철거 완료 · 빈 위치로 돌아왔습니다');
             return ok;
           }}

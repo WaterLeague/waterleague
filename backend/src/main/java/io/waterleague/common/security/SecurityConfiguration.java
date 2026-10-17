@@ -53,6 +53,7 @@ public class SecurityConfiguration {
                         "/api/v1/lab/catalog",
                         "/api/v1/leaderboard",
                         "/api/v1/weekly",
+                        "/api/v1/budget",
                         "/api/v1/leagues",
                         "/api/v1/leagues/{id}",
                         "/api/v1/organizations",

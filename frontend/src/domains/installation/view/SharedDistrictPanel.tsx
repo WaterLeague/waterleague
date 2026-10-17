@@ -8,6 +8,9 @@ import { DistrictFields } from '../../district/view/DistrictFields';
 import type { AffiliationType } from '../../district/entity/district';
 import { selectAccountDistrict } from '../../account/repository/accountRepository';
 import { errorMessage } from '../../../shared/exception/ApiError';
+import { BudgetEvidence } from '../../budget/view/BudgetEvidence';
+import type { Budget } from '../../budget/dto/budgetDto';
+import { CostEstimate } from './CostEstimate';
 import { PhysicsPanel } from '../../physics/view/PhysicsPanel';
 const icons = { RAIN_GARDEN: Leaf, PERMEABLE_PAVEMENT: Grid2X2, GREEN_ROOF: House };
 const won = (n: number) =>
@@ -23,6 +26,8 @@ export function SharedDistrictPanel({
   onType,
   onArea,
   remaining,
+  budget,
+  budgetReady,
   busy,
   error,
   onInstall,
@@ -42,6 +47,8 @@ export function SharedDistrictPanel({
   onType: (t: FacilityType) => void;
   onArea: (a: string) => void;
   remaining: number;
+  budget: Budget | null;
+  budgetReady: boolean;
   busy: boolean;
   error: string;
   feedback: string;
@@ -58,6 +65,7 @@ export function SharedDistrictPanel({
   const own = !!account && account.role === 'MEMBER' && account.districtId === districtId;
   const cost = site && type ? (Number(area) || 0) * site.unitCosts[type] : 0;
   const valid =
+    budgetReady &&
     !!site &&
     !!type &&
     site.allowedTypes.includes(type) &&
@@ -209,10 +217,15 @@ export function SharedDistrictPanel({
                 {site.inflowPolicy === 'DIRECT_RAINFALL_ONLY' &&
                   ' 시설 자체에 내리는 비만 계산하며, 주변 유출의 시설 유입은 가산하지 않습니다.'}
               </p>
-              <div className="placement-cost">
-                <span>설치 비용</span>
-                <strong>{won(cost)}</strong>
-              </div>
+              {type && (
+                <CostEstimate
+                  site={site}
+                  type={type}
+                  area={Number(area)}
+                  remaining={remaining}
+                  onArea={onArea}
+                />
+              )}
               {cost > remaining && own && (
                 <p role="alert" className="shared-error">
                   남은 예산을 초과했습니다.
@@ -242,17 +255,20 @@ export function SharedDistrictPanel({
         </p>
       )}
       {occupied && <PhysicsPanel key={occupied.id} installationId={occupied.id} />}
-      {account?.districtId && (
+      {budget && (
         <div className="budget-box">
-          <span>내 남은 예산</span>
+          <span>서울 공동 배치예산 잔액</span>
           <strong>{won(remaining)}</strong>
           <div className="shared-budget-track">
             <span
-              style={{ width: Math.max(0, Math.min(100, (remaining / 300000000) * 100)) + '%' }}
+              style={{
+                width: Math.max(0, Math.min(100, (remaining / budget.policy.limitKrw) * 100)) + '%',
+              }}
             />
           </div>
         </div>
       )}
+      <BudgetEvidence value={budget} />
       <p className="shared-evidence-note">
         공개 도형 기반 실험 후보 · 현장 시공 적합성 미확인
         <br />

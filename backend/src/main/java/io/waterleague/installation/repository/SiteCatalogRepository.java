@@ -29,15 +29,15 @@ public class SiteCatalogRepository {
     this.json = json;
     this.districts = districts;
     this.models = models;
-    var source = read("catalog-v2.json", false, 50000);
+    var source = read("catalog-v3.json", false, 50000);
     if (!json.hash(source)
-        .equals("009fcd085f476bbc96a41888646f284942cd69aae0b9405defcb2764a8d6d5ea"))
+        .equals("80e46a9c3821cdeff4b9acd839b264d810ba559202da828cdb8a6b45c04b15e4"))
       throw new IllegalStateException("공동 후보 목록 해시 오류");
     for (var entry : json.tree(source).path("entries")) {
       String id = entry.path("districtId").asString();
       var district = districts.require(id);
       if (entries.put(id, entry) != null
-          || !entry.path("file").asString().equals(id + "-v2.json.gz"))
+          || !entry.path("file").asString().equals(id + "-v3.json.gz"))
         throw new IllegalStateException("공동 후보 목록 오류");
       counts.put(id, entry.path("count").asInt());
     }
@@ -117,12 +117,13 @@ public class SiteCatalogRepository {
               cell.path("maxAreaM2").decimalValue(),
               List.copyOf(types),
               Map.copyOf(costs),
-              model.path("budget").decimalValue(),
               hash,
               List.copyOf(sources),
               cell.path("areaLimitBasis").asString(),
               cell.path("siteEligibility").asString(),
-              cell.path("inflowPolicy").asString());
+              cell.path("inflowPolicy").asString(),
+              model.path("costModel"),
+              model.path("costSourceSha256").asString());
       if (output.put(site.cellId(), site) != null) throw new IllegalStateException("공동 후보 중복");
     }
   }

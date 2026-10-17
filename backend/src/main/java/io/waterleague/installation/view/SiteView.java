@@ -15,9 +15,10 @@ public record SiteView(
     BigDecimal maxAreaM2,
     List<String> allowedTypes,
     Map<String, BigDecimal> unitCosts,
-    BigDecimal budget,
     String modelHash,
     List<String> sourceIds,
     String areaLimitBasis,
     String siteEligibility,
-    String inflowPolicy) {}
+    String inflowPolicy,
+    tools.jackson.databind.JsonNode costModel,
+    String costSourceSha256) {}

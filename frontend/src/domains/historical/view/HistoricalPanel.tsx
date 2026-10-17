@@ -4,6 +4,8 @@ import type { SharedSite } from '../../installation/entity/installation';
 import type { FacilityType } from '../../game/entity/game';
 import { facilities, won, format } from '../../game/service/gameService';
 import './historical.css';
+import { BudgetEvidence } from '../../budget/view/BudgetEvidence';
+import { CostEstimate } from '../../installation/view/CostEstimate';
 const time = (s: string) =>
   new Date(s).toLocaleString('ko-KR', {
     month: 'numeric',
@@ -211,15 +213,21 @@ export function HistoricalPanel({
             </span>
           </label>
           <small>최대 {site.maxAreaM2.toLocaleString('ko-KR')}m² · 공개 도형 면적</small>
-          <div className="placement-cost">
-            <span>설치 비용</span>
-            <strong>{won(cost)}</strong>
-          </div>
+          {type && (
+            <CostEstimate
+              site={site}
+              type={type}
+              area={Number(area)}
+              remaining={s.remaining}
+              onArea={onArea}
+            />
+          )}
           <button className="solid-button" disabled={!valid}>
             연구 설계에 추가
           </button>
         </form>
       )}
+      <BudgetEvidence value={s.budget} research />
       <div className="historical-design-summary">
         <strong>이 구의 연구 설계 · {s.current.length}곳</strong>
         <small>남은 예산 {won(s.remaining)}</small>

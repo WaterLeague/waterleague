@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class HistoricalService {
   private final HistoricalRepository jobs;
+  private final io.waterleague.budget.service.BudgetService budget;
   private final SimulationRepository admission;
   private final SiteCatalogRepository sites;
   private final DistrictRepository districts;
@@ -31,6 +32,7 @@ public class HistoricalService {
 
   public HistoricalService(
       HistoricalRepository jobs,
+      io.waterleague.budget.service.BudgetService budget,
       SimulationRepository admission,
       SiteCatalogRepository sites,
       DistrictRepository districts,
@@ -39,6 +41,7 @@ public class HistoricalService {
       JsonService json,
       io.waterleague.disaster.service.DisasterService disasters) {
     this.jobs = jobs;
+    this.budget = budget;
     this.admission = admission;
     this.sites = sites;
     this.districts = districts;
@@ -105,7 +108,7 @@ public class HistoricalService {
                   "areaM2",
                   p.areaM2())));
     }
-    validation.validate(physical, cells, costs, new BigDecimal("300000000"), 50);
+    validation.validate(physical, cells, costs, budget.limit(), 50);
     String body = json.write(frozen), hash = json.hash(dto.modelHash() + "\n" + body);
     admission.lockAdmission();
     admission.lockOwner(owner);

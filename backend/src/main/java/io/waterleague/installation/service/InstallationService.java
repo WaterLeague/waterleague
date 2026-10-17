@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class InstallationService {
   private final InstallationRepository installations;
+  private final io.waterleague.budget.service.BudgetService budget;
   private final DistrictRepository districts;
   private final AccountRepository accounts;
   private final AccountService auth;
@@ -26,12 +27,14 @@ public class InstallationService {
 
   public InstallationService(
       InstallationRepository i,
+      io.waterleague.budget.service.BudgetService budget,
       DistrictRepository d,
       AccountRepository a,
       AccountService auth,
       io.waterleague.installation.repository.SiteCatalogRepository sites,
       io.waterleague.strategy.service.PlacementValidationService validation) {
     installations = i;
+    this.budget = budget;
     districts = d;
     accounts = a;
     this.auth = auth;
@@ -107,12 +110,9 @@ public class InstallationService {
     var own = installations.owned(account.id());
     if (own.stream().anyMatch(i -> i.cellId().equals(request.cellId())))
       throw new InstallationException(ErrorCode.SITE_OCCUPIED);
-    var all = new ArrayList<Placement>();
-    for (var i : own) all.add(new Placement(i.cellId(), i.facilityType(), i.areaM2()));
-    all.add(placement);
     var site = sites.require(district.id(), request.cellId());
     var cells = new HashMap<String, io.waterleague.strategy.entity.PlacementCell>();
-    for (var p : all) {
+    for (var p : List.of(placement)) {
       var c = sites.require(district.id(), p.cellId());
       var types = new HashSet<io.waterleague.strategy.entity.FacilityType>();
       for (var t : c.allowedTypes())
@@ -126,8 +126,8 @@ public class InstallationService {
             io.waterleague.strategy.entity.FacilityType.class);
     site.unitCosts()
         .forEach((t, c) -> costs.put(io.waterleague.strategy.entity.FacilityType.valueOf(t), c));
-    validation.validate(all, cells, costs, site.budget(), sites.counts().get(district.id()));
-    var cost = validation.validate(List.of(placement), cells, costs, site.budget(), 1);
+    var cost = validation.validate(List.of(placement), cells, costs, budget.limit(), 1);
+    budget.requireAvailable(cost);
     var value =
         new SharedInstallation(
             UUID.randomUUID(),
@@ -141,7 +141,7 @@ public class InstallationService {
             cost,
             Instant.now(),
             null);
-    // 사용자별 예산 잠금과 별개로 위치 고유 제약이 서로 다른 회원의 동시 설치를 직렬화한다.
+    // 공동 예산 잠금과 위치 고유 제약으로 초과 배정·중복 점유를 차단한다.
     try {
       installations.add(value);
     } catch (DuplicateKeyException e) {
@@ -161,6 +161,7 @@ public class InstallationService {
         || !value.ownerId().equals(account.id())
         || !value.districtId().equals(account.districtId()))
       throw new InstallationException(ErrorCode.ACCESS_DENIED);
+    budget.lock();
     if (!installations.remove(id, account.id(), Instant.now()))
       throw new InstallationException(ErrorCode.CONFLICT);
   }

@@ -27,3 +27,13 @@ class SharedConstraintTests(unittest.TestCase):
             new,_,_=resolve({'district_id':d,'cell_id':first,'model_hash':sites[d]['sha256']})
             self.assertEqual(prior['cells'][0]['maxAreaM2'],old[first]['maxAreaM2'])
             self.assertEqual(new['sharedSiteSource']['inflowPolicy'],'DIRECT_RAINFALL_ONLY')
+
+    def test_cost_revision_preserves_geometry_and_historical_price(self):
+        d='2410520';cell='G1'
+        old,_,_=resolve({'district_id':d,'cell_id':cell,'model_hash':site_catalog(2)[d]['sha256']})
+        new,_,_=resolve({'district_id':d,'cell_id':cell,'model_hash':site_catalog(3)[d]['sha256']})
+        self.assertEqual(new['cells'],old['cells'])
+        self.assertEqual(new['hydrology'],old['hydrology'])
+        self.assertEqual(old['unitCosts']['GREEN_ROOF'],260000)
+        self.assertEqual(new['unitCosts']['GREEN_ROOF'],350000)
+        self.assertEqual(new['costModel']['facilities']['GREEN_ROOF']['includes'],['구조안전진단','설계','공사'])

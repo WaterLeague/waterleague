@@ -460,3 +460,48 @@
     font-size: 8px;
   }
 }
+
+.cost-formula {
+  font-size: 11px;
+  color: #5d7166;
+  margin: -4px 0 12px;
+}
+.cost-fit {
+  width: 100%;
+  padding: 9px;
+  border: 1px solid #cbd7c3;
+  background: #f0f4e8;
+  color: #29453d;
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+.cost-fit:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.cost-estimate details {
+  margin: 12px 0 18px;
+  font-size: 10px;
+  line-height: 1.8;
+  color: #607361;
+}
+.cost-estimate summary {
+  cursor: pointer;
+}
+.cost-estimate a {
+  color: #345a41;
+}
+
+.budget-evidence {
+  margin: 18px 0;
+  font-size: 10px;
+  line-height: 1.8;
+  color: #607361;
+}
+.budget-evidence summary {
+  cursor: pointer;
+}
+.budget-evidence a {
+  color: #345a41;
+}

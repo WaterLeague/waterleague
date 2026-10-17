@@ -26,7 +26,26 @@ export const siteDto = z.object({
   maxAreaM2: z.number().positive(),
   allowedTypes: z.array(facility).min(1),
   unitCosts: z.record(facility, z.number().positive()),
-  budget: z.number().positive(),
+  costSourceSha256: z.string().regex(/^[a-f0-9]{64}$/),
+  costModel: z.object({
+    currency: z.literal('KRW'),
+    unit: z.literal('KRW_PER_SQUARE_METRE'),
+    facilities: z.record(
+      facility,
+      z.object({
+        unitCost: z.number().positive(),
+        sourceTitle: z.string(),
+        sourceUrl: z.url().startsWith('https://'),
+        sourceSha256: z.string().regex(/^[a-f0-9]{64}$/),
+        referenceYear: z.number().int(),
+        evidence: z.string(),
+        scope: z.string(),
+        includes: z.array(z.string()),
+        excludes: z.array(z.string()),
+        note: z.string(),
+      })
+    ),
+  }),
   sourceIds: z.array(z.string()),
   areaLimitBasis: z.literal('PUBLIC_FOOTPRINT_GEOMETRY').optional(),
   siteEligibility: z.literal('UNKNOWN').optional(),

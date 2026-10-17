@@ -38,6 +38,8 @@ class SharedInstallationTests {
   @Autowired AccountService auth;
   @Autowired InstallationService service;
   @Autowired JdbcTemplate db;
+  @Autowired io.waterleague.installation.repository.SiteCatalogRepository sites;
+  @Autowired io.waterleague.budget.service.BudgetService budget;
 
   @BeforeEach
   void clear() {
@@ -138,8 +140,68 @@ class SharedInstallationTests {
   }
 
   @Test
+  void concurrentMembersShareOneCityBudgetAndRemovalReleasesAllocation() throws Exception {
+    String district = "2410520";
+    var roofs =
+        sites.district(district).values().stream()
+            .filter(
+                v ->
+                    v.allowedTypes().contains("GREEN_ROOF")
+                        && v.maxAreaM2().compareTo(new BigDecimal("2000")) >= 0)
+            .limit(3)
+            .toList();
+    assertThat(roofs).hasSize(3);
+    var actors = List.of(account(district), account(district), account(district));
+    var start = new CountDownLatch(1);
+    try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
+      var futures = new ArrayList<Future<String>>();
+      for (int i = 0; i < 3; i++) {
+        final int index = i;
+        futures.add(
+            executor.submit(
+                () -> {
+                  start.await();
+                  try {
+                    service.install(
+                        actors.get(index).username(),
+                        new InstallRequest(
+                            district,
+                            roofs.get(index).cellId(),
+                            FacilityType.GREEN_ROOF,
+                            new BigDecimal("2000")));
+                    return "INSTALLED";
+                  } catch (DomainException e) {
+                    return e.code().name();
+                  }
+                }));
+      }
+      start.countDown();
+      var outcomes = new ArrayList<String>();
+      for (var f : futures) outcomes.add(f.get(10, TimeUnit.SECONDS));
+      assertThat(outcomes).containsExactlyInAnyOrder("INSTALLED", "INSTALLED", "BUDGET_EXCEEDED");
+    }
+    assertThat(budget.view().allocatedKrw()).isEqualByComparingTo("1400000000");
+    assertThat(budget.view().remainingKrw()).isEqualByComparingTo("600000000");
+    var installed = service.active().getFirst();
+    var owner =
+        actors.stream().filter(a -> a.id().equals(installed.ownerId())).findFirst().orElseThrow();
+    service.remove(owner.username(), installed.id());
+    assertThat(budget.view().remainingKrw()).isEqualByComparingTo("1300000000");
+  }
+
+  @Test
   void rejectsUnknownSitesAndInvalidAreaAndPreservesGlobalCoordinates() {
     var a = account("2410520");
+    var reference = service.site("2410520", "G1");
+    assertThat(reference.unitCosts().get("GREEN_ROOF")).isEqualByComparingTo("350000");
+    assertThat(
+            reference
+                .costModel()
+                .path("facilities")
+                .path("GREEN_ROOF")
+                .path("referenceYear")
+                .asInt())
+        .isEqualTo(2025);
     assertThatThrownBy(
             () ->
                 service.install(
