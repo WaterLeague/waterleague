@@ -4,8 +4,9 @@ WORKDIR /source
 RUN curl --fail --location --silent --show-error --max-time 90 https://api.github.com/repos/USEPA/Stormwater-Management-Model/tarball/7952ca837988b1c32f791812eccc9fd64547e093 -o source.tar.gz \
     && echo '3f76a199573088ce47ff02491c529afb73d9953ee9d948dfc89dcd4981b4c0c0  source.tar.gz' | sha256sum -c - \
     && tar -xzf source.tar.gz --strip-components=1 \
-    && cmake -S . -B /build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/opt/swmm -DCMAKE_DISABLE_FIND_PACKAGE_OpenMP=TRUE \
-    && cmake --build /build -j 2 && cmake --install /build
+    && cmake -S . -B /build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/opt/swmm '-DCMAKE_INSTALL_RPATH=$ORIGIN' \
+    && cmake --build /build -j 2 && cmake --install /build \
+    && cp -L "$(gcc -print-file-name=libgomp.so.1)" /opt/swmm/bin/libgomp.so.1
 COPY deploy/requirements.lock /source/requirements.lock
 RUN pip install --no-cache-dir --only-binary=:all: --require-hashes --prefix=/dependencies -r /source/requirements.lock
 

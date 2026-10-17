@@ -20,13 +20,17 @@ API는 Spring config tree, 워커는 `_FILE` 설정으로 DB 연결 비밀을 �
 
 로컬 검증 명령: 저장소 루트에서 `python3 scripts/verify_containers.py`. Docker 엔진과 비root 계정 필요. 임의 프로젝트 이름·비공개 임시 폴더·loopback 임의 포트를 사용하고 기존 `.env.local`은 읽거나 수정하지 않음. `deploy/compose.yml`은 로컬 검증 구성. `Caddyfile.public`은 도메인 확보 후 검증할 초안이며 공개 포트/인증서 설정은 아직 운영 완료 범위 아님.
 
-워커 Python 3.14 의존성은 `deploy/requirements.lock`에 직접·전이 패키지 버전과 Linux amd64/arm64 wheel 해시 고정, `pip --require-hashes --only-binary` 사용. SWMM은 EPA 고정 commit tarball SHA256 확인 후 빌드, 워커당 단일 작업에 맞춰 OpenMP 비활성화. 베이스 이미지 digest·Python wheel·Maven/pnpm 버전은 고정하되 빌드 단계 OS 도구 패키지까지 비트 단위 재현을 보장하지는 않음.
+워커 Python 3.14 의존성은 `deploy/requirements.lock`에 직접·전이 패키지 버전과 Linux amd64/arm64 wheel 해시 고정, `pip --require-hashes --only-binary` 사용. SWMM은 EPA 고정 commit tarball SHA256 확인 후 기존 실행과 동일하게 OpenMP로 빌드, 컴파일러가 연결한 libgomp 사본과 `$ORIGIN` RPATH 보존. 공식 CMake에서 OpenMP 탐색만 비활성화하면 링크 대상 오류가 발생하여 지원되는 기본 빌드 유지. 모델의 `THREADS 1`과 워커당 단일 작업 유지. 베이스 이미지 digest·Python wheel·Maven/pnpm 버전은 고정하되 빌드 단계 OS 도구 패키지까지 비트 단위 재현을 보장하지는 않음.
 
 Corretto 빌드 단계에 unzip 설치: 미설치 시 Maven Wrapper가 URL을 tar.gz로 바꾸지만 저장소에 고정한 ZIP SHA256과는 달라 첫 CI 빌드 실패. 압축 형식을 ZIP으로 유지하며 해시 검증은 제거하지 않음. 런타임 이미지는 빌드 단계의 추가 패키지를 복사하지 않음.
 
 프런트 빌드 단계는 저장소의 `frontend/`, `data/`, `simulation/tests/fixtures/` 상대 위치 유지. 타입 검사에서 참조하는 고정 공개 모델·CPU 기준 JSON·후보 생성 fixture만 allowlist에 추가, 런타임 정적 이미지에는 완성된 dist만 복사. Caddy는 전달한 Forwarded와 X-Forwarded-Port/Prefix를 제거하고 주소·프로토콜·호스트를 직접 지정.
 
+비밀 경로 기본값은 `/run/secrets/`, 네이티브 격리 마이그레이션 시험에 한해 `WATERLEAGUE_SECRET_DIR`로 비공개 경로 지정 가능. 필수 config tree 부재 시 시작 실패 유지.
+
 초기 확인: 보안/가입/컨테이너 정책 Java 시험 8건, 파일 비밀 Python 시험 4건, Compose 문법 검사 통과. macOS Docker 엔진 연결 실패로 실제 컨테이너 검증은 아직 미완료. CI에 Linux amd64/arm64 독립 실행을 추가하여 결과 확인 예정. 아래 완료 증거는 실행 성공 후 갱신.
+
+네이티브 보조 검증: 별도 임시 PostgreSQL 18 클러스터·임의 포트에서 관리자/소유자/API/워커 역할 생성, 실제 패키지의 `container,migrate` 비웹 실행과 전체 마이그레이션·정상 종료, 명시적 권한 목록 부여 통과. API/워커 DDL·Flyway 열람 및 워커 MFA 열람 거부, 공용 큐 잠금·배치 읽기·상태 갱신 허용 확인. 시험 클러스터 종료·삭제, 기존 55432 개발 DB 미접속. 컨테이너 파일 권한·HTTPS·네트워크 확인을 대체하지 않음.
 
 ## HTTPS와 웹 응답
 
