@@ -3459,3 +3459,21 @@ a:focus-visible {
   text-decoration: underline;
   pointer-events: auto;
 }
+
+@media (min-width: 701px) {
+  .city-sidebar {
+    max-height: calc(100dvh - 96px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .city-stage {
+    position: sticky;
+    top: 96px;
+    max-height: calc(100dvh - 96px);
+  }
+}
+.city-districts button small {
+  font-size: 9px;
+  opacity: 0.65;
+  margin-left: 4px;
+}

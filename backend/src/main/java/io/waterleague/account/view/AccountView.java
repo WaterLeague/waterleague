@@ -9,4 +9,6 @@ public record AccountView(
     String role,
     String memberType,
     String approvalStatus,
-    UUID organizationId) {}
+    UUID organizationId,
+    String districtId,
+    String affiliationType) {}

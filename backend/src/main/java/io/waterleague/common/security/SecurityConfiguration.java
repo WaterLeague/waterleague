@@ -42,6 +42,8 @@ public class SecurityConfiguration {
                         HttpMethod.GET,
                         "/api/v1/catalog",
                         "/api/v1/districts",
+                        "/api/v1/installations",
+                        "/api/v1/installations/sites",
                         "/api/v1/rainfall/live",
                         "/api/v1/maps",
                         "/api/v1/lab",
@@ -70,6 +72,7 @@ public class SecurityConfiguration {
                     .authenticated()
                     .requestMatchers(
                         "/api/v1/strategies/**",
+                        "/api/v1/installations/**",
                         "/api/v1/simulations/**",
                         "/api/v1/comparisons/**",
                         "/api/v1/utilization/**",

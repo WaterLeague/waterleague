@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
+import { DistrictFields } from '../../district/view/DistrictFields';
+import type { AffiliationType } from '../../district/entity/district';
 import { X, ArrowRight } from 'lucide-react';
 import { authenticate, beginEnrollment, confirmEnrollment } from '../repository/accountRepository';
 import { type Account, type MemberType, memberTypeNames } from '../entity/account';
@@ -21,6 +23,8 @@ export function AuthDialog({
     [memberType, setMemberType] = useState<MemberType>('PLAYER'),
     [organizationName, setOrganizationName] = useState(''),
     [purpose, setPurpose] = useState(''),
+    [districtId, setDistrictId] = useState(''),
+    [affiliationType, setAffiliationType] = useState<AffiliationType>('RESIDENT'),
     [enrollment, setEnrollment] = useState<{
       secret: string;
       issuer: string;
@@ -43,7 +47,7 @@ export function AuthDialog({
       <h2 id="auth-title">
         {mode === 'login' ? '다시, 더 나은 설계로.' : '도시를 바꾸는 첫 설계.'}
       </h2>
-      <p>나만의 설계를 저장하고 같은 조건에서 기록에 도전하세요.</p>
+      <p>우리 구에 시설을 설치하고 서울 주간 리그에 함께 도전하세요.</p>
       {!enrollment && (
         <div className="auth-tabs">
           <button className={mode === 'login' ? 'active' : ''} onClick={() => setMode('login')}>
@@ -69,6 +73,8 @@ export function AuthDialog({
             } else {
               const account = await authenticate(mode, name, password, otp, {
                 memberType,
+                districtId,
+                affiliationType,
                 organizationName: memberType === 'PLAYER' ? '' : organizationName,
                 purpose: memberType === 'PLAYER' ? '' : purpose,
               });
@@ -140,6 +146,12 @@ export function AuthDialog({
                     ))}
                   </select>
                 </label>
+                <DistrictFields
+                  districtId={districtId}
+                  affiliationType={affiliationType}
+                  onDistrict={setDistrictId}
+                  onType={setAffiliationType}
+                />
                 {memberType !== 'PLAYER' && (
                   <>
                     <label>

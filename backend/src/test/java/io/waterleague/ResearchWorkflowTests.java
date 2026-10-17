@@ -915,7 +915,11 @@ class ResearchWorkflowTests {
             "organizationName",
             "가입 검토 시험 기업",
             "purpose",
-            "빗물 설계 연구");
+            "빗물 설계 연구",
+            "districtId",
+            "2410520",
+            "affiliationType",
+            "AFFILIATED");
     var pending = ok(applicant, "POST", "/auth/register", registration, 200);
     assertThat(pending.get("role").asString()).isEqualTo("MEMBER");
     assertThat(pending.get("approvalStatus").asString()).isEqualTo("PENDING");

@@ -210,7 +210,7 @@ def check_http(stack, state):
         'X-Forwarded-Port': '80', 'X-Forwarded-Prefix': '/forged'})
     assert headers.get('Strict-Transport-Security')
     name, password = 'tls_' + uuid.uuid4().hex[:12], secrets.token_urlsafe(24)
-    member = client.api('/auth/register', {'username': name, 'password': password, 'memberType': 'PLAYER',
+    member = client.api('/auth/register', {'username': name, 'password': password, 'memberType': 'PLAYER', 'districtId': '2410520', 'affiliationType': 'AFFILIATED',
                                          'organizationName': '', 'purpose': ''})
     cookies = [c for c in client.cookies if c.name == '__Host-waterleague']
     assert len(cookies) == 1

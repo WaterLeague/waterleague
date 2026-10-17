@@ -35,6 +35,10 @@ public enum ErrorCode {
   RAINFALL_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "실시간 강우를 조회하지 못했습니다. 잠시 후 다시 시도해 주세요"),
   RAINFALL_ACCESS_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "실시간 강우 API 인증 설정 확인이 필요합니다"),
   RAINFALL_DATA_INVALID(HttpStatus.SERVICE_UNAVAILABLE, "실시간 강우 응답의 관측 시각·형식을 확인하지 못했습니다"),
+  DISTRICT_REQUIRED(HttpStatus.CONFLICT, "소속 구를 먼저 선택해 주세요"),
+  DISTRICT_ALREADY_SELECTED(HttpStatus.CONFLICT, "이미 소속 구가 선택됐습니다"),
+  DISTRICT_ACCESS_DENIED(HttpStatus.FORBIDDEN, "자신의 소속 구에만 설치할 수 있습니다"),
+  SITE_OCCUPIED(HttpStatus.CONFLICT, "이미 시설이 설치된 위치입니다. 다른 위치를 선택해 주세요"),
   INTERNAL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "요청을 처리하지 못했습니다");
 
   private final HttpStatus status;

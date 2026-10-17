@@ -8,4 +8,6 @@ public record RegistrationRequest(
     @NotNull @Size(min = 12, max = 128) String password,
     @NotNull MemberType memberType,
     @NotNull @Size(max = 100) String organizationName,
-    @NotNull @Size(max = 2000) String purpose) {}
+    @NotNull @Size(max = 2000) String purpose,
+    @NotBlank @Pattern(regexp = "[0-9]{7}") String districtId,
+    @NotNull @Pattern(regexp = "RESIDENT|AFFILIATED") String affiliationType) {}

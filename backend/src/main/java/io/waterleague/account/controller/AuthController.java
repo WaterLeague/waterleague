@@ -76,6 +76,12 @@ public class AuthController {
     return AccountMapper.view(accounts.current(p.getName()));
   }
 
+  @PostMapping("/district")
+  public AccountView selectDistrict(
+      Principal p, @Valid @RequestBody io.waterleague.account.dto.DistrictSelectionRequest dto) {
+    return AccountMapper.view(accounts.selectDistrict(p.getName(), dto));
+  }
+
   @PostMapping("/mfa/enrollment")
   public org.springframework.http.ResponseEntity<?> enrollment(
       @Valid @RequestBody AuthRequest dto, HttpServletRequest req, HttpServletResponse res) {

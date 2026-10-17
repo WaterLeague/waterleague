@@ -13,7 +13,37 @@ public record Account(
     UUID organizationId,
     String organizationName,
     String applicationPurpose,
-    boolean enabled) {
+    boolean enabled,
+    String districtId,
+    String affiliationType) {
+  public Account(
+      UUID id,
+      String username,
+      String displayName,
+      String passwordHash,
+      String role,
+      String memberType,
+      String approvalStatus,
+      UUID organizationId,
+      String organizationName,
+      String applicationPurpose,
+      boolean enabled) {
+    this(
+        id,
+        username,
+        displayName,
+        passwordHash,
+        role,
+        memberType,
+        approvalStatus,
+        organizationId,
+        organizationName,
+        applicationPurpose,
+        enabled,
+        null,
+        null);
+  }
+
   public boolean usable() {
     return enabled && approvalStatus.equals("APPROVED");
   }

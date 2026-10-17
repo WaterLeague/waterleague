@@ -7,6 +7,8 @@ export interface Account {
   memberType: MemberType | null;
   approvalStatus: 'PENDING' | 'APPROVED' | 'REJECTED' | 'SUSPENDED';
   organizationId: string | null;
+  districtId: string | null;
+  affiliationType: 'RESIDENT' | 'AFFILIATED' | null;
 }
 export const memberTypeNames: Record<MemberType, string> = {
   PLAYER: '플레이어',

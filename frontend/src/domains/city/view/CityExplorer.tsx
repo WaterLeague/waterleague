@@ -1,19 +1,26 @@
 import { lazy, Suspense, useCallback, useState, useRef } from 'react';
-import { ArrowRight, Search, RotateCcw, MapPin, Layers3 } from 'lucide-react';
+import { Search, RotateCcw, MapPin, Layers3 } from 'lucide-react';
 import { useCity, useCityTiles } from '../controller/useCity';
 import type { City, CityFocus } from '../entity/city';
 import type { CityPlayRegion } from '../dto/cityPlayDto';
 import { ErrorBoundary } from '../../../shared/exception/ErrorBoundary';
 import { polygonPath } from '../../catalog/service/mapGeometryService';
+import type { Account } from '../../account/entity/account';
+import { useInstallations } from '../../installation/controller/useInstallations';
+import { SharedDistrictPanel } from '../../installation/view/SharedDistrictPanel';
+import { siteKey } from '../../installation/entity/installation';
 import { LiveRainfallPanel } from '../../rainfall/view/LiveRainfallPanel';
 const CityScene = lazy(() => import('./CityScene'));
-type PlayProps = { busy: boolean; onPlay: (modelHash?: string) => void };
+type PlayProps = { account: Account | null; onLogin: () => void; onAccount: (a: Account) => void };
 function Explorer({
   city,
   regions,
-  onPlay,
-  busy,
+  account,
+  onLogin,
+  onAccount,
 }: { city: City; regions: CityPlayRegion[] } & PlayProps) {
+  const shared = useInstallations();
+  const [selectedSite, setSelectedSite] = useState('');
   const [selected, setSelected] = useState(''),
     [query, setQuery] = useState(''),
     [flat, setFlat] = useState(false),
@@ -35,14 +42,22 @@ function Explorer({
     setFailed(true);
     setFlat(true);
   }, []);
+  function selectSite(key: string) {
+    const site = shared.sites.find((s) => siteKey(s) === key);
+    if (!site) return;
+    setSelected(site.districtId);
+    setSelectedSite(site.cellId);
+    setFocus((p) => ({ center: site.center, distance: 260, key: p.key + 1 }));
+  }
   function select(id: string) {
     const district = city.districts.find((d) => d.id === id);
     if (!district) return;
     const playRegion = regions.find((r) => r.districtId === id);
     setSelected(id);
+    setSelectedSite('');
     setFocus((p) => ({
       center: playRegion?.center ?? district.center,
-      distance: playRegion ? 2400 : 4800,
+      distance: playRegion ? 1000 : 4800,
       key: p.key + 1,
     }));
   }
@@ -51,21 +66,25 @@ function Explorer({
     setFocus((p) => ({ center: [0, 0], distance: 35000, key: p.key + 1, overview: true }));
   }
   const district = city.districts.find((d) => d.id === selected);
-  const region = regions.find((r) => r.districtId === selected);
   const [west, south, east, north] = city.bounds;
   const plan = (
     <svg
       className="city-plan"
-      viewBox={`${west - 1000} ${-north - 1000} ${east - west + 2000} ${north - south + 2000}`}
+      viewBox={
+        focus.overview
+          ? `${west - 1000} ${-north - 1000} ${east - west + 2000} ${north - south + 2000}`
+          : `${focus.center[0] - focus.distance} ${-focus.center[1] - focus.distance} ${focus.distance * 2} ${focus.distance * 2}`
+      }
       role="group"
       aria-label="서울 25개 구 플레이 지도"
     >
-      <path d={polygonPath(city.boundary)} fill="#dfe3cf" />
+      <path d={polygonPath(city.boundary)} fill="#eef0e6" />
       {city.districts.map((d) => (
         <path
           key={d.id}
           d={polygonPath(d.polygons)}
           fill={d.id === selected ? '#b6cda4' : '#dfe3cf'}
+          opacity={!account?.districtId || account.districtId === d.id ? 1 : 0.35}
           stroke="#809478"
           strokeWidth={30}
           onClick={() => select(d.id)}
@@ -84,12 +103,36 @@ function Explorer({
           x={d.center[0]}
           y={-d.center[1]}
           textAnchor="middle"
-          fontSize={420}
+          fontSize={focus.overview ? 420 : focus.distance * 0.035}
           fill="#233c35"
         >
           {d.name}
         </text>
       ))}
+      {shared.sites
+        .filter(
+          (site) =>
+            site.districtId === selected ||
+            shared.installations.some((i) => siteKey(i) === siteKey(site))
+        )
+        .map((site) => {
+          const installed = shared.installations.some((i) => siteKey(i) === siteKey(site));
+          return (
+            <path
+              key={siteKey(site)}
+              d={polygonPath([[site.coordinates]])}
+              fill={installed ? '#327f56' : '#d7a743'}
+              stroke="#183c2d"
+              strokeWidth={2}
+              opacity={!account?.districtId || account.districtId === site.districtId ? 1 : 0.35}
+              onClick={() => selectSite(siteKey(site))}
+            >
+              <title>
+                {site.name} · {installed ? '설치됨' : '빈 위치'}
+              </title>
+            </path>
+          );
+        })}
       {regions.map((r) => (
         <g
           key={r.mapId}
@@ -109,10 +152,10 @@ function Explorer({
           <circle
             cx={r.center[0]}
             cy={-r.center[1]}
-            r={r.districtId === selected ? 230 : 160}
+            r={focus.overview ? 160 : 8}
             fill={r.districtId === selected ? '#173d29' : '#52734b'}
             stroke="#fffdf2"
-            strokeWidth={60}
+            strokeWidth={focus.overview ? 60 : 2}
           />
           <title>{r.districtName} · 대표 블록 플레이 가능</title>
         </g>
@@ -130,9 +173,9 @@ function Explorer({
             <em>바꾸는 선택.</em>
           </h1>
           <p>
-            플레이할 구를 고르고
+            우리 구의 빗물을 줄이고
             <br />
-            대표 블록의 빗물 설계에 도전하세요.
+            서울의 주간 순위에 함께 도전하세요.
           </p>
         </div>
         <label className="city-search">
@@ -145,8 +188,8 @@ function Explorer({
           />
         </label>
         <LiveRainfallPanel districtId={selected} />
-        <p className="city-play-count">{regions.length}개 구 · 대표 블록 플레이 가능</p>
-        <div className="city-districts" aria-label="플레이할 서울 자치구 선택">
+        <p className="city-play-count">25개 구 · 공유 시설 {shared.installations.length}곳</p>
+        <div className="city-districts" aria-label="서울 자치구 상태 조회">
           {city.districts
             .filter((d) => d.name.includes(query.trim()))
             .map((d) => (
@@ -154,9 +197,10 @@ function Explorer({
                 key={d.id}
                 aria-pressed={d.id === selected}
                 onClick={() => select(d.id)}
-                title={`${d.name} 대표 블록 선택`}
+                title={`${d.name} 설치 상태 조회`}
               >
-                {d.name}
+                {d.name}{' '}
+                <small>{shared.installations.filter((i) => i.districtId === d.id).length}곳</small>
               </button>
             ))}
         </div>
@@ -164,40 +208,29 @@ function Explorer({
           <div className="city-selected">
             <MapPin size={15} />
             <strong>{district.name}</strong>
-            <span>대표 블록 선택됨</span>
+            <span>{account?.districtId === selected ? '내 소속 구' : '설치 상태 조회'}</span>
           </div>
         )}
-        <div className="city-mission">
-          <span className="city-mission-kicker">{region ? '선택한 지역 도전' : '빠른 시작'}</span>
-          <h2>{region ? `${region.districtName} · 대표 블록` : '성수 · 연무장길'}</h2>
-          <p>
-            {region ? '옥상 8곳 · 지상 5곳' : '관측 강우와 3종 시설로'}
-            <br />
-            {region?.defaultRainfall
-              ? `${region.defaultRainfall.stationName} 관측소 · ${region.defaultRainfall.distanceKm} km`
-              : '성동 관측 강우로 설계에 도전하세요.'}
-          </p>
-          <button disabled={busy} onClick={() => onPlay(region?.defaultModelHash)}>
-            {busy ? '도전 준비 중' : `${region?.districtName ?? '성수'}에서 도전`}{' '}
-            <ArrowRight size={18} />
+        {account?.districtId && (
+          <button className="city-locate" onClick={() => select(account.districtId!)}>
+            내 소속 구로 이동 <MapPin size={13} />
           </button>
-          <button
-            className="city-locate"
-            onClick={() => {
-              setFocus((p) => ({
-                center: region?.center ?? city.playAreas[0].center,
-                distance: 800,
-                key: p.key + 1,
-              }));
-            }}
-          >
-            지도에서 보기 <MapPin size={13} />
-          </button>
-        </div>
-        <small className="city-model-note">
-          25개 구의 대표 블록에서 플레이할 수 있습니다. 인근 관측 강우와 성동 공통 강우를 선택하며,
-          구 전체 유역 계산은 아닙니다.
-        </small>
+        )}
+        <SharedDistrictPanel
+          account={account}
+          districtId={selected}
+          districtName={district?.name ?? ''}
+          sites={shared.sites.filter((s) => s.districtId === selected)}
+          installations={shared.installations.filter((i) => i.districtId === selected)}
+          selected={selectedSite}
+          onSelect={(id) => selectSite(`${selected}:${id}`)}
+          busy={shared.busy}
+          error={shared.error}
+          onInstall={shared.install}
+          onRemove={shared.remove}
+          onLogin={onLogin}
+          onAccount={onAccount}
+        />
       </aside>
       <section className="city-stage" aria-label="서울 전역 3D 지도">
         {flat ? (
@@ -221,6 +254,11 @@ function Explorer({
                 onCamera={onCamera}
                 labels={labels.current}
                 onUnavailable={unavailable}
+                ownDistrictId={account?.districtId ?? null}
+                sites={shared.sites}
+                installations={shared.installations}
+                selectedSite={selectedSite}
+                onSite={selectSite}
               />
             </Suspense>
           </ErrorBoundary>
@@ -238,7 +276,8 @@ function Explorer({
                 onClick={() => select(d.id)}
               >
                 <span aria-hidden="true">● </span>
-                {d.name}
+                {d.name}{' '}
+                <small>{shared.installations.filter((i) => i.districtId === d.id).length}곳</small>
               </button>
             ))}
             {regions.map((r) => (
@@ -249,18 +288,18 @@ function Explorer({
                   else labels.current.delete(r.mapId);
                 }}
                 className={`city-play-pin${r.districtId === selected ? ' selected' : ''}`}
-                disabled={busy}
-                onClick={() => onPlay(r.defaultModelHash)}
-                aria-label={`${r.districtName} 대표 블록에서 도전`}
+                onClick={() => select(r.districtId)}
+                aria-label={`${r.districtName} 공유 설치 상태 보기`}
               >
-                ● {r.districtName} 플레이 →
+                ● {r.districtName} ·{' '}
+                {shared.installations.filter((i) => i.districtId === r.districtId).length}곳
               </button>
             ))}
           </div>
         )}
         <div className="city-map-top">
           <span>
-            <Layers3 size={14} /> {regions.length}개 구 플레이
+            <Layers3 size={14} /> 25개 구 · 공동 지도
           </span>
           <div>
             <button
@@ -315,7 +354,7 @@ function Explorer({
     </main>
   );
 }
-export function CityExplorer({ onPlay, busy }: PlayProps) {
+export function CityExplorer({ account, onLogin, onAccount }: PlayProps) {
   const { city, regions, error, retry } = useCity();
   if (!city)
     return (
@@ -329,5 +368,13 @@ export function CityExplorer({ onPlay, busy }: PlayProps) {
         )}
       </main>
     );
-  return <Explorer city={city} regions={regions} onPlay={onPlay} busy={busy} />;
+  return (
+    <Explorer
+      city={city}
+      regions={regions}
+      account={account}
+      onLogin={onLogin}
+      onAccount={onAccount}
+    />
+  );
 }

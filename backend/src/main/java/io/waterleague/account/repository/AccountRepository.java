@@ -22,7 +22,9 @@ public class AccountRepository {
               rs.getObject("organization_id", UUID.class),
               rs.getString("requested_organization_name"),
               rs.getString("application_purpose"),
-              rs.getBoolean("enabled"));
+              rs.getBoolean("enabled"),
+              rs.getString("district_id"),
+              rs.getString("affiliation_type"));
 
   public AccountRepository(JdbcTemplate db) {
     this.db = db;
@@ -39,8 +41,8 @@ public class AccountRepository {
   public void add(Account a) {
     db.update(
         "INSERT INTO"
-            + " accounts(id,username,display_name,password_hash,role,member_type,approval_status,organization_id,requested_organization_name,application_purpose,enabled,admin_slot,created_at)"
-            + " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            + " accounts(id,username,display_name,password_hash,role,member_type,approval_status,organization_id,requested_organization_name,application_purpose,enabled,admin_slot,created_at,district_id,affiliation_type)"
+            + " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
         a.id(),
         a.username(),
         a.displayName(),
@@ -53,6 +55,27 @@ public class AccountRepository {
         a.applicationPurpose(),
         a.enabled(),
         a.role().equals("ADMIN") ? 1 : null,
-        java.sql.Timestamp.from(Instant.now()));
+        java.sql.Timestamp.from(Instant.now()),
+        a.districtId(),
+        a.affiliationType());
+  }
+
+  public boolean selectDistrict(UUID id, String district, String type) {
+    return db.update(
+            "UPDATE accounts SET district_id=?,affiliation_type=? WHERE id=? AND district_id IS"
+                + " NULL AND role='MEMBER' AND approval_status='APPROVED' AND enabled=TRUE",
+            district,
+            type,
+            id)
+        == 1;
+  }
+
+  public Account lock(UUID id) {
+    return db.query("SELECT * FROM accounts WHERE id=? FOR UPDATE", mapper, id).stream()
+        .findFirst()
+        .orElseThrow(
+            () ->
+                new io.waterleague.common.exception.DomainException(
+                    io.waterleague.common.exception.ErrorCode.AUTHENTICATION_REQUIRED));
   }
 }

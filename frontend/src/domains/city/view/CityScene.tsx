@@ -10,8 +10,10 @@ import { polygonShapes } from '../../catalog/service/mapGeometryService';
 import { watchContextLoss } from '../../catalog/service/sceneLifecycleService';
 import { positionSceneLabels } from '../../catalog/service/sceneLabelService';
 
+import type { SharedSite, SharedInstallation } from '../../installation/entity/installation';
+import { siteKey } from '../../installation/entity/installation';
 type CameraState = { center: [number, number]; distance: number };
-function Buildings({ buildings }: { buildings: CityBuilding[] }) {
+function Buildings({ buildings, opacity = 1 }: { buildings: CityBuilding[]; opacity?: number }) {
   const geometry = useMemo(() => {
     const parts = buildings.map(
       (b) =>
@@ -28,7 +30,13 @@ function Buildings({ buildings }: { buildings: CityBuilding[] }) {
   useEffect(() => () => geometry?.dispose(), [geometry]);
   return geometry ? (
     <mesh geometry={geometry} rotation={[-Math.PI / 2, 0, 0]}>
-      <meshStandardMaterial color="#d9d8cb" roughness={0.85} />
+      <meshStandardMaterial
+        color="#d9d8cb"
+        roughness={0.85}
+        transparent={opacity < 1}
+        opacity={opacity}
+        depthWrite={opacity === 1}
+      />
     </mesh>
   ) : null;
 }
@@ -36,16 +44,39 @@ function Surface({
   polygons,
   color,
   height = 0,
+  opacity = 1,
+  onClick,
 }: {
   polygons: City['boundary'];
   color: string;
   height?: number;
+  opacity?: number;
+  onClick?: () => void;
 }) {
   const geometry = useMemo(() => new THREE.ShapeGeometry(polygonShapes(polygons)), [polygons]);
   useEffect(() => () => geometry.dispose(), [geometry]);
   return (
-    <mesh geometry={geometry} rotation={[-Math.PI / 2, 0, 0]} position={[0, height, 0]}>
-      <meshStandardMaterial color={color} side={THREE.DoubleSide} roughness={1} />
+    <mesh
+      geometry={geometry}
+      rotation={[-Math.PI / 2, 0, 0]}
+      position={[0, height, 0]}
+      onClick={
+        onClick
+          ? (event) => {
+              event.stopPropagation();
+              onClick();
+            }
+          : undefined
+      }
+    >
+      <meshStandardMaterial
+        color={color}
+        side={THREE.DoubleSide}
+        roughness={1}
+        transparent={opacity < 1}
+        opacity={opacity}
+        depthWrite={opacity === 1}
+      />
     </mesh>
   );
 }
@@ -93,7 +124,7 @@ function Lines({ city, selected }: { city: City; selected: string }) {
       <lineSegments geometry={geometry}>
         <lineBasicMaterial color="#889b81" transparent opacity={0.65} />
       </lineSegments>
-      {district && <Surface polygons={district.polygons} height={1} color="#cbd9bd" />}
+      {district && <Surface polygons={district.polygons} height={0.01} color="#cbd9bd" />}
     </>
   );
 }
@@ -212,6 +243,11 @@ export default function CityScene({
   onCamera,
   labels,
   onUnavailable,
+  ownDistrictId,
+  sites,
+  installations,
+  selectedSite,
+  onSite,
 }: {
   city: City;
   regions: CityPlayRegion[];
@@ -222,6 +258,11 @@ export default function CityScene({
   onCamera: (state: CameraState) => void;
   labels: Map<string, HTMLElement>;
   onUnavailable: () => void;
+  ownDistrictId: string | null;
+  sites: SharedSite[];
+  installations: SharedInstallation[];
+  selectedSite: string;
+  onSite: (key: string) => void;
 }) {
   const overview = useMemo(() => {
     const loaded = new Set(tiles.flatMap((t) => t.buildings.map((b) => b.id)));
@@ -247,10 +288,48 @@ export default function CityScene({
           height={s.kind === 'water' ? 4 : 2}
         />
       ))}
-      <Buildings buildings={overview} />
+      <DistrictBuildings buildings={overview} city={city} ownDistrictId={ownDistrictId} />
       {tiles.map((t) => (
-        <Buildings key={t.id} buildings={t.buildings} />
+        <DistrictBuildings
+          key={t.id}
+          buildings={t.buildings}
+          city={city}
+          ownDistrictId={ownDistrictId}
+        />
       ))}
+      {ownDistrictId &&
+        city.districts.map((d) => (
+          <Surface
+            key={d.id}
+            polygons={d.polygons}
+            height={0.02}
+            color={d.id === ownDistrictId ? '#b3d29a' : '#f8f8ef'}
+            opacity={d.id === ownDistrictId ? 0.8 : 0.3}
+          />
+        ))}
+      {sites
+        .filter(
+          (site) =>
+            site.districtId === selected || installations.some((i) => siteKey(i) === siteKey(site))
+        )
+        .map((site) => {
+          const installed = installations.some((i) => siteKey(i) === siteKey(site));
+          return (
+            <SiteSurface
+              key={siteKey(site)}
+              site={site}
+              color={
+                site.districtId === selected && site.cellId === selectedSite
+                  ? '#ffd56d'
+                  : installed
+                    ? '#367c51'
+                    : '#d4b46d'
+              }
+              opacity={!ownDistrictId || site.districtId === ownDistrictId ? 1 : 0.35}
+              onClick={() => onSite(siteKey(site))}
+            />
+          );
+        })}
       <ProjectedLabels
         city={city}
         regions={regions}
@@ -265,5 +344,66 @@ export default function CityScene({
         onUnavailable={onUnavailable}
       />
     </Canvas>
+  );
+}
+
+function SiteSurface({
+  site,
+  color,
+  opacity,
+  onClick,
+}: {
+  site: SharedSite;
+  color: string;
+  opacity: number;
+  onClick: () => void;
+}) {
+  const polygons = useMemo(() => [[site.coordinates]], [site]);
+  return (
+    <Surface
+      polygons={polygons}
+      height={site.heightM + 0.8}
+      color={color}
+      opacity={opacity}
+      onClick={onClick}
+    />
+  );
+}
+function inRing([x, y]: [number, number], ring: [number, number][]) {
+  let inside = false;
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+    const [a, b] = ring[i],
+      [c, d] = ring[j];
+    if (b > y !== d > y && x < ((c - a) * (y - b)) / (d - b) + a) inside = !inside;
+  }
+  return inside;
+}
+function DistrictBuildings({
+  buildings,
+  city,
+  ownDistrictId,
+}: {
+  buildings: CityBuilding[];
+  city: City;
+  ownDistrictId: string | null;
+}) {
+  const groups = useMemo(() => {
+    const district = city.districts.find((d) => d.id === ownDistrictId);
+    if (!district) return [buildings, []];
+    const own: CityBuilding[] = [],
+      other: CityBuilding[] = [];
+    for (const b of buildings) {
+      const match = district.polygons.some(
+        (p) => inRing(b.center, p[0]) && !p.slice(1).some((hole) => inRing(b.center, hole))
+      );
+      (match ? own : other).push(b);
+    }
+    return [own, other];
+  }, [buildings, city, ownDistrictId]);
+  return (
+    <>
+      <Buildings buildings={groups[0]} />
+      <Buildings buildings={groups[1]} opacity={0.3} />
+    </>
   );
 }

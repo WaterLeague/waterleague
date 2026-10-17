@@ -16,14 +16,20 @@ public class AccountService {
   private final AccountRepository accounts;
   private final PasswordEncoder encoder;
   private final String dummy;
+  private final io.waterleague.district.repository.DistrictRepository districts;
 
-  public AccountService(AccountRepository a, PasswordEncoder e) {
+  public AccountService(
+      AccountRepository a,
+      PasswordEncoder e,
+      io.waterleague.district.repository.DistrictRepository districts) {
     accounts = a;
+    this.districts = districts;
     encoder = e;
     dummy = e.encode(UUID.randomUUID().toString());
   }
 
   public Account register(RegistrationRequest dto) {
+    districts.require(dto.districtId());
     boolean player = dto.memberType() == MemberType.PLAYER;
     if (player
         ? (!dto.organizationName().isBlank() || !dto.purpose().isBlank())
@@ -41,13 +47,24 @@ public class AccountService {
             null,
             dto.organizationName().strip(),
             dto.purpose().strip(),
-            true);
+            true,
+            dto.districtId(),
+            dto.affiliationType());
     try {
       accounts.add(account);
     } catch (DuplicateKeyException e) {
       throw new DomainException(ErrorCode.ACCOUNT_UNAVAILABLE);
     }
     return account;
+  }
+
+  public Account selectDistrict(
+      String username, io.waterleague.account.dto.DistrictSelectionRequest dto) {
+    var account = current(username);
+    districts.require(dto.districtId());
+    if (!accounts.selectDistrict(account.id(), dto.districtId(), dto.affiliationType()))
+      throw new DomainException(ErrorCode.DISTRICT_ALREADY_SELECTED);
+    return current(username);
   }
 
   public Account login(AuthRequest dto) {

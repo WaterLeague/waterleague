@@ -54,7 +54,11 @@ class AccountFlowTests {
                 "organizationName",
                 "",
                 "purpose",
-                ""));
+                "",
+                "districtId",
+                "2410520",
+                "affiliationType",
+                "RESIDENT"));
     var token = csrf();
     var before = call("/auth/register", body, token);
     assertThat(before.statusCode()).isEqualTo(200);

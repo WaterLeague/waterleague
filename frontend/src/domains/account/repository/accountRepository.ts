@@ -7,7 +7,13 @@ export async function authenticate(
   username: string,
   password: string,
   otp?: string,
-  registration?: { memberType: MemberType; organizationName: string; purpose: string }
+  registration?: {
+    memberType: MemberType;
+    organizationName: string;
+    purpose: string;
+    districtId: string;
+    affiliationType: 'RESIDENT' | 'AFFILIATED';
+  }
 ) {
   resetSessionToken();
   await refreshCsrf();
@@ -47,3 +53,8 @@ export async function confirmEnrollment(otp: string) {
   resetSessionToken();
   return account;
 }
+
+export const selectAccountDistrict = (
+  districtId: string,
+  affiliationType: 'RESIDENT' | 'AFFILIATED'
+) => api<Account>('/auth/district', 'POST', { districtId, affiliationType });

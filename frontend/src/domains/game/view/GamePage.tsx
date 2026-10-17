@@ -212,7 +212,7 @@ export function GamePage() {
               ] as const)
             : ([
                 ['city', '서울 지도'],
-                ['missions', '도전'],
+                ['missions', '과거 강우 연구'],
                 ...(tab === 'studio' ? ([['studio', '플레이']] as const) : []),
                 ['leaderboard', '기록 경쟁'],
                 ['research', '연구실'],
@@ -323,23 +323,7 @@ export function GamePage() {
         </div>
       )}
       {tab === 'city' ? (
-        <CityExplorer
-          busy={working || g.loading}
-          onPlay={(modelHash) => {
-            const hash = modelHash ?? g.rainfallCatalog?.defaultModelHash;
-            if (!hash) {
-              g.setError('도전 목록을 불러온 뒤 다시 선택해 주세요.');
-              return;
-            }
-            void g.action(async () => {
-              if (hash !== lab?.modelHash && !(await g.selectModel(hash))) return;
-              setSelected(null);
-              setActiveLeague(null);
-              setFeedback('');
-              setTab('missions');
-            });
-          }}
-        />
+        <CityExplorer account={g.account} onLogin={() => setAuth(true)} onAccount={g.setAccount} />
       ) : !lab ? (
         <div className="empty-state">
           <CloudRain size={38} />

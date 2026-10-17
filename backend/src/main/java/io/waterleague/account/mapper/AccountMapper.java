@@ -14,6 +14,8 @@ public final class AccountMapper {
         a.role(),
         a.memberType(),
         a.approvalStatus(),
-        a.organizationId());
+        a.organizationId(),
+        a.districtId(),
+        a.affiliationType());
   }
 }
