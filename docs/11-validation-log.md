@@ -257,7 +257,7 @@ ZIP은 고정 21개 파일, 18개 manifest hash·모델/입력/결과 바인딩�
 
 문서 29 계약 선행. 공식 이미지 digest·SWMM commit/tarball hash·Python 직접/전이 wheel hash 고정, DB 소유/마이그레이션·API·워커 자격 분리. 파일 비밀과 config tree·worker `_FILE`, 비root·읽기 전용 root·API 산출물 RO·capabilities 제거·자원 한도·워커 내부망, HTTPS 동일 출처·전달 헤더 정리·CSP·정적 캐시 구성.
 
-코드 `1325601`의 PR/push CI 모두 성공. 각각 Linux amd64/arm64에서 새 PostgreSQL 18.6·역할 생성·실제 마이그레이션·정확한 테이블 권한 목록 적용과 API 준비 확인. API/워커 DDL·역할/행 전체 삭제·내부 Flyway 열람 거부, 워커 회원/MFA/동의/배치 이력 접근 및 입력 변경·작업 삭제 거부. 내부망·외부 TCP 차단·비공개 DB/API 포트·읽기 전용 mount와 실제 root 쓰기 실패 확인.
+코드 `1325601`의 PR/push CI 모두 성공. 각각 Linux amd64/arm64에서 새 PostgreSQL 18.6·역할 생성·실제 마이그레이션·정확한 테이블 권한 목록 적용과 API 준비 확인. API/워커 DDL·역할 생성·TRUNCATE·내부 Flyway 열람 거부, 워커 회원/MFA/동의/배치 이력 접근 및 입력 변경·작업 삭제 거부. 내부망·외부 TCP 차단·비공개 DB/API 포트·읽기 전용 mount와 실제 root 쓰기 실패 확인.
 
 시스템 신뢰 저장소를 바꾸지 않고 지정 CA로 TLS/호스트명 검증. 정적 자산·헤더·금지 경로/없는 JS 404·CSRF·가입/로그인/로그아웃·__Host Secure/HttpOnly/SameSite=Lax/Path=/·Domain 부재 확인. 기본 고정 모델의 빗물정원 40m² 저장→실제 SWMM 성공→ZIP 18개 파일 hash→동일 엔진 캐시 없는 전체 결과 재계산 일치. DB/API/워커 재시작 후 세션·결과·manifest 보존, 시험 프로젝트의 컨테이너·볼륨·이미지·임시 비밀 제거.
 
