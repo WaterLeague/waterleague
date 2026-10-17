@@ -55,6 +55,11 @@ test('별도 스레드 전송 형상의 구멍·높이·면 순서와 원본 선
   expect(buildingFaceIndex(data.ends, data.ends[0] - 1)).toBe(0);
   expect(buildingFaceIndex(data.ends, data.ends[0])).toBe(1);
   expect(buildings).toEqual(before);
+  const elevated = buildBuildingMesh(buildings.map((b) => ({ ...b, baseElevationM: 123 })));
+  expect(elevated.ends).toEqual(data.ends);
+  expect(elevated.normals).toEqual(data.normals);
+  for (let i = 0; i < data.positions.length; i++)
+    expect(elevated.positions[i]).toBe(data.positions[i] + (i % 3 === 2 ? 123 : 0));
   original.dispose();
   parts.forEach((p) => p.dispose());
 });

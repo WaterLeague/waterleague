@@ -44,6 +44,7 @@ import { useReducedMotion } from '../../catalog/controller/useReducedMotion';
 import { useBudget } from '../../budget/controller/useBudget';
 import { useWeekly } from '../../weekly/controller/useWeekly';
 import { WeeklyBoard, scoreFormat } from '../../weekly/view/WeeklyBoard';
+import { useTerrain } from '../../terrain/controller/useTerrain';
 import { GameClock } from '../../game/view/GameClock';
 const CityScene = lazy(() => import('./CityScene'));
 type PlayProps = {
@@ -68,6 +69,7 @@ function Explorer({
   onExit,
 }: { city: City; regions: CityPlayRegion[]; eligibility: CityEligibility } & PlayProps) {
   const researchMode = mode === 'historical';
+  const { terrain, error: terrainError } = useTerrain();
   const [budgetRevision, setBudgetRevision] = useState(0);
   const budget = useBudget(budgetRevision, account?.id ?? null);
   const weekly = useWeekly(!researchMode, account?.id ?? null);
@@ -549,6 +551,7 @@ function Explorer({
                 }
               >
                 <CityScene
+                  terrain={terrain}
                   facilityType={type}
                   viewerId={viewerId ?? null}
                   city={city}
@@ -946,8 +949,22 @@ function Explorer({
         </section>
       )}
       <footer className="city-source-note">
-        공개자료 기준 {city.sourceDate} · 건물 높이는 태그·층수 환산·표현용 가정 · 지면 평탄화 ·
-        실제 침수 깊이 표시 아님
+        공개 형상 {city.sourceDate} ·{' '}
+        {terrain
+          ? 'Copernicus 공개 지표면 높이 · 90m 표시 격자'
+          : terrainError
+            ? '높이 자료 연결 실패 · 평면 표시'
+            : '지표면 높이 연결 중'}{' '}
+        · 건물 높이 태그·층수 환산 포함 · 침수 깊이 표시 아님
+        {terrain && (
+          <>
+            {' '}
+            ·{' '}
+            <a href="/data/seoul-terrain-v1/attribution.txt" target="_blank" rel="noreferrer">
+              지표면 출처·이용조건
+            </a>
+          </>
+        )}
       </footer>
     </main>
   );

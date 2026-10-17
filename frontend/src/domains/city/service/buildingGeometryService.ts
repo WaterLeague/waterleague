@@ -14,6 +14,8 @@ export function buildBuildingMesh(buildings: CityBuilding[]): BuildingMeshData {
       steps: 1,
     });
     const positions = geometry.getAttribute('position').array as Float32Array;
+    if (b.baseElevationM)
+      for (let i = 2; i < positions.length; i += 3) positions[i] += b.baseElevationM;
     const normals = geometry.getAttribute('normal').array as Float32Array;
     parts.push({ positions, normals });
     length += positions.length;

@@ -1,6 +1,8 @@
 import { useEffect, useMemo } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
+import type { Terrain } from '../../terrain/entity/terrain';
+import { terrainHeight } from '../../terrain/service/terrainService';
 import type { City } from '../../city/entity/city';
 import { rainParticleSeeds } from '../service/rainEffectService';
 
@@ -9,11 +11,13 @@ export function LiveRainScene({
   center,
   distance,
   animate,
+  terrain,
 }: {
   districts: City['districts'];
   center: [number, number];
   distance: number;
   animate: boolean;
+  terrain?: Terrain | null;
 }) {
   const invalidate = useThree((s) => s.invalidate);
   const seeds = useMemo(() => {
@@ -31,15 +35,17 @@ export function LiveRainScene({
     );
     const count =
       distance < 9000 ? Math.min(1200, Math.floor(6000 / Math.max(1, visible.length))) : 240;
-    return visible.flatMap((d) => rainParticleSeeds(d.polygons, center, distance, count));
-  }, [districts, center, distance]);
+    return visible
+      .flatMap((d) => rainParticleSeeds(d.polygons, center, distance, count))
+      .map((s) => ({ ...s, elevation: terrainHeight(terrain, s.point) }));
+  }, [districts, center, distance, terrain]);
   const geometry = useMemo(() => {
     const value = new THREE.BufferGeometry();
     const height = Math.max(120, Math.min(1800, distance * 0.3));
     const length = Math.max(3.5, Math.min(height * 0.2, distance * 0.018));
     const initial = new Float32Array(seeds.length * 6);
-    seeds.forEach(({ point: [x, y], phase }, i) => {
-      const top = height * (1 - phase);
+    seeds.forEach(({ point: [x, y], phase, elevation }, i) => {
+      const top = elevation + height * (1 - phase);
       initial.set([x, top + length, -y, x, top, -y], i * 6);
     });
     value.setAttribute('position', new THREE.BufferAttribute(initial, 3));
@@ -57,8 +63,8 @@ export function LiveRainScene({
     const height = Math.max(120, Math.min(1800, distance * 0.3));
     const length = Math.max(3.5, Math.min(height * 0.2, distance * 0.018));
     const positions = geometry.getAttribute('position') as THREE.BufferAttribute;
-    seeds.forEach(({ point: [x, y], phase }, i) => {
-      const top = height * (1 - ((clock.elapsedTime / 1.7 + phase) % 1));
+    seeds.forEach(({ point: [x, y], phase, elevation }, i) => {
+      const top = elevation + height * (1 - ((clock.elapsedTime / 1.7 + phase) % 1));
       positions.setXYZ(i * 2, x, top + length, -y);
       positions.setXYZ(i * 2 + 1, x, top, -y);
     });
