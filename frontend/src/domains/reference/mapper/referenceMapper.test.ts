@@ -1,4 +1,6 @@
 import { describe, expect, it } from 'vitest';
+import newReport from '../../../../../data/derived/cpu-reference-ngii-v2.json';
+import newModel from '../../../../../data/models/seongsu-ngii-v2-421-20240718.json';
 import report from '../../../../../data/derived/cpu-reference.json';
 import model from '../../../../../data/models/seongsu-lab.json';
 import { mapReference } from './referenceMapper';
@@ -6,6 +8,18 @@ import { canCopyReference } from '../service/referenceService';
 import { mapLab } from '../../game/mapper/labMapper';
 const fixture = () => ({ reportHash: 'a'.repeat(64), report: structuredClone(report) });
 describe('CPU 기준안 계약', () => {
+  it('수치지형도 기준안은 해당 모델에서만 조회·복사 허용', () => {
+    const hash = newReport.trainingModelHash;
+    const data = mapReference({ reportHash: 'b'.repeat(64), report: newReport }, hash);
+    const lab = mapLab({ modelHash: hash, model: newModel });
+    expect(canCopyReference(lab, data.report.plans[0])).toBe(true);
+    expect(data.report.plans[0].placements.every((p) => p.areaM2 <= 20)).toBe(true);
+    expect(() => mapReference(fixture(), hash)).toThrow();
+    expect(() =>
+      mapReference({ reportHash: 'b'.repeat(64), report: newReport }, report.trainingModelHash)
+    ).toThrow();
+    expect(canCopyReference(lab, mapReference(fixture()).report.plans[0])).toBe(false);
+  });
   it('실제 자료와 현재 모델 비용·면적 일치 시 복사 허용', () => {
     const data = mapReference(fixture());
     const lab = mapLab({ modelHash: report.modelHashes[0], model });

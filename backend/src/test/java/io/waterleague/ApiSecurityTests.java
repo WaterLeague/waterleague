@@ -66,6 +66,34 @@ class ApiSecurityTests {
   }
 
   @Test
+  void bindsReferenceAndDownloadsToRequestedModel() throws Exception {
+    var models = json.tree(get("/api/v1/lab/catalog").body()).path("models");
+    java.util.Map<String, String> reportByMap = new java.util.HashMap<>();
+    for (var model : models) {
+      String hash = model.path("modelHash").asString();
+      String query = "?modelHash=" + hash;
+      var response = get("/api/v1/references" + query);
+      assertThat(response.statusCode()).isEqualTo(200);
+      var view = json.tree(response.body());
+      var report = view.path("report");
+      assertThat(report.path("modelHashes").toString()).contains(hash);
+      String reportHash = view.path("reportHash").asString();
+      String previous = reportByMap.putIfAbsent(model.path("mapId").asString(), reportHash);
+      if (previous != null) assertThat(previous).isEqualTo(reportHash);
+      var source = get("/api/v1/references/source" + query);
+      var ledger = get("/api/v1/references/ledger" + query);
+      assertThat(source.statusCode()).isEqualTo(200);
+      assertThat(ledger.statusCode()).isEqualTo(200);
+      assertThat(json.hash(source.body())).isEqualTo(reportHash);
+      assertThat(json.hash(ledger.body())).isEqualTo(report.path("ledgerSha256").asString());
+    }
+    assertThat(new java.util.HashSet<>(reportByMap.values())).hasSize(2);
+    for (String suffix : java.util.List.of("", "/source", "/ledger"))
+      assertThat(get("/api/v1/references" + suffix + "?modelHash=" + "0".repeat(64)).statusCode())
+          .isEqualTo(404);
+  }
+
+  @Test
   void publishesCpuEvidenceWithoutAddingHumanRecords() throws Exception {
     var response = get("/api/v1/references");
     assertThat(response.statusCode()).isEqualTo(200);

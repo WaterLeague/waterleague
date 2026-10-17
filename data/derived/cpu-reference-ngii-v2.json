@@ -1,0 +1,1715 @@
+{
+  "schemaVersion": 1,
+  "id": "090467ed781f0747dc6f0565480f7d3eb1cf6a50e96ef1bd30dbdb2d0d0304c3",
+  "kind": "CPU_REFERENCE",
+  "official": false,
+  "validationLevel": "EXPLORATORY",
+  "currency": "KRW",
+  "algorithm": "GREEDY_MARGINAL_DISCHARGE_PER_KRW_V1",
+  "stepAreaM2": 10,
+  "trainingModelHash": "618cc8cc889c36953891e8e62ff42e1702f675dcfa1fd2b7218873cca005d2fa",
+  "algorithmSha256": "29192e60c45defd9f2435d2719121187774f0da656a9223190ee79c3e82667c9",
+  "runnerSha256": "f0a70f24852a7070a050e66819388cfc090071aa5400d73af9597efae3f7422f",
+  "generatorSha256": "1754562f19f0860daa127f34e35c6336e2884d5779b9cd531d1811088f702823",
+  "engineRevision": "7952ca837988b1c32f791812eccc9fd64547e093",
+  "engineBinarySha256": "6d9b7c9704abd4e268e47bb431186a0a88602d4ff16e51b5da506a47112c33bf",
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "mapId": "seongsu-ngii-2025-v2",
+  "mapTitle": "수치지형도 2025",
+  "geometrySourceHash": "d876b007b26eb40eca8e31ff967b36a311ab02c1e9b55e1e3c6e472263120ae7",
+  "modelHashes": [
+    "c55a68302a99b815a25c7f403a38fa7e395f6635037c6abbaa6a2a6436a6c684",
+    "0bd06d394f6dd0d36b0e98fc1f32ea7b2bc00597b0c0aaa944d097733f9de0b2",
+    "53955844bce2e3717530d8605cb59f386b67e2b4dc6c47bbd53cc4c25d0e9009",
+    "618cc8cc889c36953891e8e62ff42e1702f675dcfa1fd2b7218873cca005d2fa"
+  ],
+  "searchCompletedAt": "2026-10-17T09:37:48.788216+00:00",
+  "createdAt": "2026-10-17T09:37:52.975192+00:00",
+  "elapsedSeconds": 15.154,
+  "uniqueCandidateEvaluations": 144,
+  "totalCandidateRequests": 432,
+  "ledgerSha256": "3df2b9b3ad852d6bf8972b20d9cd76e316e8c080adb4f0dc931b7ba497bd7104",
+  "plans": [
+    {
+      "placements": [
+        {
+          "cellId": "G1",
+          "facilityType": "PERMEABLE_PAVEMENT",
+          "areaM2": 20
+        },
+        {
+          "cellId": "G2",
+          "facilityType": "PERMEABLE_PAVEMENT",
+          "areaM2": 20
+        },
+        {
+          "cellId": "G3",
+          "facilityType": "PERMEABLE_PAVEMENT",
+          "areaM2": 20
+        },
+        {
+          "cellId": "G4",
+          "facilityType": "PERMEABLE_PAVEMENT",
+          "areaM2": 20
+        },
+        {
+          "cellId": "G5",
+          "facilityType": "PERMEABLE_PAVEMENT",
+          "areaM2": 20
+        }
+      ],
+      "cost": 11000000,
+      "stages": [
+        {
+          "placements": [
+            {
+              "cellId": "G1",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            }
+          ],
+          "cost": 1100000,
+          "accountedDischargeM3": 1005.8728251448156,
+          "incrementReductionM3": 1.8699942710875348
+        },
+        {
+          "placements": [
+            {
+              "cellId": "G1",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G2",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            }
+          ],
+          "cost": 2200000,
+          "accountedDischargeM3": 1004.0125199632156,
+          "incrementReductionM3": 1.8603051815999834
+        },
+        {
+          "placements": [
+            {
+              "cellId": "G1",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G2",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G3",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            }
+          ],
+          "cost": 3300000,
+          "accountedDischargeM3": 1002.1425256921283,
+          "incrementReductionM3": 1.8699942710873074
+        },
+        {
+          "placements": [
+            {
+              "cellId": "G1",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G2",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G3",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G4",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            }
+          ],
+          "cost": 4400000,
+          "accountedDischargeM3": 1000.2822205105282,
+          "incrementReductionM3": 1.860305181600097
+        },
+        {
+          "placements": [
+            {
+              "cellId": "G1",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G2",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G3",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G4",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G5",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            }
+          ],
+          "cost": 5500000,
+          "accountedDischargeM3": 998.4122262394405,
+          "incrementReductionM3": 1.8699942710876485
+        },
+        {
+          "placements": [
+            {
+              "cellId": "G1",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G2",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G3",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G4",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G5",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 20
+            }
+          ],
+          "cost": 6600000,
+          "accountedDischargeM3": 997.6855445278783,
+          "incrementReductionM3": 0.7266817115622644
+        },
+        {
+          "placements": [
+            {
+              "cellId": "G1",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G2",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G3",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G4",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 20
+            },
+            {
+              "cellId": "G5",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 20
+            }
+          ],
+          "cost": 7700000,
+          "accountedDischargeM3": 996.9588628163154,
+          "incrementReductionM3": 0.7266817115628328
+        },
+        {
+          "placements": [
+            {
+              "cellId": "G1",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G2",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G3",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 20
+            },
+            {
+              "cellId": "G4",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 20
+            },
+            {
+              "cellId": "G5",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 20
+            }
+          ],
+          "cost": 8800000,
+          "accountedDischargeM3": 996.2321811047532,
+          "incrementReductionM3": 0.7266817115622644
+        },
+        {
+          "placements": [
+            {
+              "cellId": "G1",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G2",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 20
+            },
+            {
+              "cellId": "G3",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 20
+            },
+            {
+              "cellId": "G4",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 20
+            },
+            {
+              "cellId": "G5",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 20
+            }
+          ],
+          "cost": 9900000,
+          "accountedDischargeM3": 995.5054993931907,
+          "incrementReductionM3": 0.7266817115624917
+        },
+        {
+          "placements": [
+            {
+              "cellId": "G1",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 20
+            },
+            {
+              "cellId": "G2",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 20
+            },
+            {
+              "cellId": "G3",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 20
+            },
+            {
+              "cellId": "G4",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 20
+            },
+            {
+              "cellId": "G5",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 20
+            }
+          ],
+          "cost": 11000000,
+          "accountedDischargeM3": 994.7788176816282,
+          "incrementReductionM3": 0.7266817115624917
+        }
+      ],
+      "stopReason": "NO_POSITIVE_FEASIBLE_INCREMENT",
+      "comparisonToleranceM3": 0.038756357950000125,
+      "id": "cpu-30000000",
+      "budget": 30000000,
+      "title": "3,000만 원 상한 CPU 기준안",
+      "candidateEvaluations": 144,
+      "evaluations": [
+        {
+          "modelHash": "c55a68302a99b815a25c7f403a38fa7e395f6635037c6abbaa6a2a6436a6c684",
+          "modelTitle": "성수 수치지형도 2025 · 서울 2024-07-18",
+          "role": "POST_SELECTION_COMPARISON",
+          "rainfall": {
+            "stationId": "108",
+            "stationName": "서울",
+            "start": "2024-07-17T20:00:00+00:00",
+            "end": "2024-07-18T14:59:00+00:00",
+            "totalDepthMm": 109.7
+          },
+          "score": 1.28711156,
+          "baseline": {
+            "surfaceRunoffM3": 1048.3401043685283,
+            "lidDrainageM3": 0.0,
+            "finalStorageM3": 14.582079678687546,
+            "initialStorageM3": 0.0,
+            "infiltrationM3": 0.0,
+            "evaporationM3": 0.0,
+            "precipitationM3": 1062.8931167787534,
+            "runoffContinuityPercent": 9.999999974752427e-07,
+            "routingContinuityPercent": null,
+            "routingStatus": "NOT_APPLICABLE_NO_CONVEYANCE_NETWORK",
+            "peakM3s": 0.14923312471364625,
+            "warnings": 0,
+            "runoffM3": 1048.3401043685283,
+            "accountedDischargeM3": 1062.9221840472158,
+            "seriesIntegralM3": 1049.0807090053286
+          },
+          "strategy": {
+            "surfaceRunoffM3": 1034.8141354439783,
+            "lidDrainageM3": 0.0,
+            "finalStorageM3": 14.427054246887547,
+            "initialStorageM3": 0.0,
+            "infiltrationM3": 13.680994356350041,
+            "evaporationM3": 0.0,
+            "precipitationM3": 1062.8931167787534,
+            "runoffContinuityPercent": 9.999999974752427e-07,
+            "routingContinuityPercent": null,
+            "routingStatus": "NOT_APPLICABLE_NO_CONVEYANCE_NETWORK",
+            "peakM3s": 0.14708284568041563,
+            "warnings": 0,
+            "runoffM3": 1034.8141354439783,
+            "accountedDischargeM3": 1049.241189690866,
+            "seriesIntegralM3": 1035.5028364576901
+          },
+          "sensitivity": [
+            {
+              "conductivityFactor": 0.5,
+              "score": 0.88329398,
+              "runoffM3": 1034.8141354439783
+            },
+            {
+              "conductivityFactor": 1.5,
+              "score": 1.28711156,
+              "runoffM3": 1034.8141354439783
+            }
+          ],
+          "resultSha256": "43756d80c8fcf5d3864c31010b04f4692d8c4dc095631bda2def1e775e031e99",
+          "manifestSha256": "64e192228eb2f385b704bb36bd9363fee9e53c3b8aff9a320a7cca319f124eb4"
+        },
+        {
+          "modelHash": "0bd06d394f6dd0d36b0e98fc1f32ea7b2bc00597b0c0aaa944d097733f9de0b2",
+          "modelTitle": "성수 수치지형도 2025 · 성동 2024-06-22",
+          "role": "POST_SELECTION_COMPARISON",
+          "rainfall": {
+            "stationId": "421",
+            "stationName": "성동",
+            "start": "2024-06-21T15:01:00+00:00",
+            "end": "2024-06-22T14:59:00+00:00",
+            "totalDepthMm": 18.5
+          },
+          "score": 1.27539991,
+          "baseline": {
+            "surfaceRunoffM3": 162.321316184088,
+            "lidDrainageM3": 0.0,
+            "finalStorageM3": 16.965595692612553,
+            "initialStorageM3": 0.0,
+            "infiltrationM3": 0.0,
+            "evaporationM3": 0.0,
+            "precipitationM3": 179.24815551875056,
+            "runoffContinuityPercent": -0.020071856677532196,
+            "routingContinuityPercent": null,
+            "routingStatus": "NOT_APPLICABLE_NO_CONVEYANCE_NETWORK",
+            "peakM3s": 0.024908363877329975,
+            "warnings": 0,
+            "runoffM3": 162.321316184088,
+            "accountedDischargeM3": 179.28691187670057,
+            "seriesIntegralM3": 162.92513562207887
+          },
+          "strategy": {
+            "surfaceRunoffM3": 160.18971649683803,
+            "lidDrainageM3": 0.0,
+            "finalStorageM3": 16.810570260812554,
+            "initialStorageM3": 0.0,
+            "infiltrationM3": 2.276936029562507,
+            "evaporationM3": 0.0,
+            "precipitationM3": 179.24815551875056,
+            "runoffContinuityPercent": -0.019804053008556366,
+            "routingContinuityPercent": null,
+            "routingStatus": "NOT_APPLICABLE_NO_CONVEYANCE_NETWORK",
+            "peakM3s": 0.024346017045900226,
+            "warnings": 0,
+            "runoffM3": 160.18971649683803,
+            "accountedDischargeM3": 177.0002867576506,
+            "seriesIntegralM3": 160.71285470754447
+          },
+          "sensitivity": [
+            {
+              "conductivityFactor": 0.5,
+              "score": 1.27539991,
+              "runoffM3": 160.18971649683803
+            },
+            {
+              "conductivityFactor": 1.5,
+              "score": 1.27539991,
+              "runoffM3": 160.18971649683803
+            }
+          ],
+          "resultSha256": "5c3d7baa60cc30a0542f3649e222ade95d575c02b45f66ce780ede146d9d64c1",
+          "manifestSha256": "dc3d0cd38728b283d567d3cddec04e209ef908376ef250818f3e19b9f75f0c48"
+        },
+        {
+          "modelHash": "53955844bce2e3717530d8605cb59f386b67e2b4dc6c47bbd53cc4c25d0e9009",
+          "modelTitle": "성수 수치지형도 2025 · 성동 2024-07-02",
+          "role": "POST_SELECTION_COMPARISON",
+          "rainfall": {
+            "stationId": "421",
+            "stationName": "성동",
+            "start": "2024-07-01T15:01:00+00:00",
+            "end": "2024-07-02T14:59:00+00:00",
+            "totalDepthMm": 55.0
+          },
+          "score": 1.28347301,
+          "baseline": {
+            "surfaceRunoffM3": 515.1882662293516,
+            "lidDrainageM3": 0.0,
+            "finalStorageM3": 17.779479209562556,
+            "initialStorageM3": 0.0,
+            "infiltrationM3": 0.0,
+            "evaporationM3": 0.0,
+            "precipitationM3": 532.8999218125016,
+            "runoffContinuityPercent": -0.01246979646384716,
+            "routingContinuityPercent": null,
+            "routingStatus": "NOT_APPLICABLE_NO_CONVEYANCE_NETWORK",
+            "peakM3s": 0.08365438447799534,
+            "warnings": 0,
+            "runoffM3": 515.1882662293516,
+            "accountedDischargeM3": 532.9677454389141,
+            "seriesIntegralM3": 516.687152580642
+          },
+          "strategy": {
+            "surfaceRunoffM3": 508.5027944829766,
+            "lidDrainageM3": 0.0,
+            "finalStorageM3": 17.624453777762554,
+            "initialStorageM3": 0.0,
+            "infiltrationM3": 6.840497178175021,
+            "evaporationM3": 0.0,
+            "precipitationM3": 532.8999218125016,
+            "runoffContinuityPercent": -0.012353470548987389,
+            "routingContinuityPercent": null,
+            "routingStatus": "NOT_APPLICABLE_NO_CONVEYANCE_NETWORK",
+            "peakM3s": 0.08190293284133077,
+            "warnings": 0,
+            "runoffM3": 508.5027944829766,
+            "accountedDischargeM3": 526.1272482607392,
+            "seriesIntegralM3": 509.8328246125766
+          },
+          "sensitivity": [
+            {
+              "conductivityFactor": 0.5,
+              "score": 1.25802171,
+              "runoffM3": 508.5027944829766
+            },
+            {
+              "conductivityFactor": 1.5,
+              "score": 1.28347301,
+              "runoffM3": 508.5027944829766
+            }
+          ],
+          "resultSha256": "eb2e354afecfca8a2a86f7f30fa5ee653f8d3c79da9fd0b5114fce9d3072ba58",
+          "manifestSha256": "44c214f431bfef0a7d8fbb86f5a2951bbe5f5cfb40ef58a8e0ed63b2f21be1cf"
+        },
+        {
+          "modelHash": "618cc8cc889c36953891e8e62ff42e1702f675dcfa1fd2b7218873cca005d2fa",
+          "modelTitle": "성수 수치지형도 2025 · 성동 2024-07-18",
+          "role": "SEARCH_INPUT",
+          "rainfall": {
+            "stationId": "421",
+            "stationName": "성동",
+            "start": "2024-07-17T20:00:00+00:00",
+            "end": "2024-07-18T14:59:00+00:00",
+            "totalDepthMm": 104.0
+          },
+          "score": 1.2864395,
+          "baseline": {
+            "surfaceRunoffM3": 993.1607397372155,
+            "lidDrainageM3": 0.0,
+            "finalStorageM3": 14.582079678687546,
+            "initialStorageM3": 0.0,
+            "infiltrationM3": 0.0,
+            "evaporationM3": 0.0,
+            "precipitationM3": 1007.6653067000032,
+            "runoffContinuityPercent": -0.007949634455144405,
+            "routingContinuityPercent": null,
+            "routingStatus": "NOT_APPLICABLE_NO_CONVEYANCE_NETWORK",
+            "peakM3s": 0.11557356602861546,
+            "warnings": 0,
+            "runoffM3": 993.1607397372155,
+            "accountedDischargeM3": 1007.7428194159031,
+            "seriesIntegralM3": 995.7156599957108
+          },
+          "strategy": {
+            "surfaceRunoffM3": 980.3420743452532,
+            "lidDrainageM3": 0.0,
+            "finalStorageM3": 14.436743336375047,
+            "initialStorageM3": 0.0,
+            "infiltrationM3": 12.97369082376254,
+            "evaporationM3": 0.0,
+            "precipitationM3": 1007.6653067000032,
+            "runoffContinuityPercent": -0.007869217544794083,
+            "routingContinuityPercent": null,
+            "routingStatus": "NOT_APPLICABLE_NO_CONVEYANCE_NETWORK",
+            "peakM3s": 0.1135638291016221,
+            "warnings": 0,
+            "runoffM3": 980.3420743452532,
+            "accountedDischargeM3": 994.7788176816282,
+            "seriesIntegralM3": 982.644602272203
+          },
+          "sensitivity": [
+            {
+              "conductivityFactor": 0.5,
+              "score": 0.93069764,
+              "runoffM3": 980.3420743452532
+            },
+            {
+              "conductivityFactor": 1.5,
+              "score": 1.2864395,
+              "runoffM3": 980.3420743452532
+            }
+          ],
+          "resultSha256": "2e55c21de84889cbeecd35906b19ec8ad8d815decc499c371c6bb4ae300ea951",
+          "manifestSha256": "c8818f17cdfbd29a312e1e3fe8d3742a0e68edfe74da4ab23b8b22e5d9c025ab"
+        }
+      ],
+      "sampleScoreRange": {
+        "min": 1.27539991,
+        "max": 1.28711156
+      }
+    },
+    {
+      "placements": [
+        {
+          "cellId": "G1",
+          "facilityType": "PERMEABLE_PAVEMENT",
+          "areaM2": 20
+        },
+        {
+          "cellId": "G2",
+          "facilityType": "PERMEABLE_PAVEMENT",
+          "areaM2": 20
+        },
+        {
+          "cellId": "G3",
+          "facilityType": "PERMEABLE_PAVEMENT",
+          "areaM2": 20
+        },
+        {
+          "cellId": "G4",
+          "facilityType": "PERMEABLE_PAVEMENT",
+          "areaM2": 20
+        },
+        {
+          "cellId": "G5",
+          "facilityType": "PERMEABLE_PAVEMENT",
+          "areaM2": 20
+        }
+      ],
+      "cost": 11000000,
+      "stages": [
+        {
+          "placements": [
+            {
+              "cellId": "G1",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            }
+          ],
+          "cost": 1100000,
+          "accountedDischargeM3": 1005.8728251448156,
+          "incrementReductionM3": 1.8699942710875348
+        },
+        {
+          "placements": [
+            {
+              "cellId": "G1",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G2",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            }
+          ],
+          "cost": 2200000,
+          "accountedDischargeM3": 1004.0125199632156,
+          "incrementReductionM3": 1.8603051815999834
+        },
+        {
+          "placements": [
+            {
+              "cellId": "G1",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G2",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G3",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            }
+          ],
+          "cost": 3300000,
+          "accountedDischargeM3": 1002.1425256921283,
+          "incrementReductionM3": 1.8699942710873074
+        },
+        {
+          "placements": [
+            {
+              "cellId": "G1",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G2",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G3",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G4",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            }
+          ],
+          "cost": 4400000,
+          "accountedDischargeM3": 1000.2822205105282,
+          "incrementReductionM3": 1.860305181600097
+        },
+        {
+          "placements": [
+            {
+              "cellId": "G1",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G2",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G3",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G4",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G5",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            }
+          ],
+          "cost": 5500000,
+          "accountedDischargeM3": 998.4122262394405,
+          "incrementReductionM3": 1.8699942710876485
+        },
+        {
+          "placements": [
+            {
+              "cellId": "G1",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G2",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G3",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G4",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G5",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 20
+            }
+          ],
+          "cost": 6600000,
+          "accountedDischargeM3": 997.6855445278783,
+          "incrementReductionM3": 0.7266817115622644
+        },
+        {
+          "placements": [
+            {
+              "cellId": "G1",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G2",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G3",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G4",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 20
+            },
+            {
+              "cellId": "G5",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 20
+            }
+          ],
+          "cost": 7700000,
+          "accountedDischargeM3": 996.9588628163154,
+          "incrementReductionM3": 0.7266817115628328
+        },
+        {
+          "placements": [
+            {
+              "cellId": "G1",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G2",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G3",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 20
+            },
+            {
+              "cellId": "G4",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 20
+            },
+            {
+              "cellId": "G5",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 20
+            }
+          ],
+          "cost": 8800000,
+          "accountedDischargeM3": 996.2321811047532,
+          "incrementReductionM3": 0.7266817115622644
+        },
+        {
+          "placements": [
+            {
+              "cellId": "G1",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G2",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 20
+            },
+            {
+              "cellId": "G3",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 20
+            },
+            {
+              "cellId": "G4",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 20
+            },
+            {
+              "cellId": "G5",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 20
+            }
+          ],
+          "cost": 9900000,
+          "accountedDischargeM3": 995.5054993931907,
+          "incrementReductionM3": 0.7266817115624917
+        },
+        {
+          "placements": [
+            {
+              "cellId": "G1",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 20
+            },
+            {
+              "cellId": "G2",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 20
+            },
+            {
+              "cellId": "G3",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 20
+            },
+            {
+              "cellId": "G4",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 20
+            },
+            {
+              "cellId": "G5",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 20
+            }
+          ],
+          "cost": 11000000,
+          "accountedDischargeM3": 994.7788176816282,
+          "incrementReductionM3": 0.7266817115624917
+        }
+      ],
+      "stopReason": "NO_POSITIVE_FEASIBLE_INCREMENT",
+      "comparisonToleranceM3": 0.038756357950000125,
+      "id": "cpu-100000000",
+      "budget": 100000000,
+      "title": "10,000만 원 상한 CPU 기준안",
+      "candidateEvaluations": 144,
+      "evaluations": [
+        {
+          "modelHash": "c55a68302a99b815a25c7f403a38fa7e395f6635037c6abbaa6a2a6436a6c684",
+          "modelTitle": "성수 수치지형도 2025 · 서울 2024-07-18",
+          "role": "POST_SELECTION_COMPARISON",
+          "rainfall": {
+            "stationId": "108",
+            "stationName": "서울",
+            "start": "2024-07-17T20:00:00+00:00",
+            "end": "2024-07-18T14:59:00+00:00",
+            "totalDepthMm": 109.7
+          },
+          "score": 1.28711156,
+          "baseline": {
+            "surfaceRunoffM3": 1048.3401043685283,
+            "lidDrainageM3": 0.0,
+            "finalStorageM3": 14.582079678687546,
+            "initialStorageM3": 0.0,
+            "infiltrationM3": 0.0,
+            "evaporationM3": 0.0,
+            "precipitationM3": 1062.8931167787534,
+            "runoffContinuityPercent": 9.999999974752427e-07,
+            "routingContinuityPercent": null,
+            "routingStatus": "NOT_APPLICABLE_NO_CONVEYANCE_NETWORK",
+            "peakM3s": 0.14923312471364625,
+            "warnings": 0,
+            "runoffM3": 1048.3401043685283,
+            "accountedDischargeM3": 1062.9221840472158,
+            "seriesIntegralM3": 1049.0807090053286
+          },
+          "strategy": {
+            "surfaceRunoffM3": 1034.8141354439783,
+            "lidDrainageM3": 0.0,
+            "finalStorageM3": 14.427054246887547,
+            "initialStorageM3": 0.0,
+            "infiltrationM3": 13.680994356350041,
+            "evaporationM3": 0.0,
+            "precipitationM3": 1062.8931167787534,
+            "runoffContinuityPercent": 9.999999974752427e-07,
+            "routingContinuityPercent": null,
+            "routingStatus": "NOT_APPLICABLE_NO_CONVEYANCE_NETWORK",
+            "peakM3s": 0.14708284568041563,
+            "warnings": 0,
+            "runoffM3": 1034.8141354439783,
+            "accountedDischargeM3": 1049.241189690866,
+            "seriesIntegralM3": 1035.5028364576901
+          },
+          "sensitivity": [
+            {
+              "conductivityFactor": 0.5,
+              "score": 0.88329398,
+              "runoffM3": 1034.8141354439783
+            },
+            {
+              "conductivityFactor": 1.5,
+              "score": 1.28711156,
+              "runoffM3": 1034.8141354439783
+            }
+          ],
+          "resultSha256": "43756d80c8fcf5d3864c31010b04f4692d8c4dc095631bda2def1e775e031e99",
+          "manifestSha256": "1b2657d0054041d64860f61dab45236d9cc7aea7eb3a5a06c6ce446fb0cd65ed"
+        },
+        {
+          "modelHash": "0bd06d394f6dd0d36b0e98fc1f32ea7b2bc00597b0c0aaa944d097733f9de0b2",
+          "modelTitle": "성수 수치지형도 2025 · 성동 2024-06-22",
+          "role": "POST_SELECTION_COMPARISON",
+          "rainfall": {
+            "stationId": "421",
+            "stationName": "성동",
+            "start": "2024-06-21T15:01:00+00:00",
+            "end": "2024-06-22T14:59:00+00:00",
+            "totalDepthMm": 18.5
+          },
+          "score": 1.27539991,
+          "baseline": {
+            "surfaceRunoffM3": 162.321316184088,
+            "lidDrainageM3": 0.0,
+            "finalStorageM3": 16.965595692612553,
+            "initialStorageM3": 0.0,
+            "infiltrationM3": 0.0,
+            "evaporationM3": 0.0,
+            "precipitationM3": 179.24815551875056,
+            "runoffContinuityPercent": -0.020071856677532196,
+            "routingContinuityPercent": null,
+            "routingStatus": "NOT_APPLICABLE_NO_CONVEYANCE_NETWORK",
+            "peakM3s": 0.024908363877329975,
+            "warnings": 0,
+            "runoffM3": 162.321316184088,
+            "accountedDischargeM3": 179.28691187670057,
+            "seriesIntegralM3": 162.92513562207887
+          },
+          "strategy": {
+            "surfaceRunoffM3": 160.18971649683803,
+            "lidDrainageM3": 0.0,
+            "finalStorageM3": 16.810570260812554,
+            "initialStorageM3": 0.0,
+            "infiltrationM3": 2.276936029562507,
+            "evaporationM3": 0.0,
+            "precipitationM3": 179.24815551875056,
+            "runoffContinuityPercent": -0.019804053008556366,
+            "routingContinuityPercent": null,
+            "routingStatus": "NOT_APPLICABLE_NO_CONVEYANCE_NETWORK",
+            "peakM3s": 0.024346017045900226,
+            "warnings": 0,
+            "runoffM3": 160.18971649683803,
+            "accountedDischargeM3": 177.0002867576506,
+            "seriesIntegralM3": 160.71285470754447
+          },
+          "sensitivity": [
+            {
+              "conductivityFactor": 0.5,
+              "score": 1.27539991,
+              "runoffM3": 160.18971649683803
+            },
+            {
+              "conductivityFactor": 1.5,
+              "score": 1.27539991,
+              "runoffM3": 160.18971649683803
+            }
+          ],
+          "resultSha256": "5c3d7baa60cc30a0542f3649e222ade95d575c02b45f66ce780ede146d9d64c1",
+          "manifestSha256": "75e9c2302d4fcba051e1e50ed26b398412e1783824729341ef306645f7b7b7f2"
+        },
+        {
+          "modelHash": "53955844bce2e3717530d8605cb59f386b67e2b4dc6c47bbd53cc4c25d0e9009",
+          "modelTitle": "성수 수치지형도 2025 · 성동 2024-07-02",
+          "role": "POST_SELECTION_COMPARISON",
+          "rainfall": {
+            "stationId": "421",
+            "stationName": "성동",
+            "start": "2024-07-01T15:01:00+00:00",
+            "end": "2024-07-02T14:59:00+00:00",
+            "totalDepthMm": 55.0
+          },
+          "score": 1.28347301,
+          "baseline": {
+            "surfaceRunoffM3": 515.1882662293516,
+            "lidDrainageM3": 0.0,
+            "finalStorageM3": 17.779479209562556,
+            "initialStorageM3": 0.0,
+            "infiltrationM3": 0.0,
+            "evaporationM3": 0.0,
+            "precipitationM3": 532.8999218125016,
+            "runoffContinuityPercent": -0.01246979646384716,
+            "routingContinuityPercent": null,
+            "routingStatus": "NOT_APPLICABLE_NO_CONVEYANCE_NETWORK",
+            "peakM3s": 0.08365438447799534,
+            "warnings": 0,
+            "runoffM3": 515.1882662293516,
+            "accountedDischargeM3": 532.9677454389141,
+            "seriesIntegralM3": 516.687152580642
+          },
+          "strategy": {
+            "surfaceRunoffM3": 508.5027944829766,
+            "lidDrainageM3": 0.0,
+            "finalStorageM3": 17.624453777762554,
+            "initialStorageM3": 0.0,
+            "infiltrationM3": 6.840497178175021,
+            "evaporationM3": 0.0,
+            "precipitationM3": 532.8999218125016,
+            "runoffContinuityPercent": -0.012353470548987389,
+            "routingContinuityPercent": null,
+            "routingStatus": "NOT_APPLICABLE_NO_CONVEYANCE_NETWORK",
+            "peakM3s": 0.08190293284133077,
+            "warnings": 0,
+            "runoffM3": 508.5027944829766,
+            "accountedDischargeM3": 526.1272482607392,
+            "seriesIntegralM3": 509.8328246125766
+          },
+          "sensitivity": [
+            {
+              "conductivityFactor": 0.5,
+              "score": 1.25802171,
+              "runoffM3": 508.5027944829766
+            },
+            {
+              "conductivityFactor": 1.5,
+              "score": 1.28347301,
+              "runoffM3": 508.5027944829766
+            }
+          ],
+          "resultSha256": "eb2e354afecfca8a2a86f7f30fa5ee653f8d3c79da9fd0b5114fce9d3072ba58",
+          "manifestSha256": "df9a28dd61a45674e306801e9d5011a6cd856b8cfe0addce58a4d9507458b52e"
+        },
+        {
+          "modelHash": "618cc8cc889c36953891e8e62ff42e1702f675dcfa1fd2b7218873cca005d2fa",
+          "modelTitle": "성수 수치지형도 2025 · 성동 2024-07-18",
+          "role": "SEARCH_INPUT",
+          "rainfall": {
+            "stationId": "421",
+            "stationName": "성동",
+            "start": "2024-07-17T20:00:00+00:00",
+            "end": "2024-07-18T14:59:00+00:00",
+            "totalDepthMm": 104.0
+          },
+          "score": 1.2864395,
+          "baseline": {
+            "surfaceRunoffM3": 993.1607397372155,
+            "lidDrainageM3": 0.0,
+            "finalStorageM3": 14.582079678687546,
+            "initialStorageM3": 0.0,
+            "infiltrationM3": 0.0,
+            "evaporationM3": 0.0,
+            "precipitationM3": 1007.6653067000032,
+            "runoffContinuityPercent": -0.007949634455144405,
+            "routingContinuityPercent": null,
+            "routingStatus": "NOT_APPLICABLE_NO_CONVEYANCE_NETWORK",
+            "peakM3s": 0.11557356602861546,
+            "warnings": 0,
+            "runoffM3": 993.1607397372155,
+            "accountedDischargeM3": 1007.7428194159031,
+            "seriesIntegralM3": 995.7156599957108
+          },
+          "strategy": {
+            "surfaceRunoffM3": 980.3420743452532,
+            "lidDrainageM3": 0.0,
+            "finalStorageM3": 14.436743336375047,
+            "initialStorageM3": 0.0,
+            "infiltrationM3": 12.97369082376254,
+            "evaporationM3": 0.0,
+            "precipitationM3": 1007.6653067000032,
+            "runoffContinuityPercent": -0.007869217544794083,
+            "routingContinuityPercent": null,
+            "routingStatus": "NOT_APPLICABLE_NO_CONVEYANCE_NETWORK",
+            "peakM3s": 0.1135638291016221,
+            "warnings": 0,
+            "runoffM3": 980.3420743452532,
+            "accountedDischargeM3": 994.7788176816282,
+            "seriesIntegralM3": 982.644602272203
+          },
+          "sensitivity": [
+            {
+              "conductivityFactor": 0.5,
+              "score": 0.93069764,
+              "runoffM3": 980.3420743452532
+            },
+            {
+              "conductivityFactor": 1.5,
+              "score": 1.2864395,
+              "runoffM3": 980.3420743452532
+            }
+          ],
+          "resultSha256": "2e55c21de84889cbeecd35906b19ec8ad8d815decc499c371c6bb4ae300ea951",
+          "manifestSha256": "b8ee3c2c879e3ff069291ad451e836ed1981add93fb473d9883babeb313bfa5e"
+        }
+      ],
+      "sampleScoreRange": {
+        "min": 1.27539991,
+        "max": 1.28711156
+      }
+    },
+    {
+      "placements": [
+        {
+          "cellId": "G1",
+          "facilityType": "PERMEABLE_PAVEMENT",
+          "areaM2": 20
+        },
+        {
+          "cellId": "G2",
+          "facilityType": "PERMEABLE_PAVEMENT",
+          "areaM2": 20
+        },
+        {
+          "cellId": "G3",
+          "facilityType": "PERMEABLE_PAVEMENT",
+          "areaM2": 20
+        },
+        {
+          "cellId": "G4",
+          "facilityType": "PERMEABLE_PAVEMENT",
+          "areaM2": 20
+        },
+        {
+          "cellId": "G5",
+          "facilityType": "PERMEABLE_PAVEMENT",
+          "areaM2": 20
+        }
+      ],
+      "cost": 11000000,
+      "stages": [
+        {
+          "placements": [
+            {
+              "cellId": "G1",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            }
+          ],
+          "cost": 1100000,
+          "accountedDischargeM3": 1005.8728251448156,
+          "incrementReductionM3": 1.8699942710875348
+        },
+        {
+          "placements": [
+            {
+              "cellId": "G1",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G2",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            }
+          ],
+          "cost": 2200000,
+          "accountedDischargeM3": 1004.0125199632156,
+          "incrementReductionM3": 1.8603051815999834
+        },
+        {
+          "placements": [
+            {
+              "cellId": "G1",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G2",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G3",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            }
+          ],
+          "cost": 3300000,
+          "accountedDischargeM3": 1002.1425256921283,
+          "incrementReductionM3": 1.8699942710873074
+        },
+        {
+          "placements": [
+            {
+              "cellId": "G1",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G2",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G3",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G4",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            }
+          ],
+          "cost": 4400000,
+          "accountedDischargeM3": 1000.2822205105282,
+          "incrementReductionM3": 1.860305181600097
+        },
+        {
+          "placements": [
+            {
+              "cellId": "G1",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G2",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G3",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G4",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G5",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            }
+          ],
+          "cost": 5500000,
+          "accountedDischargeM3": 998.4122262394405,
+          "incrementReductionM3": 1.8699942710876485
+        },
+        {
+          "placements": [
+            {
+              "cellId": "G1",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G2",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G3",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G4",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G5",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 20
+            }
+          ],
+          "cost": 6600000,
+          "accountedDischargeM3": 997.6855445278783,
+          "incrementReductionM3": 0.7266817115622644
+        },
+        {
+          "placements": [
+            {
+              "cellId": "G1",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G2",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G3",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G4",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 20
+            },
+            {
+              "cellId": "G5",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 20
+            }
+          ],
+          "cost": 7700000,
+          "accountedDischargeM3": 996.9588628163154,
+          "incrementReductionM3": 0.7266817115628328
+        },
+        {
+          "placements": [
+            {
+              "cellId": "G1",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G2",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G3",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 20
+            },
+            {
+              "cellId": "G4",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 20
+            },
+            {
+              "cellId": "G5",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 20
+            }
+          ],
+          "cost": 8800000,
+          "accountedDischargeM3": 996.2321811047532,
+          "incrementReductionM3": 0.7266817115622644
+        },
+        {
+          "placements": [
+            {
+              "cellId": "G1",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 10
+            },
+            {
+              "cellId": "G2",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 20
+            },
+            {
+              "cellId": "G3",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 20
+            },
+            {
+              "cellId": "G4",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 20
+            },
+            {
+              "cellId": "G5",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 20
+            }
+          ],
+          "cost": 9900000,
+          "accountedDischargeM3": 995.5054993931907,
+          "incrementReductionM3": 0.7266817115624917
+        },
+        {
+          "placements": [
+            {
+              "cellId": "G1",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 20
+            },
+            {
+              "cellId": "G2",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 20
+            },
+            {
+              "cellId": "G3",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 20
+            },
+            {
+              "cellId": "G4",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 20
+            },
+            {
+              "cellId": "G5",
+              "facilityType": "PERMEABLE_PAVEMENT",
+              "areaM2": 20
+            }
+          ],
+          "cost": 11000000,
+          "accountedDischargeM3": 994.7788176816282,
+          "incrementReductionM3": 0.7266817115624917
+        }
+      ],
+      "stopReason": "NO_POSITIVE_FEASIBLE_INCREMENT",
+      "comparisonToleranceM3": 0.038756357950000125,
+      "id": "cpu-300000000",
+      "budget": 300000000,
+      "title": "30,000만 원 상한 CPU 기준안",
+      "candidateEvaluations": 144,
+      "evaluations": [
+        {
+          "modelHash": "c55a68302a99b815a25c7f403a38fa7e395f6635037c6abbaa6a2a6436a6c684",
+          "modelTitle": "성수 수치지형도 2025 · 서울 2024-07-18",
+          "role": "POST_SELECTION_COMPARISON",
+          "rainfall": {
+            "stationId": "108",
+            "stationName": "서울",
+            "start": "2024-07-17T20:00:00+00:00",
+            "end": "2024-07-18T14:59:00+00:00",
+            "totalDepthMm": 109.7
+          },
+          "score": 1.28711156,
+          "baseline": {
+            "surfaceRunoffM3": 1048.3401043685283,
+            "lidDrainageM3": 0.0,
+            "finalStorageM3": 14.582079678687546,
+            "initialStorageM3": 0.0,
+            "infiltrationM3": 0.0,
+            "evaporationM3": 0.0,
+            "precipitationM3": 1062.8931167787534,
+            "runoffContinuityPercent": 9.999999974752427e-07,
+            "routingContinuityPercent": null,
+            "routingStatus": "NOT_APPLICABLE_NO_CONVEYANCE_NETWORK",
+            "peakM3s": 0.14923312471364625,
+            "warnings": 0,
+            "runoffM3": 1048.3401043685283,
+            "accountedDischargeM3": 1062.9221840472158,
+            "seriesIntegralM3": 1049.0807090053286
+          },
+          "strategy": {
+            "surfaceRunoffM3": 1034.8141354439783,
+            "lidDrainageM3": 0.0,
+            "finalStorageM3": 14.427054246887547,
+            "initialStorageM3": 0.0,
+            "infiltrationM3": 13.680994356350041,
+            "evaporationM3": 0.0,
+            "precipitationM3": 1062.8931167787534,
+            "runoffContinuityPercent": 9.999999974752427e-07,
+            "routingContinuityPercent": null,
+            "routingStatus": "NOT_APPLICABLE_NO_CONVEYANCE_NETWORK",
+            "peakM3s": 0.14708284568041563,
+            "warnings": 0,
+            "runoffM3": 1034.8141354439783,
+            "accountedDischargeM3": 1049.241189690866,
+            "seriesIntegralM3": 1035.5028364576901
+          },
+          "sensitivity": [
+            {
+              "conductivityFactor": 0.5,
+              "score": 0.88329398,
+              "runoffM3": 1034.8141354439783
+            },
+            {
+              "conductivityFactor": 1.5,
+              "score": 1.28711156,
+              "runoffM3": 1034.8141354439783
+            }
+          ],
+          "resultSha256": "43756d80c8fcf5d3864c31010b04f4692d8c4dc095631bda2def1e775e031e99",
+          "manifestSha256": "5e2cac97f42b7a22e096afe5396e38fca99c5a43f81a1b569ef299bc1c6292e8"
+        },
+        {
+          "modelHash": "0bd06d394f6dd0d36b0e98fc1f32ea7b2bc00597b0c0aaa944d097733f9de0b2",
+          "modelTitle": "성수 수치지형도 2025 · 성동 2024-06-22",
+          "role": "POST_SELECTION_COMPARISON",
+          "rainfall": {
+            "stationId": "421",
+            "stationName": "성동",
+            "start": "2024-06-21T15:01:00+00:00",
+            "end": "2024-06-22T14:59:00+00:00",
+            "totalDepthMm": 18.5
+          },
+          "score": 1.27539991,
+          "baseline": {
+            "surfaceRunoffM3": 162.321316184088,
+            "lidDrainageM3": 0.0,
+            "finalStorageM3": 16.965595692612553,
+            "initialStorageM3": 0.0,
+            "infiltrationM3": 0.0,
+            "evaporationM3": 0.0,
+            "precipitationM3": 179.24815551875056,
+            "runoffContinuityPercent": -0.020071856677532196,
+            "routingContinuityPercent": null,
+            "routingStatus": "NOT_APPLICABLE_NO_CONVEYANCE_NETWORK",
+            "peakM3s": 0.024908363877329975,
+            "warnings": 0,
+            "runoffM3": 162.321316184088,
+            "accountedDischargeM3": 179.28691187670057,
+            "seriesIntegralM3": 162.92513562207887
+          },
+          "strategy": {
+            "surfaceRunoffM3": 160.18971649683803,
+            "lidDrainageM3": 0.0,
+            "finalStorageM3": 16.810570260812554,
+            "initialStorageM3": 0.0,
+            "infiltrationM3": 2.276936029562507,
+            "evaporationM3": 0.0,
+            "precipitationM3": 179.24815551875056,
+            "runoffContinuityPercent": -0.019804053008556366,
+            "routingContinuityPercent": null,
+            "routingStatus": "NOT_APPLICABLE_NO_CONVEYANCE_NETWORK",
+            "peakM3s": 0.024346017045900226,
+            "warnings": 0,
+            "runoffM3": 160.18971649683803,
+            "accountedDischargeM3": 177.0002867576506,
+            "seriesIntegralM3": 160.71285470754447
+          },
+          "sensitivity": [
+            {
+              "conductivityFactor": 0.5,
+              "score": 1.27539991,
+              "runoffM3": 160.18971649683803
+            },
+            {
+              "conductivityFactor": 1.5,
+              "score": 1.27539991,
+              "runoffM3": 160.18971649683803
+            }
+          ],
+          "resultSha256": "5c3d7baa60cc30a0542f3649e222ade95d575c02b45f66ce780ede146d9d64c1",
+          "manifestSha256": "e9024bbdab3c93cd25ee92b5ea7adf895aca4f9695c96379ac5ad8173ef870b8"
+        },
+        {
+          "modelHash": "53955844bce2e3717530d8605cb59f386b67e2b4dc6c47bbd53cc4c25d0e9009",
+          "modelTitle": "성수 수치지형도 2025 · 성동 2024-07-02",
+          "role": "POST_SELECTION_COMPARISON",
+          "rainfall": {
+            "stationId": "421",
+            "stationName": "성동",
+            "start": "2024-07-01T15:01:00+00:00",
+            "end": "2024-07-02T14:59:00+00:00",
+            "totalDepthMm": 55.0
+          },
+          "score": 1.28347301,
+          "baseline": {
+            "surfaceRunoffM3": 515.1882662293516,
+            "lidDrainageM3": 0.0,
+            "finalStorageM3": 17.779479209562556,
+            "initialStorageM3": 0.0,
+            "infiltrationM3": 0.0,
+            "evaporationM3": 0.0,
+            "precipitationM3": 532.8999218125016,
+            "runoffContinuityPercent": -0.01246979646384716,
+            "routingContinuityPercent": null,
+            "routingStatus": "NOT_APPLICABLE_NO_CONVEYANCE_NETWORK",
+            "peakM3s": 0.08365438447799534,
+            "warnings": 0,
+            "runoffM3": 515.1882662293516,
+            "accountedDischargeM3": 532.9677454389141,
+            "seriesIntegralM3": 516.687152580642
+          },
+          "strategy": {
+            "surfaceRunoffM3": 508.5027944829766,
+            "lidDrainageM3": 0.0,
+            "finalStorageM3": 17.624453777762554,
+            "initialStorageM3": 0.0,
+            "infiltrationM3": 6.840497178175021,
+            "evaporationM3": 0.0,
+            "precipitationM3": 532.8999218125016,
+            "runoffContinuityPercent": -0.012353470548987389,
+            "routingContinuityPercent": null,
+            "routingStatus": "NOT_APPLICABLE_NO_CONVEYANCE_NETWORK",
+            "peakM3s": 0.08190293284133077,
+            "warnings": 0,
+            "runoffM3": 508.5027944829766,
+            "accountedDischargeM3": 526.1272482607392,
+            "seriesIntegralM3": 509.8328246125766
+          },
+          "sensitivity": [
+            {
+              "conductivityFactor": 0.5,
+              "score": 1.25802171,
+              "runoffM3": 508.5027944829766
+            },
+            {
+              "conductivityFactor": 1.5,
+              "score": 1.28347301,
+              "runoffM3": 508.5027944829766
+            }
+          ],
+          "resultSha256": "eb2e354afecfca8a2a86f7f30fa5ee653f8d3c79da9fd0b5114fce9d3072ba58",
+          "manifestSha256": "cf889e089bdc98c4538ece5d67868a47fbfc47aa60333f35117536b6446c76c1"
+        },
+        {
+          "modelHash": "618cc8cc889c36953891e8e62ff42e1702f675dcfa1fd2b7218873cca005d2fa",
+          "modelTitle": "성수 수치지형도 2025 · 성동 2024-07-18",
+          "role": "SEARCH_INPUT",
+          "rainfall": {
+            "stationId": "421",
+            "stationName": "성동",
+            "start": "2024-07-17T20:00:00+00:00",
+            "end": "2024-07-18T14:59:00+00:00",
+            "totalDepthMm": 104.0
+          },
+          "score": 1.2864395,
+          "baseline": {
+            "surfaceRunoffM3": 993.1607397372155,
+            "lidDrainageM3": 0.0,
+            "finalStorageM3": 14.582079678687546,
+            "initialStorageM3": 0.0,
+            "infiltrationM3": 0.0,
+            "evaporationM3": 0.0,
+            "precipitationM3": 1007.6653067000032,
+            "runoffContinuityPercent": -0.007949634455144405,
+            "routingContinuityPercent": null,
+            "routingStatus": "NOT_APPLICABLE_NO_CONVEYANCE_NETWORK",
+            "peakM3s": 0.11557356602861546,
+            "warnings": 0,
+            "runoffM3": 993.1607397372155,
+            "accountedDischargeM3": 1007.7428194159031,
+            "seriesIntegralM3": 995.7156599957108
+          },
+          "strategy": {
+            "surfaceRunoffM3": 980.3420743452532,
+            "lidDrainageM3": 0.0,
+            "finalStorageM3": 14.436743336375047,
+            "initialStorageM3": 0.0,
+            "infiltrationM3": 12.97369082376254,
+            "evaporationM3": 0.0,
+            "precipitationM3": 1007.6653067000032,
+            "runoffContinuityPercent": -0.007869217544794083,
+            "routingContinuityPercent": null,
+            "routingStatus": "NOT_APPLICABLE_NO_CONVEYANCE_NETWORK",
+            "peakM3s": 0.1135638291016221,
+            "warnings": 0,
+            "runoffM3": 980.3420743452532,
+            "accountedDischargeM3": 994.7788176816282,
+            "seriesIntegralM3": 982.644602272203
+          },
+          "sensitivity": [
+            {
+              "conductivityFactor": 0.5,
+              "score": 0.93069764,
+              "runoffM3": 980.3420743452532
+            },
+            {
+              "conductivityFactor": 1.5,
+              "score": 1.2864395,
+              "runoffM3": 980.3420743452532
+            }
+          ],
+          "resultSha256": "2e55c21de84889cbeecd35906b19ec8ad8d815decc499c371c6bb4ae300ea951",
+          "manifestSha256": "9b86ed19ac756057ac1737465dca50983582dd74c3d8712b420fafb3fee05558"
+        }
+      ],
+      "sampleScoreRange": {
+        "min": 1.27539991,
+        "max": 1.28711156
+      }
+    }
+  ],
+  "limitations": [
+    "10m² 증분·시설 유형 교체 없는 탐욕 탐색. 전역 최적해 아님",
+    "탐색 중 한 강우만 사용; 별도 강우 비교도 현장 관측 검증 아님",
+    "사람과 탐색 횟수가 다름; 사람 순위에 포함하지 않음",
+    "증발·설치 가능성·토양·유입 경로 가정 유지",
+    "제시 범위는 선택된 강우 창의 최저/최고이며 신뢰구간 아님"
+  ]
+}

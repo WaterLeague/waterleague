@@ -14,18 +14,18 @@ public class ReferenceController {
   }
 
   @GetMapping
-  public Object list() {
-    return references.view();
+  public Object list(@RequestParam(required = false) String modelHash) {
+    return references.view(modelHash);
   }
 
   @GetMapping("/source")
-  public ResponseEntity<String> source() {
-    return download("cpu-reference.json", references.source());
+  public ResponseEntity<String> source(@RequestParam(required = false) String modelHash) {
+    return download("cpu-reference.json", references.source(modelHash));
   }
 
   @GetMapping("/ledger")
-  public ResponseEntity<String> ledger() {
-    return download("cpu-search-ledger.json", references.ledger());
+  public ResponseEntity<String> ledger(@RequestParam(required = false) String modelHash) {
+    return download("cpu-search-ledger.json", references.ledger(modelHash));
   }
 
   private ResponseEntity<String> download(String name, String content) {

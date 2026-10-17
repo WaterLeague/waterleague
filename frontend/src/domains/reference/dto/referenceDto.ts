@@ -25,6 +25,8 @@ export const referenceDto = z.object({
     algorithm: z.literal('GREEDY_MARGINAL_DISCHARGE_PER_KRW_V1'),
     stepAreaM2: z.literal(10),
     trainingModelHash: hash,
+    mapId: z.string().optional(),
+    mapTitle: z.string().optional(),
     modelHashes: z.array(hash).min(2).max(20),
     uniqueCandidateEvaluations: z.number().int().positive().max(2000),
     totalCandidateRequests: z.number().int().positive().max(6000),

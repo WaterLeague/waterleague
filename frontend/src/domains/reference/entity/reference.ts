@@ -43,6 +43,8 @@ export interface CpuReference {
   report: {
     id: string;
     trainingModelHash: string;
+    mapId?: string;
+    mapTitle?: string;
     modelHashes: string[];
     uniqueCandidateEvaluations: number;
     totalCandidateRequests: number;

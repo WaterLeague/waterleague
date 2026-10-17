@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "references": [
+    {
+      "reportFile": "cpu-reference.json",
+      "ledgerFile": "cpu-search-ledger.json",
+      "reportSha256": "09e44ceee6a0032fa5e5e164e07f21b967cbbb81af501f97747d36177bf9daf2",
+      "modelHashes": [
+        "3af2362021b1678b743a54d82ec1cd1e40cc3b1bfaf594a39858843b35fafaee",
+        "eb5b6e36c3a161f5f4ea4b61921a5960cf9104b0c899d3afb551a87d4bc2d3f3",
+        "00991b8d0823ac4d977a8e3a6f16c240720e9334396edccec7e4aa3a13dffbff",
+        "fff031781cebc7f1b1f8e6cd0ed284c2166f688d80a2c70a2e4c24ee2df438c3"
+      ]
+    },
+    {
+      "reportFile": "cpu-reference-ngii-v2.json",
+      "ledgerFile": "cpu-search-ledger-ngii-v2.json",
+      "reportSha256": "e1a3cadeb092fd5781d225a0d00323190a46e44814eeed347999e2c7fb994adc",
+      "modelHashes": [
+        "c55a68302a99b815a25c7f403a38fa7e395f6635037c6abbaa6a2a6436a6c684",
+        "0bd06d394f6dd0d36b0e98fc1f32ea7b2bc00597b0c0aaa944d097733f9de0b2",
+        "53955844bce2e3717530d8605cb59f386b67e2b4dc6c47bbd53cc4c25d0e9009",
+        "618cc8cc889c36953891e8e62ff42e1702f675dcfa1fd2b7218873cca005d2fa"
+      ]
+    }
+  ]
+}

@@ -1,11 +1,12 @@
 import { referenceDto } from '../dto/referenceDto';
 import type { CpuReference } from '../entity/reference';
 import { ReferenceDataError } from '../exception/ReferenceDataError';
-export function mapReference(input: unknown): CpuReference {
+export function mapReference(input: unknown, modelHash?: string): CpuReference {
   const parsed = referenceDto.safeParse(input);
   if (!parsed.success) throw new ReferenceDataError();
   const { report } = parsed.data;
   if (
+    (modelHash !== undefined && !report.modelHashes.includes(modelHash)) ||
     new Set(report.modelHashes).size !== report.modelHashes.length ||
     !report.modelHashes.includes(report.trainingModelHash) ||
     new Set(report.plans.map((p) => p.id)).size !== report.plans.length ||

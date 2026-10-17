@@ -16,7 +16,7 @@ export function ReferencePage({
   busy: boolean;
   onCopy: (plan: ReferencePlan) => void;
 }) {
-  const { data, error, retry } = useReference();
+  const { data, error, retry } = useReference(lab.modelHash);
   const [index, setIndex] = useState(0);
   if (error)
     return (
@@ -52,6 +52,7 @@ export function ReferencePage({
         예산과 탐색 범위를 확인하고, 내 설계의 출발점으로 삼아 보세요.
       </p>
       <div className="reference-method">
+        <span>{report.mapTitle ?? 'OSM 초기 지도'} · 공간 버전별 계산 기준안</span>
         <b>고유 후보 {format.format(report.uniqueCandidateEvaluations)}개 계산</b>
         <span>
           {training.rainfall.stationName} · {rainDate(training.rainfall.start)} ·{' '}
@@ -236,10 +237,16 @@ export function ReferencePage({
           </details>
         </div>
         <div className="reference-downloads">
-          <a className="outline-button" href="/api/v1/references/source">
+          <a
+            className="outline-button"
+            href={`/api/v1/references/source?modelHash=${lab.modelHash}`}
+          >
             <Download size={15} /> 계산 결과 JSON
           </a>
-          <a className="outline-button" href="/api/v1/references/ledger">
+          <a
+            className="outline-button"
+            href={`/api/v1/references/ledger?modelHash=${lab.modelHash}`}
+          >
             <Download size={15} /> 후보 원장 JSON
           </a>
         </div>
