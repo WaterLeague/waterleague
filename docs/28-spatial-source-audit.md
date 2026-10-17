@@ -51,3 +51,30 @@ simulation/.venv/bin/python scripts/audit_spatial_sources.py \
 입력 ZIP 이름은 `dem-2024.zip`, `dem-2025.zip`, `landcover-2024.zip`. 등록 hash가 다른 재배포 원본은 자동 수락하지 않으며 출처 계약 갱신 필요. 기존 검사 출력 덮어쓰기 거부.
 
 도구 근거: [GDAL raster info](https://gdal.org/en/stable/programs/gdalinfo.html), [GDAL XYZ 변환](https://gdal.org/en/stable/programs/gdal_translate.html), [Shapefile 문자셋](https://gdal.org/en/stable/drivers/vector/shapefile.html), [pyproj TransformerGroup](https://pyproj4.github.io/pyproj/stable/api/transformer.html).
+
+## 자기교차 도형 진단 계약
+
+원본 검사와 별도 명령으로 `make_valid`의 `linework`·`structure` 두 보정 후보를 비교. 원본 ZIP 검증 후 임시 디렉터리에서 계산하며 원본/기존 검사 보고서/모델은 덮어쓰지 않음. 원도형을 수정한 파생 데이터는 공개하지 않고 로컬 진단 보고서만 생성. [Shapely 공식 문서](https://shapely.readthedocs.io/en/stable/reference/shapely.make_valid.html)에 따라 전자는 선분과 꼭짓점 보존, 후자는 외곽/내부 링의 분류가 맞다는 가정에 기반. 두 방식의 일치도 현장 경계의 정확성 증명은 아님.
+
+- 각 오류 도형의 원본 순번·속성 hash·원도형 WKB hash·오류 이유 기록. 후보의 WKB hash·유형·면적·꼭짓점 수와 비면적 선/점 성분을 별도 기록. 단순 `buffer(0)`·반올림·격자 스냅 없음.
+- 면적 성분만으로 대상 구역 교차를 계산하되 선/점 성분의 수·길이는 버리지 않고 보고. 두 방식의 대상 구역 내 대칭차 면적과 각 분류별 합/합집합/중복·전체 빈 영역 비교. 오류 원도형의 수치 면적은 참고값이며 실측 기준으로 사용하지 않음.
+- 원래 유효한 도형과 속성은 동일하게 보존. 보정 후 빈 도형·비면적 성분·방법 간 불일치·전체 중복/빈 영역은 검토 대상으로 유지. `modelEligible=false`, `calibrationEligible=false`, `DIAGNOSTIC_ONLY` 고정.
+- 공개 보고는 원본/코드/로컬 결과 hash와 요약 수치만 포함. 기존 EXPLORATORY 모델과 랭킹은 불변. 최종 후보 채택은 이용조건·현장/영상 대조·좌표/시기 정합 검토 이후 별도 계약.
+
+2026-10-17 [EGIS 저작권 정책](https://aid.mcee.go.kr/bbs/copyright.do) 확인. 정책은 자료별 공공누리 표시 확인과 출처 표시를 요구. 제공 XML에는 저작권자 `환경부`가 있으나 이 ZIP에 적용되는 공공누리 유형은 아직 확인되지 않음. 사이트 전체 정책을 개별 원본/파생 좌표의 무제한 재배포 허가로 취급하지 않음. 현재 GitHub에는 원자료/파생 좌표를 제외한 코드·검사 요약만 저장.
+
+## 두 보정 후보 진단 결과
+
+`scripts/diagnose_landcover_topology.py`의 GEOS 3.14.1 `linework`/`structure`, `keep_collapsed=true` 적용. 오류 4개 모두 유효 Polygon 후보가 되었으며 선/점 퇴화 성분 없음. 유효 원도형 12,326개·전체 속성 원문은 그대로 유지. 두 방식은 WKB의 순서/방향에 따른 hash는 다르지만 4개 후보 각각의 면적 도형이 같고 전체/대상 구역 대칭차 면적 0m². 이는 경계의 현장 정확성 승인과 별개.
+
+대상 구역은 기존 유효 173개와 보정한 도로 2개를 포함해 175개. 두 방식 모두 합집합 면적 73,562.72154458915m², 대상 경계 73,562.72154458817m². 계산 피복률 1.0000000000000133으로 부동소수 오차를 그대로 보존, 중첩/빈 영역 계산값 0m². 도로 후보가 구역과 겹치는 면적은 약 31,273.37m²·3,502.68m². 이전 52.73%는 오류 도형을 제외한 부분 검사였으며 실제 미피복 비율이 아님. 분류별 합집합도 두 방식 간 대칭차 0m².
+
+오류 도형의 원본 순번·속성/WKB hash·후보 구조·면적과 변환 근거를 로컬 `topology-final.json`에 기록, 같은 코드 재실행 `topology-final-repeat.json`과 byte 일치. 공개 요약 `data/manifests/seongsu-topology-diagnostic.json`은 좌표·원본 속성을 제외. 원본 ZIP·기존 검사 보고서·모델/점수 입력 불변.
+
+교차 도형·겹친 내부 링의 방법별 차이·선으로 퇴화한 도형·기존 중첩/빈 영역·구역 밖 오류·잘못된 경계/3D 입력·원본 보존/결정성을 6개 검사로 확인. 기존 SWMM 검사를 포함한 Python 전체 48개 통과. 시험용 도형은 진단 규칙 검증이며 현장 경계의 정확도 검증 자료가 아님.
+
+```sh
+simulation/.venv/bin/python scripts/diagnose_landcover_topology.py \
+  --source data/private/seongsu-official-20261017/landcover-2024.zip \
+  --output data/private/seongsu-official-20261017/topology-new.json
+```

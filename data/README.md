@@ -41,3 +41,5 @@ AWS 응답은 별도 QC 플래그를 포함하지 않으므로 자체 검사 결
 2026-10-17 사용자 직접 다운로드한 성동 37705의 2024/2025 DEM과 성동083의 2024 세분류 토지피복 확보. 원본은 `private/seongsu-official-20261017/`에 보존, Git 제외. 원본 구성 파일 hash·검사 도구 버전·품질 제한은 `manifests/seongsu-spatial-audit.json`, 검사 방법/결과는 [문서 28](../docs/28-spatial-source-audit.md) 참조.
 
 DEM은 90m 격자이며 수직 기준·표고 단위 필드 미제공. 토지피복은 잘못된 도로 도형이 실험 구역에 영향을 줄 수 있어 부분 면적만 계산. 원본 자동 복구·모델 편입·공개 배포 없음. 등록된 ZIP의 hash를 확인하는 `scripts/audit_spatial_sources.py`로 로컬에서 재검사. 원본/파생 좌표 재배포 조건과 정밀도 검토 후 새 모델 버전 결정.
+
+별도 `scripts/diagnose_landcover_topology.py`로 원본을 보존한 두 보정 후보 진단. 오류 도로 2개를 포함하면 구역 내 175개 도형, 부동소수 오차 범위에서 전체 영역 포함. 두 방식의 분류별 대칭차 0m², 현장 정확성·불투수율·침투율 검증은 아님. 좌표를 제외한 요약은 `manifests/seongsu-topology-diagnostic.json`. 운영 모델 채택 없음.
