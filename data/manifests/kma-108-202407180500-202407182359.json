@@ -1,0 +1,16 @@
+{
+  "provider": "기상청",
+  "endpoint": "https://apihub.kma.go.kr/api/typ01/cgi-bin/url/nph-aws2_min",
+  "parameters": {
+    "tm1": "202407180500",
+    "tm2": "202407182359",
+    "stn": "108",
+    "disp": "0",
+    "help": "1"
+  },
+  "acquiredAt": "2026-10-15T14:41:05.635685+00:00",
+  "sha256": "17bc07c7c47f7d9c4db164173da039b849bf1bb6f74d1a549f92a621ab25f120",
+  "bytes": 150615,
+  "sourceTimezone": "Asia/Seoul",
+  "sourceNotice": "AWS 원본의 -50 이하 값은 결측·오류. 별도 품질 플래그 미포함."
+}

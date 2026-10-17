@@ -21,3 +21,4 @@ data/private/
 data/runs/
 playwright-report/
 test-results/
+*.tsbuildinfo

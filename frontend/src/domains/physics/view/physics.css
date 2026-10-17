@@ -1,0 +1,56 @@
+.shared-physics {
+  margin: 20px 0;
+  padding-top: 18px;
+  border-top: 1px solid #d6dfcf;
+}
+.shared-physics h3 {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 0 10px;
+  font-size: 15px;
+}
+.shared-physics .physics-status {
+  font-size: 12px;
+  line-height: 1.6;
+  color: #51644f;
+}
+.shared-physics > small {
+  display: block;
+  font-size: 10px;
+  line-height: 1.6;
+  color: #73806b;
+}
+.shared-physics dl {
+  display: grid;
+  gap: 10px;
+  margin: 16px 0;
+}
+.shared-physics dl div {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+}
+.shared-physics dt {
+  font-size: 12px;
+  color: #566651;
+}
+.shared-physics dd {
+  margin: 0;
+  font-size: 16px;
+  color: #294e36;
+  font-variant-numeric: tabular-nums;
+}
+.shared-physics dd small {
+  font-size: 10px;
+}
+.shared-physics details {
+  font-size: 11px;
+  line-height: 1.6;
+  color: #6b7863;
+}
+.shared-physics summary {
+  cursor: pointer;
+  padding: 7px 0;
+}

@@ -1,0 +1,118 @@
+.live-rainfall {
+  margin: 20px 0;
+  padding: 18px 16px;
+  background: #e8eee7;
+  border: 1px solid #cad6c8;
+  border-radius: 10px;
+  color: #233d32;
+}
+.live-rainfall-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.live-rainfall-heading > span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 13px;
+}
+.live-rainfall-heading button {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  padding: 6px;
+}
+.live-rainfall-heading button:disabled {
+  opacity: 0.4;
+  cursor: wait;
+}
+.live-rainfall-status {
+  display: block;
+  font-size: 10px;
+  margin-bottom: 9px;
+  color: #496151;
+}
+.live-rainfall > strong {
+  display: block;
+  font-size: 15px;
+}
+.live-rainfall strong small {
+  font-size: 10px;
+  font-weight: 400;
+  margin-left: 4px;
+}
+.live-rainfall dl {
+  display: flex;
+  gap: 24px;
+  margin: 14px 0;
+}
+.live-rainfall dt {
+  font-size: 10px;
+  margin-bottom: 4px;
+}
+.live-rainfall dd {
+  margin: 0;
+  font-size: 22px;
+  font-variant-numeric: tabular-nums;
+}
+.live-rainfall dd small {
+  font-size: 11px;
+}
+.live-rainfall > small {
+  display: block;
+  font-size: 9px;
+  line-height: 1.7;
+  color: #536857;
+}
+.live-rainfall p {
+  font-size: 11px;
+  line-height: 1.7;
+  margin: 8px 0;
+}
+
+.live-rainfall-condition {
+  font-weight: 600;
+}
+.city-weather-badge {
+  position: absolute;
+  left: 20px;
+  top: 68px;
+  z-index: 3;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  max-width: calc(100% - 40px);
+  padding: 10px 13px;
+  border: 1px solid #b6c8c9;
+  border-radius: 8px;
+  background: #f4f8f2ed;
+  color: #365961;
+  font-size: 12px;
+  box-shadow: 0 3px 12px #193d3410;
+}
+.city-weather-badge small {
+  display: block;
+  margin-top: 3px;
+  color: #607674;
+  font-size: 9px;
+}
+.live-rain-streaks {
+  animation: live-rain-fall 0.8s linear infinite;
+}
+@keyframes live-rain-fall {
+  to {
+    transform: translateY(var(--rain-step));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .live-rain-streaks {
+    animation: none;
+  }
+}

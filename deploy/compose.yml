@@ -1,0 +1,149 @@
+name: ${WL_PROJECT:?고유 프로젝트 이름 필요}
+
+x-runtime: &runtime
+  user: "${WL_RUNTIME_UID:?호스트 UID 필요}:${WL_RUNTIME_GID:?호스트 GID 필요}"
+  read_only: true
+  cap_drop: [ALL]
+  security_opt: [no-new-privileges:true]
+  init: true
+  pids_limit: 256
+  tmpfs: ['/tmp:rw,noexec,nosuid,size=134217728,mode=1777']
+  logging:
+    driver: json-file
+    options: {max-size: 10m, max-file: '3'}
+
+services:
+  db:
+    image: postgres:18.6-bookworm@sha256:afc7e2d441324c0388fa80c3d24f733b4194a4eb7f47dd8ee2b08eb1a24a647c
+    environment:
+      POSTGRES_USER: wl_admin
+      POSTGRES_DB: waterleague
+      POSTGRES_PASSWORD_FILE: /run/secrets/wl_admin-password
+      POSTGRES_INITDB_ARGS: --auth-host=scram-sha-256
+    secrets: [wl_admin-password]
+    volumes: ['postgres:/var/lib/postgresql']
+    networks: [database]
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U wl_admin -d waterleague']
+      interval: 3s
+      timeout: 3s
+      retries: 30
+    shm_size: 256m
+    mem_limit: 2g
+    cpus: 1
+    pids_limit: 256
+    security_opt: [no-new-privileges:true]
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options: {max-size: 10m, max-file: '3'}
+
+  bootstrap:
+    <<: *runtime
+    image: ${WL_PROJECT}-worker:local
+    build: {context: .., dockerfile: deploy/worker.Dockerfile}
+    command: [python, /app/deploy/database.py, bootstrap]
+    secrets: [wl_admin-password, wl_owner-password, wl_api-password, wl_worker-password]
+    networks: [database]
+    depends_on: {db: {condition: service_healthy}}
+    mem_limit: 256m
+    cpus: 0.5
+
+  migrate:
+    <<: *runtime
+    image: ${WL_PROJECT}-api:local
+    build: {context: .., dockerfile: deploy/api.Dockerfile}
+    environment:
+      SPRING_PROFILES_ACTIVE: container,migrate
+      DB_URL: jdbc:postgresql://db:5432/waterleague
+      DB_USER: wl_owner
+    secrets:
+      - {source: wl_owner-password, target: spring.datasource.password}
+    networks: [database]
+    depends_on: {bootstrap: {condition: service_completed_successfully}}
+    mem_limit: 1g
+    cpus: 1
+
+  grant:
+    <<: *runtime
+    image: ${WL_PROJECT}-worker:local
+    command: [python, /app/deploy/database.py, grant]
+    secrets: [wl_owner-password]
+    networks: [database]
+    depends_on: {migrate: {condition: service_completed_successfully}}
+    mem_limit: 256m
+    cpus: 0.5
+
+  api:
+    <<: *runtime
+    image: ${WL_PROJECT}-api:local
+    environment:
+      SPRING_PROFILES_ACTIVE: container
+      DB_URL: jdbc:postgresql://db:5432/waterleague
+      DB_USER: wl_api
+      ARTIFACTS_PATH: /artifacts
+    secrets:
+      - {source: wl_api-password, target: spring.datasource.password}
+      - {source: mfa-key, target: waterleague.mfa-key}
+    volumes: ['${WL_STATE_DIR:?비공개 상태 경로 필요}/artifacts:/artifacts:ro']
+    networks: [edge, database]
+    depends_on: {grant: {condition: service_completed_successfully}}
+    healthcheck:
+      test: [CMD, java, -cp, /app/health, HttpHealthCheck]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    mem_limit: 2g
+    cpus: 1
+    restart: unless-stopped
+
+  worker:
+    <<: *runtime
+    image: ${WL_PROJECT}-worker:local
+    environment:
+      DATABASE_URL_FILE: /run/secrets/database-url
+      ARTIFACTS_PATH: /artifacts
+      SIMULATION_CACHE_PATH: /cache
+    secrets: [database-url]
+    volumes:
+      - '${WL_STATE_DIR}/artifacts:/artifacts'
+      - '${WL_STATE_DIR}/cache:/cache'
+    networks: [database]
+    depends_on: {grant: {condition: service_completed_successfully}}
+    mem_limit: 2g
+    cpus: 1
+    restart: unless-stopped
+    stop_grace_period: 100s
+
+  web:
+    <<: *runtime
+    image: ${WL_PROJECT}-web:local
+    build: {context: .., dockerfile: deploy/web.Dockerfile}
+    ports: ['127.0.0.1:${WL_HTTPS_PORT:-8443}:8443']
+    volumes:
+      - '${WL_STATE_DIR}/caddy-data:/data'
+      - '${WL_STATE_DIR}/caddy-config:/config'
+    networks: [edge]
+    depends_on: {api: {condition: service_healthy}}
+    healthcheck:
+      test: [CMD, wget, -q, -O, /dev/null, 'http://127.0.0.1:8081/healthz']
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    mem_limit: 256m
+    cpus: 0.5
+    restart: unless-stopped
+
+networks:
+  edge: {}
+  database: {internal: true}
+volumes:
+  postgres: {}
+secrets:
+  wl_admin-password: {file: '${WL_STATE_DIR}/secrets/wl_admin-password'}
+  wl_owner-password: {file: '${WL_STATE_DIR}/secrets/wl_owner-password'}
+  wl_api-password: {file: '${WL_STATE_DIR}/secrets/wl_api-password'}
+  wl_worker-password: {file: '${WL_STATE_DIR}/secrets/wl_worker-password'}
+  database-url: {file: '${WL_STATE_DIR}/secrets/database-url'}
+  mfa-key: {file: '${WL_STATE_DIR}/secrets/mfa-key'}

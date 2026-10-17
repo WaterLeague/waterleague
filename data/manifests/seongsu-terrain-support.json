@@ -1,0 +1,204 @@
+{
+  "schemaVersion": 1,
+  "status": "DIAGNOSTIC_ONLY",
+  "modelEligible": false,
+  "mapId": "seongsu-ngii-2025-v2",
+  "provider": "국토지리정보원",
+  "sourceUrl": "https://www.data.go.kr/data/15059719/fileData.do",
+  "inputHashes": {
+    "registry": "d876b007b26eb40eca8e31ff967b36a311ab02c1e9b55e1e3c6e472263120ae7",
+    "candidates": "d879febb289cd101caaec9758a2e5df078ed903f1f1b8983b37fa1a7b0d485ec"
+  },
+  "codeHashes": {
+    "audit_terrain_support.py": "a346e74a0abf5b1936d0a690f9212e73099c573489c72daf25fc08e49a2a28d0",
+    "audit_spatial_sources.py": "74dd6155a3cc8a05e09b14e53a8ef80f8bde2accf78c51a86d797d738ae36b42"
+  },
+  "versions": {
+    "gdal": "GDAL 3.8.5, released 2024/04/02",
+    "pyproj": "3.8.0",
+    "proj": "9.8.1",
+    "shapely": "2.2.0",
+    "geos": "3.14.1"
+  },
+  "sources": [
+    {
+      "tile": "377052201",
+      "layer": "N1P_F0020000",
+      "present": true,
+      "count": 3,
+      "sourceSha256": "78c2e77cbb90b48be94c87e4bb815b6498b78c14bc42cf4d7b9b54d1052f97fe"
+    },
+    {
+      "tile": "377052201",
+      "layer": "N1L_F0010000",
+      "present": false,
+      "count": 0,
+      "sourceSha256": "78c2e77cbb90b48be94c87e4bb815b6498b78c14bc42cf4d7b9b54d1052f97fe"
+    },
+    {
+      "tile": "377052202",
+      "layer": "N1P_F0020000",
+      "present": true,
+      "count": 3,
+      "sourceSha256": "02c4bf8bf053f35e0811b141507530bc6d450d9eefb003a81372af7aacd4a482"
+    },
+    {
+      "tile": "377052202",
+      "layer": "N1L_F0010000",
+      "present": true,
+      "count": 3,
+      "sourceSha256": "02c4bf8bf053f35e0811b141507530bc6d450d9eefb003a81372af7aacd4a482"
+    },
+    {
+      "tile": "377052211",
+      "layer": "N1P_F0020000",
+      "present": true,
+      "count": 3,
+      "sourceSha256": "c33becacbfde9e862c59b49b87afeffc1bc7a15104ad1136ef264a76a1abdb9f"
+    },
+    {
+      "tile": "377052211",
+      "layer": "N1L_F0010000",
+      "present": true,
+      "count": 2,
+      "sourceSha256": "c33becacbfde9e862c59b49b87afeffc1bc7a15104ad1136ef264a76a1abdb9f"
+    },
+    {
+      "tile": "377052212",
+      "layer": "N1P_F0020000",
+      "present": true,
+      "count": 3,
+      "sourceSha256": "35d039f88fa61d16af24b1cce661105966e822bf7f651b5f4b2276d52169dc01"
+    },
+    {
+      "tile": "377052212",
+      "layer": "N1L_F0010000",
+      "present": false,
+      "count": 0,
+      "sourceSha256": "35d039f88fa61d16af24b1cce661105966e822bf7f651b5f4b2276d52169dc01"
+    }
+  ],
+  "summary": {
+    "sourcePointCount": 12,
+    "pointsWithinStudy": 1,
+    "sourceContourCount": 5,
+    "contoursIntersectingStudy": 0,
+    "nearestContourDistanceM": 267.3718525710627,
+    "studyAreaM2": 73562.72154458817,
+    "tinCoveredStudyFraction": 1.0000000000000002,
+    "candidateCount": 13,
+    "interpolatedCandidateCount": 13
+  },
+  "limitations": [
+    "표고점·DEM의 해상도·제작 시점·수직 기준이 통일되지 않은 수치 대조",
+    "DEM 밴드 단위·수직 기준·취득일 미확인; 값 차이를 미터 단위 정확도나 보정량으로 해석하지 않음",
+    "점 사이의 삼각망 선형 보간은 추정이며 실측 지면·도로 경사·배수경계가 아님",
+    "차이가 큰 원본 점도 보존; 표고점의 현장 대상·높이 기준 확인 필요",
+    "90m DEM 격자 값을 개별 시설 위치의 실측값으로 취급하지 않음",
+    "옥상 구역 중심의 지형 자료 대조이며 지붕 높이·하중·시공 적합성 검증이 아님",
+    "수문 모델·3D 지면·과거 기록·순위에 미반영"
+  ],
+  "reportSha256": "92c661323a29280f418b31b4e076a85d09c5f8c3efde57cc17cf79a191c7edba",
+  "datasets": [
+    {
+      "year": 2024,
+      "sourceSha256": "1686afb246370b1a7b6ad9a5f510c75cabc73985324feb33c803838aea2d3000",
+      "resolutionM": [
+        90.0,
+        90.0
+      ],
+      "bandUnit": null,
+      "verticalDatum": null,
+      "acquisitionDate": null,
+      "studyIntersectingCellCount": 16,
+      "comparison": {
+        "points": {
+          "comparedCount": 12,
+          "missingCount": 0,
+          "demMinusReferenceRawValue": {
+            "count": 12,
+            "min": -18.752880218505858,
+            "max": 2.3814128952026365,
+            "mean": -2.9705383726755774
+          },
+          "absoluteRawDifference": {
+            "count": 12,
+            "min": 0.023324256896971818,
+            "max": 18.752880218505858,
+            "mean": 3.6802718219757082
+          },
+          "unitCompatibility": "UNVERIFIED",
+          "accuracyMetric": false
+        },
+        "candidates": {
+          "comparedCount": 13,
+          "missingCount": 0,
+          "demMinusReferenceRawValue": {
+            "count": 13,
+            "min": -8.387725404760815,
+            "max": 0.7837059766484256,
+            "mean": -0.9140467120743517
+          },
+          "absoluteRawDifference": {
+            "count": 13,
+            "min": 0.3058957721965303,
+            "max": 8.387725404760815,
+            "mean": 1.4909976056288794
+          },
+          "unitCompatibility": "UNVERIFIED",
+          "accuracyMetric": false
+        }
+      }
+    },
+    {
+      "year": 2025,
+      "sourceSha256": "a99a82b4e98f5e26445f88801b95d87b823bfef154db804acbb60fc136683feb",
+      "resolutionM": [
+        90.0,
+        90.0
+      ],
+      "bandUnit": null,
+      "verticalDatum": null,
+      "acquisitionDate": null,
+      "studyIntersectingCellCount": 16,
+      "comparison": {
+        "points": {
+          "comparedCount": 12,
+          "missingCount": 0,
+          "demMinusReferenceRawValue": {
+            "count": 12,
+            "min": -18.750692489624022,
+            "max": 2.3507446365356444,
+            "mean": -3.0199778823852537
+          },
+          "absoluteRawDifference": {
+            "count": 12,
+            "min": 0.08324170684814369,
+            "max": 18.750692489624022,
+            "mean": 3.614567555745443
+          },
+          "unitCompatibility": "UNVERIFIED",
+          "accuracyMetric": false
+        },
+        "candidates": {
+          "comparedCount": 13,
+          "missingCount": 0,
+          "demMinusReferenceRawValue": {
+            "count": 13,
+            "min": -8.430119089148022,
+            "max": 0.8272240430546756,
+            "mean": -0.9686700224569014
+          },
+          "absoluteRawDifference": {
+            "count": 13,
+            "min": 0.18116375467944046,
+            "max": 8.430119089148022,
+            "mean": 1.4679046754953533
+          },
+          "unitCompatibility": "UNVERIFIED",
+          "accuracyMetric": false
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+import { z } from 'zod';
+const facility = z.enum(['RAIN_GARDEN', 'PERMEABLE_PAVEMENT', 'GREEN_ROOF']);
+const point = z.tuple([z.number().finite(), z.number().finite()]);
+export const installationDto = z.object({
+  id: z.uuid(),
+  districtId: z.string(),
+  cellId: z.string(),
+  ownerId: z.uuid(),
+  ownerName: z.string().max(40),
+  facilityType: facility,
+  areaM2: z.number().positive(),
+  cost: z.number().nonnegative(),
+  installedAt: z.iso.datetime(),
+  center: point,
+  heightM: z.number().nonnegative(),
+});
+export const siteDto = z.object({
+  districtId: z.string(),
+  cellId: z.string(),
+  name: z.string(),
+  kind: z.enum(['ROOF', 'GROUND']),
+  coordinates: z.array(point).min(4),
+  center: point,
+  heightM: z.number().nonnegative(),
+  areaM2: z.number().positive(),
+  maxAreaM2: z.number().positive(),
+  allowedTypes: z.array(facility).min(1),
+  unitCosts: z.record(facility, z.number().positive()),
+  costSourceSha256: z.string().regex(/^[a-f0-9]{64}$/),
+  costModel: z.object({
+    currency: z.literal('KRW'),
+    unit: z.literal('KRW_PER_SQUARE_METRE'),
+    facilities: z.record(
+      facility,
+      z.object({
+        unitCost: z.number().positive(),
+        sourceTitle: z.string(),
+        sourceUrl: z.url().startsWith('https://'),
+        sourceSha256: z.string().regex(/^[a-f0-9]{64}$/),
+        referenceYear: z.number().int(),
+        evidence: z.string(),
+        scope: z.string(),
+        includes: z.array(z.string()),
+        excludes: z.array(z.string()),
+        note: z.string(),
+      })
+    ),
+  }),
+  sourceIds: z.array(z.string()),
+  areaLimitBasis: z.literal('PUBLIC_FOOTPRINT_GEOMETRY').optional(),
+  siteEligibility: z.literal('UNKNOWN').optional(),
+  inflowPolicy: z.literal('DIRECT_RAINFALL_ONLY').optional(),
+  modelHash: z.string().regex(/^[a-f0-9]{64}$/),
+});
+
+export const sitePageDto = z.object({
+  sites: z.array(siteDto).max(200),
+  districtCounts: z.record(z.string(), z.number().int().nonnegative()),
+  matchedCount: z.number().int().nonnegative(),
+  offset: z.number().int().nonnegative(),
+  limit: z.number().int().positive(),
+});

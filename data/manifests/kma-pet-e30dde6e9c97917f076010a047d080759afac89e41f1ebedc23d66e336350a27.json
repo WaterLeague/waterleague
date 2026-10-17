@@ -1,0 +1,15 @@
+{
+  "provider": "KMA_AWS_DIRECT",
+  "endpoint": "https://apihub.kma.go.kr/api/typ01/cgi-bin/url/nph-aws2_min",
+  "parameters": {
+    "tm1": "202407172301",
+    "tm2": "202407181100",
+    "stn": "108",
+    "disp": "0",
+    "help": "1"
+  },
+  "fetchedAt": "2026-10-17T14:31:47.694384+00:00",
+  "sha256": "e30dde6e9c97917f076010a047d080759afac89e41f1ebedc23d66e336350a27",
+  "purpose": "SIMULATION_USED_INPUT_ONLY",
+  "rawFile": "data/raw/kma-pet-e30dde6e9c97917f076010a047d080759afac89e41f1ebedc23d66e336350a27.txt"
+}

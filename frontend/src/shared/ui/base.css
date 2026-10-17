@@ -1,0 +1,248 @@
+:root {
+  font-family: 'Avenir Next', 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif;
+  color: #263c2f;
+  background: #f7f8f2;
+  font-synthesis: none;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+button,
+a,
+input,
+textarea {
+  font: inherit;
+}
+button,
+a {
+  touch-action: manipulation;
+}
+button {
+  cursor: pointer;
+  border: 0;
+  background: none;
+  color: inherit;
+}
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid #24563a;
+  outline-offset: 3px;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+svg {
+  flex-shrink: 0;
+}
+p,
+h1,
+h2,
+h3 {
+  margin: 0;
+}
+.topbar {
+  height: 78px;
+  display: flex;
+  align-items: center;
+  gap: 60px;
+  padding: 0 28px;
+  border-bottom: 1px solid #dce1d7;
+}
+.wordmark {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  white-space: nowrap;
+  color: #233f31;
+}
+.wordmark > span {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+.wordmark small {
+  font-size: 10px;
+  display: block;
+  font-weight: 500;
+  letter-spacing: 0.4px;
+  margin-top: 3px;
+  color: #62745d;
+}
+.topbar nav {
+  align-self: stretch;
+  display: flex;
+  gap: 28px;
+}
+.topbar nav button {
+  font-weight: 600;
+  font-size: 13px;
+  position: relative;
+  color: #6a7865;
+  padding: 0 3px;
+}
+.topbar nav button.active {
+  color: #244e36;
+}
+.topbar nav button.active:after {
+  content: '';
+  height: 3px;
+  background: #285c3c;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+.topbar-end {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  min-height: 32px;
+}
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: 1.7px;
+  font-weight: 700;
+  color: #687a5e;
+  display: flex;
+  justify-content: space-between;
+}
+.location {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #65775d;
+}
+.section-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #65795b;
+}
+.section-label > span {
+  font-size: 10px;
+}
+.text-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #416442;
+}
+.outline-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #b9c9ad;
+  border-radius: 4px;
+  padding: 10px 15px;
+  color: #46673b;
+  font-size: 12px;
+  gap: 8px;
+  background: #fafcf6;
+}
+.primary-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: #2b553b;
+  border-radius: 4px;
+  padding: 14px 17px;
+  color: #fff;
+  margin-top: 20px;
+  font-size: 13px;
+}
+.primary-button:hover,
+.simulate-button:hover {
+  color: #fff;
+  background: #3d6849;
+}
+.source-credit {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #607253;
+}
+.state {
+  font-size: 10px;
+  padding: 4px 7px;
+  border: 1px solid #bacbad;
+  border-radius: 3px;
+}
+.scene-label {
+  font-size: 11px;
+  background: #fafcf2e8;
+  border: 1px solid #a9bda0;
+  padding: 5px 9px;
+  border-radius: 4px;
+  white-space: nowrap;
+  color: #426037;
+}
+.panel-intro {
+  line-height: 1.8;
+  color: #5a6b52;
+}
+.intro-steps > div {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 24px 0;
+  border-bottom: 1px solid #e0e7d8;
+}
+.intro-steps span {
+  font-size: 22px;
+  color: #91a181;
+  font-weight: 300;
+}
+.intro-steps p {
+  font-size: 12px;
+  line-height: 1.8;
+  color: #738565;
+}
+.intro-steps b {
+  font-weight: 500;
+  color: #46613b;
+}
+.micro-note {
+  font-size: 11px;
+  line-height: 1.8;
+  color: #617457;
+  margin-top: 15px;
+}
+.error-view {
+  padding: 60px;
+}
+.error-view p {
+  margin: 20px 0;
+}
+.error-view button {
+  border: 1px solid;
+  padding: 12px;
+}
+@media (max-width: 1000px) {
+  .topbar {
+    gap: 26px;
+  }
+  .topbar nav {
+    gap: 18px;
+  }
+  .wordmark > span {
+    font-size: 15px;
+  }
+}

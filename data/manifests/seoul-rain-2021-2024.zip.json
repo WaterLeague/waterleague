@@ -1,0 +1,16 @@
+{
+  "provider": "서울특별시",
+  "sourcePage": "https://data.seoul.go.kr/dataList/OA-22715/F/1/datasetView.do",
+  "endpoint": "https://datafile.seoul.go.kr/bigfile/iot/inf/nio_download.do?&useCache=false",
+  "method": "POST",
+  "parameters": {
+    "infId": "OA-22715",
+    "seqNo": "",
+    "seq": "3",
+    "infSeq": "1"
+  },
+  "filename": "seoul-rain-2021-2024.zip",
+  "sha256": "90e8613712daad84dacbc91716586915dfad4e63e63143ee92dc031f75bb8f41",
+  "bytes": 23391436,
+  "acquiredAt": "2026-10-15T18:43:16.788585+00:00"
+}

@@ -1,0 +1,641 @@
+{
+  "schemaVersion": 1,
+  "kind": "EXTERNAL_REFERENCE_DIAGNOSTIC",
+  "official": false,
+  "modelPromotionAllowed": false,
+  "executionStatus": "PASS",
+  "internationalUnitStatus": "REVIEW_REQUIRED",
+  "engineUnitStatus": "PASS",
+  "referenceStatus": "REVIEW_REQUIRED",
+  "summary": {
+    "WITHIN_PRINT_PRECISION": 22,
+    "REFERENCE_DIFFERENCE": 1,
+    "SOURCE_CONFLICT": 1
+  },
+  "engine": {
+    "version": "5.2.4",
+    "revision": "7952ca837988b1c32f791812eccc9fd64547e093",
+    "binarySha256": "6d9b7c9704abd4e268e47bb431186a0a88602d4ff16e51b5da506a47112c33bf",
+    "cliSha256": "e260ac61c21466372412d2438d92af2c6b8331433c99dcfffb4595b15352251c",
+    "platform": "macOS-27.0.1-arm64-arm-64bit"
+  },
+  "provenance": {
+    "sourceUrl": "https://www.epa.gov/sites/production/files/2014-05/epaswmm5_apps_manual.zip",
+    "sourceSha256": "889dd60a53ac85f00ee90db947a67ddc6d0737f46acf818bf7c7c08ac272f0ea",
+    "contractSha256": "18e5f2e628f45308313fc2488c9826bde2ace7112524432348415d323a70573c",
+    "verificationCodeSha256": "cbc737e5867eb72af81fe76cc527ed48e8102bbd631202b79fc24bf7d96d5245"
+  },
+  "limitations": [
+    "미국 설계강우 교육 사례이며 서울 관측·현장 보정 자료가 아님",
+    "Horton 기반 지표 유출 예제이며 세 LID의 물리 단면·Green-Ampt·관망 정확도를 검증하지 않음",
+    "API/CLI는 같은 바이너리이며 다른 수문모형에 의한 독립 검증이 아님",
+    "표의 상충과 엔진 버전 차이를 포함하므로 모델 검증 등급 자동 승격 금지"
+  ],
+  "cases": [
+    {
+      "id": "pre-2-yr",
+      "manualPage": 27,
+      "manualTable": "1-4",
+      "cfs": {
+        "areaM2": 117116.02486425602,
+        "depthsIn": {
+          "precipitationIn": 0.978,
+          "runoffIn": 0.047,
+          "infiltrationIn": 0.929
+        },
+        "runoffM3": 139.81311048294884,
+        "infiltrationM3": 2763.5399923119035,
+        "peakM3s": 0.11728730399914163,
+        "runoffContinuityPercent": -0.004324922803789377,
+        "reportCount": 720,
+        "apiCliBinaryEqual": true,
+        "outletComparison": {
+          "status": "DIFFERENT_SERIES",
+          "differingPeriods": 719,
+          "relativeTolerance": 1e-06,
+          "absoluteToleranceM3s": 1e-08,
+          "maxDifferenceM3s": 0.04075238149792494,
+          "outletPeakM3s": 0.11728730399914163,
+          "subcatchmentPeakPeriod": 35,
+          "outletPeakPeriod": 36
+        }
+      },
+      "internationalUnitCheck": {
+        "status": "PASS",
+        "flowMismatches": [],
+        "flowRelativeTolerance": 0.0002,
+        "flowAbsoluteToleranceM3s": 1e-07,
+        "reportRoundingToleranceM3": 1.5459315282081796,
+        "maxFlowAbsoluteDifferenceM3s": 8.87016944510488e-06
+      },
+      "engineUnitCheck": {
+        "status": "PASS",
+        "flowMismatches": [],
+        "flowRelativeTolerance": 0.0002,
+        "flowAbsoluteToleranceM3s": 1e-07,
+        "reportRoundingToleranceM3": 1.5459315282081796,
+        "maxFlowAbsoluteDifferenceM3s": 1.3064846321172996e-05
+      },
+      "publishedComparison": [
+        {
+          "field": "precipitationIn",
+          "quantity": "RUNOFF_CONTINUITY_DEPTH",
+          "printed": "0.978",
+          "actual": 0.978,
+          "difference": 0.0,
+          "absoluteTolerance": 0.001,
+          "status": "WITHIN_PRINT_PRECISION",
+          "conflictingSource": null
+        },
+        {
+          "field": "runoffIn",
+          "quantity": "RUNOFF_CONTINUITY_DEPTH",
+          "printed": "0.047",
+          "actual": 0.047,
+          "difference": 0.0,
+          "absoluteTolerance": 0.001,
+          "status": "WITHIN_PRINT_PRECISION",
+          "conflictingSource": null
+        },
+        {
+          "field": "peakCfs",
+          "quantity": "O1_NODE_TOTAL_INFLOW_PEAK",
+          "printed": "4.14",
+          "actual": 4.141962051391602,
+          "difference": 0.0019620513916018822,
+          "absoluteTolerance": 0.005,
+          "status": "WITHIN_PRINT_PRECISION",
+          "conflictingSource": null
+        },
+        {
+          "field": "infiltrationIn",
+          "quantity": "RUNOFF_CONTINUITY_DEPTH",
+          "printed": "0.93",
+          "actual": 0.929,
+          "difference": -0.0010000000000000009,
+          "absoluteTolerance": 0.0055,
+          "status": "WITHIN_PRINT_PRECISION",
+          "conflictingSource": null
+        }
+      ]
+    },
+    {
+      "id": "pre-10-yr",
+      "manualPage": 27,
+      "manualTable": "1-4",
+      "cfs": {
+        "areaM2": 117116.02486425602,
+        "depthsIn": {
+          "precipitationIn": 1.711,
+          "runoffIn": 0.225,
+          "infiltrationIn": 1.484
+        },
+        "runoffM3": 669.3180820992231,
+        "infiltrationM3": 4414.5245948233205,
+        "peakM3s": 0.20769633388589284,
+        "runoffContinuityPercent": -0.005860385950654745,
+        "reportCount": 720,
+        "apiCliBinaryEqual": true,
+        "outletComparison": {
+          "status": "DIFFERENT_SERIES",
+          "differingPeriods": 719,
+          "relativeTolerance": 1e-06,
+          "absoluteToleranceM3s": 1e-08,
+          "maxDifferenceM3s": 0.07546542127935205,
+          "outletPeakM3s": 0.20769633388589284,
+          "subcatchmentPeakPeriod": 35,
+          "outletPeakPeriod": 36
+        }
+      },
+      "internationalUnitCheck": {
+        "status": "PASS",
+        "flowMismatches": [],
+        "flowRelativeTolerance": 0.0002,
+        "flowAbsoluteToleranceM3s": 1e-07,
+        "reportRoundingToleranceM3": 1.5459315282081796,
+        "maxFlowAbsoluteDifferenceM3s": 1.588427950480198e-05
+      },
+      "engineUnitCheck": {
+        "status": "PASS",
+        "flowMismatches": [],
+        "flowRelativeTolerance": 0.0002,
+        "flowAbsoluteToleranceM3s": 1e-07,
+        "reportRoundingToleranceM3": 1.5459315282081796,
+        "maxFlowAbsoluteDifferenceM3s": 2.312624384501194e-05
+      },
+      "publishedComparison": [
+        {
+          "field": "precipitationIn",
+          "quantity": "RUNOFF_CONTINUITY_DEPTH",
+          "printed": "1.711",
+          "actual": 1.711,
+          "difference": 0.0,
+          "absoluteTolerance": 0.001,
+          "status": "WITHIN_PRINT_PRECISION",
+          "conflictingSource": null
+        },
+        {
+          "field": "runoffIn",
+          "quantity": "RUNOFF_CONTINUITY_DEPTH",
+          "printed": "0.22",
+          "actual": 0.225,
+          "difference": 0.0050000000000000044,
+          "absoluteTolerance": 0.0055,
+          "status": "SOURCE_CONFLICT",
+          "conflictingSource": {
+            "manualPage": 33,
+            "manualTable": "1-9",
+            "value": "0.24"
+          }
+        },
+        {
+          "field": "peakCfs",
+          "quantity": "O1_NODE_TOTAL_INFLOW_PEAK",
+          "printed": "7.34",
+          "actual": 7.334726810455322,
+          "difference": -0.005273189544677592,
+          "absoluteTolerance": 0.005,
+          "status": "REFERENCE_DIFFERENCE",
+          "conflictingSource": null
+        },
+        {
+          "field": "infiltrationIn",
+          "quantity": "RUNOFF_CONTINUITY_DEPTH",
+          "printed": "1.48",
+          "actual": 1.484,
+          "difference": 0.0040000000000000036,
+          "absoluteTolerance": 0.0055,
+          "status": "WITHIN_PRINT_PRECISION",
+          "conflictingSource": null
+        }
+      ]
+    },
+    {
+      "id": "pre-100-yr",
+      "manualPage": 27,
+      "manualTable": "1-4",
+      "cfs": {
+        "areaM2": 117116.02486425602,
+        "depthsIn": {
+          "precipitationIn": 3.669,
+          "runoffIn": 1.865,
+          "infiltrationIn": 1.802
+        },
+        "runoffM3": 5547.903213844671,
+        "infiltrationM3": 5360.49415085689,
+        "peakM3s": 0.8949100133675479,
+        "runoffContinuityPercent": -0.0104726767167449,
+        "reportCount": 720,
+        "apiCliBinaryEqual": true,
+        "outletComparison": {
+          "status": "DIFFERENT_SERIES",
+          "differingPeriods": 720,
+          "relativeTolerance": 1e-06,
+          "absoluteToleranceM3s": 1e-08,
+          "maxDifferenceM3s": 0.19807758090270267,
+          "outletPeakM3s": 0.8949100133675479,
+          "subcatchmentPeakPeriod": 45,
+          "outletPeakPeriod": 46
+        }
+      },
+      "internationalUnitCheck": {
+        "status": "REVIEW_REQUIRED",
+        "flowMismatches": [
+          {
+            "period": 272,
+            "cfsAsM3s": 0.005129328096356919,
+            "cmsM3s": 0.005128256976604462,
+            "differenceM3s": -1.0711197524571406e-06
+          },
+          {
+            "period": 273,
+            "cfsAsM3s": 0.004679943399991037,
+            "cmsM3s": 0.004678885452449322,
+            "differenceM3s": -1.0579475417148501e-06
+          },
+          {
+            "period": 274,
+            "cfsAsM3s": 0.004248356296986351,
+            "cmsM3s": 0.00424731383100152,
+            "differenceM3s": -1.0424659848311604e-06
+          },
+          {
+            "period": 275,
+            "cfsAsM3s": 0.0038347089858056724,
+            "cmsM3s": 0.0038336848374456167,
+            "differenceM3s": -1.0241483600556545e-06
+          },
+          {
+            "period": 276,
+            "cfsAsM3s": 0.003439172779730599,
+            "cmsM3s": 0.0034381693694740534,
+            "differenceM3s": -1.003410256545604e-06
+          },
+          {
+            "period": 277,
+            "cfsAsM3s": 0.0030619508495618483,
+            "cmsM3s": 0.003060971386730671,
+            "differenceM3s": -9.794628311773738e-07
+          },
+          {
+            "period": 278,
+            "cfsAsM3s": 0.0027032849748815807,
+            "cmsM3s": 0.0027023323345929384,
+            "differenceM3s": -9.526402886422293e-07
+          },
+          {
+            "period": 279,
+            "cfsAsM3s": 0.00236345955261541,
+            "cmsM3s": 0.0023625369649380445,
+            "differenceM3s": -9.225876773655273e-07
+          },
+          {
+            "period": 280,
+            "cfsAsM3s": 0.002042809614156418,
+            "cmsM3s": 0.0020419207867234945,
+            "differenceM3s": -8.888274329234974e-07
+          },
+          {
+            "period": 281,
+            "cfsAsM3s": 0.0017417309522586482,
+            "cmsM3s": 0.0017408794956281781,
+            "differenceM3s": -8.514566304700447e-07
+          },
+          {
+            "period": 282,
+            "cfsAsM3s": 0.0014606921467231295,
+            "cmsM3s": 0.0014598822453990579,
+            "differenceM3s": -8.099013240716376e-07
+          },
+          {
+            "period": 283,
+            "cfsAsM3s": 0.0012002526029269126,
+            "cmsM3s": 0.0011994886444881558,
+            "differenceM3s": -7.63958438756724e-07
+          },
+          {
+            "period": 284,
+            "cfsAsM3s": 0.0009610863922181684,
+            "cmsM3s": 0.0009603735525161028,
+            "differenceM3s": -7.128397020656277e-07
+          }
+        ],
+        "flowRelativeTolerance": 0.0002,
+        "flowAbsoluteToleranceM3s": 1e-07,
+        "reportRoundingToleranceM3": 1.5459315282081796,
+        "maxFlowAbsoluteDifferenceM3s": 9.050400076870968e-05
+      },
+      "engineUnitCheck": {
+        "status": "PASS",
+        "flowMismatches": [],
+        "flowRelativeTolerance": 0.0002,
+        "flowAbsoluteToleranceM3s": 1e-07,
+        "reportRoundingToleranceM3": 1.5459315282081796,
+        "maxFlowAbsoluteDifferenceM3s": 9.962351141934445e-05
+      },
+      "publishedComparison": [
+        {
+          "field": "precipitationIn",
+          "quantity": "RUNOFF_CONTINUITY_DEPTH",
+          "printed": "3.669",
+          "actual": 3.669,
+          "difference": 0.0,
+          "absoluteTolerance": 0.001,
+          "status": "WITHIN_PRINT_PRECISION",
+          "conflictingSource": null
+        },
+        {
+          "field": "runoffIn",
+          "quantity": "RUNOFF_CONTINUITY_DEPTH",
+          "printed": "1.87",
+          "actual": 1.865,
+          "difference": -0.0050000000000001155,
+          "absoluteTolerance": 0.0055,
+          "status": "WITHIN_PRINT_PRECISION",
+          "conflictingSource": null
+        },
+        {
+          "field": "peakCfs",
+          "quantity": "O1_NODE_TOTAL_INFLOW_PEAK",
+          "printed": "31.6",
+          "actual": 31.60344886779785,
+          "difference": 0.0034488677978501414,
+          "absoluteTolerance": 0.05,
+          "status": "WITHIN_PRINT_PRECISION",
+          "conflictingSource": null
+        },
+        {
+          "field": "infiltrationIn",
+          "quantity": "RUNOFF_CONTINUITY_DEPTH",
+          "printed": "1.80",
+          "actual": 1.802,
+          "difference": 0.0020000000000000018,
+          "absoluteTolerance": 0.0055,
+          "status": "WITHIN_PRINT_PRECISION",
+          "conflictingSource": null
+        }
+      ]
+    },
+    {
+      "id": "post-2-yr",
+      "manualPage": 33,
+      "manualTable": "1-8",
+      "cfs": {
+        "areaM2": 117035.087735808,
+        "depthsIn": {
+          "precipitationIn": 0.978,
+          "runoffIn": 0.533,
+          "infiltrationIn": 0.42
+        },
+        "runoffM3": 1584.444424784916,
+        "infiltrationM3": 1248.5303159655996,
+        "peakM3s": 1.3233800653061487,
+        "runoffContinuityPercent": -0.04191459342837334,
+        "reportCount": 720,
+        "apiCliBinaryEqual": true,
+        "outletComparison": {
+          "status": "DIFFERENT_SERIES",
+          "differingPeriods": 720,
+          "relativeTolerance": 1e-06,
+          "absoluteToleranceM3s": 1e-08,
+          "maxDifferenceM3s": 0.39454683558579284,
+          "outletPeakM3s": 1.3233800653061487,
+          "subcatchmentPeakPeriod": 35,
+          "outletPeakPeriod": 36
+        }
+      },
+      "internationalUnitCheck": {
+        "status": "PASS",
+        "flowMismatches": [],
+        "flowRelativeTolerance": 0.0002,
+        "flowAbsoluteToleranceM3s": 1e-07,
+        "reportRoundingToleranceM3": 1.5448631581126655,
+        "maxFlowAbsoluteDifferenceM3s": 0.00010106231359463536
+      },
+      "engineUnitCheck": {
+        "status": "PASS",
+        "flowMismatches": [],
+        "flowRelativeTolerance": 0.0002,
+        "flowAbsoluteToleranceM3s": 1e-07,
+        "reportRoundingToleranceM3": 1.5448631581126655,
+        "maxFlowAbsoluteDifferenceM3s": 0.0001473825731657108
+      },
+      "publishedComparison": [
+        {
+          "field": "precipitationIn",
+          "quantity": "RUNOFF_CONTINUITY_DEPTH",
+          "printed": "0.978",
+          "actual": 0.978,
+          "difference": 0.0,
+          "absoluteTolerance": 0.001,
+          "status": "WITHIN_PRINT_PRECISION",
+          "conflictingSource": null
+        },
+        {
+          "field": "runoffIn",
+          "quantity": "RUNOFF_CONTINUITY_DEPTH",
+          "printed": "0.53",
+          "actual": 0.533,
+          "difference": 0.0030000000000000027,
+          "absoluteTolerance": 0.0055,
+          "status": "WITHIN_PRINT_PRECISION",
+          "conflictingSource": null
+        },
+        {
+          "field": "peakCfs",
+          "quantity": "O1_NODE_TOTAL_INFLOW_PEAK",
+          "printed": "46.7",
+          "actual": 46.73472595214844,
+          "difference": 0.03472595214843466,
+          "absoluteTolerance": 0.05,
+          "status": "WITHIN_PRINT_PRECISION",
+          "conflictingSource": null
+        },
+        {
+          "field": "infiltrationIn",
+          "quantity": "RUNOFF_CONTINUITY_DEPTH",
+          "printed": "0.42",
+          "actual": 0.42,
+          "difference": 0.0,
+          "absoluteTolerance": 0.0055,
+          "status": "WITHIN_PRINT_PRECISION",
+          "conflictingSource": null
+        }
+      ]
+    },
+    {
+      "id": "post-10-yr",
+      "manualPage": 33,
+      "manualTable": "1-8",
+      "cfs": {
+        "areaM2": 117035.087735808,
+        "depthsIn": {
+          "precipitationIn": 1.711,
+          "runoffIn": 1.108,
+          "infiltrationIn": 0.578
+        },
+        "runoffM3": 3293.741881166392,
+        "infiltrationM3": 1718.2155300669442,
+        "peakM3s": 2.3401106624939,
+        "runoffContinuityPercent": -0.05365569889545441,
+        "reportCount": 720,
+        "apiCliBinaryEqual": true,
+        "outletComparison": {
+          "status": "DIFFERENT_SERIES",
+          "differingPeriods": 720,
+          "relativeTolerance": 1e-06,
+          "absoluteToleranceM3s": 1e-08,
+          "maxDifferenceM3s": 0.7575870050324875,
+          "outletPeakM3s": 2.340110666291485,
+          "subcatchmentPeakPeriod": 35,
+          "outletPeakPeriod": 36
+        }
+      },
+      "internationalUnitCheck": {
+        "status": "PASS",
+        "flowMismatches": [],
+        "flowRelativeTolerance": 0.0002,
+        "flowAbsoluteToleranceM3s": 1e-07,
+        "reportRoundingToleranceM3": 1.5448631581126655,
+        "maxFlowAbsoluteDifferenceM3s": 0.00017928228895325304
+      },
+      "engineUnitCheck": {
+        "status": "PASS",
+        "flowMismatches": [],
+        "flowRelativeTolerance": 0.0002,
+        "flowAbsoluteToleranceM3s": 1e-07,
+        "reportRoundingToleranceM3": 1.5448631581126655,
+        "maxFlowAbsoluteDifferenceM3s": 0.00026057091723341586
+      },
+      "publishedComparison": [
+        {
+          "field": "precipitationIn",
+          "quantity": "RUNOFF_CONTINUITY_DEPTH",
+          "printed": "1.711",
+          "actual": 1.711,
+          "difference": 0.0,
+          "absoluteTolerance": 0.001,
+          "status": "WITHIN_PRINT_PRECISION",
+          "conflictingSource": null
+        },
+        {
+          "field": "runoffIn",
+          "quantity": "RUNOFF_CONTINUITY_DEPTH",
+          "printed": "1.11",
+          "actual": 1.108,
+          "difference": -0.0020000000000000018,
+          "absoluteTolerance": 0.0055,
+          "status": "WITHIN_PRINT_PRECISION",
+          "conflictingSource": null
+        },
+        {
+          "field": "peakCfs",
+          "quantity": "O1_NODE_TOTAL_INFLOW_PEAK",
+          "printed": "82.6",
+          "actual": 82.64022827148438,
+          "difference": 0.040228271484380684,
+          "absoluteTolerance": 0.05,
+          "status": "WITHIN_PRINT_PRECISION",
+          "conflictingSource": null
+        },
+        {
+          "field": "infiltrationIn",
+          "quantity": "RUNOFF_CONTINUITY_DEPTH",
+          "printed": "0.58",
+          "actual": 0.578,
+          "difference": -0.0020000000000000018,
+          "absoluteTolerance": 0.0055,
+          "status": "WITHIN_PRINT_PRECISION",
+          "conflictingSource": null
+        }
+      ]
+    },
+    {
+      "id": "post-100-yr",
+      "manualPage": 33,
+      "manualTable": "1-8",
+      "cfs": {
+        "areaM2": 117035.087735808,
+        "depthsIn": {
+          "precipitationIn": 3.669,
+          "runoffIn": 3.036,
+          "infiltrationIn": 0.61
+        },
+        "runoffM3": 9025.090569694194,
+        "infiltrationM3": 1813.341649378609,
+        "peakM3s": 6.822938131810345,
+        "runoffContinuityPercent": -0.07690241187810898,
+        "reportCount": 720,
+        "apiCliBinaryEqual": true,
+        "outletComparison": {
+          "status": "DIFFERENT_SERIES",
+          "differingPeriods": 720,
+          "relativeTolerance": 1e-06,
+          "absoluteToleranceM3s": 1e-08,
+          "maxDifferenceM3s": 2.0707186372449042,
+          "outletPeakM3s": 6.822938050795196,
+          "subcatchmentPeakPeriod": 35,
+          "outletPeakPeriod": 36
+        }
+      },
+      "internationalUnitCheck": {
+        "status": "PASS",
+        "flowMismatches": [],
+        "flowRelativeTolerance": 0.0002,
+        "flowAbsoluteToleranceM3s": 1e-07,
+        "reportRoundingToleranceM3": 1.5448631581126655,
+        "maxFlowAbsoluteDifferenceM3s": 0.0005508487213479185
+      },
+      "engineUnitCheck": {
+        "status": "PASS",
+        "flowMismatches": [],
+        "flowRelativeTolerance": 0.0002,
+        "flowAbsoluteToleranceM3s": 1e-07,
+        "reportRoundingToleranceM3": 1.5448631581126655,
+        "maxFlowAbsoluteDifferenceM3s": 0.0007599716175423765
+      },
+      "publishedComparison": [
+        {
+          "field": "precipitationIn",
+          "quantity": "RUNOFF_CONTINUITY_DEPTH",
+          "printed": "3.669",
+          "actual": 3.669,
+          "difference": 0.0,
+          "absoluteTolerance": 0.001,
+          "status": "WITHIN_PRINT_PRECISION",
+          "conflictingSource": null
+        },
+        {
+          "field": "runoffIn",
+          "quantity": "RUNOFF_CONTINUITY_DEPTH",
+          "printed": "3.04",
+          "actual": 3.036,
+          "difference": -0.0040000000000000036,
+          "absoluteTolerance": 0.0055,
+          "status": "WITHIN_PRINT_PRECISION",
+          "conflictingSource": null
+        },
+        {
+          "field": "peakCfs",
+          "quantity": "O1_NODE_TOTAL_INFLOW_PEAK",
+          "printed": "241",
+          "actual": 240.9497833251953,
+          "difference": -0.0502166748046875,
+          "absoluteTolerance": 0.5,
+          "status": "WITHIN_PRINT_PRECISION",
+          "conflictingSource": null
+        },
+        {
+          "field": "infiltrationIn",
+          "quantity": "RUNOFF_CONTINUITY_DEPTH",
+          "printed": "0.61",
+          "actual": 0.61,
+          "difference": 0.0,
+          "absoluteTolerance": 0.0055,
+          "status": "WITHIN_PRINT_PRECISION",
+          "conflictingSource": null
+        }
+      ]
+    }
+  ]
+}

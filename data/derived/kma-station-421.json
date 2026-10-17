@@ -1,0 +1,16 @@
+{
+  "provider": "기상청",
+  "stationId": "421",
+  "stationName": "성동",
+  "longitude": 127.03885,
+  "latitude": 37.54721,
+  "crs": "EPSG:4326",
+  "elevationM": 34.73,
+  "coordinateMeasuredOn": "2005-10-25",
+  "sourceUrl": "https://data.kma.go.kr/tmeta/stn/selectStnDetail.do?pgmNo=82&isSelectStn=Y&stdStnNo=421",
+  "sourcePageSha256": "2fdcb94039611d7315b9d9614a368d74d2a070632166a232ddde59f3d014f224",
+  "retrievedOn": "2026-10-16",
+  "evidence": "OFFICIAL_PUBLIC_STATION_DETAIL",
+  "historicalValidity": "UNVERIFIED_FOR_2024",
+  "limitation": "현재 공개 지점 상세의 좌표. 2024년 당시 유효 좌표와 이전 이력은 별도 확인 필요."
+}

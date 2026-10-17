@@ -1,0 +1,126 @@
+.disaster-lobby {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 48px clamp(20px, 5vw, 80px);
+  background: #f1f3eb;
+}
+.disaster-lobby header {
+  max-width: 720px;
+  margin-bottom: 32px;
+}
+.disaster-lobby h1 {
+  font-size: clamp(28px, 3vw, 42px);
+  letter-spacing: -0.055em;
+  margin: 14px 0;
+}
+.disaster-lobby header p {
+  color: #667468;
+  line-height: 1.9;
+}
+.disaster-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+  max-width: 1400px;
+}
+.disaster-card {
+  border: 1px solid #cbd5c9;
+  background: #fcfdf8;
+  border-radius: 6px;
+  overflow: hidden;
+}
+.disaster-card-art {
+  position: relative;
+  height: 170px;
+  padding: 28px;
+  background: #233f48;
+  color: #c2d9d2;
+  overflow: hidden;
+  background-image: repeating-linear-gradient(115deg, transparent 0 22px, #b8d9d01c 23px 24px);
+}
+.disaster-card-1 .disaster-card-art {
+  background-color: #3f5045;
+}
+.disaster-card-2 .disaster-card-art {
+  background-color: #505447;
+}
+.disaster-card-art span {
+  position: absolute;
+  right: 18px;
+  bottom: -12px;
+  font-size: 90px;
+  font-weight: 650;
+  letter-spacing: -0.06em;
+  opacity: 0.3;
+}
+.disaster-card-copy {
+  padding: 24px;
+}
+.disaster-card-copy > span {
+  font-size: 11px;
+  color: #6b7c69;
+}
+.disaster-card-copy h2 {
+  margin: 10px 0 14px;
+  font-size: 21px;
+  letter-spacing: -0.04em;
+}
+.disaster-card-copy p {
+  min-height: 75px;
+  font-size: 13px;
+  line-height: 1.85;
+  color: #607063;
+}
+.disaster-card-copy small {
+  display: block;
+  margin-top: 12px;
+  color: #657667;
+  font-size: 11px;
+}
+.disaster-card-copy button {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  margin: 20px 0 14px;
+  padding: 13px 16px;
+  color: #f8f9f0;
+  background: #2e5040;
+  border-radius: 3px;
+}
+.disaster-card-copy a {
+  font-size: 10px;
+  text-decoration: underline;
+  color: #6c7a6c;
+}
+.disaster-lobby-note {
+  margin-top: 28px;
+  font-size: 11px;
+  line-height: 1.8;
+  color: #71806e;
+}
+@media (max-width: 850px) {
+  .disaster-cards {
+    grid-template-columns: 1fr;
+  }
+  .disaster-card {
+    display: grid;
+    grid-template-columns: 150px 1fr;
+  }
+  .disaster-card-art {
+    height: 100%;
+  }
+  .disaster-card-copy p {
+    min-height: 0;
+  }
+}
+@media (max-width: 480px) {
+  .disaster-card {
+    display: block;
+  }
+  .disaster-card-art {
+    height: 120px;
+  }
+}

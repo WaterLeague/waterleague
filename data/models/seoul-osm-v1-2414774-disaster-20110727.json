@@ -1,0 +1,1488 @@
+{
+  "id": "seoul-osm-v1-2414774-disaster-20110727",
+  "title": "동작구 · 2011년 7월 서울 집중호우",
+  "validationLevel": "EXPLORATORY",
+  "officialEvaluationAvailable": false,
+  "simulationAvailable": true,
+  "engine": "EPA SWMM 5.2.4",
+  "engineRevision": "7952ca837988b1c32f791812eccc9fd64547e093",
+  "budget": 300000000,
+  "maxPlacements": 13,
+  "unitCosts": {
+    "RAIN_GARDEN": 560000,
+    "PERMEABLE_PAVEMENT": 110000,
+    "GREEN_ROOF": 260000
+  },
+  "costEvidence": "PUBLIC_PLAN_REFERENCE_SITE_TRANSFER_UNVERIFIED",
+  "geometrySourceHash": "5844138cdd171124886805c0c943bdab9bc009b8102478e9b6e720bafa82f87f",
+  "cells": [
+    {
+      "id": "R1",
+      "kind": "ROOF",
+      "name": "옥상 후보 1",
+      "coordinates": [
+        [
+          25.600076698319754,
+          24.019997864263132
+        ],
+        [
+          16.06650077251834,
+          38.353314617066644
+        ],
+        [
+          -10.46961847881903,
+          20.83099697669968
+        ],
+        [
+          -0.9272256899275817,
+          6.497645633877255
+        ],
+        [
+          25.600076698319754,
+          24.019997864263132
+        ]
+      ],
+      "center": [
+        7.565632651967462,
+        22.425497420481406
+      ],
+      "areaM2": 547.4156305578626,
+      "maxAreaM2": 328.44,
+      "heightM": 9.6,
+      "allowedTypes": [
+        "GREEN_ROOF"
+      ],
+      "areaEvidence": "OSM_EPSG5186_FOOTPRINT",
+      "siteEligibility": "UNKNOWN",
+      "eligibilityEvidence": "UNKNOWN_DESIGN_CAP_NOT_SITE_APPROVED",
+      "sourceIds": [
+        "way/744062054"
+      ],
+      "buildingId": "way/744062054"
+    },
+    {
+      "id": "R2",
+      "kind": "ROOF",
+      "name": "옥상 후보 2",
+      "coordinates": [
+        [
+          -142.3320013678749,
+          94.91736082779244
+        ],
+        [
+          -130.61227230823715,
+          101.85893190768547
+        ],
+        [
+          -124.97589257181971,
+          92.41094135027379
+        ],
+        [
+          -130.87556108477293,
+          88.91797349986155
+        ],
+        [
+          -131.82967640759307,
+          90.52779270219617
+        ],
+        [
+          -137.64974480331875,
+          87.07918228686322
+        ],
+        [
+          -142.3320013678749,
+          94.91736082779244
+        ]
+      ],
+      "center": [
+        -133.65344804598135,
+        93.66415108903311
+      ],
+      "areaM2": 137.15595897500995,
+      "maxAreaM2": 82.29,
+      "heightM": 9.6,
+      "allowedTypes": [
+        "GREEN_ROOF"
+      ],
+      "areaEvidence": "OSM_EPSG5186_FOOTPRINT",
+      "siteEligibility": "UNKNOWN",
+      "eligibilityEvidence": "UNKNOWN_DESIGN_CAP_NOT_SITE_APPROVED",
+      "sourceIds": [
+        "way/1151169318"
+      ],
+      "buildingId": "way/1151169318"
+    },
+    {
+      "id": "R3",
+      "kind": "ROOF",
+      "name": "옥상 후보 3",
+      "coordinates": [
+        [
+          -134.45122949016513,
+          115.8786417497322
+        ],
+        [
+          -122.92999079497531,
+          115.40638938581105
+        ],
+        [
+          -123.3420820813626,
+          105.30677952279802
+        ],
+        [
+          -134.8633347376599,
+          105.77903243678156
+        ],
+        [
+          -134.45122949016513,
+          115.8786417497322
+        ]
+      ],
+      "center": [
+        -128.8966594338999,
+        110.59271091129631
+      ],
+      "areaM2": 116.55469778630443,
+      "maxAreaM2": 69.93,
+      "heightM": 9.6,
+      "allowedTypes": [
+        "GREEN_ROOF"
+      ],
+      "areaEvidence": "OSM_EPSG5186_FOOTPRINT",
+      "siteEligibility": "UNKNOWN",
+      "eligibilityEvidence": "UNKNOWN_DESIGN_CAP_NOT_SITE_APPROVED",
+      "sourceIds": [
+        "way/1151169317"
+      ],
+      "buildingId": "way/1151169317"
+    },
+    {
+      "id": "R4",
+      "kind": "ROOF",
+      "name": "옥상 후보 4",
+      "coordinates": [
+        [
+          -165.8790970776463,
+          78.28184536017943
+        ],
+        [
+          -160.11848666498554,
+          69.69946440297645
+        ],
+        [
+          -162.45369029263384,
+          68.14689162361901
+        ],
+        [
+          -159.34366726517328,
+          63.50596988259349
+        ],
+        [
+          -148.76449233482708,
+          70.53691362205427
+        ],
+        [
+          -157.62629141635261,
+          83.76020205789246
+        ],
+        [
+          -165.8790970776463,
+          78.28184536017943
+        ]
+      ],
+      "center": [
+        -157.31976651208242,
+        74.40937949111685
+      ],
+      "areaM2": 173.29082869279176,
+      "maxAreaM2": 103.97,
+      "heightM": 9.6,
+      "allowedTypes": [
+        "GREEN_ROOF"
+      ],
+      "areaEvidence": "OSM_EPSG5186_FOOTPRINT",
+      "siteEligibility": "UNKNOWN",
+      "eligibilityEvidence": "UNKNOWN_DESIGN_CAP_NOT_SITE_APPROVED",
+      "sourceIds": [
+        "way/1151539360"
+      ],
+      "buildingId": "way/1151539360"
+    },
+    {
+      "id": "R5",
+      "kind": "ROOF",
+      "name": "옥상 후보 5",
+      "coordinates": [
+        [
+          -159.31450802777545,
+          101.57453541003633
+        ],
+        [
+          -143.18058008677326,
+          112.07642079237849
+        ],
+        [
+          -136.58073606269318,
+          102.01748076686636
+        ],
+        [
+          -152.70583283150336,
+          91.51557802665047
+        ],
+        [
+          -159.31450802777545,
+          101.57453541003633
+        ]
+      ],
+      "center": [
+        -147.94752864466864,
+        101.79600808839314
+      ],
+      "areaM2": 231.6031721850307,
+      "maxAreaM2": 138.96,
+      "heightM": 9.6,
+      "allowedTypes": [
+        "GREEN_ROOF"
+      ],
+      "areaEvidence": "OSM_EPSG5186_FOOTPRINT",
+      "siteEligibility": "UNKNOWN",
+      "eligibilityEvidence": "UNKNOWN_DESIGN_CAP_NOT_SITE_APPROVED",
+      "sourceIds": [
+        "way/1151169316"
+      ],
+      "buildingId": "way/1151169316"
+    },
+    {
+      "id": "R6",
+      "kind": "ROOF",
+      "name": "옥상 후보 6",
+      "coordinates": [
+        [
+          -143.20469306531595,
+          116.61580690392293
+        ],
+        [
+          -136.83618643519003,
+          120.50807081814855
+        ],
+        [
+          -126.05745816009585,
+          120.50235433108173
+        ],
+        [
+          -126.04065572819673,
+          135.53000201564282
+        ],
+        [
+          -140.57731700179284,
+          135.54881352139637
+        ],
+        [
+          -150.97035430156393,
+          129.19478110480122
+        ],
+        [
+          -143.20469306531595,
+          116.61580690392293
+        ]
+      ],
+      "center": [
+        -137.17078429015237,
+        124.85142596147489
+      ],
+      "areaM2": 335.4881905811565,
+      "maxAreaM2": 201.29,
+      "heightM": 9.6,
+      "allowedTypes": [
+        "GREEN_ROOF"
+      ],
+      "areaEvidence": "OSM_EPSG5186_FOOTPRINT",
+      "siteEligibility": "UNKNOWN",
+      "eligibilityEvidence": "UNKNOWN_DESIGN_CAP_NOT_SITE_APPROVED",
+      "sourceIds": [
+        "way/1151169314"
+      ],
+      "buildingId": "way/1151169314"
+    },
+    {
+      "id": "R7",
+      "kind": "ROOF",
+      "name": "옥상 후보 7",
+      "coordinates": [
+        [
+          172.12232543696882,
+          -57.22961319540627
+        ],
+        [
+          182.33575981410104,
+          -56.435543720959686
+        ],
+        [
+          184.7873643032508,
+          -87.80170107621234
+        ],
+        [
+          174.58273416841985,
+          -88.5957779175369
+        ],
+        [
+          172.12232543696882,
+          -57.22961319540627
+        ]
+      ],
+      "center": [
+        178.45699006755603,
+        -72.5156571357511
+      ],
+      "areaM2": 322.16839871514486,
+      "maxAreaM2": 193.3,
+      "heightM": 9.6,
+      "allowedTypes": [
+        "GREEN_ROOF"
+      ],
+      "areaEvidence": "OSM_EPSG5186_FOOTPRINT",
+      "siteEligibility": "UNKNOWN",
+      "eligibilityEvidence": "UNKNOWN_DESIGN_CAP_NOT_SITE_APPROVED",
+      "sourceIds": [
+        "way/404831654"
+      ],
+      "buildingId": "way/404831654"
+    },
+    {
+      "id": "R8",
+      "kind": "ROOF",
+      "name": "옥상 후보 8",
+      "coordinates": [
+        [
+          -190.10287295421585,
+          53.14514754677657
+        ],
+        [
+          -178.84236473028432,
+          60.985892814351246
+        ],
+        [
+          -175.21976592039573,
+          55.83414971886668
+        ],
+        [
+          -175.2573763501132,
+          51.64995572948828
+        ],
+        [
+          -184.52761393680703,
+          45.206574864219874
+        ],
+        [
+          -190.10287295421585,
+          53.14514754677657
+        ]
+      ],
+      "center": [
+        -182.41424642148195,
+        52.39755163807422
+      ],
+      "areaM2": 129.05188228722466,
+      "maxAreaM2": 77.43,
+      "heightM": 9.6,
+      "allowedTypes": [
+        "GREEN_ROOF"
+      ],
+      "areaEvidence": "OSM_EPSG5186_FOOTPRINT",
+      "siteEligibility": "UNKNOWN",
+      "eligibilityEvidence": "UNKNOWN_DESIGN_CAP_NOT_SITE_APPROVED",
+      "sourceIds": [
+        "way/1444159953"
+      ],
+      "buildingId": "way/1444159953"
+    },
+    {
+      "id": "G1",
+      "kind": "GROUND",
+      "name": "주차장 실험 구역 1",
+      "coordinates": [
+        [
+          2.0,
+          -3.0
+        ],
+        [
+          2.0,
+          2.0
+        ],
+        [
+          -3.0,
+          2.0
+        ],
+        [
+          -3.0,
+          -3.0
+        ],
+        [
+          2.0,
+          -3.0
+        ]
+      ],
+      "center": [
+        -0.5,
+        -0.5
+      ],
+      "areaM2": 25.0,
+      "maxAreaM2": 20.0,
+      "heightM": 0.12,
+      "allowedTypes": [
+        "RAIN_GARDEN",
+        "PERMEABLE_PAVEMENT"
+      ],
+      "areaEvidence": "DESIGN_GRID_INSIDE_OSM_SURFACE_PARKING",
+      "siteEligibility": "UNKNOWN",
+      "eligibilityEvidence": "UNKNOWN_DESIGN_CAP_NOT_SITE_APPROVED",
+      "sourceIds": [
+        "way/744062053"
+      ]
+    },
+    {
+      "id": "G2",
+      "kind": "GROUND",
+      "name": "주차장 실험 구역 2",
+      "coordinates": [
+        [
+          12.0,
+          -3.0
+        ],
+        [
+          12.0,
+          2.0
+        ],
+        [
+          7.0,
+          2.0
+        ],
+        [
+          7.0,
+          -3.0
+        ],
+        [
+          12.0,
+          -3.0
+        ]
+      ],
+      "center": [
+        9.5,
+        -0.5
+      ],
+      "areaM2": 25.0,
+      "maxAreaM2": 20.0,
+      "heightM": 0.12,
+      "allowedTypes": [
+        "RAIN_GARDEN",
+        "PERMEABLE_PAVEMENT"
+      ],
+      "areaEvidence": "DESIGN_GRID_INSIDE_OSM_SURFACE_PARKING",
+      "siteEligibility": "UNKNOWN",
+      "eligibilityEvidence": "UNKNOWN_DESIGN_CAP_NOT_SITE_APPROVED",
+      "sourceIds": [
+        "way/744062053"
+      ]
+    },
+    {
+      "id": "G3",
+      "kind": "GROUND",
+      "name": "주차장 실험 구역 3",
+      "coordinates": [
+        [
+          -8.0,
+          -3.0
+        ],
+        [
+          -8.0,
+          2.0
+        ],
+        [
+          -13.0,
+          2.0
+        ],
+        [
+          -13.0,
+          -3.0
+        ],
+        [
+          -8.0,
+          -3.0
+        ]
+      ],
+      "center": [
+        -10.5,
+        -0.5
+      ],
+      "areaM2": 25.0,
+      "maxAreaM2": 20.0,
+      "heightM": 0.12,
+      "allowedTypes": [
+        "RAIN_GARDEN",
+        "PERMEABLE_PAVEMENT"
+      ],
+      "areaEvidence": "DESIGN_GRID_INSIDE_OSM_SURFACE_PARKING",
+      "siteEligibility": "UNKNOWN",
+      "eligibilityEvidence": "UNKNOWN_DESIGN_CAP_NOT_SITE_APPROVED",
+      "sourceIds": [
+        "way/744062053"
+      ]
+    },
+    {
+      "id": "G4",
+      "kind": "GROUND",
+      "name": "주차장 실험 구역 4",
+      "coordinates": [
+        [
+          -8.0,
+          7.0
+        ],
+        [
+          -8.0,
+          12.0
+        ],
+        [
+          -13.0,
+          12.0
+        ],
+        [
+          -13.0,
+          7.0
+        ],
+        [
+          -8.0,
+          7.0
+        ]
+      ],
+      "center": [
+        -10.5,
+        9.5
+      ],
+      "areaM2": 25.0,
+      "maxAreaM2": 20.0,
+      "heightM": 0.12,
+      "allowedTypes": [
+        "RAIN_GARDEN",
+        "PERMEABLE_PAVEMENT"
+      ],
+      "areaEvidence": "DESIGN_GRID_INSIDE_OSM_SURFACE_PARKING",
+      "siteEligibility": "UNKNOWN",
+      "eligibilityEvidence": "UNKNOWN_DESIGN_CAP_NOT_SITE_APPROVED",
+      "sourceIds": [
+        "way/744062053"
+      ]
+    },
+    {
+      "id": "G5",
+      "kind": "GROUND",
+      "name": "주차장 실험 구역 5",
+      "coordinates": [
+        [
+          17.0,
+          7.0
+        ],
+        [
+          17.0,
+          12.0
+        ],
+        [
+          12.0,
+          12.0
+        ],
+        [
+          12.0,
+          7.0
+        ],
+        [
+          17.0,
+          7.0
+        ]
+      ],
+      "center": [
+        14.5,
+        9.5
+      ],
+      "areaM2": 25.0,
+      "maxAreaM2": 20.0,
+      "heightM": 0.12,
+      "allowedTypes": [
+        "RAIN_GARDEN",
+        "PERMEABLE_PAVEMENT"
+      ],
+      "areaEvidence": "DESIGN_GRID_INSIDE_OSM_SURFACE_PARKING",
+      "siteEligibility": "UNKNOWN",
+      "eligibilityEvidence": "UNKNOWN_DESIGN_CAP_NOT_SITE_APPROVED",
+      "sourceIds": [
+        "way/744062053"
+      ]
+    }
+  ],
+  "rainfall": {
+    "id": "kma-418-201107270001-201107271200-disaster-v1",
+    "provider": "기상청",
+    "stationId": "418",
+    "stationName": "한강",
+    "sourceTimezone": "Asia/Seoul",
+    "intervalSeconds": 60,
+    "start": "2011-07-26T15:01:00+00:00",
+    "end": "2011-07-27T03:00:00+00:00",
+    "depthsMm": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      0.5,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.5,
+      0.5,
+      0.5,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      1.0,
+      1.0,
+      1.0,
+      0.0,
+      0.0,
+      1.0,
+      1.5,
+      0.5,
+      1.0,
+      1.0,
+      0.0,
+      0.5,
+      0.5,
+      1.0,
+      0.5,
+      1.5,
+      1.5,
+      0.5,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      1.5,
+      0.5,
+      0.0,
+      0.0,
+      0.5,
+      0.0,
+      0.5,
+      1.5,
+      1.0,
+      1.0,
+      1.5,
+      0.5,
+      1.0,
+      2.0,
+      1.0,
+      1.5,
+      1.0,
+      1.5,
+      1.5,
+      1.0,
+      1.5,
+      1.0,
+      1.0,
+      0.5,
+      0.0,
+      1.5,
+      1.5,
+      1.5,
+      0.5,
+      0.5,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      0.0,
+      0.5,
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      0.0,
+      0.5,
+      0.5,
+      0.0,
+      0.0,
+      0.5,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      1.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      1.0,
+      1.5,
+      1.0,
+      0.5,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      0.0,
+      0.5,
+      1.0,
+      0.5,
+      0.5,
+      0.0,
+      0.0,
+      0.5,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      0.5,
+      1.0,
+      0.0,
+      1.5,
+      0.5,
+      0.5,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      0.0,
+      1.0,
+      1.5,
+      1.5,
+      1.5,
+      0.0,
+      0.5,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      1.0,
+      0.5,
+      0.5,
+      0.0,
+      0.0,
+      0.5,
+      0.5,
+      2.0,
+      1.0,
+      1.0,
+      1.5,
+      1.0,
+      1.0,
+      0.5,
+      1.0,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.0,
+      0.0,
+      0.5,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      0.0,
+      0.5,
+      0.5,
+      0.5,
+      1.0,
+      0.5,
+      1.0,
+      0.5,
+      0.5,
+      0.5,
+      1.0,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      0.0,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.0,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.0,
+      0.5,
+      0.5,
+      1.0,
+      1.0,
+      1.0,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      1.5,
+      1.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      1.0,
+      0.0,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      1.0,
+      0.5,
+      0.5,
+      0.5,
+      0.0,
+      0.5,
+      0.0,
+      0.0,
+      0.5,
+      0.5,
+      1.0,
+      0.0,
+      0.5,
+      0.5,
+      1.0,
+      0.5,
+      0.5,
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      0.0,
+      0.5,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      0.5,
+      0.0,
+      0.5,
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      1.0,
+      0.5,
+      1.0,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      0.5,
+      0.0,
+      0.5,
+      0.0,
+      0.5,
+      1.0,
+      0.5,
+      0.5,
+      0.0,
+      0.5,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      0.5,
+      0.5,
+      0.0,
+      0.5,
+      0.0,
+      0.5,
+      1.0,
+      0.0,
+      1.0,
+      1.0,
+      1.0,
+      0.5,
+      1.0,
+      1.0,
+      1.0,
+      1.5,
+      1.5,
+      1.0,
+      0.5,
+      0.5,
+      0.5,
+      0.0,
+      0.5,
+      0.5,
+      1.5,
+      1.0,
+      0.0,
+      0.5,
+      0.0,
+      0.0,
+      0.5,
+      0.5,
+      0.5,
+      1.0,
+      0.0,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.0,
+      0.0,
+      0.5,
+      0.5,
+      0.0,
+      0.5,
+      1.5,
+      1.0,
+      0.5,
+      0.5,
+      0.5,
+      1.0,
+      1.0,
+      0.5,
+      0.0,
+      0.5,
+      0.5,
+      0.0,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      1.0,
+      1.5,
+      1.5,
+      1.5,
+      2.0,
+      2.0,
+      2.0,
+      2.5,
+      2.0,
+      2.0,
+      2.0,
+      0.5,
+      0.5,
+      0.5,
+      0.0,
+      0.0,
+      0.5,
+      0.0,
+      0.5,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      1.0,
+      0.0,
+      0.5,
+      0.0,
+      0.5,
+      0.0,
+      0.5,
+      0.5,
+      0.5,
+      0.0,
+      1.0,
+      1.0,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.0,
+      0.5,
+      0.0,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.0,
+      0.0,
+      0.5,
+      0.5,
+      0.5,
+      0.0,
+      0.0,
+      0.5,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.5,
+      0.0,
+      0.0,
+      0.5,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      0.0,
+      0.5,
+      0.0,
+      0.0,
+      0.5,
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "totalDepthMm": 230.5,
+    "sourceHash": "915507d0716b316af033e3015ee08ab45f47d0fc6af9e96bf6ef44e01eb121ad",
+    "sourceManifest": "kma-418-201107270001-201107271200.json",
+    "sourceUrl": "https://apihub.kma.go.kr/apiList.do?seqApi=2&seqApiSub=239",
+    "attribution": "기상청 기상자료개방포털 · AWS 매분 관측자료",
+    "checks": [
+      "분 간격 연속성",
+      "누적 강우 비음수 차분",
+      "15분·60분 이동 누적 일치",
+      "요청 관측소·시간 일치"
+    ],
+    "stationMetadata": {
+      "provider": "기상청",
+      "stationId": "418",
+      "stationName": "한강",
+      "longitude": 126.93906,
+      "latitude": 37.5249,
+      "elevationM": 10.66,
+      "crs": "EPSG:4326",
+      "requestedTimeKst": "201107270001",
+      "sourceSha256": "48a496b27a6f66b95edd941db954251a865f44163a4d06fa6b52881ba2e7c5d2",
+      "sourceManifest": "kma-stations-aws-201107270001.json",
+      "sourceUrl": "https://apihub.kma.go.kr/apiList.do?seqApi=2&seqApiSub=317",
+      "historicalValidity": "API_TIME_QUERY_CONFIRMED",
+      "limitation": "관측 창 양 끝 시점 API 좌표 확인; 전체 이전 이력·부지 강우 대표성 미검증",
+      "endTimeKst": "201107271200",
+      "endSourceSha256": "48a496b27a6f66b95edd941db954251a865f44163a4d06fa6b52881ba2e7c5d2",
+      "endSourceManifest": "kma-stations-aws-201107271200.json"
+    },
+    "windowType": "OBSERVED_WINDOW_NOT_COMPLETE_STORM",
+    "windowStatistics": {
+      "peak15MinuteMm": 22.0,
+      "peak60MinuteMm": 47.5,
+      "firstWetIntervalStart": "2011-07-26T15:32:00+00:00",
+      "lastWetIntervalEnd": "2011-07-27T02:27:00+00:00",
+      "observedDryLeadMinutes": 31,
+      "observedDryTailMinutes": 33
+    },
+    "quality": "BASIC_CHECKED",
+    "limitations": [
+      "실제 재해 기간 중 명시한 관측 창만 재생; 완전한 재해 사상 아님",
+      "원문 누적값·이동합 자체 일관성 검사; 별도 품질 플래그 미제공",
+      "관측 창 밖 무강우·결측 보간 없음",
+      "현재 공개 형상에 과거 강우를 적용한 비교이며 당시 피해·수심 복원 아님"
+    ],
+    "stationDistanceKm": 2.849,
+    "stationDistanceEvidence": "대표 블록에서 10km 이내·관측 창 검사 통과·양 끝 좌표 동일한 AWS 중 가장 가까운 지점; 구 전체 대표성 미검증"
+  },
+  "assumptions": [
+    "관측소 강우를 모든 실험 단위에 동일 적용; 부지 대표성 미검증",
+    "선정한 표면 단위만 계산; 해당 구 전체 유역·관망·침수 미모델링",
+    "불투수율 100%, 경사 1%, 유출 폭 면적 제곱근 가정",
+    "시설 제원·토양·초기 함수 상태·설치 가능성 가정; 현장 조사·보정 없음",
+    "실제 건물 경계와 실측 강우가 포함되어도 현장 예측 검증을 의미하지 않음",
+    "선정 표면의 잔여 불투수면 유출 전량을 해당 LID로 유입시키는 가정; 실제 유입 동선 미검증",
+    "증발 0 가정·최종 잔여저류는 평가체적에 포함; 녹화지붕의 일시 저류·장기 증발편익을 점수로 산정하지 않음",
+    "유량 시계열은 1분 보고시각 보간값이며 분 평균값이 아님; 실제 관망 합류 첨두·침수깊이 산정 불가",
+    "고정 관측 창만 계산하며 후속 무강우를 임의 생성하지 않음",
+    "구 전체 유역이 아닌 공개 건물·지상 주차장의 선택 표면 비교",
+    "실제 지표고·관망·토양 보정 없음; 높이는 표시용 태그 또는 추정",
+    "설치 적합성 UNKNOWN; 주차장 지상·포장 태그도 현장 조사 결과가 아님",
+    "옥상 60%·지상 격자 80% 상한은 설계 가정이며 실제 시공 가능 면적이 아님",
+    "현재 공개 형상과 과거 재해 강우의 가상 시설 비교; 당시 지형·피해 복원 아님",
+    "시설 재료·토양·초기 수분·경사 미확인 설계 조건"
+  ],
+  "hydrology": {
+    "imperviousPercent": 100,
+    "slopePercent": 1,
+    "nImpervious": 0.015,
+    "depressionMm": 1.5,
+    "suctionMm": 110,
+    "conductivityMmH": 10,
+    "moistureDeficit": 0.25,
+    "evaporationMmDay": 0,
+    "initialSaturationPercent": 0
+  },
+  "scoreRule": "VOLUME_WITH_FINAL_STORAGE_V1",
+  "rainfallSource": "기상청 한강 418 · 2011-07-27",
+  "generatorSha256": "1754562f19f0860daa127f34e35c6336e2884d5779b9cd531d1811088f702823",
+  "currency": "KRW",
+  "costModel": {
+    "currency": "KRW",
+    "unit": "KRW_PER_SQUARE_METRE",
+    "evidence": "PUBLIC_PLAN_REFERENCE_SITE_TRANSFER_UNVERIFIED",
+    "priceBaseYear": null,
+    "documentYear": 2022,
+    "source": {
+      "title": "진주상평 일반산업단지 저탄소 그린산업단지 조성사업 사업계획서",
+      "publisher": "진주시 / 진주상공회의소 공개본",
+      "url": "https://jinjucci.korcham.net/file/dext5uploaddata/2022/0718_%EC%A7%84%EC%A3%BC%EC%8B%9C_%EC%A0%80%ED%83%84%EC%86%8C%20%EA%B7%B8%EB%A6%B0%EC%82%B0%EC%97%85%EB%8B%A8%EC%A7%80%20%EC%A1%B0%EC%84%B1%EC%82%AC%EC%97%85_%EC%82%AC%EC%97%85%EA%B3%84%ED%9A%8D%EC%84%9C%20(%EC%9E%85%EC%A3%BC%EA%B8%B0%EC%97%85%ED%98%91%EC%9D%98%EC%B2%B4).pdf",
+      "page": 12,
+      "sha256": "0efc54c3c884441d810ce28abb8928d758d98eb152fb71aac38791327b2d7414"
+    },
+    "scope": "REFERENCE_FACILITY_INSTALLATION_ONLY",
+    "exclusions": [
+      "실시설계·감리",
+      "별도 토공",
+      "철거·폐기",
+      "토지",
+      "구조보강",
+      "유지관리·모니터링",
+      "예비비"
+    ],
+    "taxTreatment": "원자료 단가의 부가세 포함 여부 미확인",
+    "adjustments": "서울 지역·현재 시점 물가·시설 규격 차이 미보정",
+    "note": "공개 사업계획의 참고 단가를 적용한 추정 비용. 성수동 실공사비·발주 단가로 검증되지 않음."
+  },
+  "budgetEvidence": "EXPERIMENT_RULE_NOT_PUBLIC_PROJECT_APPROPRIATION",
+  "mapId": "seoul-osm-v1-2414774",
+  "mapTitle": "동작구 대표 블록",
+  "mapSnapshotHash": "8704a32cf69357e1f3e00c597cd1c08c498f4ae2a55d0b78e672715172e59d19",
+  "geometryModelGeneratorSha256": "5c9e1480adae4ddd37c35fcffb4e52c16142e7b37353d36dd4bcc0a4d144bf3f",
+  "geometryEvidence": "OSM_20261016_PROJECTED_FOOTPRINT_AND_SURFACE_PARKING_GRID",
+  "geometryPolicy": {
+    "roofAreaCapFraction": 0.6,
+    "groundAreaCapFraction": 0.8,
+    "evidence": "ASSUMED_DESIGN_LIMIT_NOT_SURVEYED"
+  },
+  "regionalRainfallUse": "NEAREST_AWS_OBSERVED_REPLAY",
+  "district": {
+    "id": "2414774",
+    "name": "동작구"
+  },
+  "parkingEvidence": {
+    "sourceId": "way/744062053",
+    "parking": "surface",
+    "surface": null
+  },
+  "disasterEvent": {
+    "id": "seoul-20110727",
+    "title": "2011년 7월 서울 집중호우",
+    "eventDate": "2011-07-27",
+    "startKst": "201107270001",
+    "endKst": "201107271200",
+    "summary": "서울 도심 침수와 우면산 산사태가 발생한 집중호우. 27일 오전 강우를 재생하며 산사태는 계산하지 않습니다.",
+    "evidenceTitle": "기상청 · 2011 서울특별시 기후변화 적응정보 보고서",
+    "evidenceUrl": "https://www.climate.go.kr/home/cc_data/2011_RRCC/2011_RRCC_01.pdf"
+  }
+}

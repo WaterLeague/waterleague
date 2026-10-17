@@ -6,13 +6,19 @@
 
 서버 세션·프레임워크 사용. 운영 쿠키 __Host- 접두사, Secure·HttpOnly·SameSite=Lax·Path=/·Domain 미설정. 로그인·권한 변경 시 세션 회전, 유휴·절대 만료, 서버 로그아웃. 토큰 localStorage 저장 금지. [OWASP 세션 지침](https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html) 참고.
 
-Argon2id 최소 m=19MiB·t=2·p=1에서 성능 측정·상향. 비밀번호 길이 12~128자, 인증 실패 메시지 일반화, 가입·로그인·복구 rate limit. 이메일 검증·재설정·유출 비밀번호 검사·기관 MFA/IdP는 공개 운영 전 게이트. [OWASP 비밀번호 지침](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html) 참고.
+Argon2id 최소 m=19MiB·t=2·p=1에서 성능 측정·상향. 비밀번호 길이 8~128자(2026-10-17 사용자 요청: 최소 8자). 회원가입 폼의 비밀번호 확인란 필수·불일치 제출 차단, 확인값의 서버 전송·저장 없음. 인증 실패 메시지 일반화, 가입·로그인·복구 rate limit. 이메일 검증·재설정·유출 비밀번호 검사·기관 MFA/IdP는 공개 운영 전 게이트. [OWASP 비밀번호 지침](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html) 참고.
+
+기관 인증 구현: [RFC 6238](https://www.rfc-editor.org/rfc/rfc6238) TOTP 6자리·30초·인접 1구간 허용, 사용 카운터 조건부 갱신으로 재사용 거부. 기관별 비밀은 계정 ID를 AAD로 한 AES-256-GCM 암호화 저장, `MFA_ENCRYPTION_KEY`는 DB와 분리. 키·등록 정보 부재 시 기관 로그인 거부. 공개 가입에서 등록·역할 변경 불가, 로컬 운영 명령에서 소속 확인 후 기존 계정 승격. 기관 MFA는 피싱 저항성을 제공하지 않으므로 운영 IdP/WebAuthn 도입 전 위험 검토 필요.
+
+로그인 세션 절대 만료 8시간, 유휴 만료 30분. 매 요청 계정 활성 상태·현재 역할·기관 MFA 확인. 권한 변경·재등록 시 기존 세션 삭제. JSON 본문 64 KiB 상한, 전역 작업 입장 잠금으로 큐 상한 경합 차단.
 
 상태 변경 CSRF 검사, SameSite만으로 대체 금지. 동일 출처 기본, wildcard CORS+credentials 금지. HTTPS·운영 HSTS·CSP·frame-ancestors none·nosniff·Referrer-Policy. 개발 HMR 예외를 운영에 복사 금지. DTO 검증·과대 본문·unknown field·비유한 수 거부, 매개변수 쿼리·sort allowlist, HTML 원문 렌더링 금지.
 
 ## 객체 권한
 
-소유자·기관 소속·리그 소유·동의 범위 매 요청 검증. URL ID나 클라이언트 role 불신. 가입은 PLAYER 고정. 기관 관리자의 모델 승인·플랫폼 권한 부여 금지. 권한 철회 시 세션·캐시 무효화. export 다운로드에도 동의 재검사.
+소유자·기관 소속·리그 소유·동의 범위 매 요청 검증. URL ID나 클라이언트 role 불신. 가입은 MEMBER 역할 고정. PLAYER는 즉시 승인, BUSINESS·INSTITUTION·GOVERNMENT는 관리자 승인 전 이용 차단. ADMIN은 DB 유일 제약으로 한 계정만 허용하며 조직 회원과 분리. 회원의 모델 승인·플랫폼 권한 부여 금지. 권한 철회 시 세션·캐시 무효화. export 다운로드에도 동의 재검사.
+
+사업 활용 검토는 계산·기관·목적 hash와 정책 버전에 묶인 별도 소유자 동의. 요청 상태와 결정 이벤트 원자적 저장, 예상 revision·내용 hash 불일치 거부. 연구 동의를 철회해도 별도로 승인한 사업 동의는 유지되므로 각 활성 동의의 관리 화면 제공. [상태·검증 계약](17-utilization-consent.md) 참조.
 
 ## 계산·수집
 

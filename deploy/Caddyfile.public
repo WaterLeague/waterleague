@@ -1,0 +1,11 @@
+{
+    admin off
+    http_port 8080
+    https_port 8443
+}
+{$WATERLEAGUE_DOMAIN} {
+    import Caddyfile.common
+}
+http://127.0.0.1:8081 {
+    respond /healthz 200
+}

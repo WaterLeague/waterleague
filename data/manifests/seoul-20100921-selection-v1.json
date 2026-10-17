@@ -1,0 +1,408 @@
+{
+  "event": {
+    "id": "seoul-20100921",
+    "title": "2010년 추석 서울 집중호우",
+    "eventDate": "2010-09-21",
+    "startKst": "201009211000",
+    "endKst": "201009212000",
+    "summary": "광화문 등 서울 시내 주택·도로 침수가 발생한 집중호우. 21일 낮과 저녁 관측 창을 재생합니다.",
+    "evidenceTitle": "기상청 · 2011 서울특별시 기후변화 적응정보 보고서",
+    "evidenceUrl": "https://www.climate.go.kr/home/cc_data/2011_RRCC/2011_RRCC_01.pdf"
+  },
+  "selectionRule": "NEAREST_QUALITY_ACCEPTED_STABLE_AWS_WITHIN_10KM",
+  "selections": [
+    {
+      "districtId": "2410520",
+      "districtName": "강남구",
+      "status": "ACCEPTED",
+      "rejectedStations": [],
+      "stationId": "400",
+      "stationDistanceKm": 2.123,
+      "rainfallId": "kma-400-201009211000-201009212000-disaster-v1",
+      "rainfallSha256": "bcc7d4cfa5eade4eeb9eddcaa161cdd64b5f81eb4152f07a97bb63ba9d853dd9"
+    },
+    {
+      "districtId": "2419944",
+      "districtName": "강동구",
+      "status": "ACCEPTED",
+      "rejectedStations": [],
+      "stationId": "402",
+      "stationDistanceKm": 1.926,
+      "rainfallId": "kma-402-201009211000-201009212000-disaster-v1",
+      "rainfallSha256": "eb613055f52f17c4fe32349eaefff68758ee3041bf2ad6cd8f71d9372807d02c"
+    },
+    {
+      "districtId": "2419943",
+      "districtName": "강북구",
+      "status": "ACCEPTED",
+      "rejectedStations": [],
+      "stationId": "406",
+      "stationDistanceKm": 1.488,
+      "rainfallId": "kma-406-201009211000-201009212000-disaster-v1",
+      "rainfallSha256": "183b9c3c05749a5c66c082b061dcc9e9de550a761872145aeb65b33859cce824"
+    },
+    {
+      "districtId": "2414775",
+      "districtName": "강서구",
+      "status": "ACCEPTED",
+      "rejectedStations": [
+        {
+          "stationId": "110",
+          "distanceKm": 1.667,
+          "reason": "결측·오류·음수 강우"
+        },
+        {
+          "stationId": "404",
+          "distanceKm": 2.175,
+          "reason": "이동 누적 강우 불일치"
+        },
+        {
+          "stationId": "405",
+          "distanceKm": 6.272,
+          "reason": "이동 누적 강우 불일치"
+        },
+        {
+          "stationId": "423",
+          "distanceKm": 7.093,
+          "reason": "기상청 원본 수집 실패: kma-423-201009211000-201009212000"
+        },
+        {
+          "stationId": "589",
+          "distanceKm": 7.271,
+          "reason": "이동 누적 강우 불일치"
+        }
+      ],
+      "stationId": "433",
+      "stationDistanceKm": 7.959,
+      "rainfallId": "kma-433-201009211000-201009212000-disaster-v1",
+      "rainfallSha256": "3bd79adbf7c0a1a810ba91a3cc3c98ad80a20f8f2739e034c2a97014565afb0b"
+    },
+    {
+      "districtId": "2414778",
+      "districtName": "관악구",
+      "status": "ACCEPTED",
+      "rejectedStations": [
+        {
+          "stationId": "509",
+          "distanceKm": 1.054,
+          "reason": "이동 누적 강우 불일치"
+        },
+        {
+          "stationId": "116",
+          "distanceKm": 2.015,
+          "reason": "결측·오류·음수 강우"
+        },
+        {
+          "stationId": "410",
+          "distanceKm": 4.787,
+          "reason": "결측·오류·음수 강우"
+        },
+        {
+          "stationId": "417",
+          "distanceKm": 4.816,
+          "reason": "기상청 HTTP 504: kma-417-201009211000-201009212000"
+        }
+      ],
+      "stationId": "590",
+      "stationDistanceKm": 4.967,
+      "rainfallId": "kma-590-201009211000-201009212000-disaster-v1",
+      "rainfallSha256": "e7efad4a0c70478a55f99af997ba978362207e0f4cb475c0de55de33b56cbb4a"
+    },
+    {
+      "districtId": "2419945",
+      "districtName": "광진구",
+      "status": "ACCEPTED",
+      "rejectedStations": [],
+      "stationId": "413",
+      "stationDistanceKm": 1.066,
+      "rainfallId": "kma-413-201009211000-201009212000-disaster-v1",
+      "rainfallSha256": "593a39efa66fcff209eaa343b862fe7e7d8b3a2d6458b98e16f6c59e275339cf"
+    },
+    {
+      "districtId": "2414777",
+      "districtName": "구로구",
+      "status": "ACCEPTED",
+      "rejectedStations": [],
+      "stationId": "437",
+      "stationDistanceKm": 2.649,
+      "rainfallId": "kma-437-201009211000-201009212000-disaster-v1",
+      "rainfallSha256": "9414e19264ab5f4c0de729643221e0f25727bef6f5d77169a76fe76c226b5c8d"
+    },
+    {
+      "districtId": "2414776",
+      "districtName": "금천구",
+      "status": "ACCEPTED",
+      "rejectedStations": [],
+      "stationId": "437",
+      "stationDistanceKm": 1.16,
+      "rainfallId": "kma-437-201009211000-201009212000-disaster-v1",
+      "rainfallSha256": "9414e19264ab5f4c0de729643221e0f25727bef6f5d77169a76fe76c226b5c8d"
+    },
+    {
+      "districtId": "2419950",
+      "districtName": "노원구",
+      "status": "ACCEPTED",
+      "rejectedStations": [],
+      "stationId": "406",
+      "stationDistanceKm": 2.834,
+      "rainfallId": "kma-406-201009211000-201009212000-disaster-v1",
+      "rainfallSha256": "183b9c3c05749a5c66c082b061dcc9e9de550a761872145aeb65b33859cce824"
+    },
+    {
+      "districtId": "2419940",
+      "districtName": "도봉구",
+      "status": "ACCEPTED",
+      "rejectedStations": [],
+      "stationId": "406",
+      "stationDistanceKm": 1.717,
+      "rainfallId": "kma-406-201009211000-201009212000-disaster-v1",
+      "rainfallSha256": "183b9c3c05749a5c66c082b061dcc9e9de550a761872145aeb65b33859cce824"
+    },
+    {
+      "districtId": "2419941",
+      "districtName": "동대문구",
+      "status": "ACCEPTED",
+      "rejectedStations": [
+        {
+          "stationId": "408",
+          "distanceKm": 0.209,
+          "reason": "결측·오류·음수 강우"
+        }
+      ],
+      "stationId": "409",
+      "stationDistanceKm": 2.534,
+      "rainfallId": "kma-409-201009211000-201009212000-disaster-v1",
+      "rainfallSha256": "a74e4c151777b5b9c128c864ec9af675579ce1f50192a0b59327bae1f834461c"
+    },
+    {
+      "districtId": "2414774",
+      "districtName": "동작구",
+      "status": "ACCEPTED",
+      "rejectedStations": [],
+      "stationId": "418",
+      "stationDistanceKm": 2.849,
+      "rainfallId": "kma-418-201009211000-201009212000-disaster-v1",
+      "rainfallSha256": "a8c58dbe0833fa97f500f94ec69b76d978b84e33ed975164635f2cffe1c81f30"
+    },
+    {
+      "districtId": "2419949",
+      "districtName": "마포구",
+      "status": "ACCEPTED",
+      "rejectedStations": [],
+      "stationId": "411",
+      "stationDistanceKm": 3.176,
+      "rainfallId": "kma-411-201009211000-201009212000-disaster-v1",
+      "rainfallSha256": "0509b4997a1e1ab1c4982dd19444db1e8ff5af97779b77de57bc4ca703884876"
+    },
+    {
+      "districtId": "2419951",
+      "districtName": "서대문구",
+      "status": "ACCEPTED",
+      "rejectedStations": [
+        {
+          "stationId": "412",
+          "distanceKm": 0.767,
+          "reason": "이동 누적 강우 불일치"
+        },
+        {
+          "stationId": "108",
+          "distanceKm": 2.715,
+          "reason": "이동 누적 강우 불일치"
+        }
+      ],
+      "stationId": "411",
+      "stationDistanceKm": 2.764,
+      "rainfallId": "kma-411-201009211000-201009212000-disaster-v1",
+      "rainfallSha256": "0509b4997a1e1ab1c4982dd19444db1e8ff5af97779b77de57bc4ca703884876"
+    },
+    {
+      "districtId": "2414779",
+      "districtName": "서초구",
+      "status": "ACCEPTED",
+      "rejectedStations": [
+        {
+          "stationId": "401",
+          "distanceKm": 2.706,
+          "reason": "이동 누적 강우 불일치"
+        }
+      ],
+      "stationId": "400",
+      "stationDistanceKm": 4.6,
+      "rainfallId": "kma-400-201009211000-201009212000-disaster-v1",
+      "rainfallSha256": "bcc7d4cfa5eade4eeb9eddcaa161cdd64b5f81eb4152f07a97bb63ba9d853dd9"
+    },
+    {
+      "districtId": "2419953",
+      "districtName": "성동구",
+      "status": "ACCEPTED",
+      "rejectedStations": [],
+      "stationId": "421",
+      "stationDistanceKm": 1.031,
+      "rainfallId": "kma-421-201009211000-201009212000-disaster-v1",
+      "rainfallSha256": "c22e51befb3ff95d4aed1c93119b0aeaf402e23d8617e14ee0d3df285afbfbe1"
+    },
+    {
+      "districtId": "2419952",
+      "districtName": "성북구",
+      "status": "ACCEPTED",
+      "rejectedStations": [
+        {
+          "stationId": "408",
+          "distanceKm": 2.83,
+          "reason": "결측·오류·음수 강우"
+        }
+      ],
+      "stationId": "414",
+      "stationDistanceKm": 3.598,
+      "rainfallId": "kma-414-201009211000-201009212000-disaster-v1",
+      "rainfallSha256": "b657036016aa29cf5699fbb77c3e2b0ffc3abfcb06fa0daed024f88555408f26"
+    },
+    {
+      "districtId": "2419954",
+      "districtName": "송파구",
+      "status": "ACCEPTED",
+      "rejectedStations": [
+        {
+          "stationId": "403",
+          "distanceKm": 1.529,
+          "reason": "이동 누적 강우 불일치"
+        }
+      ],
+      "stationId": "413",
+      "stationDistanceKm": 4.262,
+      "rainfallId": "kma-413-201009211000-201009212000-disaster-v1",
+      "rainfallSha256": "593a39efa66fcff209eaa343b862fe7e7d8b3a2d6458b98e16f6c59e275339cf"
+    },
+    {
+      "districtId": "2414780",
+      "districtName": "양천구",
+      "status": "ACCEPTED",
+      "rejectedStations": [
+        {
+          "stationId": "405",
+          "distanceKm": 2.276,
+          "reason": "이동 누적 강우 불일치"
+        },
+        {
+          "stationId": "423",
+          "distanceKm": 3.912,
+          "reason": "기상청 원본 수집 실패: kma-423-201009211000-201009212000"
+        }
+      ],
+      "stationId": "437",
+      "stationDistanceKm": 4.02,
+      "rainfallId": "kma-437-201009211000-201009212000-disaster-v1",
+      "rainfallSha256": "9414e19264ab5f4c0de729643221e0f25727bef6f5d77169a76fe76c226b5c8d"
+    },
+    {
+      "districtId": "2414781",
+      "districtName": "영등포구",
+      "status": "ACCEPTED",
+      "rejectedStations": [
+        {
+          "stationId": "510",
+          "distanceKm": 0.602,
+          "reason": "이동 누적 강우 불일치"
+        },
+        {
+          "stationId": "405",
+          "distanceKm": 2.046,
+          "reason": "이동 누적 강우 불일치"
+        }
+      ],
+      "stationId": "418",
+      "stationDistanceKm": 3.394,
+      "rainfallId": "kma-418-201009211000-201009212000-disaster-v1",
+      "rainfallSha256": "a8c58dbe0833fa97f500f94ec69b76d978b84e33ed975164635f2cffe1c81f30"
+    },
+    {
+      "districtId": "2419955",
+      "districtName": "용산구",
+      "status": "ACCEPTED",
+      "rejectedStations": [
+        {
+          "stationId": "415",
+          "distanceKm": 1.644,
+          "reason": "이동 누적 강우 불일치"
+        }
+      ],
+      "stationId": "418",
+      "stationDistanceKm": 2.508,
+      "rainfallId": "kma-418-201009211000-201009212000-disaster-v1",
+      "rainfallSha256": "a8c58dbe0833fa97f500f94ec69b76d978b84e33ed975164635f2cffe1c81f30"
+    },
+    {
+      "districtId": "2419942",
+      "districtName": "은평구",
+      "status": "ACCEPTED",
+      "rejectedStations": [
+        {
+          "stationId": "416",
+          "distanceKm": 1.334,
+          "reason": "이동 누적 강우 불일치"
+        },
+        {
+          "stationId": "420",
+          "distanceKm": 3.009,
+          "reason": "결측·오류·음수 강우"
+        }
+      ],
+      "stationId": "540",
+      "stationDistanceKm": 4.732,
+      "rainfallId": "kma-540-201009211000-201009212000-disaster-v1",
+      "rainfallSha256": "92965991e6e691b496f019d141552357e37da11770a0e5c70252a356219a8626"
+    },
+    {
+      "districtId": "2419946",
+      "districtName": "종로구",
+      "status": "ACCEPTED",
+      "rejectedStations": [
+        {
+          "stationId": "108",
+          "distanceKm": 1.762,
+          "reason": "이동 누적 강우 불일치"
+        },
+        {
+          "stationId": "419",
+          "distanceKm": 3.093,
+          "reason": "이동 누적 강우 불일치"
+        }
+      ],
+      "stationId": "414",
+      "stationDistanceKm": 3.824,
+      "rainfallId": "kma-414-201009211000-201009212000-disaster-v1",
+      "rainfallSha256": "b657036016aa29cf5699fbb77c3e2b0ffc3abfcb06fa0daed024f88555408f26"
+    },
+    {
+      "districtId": "2419947",
+      "districtName": "중구",
+      "status": "ACCEPTED",
+      "rejectedStations": [
+        {
+          "stationId": "419",
+          "distanceKm": 1.765,
+          "reason": "이동 누적 강우 불일치"
+        },
+        {
+          "stationId": "108",
+          "distanceKm": 3.472,
+          "reason": "이동 누적 강우 불일치"
+        }
+      ],
+      "stationId": "421",
+      "stationDistanceKm": 3.545,
+      "rainfallId": "kma-421-201009211000-201009212000-disaster-v1",
+      "rainfallSha256": "c22e51befb3ff95d4aed1c93119b0aeaf402e23d8617e14ee0d3df285afbfbe1"
+    },
+    {
+      "districtId": "2419948",
+      "districtName": "중랑구",
+      "status": "ACCEPTED",
+      "rejectedStations": [],
+      "stationId": "409",
+      "stationDistanceKm": 1.325,
+      "rainfallId": "kma-409-201009211000-201009212000-disaster-v1",
+      "rainfallSha256": "a74e4c151777b5b9c128c864ec9af675579ce1f50192a0b59327bae1f834461c"
+    }
+  ]
+}

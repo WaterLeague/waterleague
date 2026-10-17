@@ -1,0 +1,147 @@
+name: 기반 검증
+on:
+  push:
+    branches: [main, 'feat/**', 'fix/**']
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: verify-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  containers:
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: HTTPS·DB 권한·실제 SWMM 컨테이너 검증
+        run: python3 scripts/verify_containers.py
+  backend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:18.4
+        env:
+          POSTGRES_USER: waterleague_test
+          POSTGRES_PASSWORD: local-ci-test-only
+          POSTGRES_DB: waterleague_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad
+        with:
+          distribution: corretto
+          java-version: '25'
+          cache: maven
+      - run: ./mvnw --batch-mode verify
+        working-directory: backend
+      - run: ./mvnw --batch-mode -Dtest=LeagueParticipationWorkflowTests,ResearchAnalysisWorkflowTests,ResearchSearchWorkflowTests -Dwaterleague.integration.jdbc=jdbc:postgresql://127.0.0.1:5432/waterleague_test test
+        working-directory: backend
+        env:
+          WL_INTEGRATION_USER: waterleague_test
+          WL_INTEGRATION_PASSWORD: local-ci-test-only
+  frontend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: '24'
+      - run: npm install --global pnpm@11.25.0 --ignore-scripts
+      - run: pnpm install --frozen-lockfile
+        working-directory: frontend
+      - run: pnpm format:check && pnpm test && pnpm build && pnpm audit --audit-level=high
+        working-directory: frontend
+  data:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.13'
+      - name: 고정된 공간 분석 의존성 설치
+        run: |
+          python - <<'PY'
+          import pathlib, subprocess, sys, tomllib
+          dependencies = tomllib.loads(pathlib.Path('simulation/pyproject.toml').read_text())['project']['dependencies']
+          subprocess.run([sys.executable, '-m', 'pip', 'install', *dependencies], check=True)
+          PY
+      - run: bash scripts/build_swmm.sh
+      - run: test -f tmp/swmm-build/install/bin/libswmm5.so
+      - run: python scripts/build_live_swmm.py
+      - name: EPA 참조 사례 실행·단위 대조와 인쇄 차이 기록
+        run: python scripts/verify_epa_reference.py --download --output tmp/epa-reference/ci
+      - run: python -m unittest discover -s tests -v
+        working-directory: simulation
+      - run: python scripts/verify_snapshot.py
+      - run: python scripts/verify_model.py
+      - run: python scripts/verify_shared_sites.py
+  worker-queue:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:18.4
+        env:
+          POSTGRES_USER: waterleague_test
+          POSTGRES_PASSWORD: local-ci-test-only
+          POSTGRES_DB: waterleague_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad
+        with:
+          distribution: corretto
+          java-version: '25'
+          cache: maven
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.13'
+      - name: 고정된 워커 의존성 설치
+        run: |
+          python - <<'PY'
+          import pathlib, subprocess, sys, tomllib
+          dependencies = tomllib.loads(pathlib.Path('simulation/pyproject.toml').read_text())['project']['dependencies']
+          subprocess.run([sys.executable, '-m', 'pip', 'install', *dependencies], check=True)
+          PY
+      - run: bash scripts/build_swmm.sh
+      - run: python scripts/verify_league_postgres.py --suite queue
+        env:
+          DATABASE_URL: postgresql://waterleague_test:local-ci-test-only@127.0.0.1:5432/waterleague_test
+      - run: python scripts/verify_league_postgres.py --suite search
+        env:
+          DATABASE_URL: postgresql://waterleague_test:local-ci-test-only@127.0.0.1:5432/waterleague_test
+      - name: PostgreSQL 18 복원 도구 설치
+        run: |
+          sudo install -d /usr/share/postgresql-common/pgdg
+          sudo curl --fail --silent --show-error --location https://www.postgresql.org/media/keys/ACCC4CF8.asc -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc
+          sudo tee /etc/apt/sources.list.d/pgdg.sources >/dev/null <<'EOF'
+          Types: deb
+          URIs: https://apt.postgresql.org/pub/repos/apt
+          Suites: noble-pgdg
+          Architectures: amd64
+          Components: main
+          Signed-By: /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc
+          EOF
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends postgresql-client-18=18.6-1.pgdg24.04+2 libpq5=18.6-1.pgdg24.04+2
+      - run: python scripts/verify_league_postgres.py --suite restore
+        env:
+          DATABASE_URL: postgresql://waterleague_test:local-ci-test-only@127.0.0.1:5432/waterleague_test

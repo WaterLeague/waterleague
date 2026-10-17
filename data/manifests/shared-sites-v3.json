@@ -1,0 +1,283 @@
+{
+  "schemaVersion": 3,
+  "previousCatalogSha256": "009fcd085f476bbc96a41888646f284942cd69aae0b9405defcb2764a8d6d5ea",
+  "generatorSha256": "322be982d4a922220dcc3f0652ef4e56b6f78bc9c9b0d71bf5e91ca7c22a634d",
+  "costSourceSha256": "4541e791e1213f6c1885921c9b5c939426dbee9b1d01fef60f0d6f595365640a",
+  "entries": [
+    {
+      "districtId": "2410520",
+      "districtName": "강남구",
+      "file": "2410520-v3.json.gz",
+      "sha256": "ebceda9e5ece75e8de06efaffdc6cdb7fdc4f4b8a0a18a81be2205647d76e042",
+      "gzipSha256": "af41128d3313285ee1f34ac63d30a40eb84dce950f22f2dd9ce2420ff40e0cf6",
+      "bytes": 17437035,
+      "count": 17458,
+      "roofCount": 17115,
+      "groundCount": 343
+    },
+    {
+      "districtId": "2419944",
+      "districtName": "강동구",
+      "file": "2419944-v3.json.gz",
+      "sha256": "dba08ddd6f17da05ea5a00fc0e71671dc7f0b9a44dca9ae0c2f5d56fd96b3424",
+      "gzipSha256": "9f84b56d11240490b0a66f96e27e4737138d3dbfae88695e24816d6eff7bc3b5",
+      "bytes": 3431266,
+      "count": 2935,
+      "roofCount": 2907,
+      "groundCount": 28
+    },
+    {
+      "districtId": "2419943",
+      "districtName": "강북구",
+      "file": "2419943-v3.json.gz",
+      "sha256": "66ee7bd768f86ca9eefb66f9dfd64db806cb1f4eb3c8850bc3249a6c607155e3",
+      "gzipSha256": "0b8aa3449041b7d79645b04a9eedbe15ce61bf4b6cb3e4f52b9dc264cab73172",
+      "bytes": 1449499,
+      "count": 1352,
+      "roofCount": 1334,
+      "groundCount": 18
+    },
+    {
+      "districtId": "2414775",
+      "districtName": "강서구",
+      "file": "2414775-v3.json.gz",
+      "sha256": "880aadddecd7fab063f394c3f860abe048bc1bc2985343b2f4b4e5baa9b33cc7",
+      "gzipSha256": "154a4663d60cb3199cc4c25fff0bdc3aa0a1edb64d9a3b91b253675d55253104",
+      "bytes": 11132741,
+      "count": 11426,
+      "roofCount": 10145,
+      "groundCount": 1281
+    },
+    {
+      "districtId": "2414778",
+      "districtName": "관악구",
+      "file": "2414778-v3.json.gz",
+      "sha256": "1bb7a341a03c54b2a2c374760ae613440656e57dc1c616ded9b7f57c40db6d53",
+      "gzipSha256": "3198b7542d2e734f01f9d48e5dbc7aa1e5e5a133ece396c24a3c98cfb9ee6fd7",
+      "bytes": 6608415,
+      "count": 6658,
+      "roofCount": 6643,
+      "groundCount": 15
+    },
+    {
+      "districtId": "2419945",
+      "districtName": "광진구",
+      "file": "2419945-v3.json.gz",
+      "sha256": "1a64f9a3981aeeabfeba4c63bc6f83635906262b454193c7c9fdeb57d1035364",
+      "gzipSha256": "24442478a19683c811b1960fce12dae1a4f77c67f6c57772c8eaf797f12393a9",
+      "bytes": 5424053,
+      "count": 5541,
+      "roofCount": 5335,
+      "groundCount": 206
+    },
+    {
+      "districtId": "2414777",
+      "districtName": "구로구",
+      "file": "2414777-v3.json.gz",
+      "sha256": "713d0028321cde11724e2b3b0747704adf386f235e0b030d215f69b615c4ebb8",
+      "gzipSha256": "1119f31609d6b79d195b2dbd743a738b1b049e7a20cba2d6836bada5694fbf43",
+      "bytes": 3515104,
+      "count": 3164,
+      "roofCount": 3142,
+      "groundCount": 22
+    },
+    {
+      "districtId": "2414776",
+      "districtName": "금천구",
+      "file": "2414776-v3.json.gz",
+      "sha256": "1a53fc3e4257991c12b174e7ea114bae77a08c731a69d8a914af04618839f4d3",
+      "gzipSha256": "75e4b2e6b3c09ba6e2db2c42a7ef30754e68e5e1e89eeae90f30e94697413edb",
+      "bytes": 1574999,
+      "count": 1498,
+      "roofCount": 1427,
+      "groundCount": 71
+    },
+    {
+      "districtId": "2419950",
+      "districtName": "노원구",
+      "file": "2419950-v3.json.gz",
+      "sha256": "9dcdff82148f1835914577698cf3a00d8cb905b8ac10c3474f2a691b2e491daf",
+      "gzipSha256": "f3868ad8d82e96188ef923c2ab37398ceedf958bdbe161b6603587eecac62afc",
+      "bytes": 3991856,
+      "count": 3542,
+      "roofCount": 3267,
+      "groundCount": 275
+    },
+    {
+      "districtId": "2419940",
+      "districtName": "도봉구",
+      "file": "2419940-v3.json.gz",
+      "sha256": "0143e1c81cd5c4fc08f36e4a24313670448e81f41686fa6bc40bcb61aae976e9",
+      "gzipSha256": "a8c99843b8ae5060f500ca1e01de4ab912fe9b876b3a42c9f90ea8acc561e60c",
+      "bytes": 1737250,
+      "count": 1614,
+      "roofCount": 1525,
+      "groundCount": 89
+    },
+    {
+      "districtId": "2419941",
+      "districtName": "동대문구",
+      "file": "2419941-v3.json.gz",
+      "sha256": "7b915c896291f7db2a2af808441e7fb0812f21e6594572d4c08252a6f775adc3",
+      "gzipSha256": "d1469d0e1c093ecdbc289614ded0bbc9d9cba2e58583aacedef1a37195a393ef",
+      "bytes": 6448663,
+      "count": 5830,
+      "roofCount": 5774,
+      "groundCount": 56
+    },
+    {
+      "districtId": "2414774",
+      "districtName": "동작구",
+      "file": "2414774-v3.json.gz",
+      "sha256": "8fdeab01a9efa8aa122fb1476a5abd7817dec7d43e79717b4b16ebeec7073bf2",
+      "gzipSha256": "7d8eaefce036ed634ac9c30efae487fd710edd72de519879817c8d23ee181fdb",
+      "bytes": 6925510,
+      "count": 6691,
+      "roofCount": 6549,
+      "groundCount": 142
+    },
+    {
+      "districtId": "2419949",
+      "districtName": "마포구",
+      "file": "2419949-v3.json.gz",
+      "sha256": "b4e652103cdf5c4b043704fe8e6e145e95dbe69448a894c9cc7a03743f338d4c",
+      "gzipSha256": "246492c0e4b7160ce29c613a13d499dd6ce99017cb22624844a766627e2a0445",
+      "bytes": 15900225,
+      "count": 14842,
+      "roofCount": 14526,
+      "groundCount": 316
+    },
+    {
+      "districtId": "2419951",
+      "districtName": "서대문구",
+      "file": "2419951-v3.json.gz",
+      "sha256": "426cb5a294dedbba5d2d71a3900f7b005c703e0e0e7b2c48c1f89cc267ac525e",
+      "gzipSha256": "ffa43d8bd9702926e306cf3b8b1a199a4fc3bca622927f4ebc3e6d898f45968e",
+      "bytes": 7552468,
+      "count": 7396,
+      "roofCount": 7363,
+      "groundCount": 33
+    },
+    {
+      "districtId": "2414779",
+      "districtName": "서초구",
+      "file": "2414779-v3.json.gz",
+      "sha256": "d22fc071de0fc0f4483fffa8cf19052676b8671330d395d1fe1618921b35371e",
+      "gzipSha256": "57e99997b8b3c9650492d1b3b024a81a1344490225afe2a2e4a641d43ab5ca88",
+      "bytes": 5693281,
+      "count": 5422,
+      "roofCount": 5223,
+      "groundCount": 199
+    },
+    {
+      "districtId": "2419953",
+      "districtName": "성동구",
+      "file": "2419953-v3.json.gz",
+      "sha256": "175a69d3888c6f720a3b8bfddeafaaf5d4a04f8a9d0b71c1af1080c2c86769ec",
+      "gzipSha256": "a59fc8b85be18f81932ffd442c9a32f27e0f7003247f68cb31e8f7e667238f4d",
+      "bytes": 4613528,
+      "count": 4406,
+      "roofCount": 4191,
+      "groundCount": 215
+    },
+    {
+      "districtId": "2419952",
+      "districtName": "성북구",
+      "file": "2419952-v3.json.gz",
+      "sha256": "301f035c947769a5cfa95230d1007d23dd7a371d42b583f3fd1a39b143750b33",
+      "gzipSha256": "53d6cc00f282d33e12aad96a155c4820e459b69d3662b42624de4b7b391acf7d",
+      "bytes": 4323444,
+      "count": 4015,
+      "roofCount": 3993,
+      "groundCount": 22
+    },
+    {
+      "districtId": "2419954",
+      "districtName": "송파구",
+      "file": "2419954-v3.json.gz",
+      "sha256": "fdc2e448ebb6079969d86ffcdf08fa7d32753db88e29dcead4894af9cbc4f59c",
+      "gzipSha256": "6d86eddca0d0fa6a6f3eea39ab4a7e19d8a15d2687b97e03c86e2dfc92b6cb68",
+      "bytes": 8706476,
+      "count": 8471,
+      "roofCount": 7683,
+      "groundCount": 788
+    },
+    {
+      "districtId": "2414780",
+      "districtName": "양천구",
+      "file": "2414780-v3.json.gz",
+      "sha256": "005420a487862a65f8aa3c84fc8fb16f9f8b7e069c9bee5f79ba974d4821c8e2",
+      "gzipSha256": "5e47ba6975dd782b056a61c3e9209afb8e8ebe13caccb03ac542798f12b022c7",
+      "bytes": 4757186,
+      "count": 4658,
+      "roofCount": 4251,
+      "groundCount": 407
+    },
+    {
+      "districtId": "2414781",
+      "districtName": "영등포구",
+      "file": "2414781-v3.json.gz",
+      "sha256": "3ab952128cc9a9ebe18a1d48ad599201dbbd4bcf9b1ab2e05d93522f421de28b",
+      "gzipSha256": "57b5b6b4c4dcfc7d43d4d3a53f30aaf0dd16a95baa55c388085c85914c7d9d2d",
+      "bytes": 3701708,
+      "count": 3521,
+      "roofCount": 2727,
+      "groundCount": 794
+    },
+    {
+      "districtId": "2419955",
+      "districtName": "용산구",
+      "file": "2419955-v3.json.gz",
+      "sha256": "e3c2ab7a096dfd79033202d0ea44b367039f51c2ce65a0f9edd07b62e1f80cc2",
+      "gzipSha256": "57e141125c43b290f0f1e2fdee958689047c276494b4af5a84c2353f988fadec",
+      "bytes": 5892396,
+      "count": 5665,
+      "roofCount": 5500,
+      "groundCount": 165
+    },
+    {
+      "districtId": "2419942",
+      "districtName": "은평구",
+      "file": "2419942-v3.json.gz",
+      "sha256": "af51ec82ae8b5fab3780ecba7d093303606265314f617238de2d2574ce917f87",
+      "gzipSha256": "87d202f14d02a541475254c54ac03048adf36085a53ba38515f90a60900c4b97",
+      "bytes": 7856513,
+      "count": 7803,
+      "roofCount": 7746,
+      "groundCount": 57
+    },
+    {
+      "districtId": "2419946",
+      "districtName": "종로구",
+      "file": "2419946-v3.json.gz",
+      "sha256": "2757ee9103439a72edb1e09b842069425bbe354a9fc6aa581228d64239b8b962",
+      "gzipSha256": "13c559c773b94ba6b42638a63c19a7a4b286dd2a406e1fc0d4fd4ae528d494c8",
+      "bytes": 8416577,
+      "count": 7908,
+      "roofCount": 7768,
+      "groundCount": 140
+    },
+    {
+      "districtId": "2419947",
+      "districtName": "중구",
+      "file": "2419947-v3.json.gz",
+      "sha256": "bab57e2619f31842830a1d960d4ea4d68c3b5a07ae4ba87cc1fda15c56cc5d0f",
+      "gzipSha256": "abca2cf65dd0524797b3f6fa78a9958359eb6dde756b2be6589bb12b0b9def89",
+      "bytes": 5243227,
+      "count": 4966,
+      "roofCount": 4844,
+      "groundCount": 122
+    },
+    {
+      "districtId": "2419948",
+      "districtName": "중랑구",
+      "file": "2419948-v3.json.gz",
+      "sha256": "95ce5d5c0554bb42423ecc38bdc55066311fcebdd6dceab61d42d5a046135798",
+      "gzipSha256": "f86caa37bb30bc9176917021ec561e3db72ce265d55d5e4a3f48304702f043a7",
+      "bytes": 8681028,
+      "count": 8002,
+      "roofCount": 7730,
+      "groundCount": 272
+    }
+  ]
+}

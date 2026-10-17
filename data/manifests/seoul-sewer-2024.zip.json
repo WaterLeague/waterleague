@@ -1,0 +1,16 @@
+{
+  "provider": "서울특별시",
+  "sourcePage": "https://data.seoul.go.kr/dataList/OA-2527/F/1/datasetView.do",
+  "endpoint": "https://datafile.seoul.go.kr/bigfile/iot/inf/nio_download.do?&useCache=false",
+  "method": "POST",
+  "parameters": {
+    "infId": "OA-2527",
+    "seqNo": "",
+    "seq": "17",
+    "infSeq": "3"
+  },
+  "filename": "seoul-sewer-2024.zip",
+  "sha256": "a1499be45fab2798375b75050acd0f826e34dd462c646747be043dc862a082e4",
+  "bytes": 727913789,
+  "acquiredAt": "2026-10-15T18:53:59.404527+00:00"
+}

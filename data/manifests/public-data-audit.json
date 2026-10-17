@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "map": {
+    "sourceUrl": "https://api.openstreetmap.org/api/0.6/map?bbox=127.0525,37.5430,127.0555,37.5455",
+    "provider": "OpenStreetMap contributors",
+    "license": "ODbL-1.0",
+    "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "sourceHash": "df5ff0d7c4d81517d4fdd55f73f6b0cb37cd4bacf8af2bb883251b03010a94e0",
+    "sourceBytes": 375364,
+    "derivedHash": "99f1b48cf2288c62f7cd9d7cac4512abf2a25209508af185b746e883555bbae2",
+    "acquiredAt": "2026-10-15T13:49:17.745342+00:00",
+    "buildings": 94,
+    "status": "VISUALIZATION_ONLY",
+    "transform": "scripts/prepare_public_data.py",
+    "transformSha256": "50f55da5e90a4d72d29a6a46e7401dc390218c0f9cbdd1488c3e362a4441675f",
+    "coordinateSystem": "WGS84 with local equirectangular display projection",
+    "limitations": [
+      "후보 지역의 시각화 자료이며 승인된 수문모델 아님",
+      "표고 미확보로 평탄화한 지면",
+      "높이 누락은 층수×3.2m 또는 9.6m의 표현용 가정",
+      "도로 폭은 표현용 가정",
+      "way 형상만 포함, relation·중정·복잡한 지붕 미반영",
+      "화면 투영 면적은 공식 설치면적 아님"
+    ]
+  },
+  "rainfall": {
+    "id": "noaa-seoul-2024",
+    "provider": "NOAA NCEI",
+    "stationId": "47108099999",
+    "stationName": "SEOUL CITY, KS",
+    "sourceUrl": "https://noaa-global-hourly-pds.s3.amazonaws.com/2024/47108099999.csv",
+    "sourceHash": "f8586d857a3ae59584c535867eb1e594daea9402315fd569321ebd9ffcd19064",
+    "acquiredAt": "2026-10-15T13:48:25.912022+00:00",
+    "sizeBytes": 2969340,
+    "rowCount": 8430,
+    "periodCounts": {
+      "01": 794,
+      "03": 184,
+      "06": 2,
+      "12": 7,
+      "24": 2181,
+      "99": 977
+    },
+    "status": "REJECTED_FOR_SIMULATION",
+    "reason": "누적기간 혼합·결측·품질코드의 이벤트별 검증 미완료",
+    "intervalInterpretation": "AA1~AA4의 첫 필드는 누적 시간, 99는 결측 코드. 자료 상세는 ISD 명세 확인 필요.",
+    "usableRainfallEventCount": 0
+  }
+}

@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>로컬 지도 장애 검증</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <aside
+      style="
+        position: fixed;
+        right: 8px;
+        top: 8px;
+        z-index: 1000;
+        background: #fff;
+        border: 2px solid #874;
+        padding: 8px;
+        max-width: 370px;
+        font: 11px system-ui;
+      "
+    >
+      <b>로컬 QA · 제품 빌드 제외</b><br />
+      <button id="loss">그래픽 연결 강제 손실</button>
+      <button id="block">다음 3D 초기화 차단</button>
+      <button id="allow">3D 초기화 허용</button>
+      <button id="measure">10초 연속 렌더 측정</button>
+      <button id="idle">3초 정지 렌더 측정</button>
+      <pre id="result" style="white-space: pre-wrap; max-height: 130px; overflow: auto">
+준비 중</pre>
+    </aside>
+    <script type="module">
+      import { addAfterEffect, invalidate } from '@react-three/fiber';
+      if (!import.meta.env.DEV || !['localhost', '127.0.0.1', '[::1]'].includes(location.hostname))
+        throw new Error('로컬 개발 환경 전용 화면');
+      const out = document.getElementById('result');
+      let geometryJobs = 0;
+      const WorkerOriginal = window.Worker;
+      window.Worker = class extends WorkerOriginal {
+        postMessage(...args) {
+          geometryJobs++;
+          return super.postMessage(...args);
+        }
+      };
+      const longTasks = [];
+      new PerformanceObserver((list) =>
+        longTasks.push(
+          ...list.getEntries().map((e) => ({ start: e.startTime, duration: e.duration }))
+        )
+      ).observe({ type: 'longtask', buffered: true });
+      const originalGetContext = HTMLCanvasElement.prototype.getContext;
+      let blocked = false,
+        drawing = false,
+        totalFrames = 0,
+        measuring = false,
+        stamps = [];
+      HTMLCanvasElement.prototype.getContext = function (type, ...args) {
+        if (blocked && (type === 'webgl2' || type === 'webgl')) return null;
+        return originalGetContext.call(this, type, ...args);
+      };
+      for (const method of [
+        'drawElements',
+        'drawArrays',
+        'drawElementsInstanced',
+        'drawArraysInstanced',
+      ]) {
+        const original = WebGL2RenderingContext.prototype[method];
+        WebGL2RenderingContext.prototype[method] = function (...args) {
+          drawing = true;
+          return original.apply(this, args);
+        };
+      }
+      addAfterEffect((timestamp) => {
+        if (drawing) {
+          totalFrames++;
+          if (measuring) stamps.push(timestamp);
+        }
+        drawing = false;
+      });
+      document.getElementById('loss').onclick = () => {
+        const canvas = document.querySelector('canvas');
+        const gl = canvas?.getContext('webgl2');
+        const ext = gl?.getExtension('WEBGL_lose_context');
+        if (!ext) {
+          out.textContent = '강제 손실 미지원';
+          return;
+        }
+        ext.loseContext();
+        out.textContent = 'WEBGL_lose_context 호출 완료';
+      };
+      document.getElementById('block').onclick = () => {
+        blocked = true;
+        out.textContent = '다음 WebGL 초기화 null 반환';
+      };
+      document.getElementById('allow').onclick = () => {
+        blocked = false;
+        out.textContent = 'WebGL 초기화 허용';
+      };
+      document.getElementById('measure').onclick = () => {
+        if (measuring) return;
+        stamps = [];
+        const workerBefore = geometryJobs,
+          started = performance.now();
+        measuring = true;
+        function tick() {
+          if (measuring) {
+            invalidate();
+            requestAnimationFrame(tick);
+          }
+        }
+        tick();
+        out.textContent = '10초 측정 중';
+        setTimeout(() => {
+          measuring = false;
+          const gaps = stamps
+            .slice(1)
+            .map((time, index) => time - stamps[index])
+            .sort((a, b) => a - b);
+          const canvas = document.querySelector('canvas');
+          out.textContent = JSON.stringify(
+            {
+              geometryJobs: geometryJobs - workerBefore,
+              longTasks: longTasks.filter((e) => e.start >= started),
+              frames: stamps.length,
+              elapsedMs: stamps.at(-1) - stamps[0],
+              fps: ((stamps.length - 1) * 1000) / (stamps.at(-1) - stamps[0]),
+              medianMs: gaps[Math.floor(gaps.length * 0.5)],
+              p95Ms: gaps[Math.floor(gaps.length * 0.95)],
+              viewport: [innerWidth, innerHeight],
+              canvas: [canvas?.width, canvas?.height],
+              userAgent: navigator.userAgent,
+            },
+            null,
+            2
+          );
+        }, 10000);
+      };
+      document.getElementById('idle').onclick = () => {
+        const before = totalFrames;
+        out.textContent = '3초 정지 측정 중';
+        setTimeout(
+          () =>
+            (out.textContent = JSON.stringify({
+              idleDrawnFrames: totalFrames - before,
+              durationMs: 3000,
+            })),
+          3000
+        );
+      };
+      await import('/src/app/main.tsx');
+      out.textContent = '준비 완료';
+    </script>
+  </body>
+</html>

@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "snapshotSha256": "c9939a2cc22961daf9834e2ad76e91c14cf8c85f8c9535dd7c2e0e5f70e858a2",
+  "registrySha256": "d876b007b26eb40eca8e31ff967b36a311ab02c1e9b55e1e3c6e472263120ae7",
+  "generatorSha256": "b4ef68c2375ddb497216dfc1f29a7701c7ebd675d879f057a805a7f3d987b970",
+  "buildings": 246,
+  "selection": "POSITIVE_AREA_INTERSECTION_WITH_STUDY_BOUNDS_FULL_FEATURE_PRESERVED",
+  "tileFragmentsMerged": false,
+  "tiles": [
+    {
+      "tile": "377052201",
+      "sourceSha256": "78c2e77cbb90b48be94c87e4bb815b6498b78c14bc42cf4d7b9b54d1052f97fe",
+      "totalFeatureCount": 760,
+      "selectedCount": 37,
+      "crs": {
+        "originalWkt": "PROJCS[\"Korea_2000_Central_Belt_2010\",GEOGCS[\"GCS_Korea_2000\",DATUM[\"D_Korea_2000\",SPHEROID[\"GRS_1980\",6378137.0,298.257222101]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"False_Easting\",200000.0],PARAMETER[\"False_Northing\",600000.0],PARAMETER[\"Central_Meridian\",127.0],PARAMETER[\"Scale_Factor\",1.0],PARAMETER[\"Latitude_Of_Origin\",38.0],UNIT[\"Meter\",1.0]]",
+        "identifiedEpsg": 5186,
+        "bestOperationAvailable": true,
+        "operation": "Inverse of KGD2002 to WGS 84 (1) + axis order change (2D) + unnamed (with axis order normalized for visualization)",
+        "pipeline": "proj=pipeline step proj=unitconvert xy_in=deg xy_out=rad step proj=tmerc lat_0=38 lon_0=127 k=1 x_0=200000 y_0=600000 ellps=GRS80",
+        "statedOperationAccuracyM": 1.0,
+        "usesBallpark": false,
+        "coordinateEpoch": null,
+        "axisOrder": "x,y; input longitude,latitude",
+        "limitation": "변환 연산 정확도는 원본 측량 정확도 또는 시점 정합의 보증이 아님"
+      }
+    },
+    {
+      "tile": "377052202",
+      "sourceSha256": "02c4bf8bf053f35e0811b141507530bc6d450d9eefb003a81372af7aacd4a482",
+      "totalFeatureCount": 465,
+      "selectedCount": 3,
+      "crs": {
+        "originalWkt": "PROJCS[\"Korea_2000_Central_Belt_2010\",GEOGCS[\"GCS_Korea_2000\",DATUM[\"D_Korea_2000\",SPHEROID[\"GRS_1980\",6378137.0,298.257222101]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"False_Easting\",200000.0],PARAMETER[\"False_Northing\",600000.0],PARAMETER[\"Central_Meridian\",127.0],PARAMETER[\"Scale_Factor\",1.0],PARAMETER[\"Latitude_Of_Origin\",38.0],UNIT[\"Meter\",1.0]]",
+        "identifiedEpsg": 5186,
+        "bestOperationAvailable": true,
+        "operation": "Inverse of KGD2002 to WGS 84 (1) + axis order change (2D) + unnamed (with axis order normalized for visualization)",
+        "pipeline": "proj=pipeline step proj=unitconvert xy_in=deg xy_out=rad step proj=tmerc lat_0=38 lon_0=127 k=1 x_0=200000 y_0=600000 ellps=GRS80",
+        "statedOperationAccuracyM": 1.0,
+        "usesBallpark": false,
+        "coordinateEpoch": null,
+        "axisOrder": "x,y; input longitude,latitude",
+        "limitation": "변환 연산 정확도는 원본 측량 정확도 또는 시점 정합의 보증이 아님"
+      }
+    },
+    {
+      "tile": "377052211",
+      "sourceSha256": "c33becacbfde9e862c59b49b87afeffc1bc7a15104ad1136ef264a76a1abdb9f",
+      "totalFeatureCount": 805,
+      "selectedCount": 168,
+      "crs": {
+        "originalWkt": "PROJCS[\"Korea_2000_Central_Belt_2010\",GEOGCS[\"GCS_Korea_2000\",DATUM[\"D_Korea_2000\",SPHEROID[\"GRS_1980\",6378137.0,298.257222101]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"False_Easting\",200000.0],PARAMETER[\"False_Northing\",600000.0],PARAMETER[\"Central_Meridian\",127.0],PARAMETER[\"Scale_Factor\",1.0],PARAMETER[\"Latitude_Of_Origin\",38.0],UNIT[\"Meter\",1.0]]",
+        "identifiedEpsg": 5186,
+        "bestOperationAvailable": true,
+        "operation": "Inverse of KGD2002 to WGS 84 (1) + axis order change (2D) + unnamed (with axis order normalized for visualization)",
+        "pipeline": "proj=pipeline step proj=unitconvert xy_in=deg xy_out=rad step proj=tmerc lat_0=38 lon_0=127 k=1 x_0=200000 y_0=600000 ellps=GRS80",
+        "statedOperationAccuracyM": 1.0,
+        "usesBallpark": false,
+        "coordinateEpoch": null,
+        "axisOrder": "x,y; input longitude,latitude",
+        "limitation": "변환 연산 정확도는 원본 측량 정확도 또는 시점 정합의 보증이 아님"
+      }
+    },
+    {
+      "tile": "377052212",
+      "sourceSha256": "35d039f88fa61d16af24b1cce661105966e822bf7f651b5f4b2276d52169dc01",
+      "totalFeatureCount": 707,
+      "selectedCount": 38,
+      "crs": {
+        "originalWkt": "PROJCS[\"Korea_2000_Central_Belt_2010\",GEOGCS[\"GCS_Korea_2000\",DATUM[\"D_Korea_2000\",SPHEROID[\"GRS_1980\",6378137.0,298.257222101]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"False_Easting\",200000.0],PARAMETER[\"False_Northing\",600000.0],PARAMETER[\"Central_Meridian\",127.0],PARAMETER[\"Scale_Factor\",1.0],PARAMETER[\"Latitude_Of_Origin\",38.0],UNIT[\"Meter\",1.0]]",
+        "identifiedEpsg": 5186,
+        "bestOperationAvailable": true,
+        "operation": "Inverse of KGD2002 to WGS 84 (1) + axis order change (2D) + unnamed (with axis order normalized for visualization)",
+        "pipeline": "proj=pipeline step proj=unitconvert xy_in=deg xy_out=rad step proj=tmerc lat_0=38 lon_0=127 k=1 x_0=200000 y_0=600000 ellps=GRS80",
+        "statedOperationAccuracyM": 1.0,
+        "usesBallpark": false,
+        "coordinateEpoch": null,
+        "axisOrder": "x,y; input longitude,latitude",
+        "limitation": "변환 연산 정확도는 원본 측량 정확도 또는 시점 정합의 보증이 아님"
+      }
+    }
+  ],
+  "versions": {
+    "gdal": "GDAL 3.8.5, released 2024/04/02",
+    "pyproj": "3.8.0",
+    "proj": "9.8.1",
+    "shapely": "2.2.0",
+    "geos": "3.14.1"
+  },
+  "limitations": [
+    "2025 제작 자료이며 2024 강우 당시 형상 일치 미검증",
+    "도엽별 건물 도형이며 건수 차이를 누락 건물 수로 해석하지 않음",
+    "층수는 실측 높이·표고가 아님",
+    "화면 대조 자료; 수문 모델 변경 없음"
+  ]
+}

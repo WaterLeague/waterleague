@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>로컬 비 효과 검증 · 가상 관측</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <aside
+      style="
+        position: fixed;
+        bottom: 8px;
+        right: 8px;
+        z-index: 10000;
+        padding: 12px;
+        background: #fff0ce;
+        border: 2px solid #9d5c17;
+        color: #543514;
+        font: 12px system-ui;
+        max-width: 360px;
+      "
+    >
+      <b>로컬 QA · 가상 관측 · 제품 빌드 제외</b>
+      <p>성동·강남 강수, 다른 구 무강수의 화면 검증용 입력</p>
+      <button id="wet">비 감지</button> <button id="dry">비 그침</button>
+      <button id="stale">관측 지연</button> <button id="failure">조회 실패</button>
+      <span id="state">비 감지</span>
+    </aside>
+    <script type="module">
+      if (!import.meta.env.DEV || !['localhost', '127.0.0.1', '[::1]'].includes(location.hostname))
+        throw new Error('로컬 개발 환경 전용 화면');
+      const originalFetch = window.fetch.bind(window);
+      const city = await (await originalFetch('/data/seoul-v1/city.json')).json();
+      let mode = 'wet';
+      for (const value of ['wet', 'dry', 'stale', 'failure'])
+        document.getElementById(value).onclick = () => {
+          mode = value;
+          document.getElementById('state').textContent = document.getElementById(value).textContent;
+          document.querySelector('[aria-label="최신 강우 직접 조회"]')?.click();
+        };
+      window.fetch = async (input, options) => {
+        const url =
+          typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
+        if (new URL(url, location.href).pathname !== '/api/v1/rainfall/live')
+          return originalFetch(input, options);
+        if (mode === 'failure')
+          return new Response(
+            JSON.stringify({ code: 'RAINFALL_UNAVAILABLE', message: '검증용 조회 실패' }),
+            { status: 503, headers: { 'Content-Type': 'application/json' } }
+          );
+        const now = Date.now(),
+          at = new Date(now - (mode === 'stale' ? 360000 : 120000)).toISOString();
+        return new Response(
+          JSON.stringify({
+            fetchedAt: new Date(now).toISOString(),
+            requestedObservationAt: at,
+            source: 'KMA_AWS_DIRECT',
+            sourceUrl: 'https://apihub.kma.go.kr/apiList.do?seqApi=2&seqApiSub=239',
+            districts: city.districts.map((d) => {
+              const wet = ['성동구', '강남구'].includes(d.name) && mode !== 'dry';
+              return {
+                districtId: d.id,
+                districtName: d.name,
+                stationId: '0',
+                stationName: '화면 검증용 가상 관측소',
+                observedAt: at,
+                ageSeconds: mode === 'stale' ? 360 : 120,
+                status: mode === 'stale' ? 'DELAYED' : 'CURRENT',
+                fifteenMinuteMm: 3,
+                sixtyMinuteMm: 8,
+                dayMm: 12,
+                rainDetected: wet,
+                oneMinuteMm: wet ? 0.5 : 0,
+                rainState: wet ? 'WET' : 'NO_RAIN_DETECTED',
+                temperatureC: 20,
+                humidityPercent: 60,
+                windSpeedMs: 0,
+                pressureHpa: 1000,
+              };
+            }),
+          }),
+          { status: 200, headers: { 'Content-Type': 'application/json' } }
+        );
+      };
+      await import('/src/app/main.tsx');
+    </script>
+  </body>
+</html>

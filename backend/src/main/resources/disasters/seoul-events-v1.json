@@ -1,0 +1,566 @@
+{
+  "schemaVersion": 1,
+  "events": [
+    {
+      "id": "seoul-20220808",
+      "title": "2022년 8월 수도권 집중호우",
+      "eventDate": "2022-08-08",
+      "startKst": "202208081800",
+      "endKst": "202208082359",
+      "summary": "한강 이남 도심과 저지대 지하공간에 침수 피해가 발생한 집중호우. 8일 저녁 관측 창을 재생합니다.",
+      "evidenceTitle": "서울연구원 · 2022년 8월 집중호우 강우량과 피해특성",
+      "evidenceUrl": "https://www.si.re.kr/bbs/view.do?key=2024100042&pstSn=2208290002",
+      "models": [
+        {
+          "districtId": "2410520",
+          "modelHash": "8d5aec59d4820aa2832771e64f2118a632e0c62b9ce4a3aea9f67272b08cb26a",
+          "stationName": "서초",
+          "stationId": "401",
+          "totalDepthMm": 288.5
+        },
+        {
+          "districtId": "2419944",
+          "modelHash": "56f463094099f24b92d72e9db62e937c850cecf94601e13f796600853fd1937c",
+          "stationName": "광진",
+          "stationId": "413",
+          "totalDepthMm": 119.5
+        },
+        {
+          "districtId": "2419943",
+          "modelHash": "823444ed2169f1b9ce45914d60600973e36aa4876d42a885c100db74a101f27a",
+          "stationName": "성북",
+          "stationId": "414",
+          "totalDepthMm": 38.5
+        },
+        {
+          "districtId": "2414775",
+          "modelHash": "3ad70d451be9b4af29eccc8bdd870e5e44444f11bfc1615a069ee25deed3bc20",
+          "stationName": "강서",
+          "stationId": "404",
+          "totalDepthMm": 26.0
+        },
+        {
+          "districtId": "2414778",
+          "modelHash": "6144ddb9bded2cab7e9d2bea621a77f661bb555c31b30a48741e0a0c7af50451",
+          "stationName": "관악",
+          "stationId": "509",
+          "totalDepthMm": 233.5
+        },
+        {
+          "districtId": "2419945",
+          "modelHash": "8c8bd03b34a05bb3dee7e0a47617418d4ef16d2e8aa130c602bda465b4b2a475",
+          "stationName": "광진",
+          "stationId": "413",
+          "totalDepthMm": 119.5
+        },
+        {
+          "districtId": "2414777",
+          "modelHash": "d3b52b0a7bd77ab4a58dbc166a934751ea8bf200cf41a99c92fa5e55ddeaeb11",
+          "stationName": "광명",
+          "stationId": "437",
+          "totalDepthMm": 225.5
+        },
+        {
+          "districtId": "2414776",
+          "modelHash": "0ceaaed7dc782700fb47b9e427422b53e787663eb02c266d15def1ff2174b2c5",
+          "stationName": "광명",
+          "stationId": "437",
+          "totalDepthMm": 225.5
+        },
+        {
+          "districtId": "2419950",
+          "modelHash": "f690bd0a04ca6f7fec85965a2c926c2b1b77e3ba579ce9e1520819239c231d2b",
+          "stationName": "노원",
+          "stationId": "407",
+          "totalDepthMm": 49.0
+        },
+        {
+          "districtId": "2419940",
+          "modelHash": "0df0f46d25bfabf6512242d9e8a005b1666cddffc2caa92e0cf1d607d8f50f4d",
+          "stationName": "노원",
+          "stationId": "407",
+          "totalDepthMm": 49.0
+        },
+        {
+          "districtId": "2419941",
+          "modelHash": "7296909cd50670b40bf0487a34c6d0db55d90b142b7d7416a8b75cb1a6a8b33a",
+          "stationName": "동대문",
+          "stationId": "408",
+          "totalDepthMm": 52.5
+        },
+        {
+          "districtId": "2414774",
+          "modelHash": "1def9a1a8800532cb96876a81ebd9107c72fcf4d78a62686d90d6c86d5f0b96a",
+          "stationName": "현충원",
+          "stationId": "889",
+          "totalDepthMm": 223.5
+        },
+        {
+          "districtId": "2419949",
+          "modelHash": "4c86138ce118f246e116fdc1345b7ff3d0f78efe413c4905a59dee2f3319a475",
+          "stationName": "마포",
+          "stationId": "411",
+          "totalDepthMm": 37.0
+        },
+        {
+          "districtId": "2419951",
+          "modelHash": "5b643d7091c583d234235915630d5047cc8d995503953468036b1968e9ca0364",
+          "stationName": "서대문",
+          "stationId": "412",
+          "totalDepthMm": 44.5
+        },
+        {
+          "districtId": "2414779",
+          "modelHash": "8d05dd2c8b06a5a4df796a7cb5d6aae9a1c29c0ddc8b9f5d8c502eaa0a2f47a6",
+          "stationName": "서초",
+          "stationId": "401",
+          "totalDepthMm": 288.5
+        },
+        {
+          "districtId": "2419953",
+          "modelHash": "3a02b5d7acd351e03c03be43bdf0f15d571f69efb984527bf60afadd0c0328f2",
+          "stationName": "성동",
+          "stationId": "421",
+          "totalDepthMm": 85.0
+        },
+        {
+          "districtId": "2419952",
+          "modelHash": "f868ac1971f55628e59af3e459d73e79ddf7872f2fbf4ca4d82aca2708617c32",
+          "stationName": "동대문",
+          "stationId": "408",
+          "totalDepthMm": 52.5
+        },
+        {
+          "districtId": "2419954",
+          "modelHash": "faefc72e5ee8413c46d867e8595ba1dd9d66dc113569762fa8b8315289dc0b37",
+          "stationName": "송파",
+          "stationId": "403",
+          "totalDepthMm": 240.5
+        },
+        {
+          "districtId": "2414780",
+          "modelHash": "9167ddd31fc50353cd3847837d5ec518bccbd3b4224b236d6f738279e015f6c6",
+          "stationName": "양천",
+          "stationId": "405",
+          "totalDepthMm": 79.5
+        },
+        {
+          "districtId": "2414781",
+          "modelHash": "ed55bd38f3723721dc8b7238272483f273f9edc5f230673af85aef8df87b7702",
+          "stationName": "영등포",
+          "stationId": "510",
+          "totalDepthMm": 110.5
+        },
+        {
+          "districtId": "2419955",
+          "modelHash": "98badb44926e657e23700f34d90c6c9ea605027d650d455e9f296fb614fd2a44",
+          "stationName": "용산",
+          "stationId": "415",
+          "totalDepthMm": 171.5
+        },
+        {
+          "districtId": "2419942",
+          "modelHash": "e23bd26abad0c9df9c1ef7d65cbd7936817053f99135ffc38f263365f92da41b",
+          "stationName": "고양",
+          "stationId": "540",
+          "totalDepthMm": 21.5
+        },
+        {
+          "districtId": "2419946",
+          "modelHash": "f96d925828863bb9e2604af186ff1a41d662d34a920670005ea8f1f6fe8eda3b",
+          "stationName": "서울",
+          "stationId": "108",
+          "totalDepthMm": 51.7
+        },
+        {
+          "districtId": "2419947",
+          "modelHash": "2ada3549587baf1d91860a9834c1de70fa29b2221259f40e29184772457a3477",
+          "stationName": "중구",
+          "stationId": "419",
+          "totalDepthMm": 60.5
+        },
+        {
+          "districtId": "2419948",
+          "modelHash": "e6568cfe658bf6e68741b6ea445825110934d6acca8e821b577b864e78727228",
+          "stationName": "중랑",
+          "stationId": "409",
+          "totalDepthMm": 60.5
+        }
+      ]
+    },
+    {
+      "id": "seoul-20110727",
+      "title": "2011년 7월 서울 집중호우",
+      "eventDate": "2011-07-27",
+      "startKst": "201107270001",
+      "endKst": "201107271200",
+      "summary": "서울 도심 침수와 우면산 산사태가 발생한 집중호우. 27일 오전 강우를 재생하며 산사태는 계산하지 않습니다.",
+      "evidenceTitle": "기상청 · 2011 서울특별시 기후변화 적응정보 보고서",
+      "evidenceUrl": "https://www.climate.go.kr/home/cc_data/2011_RRCC/2011_RRCC_01.pdf",
+      "models": [
+        {
+          "districtId": "2410520",
+          "modelHash": "812db53a8743e82c39f632c0c7ef237abcfee60391d03666e3455e108bc50e70",
+          "stationName": "서초",
+          "stationId": "401",
+          "totalDepthMm": 259.0
+        },
+        {
+          "districtId": "2419944",
+          "modelHash": "e336b6148c829768b72621a204df088d08ff3edd2296e321e02bb6b8805939ca",
+          "stationName": "광진",
+          "stationId": "413",
+          "totalDepthMm": 213.0
+        },
+        {
+          "districtId": "2419943",
+          "modelHash": "9f1dde6d5983c50fb6452842da3d20744bc508f432f672282d5a359383826cee",
+          "stationName": "강북",
+          "stationId": "424",
+          "totalDepthMm": 165.0
+        },
+        {
+          "districtId": "2414775",
+          "modelHash": "9f8cfd3cb63d02e136e397e59dffba51b7259f58930ebd3955caea06685615ad",
+          "stationName": "김포(공)",
+          "stationId": "110",
+          "totalDepthMm": 163.5
+        },
+        {
+          "districtId": "2414778",
+          "modelHash": "891d33ad3690ba30cf92f61d991778f9e5ee87251a0667c95c7bb491ab0a6abb",
+          "stationName": "관악",
+          "stationId": "509",
+          "totalDepthMm": 312.0
+        },
+        {
+          "districtId": "2419945",
+          "modelHash": "8ced58402e0b8baffc858010bd220a485e939eb2c0d5cb448d51bee9fff66b49",
+          "stationName": "광진",
+          "stationId": "413",
+          "totalDepthMm": 213.0
+        },
+        {
+          "districtId": "2414777",
+          "modelHash": "205ce2802f765fc00506fd83733e2340cec90d4c20bf4b7c0aadcf1704f16dca",
+          "stationName": "광명",
+          "stationId": "437",
+          "totalDepthMm": 229.0
+        },
+        {
+          "districtId": "2414776",
+          "modelHash": "a36a22806b9cb56f4524c4b63f93413bae02fa823112f67b2a4f1ff0f77d1e06",
+          "stationName": "광명",
+          "stationId": "437",
+          "totalDepthMm": 229.0
+        },
+        {
+          "districtId": "2419950",
+          "modelHash": "db4977cde6b307bffb86a548308223c2057206331b2b969d16a0987b5ee2938f",
+          "stationName": "강북",
+          "stationId": "424",
+          "totalDepthMm": 165.0
+        },
+        {
+          "districtId": "2419940",
+          "modelHash": "18f89f02272bdfe975c74f6bc84ea9a0d5b390bacc8b746b428ff0c257059d15",
+          "stationName": "강북",
+          "stationId": "424",
+          "totalDepthMm": 165.0
+        },
+        {
+          "districtId": "2419941",
+          "modelHash": "f8a8f502da0b9ce5d8cbb7ff3fba2f53fb32fefdc136febc4b7fb76e33116913",
+          "stationName": "중랑",
+          "stationId": "409",
+          "totalDepthMm": 229.0
+        },
+        {
+          "districtId": "2414774",
+          "modelHash": "cd969b3ce5d787d26018097626672f31d0f7cf31ed56360b99d91f4d09ae66d8",
+          "stationName": "한강",
+          "stationId": "418",
+          "totalDepthMm": 230.5
+        },
+        {
+          "districtId": "2419949",
+          "modelHash": "74a8fc3942c73607698b68e4e1181df4355beb7110078975e5b8e71d71a73313",
+          "stationName": "마포",
+          "stationId": "411",
+          "totalDepthMm": 252.5
+        },
+        {
+          "districtId": "2419951",
+          "modelHash": "d0597f0a973202e8e8c99aebf32607009b4829b8e40381e1517da7abe184f8a1",
+          "stationName": "마포",
+          "stationId": "411",
+          "totalDepthMm": 252.5
+        },
+        {
+          "districtId": "2414779",
+          "modelHash": "a8592a64771924606839960526120ad797a500b9ba1711bd82c6e2c6d0e6f808",
+          "stationName": "서초",
+          "stationId": "401",
+          "totalDepthMm": 259.0
+        },
+        {
+          "districtId": "2419953",
+          "modelHash": "ac53510f8b3f98ca786f1d50c1ef1bcdf3f07670a97a52b0c86ef3ddd4419a5b",
+          "stationName": "성동",
+          "stationId": "421",
+          "totalDepthMm": 227.0
+        },
+        {
+          "districtId": "2419952",
+          "modelHash": "f14b663fc077c64f371bac20918e0da5a74289e2dbed758dc8142d9ad737e040",
+          "stationName": "성북",
+          "stationId": "414",
+          "totalDepthMm": 190.0
+        },
+        {
+          "districtId": "2419954",
+          "modelHash": "10576f67a96b7174ff916c7edf764dd52b94af65a06be182cfa31c4a12b56776",
+          "stationName": "광진",
+          "stationId": "413",
+          "totalDepthMm": 213.0
+        },
+        {
+          "districtId": "2414780",
+          "modelHash": "26c60ed0d36927f8cd335e0ae1360b028124f90f0e55f7face43e86990846fb1",
+          "stationName": "양천",
+          "stationId": "405",
+          "totalDepthMm": 242.0
+        },
+        {
+          "districtId": "2414781",
+          "modelHash": "63ff1935f1bfa006fc9013675aff16c30a6d94b2291a664affdd052097836ed7",
+          "stationName": "영등포",
+          "stationId": "510",
+          "totalDepthMm": 249.5
+        },
+        {
+          "districtId": "2419955",
+          "modelHash": "a1d90e0fe8fb4fb4ed0422d9f3b86909b0ee5d35b0f6f9ff501b30a892597ccb",
+          "stationName": "용산",
+          "stationId": "415",
+          "totalDepthMm": 236.0
+        },
+        {
+          "districtId": "2419942",
+          "modelHash": "02fb94c327d41fc076c97b5ece6047fcaaff7decf0a1aac9efb8c964d6732aaa",
+          "stationName": "은평",
+          "stationId": "416",
+          "totalDepthMm": 208.0
+        },
+        {
+          "districtId": "2419946",
+          "modelHash": "b98654637331306f3cc6fc87fe268f92feaa75792266d059ae520334d7b2237d",
+          "stationName": "중구",
+          "stationId": "419",
+          "totalDepthMm": 225.0
+        },
+        {
+          "districtId": "2419947",
+          "modelHash": "82b05ecf1b2ca63bc71dd394ec034560f86724151b638b7b08d84b8f6da24c2a",
+          "stationName": "중구",
+          "stationId": "419",
+          "totalDepthMm": 225.0
+        },
+        {
+          "districtId": "2419948",
+          "modelHash": "921d2bdf47e5036ba2f0fbeaf31cf898e2f1c9fb3c21bb973b5efa325d1e2989",
+          "stationName": "중랑",
+          "stationId": "409",
+          "totalDepthMm": 229.0
+        }
+      ]
+    },
+    {
+      "id": "seoul-20100921",
+      "title": "2010년 추석 서울 집중호우",
+      "eventDate": "2010-09-21",
+      "startKst": "201009211000",
+      "endKst": "201009212000",
+      "summary": "광화문 등 서울 시내 주택·도로 침수가 발생한 집중호우. 21일 낮과 저녁 관측 창을 재생합니다.",
+      "evidenceTitle": "기상청 · 2011 서울특별시 기후변화 적응정보 보고서",
+      "evidenceUrl": "https://www.climate.go.kr/home/cc_data/2011_RRCC/2011_RRCC_01.pdf",
+      "models": [
+        {
+          "districtId": "2410520",
+          "modelHash": "5fc71d0df05520db2d8ad2642123cbe329f4ac35c23f82c763c93b2621b61e24",
+          "stationName": "강남",
+          "stationId": "400",
+          "totalDepthMm": 279.5
+        },
+        {
+          "districtId": "2419944",
+          "modelHash": "ce24f605e2a12310703183da400d63360a463e35137dfac7158bf6b56d15c855",
+          "stationName": "강동",
+          "stationId": "402",
+          "totalDepthMm": 261.5
+        },
+        {
+          "districtId": "2419943",
+          "modelHash": "1d8b4b68af6491f125f661616d8e28c71aee1b66edc47f3dbd7ac065e9f6961b",
+          "stationName": "도봉",
+          "stationId": "406",
+          "totalDepthMm": 91.0
+        },
+        {
+          "districtId": "2414775",
+          "modelHash": "df8d8ff30f57d3329fade836a40679e526a5750d4b4c6545d0ceb269dcb25f00",
+          "stationName": "부천",
+          "stationId": "433",
+          "totalDepthMm": 210.5
+        },
+        {
+          "districtId": "2414778",
+          "modelHash": "16690e8232509cc4306602970a34f84c30b9bf7b699c9c1dbd3ddc0afbc839a6",
+          "stationName": "과천",
+          "stationId": "590",
+          "totalDepthMm": 95.0
+        },
+        {
+          "districtId": "2419945",
+          "modelHash": "ac205dbb80e693e5a357bbd60f4d9c7c8a48cbf5c01b804461bbaa5925c3c5c5",
+          "stationName": "광진",
+          "stationId": "413",
+          "totalDepthMm": 251.5
+        },
+        {
+          "districtId": "2414777",
+          "modelHash": "f5637f708b8cf6f14c8384533b80feed9533f4fad067db9ac325012440312152",
+          "stationName": "광명",
+          "stationId": "437",
+          "totalDepthMm": 195.0
+        },
+        {
+          "districtId": "2414776",
+          "modelHash": "11e2238dbb57df72e26f448ac54809d15672946ac8fa029992c9839977409d4a",
+          "stationName": "광명",
+          "stationId": "437",
+          "totalDepthMm": 195.0
+        },
+        {
+          "districtId": "2419950",
+          "modelHash": "c2498f43ef67a94a44529f045549bc27c70970f9bd144451cf0843cc66108efa",
+          "stationName": "도봉",
+          "stationId": "406",
+          "totalDepthMm": 91.0
+        },
+        {
+          "districtId": "2419940",
+          "modelHash": "7c406602b1e87ae3297dbe695dbe2c3400fe97b55f5cdddca846ae0d1255d9e6",
+          "stationName": "도봉",
+          "stationId": "406",
+          "totalDepthMm": 91.0
+        },
+        {
+          "districtId": "2419941",
+          "modelHash": "c21595550003a367944417396d482a592c1c47f4dcd93b40ad3a6bc84c13fea3",
+          "stationName": "중랑",
+          "stationId": "409",
+          "totalDepthMm": 216.0
+        },
+        {
+          "districtId": "2414774",
+          "modelHash": "00108d45db8f9ee3af58b6a78ab2789b4a37a2b98825253cea723c4f148389de",
+          "stationName": "한강",
+          "stationId": "418",
+          "totalDepthMm": 258.0
+        },
+        {
+          "districtId": "2419949",
+          "modelHash": "869c5c28d649f0d2dde1ee2c4dbeab8d2546da3501b8e2f2334fe1a86022c9de",
+          "stationName": "마포",
+          "stationId": "411",
+          "totalDepthMm": 275.5
+        },
+        {
+          "districtId": "2419951",
+          "modelHash": "8290fb0f98ce26246de866c35f89e20620d52466f09763a08834c404fd73d32d",
+          "stationName": "마포",
+          "stationId": "411",
+          "totalDepthMm": 275.5
+        },
+        {
+          "districtId": "2414779",
+          "modelHash": "742ba84ea3a06327af09844974a91eb1c5b3dff6f28a5de2ae85c0f72fb4f7fe",
+          "stationName": "강남",
+          "stationId": "400",
+          "totalDepthMm": 279.5
+        },
+        {
+          "districtId": "2419953",
+          "modelHash": "74e4ffe648eb3b716f03446ac8a29fa768be1ef37562e059908c03f79f0bcca4",
+          "stationName": "성동",
+          "stationId": "421",
+          "totalDepthMm": 246.0
+        },
+        {
+          "districtId": "2419952",
+          "modelHash": "725a68f2a46844c937aafd07249d43ff01b91c8bd8401d26150851013b47436b",
+          "stationName": "성북",
+          "stationId": "414",
+          "totalDepthMm": 167.0
+        },
+        {
+          "districtId": "2419954",
+          "modelHash": "44c7f99dfac1831a25445f3f3c44fa13f1ba70cb04316853d77b78982183783c",
+          "stationName": "광진",
+          "stationId": "413",
+          "totalDepthMm": 251.5
+        },
+        {
+          "districtId": "2414780",
+          "modelHash": "c81183e8046a274e8377c3502bb33f28b2940c0a44da8cebff6bfe89a868f13e",
+          "stationName": "광명",
+          "stationId": "437",
+          "totalDepthMm": 195.0
+        },
+        {
+          "districtId": "2414781",
+          "modelHash": "0e02c2c312d46167bcaa28ad2485142177e7448527a724e1973515f6d2da28f0",
+          "stationName": "한강",
+          "stationId": "418",
+          "totalDepthMm": 258.0
+        },
+        {
+          "districtId": "2419955",
+          "modelHash": "ffc9a307f5ab11706bdbef5e20c52c05852d388524176fe8e37538e0d1f57161",
+          "stationName": "한강",
+          "stationId": "418",
+          "totalDepthMm": 258.0
+        },
+        {
+          "districtId": "2419942",
+          "modelHash": "8a7bdc0b12d890979578289e0b36398d4f105c966cf2873babbbfc77f3b859da",
+          "stationName": "고양",
+          "stationId": "540",
+          "totalDepthMm": 100.0
+        },
+        {
+          "districtId": "2419946",
+          "modelHash": "fedf442263bb82abd3ee10cdef8e262e45a296b7059621d280b2cf69ae4c2f28",
+          "stationName": "성북",
+          "stationId": "414",
+          "totalDepthMm": 167.0
+        },
+        {
+          "districtId": "2419947",
+          "modelHash": "6fb0456b8c9eae1eddfb36b716dd5ca91ede7dedd0b8b251577ca06d7e3d8cd7",
+          "stationName": "성동",
+          "stationId": "421",
+          "totalDepthMm": 246.0
+        },
+        {
+          "districtId": "2419948",
+          "modelHash": "4646ef3ced08f001c9dba5cb72ca963353e6c8d3c02b5cc6646b709bad7bf9f3",
+          "stationName": "중랑",
+          "stationId": "409",
+          "totalDepthMm": 216.0
+        }
+      ]
+    }
+  ]
+}

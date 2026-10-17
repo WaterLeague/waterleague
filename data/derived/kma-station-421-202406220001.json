@@ -1,0 +1,11 @@
+{
+  "stationId": "421",
+  "requestedTimeKst": "202406220001",
+  "longitude": 127.03885,
+  "latitude": 37.54721,
+  "altitudeM": 34.73,
+  "sourceSha256": "171ca5f1cd680860e65e3b40555b229226146eeceef7f4baf4be16c95891d971",
+  "sourceUrl": "https://apihub.kma.go.kr/apiList.do?seqApi=2&seqApiSub=317",
+  "historicalLocationStatus": "API_TIME_QUERY_CONFIRMED",
+  "limitation": "요청 시점 API 조회 결과. 전체 이전 이력 또는 현장 실측 검증을 의미하지 않음"
+}

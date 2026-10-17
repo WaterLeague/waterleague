@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "inspectionDate": "2026-10-17",
+  "status": "DIAGNOSTIC_ONLY",
+  "modelEligible": false,
+  "calibrationEligible": false,
+  "sourceSha256": "88456ce3a6ea11bd003ec9d9b0b7ebd67dd09d636a4dff572a083ebed18edf1f",
+  "codeSha256": "80579574a280fb0788c12fe7596b2a23388aba508c999a32ffc2af58f65298c7",
+  "auditCodeSha256": "74dd6155a3cc8a05e09b14e53a8ef80f8bde2accf78c51a86d797d738ae36b42",
+  "localReportSha256": "21057059a31651955722aaee0c496b6239d29560c1c0db93ed6d49b73e071e85",
+  "modelSha256": "3af2362021b1678b743a54d82ec1cd1e40cc3b1bfaf594a39858843b35fafaee",
+  "versions": {
+    "gdal": "GDAL 3.8.5, released 2024/04/02",
+    "pyproj": "3.8.0",
+    "proj": "9.8.1",
+    "shapely": "2.2.0",
+    "geos": "3.14.1"
+  },
+  "originalInvalidFeatureCount": 4,
+  "methods": {
+    "linework": {
+      "keepCollapsed": true,
+      "unchangedOriginalValidFeatureCount": 12326,
+      "repairedFeatureCount": 4,
+      "nonAreaComponentCount": 0,
+      "study": {
+        "featureCount": 175,
+        "boundaryAreaM2": 73562.72154458817,
+        "summedAreaM2": 73562.72154458915,
+        "unionAreaM2": 73562.72154458915,
+        "overlapAreaM2": 0,
+        "uncoveredAreaM2": 0,
+        "coveredFraction": 1.0000000000000133
+      },
+      "classUnionAreasM2": {
+        "111": 2447.807090744961,
+        "112": 1048.655756875466,
+        "121": 713.3456579344219,
+        "131": 23480.336440313018,
+        "141": 1772.3771227723541,
+        "153": 6290.042618766165,
+        "154": 34781.28123912911,
+        "423": 2664.3235397459057,
+        "623": 364.55207830778215
+      }
+    },
+    "structure": {
+      "keepCollapsed": true,
+      "unchangedOriginalValidFeatureCount": 12326,
+      "repairedFeatureCount": 4,
+      "nonAreaComponentCount": 0,
+      "study": {
+        "featureCount": 175,
+        "boundaryAreaM2": 73562.72154458817,
+        "summedAreaM2": 73562.72154458915,
+        "unionAreaM2": 73562.72154458915,
+        "overlapAreaM2": 0,
+        "uncoveredAreaM2": 0,
+        "coveredFraction": 1.0000000000000133
+      },
+      "classUnionAreasM2": {
+        "111": 2447.807090744961,
+        "112": 1048.655756875466,
+        "121": 713.3456579344219,
+        "131": 23480.336440313018,
+        "141": 1772.3771227723541,
+        "153": 6290.042618766165,
+        "154": 34781.28123912909,
+        "423": 2664.3235397459057,
+        "623": 364.55207830778215
+      }
+    }
+  },
+  "methodComparison": {
+    "allInvalidAreaGeometriesEqual": true,
+    "classStudySymmetricDifferenceM2": {
+      "111": 0.0,
+      "112": 0.0,
+      "121": 0.0,
+      "131": 0.0,
+      "141": 0.0,
+      "153": 0.0,
+      "154": 0.0,
+      "423": 0.0,
+      "623": 0.0
+    },
+    "studyUnionSymmetricDifferenceM2": 0.0
+  },
+  "limitations": [
+    "원본 자동 수정·운영 모델 채택 없음",
+    "방법 간 일치와 영역 피복은 현장 경계·분류·시점 정확성 검증이 아님",
+    "반올림 전 면적·피복률 보존; 부동소수 연산 오차 포함",
+    "원본/파생 좌표의 공개 재배포 범위 확인 전 로컬 보관"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "endpoint": "https://apihub.kma.go.kr/api/typ01/url/stn_inf.php",
+  "parameters": {
+    "inf": "AWS",
+    "stn": "421",
+    "tm": "202407180500",
+    "help": "1"
+  },
+  "sha256": "171ca5f1cd680860e65e3b40555b229226146eeceef7f4baf4be16c95891d971",
+  "retrievedOn": "2026-10-15"
+}

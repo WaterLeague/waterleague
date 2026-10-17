@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 2,
+  "currency": "KRW",
+  "unit": "KRW_PER_SQUARE_METRE",
+  "facilities": {
+    "RAIN_GARDEN": {
+      "sourceTitle": "진주상평 일반산업단지 저탄소 그린산업단지 조성사업 사업계획서",
+      "sourceUrl": "https://jinjucci.korcham.net/file/dext5uploaddata/2022/0718_%EC%A7%84%EC%A3%BC%EC%8B%9C_%EC%A0%80%ED%83%84%EC%86%8C%20%EA%B7%B8%EB%A6%B0%EC%82%B0%EC%97%85%EB%8B%A8%EC%A7%80%20%EC%A1%B0%EC%84%B1%EC%82%AC%EC%97%85_%EC%82%AC%EC%97%85%EA%B3%84%ED%9A%8D%EC%84%9C%20(%EC%9E%85%EC%A3%BC%EA%B8%B0%EC%97%85%ED%98%91%EC%9D%98%EC%B2%B4).pdf",
+      "sourceSha256": "0efc54c3c884441d810ce28abb8928d758d98eb152fb71aac38791327b2d7414",
+      "referenceYear": 2022,
+      "evidence": "PUBLIC_PLAN_REFERENCE_SITE_TRANSFER_UNVERIFIED",
+      "scope": "시설 설치 참고비",
+      "includes": [
+        "시설 설치"
+      ],
+      "excludes": [
+        "실시설계·감리",
+        "별도 토공",
+        "철거·폐기",
+        "토지",
+        "구조보강",
+        "유지관리·모니터링",
+        "예비비"
+      ],
+      "note": "서울 지역·현재 물가·규격 미보정, 부가세 포함 여부 미확인",
+      "unitCost": 560000
+    },
+    "PERMEABLE_PAVEMENT": {
+      "sourceTitle": "진주상평 일반산업단지 저탄소 그린산업단지 조성사업 사업계획서",
+      "sourceUrl": "https://jinjucci.korcham.net/file/dext5uploaddata/2022/0718_%EC%A7%84%EC%A3%BC%EC%8B%9C_%EC%A0%80%ED%83%84%EC%86%8C%20%EA%B7%B8%EB%A6%B0%EC%82%B0%EC%97%85%EB%8B%A8%EC%A7%80%20%EC%A1%B0%EC%84%B1%EC%82%AC%EC%97%85_%EC%82%AC%EC%97%85%EA%B3%84%ED%9A%8D%EC%84%9C%20(%EC%9E%85%EC%A3%BC%EA%B8%B0%EC%97%85%ED%98%91%EC%9D%98%EC%B2%B4).pdf",
+      "sourceSha256": "0efc54c3c884441d810ce28abb8928d758d98eb152fb71aac38791327b2d7414",
+      "referenceYear": 2022,
+      "evidence": "PUBLIC_PLAN_REFERENCE_SITE_TRANSFER_UNVERIFIED",
+      "scope": "시설 설치 참고비",
+      "includes": [
+        "시설 설치"
+      ],
+      "excludes": [
+        "실시설계·감리",
+        "별도 토공",
+        "철거·폐기",
+        "토지",
+        "구조보강",
+        "유지관리·모니터링",
+        "예비비"
+      ],
+      "note": "서울 지역·현재 물가·규격 미보정, 부가세 포함 여부 미확인",
+      "unitCost": 110000
+    },
+    "GREEN_ROOF": {
+      "unitCost": 350000,
+      "sourceTitle": "동대문구 옥상녹화 사업비 산정 안내",
+      "sourceUrl": "https://www.ddm.go.kr/www/selectBbsNttView.do?bbsNo=278&key=2143&nttNo=107220",
+      "sourceSha256": "0f4852e2778a3ba3c5db034527e22ce124dccb65b1a59d8c9bf3d1c1bf950a01",
+      "referenceYear": 2025,
+      "evidence": "PUBLIC_SEOUL_PROGRAM_APPROXIMATE_TOTAL",
+      "scope": "진단·설계·공사 포함 사업비 참고",
+      "includes": [
+        "구조안전진단",
+        "설계",
+        "공사"
+      ],
+      "excludes": [
+        "현장별 추가 공사 미확정",
+        "유지관리 미산정"
+      ],
+      "note": "공식 안내의 35만원/㎡ 내외 추정. 구조·현장 조건에 따라 변동, 70% 보조율 차감 없음. 기준 가격연도·부가세 포함 여부 미확인"
+    }
+  }
+}
