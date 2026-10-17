@@ -6,6 +6,7 @@ import type { League } from '../../league/entity/league';
 import { facilities, format, won } from '../service/gameService';
 import { sameMapModels, rainfallLabel, rainfallNote } from '../service/modelFamilyService';
 import { rainDate } from './RainfallSelector';
+import { ResearchDistrictSelector } from './ResearchDistrictSelector';
 
 export function ChallengeLobby({
   lab,
@@ -41,6 +42,12 @@ export function ChallengeLobby({
           <MapPin size={14} /> {current?.mapTitle ?? '성수 · 연무장길'}
         </span>
       </div>
+      <ResearchDistrictSelector
+        lab={lab}
+        catalog={catalog}
+        disabled={busy || !!league}
+        onSelect={onSelect}
+      />
       <section className="challenge-hero" aria-label="지역 빗물 도전">
         <div className="challenge-copy">
           <span className="challenge-kicker">

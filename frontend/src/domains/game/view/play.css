@@ -968,3 +968,29 @@
   bottom: 0;
   z-index: 2;
 }
+
+.research-district {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 18px 0 0;
+  font-size: 13px;
+}
+.research-district label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.research-district select {
+  min-width: 140px;
+  padding: 9px 32px 9px 12px;
+  border: 1px solid #62746b;
+  border-radius: 4px;
+  background: #233c35;
+  color: #f4f5ed;
+  font: inherit;
+}
+.research-district small {
+  color: #b0bcb4;
+}
