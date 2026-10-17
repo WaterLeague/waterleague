@@ -142,8 +142,8 @@ export function useHistorical(
   }, [job?.id, job?.state]);
   const current = drafts.filter((d) => d.site.districtId === districtId);
   const remaining =
-    (budget?.policy.districtLimitKrw ?? 0) -
-    current.reduce((n, d) => n + d.areaM2 * d.site.unitCosts[d.facilityType], 0);
+    (budget?.policy.personalLimitKrw ?? 0) -
+    drafts.reduce((n, d) => n + d.areaM2 * d.site.unitCosts[d.facilityType], 0);
   function add(site: SharedSite, type: FacilityType, area: number) {
     if (
       !site.allowedTypes.includes(type) ||

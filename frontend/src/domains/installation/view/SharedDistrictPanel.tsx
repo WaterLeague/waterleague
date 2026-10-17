@@ -70,7 +70,7 @@ export function SharedDistrictPanel({
       feedback={feedback}
       budget={budget}
       remaining={remaining}
-      limit={districtId ? (budget?.policy.districtLimitKrw ?? 0) : (budget?.policy.limitKrw ?? 0)}
+      limit={budget?.policy.personalLimitKrw ?? 0}
       budgetReady={budgetReady}
       busy={busy}
       canInstall={own}

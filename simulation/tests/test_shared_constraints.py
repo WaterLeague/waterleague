@@ -44,12 +44,14 @@ class SharedConstraintTests(unittest.TestCase):
         old,_,_=resolve(installation)
         new,_,_=resolve(installation|{'budget_policy':json.dumps(policy)})
         self.assertEqual(old['budget'],2000000000)
-        self.assertEqual(new['budget'],80000000)
+        self.assertEqual(new['budget'],2000000000)
+        legacy=policy|{'ruleVersion':'SEOUL_DISTRICT_EQUAL_2026_V2','districtCount':25,'districtLimitKrw':80000000}
+        self.assertEqual(resolve(installation|{'budget_policy':legacy})[0]['budget'],80000000)
         self.assertEqual(new['budgetPolicy'],policy)
         self.assertEqual(new['cells'],old['cells'])
         self.assertEqual(new['hydrology'],old['hydrology'])
         with self.assertRaises(ValueError):
-            resolve(installation|{'budget_policy':policy|{'districtLimitKrw':80000001}})
+            resolve(installation|{'budget_policy':policy|{'personalLimitKrw':80000001}})
 
     def test_effective_forcing_notes_preserve_physical_inputs_and_original_model(self):
         from waterleague_sim.engine.continuous import input_source

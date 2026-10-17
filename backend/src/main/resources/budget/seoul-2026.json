@@ -4,8 +4,8 @@
   "sourceTitle": "서울시 2026년 빗물관리시설 확충사업",
   "sourceUrl": "https://www.seoul.go.kr/news/news_report.do?nttNo=454536&srchCtgry=471",
   "sourceSha256": "899f375797620e01c7c6223518f4d02656512d92d85aa9c48dd234bb1141ab4e",
-  "ruleVersion": "SEOUL_DISTRICT_EQUAL_2026_V2",
-  "note": "원 사업은 9개 구 10개 사업, 시비 10억 원·총사업비 20억 원. 게임에서는 25개 구에 8천만 원씩 균등 배분하며 실제 구별 배정액이 아님. 같은 구 회원이 공동 사용. 철거는 가상 배치 취소로 해당 구 가용액 복원. 주간 초기화 없음.",
-  "districtLimitKrw": 80000000,
-  "districtCount": 25
+  "ruleVersion": "SEOUL_PERSONAL_FULL_2026_V3",
+  "note": "서울시 2026년 빗물관리시설 확충사업 총사업비 20억 원을 참고한 1인당 게임 설계 예산. 서울시 모든 분야의 총예산이나 실제 개인 배정액이 아님. 각 회원은 독립된 20억 원을 사용하며 철거 시 본인 가용액 복원, 주간 초기화 없음. 재해 설계는 별도의 20억 원 한도이며 여러 구의 배치를 합산.",
+  "personalLimitKrw": 2000000000,
+  "allocationScope": "MEMBER"
 }

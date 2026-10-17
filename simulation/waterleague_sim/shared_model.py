@@ -75,11 +75,16 @@ def resolve(installation):
     if installation.get('budget_policy') is not None:
         policy = installation['budget_policy']
         if isinstance(policy,str): policy = json.loads(policy)
-        if (policy.get('ruleVersion') != 'SEOUL_DISTRICT_EQUAL_2026_V2'
-                or policy.get('districtCount') != 25 or policy.get('districtLimitKrw') != 80000000
-                or policy.get('limitKrw') != 2000000000):
+        if policy.get('ruleVersion') == 'SEOUL_DISTRICT_EQUAL_2026_V2':
+            if policy.get('districtCount') != 25 or policy.get('districtLimitKrw') != 80000000 or policy.get('limitKrw') != 2000000000:
+                raise ValueError('LIVE_BUDGET_POLICY_INVALID')
+            model['budget'] = policy['districtLimitKrw']
+        elif policy.get('ruleVersion') == 'SEOUL_PERSONAL_FULL_2026_V3':
+            if policy.get('personalLimitKrw') != 2000000000 or policy.get('limitKrw') != 2000000000 or policy.get('allocationScope') != 'MEMBER':
+                raise ValueError('LIVE_BUDGET_POLICY_INVALID')
+            model['budget'] = policy['personalLimitKrw']
+        else:
             raise ValueError('LIVE_BUDGET_POLICY_INVALID')
-        model['budget'] = policy['districtLimitKrw']
         model['budgetPolicy'] = copy.deepcopy(policy)
     # 현재/재해 강우를 별도로 연결하므로 기본 모델의 과거 관측 창 설명은 상속하지 않는다.
     model['assumptions']=[a for a in model['assumptions']

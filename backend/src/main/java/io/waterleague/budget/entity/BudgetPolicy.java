@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 
 public record BudgetPolicy(
     BigDecimal limitKrw,
-    BigDecimal districtLimitKrw,
-    int districtCount,
+    BigDecimal personalLimitKrw,
+    String allocationScope,
     int referenceYear,
     String sourceTitle,
     String sourceUrl,

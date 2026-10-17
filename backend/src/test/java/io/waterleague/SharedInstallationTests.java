@@ -140,35 +140,26 @@ class SharedInstallationTests {
   }
 
   @Test
-  void concurrentMembersShareDistrictBudgetWithoutSpendingOtherDistricts() throws Exception {
+  void personalBudgetSerializesConcurrentSpendingAndIsolatesMembers() throws Exception {
     String district = "2410520";
-    var roofs =
-        sites.district(district).values().stream()
-            .filter(
-                v ->
-                    v.allowedTypes().contains("GREEN_ROOF")
-                        && v.maxAreaM2().compareTo(new BigDecimal("100")) >= 0)
-            .limit(3)
-            .toList();
-    assertThat(roofs).hasSize(3);
-    var actors = List.of(account(district), account(district), account(district));
+    var owner = account(district);
+    var other = account(district);
+    var first = service.install(owner.username(), placement(district));
+    // 과거 배치 누적액이 한도에 근접한 상황에서 동시 요청 초과를 검사한다.
+    db.update("UPDATE shared_installations SET cost=1997000000 WHERE id=?", first.id());
     var start = new CountDownLatch(1);
     try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
       var futures = new ArrayList<Future<String>>();
-      for (int i = 0; i < 3; i++) {
-        final int index = i;
+      for (String cell : List.of("G2", "G3")) {
         futures.add(
             executor.submit(
                 () -> {
                   start.await();
                   try {
                     service.install(
-                        actors.get(index).username(),
+                        owner.username(),
                         new InstallRequest(
-                            district,
-                            roofs.get(index).cellId(),
-                            FacilityType.GREEN_ROOF,
-                            new BigDecimal("100")));
+                            district, cell, FacilityType.PERMEABLE_PAVEMENT, new BigDecimal("20")));
                     return "INSTALLED";
                   } catch (DomainException e) {
                     return e.code().name();
@@ -178,50 +169,27 @@ class SharedInstallationTests {
       start.countDown();
       var outcomes = new ArrayList<String>();
       for (var f : futures) outcomes.add(f.get(10, TimeUnit.SECONDS));
-      assertThat(outcomes).containsExactlyInAnyOrder("INSTALLED", "INSTALLED", "BUDGET_EXCEEDED");
+      assertThat(outcomes).containsExactlyInAnyOrder("INSTALLED", "BUDGET_EXCEEDED");
     }
-    assertThat(budget.view().allocatedKrw()).isEqualByComparingTo("70000000");
-    assertThat(budget.view().remainingKrw()).isEqualByComparingTo("1930000000");
-    var row =
-        budget.view().districts().stream()
-            .filter(d -> d.districtId().equals(district))
-            .findFirst()
-            .orElseThrow();
-    assertThat(row.remainingKrw()).isEqualByComparingTo("10000000");
-    assertThat(budget.view().districts()).hasSize(25);
-    assertThat(budget.view().districts().stream().filter(d -> !d.districtId().equals(district)))
-        .allSatisfy(d -> assertThat(d.remainingKrw()).isEqualByComparingTo("80000000"));
-    var other = account("2414774");
-    service.install(other.username(), placement("2414774"));
-    assertThat(
-            budget.view().districts().stream()
-                .filter(d -> d.districtId().equals("2414774"))
-                .findFirst()
-                .orElseThrow()
-                .remainingKrw())
-        .isEqualByComparingTo("77800000");
-    var installed =
-        service.active().stream()
-            .filter(i -> i.districtId().equals(district))
-            .findFirst()
-            .orElseThrow();
+    assertThat(budget.view(owner.id()).remainingKrw()).isEqualByComparingTo("800000");
+    assertThat(budget.view(other.id()).remainingKrw()).isEqualByComparingTo("2000000000");
+    var independent =
+        service.install(
+            other.username(),
+            new InstallRequest(
+                district, "G4", FacilityType.PERMEABLE_PAVEMENT, new BigDecimal("20")));
+    assertThat(budget.view(other.id()).remainingKrw()).isEqualByComparingTo("1997800000");
+    assertThat(budget.view(null).personal()).isFalse();
+    assertThat(budget.view(null).allocatedKrw()).isZero();
     assertThat(
             db.queryForObject(
                 "SELECT budget_policy FROM shared_installations WHERE id=?",
                 String.class,
-                installed.id()))
-        .contains("SEOUL_DISTRICT_EQUAL_2026_V2");
-    var owner =
-        actors.stream().filter(a -> a.id().equals(installed.ownerId())).findFirst().orElseThrow();
-    service.remove(owner.username(), installed.id());
-    assertThat(
-            budget.view().districts().stream()
-                .filter(d -> d.districtId().equals(district))
-                .findFirst()
-                .orElseThrow()
-                .remainingKrw())
-        .isEqualByComparingTo("45000000");
-    assertThat(budget.view().remainingKrw()).isEqualByComparingTo("1962800000");
+                independent.id()))
+        .contains("SEOUL_PERSONAL_FULL_2026_V3");
+    service.remove(other.username(), independent.id());
+    assertThat(budget.view(other.id()).remainingKrw()).isEqualByComparingTo("2000000000");
+    assertThat(budget.view(owner.id()).remainingKrw()).isEqualByComparingTo("800000");
   }
 
   @Test

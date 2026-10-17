@@ -149,7 +149,7 @@ export function HistoricalPanel({
       research
       budget={s.budget}
       remaining={s.remaining}
-      limit={s.budget?.policy.districtLimitKrw ?? 0}
+      limit={s.budget?.policy.personalLimitKrw ?? 0}
       budgetReady={!!s.budget}
       busy={false}
       canInstall={s.current.length < 50}

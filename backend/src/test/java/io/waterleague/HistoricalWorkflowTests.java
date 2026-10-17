@@ -87,7 +87,7 @@ class HistoricalWorkflowTests {
     assertThat(service.create(owner, dto).id()).isEqualTo(job.id());
     assertThat(service.require(owner, job.id()).placements())
         .contains(
-            cell, "siteModelHash", "budgetPolicy", "SEOUL_DISTRICT_EQUAL_2026_V2", "80000000");
+            cell, "siteModelHash", "budgetPolicy", "SEOUL_PERSONAL_FULL_2026_V3", "2000000000");
     assertThat(service.list(owner)).hasSize(1);
     assertThat(db.queryForObject("SELECT COUNT(*) FROM shared_installations", Integer.class))
         .isEqualTo(before);
@@ -126,19 +126,24 @@ class HistoricalWorkflowTests {
                         hash,
                         List.of(dto.placements().getFirst(), dto.placements().getFirst()))))
         .isInstanceOf(DomainException.class);
-    var largeRoof =
+    var largeRoofs =
         sites.district("2419953").values().stream()
             .filter(
                 s ->
                     s.allowedTypes().contains("GREEN_ROOF")
-                        && s.maxAreaM2().compareTo(new BigDecimal("300")) >= 0)
-            .findFirst()
-            .orElseThrow();
+                        && s.maxAreaM2().compareTo(new BigDecimal("3000")) >= 0)
+            .limit(2)
+            .map(
+                s ->
+                    request(UUID.randomUUID(), s.cellId(), FacilityType.GREEN_ROOF, "3000")
+                        .placements()
+                        .getFirst())
+            .toList();
+    assertThat(largeRoofs).hasSize(2);
     assertThatThrownBy(
             () ->
                 service.create(
-                    owner,
-                    request(UUID.randomUUID(), largeRoof.cellId(), FacilityType.GREEN_ROOF, "300")))
+                    owner, new HistoricalRequest(UUID.randomUUID(), "2419953", hash, largeRoofs)))
         .isInstanceOfSatisfying(
             DomainException.class, e -> assertThat(e.code()).isEqualTo(ErrorCode.BUDGET_EXCEEDED));
     assertThat(service.list(owner)).isEmpty();

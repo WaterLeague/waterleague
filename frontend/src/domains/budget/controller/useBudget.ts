@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import type { Budget } from '../dto/budgetDto';
 import { loadBudget } from '../repository/budgetRepository';
-export function useBudget(revision: number) {
+export function useBudget(revision: number, accountId: string | null) {
   const [value, setValue] = useState<Budget | null>(null);
   const [error, setError] = useState('');
   useEffect(() => {
+    setValue(null);
     let active = true,
       pending = false;
     async function refresh() {
@@ -17,7 +18,7 @@ export function useBudget(revision: number) {
           setError('');
         }
       } catch {
-        if (active) setError('공동 예산을 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.');
+        if (active) setError('개인 예산을 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.');
       } finally {
         pending = false;
       }
@@ -30,6 +31,6 @@ export function useBudget(revision: number) {
       clearInterval(timer);
       document.removeEventListener('visibilitychange', refresh);
     };
-  }, [revision]);
+  }, [revision, accountId]);
   return { value, error };
 }

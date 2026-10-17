@@ -203,9 +203,7 @@ export function FacilityPlacementPanel(p: FacilityPlacementProps) {
       )}
       {p.budget && (
         <div className="budget-box">
-          <span>
-            {p.districtName || '서울 25개 구'} {p.research ? '연구' : '공동'} 잔액
-          </span>
+          <span>{p.research ? '내 재해 설계' : '내 설치 예산'} 잔액</span>
           <strong>{won(remaining)}</strong>
           <div className="shared-budget-track">
             <span

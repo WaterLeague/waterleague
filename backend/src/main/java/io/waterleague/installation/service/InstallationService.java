@@ -130,7 +130,7 @@ public class InstallationService {
     site.unitCosts()
         .forEach((t, c) -> costs.put(io.waterleague.strategy.entity.FacilityType.valueOf(t), c));
     var cost = validation.validate(List.of(placement), cells, costs, budget.limit(), 1);
-    budget.requireAvailable(district.id(), cost);
+    budget.requireAvailable(account.id(), cost);
     var value =
         new SharedInstallation(
             UUID.randomUUID(),
@@ -144,7 +144,7 @@ public class InstallationService {
             cost,
             Instant.now(),
             null);
-    // 공동 예산 잠금과 위치 고유 제약으로 초과 배정·중복 점유를 차단한다.
+    // 회원별 예산 잠금과 위치 고유 제약으로 초과 배정·중복 점유를 차단한다.
     try {
       installations.add(value, json.write(budget.policy()));
     } catch (DuplicateKeyException e) {
@@ -164,7 +164,7 @@ public class InstallationService {
         || !value.ownerId().equals(account.id())
         || !value.districtId().equals(account.districtId()))
       throw new InstallationException(ErrorCode.ACCESS_DENIED);
-    budget.lock(value.districtId());
+    budget.lock(account.id());
     if (!installations.remove(id, account.id(), Instant.now()))
       throw new InstallationException(ErrorCode.CONFLICT);
   }
