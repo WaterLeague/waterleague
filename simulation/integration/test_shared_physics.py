@@ -118,6 +118,7 @@ class SharedPhysicsTests(unittest.TestCase):
             result=json.loads(row['result'])
             self.assertEqual(result['inflowPolicy'],'DIRECT_RAINFALL_ONLY')
             self.assertEqual(result['areaLimitBasis'],'PUBLIC_FOOTPRINT_GEOMETRY')
+            self.assertEqual(result['facilityDesign']['nativeSoilBoundary']['method'], 'RG_NATIVE_SOIL_SEEPAGE_V1')
             self.assertEqual(result['initialState'],'OBSERVED_7_DAY_CONTINUOUS_SPINUP_V1')
             self.assertTrue(result['initialization']['scoreExcludesWarmup'])
             self.assertEqual(result['facilityDesign']['profile']['id'],'EPA_RG_610_V1')

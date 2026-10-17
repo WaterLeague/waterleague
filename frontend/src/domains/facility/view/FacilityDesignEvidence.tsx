@@ -15,6 +15,9 @@ export function FacilityDesignEvidence({ site, type }: { site: SharedSite; type:
       profile={profile}
       source={catalog.source}
       limitations={catalog.limitations}
+      nativeSoilBoundary={
+        type === 'RAIN_GARDEN' ? site.physicalInputs?.rainGardenBoundary : undefined
+      }
     >
       {site.initializationPolicy && (
         <p>

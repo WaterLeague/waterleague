@@ -1,4 +1,11 @@
 import { z } from 'zod';
+export const nativeSoilBoundaryDto = z.object({
+  method: z.literal('RG_NATIVE_SOIL_SEEPAGE_V1'),
+  seepageMmH: z.number().finite().positive(),
+  basis: z.enum(['TEXTURE_CLASS_LITERATURE_ESTIMATE', 'UNRESOLVED_DESIGN_ASSUMPTION']),
+  liner: z.literal('UNLINED_DESIGN_NOT_SITE_CONFIRMED'),
+  storageThicknessMm: z.literal(0),
+});
 const parameter = z.object({
   value: z.number().finite(),
   unit: z.string(),
@@ -26,6 +33,7 @@ export const facilityEvidenceDto = z.object({
   source: facilitySourceDto,
   profile: facilityProfileDto,
   limitations: z.array(z.string()),
+  nativeSoilBoundary: nativeSoilBoundaryDto.optional(),
 });
 export const facilityCatalogDto = z.object({
   id: z.literal('EPA_LID_PUBLIC_DESIGNS_V1'),

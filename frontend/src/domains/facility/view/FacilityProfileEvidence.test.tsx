@@ -28,3 +28,28 @@ it('공개 제원 원본의 값·문헌 범위·가정과 보관 해시 표시',
     false
   );
 });
+
+it('계산 당시 원지반 경계와 이전 입력의 침투 미연결 구분', () => {
+  const parsed = facilityCatalogDto.parse(catalog);
+  const archived = facilityEvidenceDto.parse({
+    ...parsed,
+    profile: parsed.profiles.RAIN_GARDEN,
+    catalogSha256: 'b'.repeat(64),
+    nativeSoilBoundary: {
+      method: 'RG_NATIVE_SOIL_SEEPAGE_V1',
+      seepageMmH: 3.302,
+      basis: 'TEXTURE_CLASS_LITERATURE_ESTIMATE',
+      liner: 'UNLINED_DESIGN_NOT_SITE_CONFIRMED',
+      storageThicknessMm: 0,
+    },
+  });
+  const current = renderToStaticMarkup(<FacilityProfileEvidence {...archived} />);
+  expect(current).toContain('3.302 mm/h');
+  expect(current).toContain('공개 토성군·문헌 추정');
+  expect(current).not.toContain('침투량을 0으로');
+  const previous = renderToStaticMarkup(
+    <FacilityProfileEvidence {...archived} nativeSoilBoundary={undefined} />
+  );
+  expect(previous).toContain('침투량을 0으로');
+  expect(previous).not.toContain('3.302 mm/h');
+});

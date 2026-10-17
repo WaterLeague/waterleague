@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { nativeSoilBoundaryDto } from '../../facility/dto/facilityDto';
 const facility = z.enum(['RAIN_GARDEN', 'PERMEABLE_PAVEMENT', 'GREEN_ROOF']);
 const point = z.tuple([z.number().finite(), z.number().finite()]);
 export const installationDto = z.object({
@@ -72,6 +73,7 @@ export const siteDto = z.object({
       conductivityMmH: z.number().positive().optional(),
       conductivityRangeMmH: z.tuple([z.number().positive(), z.number().positive()]).optional(),
       suctionMm: z.number().positive().optional(),
+      rainGardenBoundary: nativeSoilBoundaryDto.optional(),
     })
     .optional(),
   modelHash: z.string().regex(/^[a-f0-9]{64}$/),

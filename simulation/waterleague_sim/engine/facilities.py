@@ -2,6 +2,7 @@
 import copy
 import hashlib
 import json
+import math
 from functools import lru_cache
 from .swmm import ROOT, SimulationQualityError
 
@@ -21,6 +22,20 @@ def design_set():
     return {'id': catalog()['id'], 'sha256': CATALOG_SHA256}
 
 
+def native_soil_boundary(cell, hydrology):
+    physical = cell.get('physicalInputs', {})
+    rate = physical.get('conductivityMmH', hydrology['conductivityMmH'])
+    if (cell.get('kind') != 'GROUND' or 'RAIN_GARDEN' not in cell['allowedTypes']
+            or isinstance(rate, bool) or not isinstance(rate, (int, float))
+            or not math.isfinite(rate) or rate <= 0):
+        raise SimulationQualityError('LIVE_NATIVE_SOIL_BOUNDARY_INVALID')
+    return {'method': 'RG_NATIVE_SOIL_SEEPAGE_V1', 'seepageMmH': rate,
+            'basis': ('TEXTURE_CLASS_LITERATURE_ESTIMATE'
+                      if physical.get('soilStatus') == 'TEXTURE_CLASS_LITERATURE_ESTIMATE'
+                      and 'conductivityMmH' in physical else 'UNRESOLVED_DESIGN_ASSUMPTION'),
+            'liner': 'UNLINED_DESIGN_NOT_SITE_CONFIRMED', 'storageThicknessMm': 0}
+
+
 def apply(source, model):
     if model.get('facilityDesignSet') != design_set():
         raise SimulationQualityError('LIVE_FACILITY_DESIGN_INVALID')
@@ -28,6 +43,9 @@ def apply(source, model):
     physical = cell.get('physicalInputs', {})
     slope = physical.get('slopePercent', model['hydrology']['slopePercent'])
     native_k = physical.get('conductivityMmH', model['hydrology']['conductivityMmH'])
+    boundary = physical.get('rainGardenBoundary')
+    if boundary is not None and boundary != native_soil_boundary(cell, model['hydrology']):
+        raise SimulationQualityError('LIVE_NATIVE_SOIL_BOUNDARY_INVALID')
     rows = []
     for profile in catalog()['profiles'].values():
         t = profile['type']
@@ -43,6 +61,9 @@ def apply(source, model):
             rows.append(f'PP STORAGE {p["storageDepthMm"]} {void_ratio} {native_k} 0')
         if t == 'GR':
             rows.append(f'GR DRAINMAT {p["drainageDepthMm"]} {p["drainagePorosity"]} {p["drainageRoughness"]}')
+        if t == 'RG' and boundary is not None:
+            # 두께·공극 체적을 늘리지 않고 EPA 하부 침투 경계만 연결한다.
+            rows.append(f'RG STORAGE 0 0 {boundary["seepageMmH"]} 0')
     lines, section = [], ''
     for line in source.splitlines():
         if line.startswith('['):
@@ -55,8 +76,13 @@ def apply(source, model):
     return '\n'.join(lines)+'\n'
 
 
-def evidence(facility):
+def evidence(facility, model=None):
     source = catalog()
-    return copy.deepcopy({'catalogSha256': CATALOG_SHA256, 'evidence': source['evidence'],
+    value = copy.deepcopy({'catalogSha256': CATALOG_SHA256, 'evidence': source['evidence'],
                           'source': source['source'], 'profile': source['profiles'][facility],
                           'limitations': source['limitations']})
+    if facility == 'RAIN_GARDEN' and model is not None:
+        boundary = model['cells'][0].get('physicalInputs', {}).get('rainGardenBoundary')
+        if boundary is not None:
+            value['nativeSoilBoundary'] = copy.deepcopy(boundary)
+    return value

@@ -41,8 +41,9 @@ export function FacilityProfileEvidence({
   source,
   limitations,
   catalogSha256,
+  nativeSoilBoundary,
   children,
-}: Pick<FacilityEvidence, 'profile' | 'source' | 'limitations'> & {
+}: Pick<FacilityEvidence, 'profile' | 'source' | 'limitations' | 'nativeSoilBoundary'> & {
   catalogSha256?: string;
   children?: ReactNode;
 }) {
@@ -75,6 +76,25 @@ export function FacilityProfileEvidence({
           </Fragment>
         ))}
       </dl>
+      {nativeSoilBoundary && (
+        <>
+          <p>
+            원지반 침투율 {display(nativeSoilBoundary.seepageMmH, 'mm/h')} ·{' '}
+            {nativeSoilBoundary.basis === 'TEXTURE_CLASS_LITERATURE_ESTIMATE'
+              ? '공개 토성군·문헌 추정'
+              : '토성 미확보·설계 가정'}
+          </p>
+          <p>
+            차수막 없는 설계 조건입니다. 실제 부지의 차수막·지하수·다짐 상태는 확인되지 않았습니다.
+          </p>
+        </>
+      )}
+      {profile.type === 'RG' && !nativeSoilBoundary && (
+        <p>
+          이전 입력은 원지반 침투 연결이 빠져 침투량을 0으로 계산했습니다. 현장 효과 비교에 사용하지
+          마세요.
+        </p>
+      )}
       {children}
       {limitations.map((note) => (
         <p key={note}>{note}</p>

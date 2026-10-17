@@ -254,7 +254,7 @@ def experiment(model, placement, directory, evaporation=None):
         result['initialization'] = initialization
     if model.get('facilityDesignSet') is not None:
         from .facilities import evidence, CATALOG_PATH
-        result['facilityDesign'] = evidence(placement['facilityType'])
+        result['facilityDesign'] = evidence(placement['facilityType'], model)
         (directory/'facility-designs.json').write_bytes(CATALOG_PATH.read_bytes())
         (directory/'facilities.py').write_bytes((Path(__file__).parent/'facilities.py').read_bytes())
     if initialization is not None:
