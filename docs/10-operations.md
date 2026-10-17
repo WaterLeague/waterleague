@@ -22,6 +22,8 @@ DB·모델·출처·결과 백업, 암호화·키 분리·복원 훈련. 복원 
 
 배포 전 의존성·secret·권한·migration·backup·ARM64 SWMM·수치 회귀·성능 확인. 모델 변경과 코드 배포 분리, 진행 리그 입력 자동 덮어쓰기 금지. 이전 이미지 복귀와 DB 호환성 검증.
 
+실행 가능한 로컬 검증 구성과 Linux amd64/arm64 증거는 [컨테이너 배포 계약](29-deployment-contract.md) 참조. `python3 scripts/verify_containers.py`는 별도 프로젝트·임의 loopback 포트·임시 비밀로 전체 HTTPS 계산을 검사 후 정리하며 기존 `.env.local`·개발 DB를 읽지 않음. Oracle 예산 표는 제안이고, CI Compose의 보수적 한도(API 2GB·DB 2GB·워커 2GB)를 운영 실측 결과로 해석하지 않음.
+
 ## 로컬 복원 훈련 계약
 
 `verify_database_restore.py`는 운영 복구 명령이 아닌 격리된 복원 검사. 원본 DB의 REPEATABLE READ 스냅샷을 `pg_dump --snapshot`과 공유하고 새 `waterleague_restore_<무작위값>` DB에만 복원. 원본 DB 변경·기존 DB 덮어쓰기 금지. 생성한 DB만 마지막에 제거, 정상 종료·검사 실패 모두 임시 덤프 제거. 덤프 디렉터리 700·파일 600, 비밀값은 명령 인자·보고서·로그에 출력하지 않음.

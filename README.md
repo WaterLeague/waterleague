@@ -60,7 +60,7 @@ simulation/.venv/bin/python scripts/verify_bundle.py /path/to/bundle.zip --rerun
 - [제품 요구사항](docs/01-product.md) · [연구 적합성](docs/02-scientific-validity.md) · [자료 계보](docs/03-data-provenance.md)
 - [아키텍처](docs/04-architecture.md) · [데이터 모델](docs/05-data-model.md) · [API](docs/06-api.md)
 - [보안](docs/07-security.md) · [3D·UX](docs/08-experience.md) · [작업 현황](docs/09-delivery.md)
-- [운영](docs/10-operations.md) · [검증 기록](docs/11-validation-log.md) · [원화 비용](docs/decisions/0003-krw-cost-model.md)
+- [운영](docs/10-operations.md) · [컨테이너·HTTPS 검증](docs/29-deployment-contract.md) · [검증 기록](docs/11-validation-log.md) · [원화 비용](docs/decisions/0003-krw-cost-model.md)
 - [백엔드](backend/README.md) · [프론트](frontend/README.md) · [계산 엔진](simulation/README.md) · [출처](data/README.md) · [Git 규칙](CONTRIBUTING.md)
 
 공식 현장 평가·Oracle 공개 운영은 후속 검증 대상. 독립 현장 관측·설치 적합성·비용 검토·운영 인증과 백업 검증 없이 현재 모델을 공식 등급으로 승격하지 않는다. 로컬 논리 복원 훈련과 운영용 암호화·외부 보관 백업은 [운영 문서](docs/10-operations.md)에서 구분한다.
