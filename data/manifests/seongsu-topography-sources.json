@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "provider": "국토지리정보원",
+  "sourceUrl": "https://www.data.go.kr/data/15059719/fileData.do",
+  "license": "KOGL_TYPE_1",
+  "licenseEvidenceUrl": "https://www.data.go.kr/data/15059719/fileData.do",
+  "acquiredAt": "2026-10-17T08:46:50.730793Z",
+  "editionYear": 2025,
+  "scaleDenominator": 1000,
+  "sourceDirectory": "data/private/seongsu-topography-20261017/originals",
+  "files": [
+    {
+      "file": "(B010)수치지도_377052201_2025_00000833602640.xml",
+      "bytes": 1261,
+      "sha256": "235461bb62f5a8ab2545c8c72dd16d06f5f873dd71b307308aeb2a2d5c4044d8"
+    },
+    {
+      "file": "(B010)수치지도_377052201_2025_00000833602640.zip",
+      "bytes": 220570,
+      "sha256": "78c2e77cbb90b48be94c87e4bb815b6498b78c14bc42cf4d7b9b54d1052f97fe"
+    },
+    {
+      "file": "(B010)수치지도_377052202_2025_00000980554043.xml",
+      "bytes": 1261,
+      "sha256": "82c793f53202e6137942752368ae366de0d678e83f265d6cfd29844f914b3b20"
+    },
+    {
+      "file": "(B010)수치지도_377052202_2025_00000980554043.zip",
+      "bytes": 200437,
+      "sha256": "02c4bf8bf053f35e0811b141507530bc6d450d9eefb003a81372af7aacd4a482"
+    },
+    {
+      "file": "(B010)수치지도_377052211_2025_00000118415423.xml",
+      "bytes": 1261,
+      "sha256": "9b8b41edae4e3bc3df67a84b62d14894d4191d54f33b055eec8056a50f31dc10"
+    },
+    {
+      "file": "(B010)수치지도_377052211_2025_00000118415423.zip",
+      "bytes": 250169,
+      "sha256": "c33becacbfde9e862c59b49b87afeffc1bc7a15104ad1136ef264a76a1abdb9f"
+    },
+    {
+      "file": "(B010)수치지도_377052211_2025_00000557948019.dxf",
+      "bytes": 1578394,
+      "sha256": "1025d0fb75643c1e3c7e9b8ab24dc4add4ac002b80ba797a497bae7ea6e60bd2"
+    },
+    {
+      "file": "(B010)수치지도_377052211_2025_00000557948019.xml",
+      "bytes": 1261,
+      "sha256": "90d029d10d498630b2ebffce55b2e66f6f3d783da1e22c232d80325c19ac12bb"
+    },
+    {
+      "file": "(B010)수치지도_377052212_2025_00000573758691.xml",
+      "bytes": 1261,
+      "sha256": "b4180a3217555668a834d9ca489e4c4c7e6835b7739c3cc3d095413dcdf560b3"
+    },
+    {
+      "file": "(B010)수치지도_377052212_2025_00000573758691.zip",
+      "bytes": 196480,
+      "sha256": "35d039f88fa61d16af24b1cce661105966e822bf7f651b5f4b2276d52169dc01"
+    }
+  ],
+  "boundsWgs84": [
+    127.0525,
+    37.543,
+    127.0555,
+    37.5455
+  ],
+  "use": "DISPLAY_COMPARISON_ONLY",
+  "modelChanged": false
+}

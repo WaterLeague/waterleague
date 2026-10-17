@@ -13,9 +13,13 @@
 
 근거: [2D 데이터 레퍼런스](https://www.vworld.kr/dev/v4dv_2ddataguide2_s002.do?svcIde=spbd&apiVer=2), [API 목록](https://www.vworld.kr/dev/v4apiRefer.do), [이용약관](https://www.vworld.kr/v4po_prcint_a001.do), [저작권정책](https://www.vworld.kr/v4po_prcint_a006.do).
 
-## 화면 연결 설계
+## 이전 화면 연결 설계
 
 - 고정 성수 bbox 조회에서 129개 건물 반환, 122개 지상 층수 양수 확인. OSM 94개는 중심점 기준 선택이므로 건수 차이를 누락 건물 수로 해석하지 않음.
 - 인증 회원의 명시적 조회에만 서버가 고정 HTTPS endpoint 호출. 키는 서버 환경변수, 임의 주소·bbox·컬럼 입력 불가. 리다이렉트 금지, 응답 2MB·15초·동시 2개 상한, 회원별·전체 호출 제한.
 - 공간 도메인 controller → service → repository / mapper → entity / view. 공통 예외 handler 사용. 좌표·도형·페이지 누락 검사 후 필요한 건물명·층수·경계만 브라우저에 반환. `Cache-Control: no-store`, DB·원본 파일·로그·로컬 스토리지 보관 없음.
 - 데이터 화면에서 OSM과 브이월드 경계 대조. 2024년 강우 당시 형상과 현재 조회 형상의 시점 차이, 높이·표고 미제공 명시. 층수×상수의 임의 높이 치환 금지. 시뮬레이션 모델·점수·재현 묶음은 변경하지 않음.
+
+2026-10-17 사용자 요구 반영: 서비스 요청마다 외부 공공 API를 호출하지 않는다. 수집 시 원본·취득시각·해시를 프로젝트에 보관하고 서비스는 검증한 고정 스냅샷을 읽는다. 기존 브이월드 실시간 대조는 사용자 제공 국토지리정보원 2025 수치지형도 4개 도엽의 건물 레이어 스냅샷으로 교체한다. API 서버에 브이월드 키 전달 제거, 수집/진단 도구에서만 기존 키 사용. 수문 모델·기존 순위는 이번 표시 자료 교체로 변경하지 않음.
+
+원본 ZIP·XML·추가 DXF 10개는 프로젝트 `data/private/seongsu-topography-20261017/originals`에 복사·해시 대조. 공개 출처/해시 목록은 `data/manifests/seongsu-topography-sources.json`. SHP 원문 PRJ와 CP949 속성, 영역 교차·유효 도형·고유 식별자·층수 검사 후 필요한 필드만 배포용 파생 JSON으로 생성. 서버는 스냅샷 SHA-256을 검사하고 외부 요청 없이 같은 취득시각/버전을 반환한다.
