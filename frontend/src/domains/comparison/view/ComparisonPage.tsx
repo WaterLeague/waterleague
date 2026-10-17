@@ -1,3 +1,4 @@
+import { sameMapModels } from '../../game/service/modelFamilyService';
 import { useEffect, useState } from 'react';
 import { ArrowUpRight, Download, Play } from 'lucide-react';
 import type { Account } from '../../account/entity/account';
@@ -24,7 +25,7 @@ export function ComparisonPage({
     [selected, setSelected] = useState<string[]>([]);
   useEffect(() => {
     setSelected(
-      catalog.models
+      sameMapModels(catalog, version?.modelHash)
         .filter((m) => m.modelHash !== version?.modelHash)
         .slice(0, 3)
         .map((m) => m.modelHash)
@@ -82,7 +83,7 @@ export function ComparisonPage({
             </div>
             <fieldset disabled={!version || c.busy}>
               <legend>비교 강우 2–3개 선택</legend>
-              {catalog.models.map((m) => (
+              {sameMapModels(catalog, version?.modelHash).map((m) => (
                 <label key={m.modelHash}>
                   <input
                     type="checkbox"

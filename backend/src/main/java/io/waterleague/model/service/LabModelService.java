@@ -57,6 +57,10 @@ public class LabModelService {
                         item.hash(),
                         "title",
                         item.model().path("title").asString(),
+                        "mapId",
+                        item.model().path("mapId").asString("seongsu-candidate-01"),
+                        "mapTitle",
+                        item.model().path("mapTitle").asString("OSM 초기 지도"),
                         "rainfall",
                         ((tools.jackson.databind.node.ObjectNode)
                                 item.model().path("rainfall").deepCopy())

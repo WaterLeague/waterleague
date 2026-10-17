@@ -30,7 +30,7 @@ class CandidateGenerationTests {
   CandidateGenerationTests() throws Exception {
     repository = new LabModelRepository(json);
     models = new LabModelService(repository, validation);
-    model = repository.require(null);
+    model = repository.require(LegacyModelFixtures.HASH);
   }
 
   SearchSample sample(int id, String cell, String area, String score) {

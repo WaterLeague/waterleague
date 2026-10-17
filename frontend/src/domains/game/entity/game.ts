@@ -149,6 +149,8 @@ export interface RainfallCatalog {
   models: {
     modelHash: string;
     title: string;
+    mapId?: string;
+    mapTitle?: string;
     budget: number;
     validationLevel: 'EXPLORATORY';
     official: false;

@@ -42,7 +42,11 @@ def verify(rerun=False):
     require(report['id'] == hashlib.sha256((report['trainingModelHash']+report['algorithmSha256']+report['runnerSha256']).encode()).hexdigest(), '기준안 식별자 불일치')
     require(datetime.fromisoformat(report['searchCompletedAt']) < datetime.fromisoformat(report['createdAt']), '배치 확정 순서 오류')
     models = {h: json.loads(raw) for h, raw in read_catalog(ROOT/'data/models').items()}
-    require(set(report['modelHashes']) == set(models) and len(report['modelHashes']) == len(models), '강우 목록 오류')
+    legacy_ids = {'seongsu-exploratory-v1', 'seongsu-421-20240622', 'seongsu-421-20240702', 'seongsu-421-20240718'}
+    expected = {h for h, m in models.items() if m['id'] in legacy_ids}
+    require(len(expected) == 4 and set(report['modelHashes']) == expected and len(report['modelHashes']) == 4, '고정 OSM 기준안 강우 목록 오류')
+    models = {h: models[h] for h in report['modelHashes']}
+    require(all(m['cells'] == next(iter(models.values()))['cells'] for m in models.values()), '기준안 공간 버전 혼합')
     training = models[report['trainingModelHash']]
     require(training['id'] == 'seongsu-421-20240718' and report['engineRevision'] == swmm.REVISION, '탐색 모델·엔진 불일치')
     for model in models.values():

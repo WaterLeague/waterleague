@@ -120,7 +120,7 @@ class LeagueParticipationWorkflowTests {
         "title",
         "검증 설계",
         "modelHash",
-        model.hash(),
+        LegacyModelFixtures.HASH,
         "placements",
         List.of(Map.of("cellId", "G1", "facilityType", "RAIN_GARDEN", "areaM2", 40)),
         "designNote",
@@ -132,7 +132,7 @@ class LeagueParticipationWorkflowTests {
   Map<String, Object> leagueDraft(int revision, int limit, long budget) {
     return Map.of(
         "modelHash",
-        model.hash(),
+        LegacyModelFixtures.HASH,
         "baseRevision",
         revision,
         "title",
@@ -176,11 +176,11 @@ class LeagueParticipationWorkflowTests {
             "/simulations",
             Map.of("versionId", v.get("id").asString(), "requestKey", UUID.randomUUID()),
             202);
-    var m = (JsonNode) model.view().get("model");
+    var m = (JsonNode) model.view(LegacyModelFixtures.HASH).get("model");
     var result =
         Map.of(
             "modelHash",
-            model.hash(),
+            LegacyModelFixtures.HASH,
             "inputHash",
             v.get("inputHash").asString(),
             "validationLevel",

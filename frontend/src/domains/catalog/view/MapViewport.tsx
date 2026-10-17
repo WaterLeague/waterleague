@@ -137,7 +137,7 @@ export function MapViewport({
         </div>
       )}
       <a className="map-credit" href={map.snapshot.licenseUrl} target="_blank" rel="noreferrer">
-        © OpenStreetMap contributors
+        {map.snapshot.attribution}
       </a>
     </div>
   );

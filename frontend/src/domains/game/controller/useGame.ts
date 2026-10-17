@@ -228,7 +228,7 @@ export function useGame() {
     setNotice(
       copy && compatible
         ? '배치를 새 강우 조건으로 복사했습니다. 저장·계산 결과는 조건별로 남습니다.'
-        : '새 강우 조건을 선택했습니다.'
+        : '지도·계산 조건을 변경했습니다. 새 배치로 시작하며 저장한 기록은 유지됩니다.'
     );
     return next;
   }

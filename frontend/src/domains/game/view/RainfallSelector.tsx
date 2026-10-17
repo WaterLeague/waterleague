@@ -1,3 +1,4 @@
+import { sameMapModels } from '../service/modelFamilyService';
 import { CloudRain } from 'lucide-react';
 import type { Lab, RainfallCatalog } from '../entity/game';
 export const rainDate = (value: string) =>
@@ -31,7 +32,7 @@ export function RainfallSelector({
           disabled={disabled}
           onChange={(e) => onChange(e.target.value)}
         >
-          {catalog.models.map((item) => (
+          {sameMapModels(catalog, lab.modelHash).map((item) => (
             <option key={item.modelHash} value={item.modelHash}>
               {item.rainfall.stationName} {item.rainfall.stationId} ·{' '}
               {rainDate(item.rainfall.start)} · {item.rainfall.totalDepthMm} mm

@@ -62,7 +62,7 @@ class QueueCapacityTests {
             + " VALUES(?,?,1,?,?,'[]','[]','큐 상한 시험',0,'KRW',CURRENT_TIMESTAMP)",
         version,
         strategy,
-        model.hash(),
+        LegacyModelFixtures.HASH,
         "a".repeat(64));
     List<UUID> candidates = new ArrayList<>();
     for (int i = 0; i < 499; i++) {
@@ -76,7 +76,7 @@ class QueueCapacityTests {
           owner,
           UUID.randomUUID(),
           "b".repeat(64),
-          model.hash(),
+          LegacyModelFixtures.HASH,
           "c".repeat(64));
       db.update(
           "INSERT INTO"
@@ -84,7 +84,7 @@ class QueueCapacityTests {
               + " VALUES(?,?,'PATTERN',1,'[]',?,?,0,'QUEUED',CURRENT_TIMESTAMP)",
           candidate,
           group,
-          model.hash(),
+          LegacyModelFixtures.HASH,
           "d".repeat(64));
       candidates.add(candidate);
     }
@@ -119,7 +119,7 @@ class QueueCapacityTests {
         "INSERT INTO rainfall_comparison_jobs(comparison_id,ordinal,model_hash,job_id)"
             + " VALUES(?,0,?,?)",
         comparison,
-        model.hash(),
+        LegacyModelFixtures.HASH,
         first.id());
     db.update(
         "INSERT INTO"

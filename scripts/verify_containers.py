@@ -225,7 +225,7 @@ def check_http(stack, state):
     model = client.api('/lab')
     assert model['model']['validationLevel'] == 'EXPLORATORY'
     version = client.api('/strategies', {'title': '컨테이너 검증', 'modelHash': model['modelHash'],
-        'placements': [{'cellId': 'G1', 'facilityType': 'RAIN_GARDEN', 'areaM2': 40}],
+        'placements': [{'cellId': 'G1', 'facilityType': 'RAIN_GARDEN', 'areaM2': 20}],
         'designNote': '격리 환경의 실제 SWMM 계산 검증', 'baseRevision': 0})
     job = client.api('/simulations', {'versionId': version['id'], 'requestKey': str(uuid.uuid4())}, 202)
     deadline = time.monotonic() + 150

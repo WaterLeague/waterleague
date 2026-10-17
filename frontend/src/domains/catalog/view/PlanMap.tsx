@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef, useState, useId } from 'react';
+import { buildingPolygons, polygonPath } from '../service/mapGeometryService';
 import { facilityFootprint } from '../service/facilityGeometryService';
 import type { CandidateMap } from '../entity/catalog';
 import type { Cell, Placement } from '../../game/entity/game';
@@ -82,10 +83,19 @@ export function PlanMap({
             }
           />
         ))}
+        {map.transports.map((surface) => (
+          <path
+            key={surface.id}
+            d={polygonPath(surface.polygons)}
+            fillRule="evenodd"
+            fill={surface.transportType === 'railways' ? '#a8b1ad' : '#bcc5bb'}
+          />
+        ))}
         {map.buildings.map((building) => (
-          <polygon
+          <path
             key={building.id}
-            points={points(building.coordinates)}
+            d={polygonPath(buildingPolygons(building))}
+            fillRule="evenodd"
             fill="#f3f3e9"
             stroke="#a7b3a0"
             strokeWidth={0.6}

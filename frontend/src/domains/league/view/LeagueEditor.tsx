@@ -3,6 +3,7 @@ import type { League, LeagueDraft, LeagueParticipationRules } from '../entity/le
 import { loadRainfallCatalog } from '../../game/repository/gameRepository';
 import type { Lab, RainfallCatalog, FacilityType } from '../../game/entity/game';
 import { facilities, won } from '../../game/service/gameService';
+import { rainDate } from '../../game/view/RainfallSelector';
 import { localDateTime, availableLimits } from '../service/leagueService';
 export function LeagueEditor({
   league,
@@ -131,7 +132,8 @@ export function LeagueEditor({
         >
           {catalog?.models.map((m) => (
             <option key={m.modelHash} value={m.modelHash}>
-              {m.title} · {m.rainfall.totalDepthMm} mm
+              {m.mapTitle ?? '기존 지도'} · {m.rainfall.stationName} {rainDate(m.rainfall.start)} ·{' '}
+              {m.rainfall.totalDepthMm} mm
             </option>
           ))}
         </select>

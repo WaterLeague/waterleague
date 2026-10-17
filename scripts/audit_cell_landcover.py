@@ -303,7 +303,6 @@ def load_inputs():
     registered = [m for m in values['catalog']['models'] if m['file'] == 'seongsu-lab.json']
     if (len(registered) != 1 or registered[0]['sha256'] != hashes['model']
             or registered[0]['id'] != values['model']['id']
-            or values['catalog']['defaultModelHash'] != hashes['model']
             or manifest['derivedHash'] != hashes['map'] or manifest['sourceHash'] != hashes['osm']
             or manifest['transformSha256'] != hashes['mapTransform']
             or values['model']['generatorSha256'] != hashes['engineGenerator']

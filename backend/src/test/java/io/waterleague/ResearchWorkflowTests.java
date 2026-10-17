@@ -107,7 +107,7 @@ class ResearchWorkflowTests {
         "title",
         "검증 설계",
         "modelHash",
-        model.hash(),
+        LegacyModelFixtures.HASH,
         "placements",
         List.of(Map.of("cellId", "G1", "facilityType", "RAIN_GARDEN", "areaM2", 40)),
         "designNote",
@@ -206,7 +206,7 @@ class ResearchWorkflowTests {
     var result =
         Map.of(
             "modelHash",
-            model.hash(),
+            LegacyModelFixtures.HASH,
             "inputHash",
             v.get("inputHash").asString(),
             "validationLevel",
@@ -239,11 +239,12 @@ class ResearchWorkflowTests {
         200);
     var details = ok(a, "GET", "/research/strategies/" + id, null, 200);
     assertThat(details.get("history").size()).isEqualTo(1);
-    assertThat(details.get("lab").get("modelHash").asString()).isEqualTo(model.hash());
+    assertThat(details.get("lab").get("modelHash").asString()).isEqualTo(LegacyModelFixtures.HASH);
     assertThat(details.toString()).doesNotContain("미제출 비공개 후속 메모", "passwordHash", "username");
     // 이전 계산은 현재 강우로 대체하지 않고 해시가 일치하는 보관 모델을 사용한다.
     var archived =
-        (tools.jackson.databind.node.ObjectNode) json.valueToTree(model.view().get("model"));
+        (tools.jackson.databind.node.ObjectNode)
+            json.valueToTree(model.view(LegacyModelFixtures.HASH).get("model"));
     ((tools.jackson.databind.node.ObjectNode) archived.get("rainfall")).put("source", "이전 시험 강우");
     String source = json.writeValueAsString(archived);
     String archiveHash = documentJson.hash(source);
@@ -312,10 +313,32 @@ class ResearchWorkflowTests {
   }
 
   @Test
+  void usesNewGeometryByDefaultWithoutReinterpretingLegacyPlacements() throws Exception {
+    var player = actor(null);
+    var current = ok(player, "GET", "/lab", null, 200);
+    String hash = current.path("modelHash").asString();
+    assertThat(hash).isNotEqualTo(LegacyModelFixtures.HASH);
+    assertThat(current.path("model").path("mapId").asString()).isEqualTo("seongsu-ngii-2025-v2");
+    var input = new HashMap<>(draft(0, "신규 공개 지도 검사"));
+    input.put("modelHash", hash);
+    assertThat(call(player, "POST", "/strategies", input).statusCode()).isEqualTo(422);
+    input.put(
+        "placements", List.of(Map.of("cellId", "G1", "facilityType", "RAIN_GARDEN", "areaM2", 20)));
+    var version = ok(player, "POST", "/strategies", input, 200);
+    assertThat(version.path("modelHash").asString()).isEqualTo(hash);
+    var legacy = ok(player, "POST", "/strategies", draft(0, "이전 지도 검사"), 200);
+    assertThat(legacy.path("modelHash").asString()).isEqualTo(LegacyModelFixtures.HASH);
+    var compatibility = new io.waterleague.comparison.service.ComparisonCompatibilityService();
+    var original = ok(player, "GET", "/lab?modelHash=" + LegacyModelFixtures.HASH, null, 200);
+    assertThatThrownBy(() -> compatibility.require(original.path("model"), current.path("model")))
+        .isInstanceOf(io.waterleague.comparison.exception.IncompatibleComparisonException.class);
+  }
+
+  @Test
   void separatesRainfallVersionsBoardsAndLeagueModels() throws Exception {
     var player = actor(null);
     var catalog = ok(player, "GET", "/lab/catalog", null, 200).get("models");
-    assertThat(catalog.size()).isEqualTo(4);
+    assertThat(catalog.size()).isEqualTo(8);
     String first = catalog.get(1).get("modelHash").asString();
     String second = catalog.get(2).get("modelHash").asString();
     assertThat(
@@ -405,7 +428,7 @@ class ResearchWorkflowTests {
   Map<String, Object> leagueDraft(int revision, int limit, long budget) {
     return Map.of(
         "modelHash",
-        model.hash(),
+        LegacyModelFixtures.HASH,
         "baseRevision",
         revision,
         "title",
@@ -459,11 +482,11 @@ class ResearchWorkflowTests {
             "/simulations",
             Map.of("versionId", v.get("id").asString(), "requestKey", UUID.randomUUID()),
             202);
-    var m = (JsonNode) model.view().get("model");
+    var m = (JsonNode) model.view(LegacyModelFixtures.HASH).get("model");
     var result =
         Map.of(
             "modelHash",
-            model.hash(),
+            LegacyModelFixtures.HASH,
             "inputHash",
             v.get("inputHash").asString(),
             "validationLevel",
@@ -673,7 +696,7 @@ class ResearchWorkflowTests {
         .isEqualTo(409);
     var detail = ok(player, "GET", "/leagues/" + id, null, 200);
     assertThat(detail.get("league").get("rules").get("official").asBoolean()).isFalse();
-    assertThat(detail.get("lab").get("modelHash").asString()).isEqualTo(model.hash());
+    assertThat(detail.get("lab").get("modelHash").asString()).isEqualTo(LegacyModelFixtures.HASH);
     var rulesText =
         db.queryForObject(
             "SELECT rules FROM leagues WHERE id=?", String.class, UUID.fromString(id));
@@ -721,7 +744,10 @@ class ResearchWorkflowTests {
     assertThat(
             ok(org, "GET", "/research/strategies/" + jobId, null, 200).get("leagueContexts").size())
         .isEqualTo(1);
-    assertThat(ok(org, "GET", "/research/strategies", null, 200).toString()).contains(jobId);
+    assertThat(
+            ok(org, "GET", "/research/strategies?modelHash=" + LegacyModelFixtures.HASH, null, 200)
+                .toString())
+        .contains(jobId);
     assertThat(call(other, "GET", "/research/strategies/" + jobId, null).statusCode())
         .isEqualTo(404);
     ok(a, "PUT", "/consents/" + orgId, Map.of("granted", false), 200);

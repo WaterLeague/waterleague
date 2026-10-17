@@ -97,7 +97,7 @@ class ComparisonWorkflowTests {
         "title",
         "검증 설계",
         "modelHash",
-        model.hash(),
+        LegacyModelFixtures.HASH,
         "placements",
         List.of(Map.of("cellId", "G1", "facilityType", "RAIN_GARDEN", "areaM2", 40)),
         "designNote",
@@ -194,7 +194,7 @@ class ComparisonWorkflowTests {
     assertThat(ownerVersions(owner)).isEqualTo(1);
     assertThat(ok(owner, "GET", "/comparisons", null, 200).size()).isZero();
     var duplicate = new HashMap<>(comparison(source, UUID.randomUUID(), 2));
-    duplicate.put("modelHashes", List.of(model.hash(), model.hash()));
+    duplicate.put("modelHashes", List.of(LegacyModelFixtures.HASH, LegacyModelFixtures.HASH));
     assertThat(call(owner, "POST", "/comparisons", duplicate).statusCode()).isEqualTo(400);
   }
 

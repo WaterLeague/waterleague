@@ -101,6 +101,17 @@ export function GamePage() {
   const [activeLeague, setActiveLeague] = useState<League | null>(null);
   const lab = g.lab;
   useEffect(() => {
+    setSelected(null);
+    setFeedback('');
+  }, [lab?.modelHash]);
+  const mapEntry = catalog.data?.maps.find((entry) =>
+    entry.modelHashes.includes(lab?.modelHash ?? '')
+  );
+  const activeMap = mapEntry?.map ?? null;
+  const mapError =
+    catalog.error ||
+    (catalog.data && lab && !activeMap ? '이 모델에 연결된 지도 버전을 찾을 수 없습니다.' : '');
+  useEffect(() => {
     if (activeLeague && lab && activeLeague.rules.modelHash !== lab.modelHash)
       setActiveLeague(null);
   }, [lab?.modelHash, activeLeague]);
@@ -328,7 +339,7 @@ export function GamePage() {
         <ChallengeLobby
           lab={lab}
           catalog={g.rainfallCatalog}
-          map={catalog.data?.map ?? null}
+          map={activeMap}
           busy={working}
           hasDesign={g.placements.length > 0}
           league={activeLeague}
@@ -517,14 +528,15 @@ export function GamePage() {
                     </span>
                     <span>표고 평탄화 · 설치 가능성 가정</span>
                   </div>
-                  {catalog.error ? (
+                  {mapError ? (
                     <div className="empty-state">
-                      <p>{catalog.error}</p>
+                      <p>{mapError}</p>
                       <button onClick={catalog.retry}>다시 시도</button>
                     </div>
-                  ) : catalog.data ? (
+                  ) : activeMap ? (
                     <MapViewport
-                      map={catalog.data.map}
+                      key={activeMap.snapshot.id}
+                      map={activeMap}
                       cells={lab.model.cells}
                       placements={g.placements}
                       preview={preview}
@@ -987,7 +999,7 @@ export function GamePage() {
           account={g.account}
           lab={lab}
           catalog={g.rainfallCatalog}
-          map={catalog.data?.map ?? null}
+          map={activeMap}
           onReplay={(p) => {
             g.newDesign();
             setActiveLeague(null);
@@ -1047,14 +1059,14 @@ export function GamePage() {
               <span className="state done">공개 공간자료</span>
               <h2>성수동 실제 건물 경계</h2>
               <strong>
-                {catalog.data?.map.buildings.length ?? '—'}
+                {activeMap?.buildings.length ?? '—'}
                 <small>개</small>
               </strong>
               <p>
-                OpenStreetMap 형상. 높이 일부는 시각화 가정입니다. 선택 옥상 면적은 WGS84 타원체
-                계산, 지상 구역은 가정 실험 단위입니다.
+                {activeMap?.snapshot.title} · {activeMap?.snapshot.subtitle}
               </p>
-              <a href="/data/seongsu.json" download>
+              <p>{activeMap?.snapshot.limitations.join(' · ')}</p>
+              <a href={mapEntry ? `/data/${mapEntry.file}` : undefined} download>
                 공간 파생자료 <Download size={14} />
               </a>
             </article>

@@ -2,7 +2,8 @@ import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { Canvas, useThree, useFrame } from '@react-three/fiber';
 import { OrbitControls, Edges } from '@react-three/drei';
 import * as THREE from 'three';
-import type { Building, CandidateMap } from '../entity/catalog';
+import type { Building, CandidateMap, Transport } from '../entity/catalog';
+import { buildingPolygons, polygonShapes } from '../service/mapGeometryService';
 import { buildingLabel } from '../service/catalogService';
 import type { Cell, Placement } from '../../game/entity/game';
 import { FacilityMesh } from './FacilityMesh';
@@ -88,7 +89,7 @@ function FitDistrict({ map }: { map: CandidateMap }) {
     let x = 0,
       y = 0;
     for (const building of map.buildings)
-      for (const [east, north] of building.coordinates)
+      for (const [east, north] of buildingPolygons(building).flatMap((polygon) => polygon[0]))
         for (const height of [0, building.heightM]) {
           const point = new THREE.Vector3(east, height, -north).applyMatrix4(
             camera.matrixWorldInverse
@@ -113,12 +114,10 @@ function BuildingMesh({
   onSelect: () => void;
 }) {
   const geometry = useMemo(() => {
-    const shape = new THREE.Shape();
-    building.coordinates.forEach(([x, y], i) => {
-      if (i === 0) shape.moveTo(x, y);
-      else shape.lineTo(x, y);
+    return new THREE.ExtrudeGeometry(polygonShapes(buildingPolygons(building)), {
+      depth: building.heightM,
+      bevelEnabled: false,
     });
-    return new THREE.ExtrudeGeometry(shape, { depth: building.heightM, bevelEnabled: false });
   }, [building]);
   useEffect(() => () => geometry.dispose(), [geometry]);
   return (
@@ -198,6 +197,30 @@ function Roads({ map }: { map: CandidateMap }) {
   return (
     <mesh geometry={geometry} receiveShadow>
       <meshStandardMaterial color="#c1c9bc" roughness={1} side={THREE.DoubleSide} />
+    </mesh>
+  );
+}
+
+function TransportMesh({ surface }: { surface: Transport }) {
+  const geometry = useMemo(
+    () => new THREE.ShapeGeometry(polygonShapes(surface.polygons)),
+    [surface]
+  );
+  useEffect(() => () => geometry.dispose(), [geometry]);
+  const colors = { roads: '#bcc5bb', railways: '#a8b1ad', bridges: '#bdc4bb' };
+  const levels = { roads: 0.035, railways: 0.045, bridges: 0.055 };
+  return (
+    <mesh
+      geometry={geometry}
+      rotation={[-Math.PI / 2, 0, 0]}
+      position={[0, levels[surface.transportType], 0]}
+      receiveShadow
+    >
+      <meshStandardMaterial
+        color={colors[surface.transportType]}
+        roughness={1}
+        side={THREE.DoubleSide}
+      />
     </mesh>
   );
 }
@@ -282,7 +305,7 @@ export default function MapScene({
   const reducedMotion = useReducedMotion();
   return (
     <Canvas
-      key={`${topView}-${reset}`}
+      key={`${map.snapshot.id}-${topView}-${reset}`}
       shadows="percentage"
       dpr={[1, 1.7]}
       frameloop="demand"
@@ -322,6 +345,9 @@ export default function MapScene({
         <meshStandardMaterial color="#e4e7d9" roughness={1} />
       </mesh>
       <Roads map={map} />
+      {map.transports.map((surface) => (
+        <TransportMesh key={surface.id} surface={surface} />
+      ))}
       <FitDistrict map={map} />
       {map.buildings.map((building) => (
         <BuildingMesh

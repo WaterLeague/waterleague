@@ -79,6 +79,8 @@ export const rainfallCatalogDto = z.object({
       z.object({
         modelHash: z.string().regex(/^[a-f0-9]{64}$/),
         title: z.string(),
+        mapId: z.string().optional(),
+        mapTitle: z.string().optional(),
         budget: positive,
         validationLevel: z.literal('EXPLORATORY'),
         official: z.literal(false),

@@ -1,17 +1,31 @@
 import { z } from 'zod';
 const point = z.tuple([z.number().finite(), z.number().finite()]);
-const building = z.object({
-  id: z.string().regex(/^way\/\d+$/),
-  kind: z.literal('building'),
-  name: z.string(),
-  coordinates: z.array(point).min(4),
-  geographicCoordinates: z.array(point),
-  heightM: z.number().positive().max(500),
-  heightSource: z.enum(['OSM_TAG', 'LEVELS_ESTIMATE', 'VISUAL_ASSUMPTION']),
-  displayAreaM2: z.number().positive(),
-  center: point,
-  osmVersion: z.string().nullable(),
-  sourceUpdatedAt: z.string().nullable(),
+const ring = z
+  .array(point)
+  .min(4)
+  .refine((r) => r[0][0] === r.at(-1)![0] && r[0][1] === r.at(-1)![1]);
+const polygons = z.array(z.array(ring).min(1)).min(1);
+const building = z
+  .object({
+    id: z.string().regex(/^(way\/\d+|\d{9}:[A-Za-z0-9_-]{1,80})$/),
+    kind: z.literal('building'),
+    name: z.string(),
+    coordinates: z.array(point).default([]),
+    polygons: polygons.optional(),
+    geographicCoordinates: z.array(point).default([]),
+    heightM: z.number().positive().max(500),
+    heightSource: z.enum(['OSM_TAG', 'LEVELS_ESTIMATE', 'VISUAL_ASSUMPTION']),
+    displayAreaM2: z.number().positive(),
+    center: point,
+    osmVersion: z.string().nullable().default(null),
+    sourceUpdatedAt: z.string().nullable().default(null),
+  })
+  .refine((b) => !!b.polygons || b.coordinates.length >= 4);
+const transport = z.object({
+  id: z.string(),
+  kind: z.literal('transport'),
+  transportType: z.enum(['roads', 'railways', 'bridges']),
+  polygons,
 });
 const road = z.object({
   id: z.string(),
@@ -31,9 +45,12 @@ export const mapDto = z.object({
   validationLevel: z.literal('DRAFT'),
   officialEvaluationAvailable: z.literal(false),
   sourceHash: z.string().regex(/^[a-f0-9]{64}$/),
-  features: z.array(z.discriminatedUnion('kind', [building, road])),
+  features: z.array(z.discriminatedUnion('kind', [building, road, transport])),
   attribution: z.string(),
-  licenseUrl: z.literal('https://www.openstreetmap.org/copyright'),
+  licenseUrl: z.enum([
+    'https://www.openstreetmap.org/copyright',
+    'https://www.data.go.kr/data/15059719/fileData.do',
+  ]),
   limitations: z.array(z.string()),
 });
 export type MapDto = z.infer<typeof mapDto>;

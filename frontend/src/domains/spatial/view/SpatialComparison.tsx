@@ -35,8 +35,8 @@ export function SpatialComparison({
         </button>
       </div>
       <p>
-        2025년 수치지형도의 건물 경계·지상 층수와 게임의 OSM 경계를 대조합니다. 보관한 자료를
-        불러오며, 외부 API를 호출하지 않습니다. 이 대조 자료는 시뮬레이션 입력에 포함되지 않습니다.
+        2025년 수치지형도의 건물 경계·지상 층수와 초기 OSM 경계를 대조합니다. 보관한 자료를
+        불러오며, 외부 API를 호출하지 않습니다. 플레이는 선택한 모델의 지도 버전을 사용합니다.
       </p>
       {!authenticated && <p className="micro-note">로그인 후 조회할 수 있습니다.</p>}
       {spatial.error && (

@@ -39,7 +39,15 @@ for entry in json.loads((root/'data/models/catalog.json').read_text())['models']
  data=models[entry['sha256']]
  assert data==(root/'backend/src/main/resources/models'/entry['file']).read_bytes()
  item=json.loads(data); rain=item['rainfall']
- assert item['cells']==model['cells'] and item['unitCosts']==model['unitCosts']
+ assert item['unitCosts']==model['unitCosts']
+ if 'mapId' not in item:
+  assert item['cells']==model['cells']
+ else:
+  assert item['mapId']=='seongsu-ngii-2025-v2'
+  assert item['mapSnapshotHash']==hashlib.sha256((root/'frontend/public/data/seongsu-ngii-v2.json').read_bytes()).hexdigest()
+  assert item['candidateSnapshotHash']==hashlib.sha256((root/'data/derived/seongsu-topography-candidates-v2.json').read_bytes()).hexdigest()
+  assert item['geometrySourceHash']==hashlib.sha256((root/'data/manifests/seongsu-topography-sources.json').read_bytes()).hexdigest()
+  assert item['geometryModelGeneratorSha256']==hashlib.sha256((root/'scripts/prepare_topography_models.py').read_bytes()).hexdigest()
  assert item['generatorSha256']==model['generatorSha256']
  assert rain['transformSha256']==model['rainfall']['transformSha256']
  assert len(rain['depthsMm'])>60 and all(x>=0 for x in rain['depthsMm'])

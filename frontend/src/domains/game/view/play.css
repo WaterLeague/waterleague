@@ -948,3 +948,23 @@
   bottom: 0;
   z-index: 2;
 }
+
+.challenge-map-choice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0;
+  font-size: 13px;
+}
+.challenge-map-choice select {
+  padding: 10px 32px 10px 12px;
+  border: 1px solid #aeb9b1;
+  border-radius: 4px;
+  background: #fff;
+  color: #203e32;
+  font: inherit;
+}
+.challenge-map-choice small {
+  color: #617468;
+}

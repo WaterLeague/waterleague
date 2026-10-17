@@ -8,7 +8,9 @@ export function useCatalog() {
     const abort = new AbortController();
     setError(null);
     loadCatalog(abort.signal)
-      .then(setData)
+      .then((data) => {
+        if (!abort.signal.aborted) setData(data);
+      })
       .catch((error) => {
         if (!abort.signal.aborted)
           setError(error instanceof Error ? error.message : '자료 연결을 확인해 주세요.');

@@ -7,5 +7,5 @@ export function heightDescription(building: Building): string {
   }[building.heightSource];
 }
 export function buildingLabel(building: Building): string {
-  return building.name || `건물 ${building.id.split('/')[1]}`;
+  return building.name || `건물 ${building.id.split(/[/:]/).at(-1)}`;
 }

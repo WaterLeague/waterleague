@@ -4,6 +4,7 @@ import type { CandidateMap } from '../../catalog/entity/catalog';
 import { MapViewport } from '../../catalog/view/MapViewport';
 import type { League } from '../../league/entity/league';
 import { facilities, format, won } from '../service/gameService';
+import { sameMapModels } from '../service/modelFamilyService';
 import { rainDate } from './RainfallSelector';
 
 export function ChallengeLobby({
@@ -31,6 +32,10 @@ export function ChallengeLobby({
   onCompetition: () => void;
   onEvidence: () => void;
 }) {
+  const families = [
+    ...new Map((catalog?.models ?? []).map((m) => [m.mapId ?? 'legacy', m])).values(),
+  ];
+  const current = catalog?.models.find((m) => m.modelHash === lab.modelHash);
   return (
     <main className="challenge-lobby">
       <div className="challenge-heading">
@@ -101,7 +106,7 @@ export function ChallengeLobby({
           <div className="challenge-city-caption">
             <span>SEONGSU</span>
             <b>실제 동네에서 시작하는 전략</b>
-            <small>공개 건물 경계 · 지형 평탄화 · 일부 높이 가정</small>
+            <small>{map?.snapshot.title} · 지형 평탄화 · 높이 가정</small>
           </div>
         </div>
       </section>
@@ -110,6 +115,30 @@ export function ChallengeLobby({
           <h2 id="challenge-events-title">어떤 비에 도전할까요?</h2>
           <span>기상청 실제 관측 · 선택한 조건으로 계산·순위 구분</span>
         </div>
+        <label className="challenge-map-choice">
+          지도 버전
+          <select
+            aria-label="지도 버전 선택"
+            disabled={busy || !!league}
+            value={current?.mapId ?? 'legacy'}
+            onChange={(e) => {
+              const target =
+                catalog?.models.find(
+                  (m) =>
+                    (m.mapId ?? 'legacy') === e.target.value &&
+                    m.rainfall.sourceHash === lab.model.rainfall.sourceHash
+                ) ?? families.find((m) => (m.mapId ?? 'legacy') === e.target.value);
+              if (target) onSelect(target.modelHash);
+            }}
+          >
+            {families.map((m) => (
+              <option key={m.mapId ?? 'legacy'} value={m.mapId ?? 'legacy'}>
+                {m.mapTitle ?? '기존 지도'}
+              </option>
+            ))}
+          </select>
+          <small>지도 변경 시 새 배치로 시작 · 기존 저장 기록 유지</small>
+        </label>
         {league && (
           <p className="challenge-copy-note">
             리그의 강우·예산·시설은 고정됩니다.{' '}
@@ -119,7 +148,7 @@ export function ChallengeLobby({
           </p>
         )}
         <div className="challenge-event-list">
-          {(catalog?.models ?? []).map((item, index) => (
+          {sameMapModels(catalog, lab.modelHash).map((item, index) => (
             <button
               key={item.modelHash}
               aria-pressed={lab.modelHash === item.modelHash}

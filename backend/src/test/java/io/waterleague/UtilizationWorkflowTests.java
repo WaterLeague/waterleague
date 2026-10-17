@@ -112,7 +112,7 @@ class UtilizationWorkflowTests {
                 "title",
                 "활용 동의 시험",
                 "modelHash",
-                model.hash(),
+                LegacyModelFixtures.HASH,
                 "placements",
                 List.of(),
                 "designNote",
@@ -132,7 +132,7 @@ class UtilizationWorkflowTests {
     var result =
         Map.of(
             "modelHash",
-            model.hash(),
+            LegacyModelFixtures.HASH,
             "inputHash",
             version.get("inputHash").asString(),
             "validationLevel",

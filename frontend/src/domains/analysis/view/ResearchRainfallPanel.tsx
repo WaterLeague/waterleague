@@ -1,3 +1,4 @@
+import { sameMapModels } from '../../game/service/modelFamilyService';
 import { useEffect, useState } from 'react';
 import { Download, Play } from 'lucide-react';
 import type { RainfallCatalog } from '../../game/entity/game';
@@ -17,7 +18,7 @@ export function ResearchRainfallPanel({
     [selected, setSelected] = useState<string[]>([]);
   useEffect(() => {
     setSelected(
-      catalog?.models
+      sameMapModels(catalog, source?.version.modelHash)
         .filter((m) => m.modelHash !== source?.version.modelHash)
         .slice(0, 2)
         .map((m) => m.modelHash) ?? []
@@ -55,7 +56,7 @@ export function ResearchRainfallPanel({
         </div>
         <fieldset disabled={!source || c.busy || !catalog}>
           <legend>실제 관측 강우 2–3개 선택</legend>
-          {catalog?.models.map((m) => (
+          {sameMapModels(catalog, source?.version.modelHash).map((m) => (
             <label key={m.modelHash}>
               <input
                 type="checkbox"
