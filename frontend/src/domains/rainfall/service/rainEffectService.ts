@@ -18,6 +18,16 @@ export function rainCondition(station: RainStation, now: number) {
 
 type Point = [number, number];
 export type RainPolygons = Point[][][];
+// 작은 카메라 이동은 같은 입자 영역을 재사용하고 실제 관측 구 경계는 유지한다.
+export function rainSamplingWindow(center: Point, distance: number) {
+  const scale = 2 ** Math.ceil(Math.log2(Math.max(256, distance)));
+  return {
+    x: Math.round(center[0] / scale) * scale,
+    y: Math.round(center[1] / scale) * scale,
+    radius: scale * 1.5,
+    scale,
+  };
+}
 function inRing([x, y]: Point, ring: Point[]) {
   let inside = false;
   for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {

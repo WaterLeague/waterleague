@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { City, CityTile } from '../entity/city';
 import {
   loadCity,
@@ -49,7 +49,7 @@ export function useCityTiles(city: City, camera: { center: [number, number]; dis
   const [tiles, setTiles] = useState<CityTile[]>([]),
     [error, setError] = useState(''),
     [busy, setBusy] = useState(false);
-  const wanted = nearbyTiles(city, camera.center, camera.distance);
+  const wanted = useMemo(() => nearbyTiles(city, camera.center, camera.distance), [city, camera]);
   const key = wanted.map((t) => t.id).join(',');
   useEffect(() => {
     const controller = new AbortController();

@@ -3,6 +3,7 @@ import {
   isRaining,
   rainCondition,
   rainParticleSeeds,
+  rainSamplingWindow,
   insideRainArea,
   type RainStation,
   type RainPolygons,
@@ -37,6 +38,26 @@ it('과거 누적 강우와 결측·지연을 현재 비 효과로 사용하지 
   expect(isRaining({ ...wet, observedAt: null }, at)).toBe(false);
   expect(isRaining({ ...wet, rainState: 'UNKNOWN' }, at)).toBe(false);
   expect(rainCondition(wet, at + 300001)).toBe('현재 강수 확인 불가');
+});
+it('작은 확대·축소와 이동은 같은 비 입자 영역을 재사용', () => {
+  const base = rainSamplingWindow([200100, 450100], 3000);
+  expect(rainSamplingWindow([200130, 450070], 3200)).toEqual(base);
+  expect(rainSamplingWindow([200100, 450100], 4200).scale).toBeGreaterThan(base.scale);
+});
+it('입자 영역은 확대 단계와 이동 경계에서도 카메라 범위를 포함', () => {
+  for (const distance of [15, 255, 256, 257, 4095, 4096, 4097, 35000]) {
+    for (const center of [
+      [200100, 450100],
+      [-1025, 1025],
+      [2047, 2049],
+    ] as [number, number][]) {
+      const window = rainSamplingWindow(center, distance);
+      expect(window.x - window.radius).toBeLessThanOrEqual(center[0] - distance);
+      expect(window.x + window.radius).toBeGreaterThanOrEqual(center[0] + distance);
+      expect(window.y - window.radius).toBeLessThanOrEqual(center[1] - distance);
+      expect(window.y + window.radius).toBeGreaterThanOrEqual(center[1] + distance);
+    }
+  }
 });
 it('비 입자는 구 경계 안이며 구멍과 카메라 범위 밖을 제외', () => {
   const polygons: RainPolygons = [

@@ -314,7 +314,7 @@ function ProjectedLabels({
   });
   return null;
 }
-export default function CityScene({
+const CityScene = memo(function CityScene({
   terrain,
   city,
   regions,
@@ -556,7 +556,8 @@ export default function CityScene({
       </TerrainContext.Provider>
     </Canvas>
   );
-}
+});
+export default CityScene;
 
 function SiteSurface({
   site,

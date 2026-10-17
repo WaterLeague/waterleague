@@ -60,7 +60,7 @@ export function FacilityMesh({
 }) {
   const footprint = useMemo(
     () => facilityFootprint(cell.coordinates, placement.areaM2 / cell.areaM2),
-    [cell, placement.areaM2]
+    [cell.coordinates, cell.areaM2, placement.areaM2]
   );
   const paved = placement.facilityType === 'PERMEABLE_PAVEMENT';
   const roof = placement.facilityType === 'GREEN_ROOF';
