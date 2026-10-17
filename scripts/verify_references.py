@@ -120,7 +120,16 @@ def verify(rerun=False, rerun_candidates=False):
         require(entry['reportSha256'] == digest(ROOT/'data/derived'/config[0]) and entry['modelHashes'] == report['modelHashes'], '기준안 목록 해시 연결 오류')
         all_hashes.extend(entry['modelHashes'])
         verify_family(*config, rerun, rerun_candidates)
-    require(len(all_hashes) == len(set(all_hashes)) and set(all_hashes) == set(read_catalog(ROOT/'data/models')), '모델 기준안 연결 누락·중복')
+    models = read_catalog(ROOT/'data/models')
+    regions = json.loads((ROOT/'data/manifests/seoul-play-v1.json').read_text())['regions']
+    pending = [h for region in regions for h in region['modelHashes']]
+    require(len(regions) == 25 and len(pending) == 75 and len(set(pending)) == 75, '미생성 지역 목록 오류')
+    for region in regions:
+        for h in region['modelHashes']:
+            require(h in models and json.loads(models[h])['mapId'] == region['mapId'], '미생성 지역 모델 연결 오류')
+    require(not set(pending).intersection(all_hashes), '생성·미생성 기준안 중복')
+    require(len(all_hashes) == len(set(all_hashes)) and set(all_hashes) | set(pending) == set(models), '모델 기준안 연결 누락·중복')
+    print(f'기존 모델 {len(all_hashes)}개 기준안 연결·신규 지역 {len(pending)}개 미생성 상태 확인')
 
 
 if __name__ == '__main__':
