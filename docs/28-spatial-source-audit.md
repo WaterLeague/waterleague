@@ -26,3 +26,28 @@
 ## 모델 편입 조건
 
 원본 이용조건·출처 표시·파생물 재배포 범위, 공간/시간 정합과 사용 목적에 맞는 정밀도 확인 후 별도 모델 버전 생성. 모델·시설 가능 면적/토양/관망 등 연관 입력 변경과 기본안·민감도·수지·재현을 함께 검증. 원자료 확보만으로 보정/독립 사상 검증·현장 적용 가능 등급을 부여하지 않음. 기관 보고서와 화면은 공개자료·계산·가정·미확인을 구분.
+
+## 첫 검사 결과
+
+`scripts/audit_spatial_sources.py`로 등록 원본 hash·ZIP CRC/경로/중복/크기를 검증한 뒤 임시 디렉터리에서 읽기 전용 검사. GDAL 3.8.5, pyproj 3.8.0 및 실행 당시 PROJ/GEOS 버전 기록. 네트워크 좌표계 격자 자동 취득과 GDAL 원본 보조 파일 저장 비활성화. 원문 WKT 유지, 대상지 AreaOfInterest·항상 x/y·경계 변별 20분할 적용. 수평 변환 연산의 정확도를 측량 정확도로 표현하지 않음.
+
+- DEM 두 연도 모두 79,380개 원본 격자 값. 실험 경계에 걸친 16개 셀은 유효하며 NoData 없음. 격자는 90m, 표고 단위 필드·수직 기준·취득일 미제공. 두 연도 투영 격자 수치는 같지만 원문 WKT와 모든 원본 값은 다름. 제작 차이를 지형 변화로 판정하지 않음.
+- 토지피복 12,330개 중 원도형 4개에 자기교차 오류. 그중 도로 분류 2개의 envelope가 실험 구역과 겹쳐 검사 상태 `INCOMPLETE_INVALID_GEOMETRY`. 오류점 자체가 블록 안에 있다는 의미는 아님.
+- 유효 도형만 교차 계산한 경우 173개·9개 세분류·약 52.73% 면적 포함. 제외한 잘못된 도로 도형 때문에 남은 비율을 실제 미피복/결측으로 해석할 수 없음. 원도형 자동 보정이나 불투수율 대입 없음.
+- 교차한 유효 도형의 IMG_DATE 필드는 모두 `2023-12-31`. XML은 2023년 영상 기반 2024 현행화 표기. 실제 촬영일·2024 강우 당일 현장 상태는 별도 확인 대상.
+
+해시·도구 버전·오류 수·승인 제한은 `data/manifests/seongsu-spatial-audit.json` 보존. 원본·각 셀 값·상세 CRS/변환·도형 식별/면적이 포함된 전체 보고서는 `data/private/seongsu-official-20261017/`에만 보존. 같은 실행 코드·입력으로 두 번 생성한 보고서의 byte 일치 확인. 기존 모델·기하·랭킹 입력 변경 없음.
+
+검사 7개 추가(압축 경로/링크/CRC/해시/정규화 중복/덮어쓰기, 미터 CRS/면적, NoData, 중첩/빈 영역, 잘못된 도형과 원본 보존). Python 전체 42개 통과, 기존 실제 SWMM 수치 검사 포함. CI의 data job도 고정 pyproject 의존성 설치 후 동일 검사 실행. 원본이 필요한 실제 GDAL 검사는 로컬 수행, CI 단위 검사를 원자료 검사로 대체하지 않음.
+
+보완 자료로 공식 화면에서 2025년 1:1,000 수치지형도 Ver2.0 `377052201·377052202·377052211·377052212`를 선택하고 신청서 작성. 사용자에게 준수사항 동의·SHP와 제공 설명/좌표계 파일 다운로드를 묶어서 요청. 추가 API 키·프로그램 없음. 2025 자료는 2024 지형 상태의 직접 증거로 사용하지 않음.
+
+```sh
+simulation/.venv/bin/python scripts/audit_spatial_sources.py \
+  --sources data/private/seongsu-official-20261017 \
+  --output data/private/seongsu-official-20261017/audit-new.json
+```
+
+입력 ZIP 이름은 `dem-2024.zip`, `dem-2025.zip`, `landcover-2024.zip`. 등록 hash가 다른 재배포 원본은 자동 수락하지 않으며 출처 계약 갱신 필요. 기존 검사 출력 덮어쓰기 거부.
+
+도구 근거: [GDAL raster info](https://gdal.org/en/stable/programs/gdalinfo.html), [GDAL XYZ 변환](https://gdal.org/en/stable/programs/gdal_translate.html), [Shapefile 문자셋](https://gdal.org/en/stable/drivers/vector/shapefile.html), [pyproj TransformerGroup](https://pyproj4.github.io/pyproj/stable/api/transformer.html).

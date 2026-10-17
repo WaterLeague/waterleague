@@ -60,6 +60,13 @@ jobs:
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
         with:
           python-version: '3.13'
+      - name: 고정된 공간 분석 의존성 설치
+        run: |
+          python - <<'PY'
+          import pathlib, subprocess, sys, tomllib
+          dependencies = tomllib.loads(pathlib.Path('simulation/pyproject.toml').read_text())['project']['dependencies']
+          subprocess.run([sys.executable, '-m', 'pip', 'install', *dependencies], check=True)
+          PY
       - run: bash scripts/build_swmm.sh
       - run: test -f tmp/swmm-build/install/bin/libswmm5.so
       - run: python -m unittest discover -s tests -v

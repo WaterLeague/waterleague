@@ -1,0 +1,150 @@
+{
+  "schemaVersion": 1,
+  "receivedDate": "2026-10-17",
+  "acquisitionMethod": "USER_DOWNLOADED_OFFICIAL_ARCHIVES",
+  "modelEligible": false,
+  "calibrationEligible": false,
+  "sourceUrls": {
+    "dem": "https://map.ngii.go.kr/ms/map/NlipMap.do",
+    "landcover": "https://aid.mcee.go.kr/req/list.do"
+  },
+  "redistributionReview": "PENDING; original and derived coordinates stored locally only",
+  "boundsWgs84": [
+    127.0525,
+    37.543,
+    127.0555,
+    37.5455
+  ],
+  "modelSha256": "3af2362021b1678b743a54d82ec1cd1e40cc3b1bfaf594a39858843b35fafaee",
+  "inspectionCodeSha256": "74dd6155a3cc8a05e09b14e53a8ef80f8bde2accf78c51a86d797d738ae36b42",
+  "localReportSha256": "bc110db722b3ed3031483e956f7958235b267a9703045e7c1d7ad6bb057fbf7a",
+  "versions": {
+    "gdal": "GDAL 3.8.5, released 2024/04/02",
+    "pyproj": "3.8.0",
+    "proj": "9.8.1",
+    "shapely": "2.2.0",
+    "geos": "3.14.1"
+  },
+  "archives": {
+    "dem-2024": {
+      "sha256": "1686afb246370b1a7b6ad9a5f510c75cabc73985324feb33c803838aea2d3000",
+      "bytes": 287722,
+      "crcVerified": true,
+      "members": [
+        {
+          "name": "37705/37705.img",
+          "bytes": 400086,
+          "sha256": "f16d441a59a7c0036333e3b556438a501072bd23bf74e5a3f0c8f011583e5702"
+        }
+      ]
+    },
+    "dem-2025": {
+      "sha256": "a99a82b4e98f5e26445f88801b95d87b823bfef154db804acbb60fc136683feb",
+      "bytes": 287839,
+      "crcVerified": true,
+      "members": [
+        {
+          "name": "37705/37705.img",
+          "bytes": 400099,
+          "sha256": "70f03190643ea70276d70a2e869397c199dfb9370caf835c8806a75f75abd522"
+        }
+      ]
+    },
+    "landcover-2024": {
+      "sha256": "88456ce3a6ea11bd003ec9d9b0b7ebd67dd09d636a4dff572a083ebed18edf1f",
+      "bytes": 3458206,
+      "crcVerified": true,
+      "members": [
+        {
+          "name": "2024_meta_37705083.xml",
+          "bytes": 11673,
+          "sha256": "db265a5c695d6f56e8df2584487df63220331e1d0793590f0e0d1c6f743ff303"
+        },
+        {
+          "name": "2024년_피복_영상메타데이터.xlsx",
+          "bytes": 1328177,
+          "sha256": "be0207125ae3adc0a15c8c792ebbdd696bf6f3fd7439d2a49226ef2a5a23b089"
+        },
+        {
+          "name": "37705083.dbf",
+          "bytes": 3095312,
+          "sha256": "27234b5fbfb7b8c54b9c0856633316d1df6b5c234ac8d508707c3363d099efc7"
+        },
+        {
+          "name": "37705083.prj",
+          "bytes": 401,
+          "sha256": "f62393100cbae93a17f01ce551ffadc153850850f8d4d6853d5338065a99781c"
+        },
+        {
+          "name": "37705083.shp",
+          "bytes": 3810064,
+          "sha256": "f707b535245ce2ad0ec4cc17aba889974a5b8b1084a17318c916e6cef51a1efb"
+        },
+        {
+          "name": "37705083.shx",
+          "bytes": 98740,
+          "sha256": "1b9632edbc71fe262e5cae1f432f1697d67bf74869d1653d77a5e98b022d7abb"
+        },
+        {
+          "name": "토지피복지도_XML_Schema_Definition.xsd",
+          "bytes": 13532,
+          "sha256": "2e6bd4ee23325b9d205254e13f0a693ab635a8c36cc70772f698fa75edbc07fe"
+        }
+      ]
+    }
+  },
+  "demInspection": {
+    "dem2024": {
+      "size": [
+        252,
+        315
+      ],
+      "pixelSizeM": [
+        90.0,
+        90.0
+      ],
+      "intersectingCells": 16,
+      "verticalDatum": null,
+      "acquisitionDate": null,
+      "bandUnit": null,
+      "coordinateEpoch": null,
+      "crsOperationAccuracyM": -1.0
+    },
+    "dem2025": {
+      "size": [
+        252,
+        315
+      ],
+      "pixelSizeM": [
+        90.0,
+        90.0
+      ],
+      "intersectingCells": 16,
+      "verticalDatum": null,
+      "acquisitionDate": null,
+      "bandUnit": null,
+      "coordinateEpoch": null,
+      "crsOperationAccuracyM": -1.0
+    }
+  },
+  "landcoverInspection": {
+    "featureCount": 12330,
+    "invalidFeatureCount": 4,
+    "invalidStudyEnvelopeCandidateCount": 2,
+    "studyGeometryStatus": "INCOMPLETE_INVALID_GEOMETRY",
+    "validStudyFeatureCount": 173,
+    "validGeometryOnlyCoverageFraction": 0.5272598744826378,
+    "coverageMeaning": "invalid geometry excluded; uncovered fraction is not a measured absence of land cover",
+    "imageDateFieldCounts": {
+      "2023-12-31": 173
+    },
+    "imageDateMeaning": "field value, not confirmation of acquisition date"
+  },
+  "limitations": [
+    "원본 CRS와 좌표 epoch·수직 기준·촬영 시점의 정합 미승인",
+    "90m DEM은 도로 턱·미세 경사·관망·침수 깊이를 나타내지 않음",
+    "피복 분류는 현장 불투수율·침투율·설치 가능성 측정이 아님",
+    "IMG_DATE는 제공 필드 값이며 실제 촬영일 확인과 별도",
+    "두 DEM 값 차이는 측량 오차·제작 차이를 포함할 수 있음"
+  ]
+}
