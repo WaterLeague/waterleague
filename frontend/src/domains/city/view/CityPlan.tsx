@@ -34,6 +34,9 @@ type Props = {
   onSite: (key: string) => void;
   onBuilding: (districtId: string, building: CityBuilding) => void;
   onCamera: (view: PlanView) => void;
+  onNavigate: (view: PlanView) => void;
+  camera: PlanView;
+  rainAmounts: ReadonlyMap<string, number | null>;
 };
 export const CityPlan = memo(function CityPlan({
   city,
@@ -56,28 +59,37 @@ export const CityPlan = memo(function CityPlan({
   onSite,
   onBuilding,
   onCamera,
+  onNavigate,
+  camera,
+  rainAmounts,
 }: Props) {
   const {
     svg,
     view: focus,
+    box,
     dragging,
     handlers,
-  } = usePlanNavigation(requestedFocus, city.bounds, onCamera);
+  } = usePlanNavigation(requestedFocus, city.bounds, camera, onCamera, onNavigate);
   const overview = focus.distance >= 9000;
   const paths = useMemo(
     () => ({
       boundary: polygonPath(city.boundary),
       districts: new Map(city.districts.map((d) => [d.id, polygonPath(d.polygons)])),
-      water: city.surfaces.filter((s) => s.kind === 'water').map((s) => polygonPath(s.polygons)),
+      roads: city.roads
+        .map((r) => r.coordinates.map(([x, y], i) => `${i ? 'L' : 'M'}${x},${-y}`).join(' '))
+        .join(' '),
+      surfaces: city.surfaces.map((s) => ({ kind: s.kind, path: polygonPath(s.polygons) })),
     }),
     [city]
   );
   const buildings = useMemo(
     () =>
-      tiles
-        .flatMap((t) => t.buildings)
-        .map((b) => ({ building: b, path: polygonPath(b.polygons) })),
-    [tiles]
+      [
+        ...new Map(
+          [...city.overviewBuildings, ...tiles.flatMap((t) => t.buildings)].map((b) => [b.id, b])
+        ).values(),
+      ].map((b) => ({ building: b, path: polygonPath(b.polygons) })),
+    [city, tiles]
   );
   const sitePaths = useMemo(
     () => new Map(sites.map((s) => [siteKey(s), polygonPath([[s.coordinates]])])),
@@ -94,17 +106,49 @@ export const CityPlan = memo(function CityPlan({
       )
     );
   }
+  const buildingLayer = useMemo(
+    () =>
+      buildings.map(({ building: b, path }) => (
+        <path
+          key={b.id}
+          d={path}
+          fill="#d9d8cb"
+          opacity={buildingOpacity(
+            (!facilityType || facilityType === 'GREEN_ROOF') &&
+              eligibleRoofs.has(b.id) &&
+              !occupiedRoofs.has(b.id),
+            otherBuilding(b)
+          )}
+          stroke="#9eac96"
+          strokeWidth={0.5}
+          vectorEffect="non-scaling-stroke"
+          onClick={() => {
+            const d = city.districts.find((d) =>
+              d.polygons.some(
+                (p) =>
+                  inBuildingRing(b.center, p[0]) &&
+                  !p.slice(1).some((h) => inBuildingRing(b.center, h))
+              )
+            );
+            if (d) void onBuilding(d.id, b);
+          }}
+        >
+          <title>{b.id} · 건물 선택</title>
+        </path>
+      )),
+    [buildings, facilityType, eligibleRoofs, occupiedRoofs, ownDistrict, onBuilding, city]
+  );
   return (
     <svg
       ref={svg}
       {...handlers}
       style={{ touchAction: 'none', userSelect: 'none', cursor: dragging ? 'grabbing' : 'grab' }}
       className="city-plan"
-      viewBox={`${focus.center[0] - focus.distance} ${-focus.center[1] - focus.distance} ${focus.distance * 2} ${focus.distance * 2}`}
+      viewBox={`${box.x} ${box.y} ${box.width} ${box.height}`}
       role="group"
       aria-label="서울 25개 구 플레이 지도"
     >
-      <path d={paths.boundary} fill="#eef0e6" />
+      <path d={paths.boundary} fill="#dfe3cf" />
       {city.districts.map((d) => (
         <path
           key={d.id}
@@ -118,9 +162,17 @@ export const CityPlan = memo(function CityPlan({
           <title>{d.name}</title>
         </path>
       ))}
-      {paths.water.map((path, i) => (
-        <path key={i} d={path} fill="#81b1ba" />
+      {paths.surfaces.map((s, i) => (
+        <path key={i} d={s.path} fill={s.kind === 'water' ? '#81b1ba' : '#b4c8a3'} />
       ))}
+      <path
+        d={paths.roads}
+        fill="none"
+        stroke="#bfc3b4"
+        strokeWidth={1}
+        vectorEffect="non-scaling-stroke"
+        pointerEvents="none"
+      />
       {showLabels &&
         city.districts.map((d) => (
           <text
@@ -139,40 +191,7 @@ export const CityPlan = memo(function CityPlan({
             )}
           </text>
         ))}
-      {!overview &&
-        buildings
-          .filter(
-            ({ building: b }) =>
-              Math.abs(b.center[0] - focus.center[0]) < focus.distance * 1.2 &&
-              Math.abs(b.center[1] - focus.center[1]) < focus.distance * 1.2
-          )
-          .map(({ building: b, path }) => (
-            <path
-              key={b.id}
-              d={path}
-              fill="#c6ccba"
-              opacity={buildingOpacity(
-                (!facilityType || facilityType === 'GREEN_ROOF') &&
-                  eligibleRoofs.has(b.id) &&
-                  !occupiedRoofs.has(b.id),
-                otherBuilding(b)
-              )}
-              stroke="#9eac96"
-              strokeWidth={Math.max(0.5, focus.distance * 0.001)}
-              onClick={() => {
-                const d = city.districts.find((d) =>
-                  d.polygons.some(
-                    (p) =>
-                      inBuildingRing(b.center, p[0]) &&
-                      !p.slice(1).some((h) => inBuildingRing(b.center, h))
-                  )
-                );
-                if (d) void onBuilding(d.id, b);
-              }}
-            >
-              <title>{b.id} · 건물 선택</title>
-            </path>
-          ))}
+      {buildingLayer}
       {sites.map((site) => {
         const installed = installations.find((i) => siteKey(i) === siteKey(site));
         return (
@@ -223,7 +242,12 @@ export const CityPlan = memo(function CityPlan({
           </title>
         </circle>
       ))}
-      <LiveRainPlan districts={wetDistricts} scale={focus.distance * 2} animate={animateRain} />
+      <LiveRainPlan
+        districts={wetDistricts}
+        amounts={rainAmounts}
+        scale={box.height}
+        animate={animateRain}
+      />
       {showLabels &&
         regions.map((r) => (
           <g

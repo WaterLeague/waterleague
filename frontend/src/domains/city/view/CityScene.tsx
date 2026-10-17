@@ -31,7 +31,7 @@ import type { Terrain } from '../../terrain/entity/terrain';
 import { terrainHeight, terrainLine } from '../../terrain/service/terrainService';
 import { TerrainSurface } from '../../terrain/view/TerrainSurface';
 const TerrainContext = createContext<Terrain | null>(null);
-type CameraState = { center: [number, number]; distance: number };
+type CameraState = Pick<CityFocus, 'center' | 'distance' | 'heightM'>;
 function Buildings({
   buildings,
   opacity = 1,
@@ -206,7 +206,7 @@ function Controls({
     (force = false) => {
       if (!controls.current) return;
       const target = controls.current.target;
-      const elevation = terrainHeight(terrain, [target.x, -target.z]);
+      const elevation = terrainHeight(terrain, [target.x, -target.z]) + (focus.heightM ?? 0);
       const rise = elevation - target.y;
       target.y = elevation;
       camera.position.y += rise;
@@ -217,9 +217,13 @@ function Controls({
       const now = performance.now();
       if (!force && now - last.current < 350) return;
       last.current = now;
-      onCamera({ center: [target.x, -target.z], distance: camera.position.distanceTo(target) });
+      onCamera({
+        center: [target.x, -target.z],
+        distance: camera.position.distanceTo(target),
+        heightM: focus.heightM,
+      });
     },
-    [camera, onCamera, terrain]
+    [camera, onCamera, terrain, focus.heightM]
   );
   useEffect(() => watchContextLoss(gl.domElement, onUnavailable), [gl, onUnavailable]);
   useEffect(() => {
@@ -235,7 +239,7 @@ function Controls({
         Math.max(halfWidth / ((tangent * size.width) / size.height), (halfHeight * 0.8) / tangent) +
         halfHeight * 0.6;
     }
-    const elevation = terrainHeight(terrain, [x, y]);
+    const elevation = terrainHeight(terrain, [x, y]) + (focus.heightM ?? 0);
     camera.position.set(x, elevation + distance * 0.8, -y + distance * 0.6);
     controls.current?.target.set(x, elevation, -y);
     controls.current?.update();
@@ -333,6 +337,7 @@ const CityScene = memo(function CityScene({
   selectedSite,
   onSite,
   wetDistricts,
+  rainAmounts,
   rainCamera,
   animateRain,
   preview,
@@ -357,6 +362,7 @@ const CityScene = memo(function CityScene({
   selectedSite: string;
   onSite: (key: string) => void;
   wetDistricts: City['districts'];
+  rainAmounts: ReadonlyMap<string, number | null>;
   rainCamera: CameraState;
   animateRain: boolean;
   preview: { site: SharedSite; placement: Placement } | null;
@@ -536,6 +542,7 @@ const CityScene = memo(function CityScene({
           ))}
         <LiveRainScene
           districts={wetDistricts}
+          amounts={rainAmounts}
           center={rainCamera.center}
           distance={rainCamera.distance}
           animate={animateRain}

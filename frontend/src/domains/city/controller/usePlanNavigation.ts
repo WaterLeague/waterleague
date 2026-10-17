@@ -1,14 +1,24 @@
-import { useEffect, useRef, useState, type PointerEvent } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type PointerEvent } from 'react';
 import type { CityFocus } from '../entity/city';
-import { initialPlanView, zoomPlanView, type PlanView } from '../service/planNavigationService';
+import {
+  initialPlanView,
+  zoomPlanView,
+  planBox,
+  type PlanView,
+} from '../service/planNavigationService';
 
 export function usePlanNavigation(
   focus: CityFocus,
   bounds: number[],
-  onCamera: (view: PlanView) => void
+  initialCamera: PlanView,
+  onCamera: (view: PlanView) => void,
+  onNavigate: (view: PlanView) => void
 ) {
   const svg = useRef<SVGSVGElement>(null);
-  const [view, setView] = useState(() => initialPlanView(focus, bounds));
+  const [view, setView] = useState(initialCamera);
+  const [aspect, setAspect] = useState(1);
+  const aspectRef = useRef(1);
+  const focusKey = useRef(focus.key);
   const current = useRef(view);
   const drag = useRef<{ id: number; x: number; y: number; scale: number; view: PlanView } | null>(
     null
@@ -17,13 +27,29 @@ export function usePlanNavigation(
   const frame = useRef<number | null>(null);
   const reportTimer = useRef<number | null>(null);
   const [dragging, setDragging] = useState(false);
+  useLayoutEffect(() => {
+    const element = svg.current;
+    if (!element) return;
+    const resize = () => {
+      aspectRef.current = element.clientWidth / Math.max(1, element.clientHeight);
+      setAspect(aspectRef.current);
+    };
+    resize();
+    const observer = new ResizeObserver(resize);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
   useEffect(() => {
-    current.current = initialPlanView(focus, bounds);
+    if (focusKey.current === focus.key) return;
+    focusKey.current = focus.key;
+    current.current = initialPlanView(focus, bounds, aspectRef.current);
+    onNavigate(current.current);
     setView(current.current);
     onCamera(current.current);
-  }, [focus, bounds, onCamera]);
+  }, [focus, bounds, onCamera, onNavigate]);
   function change(next: PlanView) {
     current.current = next;
+    onNavigate(next);
     if (frame.current === null)
       frame.current = requestAnimationFrame(() => {
         frame.current = null;
@@ -50,12 +76,13 @@ export function usePlanNavigation(
       const pixels =
         event.deltaY *
         (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? element.clientHeight : 1);
+      const currentBox = planBox(current.current, aspectRef.current);
       change(
         zoomPlanView(
           current.current,
           [
-            current.current.center[0] + u * current.current.distance * 2,
-            current.current.center[1] - v * current.current.distance * 2,
+            current.current.center[0] + u * currentBox.width,
+            current.current.center[1] - v * currentBox.height,
           ],
           Math.exp(Math.max(-500, Math.min(500, pixels)) * 0.002)
         )
@@ -69,7 +96,7 @@ export function usePlanNavigation(
       frame.current = null;
       reportTimer.current = null;
     };
-  }, [onCamera]);
+  }, [onCamera, onNavigate]);
   function pointerDown(event: PointerEvent<SVGSVGElement>) {
     if (event.button !== 0 || !event.isPrimary) return;
     const matrix = svg.current?.getScreenCTM();
@@ -93,6 +120,7 @@ export function usePlanNavigation(
     setDragging(true);
     svg.current?.setPointerCapture(event.pointerId);
     change({
+      ...start.view,
       center: [start.view.center[0] - dx * start.scale, start.view.center[1] + dy * start.scale],
       distance: start.view.distance,
     });
@@ -107,6 +135,7 @@ export function usePlanNavigation(
   return {
     svg,
     view,
+    box: planBox(view, aspect),
     dragging,
     handlers: {
       onPointerDown: pointerDown,

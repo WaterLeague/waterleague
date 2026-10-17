@@ -4,6 +4,7 @@ import {
   rainCondition,
   rainParticleSeeds,
   rainSamplingWindow,
+  rainVisualDensity,
   insideRainArea,
   type RainStation,
   type RainPolygons,
@@ -29,6 +30,13 @@ const station: RainStation = {
   windSpeedMs: 0,
   pressureHpa: 1000,
 };
+it('구별 분 강수량이 증가하면 표현 밀도가 증가하고 표시 상한 유지', () => {
+  expect(rainVisualDensity(0.1)).toBeGreaterThan(rainVisualDensity(null));
+  expect(rainVisualDensity(1)).toBeGreaterThan(rainVisualDensity(0.1));
+  expect(rainVisualDensity(2)).toBeGreaterThan(rainVisualDensity(1));
+  expect(rainVisualDensity(1000)).toBe(1.6);
+  expect(rainVisualDensity(Number.NaN)).toBe(rainVisualDensity(null));
+});
 it('과거 누적 강우와 결측·지연을 현재 비 효과로 사용하지 않음', () => {
   expect(isRaining(station, at + 120000)).toBe(false);
   const wet = { ...station, rainDetected: true, rainState: 'WET' as const };

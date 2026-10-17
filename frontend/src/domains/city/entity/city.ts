@@ -7,6 +7,7 @@ export type TileEntry = City['tiles'][number];
 export type CityFocus = {
   center: [number, number];
   distance: number;
+  heightM?: number;
   key: number;
   overview?: boolean;
 };

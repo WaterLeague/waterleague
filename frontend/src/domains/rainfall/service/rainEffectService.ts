@@ -18,6 +18,11 @@ export function rainCondition(station: RainStation, now: number) {
 
 type Point = [number, number];
 export type RainPolygons = Point[][][];
+// 밀도는 시각 표현용이다. 관측량·점수·물리 입력에는 적용하지 않는다.
+export function rainVisualDensity(oneMinuteMm: number | null | undefined) {
+  if (oneMinuteMm == null || !Number.isFinite(oneMinuteMm) || oneMinuteMm <= 0) return 0.25;
+  return Math.min(1.6, 0.25 + Math.sqrt(oneMinuteMm * 60) / 10);
+}
 // 작은 카메라 이동은 같은 입자 영역을 재사용하고 실제 관측 구 경계는 유지한다.
 export function rainSamplingWindow(center: Point, distance: number) {
   const scale = 2 ** Math.ceil(Math.log2(Math.max(256, distance)));

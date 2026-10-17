@@ -17,6 +17,8 @@ import { useMapLabelWheel } from '../controller/useMapLabelWheel';
 import type { City, CityFocus, CityBuilding } from '../entity/city';
 import type { CityEligibility } from '../dto/cityEligibilityDto';
 import { occupiedRoofSource } from '../service/siteVisibilityService';
+import { siteFocus } from '../service/siteFocusService';
+import type { PlanView } from '../service/planNavigationService';
 import type { CityPlayRegion } from '../dto/cityPlayDto';
 import { ErrorBoundary } from '../../../shared/exception/ErrorBoundary';
 import { CityPlan } from './CityPlan';
@@ -96,6 +98,17 @@ function Explorer({
     return city.districts.filter((d) => ids.has(d.id));
   }, [city, rainfall.value, rainfall.now, researchMode, historicalWetKey]);
   const wetIds = new Set(wetDistricts.map((d) => d.id));
+  const rainAmounts = useMemo(
+    () =>
+      new Map<string, number | null>(
+        researchMode
+          ? (research.event?.regions.map(
+              (r) => [r.districtId, r.depthsMm[research.index] ?? null] as const
+            ) ?? [])
+          : (rainfall.value?.districts.map((d) => [d.districtId, d.oneMinuteMm] as const) ?? [])
+      ),
+    [researchMode, research.event, research.index, rainfall.value]
+  );
   const unknownRainCount =
     rainfall.value?.districts.filter(
       (d) => !observationFresh(d, rainfall.now) || d.rainState === 'UNKNOWN'
@@ -122,10 +135,15 @@ function Explorer({
   useEffect(() => {
     if (initialDistrictId && !researchMode) select(initialDistrictId);
   }, [initialDistrictId, researchMode]);
-  const [camera, setCamera] = useState<{ center: [number, number]; distance: number }>({
+  const stage = useRef<HTMLElement>(null);
+  const [camera, setCamera] = useState<PlanView>({
     center: [0, 0],
     distance: 35000,
   });
+  const navigationCamera = useRef(camera);
+  const onNavigate = useCallback((value: typeof camera) => {
+    navigationCamera.current = value;
+  }, []);
   const sharedData = useInstallations(
     {
       districtId: selected,
@@ -173,19 +191,20 @@ function Explorer({
   const labels = useRef(new Map<string, HTMLElement>());
   const labelLayer = useRef<HTMLDivElement>(null);
   useMapLabelWheel(labelLayer, flat);
-  const onCamera = useCallback(
-    (value: typeof camera) =>
-      setCamera((previous) => {
-        const threshold = Math.max(2, value.distance * 0.005);
-        return Math.hypot(
-          previous.center[0] - value.center[0],
-          previous.center[1] - value.center[1]
-        ) < threshold && Math.abs(previous.distance - value.distance) < threshold
-          ? previous
-          : value;
-      }),
-    []
-  );
+  const onCamera = useCallback((value: typeof camera) => {
+    navigationCamera.current = value;
+    setCamera((previous) => {
+      const threshold = Math.max(2, value.distance * 0.005);
+      return Math.hypot(
+        previous.center[0] - value.center[0],
+        previous.center[1] - value.center[1]
+      ) < threshold &&
+        Math.abs(previous.distance - value.distance) < threshold &&
+        (previous.heightM ?? 0) === (value.heightM ?? 0)
+        ? previous
+        : value;
+    });
+  }, []);
   const unavailable = useCallback(() => {
     setFailed(true);
     setFlat(true);
@@ -194,7 +213,13 @@ function Explorer({
     (value: SharedSite) => {
       selectionRequest.current++;
       setSelected(value.districtId);
-      setCamera({ center: value.center, distance: Math.max(180, Math.sqrt(value.areaM2) * 3.5) });
+      const target = siteFocus(
+        value,
+        stage.current?.clientWidth ?? 800,
+        stage.current?.clientHeight ?? 600
+      );
+      navigationCamera.current = target;
+      setCamera(target);
       setSite(value);
       setType(value.allowedTypes.includes(type as FacilityType) ? type : value.allowedTypes[0]);
       setArea(String(Math.min(20, value.maxAreaM2)));
@@ -202,8 +227,7 @@ function Explorer({
       setListOpen(false);
       setOffset(0);
       setFocus((p) => ({
-        center: value.center,
-        distance: Math.max(180, Math.sqrt(value.areaM2) * 3.5),
+        ...target,
         key: p.key + 1,
       }));
     },
@@ -334,6 +358,9 @@ function Explorer({
       onSite={selectSite}
       onBuilding={selectBuilding}
       onCamera={onCamera}
+      onNavigate={onNavigate}
+      camera={camera}
+      rainAmounts={rainAmounts}
     />
   );
 
@@ -423,7 +450,7 @@ function Explorer({
             )}
           </div>
         </div>
-        <section className="city-stage" aria-label="서울 전역 3D 지도">
+        <section ref={stage} className="city-stage" aria-label="서울 전역 3D 지도">
           {flat ? (
             plan
           ) : (
@@ -456,6 +483,7 @@ function Explorer({
                   onSite={selectSite}
                   onBuilding={selectBuilding}
                   wetDistricts={wetDistricts}
+                  rainAmounts={rainAmounts}
                   rainCamera={camera}
                   animateRain={animateRain}
                   preview={preview}
@@ -521,6 +549,13 @@ function Explorer({
               <button
                 aria-pressed={!flat}
                 onClick={() => {
+                  if (flat)
+                    setFocus((p) => ({
+                      center: navigationCamera.current.center,
+                      distance: navigationCamera.current.distance,
+                      heightM: navigationCamera.current.heightM,
+                      key: p.key + 1,
+                    }));
                   setFailed(false);
                   setFlat(false);
                 }}
