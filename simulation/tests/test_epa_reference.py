@@ -1,13 +1,14 @@
 import copy
 from decimal import Decimal
 import json
+import os
 from pathlib import Path
 import tempfile
 import unittest
 
 from waterleague_sim.reference.epa import (
     MANIFEST, ROOT, ReferenceValidationError, compare_published, compare_units,
-    read_sources, report_depths, transform_input,
+    execute_case, read_sources, report_depths, transform_input,
 )
 
 
@@ -72,6 +73,23 @@ class RegisteredSourceTests(unittest.TestCase):
         if not cls.cache.exists():
             raise unittest.SkipTest('고정 EPA ZIP 취득 후 실행')
         cls.manifest, cls.sources = read_sources(cls.cache)
+
+    def test_relative_native_paths_and_byte_length_limit(self):
+        source = transform_input(self.sources['Example1-Pre.inp'], '2-yr')
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary).resolve()
+            # ASCII 경계 성공과 다중 바이트 경로 초과를 실제 엔진 앞에서 구분한다.
+            length = 259 - len(os.fsencode(root)) - len('/input.inp') - 1
+            boundary = root / ('a' * length)
+            relative = Path(os.path.relpath(boundary))
+            self.assertFalse(relative.is_absolute())
+            result = execute_case(source, relative, 'CFS')
+            self.assertTrue(result['apiCliBinaryEqual'])
+            self.assertEqual(result['reportCount'], 720)
+            too_long = root / ('a' * (length - 1) + '가')
+            with self.assertRaisesRegex(ReferenceValidationError, 'ENGINE_PATH_TOO_LONG'):
+                execute_case(source, too_long, 'CFS')
+            self.assertFalse(too_long.exists())
 
     def test_unit_conversion_preserves_hydrologic_fields_and_original(self):
         source = self.sources['Example1-Pre.inp']

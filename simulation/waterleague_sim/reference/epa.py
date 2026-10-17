@@ -132,7 +132,9 @@ def report_depths(report, units):
 
 def execute_case(inp, directory, units):
     require(units in ('CFS', 'CMS'), 'UNITS_UNSUPPORTED')
-    directory = Path(directory)
+    # 고정 엔진의 상대경로 변환 버퍼와 파일명 한도를 호출 전에 처리한다.
+    directory = Path(directory).resolve()
+    require(all(len(os.fsencode(directory/name)) <= 259 for name in ('input.inp', 'api.rpt', 'api.out', 'cli.rpt', 'cli.out')), 'ENGINE_PATH_TOO_LONG')
     directory.mkdir()
     path = directory / 'input.inp'
     path.write_text(inp)

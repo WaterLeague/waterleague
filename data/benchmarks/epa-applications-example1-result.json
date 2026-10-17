@@ -23,7 +23,7 @@
     "sourceUrl": "https://www.epa.gov/sites/production/files/2014-05/epaswmm5_apps_manual.zip",
     "sourceSha256": "889dd60a53ac85f00ee90db947a67ddc6d0737f46acf818bf7c7c08ac272f0ea",
     "contractSha256": "18e5f2e628f45308313fc2488c9826bde2ace7112524432348415d323a70573c",
-    "verificationCodeSha256": "b134949d7fbbfff7c78a7640f33b88b39a1db21e4ab963d0d463fa1882dc6868"
+    "verificationCodeSha256": "cbc737e5867eb72af81fe76cc527ed48e8102bbd631202b79fc24bf7d96d5245"
   },
   "limitations": [
     "미국 설계강우 교육 사례이며 서울 관측·현장 보정 자료가 아님",
