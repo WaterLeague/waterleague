@@ -1,0 +1,14 @@
+{
+  "provider": "KMA_ASOS_DIRECT",
+  "endpoint": "https://apihub.kma.go.kr/api/typ01/url/kma_sfctm3.php",
+  "parameters": {
+    "tm1": "202407161200",
+    "tm2": "202407181100",
+    "stn": "108",
+    "help": "1"
+  },
+  "fetchedAt": "2026-10-17T14:31:29.710548+00:00",
+  "sha256": "fd46c73f07f9c696092d9eb4ea668ef2685f9744f39405323236886cc2546abf",
+  "purpose": "SIMULATION_USED_INPUT_ONLY",
+  "rawFile": "data/raw/kma-pet-fd46c73f07f9c696092d9eb4ea668ef2685f9744f39405323236886cc2546abf.txt"
+}

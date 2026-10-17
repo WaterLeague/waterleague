@@ -1,0 +1,70 @@
+"""FAO 공개 예제와 결측·시간 인과성 검사. 합성 기상은 시험 전용."""
+import unittest
+from datetime import datetime, timedelta, timezone
+
+from waterleague_sim.engine.evapotranspiration import solar_hour, hourly
+from waterleague_sim.ingestion.evaporation import KST, derive, append_evaporation, LiveSourceError
+
+
+class EvapotranspirationTests(unittest.TestCase):
+    def test_fao56_example19_daytime(self):
+        at = datetime(2001, 10, 1, 15, tzinfo=timezone(timedelta(hours=-1)))
+        solar = solar_hour(at, 16+13/60, -16.25, 8)
+        result = hourly(38, 52, 3.3, 1012, 2, 2.450, solar['clearSkyMjM2'], 2.450/solar['clearSkyMjM2'])
+        self.assertAlmostEqual(solar['extraterrestrialMjM2'], 3.543, places=3)
+        self.assertAlmostEqual(result['netRadiationMjM2'], 1.749, places=3)
+        self.assertAlmostEqual(result['referenceEtMmHour'], .63, places=2)
+
+    def fixture(self):
+        start = datetime(2024, 7, 18, 0, tzinfo=KST)
+        end = start+timedelta(hours=24)
+        station = {'latitude': 37.57142, 'longitude': 126.9658, 'elevationM': 85.67, 'windHeightM': 7}
+        radiation, weather = {}, {}
+        for i in range(-36, 24):
+            at = start+timedelta(hours=i)
+            solar = solar_hour(at, station['latitude'], station['longitude'], station['elevationM'])
+            radiation[at] = solar['clearSkyMjM2']*.6 if solar['clearSkyMjM2'] else None
+        for i in range(-59, 24*60):
+            weather[start+timedelta(minutes=i)] = {'temperatureC': 25, 'humidityPercent': 60,
+                                                   'windSpeedMs': 2, 'pressureHpa': 1000}
+        return start, end, station, radiation, weather
+
+    def test_hour_boundary_night_and_required_observation(self):
+        start, end, station, radiation, weather = self.fixture()
+        result = derive(start, end, station, radiation, weather)
+        self.assertEqual(len(result['ratesMmDay']), 1440)
+        self.assertEqual(len(result['hours']), 24)
+        self.assertEqual(result['hours'][0]['radiationBasis'], 'ASTRONOMICAL_NIGHT_ZERO')
+        self.assertTrue(all(v >= 0 for v in result['ratesMmDay']))
+        for hour in range(24):
+            self.assertEqual(len(set(result['ratesMmDay'][hour*60:(hour+1)*60])), 1)
+        noon = start+timedelta(hours=12)
+        del weather[noon]
+        with self.assertRaisesRegex(LiveSourceError, 'HOURLY_WEATHER_MISSING'):
+            derive(start, end, station, radiation, weather)
+
+    def test_missing_daylight_and_night_cloud_never_default_to_zero(self):
+        start, end, station, radiation, weather = self.fixture()
+        radiation[start+timedelta(hours=12)] = None
+        with self.assertRaisesRegex(LiveSourceError, 'RADIATION_MISSING'):
+            derive(start, end, station, radiation, weather)
+        with self.assertRaisesRegex(LiveSourceError, 'NIGHT_CLOUD_MISSING'):
+            derive(start, start+timedelta(hours=1), station, {start: None}, weather)
+
+    def test_future_hour_cannot_change_earlier_minute_and_legacy_prefix_preserved(self):
+        start, end, station, radiation, weather = self.fixture()
+        before = derive(start, end, station, radiation, weather)
+        radiation[start+timedelta(hours=12)] *= .8
+        after = derive(start, end, station, radiation, weather)
+        self.assertEqual(before['ratesMmDay'][:720], after['ratesMmDay'][:720])
+        self.assertNotEqual(before['ratesMmDay'][720], after['ratesMmDay'][720])
+        extension = before | {'sourceHashes': ['TEST_ONLY']}
+        joined = append_evaporation(None, 10, 0, extension)
+        self.assertEqual(joined['ratesMmDay'][:10], [0]*10)
+        self.assertEqual(joined['legacyPrefixMinutes'], 10)
+        second = append_evaporation(joined, len(joined['ratesMmDay']), 0, extension)
+        self.assertEqual(second['ratesMmDay'][:1450], joined['ratesMmDay'])
+
+
+if __name__ == '__main__':
+    unittest.main()

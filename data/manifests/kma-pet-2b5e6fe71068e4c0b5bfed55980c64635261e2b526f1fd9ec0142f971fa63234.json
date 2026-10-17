@@ -1,0 +1,14 @@
+{
+  "provider": "KMA_ASOS_DIRECT",
+  "endpoint": "https://apihub.kma.go.kr/api/typ01/url/stn_inf.php",
+  "parameters": {
+    "inf": "AWS",
+    "stn": "108",
+    "tm": "202407181100",
+    "help": "1"
+  },
+  "fetchedAt": "2026-10-17T14:31:28.856076+00:00",
+  "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+  "purpose": "SIMULATION_USED_INPUT_ONLY",
+  "rawFile": "data/raw/kma-pet-2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234.txt"
+}

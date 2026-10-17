@@ -20,7 +20,7 @@ def main():
     if (request['modelSha256'] != digest(source) or request['forcingSha256'] != digest(forcing)
             or request['engine'] != engine_identity()):
         raise ValueError('LIVE_REQUEST_HASH_INVALID')
-    experiment(json.loads(source), request['placement'], path)
+    experiment(json.loads(source), request['placement'], path, json.loads(forcing).get('evaporation'))
 
 
 if __name__ == '__main__':

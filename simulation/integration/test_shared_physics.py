@@ -30,6 +30,13 @@ class SharedPhysicsTests(unittest.TestCase):
             owner_id,model_hash,facility_type,area_m2,cost,installed_at)
             VALUES(%s,'2419953:G1','2419953','G1',%s,%s,'RAIN_GARDEN',10,1000000,%s)""",
             (self.installation, self.owner, model_hash, start))
+        evaporation = patch.object(physics, 'observed_evaporation', side_effect=self.evaporation)
+        evaporation.start()
+        self.addCleanup(evaporation.stop)
+
+    def evaporation(self, start, end, key):
+        return {'method': 'SYNTHETIC_TEST_ONLY', 'sourceHashes': ['TEST_ONLY'], 'hours': [],
+                'ratesMmDay': [2]*int((end-start).total_seconds()/60)}, []
 
     def test_atomic_claim_and_expired_result_fencing(self):
         barrier = threading.Barrier(2)

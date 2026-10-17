@@ -11,6 +11,7 @@ from pathlib import Path
 
 from .engine.continuous import ROOT, digest, engine_identity
 from .ingestion.live import observed_forcing
+from .ingestion.evaporation import observed_evaporation, append_evaporation
 from .shared_model import resolve
 
 
@@ -81,6 +82,7 @@ def process(conn, job, root):
         model, station, station_name = resolve(job['installation'])
         engine = engine_identity()
         observations, source_hashes, previous_ref, previous_result = [], [], None, None
+        previous_evaporation = None
         covered = job['start']
         if previous := job['previous']:
             old = Path(root)/'shared-physics'/str(previous['id'])/str(previous['lease_token'])
@@ -96,6 +98,7 @@ def process(conn, job, root):
                 raise ValueError('LIVE_PREVIOUS_INPUT_INVALID')
             previous_result = json.loads((old/'result.json').read_text())
             observations, source_hashes = forcing['observations'], forcing['sourceHashes']
+            previous_evaporation = forcing.get('evaporation')
             covered = previous['requested_through']
             previous_ref = {'jobId': str(previous['id']), 'leaseToken': str(previous['lease_token']),
                             'requestSha256': digest(req_raw), 'forcingSha256': digest(raw)}
@@ -104,10 +107,13 @@ def process(conn, job, root):
         if any(v['end'] in saved_depths and v['depthMm'] != saved_depths[v['end']]
                for v in extension['overlapObservations']):
             raise ValueError('AWS_PREVIOUS_INTERVAL_REVISED')
+        evaporation, weather_sources = observed_evaporation(covered, job['end'], os.environ.get('KMA_API_KEY', ''))
+        evaporation = append_evaporation(previous_evaporation, len(observations), model['hydrology']['evaporationMmDay'], evaporation)
         forcing = extension | {'start': job['start'].isoformat(),
                                'observations': observations+extension['observations'],
-                               'sourceHashes': source_hashes+extension['sourceHashes'], 'previousInput': previous_ref}
-        for raw, meta in sources:
+                               'sourceHashes': source_hashes+extension['sourceHashes'], 'previousInput': previous_ref,
+                               'evaporation': evaporation}
+        for raw, meta in sources+weather_sources:
             (path/(meta['sha256']+'.txt')).write_bytes(raw)
             (path/(meta['sha256']+'.json')).write_bytes(encode(meta))
         # 저장된 값은 이 계산의 재현 입력이다. 최신 날씨 응답의 공급원으로 사용하지 않는다.
@@ -123,6 +129,8 @@ def process(conn, job, root):
         (path/'model-source.json').write_bytes(source)
         (path/'forcing.json').write_bytes(forcing_raw)
         (path/'request.json').write_bytes(request_raw)
+        for module in ('engine/evapotranspiration.py', 'ingestion/evaporation.py'):
+            (path/Path(module).name).write_bytes((Path(__file__).parent/module).read_bytes())
         env = {k: v for k, v in os.environ.items() if k in ('PATH', 'LANG', 'LC_ALL', 'LIVE_SWMM_LIBRARY')}
         env['PYTHONPATH'] = str(ROOT/'simulation')
         child = subprocess.Popen([sys.executable, '-m', 'waterleague_sim.run_live_job', str(path)],

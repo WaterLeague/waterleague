@@ -84,7 +84,7 @@ export function PhysicsPanel({ installationId }: { installationId: string }) {
             <p>
               {result.evaporationMethod === 'ASSUMED_MODEL_CONSTANT'
                 ? '증발산 기상 입력 연결 전으로 0 조건 적용 중입니다.'
-                : '기상자료에서 계산한 잠재 증발률 적용 중입니다.'}{' '}
+                : '서울 관측소의 일사·기온·습도·풍속·기압으로 계산한 기준 증발산을 적용합니다. 직전 완료 시간의 값을 다음 시간에 유지하며, 시설별 보정 전입니다.'}{' '}
               실제 침수 깊이나 현장 계측값은 아닙니다.
             </p>
           </details>
