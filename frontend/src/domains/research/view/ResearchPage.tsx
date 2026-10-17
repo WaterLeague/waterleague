@@ -10,21 +10,31 @@ import { useResearch } from '../controller/useResearch';
 import { CostPerformance, MetricsComparison } from './ResearchComparison';
 import { format, facilities } from '../../game/service/gameService';
 import { Hydrograph } from '../../game/view/Hydrograph';
+import type { CandidateMap } from '../../catalog/entity/catalog';
 export function ResearchPage({
   account,
   lab,
   catalog,
+  map,
   onReplay,
 }: {
   account: Account | null;
   lab: Lab;
   catalog: RainfallCatalog | null;
+  map: CandidateMap | null;
   onReplay: (p: Placement[]) => void;
 }) {
-  const { consents, entries, detail, error, revision, setRevision, inspect, consent } = useResearch(
-    account,
-    lab.modelHash
-  );
+  const {
+    consents,
+    entries,
+    detail,
+    error,
+    revision,
+    setRevision,
+    inspect,
+    consent,
+    refreshAccess,
+  } = useResearch(account, lab.modelHash);
   const [utilizationRefresh, setUtilizationRefresh] = useState(0);
   return (
     <section className="full-page">
@@ -163,6 +173,10 @@ export function ResearchPage({
             source={detail}
             entries={entries}
             catalog={catalog}
+            lab={lab}
+            map={map}
+            organizationId={account.organizationId}
+            refreshSources={refreshAccess}
           />
         </>
       )}

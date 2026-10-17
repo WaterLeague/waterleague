@@ -923,6 +923,7 @@ export function GamePage() {
           account={g.account}
           lab={lab}
           catalog={g.rainfallCatalog}
+          map={catalog.data?.map ?? null}
           onReplay={(p) => {
             g.newDesign();
             setActiveLeague(null);

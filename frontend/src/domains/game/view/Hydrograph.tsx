@@ -1,10 +1,20 @@
 import { useState } from 'react';
-import type { Job, Rainfall } from '../entity/game';
+import type { Job, Rainfall, SimulationResult } from '../entity/game';
 import { rainDate } from './RainfallSelector';
 import { format } from '../service/gameService';
-export function Hydrograph({ job, rainfall }: { job: Job | null; rainfall: Rainfall }) {
+export function Hydrograph({
+  job,
+  result,
+  rainfall,
+  designLabel = '내 설계',
+}: {
+  job?: Job | null;
+  result?: SimulationResult | null;
+  rainfall: Rainfall;
+  designLabel?: string;
+}) {
   const [minute, setMinute] = useState(0);
-  const r = job?.result;
+  const r = result ?? job?.result;
   const values = r?.strategy.seriesM3s ?? rainfall.depthsMm;
   const base = r?.baseline.seriesM3s;
   const max = Math.max(...values, ...(base ?? []), 0.001);
@@ -43,7 +53,7 @@ export function Hydrograph({ job, rainfall }: { job: Job | null; rainfall: Rainf
           )}
           <span>
             <i />
-            {r ? '내 설계' : '관측 강우'}
+            {r ? designLabel : '관측 강우'}
           </span>
         </div>
       </div>

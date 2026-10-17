@@ -3,14 +3,25 @@ import type { ResearchDetail, ResearchEntry } from '../../research/entity/resear
 import { ResearchRainfallPanel } from './ResearchRainfallPanel';
 import { PatternPanel } from './PatternPanel';
 import './analysis.css';
+import { SearchPanel } from '../../optimization/view/SearchPanel';
+import type { Lab } from '../../game/entity/game';
+import type { CandidateMap } from '../../catalog/entity/catalog';
 export function ResearchAnalysisWorkspace({
   source,
   entries,
   catalog,
+  lab,
+  map,
+  organizationId,
+  refreshSources,
 }: {
   source: ResearchDetail | null;
   entries: ResearchEntry[];
   catalog: RainfallCatalog | null;
+  lab: Lab;
+  map: CandidateMap | null;
+  organizationId: string | null;
+  refreshSources: () => void;
 }) {
   return (
     <section className="institution-analysis" aria-label="기관 연구 분석">
@@ -24,6 +35,15 @@ export function ResearchAnalysisWorkspace({
       </p>
       <ResearchRainfallPanel source={source} catalog={catalog} />
       <PatternPanel entries={entries} />
+      {organizationId && (
+        <SearchPanel
+          lab={lab}
+          map={map}
+          organizationId={organizationId}
+          entries={entries}
+          refreshSources={refreshSources}
+        />
+      )}
     </section>
   );
 }

@@ -12,38 +12,85 @@ export function useResearch(account: Account | null, modelHash: string) {
   const owner = useRef(account?.id);
   owner.current = account?.id;
   const selection = useRef(0);
+  const detailId = useRef<string | null>(null);
+  const refreshAccess = useRef<() => void>(() => {});
   useEffect(() => {
     let active = true;
+    let epoch = 0,
+      fetching = false;
     setDetail(null);
     setEntries([]);
     setConsents([]);
     setError('');
     selection.current++;
-    if (account && account.role === 'MEMBER') {
-      repo
-        .loadConsents()
-        .then((v) => {
-          if (active) setConsents(v);
-        })
-        .catch((e) => {
-          if (active) setError(errorMessage(e));
-        });
-      if (isOrganizationMember(account))
-        repo
-          .loadResearch(modelHash)
-          .then((v) => {
-            if (active) setEntries(v);
-          })
-          .catch((e) => {
-            if (active) setError(errorMessage(e));
-          });
+    detailId.current = null;
+    async function refresh(hide = false) {
+      if (!account || account.role !== 'MEMBER' || (fetching && !hide)) return;
+      const token = ++epoch,
+        id = detailId.current;
+      if (hide) {
+        selection.current++;
+        setDetail(null);
+        setEntries([]);
+      }
+      const selected = selection.current;
+      fetching = true;
+      try {
+        const [sharing, rows, current] = await Promise.all([
+          repo.loadConsents(),
+          isOrganizationMember(account) ? repo.loadResearch(modelHash) : Promise.resolve([]),
+          isOrganizationMember(account) && id ? repo.loadResearchDetail(id) : Promise.resolve(null),
+        ]);
+        if (!active || token !== epoch) return;
+        setConsents(sharing);
+        setEntries(rows);
+        setError('');
+        if (selected === selection.current && id === detailId.current) {
+          setDetail(current);
+          if (current) setRevision((v) => Math.min(v, current.history.length - 1));
+        }
+      } catch (e) {
+        if (active && token === epoch) {
+          selection.current++;
+          setEntries([]);
+          setDetail(null);
+          setError(errorMessage(e));
+          detailId.current = null;
+        }
+      } finally {
+        if (token === epoch) fetching = false;
+      }
     }
+    const revisit = () => void refresh(true);
+    const visibility = () => {
+      if (document.visibilityState === 'visible') revisit();
+      else {
+        epoch++;
+        fetching = false;
+        selection.current++;
+        setEntries([]);
+        setDetail(null);
+      }
+    };
+    refreshAccess.current = revisit;
+    void refresh();
+    const timer = window.setInterval(() => {
+      if (document.visibilityState === 'visible') void refresh();
+    }, 30000);
+    window.addEventListener('focus', revisit);
+    document.addEventListener('visibilitychange', visibility);
     return () => {
       active = false;
+      epoch++;
+      window.clearInterval(timer);
+      window.removeEventListener('focus', revisit);
+      document.removeEventListener('visibilitychange', visibility);
+      if (refreshAccess.current === revisit) refreshAccess.current = () => {};
     };
   }, [account, modelHash]);
   async function inspect(id: string) {
     const request = ++selection.current;
+    detailId.current = id;
     setError('');
     setDetail(null);
     try {
@@ -53,7 +100,10 @@ export function useResearch(account: Account | null, modelHash: string) {
         setRevision(d.history.length - 1);
       }
     } catch (e) {
-      if (request === selection.current) setError(errorMessage(e));
+      if (request === selection.current) {
+        setError(errorMessage(e));
+        detailId.current = null;
+      }
     }
   }
   async function consent(id: string, value: boolean) {
@@ -66,5 +116,15 @@ export function useResearch(account: Account | null, modelHash: string) {
       if (identity === owner.current) setError(errorMessage(e));
     }
   }
-  return { consents, entries, detail, error, revision, setRevision, inspect, consent };
+  return {
+    consents,
+    entries,
+    detail,
+    error,
+    revision,
+    setRevision,
+    inspect,
+    consent,
+    refreshAccess: () => refreshAccess.current(),
+  };
 }
