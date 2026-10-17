@@ -20,7 +20,14 @@ def main():
     if (request['modelSha256'] != digest(source) or request['forcingSha256'] != digest(forcing)
             or request['engine'] != engine_identity()):
         raise ValueError('LIVE_REQUEST_HASH_INVALID')
-    experiment(json.loads(source), request['placement'], path, json.loads(forcing).get('evaporation'))
+    model, evaporation = json.loads(source), json.loads(forcing).get('evaporation')
+    if model.get('initializationPolicy') is not None:
+        from .engine.initialization import prepend
+        raw = (path/'antecedent.json').read_bytes()
+        if digest(raw) != request.get('antecedentSha256'):
+            raise ValueError('LIVE_ANTECEDENT_HASH_INVALID')
+        model, evaporation = prepend(model, evaporation, json.loads(raw))
+    experiment(model, request['placement'], path, evaporation)
 
 
 if __name__ == '__main__':

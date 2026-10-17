@@ -33,6 +33,19 @@ class SharedPhysicsTests(unittest.TestCase):
         evaporation = patch.object(physics, 'observed_evaporation', side_effect=self.evaporation)
         evaporation.start()
         self.addCleanup(evaporation.stop)
+        from waterleague_sim.ingestion import antecedent
+        warmup = patch.object(antecedent, 'fetch', side_effect=self.antecedent)
+        self.warmup_fetch = warmup.start()
+        self.addCleanup(warmup.stop)
+
+    def antecedent(self, station, end, key, heartbeat=None):
+        if heartbeat is not None: heartbeat()
+        from waterleague_sim.engine.initialization import MINUTES
+        start = end-timedelta(days=7)
+        rain, sources = self.forcing(station, start, end, key)
+        pet, weather = self.evaporation(start, end, key)
+        return {'rainfall': {k: rain[k] for k in ('start','end','stationId','intervalSeconds','sourceHashes','evidence')}
+            | {'depthsMm': [0]*(MINUTES-60)+[.3]*60}, 'evaporation': pet}, sources+weather
 
     def evaporation(self, start, end, key):
         raw = b'SYNTHETIC_WEATHER_TEST_ONLY\n'; sha = physics.digest(raw)
@@ -50,7 +63,12 @@ class SharedPhysicsTests(unittest.TestCase):
         jobs = [v for v in results if v is not None]
         self.assertEqual(len(jobs), 1)
         old = jobs[0]
+        physics.renew(self.conn,old)
+        with self.assertRaisesRegex(ValueError,'LIVE_LEASE_LOST'):
+            physics.renew(self.conn,dict(old,lease_token=uuid.uuid4()))
         self.conn.execute("UPDATE shared_physics_jobs SET lease_until=now()-interval '1 second',created_at=now()-interval '61 seconds' WHERE id=%s", (old['id'],))
+        with self.assertRaisesRegex(ValueError,'LIVE_LEASE_LOST'):
+            physics.renew(self.conn,old)
         new = physics.claim(self.conn)
         self.assertIsNotNone(new)
         self.assertNotEqual(old['lease_token'], new['lease_token'])
@@ -58,7 +76,8 @@ class SharedPhysicsTests(unittest.TestCase):
         self.assertTrue(physics.finish(self.conn, new, None, None, 'KMA_UNAVAILABLE'))
         self.assertEqual(self.conn.execute('SELECT error_code FROM shared_physics_jobs WHERE id=%s', (old['id'],)).fetchone()['error_code'], 'LIVE_LEASE_EXPIRED')
 
-    def forcing(self, station, start, end, key):
+    def forcing(self, station, start, end, key, heartbeat=None):
+        if heartbeat is not None: heartbeat()
         def rows(begin, finish):
             return [{'end': (begin+timedelta(minutes=i)).isoformat(), 'depthMm': .3,
                      'method': 'SYNTHETIC_TEST_ONLY', 'weather': {}}
@@ -81,6 +100,12 @@ class SharedPhysicsTests(unittest.TestCase):
             result=json.loads(row['result'])
             self.assertEqual(result['inflowPolicy'],'DIRECT_RAINFALL_ONLY')
             self.assertEqual(result['areaLimitBasis'],'PUBLIC_FOOTPRINT_GEOMETRY')
+            self.assertEqual(result['initialState'],'OBSERVED_7_DAY_CONTINUOUS_SPINUP_V1')
+            self.assertTrue(result['initialization']['scoreExcludesWarmup'])
+            self.assertEqual(result['facilityDesign']['profile']['id'],'EPA_RG_610_V1')
+            saved = Path(root)/'shared-physics'/str(job['id'])/str(job['lease_token'])
+            calculation = json.loads((saved/'result.json').read_text())
+            self.assertEqual(len(calculation['contribution']), int((job['end']-job['start']).total_seconds()/60))
 
     def test_real_child_replays_preserved_input_and_refuses_revised_overlap(self):
         first = physics.claim(self.conn)
@@ -131,8 +156,8 @@ class SharedPhysicsTests(unittest.TestCase):
                 requested_through,state,lease_token,lease_until,created_at)
                 VALUES(%s,%s,%s,%s,'RUNNING',%s,now()+interval '240 seconds',now())""",
                 (third['id'], self.installation, third['start'], third['end'], third['lease_token']))
-            def revised(*args):
-                forcing, source = self.forcing(*args)
+            def revised(*args, **kwargs):
+                forcing, source = self.forcing(*args, **kwargs)
                 forcing['overlapObservations'][-1]['depthMm'] = .4
                 return forcing, source
             with patch.object(physics, 'observed_forcing', side_effect=revised):
@@ -140,6 +165,12 @@ class SharedPhysicsTests(unittest.TestCase):
             failure = self.conn.execute('SELECT * FROM shared_physics_jobs WHERE id=%s', (third['id'],)).fetchone()
             self.assertEqual(failure['state'], 'FAILED')
             self.assertEqual(failure['error_code'], 'AWS_PREVIOUS_INTERVAL_REVISED')
+
+    def test_observed_initialization_is_frozen_across_replays(self):
+        self.conn.execute('UPDATE shared_installations SET model_hash=%s WHERE id=%s',
+                          (catalog()[1]['2419953']['sha256'], self.installation))
+        self.test_real_child_replays_preserved_input_and_refuses_revised_overlap()
+        self.warmup_fetch.assert_called_once()
 
     def test_weather_hour_reuse_preserves_state_with_new_rainfall_queries(self):
         start=datetime.now(timezone.utc).replace(minute=10,second=0,microsecond=0)-timedelta(hours=1)

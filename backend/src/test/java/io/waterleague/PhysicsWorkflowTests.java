@@ -114,7 +114,16 @@ class PhysicsWorkflowTests {
         "UPDATE shared_physics_jobs SET created_at=? WHERE id=?",
         from(Instant.now().minusSeconds(300)),
         id);
+    assertThat(physics().body()).contains("\"status\":\"RUNNING\"");
+    db.update(
+        "UPDATE shared_physics_jobs SET lease_until=? WHERE id=?",
+        from(Instant.now().minusSeconds(1)),
+        id);
     assertThat(physics().body()).contains("\"status\":\"UNAVAILABLE\"");
+    assertThat(get("/api/v1/facilities/epa-designs-v1").body())
+        .contains("EPA_LID_PUBLIC_DESIGNS_V1", "EPA_GR_150_V1");
+    assertThat(get("/api/v1/installations/sites/2410520/G1").body())
+        .contains("OBSERVED_7_DAY_CONTINUOUS_SPINUP_V1");
     installations.remove(username, installation);
     assertThat(physics().statusCode()).isEqualTo(404);
   }
@@ -129,7 +138,9 @@ class PhysicsWorkflowTests {
          "precipitationM3":1,"infiltrationM3":0.2,"evaporationM3":0,"runoffM3":0.3,
          "storageM3":0.5,"surfaceDepthMm":0,"soilMoisture":0.2,"storageDepthMm":0,
          "runoffContinuityPercent":0.001,"evaporationMethod":"ASSUMED_MODEL_CONSTANT",
-         "initialState":"ASSUMED_DESIGN_START"}
+         "initialState":"OBSERVED_7_DAY_CONTINUOUS_SPINUP_V1",
+         "initialization":{"warmupMinutes":10080,"scoreExcludesWarmup":true},
+         "facilityDesign":{"profile":{"id":"EPA_RG_610_V1"}}}
         """
             .formatted(through);
     job("SUCCEEDED", Instant.now().minusSeconds(590), through, result, null);
@@ -137,6 +148,11 @@ class PhysicsWorkflowTests {
     job("FAILED", Instant.now(), through.plusSeconds(120), null, "KMA_UNAVAILABLE");
     assertThat(physics().body())
         .contains(
-            "\"status\":\"UNAVAILABLE\"", "기상청 응답", "\"infiltrationM3\":0.2", through.toString());
+            "\"status\":\"UNAVAILABLE\"",
+            "기상청 응답",
+            "\"infiltrationM3\":0.2",
+            through.toString(),
+            "\"warmupMinutes\":10080",
+            "EPA_RG_610_V1");
   }
 }

@@ -39,6 +39,12 @@ class HistoricalTests(unittest.TestCase):
         self.assertEqual(len(result['frames']),len(json.loads(models[model_hash])['rainfall']['depthsMm']))
         self.assertEqual(result['facilities'][0]['cellId'],cell_id)
         self.assertEqual(result['facilities'][0]['budgetPolicy'],budget_policy)
+        initialization=result['facilities'][0]['initialization']
+        self.assertEqual(initialization['warmupMinutes'],10080)
+        self.assertTrue(initialization['scoreExcludesWarmup'])
+        self.assertAlmostEqual(initialization['warmupRainMm'],146)
+        self.assertGreater(initialization['initialSoilMoisture'],.125)
+        self.assertEqual(result['facilities'][0]['facilityDesign']['profile']['id'],'EPA_GR_150_V1')
         path=self.artifacts/'historical'/str(identity)/str(job['lease_token'])
         manifest=json.loads((path/'manifest.json').read_text())
         self.assertEqual(manifest['rainfall-model.json'],model_hash)

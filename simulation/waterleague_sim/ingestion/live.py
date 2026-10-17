@@ -61,10 +61,58 @@ def parse(raw, station, start, end):
         raise RainfallQualityError('AWS_SOURCE_INVALID') from None
 
 
-def normalized(rows, start, end, allow_gaps=False):
+def normalized(rows, start, end, allow_gaps=False, rolling_warnings=None, interval_averages=None):
     derived = {}
     methods = {}
     minute = timedelta(minutes=1)
+    if rolling_warnings is not None:
+        previous_counter = None
+        for at, row in sorted(rows.items()):
+            if row['dayMm'] is None:
+                continue
+            if previous_counter is not None:
+                before, value = previous_counter
+                local = before.astimezone(KST)
+                gap = int((at-before).total_seconds()/60)
+                # 같은 날의 동일 누적값은 중간 구간 총강우 0의 근거. 양의 차이는 별도 구간 총량 처리로 분리한다.
+                midnight_zero = (local.hour == 0 and local.minute == 0 and gap <= 60
+                    and local.date() == at.astimezone(KST).date() and row['dayMm'] == 0)
+                if midnight_zero:
+                    for index in range(1, gap+1):
+                        instant = before+minute*index
+                        derived[instant], methods[instant] = Decimal(0), 'OBSERVED_ZERO_COUNTER_GAP'
+                elif (1 < gap <= 60 and local.date() == at.astimezone(KST).date()
+                        and (local.hour != 0 or local.minute != 0) and value == row['dayMm']):
+                    for index in range(1, gap+1):
+                        instant = before+minute*index
+                        derived[instant], methods[instant] = Decimal(0), 'OBSERVED_ZERO_COUNTER_GAP'
+                elif (interval_averages is not None and 1 < gap <= 360
+                        and local.date() == at.astimezone(KST).date()
+                        and (local.hour != 0 or local.minute != 0)
+                        and 0 < row['dayMm']-value <= Decimal(100)*gap):
+                    total = row['dayMm']-value
+                    # 관측 구간 총량만 보존. 구간 내부 분배는 평균 강도의 모델 가정으로 별도 기록.
+                    for index in range(1, gap+1):
+                        instant = before+minute*index
+                        derived[instant], methods[instant] = total/Decimal(gap), 'OBSERVED_INTERVAL_MEAN_ASSUMPTION'
+                    if start < at <= end:
+                        interval_averages.append({'start':before.isoformat(),'end':at.isoformat(),
+                            'minutes':gap,'totalMm':float(total),'timeDistribution':'UNIFORM_NOT_MINUTE_OBSERVATIONS'})
+            previous_counter = at, row['dayMm']
+    if rolling_warnings is not None:
+        for at, row in sorted(rows.items()):
+            local = at.astimezone(KST)
+            previous, following = rows.get(at-minute), rows.get(at+minute)
+            if (local.hour == 0 and local.minute == 0 and previous and following
+                    and row['fifteenMinuteMm'] is None and row['sixtyMinuteMm'] is None
+                    and all(r['dayMm'] is not None for r in (previous,row,following))
+                    and 0 <= row['dayMm'] <= 100 and previous['dayMm'] > row['dayMm']
+                    and 0 <= following['dayMm']-row['dayMm'] <= 100):
+                # 구형 장비의 00:00 누적 초기화는 양옆 누적 관측으로 판별하고 별도 기록한다.
+                derived[at], methods[at] = row['dayMm'], 'OBSERVED_MIDNIGHT_COUNTER_RESET'
+                derived[at+minute], methods[at+minute] = following['dayMm']-row['dayMm'], 'OBSERVED_MIDNIGHT_COUNTER_RESET'
+                if start < at <= end:
+                    rolling_warnings.append({'at':at.isoformat(),'midnightResetInferred':True})
     for at, current in sorted(rows.items()):
         previous = rows.get(at-minute)
         if previous is None:
@@ -74,19 +122,37 @@ def normalized(rows, start, end, allow_gaps=False):
         if not boundary and current['dayMm'] is not None and previous['dayMm'] is not None:
             difference = current['dayMm']-previous['dayMm']
             if not 0 <= difference <= 100:
-                raise RainfallQualityError('AWS_CUMULATIVE_REVERSED')
-            derived[at], methods[at] = difference, 'DAILY_DIFFERENCE'
+                if rolling_warnings is None: raise RainfallQualityError('AWS_CUMULATIVE_REVERSED')
+                rolling_warnings.append({'at':at.isoformat(),'counterRevisionMm':float(difference),'policy':'ROLLING_OBSERVATION_REQUIRED'})
+            else:
+                derived[at], methods[at] = difference, 'DAILY_DIFFERENCE'
         for size, key in ((15, 'fifteenMinuteMm'), (60, 'sixtyMinuteMm')):
             window = [derived.get(at-i*minute) for i in range(1, size)]
             if current[key] is None or any(value is None for value in window):
                 continue
             difference = current[key]-sum(window)
-            if boundary and at not in derived:
+            if (boundary or rolling_warnings is not None) and at not in derived:
                 if not 0 <= difference <= 100:
+                    if rolling_warnings is not None: continue
                     raise RainfallQualityError('AWS_MIDNIGHT_INVALID')
                 derived[at], methods[at] = difference, f'ROLLING_{size}_MINUTE_DIFFERENCE'
             if at in derived and abs(derived[at]-difference) > Decimal('.1'):
-                raise RainfallQualityError('AWS_ROLLING_TOTAL_MISMATCH')
+                if rolling_warnings is None:
+                    raise RainfallQualityError('AWS_ROLLING_TOTAL_MISMATCH')
+                if start < at <= end:
+                    rolling_warnings.append({'at': at.isoformat(), 'windowMinutes': size,
+                        'counterDepthMm': float(derived[at]), 'rollingDerivedDepthMm': float(difference)})
+    if rolling_warnings is not None:
+        for at, row in sorted(rows.items()):
+            for size, key in ((15, 'fifteenMinuteMm'), (60, 'sixtyMinuteMm')):
+                if row[key] != 0:
+                    continue
+                instants = [at-i*minute for i in range(size)]
+                if any(derived.get(t,Decimal(0)) != 0 for t in instants):
+                    continue
+                for t in instants:
+                    if t not in derived:
+                        derived[t], methods[t] = Decimal(0), 'OBSERVED_ZERO_ROLLING_WINDOW'
     result = []
     at = start+minute
     while at <= end:
@@ -97,7 +163,7 @@ def normalized(rows, start, end, allow_gaps=False):
             raise RainfallQualityError('AWS_REQUIRED_MINUTE_MISSING')
         result.append({'end': at.isoformat(), 'depthMm': float(derived[at]),
                        'method': methods[at], 'weather': {
-                           k: float(v) if v is not None else None for k, v in rows[at].items()
+                           k: float(v) if v is not None else None for k, v in rows.get(at, {}).items()
                            if k in ('temperatureC', 'humidityPercent', 'windSpeedMs', 'pressureHpa')}})
         at += minute
     if (not result and not allow_gaps) or at != end+minute:
@@ -129,12 +195,22 @@ def fetch_range(station, start, end, key):
                  'sha256': hashlib.sha256(raw).hexdigest(), 'purpose': 'SIMULATION_USED_INPUT_ONLY'}
 
 
-def observed_forcing(station, start, end, key):
+def observed_forcing(station, start, end, key, chunk_hours=23, antecedent_quality=False, heartbeat=None):
+    if not isinstance(chunk_hours, int) or not 1 <= chunk_hours <= 23:
+        raise LiveSourceError('KMA_RANGE_INVALID')
     cursor = start-timedelta(minutes=61)
     rows, sources = {}, []
     while cursor < end:
-        limit = min(end, cursor+timedelta(hours=23))
-        raw, meta = fetch_range(station, cursor, limit, key)
+        if heartbeat is not None: heartbeat()
+        hours = chunk_hours
+        while True:
+            limit = min(end, cursor+timedelta(hours=hours))
+            try:
+                raw, meta = fetch_range(station, cursor, limit, key)
+                break
+            except LiveSourceError as error:
+                if str(error) != 'KMA_UNAVAILABLE' or hours == 1: raise
+                hours = max(1,hours//2)
         values = parse(raw, station, cursor, limit)
         for at, value in values.items():
             if at in rows and rows[at] != value:
@@ -142,8 +218,12 @@ def observed_forcing(station, start, end, key):
             rows[at] = value
         sources.append((raw, meta))
         cursor = limit
+    warnings = [] if antecedent_quality else None
+    intervals = [] if antecedent_quality else None
+    observations = normalized(rows, start, end, rolling_warnings=warnings, interval_averages=intervals)
     return {'stationId': station, 'start': start.isoformat(), 'end': end.isoformat(),
-            'intervalSeconds': 60, 'observations': normalized(rows, start, end),
-            'overlapObservations': normalized(rows, start-timedelta(minutes=60), start, allow_gaps=True),
+            'intervalSeconds': 60, 'observations': observations,
+            'overlapObservations': normalized(rows, start-timedelta(minutes=60), start, allow_gaps=True, rolling_warnings=warnings),
+            **({'qualityWarnings': warnings, 'qualityPolicy': 'ANTECEDENT_DAILY_COUNTER_PRIMARY_ROLLING_CHECK_RECORDED', 'aggregatedRainIntervals': intervals} if antecedent_quality else {}),
             'sourceHashes': [meta['sha256'] for _, meta in sources],
             'evidence': 'OBSERVED_AWS_DERIVED_INTERVAL_DEPTH'}, sources

@@ -7,6 +7,7 @@ public record PhysicsJob(
     UUID id,
     String state,
     Instant createdAt,
+    Instant leaseUntil,
     Instant finishedAt,
     Instant requestedThrough,
     String result,

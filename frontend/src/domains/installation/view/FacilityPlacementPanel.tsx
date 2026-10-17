@@ -6,6 +6,7 @@ import { facilities, won } from '../../game/service/gameService';
 import { BudgetEvidence } from '../../budget/view/BudgetEvidence';
 import type { Budget } from '../../budget/dto/budgetDto';
 import { CostEstimate } from './CostEstimate';
+import { FacilityDesignEvidence } from '../../facility/view/FacilityDesignEvidence';
 import { PhysicalInputEvidence } from './PhysicalInputEvidence';
 const icons = { RAIN_GARDEN: Leaf, PERMEABLE_PAVEMENT: Grid2X2, GREEN_ROOF: House };
 type Placed = {
@@ -165,6 +166,7 @@ export function FacilityPlacementPanel(p: FacilityPlacementProps) {
                 {site.inflowPolicy === 'DIRECT_RAINFALL_ONLY' &&
                   ' 시설 자체에 내리는 비만 계산하며, 주변 유출의 시설 유입은 가산하지 않습니다.'}
               </p>
+              {type && <FacilityDesignEvidence site={site} type={type} />}
               {type && (
                 <CostEstimate
                   site={site}

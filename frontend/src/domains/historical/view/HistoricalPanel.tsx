@@ -1,3 +1,4 @@
+import { InitializationEvidence } from '../../physics/view/InitializationEvidence';
 import { Play, Pause, Trash2 } from 'lucide-react';
 import type { HistoricalState } from '../controller/useHistorical';
 import type { SharedSite } from '../../installation/entity/installation';
@@ -211,6 +212,17 @@ export function HistoricalPanel({
           </p>
           <details>
             <summary>계산 조건</summary>
+            {s.currentResult.facilities
+              ?.filter((f) => !site || f.cellId === site.cellId)
+              .map(
+                (f) =>
+                  f.initialization && (
+                    <details key={f.cellId}>
+                      <summary>{f.cellId} · 시작 수분</summary>
+                      <InitializationEvidence value={f.initialization} />
+                    </details>
+                  )
+              )}
             {s.currentResult.assumptions.map((v) => (
               <p key={v}>{v}</p>
             ))}

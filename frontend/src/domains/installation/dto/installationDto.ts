@@ -50,6 +50,12 @@ export const siteDto = z.object({
   areaLimitBasis: z.literal('PUBLIC_FOOTPRINT_GEOMETRY').optional(),
   siteEligibility: z.literal('UNKNOWN').optional(),
   inflowPolicy: z.literal('DIRECT_RAINFALL_ONLY').optional(),
+  facilityDesignSet: z
+    .object({ id: z.string(), sha256: z.string().regex(/^[a-f0-9]{64}$/) })
+    .nullish(),
+  initializationPolicy: z
+    .object({ method: z.string(), warmupMinutes: z.number().int().positive() })
+    .nullish(),
   physicalInputs: z
     .object({
       flowLengthM: z.number().positive(),

@@ -20,6 +20,7 @@
 | POST /submissions | 소유자, 성공한 현재 모델 계산의 탐색 제출 |
 | GET /leaderboard | 현재 모델별 공개 최고기록, 서버 재계산 점수 |
 | GET /installations/{id}/physics | 공개 공동 시설의 계산 상태·마지막 성공 요약, no-store |
+| GET /facilities/epa-designs-v1 | 해시 고정 공개 시설 제원·문헌 범위·출처, ETag·공개 캐시 |
 | GET /organizations | 승인된 기관 목록 |
 | GET /consents, PUT /consents/{organizationId} | 본인 기관별 동의 조회·부여·철회 |
 | GET /research/strategies | MFA 인증 승인 기관, 동의된 현재 모델 제출 최대 100건 |
@@ -145,3 +146,5 @@ RFC 9457 `application/problem+json`: type, title, status, detail, instance, code
 상세는 DB에 고정된 manifest SHA-256과 요청·모델·설치 연결을 검사한 완료 작업만 제공. 설치 이후 누적 수문 상태와 주간 합계를 구분하며 화면은 최대 360개 시점을 추출, 원본 분별 결과는 재현 묶음에 보존. 초기 수분·저류, 최종 저류, 순저류 변화 분리. 원문 강우·기상은 계산 연장 시 이전 구간에서 함께 복사하고 원문 누락 여부를 명시. 조회 가능 주는 한국시간 현재 주 이하의 월요일 시작일. 화면 비활성화·조회 범위 변경 시 상세 제거, 복귀·30초 갱신 시 권한 재확인.
 
 계산 원문은 SHA-256별 불변 원본을 프로젝트에 보관하고 각 계산 디렉터리에 하드 링크로 연결. 링크 미지원 저장소는 검증 후 복사. 외부 심볼릭 링크는 거부하며 원문 변경 시 조회 차단. 내보내기의 주간 원문 증가를 수용하도록 manifest 8MiB·최대 50,000개, 합계 원본 512MiB, 개별 파일 64MiB·ZIP 64MiB 제한 적용. 한도를 넘는 파일은 불완전한 묶음 대신 제공 보류.
+
+신규 후보 v5 응답의 `facilityDesignSet`은 공개 제원 ID·SHA-256, `initializationPolicy`는 7일 선행 계산 정책. 물리 상태 응답과 재해 시설 결과의 `initialization`은 시작 토양수분·저류량, 선행 강우 총량·기간, 원문 해시, 구간 평균 적용 분 수와 한계를 포함. 해당 값은 관측 기반 계산이며 토양수분 실측값으로 표시하지 않음. 기존 버전 기록에는 새 초기 상태를 소급 생성하지 않음.

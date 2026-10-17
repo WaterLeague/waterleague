@@ -29,15 +29,15 @@ public class SiteCatalogRepository {
     this.json = json;
     this.districts = districts;
     this.models = models;
-    var source = read("catalog-v4.json", false, 50000);
+    var source = read("catalog-v5.json", false, 50000);
     if (!json.hash(source)
-        .equals("f1f8d5f366cf47fff86319b27669bfb8e4a1fd3912d701b70b4b6e280e6fa66f"))
+        .equals("450f016165b58477ba4fb09eb81aec08de93d6081cd367ddf9b906920d7c6e07"))
       throw new IllegalStateException("공동 후보 목록 해시 오류");
     for (var entry : json.tree(source).path("entries")) {
       String id = entry.path("districtId").asString();
       var district = districts.require(id);
       if (entries.put(id, entry) != null
-          || !entry.path("file").asString().equals(id + "-v4.json.gz"))
+          || !entry.path("file").asString().equals(id + "-v5.json.gz"))
         throw new IllegalStateException("공동 후보 목록 오류");
       counts.put(id, entry.path("count").asInt());
     }
@@ -124,7 +124,9 @@ public class SiteCatalogRepository {
               cell.path("inflowPolicy").asString(),
               model.path("costModel"),
               model.path("costSourceSha256").asString(),
-              cell.path("physicalInputs"));
+              cell.path("physicalInputs"),
+              model.path("facilityDesignSet"),
+              model.path("initializationPolicy"));
       if (output.put(site.cellId(), site) != null) throw new IllegalStateException("공동 후보 중복");
     }
   }

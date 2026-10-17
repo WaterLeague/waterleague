@@ -1,0 +1,15 @@
+{
+  "title": "EPA SWMM Reference Manual Volume III, Chapter 6",
+  "url": "https://nepis.epa.gov/Exe/ZyPDF.cgi/P100P2NY.PDF?Dockey=P100P2NY.PDF",
+  "sha256": "e276e6be2f4bdd18d312535ff4f29fce85e5afa60ecdfea5b4992d2c336a1f57",
+  "year": 2016,
+  "pages": [
+    127,
+    128,
+    130
+  ],
+  "file": "data/private/facility-reference-20261018/epa-swmm-volume-iii.pdf",
+  "profileFile": "backend/src/main/resources/facilities/epa-designs-v1.json",
+  "profileSha256": "115d89e1935be403989a08c81111a06d081ccbc422729ace2b57cd75a46cebb9",
+  "evidence": "PUBLIC_REFERENCE_DESIGN_NOT_SITE_MEASURED"
+}

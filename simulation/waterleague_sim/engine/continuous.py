@@ -66,7 +66,17 @@ def input_source(model, placements, evaporation):
     normalized = model | {'rainfall': model['rainfall'] | {
         'start': start.isoformat(), 'end': (start+timedelta(minutes=count, seconds=1)).isoformat()}}
     # 작은 표면·실제 지형 경사에서 10초 적분의 초기 수지 오차를 줄인다.
-    source = make_input(normalized, placements, step_seconds=1 if model['cells'][0].get('physicalInputs') else 10)
+    source = make_input(normalized, placements, step_seconds=1 if model['cells'][0].get('physicalInputs') or model.get('facilityDesignSet') else 10)
+    if model.get('facilityDesignSet') is not None:
+        rows = []
+        for line in source.splitlines():
+            if line.startswith('RAIN_DATA '):
+                fields = line.split()
+                # EPA gage_setState의 내부 +1초 탐색을 상쇄하여 다음 분 강우의 조기 유입 방지.
+                at = datetime.strptime(fields[1]+' '+fields[2], '%m/%d/%Y %H:%M:%S')+timedelta(seconds=1)
+                line = f'RAIN_DATA {at:%m/%d/%Y} {at:%H:%M:%S} {fields[3]}'
+            rows.append(line)
+        source = '\n'.join(rows)+'\n'
     if model.get('sharedSiteSource', {}).get('inflowPolicy') == 'DIRECT_RAINFALL_ONLY':
         # 배수 연결 근거가 없는 표면의 유출을 시설에 임의 배분하지 않는다.
         lines, in_usage = [], False
@@ -84,6 +94,9 @@ def input_source(model, placements, evaporation):
     physical = model['cells'][0].get('physicalInputs')
     if physical is not None:
         source = apply_site_inputs(source, model['cells'][0], placements)
+    if model.get('facilityDesignSet') is not None:
+        from .facilities import apply
+        source = apply(source, model)
     if evaporation is not None:
         values = evaporation['ratesMmDay']
         if (len(values) != count or not evaporation.get('method') or not evaporation.get('sourceHashes')
@@ -185,9 +198,11 @@ def replay(model, placements, directory, label, evaporation=None):
         next_minute = 60
         while True:
             check(lib.swmm_step(C.byref(elapsed)))
-            current = snapshot()
-            seconds = current['elapsedSeconds']
-            if seconds >= next_minute-1e-7:
+            # 분 경계에서만 상태를 복사하여 1초 적분의 Python 변환 비용을 줄인다.
+            seconds = elapsed.value*86400
+            if seconds >= next_minute-1e-7 or elapsed.value == 0:
+                current = snapshot()
+                seconds = current['elapsedSeconds']
                 if abs(seconds-next_minute) > 1e-7:
                     raise SimulationQualityError('LIVE_REPORT_TIME_MISMATCH')
                 samples.append(current)
@@ -216,6 +231,10 @@ def experiment(model, placement, directory, evaporation=None):
     directory = Path(directory)
     baseline = replay(model, [], directory, 'baseline', evaporation)
     strategy = replay(model, [placement], directory, 'strategy', evaporation)
+    initialization = None
+    if model.get('initialization') is not None:
+        from .initialization import evaluation_window
+        baseline, strategy, initialization = evaluation_window(model, baseline, strategy)
     increments = []
     previous = 0.0
     for a, b in zip(baseline['samples'], strategy['samples'], strict=True):
@@ -231,6 +250,15 @@ def experiment(model, placement, directory, evaporation=None):
                                             'rateMmDay': model['hydrology']['evaporationMmDay']},
               'assumptions': model['assumptions'],
               'scoreRule': 'BASELINE_MINUS_STRATEGY_RUNOFF_DRAINAGE_AND_NET_STORAGE_M3'}
+    if initialization is not None:
+        result['initialization'] = initialization
+    if model.get('facilityDesignSet') is not None:
+        from .facilities import evidence, CATALOG_PATH
+        result['facilityDesign'] = evidence(placement['facilityType'])
+        (directory/'facility-designs.json').write_bytes(CATALOG_PATH.read_bytes())
+        (directory/'facilities.py').write_bytes((Path(__file__).parent/'facilities.py').read_bytes())
+    if initialization is not None:
+        (directory/'initialization.py').write_bytes((Path(__file__).parent/'initialization.py').read_bytes())
     for name, value in [('model', model), ('placement', placement), ('result', result)]:
         (directory/f'{name}.json').write_text(json.dumps(value, ensure_ascii=False, allow_nan=False)+'\n')
     (directory/'continuous.py').write_bytes(Path(__file__).read_bytes())

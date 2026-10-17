@@ -67,6 +67,15 @@ def claim(conn):
         return job
 
 
+def renew(conn, job):
+    # 만료된 임대의 부활 없이 실제 수집 진행마다 소유 토큰을 확인한다.
+    changed = conn.execute("""UPDATE shared_physics_jobs SET lease_until=clock_timestamp()+interval '240 seconds'
+        WHERE id=%s AND lease_token=%s AND state='RUNNING' AND lease_until>clock_timestamp()""",
+        (job['id'],job['lease_token'])).rowcount
+    if changed != 1:
+        raise ValueError('LIVE_LEASE_LOST')
+
+
 def finish(conn, job, result, input_hash, error, weeks=None, manifest_hash=None):
     with conn.transaction():
         conn.execute('SELECT id FROM shared_physics_jobs WHERE id=%s FOR UPDATE', (job['id'],)).fetchone()
@@ -93,6 +102,7 @@ def process(conn, job, root):
         previous_evaporation = None
         previous_directory = None
         previous_manifest = {}
+        antecedent, antecedent_sources = None, []
         covered = job['start']
         if previous := job['previous']:
             old = Path(root)/'shared-physics'/str(previous['id'])/str(previous['lease_token'])
@@ -121,7 +131,17 @@ def process(conn, job, root):
             covered = previous['requested_through']
             previous_ref = {'jobId': str(previous['id']), 'leaseToken': str(previous['lease_token']),
                             'requestSha256': digest(req_raw), 'forcingSha256': digest(raw)}
-        extension, sources = observed_forcing(station, covered, job['end'], os.environ.get('KMA_API_KEY', ''))
+            if model.get('initializationPolicy') is not None:
+                antecedent_raw = (old/'antecedent.json').read_bytes()
+                if digest(antecedent_raw) != req.get('antecedentSha256'):
+                    raise ValueError('LIVE_PREVIOUS_ANTECEDENT_INVALID')
+                antecedent = json.loads(antecedent_raw)
+        if model.get('initializationPolicy') is not None and antecedent is None:
+            from .ingestion.antecedent import fetch as fetch_antecedent
+            antecedent, antecedent_sources = fetch_antecedent(station, job['start'], os.environ.get('KMA_API_KEY', ''), heartbeat=lambda: renew(conn,job))
+        renew(conn,job)
+        extension, sources = observed_forcing(station, covered, job['end'], os.environ.get('KMA_API_KEY', ''), heartbeat=lambda: renew(conn,job))
+        renew(conn,job)
         saved_depths = {v['end']: v['depthMm'] for v in observations[-60:]}
         if any(v['end'] in saved_depths and v['depthMm'] != saved_depths[v['end']]
                for v in extension['overlapObservations']):
@@ -135,11 +155,12 @@ def process(conn, job, root):
                                'observations': observations+extension['observations'],
                                'sourceHashes': source_hashes+extension['sourceHashes'], 'previousInput': previous_ref,
                                'evaporation': evaporation}
-        for raw, meta in sources+weather_sources:
+        for raw, meta in sources+weather_sources+antecedent_sources:
             source_archive.store(root,path/(meta['sha256']+'.txt'),raw,meta['sha256'])
             (path/(meta['sha256']+'.json')).write_bytes(encode(meta))
         missing_sources = []
-        for sha in sorted(set(forcing['sourceHashes']+evaporation['sourceHashes'])):
+        antecedent_hashes = (antecedent['rainfall']['sourceHashes']+antecedent['evaporation']['sourceHashes']) if antecedent else []
+        for sha in sorted(set(forcing['sourceHashes']+evaporation['sourceHashes']+antecedent_hashes)):
             if not re.fullmatch('[a-f0-9]{64}', sha):
                 raise ValueError('LIVE_SOURCE_HASH_INVALID')
             for suffix in ('.txt','.json'):
@@ -164,14 +185,19 @@ def process(conn, job, root):
                    'siteModelHash': job['installation']['model_hash'], 'placement': placement, 'engine': engine,
                    'weeklyRuleVersion': 'OBSERVED_ACCOUNTED_VOLUME_V1',
                    'weeklyCodeSha256': digest((Path(__file__).parent/'weekly.py').read_bytes())}
+        if antecedent is not None:
+            antecedent_raw = encode(antecedent)
+            (path/'antecedent.json').write_bytes(antecedent_raw)
+            request['antecedentSha256'] = digest(antecedent_raw)
         request_raw = encode(request)
         (path/'model-source.json').write_bytes(source)
         (path/'forcing.json').write_bytes(forcing_raw)
         (path/'request.json').write_bytes(request_raw)
-        for module in ('engine/evapotranspiration.py', 'ingestion/evaporation.py', 'weekly.py'):
+        for module in ('engine/evapotranspiration.py', 'ingestion/evaporation.py', 'ingestion/daily_evaporation.py', 'ingestion/antecedent.py', 'ingestion/live.py', 'weekly.py'):
             (path/Path(module).name).write_bytes((Path(__file__).parent/module).read_bytes())
         env = {k: v for k, v in os.environ.items() if k in ('PATH', 'LANG', 'LC_ALL', 'LIVE_SWMM_LIBRARY')}
         env['PYTHONPATH'] = str(ROOT/'simulation')
+        renew(conn,job)
         child = subprocess.Popen([sys.executable, '-m', 'waterleague_sim.run_live_job', str(path)],
                                  env=env, start_new_session=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         try:
@@ -195,7 +221,9 @@ def process(conn, job, root):
                                           'surfaceDepthMm', 'soilMoisture', 'storageDepthMm')},
                   'runoffM3': state['surfaceRunoffM3']+state['lidDrainageM3'],
                   'runoffContinuityPercent': result['strategy']['runoffContinuityPercent'],
-                  'evaporationMethod': result['evaporation']['method'], 'initialState': 'ASSUMED_DESIGN_START',
+                  'evaporationMethod': result['evaporation']['method'],
+                  'initialState': result.get('initialization', {}).get('method', 'ASSUMED_DESIGN_START'),
+                  'initialization': result.get('initialization'), 'facilityDesign': result.get('facilityDesign'),
                   'inflowPolicy': result['inflowPolicy'],
                   'areaLimitBasis': model['cells'][0].get('areaLimitBasis','LEGACY_DESIGN_RATIO')}
         weeks = weekly_aggregate(result['contribution'], job['start'], job['end'], covered)

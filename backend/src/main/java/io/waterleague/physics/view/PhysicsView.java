@@ -2,6 +2,7 @@ package io.waterleague.physics.view;
 
 import java.time.Instant;
 import java.util.UUID;
+import tools.jackson.databind.JsonNode;
 
 public record PhysicsView(
     UUID installationId,
@@ -29,5 +30,7 @@ public record PhysicsView(
       String evaporationMethod,
       String initialState,
       String inflowPolicy,
-      String areaLimitBasis) {}
+      String areaLimitBasis,
+      JsonNode initialization,
+      JsonNode facilityDesign) {}
 }

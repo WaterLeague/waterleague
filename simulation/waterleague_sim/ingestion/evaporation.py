@@ -18,7 +18,7 @@ MINUTE = timedelta(minutes=1)
 
 
 def fetch(endpoint, parameters, key):
-    if not key or endpoint not in (HOURLY_URL, STATION_URL):
+    if not key or endpoint not in (HOURLY_URL, STATION_URL, 'https://apihub.kma.go.kr/api/typ01/url/kma_sfcdd3.php'):
         raise LiveSourceError('KMA_ACCESS_UNAVAILABLE')
     try:
         with build_opener(NoRedirect()).open(endpoint+'?'+urlencode(parameters | {'authKey': key}), timeout=30) as response:
@@ -164,9 +164,14 @@ def observed_evaporation(start, end, key):
     sources.append((raw, meta))
     radiation = radiation_rows(raw, lookback, last)
     weather_start = first-HOUR+MINUTE
-    raw, meta = fetch_range('108', weather_start, last, key)
-    sources.append((raw, meta))
-    result = derive(start, end, stations[0], radiation, meteorology(raw, weather_start, last))
+    weather, cursor = {}, weather_start
+    while cursor <= last:
+        limit = min(last, cursor+timedelta(hours=6)-MINUTE)
+        raw, meta = fetch_range('108', cursor, limit, key)
+        sources.append((raw, meta))
+        weather.update(meteorology(raw, cursor, limit))
+        cursor = limit+MINUTE
+    result = derive(start, end, stations[0], radiation, weather)
     result['sourceHashes'] = [meta['sha256'] for _, meta in sources]
     result['sourceRequests'] = [meta for _, meta in sources]
     result['implementationHashes'] = {path.name: hashlib.sha256(path.read_bytes()).hexdigest()

@@ -1,0 +1,15 @@
+{
+  "provider": "기상청",
+  "endpoint": "https://apihub.kma.go.kr/api/typ01/cgi-bin/url/nph-aws2_min",
+  "parameters": {
+    "tm1": "202208031059",
+    "tm2": "202208031659",
+    "stn": "405",
+    "disp": "0",
+    "help": "1"
+  },
+  "acquiredAt": "2026-10-17T18:28:22.652605+00:00",
+  "sha256": "1eff28188839ebfd7d63ad41757377c90c11c7364cbb7c12ed320b0183a60be3",
+  "bytes": 48566,
+  "sourceTimezone": "Asia/Seoul"
+}

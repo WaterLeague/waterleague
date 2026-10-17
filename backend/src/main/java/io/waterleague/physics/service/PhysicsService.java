@@ -36,7 +36,7 @@ public class PhysicsService {
       status =
           switch (latest.state()) {
             case "RUNNING" ->
-                Duration.between(latest.createdAt(), Instant.now()).toSeconds() > 240
+                latest.leaseUntil() == null || !latest.leaseUntil().isAfter(Instant.now())
                     ? "UNAVAILABLE"
                     : "RUNNING";
             case "FAILED" -> "UNAVAILABLE";
@@ -47,7 +47,7 @@ public class PhysicsService {
           };
       message =
           switch (status) {
-            case "RUNNING" -> "설치 이후의 강우를 이어서 계산하고 있습니다";
+            case "RUNNING" -> "선행 기상과 설치 이후 강우를 이어서 계산하고 있습니다";
             case "UNAVAILABLE" ->
                 latest.errorCode() != null && latest.errorCode().startsWith("KMA_")
                     ? "기상청 응답을 기다리고 있습니다. 강우를 0으로 대체하지 않습니다"

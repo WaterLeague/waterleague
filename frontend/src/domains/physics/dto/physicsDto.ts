@@ -25,6 +25,18 @@ export const physicsDto = z.object({
       runoffContinuityPercent: value,
       evaporationMethod: z.string(),
       initialState: z.string(),
+      initialization: z
+        .object({
+          method: z.string(),
+          warmupMinutes: z.number(),
+          initialSoilMoisture: value.nullable(),
+          initialStorageM3: value,
+          warmupRainMm: value,
+          scoreExcludesWarmup: z.boolean(),
+          aggregateDerivedMinutes: z.number().optional(),
+          limitations: z.array(z.string()).optional(),
+        })
+        .nullish(),
       inflowPolicy: z.enum(['DIRECT_RAINFALL_ONLY', 'LEGACY_ALL_IMPERVIOUS_RUNOFF']).nullish(),
       areaLimitBasis: z.string().nullish(),
     })

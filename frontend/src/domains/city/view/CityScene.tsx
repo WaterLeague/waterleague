@@ -204,13 +204,21 @@ function Controls({
   const report = useCallback(
     (force = false) => {
       if (!controls.current) return;
+      const target = controls.current.target;
+      const elevation = terrainHeight(terrain, [target.x, -target.z]);
+      const rise = elevation - target.y;
+      target.y = elevation;
+      camera.position.y += rise;
+      camera.position.y = Math.max(
+        camera.position.y,
+        terrainHeight(terrain, [camera.position.x, -camera.position.z]) + 15
+      );
       const now = performance.now();
       if (!force && now - last.current < 350) return;
       last.current = now;
-      const target = controls.current.target;
       onCamera({ center: [target.x, -target.z], distance: camera.position.distanceTo(target) });
     },
-    [camera, onCamera]
+    [camera, onCamera, terrain]
   );
   useEffect(() => watchContextLoss(gl.domElement, onUnavailable), [gl, onUnavailable]);
   useEffect(() => {
@@ -240,6 +248,7 @@ function Controls({
       minDistance={180}
       maxDistance={150000}
       maxPolarAngle={Math.PI * 0.46}
+      screenSpacePanning={false}
       enableDamping
       dampingFactor={0.12}
       onChange={() => report()}

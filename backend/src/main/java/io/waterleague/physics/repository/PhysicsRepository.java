@@ -14,6 +14,9 @@ public class PhysicsRepository {
               r.getObject("id", UUID.class),
               r.getString("state"),
               r.getTimestamp("created_at").toInstant(),
+              r.getTimestamp("lease_until") == null
+                  ? null
+                  : r.getTimestamp("lease_until").toInstant(),
               r.getTimestamp("finished_at") == null
                   ? null
                   : r.getTimestamp("finished_at").toInstant(),

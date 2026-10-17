@@ -15,7 +15,8 @@ required_names={
 for name in private_names-required_names.get(mode,set()):os.environ.pop(name,None)
 if mode in ['api','provision']:
  if not os.environ.get('DB_PASSWORD'):raise SystemExit('.env.local DB_PASSWORD 설정 필요')
- if not os.environ.get('JAVA_HOME') and sys.platform=='darwin':
+ if sys.platform=='darwin':
+  # 프로젝트의 Java 25를 선택하여 전역 Java 17 설정과 분리한다.
   os.environ['JAVA_HOME']=subprocess.check_output(['/usr/libexec/java_home','-v','25'],text=True).strip()
  os.chdir(ROOT/'backend')
  if mode=='provision':

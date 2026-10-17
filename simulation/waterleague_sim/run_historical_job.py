@@ -23,6 +23,7 @@ def calculate(request, directory):
     (directory/'rainfall-model.json').write_bytes(source)
     evaporation = load_evaporation(request['modelHash'], observed, directory)
     results, frames = [], []
+    antecedent = None
     assumptions = {'관망 없는 독립 표면 계산', '관측소 강우의 선택 표면 대표성 미검증'}
     for index, placement in enumerate(placements):
         model, _, _ = resolve({'district_id': placement['districtId'], 'cell_id': placement['cellId'],
@@ -32,8 +33,15 @@ def calculate(request, directory):
             raise ValueError('HISTORICAL_DISTRICT_INVALID')
         model['rainfall'] = observed['rainfall']
         model = with_observed_forcing(model, evaporation)
+        applied_evaporation = evaporation
+        if model.get('initializationPolicy') is not None:
+            from .historical_antecedent import load as load_antecedent
+            from .engine.initialization import prepend
+            if antecedent is None:
+                antecedent = load_antecedent(request['modelHash'], directory)
+            model, applied_evaporation = prepend(model, evaporation, antecedent)
         physical = {k: placement[k] for k in ('cellId','facilityType','areaM2')}
-        result = experiment(model, physical, directory/str(index), evaporation)
+        result = experiment(model, physical, directory/str(index), applied_evaporation)
         assumptions.update(result['assumptions'])
         a, b = result['baseline']['final'], result['strategy']['final']
         results.append(placement | {'precipitationM3': b['precipitationM3'],
@@ -42,7 +50,8 @@ def calculate(request, directory):
             'baselineAccountedM3': a['accountedDischargeM3'], 'designAccountedM3': b['accountedDischargeM3'],
             'differenceM3': a['accountedDischargeM3']-b['accountedDischargeM3'],
             'runoffContinuityPercent': result['strategy']['runoffContinuityPercent'],
-            'physicalInputs': model['cells'][0].get('physicalInputs')})
+            'physicalInputs': model['cells'][0].get('physicalInputs'),
+            'facilityDesign': result.get('facilityDesign'), 'initialization': result.get('initialization')})
         for i, (base, design, contribution) in enumerate(zip(result['baseline']['samples'], result['strategy']['samples'], result['contribution'], strict=True)):
             if index == 0:
                 frames.append({'at': base['at'], 'rainMm': observed['rainfall']['depthsMm'][i],

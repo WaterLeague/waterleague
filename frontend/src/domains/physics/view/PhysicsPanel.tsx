@@ -1,3 +1,4 @@
+import { InitializationEvidence } from './InitializationEvidence';
 import { Droplets } from 'lucide-react';
 import { usePhysics } from '../controller/usePhysics';
 import './physics.css';
@@ -65,6 +66,7 @@ export function PhysicsPanel({ installationId }: { installationId: string }) {
           </dl>
           <details>
             <summary>계산 조건</summary>
+            {result.initialization && <InitializationEvidence value={result.initialization} />}
             <p>
               EPA SWMM {result.engineVersion} · {at(result.simulationStart)} 이후 연속 계산
             </p>
