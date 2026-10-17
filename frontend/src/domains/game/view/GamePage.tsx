@@ -114,16 +114,35 @@ export function GamePage() {
     areaLimitM2: activeLeague?.rules.areaLimitM2,
   };
   const currentExceedsLimits = exceedsLeagueLimits(g.placements, placementLimits);
+  const draftArea = Math.round(area * 100) / 100;
   const proposedExceedsLimits = cell
     ? exceedsLeagueLimits(
         [
           ...g.placements.filter((p) => p.cellId !== cell.id),
-          { cellId: cell.id, facilityType: type, areaM2: area },
+          { cellId: cell.id, facilityType: type, areaM2: draftArea },
         ],
         placementLimits
       )
     : false;
   const cost = lab ? totalCost(lab, g.placements) : 0;
+  const canPlace =
+    !!cell &&
+    !!lab &&
+    !g.busy &&
+    Number.isFinite(draftArea) &&
+    draftArea > 0 &&
+    draftArea <= cell.maxAreaM2 &&
+    cell.allowedTypes.includes(type) &&
+    allowedTypes.includes(type) &&
+    !proposedExceedsLimits &&
+    cost -
+      (placement ? placement.areaM2 * lab.model.unitCosts[placement.facilityType] : 0) +
+      draftArea * lab.model.unitCosts[type] <=
+      budget;
+  const preview =
+    canPlace && cell && (placement?.facilityType !== type || placement?.areaM2 !== draftArea)
+      ? { cellId: cell.id, facilityType: type, areaM2: draftArea }
+      : undefined;
   function undo() {
     g.undo();
     setFeedback('배치 변경을 되돌렸습니다.');
@@ -465,6 +484,7 @@ export function GamePage() {
                       map={catalog.data.map}
                       cells={lab.model.cells}
                       placements={g.placements}
+                      preview={preview}
                       selectedCell={selected}
                       onSelect={(id) => {
                         select(id);
@@ -715,36 +735,22 @@ export function GamePage() {
                     </div>
                     <div className="placement-cost">
                       <span>추정 설치비</span>
-                      <strong>{won(area * lab.model.unitCosts[type])}</strong>
+                      <strong>{won(draftArea * lab.model.unitCosts[type])}</strong>
                     </div>
                     <button
                       className="primary-button"
-                      disabled={
-                        g.busy ||
-                        !Number.isFinite(area) ||
-                        area <= 0 ||
-                        area > cell.maxAreaM2 ||
-                        !cell.allowedTypes.includes(type) ||
-                        !allowedTypes.includes(type) ||
-                        proposedExceedsLimits ||
-                        cost -
-                          (placement
-                            ? placement.areaM2 * lab.model.unitCosts[placement.facilityType]
-                            : 0) +
-                          area * lab.model.unitCosts[type] >
-                          budget
-                      }
+                      disabled={!canPlace}
                       onClick={() => {
                         g.change([
                           ...g.placements.filter((p) => p.cellId !== cell.id),
                           {
                             cellId: cell.id,
                             facilityType: type,
-                            areaM2: Math.round(area * 100) / 100,
+                            areaM2: draftArea,
                           },
                         ]);
                         setFeedback(
-                          `${cell.id} · ${facilities[type].name} ${format.format(Math.round(area * 100) / 100)} m² ${placement ? '변경' : '배치'} 완료`
+                          `${cell.id} · ${facilities[type].name} ${format.format(draftArea)} m² ${placement ? '변경' : '배치'} 완료`
                         );
                       }}
                     >
@@ -845,7 +851,9 @@ export function GamePage() {
                     ? g.job?.state === 'QUEUED'
                       ? '계산 순서 대기'
                       : '서버에서 계산 중'
-                    : '이 배치로 도전'}
+                    : preview
+                      ? '확정된 배치로 도전'
+                      : '이 배치로 도전'}
                   <ArrowRight size={16} />
                 </button>
                 {g.job?.state === 'FAILED' || g.job?.state === 'REJECTED' ? (

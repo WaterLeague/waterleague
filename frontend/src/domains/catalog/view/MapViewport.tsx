@@ -4,17 +4,20 @@ import type { CandidateMap } from '../entity/catalog';
 import type { Cell, Placement } from '../../game/entity/game';
 import { ErrorBoundary } from '../../../shared/exception/ErrorBoundary';
 import { PlanMap } from './PlanMap';
+import { facilities, format } from '../../game/service/gameService';
 
 export function MapViewport({
   map,
   cells,
   placements,
+  preview,
   selectedCell,
   onSelect,
 }: {
   map: CandidateMap;
   cells: Cell[];
   placements: Placement[];
+  preview?: Placement;
   selectedCell: string | null;
   onSelect: (id: string | null) => void;
 }) {
@@ -31,6 +34,7 @@ export function MapViewport({
       map={map}
       cells={cells}
       placements={placements}
+      preview={preview}
       selectedCell={selectedCell}
       onCellSelect={onSelect}
     />
@@ -62,6 +66,7 @@ export function MapViewport({
               reset={reset}
               cells={cells}
               placements={placements}
+              preview={preview}
               selectedCell={selectedCell}
               onCellSelect={onSelect}
               onUnavailable={unavailable}
@@ -69,6 +74,17 @@ export function MapViewport({
           </Suspense>
         </ErrorBoundary>
       )}
+      {preview && (
+        <p className="map-placement-preview" role="status">
+          <b>미확정 미리보기</b>
+          <span>
+            {preview.cellId} · {facilities[preview.facilityType].name}{' '}
+            {format.format(preview.areaM2)} m²
+          </span>
+          <small>배치 버튼으로 적용</small>
+        </p>
+      )}
+      {cells.length > 0 && <span className="map-facility-note">시설 위치·식재는 도식 표현</span>}
       <div className="map-display-options" role="group" aria-label="지도 표시 방식">
         <button aria-pressed={!isPlan} onClick={retry}>
           {failed ? '3D 다시 시도' : '3D'}

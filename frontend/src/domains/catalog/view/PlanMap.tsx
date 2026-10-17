@@ -1,3 +1,5 @@
+import { useLayoutEffect, useRef, useState, useId } from 'react';
+import { facilityFootprint } from '../service/facilityGeometryService';
 import type { CandidateMap } from '../entity/catalog';
 import type { Cell, Placement } from '../../game/entity/game';
 import { facilities, format } from '../../game/service/gameService';
@@ -10,15 +12,18 @@ export function PlanMap({
   map,
   cells,
   placements,
+  preview,
   selectedCell,
   onCellSelect,
 }: {
   map: CandidateMap;
   cells: Cell[];
   placements: Placement[];
+  preview?: Placement;
   selectedCell: string | null;
   onCellSelect: (id: string) => void;
 }) {
+  const patternId = useId();
   const width = map.snapshot.widthM + 26;
   const height = map.snapshot.depthM + 26;
   const svg = useRef<SVGSVGElement>(null);
@@ -49,6 +54,17 @@ export function PlanMap({
       <desc>
         같은 공개 경계와 실험 구역의 평면 표시. 구역을 Tab으로 찾아 Enter 또는 Space로 선택.
       </desc>
+      <defs>
+        <pattern id={patternId} width="2" height="2" patternUnits="userSpaceOnUse">
+          <rect width="2" height="2" fill="#96aeb1" />
+          <path
+            d="M0 0H2V2H0V0M0 1H2M1 0V1M.5 1V2M1.5 1V2"
+            stroke="#56777e"
+            strokeWidth="0.08"
+            fill="none"
+          />
+        </pattern>
+      </defs>
       <g aria-hidden="true">
         <rect x={-width / 2} y={-height / 2} width={width} height={height} fill="#e4e7d9" />
         {map.roads.map((road) => (
@@ -79,8 +95,12 @@ export function PlanMap({
       {cells.map((cell, index) => {
         const [labelEast, labelNorth] = labels[index];
         const placement = placements.find((p) => p.cellId === cell.id);
-        const coverage = placement ? Math.sqrt(placement.areaM2 / cell.areaM2) : 0;
-        const label = `${cell.id} · ${cell.name} · ${placement ? `${facilities[placement.facilityType].name} ${format.format(placement.areaM2)} m² 배치` : '미배치'}`;
+        const draft = preview?.cellId === cell.id ? preview : undefined;
+        const displayed = draft ?? placement;
+        const footprint = displayed
+          ? facilityFootprint(cell.coordinates, displayed.areaM2 / cell.areaM2)
+          : undefined;
+        const label = `${cell.id} · ${cell.name} · ${placement ? `${facilities[placement.facilityType].name} ${format.format(placement.areaM2)} m² 배치` : '미배치'}${draft ? ` · 미확정 미리보기 ${facilities[draft.facilityType].name} ${format.format(draft.areaM2)} m²` : ''}`;
         return (
           <g
             key={cell.id}
@@ -99,16 +119,32 @@ export function PlanMap({
           >
             <title>{label}</title>
             <polygon className="plan-surface" points={points(cell.coordinates)} />
-            {placement && (
-              <polygon
-                points={points(
-                  cell.coordinates.map(([east, north]) => [
-                    cell.center[0] + (east - cell.center[0]) * coverage,
-                    cell.center[1] + (north - cell.center[1]) * coverage,
-                  ])
-                )}
-                fill={facilities[placement.facilityType].color}
-              />
+            {displayed && footprint && (
+              <g opacity={draft ? 0.55 : 1}>
+                {footprint.polygons.map((polygon, part) => (
+                  <polygon
+                    key={part}
+                    points={points(polygon)}
+                    fill={
+                      displayed.facilityType === 'PERMEABLE_PAVEMENT'
+                        ? `url(#${patternId})`
+                        : facilities[displayed.facilityType].color
+                    }
+                  />
+                ))}
+                {footprint.boundary.map(([a, b], edge) => (
+                  <line
+                    key={edge}
+                    x1={a[0]}
+                    y1={-a[1]}
+                    x2={b[0]}
+                    y2={-b[1]}
+                    stroke="#214e67"
+                    strokeWidth={1 / scale}
+                    strokeDasharray={draft ? `${3 / scale} ${2 / scale}` : undefined}
+                  />
+                ))}
+              </g>
             )}
             {(labelEast !== cell.center[0] || labelNorth !== cell.center[1]) && (
               <line
@@ -135,7 +171,7 @@ export function PlanMap({
               dominantBaseline="central"
               style={{ fontSize: 11 / scale }}
             >
-              {placement ? '✓' : ''}
+              {draft ? '···' : placement ? '✓' : ''}
               {cell.id}
             </text>
           </g>
@@ -144,4 +180,3 @@ export function PlanMap({
     </svg>
   );
 }
-import { useLayoutEffect, useRef, useState } from 'react';

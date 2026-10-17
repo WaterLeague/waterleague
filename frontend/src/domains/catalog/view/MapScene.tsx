@@ -5,7 +5,7 @@ import * as THREE from 'three';
 import type { Building, CandidateMap } from '../entity/catalog';
 import { buildingLabel } from '../service/catalogService';
 import type { Cell, Placement } from '../../game/entity/game';
-import { facilities } from '../../game/service/gameService';
+import { FacilityMesh } from './FacilityMesh';
 import { watchContextLoss } from '../service/sceneLifecycleService';
 import { useReducedMotion } from '../controller/useReducedMotion';
 
@@ -205,11 +205,13 @@ function Roads({ map }: { map: CandidateMap }) {
 function Surface({
   cell,
   placement,
+  preview,
   selected,
   onSelect,
 }: {
   cell: Cell;
   placement?: Placement;
+  preview?: Placement;
   selected: boolean;
   onSelect: () => void;
 }) {
@@ -218,7 +220,7 @@ function Surface({
     cell.coordinates.forEach(([x, y], i) => (i ? shape.lineTo(x, y) : shape.moveTo(x, y)));
     return new THREE.ShapeGeometry(shape);
   }, [cell]);
-  const coverage = placement ? Math.sqrt(placement.areaM2 / cell.areaM2) : 1;
+  const displayed = preview ?? placement;
   useEffect(() => () => geometry.dispose(), [geometry]);
   return (
     <group>
@@ -240,33 +242,11 @@ function Surface({
         />
         <Edges color={selected ? '#1d553c' : '#779982'} linewidth={selected ? 1.5 : 0.8} />
       </mesh>
-      {placement && (
-        <group
-          position={[
-            cell.center[0] * (1 - coverage),
-            cell.heightM + 0.36,
-            -cell.center[1] * (1 - coverage),
-          ]}
-          scale={[coverage, 1, coverage]}
-        >
-          <mesh
-            geometry={geometry}
-            rotation={[-Math.PI / 2, 0, 0]}
-            onClick={(e) => {
-              e.stopPropagation();
-              onSelect();
-            }}
-          >
-            <meshStandardMaterial
-              color={facilities[placement.facilityType].color}
-              roughness={0.95}
-              side={THREE.DoubleSide}
-            />
-          </mesh>
-        </group>
+      {displayed && (
+        <FacilityMesh cell={cell} placement={displayed} preview={!!preview} onSelect={onSelect} />
       )}
       <LabelMarker
-        text={(placement ? '✓ ' : '') + cell.id}
+        text={(preview ? '··· ' : placement ? '✓ ' : '') + cell.id}
         position={[cell.center[0], cell.heightM + 4, -cell.center[1]]}
         selected={selected}
         onSelect={onSelect}
@@ -282,6 +262,7 @@ export default function MapScene({
   reset,
   cells = [],
   placements = [],
+  preview,
   selectedCell,
   onCellSelect,
   onUnavailable,
@@ -293,6 +274,7 @@ export default function MapScene({
   reset: number;
   cells?: Cell[];
   placements?: Placement[];
+  preview?: Placement;
   selectedCell?: string | null;
   onCellSelect?: (id: string) => void;
   onUnavailable?: () => void;
@@ -354,6 +336,7 @@ export default function MapScene({
           key={cell.id}
           cell={cell}
           placement={placements.find((p) => p.cellId === cell.id)}
+          preview={preview?.cellId === cell.id ? preview : undefined}
           selected={selectedCell === cell.id}
           onSelect={() => onCellSelect?.(cell.id)}
         />
