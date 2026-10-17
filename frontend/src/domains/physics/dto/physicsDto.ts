@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import { initializationDto } from './initializationDto';
+import { facilityEvidenceDto } from '../../facility/dto/facilityDto';
 const value = z.number().finite();
 export const physicsDto = z.object({
   installationId: z.uuid(),
@@ -25,18 +27,8 @@ export const physicsDto = z.object({
       runoffContinuityPercent: value,
       evaporationMethod: z.string(),
       initialState: z.string(),
-      initialization: z
-        .object({
-          method: z.string(),
-          warmupMinutes: z.number(),
-          initialSoilMoisture: value.nullable(),
-          initialStorageM3: value,
-          warmupRainMm: value,
-          scoreExcludesWarmup: z.boolean(),
-          aggregateDerivedMinutes: z.number().optional(),
-          limitations: z.array(z.string()).optional(),
-        })
-        .nullish(),
+      initialization: initializationDto.nullish(),
+      facilityDesign: facilityEvidenceDto.nullish(),
       inflowPolicy: z.enum(['DIRECT_RAINFALL_ONLY', 'LEGACY_ALL_IMPERVIOUS_RUNOFF']).nullish(),
       areaLimitBasis: z.string().nullish(),
     })

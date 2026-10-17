@@ -1,4 +1,5 @@
 import { InitializationEvidence } from '../../physics/view/InitializationEvidence';
+import { FacilityProfileEvidence } from '../../facility/view/FacilityProfileEvidence';
 import { Play, Pause, Trash2 } from 'lucide-react';
 import type { HistoricalState } from '../controller/useHistorical';
 import type { SharedSite } from '../../installation/entity/installation';
@@ -216,10 +217,11 @@ export function HistoricalPanel({
               ?.filter((f) => !site || f.cellId === site.cellId)
               .map(
                 (f) =>
-                  f.initialization && (
+                  (f.initialization || f.facilityDesign) && (
                     <details key={f.cellId}>
-                      <summary>{f.cellId} · 시작 수분</summary>
-                      <InitializationEvidence value={f.initialization} />
+                      <summary>{f.cellId} · 시작 수분·시설 제원</summary>
+                      {f.initialization && <InitializationEvidence value={f.initialization} />}
+                      {f.facilityDesign && <FacilityProfileEvidence {...f.facilityDesign} />}
                     </details>
                   )
               )}

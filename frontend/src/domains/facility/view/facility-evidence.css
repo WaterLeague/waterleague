@@ -1,0 +1,14 @@
+.facility-profile-evidence .physical-input-values {
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+}
+.facility-profile-evidence dd small {
+  display: block;
+  color: #52665e;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.facility-profile-evidence .hash-value {
+  display: block;
+  margin-top: 8px;
+  overflow-wrap: anywhere;
+}

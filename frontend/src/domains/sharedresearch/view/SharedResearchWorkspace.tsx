@@ -6,6 +6,8 @@ import { facilities, won } from '../../game/service/gameService';
 import { currentWeek, useSharedResearch } from '../controller/useSharedResearch';
 import { recordsPath } from '../repository/sharedResearchRepository';
 import type { SharedDetail } from '../dto/sharedResearchDto';
+import { InitializationEvidence } from '../../physics/view/InitializationEvidence';
+import { FacilityProfileEvidence } from '../../facility/view/FacilityProfileEvidence';
 import './shared-research.css';
 const amount = new Intl.NumberFormat('ko-KR', { maximumFractionDigits: 4 });
 const formatAmount = (value: number) => amount.format(Math.abs(value) < 0.00005 ? 0 : value);
@@ -131,6 +133,21 @@ export function SharedRecordDetail({
       </p>
       <details>
         <summary>공개 관측·계산 조건·미확인 가정</summary>
+        {d.initialization ? (
+          <InitializationEvidence value={d.initialization} />
+        ) : (
+          <p>
+            이 기록에는 선행 관측 초기화 근거가 보관되어 있지 않습니다. 당시 모델 입력을 확인하세요.
+          </p>
+        )}
+        {d.facilityDesign ? (
+          <FacilityProfileEvidence {...d.facilityDesign} />
+        ) : (
+          <p>
+            이 기록에는 공개 시설 제원 스냅샷이 없습니다. 당시 시설 매개변수는 아래 보관 입력에
+            포함됩니다.
+          </p>
+        )}
         {[...d.model.assumptions, ...d.evaporation.assumptions].map((a, n) => (
           <p key={n}>{a}</p>
         ))}

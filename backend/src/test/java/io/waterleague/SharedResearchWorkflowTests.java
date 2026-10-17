@@ -292,6 +292,61 @@ class SharedResearchWorkflowTests {
   }
 
   @Test
+  void exposesArchivedInitializationAndFacilityEvidenceWithoutReplacingLegacyInputs()
+      throws Exception {
+    var owner = actor(false);
+    var org = actor(true);
+    var job = fixture(owner);
+    var legacy = get(owner, "/installations/records/" + job.id());
+    assertThat(legacy.path("initialization").isNull()).isTrue();
+    assertThat(legacy.path("facilityDesign").isNull()).isTrue();
+    var result =
+        (tools.jackson.databind.node.ObjectNode)
+            json.tree(Files.readString(job.path().resolve("result.json")));
+    var initialization =
+        json.tree(
+            json.write(
+                Map.of(
+                    "method",
+                    "SYNTHETIC_ARCHIVED_ONLY",
+                    "warmupMinutes",
+                    10080,
+                    "initialSoilMoisture",
+                    0.284,
+                    "scoreExcludesWarmup",
+                    true)));
+    var facility =
+        json.tree(
+            json.write(
+                Map.of(
+                    "catalogSha256",
+                    "b".repeat(64),
+                    "profile",
+                    Map.of(
+                        "id",
+                        "SYNTHETIC_ARCHIVED_PROFILE_ONLY",
+                        "parameters",
+                        Map.of("soilDepthMm", Map.of("value", 175))))));
+    result.set("initialization", initialization);
+    result.set("facilityDesign", facility);
+    Files.writeString(job.path().resolve("result.json"), json.write(result));
+    db.update(
+        "UPDATE shared_physics_jobs SET artifact_manifest_hash=? WHERE id=?",
+        manifest(job.path()),
+        job.id());
+    grant(owner, org, true);
+    var detail = get(org, "/research/installations/" + job.id());
+    assertThat(detail.path("initialization")).isEqualTo(initialization);
+    assertThat(detail.path("facilityDesign")).isEqualTo(facility);
+    assertThat(detail.path("summary").has("facilityDesign")).isFalse();
+    grant(owner, org, false);
+    assertThat(call(org, "GET", "/research/installations/" + job.id(), null).statusCode())
+        .isEqualTo(404);
+    assertThat(get(owner, "/installations/records/" + job.id()).path("facilityDesign"))
+        .isEqualTo(facility);
+  }
+
+  @Test
   void explicitConsentIsSeparateScopedAndRevocable() throws Exception {
     var owner = actor(false);
     var stranger = actor(false);

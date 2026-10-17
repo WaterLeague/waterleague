@@ -1,4 +1,5 @@
 import type { InitializationEvidenceData } from '../../physics/entity/initialization';
+import type { FacilityEvidence } from '../../facility/dto/facilityDto';
 import type { SharedSite, SharedInstallation } from '../../installation/entity/installation';
 import type { FacilityType } from '../../game/entity/game';
 export interface HistoricalDraft {
@@ -31,7 +32,11 @@ export interface HistoricalJob {
     start: string;
     end: string;
     assumptions: string[];
-    facilities?: { cellId: string; initialization?: InitializationEvidenceData | null }[];
+    facilities?: {
+      cellId: string;
+      initialization?: InitializationEvidenceData | null;
+      facilityDesign?: FacilityEvidence | null;
+    }[];
     frames: {
       at: string;
       rainMm: number;

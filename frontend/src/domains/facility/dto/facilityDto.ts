@@ -6,26 +6,36 @@ const parameter = z.object({
   basis: z.string(),
   range: z.tuple([z.number().finite(), z.number().finite()]).optional(),
 });
+export const facilitySourceDto = z.object({
+  title: z.string(),
+  url: z.url().startsWith('https://'),
+  sha256: z.string(),
+  year: z.number(),
+  pages: z.array(z.number()),
+});
+export const facilityProfileDto = z.object({
+  id: z.string(),
+  name: z.string(),
+  summary: z.string(),
+  type: z.string(),
+  parameters: z.record(z.string(), parameter),
+});
+export const facilityEvidenceDto = z.object({
+  catalogSha256: z.string().regex(/^[a-f0-9]{64}$/),
+  evidence: z.literal('PUBLIC_REFERENCE_DESIGN_NOT_SITE_MEASURED'),
+  source: facilitySourceDto,
+  profile: facilityProfileDto,
+  limitations: z.array(z.string()),
+});
 export const facilityCatalogDto = z.object({
   id: z.literal('EPA_LID_PUBLIC_DESIGNS_V1'),
   evidence: z.literal('PUBLIC_REFERENCE_DESIGN_NOT_SITE_MEASURED'),
-  source: z.object({
-    title: z.string(),
-    url: z.url().startsWith('https://'),
-    sha256: z.string(),
-    year: z.number(),
-    pages: z.array(z.number()),
-  }),
+  source: facilitySourceDto,
   profiles: z.record(
     z.enum(['RAIN_GARDEN', 'PERMEABLE_PAVEMENT', 'GREEN_ROOF']),
-    z.object({
-      id: z.string(),
-      name: z.string(),
-      summary: z.string(),
-      type: z.string(),
-      parameters: z.record(z.string(), parameter),
-    })
+    facilityProfileDto
   ),
   limitations: z.array(z.string()),
 });
 export type FacilityCatalog = z.infer<typeof facilityCatalogDto>;
+export type FacilityEvidence = z.infer<typeof facilityEvidenceDto>;

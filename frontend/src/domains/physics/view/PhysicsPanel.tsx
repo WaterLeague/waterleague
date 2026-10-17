@@ -1,4 +1,5 @@
 import { InitializationEvidence } from './InitializationEvidence';
+import { FacilityProfileEvidence } from '../../facility/view/FacilityProfileEvidence';
 import { Droplets } from 'lucide-react';
 import { usePhysics } from '../controller/usePhysics';
 import './physics.css';
@@ -67,6 +68,7 @@ export function PhysicsPanel({ installationId }: { installationId: string }) {
           <details>
             <summary>계산 조건</summary>
             {result.initialization && <InitializationEvidence value={result.initialization} />}
+            {result.facilityDesign && <FacilityProfileEvidence {...result.facilityDesign} />}
             <p>
               EPA SWMM {result.engineVersion} · {at(result.simulationStart)} 이후 연속 계산
             </p>

@@ -141,6 +141,8 @@ public class SharedResearchArtifactService {
               "sharedSiteSource")) modelView.put(key, model.path(key));
       value.put("model", modelView);
       value.put("summary", json.tree(job.result()));
+      value.put("initialization", result.get("initialization"));
+      value.put("facilityDesign", result.get("facilityDesign"));
       value.put("sourceArchive", forcing.path("sourceArchive"));
       value.put("baselineFinal", result.path("baseline").path("final"));
       value.put("strategyFinal", result.path("strategy").path("final"));

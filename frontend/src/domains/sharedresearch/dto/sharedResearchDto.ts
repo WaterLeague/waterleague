@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import { initializationDto } from '../../physics/dto/initializationDto';
+import { facilityEvidenceDto } from '../../facility/dto/facilityDto';
 const num = z.number().finite();
 const time = z.string().datetime({ offset: true });
 const facility = z.enum(['RAIN_GARDEN', 'PERMEABLE_PAVEMENT', 'GREEN_ROOF']);
@@ -65,6 +67,7 @@ export const sharedDetailDto = z.object({
   model: z.object({
     cells: z.array(z.record(z.string(), z.unknown())),
     hydrology: z.record(z.string(), z.unknown()),
+    physicsEvidence: z.unknown(),
     assumptions: z.array(z.string()),
     unitCosts: z.record(z.string(), num),
     costModel: z.unknown(),
@@ -80,6 +83,8 @@ export const sharedDetailDto = z.object({
     validationLevel: z.literal('EXPLORATORY'),
   }),
   baselineFinal: sample,
+  initialization: initializationDto.nullish(),
+  facilityDesign: facilityEvidenceDto.nullish(),
   strategyFinal: sample,
   evaporation: z.object({
     method: z.string(),
