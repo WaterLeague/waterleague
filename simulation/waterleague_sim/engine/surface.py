@@ -121,6 +121,10 @@ class SurfaceSession:
         self.owners = owners
         self.forcing = []
         self.rain = anuga.Rate_operator(domain, rate=np.zeros(len(triangles)), factor=1 / 3_600_000)
+        self.metrics = None
+        if model.get('evaluationMetrics') is not None:
+            from waterleague_sim.engine.flood_metrics import DepthMetrics
+            self.metrics = DepthMetrics(domain, model['evaluationMetrics'])
         self.initial_volume = float(np.dot(depths, domain.areas))
         self.finished = False
         self.initial = self.snapshot()
@@ -179,5 +183,7 @@ class SurfaceSession:
                       else 'FAILED',
                   'files': {p.name: hashlib.sha256(p.read_bytes()).hexdigest()
                             for p in sorted(self.directory.iterdir()) if p.is_file()}}
+        if self.metrics is not None:
+            result['evaluationMetrics'] = self.metrics.snapshot()
         (self.directory / 'surface-result.json').write_text(json.dumps(result, allow_nan=False, indent=2) + '\n')
         return result

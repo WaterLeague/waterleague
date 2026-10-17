@@ -28,7 +28,7 @@ def main():
              ROOT / 'simulation/waterleague_sim/reference/flood_cases.py',
              *[ROOT / 'simulation/waterleague_sim/engine' / f'{name}.py' for name in
                ('coupled_flood', 'network', 'network_exchange', 'surface', 'surface_exchange', 'flood_process',
-                'flood_errors', 'swmm')],
+                'flood_errors', 'flood_metrics', 'swmm')],
              ROOT / 'simulation/native/network_snapshot.inc', ROOT / 'simulation/native/network_exchange.inc',
              ROOT / 'simulation/uv.lock', ROOT / 'simulation/pyproject.toml',
              ROOT / 'data/manifests/anuga-4.0.1.json']

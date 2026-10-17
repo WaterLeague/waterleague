@@ -14,6 +14,7 @@ from build_live_swmm import ROOT, REVISION, ARCHIVE_HASH
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--exchange', action='store_true')
+    parser.add_argument('--metrics', action='store_true')
     args = parser.parse_args()
     archive = ROOT / 'tmp/swmm/source.tar.gz'
     if not archive.exists():
@@ -26,7 +27,8 @@ def main():
         archive.write_bytes(raw)
     if hashlib.sha256(archive.read_bytes()).hexdigest() != ARCHIVE_HASH:
         raise ValueError('EPA_SOURCE_HASH_MISMATCH')
-    name = 'network-exchange-swmm' if args.exchange else 'network-swmm'
+    exchange = args.exchange or args.metrics
+    name = 'network-metrics-swmm' if args.metrics else ('network-exchange-swmm' if exchange else 'network-swmm')
     source, build = ROOT / f'tmp/{name}-source', ROOT / f'tmp/{name}-build'
     source.mkdir(parents=True, exist_ok=True)
     with tarfile.open(archive) as bundle:
@@ -45,8 +47,20 @@ def main():
     solver = source / 'src/solver/swmm5.c'
     solver.write_bytes(solver.read_bytes() + b'\n' + observer.read_bytes())
     extension = ROOT / 'simulation/native/network_exchange.inc'
-    if args.exchange:
-        solver.write_bytes(solver.read_bytes() + b'\n' + extension.read_bytes())
+    metrics = ROOT / 'simulation/native/network_metrics.inc'
+    if exchange:
+        extension_bytes = extension.read_bytes()
+        if args.metrics:
+            original = b'do { error = wl_observedStep(&elapsedTime); } while (elapsedTime > 0.0 && !error);'
+            if extension_bytes.count(original) != 1:
+                raise ValueError('NETWORK_METRICS_HOOK_MISMATCH')
+            extension_bytes = extension_bytes.replace(original, b'''do {
+        double before = NewRoutingTime / 1000.0;
+        error = wl_observedStep(&elapsedTime);
+        if (!error) wl_metricsObserve(before);
+    } while (elapsedTime > 0.0 && !error);''')
+            solver.write_bytes(solver.read_bytes() + b'\n' + metrics.read_bytes())
+        solver.write_bytes(solver.read_bytes() + b'\n' + extension_bytes)
     options = ['-DCMAKE_BUILD_TYPE=Release', '-DCMAKE_INSTALL_RPATH=$ORIGIN']
     if platform.system() == 'Darwin':
         omp = subprocess.check_output(['brew', '--prefix', 'libomp'], text=True).strip()
@@ -65,7 +79,10 @@ def main():
         'modification': 'READ_ONLY_OBSERVER_NO_SOLVER_CHANGES',
         **({'exchangeVersion': 1, 'exchangeSha256': hashlib.sha256(extension.read_bytes()).hexdigest(),
             'modification': 'OBSERVER_AND_MILLISECOND_STRIDE_NO_SOLVER_EQUATION_CHANGES'}
-           if args.exchange else {}),
+           if exchange else {}),
+        **({'metricsVersion': 1, 'metricsSha256': hashlib.sha256(metrics.read_bytes()).hexdigest(),
+            'builderSha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest()}
+           if args.metrics else {}),
     }, indent=2) + '\n')
 
 

@@ -36,6 +36,7 @@ def main():
     source_paths = [Path(__file__), ROOT / 'simulation/waterleague_sim/reference/flood_cases.py',
                     ROOT / 'simulation/waterleague_sim/engine/flood_errors.py',
                     ROOT / 'simulation/waterleague_sim/engine/flood_process.py',
+                    ROOT / 'simulation/waterleague_sim/engine/flood_metrics.py',
                     ROOT / 'simulation/waterleague_sim/engine/network.py',
                     ROOT / 'simulation/waterleague_sim/engine/surface.py',
                     ROOT / 'simulation/native/network_snapshot.inc',

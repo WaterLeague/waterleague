@@ -12,6 +12,7 @@ _METHODS = {
     'surface_exchange': frozenset(('snapshot', 'port_state', 'apply_exchange', 'advance_exchange',
                                    'set_rainfall', 'store_frame', 'finish')),
 }
+_METHODS['network_metrics'] = _METHODS['network_exchange'] | {'metric_state'}
 
 
 def _serve(connection, engine, model, directory, evaluation_seconds):
@@ -23,8 +24,10 @@ def _serve(connection, engine, model, directory, evaluation_seconds):
                                      'MKL_NUM_THREADS': '1', 'MPLBACKEND': 'Agg'})
     session = None
     try:
-        if engine in ('network', 'network_exchange'):
-            if engine == 'network_exchange':
+        if engine in ('network', 'network_exchange', 'network_metrics'):
+            if engine == 'network_metrics':
+                from waterleague_sim.engine.network_metrics import MetricsNetworkSession as NetworkSession
+            elif engine == 'network_exchange':
                 from waterleague_sim.engine.network_exchange import ExchangeNetworkSession as NetworkSession
             else:
                 from waterleague_sim.engine.network import NetworkSession
@@ -56,7 +59,7 @@ def _serve(connection, engine, model, directory, evaluation_seconds):
         except (EOFError, BrokenPipeError, OSError):
             pass
     finally:
-        if engine in ('network', 'network_exchange') and session is not None:
+        if engine in ('network', 'network_exchange', 'network_metrics') and session is not None:
             session.close()
         connection.close()
 

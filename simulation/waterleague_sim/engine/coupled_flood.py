@@ -6,6 +6,7 @@ from pathlib import Path
 
 from waterleague_sim.engine.flood_errors import FloodModelError, require
 from waterleague_sim.engine.flood_process import EngineProcess
+from waterleague_sim.engine.flood_metrics import specification_hash, validate_metrics
 
 
 def _write(path, value):
@@ -20,6 +21,10 @@ def _validate(model):
     for key in ('durationSeconds', 'maximumExchangeMilliseconds', 'frameIntervalMilliseconds'):
         require(type(model.get(key)) is int and model[key] > 0, 'COUPLED_TIMING_INVALID')
     require(model['maximumExchangeMilliseconds'] <= 60_000, 'COUPLED_TIMING_INVALID')
+    if model.get('evaluationMetrics') is not None:
+        validate_metrics(model['evaluationMetrics'], len(surface['triangles']), model['durationSeconds'])
+        require(not any('evaluationMetrics' in part for part in (surface, network)),
+                'COUPLED_METRICS_SPECIFICATION_CONFLICT')
     # 관망 강우 면적은 지정된 지표 격자와 일치해야 하며 직접 강우에서는 제외한다.
     subcatchments, section = {}, ''
     units = None
@@ -87,6 +92,10 @@ def run_coupled(model, directory):
     ports = model['ports']
     network_model = model['network'] | {'ports': ports}
     surface_model = {'surface': model['surface'], 'ports': ports}
+    metric_spec = model.get('evaluationMetrics')
+    if metric_spec is not None:
+        network_model = network_model | {'evaluationMetrics': metric_spec}
+        surface_model = surface_model | {'surface': model['surface'] | {'evaluationMetrics': metric_spec}}
     duration = model['durationSeconds'] * 1000
     events = {}
     for collection in ('networkForcing', 'surfaceRainfall'):
@@ -95,7 +104,8 @@ def run_coupled(model, directory):
     event_times = sorted(set(events) | {duration})
     clock, nstate, state = 0, None, None
     try:
-        with EngineProcess('network_exchange', network_model, directory / 'network',
+        with EngineProcess('network_metrics' if metric_spec is not None else 'network_exchange',
+                           network_model, directory / 'network',
                            evaluation_seconds=model['durationSeconds']) as network:
             with EngineProcess('surface_exchange', surface_model, directory / 'surface') as surface:
                 state = surface.call('port_state')
@@ -192,6 +202,20 @@ def run_coupled(model, directory):
                         '연결되지 않은 노드 월류는 실패 처리, 임의 지표 위치 할당 없음'],
                     'files': {str(p.relative_to(directory)): hashlib.sha256(p.read_bytes()).hexdigest()
                               for p in sorted(directory.rglob('*')) if p.is_file()}}
+                if metric_spec is not None:
+                    nm, sm = nresult['evaluationMetrics'], sresult['evaluationMetrics']
+                    spec_hash = specification_hash(metric_spec)
+                    require(nm['specificationSha256'] == sm['specificationSha256'] == spec_hash,
+                            'COUPLED_METRICS_SPECIFICATION_MISMATCH')
+                    complete = nm['complete'] and sm['complete']
+                    result['evaluationMetrics'] = {'specification': metric_spec,
+                        'specificationSha256': spec_hash,
+                        'status': 'NUMERICAL_DIAGNOSTIC' if complete and passed else 'FAILED_DIAGNOSTIC',
+                        'rankingEligible': False, 'complete': complete,
+                        'network': nm, 'surface': sm,
+                        'raw': {'outwardVolumeM3': nm['combined']['outwardVolumeM3'],
+                                'peakOutwardM3s': nm['combined']['peakOutwardM3s'],
+                                'depthAreaTimeM3Hours': sm['depthAreaTimeM3Hours']}}
                 _write(directory / 'coupled-result.json', result)
                 return result
     except BaseException as error:

@@ -102,6 +102,8 @@ class ExchangeSurfaceSession(SurfaceSession):
             self.exchange_net += volume
             records.append({'port': identifier, 'requestedM3': volume, 'appliedM3': actual,
                             'roundoffM3': actual - volume})
+        if self.metrics is not None:
+            self.metrics.reset_at_instant()
         with (self.directory / 'surface-exchange.jsonl').open('a') as stream:
             stream.write(json.dumps({'timeSeconds': domain.get_time(), 'transfers': records},
                                     allow_nan=False) + '\n')
