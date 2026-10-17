@@ -1,5 +1,5 @@
 import { Download, LockKeyhole, ArrowRight, ShieldCheck } from 'lucide-react';
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { ResearchSharing } from './ResearchSharing';
 import { SharedResearchWorkspace } from '../../sharedresearch/view/SharedResearchWorkspace';
 import { ResearchAnalysisWorkspace } from '../../analysis/view/ResearchAnalysisWorkspace';
@@ -17,12 +17,14 @@ export function ResearchPage({
   lab,
   catalog,
   map,
+  submittedConditions,
   onReplay,
 }: {
   account: Account | null;
   lab: Lab;
   catalog: RainfallCatalog | null;
   map: CandidateMap | null;
+  submittedConditions: ReactNode;
   onReplay: (p: Placement[]) => void;
 }) {
   const {
@@ -73,6 +75,8 @@ export function ResearchPage({
         <ResearchSharing key={account.id} consents={consents} onChange={consent} />
       ) : (
         <>
+          <h2>기관 리그 제출 기록</h2>
+          {submittedConditions}
           <CostPerformance entries={entries} onSelect={(id) => void inspect(id)} />
           <div className="research-layout">
             <div>

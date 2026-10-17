@@ -8,6 +8,7 @@ import { recordsPath } from '../repository/sharedResearchRepository';
 import type { SharedDetail } from '../dto/sharedResearchDto';
 import './shared-research.css';
 const amount = new Intl.NumberFormat('ko-KR', { maximumFractionDigits: 4 });
+const formatAmount = (value: number) => amount.format(Math.abs(value) < 0.00005 ? 0 : value);
 const at = (time: string) =>
   new Date(time).toLocaleString('ko-KR', {
     timeZone: 'Asia/Seoul',
@@ -43,7 +44,7 @@ function FlowChart({ detail: d }: { detail: SharedDetail }) {
         <path d={path('baseline')} className="record-chart-base" />
         <path d={path('strategy')} className="record-chart-design" />
         <text x="22" y="18">
-          {amount.format(max)}
+          {formatAmount(max)}
         </text>
         <text x="20" y="192">
           {at(frames[0].strategy.at)}
@@ -118,14 +119,14 @@ export function SharedRecordDetail({
           {rows.map(([label, a, b]) => (
             <tr key={label}>
               <th>{label}</th>
-              <td>{amount.format(a)}</td>
-              <td>{amount.format(b)}</td>
+              <td>{formatAmount(a)}</td>
+              <td>{formatAmount(b)}</td>
             </tr>
           ))}
         </tbody>
       </table>
       <p>
-        유출 물수지 오차 {amount.format(d.summary.runoffContinuityPercent)}%. 순저류를 포함한
+        유출 물수지 오차 {formatAmount(d.summary.runoffContinuityPercent)}%. 순저류를 포함한
         평가체적을 비교하며 실제 침수 저감량으로 해석하지 않습니다.
       </p>
       <details>
@@ -161,16 +162,16 @@ export function SharedRecordDetail({
               {d.frames.map((f) => (
                 <tr key={f.strategy.at}>
                   <td>{at(f.strategy.at)}</td>
-                  <td>{amount.format(f.contribution.cumulativeM3)}</td>
+                  <td>{formatAmount(f.contribution.cumulativeM3)}</td>
                   <td>
                     {f.strategy.surfaceDepthMm === null
                       ? '—'
-                      : amount.format(f.strategy.surfaceDepthMm)}
+                      : formatAmount(f.strategy.surfaceDepthMm)}
                   </td>
                   <td>
                     {f.strategy.soilMoisture === null
                       ? '—'
-                      : amount.format(100 * f.strategy.soilMoisture)}
+                      : formatAmount(100 * f.strategy.soilMoisture)}
                   </td>
                 </tr>
               ))}
@@ -264,11 +265,11 @@ export function SharedResearchWorkspace({ account }: { account: Account }) {
             >
               <div>
                 <b>
-                  {e.playerName} · {amount.format(e.playerScoreM3)}m³
+                  {e.playerName} · {formatAmount(e.playerScoreM3)}m³
                 </b>
                 <span>
                   {facilities[e.facilityType].name} · {e.areaM2}㎡ · 이 설치{' '}
-                  {amount.format(e.scoreM3)}m³
+                  {formatAmount(e.scoreM3)}m³
                 </span>
                 <small>
                   {e.evaluatedMinutes.toLocaleString('ko-KR')}분 계산 · {at(e.evaluatedThrough)}까지

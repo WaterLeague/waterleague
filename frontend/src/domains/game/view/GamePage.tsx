@@ -186,6 +186,20 @@ export function GamePage() {
         : cell
           ? 1
           : 0;
+  const rainfallContext =
+    lab && g.rainfallCatalog && g.account?.role !== 'ADMIN' ? (
+      <RainfallSelector
+        lab={lab}
+        catalog={g.rainfallCatalog}
+        disabled={working || !!activeLeague}
+        onChange={(hash) =>
+          void g.action(async () => {
+            await g.selectModel(hash);
+            setSelected(null);
+          })
+        }
+      />
+    ) : null;
   return (
     <div className={`game-shell${tab === 'studio' ? ' in-play' : ''}`}>
       <header className="topbar">
@@ -260,24 +274,7 @@ export function GamePage() {
           )}
         </div>
       </header>
-      {lab &&
-        g.rainfallCatalog &&
-        g.account?.role !== 'ADMIN' &&
-        tab !== 'missions' &&
-        tab !== 'city' &&
-        tab !== 'studio' && (
-          <RainfallSelector
-            lab={lab}
-            catalog={g.rainfallCatalog}
-            disabled={working || !!activeLeague}
-            onChange={(hash) =>
-              void g.action(async () => {
-                await g.selectModel(hash);
-                setSelected(null);
-              })
-            }
-          />
-        )}
+      {(tab === 'leaderboard' || tab === 'data') && rainfallContext}
       {activeLeague && tab === 'studio' && (
         <div className="active-league-banner">
           <div>
@@ -987,6 +984,7 @@ export function GamePage() {
           lab={lab}
           catalog={g.rainfallCatalog}
           map={activeMap}
+          submittedConditions={rainfallContext}
           onReplay={(p) => {
             g.newDesign();
             setActiveLeague(null);
