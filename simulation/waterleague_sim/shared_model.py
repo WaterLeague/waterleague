@@ -6,12 +6,12 @@ from functools import lru_cache
 from .engine.continuous import ROOT, digest
 from .model_catalog import read_catalog
 
-CATALOG_HASHES={1:'f26b639dbdb2fee3c1aff172a19153868a07aa70735a6dfcfda863c3a38e8b64',
+CATALOG_HASHES={4:'f1f8d5f366cf47fff86319b27669bfb8e4a1fd3912d701b70b4b6e280e6fa66f',1:'f26b639dbdb2fee3c1aff172a19153868a07aa70735a6dfcfda863c3a38e8b64',
                 2:'009fcd085f476bbc96a41888646f284942cd69aae0b9405defcb2764a8d6d5ea',
                 3:'80e46a9c3821cdeff4b9acd839b264d810ba559202da828cdb8a6b45c04b15e4'}
 
-@lru_cache(maxsize=3)
-def site_catalog(version=3):
+@lru_cache(maxsize=4)
+def site_catalog(version=4):
     path=ROOT/'backend/src/main/resources/shared-sites'/('catalog.json' if version==1 else f'catalog-v{version}.json')
     raw=path.read_bytes()
     if digest(raw)!=CATALOG_HASHES[version]:raise ValueError('LIVE_CATALOG_INVALID')
@@ -25,7 +25,7 @@ def catalog():
     return ({d['districtId']:d for d in json.loads(districts)['regions']},site_catalog(),read_catalog(ROOT/'data/models'))
 
 @lru_cache(maxsize=4)
-def candidate_snapshot(district, version=3):
+def candidate_snapshot(district, version=4):
     districts,_,_=catalog();entry=site_catalog(version)[district]
     if entry['file']!=f'{district}-v{version}.json.gz':raise ValueError('LIVE_CATALOG_INVALID')
     raw=(ROOT/'backend/src/main/resources/shared-sites'/entry['file']).read_bytes()
@@ -36,7 +36,7 @@ def candidate_snapshot(district, version=3):
     if snapshot['baseModelHash']!=districts[district]['defaultModelHash']:raise ValueError('LIVE_MODEL_LINK_INVALID')
     return snapshot
 
-def candidates(district, version=3):
+def candidates(district, version=4):
     return {c['id']:c for c in candidate_snapshot(district, version)['cells']}
 
 def resolve(installation):
@@ -45,7 +45,7 @@ def resolve(installation):
     if installation['model_hash']==district['defaultModelHash']:
         cell=next(c for c in model['cells'] if c['id']==installation['cell_id'])
     else:
-        version=next((v for v in (3,2,1) if site_catalog(v)[district['districtId']]['sha256']==installation['model_hash']),None)
+        version=next((v for v in (4,3,2,1) if site_catalog(v)[district['districtId']]['sha256']==installation['model_hash']),None)
         if version is None:raise ValueError('LIVE_INSTALLATION_MODEL_INVALID')
         cell=candidates(district['districtId'],version)[installation['cell_id']]
     model['cells']=[copy.deepcopy(cell)]
@@ -60,6 +60,18 @@ def resolve(installation):
         source=candidate_snapshot(district['districtId'],version)
         for key in ('unitCosts','costModel','costSourceSha256','budget','budgetPolicy'):
             model[key]=copy.deepcopy(source[key])
+    if version >= 4:
+        model['physicsEvidence'] = copy.deepcopy(candidate_snapshot(district['districtId'],version)['physicsEvidence'])
+        physical = model['cells'][0]['physicalInputs']
+        model['assumptions'] = [a for a in model['assumptions'] if not a.startswith('불투수율 100%')]
+        model['assumptions'] += [
+            '유출 폭은 공개 도형 면적/장축으로 산정; 배수구 방향 미확인, 부분 설치는 같은 종횡비 축소',
+            '기준 표면의 불투수율 100%는 옥상·포장면 분류의 모델 조건이며 실측 비율 아님',
+            ('지상 경사는 2025 공개 DEM 90m 격자의 270m 창 지역 경사 대용값; 개별 포장면 실측 아님'
+             if physical['slopeMethod']=='NGII_2025_90M_HORN_TERRAIN_PROXY' else '표면 경사 자료 미확보: 1% 설계 가정 잔존'),
+            ('원지반 침투는 공개 심토토성군과 EPA 문헌 범위의 낮은 투수계수 시나리오; 성토·다짐 미확인'
+             if physical['soilStatus']=='TEXTURE_CLASS_LITERATURE_ESTIMATE' else '원지반 토성 미확인 또는 옥상 비적용; 기존 설계 조건 유지'),
+        ]
     if installation.get('budget_policy') is not None:
         policy = installation['budget_policy']
         if isinstance(policy,str): policy = json.loads(policy)

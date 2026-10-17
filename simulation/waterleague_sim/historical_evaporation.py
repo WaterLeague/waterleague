@@ -40,7 +40,16 @@ def load(model_hash, observed, directory):
         'evaporation.py': 'ingestion/evaporation.py', 'evapotranspiration.py': 'engine/evapotranspiration.py'}
     for name, relative in implementations.items():
         body = (Path(__file__).parent/relative).read_bytes()
-        if digest(body) != value['implementationHashes'][name]:
+        expected = value['implementationHashes'][name]
+        if not re.fullmatch(r'[a-f0-9]{64}', expected):
+            raise ValueError('HISTORICAL_PET_IMPLEMENTATION_CHANGED')
+        if digest(body) != expected:
+            # 이미 산정된 증발산의 생성 코드는 실행 시점 코드와 별도로 보존한다.
+            archived = root/'implementations'/(expected+'.py')
+            if archived.is_symlink() or not archived.is_file():
+                raise ValueError('HISTORICAL_PET_IMPLEMENTATION_CHANGED')
+            body = archived.read_bytes()
+        if digest(body) != expected:
             raise ValueError('HISTORICAL_PET_IMPLEMENTATION_CHANGED')
         (directory/name).write_bytes(body)
     return value

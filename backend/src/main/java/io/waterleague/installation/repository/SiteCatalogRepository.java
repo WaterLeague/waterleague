@@ -29,15 +29,15 @@ public class SiteCatalogRepository {
     this.json = json;
     this.districts = districts;
     this.models = models;
-    var source = read("catalog-v3.json", false, 50000);
+    var source = read("catalog-v4.json", false, 50000);
     if (!json.hash(source)
-        .equals("80e46a9c3821cdeff4b9acd839b264d810ba559202da828cdb8a6b45c04b15e4"))
+        .equals("f1f8d5f366cf47fff86319b27669bfb8e4a1fd3912d701b70b4b6e280e6fa66f"))
       throw new IllegalStateException("공동 후보 목록 해시 오류");
     for (var entry : json.tree(source).path("entries")) {
       String id = entry.path("districtId").asString();
       var district = districts.require(id);
       if (entries.put(id, entry) != null
-          || !entry.path("file").asString().equals(id + "-v3.json.gz"))
+          || !entry.path("file").asString().equals(id + "-v4.json.gz"))
         throw new IllegalStateException("공동 후보 목록 오류");
       counts.put(id, entry.path("count").asInt());
     }
@@ -64,7 +64,7 @@ public class SiteCatalogRepository {
     var values = new LinkedHashMap<String, SiteView>();
     var entry = entries.get(id);
     try {
-      String raw = read(entry.path("file").asString(), true, 32 * 1024 * 1024);
+      String raw = read(entry.path("file").asString(), true, 64 * 1024 * 1024);
       String hash = entry.path("sha256").asString();
       var snapshot = json.tree(raw);
       if (!json.hash(raw).equals(hash)
@@ -123,7 +123,8 @@ public class SiteCatalogRepository {
               cell.path("siteEligibility").asString(),
               cell.path("inflowPolicy").asString(),
               model.path("costModel"),
-              model.path("costSourceSha256").asString());
+              model.path("costSourceSha256").asString(),
+              cell.path("physicalInputs"));
       if (output.put(site.cellId(), site) != null) throw new IllegalStateException("공동 후보 중복");
     }
   }

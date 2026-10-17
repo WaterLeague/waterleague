@@ -132,6 +132,7 @@ public class SharedResearchArtifactService {
           List.of(
               "cells",
               "hydrology",
+              "physicsEvidence",
               "unitCosts",
               "costModel",
               "budget",

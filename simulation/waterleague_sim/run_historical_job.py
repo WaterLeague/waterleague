@@ -23,6 +23,7 @@ def calculate(request, directory):
     (directory/'rainfall-model.json').write_bytes(source)
     evaporation = load_evaporation(request['modelHash'], observed, directory)
     results, frames = [], []
+    assumptions = {'관망 없는 독립 표면 계산', '관측소 강우의 선택 표면 대표성 미검증'}
     for index, placement in enumerate(placements):
         model, _, _ = resolve({'district_id': placement['districtId'], 'cell_id': placement['cellId'],
                                'model_hash': placement['siteModelHash'],
@@ -33,13 +34,15 @@ def calculate(request, directory):
         model = with_observed_forcing(model, evaporation)
         physical = {k: placement[k] for k in ('cellId','facilityType','areaM2')}
         result = experiment(model, physical, directory/str(index), evaporation)
+        assumptions.update(result['assumptions'])
         a, b = result['baseline']['final'], result['strategy']['final']
         results.append(placement | {'precipitationM3': b['precipitationM3'],
             'infiltrationM3': b['infiltrationM3'], 'storageM3': b['storageM3'],
             'evaporationM3': b['evaporationM3'],
             'baselineAccountedM3': a['accountedDischargeM3'], 'designAccountedM3': b['accountedDischargeM3'],
             'differenceM3': a['accountedDischargeM3']-b['accountedDischargeM3'],
-            'runoffContinuityPercent': result['strategy']['runoffContinuityPercent']})
+            'runoffContinuityPercent': result['strategy']['runoffContinuityPercent'],
+            'physicalInputs': model['cells'][0].get('physicalInputs')})
         for i, (base, design, contribution) in enumerate(zip(result['baseline']['samples'], result['strategy']['samples'], result['contribution'], strict=True)):
             if index == 0:
                 frames.append({'at': base['at'], 'rainMm': observed['rainfall']['depthsMm'][i],
@@ -56,8 +59,7 @@ def calculate(request, directory):
             'differenceM3': sum(v['differenceM3'] for v in results),
             'baselineAccountedM3': sum(v['baselineAccountedM3'] for v in results),
             'designAccountedM3': sum(v['designAccountedM3'] for v in results),
-            'assumptions': ['관망 없는 독립 표면 계산', '시설 재료·토양·초기 수분·경사 미확인 설계 조건',
-                            '관측소 강우의 선택 표면 대표성 미검증']+evaporation['assumptions']}
+            'assumptions': sorted(assumptions)+evaporation['assumptions']}
 
 
 def main():

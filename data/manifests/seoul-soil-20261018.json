@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "acquiredAt": "2026-10-17T17:02:17.981525+00:00",
+  "provider": "국립농업과학원 / 브이월드",
+  "layer": "LT_C_ASITDEEPSOIL",
+  "sourceUrl": "https://www.vworld.kr/dev/v4dv_2ddataguide2_s002.do?svcIde=asitdeepsoil&apiVer=2",
+  "bbox": [
+    126.76,
+    37.41,
+    127.19,
+    37.71
+  ],
+  "crs": "EPSG:4326",
+  "total": 8266,
+  "pages": [
+    {
+      "file": "data/private/seoul-soil-20261018/deepsoil-page-1.json",
+      "sha256": "0d62af01bb5e94c4bf7fcf76476b62bf8ecb862bd1221f402b2264adb5bd4e0c",
+      "count": 1000,
+      "bytes": 5567744
+    },
+    {
+      "file": "data/private/seoul-soil-20261018/deepsoil-page-2.json",
+      "sha256": "51082f643c4742e48c5629a1357304d163bcd74606fba478873c13da79ab7536",
+      "count": 1000,
+      "bytes": 4726883
+    },
+    {
+      "file": "data/private/seoul-soil-20261018/deepsoil-page-3.json",
+      "sha256": "124e1ebc1989bf601635a339c19becf6d3c29f3f13d8d5e22013056452a3b87e",
+      "count": 1000,
+      "bytes": 4391380
+    },
+    {
+      "file": "data/private/seoul-soil-20261018/deepsoil-page-4.json",
+      "sha256": "b44641b05096b9faca2a926466b0cdc3d37a078c9194a7ee47a6aae331c746e3",
+      "count": 1000,
+      "bytes": 2936614
+    },
+    {
+      "file": "data/private/seoul-soil-20261018/deepsoil-page-5.json",
+      "sha256": "c5ecef9ca09ca9385b583fb7eb6f6de1fa20d0d95240e8834e081bf9a1493e89",
+      "count": 1000,
+      "bytes": 808870
+    },
+    {
+      "file": "data/private/seoul-soil-20261018/deepsoil-page-6.json",
+      "sha256": "7bf395a29059d93f00a898799bc2c2176a5933339002e31234c6e097895061aa",
+      "count": 1000,
+      "bytes": 3982244
+    },
+    {
+      "file": "data/private/seoul-soil-20261018/deepsoil-page-7.json",
+      "sha256": "4f7c51e7f003035d8dbfa02fda8ac3fc0a5f17d7db461eae334c2de3beae8f54",
+      "count": 1000,
+      "bytes": 7676872
+    },
+    {
+      "file": "data/private/seoul-soil-20261018/deepsoil-page-8.json",
+      "sha256": "c7f2e915dc8a3f17b625becd83f11f26d5684d50a6326002cca5829b1647531b",
+      "count": 1000,
+      "bytes": 1162699
+    },
+    {
+      "file": "data/private/seoul-soil-20261018/deepsoil-page-9.json",
+      "sha256": "84fae0a3643fb18fcb8a1dc08a325a80624be96753f072329ffc3fac69abd186",
+      "count": 266,
+      "bytes": 167947
+    }
+  ]
+}

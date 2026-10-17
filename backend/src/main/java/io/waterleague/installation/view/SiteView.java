@@ -21,4 +21,5 @@ public record SiteView(
     String siteEligibility,
     String inflowPolicy,
     tools.jackson.databind.JsonNode costModel,
-    String costSourceSha256) {}
+    String costSourceSha256,
+    tools.jackson.databind.JsonNode physicalInputs) {}

@@ -65,7 +65,8 @@ def input_source(model, placements, evaporation):
     # EPA 날짜 차의 floor 연산으로 종료 1초가 잘리는 경우를 피한다. 실행은 관측 끝에서 중단한다.
     normalized = model | {'rainfall': model['rainfall'] | {
         'start': start.isoformat(), 'end': (start+timedelta(minutes=count, seconds=1)).isoformat()}}
-    source = make_input(normalized, placements)
+    # 작은 표면·실제 지형 경사에서 10초 적분의 초기 수지 오차를 줄인다.
+    source = make_input(normalized, placements, step_seconds=1 if model['cells'][0].get('physicalInputs') else 10)
     if model.get('sharedSiteSource', {}).get('inflowPolicy') == 'DIRECT_RAINFALL_ONLY':
         # 배수 연결 근거가 없는 표면의 유출을 시설에 임의 배분하지 않는다.
         lines, in_usage = [], False
@@ -80,6 +81,9 @@ def input_source(model, placements, evaporation):
                 line = ' '.join(fields)
             lines.append(line)
         source = '\n'.join(lines)+'\n'
+    physical = model['cells'][0].get('physicalInputs')
+    if physical is not None:
+        source = apply_site_inputs(source, model['cells'][0], placements)
     if evaporation is not None:
         values = evaporation['ratesMmDay']
         if (len(values) != count or not evaporation.get('method') or not evaporation.get('sourceHashes')
@@ -96,6 +100,39 @@ def input_source(model, placements, evaporation):
         source = source.replace('[TIMESERIES]\n', '[TIMESERIES]\n'+'\n'.join(rows)+'\n')
     return source
 
+
+
+def apply_site_inputs(source, cell, placements):
+    physical = cell['physicalInputs']
+    required = ('runoffWidthM','flowLengthM','slopePercent')
+    if (any(isinstance(physical.get(k),bool) or not isinstance(physical.get(k),(float,int))
+            or not math.isfinite(physical[k]) for k in required)
+            or physical['runoffWidthM']<=0 or physical['flowLengthM']<=0 or physical['slopePercent']<0):
+        raise SimulationQualityError('LIVE_SITE_PHYSICS_INVALID')
+    for key in ('nImpervious','conductivityMmH','suctionMm'):
+        if key in physical and (not isinstance(physical[key],(float,int)) or not math.isfinite(physical[key]) or physical[key]<=0):
+            raise SimulationQualityError('LIVE_SITE_PHYSICS_INVALID')
+    lines=[]; section=''
+    for line in source.splitlines():
+        if line.startswith('['):section=line
+        elif line.strip():
+            f=line.split()
+            if section=='[SUBCATCHMENTS]':
+                f[5]=str(physical['runoffWidthM']);f[6]=str(physical['slopePercent'])
+            elif section=='[SUBAREAS]' and 'nImpervious' in physical:
+                f[1]=str(physical['nImpervious'])
+            elif section=='[INFILTRATION]' and 'conductivityMmH' in physical:
+                f[1]=str(physical['suctionMm']);f[2]=str(physical['conductivityMmH'])
+            elif section=='[LID_USAGE]':
+                # 미확정 세부 배치 모양은 후보와 같은 종횡비로 축소한 설계로 계산한다.
+                f[4]=str(physical['runoffWidthM']*math.sqrt(float(f[3])/cell['areaM2']))
+            elif section=='[LID_CONTROLS]':
+                if f[0]=='PP' and f[1]=='SURFACE':f[5]=str(physical['slopePercent'])
+                if f[0] in ('PP','RG') and f[1]=='STORAGE' and 'conductivityMmH' in physical:
+                    f[4]=str(physical['conductivityMmH'])
+            line=' '.join(f)
+        lines.append(line)
+    return '\n'.join(lines)+'\n'
 
 def replay(model, placements, directory, label, evaporation=None):
     start, count = validated_period(model)
