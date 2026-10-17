@@ -7,6 +7,32 @@ from waterleague_sim.engine.flood_errors import require
 POLICY = 'network-continuity-convergence-v2'
 
 
+def configuration_state(library, declared_options):
+    """기본값 적용·단위 변환 후의 엔진 설정. 실제 시설 제원과 별도 보존."""
+    doubles = ('RouteStep', 'MinRouteStep', 'CourantFactor', 'MinSurfArea', 'HeadTol')
+    try:
+        values = {name: C.c_double.in_dll(library, name).value for name in doubles}
+        method = C.c_int.in_dll(library, 'SurchargeMethod').value
+        trials = C.c_int.in_dll(library, 'MaxTrials').value
+    except ValueError:
+        require(False, 'NETWORK_CONFIGURATION_UNAVAILABLE')
+    require(all(math.isfinite(v) and v >= 0 for v in values.values())
+            and values['RouteStep'] > 0 and values['MinRouteStep'] > 0
+            and method in (0, 1) and trials > 0, 'NETWORK_CONFIGURATION_INVALID')
+    names = ('SURCHARGE_METHOD', 'ROUTING_STEP', 'MINIMUM_STEP', 'VARIABLE_STEP',
+             'MIN_SURFAREA', 'HEAD_TOLERANCE', 'MAX_TRIALS')
+    return {'method': 'EPA_5_2_4_NATIVE_SETTINGS_READ_ONLY',
+            'surchargeMethod': ('EXTRAN', 'SLOT')[method],
+            'maximumRoutingStepSeconds': values['RouteStep'],
+            'minimumRoutingStepSeconds': values['MinRouteStep'],
+            'courantFactor': values['CourantFactor'],
+            'minimumNumericalNodeAreaM2': values['MinSurfArea'] * .3048 ** 2,
+            'headConvergenceToleranceM': values['HeadTol'] * .3048,
+            'maximumTrials': trials,
+            'declaredInputOptions': {key: declared_options[key] for key in names if key in declared_options},
+            'defaultedInputOptions': [key for key in names if key not in declared_options]}
+
+
 def convergence_state(library):
     # 해시로 고정된 5.2.4의 정수 카운터만 읽으며 엔진 메모리에 쓰지 않는다.
     try:

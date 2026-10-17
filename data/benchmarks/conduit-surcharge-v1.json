@@ -1,0 +1,788 @@
+{
+  "schemaVersion": 1,
+  "classification": "NUMERICAL_EVIDENCE_NOT_SEOUL_VALIDATION",
+  "engineSha256": {
+    "lid": "6d9b7c9704abd4e268e47bb431186a0a88602d4ff16e51b5da506a47112c33bf",
+    "network": "673a83f39ec76e9e26c64702a68101b2cadfe113aaa879c5637baedefd4aaac5",
+    "exchange": "6914881e7afa039fd3a48cd376954a1a8bd77b79cf8677b4dab7a3763b5588c3",
+    "metrics": "8bc4a43475a6f1ac5cc333880d0f665334b4ec68919b0f66040236c041b9f8f9"
+  },
+  "cases": [
+    {
+      "case": "wet-EXTRAN-10ms",
+      "quality": {
+        "policyVersion": "network-continuity-convergence-v2",
+        "continuityLimitPercent": 1,
+        "routingBalance": {
+          "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+          "totalInM3": 2.088134595088665,
+          "totalOutIncludingStorageM3": 2.657645902013664,
+          "residualM3": -0.5695113069249986,
+          "continuityPercent": -27.273687637976053,
+          "absoluteToleranceM3": 1e-08,
+          "allowedResidualM3": 0.020881345950886653
+        },
+        "allowedNonConvergedSteps": 0,
+        "failureReasons": [
+          "ROUTING_CONTINUITY_EXCEEDED",
+          "ROUTING_VOLUME_RESIDUAL_EXCEEDED"
+        ],
+        "status": "FAILED"
+      },
+      "configuration": {
+        "method": "EPA_5_2_4_NATIVE_SETTINGS_READ_ONLY",
+        "surchargeMethod": "EXTRAN",
+        "maximumRoutingStepSeconds": 0.01,
+        "minimumRoutingStepSeconds": 0.01,
+        "courantFactor": 0.75,
+        "minimumNumericalNodeAreaM2": 0.01,
+        "headConvergenceToleranceM": 1e-06,
+        "maximumTrials": 200,
+        "declaredInputOptions": {
+          "SURCHARGE_METHOD": "EXTRAN",
+          "ROUTING_STEP": "0.01",
+          "MINIMUM_STEP": "0.01",
+          "VARIABLE_STEP": "0.75",
+          "MIN_SURFAREA": "0.01",
+          "HEAD_TOLERANCE": "0.000001",
+          "MAX_TRIALS": "200"
+        },
+        "defaultedInputOptions": []
+      },
+      "convergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 12000,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      }
+    },
+    {
+      "case": "wet-EXTRAN-1ms",
+      "quality": {
+        "policyVersion": "network-continuity-convergence-v2",
+        "continuityLimitPercent": 1,
+        "routingBalance": {
+          "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+          "totalInM3": 2.088134595088665,
+          "totalOutIncludingStorageM3": 2.657839527223762,
+          "residualM3": -0.5697049321350969,
+          "continuityPercent": -27.2829602782816,
+          "absoluteToleranceM3": 1e-08,
+          "allowedResidualM3": 0.020881345950886653
+        },
+        "allowedNonConvergedSteps": 0,
+        "failureReasons": [
+          "ROUTING_CONTINUITY_EXCEEDED",
+          "ROUTING_VOLUME_RESIDUAL_EXCEEDED"
+        ],
+        "status": "FAILED"
+      },
+      "configuration": {
+        "method": "EPA_5_2_4_NATIVE_SETTINGS_READ_ONLY",
+        "surchargeMethod": "EXTRAN",
+        "maximumRoutingStepSeconds": 0.001,
+        "minimumRoutingStepSeconds": 0.001,
+        "courantFactor": 0.75,
+        "minimumNumericalNodeAreaM2": 0.01,
+        "headConvergenceToleranceM": 1e-06,
+        "maximumTrials": 200,
+        "declaredInputOptions": {
+          "SURCHARGE_METHOD": "EXTRAN",
+          "ROUTING_STEP": "0.001",
+          "MINIMUM_STEP": "0.001",
+          "VARIABLE_STEP": "0.75",
+          "MIN_SURFAREA": "0.01",
+          "HEAD_TOLERANCE": "0.000001",
+          "MAX_TRIALS": "200"
+        },
+        "defaultedInputOptions": []
+      },
+      "convergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 120000,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      }
+    },
+    {
+      "case": "dry-EXTRAN-10ms",
+      "quality": {
+        "policyVersion": "network-continuity-convergence-v2",
+        "continuityLimitPercent": 1,
+        "routingBalance": {
+          "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+          "totalInM3": 1.5250350859675608,
+          "totalOutIncludingStorageM3": 1.5093963928006269,
+          "residualM3": 0.015638693166933892,
+          "continuityPercent": 1.025464483462156,
+          "absoluteToleranceM3": 1e-08,
+          "allowedResidualM3": 0.015250350859675608
+        },
+        "allowedNonConvergedSteps": 0,
+        "failureReasons": [
+          "ROUTING_VOLUME_RESIDUAL_EXCEEDED"
+        ],
+        "status": "FAILED"
+      },
+      "configuration": {
+        "method": "EPA_5_2_4_NATIVE_SETTINGS_READ_ONLY",
+        "surchargeMethod": "EXTRAN",
+        "maximumRoutingStepSeconds": 0.01,
+        "minimumRoutingStepSeconds": 0.01,
+        "courantFactor": 0.75,
+        "minimumNumericalNodeAreaM2": 0.01,
+        "headConvergenceToleranceM": 1e-06,
+        "maximumTrials": 200,
+        "declaredInputOptions": {
+          "SURCHARGE_METHOD": "EXTRAN",
+          "ROUTING_STEP": "0.01",
+          "MINIMUM_STEP": "0.01",
+          "VARIABLE_STEP": "0.75",
+          "MIN_SURFAREA": "0.01",
+          "HEAD_TOLERANCE": "0.000001",
+          "MAX_TRIALS": "200"
+        },
+        "defaultedInputOptions": []
+      },
+      "convergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 12000,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      }
+    },
+    {
+      "case": "dry-EXTRAN-1ms",
+      "quality": {
+        "policyVersion": "network-continuity-convergence-v2",
+        "continuityLimitPercent": 1,
+        "routingBalance": {
+          "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+          "totalInM3": 1.5248101101739362,
+          "totalOutIncludingStorageM3": 1.5092331512273336,
+          "residualM3": 0.015576958946602604,
+          "continuityPercent": 1.021567134338172,
+          "absoluteToleranceM3": 1e-08,
+          "allowedResidualM3": 0.015248101101739362
+        },
+        "allowedNonConvergedSteps": 0,
+        "failureReasons": [
+          "ROUTING_VOLUME_RESIDUAL_EXCEEDED"
+        ],
+        "status": "FAILED"
+      },
+      "configuration": {
+        "method": "EPA_5_2_4_NATIVE_SETTINGS_READ_ONLY",
+        "surchargeMethod": "EXTRAN",
+        "maximumRoutingStepSeconds": 0.001,
+        "minimumRoutingStepSeconds": 0.001,
+        "courantFactor": 0.75,
+        "minimumNumericalNodeAreaM2": 0.01,
+        "headConvergenceToleranceM": 1e-06,
+        "maximumTrials": 200,
+        "declaredInputOptions": {
+          "SURCHARGE_METHOD": "EXTRAN",
+          "ROUTING_STEP": "0.001",
+          "MINIMUM_STEP": "0.001",
+          "VARIABLE_STEP": "0.75",
+          "MIN_SURFAREA": "0.01",
+          "HEAD_TOLERANCE": "0.000001",
+          "MAX_TRIALS": "200"
+        },
+        "defaultedInputOptions": []
+      },
+      "convergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 120000,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      }
+    },
+    {
+      "case": "wet-SLOT-10ms",
+      "quality": {
+        "policyVersion": "network-continuity-convergence-v2",
+        "continuityLimitPercent": 1,
+        "routingBalance": {
+          "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+          "totalInM3": 2.088134595088665,
+          "totalOutIncludingStorageM3": 2.124085336997847,
+          "residualM3": -0.035950741909181794,
+          "continuityPercent": -1.7216678462077428,
+          "absoluteToleranceM3": 1e-08,
+          "allowedResidualM3": 0.020881345950886653
+        },
+        "allowedNonConvergedSteps": 0,
+        "failureReasons": [
+          "ROUTING_CONTINUITY_EXCEEDED",
+          "ROUTING_VOLUME_RESIDUAL_EXCEEDED"
+        ],
+        "status": "FAILED"
+      },
+      "configuration": {
+        "method": "EPA_5_2_4_NATIVE_SETTINGS_READ_ONLY",
+        "surchargeMethod": "SLOT",
+        "maximumRoutingStepSeconds": 0.01,
+        "minimumRoutingStepSeconds": 0.01,
+        "courantFactor": 0.75,
+        "minimumNumericalNodeAreaM2": 0.01,
+        "headConvergenceToleranceM": 1e-06,
+        "maximumTrials": 200,
+        "declaredInputOptions": {
+          "SURCHARGE_METHOD": "SLOT",
+          "ROUTING_STEP": "0.01",
+          "MINIMUM_STEP": "0.01",
+          "VARIABLE_STEP": "0.75",
+          "MIN_SURFAREA": "0.01",
+          "HEAD_TOLERANCE": "0.000001",
+          "MAX_TRIALS": "200"
+        },
+        "defaultedInputOptions": []
+      },
+      "convergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 12000,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      }
+    },
+    {
+      "case": "wet-SLOT-1ms",
+      "quality": {
+        "policyVersion": "network-continuity-convergence-v2",
+        "continuityLimitPercent": 1,
+        "routingBalance": {
+          "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+          "totalInM3": 2.088134595088665,
+          "totalOutIncludingStorageM3": 2.1242055401437443,
+          "residualM3": -0.03607094505507913,
+          "continuityPercent": -1.7274243307839792,
+          "absoluteToleranceM3": 1e-08,
+          "allowedResidualM3": 0.020881345950886653
+        },
+        "allowedNonConvergedSteps": 0,
+        "failureReasons": [
+          "ROUTING_CONTINUITY_EXCEEDED",
+          "ROUTING_VOLUME_RESIDUAL_EXCEEDED"
+        ],
+        "status": "FAILED"
+      },
+      "configuration": {
+        "method": "EPA_5_2_4_NATIVE_SETTINGS_READ_ONLY",
+        "surchargeMethod": "SLOT",
+        "maximumRoutingStepSeconds": 0.001,
+        "minimumRoutingStepSeconds": 0.001,
+        "courantFactor": 0.75,
+        "minimumNumericalNodeAreaM2": 0.01,
+        "headConvergenceToleranceM": 1e-06,
+        "maximumTrials": 200,
+        "declaredInputOptions": {
+          "SURCHARGE_METHOD": "SLOT",
+          "ROUTING_STEP": "0.001",
+          "MINIMUM_STEP": "0.001",
+          "VARIABLE_STEP": "0.75",
+          "MIN_SURFAREA": "0.01",
+          "HEAD_TOLERANCE": "0.000001",
+          "MAX_TRIALS": "200"
+        },
+        "defaultedInputOptions": []
+      },
+      "convergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 120000,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      }
+    },
+    {
+      "case": "dry-SLOT-10ms",
+      "quality": {
+        "policyVersion": "network-continuity-convergence-v2",
+        "continuityLimitPercent": 1,
+        "routingBalance": {
+          "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+          "totalInM3": 1.5250350859675608,
+          "totalOutIncludingStorageM3": 1.5232311314164126,
+          "residualM3": 0.0018039545511481236,
+          "continuityPercent": 0.11828938020816761,
+          "absoluteToleranceM3": 1e-08,
+          "allowedResidualM3": 0.015250350859675608
+        },
+        "allowedNonConvergedSteps": 0,
+        "failureReasons": [],
+        "status": "PASSED"
+      },
+      "configuration": {
+        "method": "EPA_5_2_4_NATIVE_SETTINGS_READ_ONLY",
+        "surchargeMethod": "SLOT",
+        "maximumRoutingStepSeconds": 0.01,
+        "minimumRoutingStepSeconds": 0.01,
+        "courantFactor": 0.75,
+        "minimumNumericalNodeAreaM2": 0.01,
+        "headConvergenceToleranceM": 1e-06,
+        "maximumTrials": 200,
+        "declaredInputOptions": {
+          "SURCHARGE_METHOD": "SLOT",
+          "ROUTING_STEP": "0.01",
+          "MINIMUM_STEP": "0.01",
+          "VARIABLE_STEP": "0.75",
+          "MIN_SURFAREA": "0.01",
+          "HEAD_TOLERANCE": "0.000001",
+          "MAX_TRIALS": "200"
+        },
+        "defaultedInputOptions": []
+      },
+      "convergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 12000,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      }
+    },
+    {
+      "case": "dry-SLOT-1ms",
+      "quality": {
+        "policyVersion": "network-continuity-convergence-v2",
+        "continuityLimitPercent": 1,
+        "routingBalance": {
+          "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+          "totalInM3": 1.5248101101739362,
+          "totalOutIncludingStorageM3": 1.5230519446552961,
+          "residualM3": 0.0017581655186400535,
+          "continuityPercent": 0.11530389960750577,
+          "absoluteToleranceM3": 1e-08,
+          "allowedResidualM3": 0.015248101101739362
+        },
+        "allowedNonConvergedSteps": 0,
+        "failureReasons": [],
+        "status": "PASSED"
+      },
+      "configuration": {
+        "method": "EPA_5_2_4_NATIVE_SETTINGS_READ_ONLY",
+        "surchargeMethod": "SLOT",
+        "maximumRoutingStepSeconds": 0.001,
+        "minimumRoutingStepSeconds": 0.001,
+        "courantFactor": 0.75,
+        "minimumNumericalNodeAreaM2": 0.01,
+        "headConvergenceToleranceM": 1e-06,
+        "maximumTrials": 200,
+        "declaredInputOptions": {
+          "SURCHARGE_METHOD": "SLOT",
+          "ROUTING_STEP": "0.001",
+          "MINIMUM_STEP": "0.001",
+          "VARIABLE_STEP": "0.75",
+          "MIN_SURFAREA": "0.01",
+          "HEAD_TOLERANCE": "0.000001",
+          "MAX_TRIALS": "200"
+        },
+        "defaultedInputOptions": []
+      },
+      "convergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 120000,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      }
+    },
+    {
+      "case": "coupled-conduit-100ms",
+      "numericalStatus": "PASSED",
+      "balance": {
+        "networkExternalInflowM3": 3.0496103806603987,
+        "networkExternalOutflowAndLossM3": 2.932984961743094,
+        "surfaceExternalNetInflowM3": -1.3912164855210614e-34,
+        "networkStorageM3": 0.10032917798926068,
+        "surfaceStorageM3": 0.018504891482011843,
+        "networkToSurfaceM3": 0.562625497965417,
+        "surfaceToNetworkM3": 0.5441206064834023,
+        "exchangeCancellationResidualM3": 1.6653345369377348e-16,
+        "balanceResidualM3": -0.0022037307104950804
+      },
+      "quality": {
+        "policyVersion": "network-continuity-convergence-v2",
+        "continuityLimitPercent": 1,
+        "routingBalance": {
+          "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+          "totalInM3": 3.593735906987274,
+          "totalOutIncludingStorageM3": 3.5959396376977715,
+          "residualM3": -0.00220373071049762,
+          "continuityPercent": -0.06132144285318582,
+          "absoluteToleranceM3": 1e-08,
+          "allowedResidualM3": 0.03593735906987274
+        },
+        "allowedNonConvergedSteps": 0,
+        "failureReasons": [],
+        "status": "PASSED"
+      },
+      "configuration": {
+        "method": "EPA_5_2_4_NATIVE_SETTINGS_READ_ONLY",
+        "surchargeMethod": "SLOT",
+        "maximumRoutingStepSeconds": 0.001,
+        "minimumRoutingStepSeconds": 0.001,
+        "courantFactor": 0.75,
+        "minimumNumericalNodeAreaM2": 0.01,
+        "headConvergenceToleranceM": 1e-06,
+        "maximumTrials": 200,
+        "declaredInputOptions": {
+          "SURCHARGE_METHOD": "SLOT",
+          "ROUTING_STEP": "0.001",
+          "MINIMUM_STEP": "0.001",
+          "VARIABLE_STEP": "0.75",
+          "MIN_SURFAREA": "0.01",
+          "HEAD_TOLERANCE": "0.000001",
+          "MAX_TRIALS": "200"
+        },
+        "defaultedInputOptions": []
+      },
+      "convergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 120000,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      },
+      "rawMetrics": {
+        "outwardVolumeM3": 2.9329849617430215,
+        "peakOutwardM3s": 0.053721996998807184,
+        "depthAreaTimeM3Hours": 0.00433121950516277
+      },
+      "rankingEligible": false
+    },
+    {
+      "case": "coupled-conduit-route10ms",
+      "numericalStatus": "PASSED",
+      "balance": {
+        "networkExternalInflowM3": 3.050060332248112,
+        "networkExternalOutflowAndLossM3": 2.933713890486409,
+        "surfaceExternalNetInflowM3": -8.690272129548044e-35,
+        "networkStorageM3": 0.10028888419400546,
+        "surfaceStorageM3": 0.01848992702866248,
+        "networkToSurfaceM3": 0.5623953421452087,
+        "surfaceToNetworkM3": 0.543905415116557,
+        "exchangeCancellationResidualM3": 4.440892098500626e-16,
+        "balanceResidualM3": -0.002427449617492486
+      },
+      "quality": {
+        "policyVersion": "network-continuity-convergence-v2",
+        "continuityLimitPercent": 1,
+        "routingBalance": {
+          "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+          "totalInM3": 3.5939706672081413,
+          "totalOutIncludingStorageM3": 3.596398116825623,
+          "residualM3": -0.0024274496174818694,
+          "continuityPercent": -0.06754227683687676,
+          "absoluteToleranceM3": 1e-08,
+          "allowedResidualM3": 0.03593970667208141
+        },
+        "allowedNonConvergedSteps": 0,
+        "failureReasons": [],
+        "status": "PASSED"
+      },
+      "configuration": {
+        "method": "EPA_5_2_4_NATIVE_SETTINGS_READ_ONLY",
+        "surchargeMethod": "SLOT",
+        "maximumRoutingStepSeconds": 0.01,
+        "minimumRoutingStepSeconds": 0.01,
+        "courantFactor": 0.75,
+        "minimumNumericalNodeAreaM2": 0.01,
+        "headConvergenceToleranceM": 1e-06,
+        "maximumTrials": 200,
+        "declaredInputOptions": {
+          "SURCHARGE_METHOD": "SLOT",
+          "ROUTING_STEP": "0.01",
+          "MINIMUM_STEP": "0.01",
+          "VARIABLE_STEP": "0.75",
+          "MIN_SURFAREA": "0.01",
+          "HEAD_TOLERANCE": "0.000001",
+          "MAX_TRIALS": "200"
+        },
+        "defaultedInputOptions": []
+      },
+      "convergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 12000,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      },
+      "rawMetrics": {
+        "outwardVolumeM3": 2.933713890486413,
+        "peakOutwardM3s": 0.05371906878629009,
+        "depthAreaTimeM3Hours": 0.004326815094046404
+      },
+      "rankingEligible": false
+    },
+    {
+      "case": "coupled-conduit-50ms",
+      "numericalStatus": "PASSED",
+      "balance": {
+        "networkExternalInflowM3": 3.0496103806597255,
+        "networkExternalOutflowAndLossM3": 2.9329086093002648,
+        "surfaceExternalNetInflowM3": 1.3907555477251152e-35,
+        "networkStorageM3": 0.10037700861224343,
+        "surfaceStorageM3": 0.018545353549501264,
+        "networkToSurfaceM3": 0.5624653925849603,
+        "surfaceToNetworkM3": 0.5439200390354508,
+        "exchangeCancellationResidualM3": -3.885780586188048e-16,
+        "balanceResidualM3": -0.0022156709588113804
+      },
+      "quality": {
+        "policyVersion": "network-continuity-convergence-v2",
+        "continuityLimitPercent": 1,
+        "routingBalance": {
+          "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+          "totalInM3": 3.593535339538649,
+          "totalOutIncludingStorageM3": 3.5957510104974686,
+          "residualM3": -0.0022156709588196932,
+          "continuityPercent": -0.0616571356469295,
+          "absoluteToleranceM3": 1e-08,
+          "allowedResidualM3": 0.03593535339538649
+        },
+        "allowedNonConvergedSteps": 0,
+        "failureReasons": [],
+        "status": "PASSED"
+      },
+      "configuration": {
+        "method": "EPA_5_2_4_NATIVE_SETTINGS_READ_ONLY",
+        "surchargeMethod": "SLOT",
+        "maximumRoutingStepSeconds": 0.001,
+        "minimumRoutingStepSeconds": 0.001,
+        "courantFactor": 0.75,
+        "minimumNumericalNodeAreaM2": 0.01,
+        "headConvergenceToleranceM": 1e-06,
+        "maximumTrials": 200,
+        "declaredInputOptions": {
+          "SURCHARGE_METHOD": "SLOT",
+          "ROUTING_STEP": "0.001",
+          "MINIMUM_STEP": "0.001",
+          "VARIABLE_STEP": "0.75",
+          "MIN_SURFAREA": "0.01",
+          "HEAD_TOLERANCE": "0.000001",
+          "MAX_TRIALS": "200"
+        },
+        "defaultedInputOptions": []
+      },
+      "convergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 120000,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      },
+      "rawMetrics": {
+        "outwardVolumeM3": 2.93290860930031,
+        "peakOutwardM3s": 0.05372557063493484,
+        "depthAreaTimeM3Hours": 0.004333405940379494
+      },
+      "rankingEligible": false
+    },
+    {
+      "case": "coupled-conduit-mesh8",
+      "numericalStatus": "PASSED",
+      "balance": {
+        "networkExternalInflowM3": 3.0496103806603987,
+        "networkExternalOutflowAndLossM3": 2.932984961743094,
+        "surfaceExternalNetInflowM3": 2.3875034944044126e-35,
+        "networkStorageM3": 0.10032917798926068,
+        "surfaceStorageM3": 0.018504891482011843,
+        "networkToSurfaceM3": 0.562625497965417,
+        "surfaceToNetworkM3": 0.5441206064834023,
+        "exchangeCancellationResidualM3": 1.6653345369377348e-16,
+        "balanceResidualM3": -0.0022037307104950804
+      },
+      "quality": {
+        "policyVersion": "network-continuity-convergence-v2",
+        "continuityLimitPercent": 1,
+        "routingBalance": {
+          "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+          "totalInM3": 3.593735906987274,
+          "totalOutIncludingStorageM3": 3.5959396376977715,
+          "residualM3": -0.00220373071049762,
+          "continuityPercent": -0.06132144285318582,
+          "absoluteToleranceM3": 1e-08,
+          "allowedResidualM3": 0.03593735906987274
+        },
+        "allowedNonConvergedSteps": 0,
+        "failureReasons": [],
+        "status": "PASSED"
+      },
+      "configuration": {
+        "method": "EPA_5_2_4_NATIVE_SETTINGS_READ_ONLY",
+        "surchargeMethod": "SLOT",
+        "maximumRoutingStepSeconds": 0.001,
+        "minimumRoutingStepSeconds": 0.001,
+        "courantFactor": 0.75,
+        "minimumNumericalNodeAreaM2": 0.01,
+        "headConvergenceToleranceM": 1e-06,
+        "maximumTrials": 200,
+        "declaredInputOptions": {
+          "SURCHARGE_METHOD": "SLOT",
+          "ROUTING_STEP": "0.001",
+          "MINIMUM_STEP": "0.001",
+          "VARIABLE_STEP": "0.75",
+          "MIN_SURFAREA": "0.01",
+          "HEAD_TOLERANCE": "0.000001",
+          "MAX_TRIALS": "200"
+        },
+        "defaultedInputOptions": []
+      },
+      "convergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 120000,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      },
+      "rawMetrics": {
+        "outwardVolumeM3": 2.9329849617430215,
+        "peakOutwardM3s": 0.053721996998807184,
+        "depthAreaTimeM3Hours": 0.004331219505162774
+      },
+      "rankingEligible": false
+    }
+  ],
+  "fullPipeStorageDiagnostic": {
+    "intervalSeconds": [
+      2,
+      30
+    ],
+    "pipeDiameterM": 0.15,
+    "pipeLengthM": 10,
+    "crownCutoff": 0.96,
+    "minimumTopWidthAreaApproximationM2": 0.29393876913398137,
+    "storageHeadDropM": 1.3393775543911135,
+    "predictedExcessVolumeM3": 0.3936949897434061,
+    "observedExcessVolumeGrowthM3": 0.39372247438359154,
+    "predictionDifferenceM3": 2.7484640185426734e-05,
+    "initialPipeDepthM": 0.075,
+    "classification": "SOURCE_PATH_DIAGNOSTIC_NOT_VOLUME_CORRECTION"
+  },
+  "limitations": [
+    "젖은 초기 상태 단일 관로의 수지 실패 미해결",
+    "공식 SLOT의 가상 슬롯과 명시적 결합의 수치 근사 유지",
+    "평탄한 합성 격자의 비교이며 실제 지형 공간 수렴·서울 현장 검증 아님",
+    "실제 선행 관측 초기화·공개 연결 관망·새 순위 연결 미완료"
+  ],
+  "files": {
+    "coupled-conduit-100ms/coupled-input.json": "b883e30ac5bd21b810696b3dbf54d010537ea9947bc82637e3a1f0ec8e7b12a2",
+    "coupled-conduit-100ms/coupled-result.json": "a8330348ac941040887f70eee1c87bf1a1135ce88b10944fc1ec8d013bf6449b",
+    "coupled-conduit-100ms/exchange-ledger.jsonl": "7605d173447b2c474087368ce2b543f43d3e4daa2145fa2487e87405adc3cf92",
+    "coupled-conduit-100ms/network/network-result.json": "04b69d5904baec88b136f80bf040e7940142f59181aab00da6ff29cbd6b00cca",
+    "coupled-conduit-100ms/network/network.inp": "e163302b76cf3dd52ba0022f815e27b74725fd6647babe667b0b8f989a638243",
+    "coupled-conduit-100ms/network/network.out": "6ea7b33dc0c5638fb84ebd3b4e7fd173210db121a76770e81fe852fa7da6a142",
+    "coupled-conduit-100ms/network/network.rpt": "8b67b759d90d25d93ace02f18bd8ba1864264990a01f4deed204fda39eadde2a",
+    "coupled-conduit-100ms/network-frames.jsonl": "03c3d5912faf76dca6a8610a3f0fda81c8c15d1eb0b81167f00190b9c5b7317a",
+    "coupled-conduit-100ms/surface/exchange-ports.json": "ef6570c07de503c27854118d2a2b7ff0a6dba40de6e1a105310f9b721ef5c3bc",
+    "coupled-conduit-100ms/surface/surface-exchange.jsonl": "e712652ef5f05a5241ac3791fb32bc4bad0d061ff66ce0ca032aa1c2b95d7695",
+    "coupled-conduit-100ms/surface/surface-input.json": "e74cf54d4bdd31f10c5c3bb03293cb6ce6758fef6db94712ec802671176f39bb",
+    "coupled-conduit-100ms/surface/surface-result.json": "24e2814d6690db935f8d49a330f9f14ac8822dd95975f524adfa0ce50029b319",
+    "coupled-conduit-100ms/surface/surface.sww": "e6424156d92d81565296bb40f83a70d45b466fa25753ddf2b045b97f96e9c0ef",
+    "coupled-conduit-50ms/coupled-input.json": "30f08736942c698721b4663c98c8a3723621571d392f021e9c3a4775c970b945",
+    "coupled-conduit-50ms/coupled-result.json": "7e26eedf4f038954b94f13e57ab217f0ae79c541ab168a9cea95292bbaafcc3b",
+    "coupled-conduit-50ms/exchange-ledger.jsonl": "8ac80524f46f21950acaa2671f114d14ed230cb8fed45dbfb97f7f24557da4e8",
+    "coupled-conduit-50ms/network/network-result.json": "4fd04ca43632691f990e50d8a46a11f314d26638604aab265d8a905b218e1177",
+    "coupled-conduit-50ms/network/network.inp": "e163302b76cf3dd52ba0022f815e27b74725fd6647babe667b0b8f989a638243",
+    "coupled-conduit-50ms/network/network.out": "0ea94cf2de290fb3dbe24f947362c21b38d7734da3c7b6870d05bf73317d8aa5",
+    "coupled-conduit-50ms/network/network.rpt": "3a3d9a56c7f6b5061838f2ad9956267ae74c2eca510e8436eaf29ebf876a5722",
+    "coupled-conduit-50ms/network-frames.jsonl": "d12d09c8043dbf12f9604c0d351ec6405e119194d29461c47dabe4faf4dddb1a",
+    "coupled-conduit-50ms/surface/exchange-ports.json": "ef6570c07de503c27854118d2a2b7ff0a6dba40de6e1a105310f9b721ef5c3bc",
+    "coupled-conduit-50ms/surface/surface-exchange.jsonl": "932d575accc0646aedbf809d662d452d3ec1befaf87a4414fdf0381e4f9790ce",
+    "coupled-conduit-50ms/surface/surface-input.json": "e74cf54d4bdd31f10c5c3bb03293cb6ce6758fef6db94712ec802671176f39bb",
+    "coupled-conduit-50ms/surface/surface-result.json": "e55b688a50b4779c5a5912a17a143bafacfd3fecb3a154ecbd78c743bd7ce0dc",
+    "coupled-conduit-50ms/surface/surface.sww": "af6f6079d42b27445236ae7125e407d57702aa4b4a2cbd68f19198748c115513",
+    "coupled-conduit-mesh8/coupled-input.json": "f905818d69d056de48622d0209c8c3b10cb6bd3b8e99e591768edba1e57018a3",
+    "coupled-conduit-mesh8/coupled-result.json": "14a8ab1bb98ef7f6ce9478f1229ef9ad8d1f92cd2c2f411d685034193de2df1d",
+    "coupled-conduit-mesh8/exchange-ledger.jsonl": "d2971c250e154b4202bc97cff95e834d5cf8359fa993fa3851c5a2bd637d4254",
+    "coupled-conduit-mesh8/network/network-result.json": "82f0985f3add2e2a5f035b6abc0c8f7cb44cb08835f6add0e434e0b57e77331d",
+    "coupled-conduit-mesh8/network/network.inp": "e163302b76cf3dd52ba0022f815e27b74725fd6647babe667b0b8f989a638243",
+    "coupled-conduit-mesh8/network/network.out": "6ea7b33dc0c5638fb84ebd3b4e7fd173210db121a76770e81fe852fa7da6a142",
+    "coupled-conduit-mesh8/network/network.rpt": "1972c7b41cfde498bf802005b20671a910a1d49535230d46882f3e226e2d5cfd",
+    "coupled-conduit-mesh8/network-frames.jsonl": "03c3d5912faf76dca6a8610a3f0fda81c8c15d1eb0b81167f00190b9c5b7317a",
+    "coupled-conduit-mesh8/surface/exchange-ports.json": "a99b2d0aa6a4adc81d0877a29e574e88715ae8183ecd543f585168543d412682",
+    "coupled-conduit-mesh8/surface/surface-exchange.jsonl": "e712652ef5f05a5241ac3791fb32bc4bad0d061ff66ce0ca032aa1c2b95d7695",
+    "coupled-conduit-mesh8/surface/surface-input.json": "b71607b2dd451d447e5b268a21ab35a8b02e993ceea430aed67ef5c1dc0eb1c0",
+    "coupled-conduit-mesh8/surface/surface-result.json": "f07c61947daf5194e4a53b33505244a9b699bbdc8e1fcb7e88a06ed2d3fad37b",
+    "coupled-conduit-mesh8/surface/surface.sww": "7984b86f07ee87486099fe1012e8bfa19378e5b2997201bcaafb207023db66d3",
+    "coupled-conduit-route10ms/coupled-input.json": "afc8a1bdfee19af7f0e2fb6ceea8feefad5e3e4d6305be86919dda7d3f07f09f",
+    "coupled-conduit-route10ms/coupled-result.json": "6b76c352ee97f86ceab4c9777c928c93a6f26754a547fe3ee7389df7760ac61a",
+    "coupled-conduit-route10ms/exchange-ledger.jsonl": "0eec76b328934d4b5f7672bef0d4d192f92617393bdb44e4383e28b2f4afd57e",
+    "coupled-conduit-route10ms/network/network-result.json": "1c02ed62d9b00baae61dcf83eea62d833f3388e970865ca806ee19816740b042",
+    "coupled-conduit-route10ms/network/network.inp": "67b6ff4ca22854663084a635a36d1149a2286fc47bae0394daf7325d63ba2754",
+    "coupled-conduit-route10ms/network/network.out": "404bff65869938f9f599cf014240c10257da27d9073223382e7e69d3ab5769c9",
+    "coupled-conduit-route10ms/network/network.rpt": "68bbce3f682577165b9039cb03adda266e8f6994930484235fe25fed094ac258",
+    "coupled-conduit-route10ms/network-frames.jsonl": "1f210f3effee278ed68317744783bbfd39f7f0780dd9815e0fcbffcfaa8eb51b",
+    "coupled-conduit-route10ms/surface/exchange-ports.json": "ef6570c07de503c27854118d2a2b7ff0a6dba40de6e1a105310f9b721ef5c3bc",
+    "coupled-conduit-route10ms/surface/surface-exchange.jsonl": "f5de4615dbc4fb0d3e8cc4b9bb022edcaebc9afd9f25d4c0422941bcd08d5b55",
+    "coupled-conduit-route10ms/surface/surface-input.json": "e74cf54d4bdd31f10c5c3bb03293cb6ce6758fef6db94712ec802671176f39bb",
+    "coupled-conduit-route10ms/surface/surface-result.json": "38f93efa1360e67b2dcc57cf57e82fa94d1e7b38e841a2642776ae88568e4631",
+    "coupled-conduit-route10ms/surface/surface.sww": "53569ad4b1a99724d92f3755338b580b5d292dcfca8812867d4f2f988a12c4f1",
+    "dry-EXTRAN-10ms/frames.json": "5ed50cf0110641b1db74c5443cf61fbc8655823122686f12842e054864f68573",
+    "dry-EXTRAN-10ms/network-result.json": "7ab3b001e8faac1b3b3018f059bcf49a23d2c5f608953e2e92e41f80a8688510",
+    "dry-EXTRAN-10ms/network.inp": "fac6779bc033d4afdac00fa2e956dca681e6f02a44b8f4cdfd6daf8c7ca45312",
+    "dry-EXTRAN-10ms/network.out": "6af4d033571307ac95946f03763948414d07271e323c435f7a430ff315d04ebd",
+    "dry-EXTRAN-10ms/network.rpt": "8a79a7741edb3c5a6e2aae3b926b54597d70485f3c6c59d7a7e3a4f784ff7ab6",
+    "dry-EXTRAN-1ms/frames.json": "8fc86d5120f22e27285fff414ba18f516bcd09b3d901b0e17caac84bb793f33e",
+    "dry-EXTRAN-1ms/network-result.json": "57949187ff559fe3f917d1d8b3ae3d7353c479b20afa1fbe3a55c971a1ae1e05",
+    "dry-EXTRAN-1ms/network.inp": "8b4ca95c3c45ae68081c7556233c8504f476173f3a0e73daa2b1f72c6c626d80",
+    "dry-EXTRAN-1ms/network.out": "fe00968d26b0c87072c7721cda2f9746c90b58d5d1b01eab64bb9bfb854fa4f6",
+    "dry-EXTRAN-1ms/network.rpt": "d95029a0866bc627466a977f7d91d60b8388c9b05d5c609f9bb4fcfdd4308ba5",
+    "dry-SLOT-10ms/frames.json": "ec31824a3ae1e398c8fc160d850aa1a414bda8da15f7cb234e8e5e5c3d2f5cd1",
+    "dry-SLOT-10ms/network-result.json": "bc9255d49caa485f2838ffb804c27c19410ec8682826e3d1ab1b894970eb190f",
+    "dry-SLOT-10ms/network.inp": "d26bf615383f1a47a552c169cac82b43b532b3d10d06a5a7400d28286bed8b4c",
+    "dry-SLOT-10ms/network.out": "1f9774d52f5056971c72fda14aa1be3e0a962d894dc495e054ec89101d99e40f",
+    "dry-SLOT-10ms/network.rpt": "eb0b622e10d3d561851a3bc500b8f2b82beb6906857c5c535577cfa093e28998",
+    "dry-SLOT-1ms/frames.json": "8a5e06870c2d1ca94cd5e5c3f806e7fbaafd37d172925afd70eff754194a0756",
+    "dry-SLOT-1ms/network-result.json": "0d8e4765f31ce24e11992ced1d54f884c4cacfea96889c3bcbf5bd970f37010c",
+    "dry-SLOT-1ms/network.inp": "bb36fd45df630062e38ff59fa10c1e53252fd2a4a266c2eaf4c2bf610f47b638",
+    "dry-SLOT-1ms/network.out": "9389e1a6fd093a88440b25217d1a00fd615c2afbca57a3b09e46856982c0b392",
+    "dry-SLOT-1ms/network.rpt": "cdb4df8788a4dcc27559d81d1d490466d8d3f77cc7020dc53a8164e66fad6e7c",
+    "engine/exchange/libswmm5.dylib": "6914881e7afa039fd3a48cd376954a1a8bd77b79cf8677b4dab7a3763b5588c3",
+    "engine/exchange/network-build.json": "0daccab4b38e3dab780c6400024c9f6d19c43ae7c8c1acee14e1d27a99c71b4e",
+    "engine/metrics/libswmm5.dylib": "8bc4a43475a6f1ac5cc333880d0f665334b4ec68919b0f66040236c041b9f8f9",
+    "engine/metrics/network-build.json": "b1a362a98bc0165c02a77160d5bd771137f93c9c250ba856c0660611a7fca959",
+    "engine/network/libswmm5.dylib": "673a83f39ec76e9e26c64702a68101b2cadfe113aaa879c5637baedefd4aaac5",
+    "engine/network/network-build.json": "04edf03fe0a5a4a04b59dd2a397adca41683266867945afa5f2d295631745876",
+    "epa-source/dwflow.c": "2a3373b2b98daa98765f0dc90cb7605def1e1665147952b0cee4810139822bae",
+    "epa-source/dynwave.c": "d6ead221e938fdfea392c1defd0c39e00a94ac132cdc01cb48ad3bad92045e8e",
+    "epa-source/flowrout.c": "409d5e0c729f30684ae8488080b8756941f67673cd9cc6137404cebc4ffbc63d",
+    "source/data/manifests/anuga-4.0.1.json": "3002d98f0fc84a8e3384033b52795c056931f6db6cf8f5b513074c56e7e10a20",
+    "source/scripts/build_live_swmm.py": "f4bd6124c6a4c83796babe33c7c9de10003e4be1876a4ab3cba7d2f4b73fdf35",
+    "source/scripts/build_network_swmm.py": "8f8062ac4293207ed7b09282c3e71b7c74b63dfa752a0c358d434431c9e6a197",
+    "source/scripts/verify_conduit_surcharge.py": "6c3a354a4bdb38bb064040a58fcd52730329ecc90f9c824f23979ee5c43d6561",
+    "source/simulation/native/network_exchange.inc": "ec7c05a52024831efc07657f823146351c70196181dc1e3e6358202ad05ef14f",
+    "source/simulation/native/network_metrics.inc": "9a90e94998318db8bc2e25997d4c076bd8b5f09b171df768de98c4ba1c6bd28d",
+    "source/simulation/native/network_snapshot.inc": "c320fa1849cb4b03254167b107d1a9fefc7171b10c6ce397a0b82bb5c08c53e7",
+    "source/simulation/pyproject.toml": "49f1b8276a2e9e8b66f3bfdd8dda08303211669ed1c2ad938ba472d597a34cb2",
+    "source/simulation/uv.lock": "d2ffd1c9a11f47d3f3e4b9a39762c7ceff9b424171bc913c98672f759036e09e",
+    "source/simulation/waterleague_sim/engine/coupled_flood.py": "76f6ef0e5baa48216b2a532f30c6faed251ef1932c02f09446c913257576e8ab",
+    "source/simulation/waterleague_sim/engine/flood_errors.py": "59e70440df55df54e83aa7a2787f12ef14b2541ac5c05f67a10e9addbe229155",
+    "source/simulation/waterleague_sim/engine/flood_metrics.py": "30f830d17bcd174129dcdb79e3b85f684d08dee5337b8e7a964f340902da6f3c",
+    "source/simulation/waterleague_sim/engine/flood_process.py": "ee2123e539d2cecb0576d6c22b35bcf2308450fede9ee4d8c3afc39059e7e36a",
+    "source/simulation/waterleague_sim/engine/network.py": "cbd88cab2853a9f0598599e42b0fee11a4b40c11860581bd8586125729953aa7",
+    "source/simulation/waterleague_sim/engine/network_exchange.py": "36c1b650c0c642c828c5f118addf6a4f3baa9f791eff79a53a483fc2ebc0fb43",
+    "source/simulation/waterleague_sim/engine/network_metrics.py": "f0219c6affedd4b95b049815c4242b7fe8f56abe917b97f8c2d55ca2c65802df",
+    "source/simulation/waterleague_sim/engine/network_quality.py": "c78323b383d37be56c34b8cc2d5084e4a92e3de6bbc2a818d914acbabf3eb930",
+    "source/simulation/waterleague_sim/engine/surface.py": "8d4620a0750201cfc8acebd61429b930d4a5591181e9f9828fb86fb89454f589",
+    "source/simulation/waterleague_sim/engine/surface_exchange.py": "1ecf775e0caf4a61b66c3b04a2479faebca32d5f40b711c67ab55e4bd90e0080",
+    "source/simulation/waterleague_sim/engine/swmm.py": "1754562f19f0860daa127f34e35c6336e2884d5779b9cd531d1811088f702823",
+    "source/simulation/waterleague_sim/reference/flood_cases.py": "de7fd2be4e51317d0fac94d3b2bceb59cd940fb4469210947eeb94019ef2563b",
+    "wet-EXTRAN-10ms/frames.json": "b757e1d3234d7512f598cc67be59c4cc1b9402847db8eef1e84ccdf50afefe2a",
+    "wet-EXTRAN-10ms/network-result.json": "80661544033b5ddcce89fa81b56f3d89ca6fdd1a206998bf0744d054c7b38f14",
+    "wet-EXTRAN-10ms/network.inp": "6c20e6c0b08b0328db952d80e9b2a09b08f81e5e5f8cce9aefc60fe3af3f6434",
+    "wet-EXTRAN-10ms/network.out": "3d82c3aec4307f0c29b90f577ce61476522f392ed81935581a5cce7076087b69",
+    "wet-EXTRAN-10ms/network.rpt": "c19644b1528bb8af63087b5f10ee29e114f1342d66c35487a25991c4d37a4255",
+    "wet-EXTRAN-1ms/frames.json": "a9c43709c4015703bb165ecdf2ced8d5bfd551bdec4746b2720d42a9cdba1e78",
+    "wet-EXTRAN-1ms/network-result.json": "98fe6628e78557ccb1e3c7cceff990529f78284ccfbcc69d30ece6f7c9506256",
+    "wet-EXTRAN-1ms/network.inp": "97f40bf291be264150accabb3ed3e74e5e125f8d61fe5b64c9f8ea113cd29df7",
+    "wet-EXTRAN-1ms/network.out": "fa72908d9990b576de42e728b90a0ff380dde404485383a5ed754dc26c7c7250",
+    "wet-EXTRAN-1ms/network.rpt": "f3bc17db42ad1c461e98644d02adff83abdbe3f7ca27883b461c8b6305e75fca",
+    "wet-SLOT-10ms/frames.json": "5f25273d84eced628bf91eb7c6ec77ebf3e2c9e6a79e38cc935f4470678d5568",
+    "wet-SLOT-10ms/network-result.json": "a2df180dc6d7fe3a35ad02dae9d610e35da4d848b06cf076603288fce255c4b5",
+    "wet-SLOT-10ms/network.inp": "5fb3a69b014d20ce95043a6d604d944258e9fd026916e9b0f63417ed26eb7437",
+    "wet-SLOT-10ms/network.out": "ea8d306fe5dcbdae548c61fe7440483978dba12e1ff690debe90b5975935ccfe",
+    "wet-SLOT-10ms/network.rpt": "d3cf8449a44c7bdcdc747a87dda0adef240e43e0ee47a6d4b426303362cc5c59",
+    "wet-SLOT-1ms/frames.json": "5c5b80816ab44fc279eef036f05dea007e78432e8b0aa4f7277f97f8d373d7ae",
+    "wet-SLOT-1ms/network-result.json": "18bee7b016a67d2306990fc0f4e3645797b1d9c0234bc1e0ca56ea48c87fe536",
+    "wet-SLOT-1ms/network.inp": "0f46e3fce56dd98a7779c4d44618e5aea3e0e292c4944d27fa20c68c17a0bda7",
+    "wet-SLOT-1ms/network.out": "e8a260e1a8ab499c5d9659d8b37862dca7aa5a8bd0532b218d9a235b1f7cf248",
+    "wet-SLOT-1ms/network.rpt": "b1ba7f68000c42fc9774660b5cac24e59728fef4d325524e2540a9cd58bea2e4"
+  },
+  "artifactDirectory": "data/runs/conduit-surcharge-20261018-v1",
+  "manifestSha256": "be5a272128c8f39b547b95a7476ea5123d7fd5174385a74de2f7b3fb83fe6ed4"
+}

@@ -11,7 +11,7 @@ import threading
 
 from waterleague_sim.engine.flood_errors import require
 from waterleague_sim.engine.swmm import ROOT, REVISION
-from waterleague_sim.engine.network_quality import convergence_state, routing_balance, assess
+from waterleague_sim.engine.network_quality import configuration_state, convergence_state, routing_balance, assess
 
 FT3_TO_M3 = 0.3048 ** 3
 _LOCK = threading.Lock()
@@ -78,6 +78,7 @@ class NetworkSession:
                 and 0 < evaluation_seconds <= self.calendar_seconds), 'NETWORK_EVALUATION_WINDOW_INVALID')
         self.evaluation_seconds = self.calendar_seconds if evaluation_seconds is None else evaluation_seconds
         self.input_text = input_text
+        self.declared_options = options
         self.directory = Path(directory).resolve()
         self.opened = self.started = self.locked = False
         self.forcing = []
@@ -133,6 +134,7 @@ class NetworkSession:
             self._check(self.lib.swmm_start(1))
             self.started = True
             self._check(self.lib.wl_networkBegin())
+            self.configuration = configuration_state(self.lib, self.declared_options)
             self.initial = self.snapshot()
             return self
         except BaseException:
@@ -265,6 +267,7 @@ class NetworkSession:
                        'routingContinuityPercent': errors[1].value,
                        'warningCount': self.lib.swmm_getWarnings(),
                        'convergence': convergence, 'numericalQuality': quality,
+                       'numericalConfiguration': self.configuration,
                        'numericalStatus': quality['status'],
                        'files': {p.name: sha256(p) for p in sorted(self.directory.iterdir()) if p.is_file()}}
         (self.directory / 'network-result.json').write_text(json.dumps(self.result, allow_nan=False, indent=2) + '\n')

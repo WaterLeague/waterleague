@@ -193,6 +193,7 @@ def run_coupled(model, directory):
                     'initialStorageM3': initial_storage, 'balance': balance,
                     'networkRoutingContinuityPercent': nresult['routingContinuityPercent'],
                     'networkConvergence': nresult['convergence'],
+                    'networkNumericalConfiguration': nresult['numericalConfiguration'],
                     'networkNumericalQuality': nresult['numericalQuality'],
                     'networkNumericalStatus': nresult['numericalStatus'],
                     'surfaceNumericalStatus': sresult['numericalStatus'],

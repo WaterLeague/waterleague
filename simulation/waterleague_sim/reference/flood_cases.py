@@ -108,12 +108,15 @@ def coupled_limited_case():
     return model
 
 
-def conduit_drainage_case(segments=1, *, route_ms=1, drop_m=0., flow_m3s=.05):
+def conduit_drainage_case(segments=1, *, route_ms=1, drop_m=0., flow_m3s=.05, surcharge_method=None):
     """동일한 건조 초기 상태·총 관로 길이·유입량의 수치 분할 비교 입력."""
-    if type(segments) is not int or not 1 <= segments <= 100 or route_ms not in (1, 2, 5, 10):
+    if (type(segments) is not int or not 1 <= segments <= 100 or route_ms not in (1, 2, 5, 10)
+            or surcharge_method not in (None, 'EXTRAN', 'SLOT')):
         raise ValueError('수치 사례 분할 범위 오류')
     model = coupled_case(initial_network=0., conduit=True)
     text = model['network']['inputText']
+    if surcharge_method is not None:
+        text = text.replace('FLOW_ROUTING DYNWAVE', f'FLOW_ROUTING DYNWAVE\nSURCHARGE_METHOD {surcharge_method}')
     text = text.replace('ROUTING_STEP 0.01', f'ROUTING_STEP {route_ms / 1000}')
     text = text.replace('MINIMUM_STEP 0.01', f'MINIMUM_STEP {route_ms / 1000}')
     text = text.replace('MAX_TRIALS 40', 'MAX_TRIALS 200')
@@ -136,4 +139,19 @@ LOAD 01/01/2020 00:00:31 0
 LOAD 01/01/2020 00:02:01 0
 '''
     model['network']['inputText'] = text
+    return model
+
+
+def coupled_conduit_surcharge_case(*, route_ms=1, exchange_ms=100, nx=4):
+    """빈 시설의 시간별 유입으로 월류·재유입을 만드는 공식 SLOT 수치 사례."""
+    model = conduit_drainage_case(flow_m3s=.1, route_ms=route_ms, surcharge_method='SLOT')
+    template = coupled_case(initial_network=0., nx=nx)
+    model['surface'], model['ports'] = template['surface'], template['ports']
+    model['maximumExchangeMilliseconds'] = exchange_ms
+    model['evaluationMetrics'] = {
+        'schemaVersion': 1, 'policyVersion': 'NUMERICAL_CONDUIT_SURCHARGE_v1',
+        'evidence': 'NUMERICAL_TEST_ONLY_NOT_SEOUL', 'startMilliseconds': 0,
+        'endMilliseconds': 120000, 'networkOutfalls': ['OUT'],
+        'exposureTriangles': list(range(len(model['surface']['triangles']))),
+        'wetDepthThresholdM': .001}
     return model
