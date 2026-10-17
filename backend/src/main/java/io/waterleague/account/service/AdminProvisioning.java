@@ -42,8 +42,8 @@ public class AdminProvisioning implements ApplicationRunner {
     String name = console.readLine("단일 관리자 아이디: ");
     if (name == null || !name.matches("[a-z0-9_]{4,32}") || accounts.byUsername(name).isPresent())
       throw new IllegalArgumentException("새 관리자 아이디 확인 필요");
-    char[] password = console.readPassword("관리자 비밀번호 (12~128자): ");
-    if (password == null || password.length < 12 || password.length > 128)
+    char[] password = console.readPassword("관리자 비밀번호 (8~128자): ");
+    if (password == null || password.length < 8 || password.length > 128)
       throw new IllegalArgumentException("비밀번호 길이 확인 필요");
     String encoded;
     try {

@@ -16,6 +16,7 @@ export function AuthDialog({
   const [mode, setMode] = useState<'login' | 'register'>('login'),
     [name, setName] = useState(''),
     [password, setPassword] = useState(''),
+    [passwordConfirmation, setPasswordConfirmation] = useState(''),
     [otp, setOtp] = useState(''),
     [busy, setBusy] = useState(false),
     [error, setError] = useState(''),
@@ -32,6 +33,13 @@ export function AuthDialog({
     } | null>(null);
   const ref = useRef<HTMLDialogElement>(null);
   const nameInput = useRef<HTMLInputElement>(null);
+  const confirmationInput = useRef<HTMLInputElement>(null);
+  const passwordMismatch = passwordConfirmation.length > 0 && passwordConfirmation !== password;
+  useEffect(() => {
+    confirmationInput.current?.setCustomValidity(
+      passwordMismatch ? '비밀번호가 일치하지 않습니다.' : ''
+    );
+  }, [passwordMismatch, password, passwordConfirmation, mode]);
   useEffect(() => {
     const el = ref.current;
     el?.showModal();
@@ -64,6 +72,11 @@ export function AuthDialog({
       <form
         onSubmit={async (e) => {
           e.preventDefault();
+          if (mode === 'register' && password !== passwordConfirmation) {
+            setError('비밀번호가 일치하지 않습니다.');
+            confirmationInput.current?.focus();
+            return;
+          }
           setBusy(true);
           setError('');
           try {
@@ -98,6 +111,7 @@ export function AuthDialog({
           } finally {
             setBusy(false);
             setPassword('');
+            setPasswordConfirmation('');
             setOtp('');
           }
         }}
@@ -123,16 +137,37 @@ export function AuthDialog({
               <input
                 type="password"
                 required
-                minLength={12}
+                minLength={8}
                 maxLength={128}
                 autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="12자 이상"
+                placeholder="8자 이상"
               />
             </label>
             {mode === 'register' && (
               <>
+                <label>
+                  비밀번호 확인
+                  <input
+                    ref={confirmationInput}
+                    type="password"
+                    required
+                    minLength={8}
+                    maxLength={128}
+                    autoComplete="new-password"
+                    value={passwordConfirmation}
+                    onChange={(e) => setPasswordConfirmation(e.target.value)}
+                    placeholder="비밀번호를 다시 입력하세요"
+                    aria-invalid={passwordMismatch}
+                    aria-describedby={passwordMismatch ? 'password-confirmation-error' : undefined}
+                  />
+                  {passwordMismatch && (
+                    <small id="password-confirmation-error" className="form-error">
+                      비밀번호가 일치하지 않습니다.
+                    </small>
+                  )}
+                </label>
                 <label>
                   회원 유형
                   <select

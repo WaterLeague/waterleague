@@ -6,7 +6,7 @@
 
 서버 세션·프레임워크 사용. 운영 쿠키 __Host- 접두사, Secure·HttpOnly·SameSite=Lax·Path=/·Domain 미설정. 로그인·권한 변경 시 세션 회전, 유휴·절대 만료, 서버 로그아웃. 토큰 localStorage 저장 금지. [OWASP 세션 지침](https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html) 참고.
 
-Argon2id 최소 m=19MiB·t=2·p=1에서 성능 측정·상향. 비밀번호 길이 12~128자, 인증 실패 메시지 일반화, 가입·로그인·복구 rate limit. 이메일 검증·재설정·유출 비밀번호 검사·기관 MFA/IdP는 공개 운영 전 게이트. [OWASP 비밀번호 지침](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html) 참고.
+Argon2id 최소 m=19MiB·t=2·p=1에서 성능 측정·상향. 비밀번호 길이 8~128자(2026-10-17 사용자 요청: 최소 8자). 회원가입 폼의 비밀번호 확인란 필수·불일치 제출 차단, 확인값의 서버 전송·저장 없음. 인증 실패 메시지 일반화, 가입·로그인·복구 rate limit. 이메일 검증·재설정·유출 비밀번호 검사·기관 MFA/IdP는 공개 운영 전 게이트. [OWASP 비밀번호 지침](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html) 참고.
 
 기관 인증 구현: [RFC 6238](https://www.rfc-editor.org/rfc/rfc6238) TOTP 6자리·30초·인접 1구간 허용, 사용 카운터 조건부 갱신으로 재사용 거부. 기관별 비밀은 계정 ID를 AAD로 한 AES-256-GCM 암호화 저장, `MFA_ENCRYPTION_KEY`는 DB와 분리. 키·등록 정보 부재 시 기관 로그인 거부. 공개 가입에서 등록·역할 변경 불가, 로컬 운영 명령에서 소속 확인 후 기존 계정 승격. 기관 MFA는 피싱 저항성을 제공하지 않으므로 운영 IdP/WebAuthn 도입 전 위험 검토 필요.
 

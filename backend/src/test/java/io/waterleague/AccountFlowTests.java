@@ -48,7 +48,7 @@ class AccountFlowTests {
                 "username",
                 name,
                 "password",
-                "safe-test-password-142",
+                "Test8pw!",
                 "memberType",
                 "PLAYER",
                 "organizationName",
@@ -60,6 +60,8 @@ class AccountFlowTests {
                 "affiliationType",
                 "RESIDENT"));
     var token = csrf();
+    assertThat(call("/auth/register", body.replace("Test8pw!", "Test7pw"), token).statusCode())
+        .isEqualTo(400);
     var before = call("/auth/register", body, token);
     assertThat(before.statusCode()).isEqualTo(200);
     assertThat(before.body()).contains("PLAYER").doesNotContain("passwordHash");
@@ -76,7 +78,7 @@ class AccountFlowTests {
             call(
                     "/auth/login",
                     json.writeValueAsString(
-                        Map.of("username", name, "password", "safe-test-password-142")),
+                        Map.of("username", name, "password", "Test8pw!")),
                     csrf())
                 .statusCode())
         .isEqualTo(200);
