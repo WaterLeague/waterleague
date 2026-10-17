@@ -1,7 +1,7 @@
 """공개 도형의 면적 상한과 설치 당시 버전 보존 검사."""
 import gzip,json,sys,unittest
 from pathlib import Path
-from waterleague_sim.shared_model import catalog,candidates,resolve,site_catalog
+from waterleague_sim.shared_model import catalog,candidates,resolve,site_catalog,with_observed_forcing
 from waterleague_sim.engine.continuous import ROOT
 sys.path.insert(0,str(ROOT/'scripts'))
 from prepare_shared_site_constraints import constrain
@@ -50,3 +50,18 @@ class SharedConstraintTests(unittest.TestCase):
         self.assertEqual(new['hydrology'],old['hydrology'])
         with self.assertRaises(ValueError):
             resolve(installation|{'budget_policy':policy|{'districtLimitKrw':80000001}})
+
+    def test_effective_forcing_notes_preserve_physical_inputs_and_original_model(self):
+        from waterleague_sim.engine.continuous import input_source
+        model,_,_=resolve({'district_id':'2410520','cell_id':'G1','model_hash':site_catalog(3)['2410520']['sha256']})
+        self.assertFalse(any('2024' in a or '유출 전량' in a for a in model['assumptions']))
+        model['rainfall']={'start':'2026-10-17T00:00:00+09:00','end':'2026-10-17T00:02:00+09:00','intervalSeconds':60,'depthsMm':[0,0]}
+        evap={'method':'SYNTHETIC_TEST_ONLY','sourceHashes':['test'],'ratesMmDay':[0,1]}
+        original=json.dumps(model,sort_keys=True)
+        bound=with_observed_forcing(model,evap)
+        self.assertEqual(json.dumps(model,sort_keys=True),original)
+        self.assertEqual(model['hydrology'],bound['hydrology'])
+        self.assertEqual(input_source(model,[],evap),input_source(bound,[],evap))
+        self.assertFalse(any('증발 0 가정' in a for a in bound['assumptions']))
+        self.assertTrue(any('경사 1%' in a for a in bound['assumptions']))
+        with self.assertRaises(ValueError):with_observed_forcing(model,{})

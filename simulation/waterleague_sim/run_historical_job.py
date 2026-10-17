@@ -7,7 +7,7 @@ from pathlib import Path
 
 from .engine.continuous import ROOT, digest, experiment
 from .model_catalog import read_catalog
-from .shared_model import resolve
+from .shared_model import resolve, with_observed_forcing
 from .historical_evaporation import load as load_evaporation
 
 
@@ -30,6 +30,7 @@ def calculate(request, directory):
         if observed['mapId'] != 'seoul-osm-v1-'+placement['districtId']:
             raise ValueError('HISTORICAL_DISTRICT_INVALID')
         model['rainfall'] = observed['rainfall']
+        model = with_observed_forcing(model, evaporation)
         physical = {k: placement[k] for k in ('cellId','facilityType','areaM2')}
         result = experiment(model, physical, directory/str(index), evaporation)
         a, b = result['baseline']['final'], result['strategy']['final']

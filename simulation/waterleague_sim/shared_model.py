@@ -69,6 +69,22 @@ def resolve(installation):
             raise ValueError('LIVE_BUDGET_POLICY_INVALID')
         model['budget'] = policy['districtLimitKrw']
         model['budgetPolicy'] = copy.deepcopy(policy)
+    # 현재/재해 강우를 별도로 연결하므로 기본 모델의 과거 관측 창 설명은 상속하지 않는다.
+    model['assumptions']=[a for a in model['assumptions']
+        if not a.startswith(('2026 공개 형상에서 2024', '2024-07-18'))
+        and not (version>=2 and a.startswith('선정 표면의 잔여 불투수면 유출 전량'))]
     model.pop('rainfall',None)
     station=district.get('defaultRainfall') or {}
     return model,str(station.get('stationId','110')),station.get('stationName','강서')
+
+
+def with_observed_forcing(model, evaporation):
+    if not evaporation.get('method') or not evaporation.get('sourceHashes'):
+        raise ValueError('LIVE_EVAPORATION_EVIDENCE_MISSING')
+    value = copy.deepcopy(model)
+    value['assumptions'] = [a for a in value['assumptions'] if not a.startswith('증발 0 가정')]
+    value['assumptions'] += [
+        '강우는 계산 기간의 관측 입력, 증발산은 관측 기상에서 산정한 분별 적용률 사용',
+        '불투수율·경사·유출 폭·시설 재료는 관측 강우와 별개인 모델 입력; 실측으로 자동 변환되지 않음',
+    ]
+    return value

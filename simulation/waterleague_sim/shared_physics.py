@@ -12,7 +12,7 @@ from pathlib import Path
 from .engine.continuous import ROOT, digest, engine_identity
 from .ingestion.live import observed_forcing
 from .ingestion.evaporation import observed_evaporation, append_evaporation, reusable_observation_hour
-from .shared_model import resolve
+from .shared_model import resolve, with_observed_forcing
 from .ingestion import source_archive
 from .weekly import aggregate as weekly_aggregate, publish as publish_weekly
 
@@ -157,6 +157,7 @@ def process(conn, job, root):
         model['rainfall']['depthsMm'] = [v['depthMm'] for v in forcing['observations']]
         placement = {'cellId': job['installation']['cell_id'], 'facilityType': job['installation']['facility_type'],
                      'areaM2': float(job['installation']['area_m2'])}
+        model = with_observed_forcing(model, evaporation)
         source, forcing_raw = encode(model), encode(forcing)
         request = {'schemaVersion': 1, 'installationId': str(job['installation']['id']),
                    'modelSha256': digest(source), 'forcingSha256': digest(forcing_raw),
