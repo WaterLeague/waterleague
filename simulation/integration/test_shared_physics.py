@@ -103,6 +103,12 @@ class SharedPhysicsTests(unittest.TestCase):
             prefix = artifact(first, 'result.json')['strategy']['samples']
             self.assertEqual(prefix, artifact(second, 'result.json')['strategy']['samples'][:len(prefix)])
             self.assertEqual(artifact(second, 'forcing.json')['previousInput']['jobId'], str(first['id']))
+            first_directory=Path(root)/'shared-physics'/str(first['id'])/str(first['lease_token'])
+            first_source=artifact(first,'forcing.json')['sourceHashes'][0]+'.txt'
+            self.assertEqual((first_directory/first_source).stat().st_ino,
+                (Path(root)/'shared-physics'/str(second['id'])/str(second['lease_token'])/first_source).stat().st_ino)
+            self.assertEqual((first_directory/first_source).stat().st_ino,
+                (Path(root)/'observation-sources'/first_source).stat().st_ino)
             directory=Path(root)/'shared-physics'/str(second['id'])/str(second['lease_token'])
             self.assertEqual(row['artifact_manifest_hash'],physics.digest((directory/'manifest.json').read_bytes()))
             forcing=artifact(second,'forcing.json')

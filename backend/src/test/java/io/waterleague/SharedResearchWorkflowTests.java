@@ -356,6 +356,54 @@ class SharedResearchWorkflowTests {
   }
 
   @Test
+  void exportsWeeklyObservationFileCountAndRejectsMislabeledRawSource() throws Exception {
+    var owner = actor(false);
+    var job = fixture(owner);
+    var directory = job.path();
+    for (int minute = 0; minute < 11000; minute++) {
+      String raw = "SYNTHETIC_ARCHIVE_SIZE_TEST_ONLY " + minute;
+      String sha = json.hash(raw);
+      Files.writeString(directory.resolve(sha + ".txt"), raw);
+      Files.writeString(directory.resolve(sha + ".json"), "{}");
+    }
+    db.update(
+        "UPDATE shared_physics_jobs SET artifact_manifest_hash=? WHERE id=?",
+        manifest(directory),
+        job.id());
+    var response =
+        owner
+            .client()
+            .send(
+                HttpRequest.newBuilder(
+                        URI.create(
+                            "http://127.0.0.1:"
+                                + port
+                                + "/api/v1/installations/records/"
+                                + job.id()
+                                + "/bundle"))
+                    .build(),
+                HttpResponse.BodyHandlers.ofByteArray());
+    assertThat(response.statusCode()).isEqualTo(200);
+    int entries = 0;
+    try (var zip =
+        new java.util.zip.ZipInputStream(new java.io.ByteArrayInputStream(response.body()))) {
+      while (zip.getNextEntry() != null) {
+        entries++;
+        zip.closeEntry();
+      }
+    }
+    assertThat(entries).isEqualTo(22007);
+    Files.writeString(directory.resolve("b".repeat(64) + ".txt"), "SYNTHETIC_WRONG_HASH_TEST_ONLY");
+    db.update(
+        "UPDATE shared_physics_jobs SET artifact_manifest_hash=? WHERE id=?",
+        manifest(directory),
+        job.id());
+    assertThat(
+            call(owner, "GET", "/installations/records/" + job.id() + "/bundle", null).statusCode())
+        .isEqualTo(503);
+  }
+
+  @Test
   void anchoredManifestRejectsChangedFilesEvenWithRewrittenHashesAndSymlinks() throws Exception {
     var owner = actor(false);
     var job = fixture(owner);

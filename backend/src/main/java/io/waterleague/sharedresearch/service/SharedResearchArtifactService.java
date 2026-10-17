@@ -61,10 +61,10 @@ public class SharedResearchArtifactService {
             .resolve(job.id().toString())
             .resolve(job.leaseToken().toString());
     if (!dir.toRealPath().equals(dir)) throw invalid();
-    var bytes = read(dir.resolve("manifest.json"), 256 * 1024);
+    var bytes = read(dir.resolve("manifest.json"), 8 * 1024 * 1024);
     if (!hash(bytes).equals(job.manifestHash())) throw invalid();
     var manifest = tree(bytes);
-    if (!manifest.isObject() || manifest.size() > 2000) throw invalid();
+    if (!manifest.isObject() || manifest.size() > 50000) throw invalid();
     for (String required :
         List.of("request.json", "model-source.json", "forcing.json", "result.json", "weekly.py"))
       if (!manifest.has(required)) throw invalid();
@@ -90,7 +90,10 @@ public class SharedResearchArtifactService {
         || name.contains("..")
         || name.equals("manifest.json")) throw invalid();
     var bytes = read(a.directory().resolve(name), 64 * 1024 * 1024);
-    if (!hash(bytes).equals(a.manifest().path(name).asString())) throw invalid();
+    String actual = hash(bytes);
+    if (!actual.equals(a.manifest().path(name).asString())
+        || (name.matches("[a-f0-9]{64}\\.txt") && !actual.equals(name.substring(0, 64))))
+      throw invalid();
     return bytes;
   }
 
@@ -173,7 +176,7 @@ public class SharedResearchArtifactService {
         for (String name : a.manifest().propertyNames()) {
           var bytes = file(a, name);
           total += bytes.length;
-          if (total > 256L * 1024 * 1024) throw invalid();
+          if (total > 512L * 1024 * 1024) throw invalid();
           zip.putNextEntry(new ZipEntry(name));
           zip.write(bytes);
           zip.closeEntry();

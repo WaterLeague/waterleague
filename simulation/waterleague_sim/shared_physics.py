@@ -13,6 +13,7 @@ from .engine.continuous import ROOT, digest, engine_identity
 from .ingestion.live import observed_forcing
 from .ingestion.evaporation import observed_evaporation, append_evaporation, reusable_observation_hour
 from .shared_model import resolve
+from .ingestion import source_archive
 from .weekly import aggregate as weekly_aggregate, publish as publish_weekly
 
 
@@ -91,6 +92,7 @@ def process(conn, job, root):
         observations, source_hashes, previous_ref, previous_result = [], [], None, None
         previous_evaporation = None
         previous_directory = None
+        previous_manifest = {}
         covered = job['start']
         if previous := job['previous']:
             old = Path(root)/'shared-physics'/str(previous['id'])/str(previous['lease_token'])
@@ -109,6 +111,7 @@ def process(conn, job, root):
             if previous.get('artifact_manifest_hash'):
                 manifest_raw = (old/'manifest.json').read_bytes()
                 manifest = json.loads(manifest_raw)
+                previous_manifest = manifest
                 if (digest(manifest_raw) != previous['artifact_manifest_hash']
                         or manifest.get('result.json') != digest(result_raw)):
                     raise ValueError('LIVE_PREVIOUS_RESULT_INVALID')
@@ -133,7 +136,7 @@ def process(conn, job, root):
                                'sourceHashes': source_hashes+extension['sourceHashes'], 'previousInput': previous_ref,
                                'evaporation': evaporation}
         for raw, meta in sources+weather_sources:
-            (path/(meta['sha256']+'.txt')).write_bytes(raw)
+            source_archive.store(root,path/(meta['sha256']+'.txt'),raw,meta['sha256'])
             (path/(meta['sha256']+'.json')).write_bytes(encode(meta))
         missing_sources = []
         for sha in sorted(set(forcing['sourceHashes']+evaporation['sourceHashes'])):
@@ -144,10 +147,8 @@ def process(conn, job, root):
                 if not target.exists() and previous_directory is not None:
                     original = previous_directory/(sha+suffix)
                     if original.is_file() and original.resolve() == original.absolute():
-                        raw = original.read_bytes()
-                        if len(raw) > 64*1024*1024 or (suffix == '.txt' and digest(raw) != sha):
-                            raise ValueError('LIVE_PREVIOUS_SOURCE_INVALID')
-                        target.write_bytes(raw)
+                        expected = sha if suffix == '.txt' else previous_manifest.get(sha+suffix)
+                        source_archive.link(original,target,expected)
             if not (path/(sha+'.txt')).is_file() or not (path/(sha+'.json')).is_file():
                 missing_sources.append(sha)
         forcing['sourceArchive'] = {'complete': not missing_sources, 'missingHashes': missing_sources}

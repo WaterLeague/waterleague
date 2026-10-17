@@ -143,3 +143,5 @@ RFC 9457 `application/problem+json`: type, title, status, detail, instance, code
 `GET/PUT /consents/shared[/{organizationId}]`는 기존 전략 동의와 독립적인 기관별 공동 설치 연구 동의. `GET /installations/records`와 `/installations/records/{jobId}[/bundle]`는 본인 완료 기록. `GET /research/installations` 및 `/research/installations/{jobId}[/bundle]`는 승인된 조직 회원의 현재 기관에 동의된 기록. 목록은 한국시간 주 시작일의 기여·회원 합계 순으로 최대 100개 설치, 상세는 선택한 완료 job에 고정. 이메일·사용자명·IP·키 미포함. 산출물 manifest의 DB 고정 해시·입력 해시·모델/설치 연결 검증 후 다운로드, 과거 manifest 미고정 작업은 내보내기 보류.
 
 상세는 DB에 고정된 manifest SHA-256과 요청·모델·설치 연결을 검사한 완료 작업만 제공. 설치 이후 누적 수문 상태와 주간 합계를 구분하며 화면은 최대 360개 시점을 추출, 원본 분별 결과는 재현 묶음에 보존. 초기 수분·저류, 최종 저류, 순저류 변화 분리. 원문 강우·기상은 계산 연장 시 이전 구간에서 함께 복사하고 원문 누락 여부를 명시. 조회 가능 주는 한국시간 현재 주 이하의 월요일 시작일. 화면 비활성화·조회 범위 변경 시 상세 제거, 복귀·30초 갱신 시 권한 재확인.
+
+계산 원문은 SHA-256별 불변 원본을 프로젝트에 보관하고 각 계산 디렉터리에 하드 링크로 연결. 링크 미지원 저장소는 검증 후 복사. 외부 심볼릭 링크는 거부하며 원문 변경 시 조회 차단. 내보내기의 주간 원문 증가를 수용하도록 manifest 8MiB·최대 50,000개, 합계 원본 512MiB, 개별 파일 64MiB·ZIP 64MiB 제한 적용. 한도를 넘는 파일은 불완전한 묶음 대신 제공 보류.
