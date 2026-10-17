@@ -16,6 +16,7 @@ import tools.jackson.databind.ObjectMapper;
 @Configuration
 public class SecurityConfiguration {
   @Bean
+  @org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
   SecurityFilterChain security(
       HttpSecurity http,
       ObjectMapper json,
@@ -51,7 +52,9 @@ public class SecurityConfiguration {
                         "/api/v1/leagues/{id}",
                         "/api/v1/organizations",
                         "/api/v1/auth/csrf",
-                        "/actuator/health")
+                        "/actuator/health",
+                        "/actuator/health/readiness",
+                        "/actuator/health/liveness")
                     .permitAll()
                     .requestMatchers(
                         HttpMethod.POST,

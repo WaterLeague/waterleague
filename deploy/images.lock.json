@@ -1,0 +1,137 @@
+{
+  "checkedAt": "2026-10-17",
+  "images": {
+    "java": {
+      "image": "amazoncorretto:25.0.4-al2023",
+      "digest": "sha256:c4348c3d4e9c2219d6e09c2e9e473c9a5bafe0492c4a7038cd60f2f6a473c16b",
+      "reference": "amazoncorretto:25.0.4-al2023@sha256:c4348c3d4e9c2219d6e09c2e9e473c9a5bafe0492c4a7038cd60f2f6a473c16b",
+      "platforms": [
+        {
+          "architecture": "amd64",
+          "os": "linux"
+        },
+        {
+          "architecture": "arm64",
+          "os": "linux",
+          "variant": "v8"
+        }
+      ]
+    },
+    "python": {
+      "image": "python:3.14.8-slim-bookworm",
+      "digest": "sha256:48b13b003dda20b16f9442b8475aa05fe21bf6579a8c881db92ffb4d8fd20f83",
+      "reference": "python:3.14.8-slim-bookworm@sha256:48b13b003dda20b16f9442b8475aa05fe21bf6579a8c881db92ffb4d8fd20f83",
+      "platforms": [
+        {
+          "architecture": "amd64",
+          "os": "linux"
+        },
+        {
+          "architecture": "arm",
+          "os": "linux",
+          "variant": "v7"
+        },
+        {
+          "architecture": "arm64",
+          "os": "linux",
+          "variant": "v8"
+        },
+        {
+          "architecture": "386",
+          "os": "linux"
+        },
+        {
+          "architecture": "ppc64le",
+          "os": "linux"
+        }
+      ]
+    },
+    "node": {
+      "image": "node:24.22.0-bookworm-slim",
+      "digest": "sha256:a5f4366e834695d5f363b920c104953a535d3a9864d1bdf74566a0ebe01daee5",
+      "reference": "node:24.22.0-bookworm-slim@sha256:a5f4366e834695d5f363b920c104953a535d3a9864d1bdf74566a0ebe01daee5",
+      "platforms": [
+        {
+          "architecture": "amd64",
+          "os": "linux"
+        },
+        {
+          "architecture": "arm64",
+          "os": "linux",
+          "variant": "v8"
+        },
+        {
+          "architecture": "ppc64le",
+          "os": "linux"
+        }
+      ]
+    },
+    "postgres": {
+      "image": "postgres:18.6-bookworm",
+      "digest": "sha256:afc7e2d441324c0388fa80c3d24f733b4194a4eb7f47dd8ee2b08eb1a24a647c",
+      "reference": "postgres:18.6-bookworm@sha256:afc7e2d441324c0388fa80c3d24f733b4194a4eb7f47dd8ee2b08eb1a24a647c",
+      "platforms": [
+        {
+          "architecture": "amd64",
+          "os": "linux"
+        },
+        {
+          "architecture": "arm",
+          "os": "linux",
+          "variant": "v7"
+        },
+        {
+          "architecture": "arm64",
+          "os": "linux",
+          "variant": "v8"
+        },
+        {
+          "architecture": "386",
+          "os": "linux"
+        },
+        {
+          "architecture": "ppc64le",
+          "os": "linux"
+        }
+      ]
+    },
+    "caddy": {
+      "image": "caddy:2.11.7-alpine",
+      "digest": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+      "reference": "caddy:2.11.7-alpine@sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+      "platforms": [
+        {
+          "architecture": "amd64",
+          "os": "linux"
+        },
+        {
+          "architecture": "arm",
+          "os": "linux",
+          "variant": "v6"
+        },
+        {
+          "architecture": "arm",
+          "os": "linux",
+          "variant": "v7"
+        },
+        {
+          "architecture": "arm64",
+          "os": "linux",
+          "variant": "v8"
+        },
+        {
+          "architecture": "ppc64le",
+          "os": "linux"
+        },
+        {
+          "architecture": "riscv64",
+          "os": "linux"
+        },
+        {
+          "architecture": "s390x",
+          "os": "linux"
+        }
+      ]
+    }
+  }
+}

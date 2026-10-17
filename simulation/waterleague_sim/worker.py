@@ -10,6 +10,7 @@ load()
 os.umask(0o077)
 from waterleague_sim.model_catalog import read_catalog
 from waterleague_sim.queue import claim, finish, TABLES
+from waterleague_sim.runtime import database_url
 MODELS=read_catalog(ROOT/'data/models')
 ARTIFACTS=Path(os.environ.get('ARTIFACTS_PATH',ROOT/'data/runs')).resolve()
 
@@ -41,7 +42,7 @@ def process(conn,job):
  return saved
 
 def main():
- with psycopg.connect(os.environ['DATABASE_URL'],autocommit=True,row_factory=dict_row) as conn:
+ with psycopg.connect(database_url(),autocommit=True,row_factory=dict_row) as conn:
   # SWMM은 프로세스별 전역 상태를 사용하므로 이 워커에서는 한 작업씩 실행한다.
   while True:
    job=claim(conn)
