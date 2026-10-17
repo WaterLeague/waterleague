@@ -60,7 +60,6 @@ simulation/.venv/bin/python scripts/verify_bundle.py /path/to/bundle.zip --rerun
 - [제품 요구사항](docs/01-product.md) · [연구 적합성](docs/02-scientific-validity.md) · [자료 계보](docs/03-data-provenance.md)
 - [아키텍처](docs/04-architecture.md) · [데이터 모델](docs/05-data-model.md) · [API](docs/06-api.md)
 - [보안](docs/07-security.md) · [3D·UX](docs/08-experience.md) · [작업 현황](docs/09-delivery.md)
-- [전체 완성에 필요한 자료·운영 준비](docs/35-completion-dependencies.md) · [자료 접근 상태](docs/12-data-access.md)
 - [운영](docs/10-operations.md) · [컨테이너·HTTPS 검증](docs/29-deployment-contract.md) · [검증 기록](docs/11-validation-log.md) · [원화 비용](docs/decisions/0003-krw-cost-model.md)
 - [백엔드](backend/README.md) · [프론트](frontend/README.md) · [계산 엔진](simulation/README.md) · [출처](data/README.md) · [Git 규칙](CONTRIBUTING.md)
 
