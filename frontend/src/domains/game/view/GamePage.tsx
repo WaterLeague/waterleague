@@ -46,13 +46,14 @@ import { RoundReport } from './RoundReport';
 import { matchesEvaluatedDesign } from '../service/roundService';
 import { assessPlacementDraft } from '../service/placementDraftService';
 import { PlayGuide } from './PlayGuide';
+import { CityExplorer } from '../../city/view/CityExplorer';
 const icons = { RAIN_GARDEN: Leaf, PERMEABLE_PAVEMENT: Grid2X2, GREEN_ROOF: House };
 export function GamePage() {
   const g = useGame();
   const catalog = useCatalog();
   const [tab, setTab] = useState<
-    'missions' | 'studio' | 'leaderboard' | 'research' | 'data' | 'admin'
-  >('missions');
+    'city' | 'missions' | 'studio' | 'leaderboard' | 'research' | 'data' | 'admin'
+  >('city');
   const [report, setReport] = useState(false);
   const [feedback, setFeedback] = useState('');
   const playHeading = useRef<HTMLHeadingElement>(null);
@@ -209,6 +210,7 @@ export function GamePage() {
                 ['data', '데이터'],
               ] as const)
             : ([
+                ['city', '서울 지도'],
                 ['missions', '도전'],
                 ...(tab === 'studio' ? ([['studio', '플레이']] as const) : []),
                 ['leaderboard', '기록 경쟁'],
@@ -264,6 +266,7 @@ export function GamePage() {
         g.rainfallCatalog &&
         g.account?.role !== 'ADMIN' &&
         tab !== 'missions' &&
+        tab !== 'city' &&
         tab !== 'studio' && (
           <RainfallSelector
             lab={lab}
@@ -318,7 +321,9 @@ export function GamePage() {
           </button>
         </div>
       )}
-      {!lab ? (
+      {tab === 'city' ? (
+        <CityExplorer onPlay={() => setTab('missions')} />
+      ) : !lab ? (
         <div className="empty-state">
           <CloudRain size={38} />
           <h2>{g.loading ? '설계실을 준비하고 있습니다.' : '서버에 연결할 수 없습니다.'}</h2>

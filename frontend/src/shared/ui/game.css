@@ -3293,3 +3293,354 @@ a:focus-visible {
     flex-wrap: wrap;
   }
 }
+
+.city-explorer {
+  display: grid;
+  grid-template-columns: 310px minmax(0, 1fr);
+  min-height: calc(100vh - 96px);
+  background: #f5f4ed;
+}
+.city-sidebar {
+  padding: 32px 25px 22px;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #d8dccf;
+  position: relative;
+  z-index: 15;
+}
+.city-heading > span {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  color: #6d8068;
+}
+.city-heading h1 {
+  margin: 20px 0 13px;
+  font-size: 34px;
+  line-height: 1.25;
+  letter-spacing: -1.8px;
+  font-weight: 600;
+}
+.city-heading h1 em {
+  font-style: normal;
+  color: #486c4b;
+}
+.city-heading p {
+  font-size: 13px;
+  line-height: 1.8;
+  color: #687266;
+  margin: 0 0 22px;
+}
+.city-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid #a9b8a1;
+  padding: 9px 0;
+  color: #61765b;
+}
+.city-search input {
+  width: 100%;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 13px;
+  outline-offset: 4px;
+  min-width: 0;
+}
+.city-districts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+  margin: 16px 0;
+}
+.city-districts button {
+  padding: 7px 2px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #697563;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 3px;
+}
+.city-districts button:hover {
+  background: #e6ecdf;
+}
+.city-districts button[aria-pressed='true'] {
+  color: #244c32;
+  background: #dae5cf;
+  border-color: #b5c6a8;
+}
+.city-selected {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  font-size: 12px;
+  padding: 4px 0 16px;
+}
+.city-selected span {
+  color: #6d7866;
+}
+.city-mission {
+  margin-top: auto;
+  border-top: 1px solid #cdd5c6;
+  padding-top: 20px;
+}
+.city-mission-kicker {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: #7a895f;
+  font-weight: 700;
+}
+.city-mission h2 {
+  font-size: 20px;
+  margin: 8px 0;
+}
+.city-mission p {
+  font-size: 12px;
+  line-height: 1.7;
+  color: #75806d;
+}
+.city-mission > button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  border: 0;
+  background: #304e38;
+  color: #fff;
+  padding: 13px 14px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+}
+.city-mission > button.city-locate {
+  background: none;
+  color: #4f6848;
+  padding: 11px 2px;
+  font-size: 12px;
+}
+.city-model-note {
+  color: #7b8274;
+  font-size: 10px;
+  line-height: 1.7;
+  margin-top: 8px;
+}
+.city-stage {
+  position: relative;
+  min-height: 650px;
+  height: calc(100vh - 111px);
+  overflow: hidden;
+  background: #e8e9dd;
+}
+.city-map-top {
+  position: absolute;
+  top: 22px;
+  left: 26px;
+  right: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  pointer-events: none;
+}
+.city-map-top > span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #536c4e;
+  font-size: 12px;
+  letter-spacing: 0.03em;
+}
+.city-map-top > div {
+  display: flex;
+  pointer-events: auto;
+  padding: 3px;
+  border: 1px solid #c8d2be;
+  background: #f6f6efde;
+  border-radius: 5px;
+}
+.city-map-top button {
+  border: 0;
+  background: transparent;
+  color: #6a7c61;
+  padding: 8px 12px;
+  font: inherit;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+.city-map-top button[aria-pressed='true'] {
+  background: #dce6d1;
+  color: #304f36;
+  border-radius: 3px;
+}
+.city-map-bottom {
+  pointer-events: none;
+  position: absolute;
+  bottom: 48px;
+  left: 26px;
+  right: 26px;
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  color: #4e6348;
+}
+.city-map-bottom > div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.city-map-bottom b {
+  font-size: 13px;
+  font-weight: 500;
+}
+.city-map-bottom span,
+.city-map-bottom small {
+  font-size: 10px;
+  line-height: 1.7;
+}
+.city-credit {
+  position: absolute;
+  bottom: 15px;
+  left: 26px;
+  color: #6d7a66;
+  font-size: 10px;
+  background: #e8e9ddaa;
+}
+.city-source-note {
+  grid-column: 1/-1;
+  padding: 8px 25px;
+  font-size: 10px;
+  color: #87907f;
+  border-top: 1px solid #d8dccf;
+}
+.city-district-label {
+  border: 0;
+  background: #f4f6ebda;
+  color: #3d5a37;
+  font-family: inherit;
+  font-size: 11px;
+  white-space: nowrap;
+  padding: 5px 8px;
+  cursor: pointer;
+  border-radius: 3px;
+  box-shadow: 0 1px 3px #263d2312;
+}
+.city-district-label.selected {
+  background: #36563b;
+  color: white;
+}
+.city-play-pin {
+  display: block;
+  white-space: nowrap;
+  color: #fff;
+  background: #4b7151;
+  border: 2px solid #e7eedc;
+  border-radius: 20px;
+  padding: 5px 10px;
+  font-size: 10px;
+}
+.city-plan {
+  width: 100%;
+  height: 100%;
+}
+.city-plan path[stroke] {
+  cursor: pointer;
+}
+.city-plan text {
+  pointer-events: none;
+}
+.city-error {
+  position: absolute;
+  top: 75px;
+  left: 24px;
+  right: 24px;
+  padding: 12px;
+  background: #fff7e7;
+  font-size: 12px;
+}
+@media (max-width: 1000px) {
+  .city-explorer {
+    grid-template-columns: 250px minmax(0, 1fr);
+  }
+  .city-sidebar {
+    padding: 25px 18px;
+  }
+  .city-heading h1 {
+    font-size: 28px;
+  }
+}
+@media (max-width: 700px) {
+  .city-explorer {
+    display: flex;
+    flex-direction: column;
+  }
+  .city-stage {
+    order: 0;
+    height: 60vh;
+    min-height: 390px;
+  }
+  .city-sidebar {
+    order: 1;
+    border-right: 0;
+    padding: 22px;
+  }
+  .city-heading h1 {
+    margin: 10px 0;
+  }
+  .city-heading h1 br,
+  .city-heading p br {
+    display: none;
+  }
+  .city-heading p {
+    margin-bottom: 10px;
+  }
+  .city-districts {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+  .city-mission {
+    margin-top: 10px;
+  }
+  .city-source-note {
+    order: 2;
+  }
+  .city-map-bottom small {
+    display: none;
+  }
+  .city-map-top {
+    top: 15px;
+    left: 15px;
+    right: 15px;
+  }
+  .city-map-bottom {
+    left: 15px;
+    right: 15px;
+  }
+  .city-credit {
+    left: 15px;
+    font-size: 9px;
+  }
+  .city-district-label {
+    font-size: 9px;
+    padding: 3px 5px;
+  }
+}
+.city-map-labels {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.city-map-labels > button,
+.city-map-labels > span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: none;
+}
+.city-map-labels > button {
+  pointer-events: auto;
+}
