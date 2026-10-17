@@ -23,3 +23,17 @@ python3 scripts/run_local.py worker
 동일 조건의 성공 산출물은 `data/private/simulation-cache`에 최대 128개·2 GiB·7일 보관한다. 모델·배치·엔진·빌더·실행 정책·플랫폼이 일치하고 파일 해시를 통과한 경우에만 대상 작업의 새 산출물 경로에 복사한다. `request.json`·회원·메모·이력은 공유하지 않는다. `result.json.execution.mode`의 `REUSED`는 새로운 독립 검증이 아니다.
 
 `.env.local`의 `SIMULATION_CACHE_PATH`는 비어 있는 전용 경로 사용, `SIMULATION_CACHE_ENABLED=false`로 비활성화. 캐시 삭제·손상·만료·잠금 경합은 재계산으로 처리한다. 계산 중에는 캐시 잠금을 보유하지 않아 동시 미스는 각각 실행할 수 있다. 워커 설정 변경 후 처리 중 작업이 없는 시점에 재시작. 캐시는 영구 재현 산출물 백업을 대신하지 않는다. 상세 계약은 `docs/24-simulation-cache.md` 참조.
+
+## 관망·지표 엔진
+
+`engine/network.py`는 별도 EPA DYNWAVE 빌드, `engine/surface.py`는 고정 ANUGA 4.0.1 실행. 기존 LID 바이너리와 운영 큐를 교체하지 않는다. 관망·2D를 같은 프로세스에 직접 로드하면 각 휠의 OpenMP 런타임이 충돌할 수 있으므로 `EngineProcess`를 사용한다. 상태는 자식 프로세스 안에 유지하며 부모는 허용된 입력·시간 전진·결과만 요청한다. 자식에 DB/API 비밀 환경을 넘기지 않는다. 강우 소유 영역 중복·외곽 경계 누락·비유한 값·평가 종료 누락은 실패 처리.
+
+```sh
+simulation/.venv/bin/python scripts/build_network_swmm.py
+# 실행 중인 워커 환경을 보존하는 별도 선택 환경
+UV_PROJECT_ENVIRONMENT="$PWD/tmp/flood-venv" uv sync --project simulation --locked --extra flood
+MPLBACKEND=Agg tmp/flood-venv/bin/python scripts/verify_flood_engines.py \
+  --output data/runs/flood-engine-reference-new
+```
+
+참조 실행에는 이미 확보한 `tmp/epa-reference/applications.zip` 사용. `--source`로 같은 해시의 원본 위치 지정 가능. 출력 디렉터리는 새 경로 필수. 관망 INP/RPT/OUT·상태 프레임·경계 변경과 지표 입력/수심/유속/SWW·엔진/코드 해시 보존. 실패 수치 사례도 manifest에 포함한다. 이 실행은 엔진 기반 확인이며 서울 관망·지표 결합이나 현장 침수 검증 완료를 뜻하지 않는다. 실제 양방향 교환·지표 침투/증발산·공개 관망 입력은 후속 연결 대상이다.

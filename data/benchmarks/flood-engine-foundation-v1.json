@@ -1,0 +1,230 @@
+{
+  "schemaVersion": 1,
+  "classification": "NUMERICAL_EVIDENCE_NOT_SEOUL_VALIDATION",
+  "networkCases": [
+    {
+      "case": "Example3.inp",
+      "stockBinaryOutputEqual": true,
+      "routingContinuityPercent": -0.04936906322836876,
+      "numericalStatus": "PASSED",
+      "maximumPumpFlowM3s": 0.0,
+      "warnings": [
+        "WARNING 04: minimum elevation drop used for Conduit C_out"
+      ],
+      "totals": {
+        "timeSeconds": 259200.0,
+        "initialStorageM3": 0.018799733812435653,
+        "storageM3": 8.390860291291895,
+        "dryWeatherInflowM3": 0.0,
+        "runoffInflowM3": 3292.839817956974,
+        "groundwaterInflowM3": 0.0,
+        "rdiiInflowM3": 0.0,
+        "externalInflowM3": 0.0,
+        "outflowM3": 3286.093410866484,
+        "floodingM3": 0.0,
+        "evaporationM3": 0.0,
+        "seepageM3": 0.0,
+        "reactionLossM3": 0.0,
+        "balanceResidualM3": -1.6256534669895277
+      },
+      "resultSha256": "251486aca749e609d2888919d2668ef779b3da67b08200e92a009587cd6b8f76"
+    },
+    {
+      "case": "Example8.inp",
+      "stockBinaryOutputEqual": true,
+      "routingContinuityPercent": -2.043002128601074,
+      "numericalStatus": "FAILED",
+      "maximumPumpFlowM3s": 0.20388129546240003,
+      "warnings": [],
+      "totals": {
+        "timeSeconds": 43200.0,
+        "initialStorageM3": 60.3067636269136,
+        "storageM3": 197.43717249898017,
+        "dryWeatherInflowM3": 57.24953645873015,
+        "runoffInflowM3": 314.3635991428387,
+        "groundwaterInflowM3": 0.0,
+        "rdiiInflowM3": 0.0,
+        "externalInflowM3": 0.0,
+        "outflowM3": 243.30685915958045,
+        "floodingM3": 0.0,
+        "evaporationM3": 0.0,
+        "seepageM3": 0.0,
+        "reactionLossM3": 0.0,
+        "balanceResidualM3": -8.82413243007818
+      },
+      "resultSha256": "0c2aeed2cc87995010ea6d26ee2be3070fb84336c0df27e7c95b2856766fbfa5"
+    },
+    {
+      "case": "ANALYTICAL_BOUNDARY_REVERSAL",
+      "reverseFlowM3s": -0.04516173898617798,
+      "forwardFlowM3s": 0.042599664998975745,
+      "routingContinuityPercent": -0.821897029876709,
+      "numericalStatus": "PASSED",
+      "resultSha256": "404f4f8f95daf90309d3709585196b6fc3fbf0bd4183b6527fbebce1935bb573"
+    }
+  ],
+  "surfaceCases": [
+    {
+      "case": "lake",
+      "triangles": 200,
+      "numericalStatus": "PASSED",
+      "storageM3": 80.94069289573793,
+      "balanceResidualM3": 2.842170943040401e-14,
+      "maxVelocityMps": 1.5345046613793451e-15,
+      "resultSha256": "b93e1bb418f97adab2b5f8002457d21b6e33f7b4ccce5438dca13f61565592ca"
+    },
+    {
+      "case": "rain",
+      "triangles": 200,
+      "numericalStatus": "PASSED",
+      "storageM3": 0.1,
+      "balanceResidualM3": -1.249000902703301e-16,
+      "maxVelocityMps": 1.7547604423941574e-18,
+      "resultSha256": "ae259c7d3a8fdbb1222ca7ce4d4a51b4c464cfb7bf6f8e9e0ba734794e8057a2"
+    },
+    {
+      "case": "dam-break-100",
+      "triangles": 1000,
+      "numericalStatus": "PASSED",
+      "storageM3": 1000.0,
+      "balanceResidualM3": 0.0,
+      "maxVelocityMps": 4.832707072795781,
+      "resultSha256": "49c395a12393358141bd0219aff2e04f09f84b202c6129f74f835876d05ec41f",
+      "analyticalDepthAreaWeightedMaeM": 0.0031552170004854356
+    },
+    {
+      "case": "dam-break-200",
+      "triangles": 2000,
+      "numericalStatus": "PASSED",
+      "storageM3": 1000.0,
+      "balanceResidualM3": 0.0,
+      "maxVelocityMps": 6.085398296417316,
+      "resultSha256": "7439647c50bd2420c40698bbb300d5026cdeb8029e4f8ba5e5527545c1b42e5b",
+      "analyticalDepthAreaWeightedMaeM": 0.002664318301103468
+    }
+  ],
+  "reference": {
+    "archiveUrl": "https://www.epa.gov/sites/production/files/2014-05/epaswmm5_apps_manual.zip",
+    "archiveSha256": "889dd60a53ac85f00ee90db947a67ddc6d0737f46acf818bf7c7c08ac272f0ea",
+    "inputs": {
+      "Example3.inp": "ece140eda259a9e68631a7c9d25d5060f9b3e69f133aec308d19ad339c9b0a1a",
+      "Example8.inp": "e9b0834b83f663a4bf5294f897f684b5268bf134f967fff905e723f8fe1533f6"
+    }
+  },
+  "sourceCode": {
+    "scripts/verify_flood_engines.py": "c06cff47dd73fff7126e4fcec859a5c6826e80b0ede4fb43646c628ba5265719",
+    "simulation/waterleague_sim/reference/flood_cases.py": "ef440b5e59230c6b0d9077dbb64e4490dbbe31561aba3b332adcaa302329d29a",
+    "simulation/waterleague_sim/engine/flood_errors.py": "59e70440df55df54e83aa7a2787f12ef14b2541ac5c05f67a10e9addbe229155",
+    "simulation/waterleague_sim/engine/flood_process.py": "1d482245ada5d0d12992e6393dc1667b6f3c25d377558783be534845242d1caf",
+    "simulation/waterleague_sim/engine/network.py": "1c7815e5d1da974772f9453e2d6069e561749ef6fcde57e27b4a391ec273a7cb",
+    "simulation/waterleague_sim/engine/surface.py": "d94926db9102e622adda80e6e1963e449851abf3c48e890e659e12e2a8e02d10",
+    "simulation/native/network_snapshot.inc": "c320fa1849cb4b03254167b107d1a9fefc7171b10c6ce397a0b82bb5c08c53e7",
+    "simulation/pyproject.toml": "49f1b8276a2e9e8b66f3bfdd8dda08303211669ed1c2ad938ba472d597a34cb2",
+    "simulation/uv.lock": "d2ffd1c9a11f47d3f3e4b9a39762c7ceff9b424171bc913c98672f759036e09e",
+    "data/manifests/anuga-4.0.1.json": "3002d98f0fc84a8e3384033b52795c056931f6db6cf8f5b513074c56e7e10a20",
+    "scripts/build_network_swmm.py": "314927c48e0e048cb3b0ec6e04a6304340faa12212ccad0e8c1681dde5f9daa9",
+    "scripts/build_live_swmm.py": "f4bd6124c6a4c83796babe33c7c9de10003e4be1876a4ab3cba7d2f4b73fdf35"
+  },
+  "limitations": [
+    "서울 관망·2D 결합·공개 침수흔적 대조 미완료",
+    "EPA 예제의 수치 실패·경고 보존, 인쇄 보고서 참조값과의 독립 대조 아님",
+    "2D 해석 사례의 마찰·지형·경계는 명시한 시험 조건, 서울 관측 입력 아님",
+    "지표 침투·증발산·시설·양방향 체적 교환은 후속 연결 대상"
+  ],
+  "files": {
+    "Example3/network-frames.jsonl": "9629ce21af758ee00cfd0aaa1a19a916d424eba884a5f2ea838fde35f7ce0b4d",
+    "Example3/network-result.json": "251486aca749e609d2888919d2668ef779b3da67b08200e92a009587cd6b8f76",
+    "Example3/network.inp": "ece140eda259a9e68631a7c9d25d5060f9b3e69f133aec308d19ad339c9b0a1a",
+    "Example3/network.out": "b1df053c6c47454d6742a131cb94a0312b28cc9f659b8dccf1c914c957d1bd94",
+    "Example3/network.rpt": "8be72bce1dffee77377fb53dbc018d50784c342d1f2f7130f63c88f9055d4ded",
+    "Example3/stock.out": "b1df053c6c47454d6742a131cb94a0312b28cc9f659b8dccf1c914c957d1bd94",
+    "Example3/stock.rpt": "aefba9e147e7869dbcff9bebc08da1cda8d4209e142145c4c24f880f1a5295f9",
+    "Example8/network-frames.jsonl": "5e5ca446a3491317a6e3375eaf6cb68f1e8c4e08e07b3e83d609bc60cb6c4796",
+    "Example8/network-result.json": "0c2aeed2cc87995010ea6d26ee2be3070fb84336c0df27e7c95b2856766fbfa5",
+    "Example8/network.inp": "e9b0834b83f663a4bf5294f897f684b5268bf134f967fff905e723f8fe1533f6",
+    "Example8/network.out": "4eb51dc2cd06eae3ff651c396475f5223b78fa9dccdba90c91ffe65cfd29c440",
+    "Example8/network.rpt": "dae819dae873bcfec95da70742a00dae15df37c9a9a7e06519a3aba07accde67",
+    "Example8/stock.out": "4eb51dc2cd06eae3ff651c396475f5223b78fa9dccdba90c91ffe65cfd29c440",
+    "Example8/stock.rpt": "55ebefa17f635344ccfc43c9ab93025b615e221557d1fd558cac0bd7cc63a4f9",
+    "boundary-reversal/network-result.json": "404f4f8f95daf90309d3709585196b6fc3fbf0bd4183b6527fbebce1935bb573",
+    "boundary-reversal/network.inp": "29c6277d515720722e21e2f2bac15960ff544d80037137075a7493df9744e7fc",
+    "boundary-reversal/network.out": "057efaff033929a31c4da3cb07749cd99e1e8df131c5fdc64727d326b1e5edce",
+    "boundary-reversal/network.rpt": "da92a8c8119dd3f8446ac9046c17ab44f520dbc70390686edcae591bdc08a59d",
+    "dam-break-100/surface-input.json": "74f5fc9899e24090f40ae1a38347b30ca5e69e3b97c5bdb8e8dd7b8e27433c07",
+    "dam-break-100/surface-result.json": "49c395a12393358141bd0219aff2e04f09f84b202c6129f74f835876d05ec41f",
+    "dam-break-100/surface.sww": "528bcf123792e7722cc51f51b93915ad0ca90730f7d0a0ff0938611d8285a85d",
+    "dam-break-200/surface-input.json": "d48f2543119f5ff39edaba120b9e9acb93c728a51e817fe8346cf7b129e5c917",
+    "dam-break-200/surface-result.json": "7439647c50bd2420c40698bbb300d5026cdeb8029e4f8ba5e5527545c1b42e5b",
+    "dam-break-200/surface.sww": "8a173650f07390e2935e529ad5095369f880e9480840924d3da2a80265aad708",
+    "lake/surface-input.json": "369d1c123a90a8f8a9917b0768210f1965a8c65ce93e4d37310d35074aed6d6c",
+    "lake/surface-result.json": "b93e1bb418f97adab2b5f8002457d21b6e33f7b4ccce5438dca13f61565592ca",
+    "lake/surface.sww": "71471e9255f6867bd62566cc34b4ca1ef85c9b0bb7e8cf279246cd85be3aedc2",
+    "rain/surface-input.json": "031f050030fe667443fd44cc6dba64e7baacc0a50a9f0fe7abf8e7ad2e1416ee",
+    "rain/surface-result.json": "ae259c7d3a8fdbb1222ca7ce4d4a51b4c464cfb7bf6f8e9e0ba734794e8057a2",
+    "rain/surface.sww": "5bb9f749ff6f02f901efab3957b4e8cff46b9ee9c07418ca4c2cda98e4b93f07",
+    "source/data/manifests/anuga-4.0.1.json": "3002d98f0fc84a8e3384033b52795c056931f6db6cf8f5b513074c56e7e10a20",
+    "source/scripts/build_live_swmm.py": "f4bd6124c6a4c83796babe33c7c9de10003e4be1876a4ab3cba7d2f4b73fdf35",
+    "source/scripts/build_network_swmm.py": "314927c48e0e048cb3b0ec6e04a6304340faa12212ccad0e8c1681dde5f9daa9",
+    "source/scripts/verify_flood_engines.py": "c06cff47dd73fff7126e4fcec859a5c6826e80b0ede4fb43646c628ba5265719",
+    "source/simulation/native/network_snapshot.inc": "c320fa1849cb4b03254167b107d1a9fefc7171b10c6ce397a0b82bb5c08c53e7",
+    "source/simulation/pyproject.toml": "49f1b8276a2e9e8b66f3bfdd8dda08303211669ed1c2ad938ba472d597a34cb2",
+    "source/simulation/uv.lock": "d2ffd1c9a11f47d3f3e4b9a39762c7ceff9b424171bc913c98672f759036e09e",
+    "source/simulation/waterleague_sim/engine/flood_errors.py": "59e70440df55df54e83aa7a2787f12ef14b2541ac5c05f67a10e9addbe229155",
+    "source/simulation/waterleague_sim/engine/flood_process.py": "1d482245ada5d0d12992e6393dc1667b6f3c25d377558783be534845242d1caf",
+    "source/simulation/waterleague_sim/engine/network.py": "1c7815e5d1da974772f9453e2d6069e561749ef6fcde57e27b4a391ec273a7cb",
+    "source/simulation/waterleague_sim/engine/surface.py": "d94926db9102e622adda80e6e1963e449851abf3c48e890e659e12e2a8e02d10",
+    "source/simulation/waterleague_sim/reference/flood_cases.py": "ef440b5e59230c6b0d9077dbb64e4490dbbe31561aba3b332adcaa302329d29a"
+  },
+  "artifactDirectory": "data/runs/flood-engine-foundation-20261018-v1",
+  "artifactManifestSha256": "323338d9ea3d9288b32933ea04609005133c4248f2f2bebb5863494c8d7cff6f",
+  "anugaSourceManifest": "data/manifests/anuga-4.0.1.json",
+  "networkEngine": {
+    "schemaVersion": 1,
+    "engineVersion": "5.2.4",
+    "revision": "7952ca837988b1c32f791812eccc9fd64547e093",
+    "sourceArchiveSha256": "3f76a199573088ce47ff02491c529afb73d9953ee9d948dfc89dcd4981b4c0c0",
+    "observerSha256": "c320fa1849cb4b03254167b107d1a9fefc7171b10c6ce397a0b82bb5c08c53e7",
+    "binarySha256": "673a83f39ec76e9e26c64702a68101b2cadfe113aaa879c5637baedefd4aaac5",
+    "modification": "READ_ONLY_OBSERVER_NO_SOLVER_CHANGES"
+  },
+  "surfaceEngine": {
+    "name": "ANUGA",
+    "version": "4.0.1",
+    "platform": "macOS-27.0.1-arm64-arm-64bit",
+    "python": "3.12.14",
+    "installedCodeSha256": "5fc22440532fadd3fba89e6d30a8eec60898060f852713d1a9920e07ec27a5e9",
+    "binarySha256": {
+      "anuga/.dylibs/libomp.dylib": "2994de6445d119d7b9706f9cab435621f5c494cebadc9187480558dd7aaa33fc",
+      "anuga/abstract_2d_finite_volumes/mesh_factory_ext.cpython-312-darwin.so": "b1bb16a9a9322760a825f874f9b2c36421ff24ca5adb6e19132c10b894d10251",
+      "anuga/abstract_2d_finite_volumes/neighbour_mesh_ext.cpython-312-darwin.so": "9883aae728cde9b8df35463a5310d731c6391e4a3d5526747d6ca421547226cb",
+      "anuga/abstract_2d_finite_volumes/neighbour_table_ext.cpython-312-darwin.so": "7eb79811441b8fbf0d3400db5a75519a84c42f2cccb6013a00a508a16023f204",
+      "anuga/abstract_2d_finite_volumes/pmesh2domain_ext.cpython-312-darwin.so": "59a867d417b0cc3321da11dda3f1ad9c6c8f5b348f421a9fc67450ae7aec45d8",
+      "anuga/abstract_2d_finite_volumes/quantity_openmp_ext.cpython-312-darwin.so": "64d1ae802d9e1a20006abb4e29d20eac73213b364c016fea20429eb98da68098",
+      "anuga/advection/advection_ext.cpython-312-darwin.so": "df7ce1cbea18ac28f4ecf69404772db03b4c76552a75c27660ecc8e32a138221",
+      "anuga/file/urs_ext.cpython-312-darwin.so": "00bf25f6390873e193986c3bfbdbba5b600ce5ad341ad2a561735cd0359744fb",
+      "anuga/file_conversion/calc_grid_values_ext.cpython-312-darwin.so": "8cdd3430eb9db6ce49021cacb5da2f50f23d4d286a976caae2bf90da611a3b4f",
+      "anuga/fit_interpolate/fitsmooth_ext.cpython-312-darwin.so": "c829d6442b52571c4afbc011b8dc5df6a81bbbb2606eb7bf7d7048ddfd269144",
+      "anuga/geometry/polygon_ext.cpython-312-darwin.so": "494f6dbb6c694d73fd17a9d898b6832e54db06ecf92b01675652528312f86016",
+      "anuga/operators/kinematic_viscosity_operator_ext.cpython-312-darwin.so": "d89252f971b19134906c7801cd63fdd3bead41e58d60c13b055ca3300a7a47c3",
+      "anuga/operators/mannings_operator_ext.cpython-312-darwin.so": "62ca06244e6aba5d3f89b413033b893d7ec56eea7f69fd8a2088492ea4903998",
+      "anuga/parallel/distribute_mesh_ext.cpython-312-darwin.so": "a9113d1d1df162aca91b57e5145a7be6d4bc991b0a30fa65e187830bc813f918",
+      "anuga/shallow_water/sw_domain_gpu_ext.cpython-312-darwin.so": "82d9226cea067d1ea4c4b1562b1c6e013a08ac0654ecda269e9b4c0f06e07e06",
+      "anuga/shallow_water/sw_domain_openmp_ext.cpython-312-darwin.so": "940dea959fa3e91c6b0031daba384155492ffb5cb347c71f4be51f5c0c336036",
+      "anuga/utilities/cg_ext.cpython-312-darwin.so": "cb7dfd27f24c8f171cf8ffded5eeec11859003e80cf5037de190e5706453a548",
+      "anuga/utilities/quad_tree_ext.cpython-312-darwin.so": "c38f82b3ec7e8f25b0e2039e18dc295bbc1dbd9042239907cd5f63ae44ba259d",
+      "anuga/utilities/sparse_ext.cpython-312-darwin.so": "c3040d83e45a77a051d96ba881bb57398ead70df92ef81476077a0c3290088fa",
+      "anuga/utilities/sparse_matrix_ext.cpython-312-darwin.so": "8f99a5dfca49a60982d37114b6bcab08ce044d12f3417e327acc8714a59235b9",
+      "anuga/utilities/util_ext.cpython-312-darwin.so": "c0c33e495124b86bdeb50d78303b9424a9fbcdc727b29b84a0cf17fd953d08cb"
+    },
+    "adapterSha256": "d94926db9102e622adda80e6e1963e449851abf3c48e890e659e12e2a8e02d10",
+    "dependencyLockSha256": "d2ffd1c9a11f47d3f3e4b9a39762c7ceff9b424171bc913c98672f759036e09e",
+    "sourceManifestSha256": "3002d98f0fc84a8e3384033b52795c056931f6db6cf8f5b513074c56e7e10a20",
+    "runtimePackages": {
+      "numpy": "2.5.4",
+      "scipy": "1.18.1",
+      "netCDF4": "1.7.5",
+      "pyproj": "3.8.0"
+    }
+  },
+  "numericalReference": "https://github.com/anuga-community/anuga_core/tree/4.0.1/validation_tests/analytical_exact/dam_break_dry"
+}
