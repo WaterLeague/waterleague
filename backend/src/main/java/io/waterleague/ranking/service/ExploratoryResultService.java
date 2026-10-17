@@ -16,10 +16,15 @@ public class ExploratoryResultService {
   }
 
   public BigDecimal score(SimulationJob job) {
-    if (!job.state().equals("SUCCEEDED")) throw new DomainException(ErrorCode.CONFLICT);
-    var result = json.tree(job.result());
-    if (!job.inputHash().equals(result.path("inputHash").asString())
-        || !job.modelHash().equals(result.path("modelHash").asString())
+    return score(job.state(), job.modelHash(), job.inputHash(), job.result());
+  }
+
+  public BigDecimal score(String state, String modelHash, String inputHash, String rawResult) {
+    if (!state.equals("SUCCEEDED")) throw new DomainException(ErrorCode.CONFLICT);
+    if (rawResult == null) throw new DomainException(ErrorCode.RESULT_QUALITY_FAILED);
+    var result = json.tree(rawResult);
+    if (!inputHash.equals(result.path("inputHash").asString())
+        || !modelHash.equals(result.path("modelHash").asString())
         || !"EXPLORATORY".equals(result.path("validationLevel").asString())
         || !result.path("official").isBoolean()
         || result.path("official").asBoolean())

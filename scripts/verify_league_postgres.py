@@ -20,17 +20,19 @@ def source_counts(db):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--suite', choices=['league', 'analysis', 'queue', 'all'], default='league')
+    parser.add_argument('--suite', choices=['league', 'analysis', 'queue', 'search', 'all'], default='league')
     suite = parser.parse_args().suite
     test_class = {'league': 'LeagueParticipationWorkflowTests',
                   'analysis': 'ResearchAnalysisWorkflowTests',
                   'queue': 'QueueCapacityTests',
-                  'all': 'LeagueParticipationWorkflowTests,ResearchAnalysisWorkflowTests'}[suite]
+                  'search': 'ResearchSearchWorkflowTests',
+                  'all': 'LeagueParticipationWorkflowTests,ResearchAnalysisWorkflowTests,ResearchSearchWorkflowTests'}[suite]
     load()
     config = conninfo_to_dict(os.environ['DATABASE_URL'])
     if config.get('host') not in {'127.0.0.1', 'localhost', '::1'}:
         raise SystemExit('로컬 PostgreSQL만 허용')
-    test_name = ('waterleague_queue_test_' if suite == 'queue' else 'waterleague_league_test_') + uuid.uuid4().hex
+    prefix = {'queue': 'waterleague_queue_test_', 'search': 'waterleague_search_test_'}
+    test_name = prefix.get(suite, 'waterleague_league_test_') + uuid.uuid4().hex
     path = ROOT / 'tmp' / (test_name + '.log')
     path.parent.mkdir(exist_ok=True)
     env = {k: v for k, v in os.environ.items() if k in {'PATH', 'HOME', 'JAVA_HOME', 'TMPDIR', 'LANG', 'LC_ALL'}}
@@ -53,9 +55,10 @@ def main():
             created = True
         with path.open('x') as log:
             path.chmod(0o600)
+            physical = ['-Dwaterleague.integration.python=' + sys.executable] if suite == 'search' else []
             result = subprocess.run(
                 [str(ROOT / 'backend/mvnw'), '--batch-mode', '-Dtest=' + test_class,
-                 '-Dwaterleague.integration.jdbc=' + jdbc, 'test'],
+                 '-Dwaterleague.integration.jdbc=' + jdbc, *physical, 'test'],
                 cwd=ROOT / 'backend', env=env, stdout=log, stderr=subprocess.STDOUT, timeout=180)
             if suite == 'queue' and result.returncode == 0:
                 worker_env = env | {'WL_WORKER_TEST_DSN': make_conninfo(**(config | {'dbname': test_name})),

@@ -34,7 +34,7 @@ jobs:
           cache: maven
       - run: ./mvnw --batch-mode verify
         working-directory: backend
-      - run: ./mvnw --batch-mode -Dtest=LeagueParticipationWorkflowTests,ResearchAnalysisWorkflowTests -Dwaterleague.integration.jdbc=jdbc:postgresql://127.0.0.1:5432/waterleague_test test
+      - run: ./mvnw --batch-mode -Dtest=LeagueParticipationWorkflowTests,ResearchAnalysisWorkflowTests,ResearchSearchWorkflowTests -Dwaterleague.integration.jdbc=jdbc:postgresql://127.0.0.1:5432/waterleague_test test
         working-directory: backend
         env:
           WL_INTEGRATION_USER: waterleague_test
@@ -102,5 +102,8 @@ jobs:
           PY
       - run: bash scripts/build_swmm.sh
       - run: python scripts/verify_league_postgres.py --suite queue
+        env:
+          DATABASE_URL: postgresql://waterleague_test:local-ci-test-only@127.0.0.1:5432/waterleague_test
+      - run: python scripts/verify_league_postgres.py --suite search
         env:
           DATABASE_URL: postgresql://waterleague_test:local-ci-test-only@127.0.0.1:5432/waterleague_test
