@@ -1,0 +1,12 @@
+{
+  "datasetId": "15148889",
+  "sourceUrl": "https://www.data.go.kr/data/15148889/fileData.do",
+  "downloadUrl": "https://www.data.go.kr/cmm/cmm/fileDownload.do?atchFileId=FILE_000000003241161&fileDetailSn=1&insertDataPrcus=N",
+  "retrievedAt": "2026-10-17T20:08:49.424464+00:00",
+  "sha256": "25da66cbb99468dd6eab2924c46074886d8acb3ed1413b4181c43078f2b2ca13",
+  "bytes": 5314,
+  "path": "data/raw/gangseo-pumps-25da66cbb99468dd6eab2924c46074886d8acb3ed1413b4181c43078f2b2ca13.csv",
+  "referenceDate": "2025-09-08",
+  "license": "KOGL_TYPE_1",
+  "encoding": "UTF-8-BOM"
+}

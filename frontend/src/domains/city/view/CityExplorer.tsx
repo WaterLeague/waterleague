@@ -43,6 +43,10 @@ import { useWeekly } from '../../weekly/controller/useWeekly';
 import { WeeklyBoard, scoreFormat } from '../../weekly/view/WeeklyBoard';
 import { useTerrain } from '../../terrain/controller/useTerrain';
 import { GameClock } from '../../game/view/GameClock';
+import { useInfrastructure } from '../../infrastructure/controller/useInfrastructure';
+import { visibleInfrastructure } from '../../infrastructure/service/infrastructureService';
+import { InfrastructurePanel } from '../../infrastructure/view/InfrastructurePanel';
+import type { InfrastructureAsset } from '../../infrastructure/entity/infrastructure';
 const CityScene = lazy(() => import('./CityScene'));
 type PlayProps = {
   account: Account | null;
@@ -67,6 +71,10 @@ function Explorer({
 }: { city: City; regions: CityPlayRegion[]; eligibility: CityEligibility } & PlayProps) {
   const researchMode = mode === 'historical';
   const { terrain, error: terrainError } = useTerrain();
+  const infrastructure = useInfrastructure();
+  const [infrastructureOpen, setInfrastructureOpen] = useState(false);
+  const [assetsEnabled, setAssetsEnabled] = useState(true);
+  const [selectedAssetId, setSelectedAssetId] = useState('');
   const [budgetRevision, setBudgetRevision] = useState(0);
   const budget = useBudget(budgetRevision, account?.id ?? null);
   const weekly = useWeekly(!researchMode, account?.id ?? null);
@@ -141,6 +149,29 @@ function Explorer({
     distance: 35000,
   });
   const navigationCamera = useRef(camera);
+  const publicAssets = useMemo(
+    () =>
+      assetsEnabled && infrastructure.catalog
+        ? visibleInfrastructure(
+            infrastructure.catalog.assets,
+            camera.center,
+            camera.distance,
+            selectedAssetId
+          )
+        : [],
+    [infrastructure.catalog, assetsEnabled, camera, selectedAssetId]
+  );
+  const selectAsset = useCallback((asset: InfrastructureAsset) => {
+    selectionRequest.current++;
+    setSite(null);
+    setSelectionError('');
+    setFeedback('');
+    setSelected(asset.districtId);
+    setSelectedAssetId(asset.id);
+    setInfrastructureOpen(true);
+    setAssetsEnabled(true);
+    setFocus((previous) => ({ center: asset.center, distance: 1000, key: previous.key + 1 }));
+  }, []);
   const onNavigate = useCallback((value: typeof camera) => {
     navigationCamera.current = value;
   }, []);
@@ -211,6 +242,8 @@ function Explorer({
   }, []);
   const chooseSite = useCallback(
     (value: SharedSite) => {
+      setInfrastructureOpen(false);
+      setSelectedAssetId('');
       selectionRequest.current++;
       setSelected(value.districtId);
       const target = siteFocus(
@@ -257,6 +290,8 @@ function Explorer({
   );
   const selectBuilding = useCallback(
     async (districtId: string, building: CityBuilding) => {
+      setInfrastructureOpen(false);
+      setSelectedAssetId('');
       const request = ++selectionRequest.current;
       setSelected(districtId);
       setSite(null);
@@ -338,6 +373,9 @@ function Explorer({
   );
   const plan = (
     <CityPlan
+      publicAssets={publicAssets}
+      selectedAssetId={selectedAssetId}
+      onAsset={selectAsset}
       city={city}
       focus={focus}
       regions={regions}
@@ -442,6 +480,13 @@ function Explorer({
               <List size={15} />
               위치 목록
             </button>
+            <button
+              aria-expanded={infrastructureOpen}
+              onClick={() => setInfrastructureOpen((value) => !value)}
+            >
+              <Layers3 size={15} />
+              공개 시설
+            </button>
             {!researchMode && (
               <button aria-expanded={rankingOpen} onClick={() => setRankingOpen((v) => !v)}>
                 <Trophy size={15} />
@@ -463,6 +508,9 @@ function Explorer({
                 }
               >
                 <CityScene
+                  publicAssets={publicAssets}
+                  selectedAssetId={selectedAssetId}
+                  onAsset={selectAsset}
                   terrain={terrain}
                   facilityType={type}
                   viewerId={viewerId ?? null}
@@ -607,6 +655,12 @@ function Explorer({
             </span>
           </div>
           <div className="shared-map-legend">
+            {assetsEnabled && (
+              <span>
+                <i className="infrastructure-legend" />
+                {researchMode ? '공개 시설 참고 · 당시 시설 아님' : '공개 시설 참고'}
+              </span>
+            )}
             <span>
               <i className="available" />
               {type ? facilities[type].name + ' 후보' : '설치 후보'}
@@ -743,6 +797,8 @@ function Explorer({
                   className={type === t ? 'selected' : ''}
                   aria-pressed={type === t}
                   onClick={() => {
+                    setInfrastructureOpen(false);
+                    setSelectedAssetId('');
                     setType(t);
                     setOffset(0);
                     setSite(null);
@@ -787,7 +843,20 @@ function Explorer({
           )}
         </details>
       </div>
-      {researchMode ? (
+      {infrastructureOpen ? (
+        <InfrastructurePanel
+          catalog={infrastructure.catalog}
+          error={infrastructure.error}
+          retry={infrastructure.retry}
+          selectedId={selectedAssetId}
+          onSelect={selectAsset}
+          onClose={() => setInfrastructureOpen(false)}
+          districtId={selected}
+          historical={researchMode}
+          enabled={assetsEnabled}
+          onToggle={() => setAssetsEnabled((value) => !value)}
+        />
+      ) : researchMode ? (
         <HistoricalPanel
           state={research}
           districtName={district?.name ?? ''}
@@ -864,6 +933,7 @@ function Explorer({
             ? '높이 자료 연결 실패 · 평면 표시'
             : '지표면 높이 연결 중'}{' '}
         · 건물 높이 태그·층수 환산 포함 · 침수 깊이 표시 아님
+        {assetsEnabled && ' · 시설 위치: 서울특별시·강서구 / 공공누리 제1유형'}
         {terrain && (
           <>
             {' '}

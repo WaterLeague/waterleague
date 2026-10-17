@@ -150,3 +150,7 @@ RFC 9457 `application/problem+json`: type, title, status, detail, instance, code
 신규 후보 v5 응답의 `facilityDesignSet`은 공개 제원 ID·SHA-256, `initializationPolicy`는 7일 선행 계산 정책. 물리 상태 응답과 재해 시설 결과의 `initialization`은 시작 토양수분·저류량, 선행 강우 총량·기간, 원문 해시, 구간 평균 적용 분 수와 한계를 포함. 해당 값은 관측 기반 계산이며 토양수분 실측값으로 표시하지 않음. 기존 버전 기록에는 새 초기 상태를 소급 생성하지 않음.
 
 공동 설치 연구 상세의 `initialization`·`facilityDesign`은 manifest 검증을 통과한 해당 작업의 `result.json`에서 반환. 현재 제원 목록이나 DB 요약으로 대체하지 않으며 보관 근거가 없는 기존 기록은 null 반환. 물리 상태·재해 결과·기관 연구 화면은 같은 제원 표시 컴포넌트로 매개변수별 문헌 범위·설계 가정·원문 해시 표시. 본인·현재 기관별 동의·계정 상태 검증 유지.
+
+### 공개 기존 시설 참고 카탈로그
+
+`GET /api/v1/infrastructure/seoul-public-20261018-v1`은 비회원 조회 가능. 원본 해시를 검사한 프로젝트 보관 카탈로그에서 표시 가능한 1,604기록·9개 출처·삭제/결측 집계를 반환하며 외부 API를 호출하지 않음. `usage=REFERENCE_ONLY`, 위치점·층위/운영 미확인·유효 시작/끝 null·관망 미연결 유지. 원본 내부 속성과 로컬 파일 경로는 응답에서 제외. ETag·공개 불변 캐시 제공. 이 응답은 실제 운영 중 시설 수·재해 당시 시설 목록·계산 자산 API가 아님. 강서구 호기별 양수량은 원문 단위 m³/min, 유수지 용량은 시설별 한 번만 표시.

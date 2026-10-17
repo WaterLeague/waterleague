@@ -9,7 +9,7 @@ import {
   useContext,
 } from 'react';
 import type { ComponentRef } from 'react';
-import { Canvas, useThree, useFrame } from '@react-three/fiber';
+import { Canvas, events, useThree, useFrame } from '@react-three/fiber';
 import { OrbitControls, Line } from '@react-three/drei';
 import * as THREE from 'three';
 import { requestBuildingMesh } from '../repository/buildingGeometryRepository';
@@ -30,7 +30,19 @@ import { LiveRainScene } from '../../rainfall/view/LiveRainScene';
 import type { Terrain } from '../../terrain/entity/terrain';
 import { terrainHeight, terrainLine } from '../../terrain/service/terrainService';
 import { TerrainSurface } from '../../terrain/view/TerrainSurface';
+import type { InfrastructureAsset } from '../../infrastructure/entity/infrastructure';
+import { InfrastructureMarkers } from '../../infrastructure/view/InfrastructureMarkers';
 const TerrainContext = createContext<Terrain | null>(null);
+const mapEvents: Parameters<typeof Canvas>[0]['events'] = (state) => ({
+  ...events(state),
+  // 화면 위에 그린 참고 표식은 뒤쪽 건물의 클릭 차단보다 먼저 처리한다.
+  filter: (items) =>
+    items.sort(
+      (a, b) =>
+        Number(b.object.userData.publicAssetMarker === true) -
+        Number(a.object.userData.publicAssetMarker === true)
+    ),
+});
 type CameraState = Pick<CityFocus, 'center' | 'distance' | 'heightM'>;
 function Buildings({
   buildings,
@@ -322,6 +334,9 @@ function ProjectedLabels({
   return null;
 }
 const CityScene = memo(function CityScene({
+  publicAssets,
+  selectedAssetId,
+  onAsset,
   terrain,
   city,
   regions,
@@ -347,6 +362,9 @@ const CityScene = memo(function CityScene({
   facilityType,
   viewerId,
 }: {
+  publicAssets: InfrastructureAsset[];
+  selectedAssetId: string;
+  onAsset: (asset: InfrastructureAsset) => void;
   terrain: Terrain | null;
   city: City;
   regions: CityPlayRegion[];
@@ -375,12 +393,19 @@ const CityScene = memo(function CityScene({
   const overviewIds = useMemo(() => new Set(city.overviewBuildings.map((b) => b.id)), [city]);
   return (
     <Canvas
+      events={mapEvents}
       frameloop="demand"
       dpr={[1, 1.5]}
       camera={{ position: [0, 30000, 22000], near: 5, far: 250000, fov: 45 }}
       gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
     >
       <TerrainContext.Provider value={terrain}>
+        <InfrastructureMarkers
+          assets={publicAssets}
+          selectedId={selectedAssetId}
+          terrain={terrain}
+          onSelect={onAsset}
+        />
         <color attach="background" args={['#e8e9dd']} />
         <ambientLight intensity={1.5} />
         <directionalLight position={[-20000, 30000, 10000]} intensity={2.2} />

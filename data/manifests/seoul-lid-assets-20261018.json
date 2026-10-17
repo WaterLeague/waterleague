@@ -1,0 +1,23 @@
+{
+  "datasetId": "OA-21192",
+  "sourceUrl": "https://data.seoul.go.kr/dataList/OA-21192/S/1/datasetView.do",
+  "downloadUrl": "https://datafile.seoul.go.kr/bigfile/iot/inf/nio_download.do?&useCache=false",
+  "downloadForm": {
+    "infId": "OA-21192",
+    "infSeq": "2",
+    "seq": "1"
+  },
+  "retrievedAt": "2026-10-17T20:05:18.277317+00:00",
+  "sha256": "999ed2bc746371cd2efa122bab4a89aa3a52388fe60ba79c65bd8ee71e2b6ea5",
+  "bytes": 1193,
+  "path": "data/raw/seoul-lid-assets-999ed2bc746371cd2efa122bab4a89aa3a52388fe60ba79c65bd8ee71e2b6ea5.zip",
+  "fileModifiedAt": "2022-04-03",
+  "portalUpdatedAt": "2026-10-03",
+  "license": "KOGL_TYPE_1",
+  "archiveMembers": [
+    "SP_IFEQ_PS.cpg",
+    "SP_IFEQ_PS.dbf",
+    "SP_IFEQ_PS.shp",
+    "SP_IFEQ_PS.shx"
+  ]
+}

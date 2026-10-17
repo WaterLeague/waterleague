@@ -12,8 +12,13 @@ import { LiveRainPlan } from '../../rainfall/view/LiveRainPlan';
 import { detailLabelDistance } from '../service/cityService';
 import { usePlanNavigation } from '../controller/usePlanNavigation';
 import type { PlanView } from '../service/planNavigationService';
+import type { InfrastructureAsset } from '../../infrastructure/entity/infrastructure';
+import { infrastructureColor } from '../../infrastructure/service/infrastructureService';
 
 type Props = {
+  publicAssets: InfrastructureAsset[];
+  selectedAssetId: string;
+  onAsset: (asset: InfrastructureAsset) => void;
   city: City;
   focus: CityFocus;
   regions: CityPlayRegion[];
@@ -39,6 +44,9 @@ type Props = {
   rainAmounts: ReadonlyMap<string, number | null>;
 };
 export const CityPlan = memo(function CityPlan({
+  publicAssets,
+  selectedAssetId,
+  onAsset,
   city,
   focus: requestedFocus,
   regions,
@@ -240,6 +248,24 @@ export const CityPlan = memo(function CityPlan({
           <title>
             {i.ownerName} · {facilities[i.facilityType].name}
           </title>
+        </circle>
+      ))}
+      {publicAssets.map((asset) => (
+        <circle
+          key={asset.id}
+          cx={asset.center[0]}
+          cy={-asset.center[1]}
+          r={1}
+          fill={infrastructureColor(asset)}
+          stroke={asset.id === selectedAssetId ? '#dda62e' : infrastructureColor(asset)}
+          strokeWidth={asset.id === selectedAssetId ? 15 : 10}
+          vectorEffect="non-scaling-stroke"
+          onClick={(event) => {
+            event.stopPropagation();
+            onAsset(asset);
+          }}
+        >
+          <title>{asset.name} · 공개 참고 위치</title>
         </circle>
       ))}
       <LiveRainPlan

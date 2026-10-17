@@ -1,0 +1,229 @@
+import { useMemo, useState } from 'react';
+import { X, Search, MapPin } from 'lucide-react';
+import type {
+  InfrastructureAsset,
+  InfrastructureCatalog,
+  InfrastructureSource,
+} from '../entity/infrastructure';
+import { infrastructureNames } from '../service/infrastructureService';
+import './infrastructure.css';
+const number = new Intl.NumberFormat('ko-KR');
+export function InfrastructureEvidence({
+  asset,
+  source,
+  historical,
+}: {
+  asset: InfrastructureAsset;
+  source: InfrastructureSource;
+  historical: boolean;
+}) {
+  const spec = asset.pumpSpecs;
+  return (
+    <section className="infrastructure-evidence">
+      <span className="infrastructure-kicker">{infrastructureNames[asset.kind]} · 공개 기록</span>
+      <h3>{asset.name}</h3>
+      <p className="infrastructure-scope">
+        {historical
+          ? '현재 공개자료 참고 · 재해 당시 시설로 확인되지 않음'
+          : '위치 참고 · 현재 운영 상태 미확인'}
+      </p>
+      {spec && (
+        <>
+          <p>{spec.address}</p>
+          <dl>
+            <div>
+              <dt>자료 기준일</dt>
+              <dd>{spec.asOf}</dd>
+            </div>
+            <div>
+              <dt>유역면적</dt>
+              <dd>{number.format(spec.basinAreaHa)} ha</dd>
+            </div>
+            <div>
+              <dt>유수지 용량</dt>
+              <dd>{number.format(spec.storageCapacityM3)} m³</dd>
+            </div>
+          </dl>
+          <div className="infrastructure-table">
+            <table>
+              <caption>호기별 공개 제원 · 실제 운전량 아님</caption>
+              <thead>
+                <tr>
+                  <th>호기</th>
+                  <th>마력 (HP)</th>
+                  <th>양수량 (m³/min)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {spec.units.map((unit) => (
+                  <tr key={unit.unit}>
+                    <td>{unit.unit}</td>
+                    <td>{number.format(unit.powerHp)}</td>
+                    <td>{number.format(unit.capacityM3Min)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
+      <p>
+        점 표시는 부지 경계가 아닙니다. 준공·폐지 시점과 배수 연결·운전 조건이 확인되지 않아 물리
+        계산과 설치 차단에는 사용하지 않습니다.
+      </p>
+      <a href={source.url} target="_blank" rel="noreferrer">
+        {source.publisher} · {source.title} 원문 ↗
+      </a>
+      <small>공공누리 제1유형 · 출처표시</small>
+      <dl>
+        <div>
+          <dt>파일 수정일</dt>
+          <dd>{source.fileModifiedAt ?? '미제공'}</dd>
+        </div>
+        <div>
+          <dt>포털 갱신일</dt>
+          <dd>{source.portalUpdatedAt ?? '미제공'}</dd>
+        </div>
+      </dl>
+      <details>
+        <summary>자료 식별자와 원본 해시</summary>
+        <p>{asset.id}</p>
+        <code>{source.sha256}</code>
+      </details>
+    </section>
+  );
+}
+export function InfrastructurePanel({
+  catalog,
+  error,
+  retry,
+  selectedId,
+  onSelect,
+  onClose,
+  districtId,
+  historical,
+  enabled,
+  onToggle,
+}: {
+  catalog: InfrastructureCatalog | null;
+  error: boolean;
+  retry: () => void;
+  selectedId: string;
+  onSelect: (asset: InfrastructureAsset) => void;
+  onClose: () => void;
+  districtId: string;
+  historical: boolean;
+  enabled: boolean;
+  onToggle: () => void;
+}) {
+  const [search, setSearch] = useState('');
+  const [allDistricts, setAllDistricts] = useState(false);
+  const selected = catalog?.assets.find((a) => a.id === selectedId);
+  const source = catalog?.sources.find((s) => s.id === selected?.sourceId);
+  const rows = useMemo(
+    () =>
+      catalog?.assets.filter(
+        (a) =>
+          (allDistricts || !districtId || a.districtId === districtId) &&
+          (!search || a.name.includes(search.trim()))
+      ) ?? [],
+    [catalog, districtId, allDistricts, search]
+  );
+  return (
+    <aside
+      className="infrastructure-panel"
+      aria-label="공개 기존 시설"
+      onKeyDown={(e) => {
+        if (e.key === 'Escape') onClose();
+      }}
+    >
+      <header>
+        <div>
+          <span className="infrastructure-kicker">PUBLIC INFRASTRUCTURE</span>
+          <h2>공개 기존 시설</h2>
+        </div>
+        <button onClick={onClose} aria-label="공개 시설 닫기">
+          <X size={18} />
+        </button>
+      </header>
+      <div className="infrastructure-scroll">
+        <label className="infrastructure-all">
+          <input type="checkbox" checked={enabled} onChange={onToggle} /> 지도에 공개 참고 위치 표시
+        </label>
+        <p className="infrastructure-scope">
+          {historical
+            ? '현재 공개 참고 자료 · 당시 재현 입력과 분리'
+            : '게임 설치와 구분된 공개 위치 자료'}
+        </p>
+        {error ? (
+          <p role="alert">
+            자료를 불러오지 못했습니다. <button onClick={retry}>다시 조회</button>
+          </p>
+        ) : !catalog ? (
+          <p role="status">공개 자료 불러오는 중</p>
+        ) : (
+          <>
+            {selected && source && (
+              <InfrastructureEvidence asset={selected} source={source} historical={historical} />
+            )}
+            <label className="infrastructure-search">
+              <Search size={15} />
+              <input
+                aria-label="공개 시설 검색"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="시설명 검색"
+                maxLength={100}
+              />
+            </label>
+            {districtId && (
+              <label className="infrastructure-all">
+                <input
+                  type="checkbox"
+                  checked={allDistricts}
+                  onChange={(e) => setAllDistricts(e.target.checked)}
+                />{' '}
+                다른 구 자료도 검색
+              </label>
+            )}
+            <p>{number.format(rows.length)}건 · 출처별 기록 수, 고유 시설 수 아님</p>
+            <div className="infrastructure-results">
+              {rows.slice(0, 80).map((a) => (
+                <button key={a.id} aria-pressed={a.id === selectedId} onClick={() => onSelect(a)}>
+                  <MapPin size={14} />
+                  <span>
+                    {a.name}
+                    <small>
+                      {a.pumpSpecs ? '호기별 제원 있음 · 2025 자료' : '위치점 · 운영 상태 미확인'}
+                    </small>
+                  </span>
+                </button>
+              ))}
+            </div>
+            {rows.length > 80 && <p>앞의 80건 표시 · 검색어로 범위를 좁혀 주세요.</p>}
+            <small>
+              삭제 표시 {catalog.statusCounts.SOURCE_DELETED ?? 0}건 · 삭제 여부 결측{' '}
+              {catalog.statusCounts.DELETE_FLAG_UNKNOWN ?? 0}건은 지도에서 제외했습니다. 전체
+              화면에는 펌프 위치를, 확대하면 주변 빗물관리 자료를 함께 표시합니다.
+            </small>
+            <details className="infrastructure-sources">
+              <summary>자료 출처 {catalog.sources.length}건</summary>
+              {catalog.sources.map((source) => (
+                <p key={source.id}>
+                  <a href={source.url} target="_blank" rel="noreferrer">
+                    {source.publisher} · {source.title} ↗
+                  </a>
+                  <br />
+                  공공누리 제1유형 ·{' '}
+                  {source.referenceDate
+                    ? `기준일 ${source.referenceDate}`
+                    : `파일 수정 ${source.fileModifiedAt ?? '미제공'}`}
+                </p>
+              ))}
+            </details>
+          </>
+        )}
+      </div>
+    </aside>
+  );
+}
