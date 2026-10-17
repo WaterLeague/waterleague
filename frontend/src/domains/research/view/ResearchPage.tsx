@@ -1,6 +1,7 @@
 import { Download, LockKeyhole, ArrowRight, ShieldCheck } from 'lucide-react';
 import { useState } from 'react';
 import { ResearchSharing } from './ResearchSharing';
+import { SharedResearchWorkspace } from '../../sharedresearch/view/SharedResearchWorkspace';
 import { ResearchAnalysisWorkspace } from '../../analysis/view/ResearchAnalysisWorkspace';
 import { UtilizationInbox } from '../../utilization/view/UtilizationInbox';
 import { ReviewWorkspace } from '../../utilization/view/ReviewWorkspace';
@@ -49,6 +50,12 @@ export function ResearchPage({
         <p className="form-error" role="alert">
           {error}
         </p>
+      )}
+      {account?.role === 'MEMBER' && (
+        <SharedResearchWorkspace
+          key={`${account.id}:${account.organizationId}:${account.memberType}`}
+          account={account}
+        />
       )}
       {account?.role === 'ADMIN' ? (
         <div className="empty-state">

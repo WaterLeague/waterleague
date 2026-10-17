@@ -137,3 +137,9 @@ RFC 9457 `application/problem+json`: type, title, status, detail, instance, code
 ## 공동 배치예산·시설 비용
 
 `GET /api/v1/budget` 공개 조회: `policy`(서울 총한도 20억 원·구별 한도 8천만 원·25개 구·참고연도·출처·원문 해시·규칙 버전·범위), 서울 합계 `allocatedKrw`, `remainingKrw`, 25개 구별 `districts`(구 ID·이름·사용액·잔액). 각 구 활성 설치의 저장 비용을 합산. 설치·철거 트랜잭션의 구별 DB advisory lock으로 같은 구 회원 간 초과 배정 차단, 다른 구 예산 사용 금지. 후보의 미사용 `budget` 필드는 제거하고 별도 예산 응답 사용. 후보에는 `costModel`(시설별 단가·범위·포함/제외 항목·참고연도·출처·원문 해시), `costSourceSha256` 제공. 신규 후보 v3의 단가 출처와 설치/연구 요청 시의 예산 정책을 계산 재현 입력에 고정. 균등 배분 규칙 `SEOUL_DISTRICT_EQUAL_2026_V2`는 설치 행 `budget_policy`와 재해 요청에 별도 보존. 과거 후보 v1/v2/v3와 저장 설치 비용·예산 입력은 변경하지 않음.
+
+## 공동 설치 연구 기록
+
+`GET/PUT /consents/shared[/{organizationId}]`는 기존 전략 동의와 독립적인 기관별 공동 설치 연구 동의. `GET /installations/records`와 `/installations/records/{jobId}[/bundle]`는 본인 완료 기록. `GET /research/installations` 및 `/research/installations/{jobId}[/bundle]`는 승인된 조직 회원의 현재 기관에 동의된 기록. 목록은 한국시간 주 시작일의 기여·회원 합계 순으로 최대 100개 설치, 상세는 선택한 완료 job에 고정. 이메일·사용자명·IP·키 미포함. 산출물 manifest의 DB 고정 해시·입력 해시·모델/설치 연결 검증 후 다운로드, 과거 manifest 미고정 작업은 내보내기 보류.
+
+상세는 DB에 고정된 manifest SHA-256과 요청·모델·설치 연결을 검사한 완료 작업만 제공. 설치 이후 누적 수문 상태와 주간 합계를 구분하며 화면은 최대 360개 시점을 추출, 원본 분별 결과는 재현 묶음에 보존. 초기 수분·저류, 최종 저류, 순저류 변화 분리. 원문 강우·기상은 계산 연장 시 이전 구간에서 함께 복사하고 원문 누락 여부를 명시. 조회 가능 주는 한국시간 현재 주 이하의 월요일 시작일. 화면 비활성화·조회 범위 변경 시 상세 제거, 복귀·30초 갱신 시 권한 재확인.

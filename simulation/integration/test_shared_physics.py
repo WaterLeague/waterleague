@@ -35,8 +35,9 @@ class SharedPhysicsTests(unittest.TestCase):
         self.addCleanup(evaporation.stop)
 
     def evaporation(self, start, end, key):
-        return {'method': 'SYNTHETIC_TEST_ONLY', 'sourceHashes': ['TEST_ONLY'], 'hours': [],
-                'ratesMmDay': [2]*int((end-start).total_seconds()/60)}, []
+        raw = b'SYNTHETIC_WEATHER_TEST_ONLY\n'; sha = physics.digest(raw)
+        return {'method': 'SYNTHETIC_TEST_ONLY', 'sourceHashes': [sha], 'hours': [],
+                'ratesMmDay': [2]*int((end-start).total_seconds()/60)}, [(raw, {'sha256': sha, 'purpose': 'SYNTHETIC_TEST_ONLY'})]
 
     def test_atomic_claim_and_expired_result_fencing(self):
         barrier = threading.Barrier(2)
@@ -62,7 +63,7 @@ class SharedPhysicsTests(unittest.TestCase):
             return [{'end': (begin+timedelta(minutes=i)).isoformat(), 'depthMm': .3,
                      'method': 'SYNTHETIC_TEST_ONLY', 'weather': {}}
                     for i in range(1, int((finish-begin).total_seconds()/60)+1)]
-        raw = b'SYNTHETIC_TEST_ONLY\n'
+        raw = ('SYNTHETIC_TEST_ONLY '+start.isoformat()+'\n').encode()
         sha = physics.digest(raw)
         return {'stationId': station, 'start': start.isoformat(), 'end': end.isoformat(),
             'intervalSeconds': 60, 'observations': rows(start, end),
@@ -102,6 +103,12 @@ class SharedPhysicsTests(unittest.TestCase):
             prefix = artifact(first, 'result.json')['strategy']['samples']
             self.assertEqual(prefix, artifact(second, 'result.json')['strategy']['samples'][:len(prefix)])
             self.assertEqual(artifact(second, 'forcing.json')['previousInput']['jobId'], str(first['id']))
+            directory=Path(root)/'shared-physics'/str(second['id'])/str(second['lease_token'])
+            self.assertEqual(row['artifact_manifest_hash'],physics.digest((directory/'manifest.json').read_bytes()))
+            forcing=artifact(second,'forcing.json')
+            self.assertTrue(forcing['sourceArchive']['complete'])
+            for sha in forcing['sourceHashes']+forcing['evaporation']['sourceHashes']:
+                self.assertEqual(physics.digest((directory/(sha+'.txt')).read_bytes()),sha)
             score=self.conn.execute('SELECT SUM(score_m3) AS score,SUM(evaluated_minutes) AS minutes FROM shared_weekly_scores WHERE installation_id=%s',(self.installation,)).fetchone()
             self.assertEqual(score['minutes'],len(artifact(second,'result.json')['contribution']))
             self.assertAlmostEqual(float(score['score']),artifact(second,'result.json')['contribution'][-1]['cumulativeM3'],places=8)

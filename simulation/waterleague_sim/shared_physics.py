@@ -66,14 +66,14 @@ def claim(conn):
         return job
 
 
-def finish(conn, job, result, input_hash, error, weeks=None):
+def finish(conn, job, result, input_hash, error, weeks=None, manifest_hash=None):
     with conn.transaction():
         conn.execute('SELECT id FROM shared_physics_jobs WHERE id=%s FOR UPDATE', (job['id'],)).fetchone()
         saved = conn.execute("""UPDATE shared_physics_jobs SET state=%s,result=%s,input_hash=%s,error_code=%s,
-            finished_at=clock_timestamp(),lease_until=NULL WHERE id=%s AND state='RUNNING'
+            finished_at=clock_timestamp(),lease_until=NULL,artifact_manifest_hash=%s WHERE id=%s AND state='RUNNING'
             AND lease_token=%s AND lease_until>clock_timestamp()""",
             ('SUCCEEDED' if result is not None else 'FAILED', json.dumps(result, ensure_ascii=False, allow_nan=False) if result else None,
-             input_hash, error, job['id'], job['lease_token'])).rowcount == 1
+             input_hash, error, manifest_hash, job['id'], job['lease_token'])).rowcount == 1
         if saved and result is not None:
             if weeks is None:
                 raise ValueError('LIVE_WEEKLY_INPUT_MISSING')
@@ -82,6 +82,7 @@ def finish(conn, job, result, input_hash, error, weeks=None):
 
 
 def process(conn, job, root):
+    root = Path(root).resolve()
     path = Path(root)/'shared-physics'/str(job['id'])/str(job['lease_token'])
     path.mkdir(parents=True, exist_ok=False)
     try:
@@ -89,9 +90,11 @@ def process(conn, job, root):
         engine = engine_identity()
         observations, source_hashes, previous_ref, previous_result = [], [], None, None
         previous_evaporation = None
+        previous_directory = None
         covered = job['start']
         if previous := job['previous']:
             old = Path(root)/'shared-physics'/str(previous['id'])/str(previous['lease_token'])
+            previous_directory = old
             raw = (old/'forcing.json').read_bytes()
             req_raw = (old/'request.json').read_bytes()
             req = json.loads(req_raw)
@@ -102,7 +105,14 @@ def process(conn, job, root):
                     or forcing['stationId'] != station or datetime.fromisoformat(forcing['start']) != job['start']
                     or datetime.fromisoformat(forcing['end']) != previous['requested_through']):
                 raise ValueError('LIVE_PREVIOUS_INPUT_INVALID')
-            previous_result = json.loads((old/'result.json').read_text())
+            result_raw = (old/'result.json').read_bytes()
+            if previous.get('artifact_manifest_hash'):
+                manifest_raw = (old/'manifest.json').read_bytes()
+                manifest = json.loads(manifest_raw)
+                if (digest(manifest_raw) != previous['artifact_manifest_hash']
+                        or manifest.get('result.json') != digest(result_raw)):
+                    raise ValueError('LIVE_PREVIOUS_RESULT_INVALID')
+            previous_result = json.loads(result_raw)
             observations, source_hashes = forcing['observations'], forcing['sourceHashes']
             previous_evaporation = forcing.get('evaporation')
             covered = previous['requested_through']
@@ -122,6 +132,22 @@ def process(conn, job, root):
         for raw, meta in sources+weather_sources:
             (path/(meta['sha256']+'.txt')).write_bytes(raw)
             (path/(meta['sha256']+'.json')).write_bytes(encode(meta))
+        missing_sources = []
+        for sha in sorted(set(forcing['sourceHashes']+evaporation['sourceHashes'])):
+            if not re.fullmatch('[a-f0-9]{64}', sha):
+                raise ValueError('LIVE_SOURCE_HASH_INVALID')
+            for suffix in ('.txt','.json'):
+                target = path/(sha+suffix)
+                if not target.exists() and previous_directory is not None:
+                    original = previous_directory/(sha+suffix)
+                    if original.is_file() and original.resolve() == original.absolute():
+                        raw = original.read_bytes()
+                        if len(raw) > 64*1024*1024 or (suffix == '.txt' and digest(raw) != sha):
+                            raise ValueError('LIVE_PREVIOUS_SOURCE_INVALID')
+                        target.write_bytes(raw)
+            if not (path/(sha+'.txt')).is_file() or not (path/(sha+'.json')).is_file():
+                missing_sources.append(sha)
+        forcing['sourceArchive'] = {'complete': not missing_sources, 'missingHashes': missing_sources}
         # 저장된 값은 이 계산의 재현 입력이다. 최신 날씨 응답의 공급원으로 사용하지 않는다.
         model['rainfall'] = {k: forcing[k] for k in ('start', 'end', 'intervalSeconds', 'stationId', 'sourceHashes', 'evidence')}
         model['rainfall']['depthsMm'] = [v['depthMm'] for v in forcing['observations']]
@@ -168,7 +194,7 @@ def process(conn, job, root):
                   'inflowPolicy': result['inflowPolicy'],
                   'areaLimitBasis': model['cells'][0].get('areaLimitBasis','LEGACY_DESIGN_RATIO')}
         weeks = weekly_aggregate(result['contribution'], job['start'], job['end'], covered)
-        saved = finish(conn, job, public, digest(request_raw), None, weeks)
+        saved = finish(conn, job, public, digest(request_raw), None, weeks, digest((path/'manifest.json').read_bytes()))
     except Exception as e:
         code = str(e)
         if not re.fullmatch(r'(AWS|KMA|LIVE)_[A-Z_]{1,48}', code):
