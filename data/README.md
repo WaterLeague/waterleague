@@ -44,6 +44,8 @@ DEM은 90m 격자이며 수직 기준·표고 단위 필드 미제공. 토지피
 
 별도 `scripts/diagnose_landcover_topology.py`로 원본을 보존한 두 보정 후보 진단. 오류 도로 2개를 포함하면 구역 내 175개 도형, 부동소수 오차 범위에서 전체 영역 포함. 두 방식의 분류별 대칭차 0m², 현장 정확성·불투수율·침투율 검증은 아님. 좌표를 제외한 요약은 `manifests/seongsu-topology-diagnostic.json`. 운영 모델 채택 없음.
 
+13개 배치 구역의 피복·수치지도 건물 대조는 `scripts/audit_cell_landcover.py`, 공개 집계는 `manifests/seongsu-cell-landcover-audit.json`. 원본/모델/코드/상세 결과 해시와 구역별 면적·분류·자료 간 불일치를 보존. G1의 건물 중첩, G3/G5의 철도 분류 및 옥상 경계 차이 확인. 기존 가정 구역을 현실 설치 가능 부지로 채택하지 않으며 새 모델의 후보 재선정 근거로 사용.
+
 ## 수치지형도와 서비스용 저장 자료
 
 2025년 1:1,000 수치지형도 4개 ZIP·4개 XML 및 추가 DXF·XML을 `private/seongsu-topography-20261017/originals/`에 복사하고 다운로드 원본과 해시 대조. 파일 10개의 출처·크기·SHA-256은 `manifests/seongsu-topography-sources.json`. 원본은 프로젝트에 보관하며 Git 제외, 서비스용 가공본과 출처 목록은 Git 포함.

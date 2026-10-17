@@ -1,0 +1,1553 @@
+{
+  "schemaVersion": 1,
+  "status": "DIAGNOSTIC_ONLY",
+  "modelEligible": false,
+  "calibrationEligible": false,
+  "inputHashes": {
+    "catalog": "564d92642e6d43bb747c47dac1979523765f0279fd9db9793de23dad0497d143",
+    "model": "3af2362021b1678b743a54d82ec1cd1e40cc3b1bfaf594a39858843b35fafaee",
+    "map": "99f1b48cf2288c62f7cd9d7cac4512abf2a25209508af185b746e883555bbae2",
+    "osm": "df5ff0d7c4d81517d4fdd55f73f6b0cb37cd4bacf8af2bb883251b03010a94e0",
+    "mapManifest": "e93daf9c4d4e26755ccf590fb522678a6b1c25df917889c6cb45a6ff6cd9e263",
+    "mapTransform": "50f55da5e90a4d72d29a6a46e7401dc390218c0f9cbdd1488c3e362a4441675f",
+    "cellGenerator": "2939d0f0e123af404c11994a86b001e865de24a6006960f1cfdd03e9db10a354",
+    "engineGenerator": "1754562f19f0860daa127f34e35c6336e2884d5779b9cd531d1811088f702823",
+    "buildingSnapshot": "c9939a2cc22961daf9834e2ad76e91c14cf8c85f8c9535dd7c2e0e5f70e858a2",
+    "buildingChecksum": "2fc1e542e98133ad510bae0abf015653c670ce65fb3b6cb49517d0710ef82593"
+  },
+  "reportSha256": "d538066ea2304a123948ca65658d99847b6959d8b3a567cd423fde033b8687ce",
+  "sourceArchiveSha256": "88456ce3a6ea11bd003ec9d9b0b7ebd67dd09d636a4dff572a083ebed18edf1f",
+  "codeHashes": {
+    "audit_cell_landcover.py": "51cc37407445d51eb5ae23a0e89c2f652db4c2446b286055acea9ce54283fe1f",
+    "audit_spatial_sources.py": "74dd6155a3cc8a05e09b14e53a8ef80f8bde2accf78c51a86d797d738ae36b42",
+    "diagnose_landcover_topology.py": "80579574a280fb0788c12fe7596b2a23388aba508c999a32ffc2af58f65298c7"
+  },
+  "versions": {
+    "gdal": "GDAL 3.8.5, released 2024/04/02",
+    "pyproj": "3.8.0",
+    "proj": "9.8.1",
+    "shapely": "2.2.0",
+    "geos": "3.14.1"
+  },
+  "sourceFeatureCount": 12330,
+  "originalInvalidCount": 4,
+  "cells": [
+    {
+      "id": "R1",
+      "kind": "ROOF",
+      "modelAreaM2": 2845.99,
+      "nativeAreaM2": 2845.9949408128887,
+      "nativeMinusModelAreaM2": 0.004940812888889923,
+      "outsideStudyAreaM2": 0.0,
+      "numericAreaToleranceM2": 2.8459949408128886e-07,
+      "methodComparison": {
+        "unionSymmetricDifferenceM2": 0.0,
+        "classSymmetricDifferenceM2": {
+          "131": 0.0,
+          "154": 0.0
+        }
+      },
+      "methods": {
+        "originalValidOnly": {
+          "featureCount": 1,
+          "sumAreaM2": 2666.228112179847,
+          "unionAreaM2": 2666.228112179847,
+          "overlapAreaM2": 0.0,
+          "uncoveredAreaM2": 179.76682863306414,
+          "coveredFraction": 0.9368351552368903,
+          "crossClassOverlapAreaM2": 0.0,
+          "classes": [
+            {
+              "code": "131",
+              "names": [
+                "상업·업무시설"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 2666.228112179847,
+              "unionAreaM2": 2666.228112179847,
+              "overlapAreaM2": 0.0
+            }
+          ]
+        },
+        "linework": {
+          "featureCount": 2,
+          "sumAreaM2": 2845.9949408135,
+          "unionAreaM2": 2845.9949408134994,
+          "overlapAreaM2": 4.547473508864641e-13,
+          "uncoveredAreaM2": 1.0493579338799464e-09,
+          "coveredFraction": 1.0000000000002145,
+          "crossClassOverlapAreaM2": 4.547473508864641e-13,
+          "classes": [
+            {
+              "code": "131",
+              "names": [
+                "상업·업무시설"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 2666.228112179847,
+              "unionAreaM2": 2666.228112179847,
+              "overlapAreaM2": 0.0
+            },
+            {
+              "code": "154",
+              "names": [
+                "도로"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 179.76682863365272,
+              "unionAreaM2": 179.76682863365272,
+              "overlapAreaM2": 0.0
+            }
+          ]
+        },
+        "structure": {
+          "featureCount": 2,
+          "sumAreaM2": 2845.9949408135,
+          "unionAreaM2": 2845.9949408134994,
+          "overlapAreaM2": 4.547473508864641e-13,
+          "uncoveredAreaM2": 1.0493579338799464e-09,
+          "coveredFraction": 1.0000000000002145,
+          "crossClassOverlapAreaM2": 4.547473508864641e-13,
+          "classes": [
+            {
+              "code": "131",
+              "names": [
+                "상업·업무시설"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 2666.228112179847,
+              "unionAreaM2": 2666.228112179847,
+              "overlapAreaM2": 0.0
+            },
+            {
+              "code": "154",
+              "names": [
+                "도로"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 179.76682863365272,
+              "unionAreaM2": 179.76682863365272,
+              "overlapAreaM2": 0.0
+            }
+          ]
+        }
+      },
+      "buildingComparison": {
+        "buildingFeatureCount": 1,
+        "unionAreaM2": 2682.710141136687,
+        "coveredFraction": 0.9426264617218317
+      }
+    },
+    {
+      "id": "R2",
+      "kind": "ROOF",
+      "modelAreaM2": 1845.02,
+      "nativeAreaM2": 1845.0175802934737,
+      "nativeMinusModelAreaM2": -0.0024197065263251716,
+      "outsideStudyAreaM2": 0.0,
+      "numericAreaToleranceM2": 1.8450175802934738e-07,
+      "methodComparison": {
+        "unionSymmetricDifferenceM2": 0.0,
+        "classSymmetricDifferenceM2": {
+          "154": 0.0
+        }
+      },
+      "methods": {
+        "originalValidOnly": {
+          "featureCount": 0,
+          "sumAreaM2": 0.0,
+          "unionAreaM2": 0.0,
+          "overlapAreaM2": 0.0,
+          "uncoveredAreaM2": 1845.0175802934739,
+          "coveredFraction": 0.0,
+          "crossClassOverlapAreaM2": 0.0,
+          "classes": []
+        },
+        "linework": {
+          "featureCount": 1,
+          "sumAreaM2": 1845.0175802934739,
+          "unionAreaM2": 1845.0175802934739,
+          "overlapAreaM2": 0.0,
+          "uncoveredAreaM2": 0.0,
+          "coveredFraction": 1.0000000000000002,
+          "crossClassOverlapAreaM2": 0.0,
+          "classes": [
+            {
+              "code": "154",
+              "names": [
+                "도로"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 1845.0175802934739,
+              "unionAreaM2": 1845.0175802934739,
+              "overlapAreaM2": 0.0
+            }
+          ]
+        },
+        "structure": {
+          "featureCount": 1,
+          "sumAreaM2": 1845.0175802934739,
+          "unionAreaM2": 1845.0175802934739,
+          "overlapAreaM2": 0.0,
+          "uncoveredAreaM2": 0.0,
+          "coveredFraction": 1.0000000000000002,
+          "crossClassOverlapAreaM2": 0.0,
+          "classes": [
+            {
+              "code": "154",
+              "names": [
+                "도로"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 1845.0175802934739,
+              "unionAreaM2": 1845.0175802934739,
+              "overlapAreaM2": 0.0
+            }
+          ]
+        }
+      },
+      "buildingComparison": {
+        "buildingFeatureCount": 1,
+        "unionAreaM2": 1420.6937589148731,
+        "coveredFraction": 0.7700163803799059
+      }
+    },
+    {
+      "id": "R3",
+      "kind": "ROOF",
+      "modelAreaM2": 1813.96,
+      "nativeAreaM2": 1813.9652268031955,
+      "nativeMinusModelAreaM2": 0.005226803195455432,
+      "outsideStudyAreaM2": 0.0,
+      "numericAreaToleranceM2": 1.8139652268031956e-07,
+      "methodComparison": {
+        "unionSymmetricDifferenceM2": 0.0,
+        "classSymmetricDifferenceM2": {
+          "131": 0.0,
+          "154": 0.0
+        }
+      },
+      "methods": {
+        "originalValidOnly": {
+          "featureCount": 1,
+          "sumAreaM2": 998.1801633463296,
+          "unionAreaM2": 998.1801633463296,
+          "overlapAreaM2": 0.0,
+          "uncoveredAreaM2": 815.7850634568659,
+          "coveredFraction": 0.5502752470649351,
+          "crossClassOverlapAreaM2": 0.0,
+          "classes": [
+            {
+              "code": "131",
+              "names": [
+                "상업·업무시설"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 998.1801633463296,
+              "unionAreaM2": 998.1801633463296,
+              "overlapAreaM2": 0.0
+            }
+          ]
+        },
+        "linework": {
+          "featureCount": 2,
+          "sumAreaM2": 1813.9652268031955,
+          "unionAreaM2": 1813.9652268031955,
+          "overlapAreaM2": 0.0,
+          "uncoveredAreaM2": 0.0,
+          "coveredFraction": 1.0,
+          "crossClassOverlapAreaM2": 0.0,
+          "classes": [
+            {
+              "code": "131",
+              "names": [
+                "상업·업무시설"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 998.1801633463296,
+              "unionAreaM2": 998.1801633463296,
+              "overlapAreaM2": 0.0
+            },
+            {
+              "code": "154",
+              "names": [
+                "도로"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 815.7850634568659,
+              "unionAreaM2": 815.7850634568659,
+              "overlapAreaM2": 0.0
+            }
+          ]
+        },
+        "structure": {
+          "featureCount": 2,
+          "sumAreaM2": 1813.9652268031955,
+          "unionAreaM2": 1813.9652268031955,
+          "overlapAreaM2": 0.0,
+          "uncoveredAreaM2": 0.0,
+          "coveredFraction": 1.0,
+          "crossClassOverlapAreaM2": 0.0,
+          "classes": [
+            {
+              "code": "131",
+              "names": [
+                "상업·업무시설"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 998.1801633463296,
+              "unionAreaM2": 998.1801633463296,
+              "overlapAreaM2": 0.0
+            },
+            {
+              "code": "154",
+              "names": [
+                "도로"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 815.7850634568659,
+              "unionAreaM2": 815.7850634568659,
+              "overlapAreaM2": 0.0
+            }
+          ]
+        }
+      },
+      "buildingComparison": {
+        "buildingFeatureCount": 4,
+        "unionAreaM2": 983.153424514035,
+        "coveredFraction": 0.5419913292641642
+      }
+    },
+    {
+      "id": "R4",
+      "kind": "ROOF",
+      "modelAreaM2": 1491.55,
+      "nativeAreaM2": 1491.548102476483,
+      "nativeMinusModelAreaM2": -0.0018975235168454674,
+      "outsideStudyAreaM2": 202.56769355608623,
+      "numericAreaToleranceM2": 1.491548102476483e-07,
+      "methodComparison": {
+        "unionSymmetricDifferenceM2": 0.0,
+        "classSymmetricDifferenceM2": {
+          "131": 0.0,
+          "153": 0.0,
+          "154": 0.0
+        }
+      },
+      "methods": {
+        "originalValidOnly": {
+          "featureCount": 2,
+          "sumAreaM2": 1016.3021954292046,
+          "unionAreaM2": 1016.3021954292047,
+          "overlapAreaM2": -1.1368683772161603e-13,
+          "uncoveredAreaM2": 475.2459070474683,
+          "coveredFraction": 0.68137406614094,
+          "crossClassOverlapAreaM2": -1.1368683772161603e-13,
+          "classes": [
+            {
+              "code": "131",
+              "names": [
+                "상업·업무시설"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 1011.8778200199172,
+              "unionAreaM2": 1011.8778200199172,
+              "overlapAreaM2": 0.0
+            },
+            {
+              "code": "153",
+              "names": [
+                "철도"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 4.424375409287393,
+              "unionAreaM2": 4.424375409287393,
+              "overlapAreaM2": 0.0
+            }
+          ]
+        },
+        "linework": {
+          "featureCount": 3,
+          "sumAreaM2": 1491.5481024763478,
+          "unionAreaM2": 1491.5481024763478,
+          "overlapAreaM2": 0.0,
+          "uncoveredAreaM2": 6.163709542761353e-10,
+          "coveredFraction": 0.9999999999999093,
+          "crossClassOverlapAreaM2": -2.2737367544323206e-13,
+          "classes": [
+            {
+              "code": "131",
+              "names": [
+                "상업·업무시설"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 1011.8778200199172,
+              "unionAreaM2": 1011.8778200199172,
+              "overlapAreaM2": 0.0
+            },
+            {
+              "code": "153",
+              "names": [
+                "철도"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 4.424375409287393,
+              "unionAreaM2": 4.424375409287393,
+              "overlapAreaM2": 0.0
+            },
+            {
+              "code": "154",
+              "names": [
+                "도로"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 475.2459070471432,
+              "unionAreaM2": 475.2459070471431,
+              "overlapAreaM2": 1.1368683772161603e-13
+            }
+          ]
+        },
+        "structure": {
+          "featureCount": 3,
+          "sumAreaM2": 1491.5481024763478,
+          "unionAreaM2": 1491.5481024763478,
+          "overlapAreaM2": 0.0,
+          "uncoveredAreaM2": 6.163709542761353e-10,
+          "coveredFraction": 0.9999999999999093,
+          "crossClassOverlapAreaM2": -2.2737367544323206e-13,
+          "classes": [
+            {
+              "code": "131",
+              "names": [
+                "상업·업무시설"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 1011.8778200199172,
+              "unionAreaM2": 1011.8778200199172,
+              "overlapAreaM2": 0.0
+            },
+            {
+              "code": "153",
+              "names": [
+                "철도"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 4.424375409287393,
+              "unionAreaM2": 4.424375409287393,
+              "overlapAreaM2": 0.0
+            },
+            {
+              "code": "154",
+              "names": [
+                "도로"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 475.2459070471432,
+              "unionAreaM2": 475.24590704714313,
+              "overlapAreaM2": 5.684341886080802e-14
+            }
+          ]
+        }
+      },
+      "buildingComparison": {
+        "buildingFeatureCount": 3,
+        "unionAreaM2": 1082.0438481713998,
+        "coveredFraction": 0.7254501858671769
+      }
+    },
+    {
+      "id": "R5",
+      "kind": "ROOF",
+      "modelAreaM2": 1384.88,
+      "nativeAreaM2": 1384.88518451197,
+      "nativeMinusModelAreaM2": 0.005184511969900996,
+      "outsideStudyAreaM2": 0.0,
+      "numericAreaToleranceM2": 1.38488518451197e-07,
+      "methodComparison": {
+        "unionSymmetricDifferenceM2": 0.0,
+        "classSymmetricDifferenceM2": {
+          "131": 0.0,
+          "154": 0.0
+        }
+      },
+      "methods": {
+        "originalValidOnly": {
+          "featureCount": 3,
+          "sumAreaM2": 808.0097026135039,
+          "unionAreaM2": 808.0097026135039,
+          "overlapAreaM2": 0.0,
+          "uncoveredAreaM2": 576.8754818992111,
+          "coveredFraction": 0.5834488747875836,
+          "crossClassOverlapAreaM2": 0.0,
+          "classes": [
+            {
+              "code": "131",
+              "names": [
+                "상업·업무시설"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 808.0097026135039,
+              "unionAreaM2": 808.0097026135039,
+              "overlapAreaM2": 0.0
+            }
+          ]
+        },
+        "linework": {
+          "featureCount": 4,
+          "sumAreaM2": 1384.8851845123643,
+          "unionAreaM2": 1384.8851845123645,
+          "overlapAreaM2": -2.2737367544323206e-13,
+          "uncoveredAreaM2": 8.048215427436389e-10,
+          "coveredFraction": 1.0000000000002849,
+          "crossClassOverlapAreaM2": -2.2737367544323206e-13,
+          "classes": [
+            {
+              "code": "131",
+              "names": [
+                "상업·업무시설"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 808.0097026135039,
+              "unionAreaM2": 808.0097026135039,
+              "overlapAreaM2": 0.0
+            },
+            {
+              "code": "154",
+              "names": [
+                "도로"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 576.8754818988604,
+              "unionAreaM2": 576.8754818988604,
+              "overlapAreaM2": 0.0
+            }
+          ]
+        },
+        "structure": {
+          "featureCount": 4,
+          "sumAreaM2": 1384.8851845123647,
+          "unionAreaM2": 1384.8851845123645,
+          "overlapAreaM2": 2.2737367544323206e-13,
+          "uncoveredAreaM2": 8.048215427436389e-10,
+          "coveredFraction": 1.0000000000002849,
+          "crossClassOverlapAreaM2": 2.2737367544323206e-13,
+          "classes": [
+            {
+              "code": "131",
+              "names": [
+                "상업·업무시설"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 808.0097026135039,
+              "unionAreaM2": 808.0097026135039,
+              "overlapAreaM2": 0.0
+            },
+            {
+              "code": "154",
+              "names": [
+                "도로"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 576.8754818988608,
+              "unionAreaM2": 576.8754818988608,
+              "overlapAreaM2": 0.0
+            }
+          ]
+        }
+      },
+      "buildingComparison": {
+        "buildingFeatureCount": 4,
+        "unionAreaM2": 821.696685389291,
+        "coveredFraction": 0.5933319921238488
+      }
+    },
+    {
+      "id": "R6",
+      "kind": "ROOF",
+      "modelAreaM2": 1307.52,
+      "nativeAreaM2": 1307.5256231577364,
+      "nativeMinusModelAreaM2": 0.005623157736408757,
+      "outsideStudyAreaM2": 0.0,
+      "numericAreaToleranceM2": 1.3075256231577365e-07,
+      "methodComparison": {
+        "unionSymmetricDifferenceM2": 0.0,
+        "classSymmetricDifferenceM2": {
+          "131": 0.0,
+          "154": 0.0
+        }
+      },
+      "methods": {
+        "originalValidOnly": {
+          "featureCount": 1,
+          "sumAreaM2": 894.3250590079061,
+          "unionAreaM2": 894.3250590079061,
+          "overlapAreaM2": 0.0,
+          "uncoveredAreaM2": 413.2005641503621,
+          "coveredFraction": 0.6839828169853136,
+          "crossClassOverlapAreaM2": 0.0,
+          "classes": [
+            {
+              "code": "131",
+              "names": [
+                "상업·업무시설"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 894.3250590079061,
+              "unionAreaM2": 894.3250590079061,
+              "overlapAreaM2": 0.0
+            }
+          ]
+        },
+        "linework": {
+          "featureCount": 2,
+          "sumAreaM2": 1307.5256231584035,
+          "unionAreaM2": 1307.5256231584035,
+          "overlapAreaM2": 0.0,
+          "uncoveredAreaM2": 0.0,
+          "coveredFraction": 1.0000000000005103,
+          "crossClassOverlapAreaM2": 0.0,
+          "classes": [
+            {
+              "code": "131",
+              "names": [
+                "상업·업무시설"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 894.3250590079061,
+              "unionAreaM2": 894.3250590079061,
+              "overlapAreaM2": 0.0
+            },
+            {
+              "code": "154",
+              "names": [
+                "도로"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 413.20056415049726,
+              "unionAreaM2": 413.2005641504973,
+              "overlapAreaM2": -5.684341886080802e-14
+            }
+          ]
+        },
+        "structure": {
+          "featureCount": 2,
+          "sumAreaM2": 1307.5256231584033,
+          "unionAreaM2": 1307.5256231584035,
+          "overlapAreaM2": -2.2737367544323206e-13,
+          "uncoveredAreaM2": 0.0,
+          "coveredFraction": 1.0000000000005103,
+          "crossClassOverlapAreaM2": -2.2737367544323206e-13,
+          "classes": [
+            {
+              "code": "131",
+              "names": [
+                "상업·업무시설"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 894.3250590079061,
+              "unionAreaM2": 894.3250590079061,
+              "overlapAreaM2": 0.0
+            },
+            {
+              "code": "154",
+              "names": [
+                "도로"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 413.2005641504972,
+              "unionAreaM2": 413.2005641504972,
+              "overlapAreaM2": 0.0
+            }
+          ]
+        }
+      },
+      "buildingComparison": {
+        "buildingFeatureCount": 6,
+        "unionAreaM2": 871.8955308262238,
+        "coveredFraction": 0.6668286382950988
+      }
+    },
+    {
+      "id": "R7",
+      "kind": "ROOF",
+      "modelAreaM2": 1188.73,
+      "nativeAreaM2": 1188.7264660905012,
+      "nativeMinusModelAreaM2": -0.0035339094988557918,
+      "outsideStudyAreaM2": 0.0,
+      "numericAreaToleranceM2": 1.1887264660905012e-07,
+      "methodComparison": {
+        "unionSymmetricDifferenceM2": 0.0,
+        "classSymmetricDifferenceM2": {
+          "141": 0.0,
+          "154": 0.0
+        }
+      },
+      "methods": {
+        "originalValidOnly": {
+          "featureCount": 1,
+          "sumAreaM2": 837.3952282829757,
+          "unionAreaM2": 837.3952282829757,
+          "overlapAreaM2": 0.0,
+          "uncoveredAreaM2": 351.33123780757876,
+          "coveredFraction": 0.7044473662953025,
+          "crossClassOverlapAreaM2": 0.0,
+          "classes": [
+            {
+              "code": "141",
+              "names": [
+                "문화·체육·휴양시설"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 837.3952282829757,
+              "unionAreaM2": 837.3952282829757,
+              "overlapAreaM2": 0.0
+            }
+          ]
+        },
+        "linework": {
+          "featureCount": 2,
+          "sumAreaM2": 1188.7264660904261,
+          "unionAreaM2": 1188.7264660904266,
+          "overlapAreaM2": -4.547473508864641e-13,
+          "uncoveredAreaM2": 1.2821921302474948e-10,
+          "coveredFraction": 0.9999999999999373,
+          "crossClassOverlapAreaM2": -2.2737367544323206e-13,
+          "classes": [
+            {
+              "code": "141",
+              "names": [
+                "문화·체육·휴양시설"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 837.3952282829757,
+              "unionAreaM2": 837.3952282829757,
+              "overlapAreaM2": 0.0
+            },
+            {
+              "code": "154",
+              "names": [
+                "도로"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 351.3312378074505,
+              "unionAreaM2": 351.33123780745063,
+              "overlapAreaM2": -1.1368683772161603e-13
+            }
+          ]
+        },
+        "structure": {
+          "featureCount": 2,
+          "sumAreaM2": 1188.7264660904264,
+          "unionAreaM2": 1188.7264660904266,
+          "overlapAreaM2": -2.2737367544323206e-13,
+          "uncoveredAreaM2": 1.2821921302474948e-10,
+          "coveredFraction": 0.9999999999999373,
+          "crossClassOverlapAreaM2": -2.2737367544323206e-13,
+          "classes": [
+            {
+              "code": "141",
+              "names": [
+                "문화·체육·휴양시설"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 837.3952282829757,
+              "unionAreaM2": 837.3952282829757,
+              "overlapAreaM2": 0.0
+            },
+            {
+              "code": "154",
+              "names": [
+                "도로"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 351.3312378074506,
+              "unionAreaM2": 351.3312378074506,
+              "overlapAreaM2": 0.0
+            }
+          ]
+        }
+      },
+      "buildingComparison": {
+        "buildingFeatureCount": 2,
+        "unionAreaM2": 841.3432631100409,
+        "coveredFraction": 0.7077685969902406
+      }
+    },
+    {
+      "id": "R8",
+      "kind": "ROOF",
+      "modelAreaM2": 1171.35,
+      "nativeAreaM2": 1171.34592819893,
+      "nativeMinusModelAreaM2": -0.004071801069812864,
+      "outsideStudyAreaM2": 78.666861888214,
+      "numericAreaToleranceM2": 1.1713459281989302e-07,
+      "methodComparison": {
+        "unionSymmetricDifferenceM2": 0.0,
+        "classSymmetricDifferenceM2": {
+          "131": 0.0,
+          "154": 0.0,
+          "423": 0.0
+        }
+      },
+      "methods": {
+        "originalValidOnly": {
+          "featureCount": 2,
+          "sumAreaM2": 1046.7005630254798,
+          "unionAreaM2": 1046.7005630254796,
+          "overlapAreaM2": 2.2737367544323206e-13,
+          "uncoveredAreaM2": 124.6453651740401,
+          "coveredFraction": 0.8935879126970577,
+          "crossClassOverlapAreaM2": 2.2737367544323206e-13,
+          "classes": [
+            {
+              "code": "131",
+              "names": [
+                "상업·업무시설"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 1029.9573929478033,
+              "unionAreaM2": 1029.9573929478033,
+              "overlapAreaM2": 0.0
+            },
+            {
+              "code": "423",
+              "names": [
+                "기타초지"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 16.743170077676503,
+              "unionAreaM2": 16.743170077676503,
+              "overlapAreaM2": 0.0
+            }
+          ]
+        },
+        "linework": {
+          "featureCount": 3,
+          "sumAreaM2": 1171.3459281993507,
+          "unionAreaM2": 1171.3459281993507,
+          "overlapAreaM2": 0.0,
+          "uncoveredAreaM2": 6.456342127592052e-10,
+          "coveredFraction": 1.000000000000359,
+          "crossClassOverlapAreaM2": 0.0,
+          "classes": [
+            {
+              "code": "131",
+              "names": [
+                "상업·업무시설"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 1029.9573929478033,
+              "unionAreaM2": 1029.9573929478033,
+              "overlapAreaM2": 0.0
+            },
+            {
+              "code": "154",
+              "names": [
+                "도로"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 124.64536517387093,
+              "unionAreaM2": 124.64536517387094,
+              "overlapAreaM2": -1.4210854715202004e-14
+            },
+            {
+              "code": "423",
+              "names": [
+                "기타초지"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 16.743170077676503,
+              "unionAreaM2": 16.743170077676503,
+              "overlapAreaM2": 0.0
+            }
+          ]
+        },
+        "structure": {
+          "featureCount": 3,
+          "sumAreaM2": 1171.3459281993507,
+          "unionAreaM2": 1171.3459281993507,
+          "overlapAreaM2": 0.0,
+          "uncoveredAreaM2": 6.456342127592052e-10,
+          "coveredFraction": 1.000000000000359,
+          "crossClassOverlapAreaM2": 0.0,
+          "classes": [
+            {
+              "code": "131",
+              "names": [
+                "상업·업무시설"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 1029.9573929478033,
+              "unionAreaM2": 1029.9573929478033,
+              "overlapAreaM2": 0.0
+            },
+            {
+              "code": "154",
+              "names": [
+                "도로"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 124.64536517387091,
+              "unionAreaM2": 124.64536517387096,
+              "overlapAreaM2": -4.263256414560601e-14
+            },
+            {
+              "code": "423",
+              "names": [
+                "기타초지"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 16.743170077676503,
+              "unionAreaM2": 16.743170077676503,
+              "overlapAreaM2": 0.0
+            }
+          ]
+        }
+      },
+      "buildingComparison": {
+        "buildingFeatureCount": 1,
+        "unionAreaM2": 1020.6422135333416,
+        "coveredFraction": 0.8713414107331114
+      }
+    },
+    {
+      "id": "G1",
+      "kind": "GROUND",
+      "modelAreaM2": 100,
+      "nativeAreaM2": 99.82640035101582,
+      "nativeMinusModelAreaM2": -0.17359964898417957,
+      "outsideStudyAreaM2": 0.0,
+      "numericAreaToleranceM2": 1e-08,
+      "methodComparison": {
+        "unionSymmetricDifferenceM2": 0.0,
+        "classSymmetricDifferenceM2": {
+          "131": 0.0,
+          "154": 0.0
+        }
+      },
+      "methods": {
+        "originalValidOnly": {
+          "featureCount": 1,
+          "sumAreaM2": 93.53679271390624,
+          "unionAreaM2": 93.53679271390624,
+          "overlapAreaM2": 0.0,
+          "uncoveredAreaM2": 6.289607637187715,
+          "coveredFraction": 0.9369945463825834,
+          "crossClassOverlapAreaM2": 0.0,
+          "classes": [
+            {
+              "code": "131",
+              "names": [
+                "상업·업무시설"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 93.53679271390624,
+              "unionAreaM2": 93.53679271390624,
+              "overlapAreaM2": 0.0
+            }
+          ]
+        },
+        "linework": {
+          "featureCount": 2,
+          "sumAreaM2": 99.82640035109395,
+          "unionAreaM2": 99.82640035109397,
+          "overlapAreaM2": -1.4210854715202004e-14,
+          "uncoveredAreaM2": 1.0321885360320415e-10,
+          "coveredFraction": 1.0000000000007827,
+          "crossClassOverlapAreaM2": -1.4210854715202004e-14,
+          "classes": [
+            {
+              "code": "131",
+              "names": [
+                "상업·업무시설"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 93.53679271390624,
+              "unionAreaM2": 93.53679271390624,
+              "overlapAreaM2": 0.0
+            },
+            {
+              "code": "154",
+              "names": [
+                "도로"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 6.289607637187715,
+              "unionAreaM2": 6.289607637187715,
+              "overlapAreaM2": 0.0
+            }
+          ]
+        },
+        "structure": {
+          "featureCount": 2,
+          "sumAreaM2": 99.82640035109395,
+          "unionAreaM2": 99.82640035109397,
+          "overlapAreaM2": -1.4210854715202004e-14,
+          "uncoveredAreaM2": 1.0321885360320415e-10,
+          "coveredFraction": 1.0000000000007827,
+          "crossClassOverlapAreaM2": -1.4210854715202004e-14,
+          "classes": [
+            {
+              "code": "131",
+              "names": [
+                "상업·업무시설"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 93.53679271390624,
+              "unionAreaM2": 93.53679271390624,
+              "overlapAreaM2": 0.0
+            },
+            {
+              "code": "154",
+              "names": [
+                "도로"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 6.289607637187715,
+              "unionAreaM2": 6.289607637187715,
+              "overlapAreaM2": 0.0
+            }
+          ]
+        }
+      },
+      "buildingComparison": {
+        "buildingFeatureCount": 1,
+        "unionAreaM2": 97.72545413508773,
+        "coveredFraction": 0.9789540020621739
+      }
+    },
+    {
+      "id": "G2",
+      "kind": "GROUND",
+      "modelAreaM2": 100,
+      "nativeAreaM2": 99.82433130511808,
+      "nativeMinusModelAreaM2": -0.17566869488192083,
+      "outsideStudyAreaM2": 0.0,
+      "numericAreaToleranceM2": 1e-08,
+      "methodComparison": {
+        "unionSymmetricDifferenceM2": 0.0,
+        "classSymmetricDifferenceM2": {
+          "154": 0.0
+        }
+      },
+      "methods": {
+        "originalValidOnly": {
+          "featureCount": 0,
+          "sumAreaM2": 0.0,
+          "unionAreaM2": 0.0,
+          "overlapAreaM2": 0.0,
+          "uncoveredAreaM2": 99.82433130511808,
+          "coveredFraction": 0.0,
+          "crossClassOverlapAreaM2": 0.0,
+          "classes": []
+        },
+        "linework": {
+          "featureCount": 1,
+          "sumAreaM2": 99.82433130511808,
+          "unionAreaM2": 99.82433130511808,
+          "overlapAreaM2": 0.0,
+          "uncoveredAreaM2": 0.0,
+          "coveredFraction": 1.0,
+          "crossClassOverlapAreaM2": 0.0,
+          "classes": [
+            {
+              "code": "154",
+              "names": [
+                "도로"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 99.82433130511808,
+              "unionAreaM2": 99.82433130511808,
+              "overlapAreaM2": 0.0
+            }
+          ]
+        },
+        "structure": {
+          "featureCount": 1,
+          "sumAreaM2": 99.82433130511808,
+          "unionAreaM2": 99.82433130511808,
+          "overlapAreaM2": 0.0,
+          "uncoveredAreaM2": 0.0,
+          "coveredFraction": 1.0,
+          "crossClassOverlapAreaM2": 0.0,
+          "classes": [
+            {
+              "code": "154",
+              "names": [
+                "도로"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 99.82433130511808,
+              "unionAreaM2": 99.82433130511808,
+              "overlapAreaM2": 0.0
+            }
+          ]
+        }
+      },
+      "buildingComparison": {
+        "buildingFeatureCount": 1,
+        "unionAreaM2": 0.43786070732321725,
+        "coveredFraction": 0.004386312451068407
+      }
+    },
+    {
+      "id": "G3",
+      "kind": "GROUND",
+      "modelAreaM2": 100,
+      "nativeAreaM2": 99.82469054585268,
+      "nativeMinusModelAreaM2": -0.17530945414732457,
+      "outsideStudyAreaM2": 0.0,
+      "numericAreaToleranceM2": 1e-08,
+      "methodComparison": {
+        "unionSymmetricDifferenceM2": 0.0,
+        "classSymmetricDifferenceM2": {
+          "153": 0.0,
+          "154": 0.0
+        }
+      },
+      "methods": {
+        "originalValidOnly": {
+          "featureCount": 1,
+          "sumAreaM2": 99.82347061365856,
+          "unionAreaM2": 99.82347061365856,
+          "overlapAreaM2": 0.0,
+          "uncoveredAreaM2": 0.0012199322489577732,
+          "coveredFraction": 0.9999877792539356,
+          "crossClassOverlapAreaM2": 0.0,
+          "classes": [
+            {
+              "code": "153",
+              "names": [
+                "철도"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 99.82347061365856,
+              "unionAreaM2": 99.82347061365856,
+              "overlapAreaM2": 0.0
+            }
+          ]
+        },
+        "linework": {
+          "featureCount": 2,
+          "sumAreaM2": 99.82469054570062,
+          "unionAreaM2": 99.82469054570062,
+          "overlapAreaM2": 0.0,
+          "uncoveredAreaM2": 2.0689602871107153e-10,
+          "coveredFraction": 0.9999999999984768,
+          "crossClassOverlapAreaM2": 0.0,
+          "classes": [
+            {
+              "code": "153",
+              "names": [
+                "철도"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 99.82347061365856,
+              "unionAreaM2": 99.82347061365856,
+              "overlapAreaM2": 0.0
+            },
+            {
+              "code": "154",
+              "names": [
+                "도로"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 0.0012199320420617445,
+              "unionAreaM2": 0.0012199320420617445,
+              "overlapAreaM2": 0.0
+            }
+          ]
+        },
+        "structure": {
+          "featureCount": 2,
+          "sumAreaM2": 99.82469054570062,
+          "unionAreaM2": 99.82469054570062,
+          "overlapAreaM2": 0.0,
+          "uncoveredAreaM2": 2.0689602871107153e-10,
+          "coveredFraction": 0.9999999999984768,
+          "crossClassOverlapAreaM2": 0.0,
+          "classes": [
+            {
+              "code": "153",
+              "names": [
+                "철도"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 99.82347061365856,
+              "unionAreaM2": 99.82347061365856,
+              "overlapAreaM2": 0.0
+            },
+            {
+              "code": "154",
+              "names": [
+                "도로"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 0.0012199320420617445,
+              "unionAreaM2": 0.0012199320420617445,
+              "overlapAreaM2": 0.0
+            }
+          ]
+        }
+      },
+      "buildingComparison": {
+        "buildingFeatureCount": 0,
+        "unionAreaM2": 0.0,
+        "coveredFraction": 0.0
+      }
+    },
+    {
+      "id": "G4",
+      "kind": "GROUND",
+      "modelAreaM2": 100,
+      "nativeAreaM2": 99.82563191021663,
+      "nativeMinusModelAreaM2": -0.17436808978337126,
+      "outsideStudyAreaM2": 0.0,
+      "numericAreaToleranceM2": 1e-08,
+      "methodComparison": {
+        "unionSymmetricDifferenceM2": 0.0,
+        "classSymmetricDifferenceM2": {
+          "154": 0.0,
+          "423": 0.0
+        }
+      },
+      "methods": {
+        "originalValidOnly": {
+          "featureCount": 1,
+          "sumAreaM2": 2.8600356431069307,
+          "unionAreaM2": 2.8600356431069307,
+          "overlapAreaM2": 0.0,
+          "uncoveredAreaM2": 96.96559626710972,
+          "coveredFraction": 0.02865031343532343,
+          "crossClassOverlapAreaM2": 0.0,
+          "classes": [
+            {
+              "code": "423",
+              "names": [
+                "기타초지"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 2.8600356431069307,
+              "unionAreaM2": 2.8600356431069307,
+              "overlapAreaM2": 0.0
+            }
+          ]
+        },
+        "linework": {
+          "featureCount": 2,
+          "sumAreaM2": 99.8256319101431,
+          "unionAreaM2": 99.8256319101431,
+          "overlapAreaM2": 0.0,
+          "uncoveredAreaM2": 7.35262302431483e-11,
+          "coveredFraction": 0.9999999999992635,
+          "crossClassOverlapAreaM2": 0.0,
+          "classes": [
+            {
+              "code": "154",
+              "names": [
+                "도로"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 96.96559626703618,
+              "unionAreaM2": 96.96559626703618,
+              "overlapAreaM2": 0.0
+            },
+            {
+              "code": "423",
+              "names": [
+                "기타초지"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 2.8600356431069307,
+              "unionAreaM2": 2.8600356431069307,
+              "overlapAreaM2": 0.0
+            }
+          ]
+        },
+        "structure": {
+          "featureCount": 2,
+          "sumAreaM2": 99.8256319101431,
+          "unionAreaM2": 99.8256319101431,
+          "overlapAreaM2": 0.0,
+          "uncoveredAreaM2": 7.35262302431483e-11,
+          "coveredFraction": 0.9999999999992635,
+          "crossClassOverlapAreaM2": 0.0,
+          "classes": [
+            {
+              "code": "154",
+              "names": [
+                "도로"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 96.96559626703618,
+              "unionAreaM2": 96.96559626703618,
+              "overlapAreaM2": 0.0
+            },
+            {
+              "code": "423",
+              "names": [
+                "기타초지"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 2.8600356431069307,
+              "unionAreaM2": 2.8600356431069307,
+              "overlapAreaM2": 0.0
+            }
+          ]
+        }
+      },
+      "buildingComparison": {
+        "buildingFeatureCount": 0,
+        "unionAreaM2": 0.0,
+        "coveredFraction": 0.0
+      }
+    },
+    {
+      "id": "G5",
+      "kind": "GROUND",
+      "modelAreaM2": 100,
+      "nativeAreaM2": 99.82433387170194,
+      "nativeMinusModelAreaM2": -0.1756661282980616,
+      "outsideStudyAreaM2": 0.0,
+      "numericAreaToleranceM2": 1e-08,
+      "methodComparison": {
+        "unionSymmetricDifferenceM2": 0.0,
+        "classSymmetricDifferenceM2": {
+          "153": 0.0,
+          "154": 0.0
+        }
+      },
+      "methods": {
+        "originalValidOnly": {
+          "featureCount": 1,
+          "sumAreaM2": 99.81684537754876,
+          "unionAreaM2": 99.81684537754876,
+          "overlapAreaM2": 0.0,
+          "uncoveredAreaM2": 0.00748849421963481,
+          "coveredFraction": 0.9999249832794997,
+          "crossClassOverlapAreaM2": 0.0,
+          "classes": [
+            {
+              "code": "153",
+              "names": [
+                "철도"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 99.81684537754876,
+              "unionAreaM2": 99.81684537754876,
+              "overlapAreaM2": 0.0
+            }
+          ]
+        },
+        "linework": {
+          "featureCount": 2,
+          "sumAreaM2": 99.82433387168821,
+          "unionAreaM2": 99.8243338716882,
+          "overlapAreaM2": 1.4210854715202004e-14,
+          "uncoveredAreaM2": 8.018177213766492e-11,
+          "coveredFraction": 0.9999999999998623,
+          "crossClassOverlapAreaM2": 1.4210854715202004e-14,
+          "classes": [
+            {
+              "code": "153",
+              "names": [
+                "철도"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 99.81684537754876,
+              "unionAreaM2": 99.81684537754876,
+              "overlapAreaM2": 0.0
+            },
+            {
+              "code": "154",
+              "names": [
+                "도로"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 0.007488494139453038,
+              "unionAreaM2": 0.007488494139453038,
+              "overlapAreaM2": 0.0
+            }
+          ]
+        },
+        "structure": {
+          "featureCount": 2,
+          "sumAreaM2": 99.82433387168821,
+          "unionAreaM2": 99.8243338716882,
+          "overlapAreaM2": 1.4210854715202004e-14,
+          "uncoveredAreaM2": 8.018177213766492e-11,
+          "coveredFraction": 0.9999999999998623,
+          "crossClassOverlapAreaM2": 1.4210854715202004e-14,
+          "classes": [
+            {
+              "code": "153",
+              "names": [
+                "철도"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 99.81684537754876,
+              "unionAreaM2": 99.81684537754876,
+              "overlapAreaM2": 0.0
+            },
+            {
+              "code": "154",
+              "names": [
+                "도로"
+              ],
+              "sourceImageDates": [
+                "2023-12-31"
+              ],
+              "sumAreaM2": 0.007488494139453038,
+              "unionAreaM2": 0.007488494139453038,
+              "overlapAreaM2": 0.0
+            }
+          ]
+        }
+      },
+      "buildingComparison": {
+        "buildingFeatureCount": 0,
+        "unionAreaM2": 0.0,
+        "coveredFraction": 0.0
+      }
+    }
+  ],
+  "placementOverlaps": [],
+  "placementAreaSumM2": 13548.134440329084,
+  "placementAreaUnionM2": 13548.134440329086,
+  "limitations": [
+    "기존 가정 구역과 서로 다른 제작 시점의 공개자료 대조",
+    "토지피복 분류는 실측 불투수율·침투율·시공 적합성이 아님",
+    "위상 보정 두 방식의 일치는 원본 경계의 현장 정확성 보증이 아님",
+    "IMG_DATE 원문 보존; 날짜 필드의 연말 표기를 정확 촬영일로 단정하지 않음",
+    "수치지도 건물 도형 중첩은 해당 연도 지붕·높이·구조 하중 검증이 아님",
+    "모델 및 기존 순위 변경 없음"
+  ]
+}
