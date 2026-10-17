@@ -24,7 +24,7 @@ function SceneLifecycle({ onUnavailable }: { onUnavailable?: () => void }) {
   return null;
 }
 
-function FitDistrict({ map }: { map: CandidateMap }) {
+function FitDistrict({ map, cells }: { map: CandidateMap; cells: Cell[] }) {
   const { camera, size } = useThree();
   useLayoutEffect(() => {
     if (!(camera instanceof THREE.OrthographicCamera)) return;
@@ -32,9 +32,15 @@ function FitDistrict({ map }: { map: CandidateMap }) {
     camera.updateMatrixWorld();
     let x = 0,
       y = 0;
-    for (const building of map.buildings)
-      for (const [east, north] of buildingPolygons(building).flatMap((polygon) => polygon[0]))
-        for (const height of [0, building.heightM]) {
+    const footprints = cells.length
+      ? cells.map((c) => ({ coordinates: c.coordinates, height: c.heightM }))
+      : map.buildings.map((b) => ({
+          coordinates: buildingPolygons(b).flatMap((p) => p[0]),
+          height: b.heightM,
+        }));
+    for (const footprint of footprints)
+      for (const [east, north] of footprint.coordinates)
+        for (const height of [0, footprint.height]) {
           const point = new THREE.Vector3(east, height, -north).applyMatrix4(
             camera.matrixWorldInverse
           );
@@ -44,7 +50,7 @@ function FitDistrict({ map }: { map: CandidateMap }) {
     // 상단 안내와 하단 도구 공간을 제외해 작은 화면에서도 구역 전체를 표시한다.
     camera.zoom = Math.min(size.width / (2 * x + 60), (size.height - 110) / (2 * y + 50));
     camera.updateProjectionMatrix();
-  }, [camera, size.width, size.height, map]);
+  }, [camera, size.width, size.height, map, cells]);
   return null;
 }
 
@@ -153,8 +159,8 @@ function TransportMesh({ surface }: { surface: Transport }) {
     [surface]
   );
   useEffect(() => () => geometry.dispose(), [geometry]);
-  const colors = { roads: '#bcc5bb', railways: '#a8b1ad', bridges: '#bdc4bb' };
-  const levels = { roads: 0.035, railways: 0.045, bridges: 0.055 };
+  const colors = { roads: '#bcc5bb', railways: '#a8b1ad', bridges: '#bdc4bb', parking: '#adb6ae' };
+  const levels = { roads: 0.035, railways: 0.045, bridges: 0.055, parking: 0.035 };
   return (
     <mesh
       geometry={geometry}
@@ -288,7 +294,7 @@ export default function MapScene({
       {map.transports.map((surface) => (
         <TransportMesh key={surface.id} surface={surface} />
       ))}
-      <FitDistrict map={map} />
+      <FitDistrict map={map} cells={cells} />
       {map.buildings.map((building) => (
         <BuildingMesh
           key={building.id}

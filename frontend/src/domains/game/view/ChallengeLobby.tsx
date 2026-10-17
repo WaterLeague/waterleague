@@ -39,12 +39,12 @@ export function ChallengeLobby({
   return (
     <main className="challenge-lobby">
       <div className="challenge-heading">
-        <span>WATER LEAGUE / 서울 01</span>
+        <span>WATER LEAGUE / SEOUL</span>
         <span>
-          <MapPin size={14} /> 성수 · 연무장길
+          <MapPin size={14} /> {current?.mapTitle ?? '성수 · 연무장길'}
         </span>
       </div>
-      <section className="challenge-hero" aria-label="성수 빗물 도전">
+      <section className="challenge-hero" aria-label="지역 빗물 도전">
         <div className="challenge-copy">
           <span className="challenge-kicker">
             {league ? `기관 리그 · ${league.title}` : '도시를 바꾸는 한 수'}
@@ -101,10 +101,10 @@ export function ChallengeLobby({
               onSelect={() => {}}
             />
           ) : (
-            <p role="status">성수의 건물을 불러오는 중</p>
+            <p role="status">선택한 지역의 건물을 불러오는 중</p>
           )}
           <div className="challenge-city-caption">
-            <span>SEONGSU</span>
+            <span>{current?.mapTitle ?? '성수'}</span>
             <b>실제 동네에서 시작하는 전략</b>
             <small>{map?.snapshot.title} · 지형 평탄화 · 높이 가정</small>
           </div>
@@ -113,7 +113,11 @@ export function ChallengeLobby({
       <section className="challenge-events" aria-labelledby="challenge-events-title">
         <div className="challenge-section-title">
           <h2 id="challenge-events-title">어떤 비에 도전할까요?</h2>
-          <span>기상청 실제 관측 · 선택한 조건으로 계산·순위 구분</span>
+          <span>
+            {lab.model.regionalRainfallUse
+              ? '성동 관측 강우 공통 재생 · 지역 실측 강우 아님'
+              : '기상청 실제 관측 · 선택한 조건으로 계산·순위 구분'}
+          </span>
         </div>
         <label className="challenge-map-choice">
           지도 버전

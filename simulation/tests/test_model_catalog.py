@@ -11,14 +11,14 @@ ROOT = Path(__file__).resolve().parents[2]
 class ModelCatalogTests(unittest.TestCase):
     def test_registered_models_have_distinct_rainfall_and_unchanged_geometry(self):
         models = [json.loads(data) for data in read_catalog(ROOT/'data/models').values()]
-        self.assertEqual(8, len(models))
+        self.assertEqual(83, len(models))
         self.assertEqual({18.5, 55.0, 104.0, 109.7}, {m['rainfall']['totalDepthMm'] for m in models})
         families = {}
         for m in models:
-            families.setdefault(m['geometrySourceHash'], []).append(m)
-        self.assertEqual(2, len(families))
-        for family in families.values():
-            self.assertEqual(4, len(family))
+            families.setdefault(m.get('mapId', 'legacy'), []).append(m)
+        self.assertEqual(27, len(families))
+        for map_id, family in families.items():
+            self.assertEqual(3 if map_id.startswith('seoul-osm-v1-') else 4, len(family))
             self.assertTrue(all(m['cells'] == family[0]['cells'] for m in family))
 
     def test_modified_source_is_rejected(self):

@@ -25,7 +25,7 @@ export function RainfallSelector({
     <section className="rainfall-context" aria-label="강우 실험 조건">
       <CloudRain size={21} />
       <label>
-        관측 강우
+        {lab.model.regionalRainfallUse ? '공통 비교 강우' : '관측 강우'}
         <select
           aria-label="관측 강우 선택"
           value={lab.modelHash}
@@ -41,7 +41,7 @@ export function RainfallSelector({
         </select>
       </label>
       <p>
-        배치는 다른 비에서도 비교할 수 있습니다.
+        {lab.model.mapTitle ?? '성수'} · 배치는 다른 비에서도 비교할 수 있습니다.
         <br />
         <span>저장·계산·순위는 선택한 조건별로 구분됩니다.</span>
       </p>

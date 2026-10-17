@@ -101,7 +101,7 @@ export function MapViewport({
       <div className={`scene-labels${isPlan ? ' plan-labels' : ''}`}>
         {!isPlan && (
           <b>
-            SEONGSU
+            {map.snapshot.title.split(' · ')[0]}
             <br />
             <span>RAIN LAB</span>
           </b>

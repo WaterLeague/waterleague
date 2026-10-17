@@ -322,7 +322,23 @@ export function GamePage() {
         </div>
       )}
       {tab === 'city' ? (
-        <CityExplorer onPlay={() => setTab('missions')} />
+        <CityExplorer
+          busy={working || g.loading}
+          onPlay={(modelHash) => {
+            const hash = modelHash ?? g.rainfallCatalog?.defaultModelHash;
+            if (!hash) {
+              g.setError('도전 목록을 불러온 뒤 다시 선택해 주세요.');
+              return;
+            }
+            void g.action(async () => {
+              if (hash !== lab?.modelHash && !(await g.selectModel(hash))) return;
+              setSelected(null);
+              setActiveLeague(null);
+              setFeedback('');
+              setTab('missions');
+            });
+          }}
+        />
       ) : !lab ? (
         <div className="empty-state">
           <CloudRain size={38} />
@@ -366,13 +382,16 @@ export function GamePage() {
         <div className="studio-layout play-layout">
           <header className="play-hud">
             <div className="play-objective">
-              <span>SEONGSU / {activeLeague ? '기관 리그' : '일반 도전'}</span>
+              <span>
+                {lab.model.mapTitle ?? '성수'} / {activeLeague ? '기관 리그' : '일반 도전'}
+              </span>
               <h1 ref={playHeading} tabIndex={-1}>
                 {activeLeague?.title ?? '빗물이 머물 자리를 만드세요'}
               </h1>
               <small>
                 {rainDate(lab.model.rainfall.start)} · {lab.model.rainfall.stationName} ·{' '}
                 {lab.model.rainfall.totalDepthMm} mm
+                {lab.model.regionalRainfallUse && ' · 공통 비교 강우'}
               </small>
             </div>
             <div className="play-resources">
@@ -1062,7 +1081,7 @@ export function GamePage() {
             <article>
               <Database />
               <span className="state done">공개 공간자료</span>
-              <h2>성수동 실제 건물 경계</h2>
+              <h2>{lab.model.mapTitle ?? '성수동'} 공개 건물 경계</h2>
               <strong>
                 {activeMap?.buildings.length ?? '—'}
                 <small>개</small>
@@ -1098,8 +1117,8 @@ export function GamePage() {
           </ol>
           <h2>원화 예산과 시설 단가</h2>
           <p>
-            총 예산 {won(lab.model.budget)}. 진주상평 산업단지 공개 사업계획의 참고 단가입니다.
-            성수동 실제 견적이 아닙니다.
+            총 예산 {won(lab.model.budget)}. 진주상평 산업단지 공개 사업계획의 참고 단가입니다. 해당
+            지역의 실제 견적이 아닙니다.
           </p>
           <div className="placement-table">
             {(Object.keys(facilities) as FacilityType[]).map((t) => (

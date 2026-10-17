@@ -47,6 +47,9 @@ export interface Lab {
   model: {
     id: string;
     title: string;
+    mapId?: string;
+    mapTitle?: string;
+    regionalRainfallUse?: 'COMMON_OBSERVED_REPLAY_NOT_LOCAL_OBSERVATION';
     validationLevel: 'EXPLORATORY';
     officialEvaluationAvailable: false;
     simulationAvailable: boolean;

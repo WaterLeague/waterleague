@@ -14,7 +14,7 @@ const registryDto = z.object({
       })
     )
     .min(1)
-    .max(20),
+    .max(40),
 });
 async function read(path: string, signal: AbortSignal, expectedHash?: string): Promise<unknown> {
   const response = await fetch(path, { signal, credentials: 'same-origin' });

@@ -73,6 +73,10 @@ class ApiSecurityTests {
       String hash = model.path("modelHash").asString();
       String query = "?modelHash=" + hash;
       var response = get("/api/v1/references" + query);
+      if (model.path("mapId").asString().startsWith("seoul-osm-v1-")) {
+        assertThat(response.statusCode()).isEqualTo(404);
+        continue;
+      }
       assertThat(response.statusCode()).isEqualTo(200);
       var view = json.tree(response.body());
       var report = view.path("report");

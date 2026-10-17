@@ -7,13 +7,13 @@ const ring = z
 const polygons = z.array(z.array(ring).min(1)).min(1);
 const building = z
   .object({
-    id: z.string().regex(/^(way\/\d+|\d{9}:[A-Za-z0-9_-]{1,80})$/),
+    id: z.string().regex(/^((way|relation)\/\d+|\d{9}:[A-Za-z0-9_-]{1,80})$/),
     kind: z.literal('building'),
     name: z.string(),
     coordinates: z.array(point).default([]),
     polygons: polygons.optional(),
     geographicCoordinates: z.array(point).default([]),
-    heightM: z.number().positive().max(500),
+    heightM: z.number().positive().max(650),
     heightSource: z.enum(['OSM_TAG', 'LEVELS_ESTIMATE', 'VISUAL_ASSUMPTION']),
     displayAreaM2: z.number().positive(),
     center: point,
@@ -24,7 +24,7 @@ const building = z
 const transport = z.object({
   id: z.string(),
   kind: z.literal('transport'),
-  transportType: z.enum(['roads', 'railways', 'bridges']),
+  transportType: z.enum(['roads', 'railways', 'bridges', 'parking']),
   polygons,
 });
 const road = z.object({

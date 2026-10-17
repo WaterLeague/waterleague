@@ -2,10 +2,17 @@ import { lazy, Suspense, useCallback, useState, useRef } from 'react';
 import { ArrowRight, Search, RotateCcw, MapPin, Layers3 } from 'lucide-react';
 import { useCity, useCityTiles } from '../controller/useCity';
 import type { City, CityFocus } from '../entity/city';
+import type { CityPlayRegion } from '../dto/cityPlayDto';
 import { ErrorBoundary } from '../../../shared/exception/ErrorBoundary';
 import { polygonPath } from '../../catalog/service/mapGeometryService';
 const CityScene = lazy(() => import('./CityScene'));
-function Explorer({ city, onPlay }: { city: City; onPlay: () => void }) {
+type PlayProps = { busy: boolean; onPlay: (modelHash?: string) => void };
+function Explorer({
+  city,
+  regions,
+  onPlay,
+  busy,
+}: { city: City; regions: CityPlayRegion[] } & PlayProps) {
   const [selected, setSelected] = useState(''),
     [query, setQuery] = useState(''),
     [flat, setFlat] = useState(false),
@@ -38,6 +45,7 @@ function Explorer({ city, onPlay }: { city: City; onPlay: () => void }) {
     setFocus((p) => ({ center: [0, 0], distance: 35000, key: p.key + 1, overview: true }));
   }
   const district = city.districts.find((d) => d.id === selected);
+  const region = regions.find((r) => r.districtId === selected);
   const [west, south, east, north] = city.bounds;
   const plan = (
     <svg
@@ -121,20 +129,19 @@ function Explorer({ city, onPlay }: { city: City; onPlay: () => void }) {
         )}
         <div className="city-mission">
           <span className="city-mission-kicker">플레이 가능한 지역</span>
-          <h2>성수 · 연무장길</h2>
+          <h2>{region ? `${region.districtName} · 대표 블록` : '성수 · 연무장길'}</h2>
           <p>
-            관측 강우와 3종 시설로
+            {region ? '옥상 8곳 · 지상 5곳' : '관측 강우와 3종 시설로'}
             <br />첫 번째 설계에 도전하세요.
           </p>
-          <button onClick={onPlay}>
-            도전 선택 <ArrowRight size={18} />
+          <button disabled={busy} onClick={() => onPlay(region?.defaultModelHash)}>
+            {busy ? '도전 준비 중' : '이 지역에서 도전'} <ArrowRight size={18} />
           </button>
           <button
             className="city-locate"
             onClick={() => {
-              setSelected('2419953');
               setFocus((p) => ({
-                center: city.playAreas[0].center,
+                center: region?.center ?? city.playAreas[0].center,
                 distance: 800,
                 key: p.key + 1,
               }));
@@ -144,8 +151,8 @@ function Explorer({ city, onPlay }: { city: City; onPlay: () => void }) {
           </button>
         </div>
         <small className="city-model-note">
-          전역은 지도 탐색 단계입니다. 지역별 배치·계산 모델을 연결 중이며, 현재 계산은 성수
-          도전에서 가능합니다.
+          25개 구의 대표 블록에서 플레이할 수 있습니다. 구 전체 유역 계산은 아니며, 성동 관측 강우를
+          공통 조건으로 재생합니다.
         </small>
       </aside>
       <section className="city-stage" aria-label="서울 전역 3D 지도">
@@ -259,8 +266,8 @@ function Explorer({ city, onPlay }: { city: City; onPlay: () => void }) {
     </main>
   );
 }
-export function CityExplorer({ onPlay }: { onPlay: () => void }) {
-  const { city, error, retry } = useCity();
+export function CityExplorer({ onPlay, busy }: PlayProps) {
+  const { city, regions, error, retry } = useCity();
   if (!city)
     return (
       <main className="empty-state" role={error ? 'alert' : 'status'}>
@@ -273,5 +280,5 @@ export function CityExplorer({ onPlay }: { onPlay: () => void }) {
         )}
       </main>
     );
-  return <Explorer city={city} onPlay={onPlay} />;
+  return <Explorer city={city} regions={regions} onPlay={onPlay} busy={busy} />;
 }

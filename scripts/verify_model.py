@@ -42,12 +42,17 @@ for entry in json.loads((root/'data/models/catalog.json').read_text())['models']
  assert item['unitCosts']==model['unitCosts']
  if 'mapId' not in item:
   assert item['cells']==model['cells']
- else:
-  assert item['mapId']=='seongsu-ngii-2025-v2'
+ elif item['mapId']=='seongsu-ngii-2025-v2':
   assert item['mapSnapshotHash']==hashlib.sha256((root/'frontend/public/data/seongsu-ngii-v2.json').read_bytes()).hexdigest()
   assert item['candidateSnapshotHash']==hashlib.sha256((root/'data/derived/seongsu-topography-candidates-v2.json').read_bytes()).hexdigest()
   assert item['geometrySourceHash']==hashlib.sha256((root/'data/manifests/seongsu-topography-sources.json').read_bytes()).hexdigest()
   assert item['geometryModelGeneratorSha256']==hashlib.sha256((root/'scripts/prepare_topography_models.py').read_bytes()).hexdigest()
+ else:
+  assert item['mapId'].startswith('seoul-osm-v1-')
+  assert item['mapSnapshotHash']==hashlib.sha256((root/'frontend/public/data'/f"{item['mapId']}.json").read_bytes()).hexdigest()
+  assert item['geometrySourceHash']==json.loads((root/'data/manifests/seoul-city-v1.json').read_text())['sourceSha256']
+  assert item['geometryModelGeneratorSha256']==hashlib.sha256((root/'scripts/prepare_seoul_play_models.py').read_bytes()).hexdigest()
+  assert item['regionalRainfallUse']=='COMMON_OBSERVED_REPLAY_NOT_LOCAL_OBSERVATION'
  assert item['generatorSha256']==model['generatorSha256']
  assert rain['transformSha256']==model['rainfall']['transformSha256']
  assert len(rain['depthsMm'])>60 and all(x>=0 for x in rain['depthsMm'])
@@ -55,5 +60,7 @@ for entry in json.loads((root/'data/models/catalog.json').read_text())['models']
  assert (datetime.fromisoformat(rain['end'])-datetime.fromisoformat(rain['start'])).total_seconds()==len(rain['depthsMm'])*60
  if rain.get('sourceManifest'):
   assert rain['sourceHash']==json.loads((root/'data/manifests'/rain['sourceManifest']).read_text())['sha256']
-  assert rain==json.loads((root/'data/derived/rainfall'/f"{rain['id']}.json").read_text())
+  original=json.loads((root/'data/derived/rainfall'/f"{rain['id']}.json").read_text())
+  spatial={'stationDistanceKm','stationDistanceEvidence'} if item.get('regionalRainfallUse') else set()
+  assert {k:v for k,v in rain.items() if k not in spatial}=={k:v for k,v in original.items() if k not in spatial}
 print(f'모델 카탈로그 {len(models)}개·서버 원문·파생 강우 계보 검증 통과')

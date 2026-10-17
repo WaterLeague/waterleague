@@ -1,6 +1,7 @@
 import { CityError } from '../exception/CityError';
 import { mapCity, mapCityTile } from '../mapper/cityMapper';
 import type { CityTile, TileEntry } from '../entity/city';
+import { cityPlayDto } from '../dto/cityPlayDto';
 export const CITY_HASH = 'd988b2b86c73a2e577c5c2574fdd0e7e052f5f5a68ee090cd6643fa4deab6f41';
 export const CITY_PATH = '/data/seoul-v1/city.json';
 const cache = new Map<string, CityTile>();
@@ -22,6 +23,18 @@ async function read(path: string, expected: string, signal: AbortSignal, maximum
 }
 export async function loadCity(signal: AbortSignal) {
   return mapCity(await read(CITY_PATH, CITY_HASH, signal, 16000000));
+}
+export async function loadCityPlayRegions(signal: AbortSignal) {
+  const result = cityPlayDto.safeParse(
+    await read(
+      '/data/seoul-play-v1.json',
+      '64ef3940d12a6b629b1549ab908f3158293df4f51b36e7035c90c28bfe21f944',
+      signal,
+      100000
+    )
+  );
+  if (!result.success) throw new CityError('INVALID_DATA');
+  return result.data.regions;
 }
 export async function loadCityTile(entry: TileEntry, signal: AbortSignal) {
   const cached = cache.get(entry.sha256);

@@ -1,25 +1,37 @@
 import { useEffect, useState } from 'react';
 import type { City, CityTile } from '../entity/city';
-import { loadCity, loadCityTile } from '../repository/cityRepository';
+import { loadCity, loadCityTile, loadCityPlayRegions } from '../repository/cityRepository';
+import type { CityPlayRegion } from '../dto/cityPlayDto';
+import { CityError } from '../exception/CityError';
 import { errorMessage } from '../../../shared/exception/ApiError';
 import { nearbyTiles } from '../service/cityService';
 export function useCity() {
   const [city, setCity] = useState<City | null>(null),
+    [regions, setRegions] = useState<CityPlayRegion[]>([]),
     [error, setError] = useState(''),
     [attempt, setAttempt] = useState(0);
   useEffect(() => {
     const controller = new AbortController();
     setError('');
-    void loadCity(controller.signal)
-      .then((v) => {
-        if (!controller.signal.aborted) setCity(v);
+    void Promise.all([loadCity(controller.signal), loadCityPlayRegions(controller.signal)])
+      .then(([v, play]) => {
+        if (
+          play.some(
+            (r) => !v.districts.some((d) => d.id === r.districtId && d.name === r.districtName)
+          )
+        )
+          throw new CityError('INVALID_DATA');
+        if (!controller.signal.aborted) {
+          setRegions(play);
+          setCity(v);
+        }
       })
       .catch((e) => {
         if (!controller.signal.aborted) setError(errorMessage(e));
       });
     return () => controller.abort();
   }, [attempt]);
-  return { city, error, retry: () => setAttempt((v) => v + 1) };
+  return { city, regions, error, retry: () => setAttempt((v) => v + 1) };
 }
 export function useCityTiles(city: City, camera: { center: [number, number]; distance: number }) {
   const [tiles, setTiles] = useState<CityTile[]>([]),

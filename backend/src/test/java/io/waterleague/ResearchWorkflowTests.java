@@ -338,7 +338,7 @@ class ResearchWorkflowTests {
   void separatesRainfallVersionsBoardsAndLeagueModels() throws Exception {
     var player = actor(null);
     var catalog = ok(player, "GET", "/lab/catalog", null, 200).get("models");
-    assertThat(catalog.size()).isEqualTo(8);
+    assertThat(catalog.size()).isEqualTo(8 + 25 * 3);
     String first = catalog.get(1).get("modelHash").asString();
     String second = catalog.get(2).get("modelHash").asString();
     assertThat(

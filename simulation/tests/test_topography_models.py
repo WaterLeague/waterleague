@@ -31,7 +31,7 @@ class TopographyModelTests(unittest.TestCase):
         buildings = {b['id']: b for b in snapshot['features'] if b['kind'] == 'building'}
         self.assertEqual(len(buildings), 246)
         candidates = json.loads((ROOT/'data/derived/seongsu-topography-candidates-v2.json').read_text())
-        for entry in catalog['models'][4:]:
+        for entry in catalog['models'][4:8]:
             model = json.loads((ROOT/'data/models'/entry['file']).read_text())
             self.assertEqual(model['mapSnapshotHash'], new_map['sha256'])
             self.assertEqual(model['geometrySourceHash'], snapshot['sourceHash'])
@@ -60,7 +60,7 @@ class TopographyModelTests(unittest.TestCase):
     @unittest.skipUnless(library_path().exists(), 'EPA 엔진 빌드 필요')
     def test_observed_rain_new_geometry_all_facilities_and_reproduction(self):
         catalog = json.loads((ROOT/'data/models/catalog.json').read_text())
-        for entry in catalog['models'][4:]:
+        for entry in catalog['models'][4:8]:
             model = json.loads((ROOT/'data/models'/entry['file']).read_text())
             placements = [{'cellId': 'R1', 'facilityType': 'GREEN_ROOF', 'areaM2': 100},
                           {'cellId': 'G1', 'facilityType': 'RAIN_GARDEN', 'areaM2': 20},

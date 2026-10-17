@@ -219,6 +219,10 @@ export function useGame() {
       JSON.stringify(lab.model.unitCosts) === JSON.stringify(next.model.unitCosts) &&
       lab.model.budget === next.model.budget;
     setLab(next);
+    if (!compatible) {
+      setTitle((next.model.mapTitle ?? '성수') + ' 빗물 설계');
+      setNote('');
+    }
     setVersion(null);
     setJob(null);
     setEvaluatedVersion(null);

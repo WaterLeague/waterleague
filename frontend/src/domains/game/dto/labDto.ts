@@ -7,6 +7,9 @@ export const labDto = z.object({
   model: z.object({
     id: z.string(),
     title: z.string(),
+    mapId: z.string().optional(),
+    mapTitle: z.string().optional(),
+    regionalRainfallUse: z.literal('COMMON_OBSERVED_REPLAY_NOT_LOCAL_OBSERVATION').optional(),
     validationLevel: z.literal('EXPLORATORY'),
     officialEvaluationAvailable: z.literal(false),
     simulationAvailable: z.boolean(),

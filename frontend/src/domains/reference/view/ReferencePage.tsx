@@ -16,8 +16,19 @@ export function ReferencePage({
   busy: boolean;
   onCopy: (plan: ReferencePlan) => void;
 }) {
-  const { data, error, retry } = useReference(lab.modelHash);
+  const { data, error, retry, unavailable } = useReference(lab.modelHash);
   const [index, setIndex] = useState(0);
+  if (unavailable)
+    return (
+      <section className="full-page">
+        <div className="page-eyebrow">COMPUTED REFERENCE</div>
+        <h1>이 지역의 CPU 기준안은 아직 없습니다.</h1>
+        <p>
+          직접 배치한 설계는 저장·계산할 수 있습니다. CPU 기준안은 이 지역의 지도와 강우로 별도
+          계산한 뒤 제공됩니다.
+        </p>
+      </section>
+    );
   if (error)
     return (
       <section className="full-page">
