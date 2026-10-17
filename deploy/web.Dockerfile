@@ -6,6 +6,7 @@ RUN pnpm install --frozen-lockfile
 COPY frontend/ ./
 COPY data/models/ /build/data/models/
 COPY data/derived/cpu-reference.json /build/data/derived/cpu-reference.json
+COPY data/derived/cpu-reference-ngii-v2.json /build/data/derived/cpu-reference-ngii-v2.json
 COPY simulation/tests/fixtures/pattern-search-v1.json /build/simulation/tests/fixtures/pattern-search-v1.json
 RUN pnpm build
 

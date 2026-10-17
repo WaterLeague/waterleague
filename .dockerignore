@@ -23,6 +23,7 @@ frontend/qa/
 !data/models/**
 !data/derived/
 !data/derived/cpu-reference.json
+!data/derived/cpu-reference-ngii-v2.json
 !deploy/
 !deploy/**
 **/.env
