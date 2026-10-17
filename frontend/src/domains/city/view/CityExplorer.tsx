@@ -1,5 +1,17 @@
-import { lazy, Suspense, useCallback, useState, useRef, useMemo } from 'react';
-import { RotateCcw, MapPin, Layers3, CloudRain, Leaf, Grid2X2, House, List, X } from 'lucide-react';
+import { lazy, Suspense, useEffect, useCallback, useState, useRef, useMemo } from 'react';
+import {
+  RotateCcw,
+  MapPin,
+  Layers3,
+  CloudRain,
+  Leaf,
+  Grid2X2,
+  House,
+  List,
+  X,
+  Trophy,
+  ArrowLeft,
+} from 'lucide-react';
 import { useCity, useCityTiles } from '../controller/useCity';
 import type { City, CityFocus, CityBuilding } from '../entity/city';
 import type { CityEligibility } from '../dto/cityEligibilityDto';
@@ -32,12 +44,16 @@ import { useReducedMotion } from '../../catalog/controller/useReducedMotion';
 import { useBudget } from '../../budget/controller/useBudget';
 import { useWeekly } from '../../weekly/controller/useWeekly';
 import { WeeklyBoard, scoreFormat } from '../../weekly/view/WeeklyBoard';
+import { GameClock } from '../../game/view/GameClock';
 const CityScene = lazy(() => import('./CityScene'));
 type PlayProps = {
   account: Account | null;
   onLogin: () => void;
   onAccount: (a: Account) => void;
   mode?: 'shared' | 'historical';
+  initialDistrictId?: string;
+  eventId?: string;
+  onExit?: () => void;
 };
 function Explorer({
   city,
@@ -47,6 +63,9 @@ function Explorer({
   onLogin,
   onAccount,
   mode = 'shared',
+  initialDistrictId = '',
+  eventId = '',
+  onExit,
 }: { city: City; regions: CityPlayRegion[]; eligibility: CityEligibility } & PlayProps) {
   const researchMode = mode === 'historical';
   const [budgetRevision, setBudgetRevision] = useState(0);
@@ -57,8 +76,11 @@ function Explorer({
     const score = weekly.value?.current.districts.find((d) => d.districtId === id);
     return score?.rank ? `${score.rank}위 · ${scoreFormat.format(score.scoreM3)}m³` : '평가 대기';
   };
-  const [selected, setSelected] = useState(researchMode ? (account?.districtId ?? '2419953') : '');
-  const research = useHistorical(researchMode, selected, account, budget.value);
+  const [selected, setSelected] = useState(
+    researchMode ? (account?.districtId ?? '2419953') : initialDistrictId
+  );
+  const research = useHistorical(researchMode, selected, account, budget.value, eventId);
+  const [rankingOpen, setRankingOpen] = useState(false);
   const ownDistrictId = researchMode ? null : account?.districtId;
   const viewerId = researchMode
     ? (account?.id ?? '00000000-0000-0000-0000-000000000000')
@@ -100,6 +122,9 @@ function Explorer({
     key: 0,
     overview: true,
   });
+  useEffect(() => {
+    if (initialDistrictId && !researchMode) select(initialDistrictId);
+  }, [initialDistrictId, researchMode]);
   const [camera, setCamera] = useState<{ center: [number, number]; distance: number }>({
     center: [0, 0],
     distance: 35000,
@@ -434,8 +459,13 @@ function Explorer({
     <main className="studio-layout play-layout shared-play-layout">
       <header className="play-hud">
         <div className="play-objective">
-          <span>WATER LEAGUE / {researchMode ? '재해 모드' : '서울 공동 모드'}</span>
-          <h1>{district?.name ?? '서울, 함께 바꾸는 물길'}</h1>
+          <span>WATER LEAGUE / {researchMode ? '재해 모드' : '주간 서울 대항전'}</span>
+          <h1>
+            {researchMode
+              ? `${research.event?.eventDate.replaceAll('-', '. ') ?? ''} 집중호우`
+              : '주간 서울 대항전'}
+            {district && <small className="game-district-name"> · {district.name}</small>}
+          </h1>
           <small>
             {researchMode
               ? '서울 전역의 공개 후보에 설계하고, 관측 강우로 비교하세요.'
@@ -443,6 +473,13 @@ function Explorer({
           </small>
         </div>
         <div className="play-resources">
+          {!researchMode && <GameClock />}
+          {researchMode && (
+            <button className="disaster-back" onClick={onExit}>
+              <ArrowLeft size={15} />
+              재난 다시 선택
+            </button>
+          )}
           <span>
             {researchMode
               ? '연구 남은 예산'
@@ -496,6 +533,12 @@ function Explorer({
               <List size={15} />
               위치 목록
             </button>
+            {!researchMode && (
+              <button aria-expanded={rankingOpen} onClick={() => setRankingOpen((v) => !v)}>
+                <Trophy size={15} />
+                주간 순위
+              </button>
+            )}
           </div>
         </div>
         <section className="city-stage" aria-label="서울 전역 3D 지도">
@@ -629,6 +672,8 @@ function Explorer({
                   ? new Date(research.at).toLocaleTimeString('ko-KR', {
                       hour: '2-digit',
                       minute: '2-digit',
+                      second: '2-digit',
+                      hourCycle: 'h23',
                       timeZone: 'Asia/Seoul',
                     }) +
                     ' · 1분 ' +
@@ -824,9 +869,7 @@ function Explorer({
             {city.attribution}
           </a>
         </section>
-        {researchMode ? (
-          <HistoricalTimeline state={research} />
-        ) : (
+        {!researchMode && (
           <details className="shared-rain-details">
             <summary>
               <CloudRain size={15} />
@@ -837,17 +880,20 @@ function Explorer({
         )}
       </div>
       {researchMode ? (
-        <HistoricalPanel
-          state={research}
-          site={site}
-          type={type}
-          area={area}
-          onType={setType}
-          onArea={setArea}
-          onLogin={onLogin}
-          authenticated={!!account}
-          error={selectionError || budget.error}
-        />
+        <div className="historical-side game-side-panel">
+          <HistoricalTimeline state={research} />
+          <HistoricalPanel
+            state={research}
+            site={site}
+            type={type}
+            area={area}
+            onType={setType}
+            onArea={setArea}
+            onLogin={onLogin}
+            authenticated={!!account}
+            error={selectionError || budget.error}
+          />
+        </div>
       ) : (
         <SharedDistrictPanel
           account={account}
@@ -884,13 +930,25 @@ function Explorer({
           }}
         />
       )}
-      {!researchMode && (
-        <WeeklyBoard
-          value={weekly.value}
-          error={weekly.error}
-          ownDistrictId={ownDistrictId ?? null}
-          onDistrict={select}
-        />
+      {!researchMode && rankingOpen && (
+        <section className="weekly-drawer" aria-label="주간 순위 패널">
+          <button
+            className="weekly-drawer-close"
+            aria-label="주간 순위 닫기"
+            onClick={() => setRankingOpen(false)}
+          >
+            <X size={18} />
+          </button>
+          <WeeklyBoard
+            value={weekly.value}
+            error={weekly.error}
+            ownDistrictId={ownDistrictId ?? null}
+            onDistrict={(id) => {
+              select(id);
+              setRankingOpen(false);
+            }}
+          />
+        </section>
       )}
       <footer className="city-source-note">
         공개자료 기준 {city.sourceDate} · 건물 높이는 태그·층수 환산·표현용 가정 · 지면 평탄화 ·
@@ -899,7 +957,15 @@ function Explorer({
     </main>
   );
 }
-export function CityExplorer({ account, onLogin, onAccount, mode = 'shared' }: PlayProps) {
+export function CityExplorer({
+  account,
+  onLogin,
+  onAccount,
+  mode = 'shared',
+  eventId,
+  onExit,
+  initialDistrictId,
+}: PlayProps) {
   const { city, regions, eligibility, error, retry } = useCity();
   if (!city || !eligibility)
     return (
@@ -917,6 +983,9 @@ export function CityExplorer({ account, onLogin, onAccount, mode = 'shared' }: P
     <Explorer
       key={mode}
       mode={mode}
+      initialDistrictId={initialDistrictId}
+      eventId={eventId}
+      onExit={onExit}
       city={city}
       eligibility={eligibility}
       regions={regions}

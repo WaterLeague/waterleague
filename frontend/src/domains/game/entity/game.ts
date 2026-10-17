@@ -138,19 +138,6 @@ export interface Job {
   modelHash: string;
   inputHash: string;
 }
-export interface Board {
-  modelHash: string;
-  official: false;
-  title: string;
-  entries: {
-    displayName: string;
-    rank: number;
-    score: number;
-    cost: number;
-    submittedAt: string;
-  }[];
-}
-
 export interface RainfallCatalog {
   defaultModelHash: string;
   models: {

@@ -46,10 +46,15 @@ import { RoundReport } from './RoundReport';
 import { matchesEvaluatedDesign } from '../service/roundService';
 import { assessPlacementDraft } from '../service/placementDraftService';
 import { PlayGuide } from './PlayGuide';
+import { DisasterMode } from '../../disaster/view/DisasterMode';
+import { FullscreenButton } from './FullscreenButton';
+import './game-viewport.css';
 import { CityExplorer } from '../../city/view/CityExplorer';
 const icons = { RAIN_GARDEN: Leaf, PERMEABLE_PAVEMENT: Grid2X2, GREEN_ROOF: House };
 export function GamePage() {
   const g = useGame();
+  const shell = useRef<HTMLDivElement>(null);
+  const [cityDistrict, setCityDistrict] = useState('');
   const catalog = useCatalog();
   const [tab, setTab] = useState<
     'city' | 'missions' | 'studio' | 'leaderboard' | 'research' | 'data' | 'admin'
@@ -201,7 +206,10 @@ export function GamePage() {
       />
     ) : null;
   return (
-    <div className={`game-shell${tab === 'studio' ? ' in-play' : ''}`}>
+    <div
+      ref={shell}
+      className={`game-shell${['city', 'missions', 'studio'].includes(tab) ? ' is-game' : ''}${tab === 'studio' ? ' in-play' : ''}`}
+    >
       <header className="topbar">
         <a className="wordmark" href="/" aria-label="WATER LEAGUE 홈">
           <svg width="31" height="31" viewBox="0 0 32 32" fill="none" aria-hidden="true">
@@ -222,7 +230,7 @@ export function GamePage() {
                 ['data', '데이터'],
               ] as const)
             : ([
-                ['city', '서울 지도'],
+                ['city', '주간 서울 대항전'],
                 ['missions', '재해 모드'],
                 ...(tab === 'studio' ? ([['studio', '플레이']] as const) : []),
                 ['leaderboard', '기록 경쟁'],
@@ -244,6 +252,7 @@ export function GamePage() {
           ))}
         </nav>
         <div className="topbar-end">
+          {['city', 'missions', 'studio'].includes(tab) && <FullscreenButton target={shell} />}
           {g.account ? (
             <>
               <span className="account-name">
@@ -274,7 +283,7 @@ export function GamePage() {
           )}
         </div>
       </header>
-      {(tab === 'leaderboard' || tab === 'data') && rainfallContext}
+      {tab === 'data' && rainfallContext}
       {activeLeague && tab === 'studio' && (
         <div className="active-league-banner">
           <div>
@@ -319,6 +328,7 @@ export function GamePage() {
       {tab === 'city' ? (
         <CityExplorer
           key="shared"
+          initialDistrictId={cityDistrict}
           account={g.account}
           onLogin={() => setAuth(true)}
           onAccount={g.setAccount}
@@ -341,13 +351,7 @@ export function GamePage() {
       ) : tab === 'admin' && g.account?.role === 'ADMIN' ? (
         <ApprovalPage key={g.account.id} />
       ) : tab === 'missions' ? (
-        <CityExplorer
-          key="historical"
-          mode="historical"
-          account={g.account}
-          onLogin={() => setAuth(true)}
-          onAccount={g.setAccount}
-        />
+        <DisasterMode account={g.account} onLogin={() => setAuth(true)} onAccount={g.setAccount} />
       ) : tab === 'studio' ? (
         <div className="studio-layout play-layout">
           <header className="play-hud">
@@ -954,17 +958,12 @@ export function GamePage() {
         <CompetitionPage
           account={g.account}
           lab={lab}
-          initialLeague={!!activeLeague}
-          version={g.version}
-          catalog={g.rainfallCatalog}
-          onStudio={() => setTab('studio')}
-          onOpen={(id) => {
-            void g.open(id).then(() => {
-              setActiveLeague(null);
-              setSelected(null);
-              setTab('studio');
-            });
+          onWeeklyDistrict={(id) => {
+            setCityDistrict(id);
+            setTab('city');
           }}
+          submittedConditions={rainfallContext}
+          initialLeague={!!activeLeague}
           onDesign={(l) => {
             void g.action(async () => {
               if (!(await g.selectModel(l.rules.modelHash, false))) return;

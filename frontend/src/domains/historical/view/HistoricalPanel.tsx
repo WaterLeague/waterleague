@@ -12,27 +12,16 @@ const time = (s: string) =>
     day: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
+    second: '2-digit',
+    hourCycle: 'h23',
     timeZone: 'Asia/Seoul',
   });
 export function HistoricalTimeline({ state: s }: { state: HistoricalState }) {
   return (
     <section className="historical-weather" aria-label="재해 강우 재생">
-      <label>
-        재해 기록
-        <select
-          aria-label="재해 사건 선택"
-          value={s.eventId}
-          disabled={!s.events.length}
-          onChange={(e) => s.setEventId(e.target.value)}
-        >
-          {!s.events.length && <option value="">재해 기록 불러오는 중</option>}
-          {s.events.map((e) => (
-            <option key={e.id} value={e.id}>
-              {e.title}
-            </option>
-          ))}
-        </select>
-      </label>
+      <strong>
+        {s.event ? s.event.eventDate.replaceAll('-', '. ') + ' 집중호우' : '재해 기록 불러오는 중'}
+      </strong>
       {s.event && (
         <div className="historical-event-note">
           <p>{s.event.summary}</p>
@@ -67,9 +56,9 @@ export function HistoricalTimeline({ state: s }: { state: HistoricalState }) {
                 value={s.speed}
                 onChange={(e) => s.setSpeed(Number(e.target.value))}
               >
-                {[1, 4, 15, 60].map((v) => (
+                {[1, 60, 240, 900, 3600].map((v) => (
                   <option key={v} value={v}>
-                    {v}분/초
+                    {v === 1 ? '1배속 · 실제 시간' : `${v}배속`}
                   </option>
                 ))}
               </select>
@@ -79,10 +68,10 @@ export function HistoricalTimeline({ state: s }: { state: HistoricalState }) {
             type="range"
             aria-label="재해 강우 재생 시각"
             min="0"
-            max={s.frameCount - 1}
-            value={s.index}
+            max={s.duration}
+            value={s.elapsedSeconds}
             onChange={(e) => {
-              s.setIndex(Number(e.target.value));
+              s.setElapsedSeconds(Number(e.target.value));
               s.setPlaying(false);
             }}
           />

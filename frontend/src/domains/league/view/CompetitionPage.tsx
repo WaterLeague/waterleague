@@ -1,29 +1,26 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
 import type { Account } from '../../account/entity/account';
-import type { Lab, Version, RainfallCatalog } from '../../game/entity/game';
+import type { Lab } from '../../game/entity/game';
 import type { League } from '../entity/league';
-import { Leaderboard } from '../../game/view/Leaderboard';
+import { WeeklyBoard } from '../../weekly/view/WeeklyBoard';
+import { useWeekly } from '../../weekly/controller/useWeekly';
 import { LeaguePage } from './LeaguePage';
-import { ComparisonPage } from '../../comparison/view/ComparisonPage';
 export function CompetitionPage({
   account,
   lab,
   onDesign,
   initialLeague = false,
-  version,
-  catalog,
-  onOpen,
-  onStudio,
+  onWeeklyDistrict,
+  submittedConditions,
 }: {
   account: Account | null;
   lab: Lab;
   onDesign: (l: League) => void;
+  onWeeklyDistrict: (id: string) => void;
+  submittedConditions: ReactNode;
   initialLeague?: boolean;
-  version: Version | null;
-  catalog: RainfallCatalog | null;
-  onOpen: (id: string) => void;
-  onStudio: () => void;
 }) {
+  const weekly = useWeekly(true, account?.id ?? null);
   const [mode, setMode] = useState(initialLeague ? 'leagues' : 'general');
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
@@ -36,7 +33,7 @@ export function CompetitionPage({
           aria-pressed={mode === 'general'}
           onClick={() => setMode('general')}
         >
-          일반 탐색 기록
+          주간 서울 대항전
         </button>
         <button
           className={mode === 'leagues' ? 'active' : ''}
@@ -45,33 +42,24 @@ export function CompetitionPage({
         >
           기관 리그
         </button>
-        <button
-          className={mode === 'comparison' ? 'active' : ''}
-          aria-pressed={mode === 'comparison'}
-          onClick={() => setMode('comparison')}
-        >
-          내 강우 비교
-        </button>
       </div>
       {mode === 'general' ? (
-        <Leaderboard key={lab.modelHash} lab={lab} />
-      ) : mode === 'comparison' ? (
-        catalog ? (
-          <ComparisonPage
+        <WeeklyBoard
+          value={weekly.value}
+          error={weekly.error}
+          ownDistrictId={account?.districtId ?? null}
+          onDistrict={onWeeklyDistrict}
+        />
+      ) : (
+        <>
+          {submittedConditions}
+          <LeaguePage
             key={account?.id ?? 'guest'}
             account={account}
-            version={version}
-            catalog={catalog}
-            onOpen={onOpen}
-            onStudio={onStudio}
+            lab={lab}
+            onDesign={onDesign}
           />
-        ) : (
-          <p className="full-page" role="status">
-            강우 목록을 불러오는 중입니다.
-          </p>
-        )
-      ) : (
-        <LeaguePage key={account?.id ?? 'guest'} account={account} lab={lab} onDesign={onDesign} />
+        </>
       )}
     </>
   );

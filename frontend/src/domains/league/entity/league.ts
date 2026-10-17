@@ -1,4 +1,4 @@
-import type { FacilityType, Lab, Board } from '../../game/entity/game';
+import type { FacilityType, Lab } from '../../game/entity/game';
 export interface LeagueRules {
   schemaVersion: 1 | 2 | 3;
   modelHash: string;
@@ -48,7 +48,13 @@ export interface League {
 export interface LeagueDetail {
   league: League;
   lab: Lab;
-  entries: Board['entries'];
+  entries: {
+    displayName: string;
+    rank: number;
+    score: number;
+    cost: number;
+    submittedAt: string;
+  }[];
   boardVisible?: boolean;
 }
 export interface LeagueDraft {

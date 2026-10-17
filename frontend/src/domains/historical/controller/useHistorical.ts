@@ -1,3 +1,4 @@
+import { playbackSecond, rainfallFrame } from '../service/playbackService';
 import { useEffect, useRef, useState } from 'react';
 import { loadLab } from '../../game/repository/gameRepository';
 import type { Lab, FacilityType } from '../../game/entity/game';
@@ -15,18 +16,24 @@ export function useHistorical(
   enabled: boolean,
   districtId: string,
   account: Account | null,
-  budget: Budget | null
+  budget: Budget | null,
+  initialEventId: string
 ) {
   const [catalog, setCatalog] = useState<DisasterCatalog | null>(null);
-  const [eventId, setEventId] = useState('seoul-20220808');
+  const eventId = initialEventId;
   const [lab, setLab] = useState<Lab | null>(null);
   const [drafts, setDrafts] = useState<HistoricalDraft[]>([]);
   const [job, setJob] = useState<HistoricalJob | null>(null);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
-  const [index, setIndex] = useState(0),
+  const [elapsedSeconds, setElapsedSeconds] = useState(0),
     [playing, setPlaying] = useState(true);
-  const [speed, setSpeed] = useState(4);
+  const [seekRevision, setSeekRevision] = useState(0);
+  const seek = (second: number) => {
+    setElapsedSeconds(second);
+    setSeekRevision((v) => v + 1);
+  };
+  const [speed, setSpeed] = useState(1);
   const accountId = useRef(account?.id);
   const epoch = useRef(0);
   const pendingRequest = useRef<{ fingerprint: string; id: string } | null>(null);
@@ -35,6 +42,11 @@ export function useHistorical(
   const hash = selectedRain?.modelHash ?? '';
   const timeline = event?.regions[0];
   const frameCount = timeline?.depthsMm.length ?? 0;
+  const duration = frameCount * 60;
+  const index = rainfallFrame(elapsedSeconds, frameCount);
+  const setIndex = (minute: number) => seek(minute * 60);
+  const clockAnchor = useRef(0);
+  clockAnchor.current = elapsedSeconds;
   const wetKey =
     event?.regions
       .filter((r) => (r.depthsMm[index] ?? 0) > 0)
@@ -57,7 +69,7 @@ export function useHistorical(
     };
   }, [enabled]);
   useEffect(() => {
-    setIndex(0);
+    setElapsedSeconds(0);
     setPlaying(true);
     setJob(null);
   }, [eventId]);
@@ -94,15 +106,16 @@ export function useHistorical(
   }, [account?.id]);
   useEffect(() => {
     if (!playing || !frameCount || !enabled) return;
+    const beganAt = performance.now();
+    const beganSecond = clockAnchor.current;
     const timer = setInterval(() => {
-      if (document.hidden) return;
-      setIndex((i) => Math.min(frameCount - 1, i + speed));
-    }, 1000);
+      setElapsedSeconds(playbackSecond(beganSecond, performance.now() - beganAt, speed, duration));
+    }, 250);
     return () => clearInterval(timer);
-  }, [enabled, playing, frameCount, speed]);
+  }, [enabled, playing, frameCount, speed, duration, seekRevision, eventId]);
   useEffect(() => {
-    if (frameCount && index >= frameCount - 1) setPlaying(false);
-  }, [index, frameCount]);
+    if (duration && elapsedSeconds >= duration) setPlaying(false);
+  }, [elapsedSeconds, duration]);
   useEffect(() => {
     if (!job || !['QUEUED', 'RUNNING'].includes(job.state)) return;
     let active = true,
@@ -197,7 +210,7 @@ export function useHistorical(
   }
   const rainMm = selectedRain?.depthsMm[index] ?? 0;
   const at = timeline
-    ? new Date(Date.parse(timeline.start) + (index + 1) * 60000).toISOString()
+    ? new Date(Date.parse(timeline.start) + elapsedSeconds * 1000).toISOString()
     : null;
   const currentResult =
     job?.modelHash === lab?.modelHash && job?.districtId === districtId ? job.result : null;
@@ -206,9 +219,11 @@ export function useHistorical(
     events: catalog?.events ?? [],
     event,
     eventId,
-    setEventId,
     selectedRain,
     frameCount,
+    elapsedSeconds,
+    setElapsedSeconds: seek,
+    duration,
     wetKey,
     hash,
     drafts,
