@@ -34,7 +34,7 @@ def main():
     paths = [Path(__file__), ROOT / 'scripts/build_network_swmm.py', ROOT / 'scripts/build_live_swmm.py',
              ROOT / 'simulation/waterleague_sim/reference/flood_cases.py',
              *[ROOT / 'simulation/waterleague_sim/engine' / f'{name}.py' for name in (
-                'coupled_flood', 'flood_metrics', 'network_metrics', 'network', 'network_exchange',
+                'coupled_flood', 'flood_metrics', 'network_metrics', 'network', 'network_quality', 'network_exchange',
                 'surface', 'surface_exchange', 'flood_process', 'flood_errors', 'swmm')],
              *[ROOT / 'simulation/native' / f'{name}.inc' for name in (
                 'network_snapshot', 'network_exchange', 'network_metrics')],

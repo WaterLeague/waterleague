@@ -106,3 +106,34 @@ def coupled_limited_case():
     model['surface']['maxStepSeconds'] = .1
     model['ports'][0]['surfaceTriangles'] = list(range(len(model['surface']['triangles'])))
     return model
+
+
+def conduit_drainage_case(segments=1, *, route_ms=1, drop_m=0., flow_m3s=.05):
+    """동일한 건조 초기 상태·총 관로 길이·유입량의 수치 분할 비교 입력."""
+    if type(segments) is not int or not 1 <= segments <= 100 or route_ms not in (1, 2, 5, 10):
+        raise ValueError('수치 사례 분할 범위 오류')
+    model = coupled_case(initial_network=0., conduit=True)
+    text = model['network']['inputText']
+    text = text.replace('ROUTING_STEP 0.01', f'ROUTING_STEP {route_ms / 1000}')
+    text = text.replace('MINIMUM_STEP 0.01', f'MINIMUM_STEP {route_ms / 1000}')
+    text = text.replace('MAX_TRIALS 40', 'MAX_TRIALS 200')
+    text = text.replace('OUT 0 FIXED 0 NO', f'OUT {-drop_m} FIXED {-drop_m} NO')
+    nodes = ['TANK', *[f'J{i}' for i in range(1, segments)], 'OUT']
+    links = '\n'.join(f'P{i} {nodes[i]} {nodes[i+1]} {10 / segments} .013 0 0 0 0'
+                      for i in range(segments))
+    sections = '\n'.join(f'P{i} CIRCULAR .15 0 0 0 1' for i in range(segments))
+    text = text.replace('PIPE TANK OUT 10 0.013 0 0 0 0', links)
+    text = text.replace('PIPE CIRCULAR 0.15 0 0 0 1', sections)
+    if segments > 1:
+        text += '\n[JUNCTIONS]\n' + '\n'.join(
+            f'J{i} {-drop_m*i/segments} 5 0 0 0' for i in range(1, segments)) + '\n'
+    text += f'''\n[INFLOWS]
+TANK FLOW LOAD FLOW 1.0 1.0
+[TIMESERIES]
+LOAD 01/01/2020 00:00:00 {flow_m3s}
+LOAD 01/01/2020 00:00:30 {flow_m3s}
+LOAD 01/01/2020 00:00:31 0
+LOAD 01/01/2020 00:02:01 0
+'''
+    model['network']['inputText'] = text
+    return model

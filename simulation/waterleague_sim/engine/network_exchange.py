@@ -5,6 +5,7 @@ import math
 
 from waterleague_sim.engine.flood_errors import require
 from waterleague_sim.engine import network
+from waterleague_sim.engine.network_quality import convergence_state
 
 
 def library_path():
@@ -22,7 +23,9 @@ def identity():
             and build.get('exchangeSha256') == network.sha256(network.ROOT / 'simulation/native/network_exchange.inc'),
             'EXCHANGE_ENGINE_IDENTITY_MISMATCH')
     return build | {'adapterSha256': network.sha256(__file__),
-                    'baseAdapterSha256': network.sha256(network.__file__)}
+                    'baseAdapterSha256': network.sha256(network.__file__),
+                    'qualityAdapterSha256': network.sha256(
+                        network.ROOT / 'simulation/waterleague_sim/engine/network_quality.py')}
 
 
 class ExchangeNetworkSession(network.NetworkSession):
@@ -99,7 +102,7 @@ class ExchangeNetworkSession(network.NetworkSession):
             # 같은 단계의 경계 입력은 결합 원장에 한 번 보존한다.
             self.lib.swmm_setValue(304, self.nodes[row['outfall']], heads[row['id']] / self.length_scale)
         self._check(self.lib.wl_exchangeAdvance(milliseconds))
-        result = {'totals': self._totals()}
+        result = {'totals': self._totals(), 'convergence': convergence_state(self.lib)}
         require(math.isclose(result['totals']['timeSeconds'], before + milliseconds / 1000,
                              abs_tol=1e-8, rel_tol=0), 'EXCHANGE_NETWORK_TIME_MISMATCH')
         return {'network': result, 'ports': self.port_state(heads)}

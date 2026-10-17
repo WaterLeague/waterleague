@@ -38,6 +38,7 @@ def main():
                     ROOT / 'simulation/waterleague_sim/engine/flood_process.py',
                     ROOT / 'simulation/waterleague_sim/engine/flood_metrics.py',
                     ROOT / 'simulation/waterleague_sim/engine/network.py',
+                    ROOT / 'simulation/waterleague_sim/engine/network_quality.py',
                     ROOT / 'simulation/waterleague_sim/engine/surface.py',
                     ROOT / 'simulation/native/network_snapshot.inc',
                     ROOT / 'simulation/pyproject.toml', ROOT / 'simulation/uv.lock',

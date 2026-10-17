@@ -30,7 +30,9 @@ def identity():
                 'NETWORK_METRICS_IDENTITY_MISMATCH')
     return build | {'adapterSha256': network.sha256(__file__),
                     'exchangeAdapterSha256': network.sha256(network_exchange.__file__),
-                    'baseAdapterSha256': network.sha256(network.__file__)}
+                    'baseAdapterSha256': network.sha256(network.__file__),
+                    'qualityAdapterSha256': network.sha256(
+                        network.ROOT / 'simulation/waterleague_sim/engine/network_quality.py')}
 
 
 class MetricsNetworkSession(network_exchange.ExchangeNetworkSession):

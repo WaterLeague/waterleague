@@ -11,6 +11,7 @@ import threading
 
 from waterleague_sim.engine.flood_errors import require
 from waterleague_sim.engine.swmm import ROOT, REVISION
+from waterleague_sim.engine.network_quality import convergence_state, routing_balance, assess
 
 FT3_TO_M3 = 0.3048 ** 3
 _LOCK = threading.Lock()
@@ -40,7 +41,8 @@ def identity():
             and build.get('binarySha256') == sha256(path)
             and build.get('observerSha256') == sha256(ROOT / 'simulation/native/network_snapshot.inc'),
             'NETWORK_ENGINE_IDENTITY_MISMATCH')
-    return build | {'adapterSha256': sha256(__file__), 'platform': platform.platform()}
+    return build | {'adapterSha256': sha256(__file__), 'platform': platform.platform(),
+                    'qualityAdapterSha256': sha256(Path(__file__).with_name('network_quality.py'))}
 
 
 class NetworkSession:
@@ -244,6 +246,7 @@ class NetworkSession:
     def finish(self):
         require(self.started, 'NETWORK_SESSION_NOT_RUNNING')
         final = self.snapshot()
+        convergence = convergence_state(self.lib)
         self._check(self.lib.swmm_end())
         self.started = False
         self._check(self.lib.swmm_report())
@@ -251,6 +254,8 @@ class NetworkSession:
         self._check(self.lib.swmm_getMassBalErr(*(C.byref(value) for value in errors)))
         require(all(math.isfinite(value.value) for value in errors), 'NETWORK_CONTINUITY_INVALID')
         complete = math.isclose(final['totals']['timeSeconds'], self.evaluation_seconds, abs_tol=.002)
+        quality = assess(complete, errors[0].value, errors[1].value,
+                         bool(self.lib.swmm_getCount(1)), convergence, routing_balance(final['totals']))
         self.result = {'schemaVersion': 1, 'engine': self.engine, 'inputUnits': self.input_units,
                        'internalVolumeConversionM3PerFt3': FT3_TO_M3,
                        'durationSeconds': self.duration_seconds, 'evaluationSeconds': self.evaluation_seconds,
@@ -259,8 +264,8 @@ class NetworkSession:
                        'runoffContinuityPercent': errors[0].value,
                        'routingContinuityPercent': errors[1].value,
                        'warningCount': self.lib.swmm_getWarnings(),
-                       'numericalStatus': 'PASSED' if complete and abs(errors[1].value) <= 1
-                           and (not self.lib.swmm_getCount(1) or abs(errors[0].value) <= 1) else 'FAILED',
+                       'convergence': convergence, 'numericalQuality': quality,
+                       'numericalStatus': quality['status'],
                        'files': {p.name: sha256(p) for p in sorted(self.directory.iterdir()) if p.is_file()}}
         (self.directory / 'network-result.json').write_text(json.dumps(self.result, allow_nan=False, indent=2) + '\n')
         return self.result

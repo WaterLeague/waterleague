@@ -192,6 +192,8 @@ def run_coupled(model, directory):
                     'smallestExchangeMilliseconds': smallest, 'availabilityFractionLimit': .25,
                     'initialStorageM3': initial_storage, 'balance': balance,
                     'networkRoutingContinuityPercent': nresult['routingContinuityPercent'],
+                    'networkConvergence': nresult['convergence'],
+                    'networkNumericalQuality': nresult['numericalQuality'],
                     'networkNumericalStatus': nresult['numericalStatus'],
                     'surfaceNumericalStatus': sresult['numericalStatus'],
                     'numericalStatus': 'PASSED' if passed else 'FAILED',
