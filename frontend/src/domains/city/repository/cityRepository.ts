@@ -1,10 +1,13 @@
 import { CityError } from '../exception/CityError';
 import { mapCity, mapCityTile } from '../mapper/cityMapper';
-import type { CityTile, TileEntry } from '../entity/city';
+import type { City, CityTile, TileEntry } from '../entity/city';
 import { cityPlayDto } from '../dto/cityPlayDto';
 export const CITY_HASH = 'd988b2b86c73a2e577c5c2574fdd0e7e052f5f5a68ee090cd6643fa4deab6f41';
 export const CITY_PATH = '/data/seoul-v1/city.json';
 const cache = new Map<string, CityTile>();
+let cityCache: City | undefined;
+let regionsCache: import('../dto/cityPlayDto').CityPlayRegion[] | undefined;
+let eligibilityCache: import('../dto/cityEligibilityDto').CityEligibility | undefined;
 async function read(path: string, expected: string, signal: AbortSignal, maximum: number) {
   try {
     const response = await fetch(path, { signal, credentials: 'same-origin' });
@@ -22,9 +25,13 @@ async function read(path: string, expected: string, signal: AbortSignal, maximum
   }
 }
 export async function loadCity(signal: AbortSignal) {
-  return mapCity(await read(CITY_PATH, CITY_HASH, signal, 16000000));
+  if (cityCache) return cityCache;
+  const value = mapCity(await read(CITY_PATH, CITY_HASH, signal, 16000000));
+  if (!signal.aborted) cityCache = value;
+  return value;
 }
 export async function loadCityPlayRegions(signal: AbortSignal) {
+  if (regionsCache) return regionsCache;
   const result = cityPlayDto.safeParse(
     await read(
       '/data/seoul-play-v2.json',
@@ -34,6 +41,7 @@ export async function loadCityPlayRegions(signal: AbortSignal) {
     )
   );
   if (!result.success) throw new CityError('INVALID_DATA');
+  if (!signal.aborted) regionsCache = result.data.regions;
   return result.data.regions;
 }
 export async function loadCityTile(entry: TileEntry, signal: AbortSignal) {
@@ -57,6 +65,7 @@ export async function loadCityTile(entry: TileEntry, signal: AbortSignal) {
 
 import { cityEligibilityDto } from '../dto/cityEligibilityDto';
 export async function loadCityEligibility(signal: AbortSignal) {
+  if (eligibilityCache) return eligibilityCache;
   const value = cityEligibilityDto.parse(
     await read(
       '/data/seoul-site-eligibility-v1.json',
@@ -65,5 +74,10 @@ export async function loadCityEligibility(signal: AbortSignal) {
       4000000
     )
   );
-  return { roofIds: new Set(value.roofSourceIds), legacySiteSources: value.legacySiteSources };
+  const result = {
+    roofIds: new Set(value.roofSourceIds),
+    legacySiteSources: value.legacySiteSources,
+  };
+  if (!signal.aborted) eligibilityCache = result;
+  return result;
 }

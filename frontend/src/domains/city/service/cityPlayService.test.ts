@@ -1,8 +1,11 @@
-import { expect, it, vi, afterEach } from 'vitest';
+import { expect, it, vi, afterEach, beforeEach } from 'vitest';
 import registryText from '../../../../public/data/seoul-play-v2.json?raw';
 import city from '../../../../public/data/seoul-v1/city.json';
-import { loadCityPlayRegions } from '../repository/cityRepository';
-import { CityError } from '../exception/CityError';
+let loadCityPlayRegions: typeof import('../repository/cityRepository').loadCityPlayRegions;
+beforeEach(async () => {
+  vi.resetModules();
+  ({ loadCityPlayRegions } = await import('../repository/cityRepository'));
+});
 import { cityPlayDto } from '../dto/cityPlayDto';
 afterEach(() => vi.unstubAllGlobals());
 it('서울의 모든 구를 각기 다른 플레이 모델과 연결', async () => {
@@ -22,7 +25,10 @@ it('변조된 플레이 목록과 중복 구역을 거부', async () => {
     'fetch',
     vi.fn(async () => new Response(registryText + ' '))
   );
-  await expect(loadCityPlayRegions(new AbortController().signal)).rejects.toBeInstanceOf(CityError);
+  await expect(loadCityPlayRegions(new AbortController().signal)).rejects.toHaveProperty(
+    'name',
+    'CityError'
+  );
   const copy = JSON.parse(registryText);
   copy.regions[1] = copy.regions[0];
   expect(cityPlayDto.safeParse(copy).success).toBe(false);

@@ -34,6 +34,20 @@
       if (!import.meta.env.DEV || !['localhost', '127.0.0.1', '[::1]'].includes(location.hostname))
         throw new Error('로컬 개발 환경 전용 화면');
       const out = document.getElementById('result');
+      let geometryJobs = 0;
+      const WorkerOriginal = window.Worker;
+      window.Worker = class extends WorkerOriginal {
+        postMessage(...args) {
+          geometryJobs++;
+          return super.postMessage(...args);
+        }
+      };
+      const longTasks = [];
+      new PerformanceObserver((list) =>
+        longTasks.push(
+          ...list.getEntries().map((e) => ({ start: e.startTime, duration: e.duration }))
+        )
+      ).observe({ type: 'longtask', buffered: true });
       const originalGetContext = HTMLCanvasElement.prototype.getContext;
       let blocked = false,
         drawing = false,
@@ -64,7 +78,7 @@
         drawing = false;
       });
       document.getElementById('loss').onclick = () => {
-        const canvas = document.querySelector('.map-viewport canvas');
+        const canvas = document.querySelector('canvas');
         const gl = canvas?.getContext('webgl2');
         const ext = gl?.getExtension('WEBGL_lose_context');
         if (!ext) {
@@ -85,6 +99,8 @@
       document.getElementById('measure').onclick = () => {
         if (measuring) return;
         stamps = [];
+        const workerBefore = geometryJobs,
+          started = performance.now();
         measuring = true;
         function tick() {
           if (measuring) {
@@ -100,9 +116,11 @@
             .slice(1)
             .map((time, index) => time - stamps[index])
             .sort((a, b) => a - b);
-          const canvas = document.querySelector('.map-viewport canvas');
+          const canvas = document.querySelector('canvas');
           out.textContent = JSON.stringify(
             {
+              geometryJobs: geometryJobs - workerBefore,
+              longTasks: longTasks.filter((e) => e.start >= started),
               frames: stamps.length,
               elapsedMs: stamps.at(-1) - stamps[0],
               fps: ((stamps.length - 1) * 1000) / (stamps.at(-1) - stamps[0]),

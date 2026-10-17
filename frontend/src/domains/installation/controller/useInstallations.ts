@@ -9,7 +9,7 @@ import type { SharedInstallation, SharedSite } from '../entity/installation';
 import type { FacilityType } from '../../game/entity/game';
 import { errorMessage } from '../../../shared/exception/ApiError';
 import type { SiteQuery } from '../repository/installationRepository';
-export function useInstallations(query: SiteQuery) {
+export function useInstallations(query: SiteQuery, live = true) {
   const [sites, setSites] = useState<SharedSite[]>([]),
     [installations, setInstallations] = useState<SharedInstallation[]>([]),
     [error, setError] = useState(''),
@@ -55,7 +55,9 @@ export function useInstallations(query: SiteQuery) {
     }
     const request = loadInstallations().then((v) => {
       if (alive.current) {
-        setInstallations(v);
+        setInstallations((previous) =>
+          JSON.stringify(previous) === JSON.stringify(v) ? previous : v
+        );
         setError('');
       }
     });
@@ -67,6 +69,7 @@ export function useInstallations(query: SiteQuery) {
     }
   }, []);
   useEffect(() => {
+    if (!live) return;
     alive.current = true;
     let disposed = false;
     const poll = () => {
@@ -84,7 +87,7 @@ export function useInstallations(query: SiteQuery) {
       clearInterval(timer);
       document.removeEventListener('visibilitychange', poll);
     };
-  }, [refresh]);
+  }, [refresh, live]);
   const mutate = async (action: () => Promise<unknown>) => {
     setBusy(true);
     setError('');

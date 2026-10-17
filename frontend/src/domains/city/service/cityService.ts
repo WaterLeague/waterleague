@@ -2,7 +2,7 @@ import type { City } from '../entity/city';
 export function nearbyTiles(city: City, center: [number, number], distance: number) {
   if (!Number.isFinite(distance) || distance > 6500 || !center.every(Number.isFinite)) return [];
   const radius = Math.max(900, distance * 0.75);
-  return city.tiles
+  const candidates = city.tiles
     .filter(
       (t) =>
         t.bounds[0] <= center[0] + radius &&
@@ -18,5 +18,11 @@ export function nearbyTiles(city: City, center: [number, number], distance: numb
         );
       return d(a) - d(b) || a.id.localeCompare(b.id);
     })
-    .slice(0, 16);
+    .slice(0, 9);
+  let count = 0;
+  return candidates.filter((tile, index) => {
+    if (index > 0 && count + tile.buildingCount > 7000) return false;
+    count += tile.buildingCount;
+    return true;
+  });
 }

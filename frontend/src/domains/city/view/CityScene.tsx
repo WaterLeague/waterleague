@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useRef, useCallback } from 'react';
+import { useEffect, useMemo, useRef, useCallback, useState, memo } from 'react';
 import type { ComponentRef } from 'react';
 import { Canvas, useThree, useFrame } from '@react-three/fiber';
 import { OrbitControls, Line } from '@react-three/drei';
 import * as THREE from 'three';
-import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+import { requestBuildingMesh } from '../repository/buildingGeometryRepository';
 import type { City, CityBuilding, CityFocus, CityTile } from '../entity/city';
 import type { CityPlayRegion } from '../dto/cityPlayDto';
 import { polygonShapes } from '../../catalog/service/mapGeometryService';
@@ -27,33 +27,42 @@ function Buildings({
   opacity?: number;
   onSelect: (b: CityBuilding) => void;
 }) {
-  const rendered = useMemo(() => {
-    const parts = buildings.map(
-      (b) =>
-        new THREE.ExtrudeGeometry(polygonShapes(b.polygons), {
-          depth: b.heightM,
-          bevelEnabled: false,
-          steps: 1,
+  const [rendered, setRendered] = useState<{
+    geometry: THREE.BufferGeometry;
+    ends: number[];
+    source: CityBuilding[];
+  } | null>(null);
+  const [error, setError] = useState<Error | null>(null);
+  useEffect(() => {
+    const controller = new AbortController();
+    let geometry: THREE.BufferGeometry | undefined;
+    if (buildings.length)
+      void requestBuildingMesh(buildings, controller.signal)
+        .then((data) => {
+          if (controller.signal.aborted) return;
+          geometry = new THREE.BufferGeometry();
+          geometry.setAttribute('position', new THREE.BufferAttribute(data.positions, 3));
+          geometry.setAttribute('normal', new THREE.BufferAttribute(data.normals, 3));
+          geometry.computeBoundingSphere();
+          setRendered({ geometry, ends: data.ends, source: buildings });
         })
-    );
-    const combined = parts.length ? mergeGeometries(parts, false) : null;
-    let end = 0;
-    const ends = parts.map((p) => {
-      end += (p.index?.count ?? p.getAttribute('position').count) / 3;
-      return end;
-    });
-    parts.forEach((p) => p.dispose());
-    return { geometry: combined, ends };
+        .catch((e) => {
+          if (!controller.signal.aborted) setError(e);
+        });
+    return () => {
+      controller.abort();
+      geometry?.dispose();
+    };
   }, [buildings]);
-  const geometry = rendered.geometry;
-  useEffect(() => () => geometry?.dispose(), [geometry]);
+  if (error) throw error;
+  const geometry = rendered?.source === buildings ? rendered.geometry : null;
   return geometry ? (
     <mesh
       geometry={geometry}
       rotation={[-Math.PI / 2, 0, 0]}
       onClick={(event) => {
         if (event.delta > 5 || event.faceIndex == null) return;
-        const index = buildingFaceIndex(rendered.ends, event.faceIndex);
+        const index = buildingFaceIndex(rendered!.ends, event.faceIndex);
         if (index >= 0) {
           event.stopPropagation();
           onSelect(buildings[index]);
@@ -70,7 +79,7 @@ function Buildings({
     </mesh>
   ) : null;
 }
-function Surface({
+const Surface = memo(function Surface({
   polygons,
   color,
   height = 0,
@@ -109,7 +118,7 @@ function Surface({
       />
     </mesh>
   );
-}
+});
 function Lines({
   city,
   selected,
@@ -241,7 +250,16 @@ function ProjectedLabels({
   selected: string;
 }) {
   const point = useMemo(() => new THREE.Vector3(), []);
+  const last = useRef('');
+  const dirty = useRef(true);
+  useEffect(() => {
+    dirty.current = true;
+  }, [city, regions, labels, near, selected]);
   useFrame(({ camera, size }) => {
+    const signature = `${camera.matrixWorld.elements.join(',')}:${camera.projectionMatrix.elements.join(',')}:${size.width}:${size.height}:${labels.size}`;
+    if (!dirty.current && last.current === signature) return;
+    dirty.current = false;
+    last.current = signature;
     const candidates = [];
     for (const element of labels.values()) element.style.display = 'none';
     const locations = near
@@ -322,10 +340,7 @@ export default function CityScene({
   facilityType: FacilityType | '';
   viewerId: string | null;
 }) {
-  const overview = useMemo(() => {
-    const loaded = new Set(tiles.flatMap((t) => t.buildings.map((b) => b.id)));
-    return city.overviewBuildings.filter((b) => !loaded.has(b.id));
-  }, [city, tiles]);
+  const overviewIds = useMemo(() => new Set(city.overviewBuildings.map((b) => b.id)), [city]);
   return (
     <Canvas
       frameloop="demand"
@@ -361,13 +376,14 @@ export default function CityScene({
         facilityType={facilityType}
         eligibleRoofs={eligibleRoofs}
         occupiedRoofs={occupiedRoofs}
-        buildings={overview}
+        buildings={city.overviewBuildings}
         city={city}
         ownDistrictId={ownDistrictId}
         onBuilding={onBuilding}
       />
       {tiles.map((t) => (
-        <DistrictBuildings
+        <DetailBuildings
+          exclude={overviewIds}
           facilityType={facilityType}
           key={t.id}
           eligibleRoofs={eligibleRoofs}
@@ -545,29 +561,47 @@ function DistrictBuildings({
   }
   const groups = useMemo(() => {
     const district = city.districts.find((d) => d.id === ownDistrictId);
-    const buckets = new Map<number, CityBuilding[]>();
+    const buckets = new Map<
+      string,
+      { eligible: boolean; other: boolean; buildings: CityBuilding[] }
+    >();
     for (const b of buildings) {
       const other =
         !!district &&
         !district.polygons.some(
           (p) => inRing(b.center, p[0]) && !p.slice(1).some((h) => inRing(b.center, h))
         );
-      const opacity = buildingOpacity(
-        (!facilityType || facilityType === 'GREEN_ROOF') &&
-          eligibleRoofs.has(b.id) &&
-          !occupiedRoofs.has(b.id),
-        other
-      );
-      if (!buckets.has(opacity)) buckets.set(opacity, []);
-      buckets.get(opacity)!.push(b);
+      const eligible = eligibleRoofs.has(b.id) && !occupiedRoofs.has(b.id);
+      const key = `${eligible}:${other}`;
+      if (!buckets.has(key)) buckets.set(key, { eligible, other, buildings: [] });
+      buckets.get(key)!.buildings.push(b);
     }
     return [...buckets.entries()];
-  }, [buildings, city, ownDistrictId, eligibleRoofs, occupiedRoofs, facilityType]);
+  }, [buildings, city, ownDistrictId, eligibleRoofs, occupiedRoofs]);
   return (
     <>
-      {groups.map(([opacity, values]) => (
-        <Buildings key={opacity} buildings={values} opacity={opacity} onSelect={selectBuilding} />
+      {groups.map(([key, values]) => (
+        <Buildings
+          key={key}
+          buildings={values.buildings}
+          opacity={buildingOpacity(
+            values.eligible && (!facilityType || facilityType === 'GREEN_ROOF'),
+            values.other
+          )}
+          onSelect={selectBuilding}
+        />
       ))}
     </>
   );
+}
+
+function DetailBuildings({
+  exclude,
+  ...props
+}: React.ComponentProps<typeof DistrictBuildings> & { exclude: ReadonlySet<string> }) {
+  const buildings = useMemo(
+    () => props.buildings.filter((b) => !exclude.has(b.id)),
+    [props.buildings, exclude]
+  );
+  return <DistrictBuildings {...props} buildings={buildings} />;
 }
