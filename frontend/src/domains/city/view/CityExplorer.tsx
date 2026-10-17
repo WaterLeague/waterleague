@@ -37,8 +37,13 @@ function Explorer({
   function select(id: string) {
     const district = city.districts.find((d) => d.id === id);
     if (!district) return;
+    const playRegion = regions.find((r) => r.districtId === id);
     setSelected(id);
-    setFocus((p) => ({ center: district.center, distance: 4800, key: p.key + 1 }));
+    setFocus((p) => ({
+      center: playRegion?.center ?? district.center,
+      distance: playRegion ? 2400 : 4800,
+      key: p.key + 1,
+    }));
   }
   function reset() {
     setSelected('');
@@ -51,8 +56,8 @@ function Explorer({
     <svg
       className="city-plan"
       viewBox={`${west - 1000} ${-north - 1000} ${east - west + 2000} ${north - south + 2000}`}
-      role="img"
-      aria-label="서울 25개 구 탐색 지도"
+      role="group"
+      aria-label="서울 25개 구 플레이 지도"
     >
       <path d={polygonPath(city.boundary)} fill="#dfe3cf" />
       {city.districts.map((d) => (
@@ -84,6 +89,33 @@ function Explorer({
           {d.name}
         </text>
       ))}
+      {regions.map((r) => (
+        <g
+          key={r.mapId}
+          role="button"
+          tabIndex={0}
+          aria-label={`${r.districtName} 대표 블록 선택`}
+          aria-pressed={r.districtId === selected}
+          className="city-plan-pin"
+          onClick={() => select(r.districtId)}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              select(r.districtId);
+            }
+          }}
+        >
+          <circle
+            cx={r.center[0]}
+            cy={-r.center[1]}
+            r={r.districtId === selected ? 230 : 160}
+            fill={r.districtId === selected ? '#173d29' : '#52734b'}
+            stroke="#fffdf2"
+            strokeWidth={60}
+          />
+          <title>{r.districtName} · 대표 블록 플레이 가능</title>
+        </g>
+      ))}
     </svg>
   );
   return (
@@ -97,9 +129,9 @@ function Explorer({
             <em>바꾸는 선택.</em>
           </h1>
           <p>
-            우리 동네를 찾고
+            플레이할 구를 고르고
             <br />
-            빗물이 머물 자리를 살펴보세요.
+            대표 블록의 빗물 설계에 도전하세요.
           </p>
         </div>
         <label className="city-search">
@@ -111,11 +143,17 @@ function Explorer({
             onChange={(e) => setQuery(e.target.value)}
           />
         </label>
-        <div className="city-districts" aria-label="서울 자치구 선택">
+        <p className="city-play-count">{regions.length}개 구 · 대표 블록 플레이 가능</p>
+        <div className="city-districts" aria-label="플레이할 서울 자치구 선택">
           {city.districts
             .filter((d) => d.name.includes(query.trim()))
             .map((d) => (
-              <button key={d.id} aria-pressed={d.id === selected} onClick={() => select(d.id)}>
+              <button
+                key={d.id}
+                aria-pressed={d.id === selected}
+                onClick={() => select(d.id)}
+                title={`${d.name} 대표 블록 선택`}
+              >
                 {d.name}
               </button>
             ))}
@@ -124,11 +162,11 @@ function Explorer({
           <div className="city-selected">
             <MapPin size={15} />
             <strong>{district.name}</strong>
-            <span>{district.areaKm2} km² · 지도 탐색</span>
+            <span>대표 블록 선택됨</span>
           </div>
         )}
         <div className="city-mission">
-          <span className="city-mission-kicker">플레이 가능한 지역</span>
+          <span className="city-mission-kicker">{region ? '선택한 지역 도전' : '빠른 시작'}</span>
           <h2>{region ? `${region.districtName} · 대표 블록` : '성수 · 연무장길'}</h2>
           <p>
             {region ? '옥상 8곳 · 지상 5곳' : '관측 강우와 3종 시설로'}
@@ -138,7 +176,8 @@ function Explorer({
               : '성동 관측 강우로 설계에 도전하세요.'}
           </p>
           <button disabled={busy} onClick={() => onPlay(region?.defaultModelHash)}>
-            {busy ? '도전 준비 중' : '이 지역에서 도전'} <ArrowRight size={18} />
+            {busy ? '도전 준비 중' : `${region?.districtName ?? '성수'}에서 도전`}{' '}
+            <ArrowRight size={18} />
           </button>
           <button
             className="city-locate"
@@ -172,6 +211,7 @@ function Explorer({
             >
               <CityScene
                 city={city}
+                regions={regions}
                 tiles={details.tiles}
                 focus={focus}
                 selected={selected}
@@ -195,26 +235,30 @@ function Explorer({
                 className={`city-district-label${d.id === selected ? ' selected' : ''}`}
                 onClick={() => select(d.id)}
               >
+                <span aria-hidden="true">● </span>
                 {d.name}
               </button>
             ))}
-            {city.playAreas.map((area) => (
-              <span
-                key={area.id}
+            {regions.map((r) => (
+              <button
+                key={r.mapId}
                 ref={(element) => {
-                  if (element) labels.current.set(area.id, element);
-                  else labels.current.delete(area.id);
+                  if (element) labels.current.set(r.mapId, element);
+                  else labels.current.delete(r.mapId);
                 }}
-                className="city-play-pin"
+                className={`city-play-pin${r.districtId === selected ? ' selected' : ''}`}
+                disabled={busy}
+                onClick={() => onPlay(r.defaultModelHash)}
+                aria-label={`${r.districtName} 대표 블록에서 도전`}
               >
-                ● 성수 플레이
-              </span>
+                ● {r.districtName} 플레이 →
+              </button>
             ))}
           </div>
         )}
         <div className="city-map-top">
           <span>
-            <Layers3 size={14} /> 서울 25개 구
+            <Layers3 size={14} /> {regions.length}개 구 플레이
           </span>
           <div>
             <button

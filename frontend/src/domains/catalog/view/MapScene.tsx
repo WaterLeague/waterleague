@@ -1,3 +1,5 @@
+import { SceneContextLayer } from './SceneContextLayer';
+import type { SceneContext } from '../entity/sceneContext';
 import { useEffect, useLayoutEffect, useMemo } from 'react';
 import { Canvas, useThree } from '@react-three/fiber';
 import { OrbitControls, Edges } from '@react-three/drei';
@@ -225,6 +227,7 @@ function Surface({
 }
 export default function MapScene({
   map,
+  context,
   selected,
   onSelect,
   topView,
@@ -237,6 +240,7 @@ export default function MapScene({
   onUnavailable,
 }: {
   map: CandidateMap;
+  context?: SceneContext | null;
   selected: string | null;
   onSelect: (id: string | null) => void;
   topView: boolean;
@@ -290,6 +294,7 @@ export default function MapScene({
         <planeGeometry args={[map.snapshot.widthM + 24, map.snapshot.depthM + 24]} />
         <meshStandardMaterial color="#e4e7d9" roughness={1} />
       </mesh>
+      {context && <SceneContextLayer context={context} labels={!cells.length} />}
       <Roads map={map} />
       {map.transports.map((surface) => (
         <TransportMesh key={surface.id} surface={surface} />

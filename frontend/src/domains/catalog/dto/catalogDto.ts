@@ -39,6 +39,7 @@ export const mapDto = z.object({
   title: z.string(),
   subtitle: z.string(),
   origin: point,
+  originProjected: point.optional(),
   bounds: z.tuple([z.number(), z.number(), z.number(), z.number()]),
   widthM: z.number().positive(),
   depthM: z.number().positive(),

@@ -1,3 +1,5 @@
+import type { SceneContext } from '../entity/sceneContext';
+import { sceneSurfaceStyle } from '../service/sceneContextService';
 import { useLayoutEffect, useRef, useState, useId } from 'react';
 import { buildingPolygons, polygonPath } from '../service/mapGeometryService';
 import { facilityFootprint } from '../service/facilityGeometryService';
@@ -11,6 +13,7 @@ const points = (coordinates: [number, number][]) =>
 
 export function PlanMap({
   map,
+  context,
   cells,
   placements,
   preview,
@@ -18,6 +21,7 @@ export function PlanMap({
   onCellSelect,
 }: {
   map: CandidateMap;
+  context?: SceneContext | null;
   cells: Cell[];
   placements: Placement[];
   preview?: Placement;
@@ -68,6 +72,19 @@ export function PlanMap({
       </defs>
       <g aria-hidden="true">
         <rect x={-width / 2} y={-height / 2} width={width} height={height} fill="#e4e7d9" />
+        {context &&
+          (Object.keys(sceneSurfaceStyle) as (keyof typeof sceneSurfaceStyle)[]).flatMap((kind) =>
+            context.features
+              .filter((f) => f.kind === kind)
+              .map((feature) => (
+                <path
+                  key={`${kind}:${feature.id}`}
+                  d={polygonPath(feature.polygons)}
+                  fillRule="evenodd"
+                  fill={sceneSurfaceStyle[kind].color}
+                />
+              ))
+          )}
         {map.roads.map((road) => (
           <polyline
             key={road.id}
@@ -101,6 +118,26 @@ export function PlanMap({
             strokeWidth={0.6}
           />
         ))}
+        {context &&
+          !cells.length &&
+          context.labels.map((label) => (
+            <text
+              key={label.name}
+              x={label.center[0]}
+              y={-label.center[1]}
+              textAnchor="middle"
+              style={{
+                fontSize: 10 / scale,
+                paintOrder: 'stroke',
+                stroke: '#edf1e8',
+                strokeWidth: 3 / scale,
+                strokeLinejoin: 'round',
+                fill: '#52645d',
+              }}
+            >
+              {label.name}
+            </text>
+          ))}
       </g>
       {cells.map((cell, index) => {
         const [labelEast, labelNorth] = labels[index];

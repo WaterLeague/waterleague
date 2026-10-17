@@ -1,3 +1,4 @@
+import { useSceneContext } from '../controller/useSceneContext';
 import { lazy, Suspense, useCallback, useMemo, useState } from 'react';
 import { Box, RotateCcw, Scan } from 'lucide-react';
 import type { CandidateMap } from '../entity/catalog';
@@ -21,6 +22,9 @@ export function MapViewport({
   selectedCell: string | null;
   onSelect: (id: string | null) => void;
 }) {
+  const context = useSceneContext(map);
+  const [showContext, setShowContext] = useState(true);
+  const sceneContext = showContext ? context.data : null;
   const [plan, setPlan] = useState(false);
   const [failed, setFailed] = useState(false);
   const [attempt, setAttempt] = useState(0);
@@ -32,6 +36,7 @@ export function MapViewport({
   const fallback = (
     <PlanMap
       map={map}
+      context={sceneContext}
       cells={cells}
       placements={placements}
       preview={preview}
@@ -60,6 +65,7 @@ export function MapViewport({
           >
             <MapScene
               map={map}
+              context={sceneContext}
               selected={cells.find((cell) => cell.id === selectedCell)?.buildingId ?? null}
               onSelect={onSelect}
               topView={top}
@@ -85,6 +91,19 @@ export function MapViewport({
         </p>
       )}
       {cells.length > 0 && <span className="map-facility-note">시설 위치·식재는 도식 표현</span>}
+      {map.contextSource && showContext && (
+        <p className="map-context-note" role={context.failed ? 'status' : undefined}>
+          {context.failed ? (
+            <>
+              주변 자료 연결 실패 <button onClick={context.retry}>다시 불러오기</button>
+            </>
+          ) : context.data ? (
+            '공개 주변 형상 · 도로 폭은 태그·표시용 가정'
+          ) : (
+            '주변 도로·녹지 불러오는 중'
+          )}
+        </p>
+      )}
       <div className="map-display-options" role="group" aria-label="지도 표시 방식">
         <button aria-pressed={!isPlan} onClick={retry}>
           {failed ? '3D 다시 시도' : '3D'}
@@ -92,6 +111,11 @@ export function MapViewport({
         <button aria-pressed={isPlan} onClick={() => setPlan(true)}>
           2D 평면도
         </button>
+        {map.contextSource && (
+          <button aria-pressed={showContext} onClick={() => setShowContext((value) => !value)}>
+            주변 환경
+          </button>
+        )}
       </div>
       {failed && (
         <p className="map-feedback" role="status">

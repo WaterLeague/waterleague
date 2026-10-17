@@ -1,3 +1,4 @@
+import { sceneContextSourceDto } from '../dto/sceneContextDto';
 import { z } from 'zod';
 import { mapDto, rainAuditDto } from '../dto/catalogDto';
 import { CatalogError } from '../exception/CatalogError';
@@ -10,6 +11,7 @@ const registryDto = z.object({
         id: z.string(),
         file: z.string().regex(/^[a-z0-9-]+\.json$/),
         sha256: z.string().regex(/^[a-f0-9]{64}$/),
+        context: sceneContextSourceDto.optional(),
         modelHashes: z.array(z.string().regex(/^[a-f0-9]{64}$/)).min(1),
       })
     )
@@ -45,7 +47,15 @@ async function readCatalog(signal: AbortSignal) {
     registry.maps.map(async (entry) => {
       const snapshot = mapDto.parse(await read('/data/' + entry.file, signal, entry.sha256));
       if (entry.id !== snapshot.id) throw new CatalogError('INVALID_DATA');
-      return { ...entry, map: toCandidateMap(snapshot) };
+      return {
+        ...entry,
+        map: {
+          ...toCandidateMap(snapshot),
+          ...(entry.context
+            ? { contextSource: { ...entry.context, baseMapSha256: entry.sha256 } }
+            : {}),
+        },
+      };
     })
   );
   const legacy = maps.find((m) => m.file === 'seongsu.json');

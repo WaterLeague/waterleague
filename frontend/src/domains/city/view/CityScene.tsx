@@ -5,6 +5,7 @@ import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import type { City, CityBuilding, CityFocus, CityTile } from '../entity/city';
+import type { CityPlayRegion } from '../dto/cityPlayDto';
 import { polygonShapes } from '../../catalog/service/mapGeometryService';
 import { watchContextLoss } from '../../catalog/service/sceneLifecycleService';
 import { positionSceneLabels } from '../../catalog/service/sceneLabelService';
@@ -157,11 +158,13 @@ function Controls({
 }
 function ProjectedLabels({
   city,
+  regions,
   labels,
   near,
   selected,
 }: {
   city: City;
+  regions: CityPlayRegion[];
   labels: Map<string, HTMLElement>;
   near: boolean;
   selected: string;
@@ -170,18 +173,19 @@ function ProjectedLabels({
   useFrame(({ camera, size }) => {
     const candidates = [];
     for (const element of labels.values()) element.style.display = 'none';
-    const locations = [...(!near ? city.districts : []), ...city.playAreas];
+    const locations = near
+      ? regions.map((r) => ({ id: r.mapId, districtId: r.districtId, center: r.center }))
+      : city.districts.map((d) => ({ ...d, districtId: d.id }));
     for (const location of locations) {
       point.set(location.center[0], 60, -location.center[1]).project(camera);
       if (Math.abs(point.x) > 1 || Math.abs(point.y) > 1 || Math.abs(point.z) > 1) continue;
-      const play = city.playAreas.some((p) => p.id === location.id);
       candidates.push({
         id: location.id,
         x: ((point.x + 1) * size.width) / 2,
         y: ((1 - point.y) * size.height) / 2,
-        width: play ? 112 : 66,
-        height: 26,
-        priority: play ? 2 : location.id === selected ? 1 : 0,
+        width: near ? 136 : 80,
+        height: near ? 30 : 26,
+        priority: location.districtId === selected ? 2 : 0,
       });
     }
     for (const label of positionSceneLabels(candidates, {
@@ -200,6 +204,7 @@ function ProjectedLabels({
 }
 export default function CityScene({
   city,
+  regions,
   tiles,
   focus,
   selected,
@@ -209,6 +214,7 @@ export default function CityScene({
   onUnavailable,
 }: {
   city: City;
+  regions: CityPlayRegion[];
   tiles: CityTile[];
   focus: CityFocus;
   selected: string;
@@ -245,7 +251,13 @@ export default function CityScene({
       {tiles.map((t) => (
         <Buildings key={t.id} buildings={t.buildings} />
       ))}
-      <ProjectedLabels city={city} labels={labels} near={near} selected={selected} />
+      <ProjectedLabels
+        city={city}
+        regions={regions}
+        labels={labels}
+        near={near}
+        selected={selected}
+      />
       <Controls
         focus={focus}
         bounds={city.bounds}

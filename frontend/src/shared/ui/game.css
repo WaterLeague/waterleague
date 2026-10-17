@@ -3348,11 +3348,21 @@ a:focus-visible {
   outline-offset: 4px;
   min-width: 0;
 }
+.city-play-count {
+  margin: 16px 0 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: #41613c;
+}
 .city-districts {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-auto-rows: min-content;
   gap: 5px;
-  margin: 16px 0;
+  margin: 8px 0 16px;
+  max-height: 200px;
+  overflow-y: auto;
+  scrollbar-width: thin;
 }
 .city-districts button {
   padding: 7px 2px;
@@ -3543,6 +3553,23 @@ a:focus-visible {
   border-radius: 20px;
   padding: 5px 10px;
   font-size: 10px;
+  font-family: inherit;
+  cursor: pointer;
+}
+.city-play-pin.selected,
+.city-play-pin:hover {
+  background: #294b32;
+}
+.city-play-pin:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+.city-plan-pin {
+  cursor: pointer;
+}
+.city-plan-pin:focus circle {
+  stroke: #173d29;
+  stroke-width: 100px;
 }
 .city-plan {
   width: 100%;
@@ -3642,5 +3669,32 @@ a:focus-visible {
   display: none;
 }
 .city-map-labels > button {
+  pointer-events: auto;
+}
+
+.map-context-note {
+  position: absolute;
+  left: 20px;
+  top: 82px;
+  max-width: calc(100% - 30px);
+  margin: 0;
+  padding: 4px 6px;
+  border-radius: 3px;
+  color: #43594d;
+  background: #f5f8efdc;
+  font-size: 9px;
+  pointer-events: none;
+}
+.challenge-city .map-context-note {
+  top: auto;
+  bottom: 66px;
+}
+.replay-map .map-context-note {
+  top: 124px;
+}
+.map-context-note button {
+  margin-left: 5px;
+  color: #254d3e;
+  text-decoration: underline;
   pointer-events: auto;
 }
