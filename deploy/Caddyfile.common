@@ -15,6 +15,8 @@ handle /api/* {
     header Cache-Control "no-store"
     reverse_proxy api:8080 {
         header_up -Forwarded
+        header_up -X-Forwarded-Port
+        header_up -X-Forwarded-Prefix
         header_up X-Forwarded-For {remote_host}
         header_up X-Forwarded-Proto https
         header_up X-Forwarded-Host {hostport}

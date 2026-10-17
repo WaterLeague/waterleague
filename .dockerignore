@@ -11,6 +11,9 @@ frontend/coverage/
 frontend/qa/
 !simulation/
 !simulation/pyproject.toml
+!simulation/tests/
+!simulation/tests/fixtures/
+!simulation/tests/fixtures/pattern-search-v1.json
 !simulation/waterleague_sim/
 !simulation/waterleague_sim/**
 !scripts/
@@ -18,6 +21,8 @@ frontend/qa/
 !data/
 !data/models/
 !data/models/**
+!data/derived/
+!data/derived/cpu-reference.json
 !deploy/
 !deploy/**
 **/.env

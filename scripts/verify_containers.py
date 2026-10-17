@@ -206,7 +206,8 @@ def check_http(stack, state):
     client.call('/api/v1/auth/register', {}, expected=403)
     _, headers = client.call('/api/v1/auth/csrf', headers={
         'Forwarded': 'proto=http;host=attacker.example', 'X-Forwarded-Proto': 'http',
-        'X-Forwarded-For': '198.51.100.1', 'X-Forwarded-Host': 'attacker.example'})
+        'X-Forwarded-For': '198.51.100.1', 'X-Forwarded-Host': 'attacker.example',
+        'X-Forwarded-Port': '80', 'X-Forwarded-Prefix': '/forged'})
     assert headers.get('Strict-Transport-Security')
     name, password = 'tls_' + uuid.uuid4().hex[:12], secrets.token_urlsafe(24)
     member = client.api('/auth/register', {'username': name, 'password': password, 'memberType': 'PLAYER',
