@@ -269,7 +269,7 @@ def execute(model_source, request, directory, cache_root=None):
     key, identity = computation_identity(model_source, request)
     if identity['engine']['generatorSha256'] != model['generatorSha256']:
         raise ValueError('GENERATOR_MISMATCH')
-    from .reference.search import cost
+    from .placement_validation import cost
     cost(model, request['placements'])
     cache = ResultCache(cache_root) if cache_root is not None else None
     files = cache.load(key, identity) if cache else None

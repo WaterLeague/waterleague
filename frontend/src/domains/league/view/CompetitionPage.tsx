@@ -4,16 +4,12 @@ import type { Lab, Version, RainfallCatalog } from '../../game/entity/game';
 import type { League } from '../entity/league';
 import { Leaderboard } from '../../game/view/Leaderboard';
 import { LeaguePage } from './LeaguePage';
-import { ReferencePage } from '../../reference/view/ReferencePage';
-import type { ReferencePlan } from '../../reference/entity/reference';
 import { ComparisonPage } from '../../comparison/view/ComparisonPage';
 export function CompetitionPage({
   account,
   lab,
   onDesign,
   initialLeague = false,
-  busy,
-  onReference,
   version,
   catalog,
   onOpen,
@@ -23,8 +19,6 @@ export function CompetitionPage({
   lab: Lab;
   onDesign: (l: League) => void;
   initialLeague?: boolean;
-  busy: boolean;
-  onReference: (plan: ReferencePlan) => void;
   version: Version | null;
   catalog: RainfallCatalog | null;
   onOpen: (id: string) => void;
@@ -52,13 +46,6 @@ export function CompetitionPage({
           기관 리그
         </button>
         <button
-          className={mode === 'reference' ? 'active' : ''}
-          aria-pressed={mode === 'reference'}
-          onClick={() => setMode('reference')}
-        >
-          CPU 기준안
-        </button>
-        <button
           className={mode === 'comparison' ? 'active' : ''}
           aria-pressed={mode === 'comparison'}
           onClick={() => setMode('comparison')}
@@ -83,8 +70,6 @@ export function CompetitionPage({
             강우 목록을 불러오는 중입니다.
           </p>
         )
-      ) : mode === 'reference' ? (
-        <ReferencePage lab={lab} busy={busy} onCopy={onReference} />
       ) : (
         <LeaguePage key={account?.id ?? 'guest'} account={account} lab={lab} onDesign={onDesign} />
       )}

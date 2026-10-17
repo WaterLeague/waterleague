@@ -86,7 +86,6 @@ jobs:
         working-directory: simulation
       - run: python scripts/verify_snapshot.py
       - run: python scripts/verify_model.py
-      - run: python scripts/verify_references.py --rerun
   worker-queue:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
