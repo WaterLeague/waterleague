@@ -289,9 +289,19 @@ function Explorer({
           <path
             key={siteKey(site)}
             d={polygonPath([[site.coordinates]])}
-            fill={installed ? '#327f56' : '#d7a743'}
-            stroke="#183c2d"
-            strokeWidth={2}
+            fill={
+              site.districtId === selected && site.cellId === selectedSite
+                ? '#ffd56d'
+                : installed
+                  ? '#327f56'
+                  : site.kind === 'ROOF'
+                    ? '#d9d8cb'
+                    : '#b6c3ab'
+            }
+            stroke={
+              site.districtId === selected && site.cellId === selectedSite ? '#b87a13' : '#6c8069'
+            }
+            strokeWidth={site.districtId === selected && site.cellId === selectedSite ? 2 : 0.5}
             opacity={
               !account?.districtId || account.districtId === site.districtId
                 ? 1

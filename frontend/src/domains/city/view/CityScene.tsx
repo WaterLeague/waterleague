@@ -401,7 +401,9 @@ export default function CityScene({
                     ? '#ffd56d'
                     : installed
                       ? '#367c51'
-                      : '#d4b46d'
+                      : site.kind === 'ROOF'
+                        ? '#d9d8cb'
+                        : '#b6c3ab'
                 }
                 opacity={
                   !ownDistrictId || site.districtId === ownDistrictId ? 1 : otherDistrictOpacity
