@@ -62,9 +62,6 @@ body:has(.game-shell.is-game) {
   overflow: auto;
   overscroll-behavior: contain;
 }
-.game-shell.is-game .historical-side > .shared-inspector {
-  min-height: 0;
-}
 .game-shell.is-game .shared-rain-details {
   flex: 0 0 auto;
   max-height: 36%;

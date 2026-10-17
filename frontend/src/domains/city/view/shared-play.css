@@ -505,3 +505,15 @@
 .budget-evidence a {
   color: #345a41;
 }
+
+.physical-input-values {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  font-size: 11px;
+}
+.physical-input-values dd {
+  margin: 0;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}

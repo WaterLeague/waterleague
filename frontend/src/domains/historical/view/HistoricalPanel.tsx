@@ -1,11 +1,10 @@
-import { Leaf, Play, Pause, Trash2 } from 'lucide-react';
+import { Play, Pause, Trash2 } from 'lucide-react';
 import type { HistoricalState } from '../controller/useHistorical';
 import type { SharedSite } from '../../installation/entity/installation';
 import type { FacilityType } from '../../game/entity/game';
-import { facilities, won, format } from '../../game/service/gameService';
+import { format } from '../../game/service/gameService';
 import './historical.css';
-import { BudgetEvidence } from '../../budget/view/BudgetEvidence';
-import { CostEstimate } from '../../installation/view/CostEstimate';
+import { FacilityPlacementPanel } from '../../installation/view/FacilityPlacementPanel';
 const time = (s: string) =>
   new Date(s).toLocaleString('ko-KR', {
     month: 'numeric',
@@ -121,6 +120,7 @@ export function HistoricalPanel({
   onLogin,
   authenticated,
   error,
+  districtName,
 }: {
   state: HistoricalState;
   site: SharedSite | null;
@@ -131,95 +131,39 @@ export function HistoricalPanel({
   onLogin: () => void;
   authenticated: boolean;
   error: string;
+  districtName: string;
 }) {
   const placed = s.drafts.find(
     (d) => d.site.districtId === site?.districtId && d.site.cellId === site?.cellId
   );
-  const cost = site && type ? Number(area) * site.unitCosts[type] : 0;
-  const valid =
-    site &&
-    type &&
-    site.allowedTypes.includes(type) &&
-    Number(area) > 0 &&
-    Number(area) <= site.maxAreaM2 &&
-    cost <= s.remaining;
   const working = s.busy || s.job?.state === 'QUEUED' || s.job?.state === 'RUNNING';
   return (
-    <aside className="inspector shared-inspector historical-inspector" aria-label="재해 모드 설계">
-      <span className="shared-site-kind">실제 재해 강우로 설계 비교</span>
-      <h2 className="shared-site-title">{site?.name ?? '서울의 빈 공간을 연구하세요'}</h2>
-      <p className="micro-note">
-        공동 모드와 같은 공개 후보입니다. 연구 배치는 현재 공동 시설에 반영되지 않습니다.
-      </p>
-      {!site ? (
-        <div className="shared-selection-empty">
-          <Leaf size={28} />
-          <p>구를 고르고 지도나 위치 목록에서 후보를 선택하세요.</p>
-        </div>
-      ) : placed ? (
-        <div className="shared-occupied">
-          <strong>
-            {facilities[placed.facilityType].name} · {placed.areaM2}m²
-          </strong>
-          <button className="outline-button" onClick={() => s.remove(placed.marker.id)}>
-            <Trash2 size={14} /> 설계에서 제거
-          </button>
-        </div>
-      ) : (
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (valid && type) s.add(site, type, Number(area));
-          }}
-        >
-          <div className="facility-options">
-            {site.allowedTypes.map((t) => (
-              <button
-                key={t}
-                type="button"
-                aria-pressed={type === t}
-                className={type === t ? 'selected' : ''}
-                onClick={() => onType(t)}
-              >
-                {facilities[t].name}
-              </button>
-            ))}
-          </div>
-          <label className="area-input">
-            설치 면적{' '}
-            <span>
-              <input
-                aria-label="연구 설치 면적"
-                type="number"
-                min="0.01"
-                max={site.maxAreaM2}
-                step="0.01"
-                required
-                value={area}
-                onChange={(e) => onArea(e.target.value)}
-              />{' '}
-              m²
-            </span>
-          </label>
-          <small>최대 {site.maxAreaM2.toLocaleString('ko-KR')}m² · 공개 도형 면적</small>
-          {type && (
-            <CostEstimate
-              site={site}
-              type={type}
-              area={Number(area)}
-              remaining={s.remaining}
-              onArea={onArea}
-            />
-          )}
-          <button className="solid-button" disabled={!valid}>
-            연구 설계에 추가
-          </button>
-        </form>
-      )}
-      <BudgetEvidence value={s.budget} research />
+    <FacilityPlacementPanel
+      site={site}
+      type={type}
+      area={area}
+      onType={onType}
+      onArea={onArea}
+      districtName={districtName}
+      context="재해 연구 설계"
+      research
+      budget={s.budget}
+      remaining={s.remaining}
+      limit={s.budget?.policy.districtLimitKrw ?? 0}
+      budgetReady={!!s.budget}
+      busy={false}
+      canInstall={s.current.length < 50}
+      readOnlyMessage="한 번에 비교할 연구 배치 50곳을 모두 사용했습니다."
+      onInstall={() => {
+        if (site && type) s.add(site, type, Number(area));
+      }}
+      occupied={
+        placed ? { ...placed.marker, onRemove: () => s.remove(placed.marker.id) } : undefined
+      }
+      error={error || s.error || s.job?.message}
+    >
       <div className="historical-design-summary">
         <strong>이 구의 연구 설계 · {s.current.length}곳</strong>
-        <small>남은 예산 {won(s.remaining)}</small>
         {s.current.map((d) => (
           <div key={d.marker.id}>
             <span>
@@ -246,11 +190,6 @@ export function HistoricalPanel({
         <button className="solid-button" onClick={onLogin}>
           로그인 후 계산
         </button>
-      )}
-      {(error || s.error || s.job?.message) && (
-        <p role="alert" className="shared-error">
-          {error || s.error || s.job?.message}
-        </p>
       )}
       {s.currentResult && (
         <section className="historical-result" aria-label="과거 강우 비교 결과">
@@ -279,6 +218,6 @@ export function HistoricalPanel({
           </details>
         </section>
       )}
-    </aside>
+    </FacilityPlacementPanel>
   );
 }

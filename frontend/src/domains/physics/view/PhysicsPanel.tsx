@@ -78,8 +78,8 @@ export function PhysicsPanel({ installationId }: { installationId: string }) {
                 : '기존 설치 당시의 유입 조건을 보존한 계산입니다.'}
             </p>
             <p>
-              공개 관측 강우에 따른 모델 결과입니다. 시설 재료·초기 수분·토양·경사는 미확인 설계
-              조건입니다.
+              공개 관측 강우와 설치 당시 입력으로 계산한 결과입니다. 후보별 공간자료와 문헌 추정,
+              미확보 설계 조건은 저장된 계산 기록에서 구분합니다.
             </p>
             <p>
               {result.evaporationMethod === 'ASSUMED_MODEL_CONSTANT'

@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-export function GameClock() {
+export function GameClock({ at, label = 'KST · 실시간' }: { at?: string; label?: string }) {
   const [now, setNow] = useState(Date.now());
   useEffect(() => {
+    if (at) return;
     const update = () => setNow(Date.now());
     const timer = window.setInterval(update, 1000);
     document.addEventListener('visibilitychange', update);
@@ -9,15 +10,16 @@ export function GameClock() {
       clearInterval(timer);
       document.removeEventListener('visibilitychange', update);
     };
-  }, []);
+  }, [at]);
+  const instant = at ? new Date(at) : new Date(now);
   return (
     <time
       className="game-live-clock"
-      dateTime={new Date(now).toISOString()}
-      aria-label="현재 한국 시각"
+      dateTime={instant.toISOString()}
+      aria-label={at ? '재해 재생 시각' : '현재 한국 시각'}
     >
-      {new Date(now).toLocaleTimeString('ko-KR', { timeZone: 'Asia/Seoul', hourCycle: 'h23' })}
-      <small>KST · 실시간</small>
+      {instant.toLocaleTimeString('ko-KR', { timeZone: 'Asia/Seoul', hourCycle: 'h23' })}
+      <small>{label}</small>
     </time>
   );
 }

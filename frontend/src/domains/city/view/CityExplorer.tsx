@@ -473,7 +473,11 @@ function Explorer({
           </small>
         </div>
         <div className="play-resources">
-          {!researchMode && <GameClock />}
+          {researchMode ? (
+            <GameClock at={research.at ?? undefined} label="KST · 재해 재생" />
+          ) : (
+            <GameClock />
+          )}
           {researchMode && (
             <button className="disaster-back" onClick={onExit}>
               <ArrowLeft size={15} />
@@ -869,31 +873,31 @@ function Explorer({
             {city.attribution}
           </a>
         </section>
-        {!researchMode && (
-          <details className="shared-rain-details">
-            <summary>
-              <CloudRain size={15} />
-              실시간 강우 · 관측 정보 보기
-            </summary>
+        <details className="shared-rain-details">
+          <summary>
+            <CloudRain size={15} />
+            {researchMode ? '재해 강우 · 재생 조절' : '실시간 강우 · 관측 정보 보기'}
+          </summary>
+          {researchMode ? (
+            <HistoricalTimeline state={research} />
+          ) : (
             <LiveRainfallPanel districtId={selected} rainfall={rainfall} />
-          </details>
-        )}
+          )}
+        </details>
       </div>
       {researchMode ? (
-        <div className="historical-side game-side-panel">
-          <HistoricalTimeline state={research} />
-          <HistoricalPanel
-            state={research}
-            site={site}
-            type={type}
-            area={area}
-            onType={setType}
-            onArea={setArea}
-            onLogin={onLogin}
-            authenticated={!!account}
-            error={selectionError || budget.error}
-          />
-        </div>
+        <HistoricalPanel
+          state={research}
+          districtName={district?.name ?? ''}
+          site={site}
+          type={type}
+          area={area}
+          onType={setType}
+          onArea={setArea}
+          onLogin={onLogin}
+          authenticated={!!account}
+          error={selectionError || budget.error}
+        />
       ) : (
         <SharedDistrictPanel
           account={account}

@@ -50,6 +50,24 @@ export const siteDto = z.object({
   areaLimitBasis: z.literal('PUBLIC_FOOTPRINT_GEOMETRY').optional(),
   siteEligibility: z.literal('UNKNOWN').optional(),
   inflowPolicy: z.literal('DIRECT_RAINFALL_ONLY').optional(),
+  physicalInputs: z
+    .object({
+      flowLengthM: z.number().positive(),
+      runoffWidthM: z.number().positive(),
+      widthMethod: z.literal('FOOTPRINT_AREA_OVER_LONG_AXIS'),
+      slopePercent: z.number().nonnegative(),
+      slopeMethod: z.enum(['NGII_2025_90M_HORN_TERRAIN_PROXY', 'UNRESOLVED_DESIGN_ASSUMPTION']),
+      terrainResolutionM: z.number().positive().optional(),
+      nImpervious: z.number().positive().optional(),
+      surfaceTag: z.string().nullable(),
+      imperviousBasis: z.string(),
+      soilStatus: z.string(),
+      soilClass: z.string().optional(),
+      conductivityMmH: z.number().positive().optional(),
+      conductivityRangeMmH: z.tuple([z.number().positive(), z.number().positive()]).optional(),
+      suctionMm: z.number().positive().optional(),
+    })
+    .optional(),
   modelHash: z.string().regex(/^[a-f0-9]{64}$/),
 });
 
