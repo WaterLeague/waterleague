@@ -174,13 +174,48 @@ def observed_evaporation(start, end, key):
     return result, sources
 
 
+
+def reusable_observation_hour(previous, start, end):
+    """이미 계산한 완료 시간의 적용 구간 안에서만 같은 증발산 입력 유지."""
+    if (not previous or previous.get('method') != METHOD or not previous.get('hours')
+            or start.utcoffset() is None or end.utcoffset() is None
+            or start.second or end.second or start.microsecond or end.microsecond or end <= start):
+        return None
+    hour = previous['hours'][-1]
+    try:
+        observed = datetime.fromisoformat(hour['observationEnd'])
+        covered = datetime.fromisoformat(hour['appliesUntil'])
+        rate = float(hour['referenceEtMmHour'])*24
+        if (covered != start or not observed <= start < end <= observed+HOUR
+                or not math.isfinite(rate) or not 0 <= rate <= 100):
+            return None
+    except (KeyError,TypeError,ValueError):
+        return None
+    # 강우 최신 조회와 별개로 이미 고정한 기상 입력의 다음 시간 유지 규칙을 적용한다.
+    return previous | {'ratesMmDay': [rate]*int((end-start).total_seconds()/60),
+        'hours': [hour | {'appliesFrom': start.isoformat(), 'appliesUntil': end.isoformat()}],
+        'sourceHashes': [], 'sourceRequests': []}
+
+
+def append_hours(previous, extension):
+    hours = [dict(hour) for hour in previous]
+    basis = lambda hour: {key:value for key,value in hour.items() if key not in ('appliesFrom','appliesUntil')}
+    for hour in extension:
+        if (hours and basis(hours[-1]) == basis(hour)
+                and datetime.fromisoformat(hours[-1]['appliesUntil']) == datetime.fromisoformat(hour['appliesFrom'])):
+            hours[-1]['appliesUntil'] = hour['appliesUntil']
+        else:
+            hours.append(dict(hour))
+    return hours
+
+
 def append_evaporation(previous, count, old_rate, extension):
     if previous is not None and len(previous['ratesMmDay']) != count:
         raise ValueError('LIVE_PREVIOUS_PET_INVALID')
     # 이전 계산의 고정 증발 조건도 보존해 새 입력 연결 시 토양 상태가 소급 변경되지 않게 한다.
     old = previous or {'ratesMmDay': [old_rate]*count, 'hours': [], 'sourceHashes': [], 'legacyPrefixMinutes': count}
     return extension | {'ratesMmDay': old['ratesMmDay']+extension['ratesMmDay'],
-                        'hours': old['hours']+extension['hours'],
+                        'hours': append_hours(old['hours'],extension['hours']),
                         'sourceHashes': list(dict.fromkeys(old['sourceHashes']+extension['sourceHashes'])),
                         'sourceRequests': old.get('sourceRequests', [])+extension.get('sourceRequests', []),
                         'legacyPrefixMinutes': old.get('legacyPrefixMinutes', 0)}

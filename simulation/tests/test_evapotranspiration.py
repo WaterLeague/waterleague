@@ -3,7 +3,7 @@ import unittest
 from datetime import datetime, timedelta, timezone
 
 from waterleague_sim.engine.evapotranspiration import solar_hour, hourly
-from waterleague_sim.ingestion.evaporation import KST, derive, append_evaporation, LiveSourceError
+from waterleague_sim.ingestion.evaporation import KST, derive, append_evaporation, reusable_observation_hour, LiveSourceError
 from waterleague_sim.ingestion.daily_evaporation import daily
 
 
@@ -72,6 +72,25 @@ class EvapotranspirationTests(unittest.TestCase):
         self.assertEqual(joined['legacyPrefixMinutes'], 10)
         second = append_evaporation(joined, len(joined['ratesMmDay']), 0, extension)
         self.assertEqual(second['ratesMmDay'][:1450], joined['ratesMmDay'])
+
+    def test_reuse_stops_at_hour_boundary_and_retains_original_sources(self):
+        start, _, station, radiation, weather = self.fixture()
+        first = derive(start, start+timedelta(minutes=1), station, radiation, weather) | {'sourceHashes':['TEST_SOURCE'], 'sourceRequests':[]}
+        prior = first
+        for minute in range(1,60):
+            begin=start+timedelta(minutes=minute)
+            reused=reusable_observation_hour(prior,begin,begin+timedelta(minutes=1))
+            self.assertIsNotNone(reused)
+            self.assertEqual(reused['ratesMmDay'],first['ratesMmDay'])
+            prior=append_evaporation(prior,minute,0,reused)
+        self.assertEqual(len(prior['hours']),1)
+        self.assertEqual(prior['sourceHashes'],['TEST_SOURCE'])
+        self.assertEqual(len(prior['ratesMmDay']),60)
+        self.assertEqual(prior['hours'][0]['appliesUntil'],(start+timedelta(hours=1)).isoformat())
+        self.assertEqual(first['hours'][0]['appliesUntil'],(start+timedelta(minutes=1)).isoformat())
+        self.assertIsNone(reusable_observation_hour(prior,start+timedelta(hours=1),start+timedelta(minutes=61)))
+        self.assertIsNone(reusable_observation_hour(first,start+timedelta(minutes=3),start+timedelta(minutes=4)))
+        self.assertIsNone(reusable_observation_hour(first|{'method':'ASSUMED_MODEL_CONSTANT'},start+timedelta(minutes=1),start+timedelta(minutes=2)))
 
 
 if __name__ == '__main__':

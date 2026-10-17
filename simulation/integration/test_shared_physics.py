@@ -134,3 +134,31 @@ class SharedPhysicsTests(unittest.TestCase):
             failure = self.conn.execute('SELECT * FROM shared_physics_jobs WHERE id=%s', (third['id'],)).fetchone()
             self.assertEqual(failure['state'], 'FAILED')
             self.assertEqual(failure['error_code'], 'AWS_PREVIOUS_INTERVAL_REVISED')
+
+    def test_weather_hour_reuse_preserves_state_with_new_rainfall_queries(self):
+        start=datetime.now(timezone.utc).replace(minute=10,second=0,microsecond=0)-timedelta(hours=1)
+        self.conn.execute('UPDATE shared_installations SET installed_at=%s WHERE id=%s',(start,self.installation))
+        first=physics.claim(self.conn);first['end']=start+timedelta(minutes=5)
+        self.conn.execute('UPDATE shared_physics_jobs SET requested_through=%s WHERE id=%s',(first['end'],first['id']))
+        def hourly_input(begin,end,key):
+            value,sources=self.evaporation(begin,end,key)
+            return value | {'method':'FAO56_HOURLY_LAGGED_ASOS_AWS_V1','evidence':'SYNTHETIC_TEST_ONLY',
+                'hours':[{'observationEnd':begin.replace(minute=0).isoformat(),'appliesFrom':begin.isoformat(),
+                          'appliesUntil':end.isoformat(),'referenceEtMmHour':2/24}]},sources
+        with tempfile.TemporaryDirectory() as root, patch.object(physics,'observed_forcing',side_effect=self.forcing) as rain, patch.object(physics,'observed_evaporation',side_effect=hourly_input) as weather:
+            physics.process(self.conn,first,root)
+            first_row=self.conn.execute('SELECT * FROM shared_physics_jobs WHERE id=%s',(first['id'],)).fetchone()
+            self.assertEqual(first_row['state'],'SUCCEEDED',first_row['error_code'])
+            self.conn.execute("UPDATE shared_physics_jobs SET created_at=now()-interval '61 seconds' WHERE id=%s",(first['id'],))
+            second=physics.claim(self.conn);self.assertIsNotNone(second)
+            second['end']=start+timedelta(minutes=6)
+            self.conn.execute('UPDATE shared_physics_jobs SET requested_through=%s WHERE id=%s',(second['end'],second['id']))
+            physics.process(self.conn,second,root)
+            row=self.conn.execute('SELECT * FROM shared_physics_jobs WHERE id=%s',(second['id'],)).fetchone()
+            self.assertEqual(row['state'],'SUCCEEDED',row['error_code'])
+            self.assertEqual(rain.call_count,2)
+            self.assertEqual(weather.call_count,1)
+            forcing=json.loads((Path(root)/'shared-physics'/str(second['id'])/str(second['lease_token'])/'forcing.json').read_text())
+            self.assertEqual(forcing['evaporation']['ratesMmDay'],[2]*6)
+            self.assertEqual(len(forcing['evaporation']['hours']),1)
+            self.assertTrue(forcing['sourceArchive']['complete'])

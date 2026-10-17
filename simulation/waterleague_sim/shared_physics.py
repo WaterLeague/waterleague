@@ -11,7 +11,7 @@ from pathlib import Path
 
 from .engine.continuous import ROOT, digest, engine_identity
 from .ingestion.live import observed_forcing
-from .ingestion.evaporation import observed_evaporation, append_evaporation
+from .ingestion.evaporation import observed_evaporation, append_evaporation, reusable_observation_hour
 from .shared_model import resolve
 from .weekly import aggregate as weekly_aggregate, publish as publish_weekly
 
@@ -123,7 +123,10 @@ def process(conn, job, root):
         if any(v['end'] in saved_depths and v['depthMm'] != saved_depths[v['end']]
                for v in extension['overlapObservations']):
             raise ValueError('AWS_PREVIOUS_INTERVAL_REVISED')
-        evaporation, weather_sources = observed_evaporation(covered, job['end'], os.environ.get('KMA_API_KEY', ''))
+        evaporation = reusable_observation_hour(previous_evaporation, covered, job['end'])
+        weather_sources = []
+        if evaporation is None:
+            evaporation, weather_sources = observed_evaporation(covered, job['end'], os.environ.get('KMA_API_KEY', ''))
         evaporation = append_evaporation(previous_evaporation, len(observations), model['hydrology']['evaporationMmDay'], evaporation)
         forcing = extension | {'start': job['start'].isoformat(),
                                'observations': observations+extension['observations'],
