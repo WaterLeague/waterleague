@@ -7,10 +7,10 @@ from waterleague_sim.engine.flood_errors import FloodModelError, require
 
 _METHODS = {
     'network': frozenset(('snapshot', 'advance', 'set_inflow', 'set_outfall_head', 'finish', 'run')),
-    'surface': frozenset(('snapshot', 'advance', 'set_rainfall', 'finish')),
+    'surface': frozenset(('snapshot', 'advance', 'set_rainfall', 'set_station_rainfall', 'finish')),
     'network_exchange': frozenset(('snapshot', 'port_state', 'exchange_step', 'set_inflow', 'finish')),
     'surface_exchange': frozenset(('snapshot', 'port_state', 'apply_exchange', 'advance_exchange',
-                                   'set_rainfall', 'store_frame', 'finish')),
+                                   'set_rainfall', 'set_station_rainfall', 'store_frame', 'finish')),
 }
 _METHODS['network_metrics'] = _METHODS['network_exchange'] | {'metric_state'}
 

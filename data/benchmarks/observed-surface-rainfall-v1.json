@@ -1,0 +1,392 @@
+{
+  "schemaVersion": 1,
+  "classification": "OBSERVED_RAIN_ON_SYNTHETIC_HYDRAULICS",
+  "rankingEligible": false,
+  "cases": [
+    {
+      "name": "step-30s",
+      "maximumStepSeconds": 30.0,
+      "status": "FAILED",
+      "code": "OBSERVED_SURFACE_BALANCE_FAILED",
+      "lastTimeSeconds": 60.0,
+      "maximumForcingBoundaryBalanceResidualM3": 0.0017529116073752744,
+      "failureSha256": "aafa66cf54f1e931038ee39285c2c419246f81e72df32fdc6eca535198ada25a"
+    },
+    {
+      "name": "step-1s",
+      "maximumStepSeconds": 1.0,
+      "status": "FAILED",
+      "code": "OBSERVED_SURFACE_BALANCE_FAILED",
+      "lastTimeSeconds": 12180.0,
+      "maximumForcingBoundaryBalanceResidualM3": 93.22502159936772,
+      "failureSha256": "86b35ec3adccaca5d51425b9b5ddd4f1ecd9e9c9b22239d6eb90af0c52029f84"
+    },
+    {
+      "name": "step-01s",
+      "maximumStepSeconds": 0.1,
+      "status": "PASSED",
+      "final": {
+        "timeSeconds": 21540.0,
+        "storageM3": 18.674999999982738,
+        "boundaryNetInflowM3": -7.073904792273352e-20,
+        "sourceNetInflowM3": 18.674999999988838,
+        "balanceResidualM3": 6.10000938650046e-12,
+        "depthM": [
+          0.18674999999982625,
+          0.18674999999982636,
+          0.18674999999982847,
+          0.18674999999982847,
+          0.1867499999998263,
+          0.1867499999998263,
+          0.18674999999982841,
+          0.18674999999982847
+        ],
+        "velocityXMps": [
+          -6.711992041872075e-15,
+          -1.0741858505275927e-14,
+          -1.2437600024803338e-14,
+          -9.185824581775905e-15,
+          -9.44155591913292e-15,
+          -1.2826123326655382e-14,
+          -1.0538990572463127e-14,
+          -6.458336761052047e-15
+        ],
+        "velocityYMps": [
+          -2.2597479202999305e-16,
+          -4.843331195665402e-16,
+          2.3361503338152043e-17,
+          9.576934308709182e-17,
+          -1.6689533479215474e-16,
+          -1.122276658487732e-16,
+          -1.420170655490628e-16,
+          -1.0974916543738719e-16
+        ]
+      },
+      "rainfall": {
+        "schemaVersion": 1,
+        "method": "OBSERVED_MINUTE_DEPTH_UNIFORM_WITHIN_INTERVAL",
+        "startUtc": "2022-08-08T09:00:00+00:00",
+        "endUtc": "2022-08-08T14:59:00+00:00",
+        "durationSeconds": 21540,
+        "observedIntervalCount": 359,
+        "rateChangeCount": 225,
+        "stations": [
+          {
+            "stationId": "401",
+            "surfaceAreaM2": 50.0,
+            "depthMm": 288.5,
+            "expectedVolumeM3": 14.425,
+            "sourceSha256": "c287353fd6f861a0af4167aabe5b18945f279975098202a9c66bf4d5b36ab50e"
+          },
+          {
+            "stationId": "421",
+            "surfaceAreaM2": 50.0,
+            "depthMm": 85.0,
+            "expectedVolumeM3": 4.25,
+            "sourceSha256": "fd13e6e5d75707b75d13bb9b0a7860356172f0038d5bee9a68874b0f4f42c0e4"
+          }
+        ],
+        "expectedSurfaceRainfallM3": 18.675,
+        "assignmentEvidence": "실제 성동/서초 강우의 합성 격자 배정; 서울 위치·유역 재현 아님",
+        "specificationSha256": "93074da9dc9539a59ee0273adf7a3eea1969afe5a72287ac5a0ece55067ff135",
+        "sourceFiles": {
+          "data/derived/rainfall/kma-421-202208081800-202208082359-disaster-v1.json": "21d21033308e31deafe9190f5a0723fded9e43562a0d7c5573cc94c3e99efd96",
+          "data/manifests/kma-421-202208081800-202208082359.json": "72a112bce1950379ad10167c5868e810e94787d87b719001524b7b5ad04f39b3",
+          "data/raw/kma-421-202208081800-202208082359.txt": "fd13e6e5d75707b75d13bb9b0a7860356172f0038d5bee9a68874b0f4f42c0e4",
+          "data/derived/rainfall/kma-401-202208081800-202208082359-disaster-v1.json": "39ce4686facc74c09f13c2911162ea0293a30a8cac410da821a5fa51a423f21c",
+          "data/manifests/kma-401-202208081800-202208082359.json": "780c0bb5c042a9105f732bdb45a3b3b9234cc6fcd783d2d4bacc403e49075d7a",
+          "data/raw/kma-401-202208081800-202208082359.txt": "c287353fd6f861a0af4167aabe5b18945f279975098202a9c66bf4d5b36ab50e"
+        },
+        "adapterSha256": "d4dd49775bbf8719b50e43fe69bf7b7d76988fefd2ec60eedb4099b7f540a818",
+        "limitations": [
+          "분 내부 일정 강도 가정; 초 단위 실측 아님",
+          "관측소→격자 배정은 명시한 공간 모형; 격자별 현장 관측 아님",
+          "관측 창 밖 외삽·무강우 보간 없음; 지형·관망·경계 검증과 별개"
+        ],
+        "appliedSurfaceRainfallM3": 18.674999999988838,
+        "volumeResidualM3": -1.1162626378791174e-11
+      },
+      "maximumForcingBoundaryBalanceResidualM3": 8.817835350782843e-12,
+      "resultSha256": "32fe2388778ed74f97e201155bf3cb2aae011e49447eb77b5cb67e02a2af29b5"
+    },
+    {
+      "name": "step-005s",
+      "maximumStepSeconds": 0.05,
+      "status": "PASSED",
+      "final": {
+        "timeSeconds": 21540.0,
+        "storageM3": 18.675000000250005,
+        "boundaryNetInflowM3": 6.638291880939182e-21,
+        "sourceNetInflowM3": 18.67500000020896,
+        "balanceResidualM3": -4.104450113118219e-11,
+        "depthM": [
+          0.18675000000249808,
+          0.18675000000249856,
+          0.18675000000250183,
+          0.186750000002502,
+          0.18675000000249814,
+          0.18675000000249814,
+          0.18675000000250172,
+          0.18675000000250205
+        ],
+        "velocityXMps": [
+          -1.20848303684421e-14,
+          -1.874496573084348e-14,
+          -2.13596119606749e-14,
+          -1.6301727859212018e-14,
+          -1.613406497014464e-14,
+          -2.1583987267510732e-14,
+          -1.8995093171791458e-14,
+          -1.2155816859207825e-14
+        ],
+        "velocityYMps": [
+          -8.352698535009489e-16,
+          -1.9261440602341628e-16,
+          -2.3607950262743345e-16,
+          -8.623466722605101e-16,
+          1.0038657644949459e-15,
+          3.346447436713318e-17,
+          -1.1367977720716547e-15,
+          -6.561331321138186e-16
+        ]
+      },
+      "rainfall": {
+        "schemaVersion": 1,
+        "method": "OBSERVED_MINUTE_DEPTH_UNIFORM_WITHIN_INTERVAL",
+        "startUtc": "2022-08-08T09:00:00+00:00",
+        "endUtc": "2022-08-08T14:59:00+00:00",
+        "durationSeconds": 21540,
+        "observedIntervalCount": 359,
+        "rateChangeCount": 225,
+        "stations": [
+          {
+            "stationId": "401",
+            "surfaceAreaM2": 50.0,
+            "depthMm": 288.5,
+            "expectedVolumeM3": 14.425,
+            "sourceSha256": "c287353fd6f861a0af4167aabe5b18945f279975098202a9c66bf4d5b36ab50e"
+          },
+          {
+            "stationId": "421",
+            "surfaceAreaM2": 50.0,
+            "depthMm": 85.0,
+            "expectedVolumeM3": 4.25,
+            "sourceSha256": "fd13e6e5d75707b75d13bb9b0a7860356172f0038d5bee9a68874b0f4f42c0e4"
+          }
+        ],
+        "expectedSurfaceRainfallM3": 18.675,
+        "assignmentEvidence": "실제 성동/서초 강우의 합성 격자 배정; 서울 위치·유역 재현 아님",
+        "specificationSha256": "93074da9dc9539a59ee0273adf7a3eea1969afe5a72287ac5a0ece55067ff135",
+        "sourceFiles": {
+          "data/derived/rainfall/kma-421-202208081800-202208082359-disaster-v1.json": "21d21033308e31deafe9190f5a0723fded9e43562a0d7c5573cc94c3e99efd96",
+          "data/manifests/kma-421-202208081800-202208082359.json": "72a112bce1950379ad10167c5868e810e94787d87b719001524b7b5ad04f39b3",
+          "data/raw/kma-421-202208081800-202208082359.txt": "fd13e6e5d75707b75d13bb9b0a7860356172f0038d5bee9a68874b0f4f42c0e4",
+          "data/derived/rainfall/kma-401-202208081800-202208082359-disaster-v1.json": "39ce4686facc74c09f13c2911162ea0293a30a8cac410da821a5fa51a423f21c",
+          "data/manifests/kma-401-202208081800-202208082359.json": "780c0bb5c042a9105f732bdb45a3b3b9234cc6fcd783d2d4bacc403e49075d7a",
+          "data/raw/kma-401-202208081800-202208082359.txt": "c287353fd6f861a0af4167aabe5b18945f279975098202a9c66bf4d5b36ab50e"
+        },
+        "adapterSha256": "d4dd49775bbf8719b50e43fe69bf7b7d76988fefd2ec60eedb4099b7f540a818",
+        "limitations": [
+          "분 내부 일정 강도 가정; 초 단위 실측 아님",
+          "관측소→격자 배정은 명시한 공간 모형; 격자별 현장 관측 아님",
+          "관측 창 밖 외삽·무강우 보간 없음; 지형·관망·경계 검증과 별개"
+        ],
+        "appliedSurfaceRainfallM3": 18.67500000020896,
+        "volumeResidualM3": 2.0895996044600906e-10
+      },
+      "maximumForcingBoundaryBalanceResidualM3": 5.1667115030795685e-11,
+      "resultSha256": "06e9ab61353c3139b3fd62aaca119586c1359cd2f0e2b04f163095491060bcfc"
+    },
+    {
+      "name": "replay-01s",
+      "maximumStepSeconds": 0.1,
+      "status": "PASSED",
+      "final": {
+        "timeSeconds": 21540.0,
+        "storageM3": 18.674999999982738,
+        "boundaryNetInflowM3": -7.073904792273352e-20,
+        "sourceNetInflowM3": 18.674999999988838,
+        "balanceResidualM3": 6.10000938650046e-12,
+        "depthM": [
+          0.18674999999982625,
+          0.18674999999982636,
+          0.18674999999982847,
+          0.18674999999982847,
+          0.1867499999998263,
+          0.1867499999998263,
+          0.18674999999982841,
+          0.18674999999982847
+        ],
+        "velocityXMps": [
+          -6.711992041872075e-15,
+          -1.0741858505275927e-14,
+          -1.2437600024803338e-14,
+          -9.185824581775905e-15,
+          -9.44155591913292e-15,
+          -1.2826123326655382e-14,
+          -1.0538990572463127e-14,
+          -6.458336761052047e-15
+        ],
+        "velocityYMps": [
+          -2.2597479202999305e-16,
+          -4.843331195665402e-16,
+          2.3361503338152043e-17,
+          9.576934308709182e-17,
+          -1.6689533479215474e-16,
+          -1.122276658487732e-16,
+          -1.420170655490628e-16,
+          -1.0974916543738719e-16
+        ]
+      },
+      "rainfall": {
+        "schemaVersion": 1,
+        "method": "OBSERVED_MINUTE_DEPTH_UNIFORM_WITHIN_INTERVAL",
+        "startUtc": "2022-08-08T09:00:00+00:00",
+        "endUtc": "2022-08-08T14:59:00+00:00",
+        "durationSeconds": 21540,
+        "observedIntervalCount": 359,
+        "rateChangeCount": 225,
+        "stations": [
+          {
+            "stationId": "401",
+            "surfaceAreaM2": 50.0,
+            "depthMm": 288.5,
+            "expectedVolumeM3": 14.425,
+            "sourceSha256": "c287353fd6f861a0af4167aabe5b18945f279975098202a9c66bf4d5b36ab50e"
+          },
+          {
+            "stationId": "421",
+            "surfaceAreaM2": 50.0,
+            "depthMm": 85.0,
+            "expectedVolumeM3": 4.25,
+            "sourceSha256": "fd13e6e5d75707b75d13bb9b0a7860356172f0038d5bee9a68874b0f4f42c0e4"
+          }
+        ],
+        "expectedSurfaceRainfallM3": 18.675,
+        "assignmentEvidence": "실제 성동/서초 강우의 합성 격자 배정; 서울 위치·유역 재현 아님",
+        "specificationSha256": "93074da9dc9539a59ee0273adf7a3eea1969afe5a72287ac5a0ece55067ff135",
+        "sourceFiles": {
+          "data/derived/rainfall/kma-421-202208081800-202208082359-disaster-v1.json": "21d21033308e31deafe9190f5a0723fded9e43562a0d7c5573cc94c3e99efd96",
+          "data/manifests/kma-421-202208081800-202208082359.json": "72a112bce1950379ad10167c5868e810e94787d87b719001524b7b5ad04f39b3",
+          "data/raw/kma-421-202208081800-202208082359.txt": "fd13e6e5d75707b75d13bb9b0a7860356172f0038d5bee9a68874b0f4f42c0e4",
+          "data/derived/rainfall/kma-401-202208081800-202208082359-disaster-v1.json": "39ce4686facc74c09f13c2911162ea0293a30a8cac410da821a5fa51a423f21c",
+          "data/manifests/kma-401-202208081800-202208082359.json": "780c0bb5c042a9105f732bdb45a3b3b9234cc6fcd783d2d4bacc403e49075d7a",
+          "data/raw/kma-401-202208081800-202208082359.txt": "c287353fd6f861a0af4167aabe5b18945f279975098202a9c66bf4d5b36ab50e"
+        },
+        "adapterSha256": "d4dd49775bbf8719b50e43fe69bf7b7d76988fefd2ec60eedb4099b7f540a818",
+        "limitations": [
+          "분 내부 일정 강도 가정; 초 단위 실측 아님",
+          "관측소→격자 배정은 명시한 공간 모형; 격자별 현장 관측 아님",
+          "관측 창 밖 외삽·무강우 보간 없음; 지형·관망·경계 검증과 별개"
+        ],
+        "appliedSurfaceRainfallM3": 18.674999999988838,
+        "volumeResidualM3": -1.1162626378791174e-11
+      },
+      "maximumForcingBoundaryBalanceResidualM3": 8.817835350782843e-12,
+      "resultSha256": "32fe2388778ed74f97e201155bf3cb2aae011e49447eb77b5cb67e02a2af29b5"
+    }
+  ],
+  "timeComparison": {
+    "maximumStepsSeconds": [
+      0.1,
+      0.05
+    ],
+    "maximumDepthDifferenceM": 2.6735835767510707e-12,
+    "storageDifferenceM3": -2.672670973424829e-10,
+    "exactReplay": true
+  },
+  "coupled": {
+    "numericalStatus": "PASSED",
+    "balance": {
+      "networkExternalInflowM3": 2.2768245622195593e-17,
+      "networkExternalOutflowAndLossM3": 0.0006430522683301584,
+      "surfaceExternalNetInflowM3": 0.005999999999999941,
+      "networkStorageM3": 0.0011503969737589447,
+      "surfaceStorageM3": 0.004206401871635457,
+      "networkToSurfaceM3": 0.0,
+      "surfaceToNetworkM3": 0.0017935981281388509,
+      "exchangeCancellationResidualM3": 0.0,
+      "balanceResidualM3": 1.4888627540392274e-07
+    },
+    "observedRainfall": {
+      "schemaVersion": 1,
+      "method": "OBSERVED_MINUTE_DEPTH_UNIFORM_WITHIN_INTERVAL",
+      "startUtc": "2022-08-08T09:00:00+00:00",
+      "endUtc": "2022-08-08T09:02:00+00:00",
+      "durationSeconds": 120,
+      "observedIntervalCount": 2,
+      "rateChangeCount": 2,
+      "stations": [
+        {
+          "stationId": "421",
+          "surfaceAreaM2": 4.0,
+          "depthMm": 1.5,
+          "expectedVolumeM3": 0.006,
+          "sourceSha256": "fd13e6e5d75707b75d13bb9b0a7860356172f0038d5bee9a68874b0f4f42c0e4"
+        }
+      ],
+      "expectedSurfaceRainfallM3": 0.006,
+      "assignmentEvidence": "실제 성동/서초 강우의 합성 격자 배정; 서울 위치·유역 재현 아님",
+      "specificationSha256": "b4ee9423ea19a1b094360740a3d7b486f1ef1fac8f74da8c3c255c10c061f20b",
+      "sourceFiles": {
+        "data/derived/rainfall/kma-421-202208081800-202208082359-disaster-v1.json": "21d21033308e31deafe9190f5a0723fded9e43562a0d7c5573cc94c3e99efd96",
+        "data/manifests/kma-421-202208081800-202208082359.json": "72a112bce1950379ad10167c5868e810e94787d87b719001524b7b5ad04f39b3",
+        "data/raw/kma-421-202208081800-202208082359.txt": "fd13e6e5d75707b75d13bb9b0a7860356172f0038d5bee9a68874b0f4f42c0e4"
+      },
+      "adapterSha256": "d4dd49775bbf8719b50e43fe69bf7b7d76988fefd2ec60eedb4099b7f540a818",
+      "limitations": [
+        "분 내부 일정 강도 가정; 초 단위 실측 아님",
+        "관측소→격자 배정은 명시한 공간 모형; 격자별 현장 관측 아님",
+        "관측 창 밖 외삽·무강우 보간 없음; 지형·관망·경계 검증과 별개"
+      ],
+      "appliedSurfaceRainfallM3": 0.005999999999999941,
+      "volumeResidualM3": -5.898059818321144e-17
+    }
+  },
+  "limitations": [
+    "359분 실제 AWS 관측; 격자·경계·관망은 합성 입력 연결 검사",
+    "지표 침투·증발산·선행 수분·실제 서울 DEM·관망 연결 미포함",
+    "0.1/0.05초는 명시한 수치 비교; 자동 설정 완화·실제 시설 제원 변경 없음",
+    "큰 시간 간격의 실패 보존; 모든 유역·격자의 안정성 또는 현장 정확도 근거 아님"
+  ],
+  "artifactDirectory": "data/runs/observed-surface-rainfall-20261018-v1",
+  "artifactManifestSha256": "6fce9c13cd19d6802eafec50195aa3fd566cd777cff31779762c0885df72a62a",
+  "verifiedFileCount": 110,
+  "sourceCode": {
+    "scripts/verify_observed_surface_rainfall.py": "22024ebf117bd4893cb5eba09f8581200ccb2751ac9927315c3e70aee69ec4c1",
+    "simulation/uv.lock": "d2ffd1c9a11f47d3f3e4b9a39762c7ceff9b424171bc913c98672f759036e09e",
+    "simulation/pyproject.toml": "49f1b8276a2e9e8b66f3bfdd8dda08303211669ed1c2ad938ba472d597a34cb2",
+    "data/manifests/anuga-4.0.1.json": "3002d98f0fc84a8e3384033b52795c056931f6db6cf8f5b513074c56e7e10a20",
+    "simulation/waterleague_sim/forcing/__init__.py": "8eeb67181b650bc778bd2d3910b0e4a59bf1198df4063c22f2d4cc89d259789f",
+    "simulation/waterleague_sim/forcing/observed_rainfall.py": "d4dd49775bbf8719b50e43fe69bf7b7d76988fefd2ec60eedb4099b7f540a818",
+    "simulation/waterleague_sim/forcing/surface_run.py": "392aa7b70f26ebe994ec4ad7fe61b0ff3f655028597ab68e4bca19e7dff5570d",
+    "simulation/waterleague_sim/ingestion/antecedent.py": "747d04bf96469d48f80e831ebc7aad20f14b2834c79aa30c2c42c16cb27feb1d",
+    "simulation/waterleague_sim/ingestion/daily_evaporation.py": "29de21fe5ccd574300f4631dc41b338c343eacedd9273ce555e3d32fab6dad9c",
+    "simulation/waterleague_sim/ingestion/evaporation.py": "c61afcbbcf3825eefade654c2bcbbedb7102c67b0ce59057528d63e8667c6c22",
+    "simulation/waterleague_sim/ingestion/hourly_rainfall.py": "6f22ee0c0fb0304e24f3751aae1f80306f95eb5b645385e5d434c9dd210794af",
+    "simulation/waterleague_sim/ingestion/kma.py": "908c094b6c1149cf725a4926646628255238fcdb2aecaa62ab7da769bce9d33f",
+    "simulation/waterleague_sim/ingestion/live.py": "14ce246909617af810e5712f80ae621da45872eb6223d856067002d85f3e5f60",
+    "simulation/waterleague_sim/ingestion/rainfall.py": "7fb2c1b8d3b9e5be16743ceb1bc5934ca83ac44520c3b477625f2b13eb175f49",
+    "simulation/waterleague_sim/ingestion/seoul.py": "429231d0d30e8ab45c301ecd3f7b6da60d46ddf9d53c20d362193998062d6130",
+    "simulation/waterleague_sim/ingestion/source_archive.py": "2ca647f23b014fe3cb1bf6889bd263ec7a1beb7160e5c84353c244f4c67e8e0c",
+    "simulation/waterleague_sim/engine/continuous.py": "3a4ec3679d7fe3c2ed0a39a2cf3528fb75e76b688754653e3c3431ca7bd97f4e",
+    "simulation/waterleague_sim/engine/coupled_flood.py": "6afb69a72570a0f59d16483ad7221ae5af565d58621dffdcf16f7aaf72447ca9",
+    "simulation/waterleague_sim/engine/evapotranspiration.py": "4de54c4eea26ba0c48dd4ceb4403d699806d9b5a3531c5b2d3528582da506b69",
+    "simulation/waterleague_sim/engine/facilities.py": "1ac27875c4a3cce79f89584da4a65ca408fe7a03daaae9f6b07ce1925f53cefa",
+    "simulation/waterleague_sim/engine/flood_errors.py": "59e70440df55df54e83aa7a2787f12ef14b2541ac5c05f67a10e9addbe229155",
+    "simulation/waterleague_sim/engine/flood_metrics.py": "30f830d17bcd174129dcdb79e3b85f684d08dee5337b8e7a964f340902da6f3c",
+    "simulation/waterleague_sim/engine/flood_process.py": "2145dd557e5a3b44328b153925974af0e2f257a3409015b520ee57fe50e13cd9",
+    "simulation/waterleague_sim/engine/initialization.py": "ca770523b30f41407ef60cd48f28fcd16b303e5f347e4b8ee57b504059eb48c6",
+    "simulation/waterleague_sim/engine/initialization_sensitivity.py": "13c4da988b789d06df63b78361a15d0261056a96bfe95206a25a07fef55522fa",
+    "simulation/waterleague_sim/engine/network.py": "a4f6dd28e02dc6360f90b86eff8c1a6d7a5a4832535e98ac4b0c87d4464720d2",
+    "simulation/waterleague_sim/engine/network_exchange.py": "36c1b650c0c642c828c5f118addf6a4f3baa9f791eff79a53a483fc2ebc0fb43",
+    "simulation/waterleague_sim/engine/network_metrics.py": "f0219c6affedd4b95b049815c4242b7fe8f56abe917b97f8c2d55ca2c65802df",
+    "simulation/waterleague_sim/engine/network_quality.py": "c78323b383d37be56c34b8cc2d5084e4a92e3de6bbc2a818d914acbabf3eb930",
+    "simulation/waterleague_sim/engine/surface.py": "cb3adb895205be15cb8dc9cec605dfe17d063bffbe70dee23cad215d303da4a0",
+    "simulation/waterleague_sim/engine/surface_exchange.py": "1ecf775e0caf4a61b66c3b04a2479faebca32d5f40b711c67ab55e4bd90e0080",
+    "simulation/waterleague_sim/engine/swmm.py": "1754562f19f0860daa127f34e35c6336e2884d5779b9cd531d1811088f702823",
+    "simulation/waterleague_sim/reference/__init__.py": "b6a5ae176a277f234a9121e41bd9290664df5c62bcac189c83ffda181f60d850",
+    "simulation/waterleague_sim/reference/epa.py": "cbc737e5867eb72af81fe76cc527ed48e8102bbd631202b79fc24bf7d96d5245",
+    "simulation/waterleague_sim/reference/flood_cases.py": "de7fd2be4e51317d0fac94d3b2bceb59cd940fb4469210947eeb94019ef2563b"
+  }
+}

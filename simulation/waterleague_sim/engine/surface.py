@@ -119,6 +119,15 @@ class SurfaceSession:
         domain.set_store(True)
         domain.set_store_centroids(True)
         self.owners = owners
+        self.station_indices = None
+        if model.get('rainfallStationIds') is not None:
+            assignments = model['rainfallStationIds']
+            require(isinstance(assignments, list) and len(assignments) == len(owners)
+                    and all((owner == 'NETWORK' and sid is None) or
+                        (owner == 'SURFACE' and isinstance(sid, str) and sid.isdigit())
+                        for owner, sid in zip(owners, assignments)), 'SURFACE_STATION_ASSIGNMENT_INVALID')
+            self.station_indices = {sid: np.asarray([i for i, value in enumerate(assignments) if value == sid])
+                                    for sid in sorted({sid for sid in assignments if sid is not None})}
         self.forcing = []
         self.rain = anuga.Rate_operator(domain, rate=np.zeros(len(triangles)), factor=1 / 3_600_000)
         self.metrics = None
@@ -131,6 +140,7 @@ class SurfaceSession:
 
     def set_rainfall(self, rates_mm_hour):
         require(not self.finished, 'SURFACE_SESSION_FINISHED')
+        require(self.station_indices is None, 'SURFACE_RAINFALL_BINDING_REQUIRED')
         np = self.np
         rates = np.asarray(rates_mm_hour, dtype=float)
         require(rates.shape == self.owners.shape and np.all(np.isfinite(rates))
@@ -138,6 +148,19 @@ class SurfaceSession:
         require(np.all(rates[self.owners != 'SURFACE'] == 0), 'SURFACE_RAINFALL_DOUBLE_COUNT')
         self.rain.set_rate(rates.copy())
         self.forcing.append({'timeSeconds': self.domain.get_time(), 'ratesMmH': rates.tolist()})
+
+    def set_station_rainfall(self, rates_by_station):
+        require(not self.finished, 'SURFACE_SESSION_FINISHED')
+        require(self.station_indices is not None and isinstance(rates_by_station, dict)
+                and set(rates_by_station) == set(self.station_indices)
+                and all(type(rate) in (int, float) and math.isfinite(rate) and rate >= 0
+                        for rate in rates_by_station.values()), 'SURFACE_STATION_RAINFALL_INVALID')
+        rates = self.np.zeros(len(self.owners))
+        for sid, indices in self.station_indices.items():
+            rates[indices] = rates_by_station[sid]
+        self.rain.set_rate(rates)
+        self.forcing.append({'timeSeconds': self.domain.get_time(),
+                             'ratesMmHByStation': dict(rates_by_station)})
 
     def snapshot(self):
         np, domain = self.np, self.domain

@@ -1,5 +1,6 @@
 """SWMM 수평 유입부와 ANUGA의 보존적 명시적 분할 결합."""
 import hashlib
+from bisect import bisect_right
 import json
 import math
 from pathlib import Path
@@ -7,6 +8,7 @@ from pathlib import Path
 from waterleague_sim.engine.flood_errors import FloodModelError, require
 from waterleague_sim.engine.flood_process import EngineProcess
 from waterleague_sim.engine.flood_metrics import specification_hash, validate_metrics
+from waterleague_sim.forcing.observed_rainfall import compile_rainfall, require_network_clock
 
 
 def _write(path, value):
@@ -85,10 +87,18 @@ def _balance(network, surface, ports):
 
 def run_coupled(model, directory):
     _validate(model)
+    observed = None
+    if model.get('observedRainfall') is not None:
+        require(not model.get('surfaceRainfall') and model['surface'].get('rainfallStationIds') is None,
+                'COUPLED_RAINFALL_FORCING_CONFLICT')
+        require_network_clock(model['network'], model['observedRainfall'])
+        observed = compile_rainfall(model['observedRainfall'], model['surface'], model['durationSeconds'])
     directory = Path(directory).resolve()
     require(not directory.exists(), 'COUPLED_OUTPUT_EXISTS')
     directory.mkdir(parents=True)
     _write(directory / 'coupled-input.json', model)
+    if observed is not None:
+        observed.archive(directory / 'observed-rainfall')
     ports = model['ports']
     network_model = model['network'] | {'ports': ports}
     surface_model = {'surface': model['surface'], 'ports': ports}
@@ -96,11 +106,17 @@ def run_coupled(model, directory):
     if metric_spec is not None:
         network_model = network_model | {'evaluationMetrics': metric_spec}
         surface_model = surface_model | {'surface': model['surface'] | {'evaluationMetrics': metric_spec}}
+    if observed is not None:
+        surface_model['surface'] = surface_model['surface'] | {
+            'rainfallStationIds': model['observedRainfall']['stationByTriangle']}
     duration = model['durationSeconds'] * 1000
     events = {}
     for collection in ('networkForcing', 'surfaceRainfall'):
         for row in model.get(collection, []):
             events.setdefault(row['timeMilliseconds'], []).append((collection, row))
+    if observed is not None:
+        for row in observed.events:
+            events.setdefault(row['timeMilliseconds'], []).append(('observedRainfall', row))
     event_times = sorted(set(events) | {duration})
     clock, nstate, state = 0, None, None
     try:
@@ -120,6 +136,8 @@ def run_coupled(model, directory):
                         for collection, row in events.get(clock, []):
                             if collection == 'networkForcing':
                                 network.call('set_inflow', row['node'], row['flowM3s'])
+                            elif collection == 'observedRainfall':
+                                surface.call('set_station_rainfall', row['ratesMmHByStation'])
                             else:
                                 surface.call('set_rainfall', row['ratesMmH'])
                         heads = {key: row['headM'] for key, row in state['ports'].items()}
@@ -127,7 +145,7 @@ def run_coupled(model, directory):
                         require(all(row['openingAreaM2'] <= state['ports'][key]['regionAreaM2']
                                     for key, row in hydraulic.items()), 'COUPLED_OPENING_EXCEEDS_REGION')
                         step = min(model['maximumExchangeMilliseconds'], duration - clock,
-                                   next(t for t in event_times if t > clock) - clock)
+                                   event_times[bisect_right(event_times, clock)] - clock)
                         for key, row in hydraulic.items():
                             bound = max(row['maximumInflowM3s'], row['previousInflowM3s'])
                             if bound > 0:
@@ -185,6 +203,10 @@ def run_coupled(model, directory):
                             balance['networkStorageM3'] + balance['surfaceStorageM3'])
                 passed = (nresult['numericalStatus'] == sresult['numericalStatus'] == 'PASSED'
                           and abs(residual) <= max(1e-8, .01 * scale))
+                if observed is not None:
+                    expected_rain = observed.summary['expectedSurfaceRainfallM3']
+                    require(math.isclose(state['externalSourceNetInflowM3'], expected_rain,
+                                        rel_tol=1e-8, abs_tol=1e-8), 'OBSERVED_RAIN_VOLUME_MISMATCH')
                 result = {'schemaVersion': 1, 'classification': model['evidence'],
                     'method': 'EXPLICIT_NETWORK_EXCHANGE_THEN_SURFACE_FLOW',
                     'durationSeconds': model['durationSeconds'], 'steps': steps,
@@ -205,6 +227,10 @@ def run_coupled(model, directory):
                         '연결되지 않은 노드 월류는 실패 처리, 임의 지표 위치 할당 없음'],
                     'files': {str(p.relative_to(directory)): hashlib.sha256(p.read_bytes()).hexdigest()
                               for p in sorted(directory.rglob('*')) if p.is_file()}}
+                if observed is not None:
+                    result['observedRainfall'] = observed.summary | {
+                        'appliedSurfaceRainfallM3': state['externalSourceNetInflowM3'],
+                        'volumeResidualM3': state['externalSourceNetInflowM3'] - expected_rain}
                 if metric_spec is not None:
                     nm, sm = nresult['evaluationMetrics'], sresult['evaluationMetrics']
                     spec_hash = specification_hash(metric_spec)
