@@ -23,5 +23,9 @@ public record LiveRainfallView(
       BigDecimal dayMm,
       Boolean rainDetected,
       BigDecimal oneMinuteMm,
-      String rainState) {}
+      String rainState,
+      BigDecimal temperatureC,
+      BigDecimal humidityPercent,
+      BigDecimal windSpeedMs,
+      BigDecimal pressureHpa) {}
 }

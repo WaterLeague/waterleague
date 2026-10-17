@@ -10,7 +10,11 @@ public record LiveObservation(
     BigDecimal sixtyMinuteMm,
     BigDecimal dayMm,
     Boolean rainDetected,
-    BigDecimal oneMinuteMm) {
+    BigDecimal oneMinuteMm,
+    BigDecimal temperatureC,
+    BigDecimal humidityPercent,
+    BigDecimal windSpeedMs,
+    BigDecimal pressureHpa) {
   public String rainState() {
     if (Boolean.TRUE.equals(rainDetected) || (oneMinuteMm != null && oneMinuteMm.signum() > 0))
       return "WET";

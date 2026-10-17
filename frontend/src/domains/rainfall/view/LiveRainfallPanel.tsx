@@ -68,6 +68,12 @@ export function LiveRainfallPanel({
                 </div>
               </dl>
               <p>최근 1분 {station.oneMinuteMm ?? '—'} mm</p>
+              <p>
+                기온 {station.temperatureC ?? '—'} °C · 습도 {station.humidityPercent ?? '—'} %
+                <br />
+                10분 평균 풍속 {station.windSpeedMs ?? '—'} m/s · 기압 {station.pressureHpa ?? '—'}{' '}
+                hPa
+              </p>
               {station.status === 'MISSING' && <p>결측 항목은 0으로 계산하지 않습니다.</p>}
             </>
           ) : (

@@ -23,6 +23,10 @@ const station: RainStation = {
   rainDetected: false,
   oneMinuteMm: 0,
   rainState: 'NO_RAIN_DETECTED',
+  temperatureC: 20,
+  humidityPercent: 60,
+  windSpeedMs: 0,
+  pressureHpa: 1000,
 };
 it('과거 누적 강우와 결측·지연을 현재 비 효과로 사용하지 않음', () => {
   expect(isRaining(station, at + 120000)).toBe(false);

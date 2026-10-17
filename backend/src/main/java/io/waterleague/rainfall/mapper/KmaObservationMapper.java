@@ -31,7 +31,17 @@ public final class KmaObservationMapper {
           throw new IllegalArgumentException();
         var value =
             new LiveObservation(
-                f[1], time, depth(f[10]), depth(f[11]), depth(f[13]), detection(f[9]), null);
+                f[1],
+                time,
+                depth(f[10]),
+                depth(f[11]),
+                depth(f[13]),
+                detection(f[9]),
+                null,
+                weather(f[8], -90, 60),
+                weather(f[14], 0, 100),
+                weather(f[7], 0, 150),
+                weather(f[15], 300, 1100));
         var target = time.equals(requested) ? rows : previous;
         if (target.put(f[1], value) != null) throw new IllegalArgumentException();
       }
@@ -58,7 +68,11 @@ public final class KmaObservationMapper {
                 current.sixtyMinuteMm(),
                 current.dayMm(),
                 current.rainDetected(),
-                minute);
+                minute,
+                current.temperatureC(),
+                current.humidityPercent(),
+                current.windSpeedMs(),
+                current.pressureHpa());
           });
       return Map.copyOf(rows);
     } catch (RuntimeException e) {
@@ -72,6 +86,15 @@ public final class KmaObservationMapper {
     if (n.signum() == 0) return false;
     if (n.compareTo(BigDecimal.ONE) == 0) return true;
     throw new IllegalArgumentException();
+  }
+
+  private static BigDecimal weather(String s, int minimum, int maximum) {
+    var n = new BigDecimal(s);
+    if (n.compareTo(BigDecimal.valueOf(-99)) <= 0) return null;
+    if (n.compareTo(BigDecimal.valueOf(minimum)) < 0
+        || n.compareTo(BigDecimal.valueOf(maximum)) > 0
+        || n.scale() > 3) throw new IllegalArgumentException();
+    return n;
   }
 
   private static BigDecimal depth(String s) {

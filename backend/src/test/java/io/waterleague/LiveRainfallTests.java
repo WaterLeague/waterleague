@@ -32,9 +32,33 @@ class LiveRainfallTests {
     assertThat(zero.dayMm()).isEqualByComparingTo("5");
     assertThat(zero.observedAt()).isEqualTo(at);
     assertThat(zero.complete()).isTrue();
+    assertThat(zero.temperatureC()).isEqualByComparingTo("20");
+    assertThat(zero.humidityPercent()).isEqualByComparingTo("60");
+    assertThat(zero.windSpeedMs()).isZero();
+    assertThat(zero.pressureHpa()).isEqualByComparingTo("1000");
     var missing = KmaObservationMapper.parse(response(row(at, "-99.9")), at).get("421");
     assertThat(missing.fifteenMinuteMm()).isNull();
     assertThat(missing.complete()).isFalse();
+  }
+
+  @Test
+  void preservesMissingWeatherWithoutInvalidatingObservedRain() {
+    Instant at = Instant.parse("2026-10-17T11:47:00Z");
+    String source =
+        row(at, "0")
+            .replace("0 20 0", "-99.9 -99.9 0")
+            .replace("60 1000 1010 10", "-99.9 -99.9 1010 10");
+    var missing = KmaObservationMapper.parse(response(source), at).get("421");
+    assertThat(missing.temperatureC()).isNull();
+    assertThat(missing.humidityPercent()).isNull();
+    assertThat(missing.windSpeedMs()).isNull();
+    assertThat(missing.pressureHpa()).isNull();
+    assertThat(missing.complete()).isTrue();
+    assertThatThrownBy(
+            () ->
+                KmaObservationMapper.parse(
+                    response(row(at, "0").replace("60 1000 1010 10", "101 1000 1010 10")), at))
+        .isInstanceOf(DomainException.class);
   }
 
   @Test

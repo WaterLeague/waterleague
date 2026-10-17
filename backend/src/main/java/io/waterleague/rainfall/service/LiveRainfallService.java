@@ -77,7 +77,11 @@ public class LiveRainfallService {
                       v == null ? null : v.dayMm(),
                       v == null ? null : v.rainDetected(),
                       v == null ? null : v.oneMinuteMm(),
-                      v == null ? "UNKNOWN" : v.rainState());
+                      v == null ? "UNKNOWN" : v.rainState(),
+                      v == null ? null : v.temperatureC(),
+                      v == null ? null : v.humidityPercent(),
+                      v == null ? null : v.windSpeedMs(),
+                      v == null ? null : v.pressureHpa());
                 })
             .toList();
     return new LiveRainfallView(
