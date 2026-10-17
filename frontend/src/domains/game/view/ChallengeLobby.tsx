@@ -32,9 +32,6 @@ export function ChallengeLobby({
   onCompetition: () => void;
   onEvidence: () => void;
 }) {
-  const families = [
-    ...new Map((catalog?.models ?? []).map((m) => [m.mapId ?? 'legacy', m])).values(),
-  ];
   const current = catalog?.models.find((m) => m.modelHash === lab.modelHash);
   return (
     <main className="challenge-lobby">
@@ -115,30 +112,6 @@ export function ChallengeLobby({
           <h2 id="challenge-events-title">어떤 비에 도전할까요?</h2>
           <span>{rainfallNote(lab.model.regionalRainfallUse)}</span>
         </div>
-        <label className="challenge-map-choice">
-          지도 버전
-          <select
-            aria-label="지도 버전 선택"
-            disabled={busy || !!league}
-            value={current?.mapId ?? 'legacy'}
-            onChange={(e) => {
-              const target =
-                catalog?.models.find(
-                  (m) =>
-                    (m.mapId ?? 'legacy') === e.target.value &&
-                    m.rainfall.sourceHash === lab.model.rainfall.sourceHash
-                ) ?? families.find((m) => (m.mapId ?? 'legacy') === e.target.value);
-              if (target) onSelect(target.modelHash);
-            }}
-          >
-            {families.map((m) => (
-              <option key={m.mapId ?? 'legacy'} value={m.mapId ?? 'legacy'}>
-                {m.mapTitle ?? '기존 지도'}
-              </option>
-            ))}
-          </select>
-          <small>지도 변경 시 새 배치로 시작 · 기존 저장 기록 유지</small>
-        </label>
         {league && (
           <p className="challenge-copy-note">
             리그의 강우·예산·시설은 고정됩니다.{' '}
