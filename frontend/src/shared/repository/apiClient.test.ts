@@ -15,6 +15,28 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 describe('세션 만료 복구', () => {
+  it('중단된 지도 조회의 통신 취소와 세션 유지', async () => {
+    const cancel = new AbortController();
+    const listener = vi.fn();
+    unsubscribe = onSessionExpired(listener);
+    const fetcher = vi.fn(
+      (_url: string, options: RequestInit) =>
+        new Promise<Response>((_resolve, reject) => {
+          options.signal?.addEventListener(
+            'abort',
+            () => reject(new DOMException('Aborted', 'AbortError')),
+            { once: true }
+          );
+        })
+    );
+    vi.stubGlobal('fetch', fetcher);
+    const request = api('/installations/sites', 'GET', undefined, cancel.signal);
+    const rejected = expect(request).rejects.toMatchObject({ name: 'AbortError' });
+    cancel.abort();
+    await rejected;
+    expect(fetcher.mock.calls[0][1].signal).toBe(cancel.signal);
+    expect(listener).not.toHaveBeenCalled();
+  });
   it('병렬 변경 요청의 첫 CSRF 조회 공유와 만료 알림', async () => {
     const fetcher = vi
       .fn()

@@ -38,7 +38,12 @@ export function refreshCsrf(): Promise<Csrf> {
     .catch(() => {});
   return request;
 }
-export async function api<T>(path: string, method = 'GET', body?: unknown): Promise<T> {
+export async function api<T>(
+  path: string,
+  method = 'GET',
+  body?: unknown,
+  signal?: AbortSignal
+): Promise<T> {
   const epoch = sessionEpoch;
   const headers: Record<string, string> = { Accept: 'application/json' };
   if (body !== undefined) headers['Content-Type'] = 'application/json';
@@ -53,6 +58,7 @@ export async function api<T>(path: string, method = 'GET', body?: unknown): Prom
     credentials: 'same-origin',
     cache: 'no-store',
     body: body === undefined ? undefined : JSON.stringify(body),
+    signal,
   });
   if (epoch !== sessionEpoch) throw sessionChanged();
   if (!response.ok) {

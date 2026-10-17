@@ -9,8 +9,12 @@ import type { SharedInstallation, SharedSite } from '../entity/installation';
 import type { FacilityType } from '../../game/entity/game';
 import { errorMessage } from '../../../shared/exception/ApiError';
 import type { SiteQuery } from '../repository/installationRepository';
+const NO_SITES: SharedSite[] = [];
 export function useInstallations(query: SiteQuery, live = true) {
-  const [sites, setSites] = useState<SharedSite[]>([]),
+  const [sitePage, setSitePage] = useState<{ scope: string; sites: SharedSite[] }>({
+      scope: '',
+      sites: [],
+    }),
     [installations, setInstallations] = useState<SharedInstallation[]>([]),
     [error, setError] = useState(''),
     [busy, setBusy] = useState(false),
@@ -20,22 +24,26 @@ export function useInstallations(query: SiteQuery, live = true) {
     [siteError, setSiteError] = useState(''),
     [revision, setRevision] = useState(0);
   const key = JSON.stringify(query);
+  const scope = JSON.stringify([query.districtId, query.type, query.vacant]);
   useEffect(() => {
     let disposed = false;
+    const controller = new AbortController();
     setSiteBusy(true);
-    setSites([]);
     setSiteError('');
     const timer = window.setTimeout(() => {
-      void loadSites(JSON.parse(key) as SiteQuery)
+      void loadSites(JSON.parse(key) as SiteQuery, controller.signal)
         .then((page) => {
           if (!disposed) {
-            setSites(page.sites);
+            setSitePage({ scope, sites: page.sites });
             setCounts(page.districtCounts);
             setMatchedCount(page.matchedCount);
           }
         })
         .catch((e) => {
-          if (!disposed) setSiteError(errorMessage(e));
+          if (!disposed) {
+            setSitePage({ scope, sites: [] });
+            setSiteError(errorMessage(e));
+          }
         })
         .finally(() => {
           if (!disposed) setSiteBusy(false);
@@ -44,8 +52,9 @@ export function useInstallations(query: SiteQuery, live = true) {
     return () => {
       disposed = true;
       clearTimeout(timer);
+      controller.abort();
     };
-  }, [key, revision]);
+  }, [key, scope, revision]);
   const alive = useRef(false),
     loading = useRef<Promise<void> | null>(null);
   const refresh = useCallback(async (force = false) => {
@@ -107,7 +116,8 @@ export function useInstallations(query: SiteQuery, live = true) {
     }
   };
   return {
-    sites,
+    // 카메라 이동 중에는 이전 형상을 유지하되 구·시설 조건이 달라지면 즉시 숨긴다.
+    sites: sitePage.scope === scope ? sitePage.sites : NO_SITES,
     counts,
     matchedCount,
     siteBusy,

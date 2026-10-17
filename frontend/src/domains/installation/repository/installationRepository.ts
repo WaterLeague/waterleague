@@ -12,7 +12,7 @@ export type SiteQuery = {
   type: FacilityType | '';
   vacant: boolean;
 };
-export const loadSites = async (query: SiteQuery) => {
+export const loadSites = async (query: SiteQuery, signal?: AbortSignal) => {
   const params = new URLSearchParams({
     districtId: query.districtId,
     x: String(query.x),
@@ -21,7 +21,9 @@ export const loadSites = async (query: SiteQuery) => {
     vacant: String(query.vacant),
   });
   if (query.type) params.set('type', query.type);
-  return sitePageDto.parse(await api<unknown>('/installations/sites?' + params));
+  return sitePageDto.parse(
+    await api<unknown>('/installations/sites?' + params, 'GET', undefined, signal)
+  );
 };
 export const loadSite = async (districtId: string, cellId: string) =>
   siteDto.parse(

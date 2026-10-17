@@ -14,9 +14,17 @@ let worker: Worker | null = null,
   sequence = 0;
 const pending: Job[] = [];
 
-function fail() {
-  worker?.terminate();
+function stopWorker() {
+  if (worker) {
+    worker.onmessage = null;
+    worker.onerror = null;
+    worker.onmessageerror = null;
+    worker.terminate();
+  }
   worker = null;
+}
+function fail() {
+  stopWorker();
   const jobs = [...(active ? [active] : []), ...pending.splice(0)];
   active = null;
   jobs.forEach((j) => {
@@ -30,9 +38,11 @@ function drain() {
       worker = new Worker(new URL('../service/buildingGeometry.worker.ts', import.meta.url), {
         type: 'module',
       });
+      const current = worker;
       worker.onmessage = (
         event: MessageEvent<{ id: number; data?: BuildingMeshData; failed?: boolean }>
       ) => {
+        if (worker !== current) return;
         const job = active;
         if (!job || job.id !== event.data.id) return;
         active = null;
@@ -42,8 +52,11 @@ function drain() {
         }
         drain();
       };
-      worker.onerror = fail;
-      worker.onmessageerror = fail;
+      const failed = () => {
+        if (worker === current) fail();
+      };
+      worker.onerror = failed;
+      worker.onmessageerror = failed;
     }
     active = pending.shift()!;
     worker.postMessage({ id: active.id, buildings: active.buildings });
@@ -62,7 +75,13 @@ export function requestBuildingMesh(buildings: CityBuilding[], signal: AbortSign
       job.canceled = true;
       const index = pending.indexOf(job);
       if (index >= 0) pending.splice(index, 1);
-      reject(new DOMException('Aborted', 'AbortError'));
+      job.reject(new DOMException('Aborted', 'AbortError'));
+      if (active === job) {
+        // 동기 형상 계산은 메시지로 중단할 수 없으므로 이전 작업의 스레드를 종료한다.
+        stopWorker();
+        active = null;
+        drain();
+      }
     };
     const job: Job = {
       id,
