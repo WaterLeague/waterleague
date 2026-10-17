@@ -6,7 +6,8 @@ export function useLiveRainfall() {
   const [value, setValue] = useState<LiveRainfall | null>(null),
     [busy, setBusy] = useState(false),
     [error, setError] = useState(''),
-    [now, setNow] = useState(Date.now());
+    [now, setNow] = useState(Date.now()),
+    [visible, setVisible] = useState(!document.hidden);
   const alive = useRef(false),
     pending = useRef<number | null>(null),
     generation = useRef(0);
@@ -41,17 +42,28 @@ export function useLiveRainfall() {
       setNow(Date.now());
       void refresh();
     }, 60000);
-    const visible = () => {
+    const onVisibility = () => {
+      setVisible(!document.hidden);
       setNow(Date.now());
       if (!document.hidden) void refresh();
     };
-    document.addEventListener('visibilitychange', visible);
+    document.addEventListener('visibilitychange', onVisibility);
     return () => {
       alive.current = false;
       generation.current++;
       window.clearInterval(timer);
-      document.removeEventListener('visibilitychange', visible);
+      document.removeEventListener('visibilitychange', onVisibility);
     };
   }, [refresh]);
-  return { value, busy, error, now, refresh };
+  useEffect(() => {
+    const expiry = Math.min(
+      ...(value?.districts.flatMap((d) =>
+        d.observedAt ? [Date.parse(d.observedAt) + 300001] : []
+      ) ?? [])
+    );
+    if (!Number.isFinite(expiry) || expiry <= Date.now()) return;
+    const timer = window.setTimeout(() => setNow(Date.now()), expiry - Date.now());
+    return () => window.clearTimeout(timer);
+  }, [value]);
+  return { value, busy, error, now, visible, refresh };
 }

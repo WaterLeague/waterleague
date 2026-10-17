@@ -19,6 +19,9 @@ export const liveRainfallDto = z
           fifteenMinuteMm: depth,
           sixtyMinuteMm: depth,
           dayMm: depth,
+          rainDetected: z.boolean().nullable(),
+          oneMinuteMm: depth,
+          rainState: z.enum(['WET', 'NO_RAIN_DETECTED', 'UNKNOWN']),
         })
       )
       .length(25),

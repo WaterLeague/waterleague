@@ -8,7 +8,16 @@ public record LiveObservation(
     Instant observedAt,
     BigDecimal fifteenMinuteMm,
     BigDecimal sixtyMinuteMm,
-    BigDecimal dayMm) {
+    BigDecimal dayMm,
+    Boolean rainDetected,
+    BigDecimal oneMinuteMm) {
+  public String rainState() {
+    if (Boolean.TRUE.equals(rainDetected) || (oneMinuteMm != null && oneMinuteMm.signum() > 0))
+      return "WET";
+    if (Boolean.FALSE.equals(rainDetected) || oneMinuteMm != null) return "NO_RAIN_DETECTED";
+    return "UNKNOWN";
+  }
+
   public boolean complete() {
     return fifteenMinuteMm != null && sixtyMinuteMm != null && dayMm != null;
   }

@@ -27,11 +27,15 @@ public class KmaLiveRepository {
 
   public String fetch(Instant at) {
     if (key.isBlank()) throw new RainfallException(ErrorCode.RAINFALL_ACCESS_UNAVAILABLE);
+    String previous =
+        KmaObservationMapper.TIME.format(at.minusSeconds(60).atZone(KmaObservationMapper.KST));
     String time = KmaObservationMapper.TIME.format(at.atZone(KmaObservationMapper.KST));
     var uri =
         URI.create(
             ENDPOINT
-                + "?tm2="
+                + "?tm1="
+                + previous
+                + "&tm2="
                 + time
                 + "&stn=0&disp=0&help=1&authKey="
                 + URLEncoder.encode(key, StandardCharsets.UTF_8));

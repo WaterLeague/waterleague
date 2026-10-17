@@ -20,5 +20,8 @@ public record LiveRainfallView(
       String status,
       BigDecimal fifteenMinuteMm,
       BigDecimal sixtyMinuteMm,
-      BigDecimal dayMm) {}
+      BigDecimal dayMm,
+      Boolean rainDetected,
+      BigDecimal oneMinuteMm,
+      String rainState) {}
 }

@@ -1,5 +1,5 @@
-import { lazy, Suspense, useCallback, useState, useRef } from 'react';
-import { Search, RotateCcw, MapPin, Layers3 } from 'lucide-react';
+import { lazy, Suspense, useCallback, useState, useRef, useMemo } from 'react';
+import { Search, RotateCcw, MapPin, Layers3, CloudRain } from 'lucide-react';
 import { useCity, useCityTiles } from '../controller/useCity';
 import type { City, CityFocus } from '../entity/city';
 import type { CityPlayRegion } from '../dto/cityPlayDto';
@@ -10,6 +10,10 @@ import { useInstallations } from '../../installation/controller/useInstallations
 import { SharedDistrictPanel } from '../../installation/view/SharedDistrictPanel';
 import { siteKey } from '../../installation/entity/installation';
 import { LiveRainfallPanel } from '../../rainfall/view/LiveRainfallPanel';
+import { useLiveRainfall } from '../../rainfall/controller/useLiveRainfall';
+import { isRaining, observationFresh } from '../../rainfall/service/rainEffectService';
+import { LiveRainPlan } from '../../rainfall/view/LiveRainPlan';
+import { useReducedMotion } from '../../catalog/controller/useReducedMotion';
 const CityScene = lazy(() => import('./CityScene'));
 type PlayProps = { account: Account | null; onLogin: () => void; onAccount: (a: Account) => void };
 function Explorer({
@@ -20,6 +24,20 @@ function Explorer({
   onAccount,
 }: { city: City; regions: CityPlayRegion[] } & PlayProps) {
   const shared = useInstallations();
+  const rainfall = useLiveRainfall();
+  const reducedMotion = useReducedMotion();
+  const wetDistricts = useMemo(() => {
+    const ids = new Set(
+      rainfall.value?.districts.filter((d) => isRaining(d, rainfall.now)).map((d) => d.districtId)
+    );
+    return city.districts.filter((d) => ids.has(d.id));
+  }, [city, rainfall.value, rainfall.now]);
+  const wetIds = new Set(wetDistricts.map((d) => d.id));
+  const unknownRainCount =
+    rainfall.value?.districts.filter(
+      (d) => !observationFresh(d, rainfall.now) || d.rainState === 'UNKNOWN'
+    ).length ?? 25;
+  const animateRain = rainfall.visible && !reducedMotion;
   const [selectedSite, setSelectedSite] = useState('');
   const [selected, setSelected] = useState(''),
     [query, setQuery] = useState(''),
@@ -133,6 +151,11 @@ function Explorer({
             </path>
           );
         })}
+      <LiveRainPlan
+        districts={wetDistricts}
+        scale={focus.overview ? east - west : focus.distance * 2}
+        animate={animateRain}
+      />
       {regions.map((r) => (
         <g
           key={r.mapId}
@@ -187,7 +210,7 @@ function Explorer({
             onChange={(e) => setQuery(e.target.value)}
           />
         </label>
-        <LiveRainfallPanel districtId={selected} />
+        <LiveRainfallPanel districtId={selected} rainfall={rainfall} />
         <p className="city-play-count">25개 구 · 공유 시설 {shared.installations.length}곳</p>
         <div className="city-districts" aria-label="서울 자치구 상태 조회">
           {city.districts
@@ -200,6 +223,7 @@ function Explorer({
                 title={`${d.name} 설치 상태 조회`}
               >
                 {d.name}{' '}
+                {wetIds.has(d.id) && <CloudRain size={13} aria-label="최근 관측 비 감지" />}
                 <small>{shared.installations.filter((i) => i.districtId === d.id).length}곳</small>
               </button>
             ))}
@@ -259,6 +283,9 @@ function Explorer({
                 installations={shared.installations}
                 selectedSite={selectedSite}
                 onSite={selectSite}
+                wetDistricts={wetDistricts}
+                rainCamera={camera}
+                animateRain={animateRain}
               />
             </Suspense>
           </ErrorBoundary>
@@ -277,6 +304,7 @@ function Explorer({
               >
                 <span aria-hidden="true">● </span>
                 {d.name}{' '}
+                {wetIds.has(d.id) && <CloudRain size={13} aria-label="최근 관측 비 감지" />}
                 <small>{shared.installations.filter((i) => i.districtId === d.id).length}곳</small>
               </button>
             ))}
@@ -318,6 +346,26 @@ function Explorer({
               <RotateCcw size={15} />
             </button>
           </div>
+        </div>
+        <div className="city-weather-badge" role="status">
+          <CloudRain size={15} />
+          <span>
+            {rainfall.error
+              ? '현재 강수 확인 불가'
+              : !rainfall.value
+                ? '기상청 관측 연결 중'
+                : wetDistricts.length
+                  ? `${wetDistricts.length}개 구에서 비 감지`
+                  : unknownRainCount === 25
+                    ? '현재 강수 확인 불가'
+                    : '현재 비 감지 구 없음'}
+            {rainfall.value && unknownRainCount > 0 && unknownRainCount < 25
+              ? ` · ${unknownRainCount}개 구 미확인`
+              : ''}
+            <small>
+              구별 관측소 기준 · 1분마다 갱신{wetDistricts.length > 0 ? ' · 빗줄기는 표현용' : ''}
+            </small>
+          </span>
         </div>
         <div className="city-map-bottom">
           <div>

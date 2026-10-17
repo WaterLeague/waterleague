@@ -74,7 +74,10 @@ public class LiveRainfallService {
                       status,
                       v == null ? null : v.fifteenMinuteMm(),
                       v == null ? null : v.sixtyMinuteMm(),
-                      v == null ? null : v.dayMm());
+                      v == null ? null : v.dayMm(),
+                      v == null ? null : v.rainDetected(),
+                      v == null ? null : v.oneMinuteMm(),
+                      v == null ? "UNKNOWN" : v.rainState());
                 })
             .toList();
     return new LiveRainfallView(

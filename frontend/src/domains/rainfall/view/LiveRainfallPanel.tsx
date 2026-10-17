@@ -1,5 +1,6 @@
 import { CloudRain, RefreshCw } from 'lucide-react';
-import { useLiveRainfall } from '../controller/useLiveRainfall';
+import type { useLiveRainfall } from '../controller/useLiveRainfall';
+import { rainCondition } from '../service/rainEffectService';
 import './rainfall.css';
 const time = (value: string) =>
   new Date(value).toLocaleTimeString('ko-KR', {
@@ -7,8 +8,14 @@ const time = (value: string) =>
     hour: '2-digit',
     minute: '2-digit',
   });
-export function LiveRainfallPanel({ districtId }: { districtId?: string }) {
-  const { value, busy, error, now, refresh } = useLiveRainfall();
+export function LiveRainfallPanel({
+  districtId,
+  rainfall,
+}: {
+  districtId?: string;
+  rainfall: ReturnType<typeof useLiveRainfall>;
+}) {
+  const { value, busy, error, now, refresh } = rainfall;
   const station = value?.districts.find((d) => d.districtId === districtId);
   const delayed = station?.observedAt
     ? now - Date.parse(station.observedAt) > 300000
@@ -45,6 +52,7 @@ export function LiveRainfallPanel({ districtId }: { districtId?: string }) {
               <strong>
                 {station.districtName} <small>{station.stationName} 관측소</small>
               </strong>
+              <p className="live-rainfall-condition">{rainCondition(station, now)}</p>
               <dl>
                 <div>
                   <dt>최근 60분</dt>
@@ -59,6 +67,7 @@ export function LiveRainfallPanel({ districtId }: { districtId?: string }) {
                   </dd>
                 </div>
               </dl>
+              <p>최근 1분 {station.oneMinuteMm ?? '—'} mm</p>
               {station.status === 'MISSING' && <p>결측 항목은 0으로 계산하지 않습니다.</p>}
             </>
           ) : (

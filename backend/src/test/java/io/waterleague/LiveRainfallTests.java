@@ -47,9 +47,70 @@ class LiveRainfallTests {
             () -> KmaObservationMapper.parse(response(row(at, "0") + "\n" + row(at, "0")), at))
         .isInstanceOf(DomainException.class);
     assertThatThrownBy(
-            () -> KmaObservationMapper.parse(response(row(at.minusSeconds(60), "0")), at))
+            () -> KmaObservationMapper.parse(response(row(at.minusSeconds(120), "0")), at))
         .isInstanceOf(DomainException.class);
     assertThatThrownBy(() -> KmaObservationMapper.parse("invalid provider output", at))
+        .isInstanceOf(DomainException.class);
+  }
+
+  private static String observed(Instant at, String sensor, String daily) {
+    return KmaObservationMapper.TIME.format(at.atZone(KmaObservationMapper.KST))
+        + " 421 0 0 0 0 0 0 20 "
+        + sensor
+        + " 3 8 10 "
+        + daily
+        + " 60 1000 1010 10";
+  }
+
+  @Test
+  void rainEffectUsesCurrentSensorOrConsecutiveMinuteNotPastAccumulation() {
+    Instant at = Instant.parse("2026-10-17T11:47:00Z");
+    var wet =
+        KmaObservationMapper.parse(
+                response(
+                    observed(at.minusSeconds(60), "-99.9", "5")
+                        + "\n"
+                        + observed(at, "-99.9", "5.5")),
+                at)
+            .get("421");
+    assertThat(wet.oneMinuteMm()).isEqualByComparingTo("0.5");
+    assertThat(wet.rainState()).isEqualTo("WET");
+    var stopped =
+        KmaObservationMapper.parse(
+                response(observed(at.minusSeconds(60), "0", "5") + "\n" + observed(at, "0", "5")),
+                at)
+            .get("421");
+    assertThat(stopped.sixtyMinuteMm()).isPositive();
+    assertThat(stopped.rainState()).isEqualTo("NO_RAIN_DETECTED");
+    assertThat(
+            KmaObservationMapper.parse(response(observed(at, "1", "-99.9")), at)
+                .get("421")
+                .rainState())
+        .isEqualTo("WET");
+    assertThat(
+            KmaObservationMapper.parse(response(observed(at, "-99.9", "5")), at)
+                .get("421")
+                .rainState())
+        .isEqualTo("UNKNOWN");
+  }
+
+  @Test
+  void doesNotInventMinuteRainOnDayResetOrNegativeDifference() {
+    for (Instant at :
+        List.of(Instant.parse("2026-10-17T15:00:00Z"), Instant.parse("2026-10-17T11:47:00Z"))) {
+      var value =
+          KmaObservationMapper.parse(
+                  response(
+                      observed(at.minusSeconds(60), "-99.9", "5")
+                          + "\n"
+                          + observed(at, "-99.9", "0")),
+                  at)
+              .get("421");
+      assertThat(value.oneMinuteMm()).isNull();
+      assertThat(value.rainState()).isEqualTo("UNKNOWN");
+    }
+    Instant at = Instant.parse("2026-10-17T11:47:00Z");
+    assertThatThrownBy(() -> KmaObservationMapper.parse(response(observed(at, "2", "5")), at))
         .isInstanceOf(DomainException.class);
   }
 

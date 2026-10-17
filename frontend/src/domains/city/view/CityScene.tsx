@@ -12,6 +12,7 @@ import { positionSceneLabels } from '../../catalog/service/sceneLabelService';
 
 import type { SharedSite, SharedInstallation } from '../../installation/entity/installation';
 import { siteKey } from '../../installation/entity/installation';
+import { LiveRainScene } from '../../rainfall/view/LiveRainScene';
 type CameraState = { center: [number, number]; distance: number };
 function Buildings({ buildings, opacity = 1 }: { buildings: CityBuilding[]; opacity?: number }) {
   const geometry = useMemo(() => {
@@ -221,7 +222,7 @@ function ProjectedLabels({
     }
     for (const label of positionSceneLabels(candidates, {
       left: 12,
-      top: 65,
+      top: 130,
       right: size.width - 12,
       bottom: size.height - 110,
     })) {
@@ -248,6 +249,9 @@ export default function CityScene({
   installations,
   selectedSite,
   onSite,
+  wetDistricts,
+  rainCamera,
+  animateRain,
 }: {
   city: City;
   regions: CityPlayRegion[];
@@ -263,6 +267,9 @@ export default function CityScene({
   installations: SharedInstallation[];
   selectedSite: string;
   onSite: (key: string) => void;
+  wetDistricts: City['districts'];
+  rainCamera: CameraState;
+  animateRain: boolean;
 }) {
   const overview = useMemo(() => {
     const loaded = new Set(tiles.flatMap((t) => t.buildings.map((b) => b.id)));
@@ -330,6 +337,12 @@ export default function CityScene({
             />
           );
         })}
+      <LiveRainScene
+        districts={wetDistricts}
+        center={rainCamera.center}
+        distance={rainCamera.distance}
+        animate={animateRain}
+      />
       <ProjectedLabels
         city={city}
         regions={regions}
