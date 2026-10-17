@@ -1,0 +1,137 @@
+{
+  "schemaVersion": 1,
+  "kind": "EXTERNAL_REFERENCE_DIAGNOSTIC",
+  "official": false,
+  "modelPromotionAllowed": false,
+  "sourcePage": "https://www.epa.gov/water-research/storm-water-management-model-swmm",
+  "archiveUrl": "https://www.epa.gov/sites/production/files/2014-05/epaswmm5_apps_manual.zip",
+  "archiveSha256": "889dd60a53ac85f00ee90db947a67ddc6d0737f46acf818bf7c7c08ac272f0ea",
+  "archiveBytes": 6586620,
+  "nestedArchive": {
+    "member": "epaswmm5_apps_manual/files.zip",
+    "sha256": "99ef5eb1ec7995fa2db3cc797d75080ab26843a7b523e2bc227717e2d047c9a8"
+  },
+  "manual": {
+    "member": "epaswmm5_apps_manual/Swmm_Apps_Manual.pdf",
+    "sha256": "c40f7afea62b8b8b5d97b337e56db19320cfe478354b5e99c8618568b6da5feb",
+    "publication": "EPA/600/R-09/000, July 2009",
+    "engineGeneration": "SWMM 5.0; exact patch not stated in inspected reference tables"
+  },
+  "inputs": {
+    "Example1-Pre.inp": {
+      "sha256": "490a951ec726cf068c3560c2b2c33a426586253aa52852f3b29a338967354357",
+      "bytes": 9150
+    },
+    "Example1-Post.inp": {
+      "sha256": "ab7203583f3966eaf3041b47aebbe2ed7c2204f1580fc13f15e8d3feb97c31fc",
+      "bytes": 16770
+    }
+  },
+  "cases": [
+    {
+      "id": "pre-2-yr",
+      "input": "Example1-Pre.inp",
+      "storm": "2-yr",
+      "manualPage": 27,
+      "manualTable": "1-4",
+      "published": {
+        "precipitationIn": "0.978",
+        "runoffIn": "0.047",
+        "peakCfs": "4.14",
+        "infiltrationIn": "0.93"
+      }
+    },
+    {
+      "id": "pre-10-yr",
+      "input": "Example1-Pre.inp",
+      "storm": "10-yr",
+      "manualPage": 27,
+      "manualTable": "1-4",
+      "published": {
+        "precipitationIn": "1.711",
+        "runoffIn": "0.22",
+        "peakCfs": "7.34",
+        "infiltrationIn": "1.48"
+      },
+      "sourceConflicts": {
+        "runoffIn": {
+          "manualPage": 33,
+          "manualTable": "1-9",
+          "value": "0.24"
+        }
+      }
+    },
+    {
+      "id": "pre-100-yr",
+      "input": "Example1-Pre.inp",
+      "storm": "100-yr",
+      "manualPage": 27,
+      "manualTable": "1-4",
+      "published": {
+        "precipitationIn": "3.669",
+        "runoffIn": "1.87",
+        "peakCfs": "31.6",
+        "infiltrationIn": "1.80"
+      }
+    },
+    {
+      "id": "post-2-yr",
+      "input": "Example1-Post.inp",
+      "storm": "2-yr",
+      "manualPage": 33,
+      "manualTable": "1-8",
+      "published": {
+        "precipitationIn": "0.978",
+        "runoffIn": "0.53",
+        "peakCfs": "46.7",
+        "infiltrationIn": "0.42"
+      }
+    },
+    {
+      "id": "post-10-yr",
+      "input": "Example1-Post.inp",
+      "storm": "10-yr",
+      "manualPage": 33,
+      "manualTable": "1-8",
+      "published": {
+        "precipitationIn": "1.711",
+        "runoffIn": "1.11",
+        "peakCfs": "82.6",
+        "infiltrationIn": "0.58"
+      }
+    },
+    {
+      "id": "post-100-yr",
+      "input": "Example1-Post.inp",
+      "storm": "100-yr",
+      "manualPage": 33,
+      "manualTable": "1-8",
+      "published": {
+        "precipitationIn": "3.669",
+        "runoffIn": "3.04",
+        "peakCfs": "241",
+        "infiltrationIn": "0.61"
+      }
+    }
+  ],
+  "acceptance": {
+    "maxRunoffContinuityPercent": 1,
+    "unitRelativeTolerance": 0.0002,
+    "unitFlowAbsoluteToleranceM3s": 1e-07,
+    "referenceTolerance": "Half of published decimal place plus half of current report decimal place; no widening after execution",
+    "diagnosticOnly": true,
+    "internationalUnitViolationPolicy": "Retain every violating period as REVIEW_REQUIRED; no threshold widening",
+    "engineUnitViolationPolicy": "Fail execution if engine-area variant violates unchanged tolerance"
+  },
+  "limitations": [
+    "미국 설계강우 교육 사례이며 서울 관측·현장 보정 자료가 아님",
+    "Horton 기반 지표 유출 예제이며 세 LID의 물리 단면·Green-Ampt·관망 정확도를 검증하지 않음",
+    "API/CLI는 같은 바이너리이며 다른 수문모형에 의한 독립 검증이 아님",
+    "표의 상충과 엔진 버전 차이를 포함하므로 모델 검증 등급 자동 승격 금지"
+  ],
+  "unitVariants": {
+    "cfs": "Original US input; normalize output using exact international foot",
+    "cms": "International acre-to-hectare input conversion 0.40468564224",
+    "cmsEngineArea": "Engine internal area preserved with 0.92903e-5 / 2.2956e-5; separate diagnostic input"
+  }
+}

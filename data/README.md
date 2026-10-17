@@ -43,3 +43,7 @@ AWS 응답은 별도 QC 플래그를 포함하지 않으므로 자체 검사 결
 DEM은 90m 격자이며 수직 기준·표고 단위 필드 미제공. 토지피복은 잘못된 도로 도형이 실험 구역에 영향을 줄 수 있어 부분 면적만 계산. 원본 자동 복구·모델 편입·공개 배포 없음. 등록된 ZIP의 hash를 확인하는 `scripts/audit_spatial_sources.py`로 로컬에서 재검사. 원본/파생 좌표 재배포 조건과 정밀도 검토 후 새 모델 버전 결정.
 
 별도 `scripts/diagnose_landcover_topology.py`로 원본을 보존한 두 보정 후보 진단. 오류 도로 2개를 포함하면 구역 내 175개 도형, 부동소수 오차 범위에서 전체 영역 포함. 두 방식의 분류별 대칭차 0m², 현장 정확성·불투수율·침투율 검증은 아님. 좌표를 제외한 요약은 `manifests/seongsu-topology-diagnostic.json`. 운영 모델 채택 없음.
+
+## EPA 참조 사례
+
+`benchmarks/epa-applications-example1.json`은 EPA Applications Manual의 Example 1 원본·인쇄 수치·충돌·판정 계약이다. `benchmarks/epa-applications-example1-result.json`은 고정 SWMM 5.2.4 실행의 공개 요약. 원본은 공식 주소에서 hash 검증 후 로컬/CI로 재취득한다. 미국 설계강우 교육 사례이며 서울 관측이나 시설 효과 자료로 혼용하지 않는다. 국제단위 변환·인쇄 참조 차이는 검토 필요 상태로 보존. 재현 명령과 판정 범위는 [문서 32](../docs/32-epa-reference-validation.md) 참조.
