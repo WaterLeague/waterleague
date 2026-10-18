@@ -47,7 +47,7 @@ def case(*, sealed=False, exchange_ms=100, initial_network=2., route_ms=10):
         'evidence': 'NUMERICAL_TEST_ONLY_NOT_SEOUL', 'startMilliseconds': 0, 'endMilliseconds': 120000,
         'networkOutfalls': ['OUT'], 'exposureTriangles': [i for i in range(count) if i not in cells],
         'wetDepthThresholdM': .001}
-    model['surfaceBasinDesign'] = {'schemaVersion': 1, 'sourceModelSha256': digest(model), 'placements': [{
+    model['surfaceBasinDesign'] = {'schemaVersion': 2, 'sourceModelSha256': digest(model), 'placements': [{
         'id': 'Pond', 'facilityType': 'RETENTION_BASIN', 'basis': 'EXPLICIT_DESIGN_NOT_SITE_MEASURED',
         'evidence': '합성 1m² 절토·0.8m 바닥·수평 배수구의 수치 진단', 'triangles': cells,
         'vertexElevations': heights,

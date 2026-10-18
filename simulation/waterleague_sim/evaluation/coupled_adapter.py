@@ -268,6 +268,12 @@ def _verify_surface_basins(model, surface, result, root):
     try:
         expected_model, expected = compile_basin(model)
         expected['compilerSha256'] = metadata['compilerSha256']
+        if expected['schemaVersion'] == 2:
+            require(len(expected['facilities']) == len(metadata['facilities']), 'EVALUATION_BASIN_CONTEXT_MISMATCH')
+            for current, stored in zip(expected['facilities'], metadata['facilities']):
+                code_hash = stored.get('terrainStageStorage', {}).get('implementationSha256')
+                require(is_hash(code_hash), 'EVALUATION_BASIN_CONTEXT_MISMATCH')
+                current['terrainStageStorage']['implementationSha256'] = code_hash
         origin = _read(root/'evaluation-initial-state.json')['surface']['surface'] if 'initialization' in model else None
         summary = result_summary(metadata, surface, origin)
     except FloodModelError:

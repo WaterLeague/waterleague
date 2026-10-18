@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "classification": "PUBLIC_TERRAIN_GEOMETRIC_STORAGE_NOT_FLOOD_PREDICTION",
+  "rankingEligible": false,
+  "sourceSurfaceSha256": "80a3b0818a0a93ec25c7f07f3b2e9c703c7911b98131d6383903610c9515c534",
+  "sourceRasterFiles": {
+    "data/private/seongsu-official-20261017/dem-2025.zip": "a99a82b4e98f5e26445f88801b95d87b823bfef154db804acbb60fc136683feb",
+    "data/private/seongsu-official-20261017/dem-2025/37705/37705.img": "70f03190643ea70276d70a2e869397c199dfb9370caf835c8806a75f75abd522",
+    "data/manifests/ngii-elevation-products-20231107.json": "1bec233671bbb328fa1f7d890ce0c16effcf514cabf90d024ecfbdd91f778239",
+    "data/raw/ngii-elevation-products-20231107.csv": "10e46e3c749e91c4aa6a9de41dff1d724b09dd355cd9c90e63c7f4181e62fe3e",
+    "data/raw/ngii-elevation-products-20231107-page.html": "1410a49489d553bc35e0d6f426602a231aae144756de25d6317711cc390bad36"
+  },
+  "verticalReference": {
+    "unit": "m",
+    "unitStatus": "PRODUCT_FAMILY_INFERRED",
+    "unitEvidence": {
+      "source": "https://www.data.go.kr/data/15067637/fileData.do",
+      "records": [
+        {
+          "sourceRow": 3006,
+          "tile": "377053",
+          "year": "2014",
+          "spacing": "90mX90m",
+          "unit": "M",
+          "datum": "인천항의 평균해수면",
+          "format": "PDF"
+        },
+        {
+          "sourceRow": 3007,
+          "tile": "377054",
+          "year": "2014",
+          "spacing": "90mX90m",
+          "unit": "M",
+          "datum": "인천항의 평균해수면",
+          "format": "PDF"
+        },
+        {
+          "sourceRow": 4520,
+          "tile": "377051",
+          "year": "2014",
+          "spacing": "90mX90m",
+          "unit": "M",
+          "datum": "인천항의 평균해수면",
+          "format": "PDF"
+        },
+        {
+          "sourceRow": 4521,
+          "tile": "377052",
+          "year": "2014",
+          "spacing": "90mX90m",
+          "unit": "M",
+          "datum": "인천항의 평균해수면",
+          "format": "PDF"
+        }
+      ],
+      "limitation": "같은 지역 90m 제품군의 미터 표기; 보관된 2025 파일과 직접 일치 없음"
+    },
+    "datum": null,
+    "datumVerified": false
+  },
+  "publicTerrain": {
+    "triangles": 288,
+    "stages": 257,
+    "areaM2": 1166400.0,
+    "maximumLinearMinusCentroidM3": 14291.347973516386,
+    "exactReplay": true
+  },
+  "basin": {
+    "unchangedHydraulicInputs": true,
+    "nativeOutExact": true,
+    "surfaceResultExact": true,
+    "balanceAndMetricsExact": true,
+    "researchVersionsRead": [
+      1,
+      2
+    ],
+    "capacityAtLowestBankM3": 0.45,
+    "maximumLinearMinusCentroidM3": 0.03568064371744792
+  },
+  "limitations": [
+    "원 DEM 또는 설계 꼭짓점 사이 선형 보간 지형의 기하 적분이며 현장 용량 실측 아님",
+    "수평 수면 아래 모든 선택 영역의 체적이며 연결되지 않은 함몰의 채움 순서 미반영",
+    "계산 엔진의 격자 중심 저장량·수지·수심을 이 기하 적분으로 치환하지 않음",
+    "배수 경계·유입량·관망·침투를 포함한 수리 계산 또는 침수 예측이 아님",
+    "성수 사각 창의 모든 낮은 지형에 같은 수위를 놓은 적분이며 실제 연결 저류지가 아님",
+    "공개 DEM의 원 해상도·수직 기준 한계 유지; 수리 경계·관망 연결과 지도 설치 미완료"
+  ],
+  "archive": {
+    "directory": "data/runs/terrain-storage-20261019-v1",
+    "manifestSha256": "627bf008727fa0db5e777edf25f47a7c263d1cf863c593691aca9fe815d502da",
+    "files": 200
+  },
+  "verification": {
+    "analyticalAndContractTests": 9,
+    "nativeRuns": 2,
+    "legacyArchivedCompiledModelAndMetadataExact": true
+  }
+}

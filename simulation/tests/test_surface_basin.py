@@ -28,6 +28,19 @@ def rebind(model):
 
 
 class SurfaceBasinContractTests(unittest.TestCase):
+    def test_stage_storage_version_keeps_previous_hydraulic_model(self):
+        current = case()
+        previous = deepcopy(current)
+        previous['surfaceBasinDesign']['schemaVersion'] = 1
+        old_model, old_metadata = compile_basin(previous)
+        new_model, new_metadata = compile_basin(current)
+        self.assertEqual(old_model, new_model)
+        self.assertEqual(old_metadata['schemaVersion'], 1)
+        self.assertEqual(new_metadata['schemaVersion'], 2)
+        self.assertNotIn('terrainStageStorage', old_metadata['facilities'][0])
+        for old, new in zip(old_metadata['facilities'], new_metadata['facilities']):
+            self.assertEqual(old, {key: value for key, value in new.items() if key != 'terrainStageStorage'})
+
     def test_dry_high_ground_is_not_reported_as_water_above_bank(self):
         metadata = {'facilities': [{'id': 'pond', 'triangles': [0, 1], 'areasM2': [1, 1],
             'bedElevationM': [3, 0], 'lowestBoundaryElevationM': 1}]}
@@ -61,6 +74,10 @@ class SurfaceBasinContractTests(unittest.TestCase):
         self.assertEqual(geometry['planAreaM2'], 1.)
         self.assertAlmostEqual(geometry['excavationM3'], .45)
         self.assertAlmostEqual(geometry['storageToLowestBoundaryM3'], .45)
+        curve = geometry['terrainStageStorage']
+        self.assertAlmostEqual(curve['levels'][-1]['storageM3'], .45)
+        self.assertEqual(curve['levels'][-1]['stageM'], geometry['lowestBoundaryElevationM'])
+        self.assertTrue(any(row['linearMinusCentroidStorageM3'] > 0 for row in curve['levels']))
         self.assertEqual(metadata['additionalNetworkStorageM3'], 0)
         before = records(source['network']['inputText'].encode())[1]
         after = records(model['network']['inputText'].encode())[1]

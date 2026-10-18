@@ -10,6 +10,7 @@ from waterleague_sim.engine.flood_errors import require
 from waterleague_sim.engine.surface_infiltration import validate as validate_soil
 from waterleague_sim.evaluation.values import digest
 from waterleague_sim.ingestion.published_network import records
+from waterleague_sim.terrain.storage import stage_storage
 
 METHOD = 'EXPLICIT_SURFACE_BASIN_EARTHWORK_V1'
 
@@ -60,7 +61,7 @@ def compile_basin(model):
     source = deepcopy(model)
     design = source.pop('surfaceBasinDesign')
     require(isinstance(design, dict) and set(design) == {'schemaVersion', 'sourceModelSha256', 'placements'}
-        and type(design['schemaVersion']) is int and design['schemaVersion'] == 1
+        and type(design['schemaVersion']) is int and design['schemaVersion'] in (1, 2)
         and design['sourceModelSha256'] == digest(source), 'BASIN_SOURCE_BINDING_INVALID')
     placements = design['placements']
     require(isinstance(placements, list) and 0 < len(placements) <= 128, 'BASIN_PLACEMENTS_INVALID')
@@ -145,6 +146,12 @@ def compile_basin(model):
         crest = min(surface['elevationM'][i] for i in border)
         capacity = math.fsum(a*max(0, crest-z) for a, z in zip(areas, beds))
         require(capacity > 0, 'BASIN_RETENTION_CAPACITY_REQUIRED')
+        terrain_storage = {}
+        if design['schemaVersion'] == 2:
+            bottom = min(surface['elevationM'][j] for j in vertices)
+            # 원 엔진 수지는 유지하고 부분 침수된 경사면의 기하 용량을 별도로 제공한다.
+            levels = sorted({bottom + (crest-bottom)*i/32 for i in range(32)} | {crest})
+            terrain_storage = {'terrainStageStorage': stage_storage(surface, sorted(cells), levels)}
         name = 'WLBS_'+identifier(p['id'])
         generated = {name.upper()+'_O', name.upper()+'_D'}
         require(not generated.intersection(used), 'BASIN_IDENTIFIER_COLLISION')
@@ -182,6 +189,7 @@ def compile_basin(model):
             'planAreaM2': math.fsum(areas), 'excavationM3': excavation, 'lowestBoundaryElevationM': crest,
             'storageToLowestBoundaryM3': capacity,
             'capacityMethod': 'DISCRETE_CENTROID_DEPTH_AT_LOWEST_BOUNDARY',
+            **terrain_storage,
             'bedElevationM': beds, 'geometryVerifiedOnSite': False})
         occupied.update(cells)
     lines = text.splitlines(keepends=True)
@@ -191,7 +199,7 @@ def compile_basin(model):
     source['network']['inputText'] = ''.join(lines)
     surface['designTerrainProvenance'] = {'method': METHOD, 'sourceSurfaceSha256': digest(original),
                                          'sourceModelSha256': design['sourceModelSha256']}
-    return source, {'schemaVersion': 1, 'method': METHOD, 'design': deepcopy(design),
+    return source, {'schemaVersion': design['schemaVersion'], 'method': METHOD, 'design': deepcopy(design),
         'sourceModelSha256': design['sourceModelSha256'], 'derivedModelSha256': digest(source),
         'compilerSha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(), 'facilities': details,
         'rainfallOwnershipUnchanged': True, 'additionalNetworkStorageM3': 0,
