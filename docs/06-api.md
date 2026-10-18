@@ -154,3 +154,13 @@ RFC 9457 `application/problem+json`: type, title, status, detail, instance, code
 ### 공개 기존 시설 참고 카탈로그
 
 `GET /api/v1/infrastructure/seoul-public-20261018-v1`은 비회원 조회 가능. 원본 해시를 검사한 프로젝트 보관 카탈로그에서 표시 가능한 1,604기록·9개 출처·삭제/결측 집계를 반환하며 외부 API를 호출하지 않음. `usage=REFERENCE_ONLY`, 위치점·층위/운영 미확인·유효 시작/끝 null·관망 미연결 유지. 원본 내부 속성과 로컬 파일 경로는 응답에서 제외. ETag·공개 불변 캐시 제공. 이 응답은 실제 운영 중 시설 수·재해 당시 시설 목록·계산 자산 API가 아님. 강서구 호기별 양수량은 원문 단위 m³/min, 유수지 용량은 시설별 한 번만 표시.
+
+### 지표 수심·속력 결과 조회
+
+- `GET /api/v1/historical/{id}/surface/catalog|frame`: 본인의 성공한 재해 실행.
+- `GET /api/v1/installations/{id}/surface/catalog|frame`: 본인 설치의 최신 성공 실행.
+- `GET /api/v1/installations/records/{id}/surface/catalog|frame`: 본인의 고정 실행 기록.
+- `GET /api/v1/research/installations/{id}/surface/catalog|frame`: 승인 기관·MFA·현재 공유 연구 동의가 있는 실행 기록.
+- `catalog`는 원 계산/카탈로그 해시·실제 기록 시각·EPSG:5186 지도 원점·계산 등급·한계 반환. `frame`은 `index,minX,minY,maxX,maxY` 필수. 화면 좌표는 도시 공통 원점 이동 후 미터이며 원 계산 경계와 별개. 선택 시각 하나의 원 수심/운동량을 읽고 영역과 교차하는 격자의 수심·속력·도형 반환. 8,192격자 초과는 413이며 임의 생략 없음.
+- 요청마다 파일 조회 전후 소유/기관/동의 재검사, `no-store`, 회원당 분당 120요청. 게시된 지표 결과가 없으면 404; 다른 시설의 내부 수심을 지표 침수로 대체하지 않음. 파일 변조·심볼릭 링크·물수지 불일치는 공통 오류로 거부, 내부 경로 비노출.
+- 작업 결과의 선택적 `surfacePlayback` 참조는 `schemaVersion:1,catalogSha256,surfaceResultSha256`로 고정. 해당 작업의 서버 lease 디렉터리 아래 `surface-playback/`만 조회. 클라이언트 경로·파일명·원본 URL 입력 금지. 현재 기존 시설 유출 작업에는 이 참조가 없으며 연결 유역 작업의 생성·게시 연동은 별도 진행.

@@ -1,0 +1,61 @@
+.surface-controls {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  padding: 6px 18px;
+  background: #f0f6f8;
+  color: #285568;
+  border-bottom: 1px solid #d2e2e9;
+  font-size: 11px;
+  flex: 0 0 auto;
+}
+.surface-controls label,
+.surface-legend,
+.surface-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.surface-controls input[type='checkbox'] {
+  accent-color: #0284c7;
+}
+.surface-controls select,
+.surface-controls button {
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: 1px solid #a9c8d5;
+  border-radius: 3px;
+  padding: 3px 5px;
+}
+.surface-legend {
+  gap: 8px;
+  font-variant-numeric: tabular-nums;
+}
+.surface-legend i {
+  width: 10px;
+  height: 10px;
+}
+.surface-controls input[type='range'] {
+  max-width: 180px;
+  accent-color: #0284c7;
+}
+.surface-controls summary {
+  cursor: pointer;
+}
+.surface-description {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #f6fafc;
+  padding: 12px 18px;
+  max-height: 200px;
+  overflow: auto;
+  overscroll-behavior: contain;
+  word-break: break-word;
+  border: 1px solid #a9c8d5;
+}

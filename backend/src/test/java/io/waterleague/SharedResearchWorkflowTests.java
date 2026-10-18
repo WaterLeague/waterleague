@@ -292,6 +292,51 @@ class SharedResearchWorkflowTests {
   }
 
   @Test
+  void surfaceFramesRequireCurrentOwnershipConsentAndIntegrity() throws Exception {
+    var owner = actor(false);
+    var stranger = actor(false);
+    var org = actor(true);
+    var job = fixture(owner);
+    String own = "/installations/records/" + job.id() + "/surface/";
+    String institutional = "/research/installations/" + job.id() + "/surface/";
+    assertThat(call(owner, "GET", own + "catalog", null).statusCode()).isEqualTo(404);
+    var descriptor = SurfacePlaybackTests.fixture(job.path().resolve("surface-playback"), json);
+    var summary =
+        (tools.jackson.databind.node.ObjectNode)
+            json.tree(
+                db.queryForObject(
+                    "SELECT result FROM shared_physics_jobs WHERE id=?", String.class, job.id()));
+    summary.set("surfacePlayback", json.tree(json.write(descriptor)));
+    db.update("UPDATE shared_physics_jobs SET result=? WHERE id=?", json.write(summary), job.id());
+    var anonymous = new Actor(UUID.randomUUID(), null, HttpClient.newHttpClient());
+    assertThat(call(anonymous, "GET", own + "catalog", null).statusCode()).isEqualTo(401);
+    assertThat(call(stranger, "GET", own + "catalog", null).statusCode()).isEqualTo(404);
+    assertThat(call(org, "GET", institutional + "catalog", null).statusCode()).isEqualTo(404);
+    var catalog = call(owner, "GET", own + "catalog", null);
+    assertThat(catalog.statusCode()).as(catalog.body()).isEqualTo(200);
+    assertThat(catalog.headers().firstValue("Cache-Control").orElse("")).contains("no-store");
+    assertThat(catalog.body()).doesNotContain("surface-playback", "leaseToken", ROOT.toString());
+    String query = "frame?index=0&minX=-1&minY=-1&maxX=2&maxY=2";
+    assertThat(get(owner, own + query).path("cells")).hasSize(1);
+    assertThat(call(owner, "GET", own + query.replace("minX=-1", "minX=NaN"), null).statusCode())
+        .isEqualTo(400);
+    var installation =
+        db.queryForObject(
+            "SELECT installation_id FROM shared_physics_jobs WHERE id=?", UUID.class, job.id());
+    assertThat(
+            get(owner, "/installations/" + installation + "/surface/catalog").path("catalogSha256"))
+        .isEqualTo(json.tree(catalog.body()).path("catalogSha256"));
+    grant(owner, org, true);
+    assertThat(get(org, institutional + query).path("cells")).hasSize(1);
+    grant(owner, org, false);
+    assertThat(call(org, "GET", institutional + query, null).statusCode()).isEqualTo(404);
+    Files.writeString(job.path().resolve("surface-playback/frame-00000.bin"), "tampered");
+    var invalid = call(owner, "GET", own + query, null);
+    assertThat(invalid.statusCode()).isEqualTo(503);
+    assertThat(invalid.body()).doesNotContain(ROOT.toString(), "Exception", "tampered");
+  }
+
+  @Test
   void exposesArchivedInitializationAndFacilityEvidenceWithoutReplacingLegacyInputs()
       throws Exception {
     var owner = actor(false);

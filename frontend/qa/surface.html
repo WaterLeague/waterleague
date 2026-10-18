@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>공개 DEM 원 계산 전달 검증</title>
+  </head>
+  <body style="margin: 0; background: #f2f3ee; font: 14px system-ui">
+    <div id="root"></div>
+    <script type="module">
+      if (!import.meta.env.DEV || !['localhost', '127.0.0.1', '[::1]'].includes(location.hostname))
+        throw new Error('로컬 개발 환경 전용');
+      const [
+        { default: React },
+        { createRoot },
+        { CityPlan },
+        { default: CityScene },
+        { surfaceFrameDto, surfaceCatalogDto },
+      ] = await Promise.all([
+        import('react'),
+        import('react-dom/client'),
+        import('/src/domains/city/view/CityPlan.tsx'),
+        import('/src/domains/city/view/CityScene.tsx'),
+        import('/src/domains/surface/dto/surfaceDto.ts'),
+      ]);
+      const city = await (await fetch('/data/seoul-v1/city.json')).json();
+      const raw = await (await fetch('/qa/surface-playback.local.json')).json();
+      const frame = surfaceFrameDto.parse(raw.frame),
+        catalog = surfaceCatalogDto.parse(raw.catalog);
+      const xy = frame.cells.flatMap((c) => c.vertices),
+        center = [
+          xy.reduce((n, p) => n + p[0], 0) / xy.length,
+          xy.reduce((n, p) => n + p[1], 0) / xy.length,
+        ];
+      const focus = { center, distance: 2200, key: 0 };
+      const common = {
+        city,
+        regions: [],
+        tiles: [],
+        focus,
+        selected: '',
+        ownDistrictId: null,
+        viewerId: null,
+        sites: [],
+        installations: [],
+        selectedSite: '',
+        facilityType: '',
+        eligibleRoofs: new Set(),
+        occupiedRoofs: new Set(),
+        wetDistricts: [],
+        animateRain: false,
+        rainAmounts: new Map(),
+        traceTiles: [],
+        publicAssets: [],
+        selectedAssetId: '',
+        onAsset: () => {},
+        onSite: () => {},
+        onBuilding: () => {},
+        onCamera: () => {},
+      };
+      function App() {
+        const [metric, setMetric] = React.useState('depth');
+        return React.createElement(
+          React.Fragment,
+          null,
+          React.createElement(
+            'header',
+            { style: { padding: 16 } },
+            React.createElement('b', null, '공개 DEM 원 계산 · 로컬 표시 검증 · 운영 순위 제외'),
+            React.createElement(
+              'p',
+              null,
+              '2025 DEM + 2022 관측 강우. 미확인 외곽 경계·조도·기준고를 포함한 진단 계산이며 서울 실제 침수 예측 아님.'
+            ),
+            React.createElement(
+              'button',
+              {
+                id: 'metric',
+                onClick: () => setMetric((v) => (v === 'depth' ? 'speed' : 'depth')),
+              },
+              metric === 'depth' ? '수심 → 속력' : '속력 → 수심'
+            )
+          ),
+          React.createElement(
+            'div',
+            { style: { display: 'grid', gridTemplateColumns: '1fr 1fr', height: '75vh' } },
+            React.createElement(
+              'div',
+              { style: { position: 'relative', overflow: 'hidden' } },
+              React.createElement(CityPlan, {
+                ...common,
+                camera: focus,
+                districtScores: null,
+                onDistrict: () => {},
+                onNavigate: () => {},
+                surfaceFrame: frame,
+                surfaceMetric: metric,
+              })
+            ),
+            React.createElement(
+              'div',
+              { style: { position: 'relative', overflow: 'hidden' } },
+              React.createElement(CityScene, {
+                ...common,
+                terrain: null,
+                labels: new Map(),
+                onUnavailable: () => {},
+                onTraceError: () => {},
+                onSurfaceError: () => {
+                  document.body.dataset.failed = 'true';
+                },
+                rainCamera: focus,
+                preview: null,
+                surfaceFrame: frame,
+                surfaceMetric: metric,
+              })
+            )
+          ),
+          React.createElement(
+            'footer',
+            { style: { padding: 12 } },
+            `기록 ${frame.timeSeconds}초 / ${frame.cells.length}격자 · 격자 중심값 색상, 수면 표고 아님 · ${catalog.catalogSha256.slice(0, 12)}`
+          )
+        );
+      }
+      createRoot(document.getElementById('root')).render(React.createElement(App));
+    </script>
+  </body>
+</html>

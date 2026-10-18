@@ -16,8 +16,12 @@ import type { InfrastructureAsset } from '../../infrastructure/entity/infrastruc
 import { infrastructureColor } from '../../infrastructure/service/infrastructureService';
 import type { TraceTile } from '../../floodtrace/entity/floodTrace';
 import { FloodTracePlan } from '../../floodtrace/view/FloodTraceLayer';
+import { SurfacePlan } from '../../surface/view/SurfaceLayer';
+import type { SurfaceFrame, SurfaceMetric } from '../../surface/entity/surface';
 
 type Props = {
+  surfaceFrame?: SurfaceFrame | null;
+  surfaceMetric?: SurfaceMetric;
   traceTiles: TraceTile[];
   publicAssets: InfrastructureAsset[];
   selectedAssetId: string;
@@ -47,6 +51,8 @@ type Props = {
   rainAmounts: ReadonlyMap<string, number | null>;
 };
 export const CityPlan = memo(function CityPlan({
+  surfaceFrame = null,
+  surfaceMetric = 'depth',
   traceTiles,
   publicAssets,
   selectedAssetId,
@@ -237,6 +243,7 @@ export const CityPlan = memo(function CityPlan({
         );
       })}
       <FloodTracePlan tiles={traceTiles} />
+      <SurfacePlan frame={surfaceFrame} metric={surfaceMetric} />
       {installations.map((i) => (
         <circle
           key={i.id}

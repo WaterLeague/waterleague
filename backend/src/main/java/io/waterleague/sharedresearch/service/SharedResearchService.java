@@ -99,6 +99,10 @@ public class SharedResearchService {
     return job;
   }
 
+  public SharedResearchJob surfaceAccess(UUID actor, boolean institution, UUID id) {
+    return authorize(actor, institution, id);
+  }
+
   private Map<String, Object> installation(SharedResearchJob j) {
     var value = new LinkedHashMap<String, Object>();
     value.put("id", j.installationId());

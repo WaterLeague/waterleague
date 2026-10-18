@@ -49,6 +49,9 @@ import { InfrastructurePanel } from '../../infrastructure/view/InfrastructurePan
 import type { InfrastructureAsset } from '../../infrastructure/entity/infrastructure';
 import { useFloodTraces } from '../../floodtrace/controller/useFloodTraces';
 import { FloodTraceControls } from '../../floodtrace/view/FloodTraceControls';
+import { useSurfacePlayback } from '../../surface/controller/useSurfacePlayback';
+import { SurfaceControls } from '../../surface/view/SurfaceControls';
+import type { SurfaceMetric, SurfaceSource } from '../../surface/entity/surface';
 const CityScene = lazy(() => import('./CityScene'));
 type PlayProps = {
   account: Account | null;
@@ -77,6 +80,11 @@ function Explorer({
   const [infrastructureOpen, setInfrastructureOpen] = useState(false);
   const [assetsEnabled, setAssetsEnabled] = useState(true);
   const [tracesEnabled, setTracesEnabled] = useState(false);
+  const [surfaceEnabled, setSurfaceEnabled] = useState(false);
+  const [surfaceMetric, setSurfaceMetric] = useState<SurfaceMetric>('depth');
+  const [surfaceIndex, setSurfaceIndex] = useState<number | null>(null);
+  const [surfaceRenderError, setSurfaceRenderError] = useState(false);
+  const surfaceFailed = useCallback(() => setSurfaceRenderError(true), []);
   const [referenceTraceEvent, setReferenceTraceEvent] = useState('seoul-20220808');
   const [traceRenderError, setTraceRenderError] = useState(false);
   const traceFailed = useCallback(() => setTraceRenderError(true), []);
@@ -216,6 +224,32 @@ function Explorer({
   const occupied = site
     ? shared.installations.find((i) => siteKey(i) === siteKey(site))
     : undefined;
+  const surfaceSource: SurfaceSource | null = researchMode
+    ? research.job?.state === 'SUCCEEDED' && research.currentResult
+      ? { kind: 'historical', id: research.job.id }
+      : null
+    : occupied?.ownerId === account?.id && occupied
+      ? { kind: 'installation', id: occupied.id }
+      : null;
+  const surface = useSurfacePlayback(
+    surfaceEnabled,
+    surfaceSource,
+    account?.id ?? null,
+    researchMode ? research.at : null,
+    camera,
+    city,
+    researchMode ? null : surfaceIndex
+  );
+  useEffect(() => {
+    setSurfaceIndex(null);
+    setSurfaceRenderError(false);
+  }, [surfaceSource?.kind, surfaceSource?.id, account?.id]);
+  const seekSurface = (index: number) => {
+    if (researchMode && surface.catalog && research.at) {
+      const at = Date.parse(surface.catalog.startUtc) + surface.catalog.timesSeconds[index] * 1000;
+      research.setElapsedSeconds(research.elapsedSeconds + (at - Date.parse(research.at)) / 1000);
+    } else setSurfaceIndex(index);
+  };
   const visibleSites = useMemo(() => {
     const values = new Map(shared.sites.map((s) => [siteKey(s), s]));
     if (site) values.set(siteKey(site), site);
@@ -381,6 +415,8 @@ function Explorer({
   );
   const plan = (
     <CityPlan
+      surfaceFrame={surface.frame}
+      surfaceMetric={surfaceMetric}
       traceTiles={traces.tiles}
       publicAssets={publicAssets}
       selectedAssetId={selectedAssetId}
@@ -533,6 +569,9 @@ function Explorer({
                 }
               >
                 <CityScene
+                  surfaceFrame={surface.frame}
+                  surfaceMetric={surfaceMetric}
+                  onSurfaceError={surfaceFailed}
                   traceTiles={traces.tiles}
                   onTraceError={traceFailed}
                   publicAssets={publicAssets}
@@ -858,6 +897,16 @@ function Explorer({
             {city.attribution}
           </a>
         </section>
+        <SurfaceControls
+          enabled={surfaceEnabled}
+          onEnabled={setSurfaceEnabled}
+          metric={surfaceMetric}
+          onMetric={setSurfaceMetric}
+          state={surface}
+          hasSource={!!surfaceSource}
+          onSeek={seekSurface}
+          renderError={surfaceRenderError}
+        />
         <details className="shared-rain-details">
           <summary>
             <CloudRain size={15} />
@@ -960,7 +1009,10 @@ function Explorer({
           : terrainError
             ? '높이 자료 연결 실패 · 평면 표시'
             : '지표면 높이 연결 중'}{' '}
-        · 건물 높이 태그·층수 환산 포함 · 침수 깊이 표시 아님
+        · 건물 높이 태그·층수 환산 포함 ·{' '}
+        {surface.frame
+          ? '계산 침수는 별도 색상 레이어 · 표시 지형과 물리 기준고 구분'
+          : '침수 깊이 표시 아님'}
         {assetsEnabled && ' · 시설 위치: 서울특별시·강서구 / 공공누리 제1유형'}
         {terrain && (
           <>

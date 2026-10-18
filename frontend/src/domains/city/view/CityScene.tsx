@@ -34,6 +34,8 @@ import type { InfrastructureAsset } from '../../infrastructure/entity/infrastruc
 import { InfrastructureMarkers } from '../../infrastructure/view/InfrastructureMarkers';
 import type { TraceTile } from '../../floodtrace/entity/floodTrace';
 import { FloodTraceLayer } from '../../floodtrace/view/FloodTraceLayer';
+import { SurfaceLayer } from '../../surface/view/SurfaceLayer';
+import type { SurfaceFrame, SurfaceMetric } from '../../surface/entity/surface';
 const TerrainContext = createContext<Terrain | null>(null);
 const mapEvents: Parameters<typeof Canvas>[0]['events'] = (state) => ({
   ...events(state),
@@ -336,6 +338,9 @@ function ProjectedLabels({
   return null;
 }
 const CityScene = memo(function CityScene({
+  surfaceFrame = null,
+  surfaceMetric = 'depth',
+  onSurfaceError,
   traceTiles,
   onTraceError,
   publicAssets,
@@ -366,6 +371,9 @@ const CityScene = memo(function CityScene({
   facilityType,
   viewerId,
 }: {
+  surfaceFrame?: SurfaceFrame | null;
+  surfaceMetric?: SurfaceMetric;
+  onSurfaceError: () => void;
   traceTiles: TraceTile[];
   onTraceError: () => void;
   publicAssets: InfrastructureAsset[];
@@ -407,6 +415,12 @@ const CityScene = memo(function CityScene({
     >
       <TerrainContext.Provider value={terrain}>
         <FloodTraceLayer tiles={traceTiles} terrain={terrain} onError={onTraceError} />
+        <SurfaceLayer
+          frame={surfaceFrame}
+          metric={surfaceMetric}
+          terrain={terrain}
+          onError={onSurfaceError}
+        />
         <InfrastructureMarkers
           assets={publicAssets}
           selectedId={selectedAssetId}
