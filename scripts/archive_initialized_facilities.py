@@ -11,6 +11,7 @@ from waterleague_sim.engine import facility_metrics
 from waterleague_sim.engine.connected_facilities import CATALOG_PATH
 from waterleague_sim.engine.flood_errors import require
 from waterleague_sim.engine.initialized_facilities import run_initialized_facilities
+from waterleague_sim.engine.initialized_cistern import run_initialized_cistern
 from waterleague_sim.engine.network import sha256
 
 
@@ -18,29 +19,41 @@ def write(path, value):
     path.write_text(json.dumps(value, ensure_ascii=False, allow_nan=False, indent=2)+'\n')
 
 
-def archive(directory):
+def archive(directory, kind='facilities'):
+    require(kind in ('facilities', 'cistern'), 'INITIALIZED_ARCHIVE_KIND_INVALID')
     directory = directory.resolve()
     require(directory.is_relative_to(ROOT/'data/runs') and directory.is_dir()
         and not (directory/'manifest.json').exists() and not (directory/'source').exists(),
         'INITIALIZED_ARCHIVE_DIRECTORY_INVALID')
     require(not any(p.is_symlink() for p in directory.rglob('*')), 'INITIALIZED_ARCHIVE_SYMLINK')
-    reports = sorted(directory.glob('*/initialized-facilities-result.json'))
+    reports = sorted(directory.glob(f'*/initialized-{kind}-result.json'))
     require(reports, 'INITIALIZED_ARCHIVE_RESULTS_REQUIRED')
     summaries = {}
     for path in reports:
         result = json.loads(path.read_bytes())
-        require(result['schemaVersion'] == 2 and result['engine'] == facility_metrics.identity()
-            and result['adapterSha256'] == sha256(ROOT/'simulation/waterleague_sim/engine/initialized_facilities.py'),
+        require(result['schemaVersion'] == (2 if kind == 'facilities' else 1)
+            and result['engine'] == facility_metrics.identity()
+            and result['adapterSha256'] == sha256(ROOT/f'simulation/waterleague_sim/engine/initialized_{kind}.py'),
             'INITIALIZED_ARCHIVE_CODE_CHANGED')
+        if kind == 'cistern':
+            require(result['evaluationAdapterSha256'] == sha256(
+                ROOT/'simulation/waterleague_sim/engine/initialized_metrics.py'), 'INITIALIZED_ARCHIVE_CODE_CHANGED')
         for name, expected in result['files'].items():
             original = path.parent/name
             require(not Path(name).is_absolute() and '..' not in Path(name).parts
                 and original.is_file() and sha256(original) == expected, 'INITIALIZED_ARCHIVE_FILE_CHANGED')
-        summaries[path.parent.name] = {
-            'numericalStatus': result['numericalStatus'], 'window': result['evaluationLedger']['outfallMetrics'],
-            'warmupSeconds': result['initialization']['warmupSeconds'],
-            'evaluationInitialFacilities': result['evaluationInitialFacilities'],
-            'routingBalance': result['evaluationLedger']['routingBalance']}
+        if kind == 'facilities':
+            summaries[path.parent.name] = {
+                'numericalStatus': result['numericalStatus'], 'window': result['evaluationLedger']['outfallMetrics'],
+                'warmupSeconds': result['initialization']['warmupSeconds'],
+                'evaluationInitialFacilities': result['evaluationInitialFacilities'],
+                'routingBalance': result['evaluationLedger']['routingBalance']}
+        else:
+            summaries[path.parent.name] = {
+                'numericalStatus': result['numericalStatus'], 'comparison': result['comparison'],
+                'warmupSeconds': result['initialization']['warmupSeconds'],
+                'evaluationInitialStorage': result['evaluationInitialStorage'],
+                'storage': result['storage']['evaluationLedger']}
     paths = [*list((ROOT/'simulation/waterleague_sim').rglob('*.py')),
         *list((ROOT/'simulation/native').glob('*.inc')), CATALOG_PATH, Path(__file__),
         ROOT/'scripts/build_facility_metrics_swmm.py', ROOT/'scripts/build_live_swmm.py',
@@ -61,7 +74,7 @@ def archive(directory):
     write(directory/'outfall-summary.json', {'classification': 'OBSERVED_WEATHER_SYNTHETIC_NETWORK',
         'rankingEligible': False, 'cases': summaries})
     files = {str(p.relative_to(directory)): sha256(p) for p in sorted(directory.rglob('*')) if p.is_file()}
-    write(directory/'manifest.json', {'schemaVersion': 1, 'files': files})
+    write(directory/'manifest.json', {'schemaVersion': 1, 'kind': kind, 'files': files})
     print(json.dumps({'files': len(files), 'manifestSha256': sha256(directory/'manifest.json')}))
 
 
@@ -76,13 +89,18 @@ def replay(directory, case, output):
             and path.is_file() and sha256(path) == expected, 'INITIALIZED_REPLAY_FILE_CHANGED')
     source = directory/case
     request = json.loads((source/'request.json').read_bytes())
-    result = run_initialized_facilities(request['network'], request['observation'],
+    kind = manifest.get('kind', 'facilities')
+    require(kind in ('facilities', 'cistern'), 'INITIALIZED_ARCHIVE_KIND_INVALID')
+    runner = run_initialized_facilities if kind == 'facilities' else run_initialized_cistern
+    result = runner(request['network'], request['observation'],
         request['initialization'], request['design'], output)
-    expected = json.loads((source/'initialized-facilities-result.json').read_bytes())
-    require(result['evaluationLedger'] == expected['evaluationLedger']
-        and result['evaluationInitialFacilities'] == expected['evaluationInitialFacilities']
-        and result['evaluationFinalFacilities'] == expected['evaluationFinalFacilities']
-        and sha256(output/'network/network.out') == sha256(source/'network/network.out'),
+    expected = json.loads((source/f'initialized-{kind}-result.json').read_bytes())
+    keys = ('evaluationLedger', 'evaluationInitialFacilities', 'evaluationFinalFacilities') if kind == 'facilities' else (
+        'comparison', 'baselineEvaluation', 'strategyEvaluation', 'storage',
+        'baselineEvaluationInitialState', 'strategyEvaluationInitialState')
+    outputs = ('network',) if kind == 'facilities' else ('baseline', 'strategy')
+    require(all(result[key] == expected[key] for key in keys)
+        and all(sha256(output/name/'network.out') == sha256(source/name/'network.out') for name in outputs),
         'INITIALIZED_REPLAY_DIFFERENT')
     print(json.dumps({'case': case, 'nativeOutEqual': True, 'metricsEqual': True, 'statesEqual': True}))
 
@@ -92,10 +110,11 @@ if __name__ == '__main__':
     parser.add_argument('directory', type=Path)
     parser.add_argument('--replay-case')
     parser.add_argument('--output', type=Path)
+    parser.add_argument('--kind', choices=('facilities', 'cistern'), default='facilities')
     args = parser.parse_args()
     if args.replay_case:
         require(args.output is not None, 'INITIALIZED_REPLAY_OUTPUT_REQUIRED')
         replay(args.directory.resolve(), args.replay_case, args.output.resolve())
     else:
         require(args.output is None, 'INITIALIZED_ARCHIVE_ARGUMENT_INVALID')
-        archive(args.directory)
+        archive(args.directory, args.kind)

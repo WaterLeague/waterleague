@@ -1,0 +1,433 @@
+{
+  "classification": "OBSERVED_WEATHER_SYNTHETIC_NETWORK",
+  "rankingEligible": false,
+  "cases": {
+    "14d-dry": {
+      "numericalStatus": "PASSED",
+      "comparison": {
+        "numericalStatus": "PASSED",
+        "rankingEligible": false,
+        "sourceRunoffPreservation": {
+          "differenceM3": 9.094947017729282e-13,
+          "allowedDifferenceM3": 1.7351024630667823e-06,
+          "status": "PASSED"
+        },
+        "rawChanges": {
+          "outwardVolumeReductionM3": 0.031092021901940825,
+          "inwardVolumeReductionM3": 0.0,
+          "peakOutwardReductionM3s": 3.340715575189668e-05,
+          "nodeFloodingReductionM3": 0.0,
+          "netStorageIncreaseM3": 0.031091155691377992
+        },
+        "effects": {
+          "outwardVolumeReductionM3": 0.031092021901940825,
+          "inwardVolumeReductionM3": 0.0,
+          "peakOutwardReductionM3s": 3.340715575189668e-05,
+          "nodeFloodingReductionM3": 0.0,
+          "netStorageIncreaseM3": 0.031091155691377992
+        },
+        "effectStatus": "EXPLORATORY_NUMERICAL_COMPARISON",
+        "storedWaterIsPermanentReduction": false,
+        "storageLedgerAlreadyIncludedInRouting": true
+      },
+      "warmupSeconds": 1209600,
+      "evaluationInitialStorage": {
+        "type": 2,
+        "headM": 0.13270837584693732,
+        "depthM": 0.13270837584693732,
+        "storageM3": 0.1326935988817515,
+        "lateralFlowM3s": 0.00027373592778405097,
+        "inflowM3s": 0.00027373592778405097,
+        "overflowM3s": 0.0,
+        "statisticFloodingM3": 0.0,
+        "statisticInflowIncludingInitialM3": 4.323680265963585,
+        "statisticOutflowM3": 4.19098340497775,
+        "floodingM3": 0.0,
+        "boundaryOutflowM3": 0.0,
+        "boundaryInflowM3": 0.0
+      },
+      "storage": {
+        "startSeconds": 1209600.0,
+        "endSeconds": 1231140.0,
+        "facilities": [
+          {
+            "id": "Cistern",
+            "nodeId": "WLCT_Cistern",
+            "initialStorageM3": 0.1326935988817515,
+            "inflowM3": 1.8259890521231688,
+            "outflowIncludingFloodingM3": 1.8966669856289675,
+            "floodingM3": 0.0,
+            "finalStorageM3": 0.06201359058490486,
+            "capacityM3": 1.4,
+            "balanceResidualM3": 2.0747910478499665e-06,
+            "allowedResidualM3": 0.019586826510049202,
+            "numericalStatus": "PASSED"
+          }
+        ],
+        "scope": "NATIVE_STORAGE_NODE_BALANCE_ALREADY_INCLUDED_IN_NETWORK_ROUTING",
+        "numericalStatus": "PASSED"
+      }
+    },
+    "14d-wet": {
+      "numericalStatus": "PASSED",
+      "comparison": {
+        "numericalStatus": "PASSED",
+        "rankingEligible": false,
+        "sourceRunoffPreservation": {
+          "differenceM3": 9.094947017729282e-13,
+          "allowedDifferenceM3": 1.7351024630667823e-06,
+          "status": "PASSED"
+        },
+        "rawChanges": {
+          "outwardVolumeReductionM3": 0.031092021901940825,
+          "inwardVolumeReductionM3": 0.0,
+          "peakOutwardReductionM3s": 3.340715575189668e-05,
+          "nodeFloodingReductionM3": 0.0,
+          "netStorageIncreaseM3": 0.031091155691377992
+        },
+        "effects": {
+          "outwardVolumeReductionM3": 0.031092021901940825,
+          "inwardVolumeReductionM3": 0.0,
+          "peakOutwardReductionM3s": 3.340715575189668e-05,
+          "nodeFloodingReductionM3": 0.0,
+          "netStorageIncreaseM3": 0.031091155691377992
+        },
+        "effectStatus": "EXPLORATORY_NUMERICAL_COMPARISON",
+        "storedWaterIsPermanentReduction": false,
+        "storageLedgerAlreadyIncludedInRouting": true
+      },
+      "warmupSeconds": 1209600,
+      "evaluationInitialStorage": {
+        "type": 2,
+        "headM": 0.13270837584693732,
+        "depthM": 0.13270837584693732,
+        "storageM3": 0.1326935988817515,
+        "lateralFlowM3s": 0.00027373592778405097,
+        "inflowM3s": 0.00027373592778405097,
+        "overflowM3s": 0.0,
+        "statisticFloodingM3": 0.0,
+        "statisticInflowIncludingInitialM3": 5.7235243771497535,
+        "statisticOutflowM3": 5.590818475446284,
+        "floodingM3": 0.0,
+        "boundaryOutflowM3": 0.0,
+        "boundaryInflowM3": 0.0
+      },
+      "storage": {
+        "startSeconds": 1209600.0,
+        "endSeconds": 1231140.0,
+        "facilities": [
+          {
+            "id": "Cistern",
+            "nodeId": "WLCT_Cistern",
+            "initialStorageM3": 0.1326935988817515,
+            "inflowM3": 1.825989052123302,
+            "outflowIncludingFloodingM3": 1.8966669856290777,
+            "floodingM3": 0.0,
+            "finalStorageM3": 0.06201359058490486,
+            "capacityM3": 1.4,
+            "balanceResidualM3": 2.0747910709426054e-06,
+            "allowedResidualM3": 0.019586826510050535,
+            "numericalStatus": "PASSED"
+          }
+        ],
+        "scope": "NATIVE_STORAGE_NODE_BALANCE_ALREADY_INCLUDED_IN_NETWORK_ROUTING",
+        "numericalStatus": "PASSED"
+      }
+    },
+    "7d-dry": {
+      "numericalStatus": "PASSED",
+      "comparison": {
+        "numericalStatus": "PASSED",
+        "rankingEligible": false,
+        "sourceRunoffPreservation": {
+          "differenceM3": 4.547473508864641e-13,
+          "allowedDifferenceM3": 1.7351024630667717e-06,
+          "status": "PASSED"
+        },
+        "rawChanges": {
+          "outwardVolumeReductionM3": 0.031092021901940825,
+          "inwardVolumeReductionM3": 0.0,
+          "peakOutwardReductionM3s": 3.340715575189668e-05,
+          "nodeFloodingReductionM3": 0.0,
+          "netStorageIncreaseM3": 0.031091155691377992
+        },
+        "effects": {
+          "outwardVolumeReductionM3": 0.031092021901940825,
+          "inwardVolumeReductionM3": 0.0,
+          "peakOutwardReductionM3s": 3.340715575189668e-05,
+          "nodeFloodingReductionM3": 0.0,
+          "netStorageIncreaseM3": 0.031091155691377992
+        },
+        "effectStatus": "EXPLORATORY_NUMERICAL_COMPARISON",
+        "storedWaterIsPermanentReduction": false,
+        "storageLedgerAlreadyIncludedInRouting": true
+      },
+      "warmupSeconds": 604800,
+      "evaluationInitialStorage": {
+        "type": 2,
+        "headM": 0.13270837584693732,
+        "depthM": 0.13270837584693732,
+        "storageM3": 0.1326935988817515,
+        "lateralFlowM3s": 0.00027373592778405097,
+        "inflowM3s": 0.00027373592778405097,
+        "overflowM3s": 0.0,
+        "statisticFloodingM3": 0.0,
+        "statisticInflowIncludingInitialM3": 2.5561694338861876,
+        "statisticOutflowM3": 2.4234725762255103,
+        "floodingM3": 0.0,
+        "boundaryOutflowM3": 0.0,
+        "boundaryInflowM3": 0.0
+      },
+      "storage": {
+        "startSeconds": 604800.0,
+        "endSeconds": 626340.0,
+        "facilities": [
+          {
+            "id": "Cistern",
+            "nodeId": "WLCT_Cistern",
+            "initialStorageM3": 0.1326935988817515,
+            "inflowM3": 1.8259890521231497,
+            "outflowIncludingFloodingM3": 1.8966669856290315,
+            "floodingM3": 0.0,
+            "finalStorageM3": 0.06201359058490486,
+            "capacityM3": 1.4,
+            "balanceResidualM3": 2.0747909648052842e-06,
+            "allowedResidualM3": 0.01958682651004901,
+            "numericalStatus": "PASSED"
+          }
+        ],
+        "scope": "NATIVE_STORAGE_NODE_BALANCE_ALREADY_INCLUDED_IN_NETWORK_ROUTING",
+        "numericalStatus": "PASSED"
+      }
+    },
+    "7d-wet": {
+      "numericalStatus": "PASSED",
+      "comparison": {
+        "numericalStatus": "PASSED",
+        "rankingEligible": false,
+        "sourceRunoffPreservation": {
+          "differenceM3": 4.547473508864641e-13,
+          "allowedDifferenceM3": 1.7351024630667717e-06,
+          "status": "PASSED"
+        },
+        "rawChanges": {
+          "outwardVolumeReductionM3": 0.031092021901940825,
+          "inwardVolumeReductionM3": 0.0,
+          "peakOutwardReductionM3s": 3.340715575189668e-05,
+          "nodeFloodingReductionM3": 0.0,
+          "netStorageIncreaseM3": 0.031091155691377992
+        },
+        "effects": {
+          "outwardVolumeReductionM3": 0.031092021901940825,
+          "inwardVolumeReductionM3": 0.0,
+          "peakOutwardReductionM3s": 3.340715575189668e-05,
+          "nodeFloodingReductionM3": 0.0,
+          "netStorageIncreaseM3": 0.031091155691377992
+        },
+        "effectStatus": "EXPLORATORY_NUMERICAL_COMPARISON",
+        "storedWaterIsPermanentReduction": false,
+        "storageLedgerAlreadyIncludedInRouting": true
+      },
+      "warmupSeconds": 604800,
+      "evaluationInitialStorage": {
+        "type": 2,
+        "headM": 0.13270837584693732,
+        "depthM": 0.13270837584693732,
+        "storageM3": 0.1326935988817515,
+        "lateralFlowM3s": 0.00027373592778405097,
+        "inflowM3s": 0.00027373592778405097,
+        "overflowM3s": 0.0,
+        "statisticFloodingM3": 0.0,
+        "statisticInflowIncludingInitialM3": 3.9560135450726235,
+        "statisticOutflowM3": 3.823307645348561,
+        "floodingM3": 0.0,
+        "boundaryOutflowM3": 0.0,
+        "boundaryInflowM3": 0.0
+      },
+      "storage": {
+        "startSeconds": 604800.0,
+        "endSeconds": 626340.0,
+        "facilities": [
+          {
+            "id": "Cistern",
+            "nodeId": "WLCT_Cistern",
+            "initialStorageM3": 0.1326935988817515,
+            "inflowM3": 1.8259890521231692,
+            "outflowIncludingFloodingM3": 1.8966669856289666,
+            "floodingM3": 0.0,
+            "finalStorageM3": 0.06201359058490486,
+            "capacityM3": 1.4,
+            "balanceResidualM3": 2.074791049182234e-06,
+            "allowedResidualM3": 0.019586826510049206,
+            "numericalStatus": "PASSED"
+          }
+        ],
+        "scope": "NATIVE_STORAGE_NODE_BALANCE_ALREADY_INCLUDED_IN_NETWORK_ROUTING",
+        "numericalStatus": "PASSED"
+      }
+    },
+    "replay-14d-dry": {
+      "numericalStatus": "PASSED",
+      "comparison": {
+        "numericalStatus": "PASSED",
+        "rankingEligible": false,
+        "sourceRunoffPreservation": {
+          "differenceM3": 9.094947017729282e-13,
+          "allowedDifferenceM3": 1.7351024630667823e-06,
+          "status": "PASSED"
+        },
+        "rawChanges": {
+          "outwardVolumeReductionM3": 0.031092021901940825,
+          "inwardVolumeReductionM3": 0.0,
+          "peakOutwardReductionM3s": 3.340715575189668e-05,
+          "nodeFloodingReductionM3": 0.0,
+          "netStorageIncreaseM3": 0.031091155691377992
+        },
+        "effects": {
+          "outwardVolumeReductionM3": 0.031092021901940825,
+          "inwardVolumeReductionM3": 0.0,
+          "peakOutwardReductionM3s": 3.340715575189668e-05,
+          "nodeFloodingReductionM3": 0.0,
+          "netStorageIncreaseM3": 0.031091155691377992
+        },
+        "effectStatus": "EXPLORATORY_NUMERICAL_COMPARISON",
+        "storedWaterIsPermanentReduction": false,
+        "storageLedgerAlreadyIncludedInRouting": true
+      },
+      "warmupSeconds": 1209600,
+      "evaluationInitialStorage": {
+        "type": 2,
+        "headM": 0.13270837584693732,
+        "depthM": 0.13270837584693732,
+        "storageM3": 0.1326935988817515,
+        "lateralFlowM3s": 0.00027373592778405097,
+        "inflowM3s": 0.00027373592778405097,
+        "overflowM3s": 0.0,
+        "statisticFloodingM3": 0.0,
+        "statisticInflowIncludingInitialM3": 4.323680265963585,
+        "statisticOutflowM3": 4.19098340497775,
+        "floodingM3": 0.0,
+        "boundaryOutflowM3": 0.0,
+        "boundaryInflowM3": 0.0
+      },
+      "storage": {
+        "startSeconds": 1209600.0,
+        "endSeconds": 1231140.0,
+        "facilities": [
+          {
+            "id": "Cistern",
+            "nodeId": "WLCT_Cistern",
+            "initialStorageM3": 0.1326935988817515,
+            "inflowM3": 1.8259890521231688,
+            "outflowIncludingFloodingM3": 1.8966669856289675,
+            "floodingM3": 0.0,
+            "finalStorageM3": 0.06201359058490486,
+            "capacityM3": 1.4,
+            "balanceResidualM3": 2.0747910478499665e-06,
+            "allowedResidualM3": 0.019586826510049202,
+            "numericalStatus": "PASSED"
+          }
+        ],
+        "scope": "NATIVE_STORAGE_NODE_BALANCE_ALREADY_INCLUDED_IN_NETWORK_ROUTING",
+        "numericalStatus": "PASSED"
+      }
+    },
+    "undersized": {
+      "numericalStatus": "FAILED",
+      "comparison": {
+        "numericalStatus": "FAILED",
+        "rankingEligible": false,
+        "sourceRunoffPreservation": {
+          "differenceM3": 4.547473508864641e-13,
+          "allowedDifferenceM3": 1.7351024630667717e-06,
+          "status": "PASSED"
+        },
+        "rawChanges": {
+          "outwardVolumeReductionM3": 516.0666917911344,
+          "inwardVolumeReductionM3": 0.0,
+          "peakOutwardReductionM3s": 0.034737225598940685,
+          "nodeFloodingReductionM3": -486.0515219173335,
+          "netStorageIncreaseM3": 30.080107494562405
+        },
+        "effects": null,
+        "effectStatus": "WITHHELD_NUMERICAL_FAILURE",
+        "storedWaterIsPermanentReduction": false,
+        "storageLedgerAlreadyIncludedInRouting": true
+      },
+      "warmupSeconds": 604800,
+      "evaluationInitialStorage": {
+        "type": 2,
+        "headM": 1.4,
+        "depthM": 1.4,
+        "storageM3": 1.3998441111864408,
+        "lateralFlowM3s": 0.10949437111362037,
+        "inflowM3s": 0.10949437111362037,
+        "overflowM3s": 0.0950991585374789,
+        "statisticFloodingM3": 443.72976574534096,
+        "statisticInflowIncludingInitialM3": 1022.4677735544427,
+        "statisticOutflowM3": 1021.0253960083284,
+        "floodingM3": 443.68221616607235,
+        "boundaryOutflowM3": 0.0,
+        "boundaryInflowM3": 0.0
+      },
+      "storage": {
+        "startSeconds": 604800.0,
+        "endSeconds": 626340.0,
+        "facilities": [
+          {
+            "id": "Cistern",
+            "nodeId": "WLCT_Cistern",
+            "initialStorageM3": 1.3998441111864408,
+            "inflowM3": 730.3956208492781,
+            "outflowIncludingFloodingM3": 730.7678484343218,
+            "floodingM3": 486.0515219173297,
+            "finalStorageM3": 1.0864392213068543,
+            "capacityM3": 1.4,
+            "balanceResidualM3": -0.058822695164089334,
+            "allowedResidualM3": 7.318542876556286,
+            "numericalStatus": "FAILED"
+          }
+        ],
+        "scope": "NATIVE_STORAGE_NODE_BALANCE_ALREADY_INCLUDED_IN_NETWORK_ROUTING",
+        "numericalStatus": "FAILED"
+      }
+    }
+  },
+  "schemaVersion": 1,
+  "method": "OBSERVED_ANTECEDENT_HYDRAULIC_CISTERN_COMPARISON_V1",
+  "archive": "data/runs/initialized-cistern-20261019-v2",
+  "manifestSha256": "d8ce4330f7c3faa380083d9e7dc3ef25722c1d5b3e7fda432101c602282b4424",
+  "observations": {
+    "stationId": "421",
+    "eventDate": "2022-08-08",
+    "evaluationMinutes": 359,
+    "evaluationRainfallMm": 85,
+    "antecedentDays": [
+      7,
+      14
+    ]
+  },
+  "designScope": {
+    "network": "SYNTHETIC_2_HA",
+    "captureAreaM2": 20,
+    "capacityM3": 1.4,
+    "seedDepthM": [
+      0,
+      1.4
+    ],
+    "undersizedCaptureAreaM2": 8000
+  },
+  "limitations": [
+    "명시적 수리 설계와 합성 관망의 관측 강우 비교이며 실제 서울 연결 관망 검증 아님",
+    "탱크 저류와 관망 저류는 이미 관망 수지에 포함되며 별도 합산 금지",
+    "덮개 강우와 투수면을 보존한 집수 분할; 지도 부지·홈통 및 현재 설치 연결 미완료",
+    "7/14일 네 조건의 시작 저류 일치는 이 사례의 결과이며 모든 시설·관망의 초기화 수렴 인증 아님"
+  ],
+  "archivedReplay": {
+    "case": "14d-dry",
+    "nativeOutEqual": true,
+    "metricsEqual": true,
+    "statesEqual": true,
+    "fileCount": 1146
+  }
+}
