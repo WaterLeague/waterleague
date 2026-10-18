@@ -71,7 +71,8 @@ public class SimulationRepository {
     return db.queryForObject(
         "SELECT (SELECT COUNT(*) FROM simulation_jobs WHERE state IN ('QUEUED','RUNNING')) +"
             + " (SELECT COUNT(*) FROM research_candidates WHERE state IN ('QUEUED','RUNNING')) +"
-            + " (SELECT COUNT(*) FROM historical_experiments WHERE state IN ('QUEUED','RUNNING'))",
+            + " (SELECT COUNT(*) FROM historical_experiments WHERE state IN ('QUEUED','RUNNING')) +"
+            + " (SELECT COUNT(*) FROM watershed_experiments WHERE state IN ('QUEUED','RUNNING'))",
         Integer.class);
   }
 

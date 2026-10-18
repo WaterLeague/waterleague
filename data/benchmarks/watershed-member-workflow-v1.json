@@ -1,0 +1,131 @@
+{
+  "schemaVersion": 1,
+  "catalogHash": "beaddba8868b6f1f6bbf35b1d53d4695a94db99498d8988f90d62013cf8f053c",
+  "inputHash": "57ee3f16cf15f169250af85ea12d450300c0c71e2572fa66918740b245b6af80",
+  "classification": "PUBLIC_NETWORK_REFERENCE_DESIGN_COMPARISON",
+  "numericalStatus": "PASSED",
+  "signedReductionM3": {
+    "outflowM3": -5.145423324778676,
+    "floodingM3": 51.337923989398405
+  },
+  "numericalProfile": {
+    "id": "slot-62-5ms",
+    "options": {
+      "SURCHARGE_METHOD": "SLOT",
+      "MAX_TRIALS": 200,
+      "ROUTING_STEP": 0.0625,
+      "MINIMUM_STEP": 0.025
+    }
+  },
+  "hydraulicApproximationChanged": true,
+  "sourceUrl": "https://doi.org/10.17632/dzzwvd8rjk.3",
+  "rankingEligible": false,
+  "historicalReconstructionEligible": false,
+  "limitations": [
+    "논문 PDF·부록 원본은 아직 미보관, 공개 출판 본문 확인과 구분",
+    "EPSG·수직 기준·시설 유효 시점은 계속 미확인",
+    "문헌의 단면·유입 추정값과 사후 공간자료를 2010 실측 입력으로 표시하지 않음",
+    "원 관망의 2010 강우·추정 외부 유입·초기 상태를 보존한 문헌 단면 설계 비교",
+    "시설 면적과 처리 불투수 면적은 사용자의 가상 설계이며 현장 설치 가능 범위 미확인",
+    "초기 포화도 0·문헌 단면·하부 침투 4mm/h는 설계 조건이며 현장 실측값 아님",
+    "좌표 정합·지표 결합·가격 미확정: 주간 설치·예산 차감·순위 게시 제외",
+    "월류 체적은 지표 침수 깊이·면적·지속시간의 대체 지표가 아님",
+    "원본 EXTRAN 수치 실패를 보존하고 별도 SLOT 파생 입력으로 계산; 원본의 달력 종료보다 1초 짧은 엔진 평가 창",
+    "방류 체적만으로 하류 첨두 개선을 판정하지 않으며 필수 침수 지표 미확보로 총점 없음"
+  ],
+  "cases": [
+    {
+      "id": "baseline",
+      "inputSha256": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+      "numericalStatus": "PASSED",
+      "convergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 1392566,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      },
+      "facilityQuality": {
+        "policyVersion": "connected-lid-volume-balance-v1",
+        "failedFacilityIds": [],
+        "status": "PASSED",
+        "timeBasis": "NATIVE_HYDROLOGY_CLOCK_SEPARATE_FROM_ROUTING_CLOCK"
+      },
+      "timeWindowPolicy": "NATIVE_DURATION_DIAGNOSTIC",
+      "calendarShortfallSeconds": 1.0,
+      "totals": {
+        "timeSeconds": 86339.0,
+        "initialStorageM3": 0.32019239999999993,
+        "storageM3": 11131.689178989987,
+        "dryWeatherInflowM3": 0.0,
+        "runoffInflowM3": 229448.4376731979,
+        "groundwaterInflowM3": 0.0,
+        "rdiiInflowM3": 0.0,
+        "externalInflowM3": 3469729.3551090127,
+        "outflowM3": 2180749.855360638,
+        "floodingM3": 1507902.468925209,
+        "evaporationM3": 0.0,
+        "seepageM3": 0.0,
+        "reactionLossM3": 0.0,
+        "balanceResidualM3": -605.9004902264769
+      }
+    },
+    {
+      "id": "strategy",
+      "inputSha256": "15efae167ee1e96279d3cc5f00881b883f38772b8111075c56c0e446c2bfeb98",
+      "numericalStatus": "PASSED",
+      "convergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 1392566,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      },
+      "facilityQuality": {
+        "policyVersion": "connected-lid-volume-balance-v1",
+        "failedFacilityIds": [],
+        "status": "PASSED",
+        "timeBasis": "NATIVE_HYDROLOGY_CLOCK_SEPARATE_FROM_ROUTING_CLOCK"
+      },
+      "timeWindowPolicy": "NATIVE_DURATION_DIAGNOSTIC",
+      "calendarShortfallSeconds": 1.0,
+      "totals": {
+        "timeSeconds": 86339.0,
+        "initialStorageM3": 0.32019239999999993,
+        "storageM3": 11132.371694464544,
+        "dryWeatherInflowM3": 0.0,
+        "runoffInflowM3": 229403.99942595765,
+        "groundwaterInflowM3": 0.0,
+        "rdiiInflowM3": 0.0,
+        "externalInflowM3": 3469729.3551090127,
+        "outflowM3": 2180755.0007839627,
+        "floodingM3": 1507851.1310012196,
+        "evaporationM3": 0.0,
+        "seepageM3": 0.0,
+        "reactionLossM3": 0.0,
+        "balanceResidualM3": -604.8287522767951
+      }
+    }
+  ],
+  "replay": [
+    {
+      "id": "baseline",
+      "outSha256": "682eeb8bb19391dde81c640bc68f91de924852787689c89cbd46a3c771006c18",
+      "binaryEqual": true
+    },
+    {
+      "id": "strategy",
+      "outSha256": "769332420a751c772db450c3d29cfa6ddcb3b7b8b32ee44894149607b85c416f",
+      "binaryEqual": true
+    }
+  ],
+  "calculationSeconds": 19.156,
+  "artifactManifestSha256": "66af347ab2e10c6df6352e9effb2f97739e47068d5c564f35d82fdc6951a13cb",
+  "facilityLimitations": [
+    "공개 문헌의 설계 범위이며 서울 현장 또는 특정 제품의 실측 제원이 아님",
+    "시설 위치·대체 면적·집수 연결·초기 포화도·배수구 규격·하부 침투율은 명시된 설계 입력",
+    "기존 집수구역 출구를 계승하며 새로운 무한 방류구를 생성하지 않음",
+    "SWMM LID 배수는 수신 관망 수두의 역압이나 지하수에 의한 침투 저하를 완전하게 연결하지 않음",
+    "덮개 이용조 면적의 직접 강우는 제외, 덮개에서 외부로 떨어지는 물의 별도 경로 미구현",
+    "이용조 방류는 관망 배수이며 수요·수질 근거 없는 재이용 점수 없음",
+    "공사비·입지·현장 연결 검증 전 신규 시설의 운영 설치 및 순위 미개방"
+  ]
+}

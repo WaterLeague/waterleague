@@ -4,7 +4,7 @@ import uuid
 
 from psycopg import sql
 
-TABLES = {'PERSONAL': 'simulation_jobs', 'RESEARCH_CANDIDATE': 'research_candidates', 'HISTORICAL': 'historical_experiments'}
+TABLES = {'PERSONAL': 'simulation_jobs', 'RESEARCH_CANDIDATE': 'research_candidates', 'HISTORICAL': 'historical_experiments', 'WATERSHED': 'watershed_experiments'}
 
 
 def table(kind):

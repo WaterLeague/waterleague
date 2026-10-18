@@ -132,6 +132,10 @@ RFC 9457 `application/problem+json`: type, title, status, detail, instance, code
 
 ## 재해 모드 API 추가
 
+공개 연결 관망 연구 API는 `MEMBER` 인증·현재 승인 상태와 기존 CSRF 검사를 적용한다. `GET /api/v1/watersheds/catalog`는 불변 카탈로그 원문·SHA-256, 실제 공개 연구 관망의 14집수 면적/출구·4종 문헌 제원·미확인 조건 제공. `POST /api/v1/watersheds`는 `requestKey`, `catalogHash`, `placements[{id,catchmentId,facilityType,areaM2,treatedImperviousM2}]`를 받아 202 반환. 시설 면적 전체를 불투수 면적으로 대체하는 이 버전의 규칙과 서버 제원·시드를 고정하며, 같은 집수의 시설/처리 면적 합산·중복 ID·소스 해시·회원별 2개/전체 공용 20개 큐 한도 검사. 요청 키의 입력 변경은 409. 가격·소속 구 점유·주간 예산 차감 없음.
+
+`GET /api/v1/watersheds`는 본인 최근 50작업, `GET /api/v1/watersheds/{id}`는 본인 입력과 결과 조회. `SUCCEEDED`는 보고서 생성 완료이며, 수치 품질은 결과 `numericalStatus`로 별도 확인. 수치 실패는 두 조건과 원 파일을 보존하고 `signedReductionM3:null`; 음의 개선량·방류 증가 보존. 월류를 지표 침수나 총점으로 전용하지 않음. `GET /api/v1/watersheds/{id}/bundle`는 소유자 전용 원본/파생 INP·RPT·OUT·관망/시설 상태·변환/입력·엔진/소스·재생 코드 묶음. DB 결과에 고정된 파일 해시와 내용 대조, 64MiB 파일/ZIP·512MiB 총량 제한, 경로 이탈·심볼릭 링크·입력/결과/목록 동시 변조 거부. 같은 플랫폼에서 새 출력 폴더로 `python replay.py --output <새 폴더>` 실행 시 두 OUT의 원 해시 대조. 좌표계/수직 기준 미확정으로 지리 배치·당시 재현·순위 미개방.
+
 - `GET /api/v1/disasters`: 공개 재해 3건과 각 사건의 25개 구 강우 모델·시각·관측소·분량 제공.
 - `POST /api/v1/historical`: 로그인 회원의 선택 구·등록 재해 모델·공개 후보 1~50곳 검사 후 계산 요청. 요청 키 재사용은 같은 입력에만 허용. 다른 구 연구 허용, 공동 위치 점유 변경 없음.
 - 선택 `sensitivityCellId`는 같은 요청 배치 중 한 곳만 지정. 선행 초기화·제원 지원 후보인지 서버 확인 후 배치의 `initializationSensitivity=SELECTED_SURFACE_7_DAY_DRY_WET_V1` 정책을 입력 해시에 고정. 같은 요청 키로 비교 대상 추가/제거/변경 시 409, 미배치 대상 거부. 별도 비교 요청이 없는 기존 계산은 추가 실행 없음.

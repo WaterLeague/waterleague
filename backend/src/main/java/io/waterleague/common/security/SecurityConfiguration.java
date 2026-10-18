@@ -85,6 +85,7 @@ public class SecurityConfiguration {
                         "/api/v1/installations/**",
                         "/api/v1/simulations/**",
                         "/api/v1/historical/**",
+                        "/api/v1/watersheds/**",
                         "/api/v1/budget/ledger",
                         "/api/v1/comparisons/**",
                         "/api/v1/utilization/**",
