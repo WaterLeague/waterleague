@@ -1,0 +1,116 @@
+{
+  "schemaVersion": 1,
+  "classification": "PUBLIC_NETWORK_WITH_EXPLICIT_CISTERN_CAPTURE_DESIGNS",
+  "sourceManifestSha256": "2104f9143e6deea2213c9f88219a2d23ddfb78b0dab61b961cb8ab362df1da98",
+  "sourceUrl": "https://data.mendeley.com/datasets/dzzwvd8rjk/3",
+  "attribution": {
+    "title": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience: A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures",
+    "authors": [
+      "Samuel Park",
+      "Jaekyoung Kim",
+      "Hyeryeong Yun",
+      "Junsuk Kang"
+    ],
+    "year": 2024
+  },
+  "licence": {
+    "id": "01d9c749-3c4d-4431-9df3-620b2dcfe144",
+    "short_name": "CC BY 4.0",
+    "full_name": "Creative Commons Attribution 4.0 International",
+    "description": "You can share, copy and modify this dataset so long as you give appropriate credit, provide a link to the CC BY license, and indicate if changes were made, but you may not do so in a way that suggests the rights holder has endorsed you or your use of the dataset. Note that further permission may be required for any content within the dataset that is identified as belonging to a third party.",
+    "url": "http://creativecommons.org/licenses/by/4.0",
+    "category": "Creative",
+    "customer_id": null
+  },
+  "originalNetworkSha256": "8ce278a3d2b58df3c2a5fd1232160bcabb324389746ee0c878792acf91abbdbb",
+  "derivedBaseSha256": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+  "numericalProfile": {
+    "id": "slot-62-5ms",
+    "options": {
+      "SURCHARGE_METHOD": "SLOT",
+      "MAX_TRIALS": 200,
+      "ROUTING_STEP": 0.0625,
+      "MINIMUM_STEP": 0.025
+    }
+  },
+  "evidenceDirectory": "data/runs/cistern-network-evidence-v1",
+  "evidenceManifestSha256": "64d663f052a401ada5243013f310e94bfc44dc26059800d2e34b40d6019369b9",
+  "method": "COVERED_CISTERN_IMPERVIOUS_CAPTURE_DYNWAVE_V1",
+  "originalAreaM2": 13729.38,
+  "success": {
+    "captureAreaM2": 20,
+    "footprintM2": 5,
+    "capacityM3": 7,
+    "numericalStatus": "PASSED",
+    "routingRunoffInflowDifferenceM3": 0.0,
+    "signedReductionM3": {
+      "outflowM3": 0.028319278731942177,
+      "floodingM3": 5.1578023543115705
+    },
+    "signedPeakReductionM3s": 0.0,
+    "storageLedger": {
+      "id": "S9Tank",
+      "nodeId": "WLCT_S9Tank",
+      "initialStorageM3": 0.0,
+      "inflowM3": 5.192330343492042,
+      "outflowIncludingFloodingM3": 0.0,
+      "floodingM3": 0.0,
+      "finalStorageM3": 5.191752181908615,
+      "capacityM3": 7.0,
+      "balanceResidualM3": 0.0005781615834266063,
+      "allowedResidualM3": 0.05192330343492042,
+      "numericalStatus": "PASSED"
+    }
+  },
+  "failedDesign": {
+    "captureAreaM2": 500,
+    "footprintM2": 5,
+    "capacityM3": 7,
+    "numericalStatus": "FAILED",
+    "routingRunoffInflowDifferenceM3": 2.9103830456733704e-11,
+    "signedReductionM3": null,
+    "storageLedger": {
+      "id": "S9Tank",
+      "nodeId": "WLCT_S9Tank",
+      "initialStorageM3": 0.0,
+      "inflowM3": 129.80825858730026,
+      "outflowIncludingFloodingM3": 122.80827214727019,
+      "floodingM3": 122.80827214727047,
+      "finalStorageM3": 6.999220555932204,
+      "capacityM3": 7.0,
+      "balanceResidualM3": 0.0007658840978672643,
+      "allowedResidualM3": 1.2980825858730025,
+      "numericalStatus": "FAILED"
+    }
+  },
+  "diagnostics": {
+    "backflowMinimumM3s": -0.0006126219492632148,
+    "flapMinimumM3s": 0.0,
+    "dryStartFailurePreserved": true,
+    "dryStartRoutingResidualM3": -0.060753076565412734,
+    "routingHalfAndTenthStepFailuresPreserved": true
+  },
+  "validation": {
+    "pythonTests": 2,
+    "nativeCasesInTests": 6,
+    "archiveCompilerReplayExact": true,
+    "outAndOutletMetricsReplayExact": true
+  },
+  "memberGameIntegration": false,
+  "rankingEligible": false,
+  "historicalReconstructionEligible": false,
+  "limitations": [
+    "전면 불투수 집수의 명시적 균질 분할; 실제 지붕·홈통 연결 관측 아님",
+    "기존 강우 면적·조도·요지저류·폭/면적 보존, 덮개 강우는 원 출구로 우회",
+    "집수 유출은 이용조 측방 유입으로 연결; 홈통 용량·막힘·역류의 지붕 재유입 미모형화",
+    "배수·비상구의 관망 수두 및 역류 반영; 접속관 마찰은 별도 설계 필요",
+    "포화 토양·수질·수요·펌프 없는 재이용 저감점수 부여 금지",
+    "비상구 용량 초과에 따른 이용조 절점 월류는 실패로 보존",
+    "명시적 집수·이용조 설계의 관망 수리 비교; 실제 현장 지붕·높이·홈통 검증 아님",
+    "관망 월류 감소와 순저류는 재이용 수요 충족·지표 침수 저감의 확정값이 아님",
+    "원 자료의 시간 창·초기 상태 사용, 선행 관측 수위로 초기화된 재난 복원 아님",
+    "집수 면적 20/500m²와 용량 7m³는 설계 비교값이며 서초 현장 측정값 아님",
+    "작은 효과 차이의 관측 유의성·수치 오차 대비 견고성 미확정; 현재 점수 적용 없음",
+    "기존 회원 LID 이용조 입력을 재해석하지 않으며 새 수리 방식의 회원 양식 연결은 잔여 범위"
+  ]
+}
