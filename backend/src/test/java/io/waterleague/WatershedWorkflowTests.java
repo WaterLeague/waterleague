@@ -10,6 +10,7 @@ import io.waterleague.simulation.repository.SimulationRepository;
 import io.waterleague.watershed.dto.WatershedRequest;
 import io.waterleague.watershed.entity.WatershedExperiment;
 import io.waterleague.watershed.repository.WatershedCatalogRepository;
+import io.waterleague.watershed.repository.WatershedCostRepository;
 import io.waterleague.watershed.service.*;
 import java.math.BigDecimal;
 import java.nio.file.*;
@@ -130,6 +131,42 @@ class WatershedWorkflowTests {
             List.of(one.placements().getFirst(), one.placements().getFirst()));
     assertThatThrownBy(() -> service.create(owner, duplicate)).isInstanceOf(DomainException.class);
     assertThat(service.list(owner)).isEmpty();
+  }
+
+  @Test
+  void freezesReferenceCostAndKeepsUnknownPricesAndLegacyRequests() {
+    var placements =
+        List.of(
+            new WatershedRequest.Item(
+                "Bio1", "S1", "BIORETENTION", new BigDecimal("100.01"), BigDecimal.ZERO),
+            new WatershedRequest.Item(
+                "Swale1", "S1", "VEGETATIVE_SWALE", new BigDecimal("100"), BigDecimal.ZERO));
+    var key = UUID.randomUUID();
+    var dto =
+        new WatershedRequest(
+            key, WatershedCatalogRepository.HASH, placements, WatershedCostRepository.HASH);
+    var job = service.create(owner, dto);
+    var cost = job.design().path("costing");
+    assertThat(cost.path("knownReferenceSubtotalKrw").longValue()).isEqualTo(56005600);
+    assertThat(cost.path("items").get(1).path("referenceAmountKrw").isNull()).isTrue();
+    assertThat(cost.path("unpricedPlacementIds").get(0).asString()).isEqualTo("Swale1");
+    assertThat(cost.path("completeInstalledCostKrw").isNull()).isTrue();
+    assertThat(cost.path("budgetChargedKrw").isNull()).isTrue();
+    assertThat(service.create(owner, dto).id()).isEqualTo(job.id());
+    assertThatThrownBy(
+            () -> service.create(owner, new WatershedRequest(key, dto.catalogHash(), placements)))
+        .isInstanceOfSatisfying(
+            DomainException.class, e -> assertThat(e.code()).isEqualTo(ErrorCode.CONFLICT));
+    assertThatThrownBy(
+            () ->
+                service.create(
+                    owner,
+                    new WatershedRequest(
+                        UUID.randomUUID(), dto.catalogHash(), placements, "0".repeat(64))))
+        .isInstanceOfSatisfying(
+            DomainException.class, e -> assertThat(e.code()).isEqualTo(ErrorCode.CONFLICT));
+    var old = service.create(owner, request(UUID.randomUUID(), "Bio1", "S1", "100", "0"));
+    assertThat(old.design().path("costing").isMissingNode()).isTrue();
   }
 
   @Test

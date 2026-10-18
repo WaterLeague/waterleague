@@ -290,3 +290,31 @@
     flex-shrink: 0;
   }
 }
+.watershed-costs {
+  margin: 16px 0;
+  padding: 14px;
+  border: 1px solid #c7d5ca;
+  border-radius: 12px;
+  background: #f1f5ef;
+}
+.watershed-costs > strong {
+  display: block;
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+}
+.watershed-costs ul {
+  padding: 0;
+  list-style: none;
+}
+.watershed-costs li {
+  padding: 10px 0;
+  border-bottom: 1px solid #d6dfd4;
+}
+.watershed-costs li > span,
+.watershed-costs li > strong {
+  display: block;
+  margin-bottom: 4px;
+}
+.watershed-costs a {
+  overflow-wrap: anywhere;
+}

@@ -1,4 +1,5 @@
 import type { WatershedJob } from '../dto/watershedDto';
+import { WatershedCosts } from './WatershedCosts';
 import { networkNames } from '../service/watershedDesign';
 import { physicalAmount as number } from '../../physics/service/physicalValueFormat';
 const totalAmount = (value: number) =>
@@ -33,6 +34,7 @@ export function WatershedResult({ job }: { job: WatershedJob }) {
           </li>
         ))}
       </ul>
+      {job.design.costing && <WatershedCosts costing={job.design.costing} />}
       {(job.state === 'QUEUED' || job.state === 'RUNNING') && (
         <p role="status">
           시설 없는 기준안과 설계안을 같은 공개 관망에서 계산합니다. 창을 닫아도 서버 계산은

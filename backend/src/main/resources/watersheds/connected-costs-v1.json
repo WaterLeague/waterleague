@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "id": "JINJU_2022_CONNECTED_LID_REFERENCE_V1",
+  "currency": "KRW",
+  "classification": "HISTORICAL_PUBLIC_PLAN_REFERENCE_NOT_CURRENT_QUOTE",
+  "source": {
+    "title": "진주상평 일반산업단지 저탄소 그린산업단지 조성사업 사업계획서",
+    "url": "https://jinjucci.korcham.net/file/dext5uploaddata/2022/0718_%EC%A7%84%EC%A3%BC%EC%8B%9C_%EC%A0%80%ED%83%84%EC%86%8C%20%EA%B7%B8%EB%A6%B0%EC%82%B0%EC%97%85%EB%8B%A8%EC%A7%80%20%EC%A1%B0%EC%84%B1%EC%82%AC%EC%97%85_%EC%82%AC%EC%97%85%EA%B3%84%ED%9A%8D%EC%84%9C%20(%EC%9E%85%EC%A3%BC%EA%B8%B0%EC%97%85%ED%98%91%EC%9D%98%EC%B2%B4).pdf",
+    "year": 2022,
+    "sha256": "0efc54c3c884441d810ce28abb8928d758d98eb152fb71aac38791327b2d7414",
+    "pdfPages": [
+      11,
+      12
+    ]
+  },
+  "entries": {
+    "BIORETENTION": {
+      "label": "생물저류시설",
+      "status": "AREA_REFERENCE_ONLY",
+      "unit": "M2",
+      "unitPriceKrw": 560000,
+      "sourceQuantity": 243,
+      "sourceAmountKrw": 136080000,
+      "sourceLabel": "식생체류지",
+      "notes": [
+        "원문 3개소 × 9m × 9m = 243m², 하부층 깊이 0.9m",
+        "면적에 따른 참고 외삽이며 적용 EPA 단면과 시공 규격 일치 미확인"
+      ]
+    },
+    "INFILTRATION_TRENCH": {
+      "label": "침투 트렌치",
+      "status": "UNPRICED",
+      "unit": null,
+      "unitPriceKrw": null,
+      "sourceQuantity": null,
+      "sourceAmountKrw": null,
+      "sourceLabel": null,
+      "notes": [
+        "해당 단면과 일치하는 공개 공사 단가 미확보",
+        "같은 표의 침투우수관 가격은 다른 시설이므로 대입하지 않음"
+      ]
+    },
+    "VEGETATIVE_SWALE": {
+      "label": "식생수로",
+      "status": "UNPRICED",
+      "unit": "M",
+      "unitPriceKrw": 90000,
+      "sourceQuantity": 1271,
+      "sourceAmountKrw": 114390000,
+      "sourceLabel": "식생수로",
+      "notes": [
+        "행 수량 1,271m·총액 114,390천원에서 m당 90,000원 도출",
+        "표 머리글은 천원/㎡, 해당 행은 m이므로 원문 단위 불일치 보존",
+        "원문 폭 1.5m·2m와 적용 설계 상부 폭 3.048m 불일치로 설계 가격 미산정"
+      ]
+    },
+    "RAINWATER_CISTERN": {
+      "label": "빗물이용조",
+      "status": "UNPRICED",
+      "unit": null,
+      "unitPriceKrw": null,
+      "sourceQuantity": null,
+      "sourceAmountKrw": null,
+      "sourceLabel": null,
+      "notes": [
+        "용량·치수·배관 규격이 일치하는 공개 견적 미확보",
+        "빗물저금통·빗물이용시설 행의 금액 단위 모순을 임의 수정하여 단가로 사용하지 않음"
+      ]
+    }
+  },
+  "limitations": [
+    "2022년 진주 사업계획의 참고 공사비이며 현재 서울 견적이나 2010년 당시 가격이 아님",
+    "별도 설계·토공·철거·폐기물·스마트시스템·유지관리·성능평가 등의 사업 총액을 개별 시설에 임의 배분하지 않음",
+    "부가세 포함 여부·공종별 단가·현장 시공 조건 미확인",
+    "면적 외삽 참고 금액만 집계하며 미산정 시설과 부대공사는 0원으로 간주하지 않음",
+    "전체 설치비·예산 차감·순위 자격은 미확정 상태 유지"
+  ]
+}

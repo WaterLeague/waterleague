@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { watershedCostCatalogDto, watershedCostSnapshotDto } from './watershedCostDto';
 const hash = z.string().regex(/^[a-f0-9]{64}$/);
 const amount = z.number().finite();
 export const networkFacilityDto = z.enum([
@@ -10,6 +11,8 @@ export const networkFacilityDto = z.enum([
 export type NetworkFacility = z.infer<typeof networkFacilityDto>;
 export const watershedCatalogDto = z.object({
   catalogHash: hash,
+  costCatalogHash: hash.optional(),
+  costCatalog: watershedCostCatalogDto.optional(),
   catalog: z.object({
     id: z.string(),
     title: z.string(),
@@ -94,6 +97,7 @@ export const watershedResultDto = z
     historicalReconstructionEligible: z.literal(false),
     completeInstalledCostKrw: z.null(),
     budgetChargedKrw: z.null(),
+    costing: watershedCostSnapshotDto.optional(),
     limitations: z.array(z.string()),
   })
   .superRefine((value, ctx) => {
@@ -129,6 +133,7 @@ export const watershedJobDto = z
     state: z.enum(['QUEUED', 'RUNNING', 'SUCCEEDED', 'FAILED', 'REJECTED']),
     createdAt: z.iso.datetime(),
     design: z.object({
+      costing: watershedCostSnapshotDto.optional(),
       placements: z.array(
         z.object({
           id: z.string(),
@@ -143,6 +148,21 @@ export const watershedJobDto = z
     message: z.string(),
   })
   .superRefine((value, ctx) => {
+    const cost = value.design.costing;
+    if (
+      cost &&
+      (cost.items.length !== value.design.placements.length ||
+        cost.items.some(
+          (i) =>
+            !value.design.placements.some(
+              (p) =>
+                p.id === i.placementId && p.facilityType === i.facilityType && p.areaM2 === i.areaM2
+            )
+        ))
+    )
+      ctx.addIssue({ code: 'custom', message: '설계와 참고 공사비 수량 불일치' });
+    if (value.result && JSON.stringify(value.result.costing) !== JSON.stringify(cost))
+      ctx.addIssue({ code: 'custom', message: '요청과 결과의 참고 공사비 불일치' });
     if (
       (value.state === 'SUCCEEDED' && !value.result) ||
       (value.result && value.catalogHash !== value.result.catalogHash)

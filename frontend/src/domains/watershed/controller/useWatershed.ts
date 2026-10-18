@@ -84,7 +84,7 @@ export function useWatershed(account: Account | null, open: boolean) {
       setSubmitError(invalid);
       return;
     }
-    const fingerprint = designFingerprint(catalog.catalogHash, drafts);
+    const fingerprint = designFingerprint(catalog.catalogHash, drafts, catalog.costCatalogHash);
     let key = requestKeys.current.get(fingerprint);
     if (!key) {
       key = crypto.randomUUID();
@@ -101,7 +101,8 @@ export function useWatershed(account: Account | null, open: boolean) {
         catalog.catalogHash,
         drafts,
         key,
-        AbortSignal.any([abort.signal, AbortSignal.timeout(30000)])
+        AbortSignal.any([abort.signal, AbortSignal.timeout(30000)]),
+        catalog.costCatalogHash
       );
       if (!mounted.current || abort.signal.aborted) return;
       setJobs((previous) => [job, ...previous.filter((v) => v.id !== job.id)].slice(0, 50));

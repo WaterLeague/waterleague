@@ -42,9 +42,14 @@ export function validateNetworkDesign(catalog: WatershedCatalog, placements: Net
   }
   return '';
 }
-export const designFingerprint = (hash: string, placements: NetworkPlacement[]) =>
+export const designFingerprint = (
+  hash: string,
+  placements: NetworkPlacement[],
+  costHash?: string
+) =>
   JSON.stringify([
     hash,
+    costHash ?? null,
     [...placements]
       .sort((a, b) => a.id.localeCompare(b.id))
       .map((p) => [p.id, p.catchmentId, p.facilityType, p.areaM2, p.treatedImperviousM2]),

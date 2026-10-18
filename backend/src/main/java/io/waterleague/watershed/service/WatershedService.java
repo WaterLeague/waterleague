@@ -20,20 +20,34 @@ public class WatershedService {
   private final WatershedCatalogRepository catalog;
   private final SimulationRepository admission;
   private final JsonService json;
+  private final WatershedCostRepository costCatalog;
+  private final WatershedCostService costs;
 
   public WatershedService(
       WatershedRepository jobs,
       WatershedCatalogRepository catalog,
       SimulationRepository admission,
-      JsonService json) {
+      JsonService json,
+      WatershedCostRepository costCatalog,
+      WatershedCostService costs) {
     this.jobs = jobs;
     this.catalog = catalog;
     this.admission = admission;
     this.json = json;
+    this.costCatalog = costCatalog;
+    this.costs = costs;
   }
 
   public Map<String, Object> catalog() {
-    return Map.of("catalogHash", WatershedCatalogRepository.HASH, "catalog", catalog.value());
+    return Map.of(
+        "catalogHash",
+        WatershedCatalogRepository.HASH,
+        "catalog",
+        catalog.value(),
+        "costCatalogHash",
+        WatershedCostRepository.HASH,
+        "costCatalog",
+        costCatalog.value());
   }
 
   public WatershedExperiment require(UUID owner, UUID id) {
@@ -115,16 +129,18 @@ public class WatershedService {
               || treated.get(id).compareTo(c.path("imperviousM2").decimalValue().subtract(used))
                   > 0) throw new DomainException(ErrorCode.PLACEMENT_INVALID);
         });
-    String body =
-        json.write(
-            new TreeMap<>(
-                Map.of(
-                    "schemaVersion",
-                    1,
-                    "basis",
-                    data.path("designBasis").asString(),
-                    "placements",
-                    placements)));
+    var design =
+        new TreeMap<String, Object>(
+            Map.of(
+                "schemaVersion",
+                1,
+                "basis",
+                data.path("designBasis").asString(),
+                "placements",
+                placements));
+    if (dto.costCatalogHash() != null)
+      design.put("costing", costs.snapshot(dto.costCatalogHash(), dto.placements()));
+    String body = json.write(design);
     String hash = json.hash(dto.catalogHash() + "\n" + body);
     admission.lockAdmission();
     admission.lockOwner(owner);

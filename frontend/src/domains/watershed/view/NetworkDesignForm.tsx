@@ -3,6 +3,8 @@ import type { NetworkFacility, NetworkPlacement, WatershedCatalog } from '../dto
 import { networkNames, validateNetworkDesign } from '../service/watershedDesign';
 import { physicalAmount as number } from '../../physics/service/physicalValueFormat';
 import type { WatershedState } from '../controller/useWatershed';
+import { previewWatershedCosts } from '../service/watershedCosts';
+import { WatershedCosts } from './WatershedCosts';
 const areaAmount = (value: number) => value.toLocaleString('ko-KR', { maximumFractionDigits: 2 });
 const parameterLabels: Record<string, string> = {
   surfaceDepthMm: '표면 저류 깊이 (mm)',
@@ -68,6 +70,7 @@ export function NetworkDesignForm({
     .filter((p) => p.catchmentId === catchmentId)
     .reduce((sum, p) => sum + p.areaM2 + p.treatedImperviousM2, 0);
   const template = catalog.catalog.templates[type];
+  const costing = previewWatershedCosts(catalog, state.drafts);
   function add() {
     setFeedback('');
     if (!area.trim() || !treated.trim()) {
@@ -209,6 +212,7 @@ export function NetworkDesignForm({
         2010년 공개 원 관망 강우로 계산합니다. 현재 재생 중인 재해·실시간 강우와 별도이며 주간·재해
         예산과 순위에 반영하지 않습니다. 전체 설치비 미확정.
       </p>
+      {costing && <WatershedCosts costing={costing} preview />}
       <button
         type="button"
         className="watershed-submit"

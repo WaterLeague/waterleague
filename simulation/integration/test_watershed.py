@@ -7,6 +7,7 @@ import test_worker_queue as fixture
 from waterleague_sim import queue, watershed
 from waterleague_sim.run_watershed_job import CATALOG, CATALOG_HASH, inputs
 from waterleague_sim.engine.flood_errors import FloodModelError
+from waterleague_sim.costing.watershed import CATALOG as COST_CATALOG, CATALOG_HASH as COST_HASH, snapshot
 
 
 class WatershedTests(unittest.TestCase):
@@ -23,6 +24,7 @@ class WatershedTests(unittest.TestCase):
             {'id':'Bio1','facilityType':'BIORETENTION','subcatchmentId':'S1','areaM2':100,
              'replacedImperviousM2':100,'treatedImperviousM2':1000,'initialSaturationPercent':0,
              'parameters':catalog['templates']['BIORETENTION']['parameters']}]}
+        design['costing'] = snapshot(design['placements'], json.loads(COST_CATALOG.read_text()))
         raw=json.dumps(design,sort_keys=True)
         digest=hashlib.sha256((CATALOG_HASH+'\n'+raw).encode()).hexdigest()
         identity=uuid.uuid4()
@@ -36,6 +38,9 @@ class WatershedTests(unittest.TestCase):
         self.assertEqual(result['numericalStatus'],'PASSED')
         self.assertFalse(result['rankingEligible'])
         self.assertIsNone(result['completeInstalledCostKrw'])
+        self.assertEqual(result['costing'], design['costing'])
+        self.assertEqual(result['costing']['knownReferenceSubtotalKrw'], 56000000)
+        self.assertIsNone(result['costing']['budgetChargedKrw'])
         self.assertLess(result['signedReductionM3']['outflowM3'],0)
         self.assertGreater(result['signedReductionM3']['floodingM3'],0)
         directory=self.artifacts/'watersheds'/str(identity)/str(job['lease_token'])
@@ -44,6 +49,8 @@ class WatershedTests(unittest.TestCase):
             self.assertEqual(hashlib.sha256((directory/name).read_bytes()).hexdigest(),sha)
             if name!='result.json': self.assertEqual(result['artifactFiles'][name],sha)
         self.assertEqual(manifest['catalog.json'],CATALOG_HASH)
+        self.assertEqual(manifest['cost-catalog.json'], COST_HASH)
+        self.assertEqual(json.loads((directory/'cost-snapshot.json').read_text()), design['costing'])
         self.assertIn('strategy/network.out',manifest)
         self.assertFalse(queue.finish(self.conn,job,'SUCCEEDED',{'stale':True},None))
         request={'modelHash':CATALOG_HASH,'inputHash':digest,'placements':raw}

@@ -15,6 +15,7 @@ from .engine.flood_process import EngineProcess
 from .engine.swmm import ROOT
 from .ingestion.network_variant import derive
 from .ingestion.published_network import digest, load_archive, inspect_input
+from .costing.watershed import verify as verify_costs
 
 CATALOG = ROOT / 'backend/src/main/resources/watersheds/seocho-published-v1.json'
 CATALOG_HASH = 'beaddba8868b6f1f6bbf35b1d53d4695a94db99498d8988f90d62013cf8f053c'
@@ -38,6 +39,7 @@ def inputs(request):
         require(template is not None and p['parameters'] == template['parameters']
                 and p['initialSaturationPercent'] == template['initialSaturationPercent']
                 and p['replacedImperviousM2'] == p['areaM2'], 'WATERSHED_TEMPLATE_CHANGED')
+    verify_costs(design)
     manifest = ROOT/'data/manifests/mendeley-seocho-network-v3.json'
     source, source_hash, entries = load_archive(ROOT, manifest)
     require(source_hash == catalog['sourceManifestSha256']
@@ -50,7 +52,7 @@ def inputs(request):
                  'outletNodeId':v['outlet']} for v in audit['catchments']]
     require(catchments==catalog['catchments'], 'WATERSHED_CATCHMENT_SOURCE_MISMATCH')
     base, numerical = derive(original, catalog['numericalProfile'])
-    strategy, transformation = compile_design(base, design)
+    strategy, transformation = compile_design(base, {k: v for k, v in design.items() if k != 'costing'})
     return catalog, original, base, strategy, numerical, transformation, manifest
 
 
@@ -58,6 +60,11 @@ def calculate(request, directory):
     catalog, original, base, strategy, numerical, transformation, manifest = inputs(request)
     directory = Path(directory)
     directory.mkdir(parents=True, exist_ok=True)
+    design = json.loads(request['placements'])
+    cost_raw = verify_costs(design)
+    if cost_raw is not None:
+        (directory/'cost-catalog.json').write_bytes(cost_raw)
+        write(directory/'cost-snapshot.json', design['costing'])
     (directory/'catalog.json').write_bytes(CATALOG.read_bytes())
     (directory/'original.inp').write_bytes(original)
     (directory/'source-manifest.json').write_bytes(manifest.read_bytes())
@@ -97,7 +104,7 @@ def calculate(request, directory):
             case.update(numericalStatus='FAILED', failureCode=str(error))
         cases.append(case)
     passed = all(v['numericalStatus'] == 'PASSED' for v in cases)
-    return {'schemaVersion': 1, 'catalogHash': CATALOG_HASH, 'inputHash': request['inputHash'],
+    result = {'schemaVersion': 1, 'catalogHash': CATALOG_HASH, 'inputHash': request['inputHash'],
         'classification': 'PUBLIC_NETWORK_REFERENCE_DESIGN_COMPARISON', 'engine': engine,
         'numericalProfile': catalog['numericalProfile'],
         'hydraulicApproximationChanged': numerical['hydraulicApproximationChanged'],
@@ -110,6 +117,9 @@ def calculate(request, directory):
         'limitations': catalog['limitations'] + transformation['limitations'] + ['월류 체적은 지표 침수 깊이·면적·지속시간의 대체 지표가 아님',
             '원본 EXTRAN 수치 실패를 보존하고 별도 SLOT 파생 입력으로 계산; 원본의 달력 종료보다 1초 짧은 엔진 평가 창',
             '방류 체적만으로 하류 첨두 개선을 판정하지 않으며 필수 침수 지표 미확보로 총점 없음']}
+    if cost_raw is not None:
+        result['costing'] = design['costing']
+    return result
 
 
 def main():

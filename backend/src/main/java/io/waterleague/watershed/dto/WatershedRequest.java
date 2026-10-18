@@ -8,7 +8,12 @@ import java.util.*;
 public record WatershedRequest(
     @NotNull UUID requestKey,
     @NotBlank @Pattern(regexp = "[a-f0-9]{64}") String catalogHash,
-    @NotNull @Size(min = 1, max = 20) List<@NotNull @Valid Item> placements) {
+    @NotNull @Size(min = 1, max = 20) List<@NotNull @Valid Item> placements,
+    @Pattern(regexp = "[a-f0-9]{64}") String costCatalogHash) {
+  public WatershedRequest(UUID requestKey, String catalogHash, List<Item> placements) {
+    this(requestKey, catalogHash, placements, null);
+  }
+
   public record Item(
       @NotBlank @Pattern(regexp = "[A-Za-z][A-Za-z0-9_-]{0,23}") String id,
       @NotBlank @Size(max = 20) String catchmentId,
