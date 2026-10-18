@@ -1,0 +1,3258 @@
+{
+  "schemaVersion": 1,
+  "classification": "PUBLISHED_RESEARCH_NUMERICAL_RESOLUTION_COMPARISON",
+  "sourceManifestSha256": "2104f9143e6deea2213c9f88219a2d23ddfb78b0dab61b961cb8ab362df1da98",
+  "contextSha256": "b97793212754e2b52f4289c63cecc75aacd96a9df0a01832fdadd7af0605b6c0",
+  "attribution": {
+    "title": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience: A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures",
+    "authors": [
+      "Samuel Park",
+      "Jaekyoung Kim",
+      "Hyeryeong Yun",
+      "Junsuk Kang"
+    ],
+    "year": 2024
+  },
+  "licence": {
+    "id": "01d9c749-3c4d-4431-9df3-620b2dcfe144",
+    "short_name": "CC BY 4.0",
+    "full_name": "Creative Commons Attribution 4.0 International",
+    "description": "You can share, copy and modify this dataset so long as you give appropriate credit, provide a link to the CC BY license, and indicate if changes were made, but you may not do so in a way that suggests the rights holder has endorsed you or your use of the dataset. Note that further permission may be required for any content within the dataset that is identified as belonging to a third party.",
+    "url": "http://creativecommons.org/licenses/by/4.0",
+    "category": "Creative",
+    "customer_id": null
+  },
+  "engine": {
+    "schemaVersion": 1,
+    "engineVersion": "5.2.4",
+    "revision": "7952ca837988b1c32f791812eccc9fd64547e093",
+    "sourceArchiveSha256": "3f76a199573088ce47ff02491c529afb73d9953ee9d948dfc89dcd4981b4c0c0",
+    "observerSha256": "c320fa1849cb4b03254167b107d1a9fefc7171b10c6ce397a0b82bb5c08c53e7",
+    "binarySha256": "673a83f39ec76e9e26c64702a68101b2cadfe113aaa879c5637baedefd4aaac5",
+    "modification": "READ_ONLY_OBSERVER_NO_SOLVER_CHANGES",
+    "adapterSha256": "f9fa6734de7a3adc64f1bd456862d80260115c656a6bc1c0b090841883bfb0d7",
+    "platform": "macOS-27.0.1-arm64-arm-64bit",
+    "qualityAdapterSha256": "c78323b383d37be56c34b8cc2d5084e4a92e3de6bbc2a818d914acbabf3eb930"
+  },
+  "profiles": [
+    {
+      "id": "published-extran",
+      "options": {
+        "SURCHARGE_METHOD": "EXTRAN"
+      }
+    },
+    {
+      "id": "slot-125ms",
+      "options": {
+        "SURCHARGE_METHOD": "SLOT",
+        "MAX_TRIALS": 200,
+        "ROUTING_STEP": 0.125,
+        "MINIMUM_STEP": 0.05
+      }
+    },
+    {
+      "id": "slot-62-5ms",
+      "options": {
+        "SURCHARGE_METHOD": "SLOT",
+        "MAX_TRIALS": 200,
+        "ROUTING_STEP": 0.0625,
+        "MINIMUM_STEP": 0.025
+      }
+    },
+    {
+      "id": "slot-31-25ms",
+      "options": {
+        "SURCHARGE_METHOD": "SLOT",
+        "MAX_TRIALS": 200,
+        "ROUTING_STEP": 0.03125,
+        "MINIMUM_STEP": 0.01
+      }
+    }
+  ],
+  "cases": [
+    {
+      "id": "baseline-published-extran",
+      "design": "baseline",
+      "profile": {
+        "id": "published-extran",
+        "options": {
+          "SURCHARGE_METHOD": "EXTRAN"
+        }
+      },
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline/seocho2_baseline.inp",
+      "transformation": {
+        "schemaVersion": 1,
+        "profile": {
+          "id": "published-extran",
+          "options": {
+            "SURCHARGE_METHOD": "EXTRAN"
+          }
+        },
+        "classification": "NUMERICAL_VARIANT_OF_PUBLISHED_RESEARCH_INPUT",
+        "originalSha256": "8ce278a3d2b58df3c2a5fd1232160bcabb324389746ee0c878792acf91abbdbb",
+        "derivedSha256": "d66a7c5f614f0a4251a802f9565f7bd14a098b391e9fa4ca6ff490545d6c974f",
+        "hydraulicInputSha256": "4f62cd345b6632802d1431044a310402b5eb8a88e470e36d73060d7e832262c1",
+        "hydraulicInputValuesUnchanged": true,
+        "originalSurchargeMethod": "EXTRAN",
+        "derivedSurchargeMethod": "EXTRAN",
+        "hydraulicApproximationChanged": false,
+        "reportOutputTransformation": {
+          "schemaVersion": 1,
+          "originalSha256": "8ce278a3d2b58df3c2a5fd1232160bcabb324389746ee0c878792acf91abbdbb",
+          "executionSha256": "8ce278a3d2b58df3c2a5fd1232160bcabb324389746ee0c878792acf91abbdbb",
+          "changes": [],
+          "bomRemoved": false,
+          "physicsValuesChanged": false,
+          "diagnosticOnly": true,
+          "rankingEligible": false,
+          "preservedNonfiniteUnusedTokens": [
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 57,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 58,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 59,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 60,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 61,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 62,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 63,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 64,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 65,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 66,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 67,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 68,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 69,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 70,
+              "tokenIndex": 7,
+              "value": "NaN"
+            }
+          ]
+        },
+        "numericalChanges": [
+          {
+            "option": "SURCHARGE_METHOD",
+            "sourceLine": null,
+            "before": null,
+            "after": "EXTRAN"
+          }
+        ],
+        "rankingEligible": false,
+        "historicalReconstructionEligible": false
+      },
+      "numericalStatus": "FAILED",
+      "convergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 86340,
+        "nonConvergedSteps": 1534,
+        "nonConvergedPercent": 1.7766967801714153
+      },
+      "numericalQuality": {
+        "policyVersion": "network-continuity-convergence-v2",
+        "continuityLimitPercent": 1,
+        "routingBalance": {
+          "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+          "totalInM3": 3699172.750161714,
+          "totalOutIncludingStorageM3": 3700847.3698978955,
+          "residualM3": -1674.619736181572,
+          "continuityPercent": -0.045270114408913834,
+          "absoluteToleranceM3": 1e-08,
+          "allowedResidualM3": 36991.72750161714
+        },
+        "allowedNonConvergedSteps": 0,
+        "failureReasons": [
+          "ROUTING_NONCONVERGED"
+        ],
+        "status": "FAILED"
+      },
+      "numericalConfiguration": {
+        "method": "EPA_5_2_4_NATIVE_SETTINGS_READ_ONLY",
+        "surchargeMethod": "EXTRAN",
+        "maximumRoutingStepSeconds": 1.0,
+        "minimumRoutingStepSeconds": 0.5,
+        "courantFactor": 0.75,
+        "minimumNumericalNodeAreaM2": 1.167,
+        "headConvergenceToleranceM": 0.0015,
+        "maximumTrials": 8,
+        "declaredInputOptions": {
+          "SURCHARGE_METHOD": "EXTRAN",
+          "ROUTING_STEP": "0:00:01",
+          "MINIMUM_STEP": "0.5",
+          "VARIABLE_STEP": "0.75",
+          "MIN_SURFAREA": "1.167",
+          "HEAD_TOLERANCE": "0.0015",
+          "MAX_TRIALS": "8"
+        },
+        "defaultedInputOptions": []
+      },
+      "calendarShortfallSeconds": 1.0,
+      "timeWindowPolicy": "NATIVE_DURATION_DIAGNOSTIC",
+      "totals": {
+        "timeSeconds": 86339.0,
+        "initialStorageM3": 0.32019239999999993,
+        "storageM3": 10881.191638072149,
+        "dryWeatherInflowM3": 0.0,
+        "runoffInflowM3": 229448.15193151555,
+        "groundwaterInflowM3": 0.0,
+        "rdiiInflowM3": 0.0,
+        "externalInflowM3": 3469724.2780377986,
+        "outflowM3": 2184748.553532702,
+        "floodingM3": 1505217.6247271216,
+        "evaporationM3": 0.0,
+        "seepageM3": 0.0,
+        "reactionLossM3": 0.0,
+        "balanceResidualM3": -1674.6197361816994
+      }
+    },
+    {
+      "id": "baseline-slot-125ms",
+      "design": "baseline",
+      "profile": {
+        "id": "slot-125ms",
+        "options": {
+          "SURCHARGE_METHOD": "SLOT",
+          "MAX_TRIALS": 200,
+          "ROUTING_STEP": 0.125,
+          "MINIMUM_STEP": 0.05
+        }
+      },
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline/seocho2_baseline.inp",
+      "transformation": {
+        "schemaVersion": 1,
+        "profile": {
+          "id": "slot-125ms",
+          "options": {
+            "SURCHARGE_METHOD": "SLOT",
+            "MAX_TRIALS": 200,
+            "ROUTING_STEP": 0.125,
+            "MINIMUM_STEP": 0.05
+          }
+        },
+        "classification": "NUMERICAL_VARIANT_OF_PUBLISHED_RESEARCH_INPUT",
+        "originalSha256": "8ce278a3d2b58df3c2a5fd1232160bcabb324389746ee0c878792acf91abbdbb",
+        "derivedSha256": "618918e2fcc518c7893638ae5c51a6e6dfb1256ec93f6aeb94c9dbecaa501306",
+        "hydraulicInputSha256": "4f62cd345b6632802d1431044a310402b5eb8a88e470e36d73060d7e832262c1",
+        "hydraulicInputValuesUnchanged": true,
+        "originalSurchargeMethod": "EXTRAN",
+        "derivedSurchargeMethod": "SLOT",
+        "hydraulicApproximationChanged": true,
+        "reportOutputTransformation": {
+          "schemaVersion": 1,
+          "originalSha256": "8ce278a3d2b58df3c2a5fd1232160bcabb324389746ee0c878792acf91abbdbb",
+          "executionSha256": "8ce278a3d2b58df3c2a5fd1232160bcabb324389746ee0c878792acf91abbdbb",
+          "changes": [],
+          "bomRemoved": false,
+          "physicsValuesChanged": false,
+          "diagnosticOnly": true,
+          "rankingEligible": false,
+          "preservedNonfiniteUnusedTokens": [
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 57,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 58,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 59,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 60,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 61,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 62,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 63,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 64,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 65,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 66,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 67,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 68,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 69,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 70,
+              "tokenIndex": 7,
+              "value": "NaN"
+            }
+          ]
+        },
+        "numericalChanges": [
+          {
+            "option": "MAX_TRIALS",
+            "sourceLine": 36,
+            "before": "8",
+            "after": "200"
+          },
+          {
+            "option": "MINIMUM_STEP",
+            "sourceLine": 40,
+            "before": "0.5",
+            "after": "0.05"
+          },
+          {
+            "option": "ROUTING_STEP",
+            "sourceLine": 27,
+            "before": "0:00:01",
+            "after": "0.125"
+          },
+          {
+            "option": "SURCHARGE_METHOD",
+            "sourceLine": null,
+            "before": null,
+            "after": "SLOT"
+          }
+        ],
+        "rankingEligible": false,
+        "historicalReconstructionEligible": false
+      },
+      "numericalStatus": "FAILED",
+      "convergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 690713,
+        "nonConvergedSteps": 40,
+        "nonConvergedPercent": 0.005791117294737467
+      },
+      "numericalQuality": {
+        "policyVersion": "network-continuity-convergence-v2",
+        "continuityLimitPercent": 1,
+        "routingBalance": {
+          "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+          "totalInM3": 3699177.570860811,
+          "totalOutIncludingStorageM3": 3699850.403426675,
+          "residualM3": -672.8325658640824,
+          "continuityPercent": -0.018188706894314132,
+          "absoluteToleranceM3": 1e-08,
+          "allowedResidualM3": 36991.77570860811
+        },
+        "allowedNonConvergedSteps": 0,
+        "failureReasons": [
+          "ROUTING_NONCONVERGED"
+        ],
+        "status": "FAILED"
+      },
+      "numericalConfiguration": {
+        "method": "EPA_5_2_4_NATIVE_SETTINGS_READ_ONLY",
+        "surchargeMethod": "SLOT",
+        "maximumRoutingStepSeconds": 0.125,
+        "minimumRoutingStepSeconds": 0.05,
+        "courantFactor": 0.75,
+        "minimumNumericalNodeAreaM2": 1.167,
+        "headConvergenceToleranceM": 0.0015,
+        "maximumTrials": 200,
+        "declaredInputOptions": {
+          "SURCHARGE_METHOD": "SLOT",
+          "ROUTING_STEP": "0.125",
+          "MINIMUM_STEP": "0.05",
+          "VARIABLE_STEP": "0.75",
+          "MIN_SURFAREA": "1.167",
+          "HEAD_TOLERANCE": "0.0015",
+          "MAX_TRIALS": "200"
+        },
+        "defaultedInputOptions": []
+      },
+      "calendarShortfallSeconds": 1.0,
+      "timeWindowPolicy": "NATIVE_DURATION_DIAGNOSTIC",
+      "totals": {
+        "timeSeconds": 86339.0,
+        "initialStorageM3": 0.32019239999999993,
+        "storageM3": 11131.69183653447,
+        "dryWeatherInflowM3": 0.0,
+        "runoffInflowM3": 229448.41844364468,
+        "groundwaterInflowM3": 0.0,
+        "rdiiInflowM3": 0.0,
+        "externalInflowM3": 3469728.8322247663,
+        "outflowM3": 2180749.5043287235,
+        "floodingM3": 1507969.207261417,
+        "evaporationM3": 0.0,
+        "seepageM3": 0.0,
+        "reactionLossM3": 0.0,
+        "balanceResidualM3": -672.8325658640188
+      }
+    },
+    {
+      "id": "baseline-slot-62-5ms",
+      "design": "baseline",
+      "profile": {
+        "id": "slot-62-5ms",
+        "options": {
+          "SURCHARGE_METHOD": "SLOT",
+          "MAX_TRIALS": 200,
+          "ROUTING_STEP": 0.0625,
+          "MINIMUM_STEP": 0.025
+        }
+      },
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline/seocho2_baseline.inp",
+      "transformation": {
+        "schemaVersion": 1,
+        "profile": {
+          "id": "slot-62-5ms",
+          "options": {
+            "SURCHARGE_METHOD": "SLOT",
+            "MAX_TRIALS": 200,
+            "ROUTING_STEP": 0.0625,
+            "MINIMUM_STEP": 0.025
+          }
+        },
+        "classification": "NUMERICAL_VARIANT_OF_PUBLISHED_RESEARCH_INPUT",
+        "originalSha256": "8ce278a3d2b58df3c2a5fd1232160bcabb324389746ee0c878792acf91abbdbb",
+        "derivedSha256": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+        "hydraulicInputSha256": "4f62cd345b6632802d1431044a310402b5eb8a88e470e36d73060d7e832262c1",
+        "hydraulicInputValuesUnchanged": true,
+        "originalSurchargeMethod": "EXTRAN",
+        "derivedSurchargeMethod": "SLOT",
+        "hydraulicApproximationChanged": true,
+        "reportOutputTransformation": {
+          "schemaVersion": 1,
+          "originalSha256": "8ce278a3d2b58df3c2a5fd1232160bcabb324389746ee0c878792acf91abbdbb",
+          "executionSha256": "8ce278a3d2b58df3c2a5fd1232160bcabb324389746ee0c878792acf91abbdbb",
+          "changes": [],
+          "bomRemoved": false,
+          "physicsValuesChanged": false,
+          "diagnosticOnly": true,
+          "rankingEligible": false,
+          "preservedNonfiniteUnusedTokens": [
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 57,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 58,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 59,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 60,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 61,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 62,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 63,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 64,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 65,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 66,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 67,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 68,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 69,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 70,
+              "tokenIndex": 7,
+              "value": "NaN"
+            }
+          ]
+        },
+        "numericalChanges": [
+          {
+            "option": "MAX_TRIALS",
+            "sourceLine": 36,
+            "before": "8",
+            "after": "200"
+          },
+          {
+            "option": "MINIMUM_STEP",
+            "sourceLine": 40,
+            "before": "0.5",
+            "after": "0.025"
+          },
+          {
+            "option": "ROUTING_STEP",
+            "sourceLine": 27,
+            "before": "0:00:01",
+            "after": "0.0625"
+          },
+          {
+            "option": "SURCHARGE_METHOD",
+            "sourceLine": null,
+            "before": null,
+            "after": "SLOT"
+          }
+        ],
+        "rankingEligible": false,
+        "historicalReconstructionEligible": false
+      },
+      "numericalStatus": "PASSED",
+      "convergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 1392566,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      },
+      "numericalQuality": {
+        "policyVersion": "network-continuity-convergence-v2",
+        "continuityLimitPercent": 1,
+        "routingBalance": {
+          "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+          "totalInM3": 3699178.1129746106,
+          "totalOutIncludingStorageM3": 3699784.013464837,
+          "residualM3": -605.9004902262241,
+          "continuityPercent": -0.016379327291677848,
+          "absoluteToleranceM3": 1e-08,
+          "allowedResidualM3": 36991.78112974611
+        },
+        "allowedNonConvergedSteps": 0,
+        "failureReasons": [],
+        "status": "PASSED"
+      },
+      "numericalConfiguration": {
+        "method": "EPA_5_2_4_NATIVE_SETTINGS_READ_ONLY",
+        "surchargeMethod": "SLOT",
+        "maximumRoutingStepSeconds": 0.0625,
+        "minimumRoutingStepSeconds": 0.025,
+        "courantFactor": 0.75,
+        "minimumNumericalNodeAreaM2": 1.167,
+        "headConvergenceToleranceM": 0.0015,
+        "maximumTrials": 200,
+        "declaredInputOptions": {
+          "SURCHARGE_METHOD": "SLOT",
+          "ROUTING_STEP": "0.0625",
+          "MINIMUM_STEP": "0.025",
+          "VARIABLE_STEP": "0.75",
+          "MIN_SURFAREA": "1.167",
+          "HEAD_TOLERANCE": "0.0015",
+          "MAX_TRIALS": "200"
+        },
+        "defaultedInputOptions": []
+      },
+      "calendarShortfallSeconds": 1.0,
+      "timeWindowPolicy": "NATIVE_DURATION_DIAGNOSTIC",
+      "totals": {
+        "timeSeconds": 86339.0,
+        "initialStorageM3": 0.32019239999999993,
+        "storageM3": 11131.689178989987,
+        "dryWeatherInflowM3": 0.0,
+        "runoffInflowM3": 229448.4376731979,
+        "groundwaterInflowM3": 0.0,
+        "rdiiInflowM3": 0.0,
+        "externalInflowM3": 3469729.3551090127,
+        "outflowM3": 2180749.855360638,
+        "floodingM3": 1507902.468925209,
+        "evaporationM3": 0.0,
+        "seepageM3": 0.0,
+        "reactionLossM3": 0.0,
+        "balanceResidualM3": -605.9004902264769
+      }
+    },
+    {
+      "id": "baseline-slot-31-25ms",
+      "design": "baseline",
+      "profile": {
+        "id": "slot-31-25ms",
+        "options": {
+          "SURCHARGE_METHOD": "SLOT",
+          "MAX_TRIALS": 200,
+          "ROUTING_STEP": 0.03125,
+          "MINIMUM_STEP": 0.01
+        }
+      },
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline/seocho2_baseline.inp",
+      "transformation": {
+        "schemaVersion": 1,
+        "profile": {
+          "id": "slot-31-25ms",
+          "options": {
+            "SURCHARGE_METHOD": "SLOT",
+            "MAX_TRIALS": 200,
+            "ROUTING_STEP": 0.03125,
+            "MINIMUM_STEP": 0.01
+          }
+        },
+        "classification": "NUMERICAL_VARIANT_OF_PUBLISHED_RESEARCH_INPUT",
+        "originalSha256": "8ce278a3d2b58df3c2a5fd1232160bcabb324389746ee0c878792acf91abbdbb",
+        "derivedSha256": "3ebb23f7aafc453762144088ee07946e230dbe757fd4eee4dab88ddda6c1ede1",
+        "hydraulicInputSha256": "4f62cd345b6632802d1431044a310402b5eb8a88e470e36d73060d7e832262c1",
+        "hydraulicInputValuesUnchanged": true,
+        "originalSurchargeMethod": "EXTRAN",
+        "derivedSurchargeMethod": "SLOT",
+        "hydraulicApproximationChanged": true,
+        "reportOutputTransformation": {
+          "schemaVersion": 1,
+          "originalSha256": "8ce278a3d2b58df3c2a5fd1232160bcabb324389746ee0c878792acf91abbdbb",
+          "executionSha256": "8ce278a3d2b58df3c2a5fd1232160bcabb324389746ee0c878792acf91abbdbb",
+          "changes": [],
+          "bomRemoved": false,
+          "physicsValuesChanged": false,
+          "diagnosticOnly": true,
+          "rankingEligible": false,
+          "preservedNonfiniteUnusedTokens": [
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 57,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 58,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 59,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 60,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 61,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 62,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 63,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 64,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 65,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 66,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 67,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 68,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 69,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 70,
+              "tokenIndex": 7,
+              "value": "NaN"
+            }
+          ]
+        },
+        "numericalChanges": [
+          {
+            "option": "MAX_TRIALS",
+            "sourceLine": 36,
+            "before": "8",
+            "after": "200"
+          },
+          {
+            "option": "MINIMUM_STEP",
+            "sourceLine": 40,
+            "before": "0.5",
+            "after": "0.01"
+          },
+          {
+            "option": "ROUTING_STEP",
+            "sourceLine": 27,
+            "before": "0:00:01",
+            "after": "0.03125"
+          },
+          {
+            "option": "SURCHARGE_METHOD",
+            "sourceLine": null,
+            "before": null,
+            "after": "SLOT"
+          }
+        ],
+        "rankingEligible": false,
+        "historicalReconstructionEligible": false
+      },
+      "numericalStatus": "PASSED",
+      "convergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 2785130,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      },
+      "numericalQuality": {
+        "policyVersion": "network-continuity-convergence-v2",
+        "continuityLimitPercent": 1,
+        "routingBalance": {
+          "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+          "totalInM3": 3699178.2905167793,
+          "totalOutIncludingStorageM3": 3699763.3737017345,
+          "residualM3": -585.083184955176,
+          "continuityPercent": -0.01581657165471306,
+          "absoluteToleranceM3": 1e-08,
+          "allowedResidualM3": 36991.78290516779
+        },
+        "allowedNonConvergedSteps": 0,
+        "failureReasons": [],
+        "status": "PASSED"
+      },
+      "numericalConfiguration": {
+        "method": "EPA_5_2_4_NATIVE_SETTINGS_READ_ONLY",
+        "surchargeMethod": "SLOT",
+        "maximumRoutingStepSeconds": 0.03125,
+        "minimumRoutingStepSeconds": 0.01,
+        "courantFactor": 0.75,
+        "minimumNumericalNodeAreaM2": 1.167,
+        "headConvergenceToleranceM": 0.0015,
+        "maximumTrials": 200,
+        "declaredInputOptions": {
+          "SURCHARGE_METHOD": "SLOT",
+          "ROUTING_STEP": "0.03125",
+          "MINIMUM_STEP": "0.01",
+          "VARIABLE_STEP": "0.75",
+          "MIN_SURFAREA": "1.167",
+          "HEAD_TOLERANCE": "0.0015",
+          "MAX_TRIALS": "200"
+        },
+        "defaultedInputOptions": []
+      },
+      "calendarShortfallSeconds": 1.0,
+      "timeWindowPolicy": "NATIVE_DURATION_DIAGNOSTIC",
+      "totals": {
+        "timeSeconds": 86339.0,
+        "initialStorageM3": 0.32019239999999993,
+        "storageM3": 11131.687915209708,
+        "dryWeatherInflowM3": 0.0,
+        "runoffInflowM3": 229448.44711739212,
+        "groundwaterInflowM3": 0.0,
+        "rdiiInflowM3": 0.0,
+        "externalInflowM3": 3469729.523206987,
+        "outflowM3": 2180750.4323278726,
+        "floodingM3": 1507881.2534586522,
+        "evaporationM3": 0.0,
+        "seepageM3": 0.0,
+        "reactionLossM3": 0.0,
+        "balanceResidualM3": -585.0831849556689
+      }
+    },
+    {
+      "id": "lid-published-extran",
+      "design": "lid",
+      "profile": {
+        "id": "published-extran",
+        "options": {
+          "SURCHARGE_METHOD": "EXTRAN"
+        }
+      },
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/seocho2_baseline LID.inp",
+      "transformation": {
+        "schemaVersion": 1,
+        "profile": {
+          "id": "published-extran",
+          "options": {
+            "SURCHARGE_METHOD": "EXTRAN"
+          }
+        },
+        "classification": "NUMERICAL_VARIANT_OF_PUBLISHED_RESEARCH_INPUT",
+        "originalSha256": "a8921e3cf185b076c320ca6c9e0ce5fa7e3c8531713811f84bc68edadd608464",
+        "derivedSha256": "b42cac5bb0ad2cf62a77e7863d29537a1c1121ce21c505defc924cbdac18e7f0",
+        "hydraulicInputSha256": "9ff2db902f1ec9fcdf2c0fa2bd543bd4cbd408e033fcac7cbdb5e6484c8fd68a",
+        "hydraulicInputValuesUnchanged": true,
+        "originalSurchargeMethod": "EXTRAN",
+        "derivedSurchargeMethod": "EXTRAN",
+        "hydraulicApproximationChanged": false,
+        "reportOutputTransformation": {
+          "schemaVersion": 1,
+          "originalSha256": "a8921e3cf185b076c320ca6c9e0ce5fa7e3c8531713811f84bc68edadd608464",
+          "executionSha256": "7f033d621fe35f20719abd6b4e854502c3528deaeeda45ff86cd677336497b04",
+          "changes": [
+            {
+              "line": 149,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S1_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 150,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S1_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 151,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S1_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 152,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S2_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 153,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S2_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 154,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S2_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 155,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S3_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 156,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S3_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 157,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S3_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 158,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S5_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 159,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S5_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 160,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S5_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 161,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S6_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 162,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S6_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 163,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S6_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 164,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S7_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 165,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S7_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 166,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S7_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 167,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S8_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 168,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S8_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 169,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S8_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 170,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S9_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 171,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S9_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 172,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S9_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 173,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S10_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 174,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S10_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 175,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S10_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 176,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S11_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 177,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S11_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 178,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S11_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 179,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S12_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 180,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S12_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 181,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S12_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 182,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S13_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 183,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S13_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 184,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S13_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 185,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S4_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 186,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S4_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 187,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S4_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 188,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S14_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 189,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S14_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 190,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S14_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            }
+          ],
+          "bomRemoved": false,
+          "physicsValuesChanged": false,
+          "diagnosticOnly": true,
+          "rankingEligible": false,
+          "preservedNonfiniteUnusedTokens": [
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 57,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 58,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 59,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 60,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 61,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 62,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 63,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 64,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 65,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 66,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 67,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 68,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 69,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 70,
+              "tokenIndex": 7,
+              "value": "NaN"
+            }
+          ]
+        },
+        "numericalChanges": [
+          {
+            "option": "SURCHARGE_METHOD",
+            "sourceLine": null,
+            "before": null,
+            "after": "EXTRAN"
+          }
+        ],
+        "rankingEligible": false,
+        "historicalReconstructionEligible": false
+      },
+      "numericalStatus": "FAILED",
+      "convergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 86340,
+        "nonConvergedSteps": 530,
+        "nonConvergedPercent": 0.6138522121843873
+      },
+      "numericalQuality": {
+        "policyVersion": "network-continuity-convergence-v2",
+        "continuityLimitPercent": 1,
+        "routingBalance": {
+          "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+          "totalInM3": 3470419.0972588733,
+          "totalOutIncludingStorageM3": 3472016.3693292155,
+          "residualM3": -1597.2720703422092,
+          "continuityPercent": -0.04602533658265718,
+          "absoluteToleranceM3": 1e-08,
+          "allowedResidualM3": 34704.19097258873
+        },
+        "allowedNonConvergedSteps": 0,
+        "failureReasons": [
+          "ROUTING_NONCONVERGED"
+        ],
+        "status": "FAILED"
+      },
+      "numericalConfiguration": {
+        "method": "EPA_5_2_4_NATIVE_SETTINGS_READ_ONLY",
+        "surchargeMethod": "EXTRAN",
+        "maximumRoutingStepSeconds": 1.0,
+        "minimumRoutingStepSeconds": 0.5,
+        "courantFactor": 0.75,
+        "minimumNumericalNodeAreaM2": 1.167,
+        "headConvergenceToleranceM": 0.0015,
+        "maximumTrials": 8,
+        "declaredInputOptions": {
+          "SURCHARGE_METHOD": "EXTRAN",
+          "ROUTING_STEP": "0:00:01",
+          "MINIMUM_STEP": "0.5",
+          "VARIABLE_STEP": "0.75",
+          "MIN_SURFAREA": "1.167",
+          "HEAD_TOLERANCE": "0.0015",
+          "MAX_TRIALS": "8"
+        },
+        "defaultedInputOptions": []
+      },
+      "calendarShortfallSeconds": 1.0,
+      "timeWindowPolicy": "NATIVE_DURATION_DIAGNOSTIC",
+      "totals": {
+        "timeSeconds": 86339.0,
+        "initialStorageM3": 0.32019239999999993,
+        "storageM3": 10515.361851412848,
+        "dryWeatherInflowM3": 0.0,
+        "runoffInflowM3": 694.4990286746772,
+        "groundwaterInflowM3": 0.0,
+        "rdiiInflowM3": 0.0,
+        "externalInflowM3": 3469724.2780377986,
+        "outflowM3": 2082250.1377340714,
+        "floodingM3": 1379250.8697437313,
+        "evaporationM3": 0.0,
+        "seepageM3": 0.0,
+        "reactionLossM3": 0.0,
+        "balanceResidualM3": -1597.2720703422547
+      }
+    },
+    {
+      "id": "lid-slot-125ms",
+      "design": "lid",
+      "profile": {
+        "id": "slot-125ms",
+        "options": {
+          "SURCHARGE_METHOD": "SLOT",
+          "MAX_TRIALS": 200,
+          "ROUTING_STEP": 0.125,
+          "MINIMUM_STEP": 0.05
+        }
+      },
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/seocho2_baseline LID.inp",
+      "transformation": {
+        "schemaVersion": 1,
+        "profile": {
+          "id": "slot-125ms",
+          "options": {
+            "SURCHARGE_METHOD": "SLOT",
+            "MAX_TRIALS": 200,
+            "ROUTING_STEP": 0.125,
+            "MINIMUM_STEP": 0.05
+          }
+        },
+        "classification": "NUMERICAL_VARIANT_OF_PUBLISHED_RESEARCH_INPUT",
+        "originalSha256": "a8921e3cf185b076c320ca6c9e0ce5fa7e3c8531713811f84bc68edadd608464",
+        "derivedSha256": "eb606028ca234ba269d89d15d56dd941c65a0d9ce57d63bdfcec4aff75c83e49",
+        "hydraulicInputSha256": "9ff2db902f1ec9fcdf2c0fa2bd543bd4cbd408e033fcac7cbdb5e6484c8fd68a",
+        "hydraulicInputValuesUnchanged": true,
+        "originalSurchargeMethod": "EXTRAN",
+        "derivedSurchargeMethod": "SLOT",
+        "hydraulicApproximationChanged": true,
+        "reportOutputTransformation": {
+          "schemaVersion": 1,
+          "originalSha256": "a8921e3cf185b076c320ca6c9e0ce5fa7e3c8531713811f84bc68edadd608464",
+          "executionSha256": "7f033d621fe35f20719abd6b4e854502c3528deaeeda45ff86cd677336497b04",
+          "changes": [
+            {
+              "line": 149,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S1_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 150,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S1_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 151,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S1_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 152,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S2_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 153,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S2_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 154,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S2_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 155,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S3_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 156,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S3_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 157,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S3_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 158,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S5_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 159,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S5_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 160,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S5_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 161,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S6_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 162,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S6_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 163,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S6_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 164,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S7_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 165,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S7_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 166,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S7_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 167,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S8_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 168,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S8_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 169,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S8_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 170,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S9_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 171,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S9_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 172,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S9_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 173,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S10_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 174,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S10_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 175,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S10_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 176,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S11_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 177,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S11_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 178,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S11_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 179,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S12_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 180,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S12_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 181,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S12_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 182,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S13_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 183,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S13_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 184,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S13_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 185,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S4_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 186,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S4_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 187,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S4_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 188,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S14_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 189,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S14_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 190,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S14_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            }
+          ],
+          "bomRemoved": false,
+          "physicsValuesChanged": false,
+          "diagnosticOnly": true,
+          "rankingEligible": false,
+          "preservedNonfiniteUnusedTokens": [
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 57,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 58,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 59,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 60,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 61,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 62,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 63,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 64,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 65,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 66,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 67,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 68,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 69,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 70,
+              "tokenIndex": 7,
+              "value": "NaN"
+            }
+          ]
+        },
+        "numericalChanges": [
+          {
+            "option": "MAX_TRIALS",
+            "sourceLine": 36,
+            "before": "8",
+            "after": "200"
+          },
+          {
+            "option": "MINIMUM_STEP",
+            "sourceLine": 40,
+            "before": "0.5",
+            "after": "0.05"
+          },
+          {
+            "option": "ROUTING_STEP",
+            "sourceLine": 27,
+            "before": "0:00:01",
+            "after": "0.125"
+          },
+          {
+            "option": "SURCHARGE_METHOD",
+            "sourceLine": null,
+            "before": null,
+            "after": "SLOT"
+          }
+        ],
+        "rankingEligible": false,
+        "historicalReconstructionEligible": false
+      },
+      "numericalStatus": "FAILED",
+      "convergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 690713,
+        "nonConvergedSteps": 1,
+        "nonConvergedPercent": 0.00014477793236843667
+      },
+      "numericalQuality": {
+        "policyVersion": "network-continuity-convergence-v2",
+        "continuityLimitPercent": 1,
+        "routingBalance": {
+          "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+          "totalInM3": 3470423.655591053,
+          "totalOutIncludingStorageM3": 3470999.3720548106,
+          "residualM3": -575.7164637576789,
+          "continuityPercent": -0.01658922716338008,
+          "absoluteToleranceM3": 1e-08,
+          "allowedResidualM3": 34704.23655591053
+        },
+        "allowedNonConvergedSteps": 0,
+        "failureReasons": [
+          "ROUTING_NONCONVERGED"
+        ],
+        "status": "FAILED"
+      },
+      "numericalConfiguration": {
+        "method": "EPA_5_2_4_NATIVE_SETTINGS_READ_ONLY",
+        "surchargeMethod": "SLOT",
+        "maximumRoutingStepSeconds": 0.125,
+        "minimumRoutingStepSeconds": 0.05,
+        "courantFactor": 0.75,
+        "minimumNumericalNodeAreaM2": 1.167,
+        "headConvergenceToleranceM": 0.0015,
+        "maximumTrials": 200,
+        "declaredInputOptions": {
+          "SURCHARGE_METHOD": "SLOT",
+          "ROUTING_STEP": "0.125",
+          "MINIMUM_STEP": "0.05",
+          "VARIABLE_STEP": "0.75",
+          "MIN_SURFAREA": "1.167",
+          "HEAD_TOLERANCE": "0.0015",
+          "MAX_TRIALS": "200"
+        },
+        "defaultedInputOptions": []
+      },
+      "calendarShortfallSeconds": 1.0,
+      "timeWindowPolicy": "NATIVE_DURATION_DIAGNOSTIC",
+      "totals": {
+        "timeSeconds": 86339.0,
+        "initialStorageM3": 0.32019239999999993,
+        "storageM3": 10850.845662945336,
+        "dryWeatherInflowM3": 0.0,
+        "runoffInflowM3": 694.5031738866743,
+        "groundwaterInflowM3": 0.0,
+        "rdiiInflowM3": 0.0,
+        "externalInflowM3": 3469728.8322247663,
+        "outflowM3": 2078669.8613064825,
+        "floodingM3": 1381478.665085383,
+        "evaporationM3": 0.0,
+        "seepageM3": 0.0,
+        "reactionLossM3": 0.0,
+        "balanceResidualM3": -575.7164637580645
+      }
+    },
+    {
+      "id": "lid-slot-62-5ms",
+      "design": "lid",
+      "profile": {
+        "id": "slot-62-5ms",
+        "options": {
+          "SURCHARGE_METHOD": "SLOT",
+          "MAX_TRIALS": 200,
+          "ROUTING_STEP": 0.0625,
+          "MINIMUM_STEP": 0.025
+        }
+      },
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/seocho2_baseline LID.inp",
+      "transformation": {
+        "schemaVersion": 1,
+        "profile": {
+          "id": "slot-62-5ms",
+          "options": {
+            "SURCHARGE_METHOD": "SLOT",
+            "MAX_TRIALS": 200,
+            "ROUTING_STEP": 0.0625,
+            "MINIMUM_STEP": 0.025
+          }
+        },
+        "classification": "NUMERICAL_VARIANT_OF_PUBLISHED_RESEARCH_INPUT",
+        "originalSha256": "a8921e3cf185b076c320ca6c9e0ce5fa7e3c8531713811f84bc68edadd608464",
+        "derivedSha256": "8791d257457f011bb34dfd28c53a0ae95e643897517381d1a4be2b7714abf5be",
+        "hydraulicInputSha256": "9ff2db902f1ec9fcdf2c0fa2bd543bd4cbd408e033fcac7cbdb5e6484c8fd68a",
+        "hydraulicInputValuesUnchanged": true,
+        "originalSurchargeMethod": "EXTRAN",
+        "derivedSurchargeMethod": "SLOT",
+        "hydraulicApproximationChanged": true,
+        "reportOutputTransformation": {
+          "schemaVersion": 1,
+          "originalSha256": "a8921e3cf185b076c320ca6c9e0ce5fa7e3c8531713811f84bc68edadd608464",
+          "executionSha256": "7f033d621fe35f20719abd6b4e854502c3528deaeeda45ff86cd677336497b04",
+          "changes": [
+            {
+              "line": 149,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S1_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 150,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S1_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 151,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S1_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 152,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S2_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 153,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S2_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 154,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S2_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 155,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S3_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 156,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S3_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 157,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S3_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 158,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S5_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 159,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S5_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 160,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S5_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 161,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S6_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 162,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S6_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 163,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S6_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 164,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S7_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 165,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S7_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 166,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S7_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 167,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S8_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 168,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S8_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 169,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S8_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 170,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S9_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 171,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S9_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 172,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S9_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 173,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S10_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 174,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S10_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 175,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S10_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 176,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S11_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 177,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S11_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 178,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S11_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 179,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S12_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 180,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S12_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 181,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S12_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 182,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S13_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 183,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S13_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 184,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S13_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 185,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S4_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 186,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S4_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 187,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S4_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 188,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S14_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 189,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S14_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 190,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S14_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            }
+          ],
+          "bomRemoved": false,
+          "physicsValuesChanged": false,
+          "diagnosticOnly": true,
+          "rankingEligible": false,
+          "preservedNonfiniteUnusedTokens": [
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 57,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 58,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 59,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 60,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 61,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 62,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 63,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 64,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 65,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 66,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 67,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 68,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 69,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 70,
+              "tokenIndex": 7,
+              "value": "NaN"
+            }
+          ]
+        },
+        "numericalChanges": [
+          {
+            "option": "MAX_TRIALS",
+            "sourceLine": 36,
+            "before": "8",
+            "after": "200"
+          },
+          {
+            "option": "MINIMUM_STEP",
+            "sourceLine": 40,
+            "before": "0.5",
+            "after": "0.025"
+          },
+          {
+            "option": "ROUTING_STEP",
+            "sourceLine": 27,
+            "before": "0:00:01",
+            "after": "0.0625"
+          },
+          {
+            "option": "SURCHARGE_METHOD",
+            "sourceLine": null,
+            "before": null,
+            "after": "SLOT"
+          }
+        ],
+        "rankingEligible": false,
+        "historicalReconstructionEligible": false
+      },
+      "numericalStatus": "PASSED",
+      "convergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 1392566,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      },
+      "numericalQuality": {
+        "policyVersion": "network-continuity-convergence-v2",
+        "continuityLimitPercent": 1,
+        "routingBalance": {
+          "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+          "totalInM3": 3470424.1787739387,
+          "totalOutIncludingStorageM3": 3470998.7802688535,
+          "residualM3": -574.6014949148521,
+          "continuityPercent": -0.01655709692288544,
+          "absoluteToleranceM3": 1e-08,
+          "allowedResidualM3": 34704.24178773939
+        },
+        "allowedNonConvergedSteps": 0,
+        "failureReasons": [],
+        "status": "PASSED"
+      },
+      "numericalConfiguration": {
+        "method": "EPA_5_2_4_NATIVE_SETTINGS_READ_ONLY",
+        "surchargeMethod": "SLOT",
+        "maximumRoutingStepSeconds": 0.0625,
+        "minimumRoutingStepSeconds": 0.025,
+        "courantFactor": 0.75,
+        "minimumNumericalNodeAreaM2": 1.167,
+        "headConvergenceToleranceM": 0.0015,
+        "maximumTrials": 200,
+        "declaredInputOptions": {
+          "SURCHARGE_METHOD": "SLOT",
+          "ROUTING_STEP": "0.0625",
+          "MINIMUM_STEP": "0.025",
+          "VARIABLE_STEP": "0.75",
+          "MIN_SURFAREA": "1.167",
+          "HEAD_TOLERANCE": "0.0015",
+          "MAX_TRIALS": "200"
+        },
+        "defaultedInputOptions": []
+      },
+      "calendarShortfallSeconds": 1.0,
+      "timeWindowPolicy": "NATIVE_DURATION_DIAGNOSTIC",
+      "totals": {
+        "timeSeconds": 86339.0,
+        "initialStorageM3": 0.32019239999999993,
+        "storageM3": 10850.846215082127,
+        "dryWeatherInflowM3": 0.0,
+        "runoffInflowM3": 694.5034725259679,
+        "groundwaterInflowM3": 0.0,
+        "rdiiInflowM3": 0.0,
+        "externalInflowM3": 3469729.3551090127,
+        "outflowM3": 2078670.0327526724,
+        "floodingM3": 1381477.901301099,
+        "evaporationM3": 0.0,
+        "seepageM3": 0.0,
+        "reactionLossM3": 0.0,
+        "balanceResidualM3": -574.6014949146465
+      }
+    },
+    {
+      "id": "lid-slot-31-25ms",
+      "design": "lid",
+      "profile": {
+        "id": "slot-31-25ms",
+        "options": {
+          "SURCHARGE_METHOD": "SLOT",
+          "MAX_TRIALS": 200,
+          "ROUTING_STEP": 0.03125,
+          "MINIMUM_STEP": 0.01
+        }
+      },
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/seocho2_baseline LID.inp",
+      "transformation": {
+        "schemaVersion": 1,
+        "profile": {
+          "id": "slot-31-25ms",
+          "options": {
+            "SURCHARGE_METHOD": "SLOT",
+            "MAX_TRIALS": 200,
+            "ROUTING_STEP": 0.03125,
+            "MINIMUM_STEP": 0.01
+          }
+        },
+        "classification": "NUMERICAL_VARIANT_OF_PUBLISHED_RESEARCH_INPUT",
+        "originalSha256": "a8921e3cf185b076c320ca6c9e0ce5fa7e3c8531713811f84bc68edadd608464",
+        "derivedSha256": "0b9991817d79a193b3fa9ab1e7dca81d85e60fc0e709f46473d36c7dc862acf3",
+        "hydraulicInputSha256": "9ff2db902f1ec9fcdf2c0fa2bd543bd4cbd408e033fcac7cbdb5e6484c8fd68a",
+        "hydraulicInputValuesUnchanged": true,
+        "originalSurchargeMethod": "EXTRAN",
+        "derivedSurchargeMethod": "SLOT",
+        "hydraulicApproximationChanged": true,
+        "reportOutputTransformation": {
+          "schemaVersion": 1,
+          "originalSha256": "a8921e3cf185b076c320ca6c9e0ce5fa7e3c8531713811f84bc68edadd608464",
+          "executionSha256": "7f033d621fe35f20719abd6b4e854502c3528deaeeda45ff86cd677336497b04",
+          "changes": [
+            {
+              "line": 149,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S1_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 150,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S1_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 151,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S1_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 152,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S2_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 153,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S2_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 154,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S2_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 155,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S3_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 156,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S3_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 157,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S3_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 158,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S5_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 159,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S5_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 160,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S5_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 161,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S6_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 162,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S6_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 163,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S6_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 164,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S7_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 165,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S7_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 166,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S7_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 167,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S8_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 168,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S8_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 169,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S8_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 170,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S9_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 171,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S9_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 172,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S9_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 173,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S10_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 174,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S10_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 175,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S10_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 176,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S11_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 177,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S11_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 178,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S11_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 179,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S12_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 180,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S12_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 181,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S12_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 182,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S13_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 183,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S13_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 184,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S13_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 185,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S4_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 186,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S4_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 187,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S4_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 188,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S14_GR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 189,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S14_PP.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            },
+            {
+              "line": 190,
+              "section": "LID_USAGE",
+              "tokenIndex": 8,
+              "before": "Baseline+LID_S14_BR.txt",
+              "after": "*",
+              "reason": "DISABLE_DETAIL_REPORT_FILE_ONLY"
+            }
+          ],
+          "bomRemoved": false,
+          "physicsValuesChanged": false,
+          "diagnosticOnly": true,
+          "rankingEligible": false,
+          "preservedNonfiniteUnusedTokens": [
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 57,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 58,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 59,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 60,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 61,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 62,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 63,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 64,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 65,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 66,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 67,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 68,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 69,
+              "tokenIndex": 7,
+              "value": "NaN"
+            },
+            {
+              "section": "SUBCATCHMENTS",
+              "line": 70,
+              "tokenIndex": 7,
+              "value": "NaN"
+            }
+          ]
+        },
+        "numericalChanges": [
+          {
+            "option": "MAX_TRIALS",
+            "sourceLine": 36,
+            "before": "8",
+            "after": "200"
+          },
+          {
+            "option": "MINIMUM_STEP",
+            "sourceLine": 40,
+            "before": "0.5",
+            "after": "0.01"
+          },
+          {
+            "option": "ROUTING_STEP",
+            "sourceLine": 27,
+            "before": "0:00:01",
+            "after": "0.03125"
+          },
+          {
+            "option": "SURCHARGE_METHOD",
+            "sourceLine": null,
+            "before": null,
+            "after": "SLOT"
+          }
+        ],
+        "rankingEligible": false,
+        "historicalReconstructionEligible": false
+      },
+      "numericalStatus": "PASSED",
+      "convergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 2785130,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      },
+      "numericalQuality": {
+        "policyVersion": "network-continuity-convergence-v2",
+        "continuityLimitPercent": 1,
+        "routingBalance": {
+          "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+          "totalInM3": 3470424.347019306,
+          "totalOutIncludingStorageM3": 3470999.2717318353,
+          "residualM3": -574.924712529406,
+          "continuityPercent": -0.01656640960991413,
+          "absoluteToleranceM3": 1e-08,
+          "allowedResidualM3": 34704.24347019306
+        },
+        "allowedNonConvergedSteps": 0,
+        "failureReasons": [],
+        "status": "PASSED"
+      },
+      "numericalConfiguration": {
+        "method": "EPA_5_2_4_NATIVE_SETTINGS_READ_ONLY",
+        "surchargeMethod": "SLOT",
+        "maximumRoutingStepSeconds": 0.03125,
+        "minimumRoutingStepSeconds": 0.01,
+        "courantFactor": 0.75,
+        "minimumNumericalNodeAreaM2": 1.167,
+        "headConvergenceToleranceM": 0.0015,
+        "maximumTrials": 200,
+        "declaredInputOptions": {
+          "SURCHARGE_METHOD": "SLOT",
+          "ROUTING_STEP": "0.03125",
+          "MINIMUM_STEP": "0.01",
+          "VARIABLE_STEP": "0.75",
+          "MIN_SURFAREA": "1.167",
+          "HEAD_TOLERANCE": "0.0015",
+          "MAX_TRIALS": "200"
+        },
+        "defaultedInputOptions": []
+      },
+      "calendarShortfallSeconds": 1.0,
+      "timeWindowPolicy": "NATIVE_DURATION_DIAGNOSTIC",
+      "totals": {
+        "timeSeconds": 86339.0,
+        "initialStorageM3": 0.32019239999999993,
+        "storageM3": 10850.84734938861,
+        "dryWeatherInflowM3": 0.0,
+        "runoffInflowM3": 694.5036199191284,
+        "groundwaterInflowM3": 0.0,
+        "rdiiInflowM3": 0.0,
+        "externalInflowM3": 3469729.523206987,
+        "outflowM3": 2078670.6168368775,
+        "floodingM3": 1381477.8075455693,
+        "evaporationM3": 0.0,
+        "seepageM3": 0.0,
+        "reactionLossM3": 0.0,
+        "balanceResidualM3": -574.9247125294914
+      }
+    }
+  ],
+  "timeRefinement": [
+    {
+      "design": "baseline",
+      "bothNumericallyPassed": true,
+      "quantities": {
+        "outflowM3": {
+          "coarse": 2180749.855360638,
+          "fine": 2180750.4323278726,
+          "signedDifference": 0.5769672347232699,
+          "relativeToFinePercent": 2.645727939200169e-05
+        },
+        "floodingM3": {
+          "coarse": 1507902.468925209,
+          "fine": 1507881.2534586522,
+          "signedDifference": -21.215466556837782,
+          "relativeToFinePercent": -0.0014069719686597016
+        },
+        "storageM3": {
+          "coarse": 11131.689178989987,
+          "fine": 11131.687915209708,
+          "signedDifference": -0.001263780279259663,
+          "relativeToFinePercent": -1.1352997756368153e-05
+        },
+        "externalInflowM3": {
+          "coarse": 3469729.3551090127,
+          "fine": 3469729.523206987,
+          "signedDifference": 0.1680979742668569,
+          "relativeToFinePercent": 4.844699655767059e-06
+        },
+        "runoffInflowM3": {
+          "coarse": 229448.4376731979,
+          "fine": 229448.44711739212,
+          "signedDifference": 0.009444194205570966,
+          "relativeToFinePercent": 4.116041892730291e-06
+        }
+      },
+      "maximumFinalNodeHeadDifferenceM": 5.940664582482214e-07,
+      "meaning": "동일 연구 수리 입력의 두 시간 설정 비교이며 현장 정확도·운영 승인 판정이 아님"
+    },
+    {
+      "design": "lid",
+      "bothNumericallyPassed": true,
+      "quantities": {
+        "outflowM3": {
+          "coarse": 2078670.0327526724,
+          "fine": 2078670.6168368775,
+          "signedDifference": 0.5840842050965875,
+          "relativeToFinePercent": 2.8098930170350467e-05
+        },
+        "floodingM3": {
+          "coarse": 1381477.901301099,
+          "fine": 1381477.8075455693,
+          "signedDifference": -0.09375552972778678,
+          "relativeToFinePercent": -6.786611353124771e-06
+        },
+        "storageM3": {
+          "coarse": 10850.846215082127,
+          "fine": 10850.84734938861,
+          "signedDifference": 0.0011343064834363759,
+          "relativeToFinePercent": 1.0453621241849728e-05
+        },
+        "externalInflowM3": {
+          "coarse": 3469729.3551090127,
+          "fine": 3469729.523206987,
+          "signedDifference": 0.1680979742668569,
+          "relativeToFinePercent": 4.844699655767059e-06
+        },
+        "runoffInflowM3": {
+          "coarse": 694.5034725259679,
+          "fine": 694.5036199191284,
+          "signedDifference": 0.00014739316043232975,
+          "relativeToFinePercent": 2.1222806649948488e-05
+        }
+      },
+      "maximumFinalNodeHeadDifferenceM": 6.669102194933885e-07,
+      "meaning": "동일 연구 수리 입력의 두 시간 설정 비교이며 현장 정확도·운영 승인 판정이 아님"
+    }
+  ],
+  "designEffects": [
+    {
+      "profileId": "published-extran",
+      "bothNumericallyPassed": false,
+      "floodingReductionM3": 125966.75498339022,
+      "outflowReductionM3": 102498.41579863057,
+      "rankingEligible": false
+    },
+    {
+      "profileId": "slot-125ms",
+      "bothNumericallyPassed": false,
+      "floodingReductionM3": 126490.54217603407,
+      "outflowReductionM3": 102079.64302224107,
+      "rankingEligible": false
+    },
+    {
+      "profileId": "slot-62-5ms",
+      "bothNumericallyPassed": true,
+      "floodingReductionM3": 126424.56762411003,
+      "outflowReductionM3": 102079.82260796544,
+      "rankingEligible": false
+    },
+    {
+      "profileId": "slot-31-25ms",
+      "bothNumericallyPassed": true,
+      "floodingReductionM3": 126403.44591308292,
+      "outflowReductionM3": 102079.81549099507,
+      "rankingEligible": false
+    }
+  ],
+  "rankingEligible": false,
+  "historicalReconstructionEligible": false,
+  "limitations": [
+    "논문 PDF·부록 원본은 아직 미보관, 공개 출판 본문 확인과 구분",
+    "EPSG·수직 기준·시설 유효 시점은 계속 미확인",
+    "문헌의 단면·유입 추정값과 사후 공간자료를 2010 실측 입력으로 표시하지 않음",
+    "SLOT 가상 슬롯 수치 근사와 EXTRAN 결과의 차이 보존",
+    "지표 결합·최대 수심/첨두·격자 수렴·독립 현장 검증 미완료",
+    "기준안·LID 두 설계의 하루 계산에 한정, 다른 관망/40일 입력으로 일반화 금지"
+  ],
+  "artifactDirectory": "data/runs/seocho-network-resolution-20261018-v1",
+  "artifactManifestSha256": "536285f8b828eb31851a08ea5eef62b49f3872a3d95694132ad50557c4865624",
+  "fileCount": 159,
+  "diagnosticProbeDirectory": "data/runs/seocho-network-resolution-probes-20261018-v1",
+  "diagnosticProbeManifestSha256": "9ca9ebdaddc87daee931bf6b3b89747cf9b64d9ccbe2ce5af420392514aab0fc",
+  "effectiveConfigurationVerified": true
+}

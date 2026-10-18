@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "datasetDoi": "10.17632/dzzwvd8rjk.3",
+  "sourceManifestSha256": "2104f9143e6deea2213c9f88219a2d23ddfb78b0dab61b961cb8ab362df1da98",
+  "studyDoi": "10.1016/j.jenvman.2024.122344",
+  "sourceUrl": "https://doi.org/10.1016/j.jenvman.2024.122344",
+  "verification": "PUBLISHER_INDEXED_BODY_SECTIONS_3_1_TO_3_3",
+  "checkedOn": "2026-10-18",
+  "classification": "RETROSPECTIVE_DESIGN_COMPARISON",
+  "historicalReconstructionEligible": false,
+  "rankingEligible": false,
+  "sourceTimes": [
+    {
+      "input": "LAND_COVER",
+      "year": 2021,
+      "reference": "Figure 2A"
+    },
+    {
+      "input": "DEM",
+      "year": 2022,
+      "reference": "Figure 2B"
+    },
+    {
+      "input": "DSM",
+      "year": 2010,
+      "reference": "Figure 2C"
+    },
+    {
+      "input": "BASE_SANITARY_FLOW_ASSUMPTION",
+      "years": [
+        2018,
+        2019,
+        2020,
+        2021,
+        2022
+      ],
+      "reference": "Section 3.2; Table A.4"
+    }
+  ],
+  "facts": [
+    {
+      "reference": "Section 3.2",
+      "meaning": "정확한 침수지도 복원보다 배수망 설계 전략의 비교를 위한 연구 모형"
+    },
+    {
+      "reference": "Section 3.2; Table A.4",
+      "meaning": "외부 기저 오수 유입은 2018~2022 평균 관로 사용률 18.2%와 단면·설계 유속의 추정이며 2010 직접 유입 관측값이 아님"
+    },
+    {
+      "reference": "Section 3.3",
+      "meaning": "2010 침수흔적과의 개연성 대조이며 사건 당시 하수 수위 관측을 이용한 독립 대조 아님"
+    }
+  ],
+  "limitations": [
+    "논문 PDF·부록 원본은 아직 미보관, 공개 출판 본문 확인과 구분",
+    "EPSG·수직 기준·시설 유효 시점은 계속 미확인",
+    "문헌의 단면·유입 추정값과 사후 공간자료를 2010 실측 입력으로 표시하지 않음"
+  ]
+}
