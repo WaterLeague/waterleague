@@ -1,0 +1,1216 @@
+{
+  "schemaVersion": 1,
+  "classification": "OBSERVED_AND_EXPLICIT_NUMERICAL_FORCING_ON_SYNTHETIC_DOMAIN",
+  "projection": "COMPACT_SUMMARY_FULL_INPUTS_AND_RECORDS_IN_ARTIFACT",
+  "rankingEligible": false,
+  "historicalReconstructionEligible": false,
+  "cases": {
+    "baseline": {
+      "numericalStatus": "PASSED",
+      "networkConvergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 120000,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      },
+      "balance": {
+        "networkExternalInflowM3": -4.1311398746302075e-13,
+        "networkExternalOutflowAndLossM3": 1.8923500655606387,
+        "surfaceExternalNetInflowM3": 0.007998674202072738,
+        "networkStorageM3": 0.08205770791361318,
+        "surfaceStorageM3": 0.03357093418417332,
+        "networkToSurfaceM3": 0.5466399230782194,
+        "surfaceToNetworkM3": 0.5210676630961368,
+        "exchangeCancellationResidualM3": -6.106226635438361e-16,
+        "surfaceRainfallM3": 0.0079999999999999,
+        "surfaceInfiltrationM3": 0.0,
+        "surfaceBoundaryNetInflowM3": -6.370581160766202e-18,
+        "surfaceEvaporationM3": 1.3257979292191635e-06,
+        "potentialSurfaceEvaporationM3": 1.3257977172352748e-06,
+        "unmetSurfaceEvaporationM3": 0.0,
+        "surfaceEvaporationRoundoffM3": 2.1198388872006424e-13,
+        "balanceResidualM3": -0.00020273176185086478
+      },
+      "evaluationMetrics": {
+        "specificationSha256": "1b1ab26a797c386bb558ddccc3fd518783c6f9fdfcbd72a9fe2e1bc475028d7d",
+        "status": "NUMERICAL_DIAGNOSTIC",
+        "rankingEligible": false,
+        "complete": true,
+        "raw": {
+          "outwardVolumeM3": 1.892350065560649,
+          "peakOutwardM3s": 0.025368879132996482,
+          "depthAreaTimeM3Hours": 0.004264999640168293
+        }
+      },
+      "resultSha256": "4671fe5858271557f09f871781b0b0f21a09c7e29e2b76b21d8c7c30d5b16451",
+      "engineSha256": "cf1a810e32f575d794ce27dda45c5ad1d929f60f5d3e7fc0132c2dfe65169c52"
+    },
+    "basin": {
+      "numericalStatus": "PASSED",
+      "networkConvergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 120000,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      },
+      "balance": {
+        "networkExternalInflowM3": -1.7763568394002505e-15,
+        "networkExternalOutflowAndLossM3": 1.85934366372266,
+        "surfaceExternalNetInflowM3": 0.005317428430260836,
+        "networkStorageM3": 0.13044742309415877,
+        "surfaceStorageM3": 0.015498919876293853,
+        "networkToSurfaceM3": 0.631155813342451,
+        "surfaceToNetworkM3": 0.6209743218964305,
+        "exchangeCancellationResidualM3": 6.938893903907228e-16,
+        "surfaceRainfallM3": 0.008000000000000018,
+        "surfaceInfiltrationM3": 0.0026812480243927593,
+        "surfaceBoundaryNetInflowM3": 4.1652772910965343e-17,
+        "surfaceEvaporationM3": 1.3235453429098418e-06,
+        "potentialSurfaceEvaporationM3": 1.3257977172353046e-06,
+        "unmetSurfaceEvaporationM3": 2.2523802968984533e-09,
+        "surfaceEvaporationRoundoffM3": 5.9714355296847056e-15,
+        "balanceResidualM3": -0.00019527656793872847
+      },
+      "evaluationMetrics": {
+        "specificationSha256": "1b1ab26a797c386bb558ddccc3fd518783c6f9fdfcbd72a9fe2e1bc475028d7d",
+        "status": "NUMERICAL_DIAGNOSTIC",
+        "rankingEligible": false,
+        "complete": true,
+        "raw": {
+          "outwardVolumeM3": 1.8593436637227327,
+          "peakOutwardM3s": 0.024808710554573284,
+          "depthAreaTimeM3Hours": 0.0009594529219565745
+        }
+      },
+      "resultSha256": "48c0c3403d80cae1209d00f06fb726c45c5c50195de70b6f71c86457c4b36694",
+      "engineSha256": "cf1a810e32f575d794ce27dda45c5ad1d929f60f5d3e7fc0132c2dfe65169c52",
+      "surfaceBasins": {
+        "initial": {
+          "timeSeconds": 0.0,
+          "facilities": [
+            {
+              "id": "Pond",
+              "storageM3": 0.0,
+              "maximumDepthM": 0.0,
+              "maximumStageAboveLowestBoundaryM": 0.0
+            }
+          ]
+        },
+        "evaluationInitial": null,
+        "final": {
+          "timeSeconds": 120.0,
+          "facilities": [
+            {
+              "id": "Pond",
+              "storageM3": 0.013512221742136028,
+              "maximumDepthM": 0.05309186169056554,
+              "maximumStageAboveLowestBoundaryM": 0.0003505132437773284
+            }
+          ]
+        },
+        "includedInSurfaceStorageAndLosses": true,
+        "additionalStorageInCoupledBalanceM3": 0,
+        "separateRegionFluxLedgerAvailable": false,
+        "rankingEligible": false
+      }
+    },
+    "combined": {
+      "numericalStatus": "PASSED",
+      "networkConvergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 120000,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      },
+      "balance": {
+        "networkExternalInflowM3": -2.942091015256665e-15,
+        "networkExternalOutflowAndLossM3": 1.8836458702490866,
+        "surfaceExternalNetInflowM3": 0.0053152572195421,
+        "networkStorageM3": 0.10633502782035285,
+        "surfaceStorageM3": 0.015309284511662571,
+        "networkToSurfaceM3": 0.4128169504884519,
+        "surfaceToNetworkM3": 0.40282292319634216,
+        "exchangeCancellationResidualM3": 3.469446951953614e-18,
+        "surfaceRainfallM3": 0.008000000000000014,
+        "surfaceInfiltrationM3": 0.0026834192558559417,
+        "surfaceBoundaryNetInflowM3": 3.453790247615876e-17,
+        "surfaceEvaporationM3": 1.3235246030590328e-06,
+        "potentialSurfaceEvaporationM3": 1.3257977172352987e-06,
+        "unmetSurfaceEvaporationM3": 2.273117444337306e-09,
+        "surfaceEvaporationRoundoffM3": 3.2680714332492455e-15,
+        "balanceResidualM3": -0.00019762366664786112
+      },
+      "evaluationMetrics": {
+        "specificationSha256": "1b1ab26a797c386bb558ddccc3fd518783c6f9fdfcbd72a9fe2e1bc475028d7d",
+        "status": "NUMERICAL_DIAGNOSTIC",
+        "rankingEligible": false,
+        "complete": true,
+        "raw": {
+          "outwardVolumeM3": 1.8836458702490455,
+          "peakOutwardM3s": 0.03135302025846596,
+          "depthAreaTimeM3Hours": 0.00033624887172990797
+        }
+      },
+      "resultSha256": "8de305d5b2c4348364f5669e2720e68c107d10dfb776ddfb6e19c32eb76be5f9",
+      "engineSha256": "cf1a810e32f575d794ce27dda45c5ad1d929f60f5d3e7fc0132c2dfe65169c52",
+      "surfaceBasins": {
+        "initial": {
+          "timeSeconds": 0.0,
+          "facilities": [
+            {
+              "id": "Pond",
+              "storageM3": 0.0,
+              "maximumDepthM": 0.0,
+              "maximumStageAboveLowestBoundaryM": 0.0
+            }
+          ]
+        },
+        "evaluationInitial": null,
+        "final": {
+          "timeSeconds": 120.0,
+          "facilities": [
+            {
+              "id": "Pond",
+              "storageM3": 0.013343696256475216,
+              "maximumDepthM": 0.052428170150476044,
+              "maximumStageAboveLowestBoundaryM": 0.00034597673498582004
+            }
+          ]
+        },
+        "includedInSurfaceStorageAndLosses": true,
+        "additionalStorageInCoupledBalanceM3": 0,
+        "separateRegionFluxLedgerAvailable": false,
+        "rankingEligible": false
+      },
+      "connectedStorage": {
+        "wholeRunLedger": {
+          "startSeconds": 0.0,
+          "endSeconds": 120.0,
+          "facilities": [
+            {
+              "id": "Tank",
+              "nodeId": "WLST_Tank",
+              "initialStorageM3": 0.0,
+              "inflowM3": 0.35146978479322716,
+              "outflowIncludingFloodingM3": 0.31673393874031314,
+              "floodingM3": 0.0,
+              "finalStorageM3": 0.03474460144631002,
+              "capacityM3": 0.35,
+              "balanceResidualM3": -8.755393395995514e-06,
+              "allowedResidualM3": 0.0035147854018662316,
+              "numericalStatus": "PASSED"
+            }
+          ],
+          "scope": "NATIVE_STORAGE_NODE_BALANCE_ALREADY_INCLUDED_IN_NETWORK_ROUTING",
+          "numericalStatus": "PASSED"
+        },
+        "evaluationLedger": null,
+        "numericalStatus": "PASSED",
+        "routingBalanceAlreadyIncludesStorageAndFlows": true,
+        "rankingEligible": false
+      },
+      "composition": {
+        "schemaVersion": 1,
+        "method": "SOURCE_BOUND_BASIN_STORAGE_COMPOSITION_V1",
+        "sourceModelSha256": "fda08c00b74c0139f9f0412f512f2a32fcc23dcc3fb46047f8d86a33196d652c",
+        "sourceNetworkSha256": "38562a18c3273a630fa50c834ff26d36cc21607562ddbf51e5e0613b44a4b3b7",
+        "basinModelSha256": "44d4b2c695f1d72f11af6ffef960bdea36eea763328736a1936bdc12efdfb4bd",
+        "basinNetworkSha256": "4fb8c7b63cd5a7b080b2afa4ba5603564681ae576bf83d1dc0ce1930c72241ca",
+        "storageNetworkSha256": "040099f6050ac82b15fe5becdc59b657a3ca65f271c5dd2996a6d6dba8d96510",
+        "composedNetworkSha256": "be518020e08e95c86c65255dced230cc95dd37348b4099983b4900335262adcc",
+        "compilerSha256": "af9ceb94cc9a161dc214592d7b29ad9d724c09992b5389b13f898335d9f8388a",
+        "addedRows": {
+          "CURVES": [
+            [
+              "WLST_Tank_A",
+              "STORAGE",
+              "0",
+              "0.25"
+            ],
+            [
+              "WLST_Tank_A",
+              "1.4",
+              "0.25"
+            ]
+          ],
+          "ORIFICES": [
+            [
+              "WLST_Tank_I",
+              "TANK",
+              "WLST_Tank",
+              "SIDE",
+              "0.2",
+              "0.65",
+              "NO",
+              "0"
+            ],
+            [
+              "WLST_Tank_D",
+              "WLST_Tank",
+              "RECEIVER",
+              "SIDE",
+              "0.05",
+              "0.65",
+              "NO",
+              "0"
+            ],
+            [
+              "WLST_Tank_O",
+              "WLST_Tank",
+              "RECEIVER",
+              "SIDE",
+              "0.9",
+              "0.65",
+              "NO",
+              "0"
+            ]
+          ],
+          "STORAGE": [
+            [
+              "WLST_Tank",
+              "0",
+              "1.4",
+              "0",
+              "TABULAR",
+              "WLST_Tank_A",
+              "0",
+              "0"
+            ]
+          ],
+          "XSECTIONS": [
+            [
+              "WLST_Tank_I",
+              "CIRCULAR",
+              "0.2",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "WLST_Tank_D",
+              "CIRCULAR",
+              "0.03",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "WLST_Tank_O",
+              "CIRCULAR",
+              "0.12",
+              "0",
+              "0",
+              "0"
+            ]
+          ]
+        },
+        "rainfallOwnershipUnchanged": true,
+        "connectionScope": "SHARED_EXISTING_NETWORK_NODES",
+        "rankingEligible": false,
+        "historicalReconstructionEligible": false
+      }
+    },
+    "combined-50ms": {
+      "numericalStatus": "PASSED",
+      "networkConvergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 120000,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      },
+      "balance": {
+        "networkExternalInflowM3": -3.069766663088558e-14,
+        "networkExternalOutflowAndLossM3": 1.883743773782325,
+        "surfaceExternalNetInflowM3": 0.005317519327828249,
+        "networkStorageM3": 0.10623833653287268,
+        "surfaceStorageM3": 0.015310331269991893,
+        "networkToSurfaceM3": 0.41176478199208216,
+        "surfaceToNetworkM3": 0.4017719700496523,
+        "exchangeCancellationResidualM3": 7.7021722333370235e-16,
+        "surfaceRainfallM3": 0.008000000000000236,
+        "surfaceInfiltrationM3": 0.002681157177911399,
+        "surfaceBoundaryNetInflowM3": 3.6010219014959e-17,
+        "surfaceEvaporationM3": 1.3234942604018265e-06,
+        "potentialSurfaceEvaporationM3": 1.325797717235313e-06,
+        "unmetSurfaceEvaporationM3": 2.303556523060135e-09,
+        "surfaceEvaporationRoundoffM3": 9.968957379900899e-14,
+        "balanceResidualM3": -0.00019762056247698417
+      },
+      "evaluationMetrics": {
+        "specificationSha256": "1b1ab26a797c386bb558ddccc3fd518783c6f9fdfcbd72a9fe2e1bc475028d7d",
+        "status": "NUMERICAL_DIAGNOSTIC",
+        "rankingEligible": false,
+        "complete": true,
+        "raw": {
+          "outwardVolumeM3": 1.883743773782254,
+          "peakOutwardM3s": 0.031382318718608034,
+          "depthAreaTimeM3Hours": 0.00033608148354696024
+        }
+      },
+      "resultSha256": "cca138c536d0d4f4accc9db90290207006988a2d15da3227ece98f24a7e9fbd8",
+      "engineSha256": "cf1a810e32f575d794ce27dda45c5ad1d929f60f5d3e7fc0132c2dfe65169c52",
+      "surfaceBasins": {
+        "initial": {
+          "timeSeconds": 0.0,
+          "facilities": [
+            {
+              "id": "Pond",
+              "storageM3": 0.0,
+              "maximumDepthM": 0.0,
+              "maximumStageAboveLowestBoundaryM": 0.0
+            }
+          ]
+        },
+        "evaluationInitial": null,
+        "final": {
+          "timeSeconds": 120.0,
+          "facilities": [
+            {
+              "id": "Pond",
+              "storageM3": 0.013344321667659427,
+              "maximumDepthM": 0.052430493192330646,
+              "maximumStageAboveLowestBoundaryM": 0.0003460097553487085
+            }
+          ]
+        },
+        "includedInSurfaceStorageAndLosses": true,
+        "additionalStorageInCoupledBalanceM3": 0,
+        "separateRegionFluxLedgerAvailable": false,
+        "rankingEligible": false
+      },
+      "connectedStorage": {
+        "wholeRunLedger": {
+          "startSeconds": 0.0,
+          "endSeconds": 120.0,
+          "facilities": [
+            {
+              "id": "Tank",
+              "nodeId": "WLST_Tank",
+              "initialStorageM3": 0.0,
+              "inflowM3": 0.35197066044707265,
+              "outflowIncludingFloodingM3": 0.31725120386312705,
+              "floodingM3": 0.0,
+              "finalStorageM3": 0.034728023636941496,
+              "capacityM3": 0.35,
+              "balanceResidualM3": -8.567052995900326e-06,
+              "allowedResidualM3": 0.0035197922750006857,
+              "numericalStatus": "PASSED"
+            }
+          ],
+          "scope": "NATIVE_STORAGE_NODE_BALANCE_ALREADY_INCLUDED_IN_NETWORK_ROUTING",
+          "numericalStatus": "PASSED"
+        },
+        "evaluationLedger": null,
+        "numericalStatus": "PASSED",
+        "routingBalanceAlreadyIncludesStorageAndFlows": true,
+        "rankingEligible": false
+      },
+      "composition": {
+        "schemaVersion": 1,
+        "method": "SOURCE_BOUND_BASIN_STORAGE_COMPOSITION_V1",
+        "sourceModelSha256": "3673cf9e56909e21937ed56b43dfda92d4fdbd9196fae89354343280dfcdba2c",
+        "sourceNetworkSha256": "38562a18c3273a630fa50c834ff26d36cc21607562ddbf51e5e0613b44a4b3b7",
+        "basinModelSha256": "48467c8cec0c18f48afcbe8bbb492e906cf10024229b130e1761289acb39c63e",
+        "basinNetworkSha256": "4fb8c7b63cd5a7b080b2afa4ba5603564681ae576bf83d1dc0ce1930c72241ca",
+        "storageNetworkSha256": "040099f6050ac82b15fe5becdc59b657a3ca65f271c5dd2996a6d6dba8d96510",
+        "composedNetworkSha256": "be518020e08e95c86c65255dced230cc95dd37348b4099983b4900335262adcc",
+        "compilerSha256": "af9ceb94cc9a161dc214592d7b29ad9d724c09992b5389b13f898335d9f8388a",
+        "addedRows": {
+          "CURVES": [
+            [
+              "WLST_Tank_A",
+              "STORAGE",
+              "0",
+              "0.25"
+            ],
+            [
+              "WLST_Tank_A",
+              "1.4",
+              "0.25"
+            ]
+          ],
+          "ORIFICES": [
+            [
+              "WLST_Tank_I",
+              "TANK",
+              "WLST_Tank",
+              "SIDE",
+              "0.2",
+              "0.65",
+              "NO",
+              "0"
+            ],
+            [
+              "WLST_Tank_D",
+              "WLST_Tank",
+              "RECEIVER",
+              "SIDE",
+              "0.05",
+              "0.65",
+              "NO",
+              "0"
+            ],
+            [
+              "WLST_Tank_O",
+              "WLST_Tank",
+              "RECEIVER",
+              "SIDE",
+              "0.9",
+              "0.65",
+              "NO",
+              "0"
+            ]
+          ],
+          "STORAGE": [
+            [
+              "WLST_Tank",
+              "0",
+              "1.4",
+              "0",
+              "TABULAR",
+              "WLST_Tank_A",
+              "0",
+              "0"
+            ]
+          ],
+          "XSECTIONS": [
+            [
+              "WLST_Tank_I",
+              "CIRCULAR",
+              "0.2",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "WLST_Tank_D",
+              "CIRCULAR",
+              "0.03",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "WLST_Tank_O",
+              "CIRCULAR",
+              "0.12",
+              "0",
+              "0",
+              "0"
+            ]
+          ]
+        },
+        "rainfallOwnershipUnchanged": true,
+        "connectionScope": "SHARED_EXISTING_NETWORK_NODES",
+        "rankingEligible": false,
+        "historicalReconstructionEligible": false
+      }
+    },
+    "observed-7d": {
+      "numericalStatus": "PASSED",
+      "networkConvergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 2505360,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      },
+      "balance": {
+        "networkExternalInflowM3": 5238.1413602580615,
+        "networkExternalOutflowAndLossM3": 3247.8906963966415,
+        "surfaceExternalNetInflowM3": 1269.8571144213804,
+        "networkStorageM3": 1870.077554121475,
+        "surfaceStorageM3": 1389.8245818200505,
+        "networkToSurfaceM3": 139.66817149351328,
+        "surfaceToNetworkM3": 19.70070409606438,
+        "exchangeCancellationResidualM3": -7.105427357601002e-14,
+        "surfaceRainfallM3": 2310.0000000001983,
+        "surfaceInfiltrationM3": 1025.566102765782,
+        "surfaceBoundaryNetInflowM3": 2.981610093950227e-14,
+        "surfaceEvaporationM3": 14.57678281302288,
+        "potentialSurfaceEvaporationM3": 224.93607953946253,
+        "unmetSurfaceEvaporationM3": 210.35929672644215,
+        "surfaceEvaporationRoundoffM3": 2.5082158572331537e-12,
+        "balanceResidualM3": 0.20564234127459713
+      },
+      "evaluationMetrics": {
+        "specificationSha256": "162737aea5c6cbfb3b6d9e50c9ebbb116ab02cb4df3b36e9c8ea983b1050b7e4",
+        "status": "NUMERICAL_DIAGNOSTIC",
+        "rankingEligible": false,
+        "complete": true,
+        "raw": {
+          "outwardVolumeM3": 1401.1220936894665,
+          "peakOutwardM3s": 0.08010054279445739,
+          "depthAreaTimeM3Hours": 26.8238687505781
+        }
+      },
+      "resultSha256": "325eece84d71bb31df1390228ffba354317e4daffa4b7b80a3b2f01bb7b02bb7",
+      "engineSha256": "88274a822012d39f527774e5627a58e4fb2b09b85a0233d0395d1f0b8fc2992d",
+      "surfaceBasins": {
+        "initial": {
+          "timeSeconds": 0.0,
+          "facilities": [
+            {
+              "id": "Pond",
+              "storageM3": 0.0,
+              "maximumDepthM": 0.0,
+              "maximumStageAboveLowestBoundaryM": 0.0
+            }
+          ]
+        },
+        "evaluationInitial": {
+          "timeSeconds": 604800.0,
+          "facilities": [
+            {
+              "id": "Pond",
+              "storageM3": 607.9672789735683,
+              "maximumDepthM": 0.23365977468069601,
+              "maximumStageAboveLowestBoundaryM": 0.0012556765595279629
+            }
+          ]
+        },
+        "final": {
+          "timeSeconds": 626340.0,
+          "facilities": [
+            {
+              "id": "Pond",
+              "storageM3": 1385.6004577913654,
+              "maximumDepthM": 0.4104622336536097,
+              "maximumStageAboveLowestBoundaryM": 0.0
+            }
+          ]
+        },
+        "includedInSurfaceStorageAndLosses": true,
+        "additionalStorageInCoupledBalanceM3": 0,
+        "separateRegionFluxLedgerAvailable": false,
+        "rankingEligible": false
+      },
+      "connectedStorage": {
+        "wholeRunLedger": {
+          "startSeconds": 0.0,
+          "endSeconds": 626340.0,
+          "facilities": [
+            {
+              "id": "Tank",
+              "nodeId": "WLST_Tank",
+              "initialStorageM3": 0.0,
+              "inflowM3": 503.8414993167782,
+              "outflowIncludingFloodingM3": 169.0864011656016,
+              "floodingM3": 0.0,
+              "finalStorageM3": 334.71815485291626,
+              "capacityM3": 560.0,
+              "balanceResidualM3": 0.03694329826038256,
+              "allowedResidualM3": 5.038414993167782,
+              "numericalStatus": "PASSED"
+            }
+          ],
+          "scope": "NATIVE_STORAGE_NODE_BALANCE_ALREADY_INCLUDED_IN_NETWORK_ROUTING",
+          "numericalStatus": "PASSED"
+        },
+        "evaluationLedger": {
+          "startSeconds": 604800.0,
+          "endSeconds": 626340.0,
+          "facilities": [
+            {
+              "id": "Tank",
+              "nodeId": "WLST_Tank",
+              "initialStorageM3": 134.06836359259816,
+              "inflowM3": 308.9133845297951,
+              "outflowIncludingFloodingM3": 108.24231810845349,
+              "floodingM3": 0.0,
+              "finalStorageM3": 334.71815485291626,
+              "capacityM3": 560.0,
+              "balanceResidualM3": 0.021275161023481814,
+              "allowedResidualM3": 4.429817481223933,
+              "numericalStatus": "PASSED"
+            }
+          ],
+          "scope": "NATIVE_STORAGE_NODE_BALANCE_ALREADY_INCLUDED_IN_NETWORK_ROUTING",
+          "numericalStatus": "PASSED"
+        },
+        "numericalStatus": "PASSED",
+        "routingBalanceAlreadyIncludesStorageAndFlows": true,
+        "rankingEligible": false
+      },
+      "initialization": {
+        "warmupSeconds": 604800,
+        "evaluationSeconds": 21540,
+        "statePolicy": "SAME_LIVE_ENGINES_NO_STATE_TRANSPLANT",
+        "scoreExcludesWarmup": true,
+        "evaluationLedger": {
+          "durationSeconds": 21540.0,
+          "numericalStatus": "PASSED",
+          "routing": {
+            "totals": {
+              "dryWeatherInflowM3": 0.0,
+              "runoffInflowM3": 2608.9088204208942,
+              "groundwaterInflowM3": 0.0,
+              "rdiiInflowM3": 0.0,
+              "externalInflowM3": 0.5454527389305461,
+              "outflowM3": 1520.1803782236984,
+              "floodingM3": 0.0,
+              "evaporationM3": 0.03196451632808461,
+              "seepageM3": 0.0,
+              "reactionLossM3": 0.0,
+              "initialStorageM3": 780.9556551167201,
+              "storageM3": 1870.077554121475
+            },
+            "balance": {
+              "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+              "totalInM3": 3390.409928276545,
+              "totalOutIncludingStorageM3": 3390.2898968615013,
+              "residualM3": 0.12003141504374071,
+              "continuityPercent": 0.0035403216007203163,
+              "absoluteToleranceM3": 1e-08,
+              "allowedResidualM3": 33.90409928276545
+            }
+          },
+          "surface": {
+            "boundaryNetInflowM3": 8.98915551776632e-15,
+            "sourceNetInflowM3": 778.2329682946445,
+            "rainfallM3": 850.000000000035,
+            "infiltrationM3": 190.02538034366,
+            "potentialSurfaceEvaporationM3": 0.3196035708825491,
+            "surfaceEvaporationM3": 0.2544831570416797,
+            "unmetSurfaceEvaporationM3": 0.06512041384988265,
+            "surfaceEvaporationRoundoffM3": 9.013234603116871e-12,
+            "durationSeconds": 21540.0,
+            "initialStorageM3": 611.5916135253099,
+            "finalStorageM3": 1389.8245818200505,
+            "balanceResidualM3": -9.617906471248716e-11
+          },
+          "facilities": {
+            "durationSeconds": 21540.0,
+            "facilities": [
+              {
+                "subcatchmentId": "S1",
+                "swmmId": "WL_Trench",
+                "inflowM3": 503.4415007381806,
+                "evaporationM3": 0.015980178537729373,
+                "infiltrationM3": 11.966666666469564,
+                "surfaceOutflowM3": 491.45885389297223,
+                "drainOutflowM3": 0.0,
+                "initialStorageM3": 213.36000000000004,
+                "finalStorageM3": 213.36000000000004,
+                "balanceResidualM3": 2.0099832909181714e-10,
+                "allowedResidualM3": 7.168015007381806,
+                "numericalStatus": "PASSED"
+              },
+              {
+                "subcatchmentId": "S1",
+                "swmmId": "WL_Swale",
+                "inflowM3": 201.37660029527234,
+                "evaporationM3": 0.0032998809491686654,
+                "infiltrationM3": 2.7160721934313905,
+                "surfaceOutflowM3": 206.2467645377043,
+                "drainOutflowM3": 0.0,
+                "initialStorageM3": 9.144097777340273,
+                "finalStorageM3": 2.341996362544318,
+                "balanceResidualM3": -0.787434902016571,
+                "allowedResidualM3": 2.113081329746292,
+                "numericalStatus": "PASSED"
+              },
+              {
+                "subcatchmentId": "S1",
+                "swmmId": "WL_Cistern",
+                "inflowM3": 92.1883001476368,
+                "evaporationM3": 0.0,
+                "infiltrationM3": 0.0,
+                "surfaceOutflowM3": 92.18830014763712,
+                "drainOutflowM3": 0.0,
+                "initialStorageM3": 20.0,
+                "finalStorageM3": 20.0,
+                "balanceResidualM3": -3.268496584496461e-13,
+                "allowedResidualM3": 1.1218830014763712,
+                "numericalStatus": "PASSED"
+              },
+              {
+                "subcatchmentId": "S1",
+                "swmmId": "WL_Bioretention",
+                "inflowM3": 100.68830014763617,
+                "evaporationM3": 0.0031960357090685676,
+                "infiltrationM3": 2.3933333333668045,
+                "surfaceOutflowM3": 72.63969906070734,
+                "drainOutflowM3": 26.822002542132992,
+                "initialStorageM3": 54.559200000000004,
+                "finalStorageM3": 53.38994031860985,
+                "balanceResidualM3": -0.0006711428898995564,
+                "allowedResidualM3": 1.5524817129052608,
+                "numericalStatus": "PASSED"
+              }
+            ],
+            "routingTotals": {
+              "dryWeatherInflowM3": 0.0,
+              "runoffInflowM3": 2608.9088204208942,
+              "groundwaterInflowM3": 0.0,
+              "rdiiInflowM3": 0.0,
+              "externalInflowM3": 0.5454527389305461,
+              "outflowM3": 1520.1803782236984,
+              "floodingM3": 0.0,
+              "evaporationM3": 0.03196451632808461,
+              "seepageM3": 0.0,
+              "reactionLossM3": 0.0,
+              "initialStorageM3": 780.9556551167201,
+              "storageM3": 1870.077554121475
+            },
+            "routingBalance": {
+              "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+              "totalInM3": 3390.409928276545,
+              "totalOutIncludingStorageM3": 3390.2898968615013,
+              "residualM3": 0.12003141504374071,
+              "continuityPercent": 0.0035403216007203163,
+              "absoluteToleranceM3": 1e-08,
+              "allowedResidualM3": 33.90409928276545
+            },
+            "numericalStatus": "PASSED",
+            "scope": "SEPARATE_FACILITY_AND_ROUTING_CONTROL_VOLUMES",
+            "scoreExcludesWarmup": true,
+            "peakFlowM3s": null,
+            "peakStatus": "NOT_DERIVED_FROM_SPARSE_FRAMES"
+          },
+          "ports": {
+            "inlet": {
+              "networkToSurfaceM3": 0.35575523781352464,
+              "surfaceToNetworkM3": 0.010003415711900564
+            },
+            "WLBS_Pond": {
+              "networkToSurfaceM3": 118.70252929644603,
+              "surfaceToNetworkM3": 0.5354493232244657
+            }
+          },
+          "coupled": {
+            "initialStorageM3": 1392.5472686420298,
+            "finalStorageM3": 3259.9021359415256,
+            "networkExternalInflowM3": 2608.9088204208883,
+            "networkExternalOutflowAndLossM3": 1401.154058205767,
+            "surfaceExternalNetInflowM3": 659.7201364993213,
+            "balanceResidualM3": 0.12003141494733427,
+            "allowedResidualM3": 46.6117622556224,
+            "exchangeCancellationResidualM3": -5.684341886080802e-14
+          },
+          "scope": "SEPARATE_FACILITIES_AND_COUPLED_ROUTING_SURFACE_CONTROL_VOLUMES"
+        }
+      },
+      "composition": {
+        "schemaVersion": 1,
+        "method": "SOURCE_BOUND_BASIN_STORAGE_COMPOSITION_V1",
+        "sourceModelSha256": "62d6448cca6fc885da439c6c886ade828ff45e502dd0e0bd5388744e84b3c031",
+        "sourceNetworkSha256": "cbbb87a9b0c858aa8cbc075dfaf0b1930cec699a823b2cddf403ec936fc3acfe",
+        "basinModelSha256": "eb861ff7ae08feface0e55884e5e63af80f86e134969516966b5a56705f0b98b",
+        "basinNetworkSha256": "a15ef9ee1ebfca8b52f3db7cda17817369b16601f908a4c10c9a47f2902c7039",
+        "storageNetworkSha256": "fb018e2b87b3835807ab4a6348d2926961bc5617b2e2dae5ed9527b00fb87e18",
+        "composedNetworkSha256": "7be24eaaf646bbc9c9a86b8cad81d92bfc7b949e5fb49ea97cd18c07ebfc476a",
+        "compilerSha256": "af9ceb94cc9a161dc214592d7b29ad9d724c09992b5389b13f898335d9f8388a",
+        "addedRows": {
+          "CURVES": [
+            [
+              "WLST_Tank_A",
+              "STORAGE",
+              "0",
+              "400"
+            ],
+            [
+              "WLST_Tank_A",
+              "1.4",
+              "400"
+            ]
+          ],
+          "ORIFICES": [
+            [
+              "WLST_Tank_I",
+              "TANK",
+              "WLST_Tank",
+              "SIDE",
+              "0.2",
+              "0.65",
+              "NO",
+              "0"
+            ],
+            [
+              "WLST_Tank_D",
+              "WLST_Tank",
+              "RECEIVER",
+              "SIDE",
+              "0.05",
+              "0.65",
+              "NO",
+              "0"
+            ],
+            [
+              "WLST_Tank_O",
+              "WLST_Tank",
+              "RECEIVER",
+              "SIDE",
+              "0.9",
+              "0.65",
+              "NO",
+              "0"
+            ]
+          ],
+          "STORAGE": [
+            [
+              "WLST_Tank",
+              "0",
+              "1.4",
+              "0",
+              "TABULAR",
+              "WLST_Tank_A",
+              "0",
+              "0"
+            ]
+          ],
+          "XSECTIONS": [
+            [
+              "WLST_Tank_I",
+              "CIRCULAR",
+              "0.2",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "WLST_Tank_D",
+              "CIRCULAR",
+              "0.03",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "WLST_Tank_O",
+              "CIRCULAR",
+              "0.12",
+              "0",
+              "0",
+              "0"
+            ]
+          ]
+        },
+        "rainfallOwnershipUnchanged": true,
+        "connectionScope": "SHARED_EXISTING_NETWORK_NODES",
+        "rankingEligible": false,
+        "historicalReconstructionEligible": false
+      }
+    },
+    "replay": {
+      "numericalStatus": "PASSED",
+      "networkConvergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 120000,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      },
+      "balance": {
+        "networkExternalInflowM3": -2.942091015256665e-15,
+        "networkExternalOutflowAndLossM3": 1.8836458702490866,
+        "surfaceExternalNetInflowM3": 0.0053152572195421,
+        "networkStorageM3": 0.10633502782035285,
+        "surfaceStorageM3": 0.015309284511662571,
+        "networkToSurfaceM3": 0.4128169504884519,
+        "surfaceToNetworkM3": 0.40282292319634216,
+        "exchangeCancellationResidualM3": 3.469446951953614e-18,
+        "surfaceRainfallM3": 0.008000000000000014,
+        "surfaceInfiltrationM3": 0.0026834192558559417,
+        "surfaceBoundaryNetInflowM3": 3.453790247615876e-17,
+        "surfaceEvaporationM3": 1.3235246030590328e-06,
+        "potentialSurfaceEvaporationM3": 1.3257977172352987e-06,
+        "unmetSurfaceEvaporationM3": 2.273117444337306e-09,
+        "surfaceEvaporationRoundoffM3": 3.2680714332492455e-15,
+        "balanceResidualM3": -0.00019762366664786112
+      },
+      "evaluationMetrics": {
+        "specificationSha256": "1b1ab26a797c386bb558ddccc3fd518783c6f9fdfcbd72a9fe2e1bc475028d7d",
+        "status": "NUMERICAL_DIAGNOSTIC",
+        "rankingEligible": false,
+        "complete": true,
+        "raw": {
+          "outwardVolumeM3": 1.8836458702490455,
+          "peakOutwardM3s": 0.03135302025846596,
+          "depthAreaTimeM3Hours": 0.00033624887172990797
+        }
+      },
+      "resultSha256": "89d688b942c801055a078bb02fa69cf32ec24096f96ad741884472cfc9b93740",
+      "engineSha256": "cf1a810e32f575d794ce27dda45c5ad1d929f60f5d3e7fc0132c2dfe65169c52",
+      "surfaceBasins": {
+        "initial": {
+          "timeSeconds": 0.0,
+          "facilities": [
+            {
+              "id": "Pond",
+              "storageM3": 0.0,
+              "maximumDepthM": 0.0,
+              "maximumStageAboveLowestBoundaryM": 0.0
+            }
+          ]
+        },
+        "evaluationInitial": null,
+        "final": {
+          "timeSeconds": 120.0,
+          "facilities": [
+            {
+              "id": "Pond",
+              "storageM3": 0.013343696256475216,
+              "maximumDepthM": 0.052428170150476044,
+              "maximumStageAboveLowestBoundaryM": 0.00034597673498582004
+            }
+          ]
+        },
+        "includedInSurfaceStorageAndLosses": true,
+        "additionalStorageInCoupledBalanceM3": 0,
+        "separateRegionFluxLedgerAvailable": false,
+        "rankingEligible": false
+      },
+      "connectedStorage": {
+        "wholeRunLedger": {
+          "startSeconds": 0.0,
+          "endSeconds": 120.0,
+          "facilities": [
+            {
+              "id": "Tank",
+              "nodeId": "WLST_Tank",
+              "initialStorageM3": 0.0,
+              "inflowM3": 0.35146978479322716,
+              "outflowIncludingFloodingM3": 0.31673393874031314,
+              "floodingM3": 0.0,
+              "finalStorageM3": 0.03474460144631002,
+              "capacityM3": 0.35,
+              "balanceResidualM3": -8.755393395995514e-06,
+              "allowedResidualM3": 0.0035147854018662316,
+              "numericalStatus": "PASSED"
+            }
+          ],
+          "scope": "NATIVE_STORAGE_NODE_BALANCE_ALREADY_INCLUDED_IN_NETWORK_ROUTING",
+          "numericalStatus": "PASSED"
+        },
+        "evaluationLedger": null,
+        "numericalStatus": "PASSED",
+        "routingBalanceAlreadyIncludesStorageAndFlows": true,
+        "rankingEligible": false
+      },
+      "composition": {
+        "schemaVersion": 1,
+        "method": "SOURCE_BOUND_BASIN_STORAGE_COMPOSITION_V1",
+        "sourceModelSha256": "fda08c00b74c0139f9f0412f512f2a32fcc23dcc3fb46047f8d86a33196d652c",
+        "sourceNetworkSha256": "38562a18c3273a630fa50c834ff26d36cc21607562ddbf51e5e0613b44a4b3b7",
+        "basinModelSha256": "44d4b2c695f1d72f11af6ffef960bdea36eea763328736a1936bdc12efdfb4bd",
+        "basinNetworkSha256": "4fb8c7b63cd5a7b080b2afa4ba5603564681ae576bf83d1dc0ce1930c72241ca",
+        "storageNetworkSha256": "040099f6050ac82b15fe5becdc59b657a3ca65f271c5dd2996a6d6dba8d96510",
+        "composedNetworkSha256": "be518020e08e95c86c65255dced230cc95dd37348b4099983b4900335262adcc",
+        "compilerSha256": "af9ceb94cc9a161dc214592d7b29ad9d724c09992b5389b13f898335d9f8388a",
+        "addedRows": {
+          "CURVES": [
+            [
+              "WLST_Tank_A",
+              "STORAGE",
+              "0",
+              "0.25"
+            ],
+            [
+              "WLST_Tank_A",
+              "1.4",
+              "0.25"
+            ]
+          ],
+          "ORIFICES": [
+            [
+              "WLST_Tank_I",
+              "TANK",
+              "WLST_Tank",
+              "SIDE",
+              "0.2",
+              "0.65",
+              "NO",
+              "0"
+            ],
+            [
+              "WLST_Tank_D",
+              "WLST_Tank",
+              "RECEIVER",
+              "SIDE",
+              "0.05",
+              "0.65",
+              "NO",
+              "0"
+            ],
+            [
+              "WLST_Tank_O",
+              "WLST_Tank",
+              "RECEIVER",
+              "SIDE",
+              "0.9",
+              "0.65",
+              "NO",
+              "0"
+            ]
+          ],
+          "STORAGE": [
+            [
+              "WLST_Tank",
+              "0",
+              "1.4",
+              "0",
+              "TABULAR",
+              "WLST_Tank_A",
+              "0",
+              "0"
+            ]
+          ],
+          "XSECTIONS": [
+            [
+              "WLST_Tank_I",
+              "CIRCULAR",
+              "0.2",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "WLST_Tank_D",
+              "CIRCULAR",
+              "0.03",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "WLST_Tank_O",
+              "CIRCULAR",
+              "0.12",
+              "0",
+              "0",
+              "0"
+            ]
+          ]
+        },
+        "rainfallOwnershipUnchanged": true,
+        "connectionScope": "SHARED_EXISTING_NETWORK_NODES",
+        "rankingEligible": false,
+        "historicalReconstructionEligible": false
+      }
+    },
+    "storage": {
+      "numericalStatus": "PASSED",
+      "networkConvergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 120000,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      },
+      "balance": {
+        "networkExternalInflowM3": 4.846123502488808e-14,
+        "networkExternalOutflowAndLossM3": 1.8924187601978077,
+        "surfaceExternalNetInflowM3": 0.00799867420200746,
+        "networkStorageM3": 0.08727983117420839,
+        "surfaceStorageM3": 0.02827934568822426,
+        "networkToSurfaceM3": 0.3323620742947251,
+        "surfaceToNetworkM3": 0.31208140280853053,
+        "exchangeCancellationResidualM3": 0.0,
+        "surfaceRainfallM3": 0.007999999999999872,
+        "surfaceInfiltrationM3": 0.0,
+        "surfaceBoundaryNetInflowM3": -2.950669931046153e-18,
+        "surfaceEvaporationM3": 1.3257979940561881e-06,
+        "potentialSurfaceEvaporationM3": 1.3257977172352807e-06,
+        "unmetSurfaceEvaporationM3": 0.0,
+        "surfaceEvaporationRoundoffM3": 2.7682090742894275e-13,
+        "balanceResidualM3": -0.00020196116326951646
+      },
+      "evaluationMetrics": {
+        "specificationSha256": "1b1ab26a797c386bb558ddccc3fd518783c6f9fdfcbd72a9fe2e1bc475028d7d",
+        "status": "NUMERICAL_DIAGNOSTIC",
+        "rankingEligible": false,
+        "complete": true,
+        "raw": {
+          "outwardVolumeM3": 1.8924187601978708,
+          "peakOutwardM3s": 0.03259244593235443,
+          "depthAreaTimeM3Hours": 0.0025742071775588164
+        }
+      },
+      "resultSha256": "50ee0a3a78eb14b31a77f803b0fe5d499033ca2eeb57843bee08fa537506fe8c",
+      "engineSha256": "cf1a810e32f575d794ce27dda45c5ad1d929f60f5d3e7fc0132c2dfe65169c52",
+      "connectedStorage": {
+        "wholeRunLedger": {
+          "startSeconds": 0.0,
+          "endSeconds": 120.0,
+          "facilities": [
+            {
+              "id": "Tank",
+              "nodeId": "WLST_Tank",
+              "initialStorageM3": 0.0,
+              "inflowM3": 0.4059603121445722,
+              "outflowIncludingFloodingM3": 0.3756282077566097,
+              "floodingM3": 0.0,
+              "finalStorageM3": 0.03034830268581224,
+              "capacityM3": 0.35,
+              "balanceResidualM3": -1.6198297849774612e-05,
+              "allowedResidualM3": 0.004059765104424219,
+              "numericalStatus": "PASSED"
+            }
+          ],
+          "scope": "NATIVE_STORAGE_NODE_BALANCE_ALREADY_INCLUDED_IN_NETWORK_ROUTING",
+          "numericalStatus": "PASSED"
+        },
+        "evaluationLedger": null,
+        "numericalStatus": "PASSED",
+        "routingBalanceAlreadyIncludesStorageAndFlows": true,
+        "rankingEligible": false
+      }
+    }
+  },
+  "exactReplay": true,
+  "combinedMinusIndependentSum": {
+    "outwardVolumeM3": 0.024233511889091064,
+    "peakOutwardM3s": -0.0006792570954652702,
+    "depthAreaTimeM3Hours": 0.0010675884123828097
+  },
+  "step100Minus50": {
+    "outwardVolumeM3": -9.790353320848766e-05,
+    "peakOutwardM3s": -2.9298460142074267e-05,
+    "depthAreaTimeM3Hours": 1.6738818294772737e-07
+  },
+  "preservedFailure": {
+    "directory": "failed-observed-7d-1s/combined",
+    "resultSha256": "05ed59f3a64b820a8902aa2594ae173f3b69d2a22623ece97c345976afe28344",
+    "numericalStatus": "FAILED",
+    "networkConvergence": {
+      "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+      "routingSteps": 626340,
+      "nonConvergedSteps": 941,
+      "nonConvergedPercent": 0.15023788996391735
+    },
+    "routingStepChangeSeconds": [
+      1,
+      0.25
+    ],
+    "samePhysicalInputsAfterRemovingBoundHashes": true
+  },
+  "checks": {
+    "newContractTests": 3,
+    "newNativeTests": 2,
+    "existingStorageBasinAndReaderTests": 16,
+    "compositionProofTamperRejected": "EVALUATION_COMPOSITION_CONTEXT_MISMATCH",
+    "originalNetworkMutationRejected": "COMPOSITION_SOURCE_MUTATION"
+  },
+  "limitations": [
+    "서울 실제 부지·시설 형상이나 시공비 검증 아님",
+    "작은 120초 사례의 강우는 명시적 합성 입력; 7일 선행 사례는 성동 관측·서울 관측 기상 사용",
+    "합성 4ha 유역의 1ha 지표 저류지·560m³ 덮개 지하 저장·문헌 LID 4종 설계",
+    "기존 내부 관망 절점 경유 상호작용; 새 시설 사이 임의 직접 연결이나 입지 중첩 검증 없음",
+    "현재 가격·용량별 공사비·운영 설치 목록·새 순위 연결 미완료",
+    "독립 시설 결과의 합산을 연결 유역 결과로 대체하지 않음",
+    "같은 실행 환경에서 네이티브 재현 확인; 타 장치 독립 실행 패키지 완성 아님"
+  ],
+  "artifact": {
+    "directory": "data/runs/storage-composition-20261018-bundle-v1",
+    "files": 1193,
+    "manifestSha256": "e3275020f5ea4638897121ced40448a258de4507fdeaab3a9e225b416cb59c6e"
+  },
+  "projectionFields": {
+    "evaluationMetrics": [
+      "specificationSha256",
+      "status",
+      "rankingEligible",
+      "complete",
+      "raw"
+    ],
+    "fullEvaluationMetrics": "각 실행의 coupled-result.json 및 묶음 summary.json"
+  }
+}

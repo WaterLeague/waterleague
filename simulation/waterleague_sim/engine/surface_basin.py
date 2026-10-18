@@ -62,7 +62,6 @@ def compile_basin(model):
     require(isinstance(design, dict) and set(design) == {'schemaVersion', 'sourceModelSha256', 'placements'}
         and type(design['schemaVersion']) is int and design['schemaVersion'] == 1
         and design['sourceModelSha256'] == digest(source), 'BASIN_SOURCE_BINDING_INVALID')
-    require('connectedStorageDesign' not in source, 'BASIN_STORAGE_COMPOSITION_NOT_SUPPORTED')
     placements = design['placements']
     require(isinstance(placements, list) and 0 < len(placements) <= 128, 'BASIN_PLACEMENTS_INVALID')
     surface = source['surface']

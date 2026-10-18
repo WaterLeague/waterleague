@@ -188,9 +188,11 @@ def _verify_connected_facilities(model, network, result, root):
             'EVALUATION_FACILITY_STATUS_MISMATCH')
 
 
-def _verify_connected_storage(model, network, result, root):
+def _verify_connected_storage(model, network, result, root, original_model=None):
     if 'connectedStorageDesign' not in model:
         require('connectedStorage' not in result, 'EVALUATION_STORAGE_CONTEXT_MISMATCH')
+        require('connected-design-composition.json' not in result['files']
+                and 'composed-network.inp' not in result['files'], 'EVALUATION_COMPOSITION_CONTEXT_MISMATCH')
         return model
     from waterleague_sim.engine.connected_storage import compile_storage, result_summary
     from waterleague_sim.engine.flood_errors import FloodModelError
@@ -199,13 +201,30 @@ def _verify_connected_storage(model, network, result, root):
     metadata = _read(root/required[0])
     raw = (root/required[1]).read_bytes()
     detail = result.get('connectedStorage')
+    original_model = model if original_model is None else original_model
+    source_raw = original_model['network']['inputText'].encode()
     require(isinstance(detail, dict) and detail.get('design') == metadata
             and metadata['design'] == model['connectedStorageDesign']
-            and metadata['sourceNetworkSha256'] == hashlib.sha256(model['network']['inputText'].encode()).hexdigest()
+            and metadata['sourceNetworkSha256'] == hashlib.sha256(source_raw).hexdigest()
             and metadata['derivedNetworkSha256'] == file_digest(root/required[1]),
             'EVALUATION_STORAGE_CONTEXT_MISMATCH')
     try:
-        compiled, expected = compile_storage(model['network']['inputText'].encode(), model['connectedStorageDesign'])
+        compiled, expected = compile_storage(source_raw, model['connectedStorageDesign'])
+        composed = compiled
+        if 'surfaceBasinDesign' in original_model:
+            from waterleague_sim.engine.storage_composition import compose_storage
+            require(all(name in result['files'] for name in
+                ('connected-design-composition.json', 'composed-network.inp')),
+                'EVALUATION_COMPOSITION_ARTIFACT_MISSING')
+            composed, proof = compose_storage(original_model, model, compiled, expected)
+            saved_proof = _read(root/'connected-design-composition.json')
+            proof['compilerSha256'] = saved_proof['compilerSha256']
+            require(proof == saved_proof and is_hash(saved_proof['compilerSha256'])
+                and composed == (root/'composed-network.inp').read_bytes(),
+                'EVALUATION_COMPOSITION_CONTEXT_MISMATCH')
+        else:
+            require('connected-design-composition.json' not in result['files']
+                and 'composed-network.inp' not in result['files'], 'EVALUATION_COMPOSITION_CONTEXT_MISMATCH')
         from waterleague_sim.ingestion.published_network import records
         identifiers = {row['nodeId'].upper() for row in metadata['facilities']}
         identifiers |= {row['nodeId'].upper()+'_A' for row in metadata['facilities']}
@@ -230,7 +249,7 @@ def _verify_connected_storage(model, network, result, root):
             and detail == summary, 'EVALUATION_STORAGE_CONTEXT_MISMATCH')
     require(summary['numericalStatus'] == 'PASSED' or result['numericalStatus'] == 'FAILED',
             'EVALUATION_STORAGE_STATUS_MISMATCH')
-    return model | {'network': model['network'] | {'inputText': raw.decode()}}
+    return model | {'network': model['network'] | {'inputText': composed.decode()}}
 
 
 def _verify_surface_basins(model, surface, result, root):
@@ -282,8 +301,9 @@ def read_coupled_record(directory, expected_result_sha256, context):
         model, network, surface = [_read(root / name) for name in required]
         _verify_files(root / 'network', network['files'])
         _verify_files(root / 'surface', surface['files'])
+        original_model = model
         model = _verify_surface_basins(model, surface, result, root)
-        model = _verify_connected_storage(model, network, result, root)
+        model = _verify_connected_storage(model, network, result, root, original_model)
         model = _verify_initialization(model, network, surface, result, root)
         _verify_dry_policy(model, surface, result, root)
         _verify_surface_policy(model, surface, result, root)

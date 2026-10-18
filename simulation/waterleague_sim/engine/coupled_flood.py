@@ -110,6 +110,7 @@ def run_coupled(model, directory):
     storage_design, storage_raw, storage_summary = None, None, None
     original_model = model
     basin_design, basin_model = None, None
+    composition, composed_raw = None, None
     if 'surfaceBasinDesign' in model:
         from waterleague_sim.engine.surface_basin import compile_basin
         model, basin_design = compile_basin(model)
@@ -119,9 +120,13 @@ def run_coupled(model, directory):
     if 'connectedStorageDesign' in model:
         require(model.get('evaluationMetrics') is not None, 'COUPLED_STORAGE_METRICS_REQUIRED')
         from waterleague_sim.engine.connected_storage import compile_storage
-        storage_raw, storage_design = compile_storage(model['network']['inputText'].encode(),
+        storage_raw, storage_design = compile_storage(original_model['network']['inputText'].encode(),
                                                       model['connectedStorageDesign'])
-        model = model | {'network': model['network'] | {'inputText': storage_raw.decode()}}
+        composed_raw = storage_raw
+        if basin_design is not None:
+            from waterleague_sim.engine.storage_composition import compose_storage
+            composed_raw, composition = compose_storage(original_model, model, storage_raw, storage_design)
+        model = model | {'network': model['network'] | {'inputText': composed_raw.decode()}}
     if 'initialization' in model:
         from waterleague_sim.forcing.coupled_initialization import prepare_initialized_coupling
         initialization = prepare_initialized_coupling(model)
@@ -155,6 +160,9 @@ def run_coupled(model, directory):
     if storage_design is not None:
         _write(directory / 'connected-storage-design.json', storage_design)
         (directory / 'storage-network.inp').write_bytes(storage_raw)
+    if composition is not None:
+        _write(directory / 'connected-design-composition.json', composition)
+        (directory / 'composed-network.inp').write_bytes(composed_raw)
     if initialization is not None:
         _write(directory / 'initialized-coupled-input.json', initialization.model)
         _write(directory / 'initialization-forcing.json', initialization.summary)
