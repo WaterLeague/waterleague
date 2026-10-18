@@ -1,0 +1,623 @@
+{
+  "schemaVersion": 1,
+  "classification": "PUBLIC_NETWORK_WITH_EXPLICIT_REFERENCE_DESIGNS",
+  "sourceManifestSha256": "2104f9143e6deea2213c9f88219a2d23ddfb78b0dab61b961cb8ab362df1da98",
+  "sourceMember": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline/seocho2_baseline.inp",
+  "catalogSha256": "f06a80aebb4fc674597e1da4ca2f829a58f1724de088d603bf81eb9068e9f0a2",
+  "attribution": {
+    "title": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience: A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures",
+    "authors": [
+      "Samuel Park",
+      "Jaekyoung Kim",
+      "Hyeryeong Yun",
+      "Junsuk Kang"
+    ],
+    "year": 2024
+  },
+  "licence": {
+    "id": "01d9c749-3c4d-4431-9df3-620b2dcfe144",
+    "short_name": "CC BY 4.0",
+    "full_name": "Creative Commons Attribution 4.0 International",
+    "description": "You can share, copy and modify this dataset so long as you give appropriate credit, provide a link to the CC BY license, and indicate if changes were made, but you may not do so in a way that suggests the rights holder has endorsed you or your use of the dataset. Note that further permission may be required for any content within the dataset that is identified as belonging to a third party.",
+    "url": "http://creativecommons.org/licenses/by/4.0",
+    "category": "Creative",
+    "customer_id": null
+  },
+  "numericalProfile": {
+    "id": "slot-62-5ms",
+    "options": {
+      "SURCHARGE_METHOD": "SLOT",
+      "MAX_TRIALS": 200,
+      "ROUTING_STEP": 0.0625,
+      "MINIMUM_STEP": 0.025
+    }
+  },
+  "effects": [
+    {
+      "id": "single-bioretention",
+      "bothNumericallyPassed": true,
+      "signedReductionM3": {
+        "outflowM3": -5.145423324778676,
+        "floodingM3": 51.337923989398405
+      },
+      "meaning": "문헌 단면의 가상 배치에 따른 공개 연구 관망 변화이며 서울 설치 효과·점수 아님"
+    },
+    {
+      "id": "single-cisternone",
+      "bothNumericallyPassed": true,
+      "signedReductionM3": {
+        "outflowM3": 0.05401706509292126,
+        "floodingM3": 3.3475312560331076
+      },
+      "meaning": "문헌 단면의 가상 배치에 따른 공개 연구 관망 변화이며 서울 설치 효과·점수 아님"
+    },
+    {
+      "id": "single-cisterntwo",
+      "bothNumericallyPassed": true,
+      "signedReductionM3": {
+        "outflowM3": 0.05401706509292126,
+        "floodingM3": 3.3475312560331076
+      },
+      "meaning": "문헌 단면의 가상 배치에 따른 공개 연구 관망 변화이며 서울 설치 효과·점수 아님"
+    },
+    {
+      "id": "open-cisternone",
+      "bothNumericallyPassed": true,
+      "signedReductionM3": {
+        "outflowM3": -0.14874248811975121,
+        "floodingM3": 1.233871154487133
+      },
+      "meaning": "문헌 단면의 가상 배치에 따른 공개 연구 관망 변화이며 서울 설치 효과·점수 아님"
+    },
+    {
+      "id": "open-cisterntwo",
+      "bothNumericallyPassed": true,
+      "signedReductionM3": {
+        "outflowM3": -0.14874248811975121,
+        "floodingM3": 1.233871154487133
+      },
+      "meaning": "문헌 단면의 가상 배치에 따른 공개 연구 관망 변화이며 서울 설치 효과·점수 아님"
+    },
+    {
+      "id": "combined",
+      "bothNumericallyPassed": true,
+      "signedReductionM3": {
+        "outflowM3": -5.049240712542087,
+        "floodingM3": 56.712969155516475
+      },
+      "meaning": "문헌 단면의 가상 배치에 따른 공개 연구 관망 변화이며 서울 설치 효과·점수 아님"
+    }
+  ],
+  "rankingEligible": false,
+  "historicalReconstructionEligible": false,
+  "costCatalogSha256": "63186839053e9a254bc42ba25765dfb78831d5621a3382e5abe0d110ddb7fe3b",
+  "costScope": "추가 설계의 용량 일치 문헌 견적·연간 가정 비용; 기존 자산·현재 총공사비·물리 전력량 제외",
+  "artifactDirectory": "data/runs/priced-cisterns-20261018-v1",
+  "manifestSha256": "624141fa3fb772551272171b7f83076971ffac381333d84112f0a255fc4e0f77",
+  "filesVerified": 159,
+  "cases": [
+    {
+      "id": "baseline",
+      "inputSha256": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+      "numericalStatus": "PASSED",
+      "runoffContinuityPercent": -0.09872203320264816,
+      "routingContinuityPercent": -0.016379326581954956,
+      "convergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 1392566,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      },
+      "facilityQuality": {
+        "policyVersion": "connected-lid-volume-balance-v1",
+        "failedFacilityIds": [],
+        "status": "PASSED",
+        "timeBasis": "NATIVE_HYDROLOGY_CLOCK_SEPARATE_FROM_ROUTING_CLOCK"
+      },
+      "networkTotals": {
+        "timeSeconds": 86339.0,
+        "initialStorageM3": 0.32019239999999993,
+        "storageM3": 11131.689178989987,
+        "dryWeatherInflowM3": 0.0,
+        "runoffInflowM3": 229448.4376731979,
+        "groundwaterInflowM3": 0.0,
+        "rdiiInflowM3": 0.0,
+        "externalInflowM3": 3469729.3551090127,
+        "outflowM3": 2180749.855360638,
+        "floodingM3": 1507902.468925209,
+        "evaporationM3": 0.0,
+        "seepageM3": 0.0,
+        "reactionLossM3": 0.0,
+        "balanceResidualM3": -605.9004902264769
+      },
+      "facilities": []
+    },
+    {
+      "id": "single-bioretention",
+      "inputSha256": "0bf8e3d27fccab92fff2ddeb02dfb1235db6b1f5d2a9ea66b8be845ad054fbfc",
+      "numericalStatus": "PASSED",
+      "runoffContinuityPercent": -0.09882063418626785,
+      "routingContinuityPercent": -0.016350550577044487,
+      "convergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 1392566,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      },
+      "facilityQuality": {
+        "policyVersion": "connected-lid-volume-balance-v1",
+        "failedFacilityIds": [],
+        "status": "PASSED",
+        "timeBasis": "NATIVE_HYDROLOGY_CLOCK_SEPARATE_FROM_ROUTING_CLOCK"
+      },
+      "networkTotals": {
+        "timeSeconds": 86339.0,
+        "initialStorageM3": 0.32019239999999993,
+        "storageM3": 11132.371694464544,
+        "dryWeatherInflowM3": 0.0,
+        "runoffInflowM3": 229403.99942595765,
+        "groundwaterInflowM3": 0.0,
+        "rdiiInflowM3": 0.0,
+        "externalInflowM3": 3469729.3551090127,
+        "outflowM3": 2180755.0007839627,
+        "floodingM3": 1507851.1310012196,
+        "evaporationM3": 0.0,
+        "seepageM3": 0.0,
+        "reactionLossM3": 0.0,
+        "balanceResidualM3": -604.8287522767951
+      },
+      "facilities": [
+        {
+          "hydrologyTimeSeconds": 86339.0,
+          "areaM2": 100.0,
+          "surfaceDepthMm": 54.452090646839636,
+          "soilMoisture": 0.52,
+          "storageDepthMm": 304.8,
+          "inflowM3": 286.24622221769613,
+          "evaporationM3": 0.0,
+          "infiltrationM3": 3.6200769774564083,
+          "surfaceOutflowM3": 206.96102340677035,
+          "drainOutflowM3": 34.798033675253926,
+          "initialStorageM3": 4.876799999999999,
+          "finalStorageM3": 46.00200756384332,
+          "number": 1.0,
+          "drainNodeIndex": 3.0,
+          "drainSubcatchmentIndex": -1.0,
+          "swmmId": "WL_Bioretention",
+          "subcatchmentId": "S1",
+          "balanceResidualM3": -0.2581194056278946,
+          "allowedResidualM3": 2.9138114162332402,
+          "continuityPercent": -0.08858480140131109,
+          "numericalStatus": "PASSED"
+        }
+      ],
+      "costing": {
+        "catalogSha256": "63186839053e9a254bc42ba25765dfb78831d5621a3382e5abe0d110ddb7fe3b",
+        "knownQuotedSubtotalKrw": 0,
+        "knownAnnualOperationEstimateKrw": 0,
+        "completeInstalledCostKrw": null,
+        "unpricedPlacementIds": [
+          "Bioretention"
+        ],
+        "pricedPlacementCount": 0,
+        "totalPlacementCount": 1,
+        "eligibleForBudgetCharge": false,
+        "historicalPriceEligible": false,
+        "currentPriceEligible": false
+      }
+    },
+    {
+      "id": "single-cisternone",
+      "inputSha256": "27ed5786094e15c954f35d7bfa13d1c8aed78ebdd3905a0c9ae0b2b4976072be",
+      "numericalStatus": "PASSED",
+      "runoffContinuityPercent": -0.09846118837594986,
+      "routingContinuityPercent": -0.016367385163903236,
+      "convergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 1392566,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      },
+      "facilityQuality": {
+        "policyVersion": "connected-lid-volume-balance-v1",
+        "failedFacilityIds": [],
+        "status": "PASSED",
+        "timeBasis": "NATIVE_HYDROLOGY_CLOCK_SEPARATE_FROM_ROUTING_CLOCK"
+      },
+      "networkTotals": {
+        "timeSeconds": 86339.0,
+        "initialStorageM3": 0.32019239999999993,
+        "storageM3": 11131.688588183228,
+        "dryWeatherInflowM3": 0.0,
+        "runoffInflowM3": 229445.47778102302,
+        "groundwaterInflowM3": 0.0,
+        "rdiiInflowM3": 0.0,
+        "externalInflowM3": 3469729.3551090127,
+        "outflowM3": 2180749.801343573,
+        "floodingM3": 1507899.121393953,
+        "evaporationM3": 0.0,
+        "seepageM3": 0.0,
+        "reactionLossM3": 0.0,
+        "balanceResidualM3": -605.4582432735187
+      },
+      "facilities": [
+        {
+          "hydrologyTimeSeconds": 86339.0,
+          "areaM2": 2.35,
+          "surfaceDepthMm": 0.0,
+          "soilMoisture": null,
+          "storageDepthMm": 1000.0000000000001,
+          "inflowM3": 61.12238776394685,
+          "evaporationM3": 0.0,
+          "infiltrationM3": 0.0,
+          "surfaceOutflowM3": 58.77238776394684,
+          "drainOutflowM3": 0.0,
+          "initialStorageM3": 0.0,
+          "finalStorageM3": 2.35,
+          "number": 1.0,
+          "drainNodeIndex": 3.0,
+          "drainSubcatchmentIndex": -1.0,
+          "swmmId": "WL_CisternOne",
+          "subcatchmentId": "S1",
+          "balanceResidualM3": 7.105427357601002e-15,
+          "allowedResidualM3": 0.6112238776394685,
+          "continuityPercent": 1.1624917837048493e-14,
+          "numericalStatus": "PASSED"
+        }
+      ],
+      "costing": {
+        "catalogSha256": "63186839053e9a254bc42ba25765dfb78831d5621a3382e5abe0d110ddb7fe3b",
+        "knownQuotedSubtotalKrw": 2857000,
+        "knownAnnualOperationEstimateKrw": 107140,
+        "completeInstalledCostKrw": null,
+        "unpricedPlacementIds": [],
+        "pricedPlacementCount": 1,
+        "totalPlacementCount": 1,
+        "eligibleForBudgetCharge": false,
+        "historicalPriceEligible": false,
+        "currentPriceEligible": false
+      }
+    },
+    {
+      "id": "single-cisterntwo",
+      "inputSha256": "e51ab56b845234ac39889d12bf5c6e0b26607ed818c8220822a1af0994772626",
+      "numericalStatus": "PASSED",
+      "runoffContinuityPercent": -0.09846118837594986,
+      "routingContinuityPercent": -0.016367385163903236,
+      "convergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 1392566,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      },
+      "facilityQuality": {
+        "policyVersion": "connected-lid-volume-balance-v1",
+        "failedFacilityIds": [],
+        "status": "PASSED",
+        "timeBasis": "NATIVE_HYDROLOGY_CLOCK_SEPARATE_FROM_ROUTING_CLOCK"
+      },
+      "networkTotals": {
+        "timeSeconds": 86339.0,
+        "initialStorageM3": 0.32019239999999993,
+        "storageM3": 11131.688588183228,
+        "dryWeatherInflowM3": 0.0,
+        "runoffInflowM3": 229445.47778102302,
+        "groundwaterInflowM3": 0.0,
+        "rdiiInflowM3": 0.0,
+        "externalInflowM3": 3469729.3551090127,
+        "outflowM3": 2180749.801343573,
+        "floodingM3": 1507899.121393953,
+        "evaporationM3": 0.0,
+        "seepageM3": 0.0,
+        "reactionLossM3": 0.0,
+        "balanceResidualM3": -605.4582432735187
+      },
+      "facilities": [
+        {
+          "hydrologyTimeSeconds": 86339.0,
+          "areaM2": 2.35,
+          "surfaceDepthMm": 0.0,
+          "soilMoisture": null,
+          "storageDepthMm": 1000.0000000000001,
+          "inflowM3": 61.12238776394685,
+          "evaporationM3": 0.0,
+          "infiltrationM3": 0.0,
+          "surfaceOutflowM3": 58.77238776394684,
+          "drainOutflowM3": 0.0,
+          "initialStorageM3": 0.0,
+          "finalStorageM3": 2.35,
+          "number": 1.0,
+          "drainNodeIndex": 3.0,
+          "drainSubcatchmentIndex": -1.0,
+          "swmmId": "WL_CisternTwo",
+          "subcatchmentId": "S1",
+          "balanceResidualM3": 7.105427357601002e-15,
+          "allowedResidualM3": 0.6112238776394685,
+          "continuityPercent": 1.1624917837048493e-14,
+          "numericalStatus": "PASSED"
+        }
+      ],
+      "costing": {
+        "catalogSha256": "63186839053e9a254bc42ba25765dfb78831d5621a3382e5abe0d110ddb7fe3b",
+        "knownQuotedSubtotalKrw": 2857000,
+        "knownAnnualOperationEstimateKrw": 107140,
+        "completeInstalledCostKrw": null,
+        "unpricedPlacementIds": [],
+        "pricedPlacementCount": 1,
+        "totalPlacementCount": 1,
+        "eligibleForBudgetCharge": false,
+        "historicalPriceEligible": false,
+        "currentPriceEligible": false
+      }
+    },
+    {
+      "id": "open-cisternone",
+      "inputSha256": "070befc0b46c2d58e1d27997672a140be40a47e8992e8a98500e1e465fece372",
+      "numericalStatus": "PASSED",
+      "runoffContinuityPercent": -0.09846273064613342,
+      "routingContinuityPercent": -0.01637360081076622,
+      "convergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 1392566,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      },
+      "facilityQuality": {
+        "policyVersion": "connected-lid-volume-balance-v1",
+        "failedFacilityIds": [],
+        "status": "PASSED",
+        "timeBasis": "NATIVE_HYDROLOGY_CLOCK_SEPARATE_FROM_ROUTING_CLOCK"
+      },
+      "networkTotals": {
+        "timeSeconds": 86339.0,
+        "initialStorageM3": 0.32019239999999993,
+        "storageM3": 11131.704395333203,
+        "dryWeatherInflowM3": 0.0,
+        "runoffInflowM3": 229447.5797010497,
+        "groundwaterInflowM3": 0.0,
+        "rdiiInflowM3": 0.0,
+        "externalInflowM3": 3469729.3551090127,
+        "outflowM3": 2180750.004103126,
+        "floodingM3": 1507901.2350540545,
+        "evaporationM3": 0.0,
+        "seepageM3": 0.0,
+        "reactionLossM3": 0.0,
+        "balanceResidualM3": -605.6885500511999
+      },
+      "facilities": [
+        {
+          "hydrologyTimeSeconds": 86339.0,
+          "areaM2": 2.35,
+          "surfaceDepthMm": 0.0,
+          "soilMoisture": null,
+          "storageDepthMm": 104.73683461997888,
+          "inflowM3": 61.12238776394685,
+          "evaporationM3": 0.0,
+          "infiltrationM3": 0.0,
+          "surfaceOutflowM3": 33.14195704057303,
+          "drainOutflowM3": 27.734299162016917,
+          "initialStorageM3": 0.0,
+          "finalStorageM3": 0.24977062713192558,
+          "number": 1.0,
+          "drainNodeIndex": 3.0,
+          "drainSubcatchmentIndex": -1.0,
+          "swmmId": "WL_CisternOne",
+          "subcatchmentId": "S1",
+          "balanceResidualM3": -0.0036390657750260402,
+          "allowedResidualM3": 0.6112602682972187,
+          "continuityPercent": -0.005953381830563514,
+          "numericalStatus": "PASSED"
+        }
+      ],
+      "costing": {
+        "catalogSha256": "63186839053e9a254bc42ba25765dfb78831d5621a3382e5abe0d110ddb7fe3b",
+        "knownQuotedSubtotalKrw": 2857000,
+        "knownAnnualOperationEstimateKrw": 107140,
+        "completeInstalledCostKrw": null,
+        "unpricedPlacementIds": [],
+        "pricedPlacementCount": 1,
+        "totalPlacementCount": 1,
+        "eligibleForBudgetCharge": false,
+        "historicalPriceEligible": false,
+        "currentPriceEligible": false
+      }
+    },
+    {
+      "id": "open-cisterntwo",
+      "inputSha256": "31a63a2103d5f99017f074a54f96f104c51a88e1d6176ee35a7e3cb73e46702e",
+      "numericalStatus": "PASSED",
+      "runoffContinuityPercent": -0.09846273064613342,
+      "routingContinuityPercent": -0.01637360081076622,
+      "convergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 1392566,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      },
+      "facilityQuality": {
+        "policyVersion": "connected-lid-volume-balance-v1",
+        "failedFacilityIds": [],
+        "status": "PASSED",
+        "timeBasis": "NATIVE_HYDROLOGY_CLOCK_SEPARATE_FROM_ROUTING_CLOCK"
+      },
+      "networkTotals": {
+        "timeSeconds": 86339.0,
+        "initialStorageM3": 0.32019239999999993,
+        "storageM3": 11131.704395333203,
+        "dryWeatherInflowM3": 0.0,
+        "runoffInflowM3": 229447.5797010497,
+        "groundwaterInflowM3": 0.0,
+        "rdiiInflowM3": 0.0,
+        "externalInflowM3": 3469729.3551090127,
+        "outflowM3": 2180750.004103126,
+        "floodingM3": 1507901.2350540545,
+        "evaporationM3": 0.0,
+        "seepageM3": 0.0,
+        "reactionLossM3": 0.0,
+        "balanceResidualM3": -605.6885500511999
+      },
+      "facilities": [
+        {
+          "hydrologyTimeSeconds": 86339.0,
+          "areaM2": 2.35,
+          "surfaceDepthMm": 0.0,
+          "soilMoisture": null,
+          "storageDepthMm": 104.73683461997888,
+          "inflowM3": 61.12238776394685,
+          "evaporationM3": 0.0,
+          "infiltrationM3": 0.0,
+          "surfaceOutflowM3": 33.14195704057303,
+          "drainOutflowM3": 27.734299162016917,
+          "initialStorageM3": 0.0,
+          "finalStorageM3": 0.24977062713192558,
+          "number": 1.0,
+          "drainNodeIndex": 3.0,
+          "drainSubcatchmentIndex": -1.0,
+          "swmmId": "WL_CisternTwo",
+          "subcatchmentId": "S1",
+          "balanceResidualM3": -0.0036390657750260402,
+          "allowedResidualM3": 0.6112602682972187,
+          "continuityPercent": -0.005953381830563514,
+          "numericalStatus": "PASSED"
+        }
+      ],
+      "costing": {
+        "catalogSha256": "63186839053e9a254bc42ba25765dfb78831d5621a3382e5abe0d110ddb7fe3b",
+        "knownQuotedSubtotalKrw": 2857000,
+        "knownAnnualOperationEstimateKrw": 107140,
+        "completeInstalledCostKrw": null,
+        "unpricedPlacementIds": [],
+        "pricedPlacementCount": 1,
+        "totalPlacementCount": 1,
+        "eligibleForBudgetCharge": false,
+        "historicalPriceEligible": false,
+        "currentPriceEligible": false
+      }
+    },
+    {
+      "id": "combined",
+      "inputSha256": "b8a60e72c5e53d3b93f62517b94e2cd1128a9ba446e49820232f233e3ef581dd",
+      "numericalStatus": "PASSED",
+      "runoffContinuityPercent": -0.09829896688461304,
+      "routingContinuityPercent": -0.016362665221095085,
+      "convergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 1392566,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      },
+      "facilityQuality": {
+        "policyVersion": "connected-lid-volume-balance-v1",
+        "failedFacilityIds": [],
+        "status": "PASSED",
+        "timeBasis": "NATIVE_HYDROLOGY_CLOCK_SEPARATE_FROM_ROUTING_CLOCK"
+      },
+      "networkTotals": {
+        "timeSeconds": 86339.0,
+        "initialStorageM3": 0.32019239999999993,
+        "storageM3": 11132.3704486442,
+        "dryWeatherInflowM3": 0.0,
+        "runoffInflowM3": 229398.07979775273,
+        "groundwaterInflowM3": 0.0,
+        "rdiiInflowM3": 0.0,
+        "externalInflowM3": 3469729.3551090127,
+        "outflowM3": 2180754.9046013504,
+        "floodingM3": 1507845.7559560535,
+        "evaporationM3": 0.0,
+        "seepageM3": 0.0,
+        "reactionLossM3": 0.0,
+        "balanceResidualM3": -605.2759068831074
+      },
+      "facilities": [
+        {
+          "hydrologyTimeSeconds": 86339.0,
+          "areaM2": 2.35,
+          "surfaceDepthMm": 0.0,
+          "soilMoisture": null,
+          "storageDepthMm": 1000.0000000000001,
+          "inflowM3": 61.122831713218744,
+          "evaporationM3": 0.0,
+          "infiltrationM3": 0.0,
+          "surfaceOutflowM3": 58.77283171321875,
+          "drainOutflowM3": 0.0,
+          "initialStorageM3": 0.0,
+          "finalStorageM3": 2.35,
+          "number": 1.0,
+          "drainNodeIndex": 3.0,
+          "drainSubcatchmentIndex": -1.0,
+          "swmmId": "WL_CisternTwo",
+          "subcatchmentId": "S1",
+          "balanceResidualM3": -7.105427357601002e-15,
+          "allowedResidualM3": 0.6112283171321875,
+          "continuityPercent": -1.1624833402579978e-14,
+          "numericalStatus": "PASSED"
+        },
+        {
+          "hydrologyTimeSeconds": 86339.0,
+          "areaM2": 2.35,
+          "surfaceDepthMm": 0.0,
+          "soilMoisture": null,
+          "storageDepthMm": 1000.0000000000001,
+          "inflowM3": 61.122831713218744,
+          "evaporationM3": 0.0,
+          "infiltrationM3": 0.0,
+          "surfaceOutflowM3": 58.77283171321875,
+          "drainOutflowM3": 0.0,
+          "initialStorageM3": 0.0,
+          "finalStorageM3": 2.35,
+          "number": 1.0,
+          "drainNodeIndex": 3.0,
+          "drainSubcatchmentIndex": -1.0,
+          "swmmId": "WL_CisternOne",
+          "subcatchmentId": "S1",
+          "balanceResidualM3": -7.105427357601002e-15,
+          "allowedResidualM3": 0.6112283171321875,
+          "continuityPercent": -1.1624833402579978e-14,
+          "numericalStatus": "PASSED"
+        },
+        {
+          "hydrologyTimeSeconds": 86339.0,
+          "areaM2": 100.0,
+          "surfaceDepthMm": 54.450133729150494,
+          "soilMoisture": 0.52,
+          "storageDepthMm": 304.8,
+          "inflowM3": 286.24630900424137,
+          "evaporationM3": 0.0,
+          "infiltrationM3": 3.6200788481480806,
+          "surfaceOutflowM3": 206.96129599301955,
+          "drainOutflowM3": 34.798022127449876,
+          "initialStorageM3": 4.876799999999999,
+          "finalStorageM3": 46.001834715650816,
+          "number": 1.0,
+          "drainNodeIndex": 3.0,
+          "drainSubcatchmentIndex": -1.0,
+          "swmmId": "WL_Bioretention",
+          "subcatchmentId": "S1",
+          "balanceResidualM3": -0.2581226800269292,
+          "allowedResidualM3": 2.9138123168426833,
+          "continuityPercent": -0.08858589777210597,
+          "numericalStatus": "PASSED"
+        }
+      ],
+      "costing": {
+        "catalogSha256": "63186839053e9a254bc42ba25765dfb78831d5621a3382e5abe0d110ddb7fe3b",
+        "knownQuotedSubtotalKrw": 5714000,
+        "knownAnnualOperationEstimateKrw": 214280,
+        "completeInstalledCostKrw": null,
+        "unpricedPlacementIds": [
+          "Bioretention"
+        ],
+        "pricedPlacementCount": 2,
+        "totalPlacementCount": 3,
+        "eligibleForBudgetCharge": false,
+        "historicalPriceEligible": false,
+        "currentPriceEligible": false
+      }
+    }
+  ],
+  "limitations": [
+    "2.35m³ 용량 이외 치수·구경·유량계수·지연·초기 상태·배치는 설계 가정",
+    "논문 견적과 단면의 자재 규격 일치·현재 시공 가격·당시 재해 예산은 미검증",
+    "시설별 초기 견적과 문헌 유지비의 알려진 부분합; 미산정 생물저류/추가 공사/세금 포함 총공사비 아님"
+  ]
+}

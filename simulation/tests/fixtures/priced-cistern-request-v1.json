@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "catalogSha256": "63186839053e9a254bc42ba25765dfb78831d5621a3382e5abe0d110ddb7fe3b",
+  "items": [
+    {
+      "placementId": "CisternOne",
+      "quoteId": "C"
+    },
+    {
+      "placementId": "CisternTwo",
+      "quoteId": "C"
+    }
+  ]
+}

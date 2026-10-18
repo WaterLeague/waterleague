@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "basis": "PUBLIC_REFERENCE_DESIGN_NOT_SITE_MEASURED",
+  "placements": [
+    {
+      "id": "Bioretention",
+      "facilityType": "BIORETENTION",
+      "subcatchmentId": "S1",
+      "areaM2": 100,
+      "replacedImperviousM2": 100,
+      "treatedImperviousM2": 1000,
+      "initialSaturationPercent": 0,
+      "parameters": {
+        "surfaceDepthMm": 152.4,
+        "vegetationFraction": 0.1,
+        "soilDepthMm": 609.6,
+        "storageDepthMm": 304.8,
+        "storagePorosity": 0.3,
+        "nativeSeepageMmH": 4,
+        "nativeSeepageBasis": "DESIGN_ASSUMPTION",
+        "drain": {
+          "diameterMm": 25,
+          "dischargeCoefficient": 0.6,
+          "offsetMm": 152.4,
+          "delayHours": 0
+        }
+      }
+    },
+    {
+      "id": "CisternOne",
+      "facilityType": "RAINWATER_CISTERN",
+      "subcatchmentId": "S1",
+      "areaM2": 2.35,
+      "replacedImperviousM2": 2.35,
+      "treatedImperviousM2": 235,
+      "initialSaturationPercent": 0,
+      "parameters": {
+        "storageDepthMm": 1000,
+        "drain": {
+          "diameterMm": 25,
+          "dischargeCoefficient": 0.6,
+          "offsetMm": 100,
+          "delayHours": 6
+        }
+      }
+    },
+    {
+      "id": "CisternTwo",
+      "facilityType": "RAINWATER_CISTERN",
+      "subcatchmentId": "S1",
+      "areaM2": 2.35,
+      "replacedImperviousM2": 2.35,
+      "treatedImperviousM2": 235,
+      "initialSaturationPercent": 0,
+      "parameters": {
+        "storageDepthMm": 1000,
+        "drain": {
+          "diameterMm": 25,
+          "dischargeCoefficient": 0.6,
+          "offsetMm": 100,
+          "delayHours": 6
+        }
+      }
+    }
+  ]
+}

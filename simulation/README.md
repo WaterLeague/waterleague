@@ -37,3 +37,16 @@ MPLBACKEND=Agg tmp/flood-venv/bin/python scripts/verify_flood_engines.py \
 ```
 
 참조 실행에는 이미 확보한 `tmp/epa-reference/applications.zip` 사용. `--source`로 같은 해시의 원본 위치 지정 가능. 출력 디렉터리는 새 경로 필수. 관망 INP/RPT/OUT·상태 프레임·경계 변경과 지표 입력/수심/유속/SWW·엔진/코드 해시 보존. 실패 수치 사례도 manifest에 포함한다. 이 실행은 엔진 기반 확인이며 서울 관망·지표 결합이나 현장 침수 검증 완료를 뜻하지 않는다. 실제 양방향 교환·지표 침투/증발산·공개 관망 입력은 후속 연결 대상이다.
+
+## 연결 시설의 공개 견적
+
+`engine/priced_facilities.py`는 연결 설계의 개별 이용조 용량을 `facilities/cistern-costs-v1.json`의 2.35m³ 견적과 대조한다. 수량은 배치된 개별 시설 개수로 계산하며 용량에 비례한 가격 외삽이나 단일 대형 저장조의 소형 설비 환산은 거부한다. 물리 계산에 넣는 면적·배수구·저류 깊이는 명시적 설계 입력이고 견적 문헌의 실측 치수가 아니다. 같은 물리 설계에서 견적 업체 변경은 INP를 바꾸지 않는다.
+
+```sh
+PYTHONPATH=simulation tmp/flood-venv/bin/python scripts/compare_connected_facilities.py \
+  --design simulation/tests/fixtures/priced-cisterns-v1.json \
+  --costing simulation/tests/fixtures/priced-cistern-request-v1.json \
+  --output data/runs/priced-cisterns-new
+```
+
+보관한 서초 연구 원본과 별도 시설 관측 엔진 필요. 원가 요청의 전체 참조를 먼저 검사하고, 기준안·개별 시설·이용조 개방안·공동안을 실행한다. 원문의 견적 항목·미분류 차액·문헌 유지비·미산정 시설 ID·원가 해시·원문/코드가 결과에 포함된다. 견적 부분합과 연간 비용은 분리되며 총공사비·현행 단가·재해 당시 가격은 미확정. 운영 설치/예산 차감/순위에 사용하는 경로가 아니다.

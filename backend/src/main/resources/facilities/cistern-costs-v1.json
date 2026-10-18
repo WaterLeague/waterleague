@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "id": "JKSWE_CISTERN_QUOTES_2018_V1",
+  "currency": "KRW",
+  "facilityType": "RAINWATER_CISTERN",
+  "unitCapacityM3": "2.35",
+  "quantityUnit": "COMPLETE_QUOTED_ASSEMBLY",
+  "source": {
+    "title": "친환경시범마을의 LID 적용에 따른 물순환 효과 및 비용편익 분석",
+    "authors": ["백종석", "이상진", "신현석", "김형산"],
+    "url": "https://journal.cricit.kr/jkswe/XmlViewer/f253405",
+    "doi": "10.15681/KSWE.2017.34.1.57",
+    "publicationYear": 2018,
+    "publicationMonth": "2018-01",
+    "priceYear": null,
+    "quoteDate": null,
+    "sha256": "28f0c3969bbc2f1dd08e03fec2fddb70bfdecdfc4032bd871158eb3a1734e207",
+    "reference": "2.4.2.1, 2.5.1.1, Table 9",
+    "licence": "CC BY-NC 3.0",
+    "licenceUrl": "http://creativecommons.org/licenses/by-nc/3.0/"
+  },
+  "quotes": [
+    {"id": "A", "totalKrw": 5447000, "materialsKrw": 5149000, "components": {"BARREL": 3102000, "PIPE": 847000, "PUMP": 738000, "LOG": 297000, "ETC": 165000}},
+    {"id": "B", "totalKrw": 3512000, "materialsKrw": 2961000, "components": {"BARREL": 1421000, "PIPE": 715000, "PUMP": 550000, "LOG": 275000, "ETC": null}},
+    {"id": "C", "totalKrw": 2857000, "materialsKrw": 2857000, "components": {"BARREL": 1233000, "PIPE": 542000, "PUMP": 450000, "LOG": null, "ETC": 632000}}
+  ],
+  "componentLabels": {"BARREL": "물통", "PIPE": "배관", "PUMP": "펌프", "LOG": "원문 Log 항목", "ETC": "기타"},
+  "annualOperation": {
+    "basis": "LITERATURE_COST_ASSUMPTION_NOT_OBSERVED_BILL",
+    "ratesOnInitialCost": [
+      {"id": "ELECTRICITY", "label": "전기요금", "rate": "0.003"},
+      {"id": "MONITORING", "label": "모니터링", "rate": "0.007"},
+      {"id": "REPAIR_LABOUR_ETC", "label": "보수·기타·인건비", "rate": "0.01"}
+    ],
+    "cleaning": {"costKrw": 1000000, "households": 20},
+    "reference": "2.5.1.1; 본문이 인용한 Lee et al. (2012)의 비용 가정"
+  },
+  "scope": {
+    "evidence": "PUBLISHED_QUOTE_CAPACITY_MATCH_ONLY",
+    "vat": "UNKNOWN",
+    "priceAdjustment": "NONE",
+    "additionalConstruction": "NOT_COUNTED_BY_PAPER_NOT_PROVEN_ZERO",
+    "unresolved": ["견적 기준 시점", "부가세", "현장 토공·기초·철거·구조 보강", "운송·조립 비용의 세부 범위", "배관 길이·구경·펌프 곡선·물통 상세 치수", "현재 서울 시공 조건과 가격"]
+  },
+  "limitations": [
+    "2.35m³ 단위 설비 견적이며 임의 용량의 비례 단가가 아님",
+    "공개 업체 견적 세 건의 범위이며 확률적 신뢰구간이나 현재 시장 가격 범위가 아님",
+    "견적 용량 일치는 자재 규격·시공 조건·계산 단면의 일치 증거가 아님",
+    "원문의 미기재 항목은 null이며 무상 자재 또는 공사비 0으로 해석하지 않음",
+    "펌프 견적 포함은 펌프 곡선·재이용 수요·수질 성능의 확보를 뜻하지 않음",
+    "논문의 보조율을 차감하지 않으며 별도 미확정 공종·세금은 총공사비로 포함되지 않음",
+    "문헌의 연간 유지비 가정은 물리 계산의 실제 전력·운전·재이용량과 독립",
+    "현재 사업 한도·재해 당시 예산·가격 또는 운영 설치 승인으로 사용하지 않음"
+  ]
+}

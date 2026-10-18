@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "id": "JKSWE_CISTERN_QUOTES_2018",
+  "source": {
+    "title": "친환경시범마을의 LID 적용에 따른 물순환 효과 및 비용편익 분석",
+    "authors": [
+      "백종석",
+      "이상진",
+      "신현석",
+      "김형산"
+    ],
+    "url": "https://journal.cricit.kr/jkswe/XmlViewer/f253405",
+    "doi": "10.15681/KSWE.2017.34.1.57",
+    "publicationYear": 2018,
+    "publicationMonth": "2018-01",
+    "priceYear": null,
+    "quoteDate": null,
+    "sha256": "28f0c3969bbc2f1dd08e03fec2fddb70bfdecdfc4032bd871158eb3a1734e207",
+    "reference": "2.4.2.1, 2.5.1.1, Table 9",
+    "licence": "CC BY-NC 3.0",
+    "licenceUrl": "http://creativecommons.org/licenses/by-nc/3.0/"
+  },
+  "raw": {
+    "path": "data/private/facility-reference-20261018/jkswe-lid-costs-2018.html",
+    "bytes": 507913,
+    "sha256": "28f0c3969bbc2f1dd08e03fec2fddb70bfdecdfc4032bd871158eb3a1734e207"
+  },
+  "extraction": {
+    "method": "MANUAL_TABLE_9_AND_SECTIONS_2_4_2_1_2_5_1_1",
+    "catalogPath": "backend/src/main/resources/facilities/cistern-costs-v1.json",
+    "catalogSha256": "63186839053e9a254bc42ba25765dfb78831d5621a3382e5abe0d110ddb7fe3b"
+  },
+  "classification": "PUBLISHED_DESIGN_AND_QUOTES_NOT_AS_BUILT_OR_CURRENT_MARKET",
+  "notes": [
+    "2018년은 발표 연도이며 견적 기준 연도는 미확인",
+    "설계 용량 2.35m³와 견적 개별 항목 보존; 세대당 235m²는 집수 지붕 면적이며 물통 바닥 면적이 아님",
+    "연구의 243개×2.35m³는 571.05m³로 본문 전체 570m³와 반올림 차이; 계산에는 개별 용량만 사용",
+    "논문의 가격 비율 63%는 명시 금액과 산술 불일치하여 사용 제외",
+    "가격·용량 사실 추출, 원문 CC BY-NC 3.0의 출처와 이용 조건 보존"
+  ]
+}
