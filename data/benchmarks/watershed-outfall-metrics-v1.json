@@ -1,0 +1,155 @@
+{
+  "schemaVersion": 1,
+  "classification": "PUBLIC_NETWORK_REFERENCE_DESIGN_COMPARISON",
+  "catalogHash": "beaddba8868b6f1f6bbf35b1d53d4695a94db99498d8988f90d62013cf8f053c",
+  "inputHash": "57ee3f16cf15f169250af85ea12d450300c0c71e2572fa66918740b245b6af80",
+  "engine": {
+    "schemaVersion": 1,
+    "engineVersion": "5.2.4",
+    "revision": "7952ca837988b1c32f791812eccc9fd64547e093",
+    "sourceArchiveSha256": "3f76a199573088ce47ff02491c529afb73d9953ee9d948dfc89dcd4981b4c0c0",
+    "metricsSha256": "9a90e94998318db8bc2e25997d4c076bd8b5f09b171df768de98c4ba1c6bd28d",
+    "observerSha256": "c320fa1849cb4b03254167b107d1a9fefc7171b10c6ce397a0b82bb5c08c53e7",
+    "facilityObserverSha256": "fd6692274cec934d4f832223c69d8e3bdf31112fb02b875b153f70366cf21869",
+    "facilityObserverVersion": 1,
+    "metricsVersion": 1,
+    "builderSha256": "8540db81bd886e8226604a0683a50a9d6e54d1ae8a99176349329a6ae16e3e15",
+    "binarySha256": "3190412f6dee5afd88aef2c081c0fb5a821d01788f3a7f15652cb0713f34cd78",
+    "modification": "READ_ONLY_LID_AND_NATIVE_OUTFALL_METRICS_NO_SOLVER_CHANGES",
+    "adapterSha256": "2a8fbb64df92edc48e9a11741ccb6d428a5bc7994a487733eb54583071cd0eb1",
+    "facilityAdapterSha256": "d8a17fe1650df27dc0a46f48deb92f6e4a04bf69fc6d17e383484ba962df75db",
+    "metricsAdapterSha256": "f0219c6affedd4b95b049815c4242b7fe8f56abe917b97f8c2d55ca2c65802df",
+    "baseAdapterSha256": "f9fa6734de7a3adc64f1bd456862d80260115c656a6bc1c0b090841883bfb0d7",
+    "qualityAdapterSha256": "c78323b383d37be56c34b8cc2d5084e4a92e3de6bbc2a818d914acbabf3eb930",
+    "platform": "macOS-27.0.1-arm64-arm-64bit"
+  },
+  "resultSha256": "794f25bfd8154b81b31b475bbf930d01348261a81e7c073cfd015f576aecfb06",
+  "numericalStatus": "PASSED",
+  "signedReductionM3": {
+    "outflowM3": -5.145423324778676,
+    "floodingM3": 51.337923989398405
+  },
+  "signedPeakReductionM3s": 0.0,
+  "metrics": {
+    "baseline": {
+      "specificationSha256": "d1d16a03051f33f0bfe03343dd7862c21a2e796442175798e85d664ff4cc72c2",
+      "complete": true,
+      "method": "NATIVE_ROUTING_STEP_DIRECTIONAL_TRAPEZOIDAL_INTEGRAL",
+      "peakMethod": "SIMULTANEOUS_SELECTED_OUTFALL_SUM",
+      "outfalls": {
+        "Out1": {
+          "outwardVolumeM3": 1698113.0619242836,
+          "inwardVolumeM3": 0.0,
+          "peakOutwardM3s": 21.6348078727807,
+          "peakInwardM3s": 0.0,
+          "peakOutwardTimeSeconds": 51893.095,
+          "peakInwardTimeSeconds": 0.0,
+          "coveredSeconds": 86339.0,
+          "nativeSteps": 1392566.0
+        },
+        "Out2": {
+          "outwardVolumeM3": 482636.79340946407,
+          "inwardVolumeM3": 0.0,
+          "peakOutwardM3s": 17.406227075478647,
+          "peakInwardM3s": 0.0,
+          "peakOutwardTimeSeconds": 57599.699,
+          "peakInwardTimeSeconds": 0.0,
+          "coveredSeconds": 86339.0,
+          "nativeSteps": 1392566.0
+        }
+      },
+      "combined": {
+        "outwardVolumeM3": 2180749.8553501973,
+        "inwardVolumeM3": 0.0,
+        "peakOutwardM3s": 39.04103494825935,
+        "peakInwardM3s": 0.0,
+        "peakOutwardTimeSeconds": 57599.699,
+        "peakInwardTimeSeconds": 0.0,
+        "coveredSeconds": 86339.0,
+        "nativeSteps": 1392566.0
+      },
+      "specification": {
+        "schemaVersion": 1,
+        "policyVersion": "PUBLIC_NETWORK_ALL_OUTFALLS_v1",
+        "startMilliseconds": 0,
+        "endMilliseconds": 86339000,
+        "networkOutfalls": [
+          "Out1",
+          "Out2"
+        ]
+      }
+    },
+    "strategy": {
+      "specificationSha256": "d1d16a03051f33f0bfe03343dd7862c21a2e796442175798e85d664ff4cc72c2",
+      "complete": true,
+      "method": "NATIVE_ROUTING_STEP_DIRECTIONAL_TRAPEZOIDAL_INTEGRAL",
+      "peakMethod": "SIMULTANEOUS_SELECTED_OUTFALL_SUM",
+      "outfalls": {
+        "Out1": {
+          "outwardVolumeM3": 1698118.2069200051,
+          "inwardVolumeM3": 0.0,
+          "peakOutwardM3s": 21.6348078727807,
+          "peakInwardM3s": 0.0,
+          "peakOutwardTimeSeconds": 51893.095,
+          "peakInwardTimeSeconds": 0.0,
+          "coveredSeconds": 86339.0,
+          "nativeSteps": 1392566.0
+        },
+        "Out2": {
+          "outwardVolumeM3": 482636.7938374022,
+          "inwardVolumeM3": 0.0,
+          "peakOutwardM3s": 17.406227075478647,
+          "peakInwardM3s": 0.0,
+          "peakOutwardTimeSeconds": 57599.699,
+          "peakInwardTimeSeconds": 0.0,
+          "coveredSeconds": 86339.0,
+          "nativeSteps": 1392566.0
+        }
+      },
+      "combined": {
+        "outwardVolumeM3": 2180755.0007738294,
+        "inwardVolumeM3": 0.0,
+        "peakOutwardM3s": 39.04103494825935,
+        "peakInwardM3s": 0.0,
+        "peakOutwardTimeSeconds": 57599.699,
+        "peakInwardTimeSeconds": 0.0,
+        "coveredSeconds": 86339.0,
+        "nativeSteps": 1392566.0
+      },
+      "specification": {
+        "schemaVersion": 1,
+        "policyVersion": "PUBLIC_NETWORK_ALL_OUTFALLS_v1",
+        "startMilliseconds": 0,
+        "endMilliseconds": 86339000,
+        "networkOutfalls": [
+          "Out1",
+          "Out2"
+        ]
+      }
+    }
+  },
+  "previousBinaryUnchanged": {
+    "baseline": true,
+    "strategy": true
+  },
+  "replay": [
+    {
+      "id": "baseline",
+      "outSha256": "682eeb8bb19391dde81c640bc68f91de924852787689c89cbd46a3c771006c18",
+      "binaryEqual": true,
+      "metricsEqual": true
+    },
+    {
+      "id": "strategy",
+      "outSha256": "769332420a751c772db450c3d29cfa6ddcb3b7b8b32ee44894149607b85c416f",
+      "binaryEqual": true,
+      "metricsEqual": true
+    }
+  ],
+  "rankingEligible": false,
+  "limitations": [
+    "원 관망의 2010 강우·추정 외부 유입·초기 상태 보존",
+    "선행 강우 초기화는 외부 유입의 선행 기간 미확보로 미연결",
+    "현장 침수 판정과 운영 순위에 미사용"
+  ]
+}

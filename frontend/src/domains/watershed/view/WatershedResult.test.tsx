@@ -1,6 +1,7 @@
 import { expect, it } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import fixture from './fixtures/public-network-result.json';
+import peaks from './fixtures/public-network-peaks.json';
 import { watershedJobDto, watershedResultDto } from '../dto/watershedDto';
 import { WatershedResult } from './WatershedResult';
 import { FacilityExpansionPanel } from './FacilityExpansionPanel';
@@ -95,4 +96,47 @@ it('공통 시설창에 12군의 사용 범위를 구분하고 비회원 계산 
     expect(html).toContain(name);
   expect(html).toContain('아직 설치하거나 이 화면에서 계산할 수 없습니다');
   expect(html).not.toContain('/bundle');
+});
+const withPeaks = () => ({
+  ...fixture,
+  signedPeakReductionM3s: peaks.signedPeakReductionM3s,
+  cases: fixture.cases.map((c) => ({
+    ...c,
+    evaluationMetrics: peaks.cases.find((p) => p.id === c.id)!.evaluationMetrics,
+  })),
+});
+it('실제 관망의 첨두 변화 없음과 출구별 발생 시각 표시', () => {
+  const result = watershedResultDto.parse(withPeaks());
+  const html = renderToStaticMarkup(<WatershedResult job={{ ...job(), result }} />);
+  expect(html).toContain('외부 출구 동시 합계 첨두');
+  expect(html).toContain('39.041');
+  expect(html).toContain('변화 없음');
+  expect(html).toContain('Out1');
+  expect(html).toContain('Out2');
+  expect(html).toContain('14시간 24분 53.095초');
+  expect(renderToStaticMarkup(<WatershedResult job={job()} />)).toContain(
+    '출구 첨두가 수집되지 않았습니다'
+  );
+});
+it('첨두 악화 보존과 평가 기간·출구·부호·실패 불일치 차단', () => {
+  const worse = withPeaks();
+  worse.cases = structuredClone(worse.cases);
+  worse.cases[1].evaluationMetrics.combined.peakOutwardM3s += 1;
+  worse.signedPeakReductionM3s = -1;
+  const html = renderToStaticMarkup(
+    <WatershedResult job={{ ...job(), result: watershedResultDto.parse(worse) }} />
+  );
+  expect(html).toContain('1 m³/s 증가');
+  for (const change of ['sign', 'window', 'outfall', 'incomplete', 'failed']) {
+    const bad = structuredClone(worse);
+    if (change === 'sign') bad.signedPeakReductionM3s = 1;
+    if (change === 'window') bad.cases[1].evaluationMetrics.specification.endMilliseconds -= 1000;
+    if (change === 'outfall')
+      bad.cases[1].evaluationMetrics.specification.networkOutfalls = ['Out1'];
+    if (change === 'incomplete') bad.cases[1].evaluationMetrics.complete = false;
+    if (change === 'failed') {
+      bad.numericalStatus = 'FAILED';
+    }
+    expect(watershedResultDto.safeParse(bad).success, change).toBe(false);
+  }
 });

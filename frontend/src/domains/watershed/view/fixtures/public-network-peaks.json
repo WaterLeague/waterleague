@@ -1,0 +1,103 @@
+{
+  "sourceRun": "tmp/watershed-outfall-metrics-v1",
+  "sourceResultSha256": "ee0abbb16f7f93924d96561f4f3b669339a00f3844fae032e9d385484a08b84f",
+  "cases": [
+    {
+      "id": "baseline",
+      "evaluationMetrics": {
+        "specificationSha256": "d1d16a03051f33f0bfe03343dd7862c21a2e796442175798e85d664ff4cc72c2",
+        "complete": true,
+        "method": "NATIVE_ROUTING_STEP_DIRECTIONAL_TRAPEZOIDAL_INTEGRAL",
+        "peakMethod": "SIMULTANEOUS_SELECTED_OUTFALL_SUM",
+        "outfalls": {
+          "Out1": {
+            "outwardVolumeM3": 1698113.0619242836,
+            "inwardVolumeM3": 0.0,
+            "peakOutwardM3s": 21.6348078727807,
+            "peakInwardM3s": 0.0,
+            "peakOutwardTimeSeconds": 51893.095,
+            "peakInwardTimeSeconds": 0.0,
+            "coveredSeconds": 86339.0,
+            "nativeSteps": 1392566.0
+          },
+          "Out2": {
+            "outwardVolumeM3": 482636.79340946407,
+            "inwardVolumeM3": 0.0,
+            "peakOutwardM3s": 17.406227075478647,
+            "peakInwardM3s": 0.0,
+            "peakOutwardTimeSeconds": 57599.699,
+            "peakInwardTimeSeconds": 0.0,
+            "coveredSeconds": 86339.0,
+            "nativeSteps": 1392566.0
+          }
+        },
+        "combined": {
+          "outwardVolumeM3": 2180749.8553501973,
+          "inwardVolumeM3": 0.0,
+          "peakOutwardM3s": 39.04103494825935,
+          "peakInwardM3s": 0.0,
+          "peakOutwardTimeSeconds": 57599.699,
+          "peakInwardTimeSeconds": 0.0,
+          "coveredSeconds": 86339.0,
+          "nativeSteps": 1392566.0
+        },
+        "specification": {
+          "schemaVersion": 1,
+          "policyVersion": "PUBLIC_NETWORK_ALL_OUTFALLS_v1",
+          "startMilliseconds": 0,
+          "endMilliseconds": 86339000,
+          "networkOutfalls": ["Out1", "Out2"]
+        }
+      }
+    },
+    {
+      "id": "strategy",
+      "evaluationMetrics": {
+        "specificationSha256": "d1d16a03051f33f0bfe03343dd7862c21a2e796442175798e85d664ff4cc72c2",
+        "complete": true,
+        "method": "NATIVE_ROUTING_STEP_DIRECTIONAL_TRAPEZOIDAL_INTEGRAL",
+        "peakMethod": "SIMULTANEOUS_SELECTED_OUTFALL_SUM",
+        "outfalls": {
+          "Out1": {
+            "outwardVolumeM3": 1698118.2069200051,
+            "inwardVolumeM3": 0.0,
+            "peakOutwardM3s": 21.6348078727807,
+            "peakInwardM3s": 0.0,
+            "peakOutwardTimeSeconds": 51893.095,
+            "peakInwardTimeSeconds": 0.0,
+            "coveredSeconds": 86339.0,
+            "nativeSteps": 1392566.0
+          },
+          "Out2": {
+            "outwardVolumeM3": 482636.7938374022,
+            "inwardVolumeM3": 0.0,
+            "peakOutwardM3s": 17.406227075478647,
+            "peakInwardM3s": 0.0,
+            "peakOutwardTimeSeconds": 57599.699,
+            "peakInwardTimeSeconds": 0.0,
+            "coveredSeconds": 86339.0,
+            "nativeSteps": 1392566.0
+          }
+        },
+        "combined": {
+          "outwardVolumeM3": 2180755.0007738294,
+          "inwardVolumeM3": 0.0,
+          "peakOutwardM3s": 39.04103494825935,
+          "peakInwardM3s": 0.0,
+          "peakOutwardTimeSeconds": 57599.699,
+          "peakInwardTimeSeconds": 0.0,
+          "coveredSeconds": 86339.0,
+          "nativeSteps": 1392566.0
+        },
+        "specification": {
+          "schemaVersion": 1,
+          "policyVersion": "PUBLIC_NETWORK_ALL_OUTFALLS_v1",
+          "startMilliseconds": 0,
+          "endMilliseconds": 86339000,
+          "networkOutfalls": ["Out1", "Out2"]
+        }
+      }
+    }
+  ],
+  "signedPeakReductionM3s": 0.0
+}

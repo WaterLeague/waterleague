@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { watershedCostCatalogDto, watershedCostSnapshotDto } from './watershedCostDto';
 import { watershedLayoutDto } from './watershedLayoutDto';
+import { watershedMetricsDto } from './watershedMetricsDto';
 const hash = z.string().regex(/^[a-f0-9]{64}$/);
 const amount = z.number().finite();
 export const networkFacilityDto = z.enum([
@@ -82,6 +83,7 @@ const caseDto = z.object({
   id: z.enum(['baseline', 'strategy']),
   numericalStatus: z.enum(['PASSED', 'FAILED']),
   complete: z.boolean().optional(),
+  evaluationMetrics: watershedMetricsDto.optional(),
   totals: totals.optional(),
   calendarShortfallSeconds: amount.optional(),
   runoffContinuityPercent: amount.optional(),
@@ -111,6 +113,7 @@ export const watershedResultDto = z
     numericalStatus: z.enum(['PASSED', 'FAILED']),
     cases: z.array(caseDto).length(2),
     signedReductionM3: z.object({ floodingM3: amount, outflowM3: amount }).nullable(),
+    signedPeakReductionM3s: amount.nullable().optional(),
     rankingEligible: z.literal(false),
     historicalReconstructionEligible: z.literal(false),
     completeInstalledCostKrw: z.null(),
@@ -129,6 +132,23 @@ export const watershedResultDto = z
       ctx.addIssue({ code: 'custom', message: '계산 상태와 원 지표 불일치' });
     if (value.numericalStatus === 'FAILED' && value.signedReductionM3 !== null)
       ctx.addIssue({ code: 'custom', message: '실패한 계산의 효과 표시 금지' });
+    if (value.numericalStatus === 'FAILED' && value.signedPeakReductionM3s != null)
+      ctx.addIssue({ code: 'custom', message: '실패한 계산의 첨두 비교 금지' });
+    const bm = baseline?.evaluationMetrics;
+    const sm = strategy?.evaluationMetrics;
+    if (value.numericalStatus === 'PASSED' && (bm || sm || value.signedPeakReductionM3s != null)) {
+      if (
+        !bm?.complete ||
+        !sm?.complete ||
+        bm.specificationSha256 !== sm.specificationSha256 ||
+        JSON.stringify(bm.specification) !== JSON.stringify(sm.specification) ||
+        value.signedPeakReductionM3s == null ||
+        Math.abs(
+          value.signedPeakReductionM3s - (bm.combined.peakOutwardM3s - sm.combined.peakOutwardM3s)
+        ) > 1e-10
+      )
+        ctx.addIssue({ code: 'custom', message: '첨두 비교의 평가 범위·변화량 불일치' });
+    }
     if (value.numericalStatus === 'PASSED') {
       if (!value.signedReductionM3) ctx.addIssue({ code: 'custom', message: '효과 비교 누락' });
       else if (baseline?.totals && strategy?.totals) {

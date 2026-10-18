@@ -1,5 +1,6 @@
 import type { WatershedJob } from '../dto/watershedDto';
 import { WatershedCosts } from './WatershedCosts';
+import { WatershedPeaks } from './WatershedPeaks';
 import { networkNames } from '../service/watershedDesign';
 import { physicalAmount as number } from '../../physics/service/physicalValueFormat';
 const totalAmount = (value: number) =>
@@ -82,6 +83,17 @@ export function WatershedResult({ job }: { job: WatershedJob }) {
                 월류량은 지표 침수 깊이가 아닙니다. 방류량의 변화만으로 하류 침수 위험이나 첨두
                 감소를 판단할 수 없습니다.
               </p>
+              {baseline?.evaluationMetrics &&
+              strategy?.evaluationMetrics &&
+              result.signedPeakReductionM3s != null ? (
+                <WatershedPeaks
+                  baseline={baseline.evaluationMetrics}
+                  strategy={strategy.evaluationMetrics}
+                  reduction={result.signedPeakReductionM3s}
+                />
+              ) : (
+                <p>이전 계산 기록에는 출구 첨두가 수집되지 않았습니다.</p>
+              )}
             </>
           )}
           <details>

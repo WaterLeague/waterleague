@@ -8,6 +8,46 @@ from pathlib import Path
 import platform
 
 
+def observed_run(engine, paths, metrics):
+    engine.swmm_open.argtypes = [ctypes.c_char_p] * 3
+    engine.wl_metricsBegin.argtypes = [ctypes.c_double, ctypes.c_double, ctypes.POINTER(ctypes.c_int), ctypes.c_int]
+    engine.swmm_getIndex.argtypes = [ctypes.c_int, ctypes.c_char_p]
+    engine.wl_networkAdvance.argtypes = [ctypes.c_int, ctypes.POINTER(ctypes.c_double)]
+    engine.wl_metricsRead.argtypes = [ctypes.c_int, ctypes.POINTER(ctypes.c_double), ctypes.c_int]
+    spec = metrics['specification']
+    def check(status):
+        if status != 0:
+            raise ValueError('WATERSHED_REPLAY_ENGINE_FAILED')
+    try:
+        check(engine.swmm_open(*(os.fsencode(p) for p in paths)))
+        check(engine.swmm_start(1))
+        check(engine.wl_networkBegin())
+        ids = spec['networkOutfalls']
+        indexes = (ctypes.c_int * len(ids))(*(engine.swmm_getIndex(2, n.encode()) for n in ids))
+        check(engine.wl_metricsBegin(spec['startMilliseconds']/1000, spec['endMilliseconds']/1000, indexes, len(ids)))
+        elapsed = ctypes.c_double()
+        for _ in range(20_000_000):
+            check(engine.wl_networkAdvance(0, ctypes.byref(elapsed)))
+            if elapsed.value == 0:
+                break
+        else:
+            raise ValueError('WATERSHED_REPLAY_STEP_LIMIT')
+        fields = ('outwardVolumeM3', 'inwardVolumeM3', 'peakOutwardM3s', 'peakInwardM3s',
+                  'peakOutwardTimeSeconds', 'peakInwardTimeSeconds', 'coveredSeconds', 'nativeSteps')
+        rows = []
+        for i in range(len(ids)+1):
+            raw = (ctypes.c_double * 8)()
+            check(engine.wl_metricsRead(i, raw, 8))
+            rows.append(dict(zip(fields, raw)))
+        check(engine.swmm_end())
+        check(engine.swmm_report())
+        return dict(zip(ids, rows[:-1])) == metrics['outfalls'] and rows[-1] == metrics['combined']
+    finally:
+        engine.wl_metricsRelease()
+        engine.wl_networkRelease()
+        engine.swmm_close()
+
+
 def replay(bundle, destination):
     bundle=Path(bundle).resolve()
     destination=Path(destination).resolve()
@@ -30,12 +70,19 @@ def replay(bundle, destination):
         source=target/'network.inp';source.write_bytes((bundle/name/'network.inp').read_bytes())
         paths=[target/('network.'+ext) for ext in ('inp','rpt','out')]
         if any(len(os.fsencode(p))>259 for p in paths): raise ValueError('WATERSHED_REPLAY_PATH_TOO_LONG')
-        status=engine.swmm_run(*(os.fsencode(p) for p in paths))
-        if status!=0: raise ValueError('WATERSHED_REPLAY_ENGINE_FAILED')
+        case = next(c for c in result['cases'] if c['id'] == name)
+        metrics = case.get('evaluationMetrics')
+        if metrics:
+            metrics_equal = observed_run(engine, paths, metrics)
+        else:
+            status=engine.swmm_run(*(os.fsencode(p) for p in paths))
+            if status!=0: raise ValueError('WATERSHED_REPLAY_ENGINE_FAILED')
         sha=hashlib.sha256(paths[2].read_bytes()).hexdigest()
         rows.append({'id':name,'outSha256':sha,'binaryEqual':sha==expected[name+'/network.out']})
+        if metrics:
+            rows[-1]['metricsEqual'] = metrics_equal
     (destination/'replay.json').write_text(json.dumps(rows,indent=2)+'\n')
-    if not all(r['binaryEqual'] for r in rows): raise ValueError('WATERSHED_REPLAY_DIFFERENT')
+    if not all(r['binaryEqual'] and r.get('metricsEqual', True) for r in rows): raise ValueError('WATERSHED_REPLAY_DIFFERENT')
     return rows
 
 

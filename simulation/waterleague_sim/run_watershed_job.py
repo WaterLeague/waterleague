@@ -8,7 +8,7 @@ import shutil
 import sys
 from zipfile import ZipFile, ZIP_DEFLATED
 
-from .engine import facility_network
+from .engine import facility_metrics as facility_network
 from .engine.connected_facilities import compile_design, CATALOG_PATH, CATALOG_SHA256
 from .engine.flood_errors import FloodModelError, require
 from .engine.flood_process import EngineProcess
@@ -82,7 +82,8 @@ def calculate(request, directory):
     with ZipFile(directory/'implementation.zip', 'w', ZIP_DEFLATED) as archive:
         files = [*sorted((ROOT/'simulation/waterleague_sim').rglob('*.py')),
                  ROOT/'simulation/native/network_snapshot.inc', ROOT/'simulation/native/connected_lid_snapshot.inc',
-                 ROOT/'scripts/build_facility_swmm.py', ROOT/'scripts/build_live_swmm.py',
+                 ROOT/'simulation/native/network_metrics.inc',
+                 ROOT/'scripts/build_facility_metrics_swmm.py', ROOT/'scripts/build_live_swmm.py',
                  ROOT/'simulation/pyproject.toml', ROOT/'simulation/uv.lock']
         for path in files:
             archive.write(path, str(path.relative_to(ROOT)))
@@ -92,7 +93,7 @@ def calculate(request, directory):
         case = {'id': name, 'inputSha256': digest(raw)}
         (directory/(name+'-input.inp')).write_bytes(raw)
         try:
-            with EngineProcess('facility_network', raw.decode(), target, native_duration=True) as process:
+            with EngineProcess('facility_metrics', raw.decode(), target, native_duration=True) as process:
                 result = process.call('run', 300)['result']
             case.update({key: result[key] for key in ('numericalStatus', 'runoffContinuityPercent',
                 'routingContinuityPercent', 'numericalQuality', 'convergence', 'facilityQuality')})
@@ -100,10 +101,14 @@ def calculate(request, directory):
             case['totals'] = result['final']['totals']
             case['facilities'] = result['final']['facilities']
             case['outfalls'] = {key: value for key, value in result['final']['nodes'].items() if value['type'] == 1}
+            case['evaluationMetrics'] = result['evaluationMetrics']
         except FloodModelError as error:
             case.update(numericalStatus='FAILED', failureCode=str(error))
         cases.append(case)
     passed = all(v['numericalStatus'] == 'PASSED' for v in cases)
+    if passed:
+        passed = (cases[0]['evaluationMetrics']['specificationSha256']
+                  == cases[1]['evaluationMetrics']['specificationSha256'])
     result = {'schemaVersion': 1, 'catalogHash': CATALOG_HASH, 'inputHash': request['inputHash'],
         'classification': 'PUBLIC_NETWORK_REFERENCE_DESIGN_COMPARISON', 'engine': engine,
         'numericalProfile': catalog['numericalProfile'],
@@ -111,12 +116,15 @@ def calculate(request, directory):
         'numericalStatus': 'PASSED' if passed else 'FAILED', 'cases': cases,
         'signedReductionM3': {key: cases[0]['totals'][key]-cases[1]['totals'][key]
                               for key in ('outflowM3', 'floodingM3')} if passed else None,
+        'signedPeakReductionM3s': (cases[0]['evaluationMetrics']['combined']['peakOutwardM3s']
+                                  - cases[1]['evaluationMetrics']['combined']['peakOutwardM3s']) if passed else None,
         'sourceUrl': catalog['sourceUrl'], 'attribution': catalog['attribution'], 'licence': catalog['licence'],
         'rankingEligible': False, 'historicalReconstructionEligible': False,
         'completeInstalledCostKrw': None, 'budgetChargedKrw': None,
         'limitations': catalog['limitations'] + transformation['limitations'] + ['월류 체적은 지표 침수 깊이·면적·지속시간의 대체 지표가 아님',
             '원본 EXTRAN 수치 실패를 보존하고 별도 SLOT 파생 입력으로 계산; 원본의 달력 종료보다 1초 짧은 엔진 평가 창',
-            '방류 체적만으로 하류 첨두 개선을 판정하지 않으며 필수 침수 지표 미확보로 총점 없음']}
+            '첨두는 같은 시각의 모든 외부 출구 유량 합의 최댓값이며 출구별 최댓값의 합이 아님',
+            '외부 출구 첨두는 공개 연구 관망의 계산값이며 실제 하류 침수 위험도·현장 효과 확정값이 아님; 필수 지표 침수 미확보로 총점 없음']}
     if cost_raw is not None:
         result['costing'] = design['costing']
     return result

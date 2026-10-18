@@ -25,7 +25,8 @@
         { WatershedResult },
         { watershedCatalogDto, watershedJobDto },
         { default: catalogRaw },
-        { default: result },
+        { default: storedResult },
+        { default: peaks },
       ] = await Promise.all([
         import('react'),
         import('react-dom/client'),
@@ -34,8 +35,17 @@
         import('/src/domains/watershed/dto/watershedDto.ts'),
         import('/src/domains/watershed/view/fixtures/catalog.json'),
         import('/src/domains/watershed/view/fixtures/public-network-result.json'),
+        import('/src/domains/watershed/view/fixtures/public-network-peaks.json'),
         import('/src/domains/watershed/view/watershed.css'),
       ]);
+      const result = {
+        ...storedResult,
+        signedPeakReductionM3s: peaks.signedPeakReductionM3s,
+        cases: storedResult.cases.map((c) => ({
+          ...c,
+          evaluationMetrics: peaks.cases.find((p) => p.id === c.id).evaluationMetrics,
+        })),
+      };
       const catalog = watershedCatalogDto.parse(catalogRaw);
       const original = watershedJobDto.parse({
         id: '10000000-0000-4000-8000-000000000001',
@@ -70,6 +80,7 @@
                   ...result,
                   numericalStatus: 'FAILED',
                   signedReductionM3: null,
+                  signedPeakReductionM3s: null,
                   cases: [
                     result.cases[0],
                     { id: 'strategy', numericalStatus: 'FAILED', failureCode: 'QA_ONLY' },

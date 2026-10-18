@@ -14,6 +14,7 @@ _METHODS = {
 }
 _METHODS['network_metrics'] = _METHODS['network_exchange'] | {'metric_state'}
 _METHODS['facility_network'] = _METHODS['network']
+_METHODS['facility_metrics'] = _METHODS['network'] | {'metric_state'}
 _METHODS['coupled_facility_network'] = _METHODS['network_metrics']
 for _engine in ('surface', 'surface_exchange'):
     _METHODS[_engine] = _METHODS[_engine] | {'initialization_state'}
@@ -28,8 +29,10 @@ def _serve(connection, engine, model, directory, evaluation_seconds, native_dura
                                      'MKL_NUM_THREADS': '1', 'MPLBACKEND': 'Agg'})
     session = None
     try:
-        if engine in ('network', 'network_exchange', 'network_metrics', 'facility_network', 'coupled_facility_network'):
-            if engine == 'coupled_facility_network':
+        if engine in ('network', 'network_exchange', 'network_metrics', 'facility_network', 'facility_metrics', 'coupled_facility_network'):
+            if engine == 'facility_metrics':
+                from waterleague_sim.engine.facility_metrics import FacilityMetricsSession as NetworkSession
+            elif engine == 'coupled_facility_network':
                 from waterleague_sim.engine.coupled_facility_network import CoupledFacilityNetworkSession as NetworkSession
             elif engine == 'facility_network':
                 from waterleague_sim.engine.facility_network import FacilityNetworkSession as NetworkSession
@@ -68,7 +71,7 @@ def _serve(connection, engine, model, directory, evaluation_seconds, native_dura
         except (EOFError, BrokenPipeError, OSError):
             pass
     finally:
-        if engine in ('network', 'network_exchange', 'network_metrics', 'facility_network', 'coupled_facility_network') and session is not None:
+        if engine in ('network', 'network_exchange', 'network_metrics', 'facility_network', 'facility_metrics', 'coupled_facility_network') and session is not None:
             session.close()
         connection.close()
 
@@ -79,7 +82,7 @@ class EngineProcess:
     def __init__(self, engine, model, directory, *, evaluation_seconds=None, timeout_seconds=60,
                  native_duration=False):
         require(engine in _METHODS, 'FLOOD_ENGINE_KIND_INVALID')
-        require(type(native_duration) is bool and (not native_duration or engine in ('network', 'facility_network')),
+        require(type(native_duration) is bool and (not native_duration or engine in ('network', 'facility_network', 'facility_metrics')),
                 'FLOOD_NATIVE_DURATION_DIAGNOSTIC_ONLY')
         self.native_duration = native_duration
         require(type(timeout_seconds) in (int, float) and 0 < timeout_seconds <= 60,
