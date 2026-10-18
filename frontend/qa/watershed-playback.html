@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>공개 관망 수위·유량 재생 검증</title>
+  </head>
+  <body style="margin: 0; background: #f3f5ec; color: #29453d; font: 14px system-ui">
+    <header style="padding: 16px; border-bottom: 1px solid #cbd6c6">
+      <strong>공개 관망 원 계산 · 로컬 재생 검증</strong>
+      <p>실제 EPA 계산의 선택 기록 5개 · 원 연구 입력 비교 · 서울 현장 침수 재현 아님</p>
+    </header>
+    <main id="root" style="max-width: 460px; padding: 20px; margin: auto"></main>
+    <script type="module">
+      if (!import.meta.env.DEV || !['127.0.0.1', 'localhost', '[::1]'].includes(location.hostname))
+        throw new Error('로컬 개발 환경 전용');
+      const [
+        { default: React },
+        { createRoot },
+        { WatershedPlaybackView },
+        { playbackCatalogDto, playbackFrameDto },
+        { watershedLayoutDto },
+        { requirePlaybackBinding },
+      ] = await Promise.all([
+        import('react'),
+        import('react-dom/client'),
+        import('/src/domains/watershed/view/WatershedPlayback.tsx'),
+        import('/src/domains/watershed/dto/playbackDto.ts'),
+        import('/src/domains/watershed/dto/watershedLayoutDto.ts'),
+        import('/src/domains/watershed/service/playback.ts'),
+        import('/src/domains/watershed/view/watershed.css'),
+      ]);
+      const raw = await fetch('./watershed-playback.local.json').then((r) => {
+        if (!r.ok) throw new Error('원 계산 검증 자료 필요');
+        return r.json();
+      });
+      const catalog = playbackCatalogDto.parse(raw.catalog),
+        layout = watershedLayoutDto.parse(raw.layout);
+      const frames = raw.frames.map((f, i) =>
+        requirePlaybackBinding(catalog, playbackFrameDto.parse(f), catalog.timesSeconds[i])
+      );
+      function App() {
+        const [index, setIndex] = React.useState(2),
+          [playing, setPlaying] = React.useState(false);
+        React.useEffect(() => {
+          if (!playing) return;
+          if (index === frames.length - 1) {
+            setPlaying(false);
+            return;
+          }
+          const timer = setTimeout(() => setIndex((i) => i + 1), 750);
+          return () => clearTimeout(timer);
+        }, [index, playing]);
+        return React.createElement(WatershedPlaybackView, {
+          layout,
+          catalog,
+          frame: frames[index],
+          index,
+          playing,
+          onIndex: setIndex,
+          onPlaying: setPlaying,
+        });
+      }
+      createRoot(document.getElementById('root')).render(React.createElement(App));
+    </script>
+  </body>
+</html>

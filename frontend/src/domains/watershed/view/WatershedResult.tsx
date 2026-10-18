@@ -1,4 +1,5 @@
 import { PumpOperation } from './PumpOperation';
+import { WatershedPlayback } from './WatershedPlayback';
 import { CisternReferenceCosts } from './CisternReferenceCosts';
 import { conduitDimensions } from '../service/conduitDesign';
 import type { WatershedJob } from '../dto/watershedDto';
@@ -107,6 +108,11 @@ export function WatershedResult({ job }: { job: WatershedJob }) {
               : '수치 검사 실패 · 효과 비교 보류'}
           </p>
           <PumpOperation job={job} />
+          {job.state === 'SUCCEEDED' &&
+            result.networkLayout &&
+            result.cases.every((c) => c.complete) && (
+              <WatershedPlayback key={job.id} jobId={job.id} layout={result.networkLayout.layout} />
+            )}
           {strategy?.connectedStorage && (
             <div aria-label="저류조 물수지">
               <h3>저류조 물수지</h3>

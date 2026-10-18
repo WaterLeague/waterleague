@@ -527,3 +527,89 @@
   fill: currentColor;
   font-size: 11px;
 }
+
+.watershed-playback-section {
+  margin: 16px 0;
+}
+.watershed-playback {
+  padding: 12px 0;
+}
+.watershed-playback-time {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.watershed-playback-time input {
+  min-width: 0;
+  flex: 1;
+}
+.watershed-playback-time button {
+  flex-shrink: 0;
+}
+.watershed-playback-stamps {
+  font-size: 12px;
+  color: #475569;
+}
+.watershed-playback svg {
+  width: 100%;
+  max-height: 340px;
+  background: #f4f7f7;
+  border: 1px solid #d9e2e2;
+  border-radius: 8px;
+}
+.watershed-playback-link {
+  fill: none;
+  stroke: #17618a;
+  stroke-width: 3;
+  cursor: pointer;
+  pointer-events: stroke;
+}
+.watershed-playback-link[data-selected='true'] {
+  stroke: #a16207;
+  stroke-width: 5;
+}
+.watershed-playback-node {
+  stroke: #4b6475;
+  stroke-width: 1.2;
+  cursor: pointer;
+}
+.watershed-playback-node[data-overflow='true'] {
+  stroke: #c2410c;
+  stroke-width: 3;
+}
+.watershed-playback-node[data-selected='true'] {
+  stroke: #a16207;
+  stroke-width: 3;
+}
+.watershed-playback-node:focus-visible,
+.watershed-playback-link:focus-visible {
+  outline: none;
+  stroke: #a16207;
+  stroke-width: 4;
+}
+.watershed-playback-table {
+  overflow-x: auto;
+  margin: 12px 0;
+}
+.watershed-playback table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.watershed-playback th,
+.watershed-playback td {
+  padding: 8px 5px;
+  text-align: right;
+  border-bottom: 1px solid #d9e2e2;
+}
+.watershed-playback th:first-child {
+  text-align: left;
+}
+.watershed-playback caption {
+  text-align: left;
+  font-weight: 650;
+  padding: 8px 0;
+}
+.watershed-playback code {
+  overflow-wrap: anywhere;
+}

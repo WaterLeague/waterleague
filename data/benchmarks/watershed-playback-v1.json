@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "classification": "PUBLIC_NETWORK_RECORDED_STATE_PLAYBACK_NOT_FIELD_VALIDATION",
+  "rankingEligible": false,
+  "sourceDirectory": "data/runs/watershed-member-pump-v1",
+  "sourceResultSha256": "0adc90f8dd2cb37953e11f2a71c1f919759e860dff854c504eb67b21dd7b929a",
+  "inputHash": "d646e3711abaac2a951a542b04dc33ca33c41fa56e128d0a4fa99cdec8ea33bd",
+  "method": "PREVIOUS_RECORDED_STATE_NO_INTERPOLATION",
+  "depthScaleM": 3.2,
+  "commonTimelineCount": 290,
+  "selectedTimesSeconds": [
+    0.0,
+    21300.001,
+    43200.013,
+    64800.007,
+    86339.0
+  ],
+  "cases": [
+    {
+      "id": "baseline",
+      "framesSha256": "6152506270efcda4aa93e4e4c59274ff97d637326400b12d73905ed95f5740f2",
+      "resultSha256": "21f20f695759fb983c0f8a49666fae42fbe062d9c4114839ff46eb2a506e3499",
+      "recordedRows": 289,
+      "statesIncludingInitial": 290,
+      "nodes": 28,
+      "links": 26,
+      "lastSeconds": 86339.0
+    },
+    {
+      "id": "strategy",
+      "framesSha256": "ad36f860554009b335cbfad1621187e4de496b6f192264a148d7780e18c2358e",
+      "resultSha256": "41553f8482e0b32629db037ed6e847d3f53f9825c12aad067a5e5aa50f05d40c",
+      "recordedRows": 289,
+      "statesIncludingInitial": 290,
+      "nodes": 30,
+      "links": 31,
+      "lastSeconds": 86339.0
+    }
+  ],
+  "verification": {
+    "javaTests": 5,
+    "frontendTests": 9,
+    "productionBuildPassed": true,
+    "selectedNativeDepthsAndSignedFlowsExactlyEqual": true,
+    "tamperedCachedSourceRejected": true,
+    "symlinkRejected": true,
+    "accountAndOwnershipBeforeAndAfterRead": true,
+    "designFailurePreserved": true,
+    "noInterpolationOrExtrapolation": true,
+    "browserSlider": true,
+    "browserUnmappedStorageDetails": true,
+    "browserAutoplayEndStopped": true,
+    "browserConsoleErrors": 0,
+    "apiHealthStatus": 200,
+    "gameStatus": 200,
+    "anonymousPlaybackStatus": 401
+  },
+  "limitations": [
+    "원 공개 관망의 기존 계산 기록 표시이며 신규 물리 계산·서울 실좌표 정합·현장 검증 아님",
+    "두 안의 내부 기록 시각이 달라 각각 직전 원 기록과 경과 시간 표시",
+    "표시 프레임으로 첨두·전체 수지 재산정 없음",
+    "좌표 없는 추가 시설은 수치 목록으로 표시",
+    "6개 외부 유입의 원 24시간 기록을 선행 기간·다른 재해 날짜로 이동하거나 연장하지 않음"
+  ]
+}
