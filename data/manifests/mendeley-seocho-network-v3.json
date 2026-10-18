@@ -1,0 +1,1047 @@
+{
+  "schemaVersion": 1,
+  "datasetId": "dzzwvd8rjk",
+  "version": 3,
+  "doi": "10.17632/dzzwvd8rjk.3",
+  "pageUrl": "https://data.mendeley.com/datasets/dzzwvd8rjk/3",
+  "downloadUrl": "https://data.mendeley.com/public-api/zip/dzzwvd8rjk/download/3",
+  "acquiredAt": "2026-10-18T02:14:14.996206+00:00",
+  "classification": "PUBLISHED_RESEARCH_MODEL_NOT_OFFICIAL_ASSET_INVENTORY",
+  "licence": {
+    "id": "01d9c749-3c4d-4431-9df3-620b2dcfe144",
+    "short_name": "CC BY 4.0",
+    "full_name": "Creative Commons Attribution 4.0 International",
+    "description": "You can share, copy and modify this dataset so long as you give appropriate credit, provide a link to the CC BY license, and indicate if changes were made, but you may not do so in a way that suggests the rights holder has endorsed you or your use of the dataset. Note that further permission may be required for any content within the dataset that is identified as belonging to a third party.",
+    "url": "http://creativecommons.org/licenses/by/4.0",
+    "category": "Creative",
+    "customer_id": null
+  },
+  "attribution": {
+    "title": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience: A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures",
+    "authors": [
+      "Samuel Park",
+      "Jaekyoung Kim",
+      "Hyeryeong Yun",
+      "Junsuk Kang"
+    ],
+    "year": 2024
+  },
+  "archive": {
+    "file": "data/raw/mendeley-seocho-v3/dataset.zip",
+    "bytes": 14148699,
+    "sha256": "b2b51c87b987323e49f24f166a7933bbbab6b8af9f0928fcf20cd039f77be71e"
+  },
+  "metadataFiles": {
+    "data/raw/mendeley-seocho-v3/folders.json": "5a1702b950de2cf20bb27ca2350c0baa15d4a97b8e97d0d08837f453db2d0c88",
+    "data/raw/mendeley-seocho-v3/metadata.json": "86a13d9656c47a56b5f75fd8bf1df7a20f48570258bd12aec46fd286d1925ab6"
+  },
+  "members": [
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline/seocho2_baseline.ini",
+      "bytes": 4971,
+      "sha256": "0eb54f8b05a986caf89e21b52da36bbfb47cc49f7a18a9a9fb7ca7a29dc0fa8c"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline/seocho2_baseline.rpt",
+      "bytes": 23826,
+      "sha256": "78ca4581bd21d7ad4331f0b56c53c8e7f4d9d1371337e441283b30149e0a8896"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline/seocho2_baseline.inp",
+      "bytes": 31920,
+      "sha256": "8ce278a3d2b58df3c2a5fd1232160bcabb324389746ee0c878792acf91abbdbb"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline/seocho2_baseline.out",
+      "bytes": 2457731,
+      "sha256": "be5086da342b9ba786c42c89e9f35954f73ba7233845124b90fc71a882166365"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/Baseline+LID_S8_PP.txt",
+      "bytes": 300738,
+      "sha256": "6714926ca9459bc6a1e991f54a9ec9dc78a2079daa478f7a554f16654b205d2d"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/Baseline+LID_S10_PP.txt",
+      "bytes": 299078,
+      "sha256": "4b2bfcd21e8ef87b9d93e25f518a5492016159f4c05ae3292301f3561ebc724a"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/Baseline+LID_S7_PP.txt",
+      "bytes": 299681,
+      "sha256": "a44c6773ac2039c7abe2853fe6bfb1e1cd55177bff28c1b90dda4f2a4c44836a"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/Baseline+LID_S9_PP.txt",
+      "bytes": 300436,
+      "sha256": "9a17166afb911b09060e801619acc98b0e988854f66e5c3489315fc422c62934"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/Baseline+LID_S10_GR.txt",
+      "bytes": 356911,
+      "sha256": "5dd255cae8bcb8cdb56d5c2c7837a49fc103bd73453ce09a0fb820dfd57851e0"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/Baseline+LID_S9_GR.txt",
+      "bytes": 543999,
+      "sha256": "ce74c5d2c47f7c12a6f9bda4552a9de67b6eac1fbf448d24c80ccb8821985871"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/Baseline+LID_S7_GR.txt",
+      "bytes": 1127614,
+      "sha256": "df95b330a236ca75f10a9d17809249ea495be30ba170d2ffa86e92066c4a0126"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/Baseline+LID_S11_BR.txt",
+      "bytes": 310252,
+      "sha256": "8037e659f82bab83df69f615eaafd25f22473357e196230dd05973938572d2d5"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/Baseline+LID_S10_BR.txt",
+      "bytes": 1246603,
+      "sha256": "556d6400961b264944ec27bf994a156c7f9c266288ac27dc3e2af45b8526906d"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/Baseline+LID_S11_PP.txt",
+      "bytes": 299531,
+      "sha256": "a20ef1f600e4ca3134bfa76577ec29cceac492d6e44343c5478130b32dd36edf"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/Baseline+LID_S12_PP.txt",
+      "bytes": 300588,
+      "sha256": "1252ca515bcd22b34d9ec42f14053558c7b754b537993300b55912b098726e48"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/Baseline+LID_S11_GR.txt",
+      "bytes": 500663,
+      "sha256": "23278039e717f6a2f94a75eda57038519e9fbdf08b45d907edf77c2e563c75bc"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/Baseline+LID_S8_GR.txt",
+      "bytes": 1585899,
+      "sha256": "e5315a88207dd8948f5b9ffea3fdd0f3a736b0c704298d1b5fdae9e76d38bafc"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/Baseline+LID_S8_BR.txt",
+      "bytes": 1768005,
+      "sha256": "c5b2d60f31e447f47b8dab9c985c9c68ebff7255bd757e5b4a90f9f39d2ee288"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/Baseline+LID_S12_GR.txt",
+      "bytes": 815347,
+      "sha256": "a04534bb6a9bb7b2972cc2f2c1697f2cc82b8407a20f9f21a7394da13b4ec3bf"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/Baseline+LID_S13_GR.txt",
+      "bytes": 362800,
+      "sha256": "c332656e2dd4894e0e597f1fc4c7c23147c84ca2e952e2b650c79d2ce50bd500"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/Baseline+LID_S13_PP.txt",
+      "bytes": 297417,
+      "sha256": "05f8b2d8b2a4b42a6007c83c51cb5368c7fcf202d9110e2179d0e547d7195dc8"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/seocho2_baseline LID_40d.rpt",
+      "bytes": 28700,
+      "sha256": "3318d632d4672510d4ba3d466fb9a89b34c82f0b1b164b3e3baaf94f46d128d3"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/Baseline+LID_S12_BR.txt",
+      "bytes": 1768006,
+      "sha256": "007ae5c08260788e7745713233f9e55ccf777849b7ae8e14edfbf40cb5fddad8"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/seocho2_baseline LID.ini",
+      "bytes": 4959,
+      "sha256": "a5280870ad76e6990ad84c0efa8a342755358dfa756c1e440353415d4fda2350"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/Baseline+LID_S14_PP.txt",
+      "bytes": 300135,
+      "sha256": "2ea56dfb11afd9c0184a2d9620f7b564a97bde8aac4637beda516c753b0bdc1d"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/seocho2_baseline LID.inp",
+      "bytes": 41192,
+      "sha256": "a8921e3cf185b076c320ca6c9e0ce5fa7e3c8531713811f84bc68edadd608464"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/Baseline+LID_S13_BR.txt",
+      "bytes": 1768006,
+      "sha256": "332b9f3d9979e1d29d1c23c37bd88844247a27c464c882b1a4886e55937f28c0"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/Baseline+LID_S14_GR.txt",
+      "bytes": 1073557,
+      "sha256": "b704c4f43621bff5608c6d3cabfb5b2d5f520990ecae09c8e25bff7219704709"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/seocho2_baseline LID.rpt",
+      "bytes": 28700,
+      "sha256": "7be05b503d5020a8d394833cc86cb17d8edc3c827249200e3a4d2f651c6d181e"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/seocho2_baseline LID_40d.ini",
+      "bytes": 4949,
+      "sha256": "fcb1c5c35eb9d8166db7a93eed2896e534c2825bee38c030a93d856c3d58f3b1"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/seocho2_baseline LID_40d.inp",
+      "bytes": 41192,
+      "sha256": "2cf74c3ec3788eaab703228c695587b9821ac32f03b0d7d8ee016fef6a40bca5"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/Baseline+LID_S14_BR.txt",
+      "bytes": 1768006,
+      "sha256": "e76480a0e2c485206d0304d4655bcab73ed3bd9cfc202cf05199f1f1382ccef4"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/Baseline+LID_S1_BR.txt",
+      "bytes": 650605,
+      "sha256": "ce25798c4a70f91ca7708352319b06f524117b9b5ede98599eb09cb0d58b5f4b"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/Baseline+LID_S1_PP.txt",
+      "bytes": 299681,
+      "sha256": "0405fff0e53d7ac7329bc6f62c81802a4859b9691b42f56a04816764cf6af859"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/Baseline+LID_S1_GR.txt",
+      "bytes": 665252,
+      "sha256": "a9e4f723d9ef438108f4ff2da10b1e7c211c32866f1065754b288be3f047eb75"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/Baseline+LID_S2_PP.txt",
+      "bytes": 300134,
+      "sha256": "62a97177f6a4f3f8b654a387ab167cb06d280d6eab465fafbfabd6ebcbdb9fa9"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/seocho2_baseline LID.out",
+      "bytes": 2457731,
+      "sha256": "83e460b1a8d5ae37aa65c80746385131ae05f93964e9ec748c895faa1c7f22f6"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/Baseline+LID_S3_PP.txt",
+      "bytes": 300436,
+      "sha256": "ad15da2983a3f695923257e6ee9de9059a75053893d94eaf6e50c952640644b0"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/Baseline+LID_S3_GR.txt",
+      "bytes": 1176840,
+      "sha256": "c160d9de5cd777a8bf54c511d08d3913f31e6fdc67aa00bf25ab5266e029d644"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/Baseline+LID_S2_GR.txt",
+      "bytes": 1439731,
+      "sha256": "223630ac35577aa64a3e7c4302e5c2ea522721c167228b14019dcdff647f7b1a"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/Baseline+LID_S2_BR.txt",
+      "bytes": 1504359,
+      "sha256": "def4f90b1b29a1be8f8eedecca5dc258184730b2ad6e436fa0645a392435db72"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/Baseline+LID_S3_BR.txt",
+      "bytes": 1480652,
+      "sha256": "c2860d140df66cd3f4e2deff51a00e16953f2078d9ee22b829ee01d994640808"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/Baseline+LID_S4_PP.txt",
+      "bytes": 299983,
+      "sha256": "595de1778dccf26661bf89cd6838d71c0fb16db4865438269aa11dcc1c7afc38"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/Baseline+LID_S4_GR.txt",
+      "bytes": 1279520,
+      "sha256": "8f4c9c42e759075c7496eea18bbf0872675015957b9d58357b3f6c6af563bc46"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/Baseline+LID_S4_BR.txt",
+      "bytes": 1768005,
+      "sha256": "29565f39956b0794b74bddbfca6f3ff6ef4c8fe1c00c3c2b73d72aaae50d3086"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/Baseline+LID_S5_BR.txt",
+      "bytes": 816252,
+      "sha256": "5e1d8398b002cc565c42477cbc11b567d0acb83649ccf61c87c3f986dd91e8ac"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/Baseline+LID_S5_PP.txt",
+      "bytes": 299530,
+      "sha256": "5593608a6bb89aa4401614c944bc09bce95fd3e6dc54b8e6adca13d1e5ce8f91"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/Baseline+LID_S6_BR.txt",
+      "bytes": 463969,
+      "sha256": "ebf31f124854c5c7c086523a63f03302630d764740d7b128fe8d29c1377b8f9e"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/Baseline+LID_S6_PP.txt",
+      "bytes": 299681,
+      "sha256": "737239854d209794ce8f6921f8e2910ec88a100479a21cd111bac7603abab721"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/Baseline+LID_S5_GR.txt",
+      "bytes": 1027350,
+      "sha256": "653e9acfcba7f0c0bbf09fe5fad80b3fcbfe1204e3752a9e7cd9dfd0fb9d700a"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/Baseline+LID_S6_GR.txt",
+      "bytes": 639733,
+      "sha256": "44db361d35f23f559aa022ad3b502a1a2bf21c75116e9d22a35e331d645ad2d5"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/Baseline+LID_S7_BR.txt",
+      "bytes": 1036410,
+      "sha256": "693283da8150bd55d725dcb4bbed73e232f1ed132ca4086ed4677de47444c0be"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline+LID/seocho2_baseline LID_40d.out",
+      "bytes": 100838531,
+      "sha256": "1a4a01138d0be9caaacf3d93b33ecb8fba14ed0927b0af5d7a6567766fc68d92"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1/seocho2_CEN1.rpt",
+      "bytes": 23903,
+      "sha256": "0dd31a9d0fe3493686a01559bdb2289fe7143f84e85ce3832061d4d458f7a823"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1/seocho2_CEN1.ini",
+      "bytes": 4958,
+      "sha256": "2b6bea1a06a78c3ed330bba37541e18ffb585bceca4166ed4389e4f7dee39c45"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1/seocho2_CEN1.inp",
+      "bytes": 31920,
+      "sha256": "290fd0219b73a9e34bec8f78f209c17af00c142888fba9a6d4ab395ce26487d5"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1/seocho2_CEN1.out",
+      "bytes": 2457731,
+      "sha256": "76169139e78d77c3333d315c9e9101ba31c06ea56cbf61263e51bf6da53a6832"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8/seocho2_CEN1 DEC8.ini",
+      "bytes": 4962,
+      "sha256": "10bebb4aea5f9f966a882bdcb4e13914126d92a45005735a7e86b5bf09854622"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8/seocho2_CEN1 DEC8.inp",
+      "bytes": 32408,
+      "sha256": "3a7690356a6b26e319a60a408944ab0893dd205f1adaddfb42898eb1281ee941"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8/seocho2_CEN1 DEC8.rpt",
+      "bytes": 23935,
+      "sha256": "75f72218f06b0ff8a42a16ffb403ee00af16d3774e0a76054fb4b402f3b28621"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8/seocho2_CEN1 DEC8.out",
+      "bytes": 2515305,
+      "sha256": "7f9f7cc4e9c029706d225bdb74761d1d2640a814628eb0d8c6a95b880f446725"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8+LID/CEN+DEC+LID_S9_PP.txt",
+      "bytes": 31807,
+      "sha256": "3b0d9ff37b2e1daee7486b75c79e77e2f183f3d758e123c4c43b3935db4a825b"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8+LID/CEN+DEC+LID_S10_GR.txt",
+      "bytes": 28486,
+      "sha256": "40a5bb05d4eb43b536b0238f9451a36b24e195a848717439c8aed489cbf37d48"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8+LID/CEN+DEC+LID_S9_GR.txt",
+      "bytes": 28485,
+      "sha256": "4cba5c96710117bbc6209e0e5f1d38756cb52526ae90b52770297ec8d5bbe1af"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8+LID/CEN+DEC+LID_S12_BR.txt",
+      "bytes": 28486,
+      "sha256": "e837d8cf9adede6fe3a9e30806cafaef082b23de16cfa8899c7c5b40c879d465"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8+LID/CEN+DEC+LID_S12_PP.txt",
+      "bytes": 31808,
+      "sha256": "4d3b8d642bbed341d60bc61ebac81f117b37e9163160b5dbd04138884e1ed14c"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8+LID/CEN+DEC+LID_S13_GR.txt",
+      "bytes": 28486,
+      "sha256": "683de5df6760a5a93c8591669ea60a5a08e63d761748eee58bef3ea63818e43e"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8+LID/CEN+DEC+LID_S13_BR.txt",
+      "bytes": 28486,
+      "sha256": "4f6889073b9a3f1b7a37b42d56a08cef837b104f3bf793dbc4a83962a4557cc4"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8+LID/CEN+DEC+LID_S13_PP.txt",
+      "bytes": 29996,
+      "sha256": "8b1e54638cc69b5a3c30b4a2b4b2de904628a4b833ca7e4dfc97a5340ea451b9"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8+LID/CEN+DEC+LID_S10_BR.txt",
+      "bytes": 28486,
+      "sha256": "e078e23d389f3aee3050b12d5daf01a7cfbef4788d420da026132b0df25bc352"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8+LID/CEN+DEC+LID_S10_PP.txt",
+      "bytes": 31506,
+      "sha256": "c14780891bd42ab3c12118a41c69da7a64383bdb6f0700f0326a6a0ccc5da8b1"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8+LID/CEN+DEC+LID_S11_GR.txt",
+      "bytes": 28486,
+      "sha256": "98de3d56c7a630b65f1e0fa0b1db31b2ea2734876f369525f52611dc3d1fe7ab"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8+LID/CEN+DEC+LID_S12_GR.txt",
+      "bytes": 28486,
+      "sha256": "297257f3ed763917bbbf2282a6d6b26a3d13986a367c8c31c6cd5fea78dc524e"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8+LID/CEN+DEC+LID_S11_BR.txt",
+      "bytes": 28486,
+      "sha256": "20265e7643260b5f4cbd36cda1cbda0c0bfe3b4118f790678a89a58d05f65f0c"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8+LID/CEN+DEC+LID_S11_PP.txt",
+      "bytes": 31808,
+      "sha256": "52910d6c8b094dd43eddde024a92bed88d01141a4c2b7f53e312ed68f02d36df"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8+LID/CEN+DEC+LID_S14_BR.txt",
+      "bytes": 28486,
+      "sha256": "9e8f2d56e145ce7764cf63b17c016bc8cf2bbc4b8ecc2f417e0bd8648ae15cc7"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8+LID/CEN+DEC+LID_S14_GR.txt",
+      "bytes": 28486,
+      "sha256": "c3b00ca4d0bea601d41ca72b90ae42abca4c10a9db24f905c4b130b1f9ee1cca"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8+LID/seocho2_CEN1 DEC8 LID.ini",
+      "bytes": 4961,
+      "sha256": "2b73bb6d94e204bdbdfd689d9f73a5ca8f930db45d5d1e3577685c03e13f8314"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8+LID/CEN+DEC+LID_S14_PP.txt",
+      "bytes": 31808,
+      "sha256": "7244946fd0a5bfe2cb6fdd852d6aa84edf84a3b6c2442d80d8d7b2683e904b97"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8+LID/seocho2_CEN1 DEC8 LID.inp",
+      "bytes": 41665,
+      "sha256": "705fb7f637573260dbb02991fc24e6ff3f364556790654e77efd36996903911a"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8+LID/CEN+DEC+LID_S1_GR.txt",
+      "bytes": 28485,
+      "sha256": "bf6748b29987db8f1e365cf40e4b9c3fd4a1c37b8e0883d73396be9669f29581"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8+LID/CEN+DEC+LID_S1_PP.txt",
+      "bytes": 31807,
+      "sha256": "2b1ee3763aefef29a54457bfa7aac87f386189cc61b476270990c45f09590b63"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8+LID/seocho2_CEN1 DEC8 LID.rpt",
+      "bytes": 29192,
+      "sha256": "c5209dfe49ab632ed0c48920dfd0471a4841ff690e4f6658803b58f7cac0531f"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8+LID/CEN+DEC+LID_S1_BR.txt",
+      "bytes": 28485,
+      "sha256": "2e4223f98dc0a2637d46df9120e8203ea6cb86ebb854ab4818385d930304f3fa"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8+LID/CEN+DEC+LID_S2_BR.txt",
+      "bytes": 28485,
+      "sha256": "7d66a06251ef033f036cefef2f4d84dbe7582454617005fa19f42ea913e50f52"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8+LID/CEN+DEC+LID_S2_PP.txt",
+      "bytes": 31807,
+      "sha256": "6a822171238b5aeff546296ed2cd75436af1b903e338e738f682594ef7b87ea5"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8+LID/CEN+DEC+LID_S3_GR.txt",
+      "bytes": 28485,
+      "sha256": "e51ecd1ceed656d37771ec862f58c4f8b58967c38f04b82ebe57c68705fefec9"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8+LID/CEN+DEC+LID_S2_GR.txt",
+      "bytes": 28485,
+      "sha256": "431d24671063921c1b2310fa8d7aa75d6adb745511a70723743d3bfcf3c10892"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8+LID/CEN+DEC+LID_S3_BR.txt",
+      "bytes": 28485,
+      "sha256": "94d18de96b10da20f720593002c566fa994fc9018c4a74888721f81c1453ab5d"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8+LID/CEN+DEC+LID_S3_PP.txt",
+      "bytes": 31807,
+      "sha256": "6253d6c1ec2ef495ea5858d84dc1d0fef0bd1c4dba83263e9e2f45a461438de1"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8+LID/CEN+DEC+LID_S4_GR.txt",
+      "bytes": 28485,
+      "sha256": "bd61ee56e6e4ecbf21916cb7391a8f5b491485c7a37ce09fbdc82a79d546b3be"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8+LID/CEN+DEC+LID_S4_BR.txt",
+      "bytes": 28485,
+      "sha256": "431a619be0049fbf7aabd3e09a88af55e9391b1a9daf9e6c8cfc54c53612ac41"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8+LID/CEN+DEC+LID_S4_PP.txt",
+      "bytes": 31807,
+      "sha256": "3188ddbe7d4af4ceb712a06452f43af03a647e44c6d3c02f44afcde77a600aae"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8+LID/CEN+DEC+LID_S5_BR.txt",
+      "bytes": 28485,
+      "sha256": "5cd830e8799d151f6f5d60f7558eba7d3245a4654af83ce08899a4b051ec364b"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8+LID/seocho2_CEN1 DEC8 LID.out",
+      "bytes": 2515305,
+      "sha256": "208fd655f9498f23639c2658cec9494b592994ab71dcf350fc2773c7cf1b702e"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8+LID/CEN+DEC+LID_S5_GR.txt",
+      "bytes": 28485,
+      "sha256": "d5b9e49dad31e4ef60db9617af2c9075b9c6f662feb20bb6c631e145e1d63901"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8+LID/CEN+DEC+LID_S5_PP.txt",
+      "bytes": 31807,
+      "sha256": "60130ce1ac921e24198e7ba041b01f0b105b35e54af1b4bfb39fa51065f90e02"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8+LID/CEN+DEC+LID_S6_BR.txt",
+      "bytes": 28485,
+      "sha256": "01039990c0946ae4257516163bfe0b0a50dbcf4858dc01ab650accf0b94b0f17"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8+LID/CEN+DEC+LID_S6_GR.txt",
+      "bytes": 28485,
+      "sha256": "e49b6f9bfb2ece5dbbca2218c32af8d09b2480f16fb88670fa915bee49fe38a3"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8+LID/CEN+DEC+LID_S7_BR.txt",
+      "bytes": 28485,
+      "sha256": "2761df67d7f878045cf17266680c8b4f075c1c596413c93a493fe470d6b63f97"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8+LID/CEN+DEC+LID_S6_PP.txt",
+      "bytes": 31807,
+      "sha256": "73e65c0a1657f7bd21416f8e8567d0b9822ee6aed9d414a736d33671492dfd0d"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8+LID/CEN+DEC+LID_S8_BR.txt",
+      "bytes": 28485,
+      "sha256": "0db7ca218db070def925a4e1c77e34b0c6ecce0b45bdb9155ae41c493319503f"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8+LID/CEN+DEC+LID_S7_PP.txt",
+      "bytes": 31807,
+      "sha256": "a2c7fe1fba74f5f3ae97d526e194d970721f9e8cf5aeb189e5612a89d872a585"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8+LID/CEN+DEC+LID_S7_GR.txt",
+      "bytes": 28485,
+      "sha256": "7d8f494bbaaa0de9f3fb3b59fb8ccd77992be2a8dfc223b173dddd05ad5ce133"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8+LID/CEN+DEC+LID_S8_GR.txt",
+      "bytes": 28485,
+      "sha256": "c5307a772a93dbe8611080fbc68dd0f06f6bd8699f8f4c56ed0329aaa106457f"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+DEC8+LID/CEN+DEC+LID_S8_PP.txt",
+      "bytes": 31807,
+      "sha256": "3b75a60fa71fad83b60d8f260a4dca43a896591ec93b706d3cff95b6d95dd8b8"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+LID/CEN+LID_S10_PP.txt",
+      "bytes": 31506,
+      "sha256": "c14780891bd42ab3c12118a41c69da7a64383bdb6f0700f0326a6a0ccc5da8b1"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+LID/CEN+LID_S12_PP.txt",
+      "bytes": 31808,
+      "sha256": "4d3b8d642bbed341d60bc61ebac81f117b37e9163160b5dbd04138884e1ed14c"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+LID/CEN+LID_S13_GR.txt",
+      "bytes": 28486,
+      "sha256": "683de5df6760a5a93c8591669ea60a5a08e63d761748eee58bef3ea63818e43e"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+LID/CEN+LID_S12_BR.txt",
+      "bytes": 28486,
+      "sha256": "e837d8cf9adede6fe3a9e30806cafaef082b23de16cfa8899c7c5b40c879d465"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+LID/CEN+LID_S10_GR.txt",
+      "bytes": 28486,
+      "sha256": "40a5bb05d4eb43b536b0238f9451a36b24e195a848717439c8aed489cbf37d48"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+LID/CEN+LID_S13_BR.txt",
+      "bytes": 28486,
+      "sha256": "4f6889073b9a3f1b7a37b42d56a08cef837b104f3bf793dbc4a83962a4557cc4"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+LID/CEN+LID_S10_BR.txt",
+      "bytes": 28486,
+      "sha256": "e078e23d389f3aee3050b12d5daf01a7cfbef4788d420da026132b0df25bc352"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+LID/CEN+LID_S11_PP.txt",
+      "bytes": 31808,
+      "sha256": "52910d6c8b094dd43eddde024a92bed88d01141a4c2b7f53e312ed68f02d36df"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+LID/CEN+LID_S13_PP.txt",
+      "bytes": 29996,
+      "sha256": "8b1e54638cc69b5a3c30b4a2b4b2de904628a4b833ca7e4dfc97a5340ea451b9"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+LID/CEN+LID_S11_BR.txt",
+      "bytes": 28486,
+      "sha256": "20265e7643260b5f4cbd36cda1cbda0c0bfe3b4118f790678a89a58d05f65f0c"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+LID/CEN+LID_S12_GR.txt",
+      "bytes": 28486,
+      "sha256": "297257f3ed763917bbbf2282a6d6b26a3d13986a367c8c31c6cd5fea78dc524e"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+LID/CEN+LID_S11_GR.txt",
+      "bytes": 28486,
+      "sha256": "98de3d56c7a630b65f1e0fa0b1db31b2ea2734876f369525f52611dc3d1fe7ab"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+LID/CEN+LID_S14_BR.txt",
+      "bytes": 28486,
+      "sha256": "9e8f2d56e145ce7764cf63b17c016bc8cf2bbc4b8ecc2f417e0bd8648ae15cc7"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+LID/CEN+LID_S14_GR.txt",
+      "bytes": 28486,
+      "sha256": "c3b00ca4d0bea601d41ca72b90ae42abca4c10a9db24f905c4b130b1f9ee1cca"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+LID/CEN+LID_S14_PP.txt",
+      "bytes": 31808,
+      "sha256": "7244946fd0a5bfe2cb6fdd852d6aa84edf84a3b6c2442d80d8d7b2683e904b97"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+LID/CEN+LID_S1_BR.txt",
+      "bytes": 28485,
+      "sha256": "2e4223f98dc0a2637d46df9120e8203ea6cb86ebb854ab4818385d930304f3fa"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+LID/CEN+LID_S1_GR.txt",
+      "bytes": 28485,
+      "sha256": "bf6748b29987db8f1e365cf40e4b9c3fd4a1c37b8e0883d73396be9669f29581"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+LID/CEN+LID_S1_PP.txt",
+      "bytes": 31807,
+      "sha256": "2b1ee3763aefef29a54457bfa7aac87f386189cc61b476270990c45f09590b63"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+LID/CEN+LID_S2_BR.txt",
+      "bytes": 28485,
+      "sha256": "7d66a06251ef033f036cefef2f4d84dbe7582454617005fa19f42ea913e50f52"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+LID/CEN+LID_S2_GR.txt",
+      "bytes": 28485,
+      "sha256": "431d24671063921c1b2310fa8d7aa75d6adb745511a70723743d3bfcf3c10892"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+LID/CEN+LID_S3_BR.txt",
+      "bytes": 28485,
+      "sha256": "94d18de96b10da20f720593002c566fa994fc9018c4a74888721f81c1453ab5d"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+LID/CEN+LID_S2_PP.txt",
+      "bytes": 31807,
+      "sha256": "6a822171238b5aeff546296ed2cd75436af1b903e338e738f682594ef7b87ea5"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+LID/CEN+LID_S3_GR.txt",
+      "bytes": 28485,
+      "sha256": "e51ecd1ceed656d37771ec862f58c4f8b58967c38f04b82ebe57c68705fefec9"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+LID/CEN+LID_S3_PP.txt",
+      "bytes": 31807,
+      "sha256": "6253d6c1ec2ef495ea5858d84dc1d0fef0bd1c4dba83263e9e2f45a461438de1"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+LID/CEN+LID_S4_BR.txt",
+      "bytes": 28485,
+      "sha256": "431a619be0049fbf7aabd3e09a88af55e9391b1a9daf9e6c8cfc54c53612ac41"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+LID/CEN+LID_S4_PP.txt",
+      "bytes": 31807,
+      "sha256": "3188ddbe7d4af4ceb712a06452f43af03a647e44c6d3c02f44afcde77a600aae"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+LID/CEN+LID_S5_BR.txt",
+      "bytes": 28485,
+      "sha256": "5cd830e8799d151f6f5d60f7558eba7d3245a4654af83ce08899a4b051ec364b"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+LID/CEN+LID_S4_GR.txt",
+      "bytes": 28485,
+      "sha256": "bd61ee56e6e4ecbf21916cb7391a8f5b491485c7a37ce09fbdc82a79d546b3be"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+LID/CEN+LID_S5_GR.txt",
+      "bytes": 28485,
+      "sha256": "d5b9e49dad31e4ef60db9617af2c9075b9c6f662feb20bb6c631e145e1d63901"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+LID/CEN+LID_S5_PP.txt",
+      "bytes": 31807,
+      "sha256": "60130ce1ac921e24198e7ba041b01f0b105b35e54af1b4bfb39fa51065f90e02"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+LID/CEN+LID_S6_GR.txt",
+      "bytes": 28485,
+      "sha256": "e49b6f9bfb2ece5dbbca2218c32af8d09b2480f16fb88670fa915bee49fe38a3"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+LID/CEN+LID_S6_BR.txt",
+      "bytes": 28485,
+      "sha256": "01039990c0946ae4257516163bfe0b0a50dbcf4858dc01ab650accf0b94b0f17"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+LID/CEN+LID_S6_PP.txt",
+      "bytes": 31807,
+      "sha256": "73e65c0a1657f7bd21416f8e8567d0b9822ee6aed9d414a736d33671492dfd0d"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+LID/CEN+LID_S7_BR.txt",
+      "bytes": 28485,
+      "sha256": "2761df67d7f878045cf17266680c8b4f075c1c596413c93a493fe470d6b63f97"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+LID/CEN+LID_S7_GR.txt",
+      "bytes": 28485,
+      "sha256": "7d8f494bbaaa0de9f3fb3b59fb8ccd77992be2a8dfc223b173dddd05ad5ce133"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+LID/CEN+LID_S7_PP.txt",
+      "bytes": 31807,
+      "sha256": "a2c7fe1fba74f5f3ae97d526e194d970721f9e8cf5aeb189e5612a89d872a585"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+LID/CEN+LID_S8_BR.txt",
+      "bytes": 28485,
+      "sha256": "0db7ca218db070def925a4e1c77e34b0c6ecce0b45bdb9155ae41c493319503f"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+LID/CEN+LID_S8_GR.txt",
+      "bytes": 28485,
+      "sha256": "c5307a772a93dbe8611080fbc68dd0f06f6bd8699f8f4c56ed0329aaa106457f"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+LID/CEN+LID_S8_PP.txt",
+      "bytes": 31807,
+      "sha256": "3b75a60fa71fad83b60d8f260a4dca43a896591ec93b706d3cff95b6d95dd8b8"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+LID/CEN+LID_S9_GR.txt",
+      "bytes": 28485,
+      "sha256": "4cba5c96710117bbc6209e0e5f1d38756cb52526ae90b52770297ec8d5bbe1af"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+LID/seocho2_CEN1+LID.ini",
+      "bytes": 4948,
+      "sha256": "91836fded4c36dc36ce403f568e10d150e59424d6cfa2780d5579ebea486780e"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+LID/CEN+LID_S9_PP.txt",
+      "bytes": 31807,
+      "sha256": "3b0d9ff37b2e1daee7486b75c79e77e2f183f3d758e123c4c43b3935db4a825b"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+LID/seocho2_CEN1+LID.inp",
+      "bytes": 41177,
+      "sha256": "a887402fd7fcd667850ab632e228d531f3ad64353553409426061a212040ccad"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+LID/seocho2_CEN1+LID.rpt",
+      "bytes": 28778,
+      "sha256": "72c4baf0e39db53922d44944c0983c3c0fbeaef18cd137648defd8d8ea01b272"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/CEN1+LID/seocho2_CEN1+LID.out",
+      "bytes": 2457731,
+      "sha256": "afbcff557a6c17d1d14d5f0686d1c1da69ea836109ae6d2d6fc7ce5d5511ffdb"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8/seocho2_DEC8.inp",
+      "bytes": 32408,
+      "sha256": "c9fe05c51320e2c2194d8c0a69e183b362cfdc606ba7bac862833cec2ee03b8f"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8/seocho2_DEC8.ini",
+      "bytes": 4960,
+      "sha256": "0a007b01a7036dcaee736ee0114eefba6713d2a25a65e1dd1c4af6def3701602"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8/seocho2_DEC8.rpt",
+      "bytes": 24321,
+      "sha256": "f0572405c0333e40e7ac8d0b1111ae2baab64a5afe1dded0133a45eccde9218b"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8/seocho2_DEC8.out",
+      "bytes": 2515305,
+      "sha256": "6e4ff84ebf503acb220904ef532cf2ad7467fdcf63f8460a636549d8bd45dd89"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8+LID/DEC+LID_S11_BR.txt",
+      "bytes": 28486,
+      "sha256": "20265e7643260b5f4cbd36cda1cbda0c0bfe3b4118f790678a89a58d05f65f0c"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8+LID/DEC+LID_S14_BR.txt",
+      "bytes": 28486,
+      "sha256": "9e8f2d56e145ce7764cf63b17c016bc8cf2bbc4b8ecc2f417e0bd8648ae15cc7"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8+LID/DEC+LID_S13_GR.txt",
+      "bytes": 28486,
+      "sha256": "683de5df6760a5a93c8591669ea60a5a08e63d761748eee58bef3ea63818e43e"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8+LID/DEC+LID_S14_GR.txt",
+      "bytes": 28486,
+      "sha256": "c3b00ca4d0bea601d41ca72b90ae42abca4c10a9db24f905c4b130b1f9ee1cca"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8+LID/DEC+LID_S13_PP.txt",
+      "bytes": 29996,
+      "sha256": "8b1e54638cc69b5a3c30b4a2b4b2de904628a4b833ca7e4dfc97a5340ea451b9"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8+LID/DEC+LID_S11_GR.txt",
+      "bytes": 28486,
+      "sha256": "98de3d56c7a630b65f1e0fa0b1db31b2ea2734876f369525f52611dc3d1fe7ab"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8+LID/DEC+LID_S11_PP.txt",
+      "bytes": 31808,
+      "sha256": "52910d6c8b094dd43eddde024a92bed88d01141a4c2b7f53e312ed68f02d36df"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8+LID/DEC+LID_S13_BR.txt",
+      "bytes": 28486,
+      "sha256": "4f6889073b9a3f1b7a37b42d56a08cef837b104f3bf793dbc4a83962a4557cc4"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8+LID/DEC+LID_S12_GR.txt",
+      "bytes": 28486,
+      "sha256": "297257f3ed763917bbbf2282a6d6b26a3d13986a367c8c31c6cd5fea78dc524e"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8+LID/DEC+LID_S12_BR.txt",
+      "bytes": 28486,
+      "sha256": "e837d8cf9adede6fe3a9e30806cafaef082b23de16cfa8899c7c5b40c879d465"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8+LID/DEC+LID_S12_PP.txt",
+      "bytes": 31808,
+      "sha256": "4d3b8d642bbed341d60bc61ebac81f117b37e9163160b5dbd04138884e1ed14c"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8+LID/DEC+LID_S14_PP.txt",
+      "bytes": 31808,
+      "sha256": "7244946fd0a5bfe2cb6fdd852d6aa84edf84a3b6c2442d80d8d7b2683e904b97"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8+LID/seocho2_DEC8 LID.ini",
+      "bytes": 4949,
+      "sha256": "52dd2166c1ef83efe31ec6e9d24700e4a6ca23b512a199b4bb73f2dc3c8f2f61"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8+LID/seocho2_DEC8 LID.inp",
+      "bytes": 41665,
+      "sha256": "ae80a62d7d661f3af23e63625a625a1da30010fec8852851aa96003bb8ef4bac"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8+LID/DEC+LID_S1_PP.txt",
+      "bytes": 31807,
+      "sha256": "2b1ee3763aefef29a54457bfa7aac87f386189cc61b476270990c45f09590b63"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8+LID/DEC+LID_S2_GR.txt",
+      "bytes": 28485,
+      "sha256": "431d24671063921c1b2310fa8d7aa75d6adb745511a70723743d3bfcf3c10892"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8+LID/DEC+LID_S1_BR.txt",
+      "bytes": 28485,
+      "sha256": "2e4223f98dc0a2637d46df9120e8203ea6cb86ebb854ab4818385d930304f3fa"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8+LID/DEC+LID_S1_GR.txt",
+      "bytes": 28485,
+      "sha256": "bf6748b29987db8f1e365cf40e4b9c3fd4a1c37b8e0883d73396be9669f29581"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8+LID/DEC+LID_S2_PP.txt",
+      "bytes": 31807,
+      "sha256": "6a822171238b5aeff546296ed2cd75436af1b903e338e738f682594ef7b87ea5"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8+LID/seocho2_DEC8 LID.rpt",
+      "bytes": 29577,
+      "sha256": "359b4ea5ac18ca07d43a3cf7044d76c181960e92850d0347bcaa09cc3cad9f6c"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8+LID/DEC+LID_S2_BR.txt",
+      "bytes": 28485,
+      "sha256": "7d66a06251ef033f036cefef2f4d84dbe7582454617005fa19f42ea913e50f52"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8+LID/DEC+LID_S3_BR.txt",
+      "bytes": 28485,
+      "sha256": "94d18de96b10da20f720593002c566fa994fc9018c4a74888721f81c1453ab5d"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8+LID/DEC+LID_S3_GR.txt",
+      "bytes": 28485,
+      "sha256": "e51ecd1ceed656d37771ec862f58c4f8b58967c38f04b82ebe57c68705fefec9"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8+LID/DEC+LID_S4_GR.txt",
+      "bytes": 28485,
+      "sha256": "bd61ee56e6e4ecbf21916cb7391a8f5b491485c7a37ce09fbdc82a79d546b3be"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8+LID/seocho2_DEC8 LID.out",
+      "bytes": 2515305,
+      "sha256": "e612fef94a6765aba882eb788549a4705b3cc27ef63154cd9d4704610208cca0"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8+LID/DEC+LID_S3_PP.txt",
+      "bytes": 31807,
+      "sha256": "6253d6c1ec2ef495ea5858d84dc1d0fef0bd1c4dba83263e9e2f45a461438de1"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8+LID/DEC+LID_S4_BR.txt",
+      "bytes": 28485,
+      "sha256": "431a619be0049fbf7aabd3e09a88af55e9391b1a9daf9e6c8cfc54c53612ac41"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8+LID/DEC+LID_S5_BR.txt",
+      "bytes": 28485,
+      "sha256": "5cd830e8799d151f6f5d60f7558eba7d3245a4654af83ce08899a4b051ec364b"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8+LID/DEC+LID_S4_PP.txt",
+      "bytes": 31807,
+      "sha256": "3188ddbe7d4af4ceb712a06452f43af03a647e44c6d3c02f44afcde77a600aae"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8+LID/DEC+LID_S5_PP.txt",
+      "bytes": 31807,
+      "sha256": "60130ce1ac921e24198e7ba041b01f0b105b35e54af1b4bfb39fa51065f90e02"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8+LID/DEC+LID_S5_GR.txt",
+      "bytes": 28485,
+      "sha256": "d5b9e49dad31e4ef60db9617af2c9075b9c6f662feb20bb6c631e145e1d63901"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8+LID/DEC+LID_S6_BR.txt",
+      "bytes": 28485,
+      "sha256": "01039990c0946ae4257516163bfe0b0a50dbcf4858dc01ab650accf0b94b0f17"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8+LID/DEC+LID_S6_GR.txt",
+      "bytes": 28485,
+      "sha256": "e49b6f9bfb2ece5dbbca2218c32af8d09b2480f16fb88670fa915bee49fe38a3"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8+LID/DEC+LID_S6_PP.txt",
+      "bytes": 31807,
+      "sha256": "73e65c0a1657f7bd21416f8e8567d0b9822ee6aed9d414a736d33671492dfd0d"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8+LID/DEC+LID_S7_BR.txt",
+      "bytes": 28485,
+      "sha256": "2761df67d7f878045cf17266680c8b4f075c1c596413c93a493fe470d6b63f97"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8+LID/DEC+LID_S7_GR.txt",
+      "bytes": 28485,
+      "sha256": "7d8f494bbaaa0de9f3fb3b59fb8ccd77992be2a8dfc223b173dddd05ad5ce133"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8+LID/DEC+LID_S7_PP.txt",
+      "bytes": 31807,
+      "sha256": "a2c7fe1fba74f5f3ae97d526e194d970721f9e8cf5aeb189e5612a89d872a585"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8+LID/DEC+LID_S8_BR.txt",
+      "bytes": 28485,
+      "sha256": "0db7ca218db070def925a4e1c77e34b0c6ecce0b45bdb9155ae41c493319503f"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8+LID/DEC+LID_S8_GR.txt",
+      "bytes": 28485,
+      "sha256": "c5307a772a93dbe8611080fbc68dd0f06f6bd8699f8f4c56ed0329aaa106457f"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8+LID/DEC+LID_S8_PP.txt",
+      "bytes": 31807,
+      "sha256": "3b75a60fa71fad83b60d8f260a4dca43a896591ec93b706d3cff95b6d95dd8b8"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8+LID/DEC+LID_S9_GR.txt",
+      "bytes": 28485,
+      "sha256": "4cba5c96710117bbc6209e0e5f1d38756cb52526ae90b52770297ec8d5bbe1af"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8+LID/DEC+LID_S9_PP.txt",
+      "bytes": 31807,
+      "sha256": "3b0d9ff37b2e1daee7486b75c79e77e2f183f3d758e123c4c43b3935db4a825b"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8+LID/DEC+LID_S10_BR.txt",
+      "bytes": 28486,
+      "sha256": "e078e23d389f3aee3050b12d5daf01a7cfbef4788d420da026132b0df25bc352"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8+LID/DEC+LID_S10_GR.txt",
+      "bytes": 28486,
+      "sha256": "40a5bb05d4eb43b536b0238f9451a36b24e195a848717439c8aed489cbf37d48"
+    },
+    {
+      "member": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/DEC8+LID/DEC+LID_S10_PP.txt",
+      "bytes": 31506,
+      "sha256": "c14780891bd42ab3c12118a41c69da7a64383bdb6f0700f0326a6a0ccc5da8b1"
+    }
+  ],
+  "rankingEligible": false,
+  "limitations": [
+    "공개 연구 모형의 입력이며 공식 실측 관망·현행 시설 목록과 다름",
+    "수평 좌표계·수직 기준·시설 유효 시점 미명시",
+    "내장 강우·외부 유입 시계열의 원 관측/산정 계보 미확인",
+    "원본과 모든 변경/실패 결과 보존, 현장 정확도/경쟁 등급 자동 승격 금지"
+  ]
+}

@@ -17,7 +17,7 @@ for _engine in ('surface', 'surface_exchange'):
     _METHODS[_engine] = _METHODS[_engine] | {'initialization_state'}
 
 
-def _serve(connection, engine, model, directory, evaluation_seconds):
+def _serve(connection, engine, model, directory, evaluation_seconds, native_duration):
     # 새 인터프리터에서만 엔진을 로드하며 DB·API 비밀 환경을 전달하지 않는다.
     environment = {key: value for key, value in os.environ.items()
                    if key in ('PATH', 'HOME', 'TMPDIR', 'LANG', 'SYSTEMROOT', 'WINDIR')}
@@ -33,7 +33,8 @@ def _serve(connection, engine, model, directory, evaluation_seconds):
                 from waterleague_sim.engine.network_exchange import ExchangeNetworkSession as NetworkSession
             else:
                 from waterleague_sim.engine.network import NetworkSession
-            session = NetworkSession(model, directory, evaluation_seconds=evaluation_seconds)
+            kwargs = {'native_duration': True} if native_duration else {}
+            session = NetworkSession(model, directory, evaluation_seconds=evaluation_seconds, **kwargs)
             session.__enter__()
             extra = {'durationSeconds': session.duration_seconds, 'evaluationSeconds': session.evaluation_seconds}
         else:
@@ -69,8 +70,12 @@ def _serve(connection, engine, model, directory, evaluation_seconds):
 class EngineProcess:
     """계산 작업 내부 전용 RPC. 사용자 지정 메서드·코드 실행 인터페이스 없음."""
 
-    def __init__(self, engine, model, directory, *, evaluation_seconds=None, timeout_seconds=60):
+    def __init__(self, engine, model, directory, *, evaluation_seconds=None, timeout_seconds=60,
+                 native_duration=False):
         require(engine in _METHODS, 'FLOOD_ENGINE_KIND_INVALID')
+        require(type(native_duration) is bool and (not native_duration or engine == 'network'),
+                'FLOOD_NATIVE_DURATION_DIAGNOSTIC_ONLY')
+        self.native_duration = native_duration
         require(type(timeout_seconds) in (int, float) and 0 < timeout_seconds <= 60,
                 'FLOOD_PROCESS_TIMEOUT_INVALID')
         self.engine_kind, self.model = engine, model
@@ -84,7 +89,7 @@ class EngineProcess:
         context = multiprocessing.get_context('spawn')
         self.connection, child = context.Pipe()
         self.process = context.Process(target=_serve, args=(child, self.engine_kind, self.model,
-                                      self.directory, self.evaluation_seconds), daemon=True)
+                                      self.directory, self.evaluation_seconds, self.native_duration), daemon=True)
         self.process.start()
         child.close()
         try:

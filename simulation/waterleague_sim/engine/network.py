@@ -50,7 +50,11 @@ def identity():
 class NetworkSession:
     """외부 HTTP 입력을 받지 않는 계산 작업용 세션. 프로세스당 관망 하나."""
 
-    def __init__(self, input_text, directory, *, evaluation_seconds=None):
+    def __init__(self, input_text, directory, *, evaluation_seconds=None, native_duration=False):
+        require(type(native_duration) is bool and (not native_duration or
+                (evaluation_seconds is None and isinstance(input_text, str))),
+                'NETWORK_NATIVE_DURATION_DIAGNOSTIC_ONLY')
+        self.native_duration = native_duration
         self.stage_input = None
         self.original_model = deepcopy(input_text) if isinstance(input_text, dict) else None
         if self.original_model is not None:
@@ -138,6 +142,11 @@ class NetworkSession:
             require(settings[0] == 1 and settings[1] > 0 and settings[2] == 1,
                     'NETWORK_REQUIRES_DYNWAVE_AND_FULL_REPORT_WINDOW')
             self.duration_seconds = settings[1]
+            if self.native_duration:
+                # 공개 INP 재실행에서만 EPA 날짜 차의 초 단위 내림을 원형 그대로 보존한다.
+                require(0 <= self.calendar_seconds - self.duration_seconds <= 1.002,
+                        'NETWORK_NATIVE_DURATION_MISMATCH')
+                self.evaluation_seconds = self.duration_seconds
             require(self.evaluation_seconds <= self.duration_seconds + .002,
                     'NETWORK_ENGINE_END_TRUNCATED')
             self.ponding_enabled = bool(settings[3])
@@ -251,17 +260,21 @@ class NetworkSession:
         require(self.evaluation_seconds == self.duration_seconds, 'NETWORK_EXPLICIT_STRIDE_REQUIRED')
         maximum_pump = 0.
         next_frame = 0.
+        pumps = [index for index in self.links.values() if self.lib.swmm_getValue(400, index) == 1]
+        elapsed = C.c_double()
         with (self.directory / 'network-frames.jsonl').open('x') as frames:
-            for _ in range(2_000_000):
-                row = self.snapshot()
-                if row['totals']['timeSeconds'] >= self.duration_seconds:
-                    break
-                row = self.advance()
-                maximum_pump = max(maximum_pump, *(abs(link['flowM3s']) for link in row['links'].values()
-                                                   if link['type'] == 1), 0)
-                if row['totals']['timeSeconds'] >= next_frame:
+            for _ in range(20_000_000):
+                # 표시 시각에서 계산 단계를 절단하지 않고 EPA 원래 내부 단계를 그대로 진행한다.
+                self._check(self.lib.wl_networkAdvance(0, C.byref(elapsed)))
+                if pumps:
+                    maximum_pump = max(maximum_pump, *(abs(self.lib.swmm_getValue(410, index))
+                                                       * self.flow_scale for index in pumps))
+                if elapsed.value == 0 or elapsed.value * 86400 >= next_frame:
+                    row = self.snapshot()
                     frames.write(json.dumps(row, allow_nan=False) + '\n')
                     next_frame += frame_interval_seconds
+                if elapsed.value == 0:
+                    break
             else:
                 require(False, 'NETWORK_STEP_LIMIT_EXCEEDED')
         return {'result': self.finish(), 'maximumPumpFlowM3s': maximum_pump}
@@ -283,6 +296,9 @@ class NetworkSession:
                        'internalVolumeConversionM3PerFt3': FT3_TO_M3,
                        'durationSeconds': self.duration_seconds, 'evaluationSeconds': self.evaluation_seconds,
                        'calendarDurationSeconds': self.calendar_seconds, 'complete': complete,
+                       'timeWindowPolicy': ('NATIVE_DURATION_DIAGNOSTIC' if self.native_duration
+                                            else 'EXPLICIT_CALENDAR_EVALUATION'),
+                       'calendarShortfallSeconds': self.calendar_seconds - self.duration_seconds,
                        'initial': self.initial, 'final': final, 'forcing': self.forcing,
                        'runoffContinuityPercent': errors[0].value,
                        'routingContinuityPercent': errors[1].value,
