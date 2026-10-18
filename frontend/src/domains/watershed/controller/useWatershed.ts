@@ -1,3 +1,4 @@
+import type { ConduitPlacement } from '../dto/conduitDto';
 import type { StoragePlacement } from '../dto/storageDto';
 import { validateCombinedDesign } from '../service/storageDesign';
 import { useEffect, useRef, useState } from 'react';
@@ -19,6 +20,7 @@ export function useWatershed(account: Account | null, open: boolean) {
   const [jobs, setJobs] = useState<WatershedJob[]>([]);
   const [selectedId, setSelectedId] = useState('');
   const [drafts, setDrafts] = useState<NetworkPlacement[]>([]);
+  const [conduitDrafts, setConduitDrafts] = useState<ConduitPlacement[]>([]);
   const [storageDrafts, setStorageDrafts] = useState<StoragePlacement[]>([]);
   const [queryError, setQueryError] = useState('');
   const [submitError, setSubmitError] = useState('');
@@ -82,13 +84,15 @@ export function useWatershed(account: Account | null, open: boolean) {
   }, [open, allowed, revision]);
   async function submit() {
     if (!allowed || !catalog || submitting.current) return;
-    const invalid = validateCombinedDesign(catalog, drafts, storageDrafts);
+    const invalid = validateCombinedDesign(catalog, drafts, storageDrafts, conduitDrafts);
     if (invalid) {
       setSubmitError(invalid);
       return;
     }
     const fingerprint = JSON.stringify([
       designFingerprint(catalog.catalogHash, drafts, catalog.costCatalogHash),
+      catalog.conduitCatalogHash,
+      [...conduitDrafts].sort((a, b) => a.id.localeCompare(b.id)),
       catalog.storageCatalogHash,
       [...storageDrafts].sort((a, b) => a.id.localeCompare(b.id)),
     ]);
@@ -112,6 +116,9 @@ export function useWatershed(account: Account | null, open: boolean) {
         drafts.length ? catalog.costCatalogHash : undefined,
         storageDrafts.length && catalog.storageCatalogHash
           ? { catalogHash: catalog.storageCatalogHash, placements: storageDrafts }
+          : undefined,
+        conduitDrafts.length && catalog.conduitCatalogHash
+          ? { catalogHash: catalog.conduitCatalogHash, placements: conduitDrafts }
           : undefined
       );
       if (!mounted.current || abort.signal.aborted) return;
@@ -139,6 +146,8 @@ export function useWatershed(account: Account | null, open: boolean) {
     setDrafts,
     storageDrafts,
     setStorageDrafts,
+    conduitDrafts,
+    setConduitDrafts,
     error: submitError || queryError,
     busy,
     loading,

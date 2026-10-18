@@ -1,3 +1,4 @@
+import { ConduitDesignForm } from './ConduitDesignForm';
 import { useState } from 'react';
 import {
   X,
@@ -34,6 +35,7 @@ const networkFacilities = [
   { id: 'VEGETATIVE_SWALE', name: '식생수로', Icon: Route },
   { id: 'RAINWATER_CISTERN', name: '빗물이용조', Icon: Container },
   { id: 'UNDERGROUND_STORAGE', name: '지하 저류조', Icon: Warehouse },
+  { id: 'CONDUIT', name: '배수관·암거', Icon: Network },
 ] as const;
 const pendingFacilities = [
   { name: '저류지·유수지', Icon: Fence, reason: '수위별 저류 용량·월류 구조·부지·원가 연결 필요' },
@@ -41,11 +43,6 @@ const pendingFacilities = [
     name: '빗물받이',
     Icon: CircleDot,
     reason: '유입부 단면·기준고·관망과 지표의 같은 좌표계 연결 필요',
-  },
-  {
-    name: '배수관·암거',
-    Icon: Network,
-    reason: '상하류 절점·관저고·관경·접속 위치·원가 연결 필요',
   },
   {
     name: '빗물펌프장',
@@ -70,7 +67,9 @@ export function FacilityExpansionPanel({
   onAllCandidates?: () => void;
   onLogin: () => void;
 }) {
-  const [type, setType] = useState<NetworkFacility | 'UNDERGROUND_STORAGE' | null>(null);
+  const [type, setType] = useState<NetworkFacility | 'UNDERGROUND_STORAGE' | 'CONDUIT' | null>(
+    null
+  );
   const state = useWatershed(account, open);
   return (
     <aside
@@ -111,10 +110,10 @@ export function FacilityExpansionPanel({
         </button>
       )}
       <h3>
-        연결 유역 비교 <small>생물저류 포함 5종</small>
+        연결 유역 비교 <small>생물저류 포함 6종</small>
       </h3>
       <p>
-        생물저류시설은 공개 토성 후보에서 지도 설치가 가능합니다. 나머지 4종은 관망 계산에서 사용할
+        생물저류시설은 공개 토성 후보에서 지도 설치가 가능합니다. 나머지 5종은 관망 계산에서 사용할
         수 있으며, 지도 설치 연결을 진행 중입니다.
       </p>
       <div className="watershed-facility-grid">
@@ -128,7 +127,7 @@ export function FacilityExpansionPanel({
       </div>
       {type && !account && (
         <div className="watershed-access">
-          <p>회원으로 로그인하면 집수구역을 선택하고 내 설계를 계산할 수 있습니다.</p>
+          <p>회원으로 로그인하면 공개 관망에서 시설을 설계하고 계산할 수 있습니다.</p>
           <button className="watershed-submit" onClick={onLogin}>
             로그인하고 설계
           </button>
@@ -152,7 +151,9 @@ export function FacilityExpansionPanel({
           )}
           {state.catalog &&
             type &&
-            (type === 'UNDERGROUND_STORAGE' ? (
+            (type === 'CONDUIT' ? (
+              <ConduitDesignForm catalog={state.catalog} state={state} />
+            ) : type === 'UNDERGROUND_STORAGE' ? (
               <StorageDesignForm catalog={state.catalog} state={state} />
             ) : (
               <NetworkDesignForm type={type} catalog={state.catalog} state={state} />
@@ -164,8 +165,10 @@ export function FacilityExpansionPanel({
                 {state.jobs.map((job) => (
                   <option key={job.id} value={job.id}>
                     {new Date(job.createdAt).toLocaleString('ko-KR')} ·{' '}
-                    {job.design.placements.length + (job.design.storage?.placements.length ?? 0)}곳
-                    · {jobLabels[job.state]}
+                    {job.design.placements.length +
+                      (job.design.storage?.placements.length ?? 0) +
+                      (job.design.conduits?.placements.length ?? 0)}
+                    곳 · {jobLabels[job.state]}
                   </option>
                 ))}
               </select>
@@ -201,7 +204,7 @@ export function FacilityExpansionPanel({
       )}
       <details className="watershed-pending">
         <summary>
-          연결 준비 중인 시설 <span>4종</span>
+          연결 준비 중인 시설 <span>3종</span>
         </summary>
         <p>아래 시설은 아직 설치하거나 이 화면에서 계산할 수 없습니다.</p>
         {pendingFacilities.map(({ name, Icon, reason }) => (

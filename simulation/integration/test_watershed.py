@@ -100,3 +100,39 @@ class WatershedTests(unittest.TestCase):
             changed=json.loads(raw);changed['storage']['placements'][0]['drain']['nodeId']='Out1'
             invalid=json.dumps(changed,sort_keys=True)
             with self.assertRaises(FloodModelError): inputs({'modelHash':CATALOG_HASH,'placements':invalid,'inputHash':hashlib.sha256((CATALOG_HASH+'\n'+invalid).encode()).hexdigest()})
+
+    def test_conduit_storage_and_lid_share_one_native_run(self):
+        from waterleague_sim.watershed_conduits import CATALOG as PIPES,CATALOG_HASH as PIPE_HASH
+        from waterleague_sim.watershed_storage import CATALOG_HASH as STORAGE_HASH
+        from waterleague_sim.reference.connected_storage import design as tank_design
+        catalog=json.loads(CATALOG.read_text());pipe_catalog=json.loads(PIPES.read_text())
+        design={'schemaVersion':1,'basis':catalog['designBasis'],'placements':[
+            {'id':'Bio1','facilityType':'BIORETENTION','subcatchmentId':'S1','areaM2':100,
+             'replacedImperviousM2':100,'treatedImperviousM2':1000,'initialSaturationPercent':0,
+             'parameters':catalog['templates']['BIORETENTION']['parameters']}]}
+        def packed(d):
+            raw=json.dumps(d,sort_keys=True)
+            return raw,hashlib.sha256((CATALOG_HASH+'\n'+raw).encode()).hexdigest()
+        raw,digest=packed(design)
+        base=inputs({'modelHash':CATALOG_HASH,'placements':raw,'inputHash':digest})[2]
+        design['storage']=tank_design(base,inlet='J1',receiver='J2',invert=16,depth=5,area=100,inlet_crest=18.5,drain_crest=16.2,overflow_crest=18.5)|{'catalogHash':STORAGE_HASH}
+        original=next(p['original'] for p in pipe_catalog['conduits'] if p['id']=='C2')
+        design['conduits']={'schemaVersion':1,'catalogHash':PIPE_HASH,'sourceNetworkSha256':pipe_catalog['baseNetworkSha256'],
+            'placements':[{'id':'Pipe1','conduitId':'C2',**original,'widthM':3,'basis':'EXPLICIT_DESIGN_NOT_SITE_MEASURED',
+                'evidence':'명시적 회원 관로 개량 설계; 현장 관측 제원 아님','original':original}]}
+        raw,digest=packed(design);identity=uuid.uuid4()
+        self.conn.execute("INSERT INTO watershed_experiments(id,owner_id,request_key,model_hash,input_hash,placements,state,created_at) VALUES(%s,%s,%s,%s,%s,%s,'QUEUED',now())",(identity,self.owner,uuid.uuid4(),CATALOG_HASH,digest,raw))
+        job=queue.claim(self.conn);self.assertTrue(watershed.process(self.conn,job,self.artifacts))
+        row=self.conn.execute('SELECT * FROM watershed_experiments WHERE id=%s',(identity,)).fetchone()
+        self.assertEqual(row['state'],'SUCCEEDED',row['error_code']);result=json.loads(row['result'])
+        self.assertEqual(result['numericalStatus'],'PASSED',result)
+        self.assertEqual(result['cases'][1]['connectedStorage']['numericalStatus'],'PASSED')
+        for case in result['cases']:
+            self.assertEqual(case['conduits'][0]['conduitId'],'C2')
+            self.assertGreater(case['conduitStateTimeSeconds'],0)
+        self.assertNotEqual(result['cases'][0]['totals'],result['cases'][1]['totals'])
+        self.assertIsNone(result['completeInstalledCostKrw']);self.assertFalse(result['rankingEligible'])
+        folder=self.artifacts/'watersheds'/str(identity)/str(job['lease_token'])
+        manifest=json.loads((folder/'manifest.json').read_text())
+        self.assertEqual(manifest['conduit-catalog.json'],PIPE_HASH)
+        self.assertEqual((folder/'baseline-input.inp').read_bytes(),base)

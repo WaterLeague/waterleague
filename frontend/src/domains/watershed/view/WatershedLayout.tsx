@@ -8,6 +8,7 @@ export function WatershedLayout({
   placements,
   onSelect,
   disabled = false,
+  linkSelectionLabel = '파란색: 저류조를 추가할 기존 관로의 연결점',
   selectedLinkId,
   selectableLinkIds,
   onSelectLink,
@@ -17,6 +18,7 @@ export function WatershedLayout({
   placements: NetworkPlacement[];
   onSelect: (id: string) => void;
   disabled?: boolean;
+  linkSelectionLabel?: string;
   selectedLinkId?: string;
   selectableLinkIds?: string[];
   onSelectLink?: (id: string) => void;
@@ -191,9 +193,7 @@ export function WatershedLayout({
           : `${selectedId} → ${downstream.start} → 연결 방류구 ${downstream.outfalls.join('·') || '없음'}`}
       </p>
       <p>
-        {onSelectLink
-          ? '파란색: 저류조를 추가할 기존 관로의 연결점'
-          : '노란색: 선택 구역 · 파란색: 하류 연결'}
+        {onSelectLink ? linkSelectionLabel : '노란색: 선택 구역 · 파란색: 하류 연결'}
         <br />
         화살표는 관로 정의 방향이며 실제 유량 방향이 아닙니다.
       </p>

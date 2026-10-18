@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "classification": "PUBLIC_NETWORK_MEMBER_CONDUIT_COMPARISON",
+  "sourceCatalogSha256": "beaddba8868b6f1f6bbf35b1d53d4695a94db99498d8988f90d62013cf8f053c",
+  "conduitCatalogSha256": "a5dac5d1552b1620bfbe65c2f54a62626de16dd70a3807b1a2d03736ddcfdd6b",
+  "requestSha256": "3937fdcf2bd54b04ff15cb7e2febaf6c1b869da69bfaa45c445c1be60ca166bb",
+  "inputHash": "89766196cd5a140ec84ef92ca68327fe4c4592fba762601bb6dff8fffe88f9c2",
+  "sourceOriginalSha256": "8ce278a3d2b58df3c2a5fd1232160bcabb324389746ee0c878792acf91abbdbb",
+  "engineSha256": "3190412f6dee5afd88aef2c081c0fb5a821d01788f3a7f15652cb0713f34cd78",
+  "numericalStatus": "PASSED",
+  "replay": [
+    {
+      "id": "baseline",
+      "outSha256": "682eeb8bb19391dde81c640bc68f91de924852787689c89cbd46a3c771006c18",
+      "binaryEqual": true,
+      "metricsEqual": true
+    },
+    {
+      "id": "strategy",
+      "outSha256": "0d065959ccc1b4898e483e5f807b56b00ff014af1044f2f8031d1bf9e6cf4686",
+      "binaryEqual": true,
+      "metricsEqual": true
+    }
+  ],
+  "design": "S1 BIORETENTION 100 m², treated 1000 m²; J1 -> J2 sealed 500 m³ storage; C2 width 2.2 -> 3 m, height 2.2 m; explicit design, not observed assets",
+  "signedReductionM3": {
+    "outflowM3": 3.3068004492670298,
+    "floodingM3": 241.7232619957067
+  },
+  "signedPeakReductionM3s": 0.0,
+  "comparisonWithSameStorageAndLid": {
+    "referenceResultSha256": "a01f2a3164e96c717cc988f42133a9a6ff2c226eaab8b77afec1e56900e99292",
+    "differenceInFloodingReductionM3": -35.39674081513658,
+    "differenceInOutflowReductionM3": 23.606962205376476
+  },
+  "finalConduitStates": [
+    {
+      "case": "baseline",
+      "timeSeconds": 86339.0,
+      "states": [
+        {
+          "id": "Pipe1",
+          "conduitId": "C2",
+          "type": 0,
+          "flowM3s": 0.07608924547800727,
+          "depthM": 0.27094071835410666,
+          "setting": 1.0
+        }
+      ]
+    },
+    {
+      "case": "strategy",
+      "timeSeconds": 86339.0,
+      "states": [
+        {
+          "id": "Pipe1",
+          "conduitId": "C2",
+          "type": 0,
+          "flowM3s": 0.07825721418067015,
+          "depthM": 0.2675717194254114,
+          "setting": 1.0
+        }
+      ]
+    }
+  ],
+  "resultFileSha256": "af713b0fffcbbf200f77fb7ab860ade91ef5ff21b6a04854ce06e113352bdc47",
+  "frontFixtureSha256": "4d858f36ca90d03086786df65781cf87990e03888d22768c3cb4f849e6222092",
+  "rankingEligible": false,
+  "completeInstalledCostKrw": null,
+  "limitations": [
+    "논문 PDF·부록 원본은 아직 미보관, 공개 출판 본문 확인과 구분",
+    "EPSG·수직 기준·시설 유효 시점은 계속 미확인",
+    "문헌의 단면·유입 추정값과 사후 공간자료를 2010 실측 입력으로 표시하지 않음",
+    "원 관망의 2010 강우·추정 외부 유입·초기 상태를 보존한 문헌 단면 설계 비교",
+    "시설 면적과 처리 불투수 면적은 사용자의 가상 설계이며 현장 설치 가능 범위 미확인",
+    "초기 포화도 0·문헌 단면·하부 침투 4mm/h는 설계 조건이며 현장 실측값 아님",
+    "좌표 정합·지표 결합·가격 미확정: 주간 설치·예산 차감·순위 게시 제외",
+    "공개 문헌의 설계 범위이며 서울 현장 또는 특정 제품의 실측 제원이 아님",
+    "시설 위치·대체 면적·집수 연결·초기 포화도·배수구 규격·하부 침투율은 명시된 설계 입력",
+    "기존 집수구역 출구를 계승하며 새로운 무한 방류구를 생성하지 않음",
+    "SWMM LID 배수는 수신 관망 수두의 역압이나 지하수에 의한 침투 저하를 완전하게 연결하지 않음",
+    "덮개 이용조 면적의 직접 강우는 제외, 덮개에서 외부로 떨어지는 물의 별도 경로 미구현",
+    "이용조 방류는 관망 배수이며 수요·수질 근거 없는 재이용 점수 없음",
+    "공사비·입지·현장 연결 검증 전 신규 시설의 운영 설치 및 순위 미개방",
+    "명시적 설계 제원이며 현장 치수·입지·공사 가능성·단가의 검증 아님",
+    "기존 절점과 시설 사이의 국부 오리피스 연결; 긴 접속관 마찰·침전·막힘은 포함하지 않음",
+    "덮개·차수 설계의 지하 저장 범위; 개방 저류지 직접 강우·증발·침투와 구분",
+    "비상 배수구 용량 초과 시 별도 지표 연결이 필요하며 절점 월류 소실은 성공 효과 아님",
+    "공개 연구 모형의 기존 관로 개량 비교이며 현장 관로 대장·공사 가능성의 확인 아님",
+    "원본 연결·길이·관저고·초기 유량·경계·손실 조건 유지, 단면·병렬 관 개수·Manning 조도만 설계 변경",
+    "관로 높이는 공개 접속 절점 최대 깊이에서 원 관저고 오프셋을 뺀 범위 내 제한, 현장 허가 한도 아님",
+    "직사각형 폐합 암거와 원형 관로만 지원, 별도 입구 통제 암거 코드는 원본 값 유지",
+    "시공비·부지·매설 깊이·시설 유효 시점 미확정, 지도 점유·예산·순위 미개방",
+    "월류 체적은 지표 침수 깊이·면적·지속시간의 대체 지표가 아님",
+    "원본 EXTRAN 수치 실패를 보존하고 별도 SLOT 파생 입력으로 계산; 원본의 달력 종료보다 1초 짧은 엔진 평가 창",
+    "첨두는 같은 시각의 모든 외부 출구 유량 합의 최댓값이며 출구별 최댓값의 합이 아님",
+    "외부 출구 첨두는 공개 연구 관망의 계산값이며 실제 하류 침수 위험도·현장 효과 확정값이 아님; 필수 지표 침수 미확보로 총점 없음"
+  ]
+}

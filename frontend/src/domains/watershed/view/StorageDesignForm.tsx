@@ -59,10 +59,14 @@ function Composer({ catalog, state }: { catalog: WatershedCatalog; state: Waters
   }
   function add() {
     let i = 1;
-    const used = new Set([...state.drafts, ...state.storageDrafts].map((p) => p.id.toUpperCase()));
+    const used = new Set(
+      [...state.drafts, ...state.storageDrafts, ...state.conduitDrafts].map((p) =>
+        p.id.toUpperCase()
+      )
+    );
     while (used.has(`TANK${i}`)) i++;
     const next = [...state.storageDrafts, { ...draft, id: `Tank${i}` }];
-    const invalid = validateCombinedDesign(catalog, state.drafts, next);
+    const invalid = validateCombinedDesign(catalog, state.drafts, next, state.conduitDrafts);
     setError(invalid);
     setFeedback('');
     if (!invalid) {
@@ -203,7 +207,10 @@ function Composer({ catalog, state }: { catalog: WatershedCatalog; state: Waters
       {feedback && <p role="status">{feedback}</p>}
       <button
         className="watershed-secondary"
-        disabled={state.busy || state.drafts.length + state.storageDrafts.length >= 20}
+        disabled={
+          state.busy ||
+          state.drafts.length + state.storageDrafts.length + state.conduitDrafts.length >= 20
+        }
         onClick={add}
       >
         설계에 추가

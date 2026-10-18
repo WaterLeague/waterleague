@@ -1,3 +1,4 @@
+import { conduitDimensions } from '../service/conduitDesign';
 import type { WatershedState } from '../controller/useWatershed';
 import type { WatershedCatalog } from '../dto/watershedDto';
 import { networkNames } from '../service/watershedDesign';
@@ -11,7 +12,7 @@ export function WatershedDesignReview({
   catalog: WatershedCatalog;
   state: WatershedState;
 }) {
-  const count = state.drafts.length + state.storageDrafts.length;
+  const count = state.drafts.length + state.storageDrafts.length + state.conduitDrafts.length;
   const costing = state.drafts.length ? previewWatershedCosts(catalog, state.drafts) : null;
   return (
     <>
@@ -57,12 +58,32 @@ export function WatershedDesignReview({
               </button>
             </li>
           ))}
+          {state.conduitDrafts.map((p) => (
+            <li key={p.id}>
+              <div>
+                <strong>{p.conduitId} · 배수관·암거 개량</strong>
+                <span>{conduitDimensions(p)}</span>
+              </div>
+              <button
+                aria-label={`${p.id} 관로 개량 삭제`}
+                disabled={state.busy}
+                onClick={() =>
+                  state.setConduitDrafts(state.conduitDrafts.filter((c) => c.id !== p.id))
+                }
+              >
+                삭제
+              </button>
+            </li>
+          ))}
         </ul>
       </div>
       <p className="watershed-warning">
         2010년 공개 원 관망 강우로 계산합니다. 현재 재생 중인 재해·실시간 강우와 별도이며 주간·재해
         예산과 순위에 반영하지 않습니다. 전체 설치비 미확정.
       </p>
+      {state.conduitDrafts.length > 0 && (
+        <p className="watershed-warning">관로 개량 공사비 미산정 · 참고 부분합 제외</p>
+      )}
       {state.storageDrafts.length > 0 && (
         <p className="watershed-warning">
           지하 저류조 공사비 미산정 · 아래 참고 부분합에는 포함되지 않습니다.
@@ -72,7 +93,10 @@ export function WatershedDesignReview({
         <WatershedCosts
           costing={costing}
           preview
-          additionalUnpricedIds={state.storageDrafts.map((p) => p.id)}
+          additionalUnpriced={[
+            ...state.storageDrafts.map((p) => ({ id: p.id, name: '지하 저류조' })),
+            ...state.conduitDrafts.map((p) => ({ id: p.id, name: '배수관·암거 개량' })),
+          ]}
         />
       )}
       <button

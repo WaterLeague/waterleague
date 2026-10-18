@@ -34,17 +34,19 @@ def inputs(request):
     design = json.loads(request['placements'])
     require(isinstance(design, dict) and isinstance(design.get('placements'), list)
             and design.get('schemaVersion') == 1 and design.get('basis') == catalog['designBasis']
-            and set(design) <= {'schemaVersion','basis','placements','costing','storage'}, 'WATERSHED_DESIGN_INVALID')
+            and set(design) <= {'schemaVersion','basis','placements','costing','storage','conduits'}, 'WATERSHED_DESIGN_INVALID')
     storage = design.get('storage', {})
     require(isinstance(storage, dict) and isinstance(storage.get('placements', []), list), 'WATERSHED_STORAGE_PLACEMENTS_INVALID')
-    storage_count = len(storage.get('placements', []))
+    conduit_design=design.get('conduits', {})
+    require(isinstance(conduit_design,dict) and isinstance(conduit_design.get('placements',[]),list),'WATERSHED_CONDUIT_PLACEMENTS_INVALID')
+    storage_count = len(storage.get('placements', [])) + len(conduit_design.get('placements',[]))
     require(1 <= len(design['placements'])+storage_count <= 20, 'WATERSHED_DESIGN_INVALID')
     for p in design['placements']:
         template = catalog['templates'].get(p['facilityType'])
         require(template is not None and p['parameters'] == template['parameters']
                 and p['initialSaturationPercent'] == template['initialSaturationPercent']
                 and p['replacedImperviousM2'] == p['areaM2'], 'WATERSHED_TEMPLATE_CHANGED')
-    verify_costs({k: v for k, v in design.items() if k != 'storage'})
+    verify_costs({k: v for k, v in design.items() if k not in ('storage','conduits')})
     manifest = ROOT/'data/manifests/mendeley-seocho-network-v3.json'
     source, source_hash, entries = load_archive(ROOT, manifest)
     require(source_hash == catalog['sourceManifestSha256']
@@ -61,12 +63,19 @@ def inputs(request):
     if 'storage' in design:
         from .watershed_storage import compile as compile_storage
         strategy, storage_metadata = compile_storage(base, design['storage'], [p['id'] for p in design['placements']])
+    conduit_metadata=None
+    if 'conduits' in design:
+        from .watershed_conduits import compile as compile_conduits
+        strategy,conduit_metadata=compile_conduits(strategy,design['conduits'],base,[p['id'] for p in design['placements']+storage.get('placements',[])])
     transformation = {'limitations': []}
     if design['placements']:
-        strategy, transformation = compile_design(strategy, {k: v for k, v in design.items() if k not in ('costing','storage')})
+        strategy, transformation = compile_design(strategy, {k: v for k, v in design.items() if k not in ('costing','storage','conduits')})
     if storage_metadata is not None:
         transformation['connectedStorage'] = storage_metadata
         transformation['limitations'] += storage_metadata['limitations']
+    if conduit_metadata is not None:
+        transformation['conduitRetrofits']=conduit_metadata
+        transformation['limitations']+=conduit_metadata['limitations']
     return catalog, original, base, strategy, numerical, transformation, manifest
 
 
@@ -75,13 +84,16 @@ def calculate(request, directory):
     directory = Path(directory)
     directory.mkdir(parents=True, exist_ok=True)
     design = json.loads(request['placements'])
-    cost_raw = verify_costs({k: v for k, v in design.items() if k != 'storage'})
+    cost_raw = verify_costs({k: v for k, v in design.items() if k not in ('storage','conduits')})
     if cost_raw is not None:
         (directory/'cost-catalog.json').write_bytes(cost_raw)
         write(directory/'cost-snapshot.json', design['costing'])
     if 'storage' in design:
         from .watershed_storage import CATALOG as STORAGE_CATALOG
         (directory/'storage-connections.json').write_bytes(STORAGE_CATALOG.read_bytes())
+    if 'conduits' in design:
+        from .watershed_conduits import CATALOG as CONDUIT_CATALOG
+        (directory/'conduit-catalog.json').write_bytes(CONDUIT_CATALOG.read_bytes())
     (directory/'catalog.json').write_bytes(CATALOG.read_bytes())
     (directory/'original.inp').write_bytes(original)
     (directory/'source-manifest.json').write_bytes(manifest.read_bytes())
@@ -119,6 +131,9 @@ def calculate(request, directory):
             case['facilities'] = result['final']['facilities']
             case['outfalls'] = {key: value for key, value in result['final']['nodes'].items() if value['type'] == 1}
             case['evaluationMetrics'] = result['evaluationMetrics']
+            if 'conduits' in design:
+                case['conduits']=[{'id':p['id'],'conduitId':p['conduitId'],**result['final']['links'][p['conduitId']]} for p in design['conduits']['placements']]
+                case['conduitStateTimeSeconds']=result['final']['totals']['timeSeconds']
             if name == 'strategy' and 'connectedStorage' in transformation:
                 from .engine.connected_storage import result_summary
                 case['connectedStorage'] = result_summary(transformation['connectedStorage'], result['initial'], result['final'])

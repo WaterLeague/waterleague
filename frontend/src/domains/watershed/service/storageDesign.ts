@@ -1,3 +1,5 @@
+import type { ConduitPlacement } from '../dto/conduitDto';
+import { validateConduits } from './conduitDesign';
 import type { NetworkPlacement, WatershedCatalog } from '../dto/watershedDto';
 import type { StoragePlacement } from '../dto/storageDto';
 import { validateNetworkDesign } from './watershedDesign';
@@ -7,14 +9,17 @@ const precision = (value: number, digits: number) =>
 export function validateCombinedDesign(
   catalog: WatershedCatalog,
   lids: NetworkPlacement[],
-  tanks: StoragePlacement[]
+  tanks: StoragePlacement[],
+  conduits: ConduitPlacement[] = []
 ) {
   if (lids.length) {
     const error = validateNetworkDesign(catalog, lids);
     if (error) return error;
   }
-  if (!lids.length && !tanks.length) return '시설을 한 곳 이상 설계에 추가해 주세요.';
-  if (lids.length + tanks.length > 20) return '한 설계에는 최대 20곳까지 추가할 수 있습니다.';
+  if (!lids.length && !tanks.length && !conduits.length)
+    return '시설을 한 곳 이상 설계에 추가해 주세요.';
+  if (lids.length + tanks.length + conduits.length > 20)
+    return '한 설계에는 최대 20곳까지 추가할 수 있습니다.';
   const ids = new Set(lids.map((p) => p.id.toUpperCase()));
   for (const t of tanks) {
     if (ids.has(t.id.toUpperCase()) || !/^[A-Za-z][A-Za-z0-9_-]{0,23}$/.test(t.id))
@@ -58,5 +63,5 @@ export function validateCombinedDesign(
     }
     if (t.overflow.crestM <= t.drain.crestM) return '비상 배수구는 일반 배수구보다 높아야 합니다.';
   }
-  return '';
+  return validateConduits(catalog, conduits, ids);
 }

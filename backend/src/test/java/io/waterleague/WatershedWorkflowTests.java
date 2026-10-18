@@ -212,6 +212,100 @@ class WatershedWorkflowTests {
         .isZero();
   }
 
+  WatershedRequest.ConduitItem pipe(String id, String conduit, String width) {
+    return new WatershedRequest.ConduitItem(
+        id,
+        conduit,
+        "RECT_CLOSED",
+        new BigDecimal("2.2"),
+        new BigDecimal(width),
+        1,
+        new BigDecimal("0.0147"));
+  }
+
+  WatershedRequest pipeRequest(UUID key, List<WatershedRequest.ConduitItem> pipes) {
+    return new WatershedRequest(
+        key,
+        WatershedCatalogRepository.HASH,
+        List.of(),
+        null,
+        null,
+        new WatershedRequest.ConduitRequest(WatershedCatalogRepository.CONDUIT_HASH, pipes));
+  }
+
+  @Test
+  void freezesConduitOriginalAndKeepsCanonicalRequestsAndOwnerBoundary() {
+    assertThat(catalog.conduits().path("conduits")).hasSize(26);
+    UUID key = UUID.randomUUID();
+    var dto = pipeRequest(key, List.of(pipe("Pipe1", "C2", "3")));
+    var job = service.create(owner, dto);
+    var p = job.design().path("conduits").path("placements").get(0);
+    assertThat(p.path("original").path("widthM").doubleValue()).isEqualTo(2.2);
+    assertThat(p.path("widthM").doubleValue()).isEqualTo(3);
+    assertThat(job.design().path("costing").isMissingNode()).isTrue();
+    assertThat(service.create(owner, pipeRequest(key, List.of(pipe("Pipe1", "C2", "3.000")))).id())
+        .isEqualTo(job.id());
+    assertThatThrownBy(
+            () -> service.create(owner, pipeRequest(key, List.of(pipe("Pipe1", "C2", "4")))))
+        .isInstanceOfSatisfying(
+            DomainException.class, e -> assertThat(e.code()).isEqualTo(ErrorCode.CONFLICT));
+    assertThatThrownBy(() -> service.require(UUID.randomUUID(), job.id()))
+        .isInstanceOf(DomainException.class);
+    assertThat(
+            db.queryForObject(
+                "SELECT count(*) FROM budget_ledger_entries WHERE owner_id=?",
+                Integer.class,
+                owner))
+        .isZero();
+  }
+
+  @Test
+  void rejectsConduitDuplicationForeignLinksAndIdentifiersSharedWithStorage() {
+    for (var pipes :
+        List.of(
+            List.of(pipe("Pipe1", "NONE", "3")),
+            List.of(pipe("Pipe1", "C2", "3"), pipe("Pipe2", "C2", "4"))))
+      assertThatThrownBy(() -> service.create(owner, pipeRequest(UUID.randomUUID(), pipes)))
+          .isInstanceOf(DomainException.class);
+    var storage =
+        storageRequest(UUID.randomUUID(), List.of(), tank("Pipe1", "C1", "100", "18.5")).storage();
+    var mixed =
+        new WatershedRequest(
+            UUID.randomUUID(),
+            WatershedCatalogRepository.HASH,
+            List.of(),
+            null,
+            storage,
+            new WatershedRequest.ConduitRequest(
+                WatershedCatalogRepository.CONDUIT_HASH, List.of(pipe("pipe1", "C2", "3"))));
+    assertThatThrownBy(() -> service.create(owner, mixed)).isInstanceOf(DomainException.class);
+    var invalid =
+        new WatershedRequest.ConduitItem(
+            "Pipe1",
+            "C2",
+            "CIRCULAR",
+            new BigDecimal("2.2"),
+            new BigDecimal("3"),
+            1,
+            new BigDecimal(".0147"));
+    assertThatThrownBy(
+            () -> service.create(owner, pipeRequest(UUID.randomUUID(), List.of(invalid))))
+        .isInstanceOf(DomainException.class);
+    var tooHigh =
+        new WatershedRequest.ConduitItem(
+            "Pipe1",
+            "C2",
+            "RECT_CLOSED",
+            new BigDecimal("3.201"),
+            new BigDecimal("3"),
+            1,
+            new BigDecimal(".0147"));
+    assertThatThrownBy(
+            () -> service.create(owner, pipeRequest(UUID.randomUUID(), List.of(tooHigh))))
+        .isInstanceOf(DomainException.class);
+    assertThat(service.list(owner)).isEmpty();
+  }
+
   @Test
   void rejectsMissingCatchmentsDuplicatesAndOverlappingCaptureAreas() {
     assertThat(catalog.value().path("catchments")).hasSize(14);

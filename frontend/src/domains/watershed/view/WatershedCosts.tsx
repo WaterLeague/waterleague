@@ -4,11 +4,11 @@ const won = (v: number) => `${v.toLocaleString('ko-KR')}원`;
 export function WatershedCosts({
   costing,
   preview = false,
-  additionalUnpricedIds = [],
+  additionalUnpriced = [],
 }: {
   costing: WatershedCostSnapshot;
   preview?: boolean;
-  additionalUnpricedIds?: string[];
+  additionalUnpriced?: { id: string; name: string }[];
 }) {
   return (
     <section
@@ -23,13 +23,15 @@ export function WatershedCosts({
           : `산정된 항목만 ${won(costing.knownReferenceSubtotalKrw)}`}
       </strong>
       <p>
-        미산정 시설 {costing.unpricedPlacementIds.length + additionalUnpricedIds.length}곳 · 전체
+        미산정 시설 {costing.unpricedPlacementIds.length + additionalUnpriced.length}곳 · 전체
         설치비 미확정 · 게임 예산 차감 없음
       </p>
       <ul>
-        {additionalUnpricedIds.map((id) => (
+        {additionalUnpriced.map(({ id, name }) => (
           <li key={id}>
-            <span>{id} · 지하 저류조</span>
+            <span>
+              {id} · {name}
+            </span>
             <strong>미산정</strong>
             <p>현장 부지·굴착·접속 공종과 규격 일치 단가 미확인</p>
           </li>

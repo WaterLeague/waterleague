@@ -23,6 +23,7 @@ public class WatershedService {
   private final WatershedCostRepository costCatalog;
   private final WatershedCostService costs;
   private final StorageDesignService storage;
+  private final ConduitDesignService conduits;
 
   public WatershedService(
       WatershedRepository jobs,
@@ -31,7 +32,8 @@ public class WatershedService {
       JsonService json,
       WatershedCostRepository costCatalog,
       WatershedCostService costs,
-      StorageDesignService storage) {
+      StorageDesignService storage,
+      ConduitDesignService conduits) {
     this.jobs = jobs;
     this.catalog = catalog;
     this.admission = admission;
@@ -39,6 +41,7 @@ public class WatershedService {
     this.costCatalog = costCatalog;
     this.costs = costs;
     this.storage = storage;
+    this.conduits = conduits;
   }
 
   public Map<String, Object> catalog() {
@@ -58,7 +61,11 @@ public class WatershedService {
         "storageCatalogHash",
         WatershedCatalogRepository.STORAGE_HASH,
         "storageCatalog",
-        catalog.storage());
+        catalog.storage(),
+        "conduitCatalogHash",
+        WatershedCatalogRepository.CONDUIT_HASH,
+        "conduitCatalog",
+        catalog.conduits());
   }
 
   public WatershedExperiment require(UUID owner, UUID id) {
@@ -97,9 +104,13 @@ public class WatershedService {
         dto.storage() == null || dto.storage().placements() == null
             ? 0
             : dto.storage().placements().size();
+    int conduitCount =
+        dto.conduits() == null || dto.conduits().placements() == null
+            ? 0
+            : dto.conduits().placements().size();
     if (dto.placements() == null
-        || dto.placements().size() + storageCount < 1
-        || dto.placements().size() + storageCount > 20)
+        || dto.placements().size() + storageCount + conduitCount < 1
+        || dto.placements().size() + storageCount + conduitCount > 20)
       throw new DomainException(ErrorCode.PLACEMENT_INVALID);
     for (var p :
         dto.placements().stream()
@@ -156,6 +167,7 @@ public class WatershedService {
                 "placements",
                 placements));
     if (dto.storage() != null) design.put("storage", storage.compile(dto.storage(), ids));
+    if (dto.conduits() != null) design.put("conduits", conduits.compile(dto.conduits(), ids));
     if (dto.costCatalogHash() != null && !dto.placements().isEmpty())
       design.put("costing", costs.snapshot(dto.costCatalogHash(), dto.placements()));
     String body = json.write(design);

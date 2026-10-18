@@ -1218,5 +1218,547 @@
       "덮개·차수·직육면체 설계, 무펌프 국부 오리피스 유입·배수·비상배수 사용",
       "공사비·시공 가능성 미확인, 지도 점유·예산 차감·순위 게시 제외"
     ]
+  },
+  "conduitCatalogHash": "a5dac5d1552b1620bfbe65c2f54a62626de16dd70a3807b1a2d03736ddcfdd6b",
+  "conduitCatalog": {
+    "schemaVersion": 1,
+    "id": "SEOUL_PUBLIC_NETWORK_CONDUITS_V1",
+    "facilityType": "CONDUIT",
+    "sourceCatalogSha256": "beaddba8868b6f1f6bbf35b1d53d4695a94db99498d8988f90d62013cf8f053c",
+    "sourceOriginalSha256": "8ce278a3d2b58df3c2a5fd1232160bcabb324389746ee0c878792acf91abbdbb",
+    "baseNetworkSha256": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+    "generatorSha256": "0583e59245d82ba28f9b31ac10e30edcc3617b1f82c0839b8751563c87c7929c",
+    "sourceUrl": "https://doi.org/10.17632/dzzwvd8rjk.3",
+    "conduits": [
+      {
+        "id": "C1",
+        "fromNode": "J1",
+        "toNode": "J2",
+        "lengthM": 200.0,
+        "inletOffsetM": 0.0,
+        "outletOffsetM": 0.0,
+        "maxFullDepthM": 3.2,
+        "original": {
+          "shape": "RECT_CLOSED",
+          "fullDepthM": 2.2,
+          "widthM": 2.2,
+          "barrels": 1,
+          "roughness": 0.0147
+        },
+        "sourceLine": 147,
+        "crossSectionSourceLine": 177,
+        "sourceConduitTokens": ["C1", "J1", "J2", "200", "0.0147", "0", "0", "0", "0"],
+        "sourceCrossSectionTokens": ["C1", "RECT_CLOSED", "2.2", "2.2", "0", "0", "1"]
+      },
+      {
+        "id": "C2",
+        "fromNode": "J2",
+        "toNode": "J3",
+        "lengthM": 65.0,
+        "inletOffsetM": 0.0,
+        "outletOffsetM": 0.0,
+        "maxFullDepthM": 3.2,
+        "original": {
+          "shape": "RECT_CLOSED",
+          "fullDepthM": 2.2,
+          "widthM": 2.2,
+          "barrels": 1,
+          "roughness": 0.0147
+        },
+        "sourceLine": 148,
+        "crossSectionSourceLine": 178,
+        "sourceConduitTokens": ["C2", "J2", "J3", "65", "0.0147", "0", "0", "0", "0"],
+        "sourceCrossSectionTokens": ["C2", "RECT_CLOSED", "2.2", "2.2", "0", "0", "1"]
+      },
+      {
+        "id": "C3",
+        "fromNode": "J11",
+        "toNode": "J12",
+        "lengthM": 200.0,
+        "inletOffsetM": 0.0,
+        "outletOffsetM": 0.0,
+        "maxFullDepthM": 3.2,
+        "original": {
+          "shape": "RECT_CLOSED",
+          "fullDepthM": 2.2,
+          "widthM": 2.2,
+          "barrels": 1,
+          "roughness": 0.0147
+        },
+        "sourceLine": 149,
+        "crossSectionSourceLine": 179,
+        "sourceConduitTokens": ["C3", "J11", "J12", "200", "0.0147", "0", "0", "0", "0"],
+        "sourceCrossSectionTokens": ["C3", "RECT_CLOSED", "2.2", "2.2", "0", "0", "1"]
+      },
+      {
+        "id": "C4",
+        "fromNode": "J12",
+        "toNode": "J13",
+        "lengthM": 40.0,
+        "inletOffsetM": 0.0,
+        "outletOffsetM": 0.0,
+        "maxFullDepthM": 3.2,
+        "original": {
+          "shape": "RECT_CLOSED",
+          "fullDepthM": 2.2,
+          "widthM": 2.2,
+          "barrels": 1,
+          "roughness": 0.0147
+        },
+        "sourceLine": 150,
+        "crossSectionSourceLine": 180,
+        "sourceConduitTokens": ["C4", "J12", "J13", "40", "0.0147", "0", "0", "0", "0"],
+        "sourceCrossSectionTokens": ["C4", "RECT_CLOSED", "2.2", "2.2", "0", "0", "1"]
+      },
+      {
+        "id": "C5",
+        "fromNode": "J13",
+        "toNode": "J2",
+        "lengthM": 160.0,
+        "inletOffsetM": 0.0,
+        "outletOffsetM": 0.0,
+        "maxFullDepthM": 3.2,
+        "original": {
+          "shape": "RECT_CLOSED",
+          "fullDepthM": 2.2,
+          "widthM": 2.2,
+          "barrels": 1,
+          "roughness": 0.0147
+        },
+        "sourceLine": 151,
+        "crossSectionSourceLine": 181,
+        "sourceConduitTokens": ["C5", "J13", "J2", "160", "0.0147", "0", "0", "0", "0"],
+        "sourceCrossSectionTokens": ["C5", "RECT_CLOSED", "2.2", "2.2", "0", "0", "1"]
+      },
+      {
+        "id": "C6",
+        "fromNode": "J4",
+        "toNode": "J3",
+        "lengthM": 200.0,
+        "inletOffsetM": 0.0,
+        "outletOffsetM": 0.0,
+        "maxFullDepthM": 3.2,
+        "original": {
+          "shape": "RECT_CLOSED",
+          "fullDepthM": 2.2,
+          "widthM": 2.2,
+          "barrels": 1,
+          "roughness": 0.0147
+        },
+        "sourceLine": 152,
+        "crossSectionSourceLine": 182,
+        "sourceConduitTokens": ["C6", "J4", "J3", "200", "0.0147", "0", "0", "0", "0"],
+        "sourceCrossSectionTokens": ["C6", "RECT_CLOSED", "2.2", "2.2", "0", "0", "1"]
+      },
+      {
+        "id": "C7",
+        "fromNode": "J3",
+        "toNode": "J5",
+        "lengthM": 160.0,
+        "inletOffsetM": 0.0,
+        "outletOffsetM": 0.0,
+        "maxFullDepthM": 3.2,
+        "original": {
+          "shape": "RECT_CLOSED",
+          "fullDepthM": 2.2,
+          "widthM": 2.2,
+          "barrels": 1,
+          "roughness": 0.0147
+        },
+        "sourceLine": 153,
+        "crossSectionSourceLine": 183,
+        "sourceConduitTokens": ["C7", "J3", "J5", "160", "0.0147", "0", "0", "0", "0"],
+        "sourceCrossSectionTokens": ["C7", "RECT_CLOSED", "2.2", "2.2", "0", "0", "1"]
+      },
+      {
+        "id": "C8",
+        "fromNode": "J17",
+        "toNode": "J18",
+        "lengthM": 200.0,
+        "inletOffsetM": 0.0,
+        "outletOffsetM": 0.0,
+        "maxFullDepthM": 3.2,
+        "original": {
+          "shape": "RECT_CLOSED",
+          "fullDepthM": 2.2,
+          "widthM": 2.2,
+          "barrels": 1,
+          "roughness": 0.0147
+        },
+        "sourceLine": 154,
+        "crossSectionSourceLine": 184,
+        "sourceConduitTokens": ["C8", "J17", "J18", "200", "0.0147", "0", "0", "0", "0"],
+        "sourceCrossSectionTokens": ["C8", "RECT_CLOSED", "2.2", "2.2", "0", "0", "1"]
+      },
+      {
+        "id": "C9",
+        "fromNode": "J18",
+        "toNode": "J5",
+        "lengthM": 200.0,
+        "inletOffsetM": 0.0,
+        "outletOffsetM": 0.0,
+        "maxFullDepthM": 3.2,
+        "original": {
+          "shape": "RECT_CLOSED",
+          "fullDepthM": 2.2,
+          "widthM": 2.2,
+          "barrels": 1,
+          "roughness": 0.0147
+        },
+        "sourceLine": 155,
+        "crossSectionSourceLine": 185,
+        "sourceConduitTokens": ["C9", "J18", "J5", "200", "0.0147", "0", "0", "0", "0"],
+        "sourceCrossSectionTokens": ["C9", "RECT_CLOSED", "2.2", "2.2", "0", "0", "1"]
+      },
+      {
+        "id": "C10",
+        "fromNode": "J5",
+        "toNode": "J19",
+        "lengthM": 200.0,
+        "inletOffsetM": 0.0,
+        "outletOffsetM": 0.0,
+        "maxFullDepthM": 3.2,
+        "original": {
+          "shape": "RECT_CLOSED",
+          "fullDepthM": 2.2,
+          "widthM": 2.2,
+          "barrels": 1,
+          "roughness": 0.0147
+        },
+        "sourceLine": 156,
+        "crossSectionSourceLine": 186,
+        "sourceConduitTokens": ["C10", "J5", "J19", "200", "0.0147", "0", "0", "0", "0"],
+        "sourceCrossSectionTokens": ["C10", "RECT_CLOSED", "2.2", "2.2", "0", "0", "1"]
+      },
+      {
+        "id": "C11",
+        "fromNode": "J19",
+        "toNode": "J20",
+        "lengthM": 200.0,
+        "inletOffsetM": 0.0,
+        "outletOffsetM": 0.0,
+        "maxFullDepthM": 3.2,
+        "original": {
+          "shape": "RECT_CLOSED",
+          "fullDepthM": 2.2,
+          "widthM": 2.2,
+          "barrels": 1,
+          "roughness": 0.0147
+        },
+        "sourceLine": 157,
+        "crossSectionSourceLine": 187,
+        "sourceConduitTokens": ["C11", "J19", "J20", "200", "0.0147", "0", "0", "0", "0"],
+        "sourceCrossSectionTokens": ["C11", "RECT_CLOSED", "2.2", "2.2", "0", "0", "1"]
+      },
+      {
+        "id": "C12",
+        "fromNode": "J20",
+        "toNode": "J21",
+        "lengthM": 100.0,
+        "inletOffsetM": 0.0,
+        "outletOffsetM": 0.0,
+        "maxFullDepthM": 3.2,
+        "original": {
+          "shape": "RECT_CLOSED",
+          "fullDepthM": 2.2,
+          "widthM": 2.2,
+          "barrels": 1,
+          "roughness": 0.0147
+        },
+        "sourceLine": 158,
+        "crossSectionSourceLine": 188,
+        "sourceConduitTokens": ["C12", "J20", "J21", "100", "0.0147", "0", "0", "0", "0"],
+        "sourceCrossSectionTokens": ["C12", "RECT_CLOSED", "2.2", "2.2", "0", "0", "1"]
+      },
+      {
+        "id": "C13",
+        "fromNode": "J21",
+        "toNode": "J22",
+        "lengthM": 200.0,
+        "inletOffsetM": 0.0,
+        "outletOffsetM": 0.0,
+        "maxFullDepthM": 3.2,
+        "original": {
+          "shape": "RECT_CLOSED",
+          "fullDepthM": 2.2,
+          "widthM": 2.2,
+          "barrels": 1,
+          "roughness": 0.0147
+        },
+        "sourceLine": 159,
+        "crossSectionSourceLine": 189,
+        "sourceConduitTokens": ["C13", "J21", "J22", "200", "0.0147", "0", "0", "0", "0"],
+        "sourceCrossSectionTokens": ["C13", "RECT_CLOSED", "2.2", "2.2", "0", "0", "1"]
+      },
+      {
+        "id": "C14",
+        "fromNode": "J22",
+        "toNode": "J23",
+        "lengthM": 200.0,
+        "inletOffsetM": 0.0,
+        "outletOffsetM": 0.0,
+        "maxFullDepthM": 3.2,
+        "original": {
+          "shape": "RECT_CLOSED",
+          "fullDepthM": 2.2,
+          "widthM": 2.2,
+          "barrels": 1,
+          "roughness": 0.0147
+        },
+        "sourceLine": 160,
+        "crossSectionSourceLine": 190,
+        "sourceConduitTokens": ["C14", "J22", "J23", "200", "0.0147", "0", "0", "0", "0"],
+        "sourceCrossSectionTokens": ["C14", "RECT_CLOSED", "2.2", "2.2", "0", "0", "1"]
+      },
+      {
+        "id": "C15",
+        "fromNode": "J23",
+        "toNode": "J24",
+        "lengthM": 200.0,
+        "inletOffsetM": 0.0,
+        "outletOffsetM": 0.0,
+        "maxFullDepthM": 3.2,
+        "original": {
+          "shape": "RECT_CLOSED",
+          "fullDepthM": 2.2,
+          "widthM": 2.2,
+          "barrels": 1,
+          "roughness": 0.0147
+        },
+        "sourceLine": 161,
+        "crossSectionSourceLine": 191,
+        "sourceConduitTokens": ["C15", "J23", "J24", "200", "0.0147", "0", "0", "0", "0"],
+        "sourceCrossSectionTokens": ["C15", "RECT_CLOSED", "2.2", "2.2", "0", "0", "1"]
+      },
+      {
+        "id": "C16",
+        "fromNode": "J24",
+        "toNode": "J25",
+        "lengthM": 200.0,
+        "inletOffsetM": 0.0,
+        "outletOffsetM": 0.0,
+        "maxFullDepthM": 3.2,
+        "original": {
+          "shape": "RECT_CLOSED",
+          "fullDepthM": 2.2,
+          "widthM": 2.2,
+          "barrels": 1,
+          "roughness": 0.0147
+        },
+        "sourceLine": 162,
+        "crossSectionSourceLine": 192,
+        "sourceConduitTokens": ["C16", "J24", "J25", "200", "0.0147", "0", "0", "0", "0"],
+        "sourceCrossSectionTokens": ["C16", "RECT_CLOSED", "2.2", "2.2", "0", "0", "1"]
+      },
+      {
+        "id": "C17",
+        "fromNode": "J25",
+        "toNode": "J26",
+        "lengthM": 120.0,
+        "inletOffsetM": 0.0,
+        "outletOffsetM": 0.0,
+        "maxFullDepthM": 3.2,
+        "original": {
+          "shape": "RECT_CLOSED",
+          "fullDepthM": 2.2,
+          "widthM": 2.2,
+          "barrels": 1,
+          "roughness": 0.0147
+        },
+        "sourceLine": 163,
+        "crossSectionSourceLine": 193,
+        "sourceConduitTokens": ["C17", "J25", "J26", "120", "0.0147", "0", "0", "0", "0"],
+        "sourceCrossSectionTokens": ["C17", "RECT_CLOSED", "2.2", "2.2", "0", "0", "1"]
+      },
+      {
+        "id": "C18",
+        "fromNode": "J26",
+        "toNode": "J10",
+        "lengthM": 130.0,
+        "inletOffsetM": 0.0,
+        "outletOffsetM": 0.0,
+        "maxFullDepthM": 3.2,
+        "original": {
+          "shape": "RECT_CLOSED",
+          "fullDepthM": 2.2,
+          "widthM": 2.2,
+          "barrels": 1,
+          "roughness": 0.0147
+        },
+        "sourceLine": 164,
+        "crossSectionSourceLine": 194,
+        "sourceConduitTokens": ["C18", "J26", "J10", "130", "0.0147", "0", "0", "0", "0"],
+        "sourceCrossSectionTokens": ["C18", "RECT_CLOSED", "2.2", "2.2", "0", "0", "1"]
+      },
+      {
+        "id": "C19",
+        "fromNode": "J14",
+        "toNode": "J6",
+        "lengthM": 200.0,
+        "inletOffsetM": 0.0,
+        "outletOffsetM": 0.0,
+        "maxFullDepthM": 3.2,
+        "original": {
+          "shape": "RECT_CLOSED",
+          "fullDepthM": 2.2,
+          "widthM": 2.2,
+          "barrels": 1,
+          "roughness": 0.0147
+        },
+        "sourceLine": 165,
+        "crossSectionSourceLine": 195,
+        "sourceConduitTokens": ["C19", "J14", "J6", "200", "0.0147", "0", "0", "0", "0"],
+        "sourceCrossSectionTokens": ["C19", "RECT_CLOSED", "2.2", "2.2", "0", "0", "1"]
+      },
+      {
+        "id": "C20",
+        "fromNode": "J6",
+        "toNode": "J7",
+        "lengthM": 200.0,
+        "inletOffsetM": 0.0,
+        "outletOffsetM": 0.0,
+        "maxFullDepthM": 3.2,
+        "original": {
+          "shape": "RECT_CLOSED",
+          "fullDepthM": 2.2,
+          "widthM": 2.2,
+          "barrels": 1,
+          "roughness": 0.0147
+        },
+        "sourceLine": 166,
+        "crossSectionSourceLine": 196,
+        "sourceConduitTokens": ["C20", "J6", "J7", "200", "0.0147", "0", "0", "0", "0"],
+        "sourceCrossSectionTokens": ["C20", "RECT_CLOSED", "2.2", "2.2", "0", "0", "1"]
+      },
+      {
+        "id": "C21",
+        "fromNode": "J7",
+        "toNode": "J8",
+        "lengthM": 200.0,
+        "inletOffsetM": 0.0,
+        "outletOffsetM": 0.0,
+        "maxFullDepthM": 3.2,
+        "original": {
+          "shape": "RECT_CLOSED",
+          "fullDepthM": 2.2,
+          "widthM": 2.2,
+          "barrels": 1,
+          "roughness": 0.0147
+        },
+        "sourceLine": 167,
+        "crossSectionSourceLine": 197,
+        "sourceConduitTokens": ["C21", "J7", "J8", "200", "0.0147", "0", "0", "0", "0"],
+        "sourceCrossSectionTokens": ["C21", "RECT_CLOSED", "2.2", "2.2", "0", "0", "1"]
+      },
+      {
+        "id": "C22",
+        "fromNode": "J8",
+        "toNode": "J9",
+        "lengthM": 200.0,
+        "inletOffsetM": 0.0,
+        "outletOffsetM": 0.0,
+        "maxFullDepthM": 3.2,
+        "original": {
+          "shape": "RECT_CLOSED",
+          "fullDepthM": 2.2,
+          "widthM": 2.2,
+          "barrels": 1,
+          "roughness": 0.0147
+        },
+        "sourceLine": 168,
+        "crossSectionSourceLine": 198,
+        "sourceConduitTokens": ["C22", "J8", "J9", "200", "0.0147", "0", "0", "0", "0"],
+        "sourceCrossSectionTokens": ["C22", "RECT_CLOSED", "2.2", "2.2", "0", "0", "1"]
+      },
+      {
+        "id": "C23",
+        "fromNode": "J15",
+        "toNode": "J9",
+        "lengthM": 200.0,
+        "inletOffsetM": 0.0,
+        "outletOffsetM": 0.0,
+        "maxFullDepthM": 3.2,
+        "original": {
+          "shape": "RECT_CLOSED",
+          "fullDepthM": 2.2,
+          "widthM": 2.2,
+          "barrels": 1,
+          "roughness": 0.0147
+        },
+        "sourceLine": 169,
+        "crossSectionSourceLine": 199,
+        "sourceConduitTokens": ["C23", "J15", "J9", "200", "0.0147", "0", "0", "0", "0"],
+        "sourceCrossSectionTokens": ["C23", "RECT_CLOSED", "2.2", "2.2", "0", "0", "1"]
+      },
+      {
+        "id": "C24",
+        "fromNode": "J9",
+        "toNode": "Out2",
+        "lengthM": 400.0,
+        "inletOffsetM": 0.0,
+        "outletOffsetM": 0.0,
+        "maxFullDepthM": 3.2,
+        "original": {
+          "shape": "RECT_CLOSED",
+          "fullDepthM": 2.2,
+          "widthM": 2.2,
+          "barrels": 1,
+          "roughness": 0.0147
+        },
+        "sourceLine": 170,
+        "crossSectionSourceLine": 200,
+        "sourceConduitTokens": ["C24", "J9", "Out2", "400", "0.0147", "0", "0", "0", "0"],
+        "sourceCrossSectionTokens": ["C24", "RECT_CLOSED", "2.2", "2.2", "0", "0", "1"]
+      },
+      {
+        "id": "C25",
+        "fromNode": "J10",
+        "toNode": "J16",
+        "lengthM": 200.0,
+        "inletOffsetM": 0.0,
+        "outletOffsetM": 0.0,
+        "maxFullDepthM": 3.2,
+        "original": {
+          "shape": "RECT_CLOSED",
+          "fullDepthM": 2.2,
+          "widthM": 2.2,
+          "barrels": 1,
+          "roughness": 0.0147
+        },
+        "sourceLine": 171,
+        "crossSectionSourceLine": 201,
+        "sourceConduitTokens": ["C25", "J10", "J16", "200", "0.0147", "0", "0", "0", "0"],
+        "sourceCrossSectionTokens": ["C25", "RECT_CLOSED", "2.2", "2.2", "0", "0", "1"]
+      },
+      {
+        "id": "C26",
+        "fromNode": "J16",
+        "toNode": "Out1",
+        "lengthM": 200.0,
+        "inletOffsetM": 0.0,
+        "outletOffsetM": 0.0,
+        "maxFullDepthM": 3.2,
+        "original": {
+          "shape": "RECT_CLOSED",
+          "fullDepthM": 2.2,
+          "widthM": 2.2,
+          "barrels": 1,
+          "roughness": 0.0147
+        },
+        "sourceLine": 172,
+        "crossSectionSourceLine": 202,
+        "sourceConduitTokens": ["C26", "J16", "Out1", "200", "0.0147", "0", "0", "0", "0"],
+        "sourceCrossSectionTokens": ["C26", "RECT_CLOSED", "2.2", "2.2", "0", "0", "1"]
+      }
+    ],
+    "completeInstalledCostKrw": null,
+    "designBasis": "EXPLICIT_DESIGN_NOT_SITE_MEASURED",
+    "limitations": [
+      "공개 연구 모형의 기존 관로 개량 비교이며 현장 관로 대장·공사 가능성의 확인 아님",
+      "원본 연결·길이·관저고·초기 유량·경계·손실 조건 유지, 단면·병렬 관 개수·Manning 조도만 설계 변경",
+      "관로 높이는 공개 접속 절점 최대 깊이에서 원 관저고 오프셋을 뺀 범위 내 제한, 현장 허가 한도 아님",
+      "직사각형 폐합 암거와 원형 관로만 지원, 별도 입구 통제 암거 코드는 원본 값 유지",
+      "시공비·부지·매설 깊이·시설 유효 시점 미확정, 지도 점유·예산·순위 미개방"
+    ]
   }
 }

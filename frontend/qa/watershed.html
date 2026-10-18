@@ -12,6 +12,7 @@
         서초 공개 관망의 실제 기준안·생물저류 계산 결과. QA 설계 제출은 서버에 저장하지 않습니다.
       </p>
       <button id="success">실제 결과</button><button id="storage-result">실제 혼합 설계 결과</button
+      ><button id="conduit-result">실제 관로 개량 결과</button
       ><button id="failure">실패 표시 시험</button>
       <p id="submission" role="status">설계 입력 대기</p>
     </header>
@@ -24,23 +25,27 @@
         { createRoot },
         { NetworkDesignForm },
         { StorageDesignForm },
+        { ConduitDesignForm },
         { WatershedResult },
         { watershedCatalogDto, watershedJobDto },
         { default: catalogRaw },
         { default: storedResult },
         { default: peaks },
         { default: storageJob },
+        { default: conduitJob },
       ] = await Promise.all([
         import('react'),
         import('react-dom/client'),
         import('/src/domains/watershed/view/NetworkDesignForm.tsx'),
         import('/src/domains/watershed/view/StorageDesignForm.tsx'),
+        import('/src/domains/watershed/view/ConduitDesignForm.tsx'),
         import('/src/domains/watershed/view/WatershedResult.tsx'),
         import('/src/domains/watershed/dto/watershedDto.ts'),
         import('/src/domains/watershed/view/fixtures/catalog.json'),
         import('/src/domains/watershed/view/fixtures/public-network-result.json'),
         import('/src/domains/watershed/view/fixtures/public-network-peaks.json'),
         import('/src/domains/watershed/view/fixtures/public-storage-job.json'),
+        import('/src/domains/watershed/view/fixtures/public-conduit-job.json'),
         import('/src/domains/watershed/view/watershed.css'),
       ]);
       const result = {
@@ -74,10 +79,13 @@
       function Harness() {
         const [drafts, setDrafts] = React.useState([]);
         const [storageDrafts, setStorageDrafts] = React.useState([]);
+        const [conduitDrafts, setConduitDrafts] = React.useState([]);
         const [type, setType] = React.useState('BIORETENTION');
         const [job, setJob] = React.useState(original);
         React.useEffect(() => {
           document.getElementById('success').onclick = () => setJob(original);
+          document.getElementById('conduit-result').onclick = () =>
+            setJob(watershedJobDto.parse(conduitJob));
           document.getElementById('storage-result').onclick = () =>
             setJob(watershedJobDto.parse(storageJob));
           document.getElementById('failure').onclick = () =>
@@ -102,11 +110,17 @@
           setDrafts,
           storageDrafts,
           setStorageDrafts,
+          conduitDrafts,
+          setConduitDrafts,
           busy: false,
           submit: async () => {
             document.getElementById('submission').textContent =
               'QA 제출 내용: ' +
-              JSON.stringify({ placements: drafts, storage: storageDrafts }) +
+              JSON.stringify({
+                placements: drafts,
+                storage: storageDrafts,
+                conduits: conduitDrafts,
+              }) +
               ' · 서버 요청 없음';
           },
         };
@@ -123,11 +137,16 @@
               Object.entries({
                 ...catalog.catalog.templates,
                 UNDERGROUND_STORAGE: { label: '지하 저류조' },
+                CONDUIT: { label: '배수관·암거' },
               }).map(([id, t]) => React.createElement('option', { key: id, value: id }, t.label))
             )
           ),
           React.createElement(
-            type === 'UNDERGROUND_STORAGE' ? StorageDesignForm : NetworkDesignForm,
+            type === 'CONDUIT'
+              ? ConduitDesignForm
+              : type === 'UNDERGROUND_STORAGE'
+                ? StorageDesignForm
+                : NetworkDesignForm,
             { catalog, type, state }
           ),
           React.createElement(WatershedResult, { job })

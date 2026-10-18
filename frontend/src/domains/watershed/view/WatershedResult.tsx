@@ -1,3 +1,4 @@
+import { conduitDimensions } from '../service/conduitDesign';
 import type { WatershedJob } from '../dto/watershedDto';
 import { WatershedCosts } from './WatershedCosts';
 import { WatershedPeaks } from './WatershedPeaks';
@@ -35,6 +36,14 @@ export function WatershedResult({ job }: { job: WatershedJob }) {
           </li>
         ))}
       </ul>
+      {job.design.conduits?.placements.map((p) => (
+        <div key={p.id} className="watershed-facility-state">
+          <strong>{p.conduitId} · 배수관·암거 개량</strong>
+          <p>원본: {conduitDimensions(p.original)}</p>
+          <p>설계: {conduitDimensions(p)}</p>
+          <p>개량 공사비 미산정 · 참고 부분합 제외</p>
+        </div>
+      ))}
       {job.design.storage?.placements.map((p) => (
         <p key={p.id}>
           {p.id} · 지하 저류조 · {p.inlet.nodeId} → {p.drain.nodeId} · 설계 용량{' '}
@@ -49,7 +58,16 @@ export function WatershedResult({ job }: { job: WatershedJob }) {
       {job.design.costing && (
         <WatershedCosts
           costing={job.design.costing}
-          additionalUnpricedIds={job.design.storage?.placements.map((p) => p.id)}
+          additionalUnpriced={[
+            ...(job.design.storage?.placements ?? []).map((p) => ({
+              id: p.id,
+              name: '지하 저류조',
+            })),
+            ...(job.design.conduits?.placements ?? []).map((p) => ({
+              id: p.id,
+              name: '배수관·암거 개량',
+            })),
+          ]}
         />
       )}
       {(job.state === 'QUEUED' || job.state === 'RUNNING') && (
@@ -156,6 +174,13 @@ export function WatershedResult({ job }: { job: WatershedJob }) {
                 {c.calendarShortfallSeconds !== undefined && (
                   <p>입력 종료 시각보다 {number(c.calendarShortfallSeconds)}초 짧은 엔진 계산 창</p>
                 )}
+                {c.conduits?.map((p) => (
+                  <p key={p.id}>
+                    {p.conduitId} · 계산 종료 유량 {number(p.flowM3s)} m³/s · 내부 수심{' '}
+                    {number(p.depthM)} m · 시작 후 {number(c.conduitStateTimeSeconds!)}초. 양수는
+                    관로 정의 방향이며 첨두 유량이 아닙니다.
+                  </p>
+                ))}
                 {c.facilities?.map((f) => (
                   <div className="watershed-facility-state" key={f.swmmId}>
                     <strong>

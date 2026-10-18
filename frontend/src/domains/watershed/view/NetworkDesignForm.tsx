@@ -86,10 +86,14 @@ export function NetworkDesignForm({
       areaM2: Number(area),
       treatedImperviousM2: Number(treated),
     };
-    while ([...state.drafts, ...state.storageDrafts].some((p) => p.id === placement.id))
+    while (
+      [...state.drafts, ...state.storageDrafts, ...state.conduitDrafts].some(
+        (p) => p.id === placement.id
+      )
+    )
       placement.id = `F${++sequence.current + 1}`;
     const next = [...state.drafts, placement];
-    const invalid = validateCombinedDesign(catalog, next, state.storageDrafts);
+    const invalid = validateCombinedDesign(catalog, next, state.storageDrafts, state.conduitDrafts);
     if (invalid) {
       setError(invalid);
       return;
@@ -191,7 +195,10 @@ export function NetworkDesignForm({
       <button
         type="button"
         className="watershed-secondary"
-        disabled={state.busy || state.drafts.length + state.storageDrafts.length >= 20}
+        disabled={
+          state.busy ||
+          state.drafts.length + state.storageDrafts.length + state.conduitDrafts.length >= 20
+        }
         onClick={add}
       >
         설계에 추가

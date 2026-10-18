@@ -10,15 +10,40 @@ public record WatershedRequest(
     @NotBlank @Pattern(regexp = "[a-f0-9]{64}") String catalogHash,
     @NotNull @Size(max = 20) List<@NotNull @Valid Item> placements,
     @Pattern(regexp = "[a-f0-9]{64}") String costCatalogHash,
-    @Valid StorageRequest storage) {
+    @Valid StorageRequest storage,
+    @Valid ConduitRequest conduits) {
   public WatershedRequest(UUID requestKey, String catalogHash, List<Item> placements) {
-    this(requestKey, catalogHash, placements, null, null);
+    this(requestKey, catalogHash, placements, null, null, null);
   }
 
   public WatershedRequest(
       UUID requestKey, String catalogHash, List<Item> placements, String costCatalogHash) {
-    this(requestKey, catalogHash, placements, costCatalogHash, null);
+    this(requestKey, catalogHash, placements, costCatalogHash, null, null);
   }
+
+  public WatershedRequest(
+      UUID requestKey,
+      String catalogHash,
+      List<Item> placements,
+      String costCatalogHash,
+      StorageRequest storage) {
+    this(requestKey, catalogHash, placements, costCatalogHash, storage, null);
+  }
+
+  public record ConduitRequest(
+      @NotBlank @Pattern(regexp = "[a-f0-9]{64}") String catalogHash,
+      @NotNull @Size(min = 1, max = 20) List<@NotNull @Valid ConduitItem> placements) {}
+
+  public record ConduitItem(
+      @NotBlank @Pattern(regexp = "[A-Za-z][A-Za-z0-9_-]{0,23}") String id,
+      @NotBlank @Size(max = 40) String conduitId,
+      @NotBlank @Pattern(regexp = "CIRCULAR|RECT_CLOSED") String shape,
+      @NotNull @DecimalMin("0.01") @DecimalMax("100") @Digits(integer = 3, fraction = 3)
+          BigDecimal fullDepthM,
+      @DecimalMin("0.01") @DecimalMax("100") @Digits(integer = 3, fraction = 3) BigDecimal widthM,
+      @NotNull @Min(1) @Max(20) Integer barrels,
+      @NotNull @DecimalMin("0.001") @DecimalMax("1") @Digits(integer = 1, fraction = 4)
+          BigDecimal roughness) {}
 
   public record StorageRequest(
       @NotBlank @Pattern(regexp = "[a-f0-9]{64}") String catalogHash,

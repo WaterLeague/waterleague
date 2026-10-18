@@ -1,3 +1,4 @@
+import { conduitCatalogDto, conduitDesignDto } from './conduitDto';
 import { storageCatalogDto, storageDesignDto, storageSummaryDto } from './storageDto';
 import { z } from 'zod';
 import { watershedCostCatalogDto, watershedCostSnapshotDto } from './watershedCostDto';
@@ -15,6 +16,8 @@ export type NetworkFacility = z.infer<typeof networkFacilityDto>;
 export const watershedCatalogDto = z
   .object({
     catalogHash: hash,
+    conduitCatalogHash: hash.optional(),
+    conduitCatalog: conduitCatalogDto.optional(),
     storageCatalogHash: hash.optional(),
     storageCatalog: storageCatalogDto.optional(),
     costCatalogHash: hash.optional(),
@@ -57,6 +60,13 @@ export const watershedCatalogDto = z
   })
   .superRefine((v, ctx) => {
     if (
+      Boolean(v.conduitCatalog) !== Boolean(v.conduitCatalogHash) ||
+      (v.conduitCatalog &&
+        (v.conduitCatalog.sourceCatalogSha256 !== v.catalogHash ||
+          v.conduitCatalog.sourceOriginalSha256 !== v.catalog.sourceOriginalSha256))
+    )
+      ctx.addIssue({ code: 'custom', message: '관로 목록과 공개 원본 불일치' });
+    if (
       Boolean(v.storageCatalog) !== Boolean(v.storageCatalogHash) ||
       (v.storageCatalog &&
         (v.storageCatalog.sourceCatalogSha256 !== v.catalogHash ||
@@ -90,6 +100,10 @@ const totals = z.object({
   balanceResidualM3: amount,
 });
 const caseDto = z.object({
+  conduits: z
+    .array(z.object({ id: z.string(), conduitId: z.string(), flowM3s: amount, depthM: amount }))
+    .optional(),
+  conduitStateTimeSeconds: amount.nonnegative().optional(),
   connectedStorage: storageSummaryDto.optional(),
   id: z.enum(['baseline', 'strategy']),
   numericalStatus: z.enum(['PASSED', 'FAILED']),
@@ -198,6 +212,7 @@ export const watershedJobDto = z
     state: z.enum(['QUEUED', 'RUNNING', 'SUCCEEDED', 'FAILED', 'REJECTED']),
     createdAt: z.iso.datetime(),
     design: z.object({
+      conduits: conduitDesignDto.optional(),
       storage: storageDesignDto.optional(),
       costing: watershedCostSnapshotDto.optional(),
       placements: z.array(
@@ -214,6 +229,21 @@ export const watershedJobDto = z
     message: z.string(),
   })
   .superRefine((value, ctx) => {
+    const pipes = value.design.conduits?.placements ?? [];
+    if (
+      value.result?.numericalStatus === 'PASSED' &&
+      pipes.length &&
+      value.result.cases.some(
+        (c) =>
+          c.conduitStateTimeSeconds == null ||
+          c.conduits?.length !== pipes.length ||
+          pipes.some(
+            (p) =>
+              c.conduits?.filter((r) => p.id === r.id && p.conduitId === r.conduitId).length !== 1
+          )
+      )
+    )
+      ctx.addIssue({ code: 'custom', message: '관로 설계와 최종 계산 상태 불일치' });
     const tanks = value.design.storage?.placements ?? [];
     const ledger = value.result?.cases.find((c) => c.id === 'strategy')?.connectedStorage
       ?.wholeRunLedger.facilities;
