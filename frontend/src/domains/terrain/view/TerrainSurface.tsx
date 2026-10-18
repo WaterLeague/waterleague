@@ -2,6 +2,7 @@ import { useEffect, useMemo } from 'react';
 import * as THREE from 'three';
 import type { Terrain } from '../entity/terrain';
 import { otherDistrictOpacity } from '../../city/service/siteVisibilityService';
+import { createTerrainGeometry } from '../service/terrainMeshService';
 export function TerrainSurface({
   terrain,
   ownDistrictId,
@@ -11,44 +12,7 @@ export function TerrainSurface({
   ownDistrictId: string | null;
   selected: string;
 }) {
-  const geometry = useMemo(() => {
-    const count = terrain.width * terrain.height;
-    const positions = new Float32Array(count * 3),
-      colors = new Float32Array(count * 4);
-    const indices: number[] = [];
-    for (let i = 0; i < count; i++) {
-      positions.set(
-        [
-          terrain.origin[0] + (i % terrain.width) * 90,
-          terrain.heights[i],
-          -terrain.origin[1] + Math.floor(i / terrain.width) * 90,
-        ],
-        i * 3
-      );
-      if (
-        i % terrain.width < terrain.width - 1 &&
-        Math.floor(i / terrain.width) < terrain.height - 1
-      ) {
-        const b = i + 1,
-          c = i + terrain.width,
-          d = c + 1;
-        if (
-          terrain.districts[i] ||
-          terrain.districts[b] ||
-          terrain.districts[c] ||
-          terrain.districts[d]
-        )
-          indices.push(i, c, b, b, c, d);
-      }
-    }
-    const value = new THREE.BufferGeometry();
-    value.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    value.setAttribute('color', new THREE.BufferAttribute(colors, 4));
-    value.setIndex(indices);
-    value.computeVertexNormals();
-    value.computeBoundingSphere();
-    return value;
-  }, [terrain]);
+  const geometry = useMemo(() => createTerrainGeometry(terrain), [terrain]);
   useEffect(() => {
     const colors = geometry.getAttribute('color') as THREE.BufferAttribute;
     const palette = ['#d5d9c6', '#9bb18a', '#81b1ba'].map((c) => new THREE.Color(c));

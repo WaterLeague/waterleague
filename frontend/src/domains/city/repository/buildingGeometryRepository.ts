@@ -1,10 +1,12 @@
 import type { CityBuilding } from '../entity/city';
 import type { BuildingMeshData } from '../service/buildingGeometryService';
 import { CityError } from '../exception/CityError';
+import { BuildingMeshCache, buildingMeshKey } from '../service/buildingMeshCache';
 
 type Job = {
   id: number;
   buildings: CityBuilding[];
+  cacheKey: string;
   resolve: (v: BuildingMeshData) => void;
   reject: (e: Error) => void;
   canceled: boolean;
@@ -13,6 +15,7 @@ let worker: Worker | null = null,
   active: Job | null = null,
   sequence = 0;
 const pending: Job[] = [];
+const cache = new BuildingMeshCache();
 
 function stopWorker() {
   if (worker) {
@@ -47,8 +50,10 @@ function drain() {
         if (!job || job.id !== event.data.id) return;
         active = null;
         if (!job.canceled) {
-          if (event.data.data) job.resolve(event.data.data);
-          else job.reject(new CityError('INVALID_DATA'));
+          if (event.data.data) {
+            cache.put(job.cacheKey, event.data.data);
+            job.resolve(event.data.data);
+          } else job.reject(new CityError('INVALID_DATA'));
         }
         drain();
       };
@@ -70,6 +75,12 @@ export function requestBuildingMesh(buildings: CityBuilding[], signal: AbortSign
       reject(new DOMException('Aborted', 'AbortError'));
       return;
     }
+    const cacheKey = buildingMeshKey(buildings);
+    const cached = cache.get(cacheKey);
+    if (cached) {
+      resolve(cached);
+      return;
+    }
     const id = ++sequence;
     const cancel = () => {
       job.canceled = true;
@@ -86,6 +97,7 @@ export function requestBuildingMesh(buildings: CityBuilding[], signal: AbortSign
     const job: Job = {
       id,
       buildings,
+      cacheKey,
       canceled: false,
       resolve: (value) => {
         signal.removeEventListener('abort', cancel);
@@ -101,4 +113,8 @@ export function requestBuildingMesh(buildings: CityBuilding[], signal: AbortSign
     drain();
   });
 }
-if (import.meta.hot) import.meta.hot.dispose(fail);
+if (import.meta.hot)
+  import.meta.hot.dispose(() => {
+    fail();
+    cache.clear();
+  });

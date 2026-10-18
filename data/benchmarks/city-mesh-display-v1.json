@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-10-18",
+  "numericalModelChanged": false,
+  "geometry": {
+    "citySha256": "d988b2b86c73a2e577c5c2574fdd0e7e052f5f5a68ee090cd6643fa4deab6f41",
+    "buildingCount": 1200,
+    "triangleCount": 52772,
+    "rayCount": 96,
+    "sameIntersections": true,
+    "firstRequestMs": 25.899999976158142,
+    "cachedRequestMs": 4,
+    "sameCachedBuffers": true,
+    "originalRaycastMedianMs": 144.29999995231628,
+    "acceleratedRaycastMedianMs": 1.600000023841858,
+    "originalMs": [
+      144.39999997615814,
+      143.39999997615814,
+      144.29999995231628,
+      144.29999995231628,
+      144,
+      144.69999992847443,
+      143.39999997615814
+    ],
+    "acceleratedMs": [
+      1.8000000715255737,
+      1.9000000953674316,
+      1.5,
+      1.600000023841858,
+      1.8000000715255737,
+      1.600000023841858,
+      1.600000023841858
+    ],
+    "terrainFirstMs": 18.100000023841858,
+    "terrainReusedMs": 1.2000000476837158,
+    "sameTerrainBuffers": true,
+    "scope": "공개 서울 전체 보기 건물의 광선 판정·CPU 형상 재사용, 전체 사용자 선택 응답 시간 아님",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36",
+    "viewport": [
+      1280,
+      720
+    ]
+  },
+  "disasterTransition": {
+    "event": "2022-08-08",
+    "site": "2419953:RW187182895",
+    "action": "성동 상세 3D → 2D → 3D, 1배속 강우 재생",
+    "geometryJobs": 0,
+    "longTasks": [
+      {
+        "start": 60579,
+        "duration": 192
+      },
+      {
+        "start": 64207.60000002384,
+        "duration": 95
+      }
+    ],
+    "frames": 745,
+    "elapsedMs": 9991.700000000004,
+    "fps": 74.46180329673626,
+    "medianMs": 8.30000000000291,
+    "p95Ms": 9.30000000000291,
+    "viewport": [
+      1280,
+      720
+    ],
+    "canvas": [
+      1458,
+      533
+    ],
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36"
+  },
+  "sourceSha256": {
+    "frontend/qa/meshPerformance.ts": "04abb1224b44873748ef974dea88d3e5461a82835318d1221632ba47cf17643e",
+    "frontend/qa/scene.html": "72ef90a14064ad980fa6878de81cfa656453a8359b07d0615985b170bb731732",
+    "frontend/src/domains/city/service/buildingGeometryService.ts": "012e2ba303eab69b4de613935da9fd0c09d77039df70806ea285b28d0b7e0a64",
+    "frontend/src/domains/city/service/buildingRaycastService.ts": "5717de0c9e4886ab192d2586a598b09aeeddf2ed62088d7f46af4144a8bc21b8",
+    "frontend/src/domains/city/service/buildingMeshCache.ts": "7d88fb11246d4033589ad9bf0c92264239a80392ac54519d0d337523e8d48646",
+    "frontend/src/domains/city/repository/buildingGeometryRepository.ts": "9297ef0d18761bf5b1137cb28a9540c47d8fb4a0627b7d4c7c74420d9e0796d2",
+    "frontend/src/domains/terrain/service/terrainMeshService.ts": "4cb139846ea8ff0bb3ac0bad31e274ab3ad8c84c3e90c1b7782775b2f46ef5b0",
+    "frontend/src/domains/city/view/CityScene.tsx": "7ec08d4786a1e265c482236e15f3ae6fd8397132d063ec377d6290358cde4460",
+    "frontend/src/domains/terrain/view/TerrainSurface.tsx": "a9a7d560588182ac9ab70bfcebf93865ac576103de8aeb9c943e74d4e335c181",
+    "frontend/pnpm-lock.yaml": "9a9be01da14c5e957d836753e3157df3c41e260904f5ab1554364692f85f424d"
+  }
+}

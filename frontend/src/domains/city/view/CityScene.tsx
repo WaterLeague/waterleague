@@ -13,6 +13,7 @@ import { Canvas, events, useThree, useFrame } from '@react-three/fiber';
 import { OrbitControls, Line } from '@react-three/drei';
 import * as THREE from 'three';
 import { requestBuildingMesh } from '../repository/buildingGeometryRepository';
+import { buildingRaycast } from '../service/buildingRaycastService';
 import type { City, CityBuilding, CityFocus, CityTile } from '../entity/city';
 import type { CityPlayRegion } from '../dto/cityPlayDto';
 import { polygonShapes } from '../../catalog/service/mapGeometryService';
@@ -63,6 +64,7 @@ function Buildings({
     geometry: THREE.BufferGeometry;
     ends: number[];
     source: CityBuilding[];
+    raycast: THREE.Mesh['raycast'];
   } | null>(null);
   const [error, setError] = useState<Error | null>(null);
   useEffect(() => {
@@ -79,7 +81,13 @@ function Buildings({
           geometry.setAttribute('position', new THREE.BufferAttribute(data.positions, 3));
           geometry.setAttribute('normal', new THREE.BufferAttribute(data.normals, 3));
           geometry.computeBoundingSphere();
-          setRendered({ geometry, ends: data.ends, source: buildings });
+          geometry.computeBoundingBox();
+          setRendered({
+            geometry,
+            ends: data.ends,
+            source: buildings,
+            raycast: buildingRaycast(data),
+          });
         })
         .catch((e) => {
           if (!controller.signal.aborted) setError(e);
@@ -94,6 +102,7 @@ function Buildings({
   return geometry ? (
     <mesh
       geometry={geometry}
+      raycast={rendered!.raycast}
       rotation={[-Math.PI / 2, 0, 0]}
       onClick={(event) => {
         if (event.delta > 5 || event.faceIndex == null) return;

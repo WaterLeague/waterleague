@@ -2,10 +2,16 @@ import { ExtrudeGeometry } from 'three';
 import type { CityBuilding } from '../entity/city';
 import { polygonShapes } from '../../catalog/service/mapGeometryService';
 
-export type BuildingMeshData = { positions: Float32Array; normals: Float32Array; ends: number[] };
+export type BuildingMeshData = {
+  positions: Float32Array;
+  normals: Float32Array;
+  bounds: Float32Array;
+  ends: number[];
+};
 export function buildBuildingMesh(buildings: CityBuilding[]): BuildingMeshData {
   const parts: { positions: Float32Array; normals: Float32Array }[] = [];
   const ends: number[] = [];
+  const bounds = new Float32Array(buildings.length * 6);
   let length = 0;
   for (const b of buildings) {
     const geometry = new ExtrudeGeometry(polygonShapes(b.polygons), {
@@ -16,6 +22,9 @@ export function buildBuildingMesh(buildings: CityBuilding[]): BuildingMeshData {
     const positions = geometry.getAttribute('position').array as Float32Array;
     if (b.baseElevationM)
       for (let i = 2; i < positions.length; i += 3) positions[i] += b.baseElevationM;
+    geometry.computeBoundingBox();
+    const box = geometry.boundingBox!;
+    bounds.set([...box.min.toArray(), ...box.max.toArray()], ends.length * 6);
     const normals = geometry.getAttribute('normal').array as Float32Array;
     parts.push({ positions, normals });
     length += positions.length;
@@ -30,5 +39,5 @@ export function buildBuildingMesh(buildings: CityBuilding[]): BuildingMeshData {
     normals.set(part.normals, offset);
     offset += part.positions.length;
   }
-  return { positions, normals, ends };
+  return { positions, normals, bounds, ends };
 }
