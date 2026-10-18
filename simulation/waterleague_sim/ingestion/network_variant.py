@@ -27,6 +27,27 @@ def hydraulic_input_hash(raw):
 
 
 def derive(raw, profile):
+    return _derive(raw, profile, execution_input)
+
+
+def derive_compiled(raw, profile):
+    """시설 컴파일 이후 입력의 출력 경로는 바꾸지 않고 수치 옵션만 파생."""
+    text, sections = records(raw)
+    require(not any(sections.get(name) for name in ('FILES', 'TEMPERATURE', 'EVENTS')),
+            'NETWORK_VARIANT_EXTERNAL_FILE_REJECTED')
+    for section, rows in sections.items():
+        for row in rows:
+            tokens = row['tokens']
+            require(not (section in ('TIMESERIES', 'RAINGAGES', 'EVAPORATION', 'REPORT')
+                         and 'FILE' in [t.upper() for t in tokens])
+                and not (section == 'LID_USAGE' and len(tokens) >= 9 and tokens[8] != '*'),
+                'NETWORK_VARIANT_EXTERNAL_FILE_REJECTED')
+    result, metadata = _derive(raw, profile, lambda _: (text, None))
+    metadata['classification'] = 'NUMERICAL_VARIANT_OF_COMPILED_INPUT'
+    return result, metadata
+
+
+def _derive(raw, profile, prepare):
     require(isinstance(profile, dict) and set(profile) == {'id', 'options'}
             and isinstance(profile['id'], str)
             and re.fullmatch(r'[a-z][a-z0-9-]{0,63}', profile['id']), 'NETWORK_VARIANT_INVALID')
@@ -43,7 +64,7 @@ def derive(raw, profile):
                     'NETWORK_VARIANT_STEP_INVALID')
     if 'ROUTING_STEP' in options and 'MINIMUM_STEP' in options:
         require(options['MINIMUM_STEP'] <= options['ROUTING_STEP'], 'NETWORK_VARIANT_MINIMUM_EXCEEDS_MAXIMUM')
-    text, output_changes = execution_input(raw)
+    text, output_changes = prepare(raw)
     _, sections = records(text.encode())
     entries = {row['tokens'][0].upper(): row for row in sections['OPTIONS']}
     require(all(len(row['tokens']) == 2 for row in entries.values()), 'NETWORK_VARIANT_OPTION_FORMAT')

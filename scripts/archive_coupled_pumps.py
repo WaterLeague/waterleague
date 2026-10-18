@@ -44,7 +44,9 @@ def main():
     output.mkdir(parents=True)
     sources = archive_source(output)
     extra = [CATALOG, *list((ROOT/'simulation/tests').glob('test_*pump*.py')),
-             ROOT/'simulation/tests/test_storage_composition.py', ROOT/'simulation/tests/test_flood_attribution.py']
+             ROOT/'simulation/tests/test_storage_composition.py', ROOT/'simulation/tests/test_flood_attribution.py',
+             ROOT/'simulation/tests/test_coupled_numerics.py', ROOT/'simulation/tests/test_network_variant.py',
+             ROOT/'simulation/tests/test_replay_coupled_bundle.py']
     for binary in (coupled_pump_network.library_path(), network_metrics.library_path()):
         extra += [binary, *binary.parent.glob('*build.json')]
     for path in extra:

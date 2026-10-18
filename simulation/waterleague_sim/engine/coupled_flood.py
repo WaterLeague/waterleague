@@ -112,6 +112,7 @@ def run_coupled(model, directory):
     basin_design, basin_model = None, None
     composition, composed_raw = None, None
     pump_design, pump_model = None, None
+    numerical_profile, numerical_model = None, None
     if 'surfaceBasinDesign' in model:
         from waterleague_sim.engine.surface_basin import compile_basin
         model, basin_design = compile_basin(model)
@@ -133,6 +134,10 @@ def run_coupled(model, directory):
         from waterleague_sim.engine.coupled_pumps import compile as compile_pumps
         model, pump_design = compile_pumps(original_model, model)
         pump_model = model
+    if 'networkNumericalProfile' in model:
+        from waterleague_sim.engine.coupled_numerics import compile as compile_numerics
+        model, numerical_profile = compile_numerics(model)
+        numerical_model = model
     if 'initialization' in model:
         from waterleague_sim.forcing.coupled_initialization import prepare_initialized_coupling
         initialization = prepare_initialized_coupling(model)
@@ -178,6 +183,10 @@ def run_coupled(model, directory):
         _write(directory / 'connected-pump-design.json', pump_design)
         _write(directory / 'pump-coupled-input.json', pump_model)
         (directory / 'pump-curve.json').write_bytes(PUMP_CATALOG.read_bytes())
+    if numerical_profile is not None:
+        _write(directory / 'network-numerical-profile.json', numerical_profile)
+        _write(directory / 'numerical-coupled-input.json', numerical_model)
+        (directory / 'numerical-network.inp').write_text(numerical_model['network']['inputText'])
     if facility_design is not None:
         _write(directory / 'connected-facility-design.json', facility_design)
         (directory / 'facility-network.inp').write_bytes(raw)
@@ -367,6 +376,8 @@ def run_coupled(model, directory):
                 if pump_design is not None:
                     from waterleague_sim.engine.coupled_pumps import summary as pump_summary
                     result['connectedPumps'] = pump_summary(pump_design, nresult['pumpOperation'])
+                if numerical_profile is not None:
+                    result['networkNumericalProfile'] = numerical_profile
                 if basin_design is not None:
                     from waterleague_sim.engine.surface_basin import result_summary as basin_summary
                     result['surfaceBasins'] = basin_summary(basin_design, sresult,

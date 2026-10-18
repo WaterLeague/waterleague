@@ -40,6 +40,10 @@ def engine_signature(network_result, surface_result, coupled_result):
         identity['surfaceNumericalConfiguration'] = coupled_result['surfaceNumericalConfiguration']
     if 'initialization' in coupled_result:
         identity['initializationAdapterSha256'] = coupled_result['initialization']['adapterSha256']
+    if 'networkNumericalProfile' in coupled_result:
+        # 시설 배치의 원 입력 해시는 엔진 식별자에 넣지 않아 동일 엔진의 전후 비교를 유지한다.
+        identity['numericalProfileAdapters'] = {k: coupled_result['networkNumericalProfile'][k]
+                                               for k in ('adapterSha256', 'compilerSha256')}
     if 'dryExchangeRoundoff' in coupled_result:
         identity['dryExchangePolicy'] = {k: v for k, v in coupled_result['dryExchangeRoundoff'].items()
                                        if k != 'withdrawalShortfallM3'}
@@ -306,6 +310,8 @@ def read_coupled_record(directory, expected_result_sha256, context):
         model = _verify_connected_storage(model, network, result, root, original_model)
         from .pumps import verify_connected_pumps
         model = verify_connected_pumps(original_model, model, network, result, root, _read)
+        from .coupled_numerics import verify_numerical_profile
+        model = verify_numerical_profile(model, network, result, root, _read)
         model = _verify_initialization(model, network, surface, result, root)
         _verify_dry_policy(model, surface, result, root)
         _verify_surface_policy(model, surface, result, root)

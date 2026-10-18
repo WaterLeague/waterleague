@@ -51,3 +51,28 @@ def initialized(lids, *, route_step=.25):
     pond['sourceModelSha256'] = model_digest(model)
     model['surfaceBasinDesign'] = pond
     return model
+
+
+def initialized_profile(lids, *, route_step=.05, exchange_ms=60000, numerical_node_area_m2=None,
+                        max_trials=None):
+    from ..evaluation.values import digest as model_digest
+    model = initialized(lids)
+    pond = model.pop('surfaceBasinDesign')
+    if numerical_node_area_m2 is not None:
+        text = model['network']['inputText'].replace('MIN_SURFAREA 0.01',
+            f'MIN_SURFAREA {numerical_node_area_m2:.15g}')
+        model['network']['inputText'] = text
+        for key in ('connectedStorageDesign', 'connectedPumpDesign'):
+            model[key]['sourceNetworkSha256'] = digest(text.encode())
+        model['numericalFixtureVariation'] = {'classification': 'NUMERICAL_AREA_NOT_SITE_GEOMETRY',
+            'originalDeclaredNodeAreaM2': .01, 'declaredNodeAreaM2': numerical_node_area_m2,
+            'zeroPolicy': 'EPA_5_2_4_DEFAULT_12_566_SQUARE_FEET'}
+    model['networkNumericalProfile'] = {'id': 'coupled-pump-slot-v1', 'options': {
+        'SURCHARGE_METHOD': 'SLOT', 'ROUTING_STEP': route_step}}
+    if max_trials is not None:
+        model['networkNumericalProfile']['id'] = 'coupled-pump-slot-trials-v2'
+        model['networkNumericalProfile']['options']['MAX_TRIALS'] = max_trials
+    model['maximumExchangeMilliseconds'] = exchange_ms
+    pond['sourceModelSha256'] = model_digest(model)
+    model['surfaceBasinDesign'] = pond
+    return model
