@@ -1,0 +1,356 @@
+{
+  "schemaVersion": 1,
+  "classification": "PUBLIC_BLOCK_COMPOSITION_NOT_SITE_VALIDATED",
+  "rankingEligible": false,
+  "sourceManifest": "data/manifests/seoul-biotope-20261018.json",
+  "sourceManifestSha256": "b5360c3a5e8691e51e0629763952cbbfe2a5167404be92a5d6ed84bcd7fd1067",
+  "sourceScope": "서울 전역 조사 블록",
+  "assignmentScope": "2025 성동 DEM의 성수 1,166,400m²·288개 삼각형",
+  "editions": [
+    {
+      "schemaVersion": 1,
+      "classification": "PUBLIC_BLOCK_COMPOSITION_NOT_SITE_VALIDATED",
+      "rankingEligible": false,
+      "editionYear": 2010,
+      "sourceArchiveSha256": "f4600fa908a1d5ecf014cc6ea276f37bca936cb60bb37ca28516d1d0d04e4135",
+      "attributes": {
+        "editionYear": 2010,
+        "features": 38170,
+        "consistentRecords": 37801,
+        "duplicateOriginalIds": 384,
+        "issues": {
+          "COMPONENT_TOTAL_MISMATCH": 286,
+          "REPORTED_IMPERVIOUS_MISMATCH": 111
+        },
+        "warnings": {
+          "LEGEND_DIFFERS_FROM_REPORTED_FRACTION": 4
+        },
+        "classification": "PUBLIC_BLOCK_SURVEY_COMPOSITION_NOT_POINT_MEASUREMENT",
+        "rankingEligible": false
+      },
+      "cases": {
+        "original": {
+          "totals": {
+            "areaM2": 1166400.0,
+            "knownCompositionAreaM2": 1166399.9991288732,
+            "unresolvedAreaM2": 0.0008709984266130648,
+            "componentAreasM2": {
+              "building": 642271.0219044493,
+              "imperviousPaving": 359771.9788624282,
+              "permeablePaving": 68016.40272097345,
+              "vegetation": 96340.59564102234,
+              "bare": 0.0
+            },
+            "reportedImperviousAreaM2": 1002043.0007668776,
+            "knownAreaComponentFractions": {
+              "building": 0.5506438806448302,
+              "imperviousPaving": 0.3084464841659158,
+              "permeablePaving": 0.058313102513521564,
+              "vegetation": 0.08259653267573251,
+              "bare": 0.0
+            },
+            "areaAccountingResidualM2": 1.283462227859647e-07
+          },
+          "validGeometries": 38090,
+          "invalidGeometries": 80,
+          "soilCoverCandidates": 32105,
+          "additionalPhysicsRequired": 5985,
+          "resultSha256": "787a54a29a2e98c64e02eb6051a6553c7ba673521e82455aebf5709cbaea92df"
+        },
+        "derived-consensus": {
+          "totals": {
+            "areaM2": 1166400.0,
+            "knownCompositionAreaM2": 1166399.9991288732,
+            "unresolvedAreaM2": 0.0008709984266130648,
+            "componentAreasM2": {
+              "building": 642271.0219044493,
+              "imperviousPaving": 359771.9788624282,
+              "permeablePaving": 68016.40272097345,
+              "vegetation": 96340.59564102234,
+              "bare": 0.0
+            },
+            "reportedImperviousAreaM2": 1002043.0007668776,
+            "knownAreaComponentFractions": {
+              "building": 0.5506438806448302,
+              "imperviousPaving": 0.3084464841659158,
+              "permeablePaving": 0.058313102513521564,
+              "vegetation": 0.08259653267573251,
+              "bare": 0.0
+            },
+            "areaAccountingResidualM2": 1.283462227859647e-07
+          },
+          "validGeometries": 38170,
+          "invalidGeometries": 0,
+          "soilCoverCandidates": 32170,
+          "additionalPhysicsRequired": 6000,
+          "resultSha256": "c10973ebfae4a4950f825c886038bd2b48c82622c37fdb850c2a8c31eb2640aa"
+        }
+      },
+      "topology": {
+        "policy": "EXPLICIT_TWO_METHOD_AREA_CONSENSUS_v1",
+        "adoptedCount": 80,
+        "unresolvedCount": 0
+      },
+      "exactReplay": true,
+      "operationAccuracyM": -1.0,
+      "limitations": [
+        "원본 블록 내부의 각 격자에 같은 면적비 배정; 실제 포장 위치를 측량한 분포 아님",
+        "미해결 면적은 0% 또는 100% 불투수로 채우거나 알려진 면적에 재배분하지 않음",
+        "투수포장과 녹지·나지 구분; 포장층 제원·토양·조도·초기 수분은 별도 입력 필요",
+        "자료 판년도와 사건 당일 유효성 구분; 현장 침수 정확도·경쟁 등급 승격 없음",
+        "두 방법의 일치는 원래 경계·분류의 현장 정확성 증명이 아님",
+        "방법 불일치·선/점 퇴화는 원본 오류 상태 유지",
+        "기존 모델·원본·기록의 소급 변경 없음"
+      ],
+      "sourceCode": {
+        "scripts/prepare_seoul_biotope.py": "6f98ce6839bbc962cc572808c86778a4aaf0888994af122f3df4074118ddce78",
+        "data/manifests/seoul-biotope-20261018.json": "b5360c3a5e8691e51e0629763952cbbfe2a5167404be92a5d6ed84bcd7fd1067",
+        "scripts/audit_spatial_sources.py": "74dd6155a3cc8a05e09b14e53a8ef80f8bde2accf78c51a86d797d738ae36b42",
+        "simulation/waterleague_sim/ingestion/seoul_biotope.py": "db2d1d0c6f3610a0a23c6224c61c15bebce03b590a3206c3e79cdd4dd3bc5131",
+        "simulation/waterleague_sim/terrain/__init__.py": "13082ab4b383cebe48b8ad2a598f78e568feb6c979b8a5debbc85c3621518abd",
+        "simulation/waterleague_sim/terrain/composition.py": "9466a8aeed7b8cf04d3bf3ed0ee7c22b17c2b7bd8db8f5b95dbe8ec18ba1f3a3",
+        "simulation/waterleague_sim/terrain/coverage.py": "db63ab9b158701681f5c3fe263fb8403d0c1155e77dd893b251cfe89a928e1ec",
+        "simulation/waterleague_sim/terrain/grid.py": "04f5f5f7d139d96fe2a1d8d615b2267310360283bf0974fda31af3cb9268930a",
+        "simulation/waterleague_sim/terrain/topology.py": "33b99d2d31615f027dceaf6fe8c52afe2e2093c1de04423e1cf82272e0cc25ce"
+      },
+      "artifactArchive": {
+        "directory": "data/runs/seoul-biotope-2010-20261018-v1",
+        "manifestSha256": "6aeb9aec5d26446147e2deb3115d184a5ca6bb661bc15314d6b1e1a88db20e72",
+        "files": 36
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "classification": "PUBLIC_BLOCK_COMPOSITION_NOT_SITE_VALIDATED",
+      "rankingEligible": false,
+      "editionYear": 2020,
+      "sourceArchiveSha256": "f6c87c5d182c5c4d84b87728f44718991056db289e69613b485d6ca7e5d83a47",
+      "attributes": {
+        "editionYear": 2020,
+        "features": 39862,
+        "consistentRecords": 39601,
+        "duplicateOriginalIds": 50,
+        "issues": {
+          "COMPONENT_TOTAL_MISMATCH": 259,
+          "PERCENT_OUT_OF_RANGE": 1,
+          "REPORTED_IMPERVIOUS_MISMATCH": 1
+        },
+        "warnings": {
+          "LEGEND_DIFFERS_FROM_REPORTED_FRACTION": 2
+        },
+        "classification": "PUBLIC_BLOCK_SURVEY_COMPOSITION_NOT_POINT_MEASUREMENT",
+        "rankingEligible": false
+      },
+      "cases": {
+        "original": {
+          "totals": {
+            "areaM2": 1166400.0,
+            "knownCompositionAreaM2": 1166399.9998797216,
+            "unresolvedAreaM2": 0.0001202226798801426,
+            "componentAreasM2": {
+              "building": 627624.934189069,
+              "imperviousPaving": 407877.5901100313,
+              "permeablePaving": 34705.0465883956,
+              "vegetation": 96192.42899222577,
+              "bare": 0.0
+            },
+            "reportedImperviousAreaM2": 1035502.5242991003,
+            "knownAreaComponentFractions": {
+              "building": 0.5380872207251279,
+              "imperviousPaving": 0.34968929196852827,
+              "permeablePaving": 0.029753983703681722,
+              "vegetation": 0.0824695036026621,
+              "bare": 0.0
+            },
+            "areaAccountingResidualM2": 5.576798629722225e-08
+          },
+          "validGeometries": 39796,
+          "invalidGeometries": 66,
+          "soilCoverCandidates": 33742,
+          "additionalPhysicsRequired": 6054,
+          "resultSha256": "ba9fcde3e25b29259e793ff578b9eb49fef5bb6c9086623047f970b997628e94"
+        },
+        "derived-consensus": {
+          "totals": {
+            "areaM2": 1166400.0,
+            "knownCompositionAreaM2": 1166399.9998797216,
+            "unresolvedAreaM2": 0.0001202226798801426,
+            "componentAreasM2": {
+              "building": 627624.934189069,
+              "imperviousPaving": 407877.5901100313,
+              "permeablePaving": 34705.0465883956,
+              "vegetation": 96192.42899222577,
+              "bare": 0.0
+            },
+            "reportedImperviousAreaM2": 1035502.5242991003,
+            "knownAreaComponentFractions": {
+              "building": 0.5380872207251279,
+              "imperviousPaving": 0.34968929196852827,
+              "permeablePaving": 0.029753983703681722,
+              "vegetation": 0.0824695036026621,
+              "bare": 0.0
+            },
+            "areaAccountingResidualM2": 5.576798629722225e-08
+          },
+          "validGeometries": 39862,
+          "invalidGeometries": 0,
+          "soilCoverCandidates": 33799,
+          "additionalPhysicsRequired": 6063,
+          "resultSha256": "cedf1e8fc8207309c52c01a675b35491aa66a4a008caff349499d6189eb5e15d"
+        }
+      },
+      "topology": {
+        "policy": "EXPLICIT_TWO_METHOD_AREA_CONSENSUS_v1",
+        "adoptedCount": 66,
+        "unresolvedCount": 0
+      },
+      "exactReplay": true,
+      "operationAccuracyM": -1.0,
+      "limitations": [
+        "원본 블록 내부의 각 격자에 같은 면적비 배정; 실제 포장 위치를 측량한 분포 아님",
+        "미해결 면적은 0% 또는 100% 불투수로 채우거나 알려진 면적에 재배분하지 않음",
+        "투수포장과 녹지·나지 구분; 포장층 제원·토양·조도·초기 수분은 별도 입력 필요",
+        "자료 판년도와 사건 당일 유효성 구분; 현장 침수 정확도·경쟁 등급 승격 없음",
+        "두 방법의 일치는 원래 경계·분류의 현장 정확성 증명이 아님",
+        "방법 불일치·선/점 퇴화는 원본 오류 상태 유지",
+        "기존 모델·원본·기록의 소급 변경 없음"
+      ],
+      "sourceCode": {
+        "scripts/prepare_seoul_biotope.py": "6f98ce6839bbc962cc572808c86778a4aaf0888994af122f3df4074118ddce78",
+        "data/manifests/seoul-biotope-20261018.json": "b5360c3a5e8691e51e0629763952cbbfe2a5167404be92a5d6ed84bcd7fd1067",
+        "scripts/audit_spatial_sources.py": "74dd6155a3cc8a05e09b14e53a8ef80f8bde2accf78c51a86d797d738ae36b42",
+        "simulation/waterleague_sim/ingestion/seoul_biotope.py": "db2d1d0c6f3610a0a23c6224c61c15bebce03b590a3206c3e79cdd4dd3bc5131",
+        "simulation/waterleague_sim/terrain/__init__.py": "13082ab4b383cebe48b8ad2a598f78e568feb6c979b8a5debbc85c3621518abd",
+        "simulation/waterleague_sim/terrain/composition.py": "9466a8aeed7b8cf04d3bf3ed0ee7c22b17c2b7bd8db8f5b95dbe8ec18ba1f3a3",
+        "simulation/waterleague_sim/terrain/coverage.py": "db63ab9b158701681f5c3fe263fb8403d0c1155e77dd893b251cfe89a928e1ec",
+        "simulation/waterleague_sim/terrain/grid.py": "04f5f5f7d139d96fe2a1d8d615b2267310360283bf0974fda31af3cb9268930a",
+        "simulation/waterleague_sim/terrain/topology.py": "33b99d2d31615f027dceaf6fe8c52afe2e2093c1de04423e1cf82272e0cc25ce"
+      },
+      "artifactArchive": {
+        "directory": "data/runs/seoul-biotope-2020-20261018-v1",
+        "manifestSha256": "59619af70da9dac7cd0c01b821a534b1bb352bc1de17a05a85661a85d68b90bc",
+        "files": 36
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "classification": "PUBLIC_BLOCK_COMPOSITION_NOT_SITE_VALIDATED",
+      "rankingEligible": false,
+      "editionYear": 2025,
+      "sourceArchiveSha256": "72ece9aaf5757b05b9d71b4bb039fb745aba275aa57d2f1b0e3b51cd13bbbb3f",
+      "attributes": {
+        "editionYear": 2025,
+        "features": 42544,
+        "consistentRecords": 42203,
+        "duplicateOriginalIds": 72,
+        "issues": {
+          "COMPONENT_TOTAL_MISMATCH": 198,
+          "PERCENT_OUT_OF_RANGE": 1,
+          "REPORTED_IMPERVIOUS_MISMATCH": 143
+        },
+        "warnings": {
+          "LEGEND_DIFFERS_FROM_REPORTED_FRACTION": 309
+        },
+        "classification": "PUBLIC_BLOCK_SURVEY_COMPOSITION_NOT_POINT_MEASUREMENT",
+        "rankingEligible": false
+      },
+      "cases": {
+        "original": {
+          "totals": {
+            "areaM2": 1166400.0,
+            "knownCompositionAreaM2": 1151569.8450658694,
+            "unresolvedAreaM2": 14830.154934112667,
+            "componentAreasM2": {
+              "building": 606948.0254939432,
+              "imperviousPaving": 399194.78481418535,
+              "permeablePaving": 45823.908240257144,
+              "vegetation": 99140.3813791389,
+              "bare": 462.7451383448468
+            },
+            "reportedImperviousAreaM2": 1006142.8103081286,
+            "knownAreaComponentFractions": {
+              "building": 0.5270614093400701,
+              "imperviousPaving": 0.3466526902598353,
+              "permeablePaving": 0.03979255660140704,
+              "vegetation": 0.08609150526468336,
+              "bare": 0.00040183853400431647
+            },
+            "areaAccountingResidualM2": 1.7942511476576328e-08
+          },
+          "validGeometries": 42480,
+          "invalidGeometries": 64,
+          "soilCoverCandidates": 35664,
+          "additionalPhysicsRequired": 6816,
+          "resultSha256": "f8b2f2ac2ddc3f8a289a00b29800b177e5b48b0a5f42928ece8dc40b968fe5dc"
+        },
+        "derived-consensus": {
+          "totals": {
+            "areaM2": 1166400.0,
+            "knownCompositionAreaM2": 1151569.8450658694,
+            "unresolvedAreaM2": 14830.154934112667,
+            "componentAreasM2": {
+              "building": 606948.0254939432,
+              "imperviousPaving": 399194.78481418535,
+              "permeablePaving": 45823.908240257144,
+              "vegetation": 99140.3813791389,
+              "bare": 462.7451383448468
+            },
+            "reportedImperviousAreaM2": 1006142.8103081286,
+            "knownAreaComponentFractions": {
+              "building": 0.5270614093400701,
+              "imperviousPaving": 0.3466526902598353,
+              "permeablePaving": 0.03979255660140704,
+              "vegetation": 0.08609150526468336,
+              "bare": 0.00040183853400431647
+            },
+            "areaAccountingResidualM2": 1.7942511476576328e-08
+          },
+          "validGeometries": 42481,
+          "invalidGeometries": 63,
+          "soilCoverCandidates": 35665,
+          "additionalPhysicsRequired": 6816,
+          "resultSha256": "e246e2457fc38ceb79a5452ecf772f54f47ba2de3c857be3a8019716418b447a"
+        }
+      },
+      "topology": {
+        "policy": "EXPLICIT_TWO_METHOD_AREA_CONSENSUS_v1",
+        "adoptedCount": 1,
+        "unresolvedCount": 2
+      },
+      "exactReplay": true,
+      "operationAccuracyM": -1.0,
+      "limitations": [
+        "원본 블록 내부의 각 격자에 같은 면적비 배정; 실제 포장 위치를 측량한 분포 아님",
+        "미해결 면적은 0% 또는 100% 불투수로 채우거나 알려진 면적에 재배분하지 않음",
+        "투수포장과 녹지·나지 구분; 포장층 제원·토양·조도·초기 수분은 별도 입력 필요",
+        "자료 판년도와 사건 당일 유효성 구분; 현장 침수 정확도·경쟁 등급 승격 없음",
+        "두 방법의 일치는 원래 경계·분류의 현장 정확성 증명이 아님",
+        "방법 불일치·선/점 퇴화는 원본 오류 상태 유지",
+        "기존 모델·원본·기록의 소급 변경 없음"
+      ],
+      "sourceCode": {
+        "scripts/prepare_seoul_biotope.py": "6f98ce6839bbc962cc572808c86778a4aaf0888994af122f3df4074118ddce78",
+        "data/manifests/seoul-biotope-20261018.json": "b5360c3a5e8691e51e0629763952cbbfe2a5167404be92a5d6ed84bcd7fd1067",
+        "scripts/audit_spatial_sources.py": "74dd6155a3cc8a05e09b14e53a8ef80f8bde2accf78c51a86d797d738ae36b42",
+        "simulation/waterleague_sim/ingestion/seoul_biotope.py": "db2d1d0c6f3610a0a23c6224c61c15bebce03b590a3206c3e79cdd4dd3bc5131",
+        "simulation/waterleague_sim/terrain/__init__.py": "13082ab4b383cebe48b8ad2a598f78e568feb6c979b8a5debbc85c3621518abd",
+        "simulation/waterleague_sim/terrain/composition.py": "9466a8aeed7b8cf04d3bf3ed0ee7c22b17c2b7bd8db8f5b95dbe8ec18ba1f3a3",
+        "simulation/waterleague_sim/terrain/coverage.py": "db63ab9b158701681f5c3fe263fb8403d0c1155e77dd893b251cfe89a928e1ec",
+        "simulation/waterleague_sim/terrain/grid.py": "04f5f5f7d139d96fe2a1d8d615b2267310360283bf0974fda31af3cb9268930a",
+        "simulation/waterleague_sim/terrain/topology.py": "33b99d2d31615f027dceaf6fe8c52afe2e2093c1de04423e1cf82272e0cc25ce"
+      },
+      "artifactArchive": {
+        "directory": "data/runs/seoul-biotope-2025-20261018-v1",
+        "manifestSha256": "8abc5a7d8f2309b8a70e6fa070662f9062c09916e0b46b40233b8ad1b4e683e0",
+        "files": 36
+      }
+    }
+  ],
+  "verifiedArtifactFiles": 108,
+  "limitations": [
+    "공개 판년도별 표면 면적 구성과 당시 재난 시점 복원 구분",
+    "블록 내부 균질 면적 배정 근사이며 상세 포장 위치 미확인",
+    "투수포장층·토양 제원·초기 수분·조도·실제 배수 경계의 추가 입력 필요",
+    "원본·전체 좌표는 프로젝트에 보관하고 공개 저장소에는 출처·해시·집계만 포함"
+  ]
+}

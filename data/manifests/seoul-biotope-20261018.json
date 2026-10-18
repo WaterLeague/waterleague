@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "acquiredAt": "2026-10-18T01:03:49.909164+00:00",
+  "provider": "서울특별시 도시공간본부",
+  "files": [
+    {
+      "year": 2025,
+      "postId": 441638,
+      "originalFilename": "2025 도시생태현황도 최종보고서.pdf",
+      "file": "data/private/seoul-biotope-20261018/seoul-ecology-2025.pdf",
+      "bytes": 45379423,
+      "sha256": "b1b6d41d1d4686e7c0919d7c298d6e9ff3fd509256f3bb8a99a2d4cd842cb39f",
+      "url": "https://seoulboard.seoul.go.kr/comm/getFile?srvcId=BBSTY1&upperNo=441638&fileTy=ATTACH&fileNo=2&bbsNo=318",
+      "boardUrl": "https://urban.seoul.go.kr/view/html/PMNU5020600001?brdSeq=441638&subTit=%EC%97%85%EB%AC%B4%EC%9E%90%EB%A3%8C&type=1"
+    },
+    {
+      "year": 2025,
+      "postId": 441638,
+      "originalFilename": "2025 도시생태현황도 자료.zip",
+      "file": "data/private/seoul-biotope-20261018/seoul-ecology-2025.zip",
+      "bytes": 100674688,
+      "sha256": "72ece9aaf5757b05b9d71b4bb039fb745aba275aa57d2f1b0e3b51cd13bbbb3f",
+      "url": "https://seoulboard.seoul.go.kr/comm/getFile?srvcId=BBSTY1&upperNo=441638&fileTy=ATTACH&fileNo=3&bbsNo=318",
+      "boardUrl": "https://urban.seoul.go.kr/view/html/PMNU5020600001?brdSeq=441638&subTit=%EC%97%85%EB%AC%B4%EC%9E%90%EB%A3%8C&type=1"
+    },
+    {
+      "year": 2020,
+      "postId": 348030,
+      "originalFilename": "2020seoulcityecology_data.zip",
+      "file": "data/private/seoul-biotope-20261018/seoul-ecology-2020.zip",
+      "bytes": 15330443,
+      "sha256": "f6c87c5d182c5c4d84b87728f44718991056db289e69613b485d6ca7e5d83a47",
+      "url": "https://seoulboard.seoul.go.kr/comm/getFile?srvcId=BBSTY1&upperNo=348030&fileTy=ATTACH&fileNo=1&bbsNo=318",
+      "boardUrl": "https://urban.seoul.go.kr/view/html/PMNU5020600001?brdSeq=348030&subTit=%EC%97%85%EB%AC%B4%EC%9E%90%EB%A3%8C&type=1"
+    },
+    {
+      "year": 2010,
+      "postId": 323762,
+      "originalFilename": "2010seoulcityecology_data.zip",
+      "file": "data/private/seoul-biotope-20261018/seoul-ecology-2010.zip",
+      "bytes": 40012249,
+      "sha256": "f4600fa908a1d5ecf014cc6ea276f37bca936cb60bb37ca28516d1d0d04e4135",
+      "url": "https://seoulboard.seoul.go.kr/comm/getFile?srvcId=BBSTY1&upperNo=323762&fileTy=ATTACH&fileNo=1&bbsNo=318",
+      "boardUrl": "https://urban.seoul.go.kr/view/html/PMNU5020600001?brdSeq=323762&subTit=%EC%97%85%EB%AC%B4%EC%9E%90%EB%A3%8C&type=1"
+    }
+  ],
+  "limitations": [
+    "자료 판년도와 원문 게시/수정 시점 구분",
+    "과거 사건 당시 자산·운영 유효성은 별도 확인",
+    "공개자료의 개별 이용조건 확인 전 원본·파생 좌표 비공개 보관"
+  ],
+  "method": "공식 서울도시공간포털 자료실의 공개 게시판 첨부파일 직접 다운로드",
+  "metadataFiles": {
+    "data/private/seoul-biotope-20261018/board-2010.json": "7124d9db8b6e4fec25c31c5267db706566565536ee846e32547e543c4302e49b",
+    "data/private/seoul-biotope-20261018/board-2020.json": "a8d8c3a07c9fd14236f7a99b9118fc205b72220d93ec7d7c9703eb18be99f005",
+    "data/private/seoul-biotope-20261018/board-2025.json": "c70ac43d3846423f58696b73a8a300d22410ec5d12cc4bca5a5b1ad65c19e293"
+  },
+  "reference": {
+    "file": "data/private/seoul-biotope-20261018/seoul-ecology-2025.pdf",
+    "sha256": "b1b6d41d1d4686e7c0919d7c298d6e9ff3fd509256f3bb8a99a2d4cd842cb39f",
+    "pagesPdf": [
+      134,
+      135,
+      287,
+      290
+    ],
+    "pagesPrinted": [
+      111,
+      112,
+      264,
+      267
+    ],
+    "meaning": "블록별 면적비·투수포장 조사 한계·건설현장 기타비율 해석"
+  }
+}
