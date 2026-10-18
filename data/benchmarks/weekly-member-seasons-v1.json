@@ -1,0 +1,59 @@
+{
+  "version": "WEEKLY_MEMBER_SEASONS_V1",
+  "date": "2026-10-19",
+  "scope": "회원별 위치·시즌 종료·원장·표시 검증; 연결 침수 모델 완료 아님",
+  "checks": {
+    "postgresBudget": 25,
+    "postgresPhysicsAndInstallations": 13,
+    "postgresWeekly": 4,
+    "postgresCisternPlan": 6,
+    "nativeWorker": 8,
+    "frontend": 205,
+    "productionBuild": "PASSED",
+    "postgresDuplicateLocation": "different members both installed; same member one winner",
+    "seasonClose": "one release at exact KST end; prior nanosecond does not release",
+    "score": "missing/zero/negative distinct; late cleanup preserves previous final ranking"
+  },
+  "logs": [
+    "tmp/waterleague_league_test_45199871f17e4cefb3eb57d7b4e1cb60.log",
+    "tmp/waterleague_queue_test_6756d1c40f724673845e46315d6c3a91.log",
+    "tmp/waterleague_league_test_5e67469e613844fd902e87a9f8f92647.log",
+    "tmp/waterleague_league_test_b66fafe1aa7148868a9f1e8125188c50.log"
+  ],
+  "browserEvidence": [
+    {
+      "path": "data/benchmarks/weekly-member-seasons-v1/weekly-season-locked-20261019.png",
+      "sha256": "716f8cc9900467a0fd3991e29cc350fb422350e7d34aacfc01ead502bf0c876d"
+    },
+    {
+      "path": "data/benchmarks/weekly-member-seasons-v1/weekly-site-scores-20261019.png",
+      "sha256": "1fd9283eb2a391046a01bf1cc18862c80e0e032e2f37561503dd1291fe468a00"
+    },
+    {
+      "path": "data/benchmarks/weekly-member-seasons-v1/weekly-historical-trace-20261019.png",
+      "sha256": "aa17282b74d9c1b560bd4c0f7f8c32a468f902f3084199a86673d0a30e70fc36"
+    },
+    {
+      "path": "data/benchmarks/weekly-member-seasons-v1/disaster-historical-trace-20261019.png",
+      "sha256": "84f97bfae28d7a9d5bc69282f3b04cd9ef66e8d38f625c2c335154b9b5ef9ff9"
+    }
+  ],
+  "qa": "frontend/qa/weekly-season.html; synthetic members/scores only in DEV page, no operational writes",
+  "limitations": [
+    "H2 fails at pre-existing V21 constraint name; PostgreSQL passes",
+    "Installation partial minute not yet evaluated",
+    "No connected realtime 2D city simulation in this change",
+    "Six further map facility types and additional verified budget programs pending",
+    "Public building linkage and facility-specific 3D expansion pending"
+  ],
+  "sourceHashes": {
+    "backend/src/main/java/db/migration/V25__weekly_member_seasons.java": "dadbbfb96fe9f32c10ce02d3b37b174b04fe71e005f6106b71f15f59b7058215",
+    "backend/src/main/java/io/waterleague/weekly/service/WeeklySeasonService.java": "4cfeffa6c3ba0974e4cdc1aeb0a147d5d5813ad76967fc1e7309279ef1957899",
+    "backend/src/main/java/io/waterleague/weekly/repository/WeeklySeasonRepository.java": "937349d7840ef1be2952b8299dcfed767c11f5bd0e6d04164bb04b124e6d8b15",
+    "backend/src/main/java/io/waterleague/installation/service/InstallationService.java": "e621504eb93c563a3c35447a0cd5f7e9a3d4fc512ac4bc819d6d2163297d7a79",
+    "simulation/waterleague_sim/shared_physics.py": "a60e522ea92d64ba96148baca061716b95ebad6d19956f26030f31964aee85c3",
+    "simulation/integration/test_shared_physics.py": "07292cdb97c0562bc52fbb48120b33ad88d14e2e4282eb00e5d75a57686ce5ae",
+    "frontend/src/domains/city/view/CityExplorer.tsx": "5fa57b0d27fdf0e1f3f48f9771f33fa3f12f9619ea73fefa91498dce40a084e1",
+    "frontend/src/domains/weekly/view/SiteScores.tsx": "2b4aa4efa3487b633fde2ffc44d840ea1f745c71ec3382478e445adf7889a0e7"
+  }
+}

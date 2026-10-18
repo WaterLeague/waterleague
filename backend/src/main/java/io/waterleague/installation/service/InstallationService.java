@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class InstallationService {
   private final InstallationRepository installations;
+  private final io.waterleague.weekly.service.WeeklySeasonService seasons;
   private final io.waterleague.budget.service.BudgetService budget;
   private final DistrictRepository districts;
   private final AccountRepository accounts;
@@ -29,6 +30,7 @@ public class InstallationService {
 
   public InstallationService(
       InstallationRepository i,
+      io.waterleague.weekly.service.WeeklySeasonService seasons,
       io.waterleague.budget.service.BudgetService budget,
       DistrictRepository d,
       AccountRepository a,
@@ -38,6 +40,7 @@ public class InstallationService {
       io.waterleague.strategy.service.PlacementValidationService validation,
       io.waterleague.cost.service.CostService costRecords) {
     installations = i;
+    this.seasons = seasons;
     this.budget = budget;
     districts = d;
     accounts = a;
@@ -68,14 +71,9 @@ public class InstallationService {
     if (districtId == null || districtId.isEmpty())
       return new io.waterleague.installation.view.SitePageView(
           List.of(), sites.counts(), 0, 0, 200);
-    var occupied = new HashSet<String>();
-    if (vacant)
-      for (var i : installations.active())
-        if (i.districtId().equals(districtId)) occupied.add(i.cellId());
     var matched =
         sites.district(districtId).values().stream()
             .filter(v -> type == null || v.allowedTypes().contains(type.name()))
-            .filter(v -> !occupied.contains(v.cellId()))
             .filter(v -> !vacant || v.existingInfrastructure() == null)
             .sorted(
                 Comparator.comparingDouble(
@@ -112,6 +110,7 @@ public class InstallationService {
     if (account.districtId() == null) throw new InstallationException(ErrorCode.DISTRICT_REQUIRED);
     if (!account.districtId().equals(request.districtId()))
       throw new InstallationException(ErrorCode.DISTRICT_ACCESS_DENIED);
+    seasons.closeOwner(account.id());
     var district = districts.require(account.districtId());
     var placement = new Placement(request.cellId(), request.facilityType(), request.areaM2());
     var own = installations.owned(account.id());
@@ -136,6 +135,7 @@ public class InstallationService {
         .forEach((t, c) -> costs.put(io.waterleague.strategy.entity.FacilityType.valueOf(t), c));
     var cost = validation.validate(List.of(placement), cells, costs, budget.limit(), 1);
     budget.requireAvailable(account.id(), request.facilityType(), cost);
+    var now = seasons.now();
     var value =
         new SharedInstallation(
             UUID.randomUUID(),
@@ -147,9 +147,10 @@ public class InstallationService {
             request.facilityType(),
             request.areaM2(),
             cost,
-            Instant.now(),
-            null);
-    // 회원별 예산 잠금과 위치 고유 제약으로 초과 배정·중복 점유를 차단한다.
+            now,
+            null,
+            io.waterleague.weekly.service.WeeklySeasonService.endFor(now));
+    // 회원별 위치와 예산을 잠그며 다른 회원의 같은 위치 설계는 독립 허용한다.
     try {
       installations.add(
           value,
@@ -174,6 +175,12 @@ public class InstallationService {
         || !value.ownerId().equals(account.id())
         || !value.districtId().equals(account.districtId()))
       throw new InstallationException(ErrorCode.ACCESS_DENIED);
+    if (value.seasonEndsAt() != null) {
+      if (seasons.now().isBefore(value.seasonEndsAt()))
+        throw new InstallationException(ErrorCode.SEASON_INSTALLATION_LOCKED);
+      seasons.closeOwner(account.id());
+      return;
+    }
     budget.lock(account.id());
     if (!installations.remove(id, account.id(), Instant.now()))
       throw new InstallationException(ErrorCode.CONFLICT);

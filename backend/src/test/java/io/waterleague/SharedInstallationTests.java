@@ -37,6 +37,7 @@ class SharedInstallationTests {
   @Autowired AccountRepository accounts;
   @Autowired AccountService auth;
   @Autowired InstallationService service;
+  @Autowired io.waterleague.weekly.service.WeeklySeasonService seasons;
   @Autowired JdbcTemplate db;
   @Autowired io.waterleague.installation.repository.SiteCatalogRepository sites;
   @Autowired io.waterleague.budget.service.BudgetService budget;
@@ -87,11 +88,11 @@ class SharedInstallationTests {
     assertThatThrownBy(
             () ->
                 service.install(
-                    account("2410520").username(),
+                    owner.username(),
                     new InstallRequest(
                         "2410520", site.cellId(), FacilityType.RAIN_GARDEN, BigDecimal.ONE)))
         .isInstanceOf(DomainException.class);
-    service.remove(owner.username(), installed.id());
+    seasons.closeOwnerAt(owner.id(), installed.seasonEndsAt());
     assertThat(budget.view(owner.id()).remainingKrw()).isEqualByComparingTo("2000000000");
     var roof =
         sites.district("2410520").values().stream()
@@ -152,11 +153,11 @@ class SharedInstallationTests {
     assertThatThrownBy(
             () ->
                 service.install(
-                    account("2410520").username(),
+                    owner.username(),
                     new InstallRequest(
                         "2410520", site.cellId(), FacilityType.RAIN_GARDEN, BigDecimal.ONE)))
         .isInstanceOf(DomainException.class);
-    service.remove(owner.username(), installed.id());
+    seasons.closeOwnerAt(owner.id(), installed.seasonEndsAt());
     assertThat(budget.view(owner.id()).remainingKrw()).isEqualByComparingTo("2000000000");
     var roof =
         sites.district("2410520").values().stream()
@@ -215,11 +216,11 @@ class SharedInstallationTests {
     assertThatThrownBy(
             () ->
                 service.install(
-                    account("2410520").username(),
+                    owner.username(),
                     new InstallRequest(
                         "2410520", eligible.cellId(), FacilityType.BIORETENTION, BigDecimal.TEN)))
         .isInstanceOf(DomainException.class);
-    service.remove(owner.username(), installed.id());
+    seasons.closeOwnerAt(owner.id(), installed.seasonEndsAt());
     assertThat(budget.view(owner.id()).remainingKrw()).isEqualByComparingTo("2000000000");
   }
 
@@ -266,7 +267,7 @@ class SharedInstallationTests {
         raw,
         record.sha256(),
         installed.id());
-    service.remove(owner.username(), installed.id());
+    seasons.closeOwnerAt(owner.id(), installed.seasonEndsAt());
     assertThatThrownBy(() -> costs.active(installed.id()))
         .isInstanceOfSatisfying(
             DomainException.class,
@@ -375,7 +376,7 @@ class SharedInstallationTests {
   }
 
   @Test
-  void sharedLocationHasExactlyOneWinnerUnderConcurrentRequests() throws Exception {
+  void membersCanShareLocationWhileOwnDuplicateAndSeasonRemovalAreRejected() throws Exception {
     var a = account("2410520");
     var b = account("2410520");
     var start = new CountDownLatch(1);
@@ -396,24 +397,75 @@ class SharedInstallationTests {
       start.countDown();
       var outcomes = new ArrayList<String>();
       for (var f : futures) outcomes.add(f.get(10, TimeUnit.SECONDS));
-      assertThat(outcomes).containsExactlyInAnyOrder("INSTALLED", "SITE_OCCUPIED");
+      assertThat(outcomes).containsExactlyInAnyOrder("INSTALLED", "INSTALLED");
     }
     var installed = service.active().getFirst();
-    assertThat(service.active()).hasSize(1);
+    assertThat(service.active()).hasSize(2);
     assertThat(installed.cost()).isEqualByComparingTo("2200000");
     var owner = installed.ownerId().equals(a.id()) ? a : b;
     var other = owner.id().equals(a.id()) ? b : a;
     assertThatThrownBy(() -> service.remove(other.username(), installed.id()))
         .isInstanceOf(DomainException.class);
-    service.remove(owner.username(), installed.id());
-    assertThat(service.active()).isEmpty();
+    assertThatThrownBy(() -> service.remove(owner.username(), installed.id()))
+        .isInstanceOfSatisfying(
+            DomainException.class,
+            e ->
+                assertThat(e.code())
+                    .isEqualTo(
+                        io.waterleague.common.exception.ErrorCode.SEASON_INSTALLATION_LOCKED));
+    assertThatThrownBy(() -> service.install(owner.username(), placement("2410520")))
+        .isInstanceOfSatisfying(
+            DomainException.class,
+            e ->
+                assertThat(e.code())
+                    .isEqualTo(io.waterleague.common.exception.ErrorCode.SITE_OCCUPIED));
+    seasons.closeOwnerAt(owner.id(), installed.seasonEndsAt().minusNanos(1));
+    assertThat(service.active()).hasSize(2);
+    seasons.closeOwnerAt(owner.id(), installed.seasonEndsAt());
+    seasons.closeOwnerAt(owner.id(), installed.seasonEndsAt());
+    assertThat(service.active()).hasSize(1);
+    assertThat(service.active().getFirst().ownerId()).isEqualTo(other.id());
+    assertThat(budget.history(owner.id(), null).entries()).hasSize(2);
+    assertThat(budget.history(owner.id(), null).entries().getFirst().effectiveAt())
+        .isEqualTo(installed.seasonEndsAt());
     assertThat(
             db.queryForObject(
-                "SELECT COUNT(*) FROM shared_installations WHERE removed_at IS NOT NULL",
-                Integer.class))
-        .isEqualTo(1);
-    service.install(other.username(), placement("2410520"));
-    assertThat(service.active().getFirst().ownerId()).isEqualTo(other.id());
+                    "SELECT removed_at FROM shared_installations WHERE id=?",
+                    java.sql.Timestamp.class,
+                    installed.id())
+                .toInstant())
+        .isEqualTo(installed.seasonEndsAt());
+    assertThat(budget.view(owner.id()).allocatedKrw()).isZero();
+    assertThat(budget.view(other.id()).allocatedKrw()).isEqualByComparingTo("2200000");
+  }
+
+  @Test
+  void oneMemberConcurrentSameSiteHasOneAllocation() throws Exception {
+    var a = account("2410520");
+    var start = new CountDownLatch(1);
+    try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
+      var futures = new ArrayList<Future<String>>();
+      for (int n = 0; n < 2; n++)
+        futures.add(
+            executor.submit(
+                () -> {
+                  start.await();
+                  try {
+                    service.install(a.username(), placement("2410520"));
+                    return "INSTALLED";
+                  } catch (DomainException e) {
+                    return e.code().name();
+                  }
+                }));
+      start.countDown();
+      assertThat(
+              List.of(
+                  futures.get(0).get(10, TimeUnit.SECONDS),
+                  futures.get(1).get(10, TimeUnit.SECONDS)))
+          .containsExactlyInAnyOrder("INSTALLED", "SITE_OCCUPIED");
+    }
+    assertThat(service.active()).hasSize(1);
+    assertThat(budget.history(a.id(), null).entries()).hasSize(1);
   }
 
   @Test
@@ -482,7 +534,7 @@ class SharedInstallationTests {
                 String.class,
                 independent.id()))
         .contains("seoul-basin-footprints-20261018-v4", "historicalExistenceVerified");
-    service.remove(other.username(), independent.id());
+    seasons.closeOwnerAt(other.id(), independent.seasonEndsAt());
     assertThat(budget.view(other.id()).remainingKrw()).isEqualByComparingTo("2000000000");
     assertThat(budget.view(owner.id()).remainingKrw()).isEqualByComparingTo("1050000");
   }
@@ -554,7 +606,7 @@ class SharedInstallationTests {
             service
                 .sites("2410520", 7239.5, -7741.5, 0, FacilityType.GREEN_ROOF, true)
                 .matchedCount())
-        .isEqualTo(page.matchedCount() - 1);
+        .isEqualTo(page.matchedCount());
     assertThatThrownBy(
             () ->
                 service.install(

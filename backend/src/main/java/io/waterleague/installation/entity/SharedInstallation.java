@@ -16,4 +16,32 @@ public record SharedInstallation(
     BigDecimal areaM2,
     BigDecimal cost,
     Instant installedAt,
-    Instant removedAt) {}
+    Instant removedAt,
+    Instant seasonEndsAt) {
+  public SharedInstallation(
+      UUID id,
+      String districtId,
+      String cellId,
+      UUID ownerId,
+      String ownerName,
+      String modelHash,
+      FacilityType facilityType,
+      BigDecimal areaM2,
+      BigDecimal cost,
+      Instant installedAt,
+      Instant removedAt) {
+    this(
+        id,
+        districtId,
+        cellId,
+        ownerId,
+        ownerName,
+        modelHash,
+        facilityType,
+        areaM2,
+        cost,
+        installedAt,
+        removedAt,
+        null);
+  }
+}

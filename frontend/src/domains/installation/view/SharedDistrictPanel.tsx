@@ -1,3 +1,5 @@
+import { SiteScores } from '../../weekly/view/SiteScores';
+import { facilities } from '../../game/service/gameService';
 import { useState } from 'react';
 import { MapPin } from 'lucide-react';
 import type { Account } from '../../account/entity/account';
@@ -17,6 +19,8 @@ export function SharedDistrictPanel({
   districtName,
   site,
   occupied,
+  ownInstallations,
+  onSelectInstallation,
   type,
   area,
   onType,
@@ -27,7 +31,6 @@ export function SharedDistrictPanel({
   busy,
   error,
   onInstall,
-  onRemove,
   onLogin,
   onAccount,
   onLocate,
@@ -38,6 +41,8 @@ export function SharedDistrictPanel({
   districtName: string;
   site: SharedSite | null;
   occupied?: SharedInstallation;
+  ownInstallations: SharedInstallation[];
+  onSelectInstallation: (value: SharedInstallation) => void;
   type: FacilityType | '';
   area: string;
   onType: (t: FacilityType) => void;
@@ -49,7 +54,6 @@ export function SharedDistrictPanel({
   error: string;
   feedback: string;
   onInstall: (s: SharedSite, t: FacilityType, a: number) => Promise<boolean>;
-  onRemove: (id: string) => Promise<boolean>;
   onLogin: () => void;
   onAccount: (a: Account) => void;
   onLocate: () => void;
@@ -83,19 +87,7 @@ export function SharedDistrictPanel({
       onInstall={() => {
         if (site && type) void onInstall(site, type, Number(area));
       }}
-      occupied={
-        occupied
-          ? {
-              ...occupied,
-              onRemove:
-                occupied.ownerId === account?.id
-                  ? () => {
-                      void onRemove(occupied.id);
-                    }
-                  : undefined,
-            }
-          : undefined
-      }
+      occupied={occupied}
       error={error}
       access={
         <>
@@ -138,6 +130,29 @@ export function SharedDistrictPanel({
         </>
       }
     >
+      {site && (
+        <SiteScores
+          key={site.districtId + ':' + site.cellId}
+          districtId={site.districtId}
+          cellId={site.cellId}
+          viewerId={account?.id ?? null}
+        />
+      )}
+      {!!ownInstallations.length && (
+        <details className="weekly-site-scores">
+          <summary>내 시설 {ownInstallations.length}곳</summary>
+          {ownInstallations.map((value) => (
+            <button
+              key={value.id}
+              className="outline-button"
+              onClick={() => onSelectInstallation(value)}
+            >
+              {facilities[value.facilityType].name} · {value.cellId} ·{' '}
+              {value.areaM2.toLocaleString('ko-KR')} m²
+            </button>
+          ))}
+        </details>
+      )}
       {occupied && (
         <>
           <InstallationCostRecord key={'cost-' + occupied.id} id={occupied.id} />

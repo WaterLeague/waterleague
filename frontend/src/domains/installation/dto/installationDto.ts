@@ -36,6 +36,7 @@ export const installationDto = z.object({
   areaM2: z.number().positive(),
   cost: z.number().nonnegative(),
   installedAt: z.iso.datetime(),
+  seasonEndsAt: z.iso.datetime().nullish(),
   center: point,
   heightM: z.number().nonnegative(),
 });

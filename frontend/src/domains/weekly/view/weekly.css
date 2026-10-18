@@ -165,3 +165,28 @@
     max-width: 100%;
   }
 }
+
+.weekly-site-scores {
+  margin: 18px 0;
+  border-top: 1px solid #d7dfd6;
+  padding-top: 12px;
+}
+.weekly-site-scores h3 {
+  font-size: 14px;
+}
+.weekly-site-scores article {
+  padding: 10px 0;
+  border-bottom: 1px solid #e5e9e2;
+  font-size: 12px;
+}
+.weekly-site-scores article p {
+  margin: 6px 0;
+}
+.weekly-site-scores article small {
+  display: block;
+  color: #516654;
+  line-height: 1.6;
+}
+.weekly-site-scores button {
+  margin: 4px 0;
+}

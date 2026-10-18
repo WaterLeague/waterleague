@@ -24,6 +24,7 @@ type Placed = {
   cost: number;
   ownerName: string;
   onRemove?: () => void;
+  seasonEndsAt?: string | null;
 };
 export type FacilityPlacementProps = {
   site: SharedSite | null;
@@ -76,7 +77,7 @@ export function FacilityPlacementPanel(p: FacilityPlacementProps) {
         <MapPin size={17} />
         <div>
           <strong>
-            {p.feedback || (site ? '선택한 위치' : '시설을 설치할 빈 곳을 찾아보세요')}
+            {p.feedback || (site ? '선택한 위치' : '시설을 설치할 위치를 찾아보세요')}
           </strong>
           <span>
             {p.districtName || '서울 25개 구'} · {p.context}
@@ -88,11 +89,11 @@ export function FacilityPlacementPanel(p: FacilityPlacementProps) {
         <div className="shared-selection-empty">
           <Leaf size={30} />
           <h2>작은 시설, 함께 만드는 변화</h2>
-          <p>시설을 고른 뒤 지도에 표시된 후보나 위치 목록에서 빈 곳을 선택하세요.</p>
+          <p>시설을 고른 뒤 지도에 표시된 후보나 위치 목록에서 설치할 곳을 선택하세요.</p>
           <p>
             {p.research
               ? '연구 배치는 이 재해의 비교 계산에 사용됩니다.'
-              : '설치는 내 소속 구에서만 가능합니다. 다른 구의 시설도 둘러볼 수 있습니다.'}
+              : '내 소속 구에 설치할 수 있습니다. 다른 회원과 같은 위치도 사용할 수 있습니다.'}
           </p>
         </div>
       ) : (
@@ -126,15 +127,24 @@ export function FacilityPlacementPanel(p: FacilityPlacementProps) {
                 {occupied.ownerName} · {occupied.areaM2.toLocaleString('ko-KR')} m²
               </p>
               <strong>{won(occupied.cost)}</strong>
-              {occupied.onRemove ? (
+              {p.research && occupied.onRemove ? (
                 <button className="outline-button" disabled={p.busy} onClick={occupied.onRemove}>
                   <Trash2 size={14} />
                   {p.research ? '설계에서 제거' : '내 시설 철거'}
                 </button>
               ) : (
                 <p>
-                  다른 회원이 설치한 위치입니다.
-                  <br />빈 위치를 선택해 주세요.
+                  시즌 종료까지 변경·철거할 수 없습니다.
+                  {occupied.seasonEndsAt && (
+                    <>
+                      <br />
+                      종료:{' '}
+                      {new Date(occupied.seasonEndsAt).toLocaleString('ko-KR', {
+                        timeZone: 'Asia/Seoul',
+                      })}{' '}
+                      KST
+                    </>
+                  )}
                 </p>
               )}
             </div>
@@ -230,7 +240,13 @@ export function FacilityPlacementPanel(p: FacilityPlacementProps) {
               )}
               {p.canInstall ? (
                 <button className="solid-button shared-install" disabled={p.busy || !valid}>
-                  {p.busy ? '설치 확인 중' : p.research ? '연구 설계에 추가' : '이 위치에 설치'}
+                  {p.busy
+                    ? '설치 확인 중'
+                    : p.research
+                      ? '연구 설계에 추가'
+                      : type
+                        ? `${facilities[type].name} 설치 확정`
+                        : '시설 선택'}
                 </button>
               ) : (
                 <p className="shared-readonly">{p.readOnlyMessage}</p>
@@ -239,7 +255,7 @@ export function FacilityPlacementPanel(p: FacilityPlacementProps) {
                 점선 시설은 미리보기입니다.{' '}
                 {p.research
                   ? '추가한 배치는 현재 공동 시설과 분리해 계산합니다.'
-                  : '설치 버튼을 누르면 모두의 지도에 반영됩니다.'}
+                  : '설치 확정 후 시즌 종료까지 변경·철거할 수 없습니다.'}
               </p>
             </form>
           )}

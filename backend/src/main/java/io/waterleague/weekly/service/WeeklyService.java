@@ -43,6 +43,24 @@ public class WeeklyService {
         period(monday.minusWeeks(1), now, own));
   }
 
+  @Transactional(readOnly = true)
+  public io.waterleague.weekly.view.SiteScorePage siteScores(
+      String district, String cell, UUID after) {
+    districts.require(district);
+    if (cell == null || !cell.matches("[A-Za-z0-9_-]{1,20}"))
+      throw new DomainException(ErrorCode.REQUEST_INVALID);
+    var week =
+        scores
+            .now()
+            .atZone(KST)
+            .toLocalDate()
+            .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+    var rows = scores.siteScores(district, cell, week, after == null ? new UUID(0, 0) : after);
+    var page = rows.stream().limit(50).toList();
+    return new io.waterleague.weekly.view.SiteScorePage(
+        page, rows.size() > 50 ? page.getLast().id() : null);
+  }
+
   private WeeklyView.Period period(LocalDate week, Instant now, UUID own) {
     Instant start = week.atStartOfDay(KST).toInstant(),
         end = week.plusWeeks(1).atStartOfDay(KST).toInstant();

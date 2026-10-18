@@ -34,6 +34,8 @@ class PhysicsWorkflowTests {
   @Autowired JdbcTemplate db;
   @Autowired AccountRepository accounts;
   @Autowired InstallationService installations;
+  @Autowired io.waterleague.weekly.service.WeeklySeasonService seasons;
+  @Autowired io.waterleague.installation.repository.InstallationRepository installationRecords;
   UUID installation;
   String username;
   final HttpClient client = HttpClient.newHttpClient();
@@ -135,7 +137,8 @@ class PhysicsWorkflowTests {
             "RG_NATIVE_SOIL_SEEPAGE_V1",
             "UNLINED_DESIGN_NOT_SITE_CONFIRMED",
             "\"storageThicknessMm\":0");
-    installations.remove(username, installation);
+    var installed = installationRecords.find(installation).orElseThrow();
+    seasons.closeOwnerAt(installed.ownerId(), installed.seasonEndsAt());
     assertThat(physics().statusCode()).isEqualTo(404);
   }
 

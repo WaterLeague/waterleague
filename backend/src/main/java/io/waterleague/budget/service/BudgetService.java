@@ -22,11 +22,17 @@ import org.springframework.transaction.annotation.*;
 @Service
 public class BudgetService {
   private final BudgetRepository repository;
+  private final io.waterleague.weekly.service.WeeklySeasonService seasons;
   private final BudgetPolicy policy;
   private final BudgetAllocationPolicy allocationPolicy;
   private final JsonService json;
 
-  public BudgetService(BudgetRepository repository, JsonService json) throws IOException {
+  public BudgetService(
+      BudgetRepository repository,
+      JsonService json,
+      io.waterleague.weekly.service.WeeklySeasonService seasons)
+      throws IOException {
+    this.seasons = seasons;
     this.repository = repository;
     this.json = json;
     try (var stream = new ClassPathResource("budget/seoul-2026.json").getInputStream()) {
@@ -64,8 +70,9 @@ public class BudgetService {
     return policy;
   }
 
-  @Transactional(readOnly = true)
+  @Transactional
   public BudgetView view(UUID ownerId) {
+    if (ownerId != null) seasons.closeOwner(ownerId);
     var accounting =
         BudgetAllocationService.calculate(
             allocationPolicy, ownerId == null ? Map.of() : repository.allocatedByFacility(ownerId));

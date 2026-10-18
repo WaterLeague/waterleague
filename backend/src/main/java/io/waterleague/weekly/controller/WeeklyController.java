@@ -14,6 +14,14 @@ public class WeeklyController {
     this.service = service;
   }
 
+  @GetMapping("/sites/{district}/{cell}")
+  public io.waterleague.weekly.view.SiteScorePage siteScores(
+      @PathVariable String district,
+      @PathVariable String cell,
+      @RequestParam(required = false) java.util.UUID after) {
+    return service.siteScores(district, cell, after);
+  }
+
   @GetMapping
   public WeeklyView dashboard(Principal principal) {
     return service.dashboard(principal == null ? null : principal.getName());

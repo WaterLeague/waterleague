@@ -26,7 +26,10 @@ public class InstallationRepository {
               r.getTimestamp("installed_at").toInstant(),
               r.getTimestamp("removed_at") == null
                   ? null
-                  : r.getTimestamp("removed_at").toInstant());
+                  : r.getTimestamp("removed_at").toInstant(),
+              r.getTimestamp("season_ends_at") == null
+                  ? null
+                  : r.getTimestamp("season_ends_at").toInstant());
 
   public InstallationRepository(JdbcTemplate db) {
     this.db = db;
@@ -35,14 +38,16 @@ public class InstallationRepository {
   public List<SharedInstallation> active() {
     return db.query(
         "SELECT i.*,a.display_name FROM shared_installations i JOIN accounts a ON a.id=i.owner_id"
-            + " WHERE removed_at IS NULL ORDER BY district_id,cell_id",
+            + " WHERE removed_at IS NULL AND (season_ends_at IS NULL OR"
+            + " season_ends_at>CURRENT_TIMESTAMP) ORDER BY district_id,cell_id",
         mapper);
   }
 
   public List<SharedInstallation> owned(UUID owner) {
     return db.query(
         "SELECT i.*,a.display_name FROM shared_installations i JOIN accounts a ON a.id=i.owner_id"
-            + " WHERE removed_at IS NULL AND owner_id=?",
+            + " WHERE removed_at IS NULL AND (season_ends_at IS NULL OR"
+            + " season_ends_at>CURRENT_TIMESTAMP) AND owner_id=?",
         mapper,
         owner);
   }
@@ -65,10 +70,10 @@ public class InstallationRepository {
       io.waterleague.cost.entity.CostSnapshot cost) {
     db.update(
         "INSERT INTO"
-            + " shared_installations(id,occupied_site,district_id,cell_id,owner_id,model_hash,facility_type,area_m2,cost,installed_at,budget_policy,admission_snapshot,cost_snapshot,cost_snapshot_sha256)"
-            + " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            + " shared_installations(id,occupied_site,district_id,cell_id,owner_id,model_hash,facility_type,area_m2,cost,installed_at,budget_policy,admission_snapshot,cost_snapshot,cost_snapshot_sha256,season_ends_at)"
+            + " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
         i.id(),
-        i.districtId() + ":" + i.cellId(),
+        i.ownerId() + ":" + i.districtId() + ":" + i.cellId(),
         i.districtId(),
         i.cellId(),
         i.ownerId(),
@@ -80,7 +85,8 @@ public class InstallationRepository {
         budgetPolicy,
         admissionSnapshot,
         cost.raw(),
-        cost.sha256());
+        cost.sha256(),
+        i.seasonEndsAt() == null ? null : Timestamp.from(i.seasonEndsAt()));
   }
 
   public boolean remove(UUID id, UUID owner, Instant at) {

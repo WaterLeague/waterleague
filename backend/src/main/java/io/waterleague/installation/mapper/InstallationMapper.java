@@ -19,6 +19,7 @@ public final class InstallationMapper {
         i.cost(),
         i.installedAt(),
         site.center(),
-        site.heightM());
+        site.heightM(),
+        i.seasonEndsAt());
   }
 }

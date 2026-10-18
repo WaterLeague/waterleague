@@ -77,7 +77,9 @@ export function WeeklyBoard({
           {period.own && (
             <p className="weekly-own">
               내 기록 · {period.own.rank === null ? '계산 대기' : `${period.own.rank}위`} ·{' '}
-              {scoreFormat.format(period.own.scoreM3)}m³
+              {period.own.evaluatedMinutes
+                ? `${scoreFormat.format(period.own.scoreM3)}m³`
+                : '미계산'}
               {period.own.evaluatedMinutes < period.own.expectedMinutes
                 ? ' · 일부 구간 미평가'
                 : ''}

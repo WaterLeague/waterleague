@@ -24,7 +24,7 @@ export function BudgetLedgerHistory({ budget }: { budget: Budget }) {
         if (!abort.signal.aborted) setPage(value);
       })
       .catch(() => {
-        if (!abort.signal.aborted) setError('설치·취소 기록을 불러오지 못했습니다.');
+        if (!abort.signal.aborted) setError('설치·예산 반환 기록을 불러오지 못했습니다.');
       })
       .finally(() => {
         if (!abort.signal.aborted) setBusy(false);
@@ -36,11 +36,11 @@ export function BudgetLedgerHistory({ budget }: { budget: Budget }) {
       className="budget-evidence budget-ledger"
       onToggle={(e) => setOpen(e.currentTarget.open)}
     >
-      <summary>내 설치·취소 기록</summary>
-      <p>설계 취소 시 배정액 복원 · 실제 공사비 환급 아님</p>
+      <summary>내 설치·예산 반환 기록</summary>
+      <p>시즌 종료·이전 설계 취소에 따른 배정액 반환 · 실제 공사비 환급 아님</p>
       {busy && <p role="status">기록 조회 중</p>}
       {error && <p role="alert">{error}</p>}
-      {page && page.entries.length === 0 && <p>설치·취소 기록이 없습니다.</p>}
+      {page && page.entries.length === 0 && <p>설치·예산 반환 기록이 없습니다.</p>}
       {page && (
         <ol>
           {page.entries.map((e) => (
@@ -48,10 +48,10 @@ export function BudgetLedgerHistory({ budget }: { budget: Budget }) {
               <div>
                 <strong>
                   {facilities[e.facilityType].name} ·{' '}
-                  {e.eventType === 'ALLOCATE' ? '설치 배정' : '설계 취소'}
+                  {e.eventType === 'ALLOCATE' ? '설치 배정' : '예산 반환'}
                 </strong>
                 <time dateTime={e.effectiveAt}>
-                  {new Date(e.effectiveAt).toLocaleString('ko-KR')}
+                  {new Date(e.effectiveAt).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })}
                 </time>
               </div>
               <span>

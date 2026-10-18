@@ -31,7 +31,7 @@ def claim(conn):
             finished_at=clock_timestamp(),lease_until=NULL WHERE state='RUNNING' AND lease_until<=clock_timestamp()""")
         installation = conn.execute("""
             SELECT i.* FROM shared_installations i
-            WHERE date_trunc('minute',LEAST(COALESCE(i.removed_at,clock_timestamp()),clock_timestamp()-interval '2 minutes'))
+            WHERE date_trunc('minute',LEAST(COALESCE(i.removed_at,i.season_ends_at,clock_timestamp()),clock_timestamp()-interval '2 minutes'))
                 > date_trunc('minute',i.installed_at)+CASE WHEN i.installed_at=date_trunc('minute',i.installed_at)
                     THEN interval '0 minutes' ELSE interval '1 minute' END
               AND NOT EXISTS(SELECT 1 FROM shared_physics_jobs j WHERE j.installation_id=i.id AND j.state='RUNNING')
@@ -39,7 +39,7 @@ def claim(conn):
               AND NOT EXISTS(SELECT 1 FROM shared_physics_jobs j WHERE j.installation_id=i.id AND j.state='FAILED'
                 AND COALESCE(j.finished_at,j.created_at)>clock_timestamp()-interval '5 minutes')
               AND NOT EXISTS(SELECT 1 FROM shared_physics_jobs j WHERE j.installation_id=i.id AND j.state='SUCCEEDED'
-                AND j.requested_through>=date_trunc('minute',LEAST(COALESCE(i.removed_at,clock_timestamp()),clock_timestamp()-interval '2 minutes')))
+                AND j.requested_through>=date_trunc('minute',LEAST(COALESCE(i.removed_at,i.season_ends_at,clock_timestamp()),clock_timestamp()-interval '2 minutes')))
             ORDER BY (SELECT max(j.created_at) FROM shared_physics_jobs j WHERE j.installation_id=i.id) NULLS FIRST,i.installed_at,i.id
             FOR UPDATE OF i SKIP LOCKED LIMIT 1
             """).fetchone()
@@ -59,8 +59,8 @@ def claim(conn):
         covered = previous['requested_through'] if previous else start
         now = conn.execute('SELECT clock_timestamp() AS now').fetchone()['now']
         end = min(floor_minute(now)-timedelta(minutes=2), covered+timedelta(hours=23))
-        if installation['removed_at']:
-            end = min(end, floor_minute(installation['removed_at']))
+        if stops := installation['removed_at'] or installation.get('season_ends_at'):
+            end = min(end, floor_minute(stops))
         if end <= covered:
             return None
         job = {'id': uuid.uuid4(), 'lease_token': uuid.uuid4(), 'installation': installation,

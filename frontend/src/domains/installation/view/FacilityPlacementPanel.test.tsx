@@ -34,7 +34,7 @@ it('주간·재해 공통 패널에서 공개 경계 교차 사유 표시와 신
   }
 });
 
-it('새 경계 정책과 겹치는 이전 설치도 기록 표시와 본인 철거 유지', () => {
+it('공개 경계와 겹치는 이전 설치 기록은 보존하고 주간 철거 금지', () => {
   const html = renderToStaticMarkup(
     <FacilityPlacementPanel
       {...props}
@@ -48,7 +48,8 @@ it('새 경계 정책과 겹치는 이전 설치도 기록 표시와 본인 철�
     />
   );
   expect(html).toContain('설치 완료');
-  expect(html).toContain('내 시설 철거');
+  expect(html).not.toContain('내 시설 철거');
+  expect(html).toContain('시즌 종료까지 변경·철거할 수 없습니다.');
   expect(html).not.toContain('<form');
 });
 
@@ -91,7 +92,7 @@ it('공통 패널의 생물저류 제원 선택과 같은 사업군 잔액 적�
     );
     expect(html).toContain('생물저류시설');
     expect(html).toContain('11,200,000원');
-    expect(html).toContain(research ? '연구 설계에 추가' : '이 위치에 설치');
+    expect(html).toContain(research ? '연구 설계에 추가' : '생물저류시설 설치 확정');
     expect(html).not.toContain('class="solid-button shared-install" disabled');
   }
 });

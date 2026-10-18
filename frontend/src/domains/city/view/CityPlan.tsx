@@ -142,34 +142,43 @@ export const CityPlan = memo(function CityPlan({
   }
   const buildingLayer = useMemo(
     () =>
-      buildings.map(({ building: b, path }) => (
-        <path
-          key={b.id}
-          d={path}
-          fill="#d9d8cb"
-          opacity={buildingOpacity(
-            (!facilityType || facilityType === 'GREEN_ROOF') &&
+      buildings
+        .filter(
+          ({ building: b }) =>
+            !facilityType ||
+            (facilityType === 'GREEN_ROOF' &&
               eligibleRoofs.has(b.id) &&
-              !occupiedRoofs.has(b.id),
-            otherBuilding(b)
-          )}
-          stroke="#9eac96"
-          strokeWidth={0.5}
-          vectorEffect="non-scaling-stroke"
-          onClick={() => {
-            const d = city.districts.find((d) =>
-              d.polygons.some(
-                (p) =>
-                  inBuildingRing(b.center, p[0]) &&
-                  !p.slice(1).some((h) => inBuildingRing(b.center, h))
-              )
-            );
-            if (d) void onBuilding(d.id, b);
-          }}
-        >
-          <title>{b.id} · 건물 선택</title>
-        </path>
-      )),
+              !occupiedRoofs.has(b.id) &&
+              !otherBuilding(b))
+        )
+        .map(({ building: b, path }) => (
+          <path
+            key={b.id}
+            d={path}
+            fill="#d9d8cb"
+            opacity={buildingOpacity(
+              (!facilityType || facilityType === 'GREEN_ROOF') &&
+                eligibleRoofs.has(b.id) &&
+                !occupiedRoofs.has(b.id),
+              otherBuilding(b)
+            )}
+            stroke="#9eac96"
+            strokeWidth={0.5}
+            vectorEffect="non-scaling-stroke"
+            onClick={() => {
+              const d = city.districts.find((d) =>
+                d.polygons.some(
+                  (p) =>
+                    inBuildingRing(b.center, p[0]) &&
+                    !p.slice(1).some((h) => inBuildingRing(b.center, h))
+                )
+              );
+              if (d) void onBuilding(d.id, b);
+            }}
+          >
+            <title>{b.id} · 건물 선택</title>
+          </path>
+        )),
     [buildings, facilityType, eligibleRoofs, occupiedRoofs, ownDistrict, onBuilding, city]
   );
   const facilityLayer = useMemo(() => {
@@ -231,7 +240,7 @@ export const CityPlan = memo(function CityPlan({
                 (planningRoles?.has(siteKey(site)) ||
                   !facilityType ||
                   site.allowedTypes.includes(facilityType)) &&
-                (!installed || installed.ownerId === viewerId),
+                (!installed || installed.ownerId !== viewerId),
               !!ownDistrictId && ownDistrictId !== site.districtId
             )}
             onClick={() => onSite(siteKey(site))}
@@ -308,7 +317,7 @@ export const CityPlan = memo(function CityPlan({
             <tspan x={d.center[0]}>{d.name}</tspan>
             {districtScores && (
               <tspan x={d.center[0]} dy="1.3em" fontSize="0.72em">
-                {districtScores.get(d.id) ?? '평가 대기'}
+                {districtScores.get(d.id) ?? ''}
               </tspan>
             )}
           </text>
@@ -328,7 +337,7 @@ export const CityPlan = memo(function CityPlan({
           r={overview ? 95 : Math.max(2, focus.distance * 0.008)}
           fill="#327b4f"
           opacity={buildingOpacity(
-            (!facilityType || i.facilityType === facilityType) && i.ownerId === viewerId,
+            !facilityType || i.facilityType === facilityType,
             !!ownDistrictId && i.districtId !== ownDistrictId
           )}
           onClick={() => void onSite(siteKey(i))}

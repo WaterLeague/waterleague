@@ -31,6 +31,7 @@ class CisternMapPlanTests {
   @Autowired AccountRepository accounts;
   @Autowired CisternPlanService service;
   @Autowired InstallationService installations;
+  @Autowired io.waterleague.weekly.service.WeeklySeasonService seasons;
   @Autowired SiteCatalogRepository sites;
   @Autowired JdbcTemplate db;
   @Autowired io.waterleague.budget.service.BudgetService budget;
@@ -202,7 +203,7 @@ class CisternMapPlanTests {
     assertThatThrownBy(() -> service.save(owner.username(), r))
         .isInstanceOfSatisfying(
             DomainException.class, e -> assertThat(e.code()).isEqualTo(ErrorCode.SITE_OCCUPIED));
-    installations.remove(owner.username(), installed.id());
+    seasons.closeOwnerAt(owner.id(), installed.seasonEndsAt());
     var first = service.save(owner.username(), r);
     db.update("UPDATE cistern_map_plans SET snapshot_text='{}' WHERE id=?", first.id());
     assertThatThrownBy(() -> service.list(owner.username()))

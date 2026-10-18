@@ -94,7 +94,10 @@ it('공통 시설창에 12군의 사용 범위를 구분하고 비회원 계산 
     '빗물펌프장',
   ])
     expect(html).toContain(name);
-  expect(html).toContain('아직 설치하거나 이 화면에서 계산할 수 없습니다');
+  expect(html).toContain('설치 연결 중 · 예산 확인 중');
+  expect(html).not.toContain('연결 유역 비교');
+  expect(html).not.toContain('지도에 설치');
+  expect(html.match(/생물저류시설/g)).toHaveLength(1);
   expect(html).not.toContain('/bundle');
 });
 const withPeaks = () => ({

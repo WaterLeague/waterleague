@@ -21,13 +21,13 @@
   white-space: nowrap;
 }
 .flood-trace-toggle input {
-  accent-color: #2c9fc2;
+  accent-color: #9354c5;
   margin: 0;
 }
 .flood-trace-toggle i {
   width: 10px;
   height: 10px;
-  background: #2c9fc2;
+  background: #9354c5;
 }
 .flood-trace-controls select,
 .flood-trace-controls button {

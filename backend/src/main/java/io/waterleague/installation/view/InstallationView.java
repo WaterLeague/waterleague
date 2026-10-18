@@ -15,4 +15,5 @@ public record InstallationView(
     BigDecimal cost,
     Instant installedAt,
     java.util.List<Double> center,
-    double heightM) {}
+    double heightM,
+    Instant seasonEndsAt) {}

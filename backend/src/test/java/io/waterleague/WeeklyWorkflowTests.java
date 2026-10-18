@@ -133,6 +133,38 @@ class WeeklyWorkflowTests {
   }
 
   @Test
+  void expiredSeasonCapsExpectedMinutesBeforeCleanupAndPreservesFinalRank() {
+    var installation =
+        contribution(
+            "2419953", "season_" + UUID.randomUUID().toString().substring(0, 8), "1.25", 10);
+    var original = service.dashboard(null).previous();
+    db.update(
+        "UPDATE shared_installations SET"
+            + " season_ends_at=removed_at,removed_at=NULL,occupied_site=CAST(owner_id AS VARCHAR)"
+            + " || ':' || district_id || ':' || cell_id WHERE id=?",
+        installation);
+    var beforeCleanup = service.dashboard(null).previous();
+    assertThat(beforeCleanup).isEqualTo(original);
+    assertThat(service.dashboard(null).current().status()).isEqualTo("EMPTY");
+    db.update(
+        "UPDATE shared_installations SET removed_at=season_ends_at,occupied_site=NULL WHERE id=?",
+        installation);
+    assertThat(service.dashboard(null).previous()).isEqualTo(original);
+  }
+
+  @Test
+  void seasonBoundaryUsesKoreanMondayMidnight() {
+    assertThat(
+            io.waterleague.weekly.service.WeeklySeasonService.endFor(
+                Instant.parse("2026-10-18T14:59:59.999999Z")))
+        .isEqualTo(Instant.parse("2026-10-18T15:00:00Z"));
+    assertThat(
+            io.waterleague.weekly.service.WeeklySeasonService.endFor(
+                Instant.parse("2026-10-18T15:00:00Z")))
+        .isEqualTo(Instant.parse("2026-10-25T15:00:00Z"));
+  }
+
+  @Test
   void emptyWeeksAndNegativeContributionsHaveNoInventedWinner() {
     var empty = service.dashboard(null).previous();
     assertThat(empty.status()).isEqualTo("EMPTY");

@@ -1,10 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import {
-  loadInstallations,
-  loadSites,
-  installSite,
-  removeInstallation,
-} from '../repository/installationRepository';
+import { loadInstallations, loadSites, installSite } from '../repository/installationRepository';
 import type { SharedInstallation, SharedSite } from '../entity/installation';
 import type { FacilityType } from '../../game/entity/game';
 import { errorMessage } from '../../../shared/exception/ApiError';
@@ -129,6 +124,5 @@ export function useInstallations(query: SiteQuery, live = true) {
     refresh,
     install: (site: SharedSite, type: FacilityType, area: number) =>
       mutate(() => installSite(site.districtId, site.cellId, type, area)),
-    remove: (id: string) => mutate(() => removeInstallation(id)),
   };
 }

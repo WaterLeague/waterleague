@@ -52,6 +52,25 @@ class SharedPhysicsTests(unittest.TestCase):
         return {'method': 'SYNTHETIC_TEST_ONLY', 'sourceHashes': [sha], 'hours': [],
                 'ratesMmDay': [2]*int((end-start).total_seconds()/60)}, [(raw, {'sha256': sha, 'purpose': 'SYNTHETIC_TEST_ONLY'})]
 
+    def test_expired_season_runs_missing_minutes_then_stops_without_reset_or_double_score(self):
+        start = self.conn.execute('SELECT installed_at FROM shared_installations WHERE id=%s', (self.installation,)).fetchone()['installed_at']
+        end = start + timedelta(minutes=4)
+        self.conn.execute("UPDATE shared_installations SET season_ends_at=%s,occupied_site=%s WHERE id=%s",
+                          (end, str(self.owner)+':2419953:G1', self.installation))
+        job=physics.claim(self.conn)
+        self.assertEqual(job['end'],end)
+        self.assertEqual(job['start'],start)
+        with tempfile.TemporaryDirectory() as root, patch.object(physics,'observed_forcing',side_effect=self.forcing):
+            self.assertTrue(physics.process(self.conn,job,root))
+            row=self.conn.execute('SELECT * FROM shared_physics_jobs WHERE id=%s',(job['id'],)).fetchone()
+            self.assertEqual(row['state'],'SUCCEEDED',row['error_code'])
+            score=self.conn.execute('SELECT SUM(evaluated_minutes) AS minutes FROM shared_weekly_scores WHERE installation_id=%s',(self.installation,)).fetchone()
+            self.assertEqual(score['minutes'],4)
+            self.conn.execute("UPDATE shared_physics_jobs SET created_at=now()-interval '61 seconds' WHERE id=%s",(job['id'],))
+            self.assertIsNone(physics.claim(self.conn))
+            self.conn.execute('UPDATE shared_installations SET removed_at=season_ends_at,occupied_site=NULL WHERE id=%s',(self.installation,))
+            self.assertIsNone(physics.claim(self.conn))
+
     def test_atomic_claim_and_expired_result_fencing(self):
         barrier = threading.Barrier(2)
         def attempt():

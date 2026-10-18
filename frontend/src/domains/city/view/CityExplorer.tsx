@@ -16,6 +16,7 @@ import { useCity, useCityTiles } from '../controller/useCity';
 import { useMapLabelWheel } from '../controller/useMapLabelWheel';
 import type { City, CityFocus, CityBuilding } from '../entity/city';
 import type { CityEligibility } from '../dto/cityEligibilityDto';
+import { representativeInstallations } from '../../installation/service/memberSitesService';
 import { occupiedRoofSource } from '../service/siteVisibilityService';
 import { siteFocus } from '../service/siteFocusService';
 import type { PlanView } from '../service/planNavigationService';
@@ -86,8 +87,8 @@ function Explorer({
   const [cisternOpen, setCisternOpen] = useState(false);
   const cistern = useCisternPlans(account, cisternOpen);
   const [assetsEnabled, setAssetsEnabled] = useState(true);
-  const [tracesEnabled, setTracesEnabled] = useState(true);
-  const [surfaceEnabled, setSurfaceEnabled] = useState(true);
+  const [comparisonEventId, setComparisonEventId] = useState('');
+  const surfaceEnabled = true;
   const [surfaceMetric, setSurfaceMetric] = useState<SurfaceMetric>('depth');
   const [surfaceIndex, setSurfaceIndex] = useState<number | null>(null);
   const [surfaceRenderError, setSurfaceRenderError] = useState(false);
@@ -101,7 +102,7 @@ function Explorer({
   const districtScore = (id: string) => {
     if (weekly.error) return '순위 갱신 지연';
     const score = weekly.value?.current.districts.find((d) => d.districtId === id);
-    return score?.rank ? `${score.rank}위 · ${scoreFormat.format(score.scoreM3)}m³` : '평가 대기';
+    return score?.rank ? `${score.rank}위 · ${scoreFormat.format(score.scoreM3)}m³` : '';
   };
   const [selected, setSelected] = useState(
     researchMode ? (account?.districtId ?? '2419953') : initialDistrictId
@@ -192,7 +193,7 @@ function Explorer({
     distance: 35000,
   });
   const navigationCamera = useRef(camera);
-  const traces = useFloodTraces(researchMode && tracesEnabled, eventId, camera);
+  const traces = useFloodTraces(true, researchMode ? eventId : comparisonEventId, camera);
   const publicAssets = useMemo(
     () =>
       assetsEnabled && infrastructure.catalog
@@ -241,21 +242,25 @@ function Explorer({
     installations: researchMode && !cisternOpen ? researchMarkers : sharedData.installations,
   };
   const installationBySite = useMemo(
-    () => new Map(shared.installations.map((i) => [siteKey(i), i])),
-    [shared.installations]
+    () => representativeInstallations(shared.installations, viewerId ?? null),
+    [shared.installations, viewerId]
   );
   const occupiedRoofs = useMemo(
     () =>
       new Set(
         shared.installations
-          .filter((i) => i.ownerId !== viewerId)
+          .filter((i) => i.ownerId === viewerId)
           .flatMap((i) => occupiedRoofSource(i.districtId, i.cellId, eligibility.legacySiteSources))
       ),
     [shared.installations, viewerId, eligibility]
   );
   const ownInstallations = shared.installations.filter((i) => i.ownerId === viewerId);
+  const ownSiteKeys = useMemo(
+    () => new Set(shared.installations.filter((i) => i.ownerId === viewerId).map(siteKey)),
+    [shared.installations, viewerId]
+  );
   const remaining = researchMode ? research.remaining : (budget.value?.remainingKrw ?? 0);
-  const occupied = site ? installationBySite.get(siteKey(site)) : undefined;
+  const occupied = site ? ownInstallations.find((i) => siteKey(i) === siteKey(site)) : undefined;
   const surfaceSource: SurfaceSource | null = researchMode
     ? research.job?.state === 'SUCCEEDED' && research.currentResult
       ? { kind: 'historical', id: research.job.id }
@@ -291,12 +296,28 @@ function Explorer({
         if (value) values.set(siteKey(value), value);
     return [...values.values()].filter(
       (s) =>
-        s === site ||
-        planningRoles.has(siteKey(s)) ||
-        Math.hypot(s.center[0] - camera.center[0], s.center[1] - camera.center[1]) <
-          camera.distance * 1.3
+        (!mapFacilityType ||
+          (s.allowedTypes.includes(mapFacilityType) &&
+            !s.existingInfrastructure &&
+            !ownSiteKeys.has(siteKey(s)) &&
+            (!ownDistrictId || s.districtId === ownDistrictId))) &&
+        (s === site ||
+          planningRoles.has(siteKey(s)) ||
+          Math.hypot(s.center[0] - camera.center[0], s.center[1] - camera.center[1]) <
+            camera.distance * 1.3)
     );
-  }, [shared.sites, site, camera, cisternOpen, cistern.roof, cistern.ground, planningRoles]);
+  }, [
+    shared.sites,
+    site,
+    camera,
+    cisternOpen,
+    cistern.roof,
+    cistern.ground,
+    planningRoles,
+    mapFacilityType,
+    ownDistrictId,
+    ownSiteKeys,
+  ]);
   const details = useCityTiles(city, camera);
   const labels = useRef(new Map<string, HTMLElement>());
   const labelLayer = useRef<HTMLDivElement>(null);
@@ -320,7 +341,16 @@ function Explorer({
     setFlat(true);
   }, []);
   const chooseSite = useCallback(
-    (value: SharedSite) => {
+    (value: SharedSite, inspect = false) => {
+      if (
+        !inspect &&
+        mapFacilityType &&
+        (!value.allowedTypes.includes(mapFacilityType) ||
+          value.existingInfrastructure ||
+          ownSiteKeys.has(siteKey(value)) ||
+          (ownDistrictId && value.districtId !== ownDistrictId))
+      )
+        return;
       if (
         cisternOpen &&
         (cistern.busy || !cistern.select(value, installationBySite.has(siteKey(value))))
@@ -339,11 +369,12 @@ function Explorer({
       navigationCamera.current = target;
       setCamera(target);
       setSite(value);
-      const chosen = cisternOpen
-        ? ''
-        : value.allowedTypes.includes(type as FacilityType)
-          ? type
-          : value.allowedTypes[0];
+      const chosen =
+        cisternOpen || inspect
+          ? ''
+          : value.allowedTypes.includes(type as FacilityType)
+            ? type
+            : value.allowedTypes[0];
       setType(chosen);
       setArea(String(Math.min(20, placementAreaLimit(value, chosen))));
       setFeedback('');
@@ -354,7 +385,17 @@ function Explorer({
         key: p.key + 1,
       }));
     },
-    [type, cisternOpen, cistern.busy, cistern.select, cistern.role, installationBySite]
+    [
+      type,
+      cisternOpen,
+      cistern.busy,
+      cistern.select,
+      cistern.role,
+      installationBySite,
+      mapFacilityType,
+      ownDistrictId,
+      ownSiteKeys,
+    ]
   );
   const selectSite = useCallback(
     async (key: string) => {
@@ -380,6 +421,14 @@ function Explorer({
   );
   const selectBuilding = useCallback(
     async (districtId: string, building: CityBuilding) => {
+      if (
+        mapFacilityType &&
+        (mapFacilityType !== 'GREEN_ROOF' ||
+          !eligibility.roofIds.has(building.id) ||
+          occupiedRoofs.has(building.id) ||
+          (ownDistrictId && districtId !== ownDistrictId))
+      )
+        return;
       setInfrastructureOpen(false);
       setFacilityExpansionOpen(false);
       setSelectedAssetId('');
@@ -402,7 +451,7 @@ function Explorer({
         );
       }
     },
-    [chooseSite]
+    [chooseSite, mapFacilityType, eligibility, ownDistrictId, occupiedRoofs]
   );
   const select = useCallback(
     (id: string) => {
@@ -477,7 +526,7 @@ function Explorer({
                   ? '순위 갱신 지연'
                   : score?.rank
                     ? `${score.rank}위 · ${scoreFormat.format(score.scoreM3)}m³`
-                    : '평가 대기',
+                    : '',
               ];
             })
           ),
@@ -623,24 +672,20 @@ function Explorer({
         </div>
       </header>
       <div className="design-main shared-map-column">
-        {researchMode && (
-          <FloodTraceControls
-            enabled={tracesEnabled}
-            onEnabled={(value) => {
-              setTracesEnabled(value);
-              setTraceRenderError(false);
-            }}
-            eventId={eventId}
-            onEvent={() => {}}
-            fixedEvent={researchMode}
-            catalog={traces.catalog}
-            event={traces.event}
-            loading={traces.loading}
-            error={traces.error}
-            renderError={traceRenderError}
-            retry={traces.retry}
-          />
-        )}
+        <FloodTraceControls
+          eventId={researchMode ? eventId : comparisonEventId}
+          onEvent={(value) => {
+            setComparisonEventId(value);
+            setTraceRenderError(false);
+          }}
+          fixedEvent={researchMode}
+          catalog={traces.catalog}
+          event={traces.event}
+          loading={traces.loading}
+          error={traces.error}
+          renderError={traceRenderError}
+          retry={traces.retry}
+        />
         <section ref={stage} className="city-stage" aria-label="서울 전역 3D 지도">
           {flat ? (
             plan
@@ -716,7 +761,7 @@ function Explorer({
                   )}
                   <small>
                     {shared.installations.filter((i) => i.districtId === d.id).length}곳
-                    {!researchMode && ` · ${districtScore(d.id)}`}
+                    {!researchMode && districtScore(d.id) && ` · ${districtScore(d.id)}`}
                   </small>
                 </button>
               ))}
@@ -733,7 +778,9 @@ function Explorer({
                 >
                   ● {r.districtName} ·{' '}
                   {shared.installations.filter((i) => i.districtId === r.districtId).length}곳
-                  {!researchMode && ` · ${districtScore(r.districtId)}`}
+                  {!researchMode &&
+                    districtScore(r.districtId) &&
+                    ` · ${districtScore(r.districtId)}`}
                 </button>
               ))}
             </div>
@@ -824,8 +871,8 @@ function Explorer({
               {researchMode
                 ? '선택 시설 설치 불가'
                 : type
-                  ? '선택 시설 설치 불가·점유'
-                  : '후보 제외·다른 회원 점유'}
+                  ? '선택 시설 설치 불가·내 설치'
+                  : '후보 제외·내 설치'}
             </span>
             {ownDistrict && (
               <span>
@@ -857,7 +904,7 @@ function Explorer({
                       setOffset(0);
                     }}
                   />
-                  빈 위치만
+                  공개 시설 영역 제외
                 </label>
               )}
               {!selected ? (
@@ -876,29 +923,39 @@ function Explorer({
                     가까운 순
                   </p>
                   <div className="shared-location-items">
-                    {shared.sites.map((s) => {
-                      const installed = installationBySite.get(siteKey(s));
-                      return (
-                        <button
-                          key={siteKey(s)}
-                          aria-pressed={site?.cellId === s.cellId}
-                          onClick={() => chooseSite(s)}
-                        >
-                          <span>
-                            {s.kind === 'ROOF' ? <House size={15} /> : <Grid2X2 size={15} />}
-                            <strong>{s.name}</strong>
-                          </span>
-                          <small>
-                            {installed
-                              ? installed.ownerName + ' · 설치됨'
-                              : s.existingInfrastructure
-                                ? '공개 저류 영역 · 신규 설치 제외'
-                                : '빈 위치'}{' '}
-                            · 최대 {placementAreaLimit(s, type).toLocaleString('ko-KR')} m²
-                          </small>
-                        </button>
-                      );
-                    })}
+                    {shared.sites
+                      .filter(
+                        (s) =>
+                          !mapFacilityType ||
+                          (!s.existingInfrastructure &&
+                            !ownSiteKeys.has(siteKey(s)) &&
+                            (!ownDistrictId || s.districtId === ownDistrictId))
+                      )
+                      .map((s) => {
+                        const installed = installationBySite.get(siteKey(s));
+                        return (
+                          <button
+                            key={siteKey(s)}
+                            aria-pressed={site?.cellId === s.cellId}
+                            onClick={() => chooseSite(s)}
+                          >
+                            <span>
+                              {s.kind === 'ROOF' ? <House size={15} /> : <Grid2X2 size={15} />}
+                              <strong>{s.name}</strong>
+                            </span>
+                            <small>
+                              {installed
+                                ? installed.ownerId === viewerId
+                                  ? '내 시설 · 시즌 고정'
+                                  : installed.ownerName + ' · 같은 위치 설치 가능'
+                                : s.existingInfrastructure
+                                  ? '공개 저류 영역 · 신규 설치 제외'
+                                  : '빈 위치'}{' '}
+                              · 최대 {placementAreaLimit(s, type).toLocaleString('ko-KR')} m²
+                            </small>
+                          </button>
+                        );
+                      })}
                   </div>
                   <div className="shared-list-pages">
                     <button
@@ -972,8 +1029,6 @@ function Explorer({
         </section>
         <SurfaceControls
           live={!researchMode}
-          enabled={surfaceEnabled}
-          onEnabled={setSurfaceEnabled}
           metric={surfaceMetric}
           onMetric={setSurfaceMetric}
           state={surface}
@@ -997,6 +1052,7 @@ function Explorer({
         key={account ? `${account.id}:${account.role}:${account.approvalStatus}` : 'visitor'}
         account={account}
         open={facilityExpansionOpen}
+        budget={budget.value}
         selectedMapFacility={type}
         onAllCandidates={() => {
           setType('');
@@ -1079,6 +1135,17 @@ function Explorer({
           districtName={district?.name ?? ''}
           site={site}
           occupied={occupied}
+          ownInstallations={ownInstallations}
+          onSelectInstallation={async (value) => {
+            const request = ++selectionRequest.current;
+            try {
+              const target = await loadSite(value.districtId, value.cellId);
+              if (request === selectionRequest.current) chooseSite(target, true);
+            } catch {
+              if (request === selectionRequest.current)
+                setSelectionError('내 시설 위치를 불러오지 못했습니다.');
+            }
+          }}
           type={type}
           area={area}
           onType={(next) => {
@@ -1095,13 +1162,7 @@ function Explorer({
           onInstall={async (s, t, a) => {
             const ok = await shared.install(s, t, a);
             setBudgetRevision((v) => v + 1);
-            if (ok) setFeedback('설치 완료 · 모두의 지도에 반영됐습니다');
-            return ok;
-          }}
-          onRemove={async (id) => {
-            const ok = await shared.remove(id);
-            setBudgetRevision((v) => v + 1);
-            if (ok) setFeedback('철거 완료 · 빈 위치로 돌아왔습니다');
+            if (ok) setFeedback('설치 확정 · 이번 시즌 종료까지 유지됩니다');
             return ok;
           }}
           onLogin={onLogin}

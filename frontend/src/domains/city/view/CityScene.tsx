@@ -532,7 +532,7 @@ const CityScene = memo(function CityScene({
                 (planningRoles?.has(siteKey(site)) ||
                   !facilityType ||
                   site.allowedTypes.includes(facilityType)) &&
-                (!installed || installed.ownerId === viewerId),
+                (!installed || installed.ownerId !== viewerId),
               !!ownDistrictId && site.districtId !== ownDistrictId
             );
             return (
@@ -609,7 +609,7 @@ const CityScene = memo(function CityScene({
                 color="#327b4f"
                 transparent
                 opacity={buildingOpacity(
-                  (!facilityType || i.facilityType === facilityType) && i.ownerId === viewerId,
+                  !facilityType || i.facilityType === facilityType,
                   !!ownDistrictId && i.districtId !== ownDistrictId
                 )}
               />
@@ -716,17 +716,22 @@ function DistrictBuildings({
   }, [buildings, city, ownDistrictId, eligibleRoofs, occupiedRoofs]);
   return (
     <>
-      {groups.map(([key, values]) => (
-        <Buildings
-          key={key}
-          buildings={values.buildings}
-          opacity={buildingOpacity(
-            values.eligible && (!facilityType || facilityType === 'GREEN_ROOF'),
-            values.other
-          )}
-          onSelect={selectBuilding}
-        />
-      ))}
+      {groups
+        .filter(
+          ([, values]) =>
+            !facilityType || (facilityType === 'GREEN_ROOF' && values.eligible && !values.other)
+        )
+        .map(([key, values]) => (
+          <Buildings
+            key={key}
+            buildings={values.buildings}
+            opacity={buildingOpacity(
+              values.eligible && (!facilityType || facilityType === 'GREEN_ROOF'),
+              values.other
+            )}
+            onSelect={selectBuilding}
+          />
+        ))}
     </>
   );
 }
