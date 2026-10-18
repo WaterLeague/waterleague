@@ -62,6 +62,12 @@ public class SiteCatalogRepository {
     return Collections.unmodifiableMap(counts);
   }
 
+  public Map<String, String> versions() {
+    var result = new TreeMap<String, String>();
+    entries.forEach((id, entry) -> result.put(id, entry.path("sha256").asString()));
+    return Collections.unmodifiableMap(result);
+  }
+
   public synchronized Map<String, SiteView> district(String id) {
     var cached = cache.get(id);
     if (cached != null) return cached;

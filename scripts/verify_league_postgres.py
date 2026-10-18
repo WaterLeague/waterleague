@@ -30,7 +30,7 @@ def main():
                   'budget': 'BudgetAllocationTests,BudgetLedgerWorkflowTests,SharedInstallationTests,HistoricalWorkflowTests',
                   'physics': 'PhysicsWorkflowTests,SharedInstallationTests',
                   'weekly': 'WeeklyWorkflowTests',
-                  'historical': 'HistoricalWorkflowTests',
+                  'historical': 'HistoricalWorkflowTests,HistoricalSubmissionTests',
                   'watershed': 'WatershedWorkflowTests',
                   'cistern-plan': 'CisternMapPlanTests,CisternLayoutTests',
                   'shared-research': 'SharedResearchWorkflowTests',
@@ -67,6 +67,8 @@ def main():
         with path.open('x') as log:
             path.chmod(0o600)
             physical = ['-Dwaterleague.integration.python=' + sys.executable] if suite in {'search', 'restore'} else []
+            if suite == 'historical':
+                physical.append('-Dwaterleague.integration.historical.request=' + str(path.with_suffix('.request.json')))
             if suite == 'restore':
                 physical.append('-Dwaterleague.integration.restore=true')
             result = subprocess.run(

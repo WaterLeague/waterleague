@@ -17,16 +17,53 @@ public class HistoricalController {
   private final HistoricalService service;
   private final io.waterleague.historical.service.HistoricalArtifactService artifacts;
   private final io.waterleague.common.security.RateLimitService rates;
+  private final io.waterleague.historical.service.HistoricalSubmissionService submissions;
 
   public HistoricalController(
       AccountService accounts,
       HistoricalService service,
       io.waterleague.historical.service.HistoricalArtifactService artifacts,
-      io.waterleague.common.security.RateLimitService rates) {
+      io.waterleague.common.security.RateLimitService rates,
+      io.waterleague.historical.service.HistoricalSubmissionService submissions) {
     this.accounts = accounts;
     this.service = service;
     this.artifacts = artifacts;
     this.rates = rates;
+    this.submissions = submissions;
+  }
+
+  @PostMapping("/submissions")
+  public ResponseEntity<io.waterleague.historical.view.HistoricalSubmissionView> submit(
+      Principal p,
+      @Valid @RequestBody io.waterleague.historical.dto.HistoricalSubmissionRequest dto) {
+    var owner = accounts.current(p.getName()).id();
+    rates.check("historical-submit:" + owner, 20, 3600);
+    return ResponseEntity.accepted()
+        .cacheControl(CacheControl.noStore())
+        .body(submissions.submit(owner, dto));
+  }
+
+  @GetMapping("/submissions")
+  public ResponseEntity<List<io.waterleague.historical.view.HistoricalSubmissionView>> submissions(
+      Principal p, @RequestParam String eventId) {
+    return ResponseEntity.ok()
+        .cacheControl(CacheControl.noStore())
+        .body(submissions.list(accounts.current(p.getName()).id(), eventId));
+  }
+
+  @GetMapping("/submissions/{id}")
+  public ResponseEntity<io.waterleague.historical.view.HistoricalSubmissionView> submission(
+      Principal p, @PathVariable UUID id) {
+    return ResponseEntity.ok()
+        .cacheControl(CacheControl.noStore())
+        .body(submissions.get(accounts.current(p.getName()).id(), id));
+  }
+
+  @GetMapping("/leaderboard/{eventId}")
+  public ResponseEntity<Object> board(@PathVariable String eventId) {
+    return ResponseEntity.ok()
+        .cacheControl(CacheControl.noStore())
+        .body(submissions.board(eventId));
   }
 
   @GetMapping

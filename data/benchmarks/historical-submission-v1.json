@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-19",
+  "policy": "FULL_EVENT_INDEPENDENT_SURFACES_V1",
+  "modelGrade": "CURRENT_GEOMETRY_HISTORICAL_RAINFALL_STRESS_TEST",
+  "runDirectory": "data/runs/historical-submission-20261019",
+  "replayDirectory": "data/runs/historical-submission-20261019-replay",
+  "manifestSha256": "d7ce78e9e54f330d8ce6d25951687b757928671d87e456561dcc10b9ba591b0c",
+  "verifiedFiles": 164,
+  "rulesHash": "f18eaf286cfd64b6319108689b4f7ba077a5a36eb63f94d9fe2d18c6e1528e03",
+  "start": "2022-08-08T09:00:00+00:00",
+  "end": "2022-08-08T14:59:00+00:00",
+  "differenceM3": -0.0006706068477768667,
+  "facilities": [
+    {
+      "districtId": "2410520",
+      "cellId": "R1",
+      "areaM2": 20,
+      "differenceM3": -0.00022183348144722004,
+      "balanceResidualsM3": [
+        0.0002438593829268143,
+        0.0003111359774479183
+      ]
+    },
+    {
+      "districtId": "2419953",
+      "cellId": "R1",
+      "areaM2": 20,
+      "differenceM3": -0.0004487733663296467,
+      "balanceResidualsM3": [
+        0.008100855769498594,
+        0.0078021305094750915
+      ]
+    }
+  ],
+  "meaningfulFieldEffectProven": false,
+  "officialTotalScore": null,
+  "evidenceGrades": {
+    "input": "Public inputs frozen by isolated PostgreSQL Java service",
+    "native": "SWMM 5.2.4 independent surfaces with observed 7-day antecedent",
+    "coupledBasin": "NOT_PROVEN",
+    "fieldValidation": "NOT_PROVEN",
+    "ui": "QA queue and account replacement with actual archived native results; live empty board checked separately"
+  },
+  "verification": {
+    "javaPostgresTests": 13,
+    "nativeWorkerTests": 6,
+    "frontendTests": 209,
+    "frontendBuild": "PASS",
+    "isolatedDbLog": "tmp/waterleague_queue_test_fd7abcd7642e4de1834fbb769c556328.log",
+    "originalDatabaseCountsUnchanged": true,
+    "exactResultReplay": true,
+    "identicalNativeInpOutFiles": 8,
+    "rptNumericalSectionsIdentical": true,
+    "rptDifference": "Execution wall-clock timestamps and elapsed time only; files and enclosing manifests preserved separately",
+    "api": {
+      "publicBoard": 200,
+      "privateSubmissionListUnauthenticated": 401,
+      "submissionWithoutCsrf": 403
+    },
+    "browser": [
+      "Submit all two districts",
+      "QUEUED to completed summary",
+      "Negative actual result shown",
+      "Record restored on component remount",
+      "Retry does not duplicate record",
+      "Live empty event board; no fabricated production records"
+    ]
+  },
+  "remaining": [
+    "Connected-basin and inundation metrics / total score",
+    "Historical asset, event duration and budget/price reconstruction",
+    "Persistent editable/empty disaster design and experiment reconnect restoration",
+    "Full 12-facility installation and verified program budgets",
+    "Weekly exact installation-second evaluation and continuous surface coupling"
+  ],
+  "sourceHashes": {
+    "backend/src/main/java/io/waterleague/historical/service/HistoricalSubmissionService.java": "bc68b906333ac555fc98ade7364482eb63207e123089962cf06777bfdbb0f4d2",
+    "backend/src/main/java/io/waterleague/historical/repository/HistoricalSubmissionRepository.java": "1a3a6383a651b35441393a9243fde1410abbcda5d9354ce11e7868e92ca9d887",
+    "simulation/waterleague_sim/run_historical_submission.py": "e34ee3c383c8b2b4481417a81d4163a495ebce105302b5919a35f083ad6057ee",
+    "simulation/waterleague_sim/historical.py": "6cb3554baefaefb0cb29026748479d3d1048f86b72c324052ac7f8569d375fa4",
+    "frontend/src/domains/historical/controller/useHistoricalSubmission.ts": "0b13bdb0d2b295f4a1aa3360725c05ea2cd4156b1eb3bc8fcb589e209bbd0ec4",
+    "frontend/src/domains/historical/view/HistoricalSubmissionPanel.tsx": "3cba23bfc1b7577ce2fceb2510874e0fcffdbb119ffaeeeac39882bfa1af99fd",
+    "frontend/src/domains/historical/view/HistoricalBoard.tsx": "6a21a8b267bf1261f2ee5ca4aaded056d48448835b16435ffa22fce6970daa3f",
+    "backend/src/main/java/io/waterleague/historical/service/HistoricalService.java": "968f96d4419e97c5680bbda1327e0e195b06ac31bf834b5842042ec754ba2b59"
+  },
+  "screenshots": {
+    "data/benchmarks/historical-submission-v1/competition-empty.png": "023b3aea2bbf0e55af9c7ee1aeb089f713d6d4b140cc5a825de033a241029225",
+    "data/benchmarks/historical-submission-v1/submitted-result-qa.png": "80bd00c7af3f740e70e3eba7e19c942075e1d847271f67f7f16fb81ae1063a60"
+  }
+}

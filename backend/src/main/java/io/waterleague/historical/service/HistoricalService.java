@@ -166,6 +166,7 @@ public class HistoricalService {
       var oldPlacements = json.tree(old.placements());
       if (!old.modelHash().equals(dto.modelHash())
           || !old.districtId().equals(dto.districtId())
+          || oldPlacements.get(0).has("submissionPolicy")
           || oldPlacements.size() != frozen.size()) throw new DomainException(ErrorCode.CONFLICT);
       for (int n = 0; n < frozen.size(); n++) {
         var entry = oldPlacements.get(n);

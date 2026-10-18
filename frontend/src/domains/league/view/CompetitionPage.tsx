@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import type { Account } from '../../account/entity/account';
 import { WeeklyBoard } from '../../weekly/view/WeeklyBoard';
 import { useWeekly } from '../../weekly/controller/useWeekly';
+import { HistoricalBoard } from '../../historical/view/HistoricalBoard';
 export function CompetitionPage({
   account,
   initialLeague = false,
@@ -27,6 +28,13 @@ export function CompetitionPage({
           주간 서울 대항전
         </button>
         <button
+          className={mode === 'historical' ? 'active' : ''}
+          aria-pressed={mode === 'historical'}
+          onClick={() => setMode('historical')}
+        >
+          재해 실험
+        </button>
+        <button
           className={mode === 'leagues' ? 'active' : ''}
           aria-pressed={mode === 'leagues'}
           onClick={() => setMode('leagues')}
@@ -41,6 +49,8 @@ export function CompetitionPage({
           ownDistrictId={account?.districtId ?? null}
           onDistrict={onWeeklyDistrict}
         />
+      ) : mode === 'historical' ? (
+        <HistoricalBoard />
       ) : (
         <section className="full-page league-page" aria-label="기관 리그 준비 중">
           <h1>기관 리그</h1>

@@ -1,0 +1,73 @@
+import type { useHistoricalSubmission } from '../controller/useHistoricalSubmission';
+import { physicalAmount } from '../../physics/service/physicalValueFormat';
+const time = (s: string) =>
+  new Date(s).toLocaleString('ko-KR', {
+    timeZone: 'Asia/Seoul',
+    month: 'numeric',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hourCycle: 'h23',
+  });
+export function HistoricalSubmissionPanel({
+  submission,
+  draftCount,
+  submit,
+  authenticated,
+  onLogin,
+}: {
+  submission: ReturnType<typeof useHistoricalSubmission>;
+  draftCount: number;
+  submit: () => Promise<void>;
+  authenticated: boolean;
+  onLogin: () => void;
+}) {
+  return (
+    <section className="historical-submission" aria-label="재해 설계 제출">
+      <h3>설계 확정·기록 경쟁</h3>
+      <p>모든 구의 {draftCount}곳을 설치 시각과 무관하게 사건 시작부터 종료까지 다시 계산합니다.</p>
+      <p>
+        현재 형상·과거 강우의 독립 표면 평가체적 순위입니다. 실제 재난 복원과 침수 총점은 아직
+        제공하지 않습니다.
+      </p>
+      <button
+        className="solid-button"
+        disabled={authenticated && (submission.busy || !draftCount || draftCount > 50)}
+        onClick={() => (authenticated ? void submit() : onLogin())}
+      >
+        {submission.busy ? '설계 제출 중' : authenticated ? '설계 확정하고 제출' : '로그인 후 제출'}
+      </button>
+      {submission.error && <p role="alert">{submission.error}</p>}
+      {submission.records.length > 0 && (
+        <details open>
+          <summary>내 제출 기록 · {submission.records.length}건</summary>
+          {submission.records.map((record) => (
+            <article key={record.id}>
+              <strong>
+                {time(record.createdAt)} · {record.placementCount}곳
+              </strong>
+              <p>
+                {record.state === 'SUCCEEDED' && record.result
+                  ? `전체 기간 평가체적 감소 ${physicalAmount(record.result.differenceM3)} m³ · 기록 경쟁 게시`
+                  : record.state === 'QUEUED'
+                    ? '전체 기간 계산 대기'
+                    : record.state === 'RUNNING'
+                      ? '전체 기간 계산 중'
+                      : '계산 실패 · 순위 미게시'}
+              </p>
+              {record.result && (
+                <>
+                  <p>
+                    {time(record.result.start)} – {time(record.result.end)} KST
+                  </p>
+                  <a href={`/api/v1/historical/${record.id}/bundle`}>제출 재현 자료 다운로드</a>
+                </>
+              )}
+            </article>
+          ))}
+        </details>
+      )}
+    </section>
+  );
+}

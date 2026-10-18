@@ -15,6 +15,7 @@ import type { Budget } from '../../budget/dto/budgetDto';
 import { designAccounting } from '../../budget/service/designAccounting';
 import { loadHistorical, runHistorical } from '../repository/historicalRepository';
 import { historicalScoreAt, matchesHistoricalDraft } from '../service/temporalService';
+import { useHistoricalSubmission } from './useHistoricalSubmission';
 
 export function useHistorical(
   enabled: boolean,
@@ -25,6 +26,7 @@ export function useHistorical(
 ) {
   const [catalog, setCatalog] = useState<DisasterCatalog | null>(null);
   const eventId = initialEventId;
+  const submission = useHistoricalSubmission(enabled, account?.id, eventId);
   const [lab, setLab] = useState<Lab | null>(null);
   const [drafts, setDrafts] = useState<HistoricalDraft[]>([]);
   const [jobs, setJobs] = useState<Record<string, HistoricalJob>>({});
@@ -170,6 +172,10 @@ export function useHistorical(
     (budget?.policy.personalLimitKrw ?? 0) -
     drafts.reduce((n, d) => n + d.areaM2 * unitCost(d.site.unitCosts, d.facilityType), 0);
   function add(site: SharedSite, type: FacilityType, area: number) {
+    if (drafts.length >= 50) {
+      setError('재해 설계는 여러 구를 합쳐 50곳까지 설치할 수 있습니다.');
+      return;
+    }
     if (!timeline || elapsedSeconds >= duration) {
       setError('재해 종료 이전 시각으로 이동한 뒤 설치해 주세요.');
       return;
@@ -275,6 +281,8 @@ export function useHistorical(
     return () => window.clearTimeout(timer);
   }, [enabled, account?.id, lab?.modelHash, signature, busy, jobs]);
   return {
+    submission,
+    submit: () => submission.submit(drafts, jobs),
     lab,
     events: catalog?.events ?? [],
     event,

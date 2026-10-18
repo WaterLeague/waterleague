@@ -17,6 +17,73 @@ class HistoricalTests(unittest.TestCase):
     def setUp(self):
         queue_fixture.WorkerQueueTests.setUp(self)
 
+    def test_full_event_submission_two_districts_ignores_install_times_and_publishes_once(self):
+        from waterleague_sim.run_historical_submission import POLICY
+        _, sites, models = catalog()
+        registry = json.loads((historical.ROOT/'backend/src/main/resources/disasters/seoul-events-v1.json').read_text())
+        event = registry['events'][0]
+        forcing = {m['districtId']: m['modelHash'] for m in event['models']}
+        primary = forcing['2410520']
+        rain = json.loads(models[primary])['rainfall']
+        rules = {'policy': POLICY, 'eventId': event['id'], 'rainfallModels': forcing,
+                 'engineVersion': '5.2.4', 'start': rain['start'], 'end': rain['end'],
+                 'modelGrade': 'CURRENT_GEOMETRY_HISTORICAL_RAINFALL_STRESS_TEST'}
+        rules_raw = json.dumps(rules, sort_keys=True)
+        rules_hash = hashlib.sha256(rules_raw.encode()).hexdigest()
+        totals, binaries = [], []
+        for offset in (137, 3717):
+            rows = []
+            for district in ('2410520','2419953'):
+                site = next(v for k,v in candidates(district).items() if k.startswith('RW') and v['maxAreaM2'] >= 20)
+                rows.append({'districtId': district, 'cellId': site['id'], 'siteModelHash': sites[district]['sha256'],
+                    'facilityType': 'GREEN_ROOF', 'areaM2': 20, 'rainfallModelHash': forcing[district],
+                    'experimentInstalledAt': (datetime.fromisoformat(rain['start'])+timedelta(seconds=offset)).isoformat()})
+            rows[0].update(submissionPolicy=POLICY,submissionRulesRaw=rules_raw,submissionRulesHash=rules_hash,
+                           submissionRequestRaw=json.dumps({'testOnly':True,'placements':rows.copy()},sort_keys=True))
+            body = json.dumps(rows, sort_keys=True)
+            input_hash = hashlib.sha256((primary+'\n'+body).encode()).hexdigest()
+            identity = uuid.uuid4()
+            self.conn.execute("INSERT INTO historical_experiments(id,owner_id,request_key,district_id,model_hash,input_hash,placements,state,created_at) VALUES(%s,%s,%s,%s,%s,%s,%s,'QUEUED',now())",
+                (identity,self.owner,uuid.uuid4(),'2410520',primary,input_hash,body))
+            self.conn.execute('INSERT INTO historical_submissions(job_id,event_id,rules_hash,request_raw,cost) VALUES(%s,%s,%s,%s,14000000)',
+                (identity,event['id'],rules_hash,rows[0]['submissionRequestRaw']))
+            job = queue.claim(self.conn)
+            self.assertTrue(historical.process(self.conn,job,self.artifacts))
+            row = self.conn.execute('SELECT * FROM historical_experiments WHERE id=%s',(identity,)).fetchone()
+            self.assertEqual(row['state'],'SUCCEEDED',row['error_code'])
+            result = json.loads(row['result'])
+            self.assertEqual(result['submissionPolicy'],POLICY)
+            self.assertIsNone(result['officialTotalScore'])
+            self.assertEqual(len(result['districts']),2)
+            self.assertAlmostEqual(result['differenceM3'],sum(d['result']['differenceM3'] for d in result['districts']))
+            for district in result['districts']:
+                self.assertEqual(district['result']['start'],rain['start'])
+                self.assertEqual(district['result']['end'],rain['end'])
+                init = district['result']['facilities'][0]['initialization']
+                self.assertEqual(init['warmupMinutes'],10080)
+                self.assertEqual(datetime.fromisoformat(init['evaluationStart']),datetime.fromisoformat(rain['start']))
+            posted = self.conn.execute('SELECT difference_m3 FROM historical_submissions WHERE job_id=%s',(identity,)).fetchone()['difference_m3']
+            self.assertAlmostEqual(float(posted),result['differenceM3'])
+            self.assertFalse(queue.finish(self.conn,job,'SUCCEEDED',{'stale':True},None))
+            path=self.artifacts/'historical'/str(identity)/str(job['lease_token'])
+            manifest=json.loads((path/'manifest.json').read_text())
+            for name,digest in manifest.items(): self.assertEqual(hashlib.sha256((path/name).read_bytes()).hexdigest(),digest)
+            self.assertEqual(manifest['submission-rules.json'],rules_hash)
+            totals.append(result['differenceM3'])
+            binaries.append({k:v for k,v in manifest.items() if k.endswith(('.inp','.out'))})
+        self.assertEqual(totals[0],totals[1])
+        self.assertEqual(binaries[0],binaries[1])
+        rows[1]['rainfallModelHash']='0'*64
+        body=json.dumps(rows,sort_keys=True)
+        identity=uuid.uuid4()
+        self.conn.execute("INSERT INTO historical_experiments(id,owner_id,request_key,district_id,model_hash,input_hash,placements,state,created_at) VALUES(%s,%s,%s,%s,%s,%s,%s,'QUEUED',now())",
+            (identity,self.owner,uuid.uuid4(),'2410520',primary,hashlib.sha256((primary+'\n'+body).encode()).hexdigest(),body))
+        self.conn.execute('INSERT INTO historical_submissions(job_id,event_id,rules_hash,request_raw,cost) VALUES(%s,%s,%s,%s,14000000)',
+            (identity,event['id'],rules_hash,rows[0]['submissionRequestRaw']))
+        self.assertTrue(historical.process(self.conn,queue.claim(self.conn),self.artifacts))
+        self.assertEqual(self.conn.execute('SELECT state FROM historical_experiments WHERE id=%s',(identity,)).fetchone()['state'],'FAILED')
+        self.assertIsNone(self.conn.execute('SELECT difference_m3 FROM historical_submissions WHERE job_id=%s',(identity,)).fetchone()['difference_m3'])
+
     def test_timed_installations_real_weather_no_future_scores_and_replay(self):
         district = '2419953'
         _, sites, models = catalog()

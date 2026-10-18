@@ -182,3 +182,41 @@
   color: inherit;
   text-underline-offset: 3px;
 }
+.historical-submission {
+  border-top: 1px solid var(--line);
+  margin-top: 20px;
+  padding-top: 12px;
+}
+.historical-submission article {
+  border-top: 1px solid var(--line);
+  padding: 10px 0;
+}
+.historical-submission p {
+  line-height: 1.6;
+  font-size: 12px;
+}
+.historical-board {
+  padding: 28px;
+}
+.historical-board p {
+  max-width: 850px;
+  line-height: 1.7;
+}
+.historical-board select {
+  padding: 8px;
+  max-width: 100%;
+}
+.historical-board-scroll {
+  overflow-x: auto;
+}
+.historical-board table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.historical-board td,
+.historical-board th {
+  text-align: left;
+  padding: 12px;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}

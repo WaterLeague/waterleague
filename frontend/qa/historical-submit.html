@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>재해 전체 기간 제출 · 로컬 검증</title>
+  </head>
+  <body style="margin: 0; background: #f2f3ee; color: #284133; font: 14px system-ui">
+    <header style="padding: 20px">
+      <strong>로컬 UI QA · 실제 SWMM 결과 · 합성 회원 · 서버 저장 없음</strong>
+      <p>
+        격리 PostgreSQL에서 서버가 고정한 두 구의 설계로 실행한 원 결과. 제출 큐·순위 응답만 로컬
+        대체.
+      </p>
+      <p id="status" role="status">제출 요청 0회</p>
+    </header>
+    <main id="root" style="max-width: 900px; margin: auto; padding: 20px"></main>
+    <script type="module">
+      if (!import.meta.env.DEV || !['localhost', '127.0.0.1', '[::1]'].includes(location.hostname))
+        throw new Error('로컬 전용');
+      const [
+        { default: React },
+        { createRoot },
+        { useHistoricalSubmission },
+        { HistoricalSubmissionPanel },
+        { HistoricalBoard },
+      ] = await Promise.all([
+        import('react'),
+        import('react-dom/client'),
+        import('/src/domains/historical/controller/useHistoricalSubmission.ts'),
+        import('/src/domains/historical/view/HistoricalSubmissionPanel.tsx'),
+        import('/src/domains/historical/view/HistoricalBoard.tsx'),
+        import('/src/shared/ui/base.css'),
+        import('/src/shared/ui/game.css'),
+        import('/src/domains/historical/view/historical.css'),
+      ]);
+      const output = await (await fetch('/qa/historical-submission-result.local.json')).json();
+      const request = await (await fetch('/qa/historical-submission-request.local.json')).json();
+      const frozen = JSON.parse(request.placements),
+        records = new Map(),
+        originalFetch = window.fetch.bind(window);
+      let calls = 0,
+        next = 0;
+      const summary = (record) => ({
+        ...record,
+        result: record.state === 'SUCCEEDED' ? output : null,
+      });
+      window.fetch = async (url, init = {}) => {
+        const path = String(url),
+          response = (data, status = 200) =>
+            Promise.resolve(
+              new Response(JSON.stringify(data), {
+                status,
+                headers: { 'Content-Type': 'application/json' },
+              })
+            );
+        if (path === '/api/v1/auth/csrf')
+          return response({ token: 'qa-only', headerName: 'X-CSRF-TOKEN' });
+        if (path.startsWith('/api/v1/historical/submissions?'))
+          return response([...records.values()].map(summary));
+        if (path === '/api/v1/historical/submissions' && init.method === 'POST') {
+          const body = JSON.parse(init.body);
+          if (
+            body.eventId !== output.eventId ||
+            body.placements.length !== frozen.length ||
+            body.placements.some(
+              (p) =>
+                !frozen.some(
+                  (f) =>
+                    p.districtId === f.districtId &&
+                    p.cellId === f.cellId &&
+                    p.facilityType === f.facilityType &&
+                    p.areaM2 === f.areaM2
+                )
+            )
+          )
+            throw new Error('원 실행과 다른 설계 거부');
+          calls++;
+          document.querySelector('#status').textContent =
+            `제출 요청 ${calls}회 · 구 ${new Set(body.placements.map((p) => p.districtId)).size}곳 · 시설 ${body.placements.length}곳`;
+          let record = [...records.values()].find((r) => r.key === body.requestKey);
+          if (!record) {
+            record = {
+              id: 'local-' + ++next,
+              key: body.requestKey,
+              createdAt: new Date().toISOString(),
+              placementCount: body.placements.length,
+              state: 'QUEUED',
+              message: '',
+            };
+            records.set(record.id, record);
+          }
+          return response(summary(record));
+        }
+        if (path.startsWith('/api/v1/historical/submissions/local-')) {
+          const record = records.get(path.split('/').at(-1));
+          record.state = 'SUCCEEDED';
+          return response(summary(record));
+        }
+        if (path.startsWith('/api/v1/historical/leaderboard/'))
+          return response({
+            eventId: output.eventId,
+            title: '2022. 08. 08 집중호우',
+            officialTotalScore: false,
+            groups: [...records.values()].some((r) => r.state === 'SUCCEEDED')
+              ? [
+                  {
+                    rulesHash: output.rulesHash,
+                    entries: [
+                      {
+                        id: 'local',
+                        displayName: '로컬 QA 회원',
+                        rank: 1,
+                        differenceM3: output.differenceM3,
+                        costKrw: 14000000,
+                        submittedAt: [...records.values()][0].createdAt,
+                      },
+                    ],
+                  },
+                ]
+              : [],
+          });
+        if (init.method && init.method !== 'GET') throw new Error('서버 쓰기 차단');
+        return originalFetch(url, init);
+      };
+      const drafts = frozen.map((f) => ({
+        site: { districtId: f.districtId, cellId: f.cellId },
+        facilityType: f.facilityType,
+        areaM2: f.areaM2,
+        marker: { installedAt: f.experimentInstalledAt },
+      }));
+      function App() {
+        const submission = useHistoricalSubmission(true, 'local-only', output.eventId);
+        const [showBoard, setShowBoard] = React.useState(false);
+        return React.createElement(
+          React.Fragment,
+          null,
+          React.createElement(
+            'p',
+            null,
+            '실험 설치 시각: 두 구의 137초 / 197초. 제출 계산: 사건 시작부터 종료까지.'
+          ),
+          React.createElement(HistoricalSubmissionPanel, {
+            submission,
+            draftCount: drafts.length,
+            submit: () => submission.submit(drafts, {}),
+            authenticated: true,
+            onLogin: () => {},
+          }),
+          React.createElement(
+            'button',
+            { onClick: () => setShowBoard((v) => !v) },
+            '재해 기록 경쟁 보기'
+          ),
+          showBoard && React.createElement(HistoricalBoard)
+        );
+      }
+      function Shell() {
+        const [generation, setGeneration] = React.useState(0);
+        return React.createElement(
+          React.Fragment,
+          null,
+          React.createElement(
+            'button',
+            { onClick: () => setGeneration((v) => v + 1) },
+            '제출 내역 다시 불러오기'
+          ),
+          React.createElement(App, { key: generation })
+        );
+      }
+      createRoot(document.querySelector('#root')).render(React.createElement(Shell));
+    </script>
+  </body>
+</html>

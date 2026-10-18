@@ -72,6 +72,8 @@
               busy: false,
               currentResult: { ...result, initializationSensitivity: comparison },
               currentScore: null,
+              submission: { records: [], busy: false, error: '' },
+              submit: async () => {},
               at: result.end,
               elapsedSeconds: 0,
               duration: 1,

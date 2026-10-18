@@ -1,3 +1,4 @@
+import { HistoricalSubmissionPanel } from './HistoricalSubmissionPanel';
 import { InitializationEvidence } from '../../physics/view/InitializationEvidence';
 import { InitializationSensitivityEvidence } from '../../physics/view/InitializationSensitivityEvidence';
 import { physicalAmount } from '../../physics/service/physicalValueFormat';
@@ -213,11 +214,11 @@ export function HistoricalPanel({
       limit={s.budget?.policy.personalLimitKrw ?? 0}
       budgetReady={!!s.budget}
       busy={false}
-      canInstall={s.current.length < 50 && s.elapsedSeconds < s.duration}
+      canInstall={s.drafts.length < 50 && s.elapsedSeconds < s.duration}
       readOnlyMessage={
         s.elapsedSeconds >= s.duration
           ? '재해 종료 이전 시각으로 이동해 설치하세요.'
-          : '한 구의 실험 배치 50곳을 모두 사용했습니다.'
+          : '재해 실험 배치 50곳을 모두 사용했습니다.'
       }
       onInstall={() => {
         if (site && type) s.add(site, type, Number(area));
@@ -306,6 +307,13 @@ export function HistoricalPanel({
           </p>
         </div>
       )}
+      <HistoricalSubmissionPanel
+        submission={s.submission}
+        draftCount={s.drafts.length}
+        submit={s.submit}
+        authenticated={authenticated}
+        onLogin={onLogin}
+      />
       {s.currentResult && (
         <section className="historical-result" aria-label="과거 강우 비교 결과">
           <h3>재생 시각까지 누적 효과</h3>

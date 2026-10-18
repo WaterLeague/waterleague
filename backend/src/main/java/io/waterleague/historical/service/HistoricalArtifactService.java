@@ -47,14 +47,34 @@ public class HistoricalArtifactService {
               .resolve(job.id().toString())
               .resolve(job.leaseToken().toString());
       if (!directory.toRealPath().equals(directory)) throw invalid();
-      byte[] manifestBytes = read(directory.resolve("manifest.json"), 256 * 1024);
+      boolean submission =
+          !json.tree(job.placements()).isEmpty()
+              && json.tree(job.placements()).get(0).has("submissionPolicy");
+      byte[] manifestBytes =
+          read(directory.resolve("manifest.json"), (submission ? 1024 : 256) * 1024);
       var manifest = json.tree(new String(manifestBytes, StandardCharsets.UTF_8));
-      if (!manifest.isObject() || manifest.size() > 2000) throw invalid();
+      if (!manifest.isObject() || manifest.size() > (submission ? 5000 : 2000)) throw invalid();
       for (String required :
-          List.of("request.json", "result.json", "rainfall-model.json", "historical.py"))
+          submission
+              ? List.of(
+                  "request.json",
+                  "result.json",
+                  "submission.py",
+                  "historical.py",
+                  "submission-rules.json",
+                  "submission-request.json")
+              : List.of("request.json", "result.json", "rainfall-model.json", "historical.py"))
         if (!manifest.has(required)) throw invalid();
-      if (!manifest.path("rainfall-model.json").asString().equals(job.modelHash())) throw invalid();
-      byte[] requestBytes = read(directory.resolve("request.json"), 256 * 1024);
+      if (!submission && !manifest.path("rainfall-model.json").asString().equals(job.modelHash()))
+        throw invalid();
+      if (submission
+          && !manifest
+              .path("submission-rules.json")
+              .asString()
+              .equals(json.tree(job.placements()).get(0).path("submissionRulesHash").asString()))
+        throw invalid();
+      byte[] requestBytes =
+          read(directory.resolve("request.json"), (submission ? 2048 : 256) * 1024);
       var request = json.tree(new String(requestBytes, StandardCharsets.UTF_8));
       if (!request.path("inputHash").asString().equals(job.inputHash())
           || !request.path("modelHash").asString().equals(job.modelHash())
@@ -66,8 +86,11 @@ public class HistoricalArtifactService {
         zip.write(manifestBytes);
         zip.closeEntry();
         for (String name : manifest.propertyNames()) {
-          if (!name.matches("(?:[0-9]{1,2}/|sensitivity/)?[a-z][a-z0-9_.-]{0,70}")
-              || name.contains("..")) throw invalid();
+          String pattern =
+              submission
+                  ? "(?:(?:[0-9]{7}/)?[0-9]{1,2}/|[0-9]{7}/)?[a-z][a-z0-9_.-]{0,70}"
+                  : "(?:[0-9]{1,2}/|sensitivity/)?[a-z][a-z0-9_.-]{0,70}";
+          if (!name.matches(pattern) || name.contains("..")) throw invalid();
           byte[] bytes = read(directory.resolve(name), 64 * 1024 * 1024);
           total += bytes.length;
           if (total > 512L * 1024 * 1024) throw invalid();

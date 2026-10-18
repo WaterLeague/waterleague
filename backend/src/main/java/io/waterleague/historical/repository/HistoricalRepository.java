@@ -61,6 +61,15 @@ public class HistoricalRepository {
         owner);
   }
 
+  public List<HistoricalExperiment> submissions(UUID owner, String event) {
+    return db.query(
+        "SELECT j.* FROM historical_experiments j JOIN historical_submissions s ON s.job_id=j.id"
+            + " WHERE j.owner_id=? AND s.event_id=? ORDER BY j.created_at DESC,j.id DESC LIMIT 50",
+        mapper,
+        owner,
+        event);
+  }
+
   public void add(HistoricalExperiment j, UUID key) {
     db.update(
         "INSERT INTO"

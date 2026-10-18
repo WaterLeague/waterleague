@@ -43,6 +43,7 @@ public class SecurityConfiguration {
                         "/api/v1/catalog",
                         "/api/v1/districts",
                         "/api/v1/disasters",
+                        "/api/v1/historical/leaderboard/*",
                         "/api/v1/installations",
                         "/api/v1/installations/sites",
                         "/api/v1/installations/sites/{districtId}/{cellId}",
