@@ -1,0 +1,113 @@
+.cistern-plan-panel {
+  padding: 20px;
+}
+.cistern-plan-panel > p {
+  color: var(--muted, #60716a);
+  font-size: 13px;
+  line-height: 1.65;
+}
+.cistern-plan-steps {
+  display: grid;
+  gap: 10px;
+  margin: 18px 0;
+}
+.cistern-plan-steps section {
+  border: 1px solid #d4ded8;
+  border-radius: 10px;
+  padding: 12px;
+}
+.cistern-plan-steps section.active {
+  border-color: #407c70;
+  background: #f1f7f4;
+}
+.cistern-plan-steps section > button:first-child {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  width: 100%;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  text-align: left;
+  color: inherit;
+  cursor: pointer;
+}
+.cistern-plan-steps p {
+  margin: 9px 0 4px;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.cistern-plan-steps small {
+  color: #60716a;
+  font-size: 12px;
+}
+.cistern-locate {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+  border: 0;
+  background: transparent;
+  color: #376c61;
+  cursor: pointer;
+}
+.cistern-plan-panel fieldset {
+  border: 0;
+  padding: 0;
+  margin: 18px 0;
+  display: grid;
+  gap: 12px;
+}
+.cistern-plan-panel legend {
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+.cistern-plan-panel label {
+  display: grid;
+  grid-template-columns: 1fr minmax(90px, 110px);
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+}
+.cistern-plan-panel input {
+  width: 100%;
+  min-width: 0;
+  padding: 9px;
+  border: 1px solid #cbd5cf;
+  border-radius: 6px;
+  font: inherit;
+}
+.cistern-plan-status {
+  padding: 12px 0;
+  border-bottom: 1px solid #dce3de;
+}
+.cistern-plan-history h3 {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+}
+.cistern-plan-history > div {
+  display: flex;
+  gap: 8px;
+  padding: 10px 0;
+  border-bottom: 1px solid #e0e7e1;
+}
+.cistern-plan-history button {
+  background: transparent;
+  border: 0;
+  text-align: left;
+  padding: 0;
+  color: #315e54;
+  cursor: pointer;
+}
+.cistern-plan-history button:first-child {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: 12px;
+}
+.cistern-plan-history small {
+  display: block;
+  color: #60716a;
+  margin-top: 5px;
+}

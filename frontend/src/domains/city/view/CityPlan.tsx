@@ -8,6 +8,10 @@ import { siteKey } from '../../installation/entity/installation';
 import { facilities } from '../../game/service/gameService';
 import { polygonPath } from '../../catalog/service/mapGeometryService';
 import { buildingOpacity, otherDistrictOpacity } from '../service/siteVisibilityService';
+import {
+  cisternSiteColors,
+  type CisternSiteRole,
+} from '../../installation/service/cisternPlanService';
 import { inBuildingRing } from '../service/buildingSelectionService';
 import { LiveRainPlan } from '../../rainfall/view/LiveRainPlan';
 import { detailLabelDistance } from '../service/cityService';
@@ -22,6 +26,7 @@ import { SurfacePlan } from '../../surface/view/SurfaceLayer';
 import type { SurfaceFrame, SurfaceMetric } from '../../surface/entity/surface';
 
 type Props = {
+  planningRoles?: ReadonlyMap<string, CisternSiteRole>;
   preview?: { site: SharedSite; placement: Placement } | null;
   surfaceFrame?: SurfaceFrame | null;
   surfaceMetric?: SurfaceMetric;
@@ -86,6 +91,7 @@ export const CityPlan = memo(function CityPlan({
   onNavigate,
   camera,
   rainAmounts,
+  planningRoles,
 }: Props) {
   const {
     svg,
@@ -204,11 +210,13 @@ export const CityPlan = memo(function CityPlan({
             fill={
               site.districtId === selected && site.cellId === selectedSite
                 ? '#ffd56d'
-                : installed
-                  ? '#327f56'
-                  : site.kind === 'ROOF'
-                    ? '#d9d8cb'
-                    : '#b6c3ab'
+                : planningRoles?.has(siteKey(site))
+                  ? cisternSiteColors[planningRoles.get(siteKey(site))!]
+                  : installed
+                    ? '#327f56'
+                    : site.kind === 'ROOF'
+                      ? '#d9d8cb'
+                      : '#b6c3ab'
             }
             stroke={
               site.districtId === selected && site.cellId === selectedSite ? '#b87a13' : '#6c8069'
@@ -216,7 +224,9 @@ export const CityPlan = memo(function CityPlan({
             strokeWidth={site.districtId === selected && site.cellId === selectedSite ? 2 : 0.5}
             opacity={buildingOpacity(
               !site.existingInfrastructure &&
-                (!facilityType || site.allowedTypes.includes(facilityType)) &&
+                (planningRoles?.has(siteKey(site)) ||
+                  !facilityType ||
+                  site.allowedTypes.includes(facilityType)) &&
                 (!installed || installed.ownerId === viewerId),
               !!ownDistrictId && ownDistrictId !== site.districtId
             )}
@@ -239,6 +249,7 @@ export const CityPlan = memo(function CityPlan({
       sitePaths,
       selected,
       selectedSite,
+      planningRoles,
       facilityType,
       viewerId,
       ownDistrictId,

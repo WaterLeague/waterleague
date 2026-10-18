@@ -58,6 +58,7 @@ export function FacilityExpansionPanel({
   selectedMapFacility = '',
   onAllCandidates,
   onLogin,
+  onCisternPlan,
 }: {
   account: Account | null;
   open: boolean;
@@ -66,6 +67,7 @@ export function FacilityExpansionPanel({
   selectedMapFacility?: FacilityType | '';
   onAllCandidates?: () => void;
   onLogin: () => void;
+  onCisternPlan?: () => void;
 }) {
   const [type, setType] = useState<
     NetworkFacility | 'UNDERGROUND_STORAGE' | 'CONDUIT' | 'PUMP_STATION' | null
@@ -107,6 +109,11 @@ export function FacilityExpansionPanel({
       {onAllCandidates && (
         <button className="watershed-all-candidates" onClick={onAllCandidates}>
           전체 시설의 설치 후보 보기
+        </button>
+      )}
+      {onCisternPlan && (
+        <button className="watershed-all-candidates" onClick={onCisternPlan}>
+          <Container size={17} /> 빗물이용조 · 지도에서 집수·저장 위치 계획
         </button>
       )}
       <h3>

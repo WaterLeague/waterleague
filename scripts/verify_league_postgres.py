@@ -22,7 +22,7 @@ def source_counts(db):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--suite', choices=['league', 'analysis', 'queue', 'budget', 'physics', 'weekly', 'historical', 'watershed', 'shared-research', 'search', 'restore', 'all'], default='league')
+    parser.add_argument('--suite', choices=['league', 'analysis', 'queue', 'budget', 'physics', 'weekly', 'historical', 'watershed', 'cistern-plan', 'shared-research', 'search', 'restore', 'all'], default='league')
     suite = parser.parse_args().suite
     test_class = {'league': 'LeagueParticipationWorkflowTests',
                   'analysis': 'ResearchAnalysisWorkflowTests',
@@ -32,6 +32,7 @@ def main():
                   'weekly': 'WeeklyWorkflowTests',
                   'historical': 'HistoricalWorkflowTests',
                   'watershed': 'WatershedWorkflowTests',
+                  'cistern-plan': 'CisternMapPlanTests',
                   'shared-research': 'SharedResearchWorkflowTests',
                   'search': 'ResearchSearchWorkflowTests',
                   'restore': 'ResearchSearchWorkflowTests#replaysActualSwmmSourcesAndGeneratedCandidateBundleOnIsolatedPostgres',

@@ -23,6 +23,10 @@ import { positionSceneLabels } from '../../catalog/service/sceneLabelService';
 import type { SharedSite, SharedInstallation } from '../../installation/entity/installation';
 import { siteKey } from '../../installation/entity/installation';
 import { buildingOpacity, otherDistrictOpacity } from '../service/siteVisibilityService';
+import {
+  cisternSiteColors,
+  type CisternSiteRole,
+} from '../../installation/service/cisternPlanService';
 import { buildingFaceIndex } from '../service/buildingSelectionService';
 import { detailLabelDistance } from '../service/cityService';
 import type { FacilityType, Placement } from '../../game/entity/game';
@@ -381,7 +385,9 @@ const CityScene = memo(function CityScene({
   occupiedRoofs,
   facilityType,
   viewerId,
+  planningRoles,
 }: {
+  planningRoles?: ReadonlyMap<string, CisternSiteRole>;
   surfaceFrame?: SurfaceFrame | null;
   surfaceMetric?: SurfaceMetric;
   onSurfaceError: () => void;
@@ -519,7 +525,9 @@ const CityScene = memo(function CityScene({
             const installed = installationBySite.get(siteKey(site));
             const opacity = buildingOpacity(
               !site.existingInfrastructure &&
-                (!facilityType || site.allowedTypes.includes(facilityType)) &&
+                (planningRoles?.has(siteKey(site)) ||
+                  !facilityType ||
+                  site.allowedTypes.includes(facilityType)) &&
                 (!installed || installed.ownerId === viewerId),
               !!ownDistrictId && site.districtId !== ownDistrictId
             );
@@ -530,11 +538,13 @@ const CityScene = memo(function CityScene({
                   color={
                     site.districtId === selected && site.cellId === selectedSite
                       ? '#ffd56d'
-                      : installed
-                        ? '#367c51'
-                        : site.kind === 'ROOF'
-                          ? '#d9d8cb'
-                          : '#b6c3ab'
+                      : planningRoles?.has(siteKey(site))
+                        ? cisternSiteColors[planningRoles.get(siteKey(site))!]
+                        : installed
+                          ? '#367c51'
+                          : site.kind === 'ROOF'
+                            ? '#d9d8cb'
+                            : '#b6c3ab'
                   }
                   opacity={opacity}
                   onClick={() => onSite(siteKey(site))}

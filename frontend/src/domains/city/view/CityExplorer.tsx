@@ -53,6 +53,9 @@ import { useSurfacePlayback } from '../../surface/controller/useSurfacePlayback'
 import { SurfaceControls } from '../../surface/view/SurfaceControls';
 import type { SurfaceMetric, SurfaceSource } from '../../surface/entity/surface';
 import { FacilityExpansionPanel } from '../../watershed/view/FacilityExpansionPanel';
+import { useCisternPlans } from '../../installation/controller/useCisternPlans';
+import { CisternPlanPanel } from '../../installation/view/CisternPlanPanel';
+import type { CisternSiteRole } from '../../installation/service/cisternPlanService';
 const CityScene = lazy(() => import('./CityScene'));
 type PlayProps = {
   account: Account | null;
@@ -80,6 +83,8 @@ function Explorer({
   const infrastructure = useInfrastructure();
   const [infrastructureOpen, setInfrastructureOpen] = useState(false);
   const [facilityExpansionOpen, setFacilityExpansionOpen] = useState(false);
+  const [cisternOpen, setCisternOpen] = useState(false);
+  const cistern = useCisternPlans(account, cisternOpen);
   const [assetsEnabled, setAssetsEnabled] = useState(true);
   const [tracesEnabled, setTracesEnabled] = useState(true);
   const [surfaceEnabled, setSurfaceEnabled] = useState(true);
@@ -103,7 +108,7 @@ function Explorer({
   );
   const research = useHistorical(researchMode, selected, account, budget.value, eventId);
   const [rankingOpen, setRankingOpen] = useState(false);
-  const ownDistrictId = researchMode ? null : account?.districtId;
+  const ownDistrictId = researchMode && !cisternOpen ? null : account?.districtId;
   const viewerId = researchMode
     ? (account?.id ?? '00000000-0000-0000-0000-000000000000')
     : account?.id;
@@ -140,6 +145,25 @@ function Explorer({
   const [site, setSite] = useState<SharedSite | null>(null);
   const selectedSite = site?.cellId ?? '';
   const [type, setType] = useState<FacilityType | ''>('');
+  const mapFacilityType = cisternOpen
+    ? cistern.role === 'roof'
+      ? 'GREEN_ROOF'
+      : 'PERMEABLE_PAVEMENT'
+    : type;
+  const planningRoles = useMemo(
+    () =>
+      new Map<string, CisternSiteRole>(
+        cisternOpen
+          ? (
+              [
+                ['roof', cistern.roof],
+                ['ground', cistern.ground],
+              ] as const
+            ).flatMap(([role, value]) => (value ? [[siteKey(value), role]] : []))
+          : []
+      ),
+    [cisternOpen, cistern.roof, cistern.ground]
+  );
   const [area, setArea] = useState('20');
   const [listOpen, setListOpen] = useState(false);
   const [vacant, setVacant] = useState(false);
@@ -147,6 +171,10 @@ function Explorer({
   const [feedback, setFeedback] = useState('');
   const [selectionError, setSelectionError] = useState('');
   const selectionRequest = useRef(0);
+  useEffect(() => {
+    // 선택 단계가 바뀐 뒤 도착한 이전 위치 조회가 새 계획을 덮어쓰지 않게 한다.
+    selectionRequest.current++;
+  }, [cisternOpen, cistern.role, account?.id, account?.districtId]);
   const [flat, setFlat] = useState(false),
     [failed, setFailed] = useState(false);
   const [focus, setFocus] = useState<CityFocus>({
@@ -178,6 +206,7 @@ function Explorer({
     [infrastructure.catalog, assetsEnabled, camera, selectedAssetId]
   );
   const selectAsset = useCallback((asset: InfrastructureAsset) => {
+    setCisternOpen(false);
     selectionRequest.current++;
     setSite(null);
     setSelectionError('');
@@ -198,10 +227,10 @@ function Explorer({
       x: Math.round(camera.center[0] / 25) * 25,
       y: Math.round(camera.center[1] / 25) * 25,
       offset,
-      type,
+      type: mapFacilityType,
       vacant: researchMode ? false : vacant,
     },
-    !researchMode
+    !researchMode || cisternOpen
   );
   const researchMarkers = useMemo(
     () => research.drafts.map((d) => ({ ...d.marker, ownerId: viewerId! })),
@@ -209,7 +238,7 @@ function Explorer({
   );
   const shared = {
     ...sharedData,
-    installations: researchMode ? researchMarkers : sharedData.installations,
+    installations: researchMode && !cisternOpen ? researchMarkers : sharedData.installations,
   };
   const installationBySite = useMemo(
     () => new Map(shared.installations.map((i) => [siteKey(i), i])),
@@ -257,13 +286,17 @@ function Explorer({
   const visibleSites = useMemo(() => {
     const values = new Map(shared.sites.map((s) => [siteKey(s), s]));
     if (site) values.set(siteKey(site), site);
+    if (cisternOpen)
+      for (const value of [cistern.roof, cistern.ground])
+        if (value) values.set(siteKey(value), value);
     return [...values.values()].filter(
       (s) =>
         s === site ||
+        planningRoles.has(siteKey(s)) ||
         Math.hypot(s.center[0] - camera.center[0], s.center[1] - camera.center[1]) <
           camera.distance * 1.3
     );
-  }, [shared.sites, site, camera]);
+  }, [shared.sites, site, camera, cisternOpen, cistern.roof, cistern.ground, planningRoles]);
   const details = useCityTiles(city, camera);
   const labels = useRef(new Map<string, HTMLElement>());
   const labelLayer = useRef<HTMLDivElement>(null);
@@ -288,6 +321,11 @@ function Explorer({
   }, []);
   const chooseSite = useCallback(
     (value: SharedSite) => {
+      if (
+        cisternOpen &&
+        (cistern.busy || !cistern.select(value, installationBySite.has(siteKey(value))))
+      )
+        return;
       setInfrastructureOpen(false);
       setFacilityExpansionOpen(false);
       setSelectedAssetId('');
@@ -301,20 +339,22 @@ function Explorer({
       navigationCamera.current = target;
       setCamera(target);
       setSite(value);
-      const chosen = value.allowedTypes.includes(type as FacilityType)
-        ? type
-        : value.allowedTypes[0];
+      const chosen = cisternOpen
+        ? ''
+        : value.allowedTypes.includes(type as FacilityType)
+          ? type
+          : value.allowedTypes[0];
       setType(chosen);
       setArea(String(Math.min(20, placementAreaLimit(value, chosen))));
       setFeedback('');
-      setListOpen(false);
+      setListOpen(cisternOpen && cistern.role === 'roof');
       setOffset(0);
       setFocus((p) => ({
         ...target,
         key: p.key + 1,
       }));
     },
-    [type]
+    [type, cisternOpen, cistern.busy, cistern.select, cistern.role, installationBySite]
   );
   const selectSite = useCallback(
     async (key: string) => {
@@ -394,10 +434,26 @@ function Explorer({
     selectionRequest.current++;
     setFocus((p) => ({ center: [0, 0], distance: 35000, key: p.key + 1, overview: true }));
   }, []);
+  const locateCistern = (value: SharedSite) => {
+    const target = siteFocus(
+      value,
+      stage.current?.clientWidth ?? 800,
+      stage.current?.clientHeight ?? 600
+    );
+    setSelected(value.districtId);
+    setSite(value);
+    setType('');
+    setOffset(0);
+    setListOpen(false);
+    navigationCamera.current = target;
+    setCamera(target);
+    setFocus((p) => ({ ...target, key: p.key + 1 }));
+  };
   const district = city.districts.find((d) => d.id === selected);
   const ownDistrict = city.districts.find((d) => d.id === ownDistrictId);
   const preview = useMemo(
     () =>
+      !cisternOpen &&
       site &&
       !site.existingInfrastructure &&
       !occupied &&
@@ -406,7 +462,7 @@ function Explorer({
       Number(area) <= placementAreaLimit(site, type)
         ? { site, placement: { cellId: site.cellId, facilityType: type, areaM2: Number(area) } }
         : null,
-    [site, occupied, type, area]
+    [site, occupied, type, area, cisternOpen]
   );
   const districtScores = useMemo(
     () =>
@@ -447,7 +503,8 @@ function Explorer({
       installations={shared.installations}
       installationBySite={installationBySite}
       selectedSite={selectedSite}
-      facilityType={type}
+      facilityType={mapFacilityType}
+      planningRoles={planningRoles}
       eligibleRoofs={eligibility.roofIds}
       occupiedRoofs={occupiedRoofs}
       wetDistricts={wetDistricts}
@@ -605,7 +662,8 @@ function Explorer({
                   selectedAssetId={selectedAssetId}
                   onAsset={selectAsset}
                   terrain={terrain}
-                  facilityType={type}
+                  facilityType={mapFacilityType}
+                  planningRoles={planningRoles}
                   viewerId={viewerId ?? null}
                   city={city}
                   eligibleRoofs={eligibility.roofIds}
@@ -891,6 +949,7 @@ function Explorer({
               aria-expanded={facilityExpansionOpen}
               aria-controls="facility-install-panel"
               onClick={() => {
+                setCisternOpen(false);
                 setFacilityExpansionOpen((value) => !value);
                 setInfrastructureOpen(false);
                 setListOpen(false);
@@ -944,7 +1003,19 @@ function Explorer({
         }}
         onClose={() => setFacilityExpansionOpen(false)}
         onLogin={onLogin}
+        onCisternPlan={() => {
+          setCisternOpen(true);
+          setFacilityExpansionOpen(false);
+          setInfrastructureOpen(false);
+          setSelectedAssetId('');
+          setType('');
+          setSite(null);
+          setOffset(0);
+          setListOpen(true);
+          if (account?.districtId && selected !== account.districtId) select(account.districtId);
+        }}
         onMapFacility={(t) => {
+          setCisternOpen(false);
           setFacilityExpansionOpen(false);
           setInfrastructureOpen(false);
           setSelectedAssetId('');
@@ -956,7 +1027,20 @@ function Explorer({
           setListOpen(true);
         }}
       />
-      {facilityExpansionOpen ? null : infrastructureOpen ? (
+      {facilityExpansionOpen ? null : cisternOpen ? (
+        <CisternPlanPanel
+          state={cistern}
+          onClose={() => setCisternOpen(false)}
+          onLogin={onLogin}
+          onLocate={locateCistern}
+          onChoose={(role) => {
+            cistern.setRole(role);
+            setSite(null);
+            setOffset(0);
+            setListOpen(true);
+          }}
+        />
+      ) : infrastructureOpen ? (
         <InfrastructurePanel
           catalog={infrastructure.catalog}
           error={infrastructure.error}

@@ -188,3 +188,10 @@ RFC 9457 `application/problem+json`: type, title, status, detail, instance, code
 - `catalog`는 원 계산/카탈로그 해시·실제 기록 시각·EPSG:5186 지도 원점·계산 등급·한계 반환. `frame`은 `index,minX,minY,maxX,maxY` 필수. 화면 좌표는 도시 공통 원점 이동 후 미터이며 원 계산 경계와 별개. 선택 시각 하나의 원 수심/운동량을 읽고 영역과 교차하는 격자의 수심·속력·도형 반환. 8,192격자 초과는 413이며 임의 생략 없음.
 - 요청마다 파일 조회 전후 소유/기관/동의 재검사, `no-store`, 회원당 분당 120요청. 게시된 지표 결과가 없으면 404; 다른 시설의 내부 수심을 지표 침수로 대체하지 않음. 파일 변조·심볼릭 링크·물수지 불일치는 공통 오류로 거부, 내부 경로 비노출.
 - 작업 결과의 선택적 `surfacePlayback` 참조는 `schemaVersion:1,catalogSha256,surfaceResultSha256`로 고정. 해당 작업의 서버 lease 디렉터리 아래 `surface-playback/`만 조회. 클라이언트 경로·파일명·원본 URL 입력 금지. 현재 기존 시설 유출 작업에는 이 참조가 없으며 연결 유역 작업의 생성·게시 연동은 별도 진행.
+
+
+### 빗물이용조 지도 계획
+
+`GET|POST /api/v1/installations/cistern-plans`, `DELETE /api/v1/installations/cistern-plans/{id}`는 사용 가능한 MEMBER의 본인 계획에 한정. POST는 소속 구·지붕/지상 후보 종류·원본 해시·공개 면적·공개 저류 영역·현재 공유 설치 점유 검사. 면적 소수 둘째 자리·깊이 소수 셋째 자리 입력, 깊이 100m는 입력 범위 방어이며 현장 설계 허용치가 아님. 본인 잠금과 활성 입력 해시 고유 제약으로 동시 재시도에 같은 계획 반환, 활성 계획 20개 한도. 삭제는 원 스냅샷을 보존하는 논리 삭제.
+
+응답의 `snapshot`은 두 후보 원 자료·설계 입력·단면적×깊이 용량·수평 중심 거리·공개 용량 참고 견적을 고정하며 `inputHash`는 저장 JSON 바이트의 SHA-256. 조회 때 해시 재검사, 클라이언트도 위치·원본 해시·용량·견적의 결속 검사. `status=SPATIAL_DRAFT_NOT_INSTALLED`, `installationReady=false`, `positionReserved=false` 고정. 주간·재해 공통 계획이며 특정 사건 당시 시설 복원·설치·계산 작업을 생성하지 않음. 기존 설치·예산·점수 API 불변.
