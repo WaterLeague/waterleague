@@ -25,6 +25,20 @@ from waterleague_sim.model_catalog import read_catalog
 from waterleague_sim.shared_model import resolve, candidates, site_catalog, with_observed_forcing
 
 
+def select_placement(available, facility):
+    def limit(cell):
+        physical = cell.get('physicalInputs', {})
+        design = {'VEGETATIVE_SWALE': 'swaleDesign', 'INFILTRATION_TRENCH': 'trenchDesign'}.get(facility)
+        return min(cell['maxAreaM2'], physical[design]['maxAreaM2']) if design else cell['maxAreaM2']
+
+    eligible = [c for c in available.values() if facility in c['allowedTypes'] and limit(c) >= .01]
+    if not eligible:
+        raise ValueError('SPINUP_FACILITY_SITE_UNAVAILABLE')
+    cell = min(eligible, key=lambda c: (limit(c) < 20, c['areaM2'], c['id']))
+    area = min(20., limit(cell))
+    return cell, {'cellId': cell['id'], 'facilityType': facility, 'areaM2': area}
+
+
 def saved(endpoint, parameters, key):
     if not key:
         raw = (json.dumps({'endpoint': endpoint, 'parameters': parameters}, ensure_ascii=False,
@@ -151,8 +165,11 @@ def main():
     parser.add_argument('--days', type=int, choices=(14, 28), default=14)
     parser.add_argument('--output', type=Path)
     parser.add_argument('--fetch', action='store_true')
+    parser.add_argument('--facilities', nargs='+', choices=study.FACILITIES, default=study.FACILITIES)
     parser.add_argument('--replay', type=Path)
     args = parser.parse_args()
+    if len(set(args.facilities)) != len(args.facilities):
+        parser.error('중복 시설 선택 불가')
     if args.replay:
         reproduce(args.replay)
         return
@@ -181,19 +198,18 @@ def main():
     periods = tuple(day for day in (7, 14, 28) if day <= args.days)
     reports = []
     available = candidates(args.district)
-    for facility in ('RAIN_GARDEN', 'PERMEABLE_PAVEMENT', 'GREEN_ROOF'):
-        cell = min((c for c in available.values() if facility in c['allowedTypes'] and c['maxAreaM2'] >= 20),
-                   key=lambda c: (c['areaM2'], c['id']))
+    for facility in args.facilities:
+        cell, placement = select_placement(available, facility)
         model, _, _ = resolve({'district_id': args.district, 'cell_id': cell['id'],
                                 'model_hash': site_catalog()[args.district]['sha256']})
         model['rainfall'] = observed['rainfall']
         model = with_observed_forcing(model, pet)
-        placement = {'cellId': cell['id'], 'facilityType': facility, 'areaM2': 20.0}
-        report = study.analyze(model, placement, pet, prior, root/facility, days=periods)
+        report = study.analyze(model, placement, pet, prior, root/facility, days=periods, schema_version=2)
         reports.append(report)
         print(facility, report['comparison']['status'], flush=True)
     raw_hashes = sorted(p.stem[1:] for p in root.glob('s*.txt') if re.fullmatch('s[a-f0-9]{64}', p.stem))
-    summary = {'schemaVersion': 1, 'eventId': args.event, 'districtId': args.district, 'days': list(periods),
+    summary = {'schemaVersion': 2, 'eventId': args.event, 'districtId': args.district, 'days': list(periods),
+               'facilities': list(args.facilities),
                'assetTemporalMode': 'CURRENT_GEOMETRY_HISTORICAL_RAIN_STRESS_TEST',
                'evaluationModelHash': observed_hash, 'siteCatalogHash': site_catalog()[args.district]['sha256'],
                'antecedentSourceCount': len(provenance), 'sourceCount': len(raw_hashes),

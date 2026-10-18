@@ -44,3 +44,5 @@
 - [서울시 수치지형도 제공 안내](https://news.seoul.go.kr/gov/archives/528208), [국토부 수치지도V2.0 제공 절차](https://www.data.go.kr/data/15059719/fileData.do): 로그인·대용량 전송 프로그램 안내. DEM·수치지형도 4개 도엽 원본 취득 완료
 - [환경공간정보서비스](https://egisapp.me.go.kr/): 자료신청과 지도 OPEN API 메뉴 구분
 - [흙토람 공식 FAQ](https://soil.rda.go.kr/board/popupFaq.do): 제공 대상·공문·토양도 축척/좌표계/제작시기·신청 항목 안내
+
+2026-10-19 옥상 자료 추가 조사: CODIL의 `옥상공원 상세설계 매뉴얼 및 표준상세도 작성 지침` 공개 검색 항목 확인([원문 주소](https://www.codil.or.kr/filebank/moct2014/201309/MOCT1140_1.PDF?nserialno=1140)). 이번 직접 원문 조회는 HTTP 503으로 PDF 미확보. 검색 발췌·일반 설계 지침을 개별 서울 건물의 실제 경사·배수구 위치/제원이나 확보 원본으로 취급하지 않음. 건물별 실제 입력은 계속 미확보이고 DSM 대체 없음. 현재 추가 사용자 파일·API 권한 요청 없음.

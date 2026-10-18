@@ -20,8 +20,10 @@ def calculate(request, directory):
             or not 1 <= len(placements) <= 50):
         raise ValueError('HISTORICAL_INPUT_INVALID')
     selected = [p for p in placements if 'initializationSensitivity' in p]
-    if (len(selected) > 1 or any(p['initializationSensitivity'] != 'SELECTED_SURFACE_7_DAY_DRY_WET_V1'
-                                for p in selected)):
+    if (len(selected) > 1 or any(p['initializationSensitivity'] not in
+            ('SELECTED_SURFACE_7_DAY_DRY_WET_V1', 'SELECTED_SWALE_7_DAY_STATE_V2') for p in selected)
+            or any((p['initializationSensitivity'] == 'SELECTED_SWALE_7_DAY_STATE_V2')
+                   != (p['facilityType'] == 'VEGETATIVE_SWALE') for p in selected)):
         raise ValueError('HISTORICAL_SENSITIVITY_INVALID')
     directory.mkdir(parents=True, exist_ok=True)
     from .admission import archive
@@ -87,7 +89,9 @@ def calculate(request, directory):
     if selected:
         from .engine.initialization_sensitivity import analyze
         physical = {k: selected[0][k] for k in ('cellId', 'facilityType', 'areaM2')}
-        report = analyze(sensitivity_input, physical, evaporation, antecedent, directory/'sensitivity', days=(7,))
+        version = 2 if selected[0]['initializationSensitivity'] == 'SELECTED_SWALE_7_DAY_STATE_V2' else 1
+        report = analyze(sensitivity_input, physical, evaporation, antecedent, directory/'sensitivity',
+                         days=(7,), schema_version=version)
         output['initializationSensitivity'] = report
     return output
 

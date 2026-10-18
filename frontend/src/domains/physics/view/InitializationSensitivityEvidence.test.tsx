@@ -4,6 +4,41 @@ import fixture from './fixtures/initializationSensitivity.json';
 import { initializationSensitivityDto } from '../dto/initializationSensitivityDto';
 import { InitializationSensitivityEvidence } from './InitializationSensitivityEvidence';
 
+it('식생수로는 단일 빈 표면 상태로 표시하고 가짜 건습 차이를 거부', () => {
+  const raw = {
+    ...fixture,
+    schemaVersion: 2,
+    method: 'OBSERVED_SPINUP_FACILITY_STATE_COMPARISON_V2',
+    facilityType: 'VEGETATIVE_SWALE',
+    seedPolicy: 'NOT_APPLICABLE_FIXED_EMPTY_SURFACE',
+    cases: [fixture.cases[0]],
+    comparison: { ...fixture.comparison, seedDifferences: [] },
+    limitations: [],
+  };
+  const value = initializationSensitivityDto.parse(raw);
+  const html = renderToStaticMarkup(<InitializationSensitivityEvidence value={value} />);
+  expect(html).toContain('빈 표면 시작');
+  expect(html).toContain('건습 비교는 해당 없으며');
+  expect(html).not.toContain('포화 시작');
+  expect(html).not.toContain('포화 시작의 평가체적 감소량이');
+  for (const invalid of [
+    { ...raw, cases: fixture.cases },
+    { ...raw, cases: [fixture.cases[1]] },
+    { ...raw, comparison: fixture.comparison },
+    { ...raw, seedPolicy: 'LID_SATURATION_BOUNDARIES' },
+    { ...fixture, facilityType: 'VEGETATIVE_SWALE' },
+  ])
+    expect(initializationSensitivityDto.safeParse(invalid).success).toBe(false);
+  const failed = initializationSensitivityDto.parse({
+    ...raw,
+    cases: [{ days: 7, seedSaturationPercent: 0, status: 'FAILED', errorCode: 'PRIVATE_FAILURE' }],
+    comparison: { status: 'INCOMPLETE', ranges: null, seedDifferences: null },
+  });
+  expect(renderToStaticMarkup(<InitializationSensitivityEvidence value={failed} />)).not.toContain(
+    'PRIVATE_FAILURE'
+  );
+});
+
 it('실제 2022년 강우 계산의 두 초기 조건과 음의 효과를 보존한 표시', () => {
   const value = initializationSensitivityDto.parse(fixture);
   const html = renderToStaticMarkup(<InitializationSensitivityEvidence value={value} />);

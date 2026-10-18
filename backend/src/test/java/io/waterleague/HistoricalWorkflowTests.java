@@ -111,18 +111,30 @@ class HistoricalWorkflowTests {
                                 FacilityType.VEGETATIVE_SWALE,
                                 cap.add(new BigDecimal("0.01")))))))
         .isInstanceOf(DomainException.class);
-    var job =
-        service.create(
-            owner,
-            new HistoricalRequest(
-                UUID.randomUUID(),
-                district,
-                model,
-                List.of(
-                    new HistoricalRequest.Item(
-                        site.cellId(), FacilityType.VEGETATIVE_SWALE, cap))));
+    var stateRequest =
+        new HistoricalRequest(
+            UUID.randomUUID(),
+            district,
+            model,
+            List.of(new HistoricalRequest.Item(site.cellId(), FacilityType.VEGETATIVE_SWALE, cap)),
+            site.cellId());
+    var job = service.create(owner, stateRequest);
     assertThat(service.require(owner, job.id()).placements())
-        .contains("VEGETATIVE_SWALE", site.modelHash(), "SEOUL_RAINWATER_ACCOUNTING_V4");
+        .contains(
+            "VEGETATIVE_SWALE",
+            site.modelHash(),
+            "SEOUL_RAINWATER_ACCOUNTING_V4",
+            "SELECTED_SWALE_7_DAY_STATE_V2")
+        .doesNotContain("SELECTED_SURFACE_7_DAY_DRY_WET_V1");
+    assertThat(service.create(owner, stateRequest).id()).isEqualTo(job.id());
+    assertThatThrownBy(
+            () ->
+                service.create(
+                    owner,
+                    new HistoricalRequest(
+                        stateRequest.requestKey(), district, model, stateRequest.placements())))
+        .isInstanceOfSatisfying(
+            DomainException.class, e -> assertThat(e.code()).isEqualTo(ErrorCode.CONFLICT));
     assertThat(db.queryForObject("SELECT COUNT(*) FROM shared_installations", Integer.class))
         .isEqualTo(before);
   }

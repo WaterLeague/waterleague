@@ -93,7 +93,8 @@ class HistoricalTests(unittest.TestCase):
         model_hash = next(m['modelHash'] for m in registry['events'][0]['models'] if m['districtId']==district)
         cell = next(c for c in candidates(district).values() if 'VEGETATIVE_SWALE' in c['allowedTypes'])
         placements = json.dumps([{'districtId': district, 'cellId': cell['id'], 'siteModelHash': sites[district]['sha256'],
-            'facilityType': 'VEGETATIVE_SWALE', 'areaM2': cell['physicalInputs']['swaleDesign']['maxAreaM2']}], sort_keys=True)
+            'facilityType': 'VEGETATIVE_SWALE', 'areaM2': cell['physicalInputs']['swaleDesign']['maxAreaM2'],
+            'initializationSensitivity': 'SELECTED_SWALE_7_DAY_STATE_V2'}], sort_keys=True)
         identity = uuid.uuid4()
         input_hash = hashlib.sha256((model_hash+'\n'+placements).encode()).hexdigest()
         self.conn.execute("INSERT INTO historical_experiments(id,owner_id,request_key,district_id,model_hash,input_hash,placements,state,created_at) VALUES(%s,%s,%s,%s,%s,%s,%s,'QUEUED',now())",
@@ -104,11 +105,18 @@ class HistoricalTests(unittest.TestCase):
         self.assertEqual(row['state'],'SUCCEEDED',row['error_code'])
         result = json.loads(row['result'])['facilities'][0]
         self.assertEqual(result['facilityDesign']['profile']['type'], 'VS')
+        state = json.loads(row['result'])['initializationSensitivity']
+        self.assertEqual(state['seedPolicy'], 'NOT_APPLICABLE_FIXED_EMPTY_SURFACE')
+        self.assertEqual([c['seedSaturationPercent'] for c in state['cases']], [0])
+        self.assertEqual(state['comparison']['seedDifferences'], [])
+        self.assertTrue(state['cases'][0]['initialization']['scoreExcludesWarmup'])
+        self.assertAlmostEqual(state['cases'][0]['metrics']['contributionM3'], result['differenceM3'], places=8)
         self.assertGreater(result['infiltrationM3'], 0)
         self.assertEqual(result['initialization']['warmupMinutes'], 10080)
         path = self.artifacts/'historical'/str(identity)/str(job['lease_token'])
         manifest = json.loads((path/'manifest.json').read_text())
         self.assertEqual(manifest['0/facility-designs.json'], result['facilityDesign']['catalogSha256'])
+
 
     def test_trench_fixed_width_candidate_through_worker_queue(self):
         district = '2410520'

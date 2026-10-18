@@ -8,6 +8,7 @@ from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / 'scripts'))
 import analyze_initialization_sensitivity as command
+import package_initialization_study as bundle
 
 
 def inputs():
@@ -29,6 +30,56 @@ def inputs():
 
 
 class InitializationCollectionTests(unittest.TestCase):
+    def test_archive_requires_original_facility_source_and_contained_path(self):
+        import hashlib
+        import tempfile
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            path = root/'public.pdf'
+            path.write_bytes(b'PUBLIC_TEST_SOURCE')
+            digest = hashlib.sha256(path.read_bytes()).hexdigest()
+            self.assertEqual(bundle.checked_reference('public.pdf', digest, root), path)
+            for name, expected in [('public.pdf', '0'*64), ('../public.pdf', digest),
+                                   (str(path), digest), ('missing.pdf', digest)]:
+                with self.assertRaises(ValueError):
+                    bundle.checked_reference(name, expected, root)
+            (root/'linked.pdf').symlink_to(path)
+            with self.assertRaises(ValueError):
+                bundle.checked_reference('linked.pdf', digest, root)
+
+    def test_worker_rejects_mismatched_facility_state_policy_before_any_calculation(self):
+        import hashlib
+        import json
+        import tempfile
+        from waterleague_sim import run_historical_job
+        for facility, policy in [('VEGETATIVE_SWALE', 'SELECTED_SURFACE_7_DAY_DRY_WET_V1'),
+                                 ('GREEN_ROOF', 'SELECTED_SWALE_7_DAY_STATE_V2')]:
+            raw = json.dumps([{'facilityType': facility, 'initializationSensitivity': policy}])
+            request = {'modelHash': 'test-model', 'placements': raw,
+                       'inputHash': hashlib.sha256(('test-model\n'+raw).encode()).hexdigest()}
+            with tempfile.TemporaryDirectory() as directory, patch.object(run_historical_job, 'read_catalog',
+                    return_value={'test-model': '{}'}):
+                target = Path(directory)/'run'
+                with self.assertRaisesRegex(ValueError, 'HISTORICAL_SENSITIVITY_INVALID'):
+                    run_historical_job.calculate(request, target)
+                self.assertFalse(target.exists())
+
+    def test_facility_specific_area_and_bundle_inventory(self):
+        site = {'id': 'TEST', 'allowedTypes': ['VEGETATIVE_SWALE'], 'maxAreaM2': 100,
+                'areaM2': 100, 'physicalInputs': {'swaleDesign': {'maxAreaM2': 9.99}}}
+        _, placement = command.select_placement({'TEST': site}, 'VEGETATIVE_SWALE')
+        self.assertEqual(placement['areaM2'], 9.99)
+        with self.assertRaisesRegex(ValueError, 'SPINUP_FACILITY_SITE_UNAVAILABLE'):
+            command.select_placement({'TEST': site}, 'INFILTRATION_TRENCH')
+        summary = {'facilities': ['VEGETATIVE_SWALE'], 'reports': [{'facilityType': 'VEGETATIVE_SWALE'}]}
+        self.assertEqual(bundle.study_facilities(summary), ['VEGETATIVE_SWALE'])
+        with self.assertRaises(ValueError):
+            bundle.study_facilities(summary | {'reports': []})
+        with self.assertRaises(ValueError):
+            bundle.study_facilities(summary | {'facilities': ['VEGETATIVE_SWALE']*2})
+        self.assertEqual(bundle.study_facilities({'reports': [{'facilityType': name}
+            for name in bundle.FACILITIES[:3]]}), list(bundle.FACILITIES[:3]))
+
     def test_complete_archive_does_not_query_rain_even_with_fetch_permission(self):
         prior, forcing, pet = inputs()
         original = deepcopy(prior)

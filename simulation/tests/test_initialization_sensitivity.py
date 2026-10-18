@@ -27,6 +27,42 @@ def inputs():
 
 
 class InitializationSensitivityTests(unittest.TestCase):
+    @unittest.skipUnless(continuous.library_path().exists(), 'EPA 연속 엔진 필요')
+    def test_swale_single_seed_never_claims_wet_dry_convergence(self):
+        from test_swale import candidate
+        original, placement = candidate()
+        source, _, pet, prior = inputs()
+        model = copy.deepcopy(original)
+        model['rainfall'] = source['rainfall']
+        before = copy.deepcopy(model)
+        with tempfile.TemporaryDirectory() as root:
+            root = Path(root)
+            with self.assertRaisesRegex(continuous.SimulationQualityError, 'SPINUP_COMPARISON_REQUEST_INVALID'):
+                study.analyze(model, placement, pet, prior, root/'legacy', days=(7,))
+            report = study.analyze(model, placement, pet, prior, root/'state', days=(7,), schema_version=2)
+            self.assertEqual(report['seedPolicy'], 'NOT_APPLICABLE_FIXED_EMPTY_SURFACE')
+            self.assertEqual(len(report['cases']), 1)
+            case = report['cases'][0]
+            self.assertEqual(case['status'], 'SUCCEEDED')
+            self.assertEqual(case['seedSaturationPercent'], 0)
+            self.assertEqual(case['initialization']['seed'], 'EMPTY_SURFACE_DEFAULT_INFILTRATION_STATE')
+            self.assertEqual(report['comparison']['seedDifferences'], [])
+            self.assertFalse((root/'state/design_7d_100.inp').exists())
+            expanded, forcing = initialization.prepend(model, pet, study.window(prior, 7))
+            replay = continuous.experiment(expanded, placement, root/'plain', forcing)
+            self.assertEqual((root/'state/design_7d_0.out').read_bytes(), (root/'plain/strategy.out').read_bytes())
+            self.assertAlmostEqual(case['metrics']['contributionM3'],
+                replay['baseline']['final']['accountedDischargeM3']-replay['strategy']['final']['accountedDischargeM3'])
+            self.assertEqual(model, before)
+
+    def test_missing_or_repeated_conditions_cannot_claim_comparison(self):
+        with self.assertRaisesRegex(continuous.SimulationQualityError, 'SPINUP_COMPARISON_INCOMPATIBLE'):
+            study.compare([], (7,))
+        failed = {'days': 7, 'seedSaturationPercent': 0, 'status': 'FAILED'}
+        with self.assertRaises(continuous.SimulationQualityError):
+            study.compare([failed, failed], (7,))
+        self.assertEqual(study.compare([failed], (7,), (0,))['status'], 'INCOMPLETE')
+
     def test_trims_only_prior_window_and_keeps_input_immutable(self):
         model, _, pet, prior = inputs()
         start = datetime.fromisoformat(model['rainfall']['start'])-timedelta(days=7)

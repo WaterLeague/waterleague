@@ -14,7 +14,18 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 
-FACILITIES = ('RAIN_GARDEN', 'PERMEABLE_PAVEMENT', 'GREEN_ROOF')
+FACILITIES = ('RAIN_GARDEN', 'PERMEABLE_PAVEMENT', 'GREEN_ROOF',
+              'BIORETENTION', 'INFILTRATION_TRENCH', 'VEGETATIVE_SWALE')
+
+
+def study_facilities(summary):
+    names = summary.get('facilities', list(FACILITIES[:3]))
+    if (not isinstance(names, list) or not names or any(n not in FACILITIES for n in names)
+            or len(set(names)) != len(names)
+            or len(summary['reports']) != len(names)
+            or {r['facilityType'] for r in summary['reports']} != set(names)):
+        raise ValueError('초기화 묶음 시설 목록 불일치')
+    return names
 
 
 def encoded(value):
@@ -23,6 +34,17 @@ def encoded(value):
 
 def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def checked_reference(relative, expected, root=ROOT):
+    if (not isinstance(relative, str) or Path(relative).is_absolute() or '..' in Path(relative).parts
+            or not isinstance(expected, str) or not re.fullmatch('[a-f0-9]{64}', expected)):
+        raise ValueError('초기화 출처 참조 오류')
+    path = root / relative
+    if (path.is_symlink() or not path.resolve().is_relative_to(root.resolve())
+            or not path.is_file() or sha(path) != expected):
+        raise ValueError('초기화 출처 원문 불일치')
+    return path
 
 
 def verify(root):
@@ -88,18 +110,41 @@ def package(study, output):
     verify(study)
     summary = json.loads((study / 'summary.json').read_bytes())
     reports = summary['reports']
+    names = study_facilities(summary)
     identity = continuous.engine_identity()
-    if ({r['facilityType'] for r in reports} != set(FACILITIES)
-            or len(reports) != len(FACILITIES) or any(r['engine'] != identity for r in reports)):
+    if any(r['engine'] != identity for r in reports):
         raise ValueError('계산 당시 엔진과 현재 고정 엔진 불일치')
     # 계산이 끝난 뒤 바뀐 코드를 당시 코드로 포장하지 않는다.
-    for facility in FACILITIES:
+    references = {}
+    for facility in names:
         for name in ('continuous.py', 'swmm.py', 'initialization.py',
                      'initialization_sensitivity.py', 'facilities.py'):
             if (study / facility / name).read_bytes() != (ROOT / 'simulation/waterleague_sim/engine' / name).read_bytes():
                 raise ValueError('계산 당시 코드와 현재 코드 불일치')
-        if (study / facility / 'facility-designs.json').read_bytes() != facilities.CATALOG_PATH.read_bytes():
+        request = json.loads((study / facility / 'input.json').read_bytes())
+        if ((study / facility / 'facility-designs.json').read_bytes()
+                != facilities.source_path(request['model']).read_bytes()):
             raise ValueError('계산 당시 시설 제원과 현재 제원 불일치')
+        source = json.loads((study / facility / 'facility-designs.json').read_bytes())['source']
+        references[source['file']] = checked_reference(source['file'], source['sha256'])
+        site = request['model']['sharedSiteSource']
+        version = site['constraintVersion']
+        if (type(version) is not int or not 1 <= version <= 100
+                or site['districtId'] != summary['districtId']
+                or site['siteCatalogHash'] != summary['siteCatalogHash']):
+            raise ValueError('초기화 공개 후보 원본 결속 오류')
+        catalog_path = ROOT / f'backend/src/main/resources/shared-sites/catalog-v{version}.json'
+        entries = [e for e in json.loads(catalog_path.read_bytes())['entries']
+                   if e['districtId'] == site['districtId'] and e['sha256'] == site['siteCatalogHash']]
+        if len(entries) != 1:
+            raise ValueError('초기화 공개 후보 목록 불일치')
+        entry = entries[0]
+        relative = 'backend/src/main/resources/shared-sites/' + entry['file']
+        snapshot = checked_reference(relative, entry['gzipSha256'])
+        if hashlib.sha256(gzip.decompress(snapshot.read_bytes())).hexdigest() != entry['sha256']:
+            raise ValueError('초기화 공개 후보 해시 불일치')
+        references[relative] = snapshot
+        references[str(catalog_path.relative_to(ROOT))] = catalog_path
     if (study / 'analyze_initialization_sensitivity.py').read_bytes() != (ROOT / 'scripts/analyze_initialization_sensitivity.py').read_bytes():
         raise ValueError('계산 당시 실행 도구와 현재 코드 불일치')
     if sha(ROOT / 'tmp/swmm/source.tar.gz') != identity['sourceArchiveSha256']:
@@ -112,6 +157,7 @@ def package(study, output):
     paths += list((ROOT / 'backend/src/main/resources/facilities').glob('*.json'))
     paths += [ROOT / 'simulation/pyproject.toml', ROOT / 'simulation/uv.lock',
               ROOT / 'scripts/build_swmm.sh', ROOT / 'tmp/swmm/source.tar.gz']
+    paths += list(references.values())
     for path in paths:
         target = output / 'runtime' / path.relative_to(ROOT)
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -128,6 +174,7 @@ def package(study, output):
         'system': platform.system(), 'machine': platform.machine(), 'engine': identity,
         'calculationManifestSha256': sha(output / 'calculation-manifest.json'),
         'antecedentReference': reference,
+        'facilityAndSiteReferences': {name: sha(path) for name, path in sorted(references.items())},
         'replayUsesArchivedCode': True, 'networkRequiredForReplay': False,
         'limitations': ['고정 바이너리와 같은 운영체제·CPU 환경의 재현',
                         '다른 플랫폼은 보관 소스로 빌드 후 별도 수치 비교 필요'],
@@ -137,8 +184,12 @@ def package(study, output):
     print('재현 묶음', len(verify(output)), '파일 해시 일치', flush=True)
 
 
-def replay(root, facility):
+def replay(root, facility, output=None):
     root = root.resolve()
+    if output is not None:
+        output = output.resolve()
+        if output.exists() or output.is_relative_to(root):
+            raise ValueError('재생 검증 기록은 원 묶음 밖의 새 파일 필요')
     print('재현 묶음', len(verify(root)), '파일 해시 일치', flush=True)
     environment = os.environ.copy()
     environment.pop('LIVE_SWMM_LIBRARY', None)
@@ -147,11 +198,52 @@ def replay(root, facility):
     environment['PYTHONDONTWRITEBYTECODE'] = '1'
     subprocess.run([sys.executable, '-B', str(root / 'runtime/scripts/package_initialization_study.py'),
                     '--verify', str(root), '--forcing-only'], env=environment, check=True, cwd=root)
-    for name in FACILITIES if facility == 'ALL' else (facility,):
-        subprocess.run([sys.executable, '-B',
-                        str(root / 'runtime/scripts/analyze_initialization_sensitivity.py'),
-                        '--replay', str(root / name)], env=environment, check=True, cwd=root)
+    names = study_facilities(json.loads((root / 'summary.json').read_bytes()))
+    if facility != 'ALL' and facility not in names:
+        raise ValueError('초기화 묶음에 없는 시설')
+    results = []
+    # 계산은 보관 모듈로 실행하고 RPT의 실행 시각을 제외한 결정적 파일을 직접 대조한다.
+    driver = '''
+import hashlib, json, sys, tempfile
+from pathlib import Path
+from waterleague_sim.engine import initialization_sensitivity as study
+directory = Path(sys.argv[1])
+request = json.loads((directory/'input.json').read_bytes())
+expected = json.loads((directory/'sensitivity.json').read_bytes())
+with tempfile.TemporaryDirectory() as temporary:
+    work = Path(temporary)
+    actual = study.analyze(**request, directory=work)
+    if actual != expected:
+        raise ValueError('SPINUP_REPLAY_MISMATCH')
+    files = [p for p in directory.iterdir() if p.suffix in ('.inp', '.out')
+             or p.name in ('input.json', 'sensitivity.json')
+             or (p.name.startswith('design_') and p.suffix == '.json')]
+    if not any(p.suffix == '.out' for p in files):
+        raise ValueError('SPINUP_REPLAY_OUTPUT_MISSING')
+    hashes = {}
+    for path in sorted(files):
+        if (work/path.name).read_bytes() != path.read_bytes():
+            raise ValueError('SPINUP_REPLAY_BINARY_MISMATCH')
+        hashes[path.name] = hashlib.sha256(path.read_bytes()).hexdigest()
+print(json.dumps({'facilityType': expected['facilityType'], 'inputSha256': expected['inputSha256'],
+                  'status': 'EXACT_MATCH', 'files': hashes}, sort_keys=True))
+'''
+    for name in names if facility == 'ALL' else (facility,):
+        result = subprocess.run([sys.executable, '-B', '-c', driver, str(root / name)],
+            env=environment, check=True, cwd=root, capture_output=True, text=True)
+        results.append(json.loads(result.stdout))
+        print(name, '보관 코드의 결과·INP·OUT 재생 일치', len(results[-1]['files']), '파일', flush=True)
     verify(root)
+    report = {'schemaVersion': 1, 'status': 'EXACT_MATCH',
+        'archiveManifestSha256': sha(root/'manifest.json'), 'verifierSha256': sha(Path(__file__)),
+        'driverSha256': hashlib.sha256(driver.encode()).hexdigest(), 'reports': results,
+        'replayUsesArchivedCode': True, 'archiveUnchanged': True,
+        'reportTimestampExcludedFromBinaryComparison': True}
+    if output is not None:
+        output.parent.mkdir(parents=True, exist_ok=True)
+        with output.open('xb') as stream:
+            stream.write(encoded(report))
+    return report
 
 
 def main():
@@ -161,7 +253,10 @@ def main():
     parser.add_argument('--verify', type=Path)
     parser.add_argument('--replay', choices=(*FACILITIES, 'ALL'))
     parser.add_argument('--forcing-only', action='store_true')
+    parser.add_argument('--replay-output', type=Path)
     args = parser.parse_args()
+    if args.replay_output and not (args.verify and args.replay):
+        parser.error('--replay-output은 --verify/--replay와 함께 사용')
     if args.verify:
         if args.study or args.output or (args.forcing_only and args.replay):
             parser.error('검증과 포장 인자 혼용 불가')
@@ -176,7 +271,7 @@ def main():
                 raise ValueError('보관 코드의 선행 원문 재산정 불일치')
             print('보관 코드·원문으로 선행 강우·기상 재산정 일치', flush=True)
         elif args.replay:
-            replay(args.verify, args.replay)
+            replay(args.verify, args.replay, args.replay_output)
         else:
             print('재현 묶음', len(verify(args.verify)), '파일 해시 일치')
     elif args.study and args.output and not args.replay and not args.forcing_only:

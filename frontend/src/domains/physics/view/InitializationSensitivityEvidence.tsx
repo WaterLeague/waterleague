@@ -35,18 +35,24 @@ export function InitializationSensitivityEvidence({
       </p>
     );
   const report = parsed.data;
+  const swale = report.seedPolicy === 'NOT_APPLICABLE_FIXED_EMPTY_SURFACE';
+  const seedLabel = (seed: number) =>
+    swale ? '빈 표면 시작' : seed === 0 ? '건조 시작' : '포화 시작';
   const cases = [...report.cases].sort((a, b) => a.seedSaturationPercent - b.seedSaturationPercent);
   const complete = report.comparison.status === 'MEASURED_NO_UNIVERSAL_CONVERGENCE_THRESHOLD';
   return (
     <section className="initialization-sensitivity" aria-label="시작 수분 비교 결과">
-      <h4>시작 수분에 따른 차이</h4>
+      <h4>{swale ? '선행 관측 이후의 식생수로 상태' : '시작 수분에 따른 차이'}</h4>
       <p>
-        {report.cellId} · {amount(report.areaM2)} m². 같은 선행 7일 강우·기상과 시설 제원에 서로
-        다른 시작 상태를 적용했습니다.
+        {report.cellId} · {amount(report.areaM2)} m².{' '}
+        {swale
+          ? '빈 표면과 엔진 기본 침투 상태에서 선행 7일 강우·기상을 계산했습니다.'
+          : '같은 선행 7일 강우·기상과 시설 제원에 서로 다른 시작 상태를 적용했습니다.'}
       </p>
       <p>
-        건조·포화는 선행 계산 전의 시드입니다. 표의 수분·저류는 7일이 지난 재해 평가 시작
-        상태입니다.
+        {swale
+          ? '식생수로는 LID 초기 포화도가 적용되지 않습니다. 건습 비교는 해당 없으며, 표는 선행 7일 이후의 계산 상태입니다.'
+          : '건조·포화는 선행 계산 전의 시드입니다. 표의 수분·저류는 7일이 지난 재해 평가 시작 상태입니다.'}
       </p>
       {!complete && (
         <p role="status">
@@ -59,8 +65,11 @@ export function InitializationSensitivityEvidence({
         <thead>
           <tr>
             <th scope="col">계산 지표</th>
-            <th scope="col">건조 시작</th>
-            <th scope="col">포화 시작</th>
+            {cases.map((c) => (
+              <th scope="col" key={c.seedSaturationPercent}>
+                {seedLabel(c.seedSaturationPercent)}
+              </th>
+            ))}
           </tr>
         </thead>
         <tbody>
@@ -83,7 +92,7 @@ export function InitializationSensitivityEvidence({
           ))}
         </tbody>
       </table>
-      {report.comparison.status === 'MEASURED_NO_UNIVERSAL_CONVERGENCE_THRESHOLD' && (
+      {!swale && report.comparison.status === 'MEASURED_NO_UNIVERSAL_CONVERGENCE_THRESHOLD' && (
         <p>
           포화 시작의 평가체적 감소량이 건조 시작보다{' '}
           {amount(report.comparison.seedDifferences[0].wetMinusDry.contributionM3)} m³ 차이 납니다.
@@ -91,15 +100,17 @@ export function InitializationSensitivityEvidence({
         </p>
       )}
       <p>
-        두 시작 조건의 차이이며 확률 신뢰구간이나 초기 상태의 수렴 판정이 아닙니다. 일반 설계 결과와
-        순위에는 합산하지 않습니다.
+        {swale
+          ? '단일 시작 상태이며 건습 시드의 수렴 검증이 아닙니다.'
+          : '두 시작 조건의 차이이며 확률 신뢰구간이나 초기 상태의 수렴 판정이 아닙니다.'}{' '}
+        일반 설계 결과와 순위에는 합산하지 않습니다.
       </p>
       <details>
         <summary>시작 조건과 원본 근거</summary>
         {cases.map((c) => (
           <div key={c.seedSaturationPercent}>
             <h5>
-              {c.seedSaturationPercent === 0 ? '건조' : '포화'} 시작 ·{' '}
+              {seedLabel(c.seedSaturationPercent)} ·{' '}
               {c.status === 'SUCCEEDED' ? '계산 완료' : '계산 실패'}
             </h5>
             {c.status === 'SUCCEEDED' && <InitializationEvidence value={c.initialization} />}

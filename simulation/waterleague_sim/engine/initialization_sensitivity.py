@@ -9,6 +9,9 @@ from . import continuous, initialization
 from .swmm import SimulationQualityError
 
 METHOD = 'OBSERVED_SPINUP_DURATION_SEED_COMPARISON_V1'
+METHOD_V2 = 'OBSERVED_SPINUP_FACILITY_STATE_COMPARISON_V2'
+FACILITIES = ('RAIN_GARDEN', 'PERMEABLE_PAVEMENT', 'GREEN_ROOF',
+              'BIORETENTION', 'INFILTRATION_TRENCH', 'VEGETATIVE_SWALE')
 METRICS = {
     'initialSoilMoisture': 'm3/m3', 'initialStorageM3': 'm3', 'initialLidStorageM3': 'm3',
     'initialSurfaceDepthMm': 'mm', 'initialPavementDepthMm': 'mm', 'initialStorageDepthMm': 'mm',
@@ -88,7 +91,10 @@ def measures(base, design):
     }
 
 
-def compare(cases, days):
+def compare(cases, days, seeds=(0, 100)):
+    expected = {(d, s) for d in days for s in seeds}
+    if len(cases) != len(expected) or {(c['days'], c['seedSaturationPercent']) for c in cases} != expected:
+        raise SimulationQualityError('SPINUP_COMPARISON_INCOMPATIBLE')
     if any(c['status'] != 'SUCCEEDED' for c in cases):
         return {'status': 'INCOMPLETE', 'ranges': None, 'seedDifferences': None, 'durationDifferences': None}
     def difference(a, b):
@@ -104,37 +110,59 @@ def compare(cases, days):
         else:
             ranges[key] = {'min': min(values), 'max': max(values), 'span': max(values)-min(values)}
     return {'status': 'MEASURED_NO_UNIVERSAL_CONVERGENCE_THRESHOLD', 'ranges': ranges,
-            'seedDifferences': [{'days': d, 'wetMinusDry': difference(by_key[d, 0], by_key[d, 100])} for d in days],
+            'seedDifferences': ([{'days': d, 'wetMinusDry': difference(by_key[d, 0], by_key[d, 100])}
+                                 for d in days] if seeds == (0, 100) else []),
             'durationDifferences': [{'shortDays': a, 'longDays': b, 'seedSaturationPercent': seed,
                                     'longMinusShort': difference(by_key[a, seed], by_key[b, seed])}
-                                   for a, b in zip(days, days[1:]) for seed in (0, 100)]}
+                                   for a, b in zip(days, days[1:]) for seed in seeds]}
 
 
-def analyze(model, placement, evaporation, antecedent, directory, days=(7, 14)):
+def analyze(model, placement, evaporation, antecedent, directory, days=(7, 14), schema_version=1):
+    facility = placement.get('facilityType')
     if (not days or tuple(sorted(set(days))) != tuple(days)
             or any(type(d) is not int or d*1440 not in initialization.SUPPORTED_MINUTES for d in days)
-            or model.get('initialization') is not None or model.get('facilityDesignSet') is None):
+            or model.get('initialization') is not None or model.get('facilityDesignSet') is None
+            or type(schema_version) is not int or schema_version not in (1, 2)
+            or facility not in FACILITIES or (schema_version == 1 and facility == 'VEGETATIVE_SWALE')):
         raise SimulationQualityError('SPINUP_COMPARISON_REQUEST_INVALID')
+    seeds = (0,) if facility == 'VEGETATIVE_SWALE' else (0, 100)
+
+    def prepare(prior, duration, seed=0):
+        expanded, pet = initialization.prepend(model, evaporation, prior,
+                                              warmup_minutes=duration*1440, seed_percent=seed)
+        if seeds == (0,):
+            # 식생수로에는 포화시킬 토양·저류층이 없으므로 동일 시드를 건습 비교로 표시하지 않는다.
+            evidence = expanded['initialization']
+            old_limits = evidence['limitations']
+            evidence['seed'] = 'EMPTY_SURFACE_DEFAULT_INFILTRATION_STATE'
+            evidence['limitations'] = [
+                '식생수로는 빈 표면·엔진 기본 침투 상태로 시작하며 LID 초기 포화도 비교 대상이 아님',
+                '원지반 침투 매개변수를 바꾸어 건습 상태 비교로 대체하지 않음',
+            ] + old_limits[1:]
+            expanded['assumptions'] = [v for v in expanded['assumptions'] if v not in old_limits]
+            expanded['assumptions'] += evidence['limitations']
+        return expanded, pet
     directory = Path(directory)
     directory.mkdir(parents=True, exist_ok=True)
     if any(directory.iterdir()):
         raise SimulationQualityError('SPINUP_OUTPUT_ALREADY_EXISTS')
     request = dict(model=model, placement=placement, evaporation=evaporation, antecedent=antecedent, days=days)
+    if schema_version == 2:
+        request['schema_version'] = schema_version
     (directory/'input.json').write_bytes(encode(request))
     cases = []
     for duration in days:
         prior = window(antecedent, duration)
-        base_model, pet = initialization.prepend(model, evaporation, prior, warmup_minutes=duration*1440)
+        base_model, pet = prepare(prior, duration)
         try:
             baseline = continuous.replay(base_model, [], directory, f'baseline_{duration}d', pet)
         except SimulationQualityError as error:
             cases.extend({'days': duration, 'seedSaturationPercent': seed, 'status': 'FAILED',
-                          'phase': 'BASELINE', 'errorCode': str(error)} for seed in (0, 100))
+                          'phase': 'BASELINE', 'errorCode': str(error)} for seed in seeds)
             continue
-        for seed in (0, 100):
+        for seed in seeds:
             label = f'design_{duration}d_{seed}'
-            expanded, pet = initialization.prepend(model, evaporation, prior,
-                                                  warmup_minutes=duration*1440, seed_percent=seed)
+            expanded, pet = prepare(prior, duration, seed)
             case = {'days': duration, 'seedSaturationPercent': seed, 'label': label}
             try:
                 replay = continuous.replay(expanded, [placement], directory, label, pet)
@@ -151,16 +179,21 @@ def analyze(model, placement, evaporation, antecedent, directory, days=(7, 14)):
             except SimulationQualityError as error:
                 case.update(status='FAILED', errorCode=str(error))
             cases.append(case)
-    report = {'schemaVersion': 1, 'method': METHOD, 'scope': 'INPUT_BOUND_INDEPENDENT_SURFACE_ONLY',
+    report = {'schemaVersion': schema_version, 'method': METHOD if schema_version == 1 else METHOD_V2,
+              'scope': 'INPUT_BOUND_INDEPENDENT_SURFACE_ONLY',
               'inputSha256': continuous.digest(encode(request)), 'cellId': placement['cellId'],
               'facilityType': placement['facilityType'], 'areaM2': placement['areaM2'],
               'evaluationStart': model['rainfall']['start'], 'evaluationEnd': model['rainfall']['end'],
               'stationId': model['rainfall']['stationId'], 'units': METRICS, 'cases': cases,
-              'comparison': compare(cases, days), 'engine': continuous.engine_identity(),
-              'limitations': ['건습 시드는 관측 수분이 아닌 초기 상태 경계 시나리오',
+              'comparison': compare(cases, days, seeds), 'engine': continuous.engine_identity(),
+              'limitations': [('건습 시드는 관측 수분이 아닌 초기 상태 경계 시나리오' if len(seeds) == 2
+                               else '식생수로의 단일 시작 상태이며 건습 시드 수렴을 검증하지 않음'),
                               '선택 입력에서의 민감도이며 서울 전역 수렴·현장 정확도 검증 아님',
                               '관망 없는 독립 표면의 유출·배수 합계 1분 평균 첨두이며 하류 침수 첨두 아님',
                               '경쟁 기록·점수·기존 초기화 정책 변경 없음']}
+    if schema_version == 2:
+        report['seedPolicy'] = ('LID_SATURATION_BOUNDARIES' if len(seeds) == 2
+                                else 'NOT_APPLICABLE_FIXED_EMPTY_SURFACE')
     (directory/'sensitivity.json').write_bytes(encode(report))
     for name in ('continuous.py', 'swmm.py', 'initialization.py', 'initialization_sensitivity.py', 'facilities.py', 'runoff_metrics.py'):
         (directory/name).write_bytes((Path(__file__).parent/name).read_bytes())

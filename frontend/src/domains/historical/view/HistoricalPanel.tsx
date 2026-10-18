@@ -205,11 +205,14 @@ export function HistoricalPanel({
             disabled={working || !s.lab}
             onClick={() => void s.calculate(placed.site.cellId)}
           >
-            이 시설의 시작 수분 비교
+            {placed.facilityType === 'VEGETATIVE_SWALE'
+              ? '이 수로의 선행 상태 확인'
+              : '이 시설의 시작 수분 비교'}
           </button>
           <p>
-            선택 시설 한 곳의 건조·포화 시작 조건을 추가 계산합니다. 일반 계산보다 시간이 더
-            걸립니다.
+            {placed.facilityType === 'VEGETATIVE_SWALE'
+              ? '식생수로의 선행 관측 이후 상태를 확인합니다. 초기 포화도는 적용되지 않아 건습 비교를 제공하지 않습니다.'
+              : '선택 시설 한 곳의 건조·포화 시작 조건을 추가 계산합니다. 일반 계산보다 시간이 더 걸립니다.'}
           </p>
         </div>
       )}
