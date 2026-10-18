@@ -14,6 +14,7 @@ import type { HistoricalDraft, HistoricalJob } from '../entity/historical';
 import type { Budget } from '../../budget/dto/budgetDto';
 import { designAccounting } from '../../budget/service/designAccounting';
 import { loadHistorical, runHistorical } from '../repository/historicalRepository';
+import { historicalScoreAt, matchesHistoricalDraft } from '../service/temporalService';
 
 export function useHistorical(
   enabled: boolean,
@@ -26,23 +27,26 @@ export function useHistorical(
   const eventId = initialEventId;
   const [lab, setLab] = useState<Lab | null>(null);
   const [drafts, setDrafts] = useState<HistoricalDraft[]>([]);
-  const [job, setJob] = useState<HistoricalJob | null>(null);
+  const [jobs, setJobs] = useState<Record<string, HistoricalJob>>({});
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0),
     [playing, setPlaying] = useState(true);
   const [seekRevision, setSeekRevision] = useState(0);
   const seek = (second: number) => {
-    setElapsedSeconds(second);
+    if (!Number.isFinite(second)) return;
+    setElapsedSeconds(Math.max(0, Math.min(duration, Math.floor(second))));
     setSeekRevision((v) => v + 1);
   };
   const [speed, setSpeed] = useState(1);
   const accountId = useRef(account?.id);
   const epoch = useRef(0);
-  const pendingRequest = useRef<{ fingerprint: string; id: string } | null>(null);
+  const pendingRequest = useRef<{ fingerprint: string; id: string; parent?: string } | null>(null);
+  const autoAttempt = useRef('');
   const event = catalog?.events.find((e) => e.id === eventId);
   const selectedRain = event?.regions.find((r) => r.districtId === districtId);
   const hash = selectedRain?.modelHash ?? '';
+  const job = jobs[hash] ?? null;
   const timeline = event?.regions[0];
   const frameCount = timeline?.depthsMm.length ?? 0;
   const duration = frameCount * 60;
@@ -74,12 +78,14 @@ export function useHistorical(
   useEffect(() => {
     setElapsedSeconds(0);
     setPlaying(true);
-    setJob(null);
+    setJobs({});
+    setDrafts([]);
+    setBusy(false);
+    pendingRequest.current = null;
+    autoAttempt.current = '';
+    epoch.current++;
   }, [eventId]);
   useEffect(() => {
-    epoch.current++;
-    setJob(null);
-    setBusy(false);
     setLab(null);
     if (!enabled || !hash) return;
     let active = true;
@@ -100,7 +106,9 @@ export function useHistorical(
   useEffect(() => {
     if (accountId.current !== account?.id) {
       epoch.current++;
-      setJob(null);
+      setJobs({});
+      pendingRequest.current = null;
+      autoAttempt.current = '';
       setError('');
       setBusy(false);
       if (accountId.current) setDrafts([]);
@@ -120,17 +128,22 @@ export function useHistorical(
     if (duration && elapsedSeconds >= duration) setPlaying(false);
   }, [elapsedSeconds, duration]);
   useEffect(() => {
-    if (!job || !['QUEUED', 'RUNNING'].includes(job.state)) return;
+    const activeJobs = Object.values(jobs).filter((j) => ['QUEUED', 'RUNNING'].includes(j.state));
+    if (!activeJobs.length) return;
     let active = true,
       pending = false;
     const timer = setInterval(async () => {
       if (pending || document.hidden) return;
       pending = true;
       try {
-        const next = await loadHistorical(job.id);
+        const updated = await Promise.all(activeJobs.map((queued) => loadHistorical(queued.id)));
         if (active) {
-          setJob(next);
-          if (next.state === 'FAILED' || next.state === 'REJECTED') pendingRequest.current = null;
+          setJobs((previous) => ({
+            ...previous,
+            ...Object.fromEntries(updated.map((next) => [next.modelHash, next])),
+          }));
+          if (updated.some((next) => next.state === 'FAILED' || next.state === 'REJECTED'))
+            pendingRequest.current = null;
         }
       } catch (e) {
         if (active) setError(errorMessage(e));
@@ -142,7 +155,7 @@ export function useHistorical(
       active = false;
       clearInterval(timer);
     };
-  }, [job?.id, job?.state]);
+  }, [jobs]);
   const current = drafts.filter((d) => d.site.districtId === districtId);
   const accounting = budget
     ? designAccounting(
@@ -157,6 +170,10 @@ export function useHistorical(
     (budget?.policy.personalLimitKrw ?? 0) -
     drafts.reduce((n, d) => n + d.areaM2 * unitCost(d.site.unitCosts, d.facilityType), 0);
   function add(site: SharedSite, type: FacilityType, area: number) {
+    if (!timeline || elapsedSeconds >= duration) {
+      setError('재해 종료 이전 시각으로 이동한 뒤 설치해 주세요.');
+      return;
+    }
     if (
       !site.allowedTypes.includes(type) ||
       !Number.isFinite(area) ||
@@ -180,33 +197,27 @@ export function useHistorical(
       facilityType: type,
       areaM2: area,
       cost: area * unitCost(site.unitCosts, type),
-      installedAt: new Date().toISOString(),
+      installedAt: new Date(Date.parse(timeline.start) + elapsedSeconds * 1000).toISOString(),
       center: site.center,
       heightM: site.heightM,
     };
-    epoch.current++;
-    setBusy(false);
     setDrafts((d) => [...d, { site, facilityType: type, areaM2: area, marker }]);
-    setJob(null);
     setError('');
   }
   function remove(id: string) {
-    epoch.current++;
-    setBusy(false);
     setDrafts((d) => d.filter((v) => v.marker.id !== id));
-    setJob(null);
   }
   async function calculate(sensitivityCellId?: string) {
-    if (!lab || !account || !current.length || busy) return;
+    if (!lab || lab.modelHash !== hash || !account || !current.length || busy) return;
     const generation = epoch.current;
     const fingerprint = JSON.stringify([
       districtId,
       lab.modelHash,
-      current.map((d) => [d.site.cellId, d.facilityType, d.areaM2]),
+      current.map((d) => [d.site.cellId, d.facilityType, d.areaM2, d.marker.installedAt]),
       sensitivityCellId ?? null,
     ]);
     if (pendingRequest.current?.fingerprint !== fingerprint)
-      pendingRequest.current = { fingerprint, id: crypto.randomUUID() };
+      pendingRequest.current = { fingerprint, id: crypto.randomUUID(), parent: job?.id };
     setBusy(true);
     setError('');
     try {
@@ -215,9 +226,11 @@ export function useHistorical(
         lab.modelHash,
         current,
         pendingRequest.current.id,
-        sensitivityCellId
+        sensitivityCellId,
+        pendingRequest.current.parent
       );
-      if (generation === epoch.current) setJob(next);
+      if (generation === epoch.current)
+        setJobs((previous) => ({ ...previous, [next.modelHash]: next }));
     } catch (e) {
       if (generation === epoch.current) setError(errorMessage(e));
     } finally {
@@ -229,7 +242,38 @@ export function useHistorical(
     ? new Date(Date.parse(timeline.start) + elapsedSeconds * 1000).toISOString()
     : null;
   const currentResult =
-    job?.modelHash === lab?.modelHash && job?.districtId === districtId ? job.result : null;
+    job?.state === 'SUCCEEDED' &&
+    job.modelHash === lab?.modelHash &&
+    job.districtId === districtId &&
+    matchesHistoricalDraft(job, current)
+      ? job.result
+      : null;
+  const currentScore = currentResult && at ? historicalScoreAt(currentResult, at) : null;
+  const signature = JSON.stringify([
+    hash,
+    current.map((d) => [d.site.cellId, d.facilityType, d.areaM2, d.marker.installedAt]),
+  ]);
+  const calculateRef = useRef(calculate);
+  calculateRef.current = calculate;
+  useEffect(() => {
+    if (
+      !enabled ||
+      !account ||
+      !current.length ||
+      !lab ||
+      lab.modelHash !== hash ||
+      busy ||
+      Object.values(jobs).some((j) => ['QUEUED', 'RUNNING'].includes(j.state)) ||
+      matchesHistoricalDraft(job, current) ||
+      autoAttempt.current === signature
+    )
+      return;
+    const timer = window.setTimeout(() => {
+      autoAttempt.current = signature;
+      void calculateRef.current();
+    }, 750);
+    return () => window.clearTimeout(timer);
+  }, [enabled, account?.id, lab?.modelHash, signature, busy, jobs]);
   return {
     lab,
     events: catalog?.events ?? [],
@@ -251,6 +295,7 @@ export function useHistorical(
     remove,
     job,
     currentResult,
+    currentScore,
     error,
     busy,
     calculate,

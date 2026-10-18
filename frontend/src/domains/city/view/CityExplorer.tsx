@@ -233,9 +233,16 @@ function Explorer({
     },
     !researchMode || cisternOpen
   );
+  const researchVisibleKey = research.drafts
+    .filter((d) => research.at && Date.parse(d.marker.installedAt) <= Date.parse(research.at))
+    .map((d) => d.marker.id)
+    .join(',');
   const researchMarkers = useMemo(
-    () => research.drafts.map((d) => ({ ...d.marker, ownerId: viewerId! })),
-    [research.drafts, viewerId]
+    () =>
+      research.drafts
+        .filter((d) => researchVisibleKey.split(',').includes(d.marker.id))
+        .map((d) => ({ ...d.marker, ownerId: viewerId! })),
+    [research.drafts, researchVisibleKey, viewerId]
   );
   const shared = {
     ...sharedData,
@@ -500,18 +507,21 @@ function Explorer({
   };
   const district = city.districts.find((d) => d.id === selected);
   const ownDistrict = city.districts.find((d) => d.id === ownDistrictId);
+  const planned =
+    researchMode && !!site && research.drafts.some((d) => siteKey(d.site) === siteKey(site));
   const preview = useMemo(
     () =>
       !cisternOpen &&
       site &&
       !site.existingInfrastructure &&
       !occupied &&
+      !planned &&
       type &&
       Number(area) > 0 &&
       Number(area) <= placementAreaLimit(site, type)
         ? { site, placement: { cellId: site.cellId, facilityType: type, areaM2: Number(area) } }
         : null,
-    [site, occupied, type, area, cisternOpen]
+    [site, occupied, planned, type, area, cisternOpen]
   );
   const districtScores = useMemo(
     () =>
@@ -1037,13 +1047,7 @@ function Explorer({
           renderError={surfaceRenderError}
         />
         {researchMode && (
-          <details className="shared-rain-details">
-            <summary>
-              <CloudRain size={15} />
-              재해 시간 재생
-            </summary>
-            <HistoricalTimeline state={research} />
-          </details>
+          <HistoricalTimeline state={research} onInspect={(d) => chooseSite(d.site, true)} />
         )}
       </div>
       <FacilityExpansionPanel
@@ -1113,6 +1117,15 @@ function Explorer({
       ) : researchMode ? (
         <HistoricalPanel
           state={research}
+          onInspect={(d) => {
+            const start = research.event?.regions[0].start;
+            if (start)
+              research.setElapsedSeconds(
+                (Date.parse(d.marker.installedAt) - Date.parse(start)) / 1000
+              );
+            research.setPlaying(false);
+            chooseSite(d.site, true);
+          }}
           districtName={district?.name ?? ''}
           site={site}
           type={type}

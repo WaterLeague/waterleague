@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>재해 설치 시각 · 로컬 검증</title>
+  </head>
+  <body style="margin: 0; background: #f2f3ee; color: #284133; font: 14px system-ui">
+    <header style="padding: 16px">
+      <strong>로컬 UI QA · 실제 SWMM 결과 · 합성 계정 · 서버 저장 없음</strong>
+      <p>data/runs/historical-temporal-20261019의 공개 입력 계산. 큐 응답만 로컬 대체.</p>
+      <p id="requests" role="status">계산 요청 0회</p>
+    </header>
+    <main id="root" style="max-width: 1000px; margin: auto"></main>
+    <script type="module">
+      if (!import.meta.env.DEV || !['localhost', '127.0.0.1', '[::1]'].includes(location.hostname))
+        throw new Error('로컬 전용');
+      const [
+        { default: React },
+        { createRoot },
+        { useHistorical },
+        { HistoricalPanel, HistoricalTimeline },
+        { loadSite },
+      ] = await Promise.all([
+        import('react'),
+        import('react-dom/client'),
+        import('/src/domains/historical/controller/useHistorical.ts'),
+        import('/src/domains/historical/view/HistoricalPanel.tsx'),
+        import('/src/domains/installation/repository/installationRepository.ts'),
+        import('/src/shared/ui/base.css'),
+        import('/src/shared/ui/game.css'),
+        import('/src/domains/city/view/shared-play.css'),
+      ]);
+      const result = await (await fetch('/qa/historical-temporal-result.local.json')).json();
+      const catalog = await (await fetch('/api/v1/disasters')).json();
+      const event = catalog.events.find((e) => e.eventDate === '2022-08-08');
+      const budget = await (await fetch('/api/v1/budget')).json();
+      const sites = await Promise.all(result.facilities.map((f) => loadSite('2419953', f.cellId)));
+      const originalFetch = window.fetch.bind(window),
+        jobs = new Map();
+      let requests = 0;
+      window.fetch = async (url, init = {}) => {
+        const path = String(url);
+        const response = (value) =>
+          Promise.resolve(
+            new Response(JSON.stringify(value), {
+              status: 200,
+              headers: { 'Content-Type': 'application/json' },
+            })
+          );
+        if (path === '/api/v1/auth/csrf')
+          return response({ token: 'local-only', headerName: 'X-CSRF-TOKEN' });
+        if (path === '/api/v1/historical' && init.method === 'POST') {
+          const request = JSON.parse(init.body);
+          const chosen = request.placements.map((p) =>
+            result.facilities.find(
+              (f) =>
+                f.cellId === p.cellId &&
+                f.areaM2 === p.areaM2 &&
+                f.facilityType === p.facilityType &&
+                Date.parse(f.installedAt) === Date.parse(p.installedAt)
+            )
+          );
+          if (chosen.some((f) => !f)) throw new Error('실제 계산 입력과 다른 QA 요청');
+          const id = crypto.randomUUID();
+          const job = {
+            id,
+            districtId: request.districtId,
+            modelHash: request.modelHash,
+            createdAt: new Date().toISOString(),
+            state: 'SUCCEEDED',
+            message: '',
+            placements: request.placements.map((p) => ({
+              ...p,
+              districtId: request.districtId,
+              temporalPolicy: request.temporalPolicy,
+            })),
+            result: { ...result, facilities: chosen },
+          };
+          jobs.set(id, job);
+          document.getElementById('requests').textContent =
+            `자동 계산 요청 ${++requests}회 · 설치 ${request.placements.map((p) => p.installedAt).join(', ')} · 이전 실행 ${request.parentExperimentId ?? '없음'}`;
+          return response({ ...job, state: 'QUEUED', result: null });
+        }
+        if (path.startsWith('/api/v1/historical/'))
+          return response(jobs.get(path.split('/').pop()));
+        if (init.method && init.method !== 'GET') throw new Error('QA 서버 쓰기 금지');
+        return originalFetch(url, init);
+      };
+      const account = {
+        id: '00000000-0000-0000-0000-000000000001',
+        role: 'MEMBER',
+        memberType: 'PLAYER',
+        approvalStatus: 'APPROVED',
+        displayName: '로컬 시험',
+        districtId: '2419953',
+      };
+      const h = React.createElement;
+      function App() {
+        const s = useHistorical(true, '2419953', account, budget, event.id);
+        const [selected, setSelected] = React.useState(sites[0]);
+        const inspect = (d) => {
+          setSelected(d.site);
+          document.getElementById('requests').textContent += ` · 위치 ${d.site.cellId}`;
+        };
+        return h(
+          React.Fragment,
+          null,
+          h(
+            'div',
+            { style: { display: 'flex', gap: 8, padding: 12 } },
+            ...[0, 137, 3717, 7200, 14400].map((t) =>
+              h(
+                'button',
+                {
+                  key: t,
+                  onClick: () => {
+                    s.setPlaying(false);
+                    s.setElapsedSeconds(t);
+                  },
+                },
+                `${t}초로 이동`
+              )
+            ),
+            ...sites.map((site, i) =>
+              h(
+                'button',
+                {
+                  key: site.cellId,
+                  onClick: () => {
+                    setSelected(site);
+                    s.add(site, 'GREEN_ROOF', 20);
+                  },
+                },
+                `시설 ${i + 1} 설치`
+              )
+            )
+          ),
+          h(HistoricalTimeline, { state: s, onInspect: inspect }),
+          h(
+            'div',
+            { style: { maxWidth: 480, margin: 'auto' } },
+            h(HistoricalPanel, {
+              state: s,
+              site: selected,
+              type: 'GREEN_ROOF',
+              area: '20',
+              onType: () => {},
+              onArea: () => {},
+              onLogin: () => {},
+              authenticated: true,
+              error: '',
+              districtName: '성동구',
+              onInspect: inspect,
+            })
+          )
+        );
+      }
+      createRoot(document.getElementById('root')).render(h(App));
+    </script>
+  </body>
+</html>

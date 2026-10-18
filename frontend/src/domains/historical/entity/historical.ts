@@ -11,6 +11,12 @@ export interface HistoricalDraft {
   areaM2: number;
   marker: SharedInstallation;
 }
+export interface HistoricalScoreFrame {
+  at: string;
+  differenceM3: number;
+  baselineAccountedM3: number;
+  designAccountedM3: number;
+}
 export interface HistoricalJob {
   id: string;
   districtId: string;
@@ -23,6 +29,9 @@ export interface HistoricalJob {
     facilityType: FacilityType;
     areaM2: number;
     siteModelHash: string;
+    installedAt?: string;
+    temporalPolicy?: 'INSTALLATION_TIME_EXPERIMENT_V1';
+    parentExperimentId?: string;
   }[];
   message: string;
   result: null | {
@@ -35,9 +44,12 @@ export interface HistoricalJob {
     start: string;
     end: string;
     assumptions: string[];
+    temporalPolicy?: 'INSTALLATION_TIME_EXPERIMENT_V1';
     initializationSensitivity?: InitializationSensitivityData;
     facilities?: {
       cellId: string;
+      installedAt?: string;
+      frames?: HistoricalScoreFrame[];
       initialization?: InitializationEvidenceData | null;
       facilityDesign?: FacilityEvidence | null;
       costRecord?: CostRecord;
@@ -49,6 +61,8 @@ export interface HistoricalJob {
       baselineM3s: number;
       designM3s: number;
       differenceM3: number;
+      baselineAccountedM3?: number;
+      designAccountedM3?: number;
     }[];
   };
 }

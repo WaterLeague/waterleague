@@ -3,6 +3,7 @@ const value = z.number().finite();
 export const initializationDto = z.object({
   method: z.string(),
   warmupMinutes: z.number().int().nonnegative(),
+  preActivationSeconds: z.number().int().nonnegative().optional(),
   initialSoilMoisture: value.nullable(),
   initialStorageM3: value,
   warmupRainMm: value,

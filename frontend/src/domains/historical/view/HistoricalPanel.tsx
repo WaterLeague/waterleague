@@ -2,11 +2,13 @@ import { InitializationEvidence } from '../../physics/view/InitializationEvidenc
 import { InitializationSensitivityEvidence } from '../../physics/view/InitializationSensitivityEvidence';
 import { physicalAmount } from '../../physics/service/physicalValueFormat';
 import { FacilityProfileEvidence } from '../../facility/view/FacilityProfileEvidence';
-import { Play, Pause, Trash2 } from 'lucide-react';
+import { Play, Pause, Trash2, Leaf, Grid2X2, House, Waves, Sprout, Route } from 'lucide-react';
 import type { HistoricalState } from '../controller/useHistorical';
 import type { SharedSite } from '../../installation/entity/installation';
 import type { FacilityType } from '../../game/entity/game';
-import { format } from '../../game/service/gameService';
+import { facilities, format } from '../../game/service/gameService';
+import type { HistoricalDraft } from '../entity/historical';
+import { scoreAt } from '../service/temporalService';
 import './historical.css';
 import { FacilityPlacementPanel } from '../../installation/view/FacilityPlacementPanel';
 import { CostRecordEvidence } from '../../cost/view/CostRecordEvidence';
@@ -21,19 +23,51 @@ const time = (s: string) =>
     hourCycle: 'h23',
     timeZone: 'Asia/Seoul',
   });
-export function HistoricalTimeline({ state: s }: { state: HistoricalState }) {
+const icons = {
+  RAIN_GARDEN: Leaf,
+  PERMEABLE_PAVEMENT: Grid2X2,
+  GREEN_ROOF: House,
+  BIORETENTION: Sprout,
+  VEGETATIVE_SWALE: Waves,
+  INFILTRATION_TRENCH: Route,
+};
+export function HistoricalTimeline({
+  state: s,
+  onInspect,
+}: {
+  state: HistoricalState;
+  onInspect: (draft: HistoricalDraft) => void;
+}) {
+  const lanes: number[] = [];
+  const markers = [...s.drafts]
+    .sort((a, b) => Date.parse(a.marker.installedAt) - Date.parse(b.marker.installedAt))
+    .map((d) => {
+      const second =
+        (Date.parse(d.marker.installedAt) - Date.parse(s.event!.regions[0].start)) / 1000;
+      const position = (second / s.duration) * 100;
+      let lane = lanes.findIndex((end) => position - end >= 5);
+      if (lane < 0) lane = lanes.length;
+      lanes[lane] = position;
+      return { draft: d, second, position, lane };
+    });
   return (
-    <section className="historical-weather" aria-label="재해 강우 재생">
-      <strong>
-        {s.event ? s.event.eventDate.replaceAll('-', '. ') + ' 집중호우' : '재해 기록 불러오는 중'}
-      </strong>
+    <section className="historical-weather" aria-label="재해 시간 재생">
       {s.event && (
-        <div className="historical-event-note">
+        <details className="historical-event-note">
+          <summary>사건 자료·계산 조건</summary>
           <p>{s.event.summary}</p>
           <a href={s.event.evidenceUrl} target="_blank" rel="noreferrer">
             {s.event.evidenceTitle} ↗
           </a>
-        </div>
+          <p>
+            {s.selectedRain &&
+              `${s.selectedRain.stationName} AWS · 대표 지점에서 ${s.selectedRain.distanceKm}km · 관측 창 누적 ${s.selectedRain.totalDepthMm}mm`}
+          </p>
+          <p>
+            현재 공개 지형에 당시 강우 적용 · 당시 침수 피해 복원 아님 · 구별 강우에 따라 빗줄기
+            표시
+          </p>
+        </details>
       )}
       {s.event && !s.selectedRain && (
         <p role="status">
@@ -45,7 +79,7 @@ export function HistoricalTimeline({ state: s }: { state: HistoricalState }) {
         <>
           <div className="historical-clock">
             <button
-              aria-label={s.playing ? '강우 일시정지' : '강우 재생'}
+              aria-label={s.playing ? '재해 일시정지' : '재해 재생'}
               onClick={() => s.setPlaying((v) => !v)}
             >
               {s.playing ? <Pause size={16} /> : <Play size={16} />}
@@ -57,7 +91,7 @@ export function HistoricalTimeline({ state: s }: { state: HistoricalState }) {
             <label>
               속도
               <select
-                aria-label="강우 재생 속도"
+                aria-label="재해 재생 속도"
                 value={s.speed}
                 onChange={(e) => s.setSpeed(Number(e.target.value))}
               >
@@ -69,9 +103,34 @@ export function HistoricalTimeline({ state: s }: { state: HistoricalState }) {
               </select>
             </label>
           </div>
+          {!!markers.length && (
+            <div className="historical-installation-track" aria-label="설치 시각 목록">
+              <div style={{ height: Math.max(1, lanes.length) * 32 }}>
+                {markers.map(({ draft: d, second, position, lane }) => {
+                  const Icon = icons[d.facilityType];
+                  const label = `${facilities[d.facilityType].name} · ${time(d.marker.installedAt)} · ${d.site.name}`;
+                  return (
+                    <button
+                      key={d.marker.id}
+                      style={{ left: `${position}%`, top: lane * 32 }}
+                      title={label}
+                      aria-label={label}
+                      onClick={() => {
+                        s.setElapsedSeconds(second);
+                        s.setPlaying(false);
+                        onInspect(d);
+                      }}
+                    >
+                      <Icon size={17} />
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
           <input
             type="range"
-            aria-label="재해 강우 재생 시각"
+            aria-label="재해 재생 시각"
             min="0"
             max={s.duration}
             value={s.elapsedSeconds}
@@ -104,13 +163,6 @@ export function HistoricalTimeline({ state: s }: { state: HistoricalState }) {
               강우 최대
             </button>
           </div>
-          <small>
-            {s.selectedRain &&
-              `${s.selectedRain.stationName} AWS · 대표 지점에서 ${s.selectedRain.distanceKm}km · 관측 창 누적 ${s.selectedRain.totalDepthMm}mm`}
-            <br />
-            현재 공개 지형에 당시 강우 적용 · 당시 침수 피해 복원 아님 · 구별 관측 강우에 따라
-            빗줄기 표시
-          </small>
         </>
       )}
     </section>
@@ -127,6 +179,7 @@ export function HistoricalPanel({
   authenticated,
   error,
   districtName,
+  onInspect,
 }: {
   state: HistoricalState;
   site: SharedSite | null;
@@ -138,6 +191,7 @@ export function HistoricalPanel({
   authenticated: boolean;
   error: string;
   districtName: string;
+  onInspect: (draft: HistoricalDraft) => void;
 }) {
   const placed = s.drafts.find(
     (d) => d.site.districtId === site?.districtId && d.site.cellId === site?.cellId
@@ -151,7 +205,7 @@ export function HistoricalPanel({
       onType={onType}
       onArea={onArea}
       districtName={districtName}
-      context="재해 연구 설계"
+      context="개인 재해 실험"
       research
       budget={s.budget}
       budgetAccounting={s.accounting}
@@ -159,31 +213,63 @@ export function HistoricalPanel({
       limit={s.budget?.policy.personalLimitKrw ?? 0}
       budgetReady={!!s.budget}
       busy={false}
-      canInstall={s.current.length < 50}
-      readOnlyMessage="한 번에 비교할 연구 배치 50곳을 모두 사용했습니다."
+      canInstall={s.current.length < 50 && s.elapsedSeconds < s.duration}
+      readOnlyMessage={
+        s.elapsedSeconds >= s.duration
+          ? '재해 종료 이전 시각으로 이동해 설치하세요.'
+          : '한 구의 실험 배치 50곳을 모두 사용했습니다.'
+      }
       onInstall={() => {
         if (site && type) s.add(site, type, Number(area));
       }}
       occupied={
-        placed ? { ...placed.marker, onRemove: () => s.remove(placed.marker.id) } : undefined
+        placed
+          ? {
+              ...placed.marker,
+              planned: !!s.at && Date.parse(s.at) < Date.parse(placed.marker.installedAt),
+              onRemove: () => s.remove(placed.marker.id),
+            }
+          : undefined
       }
       error={error || s.error || s.job?.message}
     >
       <div className="historical-design-summary">
-        <strong>이 구의 연구 설계 · {s.current.length}곳</strong>
-        {s.current.map((d) => (
-          <div key={d.marker.id}>
-            <span>
-              {d.site.name} · {d.areaM2}m²
-            </span>
-            <button
-              aria-label={d.site.name + ' 연구 배치 제거'}
-              onClick={() => s.remove(d.marker.id)}
-            >
-              <Trash2 size={13} />
-            </button>
-          </div>
-        ))}
+        <strong>이 구의 실험 시설 · {s.current.length}곳</strong>
+        {s.current.map((d) => {
+          const result = s.currentResult?.facilities?.find((f) => f.cellId === d.site.cellId);
+          const before = !!s.at && Date.parse(s.at) < Date.parse(d.marker.installedAt);
+          const score = result?.frames && s.at ? scoreAt(result.frames, s.at) : null;
+          return (
+            <div key={d.marker.id}>
+              <span>
+                <button onClick={() => onInspect(d)}>
+                  {facilities[d.facilityType].name} · {d.site.name}
+                </button>{' '}
+                · {d.areaM2}m²
+                <small>
+                  {time(d.marker.installedAt)} 설치{before ? ' 예정' : ''}
+                </small>
+                <small>
+                  {before
+                    ? '설치 전 · 누적 0 m³'
+                    : score
+                      ? `누적 ${physicalAmount(score.differenceM3)} m³ · ${time(score.at)}까지`
+                      : authenticated
+                        ? ['FAILED', 'REJECTED'].includes(s.job?.state ?? '')
+                          ? '계산 실패 · 재시도 필요'
+                          : '누적 효과 계산 중'
+                        : '로그인 후 누적 효과 계산'}
+                </small>
+              </span>
+              <button
+                aria-label={d.site.name + ' 연구 배치 제거'}
+                onClick={() => s.remove(d.marker.id)}
+              >
+                <Trash2 size={13} />
+              </button>
+            </div>
+          );
+        })}
       </div>
       {authenticated ? (
         <button
@@ -191,7 +277,11 @@ export function HistoricalPanel({
           disabled={working || !s.current.length || !s.lab}
           onClick={() => void s.calculate()}
         >
-          {working ? '관측 강우로 계산 중' : '이 강우로 비교 계산'}
+          {working
+            ? '설치 이후 효과 계산 중'
+            : s.currentResult
+              ? '같은 설계 다시 계산'
+              : '설치 이후 효과 계산'}
         </button>
       ) : (
         <button className="solid-button" onClick={onLogin}>
@@ -218,35 +308,44 @@ export function HistoricalPanel({
       )}
       {s.currentResult && (
         <section className="historical-result" aria-label="과거 강우 비교 결과">
-          <h3>계산 결과</h3>
+          <h3>재생 시각까지 누적 효과</h3>
           <a className="text-button" href={`/api/v1/historical/${s.job!.id}/bundle`}>
             재현 자료 다운로드
           </a>
-          <strong data-effect={s.currentResult.differenceM3 < 0 ? 'increase' : 'decrease'}>
-            {physicalAmount(s.currentResult.differenceM3)} m³
+          <strong data-effect={(s.currentScore?.differenceM3 ?? 0) < 0 ? 'increase' : 'decrease'}>
+            {s.currentScore
+              ? `${physicalAmount(s.currentScore.differenceM3)} m³`
+              : '누적 기록 없음'}
           </strong>
           <p>시설 없는 조건 대비 평가체적 감소</p>
-          {s.currentResult.differenceM3 < 0 && <p>음수는 평가체적 증가를 뜻합니다.</p>}
+          {s.currentScore && <p>{time(s.currentScore.at)}까지 · 분 종료 기록 · 미래 결과 제외</p>}
+          {(s.currentScore?.differenceM3 ?? 0) < 0 && <p>음수는 평가체적 증가를 뜻합니다.</p>}
           <dl>
             <dt>시설 없음</dt>
-            <dd>{physicalAmount(s.currentResult.baselineAccountedM3)}m³</dd>
+            <dd>{s.currentScore ? physicalAmount(s.currentScore.baselineAccountedM3) : '—'}m³</dd>
             <dt>현재 연구 설계</dt>
-            <dd>{physicalAmount(s.currentResult.designAccountedM3)}m³</dd>
+            <dd>{s.currentScore ? physicalAmount(s.currentScore.designAccountedM3) : '—'}m³</dd>
           </dl>
           <p>
             선택한 표면의 유출·배수·순저류 합 비교입니다. 구 전체 유출량이나 실제 침수 예측이
             아닙니다.
           </p>
+          <p>작은 차이는 물수지 오차보다 작을 수 있습니다. 현장 효과로 확정하지 않습니다.</p>
           {s.currentResult.initializationSensitivity && (
-            <InitializationSensitivityEvidence value={s.currentResult.initializationSensitivity} />
+            <details>
+              <summary>사건 전체 창의 시작 수분 비교 · 누적 효과와 별도</summary>
+              <InitializationSensitivityEvidence
+                value={s.currentResult.initializationSensitivity}
+              />
+            </details>
           )}
           {s.currentResult.facilities
             ?.filter((f) => !site || f.cellId === site.cellId)
             .map(
               (f) =>
                 f.runoffComparison && (
-                  <details key={f.cellId} open={site?.cellId === f.cellId}>
-                    <summary>{f.cellId} · 유출·저류 비교</summary>
+                  <details key={f.cellId}>
+                    <summary>{f.cellId} · 설치부터 종료까지 전체 계산 상세</summary>
                     <RunoffComparison value={f.runoffComparison} />
                   </details>
                 )

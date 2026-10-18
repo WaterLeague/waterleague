@@ -4,8 +4,8 @@ export function InitializationEvidence({ value }: { value: InitializationEvidenc
   return (
     <div className="initialization-evidence">
       <p>
-        선행 {amount(value.warmupMinutes / 1440)}일 강우 {amount(value.warmupRainMm)}mm와 기상으로
-        계산한 시작 상태입니다.{' '}
+        선행 {amount((value.preActivationSeconds ?? value.warmupMinutes * 60) / 86400)}일 강우{' '}
+        {amount(value.warmupRainMm)}mm와 기상으로 계산한 시작 상태입니다.{' '}
         {value.scoreExcludesWarmup
           ? '사전 기간은 점수에서 제외됩니다.'
           : '이 기록에는 사전 기간의 점수 제외가 확인되지 않았습니다.'}

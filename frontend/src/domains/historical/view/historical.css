@@ -46,6 +46,33 @@
   width: 100%;
   accent-color: #436c4d;
 }
+.historical-installation-track {
+  padding: 0 14px;
+  max-height: 128px;
+  overflow: auto;
+  margin-top: 12px;
+}
+.historical-installation-track > div {
+  position: relative;
+  border-bottom: 1px solid #b6c2b3;
+}
+.historical-installation-track button {
+  position: absolute;
+  transform: translateX(-50%);
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #436c4d;
+  border-radius: 5px;
+  background: #fff;
+  color: #284133;
+  cursor: pointer;
+}
+.historical-design-summary small {
+  display: block;
+  padding-top: 3px;
+}
 .historical-weather > small {
   display: block;
   font-size: 11px;

@@ -88,6 +88,27 @@ public class HistoricalService {
     var model = models.require(dto.modelHash());
     if (!model.model().path("mapId").asString().equals(district.mapId()))
       throw new DomainException(ErrorCode.PLACEMENT_INVALID);
+    boolean temporal = dto.temporalPolicy() != null;
+    if ((temporal && !dto.temporalPolicy().equals("INSTALLATION_TIME_EXPERIMENT_V1"))
+        || (!temporal && dto.parentExperimentId() != null))
+      throw new DomainException(ErrorCode.PLACEMENT_INVALID);
+    var rain = model.model().path("rainfall");
+    var start = Instant.parse(rain.path("start").asString());
+    var end = Instant.parse(rain.path("end").asString());
+    for (var p : dto.placements()) {
+      if (temporal
+          ? p.installedAt() == null
+              || p.installedAt().getNano() != 0
+              || p.installedAt().isBefore(start)
+              || !p.installedAt().isBefore(end)
+          : p.installedAt() != null) throw new DomainException(ErrorCode.PLACEMENT_INVALID);
+    }
+    if (dto.parentExperimentId() != null) {
+      var parent = require(owner, dto.parentExperimentId());
+      if (!parent.modelHash().equals(dto.modelHash())
+          || !parent.districtId().equals(dto.districtId()))
+        throw new DomainException(ErrorCode.PLACEMENT_INVALID);
+    }
     var cells = new HashMap<String, PlacementCell>();
     var costs = new EnumMap<FacilityType, BigDecimal>(FacilityType.class);
     var physical = new ArrayList<Placement>();
@@ -122,7 +143,13 @@ public class HistoricalService {
                   p.areaM2(),
                   "budgetPolicy",
                   budget.policy())));
+      if (temporal) {
+        frozen.getLast().put("temporalPolicy", dto.temporalPolicy());
+        frozen.getLast().put("installedAt", p.installedAt().toString());
+      }
     }
+    if (dto.parentExperimentId() != null)
+      frozen.getFirst().put("parentExperimentId", dto.parentExperimentId().toString());
     var cost = validation.validate(physical, cells, costs, budget.limit(), 50);
     if (cost.compareTo(allocated.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add)) != 0)
       throw new DomainException(ErrorCode.PLACEMENT_INVALID);
@@ -143,6 +170,11 @@ public class HistoricalService {
       for (int n = 0; n < frozen.size(); n++) {
         var entry = oldPlacements.get(n);
         var candidate = frozen.get(n);
+        for (var field : List.of("temporalPolicy", "installedAt", "parentExperimentId")) {
+          if (!Objects.equals(
+              entry.has(field) ? entry.path(field).asString() : null, candidate.get(field)))
+            throw new DomainException(ErrorCode.CONFLICT);
+        }
         boolean requestedSensitivity = candidate.get("cellId").equals(dto.sensitivityCellId());
         if (requestedSensitivity != entry.has("initializationSensitivity")
             || (requestedSensitivity

@@ -11,6 +11,7 @@ import io.waterleague.historical.service.HistoricalService;
 import io.waterleague.installation.repository.SiteCatalogRepository;
 import io.waterleague.strategy.entity.FacilityType;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.*;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,7 @@ class HistoricalWorkflowTests {
   @Autowired io.waterleague.disaster.service.DisasterService disasters;
   @Autowired JdbcTemplate db;
   @Autowired io.waterleague.common.service.JsonService json;
+  @Autowired io.waterleague.model.repository.LabModelRepository models;
   UUID owner;
   String cell;
   String hash;
@@ -76,6 +78,69 @@ class HistoricalWorkflowTests {
         "2419953",
         hash,
         List.of(new HistoricalRequest.Item(id, type, new BigDecimal(amount))));
+  }
+
+  HistoricalRequest timed(UUID key, Instant at, UUID parent) {
+    return new HistoricalRequest(
+        key,
+        "2419953",
+        hash,
+        List.of(new HistoricalRequest.Item(cell, FacilityType.GREEN_ROOF, BigDecimal.ONE, at)),
+        null,
+        "INSTALLATION_TIME_EXPERIMENT_V1",
+        parent);
+  }
+
+  @Test
+  void installationTimeAndParentAreImmutableOwnerBoundInputs() {
+    var start =
+        Instant.parse(models.require(hash).model().path("rainfall").path("start").asString());
+    var firstRequest = timed(UUID.randomUUID(), start.plusSeconds(37), null);
+    var first = service.create(owner, firstRequest);
+    String original = service.require(owner, first.id()).placements();
+    assertThat(first.placements().get(0).path("installedAt").asString())
+        .isEqualTo(start.plusSeconds(37).toString());
+    assertThat(service.create(owner, firstRequest).id()).isEqualTo(first.id());
+    assertThatThrownBy(
+            () ->
+                service.create(
+                    owner, timed(firstRequest.requestKey(), start.plusSeconds(38), null)))
+        .isInstanceOf(DomainException.class)
+        .extracting("code")
+        .isEqualTo(ErrorCode.CONFLICT);
+    var secondRequest = timed(UUID.randomUUID(), start.plusSeconds(137), first.id());
+    var second = service.create(owner, secondRequest);
+    assertThat(second.placements().get(0).path("parentExperimentId").asString())
+        .isEqualTo(first.id().toString());
+    assertThat(service.create(owner, secondRequest).id()).isEqualTo(second.id());
+    assertThat(service.require(owner, first.id()).placements()).isEqualTo(original);
+    assertThatThrownBy(
+            () ->
+                service.create(
+                    owner, timed(secondRequest.requestKey(), start.plusSeconds(137), null)))
+        .isInstanceOf(DomainException.class)
+        .extracting("code")
+        .isEqualTo(ErrorCode.CONFLICT);
+    assertThatThrownBy(
+            () -> service.create(UUID.randomUUID(), timed(UUID.randomUUID(), start, first.id())))
+        .isInstanceOf(DomainException.class)
+        .extracting("code")
+        .isEqualTo(ErrorCode.RESOURCE_NOT_FOUND);
+  }
+
+  @Test
+  void rejectsOutOfEventAndSubSecondInstallationTimesWithoutWritingJobs() {
+    var rain = models.require(hash).model().path("rainfall");
+    var start = Instant.parse(rain.path("start").asString());
+    var end = Instant.parse(rain.path("end").asString());
+    for (var at : List.of(start.minusSeconds(1), start.plusNanos(1), end, end.plusSeconds(1))) {
+      assertThatThrownBy(() -> service.create(owner, timed(UUID.randomUUID(), at, null)))
+          .isInstanceOf(DomainException.class)
+          .extracting("code")
+          .isEqualTo(ErrorCode.PLACEMENT_INVALID);
+    }
+    assertThat(db.queryForObject("SELECT COUNT(*) FROM historical_experiments", Integer.class))
+        .isZero();
   }
 
   @Test

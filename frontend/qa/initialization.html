@@ -53,6 +53,7 @@
         areaM2: value.areaM2,
         cost: site.unitCosts[facilityType] * value.areaM2,
         ownerName: '로컬 검증 설계',
+        installedAt: result.start,
       };
       const draft = { site, marker, facilityType, areaM2: value.areaM2 };
       const root = createRoot(document.getElementById('root'));
@@ -70,6 +71,10 @@
               job: { id: 'local-qa', state: 'SUCCEEDED' },
               busy: false,
               currentResult: { ...result, initializationSensitivity: comparison },
+              currentScore: null,
+              at: result.end,
+              elapsedSeconds: 0,
+              duration: 1,
               remove: () => {},
               calculate: async (cell) => {
                 output.textContent =
@@ -85,6 +90,7 @@
             onType: () => {},
             onArea: () => {},
             onLogin: () => {},
+            onInspect: () => {},
           })
         );
       }

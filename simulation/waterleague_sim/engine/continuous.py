@@ -161,8 +161,16 @@ def apply_site_inputs(source, cell, placements):
         lines.append(line)
     return '\n'.join(lines)+'\n'
 
-def replay(model, placements, directory, label, evaporation=None):
+def replay(model, placements, directory, label, evaporation=None, *, evaluation_start_seconds=None):
     start, count = validated_period(model)
+    step = 1 if model['cells'][0].get('physicalInputs') or model.get('facilityDesignSet') else 10
+    evaluation_start = model.get('initialization', {}).get('warmupMinutes', 0) * 60
+    if evaluation_start_seconds is not None:
+        if (type(evaluation_start_seconds) is not int
+                or not evaluation_start <= evaluation_start_seconds < count * 60
+                or evaluation_start_seconds % step):
+            raise SimulationQualityError('HISTORICAL_INSTALLATION_TIME_INVALID')
+        evaluation_start = evaluation_start_seconds
     identity = engine_identity()
     directory = Path(directory)
     directory.mkdir(parents=True, exist_ok=True)
@@ -207,14 +215,15 @@ def replay(model, placements, directory, label, evaporation=None):
 
     samples = []
     from .runoff_metrics import RunoffMetrics
-    step = 1 if cell.get('physicalInputs') or model.get('facilityDesignSet') else 10
-    metrics = RunoffMetrics(model.get('initialization', {}).get('warmupMinutes', 0) * 60,
-                            count * 60, start, step)
+    metrics = RunoffMetrics(evaluation_start, count * 60, start, step)
+    evaluation_origin = None
     metric_state = (C.c_double * len(FIELDS))()
     try:
         check(lib.swmm_open(os.fsencode(inp), os.fsencode(rpt), os.fsencode(out)))
         check(lib.swmm_start(1))
         initial = snapshot()
+        if evaluation_start_seconds == 0:
+            evaluation_origin = initial
         elapsed = C.c_double()
         next_minute = 60
         while True:
@@ -226,6 +235,8 @@ def replay(model, placements, directory, label, evaporation=None):
             metrics.observe(metric_state[0], metric_state[8], drain)
             # 분 경계에서만 상태를 복사하여 1초 적분의 Python 변환 비용을 줄인다.
             seconds = elapsed.value*86400
+            if evaluation_start_seconds is not None and abs(seconds-evaluation_start_seconds) < 1e-7:
+                evaluation_origin = snapshot()
             if seconds >= next_minute-1e-7 or elapsed.value == 0:
                 current = snapshot()
                 seconds = current['elapsedSeconds']
@@ -248,18 +259,30 @@ def replay(model, placements, directory, label, evaporation=None):
     final = samples[-1]
     if abs(final['balanceResidualM3']) > max(1e-8, .01*(final['precipitationM3']+final['initialStorageM3'])):
         raise SimulationQualityError('LIVE_VOLUME_BALANCE_FAILED')
-    return {'initial': initial, 'samples': samples, 'final': final,
+    result = {'initial': initial, 'samples': samples, 'final': final,
             'runoffMetrics': metrics.finish(),
             'runoffContinuityPercent': errors[0].value, 'warnings': warnings,
             'engine': identity, 'routingStatus': 'NOT_APPLICABLE_NO_CONVEYANCE_NETWORK'}
+    if evaluation_start_seconds is not None:
+        if evaluation_origin is None:
+            raise SimulationQualityError('HISTORICAL_INSTALLATION_STATE_MISSING')
+        result['evaluationOrigin'] = evaluation_origin
+    return result
 
 
-def experiment(model, placement, directory, evaporation=None):
+def experiment(model, placement, directory, evaporation=None, *, installed_at=None):
     directory = Path(directory)
-    baseline = replay(model, [], directory, 'baseline', evaporation)
-    strategy = replay(model, [placement], directory, 'strategy', evaporation)
+    offset = None
+    if installed_at is not None:
+        from .temporal import installation_offset
+        offset = installation_offset(model, installed_at)
+    baseline = replay(model, [], directory, 'baseline', evaporation, evaluation_start_seconds=offset)
+    strategy = replay(model, [placement], directory, 'strategy', evaporation, evaluation_start_seconds=offset)
     initialization = None
-    if model.get('initialization') is not None:
+    if installed_at is not None:
+        from .temporal import activation_window
+        baseline, strategy, initialization = activation_window(model, baseline, strategy, offset)
+    elif model.get('initialization') is not None:
         from .initialization import evaluation_window
         baseline, strategy, initialization = evaluation_window(model, baseline, strategy)
     increments = []
@@ -279,6 +302,11 @@ def experiment(model, placement, directory, evaporation=None):
               'scoreRule': 'BASELINE_MINUS_STRATEGY_RUNOFF_DRAINAGE_AND_NET_STORAGE_M3'}
     if initialization is not None:
         result['initialization'] = initialization
+    if installed_at is not None:
+        result['temporalPolicy'] = 'INSTALLATION_TIME_EXPERIMENT_V1'
+        result['installedAt'] = installed_at
+        result['assumptions'] = list(model['assumptions']) + initialization['limitations']
+        (directory/'temporal.py').write_bytes(Path(__file__).with_name('temporal.py').read_bytes())
     from .runoff_metrics import comparison
     result['runoffComparison'] = comparison(baseline, strategy)
     (directory/'runoff_metrics.py').write_bytes(Path(__file__).with_name('runoff_metrics.py').read_bytes())

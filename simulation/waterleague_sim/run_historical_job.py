@@ -3,6 +3,7 @@ import json
 import os
 import resource
 import sys
+from datetime import datetime, timedelta
 from pathlib import Path
 
 from .engine.continuous import ROOT, digest, experiment
@@ -19,6 +20,10 @@ def calculate(request, directory):
     if (digest((request['modelHash']+'\n'+request['placements']).encode()) != request['inputHash']
             or not 1 <= len(placements) <= 50):
         raise ValueError('HISTORICAL_INPUT_INVALID')
+    temporal = any('temporalPolicy' in p or 'installedAt' in p for p in placements)
+    if temporal and any(p.get('temporalPolicy') != 'INSTALLATION_TIME_EXPERIMENT_V1'
+                        or not isinstance(p.get('installedAt'), str) for p in placements):
+        raise ValueError('HISTORICAL_TEMPORAL_POLICY_INVALID')
     selected = [p for p in placements if 'initializationSensitivity' in p]
     if (len(selected) > 1 or any(p['initializationSensitivity'] not in
             ('SELECTED_SURFACE_7_DAY_DRY_WET_V1', 'SELECTED_SWALE_7_DAY_STATE_V2') for p in selected)
@@ -31,6 +36,12 @@ def calculate(request, directory):
     (directory/'rainfall-model.json').write_bytes(source)
     evaporation = load_evaporation(request['modelHash'], observed, directory)
     results, frames = [], []
+    event_start = datetime.fromisoformat(observed['rainfall']['start'])
+    if temporal:
+        frames = [{'at': (event_start+timedelta(minutes=i+1)).isoformat(), 'rainMm': rain,
+                   'baselineM3s': 0., 'designM3s': 0., 'differenceM3': 0.,
+                   'baselineAccountedM3': 0., 'designAccountedM3': 0.}
+                  for i, rain in enumerate(observed['rainfall']['depthsMm'])]
     antecedent = None
     sensitivity_input = None
     assumptions = {'관망 없는 독립 표면 계산', '관측소 강우의 선택 표면 대표성 미검증'}
@@ -56,7 +67,8 @@ def calculate(request, directory):
         physical = {k: placement[k] for k in ('cellId','facilityType','areaM2')}
         from .costing.snapshot import archive as archive_cost
         cost_record = archive_cost(placement, model, physical, directory/str(index))
-        result = experiment(model, physical, directory/str(index), applied_evaporation)
+        result = experiment(model, physical, directory/str(index), applied_evaporation,
+                            installed_at=placement.get('installedAt') if temporal else None)
         assumptions.update(result['assumptions'])
         a, b = result['baseline']['final'], result['strategy']['final']
         results.append({k: v for k,v in placement.items() if k != 'costSnapshotRaw'} | {
@@ -69,8 +81,21 @@ def calculate(request, directory):
             'physicalInputs': model['cells'][0].get('physicalInputs'),
             'facilityDesign': result.get('facilityDesign'), 'initialization': result.get('initialization')})
         results[-1]['runoffComparison'] = result['runoffComparison']
+        if temporal:
+            results[-1]['frames'] = [{'at': placement['installedAt'], 'differenceM3': 0.,
+                'baselineAccountedM3': 0., 'designAccountedM3': 0.}]
         for i, (base, design, contribution) in enumerate(zip(result['baseline']['samples'], result['strategy']['samples'], result['contribution'], strict=True)):
-            if index == 0:
+            if temporal:
+                i = int((datetime.fromisoformat(base['at'])-event_start).total_seconds()/60)-1
+                if not 0 <= i < len(frames):
+                    raise ValueError('HISTORICAL_TEMPORAL_FRAME_INVALID')
+                score = {'at': base['at'], 'differenceM3': contribution['cumulativeM3'],
+                         'baselineAccountedM3': base['accountedDischargeM3'],
+                         'designAccountedM3': design['accountedDischargeM3']}
+                results[-1]['frames'].append(score)
+                frames[i]['baselineAccountedM3'] += score['baselineAccountedM3']
+                frames[i]['designAccountedM3'] += score['designAccountedM3']
+            elif index == 0:
                 frames.append({'at': base['at'], 'rainMm': observed['rainfall']['depthsMm'][i],
                                'baselineM3s': 0., 'designM3s': 0., 'differenceM3': 0.})
             frames[i]['baselineM3s'] += base['runoffM3s']
@@ -86,6 +111,8 @@ def calculate(request, directory):
             'baselineAccountedM3': sum(v['baselineAccountedM3'] for v in results),
             'designAccountedM3': sum(v['designAccountedM3'] for v in results),
             'assumptions': sorted(assumptions)+evaporation['assumptions']}
+    if temporal:
+        output['temporalPolicy'] = 'INSTALLATION_TIME_EXPERIMENT_V1'
     if selected:
         from .engine.initialization_sensitivity import analyze
         physical = {k: selected[0][k] for k in ('cellId', 'facilityType', 'areaM2')}

@@ -3,6 +3,7 @@ import hashlib
 import json
 import unittest
 import uuid
+from datetime import datetime, timedelta
 from pathlib import Path
 import test_worker_queue as queue_fixture
 from waterleague_sim import queue, historical
@@ -15,6 +16,46 @@ class HistoricalTests(unittest.TestCase):
     connection = queue_fixture.WorkerQueueTests.connection
     def setUp(self):
         queue_fixture.WorkerQueueTests.setUp(self)
+
+    def test_timed_installations_real_weather_no_future_scores_and_replay(self):
+        district = '2419953'
+        _, sites, models = catalog()
+        registry = json.loads((historical.ROOT/'backend/src/main/resources/disasters/seoul-events-v1.json').read_text())
+        model_hash = next(m['modelHash'] for m in registry['events'][0]['models'] if m['districtId']==district)
+        observed = json.loads(models[model_hash])
+        start = datetime.fromisoformat(observed['rainfall']['start'])
+        cells = [v for k,v in candidates(district).items() if k.startswith('RW') and v['maxAreaM2'] >= 1][:2]
+        rows = [{'districtId': district, 'cellId': c['id'], 'siteModelHash': sites[district]['sha256'],
+                 'facilityType': 'GREEN_ROOF', 'areaM2': 1, 'temporalPolicy': 'INSTALLATION_TIME_EXPERIMENT_V1',
+                 'installedAt': (start+timedelta(seconds=offset)).isoformat()}
+                for c,offset in zip(cells, (77, 197), strict=True)]
+        placements = json.dumps(rows, sort_keys=True)
+        input_hash = hashlib.sha256((model_hash+'\n'+placements).encode()).hexdigest()
+        outputs = []
+        for _ in range(2):
+            identity = uuid.uuid4()
+            self.conn.execute("INSERT INTO historical_experiments(id,owner_id,request_key,district_id,model_hash,input_hash,placements,state,created_at) VALUES(%s,%s,%s,%s,%s,%s,%s,'QUEUED',now())",
+                (identity,self.owner,uuid.uuid4(),district,model_hash,input_hash,placements))
+            job = queue.claim(self.conn)
+            self.assertTrue(historical.process(self.conn,job,self.artifacts))
+            row = self.conn.execute('SELECT * FROM historical_experiments WHERE id=%s',(identity,)).fetchone()
+            self.assertEqual(row['state'], 'SUCCEEDED', row['error_code'])
+            result = json.loads(row['result']); outputs.append(result)
+            self.assertEqual(result['frames'][0]['differenceM3'], 0)
+            self.assertEqual(result['frames'][0]['baselineAccountedM3'], 0)
+            self.assertEqual(result['frames'][-1]['differenceM3'], result['differenceM3'])
+            self.assertEqual(result['differenceM3'], sum(f['frames'][-1]['differenceM3'] for f in result['facilities']))
+            for facility, expected in zip(result['facilities'], rows, strict=True):
+                self.assertEqual(datetime.fromisoformat(facility['frames'][0]['at']), datetime.fromisoformat(expected['installedAt']))
+                self.assertEqual(facility['frames'][0]['differenceM3'], 0)
+                self.assertTrue(all(datetime.fromisoformat(f['at']) >= datetime.fromisoformat(expected['installedAt']) for f in facility['frames']))
+                self.assertTrue(facility['initialization']['scoreExcludesWarmup'])
+                self.assertGreater(facility['initialization']['preActivationSeconds'], 7*86400)
+            path = self.artifacts/'historical'/str(identity)/str(job['lease_token'])
+            manifest = json.loads((path/'manifest.json').read_text())
+            self.assertIn('0/temporal.py', manifest)
+            self.assertEqual(manifest['0/temporal.py'], hashlib.sha256((path/'0/temporal.py').read_bytes()).hexdigest())
+        self.assertEqual(outputs[0], outputs[1])
     def test_expanded_candidates_real_rainfall_and_preserved_hashes(self):
         district='2419953'
         districts, sites, models = catalog()

@@ -1,0 +1,56 @@
+import type { HistoricalDraft, HistoricalJob, HistoricalScoreFrame } from '../entity/historical';
+
+export const temporalPolicy = 'INSTALLATION_TIME_EXPERIMENT_V1' as const;
+
+export function matchesHistoricalDraft(job: HistoricalJob | null, drafts: HistoricalDraft[]) {
+  return (
+    !!job &&
+    job.placements.length === drafts.length &&
+    drafts.every((d) =>
+      job.placements.some(
+        (p) =>
+          p.districtId === d.site.districtId &&
+          p.cellId === d.site.cellId &&
+          p.facilityType === d.facilityType &&
+          p.areaM2 === d.areaM2 &&
+          p.temporalPolicy === temporalPolicy &&
+          Date.parse(p.installedAt ?? '') === Date.parse(d.marker.installedAt)
+      )
+    )
+  );
+}
+
+export function scoreAt(frames: HistoricalScoreFrame[], at: string): HistoricalScoreFrame | null {
+  const instant = Date.parse(at);
+  let found: HistoricalScoreFrame | null = null;
+  for (const frame of frames) {
+    if (Date.parse(frame.at) <= instant && (!found || Date.parse(frame.at) > Date.parse(found.at)))
+      found = frame;
+  }
+  return found;
+}
+
+export function historicalScoreAt(result: NonNullable<HistoricalJob['result']>, at: string) {
+  if (result.temporalPolicy !== temporalPolicy) return null;
+  const values = (result.facilities ?? []).map((f) => {
+    if (!f.installedAt || !f.frames) return null;
+    if (Date.parse(at) < Date.parse(f.installedAt))
+      return {
+        at,
+        differenceM3: 0,
+        baselineAccountedM3: 0,
+        designAccountedM3: 0,
+      };
+    return scoreAt(f.frames, at);
+  });
+  if (!values.length || values.some((f) => !f)) return null;
+  return values.reduce<HistoricalScoreFrame>(
+    (sum, frame) => ({
+      at: Date.parse(frame!.at) < Date.parse(sum.at) ? frame!.at : sum.at,
+      differenceM3: sum.differenceM3 + frame!.differenceM3,
+      baselineAccountedM3: sum.baselineAccountedM3 + frame!.baselineAccountedM3,
+      designAccountedM3: sum.designAccountedM3 + frame!.designAccountedM3,
+    }),
+    { at, differenceM3: 0, baselineAccountedM3: 0, designAccountedM3: 0 }
+  );
+}

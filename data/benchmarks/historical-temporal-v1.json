@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-19",
+  "policy": "INSTALLATION_TIME_EXPERIMENT_V1",
+  "scope": "SELECTED_INDEPENDENT_SURFACES_ONLY",
+  "validationLevel": "EXPLORATORY",
+  "runDirectory": "data/runs/historical-temporal-20261019",
+  "manifestSha256": "8853e7630415dc3b37921a2e8265ea59bbd8f02f8305815ed42d839632f09df4",
+  "filesVerified": 95,
+  "scoreInterval": "Installation second through event observation window end; minute-end display only",
+  "initialState": "Continuous observed antecedent and event prefix with facility; modeled preconditioning, not measured construction state",
+  "partialMinuteForcing": "Existing uniform intensity within each observed minute; native 1-second integration",
+  "facilities": [
+    {
+      "cellId": "RW865253154",
+      "installedAt": "2022-08-08T09:02:17+00:00",
+      "areaM2": 20,
+      "finalDifferenceM3": -0.00040922832513956564,
+      "massBalanceResidualsM3": [
+        0.013650830123452806,
+        0.013384081808226256
+      ]
+    },
+    {
+      "cellId": "RW1552473319",
+      "installedAt": "2022-08-08T10:01:57+00:00",
+      "areaM2": 20,
+      "finalDifferenceM3": -6.816330222747524e-05,
+      "massBalanceResidualsM3": [
+        3.092250460667856e-05,
+        4.6517422198633085e-05
+      ]
+    }
+  ],
+  "meaningfulFieldEffectProven": false,
+  "verification": {
+    "javaPostgresTests": 9,
+    "nativeWorkerTests": 5,
+    "isolatedDbLog": "tmp/waterleague_queue_test_96a80789418b4d82ac8d05f0449c2a77.log",
+    "sourceDatabaseCountsUnchanged": true,
+    "nativeBoundaryAndRegressionTests": 6,
+    "initializationAndRunoffRegressionTests": 10,
+    "frontendTests": 208,
+    "frontendBuild": "PASS",
+    "browser": {
+      "liveGameGuest": "137-second installation, before-installation absence, icon time/location navigation, cancellation and budget restoration",
+      "localQa": "Actual archived native output; synthetic account and intercepted queue only; 3 automatic requests, parent lineage, seek backward, cancellation reduction; no database writes"
+    }
+  },
+  "remaining": [
+    "Persistent empty-design cancellation and reconnect restoration",
+    "Multi-district execution and server-wide design budget validation",
+    "Full-event submission and competition",
+    "Connected basin surface inundation and field validation"
+  ],
+  "screenshots": {
+    "data/benchmarks/historical-temporal-v1/accumulated-score.png": "46bd4d6f046b40a4d0ab2a3837902909132e6bd5151a821d87899740533ba1fc",
+    "data/benchmarks/historical-temporal-v1/before-installation.png": "fcf38adc29890380677aa4bc9fefff38fb697de2318a520ad7350d1af1e82eb9",
+    "data/benchmarks/historical-temporal-v1/cancel-derived-run.png": "e8f70dbe47dbf220ca6f68185196603f2c5b33fc3df56e76d69403ef97642875",
+    "data/benchmarks/historical-temporal-v1/installation-time.png": "75a88ae348991d03571aa0459ad9cd3b0a443aa72211308b12f9a82f931bedb0"
+  },
+  "sourceHashes": {
+    "simulation/waterleague_sim/engine/continuous.py": "824c62137026731122a5ae3604964371a8120a4b2c8777e7f7203262498eb85f",
+    "simulation/waterleague_sim/engine/temporal.py": "c5a08a26e41fbf33461382e4d4f22493042104c21511aacd98e79baedf71acd0",
+    "simulation/waterleague_sim/run_historical_job.py": "73df6bc40446a23eae1ac2eb13029a2a9a6b7cb5ae9d1af1245710f9119d9114",
+    "frontend/src/domains/historical/controller/useHistorical.ts": "1e92b8d7123102eef771a8038d0546d10ff87b4b5c301613317f8af725baf1f6",
+    "frontend/src/domains/historical/service/temporalService.ts": "906a96b232cc79c3960800decd2f0e39387dbf3ded01c85eba2c17b5f2240052",
+    "frontend/src/domains/historical/view/HistoricalPanel.tsx": "0eac14a0f9705de02878c6157829c441f485c420f2636ee18271afaa2640a26d"
+  }
+}

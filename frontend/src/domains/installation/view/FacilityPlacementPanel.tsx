@@ -25,6 +25,7 @@ type Placed = {
   ownerName: string;
   onRemove?: () => void;
   seasonEndsAt?: string | null;
+  planned?: boolean;
 };
 export type FacilityPlacementProps = {
   site: SharedSite | null;
@@ -121,7 +122,8 @@ export function FacilityPlacementPanel(p: FacilityPlacementProps) {
             <div className="shared-occupied">
               <Check size={22} />
               <h3>
-                {facilities[occupied.facilityType].name} {p.research ? '배치 완료' : '설치 완료'}
+                {facilities[occupied.facilityType].name}{' '}
+                {occupied.planned ? '설치 예정' : '설치 완료'}
               </h3>
               <p>
                 {occupied.ownerName} · {occupied.areaM2.toLocaleString('ko-KR')} m²
@@ -130,7 +132,7 @@ export function FacilityPlacementPanel(p: FacilityPlacementProps) {
               {p.research && occupied.onRemove ? (
                 <button className="outline-button" disabled={p.busy} onClick={occupied.onRemove}>
                   <Trash2 size={14} />
-                  {p.research ? '설계에서 제거' : '내 시설 철거'}
+                  {p.research ? '설치 취소' : '내 시설 철거'}
                 </button>
               ) : (
                 <p>
@@ -242,11 +244,9 @@ export function FacilityPlacementPanel(p: FacilityPlacementProps) {
                 <button className="solid-button shared-install" disabled={p.busy || !valid}>
                   {p.busy
                     ? '설치 확인 중'
-                    : p.research
-                      ? '연구 설계에 추가'
-                      : type
-                        ? `${facilities[type].name} 설치 확정`
-                        : '시설 선택'}
+                    : type
+                      ? `${facilities[type].name} ${p.research ? '설치' : '설치 확정'}`
+                      : '시설 선택'}
                 </button>
               ) : (
                 <p className="shared-readonly">{p.readOnlyMessage}</p>

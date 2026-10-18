@@ -92,7 +92,7 @@ it('공통 패널의 생물저류 제원 선택과 같은 사업군 잔액 적�
     );
     expect(html).toContain('생물저류시설');
     expect(html).toContain('11,200,000원');
-    expect(html).toContain(research ? '연구 설계에 추가' : '생물저류시설 설치 확정');
+    expect(html).toContain(research ? '생물저류시설 설치' : '생물저류시설 설치 확정');
     expect(html).not.toContain('class="solid-button shared-install" disabled');
   }
 });
