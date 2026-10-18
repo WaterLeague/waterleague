@@ -1,0 +1,14 @@
+{
+  "provider": "기상청",
+  "endpoint": "https://apihub.kma.go.kr/api/typ01/url/kma_sfcdd3.php",
+  "parameters": {
+    "tm1": "20220716",
+    "tm2": "20220716",
+    "stn": "108",
+    "help": "1"
+  },
+  "acquiredAt": "2026-10-18T05:11:25.799146+00:00",
+  "sha256": "e8c7659dd64a4cedb5324585012c8c966fd045a44bc5cbf810deb1d79b4300bd",
+  "bytes": 4319,
+  "sourceTimezone": "Asia/Seoul"
+}

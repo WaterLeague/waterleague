@@ -1,0 +1,1054 @@
+{
+  "schemaVersion": 1,
+  "kind": "OBSERVED_INITIALIZATION_SENSITIVITY_DIAGNOSTIC",
+  "official": false,
+  "modelPromotionAllowed": false,
+  "eventId": "seoul-20220808",
+  "districtId": "2419953",
+  "days": [
+    7,
+    14,
+    28
+  ],
+  "assetTemporalMode": "CURRENT_GEOMETRY_HISTORICAL_RAIN_STRESS_TEST",
+  "scope": "INPUT_BOUND_INDEPENDENT_SURFACE_ONLY",
+  "evaluationModelHash": "3a02b5d7acd351e03c03be43bdf0f15d571f69efb984527bf60afadd0c0328f2",
+  "siteCatalogHash": "4427988733094d0a62a84ad124d3ffbf4b456f90eda5a88c93c4a5b21910d4c2",
+  "antecedent": {
+    "stationId": "421",
+    "startUtc": "2022-07-11T18:00:00+09:00",
+    "endUtc": "2022-08-08T18:00:00+09:00",
+    "minutes": 40320,
+    "totalRainMm": 397.0,
+    "sourceCount": 152,
+    "reference": {
+      "file": "seoul-20220808-421-28d-v1.json.gz",
+      "sha256": "113dc1376856067904f1fe5ea5619105bb05b5160a042f50375955918e2c3f53"
+    },
+    "rawReconstructionStatus": "EXACT_MATCH_ARCHIVED_CODE_AND_SOURCE",
+    "rainDepthMethods": {
+      "DAILY_DIFFERENCE": 40222,
+      "ROLLING_15_MINUTE_DIFFERENCE": 28,
+      "OBSERVED_ZERO_COUNTER_GAP": 68,
+      "OBSERVED_INTERVAL_MEAN_ASSUMPTION": 2
+    },
+    "qualityWarningCount": 5,
+    "aggregatedRainIntervals": [
+      {
+        "end": "2022-08-08T03:31:00+00:00",
+        "minutes": 2,
+        "start": "2022-08-08T03:29:00+00:00",
+        "timeDistribution": "UNIFORM_NOT_MINUTE_OBSERVATIONS",
+        "totalMm": 0.5
+      }
+    ]
+  },
+  "nativeRunCount": 27,
+  "designCaseCount": 18,
+  "engine": {
+    "adapterSha256": "3a4ec3679d7fe3c2ed0a39a2cf3528fb75e76b688754653e3c3431ca7bd97f4e",
+    "binarySha256": "651e08796415344ebff4ffd709273499a3a0c098665de2589cc2ac3fcfd89183",
+    "engineVersion": "5.2.4",
+    "modification": "READ_ONLY_OBSERVER_NO_SOLVER_CHANGES",
+    "observerSha256": "54c6b8ef6709b8231e69ed2a9431be3413961d9f0da0e3f010cb1bad9c311c8c",
+    "revision": "7952ca837988b1c32f791812eccc9fd64547e093",
+    "schemaVersion": 1,
+    "sourceArchiveSha256": "3f76a199573088ce47ff02491c529afb73d9953ee9d948dfc89dcd4981b4c0c0"
+  },
+  "reports": [
+    {
+      "facilityType": "RAIN_GARDEN",
+      "cellId": "G1",
+      "areaM2": 20.0,
+      "evaluationStart": "2022-08-08T09:00:00+00:00",
+      "evaluationEnd": "2022-08-08T14:59:00+00:00",
+      "inputSha256": "d880177912acdd59d11231e10a8e1f63ec10bcf352e2cbb2897fb60b5bc72c2d",
+      "units": {
+        "contributionM3": "m3",
+        "evaluatedDischargeM3": "m3",
+        "evaluatedEvaporationM3": "m3",
+        "evaluatedInfiltrationM3": "m3",
+        "initialLidStorageM3": "m3",
+        "initialPavementDepthMm": "mm",
+        "initialSoilMoisture": "m3/m3",
+        "initialStorageDepthMm": "mm",
+        "initialStorageM3": "m3",
+        "initialSurfaceDepthMm": "mm",
+        "peakDischargeMean1MinM3s": "m3/s"
+      },
+      "cases": [
+        {
+          "days": 7,
+          "seedSaturationPercent": 0,
+          "status": "SUCCEEDED",
+          "metrics": {
+            "contributionM3": 0.08962922389553984,
+            "evaluatedDischargeM3": 0.42592112553754136,
+            "evaluatedEvaporationM3": 0.0006489611658542782,
+            "evaluatedInfiltrationM3": 0.09028149272930347,
+            "initialLidStorageM3": 3.4644998128243207,
+            "initialPavementDepthMm": null,
+            "initialSoilMoisture": 0.2840027118062103,
+            "initialStorageDepthMm": null,
+            "initialStorageM3": 3.4731093523332413,
+            "initialSurfaceDepthMm": 0.0,
+            "peakDischargeMean1MinM3s": 0.00016255078811294916
+          },
+          "evaluationBalanceResidualM3": -0.00031765128367444717
+        },
+        {
+          "days": 7,
+          "seedSaturationPercent": 100,
+          "status": "SUCCEEDED",
+          "metrics": {
+            "contributionM3": 0.39453379592159665,
+            "evaluatedDischargeM3": 0.42592112553754136,
+            "evaluatedEvaporationM3": 0.0006894892352443671,
+            "evaluatedInfiltrationM3": 0.3951393333342317,
+            "initialLidStorageM3": 5.461709538881704,
+            "initialPavementDepthMm": null,
+            "initialSoilMoisture": 0.4477069285057863,
+            "initialStorageDepthMm": null,
+            "initialStorageM3": 5.470319078390624,
+            "initialSurfaceDepthMm": 0.0,
+            "peakDischargeMean1MinM3s": 0.00016255078811294916
+          },
+          "evaluationBalanceResidualM3": -0.00031144793193549347
+        },
+        {
+          "days": 14,
+          "seedSaturationPercent": 0,
+          "status": "SUCCEEDED",
+          "metrics": {
+            "contributionM3": 0.3913437042137837,
+            "evaluatedDischargeM3": 0.4259211255375386,
+            "evaluatedEvaporationM3": 0.0006608913915152614,
+            "evaluatedInfiltrationM3": 0.39197893797496297,
+            "initialLidStorageM3": 5.109130158118859,
+            "initialPavementDepthMm": null,
+            "initialSoilMoisture": 0.4188074649732572,
+            "initialStorageDepthMm": null,
+            "initialStorageM3": 5.117739697627779,
+            "initialSurfaceDepthMm": 0.0,
+            "peakDischargeMean1MinM3s": 0.00016255078811294732
+          },
+          "evaluationBalanceResidualM3": -0.00031254643740696864
+        },
+        {
+          "days": 14,
+          "seedSaturationPercent": 100,
+          "status": "SUCCEEDED",
+          "metrics": {
+            "contributionM3": 0.3945336857248214,
+            "evaluatedDischargeM3": 0.4259211255375386,
+            "evaluatedEvaporationM3": 0.0006893790389952414,
+            "evaluatedInfiltrationM3": 0.3951393333342317,
+            "initialLidStorageM3": 5.459327125917955,
+            "initialPavementDepthMm": null,
+            "initialSoilMoisture": 0.4475116487546593,
+            "initialStorageDepthMm": null,
+            "initialStorageM3": 5.467936665426875,
+            "initialSurfaceDepthMm": 0.0,
+            "peakDischargeMean1MinM3s": 0.00016255078811294732
+          },
+          "evaluationBalanceResidualM3": -0.00031144793311810304
+        },
+        {
+          "days": 28,
+          "seedSaturationPercent": 0,
+          "status": "SUCCEEDED",
+          "metrics": {
+            "contributionM3": 0.3945383365706534,
+            "evaluatedDischargeM3": 0.42592112553754147,
+            "evaluatedEvaporationM3": 0.0006892027225182673,
+            "evaluatedInfiltrationM3": 0.3951393333342317,
+            "initialLidStorageM3": 5.45528705592163,
+            "initialPavementDepthMm": null,
+            "initialSoilMoisture": 0.4471804954762721,
+            "initialStorageDepthMm": null,
+            "initialStorageM3": 5.46389659543055,
+            "initialSurfaceDepthMm": 0.0,
+            "peakDischargeMean1MinM3s": 0.00016255078811295103
+          },
+          "evaluationBalanceResidualM3": -0.00030662077206322635
+        },
+        {
+          "days": 28,
+          "seedSaturationPercent": 100,
+          "status": "SUCCEEDED",
+          "metrics": {
+            "contributionM3": 0.3945336636855763,
+            "evaluatedDischargeM3": 0.42592112553754147,
+            "evaluatedEvaporationM3": 0.0006893569979031788,
+            "evaluatedInfiltrationM3": 0.3951393333342317,
+            "initialLidStorageM3": 5.458974289645636,
+            "initialPavementDepthMm": null,
+            "initialSoilMoisture": 0.4474827277487315,
+            "initialStorageDepthMm": null,
+            "initialStorageM3": 5.467583829154556,
+            "initialSurfaceDepthMm": 0.0,
+            "peakDischargeMean1MinM3s": 0.00016255078811295103
+          },
+          "evaluationBalanceResidualM3": -0.00031144793252524394
+        }
+      ],
+      "comparison": {
+        "durationDifferences": [
+          {
+            "longDays": 14,
+            "longMinusShort": {
+              "contributionM3": 0.3017144803182439,
+              "evaluatedDischargeM3": -2.7755575615628914e-15,
+              "evaluatedEvaporationM3": 1.1930225660983229e-05,
+              "evaluatedInfiltrationM3": 0.3016974452456595,
+              "initialLidStorageM3": 1.644630345294538,
+              "initialPavementDepthMm": null,
+              "initialSoilMoisture": 0.13480475316704693,
+              "initialStorageDepthMm": null,
+              "initialStorageM3": 1.6446303452945377,
+              "initialSurfaceDepthMm": 0.0,
+              "peakDischargeMean1MinM3s": -1.8431436932253575e-18
+            },
+            "seedSaturationPercent": 0,
+            "shortDays": 7
+          },
+          {
+            "longDays": 14,
+            "longMinusShort": {
+              "contributionM3": -1.1019677526036276e-07,
+              "evaluatedDischargeM3": -2.7755575615628914e-15,
+              "evaluatedEvaporationM3": -1.1019624912567139e-07,
+              "evaluatedInfiltrationM3": 0.0,
+              "initialLidStorageM3": -0.002382412963748415,
+              "initialPavementDepthMm": null,
+              "initialSoilMoisture": -0.0001952797511269866,
+              "initialStorageDepthMm": null,
+              "initialStorageM3": -0.002382412963748415,
+              "initialSurfaceDepthMm": 0.0,
+              "peakDischargeMean1MinM3s": -1.8431436932253575e-18
+            },
+            "seedSaturationPercent": 100,
+            "shortDays": 7
+          },
+          {
+            "longDays": 28,
+            "longMinusShort": {
+              "contributionM3": 0.0031946323568696755,
+              "evaluatedDischargeM3": 2.886579864025407e-15,
+              "evaluatedEvaporationM3": 2.831133100300587e-05,
+              "evaluatedInfiltrationM3": 0.0031603953592687084,
+              "initialLidStorageM3": 0.34615689780277137,
+              "initialPavementDepthMm": null,
+              "initialSoilMoisture": 0.028373030503014873,
+              "initialStorageDepthMm": null,
+              "initialStorageM3": 0.34615689780277137,
+              "initialSurfaceDepthMm": 0.0,
+              "peakDischargeMean1MinM3s": 3.713392440762853e-18
+            },
+            "seedSaturationPercent": 0,
+            "shortDays": 14
+          },
+          {
+            "longDays": 28,
+            "longMinusShort": {
+              "contributionM3": -2.2039245095584192e-08,
+              "evaluatedDischargeM3": 2.886579864025407e-15,
+              "evaluatedEvaporationM3": -2.204109206260796e-08,
+              "evaluatedInfiltrationM3": 0.0,
+              "initialLidStorageM3": -0.00035283627231930126,
+              "initialPavementDepthMm": null,
+              "initialSoilMoisture": -2.892100592782887e-05,
+              "initialStorageDepthMm": null,
+              "initialStorageM3": -0.00035283627231930126,
+              "initialSurfaceDepthMm": 0.0,
+              "peakDischargeMean1MinM3s": 3.713392440762853e-18
+            },
+            "seedSaturationPercent": 100,
+            "shortDays": 14
+          }
+        ],
+        "ranges": {
+          "contributionM3": {
+            "max": 0.3945383365706534,
+            "min": 0.08962922389553984,
+            "span": 0.30490911267511356
+          },
+          "evaluatedDischargeM3": {
+            "max": 0.42592112553754147,
+            "min": 0.4259211255375386,
+            "span": 2.886579864025407e-15
+          },
+          "evaluatedEvaporationM3": {
+            "max": 0.0006894892352443671,
+            "min": 0.0006489611658542782,
+            "span": 4.0528069390088906e-05
+          },
+          "evaluatedInfiltrationM3": {
+            "max": 0.3951393333342317,
+            "min": 0.09028149272930347,
+            "span": 0.3048578406049282
+          },
+          "initialLidStorageM3": {
+            "max": 5.461709538881704,
+            "min": 3.4644998128243207,
+            "span": 1.997209726057383
+          },
+          "initialPavementDepthMm": null,
+          "initialSoilMoisture": {
+            "max": 0.4477069285057863,
+            "min": 0.2840027118062103,
+            "span": 0.16370421669957602
+          },
+          "initialStorageDepthMm": null,
+          "initialStorageM3": {
+            "max": 5.470319078390624,
+            "min": 3.4731093523332413,
+            "span": 1.9972097260573825
+          },
+          "initialSurfaceDepthMm": {
+            "max": 0.0,
+            "min": 0.0,
+            "span": 0.0
+          },
+          "peakDischargeMean1MinM3s": {
+            "max": 0.00016255078811295103,
+            "min": 0.00016255078811294732,
+            "span": 3.713392440762853e-18
+          }
+        },
+        "seedDifferences": [
+          {
+            "days": 7,
+            "wetMinusDry": {
+              "contributionM3": 0.3049045720260568,
+              "evaluatedDischargeM3": 0.0,
+              "evaluatedEvaporationM3": 4.0528069390088906e-05,
+              "evaluatedInfiltrationM3": 0.3048578406049282,
+              "initialLidStorageM3": 1.997209726057383,
+              "initialPavementDepthMm": null,
+              "initialSoilMoisture": 0.16370421669957602,
+              "initialStorageDepthMm": null,
+              "initialStorageM3": 1.9972097260573825,
+              "initialSurfaceDepthMm": 0.0,
+              "peakDischargeMean1MinM3s": 0.0
+            }
+          },
+          {
+            "days": 14,
+            "wetMinusDry": {
+              "contributionM3": 0.003189981511037665,
+              "evaluatedDischargeM3": 0.0,
+              "evaluatedEvaporationM3": 2.8487647479980005e-05,
+              "evaluatedInfiltrationM3": 0.0031603953592687084,
+              "initialLidStorageM3": 0.35019696779909637,
+              "initialPavementDepthMm": null,
+              "initialSoilMoisture": 0.028704183781402104,
+              "initialStorageDepthMm": null,
+              "initialStorageM3": 0.35019696779909637,
+              "initialSurfaceDepthMm": 0.0,
+              "peakDischargeMean1MinM3s": 0.0
+            }
+          },
+          {
+            "days": 28,
+            "wetMinusDry": {
+              "contributionM3": -4.672885077106059e-06,
+              "evaluatedDischargeM3": 0.0,
+              "evaluatedEvaporationM3": 1.542753849115286e-07,
+              "evaluatedInfiltrationM3": 0.0,
+              "initialLidStorageM3": 0.0036872337240057007,
+              "initialPavementDepthMm": null,
+              "initialSoilMoisture": 0.00030223227245940176,
+              "initialStorageDepthMm": null,
+              "initialStorageM3": 0.0036872337240057007,
+              "initialSurfaceDepthMm": 0.0,
+              "peakDischargeMean1MinM3s": 0.0
+            }
+          }
+        ],
+        "status": "MEASURED_NO_UNIVERSAL_CONVERGENCE_THRESHOLD"
+      },
+      "limitations": [
+        "건습 시드는 관측 수분이 아닌 초기 상태 경계 시나리오",
+        "선택 입력에서의 민감도이며 서울 전역 수렴·현장 정확도 검증 아님",
+        "관망 없는 독립 표면의 유출·배수 합계 1분 평균 첨두이며 하류 침수 첨두 아님",
+        "경쟁 기록·점수·기존 초기화 정책 변경 없음"
+      ]
+    },
+    {
+      "facilityType": "PERMEABLE_PAVEMENT",
+      "cellId": "G1",
+      "areaM2": 20.0,
+      "evaluationStart": "2022-08-08T09:00:00+00:00",
+      "evaluationEnd": "2022-08-08T14:59:00+00:00",
+      "inputSha256": "c5e5e7d94392a82ae2c11b1b1db144bad8322ee485bea3239694b6c2aa701f66",
+      "units": {
+        "contributionM3": "m3",
+        "evaluatedDischargeM3": "m3",
+        "evaluatedEvaporationM3": "m3",
+        "evaluatedInfiltrationM3": "m3",
+        "initialLidStorageM3": "m3",
+        "initialPavementDepthMm": "mm",
+        "initialSoilMoisture": "m3/m3",
+        "initialStorageDepthMm": "mm",
+        "initialStorageM3": "m3",
+        "initialSurfaceDepthMm": "mm",
+        "peakDischargeMean1MinM3s": "m3/s"
+      },
+      "cases": [
+        {
+          "days": 7,
+          "seedSaturationPercent": 0,
+          "status": "SUCCEEDED",
+          "metrics": {
+            "contributionM3": 0.3946488104159982,
+            "evaluatedDischargeM3": 0.42592112553754136,
+            "evaluatedEvaporationM3": 0.0007990092713233976,
+            "evaluatedInfiltrationM3": 0.3951393333342317,
+            "initialLidStorageM3": 1.1438618759231025,
+            "initialPavementDepthMm": 0.0,
+            "initialSoilMoisture": null,
+            "initialStorageDepthMm": 163.45374250205305,
+            "initialStorageM3": 1.1524714154320226,
+            "initialSurfaceDepthMm": 0.0,
+            "peakDischargeMean1MinM3s": 0.00016255078811294916
+          },
+          "evaluationBalanceResidualM3": -0.00030595347361317415
+        },
+        {
+          "days": 7,
+          "seedSaturationPercent": 100,
+          "status": "SUCCEEDED",
+          "metrics": {
+            "contributionM3": 0.3946488104159982,
+            "evaluatedDischargeM3": 0.42592112553754136,
+            "evaluatedEvaporationM3": 0.0007990092713233976,
+            "evaluatedInfiltrationM3": 0.3951393333342317,
+            "initialLidStorageM3": 1.1438618759231025,
+            "initialPavementDepthMm": 0.0,
+            "initialSoilMoisture": null,
+            "initialStorageDepthMm": 163.45374250205305,
+            "initialStorageM3": 1.1524714154320226,
+            "initialSurfaceDepthMm": 0.0,
+            "peakDischargeMean1MinM3s": 0.00016255078811294916
+          },
+          "evaluationBalanceResidualM3": -0.00030595347361317415
+        },
+        {
+          "days": 14,
+          "seedSaturationPercent": 0,
+          "status": "SUCCEEDED",
+          "metrics": {
+            "contributionM3": 0.39464881041593247,
+            "evaluatedDischargeM3": 0.4259211255375386,
+            "evaluatedEvaporationM3": 0.0007990092713234254,
+            "evaluatedInfiltrationM3": 0.39513933333423124,
+            "initialLidStorageM3": 1.1438618759231025,
+            "initialPavementDepthMm": 0.0,
+            "initialSoilMoisture": null,
+            "initialStorageDepthMm": 163.45374250205305,
+            "initialStorageM3": 1.1524714154320226,
+            "initialSurfaceDepthMm": 0.0,
+            "peakDischargeMean1MinM3s": 0.00016255078811294732
+          },
+          "evaluationBalanceResidualM3": -0.0003059534743348191
+        },
+        {
+          "days": 14,
+          "seedSaturationPercent": 100,
+          "status": "SUCCEEDED",
+          "metrics": {
+            "contributionM3": 0.39464881041593247,
+            "evaluatedDischargeM3": 0.4259211255375386,
+            "evaluatedEvaporationM3": 0.0007990092713234254,
+            "evaluatedInfiltrationM3": 0.3951393333342317,
+            "initialLidStorageM3": 1.1438618759231025,
+            "initialPavementDepthMm": 0.0,
+            "initialSoilMoisture": null,
+            "initialStorageDepthMm": 163.45374250205305,
+            "initialStorageM3": 1.1524714154320226,
+            "initialSurfaceDepthMm": 0.0,
+            "peakDischargeMean1MinM3s": 0.00016255078811294732
+          },
+          "evaluationBalanceResidualM3": -0.0003059534743352632
+        },
+        {
+          "days": 28,
+          "seedSaturationPercent": 0,
+          "status": "SUCCEEDED",
+          "metrics": {
+            "contributionM3": 0.39464881041602484,
+            "evaluatedDischargeM3": 0.42592112553754147,
+            "evaluatedEvaporationM3": 0.0007990092713234254,
+            "evaluatedInfiltrationM3": 0.3951393333342317,
+            "initialLidStorageM3": 1.1438618759231025,
+            "initialPavementDepthMm": 0.0,
+            "initialSoilMoisture": null,
+            "initialStorageDepthMm": 163.45374250205305,
+            "initialStorageM3": 1.1524714154320226,
+            "initialSurfaceDepthMm": 0.0,
+            "peakDischargeMean1MinM3s": 0.00016255078811295103
+          },
+          "evaluationBalanceResidualM3": -0.0003059534754970006
+        },
+        {
+          "days": 28,
+          "seedSaturationPercent": 100,
+          "status": "SUCCEEDED",
+          "metrics": {
+            "contributionM3": 0.39464881041602484,
+            "evaluatedDischargeM3": 0.42592112553754147,
+            "evaluatedEvaporationM3": 0.0007990092711453456,
+            "evaluatedInfiltrationM3": 0.3951393333342317,
+            "initialLidStorageM3": 1.1438618759231025,
+            "initialPavementDepthMm": 0.0,
+            "initialSoilMoisture": null,
+            "initialStorageDepthMm": 163.45374250205305,
+            "initialStorageM3": 1.1524714154320226,
+            "initialSurfaceDepthMm": 0.0,
+            "peakDischargeMean1MinM3s": 0.00016255078811295103
+          },
+          "evaluationBalanceResidualM3": -0.0003059534753189208
+        }
+      ],
+      "comparison": {
+        "durationDifferences": [
+          {
+            "longDays": 14,
+            "longMinusShort": {
+              "contributionM3": -6.572520305780927e-14,
+              "evaluatedDischargeM3": -2.7755575615628914e-15,
+              "evaluatedEvaporationM3": 2.7755575615628914e-17,
+              "evaluatedInfiltrationM3": -4.440892098500626e-16,
+              "initialLidStorageM3": 0.0,
+              "initialPavementDepthMm": 0.0,
+              "initialSoilMoisture": null,
+              "initialStorageDepthMm": 0.0,
+              "initialStorageM3": 0.0,
+              "initialSurfaceDepthMm": 0.0,
+              "peakDischargeMean1MinM3s": -1.8431436932253575e-18
+            },
+            "seedSaturationPercent": 0,
+            "shortDays": 7
+          },
+          {
+            "longDays": 14,
+            "longMinusShort": {
+              "contributionM3": -6.572520305780927e-14,
+              "evaluatedDischargeM3": -2.7755575615628914e-15,
+              "evaluatedEvaporationM3": 2.7755575615628914e-17,
+              "evaluatedInfiltrationM3": 0.0,
+              "initialLidStorageM3": 0.0,
+              "initialPavementDepthMm": 0.0,
+              "initialSoilMoisture": null,
+              "initialStorageDepthMm": 0.0,
+              "initialStorageM3": 0.0,
+              "initialSurfaceDepthMm": 0.0,
+              "peakDischargeMean1MinM3s": -1.8431436932253575e-18
+            },
+            "seedSaturationPercent": 100,
+            "shortDays": 7
+          },
+          {
+            "longDays": 28,
+            "longMinusShort": {
+              "contributionM3": 9.237055564881302e-14,
+              "evaluatedDischargeM3": 2.886579864025407e-15,
+              "evaluatedEvaporationM3": 0.0,
+              "evaluatedInfiltrationM3": 4.440892098500626e-16,
+              "initialLidStorageM3": 0.0,
+              "initialPavementDepthMm": 0.0,
+              "initialSoilMoisture": null,
+              "initialStorageDepthMm": 0.0,
+              "initialStorageM3": 0.0,
+              "initialSurfaceDepthMm": 0.0,
+              "peakDischargeMean1MinM3s": 3.713392440762853e-18
+            },
+            "seedSaturationPercent": 0,
+            "shortDays": 14
+          },
+          {
+            "longDays": 28,
+            "longMinusShort": {
+              "contributionM3": 9.237055564881302e-14,
+              "evaluatedDischargeM3": 2.886579864025407e-15,
+              "evaluatedEvaporationM3": -1.780797731498751e-13,
+              "evaluatedInfiltrationM3": 0.0,
+              "initialLidStorageM3": 0.0,
+              "initialPavementDepthMm": 0.0,
+              "initialSoilMoisture": null,
+              "initialStorageDepthMm": 0.0,
+              "initialStorageM3": 0.0,
+              "initialSurfaceDepthMm": 0.0,
+              "peakDischargeMean1MinM3s": 3.713392440762853e-18
+            },
+            "seedSaturationPercent": 100,
+            "shortDays": 14
+          }
+        ],
+        "ranges": {
+          "contributionM3": {
+            "max": 0.39464881041602484,
+            "min": 0.39464881041593247,
+            "span": 9.237055564881302e-14
+          },
+          "evaluatedDischargeM3": {
+            "max": 0.42592112553754147,
+            "min": 0.4259211255375386,
+            "span": 2.886579864025407e-15
+          },
+          "evaluatedEvaporationM3": {
+            "max": 0.0007990092713234254,
+            "min": 0.0007990092711453456,
+            "span": 1.780797731498751e-13
+          },
+          "evaluatedInfiltrationM3": {
+            "max": 0.3951393333342317,
+            "min": 0.39513933333423124,
+            "span": 4.440892098500626e-16
+          },
+          "initialLidStorageM3": {
+            "max": 1.1438618759231025,
+            "min": 1.1438618759231025,
+            "span": 0.0
+          },
+          "initialPavementDepthMm": {
+            "max": 0.0,
+            "min": 0.0,
+            "span": 0.0
+          },
+          "initialSoilMoisture": null,
+          "initialStorageDepthMm": {
+            "max": 163.45374250205305,
+            "min": 163.45374250205305,
+            "span": 0.0
+          },
+          "initialStorageM3": {
+            "max": 1.1524714154320226,
+            "min": 1.1524714154320226,
+            "span": 0.0
+          },
+          "initialSurfaceDepthMm": {
+            "max": 0.0,
+            "min": 0.0,
+            "span": 0.0
+          },
+          "peakDischargeMean1MinM3s": {
+            "max": 0.00016255078811295103,
+            "min": 0.00016255078811294732,
+            "span": 3.713392440762853e-18
+          }
+        },
+        "seedDifferences": [
+          {
+            "days": 7,
+            "wetMinusDry": {
+              "contributionM3": 0.0,
+              "evaluatedDischargeM3": 0.0,
+              "evaluatedEvaporationM3": 0.0,
+              "evaluatedInfiltrationM3": 0.0,
+              "initialLidStorageM3": 0.0,
+              "initialPavementDepthMm": 0.0,
+              "initialSoilMoisture": null,
+              "initialStorageDepthMm": 0.0,
+              "initialStorageM3": 0.0,
+              "initialSurfaceDepthMm": 0.0,
+              "peakDischargeMean1MinM3s": 0.0
+            }
+          },
+          {
+            "days": 14,
+            "wetMinusDry": {
+              "contributionM3": 0.0,
+              "evaluatedDischargeM3": 0.0,
+              "evaluatedEvaporationM3": 0.0,
+              "evaluatedInfiltrationM3": 4.440892098500626e-16,
+              "initialLidStorageM3": 0.0,
+              "initialPavementDepthMm": 0.0,
+              "initialSoilMoisture": null,
+              "initialStorageDepthMm": 0.0,
+              "initialStorageM3": 0.0,
+              "initialSurfaceDepthMm": 0.0,
+              "peakDischargeMean1MinM3s": 0.0
+            }
+          },
+          {
+            "days": 28,
+            "wetMinusDry": {
+              "contributionM3": 0.0,
+              "evaluatedDischargeM3": 0.0,
+              "evaluatedEvaporationM3": -1.780797731498751e-13,
+              "evaluatedInfiltrationM3": 0.0,
+              "initialLidStorageM3": 0.0,
+              "initialPavementDepthMm": 0.0,
+              "initialSoilMoisture": null,
+              "initialStorageDepthMm": 0.0,
+              "initialStorageM3": 0.0,
+              "initialSurfaceDepthMm": 0.0,
+              "peakDischargeMean1MinM3s": 0.0
+            }
+          }
+        ],
+        "status": "MEASURED_NO_UNIVERSAL_CONVERGENCE_THRESHOLD"
+      },
+      "limitations": [
+        "건습 시드는 관측 수분이 아닌 초기 상태 경계 시나리오",
+        "선택 입력에서의 민감도이며 서울 전역 수렴·현장 정확도 검증 아님",
+        "관망 없는 독립 표면의 유출·배수 합계 1분 평균 첨두이며 하류 침수 첨두 아님",
+        "경쟁 기록·점수·기존 초기화 정책 변경 없음"
+      ]
+    },
+    {
+      "facilityType": "GREEN_ROOF",
+      "cellId": "RW1030372929",
+      "areaM2": 20.0,
+      "evaluationStart": "2022-08-08T09:00:00+00:00",
+      "evaluationEnd": "2022-08-08T14:59:00+00:00",
+      "inputSha256": "59f61b5173ec984a997b6e8e8e94f4b61745eb80505eb8d03193d0caf90e604f",
+      "units": {
+        "contributionM3": "m3",
+        "evaluatedDischargeM3": "m3",
+        "evaluatedEvaporationM3": "m3",
+        "evaluatedInfiltrationM3": "m3",
+        "initialLidStorageM3": "m3",
+        "initialPavementDepthMm": "mm",
+        "initialSoilMoisture": "m3/m3",
+        "initialStorageDepthMm": "mm",
+        "initialStorageM3": "m3",
+        "initialSurfaceDepthMm": "mm",
+        "peakDischargeMean1MinM3s": "m3/s"
+      },
+      "cases": [
+        {
+          "days": 7,
+          "seedSaturationPercent": 0,
+          "status": "SUCCEEDED",
+          "metrics": {
+            "contributionM3": -0.0004639218325754868,
+            "evaluatedDischargeM3": 5.327104504705045,
+            "evaluatedEvaporationM3": 0.001767887358284037,
+            "evaluatedInfiltrationM3": 0.0,
+            "initialLidStorageM3": 1.4159406459883757,
+            "initialPavementDepthMm": null,
+            "initialSoilMoisture": 0.4680531717639085,
+            "initialStorageDepthMm": 1.9858179128512088,
+            "initialStorageM3": 1.5237887408470616,
+            "initialSurfaceDepthMm": 0.0,
+            "peakDischargeMean1MinM3s": 0.0014161446866805796
+          },
+          "evaluationBalanceResidualM3": 0.000159717167440121
+        },
+        {
+          "days": 7,
+          "seedSaturationPercent": 100,
+          "status": "SUCCEEDED",
+          "metrics": {
+            "contributionM3": -0.0004639218325968031,
+            "evaluatedDischargeM3": 5.3271045047050665,
+            "evaluatedEvaporationM3": 0.001767887358284037,
+            "evaluatedInfiltrationM3": 0.0,
+            "initialLidStorageM3": 1.4159406459883757,
+            "initialPavementDepthMm": null,
+            "initialSoilMoisture": 0.4680531717639085,
+            "initialStorageDepthMm": 1.9858179128512088,
+            "initialStorageM3": 1.5237887408470616,
+            "initialSurfaceDepthMm": 0.0,
+            "peakDischargeMean1MinM3s": 0.0014161446866805796
+          },
+          "evaluationBalanceResidualM3": 0.0001597171674188047
+        },
+        {
+          "days": 14,
+          "seedSaturationPercent": 0,
+          "status": "SUCCEEDED",
+          "metrics": {
+            "contributionM3": -0.00046392183252397245,
+            "evaluatedDischargeM3": 5.327104504705133,
+            "evaluatedEvaporationM3": 0.001767887358284037,
+            "evaluatedInfiltrationM3": 0.0,
+            "initialLidStorageM3": 1.4159406459883757,
+            "initialPavementDepthMm": null,
+            "initialSoilMoisture": 0.4680531717639085,
+            "initialStorageDepthMm": 1.9858179128512088,
+            "initialStorageM3": 1.5237887408470616,
+            "initialSurfaceDepthMm": 0.0,
+            "peakDischargeMean1MinM3s": 0.001416144686680528
+          },
+          "evaluationBalanceResidualM3": 0.00015971716347973341
+        },
+        {
+          "days": 14,
+          "seedSaturationPercent": 100,
+          "status": "SUCCEEDED",
+          "metrics": {
+            "contributionM3": -0.0004639218325177552,
+            "evaluatedDischargeM3": 5.327104504705127,
+            "evaluatedEvaporationM3": 0.0017678873565456499,
+            "evaluatedInfiltrationM3": 0.0,
+            "initialLidStorageM3": 1.4159406459883757,
+            "initialPavementDepthMm": null,
+            "initialSoilMoisture": 0.4680531717639085,
+            "initialStorageDepthMm": 1.9858179128512088,
+            "initialStorageM3": 1.5237887408470616,
+            "initialSurfaceDepthMm": 0.0,
+            "peakDischargeMean1MinM3s": 0.001416144686680528
+          },
+          "evaluationBalanceResidualM3": 0.00015971716522411583
+        },
+        {
+          "days": 28,
+          "seedSaturationPercent": 0,
+          "status": "SUCCEEDED",
+          "metrics": {
+            "contributionM3": -0.00046392183251953156,
+            "evaluatedDischargeM3": 5.327104504704956,
+            "evaluatedEvaporationM3": 0.0017678873565456499,
+            "evaluatedInfiltrationM3": 0.0,
+            "initialLidStorageM3": 1.4159406459883757,
+            "initialPavementDepthMm": null,
+            "initialSoilMoisture": 0.4680531717639085,
+            "initialStorageDepthMm": 1.9858179128512088,
+            "initialStorageM3": 1.5237887408470616,
+            "initialSurfaceDepthMm": 0.0,
+            "peakDischargeMean1MinM3s": 0.0014161446866807056
+          },
+          "evaluationBalanceResidualM3": 0.00015971716549767478
+        },
+        {
+          "days": 28,
+          "seedSaturationPercent": 100,
+          "status": "SUCCEEDED",
+          "metrics": {
+            "contributionM3": -0.0004639218324431482,
+            "evaluatedDischargeM3": 5.32710450470488,
+            "evaluatedEvaporationM3": 0.0017678873565456499,
+            "evaluatedInfiltrationM3": 0.0,
+            "initialLidStorageM3": 1.4159406459883757,
+            "initialPavementDepthMm": null,
+            "initialSoilMoisture": 0.4680531717639085,
+            "initialStorageDepthMm": 1.9858179128512088,
+            "initialStorageM3": 1.5237887408470616,
+            "initialSurfaceDepthMm": 0.0,
+            "peakDischargeMean1MinM3s": 0.0014161446866807056
+          },
+          "evaluationBalanceResidualM3": 0.00015971716557405813
+        }
+      ],
+      "comparison": {
+        "durationDifferences": [
+          {
+            "longDays": 14,
+            "longMinusShort": {
+              "contributionM3": 5.1514348342607263e-14,
+              "evaluatedDischargeM3": 8.79296635503124e-14,
+              "evaluatedEvaporationM3": 0.0,
+              "evaluatedInfiltrationM3": 0.0,
+              "initialLidStorageM3": 0.0,
+              "initialPavementDepthMm": null,
+              "initialSoilMoisture": 0.0,
+              "initialStorageDepthMm": 0.0,
+              "initialStorageM3": 0.0,
+              "initialSurfaceDepthMm": 0.0,
+              "peakDischargeMean1MinM3s": -5.160802341031001e-17
+            },
+            "seedSaturationPercent": 0,
+            "shortDays": 7
+          },
+          {
+            "longDays": 14,
+            "longMinusShort": {
+              "contributionM3": 7.904787935331115e-14,
+              "evaluatedDischargeM3": 6.039613253960852e-14,
+              "evaluatedEvaporationM3": -1.7383872119580701e-12,
+              "evaluatedInfiltrationM3": 0.0,
+              "initialLidStorageM3": 0.0,
+              "initialPavementDepthMm": null,
+              "initialSoilMoisture": 0.0,
+              "initialStorageDepthMm": 0.0,
+              "initialStorageM3": 0.0,
+              "initialSurfaceDepthMm": 0.0,
+              "peakDischargeMean1MinM3s": -5.160802341031001e-17
+            },
+            "seedSaturationPercent": 100,
+            "shortDays": 7
+          },
+          {
+            "longDays": 28,
+            "longMinusShort": {
+              "contributionM3": 4.440892098500626e-15,
+              "evaluatedDischargeM3": -1.7674750552032492e-13,
+              "evaluatedEvaporationM3": -1.7383872119580701e-12,
+              "evaluatedInfiltrationM3": 0.0,
+              "initialLidStorageM3": 0.0,
+              "initialPavementDepthMm": null,
+              "initialSoilMoisture": 0.0,
+              "initialStorageDepthMm": 0.0,
+              "initialStorageM3": 0.0,
+              "initialSurfaceDepthMm": 0.0,
+              "peakDischargeMean1MinM3s": 1.7759231585312563e-16
+            },
+            "seedSaturationPercent": 0,
+            "shortDays": 14
+          },
+          {
+            "longDays": 28,
+            "longMinusShort": {
+              "contributionM3": 7.460698725481052e-14,
+              "evaluatedDischargeM3": -2.469136006766348e-13,
+              "evaluatedEvaporationM3": 0.0,
+              "evaluatedInfiltrationM3": 0.0,
+              "initialLidStorageM3": 0.0,
+              "initialPavementDepthMm": null,
+              "initialSoilMoisture": 0.0,
+              "initialStorageDepthMm": 0.0,
+              "initialStorageM3": 0.0,
+              "initialSurfaceDepthMm": 0.0,
+              "peakDischargeMean1MinM3s": 1.7759231585312563e-16
+            },
+            "seedSaturationPercent": 100,
+            "shortDays": 14
+          }
+        ],
+        "ranges": {
+          "contributionM3": {
+            "max": -0.0004639218324431482,
+            "min": -0.0004639218325968031,
+            "span": 1.5365486660812167e-13
+          },
+          "evaluatedDischargeM3": {
+            "max": 5.327104504705133,
+            "min": 5.32710450470488,
+            "span": 2.531308496145357e-13
+          },
+          "evaluatedEvaporationM3": {
+            "max": 0.001767887358284037,
+            "min": 0.0017678873565456499,
+            "span": 1.7383872119580701e-12
+          },
+          "evaluatedInfiltrationM3": {
+            "max": 0.0,
+            "min": 0.0,
+            "span": 0.0
+          },
+          "initialLidStorageM3": {
+            "max": 1.4159406459883757,
+            "min": 1.4159406459883757,
+            "span": 0.0
+          },
+          "initialPavementDepthMm": null,
+          "initialSoilMoisture": {
+            "max": 0.4680531717639085,
+            "min": 0.4680531717639085,
+            "span": 0.0
+          },
+          "initialStorageDepthMm": {
+            "max": 1.9858179128512088,
+            "min": 1.9858179128512088,
+            "span": 0.0
+          },
+          "initialStorageM3": {
+            "max": 1.5237887408470616,
+            "min": 1.5237887408470616,
+            "span": 0.0
+          },
+          "initialSurfaceDepthMm": {
+            "max": 0.0,
+            "min": 0.0,
+            "span": 0.0
+          },
+          "peakDischargeMean1MinM3s": {
+            "max": 0.0014161446866807056,
+            "min": 0.001416144686680528,
+            "span": 1.7759231585312563e-16
+          }
+        },
+        "seedDifferences": [
+          {
+            "days": 7,
+            "wetMinusDry": {
+              "contributionM3": -2.1316282072803006e-14,
+              "evaluatedDischargeM3": 2.1316282072803006e-14,
+              "evaluatedEvaporationM3": 0.0,
+              "evaluatedInfiltrationM3": 0.0,
+              "initialLidStorageM3": 0.0,
+              "initialPavementDepthMm": null,
+              "initialSoilMoisture": 0.0,
+              "initialStorageDepthMm": 0.0,
+              "initialStorageM3": 0.0,
+              "initialSurfaceDepthMm": 0.0,
+              "peakDischargeMean1MinM3s": 0.0
+            }
+          },
+          {
+            "days": 14,
+            "wetMinusDry": {
+              "contributionM3": 6.217248937900877e-15,
+              "evaluatedDischargeM3": -6.217248937900877e-15,
+              "evaluatedEvaporationM3": -1.7383872119580701e-12,
+              "evaluatedInfiltrationM3": 0.0,
+              "initialLidStorageM3": 0.0,
+              "initialPavementDepthMm": null,
+              "initialSoilMoisture": 0.0,
+              "initialStorageDepthMm": 0.0,
+              "initialStorageM3": 0.0,
+              "initialSurfaceDepthMm": 0.0,
+              "peakDischargeMean1MinM3s": 0.0
+            }
+          },
+          {
+            "days": 28,
+            "wetMinusDry": {
+              "contributionM3": 7.638334409421077e-14,
+              "evaluatedDischargeM3": -7.638334409421077e-14,
+              "evaluatedEvaporationM3": 0.0,
+              "evaluatedInfiltrationM3": 0.0,
+              "initialLidStorageM3": 0.0,
+              "initialPavementDepthMm": null,
+              "initialSoilMoisture": 0.0,
+              "initialStorageDepthMm": 0.0,
+              "initialStorageM3": 0.0,
+              "initialSurfaceDepthMm": 0.0,
+              "peakDischargeMean1MinM3s": 0.0
+            }
+          }
+        ],
+        "status": "MEASURED_NO_UNIVERSAL_CONVERGENCE_THRESHOLD"
+      },
+      "limitations": [
+        "건습 시드는 관측 수분이 아닌 초기 상태 경계 시나리오",
+        "선택 입력에서의 민감도이며 서울 전역 수렴·현장 정확도 검증 아님",
+        "관망 없는 독립 표면의 유출·배수 합계 1분 평균 첨두이며 하류 침수 첨두 아님",
+        "경쟁 기록·점수·기존 초기화 정책 변경 없음"
+      ]
+    }
+  ],
+  "artifactDirectory": "data/runs/initialization-seoul-20220808-seongdong-28d-bundle-v2",
+  "artifactManifestSha256": "d0b5a919939a2a431e79c8ac9d450d99bc3c3c392d03958f9fdc6e760e2f195c",
+  "artifactFileCount": 712,
+  "calculationDirectory": "data/runs/initialization-seoul-20220808-seongdong-28d-v3",
+  "calculationManifestSha256": "91486a8efb8405bfddcbf4c62844a30c74aa8daa48b801c6fcd6d4bed4bef203",
+  "replay": {
+    "case": "RAIN_GARDEN",
+    "status": "EXACT_MATCH_ARCHIVED_CODE_AND_ENGINE",
+    "networkRequired": false
+  },
+  "previous7And14DayMetricMaximumDifference": 0,
+  "retainedAttempts": [
+    {
+      "directory": "data/runs/initialization-seoul-20220808-seongdong-28d-v1",
+      "manifestSha256": "7184cdb38d4c10dff069d9f7de457db3213849d3a789df521cd7ae59ebf6637a",
+      "status": "INTERRUPTED_SOURCE_ALREADY_ARCHIVED"
+    },
+    {
+      "directory": "data/runs/initialization-seoul-20220808-seongdong-28d-v2",
+      "manifestSha256": "2a65d17e27b752ff61b2674ed99589afdde436b08efd689bca71c7344577e3f8",
+      "status": "FAILED_SOURCE_HTTP_504"
+    }
+  ],
+  "limitations": [
+    "명시적 20m² 문헌 설계·현재 공개 후보와 과거 관측의 비교이며 당시 시공 시설의 재현 아님",
+    "빗물정원의 28일 건습 시드 차이가 작아졌으나 보편 수렴 임계값·서울 전역 수렴 인증 없음",
+    "원지반 토성 문헌 추정·지붕 경사·차수/다짐·현장 수분 등의 입력 불확실성 유지",
+    "관망·지표 결합 침수의 28일 수렴 및 운영 초기화 정책 변경 미포함"
+  ]
+}

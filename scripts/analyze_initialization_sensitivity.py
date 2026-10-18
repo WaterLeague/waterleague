@@ -7,6 +7,7 @@ import os
 import re
 import sys
 import tempfile
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -17,6 +18,7 @@ from prepare_disaster_evaporation import saved as network_saved
 sys.path.insert(0, str(ROOT/'simulation'))
 from waterleague_sim.engine import initialization_sensitivity as study
 from waterleague_sim.ingestion import live, antecedent
+from waterleague_sim.ingestion.rainfall import RainfallQualityError
 from waterleague_sim.historical_antecedent import load as load_prior
 from waterleague_sim.historical_evaporation import load as load_pet
 from waterleague_sim.model_catalog import read_catalog
@@ -31,6 +33,30 @@ def saved(endpoint, parameters, key):
         if not (ROOT/'data/raw'/(stem+'.txt')).is_file():
             raise ValueError('SPINUP_ARCHIVED_SOURCE_MISSING')
     return network_saved(endpoint, parameters, key)
+
+
+def archived_weather(start, end, key):
+    periods, cursor = [], start
+    while cursor < end:
+        midnight = cursor.astimezone(live.KST).replace(hour=0, minute=0, second=0, microsecond=0)
+        limit = min(end, midnight + timedelta(days=1))
+        periods.append((cursor, limit))
+        cursor = limit
+
+    def collect(period):
+        result, _ = antecedent.weather(*period, key, saved)
+        print('선행 기상 원문 확인', period[0].date().isoformat(), flush=True)
+        return result
+
+    # 날짜별 요청 파일은 서로 다르며 결과는 원래 시간 순서로 결합한다.
+    with ThreadPoolExecutor(max_workers=3) as pool:
+        parts = list(pool.map(collect, periods))
+    return {'method': antecedent.METHOD,
+            'ratesMmDay': [v for p in parts for v in p['ratesMmDay']],
+            'sourceHashes': sorted({v for p in parts for v in p['sourceHashes']}),
+            'sourceRequests': [v for p in parts for v in p['sourceRequests']],
+            'segments': [v for p in parts for v in p['segments']],
+            'assumptions': sorted({v for p in parts for v in p['assumptions']})}
 
 
 def extend(short, days, key):
@@ -49,15 +75,21 @@ def extend(short, days, key):
                 raise live.LiveSourceError('KMA_UNAVAILABLE') from None
             raise
     live.fetch_range = fetch_aws
-    collector = live.observed_forcing if key else archived_forcing
-    forcing, sources = collector(short['rainfall']['stationId'], start, end, key,
-        chunk_hours=6, antecedent_quality=True, heartbeat=lambda: print('선행 강우 원문 확인', flush=True))
+    options = {'chunk_hours': 6, 'antecedent_quality': True,
+               'heartbeat': lambda: print('선행 강우 원문 확인', flush=True)}
+    try:
+        forcing, sources = archived_forcing(short['rainfall']['stationId'], start, end, '', **options)
+        print('보관 선행 강우 원문 재사용', flush=True)
+    except RainfallQualityError as error:
+        if not key or str(error) != 'AWS_REQUIRED_MINUTE_MISSING':
+            raise
+        forcing, sources = live.observed_forcing(short['rainfall']['stationId'], start, end, key, **options)
     rain = {k: forcing[k] for k in ('start', 'end', 'stationId', 'intervalSeconds', 'sourceHashes',
                                    'evidence', 'qualityWarnings', 'qualityPolicy', 'aggregatedRainIntervals')}
     rain.update(depthsMm=[v['depthMm'] for v in forcing['observations']],
                 depthMethods=[v['method'] for v in forcing['observations']], sourceRequests=[s for _, s in sources])
     rain['reconstructedMinutes'] = sum(v.startswith('OBSERVED_ZERO_') for v in rain['depthMethods'])
-    pet, _ = antecedent.weather(start, end, key, saved)
+    pet = archived_weather(start, end, key)
     rain['end'] = short['rainfall']['end']
     for k in ('depthsMm', 'depthMethods', 'qualityWarnings', 'aggregatedRainIntervals', 'sourceRequests'):
         rain[k] += short['rainfall'][k]
@@ -146,6 +178,7 @@ def main():
     prior = extend(short, args.days, os.environ.get('KMA_API_KEY', '') if args.fetch else '')
     provenance = archive_sources(prior, root)
     (root/'extended-antecedent.json.gz').write_bytes(gzip.compress(study.encode(prior), mtime=0))
+    periods = tuple(day for day in (7, 14, 28) if day <= args.days)
     reports = []
     available = candidates(args.district)
     for facility in ('RAIN_GARDEN', 'PERMEABLE_PAVEMENT', 'GREEN_ROOF'):
@@ -156,11 +189,11 @@ def main():
         model['rainfall'] = observed['rainfall']
         model = with_observed_forcing(model, pet)
         placement = {'cellId': cell['id'], 'facilityType': facility, 'areaM2': 20.0}
-        report = study.analyze(model, placement, pet, prior, root/facility, days=(7, args.days))
+        report = study.analyze(model, placement, pet, prior, root/facility, days=periods)
         reports.append(report)
         print(facility, report['comparison']['status'], flush=True)
     raw_hashes = sorted(p.stem[1:] for p in root.glob('s*.txt') if re.fullmatch('s[a-f0-9]{64}', p.stem))
-    summary = {'schemaVersion': 1, 'eventId': args.event, 'districtId': args.district, 'days': [7, args.days],
+    summary = {'schemaVersion': 1, 'eventId': args.event, 'districtId': args.district, 'days': list(periods),
                'assetTemporalMode': 'CURRENT_GEOMETRY_HISTORICAL_RAIN_STRESS_TEST',
                'evaluationModelHash': observed_hash, 'siteCatalogHash': site_catalog()[args.district]['sha256'],
                'antecedentSourceCount': len(provenance), 'sourceCount': len(raw_hashes),
