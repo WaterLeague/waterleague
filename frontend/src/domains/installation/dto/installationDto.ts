@@ -2,6 +2,13 @@ import { z } from 'zod';
 import { nativeSoilBoundaryDto } from '../../facility/dto/facilityDto';
 const facility = z.enum(['RAIN_GARDEN', 'PERMEABLE_PAVEMENT', 'GREEN_ROOF']);
 const point = z.tuple([z.number().finite(), z.number().finite()]);
+export const publicAssetPolicyDto = z.object({
+  version: z.literal('seoul-basin-footprints-20261018-v1'),
+  sha256: z.string().regex(/^[a-f0-9]{64}$/),
+  sourceSha256: z.string().regex(/^[a-f0-9]{64}$/),
+  scope: z.literal('CURRENT_MAPPED_GEOMETRY_NEW_GROUND_PLACEMENTS_ONLY'),
+  historicalExistenceVerified: z.literal(false),
+});
 export const installationDto = z.object({
   id: z.uuid(),
   districtId: z.string(),
@@ -16,6 +23,23 @@ export const installationDto = z.object({
   heightM: z.number().nonnegative(),
 });
 export const siteDto = z.object({
+  existingInfrastructure: z
+    .object({
+      policy: publicAssetPolicyDto,
+      assets: z
+        .array(
+          z.object({
+            districtId: z.string(),
+            cellId: z.string(),
+            siteModelHash: z.string().regex(/^[a-f0-9]{64}$/),
+            assetId: z.string(),
+            assetName: z.string(),
+            overlapAreaM2: z.number().positive(),
+          })
+        )
+        .min(1),
+    })
+    .nullish(),
   districtId: z.string(),
   cellId: z.string(),
   name: z.string(),

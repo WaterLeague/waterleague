@@ -50,6 +50,7 @@ export function FacilityPlacementPanel(p: FacilityPlacementProps) {
   const valid =
     p.budgetReady &&
     !!site &&
+    !site.existingInfrastructure &&
     !!type &&
     site.allowedTypes.includes(type) &&
     Number.isFinite(numericArea) &&
@@ -87,6 +88,21 @@ export function FacilityPlacementPanel(p: FacilityPlacementProps) {
             {site.kind === 'ROOF' ? '옥상 후보' : '지상 주차장 후보'}
           </span>
           <h2 className="shared-site-title">{site.name}</h2>
+          {site.existingInfrastructure && (
+            <div className="shared-readonly" role="note">
+              <strong>공개 지도 저류 영역 · 신규 설치 제외</strong>
+              {site.existingInfrastructure.assets.map((asset) => (
+                <p key={asset.assetId}>
+                  {asset.assetName} · 교차{' '}
+                  {asset.overlapAreaM2.toLocaleString('ko-KR', { maximumFractionDigits: 2 })} m²
+                </p>
+              ))}
+              <p>
+                현재 지도 경계와 겹치는 지상 후보입니다. 과거 재해 당시의 존재·운영 여부는 확인되지
+                않았습니다.
+              </p>
+            </div>
+          )}
           {occupied ? (
             <div className="shared-occupied">
               <Check size={22} />
@@ -109,7 +125,7 @@ export function FacilityPlacementPanel(p: FacilityPlacementProps) {
                 </p>
               )}
             </div>
-          ) : (
+          ) : site.existingInfrastructure ? null : (
             <form
               onSubmit={(e) => {
                 e.preventDefault();

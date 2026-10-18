@@ -12,11 +12,15 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/infrastructure")
 public class InfrastructureController {
   private final InfrastructureService service;
-  public InfrastructureController(InfrastructureService service) { this.service = service; }
 
-  @GetMapping("/seoul-public-20261018-v1")
+  public InfrastructureController(InfrastructureService service) {
+    this.service = service;
+  }
+
+  @GetMapping("/seoul-public-20261018-v2")
   public ResponseEntity<InfrastructureView> catalog() {
-    return ResponseEntity.ok().eTag(InfrastructureRepository.SHA256)
+    return ResponseEntity.ok()
+        .eTag(InfrastructureRepository.SHA256)
         .cacheControl(CacheControl.maxAge(Duration.ofDays(1)).cachePublic().immutable())
         .body(service.referenceCatalog());
   }

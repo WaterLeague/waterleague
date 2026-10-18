@@ -77,6 +77,44 @@ class SharedInstallationTests {
   }
 
   @Test
+  void mappedGroundExclusionRejectsBeforeSpendingAndVacantFilterUsesSameRule() {
+    String district = "2419954";
+    var owner = account(district);
+    var blocked = service.site(district, "G20695-54482");
+    assertThat(blocked.existingInfrastructure().path("assets").get(0).path("assetName").asString())
+        .isEqualTo("잠실유수지");
+    assertThat(
+            sites.district(district).values().stream()
+                .filter(s -> s.existingInfrastructure() != null)
+                .count())
+        .isEqualTo(86);
+    assertThat(sites.district(district).values().stream().filter(s -> s.kind().equals("ROOF")))
+        .allMatch(s -> s.existingInfrastructure() == null);
+    assertThatThrownBy(
+            () ->
+                service.install(
+                    owner.username(),
+                    new InstallRequest(
+                        district,
+                        blocked.cellId(),
+                        FacilityType.PERMEABLE_PAVEMENT,
+                        BigDecimal.ONE)))
+        .isInstanceOfSatisfying(
+            DomainException.class,
+            e -> assertThat(e.code()).isEqualTo(ErrorCode.EXISTING_INFRASTRUCTURE));
+    assertThat(service.active()).isEmpty();
+    assertThat(budget.view(owner.id()).remainingKrw()).isEqualByComparingTo("2000000000");
+    assertThat(db.queryForObject("SELECT COUNT(*) FROM budget_ledger_entries", Integer.class))
+        .isZero();
+    var all =
+        service.sites(district, blocked.center().get(0), blocked.center().get(1), 0, null, false);
+    var vacant =
+        service.sites(district, blocked.center().get(0), blocked.center().get(1), 0, null, true);
+    assertThat(all.matchedCount() - vacant.matchedCount()).isEqualTo(86);
+    assertThat(vacant.sites()).allMatch(s -> s.existingInfrastructure() == null);
+  }
+
+  @Test
   void existingMembersChooseOnceAndCannotInstallElsewhere() {
     var a = account(null);
     assertThatThrownBy(() -> service.install(a.username(), placement("2410520")))
@@ -200,6 +238,12 @@ class SharedInstallationTests {
                 String.class,
                 independent.id()))
         .contains("SEOUL_PERSONAL_FULL_2026_V3");
+    assertThat(
+            db.queryForObject(
+                "SELECT admission_snapshot FROM shared_installations WHERE id=?",
+                String.class,
+                independent.id()))
+        .contains("seoul-basin-footprints-20261018-v1", "historicalExistenceVerified");
     service.remove(other.username(), independent.id());
     assertThat(budget.view(other.id()).remainingKrw()).isEqualByComparingTo("2000000000");
     assertThat(budget.view(owner.id()).remainingKrw()).isEqualByComparingTo("1050000");

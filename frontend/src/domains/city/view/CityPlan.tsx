@@ -14,6 +14,7 @@ import { usePlanNavigation } from '../controller/usePlanNavigation';
 import type { PlanView } from '../service/planNavigationService';
 import type { InfrastructureAsset } from '../../infrastructure/entity/infrastructure';
 import { infrastructureColor } from '../../infrastructure/service/infrastructureService';
+import { InfrastructureFootprintsPlan } from '../../infrastructure/view/InfrastructureFootprints';
 import type { TraceTile } from '../../floodtrace/entity/floodTrace';
 import { FloodTracePlan } from '../../floodtrace/view/FloodTraceLayer';
 import { SurfacePlan } from '../../surface/view/SurfaceLayer';
@@ -180,14 +181,20 @@ export const CityPlan = memo(function CityPlan({
             }
             strokeWidth={site.districtId === selected && site.cellId === selectedSite ? 2 : 0.5}
             opacity={buildingOpacity(
-              (!facilityType || site.allowedTypes.includes(facilityType)) &&
+              !site.existingInfrastructure &&
+                (!facilityType || site.allowedTypes.includes(facilityType)) &&
                 (!installed || installed.ownerId === viewerId),
               !!ownDistrictId && ownDistrictId !== site.districtId
             )}
             onClick={() => onSite(siteKey(site))}
           >
             <title>
-              {site.name} · {installed ? '설치됨' : '빈 위치'}
+              {site.name} ·{' '}
+              {installed
+                ? '설치됨'
+                : site.existingInfrastructure
+                  ? '공개 저류 영역 · 신규 설치 제외'
+                  : '빈 위치'}
             </title>
           </path>
         );
@@ -258,6 +265,7 @@ export const CityPlan = memo(function CityPlan({
           </text>
         ))}
       {buildingLayer}
+      <InfrastructureFootprintsPlan assets={publicAssets} selectedId={selectedAssetId} />
       {siteLayer}
       <FloodTracePlan tiles={traceTiles} />
       <SurfacePlan frame={surfaceFrame} metric={surfaceMetric} />

@@ -57,6 +57,7 @@
   margin: 4px 0 8px;
 }
 .infrastructure-evidence a {
+  display: block;
   color: #244a78;
   text-decoration: underline;
 }

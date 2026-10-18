@@ -21,6 +21,8 @@ def main():
             or request['engine'] != engine_identity()):
         raise ValueError('LIVE_REQUEST_HASH_INVALID')
     model, evaporation = json.loads(source), json.loads(forcing).get('evaporation')
+    from .admission import archive
+    archive(request.get('publicAssetPolicy'), path)
     if model.get('initializationPolicy') is not None:
         from .engine.initialization import prepend
         raw = (path/'antecedent.json').read_bytes()

@@ -20,6 +20,8 @@ def calculate(request, directory):
             or not 1 <= len(placements) <= 50):
         raise ValueError('HISTORICAL_INPUT_INVALID')
     directory.mkdir(parents=True, exist_ok=True)
+    from .admission import archive
+    archive(placements[0].get('publicAssetPolicy'), directory)
     (directory/'rainfall-model.json').write_bytes(source)
     evaporation = load_evaporation(request['modelHash'], observed, directory)
     results, frames = [], []

@@ -1,6 +1,16 @@
 import { z } from 'zod';
 
 const coordinate = z.number().finite().min(-60000).max(60000);
+const point = z.tuple([coordinate, coordinate]);
+export const infrastructureFootprintDto = z.object({
+  polygons: z.array(z.array(z.array(point).min(4)).min(1)).min(1),
+  areaM2: z.number().positive(),
+  sourceObjectUrl: z.string().regex(/^https:\/\/www\.openstreetmap\.org\/(way|relation)\/[0-9]+$/),
+  mappedAt: z.iso.date(),
+  basinType: z.enum(['detention', 'retention', 'infiltration']),
+  basis: z.literal('PUBLIC_OSM_MAPPING_NOT_SURVEYED_OR_AS_BUILT'),
+  policyVersion: z.literal('seoul-basin-footprints-20261018-v1'),
+});
 export const infrastructureAssetDto = z.object({
   id: z.string().min(1).max(100),
   sourceId: z.string(),
@@ -13,15 +23,17 @@ export const infrastructureAssetDto = z.object({
     'INFILTRATION_PIT',
     'INFILTRATION_TRENCH',
     'RAINWATER_REUSE',
+    'RETENTION_BASIN',
   ]),
   center: z.tuple([coordinate, coordinate]),
   districtId: z.string(),
-  geometryEvidence: z.literal('LOCATION_POINT'),
-  verticalLayer: z.literal('UNKNOWN'),
+  geometryEvidence: z.enum(['LOCATION_POINT', 'PUBLIC_MAPPED_FOOTPRINT']),
+  verticalLayer: z.enum(['UNKNOWN', 'MAPPED_SURFACE']),
   validFrom: z.null(),
   validTo: z.null(),
   operationStatus: z.literal('UNKNOWN'),
   hydraulicStatus: z.literal('UNCONNECTED'),
+  footprint: infrastructureFootprintDto.nullish(),
   pumpSpecs: z
     .object({
       asOf: z.iso.date(),
@@ -44,9 +56,13 @@ export const infrastructureSourceDto = z.object({
   id: z.string(),
   title: z.string(),
   publisher: z.string(),
-  url: z.url().refine((v) => ['data.seoul.go.kr', 'www.data.go.kr'].includes(new URL(v).hostname)),
+  url: z
+    .url()
+    .refine((v) =>
+      ['data.seoul.go.kr', 'www.data.go.kr', 'www.openstreetmap.org'].includes(new URL(v).hostname)
+    ),
   sha256: z.string().regex(/^[a-f0-9]{64}$/),
-  license: z.literal('KOGL_TYPE_1'),
+  license: z.enum(['KOGL_TYPE_1', 'ODbL-1.0']),
   fileModifiedAt: z.iso.date().nullable(),
   portalUpdatedAt: z.iso.date().nullable(),
   referenceDate: z.iso.date().nullable(),
@@ -56,7 +72,7 @@ export const infrastructureSourceDto = z.object({
 });
 export const infrastructureDto = z
   .object({
-    version: z.literal('seoul-public-20261018-v1'),
+    version: z.literal('seoul-public-20261018-v2'),
     sha256: z.string().regex(/^[a-f0-9]{64}$/),
     usage: z.literal('REFERENCE_ONLY'),
     statusCounts: z.record(z.string(), z.number().int().nonnegative()),

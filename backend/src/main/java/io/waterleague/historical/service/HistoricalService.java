@@ -119,6 +119,7 @@ public class HistoricalService {
       throw new DomainException(ErrorCode.PLACEMENT_INVALID);
     var accounting = budget.validateDesign(allocated);
     frozen.getFirst().put("budgetAccounting", accounting);
+    frozen.getFirst().put("publicAssetPolicy", sites.publicAssetPolicy());
     String body = json.write(frozen), hash = json.hash(dto.modelHash() + "\n" + body);
     admission.lockAdmission();
     admission.lockOwner(owner);
@@ -143,6 +144,8 @@ public class HistoricalService {
       }
       return view(previous.get());
     }
+    // 기존 요청은 원 입력으로 반환하고 새로운 배치만 현재 공개 경계와 대조한다.
+    for (var p : dto.placements()) sites.requireInstallable(district.id(), p.cellId());
     if (jobs.active(owner) >= 2 || admission.totalActive() >= 20)
       throw new DomainException(ErrorCode.SIMULATION_QUOTA_EXCEEDED);
     var j =

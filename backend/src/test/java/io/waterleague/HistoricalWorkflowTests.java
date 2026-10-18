@@ -79,6 +79,62 @@ class HistoricalWorkflowTests {
   }
 
   @Test
+  void newHistoricalDesignRejectsCurrentMappedBasinButExistingRequestRemainsReplayable() {
+    String district = "2419954";
+    String model =
+        disasters.catalog().events().getFirst().regions().stream()
+            .filter(r -> r.districtId().equals(district))
+            .findFirst()
+            .orElseThrow()
+            .modelHash();
+    var key = UUID.randomUUID();
+    var blocked =
+        new HistoricalRequest(
+            key,
+            district,
+            model,
+            List.of(
+                new HistoricalRequest.Item(
+                    "G20695-54482", FacilityType.PERMEABLE_PAVEMENT, BigDecimal.ONE)));
+    assertThatThrownBy(() -> service.create(owner, blocked))
+        .isInstanceOfSatisfying(
+            DomainException.class,
+            e -> assertThat(e.code()).isEqualTo(ErrorCode.EXISTING_INFRASTRUCTURE));
+    assertThat(service.list(owner)).isEmpty();
+    var site =
+        sites.district(district).values().stream()
+            .filter(
+                s ->
+                    s.existingInfrastructure() == null
+                        && s.allowedTypes().contains("PERMEABLE_PAVEMENT"))
+            .findFirst()
+            .orElseThrow();
+    var job =
+        service.create(
+            owner,
+            new HistoricalRequest(
+                key,
+                district,
+                model,
+                List.of(
+                    new HistoricalRequest.Item(
+                        site.cellId(), FacilityType.PERMEABLE_PAVEMENT, BigDecimal.ONE))));
+    var old = json.tree(service.require(owner, job.id()).placements());
+    var row = (tools.jackson.databind.node.ObjectNode) old.get(0);
+    row.put("cellId", "G20695-54482");
+    row.remove("publicAssetPolicy");
+    String body = json.write(old), oldHash = json.hash(model + "\n" + body);
+    db.update(
+        "UPDATE historical_experiments SET placements=?,input_hash=? WHERE id=?",
+        body,
+        oldHash,
+        job.id());
+    assertThat(service.create(owner, blocked).id()).isEqualTo(job.id());
+    assertThat(service.require(owner, job.id()).placements()).isEqualTo(body);
+    assertThat(service.require(owner, job.id()).inputHash()).isEqualTo(oldHash);
+  }
+
+  @Test
   void acceptsExpandedSitesAndOtherDistrictsWithoutChangingSharedOccupancy() {
     int before = db.queryForObject("SELECT COUNT(*) FROM shared_installations", Integer.class);
     UUID key = UUID.randomUUID();
@@ -91,6 +147,7 @@ class HistoricalWorkflowTests {
             "siteModelHash",
             "budgetPolicy",
             "budgetAccounting",
+            "publicAssetPolicy",
             "SEOUL_RAINWATER_ACCOUNTING_V1",
             "SEOUL_PERSONAL_FULL_2026_V3",
             "2000000000");

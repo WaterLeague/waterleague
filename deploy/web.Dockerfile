@@ -5,6 +5,7 @@ COPY frontend/package.json frontend/pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
 COPY frontend/ ./
 COPY data/models/ /build/data/models/
+COPY backend/src/main/resources/infrastructure/ /build/backend/src/main/resources/infrastructure/
 COPY simulation/tests/fixtures/pattern-search-v1.json /build/simulation/tests/fixtures/pattern-search-v1.json
 RUN pnpm build
 

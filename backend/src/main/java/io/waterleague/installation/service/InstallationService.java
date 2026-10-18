@@ -73,6 +73,7 @@ public class InstallationService {
         sites.district(districtId).values().stream()
             .filter(v -> type == null || v.allowedTypes().contains(type.name()))
             .filter(v -> !occupied.contains(v.cellId()))
+            .filter(v -> !vacant || v.existingInfrastructure() == null)
             .sorted(
                 Comparator.comparingDouble(
                         (io.waterleague.installation.view.SiteView v) ->
@@ -113,7 +114,7 @@ public class InstallationService {
     var own = installations.owned(account.id());
     if (own.stream().anyMatch(i -> i.cellId().equals(request.cellId())))
       throw new InstallationException(ErrorCode.SITE_OCCUPIED);
-    var site = sites.require(district.id(), request.cellId());
+    var site = sites.requireInstallable(district.id(), request.cellId());
     var cells = new HashMap<String, io.waterleague.strategy.entity.PlacementCell>();
     for (var p : List.of(placement)) {
       var c = sites.require(district.id(), p.cellId());
@@ -146,7 +147,7 @@ public class InstallationService {
             null);
     // 회원별 예산 잠금과 위치 고유 제약으로 초과 배정·중복 점유를 차단한다.
     try {
-      installations.add(value, json.write(budget.policy()));
+      installations.add(value, json.write(budget.policy()), json.write(sites.publicAssetPolicy()));
     } catch (DuplicateKeyException e) {
       throw new InstallationException(ErrorCode.SITE_OCCUPIED);
     }

@@ -32,6 +32,7 @@ import { terrainHeight, terrainLine } from '../../terrain/service/terrainService
 import { TerrainSurface } from '../../terrain/view/TerrainSurface';
 import type { InfrastructureAsset } from '../../infrastructure/entity/infrastructure';
 import { InfrastructureMarkers } from '../../infrastructure/view/InfrastructureMarkers';
+import { InfrastructureFootprints } from '../../infrastructure/view/InfrastructureFootprints';
 import type { TraceTile } from '../../floodtrace/entity/floodTrace';
 import { FloodTraceLayer } from '../../floodtrace/view/FloodTraceLayer';
 import { SurfaceLayer } from '../../surface/view/SurfaceLayer';
@@ -416,6 +417,11 @@ const CityScene = memo(function CityScene({
       gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
     >
       <TerrainContext.Provider value={terrain}>
+        <InfrastructureFootprints
+          assets={publicAssets}
+          selectedId={selectedAssetId}
+          terrain={terrain}
+        />
         <FloodTraceLayer tiles={traceTiles} terrain={terrain} onError={onTraceError} />
         <SurfaceLayer
           frame={surfaceFrame}
@@ -499,15 +505,12 @@ const CityScene = memo(function CityScene({
               ))
             )}
         {sites
-          .filter(
-            (site) =>
-              site.districtId === selected ||
-              installationBySite.has(siteKey(site))
-          )
+          .filter((site) => site.districtId === selected || installationBySite.has(siteKey(site)))
           .map((site) => {
             const installed = installationBySite.get(siteKey(site));
             const opacity = buildingOpacity(
-              (!facilityType || site.allowedTypes.includes(facilityType)) &&
+              !site.existingInfrastructure &&
+                (!facilityType || site.allowedTypes.includes(facilityType)) &&
                 (!installed || installed.ownerId === viewerId),
               !!ownDistrictId && site.districtId !== ownDistrictId
             );

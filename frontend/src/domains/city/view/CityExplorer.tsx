@@ -391,7 +391,12 @@ function Explorer({
   const ownDistrict = city.districts.find((d) => d.id === ownDistrictId);
   const preview = useMemo(
     () =>
-      site && !occupied && type && Number(area) > 0 && Number(area) <= site.maxAreaM2
+      site &&
+      !site.existingInfrastructure &&
+      !occupied &&
+      type &&
+      Number(area) > 0 &&
+      Number(area) <= site.maxAreaM2
         ? { site, placement: { cellId: site.cellId, facilityType: type, areaM2: Number(area) } }
         : null,
     [site, occupied, type, area]
@@ -805,8 +810,12 @@ function Explorer({
                             <strong>{s.name}</strong>
                           </span>
                           <small>
-                            {installed ? installed.ownerName + ' · 설치됨' : '빈 위치'} · 최대{' '}
-                            {s.maxAreaM2.toLocaleString('ko-KR')} m²
+                            {installed
+                              ? installed.ownerName + ' · 설치됨'
+                              : s.existingInfrastructure
+                                ? '공개 저류 영역 · 신규 설치 제외'
+                                : '빈 위치'}{' '}
+                            · 최대 {s.maxAreaM2.toLocaleString('ko-KR')} m²
                           </small>
                         </button>
                       );
@@ -1017,7 +1026,8 @@ function Explorer({
         {surface.frame
           ? '계산 침수는 별도 색상 레이어 · 표시 지형과 물리 기준고 구분'
           : '침수 깊이 표시 아님'}
-        {assetsEnabled && ' · 시설 위치: 서울특별시·강서구 / 공공누리 제1유형'}
+        {assetsEnabled &&
+          ' · 시설 위치: 서울특별시·강서구 / 공공누리 제1유형 · 저류 경계: OpenStreetMap / ODbL 1.0'}
         {terrain && (
           <>
             {' '}

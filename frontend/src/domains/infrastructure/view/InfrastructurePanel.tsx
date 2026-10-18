@@ -20,6 +20,7 @@ export function InfrastructureEvidence({
   historical: boolean;
 }) {
   const spec = asset.pumpSpecs;
+  const footprint = asset.footprint;
   return (
     <section className="infrastructure-evidence">
       <span className="infrastructure-kicker">{infrastructureNames[asset.kind]} · 공개 기록</span>
@@ -69,14 +70,44 @@ export function InfrastructureEvidence({
           </div>
         </>
       )}
-      <p>
-        점 표시는 부지 경계가 아닙니다. 준공·폐지 시점과 배수 연결·운전 조건이 확인되지 않아 물리
-        계산과 설치 차단에는 사용하지 않습니다.
-      </p>
+      {footprint ? (
+        <>
+          <dl>
+            <div>
+              <dt>지도 도형 면적</dt>
+              <dd>{number.format(Math.round(footprint.areaM2))} m²</dd>
+            </div>
+            <div>
+              <dt>지도 자료 시점</dt>
+              <dd>{footprint.mappedAt}</dd>
+            </div>
+          </dl>
+          <p>
+            공개 지도에 저류 영역으로 등록된 경계입니다. 겹치는 지상 후보에는 새 게임 시설을 설치할
+            수 없습니다. 옥상과 이전 설치 기록은 유지됩니다.
+          </p>
+          <p>
+            측량·준공도와 대조되지 않았으며 용량·현재 운영·과거 존속은 미확인입니다. 물리 계산의
+            시설로 포함하지 않습니다.
+          </p>
+          <a href={footprint.sourceObjectUrl} target="_blank" rel="noreferrer">
+            OpenStreetMap 도형 원문 ↗
+          </a>
+        </>
+      ) : (
+        <p>
+          점 표시는 부지 경계가 아닙니다. 준공·폐지 시점과 배수 연결·운전 조건이 확인되지 않아 물리
+          계산과 설치 차단에는 사용하지 않습니다.
+        </p>
+      )}
       <a href={source.url} target="_blank" rel="noreferrer">
         {source.publisher} · {source.title} 원문 ↗
       </a>
-      <small>공공누리 제1유형 · 출처표시</small>
+      <small>
+        {source.license === 'ODbL-1.0'
+          ? '© OpenStreetMap contributors · ODbL 1.0'
+          : '공공누리 제1유형 · 출처표시'}
+      </small>
       <dl>
         <div>
           <dt>파일 수정일</dt>
@@ -211,7 +242,9 @@ export function InfrastructurePanel({
                         ? '설치·증설 연도 있음 · 2022 자료'
                         : a.pumpSpecs
                           ? '호기별 제원 있음 · 2025 자료'
-                          : '위치점 · 운영 상태 미확인'}
+                          : a.footprint
+                            ? '지도 경계 · 운영 상태 미확인'
+                            : '위치점 · 운영 상태 미확인'}
                     </small>
                   </span>
                 </button>
@@ -221,7 +254,7 @@ export function InfrastructurePanel({
             <small>
               삭제 표시 {catalog.statusCounts.SOURCE_DELETED ?? 0}건 · 삭제 여부 결측{' '}
               {catalog.statusCounts.DELETE_FLAG_UNKNOWN ?? 0}건은 지도에서 제외했습니다. 전체
-              화면에는 펌프 위치를, 확대하면 주변 빗물관리 자료를 함께 표시합니다.
+              화면에는 펌프 위치와 저류 경계를, 확대하면 주변 빗물관리 자료를 함께 표시합니다.
             </small>
             <details className="infrastructure-sources">
               <summary>자료 출처 {catalog.sources.length}건</summary>
@@ -231,7 +264,10 @@ export function InfrastructurePanel({
                     {source.publisher} · {source.title} ↗
                   </a>
                   <br />
-                  공공누리 제1유형 ·{' '}
+                  {source.license === 'ODbL-1.0'
+                    ? '© OpenStreetMap contributors · ODbL 1.0'
+                    : '공공누리 제1유형'}{' '}
+                  ·{' '}
                   {source.referenceDate
                     ? `기준일 ${source.referenceDate}`
                     : `파일 수정 ${source.fileModifiedAt ?? '미제공'}`}

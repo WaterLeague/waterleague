@@ -189,6 +189,8 @@ def process(conn, job, root):
                    'siteModelHash': job['installation']['model_hash'], 'placement': placement, 'engine': engine,
                    'weeklyRuleVersion': 'OBSERVED_ACCOUNTED_VOLUME_V1',
                    'weeklyCodeSha256': digest((Path(__file__).parent/'weekly.py').read_bytes())}
+        if job['installation'].get('admission_snapshot') is not None:
+            request['publicAssetPolicy'] = json.loads(job['installation']['admission_snapshot'])
         if antecedent is not None:
             antecedent_raw = encode(antecedent)
             (path/'antecedent.json').write_bytes(antecedent_raw)

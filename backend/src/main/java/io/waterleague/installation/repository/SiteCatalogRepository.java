@@ -19,16 +19,21 @@ public class SiteCatalogRepository {
   private final JsonService json;
   private final DistrictRepository districts;
   private final LabModelRepository models;
+  private final io.waterleague.infrastructure.repository.SurfaceOccupancyRepository occupancy;
   private final Map<String, JsonNode> entries = new LinkedHashMap<>();
   private final Map<String, Integer> counts = new LinkedHashMap<>();
   private final Map<String, Map<String, SiteView>> cache = new LinkedHashMap<>(8, .75f, true);
 
   public SiteCatalogRepository(
-      JsonService json, DistrictRepository districts, LabModelRepository models)
+      JsonService json,
+      DistrictRepository districts,
+      LabModelRepository models,
+      io.waterleague.infrastructure.repository.SurfaceOccupancyRepository occupancy)
       throws IOException {
     this.json = json;
     this.districts = districts;
     this.models = models;
+    this.occupancy = occupancy;
     var source = read("catalog-v6.json", false, 50000);
     if (!json.hash(source)
         .equals("18a22093b2541ab05ed3fdee6a394a998bbfd5d092c6105cf787702f99bdf501"))
@@ -126,7 +131,9 @@ public class SiteCatalogRepository {
               model.path("costSourceSha256").asString(),
               cell.path("physicalInputs"),
               model.path("facilityDesignSet"),
-              model.path("initializationPolicy"));
+              model.path("initializationPolicy"),
+              occupancy.exclusion(
+                  districtId, cell.path("id").asString(), hash, cell.path("kind").asString()));
       if (output.put(site.cellId(), site) != null) throw new IllegalStateException("공동 후보 중복");
     }
   }
@@ -144,5 +151,16 @@ public class SiteCatalogRepository {
     var site = district(districtId).get(cellId);
     if (site == null) throw new DomainException(ErrorCode.PLACEMENT_INVALID);
     return site;
+  }
+
+  public SiteView requireInstallable(String districtId, String cellId) {
+    var site = require(districtId, cellId);
+    if (site.existingInfrastructure() != null)
+      throw new DomainException(ErrorCode.EXISTING_INFRASTRUCTURE);
+    return site;
+  }
+
+  public JsonNode publicAssetPolicy() {
+    return occupancy.evidence();
   }
 }

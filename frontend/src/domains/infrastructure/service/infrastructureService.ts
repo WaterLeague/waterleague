@@ -7,6 +7,7 @@ export const infrastructureNames: Record<InfrastructureAsset['kind'], string> = 
   INFILTRATION_PIT: '침투통',
   INFILTRATION_TRENCH: '침투 트렌치',
   RAINWATER_REUSE: '빗물이용시설',
+  RETENTION_BASIN: '저류·유수 영역',
 };
 export function visibleInfrastructure(
   assets: InfrastructureAsset[],
@@ -17,7 +18,7 @@ export function visibleInfrastructure(
   return assets.filter(
     (a) =>
       a.id === selectedId ||
-      ((distance < 9000 || a.kind === 'STORM_PUMP') &&
+      ((distance < 9000 || a.kind === 'STORM_PUMP' || a.footprint) &&
         Math.hypot(a.center[0] - center[0], a.center[1] - center[1]) < distance * 1.5)
   );
 }

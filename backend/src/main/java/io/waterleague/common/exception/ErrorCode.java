@@ -40,6 +40,7 @@ public enum ErrorCode {
   DISTRICT_ALREADY_SELECTED(HttpStatus.CONFLICT, "이미 소속 구가 선택됐습니다"),
   DISTRICT_ACCESS_DENIED(HttpStatus.FORBIDDEN, "자신의 소속 구에만 설치할 수 있습니다"),
   SITE_OCCUPIED(HttpStatus.CONFLICT, "이미 시설이 설치된 위치입니다. 다른 위치를 선택해 주세요"),
+  EXISTING_INFRASTRUCTURE(HttpStatus.CONFLICT, "공개 지도 저류 영역과 겹치는 지상 위치입니다. 다른 위치를 선택해 주세요"),
   SIMULATION_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "계산 자료를 확인하지 못했습니다. 잠시 후 다시 시도해 주세요"),
   SIMULATION_QUOTA_EXCEEDED(HttpStatus.TOO_MANY_REQUESTS, "진행 중인 계산이 많습니다. 완료 후 다시 시도해 주세요"),
   INTERNAL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "요청을 처리하지 못했습니다");

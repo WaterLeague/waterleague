@@ -26,6 +26,7 @@ COPY simulation/native/lid_snapshot.inc /app/simulation/native/lid_snapshot.inc
 COPY scripts/local_config.py /app/scripts/local_config.py
 COPY data/models /app/data/models
 COPY backend/src/main/resources/shared-sites /app/backend/src/main/resources/shared-sites
+COPY backend/src/main/resources/infrastructure/seoul-basin-footprints-*.json /app/backend/src/main/resources/infrastructure/
 COPY backend/src/main/resources/districts /app/backend/src/main/resources/districts
 COPY deploy/database.py /app/deploy/database.py
 ENV PYTHONPATH=/app/simulation PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 SWMM_LIBRARY=/opt/swmm/bin/libswmm5.so LIVE_SWMM_LIBRARY=/opt/live-swmm/bin/libswmm5.so
