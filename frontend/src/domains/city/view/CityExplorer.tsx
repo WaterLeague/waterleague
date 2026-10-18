@@ -210,6 +210,10 @@ function Explorer({
     ...sharedData,
     installations: researchMode ? researchMarkers : sharedData.installations,
   };
+  const installationBySite = useMemo(
+    () => new Map(shared.installations.map((i) => [siteKey(i), i])),
+    [shared.installations]
+  );
   const occupiedRoofs = useMemo(
     () =>
       new Set(
@@ -221,9 +225,7 @@ function Explorer({
   );
   const ownInstallations = shared.installations.filter((i) => i.ownerId === viewerId);
   const remaining = researchMode ? research.remaining : (budget.value?.remainingKrw ?? 0);
-  const occupied = site
-    ? shared.installations.find((i) => siteKey(i) === siteKey(site))
-    : undefined;
+  const occupied = site ? installationBySite.get(siteKey(site)) : undefined;
   const surfaceSource: SurfaceSource | null = researchMode
     ? research.job?.state === 'SUCCEEDED' && research.currentResult
       ? { kind: 'historical', id: research.job.id }
@@ -430,6 +432,7 @@ function Explorer({
       viewerId={viewerId ?? null}
       sites={visibleSites}
       installations={shared.installations}
+      installationBySite={installationBySite}
       selectedSite={selectedSite}
       facilityType={type}
       eligibleRoofs={eligibility.roofIds}
@@ -593,6 +596,7 @@ function Explorer({
                   ownDistrictId={ownDistrictId ?? null}
                   sites={visibleSites}
                   installations={shared.installations}
+                  installationBySite={installationBySite}
                   selectedSite={selectedSite}
                   onSite={selectSite}
                   onBuilding={selectBuilding}
@@ -789,7 +793,7 @@ function Explorer({
                   </p>
                   <div className="shared-location-items">
                     {shared.sites.map((s) => {
-                      const installed = shared.installations.find((i) => siteKey(i) === siteKey(s));
+                      const installed = installationBySite.get(siteKey(s));
                       return (
                         <button
                           key={siteKey(s)}

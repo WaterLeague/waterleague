@@ -358,6 +358,7 @@ const CityScene = memo(function CityScene({
   ownDistrictId,
   sites,
   installations,
+  installationBySite,
   selectedSite,
   onSite,
   wetDistricts,
@@ -391,6 +392,7 @@ const CityScene = memo(function CityScene({
   ownDistrictId: string | null;
   sites: SharedSite[];
   installations: SharedInstallation[];
+  installationBySite: ReadonlyMap<string, SharedInstallation>;
   selectedSite: string;
   onSite: (key: string) => void;
   wetDistricts: City['districts'];
@@ -500,10 +502,10 @@ const CityScene = memo(function CityScene({
           .filter(
             (site) =>
               site.districtId === selected ||
-              installations.some((i) => siteKey(i) === siteKey(site))
+              installationBySite.has(siteKey(site))
           )
           .map((site) => {
-            const installed = installations.find((i) => siteKey(i) === siteKey(site));
+            const installed = installationBySite.get(siteKey(site));
             const opacity = buildingOpacity(
               (!facilityType || site.allowedTypes.includes(facilityType)) &&
                 (!installed || installed.ownerId === viewerId),

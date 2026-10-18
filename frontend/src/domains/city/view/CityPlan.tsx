@@ -35,6 +35,7 @@ type Props = {
   viewerId: string | null;
   sites: SharedSite[];
   installations: SharedInstallation[];
+  installationBySite: ReadonlyMap<string, SharedInstallation>;
   selectedSite: string;
   facilityType: FacilityType | '';
   eligibleRoofs: ReadonlySet<string>;
@@ -66,6 +67,7 @@ export const CityPlan = memo(function CityPlan({
   viewerId,
   sites,
   installations,
+  installationBySite,
   selectedSite,
   facilityType,
   eligibleRoofs,
@@ -156,6 +158,52 @@ export const CityPlan = memo(function CityPlan({
       )),
     [buildings, facilityType, eligibleRoofs, occupiedRoofs, ownDistrict, onBuilding, city]
   );
+  const siteLayer = useMemo(
+    () =>
+      sites.map((site) => {
+        const installed = installationBySite.get(siteKey(site));
+        return (
+          <path
+            key={siteKey(site)}
+            d={sitePaths.get(siteKey(site))}
+            fill={
+              site.districtId === selected && site.cellId === selectedSite
+                ? '#ffd56d'
+                : installed
+                  ? '#327f56'
+                  : site.kind === 'ROOF'
+                    ? '#d9d8cb'
+                    : '#b6c3ab'
+            }
+            stroke={
+              site.districtId === selected && site.cellId === selectedSite ? '#b87a13' : '#6c8069'
+            }
+            strokeWidth={site.districtId === selected && site.cellId === selectedSite ? 2 : 0.5}
+            opacity={buildingOpacity(
+              (!facilityType || site.allowedTypes.includes(facilityType)) &&
+                (!installed || installed.ownerId === viewerId),
+              !!ownDistrictId && ownDistrictId !== site.districtId
+            )}
+            onClick={() => onSite(siteKey(site))}
+          >
+            <title>
+              {site.name} · {installed ? '설치됨' : '빈 위치'}
+            </title>
+          </path>
+        );
+      }),
+    [
+      sites,
+      installationBySite,
+      sitePaths,
+      selected,
+      selectedSite,
+      facilityType,
+      viewerId,
+      ownDistrictId,
+      onSite,
+    ]
+  );
   return (
     <svg
       ref={svg}
@@ -210,38 +258,7 @@ export const CityPlan = memo(function CityPlan({
           </text>
         ))}
       {buildingLayer}
-      {sites.map((site) => {
-        const installed = installations.find((i) => siteKey(i) === siteKey(site));
-        return (
-          <path
-            key={siteKey(site)}
-            d={sitePaths.get(siteKey(site))}
-            fill={
-              site.districtId === selected && site.cellId === selectedSite
-                ? '#ffd56d'
-                : installed
-                  ? '#327f56'
-                  : site.kind === 'ROOF'
-                    ? '#d9d8cb'
-                    : '#b6c3ab'
-            }
-            stroke={
-              site.districtId === selected && site.cellId === selectedSite ? '#b87a13' : '#6c8069'
-            }
-            strokeWidth={site.districtId === selected && site.cellId === selectedSite ? 2 : 0.5}
-            opacity={buildingOpacity(
-              (!facilityType || site.allowedTypes.includes(facilityType)) &&
-                (!installed || installed.ownerId === viewerId),
-              !!ownDistrictId && ownDistrictId !== site.districtId
-            )}
-            onClick={() => onSite(siteKey(site))}
-          >
-            <title>
-              {site.name} · {installed ? '설치됨' : '빈 위치'}
-            </title>
-          </path>
-        );
-      })}
+      {siteLayer}
       <FloodTracePlan tiles={traceTiles} />
       <SurfacePlan frame={surfaceFrame} metric={surfaceMetric} />
       {installations.map((i) => (
