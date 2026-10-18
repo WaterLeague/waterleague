@@ -1,3 +1,5 @@
+import type { StoragePlacement } from '../dto/storageDto';
+import { validateCombinedDesign } from '../service/storageDesign';
 import { useEffect, useRef, useState } from 'react';
 import type { Account } from '../../account/entity/account';
 import { ApiError } from '../../../shared/exception/ApiError';
@@ -7,7 +9,7 @@ import {
   listWatersheds,
   submitWatershed,
 } from '../repository/watershedRepository';
-import { designFingerprint, validateNetworkDesign } from '../service/watershedDesign';
+import { designFingerprint } from '../service/watershedDesign';
 const activeJob = (j: WatershedJob) => j.state === 'QUEUED' || j.state === 'RUNNING';
 const userError = (e: unknown) =>
   e instanceof ApiError ? e.message : '관망 자료를 확인하지 못했습니다. 다시 조회해 주세요.';
@@ -17,6 +19,7 @@ export function useWatershed(account: Account | null, open: boolean) {
   const [jobs, setJobs] = useState<WatershedJob[]>([]);
   const [selectedId, setSelectedId] = useState('');
   const [drafts, setDrafts] = useState<NetworkPlacement[]>([]);
+  const [storageDrafts, setStorageDrafts] = useState<StoragePlacement[]>([]);
   const [queryError, setQueryError] = useState('');
   const [submitError, setSubmitError] = useState('');
   const queryEpoch = useRef(0);
@@ -79,12 +82,16 @@ export function useWatershed(account: Account | null, open: boolean) {
   }, [open, allowed, revision]);
   async function submit() {
     if (!allowed || !catalog || submitting.current) return;
-    const invalid = validateNetworkDesign(catalog, drafts);
+    const invalid = validateCombinedDesign(catalog, drafts, storageDrafts);
     if (invalid) {
       setSubmitError(invalid);
       return;
     }
-    const fingerprint = designFingerprint(catalog.catalogHash, drafts, catalog.costCatalogHash);
+    const fingerprint = JSON.stringify([
+      designFingerprint(catalog.catalogHash, drafts, catalog.costCatalogHash),
+      catalog.storageCatalogHash,
+      [...storageDrafts].sort((a, b) => a.id.localeCompare(b.id)),
+    ]);
     let key = requestKeys.current.get(fingerprint);
     if (!key) {
       key = crypto.randomUUID();
@@ -102,7 +109,10 @@ export function useWatershed(account: Account | null, open: boolean) {
         drafts,
         key,
         AbortSignal.any([abort.signal, AbortSignal.timeout(30000)]),
-        catalog.costCatalogHash
+        drafts.length ? catalog.costCatalogHash : undefined,
+        storageDrafts.length && catalog.storageCatalogHash
+          ? { catalogHash: catalog.storageCatalogHash, placements: storageDrafts }
+          : undefined
       );
       if (!mounted.current || abort.signal.aborted) return;
       setJobs((previous) => [job, ...previous.filter((v) => v.id !== job.id)].slice(0, 50));
@@ -127,6 +137,8 @@ export function useWatershed(account: Account | null, open: boolean) {
     job: jobs.find((j) => j.id === selectedId) ?? jobs[0] ?? null,
     drafts,
     setDrafts,
+    storageDrafts,
+    setStorageDrafts,
     error: submitError || queryError,
     busy,
     loading,

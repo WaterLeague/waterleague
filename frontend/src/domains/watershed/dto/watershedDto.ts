@@ -1,3 +1,4 @@
+import { storageCatalogDto, storageDesignDto, storageSummaryDto } from './storageDto';
 import { z } from 'zod';
 import { watershedCostCatalogDto, watershedCostSnapshotDto } from './watershedCostDto';
 import { watershedLayoutDto } from './watershedLayoutDto';
@@ -14,6 +15,8 @@ export type NetworkFacility = z.infer<typeof networkFacilityDto>;
 export const watershedCatalogDto = z
   .object({
     catalogHash: hash,
+    storageCatalogHash: hash.optional(),
+    storageCatalog: storageCatalogDto.optional(),
     costCatalogHash: hash.optional(),
     costCatalog: watershedCostCatalogDto.optional(),
     layoutHash: hash.optional(),
@@ -54,6 +57,13 @@ export const watershedCatalogDto = z
   })
   .superRefine((v, ctx) => {
     if (
+      Boolean(v.storageCatalog) !== Boolean(v.storageCatalogHash) ||
+      (v.storageCatalog &&
+        (v.storageCatalog.sourceCatalogSha256 !== v.catalogHash ||
+          v.storageCatalog.sourceOriginalSha256 !== v.catalog.sourceOriginalSha256))
+    )
+      ctx.addIssue({ code: 'custom', message: '저류조 연결과 공개 관망 불일치' });
+    if (
       Boolean(v.layout) !== Boolean(v.layoutHash) ||
       (v.layout &&
         (v.layout.sourceOriginalSha256 !== v.catalog.sourceOriginalSha256 ||
@@ -80,6 +90,7 @@ const totals = z.object({
   balanceResidualM3: amount,
 });
 const caseDto = z.object({
+  connectedStorage: storageSummaryDto.optional(),
   id: z.enum(['baseline', 'strategy']),
   numericalStatus: z.enum(['PASSED', 'FAILED']),
   complete: z.boolean().optional(),
@@ -127,7 +138,23 @@ export const watershedResultDto = z
     const valid =
       baseline &&
       strategy &&
-      value.cases.every((c) => c.numericalStatus === 'PASSED' && c.complete && c.totals);
+      value.cases.every(
+        (c) =>
+          c.numericalStatus === 'PASSED' &&
+          c.complete &&
+          c.totals &&
+          (!c.connectedStorage ||
+            (c.connectedStorage.numericalStatus === 'PASSED' &&
+              c.connectedStorage.wholeRunLedger.numericalStatus === 'PASSED' &&
+              c.connectedStorage.wholeRunLedger.facilities.length > 0 &&
+              c.connectedStorage.wholeRunLedger.facilities.every(
+                (f) =>
+                  f.numericalStatus === 'PASSED' &&
+                  Math.abs(f.balanceResidualM3) <= f.allowedResidualM3 &&
+                  f.floodingM3 <= 1e-9 &&
+                  Math.max(f.initialStorageM3, f.finalStorageM3) <= f.capacityM3 + 1e-8
+              )))
+      );
     if (!baseline || !strategy || (value.numericalStatus === 'PASSED' && !valid))
       ctx.addIssue({ code: 'custom', message: '계산 상태와 원 지표 불일치' });
     if (value.numericalStatus === 'FAILED' && value.signedReductionM3 !== null)
@@ -171,6 +198,7 @@ export const watershedJobDto = z
     state: z.enum(['QUEUED', 'RUNNING', 'SUCCEEDED', 'FAILED', 'REJECTED']),
     createdAt: z.iso.datetime(),
     design: z.object({
+      storage: storageDesignDto.optional(),
       costing: watershedCostSnapshotDto.optional(),
       placements: z.array(
         z.object({
@@ -186,6 +214,24 @@ export const watershedJobDto = z
     message: z.string(),
   })
   .superRefine((value, ctx) => {
+    const tanks = value.design.storage?.placements ?? [];
+    const ledger = value.result?.cases.find((c) => c.id === 'strategy')?.connectedStorage
+      ?.wholeRunLedger.facilities;
+    if (
+      (value.result?.numericalStatus === 'PASSED' && tanks.length > 0 && !ledger) ||
+      (ledger &&
+        (ledger.length !== tanks.length ||
+          ledger.some(
+            (f) =>
+              !tanks.some(
+                (t) =>
+                  t.id === f.id &&
+                  Math.abs(f.capacityM3 - t.depthAreaCurve[1].depthM * t.depthAreaCurve[1].areaM2) <
+                    1e-8
+              )
+          )))
+    )
+      ctx.addIssue({ code: 'custom', message: '저류조 설계와 계산 원장 불일치' });
     const cost = value.design.costing;
     if (
       cost &&

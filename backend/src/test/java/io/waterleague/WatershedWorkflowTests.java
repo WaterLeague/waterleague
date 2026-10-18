@@ -69,6 +69,105 @@ class WatershedWorkflowTests {
                 id, catchment, "BIORETENTION", new BigDecimal(area), new BigDecimal(treated))));
   }
 
+  WatershedRequest.StorageItem tank(String id, String connection, String area, String inletCrest) {
+    var coefficient = new BigDecimal("0.650");
+    return new WatershedRequest.StorageItem(
+        id,
+        connection,
+        new BigDecimal(area),
+        new BigDecimal("16.000"),
+        new BigDecimal("5.000"),
+        BigDecimal.ZERO,
+        new WatershedRequest.Port(
+            new BigDecimal(inletCrest), new BigDecimal("0.200"), coefficient, false),
+        new WatershedRequest.Port(
+            new BigDecimal("16.200"), new BigDecimal("0.030"), coefficient, false),
+        new WatershedRequest.Port(
+            new BigDecimal("18.500"), new BigDecimal("0.120"), coefficient, false));
+  }
+
+  WatershedRequest storageRequest(
+      UUID key, List<WatershedRequest.Item> lids, WatershedRequest.StorageItem tank) {
+    return new WatershedRequest(
+        key,
+        WatershedCatalogRepository.HASH,
+        lids,
+        null,
+        new WatershedRequest.StorageRequest(
+            WatershedCatalogRepository.STORAGE_HASH, List.of(tank)));
+  }
+
+  @Test
+  void freezesPublicStorageConnectionsAndCanonicalMixedDesign() {
+    assertThat(catalog.storage().path("connections")).hasSize(23);
+    UUID key = UUID.randomUUID();
+    var job =
+        service.create(owner, storageRequest(key, List.of(), tank("Tank1", "C1", "100", "18.5")));
+    var storage = job.design().path("storage");
+    assertThat(job.design().path("placements")).isEmpty();
+    assertThat(storage.path("placements").get(0).path("inlet").path("nodeId").asString())
+        .isEqualTo("J1");
+    assertThat(storage.path("placements").get(0).path("drain").path("nodeId").asString())
+        .isEqualTo("J2");
+    assertThat(storage.path("sourceNetworkSha256").asString())
+        .isEqualTo(catalog.storage().path("baseNetworkSha256").asString());
+    assertThat(
+            service
+                .create(
+                    owner, storageRequest(key, List.of(), tank("Tank1", "C1", "100.00", "18.500")))
+                .id())
+        .isEqualTo(job.id());
+    assertThatThrownBy(
+            () ->
+                service.create(
+                    owner, storageRequest(key, List.of(), tank("Tank1", "C1", "101", "18.5"))))
+        .isInstanceOfSatisfying(
+            DomainException.class, e -> assertThat(e.code()).isEqualTo(ErrorCode.CONFLICT));
+    var lids = request(UUID.randomUUID(), "Bio1", "S1", "100", "1000").placements();
+    var mixed =
+        service.create(
+            owner, storageRequest(UUID.randomUUID(), lids, tank("Tank1", "C1", "100", "18.5")));
+    assertThat(mixed.design().path("placements")).hasSize(1);
+    assertThat(mixed.design().path("storage").path("placements")).hasSize(1);
+    assertThatThrownBy(() -> service.require(UUID.randomUUID(), job.id()))
+        .isInstanceOf(DomainException.class);
+    assertThat(
+            db.queryForObject(
+                "SELECT count(*) FROM budget_ledger_entries WHERE owner_id=?",
+                Integer.class,
+                owner))
+        .isZero();
+  }
+
+  @Test
+  void rejectsForeignStorageConnectionsOutOfRangePortsAndSharedIdentifiers() {
+    for (var t :
+        List.of(
+            tank("Tank1", "OUT1", "100", "18.5"),
+            tank("Tank1", "C1", "100", "17"),
+            tank("Tank1", "C1", "100", "22")))
+      assertThatThrownBy(
+              () -> service.create(owner, storageRequest(UUID.randomUUID(), List.of(), t)))
+          .isInstanceOf(DomainException.class);
+    var lids = request(UUID.randomUUID(), "Tank1", "S1", "100", "1000").placements();
+    assertThatThrownBy(
+            () ->
+                service.create(
+                    owner,
+                    storageRequest(UUID.randomUUID(), lids, tank("tank1", "C1", "100", "18.5"))))
+        .isInstanceOf(DomainException.class);
+    try (var factory = jakarta.validation.Validation.buildDefaultValidatorFactory()) {
+      assertThat(
+              factory
+                  .getValidator()
+                  .validate(
+                      storageRequest(
+                          UUID.randomUUID(), List.of(), tank("Tank1", "C1", "100.001", "18.5"))))
+          .isNotEmpty();
+    }
+    assertThat(service.list(owner)).isEmpty();
+  }
+
   @Test
   void freezesSourceTemplatesAndUsesSharedAdmissionWithOwnerBoundary() {
     int count = admission.totalActive();

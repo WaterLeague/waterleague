@@ -18,6 +18,7 @@ import type { Account } from '../../account/entity/account';
 import type { FacilityType } from '../../game/entity/game';
 import type { NetworkFacility } from '../dto/watershedDto';
 import { useWatershed } from '../controller/useWatershed';
+import { StorageDesignForm } from './StorageDesignForm';
 import { NetworkDesignForm } from './NetworkDesignForm';
 import { jobLabels, WatershedResult } from './WatershedResult';
 import './watershed.css';
@@ -32,13 +33,9 @@ const networkFacilities = [
   { id: 'INFILTRATION_TRENCH', name: '침투 트렌치', Icon: Droplets },
   { id: 'VEGETATIVE_SWALE', name: '식생수로', Icon: Route },
   { id: 'RAINWATER_CISTERN', name: '빗물이용조', Icon: Container },
+  { id: 'UNDERGROUND_STORAGE', name: '지하 저류조', Icon: Warehouse },
 ] as const;
 const pendingFacilities = [
-  {
-    name: '지하 저류조',
-    Icon: Warehouse,
-    reason: '부지·지하 층위·유입 및 방류 절점·공종 원가 연결 필요',
-  },
   { name: '저류지·유수지', Icon: Fence, reason: '수위별 저류 용량·월류 구조·부지·원가 연결 필요' },
   {
     name: '빗물받이',
@@ -73,7 +70,7 @@ export function FacilityExpansionPanel({
   onAllCandidates?: () => void;
   onLogin: () => void;
 }) {
-  const [type, setType] = useState<NetworkFacility | null>(null);
+  const [type, setType] = useState<NetworkFacility | 'UNDERGROUND_STORAGE' | null>(null);
   const state = useWatershed(account, open);
   return (
     <aside
@@ -114,10 +111,10 @@ export function FacilityExpansionPanel({
         </button>
       )}
       <h3>
-        연결 유역 비교 <small>생물저류 포함 4종</small>
+        연결 유역 비교 <small>생물저류 포함 5종</small>
       </h3>
       <p>
-        생물저류시설은 공개 토성 후보에서 지도 설치가 가능합니다. 나머지 3종은 관망 계산에서 사용할
+        생물저류시설은 공개 토성 후보에서 지도 설치가 가능합니다. 나머지 4종은 관망 계산에서 사용할
         수 있으며, 지도 설치 연결을 진행 중입니다.
       </p>
       <div className="watershed-facility-grid">
@@ -153,9 +150,13 @@ export function FacilityExpansionPanel({
               </button>
             </p>
           )}
-          {state.catalog && type && (
-            <NetworkDesignForm type={type} catalog={state.catalog} state={state} />
-          )}
+          {state.catalog &&
+            type &&
+            (type === 'UNDERGROUND_STORAGE' ? (
+              <StorageDesignForm catalog={state.catalog} state={state} />
+            ) : (
+              <NetworkDesignForm type={type} catalog={state.catalog} state={state} />
+            ))}
           {state.jobs.length > 0 && (
             <label className="watershed-history">
               내 최근 관망 계산
@@ -163,7 +164,8 @@ export function FacilityExpansionPanel({
                 {state.jobs.map((job) => (
                   <option key={job.id} value={job.id}>
                     {new Date(job.createdAt).toLocaleString('ko-KR')} ·{' '}
-                    {job.design.placements.length}곳 · {jobLabels[job.state]}
+                    {job.design.placements.length + (job.design.storage?.placements.length ?? 0)}곳
+                    · {jobLabels[job.state]}
                   </option>
                 ))}
               </select>
@@ -199,7 +201,7 @@ export function FacilityExpansionPanel({
       )}
       <details className="watershed-pending">
         <summary>
-          연결 준비 중인 시설 <span>5종</span>
+          연결 준비 중인 시설 <span>4종</span>
         </summary>
         <p>아래 시설은 아직 설치하거나 이 화면에서 계산할 수 없습니다.</p>
         {pendingFacilities.map(({ name, Icon, reason }) => (

@@ -1,3 +1,4 @@
+import type { StoragePlacement } from '../dto/storageDto';
 import { z } from 'zod';
 import { api } from '../../../shared/repository/apiClient';
 import { watershedCatalogDto, watershedJobDto, type NetworkPlacement } from '../dto/watershedDto';
@@ -13,13 +14,14 @@ export const submitWatershed = async (
   placements: NetworkPlacement[],
   requestKey: string,
   signal?: AbortSignal,
-  costCatalogHash?: string
+  costCatalogHash?: string,
+  storage?: { catalogHash: string; placements: StoragePlacement[] }
 ) =>
   watershedJobDto.parse(
     await api(
       '/watersheds',
       'POST',
-      { catalogHash, placements, requestKey, costCatalogHash },
+      { catalogHash, placements, requestKey, costCatalogHash, storage },
       signal
     )
   );

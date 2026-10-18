@@ -58,3 +58,45 @@ class WatershedTests(unittest.TestCase):
         design['placements'][0]['parameters']['nativeSeepageMmH']=1000
         changed=json.dumps(design,sort_keys=True)
         with self.assertRaises(FloodModelError): inputs(request | {'placements':changed,'inputHash':hashlib.sha256((CATALOG_HASH+'\n'+changed).encode()).hexdigest()})
+
+    def test_storage_only_and_combined_native_water_balance(self):
+        from waterleague_sim.watershed_storage import CATALOG_HASH as STORAGE_HASH
+        from waterleague_sim.reference.connected_storage import design as tank_design
+        catalog=json.loads(CATALOG.read_text())
+        lids=[{'id':'Bio1','facilityType':'BIORETENTION','subcatchmentId':'S1','areaM2':100,
+            'replacedImperviousM2':100,'treatedImperviousM2':1000,'initialSaturationPercent':0,
+            'parameters':catalog['templates']['BIORETENTION']['parameters']}]
+        for mixed in (False, True):
+            design={'schemaVersion':1,'basis':catalog['designBasis'],'placements':lids if mixed else []}
+            base_request=design | {'placements':lids}
+            raw=json.dumps(base_request,sort_keys=True)
+            _,_,base,*_=inputs({'modelHash':CATALOG_HASH,'placements':raw,'inputHash':hashlib.sha256((CATALOG_HASH+'\n'+raw).encode()).hexdigest()})
+            design['storage']=tank_design(base,inlet='J1',receiver='J2',invert=16,depth=5,area=100,inlet_crest=18.5,drain_crest=16.2,overflow_crest=18.5) | {'catalogHash':STORAGE_HASH}
+            raw=json.dumps(design,sort_keys=True)
+            digest=hashlib.sha256((CATALOG_HASH+'\n'+raw).encode()).hexdigest()
+            identity=uuid.uuid4()
+            self.conn.execute("INSERT INTO watershed_experiments(id,owner_id,request_key,model_hash,input_hash,placements,state,created_at) VALUES(%s,%s,%s,%s,%s,%s,'QUEUED',now())",(identity,self.owner,uuid.uuid4(),CATALOG_HASH,digest,raw))
+            job=queue.claim(self.conn)
+            self.assertTrue(watershed.process(self.conn,job,self.artifacts))
+            row=self.conn.execute('SELECT * FROM watershed_experiments WHERE id=%s',(identity,)).fetchone()
+            self.assertEqual(row['state'],'SUCCEEDED',row['error_code'])
+            result=json.loads(row['result'])
+            self.assertEqual(result['numericalStatus'],'PASSED',result)
+            strategy=result['cases'][1]
+            ledger=strategy['connectedStorage']['wholeRunLedger']['facilities'][0]
+            self.assertEqual(ledger['capacityM3'],500)
+            self.assertGreater(ledger['inflowM3'],0)
+            self.assertGreater(ledger['finalStorageM3'],0)
+            self.assertEqual(ledger['floodingM3'],0)
+            self.assertEqual(ledger['numericalStatus'],'PASSED')
+            self.assertEqual(len(strategy['facilities']),int(mixed))
+            self.assertFalse(result['rankingEligible'])
+            self.assertIsNone(result['budgetChargedKrw'])
+            directory=self.artifacts/'watersheds'/str(identity)/str(job['lease_token'])
+            manifest=json.loads((directory/'manifest.json').read_text())
+            self.assertEqual(manifest['storage-connections.json'],STORAGE_HASH)
+            self.assertEqual((directory/'baseline-input.inp').read_bytes(),base)
+            self.assertIn(b'WLST_Tank', (directory/'strategy-input.inp').read_bytes())
+            changed=json.loads(raw);changed['storage']['placements'][0]['drain']['nodeId']='Out1'
+            invalid=json.dumps(changed,sort_keys=True)
+            with self.assertRaises(FloodModelError): inputs({'modelHash':CATALOG_HASH,'placements':invalid,'inputHash':hashlib.sha256((CATALOG_HASH+'\n'+invalid).encode()).hexdigest()})

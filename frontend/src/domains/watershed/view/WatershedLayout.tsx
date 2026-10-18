@@ -8,12 +8,18 @@ export function WatershedLayout({
   placements,
   onSelect,
   disabled = false,
+  selectedLinkId,
+  selectableLinkIds,
+  onSelectLink,
 }: {
   layout: Layout;
   selectedId: string;
   placements: NetworkPlacement[];
   onSelect: (id: string) => void;
   disabled?: boolean;
+  selectedLinkId?: string;
+  selectableLinkIds?: string[];
+  onSelectLink?: (id: string) => void;
 }) {
   const [zoom, setZoom] = useState(false);
   const marker = useId().replace(/[^a-zA-Z0-9_-]/g, '');
@@ -30,13 +36,15 @@ export function WatershedLayout({
     [layout]
   );
   const selected = layout.catchments.find((c) => c.id === selectedId)!;
-  const extent = zoom && selected ? layoutExtent(selected.points) : allExtent;
+  const link = layout.links.find((l) => l.id === selectedLinkId);
+  const extent =
+    zoom && (link || selected) ? layoutExtent(link?.points ?? selected.points) : allExtent;
   const downstream = downstreamLayout(layout, selectedId);
   const unit = Math.max(extent.width, extent.height) / 370;
   return (
     <section className="watershed-layout" aria-label="공개 관망 구역 선택">
       <header>
-        <strong>집수구역을 눌러 설계</strong>
+        <strong>{onSelectLink ? '관로 연결을 눌러 설계' : '집수구역을 눌러 설계'}</strong>
         <span>원본 관망도</span>
       </header>
       <svg
@@ -64,16 +72,16 @@ export function WatershedLayout({
             className="watershed-catchment"
             data-selected={c.id === selectedId}
             role="button"
-            tabIndex={disabled ? -1 : 0}
+            tabIndex={disabled || onSelectLink ? -1 : 0}
             aria-label={`${c.id} 집수구역 선택`}
             aria-pressed={c.id === selectedId}
-            aria-disabled={disabled}
+            aria-disabled={disabled || Boolean(onSelectLink)}
             vectorEffect="non-scaling-stroke"
             onClick={() => {
-              if (!disabled) onSelect(c.id);
+              if (!disabled && !onSelectLink) onSelect(c.id);
             }}
             onKeyDown={(e) => {
-              if (!disabled && (e.key === 'Enter' || e.key === ' ')) {
+              if (!disabled && !onSelectLink && (e.key === 'Enter' || e.key === ' ')) {
                 e.preventDefault();
                 onSelect(c.id);
               }
@@ -89,7 +97,7 @@ export function WatershedLayout({
             <polyline
               key={l.id}
               points={l.points.map(([x, y]) => `${x},${-y}`).join(' ')}
-              data-selected={downstream.links.has(l.id)}
+              data-selected={l.id === selectedLinkId || downstream.links.has(l.id)}
               vectorEffect="non-scaling-stroke"
               markerEnd={downstream.links.has(l.id) ? `url(#${marker})` : undefined}
             />
@@ -101,10 +109,43 @@ export function WatershedLayout({
               cy={-n.coordinate[1]}
               r={unit * (n.kind === 'OUTFALL' ? 4.5 : n.id === downstream.start ? 4 : 2)}
               data-outfall={n.kind === 'OUTFALL'}
-              data-selected={downstream.nodes.has(n.id)}
+              data-selected={
+                downstream.nodes.has(n.id) || n.id === link?.fromNode || n.id === link?.toNode
+              }
             />
           ))}
         </g>
+        {onSelectLink && (
+          <g className="watershed-link-targets">
+            {layout.links
+              .filter((l) => selectableLinkIds?.includes(l.id))
+              .map((l) => (
+                <polyline
+                  key={l.id}
+                  points={l.points.map(([x, y]) => `${x},${-y}`).join(' ')}
+                  role="button"
+                  tabIndex={disabled ? -1 : 0}
+                  aria-disabled={disabled}
+                  aria-label={`${l.id} 관로 연결 선택`}
+                  aria-pressed={l.id === selectedLinkId}
+                  vectorEffect="non-scaling-stroke"
+                  onClick={() => {
+                    if (!disabled) onSelectLink(l.id);
+                  }}
+                  onKeyDown={(e) => {
+                    if (!disabled && (e.key === 'Enter' || e.key === ' ')) {
+                      e.preventDefault();
+                      onSelectLink(l.id);
+                    }
+                  }}
+                >
+                  <title>
+                    {l.id} · {l.fromNode} → {l.toNode}
+                  </title>
+                </polyline>
+              ))}
+          </g>
+        )}
         <g className="watershed-layout-labels" aria-hidden="true" fontSize={unit * 11}>
           {layout.catchments.map((c) => {
             const point = labels.get(c.id)!;
@@ -128,7 +169,7 @@ export function WatershedLayout({
             );
           })}
           {layout.nodes
-            .filter((n) => n.kind === 'OUTFALL')
+            .filter((n) => n.kind === 'OUTFALL' || n.id === link?.fromNode || n.id === link?.toNode)
             .map((n) => (
               <text key={n.id} x={n.coordinate[0] + 7 * unit} y={-n.coordinate[1]}>
                 {n.id}
@@ -145,10 +186,14 @@ export function WatershedLayout({
         </button>
       </div>
       <p className="watershed-layout-route" aria-live="polite">
-        {selectedId} → {downstream.start} → 연결 방류구 {downstream.outfalls.join('·') || '없음'}
+        {link
+          ? `${link.id} · ${link.fromNode} → ${link.toNode}`
+          : `${selectedId} → ${downstream.start} → 연결 방류구 ${downstream.outfalls.join('·') || '없음'}`}
       </p>
       <p>
-        노란색: 선택 구역 · 파란색: 하류 연결
+        {onSelectLink
+          ? '파란색: 저류조를 추가할 기존 관로의 연결점'
+          : '노란색: 선택 구역 · 파란색: 하류 연결'}
         <br />
         화살표는 관로 정의 방향이며 실제 유량 방향이 아닙니다.
       </p>

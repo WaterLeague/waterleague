@@ -422,3 +422,36 @@
   color: #245f79;
   font-weight: 700;
 }
+
+.watershed-storage-fields,
+.watershed-storage-fields fieldset {
+  min-width: 0;
+  border: 1px solid #c6d2c0;
+  padding: 12px;
+  margin: 12px 0;
+}
+.watershed-storage-capacity {
+  display: block;
+  margin: 14px 0;
+  font-variant-numeric: tabular-nums;
+}
+.watershed-composer .watershed-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.watershed-composer .watershed-check input {
+  width: auto;
+}
+.watershed-link-targets polyline {
+  stroke: transparent;
+  stroke-width: 14;
+  fill: none;
+  pointer-events: stroke;
+  cursor: pointer;
+}
+.watershed-link-targets polyline:hover,
+.watershed-link-targets polyline:focus-visible {
+  stroke: #356e8355;
+  outline: none;
+}

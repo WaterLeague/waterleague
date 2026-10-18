@@ -1,10 +1,10 @@
 import { useRef, useState } from 'react';
 import type { NetworkFacility, NetworkPlacement, WatershedCatalog } from '../dto/watershedDto';
-import { networkNames, validateNetworkDesign } from '../service/watershedDesign';
+import { networkNames } from '../service/watershedDesign';
 import { physicalAmount as number } from '../../physics/service/physicalValueFormat';
 import type { WatershedState } from '../controller/useWatershed';
-import { previewWatershedCosts } from '../service/watershedCosts';
-import { WatershedCosts } from './WatershedCosts';
+import { validateCombinedDesign } from '../service/storageDesign';
+import { WatershedDesignReview } from './WatershedDesignReview';
 import { WatershedLayout } from './WatershedLayout';
 const areaAmount = (value: number) => value.toLocaleString('ko-KR', { maximumFractionDigits: 2 });
 const parameterLabels: Record<string, string> = {
@@ -71,7 +71,6 @@ export function NetworkDesignForm({
     .filter((p) => p.catchmentId === catchmentId)
     .reduce((sum, p) => sum + p.areaM2 + p.treatedImperviousM2, 0);
   const template = catalog.catalog.templates[type];
-  const costing = previewWatershedCosts(catalog, state.drafts);
   function add() {
     setFeedback('');
     if (!area.trim() || !treated.trim()) {
@@ -87,10 +86,10 @@ export function NetworkDesignForm({
       areaM2: Number(area),
       treatedImperviousM2: Number(treated),
     };
-    while (state.drafts.some((p) => p.id === placement.id))
+    while ([...state.drafts, ...state.storageDrafts].some((p) => p.id === placement.id))
       placement.id = `F${++sequence.current + 1}`;
     const next = [...state.drafts, placement];
-    const invalid = validateNetworkDesign(catalog, next);
+    const invalid = validateCombinedDesign(catalog, next, state.storageDrafts);
     if (invalid) {
       setError(invalid);
       return;
@@ -192,49 +191,12 @@ export function NetworkDesignForm({
       <button
         type="button"
         className="watershed-secondary"
-        disabled={state.busy || state.drafts.length >= 20}
+        disabled={state.busy || state.drafts.length + state.storageDrafts.length >= 20}
         onClick={add}
       >
         설계에 추가
       </button>
-      <div className="watershed-drafts">
-        <h3>공동 설계 · {state.drafts.length}/20곳</h3>
-        {!state.drafts.length && <p>시설을 추가한 뒤 기준안과 비교할 수 있습니다.</p>}
-        <ul>
-          {state.drafts.map((p) => (
-            <li key={p.id}>
-              <div>
-                <strong>
-                  {p.catchmentId} · {networkNames[p.facilityType]}
-                </strong>
-                <span>
-                  {number(p.areaM2)} m² · 추가 처리 {number(p.treatedImperviousM2)} m²
-                </span>
-              </div>
-              <button
-                aria-label={`${p.id} ${networkNames[p.facilityType]} 삭제`}
-                disabled={state.busy}
-                onClick={() => state.setDrafts(state.drafts.filter((d) => d.id !== p.id))}
-              >
-                삭제
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
-      <p className="watershed-warning">
-        2010년 공개 원 관망 강우로 계산합니다. 현재 재생 중인 재해·실시간 강우와 별도이며 주간·재해
-        예산과 순위에 반영하지 않습니다. 전체 설치비 미확정.
-      </p>
-      {costing && <WatershedCosts costing={costing} preview />}
-      <button
-        type="button"
-        className="watershed-submit"
-        disabled={state.busy || !state.drafts.length}
-        onClick={() => void state.submit()}
-      >
-        {state.busy ? '요청 중…' : '기준안과 관망 계산 비교'}
-      </button>
+      <WatershedDesignReview catalog={catalog} state={state} />
     </section>
   );
 }

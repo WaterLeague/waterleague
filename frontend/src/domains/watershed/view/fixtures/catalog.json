@@ -852,5 +852,371 @@
       "화살표는 관로의 정의 방향이며 계산 유량·역류 방향이 아님",
       "구역별 설계 개수는 면적 배분이며 개별 시설의 실제 위치를 뜻하지 않음"
     ]
+  },
+  "storageCatalogHash": "f2df891f3914de02c37ff7ae09f6d5a849ef6f69dae85e25e562e5a44cffc105",
+  "storageCatalog": {
+    "schemaVersion": 1,
+    "id": "SEOUL_PUBLIC_NETWORK_STORAGE_CONNECTIONS_V1",
+    "sourceCatalogSha256": "beaddba8868b6f1f6bbf35b1d53d4695a94db99498d8988f90d62013cf8f053c",
+    "sourceOriginalSha256": "8ce278a3d2b58df3c2a5fd1232160bcabb324389746ee0c878792acf91abbdbb",
+    "baseNetworkSha256": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+    "sourceUrl": "https://doi.org/10.17632/dzzwvd8rjk.3",
+    "generatorSha256": "879c579ba8612f82ec8cfc86790ee2aca960f622acc3b892eace0347097b7bf1",
+    "connections": [
+      {
+        "id": "C1",
+        "inlet": {
+          "id": "J1",
+          "invertM": 18.42,
+          "maxDepthM": 3.2
+        },
+        "receiver": {
+          "id": "J2",
+          "invertM": 16.15,
+          "maxDepthM": 3.2
+        },
+        "sourceLine": 147,
+        "lengthM": 200.0
+      },
+      {
+        "id": "C2",
+        "inlet": {
+          "id": "J2",
+          "invertM": 16.15,
+          "maxDepthM": 3.2
+        },
+        "receiver": {
+          "id": "J3",
+          "invertM": 15.58,
+          "maxDepthM": 3.2
+        },
+        "sourceLine": 148,
+        "lengthM": 65.0
+      },
+      {
+        "id": "C3",
+        "inlet": {
+          "id": "J11",
+          "invertM": 20.21,
+          "maxDepthM": 3.2
+        },
+        "receiver": {
+          "id": "J12",
+          "invertM": 18.02,
+          "maxDepthM": 3.2
+        },
+        "sourceLine": 149,
+        "lengthM": 200.0
+      },
+      {
+        "id": "C4",
+        "inlet": {
+          "id": "J12",
+          "invertM": 18.02,
+          "maxDepthM": 3.2
+        },
+        "receiver": {
+          "id": "J13",
+          "invertM": 17.63,
+          "maxDepthM": 3.2
+        },
+        "sourceLine": 150,
+        "lengthM": 40.0
+      },
+      {
+        "id": "C5",
+        "inlet": {
+          "id": "J13",
+          "invertM": 17.63,
+          "maxDepthM": 3.2
+        },
+        "receiver": {
+          "id": "J2",
+          "invertM": 16.15,
+          "maxDepthM": 3.2
+        },
+        "sourceLine": 151,
+        "lengthM": 160.0
+      },
+      {
+        "id": "C6",
+        "inlet": {
+          "id": "J4",
+          "invertM": 16.48,
+          "maxDepthM": 3.2
+        },
+        "receiver": {
+          "id": "J3",
+          "invertM": 15.58,
+          "maxDepthM": 3.2
+        },
+        "sourceLine": 152,
+        "lengthM": 200.0
+      },
+      {
+        "id": "C7",
+        "inlet": {
+          "id": "J3",
+          "invertM": 15.58,
+          "maxDepthM": 3.2
+        },
+        "receiver": {
+          "id": "J5",
+          "invertM": 14.71,
+          "maxDepthM": 3.2
+        },
+        "sourceLine": 153,
+        "lengthM": 160.0
+      },
+      {
+        "id": "C8",
+        "inlet": {
+          "id": "J17",
+          "invertM": 19.65,
+          "maxDepthM": 3.2
+        },
+        "receiver": {
+          "id": "J18",
+          "invertM": 17.94,
+          "maxDepthM": 3.2
+        },
+        "sourceLine": 154,
+        "lengthM": 200.0
+      },
+      {
+        "id": "C10",
+        "inlet": {
+          "id": "J5",
+          "invertM": 14.71,
+          "maxDepthM": 3.2
+        },
+        "receiver": {
+          "id": "J19",
+          "invertM": 14.35,
+          "maxDepthM": 3.2
+        },
+        "sourceLine": 156,
+        "lengthM": 200.0
+      },
+      {
+        "id": "C11",
+        "inlet": {
+          "id": "J19",
+          "invertM": 14.35,
+          "maxDepthM": 3.2
+        },
+        "receiver": {
+          "id": "J20",
+          "invertM": 13.7,
+          "maxDepthM": 3.2
+        },
+        "sourceLine": 157,
+        "lengthM": 200.0
+      },
+      {
+        "id": "C12",
+        "inlet": {
+          "id": "J20",
+          "invertM": 13.7,
+          "maxDepthM": 3.2
+        },
+        "receiver": {
+          "id": "J21",
+          "invertM": 13.6,
+          "maxDepthM": 3.2
+        },
+        "sourceLine": 158,
+        "lengthM": 100.0
+      },
+      {
+        "id": "C13",
+        "inlet": {
+          "id": "J21",
+          "invertM": 13.6,
+          "maxDepthM": 3.2
+        },
+        "receiver": {
+          "id": "J22",
+          "invertM": 12.75,
+          "maxDepthM": 3.2
+        },
+        "sourceLine": 159,
+        "lengthM": 200.0
+      },
+      {
+        "id": "C14",
+        "inlet": {
+          "id": "J22",
+          "invertM": 12.75,
+          "maxDepthM": 3.2
+        },
+        "receiver": {
+          "id": "J23",
+          "invertM": 12.5,
+          "maxDepthM": 3.2
+        },
+        "sourceLine": 160,
+        "lengthM": 200.0
+      },
+      {
+        "id": "C15",
+        "inlet": {
+          "id": "J23",
+          "invertM": 12.5,
+          "maxDepthM": 3.2
+        },
+        "receiver": {
+          "id": "J24",
+          "invertM": 12.5,
+          "maxDepthM": 3.2
+        },
+        "sourceLine": 161,
+        "lengthM": 200.0
+      },
+      {
+        "id": "C16",
+        "inlet": {
+          "id": "J24",
+          "invertM": 12.5,
+          "maxDepthM": 3.2
+        },
+        "receiver": {
+          "id": "J25",
+          "invertM": 12.5,
+          "maxDepthM": 3.2
+        },
+        "sourceLine": 162,
+        "lengthM": 200.0
+      },
+      {
+        "id": "C17",
+        "inlet": {
+          "id": "J25",
+          "invertM": 12.5,
+          "maxDepthM": 3.2
+        },
+        "receiver": {
+          "id": "J26",
+          "invertM": 12.2,
+          "maxDepthM": 3.2
+        },
+        "sourceLine": 163,
+        "lengthM": 120.0
+      },
+      {
+        "id": "C18",
+        "inlet": {
+          "id": "J26",
+          "invertM": 12.2,
+          "maxDepthM": 3.2
+        },
+        "receiver": {
+          "id": "J10",
+          "invertM": 12.02,
+          "maxDepthM": 3.2
+        },
+        "sourceLine": 164,
+        "lengthM": 130.0
+      },
+      {
+        "id": "C19",
+        "inlet": {
+          "id": "J14",
+          "invertM": 14.32,
+          "maxDepthM": 3.2
+        },
+        "receiver": {
+          "id": "J6",
+          "invertM": 11.46,
+          "maxDepthM": 3.2
+        },
+        "sourceLine": 165,
+        "lengthM": 200.0
+      },
+      {
+        "id": "C20",
+        "inlet": {
+          "id": "J6",
+          "invertM": 11.46,
+          "maxDepthM": 3.2
+        },
+        "receiver": {
+          "id": "J7",
+          "invertM": 11.25,
+          "maxDepthM": 3.2
+        },
+        "sourceLine": 166,
+        "lengthM": 200.0
+      },
+      {
+        "id": "C21",
+        "inlet": {
+          "id": "J7",
+          "invertM": 11.25,
+          "maxDepthM": 3.2
+        },
+        "receiver": {
+          "id": "J8",
+          "invertM": 10.4,
+          "maxDepthM": 3.2
+        },
+        "sourceLine": 167,
+        "lengthM": 200.0
+      },
+      {
+        "id": "C22",
+        "inlet": {
+          "id": "J8",
+          "invertM": 10.4,
+          "maxDepthM": 3.2
+        },
+        "receiver": {
+          "id": "J9",
+          "invertM": 8.74,
+          "maxDepthM": 3.2
+        },
+        "sourceLine": 168,
+        "lengthM": 200.0
+      },
+      {
+        "id": "C23",
+        "inlet": {
+          "id": "J15",
+          "invertM": 9.87,
+          "maxDepthM": 3.2
+        },
+        "receiver": {
+          "id": "J9",
+          "invertM": 8.74,
+          "maxDepthM": 3.2
+        },
+        "sourceLine": 169,
+        "lengthM": 200.0
+      },
+      {
+        "id": "C25",
+        "inlet": {
+          "id": "J10",
+          "invertM": 12.02,
+          "maxDepthM": 3.2
+        },
+        "receiver": {
+          "id": "J16",
+          "invertM": 11.98,
+          "maxDepthM": 3.2
+        },
+        "sourceLine": 171,
+        "lengthM": 200.0
+      }
+    ],
+    "designBasis": "EXPLICIT_DESIGN_NOT_SITE_MEASURED",
+    "facilityType": "UNDERGROUND_STORAGE",
+    "completeInstalledCostKrw": null,
+    "limitations": [
+      "원 공개 관망의 내부 관로 양끝 절점이며 실제 저류조 부지 후보가 아님",
+      "수치 모형 내부 기준고이며 EPSG·수직 기준·현장 관저고의 확인 아님",
+      "덮개·차수·직육면체 설계, 무펌프 국부 오리피스 유입·배수·비상배수 사용",
+      "공사비·시공 가능성 미확인, 지도 점유·예산 차감·순위 게시 제외"
+    ]
   }
 }

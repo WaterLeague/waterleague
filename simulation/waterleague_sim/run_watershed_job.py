@@ -33,13 +33,18 @@ def inputs(request):
     catalog = json.loads(raw)
     design = json.loads(request['placements'])
     require(isinstance(design, dict) and isinstance(design.get('placements'), list)
-            and 1 <= len(design['placements']) <= 20, 'WATERSHED_DESIGN_INVALID')
+            and design.get('schemaVersion') == 1 and design.get('basis') == catalog['designBasis']
+            and set(design) <= {'schemaVersion','basis','placements','costing','storage'}, 'WATERSHED_DESIGN_INVALID')
+    storage = design.get('storage', {})
+    require(isinstance(storage, dict) and isinstance(storage.get('placements', []), list), 'WATERSHED_STORAGE_PLACEMENTS_INVALID')
+    storage_count = len(storage.get('placements', []))
+    require(1 <= len(design['placements'])+storage_count <= 20, 'WATERSHED_DESIGN_INVALID')
     for p in design['placements']:
         template = catalog['templates'].get(p['facilityType'])
         require(template is not None and p['parameters'] == template['parameters']
                 and p['initialSaturationPercent'] == template['initialSaturationPercent']
                 and p['replacedImperviousM2'] == p['areaM2'], 'WATERSHED_TEMPLATE_CHANGED')
-    verify_costs(design)
+    verify_costs({k: v for k, v in design.items() if k != 'storage'})
     manifest = ROOT/'data/manifests/mendeley-seocho-network-v3.json'
     source, source_hash, entries = load_archive(ROOT, manifest)
     require(source_hash == catalog['sourceManifestSha256']
@@ -52,7 +57,16 @@ def inputs(request):
                  'outletNodeId':v['outlet']} for v in audit['catchments']]
     require(catchments==catalog['catchments'], 'WATERSHED_CATCHMENT_SOURCE_MISMATCH')
     base, numerical = derive(original, catalog['numericalProfile'])
-    strategy, transformation = compile_design(base, {k: v for k, v in design.items() if k != 'costing'})
+    strategy, storage_metadata = base, None
+    if 'storage' in design:
+        from .watershed_storage import compile as compile_storage
+        strategy, storage_metadata = compile_storage(base, design['storage'], [p['id'] for p in design['placements']])
+    transformation = {'limitations': []}
+    if design['placements']:
+        strategy, transformation = compile_design(strategy, {k: v for k, v in design.items() if k not in ('costing','storage')})
+    if storage_metadata is not None:
+        transformation['connectedStorage'] = storage_metadata
+        transformation['limitations'] += storage_metadata['limitations']
     return catalog, original, base, strategy, numerical, transformation, manifest
 
 
@@ -61,10 +75,13 @@ def calculate(request, directory):
     directory = Path(directory)
     directory.mkdir(parents=True, exist_ok=True)
     design = json.loads(request['placements'])
-    cost_raw = verify_costs(design)
+    cost_raw = verify_costs({k: v for k, v in design.items() if k != 'storage'})
     if cost_raw is not None:
         (directory/'cost-catalog.json').write_bytes(cost_raw)
         write(directory/'cost-snapshot.json', design['costing'])
+    if 'storage' in design:
+        from .watershed_storage import CATALOG as STORAGE_CATALOG
+        (directory/'storage-connections.json').write_bytes(STORAGE_CATALOG.read_bytes())
     (directory/'catalog.json').write_bytes(CATALOG.read_bytes())
     (directory/'original.inp').write_bytes(original)
     (directory/'source-manifest.json').write_bytes(manifest.read_bytes())
@@ -102,6 +119,11 @@ def calculate(request, directory):
             case['facilities'] = result['final']['facilities']
             case['outfalls'] = {key: value for key, value in result['final']['nodes'].items() if value['type'] == 1}
             case['evaluationMetrics'] = result['evaluationMetrics']
+            if name == 'strategy' and 'connectedStorage' in transformation:
+                from .engine.connected_storage import result_summary
+                case['connectedStorage'] = result_summary(transformation['connectedStorage'], result['initial'], result['final'])
+                if case['connectedStorage']['numericalStatus'] != 'PASSED':
+                    case['numericalStatus'] = 'FAILED'
         except FloodModelError as error:
             case.update(numericalStatus='FAILED', failureCode=str(error))
         cases.append(case)

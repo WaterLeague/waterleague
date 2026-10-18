@@ -1,0 +1,610 @@
+{
+  "id": "10000000-0000-4000-8000-000000000002",
+  "catalogHash": "beaddba8868b6f1f6bbf35b1d53d4695a94db99498d8988f90d62013cf8f053c",
+  "createdAt": "2026-10-18T10:24:00Z",
+  "state": "SUCCEEDED",
+  "message": "",
+  "design": {
+    "basis": "PUBLIC_REFERENCE_DESIGN_NOT_SITE_MEASURED",
+    "placements": [
+      {
+        "areaM2": 100,
+        "facilityType": "BIORETENTION",
+        "id": "Bio1",
+        "initialSaturationPercent": 0,
+        "parameters": {
+          "drain": {
+            "delayHours": 0,
+            "diameterMm": 25,
+            "dischargeCoefficient": 0.6,
+            "offsetMm": 152.4
+          },
+          "nativeSeepageBasis": "DESIGN_ASSUMPTION",
+          "nativeSeepageMmH": 4,
+          "soilDepthMm": 609.6,
+          "storageDepthMm": 304.8,
+          "storagePorosity": 0.3,
+          "surfaceDepthMm": 152.4,
+          "vegetationFraction": 0.1
+        },
+        "replacedImperviousM2": 100,
+        "subcatchmentId": "S1",
+        "treatedImperviousM2": 1000
+      }
+    ],
+    "schemaVersion": 1,
+    "storage": {
+      "catalogHash": "f2df891f3914de02c37ff7ae09f6d5a849ef6f69dae85e25e562e5a44cffc105",
+      "placements": [
+        {
+          "basis": "EXPLICIT_DESIGN_NOT_SITE_MEASURED",
+          "cover": "COVERED",
+          "depthAreaCurve": [
+            {
+              "areaM2": 100,
+              "depthM": 0.0
+            },
+            {
+              "areaM2": 100,
+              "depthM": 5
+            }
+          ],
+          "drain": {
+            "crestM": 16.2,
+            "diameterM": 0.03,
+            "dischargeCoefficient": 0.65,
+            "evidence": "명시적 수치 시험 설계; 실제 서울 시설 치수·용량·계수 아님",
+            "flapGate": false,
+            "nodeId": "J2"
+          },
+          "evidence": "명시적 수치 시험 설계; 실제 서울 시설 치수·용량·계수 아님",
+          "facilityType": "UNDERGROUND_STORAGE",
+          "id": "Tank",
+          "initialDepthM": 0.0,
+          "inlet": {
+            "crestM": 18.5,
+            "diameterM": 0.2,
+            "dischargeCoefficient": 0.65,
+            "evidence": "명시적 수치 시험 설계; 실제 서울 시설 치수·용량·계수 아님",
+            "flapGate": false,
+            "nodeId": "J1"
+          },
+          "invertM": 16,
+          "lining": "SEALED",
+          "overflow": {
+            "crestM": 18.5,
+            "diameterM": 0.12,
+            "dischargeCoefficient": 0.65,
+            "evidence": "명시적 수치 시험 설계; 실제 서울 시설 치수·용량·계수 아님",
+            "flapGate": false,
+            "nodeId": "J2"
+          },
+          "surchargeDepthM": 0.0
+        }
+      ],
+      "schemaVersion": 1,
+      "sourceNetworkSha256": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460"
+    }
+  },
+  "result": {
+    "schemaVersion": 1,
+    "catalogHash": "beaddba8868b6f1f6bbf35b1d53d4695a94db99498d8988f90d62013cf8f053c",
+    "inputHash": "4100af5081b2d938533528a6f5c36959001ce7bc64e6fc7290f58589ee41b647",
+    "classification": "PUBLIC_NETWORK_REFERENCE_DESIGN_COMPARISON",
+    "engine": {
+      "schemaVersion": 1,
+      "engineVersion": "5.2.4",
+      "revision": "7952ca837988b1c32f791812eccc9fd64547e093",
+      "sourceArchiveSha256": "3f76a199573088ce47ff02491c529afb73d9953ee9d948dfc89dcd4981b4c0c0",
+      "metricsSha256": "9a90e94998318db8bc2e25997d4c076bd8b5f09b171df768de98c4ba1c6bd28d",
+      "observerSha256": "c320fa1849cb4b03254167b107d1a9fefc7171b10c6ce397a0b82bb5c08c53e7",
+      "facilityObserverSha256": "fd6692274cec934d4f832223c69d8e3bdf31112fb02b875b153f70366cf21869",
+      "facilityObserverVersion": 1,
+      "metricsVersion": 1,
+      "builderSha256": "8540db81bd886e8226604a0683a50a9d6e54d1ae8a99176349329a6ae16e3e15",
+      "binarySha256": "3190412f6dee5afd88aef2c081c0fb5a821d01788f3a7f15652cb0713f34cd78",
+      "modification": "READ_ONLY_LID_AND_NATIVE_OUTFALL_METRICS_NO_SOLVER_CHANGES",
+      "adapterSha256": "2a8fbb64df92edc48e9a11741ccb6d428a5bc7994a487733eb54583071cd0eb1",
+      "facilityAdapterSha256": "d8a17fe1650df27dc0a46f48deb92f6e4a04bf69fc6d17e383484ba962df75db",
+      "metricsAdapterSha256": "f0219c6affedd4b95b049815c4242b7fe8f56abe917b97f8c2d55ca2c65802df",
+      "baseAdapterSha256": "f9fa6734de7a3adc64f1bd456862d80260115c656a6bc1c0b090841883bfb0d7",
+      "qualityAdapterSha256": "c78323b383d37be56c34b8cc2d5084e4a92e3de6bbc2a818d914acbabf3eb930",
+      "platform": "macOS-27.0.1-arm64-arm-64bit"
+    },
+    "numericalProfile": {
+      "id": "slot-62-5ms",
+      "options": {
+        "SURCHARGE_METHOD": "SLOT",
+        "MAX_TRIALS": 200,
+        "ROUTING_STEP": 0.0625,
+        "MINIMUM_STEP": 0.025
+      }
+    },
+    "hydraulicApproximationChanged": true,
+    "numericalStatus": "PASSED",
+    "cases": [
+      {
+        "id": "baseline",
+        "inputSha256": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+        "numericalStatus": "PASSED",
+        "runoffContinuityPercent": -0.09872203320264816,
+        "routingContinuityPercent": -0.016379326581954956,
+        "numericalQuality": {
+          "policyVersion": "network-continuity-convergence-v2",
+          "continuityLimitPercent": 1,
+          "routingBalance": {
+            "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+            "totalInM3": 3699178.1129746106,
+            "totalOutIncludingStorageM3": 3699784.013464837,
+            "residualM3": -605.9004902262241,
+            "continuityPercent": -0.016379327291677848,
+            "absoluteToleranceM3": 1e-8,
+            "allowedResidualM3": 36991.78112974611
+          },
+          "allowedNonConvergedSteps": 0,
+          "failureReasons": [],
+          "status": "PASSED"
+        },
+        "convergence": {
+          "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+          "routingSteps": 1392566,
+          "nonConvergedSteps": 0,
+          "nonConvergedPercent": 0.0
+        },
+        "facilityQuality": {
+          "policyVersion": "connected-lid-volume-balance-v1",
+          "failedFacilityIds": [],
+          "status": "PASSED",
+          "timeBasis": "NATIVE_HYDROLOGY_CLOCK_SEPARATE_FROM_ROUTING_CLOCK"
+        },
+        "timeWindowPolicy": "NATIVE_DURATION_DIAGNOSTIC",
+        "calendarShortfallSeconds": 1.0,
+        "complete": true,
+        "totals": {
+          "timeSeconds": 86339.0,
+          "initialStorageM3": 0.32019239999999993,
+          "storageM3": 11131.689178989987,
+          "dryWeatherInflowM3": 0.0,
+          "runoffInflowM3": 229448.4376731979,
+          "groundwaterInflowM3": 0.0,
+          "rdiiInflowM3": 0.0,
+          "externalInflowM3": 3469729.3551090127,
+          "outflowM3": 2180749.855360638,
+          "floodingM3": 1507902.468925209,
+          "evaporationM3": 0.0,
+          "seepageM3": 0.0,
+          "reactionLossM3": 0.0,
+          "balanceResidualM3": -605.9004902264769
+        },
+        "facilities": [],
+        "outfalls": {
+          "Out1": {
+            "type": 1,
+            "headM": 13.087081954830289,
+            "depthM": 1.96708195483029,
+            "storageM3": 0.0,
+            "lateralFlowM3s": 0.0,
+            "inflowM3s": 19.014800777304192,
+            "overflowM3s": 0.0,
+            "statisticFloodingM3": 0.0,
+            "statisticInflowIncludingInitialM3": 1698113.0619819267,
+            "statisticOutflowM3": 1698113.0619819267,
+            "floodingM3": 0.0,
+            "boundaryOutflowM3": 1698113.061922063,
+            "boundaryInflowM3": 0.0
+          },
+          "Out2": {
+            "type": 1,
+            "headM": 8.001088107172247,
+            "depthM": 0.5210881071722457,
+            "storageM3": 0.0,
+            "lateralFlowM3s": 0.0,
+            "inflowM3s": 2.5925362644696563,
+            "overflowM3s": 0.0,
+            "statisticFloodingM3": 0.0,
+            "statisticInflowIncludingInitialM3": 482636.79340970406,
+            "statisticOutflowM3": 482636.79340970406,
+            "floodingM3": 0.0,
+            "boundaryOutflowM3": 482636.79340948444,
+            "boundaryInflowM3": 0.0
+          }
+        },
+        "evaluationMetrics": {
+          "specificationSha256": "d1d16a03051f33f0bfe03343dd7862c21a2e796442175798e85d664ff4cc72c2",
+          "complete": true,
+          "method": "NATIVE_ROUTING_STEP_DIRECTIONAL_TRAPEZOIDAL_INTEGRAL",
+          "peakMethod": "SIMULTANEOUS_SELECTED_OUTFALL_SUM",
+          "outfalls": {
+            "Out1": {
+              "outwardVolumeM3": 1698113.0619242836,
+              "inwardVolumeM3": 0.0,
+              "peakOutwardM3s": 21.6348078727807,
+              "peakInwardM3s": 0.0,
+              "peakOutwardTimeSeconds": 51893.095,
+              "peakInwardTimeSeconds": 0.0,
+              "coveredSeconds": 86339.0,
+              "nativeSteps": 1392566.0
+            },
+            "Out2": {
+              "outwardVolumeM3": 482636.79340946407,
+              "inwardVolumeM3": 0.0,
+              "peakOutwardM3s": 17.406227075478647,
+              "peakInwardM3s": 0.0,
+              "peakOutwardTimeSeconds": 57599.699,
+              "peakInwardTimeSeconds": 0.0,
+              "coveredSeconds": 86339.0,
+              "nativeSteps": 1392566.0
+            }
+          },
+          "combined": {
+            "outwardVolumeM3": 2180749.8553501973,
+            "inwardVolumeM3": 0.0,
+            "peakOutwardM3s": 39.04103494825935,
+            "peakInwardM3s": 0.0,
+            "peakOutwardTimeSeconds": 57599.699,
+            "peakInwardTimeSeconds": 0.0,
+            "coveredSeconds": 86339.0,
+            "nativeSteps": 1392566.0
+          },
+          "specification": {
+            "schemaVersion": 1,
+            "policyVersion": "PUBLIC_NETWORK_ALL_OUTFALLS_v1",
+            "startMilliseconds": 0,
+            "endMilliseconds": 86339000,
+            "networkOutfalls": ["Out1", "Out2"]
+          }
+        }
+      },
+      {
+        "id": "strategy",
+        "inputSha256": "3351daba2778df4ee2997128c6cdc021fc1fc8a4358772fa1f278d68e9b3d54a",
+        "numericalStatus": "PASSED",
+        "runoffContinuityPercent": -0.09882063418626785,
+        "routingContinuityPercent": -0.01625463180243969,
+        "numericalQuality": {
+          "policyVersion": "network-continuity-convergence-v2",
+          "continuityLimitPercent": 1,
+          "routingBalance": {
+            "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+            "totalInM3": 3699133.6747273705,
+            "totalOutIncludingStorageM3": 3699734.955267637,
+            "residualM3": -601.2805402665399,
+            "continuityPercent": -0.016254631303932395,
+            "absoluteToleranceM3": 1e-8,
+            "allowedResidualM3": 36991.33674727371
+          },
+          "allowedNonConvergedSteps": 0,
+          "failureReasons": [],
+          "status": "PASSED"
+        },
+        "convergence": {
+          "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+          "routingSteps": 1392566,
+          "nonConvergedSteps": 0,
+          "nonConvergedPercent": 0.0
+        },
+        "facilityQuality": {
+          "policyVersion": "connected-lid-volume-balance-v1",
+          "failedFacilityIds": [],
+          "status": "PASSED",
+          "timeBasis": "NATIVE_HYDROLOGY_CLOCK_SEPARATE_FROM_ROUTING_CLOCK"
+        },
+        "timeWindowPolicy": "NATIVE_DURATION_DIAGNOSTIC",
+        "calendarShortfallSeconds": 1.0,
+        "complete": true,
+        "totals": {
+          "timeSeconds": 86339.0,
+          "initialStorageM3": 0.32019239999999993,
+          "storageM3": 11339.450822845074,
+          "dryWeatherInflowM3": 0.0,
+          "runoffInflowM3": 229403.99942595765,
+          "groundwaterInflowM3": 0.0,
+          "rdiiInflowM3": 0.0,
+          "externalInflowM3": 3469729.3551090127,
+          "outflowM3": 2180770.155522394,
+          "floodingM3": 1507625.3489223982,
+          "evaporationM3": 0.0,
+          "seepageM3": 0.0,
+          "reactionLossM3": 0.0,
+          "balanceResidualM3": -601.2805402669783
+        },
+        "facilities": [
+          {
+            "hydrologyTimeSeconds": 86339.0,
+            "areaM2": 100.0,
+            "surfaceDepthMm": 54.452090646839636,
+            "soilMoisture": 0.52,
+            "storageDepthMm": 304.8,
+            "inflowM3": 286.24622221769613,
+            "evaporationM3": 0.0,
+            "infiltrationM3": 3.6200769774564083,
+            "surfaceOutflowM3": 206.96102340677035,
+            "drainOutflowM3": 34.798033675253926,
+            "initialStorageM3": 4.876799999999999,
+            "finalStorageM3": 46.00200756384332,
+            "number": 1.0,
+            "drainNodeIndex": 3.0,
+            "drainSubcatchmentIndex": -1.0,
+            "swmmId": "WL_Bio1",
+            "subcatchmentId": "S1",
+            "balanceResidualM3": -0.2581194056278946,
+            "allowedResidualM3": 2.9138114162332402,
+            "continuityPercent": -0.08858480140131109,
+            "numericalStatus": "PASSED"
+          }
+        ],
+        "outfalls": {
+          "Out1": {
+            "type": 1,
+            "headM": 13.087322901339478,
+            "depthM": 1.9673229013394786,
+            "storageM3": 0.0,
+            "lateralFlowM3s": 0.0,
+            "inflowM3s": 19.018294548995158,
+            "overflowM3s": 0.0,
+            "statisticFloodingM3": 0.0,
+            "statisticInflowIncludingInitialM3": 1698133.3617509368,
+            "statisticOutflowM3": 1698133.3617509368,
+            "floodingM3": 0.0,
+            "boundaryOutflowM3": 1698133.361691137,
+            "boundaryInflowM3": 0.0
+          },
+          "Out2": {
+            "type": 1,
+            "headM": 8.001088107172247,
+            "depthM": 0.5210881071722466,
+            "storageM3": 0.0,
+            "lateralFlowM3s": 0.0,
+            "inflowM3s": 2.5925362644696626,
+            "overflowM3s": 0.0,
+            "statisticFloodingM3": 0.0,
+            "statisticInflowIncludingInitialM3": 482636.7938025487,
+            "statisticOutflowM3": 482636.7938025487,
+            "floodingM3": 0.0,
+            "boundaryOutflowM3": 482636.79380231857,
+            "boundaryInflowM3": 0.0
+          }
+        },
+        "evaluationMetrics": {
+          "specificationSha256": "d1d16a03051f33f0bfe03343dd7862c21a2e796442175798e85d664ff4cc72c2",
+          "complete": true,
+          "method": "NATIVE_ROUTING_STEP_DIRECTIONAL_TRAPEZOIDAL_INTEGRAL",
+          "peakMethod": "SIMULTANEOUS_SELECTED_OUTFALL_SUM",
+          "outfalls": {
+            "Out1": {
+              "outwardVolumeM3": 1698133.3616934002,
+              "inwardVolumeM3": 0.0,
+              "peakOutwardM3s": 21.6348078727807,
+              "peakInwardM3s": 0.0,
+              "peakOutwardTimeSeconds": 51893.095,
+              "peakInwardTimeSeconds": 0.0,
+              "coveredSeconds": 86339.0,
+              "nativeSteps": 1392566.0
+            },
+            "Out2": {
+              "outwardVolumeM3": 482636.7938023046,
+              "inwardVolumeM3": 0.0,
+              "peakOutwardM3s": 17.406227075478647,
+              "peakInwardM3s": 0.0,
+              "peakOutwardTimeSeconds": 57599.699,
+              "peakInwardTimeSeconds": 0.0,
+              "coveredSeconds": 86339.0,
+              "nativeSteps": 1392566.0
+            }
+          },
+          "combined": {
+            "outwardVolumeM3": 2180770.155512126,
+            "inwardVolumeM3": 0.0,
+            "peakOutwardM3s": 39.04103494825935,
+            "peakInwardM3s": 0.0,
+            "peakOutwardTimeSeconds": 57599.699,
+            "peakInwardTimeSeconds": 0.0,
+            "coveredSeconds": 86339.0,
+            "nativeSteps": 1392566.0
+          },
+          "specification": {
+            "schemaVersion": 1,
+            "policyVersion": "PUBLIC_NETWORK_ALL_OUTFALLS_v1",
+            "startMilliseconds": 0,
+            "endMilliseconds": 86339000,
+            "networkOutfalls": ["Out1", "Out2"]
+          }
+        },
+        "connectedStorage": {
+          "design": {
+            "schemaVersion": 1,
+            "method": "CONNECTED_COVERED_SEALED_STORAGE_V1",
+            "source": {
+              "title": "EPA SWMM 5.2 User Manual",
+              "url": "https://nepis.epa.gov/Exe/ZyPURL.cgi?Dockey=P10145M6.TXT",
+              "sections": [
+                "3.2.6 Storage Units",
+                "B.6 Storage Unit Properties",
+                "C.20 Storage Shape Editor",
+                "[STORAGE]",
+                "[ORIFICES]",
+                "[XSECTIONS]"
+              ],
+              "engineRevision": "7952ca837988b1c32f791812eccc9fd64547e093"
+            },
+            "sourceNetworkSha256": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+            "derivedNetworkSha256": "6fa94628e63a5b0cb958d52df073fd9dbaa9c2b6ca154163dff1105c56ef984f",
+            "compilerSha256": "219d7cd11c8e06c15d7307a264816e31b4703029f90ffd3f2eefade74ae62202",
+            "design": {
+              "placements": [
+                {
+                  "basis": "EXPLICIT_DESIGN_NOT_SITE_MEASURED",
+                  "cover": "COVERED",
+                  "depthAreaCurve": [
+                    {
+                      "areaM2": 100,
+                      "depthM": 0.0
+                    },
+                    {
+                      "areaM2": 100,
+                      "depthM": 5
+                    }
+                  ],
+                  "drain": {
+                    "crestM": 16.2,
+                    "diameterM": 0.03,
+                    "dischargeCoefficient": 0.65,
+                    "evidence": "명시적 수치 시험 설계; 실제 서울 시설 치수·용량·계수 아님",
+                    "flapGate": false,
+                    "nodeId": "J2"
+                  },
+                  "evidence": "명시적 수치 시험 설계; 실제 서울 시설 치수·용량·계수 아님",
+                  "facilityType": "UNDERGROUND_STORAGE",
+                  "id": "Tank",
+                  "initialDepthM": 0.0,
+                  "inlet": {
+                    "crestM": 18.5,
+                    "diameterM": 0.2,
+                    "dischargeCoefficient": 0.65,
+                    "evidence": "명시적 수치 시험 설계; 실제 서울 시설 치수·용량·계수 아님",
+                    "flapGate": false,
+                    "nodeId": "J1"
+                  },
+                  "invertM": 16,
+                  "lining": "SEALED",
+                  "overflow": {
+                    "crestM": 18.5,
+                    "diameterM": 0.12,
+                    "dischargeCoefficient": 0.65,
+                    "evidence": "명시적 수치 시험 설계; 실제 서울 시설 치수·용량·계수 아님",
+                    "flapGate": false,
+                    "nodeId": "J2"
+                  },
+                  "surchargeDepthM": 0.0
+                }
+              ],
+              "schemaVersion": 1,
+              "sourceNetworkSha256": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460"
+            },
+            "facilities": [
+              {
+                "id": "Tank",
+                "nodeId": "WLST_Tank",
+                "facilityType": "UNDERGROUND_STORAGE",
+                "capacityM3": 500.0,
+                "capacityMethod": "EPA_TABULAR_END_AREA_INTEGRAL",
+                "ports": {
+                  "inlet": {
+                    "nodeId": "J1",
+                    "linkId": "WLST_Tank_I",
+                    "crestM": 18.5,
+                    "diameterM": 0.2,
+                    "dischargeCoefficient": 0.65,
+                    "flapGate": false
+                  },
+                  "drain": {
+                    "nodeId": "J2",
+                    "linkId": "WLST_Tank_D",
+                    "crestM": 16.2,
+                    "diameterM": 0.03,
+                    "dischargeCoefficient": 0.65,
+                    "flapGate": false
+                  },
+                  "overflow": {
+                    "nodeId": "J2",
+                    "linkId": "WLST_Tank_O",
+                    "crestM": 18.5,
+                    "diameterM": 0.12,
+                    "dischargeCoefficient": 0.65,
+                    "flapGate": false
+                  }
+                },
+                "directRainfallM3": 0,
+                "evaporationFactor": 0,
+                "seepageMmH": 0,
+                "surfaceOwnership": "UNCHANGED_ABOVE_GROUND_CATCHMENTS",
+                "geometryVerifiedOnSite": false
+              }
+            ],
+            "rankingEligible": false,
+            "historicalReconstructionEligible": false,
+            "limitations": [
+              "명시적 설계 제원이며 현장 치수·입지·공사 가능성·단가의 검증 아님",
+              "기존 절점과 시설 사이의 국부 오리피스 연결; 긴 접속관 마찰·침전·막힘은 포함하지 않음",
+              "덮개·차수 설계의 지하 저장 범위; 개방 저류지 직접 강우·증발·침투와 구분",
+              "비상 배수구 용량 초과 시 별도 지표 연결이 필요하며 절점 월류 소실은 성공 효과 아님"
+            ]
+          },
+          "wholeRunLedger": {
+            "startSeconds": 0.0,
+            "endSeconds": 86339.0,
+            "facilities": [
+              {
+                "id": "Tank",
+                "nodeId": "WLST_Tank",
+                "initialStorageM3": 0.0,
+                "inflowM3": 272.6270982652294,
+                "outflowIncludingFloodingM3": 67.91983742944845,
+                "floodingM3": 0.0,
+                "finalStorageM3": 204.6844882176319,
+                "capacityM3": 500.0,
+                "balanceResidualM3": 0.022772618149048185,
+                "allowedResidualM3": 2.726270982652294,
+                "numericalStatus": "PASSED"
+              }
+            ],
+            "scope": "NATIVE_STORAGE_NODE_BALANCE_ALREADY_INCLUDED_IN_NETWORK_ROUTING",
+            "numericalStatus": "PASSED"
+          },
+          "evaluationLedger": null,
+          "numericalStatus": "PASSED",
+          "routingBalanceAlreadyIncludesStorageAndFlows": true,
+          "rankingEligible": false
+        }
+      }
+    ],
+    "signedReductionM3": {
+      "outflowM3": -20.300161756109446,
+      "floodingM3": 277.1200028108433
+    },
+    "signedPeakReductionM3s": 0.0,
+    "sourceUrl": "https://doi.org/10.17632/dzzwvd8rjk.3",
+    "attribution": {
+      "title": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience: A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures",
+      "authors": ["Samuel Park", "Jaekyoung Kim", "Hyeryeong Yun", "Junsuk Kang"],
+      "year": 2024
+    },
+    "licence": {
+      "id": "01d9c749-3c4d-4431-9df3-620b2dcfe144",
+      "short_name": "CC BY 4.0",
+      "full_name": "Creative Commons Attribution 4.0 International",
+      "description": "You can share, copy and modify this dataset so long as you give appropriate credit, provide a link to the CC BY license, and indicate if changes were made, but you may not do so in a way that suggests the rights holder has endorsed you or your use of the dataset. Note that further permission may be required for any content within the dataset that is identified as belonging to a third party.",
+      "url": "http://creativecommons.org/licenses/by/4.0",
+      "category": "Creative",
+      "customer_id": null
+    },
+    "rankingEligible": false,
+    "historicalReconstructionEligible": false,
+    "completeInstalledCostKrw": null,
+    "budgetChargedKrw": null,
+    "limitations": [
+      "논문 PDF·부록 원본은 아직 미보관, 공개 출판 본문 확인과 구분",
+      "EPSG·수직 기준·시설 유효 시점은 계속 미확인",
+      "문헌의 단면·유입 추정값과 사후 공간자료를 2010 실측 입력으로 표시하지 않음",
+      "원 관망의 2010 강우·추정 외부 유입·초기 상태를 보존한 문헌 단면 설계 비교",
+      "시설 면적과 처리 불투수 면적은 사용자의 가상 설계이며 현장 설치 가능 범위 미확인",
+      "초기 포화도 0·문헌 단면·하부 침투 4mm/h는 설계 조건이며 현장 실측값 아님",
+      "좌표 정합·지표 결합·가격 미확정: 주간 설치·예산 차감·순위 게시 제외",
+      "공개 문헌의 설계 범위이며 서울 현장 또는 특정 제품의 실측 제원이 아님",
+      "시설 위치·대체 면적·집수 연결·초기 포화도·배수구 규격·하부 침투율은 명시된 설계 입력",
+      "기존 집수구역 출구를 계승하며 새로운 무한 방류구를 생성하지 않음",
+      "SWMM LID 배수는 수신 관망 수두의 역압이나 지하수에 의한 침투 저하를 완전하게 연결하지 않음",
+      "덮개 이용조 면적의 직접 강우는 제외, 덮개에서 외부로 떨어지는 물의 별도 경로 미구현",
+      "이용조 방류는 관망 배수이며 수요·수질 근거 없는 재이용 점수 없음",
+      "공사비·입지·현장 연결 검증 전 신규 시설의 운영 설치 및 순위 미개방",
+      "명시적 설계 제원이며 현장 치수·입지·공사 가능성·단가의 검증 아님",
+      "기존 절점과 시설 사이의 국부 오리피스 연결; 긴 접속관 마찰·침전·막힘은 포함하지 않음",
+      "덮개·차수 설계의 지하 저장 범위; 개방 저류지 직접 강우·증발·침투와 구분",
+      "비상 배수구 용량 초과 시 별도 지표 연결이 필요하며 절점 월류 소실은 성공 효과 아님",
+      "월류 체적은 지표 침수 깊이·면적·지속시간의 대체 지표가 아님",
+      "원본 EXTRAN 수치 실패를 보존하고 별도 SLOT 파생 입력으로 계산; 원본의 달력 종료보다 1초 짧은 엔진 평가 창",
+      "첨두는 같은 시각의 모든 외부 출구 유량 합의 최댓값이며 출구별 최댓값의 합이 아님",
+      "외부 출구 첨두는 공개 연구 관망의 계산값이며 실제 하류 침수 위험도·현장 효과 확정값이 아님; 필수 지표 침수 미확보로 총점 없음"
+    ]
+  }
+}

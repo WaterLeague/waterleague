@@ -35,7 +35,23 @@ export function WatershedResult({ job }: { job: WatershedJob }) {
           </li>
         ))}
       </ul>
-      {job.design.costing && <WatershedCosts costing={job.design.costing} />}
+      {job.design.storage?.placements.map((p) => (
+        <p key={p.id}>
+          {p.id} · 지하 저류조 · {p.inlet.nodeId} → {p.drain.nodeId} · 설계 용량{' '}
+          {number(p.depthAreaCurve[1].depthM * p.depthAreaCurve[1].areaM2)} m³
+        </p>
+      ))}
+      {job.design.storage && (
+        <p className="watershed-warning">
+          지하 저류조 공사비 미산정 · 참고 공사비 부분합에 포함되지 않습니다.
+        </p>
+      )}
+      {job.design.costing && (
+        <WatershedCosts
+          costing={job.design.costing}
+          additionalUnpricedIds={job.design.storage?.placements.map((p) => p.id)}
+        />
+      )}
       {(job.state === 'QUEUED' || job.state === 'RUNNING') && (
         <p role="status">
           시설 없는 기준안과 설계안을 같은 공개 관망에서 계산합니다. 창을 닫아도 서버 계산은
@@ -54,6 +70,35 @@ export function WatershedResult({ job }: { job: WatershedJob }) {
               ? '수치 검사 통과 · 현장 정확도 검증과 구분'
               : '수치 검사 실패 · 효과 비교 보류'}
           </p>
+          {strategy?.connectedStorage && (
+            <div aria-label="저류조 물수지">
+              <h3>저류조 물수지</h3>
+              {strategy.connectedStorage.wholeRunLedger.facilities.map((f) => (
+                <div key={f.id} className="watershed-facility-state">
+                  <strong>
+                    {f.id} · 설계 용량 {number(f.capacityM3)} m³
+                  </strong>
+                  <p>
+                    초기 {number(f.initialStorageM3)} → 최종 저류 {number(f.finalStorageM3)} m³
+                  </p>
+                  <p>
+                    유입 {number(f.inflowM3)} m³ · 유출·월류 {number(f.outflowIncludingFloodingM3)}{' '}
+                    m³
+                  </p>
+                  <p>미연결 지표 월류 {number(f.floodingM3)} m³</p>
+                  <p>
+                    물수지 잔차 {number(f.balanceResidualM3)} m³ · 허용{' '}
+                    {number(f.allowedResidualM3)} m³ ·{' '}
+                    {f.numericalStatus === 'PASSED' ? '통과' : '실패'}
+                  </p>
+                </div>
+              ))}
+              <p>
+                이 체적은 관망 전체 물수지에 포함됩니다. 수지 실패나 지표로 넘친 물의 미연결이
+                있으면 효과 비교를 보류합니다.
+              </p>
+            </div>
+          )}
           {comparable && (
             <>
               {(['floodingM3', 'outflowM3'] as const).map((metric) => {

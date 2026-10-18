@@ -22,6 +22,7 @@ public class WatershedService {
   private final JsonService json;
   private final WatershedCostRepository costCatalog;
   private final WatershedCostService costs;
+  private final StorageDesignService storage;
 
   public WatershedService(
       WatershedRepository jobs,
@@ -29,13 +30,15 @@ public class WatershedService {
       SimulationRepository admission,
       JsonService json,
       WatershedCostRepository costCatalog,
-      WatershedCostService costs) {
+      WatershedCostService costs,
+      StorageDesignService storage) {
     this.jobs = jobs;
     this.catalog = catalog;
     this.admission = admission;
     this.json = json;
     this.costCatalog = costCatalog;
     this.costs = costs;
+    this.storage = storage;
   }
 
   public Map<String, Object> catalog() {
@@ -51,7 +54,11 @@ public class WatershedService {
         "layoutHash",
         WatershedCatalogRepository.LAYOUT_HASH,
         "layout",
-        catalog.layout());
+        catalog.layout(),
+        "storageCatalogHash",
+        WatershedCatalogRepository.STORAGE_HASH,
+        "storageCatalog",
+        catalog.storage());
   }
 
   public WatershedExperiment require(UUID owner, UUID id) {
@@ -86,7 +93,13 @@ public class WatershedService {
     var areas = new HashMap<String, BigDecimal>();
     var treated = new HashMap<String, BigDecimal>();
     var placements = new ArrayList<Map<String, Object>>();
-    if (dto.placements() == null || dto.placements().isEmpty() || dto.placements().size() > 20)
+    int storageCount =
+        dto.storage() == null || dto.storage().placements() == null
+            ? 0
+            : dto.storage().placements().size();
+    if (dto.placements() == null
+        || dto.placements().size() + storageCount < 1
+        || dto.placements().size() + storageCount > 20)
       throw new DomainException(ErrorCode.PLACEMENT_INVALID);
     for (var p :
         dto.placements().stream()
@@ -142,7 +155,8 @@ public class WatershedService {
                 data.path("designBasis").asString(),
                 "placements",
                 placements));
-    if (dto.costCatalogHash() != null)
+    if (dto.storage() != null) design.put("storage", storage.compile(dto.storage(), ids));
+    if (dto.costCatalogHash() != null && !dto.placements().isEmpty())
       design.put("costing", costs.snapshot(dto.costCatalogHash(), dto.placements()));
     String body = json.write(design);
     String hash = json.hash(dto.catalogHash() + "\n" + body);
