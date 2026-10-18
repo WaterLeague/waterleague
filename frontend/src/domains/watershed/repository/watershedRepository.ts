@@ -17,13 +17,22 @@ export const submitWatershed = async (
   signal?: AbortSignal,
   costCatalogHash?: string,
   storage?: { catalogHash: string; placements: StoragePlacement[] },
-  conduits?: { catalogHash: string; placements: ConduitPlacement[] }
+  conduits?: { catalogHash: string; placements: ConduitPlacement[] },
+  cisternCostCatalogHash?: string
 ) =>
   watershedJobDto.parse(
     await api(
       '/watersheds',
       'POST',
-      { catalogHash, placements, requestKey, costCatalogHash, storage, conduits },
+      {
+        catalogHash,
+        placements,
+        requestKey,
+        costCatalogHash,
+        storage,
+        conduits,
+        cisternCostCatalogHash,
+      },
       signal
     )
   );

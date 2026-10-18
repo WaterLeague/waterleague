@@ -212,6 +212,81 @@ class WatershedWorkflowTests {
         .isZero();
   }
 
+  @Test
+  void freezesCisternQuotesWithoutChangingPhysicalDesignOrBudget() throws Exception {
+    var fixture =
+        json.tree(
+            Files.readString(Path.of("../simulation/tests/fixtures/member-cistern-costs-v1.json")));
+    var placements =
+        List.of(
+            new WatershedRequest.Item(
+                "Cistern1",
+                "S1",
+                "RAINWATER_CISTERN",
+                new BigDecimal("2.35"),
+                new BigDecimal("235")),
+            new WatershedRequest.Item(
+                "Cistern2", "S1", "RAINWATER_CISTERN", BigDecimal.ONE, new BigDecimal("235")));
+    UUID key = UUID.randomUUID();
+    var dto =
+        new WatershedRequest(
+            key,
+            WatershedCatalogRepository.HASH,
+            placements,
+            null,
+            null,
+            null,
+            WatershedCostRepository.CISTERN_HASH);
+    var job = service.create(owner, dto);
+    assertThat(job.design().path("cisternCosting")).isEqualTo(fixture.path("cisternCosting"));
+    assertThat(service.create(owner, dto).id()).isEqualTo(job.id());
+    assertThatThrownBy(
+            () ->
+                service.create(
+                    owner, new WatershedRequest(key, WatershedCatalogRepository.HASH, placements)))
+        .isInstanceOfSatisfying(
+            DomainException.class, e -> assertThat(e.code()).isEqualTo(ErrorCode.CONFLICT));
+    assertThat(service.catalog()).containsKey("cisternCostCatalog");
+    assertThat(
+            db.queryForObject(
+                "SELECT count(*) FROM budget_ledger_entries WHERE owner_id=?",
+                Integer.class,
+                owner))
+        .isZero();
+    Path output = Path.of("../tmp/cistern-server-request.json");
+    var stored = service.require(owner, job.id());
+    Files.writeString(
+        output,
+        json.write(
+            Map.of(
+                "modelHash",
+                stored.modelHash(),
+                "inputHash",
+                stored.inputHash(),
+                "placements",
+                stored.placements())));
+  }
+
+  @Test
+  void rejectsCisternCostCatalogMismatchAndUnrelatedFacilities() {
+    var lids = request(UUID.randomUUID(), "Bio1", "S1", "100", "1000").placements();
+    for (String hash : List.of(WatershedCostRepository.CISTERN_HASH, "0".repeat(64)))
+      assertThatThrownBy(
+              () ->
+                  service.create(
+                      owner,
+                      new WatershedRequest(
+                          UUID.randomUUID(),
+                          WatershedCatalogRepository.HASH,
+                          lids,
+                          null,
+                          null,
+                          null,
+                          hash)))
+          .isInstanceOf(DomainException.class);
+    assertThat(service.list(owner)).isEmpty();
+  }
+
   WatershedRequest.ConduitItem pipe(String id, String conduit, String width) {
     return new WatershedRequest.ConduitItem(
         id,

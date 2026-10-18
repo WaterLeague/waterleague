@@ -11,14 +11,15 @@ public record WatershedRequest(
     @NotNull @Size(max = 20) List<@NotNull @Valid Item> placements,
     @Pattern(regexp = "[a-f0-9]{64}") String costCatalogHash,
     @Valid StorageRequest storage,
-    @Valid ConduitRequest conduits) {
+    @Valid ConduitRequest conduits,
+    @Pattern(regexp = "[a-f0-9]{64}") String cisternCostCatalogHash) {
   public WatershedRequest(UUID requestKey, String catalogHash, List<Item> placements) {
-    this(requestKey, catalogHash, placements, null, null, null);
+    this(requestKey, catalogHash, placements, null, null, null, null);
   }
 
   public WatershedRequest(
       UUID requestKey, String catalogHash, List<Item> placements, String costCatalogHash) {
-    this(requestKey, catalogHash, placements, costCatalogHash, null, null);
+    this(requestKey, catalogHash, placements, costCatalogHash, null, null, null);
   }
 
   public WatershedRequest(
@@ -27,7 +28,17 @@ public record WatershedRequest(
       List<Item> placements,
       String costCatalogHash,
       StorageRequest storage) {
-    this(requestKey, catalogHash, placements, costCatalogHash, storage, null);
+    this(requestKey, catalogHash, placements, costCatalogHash, storage, null, null);
+  }
+
+  public WatershedRequest(
+      UUID requestKey,
+      String catalogHash,
+      List<Item> placements,
+      String costCatalogHash,
+      StorageRequest storage,
+      ConduitRequest conduits) {
+    this(requestKey, catalogHash, placements, costCatalogHash, storage, conduits, null);
   }
 
   public record ConduitRequest(

@@ -5,11 +5,15 @@ export function WatershedCosts({
   costing,
   preview = false,
   additionalUnpriced = [],
+  cisternQuoteIds = [],
 }: {
   costing: WatershedCostSnapshot;
   preview?: boolean;
   additionalUnpriced?: { id: string; name: string }[];
+  cisternQuoteIds?: string[];
 }) {
+  const items = costing.items.filter((i) => !cisternQuoteIds.includes(i.placementId));
+  if (!items.length && !additionalUnpriced.length) return null;
   return (
     <section
       className="watershed-costs"
@@ -23,8 +27,9 @@ export function WatershedCosts({
           : `산정된 항목만 ${won(costing.knownReferenceSubtotalKrw)}`}
       </strong>
       <p>
-        미산정 시설 {costing.unpricedPlacementIds.length + additionalUnpriced.length}곳 · 전체
-        설치비 미확정 · 게임 예산 차감 없음
+        이 면적 단가 기준 미산정 시설{' '}
+        {items.filter((i) => i.referenceAmountKrw === null).length + additionalUnpriced.length}곳 ·
+        전체 설치비 미확정 · 게임 예산 차감 없음
       </p>
       <ul>
         {additionalUnpriced.map(({ id, name }) => (
@@ -36,7 +41,7 @@ export function WatershedCosts({
             <p>현장 부지·굴착·접속 공종과 규격 일치 단가 미확인</p>
           </li>
         ))}
-        {costing.items.map((i) => (
+        {items.map((i) => (
           <li key={i.placementId}>
             <span>
               {i.placementId} ·{' '}

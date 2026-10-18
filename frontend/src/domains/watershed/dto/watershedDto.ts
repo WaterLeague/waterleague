@@ -1,3 +1,4 @@
+import { cisternCostCatalogDto, cisternCostSnapshotDto } from './cisternCostDto';
 import { conduitCatalogDto, conduitDesignDto } from './conduitDto';
 import { storageCatalogDto, storageDesignDto, storageSummaryDto } from './storageDto';
 import { z } from 'zod';
@@ -16,6 +17,8 @@ export type NetworkFacility = z.infer<typeof networkFacilityDto>;
 export const watershedCatalogDto = z
   .object({
     catalogHash: hash,
+    cisternCostCatalogHash: hash.optional(),
+    cisternCostCatalog: cisternCostCatalogDto.optional(),
     conduitCatalogHash: hash.optional(),
     conduitCatalog: conduitCatalogDto.optional(),
     storageCatalogHash: hash.optional(),
@@ -59,6 +62,8 @@ export const watershedCatalogDto = z
     }),
   })
   .superRefine((v, ctx) => {
+    if (Boolean(v.cisternCostCatalog) !== Boolean(v.cisternCostCatalogHash))
+      ctx.addIssue({ code: 'custom', message: '이용조 견적 목록·해시 누락' });
     if (
       Boolean(v.conduitCatalog) !== Boolean(v.conduitCatalogHash) ||
       (v.conduitCatalog &&
@@ -144,6 +149,7 @@ export const watershedResultDto = z
     completeInstalledCostKrw: z.null(),
     budgetChargedKrw: z.null(),
     costing: watershedCostSnapshotDto.optional(),
+    cisternCosting: cisternCostSnapshotDto.optional(),
     limitations: z.array(z.string()),
   })
   .superRefine((value, ctx) => {
@@ -215,11 +221,13 @@ export const watershedJobDto = z
       conduits: conduitDesignDto.optional(),
       storage: storageDesignDto.optional(),
       costing: watershedCostSnapshotDto.optional(),
+      cisternCosting: cisternCostSnapshotDto.optional(),
       placements: z.array(
         z.object({
           id: z.string(),
           facilityType: networkFacilityDto,
           subcatchmentId: z.string(),
+          parameters: z.record(z.string(), z.unknown()).optional(),
           areaM2: amount,
           treatedImperviousM2: amount,
         })
@@ -229,6 +237,23 @@ export const watershedJobDto = z
     message: z.string(),
   })
   .superRefine((value, ctx) => {
+    const references = value.design.cisternCosting;
+    const cisterns = value.design.placements.filter((p) => p.facilityType === 'RAINWATER_CISTERN');
+    if (
+      (references &&
+        (references.items.length !== cisterns.length ||
+          references.items.some(
+            (i) =>
+              !cisterns.some(
+                (p) =>
+                  p.id === i.placementId &&
+                  typeof p.parameters?.storageDepthMm === 'number' &&
+                  Math.abs((p.areaM2 * p.parameters.storageDepthMm) / 1000 - i.capacityM3) < 1e-9
+              )
+          ))) ||
+      (value.result && JSON.stringify(value.result.cisternCosting) !== JSON.stringify(references))
+    )
+      ctx.addIssue({ code: 'custom', message: '이용조 견적과 설계·결과 불일치' });
     const pipes = value.design.conduits?.placements ?? [];
     if (
       value.result?.numericalStatus === 'PASSED' &&

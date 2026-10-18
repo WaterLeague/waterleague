@@ -1,0 +1,691 @@
+{
+  "id": "10000000-0000-4000-8000-000000000004",
+  "catalogHash": "beaddba8868b6f1f6bbf35b1d53d4695a94db99498d8988f90d62013cf8f053c",
+  "state": "SUCCEEDED",
+  "createdAt": "2026-10-18T11:01:46.602023Z",
+  "message": "",
+  "design": {
+    "basis": "PUBLIC_REFERENCE_DESIGN_NOT_SITE_MEASURED",
+    "cisternCosting": {
+      "budgetChargedKrw": null,
+      "catalogHash": "63186839053e9a254bc42ba25765dfb78831d5621a3382e5abe0d110ddb7fe3b",
+      "completeInstalledCostKrw": null,
+      "items": [
+        {
+          "capacityM3": 4.7,
+          "equivalentUnits": 2,
+          "placementId": "Cistern1",
+          "quotes": [
+            {
+              "id": "A",
+              "components": {
+                "BARREL": 6204000,
+                "ETC": 330000,
+                "LOG": 594000,
+                "PIPE": 1694000,
+                "PUMP": 1476000
+              },
+              "unclassifiedDifferenceKrw": 596000,
+              "quotedSubtotalKrw": 10894000,
+              "annualEstimateKrw": 317880,
+              "materialsKrw": 10298000,
+              "annualComponentsKrw": {
+                "CLEANING": 100000,
+                "ELECTRICITY": 32682,
+                "MONITORING": 76258,
+                "REPAIR_LABOUR_ETC": 108940
+              }
+            },
+            {
+              "id": "B",
+              "components": {
+                "BARREL": 2842000,
+                "ETC": null,
+                "LOG": 550000,
+                "PIPE": 1430000,
+                "PUMP": 1100000
+              },
+              "unclassifiedDifferenceKrw": 1102000,
+              "quotedSubtotalKrw": 7024000,
+              "annualEstimateKrw": 240480,
+              "materialsKrw": 5922000,
+              "annualComponentsKrw": {
+                "CLEANING": 100000,
+                "ELECTRICITY": 21072,
+                "MONITORING": 49168,
+                "REPAIR_LABOUR_ETC": 70240
+              }
+            },
+            {
+              "id": "C",
+              "components": {
+                "BARREL": 2466000,
+                "ETC": 1264000,
+                "LOG": null,
+                "PIPE": 1084000,
+                "PUMP": 900000
+              },
+              "unclassifiedDifferenceKrw": 0,
+              "quotedSubtotalKrw": 5714000,
+              "annualEstimateKrw": 214280,
+              "materialsKrw": 5714000,
+              "annualComponentsKrw": {
+                "CLEANING": 100000,
+                "ELECTRICITY": 17142,
+                "MONITORING": 39998,
+                "REPAIR_LABOUR_ETC": 57140
+              }
+            }
+          ],
+          "status": "CAPACITY_EQUIVALENT_ONLY"
+        },
+        {
+          "capacityM3": 2.0,
+          "equivalentUnits": null,
+          "placementId": "Cistern2",
+          "quotes": [],
+          "status": "CAPACITY_NOT_MATCHED"
+        }
+      ],
+      "limitations": [
+        "2.35m³ 단위 설비 견적이며 임의 용량의 비례 단가가 아님",
+        "공개 업체 견적 세 건의 범위이며 확률적 신뢰구간이나 현재 시장 가격 범위가 아님",
+        "견적 용량 일치는 자재 규격·시공 조건·계산 단면의 일치 증거가 아님",
+        "원문의 미기재 항목은 null이며 무상 자재 또는 공사비 0으로 해석하지 않음",
+        "펌프 견적 포함은 펌프 곡선·재이용 수요·수질 성능의 확보를 뜻하지 않음",
+        "논문의 보조율을 차감하지 않으며 별도 미확정 공종·세금은 총공사비로 포함되지 않음",
+        "문헌의 연간 유지비 가정은 물리 계산의 실제 전력·운전·재이용량과 독립",
+        "현재 사업 한도·재해 당시 예산·가격 또는 운영 설치 승인으로 사용하지 않음"
+      ],
+      "method": "CAPACITY_EQUIVALENT_QUOTES_NOT_ASSEMBLY_MATCH_V1",
+      "schemaVersion": 1,
+      "source": {
+        "title": "친환경시범마을의 LID 적용에 따른 물순환 효과 및 비용편익 분석",
+        "authors": ["백종석", "이상진", "신현석", "김형산"],
+        "url": "https://journal.cricit.kr/jkswe/XmlViewer/f253405",
+        "doi": "10.15681/KSWE.2017.34.1.57",
+        "publicationYear": 2018,
+        "publicationMonth": "2018-01",
+        "priceYear": null,
+        "quoteDate": null,
+        "sha256": "28f0c3969bbc2f1dd08e03fec2fddb70bfdecdfc4032bd871158eb3a1734e207",
+        "reference": "2.4.2.1, 2.5.1.1, Table 9",
+        "licence": "CC BY-NC 3.0",
+        "licenceUrl": "http://creativecommons.org/licenses/by-nc/3.0/"
+      },
+      "unitCapacityM3": 2.35
+    },
+    "placements": [
+      {
+        "areaM2": 2.35,
+        "facilityType": "RAINWATER_CISTERN",
+        "id": "Cistern1",
+        "initialSaturationPercent": 0,
+        "parameters": {
+          "storageDepthMm": 2000,
+          "drain": {
+            "diameterMm": 25,
+            "dischargeCoefficient": 0.6,
+            "offsetMm": 152.4,
+            "delayHours": 6
+          }
+        },
+        "replacedImperviousM2": 2.35,
+        "subcatchmentId": "S1",
+        "treatedImperviousM2": 235.0
+      },
+      {
+        "areaM2": 1.0,
+        "facilityType": "RAINWATER_CISTERN",
+        "id": "Cistern2",
+        "initialSaturationPercent": 0,
+        "parameters": {
+          "storageDepthMm": 2000,
+          "drain": {
+            "diameterMm": 25,
+            "dischargeCoefficient": 0.6,
+            "offsetMm": 152.4,
+            "delayHours": 6
+          }
+        },
+        "replacedImperviousM2": 1.0,
+        "subcatchmentId": "S1",
+        "treatedImperviousM2": 235.0
+      }
+    ],
+    "schemaVersion": 1
+  },
+  "result": {
+    "schemaVersion": 1,
+    "catalogHash": "beaddba8868b6f1f6bbf35b1d53d4695a94db99498d8988f90d62013cf8f053c",
+    "inputHash": "bb4be59dc8386e9bd18cebe3ac698cacf9e4ff2f2b7d4babbaf804e1f3730cdf",
+    "classification": "PUBLIC_NETWORK_REFERENCE_DESIGN_COMPARISON",
+    "engine": {
+      "schemaVersion": 1,
+      "engineVersion": "5.2.4",
+      "revision": "7952ca837988b1c32f791812eccc9fd64547e093",
+      "sourceArchiveSha256": "3f76a199573088ce47ff02491c529afb73d9953ee9d948dfc89dcd4981b4c0c0",
+      "metricsSha256": "9a90e94998318db8bc2e25997d4c076bd8b5f09b171df768de98c4ba1c6bd28d",
+      "observerSha256": "c320fa1849cb4b03254167b107d1a9fefc7171b10c6ce397a0b82bb5c08c53e7",
+      "facilityObserverSha256": "fd6692274cec934d4f832223c69d8e3bdf31112fb02b875b153f70366cf21869",
+      "facilityObserverVersion": 1,
+      "metricsVersion": 1,
+      "builderSha256": "8540db81bd886e8226604a0683a50a9d6e54d1ae8a99176349329a6ae16e3e15",
+      "binarySha256": "3190412f6dee5afd88aef2c081c0fb5a821d01788f3a7f15652cb0713f34cd78",
+      "modification": "READ_ONLY_LID_AND_NATIVE_OUTFALL_METRICS_NO_SOLVER_CHANGES",
+      "adapterSha256": "2a8fbb64df92edc48e9a11741ccb6d428a5bc7994a487733eb54583071cd0eb1",
+      "facilityAdapterSha256": "d8a17fe1650df27dc0a46f48deb92f6e4a04bf69fc6d17e383484ba962df75db",
+      "metricsAdapterSha256": "f0219c6affedd4b95b049815c4242b7fe8f56abe917b97f8c2d55ca2c65802df",
+      "baseAdapterSha256": "f9fa6734de7a3adc64f1bd456862d80260115c656a6bc1c0b090841883bfb0d7",
+      "qualityAdapterSha256": "c78323b383d37be56c34b8cc2d5084e4a92e3de6bbc2a818d914acbabf3eb930",
+      "platform": "macOS-27.0.1-arm64-arm-64bit"
+    },
+    "numericalProfile": {
+      "id": "slot-62-5ms",
+      "options": {
+        "SURCHARGE_METHOD": "SLOT",
+        "MAX_TRIALS": 200,
+        "ROUTING_STEP": 0.0625,
+        "MINIMUM_STEP": 0.025
+      }
+    },
+    "hydraulicApproximationChanged": true,
+    "numericalStatus": "PASSED",
+    "cases": [
+      {
+        "id": "baseline",
+        "inputSha256": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+        "numericalStatus": "PASSED",
+        "runoffContinuityPercent": -0.09872203320264816,
+        "routingContinuityPercent": -0.016379326581954956,
+        "numericalQuality": {
+          "policyVersion": "network-continuity-convergence-v2",
+          "continuityLimitPercent": 1,
+          "routingBalance": {
+            "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+            "totalInM3": 3699178.1129746106,
+            "totalOutIncludingStorageM3": 3699784.013464837,
+            "residualM3": -605.9004902262241,
+            "continuityPercent": -0.016379327291677848,
+            "absoluteToleranceM3": 1e-8,
+            "allowedResidualM3": 36991.78112974611
+          },
+          "allowedNonConvergedSteps": 0,
+          "failureReasons": [],
+          "status": "PASSED"
+        },
+        "convergence": {
+          "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+          "routingSteps": 1392566,
+          "nonConvergedSteps": 0,
+          "nonConvergedPercent": 0.0
+        },
+        "facilityQuality": {
+          "policyVersion": "connected-lid-volume-balance-v1",
+          "failedFacilityIds": [],
+          "status": "PASSED",
+          "timeBasis": "NATIVE_HYDROLOGY_CLOCK_SEPARATE_FROM_ROUTING_CLOCK"
+        },
+        "timeWindowPolicy": "NATIVE_DURATION_DIAGNOSTIC",
+        "calendarShortfallSeconds": 1.0,
+        "complete": true,
+        "totals": {
+          "timeSeconds": 86339.0,
+          "initialStorageM3": 0.32019239999999993,
+          "storageM3": 11131.689178989987,
+          "dryWeatherInflowM3": 0.0,
+          "runoffInflowM3": 229448.4376731979,
+          "groundwaterInflowM3": 0.0,
+          "rdiiInflowM3": 0.0,
+          "externalInflowM3": 3469729.3551090127,
+          "outflowM3": 2180749.855360638,
+          "floodingM3": 1507902.468925209,
+          "evaporationM3": 0.0,
+          "seepageM3": 0.0,
+          "reactionLossM3": 0.0,
+          "balanceResidualM3": -605.9004902264769
+        },
+        "facilities": [],
+        "outfalls": {
+          "Out1": {
+            "type": 1,
+            "headM": 13.087081954830289,
+            "depthM": 1.96708195483029,
+            "storageM3": 0.0,
+            "lateralFlowM3s": 0.0,
+            "inflowM3s": 19.014800777304192,
+            "overflowM3s": 0.0,
+            "statisticFloodingM3": 0.0,
+            "statisticInflowIncludingInitialM3": 1698113.0619819267,
+            "statisticOutflowM3": 1698113.0619819267,
+            "floodingM3": 0.0,
+            "boundaryOutflowM3": 1698113.061922063,
+            "boundaryInflowM3": 0.0
+          },
+          "Out2": {
+            "type": 1,
+            "headM": 8.001088107172247,
+            "depthM": 0.5210881071722457,
+            "storageM3": 0.0,
+            "lateralFlowM3s": 0.0,
+            "inflowM3s": 2.5925362644696563,
+            "overflowM3s": 0.0,
+            "statisticFloodingM3": 0.0,
+            "statisticInflowIncludingInitialM3": 482636.79340970406,
+            "statisticOutflowM3": 482636.79340970406,
+            "floodingM3": 0.0,
+            "boundaryOutflowM3": 482636.79340948444,
+            "boundaryInflowM3": 0.0
+          }
+        },
+        "evaluationMetrics": {
+          "specificationSha256": "d1d16a03051f33f0bfe03343dd7862c21a2e796442175798e85d664ff4cc72c2",
+          "complete": true,
+          "method": "NATIVE_ROUTING_STEP_DIRECTIONAL_TRAPEZOIDAL_INTEGRAL",
+          "peakMethod": "SIMULTANEOUS_SELECTED_OUTFALL_SUM",
+          "outfalls": {
+            "Out1": {
+              "outwardVolumeM3": 1698113.0619242836,
+              "inwardVolumeM3": 0.0,
+              "peakOutwardM3s": 21.6348078727807,
+              "peakInwardM3s": 0.0,
+              "peakOutwardTimeSeconds": 51893.095,
+              "peakInwardTimeSeconds": 0.0,
+              "coveredSeconds": 86339.0,
+              "nativeSteps": 1392566.0
+            },
+            "Out2": {
+              "outwardVolumeM3": 482636.79340946407,
+              "inwardVolumeM3": 0.0,
+              "peakOutwardM3s": 17.406227075478647,
+              "peakInwardM3s": 0.0,
+              "peakOutwardTimeSeconds": 57599.699,
+              "peakInwardTimeSeconds": 0.0,
+              "coveredSeconds": 86339.0,
+              "nativeSteps": 1392566.0
+            }
+          },
+          "combined": {
+            "outwardVolumeM3": 2180749.8553501973,
+            "inwardVolumeM3": 0.0,
+            "peakOutwardM3s": 39.04103494825935,
+            "peakInwardM3s": 0.0,
+            "peakOutwardTimeSeconds": 57599.699,
+            "peakInwardTimeSeconds": 0.0,
+            "coveredSeconds": 86339.0,
+            "nativeSteps": 1392566.0
+          },
+          "specification": {
+            "schemaVersion": 1,
+            "policyVersion": "PUBLIC_NETWORK_ALL_OUTFALLS_v1",
+            "startMilliseconds": 0,
+            "endMilliseconds": 86339000,
+            "networkOutfalls": ["Out1", "Out2"]
+          }
+        }
+      },
+      {
+        "id": "strategy",
+        "inputSha256": "2414c1efebd122ecd2b8563970d099b348ab8ad605eecda4f1f1d666873f7845",
+        "numericalStatus": "PASSED",
+        "runoffContinuityPercent": -0.09835019707679749,
+        "routingContinuityPercent": -0.01635245606303215,
+        "numericalQuality": {
+          "policyVersion": "network-continuity-convergence-v2",
+          "continuityLimitPercent": 1,
+          "routingBalance": {
+            "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+            "totalInM3": 3699170.543553774,
+            "totalOutIncludingStorageM3": 3699775.4487637444,
+            "residualM3": -604.9052099706605,
+            "continuityPercent": -0.016352455309874177,
+            "absoluteToleranceM3": 1e-8,
+            "allowedResidualM3": 36991.70543553774
+          },
+          "allowedNonConvergedSteps": 0,
+          "failureReasons": [],
+          "status": "PASSED"
+        },
+        "convergence": {
+          "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+          "routingSteps": 1392566,
+          "nonConvergedSteps": 0,
+          "nonConvergedPercent": 0.0
+        },
+        "facilityQuality": {
+          "policyVersion": "connected-lid-volume-balance-v1",
+          "failedFacilityIds": [],
+          "status": "PASSED",
+          "timeBasis": "NATIVE_HYDROLOGY_CLOCK_SEPARATE_FROM_ROUTING_CLOCK"
+        },
+        "timeWindowPolicy": "NATIVE_DURATION_DIAGNOSTIC",
+        "calendarShortfallSeconds": 1.0,
+        "complete": true,
+        "totals": {
+          "timeSeconds": 86339.0,
+          "initialStorageM3": 0.32019239999999993,
+          "storageM3": 11131.688289422069,
+          "dryWeatherInflowM3": 0.0,
+          "runoffInflowM3": 229440.868252361,
+          "groundwaterInflowM3": 0.0,
+          "rdiiInflowM3": 0.0,
+          "externalInflowM3": 3469729.3551090127,
+          "outflowM3": 2180749.7653589314,
+          "floodingM3": 1507893.995115391,
+          "evaporationM3": 0.0,
+          "seepageM3": 0.0,
+          "reactionLossM3": 0.0,
+          "balanceResidualM3": -604.9052099706532
+        },
+        "facilities": [
+          {
+            "hydrologyTimeSeconds": 86339.0,
+            "areaM2": 1.0,
+            "surfaceDepthMm": 0.0,
+            "soilMoisture": null,
+            "storageDepthMm": 2000.0000000000002,
+            "inflowM3": 61.122392099676475,
+            "evaporationM3": 0.0,
+            "infiltrationM3": 0.0,
+            "surfaceOutflowM3": 59.12239209967647,
+            "drainOutflowM3": 0.0,
+            "initialStorageM3": 0.0,
+            "finalStorageM3": 2.0,
+            "number": 1.0,
+            "drainNodeIndex": 3.0,
+            "drainSubcatchmentIndex": -1.0,
+            "swmmId": "WL_Cistern2",
+            "subcatchmentId": "S1",
+            "balanceResidualM3": 7.105427357601002e-15,
+            "allowedResidualM3": 0.6112239209967648,
+            "continuityPercent": 1.162491701243252e-14,
+            "numericalStatus": "PASSED"
+          },
+          {
+            "hydrologyTimeSeconds": 86339.0,
+            "areaM2": 2.35,
+            "surfaceDepthMm": 0.0,
+            "soilMoisture": null,
+            "storageDepthMm": 2000.0000000000002,
+            "inflowM3": 61.122392099676475,
+            "evaporationM3": 0.0,
+            "infiltrationM3": 0.0,
+            "surfaceOutflowM3": 56.42239209967647,
+            "drainOutflowM3": 0.0,
+            "initialStorageM3": 0.0,
+            "finalStorageM3": 4.7,
+            "number": 1.0,
+            "drainNodeIndex": 3.0,
+            "drainSubcatchmentIndex": -1.0,
+            "swmmId": "WL_Cistern1",
+            "subcatchmentId": "S1",
+            "balanceResidualM3": 0.0,
+            "allowedResidualM3": 0.6112239209967648,
+            "continuityPercent": 0.0,
+            "numericalStatus": "PASSED"
+          }
+        ],
+        "outfalls": {
+          "Out1": {
+            "type": 1,
+            "headM": 13.087081866904665,
+            "depthM": 1.9670818669046652,
+            "storageM3": 0.0,
+            "lateralFlowM3s": 0.0,
+            "inflowM3s": 19.014799502404422,
+            "overflowM3s": 0.0,
+            "statisticFloodingM3": 0.0,
+            "statisticInflowIncludingInitialM3": 1698112.971624497,
+            "statisticOutflowM3": 1698112.971624497,
+            "floodingM3": 0.0,
+            "boundaryOutflowM3": 1698112.9715647353,
+            "boundaryInflowM3": 0.0
+          },
+          "Out2": {
+            "type": 1,
+            "headM": 8.001088107172247,
+            "depthM": 0.5210881071722456,
+            "storageM3": 0.0,
+            "lateralFlowM3s": 0.0,
+            "inflowM3s": 2.5925362644696555,
+            "overflowM3s": 0.0,
+            "statisticFloodingM3": 0.0,
+            "statisticInflowIncludingInitialM3": 482636.7937653983,
+            "statisticOutflowM3": 482636.7937653983,
+            "floodingM3": 0.0,
+            "boundaryOutflowM3": 482636.7937651606,
+            "boundaryInflowM3": 0.0
+          }
+        },
+        "evaluationMetrics": {
+          "specificationSha256": "d1d16a03051f33f0bfe03343dd7862c21a2e796442175798e85d664ff4cc72c2",
+          "complete": true,
+          "method": "NATIVE_ROUTING_STEP_DIRECTIONAL_TRAPEZOIDAL_INTEGRAL",
+          "peakMethod": "SIMULTANEOUS_SELECTED_OUTFALL_SUM",
+          "outfalls": {
+            "Out1": {
+              "outwardVolumeM3": 1698112.9715668913,
+              "inwardVolumeM3": 0.0,
+              "peakOutwardM3s": 21.6348078727807,
+              "peakInwardM3s": 0.0,
+              "peakOutwardTimeSeconds": 51893.095,
+              "peakInwardTimeSeconds": 0.0,
+              "coveredSeconds": 86339.0,
+              "nativeSteps": 1392566.0
+            },
+            "Out2": {
+              "outwardVolumeM3": 482636.79376512853,
+              "inwardVolumeM3": 0.0,
+              "peakOutwardM3s": 17.406227075478647,
+              "peakInwardM3s": 0.0,
+              "peakOutwardTimeSeconds": 57599.699,
+              "peakInwardTimeSeconds": 0.0,
+              "coveredSeconds": 86339.0,
+              "nativeSteps": 1392566.0
+            }
+          },
+          "combined": {
+            "outwardVolumeM3": 2180749.76534846,
+            "inwardVolumeM3": 0.0,
+            "peakOutwardM3s": 39.04103494825935,
+            "peakInwardM3s": 0.0,
+            "peakOutwardTimeSeconds": 57599.699,
+            "peakInwardTimeSeconds": 0.0,
+            "coveredSeconds": 86339.0,
+            "nativeSteps": 1392566.0
+          },
+          "specification": {
+            "schemaVersion": 1,
+            "policyVersion": "PUBLIC_NETWORK_ALL_OUTFALLS_v1",
+            "startMilliseconds": 0,
+            "endMilliseconds": 86339000,
+            "networkOutfalls": ["Out1", "Out2"]
+          }
+        }
+      }
+    ],
+    "signedReductionM3": {
+      "outflowM3": 0.09000170649960637,
+      "floodingM3": 8.473809818038717
+    },
+    "signedPeakReductionM3s": 0.0,
+    "sourceUrl": "https://doi.org/10.17632/dzzwvd8rjk.3",
+    "attribution": {
+      "title": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience: A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures",
+      "authors": ["Samuel Park", "Jaekyoung Kim", "Hyeryeong Yun", "Junsuk Kang"],
+      "year": 2024
+    },
+    "licence": {
+      "id": "01d9c749-3c4d-4431-9df3-620b2dcfe144",
+      "short_name": "CC BY 4.0",
+      "full_name": "Creative Commons Attribution 4.0 International",
+      "description": "You can share, copy and modify this dataset so long as you give appropriate credit, provide a link to the CC BY license, and indicate if changes were made, but you may not do so in a way that suggests the rights holder has endorsed you or your use of the dataset. Note that further permission may be required for any content within the dataset that is identified as belonging to a third party.",
+      "url": "http://creativecommons.org/licenses/by/4.0",
+      "category": "Creative",
+      "customer_id": null
+    },
+    "rankingEligible": false,
+    "historicalReconstructionEligible": false,
+    "completeInstalledCostKrw": null,
+    "budgetChargedKrw": null,
+    "limitations": [
+      "논문 PDF·부록 원본은 아직 미보관, 공개 출판 본문 확인과 구분",
+      "EPSG·수직 기준·시설 유효 시점은 계속 미확인",
+      "문헌의 단면·유입 추정값과 사후 공간자료를 2010 실측 입력으로 표시하지 않음",
+      "원 관망의 2010 강우·추정 외부 유입·초기 상태를 보존한 문헌 단면 설계 비교",
+      "시설 면적과 처리 불투수 면적은 사용자의 가상 설계이며 현장 설치 가능 범위 미확인",
+      "초기 포화도 0·문헌 단면·하부 침투 4mm/h는 설계 조건이며 현장 실측값 아님",
+      "좌표 정합·지표 결합·가격 미확정: 주간 설치·예산 차감·순위 게시 제외",
+      "공개 문헌의 설계 범위이며 서울 현장 또는 특정 제품의 실측 제원이 아님",
+      "시설 위치·대체 면적·집수 연결·초기 포화도·배수구 규격·하부 침투율은 명시된 설계 입력",
+      "기존 집수구역 출구를 계승하며 새로운 무한 방류구를 생성하지 않음",
+      "SWMM LID 배수는 수신 관망 수두의 역압이나 지하수에 의한 침투 저하를 완전하게 연결하지 않음",
+      "덮개 이용조 면적의 직접 강우는 제외, 덮개에서 외부로 떨어지는 물의 별도 경로 미구현",
+      "이용조 방류는 관망 배수이며 수요·수질 근거 없는 재이용 점수 없음",
+      "공사비·입지·현장 연결 검증 전 신규 시설의 운영 설치 및 순위 미개방",
+      "월류 체적은 지표 침수 깊이·면적·지속시간의 대체 지표가 아님",
+      "원본 EXTRAN 수치 실패를 보존하고 별도 SLOT 파생 입력으로 계산; 원본의 달력 종료보다 1초 짧은 엔진 평가 창",
+      "첨두는 같은 시각의 모든 외부 출구 유량 합의 최댓값이며 출구별 최댓값의 합이 아님",
+      "외부 출구 첨두는 공개 연구 관망의 계산값이며 실제 하류 침수 위험도·현장 효과 확정값이 아님; 필수 지표 침수 미확보로 총점 없음"
+    ],
+    "cisternCosting": {
+      "budgetChargedKrw": null,
+      "catalogHash": "63186839053e9a254bc42ba25765dfb78831d5621a3382e5abe0d110ddb7fe3b",
+      "completeInstalledCostKrw": null,
+      "items": [
+        {
+          "capacityM3": 4.7,
+          "equivalentUnits": 2,
+          "placementId": "Cistern1",
+          "quotes": [
+            {
+              "id": "A",
+              "components": {
+                "BARREL": 6204000,
+                "ETC": 330000,
+                "LOG": 594000,
+                "PIPE": 1694000,
+                "PUMP": 1476000
+              },
+              "unclassifiedDifferenceKrw": 596000,
+              "quotedSubtotalKrw": 10894000,
+              "annualEstimateKrw": 317880,
+              "materialsKrw": 10298000,
+              "annualComponentsKrw": {
+                "CLEANING": 100000,
+                "ELECTRICITY": 32682,
+                "MONITORING": 76258,
+                "REPAIR_LABOUR_ETC": 108940
+              }
+            },
+            {
+              "id": "B",
+              "components": {
+                "BARREL": 2842000,
+                "ETC": null,
+                "LOG": 550000,
+                "PIPE": 1430000,
+                "PUMP": 1100000
+              },
+              "unclassifiedDifferenceKrw": 1102000,
+              "quotedSubtotalKrw": 7024000,
+              "annualEstimateKrw": 240480,
+              "materialsKrw": 5922000,
+              "annualComponentsKrw": {
+                "CLEANING": 100000,
+                "ELECTRICITY": 21072,
+                "MONITORING": 49168,
+                "REPAIR_LABOUR_ETC": 70240
+              }
+            },
+            {
+              "id": "C",
+              "components": {
+                "BARREL": 2466000,
+                "ETC": 1264000,
+                "LOG": null,
+                "PIPE": 1084000,
+                "PUMP": 900000
+              },
+              "unclassifiedDifferenceKrw": 0,
+              "quotedSubtotalKrw": 5714000,
+              "annualEstimateKrw": 214280,
+              "materialsKrw": 5714000,
+              "annualComponentsKrw": {
+                "CLEANING": 100000,
+                "ELECTRICITY": 17142,
+                "MONITORING": 39998,
+                "REPAIR_LABOUR_ETC": 57140
+              }
+            }
+          ],
+          "status": "CAPACITY_EQUIVALENT_ONLY"
+        },
+        {
+          "capacityM3": 2.0,
+          "equivalentUnits": null,
+          "placementId": "Cistern2",
+          "quotes": [],
+          "status": "CAPACITY_NOT_MATCHED"
+        }
+      ],
+      "limitations": [
+        "2.35m³ 단위 설비 견적이며 임의 용량의 비례 단가가 아님",
+        "공개 업체 견적 세 건의 범위이며 확률적 신뢰구간이나 현재 시장 가격 범위가 아님",
+        "견적 용량 일치는 자재 규격·시공 조건·계산 단면의 일치 증거가 아님",
+        "원문의 미기재 항목은 null이며 무상 자재 또는 공사비 0으로 해석하지 않음",
+        "펌프 견적 포함은 펌프 곡선·재이용 수요·수질 성능의 확보를 뜻하지 않음",
+        "논문의 보조율을 차감하지 않으며 별도 미확정 공종·세금은 총공사비로 포함되지 않음",
+        "문헌의 연간 유지비 가정은 물리 계산의 실제 전력·운전·재이용량과 독립",
+        "현재 사업 한도·재해 당시 예산·가격 또는 운영 설치 승인으로 사용하지 않음"
+      ],
+      "method": "CAPACITY_EQUIVALENT_QUOTES_NOT_ASSEMBLY_MATCH_V1",
+      "schemaVersion": 1,
+      "source": {
+        "title": "친환경시범마을의 LID 적용에 따른 물순환 효과 및 비용편익 분석",
+        "authors": ["백종석", "이상진", "신현석", "김형산"],
+        "url": "https://journal.cricit.kr/jkswe/XmlViewer/f253405",
+        "doi": "10.15681/KSWE.2017.34.1.57",
+        "publicationYear": 2018,
+        "publicationMonth": "2018-01",
+        "priceYear": null,
+        "quoteDate": null,
+        "sha256": "28f0c3969bbc2f1dd08e03fec2fddb70bfdecdfc4032bd871158eb3a1734e207",
+        "reference": "2.4.2.1, 2.5.1.1, Table 9",
+        "licence": "CC BY-NC 3.0",
+        "licenceUrl": "http://creativecommons.org/licenses/by-nc/3.0/"
+      },
+      "unitCapacityM3": 2.35
+    },
+    "artifactFiles": {
+      "baseline/network-frames.jsonl": "6152506270efcda4aa93e4e4c59274ff97d637326400b12d73905ed95f5740f2",
+      "baseline/network-result.json": "2967a524e465695d26187e54a594c1d3252cdfd48de75e439357de84e310a62e",
+      "baseline/network.inp": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+      "baseline/network.out": "682eeb8bb19391dde81c640bc68f91de924852787689c89cbd46a3c771006c18",
+      "baseline/network.rpt": "2e9475ca58e7968100b855aaa810301b3a002c5209e315c1dac4cefb4a73905f",
+      "baseline-input.inp": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+      "catalog.json": "beaddba8868b6f1f6bbf35b1d53d4695a94db99498d8988f90d62013cf8f053c",
+      "cistern-cost-catalog.json": "63186839053e9a254bc42ba25765dfb78831d5621a3382e5abe0d110ddb7fe3b",
+      "cistern-cost-snapshot.json": "68f36f830bc587f8cd04e2c672b4963ecba5535c32dd1dd198c61ce31523513f",
+      "cistern-quote-source-manifest.json": "f537b504848fd25498b607b8e6729b1e04a3b935289c31f761fae1b7b3165e19",
+      "cistern-quote-source.html": "28f0c3969bbc2f1dd08e03fec2fddb70bfdecdfc4032bd871158eb3a1734e207",
+      "design-transformation.json": "d16e16c0af63b7c5f003cd7f5d14ba6a0e86220189bd59fba3c846af4a47f96d",
+      "engine-build.json": "42378ce0086f15758d0d4f3b82b0b75b71b89f839b58bafd3f49c521545f3a05",
+      "engine-source.tar.gz": "3f76a199573088ce47ff02491c529afb73d9953ee9d948dfc89dcd4981b4c0c0",
+      "engine.bin": "3190412f6dee5afd88aef2c081c0fb5a821d01788f3a7f15652cb0713f34cd78",
+      "facility-catalog.json": "f06a80aebb4fc674597e1da4ca2f829a58f1724de088d603bf81eb9068e9f0a2",
+      "implementation.zip": "579a9781dce4113839eb2f84fc00f04eca84eb8d1daa11b4b241613b7d64f3ef",
+      "numerical-transformation.json": "867445faaee2d6f8c21d90be6d9ea98fcdc3913246bbed4b90da880cc65e5536",
+      "original.inp": "8ce278a3d2b58df3c2a5fd1232160bcabb324389746ee0c878792acf91abbdbb",
+      "replay.py": "f96c3198b3502ab9ee5a51951c8cb20ffe8961c71f9a4cd30fd3fb714353dd0d",
+      "request.json": "8de2b8cd9195ed1918905a450dae0391518d9c8b6a8b2960e38865e08d9c3857",
+      "source-manifest.json": "2104f9143e6deea2213c9f88219a2d23ddfb78b0dab61b961cb8ab362df1da98",
+      "strategy/network-frames.jsonl": "0cbd6bb87beb7b18f286beb6b10403d88f03ebe67134cb260e0e4fc306341442",
+      "strategy/network-result.json": "d2457550e06a839cc1acbc2c2672d4989c44ebec2b6d9aae4980b10508330f9e",
+      "strategy/network.inp": "2414c1efebd122ecd2b8563970d099b348ab8ad605eecda4f1f1d666873f7845",
+      "strategy/network.out": "80a6788ec3366539710c3714355c5f5ac7fc40e62a60f7830a07c83237a1bedc",
+      "strategy/network.rpt": "352b73b85ac4549bd6658bffaabc28a1a37fa2c5466fd2a81e3bbd3eb9e49359",
+      "strategy-input.inp": "2414c1efebd122ecd2b8563970d099b348ab8ad605eecda4f1f1d666873f7845"
+    }
+  }
+}

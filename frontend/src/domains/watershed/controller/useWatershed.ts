@@ -91,6 +91,9 @@ export function useWatershed(account: Account | null, open: boolean) {
     }
     const fingerprint = JSON.stringify([
       designFingerprint(catalog.catalogHash, drafts, catalog.costCatalogHash),
+      drafts.some((p) => p.facilityType === 'RAINWATER_CISTERN')
+        ? catalog.cisternCostCatalogHash
+        : null,
       catalog.conduitCatalogHash,
       [...conduitDrafts].sort((a, b) => a.id.localeCompare(b.id)),
       catalog.storageCatalogHash,
@@ -119,6 +122,9 @@ export function useWatershed(account: Account | null, open: boolean) {
           : undefined,
         conduitDrafts.length && catalog.conduitCatalogHash
           ? { catalogHash: catalog.conduitCatalogHash, placements: conduitDrafts }
+          : undefined,
+        drafts.some((p) => p.facilityType === 'RAINWATER_CISTERN')
+          ? catalog.cisternCostCatalogHash
           : undefined
       );
       if (!mounted.current || abort.signal.aborted) return;

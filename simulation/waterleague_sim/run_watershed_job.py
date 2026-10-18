@@ -34,7 +34,7 @@ def inputs(request):
     design = json.loads(request['placements'])
     require(isinstance(design, dict) and isinstance(design.get('placements'), list)
             and design.get('schemaVersion') == 1 and design.get('basis') == catalog['designBasis']
-            and set(design) <= {'schemaVersion','basis','placements','costing','storage','conduits'}, 'WATERSHED_DESIGN_INVALID')
+            and set(design) <= {'schemaVersion','basis','placements','costing','storage','conduits','cisternCosting'}, 'WATERSHED_DESIGN_INVALID')
     storage = design.get('storage', {})
     require(isinstance(storage, dict) and isinstance(storage.get('placements', []), list), 'WATERSHED_STORAGE_PLACEMENTS_INVALID')
     conduit_design=design.get('conduits', {})
@@ -46,7 +46,9 @@ def inputs(request):
         require(template is not None and p['parameters'] == template['parameters']
                 and p['initialSaturationPercent'] == template['initialSaturationPercent']
                 and p['replacedImperviousM2'] == p['areaM2'], 'WATERSHED_TEMPLATE_CHANGED')
-    verify_costs({k: v for k, v in design.items() if k not in ('storage','conduits')})
+    verify_costs({k: v for k, v in design.items() if k not in ('storage','conduits','cisternCosting')})
+    from .costing.cistern_reference import verify as verify_cistern
+    verify_cistern(design)
     manifest = ROOT/'data/manifests/mendeley-seocho-network-v3.json'
     source, source_hash, entries = load_archive(ROOT, manifest)
     require(source_hash == catalog['sourceManifestSha256']
@@ -69,7 +71,7 @@ def inputs(request):
         strategy,conduit_metadata=compile_conduits(strategy,design['conduits'],base,[p['id'] for p in design['placements']+storage.get('placements',[])])
     transformation = {'limitations': []}
     if design['placements']:
-        strategy, transformation = compile_design(strategy, {k: v for k, v in design.items() if k not in ('costing','storage','conduits')})
+        strategy, transformation = compile_design(strategy, {k: v for k, v in design.items() if k not in ('costing','storage','conduits','cisternCosting')})
     if storage_metadata is not None:
         transformation['connectedStorage'] = storage_metadata
         transformation['limitations'] += storage_metadata['limitations']
@@ -84,7 +86,15 @@ def calculate(request, directory):
     directory = Path(directory)
     directory.mkdir(parents=True, exist_ok=True)
     design = json.loads(request['placements'])
-    cost_raw = verify_costs({k: v for k, v in design.items() if k not in ('storage','conduits')})
+    cost_raw = verify_costs({k: v for k, v in design.items() if k not in ('storage','conduits','cisternCosting')})
+    from .costing.cistern_reference import verify as verify_cistern
+    cistern_raw = verify_cistern(design)
+    if cistern_raw is not None:
+        (directory/'cistern-cost-catalog.json').write_bytes(cistern_raw)
+        write(directory/'cistern-cost-snapshot.json', design['cisternCosting'])
+        from .costing.cistern_reference import source_artifacts
+        for name, raw in source_artifacts().items():
+            (directory/name).write_bytes(raw)
     if cost_raw is not None:
         (directory/'cost-catalog.json').write_bytes(cost_raw)
         write(directory/'cost-snapshot.json', design['costing'])
@@ -164,6 +174,8 @@ def calculate(request, directory):
             '외부 출구 첨두는 공개 연구 관망의 계산값이며 실제 하류 침수 위험도·현장 효과 확정값이 아님; 필수 지표 침수 미확보로 총점 없음']}
     if cost_raw is not None:
         result['costing'] = design['costing']
+    if cistern_raw is not None:
+        result['cisternCosting'] = design['cisternCosting']
     return result
 
 

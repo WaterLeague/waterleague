@@ -1,0 +1,156 @@
+{
+  "schemaVersion": 1,
+  "basis": "PUBLIC_REFERENCE_DESIGN_NOT_SITE_MEASURED",
+  "placements": [
+    {
+      "id": "Cistern1",
+      "facilityType": "RAINWATER_CISTERN",
+      "subcatchmentId": "S1",
+      "areaM2": 2.35,
+      "replacedImperviousM2": 2.35,
+      "treatedImperviousM2": 235,
+      "parameters": {
+        "storageDepthMm": 2000,
+        "drain": {
+          "diameterMm": 25,
+          "dischargeCoefficient": 0.6,
+          "offsetMm": 152.4,
+          "delayHours": 6
+        }
+      },
+      "initialSaturationPercent": 0
+    },
+    {
+      "id": "Cistern2",
+      "facilityType": "RAINWATER_CISTERN",
+      "subcatchmentId": "S1",
+      "areaM2": 1,
+      "replacedImperviousM2": 1,
+      "treatedImperviousM2": 235,
+      "parameters": {
+        "storageDepthMm": 2000,
+        "drain": {
+          "diameterMm": 25,
+          "dischargeCoefficient": 0.6,
+          "offsetMm": 152.4,
+          "delayHours": 6
+        }
+      },
+      "initialSaturationPercent": 0
+    }
+  ],
+  "cisternCosting": {
+    "schemaVersion": 1,
+    "catalogHash": "63186839053e9a254bc42ba25765dfb78831d5621a3382e5abe0d110ddb7fe3b",
+    "method": "CAPACITY_EQUIVALENT_QUOTES_NOT_ASSEMBLY_MATCH_V1",
+    "unitCapacityM3": 2.35,
+    "items": [
+      {
+        "placementId": "Cistern1",
+        "capacityM3": 4.7,
+        "equivalentUnits": 2,
+        "status": "CAPACITY_EQUIVALENT_ONLY",
+        "quotes": [
+          {
+            "id": "A",
+            "quotedSubtotalKrw": 10894000,
+            "materialsKrw": 10298000,
+            "components": {
+              "BARREL": 6204000,
+              "PIPE": 1694000,
+              "PUMP": 1476000,
+              "LOG": 594000,
+              "ETC": 330000
+            },
+            "unclassifiedDifferenceKrw": 596000,
+            "annualComponentsKrw": {
+              "ELECTRICITY": 32682,
+              "MONITORING": 76258,
+              "REPAIR_LABOUR_ETC": 108940,
+              "CLEANING": 100000
+            },
+            "annualEstimateKrw": 317880
+          },
+          {
+            "id": "B",
+            "quotedSubtotalKrw": 7024000,
+            "materialsKrw": 5922000,
+            "components": {
+              "BARREL": 2842000,
+              "PIPE": 1430000,
+              "PUMP": 1100000,
+              "LOG": 550000,
+              "ETC": null
+            },
+            "unclassifiedDifferenceKrw": 1102000,
+            "annualComponentsKrw": {
+              "ELECTRICITY": 21072,
+              "MONITORING": 49168,
+              "REPAIR_LABOUR_ETC": 70240,
+              "CLEANING": 100000
+            },
+            "annualEstimateKrw": 240480
+          },
+          {
+            "id": "C",
+            "quotedSubtotalKrw": 5714000,
+            "materialsKrw": 5714000,
+            "components": {
+              "BARREL": 2466000,
+              "PIPE": 1084000,
+              "PUMP": 900000,
+              "LOG": null,
+              "ETC": 1264000
+            },
+            "unclassifiedDifferenceKrw": 0,
+            "annualComponentsKrw": {
+              "ELECTRICITY": 17142,
+              "MONITORING": 39998,
+              "REPAIR_LABOUR_ETC": 57140,
+              "CLEANING": 100000
+            },
+            "annualEstimateKrw": 214280
+          }
+        ]
+      },
+      {
+        "placementId": "Cistern2",
+        "capacityM3": 2.0,
+        "equivalentUnits": null,
+        "status": "CAPACITY_NOT_MATCHED",
+        "quotes": []
+      }
+    ],
+    "source": {
+      "title": "친환경시범마을의 LID 적용에 따른 물순환 효과 및 비용편익 분석",
+      "authors": [
+        "백종석",
+        "이상진",
+        "신현석",
+        "김형산"
+      ],
+      "url": "https://journal.cricit.kr/jkswe/XmlViewer/f253405",
+      "doi": "10.15681/KSWE.2017.34.1.57",
+      "publicationYear": 2018,
+      "publicationMonth": "2018-01",
+      "priceYear": null,
+      "quoteDate": null,
+      "sha256": "28f0c3969bbc2f1dd08e03fec2fddb70bfdecdfc4032bd871158eb3a1734e207",
+      "reference": "2.4.2.1, 2.5.1.1, Table 9",
+      "licence": "CC BY-NC 3.0",
+      "licenceUrl": "http://creativecommons.org/licenses/by-nc/3.0/"
+    },
+    "limitations": [
+      "2.35m³ 단위 설비 견적이며 임의 용량의 비례 단가가 아님",
+      "공개 업체 견적 세 건의 범위이며 확률적 신뢰구간이나 현재 시장 가격 범위가 아님",
+      "견적 용량 일치는 자재 규격·시공 조건·계산 단면의 일치 증거가 아님",
+      "원문의 미기재 항목은 null이며 무상 자재 또는 공사비 0으로 해석하지 않음",
+      "펌프 견적 포함은 펌프 곡선·재이용 수요·수질 성능의 확보를 뜻하지 않음",
+      "논문의 보조율을 차감하지 않으며 별도 미확정 공종·세금은 총공사비로 포함되지 않음",
+      "문헌의 연간 유지비 가정은 물리 계산의 실제 전력·운전·재이용량과 독립",
+      "현재 사업 한도·재해 당시 예산·가격 또는 운영 설치 승인으로 사용하지 않음"
+    ],
+    "completeInstalledCostKrw": null,
+    "budgetChargedKrw": null
+  }
+}

@@ -1,3 +1,5 @@
+import { CisternReferenceCosts } from './CisternReferenceCosts';
+import { previewCisternCosts } from '../service/cisternCosts';
 import { conduitDimensions } from '../service/conduitDesign';
 import type { WatershedState } from '../controller/useWatershed';
 import type { WatershedCatalog } from '../dto/watershedDto';
@@ -12,6 +14,7 @@ export function WatershedDesignReview({
   catalog: WatershedCatalog;
   state: WatershedState;
 }) {
+  const cisternCosting = previewCisternCosts(catalog, state.drafts);
   const count = state.drafts.length + state.storageDrafts.length + state.conduitDrafts.length;
   const costing = state.drafts.length ? previewWatershedCosts(catalog, state.drafts) : null;
   return (
@@ -89,9 +92,11 @@ export function WatershedDesignReview({
           지하 저류조 공사비 미산정 · 아래 참고 부분합에는 포함되지 않습니다.
         </p>
       )}
+      {cisternCosting && <CisternReferenceCosts costing={cisternCosting} preview />}
       {costing && (
         <WatershedCosts
           costing={costing}
+          cisternQuoteIds={cisternCosting?.items.map((i) => i.placementId)}
           preview
           additionalUnpriced={[
             ...state.storageDrafts.map((p) => ({ id: p.id, name: '지하 저류조' })),

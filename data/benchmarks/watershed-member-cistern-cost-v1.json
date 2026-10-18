@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "classification": "PUBLIC_NETWORK_WITH_CAPACITY_EQUIVALENT_QUOTE_COMPARISON",
+  "sourceCatalogSha256": "beaddba8868b6f1f6bbf35b1d53d4695a94db99498d8988f90d62013cf8f053c",
+  "quoteCatalogSha256": "63186839053e9a254bc42ba25765dfb78831d5621a3382e5abe0d110ddb7fe3b",
+  "quoteSourceSha256": "28f0c3969bbc2f1dd08e03fec2fddb70bfdecdfc4032bd871158eb3a1734e207",
+  "requestSha256": "8de2b8cd9195ed1918905a450dae0391518d9c8b6a8b2960e38865e08d9c3857",
+  "inputHash": "bb4be59dc8386e9bd18cebe3ac698cacf9e4ff2f2b7d4babbaf804e1f3730cdf",
+  "resultSha256": "360ef6b6d7c5cf8e94f5f926aa725eb1158f680f79596dc22e40a57e642cffa4",
+  "frontFixtureSha256": "0db0468708464eab1879a4c887674052f8ffd35ce189fa8abbcfb5881ed99bc3",
+  "numericalStatus": "PASSED",
+  "signedReductionM3": {
+    "outflowM3": 0.09000170649960637,
+    "floodingM3": 8.473809818038717
+  },
+  "signedPeakReductionM3s": 0.0,
+  "designCapacityM3": [
+    4.7,
+    2.0
+  ],
+  "equivalentQuotedUnits": [
+    2,
+    null
+  ],
+  "firstDesignQuotedTotalsKrw": {
+    "A": 10894000,
+    "B": 7024000,
+    "C": 5714000
+  },
+  "completeInstalledCostKrw": null,
+  "budgetChargedKrw": null,
+  "rankingEligible": false,
+  "validation": {
+    "serverTests": 10,
+    "workerTests": 4,
+    "pythonCostTests": 2,
+    "hydraulicInputsEqualWithAndWithoutQuotes": true,
+    "sourceCountsUnchanged": true,
+    "frontendTests": 26
+  },
+  "limitations": [
+    "용량만 같은 견적 묶음이며 시뮬레이션 물통 개수·제원과 일치하지 않음",
+    "2018 발표 견적이며 가격 기준일·현 서울 공사비 미확인",
+    "관망 원본 2010 강우와 미보정 문헌 제원의 비교; 실제 지표 침수와 당시 복원 아님"
+  ]
+}

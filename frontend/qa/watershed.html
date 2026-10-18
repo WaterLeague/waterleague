@@ -13,6 +13,7 @@
       </p>
       <button id="success">실제 결과</button><button id="storage-result">실제 혼합 설계 결과</button
       ><button id="conduit-result">실제 관로 개량 결과</button
+      ><button id="cistern-result">실제 이용조 견적 결과</button
       ><button id="failure">실패 표시 시험</button>
       <p id="submission" role="status">설계 입력 대기</p>
     </header>
@@ -33,6 +34,7 @@
         { default: peaks },
         { default: storageJob },
         { default: conduitJob },
+        { default: cisternJob },
       ] = await Promise.all([
         import('react'),
         import('react-dom/client'),
@@ -46,6 +48,7 @@
         import('/src/domains/watershed/view/fixtures/public-network-peaks.json'),
         import('/src/domains/watershed/view/fixtures/public-storage-job.json'),
         import('/src/domains/watershed/view/fixtures/public-conduit-job.json'),
+        import('/src/domains/watershed/view/fixtures/public-cistern-job.json'),
         import('/src/domains/watershed/view/watershed.css'),
       ]);
       const result = {
@@ -86,6 +89,8 @@
           document.getElementById('success').onclick = () => setJob(original);
           document.getElementById('conduit-result').onclick = () =>
             setJob(watershedJobDto.parse(conduitJob));
+          document.getElementById('cistern-result').onclick = () =>
+            setJob(watershedJobDto.parse(cisternJob));
           document.getElementById('storage-result').onclick = () =>
             setJob(watershedJobDto.parse(storageJob));
           document.getElementById('failure').onclick = () =>

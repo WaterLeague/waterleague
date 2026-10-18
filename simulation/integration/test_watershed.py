@@ -136,3 +136,28 @@ class WatershedTests(unittest.TestCase):
         manifest=json.loads((folder/'manifest.json').read_text())
         self.assertEqual(manifest['conduit-catalog.json'],PIPE_HASH)
         self.assertEqual((folder/'baseline-input.inp').read_bytes(),base)
+
+    def test_cistern_reference_quotes_are_bound_without_budget_or_physics_changes(self):
+        from pathlib import Path
+        from waterleague_sim.costing.cistern import CATALOG_SHA256
+        from waterleague_sim.costing.cistern_reference import snapshot
+        design=json.loads((Path(__file__).parents[1]/'tests/fixtures/member-cistern-costs-v1.json').read_text())
+        raw=json.dumps(design,sort_keys=True)
+        digest=hashlib.sha256((CATALOG_HASH+'\n'+raw).encode()).hexdigest()
+        identity=uuid.uuid4()
+        self.conn.execute("INSERT INTO watershed_experiments(id,owner_id,request_key,model_hash,input_hash,placements,state,created_at) VALUES(%s,%s,%s,%s,%s,%s,'QUEUED',now())",(identity,self.owner,uuid.uuid4(),CATALOG_HASH,digest,raw))
+        job=queue.claim(self.conn)
+        self.assertTrue(watershed.process(self.conn,job,self.artifacts))
+        row=self.conn.execute('SELECT * FROM watershed_experiments WHERE id=%s',(identity,)).fetchone()
+        self.assertEqual(row['state'],'SUCCEEDED',row['error_code'])
+        result=json.loads(row['result'])
+        self.assertEqual(result['numericalStatus'],'PASSED')
+        self.assertEqual(result['cisternCosting'],snapshot(design['placements']))
+        self.assertIsNone(result['completeInstalledCostKrw'])
+        self.assertIsNone(result['budgetChargedKrw'])
+        folder=self.artifacts/'watersheds'/str(identity)/str(job['lease_token'])
+        manifest=json.loads((folder/'manifest.json').read_text())
+        self.assertEqual(manifest['cistern-cost-catalog.json'],CATALOG_SHA256)
+        self.assertEqual(manifest['cistern-quote-source.html'],design['cisternCosting']['source']['sha256'])
+        self.assertEqual(json.loads((folder/'cistern-cost-snapshot.json').read_text()),design['cisternCosting'])
+        self.assertEqual(self.conn.execute('SELECT count(*) AS n FROM budget_ledger_entries WHERE owner_id=%s',(self.owner,)).fetchone()['n'],0)

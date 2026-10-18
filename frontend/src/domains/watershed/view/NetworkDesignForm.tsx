@@ -147,7 +147,7 @@ export function NetworkDesignForm({
       </p>
       <div className="watershed-inputs">
         <label>
-          시설 면적 (m²)
+          {type === 'RAINWATER_CISTERN' ? '물통 수평 단면적 (m²)' : '시설 면적 (m²)'}
           <input
             type="number"
             min="0.01"
@@ -171,6 +171,16 @@ export function NetworkDesignForm({
           />
         </label>
       </div>
+      {type === 'RAINWATER_CISTERN' &&
+        area.trim() &&
+        Number.isFinite(Number(area)) &&
+        Number(area) > 0 &&
+        typeof template.parameters.storageDepthMm === 'number' && (
+          <p>
+            설계 저류 용량 {number((Number(area) * template.parameters.storageDepthMm) / 1000)} m³ ·
+            단면적 × 깊이
+          </p>
+        )}
       <p>
         시설 면적만큼 기존 불투수면을 대체하고, 추가 처리 면적의 빗물을 시설로 보냅니다. 같은 면적을
         여러 시설에 중복 배분할 수 없습니다.

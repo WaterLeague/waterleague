@@ -45,27 +45,20 @@ public class WatershedService {
   }
 
   public Map<String, Object> catalog() {
-    return Map.of(
-        "catalogHash",
-        WatershedCatalogRepository.HASH,
-        "catalog",
-        catalog.value(),
-        "costCatalogHash",
-        WatershedCostRepository.HASH,
-        "costCatalog",
-        costCatalog.value(),
-        "layoutHash",
-        WatershedCatalogRepository.LAYOUT_HASH,
-        "layout",
-        catalog.layout(),
-        "storageCatalogHash",
-        WatershedCatalogRepository.STORAGE_HASH,
-        "storageCatalog",
-        catalog.storage(),
-        "conduitCatalogHash",
-        WatershedCatalogRepository.CONDUIT_HASH,
-        "conduitCatalog",
-        catalog.conduits());
+    var result = new TreeMap<String, Object>();
+    result.put("catalogHash", WatershedCatalogRepository.HASH);
+    result.put("catalog", catalog.value());
+    result.put("costCatalogHash", WatershedCostRepository.HASH);
+    result.put("costCatalog", costCatalog.value());
+    result.put("layoutHash", WatershedCatalogRepository.LAYOUT_HASH);
+    result.put("layout", catalog.layout());
+    result.put("storageCatalogHash", WatershedCatalogRepository.STORAGE_HASH);
+    result.put("storageCatalog", catalog.storage());
+    result.put("conduitCatalogHash", WatershedCatalogRepository.CONDUIT_HASH);
+    result.put("conduitCatalog", catalog.conduits());
+    result.put("cisternCostCatalogHash", WatershedCostRepository.CISTERN_HASH);
+    result.put("cisternCostCatalog", costCatalog.cistern());
+    return result;
   }
 
   public WatershedExperiment require(UUID owner, UUID id) {
@@ -170,6 +163,11 @@ public class WatershedService {
     if (dto.conduits() != null) design.put("conduits", conduits.compile(dto.conduits(), ids));
     if (dto.costCatalogHash() != null && !dto.placements().isEmpty())
       design.put("costing", costs.snapshot(dto.costCatalogHash(), dto.placements()));
+    if (dto.cisternCostCatalogHash() != null)
+      design.put(
+          "cisternCosting",
+          CisternReferenceService.snapshot(
+              dto.cisternCostCatalogHash(), placements, costCatalog.cistern()));
     String body = json.write(design);
     String hash = json.hash(dto.catalogHash() + "\n" + body);
     admission.lockAdmission();
