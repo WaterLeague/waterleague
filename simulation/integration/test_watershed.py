@@ -36,6 +36,12 @@ class WatershedTests(unittest.TestCase):
         self.assertEqual(row['state'],'SUCCEEDED',row['error_code'])
         result=json.loads(row['result'])
         self.assertEqual(result['numericalStatus'],'PASSED')
+        for case in result['cases']:
+            nodes=case['nodeFlooding']
+            self.assertEqual(len(nodes['nodes']),28)
+            self.assertTrue(all(n['mapped'] for n in nodes['nodes']))
+            self.assertEqual(nodes['totalFloodingM3'],case['totals']['floodingM3'])
+            self.assertAlmostEqual(sum(n['floodingM3'] for n in nodes['nodes']),nodes['totalFloodingM3'],places=5)
         self.assertFalse(result['rankingEligible'])
         self.assertIsNone(result['completeInstalledCostKrw'])
         self.assertEqual(result['costing'], design['costing'])
@@ -49,6 +55,7 @@ class WatershedTests(unittest.TestCase):
             self.assertEqual(hashlib.sha256((directory/name).read_bytes()).hexdigest(),sha)
             if name!='result.json': self.assertEqual(result['artifactFiles'][name],sha)
         self.assertEqual(manifest['catalog.json'],CATALOG_HASH)
+        self.assertEqual(manifest['network-layout.json'],result['networkLayout']['sha256'])
         self.assertEqual(manifest['cost-catalog.json'], COST_HASH)
         self.assertEqual(json.loads((directory/'cost-snapshot.json').read_text()), design['costing'])
         self.assertIn('strategy/network.out',manifest)
@@ -83,6 +90,9 @@ class WatershedTests(unittest.TestCase):
             result=json.loads(row['result'])
             self.assertEqual(result['numericalStatus'],'PASSED',result)
             strategy=result['cases'][1]
+            unmapped=[n for n in strategy['nodeFlooding']['nodes'] if not n['mapped']]
+            self.assertEqual(len(unmapped),1)
+            self.assertEqual(unmapped[0]['kind'],'STORAGE')
             ledger=strategy['connectedStorage']['wholeRunLedger']['facilities'][0]
             self.assertEqual(ledger['capacityM3'],500)
             self.assertGreater(ledger['inflowM3'],0)

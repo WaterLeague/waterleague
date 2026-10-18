@@ -455,3 +455,64 @@
   stroke: #356e8355;
   outline: none;
 }
+
+.watershed-flood-map {
+  margin: 20px 0;
+  padding: 14px;
+  background: #f6f8f3;
+  border: 1px solid #c6d2c0;
+  border-radius: 5px;
+}
+.watershed-flood-map svg {
+  display: block;
+  width: 100%;
+  height: 360px;
+  background: #f9faf6;
+  margin: 10px 0;
+}
+.watershed-flood-context polygon {
+  fill: #e8ede3;
+  stroke: #c4cebc;
+  stroke-width: 0.7;
+}
+.watershed-flood-context polyline {
+  fill: none;
+  stroke: #90a5a4;
+  stroke-width: 1.5;
+}
+.watershed-flood-node {
+  stroke: #fff;
+  stroke-width: 1.5;
+  cursor: pointer;
+}
+.watershed-flood-node[data-selected='true'],
+.watershed-flood-node:focus-visible {
+  stroke: #203c36;
+  stroke-width: 3;
+  outline: none;
+}
+.watershed-flood-label {
+  fill: #334f46;
+  pointer-events: none;
+  paint-order: stroke;
+  stroke: #f9faf6;
+  stroke-width: 0.7px;
+}
+.watershed-flood-legend {
+  font-weight: 650;
+}
+.watershed-flood-selection {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.watershed-flood-selection select {
+  background: #fff;
+  padding: 6px 10px;
+  border: 1px solid #bacbb1;
+  color: #29453d;
+}
+.watershed-flood-detail {
+  padding-top: 12px;
+  font-variant-numeric: tabular-nums;
+}

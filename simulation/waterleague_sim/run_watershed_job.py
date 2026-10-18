@@ -83,8 +83,11 @@ def inputs(request):
 
 def calculate(request, directory):
     catalog, original, base, strategy, numerical, transformation, manifest = inputs(request)
+    from .presentation.node_flooding import load_layout, summarize as node_flooding
+    layout_raw, layout_snapshot = load_layout(catalog['sourceOriginalSha256'])
     directory = Path(directory)
     directory.mkdir(parents=True, exist_ok=True)
+    (directory/'network-layout.json').write_bytes(layout_raw)
     design = json.loads(request['placements'])
     cost_raw = verify_costs({k: v for k, v in design.items() if k not in ('storage','conduits','cisternCosting')})
     from .costing.cistern_reference import verify as verify_cistern
@@ -141,6 +144,7 @@ def calculate(request, directory):
             case['facilities'] = result['final']['facilities']
             case['outfalls'] = {key: value for key, value in result['final']['nodes'].items() if value['type'] == 1}
             case['evaluationMetrics'] = result['evaluationMetrics']
+            case['nodeFlooding'] = node_flooding(result['initial'], result['final'], layout_snapshot['layout'])
             if 'conduits' in design:
                 case['conduits']=[{'id':p['id'],'conduitId':p['conduitId'],**result['final']['links'][p['conduitId']]} for p in design['conduits']['placements']]
                 case['conduitStateTimeSeconds']=result['final']['totals']['timeSeconds']
@@ -159,6 +163,7 @@ def calculate(request, directory):
     result = {'schemaVersion': 1, 'catalogHash': CATALOG_HASH, 'inputHash': request['inputHash'],
         'classification': 'PUBLIC_NETWORK_REFERENCE_DESIGN_COMPARISON', 'engine': engine,
         'numericalProfile': catalog['numericalProfile'],
+        'networkLayout': layout_snapshot,
         'hydraulicApproximationChanged': numerical['hydraulicApproximationChanged'],
         'numericalStatus': 'PASSED' if passed else 'FAILED', 'cases': cases,
         'signedReductionM3': {key: cases[0]['totals'][key]-cases[1]['totals'][key]

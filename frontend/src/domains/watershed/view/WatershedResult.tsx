@@ -3,6 +3,7 @@ import { conduitDimensions } from '../service/conduitDesign';
 import type { WatershedJob } from '../dto/watershedDto';
 import { WatershedCosts } from './WatershedCosts';
 import { WatershedPeaks } from './WatershedPeaks';
+import { WatershedFloodMap } from './WatershedFloodMap';
 import { networkNames } from '../service/watershedDesign';
 import { physicalAmount as number } from '../../physics/service/physicalValueFormat';
 const totalAmount = (value: number) =>
@@ -122,6 +123,14 @@ export function WatershedResult({ job }: { job: WatershedJob }) {
           )}
           {comparable && (
             <>
+              {result.networkLayout && baseline?.nodeFlooding && strategy?.nodeFlooding && (
+                <WatershedFloodMap
+                  key={job.id}
+                  layout={result.networkLayout.layout}
+                  baseline={baseline.nodeFlooding}
+                  strategy={strategy.nodeFlooding}
+                />
+              )}
               {(['floodingM3', 'outflowM3'] as const).map((metric) => {
                 const reduction = comparable[metric];
                 return (

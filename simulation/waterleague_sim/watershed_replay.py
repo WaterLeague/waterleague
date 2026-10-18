@@ -8,7 +8,7 @@ from pathlib import Path
 import platform
 
 
-def observed_run(engine, paths, metrics):
+def observed_run(engine, paths, metrics, node_flooding=None):
     engine.swmm_open.argtypes = [ctypes.c_char_p] * 3
     engine.wl_metricsBegin.argtypes = [ctypes.c_double, ctypes.c_double, ctypes.POINTER(ctypes.c_int), ctypes.c_int]
     engine.swmm_getIndex.argtypes = [ctypes.c_int, ctypes.c_char_p]
@@ -39,9 +39,22 @@ def observed_run(engine, paths, metrics):
             raw = (ctypes.c_double * 8)()
             check(engine.wl_metricsRead(i, raw, 8))
             rows.append(dict(zip(fields, raw)))
+        nodes_equal = None
+        if node_flooding is not None:
+            engine.wl_nodeVolumes.argtypes = [ctypes.c_int, ctypes.POINTER(ctypes.c_double), ctypes.c_int]
+            engine.wl_networkSnapshot.argtypes = [ctypes.POINTER(ctypes.c_double), ctypes.c_int]
+            totals = (ctypes.c_double * 13)()
+            check(engine.wl_networkSnapshot(totals, 13))
+            nodes_equal = (engine.swmm_getCount(2) == len(node_flooding['nodes'])
+                and totals[0] == node_flooding['endSeconds']
+                and totals[9] == node_flooding['totalFloodingM3'])
+            for node in node_flooding['nodes']:
+                values = (ctypes.c_double * 6)()
+                check(engine.wl_nodeVolumes(engine.swmm_getIndex(2, node['id'].encode()), values, 6))
+                nodes_equal = nodes_equal and values[3] == node['floodingM3']
         check(engine.swmm_end())
         check(engine.swmm_report())
-        return dict(zip(ids, rows[:-1])) == metrics['outfalls'] and rows[-1] == metrics['combined']
+        return (dict(zip(ids, rows[:-1])) == metrics['outfalls'] and rows[-1] == metrics['combined'], nodes_equal)
     finally:
         engine.wl_metricsRelease()
         engine.wl_networkRelease()
@@ -73,7 +86,7 @@ def replay(bundle, destination):
         case = next(c for c in result['cases'] if c['id'] == name)
         metrics = case.get('evaluationMetrics')
         if metrics:
-            metrics_equal = observed_run(engine, paths, metrics)
+            metrics_equal, nodes_equal = observed_run(engine, paths, metrics, case.get('nodeFlooding'))
         else:
             status=engine.swmm_run(*(os.fsencode(p) for p in paths))
             if status!=0: raise ValueError('WATERSHED_REPLAY_ENGINE_FAILED')
@@ -81,8 +94,10 @@ def replay(bundle, destination):
         rows.append({'id':name,'outSha256':sha,'binaryEqual':sha==expected[name+'/network.out']})
         if metrics:
             rows[-1]['metricsEqual'] = metrics_equal
+            if nodes_equal is not None:
+                rows[-1]['nodeFloodingEqual'] = nodes_equal
     (destination/'replay.json').write_text(json.dumps(rows,indent=2)+'\n')
-    if not all(r['binaryEqual'] and r.get('metricsEqual', True) for r in rows): raise ValueError('WATERSHED_REPLAY_DIFFERENT')
+    if not all(r['binaryEqual'] and r.get('metricsEqual', True) and r.get('nodeFloodingEqual', True) for r in rows): raise ValueError('WATERSHED_REPLAY_DIFFERENT')
     return rows
 
 

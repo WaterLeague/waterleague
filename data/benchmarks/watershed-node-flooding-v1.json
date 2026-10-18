@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "classification": "PUBLIC_NETWORK_NODE_FLOODING_DISPLAY_NOT_SURFACE_INUNDATION",
+  "rankingEligible": false,
+  "inputHash": "89766196cd5a140ec84ef92ca68327fe4c4592fba762601bb6dff8fffe88f9c2",
+  "numericalStatus": "PASSED",
+  "layoutSha256": "fa3e4d833650df5c40d933bd0b289dd029a54e0beb73fad9b9d3ef239cb0236d",
+  "resultSha256": "a449e8440aadfd7d8b1cf6e5e256c338873f3dd22b0a93c54c177e595d83930b",
+  "manifestSha256": "24f127718d25667ab2e0ce5b09a460372de2d8cfbf683359fd3957b70d9ca50c",
+  "implementationArchiveSha256": "489bf9f0db3859bbc0ab943a11ffa82c3a2cc2d909c61a30eced1d7dee3dee35",
+  "cases": [
+    {
+      "id": "baseline",
+      "inputSha256": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+      "endSeconds": 86339.0,
+      "mappedNodeCount": 28,
+      "unmappedNodes": [],
+      "totalFloodingM3": 1507902.468925209,
+      "balanceDifferenceM3": -1.0826624929904938e-07,
+      "previousOutputUnchanged": true
+    },
+    {
+      "id": "strategy",
+      "inputSha256": "3b32e60d4de18da962e66aa2a136a2ef4379200bcad977df497b694c876dcd57",
+      "endSeconds": 86339.0,
+      "mappedNodeCount": 28,
+      "unmappedNodes": [
+        {
+          "id": "WLST_Tank",
+          "kind": "STORAGE",
+          "mapped": false,
+          "floodingM3": 0.0
+        }
+      ],
+      "totalFloodingM3": 1507660.7456632133,
+      "balanceDifferenceM3": -1.618172973394394e-07,
+      "previousOutputUnchanged": true
+    }
+  ],
+  "largestChanges": [
+    {
+      "id": "J20",
+      "baselineM3": 65198.225233518875,
+      "strategyM3": 63746.0495945693,
+      "signedReductionM3": 1452.1756389495786
+    },
+    {
+      "id": "J3",
+      "baselineM3": 897.6866419442144,
+      "strategyM3": 2215.913726694889,
+      "signedReductionM3": -1318.2270847506747
+    },
+    {
+      "id": "J23",
+      "baselineM3": 190476.70667910887,
+      "strategyM3": 190552.57203790586,
+      "signedReductionM3": -75.86535879698931
+    },
+    {
+      "id": "J5",
+      "baselineM3": 64.14032070511955,
+      "strategyM3": 0.0,
+      "signedReductionM3": 64.14032070511955
+    },
+    {
+      "id": "J19",
+      "baselineM3": 90.75686803778727,
+      "strategyM3": 30.01071564932685,
+      "signedReductionM3": 60.746152388460416
+    }
+  ],
+  "replay": [
+    {
+      "id": "baseline",
+      "outSha256": "682eeb8bb19391dde81c640bc68f91de924852787689c89cbd46a3c771006c18",
+      "binaryEqual": true,
+      "metricsEqual": true,
+      "nodeFloodingEqual": true
+    },
+    {
+      "id": "strategy",
+      "outSha256": "0d065959ccc1b4898e483e5f807b56b00ff014af1044f2f8031d1bf9e6cf4686",
+      "binaryEqual": true,
+      "metricsEqual": true,
+      "nodeFloodingEqual": true
+    }
+  ],
+  "limitations": [
+    "원본 연구 관망의 2010 입력과 현재 명시적 혼합 설계의 비교; 현장 관측 검증 아님",
+    "EPSG·수직 기준 미확인으로 서울 지도 정합·지표 침수 깊이 적용 미완료",
+    "원 엔진 평가 창 86339초 전체의 절점별 누적 월류; 개별 시설의 독립 효과 아님"
+  ]
+}

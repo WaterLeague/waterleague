@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { watershedCostCatalogDto, watershedCostSnapshotDto } from './watershedCostDto';
 import { watershedLayoutDto } from './watershedLayoutDto';
 import { watershedMetricsDto } from './watershedMetricsDto';
+import { nodeFloodingDto, floodAmountClose } from './nodeFloodingDto';
 const hash = z.string().regex(/^[a-f0-9]{64}$/);
 const amount = z.number().finite();
 export const networkFacilityDto = z.enum([
@@ -105,6 +106,7 @@ const totals = z.object({
   balanceResidualM3: amount,
 });
 const caseDto = z.object({
+  nodeFlooding: nodeFloodingDto.optional(),
   conduits: z
     .array(z.object({ id: z.string(), conduitId: z.string(), flowM3s: amount, depthM: amount }))
     .optional(),
@@ -138,6 +140,7 @@ export const watershedResultDto = z
   .object({
     catalogHash: hash,
     classification: z.literal('PUBLIC_NETWORK_REFERENCE_DESIGN_COMPARISON'),
+    networkLayout: z.object({ sha256: hash, layout: watershedLayoutDto }).optional(),
     engine: z.object({ engineVersion: z.string() }),
     numericalProfile: z.object({ id: z.string() }),
     numericalStatus: z.enum(['PASSED', 'FAILED']),
@@ -155,6 +158,39 @@ export const watershedResultDto = z
   .superRefine((value, ctx) => {
     const baseline = value.cases.find((c) => c.id === 'baseline');
     const strategy = value.cases.find((c) => c.id === 'strategy');
+    const layout = value.networkLayout;
+    if (!layout && value.cases.some((c) => c.nodeFlooding))
+      ctx.addIssue({ code: 'custom', message: '절점 월류의 원본 관망도 누락' });
+    if (layout) {
+      for (const c of value.cases) {
+        const report = c.nodeFlooding;
+        if (!report) {
+          if (c.numericalStatus === 'PASSED')
+            ctx.addIssue({ code: 'custom', message: '절점 월류 기록 누락' });
+          continue;
+        }
+        if (
+          report.layoutSha256 !== layout.sha256 ||
+          !c.totals ||
+          !floodAmountClose(report.totalFloodingM3, c.totals.floodingM3) ||
+          (c.evaluationMetrics &&
+            report.endSeconds !== c.evaluationMetrics.specification.endMilliseconds / 1000) ||
+          report.nodes.filter((n) => n.mapped).length !== layout.layout.nodes.length ||
+          report.nodes.some((n) =>
+            n.mapped
+              ? !layout.layout.nodes.some((p) => p.id === n.id && p.kind === n.kind)
+              : n.kind !== 'STORAGE' || layout.layout.nodes.some((p) => p.id === n.id)
+          )
+        )
+          ctx.addIssue({ code: 'custom', message: '절점 월류·관망도·평가 범위 불일치' });
+      }
+      if (
+        baseline?.nodeFlooding &&
+        strategy?.nodeFlooding &&
+        baseline.nodeFlooding.endSeconds !== strategy.nodeFlooding.endSeconds
+      )
+        ctx.addIssue({ code: 'custom', message: '절점 월류 비교 기간 불일치' });
+    }
     const valid =
       baseline &&
       strategy &&
