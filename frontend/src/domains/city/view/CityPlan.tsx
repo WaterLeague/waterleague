@@ -1,3 +1,4 @@
+import { publicInfrastructureBuildingIds } from '../../infrastructure/service/infrastructureService';
 import { memo, useMemo } from 'react';
 import type { City, CityBuilding, CityFocus, CityTile } from '../entity/city';
 import type { CityPlayRegion } from '../dto/cityPlayDto';
@@ -18,7 +19,7 @@ import { detailLabelDistance } from '../service/cityService';
 import { usePlanNavigation } from '../controller/usePlanNavigation';
 import type { PlanView } from '../service/planNavigationService';
 import type { InfrastructureAsset } from '../../infrastructure/entity/infrastructure';
-import { infrastructureColor } from '../../infrastructure/service/infrastructureService';
+import { InfrastructureSymbolsPlan } from '../../infrastructure/view/InfrastructureSymbolsPlan';
 import { InfrastructureFootprintsPlan } from '../../infrastructure/view/InfrastructureFootprints';
 import type { TraceTile } from '../../floodtrace/entity/floodTrace';
 import { FloodTracePlan } from '../../floodtrace/view/FloodTraceLayer';
@@ -116,14 +117,20 @@ export const CityPlan = memo(function CityPlan({
     }),
     [city]
   );
+  const publicBuildings = useMemo(
+    () => publicInfrastructureBuildingIds(publicAssets),
+    [publicAssets]
+  );
   const buildings = useMemo(
     () =>
       [
         ...new Map(
           [...city.overviewBuildings, ...tiles.flatMap((t) => t.buildings)].map((b) => [b.id, b])
         ).values(),
-      ].map((b) => ({ building: b, path: polygonPath(b.polygons) })),
-    [city, tiles]
+      ]
+        .filter((b) => !publicBuildings.has(b.id))
+        .map((b) => ({ building: b, path: polygonPath(b.polygons) })),
+    [city, tiles, publicBuildings]
   );
   const sitePaths = useMemo(
     () => new Map(sites.map((s) => [siteKey(s), polygonPath([[s.coordinates]])])),
@@ -250,7 +257,7 @@ export const CityPlan = memo(function CityPlan({
               {installed
                 ? '설치됨'
                 : site.existingInfrastructure
-                  ? '공개 저류 영역 · 신규 설치 제외'
+                  ? '공개 시설 영역 · 신규 설치 제외'
                   : '빈 위치'}
             </title>
           </path>
@@ -323,7 +330,11 @@ export const CityPlan = memo(function CityPlan({
           </text>
         ))}
       {buildingLayer}
-      <InfrastructureFootprintsPlan assets={publicAssets} selectedId={selectedAssetId} />
+      <InfrastructureFootprintsPlan
+        assets={facilityType ? [] : publicAssets}
+        selectedId={selectedAssetId}
+        onSelect={onAsset}
+      />
       {siteLayer}
       {facilityLayer}
       {cisternGeometry && <CisternLayoutPlan geometry={cisternGeometry} />}
@@ -347,24 +358,12 @@ export const CityPlan = memo(function CityPlan({
           </title>
         </circle>
       ))}
-      {publicAssets.map((asset) => (
-        <circle
-          key={asset.id}
-          cx={asset.center[0]}
-          cy={-asset.center[1]}
-          r={1}
-          fill={infrastructureColor(asset)}
-          stroke={asset.id === selectedAssetId ? '#dda62e' : infrastructureColor(asset)}
-          strokeWidth={asset.id === selectedAssetId ? 15 : 10}
-          vectorEffect="non-scaling-stroke"
-          onClick={(event) => {
-            event.stopPropagation();
-            onAsset(asset);
-          }}
-        >
-          <title>{asset.name} · 공개 참고 위치</title>
-        </circle>
-      ))}
+      <InfrastructureSymbolsPlan
+        assets={facilityType ? [] : publicAssets}
+        selectedId={selectedAssetId}
+        scale={box.height * 0.014}
+        onSelect={onAsset}
+      />
       <LiveRainPlan
         districts={wetDistricts}
         amounts={rainAmounts}

@@ -105,7 +105,7 @@ export function FacilityPlacementPanel(p: FacilityPlacementProps) {
           <h2 className="shared-site-title">{site.name}</h2>
           {site.existingInfrastructure && (
             <div className="shared-readonly" role="note">
-              <strong>공개 지도 저류 영역 · 신규 설치 제외</strong>
+              <strong>공개 지도 시설 영역 · 신규 설치 제외</strong>
               {site.existingInfrastructure.assets.map((asset) => (
                 <p key={asset.assetId}>
                   {asset.assetName} · 교차{' '}
@@ -113,8 +113,10 @@ export function FacilityPlacementPanel(p: FacilityPlacementProps) {
                 </p>
               ))}
               <p>
-                현재 지도 경계와 겹치는 지상 후보입니다. 과거 재해 당시의 존재·운영 여부는 확인되지
-                않았습니다.
+                {site.kind === 'ROOF'
+                  ? '공개 시설과 같은 원본 건물로 확인되어 신규 설치에서 제외한 옥상 후보입니다.'
+                  : '현재 공개 시설 경계와 겹치는 지상 후보입니다.'}{' '}
+                과거 재해 당시의 존재·운영 여부는 확인되지 않았습니다.
               </p>
             </div>
           )}

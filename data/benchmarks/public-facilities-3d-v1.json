@@ -1,0 +1,87 @@
+{
+  "version": "public-facilities-3d-v1",
+  "createdAt": "2026-10-18T20:13:54.529764+00:00",
+  "sourceManifest": "data/manifests/seoul-pump-buildings-20261019-v1.json",
+  "catalogSha256": "44af12ac60cc058bc867b5b82f11afcfe53cf6da7afef37f85660f96cb10854a",
+  "policySha256": "5271ba50b87d0de090a6fdf5128c2e383ab67238b98d326e99abf1852d99af1a",
+  "mappedBuildings": 8,
+  "reservedRoofCandidates": 8,
+  "reservedGroundCandidates": 86,
+  "geometryRepeatedBuildIdentical": true,
+  "checks": {
+    "isolatedPostgresInstallationAndPhysics": 14,
+    "nativeWorker": 11,
+    "catalogSecurityHistory": 12,
+    "frontend": 15,
+    "build": true,
+    "formatChangedFiles": true
+  },
+  "logs": [
+    "tmp/waterleague_queue_test_baab1902fd32412296b91f871752099b.log",
+    "tmp/waterleague_league_test_5d4937af85d74f96bf20c3fb0edb95bc.log",
+    "tmp/pump-frontend-build.log"
+  ],
+  "resolvedFailures": [
+    "새 공개 API 경로 인증 차단: 정확한 GET 경로만 익명 공개 목록에 추가",
+    "지도 건물 식별자 W/way 변환 누락: 일반 건물 중복 제거 및 후보 예약 연결",
+    "출처 목록 중첩 p 태그 경고: 중첩 요소 제거"
+  ],
+  "unresolvedEnvironment": [
+    "기본 H2에서 기존 V21의 PostgreSQL 제약 이름 차이; 격리 PostgreSQL 검사 통과"
+  ],
+  "scene": "금호빗물펌프장 · 주간 공통 CityScene · 실제 지형/주변 건물/공개 시설 기호 · 표시 거리 1000m",
+  "device": "Apple M4 Pro",
+  "performance": {
+    "geometryJobs": 0,
+    "longTasks": [],
+    "frames": 1197,
+    "elapsedMs": 9991.699999999983,
+    "fps": 119.69935046088274,
+    "medianMs": 8.300000000017462,
+    "p95Ms": 8.700000000011642,
+    "viewport": [
+      1280,
+      720
+    ],
+    "canvas": [
+      1458,
+      725
+    ],
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36"
+  },
+  "observed": [
+    "3D 시설 기호와 선택 건물 도형 표시",
+    "2D 전환 시 선택/위치 유지",
+    "일반 way/653831038 건물 레이어 중복 0개",
+    "공개 시설 종류 기호의 실측 치수·작동 미확인 문구",
+    "현재 관측 강우 독립 메뉴·데이터 카드 미재노출"
+  ],
+  "limitations": [
+    "공개 지도 입력 증거이며 현장·준공·실측·과거 존속 검증 아님",
+    "3D 기호의 크기와 건물 높이 9.6m는 표시용",
+    "시설 선택 응답 150ms는 이번 측정 범위 밖",
+    "전체 서울 물리 입력·현장 정확도·다른 장치 성능 완료 아님"
+  ],
+  "files": [
+    {
+      "path": "data/benchmarks/public-facilities-3d-v1/performance.json",
+      "sha256": "84324b756a3ac70640b045725846cb0b1271664fcf73d4c4448fb8aa9ba626f2",
+      "bytes": 399
+    },
+    {
+      "path": "data/benchmarks/public-facilities-3d-v1/pump-building-2d.png",
+      "sha256": "f51210f36d3e6c16b5fe05dee61e3f4527e256c41dbc6e6b7c79f5a62c75c6ae",
+      "bytes": 99200
+    },
+    {
+      "path": "data/benchmarks/public-facilities-3d-v1/pump-building-3d.png",
+      "sha256": "4ba2a59e89baab4e2b05fea8d3b95449f95899102315679dc480fea610cf73e7",
+      "bytes": 105003
+    },
+    {
+      "path": "data/benchmarks/public-facilities-3d-v1/pump-building-final.png",
+      "sha256": "f4a1cbd3706a868baa87bc61749b65d2015a36f4ca63d407a0b8d47d5a0c5174",
+      "bytes": 100884
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "geometryJobs": 0,
+  "longTasks": [],
+  "frames": 1197,
+  "elapsedMs": 9991.699999999983,
+  "fps": 119.69935046088274,
+  "medianMs": 8.300000000017462,
+  "p95Ms": 8.700000000011642,
+  "viewport": [
+    1280,
+    720
+  ],
+  "canvas": [
+    1458,
+    725
+  ],
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36"
+}

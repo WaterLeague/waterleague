@@ -25,7 +25,7 @@ const props: FacilityPlacementProps = {
 it('주간·재해 공통 패널에서 공개 경계 교차 사유 표시와 신규 배치 폼 제외', () => {
   for (const research of [false, true]) {
     const html = renderToStaticMarkup(<FacilityPlacementPanel {...props} research={research} />);
-    expect(html).toContain('공개 지도 저류 영역 · 신규 설치 제외');
+    expect(html).toContain('공개 지도 시설 영역 · 신규 설치 제외');
     expect(html).toContain('잠실유수지');
     expect(html).toContain('교차 100 m²');
     expect(html).not.toContain('<form');

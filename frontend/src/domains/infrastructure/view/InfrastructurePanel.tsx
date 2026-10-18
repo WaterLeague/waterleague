@@ -83,23 +83,33 @@ export function InfrastructureEvidence({
             </div>
           </dl>
           <p>
-            공개 지도에 저류 영역으로 등록된 경계입니다. 겹치는 지상 후보에는 새 게임 시설을 설치할
-            수 없습니다. 옥상과 이전 설치 기록은 유지됩니다.
+            {footprint.buildingId
+              ? '공개 지도에 빗물펌프장으로 등록된 건물입니다. 같은 원본 건물의 옥상 후보에는 새 게임 시설을 설치할 수 없습니다. 건물 전체 예약은 게임 설치 규칙이며 옥상의 펌프 점유를 뜻하지 않습니다.'
+              : '공개 지도에 저류 영역으로 등록된 경계입니다. 겹치는 지상 후보에는 새 게임 시설을 설치할 수 없습니다. 옥상과 이전 설치 기록은 유지됩니다.'}
           </p>
           <p>
             측량·준공도와 대조되지 않았으며 용량·현재 운영·과거 존속은 미확인입니다. 물리 계산의
             시설로 포함하지 않습니다.
           </p>
+          {footprint.buildingId && (
+            <p>
+              건물 높이 {footprint.displayHeightM} m는 기존 도시 지도 표시용 가정입니다. 실측
+              높이·준공 형상이 아닙니다.
+            </p>
+          )}
           <a href={footprint.sourceObjectUrl} target="_blank" rel="noreferrer">
             OpenStreetMap 도형 원문 ↗
           </a>
         </>
       ) : (
         <p>
-          점 표시는 부지 경계가 아닙니다. 준공·폐지 시점과 배수 연결·운전 조건이 확인되지 않아 물리
-          계산과 설치 차단에는 사용하지 않습니다.
+          시설 기호는 부지 경계가 아닙니다. 준공·폐지 시점과 배수 연결·운전 조건이 확인되지 않아
+          물리 계산과 설치 차단에는 사용하지 않습니다.
         </p>
       )}
+      <p>
+        3D 시설 형태는 종류를 구별하는 기호입니다. 실제 치수·용량·운전 상태를 나타내지 않습니다.
+      </p>
       <a href={source.url} target="_blank" rel="noreferrer">
         {source.publisher} · {source.title} 원문 ↗
       </a>
@@ -254,7 +264,7 @@ export function InfrastructurePanel({
             <small>
               삭제 표시 {catalog.statusCounts.SOURCE_DELETED ?? 0}건 · 삭제 여부 결측{' '}
               {catalog.statusCounts.DELETE_FLAG_UNKNOWN ?? 0}건은 지도에서 제외했습니다. 전체
-              화면에는 펌프 위치와 저류 경계를, 확대하면 주변 빗물관리 자료를 함께 표시합니다.
+              화면에는 펌프 위치와 시설 경계를, 확대하면 주변 빗물관리 자료를 함께 표시합니다.
             </small>
             <details className="infrastructure-sources">
               <summary>자료 출처 {catalog.sources.length}건</summary>

@@ -2,15 +2,32 @@ import { z } from 'zod';
 
 const coordinate = z.number().finite().min(-60000).max(60000);
 const point = z.tuple([coordinate, coordinate]);
-export const infrastructureFootprintDto = z.object({
-  polygons: z.array(z.array(z.array(point).min(4)).min(1)).min(1),
-  areaM2: z.number().positive(),
-  sourceObjectUrl: z.string().regex(/^https:\/\/www\.openstreetmap\.org\/(way|relation)\/[0-9]+$/),
-  mappedAt: z.iso.date(),
-  basinType: z.enum(['detention', 'retention', 'infiltration']),
-  basis: z.literal('PUBLIC_OSM_MAPPING_NOT_SURVEYED_OR_AS_BUILT'),
-  policyVersion: z.literal('seoul-basin-footprints-20261018-v1'),
-});
+export const infrastructureFootprintDto = z
+  .object({
+    polygons: z.array(z.array(z.array(point).min(4)).min(1)).min(1),
+    areaM2: z.number().positive(),
+    sourceObjectUrl: z
+      .string()
+      .regex(/^https:\/\/www\.openstreetmap\.org\/(way|relation)\/[0-9]+$/),
+    mappedAt: z.iso.date(),
+    basinType: z.enum(['detention', 'retention', 'infiltration']).optional(),
+    buildingId: z
+      .string()
+      .regex(/^[WR][0-9]+$/)
+      .optional(),
+    displayHeightM: z.number().positive().max(1000).optional(),
+    heightBasis: z.literal('EXISTING_CITY_DISPLAY_ASSUMPTION').optional(),
+    basis: z.literal('PUBLIC_OSM_MAPPING_NOT_SURVEYED_OR_AS_BUILT'),
+    policyVersion: z.enum([
+      'seoul-basin-footprints-20261018-v1',
+      'seoul-pump-buildings-20261019-v1',
+    ]),
+  })
+  .refine((v) =>
+    v.buildingId
+      ? v.displayHeightM !== undefined && v.heightBasis !== undefined && !v.basinType
+      : !!v.basinType
+  );
 export const infrastructureAssetDto = z.object({
   id: z.string().min(1).max(100),
   sourceId: z.string(),
@@ -27,8 +44,8 @@ export const infrastructureAssetDto = z.object({
   ]),
   center: z.tuple([coordinate, coordinate]),
   districtId: z.string(),
-  geometryEvidence: z.enum(['LOCATION_POINT', 'PUBLIC_MAPPED_FOOTPRINT']),
-  verticalLayer: z.enum(['UNKNOWN', 'MAPPED_SURFACE']),
+  geometryEvidence: z.enum(['LOCATION_POINT', 'PUBLIC_MAPPED_FOOTPRINT', 'PUBLIC_MAPPED_BUILDING']),
+  verticalLayer: z.enum(['UNKNOWN', 'MAPPED_SURFACE', 'MAPPED_BUILDING']),
   validFrom: z.null(),
   validTo: z.null(),
   operationStatus: z.literal('UNKNOWN'),
@@ -72,7 +89,7 @@ export const infrastructureSourceDto = z.object({
 });
 export const infrastructureDto = z
   .object({
-    version: z.literal('seoul-public-20261018-v2'),
+    version: z.literal('seoul-public-20261019-v3'),
     sha256: z.string().regex(/^[a-f0-9]{64}$/),
     usage: z.literal('REFERENCE_ONLY'),
     statusCounts: z.record(z.string(), z.number().int().nonnegative()),

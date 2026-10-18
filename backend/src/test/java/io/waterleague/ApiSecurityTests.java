@@ -12,6 +12,18 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("local")
 class ApiSecurityTests {
+  @org.springframework.test.context.DynamicPropertySource
+  static void integrationDatabase(
+      org.springframework.test.context.DynamicPropertyRegistry registry) {
+    String url = System.getProperty("waterleague.integration.jdbc");
+    if (url != null) {
+      registry.add("spring.datasource.url", () -> url);
+      registry.add("spring.datasource.driver-class-name", () -> "org.postgresql.Driver");
+      registry.add("spring.datasource.username", () -> System.getenv("WL_INTEGRATION_USER"));
+      registry.add("spring.datasource.password", () -> System.getenv("WL_INTEGRATION_PASSWORD"));
+    }
+  }
+
   @Value("${local.server.port}")
   int port;
 
@@ -31,6 +43,17 @@ class ApiSecurityTests {
     assertThat(get("/api/v1/maps").body()).isEqualTo("[]");
     assertThat(catalog.headers().firstValue("X-Request-Id")).isPresent();
     assertThat(catalog.headers().firstValue("X-Content-Type-Options")).contains("nosniff");
+  }
+
+  @Test
+  void publicInfrastructureVersionsStayReadableWithoutOpeningPrivateEndpoints() throws Exception {
+    var current = get("/api/v1/infrastructure/seoul-public-20261019-v3");
+    var old = get("/api/v1/infrastructure/seoul-public-20261018-v2");
+    assertThat(current.statusCode()).isEqualTo(200);
+    assertThat(old.statusCode()).isEqualTo(200);
+    assertThat(current.body()).contains("PUBLIC_MAPPED_BUILDING", "W653831038");
+    assertThat(old.body()).doesNotContain("PUBLIC_MAPPED_BUILDING");
+    assertThat(get("/api/v1/infrastructure/unknown").statusCode()).isEqualTo(401);
   }
 
   @Test

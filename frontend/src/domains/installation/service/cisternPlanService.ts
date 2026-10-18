@@ -15,7 +15,7 @@ export function cisternSelectionError(
       : '탱크를 둘 지상 후보를 선택해 주세요.';
   if (occupied) return '이미 시설이 설치된 위치입니다. 다른 위치를 선택해 주세요.';
   if (site.existingInfrastructure)
-    return '공개 저류 영역과 겹치는 후보입니다. 다른 위치를 선택해 주세요.';
+    return '공개 시설 영역과 겹치는 후보입니다. 다른 위치를 선택해 주세요.';
   return '';
 }
 export function cisternRequest(

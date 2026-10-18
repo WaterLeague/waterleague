@@ -56,7 +56,7 @@ it('지붕·지상의 종류, 소속 구, 점유와 공개 저류 경계에 따�
   expect(cisternSelectionError(roof, 'ground', null, false)).toContain('지상');
   expect(cisternSelectionError(ground, 'ground', '0000000', false)).toContain('소속 구');
   expect(cisternSelectionError(ground, 'ground', ground.districtId, true)).toContain('이미');
-  expect(cisternSelectionError(siteDto.parse(rawSite), 'ground', null, false)).toContain('저류');
+  expect(cisternSelectionError(siteDto.parse(rawSite), 'ground', null, false)).toContain('시설');
 });
 it('공개 면적 한계와 입력 정밀도·종류·구 불일치 차단', () => {
   expect(cisternRequest(roof, ground, '20', '1', '2.350')?.tankDepthM).toBe(2.35);

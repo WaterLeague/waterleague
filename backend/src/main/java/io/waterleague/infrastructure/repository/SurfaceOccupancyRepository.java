@@ -10,9 +10,9 @@ import tools.jackson.databind.JsonNode;
 
 @Repository
 public class SurfaceOccupancyRepository {
-  public static final String VERSION = "seoul-basin-footprints-20261018-v4";
+  public static final String VERSION = "seoul-infrastructure-occupancy-20261019-v5";
   public static final String SHA256 =
-      "5b15ba1ff3df4460f33a4bac3dd68485c082d7c56d75eec8653d8631444eb871";
+      "5271ba50b87d0de090a6fdf5128c2e383ab67238b98d326e99abf1852d99af1a";
   private final Map<String, List<JsonNode>> exclusions = new HashMap<>();
   private final JsonService json;
   private final JsonNode evidence;
@@ -22,7 +22,7 @@ public class SurfaceOccupancyRepository {
     try (var stream =
         new ClassPathResource("infrastructure/" + VERSION + ".json").getInputStream()) {
       String raw = new String(stream.readNBytes(1_000_001), StandardCharsets.UTF_8);
-      if (!json.hash(raw).equals(SHA256)) throw new IllegalStateException("공개 저류 영역 해시 오류");
+      if (!json.hash(raw).equals(SHA256)) throw new IllegalStateException("공개 시설 영역 해시 오류");
       var root = json.tree(raw);
       for (var row : root.path("exclusions"))
         exclusions
@@ -55,9 +55,12 @@ public class SurfaceOccupancyRepository {
     var rows = exclusions.get(district + ":" + cell);
     if (rows == null) return null;
     // 다른 후보 버전에 같은 식별자를 재사용해도 이전 교차 판정을 전용하지 않는다.
-    if (!kind.equals("GROUND")
-        || rows.stream().anyMatch(r -> !modelHash.equals(r.path("siteModelHash").asString())))
-      throw new IllegalStateException("공개 저류 영역 후보 결속 오류");
+    if (rows.stream()
+        .anyMatch(
+            r ->
+                !kind.equals(r.path("siteKind").asString())
+                    || !modelHash.equals(r.path("siteModelHash").asString())))
+      throw new IllegalStateException("공개 시설 영역 후보 결속 오류");
     return json.tree(json.write(Map.of("policy", evidence(), "assets", rows)));
   }
 }

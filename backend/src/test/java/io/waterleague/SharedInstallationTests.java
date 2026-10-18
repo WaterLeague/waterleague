@@ -354,6 +354,39 @@ class SharedInstallationTests {
   }
 
   @Test
+  void mappedPumpBuildingRejectsInstallationBeforeSpendingAndPreservesOtherRoofs() {
+    String district = "2419953";
+    var owner = account(district);
+    var blocked = service.site(district, "RW653831038");
+    assertThat(blocked.existingInfrastructure().path("assets").get(0).path("assetName").asString())
+        .isEqualTo("금호빗물펌프장");
+    assertThatThrownBy(
+            () ->
+                service.install(
+                    owner.username(),
+                    new InstallRequest(
+                        district, blocked.cellId(), FacilityType.GREEN_ROOF, BigDecimal.TEN)))
+        .isInstanceOfSatisfying(
+            DomainException.class,
+            e -> assertThat(e.code()).isEqualTo(ErrorCode.EXISTING_INFRASTRUCTURE));
+    assertThat(budget.view(owner.id()).remainingKrw()).isEqualByComparingTo("2000000000");
+    assertThat(db.queryForObject("SELECT COUNT(*) FROM budget_ledger_entries", Integer.class))
+        .isZero();
+    assertThat(service.active()).isEmpty();
+    var all =
+        service.sites(district, blocked.center().get(0), blocked.center().get(1), 0, null, false);
+    var vacant =
+        service.sites(district, blocked.center().get(0), blocked.center().get(1), 0, null, true);
+    assertThat(all.matchedCount() - vacant.matchedCount()).isEqualTo(1);
+    assertThat(vacant.sites()).allMatch(site -> site.existingInfrastructure() == null);
+    assertThat(
+            sites.district(district).values().stream()
+                .filter(site -> site.kind().equals("ROOF") && site.existingInfrastructure() == null)
+                .count())
+        .isPositive();
+  }
+
+  @Test
   void existingMembersChooseOnceAndCannotInstallElsewhere() {
     var a = account(null);
     assertThatThrownBy(() -> service.install(a.username(), placement("2410520")))
@@ -540,7 +573,7 @@ class SharedInstallationTests {
                 "SELECT admission_snapshot FROM shared_installations WHERE id=?",
                 String.class,
                 independent.id()))
-        .contains("seoul-basin-footprints-20261018-v4", "historicalExistenceVerified");
+        .contains("seoul-infrastructure-occupancy-20261019-v5", "historicalExistenceVerified");
     seasons.closeOwnerAt(other.id(), independent.seasonEndsAt());
     assertThat(budget.view(other.id()).remainingKrw()).isEqualByComparingTo("2000000000");
     assertThat(budget.view(owner.id()).remainingKrw()).isEqualByComparingTo("1050000");

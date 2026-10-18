@@ -20,10 +20,14 @@ export const publicAssetPolicyDto = z.object({
     'seoul-basin-footprints-20261018-v2',
     'seoul-basin-footprints-20261018-v3',
     'seoul-basin-footprints-20261018-v4',
+    'seoul-infrastructure-occupancy-20261019-v5',
   ]),
   sha256: z.string().regex(/^[a-f0-9]{64}$/),
   sourceSha256: z.string().regex(/^[a-f0-9]{64}$/),
-  scope: z.literal('CURRENT_MAPPED_GEOMETRY_NEW_GROUND_PLACEMENTS_ONLY'),
+  scope: z.enum([
+    'CURRENT_MAPPED_GEOMETRY_NEW_GROUND_PLACEMENTS_ONLY',
+    'CURRENT_MAPPED_GROUND_AND_RESERVED_BUILDINGS',
+  ]),
   historicalExistenceVerified: z.literal(false),
 });
 export const installationDto = z.object({

@@ -1,3 +1,4 @@
+import { publicInfrastructureBuildingIds } from '../../infrastructure/service/infrastructureService';
 import {
   useEffect,
   useMemo,
@@ -426,6 +427,10 @@ const CityScene = memo(function CityScene({
   facilityType: FacilityType | '';
   viewerId: string | null;
 }) {
+  const publicBuildings = useMemo(
+    () => publicInfrastructureBuildingIds(publicAssets),
+    [publicAssets]
+  );
   const overviewIds = useMemo(() => new Set(city.overviewBuildings.map((b) => b.id)), [city]);
   return (
     <Canvas
@@ -437,9 +442,10 @@ const CityScene = memo(function CityScene({
     >
       <TerrainContext.Provider value={terrain}>
         <InfrastructureFootprints
-          assets={publicAssets}
+          assets={facilityType ? [] : publicAssets}
           selectedId={selectedAssetId}
           terrain={terrain}
+          onSelect={onAsset}
         />
         <FloodTraceLayer tiles={traceTiles} terrain={terrain} onError={onTraceError} />
         <SurfaceLayer
@@ -449,7 +455,7 @@ const CityScene = memo(function CityScene({
           onError={onSurfaceError}
         />
         <InfrastructureMarkers
-          assets={publicAssets}
+          assets={facilityType ? [] : publicAssets}
           selectedId={selectedAssetId}
           terrain={terrain}
           onSelect={onAsset}
@@ -482,6 +488,7 @@ const CityScene = memo(function CityScene({
             />
           ))}
         <DistrictBuildings
+          publicBuildings={publicBuildings}
           facilityType={facilityType}
           eligibleRoofs={eligibleRoofs}
           occupiedRoofs={occupiedRoofs}
@@ -492,6 +499,7 @@ const CityScene = memo(function CityScene({
         />
         {tiles.map((t) => (
           <DetailBuildings
+            publicBuildings={publicBuildings}
             exclude={overviewIds}
             facilityType={facilityType}
             key={t.id}
@@ -672,6 +680,7 @@ function inRing([x, y]: [number, number], ring: [number, number][]) {
 }
 function DistrictBuildings({
   buildings,
+  publicBuildings,
   city,
   ownDistrictId,
   onBuilding,
@@ -680,6 +689,7 @@ function DistrictBuildings({
   facilityType,
 }: {
   buildings: CityBuilding[];
+  publicBuildings: ReadonlySet<string>;
   city: City;
   ownDistrictId: string | null;
   onBuilding: (districtId: string, b: CityBuilding) => void;
@@ -702,6 +712,7 @@ function DistrictBuildings({
       { eligible: boolean; other: boolean; buildings: CityBuilding[] }
     >();
     for (const b of buildings) {
+      if (publicBuildings.has(b.id)) continue;
       const other =
         !!district &&
         !district.polygons.some(
@@ -713,7 +724,7 @@ function DistrictBuildings({
       buckets.get(key)!.buildings.push(b);
     }
     return [...buckets.entries()];
-  }, [buildings, city, ownDistrictId, eligibleRoofs, occupiedRoofs]);
+  }, [buildings, publicBuildings, city, ownDistrictId, eligibleRoofs, occupiedRoofs]);
   return (
     <>
       {groups

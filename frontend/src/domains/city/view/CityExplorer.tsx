@@ -45,7 +45,10 @@ import { WeeklyBoard, scoreFormat } from '../../weekly/view/WeeklyBoard';
 import { useTerrain } from '../../terrain/controller/useTerrain';
 import { GameClock } from '../../game/view/GameClock';
 import { useInfrastructure } from '../../infrastructure/controller/useInfrastructure';
-import { visibleInfrastructure } from '../../infrastructure/service/infrastructureService';
+import {
+  visibleInfrastructure,
+  unreservedRoofIds,
+} from '../../infrastructure/service/infrastructureService';
 import { InfrastructurePanel } from '../../infrastructure/view/InfrastructurePanel';
 import type { InfrastructureAsset } from '../../infrastructure/entity/infrastructure';
 import { useFloodTraces } from '../../floodtrace/controller/useFloodTraces';
@@ -190,6 +193,10 @@ function Explorer({
   });
   const navigationCamera = useRef(camera);
   const traces = useFloodTraces(true, researchMode ? eventId : comparisonEventId, camera);
+  const eligibleRoofs = useMemo(
+    () => unreservedRoofIds(eligibility.roofIds, infrastructure.catalog?.assets ?? null),
+    [eligibility.roofIds, infrastructure.catalog]
+  );
   const publicAssets = useMemo(
     () =>
       assetsEnabled && infrastructure.catalog
@@ -204,6 +211,7 @@ function Explorer({
   );
   const selectAsset = useCallback((asset: InfrastructureAsset) => {
     setCisternOpen(false);
+    setType('');
     selectionRequest.current++;
     setSite(null);
     setSelectionError('');
@@ -427,7 +435,7 @@ function Explorer({
       if (
         mapFacilityType &&
         (mapFacilityType !== 'GREEN_ROOF' ||
-          !eligibility.roofIds.has(building.id) ||
+          !eligibleRoofs.has(building.id) ||
           occupiedRoofs.has(building.id) ||
           (ownDistrictId && districtId !== ownDistrictId))
       )
@@ -454,7 +462,7 @@ function Explorer({
         );
       }
     },
-    [chooseSite, mapFacilityType, eligibility, ownDistrictId, occupiedRoofs]
+    [chooseSite, mapFacilityType, eligibleRoofs, ownDistrictId, occupiedRoofs]
   );
   const select = useCallback(
     (id: string) => {
@@ -561,7 +569,7 @@ function Explorer({
       facilityType={mapFacilityType}
       planningRoles={planningRoles}
       cisternGeometry={cisternOpen ? cistern.geometry : null}
-      eligibleRoofs={eligibility.roofIds}
+      eligibleRoofs={eligibleRoofs}
       occupiedRoofs={occupiedRoofs}
       wetDistricts={wetDistricts}
       animateRain={animateRain}
@@ -719,7 +727,7 @@ function Explorer({
                   cisternGeometry={cisternOpen ? cistern.geometry : null}
                   viewerId={viewerId ?? null}
                   city={city}
-                  eligibleRoofs={eligibility.roofIds}
+                  eligibleRoofs={eligibleRoofs}
                   occupiedRoofs={occupiedRoofs}
                   regions={regions}
                   tiles={details.tiles}
@@ -919,7 +927,7 @@ function Explorer({
                                   ? '내 시설 · 시즌 고정'
                                   : installed.ownerName + ' · 같은 위치 설치 가능'
                                 : s.existingInfrastructure
-                                  ? '공개 저류 영역 · 신규 설치 제외'
+                                  ? '공개 시설 영역 · 신규 설치 제외'
                                   : '빈 위치'}{' '}
                               · 최대 {placementAreaLimit(s, type).toLocaleString('ko-KR')} m²
                             </small>
@@ -1175,7 +1183,7 @@ function Explorer({
           ? '계산 침수는 별도 색상 레이어 · 표시 지형과 물리 기준고 구분'
           : '침수 깊이 표시 아님'}
         {assetsEnabled &&
-          ' · 시설 위치: 서울특별시·강서구 / 공공누리 제1유형 · 저류 경계: OpenStreetMap / ODbL 1.0'}
+          ' · 시설 위치: 서울특별시·강서구 / 공공누리 제1유형 · 시설 경계: OpenStreetMap / ODbL 1.0'}
         {terrain && (
           <>
             {' '}

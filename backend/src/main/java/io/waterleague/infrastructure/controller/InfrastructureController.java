@@ -18,10 +18,18 @@ public class InfrastructureController {
   }
 
   @GetMapping("/seoul-public-20261018-v2")
+  public ResponseEntity<InfrastructureView> previousCatalog() {
+    return ResponseEntity.ok()
+        .eTag(InfrastructureRepository.V2_SHA256)
+        .cacheControl(CacheControl.maxAge(Duration.ofDays(1)).cachePublic().immutable())
+        .body(service.referenceCatalog(true));
+  }
+
+  @GetMapping("/seoul-public-20261019-v3")
   public ResponseEntity<InfrastructureView> catalog() {
     return ResponseEntity.ok()
         .eTag(InfrastructureRepository.SHA256)
         .cacheControl(CacheControl.maxAge(Duration.ofDays(1)).cachePublic().immutable())
-        .body(service.referenceCatalog());
+        .body(service.referenceCatalog(false));
   }
 }

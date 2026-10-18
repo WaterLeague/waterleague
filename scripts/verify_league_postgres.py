@@ -22,9 +22,10 @@ def source_counts(db):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--suite', choices=['league', 'analysis', 'queue', 'budget', 'physics', 'weekly', 'historical', 'watershed', 'cistern-plan', 'shared-research', 'search', 'restore', 'all'], default='league')
+    parser.add_argument('--suite', choices=['infrastructure', 'league', 'analysis', 'queue', 'budget', 'physics', 'weekly', 'historical', 'watershed', 'cistern-plan', 'shared-research', 'search', 'restore', 'all'], default='league')
     suite = parser.parse_args().suite
-    test_class = {'league': 'LeagueParticipationWorkflowTests',
+    test_class = {'infrastructure': 'InfrastructureCatalogTests,ApiSecurityTests,EquipmentHistoryTests',
+                  'league': 'LeagueParticipationWorkflowTests',
                   'analysis': 'ResearchAnalysisWorkflowTests',
                   'queue': 'QueueCapacityTests',
                   'budget': 'BudgetAllocationTests,BudgetLedgerWorkflowTests,SharedInstallationTests,HistoricalWorkflowTests',

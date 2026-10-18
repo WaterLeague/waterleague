@@ -24,3 +24,22 @@ export function visibleInfrastructure(
 }
 export const infrastructureColor = (asset: InfrastructureAsset) =>
   asset.kind === 'STORM_PUMP' ? '#244a78' : '#217d88';
+
+export function publicInfrastructureBuildingIds(assets: InfrastructureAsset[]) {
+  return new Set(
+    assets.flatMap((a) =>
+      a.footprint?.buildingId
+        ? [a.footprint.buildingId.replace(/^W/, 'way/').replace(/^R/, 'relation/')]
+        : []
+    )
+  );
+}
+
+export function unreservedRoofIds(
+  roofIds: ReadonlySet<string>,
+  assets: InfrastructureAsset[] | null
+) {
+  if (!assets) return new Set<string>();
+  const reserved = publicInfrastructureBuildingIds(assets);
+  return new Set([...roofIds].filter((id) => !reserved.has(id)));
+}

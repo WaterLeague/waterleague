@@ -17,12 +17,21 @@ public class InfrastructureService {
   }
 
   public InfrastructureView referenceCatalog() {
+    return referenceCatalog(false);
+  }
+
+  public InfrastructureView referenceCatalog(boolean previous) {
     // 삭제 여부와 자료 기준일은 실제 철거·준공·운전 시점의 증거가 아니다.
     return new InfrastructureView(
-        InfrastructureRepository.VERSION, InfrastructureRepository.SHA256, "REFERENCE_ONLY",
-        repository.sources(), repository.records().stream().collect(Collectors.groupingBy(
-            a -> a.displayStatus(), Collectors.counting())),
-        repository.records().stream().filter(a -> a.displayStatus().equals("REFERENCE"))
-            .map(mapper::toView).toList());
+        previous ? "seoul-public-20261018-v2" : InfrastructureRepository.VERSION,
+        previous ? InfrastructureRepository.V2_SHA256 : InfrastructureRepository.SHA256,
+        "REFERENCE_ONLY",
+        repository.sources(previous),
+        repository.records(previous).stream()
+            .collect(Collectors.groupingBy(a -> a.displayStatus(), Collectors.counting())),
+        repository.records(previous).stream()
+            .filter(a -> a.displayStatus().equals("REFERENCE"))
+            .map(mapper::toView)
+            .toList());
   }
 }
