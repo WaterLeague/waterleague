@@ -134,6 +134,8 @@ RFC 9457 `application/problem+json`: type, title, status, detail, instance, code
 
 - `GET /api/v1/disasters`: 공개 재해 3건과 각 사건의 25개 구 강우 모델·시각·관측소·분량 제공.
 - `POST /api/v1/historical`: 로그인 회원의 선택 구·등록 재해 모델·공개 후보 1~50곳 검사 후 계산 요청. 요청 키 재사용은 같은 입력에만 허용. 다른 구 연구 허용, 공동 위치 점유 변경 없음.
+- 선택 `sensitivityCellId`는 같은 요청 배치 중 한 곳만 지정. 선행 초기화·제원 지원 후보인지 서버 확인 후 배치의 `initializationSensitivity=SELECTED_SURFACE_7_DAY_DRY_WET_V1` 정책을 입력 해시에 고정. 같은 요청 키로 비교 대상 추가/제거/변경 시 409, 미배치 대상 거부. 별도 비교 요청이 없는 기존 계산은 추가 실행 없음.
+- 결과의 선택 `initializationSensitivity`는 동일 7일 관측과 건조/포화 시드의 평가 시작 상태·평가 지표·차이·조건별 성공/실패 보고서. 조건 실패 시 `comparison.status=INCOMPLETE`, 범위·차이 null. 일반 결과·순위에 비교 효과 합산 없음. 소유자 전용 재현 ZIP에 `sensitivity/`의 원 입력·계산·실패·해시 포함, 기존 경로/크기/변조/심볼릭 링크 차단 유지.
 - `GET /api/v1/historical`, `GET /api/v1/historical/{id}`: 요청자 본인의 비공개 작업 목록·상태·결과.
 - `GET /api/v1/historical/{id}/bundle`: 본인 성공 작업의 해시 검증된 재현 묶음. 경로 이탈·심볼릭 링크·파일 변조 차단.
 

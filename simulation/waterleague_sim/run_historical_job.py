@@ -19,6 +19,10 @@ def calculate(request, directory):
     if (digest((request['modelHash']+'\n'+request['placements']).encode()) != request['inputHash']
             or not 1 <= len(placements) <= 50):
         raise ValueError('HISTORICAL_INPUT_INVALID')
+    selected = [p for p in placements if 'initializationSensitivity' in p]
+    if (len(selected) > 1 or any(p['initializationSensitivity'] != 'SELECTED_SURFACE_7_DAY_DRY_WET_V1'
+                                for p in selected)):
+        raise ValueError('HISTORICAL_SENSITIVITY_INVALID')
     directory.mkdir(parents=True, exist_ok=True)
     from .admission import archive
     archive(placements[0].get('publicAssetPolicy'), directory)
@@ -26,6 +30,7 @@ def calculate(request, directory):
     evaporation = load_evaporation(request['modelHash'], observed, directory)
     results, frames = [], []
     antecedent = None
+    sensitivity_input = None
     assumptions = {'관망 없는 독립 표면 계산', '관측소 강우의 선택 표면 대표성 미검증'}
     for index, placement in enumerate(placements):
         model, _, _ = resolve({'district_id': placement['districtId'], 'cell_id': placement['cellId'],
@@ -35,6 +40,10 @@ def calculate(request, directory):
             raise ValueError('HISTORICAL_DISTRICT_INVALID')
         model['rainfall'] = observed['rainfall']
         model = with_observed_forcing(model, evaporation)
+        if placement in selected:
+            if model.get('initializationPolicy') is None or model.get('facilityDesignSet') is None:
+                raise ValueError('HISTORICAL_SENSITIVITY_UNAVAILABLE')
+            sensitivity_input = model
         applied_evaporation = evaporation
         if model.get('initializationPolicy') is not None:
             from .historical_antecedent import load as load_antecedent
@@ -64,7 +73,7 @@ def calculate(request, directory):
             frames[i]['baselineM3s'] += base['runoffM3s']
             frames[i]['designM3s'] += design['runoffM3s']
             frames[i]['differenceM3'] += contribution['cumulativeM3']
-    return {'schemaVersion': 1, 'validationLevel': 'EXPLORATORY', 'engineVersion': '5.2.4',
+    output = {'schemaVersion': 1, 'validationLevel': 'EXPLORATORY', 'engineVersion': '5.2.4',
             'disasterEvent': observed.get('disasterEvent'),
             'evaporationMethod': evaporation['method'], 'evaporationSourceHashes': evaporation['sourceHashes'],
             'scope': 'SELECTED_INDEPENDENT_SURFACES_ONLY', 'rainfallSourceHash': observed['rainfall']['sourceHash'],
@@ -74,6 +83,12 @@ def calculate(request, directory):
             'baselineAccountedM3': sum(v['baselineAccountedM3'] for v in results),
             'designAccountedM3': sum(v['designAccountedM3'] for v in results),
             'assumptions': sorted(assumptions)+evaporation['assumptions']}
+    if selected:
+        from .engine.initialization_sensitivity import analyze
+        physical = {k: selected[0][k] for k in ('cellId', 'facilityType', 'areaM2')}
+        report = analyze(sensitivity_input, physical, evaporation, antecedent, directory/'sensitivity', days=(7,))
+        output['initializationSensitivity'] = report
+    return output
 
 
 def main():

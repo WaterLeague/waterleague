@@ -66,8 +66,8 @@ public class HistoricalArtifactService {
         zip.write(manifestBytes);
         zip.closeEntry();
         for (String name : manifest.propertyNames()) {
-          if (!name.matches("(?:[0-9]{1,2}/)?[a-z][a-z0-9_.-]{0,70}") || name.contains(".."))
-            throw invalid();
+          if (!name.matches("(?:[0-9]{1,2}/|sensitivity/)?[a-z][a-z0-9_.-]{0,70}")
+              || name.contains("..")) throw invalid();
           byte[] bytes = read(directory.resolve(name), 64 * 1024 * 1024);
           total += bytes.length;
           if (total > 512L * 1024 * 1024) throw invalid();

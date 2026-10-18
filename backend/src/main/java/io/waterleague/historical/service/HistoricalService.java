@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class HistoricalService {
+  private static final String SENSITIVITY_POLICY = "SELECTED_SURFACE_7_DAY_DRY_WET_V1";
   private final HistoricalRepository jobs;
   private final io.waterleague.budget.service.BudgetService budget;
   private final SimulationRepository admission;
@@ -78,6 +79,9 @@ public class HistoricalService {
 
   @Transactional
   public HistoricalView create(UUID owner, HistoricalRequest dto) {
+    if (dto.sensitivityCellId() != null
+        && dto.placements().stream().noneMatch(p -> p.cellId().equals(dto.sensitivityCellId())))
+      throw new DomainException(ErrorCode.PLACEMENT_INVALID);
     var district = districts.require(dto.districtId());
     disasters.requireModel(dto.districtId(), dto.modelHash());
     var model = models.require(dto.modelHash());
@@ -137,6 +141,11 @@ public class HistoricalService {
       for (int n = 0; n < frozen.size(); n++) {
         var entry = oldPlacements.get(n);
         var candidate = frozen.get(n);
+        boolean requestedSensitivity = candidate.get("cellId").equals(dto.sensitivityCellId());
+        if (requestedSensitivity != entry.has("initializationSensitivity")
+            || (requestedSensitivity
+                && !entry.path("initializationSensitivity").asString().equals(SENSITIVITY_POLICY)))
+          throw new DomainException(ErrorCode.CONFLICT);
         if (!entry.path("cellId").asString().equals(candidate.get("cellId"))
             || !entry
                 .path("facilityType")
@@ -151,6 +160,14 @@ public class HistoricalService {
     for (var p : dto.placements()) sites.requireInstallable(district.id(), p.cellId());
     for (var row : frozen) {
       var site = sites.require(district.id(), (String) row.get("cellId"));
+      if (row.get("cellId").equals(dto.sensitivityCellId())) {
+        if (site.initializationPolicy() == null
+            || site.initializationPolicy().isNull()
+            || site.facilityDesignSet() == null
+            || site.facilityDesignSet().isNull())
+          throw new DomainException(ErrorCode.SIMULATION_UNAVAILABLE);
+        row.put("initializationSensitivity", SENSITIVITY_POLICY);
+      }
       var type = (FacilityType) row.get("facilityType");
       var area = (BigDecimal) row.get("areaM2");
       var record =

@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>재해 시작 수분 비교 · 로컬 검증</title>
+  </head>
+  <body style="margin: 0; background: #f2f3ee; font: 14px system-ui; color: #284133">
+    <header style="padding: 20px; border-bottom: 1px solid #cad5c5">
+      <strong>로컬 QA · 제품 빌드 제외</strong>
+      <p>2022. 08. 08 집중호우 · 성동 공개 옥상 후보 100 m² · 실제 SWMM 계산 기록</p>
+      <button id="success">실제 계산 결과</button>
+      <button id="failure">실패 표시 시험</button>
+      <p id="status" role="status">성공 기록 표시</p>
+    </header>
+    <main id="root" style="max-width: 380px; padding: 24px; margin: auto"></main>
+    <script type="module">
+      if (!import.meta.env.DEV || !['localhost', '127.0.0.1', '[::1]'].includes(location.hostname))
+        throw new Error('로컬 개발 환경 전용');
+      const [
+        { default: React },
+        { createRoot },
+        { HistoricalPanel },
+        { loadSite },
+        { default: value },
+      ] = await Promise.all([
+        import('react'),
+        import('react-dom/client'),
+        import('/src/domains/historical/view/HistoricalPanel.tsx'),
+        import('/src/domains/installation/repository/installationRepository.ts'),
+        import('/src/domains/physics/view/fixtures/initializationSensitivity.json'),
+        import('/src/shared/ui/base.css'),
+        import('/src/shared/ui/game.css'),
+        import('/src/domains/game/view/play.css'),
+        import('/src/domains/city/view/shared-play.css'),
+      ]);
+      const site = await loadSite('2419953', value.cellId);
+      const marker = {
+        id: 'local-qa',
+        facilityType: 'GREEN_ROOF',
+        areaM2: 100,
+        cost: site.unitCosts.GREEN_ROOF * 100,
+        ownerName: '로컬 검증 설계',
+      };
+      const draft = { site, marker, facilityType: 'GREEN_ROOF', areaM2: 100 };
+      const root = createRoot(document.getElementById('root'));
+      const output = document.getElementById('status');
+      const result = await (await fetch('/qa/initialization-result.local.json')).json();
+      function render(comparison) {
+        root.render(
+          React.createElement(HistoricalPanel, {
+            state: {
+              drafts: [draft],
+              current: [draft],
+              budget: null,
+              accounting: null,
+              remaining: 0,
+              lab: {},
+              job: { id: 'local-qa', state: 'SUCCEEDED' },
+              busy: false,
+              currentResult: { ...result, initializationSensitivity: comparison },
+              remove: () => {},
+              calculate: async (cell) => {
+                output.textContent =
+                  '요청 대상: ' + (cell ?? '일반 계산') + ' · QA에서는 서버 제출 없음';
+              },
+            },
+            site,
+            type: 'GREEN_ROOF',
+            area: '100',
+            authenticated: true,
+            districtName: '성동구',
+            error: '',
+            onType: () => {},
+            onArea: () => {},
+            onLogin: () => {},
+          })
+        );
+      }
+      document.getElementById('success').onclick = () => {
+        output.textContent = '성공 기록 표시';
+        render(value);
+      };
+      document.getElementById('failure').onclick = () => {
+        output.textContent = '실패 표시 시험 · 실제 결과와 구분';
+        render({
+          ...value,
+          cases: [
+            value.cases[0],
+            {
+              days: 7,
+              seedSaturationPercent: 100,
+              status: 'FAILED',
+              errorCode: 'LOCAL_TEST_FAILURE',
+            },
+          ],
+          comparison: { status: 'INCOMPLETE', ranges: null, seedDifferences: null },
+        });
+      };
+      render(value);
+    </script>
+  </body>
+</html>

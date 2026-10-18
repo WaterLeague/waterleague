@@ -1,0 +1,47 @@
+{
+  "eventId": "seoul-20220808",
+  "modelHash": "3a02b5d7acd351e03c03be43bdf0f15d571f69efb984527bf60afadd0c0328f2",
+  "inputHash": "0194c073adb30de0c6f7a0a9d8d9a8c42f518f943b482bffd51dbe887f1eb920",
+  "cellId": "RW1000976769",
+  "areaM2": 100,
+  "elapsedSeconds": 2.531,
+  "primaryDifferenceM3": -0.0023217021741572808,
+  "cases": [
+    {
+      "status": "SUCCEEDED",
+      "seedSaturationPercent": 0,
+      "metrics": {
+        "initialSoilMoisture": 0.4680531717639085,
+        "initialStorageM3": 8.455093871163607,
+        "initialLidStorageM3": 7.1204678410825775,
+        "initialSurfaceDepthMm": 0.0,
+        "initialPavementDepthMm": null,
+        "initialStorageDepthMm": 3.346281540683776,
+        "evaluatedDischargeM3": 38.74906176931088,
+        "evaluatedEvaporationM3": 0.013179977946776056,
+        "evaluatedInfiltrationM3": 0.0,
+        "peakDischargeMean1MinM3s": 0.010231428795843704,
+        "contributionM3": -0.0023217021741572808
+      }
+    },
+    {
+      "status": "SUCCEEDED",
+      "seedSaturationPercent": 100,
+      "metrics": {
+        "initialSoilMoisture": 0.4680531717639085,
+        "initialStorageM3": 8.455093871163607,
+        "initialLidStorageM3": 7.1204678410825775,
+        "initialSurfaceDepthMm": 0.0,
+        "initialPavementDepthMm": null,
+        "initialStorageDepthMm": 3.346281540683776,
+        "evaluatedDischargeM3": 38.74906176931087,
+        "evaluatedEvaporationM3": 0.013179977946776944,
+        "evaluatedInfiltrationM3": 0.0,
+        "peakDischargeMean1MinM3s": 0.010231428795843616,
+        "contributionM3": -0.0023217021741501753
+      }
+    }
+  ],
+  "inputSha256": "03eb42b8ce5518c872c94bd92a18f3e8b284f7aeb5f468305d2c3753c657179d",
+  "artifactManifestSha256": "11423e3aeac450d3ddea3245bc4df8c35d397ed13c75a53cc78243c16c48389b"
+}

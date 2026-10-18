@@ -10,7 +10,13 @@ public record HistoricalRequest(
     @NotNull UUID requestKey,
     @NotBlank @Pattern(regexp = "[0-9]{7}") String districtId,
     @NotBlank @Pattern(regexp = "[a-f0-9]{64}") String modelHash,
-    @NotNull @Size(min = 1, max = 50) List<@Valid Item> placements) {
+    @NotNull @Size(min = 1, max = 50) List<@Valid Item> placements,
+    @Size(min = 1, max = 20) String sensitivityCellId) {
+  public HistoricalRequest(
+      UUID requestKey, String districtId, String modelHash, List<Item> placements) {
+    this(requestKey, districtId, modelHash, placements, null);
+  }
+
   public record Item(
       @NotBlank @Size(max = 20) String cellId,
       @NotNull FacilityType facilityType,

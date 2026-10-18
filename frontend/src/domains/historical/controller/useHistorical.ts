@@ -194,13 +194,14 @@ export function useHistorical(
     setDrafts((d) => d.filter((v) => v.marker.id !== id));
     setJob(null);
   }
-  async function calculate() {
+  async function calculate(sensitivityCellId?: string) {
     if (!lab || !account || !current.length || busy) return;
     const generation = epoch.current;
     const fingerprint = JSON.stringify([
       districtId,
       lab.modelHash,
       current.map((d) => [d.site.cellId, d.facilityType, d.areaM2]),
+      sensitivityCellId ?? null,
     ]);
     if (pendingRequest.current?.fingerprint !== fingerprint)
       pendingRequest.current = { fingerprint, id: crypto.randomUUID() };
@@ -211,7 +212,8 @@ export function useHistorical(
         districtId,
         lab.modelHash,
         current,
-        pendingRequest.current.id
+        pendingRequest.current.id,
+        sensitivityCellId
       );
       if (generation === epoch.current) setJob(next);
     } catch (e) {

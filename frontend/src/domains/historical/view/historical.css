@@ -92,10 +92,26 @@
   border-top: 1px solid #cad5c5;
   padding-top: 12px;
 }
+.historical-sensitivity-action {
+  margin-top: 10px;
+}
+.historical-sensitivity-action > button {
+  width: 100%;
+}
+.historical-sensitivity-action > p {
+  font-size: 11px;
+  line-height: 1.5;
+  color: #637163;
+}
 .historical-result > strong {
+  display: block;
+  margin: 8px 0;
   font-size: 28px;
   color: #2d6646;
   font-variant-numeric: tabular-nums;
+}
+.historical-result > strong[data-effect='increase'] {
+  color: #975039;
 }
 .historical-result p {
   font-size: 12px;

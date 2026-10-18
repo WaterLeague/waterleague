@@ -190,6 +190,44 @@ class HistoricalWorkflowTests {
   }
 
   @Test
+  void freezesSelectedSensitivityAndRejectsChangedRetriesOrUnplacedTargets() {
+    var dto = request(UUID.randomUUID(), cell, FacilityType.GREEN_ROOF, "1.00");
+    var selected =
+        new HistoricalRequest(
+            dto.requestKey(), dto.districtId(), dto.modelHash(), dto.placements(), cell);
+    var job = service.create(owner, selected);
+    var stored = service.require(owner, job.id());
+    assertThat(stored.placements()).contains("SELECTED_SURFACE_7_DAY_DRY_WET_V1");
+    assertThat(stored.inputHash()).isEqualTo(json.hash(hash + "\n" + stored.placements()));
+    assertThat(service.create(owner, selected).id()).isEqualTo(job.id());
+    assertThatThrownBy(() -> service.create(owner, dto))
+        .isInstanceOfSatisfying(
+            DomainException.class, e -> assertThat(e.code()).isEqualTo(ErrorCode.CONFLICT));
+    var plain = request(UUID.randomUUID(), cell, FacilityType.GREEN_ROOF, "1.00");
+    var original = service.create(owner, plain);
+    assertThat(service.require(owner, original.id()).placements())
+        .doesNotContain("initializationSensitivity");
+    assertThatThrownBy(
+            () ->
+                service.create(
+                    owner,
+                    new HistoricalRequest(
+                        plain.requestKey(), plain.districtId(), hash, plain.placements(), cell)))
+        .isInstanceOfSatisfying(
+            DomainException.class, e -> assertThat(e.code()).isEqualTo(ErrorCode.CONFLICT));
+    assertThatThrownBy(
+            () ->
+                service.create(
+                    owner,
+                    new HistoricalRequest(
+                        UUID.randomUUID(), dto.districtId(), hash, dto.placements(), "UNPLACED")))
+        .isInstanceOfSatisfying(
+            DomainException.class,
+            e -> assertThat(e.code()).isEqualTo(ErrorCode.PLACEMENT_INVALID));
+    assertThat(service.list(owner)).hasSize(2);
+  }
+
+  @Test
   void refusesMismatchedRainfallAndInvalidPlacements() {
     var dto = request(UUID.randomUUID(), cell, FacilityType.GREEN_ROOF, "1.00");
     var wrong =
@@ -281,14 +319,27 @@ class HistoricalWorkflowTests {
                         "placements",
                         placements))));
     var hashes = new TreeMap<String, String>();
+    values.put("sensitivity/sensitivity.json", "{\"test\":\"preserved\"}");
     for (var entry : values.entrySet()) {
+      java.nio.file.Files.createDirectories(directory.resolve(entry.getKey()).getParent());
       java.nio.file.Files.writeString(directory.resolve(entry.getKey()), entry.getValue());
       hashes.put(entry.getKey(), json.hash(entry.getValue()));
     }
     java.nio.file.Files.writeString(directory.resolve("manifest.json"), json.write(hashes));
     var artifacts =
         new io.waterleague.historical.service.HistoricalArtifactService(root.toString(), json);
-    assertThat(artifacts.bundle(job)).isNotEmpty();
+    var names = new ArrayList<String>();
+    try (var zip =
+        new java.util.zip.ZipInputStream(new java.io.ByteArrayInputStream(artifacts.bundle(job)))) {
+      java.util.zip.ZipEntry entry;
+      while ((entry = zip.getNextEntry()) != null) names.add(entry.getName());
+    }
+    assertThat(names).contains("sensitivity/sensitivity.json");
+    java.nio.file.Files.writeString(directory.resolve("sensitivity/sensitivity.json"), "변경된 비교");
+    assertThatThrownBy(() -> artifacts.bundle(job)).isInstanceOf(DomainException.class);
+    java.nio.file.Files.writeString(
+        directory.resolve("sensitivity/sensitivity.json"),
+        values.get("sensitivity/sensitivity.json"));
     java.nio.file.Files.writeString(directory.resolve("historical.py"), "변경된 입력");
     assertThatThrownBy(() -> artifacts.bundle(job)).isInstanceOf(DomainException.class);
     java.nio.file.Files.delete(directory.resolve("historical.py"));

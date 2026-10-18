@@ -1,0 +1,39 @@
+.initialization-sensitivity {
+  border-top: 1px solid #cad5c5;
+  margin-top: 20px;
+  padding-top: 12px;
+}
+.initialization-sensitivity h4 {
+  margin: 0 0 8px;
+  font-size: 14px;
+}
+.initialization-sensitivity table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+.initialization-sensitivity caption {
+  text-align: left;
+  color: #637163;
+  font-size: 11px;
+  padding: 8px 0;
+}
+.initialization-sensitivity th,
+.initialization-sensitivity td {
+  padding: 9px 4px;
+  border-bottom: 1px solid #dfe4da;
+  text-align: right;
+}
+.initialization-sensitivity th:first-child {
+  text-align: left;
+  font-weight: 500;
+}
+.initialization-sensitivity th small {
+  display: block;
+  font-weight: normal;
+  color: #637163;
+}
+.initialization-sensitivity .sensitivity-hash {
+  overflow-wrap: anywhere;
+}

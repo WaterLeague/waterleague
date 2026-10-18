@@ -1,4 +1,6 @@
 import { InitializationEvidence } from '../../physics/view/InitializationEvidence';
+import { InitializationSensitivityEvidence } from '../../physics/view/InitializationSensitivityEvidence';
+import { physicalAmount } from '../../physics/service/physicalValueFormat';
 import { FacilityProfileEvidence } from '../../facility/view/FacilityProfileEvidence';
 import { Play, Pause, Trash2 } from 'lucide-react';
 import type { HistoricalState } from '../controller/useHistorical';
@@ -195,24 +197,45 @@ export function HistoricalPanel({
           로그인 후 계산
         </button>
       )}
+      {authenticated && placed?.site.initializationPolicy && (
+        <div className="historical-sensitivity-action">
+          <button
+            className="outline-button"
+            disabled={working || !s.lab}
+            onClick={() => void s.calculate(placed.site.cellId)}
+          >
+            이 시설의 시작 수분 비교
+          </button>
+          <p>
+            선택 시설 한 곳의 건조·포화 시작 조건을 추가 계산합니다. 일반 계산보다 시간이 더
+            걸립니다.
+          </p>
+        </div>
+      )}
       {s.currentResult && (
         <section className="historical-result" aria-label="과거 강우 비교 결과">
           <h3>계산 결과</h3>
           <a className="text-button" href={`/api/v1/historical/${s.job!.id}/bundle`}>
             재현 자료 다운로드
           </a>
-          <strong>{format.format(s.currentResult.differenceM3)} m³</strong>
+          <strong data-effect={s.currentResult.differenceM3 < 0 ? 'increase' : 'decrease'}>
+            {physicalAmount(s.currentResult.differenceM3)} m³
+          </strong>
           <p>시설 없는 조건 대비 평가체적 감소</p>
+          {s.currentResult.differenceM3 < 0 && <p>음수는 평가체적 증가를 뜻합니다.</p>}
           <dl>
             <dt>시설 없음</dt>
-            <dd>{format.format(s.currentResult.baselineAccountedM3)}m³</dd>
+            <dd>{physicalAmount(s.currentResult.baselineAccountedM3)}m³</dd>
             <dt>현재 연구 설계</dt>
-            <dd>{format.format(s.currentResult.designAccountedM3)}m³</dd>
+            <dd>{physicalAmount(s.currentResult.designAccountedM3)}m³</dd>
           </dl>
           <p>
             선택한 표면의 유출·배수·순저류 합 비교입니다. 구 전체 유출량이나 실제 침수 예측이
             아닙니다.
           </p>
+          {s.currentResult.initializationSensitivity && (
+            <InitializationSensitivityEvidence value={s.currentResult.initializationSensitivity} />
+          )}
           <details>
             <summary>계산 조건</summary>
             {s.currentResult.facilities

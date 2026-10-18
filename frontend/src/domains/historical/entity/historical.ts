@@ -1,4 +1,5 @@
 import type { InitializationEvidenceData } from '../../physics/entity/initialization';
+import type { InitializationSensitivityData } from '../../physics/dto/initializationSensitivityDto';
 import type { FacilityEvidence } from '../../facility/dto/facilityDto';
 import type { SharedSite, SharedInstallation } from '../../installation/entity/installation';
 import type { FacilityType } from '../../game/entity/game';
@@ -33,6 +34,7 @@ export interface HistoricalJob {
     start: string;
     end: string;
     assumptions: string[];
+    initializationSensitivity?: InitializationSensitivityData;
     facilities?: {
       cellId: string;
       initialization?: InitializationEvidenceData | null;

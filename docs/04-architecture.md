@@ -4,6 +4,8 @@
 
 초기 작업 큐는 PostgreSQL 트랜잭션·lease 기반. 전략 저장과 Redis enqueue의 이중 쓰기를 피하고, 필요 시 outbox로 Redis Streams 연계. Redis는 초기 필수 구성 아님. 세션은 프레임워크 기반 서버 저장.
 
+재해 시작 수분 비교는 별도 큐를 추가하지 않고 기존 historical 요청에 선택한 배치 한 곳과 `SELECTED_SURFACE_7_DAY_DRY_WET_V1` 정책을 고정한다. 워커의 일반 계산 후 같은 선행 관측·제원으로 `initialization_sensitivity.analyze(days=(7,))`를 실행하며, 비교 없는 요청은 기존 비용 유지. 결과는 일반 결과와 분리한 `initializationSensitivity`, 재현 파일은 같은 소유자 경계의 `sensitivity/`에 보존한다. 요청 대상 변경 멱등 충돌·추가 대상 수 제한·기존 CPU/시간/파일 크기 제한 유지. 화면은 공통 설치 패널과 물리 근거 컴포넌트 사용, 프레임 재생·지도 렌더가 추가 계산을 유발하지 않는다.
+
 ## 도메인
 
 | 도메인 | 책임 |

@@ -6,12 +6,14 @@ export const runHistorical = (
   districtId: string,
   modelHash: string,
   drafts: HistoricalDraft[],
-  requestKey: string
+  requestKey: string,
+  sensitivityCellId?: string
 ) =>
   api<HistoricalJob>('/historical', 'POST', {
     requestKey,
     districtId,
     modelHash,
+    ...(sensitivityCellId ? { sensitivityCellId } : {}),
     placements: drafts.map((d) => ({
       cellId: d.site.cellId,
       facilityType: d.facilityType,
