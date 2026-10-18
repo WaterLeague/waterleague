@@ -1,3 +1,4 @@
+import { scoreDuration } from '../service/scoreDuration';
 import { useSiteScores } from '../controller/useSiteScores';
 import { facilities } from '../../game/service/gameService';
 import type { SiteScoresPage } from '../dto/siteScoresDto';
@@ -27,7 +28,7 @@ export function SiteScoreRows({
             <small>
               계산 반영{' '}
               {new Date(i.evaluatedThrough).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })} KST
-              · {i.evaluatedMinutes.toLocaleString('ko-KR')}분
+              · {scoreDuration(i)}
             </small>
           )}
         </article>

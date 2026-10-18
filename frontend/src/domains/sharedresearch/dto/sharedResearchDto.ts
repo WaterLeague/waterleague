@@ -32,6 +32,7 @@ export const sharedRecordsDto = z.object({
       scoreM3: num,
       playerScoreM3: num,
       evaluatedMinutes: z.number().int(),
+      evaluatedSeconds: z.number().int().nonnegative().optional(),
       evaluatedThrough: time,
       bundleAvailable: z.boolean(),
     })

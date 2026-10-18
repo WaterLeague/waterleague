@@ -25,7 +25,7 @@ public class WeeklyRepository {
       String district, String cell, LocalDate week, UUID after) {
     return db.query(
         """
-        SELECT i.id,i.owner_id,a.display_name,i.facility_type,i.area_m2,i.installed_at,i.season_ends_at,s.score_m3,s.evaluated_minutes,s.evaluated_through
+        SELECT i.id,i.owner_id,a.display_name,i.facility_type,i.area_m2,i.installed_at,i.season_ends_at,s.score_m3,COALESCE(s.evaluated_seconds,s.evaluated_minutes*60,0) evaluated_seconds,s.evaluated_through
         FROM shared_installations i JOIN accounts a ON a.id=i.owner_id
         LEFT JOIN shared_weekly_scores s ON s.installation_id=i.id AND s.week_start=?
         WHERE i.district_id=? AND i.cell_id=? AND i.removed_at IS NULL
@@ -44,7 +44,7 @@ public class WeeklyRepository {
                     ? null
                     : r.getTimestamp("season_ends_at").toInstant(),
                 r.getBigDecimal("score_m3"),
-                r.getLong("evaluated_minutes"),
+                r.getLong("evaluated_seconds"),
                 r.getTimestamp("evaluated_through") == null
                     ? null
                     : r.getTimestamp("evaluated_through").toInstant()),
@@ -58,16 +58,17 @@ public class WeeklyRepository {
     return db.query(
         """
         WITH periods AS (
-          SELECT i.*,GREATEST(date_trunc('minute',i.installed_at)+CASE
-            WHEN i.installed_at=date_trunc('minute',i.installed_at) THEN interval '0 minutes'
-            ELSE interval '1 minute' END,?::timestamptz) AS begins,
+          SELECT i.*,GREATEST(CASE WHEN i.physics_policy='INSTALLATION_SECOND_V2' THEN i.installed_at
+            ELSE date_trunc('minute',i.installed_at)+CASE
+              WHEN i.installed_at=date_trunc('minute',i.installed_at) THEN interval '0 minutes'
+              ELSE interval '1 minute' END END,?::timestamptz) AS begins,
             LEAST(date_trunc('minute',COALESCE(i.removed_at,i.season_ends_at,?::timestamptz)),?::timestamptz) AS ends
           FROM shared_installations i WHERE i.installed_at<?::timestamptz
             AND (COALESCE(i.removed_at,i.season_ends_at) IS NULL OR COALESCE(i.removed_at,i.season_ends_at)>?::timestamptz)
         )
         SELECT p.owner_id,a.display_name,p.district_id,COALESCE(SUM(s.score_m3),0) AS score,
-          COALESCE(SUM(s.evaluated_minutes),0) AS evaluated,
-          SUM(EXTRACT(EPOCH FROM (p.ends-p.begins))/60)::bigint AS expected,
+          COALESCE(SUM(COALESCE(s.evaluated_seconds,s.evaluated_minutes*60)),0) AS evaluated,
+          SUM(EXTRACT(EPOCH FROM (p.ends-p.begins)))::bigint AS expected,
           MIN(s.evaluated_through) AS through
         FROM periods p JOIN accounts a ON a.id=p.owner_id
         LEFT JOIN shared_weekly_scores s ON s.installation_id=p.id AND s.week_start=?

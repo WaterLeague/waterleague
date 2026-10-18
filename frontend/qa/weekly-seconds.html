@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>설치 초 경계 · 로컬 검증</title>
+  </head>
+  <body style="margin: 0; background: #f2f3ee; font: 16px system-ui; color: #284133">
+    <main
+      style="
+        max-width: 640px;
+        margin: 32px auto;
+        padding: 24px;
+        background: white;
+        border-radius: 16px;
+      "
+    >
+      <h1>설치 순간 이후의 계산 시간</h1>
+      <p>로컬 표시 검증 · 합성 회원 · 서버 저장 없음</p>
+      <p>17초에 설치하면 첫 분의 나머지 43초부터 누적합니다.</p>
+      <div id="root" class="weekly-site-scores"></div>
+    </main>
+    <script type="module">
+      if (!import.meta.env.DEV || !['localhost', '127.0.0.1', '[::1]'].includes(location.hostname))
+        throw new Error('로컬 개발 환경 전용');
+      const [{ default: React }, { createRoot }, { SiteScoreRows }, { siteScoresDto }] =
+        await Promise.all([
+          import('react'),
+          import('react-dom/client'),
+          import('/src/domains/weekly/view/SiteScores.tsx'),
+          import('/src/domains/weekly/dto/siteScoresDto.ts'),
+        ]);
+      const value = siteScoresDto.parse({
+        installations: [43, 103, 283].map((seconds, index) => ({
+          id: `00000000-0000-4000-8000-00000000000${index}`,
+          ownerId: `00000000-0000-4000-8000-00000000000${index}`,
+          ownerName: '표시 시험 ' + (index + 1),
+          facilityType: 'GREEN_ROOF',
+          areaM2: 20,
+          installedAt: '2026-10-19T00:00:17Z',
+          seasonEndsAt: '2026-10-25T15:00:00Z',
+          scoreM3: 0,
+          evaluatedMinutes: Math.ceil(seconds / 60),
+          evaluatedSeconds: seconds,
+          evaluatedThrough: new Date(
+            Date.parse('2026-10-19T00:00:17Z') + seconds * 1000
+          ).toISOString(),
+        })),
+        nextAfterId: null,
+      });
+      createRoot(document.getElementById('root')).render(
+        React.createElement(SiteScoreRows, { value, viewerId: value.installations[0].ownerId })
+      );
+    </script>
+  </body>
+</html>

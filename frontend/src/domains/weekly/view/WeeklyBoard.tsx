@@ -1,3 +1,4 @@
+import { evaluatedSeconds, expectedSeconds } from '../service/scoreDuration';
 import { useState } from 'react';
 import { Trophy } from 'lucide-react';
 import type { WeeklySnapshot } from '../dto/weeklyDto';
@@ -77,10 +78,10 @@ export function WeeklyBoard({
           {period.own && (
             <p className="weekly-own">
               내 기록 · {period.own.rank === null ? '계산 대기' : `${period.own.rank}위`} ·{' '}
-              {period.own.evaluatedMinutes
+              {evaluatedSeconds(period.own)
                 ? `${scoreFormat.format(period.own.scoreM3)}m³`
                 : '미계산'}
-              {period.own.evaluatedMinutes < period.own.expectedMinutes
+              {evaluatedSeconds(period.own) < expectedSeconds(period.own)
                 ? ' · 일부 구간 미평가'
                 : ''}
             </p>
@@ -109,9 +110,9 @@ export function WeeklyBoard({
                             {d.districtName}
                             {d.districtId === ownDistrictId ? ' · 내 구' : ''}
                           </button>
-                          {d.evaluatedMinutes < d.expectedMinutes && <small>일부 미평가</small>}
+                          {evaluatedSeconds(d) < expectedSeconds(d) && <small>일부 미평가</small>}
                         </th>
-                        <td>{d.evaluatedMinutes ? scoreFormat.format(d.scoreM3) : '—'}</td>
+                        <td>{evaluatedSeconds(d) ? scoreFormat.format(d.scoreM3) : '—'}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -153,10 +154,10 @@ export function WeeklyBoard({
                                 period.districts.find((d) => d.districtId === p.districtId)
                                   ?.districtName
                               }
-                              {p.evaluatedMinutes < p.expectedMinutes ? ' · 일부 미평가' : ''}
+                              {evaluatedSeconds(p) < expectedSeconds(p) ? ' · 일부 미평가' : ''}
                             </small>
                           </th>
-                          <td>{p.evaluatedMinutes ? scoreFormat.format(p.scoreM3) : '—'}</td>
+                          <td>{evaluatedSeconds(p) ? scoreFormat.format(p.scoreM3) : '—'}</td>
                         </tr>
                       ))}
                     </tbody>

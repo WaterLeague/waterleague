@@ -155,6 +155,8 @@ class SharedPhysicsTests(unittest.TestCase):
             row = self.conn.execute('SELECT * FROM shared_physics_jobs WHERE id=%s', (first['id'],)).fetchone()
             self.assertEqual(row['state'], 'SUCCEEDED', row['error_code'])
             self.conn.execute("UPDATE shared_physics_jobs SET created_at=now()-interval '61 seconds' WHERE id=%s", (first['id'],))
+            if first['installation'].get('physics_policy') == physics.SECOND_POLICY:
+                self.conn.execute("SET TIME ZONE 'UTC'")
             second = physics.claim(self.conn)
             self.assertEqual(second['start'], first['start'])
             self.assertGreaterEqual(second['end'], full_end)
@@ -184,7 +186,9 @@ class SharedPhysicsTests(unittest.TestCase):
             with self.conn.transaction():
                 from waterleague_sim.weekly import aggregate,publish
                 # 동일 결과의 재게시에도 분 수와 점수가 늘어나지 않는다.
-                replay=aggregate(artifact(second,'result.json')['contribution'],second['start'],second['end'],second['end'])
+                origin=second['installation']['installed_at'] if second['installation'].get('physics_policy') == physics.SECOND_POLICY else second['start']
+                rule=physics.SECOND_RULE if second['installation'].get('physics_policy') == physics.SECOND_POLICY else physics.RULE
+                replay=aggregate(artifact(second,'result.json')['contribution'],origin,second['end'],second['end'],rule=rule)
                 publish(self.conn,second,replay)
             self.assertEqual(self.conn.execute('SELECT SUM(evaluated_minutes) AS n FROM shared_weekly_scores WHERE installation_id=%s',(self.installation,)).fetchone()['n'],score['minutes'])
             # 과거 분량의 수정은 재현 입력을 바꾸지 않고 새 결과 게시를 차단한다.
@@ -249,3 +253,43 @@ class SharedPhysicsTests(unittest.TestCase):
             (cell['id'],district+':'+cell['id'],catalog()[1][district]['sha256'],area,area*171429,self.installation))
         self.test_real_child_replays_preserved_input_and_refuses_revised_overlap()
         self.warmup_fetch.assert_called_once()
+
+    def test_second_installation_replays_partial_first_minute_and_preserves_prefix(self):
+        self.conn.execute("""UPDATE shared_installations SET model_hash=%s,
+            installed_at=installed_at+interval '17 seconds',season_ends_at=installed_at+interval '7 days',
+            physics_policy='INSTALLATION_SECOND_V2',occupied_site=CAST(owner_id AS TEXT)||':'||district_id||':'||cell_id WHERE id=%s""",
+            (catalog()[1]['2419953']['sha256'],self.installation))
+        self.test_real_child_replays_preserved_input_and_refuses_revised_overlap()
+        row=self.conn.execute('SELECT SUM(evaluated_seconds) seconds,SUM(evaluated_minutes) minutes FROM shared_weekly_scores WHERE installation_id=%s',(self.installation,)).fetchone()
+        self.assertEqual(row['seconds'],row['minutes']*60-17)
+        self.warmup_fetch.assert_called_once()
+
+    def test_last_second_of_season_is_evaluated_and_never_republished(self):
+        self.conn.execute("""UPDATE shared_installations SET model_hash=%s,
+            season_ends_at=installed_at+interval '1 minute',installed_at=installed_at+interval '59 seconds',
+            physics_policy='INSTALLATION_SECOND_V2',occupied_site=CAST(owner_id AS TEXT)||':'||district_id||':'||cell_id WHERE id=%s""",
+            (catalog()[1]['2419953']['sha256'],self.installation))
+        job=physics.claim(self.conn)
+        self.assertIsNotNone(job)
+        with tempfile.TemporaryDirectory() as root, patch.object(physics,'observed_forcing',side_effect=self.forcing):
+            self.assertTrue(physics.process(self.conn,job,root))
+            row=self.conn.execute('SELECT * FROM shared_physics_jobs WHERE id=%s',(job['id'],)).fetchone()
+            self.assertEqual(row['state'],'SUCCEEDED',row['error_code'])
+            path=Path(root)/'shared-physics'/str(job['id'])/str(job['lease_token'])
+            result=json.loads((path/'result.json').read_bytes())
+            self.assertEqual(result['strategy']['runoffMetrics']['observedSeconds'],1)
+            self.assertEqual(datetime.fromisoformat(result['strategy']['initial']['at']),job['installation']['installed_at'])
+            self.assertEqual(result['strategy']['samples'][0]['elapsedSeconds'],1)
+            self.assertEqual(len(result['contribution']),1)
+            score=self.conn.execute('SELECT * FROM shared_weekly_scores WHERE installation_id=%s',(self.installation,)).fetchone()
+            self.assertEqual(score['evaluated_seconds'],1)
+            self.assertEqual(score['rule_version'],physics.SECOND_RULE)
+            self.assertAlmostEqual(float(score['score_m3']),result['contribution'][0]['cumulativeM3'],places=8)
+            self.conn.execute("UPDATE shared_physics_jobs SET created_at=now()-interval '61 seconds' WHERE id=%s",(job['id'],))
+            self.assertIsNone(physics.claim(self.conn))
+
+    def test_existing_subminute_installation_keeps_full_minute_start(self):
+        self.conn.execute("UPDATE shared_installations SET installed_at=installed_at+interval '17.123 seconds' WHERE id=%s",(self.installation,))
+        job=physics.claim(self.conn)
+        self.assertEqual(job['start'],physics.floor_minute(job['installation']['installed_at'])+timedelta(minutes=1))
+        self.assertEqual(job['installation']['physics_policy'],'FULL_MINUTE_V1')

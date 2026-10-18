@@ -135,7 +135,8 @@ public class InstallationService {
         .forEach((t, c) -> costs.put(io.waterleague.strategy.entity.FacilityType.valueOf(t), c));
     var cost = validation.validate(List.of(placement), cells, costs, budget.limit(), 1);
     budget.requireAvailable(account.id(), request.facilityType(), cost);
-    var now = seasons.now();
+    // 게임 설치 시각과 물리 평가 경계를 같은 1초 해상도로 고정한다.
+    var now = seasons.now().truncatedTo(java.time.temporal.ChronoUnit.SECONDS);
     var value =
         new SharedInstallation(
             UUID.randomUUID(),

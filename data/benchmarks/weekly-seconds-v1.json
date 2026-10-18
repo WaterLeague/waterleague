@@ -1,0 +1,147 @@
+{
+  "cases": [
+    {
+      "evaluationSeconds": 103,
+      "firstContributionM3": -1.0129039067052759e-05,
+      "firstIntervalSeconds": 43.0,
+      "maximumEvaluationBalanceResidualM3": 0.0004456501675473845,
+      "name": "prefix",
+      "nativeIntegratedSeconds": 103.0,
+      "scoreM3": "0.000147882"
+    },
+    {
+      "evaluationSeconds": 283,
+      "firstContributionM3": -1.0129039067052759e-05,
+      "firstIntervalSeconds": 43.0,
+      "maximumEvaluationBalanceResidualM3": 0.0008331249291053666,
+      "name": "extended",
+      "nativeIntegratedSeconds": 283.0,
+      "scoreM3": "-0.000062166"
+    },
+    {
+      "evaluationSeconds": 283,
+      "firstContributionM3": -1.0129039067052759e-05,
+      "firstIntervalSeconds": 43.0,
+      "maximumEvaluationBalanceResidualM3": 0.0008331249291053666,
+      "name": "replay",
+      "nativeIntegratedSeconds": 283.0,
+      "scoreM3": "-0.000062166"
+    }
+  ],
+  "cellId": "RW865253154",
+  "classification": "PUBLIC_SITE_WEEKLY_SECOND_BOUNDARY_REPLAY_NOT_LIVE_RANKING",
+  "firstIntervalSeconds": 43,
+  "installedAt": "2022-08-08T09:00:17+00:00",
+  "limitations": [
+    "1분 강우의 분 내부 균일 강도와 서버 1초 시각 해상도",
+    "7일 선행 기간에 시설이 존재한 초기 상태 가정; 시공 직후 현장 수분 아님",
+    "현재 공개 옥상에 2022 기상을 적용한 독립 표면 시험; 당시 재현/연결 침수 아님",
+    "시험용 설치 ID; 운영 회원/설치/점수 원장 변경 없음"
+  ],
+  "nativeOutFilesIdentical": true,
+  "observedModelHash": "3a02b5d7acd351e03c03be43bdf0f15d571f69efb984527bf60afadd0c0328f2",
+  "prefixStatesIdentical": true,
+  "replayIdentical": true,
+  "siteModelHash": "304dd437dd69285e1d4a32aa321342ca6c3ef893a568179978ddd12f31566e26",
+  "schemaVersion": 1,
+  "archive": "data/runs/weekly-seconds-20261019-v2",
+  "archiveManifestSha256": "61e97e652eca984b3b5607889374a277f4e5021ed9d52fb463c6d28edf2722c7",
+  "verifiedFiles": 134,
+  "validation": {
+    "weeklyApi": 7,
+    "installationAndPhysicsApi": 13,
+    "consentedResearch": 8,
+    "nativeWorker": 11,
+    "temporalAndAggregation": 6,
+    "frontend": 2,
+    "total": 47,
+    "logs": [
+      {
+        "sourceLog": "tmp/waterleague_league_test_52d1b486f5454571bb9522ba2addf54d.log",
+        "sha256": "8c7d86649c60265900b20d4267c5bdcf71fbe26809976366286a52a5a041bf78",
+        "result": [
+          "[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.643 s -- in io.waterleague.WeeklyWorkflowTests",
+          "[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0"
+        ]
+      },
+      {
+        "sourceLog": "tmp/waterleague_queue_test_1ede7bb55f8b4b198edee98f228774c2.log",
+        "sha256": "53bf9784c135c96c3c6654992d5941b236194cba6e7cbd5b28e98d85bc751590",
+        "result": [
+          "[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.981 s -- in io.waterleague.PhysicsWorkflowTests",
+          "[INFO] Tests run: 11, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.860 s -- in io.waterleague.SharedInstallationTests",
+          "[INFO] Tests run: 13, Failures: 0, Errors: 0, Skipped: 0",
+          "Ran 11 tests in 14.982s",
+          "OK"
+        ]
+      },
+      {
+        "sourceLog": "tmp/waterleague_league_test_ca76f1f4867a40e7a97586e0334217d8.log",
+        "sha256": "c6990a1b387ea99b623f508b1613e6a0f4583f639f6dd2894989a923a587f936",
+        "result": [
+          "[INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 10.80 s -- in io.waterleague.SharedResearchWorkflowTests",
+          "[INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0"
+        ]
+      },
+      {
+        "sourceLog": "tmp/weekly-seconds-unit.log",
+        "sha256": "9cf6382e9c2660625624cd0a64d508086fbbf0c2bf08c83bd1cd923541c4e61a",
+        "result": [
+          "Ran 6 tests in 0.096s",
+          "OK"
+        ]
+      },
+      {
+        "sourceLog": "tmp/weekly-seconds-web-tests.log",
+        "sha256": "76bdca6fe026a1392395de9fdd3aad9f530c8152201de14289a8480c8335083c",
+        "result": [
+          " Test Files  1 passed (1)",
+          "      Tests  2 passed (2)"
+        ]
+      },
+      {
+        "sourceLog": "tmp/weekly-seconds-web-build.log",
+        "sha256": "13586eb0e417c8126572f72a16442940b14696ac184ee6b23f244a1d2158c11b",
+        "result": [
+          "✓ built in 708ms"
+        ]
+      }
+    ]
+  },
+  "runtime": {
+    "schemaBefore": 26,
+    "schemaAfter": 27,
+    "originalLedgers": {
+      "shared_installations": {
+        "rows": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "shared_weekly_scores": {
+        "rows": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "runningPhysics": 0,
+      "schema": 26
+    },
+    "ledgerHashesUnchanged": true,
+    "health": "UP",
+    "publicWeekly": {
+      "status": 200,
+      "ruleVersion": "OBSERVED_ACCOUNTED_VOLUME_SECONDS_V2",
+      "districtCount": 25,
+      "currentStatus": "EMPTY",
+      "previousStatus": "EMPTY",
+      "secondsFieldsPresent": true
+    }
+  },
+  "uiEvidence": {
+    "path": "data/benchmarks/weekly-seconds-v1/duration-ui.png",
+    "sha256": "71cd902e01a95ae1cc0da3afe1ceadd888683931aebfb192c838409a2cc46952",
+    "visibleDurations": [
+      "43초",
+      "1분 43초",
+      "4분 43초"
+    ],
+    "classification": "PRODUCT_COMPONENT_WITH_SYNTHETIC_MEMBERS_NO_SERVER_WRITE"
+  }
+}

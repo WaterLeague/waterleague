@@ -16,6 +16,11 @@ public record SharedResearchEntry(
     Instant removedAt,
     BigDecimal scoreM3,
     BigDecimal playerScoreM3,
-    int evaluatedMinutes,
+    long evaluatedSeconds,
     Instant evaluatedThrough,
-    boolean bundleAvailable) {}
+    boolean bundleAvailable) {
+  @com.fasterxml.jackson.annotation.JsonProperty
+  public long evaluatedMinutes() {
+    return (evaluatedSeconds + 59) / 60;
+  }
+}

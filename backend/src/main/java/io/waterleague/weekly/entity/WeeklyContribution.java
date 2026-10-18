@@ -9,6 +9,14 @@ public record WeeklyContribution(
     String nickname,
     String districtId,
     BigDecimal scoreM3,
-    long evaluatedMinutes,
-    long expectedMinutes,
-    Instant evaluatedThrough) {}
+    long evaluatedSeconds,
+    long expectedSeconds,
+    Instant evaluatedThrough) {
+  public long evaluatedMinutes() {
+    return (evaluatedSeconds + 59) / 60;
+  }
+
+  public long expectedMinutes() {
+    return (expectedSeconds + 59) / 60;
+  }
+}

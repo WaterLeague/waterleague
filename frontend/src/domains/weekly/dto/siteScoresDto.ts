@@ -16,6 +16,7 @@ export const siteScoresDto = z.object({
         .extend({
           scoreM3: z.number().finite().nullable(),
           evaluatedMinutes: z.number().int().nonnegative(),
+          evaluatedSeconds: z.number().int().nonnegative().optional(),
           evaluatedThrough: z.iso.datetime().nullable(),
         })
     )

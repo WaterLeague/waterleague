@@ -1,3 +1,4 @@
+import { scoreDuration } from '../../weekly/service/scoreDuration';
 import { useState } from 'react';
 import { Download, ArrowRight, RefreshCw } from 'lucide-react';
 import type { Account } from '../../account/entity/account';
@@ -291,7 +292,7 @@ export function SharedResearchWorkspace({ account }: { account: Account }) {
                   {formatAmount(e.scoreM3)}m³
                 </span>
                 <small>
-                  {e.evaluatedMinutes.toLocaleString('ko-KR')}분 계산 · {at(e.evaluatedThrough)}까지
+                  {scoreDuration(e)} 계산 · {at(e.evaluatedThrough)}까지
                   {e.removedAt ? ' · 철거됨' : ''}
                 </small>
                 {!e.bundleAvailable && <small>산출물 해시 고정 이전 기록 · 상세 제공 보류</small>}

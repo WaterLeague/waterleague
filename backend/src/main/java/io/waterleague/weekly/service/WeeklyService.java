@@ -37,7 +37,7 @@ public class WeeklyService {
         username == null ? null : accounts.byUsername(username).map(a -> a.id()).orElse(null);
     return new WeeklyView(
         now,
-        "OBSERVED_ACCOUNTED_VOLUME_V1",
+        "OBSERVED_ACCOUNTED_VOLUME_SECONDS_V2",
         "EXPLORATORY",
         period(monday, now, own),
         period(monday.minusWeeks(1), now, own));
@@ -69,10 +69,10 @@ public class WeeklyService {
     if (target.isBefore(start)) target = start;
     var rows = scores.contributions(week, start, target);
     if (rows.stream()
-        .anyMatch(r -> r.evaluatedMinutes() > r.expectedMinutes() || r.evaluatedMinutes() < 0))
+        .anyMatch(r -> r.evaluatedSeconds() > r.expectedSeconds() || r.evaluatedSeconds() < 0))
       throw new DomainException(ErrorCode.SIMULATION_UNAVAILABLE);
-    long expected = rows.stream().mapToLong(WeeklyContribution::expectedMinutes).sum();
-    long evaluated = rows.stream().mapToLong(WeeklyContribution::evaluatedMinutes).sum();
+    long expected = rows.stream().mapToLong(WeeklyContribution::expectedSeconds).sum();
+    long evaluated = rows.stream().mapToLong(WeeklyContribution::evaluatedSeconds).sum();
     var districtRows = new ArrayList<WeeklyView.District>();
     for (var district : districts.all()) {
       var members = rows.stream().filter(r -> r.districtId().equals(district.id())).toList();
@@ -84,11 +84,11 @@ public class WeeklyService {
               members.stream()
                   .map(WeeklyContribution::scoreM3)
                   .reduce(BigDecimal.ZERO, BigDecimal::add),
-              members.stream().mapToLong(WeeklyContribution::evaluatedMinutes).sum(),
-              members.stream().mapToLong(WeeklyContribution::expectedMinutes).sum()));
+              members.stream().mapToLong(WeeklyContribution::evaluatedSeconds).sum(),
+              members.stream().mapToLong(WeeklyContribution::expectedSeconds).sum()));
     }
     districtRows.sort(
-        Comparator.comparing((WeeklyView.District r) -> r.evaluatedMinutes() == 0)
+        Comparator.comparing((WeeklyView.District r) -> r.evaluatedSeconds() == 0)
             .thenComparing(WeeklyView.District::scoreM3, Comparator.reverseOrder())
             .thenComparing(WeeklyView.District::districtName)
             .thenComparing(WeeklyView.District::districtId));
@@ -97,21 +97,21 @@ public class WeeklyService {
     BigDecimal last = null;
     for (var row : districtRows) {
       index++;
-      if (row.evaluatedMinutes() > 0 && (last == null || last.compareTo(row.scoreM3()) != 0))
+      if (row.evaluatedSeconds() > 0 && (last == null || last.compareTo(row.scoreM3()) != 0))
         rank = index;
       rankedDistricts.add(
           new WeeklyView.District(
               row.districtId(),
               row.districtName(),
-              row.evaluatedMinutes() == 0 ? null : rank,
+              row.evaluatedSeconds() == 0 ? null : rank,
               row.scoreM3(),
-              row.evaluatedMinutes(),
-              row.expectedMinutes()));
-      if (row.evaluatedMinutes() > 0) last = row.scoreM3();
+              row.evaluatedSeconds(),
+              row.expectedSeconds()));
+      if (row.evaluatedSeconds() > 0) last = row.scoreM3();
     }
     rows = new ArrayList<>(rows);
     rows.sort(
-        Comparator.comparing((WeeklyContribution r) -> r.evaluatedMinutes() == 0)
+        Comparator.comparing((WeeklyContribution r) -> r.evaluatedSeconds() == 0)
             .thenComparing(WeeklyContribution::scoreM3, Comparator.reverseOrder())
             .thenComparing(WeeklyContribution::playerId));
     var players = new ArrayList<WeeklyView.Player>();
@@ -121,20 +121,20 @@ public class WeeklyService {
     WeeklyView.Player self = null;
     for (var row : rows) {
       index++;
-      if (row.evaluatedMinutes() > 0 && (last == null || last.compareTo(row.scoreM3()) != 0))
+      if (row.evaluatedSeconds() > 0 && (last == null || last.compareTo(row.scoreM3()) != 0))
         rank = index;
       var player =
           new WeeklyView.Player(
               row.playerId(),
               row.nickname(),
               row.districtId(),
-              row.evaluatedMinutes() == 0 ? null : rank,
+              row.evaluatedSeconds() == 0 ? null : rank,
               row.scoreM3(),
-              row.evaluatedMinutes(),
-              row.expectedMinutes());
+              row.evaluatedSeconds(),
+              row.expectedSeconds());
       if (row.playerId().equals(own)) self = player;
       if (players.size() < 100) players.add(player);
-      if (row.evaluatedMinutes() > 0) last = row.scoreM3();
+      if (row.evaluatedSeconds() > 0) last = row.scoreM3();
     }
     boolean closed = !now.isBefore(end);
     String status =

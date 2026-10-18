@@ -402,6 +402,13 @@ class SharedInstallationTests {
     var installed = service.active().getFirst();
     assertThat(service.active()).hasSize(2);
     assertThat(installed.cost()).isEqualByComparingTo("2200000");
+    assertThat(installed.installedAt().getNano()).isZero();
+    assertThat(
+            db.queryForObject(
+                "SELECT physics_policy FROM shared_installations WHERE id=?",
+                String.class,
+                installed.id()))
+        .isEqualTo("INSTALLATION_SECOND_V2");
     var owner = installed.ownerId().equals(a.id()) ? a : b;
     var other = owner.id().equals(a.id()) ? b : a;
     assertThatThrownBy(() -> service.remove(other.username(), installed.id()))

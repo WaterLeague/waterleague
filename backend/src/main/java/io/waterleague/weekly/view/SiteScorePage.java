@@ -14,6 +14,11 @@ public record SiteScorePage(List<InstallationScore> installations, UUID nextAfte
       Instant installedAt,
       Instant seasonEndsAt,
       BigDecimal scoreM3,
-      long evaluatedMinutes,
-      Instant evaluatedThrough) {}
+      long evaluatedSeconds,
+      Instant evaluatedThrough) {
+    @com.fasterxml.jackson.annotation.JsonProperty
+    public long evaluatedMinutes() {
+      return (evaluatedSeconds + 59) / 60;
+    }
+  }
 }

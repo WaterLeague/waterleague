@@ -18,21 +18,41 @@ public record WeeklyView(
       Instant endsAt,
       Instant evaluatedTarget,
       String status,
-      long evaluatedMinutes,
-      long expectedMinutes,
+      long evaluatedSeconds,
+      long expectedSeconds,
       List<District> districts,
       List<Player> players,
       long participantCount,
       Player own,
-      List<String> winnerDistrictIds) {}
+      List<String> winnerDistrictIds) {
+    @com.fasterxml.jackson.annotation.JsonProperty
+    public long evaluatedMinutes() {
+      return (evaluatedSeconds + 59) / 60;
+    }
+
+    @com.fasterxml.jackson.annotation.JsonProperty
+    public long expectedMinutes() {
+      return (expectedSeconds + 59) / 60;
+    }
+  }
 
   public record District(
       String districtId,
       String districtName,
       Integer rank,
       BigDecimal scoreM3,
-      long evaluatedMinutes,
-      long expectedMinutes) {}
+      long evaluatedSeconds,
+      long expectedSeconds) {
+    @com.fasterxml.jackson.annotation.JsonProperty
+    public long evaluatedMinutes() {
+      return (evaluatedSeconds + 59) / 60;
+    }
+
+    @com.fasterxml.jackson.annotation.JsonProperty
+    public long expectedMinutes() {
+      return (expectedSeconds + 59) / 60;
+    }
+  }
 
   public record Player(
       UUID playerId,
@@ -40,6 +60,16 @@ public record WeeklyView(
       String districtId,
       Integer rank,
       BigDecimal scoreM3,
-      long evaluatedMinutes,
-      long expectedMinutes) {}
+      long evaluatedSeconds,
+      long expectedSeconds) {
+    @com.fasterxml.jackson.annotation.JsonProperty
+    public long evaluatedMinutes() {
+      return (evaluatedSeconds + 59) / 60;
+    }
+
+    @com.fasterxml.jackson.annotation.JsonProperty
+    public long expectedMinutes() {
+      return (expectedSeconds + 59) / 60;
+    }
+  }
 }

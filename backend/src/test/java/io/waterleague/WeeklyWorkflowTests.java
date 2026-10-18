@@ -27,6 +27,7 @@ class WeeklyWorkflowTests {
   @Autowired JdbcTemplate db;
   @Autowired AccountRepository accounts;
   @Autowired WeeklyService service;
+  @Autowired io.waterleague.common.service.JsonService json;
   LocalDate week;
   Instant end;
 
@@ -175,5 +176,107 @@ class WeeklyWorkflowTests {
     var result = service.dashboard(null).previous();
     assertThat(result.players().getFirst().scoreM3()).isEqualByComparingTo("-0.125");
     assertThat(result.winnerDistrictIds()).isEmpty();
+  }
+
+  @Test
+  void partialMinuteUsesSecondsAndDoesNotFinalizeWithOneSecondMissing() {
+    var id =
+        contribution(
+            "2419953", "partial_" + UUID.randomUUID().toString().substring(0, 8), "0.25", 1);
+    db.update(
+        "UPDATE shared_installations SET"
+            + " installed_at=?,season_ends_at=?,physics_policy='INSTALLATION_SECOND_V2' WHERE id=?",
+        Timestamp.from(end.minusSeconds(43)),
+        Timestamp.from(end),
+        id);
+    db.update(
+        "UPDATE shared_weekly_scores SET"
+            + " evaluated_minutes=1,evaluated_seconds=42,rule_version='OBSERVED_ACCOUNTED_VOLUME_SECONDS_V2'"
+            + " WHERE installation_id=?",
+        id);
+    var pending = service.dashboard(null).previous();
+    assertThat(pending.expectedSeconds()).isEqualTo(43);
+    assertThat(pending.evaluatedSeconds()).isEqualTo(42);
+    assertThat(pending.status()).isEqualTo("PROVISIONAL");
+    assertThat(pending.winnerDistrictIds()).isEmpty();
+    assertThat(pending.players().getFirst().rank()).isEqualTo(1);
+    db.update(
+        "UPDATE shared_weekly_scores SET evaluated_seconds=43,evaluated_through=? WHERE"
+            + " installation_id=?",
+        Timestamp.from(end),
+        id);
+    var complete = service.dashboard(null).previous();
+    assertThat(complete.status()).isEqualTo("FINAL");
+    assertThat(complete.evaluatedSeconds()).isEqualTo(43);
+    var encoded = json.tree(json.write(complete));
+    assertThat(encoded.path("evaluatedSeconds").asLong()).isEqualTo(43);
+    assertThat(encoded.path("evaluatedMinutes").asLong()).isEqualTo(1);
+    assertThat(complete.players().getFirst().scoreM3()).isEqualByComparingTo("0.25");
+  }
+
+  @Test
+  void legacyPartialMinuteStillUsesOriginalStartAndDuration() {
+    var id =
+        contribution(
+            "2419953", "legacy_" + UUID.randomUUID().toString().substring(0, 8), "0.5", 10);
+    db.update(
+        "UPDATE shared_installations SET installed_at=installed_at-interval '42.5 seconds' WHERE"
+            + " id=?",
+        id);
+    var result = service.dashboard(null).previous();
+    assertThat(result.expectedSeconds()).isEqualTo(600);
+    assertThat(result.evaluatedSeconds()).isEqualTo(600);
+    assertThat(result.status()).isEqualTo("FINAL");
+  }
+
+  @Test
+  void migrationPreservesExistingFractionalTimestampAndSignedScore() throws Exception {
+    try (var connection = db.getDataSource().getConnection()) {
+      connection.setAutoCommit(false);
+      try {
+        try (var statement = connection.createStatement()) {
+          statement.execute(
+              "CREATE TEMP TABLE shared_installations(id UUID,installed_at"
+                  + " TIMESTAMPTZ,season_ends_at TIMESTAMPTZ) ON COMMIT DROP");
+          statement.execute(
+              "CREATE TEMP TABLE shared_weekly_scores(score_m3 NUMERIC(24,9),evaluated_minutes"
+                  + " INTEGER,rule_version VARCHAR(48) CONSTRAINT"
+                  + " shared_weekly_scores_rule_version_check"
+                  + " CHECK(rule_version='OBSERVED_ACCOUNTED_VOLUME_V1')) ON COMMIT DROP");
+          statement.execute(
+              "INSERT INTO shared_installations"
+                  + " VALUES('00000000-0000-4000-8000-000000000001','2022-08-08T09:00:17.123456Z',NULL)");
+          statement.execute(
+              "INSERT INTO shared_weekly_scores"
+                  + " VALUES(-0.123456789,7,'OBSERVED_ACCOUNTED_VOLUME_V1')");
+        }
+        org.springframework.jdbc.datasource.init.ScriptUtils.executeSqlScript(
+            connection,
+            new org.springframework.core.io.ClassPathResource(
+                "db/migration/V27__weekly_installation_seconds.sql"));
+        try (var statement = connection.createStatement();
+            var rows =
+                statement.executeQuery(
+                    "SELECT installed_at,physics_policy FROM shared_installations")) {
+          assertThat(rows.next()).isTrue();
+          assertThat(rows.getTimestamp(1).toInstant())
+              .isEqualTo(Instant.parse("2022-08-08T09:00:17.123456Z"));
+          assertThat(rows.getString(2)).isEqualTo("FULL_MINUTE_V1");
+        }
+        try (var statement = connection.createStatement();
+            var rows =
+                statement.executeQuery(
+                    "SELECT score_m3,evaluated_minutes,evaluated_seconds,rule_version FROM"
+                        + " shared_weekly_scores")) {
+          assertThat(rows.next()).isTrue();
+          assertThat(rows.getBigDecimal(1)).isEqualByComparingTo("-0.123456789");
+          assertThat(rows.getInt(2)).isEqualTo(7);
+          assertThat(rows.getObject(3)).isNull();
+          assertThat(rows.getString(4)).isEqualTo("OBSERVED_ACCOUNTED_VOLUME_V1");
+        }
+      } finally {
+        connection.rollback();
+      }
+    }
   }
 }

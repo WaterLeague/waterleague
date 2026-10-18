@@ -70,8 +70,8 @@ public class InstallationRepository {
       io.waterleague.cost.entity.CostSnapshot cost) {
     db.update(
         "INSERT INTO"
-            + " shared_installations(id,occupied_site,district_id,cell_id,owner_id,model_hash,facility_type,area_m2,cost,installed_at,budget_policy,admission_snapshot,cost_snapshot,cost_snapshot_sha256,season_ends_at)"
-            + " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            + " shared_installations(id,occupied_site,district_id,cell_id,owner_id,model_hash,facility_type,area_m2,cost,installed_at,budget_policy,admission_snapshot,cost_snapshot,cost_snapshot_sha256,season_ends_at,physics_policy)"
+            + " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,'INSTALLATION_SECOND_V2')",
         i.id(),
         i.ownerId() + ":" + i.districtId() + ":" + i.cellId(),
         i.districtId(),

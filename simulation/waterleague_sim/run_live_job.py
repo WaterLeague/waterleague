@@ -31,7 +31,15 @@ def main():
         if digest(raw) != request.get('antecedentSha256'):
             raise ValueError('LIVE_ANTECEDENT_HASH_INVALID')
         model, evaporation = prepend(model, evaporation, json.loads(raw))
-    experiment(model, request['placement'], path, evaporation)
+    from .weekly import RULE, SECOND_RULE
+    rule = request.get('weeklyRuleVersion', RULE)
+    if rule not in (RULE, SECOND_RULE) or (rule == RULE and 'installedAt' in request):
+        raise ValueError('LIVE_WEEKLY_POLICY_INVALID')
+    if rule == SECOND_RULE and (not request.get('installedAt')
+            or request.get('installationClock') != 'SERVER_SECOND_RESOLUTION_V1'):
+        raise ValueError('LIVE_INSTALLATION_TIME_INVALID')
+    experiment(model, request['placement'], path, evaporation,
+               installed_at=request['installedAt'] if rule == SECOND_RULE else None)
 
 
 if __name__ == '__main__':

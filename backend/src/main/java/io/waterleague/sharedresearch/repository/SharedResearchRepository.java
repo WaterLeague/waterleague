@@ -74,7 +74,7 @@ public class SharedResearchRepository {
         """
         SELECT j.id job_id,i.id installation_id,i.district_id,a.display_name,i.facility_type,i.area_m2,i.cost,
           i.installed_at,i.removed_at,s.score_m3,SUM(s.score_m3) OVER(PARTITION BY i.owner_id) player_score,
-          s.evaluated_minutes,s.evaluated_through,j.artifact_manifest_hash
+          COALESCE(s.evaluated_seconds,s.evaluated_minutes*60) evaluated_seconds,s.evaluated_through,j.artifact_manifest_hash
         FROM shared_weekly_scores s JOIN shared_installations i ON i.id=s.installation_id
         JOIN accounts a ON a.id=i.owner_id AND a.enabled=true AND a.approval_status='APPROVED'
         JOIN shared_physics_jobs j ON j.id=s.source_job_id AND j.installation_id=i.id AND j.state='SUCCEEDED'
@@ -97,7 +97,7 @@ public class SharedResearchRepository {
                     : r.getTimestamp("removed_at").toInstant(),
                 r.getBigDecimal("score_m3"),
                 r.getBigDecimal("player_score"),
-                r.getInt("evaluated_minutes"),
+                r.getLong("evaluated_seconds"),
                 r.getTimestamp("evaluated_through").toInstant(),
                 r.getString("artifact_manifest_hash") != null),
         java.sql.Date.valueOf(week),

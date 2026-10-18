@@ -3,7 +3,9 @@ const contribution = {
   rank: z.number().int().positive().nullable(),
   scoreM3: z.number().finite(),
   evaluatedMinutes: z.number().int().nonnegative(),
+  evaluatedSeconds: z.number().int().nonnegative().optional(),
   expectedMinutes: z.number().int().nonnegative(),
+  expectedSeconds: z.number().int().nonnegative().optional(),
 };
 const player = z.object({
   ...contribution,
@@ -18,7 +20,9 @@ const period = z.object({
   evaluatedTarget: z.iso.datetime(),
   status: z.enum(['EMPTY', 'IN_PROGRESS', 'PROVISIONAL', 'FINAL']),
   evaluatedMinutes: z.number().int().nonnegative(),
+  evaluatedSeconds: z.number().int().nonnegative().optional(),
   expectedMinutes: z.number().int().nonnegative(),
+  expectedSeconds: z.number().int().nonnegative().optional(),
   districts: z
     .array(z.object({ ...contribution, districtId: z.string(), districtName: z.string() }))
     .length(25),
@@ -29,7 +33,7 @@ const period = z.object({
 });
 export const weeklyDto = z.object({
   generatedAt: z.iso.datetime(),
-  ruleVersion: z.literal('OBSERVED_ACCOUNTED_VOLUME_V1'),
+  ruleVersion: z.enum(['OBSERVED_ACCOUNTED_VOLUME_V1', 'OBSERVED_ACCOUNTED_VOLUME_SECONDS_V2']),
   validationLevel: z.literal('EXPLORATORY'),
   current: period,
   previous: period,

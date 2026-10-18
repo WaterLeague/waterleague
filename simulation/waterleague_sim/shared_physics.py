@@ -14,7 +14,7 @@ from .ingestion.live import observed_forcing
 from .ingestion.evaporation import observed_evaporation, append_evaporation, reusable_observation_hour
 from .shared_model import resolve, with_observed_forcing
 from .ingestion import source_archive
-from .weekly import aggregate as weekly_aggregate, publish as publish_weekly
+from .weekly import aggregate as weekly_aggregate, publish as publish_weekly, RULE, SECOND_RULE, SECOND_POLICY
 
 
 def encode(value):
@@ -33,7 +33,7 @@ def claim(conn):
             SELECT i.* FROM shared_installations i
             WHERE date_trunc('minute',LEAST(COALESCE(i.removed_at,i.season_ends_at,clock_timestamp()),clock_timestamp()-interval '2 minutes'))
                 > date_trunc('minute',i.installed_at)+CASE WHEN i.installed_at=date_trunc('minute',i.installed_at)
-                    THEN interval '0 minutes' ELSE interval '1 minute' END
+                    OR i.physics_policy='INSTALLATION_SECOND_V2' THEN interval '0 minutes' ELSE interval '1 minute' END
               AND NOT EXISTS(SELECT 1 FROM shared_physics_jobs j WHERE j.installation_id=i.id AND j.state='RUNNING')
               AND NOT EXISTS(SELECT 1 FROM shared_physics_jobs j WHERE j.installation_id=i.id AND j.created_at>clock_timestamp()-interval '60 seconds')
               AND NOT EXISTS(SELECT 1 FROM shared_physics_jobs j WHERE j.installation_id=i.id AND j.state='FAILED'
@@ -54,7 +54,7 @@ def claim(conn):
         previous = conn.execute("""SELECT * FROM shared_physics_jobs WHERE installation_id=%s AND state='SUCCEEDED'
             ORDER BY requested_through DESC,created_at DESC LIMIT 1""", (installation['id'],)).fetchone()
         start = floor_minute(installation['installed_at'])
-        if start < installation['installed_at']:
+        if installation['physics_policy'] != SECOND_POLICY and start < installation['installed_at']:
             start += timedelta(minutes=1)
         covered = previous['requested_through'] if previous else start
         now = conn.execute('SELECT clock_timestamp() AS now').fetchone()['now']
@@ -101,6 +101,9 @@ def process(conn, job, root):
     path.mkdir(parents=True, exist_ok=False)
     try:
         model, station, station_name = resolve(job['installation'])
+        timed = job['installation'].get('physics_policy') == SECOND_POLICY
+        score_start = job['installation']['installed_at'] if timed else job['start']
+        rule = SECOND_RULE if timed else RULE
         engine = engine_identity()
         observations, source_hashes, previous_ref, previous_result = [], [], None, None
         previous_evaporation = None
@@ -117,6 +120,8 @@ def process(conn, job, root):
             forcing = json.loads(raw)
             if (digest(req_raw) != previous['input_hash'] or digest(raw) != req['forcingSha256']
                     or {k:v for k,v in req['engine'].items() if k!='adapterSha256'} != {k:v for k,v in engine.items() if k!='adapterSha256'}
+                    or req.get('weeklyRuleVersion', RULE) != rule
+                    or (timed and datetime.fromisoformat(req.get('installedAt', '')) != score_start)
                     or req['installationId'] != str(job['installation']['id'])
                     or forcing['stationId'] != station or datetime.fromisoformat(forcing['start']) != job['start']
                     or datetime.fromisoformat(forcing['end']) != previous['requested_through']):
@@ -187,8 +192,11 @@ def process(conn, job, root):
         request = {'schemaVersion': 1, 'installationId': str(job['installation']['id']),
                    'modelSha256': digest(source), 'forcingSha256': digest(forcing_raw),
                    'siteModelHash': job['installation']['model_hash'], 'placement': placement, 'engine': engine,
-                   'weeklyRuleVersion': 'OBSERVED_ACCOUNTED_VOLUME_V1',
+                   'weeklyRuleVersion': rule,
                    'weeklyCodeSha256': digest((Path(__file__).parent/'weekly.py').read_bytes())}
+        if timed:
+            request['installedAt'] = score_start.isoformat()
+            request['installationClock'] = 'SERVER_SECOND_RESOLUTION_V1'
         if job['installation'].get('admission_snapshot') is not None:
             request['publicAssetPolicy'] = json.loads(job['installation']['admission_snapshot'])
         if job['installation'].get('cost_snapshot') is not None:
@@ -225,7 +233,7 @@ def process(conn, job, root):
                 if result[run]['samples'][prefix_index] != previous_result[run]['final']:
                     raise ValueError('LIVE_PREVIOUS_STATE_CHANGED')
         state = result['strategy']['final']
-        public = {'stationId': station, 'stationName': station_name, 'simulationStart': job['start'].isoformat(),
+        public = {'stationId': station, 'stationName': station_name, 'simulationStart': score_start.isoformat(),
                   'simulatedThrough': job['end'].isoformat(), 'engineVersion': '5.2.4', 'validationLevel': 'EXPLORATORY',
                   **{k: state[k] for k in ('precipitationM3', 'infiltrationM3', 'evaporationM3', 'storageM3',
                                           'surfaceDepthMm', 'soilMoisture', 'storageDepthMm')},
@@ -237,7 +245,7 @@ def process(conn, job, root):
                   'runoffComparison': result.get('runoffComparison'),
                   'inflowPolicy': result['inflowPolicy'],
                   'areaLimitBasis': model['cells'][0].get('areaLimitBasis','LEGACY_DESIGN_RATIO')}
-        weeks = weekly_aggregate(result['contribution'], job['start'], job['end'], covered)
+        weeks = weekly_aggregate(result['contribution'], score_start, job['end'], max(covered, score_start), rule=rule)
         saved = finish(conn, job, public, digest(request_raw), None, weeks, digest((path/'manifest.json').read_bytes()))
     except Exception as e:
         code = str(e)
