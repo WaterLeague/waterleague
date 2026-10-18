@@ -37,7 +37,7 @@ import '../../rainfall/view/rainfall.css';
 import { useHistorical } from '../../historical/controller/useHistorical';
 import { HistoricalPanel, HistoricalTimeline } from '../../historical/view/HistoricalPanel';
 import { useLiveRainfall } from '../../rainfall/controller/useLiveRainfall';
-import { isRaining, observationFresh } from '../../rainfall/service/rainEffectService';
+import { isRaining } from '../../rainfall/service/rainEffectService';
 import { useReducedMotion } from '../../catalog/controller/useReducedMotion';
 import { useBudget } from '../../budget/controller/useBudget';
 import { useWeekly } from '../../weekly/controller/useWeekly';
@@ -138,10 +138,6 @@ function Explorer({
       ),
     [researchMode, research.event, research.index, rainfall.value]
   );
-  const unknownRainCount =
-    rainfall.value?.districts.filter(
-      (d) => !observationFresh(d, rainfall.now) || d.rainState === 'UNKNOWN'
-    ).length ?? 25;
   const animateRain = rainfall.visible && !reducedMotion && (!researchMode || research.playing);
   const [site, setSite] = useState<SharedSite | null>(null);
   const selectedSite = site?.cellId ?? '';
@@ -766,7 +762,7 @@ function Explorer({
                   {wetIds.has(d.id) && (
                     <CloudRain
                       size={13}
-                      aria-label={researchMode ? '재해 관측 강우 재생' : '최근 관측 비 감지'}
+                      aria-label={researchMode ? '재해 당시 비 재생' : '최근 관측 비 감지'}
                     />
                   )}
                   <small>
@@ -828,42 +824,6 @@ function Explorer({
                 <RotateCcw size={15} />
               </button>
             </div>
-          </div>
-          <div className="city-weather-badge" role="status">
-            <CloudRain size={15} />
-            <span>
-              {researchMode
-                ? research.at
-                  ? new Date(research.at).toLocaleTimeString('ko-KR', {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                      second: '2-digit',
-                      hourCycle: 'h23',
-                      timeZone: 'Asia/Seoul',
-                    }) +
-                    ' · 1분 ' +
-                    research.rainMm +
-                    'mm'
-                  : '재해 강우 불러오는 중'
-                : rainfall.error
-                  ? '현재 강수 확인 불가'
-                  : !rainfall.value
-                    ? '기상청 관측 연결 중'
-                    : wetDistricts.length
-                      ? `${wetDistricts.length}개 구에서 비 감지`
-                      : unknownRainCount === 25
-                        ? '현재 강수 확인 불가'
-                        : '관측으로 비가 확인된 구 없음'}
-              {!researchMode && rainfall.value && unknownRainCount > 0 && unknownRainCount < 25
-                ? ` · ${unknownRainCount}개 구 미확인`
-                : ''}
-              <small>
-                {researchMode
-                  ? '재해 당시 관측 재생 · 현재 날씨 아님'
-                  : '구별 관측소 기준 · 1분마다 갱신'}
-                {wetDistricts.length > 0 ? ' · 빗줄기는 표현용' : ''}
-              </small>
-            </span>
           </div>
           <div className="shared-map-legend">
             {assetsEnabled && (

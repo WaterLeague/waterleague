@@ -315,11 +315,6 @@ body:has(.game-shell.is-game) {
     padding: 7px;
     font-size: 9px;
   }
-  .game-shell.is-game .city-weather-badge {
-    top: 58px;
-    left: 8px;
-    padding: 7px;
-  }
   .game-shell.is-game .shared-map-legend {
     display: none;
   }

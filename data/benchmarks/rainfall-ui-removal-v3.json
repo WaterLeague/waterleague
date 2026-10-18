@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-19",
+  "kind": "UI_REMOVAL_VERIFICATION",
+  "removed": [
+    "pre-result rainfall chart fallback",
+    "standalone rainfall chart and numeric cards in result replay",
+    "common city-map weather status card",
+    "active product observed-rainfall labels"
+  ],
+  "preserved": [
+    "real weather physics inputs and API",
+    "historical timeline and rainfall map effect",
+    "original records and reproduction files"
+  ],
+  "checks": {
+    "relatedExistingTests": 13,
+    "typescriptAndProductionBuild": "PASS",
+    "changedFileFormatting": "PASS",
+    "productionJsObservedRainfallLabelMatches": 0,
+    "fullFormatting": "FAIL_PREEXISTING_11_FILES_OUTSIDE_CHANGE"
+  },
+  "browser": {
+    "url": "http://127.0.0.1:5173/",
+    "authentication": "guest",
+    "views": [
+      "data",
+      "institution league placeholder",
+      "weekly map",
+      "2022 disaster map and timeline"
+    ],
+    "accountSpecificResultViewVerified": false
+  },
+  "screenshots": [
+    {
+      "path": "data/benchmarks/rainfall-ui-removal-v3/data.png",
+      "sha256": "b76ffefce4d14ae63c9c245bb99de629344eea4f229b047d793cb89b36a29272"
+    },
+    {
+      "path": "data/benchmarks/rainfall-ui-removal-v3/disaster.png",
+      "sha256": "77553d92c21a5a4e23f3b24618cebd220dbbbc376fac5138b569d915bc540b84"
+    },
+    {
+      "path": "data/benchmarks/rainfall-ui-removal-v3/institution.png",
+      "sha256": "e69269d96298bd0a02ac0346d958fbe37aa6a5db27d471cb128dc67b3e8bcff2"
+    },
+    {
+      "path": "data/benchmarks/rainfall-ui-removal-v3/weekly.png",
+      "sha256": "d8970f94bcaa68c88ee01c157d0057738f582aa2041350d5b275b58517ddc466"
+    }
+  ],
+  "fullGameGoalComplete": false
+}

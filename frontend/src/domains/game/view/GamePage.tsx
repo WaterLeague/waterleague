@@ -26,7 +26,6 @@ import {
   Database,
   CircleHelp,
 } from 'lucide-react';
-import { rainfallLabel } from '../service/modelFamilyService';
 import { useGame } from '../controller/useGame';
 import { useCatalog } from '../../catalog/controller/useCatalog';
 import type { FacilityType } from '../entity/game';
@@ -36,7 +35,6 @@ import { logout } from '../../account/repository/accountRepository';
 import { ApprovalPage } from '../../administration/view/ApprovalPage';
 import { memberTypeNames } from '../../account/entity/account';
 import { AuthDialog } from '../../account/view/AuthDialog';
-import { rainDate } from '../service/gameTimeService';
 import { Hydrograph } from './Hydrograph';
 import { CompetitionPage } from '../../league/view/CompetitionPage';
 import type { League } from '../../league/entity/league';
@@ -359,12 +357,6 @@ export function GamePage() {
               <h1 ref={playHeading} tabIndex={-1}>
                 {activeLeague?.title ?? '빗물이 머물 자리를 만드세요'}
               </h1>
-              <small>
-                {rainDate(lab.model.rainfall.start)} · {lab.model.rainfall.stationName} ·{' '}
-                {lab.model.rainfall.totalDepthMm} mm
-                {lab.model.regionalRainfallUse &&
-                  ` · ${rainfallLabel(lab.model.regionalRainfallUse)}`}
-              </small>
             </div>
             <div className="play-resources">
               <span>
@@ -688,10 +680,12 @@ export function GamePage() {
                     </button>
                   </div>
                 </section>
-                <details className="play-chart">
-                  <summary>관측 강우·계산 흐름 확인</summary>
-                  <Hydrograph job={g.job} rainfall={lab.model.rainfall} />
-                </details>
+                {g.job?.result && (
+                  <details className="play-chart">
+                    <summary>시설 전후 물 흐름</summary>
+                    <Hydrograph job={g.job} rainfall={lab.model.rainfall} />
+                  </details>
+                )}
                 <div className="studio-footnote">
                   <span>
                     <i />
@@ -934,7 +928,7 @@ export function GamePage() {
                   <p className="play-computing" role="status">
                     {g.job?.state === 'QUEUED'
                       ? '앞선 계산이 끝나면 시작합니다.'
-                      : '실제 관측 강우로 SWMM을 실행하고 품질을 확인합니다.'}{' '}
+                      : '시설 전후 물 흐름을 계산하고 품질을 확인합니다.'}{' '}
                     완료되면 결과 화면으로 이동합니다.
                   </p>
                 )}

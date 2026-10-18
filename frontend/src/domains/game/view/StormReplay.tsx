@@ -1,4 +1,3 @@
-import { rainfallNote } from '../service/modelFamilyService';
 import { memo, useCallback, useMemo, useState } from 'react';
 import { CloudRain, Pause, Play, RotateCcw } from 'lucide-react';
 import type { Cell, Job, Lab, Placement, Version } from '../entity/game';
@@ -62,11 +61,8 @@ const ReplayMap = memo(function ReplayMap({
 function Timeline({ data, index }: { data: StormReplayData; index: number }) {
   const paths = useMemo(() => {
     const x = (i: number) => 10 + (i / (data.frames.length - 1)) * 980;
-    const y = (n: number) => 151 - (n / Math.max(data.maxFlowM3s, 1e-9)) * 55;
+    const y = (n: number) => 91 - (n / Math.max(data.maxFlowM3s, 1e-9)) * 75;
     return {
-      rain: data.frames
-        .map((f, i) => `M${x(i)} 20v${(f.rainMm / Math.max(data.maxRainMm, 1e-9)) * 40}`)
-        .join(' '),
       baseline: data.frames.map((f, i) => `${i ? 'L' : 'M'}${x(i)} ${y(f.baselineM3s)}`).join(' '),
       design: data.frames.map((f, i) => `${i ? 'L' : 'M'}${x(i)} ${y(f.designM3s)}`).join(' '),
     };
@@ -76,24 +72,20 @@ function Timeline({ data, index }: { data: StormReplayData; index: number }) {
     <div className="replay-timeline">
       <div className="replay-chart-label">
         <span>
-          관측 강우 <small>1분 깊이 · 최대 {format.format(data.maxRainMm)} mm</small>
-        </span>
-        <span>
           보고시각 유량{' '}
           <small>최대 {flow.format(data.maxFlowM3s)} m³/s · 시설 없음 / 계산한 설계</small>
         </span>
       </div>
       <svg
-        viewBox="0 0 1000 165"
+        viewBox="0 0 1000 105"
         preserveAspectRatio="none"
         role="img"
-        aria-label="선택한 시각에 연결된 관측 강우와 시설 전후 계산 유량"
+        aria-label="선택한 시각의 시설 전후 계산 유량"
       >
-        <path d="M10 20H990M10 60H990M10 96H990M10 151H990" className="replay-grid" />
-        <path d={paths.rain} className="replay-rain-path" />
+        <path d="M10 16H990M10 54H990M10 91H990" className="replay-grid" />
         <path d={paths.baseline} className="replay-base-path" />
         <path d={paths.design} className="replay-design-path" />
-        <path d={`M${cursor} 10V158`} className="replay-cursor" />
+        <path d={`M${cursor} 10V98`} className="replay-cursor" />
       </svg>
       <div className="replay-chart-time">
         {[0, 0.25, 0.5, 0.75, 1].map((part) => (
@@ -184,20 +176,6 @@ function ReplayView({
         <aside className="replay-live">
           <span className="replay-eyebrow">{day.format(frame.time)} · KST</span>
           <time dateTime={new Date(frame.time).toISOString()}>{clock.format(frame.time)}</time>
-          <div className="replay-rain-values">
-            <span>
-              직전 1분의 비{' '}
-              <b>
-                {format.format(frame.rainMm)} <small>mm</small>
-              </b>
-            </span>
-            <span>
-              시작 이후 누적{' '}
-              <b>
-                {format.format(frame.cumulativeRainMm)} <small>mm</small>
-              </b>
-            </span>
-          </div>
           <div className="replay-flow-values">
             <h3>이 시각의 유출</h3>
             <small>선정 표면 단위의 합 · m³/s</small>
@@ -216,7 +194,6 @@ function ReplayView({
           </div>
           <p className="replay-live-note">
             1분 보고시각의 계산값입니다. 실제 관망 유량이나 분 평균값이 아닙니다.
-            {lab.model.regionalRainfallUse && ` ${rainfallNote(lab.model.regionalRainfallUse)}.`}
           </p>
         </aside>
       </div>
@@ -240,7 +217,7 @@ function ReplayView({
           value={replay.index}
           onChange={(e) => replay.seek(Number(e.target.value))}
           aria-label="결과 재생 시각"
-          aria-valuetext={`${clock.format(frame.time)} KST, 직전 1분 강우 ${frame.rainMm} mm, 계산한 설계 유량 ${flow.format(frame.designM3s)} m³/s`}
+          aria-valuetext={`${clock.format(frame.time)} KST, 계산한 설계 유량 ${flow.format(frame.designM3s)} m³/s`}
         />
         <label>
           재생 속도
@@ -259,8 +236,6 @@ function ReplayView({
       </div>
       <div className="replay-jumps">
         <span>시각 바로가기</span>
-        <button onClick={() => replay.seek(data.firstWetIndex)}>첫 비</button>
-        <button onClick={() => replay.seek(data.rainPeakIndex)}>강우 최대</button>
         <button onClick={() => replay.seek(data.flowPeakIndex)}>기준 유출 최대</button>
         <small>실제 기록된 구간만 재생</small>
       </div>

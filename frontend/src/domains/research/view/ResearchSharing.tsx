@@ -13,7 +13,7 @@ export function ResearchSharing({
       <h2>기관별 연구 공유</h2>
       <p>
         선택한 기관에 제출 전략과 그 버전까지의 변경 이력·계산 결과를 제공합니다. 기관은 같은 배치를
-        다른 관측 강우로 재계산하고, 배치 패턴 분석·패턴 기반 후보 생성·물리 재평가에 사용할 수
+        다른 기상 조건으로 재계산하고, 배치 패턴 분석·패턴 기반 후보 생성·물리 재평가에 사용할 수
         있습니다. 철회하면 이후 연구 열람·재계산·집계·다운로드가 차단됩니다. 이미 받은 파일은 자동
         회수되지 않습니다.
       </p>
@@ -23,7 +23,7 @@ export function ResearchSharing({
           <label className="consent-row" key={c.organizationId}>
             <span>
               <b>{c.name}</b>
-              <small>연구 목적 · 기록 열람·강우 비교·배치 패턴 분석·후보 생성 및 물리 재평가</small>
+              <small>연구 목적 · 기록 열람·조건 비교·배치 패턴 분석·후보 생성 및 물리 재평가</small>
             </span>
             <input
               type="checkbox"

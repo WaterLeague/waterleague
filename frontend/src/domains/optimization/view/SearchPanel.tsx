@@ -99,7 +99,7 @@ export function SearchPanel({
           ))}
         </div>
         {!entries.length && (
-          <p className="empty-state">현재 관측 강우에 동의된 제출 기록이 없습니다.</p>
+          <p className="empty-state">현재 비교 조건에 동의된 제출 기록이 없습니다.</p>
         )}
         <div className="search-settings">
           <label>

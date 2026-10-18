@@ -49,10 +49,6 @@
   left: 20px;
   right: 20px;
 }
-.shared-play-layout .city-weather-badge {
-  top: 66px;
-  left: 20px;
-}
 .shared-play-layout .facility-dock {
   bottom: 28px;
   max-width: calc(100% - 30px);

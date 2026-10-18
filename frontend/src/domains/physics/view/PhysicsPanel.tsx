@@ -25,13 +25,13 @@ export function PhysicsPanel({ installationId }: { installationId: string }) {
         <Droplets size={17} /> 시설의 물 흐름
       </h3>
       <p className="physics-status" role="status">
-        {error || value?.message || '계산 상태 확인 중'}
+        {error ||
+          (value?.status === 'READY' ? '시설 내부 계산 결과' : value?.message) ||
+          '계산 상태 확인 중'}
       </p>
       {result && (
         <>
-          <small>
-            {at(result.simulatedThrough)}까지 계산 · {result.stationName} 관측 강우
-          </small>
+          <small>{at(result.simulatedThrough)}까지 계산</small>
           <dl>
             <div>
               <dt>누적 침투</dt>
@@ -84,7 +84,7 @@ export function PhysicsPanel({ installationId }: { installationId: string }) {
                 : '기존 설치 당시의 유입 조건을 보존한 계산입니다.'}
             </p>
             <p>
-              공개 관측 강우와 설치 당시 입력으로 계산한 결과입니다. 후보별 공간자료와 문헌 추정,
+              설치 당시 입력과 실제 기상자료로 계산한 결과입니다. 후보별 공간자료와 문헌 추정,
               미확보 설계 조건은 저장된 계산 기록에서 구분합니다.
             </p>
             <p>
