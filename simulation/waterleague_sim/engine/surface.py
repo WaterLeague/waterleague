@@ -164,7 +164,7 @@ class SurfaceSession:
         if model.get('infiltration') is not None:
             from waterleague_sim.engine.surface_infiltration import SurfaceInfiltration
             self.infiltration = SurfaceInfiltration(domain, self.rain, model['infiltration'], owners)
-            self.engine['infiltrationEngine'] = self.infiltration.bank.engine
+            self.engine['infiltrationEngine'] = self.infiltration.engine
         self.evaporation = None
         if self.evaporation_series is not None:
             from waterleague_sim.engine.surface_evaporation import SurfaceEvaporation

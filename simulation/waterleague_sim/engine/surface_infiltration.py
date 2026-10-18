@@ -45,13 +45,16 @@ def _number(value, low, high, *, inclusive=True):
 
 
 def validate(specification, owners):
-    require(isinstance(specification, dict) and specification.get('schemaVersion') == 1
+    require(isinstance(specification, dict) and type(specification.get('schemaVersion')) is int
+            and specification['schemaVersion'] in (1, 2)
             and specification.get('method') in ('GREEN_AMPT', 'MODIFIED_GREEN_AMPT')
             and specification.get('ownershipPolicy') == 'SURFACE_ONLY'
             and specification.get('initialization') == 'EPA_INITIAL_DEFICIT_SEED'
             and specification.get('evidence')
             and _number(specification.get('recoveryFactor'), 0, 100, inclusive=False),
             'SURFACE_INFILTRATION_SPECIFICATION_INVALID')
+    if specification['schemaVersion'] == 2:
+        return validate_partition(specification, owners)
     sealed, regions = specification.get('imperviousTriangles'), specification.get('regions')
     require(isinstance(sealed, list) and isinstance(regions, list)
             and 0 < len(regions) <= len(owners), 'SURFACE_INFILTRATION_REGIONS_REQUIRED')
@@ -73,6 +76,43 @@ def validate(specification, owners):
                 and _number(row.get('conductivityMmH'), 0, 100_000, inclusive=False)
                 and _number(row.get('initialMoistureDeficit'), 0, 1),
                 'SURFACE_INFILTRATION_PARAMETERS_INVALID')
+    return deepcopy(specification)
+
+
+def validate_partition(specification, owners):
+    regions, sealed = specification.get('regions'), specification.get('imperviousRegions')
+    require(specification.get('partitionPolicy') == 'EXPLICIT_AREA_FRACTIONS'
+            and 'imperviousTriangles' not in specification
+            and isinstance(regions, list) and len(regions) <= 200_000
+            and isinstance(sealed, list) and len(sealed) <= 200_000,
+            'SURFACE_INFILTRATION_PARTITION_INVALID')
+    fractions = [[] for _ in owners]
+    entries = 0
+    for pervious, rows in ((True, regions), (False, sealed)):
+        for row in rows:
+            require(isinstance(row, dict), 'SURFACE_INFILTRATION_REGION_INVALID')
+            cells = row.get('triangles')
+            require(isinstance(cells, list) and cells and all(type(i) is int and 0 <= i < len(owners)
+                    for i in cells) and len(set(cells)) == len(cells),
+                    'SURFACE_INFILTRATION_REGION_INVALID')
+            require(all(owners[i] == 'SURFACE' for i in cells), 'SURFACE_INFILTRATION_DOUBLE_COUNT')
+            entries += len(cells)
+            require(entries <= 200_000, 'SURFACE_INFILTRATION_STATE_LIMIT')
+            fraction = row.get('perviousFraction' if pervious else 'areaFraction')
+            require(row.get('evidence') and _number(fraction, 0, 1, inclusive=False),
+                    'SURFACE_INFILTRATION_PARAMETERS_INVALID')
+            if pervious:
+                require(_number(row.get('suctionMm'), 0, 100_000)
+                        and _number(row.get('conductivityMmH'), 0, 100_000, inclusive=False)
+                        and _number(row.get('initialMoistureDeficit'), 0, 1),
+                        'SURFACE_INFILTRATION_PARAMETERS_INVALID')
+            for cell in cells:
+                fractions[cell].append(fraction)
+    for owner, parts in zip(owners, fractions):
+        total = math.fsum(parts)
+        require(total <= 1 + 1e-12, 'SURFACE_INFILTRATION_AREA_OVERLAP')
+        require(owner != 'SURFACE' or abs(total - 1) <= 1e-12,
+                'SURFACE_INFILTRATION_COVERAGE_INCOMPLETE')
     return deepcopy(specification)
 
 
@@ -132,14 +172,20 @@ class SurfaceInfiltration:
             fractions.extend([row['perviousFraction']] * len(row['triangles']))
             parameters.extend([[row['suctionMm'], row['conductivityMmH'], row['initialMoistureDeficit']]]
                                * len(row['triangles']))
-        self.indices, self.fractions = np.asarray(indices), np.asarray(fractions)
-        self.bank = SoilBank(parameters)
+        self.indices, self.fractions = np.asarray(indices, dtype=int), np.asarray(fractions, dtype=float)
+        self.cells, self.cell_inverse = np.unique(self.indices, return_inverse=True)
+        self.bank = SoilBank(parameters) if parameters else None
+        self.engine = self.bank.engine if self.bank else identity()
         self.cumulative = np.zeros(len(indices))
+        self.roundoff_m3 = 0.
         self.steps = 0
         domain.set_fractional_step_operator(self)
 
     def __call__(self):
         np, domain, cells = self.np, self.domain, self.indices
+        if not len(cells):
+            self.steps += 1
+            return
         dt = float(domain.get_timestep())
         stage = domain.quantities['stage'].centroid_values
         z = domain.quantities['elevation'].centroid_values
@@ -151,6 +197,10 @@ class SurfaceInfiltration:
         infiltration = self.bank.advance(dt, rates, np.maximum(0., depth - rain_depth),
             modified=self.specification['method'] == 'MODIFIED_GREEN_AMPT',
             recovery=self.specification['recoveryFactor'])
+        if self.specification['schemaVersion'] == 2:
+            self._remove_partitioned(infiltration)
+            self.steps += 1
+            return
         removal = infiltration * self.fractions
         require(np.all(removal <= depth + 1e-12), 'SURFACE_INFILTRATION_OVERDRAW')
         removal = np.minimum(removal, np.maximum(0., depth))
@@ -166,8 +216,30 @@ class SurfaceInfiltration:
         domain.fractional_step_volume_integral -= float(np.sum(volumes))
         self.steps += 1
 
+    def _remove_partitioned(self, infiltration):
+        np, domain, cells = self.np, self.domain, self.cells
+        stage = domain.quantities['stage'].centroid_values
+        z = domain.quantities['elevation'].centroid_values
+        depth = stage[cells] - z[cells]
+        requested = infiltration * self.fractions
+        # 독립 토양 상태의 손실을 합산한 뒤 같은 삼각형에서 한 번만 인출한다.
+        removal = np.bincount(self.cell_inverse, weights=requested, minlength=len(cells))
+        require(np.all(removal <= depth + 1e-12), 'SURFACE_INFILTRATION_OVERDRAW')
+        before = stage[cells].copy()
+        stage[cells] = z[cells] + np.maximum(0., depth - np.minimum(removal, np.maximum(0., depth)))
+        actual = before - stage[cells]
+        require(np.all(np.abs(actual - removal) <= 1e-10), 'SURFACE_INFILTRATION_ROUNDOFF_EXCEEDED')
+        ratio = np.divide(stage[cells] - z[cells], depth, out=np.ones_like(depth), where=depth > 0)
+        for name in ('xmomentum', 'ymomentum'):
+            domain.quantities[name].centroid_values[cells] *= ratio
+        allocation = np.divide(actual, removal, out=np.zeros_like(actual), where=removal > 0)
+        self.cumulative += requested * allocation[self.cell_inverse] * domain.areas[self.indices]
+        volumes = actual * domain.areas[cells]
+        self.roundoff_m3 += float(np.dot(actual - removal, domain.areas[cells]))
+        domain.fractional_step_volume_integral -= float(np.sum(volumes))
+
     def summary(self, *, include_state=False):
-        result = {'method': self.specification['method'], 'engine': self.bank.engine,
+        result = {'method': self.specification['method'], 'engine': self.engine,
             'infiltrationM3': float(self.np.sum(self.cumulative)), 'nativeSteps': self.steps,
             'effectivePerviousAreaM2': float(self.np.dot(self.domain.areas[self.indices], self.fractions)),
             'ownershipPolicy': 'SURFACE_ONLY', 'rankingEligible': False,
@@ -180,7 +252,17 @@ class SurfaceInfiltration:
         if include_state:
             result.update(triangles=self.indices.tolist(), infiltrationByTriangleM3=self.cumulative.tolist(),
                 nativeStateFields=['IMD', 'F_ft', 'Fu_ft', 'Sat', 'T_seconds'],
-                nativeState=self.bank.state().tolist())
+                nativeState=self.bank.state().tolist() if self.bank else [])
+        if self.specification['schemaVersion'] == 2:
+            result.update(schemaVersion=2, partitionPolicy='EXPLICIT_AREA_FRACTIONS',
+                          sharedPonding=True, infiltrationRoundoffM3=self.roundoff_m3)
+            if include_state:
+                result.pop('infiltrationByTriangleM3')
+                result.update(perviousFractions=self.fractions.tolist(),
+                    infiltrationByPatchM3=self.cumulative.tolist(),
+                    triangleTotals=[{'triangle': int(cell), 'infiltrationM3': float(volume)}
+                        for cell, volume in zip(self.cells, self.np.bincount(self.cell_inverse,
+                            weights=self.cumulative, minlength=len(self.cells)))])
         return result
 
     def statistics(self):

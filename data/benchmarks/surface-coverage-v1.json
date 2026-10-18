@@ -1,0 +1,219 @@
+{
+  "schemaVersion": 1,
+  "classification": "PUBLIC_SPATIAL_ASSIGNMENT_NOT_HYDRAULIC_PARAMETERS",
+  "rankingEligible": false,
+  "totals": {
+    "areaM2": 1166400.0,
+    "triangles": 288,
+    "soil": {
+      "coveredValidAreaM2": 1166399.895518055,
+      "gapAreaM2": 0.10448194518302355,
+      "overlapAreaM2": 0.0,
+      "invalidEnvelopeAffectedAreaM2": 0.0,
+      "exclusiveAreaM2": 1166399.895518055,
+      "unresolvedAreaM2": 0.10448194518302355
+    },
+    "landcover": {
+      "coveredValidAreaM2": 521876.22764869814,
+      "gapAreaM2": 644523.772351302,
+      "overlapAreaM2": 0.0,
+      "invalidEnvelopeAffectedAreaM2": 971055.0474571271,
+      "exclusiveAreaM2": 17071.676394924725,
+      "unresolvedAreaM2": 1149328.3236050752
+    },
+    "jointAreaM2": 17071.676394924678,
+    "jointUnresolvedAreaM2": 1149328.3236050752
+  },
+  "sourceValidity": {
+    "soil": {
+      "validFeatures": 8244,
+      "invalidFeatures": 22
+    },
+    "landcover": {
+      "validFeatures": 12326,
+      "invalidFeatures": 4
+    }
+  },
+  "landcoverExclusiveClasses": [
+    {
+      "code": "111",
+      "name": "단독주거시설",
+      "areaM2": 5.192602207233325e-12
+    },
+    {
+      "code": "112",
+      "name": "공동주거시설",
+      "areaM2": 872.659570629292
+    },
+    {
+      "code": "121",
+      "name": "공업시설",
+      "areaM2": 2.775470347165303e-12
+    },
+    {
+      "code": "131",
+      "name": "상업·업무시설",
+      "areaM2": 4944.783077075132
+    },
+    {
+      "code": "141",
+      "name": "문화·체육·휴양시설",
+      "areaM2": 6.601174472220165e-13
+    },
+    {
+      "code": "153",
+      "name": "철도",
+      "areaM2": 1743.5983332969836
+    },
+    {
+      "code": "154",
+      "name": "도로",
+      "areaM2": 8571.985844003279
+    },
+    {
+      "code": "162",
+      "name": "교육·행정시설",
+      "areaM2": 3.1774483964026394e-12
+    },
+    {
+      "code": "163",
+      "name": "기타 공공시설",
+      "areaM2": 5.214334448546318e-13
+    },
+    {
+      "code": "423",
+      "name": "기타초지",
+      "areaM2": 938.6495699200111
+    },
+    {
+      "code": "622",
+      "name": "운동장",
+      "areaM2": 2.32475484367037e-12
+    },
+    {
+      "code": "623",
+      "name": "기타나지",
+      "areaM2": 1.7454949219514237e-12
+    }
+  ],
+  "jointClasses": [
+    {
+      "soil": "미사사양질",
+      "landcoverCode": "112",
+      "areaM2": 2.1519125531314418e-13,
+      "literatureSoilCrosswalkAvailable": true
+    },
+    {
+      "soil": "미사사양질",
+      "landcoverCode": "121",
+      "areaM2": 6.594863467559887e-14,
+      "literatureSoilCrosswalkAvailable": true
+    },
+    {
+      "soil": "미사사양질",
+      "landcoverCode": "131",
+      "areaM2": 2.105481207836933e-12,
+      "literatureSoilCrosswalkAvailable": true
+    },
+    {
+      "soil": "미사사양질",
+      "landcoverCode": "423",
+      "areaM2": 6.89557620104113e-13,
+      "literatureSoilCrosswalkAvailable": true
+    },
+    {
+      "soil": "미사사양질",
+      "landcoverCode": "623",
+      "areaM2": 3.772933034221603e-14,
+      "literatureSoilCrosswalkAvailable": true
+    },
+    {
+      "soil": "사양질",
+      "landcoverCode": "111",
+      "areaM2": 2.992831042227745e-13,
+      "literatureSoilCrosswalkAvailable": true
+    },
+    {
+      "soil": "사양질",
+      "landcoverCode": "112",
+      "areaM2": 872.6595706292842,
+      "literatureSoilCrosswalkAvailable": true
+    },
+    {
+      "soil": "사양질",
+      "landcoverCode": "121",
+      "areaM2": 9.836427759514916e-13,
+      "literatureSoilCrosswalkAvailable": true
+    },
+    {
+      "soil": "사양질",
+      "landcoverCode": "131",
+      "areaM2": 4944.78307707512,
+      "literatureSoilCrosswalkAvailable": true
+    },
+    {
+      "soil": "사양질",
+      "landcoverCode": "141",
+      "areaM2": 5.329070518200751e-13,
+      "literatureSoilCrosswalkAvailable": true
+    },
+    {
+      "soil": "사양질",
+      "landcoverCode": "153",
+      "areaM2": 1743.598333296983,
+      "literatureSoilCrosswalkAvailable": true
+    },
+    {
+      "soil": "사양질",
+      "landcoverCode": "154",
+      "areaM2": 8571.985844003279,
+      "literatureSoilCrosswalkAvailable": true
+    },
+    {
+      "soil": "사양질",
+      "landcoverCode": "162",
+      "areaM2": 2.2382096176443156e-13,
+      "literatureSoilCrosswalkAvailable": true
+    },
+    {
+      "soil": "사양질",
+      "landcoverCode": "423",
+      "areaM2": 938.6495699200069,
+      "literatureSoilCrosswalkAvailable": true
+    }
+  ],
+  "sourceArchiveSha256": "88456ce3a6ea11bd003ec9d9b0b7ebd67dd09d636a4dff572a083ebed18edf1f",
+  "terrainArchiveSha256": "a99a82b4e98f5e26445f88801b95d87b823bfef154db804acbb60fc136683feb",
+  "soilManifestSha256": "71ba2bb571dd752f0c84a03ccd73aa31ce691c91acb8fdaff23d90b161baa119",
+  "coverageSha256": "ef2f8962f16fa5b9ec6c0c667a9176ccac95eb2a7a771b4527c7f91b5cd34cc0",
+  "exactReplay": true,
+  "incompletePhysicsRejection": "COVERAGE_SPATIAL_ASSIGNMENT_INCOMPLETE",
+  "physicalParameters": {
+    "status": "UNRESOLVED",
+    "imperviousFraction": null,
+    "roughness": null,
+    "initialSoilMoisture": null,
+    "reason": "공개 피복·심토 토성 분류만으로 실제 포장률·표면 다짐·초기 수분 확정 불가"
+  },
+  "operationAccuracyM": {
+    "soil": -1.0,
+    "landcover": -1.0
+  },
+  "limitations": [
+    "오류 도형의 envelope는 영향 가능 범위이며 실제 중첩/누락 면적이 아님",
+    "틈·중복·오류 영향 영역은 자동 복구·최근접 배정·정규화하지 않음",
+    "원본 꼭짓점 좌표 변환 후 직선 연결; 변환 정확도와 원본 위치 정확도 구분",
+    "현재 공개 토양·2024판 피복·2025판 DEM의 결합이며 2010/2011/2022 당시 복원 아님"
+  ],
+  "sourceCode": {
+    "scripts/prepare_surface_coverage.py": "0a666ef9045cd6617a3b9347c31f31c3329fe09b3b52d36cf0e8fb9fb9867629",
+    "scripts/prepare_site_physics.py": "479d7bda9b5228e3d5f367dd05f9aac6008d0175f9ff7cfb0510a3fcf1568119",
+    "simulation/waterleague_sim/terrain/coverage.py": "db63ab9b158701681f5c3fe263fb8403d0c1155e77dd893b251cfe89a928e1ec",
+    "simulation/waterleague_sim/engine/surface_infiltration.py": "ef5a1878f721aa3fdd6545d331f8ab93595ad14dd3e9d69dbc4bccc8ca77c2dc"
+  },
+  "artifactArchive": {
+    "directory": "data/runs/surface-coverage-20261018-v2",
+    "manifestSha256": "12549d81e3a82c8b89d9bebf536fd2a62262a934c77fa8c01b2f2717f9f51c71",
+    "files": 39
+  }
+}
