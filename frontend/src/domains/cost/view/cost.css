@@ -1,0 +1,51 @@
+.cost-record {
+  margin: 12px 0;
+  text-align: left;
+  font-size: 12px;
+  color: #5b6a60;
+}
+.cost-record summary {
+  cursor: pointer;
+  color: #263c2f;
+  line-height: 1.5;
+}
+.cost-record dl {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0;
+}
+.cost-record dl > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: 10px;
+}
+.cost-record dt,
+.cost-record dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.cost-record dd {
+  text-align: right;
+  color: #263c2f;
+}
+.cost-record ul {
+  margin: 10px 0;
+  padding: 0;
+  list-style: none;
+}
+.cost-record li {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 5px 0;
+}
+.cost-record li span {
+  flex-shrink: 0;
+  color: #855d1f;
+}
+.cost-record p {
+  line-height: 1.65;
+}
+.cost-record a {
+  overflow-wrap: anywhere;
+}

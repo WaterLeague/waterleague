@@ -148,6 +148,8 @@ class HistoricalWorkflowTests {
             "budgetPolicy",
             "budgetAccounting",
             "publicAssetPolicy",
+            "costSnapshotRaw",
+            "costSnapshotSha256",
             "SEOUL_RAINWATER_ACCOUNTING_V1",
             "SEOUL_PERSONAL_FULL_2026_V3",
             "2000000000");
@@ -159,6 +161,12 @@ class HistoricalWorkflowTests {
                 owner))
         .isZero();
     var legacy = json.tree(service.require(owner, job.id()).placements());
+    var quote = legacy.get(0).path("costSnapshotRaw").asString();
+    assertThat(json.hash(quote)).isEqualTo(legacy.get(0).path("costSnapshotSha256").asString());
+    assertThat(json.tree(quote).path("budgetChargeKrw").decimalValue())
+        .isEqualByComparingTo("350000");
+    ((tools.jackson.databind.node.ObjectNode) legacy.get(0)).remove("costSnapshotRaw");
+    ((tools.jackson.databind.node.ObjectNode) legacy.get(0)).remove("costSnapshotSha256");
     ((tools.jackson.databind.node.ObjectNode) legacy.get(0)).remove("budgetAccounting");
     var oldBody = json.write(legacy);
     var oldHash = json.hash(dto.modelHash() + "\n" + oldBody);

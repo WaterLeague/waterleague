@@ -43,10 +43,13 @@ def calculate(request, directory):
                 antecedent = load_antecedent(request['modelHash'], directory)
             model, applied_evaporation = prepend(model, evaporation, antecedent)
         physical = {k: placement[k] for k in ('cellId','facilityType','areaM2')}
+        from .costing.snapshot import archive as archive_cost
+        cost_record = archive_cost(placement, model, physical, directory/str(index))
         result = experiment(model, physical, directory/str(index), applied_evaporation)
         assumptions.update(result['assumptions'])
         a, b = result['baseline']['final'], result['strategy']['final']
-        results.append(placement | {'precipitationM3': b['precipitationM3'],
+        results.append({k: v for k,v in placement.items() if k != 'costSnapshotRaw'} | {
+            'costRecord': cost_record, 'precipitationM3': b['precipitationM3'],
             'infiltrationM3': b['infiltrationM3'], 'storageM3': b['storageM3'],
             'evaporationM3': b['evaporationM3'],
             'baselineAccountedM3': a['accountedDischargeM3'], 'designAccountedM3': b['accountedDischargeM3'],

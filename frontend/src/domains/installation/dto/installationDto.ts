@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { nativeSoilBoundaryDto } from '../../facility/dto/facilityDto';
+import { costSourceDto } from '../../cost/dto/costDto';
 const facility = z.enum(['RAIN_GARDEN', 'PERMEABLE_PAVEMENT', 'GREEN_ROOF']);
 const point = z.tuple([z.number().finite(), z.number().finite()]);
 export const publicAssetPolicyDto = z.object({
@@ -55,21 +56,7 @@ export const siteDto = z.object({
   costModel: z.object({
     currency: z.literal('KRW'),
     unit: z.literal('KRW_PER_SQUARE_METRE'),
-    facilities: z.record(
-      facility,
-      z.object({
-        unitCost: z.number().positive(),
-        sourceTitle: z.string(),
-        sourceUrl: z.url().startsWith('https://'),
-        sourceSha256: z.string().regex(/^[a-f0-9]{64}$/),
-        referenceYear: z.number().int(),
-        evidence: z.string(),
-        scope: z.string(),
-        includes: z.array(z.string()),
-        excludes: z.array(z.string()),
-        note: z.string(),
-      })
-    ),
+    facilities: z.record(facility, costSourceDto),
   }),
   sourceIds: z.array(z.string()),
   areaLimitBasis: z.literal('PUBLIC_FOOTPRINT_GEOMETRY').optional(),

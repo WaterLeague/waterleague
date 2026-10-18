@@ -7,6 +7,7 @@ import type { FacilityType } from '../../game/entity/game';
 import { format } from '../../game/service/gameService';
 import './historical.css';
 import { FacilityPlacementPanel } from '../../installation/view/FacilityPlacementPanel';
+import { CostRecordEvidence } from '../../cost/view/CostRecordEvidence';
 const time = (s: string) =>
   new Date(s).toLocaleString('ko-KR', {
     month: 'numeric',
@@ -218,11 +219,12 @@ export function HistoricalPanel({
               ?.filter((f) => !site || f.cellId === site.cellId)
               .map(
                 (f) =>
-                  (f.initialization || f.facilityDesign) && (
+                  (f.initialization || f.facilityDesign || f.costRecord) && (
                     <details key={f.cellId}>
                       <summary>{f.cellId} · 시작 수분·시설 제원</summary>
                       {f.initialization && <InitializationEvidence value={f.initialization} />}
                       {f.facilityDesign && <FacilityProfileEvidence {...f.facilityDesign} />}
+                      {f.costRecord && <CostRecordEvidence value={f.costRecord} />}
                     </details>
                   )
               )}

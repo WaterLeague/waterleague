@@ -2,6 +2,7 @@ import type { InitializationEvidenceData } from '../../physics/entity/initializa
 import type { FacilityEvidence } from '../../facility/dto/facilityDto';
 import type { SharedSite, SharedInstallation } from '../../installation/entity/installation';
 import type { FacilityType } from '../../game/entity/game';
+import type { CostRecord } from '../../cost/dto/costDto';
 export interface HistoricalDraft {
   site: SharedSite;
   facilityType: FacilityType;
@@ -36,6 +37,7 @@ export interface HistoricalJob {
       cellId: string;
       initialization?: InitializationEvidenceData | null;
       facilityDesign?: FacilityEvidence | null;
+      costRecord?: CostRecord;
     }[];
     frames: {
       at: string;

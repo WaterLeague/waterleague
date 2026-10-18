@@ -40,6 +40,64 @@ class SharedInstallationTests {
   @Autowired JdbcTemplate db;
   @Autowired io.waterleague.installation.repository.SiteCatalogRepository sites;
   @Autowired io.waterleague.budget.service.BudgetService budget;
+  @Autowired io.waterleague.cost.service.CostService costs;
+  @Autowired io.waterleague.common.service.JsonService json;
+
+  @Test
+  void costEvidenceFreezesQuantitySourceAndUnknownCostsWithoutRetrofittingOldRecords() {
+    var owner = account("2410520");
+    var installed =
+        service.install(
+            owner.username(),
+            new InstallRequest(
+                "2410520", "G1", FacilityType.PERMEABLE_PAVEMENT, new BigDecimal("20.25")));
+    var record = costs.active(installed.id());
+    assertThat(record.status()).isEqualTo("RECORDED");
+    var value = record.estimate();
+    assertThat(value.path("budgetChargeKrw").decimalValue()).isEqualByComparingTo("2227500");
+    assertThat(value.path("lines").get(0).path("quantity").decimalValue())
+        .isEqualByComparingTo("20.25");
+    assertThat(value.path("source").path("referenceYear").intValue()).isEqualTo(2022);
+    assertThat(value.path("source").path("sourceSha256").asString())
+        .isEqualTo("0efc54c3c884441d810ce28abb8928d758d98eb152fb71aac38791327b2d7414");
+    assertThat(value.path("completeInstalledCostKrw").isNull()).isTrue();
+    assertThat(value.path("historicalPriceEligible").asBoolean()).isFalse();
+    for (var row : value.path("unpricedItems")) assertThat(row.path("amountKrw").isNull()).isTrue();
+    String raw =
+        db.queryForObject(
+            "SELECT cost_snapshot FROM shared_installations WHERE id=?",
+            String.class,
+            installed.id());
+    assertThat(record.sha256()).isEqualTo(json.hash(raw));
+    db.update(
+        "UPDATE shared_installations SET cost_snapshot=? WHERE id=?",
+        raw.replace("2227500", "1"),
+        installed.id());
+    assertThatThrownBy(() -> costs.active(installed.id()))
+        .isInstanceOfSatisfying(
+            DomainException.class,
+            e -> assertThat(e.code()).isEqualTo(ErrorCode.COST_DATA_INVALID));
+    db.update(
+        "UPDATE shared_installations SET cost_snapshot=NULL,cost_snapshot_sha256=NULL WHERE id=?",
+        installed.id());
+    assertThat(costs.active(installed.id()).status()).isEqualTo("NOT_RECORDED");
+    db.update(
+        "UPDATE shared_installations SET cost_snapshot=?,cost_snapshot_sha256=? WHERE id=?",
+        raw,
+        record.sha256(),
+        installed.id());
+    service.remove(owner.username(), installed.id());
+    assertThatThrownBy(() -> costs.active(installed.id()))
+        .isInstanceOfSatisfying(
+            DomainException.class,
+            e -> assertThat(e.code()).isEqualTo(ErrorCode.RESOURCE_NOT_FOUND));
+    assertThat(
+            db.queryForObject(
+                "SELECT cost_snapshot FROM shared_installations WHERE id=?",
+                String.class,
+                installed.id()))
+        .isEqualTo(raw);
+  }
 
   @BeforeEach
   void clear() {

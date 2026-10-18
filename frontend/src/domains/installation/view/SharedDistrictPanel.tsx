@@ -10,6 +10,7 @@ import { errorMessage } from '../../../shared/exception/ApiError';
 import type { Budget } from '../../budget/dto/budgetDto';
 import { FacilityPlacementPanel } from './FacilityPlacementPanel';
 import { PhysicsPanel } from '../../physics/view/PhysicsPanel';
+import { InstallationCostRecord } from '../../cost/view/CostRecordEvidence';
 export function SharedDistrictPanel({
   account,
   districtId,
@@ -137,7 +138,12 @@ export function SharedDistrictPanel({
         </>
       }
     >
-      {occupied && <PhysicsPanel key={occupied.id} installationId={occupied.id} />}
+      {occupied && (
+        <>
+          <InstallationCostRecord key={'cost-' + occupied.id} id={occupied.id} />
+          <PhysicsPanel key={occupied.id} installationId={occupied.id} />
+        </>
+      )}
     </FacilityPlacementPanel>
   );
 }

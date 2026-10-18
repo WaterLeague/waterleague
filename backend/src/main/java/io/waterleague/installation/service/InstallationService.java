@@ -25,6 +25,7 @@ public class InstallationService {
   private final io.waterleague.common.service.JsonService json;
   private final io.waterleague.installation.repository.SiteCatalogRepository sites;
   private final io.waterleague.strategy.service.PlacementValidationService validation;
+  private final io.waterleague.cost.service.CostService costRecords;
 
   public InstallationService(
       InstallationRepository i,
@@ -34,7 +35,8 @@ public class InstallationService {
       AccountService auth,
       io.waterleague.common.service.JsonService json,
       io.waterleague.installation.repository.SiteCatalogRepository sites,
-      io.waterleague.strategy.service.PlacementValidationService validation) {
+      io.waterleague.strategy.service.PlacementValidationService validation,
+      io.waterleague.cost.service.CostService costRecords) {
     installations = i;
     this.budget = budget;
     districts = d;
@@ -43,6 +45,7 @@ public class InstallationService {
     this.json = json;
     this.sites = sites;
     this.validation = validation;
+    this.costRecords = costRecords;
   }
 
   public List<SharedInstallation> active() {
@@ -147,7 +150,11 @@ public class InstallationService {
             null);
     // 회원별 예산 잠금과 위치 고유 제약으로 초과 배정·중복 점유를 차단한다.
     try {
-      installations.add(value, json.write(budget.policy()), json.write(sites.publicAssetPolicy()));
+      installations.add(
+          value,
+          json.write(budget.policy()),
+          json.write(sites.publicAssetPolicy()),
+          costRecords.snapshot(site, request.facilityType(), request.areaM2(), cost));
     } catch (DuplicateKeyException e) {
       throw new InstallationException(ErrorCode.SITE_OCCUPIED);
     }

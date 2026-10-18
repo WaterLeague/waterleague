@@ -1,0 +1,90 @@
+{
+  "status": "RECORDED",
+  "sha256": "591082367783e314e68c3952eac7f000985b7f8617e325b15b6c52c53be27b6e",
+  "estimate": {
+    "version": "PUBLIC_REFERENCE_QUANTITY_V1",
+    "currency": "KRW",
+    "districtId": "2410520",
+    "cellId": "G1",
+    "siteModelHash": "1318e4f3abfe075f0a8888ee5e0547ae304e27b8d93d47f3c9287b90223c49e9",
+    "facilityType": "PERMEABLE_PAVEMENT",
+    "quantityM2": 20.25,
+    "unitCostKrw": 110000,
+    "referenceSubtotalKrw": 2227500,
+    "budgetChargeKrw": 2227500,
+    "completeInstalledCostKrw": null,
+    "priceBaseYear": null,
+    "vat": "UNCONFIRMED",
+    "priceAdjustment": "NONE",
+    "currentPriceVerified": false,
+    "historicalPriceEligible": false,
+    "costSourceSha256": "4541e791e1213f6c1885921c9b5c939426dbee9b1d01fef60f0d6f595365640a",
+    "source": {
+      "sourceTitle": "진주상평 일반산업단지 저탄소 그린산업단지 조성사업 사업계획서",
+      "sourceUrl": "https://jinjucci.korcham.net/file/dext5uploaddata/2022/0718_%EC%A7%84%EC%A3%BC%EC%8B%9C_%EC%A0%80%ED%83%84%EC%86%8C%20%EA%B7%B8%EB%A6%B0%EC%82%B0%EC%97%85%EB%8B%A8%EC%A7%80%20%EC%A1%B0%EC%84%B1%EC%82%AC%EC%97%85_%EC%82%AC%EC%97%85%EA%B3%84%ED%9A%8D%EC%84%9C%20(%EC%9E%85%EC%A3%BC%EA%B8%B0%EC%97%85%ED%98%91%EC%9D%98%EC%B2%B4).pdf",
+      "sourceSha256": "0efc54c3c884441d810ce28abb8928d758d98eb152fb71aac38791327b2d7414",
+      "referenceYear": 2022,
+      "evidence": "PUBLIC_PLAN_REFERENCE_SITE_TRANSFER_UNVERIFIED",
+      "scope": "시설 설치 참고비",
+      "includes": ["시설 설치"],
+      "excludes": [
+        "실시설계·감리",
+        "별도 토공",
+        "철거·폐기",
+        "토지",
+        "구조보강",
+        "유지관리·모니터링",
+        "예비비"
+      ],
+      "note": "서울 지역·현재 물가·규격 미보정, 부가세 포함 여부 미확인",
+      "unitCost": 110000
+    },
+    "lines": [
+      {
+        "id": "REFERENCE_INSTALLATION",
+        "label": "시설 설치 참고비",
+        "quantity": 20.25,
+        "quantityUnit": "M2",
+        "unitCostKrw": 110000,
+        "amountKrw": 2227500
+      }
+    ],
+    "unpricedItems": [
+      {
+        "label": "실시설계·감리",
+        "amountKrw": null,
+        "status": "UNPRICED"
+      },
+      {
+        "label": "별도 토공",
+        "amountKrw": null,
+        "status": "UNPRICED"
+      },
+      {
+        "label": "철거·폐기",
+        "amountKrw": null,
+        "status": "UNPRICED"
+      },
+      {
+        "label": "토지",
+        "amountKrw": null,
+        "status": "UNPRICED"
+      },
+      {
+        "label": "구조보강",
+        "amountKrw": null,
+        "status": "UNPRICED"
+      },
+      {
+        "label": "유지관리·모니터링",
+        "amountKrw": null,
+        "status": "UNPRICED"
+      },
+      {
+        "label": "예비비",
+        "amountKrw": null,
+        "status": "UNPRICED"
+      }
+    ]
+  }
+}

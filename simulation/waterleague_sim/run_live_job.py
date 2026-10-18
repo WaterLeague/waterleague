@@ -23,6 +23,8 @@ def main():
     model, evaporation = json.loads(source), json.loads(forcing).get('evaporation')
     from .admission import archive
     archive(request.get('publicAssetPolicy'), path)
+    from .costing.snapshot import archive as archive_cost
+    archive_cost(request, model, request['placement'], path)
     if model.get('initializationPolicy') is not None:
         from .engine.initialization import prepend
         raw = (path/'antecedent.json').read_bytes()

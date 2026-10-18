@@ -47,6 +47,7 @@ public class SecurityConfiguration {
                         "/api/v1/installations/sites",
                         "/api/v1/installations/sites/{districtId}/{cellId}",
                         "/api/v1/installations/{id}/physics",
+                        "/api/v1/installations/{id}/cost",
                         "/api/v1/rainfall/live",
                         "/api/v1/maps",
                         "/api/v1/lab",

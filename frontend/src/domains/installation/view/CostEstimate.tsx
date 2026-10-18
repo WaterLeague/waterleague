@@ -1,6 +1,7 @@
 import type { SharedSite } from '../entity/installation';
 import type { FacilityType } from '../../game/entity/game';
 import { won } from '../../game/service/gameService';
+import { CostScope } from '../../cost/view/CostScope';
 
 export function CostEstimate({
   site,
@@ -25,7 +26,7 @@ export function CostEstimate({
   return (
     <div className="cost-estimate">
       <div className="placement-cost">
-        <span>설치비 추정</span>
+        <span>예산 반영 참고비</span>
         <strong>{won(Math.max(0, area || 0) * unit)}</strong>
       </div>
       <p className="cost-formula">
@@ -39,16 +40,12 @@ export function CostEstimate({
       >
         예산 내 최대 면적 · {affordable.toLocaleString('ko-KR')}m²
       </button>
-      <details>
-        <summary>{evidence.referenceYear}년 공개 참고 단가 · 산정 근거</summary>
-        <p>{evidence.scope}</p>
-        <p>포함: {evidence.includes.join(' · ')}</p>
-        <p>별도·미확정: {evidence.excludes.join(' · ')}</p>
-        <p>{evidence.note}</p>
-        <a href={evidence.sourceUrl} target="_blank" rel="noreferrer">
-          {evidence.sourceTitle} ↗
-        </a>
-      </details>
+      <CostScope
+        source={evidence}
+        quantity={Math.max(0, area || 0)}
+        unit={unit}
+        subtotal={Math.max(0, area || 0) * unit}
+      />
     </div>
   );
 }

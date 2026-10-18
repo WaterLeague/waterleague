@@ -58,11 +58,15 @@ public class InstallationRepository {
         .findFirst();
   }
 
-  public void add(SharedInstallation i, String budgetPolicy, String admissionSnapshot) {
+  public void add(
+      SharedInstallation i,
+      String budgetPolicy,
+      String admissionSnapshot,
+      io.waterleague.cost.entity.CostSnapshot cost) {
     db.update(
         "INSERT INTO"
-            + " shared_installations(id,occupied_site,district_id,cell_id,owner_id,model_hash,facility_type,area_m2,cost,installed_at,budget_policy,admission_snapshot)"
-            + " VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
+            + " shared_installations(id,occupied_site,district_id,cell_id,owner_id,model_hash,facility_type,area_m2,cost,installed_at,budget_policy,admission_snapshot,cost_snapshot,cost_snapshot_sha256)"
+            + " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
         i.id(),
         i.districtId() + ":" + i.cellId(),
         i.districtId(),
@@ -74,7 +78,9 @@ public class InstallationRepository {
         i.cost(),
         Timestamp.from(i.installedAt()),
         budgetPolicy,
-        admissionSnapshot);
+        admissionSnapshot,
+        cost.raw(),
+        cost.sha256());
   }
 
   public boolean remove(UUID id, UUID owner, Instant at) {

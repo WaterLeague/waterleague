@@ -191,6 +191,10 @@ def process(conn, job, root):
                    'weeklyCodeSha256': digest((Path(__file__).parent/'weekly.py').read_bytes())}
         if job['installation'].get('admission_snapshot') is not None:
             request['publicAssetPolicy'] = json.loads(job['installation']['admission_snapshot'])
+        if job['installation'].get('cost_snapshot') is not None:
+            request['costSnapshotRaw'] = job['installation']['cost_snapshot']
+            request['costSnapshotSha256'] = job['installation']['cost_snapshot_sha256']
+            request['installationCostKrw'] = str(job['installation']['cost'])
         if antecedent is not None:
             antecedent_raw = encode(antecedent)
             (path/'antecedent.json').write_bytes(antecedent_raw)

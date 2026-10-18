@@ -29,6 +29,7 @@ public class HistoricalService {
   private final PlacementValidationService validation;
   private final JsonService json;
   private final io.waterleague.disaster.service.DisasterService disasters;
+  private final io.waterleague.cost.service.CostService costRecords;
 
   public HistoricalService(
       HistoricalRepository jobs,
@@ -39,7 +40,8 @@ public class HistoricalService {
       LabModelRepository models,
       PlacementValidationService validation,
       JsonService json,
-      io.waterleague.disaster.service.DisasterService disasters) {
+      io.waterleague.disaster.service.DisasterService disasters,
+      io.waterleague.cost.service.CostService costRecords) {
     this.jobs = jobs;
     this.budget = budget;
     this.admission = admission;
@@ -49,6 +51,7 @@ public class HistoricalService {
     this.validation = validation;
     this.json = json;
     this.disasters = disasters;
+    this.costRecords = costRecords;
   }
 
   public HistoricalExperiment require(UUID owner, UUID id) {
@@ -146,6 +149,18 @@ public class HistoricalService {
     }
     // 기존 요청은 원 입력으로 반환하고 새로운 배치만 현재 공개 경계와 대조한다.
     for (var p : dto.placements()) sites.requireInstallable(district.id(), p.cellId());
+    for (var row : frozen) {
+      var site = sites.require(district.id(), (String) row.get("cellId"));
+      var type = (FacilityType) row.get("facilityType");
+      var area = (BigDecimal) row.get("areaM2");
+      var record =
+          costRecords.snapshot(
+              site, type, area, site.unitCosts().get(type.name()).multiply(area).setScale(2));
+      row.put("costSnapshotRaw", record.raw());
+      row.put("costSnapshotSha256", record.sha256());
+    }
+    body = json.write(frozen);
+    hash = json.hash(dto.modelHash() + "\n" + body);
     if (jobs.active(owner) >= 2 || admission.totalActive() >= 20)
       throw new DomainException(ErrorCode.SIMULATION_QUOTA_EXCEEDED);
     var j =
