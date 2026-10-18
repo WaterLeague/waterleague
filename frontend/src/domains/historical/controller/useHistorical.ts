@@ -10,6 +10,7 @@ import { siteKey } from '../../installation/entity/installation';
 import { errorMessage } from '../../../shared/exception/ApiError';
 import type { HistoricalDraft, HistoricalJob } from '../entity/historical';
 import type { Budget } from '../../budget/dto/budgetDto';
+import { designAccounting } from '../../budget/service/designAccounting';
 import { loadHistorical, runHistorical } from '../repository/historicalRepository';
 
 export function useHistorical(
@@ -141,6 +142,15 @@ export function useHistorical(
     };
   }, [job?.id, job?.state]);
   const current = drafts.filter((d) => d.site.districtId === districtId);
+  const accounting = budget
+    ? designAccounting(
+        budget.accounting,
+        drafts.map((d) => ({
+          facilityType: d.facilityType,
+          cost: d.areaM2 * d.site.unitCosts[d.facilityType],
+        }))
+      )
+    : null;
   const remaining =
     (budget?.policy.personalLimitKrw ?? 0) -
     drafts.reduce((n, d) => n + d.areaM2 * d.site.unitCosts[d.facilityType], 0);
@@ -151,6 +161,8 @@ export function useHistorical(
       area <= 0 ||
       area > site.maxAreaM2 ||
       area * site.unitCosts[type] > remaining ||
+      area * site.unitCosts[type] >
+        (accounting?.facilities.find((f) => f.facilityType === type)?.availableKrw ?? 0) ||
       current.length >= 50
     ) {
       setError('시설·면적·예산·최대 50곳 조건을 확인해 주세요.');
@@ -230,6 +242,7 @@ export function useHistorical(
     current,
     remaining,
     budget,
+    accounting,
     add,
     remove,
     job,

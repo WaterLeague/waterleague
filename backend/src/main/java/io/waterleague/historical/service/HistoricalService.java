@@ -84,6 +84,7 @@ public class HistoricalService {
     var costs = new EnumMap<FacilityType, BigDecimal>(FacilityType.class);
     var physical = new ArrayList<Placement>();
     var frozen = new ArrayList<Map<String, Object>>();
+    var allocated = new EnumMap<FacilityType, BigDecimal>(FacilityType.class);
     for (var p :
         dto.placements().stream()
             .sorted(Comparator.comparing(HistoricalRequest.Item::cellId))
@@ -94,6 +95,9 @@ public class HistoricalService {
       cells.put(c.cellId(), new PlacementCell(c.cellId(), types, c.maxAreaM2(), true));
       c.unitCosts().forEach((t, n) -> costs.put(FacilityType.valueOf(t), n));
       physical.add(new Placement(p.cellId(), p.facilityType(), p.areaM2()));
+      var unitCost = c.unitCosts().get(p.facilityType().name());
+      if (unitCost == null) throw new DomainException(ErrorCode.PLACEMENT_INVALID);
+      allocated.merge(p.facilityType(), unitCost.multiply(p.areaM2()).setScale(2), BigDecimal::add);
       frozen.add(
           new TreeMap<>(
               Map.of(
@@ -110,13 +114,33 @@ public class HistoricalService {
                   "budgetPolicy",
                   budget.policy())));
     }
-    validation.validate(physical, cells, costs, budget.limit(), 50);
+    var cost = validation.validate(physical, cells, costs, budget.limit(), 50);
+    if (cost.compareTo(allocated.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add)) != 0)
+      throw new DomainException(ErrorCode.PLACEMENT_INVALID);
+    var accounting = budget.validateDesign(allocated);
+    frozen.getFirst().put("budgetAccounting", accounting);
     String body = json.write(frozen), hash = json.hash(dto.modelHash() + "\n" + body);
     admission.lockAdmission();
     admission.lockOwner(owner);
     var previous = jobs.byKey(owner, dto.requestKey());
     if (previous.isPresent()) {
-      if (!previous.get().inputHash().equals(hash)) throw new DomainException(ErrorCode.CONFLICT);
+      // 원장 추가 전 입력도 같은 사용자 요청이면 기존 실행을 반환한다.
+      var old = previous.get();
+      var oldPlacements = json.tree(old.placements());
+      if (!old.modelHash().equals(dto.modelHash())
+          || !old.districtId().equals(dto.districtId())
+          || oldPlacements.size() != frozen.size()) throw new DomainException(ErrorCode.CONFLICT);
+      for (int n = 0; n < frozen.size(); n++) {
+        var entry = oldPlacements.get(n);
+        var candidate = frozen.get(n);
+        if (!entry.path("cellId").asString().equals(candidate.get("cellId"))
+            || !entry
+                .path("facilityType")
+                .asString()
+                .equals(candidate.get("facilityType").toString())
+            || entry.path("areaM2").decimalValue().compareTo((BigDecimal) candidate.get("areaM2"))
+                != 0) throw new DomainException(ErrorCode.CONFLICT);
+      }
       return view(previous.get());
     }
     if (jobs.active(owner) >= 2 || admission.totalActive() >= 20)

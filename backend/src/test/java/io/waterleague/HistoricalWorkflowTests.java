@@ -87,8 +87,31 @@ class HistoricalWorkflowTests {
     assertThat(service.create(owner, dto).id()).isEqualTo(job.id());
     assertThat(service.require(owner, job.id()).placements())
         .contains(
-            cell, "siteModelHash", "budgetPolicy", "SEOUL_PERSONAL_FULL_2026_V3", "2000000000");
+            cell,
+            "siteModelHash",
+            "budgetPolicy",
+            "budgetAccounting",
+            "SEOUL_RAINWATER_ACCOUNTING_V1",
+            "SEOUL_PERSONAL_FULL_2026_V3",
+            "2000000000");
     assertThat(service.list(owner)).hasSize(1);
+    assertThat(
+            db.queryForObject(
+                "SELECT COUNT(*) FROM budget_ledger_entries WHERE owner_id=?",
+                Integer.class,
+                owner))
+        .isZero();
+    var legacy = json.tree(service.require(owner, job.id()).placements());
+    ((tools.jackson.databind.node.ObjectNode) legacy.get(0)).remove("budgetAccounting");
+    var oldBody = json.write(legacy);
+    var oldHash = json.hash(dto.modelHash() + "\n" + oldBody);
+    db.update(
+        "UPDATE historical_experiments SET placements=?,input_hash=? WHERE id=?",
+        oldBody,
+        oldHash,
+        job.id());
+    assertThat(service.create(owner, dto).id()).isEqualTo(job.id());
+    assertThat(service.require(owner, job.id()).inputHash()).isEqualTo(oldHash);
     assertThat(db.queryForObject("SELECT COUNT(*) FROM shared_installations", Integer.class))
         .isEqualTo(before);
     assertThatThrownBy(() -> service.require(UUID.randomUUID(), job.id()))

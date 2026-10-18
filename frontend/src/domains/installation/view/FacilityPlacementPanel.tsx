@@ -4,7 +4,7 @@ import type { SharedSite } from '../entity/installation';
 import type { FacilityType } from '../../game/entity/game';
 import { facilities, won } from '../../game/service/gameService';
 import { BudgetEvidence } from '../../budget/view/BudgetEvidence';
-import type { Budget } from '../../budget/dto/budgetDto';
+import type { Budget, BudgetAccounting } from '../../budget/dto/budgetDto';
 import { CostEstimate } from './CostEstimate';
 import { FacilityDesignEvidence } from '../../facility/view/FacilityDesignEvidence';
 import { PhysicalInputEvidence } from './PhysicalInputEvidence';
@@ -26,6 +26,7 @@ export type FacilityPlacementProps = {
   context: string;
   feedback?: string;
   budget: Budget | null;
+  budgetAccounting?: BudgetAccounting | null;
   remaining: number;
   limit: number;
   budgetReady: boolean;
@@ -43,6 +44,9 @@ export function FacilityPlacementPanel(p: FacilityPlacementProps) {
   const { site, type, area, remaining, occupied } = p;
   const numericArea = Number(area);
   const cost = site && type ? numericArea * site.unitCosts[type] : 0;
+  const accounting = p.budgetAccounting ?? (!p.research ? p.budget?.accounting : null);
+  const facilityAvailable =
+    accounting?.facilities.find((f) => f.facilityType === type)?.availableKrw ?? 0;
   const valid =
     p.budgetReady &&
     !!site &&
@@ -51,7 +55,7 @@ export function FacilityPlacementPanel(p: FacilityPlacementProps) {
     Number.isFinite(numericArea) &&
     numericArea > 0 &&
     numericArea <= site.maxAreaM2 &&
-    cost <= remaining;
+    cost <= Math.min(remaining, facilityAvailable);
   return (
     <aside className="inspector shared-inspector" aria-label="시설 설치">
       <div className="round-feedback" role="status">
@@ -216,7 +220,7 @@ export function FacilityPlacementPanel(p: FacilityPlacementProps) {
           </div>
         </div>
       )}
-      <BudgetEvidence value={p.budget} research={p.research} />
+      <BudgetEvidence value={p.budget} research={p.research} accounting={p.budgetAccounting} />
       {site && !occupied && <PhysicalInputEvidence site={site} />}
       {p.children}
       <p className="shared-evidence-note">

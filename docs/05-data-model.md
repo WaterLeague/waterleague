@@ -57,3 +57,9 @@ UUID, UTC timestamptz, 비용·면적 고정 정밀도. FK·CHECK·UNIQUE·트�
 ## V9 기관 분석 연결
 
 `research_comparisons`는 organization_id, requested_by, source_job_id, comparison_id FK와 (organization_id, request_key) 유일성, comparison_id 유일성, request_hash, created_at 보존. 기존 `rainfall_comparisons`/`rainfall_comparison_jobs`와 원래 플레이어의 `strategies`/`strategy_versions`/`simulation_jobs`를 연결. 기관 소유 전략 복사·자동 제출·자동 동의 없음. 원본 동의 철회 후에도 소유자의 개인 기록은 보존하되 기관용 API가 현재 권한을 재검사. 패턴 집계는 현재 동의된 입력으로 매 요청 계산하며 공유 캐시/영속 집계 테이블 없음. [기관 분석 계약](26-institution-analysis.md) 참조.
+
+## 개인 설계 예산 원장
+
+`V17__budget_ledger.sql`의 `budget_ledger_entries`: 설치·회원 FK, 사업군·시설·배정/해제·원화 금액·발생/기록 시각·기록 출처·회계 버전·원 예산 정책. `(installation_id,event_type)` 고유 제약으로 설치/취소별 한 번만 기록. 이관은 `LEGACY_IMPORT`, 신규 트랜잭션은 `LIVE_TRANSACTION`; 원 정책 결측은 null 보존. 제거된 기존 설치도 배정과 해제를 모두 이관하고 원 설치 행 미변경.
+
+서비스는 회원 행을 잠근 뒤 예상 시설/사업 합계를 검사하고 설치 행과 원장을 함께 저장. 취소는 최초 배정 원장의 금액/정책/사업을 복사하여 가용액 복원. 저장소에 이력 수정/삭제 경로와 외부 원장 쓰기 API 없음. 잔액은 원장의 배정 합계−해제 합계로 집계. `SEOUL_RAINWATER_ACCOUNTING_V1`은 기존 `SEOUL_PERSONAL_FULL_2026_V3`의 20억 원과 공개 출처 해시를 참조하며 별도 재원을 생성하지 않음. 실사업 원가·회계 장부를 대신하지 않는 게임 설계 원장.

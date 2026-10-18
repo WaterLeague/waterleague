@@ -139,6 +139,10 @@ RFC 9457 `application/problem+json`: type, title, status, detail, instance, code
 
 `GET /api/v1/budget`는 `policy`(사업 총액 `limitKrw`·개인 한도 `personalLimitKrw` 각각 20억 원, `allocationScope=MEMBER`, 참고연도·출처·원문 해시·규칙 버전), 본인 활성 설치 비용 `allocatedKrw`, `remainingKrw`, `personal`을 반환. 익명은 사용액 0·한도 미리보기·`personal=false`; 다른 회원의 잔액 제공 없음. 본인 ID는 서버 인증에서 결정. 설치·철거 트랜잭션의 회원 행 잠금으로 동시 초과 지출 차단. 소속 구·공유 위치 점유 규칙 유지. 규칙 `SEOUL_PERSONAL_FULL_2026_V3`를 신규 설치 행 `budget_policy`와 재해 요청에 고정. 이전 구별 8천만 원 규칙은 기존 기록 재현에만 보존. 후보의 시설 단가·포함/제외 범위·출처와 저장 설치 비용은 변경하지 않음.
 
+예산 원장 확장 계약: 같은 응답의 `accounting`에 버전·사업군 한도/사용액/잔액·시설별 사용액/가용액 반환. 현재 세 시설은 같은 빗물관리 사업군의 20억 원을 공유하며 시설별 별도 한도는 `null`(별도 배정 없음). 가용액은 시설 잔액과 상위 사업 잔액 중 작은 값이며 시설별 가용액 합계를 전체 재원으로 표시하지 않음. 기존 설치의 원 비용·원 예산 정책·설치/취소 시각을 원장에 이관, 이관 기록임을 구분. 새 설치/취소는 회원 잠금과 같은 트랜잭션에서 한 번씩 기록, 실패 시 원장도 롤백. 취소는 가상 설계 배정의 해제이며 실제 공사비 환급이 아님.
+
+`GET /api/v1/budget/ledger?beforeId=<커서>`는 인증된 본인의 원장만 50건씩 역순 조회. 시설·사업·설치 ID·배정/취소·원 비용·실제 발생/기록 시각·이관 여부·원 예산 정책을 제공. 수정/삭제 API 없음, 익명 조회 거부·타 회원 ID 입력 불가·`Cache-Control: no-store`. 재해 계산은 주간 원장을 차감하지 않고 같은 사업/시설 한도 규칙으로 별도 설계 비용을 검사하며 입력에 해당 원가/예산 집계를 고정. 사건 당시 예산의 검증 완료를 뜻하지 않음.
+
 ## 공동 설치 연구 기록
 
 `GET/PUT /consents/shared[/{organizationId}]`는 기존 전략 동의와 독립적인 기관별 공동 설치 연구 동의. `GET /installations/records`와 `/installations/records/{jobId}[/bundle]`는 본인 완료 기록. `GET /research/installations` 및 `/research/installations/{jobId}[/bundle]`는 승인된 조직 회원의 현재 기관에 동의된 기록. 목록은 한국시간 주 시작일의 기여·회원 합계 순으로 최대 100개 설치, 상세는 선택한 완료 job에 고정. 이메일·사용자명·IP·키 미포함. 산출물 manifest의 DB 고정 해시·입력 해시·모델/설치 연결 검증 후 다운로드, 과거 manifest 미고정 작업은 내보내기 보류.

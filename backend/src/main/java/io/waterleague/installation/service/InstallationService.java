@@ -130,7 +130,7 @@ public class InstallationService {
     site.unitCosts()
         .forEach((t, c) -> costs.put(io.waterleague.strategy.entity.FacilityType.valueOf(t), c));
     var cost = validation.validate(List.of(placement), cells, costs, budget.limit(), 1);
-    budget.requireAvailable(account.id(), cost);
+    budget.requireAvailable(account.id(), request.facilityType(), cost);
     var value =
         new SharedInstallation(
             UUID.randomUUID(),
@@ -150,6 +150,7 @@ public class InstallationService {
     } catch (DuplicateKeyException e) {
       throw new InstallationException(ErrorCode.SITE_OCCUPIED);
     }
+    budget.allocate(account.id(), value.id(), value.facilityType());
     return value;
   }
 
@@ -167,5 +168,6 @@ public class InstallationService {
     budget.lock(account.id());
     if (!installations.remove(id, account.id(), Instant.now()))
       throw new InstallationException(ErrorCode.CONFLICT);
+    budget.release(account.id(), id);
   }
 }

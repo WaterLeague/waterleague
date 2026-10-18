@@ -24,6 +24,7 @@ public enum ErrorCode {
   RESULT_QUALITY_FAILED(HttpStatus.UNPROCESSABLE_CONTENT, "계산 품질 검사를 통과하지 못했습니다"),
   PLACEMENT_INVALID(HttpStatus.UNPROCESSABLE_CONTENT, "설치 조건을 확인해 주세요"),
   BUDGET_EXCEEDED(HttpStatus.UNPROCESSABLE_CONTENT, "설치 예산을 초과했습니다"),
+  BUDGET_DATA_INVALID(HttpStatus.SERVICE_UNAVAILABLE, "예산 기록을 확인하지 못했습니다. 잠시 후 다시 시도해 주세요"),
   SPATIAL_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "공간자료를 조회하지 못했습니다. 잠시 후 다시 시도해 주세요"),
   SPATIAL_ACCESS_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "공간자료 서비스의 인증 설정 확인이 필요합니다"),
   SPATIAL_DATA_INVALID(HttpStatus.SERVICE_UNAVAILABLE, "공간자료의 좌표·응답 품질 검사를 통과하지 못했습니다"),

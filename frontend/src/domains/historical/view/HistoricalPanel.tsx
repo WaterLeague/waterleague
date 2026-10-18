@@ -150,6 +150,7 @@ export function HistoricalPanel({
       context="재해 연구 설계"
       research
       budget={s.budget}
+      budgetAccounting={s.accounting}
       remaining={s.remaining}
       limit={s.budget?.policy.personalLimitKrw ?? 0}
       budgetReady={!!s.budget}

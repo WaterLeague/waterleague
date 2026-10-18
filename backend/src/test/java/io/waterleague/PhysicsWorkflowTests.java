@@ -42,6 +42,7 @@ class PhysicsWorkflowTests {
   void prepare() {
     db.update("DELETE FROM shared_weekly_scores");
     db.update("DELETE FROM shared_physics_jobs");
+    db.update("DELETE FROM budget_ledger_entries");
     db.update("DELETE FROM shared_installations");
     UUID id = UUID.randomUUID();
     username = "physics_" + id.toString().substring(0, 8);

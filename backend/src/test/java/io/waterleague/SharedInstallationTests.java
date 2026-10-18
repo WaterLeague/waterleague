@@ -45,6 +45,7 @@ class SharedInstallationTests {
   void clear() {
     db.update("DELETE FROM shared_weekly_scores");
     db.update("DELETE FROM shared_physics_jobs");
+    db.update("DELETE FROM budget_ledger_entries");
     db.update("DELETE FROM shared_installations");
   }
 
@@ -144,9 +145,21 @@ class SharedInstallationTests {
     String district = "2410520";
     var owner = account(district);
     var other = account(district);
-    var first = service.install(owner.username(), placement(district));
-    // 과거 배치 누적액이 한도에 근접한 상황에서 동시 요청 초과를 검사한다.
-    db.update("UPDATE shared_installations SET cost=1997000000 WHERE id=?", first.id());
+    // 실제 서버 설치로 한도 직전까지 배정하고 서로 다른 시설의 경합을 검사한다.
+    var remainingArea = new BigDecimal("5705");
+    for (var site :
+        sites.district(district).values().stream()
+            .filter(s -> s.allowedTypes().contains("GREEN_ROOF"))
+            .sorted(Comparator.comparing(io.waterleague.installation.view.SiteView::cellId))
+            .toList()) {
+      var area = remainingArea.min(site.maxAreaM2().setScale(2, java.math.RoundingMode.DOWN));
+      service.install(
+          owner.username(),
+          new InstallRequest(district, site.cellId(), FacilityType.GREEN_ROOF, area));
+      remainingArea = remainingArea.subtract(area);
+      if (remainingArea.signum() == 0) break;
+    }
+    assertThat(remainingArea).isZero();
     var start = new CountDownLatch(1);
     try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
       var futures = new ArrayList<Future<String>>();
@@ -171,7 +184,7 @@ class SharedInstallationTests {
       for (var f : futures) outcomes.add(f.get(10, TimeUnit.SECONDS));
       assertThat(outcomes).containsExactlyInAnyOrder("INSTALLED", "BUDGET_EXCEEDED");
     }
-    assertThat(budget.view(owner.id()).remainingKrw()).isEqualByComparingTo("800000");
+    assertThat(budget.view(owner.id()).remainingKrw()).isEqualByComparingTo("1050000");
     assertThat(budget.view(other.id()).remainingKrw()).isEqualByComparingTo("2000000000");
     var independent =
         service.install(
@@ -189,7 +202,7 @@ class SharedInstallationTests {
         .contains("SEOUL_PERSONAL_FULL_2026_V3");
     service.remove(other.username(), independent.id());
     assertThat(budget.view(other.id()).remainingKrw()).isEqualByComparingTo("2000000000");
-    assertThat(budget.view(owner.id()).remainingKrw()).isEqualByComparingTo("800000");
+    assertThat(budget.view(owner.id()).remainingKrw()).isEqualByComparingTo("1050000");
   }
 
   @Test

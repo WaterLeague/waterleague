@@ -517,3 +517,51 @@
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
+
+.budget-breakdown section {
+  margin-top: 12px;
+}
+.budget-breakdown dl {
+  margin: 10px 0;
+}
+.budget-breakdown dl > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 5px 0;
+}
+.budget-breakdown dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+.budget-ledger ol {
+  list-style: none;
+  margin: 12px 0;
+  padding: 0;
+  max-height: 280px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.budget-ledger li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid #dce5e3;
+}
+.budget-ledger time {
+  display: block;
+  font-size: 11px;
+  margin-top: 4px;
+}
+.budget-ledger li > span {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.budget-ledger li > small {
+  flex-basis: 100%;
+}
+.budget-ledger button {
+  margin-right: 8px;
+}

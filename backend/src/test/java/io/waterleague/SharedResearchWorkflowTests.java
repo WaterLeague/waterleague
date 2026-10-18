@@ -75,6 +75,7 @@ class SharedResearchWorkflowTests {
     db.update("DELETE FROM rate_limits");
     db.update("DELETE FROM shared_weekly_scores");
     db.update("DELETE FROM shared_physics_jobs");
+    db.update("DELETE FROM budget_ledger_entries");
     db.update("DELETE FROM shared_installations");
   }
 
