@@ -1,0 +1,53 @@
+{
+  "id": "EPA_CONNECTED_LID_DESIGNS_V1",
+  "evidence": "PUBLIC_REFERENCE_DESIGN_NOT_SITE_MEASURED",
+  "source": {
+    "title": "EPA SWMM Reference Manual Volume III, Chapter 6",
+    "url": "https://nepis.epa.gov/Exe/ZyPDF.cgi/P100P2NY.PDF?Dockey=P100P2NY.PDF",
+    "sha256": "e276e6be2f4bdd18d312535ff4f29fce85e5afa60ecdfea5b4992d2c336a1f57",
+    "year": 2016,
+    "printedPages": [127, 129, 130, 131, 132, 133, 134]
+  },
+  "bioretentionSoil": {
+    "source": "Table 6-3; engineered soil mixture estimated with SPAW, not field measurement",
+    "porosity": 0.52,
+    "fieldCapacity": 0.15,
+    "wiltingPoint": 0.08,
+    "conductivityMmH": 119.38,
+    "conductivitySlope": 39.3,
+    "suctionMm": 48.26
+  },
+  "profiles": {
+    "BIORETENTION": {
+      "swmmType": "BC",
+      "source": "Tables 6-2 and 6-3; section 6.5.8",
+      "ranges": {"surfaceDepthMm": [152.4, 304.8], "soilDepthMm": [609.6, 1219.2], "storageDepthMm": [152.4, 914.4], "storagePorosity": [0.2, 0.4], "vegetationFraction": [0, 0.2]}
+    },
+    "INFILTRATION_TRENCH": {
+      "swmmType": "IT",
+      "source": "Table 6-5; section 6.5.8",
+      "ranges": {"surfaceDepthMm": [0, 304.8], "storageDepthMm": [914.4, 3657.6], "storagePorosity": [0.2, 0.4]}
+    },
+    "VEGETATIVE_SWALE": {
+      "swmmType": "VS",
+      "source": "Table 6-7; area = length × (bottom width + 2 × depth × side slope)",
+      "ranges": {"surfaceDepthMm": [152.4, 609.6], "bottomWidthM": [0.6096, 2.4384], "sideSlope": [2.5, 4], "slopePercent": [0.5, 3], "roughness": [0.03, 0.2], "vegetationFraction": [0, 0.2]}
+    },
+    "RAINWATER_CISTERN": {
+      "swmmType": "RB",
+      "source": "Sections 6.5.5 and 6.5.8; equation 6-73",
+      "ranges": {},
+      "covered": true,
+      "reuseCredit": false
+    }
+  },
+  "limitations": [
+    "공개 문헌의 설계 범위이며 서울 현장 또는 특정 제품의 실측 제원이 아님",
+    "시설 위치·대체 면적·집수 연결·초기 포화도·배수구 규격·하부 침투율은 명시된 설계 입력",
+    "기존 집수구역 출구를 계승하며 새로운 무한 방류구를 생성하지 않음",
+    "SWMM LID 배수는 수신 관망 수두의 역압이나 지하수에 의한 침투 저하를 완전하게 연결하지 않음",
+    "덮개 이용조 면적의 직접 강우는 제외, 덮개에서 외부로 떨어지는 물의 별도 경로 미구현",
+    "이용조 방류는 관망 배수이며 수요·수질 근거 없는 재이용 점수 없음",
+    "공사비·입지·현장 연결 검증 전 신규 시설의 운영 설치 및 순위 미개방"
+  ]
+}

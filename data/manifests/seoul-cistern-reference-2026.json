@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "sourcePage": "https://news.seoul.go.kr/env/archives/567693",
+  "retrievedOn": "2026-10-18",
+  "classification": "PUBLIC_INSTALLATION_GUIDANCE_AND_PRODUCT_DIRECTORY",
+  "files": [
+    {
+      "file": "data/private/facility-reference-20261018/seoul-cistern-installation-2026.pdf",
+      "url": "https://news.seoul.go.kr/env/files/2026/03/69a7b9ae297697.19447392.pdf",
+      "bytes": 179342,
+      "sha256": "114bfcce7f2663ab4b584319a01ae7d27aa8ffeb15aaec9cefa6438406a03683"
+    },
+    {
+      "file": "data/private/facility-reference-20261018/seoul-cistern-products-2026.hwpx",
+      "url": "https://news.seoul.go.kr/env/files/2026/03/69a7b9cc3fa673.97635351.hwpx",
+      "bytes": 8118889,
+      "sha256": "44a56bb208ac28c7820a950263d7ac3e86792271e80ca962a53d083b27d60066"
+    }
+  ],
+  "notes": [
+    "서울시 안내 페이지 첨부 원본 보관. 단면·정격·단가 확인 전 운영 입력 미사용",
+    "보조금 상한은 공사 단가가 아니므로 설치비로 전용 금지",
+    "공개 업체 연락처는 원본에만 보관, 서비스 공개 파생물 미생성"
+  ],
+  "sourcePageLicence": "KOGL_TYPE_4"
+}

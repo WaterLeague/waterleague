@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "basis": "PUBLIC_REFERENCE_DESIGN_NOT_SITE_MEASURED",
+  "placements": [
+    {
+      "id": "Bioretention", "facilityType": "BIORETENTION", "subcatchmentId": "S1",
+      "areaM2": 100, "replacedImperviousM2": 100, "treatedImperviousM2": 1000,
+      "initialSaturationPercent": 0,
+      "parameters": {
+        "surfaceDepthMm": 152.4, "vegetationFraction": 0.1, "soilDepthMm": 609.6,
+        "storageDepthMm": 304.8, "storagePorosity": 0.3,
+        "nativeSeepageMmH": 4, "nativeSeepageBasis": "DESIGN_ASSUMPTION",
+        "drain": {"diameterMm": 25, "dischargeCoefficient": 0.6, "offsetMm": 152.4, "delayHours": 0}
+      }
+    },
+    {
+      "id": "Trench", "facilityType": "INFILTRATION_TRENCH", "subcatchmentId": "S1",
+      "areaM2": 500, "replacedImperviousM2": 500, "treatedImperviousM2": 5000,
+      "initialSaturationPercent": 0,
+      "parameters": {
+        "surfaceDepthMm": 152.4, "storageDepthMm": 914.4, "storagePorosity": 0.3,
+        "nativeSeepageMmH": 4, "nativeSeepageBasis": "DESIGN_ASSUMPTION", "drain": null
+      }
+    },
+    {
+      "id": "Swale", "facilityType": "VEGETATIVE_SWALE", "subcatchmentId": "S1",
+      "areaM2": 200, "replacedImperviousM2": 200, "treatedImperviousM2": 2000,
+      "initialSaturationPercent": 0,
+      "parameters": {
+        "surfaceDepthMm": 304.8, "vegetationFraction": 0.1, "bottomWidthM": 1.2192,
+        "sideSlope": 3, "slopePercent": 1, "roughness": 0.15
+      }
+    },
+    {
+      "id": "Cistern", "facilityType": "RAINWATER_CISTERN", "subcatchmentId": "S1",
+      "areaM2": 10, "replacedImperviousM2": 10, "treatedImperviousM2": 1000,
+      "initialSaturationPercent": 0,
+      "parameters": {
+        "storageDepthMm": 2000,
+        "drain": {"diameterMm": 25, "dischargeCoefficient": 0.6, "offsetMm": 152.4, "delayHours": 6}
+      }
+    }
+  ]
+}
