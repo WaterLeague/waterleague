@@ -1,0 +1,527 @@
+{
+  "schemaVersion": 1,
+  "rankingEligible": false,
+  "classification": "OBSERVED_GAUGE_ON_SYNTHETIC_NETWORK_AND_SURFACE",
+  "sourceManifestSha256": "d0b08d5919886b9762b071eac5d3272db211ed83806a2eb8a80dffbd43b6e3b5",
+  "boundary": {
+    "type": "TIME_SERIES_STAGE",
+    "unit": "m",
+    "interpolation": "LINEAR",
+    "maximumGapSeconds": 3600,
+    "momentum": "SWMM_DYNAMIC_WAVE",
+    "referenceStatus": "LOCAL_DIAGNOSTIC",
+    "verticalDatum": "WAMIS_GAUGE_1018662_DIAGNOSTIC",
+    "evidence": {
+      "sourceSha256": "957c875dfa28a9bf45f71008846258cd1992705fbc3fdff26ea44e2c7f0e3cf0",
+      "stationId": "1018662",
+      "reference": "STATION_GAUGE_NOT_ABSOLUTE_ELEVATION",
+      "limitation": "실제 관측의 시간 변화 입력 시험; 실제 지형과 절대 높이 결합 불가"
+    },
+    "samples": [
+      {
+        "timeUtc": "2022-08-08T09:00:00+00:00",
+        "stageM": 2.98
+      },
+      {
+        "timeUtc": "2022-08-08T10:00:00+00:00",
+        "stageM": 3.28
+      }
+    ]
+  },
+  "cases": [
+    {
+      "name": "network-01s",
+      "maximumStepSeconds": 0.1,
+      "status": "PASSED",
+      "final": {
+        "totals": {
+          "timeSeconds": 3600.0,
+          "initialStorageM3": 9.975623365092584,
+          "storageM3": 12.972117311312454,
+          "dryWeatherInflowM3": 0.0,
+          "runoffInflowM3": 0.0,
+          "groundwaterInflowM3": 0.0,
+          "rdiiInflowM3": 0.0,
+          "externalInflowM3": 3.084911900299512,
+          "outflowM3": 0.0,
+          "floodingM3": 0.0,
+          "evaporationM3": 0.0,
+          "seepageM3": 0.0,
+          "reactionLossM3": 0.0,
+          "balanceResidualM3": 0.0884179540796417
+        },
+        "nodes": {
+          "TANK": {
+            "type": 2,
+            "headM": 3.2796827640437947,
+            "depthM": 1.2796827640437949,
+            "storageM3": 12.795402724524957,
+            "lateralFlowM3s": 0.0,
+            "inflowM3s": 0.0008578270833356204,
+            "overflowM3s": 0.0,
+            "statisticFloodingM3": 0.0,
+            "statisticInflowIncludingInitialM3": 12.883820678604682,
+            "statisticOutflowM3": 0.0,
+            "floodingM3": 0.0,
+            "boundaryOutflowM3": 0.0,
+            "boundaryInflowM3": 0.0
+          },
+          "OUT": {
+            "type": 1,
+            "headM": 3.28,
+            "depthM": 1.28,
+            "storageM3": 0.0,
+            "lateralFlowM3s": 0.0,
+            "inflowM3s": 0.0008578270833356204,
+            "overflowM3s": 0.0,
+            "statisticFloodingM3": 0.0,
+            "statisticInflowIncludingInitialM3": 3.084911900299512,
+            "statisticOutflowM3": 3.084911900299512,
+            "floodingM3": 0.0,
+            "boundaryOutflowM3": 0.0,
+            "boundaryInflowM3": 3.0849119002994696
+          }
+        },
+        "links": {
+          "PIPE": {
+            "type": 0,
+            "flowM3s": -0.0008578270833356204,
+            "depthM": 0.15,
+            "setting": 1.0
+          }
+        }
+      },
+      "quality": {
+        "policyVersion": "network-continuity-convergence-v2",
+        "continuityLimitPercent": 1,
+        "routingBalance": {
+          "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+          "totalInM3": 13.060535265392096,
+          "totalOutIncludingStorageM3": 12.972117311312454,
+          "residualM3": 0.0884179540796417,
+          "continuityPercent": 0.6769856846061452,
+          "absoluteToleranceM3": 1e-08,
+          "allowedResidualM3": 0.13060535265392095
+        },
+        "allowedNonConvergedSteps": 0,
+        "failureReasons": [],
+        "status": "PASSED"
+      },
+      "resultSha256": "36a5ffbc963b605e0711f1739f0ab54cf8eacad699ddc55e5ca627d2c018ed69"
+    },
+    {
+      "name": "network-005s",
+      "maximumStepSeconds": 0.05,
+      "status": "PASSED",
+      "final": {
+        "totals": {
+          "timeSeconds": 3600.0,
+          "initialStorageM3": 9.975623365092584,
+          "storageM3": 12.97211731131327,
+          "dryWeatherInflowM3": 0.0,
+          "runoffInflowM3": 0.0,
+          "groundwaterInflowM3": 0.0,
+          "rdiiInflowM3": 0.0,
+          "externalInflowM3": 3.0849118977197434,
+          "outflowM3": 0.0,
+          "floodingM3": 0.0,
+          "evaporationM3": 0.0,
+          "seepageM3": 0.0,
+          "reactionLossM3": 0.0,
+          "balanceResidualM3": 0.08841795149905884
+        },
+        "nodes": {
+          "TANK": {
+            "type": 2,
+            "headM": 3.2796827640438764,
+            "depthM": 1.2796827640438766,
+            "storageM3": 12.795402724525772,
+            "lateralFlowM3s": 0.0,
+            "inflowM3s": 0.0008578270833611696,
+            "overflowM3s": 0.0,
+            "statisticFloodingM3": 0.0,
+            "statisticInflowIncludingInitialM3": 12.883820676024973,
+            "statisticOutflowM3": 0.0,
+            "floodingM3": 0.0,
+            "boundaryOutflowM3": 0.0,
+            "boundaryInflowM3": 0.0
+          },
+          "OUT": {
+            "type": 1,
+            "headM": 3.28,
+            "depthM": 1.28,
+            "storageM3": 0.0,
+            "lateralFlowM3s": 0.0,
+            "inflowM3s": 0.0008578270833611696,
+            "overflowM3s": 0.0,
+            "statisticFloodingM3": 0.0,
+            "statisticInflowIncludingInitialM3": 3.0849118977197434,
+            "statisticOutflowM3": 3.0849118977197434,
+            "floodingM3": 0.0,
+            "boundaryOutflowM3": 0.0,
+            "boundaryInflowM3": 3.084911897719766
+          }
+        },
+        "links": {
+          "PIPE": {
+            "type": 0,
+            "flowM3s": -0.0008578270833611696,
+            "depthM": 0.15,
+            "setting": 1.0
+          }
+        }
+      },
+      "quality": {
+        "policyVersion": "network-continuity-convergence-v2",
+        "continuityLimitPercent": 1,
+        "routingBalance": {
+          "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+          "totalInM3": 13.060535262812328,
+          "totalOutIncludingStorageM3": 12.97211731131327,
+          "residualM3": 0.08841795149905884,
+          "continuityPercent": 0.6769856649812359,
+          "absoluteToleranceM3": 1e-08,
+          "allowedResidualM3": 0.13060535262812328
+        },
+        "allowedNonConvergedSteps": 0,
+        "failureReasons": [],
+        "status": "PASSED"
+      },
+      "resultSha256": "dfc8d9e777f5e6d3c4424155c8e9eabb1c7524e15fbe9580b0757d1475985222"
+    },
+    {
+      "name": "network-replay-01s",
+      "maximumStepSeconds": 0.1,
+      "status": "PASSED",
+      "final": {
+        "totals": {
+          "timeSeconds": 3600.0,
+          "initialStorageM3": 9.975623365092584,
+          "storageM3": 12.972117311312454,
+          "dryWeatherInflowM3": 0.0,
+          "runoffInflowM3": 0.0,
+          "groundwaterInflowM3": 0.0,
+          "rdiiInflowM3": 0.0,
+          "externalInflowM3": 3.084911900299512,
+          "outflowM3": 0.0,
+          "floodingM3": 0.0,
+          "evaporationM3": 0.0,
+          "seepageM3": 0.0,
+          "reactionLossM3": 0.0,
+          "balanceResidualM3": 0.0884179540796417
+        },
+        "nodes": {
+          "TANK": {
+            "type": 2,
+            "headM": 3.2796827640437947,
+            "depthM": 1.2796827640437949,
+            "storageM3": 12.795402724524957,
+            "lateralFlowM3s": 0.0,
+            "inflowM3s": 0.0008578270833356204,
+            "overflowM3s": 0.0,
+            "statisticFloodingM3": 0.0,
+            "statisticInflowIncludingInitialM3": 12.883820678604682,
+            "statisticOutflowM3": 0.0,
+            "floodingM3": 0.0,
+            "boundaryOutflowM3": 0.0,
+            "boundaryInflowM3": 0.0
+          },
+          "OUT": {
+            "type": 1,
+            "headM": 3.28,
+            "depthM": 1.28,
+            "storageM3": 0.0,
+            "lateralFlowM3s": 0.0,
+            "inflowM3s": 0.0008578270833356204,
+            "overflowM3s": 0.0,
+            "statisticFloodingM3": 0.0,
+            "statisticInflowIncludingInitialM3": 3.084911900299512,
+            "statisticOutflowM3": 3.084911900299512,
+            "floodingM3": 0.0,
+            "boundaryOutflowM3": 0.0,
+            "boundaryInflowM3": 3.0849119002994696
+          }
+        },
+        "links": {
+          "PIPE": {
+            "type": 0,
+            "flowM3s": -0.0008578270833356204,
+            "depthM": 0.15,
+            "setting": 1.0
+          }
+        }
+      },
+      "quality": {
+        "policyVersion": "network-continuity-convergence-v2",
+        "continuityLimitPercent": 1,
+        "routingBalance": {
+          "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+          "totalInM3": 13.060535265392096,
+          "totalOutIncludingStorageM3": 12.972117311312454,
+          "residualM3": 0.0884179540796417,
+          "continuityPercent": 0.6769856846061452,
+          "absoluteToleranceM3": 1e-08,
+          "allowedResidualM3": 0.13060535265392095
+        },
+        "allowedNonConvergedSteps": 0,
+        "failureReasons": [],
+        "status": "PASSED"
+      },
+      "resultSha256": "36a5ffbc963b605e0711f1739f0ab54cf8eacad699ddc55e5ca627d2c018ed69"
+    },
+    {
+      "name": "network-fixed-01s",
+      "maximumStepSeconds": 0.1,
+      "status": "PASSED",
+      "final": {
+        "totals": {
+          "timeSeconds": 3600.0,
+          "initialStorageM3": 9.975623365092584,
+          "storageM3": 9.975623365092584,
+          "dryWeatherInflowM3": 0.0,
+          "runoffInflowM3": 0.0,
+          "groundwaterInflowM3": 0.0,
+          "rdiiInflowM3": 0.0,
+          "externalInflowM3": 0.0,
+          "outflowM3": 0.0,
+          "floodingM3": 0.0,
+          "evaporationM3": 0.0,
+          "seepageM3": 0.0,
+          "reactionLossM3": 0.0,
+          "balanceResidualM3": 0.0
+        },
+        "nodes": {
+          "TANK": {
+            "type": 2,
+            "headM": 2.98,
+            "depthM": 0.98,
+            "storageM3": 9.798908778305087,
+            "lateralFlowM3s": 0.0,
+            "inflowM3s": 0.0,
+            "overflowM3s": 0.0,
+            "statisticFloodingM3": 0.0,
+            "statisticInflowIncludingInitialM3": 9.798908778305085,
+            "statisticOutflowM3": 0.0,
+            "floodingM3": 0.0,
+            "boundaryOutflowM3": 0.0,
+            "boundaryInflowM3": 0.0
+          },
+          "OUT": {
+            "type": 1,
+            "headM": 2.98,
+            "depthM": 0.98,
+            "storageM3": 0.0,
+            "lateralFlowM3s": 0.0,
+            "inflowM3s": 0.0,
+            "overflowM3s": 0.0,
+            "statisticFloodingM3": 0.0,
+            "statisticInflowIncludingInitialM3": 0.0,
+            "statisticOutflowM3": 0.0,
+            "floodingM3": 0.0,
+            "boundaryOutflowM3": 0.0,
+            "boundaryInflowM3": 0.0
+          }
+        },
+        "links": {
+          "PIPE": {
+            "type": 0,
+            "flowM3s": 0.0,
+            "depthM": 0.15,
+            "setting": 1.0
+          }
+        }
+      },
+      "quality": {
+        "policyVersion": "network-continuity-convergence-v2",
+        "continuityLimitPercent": 1,
+        "routingBalance": {
+          "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+          "totalInM3": 9.975623365092584,
+          "totalOutIncludingStorageM3": 9.975623365092584,
+          "residualM3": 0.0,
+          "continuityPercent": 0.0,
+          "absoluteToleranceM3": 1e-08,
+          "allowedResidualM3": 0.09975623365092584
+        },
+        "allowedNonConvergedSteps": 0,
+        "failureReasons": [],
+        "status": "PASSED"
+      },
+      "resultSha256": "4ddb87f656d7b89d01c4f0fc364b909da481852be6b119a10417e3f4eeb763ab"
+    },
+    {
+      "name": "coupled-500ms",
+      "maximumExchangeMilliseconds": 500,
+      "status": "PASSED",
+      "balance": {
+        "networkExternalInflowM3": 8.572726838465849,
+        "networkExternalOutflowAndLossM3": -1.616484723854228e-13,
+        "surfaceExternalNetInflowM3": 1.1500000000001798,
+        "networkStorageM3": 12.089077483906683,
+        "surfaceStorageM3": 7.436154711131637,
+        "networkToSurfaceM3": 6.677052604675119,
+        "surfaceToNetworkM3": 0.39089789362379024,
+        "exchangeCancellationResidualM3": 0.0,
+        "balanceResidualM3": -0.0035965782670430713
+      },
+      "networkQuality": {
+        "policyVersion": "network-continuity-convergence-v2",
+        "continuityLimitPercent": 1,
+        "routingBalance": {
+          "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+          "totalInM3": 18.762533510394725,
+          "totalOutIncludingStorageM3": 18.76613008858164,
+          "residualM3": -0.003596578186915167,
+          "continuityPercent": -0.019168936779900267,
+          "absoluteToleranceM3": 1e-08,
+          "allowedResidualM3": 0.18762533510394724
+        },
+        "allowedNonConvergedSteps": 0,
+        "failureReasons": [],
+        "status": "PASSED"
+      },
+      "surfaceQuality": {
+        "policyVersion": "SURFACE_NATIVE_BALANCE_v1",
+        "status": "PASSED",
+        "failureCode": null,
+        "nativeSteps": 36000,
+        "lastInternalTimeSeconds": 3599.9999999999995,
+        "minimumStepSeconds": 0.09999999999990905,
+        "maximumStepSeconds": 0.1,
+        "maximumAbsoluteResidualM3": 8.049472199900265e-11,
+        "maximumRelativeResidualPercent": 1.9842767375440087e-08,
+        "last": {
+          "timeSeconds": 3600.0,
+          "storageM3": 7.436154711131637,
+          "boundaryNetInflowM3": 1.009171511254997e-32,
+          "sourceNetInflowM3": 7.4361547110515085,
+          "balanceResidualM3": -8.01287924900862e-11,
+          "relativeResidualPercent": 1.0775568234229512e-09,
+          "minimumDepthM": 0.07436154711131637
+        },
+        "relativeTolerancePercent": 1.0,
+        "absoluteToleranceM3": 1e-08,
+        "sourceSha256": "cd0494c23e2eaa2e3f7cf7feac6484937cd842140e9ee1ddaf003ac35c9281f1"
+      },
+      "smallestExchangeMilliseconds": 500,
+      "resultSha256": "176ce72efa662a5ab41f555c9c027adcf421b2aed2cddc334c0f42da6dee5fee"
+    },
+    {
+      "name": "coupled-250ms",
+      "maximumExchangeMilliseconds": 250,
+      "status": "PASSED",
+      "balance": {
+        "networkExternalInflowM3": 8.57245573753257,
+        "networkExternalOutflowAndLossM3": 6.306066779870889e-14,
+        "surfaceExternalNetInflowM3": 1.1500000000005954,
+        "networkStorageM3": 12.0891058521408,
+        "surfaceStorageM3": 7.435782549064651,
+        "networkToSurfaceM3": 6.676682334035275,
+        "surfaceToNetworkM3": 0.3908997849744443,
+        "exchangeCancellationResidualM3": 0.0,
+        "balanceResidualM3": -0.0035238853672652226
+      },
+      "networkQuality": {
+        "policyVersion": "network-continuity-convergence-v2",
+        "continuityLimitPercent": 1,
+        "routingBalance": {
+          "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+          "totalInM3": 18.7622643008121,
+          "totalOutIncludingStorageM3": 18.765788186176138,
+          "residualM3": -0.0035238853640393586,
+          "continuityPercent": -0.018781770193306742,
+          "absoluteToleranceM3": 1e-08,
+          "allowedResidualM3": 0.18762264300812098
+        },
+        "allowedNonConvergedSteps": 0,
+        "failureReasons": [],
+        "status": "PASSED"
+      },
+      "surfaceQuality": {
+        "policyVersion": "SURFACE_NATIVE_BALANCE_v1",
+        "status": "PASSED",
+        "failureCode": null,
+        "nativeSteps": 43200,
+        "lastInternalTimeSeconds": 3600.0,
+        "minimumStepSeconds": 0.049999999999954525,
+        "maximumStepSeconds": 0.1,
+        "maximumAbsoluteResidualM3": 2.1607549083313415e-11,
+        "maximumRelativeResidualPercent": 3.174137745616084e-08,
+        "last": {
+          "timeSeconds": 3600.0,
+          "storageM3": 7.435782549064651,
+          "boundaryNetInflowM3": 2.9213700672593917e-33,
+          "sourceNetInflowM3": 7.435782549061425,
+          "balanceResidualM3": -3.225864020350855e-12,
+          "relativeResidualPercent": 4.338297951917162e-11,
+          "minimumDepthM": 0.07435782549064651
+        },
+        "relativeTolerancePercent": 1.0,
+        "absoluteToleranceM3": 1e-08,
+        "sourceSha256": "cd0494c23e2eaa2e3f7cf7feac6484937cd842140e9ee1ddaf003ac35c9281f1"
+      },
+      "smallestExchangeMilliseconds": 250,
+      "resultSha256": "845f1542d84c25c5b918c3dc4d58024d515375a6ea01ea5f02036a8fff1117c5"
+    }
+  ],
+  "sourceCode": {
+    "scripts/verify_observed_network_stage.py": "e68a111fc75e9b78a54f9a7ab08e023ac52567f1cdb6e4dac244f681a871db3f",
+    "scripts/verify_observed_surface_rainfall.py": "22024ebf117bd4893cb5eba09f8581200ccb2751ac9927315c3e70aee69ec4c1",
+    "simulation/uv.lock": "d2ffd1c9a11f47d3f3e4b9a39762c7ceff9b424171bc913c98672f759036e09e",
+    "simulation/waterleague_sim/forcing/__init__.py": "8eeb67181b650bc778bd2d3910b0e4a59bf1198df4063c22f2d4cc89d259789f",
+    "simulation/waterleague_sim/forcing/network_stage.py": "8a4762cd9c5f92ef46c8dae43dfbb4444b884f617830c0fbca5f99b9ffa95e44",
+    "simulation/waterleague_sim/forcing/observed_rainfall.py": "d4dd49775bbf8719b50e43fe69bf7b7d76988fefd2ec60eedb4099b7f540a818",
+    "simulation/waterleague_sim/forcing/stage.py": "b154811523460945456a9a3afc0312a7b0ab7d55c0e71f468eba3075592ba0cf",
+    "simulation/waterleague_sim/forcing/surface_run.py": "d0e0cebf899ad20dce66b637fdb4da7ff8ceee59ba2fa44a8dec6f885a1a2ae3",
+    "simulation/waterleague_sim/ingestion/antecedent.py": "747d04bf96469d48f80e831ebc7aad20f14b2834c79aa30c2c42c16cb27feb1d",
+    "simulation/waterleague_sim/ingestion/daily_evaporation.py": "29de21fe5ccd574300f4631dc41b338c343eacedd9273ce555e3d32fab6dad9c",
+    "simulation/waterleague_sim/ingestion/evaporation.py": "c61afcbbcf3825eefade654c2bcbbedb7102c67b0ce59057528d63e8667c6c22",
+    "simulation/waterleague_sim/ingestion/hourly_rainfall.py": "6f22ee0c0fb0304e24f3751aae1f80306f95eb5b645385e5d434c9dd210794af",
+    "simulation/waterleague_sim/ingestion/kma.py": "908c094b6c1149cf725a4926646628255238fcdb2aecaa62ab7da769bce9d33f",
+    "simulation/waterleague_sim/ingestion/live.py": "14ce246909617af810e5712f80ae621da45872eb6223d856067002d85f3e5f60",
+    "simulation/waterleague_sim/ingestion/rainfall.py": "7fb2c1b8d3b9e5be16743ceb1bc5934ca83ac44520c3b477625f2b13eb175f49",
+    "simulation/waterleague_sim/ingestion/seoul.py": "429231d0d30e8ab45c301ecd3f7b6da60d46ddf9d53c20d362193998062d6130",
+    "simulation/waterleague_sim/ingestion/source_archive.py": "2ca647f23b014fe3cb1bf6889bd263ec7a1beb7160e5c84353c244f4c67e8e0c",
+    "simulation/waterleague_sim/ingestion/wamis_stage.py": "1049aaa8925e7ceb88d91f63838a96aa4ee10198f3709977db389be0e149fb65",
+    "simulation/waterleague_sim/engine/continuous.py": "3a4ec3679d7fe3c2ed0a39a2cf3528fb75e76b688754653e3c3431ca7bd97f4e",
+    "simulation/waterleague_sim/engine/coupled_flood.py": "d55941d340b6095364c81719b195f8144de6f2061d13dbf324522cad048c65eb",
+    "simulation/waterleague_sim/engine/evapotranspiration.py": "4de54c4eea26ba0c48dd4ceb4403d699806d9b5a3531c5b2d3528582da506b69",
+    "simulation/waterleague_sim/engine/facilities.py": "1ac27875c4a3cce79f89584da4a65ca408fe7a03daaae9f6b07ce1925f53cefa",
+    "simulation/waterleague_sim/engine/flood_errors.py": "59e70440df55df54e83aa7a2787f12ef14b2541ac5c05f67a10e9addbe229155",
+    "simulation/waterleague_sim/engine/flood_metrics.py": "30f830d17bcd174129dcdb79e3b85f684d08dee5337b8e7a964f340902da6f3c",
+    "simulation/waterleague_sim/engine/flood_process.py": "2145dd557e5a3b44328b153925974af0e2f257a3409015b520ee57fe50e13cd9",
+    "simulation/waterleague_sim/engine/initialization.py": "ca770523b30f41407ef60cd48f28fcd16b303e5f347e4b8ee57b504059eb48c6",
+    "simulation/waterleague_sim/engine/initialization_sensitivity.py": "13c4da988b789d06df63b78361a15d0261056a96bfe95206a25a07fef55522fa",
+    "simulation/waterleague_sim/engine/network.py": "c624d293970e0602b4f0f39f4ff0b257c6638dd66ab82112a6ae30cff8866acd",
+    "simulation/waterleague_sim/engine/network_exchange.py": "3ad40f8cd2d706f2a3c59f2efef29ad9f8833ab4f9673c4f87ad3e68642d365a",
+    "simulation/waterleague_sim/engine/network_metrics.py": "f0219c6affedd4b95b049815c4242b7fe8f56abe917b97f8c2d55ca2c65802df",
+    "simulation/waterleague_sim/engine/network_quality.py": "c78323b383d37be56c34b8cc2d5084e4a92e3de6bbc2a818d914acbabf3eb930",
+    "simulation/waterleague_sim/engine/surface.py": "db8337e481b85be81d9f0b18b75fde9c11c15bdda30e5d297d7b025e6e316393",
+    "simulation/waterleague_sim/engine/surface_exchange.py": "f7ec719b51fe9ae64e49faa855253166e01324603eb411c231a2c9c4c87ea66d",
+    "simulation/waterleague_sim/engine/surface_quality.py": "cd0494c23e2eaa2e3f7cf7feac6484937cd842140e9ee1ddaf003ac35c9281f1",
+    "simulation/waterleague_sim/engine/swmm.py": "1754562f19f0860daa127f34e35c6336e2884d5779b9cd531d1811088f702823",
+    "simulation/waterleague_sim/reference/__init__.py": "b6a5ae176a277f234a9121e41bd9290664df5c62bcac189c83ffda181f60d850",
+    "simulation/waterleague_sim/reference/epa.py": "cbc737e5867eb72af81fe76cc527ed48e8102bbd631202b79fc24bf7d96d5245",
+    "simulation/waterleague_sim/reference/flood_cases.py": "de7fd2be4e51317d0fac94d3b2bceb59cd940fb4469210947eeb94019ef2563b"
+  },
+  "limitations": [
+    "실제 관측 시계열의 합성 관망·지표 연결 검사; 서울 현장 제원 아님",
+    "눈금 수위의 상대 기준 사용; 과거 영점표고·실제 서울 지형 결합 없음",
+    "초기 물 상태와 시설 제원은 진단 조건; 선행 관측으로 복원된 현장 상태 아님"
+  ],
+  "networkComparison": {
+    "exactReplay": true,
+    "tankHeadDifferenceM": -8.171241461241152e-14,
+    "storageDifferenceM3": -8.15347789284715e-13,
+    "variableMinusFixedStorageM3": 2.9964939462198696
+  },
+  "coupledComparison": {
+    "surfaceStorageM3": 0.00037216206698609255,
+    "networkStorageM3": -2.8368234117337465e-05,
+    "networkToSurfaceM3": 0.0003702706398440725,
+    "surfaceToNetworkM3": -1.8913506540374492e-06
+  },
+  "artifactDirectory": "data/runs/observed-network-stage-20261018-v1",
+  "artifactManifestSha256": "2929b6cfea5f636e6ffeb83fc2ec83a47a483d744da241278e569870ac10fee8",
+  "artifactFileCount": 117
+}

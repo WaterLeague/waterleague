@@ -33,11 +33,13 @@ def clamp_clock_roundoff(value, lower, upper, code):
 
 
 class StageSeries:
-    def __init__(self, specification, model):
+    def __init__(self, specification, model, *, momentum_policy='ZERO_RESERVOIR_ASSUMPTION'):
+        require(momentum_policy in ('ZERO_RESERVOIR_ASSUMPTION', 'SWMM_DYNAMIC_WAVE'),
+                'STAGE_MOMENTUM_POLICY_INVALID')
         require(specification.get('type') == 'TIME_SERIES_STAGE'
                 and specification.get('unit') == 'm'
                 and specification.get('interpolation') == 'LINEAR'
-                and specification.get('momentum') == 'ZERO_RESERVOIR_ASSUMPTION'
+                and specification.get('momentum') == momentum_policy
                 and specification.get('evidence'), 'STAGE_SPECIFICATION_INVALID')
         require(specification.get('verticalDatum') == model.get('verticalDatum')
                 and bool(model.get('verticalDatum')), 'STAGE_DATUM_MISMATCH')
@@ -80,7 +82,7 @@ class StageSeries:
             'sampleCount': len(samples), 'maximumGapSeconds': maximum_gap,
             'interpolation': 'LINEAR', 'extrapolation': 'FORBIDDEN',
             'endpointClockRoundoffUlp': 8,
-            'momentum': 'ZERO_RESERVOIR_ASSUMPTION', 'evidence': specification['evidence'],
+            'momentum': momentum_policy, 'evidence': specification['evidence'],
             'rankingEligible': False}
         if reference == 'VERIFIED_ABSOLUTE':
             self.summary['datumEvidence'] = specification['datumEvidence']
@@ -104,6 +106,23 @@ def compile_stage_boundaries(model):
             if spec.get('type') == 'TIME_SERIES_STAGE'}
 
 
+def require_network_start(network, start):
+    options, section = {}, ''
+    for line in network['inputText'].splitlines():
+        fields = line.split(';', 1)[0].split()
+        if fields and fields[0].startswith('['):
+            section = fields[0].upper()
+        elif len(fields) == 2 and section == '[OPTIONS]':
+            options[fields[0].upper()] = fields[1]
+    try:
+        network_start = datetime.strptime(options['START_DATE'] + ' ' + options['START_TIME'],
+                                           '%m/%d/%Y %H:%M:%S').replace(tzinfo=timezone.utc)
+    except (KeyError, ValueError):
+        raise FloodModelError('STAGE_NETWORK_CLOCK_INVALID') from None
+    require(network.get('timeZone') == 'UTC' and network_start == start,
+            'STAGE_NETWORK_CLOCK_MISMATCH')
+
+
 def require_stage_clock(surface, *, duration, rainfall=None, network=None):
     series = compile_stage_boundaries(surface)
     if not series:
@@ -115,20 +134,7 @@ def require_stage_clock(surface, *, duration, rainfall=None, network=None):
                 (utc(rainfall.get('endUtc')) - start).total_seconds() == duration,
                 'STAGE_RAIN_CLOCK_MISMATCH')
     if network is not None:
-        options, section = {}, ''
-        for line in network['inputText'].splitlines():
-            fields = line.split(';', 1)[0].split()
-            if fields and fields[0].startswith('['):
-                section = fields[0].upper()
-            elif len(fields) == 2 and section == '[OPTIONS]':
-                options[fields[0].upper()] = fields[1]
-        try:
-            network_start = datetime.strptime(options['START_DATE'] + ' ' + options['START_TIME'],
-                                               '%m/%d/%Y %H:%M:%S').replace(tzinfo=timezone.utc)
-        except (KeyError, ValueError):
-            raise FloodModelError('STAGE_NETWORK_CLOCK_INVALID') from None
-        require(network.get('timeZone') == 'UTC' and network_start == start,
-                'STAGE_NETWORK_CLOCK_MISMATCH')
+        require_network_start(network, start)
     return series
 
 

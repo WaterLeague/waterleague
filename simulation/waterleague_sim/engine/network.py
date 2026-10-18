@@ -1,5 +1,6 @@
 """고정 EPA DYNWAVE의 관망 상태·경계수위·누적 수지 어댑터."""
 import ctypes as C
+from copy import deepcopy
 from datetime import datetime
 import hashlib
 import json
@@ -12,6 +13,7 @@ import threading
 from waterleague_sim.engine.flood_errors import require
 from waterleague_sim.engine.swmm import ROOT, REVISION
 from waterleague_sim.engine.network_quality import configuration_state, convergence_state, routing_balance, assess
+from waterleague_sim.forcing.network_stage import prepare_network_stage
 
 FT3_TO_M3 = 0.3048 ** 3
 _LOCK = threading.Lock()
@@ -49,6 +51,14 @@ class NetworkSession:
     """외부 HTTP 입력을 받지 않는 계산 작업용 세션. 프로세스당 관망 하나."""
 
     def __init__(self, input_text, directory, *, evaluation_seconds=None):
+        self.stage_input = None
+        self.original_model = deepcopy(input_text) if isinstance(input_text, dict) else None
+        if self.original_model is not None:
+            prepared = prepare_network_stage(self.original_model, evaluation_seconds=evaluation_seconds)
+            input_text = prepared.text
+            if prepared.series:
+                self.stage_input = prepared
+                evaluation_seconds = self.original_model['durationSeconds']
         require(isinstance(input_text, str) and 0 < len(input_text.encode()) <= 2_000_000,
                 'NETWORK_INPUT_INVALID')
         # 현재 어댑터는 보존된 단일 INP만 허용하며 외부 파일 참조를 열지 않는다.
@@ -86,6 +96,9 @@ class NetworkSession:
 
     def __enter__(self):
         self.engine = self.engine_identity()
+        if self.stage_input is not None:
+            self.engine['networkStageAdapterSha256'] = self.stage_input.summary['adapterSha256']
+            self.engine['stageAdapterSha256'] = self.stage_input.summary['stageAdapterSha256']
         require(_LOCK.acquire(blocking=False), 'NETWORK_SESSION_ALREADY_OPEN')
         self.locked = True
         try:
@@ -95,6 +108,12 @@ class NetworkSession:
             self.directory.mkdir(parents=True)
             self.input_path = self.directory / 'network.inp'
             self.input_path.write_text(self.input_text)
+            if self.stage_input is not None:
+                (self.directory / 'network-original.inp').write_text(self.original_model['inputText'])
+                (self.directory / 'network-input.json').write_text(json.dumps(self.original_model,
+                    ensure_ascii=False, allow_nan=False, indent=2) + '\n')
+                (self.directory / 'network-stage-boundaries.json').write_text(json.dumps(
+                    self.stage_input.summary, ensure_ascii=False, allow_nan=False, indent=2) + '\n')
             self.lib = C.CDLL(str(self.engine_path()))
             self.lib.swmm_open.argtypes = [C.c_char_p] * 3
             self.lib.swmm_getValue.argtypes = [C.c_int, C.c_int]
@@ -218,6 +237,8 @@ class NetworkSession:
 
     def set_outfall_head(self, node, head_m):
         require(self.started and node in self.nodes, 'NETWORK_NODE_INVALID')
+        require(self.stage_input is None or node.upper() not in
+                {key.upper() for key in self.stage_input.series}, 'NETWORK_STAGE_OVERRIDE_REJECTED')
         require(type(head_m) in (int, float) and math.isfinite(head_m), 'NETWORK_HEAD_INVALID')
         require(self.lib.swmm_getValue(300, self.nodes[node]) == 1, 'NETWORK_OUTFALL_REQUIRED')
         self.lib.swmm_setValue(304, self.nodes[node], head_m / self.length_scale)
@@ -269,6 +290,8 @@ class NetworkSession:
                        'convergence': convergence, 'numericalQuality': quality,
                        'numericalConfiguration': self.configuration,
                        'numericalStatus': quality['status']}
+        if self.stage_input is not None:
+            self.result['stageBoundaries'] = self.stage_input.summary
         # swmm_close가 보고서 종료 내용을 기록하므로 파일을 닫은 뒤 해시를 확정한다.
         self.close()
         self.result['files'] = {p.name: sha256(p) for p in sorted(self.directory.iterdir()) if p.is_file()}

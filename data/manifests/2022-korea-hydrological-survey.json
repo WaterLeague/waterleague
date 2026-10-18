@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "title": "2022 한국수문조사연보",
+  "publisher": "환경부",
+  "sourceHost": "영산강홍수통제소",
+  "sourceUrl": "https://www.yeongsanriver.go.kr/_KOR/file_form/sub0205/2022_Hydrological_survey.pdf",
+  "retrievedAt": "2026-10-18T00:18:22.392105+00:00",
+  "pageCount": 390,
+  "reportingYear": 2022,
+  "registrationNumber": "11-1480964-000020-10",
+  "stationEvidence": {
+    "stationId": "1018662",
+    "name": "서울시(청담대교)",
+    "pdfPages": [
+      138,
+      162
+    ],
+    "printedPages": [
+      132,
+      156
+    ],
+    "rowSerial": 121,
+    "gaugeZeroElevationM": 1.747,
+    "benchmarkElevationM": 23.664,
+    "unit": "EL.m",
+    "tidalInfluence": true,
+    "datumValueVerifiedInAnnualInventory": true,
+    "withinYearEffectiveDatesExplicit": false,
+    "namedVerticalDatumVerified": false,
+    "compatibleTerrainDatumVerified": false
+  },
+  "limitations": [
+    "2022 연보의 보고 연도와 행 근거이며 연중 변동 유효일 전체 이력은 아님",
+    "EL.m 기준과 보관된 2025 DEM의 기준 일치가 확인되지 않아 결합 표고로 자동 변환하지 않음",
+    "연보 표고는 WAMIS 실시간 원 수위의 검보정 완료를 뜻하지 않음"
+  ],
+  "files": {
+    "data/raw/2022-korea-hydrological-survey.pdf": "3ffbf3ea79077f73da16c5f81cd07593c910f5efe4525208b0899d839dc2269b",
+    "data/raw/2022-korea-hydrological-survey-stage-extracts.json": "6c7fd5589bbc3ac015cb37c9f174c1120de4328e0fb0a45a473e74f724e46176"
+  }
+}

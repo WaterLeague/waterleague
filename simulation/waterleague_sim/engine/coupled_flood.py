@@ -10,6 +10,7 @@ from waterleague_sim.engine.flood_process import EngineProcess
 from waterleague_sim.engine.flood_metrics import specification_hash, validate_metrics
 from waterleague_sim.forcing.observed_rainfall import compile_rainfall, require_network_clock
 from waterleague_sim.forcing.stage import require_stage_clock
+from waterleague_sim.forcing.network_stage import prepare_network_stage
 
 
 def _write(path, value):
@@ -93,6 +94,8 @@ def run_coupled(model, directory):
     _validate(model)
     stages = require_stage_clock(model['surface'], duration=model['durationSeconds'],
                                  rainfall=model.get('observedRainfall'), network=model['network'])
+    network_stages = prepare_network_stage(model['network'] | {'ports': model['ports']},
+                                           evaluation_seconds=model['durationSeconds'])
     observed = None
     if model.get('observedRainfall') is not None:
         require(not model.get('surfaceRainfall') and model['surface'].get('rainfallStationIds') is None,
@@ -123,7 +126,8 @@ def run_coupled(model, directory):
     if observed is not None:
         for row in observed.events:
             events.setdefault(row['timeMilliseconds'], []).append(('observedRainfall', row))
-    stage_times = {round(t * 1000) for series in stages.values() for t in series.knots}
+    stage_times = {round(t * 1000) for series in (*stages.values(), *network_stages.series.values())
+                   for t in series.knots}
     event_times = sorted(set(events) | stage_times | {duration})
     clock, nstate, state = 0, None, None
     try:

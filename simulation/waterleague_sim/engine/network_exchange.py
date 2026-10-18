@@ -33,8 +33,8 @@ class ExchangeNetworkSession(network.NetworkSession):
     engine_identity = staticmethod(identity)
 
     def __init__(self, model, directory, *, evaluation_seconds=None):
-        self.model = model
-        super().__init__(model['inputText'], directory, evaluation_seconds=evaluation_seconds)
+        super().__init__(model, directory, evaluation_seconds=evaluation_seconds)
+        self.model = self.original_model
 
     def __enter__(self):
         super().__enter__()
