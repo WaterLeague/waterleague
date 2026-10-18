@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "classification": "DEM_DERIVED_DRAINAGE_SCREENING_NOT_HYDRAULIC_BOUNDARY",
+  "rankingEligible": false,
+  "sourceRasterSha256": "70f03190643ea70276d70a2e869397c199dfb9370caf835c8806a75f75abd522",
+  "sourceGridSha256": "a3d4bcebcb510dc042b680d291d4a442ebf53f34ed49d7287c902b4ff4f001aa",
+  "method": "UNCONDITIONED_STRICT_DESCENT_D8_V1",
+  "sourceReference": "https://doc.arcgis.com/en/arcgis-online/analyze/how-flow-direction-works.htm",
+  "summary": {
+    "validCells": 79380,
+    "noDataCells": 0,
+    "validAreaM2": 642978000.0,
+    "statusCounts": {
+      "DEPRESSION_UNRESOLVED": 1868,
+      "STRICT_DESCENT": 76382,
+      "TILE_EDGE_UNRESOLVED": 1130
+    },
+    "terminalContributingCells": 79380,
+    "terminalCount": 2998,
+    "originalElevationsChanged": false
+  },
+  "referenceWindow": {
+    "sourceGridSha256": "a3d4bcebcb510dc042b680d291d4a442ebf53f34ed49d7287c902b4ff4f001aa",
+    "analysisSha256": "7c26bca93e9336251438f06525e359440d9c225d44eab884c82644832481c0ca",
+    "sourcePixelWindow": [
+      48,
+      247,
+      13,
+      13
+    ],
+    "rasterCells": 169,
+    "rasterFootprintAreaM2": 1368900.0,
+    "areaConvention": "RASTER_CELL_FOOTPRINT_NOT_CENTER_TO_CENTER_TRIANGLE_MESH",
+    "outsideContributingAreaM2": 234900.0,
+    "unresolvedWindowCellCounts": {
+      "DEPRESSION_UNRESOLVED": 12
+    },
+    "adjacentUnresolvedCellCounts": {
+      "DEPRESSION_UNRESOLVED": 19
+    },
+    "completeWatershedVerified": false,
+    "hydraulicBoundaryAdmissible": false
+  },
+  "incomingLinkCount": 11,
+  "outgoingLinkCount": 17,
+  "outsideContributingCellCount": 29,
+  "exactReplay": true,
+  "originalWindowElevationsExact": true,
+  "limitations": [
+    "8이웃의 원 고도 하향 방향이며 2D 운동량·수심·역류 계산 아님",
+    "함몰 채움·암거 관통·평탄부 기울기·임의 경사 동률 해소 없음",
+    "DEM 타일 외곽·결측 이웃·함몰·평탄부·동률에서 경로 중지; 실제 배수구로 취급하지 않음",
+    "원 DEM 해상도·수직 단위 근거의 한계 유지; 도시 배수관·건물·도로 턱 미반영",
+    "기여 면적은 미해결 경로를 제외한 이 알고리즘의 면적이며 완전한 실제 집수면적 아님",
+    "이 경계를 수리 모형의 벽·자유 방류 경계로 자동 적용하지 않음"
+  ],
+  "archive": {
+    "directory": "data/runs/dem-drainage-20261018-v1",
+    "manifestSha256": "c9c48e6a50858d7ce30731d61b1b08cc8adbc96499394322073ecaf196c8c7a9",
+    "files": 25
+  },
+  "verification": {
+    "analyticalTests": 4,
+    "archivedSourceExactReplay": true,
+    "originalRasterUnchanged": true,
+    "publicGridCells": 79380,
+    "existingGameModelChanged": false
+  }
+}
