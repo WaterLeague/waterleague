@@ -57,6 +57,7 @@ public class SecurityConfiguration {
                         "/api/v1/budget",
                         "/api/v1/facilities/epa-designs-v1",
                         "/api/v1/facilities/epa-designs-v2",
+                        "/api/v1/facilities/epa-designs-v3",
                         "/api/v1/infrastructure/seoul-public-20261018-v2",
                         "/api/v1/infrastructure/equipment-history-20261018-v1",
                         "/api/v1/flood-traces/seoul-flood-traces-20261018-v1/**",

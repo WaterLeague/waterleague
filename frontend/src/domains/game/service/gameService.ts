@@ -25,6 +25,13 @@ export const facilities: Record<
     description: '지붕에서 빗물 저장과 방류 지연. 구조 하중·방수 확인 필요.',
     color: '#b3a464',
   },
+  VEGETATIVE_SWALE: {
+    name: '식생수로',
+    short: '수로',
+    intro: '식생을 심은 얕은 수로에서 빗물을 흘리고 침투시키는 시설.',
+    description: '폭 2m 직선 수로 설계. 공개 토성·지역 경사 후보에서 자체 강우만 처리.',
+    color: '#68966b',
+  },
   BIORETENTION: {
     name: '생물저류시설',
     short: '생물저류',

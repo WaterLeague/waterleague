@@ -24,7 +24,15 @@ export const leagueDto = z.object({
     currency: z.literal('KRW'),
     budget: z.number().int().positive().max(300000000),
     allowedTypes: z
-      .array(z.enum(['RAIN_GARDEN', 'PERMEABLE_PAVEMENT', 'GREEN_ROOF', 'BIORETENTION']))
+      .array(
+        z.enum([
+          'RAIN_GARDEN',
+          'PERMEABLE_PAVEMENT',
+          'GREEN_ROOF',
+          'BIORETENTION',
+          'VEGETATIVE_SWALE',
+        ])
+      )
       .min(1)
       .max(3),
     submissionLimit: z.number().int().min(1).max(100),

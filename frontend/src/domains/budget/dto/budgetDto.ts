@@ -1,5 +1,11 @@
 import { z } from 'zod';
-const facilityType = z.enum(['RAIN_GARDEN', 'PERMEABLE_PAVEMENT', 'GREEN_ROOF', 'BIORETENTION']);
+const facilityType = z.enum([
+  'RAIN_GARDEN',
+  'PERMEABLE_PAVEMENT',
+  'GREEN_ROOF',
+  'BIORETENTION',
+  'VEGETATIVE_SWALE',
+]);
 const amount = z.number().finite().nonnegative();
 export const budgetAccountingDto = z.object({
   version: z.string(),

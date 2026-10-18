@@ -1,3 +1,4 @@
+import { placementAreaLimit } from '../../installation/service/placementAreaLimit';
 import { unitCost } from '../../game/service/gameService';
 import { playbackSecond, rainfallFrame } from '../service/playbackService';
 import { useEffect, useRef, useState } from 'react';
@@ -160,7 +161,7 @@ export function useHistorical(
       !site.allowedTypes.includes(type) ||
       !Number.isFinite(area) ||
       area <= 0 ||
-      area > site.maxAreaM2 ||
+      area > placementAreaLimit(site, type) ||
       area * unitCost(site.unitCosts, type) > remaining ||
       area * unitCost(site.unitCosts, type) >
         (accounting?.facilities.find((f) => f.facilityType === type)?.availableKrw ?? 0) ||

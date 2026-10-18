@@ -12,6 +12,14 @@ public class FacilityService {
     this.repository = repository;
   }
 
+  public JsonNode latest() {
+    return repository.latest();
+  }
+
+  public String latestDigest() {
+    return FacilityRepository.LATEST_SHA256;
+  }
+
   public String digest(boolean previous) {
     return previous ? FacilityRepository.LEGACY_SHA256 : FacilityRepository.SHA256;
   }

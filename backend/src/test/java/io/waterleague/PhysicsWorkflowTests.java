@@ -126,6 +126,9 @@ class PhysicsWorkflowTests {
     assertThat(get("/api/v1/facilities/epa-designs-v2").body())
         .contains("EPA_LID_PUBLIC_DESIGNS_V2", "EPA_BC_610_305_UNDRAINED_V1");
     assertThat(get("/api/v1/facilities/epa-designs-v1").body()).doesNotContain("BIORETENTION");
+    assertThat(get("/api/v1/facilities/epa-designs-v2").body()).doesNotContain("VEGETATIVE_SWALE");
+    assertThat(get("/api/v1/facilities/epa-designs-v3").body())
+        .contains("EPA_VS_250_2000_V1", "VEGETATIVE_SWALE");
     assertThat(get("/api/v1/installations/sites/2410520/G1").body())
         .contains(
             "OBSERVED_7_DAY_CONTINUOUS_SPINUP_V1",

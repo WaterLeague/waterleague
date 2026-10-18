@@ -1,3 +1,4 @@
+import { placementAreaLimit } from '../../installation/service/placementAreaLimit';
 import type { SharedSite } from '../entity/installation';
 import type { FacilityType } from '../../game/entity/game';
 import { won } from '../../game/service/gameService';
@@ -23,7 +24,10 @@ export function CostEstimate({
   const affordable =
     Math.max(
       0,
-      Math.min(Math.floor(site.maxAreaM2 * 100 + 1e-7), Math.floor((remaining * 100) / unit))
+      Math.min(
+        Math.floor(placementAreaLimit(site, type) * 100 + 1e-7),
+        Math.floor((remaining * 100) / unit)
+      )
     ) / 100;
   return (
     <div className="cost-estimate">

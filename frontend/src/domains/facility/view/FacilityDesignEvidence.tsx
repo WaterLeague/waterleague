@@ -3,7 +3,7 @@ import type { FacilityType } from '../../game/entity/game';
 import type { SharedSite } from '../../installation/entity/installation';
 import { useFacilityCatalog } from '../controller/useFacilityCatalog';
 export function FacilityDesignEvidence({ site, type }: { site: SharedSite; type: FacilityType }) {
-  const enabled = !!site.facilityDesignSet?.id.match(/^EPA_LID_PUBLIC_DESIGNS_V[12]$/);
+  const enabled = !!site.facilityDesignSet?.id.match(/^EPA_LID_PUBLIC_DESIGNS_V[123]$/);
   const { catalog, failed } = useFacilityCatalog(enabled, site.facilityDesignSet?.id);
   if (!enabled) return null;
   if (failed)
@@ -24,6 +24,14 @@ export function FacilityDesignEvidence({ site, type }: { site: SharedSite; type:
             : undefined
       }
     >
+      {type === 'VEGETATIVE_SWALE' && site.physicalInputs?.swaleDesign && (
+        <p>
+          폭 2m 직선 배치 · 최대 길이{' '}
+          {site.physicalInputs.swaleDesign.maxLengthM.toLocaleString('ko-KR')}m. 경사는 공개 DEM의
+          지역 대용값이며 실제 수로 종단 측량값이 아닙니다. 주변 배수 유입과 관망 연결은
+          미확인입니다.
+        </p>
+      )}
       {site.initializationPolicy && (
         <p>
           시작 수분은 선행 7일의 실제 강우·기상을 재생해 계산합니다. 사전 계산의 효과는 점수에서

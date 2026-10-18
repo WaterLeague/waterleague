@@ -1,3 +1,4 @@
+import { placementAreaLimit } from '../../installation/service/placementAreaLimit';
 import { unitCost } from '../../game/service/gameService';
 import type { ReactNode } from 'react';
 import { Leaf, Grid2X2, House, Waves, MapPin, Check, Trash2 } from 'lucide-react';
@@ -14,6 +15,7 @@ const icons = {
   PERMEABLE_PAVEMENT: Grid2X2,
   GREEN_ROOF: House,
   BIORETENTION: Waves,
+  VEGETATIVE_SWALE: Waves,
 };
 type Placed = {
   facilityType: FacilityType;
@@ -49,6 +51,7 @@ export type FacilityPlacementProps = {
 export function FacilityPlacementPanel(p: FacilityPlacementProps) {
   const { site, type, area, remaining, occupied } = p;
   const numericArea = Number(area);
+  const maxArea = site ? placementAreaLimit(site, type) : 0;
   const cost =
     site && type && site.allowedTypes.includes(type)
       ? numericArea * unitCost(site.unitCosts, type)
@@ -64,7 +67,7 @@ export function FacilityPlacementPanel(p: FacilityPlacementProps) {
     site.allowedTypes.includes(type) &&
     Number.isFinite(numericArea) &&
     numericArea > 0 &&
-    numericArea <= site.maxAreaM2 &&
+    numericArea <= maxArea &&
     cost <= Math.min(remaining, facilityAvailable);
   return (
     <aside className="inspector shared-inspector" aria-label="시설 설치">
@@ -167,7 +170,7 @@ export function FacilityPlacementPanel(p: FacilityPlacementProps) {
                   <input
                     type="number"
                     min="0.01"
-                    max={site.maxAreaM2}
+                    max={maxArea}
                     step="0.01"
                     required
                     value={area}
@@ -181,14 +184,20 @@ export function FacilityPlacementPanel(p: FacilityPlacementProps) {
                 aria-label="설치 면적 조절"
                 type="range"
                 min="0.01"
-                max={site.maxAreaM2}
+                max={maxArea}
                 step="0.01"
-                value={Math.min(site.maxAreaM2, numericArea || 0.01)}
+                value={Math.min(maxArea, numericArea || 0.01)}
                 onChange={(e) => p.onArea(e.target.value)}
               />
               <div className="shared-area-limit">
-                최대 {site.maxAreaM2.toLocaleString('ko-KR')} m² · 공개 도형 면적
+                최대 {maxArea.toLocaleString('ko-KR')} m² ·{' '}
+                {type === 'VEGETATIVE_SWALE' ? '폭 2m 직선 배치 한도' : '공개 도형 면적'}
               </div>
+              {type === 'VEGETATIVE_SWALE' && (
+                <p className="micro-note">
+                  폭 2m × 길이 {(numericArea / 2 || 0).toLocaleString('ko-KR')}m
+                </p>
+              )}
               <p className="micro-note">
                 도형 밖 면적 배치만 제한합니다. 실제 시공 가능 면적과 구조안전은 확인되지
                 않았습니다.

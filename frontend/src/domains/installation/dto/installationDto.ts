@@ -1,10 +1,20 @@
 import { z } from 'zod';
-import { nativeSoilBoundaryDto } from '../../facility/dto/facilityDto';
+import { swaleDesignDto, nativeSoilBoundaryDto } from '../../facility/dto/facilityDto';
 import { costSourceDto } from '../../cost/dto/costDto';
-const facility = z.enum(['RAIN_GARDEN', 'PERMEABLE_PAVEMENT', 'GREEN_ROOF', 'BIORETENTION']);
+const facility = z.enum([
+  'RAIN_GARDEN',
+  'PERMEABLE_PAVEMENT',
+  'GREEN_ROOF',
+  'BIORETENTION',
+  'VEGETATIVE_SWALE',
+]);
 const point = z.tuple([z.number().finite(), z.number().finite()]);
 export const publicAssetPolicyDto = z.object({
-  version: z.enum(['seoul-basin-footprints-20261018-v1', 'seoul-basin-footprints-20261018-v2']),
+  version: z.enum([
+    'seoul-basin-footprints-20261018-v1',
+    'seoul-basin-footprints-20261018-v2',
+    'seoul-basin-footprints-20261018-v3',
+  ]),
   sha256: z.string().regex(/^[a-f0-9]{64}$/),
   sourceSha256: z.string().regex(/^[a-f0-9]{64}$/),
   scope: z.literal('CURRENT_MAPPED_GEOMETRY_NEW_GROUND_PLACEMENTS_ONLY'),
@@ -56,6 +66,7 @@ export const siteDto = z.object({
     PERMEABLE_PAVEMENT: z.number().positive(),
     GREEN_ROOF: z.number().positive(),
     BIORETENTION: z.number().positive().optional(),
+    VEGETATIVE_SWALE: z.number().positive().optional(),
   }),
   costSourceSha256: z.string().regex(/^[a-f0-9]{64}$/),
   costModel: z.object({
@@ -66,6 +77,7 @@ export const siteDto = z.object({
       PERMEABLE_PAVEMENT: costSourceDto,
       GREEN_ROOF: costSourceDto,
       BIORETENTION: costSourceDto.optional(),
+      VEGETATIVE_SWALE: costSourceDto.optional(),
     }),
   }),
   sourceIds: z.array(z.string()),
@@ -96,6 +108,7 @@ export const siteDto = z.object({
       suctionMm: z.number().positive().optional(),
       rainGardenBoundary: nativeSoilBoundaryDto.optional(),
       bioretentionBoundary: nativeSoilBoundaryDto.optional(),
+      swaleDesign: swaleDesignDto.optional(),
     })
     .optional(),
   modelHash: z.string().regex(/^[a-f0-9]{64}$/),

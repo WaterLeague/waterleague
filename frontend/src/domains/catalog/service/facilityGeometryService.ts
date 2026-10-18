@@ -2,6 +2,36 @@ import { ShapeUtils } from 'three/src/extras/ShapeUtils.js';
 import { Vector2 } from 'three/src/math/Vector2.js';
 import type { FacilityFootprint, MapPoint } from '../entity/facilityFootprint';
 import { CatalogError } from '../exception/CatalogError';
+import type { SwaleDesign } from '../../facility/dto/facilityDto';
+import type { Placement } from '../../game/entity/game';
+
+export function placementFootprint(
+  cell: { coordinates: MapPoint[]; areaM2: number; physicalInputs?: { swaleDesign?: SwaleDesign } },
+  placement: Placement
+) {
+  if (placement.facilityType !== 'VEGETATIVE_SWALE')
+    return facilityFootprint(cell.coordinates, placement.areaM2 / cell.areaM2);
+  const d = cell.physicalInputs?.swaleDesign;
+  if (
+    !d ||
+    !Number.isFinite(placement.areaM2) ||
+    placement.areaM2 <= 0 ||
+    placement.areaM2 > d.maxAreaM2
+  )
+    throw new CatalogError('INVALID_DATA');
+  const [dx, dy] = d.direction;
+  const halfLength = placement.areaM2 / d.topWidthM / 2;
+  const points = [
+    [-1, -1],
+    [1, -1],
+    [1, 1],
+    [-1, 1],
+  ].map(([s, t]): MapPoint => [
+    d.center[0] + dx * s * halfLength - (dy * t * d.topWidthM) / 2,
+    d.center[1] + dy * s * halfLength + (dx * t * d.topWidthM) / 2,
+  ]);
+  return facilityFootprint(points, 1);
+}
 
 const epsilon = 1e-8;
 const cross = (a: MapPoint, b: MapPoint, c: MapPoint) =>

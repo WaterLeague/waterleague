@@ -99,7 +99,8 @@ public class HistoricalService {
       var c = sites.require(district.id(), p.cellId());
       var types = new HashSet<FacilityType>();
       for (var t : c.allowedTypes()) types.add(FacilityType.valueOf(t));
-      cells.put(c.cellId(), new PlacementCell(c.cellId(), types, c.maxAreaM2(), true));
+      cells.put(
+          c.cellId(), new PlacementCell(c.cellId(), types, c.maxAreaFor(p.facilityType()), true));
       c.unitCosts().forEach((t, n) -> costs.put(FacilityType.valueOf(t), n));
       physical.add(new Placement(p.cellId(), p.facilityType(), p.areaM2()));
       var unitCost = c.unitCosts().get(p.facilityType().name());

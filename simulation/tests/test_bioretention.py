@@ -13,10 +13,10 @@ from waterleague_sim.model_catalog import read_catalog
 
 def candidate():
     district = '2410520'
-    snapshot = shared_model.candidate_snapshot(district)
+    snapshot = shared_model.candidate_snapshot(district, 7)
     cell = next(c for c in snapshot['cells'] if 'BIORETENTION' in c['allowedTypes'])
     model, _, _ = shared_model.resolve({'district_id': district, 'cell_id': cell['id'],
-        'model_hash': shared_model.site_catalog()[district]['sha256']})
+        'model_hash': shared_model.site_catalog(7)[district]['sha256']})
     return model, {'cellId': cell['id'], 'facilityType': 'BIORETENTION', 'areaM2': 20}
 
 

@@ -1,3 +1,4 @@
+import { placementAreaLimit } from '../../installation/service/placementAreaLimit';
 import { lazy, Suspense, useEffect, useCallback, useState, useRef, useMemo } from 'react';
 import {
   RotateCcw,
@@ -300,8 +301,11 @@ function Explorer({
       navigationCamera.current = target;
       setCamera(target);
       setSite(value);
-      setType(value.allowedTypes.includes(type as FacilityType) ? type : value.allowedTypes[0]);
-      setArea(String(Math.min(20, value.maxAreaM2)));
+      const chosen = value.allowedTypes.includes(type as FacilityType)
+        ? type
+        : value.allowedTypes[0];
+      setType(chosen);
+      setArea(String(Math.min(20, placementAreaLimit(value, chosen))));
       setFeedback('');
       setListOpen(false);
       setOffset(0);
@@ -399,7 +403,7 @@ function Explorer({
       !occupied &&
       type &&
       Number(area) > 0 &&
-      Number(area) <= site.maxAreaM2
+      Number(area) <= placementAreaLimit(site, type)
         ? { site, placement: { cellId: site.cellId, facilityType: type, areaM2: Number(area) } }
         : null,
     [site, occupied, type, area]
@@ -425,6 +429,7 @@ function Explorer({
   );
   const plan = (
     <CityPlan
+      preview={preview}
       surfaceFrame={surface.frame}
       surfaceMetric={surfaceMetric}
       traceTiles={traces.tiles}
@@ -829,7 +834,7 @@ function Explorer({
                               : s.existingInfrastructure
                                 ? '공개 저류 영역 · 신규 설치 제외'
                                 : '빈 위치'}{' '}
-                            · 최대 {s.maxAreaM2.toLocaleString('ko-KR')} m²
+                            · 최대 {placementAreaLimit(s, type).toLocaleString('ko-KR')} m²
                           </small>
                         </button>
                       );
@@ -972,7 +977,10 @@ function Explorer({
           site={site}
           type={type}
           area={area}
-          onType={setType}
+          onType={(next) => {
+            setType(next);
+            if (site) setArea(String(Math.min(Number(area) || 20, placementAreaLimit(site, next))));
+          }}
           onArea={setArea}
           onLogin={onLogin}
           authenticated={!!account}
@@ -987,7 +995,10 @@ function Explorer({
           occupied={occupied}
           type={type}
           area={area}
-          onType={setType}
+          onType={(next) => {
+            setType(next);
+            if (site) setArea(String(Math.min(Number(area) || 20, placementAreaLimit(site, next))));
+          }}
           onArea={setArea}
           remaining={remaining}
           budget={budget.value}

@@ -126,7 +126,8 @@ public class InstallationService {
         types.add(io.waterleague.strategy.entity.FacilityType.valueOf(t));
       cells.put(
           c.cellId(),
-          new io.waterleague.strategy.entity.PlacementCell(c.cellId(), types, c.maxAreaM2(), true));
+          new io.waterleague.strategy.entity.PlacementCell(
+              c.cellId(), types, c.maxAreaFor(p.facilityType()), true));
     }
     var costs =
         new EnumMap<io.waterleague.strategy.entity.FacilityType, java.math.BigDecimal>(

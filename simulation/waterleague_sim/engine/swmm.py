@@ -43,7 +43,7 @@ def make_input(model,placements,conductivity_factor=1.0,step_seconds=10):
  for c in model['cells']:
   p=byid.get(c['id'])
   if p:
-   t={'RAIN_GARDEN':'RG','PERMEABLE_PAVEMENT':'PP','GREEN_ROOF':'GR','BIORETENTION':'BC'}[p['facilityType']];a=float(p['areaM2'])
+   t={'RAIN_GARDEN':'RG','PERMEABLE_PAVEMENT':'PP','GREEN_ROOF':'GR','BIORETENTION':'BC','VEGETATIVE_SWALE':'VS'}[p['facilityType']];a=float(p['areaM2'])
    sections['LID_USAGE'].append(f'{c["id"]} {t} 1 {a} {math.sqrt(a):.6f} {h["initialSaturationPercent"]} 100 0 * OUT 0')
  sections['TIMESERIES']=[]
  for i,depth in enumerate(rain['depthsMm']):

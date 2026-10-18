@@ -1,4 +1,16 @@
 import { z } from 'zod';
+export const swaleDesignDto = z.object({
+  method: z.literal('CONTAINED_FIXED_WIDTH_STRAIGHT_DESIGN_V1'),
+  topWidthM: z.literal(2),
+  maxLengthM: z.number().positive(),
+  maxAreaM2: z.number().positive(),
+  center: z.tuple([z.number().finite(), z.number().finite()]),
+  direction: z.tuple([z.number().finite(), z.number().finite()]),
+  coordinates: z.array(z.tuple([z.number().finite(), z.number().finite()])).length(5),
+  slopeBasis: z.literal('REGIONAL_TERRAIN_PROXY_NOT_LONGITUDINAL_SURVEY'),
+  outlet: z.literal('SURFACE_RUNOFF_UNCONNECTED_TO_NETWORK'),
+});
+export type SwaleDesign = z.infer<typeof swaleDesignDto>;
 const rainGardenBoundaryDto = z.object({
   method: z.literal('RG_NATIVE_SOIL_SEEPAGE_V1'),
   seepageMmH: z.number().finite().positive(),
@@ -45,10 +57,15 @@ export const facilityEvidenceDto = z.object({
   profile: facilityProfileDto,
   limitations: z.array(z.string()),
   nativeSoilBoundary: nativeSoilBoundaryDto.optional(),
+  swaleDesign: swaleDesignDto.optional(),
 });
 export const facilityCatalogDto = z
   .object({
-    id: z.enum(['EPA_LID_PUBLIC_DESIGNS_V1', 'EPA_LID_PUBLIC_DESIGNS_V2']),
+    id: z.enum([
+      'EPA_LID_PUBLIC_DESIGNS_V1',
+      'EPA_LID_PUBLIC_DESIGNS_V2',
+      'EPA_LID_PUBLIC_DESIGNS_V3',
+    ]),
     evidence: z.literal('PUBLIC_REFERENCE_DESIGN_NOT_SITE_MEASURED'),
     source: facilitySourceDto,
     profiles: z.object({
@@ -56,12 +73,14 @@ export const facilityCatalogDto = z
       PERMEABLE_PAVEMENT: facilityProfileDto,
       GREEN_ROOF: facilityProfileDto,
       BIORETENTION: facilityProfileDto.optional(),
+      VEGETATIVE_SWALE: facilityProfileDto.optional(),
     }),
     limitations: z.array(z.string()),
   })
   .refine(
     (value) =>
-      value.id !== 'EPA_LID_PUBLIC_DESIGNS_V2' || value.profiles.BIORETENTION !== undefined,
+      (value.id === 'EPA_LID_PUBLIC_DESIGNS_V1' || value.profiles.BIORETENTION !== undefined) &&
+      (value.id !== 'EPA_LID_PUBLIC_DESIGNS_V3' || value.profiles.VEGETATIVE_SWALE !== undefined),
     { message: '생물저류 설계 제원 누락' }
   );
 export type FacilityCatalog = z.infer<typeof facilityCatalogDto>;

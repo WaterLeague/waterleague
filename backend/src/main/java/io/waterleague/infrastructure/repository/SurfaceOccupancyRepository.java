@@ -10,9 +10,9 @@ import tools.jackson.databind.JsonNode;
 
 @Repository
 public class SurfaceOccupancyRepository {
-  public static final String VERSION = "seoul-basin-footprints-20261018-v2";
+  public static final String VERSION = "seoul-basin-footprints-20261018-v3";
   public static final String SHA256 =
-      "42595f660fa135279a87488c5cafe872326884562312d123394d5b197e93c3a0";
+      "4937ca34cfeb59441ea80c539863f8359207e6ad27af7c227e600af523463d16";
   private final Map<String, List<JsonNode>> exclusions = new HashMap<>();
   private final JsonService json;
   private final JsonNode evidence;

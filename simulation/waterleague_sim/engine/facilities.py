@@ -10,29 +10,53 @@ CATALOG_SHA256 = '115d89e1935be403989a08c81111a06d081ccbc422729ace2b57cd75a46ceb
 CATALOG_PATH = ROOT/'backend/src/main/resources/facilities/epa-designs-v1.json'
 CATALOG_V2_SHA256 = '068094e1fb8214c60a86bcbc64e039964ba771beb90400702d34f6b741e2d987'
 CATALOG_V2_PATH = ROOT/'backend/src/main/resources/facilities/epa-designs-v2.json'
+CATALOG_V3_SHA256 = '2a703170835529fe4d9b2c729157a04b7555faf9a1097f481be4269bfe279d5c'
+CATALOG_V3_PATH = ROOT/'backend/src/main/resources/facilities/epa-designs-v3.json'
+CATALOGS = {1: (CATALOG_PATH, CATALOG_SHA256), 2: (CATALOG_V2_PATH, CATALOG_V2_SHA256),
+            3: (CATALOG_V3_PATH, CATALOG_V3_SHA256)}
 
 
-@lru_cache(maxsize=2)
+@lru_cache(maxsize=3)
 def catalog(version=1):
-    raw = (CATALOG_PATH if version == 1 else CATALOG_V2_PATH).read_bytes()
-    if version not in (1, 2) or hashlib.sha256(raw).hexdigest() != (CATALOG_SHA256 if version == 1 else CATALOG_V2_SHA256):
+    if version not in CATALOGS:
+        raise SimulationQualityError('LIVE_FACILITY_CATALOG_INVALID')
+    raw = CATALOGS[version][0].read_bytes()
+    if hashlib.sha256(raw).hexdigest() != CATALOGS[version][1]:
         raise SimulationQualityError('LIVE_FACILITY_CATALOG_INVALID')
     return json.loads(raw)
 
 
 def design_set(version=1):
-    return {'id': catalog(version)['id'], 'sha256': CATALOG_SHA256 if version == 1 else CATALOG_V2_SHA256}
+    return {'id': catalog(version)['id'], 'sha256': CATALOGS[version][1]}
 
 
 def model_version(model):
-    for version, digest in ((1, CATALOG_SHA256), (2, CATALOG_V2_SHA256)):
+    for version, (_, digest) in CATALOGS.items():
         if model.get('facilityDesignSet') == {'id': f'EPA_LID_PUBLIC_DESIGNS_V{version}', 'sha256': digest}:
             return version
     raise SimulationQualityError('LIVE_FACILITY_DESIGN_INVALID')
 
 
 def source_path(model):
-    return CATALOG_PATH if model_version(model) == 1 else CATALOG_V2_PATH
+    return CATALOGS[model_version(model)][0]
+
+
+def swale_design(cell):
+    physical = cell.get('physicalInputs', {})
+    design = physical.get('swaleDesign', {})
+    values = [physical.get('slopePercent'), physical.get('conductivityMmH'),
+              design.get('maxAreaM2'), design.get('maxLengthM')]
+    if (any(type(v) not in (int, float) or not math.isfinite(v) for v in values)
+            or cell.get('kind') != 'GROUND' or 'VEGETATIVE_SWALE' not in cell['allowedTypes']
+            or physical.get('soilStatus') != 'TEXTURE_CLASS_LITERATURE_ESTIMATE'
+            or physical.get('slopeMethod') != 'NGII_2025_90M_HORN_TERRAIN_PROXY'
+            or not .5 <= values[0] <= 3 or values[1] <= 0
+            or not 0 < values[2] <= cell['maxAreaM2'] or values[3] <= 0
+            or abs(values[2]-2*values[3]) > 1e-8 or design.get('topWidthM') != 2
+            or design.get('method') != 'CONTAINED_FIXED_WIDTH_STRAIGHT_DESIGN_V1'
+            or design.get('outlet') != 'SURFACE_RUNOFF_UNCONNECTED_TO_NETWORK'):
+        raise SimulationQualityError('LIVE_SWALE_DESIGN_INVALID')
+    return design
 
 
 def bioretention_boundary(cell):
@@ -72,13 +96,20 @@ def apply(source, model):
     bio = physical.get('bioretentionBoundary')
     if bio is not None and bio != bioretention_boundary(cell):
         raise SimulationQualityError('LIVE_BIORETENTION_BOUNDARY_INVALID')
-    if any(line.split()[1:2] == ['BC'] for line in source.split('[LID_USAGE]', 1)[1].split('[', 1)[0].splitlines()) and (version != 2 or bio is None):
+    usages = source.split('[LID_USAGE]', 1)[1].split('[', 1)[0].splitlines()
+    if any(line.split()[1:2] == ['BC'] for line in usages) and (version < 2 or bio is None):
         raise SimulationQualityError('LIVE_BIORETENTION_BOUNDARY_INVALID')
+    for line in usages:
+        fields = line.split()
+        if fields[1:2] == ['VS']:
+            design = swale_design(cell)
+            if version < 3 or not 0 < float(fields[3]) <= design['maxAreaM2']:
+                raise SimulationQualityError('LIVE_SWALE_DESIGN_INVALID')
     rows = []
     for profile in catalog(version)['profiles'].values():
         t = profile['type']
         p = {k: v['value'] for k, v in profile['parameters'].items()}
-        rows += [f'{t} {t}', f'{t} SURFACE {p["surfaceDepthMm"]} {p["vegetationFraction"]} {p["surfaceRoughness"]} {slope} 0']
+        rows += [f'{t} {t}', f'{t} SURFACE {p["surfaceDepthMm"]} {p["vegetationFraction"]} {p["surfaceRoughness"]} {slope} {p.get("sideSlope", 0)}']
         if 'soilDepthMm' in p:
             rows.append(f'{t} SOIL {p["soilDepthMm"]} {p["porosity"]} {p["fieldCapacity"]} {p["wiltingPoint"]} {p["conductivityMmH"]} {p["conductivitySlope"]} {p["suctionMm"]}')
         if t == 'PP':
@@ -103,6 +134,12 @@ def apply(source, model):
             if section == '[LID_CONTROLS]':
                 lines.extend(rows)
         elif section != '[LID_CONTROLS]':
+            fields = line.split()
+            if section == '[LID_USAGE]' and fields[1:2] == ['VS']:
+                # 수로 폭은 집수 유출 폭이 아닌 만수면 상부 폭이다.
+                fields[4] = str(swale_design(cell)['topWidthM'])
+                fields[5] = '0'
+                line = ' '.join(fields)
             lines.append(line)
     return '\n'.join(lines)+'\n'
 
@@ -119,4 +156,6 @@ def evidence(facility, model=None):
             value['nativeSoilBoundary'] = copy.deepcopy(boundary)
     if facility == 'BIORETENTION' and model is not None:
         value['nativeSoilBoundary'] = copy.deepcopy(model['cells'][0]['physicalInputs']['bioretentionBoundary'])
+    if facility == 'VEGETATIVE_SWALE' and model is not None:
+        value['swaleDesign'] = copy.deepcopy(swale_design(model['cells'][0]))
     return value

@@ -3,8 +3,11 @@ export type RainfallUse =
   | 'NEAREST_AWS_OBSERVED_REPLAY'
   | 'OBSERVED_REPLAY';
 export type LegacyFacilityType = 'RAIN_GARDEN' | 'PERMEABLE_PAVEMENT' | 'GREEN_ROOF';
-export type FacilityType = LegacyFacilityType | 'BIORETENTION';
-export type UnitCosts = Record<LegacyFacilityType, number> & { BIORETENTION?: number };
+export type FacilityType = LegacyFacilityType | 'BIORETENTION' | 'VEGETATIVE_SWALE';
+export type UnitCosts = Record<LegacyFacilityType, number> & {
+  BIORETENTION?: number;
+  VEGETATIVE_SWALE?: number;
+};
 export interface Placement {
   cellId: string;
   facilityType: FacilityType;

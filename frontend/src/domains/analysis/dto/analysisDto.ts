@@ -4,7 +4,13 @@ const hash = z.string().regex(/^[a-f0-9]{64}$/);
 const count = z.number().int().min(0).max(50);
 const score = z.number().max(100);
 const cost = z.number().min(0).max(300000000);
-const facility = z.enum(['RAIN_GARDEN', 'PERMEABLE_PAVEMENT', 'GREEN_ROOF', 'BIORETENTION']);
+const facility = z.enum([
+  'RAIN_GARDEN',
+  'PERMEABLE_PAVEMENT',
+  'GREEN_ROOF',
+  'BIORETENTION',
+  'VEGETATIVE_SWALE',
+]);
 export const researchComparisonSummaryDto = z.object({
   id: z.uuid(),
   sourceJobId: z.uuid(),

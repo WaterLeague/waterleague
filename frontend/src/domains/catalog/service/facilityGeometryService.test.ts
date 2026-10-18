@@ -1,3 +1,4 @@
+import { placementFootprint } from './facilityGeometryService';
 import model from '../../../../../data/models/seongsu-lab.json';
 import { describe, expect, it } from 'vitest';
 import { facilityFootprint, plantingMarkers, polygonArea } from './facilityGeometryService';
@@ -133,4 +134,40 @@ describe('시설 표시 경계', () => {
     ];
     for (const ring of invalid) expect(() => facilityFootprint(ring, 0.5)).toThrow(CatalogError);
   });
+});
+
+it('식생수로는 설치 면적이 작아져도 폭 2m 유지와 길이만 축소', () => {
+  const swaleDesign = {
+    method: 'CONTAINED_FIXED_WIDTH_STRAIGHT_DESIGN_V1' as const,
+    topWidthM: 2 as const,
+    maxLengthM: 5,
+    maxAreaM2: 10,
+    center: [0, 0] as [number, number],
+    direction: [1, 0] as [number, number],
+    coordinates: [
+      [-2.5, -1],
+      [2.5, -1],
+      [2.5, 1],
+      [-2.5, 1],
+      [-2.5, -1],
+    ] as [number, number][],
+    slopeBasis: 'REGIONAL_TERRAIN_PROXY_NOT_LONGITUDINAL_SURVEY' as const,
+    outlet: 'SURFACE_RUNOFF_UNCONNECTED_TO_NETWORK' as const,
+  };
+  const cell = {
+    coordinates: [
+      [-3, -3],
+      [3, -3],
+      [3, 3],
+      [-3, 3],
+    ] as [number, number][],
+    areaM2: 36,
+    physicalInputs: { swaleDesign },
+  };
+  const p = { cellId: 'G1', facilityType: 'VEGETATIVE_SWALE' as const, areaM2: 4 };
+  const shape = placementFootprint(cell, p);
+  expect(shape.area).toBeCloseTo(4);
+  expect(Math.max(...shape.polygons.flat().map((p) => p[1]))).toBe(1);
+  expect(Math.min(...shape.polygons.flat().map((p) => p[1]))).toBe(-1);
+  expect(() => placementFootprint(cell, { ...p, areaM2: 10.01 })).toThrow();
 });

@@ -3,6 +3,9 @@ import type { FacilityEvidence } from '../dto/facilityDto';
 import './facility-evidence.css';
 
 const labels: Record<string, string> = {
+  bottomWidthM: '수로 바닥 폭',
+  topWidthM: '수로 상부 폭',
+  sideSlope: '측면 경사',
   soilDepthMm: '식재토 두께',
   pavementDepthMm: '투수층 두께',
   storageDepthMm: '쇄석층 두께',
@@ -24,6 +27,7 @@ const labels: Record<string, string> = {
   cloggingFactor: '막힘 계수',
 };
 const bases: Record<string, string> = {
+  DERIVED_CROSS_SECTION: '단면 치수에서 계산',
   LITERATURE_ENGINEERED_SOIL_ESTIMATE: '문헌 식재토의 추정값',
   PUBLIC_RANGE_DESIGN_SELECTION: '문헌 범위에서 선택한 설계값',
   PUBLISHED_TYPICAL_DERIVED_SOIL: '문헌 대표 배합의 추정값',

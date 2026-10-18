@@ -57,6 +57,7 @@ const icons = {
   PERMEABLE_PAVEMENT: Grid2X2,
   GREEN_ROOF: House,
   BIORETENTION: Waves,
+  VEGETATIVE_SWALE: Waves,
 };
 export function GamePage() {
   const g = useGame();

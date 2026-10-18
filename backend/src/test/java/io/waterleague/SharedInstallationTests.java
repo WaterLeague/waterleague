@@ -44,6 +44,70 @@ class SharedInstallationTests {
   @Autowired io.waterleague.common.service.JsonService json;
 
   @Test
+  void swaleRejectsAreaOutsideFixedWidthDesignAndSharesBudget() {
+    var owner = account("2410520");
+    var site =
+        sites.district("2410520").values().stream()
+            .filter(
+                s ->
+                    s.allowedTypes().contains("VEGETATIVE_SWALE")
+                        && s.existingInfrastructure() == null)
+            .findFirst()
+            .orElseThrow();
+    var cap = site.maxAreaFor(FacilityType.VEGETATIVE_SWALE);
+    assertThat(cap).isLessThan(site.maxAreaM2());
+    assertThatThrownBy(
+            () ->
+                service.install(
+                    owner.username(),
+                    new InstallRequest(
+                        "2410520",
+                        site.cellId(),
+                        FacilityType.VEGETATIVE_SWALE,
+                        cap.add(new BigDecimal("0.01")))))
+        .isInstanceOf(DomainException.class);
+    var installed =
+        service.install(
+            owner.username(),
+            new InstallRequest("2410520", site.cellId(), FacilityType.VEGETATIVE_SWALE, cap));
+    var charge = cap.multiply(new BigDecimal("45000"));
+    assertThat(installed.cost()).isEqualByComparingTo(charge);
+    assertThat(budget.view(owner.id()).remainingKrw())
+        .isEqualByComparingTo(budget.limit().subtract(charge));
+    assertThat(budget.view(owner.id()).accounting().programs()).hasSize(1);
+    assertThat(
+            costs
+                .active(installed.id())
+                .estimate()
+                .path("source")
+                .path("derivation")
+                .path("headerUnitConflict")
+                .asBoolean())
+        .isTrue();
+    assertThatThrownBy(
+            () ->
+                service.install(
+                    account("2410520").username(),
+                    new InstallRequest(
+                        "2410520", site.cellId(), FacilityType.RAIN_GARDEN, BigDecimal.ONE)))
+        .isInstanceOf(DomainException.class);
+    service.remove(owner.username(), installed.id());
+    assertThat(budget.view(owner.id()).remainingKrw()).isEqualByComparingTo("2000000000");
+    var roof =
+        sites.district("2410520").values().stream()
+            .filter(s -> s.kind().equals("ROOF"))
+            .findFirst()
+            .orElseThrow();
+    assertThatThrownBy(
+            () ->
+                service.install(
+                    owner.username(),
+                    new InstallRequest(
+                        "2410520", roof.cellId(), FacilityType.VEGETATIVE_SWALE, BigDecimal.ONE)))
+        .isInstanceOf(DomainException.class);
+  }
+
+  @Test
   void bioretentionUsesPublicSoilAndSharedBudgetWhileRejectingRoofAndDuplicate() {
     var owner = account("2410520");
     var eligible =
@@ -76,7 +140,7 @@ class SharedInstallationTests {
     assertThat(installed.cost()).isEqualByComparingTo("11200000");
     assertThat(budget.view(owner.id()).remainingKrw()).isEqualByComparingTo("1988800000");
     assertThat(budget.view(owner.id()).accounting().facilities())
-        .hasSize(4)
+        .hasSize(5)
         .allSatisfy(f -> assertThat(f.availableKrw()).isEqualByComparingTo("1988800000"));
     assertThat(costs.active(installed.id()).estimate().path("completeInstalledCostKrw").isNull())
         .isTrue();
@@ -349,7 +413,7 @@ class SharedInstallationTests {
                 "SELECT admission_snapshot FROM shared_installations WHERE id=?",
                 String.class,
                 independent.id()))
-        .contains("seoul-basin-footprints-20261018-v2", "historicalExistenceVerified");
+        .contains("seoul-basin-footprints-20261018-v3", "historicalExistenceVerified");
     service.remove(other.username(), independent.id());
     assertThat(budget.view(other.id()).remainingKrw()).isEqualByComparingTo("2000000000");
     assertThat(budget.view(owner.id()).remainingKrw()).isEqualByComparingTo("1050000");

@@ -2,7 +2,8 @@ import { memo, useMemo } from 'react';
 import type { City, CityBuilding, CityFocus, CityTile } from '../entity/city';
 import type { CityPlayRegion } from '../dto/cityPlayDto';
 import type { SharedSite, SharedInstallation } from '../../installation/entity/installation';
-import type { FacilityType } from '../../game/entity/game';
+import type { FacilityType, Placement } from '../../game/entity/game';
+import { placementFootprint } from '../../catalog/service/facilityGeometryService';
 import { siteKey } from '../../installation/entity/installation';
 import { facilities } from '../../game/service/gameService';
 import { polygonPath } from '../../catalog/service/mapGeometryService';
@@ -21,6 +22,7 @@ import { SurfacePlan } from '../../surface/view/SurfaceLayer';
 import type { SurfaceFrame, SurfaceMetric } from '../../surface/entity/surface';
 
 type Props = {
+  preview?: { site: SharedSite; placement: Placement } | null;
   surfaceFrame?: SurfaceFrame | null;
   surfaceMetric?: SurfaceMetric;
   traceTiles: TraceTile[];
@@ -53,6 +55,7 @@ type Props = {
   rainAmounts: ReadonlyMap<string, number | null>;
 };
 export const CityPlan = memo(function CityPlan({
+  preview = null,
   surfaceFrame = null,
   surfaceMetric = 'depth',
   traceTiles,
@@ -159,6 +162,37 @@ export const CityPlan = memo(function CityPlan({
       )),
     [buildings, facilityType, eligibleRoofs, occupiedRoofs, ownDistrict, onBuilding, city]
   );
+  const facilityLayer = useMemo(() => {
+    const values: { site: SharedSite; placement: Placement; preview: boolean }[] = sites.flatMap(
+      (site) => {
+        const placement = installationBySite.get(siteKey(site));
+        return placement ? [{ site, placement, preview: false }] : [];
+      }
+    );
+    if (preview) values.push({ ...preview, preview: true });
+    return values.map((value) => {
+      const shape = placementFootprint(value.site, value.placement);
+      const path = shape.polygons
+        .map((p) => p.map(([x, y], i) => `${i ? 'L' : 'M'}${x},${-y}`).join(' ') + 'Z')
+        .join(' ');
+      return (
+        <path
+          key={siteKey(value.site)}
+          d={path}
+          fill={facilities[value.placement.facilityType].color}
+          fillOpacity={value.preview ? 0.55 : 0.9}
+          stroke={value.preview ? '#214e67' : '#426a49'}
+          strokeWidth={0.25}
+          strokeDasharray={value.preview ? '.8 .5' : undefined}
+          opacity={buildingOpacity(
+            !facilityType || value.placement.facilityType === facilityType,
+            !!ownDistrictId && ownDistrictId !== value.site.districtId
+          )}
+          onClick={() => onSite(siteKey(value.site))}
+        />
+      );
+    });
+  }, [sites, installationBySite, preview, facilityType, ownDistrictId, onSite]);
   const siteLayer = useMemo(
     () =>
       sites.map((site) => {
@@ -267,6 +301,7 @@ export const CityPlan = memo(function CityPlan({
       {buildingLayer}
       <InfrastructureFootprintsPlan assets={publicAssets} selectedId={selectedAssetId} />
       {siteLayer}
+      {facilityLayer}
       <FloodTracePlan tiles={traceTiles} />
       <SurfacePlan frame={surfaceFrame} metric={surfaceMetric} />
       {installations.map((i) => (

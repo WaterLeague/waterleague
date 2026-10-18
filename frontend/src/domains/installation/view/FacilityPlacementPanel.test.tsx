@@ -95,3 +95,74 @@ it('공통 패널의 생물저류 제원 선택과 같은 사업군 잔액 적�
     expect(html).not.toContain('class="solid-button shared-install" disabled');
   }
 });
+
+it('식생수로는 주간·재해 모두 폭 기준 한도 초과 설치 거부', () => {
+  const swale = siteDto.parse({
+    ...rawSite,
+    existingInfrastructure: null,
+    allowedTypes: ['VEGETATIVE_SWALE'],
+    unitCosts: { ...rawSite.unitCosts, VEGETATIVE_SWALE: 45000 },
+    costModel: {
+      ...rawSite.costModel,
+      facilities: {
+        ...rawSite.costModel.facilities,
+        VEGETATIVE_SWALE: { ...rawSite.costModel.facilities.RAIN_GARDEN, unitCost: 45000 },
+      },
+    },
+    physicalInputs: {
+      flowLengthM: 5,
+      runoffWidthM: 5,
+      widthMethod: 'FOOTPRINT_AREA_OVER_LONG_AXIS',
+      slopePercent: 1,
+      slopeMethod: 'NGII_2025_90M_HORN_TERRAIN_PROXY',
+      surfaceTag: null,
+      imperviousBasis: 'SURFACE_UNKNOWN_ASSUMPTION',
+      soilStatus: 'TEXTURE_CLASS_LITERATURE_ESTIMATE',
+      swaleDesign: {
+        method: 'CONTAINED_FIXED_WIDTH_STRAIGHT_DESIGN_V1',
+        topWidthM: 2,
+        maxAreaM2: 10,
+        maxLengthM: 5,
+        center: [0, 0],
+        direction: [1, 0],
+        coordinates: [
+          [-2.5, -1],
+          [2.5, -1],
+          [2.5, 1],
+          [-2.5, 1],
+          [-2.5, -1],
+        ],
+        slopeBasis: 'REGIONAL_TERRAIN_PROXY_NOT_LONGITUDINAL_SURVEY',
+        outlet: 'SURFACE_RUNOFF_UNCONNECTED_TO_NETWORK',
+      },
+    },
+  });
+  for (const research of [false, true])
+    for (const area of ['10', '10.01']) {
+      const html = renderToStaticMarkup(
+        <FacilityPlacementPanel
+          {...props}
+          site={swale}
+          type="VEGETATIVE_SWALE"
+          area={area}
+          research={research}
+          budgetAccounting={{
+            version: 'SEOUL_RAINWATER_ACCOUNTING_V3',
+            programs: [],
+            facilities: [
+              {
+                facilityType: 'VEGETATIVE_SWALE',
+                programId: 'SEOUL_RAINWATER',
+                limitKrw: null,
+                allocatedKrw: 0,
+                availableKrw: 2_000_000_000,
+              },
+            ],
+          }}
+        />
+      );
+      expect(html).toContain('폭 2m 직선 배치 한도');
+      expect(html.includes('class="solid-button shared-install" disabled')).toBe(area === '10.01');
+      if (area === '10') expect(html).toContain('450,000원');
+    }
+});

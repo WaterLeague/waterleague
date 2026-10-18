@@ -2,7 +2,8 @@ import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import type { Cell, Placement } from '../../game/entity/game';
 import type { FacilityFootprint } from '../entity/facilityFootprint';
-import { facilityFootprint, plantingMarkers } from '../service/facilityGeometryService';
+import { placementFootprint, plantingMarkers } from '../service/facilityGeometryService';
+import type { SharedSite } from '../../installation/entity/installation';
 import { CatalogError } from '../exception/CatalogError';
 
 function Planting({
@@ -52,15 +53,17 @@ export function FacilityMesh({
   onSelect,
   opacity = 1,
 }: {
-  cell: Pick<Cell, 'coordinates' | 'areaM2' | 'heightM'>;
+  cell: Pick<Cell, 'coordinates' | 'areaM2' | 'heightM'> & {
+    physicalInputs?: SharedSite['physicalInputs'];
+  };
   placement: Placement;
   preview: boolean;
   onSelect: () => void;
   opacity?: number;
 }) {
   const footprint = useMemo(
-    () => facilityFootprint(cell.coordinates, placement.areaM2 / cell.areaM2),
-    [cell.coordinates, cell.areaM2, placement.areaM2]
+    () => placementFootprint(cell, placement),
+    [cell.coordinates, cell.areaM2, cell.physicalInputs, placement.areaM2, placement.facilityType]
   );
   const paved = placement.facilityType === 'PERMEABLE_PAVEMENT';
   const roof = placement.facilityType === 'GREEN_ROOF';

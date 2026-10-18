@@ -40,7 +40,7 @@ public class BudgetService {
         || !"SEOUL_PERSONAL_FULL_2026_V3".equals(policy.ruleVersion())
         || !policy.sourceSha256().matches("[a-f0-9]{64}"))
       throw new IllegalStateException("예산 출처 오류");
-    try (var stream = new ClassPathResource("budget/seoul-accounting-v2.json").getInputStream()) {
+    try (var stream = new ClassPathResource("budget/seoul-accounting-v3.json").getInputStream()) {
       allocationPolicy =
           json.read(
               new String(stream.readNBytes(10000), StandardCharsets.UTF_8),
@@ -48,7 +48,7 @@ public class BudgetService {
     }
     BudgetAllocationService.validate(allocationPolicy);
     if (!allocationPolicy.budgetRuleVersion().equals(policy.ruleVersion())
-        || !allocationPolicy.version().equals("SEOUL_RAINWATER_ACCOUNTING_V2")
+        || !allocationPolicy.version().equals("SEOUL_RAINWATER_ACCOUNTING_V3")
         || allocationPolicy.programs().size() != 1
         || !allocationPolicy.programs().getFirst().id().equals("SEOUL_RAINWATER")
         || !allocationPolicy.programs().getFirst().sourceSha256().equals(policy.sourceSha256())

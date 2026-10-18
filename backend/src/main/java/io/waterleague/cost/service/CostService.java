@@ -31,7 +31,7 @@ public class CostService {
       if (!site.allowedTypes().contains(type.name())
           || area.signum() <= 0
           || area.scale() > 2
-          || area.compareTo(site.maxAreaM2()) > 0
+          || area.compareTo(site.maxAreaFor(type)) > 0
           || !source.isObject()
           || unit == null
           || unit.compareTo(source.path("unitCost").decimalValue()) != 0
