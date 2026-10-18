@@ -237,6 +237,11 @@ class SurfaceSession:
             result.update(self.evaporation.ledger())
         return result
 
+    def initialization_state(self):
+        """평가 경계의 연속 상태를 읽기만 하며 계산 재시작에는 사용하지 않는다."""
+        return {'surface': self.snapshot(),
+                'infiltration': self.infiltration.summary(include_state=True) if self.infiltration else None}
+
     def advance(self, seconds):
         require(not self.finished and type(seconds) in (int, float)
                 and math.isfinite(seconds) and 0 < seconds <= 3600, 'SURFACE_STEP_INVALID')

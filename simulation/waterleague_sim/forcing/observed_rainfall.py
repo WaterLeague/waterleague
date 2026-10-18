@@ -97,6 +97,7 @@ class RainfallSchedule:
     source_files: dict
 
     def archive(self, directory):
+        directory.mkdir(parents=True, exist_ok=True)
         for relative, raw in self.source_files.items():
             path = directory / relative
             path.parent.mkdir(parents=True, exist_ok=True)

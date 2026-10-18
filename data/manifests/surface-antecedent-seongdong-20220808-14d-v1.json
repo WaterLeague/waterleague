@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "classification": "ARCHIVED_OBSERVATIONS_RECONSTRUCTED_FOR_SURFACE_SPINUP",
+  "rankingEligible": false,
+  "file": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+  "sha256": "95c290cbbaaee551c73e3f24795605945bcc4d978b2b6c225392f5aef1f7fe98",
+  "bytes": 18297,
+  "derivation": "보존된 14일 선행 입력 원본의 바이트 동일 사본; 원문 재정규화 후 사용",
+  "sourceArchive": "data/runs/initialization-seongdong-20220808-14d-v2/extended-antecedent.json.gz",
+  "sourceManifest": "data/runs/initialization-seongdong-20220808-14d-v2/manifest.json",
+  "sourceManifestSha256": "d02a2b7d8e6f3d6bb0e4e28dd0b901c044646e64ea5559dfa62856e57139b4ce",
+  "archiveStartKst": "2022-07-25T18:00:00+09:00",
+  "evaluationStartKst": "2022-08-08T18:00:00+09:00",
+  "rainfallStation": "421",
+  "weatherStation": "108",
+  "methods": [
+    "AWS 원문 일 누적 차분과 구간 총량 평균의 선행 전용 정책",
+    "이전 완료 일 기상 기반 FAO-56 기준 증발산"
+  ],
+  "sourceCollection": "기존 기상청 원문·조회 메타자료와 해시를 묶음에 보존; 새 API 호출 없음",
+  "limitations": [
+    "합성 평탄 격자·전면 투수·차단 경계; 실제 서울 유역 재현 아님",
+    "최대 수분 부족 매개변수 0.25·회복계수 1의 시드/모형 가정 유지",
+    "기간 비교는 같은 시드·재료 조건; 별도 건습 상태 민감도 미완료",
+    "EPA 경험식 회복·지표수 제한 증발이며 토양/뿌리/지하수 전체 수지 아님",
+    "선행 구간의 관측 총량 평균·품질 경고 보존; 평가 구간 품질 완화 없음"
+  ]
+}

@@ -1,0 +1,662 @@
+{
+  "schemaVersion": 1,
+  "classification": "OBSERVED_ANTECEDENT_ON_SYNTHETIC_DOMAIN_NOT_SEOUL",
+  "rankingEligible": false,
+  "comparison": {
+    "sameMaterialAndSeedAcrossDurations": true,
+    "exactReplay": true,
+    "period14Minus7": {
+      "initialStorageM3": 7.79696307517952e-11,
+      "infiltrationM3": -3.9976910670702637e-11,
+      "surfaceEvaporationM3": 1.1018963519404679e-14,
+      "finalStorageM3": 1.1756995377254498e-10
+    },
+    "step60Minus30": {
+      "initialStorageM3": 0.0002686242846836606,
+      "infiltrationM3": -0.00011876491617357487,
+      "surfaceEvaporationM3": 1.5709655798445965e-14,
+      "finalStorageM3": 0.0003873892029648829
+    },
+    "initialNativeState14Minus7": [
+      [
+        -5.111574358229731e-12,
+        -2.7097352139904274e-12,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        -5.111574358229731e-12,
+        -2.7097352139904274e-12,
+        0.0,
+        0.0,
+        0.0
+      ]
+    ]
+  },
+  "soil": {
+    "sourceManifestSha256": "71ba2bb571dd752f0c84a03ccd73aa31ce691c91acb8fdaff23d90b161baa119",
+    "featureId": "LT_C_ASITDEEPSOIL.135003",
+    "soilClass": "사양질",
+    "conductivityRangeMmH": [
+      3.302,
+      10.922
+    ],
+    "suctionMm": 88.9,
+    "textureReference": "Loam–Sandy loam",
+    "status": "PUBLIC_TEXTURE_CLASS_LITERATURE_ESTIMATE_NOT_FIELD_MEASUREMENT",
+    "referenceUrl": "https://nepis.epa.gov/Exe/ZyPURL.cgi?Dockey=P10145M6.TXT",
+    "referenceSection": "Appendix A.2",
+    "assignment": "공개 성동 토성의 매개변수만 합성 격자에 적용; 실제 토지형상·피복 재현 아님"
+  },
+  "sourceCode": {
+    "scripts/verify_surface_initialization.py": "83c5c7c22f9012980cd0ee954598cb2621d8ac6e570e37f8cd733708fae31794",
+    "scripts/verify_surface_infiltration.py": "59757d842506fb6aaeada9c2b6b58726f404092ee1919e7e663a6e42122b0e9a",
+    "scripts/verify_observed_surface_rainfall.py": "22024ebf117bd4893cb5eba09f8581200ccb2751ac9927315c3e70aee69ec4c1",
+    "scripts/prepare_site_physics.py": "479d7bda9b5228e3d5f367dd05f9aac6008d0175f9ff7cfb0510a3fcf1568119",
+    "scripts/build_surface_infiltration.py": "67a037820dc3fdbbdb8bc8b52d3fcf1aa691b5487c5cf0b7b648ed3865c71d5b",
+    "simulation/native/surface_infiltration.inc": "64a760dea0d62a61a725b18c7238642236bf7de94d7107bc7d863264c8c1fbf2",
+    "simulation/uv.lock": "d2ffd1c9a11f47d3f3e4b9a39762c7ceff9b424171bc913c98672f759036e09e",
+    "data/manifests/anuga-4.0.1.json": "3002d98f0fc84a8e3384033b52795c056931f6db6cf8f5b513074c56e7e10a20",
+    "simulation/waterleague_sim/engine/continuous.py": "3a4ec3679d7fe3c2ed0a39a2cf3528fb75e76b688754653e3c3431ca7bd97f4e",
+    "simulation/waterleague_sim/engine/coupled_flood.py": "7c2a9e3bb8e738d0e41848963397c04a2bda2e19cfbaf02e81b028b692a421a9",
+    "simulation/waterleague_sim/engine/evapotranspiration.py": "4de54c4eea26ba0c48dd4ceb4403d699806d9b5a3531c5b2d3528582da506b69",
+    "simulation/waterleague_sim/engine/facilities.py": "1ac27875c4a3cce79f89584da4a65ca408fe7a03daaae9f6b07ce1925f53cefa",
+    "simulation/waterleague_sim/engine/flood_errors.py": "59e70440df55df54e83aa7a2787f12ef14b2541ac5c05f67a10e9addbe229155",
+    "simulation/waterleague_sim/engine/flood_metrics.py": "30f830d17bcd174129dcdb79e3b85f684d08dee5337b8e7a964f340902da6f3c",
+    "simulation/waterleague_sim/engine/flood_process.py": "536997b8395bf23c6fd5d256b726dba88e630af2feab57aa61efa013307ab606",
+    "simulation/waterleague_sim/engine/initialization.py": "ca770523b30f41407ef60cd48f28fcd16b303e5f347e4b8ee57b504059eb48c6",
+    "simulation/waterleague_sim/engine/initialization_sensitivity.py": "13c4da988b789d06df63b78361a15d0261056a96bfe95206a25a07fef55522fa",
+    "simulation/waterleague_sim/engine/network.py": "c624d293970e0602b4f0f39f4ff0b257c6638dd66ab82112a6ae30cff8866acd",
+    "simulation/waterleague_sim/engine/network_exchange.py": "d7249d37122807c88629560a7285f5afd485b7870ecd3048045bd0233e5d7322",
+    "simulation/waterleague_sim/engine/network_metrics.py": "f0219c6affedd4b95b049815c4242b7fe8f56abe917b97f8c2d55ca2c65802df",
+    "simulation/waterleague_sim/engine/network_quality.py": "c78323b383d37be56c34b8cc2d5084e4a92e3de6bbc2a818d914acbabf3eb930",
+    "simulation/waterleague_sim/engine/surface.py": "6b80afc251199c28d795f88ce8cc35d2441abcb6dbfbb5390ba1b4f3368e8276",
+    "simulation/waterleague_sim/engine/surface_evaporation.py": "576d5174c088bfcfaaebde1f6eaee8ae782fcb1b2921dc1c128896b197e40341",
+    "simulation/waterleague_sim/engine/surface_exchange.py": "ad234e342f930b08b5d27c684b7de5328a0a83f300d3f5a1cd0d0d7b1947fb8e",
+    "simulation/waterleague_sim/engine/surface_infiltration.py": "ef5a1878f721aa3fdd6545d331f8ab93595ad14dd3e9d69dbc4bccc8ca77c2dc",
+    "simulation/waterleague_sim/engine/surface_quality.py": "cd0494c23e2eaa2e3f7cf7feac6484937cd842140e9ee1ddaf003ac35c9281f1",
+    "simulation/waterleague_sim/engine/swmm.py": "1754562f19f0860daa127f34e35c6336e2884d5779b9cd531d1811088f702823",
+    "simulation/waterleague_sim/forcing/__init__.py": "8eeb67181b650bc778bd2d3910b0e4a59bf1198df4063c22f2d4cc89d259789f",
+    "simulation/waterleague_sim/forcing/antecedent_archive.py": "8fc2a2647e463c9c106a740fdd6d6497f16fd94d12acaf7e027061478c26458e",
+    "simulation/waterleague_sim/forcing/network_stage.py": "a5ec7ea84177e142c14bb6e9bf7203f266cc0109f130f195bc5d39d9aa972747",
+    "simulation/waterleague_sim/forcing/observed_rainfall.py": "48336216afa7aa1374cd40122497f7c5a776d32dd4e1334ab3af8962cc852cf9",
+    "simulation/waterleague_sim/forcing/reference_evaporation.py": "88fbd21e9d0bf047bb2b7428a0f1dec3f7cc09935aba464da32669640eef1d0f",
+    "simulation/waterleague_sim/forcing/stage.py": "b154811523460945456a9a3afc0312a7b0ab7d55c0e71f468eba3075592ba0cf",
+    "simulation/waterleague_sim/forcing/surface_evaporation.py": "197e49d2fef3602df3e5b78b683242361e7e5cd931e03f662ff5b8b1679c87f7",
+    "simulation/waterleague_sim/forcing/surface_initialization.py": "3b4a6ced2a25c06f6959a314ea89bb50b55780758c98689cf3b107c050e1aeaf",
+    "simulation/waterleague_sim/forcing/surface_run.py": "8b455dd8eb275288f79675a37827e37fc9b37b7c8b90eb64f6cbdad92856d419",
+    "simulation/waterleague_sim/ingestion/antecedent.py": "747d04bf96469d48f80e831ebc7aad20f14b2834c79aa30c2c42c16cb27feb1d",
+    "simulation/waterleague_sim/ingestion/daily_evaporation.py": "29de21fe5ccd574300f4631dc41b338c343eacedd9273ce555e3d32fab6dad9c",
+    "simulation/waterleague_sim/ingestion/evaporation.py": "c61afcbbcf3825eefade654c2bcbbedb7102c67b0ce59057528d63e8667c6c22",
+    "simulation/waterleague_sim/ingestion/hourly_rainfall.py": "6f22ee0c0fb0304e24f3751aae1f80306f95eb5b645385e5d434c9dd210794af",
+    "simulation/waterleague_sim/ingestion/kma.py": "908c094b6c1149cf725a4926646628255238fcdb2aecaa62ab7da769bce9d33f",
+    "simulation/waterleague_sim/ingestion/live.py": "14ce246909617af810e5712f80ae621da45872eb6223d856067002d85f3e5f60",
+    "simulation/waterleague_sim/ingestion/rainfall.py": "7fb2c1b8d3b9e5be16743ceb1bc5934ca83ac44520c3b477625f2b13eb175f49",
+    "simulation/waterleague_sim/ingestion/seoul.py": "429231d0d30e8ab45c301ecd3f7b6da60d46ddf9d53c20d362193998062d6130",
+    "simulation/waterleague_sim/ingestion/seoul_biotope.py": "db2d1d0c6f3610a0a23c6224c61c15bebce03b590a3206c3e79cdd4dd3bc5131",
+    "simulation/waterleague_sim/ingestion/source_archive.py": "2ca647f23b014fe3cb1bf6889bd263ec7a1beb7160e5c84353c244f4c67e8e0c",
+    "simulation/waterleague_sim/ingestion/wamis_stage.py": "1049aaa8925e7ceb88d91f63838a96aa4ee10198f3709977db389be0e149fb65",
+    "simulation/waterleague_sim/reference/__init__.py": "b6a5ae176a277f234a9121e41bd9290664df5c62bcac189c83ffda181f60d850",
+    "simulation/waterleague_sim/reference/epa.py": "cbc737e5867eb72af81fe76cc527ed48e8102bbd631202b79fc24bf7d96d5245",
+    "simulation/waterleague_sim/reference/flood_cases.py": "de7fd2be4e51317d0fac94d3b2bceb59cd940fb4469210947eeb94019ef2563b"
+  },
+  "limitations": [
+    "합성 평탄 격자·전면 투수·차단 경계; 실제 서울 유역 재현 아님",
+    "최대 수분 부족 매개변수 0.25·회복계수 1의 시드/모형 가정 유지",
+    "기간 비교는 같은 시드·재료 조건; 별도 건습 상태 민감도 미완료",
+    "EPA 경험식 회복·지표수 제한 증발이며 토양/뿌리/지하수 전체 수지 아님",
+    "선행 구간의 관측 총량 평균·품질 경고 보존; 평가 구간 품질 완화 없음"
+  ],
+  "cases": [
+    {
+      "name": "7d-60s",
+      "warmupDays": 7,
+      "maximumStepSeconds": 60.0,
+      "status": "PASSED",
+      "evaluation": {
+        "boundaryNetInflowM3": 3.26762826652928e-31,
+        "sourceNetInflowM3": 6.281958313704744,
+        "rainfallM3": 8.499999999999185,
+        "infiltrationM3": 2.2148456505855183,
+        "potentialSurfaceEvaporationM3": 0.0031960357088429703,
+        "surfaceEvaporationM3": 0.003196035708808581,
+        "unmetSurfaceEvaporationM3": 0.0,
+        "surfaceEvaporationRoundoffM3": -3.4389158187764224e-14,
+        "durationSeconds": 21540.0,
+        "initialStorageM3": 5.217439522740029,
+        "finalStorageM3": 11.499397836444777,
+        "balanceResidualM3": -3.552713678800501e-15
+      },
+      "evaluationInitialState": {
+        "surface": {
+          "timeSeconds": 604800.0,
+          "storageM3": 5.217439522740029,
+          "boundaryNetInflowM3": 8.596479268721113e-33,
+          "sourceNetInflowM3": 5.217439522740006,
+          "balanceResidualM3": -2.3092638912203256e-14,
+          "depthM": [
+            0.052174395227400285,
+            0.052174395227400285
+          ],
+          "velocityXMps": [
+            1.5927437447262938e-17,
+            -1.890084247958348e-17
+          ],
+          "velocityYMps": [
+            1.7129878851173076e-17,
+            -3.6699475605084935e-17
+          ],
+          "rainfallM3": 14.5999999999999,
+          "infiltrationM3": 9.229394277789288,
+          "potentialSurfaceEvaporationM3": 2.246164759685628,
+          "surfaceEvaporationM3": 0.15316619947059806,
+          "unmetSurfaceEvaporationM3": 2.0929985602151815,
+          "surfaceEvaporationRoundoffM3": 1.5154544286133387e-13
+        },
+        "infiltration": {
+          "method": "GREEN_AMPT",
+          "engine": {
+            "schemaVersion": 1,
+            "engineVersion": "5.2.4",
+            "revision": "7952ca837988b1c32f791812eccc9fd64547e093",
+            "sourceArchiveSha256": "3f76a199573088ce47ff02491c529afb73d9953ee9d948dfc89dcd4981b4c0c0",
+            "originalInfiltrationSha256": "4b86c2080752bee770a4a2d1f8f6bdc5469a110305316440e2a7cba7dde31124",
+            "originalSolverCMakeSha256": "456578d247a73635199295a5e23700015bfcc4b7555fcf38e731aae98aa3c9df",
+            "extensionSha256": "64a760dea0d62a61a725b18c7238642236bf7de94d7107bc7d863264c8c1fbf2",
+            "builderSha256": "67a037820dc3fdbbdb8bc8b52d3fcf1aa691b5487c5cf0b7b648ed3865c71d5b",
+            "binarySha256": "1094b6adf1db496c1d11c40d337cef215a91a9b13b3a1189857fce28beb55592",
+            "openMP": false,
+            "modification": "BATCH_INTERFACE_NO_EPA_EQUATION_CHANGES",
+            "adapterSha256": "ef5a1878f721aa3fdd6545d331f8ab93595ad14dd3e9d69dbc4bccc8ca77c2dc"
+          },
+          "infiltrationM3": 9.229394277789288,
+          "nativeSteps": 15368,
+          "effectivePerviousAreaM2": 100.0,
+          "ownershipPolicy": "SURFACE_ONLY",
+          "rankingEligible": false,
+          "initialization": "EPA_INITIAL_DEFICIT_SEED",
+          "momentumPolicy": "PROPORTIONAL_WATER_WITHDRAWAL",
+          "recoveryFactor": 1.0,
+          "limitations": [
+            "토성 문헌값·초기 부족률은 현장 관측 함수율이 아님",
+            "부분 투수 영역은 삼각형 수심 공유 근사",
+            "EPA 회복식 상태이며 토양층·지하수·증발산 전체 물수지 아님"
+          ],
+          "triangles": [
+            0,
+            1
+          ],
+          "infiltrationByTriangleM3": [
+            4.614697138894644,
+            4.614697138894644
+          ],
+          "nativeStateFields": [
+            "IMD",
+            "F_ft",
+            "Fu_ft",
+            "Sat",
+            "T_seconds"
+          ],
+          "nativeState": [
+            [
+              0.025474829757656043,
+              0.0865024449549027,
+              0.03004626062886658,
+              1.0,
+              44930.715894243556
+            ],
+            [
+              0.025474829757656043,
+              0.0865024449549027,
+              0.03004626062886658,
+              1.0,
+              44930.715894243556
+            ]
+          ]
+        }
+      },
+      "resultSha256": "e6aba16fc1944cdad03cbfc97fb3438acfab8708d1a5f9a4eac81de7a463207e",
+      "fullRainfallM3": 23.1,
+      "warmupRainfallM3": 14.6,
+      "evaluationRainfallM3": 8.5,
+      "numericalQuality": {
+        "policyVersion": "SURFACE_NATIVE_BALANCE_v1",
+        "status": "PASSED",
+        "failureCode": null,
+        "nativeSteps": 22937,
+        "lastInternalTimeSeconds": 626340.0,
+        "minimumStepSeconds": 0.0007289581699296832,
+        "maximumStepSeconds": 60.0,
+        "maximumAbsoluteResidualM3": 6.217248937900877e-14,
+        "maximumRelativeResidualPercent": 100.0,
+        "last": {
+          "timeSeconds": 626340.0,
+          "storageM3": 11.499397836444777,
+          "boundaryNetInflowM3": 3.353593059216491e-31,
+          "sourceNetInflowM3": 11.49939783644475,
+          "balanceResidualM3": -2.6645352591003757e-14,
+          "relativeResidualPercent": 2.3171085103741047e-13,
+          "minimumDepthM": 0.11499397836444777
+        },
+        "relativeTolerancePercent": 1.0,
+        "absoluteToleranceM3": 1e-08,
+        "sourceSha256": "cd0494c23e2eaa2e3f7cf7feac6484937cd842140e9ee1ddaf003ac35c9281f1"
+      },
+      "rainfallSourceFileCount": 113
+    },
+    {
+      "name": "14d-60s",
+      "warmupDays": 14,
+      "maximumStepSeconds": 60.0,
+      "status": "PASSED",
+      "evaluation": {
+        "boundaryNetInflowM3": 1.8370727049510315e-31,
+        "sourceNetInflowM3": 6.2819583137442185,
+        "rainfallM3": 8.499999999998902,
+        "infiltrationM3": 2.2148456505455414,
+        "potentialSurfaceEvaporationM3": 0.00319603570887228,
+        "surfaceEvaporationM3": 0.0031960357088196,
+        "unmetSurfaceEvaporationM3": 0.0,
+        "surfaceEvaporationRoundoffM3": -5.268008251846368e-14,
+        "durationSeconds": 21540.0,
+        "initialStorageM3": 5.217439522817998,
+        "finalStorageM3": 11.499397836562347,
+        "balanceResidualM3": -1.2967404927621828e-13
+      },
+      "evaluationInitialState": {
+        "surface": {
+          "timeSeconds": 1209600.0,
+          "storageM3": 5.217439522817998,
+          "boundaryNetInflowM3": 1.5439317872968856e-32,
+          "sourceNetInflowM3": 5.217439522817981,
+          "balanceResidualM3": -1.7763568394002505e-14,
+          "depthM": [
+            0.05217439522817999,
+            0.05217439522817999
+          ],
+          "velocityXMps": [
+            2.6455422375511562e-17,
+            -2.718052585850586e-17
+          ],
+          "velocityYMps": [
+            2.680054782066773e-17,
+            -2.2263327956938326e-17
+          ],
+          "rainfallM3": 23.899999999994808,
+          "infiltrationM3": 18.2645821173887,
+          "potentialSurfaceEvaporationM3": 5.782443861839444,
+          "surfaceEvaporationM3": 0.41797835978804143,
+          "unmetSurfaceEvaporationM3": 5.364465502051046,
+          "surfaceEvaporationRoundoffM3": -3.5649261320713777e-13
+        },
+        "infiltration": {
+          "method": "GREEN_AMPT",
+          "engine": {
+            "schemaVersion": 1,
+            "engineVersion": "5.2.4",
+            "revision": "7952ca837988b1c32f791812eccc9fd64547e093",
+            "sourceArchiveSha256": "3f76a199573088ce47ff02491c529afb73d9953ee9d948dfc89dcd4981b4c0c0",
+            "originalInfiltrationSha256": "4b86c2080752bee770a4a2d1f8f6bdc5469a110305316440e2a7cba7dde31124",
+            "originalSolverCMakeSha256": "456578d247a73635199295a5e23700015bfcc4b7555fcf38e731aae98aa3c9df",
+            "extensionSha256": "64a760dea0d62a61a725b18c7238642236bf7de94d7107bc7d863264c8c1fbf2",
+            "builderSha256": "67a037820dc3fdbbdb8bc8b52d3fcf1aa691b5487c5cf0b7b648ed3865c71d5b",
+            "binarySha256": "1094b6adf1db496c1d11c40d337cef215a91a9b13b3a1189857fce28beb55592",
+            "openMP": false,
+            "modification": "BATCH_INTERFACE_NO_EPA_EQUATION_CHANGES",
+            "adapterSha256": "ef5a1878f721aa3fdd6545d331f8ab93595ad14dd3e9d69dbc4bccc8ca77c2dc"
+          },
+          "infiltrationM3": 18.2645821173887,
+          "nativeSteps": 33371,
+          "effectivePerviousAreaM2": 100.0,
+          "ownershipPolicy": "SURFACE_ONLY",
+          "rankingEligible": false,
+          "initialization": "EPA_INITIAL_DEFICIT_SEED",
+          "momentumPolicy": "PROPORTIONAL_WATER_WITHDRAWAL",
+          "recoveryFactor": 1.0,
+          "limitations": [
+            "토성 문헌값·초기 부족률은 현장 관측 함수율이 아님",
+            "부분 투수 영역은 삼각형 수심 공유 근사",
+            "EPA 회복식 상태이며 토양층·지하수·증발산 전체 물수지 아님"
+          ],
+          "triangles": [
+            0,
+            1
+          ],
+          "infiltrationByTriangleM3": [
+            9.13229105869435,
+            9.13229105869435
+          ],
+          "nativeStateFields": [
+            "IMD",
+            "F_ft",
+            "Fu_ft",
+            "Sat",
+            "T_seconds"
+          ],
+          "nativeState": [
+            [
+              0.02547482975254447,
+              0.08650244495219296,
+              0.03004626062886658,
+              1.0,
+              44930.715894243556
+            ],
+            [
+              0.02547482975254447,
+              0.08650244495219296,
+              0.03004626062886658,
+              1.0,
+              44930.715894243556
+            ]
+          ]
+        }
+      },
+      "resultSha256": "650aa674cf5c132b420b5bbb56f90d9bad320fa9f241aa915c6dad69f57136e0",
+      "fullRainfallM3": 32.4,
+      "warmupRainfallM3": 23.9,
+      "evaluationRainfallM3": 8.5,
+      "numericalQuality": {
+        "policyVersion": "SURFACE_NATIVE_BALANCE_v1",
+        "status": "PASSED",
+        "failureCode": null,
+        "nativeSteps": 40940,
+        "lastInternalTimeSeconds": 1231140.0,
+        "minimumStepSeconds": 0.0007289594504982233,
+        "maximumStepSeconds": 60.0,
+        "maximumAbsoluteResidualM3": 1.616484723854228e-13,
+        "maximumRelativeResidualPercent": 8.04186317522909e+22,
+        "last": {
+          "timeSeconds": 1231140.0,
+          "storageM3": 11.499397836562347,
+          "boundaryNetInflowM3": 1.99146588368072e-31,
+          "sourceNetInflowM3": 11.4993978365622,
+          "balanceResidualM3": -1.474376176702208e-13,
+          "relativeResidualPercent": 1.2821333757272293e-12,
+          "minimumDepthM": 0.11499397836562346
+        },
+        "relativeTolerancePercent": 1.0,
+        "absoluteToleranceM3": 1e-08,
+        "sourceSha256": "cd0494c23e2eaa2e3f7cf7feac6484937cd842140e9ee1ddaf003ac35c9281f1"
+      },
+      "rainfallSourceFileCount": 113
+    },
+    {
+      "name": "14d-30s",
+      "warmupDays": 14,
+      "maximumStepSeconds": 30.0,
+      "status": "PASSED",
+      "evaluation": {
+        "boundaryNetInflowM3": 7.635883965467938e-32,
+        "sourceNetInflowM3": 6.281839548825983,
+        "rainfallM3": 8.499999999996458,
+        "infiltrationM3": 2.214964415461715,
+        "potentialSurfaceEvaporationM3": 0.0031960357088696156,
+        "surfaceEvaporationM3": 0.0031960357088038904,
+        "unmetSurfaceEvaporationM3": 0.0,
+        "surfaceEvaporationRoundoffM3": -6.572520305780927e-14,
+        "durationSeconds": 21540.0,
+        "initialStorageM3": 5.217170898533315,
+        "finalStorageM3": 11.499010447359382,
+        "balanceResidualM3": -8.526512829121202e-14
+      },
+      "evaluationInitialState": {
+        "surface": {
+          "timeSeconds": 1209600.0,
+          "storageM3": 5.217170898533315,
+          "boundaryNetInflowM3": 5.258059521043899e-32,
+          "sourceNetInflowM3": 5.217170898533314,
+          "balanceResidualM3": -8.881784197001252e-16,
+          "depthM": [
+            0.052171708985333146,
+            0.052171708985333146
+          ],
+          "velocityXMps": [
+            4.0360730782531543e-17,
+            -4.035606192931855e-17
+          ],
+          "velocityYMps": [
+            4.485320621551176e-17,
+            -2.600434658931518e-17
+          ],
+          "rainfallM3": 23.899999999997906,
+          "infiltrationM3": 18.262828611726736,
+          "potentialSurfaceEvaporationM3": 5.782443861840594,
+          "surfaceEvaporationM3": 0.4200004897378009,
+          "unmetSurfaceEvaporationM3": 5.362443372103387,
+          "surfaceEvaporationRoundoffM3": 5.937472735695337e-13
+        },
+        "infiltration": {
+          "method": "GREEN_AMPT",
+          "engine": {
+            "schemaVersion": 1,
+            "engineVersion": "5.2.4",
+            "revision": "7952ca837988b1c32f791812eccc9fd64547e093",
+            "sourceArchiveSha256": "3f76a199573088ce47ff02491c529afb73d9953ee9d948dfc89dcd4981b4c0c0",
+            "originalInfiltrationSha256": "4b86c2080752bee770a4a2d1f8f6bdc5469a110305316440e2a7cba7dde31124",
+            "originalSolverCMakeSha256": "456578d247a73635199295a5e23700015bfcc4b7555fcf38e731aae98aa3c9df",
+            "extensionSha256": "64a760dea0d62a61a725b18c7238642236bf7de94d7107bc7d863264c8c1fbf2",
+            "builderSha256": "67a037820dc3fdbbdb8bc8b52d3fcf1aa691b5487c5cf0b7b648ed3865c71d5b",
+            "binarySha256": "1094b6adf1db496c1d11c40d337cef215a91a9b13b3a1189857fce28beb55592",
+            "openMP": false,
+            "modification": "BATCH_INTERFACE_NO_EPA_EQUATION_CHANGES",
+            "adapterSha256": "ef5a1878f721aa3fdd6545d331f8ab93595ad14dd3e9d69dbc4bccc8ca77c2dc"
+          },
+          "infiltrationM3": 18.262828611726736,
+          "nativeSteps": 51467,
+          "effectivePerviousAreaM2": 100.0,
+          "ownershipPolicy": "SURFACE_ONLY",
+          "rankingEligible": false,
+          "initialization": "EPA_INITIAL_DEFICIT_SEED",
+          "momentumPolicy": "PROPORTIONAL_WATER_WITHDRAWAL",
+          "recoveryFactor": 1.0,
+          "limitations": [
+            "토성 문헌값·초기 부족률은 현장 관측 함수율이 아님",
+            "부분 투수 영역은 삼각형 수심 공유 근사",
+            "EPA 회복식 상태이며 토양층·지하수·증발산 전체 물수지 아님"
+          ],
+          "triangles": [
+            0,
+            1
+          ],
+          "infiltrationByTriangleM3": [
+            9.131414305863368,
+            9.131414305863368
+          ],
+          "nativeStateFields": [
+            "IMD",
+            "F_ft",
+            "Fu_ft",
+            "Sat",
+            "T_seconds"
+          ],
+          "nativeState": [
+            [
+              0.02548924443350853,
+              0.08650667118967169,
+              0.03004626062886658,
+              1.0,
+              44930.715894243556
+            ],
+            [
+              0.02548924443350853,
+              0.08650667118967169,
+              0.03004626062886658,
+              1.0,
+              44930.715894243556
+            ]
+          ]
+        }
+      },
+      "resultSha256": "660f1610968406216a99562c6e3a9ffc0c965165a944eae4c2812446cbbdf0c8",
+      "fullRainfallM3": 32.4,
+      "warmupRainfallM3": 23.9,
+      "evaluationRainfallM3": 8.5,
+      "numericalQuality": {
+        "policyVersion": "SURFACE_NATIVE_BALANCE_v1",
+        "status": "PASSED",
+        "failureCode": null,
+        "nativeSteps": 59035,
+        "lastInternalTimeSeconds": 1231140.0,
+        "minimumStepSeconds": 0.002484701108187437,
+        "maximumStepSeconds": 30.0,
+        "maximumAbsoluteResidualM3": 1.3145040611561853e-13,
+        "maximumRelativeResidualPercent": 1.0397877300341435e+25,
+        "last": {
+          "timeSeconds": 1231140.0,
+          "storageM3": 11.499010447359382,
+          "boundaryNetInflowM3": 1.2893943486511837e-31,
+          "sourceNetInflowM3": 11.499010447359296,
+          "balanceResidualM3": -8.526512829121202e-14,
+          "relativeResidualPercent": 7.414997027921842e-13,
+          "minimumDepthM": 0.11499010447359381
+        },
+        "relativeTolerancePercent": 1.0,
+        "absoluteToleranceM3": 1e-08,
+        "sourceSha256": "cd0494c23e2eaa2e3f7cf7feac6484937cd842140e9ee1ddaf003ac35c9281f1"
+      },
+      "rainfallSourceFileCount": 113
+    },
+    {
+      "name": "replay-14d-60s",
+      "warmupDays": 14,
+      "maximumStepSeconds": 60.0,
+      "status": "PASSED",
+      "evaluation": {
+        "boundaryNetInflowM3": 1.8370727049510315e-31,
+        "sourceNetInflowM3": 6.2819583137442185,
+        "rainfallM3": 8.499999999998902,
+        "infiltrationM3": 2.2148456505455414,
+        "potentialSurfaceEvaporationM3": 0.00319603570887228,
+        "surfaceEvaporationM3": 0.0031960357088196,
+        "unmetSurfaceEvaporationM3": 0.0,
+        "surfaceEvaporationRoundoffM3": -5.268008251846368e-14,
+        "durationSeconds": 21540.0,
+        "initialStorageM3": 5.217439522817998,
+        "finalStorageM3": 11.499397836562347,
+        "balanceResidualM3": -1.2967404927621828e-13
+      },
+      "evaluationInitialState": {
+        "surface": {
+          "timeSeconds": 1209600.0,
+          "storageM3": 5.217439522817998,
+          "boundaryNetInflowM3": 1.5439317872968856e-32,
+          "sourceNetInflowM3": 5.217439522817981,
+          "balanceResidualM3": -1.7763568394002505e-14,
+          "depthM": [
+            0.05217439522817999,
+            0.05217439522817999
+          ],
+          "velocityXMps": [
+            2.6455422375511562e-17,
+            -2.718052585850586e-17
+          ],
+          "velocityYMps": [
+            2.680054782066773e-17,
+            -2.2263327956938326e-17
+          ],
+          "rainfallM3": 23.899999999994808,
+          "infiltrationM3": 18.2645821173887,
+          "potentialSurfaceEvaporationM3": 5.782443861839444,
+          "surfaceEvaporationM3": 0.41797835978804143,
+          "unmetSurfaceEvaporationM3": 5.364465502051046,
+          "surfaceEvaporationRoundoffM3": -3.5649261320713777e-13
+        },
+        "infiltration": {
+          "method": "GREEN_AMPT",
+          "engine": {
+            "schemaVersion": 1,
+            "engineVersion": "5.2.4",
+            "revision": "7952ca837988b1c32f791812eccc9fd64547e093",
+            "sourceArchiveSha256": "3f76a199573088ce47ff02491c529afb73d9953ee9d948dfc89dcd4981b4c0c0",
+            "originalInfiltrationSha256": "4b86c2080752bee770a4a2d1f8f6bdc5469a110305316440e2a7cba7dde31124",
+            "originalSolverCMakeSha256": "456578d247a73635199295a5e23700015bfcc4b7555fcf38e731aae98aa3c9df",
+            "extensionSha256": "64a760dea0d62a61a725b18c7238642236bf7de94d7107bc7d863264c8c1fbf2",
+            "builderSha256": "67a037820dc3fdbbdb8bc8b52d3fcf1aa691b5487c5cf0b7b648ed3865c71d5b",
+            "binarySha256": "1094b6adf1db496c1d11c40d337cef215a91a9b13b3a1189857fce28beb55592",
+            "openMP": false,
+            "modification": "BATCH_INTERFACE_NO_EPA_EQUATION_CHANGES",
+            "adapterSha256": "ef5a1878f721aa3fdd6545d331f8ab93595ad14dd3e9d69dbc4bccc8ca77c2dc"
+          },
+          "infiltrationM3": 18.2645821173887,
+          "nativeSteps": 33371,
+          "effectivePerviousAreaM2": 100.0,
+          "ownershipPolicy": "SURFACE_ONLY",
+          "rankingEligible": false,
+          "initialization": "EPA_INITIAL_DEFICIT_SEED",
+          "momentumPolicy": "PROPORTIONAL_WATER_WITHDRAWAL",
+          "recoveryFactor": 1.0,
+          "limitations": [
+            "토성 문헌값·초기 부족률은 현장 관측 함수율이 아님",
+            "부분 투수 영역은 삼각형 수심 공유 근사",
+            "EPA 회복식 상태이며 토양층·지하수·증발산 전체 물수지 아님"
+          ],
+          "triangles": [
+            0,
+            1
+          ],
+          "infiltrationByTriangleM3": [
+            9.13229105869435,
+            9.13229105869435
+          ],
+          "nativeStateFields": [
+            "IMD",
+            "F_ft",
+            "Fu_ft",
+            "Sat",
+            "T_seconds"
+          ],
+          "nativeState": [
+            [
+              0.02547482975254447,
+              0.08650244495219296,
+              0.03004626062886658,
+              1.0,
+              44930.715894243556
+            ],
+            [
+              0.02547482975254447,
+              0.08650244495219296,
+              0.03004626062886658,
+              1.0,
+              44930.715894243556
+            ]
+          ]
+        }
+      },
+      "resultSha256": "650aa674cf5c132b420b5bbb56f90d9bad320fa9f241aa915c6dad69f57136e0",
+      "fullRainfallM3": 32.4,
+      "warmupRainfallM3": 23.9,
+      "evaluationRainfallM3": 8.5,
+      "numericalQuality": {
+        "policyVersion": "SURFACE_NATIVE_BALANCE_v1",
+        "status": "PASSED",
+        "failureCode": null,
+        "nativeSteps": 40940,
+        "lastInternalTimeSeconds": 1231140.0,
+        "minimumStepSeconds": 0.0007289594504982233,
+        "maximumStepSeconds": 60.0,
+        "maximumAbsoluteResidualM3": 1.616484723854228e-13,
+        "maximumRelativeResidualPercent": 8.04186317522909e+22,
+        "last": {
+          "timeSeconds": 1231140.0,
+          "storageM3": 11.499397836562347,
+          "boundaryNetInflowM3": 1.99146588368072e-31,
+          "sourceNetInflowM3": 11.4993978365622,
+          "balanceResidualM3": -1.474376176702208e-13,
+          "relativeResidualPercent": 1.2821333757272293e-12,
+          "minimumDepthM": 0.11499397836562346
+        },
+        "relativeTolerancePercent": 1.0,
+        "absoluteToleranceM3": 1e-08,
+        "sourceSha256": "cd0494c23e2eaa2e3f7cf7feac6484937cd842140e9ee1ddaf003ac35c9281f1"
+      },
+      "rainfallSourceFileCount": 113
+    }
+  ],
+  "artifactArchive": {
+    "directory": "data/runs/surface-initialization-20261018-v2",
+    "manifestSha256": "a894812ee371239fd06d75de2db856041ef5105cce57f302dac2735ff3dd61e4",
+    "files": 1040
+  }
+}

@@ -13,6 +13,8 @@ _METHODS = {
                                    'set_rainfall', 'set_station_rainfall', 'store_frame', 'finish')),
 }
 _METHODS['network_metrics'] = _METHODS['network_exchange'] | {'metric_state'}
+for _engine in ('surface', 'surface_exchange'):
+    _METHODS[_engine] = _METHODS[_engine] | {'initialization_state'}
 
 
 def _serve(connection, engine, model, directory, evaluation_seconds):

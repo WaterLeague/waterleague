@@ -32,9 +32,10 @@ class EvaporationSeries:
                 and float(self.duration * 1000).is_integer(), 'EVAPORATION_DURATION_INVALID')
         self.files = {}
         kind = specification.get('type')
-        if kind == 'ARCHIVED_FAO56':
+        if kind in ('ARCHIVED_FAO56', 'ARCHIVED_ANTECEDENT_AND_FAO56'):
             data, self.files, code = read_reference(specification.get('reference'), root)
-            require(utc(data['start']) <= self.start and utc(data['end']) >= self.start + timedelta(seconds=self.duration),
+            require((kind != 'ARCHIVED_FAO56' or utc(data['start']) <= self.start)
+                    and utc(data['end']) >= self.start + timedelta(seconds=self.duration),
                     'EVAPORATION_COVERAGE_INCOMPLETE')
             if data['method'] == METHOD:
                 intervals = [{'startUtc': row['appliesFrom'], 'endUtc': row['appliesUntil'],
@@ -47,6 +48,22 @@ class EvaporationSeries:
             self.summary = {key: data[key] for key in ('method', 'timePolicy', 'evidence', 'station', 'assumptions')}
             self.summary.update(reference=specification['reference'], reconstructionImplementationHashes=code,
                 referenceAdapterSha256=hashlib.sha256(Path(__file__).with_name('reference_evaporation.py').read_bytes()).hexdigest())
+            if kind == 'ARCHIVED_ANTECEDENT_AND_FAO56':
+                from waterleague_sim.forcing.antecedent_archive import read_antecedent
+                rain, prior, files, summary = read_antecedent(specification.get('antecedentReference'), root)
+                require(utc(rain['start']) <= self.start < utc(rain['end']) == utc(data['start']),
+                        'EVAPORATION_ANTECEDENT_BINDING_INVALID')
+                split = utc(data['start'])
+                # 평가 기상 파일의 범위 밖 선행 구간만 이전 완료 일 자료로 채운다.
+                evaluation = [row | {'startUtc': max(utc(row['startUtc']), split).isoformat()}
+                              for row in intervals if utc(row['endUtc']) > split]
+                intervals = [{'startUtc': row['start'], 'endUtc': row['end'],
+                              'rateMmDay': row['ratesMmDay'][0]} for row in prior['segments']] + evaluation
+                maximum_interval = 86400
+                self.files.update(files)
+                self.summary.update(antecedent=summary, timePolicy='LAGGED_DAILY_ANTECEDENT_THEN_DECLARED_EVALUATION',
+                    antecedentTimePolicy='PREVIOUS_COMPLETED_DAY_HELD_OVER_NEXT_DAY',
+                    evaluationTimePolicy=data['timePolicy'])
         else:
             require(kind == 'NUMERICAL_TEST_SERIES' and
                     model.get('evidence') in ('ANALYTICAL_TEST_ONLY', 'NUMERICAL_TEST_ONLY_NOT_SEOUL'),
