@@ -1,3 +1,4 @@
+import { PumpDesignForm } from './PumpDesignForm';
 import { ConduitDesignForm } from './ConduitDesignForm';
 import { useState } from 'react';
 import {
@@ -36,6 +37,7 @@ const networkFacilities = [
   { id: 'RAINWATER_CISTERN', name: '빗물이용조', Icon: Container },
   { id: 'UNDERGROUND_STORAGE', name: '지하 저류조', Icon: Warehouse },
   { id: 'CONDUIT', name: '배수관·암거', Icon: Network },
+  { id: 'PUMP_STATION', name: '빗물펌프장', Icon: Factory },
 ] as const;
 const pendingFacilities = [
   { name: '저류지·유수지', Icon: Fence, reason: '수위별 저류 용량·월류 구조·부지·원가 연결 필요' },
@@ -43,11 +45,6 @@ const pendingFacilities = [
     name: '빗물받이',
     Icon: CircleDot,
     reason: '유입부 단면·기준고·관망과 지표의 같은 좌표계 연결 필요',
-  },
-  {
-    name: '빗물펌프장',
-    Icon: Factory,
-    reason: '펌프 곡선·흡입 및 방류 수위·운영 규칙·원가 연결 필요',
   },
 ];
 export function FacilityExpansionPanel({
@@ -67,9 +64,9 @@ export function FacilityExpansionPanel({
   onAllCandidates?: () => void;
   onLogin: () => void;
 }) {
-  const [type, setType] = useState<NetworkFacility | 'UNDERGROUND_STORAGE' | 'CONDUIT' | null>(
-    null
-  );
+  const [type, setType] = useState<
+    NetworkFacility | 'UNDERGROUND_STORAGE' | 'CONDUIT' | 'PUMP_STATION' | null
+  >(null);
   const state = useWatershed(account, open);
   return (
     <aside
@@ -110,10 +107,10 @@ export function FacilityExpansionPanel({
         </button>
       )}
       <h3>
-        연결 유역 비교 <small>생물저류 포함 6종</small>
+        연결 유역 비교 <small>생물저류 포함 7종</small>
       </h3>
       <p>
-        생물저류시설은 공개 토성 후보에서 지도 설치가 가능합니다. 나머지 5종은 관망 계산에서 사용할
+        생물저류시설은 공개 토성 후보에서 지도 설치가 가능합니다. 나머지 6종은 관망 계산에서 사용할
         수 있으며, 지도 설치 연결을 진행 중입니다.
       </p>
       <div className="watershed-facility-grid">
@@ -151,7 +148,9 @@ export function FacilityExpansionPanel({
           )}
           {state.catalog &&
             type &&
-            (type === 'CONDUIT' ? (
+            (type === 'PUMP_STATION' ? (
+              <PumpDesignForm catalog={state.catalog} state={state} />
+            ) : type === 'CONDUIT' ? (
               <ConduitDesignForm catalog={state.catalog} state={state} />
             ) : type === 'UNDERGROUND_STORAGE' ? (
               <StorageDesignForm catalog={state.catalog} state={state} />
@@ -167,7 +166,8 @@ export function FacilityExpansionPanel({
                     {new Date(job.createdAt).toLocaleString('ko-KR')} ·{' '}
                     {job.design.placements.length +
                       (job.design.storage?.placements.length ?? 0) +
-                      (job.design.conduits?.placements.length ?? 0)}
+                      (job.design.conduits?.placements.length ?? 0) +
+                      (job.design.pumps?.placements.length ?? 0)}
                     곳 · {jobLabels[job.state]}
                   </option>
                 ))}
@@ -204,7 +204,7 @@ export function FacilityExpansionPanel({
       )}
       <details className="watershed-pending">
         <summary>
-          연결 준비 중인 시설 <span>3종</span>
+          연결 준비 중인 시설 <span>2종</span>
         </summary>
         <p>아래 시설은 아직 설치하거나 이 화면에서 계산할 수 없습니다.</p>
         {pendingFacilities.map(({ name, Icon, reason }) => (

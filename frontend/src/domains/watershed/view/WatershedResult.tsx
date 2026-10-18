@@ -1,3 +1,4 @@
+import { PumpOperation } from './PumpOperation';
 import { CisternReferenceCosts } from './CisternReferenceCosts';
 import { conduitDimensions } from '../service/conduitDesign';
 import type { WatershedJob } from '../dto/watershedDto';
@@ -52,6 +53,15 @@ export function WatershedResult({ job }: { job: WatershedJob }) {
           {number(p.depthAreaCurve[1].depthM * p.depthAreaCurve[1].areaM2)} m³
         </p>
       ))}
+      {job.design.pumps && (
+        <p className="watershed-warning">펌프·압력관 공사비 미산정 · 참고 부분합 제외</p>
+      )}
+      {job.design.pumps?.placements.map((p) => (
+        <p key={p.id}>
+          {p.id} · 빗물펌프장 · {p.fromNode} → {p.toNode} · 기동/정지 {p.startDepthM}/{p.stopDepthM}{' '}
+          m
+        </p>
+      ))}
       {job.design.storage && (
         <p className="watershed-warning">
           지하 저류조 공사비 미산정 · 참고 공사비 부분합에 포함되지 않습니다.
@@ -66,6 +76,10 @@ export function WatershedResult({ job }: { job: WatershedJob }) {
             ...(job.design.storage?.placements ?? []).map((p) => ({
               id: p.id,
               name: '지하 저류조',
+            })),
+            ...(job.design.pumps?.placements ?? []).map((p) => ({
+              id: p.id,
+              name: '빗물펌프장·압력관',
             })),
             ...(job.design.conduits?.placements ?? []).map((p) => ({
               id: p.id,
@@ -92,6 +106,7 @@ export function WatershedResult({ job }: { job: WatershedJob }) {
               ? '수치 검사 통과 · 현장 정확도 검증과 구분'
               : '수치 검사 실패 · 효과 비교 보류'}
           </p>
+          <PumpOperation job={job} />
           {strategy?.connectedStorage && (
             <div aria-label="저류조 물수지">
               <h3>저류조 물수지</h3>

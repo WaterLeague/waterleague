@@ -1,0 +1,241 @@
+{
+  "schemaVersion": 1,
+  "classification": "PUBLIC_NETWORK_MEMBER_PUMP_DESIGN_NOT_SITE_MEASURED",
+  "rankingEligible": false,
+  "inputHash": "d646e3711abaac2a951a542b04dc33ca33c41fa56e128d0a4fa99cdec8ea33bd",
+  "numericalStatus": "PASSED",
+  "curveCatalogSha256": "f27bbf2baeb0c07848539aaf944c7771e0f391ee7c864166f2c646d180f5dde8",
+  "resultSha256": "0adc90f8dd2cb37953e11f2a71c1f919759e860dff854c504eb67b21dd7b929a",
+  "manifestSha256": "8f09d5b485c367b919891b5493c479fe7b395652420f8aa5142d5fe7daa19da5",
+  "implementationArchiveSha256": "a639efc672caa78ba01818d11894941065b06043a1f9f802e252426c784a8627",
+  "signedReductionM3": {
+    "outflowM3": -0.07539967633783817,
+    "floodingM3": 125.46927393251099
+  },
+  "signedPeakReductionM3s": 0.0,
+  "pumpOperation": {
+    "method": "NATIVE_ROUTING_STEP_PUMP_OBSERVER_V1",
+    "pumps": [
+      {
+        "transferredM3": 191.1915986536587,
+        "runningSeconds": 864.3420000000042,
+        "flowingSeconds": 864.3420000000042,
+        "startCount": 3.0,
+        "peakFlowM3s": 0.2620480414158383,
+        "minimumOperatingHeadM": 2.3570255092904158,
+        "maximumOperatingHeadM": 4.911972412718082,
+        "outsideHeadCurveSeconds": 0.0,
+        "outsideFlowCurveSeconds": 0.0,
+        "inRangeShaftEnergyKwh": 2.742191155620825,
+        "maximumRequiredNpshM": 8.699732299086595,
+        "observedSeconds": 86339.0,
+        "routingSteps": 1392566.0,
+        "linkId": "WLPU_Pump1",
+        "curveStatus": "PASSED",
+        "shaftEnergyKwh": 2.742191155620825,
+        "electricEnergyKwh": null,
+        "cavitationStatus": "NOT_EVALUATED",
+        "deliveryFloodingM3": 0.0,
+        "deliveryNodeId": "WLPU_Pump1_D",
+        "deliveryStatus": "PASSED"
+      }
+    ],
+    "volumeIntegration": "TRAPEZOIDAL_INTERNAL_TRANSFER_NOT_EXTERNAL_OUTFLOW",
+    "shaftPowerIntegration": "END_OF_NATIVE_STEP_RECTANGLE_MANUFACTURER_P_Q_CURVE",
+    "curveStatus": "PASSED",
+    "rankingEligible": false,
+    "deliveryStatus": "PASSED"
+  },
+  "connectedStorage": {
+    "design": {
+      "schemaVersion": 1,
+      "method": "CONNECTED_COVERED_SEALED_STORAGE_V1",
+      "source": {
+        "title": "EPA SWMM 5.2 User Manual",
+        "url": "https://nepis.epa.gov/Exe/ZyPURL.cgi?Dockey=P10145M6.TXT",
+        "sections": [
+          "3.2.6 Storage Units",
+          "B.6 Storage Unit Properties",
+          "C.20 Storage Shape Editor",
+          "[STORAGE]",
+          "[ORIFICES]",
+          "[XSECTIONS]"
+        ],
+        "engineRevision": "7952ca837988b1c32f791812eccc9fd64547e093"
+      },
+      "sourceNetworkSha256": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+      "derivedNetworkSha256": "311ad23c31fe021ba33d0699f344f98410824504ed785ece235e388be08486ba",
+      "compilerSha256": "219d7cd11c8e06c15d7307a264816e31b4703029f90ffd3f2eefade74ae62202",
+      "design": {
+        "placements": [
+          {
+            "basis": "EXPLICIT_DESIGN_NOT_SITE_MEASURED",
+            "cover": "COVERED",
+            "depthAreaCurve": [
+              {
+                "areaM2": 100,
+                "depthM": 0
+              },
+              {
+                "areaM2": 100,
+                "depthM": 9
+              }
+            ],
+            "drain": {
+              "crestM": 16.2,
+              "diameterM": 0.03,
+              "dischargeCoefficient": 0.65,
+              "evidence": "회원 지정 저류조 설계; 현장 치수·입지·운영 상태 미확인",
+              "flapGate": false,
+              "nodeId": "J2"
+            },
+            "evidence": "회원 지정 저류조 설계; 현장 치수·입지·운영 상태 미확인",
+            "facilityType": "UNDERGROUND_STORAGE",
+            "id": "Tank",
+            "initialDepthM": 0,
+            "inlet": {
+              "crestM": 18.5,
+              "diameterM": 0.2,
+              "dischargeCoefficient": 0.65,
+              "evidence": "회원 지정 저류조 설계; 현장 치수·입지·운영 상태 미확인",
+              "flapGate": false,
+              "nodeId": "J1"
+            },
+            "invertM": 12,
+            "lining": "SEALED",
+            "overflow": {
+              "crestM": 18.5,
+              "diameterM": 0.12,
+              "dischargeCoefficient": 0.65,
+              "evidence": "회원 지정 저류조 설계; 현장 치수·입지·운영 상태 미확인",
+              "flapGate": false,
+              "nodeId": "J2"
+            },
+            "surchargeDepthM": 0
+          }
+        ],
+        "sourceNetworkSha256": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+        "schemaVersion": 1
+      },
+      "facilities": [
+        {
+          "id": "Tank",
+          "nodeId": "WLST_Tank",
+          "facilityType": "UNDERGROUND_STORAGE",
+          "capacityM3": 900.0,
+          "capacityMethod": "EPA_TABULAR_END_AREA_INTEGRAL",
+          "ports": {
+            "inlet": {
+              "nodeId": "J1",
+              "linkId": "WLST_Tank_I",
+              "crestM": 18.5,
+              "diameterM": 0.2,
+              "dischargeCoefficient": 0.65,
+              "flapGate": false
+            },
+            "drain": {
+              "nodeId": "J2",
+              "linkId": "WLST_Tank_D",
+              "crestM": 16.2,
+              "diameterM": 0.03,
+              "dischargeCoefficient": 0.65,
+              "flapGate": false
+            },
+            "overflow": {
+              "nodeId": "J2",
+              "linkId": "WLST_Tank_O",
+              "crestM": 18.5,
+              "diameterM": 0.12,
+              "dischargeCoefficient": 0.65,
+              "flapGate": false
+            }
+          },
+          "directRainfallM3": 0,
+          "evaporationFactor": 0,
+          "seepageMmH": 0,
+          "surfaceOwnership": "UNCHANGED_ABOVE_GROUND_CATCHMENTS",
+          "geometryVerifiedOnSite": false
+        }
+      ],
+      "rankingEligible": false,
+      "historicalReconstructionEligible": false,
+      "limitations": [
+        "명시적 설계 제원이며 현장 치수·입지·공사 가능성·단가의 검증 아님",
+        "기존 절점과 시설 사이의 국부 오리피스 연결; 긴 접속관 마찰·침전·막힘은 포함하지 않음",
+        "덮개·차수 설계의 지하 저장 범위; 개방 저류지 직접 강우·증발·침투와 구분",
+        "비상 배수구 용량 초과 시 별도 지표 연결이 필요하며 절점 월류 소실은 성공 효과 아님"
+      ]
+    },
+    "wholeRunLedger": {
+      "startSeconds": 0.0,
+      "endSeconds": 86339.0,
+      "facilities": [
+        {
+          "id": "Tank",
+          "nodeId": "WLST_Tank",
+          "initialStorageM3": 0.0,
+          "inflowM3": 313.8694603888137,
+          "outflowIncludingFloodingM3": 191.1915986536579,
+          "floodingM3": 0.0,
+          "finalStorageM3": 122.66249795317161,
+          "capacityM3": 900.0,
+          "balanceResidualM3": 0.01536378198419186,
+          "allowedResidualM3": 3.138694603888137,
+          "numericalStatus": "PASSED"
+        }
+      ],
+      "scope": "NATIVE_STORAGE_NODE_BALANCE_ALREADY_INCLUDED_IN_NETWORK_ROUTING",
+      "numericalStatus": "PASSED"
+    },
+    "evaluationLedger": null,
+    "numericalStatus": "PASSED",
+    "routingBalanceAlreadyIncludesStorageAndFlows": true,
+    "rankingEligible": false
+  },
+  "unmappedNodes": [
+    {
+      "id": "WLPU_Pump1_D",
+      "kind": "JUNCTION",
+      "mapped": false,
+      "floodingM3": 0.0
+    },
+    {
+      "id": "WLST_Tank",
+      "kind": "STORAGE",
+      "mapped": false,
+      "floodingM3": 0.0
+    }
+  ],
+  "replay": [
+    {
+      "id": "baseline",
+      "outSha256": "682eeb8bb19391dde81c640bc68f91de924852787689c89cbd46a3c771006c18",
+      "binaryEqual": true,
+      "metricsEqual": true,
+      "nodeFloodingEqual": true,
+      "pumpLedgerEqual": true
+    },
+    {
+      "id": "strategy",
+      "outSha256": "d96454cb2b1cb90f712acf5430decc5df695e20f362d78174eed205aa67eaf55",
+      "binaryEqual": true,
+      "metricsEqual": true,
+      "nodeFloodingEqual": true,
+      "pumpLedgerEqual": true
+    }
+  ],
+  "verification": {
+    "serverTests": 12,
+    "isolatedPostgresWorkerTests": 5,
+    "sourceDatabaseCountsUnchanged": true,
+    "frontendTests": 34,
+    "productionBuildPassed": true,
+    "browserInput": "공통 양식의 기동/정지 역전 거부·펌프 추가·요청 전달, 실제 워커 결과 표시; QA 제출은 서버 저장 없음"
+  },
+  "limitations": [
+    "현장 부지·좌표/수직 기준·NPSHa·최소 잠김 미확정",
+    "공사비·전기 사용량 미산정",
+    "50Hz 제조사 참고 곡선이며 서울 기존 펌프의 실측 제원 아님",
+    "원 관망의 2010 강우 입력 비교이며 현재/재해 모드의 순위 미반영"
+  ]
+}

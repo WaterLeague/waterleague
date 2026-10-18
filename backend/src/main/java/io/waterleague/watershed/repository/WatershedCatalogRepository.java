@@ -8,6 +8,9 @@ import tools.jackson.databind.JsonNode;
 
 @Repository
 public class WatershedCatalogRepository {
+  public static final String PUMP_HASH =
+      "f27bbf2baeb0c07848539aaf944c7771e0f391ee7c864166f2c646d180f5dde8";
+  private final JsonNode pumps;
   public static final String HASH =
       "beaddba8868b6f1f6bbf35b1d53d4695a94db99498d8988f90d62013cf8f053c";
   public static final String LAYOUT_HASH =
@@ -22,6 +25,7 @@ public class WatershedCatalogRepository {
   private final JsonNode layout;
 
   public WatershedCatalogRepository(JsonService json) throws java.io.IOException {
+    pumps = load(json, "facilities/ksb-pump-curve-v1.json", PUMP_HASH);
     conduits = load(json, "watersheds/seocho-conduits-v1.json", CONDUIT_HASH);
     if (!conduits.path("sourceCatalogSha256").asString().equals(HASH))
       throw new IllegalStateException("관로 원본 불일치");
@@ -46,6 +50,10 @@ public class WatershedCatalogRepository {
 
   public JsonNode conduits() {
     return conduits.deepCopy();
+  }
+
+  public JsonNode pumps() {
+    return pumps.deepCopy();
   }
 
   public JsonNode storage() {

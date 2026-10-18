@@ -516,3 +516,14 @@
   padding-top: 12px;
   font-variant-numeric: tabular-nums;
 }
+
+.watershed-pump-curve {
+  display: block;
+  width: 100%;
+  max-height: 170px;
+  color: #466156;
+}
+.watershed-pump-curve text {
+  fill: currentColor;
+  font-size: 11px;
+}

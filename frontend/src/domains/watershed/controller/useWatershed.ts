@@ -1,3 +1,4 @@
+import type { PumpPlacement } from '../dto/pumpDto';
 import type { ConduitPlacement } from '../dto/conduitDto';
 import type { StoragePlacement } from '../dto/storageDto';
 import { validateCombinedDesign } from '../service/storageDesign';
@@ -20,6 +21,7 @@ export function useWatershed(account: Account | null, open: boolean) {
   const [jobs, setJobs] = useState<WatershedJob[]>([]);
   const [selectedId, setSelectedId] = useState('');
   const [drafts, setDrafts] = useState<NetworkPlacement[]>([]);
+  const [pumpDrafts, setPumpDrafts] = useState<PumpPlacement[]>([]);
   const [conduitDrafts, setConduitDrafts] = useState<ConduitPlacement[]>([]);
   const [storageDrafts, setStorageDrafts] = useState<StoragePlacement[]>([]);
   const [queryError, setQueryError] = useState('');
@@ -84,7 +86,13 @@ export function useWatershed(account: Account | null, open: boolean) {
   }, [open, allowed, revision]);
   async function submit() {
     if (!allowed || !catalog || submitting.current) return;
-    const invalid = validateCombinedDesign(catalog, drafts, storageDrafts, conduitDrafts);
+    const invalid = validateCombinedDesign(
+      catalog,
+      drafts,
+      storageDrafts,
+      conduitDrafts,
+      pumpDrafts
+    );
     if (invalid) {
       setSubmitError(invalid);
       return;
@@ -94,6 +102,8 @@ export function useWatershed(account: Account | null, open: boolean) {
       drafts.some((p) => p.facilityType === 'RAINWATER_CISTERN')
         ? catalog.cisternCostCatalogHash
         : null,
+      catalog.pumpCatalogHash,
+      [...pumpDrafts].sort((a, b) => a.id.localeCompare(b.id)),
       catalog.conduitCatalogHash,
       [...conduitDrafts].sort((a, b) => a.id.localeCompare(b.id)),
       catalog.storageCatalogHash,
@@ -125,6 +135,9 @@ export function useWatershed(account: Account | null, open: boolean) {
           : undefined,
         drafts.some((p) => p.facilityType === 'RAINWATER_CISTERN')
           ? catalog.cisternCostCatalogHash
+          : undefined,
+        pumpDrafts.length && catalog.pumpCatalogHash
+          ? { catalogHash: catalog.pumpCatalogHash, placements: pumpDrafts }
           : undefined
       );
       if (!mounted.current || abort.signal.aborted) return;
@@ -154,6 +167,8 @@ export function useWatershed(account: Account | null, open: boolean) {
     setStorageDrafts,
     conduitDrafts,
     setConduitDrafts,
+    pumpDrafts,
+    setPumpDrafts,
     error: submitError || queryError,
     busy,
     loading,

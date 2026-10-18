@@ -87,13 +87,19 @@ export function NetworkDesignForm({
       treatedImperviousM2: Number(treated),
     };
     while (
-      [...state.drafts, ...state.storageDrafts, ...state.conduitDrafts].some(
+      [...state.drafts, ...state.storageDrafts, ...state.conduitDrafts, ...state.pumpDrafts].some(
         (p) => p.id === placement.id
       )
     )
       placement.id = `F${++sequence.current + 1}`;
     const next = [...state.drafts, placement];
-    const invalid = validateCombinedDesign(catalog, next, state.storageDrafts, state.conduitDrafts);
+    const invalid = validateCombinedDesign(
+      catalog,
+      next,
+      state.storageDrafts,
+      state.conduitDrafts,
+      state.pumpDrafts
+    );
     if (invalid) {
       setError(invalid);
       return;
@@ -207,7 +213,11 @@ export function NetworkDesignForm({
         className="watershed-secondary"
         disabled={
           state.busy ||
-          state.drafts.length + state.storageDrafts.length + state.conduitDrafts.length >= 20
+          state.drafts.length +
+            state.storageDrafts.length +
+            state.conduitDrafts.length +
+            state.pumpDrafts.length >=
+            20
         }
         onClick={add}
       >

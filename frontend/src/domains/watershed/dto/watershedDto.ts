@@ -1,3 +1,4 @@
+import { pumpCatalogDto, pumpDesignDto, pumpOperationDto } from './pumpDto';
 import { cisternCostCatalogDto, cisternCostSnapshotDto } from './cisternCostDto';
 import { conduitCatalogDto, conduitDesignDto } from './conduitDto';
 import { storageCatalogDto, storageDesignDto, storageSummaryDto } from './storageDto';
@@ -18,6 +19,8 @@ export type NetworkFacility = z.infer<typeof networkFacilityDto>;
 export const watershedCatalogDto = z
   .object({
     catalogHash: hash,
+    pumpCatalogHash: hash.optional(),
+    pumpCatalog: pumpCatalogDto.optional(),
     cisternCostCatalogHash: hash.optional(),
     cisternCostCatalog: cisternCostCatalogDto.optional(),
     conduitCatalogHash: hash.optional(),
@@ -63,6 +66,8 @@ export const watershedCatalogDto = z
     }),
   })
   .superRefine((v, ctx) => {
+    if (Boolean(v.pumpCatalog) !== Boolean(v.pumpCatalogHash))
+      ctx.addIssue({ code: 'custom', message: '펌프 곡선·해시 누락' });
     if (Boolean(v.cisternCostCatalog) !== Boolean(v.cisternCostCatalogHash))
       ctx.addIssue({ code: 'custom', message: '이용조 견적 목록·해시 누락' });
     if (
@@ -112,6 +117,7 @@ const caseDto = z.object({
     .optional(),
   conduitStateTimeSeconds: amount.nonnegative().optional(),
   connectedStorage: storageSummaryDto.optional(),
+  pumpOperation: pumpOperationDto.optional(),
   id: z.enum(['baseline', 'strategy']),
   numericalStatus: z.enum(['PASSED', 'FAILED']),
   complete: z.boolean().optional(),
@@ -179,7 +185,12 @@ export const watershedResultDto = z
           report.nodes.some((n) =>
             n.mapped
               ? !layout.layout.nodes.some((p) => p.id === n.id && p.kind === n.kind)
-              : n.kind !== 'STORAGE' || layout.layout.nodes.some((p) => p.id === n.id)
+              : (n.kind !== 'STORAGE' &&
+                  !(
+                    n.kind === 'JUNCTION' &&
+                    c.pumpOperation?.pumps.some((p) => p.deliveryNodeId === n.id)
+                  )) ||
+                layout.layout.nodes.some((p) => p.id === n.id)
           )
         )
           ctx.addIssue({ code: 'custom', message: '절점 월류·관망도·평가 범위 불일치' });
@@ -199,6 +210,9 @@ export const watershedResultDto = z
           c.numericalStatus === 'PASSED' &&
           c.complete &&
           c.totals &&
+          (!c.pumpOperation ||
+            (c.pumpOperation.curveStatus === 'PASSED' &&
+              c.pumpOperation.deliveryStatus === 'PASSED')) &&
           (!c.connectedStorage ||
             (c.connectedStorage.numericalStatus === 'PASSED' &&
               c.connectedStorage.wholeRunLedger.numericalStatus === 'PASSED' &&
@@ -255,6 +269,7 @@ export const watershedJobDto = z
     createdAt: z.iso.datetime(),
     design: z.object({
       conduits: conduitDesignDto.optional(),
+      pumps: pumpDesignDto.optional(),
       storage: storageDesignDto.optional(),
       costing: watershedCostSnapshotDto.optional(),
       cisternCosting: cisternCostSnapshotDto.optional(),
@@ -290,6 +305,29 @@ export const watershedJobDto = z
       (value.result && JSON.stringify(value.result.cisternCosting) !== JSON.stringify(references))
     )
       ctx.addIssue({ code: 'custom', message: '이용조 견적과 설계·결과 불일치' });
+    const pumps = value.design.pumps?.placements ?? [];
+    if (value.result)
+      for (const c of value.result.cases) {
+        const expected = c.id === 'strategy' ? pumps : [];
+        const rows = c.pumpOperation?.pumps ?? [];
+        if (
+          (rows.length !== expected.length && c.numericalStatus === 'PASSED') ||
+          rows.some((r) => !expected.some((p) => r.linkId === 'WLPU_' + p.id)) ||
+          rows.some(
+            (r) =>
+              c.nodeFlooding &&
+              (r.observedSeconds !== c.nodeFlooding.endSeconds ||
+                !c.nodeFlooding.nodes.some(
+                  (n) =>
+                    n.id === r.deliveryNodeId &&
+                    !n.mapped &&
+                    n.kind === 'JUNCTION' &&
+                    floodAmountClose(n.floodingM3, r.deliveryFloodingM3)
+                ))
+          )
+        )
+          ctx.addIssue({ code: 'custom', message: '펌프 설계·운전·토출 월류 기록 불일치' });
+      }
     const pipes = value.design.conduits?.placements ?? [];
     if (
       value.result?.numericalStatus === 'PASSED' &&

@@ -34,19 +34,21 @@ def inputs(request):
     design = json.loads(request['placements'])
     require(isinstance(design, dict) and isinstance(design.get('placements'), list)
             and design.get('schemaVersion') == 1 and design.get('basis') == catalog['designBasis']
-            and set(design) <= {'schemaVersion','basis','placements','costing','storage','conduits','cisternCosting'}, 'WATERSHED_DESIGN_INVALID')
+            and set(design) <= {'schemaVersion','basis','placements','costing','storage','conduits','cisternCosting','pumps'}, 'WATERSHED_DESIGN_INVALID')
     storage = design.get('storage', {})
     require(isinstance(storage, dict) and isinstance(storage.get('placements', []), list), 'WATERSHED_STORAGE_PLACEMENTS_INVALID')
     conduit_design=design.get('conduits', {})
     require(isinstance(conduit_design,dict) and isinstance(conduit_design.get('placements',[]),list),'WATERSHED_CONDUIT_PLACEMENTS_INVALID')
-    storage_count = len(storage.get('placements', [])) + len(conduit_design.get('placements',[]))
+    pump_design = design.get('pumps', {})
+    require(isinstance(pump_design, dict) and isinstance(pump_design.get('placements', []), list), 'WATERSHED_PUMP_PLACEMENTS_INVALID')
+    storage_count = len(pump_design.get('placements', [])) + len(storage.get('placements', [])) + len(conduit_design.get('placements',[]))
     require(1 <= len(design['placements'])+storage_count <= 20, 'WATERSHED_DESIGN_INVALID')
     for p in design['placements']:
         template = catalog['templates'].get(p['facilityType'])
         require(template is not None and p['parameters'] == template['parameters']
                 and p['initialSaturationPercent'] == template['initialSaturationPercent']
                 and p['replacedImperviousM2'] == p['areaM2'], 'WATERSHED_TEMPLATE_CHANGED')
-    verify_costs({k: v for k, v in design.items() if k not in ('storage','conduits','cisternCosting')})
+    verify_costs({k: v for k, v in design.items() if k not in ('storage','conduits','cisternCosting','pumps')})
     from .costing.cistern_reference import verify as verify_cistern
     verify_cistern(design)
     manifest = ROOT/'data/manifests/mendeley-seocho-network-v3.json'
@@ -69,15 +71,22 @@ def inputs(request):
     if 'conduits' in design:
         from .watershed_conduits import compile as compile_conduits
         strategy,conduit_metadata=compile_conduits(strategy,design['conduits'],base,[p['id'] for p in design['placements']+storage.get('placements',[])])
+    pump_metadata = None
+    if 'pumps' in design:
+        from .watershed_pumps import compile as compile_pumps
+        strategy, pump_metadata = compile_pumps(strategy, design['pumps'], base, [p['id'] for p in design['placements']+storage.get('placements',[])+conduit_design.get('placements',[])])
     transformation = {'limitations': []}
     if design['placements']:
-        strategy, transformation = compile_design(strategy, {k: v for k, v in design.items() if k not in ('costing','storage','conduits','cisternCosting')})
+        strategy, transformation = compile_design(strategy, {k: v for k, v in design.items() if k not in ('costing','storage','conduits','cisternCosting','pumps')})
     if storage_metadata is not None:
         transformation['connectedStorage'] = storage_metadata
         transformation['limitations'] += storage_metadata['limitations']
     if conduit_metadata is not None:
         transformation['conduitRetrofits']=conduit_metadata
         transformation['limitations']+=conduit_metadata['limitations']
+    if pump_metadata is not None:
+        transformation['connectedPumps'] = pump_metadata
+        transformation['limitations'] += pump_metadata['limitations']
     return catalog, original, base, strategy, numerical, transformation, manifest
 
 
@@ -89,7 +98,7 @@ def calculate(request, directory):
     directory.mkdir(parents=True, exist_ok=True)
     (directory/'network-layout.json').write_bytes(layout_raw)
     design = json.loads(request['placements'])
-    cost_raw = verify_costs({k: v for k, v in design.items() if k not in ('storage','conduits','cisternCosting')})
+    cost_raw = verify_costs({k: v for k, v in design.items() if k not in ('storage','conduits','cisternCosting','pumps')})
     from .costing.cistern_reference import verify as verify_cistern
     cistern_raw = verify_cistern(design)
     if cistern_raw is not None:
@@ -114,18 +123,25 @@ def calculate(request, directory):
     write(directory/'numerical-transformation.json', numerical)
     write(directory/'design-transformation.json', transformation)
     (directory/'replay.py').write_bytes((Path(__file__).parent/'watershed_replay.py').read_bytes())
-    engine = facility_network.identity() | {'platform': platform.platform()}
+    engine_module = facility_network
+    engine_kind = 'facility_metrics'
+    if 'pumps' in design:
+        from .engine import pump_network
+        from .engine.connected_pumps import CATALOG as PUMP_CATALOG
+        engine_module, engine_kind = pump_network, 'pump_network'
+        (directory/'pump-curve.json').write_bytes(PUMP_CATALOG.read_bytes())
+    engine = engine_module.identity() | {'platform': platform.platform()}
     require(digest((ROOT/'tmp/swmm/source.tar.gz').read_bytes()) == engine['sourceArchiveSha256'],
             'WATERSHED_ENGINE_SOURCE_CHANGED')
-    for path, name in ((facility_network.library_path(), 'engine.bin'),
-                       (facility_network.library_path().parent/'network-build.json', 'engine-build.json'),
+    for path, name in ((engine_module.library_path(), 'engine.bin'),
+                       (engine_module.library_path().parent/'network-build.json', 'engine-build.json'),
                        (ROOT/'tmp/swmm/source.tar.gz', 'engine-source.tar.gz')):
         shutil.copyfile(path, directory/name)
     with ZipFile(directory/'implementation.zip', 'w', ZIP_DEFLATED) as archive:
         files = [*sorted((ROOT/'simulation/waterleague_sim').rglob('*.py')),
                  ROOT/'simulation/native/network_snapshot.inc', ROOT/'simulation/native/connected_lid_snapshot.inc',
                  ROOT/'simulation/native/network_metrics.inc',
-                 ROOT/'scripts/build_facility_metrics_swmm.py', ROOT/'scripts/build_live_swmm.py',
+                 ROOT/'scripts/build_facility_metrics_swmm.py', ROOT/'scripts/build_pump_network_swmm.py', ROOT/'simulation/native/pump_snapshot.inc', ROOT/'scripts/build_live_swmm.py',
                  ROOT/'simulation/pyproject.toml', ROOT/'simulation/uv.lock']
         for path in files:
             archive.write(path, str(path.relative_to(ROOT)))
@@ -135,7 +151,7 @@ def calculate(request, directory):
         case = {'id': name, 'inputSha256': digest(raw)}
         (directory/(name+'-input.inp')).write_bytes(raw)
         try:
-            with EngineProcess('facility_metrics', raw.decode(), target, native_duration=True) as process:
+            with EngineProcess(engine_kind, raw.decode(), target, native_duration=True) as process:
                 result = process.call('run', 300)['result']
             case.update({key: result[key] for key in ('numericalStatus', 'runoffContinuityPercent',
                 'routingContinuityPercent', 'numericalQuality', 'convergence', 'facilityQuality')})
@@ -144,7 +160,10 @@ def calculate(request, directory):
             case['facilities'] = result['final']['facilities']
             case['outfalls'] = {key: value for key, value in result['final']['nodes'].items() if value['type'] == 1}
             case['evaluationMetrics'] = result['evaluationMetrics']
-            case['nodeFlooding'] = node_flooding(result['initial'], result['final'], layout_snapshot['layout'])
+            if 'pumpOperation' in result:
+                case['pumpOperation'] = result['pumpOperation']
+            deliveries = [p['deliveryNodeId'] for p in transformation.get('connectedPumps', {}).get('facilities', [])] if name == 'strategy' else []
+            case['nodeFlooding'] = node_flooding(result['initial'], result['final'], layout_snapshot['layout'], deliveries)
             if 'conduits' in design:
                 case['conduits']=[{'id':p['id'],'conduitId':p['conduitId'],**result['final']['links'][p['conduitId']]} for p in design['conduits']['placements']]
                 case['conduitStateTimeSeconds']=result['final']['totals']['timeSeconds']

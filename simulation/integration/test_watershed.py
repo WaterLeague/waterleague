@@ -171,3 +171,26 @@ class WatershedTests(unittest.TestCase):
         self.assertEqual(manifest['cistern-quote-source.html'],design['cisternCosting']['source']['sha256'])
         self.assertEqual(json.loads((folder/'cistern-cost-snapshot.json').read_text()),design['cisternCosting'])
         self.assertEqual(self.conn.execute('SELECT count(*) AS n FROM budget_ledger_entries WHERE owner_id=%s',(self.owner,)).fetchone()['n'],0)
+
+    def test_server_pump_request_runs_with_storage_and_preserves_native_ledger(self):
+        from pathlib import Path
+        from waterleague_sim.engine.swmm import ROOT
+        from waterleague_sim.engine.connected_pumps import CATALOG_HASH as PUMP_HASH
+        request=json.loads((ROOT/'tmp/pump-server-request.json').read_text())
+        identity=uuid.uuid4()
+        self.conn.execute("INSERT INTO watershed_experiments(id,owner_id,request_key,model_hash,input_hash,placements,state,created_at) VALUES(%s,%s,%s,%s,%s,%s,'QUEUED',now())",(identity,self.owner,uuid.uuid4(),request['modelHash'],request['inputHash'],request['placements']))
+        job=queue.claim(self.conn); self.assertTrue(watershed.process(self.conn,job,self.artifacts))
+        row=self.conn.execute('SELECT * FROM watershed_experiments WHERE id=%s',(identity,)).fetchone()
+        self.assertEqual(row['state'],'SUCCEEDED',row['error_code'])
+        result=json.loads(row['result']);self.assertEqual(result['numericalStatus'],'PASSED',result)
+        baseline,strategy=result['cases'];self.assertEqual(baseline['pumpOperation']['pumps'],[])
+        pump=strategy['pumpOperation']['pumps'][0]
+        self.assertEqual(pump['linkId'],'WLPU_Pump1');self.assertEqual(pump['startCount'],3)
+        self.assertGreater(pump['transferredM3'],190);self.assertEqual(pump['outsideHeadCurveSeconds'],0)
+        self.assertEqual(pump['deliveryFloodingM3'],0);self.assertIsNone(pump['electricEnergyKwh'])
+        self.assertEqual(strategy['connectedStorage']['numericalStatus'],'PASSED')
+        self.assertEqual({n['kind'] for n in strategy['nodeFlooding']['nodes'] if not n['mapped']},{'STORAGE','JUNCTION'})
+        self.assertFalse(result['rankingEligible']);self.assertIsNone(result['budgetChargedKrw'])
+        directory=self.artifacts/'watersheds'/str(identity)/str(job['lease_token'])
+        manifest=json.loads((directory/'manifest.json').read_text());self.assertEqual(manifest['pump-curve.json'],PUMP_HASH)
+        for name,sha in manifest.items(): self.assertEqual(hashlib.sha256((directory/name).read_bytes()).hexdigest(),sha)

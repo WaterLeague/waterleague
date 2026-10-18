@@ -60,13 +60,19 @@ function Composer({ catalog, state }: { catalog: WatershedCatalog; state: Waters
   function add() {
     let i = 1;
     const used = new Set(
-      [...state.drafts, ...state.storageDrafts, ...state.conduitDrafts].map((p) =>
-        p.id.toUpperCase()
+      [...state.drafts, ...state.storageDrafts, ...state.conduitDrafts, ...state.pumpDrafts].map(
+        (p) => p.id.toUpperCase()
       )
     );
     while (used.has(`TANK${i}`)) i++;
     const next = [...state.storageDrafts, { ...draft, id: `Tank${i}` }];
-    const invalid = validateCombinedDesign(catalog, state.drafts, next, state.conduitDrafts);
+    const invalid = validateCombinedDesign(
+      catalog,
+      state.drafts,
+      next,
+      state.conduitDrafts,
+      state.pumpDrafts
+    );
     setError(invalid);
     setFeedback('');
     if (!invalid) {
@@ -209,7 +215,11 @@ function Composer({ catalog, state }: { catalog: WatershedCatalog; state: Waters
         className="watershed-secondary"
         disabled={
           state.busy ||
-          state.drafts.length + state.storageDrafts.length + state.conduitDrafts.length >= 20
+          state.drafts.length +
+            state.storageDrafts.length +
+            state.conduitDrafts.length +
+            state.pumpDrafts.length >=
+            20
         }
         onClick={add}
       >

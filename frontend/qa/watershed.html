@@ -15,6 +15,7 @@
       ><button id="conduit-result">실제 관로 개량 결과</button
       ><button id="cistern-result">실제 이용조 견적 결과</button
       ><button id="node-result">실제 지점별 월류 결과</button
+      ><button id="pump-result">실제 펌프 운전 결과</button
       ><button id="failure">실패 표시 시험</button>
       <p id="submission" role="status">설계 입력 대기</p>
     </header>
@@ -28,6 +29,7 @@
         { NetworkDesignForm },
         { StorageDesignForm },
         { ConduitDesignForm },
+        { PumpDesignForm },
         { WatershedResult },
         { watershedCatalogDto, watershedJobDto },
         { default: catalogRaw },
@@ -37,12 +39,14 @@
         { default: conduitJob },
         { default: cisternJob },
         { default: nodeJob },
+        { default: pumpJob },
       ] = await Promise.all([
         import('react'),
         import('react-dom/client'),
         import('/src/domains/watershed/view/NetworkDesignForm.tsx'),
         import('/src/domains/watershed/view/StorageDesignForm.tsx'),
         import('/src/domains/watershed/view/ConduitDesignForm.tsx'),
+        import('/src/domains/watershed/view/PumpDesignForm.tsx'),
         import('/src/domains/watershed/view/WatershedResult.tsx'),
         import('/src/domains/watershed/dto/watershedDto.ts'),
         import('/src/domains/watershed/view/fixtures/catalog.json'),
@@ -52,6 +56,7 @@
         import('/src/domains/watershed/view/fixtures/public-conduit-job.json'),
         import('/src/domains/watershed/view/fixtures/public-cistern-job.json'),
         import('/src/domains/watershed/view/fixtures/public-node-flooding-job.json'),
+        import('/src/domains/watershed/view/fixtures/public-pump-job.json'),
         import('/src/domains/watershed/view/watershed.css'),
       ]);
       const result = {
@@ -86,6 +91,7 @@
         const [drafts, setDrafts] = React.useState([]);
         const [storageDrafts, setStorageDrafts] = React.useState([]);
         const [conduitDrafts, setConduitDrafts] = React.useState([]);
+        const [pumpDrafts, setPumpDrafts] = React.useState([]);
         const [type, setType] = React.useState('BIORETENTION');
         const [job, setJob] = React.useState(original);
         React.useEffect(() => {
@@ -96,6 +102,8 @@
             setJob(watershedJobDto.parse(cisternJob));
           document.getElementById('node-result').onclick = () =>
             setJob(watershedJobDto.parse(nodeJob));
+          document.getElementById('pump-result').onclick = () =>
+            setJob(watershedJobDto.parse(pumpJob));
           document.getElementById('storage-result').onclick = () =>
             setJob(watershedJobDto.parse(storageJob));
           document.getElementById('failure').onclick = () =>
@@ -122,6 +130,8 @@
           setStorageDrafts,
           conduitDrafts,
           setConduitDrafts,
+          pumpDrafts,
+          setPumpDrafts,
           busy: false,
           submit: async () => {
             document.getElementById('submission').textContent =
@@ -130,6 +140,7 @@
                 placements: drafts,
                 storage: storageDrafts,
                 conduits: conduitDrafts,
+                pumps: pumpDrafts,
               }) +
               ' · 서버 요청 없음';
           },
@@ -148,15 +159,18 @@
                 ...catalog.catalog.templates,
                 UNDERGROUND_STORAGE: { label: '지하 저류조' },
                 CONDUIT: { label: '배수관·암거' },
+                PUMP_STATION: { label: '빗물펌프장' },
               }).map(([id, t]) => React.createElement('option', { key: id, value: id }, t.label))
             )
           ),
           React.createElement(
-            type === 'CONDUIT'
-              ? ConduitDesignForm
-              : type === 'UNDERGROUND_STORAGE'
-                ? StorageDesignForm
-                : NetworkDesignForm,
+            type === 'PUMP_STATION'
+              ? PumpDesignForm
+              : type === 'CONDUIT'
+                ? ConduitDesignForm
+                : type === 'UNDERGROUND_STORAGE'
+                  ? StorageDesignForm
+                  : NetworkDesignForm,
             { catalog, type, state }
           ),
           React.createElement(WatershedResult, { job })

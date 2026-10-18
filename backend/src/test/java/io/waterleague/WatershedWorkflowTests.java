@@ -489,4 +489,109 @@ class WatershedWorkflowTests {
     Files.createSymbolicLink(dir.resolve("engine.bin"), root.resolve("outside.bin"));
     assertThatThrownBy(() -> artifacts.bundle(job)).isInstanceOf(DomainException.class);
   }
+
+  WatershedRequest.PumpItem pump(String id, String from, String to) {
+    return new WatershedRequest.PumpItem(
+        id,
+        from,
+        to,
+        new BigDecimal("1.800"),
+        new BigDecimal("1.200"),
+        "OFF",
+        new WatershedRequest.PumpDelivery(
+            new BigDecimal("10"),
+            new BigDecimal("0.5"),
+            new BigDecimal("0.1"),
+            new BigDecimal("20"),
+            new BigDecimal("0.5"),
+            BigDecimal.ONE,
+            BigDecimal.ZERO,
+            true));
+  }
+
+  WatershedRequest pumpRequest(UUID key, List<WatershedRequest.PumpItem> pumps) {
+    var t = tank("Tank", "C1", "100", "18.5");
+    var deep =
+        new WatershedRequest.StorageItem(
+            t.id(),
+            t.connectionId(),
+            t.areaM2(),
+            new BigDecimal("12"),
+            new BigDecimal("9"),
+            t.initialDepthM(),
+            t.inlet(),
+            t.drain(),
+            t.overflow());
+    return new WatershedRequest(
+        key,
+        WatershedCatalogRepository.HASH,
+        List.of(),
+        null,
+        new WatershedRequest.StorageRequest(WatershedCatalogRepository.STORAGE_HASH, List.of(deep)),
+        null,
+        null,
+        new WatershedRequest.PumpRequest(WatershedCatalogRepository.PUMP_HASH, pumps));
+  }
+
+  @Test
+  void bindsPumpCurveConnectionsControlsAndCanonicalOwnerRequest() throws Exception {
+    var dto = pumpRequest(UUID.randomUUID(), List.of(pump("Pump1", "WLST_Tank", "J2")));
+    var job = service.create(owner, dto);
+    assertThat(service.create(owner, dto).id()).isEqualTo(job.id());
+    var row = job.design().path("pumps").path("placements").get(0);
+    assertThat(row.path("curveId").asString()).isEqualTo("KSB_PA4_500_270_1450_17_V1");
+    assertThat(row.path("fromNode").asString()).isEqualTo("WLST_Tank");
+    assertThat(row.path("delivery").path("checkValve").asBoolean()).isTrue();
+    assertThat(service.catalog())
+        .containsEntry("pumpCatalogHash", WatershedCatalogRepository.PUMP_HASH);
+    assertThatThrownBy(() -> service.require(UUID.randomUUID(), job.id()))
+        .isInstanceOf(DomainException.class);
+    assertThat(
+            db.queryForObject(
+                "SELECT count(*) FROM budget_ledger_entries WHERE owner_id=?",
+                Integer.class,
+                owner))
+        .isZero();
+    var stored = service.require(owner, job.id());
+    Files.writeString(
+        Path.of("../tmp/pump-server-request.json"),
+        json.write(
+            Map.of(
+                "modelHash",
+                stored.modelHash(),
+                "inputHash",
+                stored.inputHash(),
+                "placements",
+                stored.placements())));
+  }
+
+  @Test
+  void rejectsUnknownPumpNodesUpstreamTransfersDuplicatePairsAndSharedIdentifiers() {
+    for (var rows :
+        List.of(
+            List.of(pump("Pump1", "UNKNOWN", "J2")),
+            List.of(pump("Pump1", "WLST_Tank", "Out1")),
+            List.of(pump("Pump1", "J2", "J1")),
+            List.of(pump("tank", "WLST_Tank", "J2")),
+            List.of(pump("Pump1", "WLST_Tank", "J2"), pump("Pump2", "WLST_Tank", "J2")))) {
+      assertThatThrownBy(() -> service.create(owner, pumpRequest(UUID.randomUUID(), rows)))
+          .isInstanceOf(DomainException.class);
+    }
+    var dto = pumpRequest(UUID.randomUUID(), List.of(pump("Pump1", "WLST_Tank", "J2")));
+    assertThatThrownBy(
+            () ->
+                service.create(
+                    owner,
+                    new WatershedRequest(
+                        dto.requestKey(),
+                        dto.catalogHash(),
+                        dto.placements(),
+                        null,
+                        null,
+                        null,
+                        null,
+                        dto.pumps())))
+        .isInstanceOf(DomainException.class);
+    assertThat(service.list(owner)).isEmpty();
+  }
 }

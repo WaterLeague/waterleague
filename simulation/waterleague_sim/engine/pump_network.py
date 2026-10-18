@@ -55,7 +55,6 @@ class PumpNetworkSession(facility_metrics.FacilityMetricsSession):
             curve_ids = list(dict.fromkeys(row['tokens'][0].upper() for row in sections.get('CURVES', [])))
             self.pump_ids = [row['tokens'][0] for row in sections.get('PUMPS', [])
                              if row['tokens'][0].startswith('WLPU_')]
-            require(self.pump_ids, 'PUMP_OBSERVER_DESIGN_REQUIRED')
             for name in self.pump_ids:
                 key = name.upper()
                 require(key+'_P' in curve_ids and key+'_N' in curve_ids, 'PUMP_OBSERVER_CURVE_MISSING')
@@ -91,6 +90,7 @@ class PumpNetworkSession(facility_metrics.FacilityMetricsSession):
             delivery = result['final']['nodes'].get(row['linkId']+'_D')
             require(delivery is not None, 'PUMP_DELIVERY_NODE_REQUIRED')
             row['deliveryFloodingM3'] = delivery['floodingM3']
+            row['deliveryNodeId'] = row['linkId']+'_D'
             row['deliveryStatus'] = 'PASSED' if delivery['floodingM3'] <= 1e-9 else 'FAILED'
         pump['deliveryStatus'] = 'PASSED' if all(r['deliveryStatus'] == 'PASSED' for r in pump['pumps']) else 'FAILED'
         result['pumpOperation'] = pump

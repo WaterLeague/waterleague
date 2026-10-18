@@ -24,6 +24,7 @@ public class WatershedService {
   private final WatershedCostService costs;
   private final StorageDesignService storage;
   private final ConduitDesignService conduits;
+  private final PumpDesignService pumps;
 
   public WatershedService(
       WatershedRepository jobs,
@@ -33,7 +34,8 @@ public class WatershedService {
       WatershedCostRepository costCatalog,
       WatershedCostService costs,
       StorageDesignService storage,
-      ConduitDesignService conduits) {
+      ConduitDesignService conduits,
+      PumpDesignService pumps) {
     this.jobs = jobs;
     this.catalog = catalog;
     this.admission = admission;
@@ -42,10 +44,13 @@ public class WatershedService {
     this.costs = costs;
     this.storage = storage;
     this.conduits = conduits;
+    this.pumps = pumps;
   }
 
   public Map<String, Object> catalog() {
     var result = new TreeMap<String, Object>();
+    result.put("pumpCatalogHash", WatershedCatalogRepository.PUMP_HASH);
+    result.put("pumpCatalog", catalog.pumps());
     result.put("catalogHash", WatershedCatalogRepository.HASH);
     result.put("catalog", catalog.value());
     result.put("costCatalogHash", WatershedCostRepository.HASH);
@@ -101,9 +106,10 @@ public class WatershedService {
         dto.conduits() == null || dto.conduits().placements() == null
             ? 0
             : dto.conduits().placements().size();
+    int pumpCount = dto.pumps() == null ? 0 : dto.pumps().placements().size();
     if (dto.placements() == null
-        || dto.placements().size() + storageCount + conduitCount < 1
-        || dto.placements().size() + storageCount + conduitCount > 20)
+        || dto.placements().size() + storageCount + conduitCount + pumpCount < 1
+        || dto.placements().size() + storageCount + conduitCount + pumpCount > 20)
       throw new DomainException(ErrorCode.PLACEMENT_INVALID);
     for (var p :
         dto.placements().stream()
@@ -161,6 +167,7 @@ public class WatershedService {
                 placements));
     if (dto.storage() != null) design.put("storage", storage.compile(dto.storage(), ids));
     if (dto.conduits() != null) design.put("conduits", conduits.compile(dto.conduits(), ids));
+    if (dto.pumps() != null) design.put("pumps", pumps.compile(dto.pumps(), dto.storage(), ids));
     if (dto.costCatalogHash() != null && !dto.placements().isEmpty())
       design.put("costing", costs.snapshot(dto.costCatalogHash(), dto.placements()));
     if (dto.cisternCostCatalogHash() != null)

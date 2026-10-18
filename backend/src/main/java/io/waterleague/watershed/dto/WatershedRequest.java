@@ -12,7 +12,27 @@ public record WatershedRequest(
     @Pattern(regexp = "[a-f0-9]{64}") String costCatalogHash,
     @Valid StorageRequest storage,
     @Valid ConduitRequest conduits,
-    @Pattern(regexp = "[a-f0-9]{64}") String cisternCostCatalogHash) {
+    @Pattern(regexp = "[a-f0-9]{64}") String cisternCostCatalogHash,
+    @Valid PumpRequest pumps) {
+  public WatershedRequest(
+      UUID requestKey,
+      String catalogHash,
+      List<Item> placements,
+      String costCatalogHash,
+      StorageRequest storage,
+      ConduitRequest conduits,
+      String cisternCostCatalogHash) {
+    this(
+        requestKey,
+        catalogHash,
+        placements,
+        costCatalogHash,
+        storage,
+        conduits,
+        cisternCostCatalogHash,
+        null);
+  }
+
   public WatershedRequest(UUID requestKey, String catalogHash, List<Item> placements) {
     this(requestKey, catalogHash, placements, null, null, null, null);
   }
@@ -44,6 +64,38 @@ public record WatershedRequest(
   public record ConduitRequest(
       @NotBlank @Pattern(regexp = "[a-f0-9]{64}") String catalogHash,
       @NotNull @Size(min = 1, max = 20) List<@NotNull @Valid ConduitItem> placements) {}
+
+  public record PumpRequest(
+      @NotBlank @Pattern(regexp = "[a-f0-9]{64}") String catalogHash,
+      @NotNull @Size(min = 1, max = 20) List<@NotNull @Valid PumpItem> placements) {}
+
+  public record PumpItem(
+      @NotBlank @Pattern(regexp = "[A-Za-z][A-Za-z0-9_-]{0,23}") String id,
+      @NotBlank @Size(max = 40) String fromNode,
+      @NotBlank @Size(max = 40) String toNode,
+      @NotNull @DecimalMin("0.001") @DecimalMax("100") @Digits(integer = 3, fraction = 3)
+          BigDecimal startDepthM,
+      @NotNull @DecimalMin("0.001") @DecimalMax("100") @Digits(integer = 3, fraction = 3)
+          BigDecimal stopDepthM,
+      @NotBlank @Pattern(regexp = "ON|OFF") String initialStatus,
+      @NotNull @Valid PumpDelivery delivery) {}
+
+  public record PumpDelivery(
+      @NotNull @DecimalMin("0.001") @DecimalMax("10000") @Digits(integer = 5, fraction = 3)
+          BigDecimal lengthM,
+      @NotNull @DecimalMin("0.001") @DecimalMax("20") @Digits(integer = 2, fraction = 3)
+          BigDecimal diameterM,
+      @NotNull @DecimalMin("0.001") @DecimalMax("100") @Digits(integer = 3, fraction = 3)
+          BigDecimal roughnessMm,
+      @NotNull @DecimalMin("0.001") @DecimalMax("1000") @Digits(integer = 4, fraction = 3)
+          BigDecimal pressureHeadLimitM,
+      @NotNull @DecimalMin("0") @DecimalMax("100") @Digits(integer = 3, fraction = 3)
+          BigDecimal entranceLoss,
+      @NotNull @DecimalMin("0") @DecimalMax("100") @Digits(integer = 3, fraction = 3)
+          BigDecimal exitLoss,
+      @NotNull @DecimalMin("0") @DecimalMax("100") @Digits(integer = 3, fraction = 3)
+          BigDecimal averageLoss,
+      @NotNull Boolean checkValve) {}
 
   public record ConduitItem(
       @NotBlank @Pattern(regexp = "[A-Za-z][A-Za-z0-9_-]{0,23}") String id,

@@ -8,7 +8,7 @@ from pathlib import Path
 import platform
 
 
-def observed_run(engine, paths, metrics, node_flooding=None):
+def observed_run(engine, paths, metrics, node_flooding=None, pump_operation=None):
     engine.swmm_open.argtypes = [ctypes.c_char_p] * 3
     engine.wl_metricsBegin.argtypes = [ctypes.c_double, ctypes.c_double, ctypes.POINTER(ctypes.c_int), ctypes.c_int]
     engine.swmm_getIndex.argtypes = [ctypes.c_int, ctypes.c_char_p]
@@ -25,6 +25,19 @@ def observed_run(engine, paths, metrics, node_flooding=None):
         ids = spec['networkOutfalls']
         indexes = (ctypes.c_int * len(ids))(*(engine.swmm_getIndex(2, n.encode()) for n in ids))
         check(engine.wl_metricsBegin(spec['startMilliseconds']/1000, spec['endMilliseconds']/1000, indexes, len(ids)))
+        pumps = (pump_operation or {}).get('pumps', [])
+        if pumps:
+            curve_ids, section = [], ''
+            for line in paths[0].read_text().splitlines():
+                tokens = line.split(';', 1)[0].strip().upper().split()
+                if not tokens: continue
+                if tokens[0].startswith('['): section = tokens[0]
+                elif section == '[CURVES]' and tokens[0] not in curve_ids: curve_ids.append(tokens[0])
+            engine.wl_pumpsBegin.argtypes = [ctypes.c_int]*3
+            engine.wl_pumpsRead.argtypes = [ctypes.c_int, ctypes.POINTER(ctypes.c_double), ctypes.c_int]
+            for p in pumps:
+                key = p['linkId'].upper()
+                check(engine.wl_pumpsBegin(engine.swmm_getIndex(3, key.encode()), curve_ids.index(key+'_P'), curve_ids.index(key+'_N')))
         elapsed = ctypes.c_double()
         for _ in range(20_000_000):
             check(engine.wl_networkAdvance(0, ctypes.byref(elapsed)))
@@ -32,6 +45,14 @@ def observed_run(engine, paths, metrics, node_flooding=None):
                 break
         else:
             raise ValueError('WATERSHED_REPLAY_STEP_LIMIT')
+        pump_fields = ('transferredM3', 'runningSeconds', 'flowingSeconds', 'startCount', 'peakFlowM3s',
+            'minimumOperatingHeadM', 'maximumOperatingHeadM', 'outsideHeadCurveSeconds',
+            'outsideFlowCurveSeconds', 'inRangeShaftEnergyKwh', 'maximumRequiredNpshM', 'observedSeconds', 'routingSteps')
+        for p in pumps:
+            values = (ctypes.c_double*13)()
+            check(engine.wl_pumpsRead(engine.swmm_getIndex(3, p['linkId'].encode()), values, 13))
+            if any(p[k] != v for k, v in zip(pump_fields, values)):
+                raise ValueError('WATERSHED_REPLAY_PUMP_DIFFERENT')
         fields = ('outwardVolumeM3', 'inwardVolumeM3', 'peakOutwardM3s', 'peakInwardM3s',
                   'peakOutwardTimeSeconds', 'peakInwardTimeSeconds', 'coveredSeconds', 'nativeSteps')
         rows = []
@@ -56,6 +77,7 @@ def observed_run(engine, paths, metrics, node_flooding=None):
         check(engine.swmm_report())
         return (dict(zip(ids, rows[:-1])) == metrics['outfalls'] and rows[-1] == metrics['combined'], nodes_equal)
     finally:
+        if pump_operation is not None: engine.wl_pumpsRelease()
         engine.wl_metricsRelease()
         engine.wl_networkRelease()
         engine.swmm_close()
@@ -86,7 +108,7 @@ def replay(bundle, destination):
         case = next(c for c in result['cases'] if c['id'] == name)
         metrics = case.get('evaluationMetrics')
         if metrics:
-            metrics_equal, nodes_equal = observed_run(engine, paths, metrics, case.get('nodeFlooding'))
+            metrics_equal, nodes_equal = observed_run(engine, paths, metrics, case.get('nodeFlooding'), case.get('pumpOperation'))
         else:
             status=engine.swmm_run(*(os.fsencode(p) for p in paths))
             if status!=0: raise ValueError('WATERSHED_REPLAY_ENGINE_FAILED')
@@ -96,6 +118,7 @@ def replay(bundle, destination):
             rows[-1]['metricsEqual'] = metrics_equal
             if nodes_equal is not None:
                 rows[-1]['nodeFloodingEqual'] = nodes_equal
+            if case.get('pumpOperation') is not None: rows[-1]['pumpLedgerEqual'] = True
     (destination/'replay.json').write_text(json.dumps(rows,indent=2)+'\n')
     if not all(r['binaryEqual'] and r.get('metricsEqual', True) and r.get('nodeFloodingEqual', True) for r in rows): raise ValueError('WATERSHED_REPLAY_DIFFERENT')
     return rows

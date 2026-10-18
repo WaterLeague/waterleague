@@ -19,7 +19,7 @@ def load_layout(original_hash):
     return raw, {'sha256': LAYOUT_HASH, 'layout': value}
 
 
-def summarize(initial, final, layout):
+def summarize(initial, final, layout, delivery_nodes=()):
     def finite(value):
         return type(value) in (int, float) and math.isfinite(value) and value >= 0
     source = {n['id']: n for n in layout['nodes']}
@@ -36,8 +36,9 @@ def summarize(initial, final, layout):
             require(node['type'] == (1 if source[name]['kind'] == 'OUTFALL' else 0),
                     'WATERSHED_NODE_LAYOUT_MISMATCH')
         else:
-            # 설계로 추가된 저류 절점은 실제 위치를 만들어 원본 관망도에 그리지 않는다.
-            require(node['type'] == 2, 'WATERSHED_NODE_LOCATION_MISSING')
+            # 추가 저류·토출 절점은 실제 위치를 만들어 원본 관망도에 그리지 않는다.
+            require(node['type'] == 2 or node['type'] == 0 and name in delivery_nodes,
+                    'WATERSHED_NODE_LOCATION_MISSING')
         rows.append({'id': name, 'kind': ('JUNCTION', 'OUTFALL', 'STORAGE')[node['type']],
                      'mapped': name in source, 'floodingM3': node['floodingM3']})
     total = final['totals']['floodingM3']

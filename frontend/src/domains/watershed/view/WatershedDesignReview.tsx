@@ -15,7 +15,11 @@ export function WatershedDesignReview({
   state: WatershedState;
 }) {
   const cisternCosting = previewCisternCosts(catalog, state.drafts);
-  const count = state.drafts.length + state.storageDrafts.length + state.conduitDrafts.length;
+  const count =
+    state.drafts.length +
+    state.storageDrafts.length +
+    state.conduitDrafts.length +
+    state.pumpDrafts.length;
   const costing = state.drafts.length ? previewWatershedCosts(catalog, state.drafts) : null;
   return (
     <>
@@ -78,12 +82,32 @@ export function WatershedDesignReview({
               </button>
             </li>
           ))}
+          {state.pumpDrafts.map((p) => (
+            <li key={p.id}>
+              <div>
+                <strong>{p.id} · 빗물펌프장</strong>
+                <span>
+                  {p.fromNode} → {p.toNode} · 기동/정지 {p.startDepthM}/{p.stopDepthM} m
+                </span>
+              </div>
+              <button
+                aria-label={`${p.id} 펌프 설계 삭제`}
+                disabled={state.busy}
+                onClick={() => state.setPumpDrafts(state.pumpDrafts.filter((v) => v.id !== p.id))}
+              >
+                삭제
+              </button>
+            </li>
+          ))}
         </ul>
       </div>
       <p className="watershed-warning">
         2010년 공개 원 관망 강우로 계산합니다. 현재 재생 중인 재해·실시간 강우와 별도이며 주간·재해
         예산과 순위에 반영하지 않습니다. 전체 설치비 미확정.
       </p>
+      {state.pumpDrafts.length > 0 && (
+        <p className="watershed-warning">펌프·압력관 공사비 미산정 · 참고 부분합 제외</p>
+      )}
       {state.conduitDrafts.length > 0 && (
         <p className="watershed-warning">관로 개량 공사비 미산정 · 참고 부분합 제외</p>
       )}
@@ -100,6 +124,7 @@ export function WatershedDesignReview({
           preview
           additionalUnpriced={[
             ...state.storageDrafts.map((p) => ({ id: p.id, name: '지하 저류조' })),
+            ...state.pumpDrafts.map((p) => ({ id: p.id, name: '빗물펌프장·압력관' })),
             ...state.conduitDrafts.map((p) => ({ id: p.id, name: '배수관·암거 개량' })),
           ]}
         />
