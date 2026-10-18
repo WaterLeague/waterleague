@@ -212,6 +212,69 @@ class CisternMapPlanTests {
   }
 
   @Test
+  void geometryBindingPersistenceAndOldSnapshotPreservation() {
+    var owner = account("2419953");
+    var r = request();
+    var old = service.save(owner.username(), r);
+    assertThat(old.snapshot().path("request").has("tankLayout")).isFalse();
+    var layout =
+        new CisternLayoutRequest(
+            BigDecimal.ONE,
+            new BigDecimal("0.1"),
+            BigDecimal.ZERO,
+            BigDecimal.ZERO,
+            BigDecimal.ZERO);
+    var request =
+        new CisternPlanRequest(
+            r.districtId(),
+            r.roofCellId(),
+            r.groundCellId(),
+            r.roofModelHash(),
+            r.groundModelHash(),
+            r.captureAreaM2(),
+            r.tankAreaM2(),
+            r.tankDepthM(),
+            layout);
+    var saved = service.save(owner.username(), request);
+    assertThat(saved.snapshot().path("schemaVersion").asInt()).isEqualTo(2);
+    assertThat(saved.snapshot().path("tankGeometry").path("outerWidthM").asDouble()).isEqualTo(1.2);
+    assertThat(saved.snapshot().path("tankGeometry").path("sourceModelHash").asString())
+        .isEqualTo(ground.modelHash());
+    assertThat(service.save(owner.username(), request).id()).isEqualTo(saved.id());
+    assertThat(
+            service.list(owner.username()).stream()
+                .filter(v -> v.id().equals(saved.id()))
+                .findFirst()
+                .orElseThrow()
+                .snapshot())
+        .isEqualTo(saved.snapshot());
+    assertThat(service.save(owner.username(), r).inputHash()).isEqualTo(old.inputHash());
+    var outside =
+        new CisternLayoutRequest(
+            new BigDecimal("10000"),
+            new BigDecimal("0.1"),
+            BigDecimal.ZERO,
+            BigDecimal.ZERO,
+            BigDecimal.ZERO);
+    assertThatThrownBy(
+            () ->
+                service.save(
+                    owner.username(),
+                    new CisternPlanRequest(
+                        r.districtId(),
+                        r.roofCellId(),
+                        r.groundCellId(),
+                        r.roofModelHash(),
+                        r.groundModelHash(),
+                        r.captureAreaM2(),
+                        r.tankAreaM2(),
+                        r.tankDepthM(),
+                        outside)))
+        .isInstanceOf(DomainException.class);
+    assertThat(installations.active()).isEmpty();
+  }
+
+  @Test
   void concurrentRetryCreatesOneDraft() throws Exception {
     var owner = account("2419953");
     var start = new CountDownLatch(1);

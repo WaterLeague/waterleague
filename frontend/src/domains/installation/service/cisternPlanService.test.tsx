@@ -9,6 +9,7 @@ import { watershedCatalogDto } from '../../watershed/dto/watershedDto';
 import { previewCisternCosts } from '../../watershed/service/cisternCosts';
 import { CisternPlanPanel } from '../view/CisternPlanPanel';
 import type { CisternPlanState } from '../controller/useCisternPlans';
+import { cisternGeometry } from './cisternLayoutService';
 
 // 공개 후보 구조를 사용하는 단위 검사이며 운영 입지·설계 자료로 사용하지 않는다.
 const ground = siteDto.parse({ ...rawSite, cellId: 'GTEST', existingInfrastructure: null });
@@ -97,6 +98,42 @@ it('복원 응답의 원본 버전·두 위치·용량·견적 결속 검사', (
     expect(cisternPlanDto.safeParse(value).success).toBe(false);
   }
 });
+it('형상 포함 계획의 수량·배치 결속과 이전 면적 계획 구분', () => {
+  const base = structuredClone(draft());
+  const site = {
+    ...base.snapshot.ground,
+    center: [0, 0] as [number, number],
+    coordinates: [
+      [-5, -5],
+      [5, -5],
+      [5, 5],
+      [-5, 5],
+      [-5, -5],
+    ] as [number, number][],
+  };
+  const layout = { widthM: 1, wallThicknessM: 0.1, offsetXM: 0, offsetYM: 0, rotationDeg: 0 };
+  const value = {
+    ...base,
+    snapshot: {
+      ...base.snapshot,
+      schemaVersion: 2,
+      ground: site,
+      request: { ...base.snapshot.request, tankLayout: layout },
+      tankGeometry: cisternGeometry(site, 1, 2.35, layout)!,
+    },
+  };
+  expect(cisternPlanDto.safeParse(value).success).toBe(true);
+  const changed = structuredClone(value);
+  changed.snapshot.tankGeometry.coordinates[0][0] += 0.1;
+  expect(cisternPlanDto.safeParse(changed).success).toBe(false);
+  const changedWidth = structuredClone(value);
+  changedWidth.snapshot.request.tankLayout.widthM = 2;
+  expect(cisternPlanDto.safeParse(changedWidth).success).toBe(false);
+  const old = structuredClone(value);
+  old.snapshot.schemaVersion = 1;
+  expect(cisternPlanDto.safeParse(old).success).toBe(false);
+  expect(cisternPlanDto.parse(base).snapshot.tankGeometry).toBeUndefined();
+});
 it('저장된 참고 견적과 계획 안내를 표시하고 비회원 저장 버튼 분리', () => {
   const plan = cisternPlanDto.parse(draft());
   const noop = () => {};
@@ -107,6 +144,9 @@ it('저장된 참고 견적과 계획 안내를 표시하고 비회원 저장 �
     roof,
     ground,
     capture: '20',
+    layoutFields: { width: '', wall: '', east: '0', north: '0', rotation: '0' },
+    geometry: null,
+    editLayout: noop,
     area: '1',
     depth: '2.35',
     edit: noop,

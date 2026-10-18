@@ -24,8 +24,11 @@ import type { TraceTile } from '../../floodtrace/entity/floodTrace';
 import { FloodTracePlan } from '../../floodtrace/view/FloodTraceLayer';
 import { SurfacePlan } from '../../surface/view/SurfaceLayer';
 import type { SurfaceFrame, SurfaceMetric } from '../../surface/entity/surface';
+import { CisternLayoutPlan } from '../../installation/view/CisternLayoutPlan';
+import type { CisternGeometryPreview } from '../../installation/dto/cisternLayoutDto';
 
 type Props = {
+  cisternGeometry?: CisternGeometryPreview | null;
   planningRoles?: ReadonlyMap<string, CisternSiteRole>;
   preview?: { site: SharedSite; placement: Placement } | null;
   surfaceFrame?: SurfaceFrame | null;
@@ -92,6 +95,7 @@ export const CityPlan = memo(function CityPlan({
   camera,
   rainAmounts,
   planningRoles,
+  cisternGeometry,
 }: Props) {
   const {
     svg,
@@ -313,6 +317,7 @@ export const CityPlan = memo(function CityPlan({
       <InfrastructureFootprintsPlan assets={publicAssets} selectedId={selectedAssetId} />
       {siteLayer}
       {facilityLayer}
+      {cisternGeometry && <CisternLayoutPlan geometry={cisternGeometry} />}
       <FloodTracePlan tiles={traceTiles} />
       <SurfacePlan frame={surfaceFrame} metric={surfaceMetric} />
       {installations.map((i) => (

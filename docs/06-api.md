@@ -195,3 +195,6 @@ RFC 9457 `application/problem+json`: type, title, status, detail, instance, code
 `GET|POST /api/v1/installations/cistern-plans`, `DELETE /api/v1/installations/cistern-plans/{id}`는 사용 가능한 MEMBER의 본인 계획에 한정. POST는 소속 구·지붕/지상 후보 종류·원본 해시·공개 면적·공개 저류 영역·현재 공유 설치 점유 검사. 면적 소수 둘째 자리·깊이 소수 셋째 자리 입력, 깊이 100m는 입력 범위 방어이며 현장 설계 허용치가 아님. 본인 잠금과 활성 입력 해시 고유 제약으로 동시 재시도에 같은 계획 반환, 활성 계획 20개 한도. 삭제는 원 스냅샷을 보존하는 논리 삭제.
 
 응답의 `snapshot`은 두 후보 원 자료·설계 입력·단면적×깊이 용량·수평 중심 거리·공개 용량 참고 견적을 고정하며 `inputHash`는 저장 JSON 바이트의 SHA-256. 조회 때 해시 재검사, 클라이언트도 위치·원본 해시·용량·견적의 결속 검사. `status=SPATIAL_DRAFT_NOT_INSTALLED`, `installationReady=false`, `positionReserved=false` 고정. 주간·재해 공통 계획이며 특정 사건 당시 시설 복원·설치·계산 작업을 생성하지 않음. 기존 설치·예산·점수 API 불변.
+
+
+지도 계획 POST의 선택적 `tankLayout`은 내부 `widthM`, 벽 `wallThicknessM`, 후보 중심에서의 `offsetXM/offsetYM`, 지도 가로축 기준 반시계 `rotationDeg`를 받는다. 전체 유효성·정밀도와 원 도형 포함 검사 후 `schemaVersion=2` 및 계산한 `tankGeometry`를 고정 저장. 클라이언트가 전송한 임의 외곽 좌표를 신뢰하지 않는다. 값이 없는 기존 요청은 같은 v1 직렬화·해시·재시도 반환을 유지하며 v1 응답에는 형상 없음. 새 화면의 저장은 유효한 외곽 배치를 요구한다. 기초/여유고·구조·수리 연결을 검사한 설치 API가 아니며 위치 점유·예산 지출 없음.

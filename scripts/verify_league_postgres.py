@@ -32,7 +32,7 @@ def main():
                   'weekly': 'WeeklyWorkflowTests',
                   'historical': 'HistoricalWorkflowTests',
                   'watershed': 'WatershedWorkflowTests',
-                  'cistern-plan': 'CisternMapPlanTests',
+                  'cistern-plan': 'CisternMapPlanTests,CisternLayoutTests',
                   'shared-research': 'SharedResearchWorkflowTests',
                   'search': 'ResearchSearchWorkflowTests',
                   'restore': 'ResearchSearchWorkflowTests#replaysActualSwmmSourcesAndGeneratedCandidateBundleOnIsolatedPostgres',

@@ -505,6 +505,7 @@ function Explorer({
       selectedSite={selectedSite}
       facilityType={mapFacilityType}
       planningRoles={planningRoles}
+      cisternGeometry={cisternOpen ? cistern.geometry : null}
       eligibleRoofs={eligibility.roofIds}
       occupiedRoofs={occupiedRoofs}
       wetDistricts={wetDistricts}
@@ -664,6 +665,7 @@ function Explorer({
                   terrain={terrain}
                   facilityType={mapFacilityType}
                   planningRoles={planningRoles}
+                  cisternGeometry={cisternOpen ? cistern.geometry : null}
                   viewerId={viewerId ?? null}
                   city={city}
                   eligibleRoofs={eligibility.roofIds}

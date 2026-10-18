@@ -1,0 +1,313 @@
+[
+  {
+    "ring": [
+      [
+        -5,
+        -5
+      ],
+      [
+        5,
+        -5
+      ],
+      [
+        5,
+        5
+      ],
+      [
+        -5,
+        5
+      ],
+      [
+        -5,
+        -5
+      ]
+    ],
+    "center": [
+      0,
+      0
+    ],
+    "area": 6,
+    "depth": 2,
+    "layout": {
+      "widthM": 2,
+      "wallThicknessM": 0.25,
+      "offsetXM": 1,
+      "offsetYM": -0.5,
+      "rotationDeg": 0
+    },
+    "expected": [
+      [
+        -0.25,
+        -2.25
+      ],
+      [
+        2.25,
+        -2.25
+      ],
+      [
+        2.25,
+        1.25
+      ],
+      [
+        -0.25,
+        1.25
+      ],
+      [
+        -0.25,
+        -2.25
+      ]
+    ],
+    "name": "직사각형 내부 배치",
+    "contained": true
+  },
+  {
+    "ring": [
+      [
+        -5,
+        -5
+      ],
+      [
+        5,
+        -5
+      ],
+      [
+        5,
+        5
+      ],
+      [
+        -5,
+        5
+      ],
+      [
+        -5,
+        -5
+      ]
+    ],
+    "center": [
+      0,
+      0
+    ],
+    "area": 64,
+    "depth": 2,
+    "layout": {
+      "widthM": 8,
+      "wallThicknessM": 1,
+      "offsetXM": 0,
+      "offsetYM": 0,
+      "rotationDeg": 0
+    },
+    "name": "외곽 경계 접촉",
+    "contained": true
+  },
+  {
+    "ring": [
+      [
+        -5,
+        -5
+      ],
+      [
+        5,
+        -5
+      ],
+      [
+        5,
+        5
+      ],
+      [
+        -5,
+        5
+      ],
+      [
+        -5,
+        -5
+      ]
+    ],
+    "center": [
+      0,
+      0
+    ],
+    "area": 81,
+    "depth": 2,
+    "layout": {
+      "widthM": 9,
+      "wallThicknessM": 1,
+      "offsetXM": 0,
+      "offsetYM": 0,
+      "rotationDeg": 0
+    },
+    "name": "내부 면적 충족 후 벽체 초과",
+    "contained": false
+  },
+  {
+    "ring": [
+      [
+        -5,
+        -5
+      ],
+      [
+        5,
+        -5
+      ],
+      [
+        5,
+        5
+      ],
+      [
+        -5,
+        5
+      ],
+      [
+        -5,
+        -5
+      ]
+    ],
+    "center": [
+      0,
+      0
+    ],
+    "area": 16,
+    "depth": 2,
+    "layout": {
+      "widthM": 4,
+      "wallThicknessM": 0.2,
+      "offsetXM": 0,
+      "offsetYM": 0,
+      "rotationDeg": 45
+    },
+    "name": "회전 배치",
+    "contained": true
+  },
+  {
+    "ring": [
+      [
+        0,
+        0
+      ],
+      [
+        12,
+        0
+      ],
+      [
+        12,
+        12
+      ],
+      [
+        8,
+        12
+      ],
+      [
+        8,
+        4
+      ],
+      [
+        4,
+        4
+      ],
+      [
+        4,
+        12
+      ],
+      [
+        0,
+        12
+      ],
+      [
+        0,
+        0
+      ]
+    ],
+    "center": [
+      6,
+      6
+    ],
+    "area": 80,
+    "depth": 2,
+    "layout": {
+      "widthM": 10,
+      "wallThicknessM": 0.25,
+      "offsetXM": 0,
+      "offsetYM": 0,
+      "rotationDeg": 0
+    },
+    "name": "오목한 경계 네 꼭짓점 포함만으로 부족",
+    "contained": false
+  },
+  {
+    "ring": [
+      [
+        -5,
+        -5
+      ],
+      [
+        5,
+        -5
+      ],
+      [
+        5,
+        5
+      ],
+      [
+        -5,
+        5
+      ],
+      [
+        -5,
+        -5
+      ]
+    ],
+    "center": [
+      0,
+      0
+    ],
+    "area": 6,
+    "depth": 2,
+    "layout": {
+      "widthM": 2,
+      "wallThicknessM": 0.25,
+      "offsetXM": 5,
+      "offsetYM": -0.5,
+      "rotationDeg": 0
+    },
+    "name": "이동에 의한 경계 초과",
+    "contained": false
+  },
+  {
+    "ring": [
+      [
+        -5,
+        -5
+      ],
+      [
+        5,
+        -5
+      ],
+      [
+        5,
+        5
+      ],
+      [
+        -5,
+        5
+      ],
+      [
+        -5,
+        -5
+      ]
+    ],
+    "center": [
+      0,
+      0
+    ],
+    "area": 64,
+    "depth": 2,
+    "layout": {
+      "widthM": 8,
+      "wallThicknessM": 1,
+      "offsetXM": 0,
+      "offsetYM": 0,
+      "rotationDeg": 90
+    },
+    "name": "직각 회전 경계 접촉",
+    "contained": true
+  }
+]

@@ -73,7 +73,7 @@ export function CisternPlanPanel({
           {(
             [
               ['capture', '집수 면적 (m²)', s.roof?.maxAreaM2, '0.01'],
-              ['area', '탱크 단면적 (m²)', s.ground?.maxAreaM2, '0.01'],
+              ['area', '내부 수면적 (m²)', s.ground?.maxAreaM2, '0.01'],
               ['depth', '저류 깊이 (m)', 100, '0.001'],
             ] as const
           ).map(([key, label, max, step]) => (
@@ -98,8 +98,51 @@ export function CisternPlanPanel({
             m³
           </strong>
         </fieldset>
+        <fieldset disabled={s.busy}>
+          <legend>탱크 모양 · 위치</legend>
+          {(
+            [
+              ['width', '내부 폭 (m)', 0.01, 10000, '0.01'],
+              ['wall', '벽 두께 (m)', 0.001, 10, '0.001'],
+              ['east', '동쪽 이동 (m)', -100000, 100000, '0.001'],
+              ['north', '북쪽 이동 (m)', -100000, 100000, '0.001'],
+              ['rotation', '회전 (°)', 0, 359.99, '0.01'],
+            ] as const
+          ).map(([key, label, min, max, step]) => (
+            <label key={key}>
+              {label}
+              <input
+                type="number"
+                min={min}
+                max={max}
+                step={step}
+                required
+                value={s.layoutFields[key]}
+                onChange={(e) => s.editLayout(key, e.target.value)}
+              />
+            </label>
+          ))}
+          {s.geometry && (
+            <p className="cistern-layout-summary">
+              내부 길이{' '}
+              {s.geometry.internalLengthM.toLocaleString('ko-KR', { maximumFractionDigits: 3 })}m
+              <br />
+              외곽 {s.geometry.outerWidthM.toLocaleString('ko-KR', {
+                maximumFractionDigits: 3,
+              })} × {s.geometry.outerLengthM.toLocaleString('ko-KR', { maximumFractionDigits: 3 })}m
+            </p>
+          )}
+          {s.geometry && (
+            <p role={s.geometry.contained ? 'status' : 'alert'}>
+              {s.geometry.contained
+                ? '공개 지상 경계 안에 배치됨'
+                : '탱크 외곽이 공개 지상 경계를 벗어납니다. 폭·위치·회전을 조절해 주세요.'}
+            </p>
+          )}
+        </fieldset>
         <p className="micro-note">
-          면적·깊이는 설계값입니다. 탱크 형상 배치와 실제 홈통·배수 연결은 아직 확인되지 않았습니다.
+          후보 중심에서 이동 · 지도 가로축 0°. 지도에는 저류공간과 벽체의 설계 범위를 표시합니다.
+          기초·여유고·실제 홈통·배수 연결은 포함하지 않습니다.
         </p>
         {s.allowed ? (
           <button

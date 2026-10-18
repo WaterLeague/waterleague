@@ -79,13 +79,23 @@ public class CisternPlanService {
     if (plans.occupied(request.districtId(), request.roofCellId(), request.groundCellId()))
       throw new CisternPlanException(ErrorCode.SITE_OCCUPIED);
     var snapshot = new TreeMap<String, Object>();
-    snapshot.put("schemaVersion", 1);
+    snapshot.put("schemaVersion", request.tankLayout() == null ? 1 : 2);
     snapshot.put("status", "SPATIAL_DRAFT_NOT_INSTALLED");
     snapshot.put("request", request);
     snapshot.put("roof", roof);
     snapshot.put("ground", ground);
     var capacity = request.tankAreaM2().multiply(request.tankDepthM());
     snapshot.put("capacityM3", capacity);
+    if (request.tankLayout() != null)
+      snapshot.put(
+          "tankGeometry",
+          CisternLayoutService.build(
+              ground.coordinates(),
+              ground.center(),
+              ground.modelHash(),
+              request.tankAreaM2().doubleValue(),
+              request.tankDepthM().doubleValue(),
+              request.tankLayout()));
     snapshot.put(
         "horizontalSeparationM",
         Math.hypot(
@@ -110,7 +120,9 @@ public class CisternPlanService {
         "limitations",
         List.of(
             "지붕·지상 후보의 원 경계이며 실제 홈통·배수관 경로 미확인",
-            "단면적·깊이는 설계값이며 지상 후보 안의 실제 탱크 형상 배치·바닥 높이 미확인",
+            request.tankLayout() == null
+                ? "단면적·깊이는 설계값이며 지상 후보 안의 실제 탱크 형상 배치·바닥 높이 미확인"
+                : "탱크 외곽의 공개 도형 포함만 확인한 설계이며 기초·여유고·구조·지장물·실제 바닥 높이 미확인",
             "직선 중심 간 거리는 수평 참고 거리이며 실제 배관 길이·낙차가 아님",
             "설계 초안 저장은 위치 예약·설치·예산 차감·점수 부여가 아님"));
     String raw = json.write(snapshot), hash = json.hash(raw);

@@ -42,6 +42,8 @@ import type { TraceTile } from '../../floodtrace/entity/floodTrace';
 import { FloodTraceLayer } from '../../floodtrace/view/FloodTraceLayer';
 import { SurfaceLayer } from '../../surface/view/SurfaceLayer';
 import type { SurfaceFrame, SurfaceMetric } from '../../surface/entity/surface';
+import { CisternLayoutMesh } from '../../installation/view/CisternLayoutMesh';
+import type { CisternGeometryPreview } from '../../installation/dto/cisternLayoutDto';
 const TerrainContext = createContext<Terrain | null>(null);
 const mapEvents: Parameters<typeof Canvas>[0]['events'] = (state) => ({
   ...events(state),
@@ -386,7 +388,9 @@ const CityScene = memo(function CityScene({
   facilityType,
   viewerId,
   planningRoles,
+  cisternGeometry,
 }: {
+  cisternGeometry?: CisternGeometryPreview | null;
   planningRoles?: ReadonlyMap<string, CisternSiteRole>;
   surfaceFrame?: SurfaceFrame | null;
   surfaceMetric?: SurfaceMetric;
@@ -566,6 +570,7 @@ const CityScene = memo(function CityScene({
               </group>
             );
           })}
+        {cisternGeometry && <CisternLayoutMesh geometry={cisternGeometry} terrain={terrain} />}
         {preview && (
           <FacilityMesh
             cell={{

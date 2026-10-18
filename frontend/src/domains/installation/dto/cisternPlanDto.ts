@@ -1,6 +1,8 @@
 import { z } from 'zod';
 import { siteDto } from './installationDto';
 import { cisternCostSnapshotDto } from '../../watershed/dto/cisternCostDto';
+import { cisternLayoutRequestDto, cisternGeometryDto } from './cisternLayoutDto';
+import { cisternGeometry } from '../service/cisternLayoutService';
 const hash = z.string().regex(/^[a-f0-9]{64}$/);
 export const cisternPlanRequestDto = z.object({
   districtId: z.string().regex(/^\d{7}$/),
@@ -11,6 +13,7 @@ export const cisternPlanRequestDto = z.object({
   captureAreaM2: z.number().finite().positive(),
   tankAreaM2: z.number().finite().positive(),
   tankDepthM: z.number().finite().min(0.001).max(100),
+  tankLayout: cisternLayoutRequestDto.optional(),
 });
 export const cisternPlanDto = z
   .object({
@@ -18,12 +21,13 @@ export const cisternPlanDto = z
     inputHash: hash,
     createdAt: z.iso.datetime(),
     snapshot: z.object({
-      schemaVersion: z.literal(1),
+      schemaVersion: z.union([z.literal(1), z.literal(2)]),
       status: z.literal('SPATIAL_DRAFT_NOT_INSTALLED'),
       request: cisternPlanRequestDto,
       roof: siteDto,
       ground: siteDto,
       capacityM3: z.number().finite().positive(),
+      tankGeometry: cisternGeometryDto.optional(),
       horizontalSeparationM: z.number().finite().nonnegative(),
       referenceCosts: cisternCostSnapshotDto,
       installationReady: z.literal(false),
@@ -33,6 +37,33 @@ export const cisternPlanDto = z
   })
   .superRefine(({ snapshot: s }, ctx) => {
     const r = s.request;
+    const expected = r.tankLayout
+      ? cisternGeometry(s.ground, r.tankAreaM2, r.tankDepthM, r.tankLayout)
+      : null;
+    const shape = s.tankGeometry;
+    if (
+      s.schemaVersion === 2
+        ? !shape ||
+          !expected?.contained ||
+          shape.sourceModelHash !== expected.sourceModelHash ||
+          (
+            [
+              'internalWidthM',
+              'internalLengthM',
+              'wallThicknessM',
+              'outerWidthM',
+              'outerLengthM',
+              'storageDepthM',
+              'rotationDeg',
+            ] as const
+          ).some((k) => Math.abs(shape[k] - expected[k]) > 1e-8) ||
+          shape.center.some((v, i) => Math.abs(v - expected.center[i]) > 1e-7) ||
+          shape.coordinates.some((p, i) =>
+            p.some((v, j) => Math.abs(v - expected.coordinates[i][j]) > 1e-7)
+          )
+        : !!shape || !!r.tankLayout
+    )
+      ctx.addIssue({ code: 'custom', message: '이용조 외곽·설계 입력·공개 경계 불일치' });
     if (
       s.roof.kind !== 'ROOF' ||
       s.ground.kind !== 'GROUND' ||
