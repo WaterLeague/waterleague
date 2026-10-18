@@ -6,7 +6,7 @@ const rainfallUse = z.enum([
   'NEAREST_AWS_OBSERVED_REPLAY',
   'OBSERVED_REPLAY',
 ]);
-const facility = z.enum(['RAIN_GARDEN', 'PERMEABLE_PAVEMENT', 'GREEN_ROOF']);
+const facility = z.enum(['RAIN_GARDEN', 'PERMEABLE_PAVEMENT', 'GREEN_ROOF', 'BIORETENTION']);
 export const labDto = z.object({
   modelHash: z.string().regex(/^[a-f0-9]{64}$/),
   model: z.object({
@@ -22,7 +22,12 @@ export const labDto = z.object({
     currency: z.literal('KRW'),
     budget: positive,
     maxPlacements: z.number().int().positive(),
-    unitCosts: z.record(facility, positive),
+    unitCosts: z.object({
+      RAIN_GARDEN: positive,
+      PERMEABLE_PAVEMENT: positive,
+      GREEN_ROOF: positive,
+      BIORETENTION: positive.optional(),
+    }),
     costModel: z.object({
       source: z.object({ url: z.url({ protocol: /^https$/ }) }).nullish(),
       currency: z.literal('KRW'),

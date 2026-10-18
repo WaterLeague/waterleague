@@ -3,7 +3,7 @@ const hash = z.string().regex(/^[a-f0-9]{64}$/),
   time = z.iso.datetime({ offset: true });
 const placement = z.object({
   cellId: z.string().min(1).max(30),
-  facilityType: z.enum(['RAIN_GARDEN', 'PERMEABLE_PAVEMENT', 'GREEN_ROOF']),
+  facilityType: z.enum(['RAIN_GARDEN', 'PERMEABLE_PAVEMENT', 'GREEN_ROOF', 'BIORETENTION']),
   areaM2: z.number().positive(),
 });
 const metrics = z.object({

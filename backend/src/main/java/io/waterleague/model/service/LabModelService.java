@@ -89,7 +89,8 @@ public class LabModelService {
     }
     Map<FacilityType, BigDecimal> costs = new EnumMap<>(FacilityType.class);
     for (var t : FacilityType.values())
-      costs.put(t, model.path("unitCosts").path(t.name()).decimalValue());
+      if (model.path("unitCosts").has(t.name()))
+        costs.put(t, model.path("unitCosts").path(t.name()).decimalValue());
     return placements.validate(
         values,
         cells,

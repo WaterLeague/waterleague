@@ -1,4 +1,5 @@
-import type { FacilityType, Placement, Lab } from '../entity/game';
+import { GameDataError } from '../exception/GameDataError';
+import type { FacilityType, Placement, Lab, UnitCosts } from '../entity/game';
 export const facilities: Record<
   FacilityType,
   { name: string; short: string; intro: string; description: string; color: string }
@@ -24,9 +25,24 @@ export const facilities: Record<
     description: '지붕에서 빗물 저장과 방류 지연. 구조 하중·방수 확인 필요.',
     color: '#b3a464',
   },
+  BIORETENTION: {
+    name: '생물저류시설',
+    short: '생물저류',
+    intro: '식재토 아래 쇄석층에 빗물을 저장하고 땅으로 침투시키는 시설.',
+    description: '식재토·쇄석 저류층의 침투형 설계. 공개 토성 후보에서 자체 강우만 처리.',
+    color: '#4f8e8a',
+  },
 };
+export function unitCost(costs: UnitCosts, type: FacilityType) {
+  const value = costs[type];
+  if (value === undefined || !Number.isFinite(value) || value <= 0) throw new GameDataError();
+  return value;
+}
 export function totalCost(lab: Lab, placements: Placement[]) {
-  return placements.reduce((n, p) => n + p.areaM2 * lab.model.unitCosts[p.facilityType], 0);
+  return placements.reduce(
+    (n, p) => n + p.areaM2 * unitCost(lab.model.unitCosts, p.facilityType),
+    0
+  );
 }
 const decimalFormat = new Intl.NumberFormat('ko-KR', { maximumFractionDigits: 2 });
 export const format = {

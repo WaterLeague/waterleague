@@ -1,3 +1,4 @@
+import { unitCost } from '../service/gameService';
 import { useState, useEffect, useRef } from 'react';
 import {
   ArrowRight,
@@ -14,6 +15,7 @@ import {
   Leaf,
   Grid2X2,
   House,
+  Waves,
   LogOut,
   Download,
   Trophy,
@@ -50,7 +52,12 @@ import { DisasterMode } from '../../disaster/view/DisasterMode';
 import { FullscreenButton } from './FullscreenButton';
 import './game-viewport.css';
 import { CityExplorer } from '../../city/view/CityExplorer';
-const icons = { RAIN_GARDEN: Leaf, PERMEABLE_PAVEMENT: Grid2X2, GREEN_ROOF: House };
+const icons = {
+  RAIN_GARDEN: Leaf,
+  PERMEABLE_PAVEMENT: Grid2X2,
+  GREEN_ROOF: House,
+  BIORETENTION: Waves,
+};
 export function GamePage() {
   const g = useGame();
   const shell = useRef<HTMLDivElement>(null);
@@ -123,7 +130,10 @@ export function GamePage() {
   }, [lab?.modelHash, activeLeague]);
   const budget = activeLeague?.rules.budget ?? lab?.model.budget ?? 0;
   const allowedTypes =
-    activeLeague?.rules.allowedTypes ?? (Object.keys(facilities) as FacilityType[]);
+    activeLeague?.rules.allowedTypes ??
+    (Object.keys(facilities) as FacilityType[]).filter(
+      (t) => lab?.model.unitCosts[t] !== undefined
+    );
   const cell = lab?.model.cells.find((c) => c.id === selected);
   const placement = g.placements.find((p) => p.cellId === selected);
   useEffect(() => {
@@ -808,7 +818,7 @@ export function GamePage() {
                       <span>추정 설치비</span>
                       <strong>
                         {Number.isFinite(draftArea) && draftArea > 0
-                          ? won(draftArea * lab.model.unitCosts[type])
+                          ? won(draftArea * unitCost(lab.model.unitCosts, type))
                           : '—'}
                       </strong>
                     </div>
@@ -1088,12 +1098,14 @@ export function GamePage() {
             지역의 실제 견적이 아닙니다.
           </p>
           <div className="placement-table">
-            {(Object.keys(facilities) as FacilityType[]).map((t) => (
-              <p key={t}>
-                <b>{facilities[t].name}</b>
-                <span>{won(lab.model.unitCosts[t])}/m²</span>
-              </p>
-            ))}
+            {(Object.keys(facilities) as FacilityType[])
+              .filter((t) => lab.model.unitCosts[t] !== undefined)
+              .map((t) => (
+                <p key={t}>
+                  <b>{facilities[t].name}</b>
+                  <span>{won(unitCost(lab.model.unitCosts, t))}/m²</span>
+                </p>
+              ))}
           </div>
           <p className="footnote">
             미포함: {lab.model.costModel.exclusions.join(' · ')}. 자료 공개연도 2022년, 단가

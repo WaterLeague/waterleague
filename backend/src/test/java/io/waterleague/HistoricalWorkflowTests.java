@@ -150,7 +150,7 @@ class HistoricalWorkflowTests {
             "publicAssetPolicy",
             "costSnapshotRaw",
             "costSnapshotSha256",
-            "SEOUL_RAINWATER_ACCOUNTING_V1",
+            "SEOUL_RAINWATER_ACCOUNTING_V2",
             "SEOUL_PERSONAL_FULL_2026_V3",
             "2000000000");
     assertThat(service.list(owner)).hasSize(1);

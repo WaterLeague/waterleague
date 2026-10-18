@@ -164,8 +164,8 @@ def analyze(model, placement, evaporation, antecedent, directory, days=(7, 14)):
     (directory/'sensitivity.json').write_bytes(encode(report))
     for name in ('continuous.py', 'swmm.py', 'initialization.py', 'initialization_sensitivity.py', 'facilities.py'):
         (directory/name).write_bytes((Path(__file__).parent/name).read_bytes())
-    from .facilities import CATALOG_PATH
-    (directory/'facility-designs.json').write_bytes(CATALOG_PATH.read_bytes())
+    from .facilities import source_path
+    (directory/'facility-designs.json').write_bytes(source_path(model).read_bytes())
     (directory/'lid_snapshot.inc').write_bytes((continuous.ROOT/'simulation/native/lid_snapshot.inc').read_bytes())
     (directory/'manifest.json').write_bytes(encode({p.name: continuous.digest(p.read_bytes())
         for p in sorted(directory.iterdir()) if p.is_file()}))

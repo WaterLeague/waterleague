@@ -136,10 +136,12 @@
   overflow-wrap: anywhere;
 }
 .shared-inspector .facility-options {
+  flex-wrap: wrap;
   margin-bottom: 15px;
 }
 .shared-inspector .facility-options button {
-  flex: 1;
+  flex: 1 1 100px;
+  white-space: nowrap;
   display: flex;
   align-items: center;
   justify-content: center;

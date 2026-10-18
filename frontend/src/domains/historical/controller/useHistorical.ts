@@ -1,3 +1,4 @@
+import { unitCost } from '../../game/service/gameService';
 import { playbackSecond, rainfallFrame } from '../service/playbackService';
 import { useEffect, useRef, useState } from 'react';
 import { loadLab } from '../../game/repository/gameRepository';
@@ -147,21 +148,21 @@ export function useHistorical(
         budget.accounting,
         drafts.map((d) => ({
           facilityType: d.facilityType,
-          cost: d.areaM2 * d.site.unitCosts[d.facilityType],
+          cost: d.areaM2 * unitCost(d.site.unitCosts, d.facilityType),
         }))
       )
     : null;
   const remaining =
     (budget?.policy.personalLimitKrw ?? 0) -
-    drafts.reduce((n, d) => n + d.areaM2 * d.site.unitCosts[d.facilityType], 0);
+    drafts.reduce((n, d) => n + d.areaM2 * unitCost(d.site.unitCosts, d.facilityType), 0);
   function add(site: SharedSite, type: FacilityType, area: number) {
     if (
       !site.allowedTypes.includes(type) ||
       !Number.isFinite(area) ||
       area <= 0 ||
       area > site.maxAreaM2 ||
-      area * site.unitCosts[type] > remaining ||
-      area * site.unitCosts[type] >
+      area * unitCost(site.unitCosts, type) > remaining ||
+      area * unitCost(site.unitCosts, type) >
         (accounting?.facilities.find((f) => f.facilityType === type)?.availableKrw ?? 0) ||
       current.length >= 50
     ) {
@@ -177,7 +178,7 @@ export function useHistorical(
       ownerName: '내 연구 설계',
       facilityType: type,
       areaM2: area,
-      cost: area * site.unitCosts[type],
+      cost: area * unitCost(site.unitCosts, type),
       installedAt: new Date().toISOString(),
       center: site.center,
       heightM: site.heightM,

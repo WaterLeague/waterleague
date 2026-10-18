@@ -123,9 +123,15 @@ class PhysicsWorkflowTests {
     assertThat(physics().body()).contains("\"status\":\"UNAVAILABLE\"");
     assertThat(get("/api/v1/facilities/epa-designs-v1").body())
         .contains("EPA_LID_PUBLIC_DESIGNS_V1", "EPA_GR_150_V1");
+    assertThat(get("/api/v1/facilities/epa-designs-v2").body())
+        .contains("EPA_LID_PUBLIC_DESIGNS_V2", "EPA_BC_610_305_UNDRAINED_V1");
+    assertThat(get("/api/v1/facilities/epa-designs-v1").body()).doesNotContain("BIORETENTION");
     assertThat(get("/api/v1/installations/sites/2410520/G1").body())
-        .contains("OBSERVED_7_DAY_CONTINUOUS_SPINUP_V1", "RG_NATIVE_SOIL_SEEPAGE_V1",
-            "UNLINED_DESIGN_NOT_SITE_CONFIRMED", "\"storageThicknessMm\":0");
+        .contains(
+            "OBSERVED_7_DAY_CONTINUOUS_SPINUP_V1",
+            "RG_NATIVE_SOIL_SEEPAGE_V1",
+            "UNLINED_DESIGN_NOT_SITE_CONFIRMED",
+            "\"storageThicknessMm\":0");
     installations.remove(username, installation);
     assertThat(physics().statusCode()).isEqualTo(404);
   }

@@ -25,6 +25,7 @@ const mapFacilities = [
   { id: 'RAIN_GARDEN', name: '빗물정원', Icon: Leaf },
   { id: 'PERMEABLE_PAVEMENT', name: '투수포장', Icon: Grid2X2 },
   { id: 'GREEN_ROOF', name: '녹화지붕', Icon: House },
+  { id: 'BIORETENTION', name: '생물저류시설', Icon: Waves },
 ] as const;
 const networkFacilities = [
   { id: 'BIORETENTION', name: '생물저류시설', Icon: Waves },
@@ -92,7 +93,7 @@ export function FacilityExpansionPanel({
       </header>
       <p>설치할 시설을 고른 뒤 지도에서 위치를 선택하세요.</p>
       <h3>
-        지도에 설치 <small>3종</small>
+        지도에 설치 <small>4종</small>
       </h3>
       <div className="watershed-facility-grid">
         {mapFacilities.map(({ id, name, Icon }) => (
@@ -113,11 +114,11 @@ export function FacilityExpansionPanel({
         </button>
       )}
       <h3>
-        관망 계산 전용 <small>4종 · 지도 설치 미지원</small>
+        연결 유역 비교 <small>생물저류 포함 4종</small>
       </h3>
       <p>
-        추가 4종은 설계·계산 기능까지 구현됐습니다. 지도 위치의 배수 연결과 설치 비용을 연결하는
-        작업이 남아 있습니다.
+        생물저류시설은 공개 토성 후보에서 지도 설치가 가능합니다. 나머지 3종은 관망 계산에서 사용할
+        수 있으며, 지도 설치 연결을 진행 중입니다.
       </p>
       <div className="watershed-facility-grid">
         {networkFacilities.map(({ id, name, Icon }) => (

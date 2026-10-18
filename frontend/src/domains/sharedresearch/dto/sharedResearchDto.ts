@@ -4,7 +4,7 @@ import { facilityEvidenceDto } from '../../facility/dto/facilityDto';
 import { budgetRecordEvidenceDto } from '../../budget/dto/budgetDto';
 const num = z.number().finite();
 const time = z.string().datetime({ offset: true });
-const facility = z.enum(['RAIN_GARDEN', 'PERMEABLE_PAVEMENT', 'GREEN_ROOF']);
+const facility = z.enum(['RAIN_GARDEN', 'PERMEABLE_PAVEMENT', 'GREEN_ROOF', 'BIORETENTION']);
 export const sharedConsentsDto = z.array(
   z.object({ organizationId: z.uuid(), name: z.string(), granted: z.boolean() })
 );

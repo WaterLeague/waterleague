@@ -18,6 +18,8 @@ export function CostEstimate({
 }) {
   const evidence = site.costModel.facilities[type];
   const unit = site.unitCosts[type];
+  if (!evidence || unit === undefined)
+    return <p className="micro-note">이 위치의 시설 참고 단가가 없습니다.</p>;
   const affordable =
     Math.max(
       0,

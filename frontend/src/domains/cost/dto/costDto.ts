@@ -21,7 +21,7 @@ export const costEstimateDto = z
     districtId: z.string(),
     cellId: z.string(),
     siteModelHash: hash,
-    facilityType: z.enum(['RAIN_GARDEN', 'PERMEABLE_PAVEMENT', 'GREEN_ROOF']),
+    facilityType: z.enum(['RAIN_GARDEN', 'PERMEABLE_PAVEMENT', 'GREEN_ROOF', 'BIORETENTION']),
     quantityM2: z.number().positive(),
     unitCostKrw: z.number().positive(),
     referenceSubtotalKrw: amount,

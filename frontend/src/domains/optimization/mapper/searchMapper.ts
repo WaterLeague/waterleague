@@ -35,7 +35,9 @@ function checkPlacement(list: Placement[], cost: number, lab: Lab, source: strin
   for (const p of list) {
     const cell = lab.model.cells.find((c) => c.id === p.cellId);
     require(cell && cell.allowedTypes.includes(p.facilityType) && p.areaM2 <= cell.maxAreaM2);
-    total += p.areaM2 * lab.model.unitCosts[p.facilityType];
+    const unit = lab.model.unitCosts[p.facilityType];
+    require(unit !== undefined && Number.isFinite(unit) && unit > 0);
+    total += p.areaM2 * unit;
   }
   require(Math.abs(total - cost) < 0.0051);
   try {

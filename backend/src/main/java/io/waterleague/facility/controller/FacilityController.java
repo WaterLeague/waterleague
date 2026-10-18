@@ -17,10 +17,19 @@ public class FacilityController {
   }
 
   @GetMapping("/epa-designs-v1")
+  public ResponseEntity<JsonNode> previous() {
+    return response(true);
+  }
+
+  @GetMapping("/epa-designs-v2")
   public ResponseEntity<JsonNode> catalog() {
+    return response(false);
+  }
+
+  private ResponseEntity<JsonNode> response(boolean previous) {
     return ResponseEntity.ok()
-        .eTag(service.digest())
+        .eTag(service.digest(previous))
         .cacheControl(CacheControl.maxAge(Duration.ofDays(1)).cachePublic().immutable())
-        .body(service.catalog());
+        .body(service.catalog(previous));
   }
 }

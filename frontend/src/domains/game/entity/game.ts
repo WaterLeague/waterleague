@@ -2,7 +2,9 @@ export type RainfallUse =
   | 'COMMON_OBSERVED_REPLAY_NOT_LOCAL_OBSERVATION'
   | 'NEAREST_AWS_OBSERVED_REPLAY'
   | 'OBSERVED_REPLAY';
-export type FacilityType = 'RAIN_GARDEN' | 'PERMEABLE_PAVEMENT' | 'GREEN_ROOF';
+export type LegacyFacilityType = 'RAIN_GARDEN' | 'PERMEABLE_PAVEMENT' | 'GREEN_ROOF';
+export type FacilityType = LegacyFacilityType | 'BIORETENTION';
+export type UnitCosts = Record<LegacyFacilityType, number> & { BIORETENTION?: number };
 export interface Placement {
   cellId: string;
   facilityType: FacilityType;
@@ -68,7 +70,7 @@ export interface Lab {
     };
     budget: number;
     maxPlacements: number;
-    unitCosts: Record<FacilityType, number>;
+    unitCosts: UnitCosts;
     cells: Cell[];
     rainfall: Rainfall;
     assumptions: string[];

@@ -6,12 +6,12 @@ from functools import lru_cache
 from .engine.continuous import ROOT, digest
 from .model_catalog import read_catalog
 
-CATALOG_HASHES={6:'18a22093b2541ab05ed3fdee6a394a998bbfd5d092c6105cf787702f99bdf501',5:'450f016165b58477ba4fb09eb81aec08de93d6081cd367ddf9b906920d7c6e07',4:'f1f8d5f366cf47fff86319b27669bfb8e4a1fd3912d701b70b4b6e280e6fa66f',1:'f26b639dbdb2fee3c1aff172a19153868a07aa70735a6dfcfda863c3a38e8b64',
+CATALOG_HASHES={7:'de9a1bf428d4bd52604744213a33d5fa26fea84cab9297668064d58eb0be7469',6:'18a22093b2541ab05ed3fdee6a394a998bbfd5d092c6105cf787702f99bdf501',5:'450f016165b58477ba4fb09eb81aec08de93d6081cd367ddf9b906920d7c6e07',4:'f1f8d5f366cf47fff86319b27669bfb8e4a1fd3912d701b70b4b6e280e6fa66f',1:'f26b639dbdb2fee3c1aff172a19153868a07aa70735a6dfcfda863c3a38e8b64',
                 2:'009fcd085f476bbc96a41888646f284942cd69aae0b9405defcb2764a8d6d5ea',
                 3:'80e46a9c3821cdeff4b9acd839b264d810ba559202da828cdb8a6b45c04b15e4'}
 
-@lru_cache(maxsize=6)
-def site_catalog(version=6):
+@lru_cache(maxsize=7)
+def site_catalog(version=7):
     path=ROOT/'backend/src/main/resources/shared-sites'/('catalog.json' if version==1 else f'catalog-v{version}.json')
     raw=path.read_bytes()
     if digest(raw)!=CATALOG_HASHES[version]:raise ValueError('LIVE_CATALOG_INVALID')
@@ -25,7 +25,7 @@ def catalog():
     return ({d['districtId']:d for d in json.loads(districts)['regions']},site_catalog(),read_catalog(ROOT/'data/models'))
 
 @lru_cache(maxsize=4)
-def candidate_snapshot(district, version=6):
+def candidate_snapshot(district, version=7):
     districts,_,_=catalog();entry=site_catalog(version)[district]
     if entry['file']!=f'{district}-v{version}.json.gz':raise ValueError('LIVE_CATALOG_INVALID')
     raw=(ROOT/'backend/src/main/resources/shared-sites'/entry['file']).read_bytes()
@@ -36,7 +36,7 @@ def candidate_snapshot(district, version=6):
     if snapshot['baseModelHash']!=districts[district]['defaultModelHash']:raise ValueError('LIVE_MODEL_LINK_INVALID')
     return snapshot
 
-def candidates(district, version=6):
+def candidates(district, version=7):
     return {c['id']:c for c in candidate_snapshot(district, version)['cells']}
 
 def resolve(installation):
@@ -45,7 +45,7 @@ def resolve(installation):
     if installation['model_hash']==district['defaultModelHash']:
         cell=next(c for c in model['cells'] if c['id']==installation['cell_id'])
     else:
-        version=next((v for v in (6,5,4,3,2,1) if site_catalog(v)[district['districtId']]['sha256']==installation['model_hash']),None)
+        version=next((v for v in (7,6,5,4,3,2,1) if site_catalog(v)[district['districtId']]['sha256']==installation['model_hash']),None)
         if version is None:raise ValueError('LIVE_INSTALLATION_MODEL_INVALID')
         cell=candidates(district['districtId'],version)[installation['cell_id']]
     model['cells']=[copy.deepcopy(cell)]

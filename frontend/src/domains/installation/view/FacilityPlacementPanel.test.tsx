@@ -51,3 +51,47 @@ it('새 경계 정책과 겹치는 이전 설치도 기록 표시와 본인 철�
   expect(html).toContain('내 시설 철거');
   expect(html).not.toContain('<form');
 });
+
+it('공통 패널의 생물저류 제원 선택과 같은 사업군 잔액 적용', () => {
+  const bio = siteDto.parse({
+    ...rawSite,
+    existingInfrastructure: null,
+    allowedTypes: ['BIORETENTION'],
+    unitCosts: { ...rawSite.unitCosts, BIORETENTION: 560000 },
+    costModel: {
+      ...rawSite.costModel,
+      facilities: {
+        ...rawSite.costModel.facilities,
+        BIORETENTION: { ...rawSite.costModel.facilities.RAIN_GARDEN, unitCost: 560000 },
+      },
+    },
+  });
+  for (const research of [false, true]) {
+    const html = renderToStaticMarkup(
+      <FacilityPlacementPanel
+        {...props}
+        site={bio}
+        type="BIORETENTION"
+        area="20"
+        research={research}
+        budgetAccounting={{
+          version: 'SEOUL_RAINWATER_ACCOUNTING_V2',
+          programs: [],
+          facilities: [
+            {
+              facilityType: 'BIORETENTION',
+              programId: 'SEOUL_RAINWATER',
+              limitKrw: null,
+              allocatedKrw: 0,
+              availableKrw: 2_000_000_000,
+            },
+          ],
+        }}
+      />
+    );
+    expect(html).toContain('생물저류시설');
+    expect(html).toContain('11,200,000원');
+    expect(html).toContain(research ? '연구 설계에 추가' : '이 위치에 설치');
+    expect(html).not.toContain('class="solid-button shared-install" disabled');
+  }
+});

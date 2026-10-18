@@ -34,15 +34,15 @@ public class SiteCatalogRepository {
     this.districts = districts;
     this.models = models;
     this.occupancy = occupancy;
-    var source = read("catalog-v6.json", false, 50000);
+    var source = read("catalog-v7.json", false, 50000);
     if (!json.hash(source)
-        .equals("18a22093b2541ab05ed3fdee6a394a998bbfd5d092c6105cf787702f99bdf501"))
+        .equals("de9a1bf428d4bd52604744213a33d5fa26fea84cab9297668064d58eb0be7469"))
       throw new IllegalStateException("공동 후보 목록 해시 오류");
     for (var entry : json.tree(source).path("entries")) {
       String id = entry.path("districtId").asString();
       var district = districts.require(id);
       if (entries.put(id, entry) != null
-          || !entry.path("file").asString().equals(id + "-v6.json.gz"))
+          || !entry.path("file").asString().equals(id + "-v7.json.gz"))
         throw new IllegalStateException("공동 후보 목록 오류");
       counts.put(id, entry.path("count").asInt());
     }

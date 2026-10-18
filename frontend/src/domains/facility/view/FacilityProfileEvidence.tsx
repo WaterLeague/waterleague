@@ -24,6 +24,7 @@ const labels: Record<string, string> = {
   cloggingFactor: '막힘 계수',
 };
 const bases: Record<string, string> = {
+  LITERATURE_ENGINEERED_SOIL_ESTIMATE: '문헌 식재토의 추정값',
   PUBLIC_RANGE_DESIGN_SELECTION: '문헌 범위에서 선택한 설계값',
   PUBLISHED_TYPICAL_DERIVED_SOIL: '문헌 대표 배합의 추정값',
   UNRESOLVED_DESIGN_ASSUMPTION: '실측 미확보 설계 가정',

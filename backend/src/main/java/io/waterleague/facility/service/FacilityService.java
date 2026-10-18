@@ -12,11 +12,11 @@ public class FacilityService {
     this.repository = repository;
   }
 
-  public String digest() {
-    return FacilityRepository.SHA256;
+  public String digest(boolean previous) {
+    return previous ? FacilityRepository.LEGACY_SHA256 : FacilityRepository.SHA256;
   }
 
-  public JsonNode catalog() {
-    return repository.catalog();
+  public JsonNode catalog(boolean previous) {
+    return repository.catalog(previous);
   }
 }

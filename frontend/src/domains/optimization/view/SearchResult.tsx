@@ -1,3 +1,4 @@
+import { unitCost } from '../../game/service/gameService';
 import { useState } from 'react';
 import { Download } from 'lucide-react';
 import type { Lab } from '../../game/entity/game';
@@ -226,7 +227,7 @@ export function SearchResult({
                   </b>
                   <small>{format.format(p.areaM2)} m²</small>
                 </span>
-                <span>{won(p.areaM2 * lab.model.unitCosts[p.facilityType])}</span>
+                <span>{won(p.areaM2 * unitCost(lab.model.unitCosts, p.facilityType))}</span>
               </button>
             ))}
             {!placements.length && <p>설치 시설 없음</p>}

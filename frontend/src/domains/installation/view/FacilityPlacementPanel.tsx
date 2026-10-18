@@ -1,5 +1,6 @@
+import { unitCost } from '../../game/service/gameService';
 import type { ReactNode } from 'react';
-import { Leaf, Grid2X2, House, MapPin, Check, Trash2 } from 'lucide-react';
+import { Leaf, Grid2X2, House, Waves, MapPin, Check, Trash2 } from 'lucide-react';
 import type { SharedSite } from '../entity/installation';
 import type { FacilityType } from '../../game/entity/game';
 import { facilities, won } from '../../game/service/gameService';
@@ -8,7 +9,12 @@ import type { Budget, BudgetAccounting } from '../../budget/dto/budgetDto';
 import { CostEstimate } from './CostEstimate';
 import { FacilityDesignEvidence } from '../../facility/view/FacilityDesignEvidence';
 import { PhysicalInputEvidence } from './PhysicalInputEvidence';
-const icons = { RAIN_GARDEN: Leaf, PERMEABLE_PAVEMENT: Grid2X2, GREEN_ROOF: House };
+const icons = {
+  RAIN_GARDEN: Leaf,
+  PERMEABLE_PAVEMENT: Grid2X2,
+  GREEN_ROOF: House,
+  BIORETENTION: Waves,
+};
 type Placed = {
   facilityType: FacilityType;
   areaM2: number;
@@ -43,7 +49,10 @@ export type FacilityPlacementProps = {
 export function FacilityPlacementPanel(p: FacilityPlacementProps) {
   const { site, type, area, remaining, occupied } = p;
   const numericArea = Number(area);
-  const cost = site && type ? numericArea * site.unitCosts[type] : 0;
+  const cost =
+    site && type && site.allowedTypes.includes(type)
+      ? numericArea * unitCost(site.unitCosts, type)
+      : 0;
   const accounting = p.budgetAccounting ?? (!p.research ? p.budget?.accounting : null);
   const facilityAvailable =
     accounting?.facilities.find((f) => f.facilityType === type)?.availableKrw ?? 0;

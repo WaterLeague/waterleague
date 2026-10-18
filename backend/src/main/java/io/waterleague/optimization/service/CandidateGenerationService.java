@@ -294,7 +294,8 @@ public class CandidateGenerationService {
   private Map<FacilityType, BigDecimal> costs(LabModel model) {
     Map<FacilityType, BigDecimal> values = new EnumMap<>(FacilityType.class);
     for (var type : FacilityType.values())
-      values.put(type, model.model().path("unitCosts").path(type.name()).decimalValue());
+      if (model.model().path("unitCosts").has(type.name()))
+        values.put(type, model.model().path("unitCosts").path(type.name()).decimalValue());
     return values;
   }
 

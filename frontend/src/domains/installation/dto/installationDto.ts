@@ -1,10 +1,10 @@
 import { z } from 'zod';
 import { nativeSoilBoundaryDto } from '../../facility/dto/facilityDto';
 import { costSourceDto } from '../../cost/dto/costDto';
-const facility = z.enum(['RAIN_GARDEN', 'PERMEABLE_PAVEMENT', 'GREEN_ROOF']);
+const facility = z.enum(['RAIN_GARDEN', 'PERMEABLE_PAVEMENT', 'GREEN_ROOF', 'BIORETENTION']);
 const point = z.tuple([z.number().finite(), z.number().finite()]);
 export const publicAssetPolicyDto = z.object({
-  version: z.literal('seoul-basin-footprints-20261018-v1'),
+  version: z.enum(['seoul-basin-footprints-20261018-v1', 'seoul-basin-footprints-20261018-v2']),
   sha256: z.string().regex(/^[a-f0-9]{64}$/),
   sourceSha256: z.string().regex(/^[a-f0-9]{64}$/),
   scope: z.literal('CURRENT_MAPPED_GEOMETRY_NEW_GROUND_PLACEMENTS_ONLY'),
@@ -51,12 +51,22 @@ export const siteDto = z.object({
   areaM2: z.number().positive(),
   maxAreaM2: z.number().positive(),
   allowedTypes: z.array(facility).min(1),
-  unitCosts: z.record(facility, z.number().positive()),
+  unitCosts: z.object({
+    RAIN_GARDEN: z.number().positive(),
+    PERMEABLE_PAVEMENT: z.number().positive(),
+    GREEN_ROOF: z.number().positive(),
+    BIORETENTION: z.number().positive().optional(),
+  }),
   costSourceSha256: z.string().regex(/^[a-f0-9]{64}$/),
   costModel: z.object({
     currency: z.literal('KRW'),
     unit: z.literal('KRW_PER_SQUARE_METRE'),
-    facilities: z.record(facility, costSourceDto),
+    facilities: z.object({
+      RAIN_GARDEN: costSourceDto,
+      PERMEABLE_PAVEMENT: costSourceDto,
+      GREEN_ROOF: costSourceDto,
+      BIORETENTION: costSourceDto.optional(),
+    }),
   }),
   sourceIds: z.array(z.string()),
   areaLimitBasis: z.literal('PUBLIC_FOOTPRINT_GEOMETRY').optional(),
@@ -85,6 +95,7 @@ export const siteDto = z.object({
       conductivityRangeMmH: z.tuple([z.number().positive(), z.number().positive()]).optional(),
       suctionMm: z.number().positive().optional(),
       rainGardenBoundary: nativeSoilBoundaryDto.optional(),
+      bioretentionBoundary: nativeSoilBoundaryDto.optional(),
     })
     .optional(),
   modelHash: z.string().regex(/^[a-f0-9]{64}$/),

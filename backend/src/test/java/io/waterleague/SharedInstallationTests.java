@@ -44,6 +44,54 @@ class SharedInstallationTests {
   @Autowired io.waterleague.common.service.JsonService json;
 
   @Test
+  void bioretentionUsesPublicSoilAndSharedBudgetWhileRejectingRoofAndDuplicate() {
+    var owner = account("2410520");
+    var eligible =
+        sites.district("2410520").values().stream()
+            .filter(
+                site ->
+                    site.allowedTypes().contains("BIORETENTION")
+                        && site.existingInfrastructure() == null)
+            .findFirst()
+            .orElseThrow();
+    var roof =
+        sites.district("2410520").values().stream()
+            .filter(site -> site.kind().equals("ROOF"))
+            .findFirst()
+            .orElseThrow();
+    assertThat(eligible.physicalInputs().path("soilStatus").asString())
+        .isEqualTo("TEXTURE_CLASS_LITERATURE_ESTIMATE");
+    assertThatThrownBy(
+            () ->
+                service.install(
+                    owner.username(),
+                    new InstallRequest(
+                        "2410520", roof.cellId(), FacilityType.BIORETENTION, BigDecimal.TEN)))
+        .isInstanceOf(DomainException.class);
+    var installed =
+        service.install(
+            owner.username(),
+            new InstallRequest(
+                "2410520", eligible.cellId(), FacilityType.BIORETENTION, new BigDecimal("20")));
+    assertThat(installed.cost()).isEqualByComparingTo("11200000");
+    assertThat(budget.view(owner.id()).remainingKrw()).isEqualByComparingTo("1988800000");
+    assertThat(budget.view(owner.id()).accounting().facilities())
+        .hasSize(4)
+        .allSatisfy(f -> assertThat(f.availableKrw()).isEqualByComparingTo("1988800000"));
+    assertThat(costs.active(installed.id()).estimate().path("completeInstalledCostKrw").isNull())
+        .isTrue();
+    assertThatThrownBy(
+            () ->
+                service.install(
+                    account("2410520").username(),
+                    new InstallRequest(
+                        "2410520", eligible.cellId(), FacilityType.BIORETENTION, BigDecimal.TEN)))
+        .isInstanceOf(DomainException.class);
+    service.remove(owner.username(), installed.id());
+    assertThat(budget.view(owner.id()).remainingKrw()).isEqualByComparingTo("2000000000");
+  }
+
+  @Test
   void costEvidenceFreezesQuantitySourceAndUnknownCostsWithoutRetrofittingOldRecords() {
     var owner = account("2410520");
     var installed =
@@ -301,7 +349,7 @@ class SharedInstallationTests {
                 "SELECT admission_snapshot FROM shared_installations WHERE id=?",
                 String.class,
                 independent.id()))
-        .contains("seoul-basin-footprints-20261018-v1", "historicalExistenceVerified");
+        .contains("seoul-basin-footprints-20261018-v2", "historicalExistenceVerified");
     service.remove(other.username(), independent.id());
     assertThat(budget.view(other.id()).remainingKrw()).isEqualByComparingTo("2000000000");
     assertThat(budget.view(owner.id()).remainingKrw()).isEqualByComparingTo("1050000");
