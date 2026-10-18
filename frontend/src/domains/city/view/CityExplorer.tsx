@@ -1,5 +1,16 @@
 import { lazy, Suspense, useEffect, useCallback, useState, useRef, useMemo } from 'react';
-import { RotateCcw, MapPin, Layers3, CloudRain, List, X, Trophy, ArrowLeft } from 'lucide-react';
+import {
+  RotateCcw,
+  MapPin,
+  Layers3,
+  CloudRain,
+  Grid2X2,
+  House,
+  List,
+  X,
+  Trophy,
+  ArrowLeft,
+} from 'lucide-react';
 import { useCity, useCityTiles } from '../controller/useCity';
 import { useMapLabelWheel } from '../controller/useMapLabelWheel';
 import type { City, CityFocus, CityBuilding } from '../entity/city';
