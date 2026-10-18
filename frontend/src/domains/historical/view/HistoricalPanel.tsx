@@ -10,6 +10,7 @@ import { format } from '../../game/service/gameService';
 import './historical.css';
 import { FacilityPlacementPanel } from '../../installation/view/FacilityPlacementPanel';
 import { CostRecordEvidence } from '../../cost/view/CostRecordEvidence';
+import { RunoffComparison } from '../../physics/view/RunoffComparison';
 const time = (s: string) =>
   new Date(s).toLocaleString('ko-KR', {
     month: 'numeric',
@@ -236,6 +237,17 @@ export function HistoricalPanel({
           {s.currentResult.initializationSensitivity && (
             <InitializationSensitivityEvidence value={s.currentResult.initializationSensitivity} />
           )}
+          {s.currentResult.facilities
+            ?.filter((f) => !site || f.cellId === site.cellId)
+            .map(
+              (f) =>
+                f.runoffComparison && (
+                  <details key={f.cellId} open={site?.cellId === f.cellId}>
+                    <summary>{f.cellId} · 유출·저류 비교</summary>
+                    <RunoffComparison value={f.runoffComparison} />
+                  </details>
+                )
+            )}
           <details>
             <summary>계산 조건</summary>
             {s.currentResult.facilities

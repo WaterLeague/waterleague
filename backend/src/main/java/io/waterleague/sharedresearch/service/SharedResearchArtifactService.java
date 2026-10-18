@@ -144,6 +144,7 @@ public class SharedResearchArtifactService {
       value.put("summary", json.tree(job.result()));
       value.put("initialization", result.get("initialization"));
       value.put("facilityDesign", result.get("facilityDesign"));
+      value.put("runoffComparison", result.get("runoffComparison"));
       value.put("sourceArchive", forcing.path("sourceArchive"));
       value.put("baselineFinal", result.path("baseline").path("final"));
       value.put("strategyFinal", result.path("strategy").path("final"));

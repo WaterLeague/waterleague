@@ -4,6 +4,7 @@ import type { FacilityEvidence } from '../../facility/dto/facilityDto';
 import type { SharedSite, SharedInstallation } from '../../installation/entity/installation';
 import type { FacilityType } from '../../game/entity/game';
 import type { CostRecord } from '../../cost/dto/costDto';
+import type { RunoffComparisonData } from '../../physics/dto/runoffComparisonDto';
 export interface HistoricalDraft {
   site: SharedSite;
   facilityType: FacilityType;
@@ -40,6 +41,7 @@ export interface HistoricalJob {
       initialization?: InitializationEvidenceData | null;
       facilityDesign?: FacilityEvidence | null;
       costRecord?: CostRecord;
+      runoffComparison?: RunoffComparisonData;
     }[];
     frames: {
       at: string;

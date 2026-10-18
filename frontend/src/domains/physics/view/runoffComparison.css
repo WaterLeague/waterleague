@@ -1,0 +1,47 @@
+.runoff-comparison {
+  margin: 16px 0;
+  padding: 12px;
+  border: 1px solid #d4ddd2;
+  border-radius: 8px;
+  background: #f5f8f2;
+}
+.runoff-comparison h4 {
+  margin: 0 0 8px;
+  font-size: 13px;
+}
+.runoff-comparison p {
+  font-size: 11px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.runoff-comparison-table {
+  overflow-x: auto;
+}
+.runoff-comparison table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+.runoff-comparison th,
+.runoff-comparison td {
+  padding: 7px 3px;
+  border-bottom: 1px solid #dce5d9;
+  text-align: right;
+  white-space: nowrap;
+}
+.runoff-comparison th:first-child {
+  text-align: left;
+  font-weight: 500;
+}
+.runoff-comparison td small {
+  color: #66765f;
+  font-size: 9px;
+}
+.runoff-comparison .runoff-comparison-change {
+  font-weight: 600;
+}
+.runoff-comparison summary {
+  cursor: pointer;
+  font-size: 11px;
+}

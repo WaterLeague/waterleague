@@ -1,0 +1,159 @@
+{
+  "source": "data/runs/selected-runoff-metrics-v1/manifest.json",
+  "stationId": "401",
+  "rainfallMm": 288.5,
+  "cases": [
+    {
+      "facilityType": "BIORETENTION",
+      "cellId": "G1",
+      "comparison": {
+        "schemaVersion": 1,
+        "method": "NATIVE_RUNOFF_STEP_SURFACE_PLUS_DRAIN_V1",
+        "cases": [
+          {
+            "id": "baseline",
+            "dischargeM3": 7.216078190208435,
+            "initialStorageM3": 0.0423735489294849,
+            "finalStorageM3": 0.03799835490675934,
+            "netStorageM3": -0.004375194022725563,
+            "accountedDischargeM3": 7.21170299618571,
+            "precipitationM3": 7.212503105387855,
+            "infiltrationM3": 0.0,
+            "evaporationM3": 0.0007990092713233699,
+            "balanceResidualM3": 1.0999308219794557e-6,
+            "nativeIntegralDifferenceM3": -3.108624468950438e-14,
+            "metrics": {
+              "method": "NATIVE_RUNOFF_STEP_SURFACE_PLUS_DRAIN_V1",
+              "scope": "SELECTED_SURFACE_OUTLET_NOT_SEWER_OR_RIVER",
+              "start": "2022-08-08T09:00:00+00:00",
+              "end": "2022-08-08T14:59:00+00:00",
+              "stepCount": 21540,
+              "maximumStepSeconds": 1.0,
+              "observedSeconds": 21540.0,
+              "dischargeIntegralM3": 7.216078190208404,
+              "peakM3s": 0.00164555984218272,
+              "peakAt": "2022-08-08T12:16:00+00:00",
+              "peakTimeConvention": "END_OF_NATIVE_RUNOFF_INTERVAL",
+              "minimumComponentRateM3s": 0.0,
+              "implementationSha256": "6a0216bc9399421ee35668af237241b648e953263b177e512d7ec506c9e3da53"
+            }
+          },
+          {
+            "id": "strategy",
+            "dischargeM3": 1.4424801267514473,
+            "initialStorageM3": 3.2592230274545653,
+            "finalStorageM3": 8.956192223214341,
+            "netStorageM3": 5.696969195759776,
+            "accountedDischargeM3": 7.139449322511224,
+            "precipitationM3": 7.212503105387855,
+            "infiltrationM3": 0.0725433818655857,
+            "evaporationM3": 0.0005682482127380983,
+            "balanceResidualM3": -5.7847201692773353e-5,
+            "nativeIntegralDifferenceM3": 2.020605904817785e-14,
+            "metrics": {
+              "method": "NATIVE_RUNOFF_STEP_SURFACE_PLUS_DRAIN_V1",
+              "scope": "SELECTED_SURFACE_OUTLET_NOT_SEWER_OR_RIVER",
+              "start": "2022-08-08T09:00:00+00:00",
+              "end": "2022-08-08T14:59:00+00:00",
+              "stepCount": 21540,
+              "maximumStepSeconds": 1.0,
+              "observedSeconds": 21540.0,
+              "dischargeIntegralM3": 1.4424801267514675,
+              "peakM3s": 0.0003333077869959769,
+              "peakAt": "2022-08-08T12:16:00+00:00",
+              "peakTimeConvention": "END_OF_NATIVE_RUNOFF_INTERVAL",
+              "minimumComponentRateM3s": 0.0,
+              "implementationSha256": "6a0216bc9399421ee35668af237241b648e953263b177e512d7ec506c9e3da53"
+            }
+          }
+        ],
+        "dischargeReductionM3": 5.773598063456988,
+        "netStorageIncreaseM3": 5.701344389782501,
+        "accountedReductionM3": 0.07225367367448587,
+        "peakReductionM3s": 0.001312252055186743,
+        "limitations": [
+          "선택 표면 출구의 유출·하부배수 합이며 하수관·하천·구 전체 첨두 아님",
+          "첨두는 내부 유출 계산 구간의 평균률 최대값과 그 구간 종료 시각",
+          "선행 초기화 제외·평가 종료 후 방류 미포함; 잔여 저류를 영구 저감으로 취급하지 않음",
+          "개별 표면 첨두 합산으로 연결 유역 첨두를 만들지 않음"
+        ]
+      }
+    },
+    {
+      "facilityType": "GREEN_ROOF",
+      "cellId": "R1",
+      "comparison": {
+        "schemaVersion": 1,
+        "method": "NATIVE_RUNOFF_STEP_SURFACE_PLUS_DRAIN_V1",
+        "cases": [
+          {
+            "id": "baseline",
+            "dischargeM3": 34.11255727329193,
+            "initialStorageM3": 0.31779950893110454,
+            "finalStorageM3": 0.19667330971514937,
+            "netStorageM3": -0.12112619921595516,
+            "accountedDischargeM3": 33.991431074075976,
+            "precipitationM3": 33.99544098695361,
+            "infiltrationM3": 0.0,
+            "evaporationM3": 0.0037660534947105972,
+            "balanceResidualM3": 0.0002438593829268143,
+            "nativeIntegralDifferenceM3": 2.1316282072803006e-14,
+            "metrics": {
+              "method": "NATIVE_RUNOFF_STEP_SURFACE_PLUS_DRAIN_V1",
+              "scope": "SELECTED_SURFACE_OUTLET_NOT_SEWER_OR_RIVER",
+              "start": "2022-08-08T09:00:00+00:00",
+              "end": "2022-08-08T14:59:00+00:00",
+              "stepCount": 21540,
+              "maximumStepSeconds": 1.0,
+              "observedSeconds": 21540.0,
+              "dischargeIntegralM3": 34.11255727329195,
+              "peakM3s": 0.006729767955688321,
+              "peakAt": "2022-08-08T12:16:00+00:00",
+              "peakTimeConvention": "END_OF_NATIVE_RUNOFF_INTERVAL",
+              "minimumComponentRateM3s": 0.0,
+              "implementationSha256": "6a0216bc9399421ee35668af237241b648e953263b177e512d7ec506c9e3da53"
+            }
+          },
+          {
+            "id": "strategy",
+            "dischargeM3": 34.19576545356587,
+            "initialStorageM3": 1.6387196365654815,
+            "finalStorageM3": 1.434607090557036,
+            "netStorageM3": -0.20411254600844542,
+            "accountedDischargeM3": 33.99165290755742,
+            "precipitationM3": 33.99544098695361,
+            "infiltrationM3": 0.0,
+            "evaporationM3": 0.0034769434187380543,
+            "balanceResidualM3": 0.0003111359774479183,
+            "nativeIntegralDifferenceM3": 2.2026824808563106e-13,
+            "metrics": {
+              "method": "NATIVE_RUNOFF_STEP_SURFACE_PLUS_DRAIN_V1",
+              "scope": "SELECTED_SURFACE_OUTLET_NOT_SEWER_OR_RIVER",
+              "start": "2022-08-08T09:00:00+00:00",
+              "end": "2022-08-08T14:59:00+00:00",
+              "stepCount": 21540,
+              "maximumStepSeconds": 1.0,
+              "observedSeconds": 21540.0,
+              "dischargeIntegralM3": 34.19576545356609,
+              "peakM3s": 0.006661355574528018,
+              "peakAt": "2022-08-08T12:16:00+00:00",
+              "peakTimeConvention": "END_OF_NATIVE_RUNOFF_INTERVAL",
+              "minimumComponentRateM3s": 0.0,
+              "implementationSha256": "6a0216bc9399421ee35668af237241b648e953263b177e512d7ec506c9e3da53"
+            }
+          }
+        ],
+        "dischargeReductionM3": -0.08320818027394239,
+        "netStorageIncreaseM3": -0.08298634679249026,
+        "accountedReductionM3": -0.00022183348144722004,
+        "peakReductionM3s": 6.84123811603033e-5,
+        "limitations": [
+          "선택 표면 출구의 유출·하부배수 합이며 하수관·하천·구 전체 첨두 아님",
+          "첨두는 내부 유출 계산 구간의 평균률 최대값과 그 구간 종료 시각",
+          "선행 초기화 제외·평가 종료 후 방류 미포함; 잔여 저류를 영구 저감으로 취급하지 않음",
+          "개별 표면 첨두 합산으로 연결 유역 첨두를 만들지 않음"
+        ]
+      }
+    }
+  ]
+}

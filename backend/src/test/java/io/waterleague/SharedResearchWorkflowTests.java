@@ -347,6 +347,7 @@ class SharedResearchWorkflowTests {
     var legacy = get(owner, "/installations/records/" + job.id());
     assertThat(legacy.path("initialization").isNull()).isTrue();
     assertThat(legacy.path("facilityDesign").isNull()).isTrue();
+    assertThat(legacy.path("runoffComparison").isNull()).isTrue();
     var result =
         (tools.jackson.databind.node.ObjectNode)
             json.tree(Files.readString(job.path().resolve("result.json")));
@@ -376,6 +377,10 @@ class SharedResearchWorkflowTests {
                         Map.of("soilDepthMm", Map.of("value", 175))))));
     result.set("initialization", initialization);
     result.set("facilityDesign", facility);
+    var runoff =
+        json.tree(
+            json.write(Map.of("method", "SYNTHETIC_ARCHIVED_ONLY", "peakReductionM3s", -0.125)));
+    result.set("runoffComparison", runoff);
     Files.writeString(job.path().resolve("result.json"), json.write(result));
     db.update(
         "UPDATE shared_physics_jobs SET artifact_manifest_hash=? WHERE id=?",
@@ -385,10 +390,13 @@ class SharedResearchWorkflowTests {
     var detail = get(org, "/research/installations/" + job.id());
     assertThat(detail.path("initialization")).isEqualTo(initialization);
     assertThat(detail.path("facilityDesign")).isEqualTo(facility);
+    assertThat(detail.path("runoffComparison")).isEqualTo(runoff);
     assertThat(detail.path("summary").has("facilityDesign")).isFalse();
     grant(owner, org, false);
     assertThat(call(org, "GET", "/research/installations/" + job.id(), null).statusCode())
         .isEqualTo(404);
+    assertThat(get(owner, "/installations/records/" + job.id()).path("runoffComparison"))
+        .isEqualTo(runoff);
     assertThat(get(owner, "/installations/records/" + job.id()).path("facilityDesign"))
         .isEqualTo(facility);
   }

@@ -32,5 +32,6 @@ public record PhysicsView(
       String inflowPolicy,
       String areaLimitBasis,
       JsonNode initialization,
-      JsonNode facilityDesign) {}
+      JsonNode facilityDesign,
+      JsonNode runoffComparison) {}
 }

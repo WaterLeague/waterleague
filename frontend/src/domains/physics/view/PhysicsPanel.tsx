@@ -3,6 +3,7 @@ import { FacilityProfileEvidence } from '../../facility/view/FacilityProfileEvid
 import { Droplets } from 'lucide-react';
 import { usePhysics } from '../controller/usePhysics';
 import './physics.css';
+import { RunoffComparison } from './RunoffComparison';
 const amount = (n: number | null, scale = 1) =>
   n === null
     ? '—'
@@ -65,6 +66,7 @@ export function PhysicsPanel({ installationId }: { installationId: string }) {
               </div>
             )}
           </dl>
+          {result.runoffComparison && <RunoffComparison value={result.runoffComparison} />}
           <details>
             <summary>계산 조건</summary>
             {result.initialization && <InitializationEvidence value={result.initialization} />}

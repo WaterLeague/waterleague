@@ -234,6 +234,7 @@ def process(conn, job, root):
                   'evaporationMethod': result['evaporation']['method'],
                   'initialState': result.get('initialization', {}).get('method', 'ASSUMED_DESIGN_START'),
                   'initialization': result.get('initialization'), 'facilityDesign': result.get('facilityDesign'),
+                  'runoffComparison': result.get('runoffComparison'),
                   'inflowPolicy': result['inflowPolicy'],
                   'areaLimitBasis': model['cells'][0].get('areaLimitBasis','LEGACY_DESIGN_RATIO')}
         weeks = weekly_aggregate(result['contribution'], job['start'], job['end'], covered)

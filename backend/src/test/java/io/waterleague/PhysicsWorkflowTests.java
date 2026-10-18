@@ -148,7 +148,8 @@ class PhysicsWorkflowTests {
          "runoffContinuityPercent":0.001,"evaporationMethod":"ASSUMED_MODEL_CONSTANT",
          "initialState":"OBSERVED_7_DAY_CONTINUOUS_SPINUP_V1",
          "initialization":{"warmupMinutes":10080,"scoreExcludesWarmup":true},
-         "facilityDesign":{"profile":{"id":"EPA_RG_610_V1"}}}
+         "facilityDesign":{"profile":{"id":"EPA_RG_610_V1"}},
+         "runoffComparison":{"method":"SYNTHETIC_SERIALIZATION_ONLY","peakReductionM3s":-0.125}}
         """
             .formatted(through);
     job("SUCCEEDED", Instant.now().minusSeconds(590), through, result, null);
@@ -161,6 +162,8 @@ class PhysicsWorkflowTests {
             "\"infiltrationM3\":0.2",
             through.toString(),
             "\"warmupMinutes\":10080",
-            "EPA_RG_610_V1");
+            "EPA_RG_610_V1",
+            "SYNTHETIC_SERIALIZATION_ONLY",
+            "\"peakReductionM3s\":-0.125");
   }
 }

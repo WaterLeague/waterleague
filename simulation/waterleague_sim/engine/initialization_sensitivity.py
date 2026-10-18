@@ -162,7 +162,7 @@ def analyze(model, placement, evaporation, antecedent, directory, days=(7, 14)):
                               '관망 없는 독립 표면의 유출·배수 합계 1분 평균 첨두이며 하류 침수 첨두 아님',
                               '경쟁 기록·점수·기존 초기화 정책 변경 없음']}
     (directory/'sensitivity.json').write_bytes(encode(report))
-    for name in ('continuous.py', 'swmm.py', 'initialization.py', 'initialization_sensitivity.py', 'facilities.py'):
+    for name in ('continuous.py', 'swmm.py', 'initialization.py', 'initialization_sensitivity.py', 'facilities.py', 'runoff_metrics.py'):
         (directory/name).write_bytes((Path(__file__).parent/name).read_bytes())
     from .facilities import source_path
     (directory/'facility-designs.json').write_bytes(source_path(model).read_bytes())

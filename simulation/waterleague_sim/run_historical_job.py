@@ -66,6 +66,7 @@ def calculate(request, directory):
             'runoffContinuityPercent': result['strategy']['runoffContinuityPercent'],
             'physicalInputs': model['cells'][0].get('physicalInputs'),
             'facilityDesign': result.get('facilityDesign'), 'initialization': result.get('initialization')})
+        results[-1]['runoffComparison'] = result['runoffComparison']
         for i, (base, design, contribution) in enumerate(zip(result['baseline']['samples'], result['strategy']['samples'], result['contribution'], strict=True)):
             if index == 0:
                 frames.append({'at': base['at'], 'rainMm': observed['rainfall']['depthsMm'][i],

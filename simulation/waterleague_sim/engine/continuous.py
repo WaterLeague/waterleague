@@ -167,6 +167,8 @@ def replay(model, placements, directory, label, evaporation=None):
     lib = C.CDLL(str(library_path()))
     lib.wl_hydrologySnapshot.argtypes = [C.POINTER(C.c_double), C.c_int]
     lib.wl_hydrologySnapshot.restype = C.c_int
+    lib.lid_getDrainFlow.argtypes = [C.c_int, C.c_int]
+    lib.lid_getDrainFlow.restype = C.c_double
     if lib.swmm_getVersion() != 52004 or lib.wl_snapshotVersion() != 1:
         raise SimulationQualityError('LIVE_ENGINE_VERSION_MISMATCH')
 
@@ -190,6 +192,11 @@ def replay(model, placements, directory, label, evaporation=None):
         return state
 
     samples = []
+    from .runoff_metrics import RunoffMetrics
+    step = 1 if cell.get('physicalInputs') or model.get('facilityDesignSet') else 10
+    metrics = RunoffMetrics(model.get('initialization', {}).get('warmupMinutes', 0) * 60,
+                            count * 60, start, step)
+    metric_state = (C.c_double * len(FIELDS))()
     try:
         check(lib.swmm_open(os.fsencode(inp), os.fsencode(rpt), os.fsencode(out)))
         check(lib.swmm_start(1))
@@ -198,6 +205,11 @@ def replay(model, placements, directory, label, evaporation=None):
         next_minute = 60
         while True:
             check(lib.swmm_step(C.byref(elapsed)))
+            if lib.wl_hydrologySnapshot(metric_state, len(FIELDS)) != len(placements):
+                raise SimulationQualityError('LIVE_STATE_INVALID')
+            # 고정 EPA lid.h의 CURRENT=1. 읽기 전용 getter이며 분별 기록에는 필드를 추가하지 않는다.
+            drain = lib.lid_getDrainFlow(0, 1) * 0.028316846592
+            metrics.observe(metric_state[0], metric_state[8], drain)
             # 분 경계에서만 상태를 복사하여 1초 적분의 Python 변환 비용을 줄인다.
             seconds = elapsed.value*86400
             if seconds >= next_minute-1e-7 or elapsed.value == 0:
@@ -223,6 +235,7 @@ def replay(model, placements, directory, label, evaporation=None):
     if abs(final['balanceResidualM3']) > max(1e-8, .01*(final['precipitationM3']+final['initialStorageM3'])):
         raise SimulationQualityError('LIVE_VOLUME_BALANCE_FAILED')
     return {'initial': initial, 'samples': samples, 'final': final,
+            'runoffMetrics': metrics.finish(),
             'runoffContinuityPercent': errors[0].value, 'warnings': warnings,
             'engine': identity, 'routingStatus': 'NOT_APPLICABLE_NO_CONVEYANCE_NETWORK'}
 
@@ -252,6 +265,9 @@ def experiment(model, placement, directory, evaporation=None):
               'scoreRule': 'BASELINE_MINUS_STRATEGY_RUNOFF_DRAINAGE_AND_NET_STORAGE_M3'}
     if initialization is not None:
         result['initialization'] = initialization
+    from .runoff_metrics import comparison
+    result['runoffComparison'] = comparison(baseline, strategy)
+    (directory/'runoff_metrics.py').write_bytes(Path(__file__).with_name('runoff_metrics.py').read_bytes())
     if model.get('facilityDesignSet') is not None:
         from .facilities import evidence, source_path
         result['facilityDesign'] = evidence(placement['facilityType'], model)
