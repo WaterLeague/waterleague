@@ -3,7 +3,7 @@ import { ArrowRight, Download, RotateCcw, Trophy } from 'lucide-react';
 import type { Job, Lab, Version } from '../entity/game';
 import { facilities, format, won } from '../service/gameService';
 import { Hydrograph } from './Hydrograph';
-import { rainDate } from './RainfallSelector';
+import { rainDate } from '../service/gameTimeService';
 import { StormReplay } from './StormReplay';
 import type { CandidateMap } from '../../catalog/entity/catalog';
 

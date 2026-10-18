@@ -3,7 +3,7 @@ import type { League, LeagueDraft, LeagueParticipationRules } from '../entity/le
 import { loadRainfallCatalog } from '../../game/repository/gameRepository';
 import type { Lab, RainfallCatalog, FacilityType } from '../../game/entity/game';
 import { facilities, won } from '../../game/service/gameService';
-import { rainDate } from '../../game/view/RainfallSelector';
+import { rainDate } from '../../game/service/gameTimeService';
 import { localDateTime, availableLimits } from '../service/leagueService';
 export function LeagueEditor({
   league,

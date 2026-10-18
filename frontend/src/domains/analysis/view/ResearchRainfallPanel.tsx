@@ -5,7 +5,7 @@ import type { RainfallCatalog } from '../../game/entity/game';
 import type { ResearchDetail } from '../../research/entity/research';
 import { useResearchComparison } from '../controller/useResearchComparison';
 import { format, won } from '../../game/service/gameService';
-import { rainDate } from '../../game/view/RainfallSelector';
+import { rainDate } from '../../game/service/gameTimeService';
 import { comparisonState, jobStateNames } from '../../comparison/service/comparisonService';
 export function ResearchRainfallPanel({
   source,

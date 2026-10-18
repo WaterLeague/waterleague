@@ -2699,24 +2699,6 @@ a:focus-visible {
   overflow-wrap: anywhere;
 }
 
-.rainfall-context {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 14px 30px;
-  border-bottom: 1px solid var(--line, #dedfd9);
-  background: #f1f4ee;
-  color: #243e34;
-}
-.rainfall-context label {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 5px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.03em;
-}
-.rainfall-context select,
 .league-editor select {
   min-width: 0;
   max-width: 100%;
@@ -2727,37 +2709,6 @@ a:focus-visible {
   color: #243e34;
   font: inherit;
   font-size: 13px;
-}
-.rainfall-context p {
-  margin: 0;
-  font-size: 12px;
-  line-height: 1.7;
-}
-.rainfall-context p span {
-  color: #667669;
-}
-.rainfall-grade {
-  margin-left: auto;
-  font-size: 11px;
-  white-space: nowrap;
-}
-@media (max-width: 800px) {
-  .rainfall-context {
-    padding: 12px 18px;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-  .rainfall-context label {
-    min-width: 0;
-    flex: 1;
-  }
-  .rainfall-context p {
-    display: none;
-  }
-  .rainfall-grade {
-    flex-basis: 100%;
-    padding-left: 31px;
-  }
 }
 
 .league-award {

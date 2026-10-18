@@ -1,23 +1,14 @@
-import { useState, useEffect, type ReactNode } from 'react';
+import { useState, useEffect } from 'react';
 import type { Account } from '../../account/entity/account';
-import type { Lab } from '../../game/entity/game';
-import type { League } from '../entity/league';
 import { WeeklyBoard } from '../../weekly/view/WeeklyBoard';
 import { useWeekly } from '../../weekly/controller/useWeekly';
-import { LeaguePage } from './LeaguePage';
 export function CompetitionPage({
   account,
-  lab,
-  onDesign,
   initialLeague = false,
   onWeeklyDistrict,
-  submittedConditions,
 }: {
   account: Account | null;
-  lab: Lab;
-  onDesign: (l: League) => void;
   onWeeklyDistrict: (id: string) => void;
-  submittedConditions: ReactNode;
   initialLeague?: boolean;
 }) {
   const weekly = useWeekly(true, account?.id ?? null);
@@ -51,15 +42,10 @@ export function CompetitionPage({
           onDistrict={onWeeklyDistrict}
         />
       ) : (
-        <>
-          {submittedConditions}
-          <LeaguePage
-            key={account?.id ?? 'guest'}
-            account={account}
-            lab={lab}
-            onDesign={onDesign}
-          />
-        </>
+        <section className="full-page league-page" aria-label="기관 리그 준비 중">
+          <h1>기관 리그</h1>
+          <p className="lead">준비 중입니다.</p>
+        </section>
       )}
     </>
   );

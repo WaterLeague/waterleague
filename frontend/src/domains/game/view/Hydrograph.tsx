@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { Job, Rainfall, SimulationResult } from '../entity/game';
-import { rainDate } from './RainfallSelector';
+import { rainDate } from '../service/gameTimeService';
 import { format } from '../service/gameService';
 export function Hydrograph({
   job,

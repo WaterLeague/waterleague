@@ -36,7 +36,7 @@ import { logout } from '../../account/repository/accountRepository';
 import { ApprovalPage } from '../../administration/view/ApprovalPage';
 import { memberTypeNames } from '../../account/entity/account';
 import { AuthDialog } from '../../account/view/AuthDialog';
-import { RainfallSelector, rainDate, rainTime } from './RainfallSelector';
+import { rainDate } from '../service/gameTimeService';
 import { Hydrograph } from './Hydrograph';
 import { CompetitionPage } from '../../league/view/CompetitionPage';
 import type { League } from '../../league/entity/league';
@@ -203,20 +203,6 @@ export function GamePage() {
         : cell
           ? 1
           : 0;
-  const rainfallContext =
-    lab && g.rainfallCatalog && g.account?.role !== 'ADMIN' ? (
-      <RainfallSelector
-        lab={lab}
-        catalog={g.rainfallCatalog}
-        disabled={working || !!activeLeague}
-        onChange={(hash) =>
-          void g.action(async () => {
-            await g.selectModel(hash);
-            setSelected(null);
-          })
-        }
-      />
-    ) : null;
   return (
     <div
       ref={shell}
@@ -295,7 +281,6 @@ export function GamePage() {
           )}
         </div>
       </header>
-      {tab === 'data' && rainfallContext}
       {activeLeague && tab === 'studio' && (
         <div className="active-league-banner">
           <div>
@@ -969,24 +954,11 @@ export function GamePage() {
       ) : tab === 'leaderboard' ? (
         <CompetitionPage
           account={g.account}
-          lab={lab}
           onWeeklyDistrict={(id) => {
             setCityDistrict(id);
             setTab('city');
           }}
-          submittedConditions={rainfallContext}
           initialLeague={!!activeLeague}
-          onDesign={(l) => {
-            void g.action(async () => {
-              if (!(await g.selectModel(l.rules.modelHash, false))) return;
-              g.newDesign();
-              setActiveLeague(l);
-              setSelected(null);
-              setType(l.rules.allowedTypes[0]);
-              g.setTitle(l.title.slice(0, 76) + ' 설계');
-              setTab('studio');
-            });
-          }}
         />
       ) : tab === 'research' ? (
         <ResearchPage
@@ -995,7 +967,6 @@ export function GamePage() {
           lab={lab}
           catalog={g.rainfallCatalog}
           map={activeMap}
-          submittedConditions={rainfallContext}
           onReplay={(p) => {
             g.newDesign();
             setActiveLeague(null);
@@ -1020,37 +991,6 @@ export function GamePage() {
           <p className="lead">공개 원본, 처리 과정, 아직 모르는 부분을 함께 남깁니다.</p>
           <div className="evidence-grid">
             <article>
-              <CloudRain />
-              <span className="state done">실제 관측 · 자체 QC 통과</span>
-              <h2>기상청 {lab.model.rainfall.stationName} 분강우</h2>
-              <strong>
-                {lab.model.rainfall.totalDepthMm}
-                <small> mm</small>
-              </strong>
-              <p>
-                {rainTime(lab.model.rainfall.start)} ~ {rainTime(lab.model.rainfall.end)} KST.
-                {lab.model.rainfall.depthsMm.length + 1}개 누적 관측에서{' '}
-                {lab.model.rainfall.depthsMm.length}분 깊이 추출. 결측·음수·자정 경계 검사와
-                이동누적 교차 확인.
-              </p>
-              {lab.model.rainfall.stationDistanceKm !== undefined && (
-                <p>
-                  구역 중심과 약 {lab.model.rainfall.stationDistanceKm.toFixed(2)} km.{' '}
-                  {lab.model.rainfall.stationDistanceEvidence}
-                </p>
-              )}
-              {lab.model.rainfall.windowStatistics && (
-                <p>
-                  최대 15분 {lab.model.rainfall.windowStatistics.peak15MinuteMm} mm · 최대 60분{' '}
-                  {lab.model.rainfall.windowStatistics.peak60MinuteMm} mm. 마지막 강우 후 관측
-                  무강우 {lab.model.rainfall.windowStatistics.observedDryTailMinutes}분.
-                </p>
-              )}
-              <a href={`/api/v1/lab?modelHash=${lab.modelHash}`} download>
-                관측 파생자료 <Download size={14} />
-              </a>
-            </article>
-            <article>
               <Database />
               <span className="state done">공개 공간자료</span>
               <h2>{lab.model.mapTitle ?? '성수동'} 공개 건물 경계</h2>
@@ -1063,10 +1003,7 @@ export function GamePage() {
               </p>
               <p>
                 {activeMap?.snapshot.limitations
-                  .filter(
-                    (text) =>
-                      !lab.model.regionalRainfallUse || !text.includes('성동 관측 강우 공통 재생')
-                  )
+                  .filter((text) => !text.includes('강우'))
                   .join(' · ')}
               </p>
               <a href={mapEntry ? `/data/${mapEntry.file}` : undefined} download>
@@ -1088,12 +1025,6 @@ export function GamePage() {
               authenticated={!!g.account}
             />
           )}
-          <h2>이 계산에 들어간 가정</h2>
-          <ol className="assumption-list">
-            {lab.model.assumptions.map((s) => (
-              <li key={s}>{s}</li>
-            ))}
-          </ol>
           <h2>원화 예산과 시설 단가</h2>
           <p>
             총 예산 {won(lab.model.budget)}. 진주상평 산업단지 공개 사업계획의 참고 단가입니다. 해당
@@ -1121,7 +1052,7 @@ export function GamePage() {
           <h2>결과가 지나가는 검증</h2>
           <div className="evidence-checks">
             {[
-              '고정 모델·관측 강우·배치 해시',
+              '계산 입력·배치 해시',
               '서버의 면적·시설·예산 검증',
               'SWMM 오류·비유한 값·물수지 검사',
               'API·CLI 일치와 시간간격 민감도 시험',
@@ -1135,10 +1066,6 @@ export function GamePage() {
           </div>
           <p className="footnote">
             출처:{' '}
-            <a href={lab.model.rainfall.sourceUrl} target="_blank" rel="noreferrer">
-              기상청 AWS
-            </a>{' '}
-            ·{' '}
             <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">
               OpenStreetMap / ODbL
             </a>{' '}
@@ -1151,8 +1078,7 @@ export function GamePage() {
               EPA SWMM
             </a>
             <br />
-            원본·변환·모델 버전은 다운로드와 연구 내보내기에 기록합니다. NOAA 수집자료는 누적 조건
-            문제로 계산에서 제외했습니다.
+            원본·변환·모델 버전은 다운로드와 연구 내보내기에 기록합니다.
           </p>
         </section>
       )}
