@@ -16,9 +16,15 @@ public final class SurfaceView {
       String verticalPlacement,
       int triangleCount,
       List<Double> timesSeconds,
-      List<String> limitations) {}
+      List<String> limitations,
+      String flowDirectionMethod) {}
 
-  public record Cell(int triangleId, double[][] vertices, double depthM, double speedMps) {}
+  public record Cell(
+      int triangleId,
+      double[][] vertices,
+      double depthM,
+      double speedMps,
+      double[] flowDirection) {}
 
   public record Frame(
       String catalogSha256,

@@ -14,7 +14,7 @@ public final class SurfaceMapper {
     validated.path("frames").forEach(f -> times.add(f.path("timeSeconds").doubleValue()));
     validated.path("limitations").forEach(n -> notes.add(n.asString()));
     return new SurfaceView.Catalog(
-        1,
+        validated.path("schemaVersion").asInt(),
         publication.catalogHash(),
         publication.resultHash(),
         validated.path("classification").asString(),
@@ -27,6 +27,9 @@ public final class SurfaceMapper {
         validated.path("verticalPlacement").asString(),
         validated.path("triangleCount").asInt(),
         times,
-        notes);
+        notes,
+        validated.path("schemaVersion").asInt() == 2
+            ? validated.path("flowDirectionMethod").asString()
+            : null);
   }
 }

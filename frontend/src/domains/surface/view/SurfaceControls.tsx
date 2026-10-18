@@ -52,7 +52,7 @@ export function SurfaceControls({
                 onChange={(e) => onMetric(e.target.value as SurfaceMetric)}
               >
                 <option value="depth">수심 · m</option>
-                <option value="speed">속력 · m/s</option>
+                <option value="speed">속력·흐름 방향 · m/s</option>
               </select>
               <span className="surface-legend">
                 {surfacePalette.map((color, i) => (
@@ -62,6 +62,13 @@ export function SurfaceControls({
                   </span>
                 ))}
               </span>
+              {metric === 'speed' && (
+                <small>
+                  {catalog.flowDirectionMethod
+                    ? '색상: 속력 · 화살표: 흐름 방향'
+                    : '이 기록에는 흐름 방향 자료 없음'}
+                </small>
+              )}
               <small>
                 {live
                   ? '최근 5분 이내 계산값 · 관측 침수와 구분'
@@ -99,6 +106,12 @@ export function SurfaceControls({
                   ))}
                   <p>원 계산 해시 {catalog.surfaceResultSha256}</p>
                   <p>표시 프레임으로 점수·첨두를 다시 계산하지 않습니다.</p>
+                  {catalog.flowDirectionMethod && (
+                    <p>
+                      화살표는 일부 격자의 흐름 방향입니다. 길이는 속력을 뜻하지 않으며 마른 곳과
+                      정지 상태에는 표시하지 않습니다.
+                    </p>
+                  )}
                 </div>
               </details>
             </>

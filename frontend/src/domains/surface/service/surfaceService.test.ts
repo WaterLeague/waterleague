@@ -7,6 +7,13 @@ import {
   liveSurfaceFrameIndex,
 } from './surfaceService';
 import { surfaceGeometry, surfacePlanPaths } from './surfaceGeometry';
+import {
+  surfaceDirections,
+  surfaceDirectionPaths,
+  maximumDirectionGlyphs,
+  arrowTriangles,
+} from './surfaceDirections';
+import { surfaceFrameDto, surfaceCatalogDto } from '../dto/surfaceDto';
 const catalog: SurfaceCatalog = {
   schemaVersion: 1,
   catalogSha256: 'a'.repeat(64),
@@ -97,4 +104,84 @@ test('2D·3D 같은 젖은 격자와 좌표 표시, 원값과 수면 표고 불�
 test('화면 범위는 표시 선택에만 사용하고 서울 경계 내 제한', () => {
   const bounds = surfaceBounds({ center: [10, 20], distance: 50000 });
   expect(bounds).toEqual([-60000, -60000, 60000, 60000]);
+});
+
+test('정지·건조·이전 기록 방향 제외와 비정규 방향 응답 거부', () => {
+  expect(surfaceDirections(frame)).toEqual([]);
+  const current = {
+    ...catalog,
+    schemaVersion: 2 as const,
+    flowDirectionMethod: 'SOURCE_MOMENTUM_LOCAL_PROJECTION_JACOBIAN_V1' as const,
+  };
+  expect(surfaceCatalogDto.safeParse(current).success).toBe(true);
+  expect(surfaceCatalogDto.safeParse({ ...current, flowDirectionMethod: undefined }).success).toBe(
+    false
+  );
+  expect(() => assertSurfaceBinding(current, frame, 1)).toThrow();
+  for (const value of [
+    [0, 0],
+    [2, 0],
+    [Infinity, 0],
+  ]) {
+    expect(
+      surfaceFrameDto.safeParse({ ...frame, cells: [{ ...frame.cells[0], flowDirection: value }] })
+        .success
+    ).toBe(false);
+  }
+  expect(
+    surfaceFrameDto.safeParse({ ...frame, cells: [{ ...frame.cells[1], flowDirection: [1, 0] }] })
+      .success
+  ).toBe(false);
+});
+
+test('2D·3D 화살표의 동서남북 방향 일치와 원 속력 불변', () => {
+  for (const direction of [
+    [1, 0],
+    [0, 1],
+    [-1, 0],
+    [0, -1],
+  ] as [number, number][]) {
+    const value: SurfaceFrame = {
+      ...frame,
+      cells: [{ ...frame.cells[0], flowDirection: direction }],
+    };
+    const before = JSON.stringify(value),
+      arrows = surfaceDirections(value);
+    expect(arrows).toHaveLength(1);
+    const center = [1 / 3, 1 / 3],
+      tip = arrows[0].points[5];
+    expect(
+      (tip[0] - center[0]) * direction[0] + (tip[1] - center[1]) * direction[1]
+    ).toBeGreaterThan(0);
+    expect(surfaceDirectionPaths(value)[0].path).toContain(`${tip[0]},${-tip[1]}`);
+    const geometry = surfaceGeometry(value, 'speed', null);
+    const expected = arrowTriangles.flat().flatMap((i) => {
+      const p = arrows[0].points[i];
+      return [p[0], 0.5, -p[1]];
+    });
+    expect([...geometry.positions.slice(9)]).toEqual(expected.map((v) => expect.closeTo(v, 6)));
+    expect(surfaceGeometry(value, 'depth', null).positions.length).toBe(9);
+    expect(JSON.stringify(value)).toBe(before);
+  }
+});
+
+test('많은 격자는 공간별 원 방향을 선택하고 표시 상한 준수', () => {
+  const cells = Array.from({ length: 8192 }, (_, i) => {
+    const x = (i % 128) * 10,
+      y = Math.floor(i / 128) * 10;
+    return {
+      ...frame.cells[0],
+      triangleId: i,
+      flowDirection: [1, 0] as [number, number],
+      vertices: [
+        [x, y],
+        [x + 9, y],
+        [x, y + 9],
+      ] as [[number, number], [number, number], [number, number]],
+    };
+  });
+  const arrows = surfaceDirections({ ...frame, cells });
+  expect(arrows.length).toBeGreaterThan(100);
+  expect(arrows.length).toBeLessThanOrEqual(maximumDirectionGlyphs);
+  expect(surfaceDirections({ ...frame, cells: [...cells].reverse() })).toEqual(arrows);
 });

@@ -18,6 +18,7 @@ import tools.jackson.databind.JsonNode;
 
 @Repository
 public class SurfacePlaybackRepository {
+  private static final String DIRECTION_METHOD = "SOURCE_MOMENTUM_LOCAL_PROJECTION_JACOBIAN_V1";
   private final Path root;
   private final JsonService json;
 
@@ -83,9 +84,9 @@ public class SurfacePlaybackRepository {
 
   private JsonNode catalog(SurfacePublication p) {
     var c = tree(read(directory(p).resolve("catalog.json"), p.catalogHash(), 8 * 1024 * 1024));
+    int version = integer(c.path("schemaVersion"), 1, 2);
     require(
-        c.path("schemaVersion").asInt() == 1
-            && c.path("type").asString().equals("SURFACE_PLAYBACK")
+        c.path("type").asString().equals("SURFACE_PLAYBACK")
             && c.path("rankingEligible").isBoolean()
             && !c.path("rankingEligible").asBoolean()
             && c.path("coordinateSystem").asString().equals("EPSG:5186")
@@ -99,6 +100,27 @@ public class SurfacePlaybackRepository {
             && c.path("classification").isString()
             && c.path("classification").asString().length() <= 120
             && number(c.path("velocityDepthThresholdM")) == 1e-6);
+    if (version == 2) {
+      var projection = c.path("directionProjection");
+      require(
+          c.path("flowDirectionMethod").asString().equals(DIRECTION_METHOD)
+              && projection.path("method").asString().equals(DIRECTION_METHOD)
+              && projection.path("coordinateSystem").asString().equals("EPSG:5186")
+              && projection.path("axisOrder").asString().equals("EASTING_NORTHING")
+              && projection.path("matrixOrder").isArray()
+              && projection.path("matrixOrder").size() == 4
+              && number(projection.path("differenceStepM")) == .25
+              && number(projection.path("comparisonStepM")) == .5
+              && number(projection.path("relativeDifferenceLimit")) == 1e-6
+              && projection.path("sourceFramesUnchanged").isBoolean()
+              && projection.path("sourceFramesUnchanged").asBoolean()
+              && c.path("directionCodeSha256").asString().matches("[a-f0-9]{64}"));
+      var order = List.of("dXdx", "dXdy", "dYdx", "dYdy");
+      for (int i = 0; i < 4; i++)
+        require(projection.path("matrixOrder").get(i).asString().equals(order.get(i)));
+      double error = number(projection.path("maximumRelativeDifference"));
+      require(error >= 0 && error <= 1e-6);
+    } else require(!c.has("flowDirectionMethod") && !c.has("directionProjection"));
     number(c.path("originProjected").get(0));
     number(c.path("originProjected").get(1));
     try {
@@ -148,7 +170,10 @@ public class SurfacePlaybackRepository {
     var vertices = mesh.path("vertices");
     var triangles = mesh.path("triangles");
     var areas = mesh.path("areasM2");
+    var basis = mesh.path("directionBasis");
+    boolean directions = c.path("schemaVersion").asInt() == 2;
     int count = c.path("triangleCount").asInt();
+    require(!directions || (basis.isArray() && basis.size() == count));
     require(
         vertices.isArray()
             && vertices.size() >= 3
@@ -179,6 +204,17 @@ public class SurfacePlaybackRepository {
       double value = depth * area - compensation, next = storage + value;
       compensation = (next - storage) - value;
       storage = next;
+      double[] jacobian = null;
+      if (directions) {
+        var matrix = basis.get(i);
+        require(matrix.isArray() && matrix.size() == 4);
+        jacobian = new double[4];
+        for (int k = 0; k < 4; k++) {
+          jacobian[k] = number(matrix.get(k));
+          require(Math.abs(jacobian[k]) <= 1000);
+        }
+        require(Math.abs(jacobian[0] * jacobian[3] - jacobian[1] * jacobian[2]) > 1e-12);
+      }
       var triangle = triangles.get(i);
       require(triangle.isArray() && triangle.size() == 3);
       double[][] xy = new double[3][2];
@@ -201,7 +237,15 @@ public class SurfacePlaybackRepository {
         if (selected.size() >= 8192) throw new DomainException(ErrorCode.REQUEST_TOO_LARGE);
         double speed = depth > 1e-6 ? Math.hypot(mx / depth, my / depth) : 0;
         require(Double.isFinite(speed));
-        selected.add(new SurfaceView.Cell(i, xy, depth, speed));
+        double[] direction = null;
+        if (jacobian != null && speed > 0) {
+          double vx = mx / depth, vy = my / depth;
+          double x = jacobian[0] * vx + jacobian[1] * vy, y = jacobian[2] * vx + jacobian[3] * vy;
+          double norm = Math.hypot(x, y);
+          require(Double.isFinite(norm) && norm > 0);
+          direction = new double[] {x / norm, y / norm};
+        }
+        selected.add(new SurfaceView.Cell(i, xy, depth, speed, direction));
       }
     }
     double recorded = number(row.path("storageM3"));

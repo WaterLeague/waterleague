@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "classification": "DISPLAY_DIRECTION_TRANSFER_NOT_SITE_VALIDATION",
+  "rankingEligible": false,
+  "nativeInput": {
+    "directory": "data/runs/surface-frames-20261018-v1/public-dem/surface",
+    "surfaceResultSha256": "7ca65dc891fe888e9311de21d32e1432c8d72181d9356e530bed6cfc0c1cafa8",
+    "classification": "PUBLIC_DEM_EXPLORATORY_NOT_SITE_VALIDATED",
+    "triangles": 288,
+    "frames": 31,
+    "allFrameBytesUnchanged": true,
+    "lastFrameTimeSeconds": 3600.0,
+    "lastFrameDirectionCount": 288
+  },
+  "projection": {
+    "axisOrder": "EASTING_NORTHING",
+    "comparisonStepM": 0.5,
+    "coordinateSystem": "EPSG:5186",
+    "differenceStepM": 0.25,
+    "matrixOrder": [
+      "dXdx",
+      "dXdy",
+      "dYdx",
+      "dYdy"
+    ],
+    "maximumRelativeDifference": 6.4004917260858584e-09,
+    "method": "SOURCE_MOMENTUM_LOCAL_PROJECTION_JACOBIAN_V1",
+    "relativeDifferenceLimit": 1e-06,
+    "sourceFramesUnchanged": true
+  },
+  "catalogSha256": "e475f48078dd51aad19b05a11d52f0e00ecddd9fb998fefb08b88027d3f4d573",
+  "artifactArchive": {
+    "directory": "data/runs/surface-direction-playback-v2",
+    "manifestSha256": "25943fb605b36c67d4b026fed01e138c844ed9c066e6baf3d425def0a95f8557",
+    "files": 88,
+    "replayScope": "PLAYBACK_EXPORT_ONLY"
+  },
+  "isolatedReplay": {
+    "directory": "data/runs/surface-direction-replay-v2",
+    "allFilesAndManifestExact": true,
+    "verifiedArchivedSourcesAndInputsOnly": true
+  },
+  "validation": {
+    "pythonTests": 2,
+    "javaTests": 4,
+    "javaPublicDem288CellsMatchPythonPreview": true,
+    "frontendTests": 8,
+    "frontendProductionBuild": "PASSED",
+    "browser2D3D": "공통 함수의 방향 화살표 양쪽 표시 확인",
+    "browser2DArrowCount": 278,
+    "displayGlyphCap": 512,
+    "additional3DDrawCalls": 0,
+    "fpsMeasured": false,
+    "apiHealth": "UP",
+    "gameHttpStatus": 200
+  },
+  "limitations": [
+    "공개 90m DEM과 2022 관측 강우의 탐색 계산; 당시 지형·실제 침수 재현 아님",
+    "외곽 경계·조도·초기 상태의 미확인 조건 유지; 실제 관망과 결합하지 않은 입력",
+    "색상은 원 수심·속력, 화살표는 원 운동량의 지도 투영 방향; 실제 수면 표고 아님",
+    "원 계산의 수치 품질·현장 타당성·점수를 변경하지 않는 표시 단계",
+    "회원의 운영 지표 계산 작업·실제 서울 침수 개방은 미완료"
+  ]
+}

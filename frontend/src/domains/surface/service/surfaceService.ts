@@ -40,7 +40,11 @@ export function assertSurfaceBinding(catalog: SurfaceCatalog, frame: SurfaceFram
     frame.catalogSha256 !== catalog.catalogSha256 ||
     frame.index !== index ||
     frame.timeSeconds !== catalog.timesSeconds[index] ||
-    frame.cells.some((c) => c.triangleId >= catalog.triangleCount)
+    frame.cells.some(
+      (c) =>
+        c.triangleId >= catalog.triangleCount ||
+        (catalog.schemaVersion === 2 ? c.flowDirection === undefined : !!c.flowDirection)
+    )
   )
     throw new Error('계산 결과가 변경되었습니다. 다시 불러와 주세요.');
   return frame;
