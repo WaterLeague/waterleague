@@ -262,6 +262,9 @@ def run_coupled(model, directory):
                         'volumeResidualM3': applied_rain - expected_rain}
                 if 'infiltration' in sresult:
                     result['surfaceInfiltration'] = sresult['infiltration']
+                if 'surfaceFrames' in sresult:
+                    result['surfaceFrames'] = sresult['surfaceFrames'] | {
+                        'catalogFile': 'surface/' + sresult['surfaceFrames']['catalogFile']}
                 if 'evaporation' in sresult:
                     result['surfaceEvaporation'] = sresult['evaporation']
                 if 'numericalQuality' in sresult:

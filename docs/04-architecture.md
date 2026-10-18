@@ -74,3 +74,9 @@ at-least-once 작업 처리, run/hash unique·fencing token으로 결과 한 번
 ## 버전
 
 Java 25 LTS·Spring Boot 4.x·React 19·TypeScript·Three.js/R3F 안정 조합 후보. 설치 시 실제 안정 배포·호환성 확인 후 lockfile 고정. [Spring 시스템 요구사항](https://docs.spring.io/spring-boot/system-requirements.html) 확인. PostgreSQL/PostGIS·Python/SWMM은 ARM64와 수치 재현 검증 후 고정.
+
+## 지표 원 계산 프레임
+
+`engine/surface_frames.py`가 명시적 `frameOutput` 설정이 있는 계산에서만 격자 원형과 중심 수심/운동량을 읽기 전용 보관. `native-frames/catalog.json`은 입력·파일 해시·실제 출력 시각·수치 상태·좌표/수직 기준·출력 한도를 연결. 꼭짓점 xyz/중심 xyz/면적은 `<f8`, 삼각형 꼭짓점 색인은 `<u4`, 각 프레임은 삼각형 순서의 `[depthM, xmomentumM2s, ymomentumM2s]` 행렬 `<f8` little-endian. 좌표는 입력의 로컬/투영 좌표 그대로이며 서울 화면 좌표로 임의 치환하지 않음.
+
+`engine/surface_frame_reader.py`는 외부에서 고정한 결과 해시→카탈로그→입력/격자/요청 프레임의 해시를 확인. 프레임 하나만 읽고 명시한 화면 범위와 교차 가능성이 있는 삼각형을 선택하며, 이 조회 범위가 계산 경계나 점수 영역을 바꾸지 않음. 수치 실패·파일 링크·경로 이탈·형식/크기/해시 불일치·시간 외삽은 도메인 예외. 공개/기관 API가 아니며 후속 서버 연결에서 작업 소유·동의를 매 요청 검사할 예정. 원 지표는 엔진 내부 집계에서 유지하고 화면 프레임으로 다시 집계하지 않음.

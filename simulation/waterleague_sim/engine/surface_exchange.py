@@ -124,6 +124,8 @@ class ExchangeSurfaceSession(SurfaceSession):
     def store_frame(self):
         now = float(self.domain.get_time())
         if now > self.last_frame_time:
+            if self.frames is not None:
+                self.frames.record()
             # 표시 재구성의 보호 연산이 실제 중심 상태를 바꾸지 않도록 원 상태를 유지한다.
             quantities = [self.domain.quantities[name] for name in ('stage', 'xmomentum', 'ymomentum')]
             saved = [q.centroid_values.copy() for q in quantities]

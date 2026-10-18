@@ -184,6 +184,11 @@ class SurfaceSession:
             self.engine['qualityAdapterSha256'] = self.quality.source_hash
         self.finished = False
         self.initial = self.snapshot()
+        self.frames = None
+        if model.get('frameOutput') is not None:
+            from waterleague_sim.engine.surface_frames import NativeFrameWriter
+            self.frames = NativeFrameWriter(domain, model, path / 'native-frames')
+            self.frames.record()
 
     def set_rainfall(self, rates_mm_hour):
         require(not self.finished, 'SURFACE_SESSION_FINISHED')
@@ -248,6 +253,8 @@ class SurfaceSession:
         target = self.domain.get_time() + seconds
         self._evolve_until(target)
         require(math.isclose(self.domain.get_time(), target, abs_tol=1e-9), 'SURFACE_TIME_MISMATCH')
+        if self.frames is not None:
+            self.frames.record()
         return self.snapshot()
 
     def _evolve_until(self, target):
@@ -284,18 +291,21 @@ class SurfaceSession:
         # 수심/운동량은 그대로 보존하며 초기 수치 시험의 잔차 허용치만 별도 판정한다.
         scale = max(self.initial_volume + max(0, final['sourceNetInflowM3'])
                     + max(0, final['boundaryNetInflowM3']), final['storageM3'])
+        numerical_status = 'PASSED' if abs(final['balanceResidualM3']) <= max(1e-8, .01 * scale) else 'FAILED'
+        frames = self.frames.finish(numerical_status) if self.frames is not None else None
         result = {'schemaVersion': 1, 'engine': self.engine, 'algorithm': self.domain.get_algorithm_parameters(),
                   'numericalConfiguration': self.numerics,
                   'computeMode': self.domain.compute_mode, 'threads': 1,
                   'gravityMps2': self.gravity_mps2,
                   'maximumStepSeconds': self.domain.get_evolve_max_timestep(),
                   'initial': self.initial, 'final': final, 'forcing': self.forcing,
-                  'numericalStatus': 'PASSED' if abs(final['balanceResidualM3']) <= max(1e-8, .01 * scale)
-                      else 'FAILED',
+                  'numericalStatus': numerical_status,
                   'files': {str(p.relative_to(self.directory)): hashlib.sha256(p.read_bytes()).hexdigest()
                             for p in sorted(self.directory.rglob('*')) if p.is_file()}}
         if self.metrics is not None:
             result['evaluationMetrics'] = self.metrics.snapshot()
+        if frames is not None:
+            result['surfaceFrames'] = frames
         if self.stage_series:
             result['stageBoundaries'] = {name: series.summary for name, series in self.stage_series.items()}
         if self.infiltration is not None:

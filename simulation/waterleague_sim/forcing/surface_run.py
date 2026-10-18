@@ -35,6 +35,10 @@ def run_schedule(model, specification, schedule, directory, *, evaluation_start=
     _write(directory / 'observed-surface-input.json', {'surface': model, 'observedRainfall': specification})
     schedule.archive(directory / 'observed-rainfall')
     surface = model | {'rainfallStationIds': specification['stationByTriangle']}
+    if model.get('frameOutput') is not None:
+        require(model.get('startUtc') is None or utc(model['startUtc']) == utc(specification.get('startUtc')),
+                'SURFACE_FRAME_OBSERVATION_CLOCK_MISMATCH')
+        surface = surface | {'startUtc': utc(specification.get('startUtc')).isoformat()}
     last, origin = None, None
     maximum_balance_residual = 0.
     try:
@@ -75,6 +79,9 @@ def run_schedule(model, specification, schedule, directory, *, evaluation_start=
                   'final': last, 'codeSha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
                   'files': {str(p.relative_to(directory)): hashlib.sha256(p.read_bytes()).hexdigest()
                             for p in sorted(directory.rglob('*')) if p.is_file()}}
+        if 'surfaceFrames' in native_result:
+            result['surfaceFrames'] = native_result['surfaceFrames'] | {
+                'catalogFile': 'surface/' + native_result['surfaceFrames']['catalogFile']}
         if evaluation_start is not None:
             from waterleague_sim.forcing.surface_initialization import evaluation_ledger
             require(origin is not None, 'SURFACE_INITIALIZATION_STATE_MISSING')
