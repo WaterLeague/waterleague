@@ -28,7 +28,10 @@ class ReplayBundleValidationTests(unittest.TestCase):
     def test_unlisted_native_reference_rejected_before_loading_archived_code(self):
         for kind, names in [('coupled', ('coupled-input.json', 'coupled-result.json')),
                             ('inlet-network', ('original.inp', 'design.json', 'transformation.json',
-                             'network/network-result.json', 'network/network.inp'))]:
+                             'network/network-result.json', 'network/network.inp')),
+                            ('refined-inlet-network', ('original.inp', 'design.json', 'transformation.json',
+                             'network/network-result.json', 'network/network.inp', 'refinement.json',
+                             'numerical-profile.json', 'prepared.inp', 'experiment-result.json'))]:
             with self.subTest(kind=kind), tempfile.TemporaryDirectory() as directory:
                 root = Path(directory)
                 for name in (*names, 'network/network.out'):

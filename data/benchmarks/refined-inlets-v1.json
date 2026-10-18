@@ -1,0 +1,578 @@
+{
+  "schemaVersion": 1,
+  "classification": "NUMERICAL_INLET_REFINEMENT_NOT_SEOUL",
+  "rankingEligible": false,
+  "physicsValidatedOnSite": false,
+  "spatialConvergenceConfirmed": false,
+  "engine": {
+    "schemaVersion": 1,
+    "engineVersion": "5.2.4",
+    "revision": "7952ca837988b1c32f791812eccc9fd64547e093",
+    "sourceArchiveSha256": "3f76a199573088ce47ff02491c529afb73d9953ee9d948dfc89dcd4981b4c0c0",
+    "metricsSha256": "9a90e94998318db8bc2e25997d4c076bd8b5f09b171df768de98c4ba1c6bd28d",
+    "observerSha256": "c320fa1849cb4b03254167b107d1a9fefc7171b10c6ce397a0b82bb5c08c53e7",
+    "facilityObserverSha256": "fd6692274cec934d4f832223c69d8e3bdf31112fb02b875b153f70366cf21869",
+    "inletObserverSha256": "646570d2f4fdc02f8675a2023e6ba0d10f4a6fec6a0ab36d39224e7612da0231",
+    "facilityObserverVersion": 1,
+    "metricsVersion": 1,
+    "inletObserverVersion": 1,
+    "builderSha256": "862b203182ebbb456f2f6117443afedc1b77a91932b1811e976a44e73d56e21e",
+    "binarySha256": "b46ed3b0b7750ed4915198444683c8c15c757f9258ebbf01e9c007d8f50e7762",
+    "modification": "READ_ONLY_INLET_LID_AND_OUTFALL_METRICS_NO_SOLVER_CHANGES",
+    "nodeFloodingMethod": "EPA_EXTERNAL_FLOODING_EXCLUDING_CAPTURE_RETURNS",
+    "adapterSha256": "2f1b7c8ef5d195aa913c9e761d60070e8353f8ef65eec126eaae10eaf4b2e19e",
+    "facilityMetricsAdapterSha256": "2a8fbb64df92edc48e9a11741ccb6d428a5bc7994a487733eb54583071cd0eb1",
+    "facilityAdapterSha256": "d8a17fe1650df27dc0a46f48deb92f6e4a04bf69fc6d17e383484ba962df75db",
+    "metricsAdapterSha256": "f0219c6affedd4b95b049815c4242b7fe8f56abe917b97f8c2d55ca2c65802df",
+    "baseAdapterSha256": "f9fa6734de7a3adc64f1bd456862d80260115c656a6bc1c0b090841883bfb0d7",
+    "qualityAdapterSha256": "c78323b383d37be56c34b8cc2d5084e4a92e3de6bbc2a818d914acbabf3eb930"
+  },
+  "originalBenchmark": {
+    "path": "data/benchmarks/connected-inlets-v1.json",
+    "sha256": "a8e5d4232a657f162284ce76924a7877ccc9891fb1d93ca602c15c310952189f",
+    "gradeRoutingResidualM3": -1.3315026415298883
+  },
+  "settings": {
+    "source": "reference/connected_inlets.py; 명시적 수치 시험 관망",
+    "segmentsPerConduit": 16,
+    "minimumNumericalNodeAreaM2": 0.0001,
+    "routingStepSeconds": 0.01,
+    "minimumStepSeconds": 0.01,
+    "maximumTrials": 200,
+    "surchargeMethod": "SLOT",
+    "unchangedHeadToleranceM": 1e-06,
+    "routingContinuityLimitPercent": 1,
+    "allowedNonConvergedSteps": 0,
+    "physicalGeometryPreserved": [
+      "original endpoints",
+      "total length",
+      "cross section",
+      "roughness",
+      "linear invert profile"
+    ],
+    "minimumAreaScope": "GLOBAL_NUMERICAL_MINIMUM_NOT_MEASURED_MANHOLE_AREA",
+    "inletPosition": "original conduit identifier retained only on downstream segment"
+  },
+  "cases": {
+    "backflow": {
+      "path": "data/runs/refined-inlets-v3/backflow",
+      "experimentSha256": "98b0131fac2a33d1a33750dbe193e24810f3a9ad9a8157ba0673740a3ab336e0",
+      "nativeResultSha256": "31f66541babf157306c3a31ceab71bcc5fa18574e5ac253bd9cc9f07c5bc2fb0",
+      "numericalStatus": "FAILED",
+      "failureReasons": [
+        "ROUTING_CONTINUITY_EXCEEDED",
+        "ROUTING_VOLUME_RESIDUAL_EXCEEDED"
+      ],
+      "nonConvergedSteps": 0,
+      "routingBalance": {
+        "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+        "totalInM3": 29.751549961884315,
+        "totalOutIncludingStorageM3": 30.120334567689856,
+        "residualM3": -0.3687846058055406,
+        "continuityPercent": -1.2395475404743708,
+        "absoluteToleranceM3": 1e-08,
+        "allowedResidualM3": 0.29751549961884316
+      },
+      "virtualNodeFloodingM3": 0.0,
+      "operation": {
+        "capturedM3": 1.1812649674101146,
+        "backflowM3": 24.102967326467795,
+        "netTransferToSewerM3": -22.921702359057676,
+        "captureActiveSeconds": 117.62000000002327,
+        "backflowActiveSeconds": 118.93000000002394,
+        "peakCapturedM3s": 0.02708794048273172,
+        "peakBackflowM3s": 0.22016756504541757,
+        "peakApproachM3s": 0.08490409834550146,
+        "observedSeconds": 119.00000000002397,
+        "routingSteps": 11900.0,
+        "conduitId": "CHANNEL",
+        "designId": "WLIN_Grate",
+        "bypassNodeId": "B",
+        "captureNodeId": "S"
+      },
+      "nativeOutSha256": "bb467f589c9feb7f6f515684017c826331676c1afbddd6e3318909763e6d7966"
+    },
+    "clogged": {
+      "path": "data/runs/refined-inlets-v3/clogged",
+      "experimentSha256": "7884bc339c728044c4def8a027ce0eadf47e1273a2cde7cc4e28fa7b6fb3c3c0",
+      "nativeResultSha256": "e97213866138da1fb037112162145c4719106498f4d02c9594cfd3db41d267ce",
+      "numericalStatus": "FAILED",
+      "failureReasons": [
+        "ROUTING_NONCONVERGED"
+      ],
+      "nonConvergedSteps": 1,
+      "routingBalance": {
+        "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+        "totalInM3": 5.955199960355606,
+        "totalOutIncludingStorageM3": 5.953076037819841,
+        "residualM3": 0.0021239225357652103,
+        "continuityPercent": 0.03566500789065668,
+        "absoluteToleranceM3": 1e-08,
+        "allowedResidualM3": 0.05955199960355606
+      },
+      "virtualNodeFloodingM3": 0.0,
+      "operation": {
+        "capturedM3": 0.08050564975093989,
+        "backflowM3": 0.0,
+        "netTransferToSewerM3": 0.08050564975093989,
+        "captureActiveSeconds": 53.07999999999801,
+        "backflowActiveSeconds": 0.0,
+        "peakCapturedM3s": 0.002158684165755477,
+        "peakBackflowM3s": 0.0,
+        "peakApproachM3s": 0.06578787056341644,
+        "observedSeconds": 119.00000000002397,
+        "routingSteps": 11900.0,
+        "conduitId": "CHANNEL",
+        "designId": "WLIN_Grate",
+        "bypassNodeId": "B",
+        "captureNodeId": "S"
+      },
+      "nativeOutSha256": "83b2d6d23b6a069b553cfe67042ec2a1c8a4d1e70d36fe2a75a6f334b45ebcc2"
+    },
+    "extran": {
+      "path": "data/runs/refined-inlets-v3/extran",
+      "experimentSha256": "f225850a2ce9effa885932cd3841812c2f84e3e701f108a1d734d5183ba916be",
+      "nativeResultSha256": "b11619e59c7a81197f4a7370e8f7aebe40cfc876590e0ba6a47333dd129d8433",
+      "numericalStatus": "FAILED",
+      "failureReasons": [
+        "ROUTING_NONCONVERGED",
+        "UNMAPPED_COMPUTATIONAL_NODE_FLOODING"
+      ],
+      "nonConvergedSteps": 129,
+      "routingBalance": {
+        "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+        "totalInM3": 5.955199960355606,
+        "totalOutIncludingStorageM3": 5.953370318515351,
+        "residualM3": 0.0018296418402554693,
+        "continuityPercent": 0.030723432503284322,
+        "absoluteToleranceM3": 1e-08,
+        "allowedResidualM3": 0.05955199960355606
+      },
+      "virtualNodeFloodingM3": 0.0004663651923358755,
+      "operation": {
+        "capturedM3": 0.8050881850576125,
+        "backflowM3": 0.4542593364121595,
+        "netTransferToSewerM3": 0.35082884864545183,
+        "captureActiveSeconds": 53.109999999998,
+        "backflowActiveSeconds": 45.41999999999953,
+        "peakCapturedM3s": 0.021634378289378853,
+        "peakBackflowM3s": 0.014350104256028213,
+        "peakApproachM3s": 0.0659512505147509,
+        "observedSeconds": 119.00000000002397,
+        "routingSteps": 11900.0,
+        "conduitId": "CHANNEL",
+        "designId": "WLIN_Grate",
+        "bypassNodeId": "B",
+        "captureNodeId": "S"
+      },
+      "nativeOutSha256": "b5dd441b79e500f059524771d050fcb06658218e50d81b464dfad45293c0cd74"
+    },
+    "grade": {
+      "path": "data/runs/refined-inlets-v3/grade",
+      "experimentSha256": "cd49f2b9b8eb199ea8e7697fba4924a7c6b71450b9fbb9b063a1dda2aa555d9f",
+      "nativeResultSha256": "6654867b205d2980e5802e4274dcc4603a4839580203875aa8f67e2c0b1347c5",
+      "numericalStatus": "PASSED",
+      "failureReasons": [],
+      "nonConvergedSteps": 0,
+      "routingBalance": {
+        "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+        "totalInM3": 5.955199960355606,
+        "totalOutIncludingStorageM3": 5.953129880095844,
+        "residualM3": 0.002070080259762186,
+        "continuityPercent": 0.03476088583998738,
+        "absoluteToleranceM3": 1e-08,
+        "allowedResidualM3": 0.05955199960355606
+      },
+      "virtualNodeFloodingM3": 0.0,
+      "operation": {
+        "capturedM3": 0.8050878262124597,
+        "backflowM3": 0.4556847130795227,
+        "netTransferToSewerM3": 0.34940311313293737,
+        "captureActiveSeconds": 53.109999999998,
+        "backflowActiveSeconds": 45.42999999999953,
+        "peakCapturedM3s": 0.02163414700264536,
+        "peakBackflowM3s": 0.014057415470183209,
+        "peakApproachM3s": 0.06595045551722599,
+        "observedSeconds": 119.00000000002397,
+        "routingSteps": 11900.0,
+        "conduitId": "CHANNEL",
+        "designId": "WLIN_Grate",
+        "bypassNodeId": "B",
+        "captureNodeId": "S"
+      },
+      "nativeOutSha256": "d170a430681d51dbdc8dcd558f8ebddd12a1d877adec617c8873b61352a7f2c1"
+    },
+    "replay": {
+      "path": "data/runs/refined-inlets-v3/replay",
+      "experimentSha256": "6f740e7aca300e87f01795dada649c978cefef1f2c33bc1642a2aa6e8e2c1b0e",
+      "nativeResultSha256": "a486203d4628eac725008f8fff73b63460bacde84e39d27a0ac233996e892086",
+      "numericalStatus": "PASSED",
+      "failureReasons": [],
+      "nonConvergedSteps": 0,
+      "routingBalance": {
+        "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+        "totalInM3": 5.955199960355606,
+        "totalOutIncludingStorageM3": 5.953129880095844,
+        "residualM3": 0.002070080259762186,
+        "continuityPercent": 0.03476088583998738,
+        "absoluteToleranceM3": 1e-08,
+        "allowedResidualM3": 0.05955199960355606
+      },
+      "virtualNodeFloodingM3": 0.0,
+      "operation": {
+        "capturedM3": 0.8050878262124597,
+        "backflowM3": 0.4556847130795227,
+        "netTransferToSewerM3": 0.34940311313293737,
+        "captureActiveSeconds": 53.109999999998,
+        "backflowActiveSeconds": 45.42999999999953,
+        "peakCapturedM3s": 0.02163414700264536,
+        "peakBackflowM3s": 0.014057415470183209,
+        "peakApproachM3s": 0.06595045551722599,
+        "observedSeconds": 119.00000000002397,
+        "routingSteps": 11900.0,
+        "conduitId": "CHANNEL",
+        "designId": "WLIN_Grate",
+        "bypassNodeId": "B",
+        "captureNodeId": "S"
+      },
+      "nativeOutSha256": "d170a430681d51dbdc8dcd558f8ebddd12a1d877adec617c8873b61352a7f2c1"
+    },
+    "sag": {
+      "path": "data/runs/refined-inlets-v3/sag",
+      "experimentSha256": "1f8694e714a61260a771a1dab81323008e3dac508126ecafbfddf56313857ccd",
+      "nativeResultSha256": "6d61e81c9f60e86e45a0eed97fe345ef3e777b3202252d1396c413142a8586ef",
+      "numericalStatus": "FAILED",
+      "failureReasons": [
+        "ROUTING_NONCONVERGED"
+      ],
+      "nonConvergedSteps": 1,
+      "routingBalance": {
+        "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+        "totalInM3": 5.955199960355606,
+        "totalOutIncludingStorageM3": 5.952432170095536,
+        "residualM3": 0.0027677902600702353,
+        "continuityPercent": 0.04647686523535241,
+        "absoluteToleranceM3": 1e-08,
+        "allowedResidualM3": 0.05955199960355606
+      },
+      "virtualNodeFloodingM3": 0.0,
+      "operation": {
+        "capturedM3": 1.1297457275563145,
+        "backflowM3": 0.8030150620386127,
+        "netTransferToSewerM3": 0.32673066551770236,
+        "captureActiveSeconds": 50.939999999998435,
+        "backflowActiveSeconds": 42.83000000000005,
+        "peakCapturedM3s": 0.03438870437087608,
+        "peakBackflowM3s": 0.026919858861995168,
+        "peakApproachM3s": 0.06610060633915177,
+        "observedSeconds": 119.00000000002397,
+        "routingSteps": 11900.0,
+        "conduitId": "CHANNEL",
+        "designId": "WLIN_Grate",
+        "bypassNodeId": "B",
+        "captureNodeId": "S"
+      },
+      "nativeOutSha256": "7d13135d91539ad9e83103f1732d34080e1761f94631501f46ed3a1900189cf5"
+    },
+    "spatial-half": {
+      "path": "data/runs/refined-inlets-v3/spatial-half",
+      "experimentSha256": "a3f62519e2eb9fa1119b8ab4dd4991556987baebdd9cf9ef15c7cfff418a9dc1",
+      "nativeResultSha256": "8d9c08dab9c802ddd7811e22a4fff60e93bae87311d0e74359355a4c9f656f9b",
+      "numericalStatus": "FAILED",
+      "failureReasons": [
+        "ROUTING_NONCONVERGED"
+      ],
+      "nonConvergedSteps": 6,
+      "routingBalance": {
+        "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+        "totalInM3": 5.955199960355606,
+        "totalOutIncludingStorageM3": 5.952223067938854,
+        "residualM3": 0.0029768924167523636,
+        "continuityPercent": 0.049988118561422795,
+        "absoluteToleranceM3": 1e-08,
+        "allowedResidualM3": 0.05955199960355606
+      },
+      "virtualNodeFloodingM3": 0.0,
+      "operation": {
+        "capturedM3": 0.7810045372981561,
+        "backflowM3": 0.46445405961865455,
+        "netTransferToSewerM3": 0.3165504776795032,
+        "captureActiveSeconds": 47.29999999999916,
+        "backflowActiveSeconds": 43.849999999999845,
+        "peakCapturedM3s": 0.028734595125871544,
+        "peakBackflowM3s": 0.020732978663612577,
+        "peakApproachM3s": 0.09070186186539758,
+        "observedSeconds": 119.00000000002397,
+        "routingSteps": 11900.0,
+        "conduitId": "CHANNEL",
+        "designId": "WLIN_Grate",
+        "bypassNodeId": "B",
+        "captureNodeId": "S"
+      },
+      "nativeOutSha256": "59de0792fead3e7348f2c08ba82859b0140fd8b86aceceaf291845501e9872cd"
+    },
+    "street": {
+      "path": "data/runs/refined-inlets-v3/street",
+      "experimentSha256": "86db8aed957ed41cf946d2edf78c0c79a0bed7eeaf7fbd626b48444312d9733e",
+      "nativeResultSha256": "0fd8dd1ebd5487f2f7ff2f8b0557c4fa973b69cd0a61af799b5566d6406d8093",
+      "numericalStatus": "PASSED",
+      "failureReasons": [],
+      "nonConvergedSteps": 0,
+      "routingBalance": {
+        "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+        "totalInM3": 5.949106282931606,
+        "totalOutIncludingStorageM3": 5.947835072123221,
+        "residualM3": 0.0012712108083849927,
+        "continuityPercent": 0.021368097121279944,
+        "absoluteToleranceM3": 1e-08,
+        "allowedResidualM3": 0.05949106282931606
+      },
+      "virtualNodeFloodingM3": 0.0,
+      "operation": {
+        "capturedM3": 1.0402593044985873,
+        "backflowM3": 0.7399339348319186,
+        "netTransferToSewerM3": 0.3003253696666676,
+        "captureActiveSeconds": 46.959999999999226,
+        "backflowActiveSeconds": 38.5500000000009,
+        "peakCapturedM3s": 0.02887743486855277,
+        "peakBackflowM3s": 0.021516724450234344,
+        "peakApproachM3s": 0.05213061100707499,
+        "observedSeconds": 119.00000000002397,
+        "routingSteps": 11900.0,
+        "conduitId": "CHANNEL",
+        "designId": "WLIN_Grate",
+        "bypassNodeId": "B",
+        "captureNodeId": "S"
+      },
+      "nativeOutSha256": "2aa5c65c1bef63ad81ff0d260ff6dfabc0bab28ecde28d987de1946cf85bd1af"
+    },
+    "temporal-half": {
+      "path": "data/runs/refined-inlets-v3/temporal-half",
+      "experimentSha256": "0f0005cbcaf1c2bb236cca8e7e95640989ee11960ec22ebca46a52b5b9c6bf3d",
+      "nativeResultSha256": "c9934988c3daa51d07be29725694f745a51ee905777c7ebcb97facb4fc56e3a7",
+      "numericalStatus": "PASSED",
+      "failureReasons": [],
+      "nonConvergedSteps": 0,
+      "routingBalance": {
+        "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+        "totalInM3": 5.955324946441541,
+        "totalOutIncludingStorageM3": 5.9533219588962485,
+        "residualM3": 0.0020029875452927115,
+        "continuityPercent": 0.033633555906794774,
+        "absoluteToleranceM3": 1e-08,
+        "allowedResidualM3": 0.05955324946441541
+      },
+      "virtualNodeFloodingM3": 0.0,
+      "operation": {
+        "capturedM3": 0.8051811137735266,
+        "backflowM3": 0.4557717432768531,
+        "netTransferToSewerM3": 0.3494093704966726,
+        "captureActiveSeconds": 53.125000000008725,
+        "backflowActiveSeconds": 45.4450000000048,
+        "peakCapturedM3s": 0.021626950595171727,
+        "peakBackflowM3s": 0.01405287474387866,
+        "peakApproachM3s": 0.06592571984110447,
+        "observedSeconds": 118.99999999996426,
+        "routingSteps": 23800.0,
+        "conduitId": "CHANNEL",
+        "designId": "WLIN_Grate",
+        "bypassNodeId": "B",
+        "captureNodeId": "S"
+      },
+      "nativeOutSha256": "e9acfd282243f32a0f550667049486d249ef9634fba4d8020e27de61e02a796d"
+    }
+  },
+  "sensitivity": {
+    "temporalHalf": {
+      "numericalStatus": "PASSED",
+      "capturedDifferenceM3": 9.328756106696812e-05,
+      "netTransferDifferenceM3": 6.257363735218124e-06
+    },
+    "spatialHalf": {
+      "numericalStatus": "FAILED",
+      "capturedDifferenceM3": -0.024083288914303558,
+      "netTransferDifferenceM3": -0.0328526354534342,
+      "convergenceConfirmed": false
+    }
+  },
+  "officialCliOutput": {
+    "path": "data/runs/refined-inlets-v3/official-engine/network.out",
+    "sha256": "d170a430681d51dbdc8dcd558f8ebddd12a1d877adec617c8873b61352a7f2c1",
+    "matchesObservedGrade": true
+  },
+  "archive": {
+    "path": "data/runs/refined-inlet-bundle-v2",
+    "manifestSha256": "6a10d8e3e7c295bdfd61816b126ba7eb3c9ee08ccc2130cf5c34849ab563ed03",
+    "files": 253,
+    "runtime": {
+      "python": "3.12.14",
+      "platform": "macOS-27.0.1-arm64-arm-64bit"
+    }
+  },
+  "independentReplays": {
+    "grade": {
+      "schemaVersion": 1,
+      "status": "MATCHED",
+      "source": "VERIFIED_ARCHIVED_CODE_BINARY_FORCING_ONLY",
+      "sourceManifestSha256": "6a10d8e3e7c295bdfd61816b126ba7eb3c9ee08ccc2130cf5c34849ab563ed03",
+      "case": "cases/grade",
+      "originalNumericalStatus": "PASSED",
+      "replayedNumericalStatus": "PASSED",
+      "fields": {
+        "numericalStatus": true,
+        "numericalQuality": true,
+        "convergence": true,
+        "initial": true,
+        "final": true,
+        "evaluationMetrics": true,
+        "inletOperation": true,
+        "numericalConfiguration": true
+      },
+      "files": {
+        "network/network.out": {
+          "expected": "d170a430681d51dbdc8dcd558f8ebddd12a1d877adec617c8873b61352a7f2c1",
+          "actual": "d170a430681d51dbdc8dcd558f8ebddd12a1d877adec617c8873b61352a7f2c1"
+        }
+      },
+      "experimentFields": {
+        "schemaVersion": true,
+        "classification": true,
+        "rankingEligible": true,
+        "transformationSha256": true,
+        "codeSha256": true,
+        "virtualNodes": true,
+        "nativeNumericalStatus": true,
+        "numericalStatus": true,
+        "failureReasons": true
+      },
+      "originalExperimentStatus": "PASSED",
+      "replayedExperimentStatus": "PASSED"
+    },
+    "backflow": {
+      "schemaVersion": 1,
+      "status": "MATCHED",
+      "source": "VERIFIED_ARCHIVED_CODE_BINARY_FORCING_ONLY",
+      "sourceManifestSha256": "6a10d8e3e7c295bdfd61816b126ba7eb3c9ee08ccc2130cf5c34849ab563ed03",
+      "case": "cases/backflow",
+      "originalNumericalStatus": "FAILED",
+      "replayedNumericalStatus": "FAILED",
+      "fields": {
+        "numericalStatus": true,
+        "numericalQuality": true,
+        "convergence": true,
+        "initial": true,
+        "final": true,
+        "evaluationMetrics": true,
+        "inletOperation": true,
+        "numericalConfiguration": true
+      },
+      "files": {
+        "network/network.out": {
+          "expected": "bb467f589c9feb7f6f515684017c826331676c1afbddd6e3318909763e6d7966",
+          "actual": "bb467f589c9feb7f6f515684017c826331676c1afbddd6e3318909763e6d7966"
+        }
+      },
+      "experimentFields": {
+        "schemaVersion": true,
+        "classification": true,
+        "rankingEligible": true,
+        "transformationSha256": true,
+        "codeSha256": true,
+        "virtualNodes": true,
+        "nativeNumericalStatus": true,
+        "numericalStatus": true,
+        "failureReasons": true
+      },
+      "originalExperimentStatus": "FAILED",
+      "replayedExperimentStatus": "FAILED"
+    },
+    "extran": {
+      "schemaVersion": 1,
+      "status": "MATCHED",
+      "source": "VERIFIED_ARCHIVED_CODE_BINARY_FORCING_ONLY",
+      "sourceManifestSha256": "6a10d8e3e7c295bdfd61816b126ba7eb3c9ee08ccc2130cf5c34849ab563ed03",
+      "case": "cases/extran",
+      "originalNumericalStatus": "FAILED",
+      "replayedNumericalStatus": "FAILED",
+      "fields": {
+        "numericalStatus": true,
+        "numericalQuality": true,
+        "convergence": true,
+        "initial": true,
+        "final": true,
+        "evaluationMetrics": true,
+        "inletOperation": true,
+        "numericalConfiguration": true
+      },
+      "files": {
+        "network/network.out": {
+          "expected": "b5dd441b79e500f059524771d050fcb06658218e50d81b464dfad45293c0cd74",
+          "actual": "b5dd441b79e500f059524771d050fcb06658218e50d81b464dfad45293c0cd74"
+        }
+      },
+      "experimentFields": {
+        "schemaVersion": true,
+        "classification": true,
+        "rankingEligible": true,
+        "transformationSha256": true,
+        "codeSha256": true,
+        "virtualNodes": true,
+        "nativeNumericalStatus": true,
+        "numericalStatus": true,
+        "failureReasons": true
+      },
+      "originalExperimentStatus": "FAILED",
+      "replayedExperimentStatus": "FAILED"
+    }
+  },
+  "previousInletReplayCompatibility": {
+    "schemaVersion": 1,
+    "status": "MATCHED",
+    "source": "VERIFIED_ARCHIVED_CODE_BINARY_FORCING_ONLY",
+    "sourceManifestSha256": "ec4749c0df7fabe9e5f0685fdb70c005fa440fb3463f07e4784100afa0422ba0",
+    "case": "cases/backflow",
+    "originalNumericalStatus": "FAILED",
+    "replayedNumericalStatus": "FAILED",
+    "fields": {
+      "numericalStatus": true,
+      "numericalQuality": true,
+      "convergence": true,
+      "initial": true,
+      "final": true,
+      "evaluationMetrics": true,
+      "inletOperation": true,
+      "numericalConfiguration": true
+    },
+    "files": {
+      "network/network.out": {
+        "expected": "0594634ad7cc49e6cd29208d15f094977e80ef2d2aff9f068ac650c0c128d6bb",
+        "actual": "0594634ad7cc49e6cd29208d15f094977e80ef2d2aff9f068ac650c0c128d6bb"
+      }
+    }
+  },
+  "validation": {
+    "tests": 9,
+    "status": "PASSED",
+    "logSha256": "d4a58580ce14cb0bf8391d785a55b113af239c9f589a06c37cd63124bda1fda0"
+  },
+  "earlierDiagnosticsPreserved": [
+    "data/runs/inlet-space-check-v1",
+    "data/runs/inlet-space-check-v2",
+    "data/runs/inlet-space-check-v3",
+    "data/runs/inlet-space-check-v4",
+    "data/runs/inlet-space-check-v5",
+    "data/runs/inlet-space-check-v6",
+    "data/runs/refined-inlets-v1",
+    "data/runs/refined-inlets-slot-v1",
+    "data/runs/refined-inlets-v2"
+  ],
+  "limitations": [
+    "합성 1D 관망 수치 시험이며 서울 현장·지표 침수 검증 아님",
+    "9개 실행 중 경사부·도로·경사부 재생·시간 절반의 4건 통과, 나머지 5건 실패 유지",
+    "공간 간격 반감은 비수렴 6회로 실패, 격자 독립성 주장 금지",
+    "폐관 계산 절점의 허용 수두는 원 끝 절점 수두로 제한, 인위적 월류는 모두 실패",
+    "SLOT·최소 수치 면적·시간 설정의 복합 변경이며 개선을 단일 요인 효과로 귀속하지 않음",
+    "폐관 내부 이송/포착을 외부 배수·실제 침수 저감 효과로 대체하지 않음",
+    "실제 서울 관망/지표/기준고 정합·공개 원가·회원 설치 및 운영 순위 연결 미완료"
+  ]
+}
