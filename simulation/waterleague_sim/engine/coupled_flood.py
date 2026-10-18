@@ -13,6 +13,7 @@ from waterleague_sim.forcing.stage import require_stage_clock
 from waterleague_sim.forcing.network_stage import prepare_network_stage
 from waterleague_sim.engine.surface_infiltration import validate as validate_infiltration
 from waterleague_sim.forcing.surface_evaporation import require_evaporation_clock
+from waterleague_sim.engine.surface_exchange import DRY_EXCHANGE_POLICY, DRY_TRANSFER_TOLERANCE_M3
 
 
 def _write(path, value):
@@ -22,6 +23,7 @@ def _write(path, value):
 def _validate(model):
     require(model.get('schemaVersion') == 1 and model.get('evidence'), 'COUPLED_REFERENCE_REQUIRED')
     surface, network = model['surface'], model['network']
+    require(model.get('dryExchangePolicy') in (None, DRY_EXCHANGE_POLICY), 'EXCHANGE_DRY_POLICY_INVALID')
     if surface.get('infiltration') is not None:
         validate_infiltration(surface['infiltration'], surface['rainfallOwner'])
     if 'terrainProvenance' in surface:
@@ -106,6 +108,12 @@ def run_coupled(model, directory):
     _validate(model)
     facility_design = None
     original_model = model
+    initialization, evaluation_origin, evaluation_final, evaluation_balance = None, None, None, None
+    if 'initialization' in model:
+        from waterleague_sim.forcing.coupled_initialization import prepare_initialized_coupling
+        initialization = prepare_initialized_coupling(model)
+        model = initialization.model
+        _validate(model)
     if 'connectedFacilityDesign' in model:
         require(model.get('evaluationMetrics') is not None, 'COUPLED_FACILITY_METRICS_REQUIRED')
         from waterleague_sim.engine.connected_facilities import compile_design
@@ -122,11 +130,16 @@ def run_coupled(model, directory):
         require(not model.get('surfaceRainfall') and model['surface'].get('rainfallStationIds') is None,
                 'COUPLED_RAINFALL_FORCING_CONFLICT')
         require_network_clock(model['network'], model['observedRainfall'])
-        observed = compile_rainfall(model['observedRainfall'], model['surface'], model['durationSeconds'])
+        observed = (initialization.schedule if initialization is not None else
+                    compile_rainfall(model['observedRainfall'], model['surface'], model['durationSeconds']))
     directory = Path(directory).resolve()
     require(not directory.exists(), 'COUPLED_OUTPUT_EXISTS')
     directory.mkdir(parents=True)
     _write(directory / 'coupled-input.json', original_model)
+    if initialization is not None:
+        _write(directory / 'initialized-coupled-input.json', initialization.model)
+        _write(directory / 'initialization-forcing.json', initialization.summary)
+        initialization.network.archive(directory / 'network-initialization')
     if facility_design is not None:
         _write(directory / 'connected-facility-design.json', facility_design)
         (directory / 'facility-network.inp').write_bytes(raw)
@@ -135,6 +148,8 @@ def run_coupled(model, directory):
     ports = model['ports']
     network_model = model['network'] | {'ports': ports}
     surface_model = {'surface': model['surface'], 'ports': ports}
+    if model.get('dryExchangePolicy') is not None:
+        surface_model['dryExchangePolicy'] = model['dryExchangePolicy']
     metric_spec = model.get('evaluationMetrics')
     if metric_spec is not None:
         network_model = network_model | {'evaluationMetrics': metric_spec}
@@ -154,6 +169,8 @@ def run_coupled(model, directory):
                    for t in series.knots}
     if evaporation is not None:
         stage_times.update(round(t * 1000) for t in evaporation.knots)
+    if initialization is not None:
+        stage_times.add(initialization.summary['warmupSeconds'] * 1000)
     event_times = sorted(set(events) | stage_times | {duration})
     clock, nstate, state = 0, None, None
     network_engine = ('coupled_facility_network' if facility_design is not None else
@@ -196,6 +213,11 @@ def run_coupled(model, directory):
                             if bound > 0:
                                 # 수치적 분할 간격 제한이며 실제 유입부 개방률을 조작하지 않는다.
                                 limit = math.floor(1000 * .25 * state['ports'][key]['availableM3'] / bound)
+                                # 건조 경계의 직전 유량 적분 꼬리만 최소 간격에서 제한된 잔차로 보존한다.
+                                if (limit == 0 and model.get('dryExchangePolicy') == DRY_EXCHANGE_POLICY
+                                        and row['maximumInflowM3s'] == 0
+                                        and row['previousInflowM3s']*.001/2 <= DRY_TRANSFER_TOLERANCE_M3):
+                                    limit = 1
                                 step = min(step, limit)
                         require(step >= 1, 'COUPLED_SUBMILLISECOND_STEP_REQUIRED')
                         result = network.call('exchange_step', step, heads)
@@ -215,7 +237,8 @@ def run_coupled(model, directory):
                         ledger.write(json.dumps({'phase': 'NETWORK_ADVANCED', 'startMilliseconds': clock,
                             'endMilliseconds': clock + step, 'transfers': entries}, allow_nan=False) + '\n')
                         ledger.flush()
-                        require(all(e['surfaceToNetworkM3'] <= e['availableBeforeM3'] for e in entries),
+                        tolerance = DRY_TRANSFER_TOLERANCE_M3 if model.get('dryExchangePolicy') else 0.
+                        require(all(e['surfaceToNetworkM3'] <= e['availableBeforeM3']+tolerance for e in entries),
                                 'COUPLED_SURFACE_OVERDRAW')
                         require(nstate['totals']['floodingM3'] <= 1e-9, 'COUPLED_UNMAPPED_NODE_FLOODING')
                         applied = surface.call('apply_exchange', transfers)
@@ -233,6 +256,11 @@ def run_coupled(model, directory):
                         ledger.write(json.dumps({'phase': 'BOTH_APPLIED', 'endMilliseconds': clock,
                             'surfaceTransfers': applied['transfers'], 'balance': balance}, allow_nan=False) + '\n')
                         previous_ports = new_ports
+                        if initialization is not None and clock == initialization.summary['warmupSeconds']*1000:
+                            evaluation_origin = {'network': network.call('snapshot'),
+                                'surface': surface.call('initialization_state'),
+                                'surfaceExchange': state, 'ports': new_ports}
+                            _write(directory / 'evaluation-initial-state.json', evaluation_origin)
                         smallest = min(smallest, step)
                         steps += 1
                         require(steps <= 2_000_000, 'COUPLED_STEP_LIMIT_EXCEEDED')
@@ -242,12 +270,24 @@ def run_coupled(model, directory):
                                 stream.write(json.dumps(network.call('snapshot'), allow_nan=False) + '\n')
                             while next_frame <= clock:
                                 next_frame += model['frameIntervalMilliseconds']
+                if initialization is not None:
+                    require(evaluation_origin is not None, 'COUPLED_INITIALIZATION_BOUNDARY_MISSING')
+                    from waterleague_sim.forcing.coupled_initialization import evaluation_ledger
+                    evaluation_final = {'network': network.call('snapshot'),
+                        'surface': surface.call('initialization_state'),
+                        'surfaceExchange': state, 'ports': previous_ports}
+                    _write(directory / 'evaluation-final-state.json', evaluation_final)
+                    evaluation_balance = evaluation_ledger(evaluation_origin, evaluation_final)
+                    expected = observed.summary['evaluationRainfall']['expectedSurfaceRainfallM3']
+                    require(math.isclose(evaluation_balance['surface']['rainfallM3'], expected,
+                            abs_tol=1e-8, rel_tol=1e-8), 'OBSERVED_EVALUATION_RAIN_VOLUME_MISMATCH')
                 nresult, sresult = network.call('finish'), surface.call('finish')
                 scale = max(initial_storage + balance['networkExternalInflowM3']
                             + max(0, balance['surfaceExternalNetInflowM3']),
                             balance['networkStorageM3'] + balance['surfaceStorageM3'])
                 passed = (nresult['numericalStatus'] == sresult['numericalStatus'] == 'PASSED'
-                          and abs(residual) <= max(1e-8, .01 * scale))
+                          and abs(residual) <= max(1e-8, .01 * scale)
+                          and (evaluation_balance is None or evaluation_balance['numericalStatus'] == 'PASSED'))
                 if observed is not None:
                     expected_rain = observed.summary['expectedSurfaceRainfallM3']
                     applied_rain = state.get('rainfallM3', state['externalSourceNetInflowM3'])
@@ -274,10 +314,16 @@ def run_coupled(model, directory):
                         '연결되지 않은 노드 월류는 실패 처리, 임의 지표 위치 할당 없음'],
                     'files': {str(p.relative_to(directory)): hashlib.sha256(p.read_bytes()).hexdigest()
                               for p in sorted(directory.rglob('*')) if p.is_file()}}
+                if model.get('dryExchangePolicy') is not None:
+                    result['dryExchangeRoundoff'] = state['dryExchangeRoundoff']
                 if observed is not None:
                     result['observedRainfall'] = observed.summary | {
                         'appliedSurfaceRainfallM3': applied_rain,
                         'volumeResidualM3': applied_rain - expected_rain}
+                if initialization is not None:
+                    result['initialization'] = initialization.summary | {'evaluationLedger': evaluation_balance,
+                        'limitations': ['선행 시드·기간의 민감도 비교 필요; 현장 초기 상태 관측 아님',
+                            '별도 시설 수지와 라우팅/지표 수지이며 유역 토양 전체 수지 아님']}
                 if 'infiltration' in sresult:
                     result['surfaceInfiltration'] = sresult['infiltration']
                 if 'surfaceFrames' in sresult:

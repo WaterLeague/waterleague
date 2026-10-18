@@ -1,0 +1,190 @@
+{
+  "schemaVersion": 1,
+  "classification": "OBSERVED_FORCING_ON_SYNTHETIC_CONNECTED_DOMAIN_NOT_SEOUL_VALIDATION",
+  "rankingEligible": false,
+  "cases": [
+    {
+      "name": "14d-30s",
+      "status": "PASSED",
+      "warmupSeconds": 1209600,
+      "evaluationSeconds": 21540,
+      "maximumExchangeMilliseconds": 30000,
+      "steps": 41060,
+      "networkNonConvergedSteps": 0,
+      "warmupRainfallDepthMm": 239.0,
+      "evaluationRainfallDepthMm": 85.0,
+      "surfaceEvaluationRainfallM3": 1700.0,
+      "evaluationInitialNetworkStorageM3": 113.73091526106144,
+      "evaluationInitialSurfaceStorageM3": 1098.4549298659774,
+      "facilityCount": 4,
+      "evaluationCoupledBalanceResidualM3": -0.0008967109879449708,
+      "dryExchangeRoundoff": {
+        "policy": "BOUNDED_DRY_TAIL_ROUNDOFF_V1",
+        "withdrawalShortfallM3": 8.620355079443694e-10,
+        "maximumTransferShortfallM3": 1e-09,
+        "maximumRunShortfallM3": 1e-08
+      },
+      "raw": {
+        "outwardVolumeM3": 1779.4806494024313,
+        "peakOutwardM3s": 0.13508312039293627,
+        "depthAreaTimeM3Hours": 10930.172423602244
+      },
+      "resultSha256": "80367cbbc53798da04168cf69b075f5ef99ca9186bb6397694c00a26f03ffa1a",
+      "evaluationInitialStateSha256": "9df9abd630778f9663d775a990eb9b8d35b5ccb3a8d7f4dfe0997717cd35ace7",
+      "nativeOutputSha256": "2b2ddf1a842f71eafe3bc3d9330bfaef441b27ec6fb7b40fcdda3276dd166c89"
+    },
+    {
+      "name": "14d-60s",
+      "status": "PASSED",
+      "warmupSeconds": 1209600,
+      "evaluationSeconds": 21540,
+      "maximumExchangeMilliseconds": 60000,
+      "steps": 20550,
+      "networkNonConvergedSteps": 0,
+      "warmupRainfallDepthMm": 239.0,
+      "evaluationRainfallDepthMm": 85.0,
+      "surfaceEvaluationRainfallM3": 1699.9999999999982,
+      "evaluationInitialNetworkStorageM3": 113.73061486342314,
+      "evaluationInitialSurfaceStorageM3": 1098.4662886243248,
+      "facilityCount": 4,
+      "evaluationCoupledBalanceResidualM3": -0.0008964578223640274,
+      "dryExchangeRoundoff": {
+        "policy": "BOUNDED_DRY_TAIL_ROUNDOFF_V1",
+        "withdrawalShortfallM3": 3.1194467484298878e-09,
+        "maximumTransferShortfallM3": 1e-09,
+        "maximumRunShortfallM3": 1e-08
+      },
+      "raw": {
+        "outwardVolumeM3": 1779.4792812105516,
+        "peakOutwardM3s": 0.13508303862620244,
+        "depthAreaTimeM3Hours": 10930.234754855048
+      },
+      "resultSha256": "8ab1c485ad62b7b3f8fd135bb83e24e0fbe9aa51a6e342caf125d5ab8fa23f0f",
+      "evaluationInitialStateSha256": "e34c6d21b12586b524896e4a2fc32fa275188de6f29403d2a4f5b594ec5f1413",
+      "nativeOutputSha256": "18b7055f471473c3b2f77af8f0ec9810345090c6d2ff71811d8a1d22a7b54c03"
+    },
+    {
+      "name": "7d-60s",
+      "status": "PASSED",
+      "warmupSeconds": 604800,
+      "evaluationSeconds": 21540,
+      "maximumExchangeMilliseconds": 60000,
+      "steps": 10476,
+      "networkNonConvergedSteps": 0,
+      "warmupRainfallDepthMm": 146.0,
+      "evaluationRainfallDepthMm": 85.0,
+      "surfaceEvaluationRainfallM3": 1699.999999999986,
+      "evaluationInitialNetworkStorageM3": 113.73061484551722,
+      "evaluationInitialSurfaceStorageM3": 1098.46628862432,
+      "facilityCount": 4,
+      "evaluationCoupledBalanceResidualM3": -0.0008964579706116638,
+      "dryExchangeRoundoff": {
+        "policy": "BOUNDED_DRY_TAIL_ROUNDOFF_V1",
+        "withdrawalShortfallM3": 2.633212843997574e-09,
+        "maximumTransferShortfallM3": 1e-09,
+        "maximumRunShortfallM3": 1e-08
+      },
+      "raw": {
+        "outwardVolumeM3": 1779.4792811926513,
+        "peakOutwardM3s": 0.13508303862618712,
+        "depthAreaTimeM3Hours": 10930.234754854922
+      },
+      "resultSha256": "306ba56a521e12134603f69c11b0e398de25b3b4894d6cc6f4051131aec68314",
+      "evaluationInitialStateSha256": "d6f27f7d1a802a54b269e95a29cefd7c80bc38681c68b75b58e6a000a56d7e4f",
+      "nativeOutputSha256": "c65af86b7ffc2410eb93e57ffae2ce0a125d3967ae3c745266263803306be529"
+    },
+    {
+      "name": "baseline-7d-60s",
+      "status": "PASSED",
+      "warmupSeconds": 604800,
+      "evaluationSeconds": 21540,
+      "maximumExchangeMilliseconds": 60000,
+      "steps": 10476,
+      "networkNonConvergedSteps": 0,
+      "warmupRainfallDepthMm": 146.0,
+      "evaluationRainfallDepthMm": 85.0,
+      "surfaceEvaluationRainfallM3": 1699.999999999986,
+      "evaluationInitialNetworkStorageM3": 121.15430136135897,
+      "evaluationInitialSurfaceStorageM3": 1098.46628862432,
+      "facilityCount": 0,
+      "evaluationCoupledBalanceResidualM3": -0.0011202968034922378,
+      "dryExchangeRoundoff": {
+        "policy": "BOUNDED_DRY_TAIL_ROUNDOFF_V1",
+        "withdrawalShortfallM3": 2.633212843997574e-09,
+        "maximumTransferShortfallM3": 1e-09,
+        "maximumRunShortfallM3": 1e-08
+      },
+      "raw": {
+        "outwardVolumeM3": 1800.369801501914,
+        "peakOutwardM3s": 0.13597717601813017,
+        "depthAreaTimeM3Hours": 10930.234754854922
+      },
+      "resultSha256": "5e1015979dec0f47da30931e18b9e4a2c8945311880d91edf6f1c777bff0f263",
+      "evaluationInitialStateSha256": "193856dcdee005a2dfe26dfe5f51a367d19448d6fe4d5881a89a09b24c6b475e",
+      "nativeOutputSha256": "e4286af3e038d26dcacea46b3d3229679798469d11b37594d23ec19eb7a0b2b4"
+    },
+    {
+      "name": "replay-7d-60s",
+      "status": "PASSED",
+      "warmupSeconds": 604800,
+      "evaluationSeconds": 21540,
+      "maximumExchangeMilliseconds": 60000,
+      "steps": 10476,
+      "networkNonConvergedSteps": 0,
+      "warmupRainfallDepthMm": 146.0,
+      "evaluationRainfallDepthMm": 85.0,
+      "surfaceEvaluationRainfallM3": 1699.999999999986,
+      "evaluationInitialNetworkStorageM3": 113.73061484551722,
+      "evaluationInitialSurfaceStorageM3": 1098.46628862432,
+      "facilityCount": 4,
+      "evaluationCoupledBalanceResidualM3": -0.0008964579706116638,
+      "dryExchangeRoundoff": {
+        "policy": "BOUNDED_DRY_TAIL_ROUNDOFF_V1",
+        "withdrawalShortfallM3": 2.633212843997574e-09,
+        "maximumTransferShortfallM3": 1e-09,
+        "maximumRunShortfallM3": 1e-08
+      },
+      "raw": {
+        "outwardVolumeM3": 1779.4792811926513,
+        "peakOutwardM3s": 0.13508303862618712,
+        "depthAreaTimeM3Hours": 10930.234754854922
+      },
+      "resultSha256": "8158b133de93316c4e39080e4740a813ca56fed115c6d0403f0b6650c6087541",
+      "evaluationInitialStateSha256": "d6f27f7d1a802a54b269e95a29cefd7c80bc38681c68b75b58e6a000a56d7e4f",
+      "nativeOutputSha256": "c65af86b7ffc2410eb93e57ffae2ce0a125d3967ae3c745266263803306be529"
+    }
+  ],
+  "comparison": {
+    "exactReplay": true,
+    "step60Minus30": {
+      "outwardVolumeM3": -0.001368191879691949,
+      "peakOutwardM3s": -8.176673382820354e-08,
+      "depthAreaTimeM3Hours": 0.06233125280414242
+    },
+    "period14Minus7InitialSurfaceM3": 4.774847184307873e-12,
+    "baselineOutflowM3": 1800.369801501914
+  },
+  "checks": {
+    "newTests": 4,
+    "existingRegressionTests": 20,
+    "sourceContractFollowupTests": 3
+  },
+  "limitations": [
+    "합성 지형/관망·문헌 시설 설계이며 실제 서울 침수 재현 아님",
+    "단일 명시적 시드의 7/14일 비교; 전체 유역/다른 시드 수렴 보증 아님",
+    "강우 배정·침투 회복·잔디 증발산 전용·반사 경계의 입력 조건 보존",
+    "건조 경계 꼬리 부족량의 명시적 수치 잔차; 물수지의 정확한 0 잔차 주장 없음",
+    "관망/지표 수지와 별도 시설 수지이며 유역 토양/지하수 전체 수지 아님"
+  ],
+  "artifact": {
+    "path": "data/runs/initialized-coupling-20261018-v3",
+    "manifestSha256": "537a683c406521756af5875c0a5825746877ac1d05abe5d5a63539fda155da9e",
+    "fileCount": 2159
+  },
+  "preservedFailure": {
+    "path": "data/runs/initialized-coupling-20261018-v1",
+    "manifestSha256": "f16c5f83075e23ca6f5570af353d5bd8fa8a5a8a5cca5f02cd9a9c315f27def6",
+    "code": "COUPLED_SUBMILLISECOND_STEP_REQUIRED",
+    "lastSynchronizedMilliseconds": 32520000
+  }
+}

@@ -64,6 +64,15 @@ INITIALIZED_FACILITY_EVIDENCE_DIR=data/runs/initialized-facilities-new PYTHONPAT
   tmp/flood-venv/bin/python -m unittest simulation.tests.test_initialized_facilities
 ```
 
+`forcing/coupled_initialization.py`는 같은 관측 초기화를 `run_coupled`의 시설·관망·지표 연속 실행으로 연결한다. 원 요청의 `initialization.method=OBSERVED_COUPLED_ANTECEDENT_CONTINUOUS_V1`, `observedRainfall.stationByCatchment`·`evaporationReference`, 지표의 동일 증발산 출처가 필요하다. 원 INP는 선행 시작부터 평가 종료+1초까지를 명시해야 하며 외부 시계열도 전체 기간을 충족해야 한다. 평가 원 지표는 선행 기간을 제외하고 내부 단계에서 집계하며, 시작 상태·누적 차분·침투 상태·요청/파생 입력을 함께 보관한다.
+
+`dryExchangePolicy=BOUNDED_DRY_TAIL_ROUNDOFF_V1`은 침투 후 마른 유입부에 남는 직전 유량 적분 꼬리를 별도 수치 잔차로 기록한다. 1회 10⁻⁹m³·전체 10⁻⁸m³보다 큰 부족은 실패한다. 물리 제원이나 강우를 바꾸지 않으며, 기존 엄격 정책과 실패 산출물도 보존한다. 아래 검사는 실제 2022 관측을 합성 지형/관망에 적용한 것으로 서울 현장 침수 검증이나 운영 작업 게시가 아니다.
+
+```sh
+INITIALIZED_COUPLING_EVIDENCE_DIR=data/runs/initialized-coupling-new PYTHONPATH=simulation \
+  tmp/flood-venv/bin/python -m unittest simulation.tests.test_initialized_coupling
+```
+
 보관한 성동 421의 선행 14일 원문과 2022-08-08 평가 강우·서울 108 기상 필요. 시험은 같은 합성 2ha 형상에서 7/14일·시들음점/포화 시드와 재생을 비교한다. 식생수로의 미지원 InitSat은 0으로 유지하며 그 시드까지 변경했다고 표시하지 않는다. 28일은 입력 형식을 지원하지만 해당 관측이 확보되지 않은 실행은 거부한다. 자료 없는 기간의 무강우 대체·다른 관측소 자동 대체는 없다.
 
 ## 연결 시설의 공개 견적

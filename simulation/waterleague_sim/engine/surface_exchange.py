@@ -7,6 +7,10 @@ from pathlib import Path
 from waterleague_sim.engine.flood_errors import require
 from waterleague_sim.engine.surface import SurfaceSession
 
+DRY_EXCHANGE_POLICY = 'BOUNDED_DRY_TAIL_ROUNDOFF_V1'
+DRY_TRANSFER_TOLERANCE_M3 = 1e-9
+DRY_TOTAL_TOLERANCE_M3 = 1e-8
+
 
 class ExchangeSurfaceSession(SurfaceSession):
     def __init__(self, model, directory):
@@ -15,6 +19,13 @@ class ExchangeSurfaceSession(SurfaceSession):
         self.port_specs = model['ports']
         self.port_indices = {}
         self.exchange_net = 0.
+        self.dry_policy = model.get('dryExchangePolicy')
+        require(self.dry_policy in (None, DRY_EXCHANGE_POLICY), 'EXCHANGE_DRY_POLICY_INVALID')
+        self.dry_shortfall = 0.
+        if self.dry_policy is not None:
+            (self.directory / 'dry-exchange-policy.json').write_text(json.dumps({
+                'policy': self.dry_policy, 'maximumTransferShortfallM3': DRY_TRANSFER_TOLERANCE_M3,
+                'maximumRunShortfallM3': DRY_TOTAL_TOLERANCE_M3}, indent=2) + '\n')
         occupied = set()
         require(isinstance(self.port_specs, list) and 0 < len(self.port_specs) <= 10_000,
                 'EXCHANGE_PORTS_REQUIRED')
@@ -61,16 +72,22 @@ class ExchangeSurfaceSession(SurfaceSession):
         storage = float(np.dot(depth, domain.areas))
         boundary = float(domain.get_boundary_flux_integral())
         source = float(domain.get_fractional_step_volume_integral())
-        return {'timeSeconds': float(domain.get_time()), 'ports': ports, 'storageM3': storage,
+        result = {'timeSeconds': float(domain.get_time()), 'ports': ports, 'storageM3': storage,
                 'boundaryNetInflowM3': boundary, 'sourceNetInflowM3': source,
                 'exchangeNetInflowM3': self.exchange_net, 'externalSourceNetInflowM3': source - self.exchange_net,
                 'balanceResidualM3': self.initial_volume + source + boundary - storage, **self.loss_ledger()}
+        if self.dry_policy is not None:
+            result['dryExchangeRoundoff'] = {'policy': self.dry_policy, 'withdrawalShortfallM3': self.dry_shortfall,
+                'maximumTransferShortfallM3': DRY_TRANSFER_TOLERANCE_M3,
+                'maximumRunShortfallM3': DRY_TOTAL_TOLERANCE_M3}
+        return result
 
     def apply_exchange(self, transfers):
         require(not self.finished and isinstance(transfers, dict)
                 and set(transfers) == set(self.port_indices), 'EXCHANGE_TRANSFERS_INVALID')
         np, domain = self.np, self.domain
         changes = []
+        shortfalls = []
         # 모든 유입부를 먼저 검증하여 잘못된 한 건 때문에 일부만 적용하지 않는다.
         for row in self.port_specs:
             volume = transfers[row['id']]
@@ -79,12 +96,18 @@ class ExchangeSurfaceSession(SurfaceSession):
             areas = domain.areas[cells]
             available = self._available(row)
             capacity = float(np.dot(available, areas))
-            require(volume >= -capacity, 'EXCHANGE_SURFACE_OVERDRAW')
-            delta = (np.full(len(cells), volume / float(np.sum(areas))) if volume >= 0
-                     else available * (volume / capacity))
-            changes.append((row['id'], cells, delta, volume))
+            shortfall = max(0., -volume-capacity)
+            require(shortfall == 0 or self.dry_policy == DRY_EXCHANGE_POLICY
+                    and shortfall <= DRY_TRANSFER_TOLERANCE_M3, 'EXCHANGE_SURFACE_OVERDRAW')
+            shortfalls.append(shortfall)
+            applied = max(volume, -capacity)
+            delta = (np.full(len(cells), applied / float(np.sum(areas))) if applied >= 0
+                     else available * (applied / capacity))
+            changes.append((row['id'], cells, delta, volume, shortfall))
+        require(self.dry_shortfall + math.fsum(shortfalls) <= DRY_TOTAL_TOLERANCE_M3,
+                'EXCHANGE_DRY_ROUNDOFF_BUDGET_EXCEEDED')
         records = []
-        for identifier, cells, delta, volume in changes:
+        for identifier, cells, delta, volume, shortfall in changes:
             stage = domain.quantities['stage'].centroid_values
             z = domain.quantities['elevation'].centroid_values
             old_depth = stage[cells] - z[cells]
@@ -100,8 +123,11 @@ class ExchangeSurfaceSession(SurfaceSession):
                     'EXCHANGE_VOLUME_ROUNDOFF_EXCEEDED')
             domain.fractional_step_volume_integral += volume
             self.exchange_net += volume
+            self.dry_shortfall += shortfall
             records.append({'port': identifier, 'requestedM3': volume, 'appliedM3': actual,
                             'roundoffM3': actual - volume})
+            if self.dry_policy is not None:
+                records[-1]['withdrawalShortfallM3'] = shortfall
         if self.metrics is not None:
             self.metrics.reset_at_instant()
         if self.quality is not None:

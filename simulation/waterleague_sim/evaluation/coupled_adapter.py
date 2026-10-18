@@ -2,6 +2,7 @@
 import hashlib
 import json
 import math
+from copy import deepcopy
 from pathlib import Path, PurePosixPath
 
 from .exception import EvaluationError, require
@@ -37,7 +38,85 @@ def engine_signature(network_result, surface_result, coupled_result):
     # 새 지표 설정을 고정하되 기존 보관 결과의 식별자는 소급 변경하지 않는다.
     if 'surfaceNumericalConfiguration' in coupled_result:
         identity['surfaceNumericalConfiguration'] = coupled_result['surfaceNumericalConfiguration']
+    if 'initialization' in coupled_result:
+        identity['initializationAdapterSha256'] = coupled_result['initialization']['adapterSha256']
+    if 'dryExchangeRoundoff' in coupled_result:
+        identity['dryExchangePolicy'] = {k: v for k, v in coupled_result['dryExchangeRoundoff'].items()
+                                       if k != 'withdrawalShortfallM3'}
     return digest(identity)
+
+
+def _verify_dry_policy(model, surface, result, root):
+    detail = result.get('dryExchangeRoundoff')
+    if model.get('dryExchangePolicy') is None:
+        require(detail is None, 'EVALUATION_DRY_POLICY_MISMATCH')
+        return
+    from waterleague_sim.engine.surface_exchange import (
+        DRY_EXCHANGE_POLICY, DRY_TRANSFER_TOLERANCE_M3, DRY_TOTAL_TOLERANCE_M3)
+    policy = {'policy': DRY_EXCHANGE_POLICY, 'maximumTransferShortfallM3': DRY_TRANSFER_TOLERANCE_M3,
+              'maximumRunShortfallM3': DRY_TOTAL_TOLERANCE_M3}
+    require(model['dryExchangePolicy'] == DRY_EXCHANGE_POLICY and isinstance(detail, dict)
+            and all(detail.get(k) == v for k, v in policy.items())
+            and detail == surface.get('exchange', {}).get('dryExchangeRoundoff')
+            and type(detail.get('withdrawalShortfallM3')) in (int, float)
+            and 0 <= detail['withdrawalShortfallM3'] <= DRY_TOTAL_TOLERANCE_M3
+            and 'surface/dry-exchange-policy.json' in result['files']
+            and _read(root/'surface/dry-exchange-policy.json') == policy,
+            'EVALUATION_DRY_POLICY_MISMATCH')
+
+
+def _verify_initialization(model, network, surface, result, root):
+    if 'initialization' not in model:
+        require('initialization' not in result, 'EVALUATION_INITIALIZATION_CONTEXT_MISMATCH')
+        return model
+    from waterleague_sim.engine.flood_errors import FloodModelError
+    from waterleague_sim.forcing.coupled_initialization import METHOD, digest as input_digest, evaluation_ledger
+    required = ('initialized-coupled-input.json', 'initialization-forcing.json',
+                'evaluation-initial-state.json', 'evaluation-final-state.json')
+    require(all(name in result['files'] for name in required), 'EVALUATION_INITIALIZATION_ARTIFACT_MISSING')
+    prepared, forcing, origin, final = [_read(root/name) for name in required]
+    summary = result.get('initialization')
+    require(isinstance(model['initialization'], dict)
+            and type(model['initialization'].get('days')) is int
+            and model['initialization']['days'] in (7, 14, 28), 'EVALUATION_INITIALIZATION_CONTEXT_MISMATCH')
+    seconds = model['initialization']['days']*86400
+    require(isinstance(summary, dict) and all(summary.get(k) == v for k, v in forcing.items())
+            and forcing['method'] == model['initialization'].get('method') == METHOD
+            and seconds in (7*86400, 14*86400, 28*86400) and forcing['warmupSeconds'] == seconds
+            and forcing['evaluationSeconds'] == model['durationSeconds']
+            and forcing['requestSha256'] == input_digest(model)
+            and forcing['preparedModelSha256'] == input_digest(prepared)
+            and forcing['network']['originalSha256'] == hashlib.sha256(model['network']['inputText'].encode()).hexdigest()
+            and forcing['network']['derivedSha256'] == hashlib.sha256(prepared['network']['inputText'].encode()).hexdigest()
+            and forcing['scoreExcludesWarmup'] is True
+            and forcing['statePolicy'] == 'SAME_LIVE_ENGINES_NO_STATE_TRANSPLANT',
+            'EVALUATION_INITIALIZATION_CONTEXT_MISMATCH')
+    expected = deepcopy(model)
+    expected.pop('initialization')
+    expected['network']['inputText'] = prepared['network']['inputText']
+    expected['durationSeconds'] += seconds
+    expected['surface'].update(startUtc=forcing['network']['startUtc'], durationSeconds=expected['durationSeconds'])
+    expected['surface']['evaporation'].update(type='ARCHIVED_ANTECEDENT_AND_FAO56',
+                                             antecedentReference=model['initialization']['weatherReference'])
+    expected['observedRainfall'].update(startUtc=forcing['network']['startUtc'],
+        evaluationStartUtc=model['observedRainfall']['startUtc'],
+        initialization=model['initialization'] | {'method': 'OBSERVED_ANTECEDENT_CONTINUOUS_V1'})
+    for key in ('startMilliseconds', 'endMilliseconds'):
+        expected['evaluationMetrics'][key] += seconds*1000
+    require(expected == prepared and final['network'] == network['final']
+            and final['surface']['surface'] == surface['final']
+            and final['surfaceExchange'] == surface['exchange']
+            and origin['network']['totals']['timeSeconds'] == seconds
+            and final['network']['totals']['timeSeconds'] == expected['durationSeconds'],
+            'EVALUATION_INITIALIZATION_STATE_MISMATCH')
+    try:
+        ledger = evaluation_ledger(origin, final)
+    except FloodModelError:
+        raise EvaluationError('EVALUATION_INITIALIZATION_LEDGER_INVALID') from None
+    require(summary.get('evaluationLedger') == ledger
+            and (ledger['numericalStatus'] == 'PASSED' or result['numericalStatus'] == 'FAILED'),
+            'EVALUATION_INITIALIZATION_LEDGER_MISMATCH')
+    return prepared
 
 
 def _verify_surface_policy(model, surface, result, root):
@@ -124,6 +203,8 @@ def read_coupled_record(directory, expected_result_sha256, context):
         model, network, surface = [_read(root / name) for name in required]
         _verify_files(root / 'network', network['files'])
         _verify_files(root / 'surface', surface['files'])
+        model = _verify_initialization(model, network, surface, result, root)
+        _verify_dry_policy(model, surface, result, root)
         _verify_surface_policy(model, surface, result, root)
         _verify_connected_facilities(model, network, result, root)
         metrics = result['evaluationMetrics']
