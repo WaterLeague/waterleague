@@ -39,10 +39,7 @@ def identity():
         'qualityAdapterSha256': network.sha256(network.ROOT/'simulation/waterleague_sim/engine/network_quality.py')}
 
 
-class PumpNetworkSession(facility_metrics.FacilityMetricsSession):
-    engine_path = staticmethod(library_path)
-    engine_identity = staticmethod(identity)
-
+class PumpObserverMixin:
     def __enter__(self):
         super().__enter__()
         try:
@@ -65,10 +62,13 @@ class PumpNetworkSession(facility_metrics.FacilityMetricsSession):
             raise
 
     def pump_state(self):
+        return self._pump_state(self.lib.wl_pumpsRead)
+
+    def _pump_state(self, read):
         rows = []
         for name in self.pump_ids:
             raw = (C.c_double*len(FIELDS))()
-            self._check(self.lib.wl_pumpsRead(self.links[name], raw, len(raw)))
+            self._check(read(self.links[name], raw, len(raw)))
             require(all(math.isfinite(v) for v in raw), 'PUMP_OBSERVER_NONFINITE')
             row = dict(zip(FIELDS, raw)) | {'linkId': name}
             valid = row['outsideHeadCurveSeconds'] == row['outsideFlowCurveSeconds'] == 0
@@ -101,3 +101,8 @@ class PumpNetworkSession(facility_metrics.FacilityMetricsSession):
     def close(self):
         if self.opened: self.lib.wl_pumpsRelease()
         super().close()
+
+
+class PumpNetworkSession(PumpObserverMixin, facility_metrics.FacilityMetricsSession):
+    engine_path = staticmethod(library_path)
+    engine_identity = staticmethod(identity)

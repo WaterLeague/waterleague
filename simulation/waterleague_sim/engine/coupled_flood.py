@@ -111,6 +111,7 @@ def run_coupled(model, directory):
     original_model = model
     basin_design, basin_model = None, None
     composition, composed_raw = None, None
+    pump_design, pump_model = None, None
     if 'surfaceBasinDesign' in model:
         from waterleague_sim.engine.surface_basin import compile_basin
         model, basin_design = compile_basin(model)
@@ -127,6 +128,11 @@ def run_coupled(model, directory):
             from waterleague_sim.engine.storage_composition import compose_storage
             composed_raw, composition = compose_storage(original_model, model, storage_raw, storage_design)
         model = model | {'network': model['network'] | {'inputText': composed_raw.decode()}}
+    if 'connectedPumpDesign' in model:
+        require(model.get('evaluationMetrics') is not None, 'COUPLED_PUMP_METRICS_REQUIRED')
+        from waterleague_sim.engine.coupled_pumps import compile as compile_pumps
+        model, pump_design = compile_pumps(original_model, model)
+        pump_model = model
     if 'initialization' in model:
         from waterleague_sim.forcing.coupled_initialization import prepare_initialized_coupling
         initialization = prepare_initialized_coupling(model)
@@ -167,6 +173,11 @@ def run_coupled(model, directory):
         _write(directory / 'initialized-coupled-input.json', initialization.model)
         _write(directory / 'initialization-forcing.json', initialization.summary)
         initialization.network.archive(directory / 'network-initialization')
+    if pump_design is not None:
+        from waterleague_sim.engine.connected_pumps import CATALOG as PUMP_CATALOG
+        _write(directory / 'connected-pump-design.json', pump_design)
+        _write(directory / 'pump-coupled-input.json', pump_model)
+        (directory / 'pump-curve.json').write_bytes(PUMP_CATALOG.read_bytes())
     if facility_design is not None:
         _write(directory / 'connected-facility-design.json', facility_design)
         (directory / 'facility-network.inp').write_bytes(raw)
@@ -198,9 +209,12 @@ def run_coupled(model, directory):
         stage_times.update(round(t * 1000) for t in evaporation.knots)
     if initialization is not None:
         stage_times.add(initialization.summary['warmupSeconds'] * 1000)
+    if pump_design is not None:
+        stage_times.update(metric_spec[k] for k in ('startMilliseconds', 'endMilliseconds'))
     event_times = sorted(set(events) | stage_times | {duration})
     clock, nstate, state = 0, None, None
-    network_engine = ('coupled_facility_network' if facility_design is not None else
+    network_engine = ('coupled_pump_network' if pump_design is not None else
+                      'coupled_facility_network' if facility_design is not None else
                       'network_metrics' if metric_spec is not None else 'network_exchange')
     try:
         with EngineProcess(network_engine,
@@ -350,6 +364,9 @@ def run_coupled(model, directory):
                     result['dryExchangeRoundoff'] = state['dryExchangeRoundoff']
                 if storage_summary is not None:
                     result['connectedStorage'] = storage_summary
+                if pump_design is not None:
+                    from waterleague_sim.engine.coupled_pumps import summary as pump_summary
+                    result['connectedPumps'] = pump_summary(pump_design, nresult['pumpOperation'])
                 if basin_design is not None:
                     from waterleague_sim.engine.surface_basin import result_summary as basin_summary
                     result['surfaceBasins'] = basin_summary(basin_design, sresult,

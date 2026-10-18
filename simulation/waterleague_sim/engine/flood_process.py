@@ -17,6 +17,7 @@ _METHODS['facility_network'] = _METHODS['network']
 _METHODS['facility_metrics'] = _METHODS['network'] | {'metric_state'}
 _METHODS['pump_network'] = _METHODS['facility_metrics'] | {'pump_state'}
 _METHODS['coupled_facility_network'] = _METHODS['network_metrics']
+_METHODS['coupled_pump_network'] = _METHODS['network_metrics'] | {'pump_state', 'evaluation_pump_state'}
 for _engine in ('surface', 'surface_exchange'):
     _METHODS[_engine] = _METHODS[_engine] | {'initialization_state'}
 
@@ -30,8 +31,10 @@ def _serve(connection, engine, model, directory, evaluation_seconds, native_dura
                                      'MKL_NUM_THREADS': '1', 'MPLBACKEND': 'Agg'})
     session = None
     try:
-        if engine in ('network', 'network_exchange', 'network_metrics', 'facility_network', 'facility_metrics', 'pump_network', 'coupled_facility_network'):
-            if engine == 'pump_network':
+        if engine in ('network', 'network_exchange', 'network_metrics', 'facility_network', 'facility_metrics', 'pump_network', 'coupled_facility_network', 'coupled_pump_network'):
+            if engine == 'coupled_pump_network':
+                from waterleague_sim.engine.coupled_pump_network import CoupledPumpNetworkSession as NetworkSession
+            elif engine == 'pump_network':
                 from waterleague_sim.engine.pump_network import PumpNetworkSession as NetworkSession
             elif engine == 'facility_metrics':
                 from waterleague_sim.engine.facility_metrics import FacilityMetricsSession as NetworkSession
@@ -74,7 +77,7 @@ def _serve(connection, engine, model, directory, evaluation_seconds, native_dura
         except (EOFError, BrokenPipeError, OSError):
             pass
     finally:
-        if engine in ('network', 'network_exchange', 'network_metrics', 'facility_network', 'facility_metrics', 'pump_network', 'coupled_facility_network') and session is not None:
+        if engine in ('network', 'network_exchange', 'network_metrics', 'facility_network', 'facility_metrics', 'pump_network', 'coupled_facility_network', 'coupled_pump_network') and session is not None:
             session.close()
         connection.close()
 

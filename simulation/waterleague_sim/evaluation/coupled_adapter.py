@@ -231,9 +231,9 @@ def _verify_connected_storage(model, network, result, root, original_model=None)
         identifiers |= {port['linkId'].upper() for row in metadata['facilities'] for port in row['ports'].values()}
         def design_rows(data):
             return {section: [row['tokens'] for row in rows
-                    if any(token.upper() in identifiers for token in row['tokens'])]
+                    if row['tokens'][0].upper() in identifiers]
                     for section, rows in records(data)[1].items()
-                    if any(any(token.upper() in identifiers for token in row['tokens']) for row in rows)}
+                    if any(row['tokens'][0].upper() in identifiers for row in rows)}
         require(design_rows(compiled) == design_rows((root/required[2]).read_bytes()),
                 'EVALUATION_STORAGE_NATIVE_INPUT_MISMATCH')
         # 이전 코드 해시는 원 묶음에 보존하고 입력·제원·계산 의미의 일치만 다시 확인한다.
@@ -304,6 +304,8 @@ def read_coupled_record(directory, expected_result_sha256, context):
         original_model = model
         model = _verify_surface_basins(model, surface, result, root)
         model = _verify_connected_storage(model, network, result, root, original_model)
+        from .pumps import verify_connected_pumps
+        model = verify_connected_pumps(original_model, model, network, result, root, _read)
         model = _verify_initialization(model, network, surface, result, root)
         _verify_dry_policy(model, surface, result, root)
         _verify_surface_policy(model, surface, result, root)
