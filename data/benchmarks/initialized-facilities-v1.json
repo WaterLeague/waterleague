@@ -1,0 +1,364 @@
+{
+  "schemaVersion": 1,
+  "classification": "OBSERVED_WEATHER_ON_SYNTHETIC_NETWORK",
+  "rankingEligible": false,
+  "artifactPath": "data/runs/initialized-facilities-20261018-v3",
+  "manifestSha256": "891ada582d30e7e060b325a3ce515977aa7018ef48b957af1d3460f168c82033",
+  "fileCount": 905,
+  "verification": {
+    "tests": 4,
+    "status": "PASSED",
+    "seconds": 16.366,
+    "nativeRuns": 5
+  },
+  "exactReplay": true,
+  "seedPolicy": "LID_INIT_SAT_0_OR_100_EXCEPT_UNSUPPORTED_SWALE_SEED",
+  "cases": {
+    "7d-dry": {
+      "routingOutflowM3": 1775.4898584629575,
+      "facilities": {
+        "WL_Trench": {
+          "inflowM3": 498.24105417763906,
+          "evaporationM3": 0.015980178537727596,
+          "infiltrationM3": 11.966666666469564,
+          "surfaceOutflowM3": 486.2584073324307,
+          "drainOutflowM3": 0.0,
+          "initialStorageM3": 213.36000000000004,
+          "finalStorageM3": 213.36000000000004
+        },
+        "WL_Swale": {
+          "inflowM3": 199.29642167105555,
+          "evaporationM3": 0.003283220762295591,
+          "infiltrationM3": 2.7133982452496888,
+          "surfaceOutflowM3": 205.51941692144183,
+          "drainOutflowM3": 0.0,
+          "initialStorageM3": 10.299871206268902,
+          "finalStorageM3": 2.2861930691053045
+        },
+        "WL_Cistern": {
+          "inflowM3": 91.14821083552923,
+          "evaporationM3": 0.0,
+          "infiltrationM3": 0.0,
+          "surfaceOutflowM3": 91.14821083552847,
+          "drainOutflowM3": 0.0,
+          "initialStorageM3": 20.0,
+          "finalStorageM3": 20.0
+        },
+        "WL_Bioretention": {
+          "inflowM3": 99.64821083552775,
+          "evaporationM3": 0.0031960357090685676,
+          "infiltrationM3": 2.3933333333668045,
+          "surfaceOutflowM3": 72.00339691925255,
+          "drainOutflowM3": 26.80484341867828,
+          "initialStorageM3": 54.559200000000004,
+          "finalStorageM3": 53.00340893041296
+        }
+      }
+    },
+    "7d-wet": {
+      "routingOutflowM3": 1775.4763039167535,
+      "facilities": {
+        "WL_Trench": {
+          "inflowM3": 498.24105417763906,
+          "evaporationM3": 0.015980178537729373,
+          "infiltrationM3": 11.966666666469564,
+          "surfaceOutflowM3": 486.2584073324296,
+          "drainOutflowM3": 0.0,
+          "initialStorageM3": 213.36000000000004,
+          "finalStorageM3": 213.36000000000004
+        },
+        "WL_Swale": {
+          "inflowM3": 199.29642167105555,
+          "evaporationM3": 0.003283220762295591,
+          "infiltrationM3": 2.7133982452496888,
+          "surfaceOutflowM3": 205.51941692144183,
+          "drainOutflowM3": 0.0,
+          "initialStorageM3": 10.299871206268902,
+          "finalStorageM3": 2.2861930691053045
+        },
+        "WL_Cistern": {
+          "inflowM3": 91.14821083552923,
+          "evaporationM3": 0.0,
+          "infiltrationM3": 0.0,
+          "surfaceOutflowM3": 91.14821083552853,
+          "drainOutflowM3": 0.0,
+          "initialStorageM3": 20.0,
+          "finalStorageM3": 20.0
+        },
+        "WL_Bioretention": {
+          "inflowM3": 99.64821083552775,
+          "evaporationM3": 0.0031960357090683456,
+          "infiltrationM3": 2.393333333293917,
+          "surfaceOutflowM3": 72.0033969192525,
+          "drainOutflowM3": 26.80484341874387,
+          "initialStorageM3": 54.559200000000004,
+          "finalStorageM3": 53.00340893041296
+        }
+      }
+    },
+    "14d-dry": {
+      "routingOutflowM3": 1775.489858480984,
+      "facilities": {
+        "WL_Trench": {
+          "inflowM3": 498.24105417763644,
+          "evaporationM3": 0.015980178537727596,
+          "infiltrationM3": 11.966666666469564,
+          "surfaceOutflowM3": 486.2584073324217,
+          "drainOutflowM3": 0.0,
+          "initialStorageM3": 213.36000000000004,
+          "finalStorageM3": 213.36000000000004
+        },
+        "WL_Swale": {
+          "inflowM3": 199.29642167105436,
+          "evaporationM3": 0.003283220762295591,
+          "infiltrationM3": 2.7133982452498415,
+          "surfaceOutflowM3": 205.5194169214471,
+          "drainOutflowM3": 0.0,
+          "initialStorageM3": 10.299871206268902,
+          "finalStorageM3": 2.2861930691053045
+        },
+        "WL_Cistern": {
+          "inflowM3": 91.148210835529,
+          "evaporationM3": 0.0,
+          "infiltrationM3": 0.0,
+          "surfaceOutflowM3": 91.14821083552926,
+          "drainOutflowM3": 0.0,
+          "initialStorageM3": 20.0,
+          "finalStorageM3": 20.0
+        },
+        "WL_Bioretention": {
+          "inflowM3": 99.6482108355271,
+          "evaporationM3": 0.0031960357075455637,
+          "infiltrationM3": 2.393333333293917,
+          "surfaceOutflowM3": 72.00339691925242,
+          "drainOutflowM3": 26.80484341874501,
+          "initialStorageM3": 54.559200000000004,
+          "finalStorageM3": 53.00340893041296
+        }
+      }
+    },
+    "14d-wet": {
+      "routingOutflowM3": 1775.4763039167683,
+      "facilities": {
+        "WL_Trench": {
+          "inflowM3": 498.24105417763644,
+          "evaporationM3": 0.015980178553085977,
+          "infiltrationM3": 11.966666666469564,
+          "surfaceOutflowM3": 486.2584073324217,
+          "drainOutflowM3": 0.0,
+          "initialStorageM3": 213.36000000000004,
+          "finalStorageM3": 213.36000000000004
+        },
+        "WL_Swale": {
+          "inflowM3": 199.29642167105436,
+          "evaporationM3": 0.003283220762295591,
+          "infiltrationM3": 2.7133982452498415,
+          "surfaceOutflowM3": 205.5194169214471,
+          "drainOutflowM3": 0.0,
+          "initialStorageM3": 10.299871206268902,
+          "finalStorageM3": 2.2861930691053045
+        },
+        "WL_Cistern": {
+          "inflowM3": 91.148210835529,
+          "evaporationM3": 0.0,
+          "infiltrationM3": 0.0,
+          "surfaceOutflowM3": 91.14821083552954,
+          "drainOutflowM3": 0.0,
+          "initialStorageM3": 20.0,
+          "finalStorageM3": 20.0
+        },
+        "WL_Bioretention": {
+          "inflowM3": 99.6482108355271,
+          "evaporationM3": 0.0031960357106166626,
+          "infiltrationM3": 2.39333333329391,
+          "surfaceOutflowM3": 72.00339691925248,
+          "drainOutflowM3": 26.804843418744923,
+          "initialStorageM3": 54.559200000000004,
+          "finalStorageM3": 53.00340893041296
+        }
+      }
+    },
+    "replay-14d-dry": {
+      "routingOutflowM3": 1775.489858480984,
+      "facilities": {
+        "WL_Trench": {
+          "inflowM3": 498.24105417763644,
+          "evaporationM3": 0.015980178537727596,
+          "infiltrationM3": 11.966666666469564,
+          "surfaceOutflowM3": 486.2584073324217,
+          "drainOutflowM3": 0.0,
+          "initialStorageM3": 213.36000000000004,
+          "finalStorageM3": 213.36000000000004
+        },
+        "WL_Swale": {
+          "inflowM3": 199.29642167105436,
+          "evaporationM3": 0.003283220762295591,
+          "infiltrationM3": 2.7133982452498415,
+          "surfaceOutflowM3": 205.5194169214471,
+          "drainOutflowM3": 0.0,
+          "initialStorageM3": 10.299871206268902,
+          "finalStorageM3": 2.2861930691053045
+        },
+        "WL_Cistern": {
+          "inflowM3": 91.148210835529,
+          "evaporationM3": 0.0,
+          "infiltrationM3": 0.0,
+          "surfaceOutflowM3": 91.14821083552926,
+          "drainOutflowM3": 0.0,
+          "initialStorageM3": 20.0,
+          "finalStorageM3": 20.0
+        },
+        "WL_Bioretention": {
+          "inflowM3": 99.6482108355271,
+          "evaporationM3": 0.0031960357075455637,
+          "infiltrationM3": 2.393333333293917,
+          "surfaceOutflowM3": 72.00339691925242,
+          "drainOutflowM3": 26.80484341874501,
+          "initialStorageM3": 54.559200000000004,
+          "finalStorageM3": 53.00340893041296
+        }
+      }
+    }
+  },
+  "comparisons": [
+    {
+      "case": "14d-dry",
+      "reference": "7d-dry",
+      "routingOutflowDifferenceM3": 1.802641236281488e-08,
+      "initialRoutingStorageDifferenceM3": 1.7992817902268143e-08,
+      "facilityDifferences": {
+        "WL_Trench": {
+          "inflowM3": -2.6147972675971687e-12,
+          "evaporationM3": 0.0,
+          "infiltrationM3": 0.0,
+          "surfaceOutflowM3": -8.981260180007666e-12,
+          "drainOutflowM3": 0.0,
+          "initialStorageM3": 0.0,
+          "finalStorageM3": 0.0
+        },
+        "WL_Swale": {
+          "inflowM3": -1.1937117960769683e-12,
+          "evaporationM3": 0.0,
+          "infiltrationM3": 1.5276668818842154e-13,
+          "surfaceOutflowM3": 5.258016244624741e-12,
+          "drainOutflowM3": 0.0,
+          "initialStorageM3": 0.0,
+          "finalStorageM3": 0.0
+        },
+        "WL_Cistern": {
+          "inflowM3": -2.2737367544323206e-13,
+          "evaporationM3": 0.0,
+          "infiltrationM3": 0.0,
+          "surfaceOutflowM3": 7.815970093361102e-13,
+          "drainOutflowM3": 0.0,
+          "initialStorageM3": 0.0,
+          "finalStorageM3": 0.0
+        },
+        "WL_Bioretention": {
+          "inflowM3": -6.536993168992922e-13,
+          "evaporationM3": -1.5230039451807897e-12,
+          "infiltrationM3": -7.288747383427108e-11,
+          "surfaceOutflowM3": -1.2789769243681803e-13,
+          "drainOutflowM3": 6.672706831523101e-11,
+          "initialStorageM3": 0.0,
+          "finalStorageM3": 0.0
+        }
+      }
+    },
+    {
+      "case": "7d-wet",
+      "reference": "7d-dry",
+      "routingOutflowDifferenceM3": -0.013554546203977225,
+      "initialRoutingStorageDifferenceM3": -0.013557903657584802,
+      "facilityDifferences": {
+        "WL_Trench": {
+          "inflowM3": 0.0,
+          "evaporationM3": 1.7763568394002505e-15,
+          "infiltrationM3": 0.0,
+          "surfaceOutflowM3": -1.0800249583553523e-12,
+          "drainOutflowM3": 0.0,
+          "initialStorageM3": 0.0,
+          "finalStorageM3": 0.0
+        },
+        "WL_Swale": {
+          "inflowM3": 0.0,
+          "evaporationM3": 0.0,
+          "infiltrationM3": 0.0,
+          "surfaceOutflowM3": 0.0,
+          "drainOutflowM3": 0.0,
+          "initialStorageM3": 0.0,
+          "finalStorageM3": 0.0
+        },
+        "WL_Cistern": {
+          "inflowM3": 0.0,
+          "evaporationM3": 0.0,
+          "infiltrationM3": 0.0,
+          "surfaceOutflowM3": 5.684341886080802e-14,
+          "drainOutflowM3": 0.0,
+          "initialStorageM3": 0.0,
+          "finalStorageM3": 0.0
+        },
+        "WL_Bioretention": {
+          "inflowM3": 0.0,
+          "evaporationM3": -2.220446049250313e-16,
+          "infiltrationM3": -7.288747383427108e-11,
+          "surfaceOutflowM3": -5.684341886080802e-14,
+          "drainOutflowM3": 6.559019993801485e-11,
+          "initialStorageM3": 0.0,
+          "finalStorageM3": 0.0
+        }
+      }
+    },
+    {
+      "case": "14d-wet",
+      "reference": "14d-dry",
+      "routingOutflowDifferenceM3": -0.013554564215610299,
+      "initialRoutingStorageDifferenceM3": -0.013557921651283777,
+      "facilityDifferences": {
+        "WL_Trench": {
+          "inflowM3": 0.0,
+          "evaporationM3": 1.5358381233454566e-11,
+          "infiltrationM3": 0.0,
+          "surfaceOutflowM3": 0.0,
+          "drainOutflowM3": 0.0,
+          "initialStorageM3": 0.0,
+          "finalStorageM3": 0.0
+        },
+        "WL_Swale": {
+          "inflowM3": 0.0,
+          "evaporationM3": 0.0,
+          "infiltrationM3": 0.0,
+          "surfaceOutflowM3": 0.0,
+          "drainOutflowM3": 0.0,
+          "initialStorageM3": 0.0,
+          "finalStorageM3": 0.0
+        },
+        "WL_Cistern": {
+          "inflowM3": 0.0,
+          "evaporationM3": 0.0,
+          "infiltrationM3": 0.0,
+          "surfaceOutflowM3": 2.8421709430404007e-13,
+          "drainOutflowM3": 0.0,
+          "initialStorageM3": 0.0,
+          "finalStorageM3": 0.0
+        },
+        "WL_Bioretention": {
+          "inflowM3": 0.0,
+          "evaporationM3": 3.071098930718108e-12,
+          "infiltrationM3": -7.105427357601002e-15,
+          "surfaceOutflowM3": 5.684341886080802e-14,
+          "drainOutflowM3": -8.526512829121202e-14,
+          "initialStorageM3": 0.0,
+          "finalStorageM3": 0.0
+        }
+      }
+    }
+  ],
+  "automaticConvergenceCertification": false,
+  "limitations": [
+    "시드는 현장 관측이 아니며 식생수로 InitSat 미지원 유지",
+    "같은 형상·재료·관측의 기간/시드 비교이며 전체 서울 수렴 인증 아님",
+    "관망 단독 실행이며 2D 지표 선행 상태는 별도 연결 필요",
+    "28일은 입력 지원이며 이 시험의 관측/실행 범위는 7/14일"
+  ]
+}

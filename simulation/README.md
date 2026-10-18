@@ -52,6 +52,20 @@ COUPLED_FACILITY_EVIDENCE_DIR=data/runs/coupled-facilities-new PYTHONPATH=simula
 
 시험 강우·집수·관망·지표는 수치 확인용 합성 입력이며 공개 현장 자료가 아니다. 생물저류·침투 트렌치·이용조의 연결, 이용조 배수 개방, 기존 관측기와의 이진 결과 일치, 표시 주기 독립성과 작은 식생수로의 시설 수지 실패 전파를 확인한다. `connectedFacilities`의 수지는 원 유출 계산 시각 기준으로 별도 표시하며 관망/지표 수지에 시설 배수·저류를 다시 더하지 않는다. 전체 유역 물수지·현장 효과·LID 배수 역압을 검증한 것으로 해석하지 않는다.
 
+## 연결 시설의 선행 관측 초기화
+
+`forcing/network_initialization.py`는 집수구역별 보관 AWS 강우와 FAO-56 기상을 원문에서 재검사하고 7/14/28일 초기화 입력을 생성한다. 관망은 전체 기간을 UTC로 선언해야 하며, 원 관망의 날짜·외부 유입·방류구 수위를 자동 연장하지 않는다. 외부 시계열은 기간·간격 근거가 필수다. 관망 형상·재료·침투 회복 곡선·증발 제어를 보존하고 강우계·잠재 증발률만 연결한다.
+
+`engine/initialized_facilities.py`는 선행→평가를 한 번의 시설/관망 실행으로 계산한다. 평가 시작의 시설/관망 상태와 원 누적량을 보존하고, 시작 저류와 이후 누적 차분으로 각각의 수지를 제공한다. 유출/라우팅 시각이 다르면 평가 시작 상태를 임의 추정하지 않는다. 시간별 표시 프레임에서 첨두를 만들어내지 않으며, 2D 지표 초기화와 운영 순위 게시를 포함하는 경로가 아니다.
+
+```sh
+tmp/flood-venv/bin/python scripts/build_facility_swmm.py
+INITIALIZED_FACILITY_EVIDENCE_DIR=data/runs/initialized-facilities-new PYTHONPATH=simulation \
+  tmp/flood-venv/bin/python -m unittest simulation.tests.test_initialized_facilities
+```
+
+보관한 성동 421의 선행 14일 원문과 2022-08-08 평가 강우·서울 108 기상 필요. 시험은 같은 합성 2ha 형상에서 7/14일·시들음점/포화 시드와 재생을 비교한다. 식생수로의 미지원 InitSat은 0으로 유지하며 그 시드까지 변경했다고 표시하지 않는다. 28일은 입력 형식을 지원하지만 해당 관측이 확보되지 않은 실행은 거부한다. 자료 없는 기간의 무강우 대체·다른 관측소 자동 대체는 없다.
+
 ## 연결 시설의 공개 견적
 
 `engine/priced_facilities.py`는 연결 설계의 개별 이용조 용량을 `facilities/cistern-costs-v1.json`의 2.35m³ 견적과 대조한다. 수량은 배치된 개별 시설 개수로 계산하며 용량에 비례한 가격 외삽이나 단일 대형 저장조의 소형 설비 환산은 거부한다. 물리 계산에 넣는 면적·배수구·저류 깊이는 명시적 설계 입력이고 견적 문헌의 실측 치수가 아니다. 같은 물리 설계에서 견적 업체 변경은 INP를 바꾸지 않는다.
