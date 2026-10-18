@@ -8,6 +8,7 @@ from waterleague_sim.engine.flood_errors import FloodModelError, require
 from waterleague_sim.engine.flood_process import EngineProcess
 from waterleague_sim.forcing.observed_rainfall import compile_rainfall, utc
 from waterleague_sim.forcing.stage import require_stage_clock
+from waterleague_sim.forcing.surface_evaporation import require_evaporation_clock
 
 
 def _write(path, value):
@@ -18,6 +19,7 @@ def run_observed_surface(model, specification, directory):
     duration = (utc(specification.get('endUtc')) - utc(specification.get('startUtc'))).total_seconds()
     require(duration.is_integer(), 'OBSERVED_RAIN_WINDOW_INVALID')
     require_stage_clock(model, duration=duration, rainfall=specification)
+    require_evaporation_clock(model, duration=duration, rainfall=specification)
     require(model.get('rainfallStationIds') is None, 'OBSERVED_RAIN_ASSIGNMENT_CONFLICT')
     schedule = compile_rainfall(specification, model, int(duration))
     directory = Path(directory).resolve()

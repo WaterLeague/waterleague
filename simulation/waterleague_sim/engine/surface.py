@@ -10,6 +10,7 @@ import platform
 from waterleague_sim.engine.flood_errors import require
 from waterleague_sim.engine.swmm import ROOT
 from waterleague_sim.forcing.stage import clamp_clock_roundoff, compile_stage_boundaries, source_hash
+from waterleague_sim.forcing.surface_evaporation import compile_evaporation
 
 VERSION = '4.0.1'
 
@@ -93,6 +94,9 @@ class SurfaceSession:
             validate(model['infiltration'], owners)
         self.stage_series = compile_stage_boundaries(model)
         self.stage_knots = sorted({time for series in self.stage_series.values() for time in series.knots})
+        self.evaporation_series = compile_evaporation(model)
+        if self.evaporation_series is not None:
+            self.stage_knots = sorted(set(self.stage_knots) | set(self.evaporation_series.knots))
         if self.stage_series:
             require(set(self.stage_series) <= set(boundaries.values()), 'STAGE_BOUNDARY_UNUSED')
             self.engine['stageAdapterSha256'] = source_hash()
@@ -161,6 +165,13 @@ class SurfaceSession:
             from waterleague_sim.engine.surface_infiltration import SurfaceInfiltration
             self.infiltration = SurfaceInfiltration(domain, self.rain, model['infiltration'], owners)
             self.engine['infiltrationEngine'] = self.infiltration.bank.engine
+        self.evaporation = None
+        if self.evaporation_series is not None:
+            from waterleague_sim.engine.surface_evaporation import SurfaceEvaporation
+            self.evaporation = SurfaceEvaporation(domain, self.evaporation_series, owners)
+            self.engine['evaporationAdapterSha256'] = self.evaporation.source_hash
+            self.engine['evaporationForcingSha256'] = self.evaporation_series.summary['adapterSha256']
+            self.evaporation_series.archive(path / 'surface-evaporation-input')
         self.metrics = None
         if model.get('evaluationMetrics') is not None:
             from waterleague_sim.engine.flood_metrics import DepthMetrics
@@ -218,10 +229,13 @@ class SurfaceSession:
                 'velocityYMps': velocities[1].tolist(), **self.loss_ledger()}
 
     def loss_ledger(self):
-        if self.infiltration is None:
+        if self.infiltration is None and self.evaporation is None:
             return {}
-        return {'rainfallM3': float(self.rain.cumulative_influx),
-                'infiltrationM3': float(self.np.sum(self.infiltration.cumulative))}
+        result = {'rainfallM3': float(self.rain.cumulative_influx),
+                  'infiltrationM3': float(self.np.sum(self.infiltration.cumulative)) if self.infiltration else 0.}
+        if self.evaporation is not None:
+            result.update(self.evaporation.ledger())
+        return result
 
     def advance(self, seconds):
         require(not self.finished and type(seconds) in (int, float)
@@ -232,10 +246,13 @@ class SurfaceSession:
         return self.snapshot()
 
     def _evolve_until(self, target):
+        if self.evaporation_series is not None:
+            target = clamp_clock_roundoff(target, 0, self.evaporation_series.duration,
+                                           'EVAPORATION_RUN_WINDOW_EXCEEDED')
         if self.stage_series:
             target = clamp_clock_roundoff(target, 0, min(s.duration for s in self.stage_series.values()),
                                            'STAGE_RUN_WINDOW_EXCEEDED')
-        # 관측 절점의 기울기 변화가 긴 내부 단계에 묻히지 않도록 분할한다.
+        # 관측 수위·기상 입력의 변화가 긴 내부 단계에 묻히지 않도록 분할한다.
         begin = bisect_right(self.stage_knots, self.domain.get_time())
         end = bisect_left(self.stage_knots, target)
         stops = self.stage_knots[begin:end] + [target]
@@ -255,6 +272,10 @@ class SurfaceSession:
             (self.directory / 'surface-infiltration.json').write_text(json.dumps(
                 self.infiltration.summary(include_state=True), ensure_ascii=False, allow_nan=False,
                 indent=2) + '\n')
+        if self.evaporation is not None:
+            (self.directory / 'surface-evaporation.json').write_text(json.dumps(
+                self.evaporation.summary(include_state=True), ensure_ascii=False, allow_nan=False,
+                indent=2) + '\n')
         # 수심/운동량은 그대로 보존하며 초기 수치 시험의 잔차 허용치만 별도 판정한다.
         scale = max(self.initial_volume + max(0, final['sourceNetInflowM3'])
                     + max(0, final['boundaryNetInflowM3']), final['storageM3'])
@@ -266,14 +287,16 @@ class SurfaceSession:
                   'initial': self.initial, 'final': final, 'forcing': self.forcing,
                   'numericalStatus': 'PASSED' if abs(final['balanceResidualM3']) <= max(1e-8, .01 * scale)
                       else 'FAILED',
-                  'files': {p.name: hashlib.sha256(p.read_bytes()).hexdigest()
-                            for p in sorted(self.directory.iterdir()) if p.is_file()}}
+                  'files': {str(p.relative_to(self.directory)): hashlib.sha256(p.read_bytes()).hexdigest()
+                            for p in sorted(self.directory.rglob('*')) if p.is_file()}}
         if self.metrics is not None:
             result['evaluationMetrics'] = self.metrics.snapshot()
         if self.stage_series:
             result['stageBoundaries'] = {name: series.summary for name, series in self.stage_series.items()}
         if self.infiltration is not None:
             result['infiltration'] = self.infiltration.summary()
+        if self.evaporation is not None:
+            result['evaporation'] = self.evaporation.summary()
         if self.quality is not None:
             result['numericalQuality'] = self.quality.snapshot()
         (self.directory / 'surface-result.json').write_text(json.dumps(result, allow_nan=False, indent=2) + '\n')

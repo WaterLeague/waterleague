@@ -12,6 +12,7 @@ from waterleague_sim.forcing.observed_rainfall import compile_rainfall, require_
 from waterleague_sim.forcing.stage import require_stage_clock
 from waterleague_sim.forcing.network_stage import prepare_network_stage
 from waterleague_sim.engine.surface_infiltration import validate as validate_infiltration
+from waterleague_sim.forcing.surface_evaporation import require_evaporation_clock
 
 
 def _write(path, value):
@@ -94,11 +95,17 @@ def _balance(network, surface, ports):
     if 'infiltrationM3' in surface:
         result.update(surfaceRainfallM3=surface['rainfallM3'], surfaceInfiltrationM3=surface['infiltrationM3'],
                       surfaceBoundaryNetInflowM3=surface['boundaryNetInflowM3'])
+    if 'surfaceEvaporationM3' in surface:
+        result.update({key: surface[key] for key in
+                       ('surfaceEvaporationM3', 'potentialSurfaceEvaporationM3',
+                        'unmetSurfaceEvaporationM3', 'surfaceEvaporationRoundoffM3')})
     return result
 
 
 def run_coupled(model, directory):
     _validate(model)
+    evaporation = require_evaporation_clock(model['surface'], duration=model['durationSeconds'],
+                         rainfall=model.get('observedRainfall'), network=model['network'])
     stages = require_stage_clock(model['surface'], duration=model['durationSeconds'],
                                  rainfall=model.get('observedRainfall'), network=model['network'])
     network_stages = prepare_network_stage(model['network'] | {'ports': model['ports']},
@@ -135,6 +142,8 @@ def run_coupled(model, directory):
             events.setdefault(row['timeMilliseconds'], []).append(('observedRainfall', row))
     stage_times = {round(t * 1000) for series in (*stages.values(), *network_stages.series.values())
                    for t in series.knots}
+    if evaporation is not None:
+        stage_times.update(round(t * 1000) for t in evaporation.knots)
     event_times = sorted(set(events) | stage_times | {duration})
     clock, nstate, state = 0, None, None
     try:
@@ -253,6 +262,8 @@ def run_coupled(model, directory):
                         'volumeResidualM3': applied_rain - expected_rain}
                 if 'infiltration' in sresult:
                     result['surfaceInfiltration'] = sresult['infiltration']
+                if 'evaporation' in sresult:
+                    result['surfaceEvaporation'] = sresult['evaporation']
                 if 'numericalQuality' in sresult:
                     result['surfaceNumericalQuality'] = sresult['numericalQuality']
                 if metric_spec is not None:
