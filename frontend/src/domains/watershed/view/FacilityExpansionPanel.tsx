@@ -60,44 +60,65 @@ export function FacilityExpansionPanel({
   open,
   onClose,
   onMapFacility,
+  selectedMapFacility = '',
+  onAllCandidates,
   onLogin,
 }: {
   account: Account | null;
   open: boolean;
   onClose: () => void;
   onMapFacility: (type: FacilityType) => void;
+  selectedMapFacility?: FacilityType | '';
+  onAllCandidates?: () => void;
   onLogin: () => void;
 }) {
   const [type, setType] = useState<NetworkFacility | null>(null);
   const state = useWatershed(account, open);
   return (
-    <aside className="shared-inspector watershed-panel" aria-label="전체 시설 설계" hidden={!open}>
+    <aside
+      id="facility-install-panel"
+      className="shared-inspector watershed-panel"
+      aria-label="시설 설치하기"
+      hidden={!open}
+    >
       <header className="watershed-heading">
         <div>
           <span>WATER LEAGUE / 시설</span>
-          <h2>빗물의 길을 설계하세요</h2>
+          <h2>시설 설치하기</h2>
         </div>
-        <button onClick={onClose} aria-label="전체 시설 닫기">
+        <button onClick={onClose} aria-label="시설 설치 패널 닫기">
           <X size={18} />
         </button>
       </header>
-      <p>12개 시설군 · 지도 설치와 연결 관망 설계의 사용 범위를 확인하고 선택하세요.</p>
+      <p>설치할 시설을 고른 뒤 지도에서 위치를 선택하세요.</p>
       <h3>
         지도에 설치 <small>3종</small>
       </h3>
       <div className="watershed-facility-grid">
         {mapFacilities.map(({ id, name, Icon }) => (
-          <button key={id} onClick={() => onMapFacility(id)}>
+          <button
+            key={id}
+            aria-pressed={selectedMapFacility === id}
+            onClick={() => onMapFacility(id)}
+          >
             <Icon size={20} />
             <strong>{name}</strong>
             <span>지도 위치 선택</span>
           </button>
         ))}
       </div>
+      {onAllCandidates && (
+        <button className="watershed-all-candidates" onClick={onAllCandidates}>
+          전체 시설의 설치 후보 보기
+        </button>
+      )}
       <h3>
-        공개 관망에 설계 <small>4종</small>
+        관망 계산 전용 <small>4종 · 지도 설치 미지원</small>
       </h3>
-      <p>같은 관망의 상호작용·월류·방류량을 비교합니다. 서울 지도 설치와 별도 연구 계산입니다.</p>
+      <p>
+        추가 4종은 설계·계산 기능까지 구현됐습니다. 지도 위치의 배수 연결과 설치 비용을 연결하는
+        작업이 남아 있습니다.
+      </p>
       <div className="watershed-facility-grid">
         {networkFacilities.map(({ id, name, Icon }) => (
           <button key={id} aria-pressed={type === id} onClick={() => setType(id)}>

@@ -1,17 +1,5 @@
 import { lazy, Suspense, useEffect, useCallback, useState, useRef, useMemo } from 'react';
-import {
-  RotateCcw,
-  MapPin,
-  Layers3,
-  CloudRain,
-  Leaf,
-  Grid2X2,
-  House,
-  List,
-  X,
-  Trophy,
-  ArrowLeft,
-} from 'lucide-react';
+import { RotateCcw, MapPin, Layers3, CloudRain, List, X, Trophy, ArrowLeft } from 'lucide-react';
 import { useCity, useCityTiles } from '../controller/useCity';
 import { useMapLabelWheel } from '../controller/useMapLabelWheel';
 import type { City, CityFocus, CityBuilding } from '../entity/city';
@@ -874,44 +862,11 @@ function Explorer({
               </>
             )}
           </div>
-          <div className="facility-dock" role="group" aria-label="시설 선택">
-            {(['RAIN_GARDEN', 'PERMEABLE_PAVEMENT', 'GREEN_ROOF'] as const).map((t) => {
-              const Icon =
-                t === 'RAIN_GARDEN' ? Leaf : t === 'PERMEABLE_PAVEMENT' ? Grid2X2 : House;
-              return (
-                <button
-                  key={t}
-                  className={type === t ? 'selected' : ''}
-                  aria-pressed={type === t}
-                  onClick={() => {
-                    setInfrastructureOpen(false);
-                    setFacilityExpansionOpen(false);
-                    setSelectedAssetId('');
-                    setType(t);
-                    setOffset(0);
-                    setSite(null);
-                    setFeedback('');
-                    if (ownDistrictId && selected !== ownDistrictId) select(ownDistrictId);
-                    setListOpen(true);
-                  }}
-                >
-                  <Icon size={20} />
-                  <span>{facilities[t].name}</span>
-                </button>
-              );
-            })}
+          <div className="facility-dock facility-install-dock">
             <button
-              aria-pressed={!type}
-              onClick={() => {
-                setType('');
-                setOffset(0);
-              }}
-            >
-              전체
-            </button>
-            <button
-              className="facility-expand"
+              className={facilityExpansionOpen ? 'selected' : ''}
               aria-expanded={facilityExpansionOpen}
+              aria-controls="facility-install-panel"
               onClick={() => {
                 setFacilityExpansionOpen((value) => !value);
                 setInfrastructureOpen(false);
@@ -919,7 +874,7 @@ function Explorer({
               }}
             >
               <Layers3 size={20} />
-              <span>시설 12종</span>
+              <span>시설 설치하기</span>
             </button>
           </div>
           {(details.error || failed) && (
@@ -957,6 +912,12 @@ function Explorer({
         key={account ? `${account.id}:${account.role}:${account.approvalStatus}` : 'visitor'}
         account={account}
         open={facilityExpansionOpen}
+        selectedMapFacility={type}
+        onAllCandidates={() => {
+          setType('');
+          setOffset(0);
+          setFacilityExpansionOpen(false);
+        }}
         onClose={() => setFacilityExpansionOpen(false)}
         onLogin={onLogin}
         onMapFacility={(t) => {

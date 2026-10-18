@@ -278,8 +278,18 @@
   grid-column: 2;
   font-size: 11px;
 }
-.shared-play-layout .facility-dock .facility-expand {
-  border-left: 1px solid #bdcbb8;
+.shared-play-layout .facility-install-dock button > span {
+  display: inline;
+}
+.watershed-all-candidates {
+  width: 100%;
+  margin: 8px 0 14px;
+  padding: 10px;
+  border: 1px solid #bdcbb8;
+  border-radius: 4px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
 }
 @media (max-width: 650px) {
   .shared-play-layout .facility-dock {
