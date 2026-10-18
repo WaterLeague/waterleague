@@ -8,7 +8,7 @@
   <body style="margin: 0; background: #f2f3ee; color: #284133; font: 14px system-ui">
     <header style="padding: 16px">
       <strong>로컬 UI QA · 실제 SWMM 결과 · 합성 계정 · 서버 저장 없음</strong>
-      <p>data/runs/historical-temporal-20261019의 공개 입력 계산. 큐 응답만 로컬 대체.</p>
+      <p>data/runs/historical-temporal-20261019의 공개 입력 계산. 큐·설계 저장 응답만 로컬 대체.</p>
       <p id="requests" role="status">계산 요청 0회</p>
     </header>
     <main id="root" style="max-width: 1000px; margin: auto"></main>
@@ -37,8 +37,18 @@
       const budget = await (await fetch('/api/v1/budget')).json();
       const sites = await Promise.all(result.facilities.map((f) => loadSite('2419953', f.cellId)));
       const originalFetch = window.fetch.bind(window),
-        jobs = new Map();
+        jobs = new Map(
+          JSON.parse(sessionStorage.getItem('waterleague-qa-historical-time-jobs-v1') ?? '[]')
+        );
+      const { designMock } = await import('/qa/historical-design-mock.js');
+      const design = designMock(
+        { eventId: event.id, revision: 0, snapshot: null, snapshotSha256: null, createdAt: null },
+        sites,
+        'waterleague-qa-historical-time-design-v1'
+      );
       let requests = 0;
+      document.getElementById('requests').textContent =
+        `저장된 실행 ${jobs.size}건 · 이번 접속 계산 요청 0회`;
       window.fetch = async (url, init = {}) => {
         const path = String(url);
         const response = (value) =>
@@ -50,6 +60,10 @@
           );
         if (path === '/api/v1/auth/csrf')
           return response({ token: 'local-only', headerName: 'X-CSRF-TOKEN' });
+        const savedDesign = await design.fetch(url, init);
+        if (savedDesign) return savedDesign;
+        if (path === '/api/v1/historical' && (!init.method || init.method === 'GET'))
+          return response([...jobs.values()]);
         if (path.startsWith('/api/v1/historical/submissions?')) return response([]);
         if (path === '/api/v1/historical' && init.method === 'POST') {
           const request = JSON.parse(init.body);
@@ -75,10 +89,15 @@
               ...p,
               districtId: request.districtId,
               temporalPolicy: request.temporalPolicy,
+              siteModelHash: sites.find((s) => s.cellId === p.cellId).modelHash,
             })),
             result: { ...result, facilities: chosen },
           };
           jobs.set(id, job);
+          sessionStorage.setItem(
+            'waterleague-qa-historical-time-jobs-v1',
+            JSON.stringify([...jobs])
+          );
           document.getElementById('requests').textContent =
             `자동 계산 요청 ${++requests}회 · 설치 ${request.placements.map((p) => p.installedAt).join(', ')} · 이전 실행 ${request.parentExperimentId ?? '없음'}`;
           return response({ ...job, state: 'QUEUED', result: null });

@@ -33,7 +33,12 @@ public record HistoricalRequest(
       @NotBlank @Size(max = 20) String cellId,
       @NotNull FacilityType facilityType,
       @NotNull @DecimalMin("0.01") @Digits(integer = 10, fraction = 2) BigDecimal areaM2,
-      Instant installedAt) {
+      Instant installedAt,
+      @Pattern(regexp = "[a-f0-9]{64}") String siteModelHash) {
+    public Item(String cellId, FacilityType facilityType, BigDecimal areaM2, Instant installedAt) {
+      this(cellId, facilityType, areaM2, installedAt, null);
+    }
+
     public Item(String cellId, FacilityType facilityType, BigDecimal areaM2) {
       this(cellId, facilityType, areaM2, null);
     }

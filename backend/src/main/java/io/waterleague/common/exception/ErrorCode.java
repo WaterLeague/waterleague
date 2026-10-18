@@ -9,6 +9,10 @@ public enum ErrorCode {
   ACCOUNT_UNAVAILABLE(HttpStatus.CONFLICT, "사용할 수 없는 아이디입니다"),
   RATE_LIMITED(HttpStatus.TOO_MANY_REQUESTS, "요청이 많습니다. 잠시 후 다시 시도해 주세요"),
   CONFLICT(HttpStatus.CONFLICT, "현재 상태에서 처리할 수 없습니다"),
+  HISTORICAL_DESIGN_CONFLICT(HttpStatus.CONFLICT, "다른 화면에서 설계가 변경되었습니다. 저장된 설계를 다시 불러와 주세요"),
+  HISTORICAL_DESIGN_INVALID(HttpStatus.SERVICE_UNAVAILABLE, "저장된 설계를 확인하지 못했습니다. 잠시 후 다시 시도해 주세요"),
+  HISTORICAL_SITE_CHANGED(
+      HttpStatus.CONFLICT, "저장 당시의 위치 자료와 현재 후보가 다릅니다. 해당 시설을 취소하고 위치를 다시 선택해 주세요"),
   REQUEST_INVALID(HttpStatus.BAD_REQUEST, "요청 형식을 확인해 주세요"),
   REQUEST_TOO_LARGE(HttpStatus.CONTENT_TOO_LARGE, "요청 본문이 허용 크기를 초과했습니다"),
   AUTHENTICATION_REQUIRED(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다"),

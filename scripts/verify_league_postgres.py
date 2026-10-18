@@ -22,9 +22,10 @@ def source_counts(db):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--suite', choices=['public-surface', 'infrastructure', 'league', 'analysis', 'queue', 'budget', 'physics', 'weekly', 'historical', 'watershed', 'cistern-plan', 'shared-research', 'search', 'restore', 'all'], default='league')
+    parser.add_argument('--suite', choices=['historical-design', 'public-surface', 'infrastructure', 'league', 'analysis', 'queue', 'budget', 'physics', 'weekly', 'historical', 'watershed', 'cistern-plan', 'shared-research', 'search', 'restore', 'all'], default='league')
     suite = parser.parse_args().suite
-    test_class = {'public-surface': 'PublicSurfaceTests,SurfacePlaybackTests,ApiSecurityTests',
+    test_class = {'historical-design': 'HistoricalDesignTests,HistoricalWorkflowTests,HistoricalSubmissionTests,ApiSecurityTests',
+                  'public-surface': 'PublicSurfaceTests,SurfacePlaybackTests,ApiSecurityTests',
                   'infrastructure': 'InfrastructureCatalogTests,ApiSecurityTests,EquipmentHistoryTests',
                   'league': 'LeagueParticipationWorkflowTests',
                   'analysis': 'ResearchAnalysisWorkflowTests',
@@ -71,12 +72,19 @@ def main():
             physical = ['-Dwaterleague.integration.python=' + sys.executable] if suite in {'search', 'restore'} else []
             if suite == 'historical':
                 physical.append('-Dwaterleague.integration.historical.request=' + str(path.with_suffix('.request.json')))
+            if suite == 'historical-design':
+                physical.append('-Dwaterleague.integration.design.fixture=' + str(path.with_suffix('.design.json')))
             if suite == 'restore':
                 physical.append('-Dwaterleague.integration.restore=true')
             result = subprocess.run(
                 [str(ROOT / 'backend/mvnw'), '--batch-mode', '-Dtest=' + test_class,
                  '-Dwaterleague.integration.jdbc=' + jdbc, *physical, 'test'],
                 cwd=ROOT / 'backend', env=env, stdout=log, stderr=subprocess.STDOUT, timeout=180)
+            if suite == 'historical-design' and result.returncode == 0:
+                result = subprocess.run(
+                    [str(ROOT / 'backend/mvnw'), '--batch-mode', '-Dtest=HistoricalDesignRestartTests',
+                     '-Dwaterleague.integration.jdbc=' + jdbc, *physical, 'test'],
+                    cwd=ROOT / 'backend', env=env, stdout=log, stderr=subprocess.STDOUT, timeout=180)
             if suite in {'queue', 'physics', 'historical', 'watershed'} and result.returncode == 0:
                 worker_env = env | {'WL_WORKER_TEST_DSN': make_conninfo(**(config | {'dbname': test_name})),
                                     'PYTHONPATH': str(ROOT / 'simulation')}

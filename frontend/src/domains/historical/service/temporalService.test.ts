@@ -4,6 +4,7 @@ import {
   matchesHistoricalDraft,
   scoreAt,
   temporalPolicy,
+  restoreHistoricalJobs,
 } from './temporalService';
 import type { HistoricalDraft, HistoricalJob, HistoricalScoreFrame } from '../entity/historical';
 
@@ -15,6 +16,44 @@ const frame = (second: number, effect: number): HistoricalScoreFrame => ({
   designAccountedM3: 5 - effect,
 });
 describe('설치 시각 이후 재해 실험', () => {
+  it('최근 다른 실험보다 저장된 배치와 같은 형상·설치 시각의 실행 우선 복원', () => {
+    const siteModelHash = 'a'.repeat(64),
+      modelHash = 'b'.repeat(64);
+    const placement = {
+      districtId: '2419953',
+      cellId: 'a',
+      facilityType: 'GREEN_ROOF',
+      areaM2: 20,
+      siteModelHash,
+      installedAt: at(137),
+      temporalPolicy,
+    };
+    const draft = {
+      site: { districtId: '2419953', cellId: 'a', modelHash: siteModelHash },
+      facilityType: 'GREEN_ROOF',
+      areaM2: 20,
+      marker: { installedAt: at(137) },
+    } as HistoricalDraft;
+    const match = {
+      id: 'matching',
+      modelHash,
+      districtId: '2419953',
+      placements: [placement],
+    } as HistoricalJob;
+    const newer = {
+      ...match,
+      id: 'different-time',
+      placements: [{ ...match.placements[0], installedAt: at(200) }],
+    };
+    const values = restoreHistoricalJobs([newer, match], new Set([modelHash]), [draft]);
+    expect(values[modelHash].id).toBe('matching');
+    expect(restoreHistoricalJobs([match], new Set(['other-event']), [draft])).toEqual({});
+    expect(
+      matchesHistoricalDraft(match, [
+        { ...draft, site: { ...draft.site, modelHash: 'c'.repeat(64) } },
+      ])
+    ).toBe(false);
+  });
   it('미래 프레임·최종 점수 누출 없이 뒤로 이동하며 음의 효과 보존', () => {
     const frames = [frame(37, 0), frame(60, -1), frame(120, 3)];
     expect(scoreAt(frames, at(36))).toBeNull();

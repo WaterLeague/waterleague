@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>재해 설계 복원·경합 로컬 검사</title>
+  </head>
+  <body style="margin: 0; background: #f2f3ee; color: #284133; font: 15px system-ui">
+    <header style="padding: 20px">
+      <strong>로컬 UI 검사 · 공개 후보 · 격리 DB 저장본 · 합성 회원</strong>
+      <p>설계 요청만 이 페이지에서 대체. 운영 API·순위·원장 쓰기 없음.</p>
+    </header>
+    <main id="root"></main>
+    <script type="module">
+      if (!import.meta.env.DEV || !['localhost', '127.0.0.1', '[::1]'].includes(location.hostname))
+        throw new Error('로컬 전용');
+      const [
+        { default: React },
+        { createRoot },
+        { useHistoricalDesign },
+        { restoreDesign },
+        { designMock },
+      ] = await Promise.all([
+        import('react'),
+        import('react-dom/client'),
+        import('/src/domains/historical/controller/useHistoricalDesign.ts'),
+        import('/src/domains/historical/repository/designRepository.ts'),
+        import('/qa/historical-design-mock.js'),
+      ]);
+      const fixture = await (await fetch('/qa/historical-design-fixture.local.json')).json();
+      const owner = '00000000-0000-4000-8000-000000000001';
+      const originals = restoreDesign(fixture, owner);
+      const mock = designMock(
+        fixture,
+        originals.map((d) => d.site),
+        'waterleague-qa-historical-design-v1'
+      );
+      const realFetch = window.fetch.bind(window);
+      window.fetch = async (url, init = {}) => {
+        if (String(url) === '/api/v1/auth/csrf')
+          return Response.json({ token: 'qa-only', headerName: 'X-CSRF-TOKEN' });
+        const mocked = await mock.fetch(url, init);
+        if (mocked) return mocked;
+        if (init.method && init.method !== 'GET') throw new Error('운영 서버 쓰기 금지');
+        return realFetch(url, init);
+      };
+      const h = React.createElement;
+      function Client({ name }) {
+        const s = useHistoricalDesign(true, fixture.eventId, owner);
+        return h(
+          'section',
+          { 'aria-label': name, style: { padding: 20, border: '1px solid #bbc5bb', margin: 12 } },
+          h('h2', null, name),
+          h(
+            'output',
+            { 'data-state': name },
+            JSON.stringify({
+              revision: s.revision,
+              count: s.drafts.length,
+              ready: s.ready,
+              saving: s.saving,
+              error: s.error,
+              restoredSecond: s.restoredSecond,
+            })
+          ),
+          h('p', null, '원 설치 시각과 위치 · 새로고침 후에도 유지'),
+          ...s.drafts.map((d) =>
+            h(
+              'p',
+              { key: d.marker.id },
+              d.site.districtId +
+                ' / ' +
+                d.site.cellId +
+                ' / ' +
+                d.marker.installedAt +
+                ' / ' +
+                d.marker.cost.toLocaleString() +
+                '원',
+              h(
+                'button',
+                {
+                  disabled: !s.ready,
+                  onClick: () =>
+                    s.replace(
+                      s.drafts.filter((v) => v.marker.id !== d.marker.id),
+                      500
+                    ),
+                },
+                '취소 ' + d.site.cellId
+              )
+            )
+          ),
+          h(
+            'button',
+            { disabled: !s.ready, onClick: () => s.replace(originals, 137) },
+            '원 설계 설치'
+          ),
+          h('button', { disabled: !s.ready, onClick: () => s.replace([], 600) }, '모두 취소'),
+          h('button', { disabled: s.saving, onClick: s.reload }, '저장본 불러오기'),
+          s.error &&
+            h('button', { onClick: s.retry }, s.conflict ? '최신 저장본 복원' : '같은 요청 재시도'),
+          h('button', { onClick: () => mock.loseReply() }, '다음 저장 응답 유실'),
+          h(
+            'details',
+            null,
+            h('summary', null, '저장 요청 기록'),
+            h(
+              'pre',
+              null,
+              JSON.stringify(
+                mock.history.map((v) => ({
+                  requestKey: v.requestKey,
+                  baseRevision: v.baseRevision,
+                  placements: v.placements.length,
+                })),
+                null,
+                2
+              )
+            )
+          )
+        );
+      }
+      function App() {
+        return h(
+          React.Fragment,
+          null,
+          h(
+            'button',
+            {
+              onClick: () => {
+                mock.reset();
+                location.reload();
+              },
+            },
+            '시험 초기화'
+          ),
+          h(
+            'div',
+            { style: { display: 'grid', gridTemplateColumns: '1fr 1fr' } },
+            h(Client, { name: '화면 A' }),
+            h(Client, { name: '화면 B' })
+          )
+        );
+      }
+      createRoot(document.getElementById('root')).render(h(App));
+    </script>
+  </body>
+</html>

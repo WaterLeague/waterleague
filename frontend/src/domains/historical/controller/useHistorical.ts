@@ -10,12 +10,17 @@ import type { Account } from '../../account/entity/account';
 import type { SharedSite } from '../../installation/entity/installation';
 import { siteKey } from '../../installation/entity/installation';
 import { errorMessage } from '../../../shared/exception/ApiError';
-import type { HistoricalDraft, HistoricalJob } from '../entity/historical';
+import type { HistoricalJob } from '../entity/historical';
 import type { Budget } from '../../budget/dto/budgetDto';
 import { designAccounting } from '../../budget/service/designAccounting';
-import { loadHistorical, runHistorical } from '../repository/historicalRepository';
-import { historicalScoreAt, matchesHistoricalDraft } from '../service/temporalService';
+import { listHistorical, loadHistorical, runHistorical } from '../repository/historicalRepository';
+import {
+  historicalScoreAt,
+  matchesHistoricalDraft,
+  restoreHistoricalJobs,
+} from '../service/temporalService';
 import { useHistoricalSubmission } from './useHistoricalSubmission';
+import { useHistoricalDesign } from './useHistoricalDesign';
 
 export function useHistorical(
   enabled: boolean,
@@ -28,7 +33,9 @@ export function useHistorical(
   const eventId = initialEventId;
   const submission = useHistoricalSubmission(enabled, account?.id, eventId);
   const [lab, setLab] = useState<Lab | null>(null);
-  const [drafts, setDrafts] = useState<HistoricalDraft[]>([]);
+  const design = useHistoricalDesign(enabled, eventId, account?.id);
+  const drafts = design.drafts;
+  const [restoredJobs, setRestoredJobs] = useState('');
   const [jobs, setJobs] = useState<Record<string, HistoricalJob>>({});
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
@@ -81,7 +88,6 @@ export function useHistorical(
     setElapsedSeconds(0);
     setPlaying(true);
     setJobs({});
-    setDrafts([]);
     setBusy(false);
     pendingRequest.current = null;
     autoAttempt.current = '';
@@ -113,10 +119,33 @@ export function useHistorical(
       autoAttempt.current = '';
       setError('');
       setBusy(false);
-      if (accountId.current) setDrafts([]);
       accountId.current = account?.id;
     }
   }, [account?.id]);
+  useEffect(() => {
+    if (!design.restoreId || !timeline) return;
+    setElapsedSeconds(Math.min(duration, design.restoredSecond));
+    setSeekRevision((v) => v + 1);
+    if (design.revision || drafts.length) setPlaying(false);
+  }, [design.restoreId, timeline?.start]);
+  const restoreKey = `${account?.id}/${eventId}/${design.restoreId}`;
+  useEffect(() => {
+    if (!enabled || !account || !event || !design.restoreId) return;
+    let active = true;
+    const models = new Set(event.regions.map((r) => r.modelHash));
+    void listHistorical()
+      .then((values) => {
+        if (!active) return;
+        setJobs(restoreHistoricalJobs(values, models, drafts));
+        setRestoredJobs(restoreKey);
+      })
+      .catch((e) => {
+        if (active) setError(errorMessage(e));
+      });
+    return () => {
+      active = false;
+    };
+  }, [enabled, account?.id, event, design.restoreId]);
   useEffect(() => {
     if (!playing || !frameCount || !enabled) return;
     const beganAt = performance.now();
@@ -172,6 +201,7 @@ export function useHistorical(
     (budget?.policy.personalLimitKrw ?? 0) -
     drafts.reduce((n, d) => n + d.areaM2 * unitCost(d.site.unitCosts, d.facilityType), 0);
   function add(site: SharedSite, type: FacilityType, area: number) {
+    if (!design.ready) return;
     if (drafts.length >= 50) {
       setError('재해 설계는 여러 구를 합쳐 50곳까지 설치할 수 있습니다.');
       return;
@@ -207,19 +237,29 @@ export function useHistorical(
       center: site.center,
       heightM: site.heightM,
     };
-    setDrafts((d) => [...d, { site, facilityType: type, areaM2: area, marker }]);
+    design.replace([...drafts, { site, facilityType: type, areaM2: area, marker }], elapsedSeconds);
     setError('');
   }
   function remove(id: string) {
-    setDrafts((d) => d.filter((v) => v.marker.id !== id));
+    design.replace(
+      drafts.filter((v) => v.marker.id !== id),
+      elapsedSeconds
+    );
   }
   async function calculate(sensitivityCellId?: string) {
-    if (!lab || lab.modelHash !== hash || !account || !current.length || busy) return;
+    if (!design.ready || !lab || lab.modelHash !== hash || !account || !current.length || busy)
+      return;
     const generation = epoch.current;
     const fingerprint = JSON.stringify([
       districtId,
       lab.modelHash,
-      current.map((d) => [d.site.cellId, d.facilityType, d.areaM2, d.marker.installedAt]),
+      current.map((d) => [
+        d.site.cellId,
+        d.site.modelHash,
+        d.facilityType,
+        d.areaM2,
+        d.marker.installedAt,
+      ]),
       sensitivityCellId ?? null,
     ]);
     if (pendingRequest.current?.fingerprint !== fingerprint)
@@ -257,13 +297,21 @@ export function useHistorical(
   const currentScore = currentResult && at ? historicalScoreAt(currentResult, at) : null;
   const signature = JSON.stringify([
     hash,
-    current.map((d) => [d.site.cellId, d.facilityType, d.areaM2, d.marker.installedAt]),
+    current.map((d) => [
+      d.site.cellId,
+      d.site.modelHash,
+      d.facilityType,
+      d.areaM2,
+      d.marker.installedAt,
+    ]),
   ]);
   const calculateRef = useRef(calculate);
   calculateRef.current = calculate;
   useEffect(() => {
     if (
       !enabled ||
+      !design.ready ||
+      restoredJobs !== restoreKey ||
       !account ||
       !current.length ||
       !lab ||
@@ -279,10 +327,23 @@ export function useHistorical(
       void calculateRef.current();
     }, 750);
     return () => window.clearTimeout(timer);
-  }, [enabled, account?.id, lab?.modelHash, signature, busy, jobs]);
+  }, [
+    enabled,
+    account?.id,
+    lab?.modelHash,
+    signature,
+    busy,
+    jobs,
+    design.ready,
+    restoredJobs,
+    restoreKey,
+  ]);
   return {
+    design,
     submission,
-    submit: () => submission.submit(drafts, jobs),
+    submit: async () => {
+      if (design.ready) await submission.submit(drafts, jobs);
+    },
     lab,
     events: catalog?.events ?? [],
     event,

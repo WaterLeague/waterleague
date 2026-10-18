@@ -40,7 +40,7 @@ export function HistoricalTimeline({
   onInspect: (draft: HistoricalDraft) => void;
 }) {
   const lanes: number[] = [];
-  const markers = [...s.drafts]
+  const markers = (s.event && s.duration > 0 ? [...s.drafts] : [])
     .sort((a, b) => Date.parse(a.marker.installedAt) - Date.parse(b.marker.installedAt))
     .map((d) => {
       const second =
@@ -213,12 +213,14 @@ export function HistoricalPanel({
       remaining={s.remaining}
       limit={s.budget?.policy.personalLimitKrw ?? 0}
       budgetReady={!!s.budget}
-      busy={false}
-      canInstall={s.drafts.length < 50 && s.elapsedSeconds < s.duration}
+      busy={!s.design.ready}
+      canInstall={s.design.ready && s.drafts.length < 50 && s.elapsedSeconds < s.duration}
       readOnlyMessage={
-        s.elapsedSeconds >= s.duration
-          ? '재해 종료 이전 시각으로 이동해 설치하세요.'
-          : '재해 실험 배치 50곳을 모두 사용했습니다.'
+        !s.design.ready
+          ? '설계 저장·복원을 확인해 주세요.'
+          : s.elapsedSeconds >= s.duration
+            ? '재해 종료 이전 시각으로 이동해 설치하세요.'
+            : '재해 실험 배치 50곳을 모두 사용했습니다.'
       }
       onInstall={() => {
         if (site && type) s.add(site, type, Number(area));
@@ -234,6 +236,31 @@ export function HistoricalPanel({
       }
       error={error || s.error || s.job?.message}
     >
+      <div className="historical-design-sync" aria-label="재해 설계 저장">
+        <strong>
+          {authenticated
+            ? s.design.saving
+              ? '설계 저장 중'
+              : s.design.loading
+                ? '저장된 설계 확인 중'
+                : `설계 저장본 ${s.design.revision}`
+            : '비회원 체험 · 이 화면에서만 유지'}
+        </strong>
+        {authenticated && <small>설치·취소 시 저장 · 다시 접속해 이어서 실험</small>}
+        {s.design.error && (
+          <p role="alert">
+            {s.design.error}{' '}
+            <button onClick={s.design.retry}>
+              {s.design.conflict ? '저장된 설계 불러오기' : '다시 시도'}
+            </button>
+          </p>
+        )}
+        {authenticated && s.design.guestCount > 0 && (
+          <button disabled={!s.design.ready} onClick={s.design.importGuest}>
+            체험 설계 {s.design.guestCount}곳 가져오기
+          </button>
+        )}
+      </div>
       <div className="historical-design-summary">
         <strong>이 구의 실험 시설 · {s.current.length}곳</strong>
         {s.current.map((d) => {
@@ -264,6 +291,7 @@ export function HistoricalPanel({
               </span>
               <button
                 aria-label={d.site.name + ' 연구 배치 제거'}
+                disabled={!s.design.ready}
                 onClick={() => s.remove(d.marker.id)}
               >
                 <Trash2 size={13} />
@@ -275,7 +303,7 @@ export function HistoricalPanel({
       {authenticated ? (
         <button
           className="solid-button"
-          disabled={working || !s.current.length || !s.lab}
+          disabled={!s.design.ready || working || !s.current.length || !s.lab}
           onClick={() => void s.calculate()}
         >
           {working
@@ -293,7 +321,7 @@ export function HistoricalPanel({
         <div className="historical-sensitivity-action">
           <button
             className="outline-button"
-            disabled={working || !s.lab}
+            disabled={!s.design.ready || working || !s.lab}
             onClick={() => void s.calculate(placed.site.cellId)}
           >
             {placed.facilityType === 'VEGETATIVE_SWALE'
@@ -313,6 +341,7 @@ export function HistoricalPanel({
         submit={s.submit}
         authenticated={authenticated}
         onLogin={onLogin}
+        designReady={s.design.ready}
       />
       {s.currentResult && (
         <section className="historical-result" aria-label="과거 강우 비교 결과">

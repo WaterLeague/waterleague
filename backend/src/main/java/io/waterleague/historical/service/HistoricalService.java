@@ -171,6 +171,14 @@ public class HistoricalService {
       for (int n = 0; n < frozen.size(); n++) {
         var entry = oldPlacements.get(n);
         var candidate = frozen.get(n);
+        var expected =
+            dto.placements().stream()
+                .filter(p -> p.cellId().equals(candidate.get("cellId")))
+                .findFirst()
+                .orElseThrow();
+        if (expected.siteModelHash() != null
+            && !entry.path("siteModelHash").asString().equals(expected.siteModelHash()))
+          throw new DomainException(ErrorCode.CONFLICT);
         for (var field : List.of("temporalPolicy", "installedAt", "parentExperimentId")) {
           if (!Objects.equals(
               entry.has(field) ? entry.path(field).asString() : null, candidate.get(field)))
@@ -193,7 +201,11 @@ public class HistoricalService {
       return view(previous.get());
     }
     // 기존 요청은 원 입력으로 반환하고 새로운 배치만 현재 공개 경계와 대조한다.
-    for (var p : dto.placements()) sites.requireInstallable(district.id(), p.cellId());
+    for (var p : dto.placements()) {
+      var site = sites.requireInstallable(district.id(), p.cellId());
+      if (p.siteModelHash() != null && !site.modelHash().equals(p.siteModelHash()))
+        throw new DomainException(ErrorCode.HISTORICAL_SITE_CHANGED);
+    }
     for (var row : frozen) {
       var site = sites.require(district.id(), (String) row.get("cellId"));
       if (row.get("cellId").equals(dto.sensitivityCellId())) {

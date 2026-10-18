@@ -1,0 +1,274 @@
+{
+  "schemaVersion": 1,
+  "classification": "HISTORICAL_DESIGN_STORAGE_AND_RESTORE_TEST_ONLY",
+  "createdAt": "2026-10-18T21:00:47.032106+00:00",
+  "baseCommit": "18106c9943035dc94001429df21faa0f1b3f4e79",
+  "rankingEligible": false,
+  "backend": {
+    "command": "simulation/.venv/bin/python scripts/verify_league_postgres.py --suite historical-design",
+    "passed": 25,
+    "initialJvmTests": 24,
+    "separateRestartJvmTests": 1,
+    "skipped": 0,
+    "temporaryPostgresOnly": true,
+    "developmentCountsUnchanged": true
+  },
+  "frontend": {
+    "passed": 11,
+    "files": 5,
+    "buildPassed": true,
+    "changedFilesFormattingPassed": true,
+    "standaloneRainfallLabelInProductJavaScript": false
+  },
+  "browser": {
+    "sources": [
+      "frontend/qa/historical-design.html",
+      "frontend/qa/historical-time.html"
+    ],
+    "cases": [
+      "두 구의 원 설치 ID·시각·비용 복원",
+      "동시 화면의 오래된 편집 409와 최신 저장본 유지",
+      "모두 취소한 빈 버전의 새로고침 복원",
+      "저장 응답 유실 후 같은 requestKey 재시도로 한 버전만 생성",
+      "137초 설치와 마지막 편집 시각 복원",
+      "저장된 SWMM 실행 1건 복원 후 새 계산 요청 0회",
+      "7200초 원 누적 음의 효과 -0.00036349m³ 보존",
+      "사건 목록보다 저장 설계가 먼저 로드되는 순서의 화면 예외 방지"
+    ],
+    "mocks": [
+      "격리 DB 저장본과 실제 제품 훅 사용; 회원·설계 저장 응답은 로컬 sessionStorage 대체",
+      "시각 실험 UI의 큐 응답 대체; 수치 프레임은 기존 실제 공개 입력 SWMM 결과"
+    ],
+    "productionDatabaseWrites": false
+  },
+  "preservation": {
+    "migration": 28,
+    "developmentRecordEvidence": "data/benchmarks/historical-design-v1/development-db-preservation.json",
+    "existingNativeInputFormatUnchanged": true,
+    "existingCalculationCodePreserved": true,
+    "noNewDependency": true
+  },
+  "nativeResultReuse": {
+    "source": "data/runs/historical-temporal-20261019",
+    "uiFixture": {
+      "path": "frontend/qa/historical-temporal-result.local.json",
+      "bytes": 224003,
+      "sha256": "fa68dd4d462c7870976056a1cd857b9380d679802a285bd39f15fa3b5f7572b8"
+    },
+    "engineReexecutedForThisChange": false
+  },
+  "limitations": [
+    "개발 원 실험/제출/설치/원장은 0건; 비어 있지 않은 설계 보존은 격리 DB 검증",
+    "마지막 편집 시각 복원이며 마지막 탐색 시각 영속 저장 아님",
+    "최근 실행 50건에서 일치 결과 복원; 더 오래된 결과는 재계산 가능",
+    "여러 구 배치 저장이며 설치 시각 실험의 다중 구 통합 계산은 미완료",
+    "전체 사건 제출은 기존 현재 형상·과거 강우 독립 표면 규칙 유지",
+    "당시 자산·당시 예산/가격·현장 물리 상태 복원이나 서울 실제 침수 검증 아님",
+    "합성 회원·응답 UI 검증은 운영 점수/순위에 미사용",
+    "전체 Goal의 다른 명시 범위 미완료"
+  ],
+  "sourceFiles": [
+    {
+      "path": "backend/src/main/java/io/waterleague/common/exception/ErrorCode.java",
+      "bytes": 5762,
+      "sha256": "6ea43c31776b03f94212936099a067c82a25ff3abe02a2ab8b54a4df355b9c64"
+    },
+    {
+      "path": "backend/src/main/java/io/waterleague/historical/controller/HistoricalDesignController.java",
+      "bytes": 2187,
+      "sha256": "4145556b55b1fe93e9b61f5cf1c0aef8028f663207204b0d0b6d145f09bebf2a"
+    },
+    {
+      "path": "backend/src/main/java/io/waterleague/historical/dto/HistoricalDesignRequest.java",
+      "bytes": 791,
+      "sha256": "4bed127c0b70bf9b2d49cc6798c32b2e13dabe2e110e4dc4d295f7a95f785de6"
+    },
+    {
+      "path": "backend/src/main/java/io/waterleague/historical/dto/HistoricalRequest.java",
+      "bytes": 1704,
+      "sha256": "e8c0c26761c484f01827a06f25807aca3e109ccc99026308c4f7c9387553c0a6"
+    },
+    {
+      "path": "backend/src/main/java/io/waterleague/historical/entity/HistoricalDesign.java",
+      "bytes": 303,
+      "sha256": "2b860d1b55be3838eb9f32878ef0a93eacc5e1aa64f438eb7d664d1d2f5ffc0f"
+    },
+    {
+      "path": "backend/src/main/java/io/waterleague/historical/repository/HistoricalDesignRepository.java",
+      "bytes": 2366,
+      "sha256": "6a689e8fb1d3a988ca433c0aa87b2fd28fc66b892fab849429e6ea42565b9eb5"
+    },
+    {
+      "path": "backend/src/main/java/io/waterleague/historical/service/HistoricalDesignService.java",
+      "bytes": 9057,
+      "sha256": "9b07f00ecbe76178aaa842656e1339ca96da183e853c4c4b63b625773dc03ae0"
+    },
+    {
+      "path": "backend/src/main/java/io/waterleague/historical/service/HistoricalService.java",
+      "bytes": 11491,
+      "sha256": "e661a57d8cd4513da23075110bb642d550d6df4400dd6e46cdf0aa7d5554057c"
+    },
+    {
+      "path": "backend/src/main/java/io/waterleague/historical/view/HistoricalDesignView.java",
+      "bytes": 243,
+      "sha256": "9c830e4095859a959d70874fefdc9a3e94a67210b95b21c335a6457cee4f2c7c"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V28__historical_design_revisions.sql",
+      "bytes": 420,
+      "sha256": "5ff664349ff736a9ada23a20dd4a695d2faa3e080ad65771073000891995f384"
+    },
+    {
+      "path": "backend/src/test/java/io/waterleague/ApiSecurityTests.java",
+      "bytes": 5413,
+      "sha256": "9cdb5691518a134e0428e201815890068cad748638d3e1cd7902d4c1c63e086f"
+    },
+    {
+      "path": "backend/src/test/java/io/waterleague/HistoricalDesignRestartTests.java",
+      "bytes": 2333,
+      "sha256": "a36f9eb9ac1014e3fbcca0b89764177a53f959d6b89eccf211e2b9cb004c064f"
+    },
+    {
+      "path": "backend/src/test/java/io/waterleague/HistoricalDesignTests.java",
+      "bytes": 9905,
+      "sha256": "6171ca920e8aa90b253ace66ac00bb900e5bdd7a2ee13efb309dbbbbd323a118"
+    },
+    {
+      "path": "backend/src/test/java/io/waterleague/HistoricalWorkflowTests.java",
+      "bytes": 23664,
+      "sha256": "f0656fe022b3f0dd254f9d6a161bdaf3ee1cfb9778dbc74391ca40a52f02c105"
+    },
+    {
+      "path": "frontend/qa/historical-design-mock.js",
+      "bytes": 2672,
+      "sha256": "ee97d58c5804644a6efb29c3c8740cff43db5509381cbb28428917d04ac08cdd"
+    },
+    {
+      "path": "frontend/qa/historical-design.html",
+      "bytes": 5201,
+      "sha256": "f145612c61c980185e4a754c3aba48336be41fd017eaa9941d9005133ad26167"
+    },
+    {
+      "path": "frontend/qa/historical-time.html",
+      "bytes": 7421,
+      "sha256": "cbfe75684315039e64b76c8bcf4da30f8130309821b14f9c40e1e29edb60abce"
+    },
+    {
+      "path": "frontend/src/domains/historical/controller/useHistorical.ts",
+      "bytes": 12413,
+      "sha256": "993e1a3ee9d38ff9296a22364e133fd5cfe2181e5af5fd488a5b2af7370eb796"
+    },
+    {
+      "path": "frontend/src/domains/historical/controller/useHistoricalDesign.ts",
+      "bytes": 5293,
+      "sha256": "fdceb93fe9a24f600fe36f5081e69c520488899ac2c8822d3155bf7a6f917727"
+    },
+    {
+      "path": "frontend/src/domains/historical/repository/designRepository.test.ts",
+      "bytes": 2735,
+      "sha256": "a86dc5915cc8fabd7adeec025d7097f99f30c9c8fa38a9f10832ef4c2ece8965"
+    },
+    {
+      "path": "frontend/src/domains/historical/repository/designRepository.ts",
+      "bytes": 3301,
+      "sha256": "b62876710ffaf499bb5f42fb5c6aa0f16d9f89558352349adf4187345e245bc7"
+    },
+    {
+      "path": "frontend/src/domains/historical/repository/historicalRepository.ts",
+      "bytes": 997,
+      "sha256": "54e1d32637a39218cef6986e9a5357dbbf88b6a40324ecf291af8559b2c67af1"
+    },
+    {
+      "path": "frontend/src/domains/historical/service/temporalService.test.ts",
+      "bytes": 4418,
+      "sha256": "331d43d6485463261309fd7311c8fcb6fb0f4de8b57071252bc1e1ca4441cb19"
+    },
+    {
+      "path": "frontend/src/domains/historical/service/temporalService.ts",
+      "bytes": 2836,
+      "sha256": "4d1ba5fd1642981cb3b4b9e2f223f8ee1d8da0d87129f119aa88170221c2f665"
+    },
+    {
+      "path": "frontend/src/domains/historical/view/HistoricalPanel.test.tsx",
+      "bytes": 800,
+      "sha256": "53ef17e8fb04b755123d19044f2f6575dcd28d5fd6a852c0ec3be7251aadd4a7"
+    },
+    {
+      "path": "frontend/src/domains/historical/view/HistoricalPanel.tsx",
+      "bytes": 16237,
+      "sha256": "c29e0a57bec41c6e53609c6f415ce42ecb7824128568329d1563972b248907e5"
+    },
+    {
+      "path": "frontend/src/domains/historical/view/HistoricalSubmissionPanel.tsx",
+      "bytes": 2880,
+      "sha256": "bda43ec9e19ff09b51e1a3b0cb98bd14f2a2964bbb8f4c9d493cc88066a338ca"
+    },
+    {
+      "path": "frontend/src/domains/historical/view/historical.css",
+      "bytes": 4348,
+      "sha256": "e8fae8eb48e3b780cfa2f79323367dadc8aafc37db08f9ce7897dbeb071aaf85"
+    },
+    {
+      "path": "scripts/verify_league_postgres.py",
+      "bytes": 6871,
+      "sha256": "786dc2509a768fa58e5cb490b87e4744fa62ee5ae2210e0f95d837b204410586"
+    }
+  ],
+  "evidenceFiles": [
+    {
+      "path": "data/benchmarks/historical-design-v1/backend-test-summary.txt",
+      "bytes": 774,
+      "sha256": "9bef0db39a881d3215ff78bd8804e61550b344485cb74ea0c967f8a24cf2a85f"
+    },
+    {
+      "path": "data/benchmarks/historical-design-v1/browser-design-fixture.json",
+      "bytes": 22298,
+      "sha256": "cf3aa249e637c8e212616288b7375ca8934d61c99e460692c6d48935a0b0c2a2"
+    },
+    {
+      "path": "data/benchmarks/historical-design-v1/build-summary.txt",
+      "bytes": 42,
+      "sha256": "ad157d9fdd7fb67d19f67e80bb3f642f0674d10a93b9ddea0b7df12f429e32e6"
+    },
+    {
+      "path": "data/benchmarks/historical-design-v1/development-db-preservation.json",
+      "bytes": 760,
+      "sha256": "adf73b0babf85f3addda7bd528a96db8952d9aca04f74a052dcc688f279930dc"
+    },
+    {
+      "path": "data/benchmarks/historical-design-v1/empty-after-reload.png",
+      "bytes": 42913,
+      "sha256": "f9d2cfc6ea2aa12a3aefec6755294355faba4719c9d836b935948657db3a49fc"
+    },
+    {
+      "path": "data/benchmarks/historical-design-v1/frontend-test-summary.txt",
+      "bytes": 54,
+      "sha256": "9ef9cd29bfa7bfb0ae5c63aa71512ce3fd66c1297a8a784d74876b7836d3c5f4"
+    },
+    {
+      "path": "data/benchmarks/historical-design-v1/lost-response-idempotent-retry.png",
+      "bytes": 66107,
+      "sha256": "b9b24648158cb2363b9bd8fd63c3b269c2d545bd3543e7ff20d140ee706ea8c0"
+    },
+    {
+      "path": "data/benchmarks/historical-design-v1/restored-temporal-state.txt",
+      "bytes": 5052,
+      "sha256": "6f0b1bf1d83d673a7f10716b6b7ba5df418638dc7721da3da931efd16e7b7f9f"
+    },
+    {
+      "path": "data/benchmarks/historical-design-v1/restored-temporal-top.png",
+      "bytes": 38696,
+      "sha256": "f30d657006f97c82f88d2baea4aa088b59f8e68be8b50a8546fa848862917b0d"
+    },
+    {
+      "path": "data/benchmarks/historical-design-v1/restored-two-districts.png",
+      "bytes": 59143,
+      "sha256": "c3d689a5bf28475ca7313bf9a6d83c3baabe875afb87122faed69664af8f085d"
+    },
+    {
+      "path": "data/benchmarks/historical-design-v1/stale-edit-rejected.png",
+      "bytes": 59879,
+      "sha256": "c263263c9909580504b707e6178a47f3299c72303429766c7e62d5534866dc1e"
+    }
+  ]
+}

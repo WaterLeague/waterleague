@@ -82,6 +82,8 @@ class ApiSecurityTests {
     for (String path :
         new String[] {
           "/api/v1/references",
+          "/api/v1/historical/designs/seoul-20220808",
+          "/api/v1/historical/designs/seoul-20220808/revisions/1",
           "/api/v1/organizations/private/strategies",
           "/actuator/env",
           "/api/v1/spatial/buildings"
@@ -98,6 +100,16 @@ class ApiSecurityTests {
 
   @Test
   void rejectsWritesWithoutCsrf() throws Exception {
+    var design =
+        client.send(
+            HttpRequest.newBuilder(
+                    URI.create(
+                        "http://127.0.0.1:" + port + "/api/v1/historical/designs/seoul-20220808"))
+                .PUT(HttpRequest.BodyPublishers.ofString("{}"))
+                .header("Content-Type", "application/json")
+                .build(),
+            HttpResponse.BodyHandlers.ofString());
+    assertThat(design.statusCode()).isEqualTo(403);
     var response =
         client.send(
             HttpRequest.newBuilder(URI.create("http://127.0.0.1:" + port + "/api/v1/strategies"))

@@ -1,0 +1,2 @@
+$ tsc -b && vite build
+✓ built in 785ms

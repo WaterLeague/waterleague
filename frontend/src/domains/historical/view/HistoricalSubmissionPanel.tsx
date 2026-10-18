@@ -16,12 +16,14 @@ export function HistoricalSubmissionPanel({
   submit,
   authenticated,
   onLogin,
+  designReady = true,
 }: {
   submission: ReturnType<typeof useHistoricalSubmission>;
   draftCount: number;
   submit: () => Promise<void>;
   authenticated: boolean;
   onLogin: () => void;
+  designReady?: boolean;
 }) {
   return (
     <section className="historical-submission" aria-label="재해 설계 제출">
@@ -33,7 +35,9 @@ export function HistoricalSubmissionPanel({
       </p>
       <button
         className="solid-button"
-        disabled={authenticated && (submission.busy || !draftCount || draftCount > 50)}
+        disabled={
+          authenticated && (!designReady || submission.busy || !draftCount || draftCount > 50)
+        }
         onClick={() => (authenticated ? void submit() : onLogin())}
       >
         {submission.busy ? '설계 제출 중' : authenticated ? '설계 확정하고 제출' : '로그인 후 제출'}

@@ -220,3 +220,11 @@
   border-bottom: 1px solid var(--line);
   white-space: nowrap;
 }
+.historical-design-sync {
+  display: grid;
+  gap: 8px;
+  padding: 12px 0;
+}
+.historical-design-sync small {
+  color: #53635b;
+}

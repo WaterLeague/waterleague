@@ -20,6 +20,7 @@ export const runHistorical = (
     ...(sensitivityCellId ? { sensitivityCellId } : {}),
     placements: drafts.map((d) => ({
       cellId: d.site.cellId,
+      siteModelHash: d.site.modelHash,
       facilityType: d.facilityType,
       areaM2: d.areaM2,
       installedAt: d.marker.installedAt,

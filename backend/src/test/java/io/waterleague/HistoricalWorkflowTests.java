@@ -92,6 +92,47 @@ class HistoricalWorkflowTests {
   }
 
   @Test
+  void restoredDesignMustBindItsSavedSiteVersionAndKeepLegacyRetries() {
+    var key = UUID.randomUUID();
+    var site = sites.require("2419953", cell);
+    var at =
+        Instant.parse(models.require(hash).model().path("rainfall").path("start").asString())
+            .plusSeconds(137);
+    var wrong =
+        new HistoricalRequest(
+            key,
+            "2419953",
+            hash,
+            List.of(
+                new HistoricalRequest.Item(
+                    cell, FacilityType.GREEN_ROOF, BigDecimal.ONE, at, "f".repeat(64))),
+            null,
+            "INSTALLATION_TIME_EXPERIMENT_V1",
+            null);
+    assertThatThrownBy(() -> service.create(owner, wrong))
+        .isInstanceOfSatisfying(
+            DomainException.class,
+            e -> assertThat(e.code()).isEqualTo(ErrorCode.HISTORICAL_SITE_CHANGED));
+    assertThat(service.list(owner)).isEmpty();
+    var right =
+        new HistoricalRequest(
+            key,
+            "2419953",
+            hash,
+            List.of(
+                new HistoricalRequest.Item(
+                    cell, FacilityType.GREEN_ROOF, BigDecimal.ONE, at, site.modelHash())),
+            null,
+            "INSTALLATION_TIME_EXPERIMENT_V1",
+            null);
+    var saved = service.create(owner, right);
+    assertThat(service.create(owner, timed(key, at, null)).id()).isEqualTo(saved.id());
+    assertThatThrownBy(() -> service.create(owner, wrong))
+        .isInstanceOfSatisfying(
+            DomainException.class, e -> assertThat(e.code()).isEqualTo(ErrorCode.CONFLICT));
+  }
+
+  @Test
   void installationTimeAndParentAreImmutableOwnerBoundInputs() {
     var start =
         Instant.parse(models.require(hash).model().path("rainfall").path("start").asString());

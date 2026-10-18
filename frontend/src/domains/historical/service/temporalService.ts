@@ -13,11 +13,36 @@ export function matchesHistoricalDraft(job: HistoricalJob | null, drafts: Histor
           p.cellId === d.site.cellId &&
           p.facilityType === d.facilityType &&
           p.areaM2 === d.areaM2 &&
+          p.siteModelHash === d.site.modelHash &&
           p.temporalPolicy === temporalPolicy &&
           Date.parse(p.installedAt ?? '') === Date.parse(d.marker.installedAt)
       )
     )
   );
+}
+
+export function restoreHistoricalJobs(
+  values: HistoricalJob[],
+  models: ReadonlySet<string>,
+  drafts: HistoricalDraft[]
+) {
+  const restored: Record<string, HistoricalJob> = {};
+  for (const value of values) {
+    if (
+      !models.has(value.modelHash) ||
+      !value.placements.length ||
+      !value.placements.every((p) => p.temporalPolicy === temporalPolicy)
+    )
+      continue;
+    const current = drafts.filter((d) => d.site.districtId === value.districtId);
+    const previous = restored[value.modelHash];
+    if (
+      !previous ||
+      (!matchesHistoricalDraft(previous, current) && matchesHistoricalDraft(value, current))
+    )
+      restored[value.modelHash] = value;
+  }
+  return restored;
 }
 
 export function scoreAt(frames: HistoricalScoreFrame[], at: string): HistoricalScoreFrame | null {
