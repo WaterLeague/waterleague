@@ -64,7 +64,7 @@ class ExchangeSurfaceSession(SurfaceSession):
         return {'timeSeconds': float(domain.get_time()), 'ports': ports, 'storageM3': storage,
                 'boundaryNetInflowM3': boundary, 'sourceNetInflowM3': source,
                 'exchangeNetInflowM3': self.exchange_net, 'externalSourceNetInflowM3': source - self.exchange_net,
-                'balanceResidualM3': self.initial_volume + source + boundary - storage}
+                'balanceResidualM3': self.initial_volume + source + boundary - storage, **self.loss_ledger()}
 
     def apply_exchange(self, transfers):
         require(not self.finished and isinstance(transfers, dict)

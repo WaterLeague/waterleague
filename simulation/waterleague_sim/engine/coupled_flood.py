@@ -11,6 +11,7 @@ from waterleague_sim.engine.flood_metrics import specification_hash, validate_me
 from waterleague_sim.forcing.observed_rainfall import compile_rainfall, require_network_clock
 from waterleague_sim.forcing.stage import require_stage_clock
 from waterleague_sim.forcing.network_stage import prepare_network_stage
+from waterleague_sim.engine.surface_infiltration import validate as validate_infiltration
 
 
 def _write(path, value):
@@ -20,6 +21,8 @@ def _write(path, value):
 def _validate(model):
     require(model.get('schemaVersion') == 1 and model.get('evidence'), 'COUPLED_REFERENCE_REQUIRED')
     surface, network = model['surface'], model['network']
+    if surface.get('infiltration') is not None:
+        validate_infiltration(surface['infiltration'], surface['rainfallOwner'])
     if 'terrainProvenance' in surface:
         require(surface['terrainProvenance'].get('absoluteVerticalReferenceVerified') is True,
                 'COUPLED_VERTICAL_REFERENCE_UNVERIFIED')
@@ -83,11 +86,15 @@ def _balance(network, surface, ports):
                                   'rdiiInflowM3', 'externalInflowM3')) - inward
     outgoing = sum(n[k] for k in ('outflowM3', 'floodingM3', 'evaporationM3', 'seepageM3',
                                   'reactionLossM3')) - outward
-    return {'networkExternalInflowM3': incoming, 'networkExternalOutflowAndLossM3': outgoing,
+    result = {'networkExternalInflowM3': incoming, 'networkExternalOutflowAndLossM3': outgoing,
             'surfaceExternalNetInflowM3': surface['externalSourceNetInflowM3'] + surface['boundaryNetInflowM3'],
             'networkStorageM3': n['storageM3'], 'surfaceStorageM3': surface['storageM3'],
             'networkToSurfaceM3': outward, 'surfaceToNetworkM3': inward,
             'exchangeCancellationResidualM3': outward - inward - surface['exchangeNetInflowM3']}
+    if 'infiltrationM3' in surface:
+        result.update(surfaceRainfallM3=surface['rainfallM3'], surfaceInfiltrationM3=surface['infiltrationM3'],
+                      surfaceBoundaryNetInflowM3=surface['boundaryNetInflowM3'])
+    return result
 
 
 def run_coupled(model, directory):
@@ -216,7 +223,8 @@ def run_coupled(model, directory):
                           and abs(residual) <= max(1e-8, .01 * scale))
                 if observed is not None:
                     expected_rain = observed.summary['expectedSurfaceRainfallM3']
-                    require(math.isclose(state['externalSourceNetInflowM3'], expected_rain,
+                    applied_rain = state.get('rainfallM3', state['externalSourceNetInflowM3'])
+                    require(math.isclose(applied_rain, expected_rain,
                                         rel_tol=1e-8, abs_tol=1e-8), 'OBSERVED_RAIN_VOLUME_MISMATCH')
                 result = {'schemaVersion': 1, 'classification': model['evidence'],
                     'method': 'EXPLICIT_NETWORK_EXCHANGE_THEN_SURFACE_FLOW',
@@ -241,8 +249,10 @@ def run_coupled(model, directory):
                               for p in sorted(directory.rglob('*')) if p.is_file()}}
                 if observed is not None:
                     result['observedRainfall'] = observed.summary | {
-                        'appliedSurfaceRainfallM3': state['externalSourceNetInflowM3'],
-                        'volumeResidualM3': state['externalSourceNetInflowM3'] - expected_rain}
+                        'appliedSurfaceRainfallM3': applied_rain,
+                        'volumeResidualM3': applied_rain - expected_rain}
+                if 'infiltration' in sresult:
+                    result['surfaceInfiltration'] = sresult['infiltration']
                 if 'numericalQuality' in sresult:
                     result['surfaceNumericalQuality'] = sresult['numericalQuality']
                 if metric_spec is not None:

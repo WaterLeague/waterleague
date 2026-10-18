@@ -88,6 +88,9 @@ class SurfaceSession:
                     'SURFACE_BOUNDARY_INVALID')
             boundaries[row[0], row[1]] = row[2]
         require(set(boundaries) == expected, 'SURFACE_BOUNDARY_INCOMPLETE')
+        if model.get('infiltration') is not None:
+            from waterleague_sim.engine.surface_infiltration import validate
+            validate(model['infiltration'], owners)
         self.stage_series = compile_stage_boundaries(model)
         self.stage_knots = sorted({time for series in self.stage_series.values() for time in series.knots})
         if self.stage_series:
@@ -153,6 +156,11 @@ class SurfaceSession:
                                     for sid in sorted({sid for sid in assignments if sid is not None})}
         self.forcing = []
         self.rain = anuga.Rate_operator(domain, rate=np.zeros(len(triangles)), factor=1 / 3_600_000)
+        self.infiltration = None
+        if model.get('infiltration') is not None:
+            from waterleague_sim.engine.surface_infiltration import SurfaceInfiltration
+            self.infiltration = SurfaceInfiltration(domain, self.rain, model['infiltration'], owners)
+            self.engine['infiltrationEngine'] = self.infiltration.bank.engine
         self.metrics = None
         if model.get('evaluationMetrics') is not None:
             from waterleague_sim.engine.flood_metrics import DepthMetrics
@@ -207,7 +215,13 @@ class SurfaceSession:
                 'boundaryNetInflowM3': boundary, 'sourceNetInflowM3': forcing,
                 'balanceResidualM3': self.initial_volume + boundary + forcing - volume,
                 'depthM': depth.tolist(), 'velocityXMps': velocities[0].tolist(),
-                'velocityYMps': velocities[1].tolist()}
+                'velocityYMps': velocities[1].tolist(), **self.loss_ledger()}
+
+    def loss_ledger(self):
+        if self.infiltration is None:
+            return {}
+        return {'rainfallM3': float(self.rain.cumulative_influx),
+                'infiltrationM3': float(self.np.sum(self.infiltration.cumulative))}
 
     def advance(self, seconds):
         require(not self.finished and type(seconds) in (int, float)
@@ -237,6 +251,10 @@ class SurfaceSession:
         if self.quality is not None:
             self.quality.observe(float(self.domain.get_time()))
             self.quality.save()
+        if self.infiltration is not None:
+            (self.directory / 'surface-infiltration.json').write_text(json.dumps(
+                self.infiltration.summary(include_state=True), ensure_ascii=False, allow_nan=False,
+                indent=2) + '\n')
         # 수심/운동량은 그대로 보존하며 초기 수치 시험의 잔차 허용치만 별도 판정한다.
         scale = max(self.initial_volume + max(0, final['sourceNetInflowM3'])
                     + max(0, final['boundaryNetInflowM3']), final['storageM3'])
@@ -254,6 +272,8 @@ class SurfaceSession:
             result['evaluationMetrics'] = self.metrics.snapshot()
         if self.stage_series:
             result['stageBoundaries'] = {name: series.summary for name, series in self.stage_series.items()}
+        if self.infiltration is not None:
+            result['infiltration'] = self.infiltration.summary()
         if self.quality is not None:
             result['numericalQuality'] = self.quality.snapshot()
         (self.directory / 'surface-result.json').write_text(json.dumps(result, allow_nan=False, indent=2) + '\n')

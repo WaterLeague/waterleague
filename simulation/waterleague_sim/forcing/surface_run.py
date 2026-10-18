@@ -46,7 +46,7 @@ def run_observed_surface(model, specification, directory):
                             'OBSERVED_SURFACE_BALANCE_FAILED')
             result = session.call('finish')
         expected = schedule.summary['expectedSurfaceRainfallM3']
-        actual = last['sourceNetInflowM3']
+        actual = last.get('rainfallM3', last['sourceNetInflowM3'])
         require(math.isclose(actual, expected, rel_tol=1e-8, abs_tol=1e-8),
                 'OBSERVED_RAIN_VOLUME_MISMATCH')
         result = {'schemaVersion': 1, 'classification': model['evidence'],
