@@ -1,0 +1,161 @@
+{
+  "schemaVersion": 1,
+  "classification": "OBSERVED_WIND_ENGINE_DIAGNOSTIC_NOT_SEOUL_FLOOD",
+  "rankingEligible": false,
+  "artifacts": [
+    {
+      "directory": "data/runs/surface-wind-20261019-v1",
+      "manifestSha256": "c8a62bf4566edc626245bc473ff68f6f7e3ee46bdda84f4997ca776a2cd52281",
+      "verifiedFiles": 510
+    },
+    {
+      "directory": "data/runs/surface-wind-refinement-20261019-v1",
+      "manifestSha256": "c321414715ff79f4b65c34ac4c549bfb0e18f93effd7fb58aa46d67ac0b1a11b",
+      "verifiedFiles": 211
+    }
+  ],
+  "comparison": {
+    "exactReplay": true,
+    "time1To05MaxDepthDifferenceM": 2.628970311673029e-05,
+    "time05To025MaxDepthDifferenceM": 1.241825099469393e-05,
+    "grid4To8MaxAreaMeanDepthDifferenceM": 0.0012507088413145073,
+    "grid8To16MaxAreaMeanDepthDifferenceM": 0.0012154753446173491,
+    "windToNoWindMaxDepthDifferenceM": 0.0030523878440402996,
+    "timeDifferenceDecreased": true,
+    "gridDifferenceDecreased": true
+  },
+  "refinement": {
+    "schemaVersion": 1,
+    "classification": "OBSERVED_WIND_NUMERICAL_GRID_REFINEMENT_NOT_SEOUL",
+    "rankingEligible": false,
+    "baseManifestSha256": "c8a62bf4566edc626245bc473ff68f6f7e3ee46bdda84f4997ca776a2cd52281",
+    "cases": [
+      {
+        "name": "grid-32",
+        "triangles": 2048,
+        "status": "PASSED",
+        "maximumAreaMeanDepthDifferenceFromPreviousGridM": 0.000556687317750118,
+        "relativeToMeanDepthPercent": 1.7672613261908992,
+        "maximumBalanceResidualM3": 6.934897101018578e-12,
+        "finalStorageM3": 314.9999999999914,
+        "depthRangeM": [
+          0.02627295205377454,
+          0.03664516429401023
+        ],
+        "surfaceResultSha256": "6714f81b474a41bb1734a88c033c04610ed743b2f584efe3f1e62b86f9bdac19"
+      },
+      {
+        "name": "grid-64",
+        "triangles": 8192,
+        "status": "PASSED",
+        "maximumAreaMeanDepthDifferenceFromPreviousGridM": 0.00029792947247526264,
+        "relativeToMeanDepthPercent": 0.945807849127825,
+        "maximumBalanceResidualM3": 9.919176591210999e-12,
+        "finalStorageM3": 314.99999999999767,
+        "depthRangeM": [
+          0.02585180227486423,
+          0.03698365204278178
+        ],
+        "surfaceResultSha256": "659eb4bc34b73bceff3222fc92afa19e5bfd729e12c87a8cc187ef65611c3467"
+      }
+    ],
+    "restriction": "AREA_WEIGHTED_RESTRICTION_TO_FIXED_4_BY_4_GRID",
+    "fixedPhysicalInputs": true
+  },
+  "cases": [
+    {
+      "name": "step-1s",
+      "status": "PASSED",
+      "maximumInternalBalanceResidualM3": 7.503331289626658e-12,
+      "rainfallVolumeResidualM3": -2.0321522242738865e-12,
+      "surfaceResultSha256": "e52b780311507611c31d8aa91b6658fab80d34b4f30d1c3f30094959d92f300e"
+    },
+    {
+      "name": "step-05s",
+      "status": "PASSED",
+      "maximumInternalBalanceResidualM3": 1.48929757415317e-11,
+      "rainfallVolumeResidualM3": 4.050093593832571e-12,
+      "surfaceResultSha256": "f29010c37934bf082aa13611ad2065e341c7e3aa27a77afeeac1d35e80ba2c75"
+    },
+    {
+      "name": "step-025s",
+      "status": "PASSED",
+      "maximumInternalBalanceResidualM3": 8.981260180007666e-12,
+      "rainfallVolumeResidualM3": -8.114398042380344e-12,
+      "surfaceResultSha256": "ba8185d3efe5c00d68d3a3fdacac2d7853215f3e5c9883f916e0cecb92a33dcd"
+    },
+    {
+      "name": "grid-8",
+      "status": "PASSED",
+      "maximumInternalBalanceResidualM3": 9.265477274311706e-12,
+      "rainfallVolumeResidualM3": -8.114398042380344e-12,
+      "surfaceResultSha256": "0bc6d79c0133f120ed7789cea55a1b5b6c17aec7361fabb75a84afe91e857bf5"
+    },
+    {
+      "name": "grid-16",
+      "status": "PASSED",
+      "maximumInternalBalanceResidualM3": 9.208633855450898e-12,
+      "rainfallVolumeResidualM3": -8.114398042380344e-12,
+      "surfaceResultSha256": "de6d9d82b0badfeb666b5be5de2885b1e22de6e9a3ddeb71e866cfb8fb6c6596"
+    },
+    {
+      "name": "replay-05s",
+      "status": "PASSED",
+      "maximumInternalBalanceResidualM3": 1.48929757415317e-11,
+      "rainfallVolumeResidualM3": 4.050093593832571e-12,
+      "surfaceResultSha256": "f29010c37934bf082aa13611ad2065e341c7e3aa27a77afeeac1d35e80ba2c75"
+    },
+    {
+      "name": "without-wind",
+      "status": "PASSED",
+      "maximumInternalBalanceResidualM3": 1.6484591469634324e-11,
+      "rainfallVolumeResidualM3": 4.050093593832571e-12,
+      "surfaceResultSha256": "dc423768fc27384c07d7f5ff22dfacc870faf6bf7f8dfc409f8b8f89b1b52fbe"
+    }
+  ],
+  "nativeFrameReplay": {
+    "files": 36,
+    "byteIdentical": true,
+    "frames": 31,
+    "meshFiles": 4,
+    "catalogFiles": 1
+  },
+  "preservedFailure": "WIND_TIMESTEP_UNSTABLE",
+  "newTests": 10,
+  "existingRegressionTests": 39,
+  "publicReferenceManifest": "data/manifests/wind-stress-references-v1.json",
+  "limitations": [
+    "합성 100×100m 수면·2cm 초기수심·반사 경계; 실제 서울 지형/배수/침수 아님",
+    "서울 108 바람과 성동 421 강우의 합성 공간 결합; 바람 공간 대표성 미검증",
+    "풍속계 7m 지상 높이를 수면 높이로 대응하는 해상 1/7 환산 미보정",
+    "시간·격자 차이 감소는 현장 정확성 검증이 아님",
+    "마지막 격자 쌍의 평균 수심 대비 최대 공간 차이 0.9458%; 모든 지표/현장 수렴 승인 아님",
+    "현재 주간/재해 운영 물리에는 미활성화; 실제 연결 관망·지형·경계·풍속 대표성 미검증"
+  ],
+  "validationLogs": [
+    {
+      "file": "data/benchmarks/surface-wind-v1/wind-tests.txt",
+      "sha256": "c4e87fd13fe52a9e9e974684d7a7564d485c19312cbfcc76810a4dbf4115f444",
+      "normalization": "ABSOLUTE_PROJECT_PATH_REPLACED_AND_TRAILING_WHITESPACE_REMOVED"
+    },
+    {
+      "file": "data/benchmarks/surface-wind-v1/regression-tests.txt",
+      "sha256": "6a5096854b7ec249880a431f1bc40b5bf4559d46cc9d9960e1f0c9bc66df6415",
+      "normalization": "ABSOLUTE_PROJECT_PATH_REPLACED_AND_TRAILING_WHITESPACE_REMOVED"
+    }
+  ],
+  "validationCommands": [
+    "PYTHONPATH=simulation:simulation/tests tmp/flood-venv/bin/python -m unittest test_surface_wind -q",
+    "PYTHONPATH=simulation:simulation/tests tmp/flood-venv/bin/python -m unittest test_surface test_surface_evaporation test_surface_initialization test_observed_surface_rainfall test_surface_frames test_stage_boundary -q"
+  ],
+  "diagnosticFigure": {
+    "file": "data/benchmarks/surface-wind-v1/redistribution.png",
+    "sha256": "da31f337f9416fc36e21221ed6da1175229cdd3f9392b3d6116b93387478be1d",
+    "cases": [
+      "without-wind",
+      "step-05s"
+    ],
+    "quantity": "FINAL_NATIVE_CENTROID_DEPTH_AND_WATER_VELOCITY",
+    "classification": "SYNTHETIC_GEOMETRY_NOT_SEOUL"
+  }
+}

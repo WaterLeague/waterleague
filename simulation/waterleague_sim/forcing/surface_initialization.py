@@ -10,6 +10,7 @@ from waterleague_sim.forcing.antecedent_archive import read_antecedent
 from waterleague_sim.forcing.observed_rainfall import RainfallSchedule, compile_rainfall, utc
 from waterleague_sim.forcing.stage import require_stage_clock
 from waterleague_sim.forcing.surface_evaporation import require_evaporation_clock
+from waterleague_sim.forcing.surface_wind import require_wind_clock
 
 
 def prepare_initialized_surface(model, specification, initialization, *, root=ROOT):
@@ -91,6 +92,7 @@ def prepare_initialized_surface(model, specification, initialization, *, root=RO
                                          'evaluationStartUtc': evaluation_start.isoformat()}
     require_stage_clock(value, duration=seconds+duration, rainfall=combined)
     require_evaporation_clock(value, duration=seconds+duration, rainfall=combined)
+    require_wind_clock(value, duration=seconds+duration, rainfall=combined)
     return value, combined, RainfallSchedule(events, summary, files), seconds
 
 

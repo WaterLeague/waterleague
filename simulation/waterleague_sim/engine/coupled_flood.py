@@ -13,6 +13,7 @@ from waterleague_sim.forcing.stage import require_stage_clock
 from waterleague_sim.forcing.network_stage import prepare_network_stage
 from waterleague_sim.engine.surface_infiltration import validate as validate_infiltration
 from waterleague_sim.forcing.surface_evaporation import require_evaporation_clock
+from waterleague_sim.forcing.surface_wind import require_wind_clock
 from waterleague_sim.engine.surface_exchange import DRY_EXCHANGE_POLICY, DRY_TRANSFER_TOLERANCE_M3
 
 
@@ -148,6 +149,8 @@ def run_coupled(model, directory):
         from waterleague_sim.engine.connected_facilities import compile_design
         raw, facility_design = compile_design(model['network']['inputText'].encode(), model['connectedFacilityDesign'])
         model = model | {'network': model['network'] | {'inputText': raw.decode()}}
+    require_wind_clock(model['surface'], duration=model['durationSeconds'],
+                       rainfall=model.get('observedRainfall'), network=model['network'])
     evaporation = require_evaporation_clock(model['surface'], duration=model['durationSeconds'],
                          rainfall=model.get('observedRainfall'), network=model['network'])
     stages = require_stage_clock(model['surface'], duration=model['durationSeconds'],
@@ -395,6 +398,8 @@ def run_coupled(model, directory):
                 if 'surfaceFrames' in sresult:
                     result['surfaceFrames'] = sresult['surfaceFrames'] | {
                         'catalogFile': 'surface/' + sresult['surfaceFrames']['catalogFile']}
+                if 'wind' in sresult:
+                    result['surfaceWind'] = sresult['wind']
                 if 'evaporation' in sresult:
                     result['surfaceEvaporation'] = sresult['evaporation']
                 if 'numericalQuality' in sresult:

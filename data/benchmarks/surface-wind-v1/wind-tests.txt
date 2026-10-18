@@ -1,0 +1,17 @@
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+----------------------------------------------------------------------
+Ran 10 tests in 9.948s
+
+OK

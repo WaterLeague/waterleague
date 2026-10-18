@@ -11,6 +11,7 @@ from waterleague_sim.engine.flood_errors import require
 from waterleague_sim.engine.swmm import ROOT
 from waterleague_sim.forcing.stage import clamp_clock_roundoff, compile_stage_boundaries, source_hash
 from waterleague_sim.forcing.surface_evaporation import compile_evaporation
+from waterleague_sim.forcing.surface_wind import compile_wind
 
 VERSION = '4.0.1'
 
@@ -97,6 +98,9 @@ class SurfaceSession:
         self.evaporation_series = compile_evaporation(model)
         if self.evaporation_series is not None:
             self.stage_knots = sorted(set(self.stage_knots) | set(self.evaporation_series.knots))
+        self.wind_series = compile_wind(model)
+        if self.wind_series is not None:
+            self.stage_knots = sorted(set(self.stage_knots) | set(self.wind_series.knots))
         if self.stage_series:
             require(set(self.stage_series) <= set(boundaries.values()), 'STAGE_BOUNDARY_UNUSED')
             self.engine['stageAdapterSha256'] = source_hash()
@@ -172,6 +176,13 @@ class SurfaceSession:
             self.engine['evaporationAdapterSha256'] = self.evaporation.source_hash
             self.engine['evaporationForcingSha256'] = self.evaporation_series.summary['adapterSha256']
             self.evaporation_series.archive(path / 'surface-evaporation-input')
+        self.wind = None
+        if self.wind_series is not None:
+            from waterleague_sim.engine.surface_wind import SurfaceWind
+            self.wind = SurfaceWind(domain, self.wind_series, model, path)
+            self.engine['windAdapterSha256'] = self.wind.source_hash
+            self.engine['windForcingSha256'] = self.wind_series.summary['adapterSha256']
+            self.wind_series.archive(path / 'surface-wind-input')
         self.metrics = None
         if model.get('evaluationMetrics') is not None:
             from waterleague_sim.engine.flood_metrics import DepthMetrics
@@ -258,6 +269,8 @@ class SurfaceSession:
         return self.snapshot()
 
     def _evolve_until(self, target):
+        if self.wind_series is not None:
+            target = clamp_clock_roundoff(target, 0, self.wind_series.duration, 'WIND_RUN_WINDOW_EXCEEDED')
         if self.evaporation_series is not None:
             target = clamp_clock_roundoff(target, 0, self.evaporation_series.duration,
                                            'EVAPORATION_RUN_WINDOW_EXCEEDED')
@@ -288,6 +301,8 @@ class SurfaceSession:
             (self.directory / 'surface-evaporation.json').write_text(json.dumps(
                 self.evaporation.summary(include_state=True), ensure_ascii=False, allow_nan=False,
                 indent=2) + '\n')
+        if self.wind is not None:
+            self.wind.save(self.directory)
         # 수심/운동량은 그대로 보존하며 초기 수치 시험의 잔차 허용치만 별도 판정한다.
         scale = max(self.initial_volume + max(0, final['sourceNetInflowM3'])
                     + max(0, final['boundaryNetInflowM3']), final['storageM3'])
@@ -312,6 +327,8 @@ class SurfaceSession:
             result['infiltration'] = self.infiltration.summary()
         if self.evaporation is not None:
             result['evaporation'] = self.evaporation.summary()
+        if self.wind is not None:
+            result['wind'] = self.wind.summary()
         if self.quality is not None:
             result['numericalQuality'] = self.quality.snapshot()
         (self.directory / 'surface-result.json').write_text(json.dumps(result, allow_nan=False, indent=2) + '\n')

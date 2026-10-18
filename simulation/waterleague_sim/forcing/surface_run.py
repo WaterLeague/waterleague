@@ -9,6 +9,7 @@ from waterleague_sim.engine.flood_process import EngineProcess
 from waterleague_sim.forcing.observed_rainfall import compile_rainfall, utc
 from waterleague_sim.forcing.stage import require_stage_clock
 from waterleague_sim.forcing.surface_evaporation import require_evaporation_clock
+from waterleague_sim.forcing.surface_wind import require_wind_clock
 
 
 def _write(path, value):
@@ -20,6 +21,7 @@ def run_observed_surface(model, specification, directory):
     require(duration.is_integer(), 'OBSERVED_RAIN_WINDOW_INVALID')
     require_stage_clock(model, duration=duration, rainfall=specification)
     require_evaporation_clock(model, duration=duration, rainfall=specification)
+    require_wind_clock(model, duration=duration, rainfall=specification)
     require(model.get('rainfallStationIds') is None, 'OBSERVED_RAIN_ASSIGNMENT_CONFLICT')
     schedule = compile_rainfall(specification, model, int(duration))
     return run_schedule(model, specification, schedule, directory)
@@ -79,6 +81,8 @@ def run_schedule(model, specification, schedule, directory, *, evaluation_start=
                   'final': last, 'codeSha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
                   'files': {str(p.relative_to(directory)): hashlib.sha256(p.read_bytes()).hexdigest()
                             for p in sorted(directory.rglob('*')) if p.is_file()}}
+        if 'wind' in native_result:
+            result['wind'] = native_result['wind']
         if 'surfaceFrames' in native_result:
             result['surfaceFrames'] = native_result['surfaceFrames'] | {
                 'catalogFile': 'surface/' + native_result['surfaceFrames']['catalogFile']}

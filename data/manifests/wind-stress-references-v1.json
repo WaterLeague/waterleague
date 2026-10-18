@@ -1,0 +1,19 @@
+{
+  "sources": [
+    {
+      "url": "https://www.hec.usace.army.mil/confluence/rasdocs/ras1dtechref/6.6/theoretical-basis-for-one-dimensional-and-two-dimensional-hydrodynamic-calculations/2d-unsteady-flow-hydrodynamics/hydraulic-equations/wind-surface-stress",
+      "path": "data/raw/hec-ras-6.6-wind-surface-stress.html",
+      "sha256": "6515032f49da37f3dcc98f6ef4c377fb232cb79b98cd7dbdcc3a93f7420f5a97",
+      "bytes": 111200,
+      "acquiredAt": "2026-10-18T19:36:25.445022+00:00"
+    },
+    {
+      "url": "https://www.hec.usace.army.mil/software/hec-ras/documentation/HEC-RAS_6.0_ReferenceManual.pdf",
+      "path": "data/raw/hec-ras-6.0-reference-manual.pdf",
+      "sha256": "d63cb706672d33205ae4a905ccaa283aa1c488b17e21cc634146b89cdb05f3c1",
+      "bytes": 8703891,
+      "acquiredAt": "2026-10-18T19:36:28.339349+00:00"
+    }
+  ],
+  "use": "PUBLIC_EQUATION_REFERENCE_NOT_SEOUL_SITE_CALIBRATION"
+}

@@ -1,0 +1,43 @@
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+<PROJECT>/tmp/flood-venv/lib/python3.12/site-packages/anuga/shallow_water/shallow_water_domain.py:3086: UserWarning: 2 negative cells set to zero depth, adding 0.00175 m^3 (14% of the 0.0125 m^3 in the domain): possible loss of conservation.
+Consider using domain.report_water_volume_statistics() to check the extent of the problem
+  warnings.warn(msg)
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+----------------------------------------------------------------------
+Ran 39 tests in 40.034s
+
+OK
