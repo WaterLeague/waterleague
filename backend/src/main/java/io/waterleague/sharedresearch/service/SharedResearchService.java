@@ -2,10 +2,14 @@ package io.waterleague.sharedresearch.service;
 
 import io.waterleague.account.entity.Account;
 import io.waterleague.account.repository.AccountRepository;
+import io.waterleague.budget.dto.BudgetRecordRequest;
+import io.waterleague.budget.service.BudgetRecordService;
+import io.waterleague.budget.view.BudgetRecordEvidence;
 import io.waterleague.common.exception.*;
 import io.waterleague.research.repository.ResearchRepository;
 import io.waterleague.sharedresearch.entity.SharedResearchJob;
 import io.waterleague.sharedresearch.repository.SharedResearchRepository;
+import io.waterleague.strategy.entity.FacilityType;
 import java.time.*;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
@@ -18,16 +22,19 @@ public class SharedResearchService {
   private final SharedResearchArtifactService artifacts;
   private final ResearchRepository research;
   private final AccountRepository accounts;
+  private final BudgetRecordService budget;
 
   public SharedResearchService(
       SharedResearchRepository records,
       SharedResearchArtifactService artifacts,
       ResearchRepository research,
-      AccountRepository accounts) {
+      AccountRepository accounts,
+      BudgetRecordService budget) {
     this.records = records;
     this.artifacts = artifacts;
     this.research = research;
     this.accounts = accounts;
+    this.budget = budget;
   }
 
   private Account member(UUID actor) {
@@ -120,25 +127,44 @@ public class SharedResearchService {
   public Object detail(UUID actor, boolean institution, UUID id) {
     var job = authorize(actor, institution, id);
     var data = new LinkedHashMap<>(artifacts.detail(job));
+    var ledger = budget(job);
+    data.put("budgetLedger", ledger);
     authorize(actor, institution, id);
     research.audit(actor, "SHARED_RESEARCH_READ", id);
     data.put("jobId", id);
-    data.put("installation", installation(job));
+    var installation = installation(job);
+    installation.put("removedAt", ledger.removedAt());
+    data.put("installation", installation);
     return data;
   }
 
   public byte[] bundle(UUID actor, boolean institution, UUID id) {
     var job = authorize(actor, institution, id);
+    var ledger = budget(job);
     var scope = new LinkedHashMap<String, Object>();
     scope.put("purpose", "EXPLORATORY_RESEARCH_ONLY");
     scope.put("exportedAt", Instant.now());
-    scope.put("installation", installation(job));
+    var installation = installation(job);
+    installation.put("removedAt", ledger.removedAt());
+    scope.put("installation", installation);
     scope.put("inputHash", job.inputHash());
     scope.put("manifestSha256", job.manifestHash());
     scope.put("notice", "선택 표면의 가정 기반 계산. 실제 침수·시공 효과나 사업 활용 승인 아님. 동의 철회는 이후 접근에 적용.");
-    var bytes = artifacts.bundle(job, scope);
+    var bytes = artifacts.bundle(job, scope, ledger);
     authorize(actor, institution, id);
     research.audit(actor, "SHARED_RESEARCH_EXPORT", id);
     return bytes;
+  }
+
+  private BudgetRecordEvidence budget(SharedResearchJob job) {
+    return budget.snapshot(
+        new BudgetRecordRequest(
+            job.ownerId(),
+            job.installationId(),
+            job.id(),
+            FacilityType.valueOf(job.facilityType()),
+            job.costKrw(),
+            job.installedAt(),
+            job.simulatedThrough()));
   }
 }

@@ -8,6 +8,7 @@ import { recordsPath } from '../repository/sharedResearchRepository';
 import type { SharedDetail } from '../dto/sharedResearchDto';
 import { InitializationEvidence } from '../../physics/view/InitializationEvidence';
 import { FacilityProfileEvidence } from '../../facility/view/FacilityProfileEvidence';
+import { BudgetRecordEvidence } from '../../budget/view/BudgetRecordEvidence';
 import './shared-research.css';
 const amount = new Intl.NumberFormat('ko-KR', { maximumFractionDigits: 4 });
 const formatAmount = (value: number) => amount.format(Math.abs(value) < 0.00005 ? 0 : value);
@@ -108,6 +109,7 @@ export function SharedRecordDetail({
         {at(d.summary.simulatedThrough)} KST
       </p>
       <FlowChart detail={d} />
+      <BudgetRecordEvidence value={d.budgetLedger} />
       <table>
         <caption>물수지 · m³</caption>
         <thead>
@@ -203,8 +205,8 @@ export function SharedRecordDetail({
         <Download size={16} /> 원본·계산 재현 묶음
       </a>
       <p className="micro-note">
-        INP·RPT·OUT·모델·관측 입력·계산 코드·분별 결과 포함. 다운로드 직전 접근 권한과 파일 해시
-        재확인.
+        INP·RPT·OUT·모델·관측 입력·계산 코드·분별 결과·이 설치의 예산 원장 포함. 원장은 다운로드
+        시점 조회본이며, 별도 내보내기 목록에 파일 해시를 기록합니다.
       </p>
       <code className="hash-value">입력 SHA-256: {d.request.modelSha256}</code>
       <code className="hash-value">강우·기상 SHA-256: {d.request.forcingSha256}</code>

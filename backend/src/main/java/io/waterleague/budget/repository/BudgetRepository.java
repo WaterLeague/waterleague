@@ -1,10 +1,14 @@
 package io.waterleague.budget.repository;
 
 import io.waterleague.budget.entity.BudgetLedgerEntry;
+import io.waterleague.budget.entity.InstallationLedger;
 import io.waterleague.budget.exception.BudgetException;
 import io.waterleague.common.exception.ErrorCode;
 import io.waterleague.strategy.entity.FacilityType;
 import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.Instant;
 import java.util.*;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -70,20 +74,52 @@ public class BudgetRepository {
   public List<BudgetLedgerEntry> history(UUID ownerId, long beforeId) {
     return db.query(
         "SELECT * FROM budget_ledger_entries WHERE owner_id=? AND id<? ORDER BY id DESC LIMIT 51",
-        (r, n) ->
-            new BudgetLedgerEntry(
-                r.getLong("id"),
-                r.getObject("installation_id", UUID.class),
-                r.getString("program_id"),
-                FacilityType.valueOf(r.getString("facility_type")),
-                r.getString("event_type"),
-                r.getBigDecimal("amount_krw"),
-                r.getTimestamp("effective_at").toInstant(),
-                r.getTimestamp("recorded_at").toInstant(),
-                r.getString("provenance"),
-                r.getString("accounting_version"),
-                r.getString("source_budget_policy")),
+        (r, n) -> entry(r),
         ownerId,
         beforeId);
+  }
+
+  public InstallationLedger installationHistory(UUID ownerId, UUID installationId) {
+    // 같은 SQL 스냅샷으로 취소 시각과 원장을 읽어 동시 취소 중 부분 상태를 피한다.
+    return db.query(
+        """
+        SELECT e.*,i.removed_at FROM shared_installations i
+        LEFT JOIN budget_ledger_entries e ON e.installation_id=i.id AND e.owner_id=i.owner_id
+        WHERE i.id=? AND i.owner_id=? ORDER BY e.effective_at,e.id
+        """,
+        (org.springframework.jdbc.core.ResultSetExtractor<InstallationLedger>)
+            r -> {
+              var entries = new ArrayList<BudgetLedgerEntry>();
+              Instant removed = null;
+              boolean found = false;
+              while (r.next()) {
+                found = true;
+                removed =
+                    r.getTimestamp("removed_at") == null
+                        ? null
+                        : r.getTimestamp("removed_at").toInstant();
+                if (r.getObject("id") != null) entries.add(entry(r));
+                if (entries.size() > 2) throw new BudgetException(ErrorCode.BUDGET_DATA_INVALID);
+              }
+              if (!found) throw new BudgetException(ErrorCode.BUDGET_DATA_INVALID);
+              return new InstallationLedger(removed, List.copyOf(entries));
+            },
+        installationId,
+        ownerId);
+  }
+
+  private BudgetLedgerEntry entry(ResultSet r) throws SQLException {
+    return new BudgetLedgerEntry(
+        r.getLong("id"),
+        r.getObject("installation_id", UUID.class),
+        r.getString("program_id"),
+        FacilityType.valueOf(r.getString("facility_type")),
+        r.getString("event_type"),
+        r.getBigDecimal("amount_krw"),
+        r.getTimestamp("effective_at").toInstant(),
+        r.getTimestamp("recorded_at").toInstant(),
+        r.getString("provenance"),
+        r.getString("accounting_version"),
+        r.getString("source_budget_policy"));
   }
 }

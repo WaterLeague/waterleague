@@ -65,6 +65,7 @@ class SharedResearchWorkflowTests {
   @Autowired InstitutionMfaService mfa;
   @Autowired ResearchRepository research;
   @Autowired SharedResearchService service;
+  @Autowired io.waterleague.budget.repository.BudgetRepository budget;
 
   record Actor(UUID id, UUID org, HttpClient client) {}
 
@@ -493,7 +494,7 @@ class SharedResearchWorkflowTests {
         zip.closeEntry();
       }
     }
-    assertThat(entries).isEqualTo(22007);
+    assertThat(entries).isEqualTo(22009);
     Files.writeString(directory.resolve("b".repeat(64) + ".txt"), "SYNTHETIC_WRONG_HASH_TEST_ONLY");
     db.update(
         "UPDATE shared_physics_jobs SET artifact_manifest_hash=? WHERE id=?",
@@ -531,5 +532,154 @@ class SharedResearchWorkflowTests {
     assertThat(
             call(owner, "GET", "/installations/records/" + job.id() + "/bundle", null).statusCode())
         .isEqualTo(409);
+  }
+
+  UUID installation(Fixture job) {
+    return db.queryForObject(
+        "SELECT installation_id FROM shared_physics_jobs WHERE id=?", UUID.class, job.id());
+  }
+
+  void allocate(Fixture job, Actor owner) {
+    var id = installation(job);
+    db.update(
+        "UPDATE shared_installations SET budget_policy=? WHERE id=?",
+        json.write(Map.of("ruleVersion", "SYNTHETIC_LEGACY_POLICY", "limitKrw", 80000000)),
+        id);
+    budget.allocate(id, owner.id(), "SEOUL_RAINWATER", "SYNTHETIC_ACCOUNTING_VERSION");
+  }
+
+  Map<String, byte[]> unzip(Actor actor, String path) throws Exception {
+    var response =
+        actor
+            .client()
+            .send(
+                HttpRequest.newBuilder(URI.create("http://127.0.0.1:" + port + "/api/v1" + path))
+                    .build(),
+                HttpResponse.BodyHandlers.ofByteArray());
+    assertThat(response.statusCode()).isEqualTo(200);
+    assertThat(response.headers().firstValue("Cache-Control").orElse("")).contains("no-store");
+    var result = new HashMap<String, byte[]>();
+    try (var zip =
+        new java.util.zip.ZipInputStream(new java.io.ByteArrayInputStream(response.body()))) {
+      java.util.zip.ZipEntry entry;
+      while ((entry = zip.getNextEntry()) != null) {
+        assertThat(result.put(entry.getName(), zip.readAllBytes())).isNull();
+        zip.closeEntry();
+      }
+    }
+    return result;
+  }
+
+  @Test
+  void selectedInstallationLedgerSeparatesLaterCancellationAndExportsFrozenOriginals()
+      throws Exception {
+    var owner = actor(false);
+    var org = actor(true);
+    var other = actor(false);
+    var job = fixture(owner);
+    allocate(job, owner);
+    var id = installation(job);
+    var unrelated = UUID.randomUUID();
+    db.update(
+        "INSERT INTO"
+            + " shared_installations(id,occupied_site,district_id,cell_id,owner_id,model_hash,facility_type,area_m2,cost,installed_at,budget_policy)"
+            + " VALUES(?,?,'2419953','DO_NOT_EXPORT',?,?,'RAIN_GARDEN',10,1000,now(),?)",
+        unrelated,
+        "2419953:DO_NOT_EXPORT",
+        owner.id(),
+        "a".repeat(64),
+        "{\"marker\":\"DO_NOT_EXPORT\"}");
+    budget.allocate(unrelated, owner.id(), "OTHER_PROGRAM", "OTHER_ACCOUNTING");
+    String path = "/installations/records/" + job.id();
+    var before = get(owner, path).path("budgetLedger");
+    assertThat(before.path("entries")).hasSize(1);
+    assertThat(before.path("allocatedAtEvaluationKrw").decimalValue())
+        .isEqualByComparingTo("5600000");
+    assertThat(before.path("allocatedAtCaptureKrw").decimalValue()).isEqualByComparingTo("5600000");
+    var ended = Instant.parse(before.path("evaluatedThrough").asString());
+    db.update(
+        "UPDATE shared_installations SET removed_at=?,occupied_site=NULL WHERE id=?",
+        java.sql.Timestamp.from(ended.plusSeconds(60)),
+        id);
+    budget.release(id, owner.id());
+    grant(owner, org, true);
+    var detail = get(org, "/research/installations/" + job.id());
+    var ledger = detail.path("budgetLedger");
+    assertThat(ledger.path("status").asString()).isEqualTo("AVAILABLE");
+    assertThat(ledger.path("allocatedAtEvaluationKrw").decimalValue())
+        .isEqualByComparingTo("5600000");
+    assertThat(ledger.path("allocatedAtCaptureKrw").decimalValue()).isZero();
+    assertThat(ledger.path("entries")).hasSize(2);
+    assertThat(ledger.path("entries").get(0).path("sourceBudgetPolicy").path("limitKrw").asInt())
+        .isEqualTo(80000000);
+    assertThat(detail.toString()).doesNotContain("DO_NOT_EXPORT", "OTHER_ACCOUNTING", "ownerId");
+    assertThat(call(other, "GET", path, null).statusCode()).isEqualTo(404);
+    byte[] originalManifest = Files.readAllBytes(job.path().resolve("manifest.json"));
+    var files = unzip(org, "/research/installations/" + job.id() + "/bundle");
+    assertThat(files.get("manifest.json")).isEqualTo(originalManifest);
+    assertThat(Files.readAllBytes(job.path().resolve("manifest.json"))).isEqualTo(originalManifest);
+    var exported =
+        json.tree(
+            new String(files.get("budget-ledger.json"), java.nio.charset.StandardCharsets.UTF_8));
+    assertThat(exported.path("entries")).isEqualTo(ledger.path("entries"));
+    assertThat(exported.path("calculationId").asString()).isEqualTo(job.id().toString());
+    var exportManifest =
+        json.tree(
+            new String(files.get("export-manifest.json"), java.nio.charset.StandardCharsets.UTF_8));
+    assertThat(exportManifest.path("files").size()).isEqualTo(files.size() - 1);
+    for (var file : files.entrySet()) {
+      if (file.getKey().equals("export-manifest.json")) continue;
+      var sha =
+          HexFormat.of()
+              .formatHex(
+                  java.security.MessageDigest.getInstance("SHA-256").digest(file.getValue()));
+      assertThat(exportManifest.path("files").path(file.getKey()).asString()).isEqualTo(sha);
+    }
+    grant(owner, org, false);
+    assertThat(call(org, "GET", "/research/installations/" + job.id(), null).statusCode())
+        .isEqualTo(404);
+    assertThat(
+            call(org, "GET", "/research/installations/" + job.id() + "/bundle", null).statusCode())
+        .isEqualTo(404);
+    assertThat(get(owner, path).path("budgetLedger").path("entries")).hasSize(2);
+    db.update(
+        "UPDATE shared_installations SET removed_at=? WHERE id=?",
+        java.sql.Timestamp.from(ended),
+        id);
+    db.update(
+        "UPDATE budget_ledger_entries SET effective_at=? WHERE installation_id=? AND"
+            + " event_type='RELEASE'",
+        java.sql.Timestamp.from(ended),
+        id);
+    assertThat(
+            get(owner, path).path("budgetLedger").path("allocatedAtEvaluationKrw").decimalValue())
+        .isZero();
+  }
+
+  @Test
+  void missingLedgerStaysUnknownAndMismatchedOrReservedExportEvidenceIsRejected() throws Exception {
+    var owner = actor(false);
+    var job = fixture(owner);
+    String path = "/installations/records/" + job.id();
+    var absent = get(owner, path).path("budgetLedger");
+    assertThat(absent.path("status").asString()).isEqualTo("NOT_RECORDED");
+    assertThat(absent.path("allocatedAtEvaluationKrw").isNull()).isTrue();
+    assertThat(absent.path("allocatedAtCaptureKrw").isNull()).isTrue();
+    allocate(job, owner);
+    var id = installation(job);
+    db.update("UPDATE budget_ledger_entries SET amount_krw=1 WHERE installation_id=?", id);
+    var bad = call(owner, "GET", path, null);
+    assertThat(bad.statusCode()).isEqualTo(503);
+    assertThat(bad.body())
+        .contains("BUDGET_DATA_INVALID")
+        .doesNotContain("Exception", "SELECT", ROOT.toString());
+    assertThat(call(owner, "GET", path + "/bundle", null).statusCode()).isEqualTo(503);
+    db.update("UPDATE budget_ledger_entries SET amount_krw=5600000 WHERE installation_id=?", id);
+    Files.writeString(job.path().resolve("budget-ledger.json"), "{\"untrusted\":true}");
+    db.update(
+        "UPDATE shared_physics_jobs SET artifact_manifest_hash=? WHERE id=?",
+        manifest(job.path()),
+        job.id());
+    assertThat(call(owner, "GET", path + "/bundle", null).statusCode()).isEqualTo(503);
   }
 }

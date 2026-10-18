@@ -1,5 +1,6 @@
 package io.waterleague.sharedresearch.service;
 
+import io.waterleague.budget.view.BudgetRecordEvidence;
 import io.waterleague.common.exception.*;
 import io.waterleague.common.service.JsonService;
 import io.waterleague.sharedresearch.entity.SharedResearchJob;
@@ -167,26 +168,51 @@ public class SharedResearchArtifactService {
     }
   }
 
-  public byte[] bundle(SharedResearchJob job, Map<String, Object> scope) {
+  public byte[] bundle(
+      SharedResearchJob job, Map<String, Object> scope, BudgetRecordEvidence ledger) {
     try {
       var a = archive(job);
       var output = new ByteArrayOutputStream();
       long total = 0;
+      var exportHashes = new TreeMap<String, String>();
+      exportHashes.put("manifest.json", hash(a.manifestBytes()));
       try (var zip = new ZipOutputStream(output)) {
         zip.putNextEntry(new ZipEntry("manifest.json"));
         zip.write(a.manifestBytes());
         zip.closeEntry();
         for (String name : a.manifest().propertyNames()) {
+          if (Set.of("access-scope.json", "budget-ledger.json", "export-manifest.json")
+              .contains(name)) throw invalid();
           var bytes = file(a, name);
           total += bytes.length;
           if (total > 512L * 1024 * 1024) throw invalid();
           zip.putNextEntry(new ZipEntry(name));
           zip.write(bytes);
           zip.closeEntry();
+          exportHashes.put(name, hash(bytes));
           if (output.size() > 64 * 1024 * 1024) throw invalid();
         }
         zip.putNextEntry(new ZipEntry("access-scope.json"));
-        zip.write(json.write(scope).getBytes(StandardCharsets.UTF_8));
+        var scopeBytes = json.write(scope).getBytes(StandardCharsets.UTF_8);
+        zip.write(scopeBytes);
+        zip.closeEntry();
+        exportHashes.put("access-scope.json", hash(scopeBytes));
+        zip.putNextEntry(new ZipEntry("budget-ledger.json"));
+        var ledgerBytes = json.write(ledger).getBytes(StandardCharsets.UTF_8);
+        zip.write(ledgerBytes);
+        zip.closeEntry();
+        exportHashes.put("budget-ledger.json", hash(ledgerBytes));
+        zip.putNextEntry(new ZipEntry("export-manifest.json"));
+        zip.write(
+            json.write(
+                    Map.of(
+                        "schemaVersion",
+                        1,
+                        "calculationManifestSha256",
+                        job.manifestHash(),
+                        "files",
+                        exportHashes))
+                .getBytes(StandardCharsets.UTF_8));
         zip.closeEntry();
       }
       if (output.size() > 64 * 1024 * 1024) throw invalid();

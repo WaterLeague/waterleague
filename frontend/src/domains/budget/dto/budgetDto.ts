@@ -46,6 +46,33 @@ export const budgetLedgerDto = z.object({
     .nullable(),
 });
 export type BudgetLedger = z.infer<typeof budgetLedgerDto>;
+export const budgetRecordEvidenceDto = z
+  .object({
+    schemaVersion: z.literal(1),
+    calculationId: z.uuid(),
+    installationId: z.uuid(),
+    capturedAt: z.string().datetime({ offset: true }),
+    evaluatedThrough: z.string().datetime({ offset: true }),
+    status: z.enum(['AVAILABLE', 'NOT_RECORDED']),
+    timeBasis: z.literal('EFFECTIVE_EVENT_TIME'),
+    installationCostKrw: amount,
+    allocatedAtEvaluationKrw: amount.nullable(),
+    allocatedAtCaptureKrw: amount.nullable(),
+    removedAt: z.string().datetime({ offset: true }).nullable(),
+    entries: budgetLedgerDto.shape.entries.max(2),
+  })
+  .refine(
+    (value) =>
+      value.status === 'AVAILABLE'
+        ? value.entries.length > 0 &&
+          value.allocatedAtEvaluationKrw !== null &&
+          value.allocatedAtCaptureKrw !== null
+        : value.entries.length === 0 &&
+          value.allocatedAtEvaluationKrw === null &&
+          value.allocatedAtCaptureKrw === null,
+    { message: '예산 원장 상태와 기록 불일치' }
+  );
+export type BudgetRecordEvidence = z.infer<typeof budgetRecordEvidenceDto>;
 export const budgetDto = z.object({
   policy: z.object({
     limitKrw: z.number().positive(),
