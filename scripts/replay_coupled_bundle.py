@@ -49,6 +49,7 @@ def main():
     parser.add_argument('--manifest-sha256', required=True)
     parser.add_argument('--case', required=True)
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--kind', choices=('coupled', 'inlet-network'), default='coupled')
     args = parser.parse_args()
     bundle = args.bundle.resolve()
     manifest = safe_path(bundle, 'manifest.json')
@@ -61,8 +62,13 @@ def main():
         require(isinstance(expected, str) and re.fullmatch('[a-f0-9]{64}', expected)
                 and path.is_file() and sha(path) == expected, 'REPLAY_ARTIFACT_HASH_MISMATCH')
     case = safe_path(bundle, args.case)
-    require(all(str(p.relative_to(bundle)) in files for p in
-        (case/'coupled-input.json', case/'coupled-result.json')), 'REPLAY_CASE_MISSING')
+    required = ('coupled-input.json', 'coupled-result.json', 'network/network.out') if args.kind == 'coupled' else (
+        'original.inp', 'design.json', 'transformation.json', 'network/network-result.json',
+        'network/network.inp', 'network/network.out')
+    require(all(str((case/name).relative_to(bundle)) in files for name in required), 'REPLAY_CASE_MISSING')
+    if args.kind == 'coupled' and 'initialization' in load(case/'coupled-result.json'):
+        require(all(str((case/name).relative_to(bundle)) in files for name in
+            ('evaluation-initial-state.json', 'evaluation-final-state.json')), 'REPLAY_CASE_MISSING')
     output = args.output.resolve()
     require(not output.exists() and not output.is_relative_to(bundle), 'REPLAY_OUTPUT_INVALID')
     require('source/simulation/waterleague_sim/engine/coupled_flood.py' in files, 'REPLAY_SOURCE_MISSING')
@@ -82,12 +88,25 @@ def replay(source, case, output, args):
     # 검증 목록만 복사하여 원 묶음에 추가된 모듈·바이트코드를 실행하지 않는다.
     sys.path[:0] = [str(source/'simulation'), str(source)]
     from waterleague_sim.engine import network
-    from waterleague_sim.engine.coupled_flood import run_coupled
     require(network.ROOT == source, 'REPLAY_SOURCE_ROOT_MISMATCH')
-    expected = load(case/'coupled-result.json')
-    actual = run_coupled(load(case/'coupled-input.json'), output)
-    fields = ('numericalStatus', 'balance', 'evaluationMetrics', 'connectedPumps',
-        'connectedStorage', 'surfaceBasins', 'connectedFacilities', 'initialization', 'networkNumericalProfile')
+    if args.kind == 'inlet-network':
+        from waterleague_sim.engine.connected_inlets import compile_inlets
+        from waterleague_sim.engine.flood_process import EngineProcess
+        raw, transformation = compile_inlets((case/'original.inp').read_bytes(), load(case/'design.json'))
+        require(transformation == load(case/'transformation.json')
+            and raw == (case/'network/network.inp').read_bytes(), 'REPLAY_INLET_INPUT_MISMATCH')
+        expected = load(case/'network/network-result.json')
+        output.mkdir(parents=True)
+        with EngineProcess('inlet_network', raw.decode(), output/'network', native_duration=True) as process:
+            actual = process.call('run', 60)['result']
+        fields = ('numericalStatus', 'numericalQuality', 'convergence', 'initial', 'final',
+                  'evaluationMetrics', 'inletOperation', 'numericalConfiguration')
+    else:
+        from waterleague_sim.engine.coupled_flood import run_coupled
+        expected = load(case/'coupled-result.json')
+        actual = run_coupled(load(case/'coupled-input.json'), output)
+        fields = ('numericalStatus', 'balance', 'evaluationMetrics', 'connectedPumps',
+            'connectedStorage', 'surfaceBasins', 'connectedFacilities', 'initialization', 'networkNumericalProfile')
     comparisons = {name: expected.get(name) == actual.get(name) for name in fields}
     native = ['network/network.out']
     if 'initialization' in expected:

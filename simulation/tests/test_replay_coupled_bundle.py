@@ -1,8 +1,10 @@
 from pathlib import Path
+import json
 import tempfile
 import unittest
+from unittest.mock import patch
 
-from scripts.replay_coupled_bundle import load, safe_path
+from scripts.replay_coupled_bundle import load, safe_path, main, sha
 
 
 class ReplayBundleValidationTests(unittest.TestCase):
@@ -22,6 +24,22 @@ class ReplayBundleValidationTests(unittest.TestCase):
                                ('{"value":NaN}', 'NONFINITE_VALUE')):
                 path.write_text(text)
                 with self.assertRaisesRegex(ValueError, code): load(path)
+
+    def test_unlisted_native_reference_rejected_before_loading_archived_code(self):
+        for kind, names in [('coupled', ('coupled-input.json', 'coupled-result.json')),
+                            ('inlet-network', ('original.inp', 'design.json', 'transformation.json',
+                             'network/network-result.json', 'network/network.inp'))]:
+            with self.subTest(kind=kind), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                for name in (*names, 'network/network.out'):
+                    path = root/'case'/name; path.parent.mkdir(parents=True, exist_ok=True)
+                    path.write_text('{}')
+                manifest = root/'manifest.json'
+                manifest.write_text(json.dumps({'files': {f'case/{name}': sha(root/'case'/name) for name in names}}))
+                args = ['replay', '--kind', kind, '--bundle', str(root), '--case', 'case',
+                        '--manifest-sha256', sha(manifest), '--output', str(root/'result')]
+                with patch('sys.argv', args), self.assertRaisesRegex(ValueError, 'REPLAY_CASE_MISSING'):
+                    main()
 
 
 if __name__ == '__main__': unittest.main()

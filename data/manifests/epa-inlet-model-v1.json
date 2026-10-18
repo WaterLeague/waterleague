@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "classification": "PUBLIC_MODEL_REFERENCE_NOT_SEOUL_FACILITY_MEASUREMENTS",
+  "provider": "US EPA",
+  "engineRevision": "7952ca837988b1c32f791812eccc9fd64547e093",
+  "sourceUrl": "https://github.com/USEPA/Stormwater-Management-Model/tree/7952ca837988b1c32f791812eccc9fd64547e093",
+  "sourceArchiveSha256": "3f76a199573088ce47ff02491c529afb73d9953ee9d948dfc89dcd4981b4c0c0",
+  "manualUrl": "https://www.epa.gov/system/files/documents/2022-04/swmm-users-manual-version-5.2.pdf",
+  "licence": "Public Domain (source README)",
+  "files": {
+    "data/raw/epa-inlet-model-v1/inlet.c": {
+      "sha256": "e900fdeb2bb96a5edbbdde2028daf8e8ecccb46e0c591a55eb2a8f57ffbf9c00",
+      "bytes": 68770
+    },
+    "data/raw/epa-inlet-model-v1/street.c": {
+      "sha256": "41852d02d7762480e4afe7addb8250c0758603d4857488ee421fc9a19aca3cc0",
+      "bytes": 5135
+    },
+    "data/raw/epa-inlet-model-v1/README.md": {
+      "sha256": "11b8645890d1befb9dded9aea32c17611f1595a252edca6eea8400a2576a04a8",
+      "bytes": 1766
+    }
+  },
+  "limitations": [
+    "HEC-22 격자 참조 유형, 현장 제품·치수·막힘 실측 아님",
+    "TILT_BAR-45 개구율 0.17은 EPA 가정",
+    "EPA 포착 절점 월류의 지표 반환이며 2D 수두 지배 결합과 구분"
+  ]
+}

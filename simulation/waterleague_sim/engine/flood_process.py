@@ -15,6 +15,7 @@ _METHODS = {
 _METHODS['network_metrics'] = _METHODS['network_exchange'] | {'metric_state'}
 _METHODS['facility_network'] = _METHODS['network']
 _METHODS['facility_metrics'] = _METHODS['network'] | {'metric_state'}
+_METHODS['inlet_network'] = _METHODS['facility_metrics'] | {'inlet_state'}
 _METHODS['pump_network'] = _METHODS['facility_metrics'] | {'pump_state'}
 _METHODS['coupled_facility_network'] = _METHODS['network_metrics']
 _METHODS['coupled_pump_network'] = _METHODS['network_metrics'] | {'pump_state', 'evaluation_pump_state'}
@@ -31,9 +32,11 @@ def _serve(connection, engine, model, directory, evaluation_seconds, native_dura
                                      'MKL_NUM_THREADS': '1', 'MPLBACKEND': 'Agg'})
     session = None
     try:
-        if engine in ('network', 'network_exchange', 'network_metrics', 'facility_network', 'facility_metrics', 'pump_network', 'coupled_facility_network', 'coupled_pump_network'):
+        if engine in ('network', 'network_exchange', 'network_metrics', 'facility_network', 'facility_metrics', 'inlet_network', 'pump_network', 'coupled_facility_network', 'coupled_pump_network'):
             if engine == 'coupled_pump_network':
                 from waterleague_sim.engine.coupled_pump_network import CoupledPumpNetworkSession as NetworkSession
+            elif engine == 'inlet_network':
+                from waterleague_sim.engine.inlet_network import InletNetworkSession as NetworkSession
             elif engine == 'pump_network':
                 from waterleague_sim.engine.pump_network import PumpNetworkSession as NetworkSession
             elif engine == 'facility_metrics':
@@ -77,7 +80,7 @@ def _serve(connection, engine, model, directory, evaluation_seconds, native_dura
         except (EOFError, BrokenPipeError, OSError):
             pass
     finally:
-        if engine in ('network', 'network_exchange', 'network_metrics', 'facility_network', 'facility_metrics', 'pump_network', 'coupled_facility_network', 'coupled_pump_network') and session is not None:
+        if engine in ('network', 'network_exchange', 'network_metrics', 'facility_network', 'facility_metrics', 'inlet_network', 'pump_network', 'coupled_facility_network', 'coupled_pump_network') and session is not None:
             session.close()
         connection.close()
 
@@ -88,7 +91,7 @@ class EngineProcess:
     def __init__(self, engine, model, directory, *, evaluation_seconds=None, timeout_seconds=60,
                  native_duration=False):
         require(engine in _METHODS, 'FLOOD_ENGINE_KIND_INVALID')
-        require(type(native_duration) is bool and (not native_duration or engine in ('network', 'facility_network', 'facility_metrics', 'pump_network')),
+        require(type(native_duration) is bool and (not native_duration or engine in ('network', 'facility_network', 'facility_metrics', 'inlet_network', 'pump_network')),
                 'FLOOD_NATIVE_DURATION_DIAGNOSTIC_ONLY')
         self.native_duration = native_duration
         require(type(timeout_seconds) in (int, float) and 0 < timeout_seconds <= 60,
