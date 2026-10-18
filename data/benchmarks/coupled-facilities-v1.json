@@ -1,0 +1,191 @@
+{
+  "schemaVersion": 1,
+  "classification": "NUMERICAL_COUPLING_NOT_SEOUL_VALIDATION",
+  "artifactPath": "data/runs/coupled-facilities-20261018-v2",
+  "manifestSha256": "8a6389bcab119eb04db26d418526a624626e42072ad778ed128e7fff6f54bb3c",
+  "fileCount": 205,
+  "verification": {
+    "tests": 12,
+    "status": "PASSED",
+    "elapsedSeconds": 8.72
+  },
+  "observerBinaryUnchanged": true,
+  "displayFramesPhysicsUnchanged": true,
+  "cases": [
+    {
+      "case": "baseline",
+      "numericalStatus": "PASSED",
+      "metricStatus": "NUMERICAL_DIAGNOSTIC",
+      "rankingEligible": false,
+      "balance": {
+        "networkExternalInflowM3": 1.7169712424265844,
+        "networkExternalOutflowAndLossM3": 2.5815465653539533,
+        "surfaceExternalNetInflowM3": -8.841056330215151e-17,
+        "networkStorageM3": 0.4458582977453411,
+        "surfaceStorageM3": 0.6893823478268085,
+        "networkToSurfaceM3": 0.7148337719749677,
+        "surfaceToNetworkM3": 0.02545142414817323,
+        "exchangeCancellationResidualM3": 5.551115123125783e-16,
+        "balanceResidualM3": -3.866680460362648e-05
+      },
+      "raw": {
+        "outwardVolumeM3": 2.581546565353892,
+        "peakOutwardM3s": 0.03198419375599778,
+        "depthAreaTimeM3Hours": 0.021696356592478056
+      },
+      "rawChangeFromBaseline": {
+        "outwardVolumeM3": 0.0,
+        "peakOutwardM3s": 0.0,
+        "depthAreaTimeM3Hours": 0.0
+      }
+    },
+    {
+      "case": "facilities",
+      "numericalStatus": "PASSED",
+      "metricStatus": "NUMERICAL_DIAGNOSTIC",
+      "rankingEligible": false,
+      "balance": {
+        "networkExternalInflowM3": 1.1783037121800126,
+        "networkExternalOutflowAndLossM3": 2.2910443703650962,
+        "surfaceExternalNetInflowM3": -8.428406254279529e-17,
+        "networkStorageM3": 0.2600759724638268,
+        "surfaceStorageM3": 0.6270155968409352,
+        "networkToSurfaceM3": 0.655035697048671,
+        "surfaceToNetworkM3": 0.028020100207838954,
+        "exchangeCancellationResidualM3": -7.771561172376096e-16,
+        "balanceResidualM3": -5.492579493071581e-05
+      },
+      "raw": {
+        "outwardVolumeM3": 2.2910443703650927,
+        "peakOutwardM3s": 0.03198419375599778,
+        "depthAreaTimeM3Hours": 0.020473737901205682
+      },
+      "rawChangeFromBaseline": {
+        "outwardVolumeM3": -0.29050219498879937,
+        "peakOutwardM3s": 0.0,
+        "depthAreaTimeM3Hours": -0.0012226186912723744
+      }
+    },
+    {
+      "case": "legacy-observer",
+      "numericalStatus": "PASSED",
+      "metricStatus": "NUMERICAL_DIAGNOSTIC",
+      "rankingEligible": false,
+      "balance": {
+        "networkExternalInflowM3": 1.1783037121800126,
+        "networkExternalOutflowAndLossM3": 2.2910443703650962,
+        "surfaceExternalNetInflowM3": -8.428406254279529e-17,
+        "networkStorageM3": 0.2600759724638268,
+        "surfaceStorageM3": 0.6270155968409352,
+        "networkToSurfaceM3": 0.655035697048671,
+        "surfaceToNetworkM3": 0.028020100207838954,
+        "exchangeCancellationResidualM3": -7.771561172376096e-16,
+        "balanceResidualM3": -5.492579493071581e-05
+      },
+      "raw": {
+        "outwardVolumeM3": 2.2910443703650927,
+        "peakOutwardM3s": 0.03198419375599778,
+        "depthAreaTimeM3Hours": 0.020473737901205682
+      },
+      "rawChangeFromBaseline": {
+        "outwardVolumeM3": -0.29050219498879937,
+        "peakOutwardM3s": 0.0,
+        "depthAreaTimeM3Hours": -0.0012226186912723744
+      }
+    },
+    {
+      "case": "frames",
+      "numericalStatus": "PASSED",
+      "metricStatus": "NUMERICAL_DIAGNOSTIC",
+      "rankingEligible": false,
+      "balance": {
+        "networkExternalInflowM3": 1.1783037121800126,
+        "networkExternalOutflowAndLossM3": 2.2910443703650962,
+        "surfaceExternalNetInflowM3": -8.428406254279529e-17,
+        "networkStorageM3": 0.2600759724638268,
+        "surfaceStorageM3": 0.6270155968409352,
+        "networkToSurfaceM3": 0.655035697048671,
+        "surfaceToNetworkM3": 0.028020100207838954,
+        "exchangeCancellationResidualM3": -7.771561172376096e-16,
+        "balanceResidualM3": -5.492579493071581e-05
+      },
+      "raw": {
+        "outwardVolumeM3": 2.2910443703650927,
+        "peakOutwardM3s": 0.03198419375599778,
+        "depthAreaTimeM3Hours": 0.020473737901205682
+      },
+      "rawChangeFromBaseline": {
+        "outwardVolumeM3": -0.29050219498879937,
+        "peakOutwardM3s": 0.0,
+        "depthAreaTimeM3Hours": -0.0012226186912723744
+      }
+    },
+    {
+      "case": "open-cistern",
+      "numericalStatus": "PASSED",
+      "metricStatus": "NUMERICAL_DIAGNOSTIC",
+      "rankingEligible": false,
+      "balance": {
+        "networkExternalInflowM3": 1.1783037121800122,
+        "networkExternalOutflowAndLossM3": 2.2906741950281826,
+        "surfaceExternalNetInflowM3": -8.432465607828838e-17,
+        "networkStorageM3": 0.2599222751972296,
+        "surfaceStorageM3": 0.6275394821528751,
+        "networkToSurfaceM3": 0.6555667332936669,
+        "surfaceToNetworkM3": 0.028027251140446456,
+        "exchangeCancellationResidualM3": -2.220446049250313e-16,
+        "balanceResidualM3": -5.493850336024675e-05
+      },
+      "raw": {
+        "outwardVolumeM3": 2.2906741950281986,
+        "peakOutwardM3s": 0.03198419375599778,
+        "depthAreaTimeM3Hours": 0.020489847809301947
+      },
+      "rawChangeFromBaseline": {
+        "outwardVolumeM3": -0.29087237032569346,
+        "peakOutwardM3s": 0.0,
+        "depthAreaTimeM3Hours": -0.0012065087831761093
+      }
+    },
+    {
+      "case": "failed-swale",
+      "numericalStatus": "FAILED",
+      "metricStatus": "FAILED_DIAGNOSTIC",
+      "rankingEligible": false,
+      "balance": {
+        "networkExternalInflowM3": 1.0742519546832896,
+        "networkExternalOutflowAndLossM3": 2.197813228823952,
+        "surfaceExternalNetInflowM3": -8.373267978899166e-17,
+        "networkStorageM3": 0.2541622559965247,
+        "surfaceStorageM3": 0.6221091220762615,
+        "networkToSurfaceM3": 0.6500002474625229,
+        "surfaceToNetworkM3": 0.027891125386258254,
+        "exchangeCancellationResidualM3": 5.551115123125783e-16,
+        "balanceResidualM3": -5.535051853355899e-05
+      },
+      "raw": {
+        "outwardVolumeM3": 2.197813228823997,
+        "peakOutwardM3s": 0.03198419375599778,
+        "depthAreaTimeM3Hours": 0.02032191621868622
+      },
+      "rawChangeFromBaseline": {
+        "outwardVolumeM3": -0.38373333652989494,
+        "peakOutwardM3s": 0.0,
+        "depthAreaTimeM3Hours": -0.0013744403737918354
+      }
+    }
+  ],
+  "knownFailure": {
+    "policyVersion": "connected-lid-volume-balance-v1",
+    "failedFacilityIds": [
+      "WL_Swale"
+    ],
+    "status": "FAILED",
+    "timeBasis": "NATIVE_HYDROLOGY_CLOCK_SEPARATE_FROM_ROUTING_CLOCK"
+  },
+  "limitations": [
+    "시험 강우·집수·관망·지표는 합성 입력이며 서울 현장 효과가 아님",
+    "유출 시각의 시설 수지와 라우팅/지표 수지 분리; 전체 유역 수지 아님",
+    "실제 시설 입지·원가·관망/지표 기준고·LID 역압·운영 설치/순위 연결 미완료"
+  ]
+}

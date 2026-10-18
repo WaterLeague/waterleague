@@ -36,7 +36,21 @@ MPLBACKEND=Agg tmp/flood-venv/bin/python scripts/verify_flood_engines.py \
   --output data/runs/flood-engine-reference-new
 ```
 
-참조 실행에는 이미 확보한 `tmp/epa-reference/applications.zip` 사용. `--source`로 같은 해시의 원본 위치 지정 가능. 출력 디렉터리는 새 경로 필수. 관망 INP/RPT/OUT·상태 프레임·경계 변경과 지표 입력/수심/유속/SWW·엔진/코드 해시 보존. 실패 수치 사례도 manifest에 포함한다. 이 실행은 엔진 기반 확인이며 서울 관망·지표 결합이나 현장 침수 검증 완료를 뜻하지 않는다. 실제 양방향 교환·지표 침투/증발산·공개 관망 입력은 후속 연결 대상이다.
+참조 실행에는 이미 확보한 `tmp/epa-reference/applications.zip` 사용. `--source`로 같은 해시의 원본 위치 지정 가능. 출력 디렉터리는 새 경로 필수. 관망 INP/RPT/OUT·상태 프레임·경계 변경과 지표 입력/수심/유속/SWW·엔진/코드 해시 보존. 실패 수치 사례도 manifest에 포함한다. 양방향 교환·지표 침투/증발·공개 연구 관망 입력 경로는 구현했으나 실제 서울 관망과 지표의 일치된 기준고·현장 침수 대조·운영 작업 연결은 남아 있다.
+
+## 연결 시설의 지표 결합
+
+`run_coupled`의 `connectedFacilityDesign`은 기존 연결 설계와 같은 형식이며 원 지표의 `evaluationMetrics`도 필수다. 원 입력·설계·파생 INP·시설 초기 상태와 각 프레임의 시설 상태를 보존한다. 별도 `coupled_facility_network` 빌드가 같은 관망에서 시설 관측·지표 교환·외부 출구 지표를 함께 계산한다. 기존 관망/시설 바이너리는 교체하지 않는다.
+
+```sh
+tmp/flood-venv/bin/python scripts/build_coupled_facility_swmm.py
+# 기존 관망 관측기와의 결과 비교용 빌드
+tmp/flood-venv/bin/python scripts/build_network_swmm.py --metrics
+COUPLED_FACILITY_EVIDENCE_DIR=data/runs/coupled-facilities-new PYTHONPATH=simulation \
+  tmp/flood-venv/bin/python -m unittest simulation.tests.test_coupled_facilities
+```
+
+시험 강우·집수·관망·지표는 수치 확인용 합성 입력이며 공개 현장 자료가 아니다. 생물저류·침투 트렌치·이용조의 연결, 이용조 배수 개방, 기존 관측기와의 이진 결과 일치, 표시 주기 독립성과 작은 식생수로의 시설 수지 실패 전파를 확인한다. `connectedFacilities`의 수지는 원 유출 계산 시각 기준으로 별도 표시하며 관망/지표 수지에 시설 배수·저류를 다시 더하지 않는다. 전체 유역 물수지·현장 효과·LID 배수 역압을 검증한 것으로 해석하지 않는다.
 
 ## 연결 시설의 공개 견적
 

@@ -81,6 +81,34 @@ def _verify_files(root, files):
         require(file_digest(path) == expected, 'EVALUATION_ARTIFACT_HASH_MISMATCH')
 
 
+def _verify_connected_facilities(model, network, result, root):
+    if 'connectedFacilityDesign' not in model:
+        require('connectedFacilities' not in result, 'EVALUATION_FACILITY_CONTEXT_MISMATCH')
+        return
+    required = ('connected-facility-design.json', 'facility-network.inp', 'connected-facility-initial.json')
+    require(all(name in result['files'] for name in required), 'EVALUATION_FACILITY_ARTIFACT_MISSING')
+    detail = result.get('connectedFacilities')
+    design = _read(root / required[0])
+    require(isinstance(detail, dict) and detail.get('design') == design
+            and design['design'] == model['connectedFacilityDesign']
+            and design['originalSha256'] == hashlib.sha256(model['network']['inputText'].encode()).hexdigest()
+            and design['derivedSha256'] == result['files']['facility-network.inp']
+            and network['engine'].get('facilityObserverVersion') == 1
+            and detail.get('initial') == network['initial']['facilities'] == _read(root / required[2])
+            and detail.get('final') == network['final']['facilities']
+            and detail.get('quality') == network['facilityQuality']
+            and detail.get('routingTimeSeconds') == network['final']['totals']['timeSeconds']
+            and detail.get('scope') == 'SEPARATE_NATIVE_HYDROLOGY_BALANCE_NOT_EVALUATION_WINDOW_METRICS'
+            and detail.get('routingSurfaceBalanceIncludesFacilityStorage') is False
+            and detail.get('routingSurfaceBalanceAddsFacilityOutflows') is False,
+            'EVALUATION_FACILITY_CONTEXT_MISMATCH')
+    failed = [row['swmmId'] for row in detail['final'] if row['numericalStatus'] != 'PASSED']
+    require(detail['quality'].get('failedFacilityIds') == failed
+            and detail['quality'].get('status') == ('FAILED' if failed else 'PASSED')
+            and (not failed or network['numericalStatus'] == result['numericalStatus'] == 'FAILED'),
+            'EVALUATION_FACILITY_STATUS_MISMATCH')
+
+
 def read_coupled_record(directory, expected_result_sha256, context):
     """context는 서버가 고정한 시나리오·관측·설계 변경 계약이며 사용자 입력이 아니다."""
     root = Path(directory).resolve()
@@ -97,6 +125,7 @@ def read_coupled_record(directory, expected_result_sha256, context):
         _verify_files(root / 'network', network['files'])
         _verify_files(root / 'surface', surface['files'])
         _verify_surface_policy(model, surface, result, root)
+        _verify_connected_facilities(model, network, result, root)
         metrics = result['evaluationMetrics']
         require(metrics['specificationSha256'] == context['metricSpecificationSha256']
                 and digest(model['evaluationMetrics']) == context['metricSpecificationSha256']

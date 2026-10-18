@@ -104,6 +104,13 @@ def _balance(network, surface, ports):
 
 def run_coupled(model, directory):
     _validate(model)
+    facility_design = None
+    original_model = model
+    if 'connectedFacilityDesign' in model:
+        require(model.get('evaluationMetrics') is not None, 'COUPLED_FACILITY_METRICS_REQUIRED')
+        from waterleague_sim.engine.connected_facilities import compile_design
+        raw, facility_design = compile_design(model['network']['inputText'].encode(), model['connectedFacilityDesign'])
+        model = model | {'network': model['network'] | {'inputText': raw.decode()}}
     evaporation = require_evaporation_clock(model['surface'], duration=model['durationSeconds'],
                          rainfall=model.get('observedRainfall'), network=model['network'])
     stages = require_stage_clock(model['surface'], duration=model['durationSeconds'],
@@ -119,7 +126,10 @@ def run_coupled(model, directory):
     directory = Path(directory).resolve()
     require(not directory.exists(), 'COUPLED_OUTPUT_EXISTS')
     directory.mkdir(parents=True)
-    _write(directory / 'coupled-input.json', model)
+    _write(directory / 'coupled-input.json', original_model)
+    if facility_design is not None:
+        _write(directory / 'connected-facility-design.json', facility_design)
+        (directory / 'facility-network.inp').write_bytes(raw)
     if observed is not None:
         observed.archive(directory / 'observed-rainfall')
     ports = model['ports']
@@ -146,13 +156,21 @@ def run_coupled(model, directory):
         stage_times.update(round(t * 1000) for t in evaporation.knots)
     event_times = sorted(set(events) | stage_times | {duration})
     clock, nstate, state = 0, None, None
+    network_engine = ('coupled_facility_network' if facility_design is not None else
+                      'network_metrics' if metric_spec is not None else 'network_exchange')
     try:
-        with EngineProcess('network_metrics' if metric_spec is not None else 'network_exchange',
+        with EngineProcess(network_engine,
                            network_model, directory / 'network',
                            evaluation_seconds=model['durationSeconds']) as network:
             with EngineProcess('surface_exchange', surface_model, directory / 'surface') as surface:
                 state = surface.call('port_state')
                 nstate = network.info['initial']
+                if facility_design is not None:
+                    expected = {(row['subcatchmentId'], row['swmmId']) for row in facility_design['facilities']}
+                    actual = [(row['subcatchmentId'], row['swmmId']) for row in nstate['facilities']]
+                    require(len(actual) == len(expected) and set(actual) == expected,
+                            'COUPLED_FACILITY_OBSERVER_MISMATCH')
+                    _write(directory / 'connected-facility-initial.json', nstate['facilities'])
                 initial_storage = nstate['totals']['initialStorageM3'] + state['storageM3']
                 heads = {key: row['headM'] for key, row in state['ports'].items()}
                 previous_ports = network.call('port_state', heads)
@@ -269,6 +287,16 @@ def run_coupled(model, directory):
                     result['surfaceEvaporation'] = sresult['evaporation']
                 if 'numericalQuality' in sresult:
                     result['surfaceNumericalQuality'] = sresult['numericalQuality']
+                if facility_design is not None:
+                    result['connectedFacilities'] = {
+                        'design': facility_design,
+                        'quality': nresult['facilityQuality'],
+                        'initial': nresult['initial']['facilities'],
+                        'final': nresult['final']['facilities'],
+                        'routingTimeSeconds': nresult['final']['totals']['timeSeconds'],
+                        'scope': 'SEPARATE_NATIVE_HYDROLOGY_BALANCE_NOT_EVALUATION_WINDOW_METRICS',
+                        'routingSurfaceBalanceIncludesFacilityStorage': False,
+                        'routingSurfaceBalanceAddsFacilityOutflows': False}
                 if metric_spec is not None:
                     nm, sm = nresult['evaluationMetrics'], sresult['evaluationMetrics']
                     spec_hash = specification_hash(metric_spec)
