@@ -1,0 +1,284 @@
+{
+  "schemaVersion": 1,
+  "method": "CONNECTED_COVERED_SEALED_STORAGE_V1",
+  "rankingEligible": false,
+  "classification": "EXPLICIT_STORAGE_DESIGN_PUBLIC_NETWORK_AND_SYNTHETIC_COUPLING",
+  "cases": [
+    {
+      "name": "backwater-1ms",
+      "status": "PASSED",
+      "nonConvergedSteps": 0,
+      "raw": {
+        "outwardVolumeM3": 0.0,
+        "peakOutwardM3s": 0.0,
+        "depthAreaTimeM3Hours": 0.05569195498656851
+      },
+      "storage": [
+        {
+          "id": "Tank",
+          "nodeId": "WLST_Tank",
+          "initialStorageM3": 0.0,
+          "inflowM3": 1.0132092315910701,
+          "outflowIncludingFloodingM3": 0.7436476007560867,
+          "floodingM3": 0.0,
+          "finalStorageM3": 0.26954630546029495,
+          "capacityM3": 0.35,
+          "balanceResidualM3": 1.5325374688457405e-05,
+          "allowedResidualM3": 0.010132092315910701,
+          "numericalStatus": "PASSED"
+        }
+      ],
+      "evaluationStorage": null,
+      "resultSha256": "ecef7a86e414bed311a5e7903b55f3fe12e1b3de6c3d01f9c584330145e6819f",
+      "nativeOutputSha256": "78fd07bc116a79bada7fdb23d90bf6c2098f2808bea4e80b77c9edcef8270f1d"
+    },
+    {
+      "name": "backwater-failed-2ms",
+      "status": "FAILED",
+      "nonConvergedSteps": 11,
+      "raw": {
+        "outwardVolumeM3": 0.0,
+        "peakOutwardM3s": 0.0,
+        "depthAreaTimeM3Hours": 0.05569161052847411
+      },
+      "storage": [
+        {
+          "id": "Tank",
+          "nodeId": "WLST_Tank",
+          "initialStorageM3": 0.0,
+          "inflowM3": 1.0132006225770744,
+          "outflowIncludingFloodingM3": 0.743653621918357,
+          "floodingM3": 0.0,
+          "finalStorageM3": 0.2695463657269724,
+          "capacityM3": 0.35,
+          "balanceResidualM3": 6.349317450138336e-07,
+          "allowedResidualM3": 0.010132006225770745,
+          "numericalStatus": "PASSED"
+        }
+      ],
+      "evaluationStorage": null,
+      "resultSha256": "1a95b46abc29326d1240b6b66b30fcd91fe84445dc6f2bca8135fb0530dcb8b1",
+      "nativeOutputSha256": "f95f078f628ed852c1898ddddb57dfc8abd3c4cfa55ad370eee96c70d53bc000"
+    },
+    {
+      "name": "baseline",
+      "status": "PASSED",
+      "nonConvergedSteps": 0,
+      "raw": {
+        "outwardVolumeM3": 2.450966937314628,
+        "peakOutwardM3s": 0.02506626181556859,
+        "depthAreaTimeM3Hours": 0.022490712019364333
+      },
+      "storage": null,
+      "evaluationStorage": null,
+      "resultSha256": "b29403bd965765d445ff9b77c0f754a1e928244baffdf6d52ddec665047a1d5c",
+      "nativeOutputSha256": "6753e0f540001547c8906a843dda87ad026122b549fe753b38ab888daf668675"
+    },
+    {
+      "name": "flap",
+      "status": "PASSED",
+      "nonConvergedSteps": 0,
+      "raw": {
+        "outwardVolumeM3": 0.0,
+        "peakOutwardM3s": 0.0,
+        "depthAreaTimeM3Hours": 0.050759722754497305
+      },
+      "storage": [
+        {
+          "id": "Tank",
+          "nodeId": "WLST_Tank",
+          "initialStorageM3": 0.0,
+          "inflowM3": 0.38825056318184736,
+          "outflowIncludingFloodingM3": 0.10681011386813398,
+          "floodingM3": 0.0,
+          "finalStorageM3": 0.28169878093243356,
+          "capacityM3": 0.35,
+          "balanceResidualM3": -0.00025833161872018673,
+          "allowedResidualM3": 0.0038850889480056758,
+          "numericalStatus": "PASSED"
+        }
+      ],
+      "evaluationStorage": null,
+      "resultSha256": "505831aa380688ce314523956fb2b5147739b75d1454aaf938dd443258363fc2",
+      "nativeOutputSha256": "3cc21551969ca130b47176034d2723b410c1afe22ccc193d9d8fa9eb763d2e94"
+    },
+    {
+      "name": "normal",
+      "status": "PASSED",
+      "nonConvergedSteps": 0,
+      "raw": {
+        "outwardVolumeM3": 2.6749396916459274,
+        "peakOutwardM3s": 0.031491647571975,
+        "depthAreaTimeM3Hours": 0.013183439179302165
+      },
+      "storage": [
+        {
+          "id": "Tank",
+          "nodeId": "WLST_Tank",
+          "initialStorageM3": 0.0,
+          "inflowM3": 0.5018380030765168,
+          "outflowIncludingFloodingM3": 0.38483186320990753,
+          "floodingM3": 0.0,
+          "finalStorageM3": 0.11701948104420713,
+          "capacityM3": 0.35,
+          "balanceResidualM3": -1.334117759783926e-05,
+          "allowedResidualM3": 0.0050185134425411474,
+          "numericalStatus": "PASSED"
+        }
+      ],
+      "evaluationStorage": null,
+      "resultSha256": "8d3a309e6ce543c2be72692eb92d0df40f535a779099e3e08760ebccc64b44a1",
+      "nativeOutputSha256": "93292d535c1b6ff7b39a2ee7221d377411576053dd88b87843d7f5714737a155"
+    },
+    {
+      "name": "normal-1ms",
+      "status": "PASSED",
+      "nonConvergedSteps": 0,
+      "raw": {
+        "outwardVolumeM3": 2.6749628507295924,
+        "peakOutwardM3s": 0.031490473419702895,
+        "depthAreaTimeM3Hours": 0.013183219555251608
+      },
+      "storage": [
+        {
+          "id": "Tank",
+          "nodeId": "WLST_Tank",
+          "initialStorageM3": 0.0,
+          "inflowM3": 0.501867215296246,
+          "outflowIncludingFloodingM3": 0.38485196501514096,
+          "floodingM3": 0.0,
+          "finalStorageM3": 0.11701866371321808,
+          "capacityM3": 0.35,
+          "balanceResidualM3": -3.4134321130335765e-06,
+          "allowedResidualM3": 0.0050187062872835905,
+          "numericalStatus": "PASSED"
+        }
+      ],
+      "evaluationStorage": null,
+      "resultSha256": "572ea5a7b50237e8bc5f99360218e66d23c52f860c0378f19b14b39a57bca900",
+      "nativeOutputSha256": "fc64706f612a14bee6aa747bb6a4ad78c433de5ec229153f9bddc9bc1ad09919"
+    },
+    {
+      "name": "observed-7d",
+      "status": "PASSED",
+      "nonConvergedSteps": 0,
+      "raw": {
+        "outwardVolumeM3": 1098.7631114242383,
+        "peakOutwardM3s": 0.06528197055229003,
+        "depthAreaTimeM3Hours": 10930.234754854922
+      },
+      "storage": [
+        {
+          "id": "Tank",
+          "nodeId": "WLST_Tank",
+          "initialStorageM3": 0.0,
+          "inflowM3": 129.16400169461093,
+          "outflowIncludingFloodingM3": 75.68853875296782,
+          "floodingM3": 0.0,
+          "finalStorageM3": 53.46198561392053,
+          "capacityM3": 400.0,
+          "balanceResidualM3": 0.013477327722583254,
+          "allowedResidualM3": 1.2916400169461093,
+          "numericalStatus": "PASSED"
+        }
+      ],
+      "evaluationStorage": [
+        {
+          "id": "Tank",
+          "nodeId": "WLST_Tank",
+          "initialStorageM3": 22.289436376509734,
+          "inflowM3": 69.10629117540338,
+          "outflowIncludingFloodingM3": 37.92740474604143,
+          "floodingM3": 0.0,
+          "finalStorageM3": 53.46198561392053,
+          "capacityM3": 400.0,
+          "balanceResidualM3": 0.006337191951161003,
+          "allowedResidualM3": 0.9139572755191313,
+          "numericalStatus": "PASSED"
+        }
+      ],
+      "resultSha256": "cc733354ca02188a766ab2c4f1a310af580a446101c2daf37fac3c7460877b88",
+      "nativeOutputSha256": "787112bd4a2bf9be58e7ca2636ea7efa9b95af21a8553a103feca43550e43b92"
+    },
+    {
+      "name": "replay",
+      "status": "PASSED",
+      "nonConvergedSteps": 0,
+      "raw": {
+        "outwardVolumeM3": 2.6749396916459274,
+        "peakOutwardM3s": 0.031491647571975,
+        "depthAreaTimeM3Hours": 0.013183439179302165
+      },
+      "storage": [
+        {
+          "id": "Tank",
+          "nodeId": "WLST_Tank",
+          "initialStorageM3": 0.0,
+          "inflowM3": 0.5018380030765168,
+          "outflowIncludingFloodingM3": 0.38483186320990753,
+          "floodingM3": 0.0,
+          "finalStorageM3": 0.11701948104420713,
+          "capacityM3": 0.35,
+          "balanceResidualM3": -1.334117759783926e-05,
+          "allowedResidualM3": 0.0050185134425411474,
+          "numericalStatus": "PASSED"
+        }
+      ],
+      "evaluationStorage": null,
+      "resultSha256": "e0f3fdb57a2a65e80fcd9efabe62807e9115dc6aa42db1445bcd8cc8dcbd105a",
+      "nativeOutputSha256": "93292d535c1b6ff7b39a2ee7221d377411576053dd88b87843d7f5714737a155"
+    },
+    {
+      "name": "public-seocho",
+      "classification": "PUBLIC_RESEARCH_NETWORK_EXPLICIT_DESIGN_NOT_SITE_VERIFIED",
+      "status": "PASSED",
+      "nonConvergedSteps": 0,
+      "networkFloodingM3": 1507679.7010494345,
+      "storage": [
+        {
+          "id": "Tank",
+          "nodeId": "WLST_Tank",
+          "initialStorageM3": 0.0,
+          "inflowM3": 272.6317257283733,
+          "outflowIncludingFloodingM3": 67.92419968512095,
+          "floodingM3": 0.0,
+          "finalStorageM3": 204.68475399302696,
+          "capacityM3": 500.0,
+          "balanceResidualM3": 0.02277205022537032,
+          "allowedResidualM3": 2.726317257283733,
+          "numericalStatus": "PASSED"
+        }
+      ],
+      "resultSha256": "723c6273b16b253e4f6a8dad999d2f3b92674a21bf66bfb2612803f032538881"
+    },
+    {
+      "name": "unmapped-overflow",
+      "status": "FAILED",
+      "code": "COUPLED_UNMAPPED_NODE_FLOODING",
+      "lastNetworkFloodingM3": 5.142061049966462e-05,
+      "failureSha256": "a8ef6a30d0128636e3b18070b0e8c43adaf5c80ca17c8ccca9592d984cbde1b8"
+    }
+  ],
+  "normal2msMinus1ms": {
+    "outwardVolumeM3": -2.315908366501418e-05,
+    "peakOutwardM3s": 1.1741522721042674e-06,
+    "depthAreaTimeM3Hours": 2.1962405055697687e-07
+  },
+  "verification": {
+    "newTests": 7,
+    "regressionTests": 23,
+    "status": "PASSED",
+    "nativeReplayBinaryIdentical": true
+  },
+  "evidence": {
+    "path": "data/runs/connected-storage-20261018-v6",
+    "manifestSha256": "7222f246ee1db91fbfdeb7942e4597db6d3a858475a1151e1c7b71f89f2b549a",
+    "files": 1291
+  },
+  "limitations": [
+    "저류조 치수·위치는 명시적 시험 설계이며 실제 서울 시설·입지·시공 단가의 검증 아님",
+    "서초 연구 관망의 좌표계·높이 기준·추정 유입 한계 유지; 실제 서울 관망·지표 결합 아님",
+    "개방 저류지·긴 접속관·펌프·침전/막힘·운영 설치 및 순위는 이번 범위 밖",
+    "2ms 역류 수렴 실패와 미연결 월류 실패 보존, 1ms 통과를 모든 입력 수렴 보증으로 해석 금지"
+  ]
+}

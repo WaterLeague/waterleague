@@ -107,8 +107,15 @@ def _balance(network, surface, ports):
 def run_coupled(model, directory):
     _validate(model)
     facility_design = None
+    storage_design, storage_raw, storage_summary = None, None, None
     original_model = model
     initialization, evaluation_origin, evaluation_final, evaluation_balance = None, None, None, None
+    if 'connectedStorageDesign' in model:
+        require(model.get('evaluationMetrics') is not None, 'COUPLED_STORAGE_METRICS_REQUIRED')
+        from waterleague_sim.engine.connected_storage import compile_storage
+        storage_raw, storage_design = compile_storage(model['network']['inputText'].encode(),
+                                                      model['connectedStorageDesign'])
+        model = model | {'network': model['network'] | {'inputText': storage_raw.decode()}}
     if 'initialization' in model:
         from waterleague_sim.forcing.coupled_initialization import prepare_initialized_coupling
         initialization = prepare_initialized_coupling(model)
@@ -136,6 +143,9 @@ def run_coupled(model, directory):
     require(not directory.exists(), 'COUPLED_OUTPUT_EXISTS')
     directory.mkdir(parents=True)
     _write(directory / 'coupled-input.json', original_model)
+    if storage_design is not None:
+        _write(directory / 'connected-storage-design.json', storage_design)
+        (directory / 'storage-network.inp').write_bytes(storage_raw)
     if initialization is not None:
         _write(directory / 'initialized-coupled-input.json', initialization.model)
         _write(directory / 'initialization-forcing.json', initialization.summary)
@@ -282,11 +292,16 @@ def run_coupled(model, directory):
                     require(math.isclose(evaluation_balance['surface']['rainfallM3'], expected,
                             abs_tol=1e-8, rel_tol=1e-8), 'OBSERVED_EVALUATION_RAIN_VOLUME_MISMATCH')
                 nresult, sresult = network.call('finish'), surface.call('finish')
+                if storage_design is not None:
+                    from waterleague_sim.engine.connected_storage import result_summary
+                    storage_summary = result_summary(storage_design, nresult['initial'], nresult['final'],
+                        evaluation_origin['network'] if evaluation_origin is not None else None)
                 scale = max(initial_storage + balance['networkExternalInflowM3']
                             + max(0, balance['surfaceExternalNetInflowM3']),
                             balance['networkStorageM3'] + balance['surfaceStorageM3'])
                 passed = (nresult['numericalStatus'] == sresult['numericalStatus'] == 'PASSED'
                           and abs(residual) <= max(1e-8, .01 * scale)
+                          and (storage_summary is None or storage_summary['numericalStatus'] == 'PASSED')
                           and (evaluation_balance is None or evaluation_balance['numericalStatus'] == 'PASSED'))
                 if observed is not None:
                     expected_rain = observed.summary['expectedSurfaceRainfallM3']
@@ -316,6 +331,8 @@ def run_coupled(model, directory):
                               for p in sorted(directory.rglob('*')) if p.is_file()}}
                 if model.get('dryExchangePolicy') is not None:
                     result['dryExchangeRoundoff'] = state['dryExchangeRoundoff']
+                if storage_summary is not None:
+                    result['connectedStorage'] = storage_summary
                 if observed is not None:
                     result['observedRainfall'] = observed.summary | {
                         'appliedSurfaceRainfallM3': applied_rain,

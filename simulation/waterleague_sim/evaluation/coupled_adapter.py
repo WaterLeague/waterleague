@@ -188,6 +188,51 @@ def _verify_connected_facilities(model, network, result, root):
             'EVALUATION_FACILITY_STATUS_MISMATCH')
 
 
+def _verify_connected_storage(model, network, result, root):
+    if 'connectedStorageDesign' not in model:
+        require('connectedStorage' not in result, 'EVALUATION_STORAGE_CONTEXT_MISMATCH')
+        return model
+    from waterleague_sim.engine.connected_storage import compile_storage, result_summary
+    from waterleague_sim.engine.flood_errors import FloodModelError
+    required = ('connected-storage-design.json', 'storage-network.inp', 'network/network.inp')
+    require(all(name in result['files'] for name in required), 'EVALUATION_STORAGE_ARTIFACT_MISSING')
+    metadata = _read(root/required[0])
+    raw = (root/required[1]).read_bytes()
+    detail = result.get('connectedStorage')
+    require(isinstance(detail, dict) and detail.get('design') == metadata
+            and metadata['design'] == model['connectedStorageDesign']
+            and metadata['sourceNetworkSha256'] == hashlib.sha256(model['network']['inputText'].encode()).hexdigest()
+            and metadata['derivedNetworkSha256'] == file_digest(root/required[1]),
+            'EVALUATION_STORAGE_CONTEXT_MISMATCH')
+    try:
+        compiled, expected = compile_storage(model['network']['inputText'].encode(), model['connectedStorageDesign'])
+        from waterleague_sim.ingestion.published_network import records
+        identifiers = {row['nodeId'].upper() for row in metadata['facilities']}
+        identifiers |= {row['nodeId'].upper()+'_A' for row in metadata['facilities']}
+        identifiers |= {port['linkId'].upper() for row in metadata['facilities'] for port in row['ports'].values()}
+        def design_rows(data):
+            return {section: [row['tokens'] for row in rows
+                    if any(token.upper() in identifiers for token in row['tokens'])]
+                    for section, rows in records(data)[1].items()
+                    if any(any(token.upper() in identifiers for token in row['tokens']) for row in rows)}
+        require(design_rows(compiled) == design_rows((root/required[2]).read_bytes()),
+                'EVALUATION_STORAGE_NATIVE_INPUT_MISMATCH')
+        # 이전 코드 해시는 원 묶음에 보존하고 입력·제원·계산 의미의 일치만 다시 확인한다.
+        expected['compilerSha256'] = metadata['compilerSha256']
+        origin = None
+        if 'initialization' in model:
+            require('evaluation-initial-state.json' in result['files'], 'EVALUATION_STORAGE_ARTIFACT_MISSING')
+            origin = _read(root/'evaluation-initial-state.json')['network']
+        summary = result_summary(metadata, network['initial'], network['final'], origin)
+    except FloodModelError:
+        raise EvaluationError('EVALUATION_STORAGE_INPUT_INVALID') from None
+    require(compiled == raw and expected == metadata and is_hash(metadata['compilerSha256'])
+            and detail == summary, 'EVALUATION_STORAGE_CONTEXT_MISMATCH')
+    require(summary['numericalStatus'] == 'PASSED' or result['numericalStatus'] == 'FAILED',
+            'EVALUATION_STORAGE_STATUS_MISMATCH')
+    return model | {'network': model['network'] | {'inputText': raw.decode()}}
+
+
 def read_coupled_record(directory, expected_result_sha256, context):
     """context는 서버가 고정한 시나리오·관측·설계 변경 계약이며 사용자 입력이 아니다."""
     root = Path(directory).resolve()
@@ -203,6 +248,7 @@ def read_coupled_record(directory, expected_result_sha256, context):
         model, network, surface = [_read(root / name) for name in required]
         _verify_files(root / 'network', network['files'])
         _verify_files(root / 'surface', surface['files'])
+        model = _verify_connected_storage(model, network, result, root)
         model = _verify_initialization(model, network, surface, result, root)
         _verify_dry_policy(model, surface, result, root)
         _verify_surface_policy(model, surface, result, root)
