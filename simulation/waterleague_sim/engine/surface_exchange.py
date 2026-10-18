@@ -140,8 +140,11 @@ class ExchangeSurfaceSession(SurfaceSession):
     def advance_exchange(self, milliseconds):
         require(not self.finished and type(milliseconds) is int and 1 <= milliseconds <= 60_000,
                 'EXCHANGE_STEP_INVALID')
-        duration = milliseconds / 1000
-        target = self.domain.get_time() + duration
+        now = float(self.domain.get_time())
+        tick = round(now * 1000)
+        require(abs(now-tick/1000) <= 1e-8, 'EXCHANGE_SURFACE_CLOCK_OFF_GRID')
+        # 관망의 정수 밀리초 시계를 유지하여 반복 덧셈 오차가 관측 끝을 넘지 않게 한다.
+        target = (tick + milliseconds) / 1000
         self._evolve_until(target)
         require(math.isclose(self.domain.get_time(), target, abs_tol=1e-8, rel_tol=0),
                 'EXCHANGE_SURFACE_TIME_MISMATCH')

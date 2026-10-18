@@ -109,6 +109,12 @@ def run_coupled(model, directory):
     facility_design = None
     storage_design, storage_raw, storage_summary = None, None, None
     original_model = model
+    basin_design, basin_model = None, None
+    if 'surfaceBasinDesign' in model:
+        from waterleague_sim.engine.surface_basin import compile_basin
+        model, basin_design = compile_basin(model)
+        basin_model = model
+        _validate(model)
     initialization, evaluation_origin, evaluation_final, evaluation_balance = None, None, None, None
     if 'connectedStorageDesign' in model:
         require(model.get('evaluationMetrics') is not None, 'COUPLED_STORAGE_METRICS_REQUIRED')
@@ -143,6 +149,9 @@ def run_coupled(model, directory):
     require(not directory.exists(), 'COUPLED_OUTPUT_EXISTS')
     directory.mkdir(parents=True)
     _write(directory / 'coupled-input.json', original_model)
+    if basin_design is not None:
+        _write(directory / 'surface-basin-design.json', basin_design)
+        _write(directory / 'basin-coupled-input.json', basin_model)
     if storage_design is not None:
         _write(directory / 'connected-storage-design.json', storage_design)
         (directory / 'storage-network.inp').write_bytes(storage_raw)
@@ -333,6 +342,10 @@ def run_coupled(model, directory):
                     result['dryExchangeRoundoff'] = state['dryExchangeRoundoff']
                 if storage_summary is not None:
                     result['connectedStorage'] = storage_summary
+                if basin_design is not None:
+                    from waterleague_sim.engine.surface_basin import result_summary as basin_summary
+                    result['surfaceBasins'] = basin_summary(basin_design, sresult,
+                        evaluation_origin['surface']['surface'] if evaluation_origin is not None else None)
                 if observed is not None:
                     result['observedRainfall'] = observed.summary | {
                         'appliedSurfaceRainfallM3': applied_rain,

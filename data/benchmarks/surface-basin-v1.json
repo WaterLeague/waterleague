@@ -1,0 +1,879 @@
+{
+  "schemaVersion": 1,
+  "classification": "OBSERVED_AND_EXPLICIT_NUMERICAL_FORCING_ON_SYNTHETIC_DOMAIN",
+  "rankingEligible": false,
+  "cases": {
+    "baseline": {
+      "numericalStatus": "PASSED",
+      "networkConvergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 12407,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      },
+      "balance": {
+        "networkExternalInflowM3": -3.6637359812630166e-15,
+        "networkExternalOutflowAndLossM3": 1.9498124500711265,
+        "surfaceExternalNetInflowM3": 0.007998674202074965,
+        "networkStorageM3": 0.024781710770211792,
+        "surfaceStorageM3": 0.033269971985660396,
+        "networkToSurfaceM3": 0.5431812472652184,
+        "surfaceToNetworkM3": 0.5179099494816469,
+        "exchangeCancellationResidualM3": 2.7755575615628914e-16,
+        "surfaceRainfallM3": 0.007999999999999901,
+        "surfaceInfiltrationM3": 0.0,
+        "surfaceBoundaryNetInflowM3": -7.060357403935388e-18,
+        "surfaceEvaporationM3": 1.3257979265546282e-06,
+        "potentialSurfaceEvaporationM3": 1.3257977172352748e-06,
+        "unmetSurfaceEvaporationM3": 0.0,
+        "surfaceEvaporationRoundoffM3": 2.0931935346096386e-13,
+        "balanceResidualM3": -8.815693001268388e-05
+      },
+      "evaluationMetrics": {
+        "specificationSha256": "1b1ab26a797c386bb558ddccc3fd518783c6f9fdfcbd72a9fe2e1bc475028d7d",
+        "status": "NUMERICAL_DIAGNOSTIC",
+        "rankingEligible": false,
+        "complete": true,
+        "raw": {
+          "outwardVolumeM3": 1.9498124500711644,
+          "peakOutwardM3s": 0.03198419375599778,
+          "depthAreaTimeM3Hours": 0.0041869119276784165
+        }
+      },
+      "resultSha256": "4fa11fbb5b63e0e57d6e370ef993a80ed8d511bb33186c221e2af20474b787ec",
+      "engineSha256": "93f694291d64e451528949ceb8d89468d3d6d50701d0fd4b811308c5e88d0d7c"
+    },
+    "observed-7d": {
+      "numericalStatus": "PASSED",
+      "networkConvergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 626340,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      },
+      "balance": {
+        "networkExternalInflowM3": 5892.965757772683,
+        "networkExternalOutflowAndLossM3": 5809.016316094142,
+        "surfaceExternalNetInflowM3": 1277.335876763974,
+        "networkStorageM3": 173.51229788603615,
+        "surfaceStorageM3": 1187.763347481361,
+        "networkToSurfaceM3": 63.42088772215032,
+        "surfaceToNetworkM3": 152.99341700605956,
+        "exchangeCancellationResidualM3": 5.684341886080802e-14,
+        "surfaceRainfallM3": 2310.000000000031,
+        "surfaceInfiltrationM3": 1018.1126813594562,
+        "surfaceBoundaryNetInflowM3": 2.7237008490213472e-14,
+        "surfaceEvaporationM3": 14.551441876589806,
+        "potentialSurfaceEvaporationM3": 224.93607953946355,
+        "unmetSurfaceEvaporationM3": 210.38463766286955,
+        "surfaceEvaporationRoundoffM3": -4.192202140984591e-12,
+        "balanceResidualM3": 0.009673075117689223
+      },
+      "evaluationMetrics": {
+        "specificationSha256": "162737aea5c6cbfb3b6d9e50c9ebbb116ab02cb4df3b36e9c8ea983b1050b7e4",
+        "status": "NUMERICAL_DIAGNOSTIC",
+        "rankingEligible": false,
+        "complete": true,
+        "raw": {
+          "outwardVolumeM3": 2669.9498483396533,
+          "peakOutwardM3s": 0.17850869914988524,
+          "depthAreaTimeM3Hours": 26.118874230220907
+        }
+      },
+      "resultSha256": "21224d91a37f0dd2b2941492972e3061a29b9e0e676e640149d482a91f907bd4",
+      "engineSha256": "47d5242024d2fb2a4d1fdec4b952eadb7c6c0ad62231d2a28d8b6ce67e73f25c",
+      "surfaceBasins": {
+        "design": {
+          "schemaVersion": 1,
+          "method": "EXPLICIT_SURFACE_BASIN_EARTHWORK_V1",
+          "sourceModelSha256": "b8ded8a80ddd1e6fe50532c4c6d5e1447b63f4622728b14575ae4dff5508a39b",
+          "derivedModelSha256": "2c9982c949c278145828bd8b1939891cf8fdc2b5cebaea24d9150d45260b7970",
+          "compilerSha256": "9b28517d7f67d84c1f5bd83a91d0e3e467d01c6833e25e08ff91624ba0f66f4d",
+          "facilities": [
+            {
+              "id": "Pond",
+              "portId": "WLBS_Pond",
+              "planAreaM2": 10000.0,
+              "excavationM3": 4500.0,
+              "lowestBoundaryElevationM": 1.0,
+              "storageToLowestBoundaryM3": 4500.0,
+              "capacityMethod": "DISCRETE_CENTROID_DEPTH_AT_LOWEST_BOUNDARY",
+              "geometryVerifiedOnSite": false
+            }
+          ],
+          "rainfallOwnershipUnchanged": true,
+          "additionalNetworkStorageM3": 0,
+          "rankingEligible": false,
+          "historicalReconstructionEligible": false,
+          "limitations": [
+            "설계 지형·재료·배수구이며 현장 형상/시공/단가 검증 아님",
+            "지표 지형과 같은 수량 소유권; 부분 영역 물수지를 별도 계측한 결과 아님",
+            "침투·증발은 기존 지표 모형의 근사와 관측 입력 한계 유지",
+            "배수구는 국부 개구부이며 접속관 마찰/막힘·3차원 수직 흐름 제외",
+            "격자 중심 수심 기반 저장량; 경계고 초과 물은 주변 지표와 같은 흐름으로 계산"
+          ],
+          "requestSha256": "bb3398fbe35577b26650327826f6652b10744369b2607e6836d8eaf52f2bd38b"
+        },
+        "initial": {
+          "timeSeconds": 0.0,
+          "facilities": [
+            {
+              "id": "Pond",
+              "storageM3": 0.0,
+              "maximumDepthM": 0.0,
+              "maximumStageAboveLowestBoundaryM": 0.0
+            }
+          ]
+        },
+        "evaluationInitial": {
+          "timeSeconds": 604800.0,
+          "facilities": [
+            {
+              "id": "Pond",
+              "storageM3": 574.3359946184709,
+              "maximumDepthM": 0.22020704551835404,
+              "maximumStageAboveLowestBoundaryM": 0.0012557153974450674
+            }
+          ]
+        },
+        "final": {
+          "timeSeconds": 626340.0,
+          "facilities": [
+            {
+              "id": "Pond",
+              "storageM3": 1183.8656996927236,
+              "maximumDepthM": 0.3701039547029056,
+              "maximumStageAboveLowestBoundaryM": 0.0
+            }
+          ]
+        },
+        "includedInSurfaceStorageAndLosses": true,
+        "additionalStorageInCoupledBalanceM3": 0,
+        "separateRegionFluxLedgerAvailable": false,
+        "rankingEligible": false
+      },
+      "initialization": {
+        "warmupSeconds": 604800,
+        "evaluationSeconds": 21540,
+        "statePolicy": "SAME_LIVE_ENGINES_NO_STATE_TRANSPLANT",
+        "scoreExcludesWarmup": true,
+        "evaluationLedger": {
+          "durationSeconds": 21540.0,
+          "numericalStatus": "PASSED",
+          "routing": {
+            "totals": {
+              "dryWeatherInflowM3": 0.0,
+              "runoffInflowM3": 2626.061963180843,
+              "groundwaterInflowM3": 0.0,
+              "rdiiInflowM3": 0.0,
+              "externalInflowM3": 87.82919172675882,
+              "outflowM3": 2700.433560351094,
+              "floodingM3": 0.0,
+              "evaporationM3": 0.031976993740743254,
+              "seepageM3": 0.0,
+              "reactionLossM3": 0.0,
+              "initialStorageM3": 160.0880346841125,
+              "storageM3": 173.51229788603615
+            },
+            "balance": {
+              "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+              "totalInM3": 2873.9791895917147,
+              "totalOutIncludingStorageM3": 2873.977835230871,
+              "residualM3": 0.0013543608438340016,
+              "continuityPercent": 4.7124935655028375e-05,
+              "absoluteToleranceM3": 1e-08,
+              "allowedResidualM3": 28.739791895917147
+            }
+          },
+          "surface": {
+            "boundaryNetInflowM3": 6.615129822278925e-15,
+            "sourceNetInflowM3": 609.8028309847099,
+            "rainfallM3": 850.0000000000875,
+            "infiltrationM3": 182.62263890417023,
+            "potentialSurfaceEvaporationM3": 0.3196035708836007,
+            "surfaceEvaporationM3": 0.22905039593663545,
+            "unmetSurfaceEvaporationM3": 0.09055317495341342,
+            "surfaceEvaporationRoundoffM3": 6.448175327022909e-12,
+            "durationSeconds": 21540.0,
+            "initialStorageM3": 577.9605164965228,
+            "finalStorageM3": 1187.763347481361,
+            "balanceResidualM3": -1.2823875294998288e-10
+          },
+          "facilities": null,
+          "ports": {
+            "inlet": {
+              "networkToSurfaceM3": 0.0,
+              "surfaceToNetworkM3": 0.008708226535133185
+            },
+            "WLBS_Pond": {
+              "networkToSurfaceM3": 30.483712011497296,
+              "surfaceToNetworkM3": 87.82048350022599
+            }
+          },
+          "coupled": {
+            "initialStorageM3": 738.0485511806353,
+            "finalStorageM3": 1361.2756453673971,
+            "networkExternalInflowM3": 2626.061963180841,
+            "networkExternalOutflowAndLossM3": 2669.981825333338,
+            "surfaceExternalNetInflowM3": 667.1483106999738,
+            "balanceResidualM3": 0.0013543607149131276,
+            "allowedResidualM3": 40.3125882506145,
+            "exchangeCancellationResidualM3": 4.263256414560601e-14
+          },
+          "scope": "SEPARATE_FACILITIES_AND_COUPLED_ROUTING_SURFACE_CONTROL_VOLUMES"
+        }
+      }
+    },
+    "observed-rain": {
+      "numericalStatus": "PASSED",
+      "networkConvergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 12000,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      },
+      "balance": {
+        "networkExternalInflowM3": 2.439454888092385e-18,
+        "networkExternalOutflowAndLossM3": 6.667167328996836e-05,
+        "surfaceExternalNetInflowM3": 0.004116932882322435,
+        "networkStorageM3": 0.00023953728395244276,
+        "surfaceStorageM3": 0.0038106936485284284,
+        "networkToSurfaceM3": 0.0,
+        "surfaceToNetworkM3": 0.00030623923363049557,
+        "exchangeCancellationResidualM3": 0.0,
+        "surfaceRainfallM3": 0.005999999999999799,
+        "surfaceInfiltrationM3": 0.0018818732693233172,
+        "surfaceBoundaryNetInflowM3": 2.127757865689949e-18,
+        "surfaceEvaporationM3": 1.1938483540632414e-06,
+        "potentialSurfaceEvaporationM3": 1.3257977172352786e-06,
+        "unmetSurfaceEvaporationM3": 1.3194967254802078e-07,
+        "surfaceEvaporationRoundoffM3": 3.0937598348195134e-13,
+        "balanceResidualM3": 3.027655159828363e-08
+      },
+      "evaluationMetrics": {
+        "specificationSha256": "1b1ab26a797c386bb558ddccc3fd518783c6f9fdfcbd72a9fe2e1bc475028d7d",
+        "status": "NUMERICAL_DIAGNOSTIC",
+        "rankingEligible": false,
+        "complete": true,
+        "raw": {
+          "outwardVolumeM3": 6.667167328996771e-05,
+          "peakOutwardM3s": 2.136448150546832e-06,
+          "depthAreaTimeM3Hours": 3.523951915855945e-05
+        }
+      },
+      "resultSha256": "230fc215ac84a3877641b6258ad27d952039ce7816d8308896dc016aa98e9511",
+      "engineSha256": "93f694291d64e451528949ceb8d89468d3d6d50701d0fd4b811308c5e88d0d7c",
+      "surfaceBasins": {
+        "design": {
+          "schemaVersion": 1,
+          "method": "EXPLICIT_SURFACE_BASIN_EARTHWORK_V1",
+          "sourceModelSha256": "702adee84c8135c8fea834316e17ecf8e3af043905bf38b5e012d08583f7c1fc",
+          "derivedModelSha256": "692e239978fea3d6b699bcf3745b546285881a20c9796adf87e77a6d82e7ec1a",
+          "compilerSha256": "9b28517d7f67d84c1f5bd83a91d0e3e467d01c6833e25e08ff91624ba0f66f4d",
+          "facilities": [
+            {
+              "id": "Pond",
+              "portId": "WLBS_Pond",
+              "planAreaM2": 1.0,
+              "excavationM3": 0.45,
+              "lowestBoundaryElevationM": 1.0,
+              "storageToLowestBoundaryM3": 0.44999999999999996,
+              "capacityMethod": "DISCRETE_CENTROID_DEPTH_AT_LOWEST_BOUNDARY",
+              "geometryVerifiedOnSite": false
+            }
+          ],
+          "rainfallOwnershipUnchanged": true,
+          "additionalNetworkStorageM3": 0,
+          "rankingEligible": false,
+          "historicalReconstructionEligible": false,
+          "limitations": [
+            "설계 지형·재료·배수구이며 현장 형상/시공/단가 검증 아님",
+            "지표 지형과 같은 수량 소유권; 부분 영역 물수지를 별도 계측한 결과 아님",
+            "침투·증발은 기존 지표 모형의 근사와 관측 입력 한계 유지",
+            "배수구는 국부 개구부이며 접속관 마찰/막힘·3차원 수직 흐름 제외",
+            "격자 중심 수심 기반 저장량; 경계고 초과 물은 주변 지표와 같은 흐름으로 계산"
+          ],
+          "requestSha256": "ab51b9c00d0329dc4389d7a062c73ef6842b9a55fd3f268d22ec490e2afa8fba"
+        },
+        "initial": {
+          "timeSeconds": 0.0,
+          "facilities": [
+            {
+              "id": "Pond",
+              "storageM3": 0.0,
+              "maximumDepthM": 0.0,
+              "maximumStageAboveLowestBoundaryM": 0.0
+            }
+          ]
+        },
+        "evaluationInitial": null,
+        "final": {
+          "timeSeconds": 120.0,
+          "facilities": [
+            {
+              "id": "Pond",
+              "storageM3": 0.001948038915102048,
+              "maximumDepthM": 0.006925051492328471,
+              "maximumStageAboveLowestBoundaryM": 0.0003216152168781239
+            }
+          ]
+        },
+        "includedInSurfaceStorageAndLosses": true,
+        "additionalStorageInCoupledBalanceM3": 0,
+        "separateRegionFluxLedgerAvailable": false,
+        "rankingEligible": false
+      }
+    },
+    "overflow": {
+      "numericalStatus": "PASSED",
+      "networkConvergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 120000,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      },
+      "balance": {
+        "networkExternalInflowM3": -5.1736392947532295e-14,
+        "networkExternalOutflowAndLossM3": 3.2655854317176556,
+        "surfaceExternalNetInflowM3": 0.005777717575406606,
+        "networkStorageM3": 0.968107749351118,
+        "surfaceStorageM3": 0.6718819582554171,
+        "networkToSurfaceM3": 2.5431338646187425,
+        "surfaceToNetworkM3": 1.8770296239387565,
+        "exchangeCancellationResidualM3": -6.661338147750939e-16,
+        "surfaceRainfallM3": 0.008000000000000009,
+        "surfaceInfiltrationM3": 0.002220958296549818,
+        "surfaceBoundaryNetInflowM3": 3.507409451594271e-17,
+        "surfaceEvaporationM3": 1.3241280426151691e-06,
+        "potentialSurfaceEvaporationM3": 1.3257977172353008e-06,
+        "unmetSurfaceEvaporationM3": 1.6696738387560019e-09,
+        "surfaceEvaporationRoundoffM3": -7.813756118643569e-16,
+        "balanceResidualM3": -0.0003430325962932024
+      },
+      "evaluationMetrics": {
+        "specificationSha256": "1b1ab26a797c386bb558ddccc3fd518783c6f9fdfcbd72a9fe2e1bc475028d7d",
+        "status": "NUMERICAL_DIAGNOSTIC",
+        "rankingEligible": false,
+        "complete": true,
+        "raw": {
+          "outwardVolumeM3": 3.265585431717766,
+          "peakOutwardM3s": 0.050066682247371486,
+          "depthAreaTimeM3Hours": 0.029094871924813283
+        }
+      },
+      "resultSha256": "d7be433f05748a622ab998f4a37812860be24c6c37fbebf6d42a9753a2caf3f9",
+      "engineSha256": "4c1bfe128edafb1d9b715604a93fc7479701af7a981a3241e5a9a69d7916c785",
+      "surfaceBasins": {
+        "design": {
+          "schemaVersion": 1,
+          "method": "EXPLICIT_SURFACE_BASIN_EARTHWORK_V1",
+          "sourceModelSha256": "0ed32b50b24b6f018493efa54a426a14b5021d9f26b4dad391fd0f8779abb786",
+          "derivedModelSha256": "9b030cf7dd558b2cadebdb208f45d0f106725c49ee7228e621fd8bbd7364240f",
+          "compilerSha256": "9b28517d7f67d84c1f5bd83a91d0e3e467d01c6833e25e08ff91624ba0f66f4d",
+          "facilities": [
+            {
+              "id": "Pond",
+              "portId": "WLBS_Pond",
+              "planAreaM2": 1.0,
+              "excavationM3": 0.45,
+              "lowestBoundaryElevationM": 1.0,
+              "storageToLowestBoundaryM3": 0.44999999999999996,
+              "capacityMethod": "DISCRETE_CENTROID_DEPTH_AT_LOWEST_BOUNDARY",
+              "geometryVerifiedOnSite": false
+            }
+          ],
+          "rainfallOwnershipUnchanged": true,
+          "additionalNetworkStorageM3": 0,
+          "rankingEligible": false,
+          "historicalReconstructionEligible": false,
+          "limitations": [
+            "설계 지형·재료·배수구이며 현장 형상/시공/단가 검증 아님",
+            "지표 지형과 같은 수량 소유권; 부분 영역 물수지를 별도 계측한 결과 아님",
+            "침투·증발은 기존 지표 모형의 근사와 관측 입력 한계 유지",
+            "배수구는 국부 개구부이며 접속관 마찰/막힘·3차원 수직 흐름 제외",
+            "격자 중심 수심 기반 저장량; 경계고 초과 물은 주변 지표와 같은 흐름으로 계산"
+          ],
+          "requestSha256": "19326d98e4e4a675e40de3078db70887cf399d93dd970c0c0c716ef5d768fb00"
+        },
+        "initial": {
+          "timeSeconds": 0.0,
+          "facilities": [
+            {
+              "id": "Pond",
+              "storageM3": 0.0,
+              "maximumDepthM": 0.0,
+              "maximumStageAboveLowestBoundaryM": 0.0
+            }
+          ]
+        },
+        "evaluationInitial": null,
+        "final": {
+          "timeSeconds": 120.0,
+          "facilities": [
+            {
+              "id": "Pond",
+              "storageM3": 0.5057183776893496,
+              "maximumDepthM": 0.8563457703731975,
+              "maximumStageAboveLowestBoundaryM": 0.057018532132379285
+            }
+          ]
+        },
+        "includedInSurfaceStorageAndLosses": true,
+        "additionalStorageInCoupledBalanceM3": 0,
+        "separateRegionFluxLedgerAvailable": false,
+        "rankingEligible": false
+      }
+    },
+    "permeable": {
+      "numericalStatus": "PASSED",
+      "networkConvergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 12145,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      },
+      "balance": {
+        "networkExternalInflowM3": 5.551115123125783e-16,
+        "networkExternalOutflowAndLossM3": 1.9357108508340866,
+        "surfaceExternalNetInflowM3": 0.005327564615319561,
+        "networkStorageM3": 0.05402780513058335,
+        "surfaceStorageM3": 0.015430782114081963,
+        "networkToSurfaceM3": 0.6270298070902478,
+        "surfaceToNetworkM3": 0.6169265895915031,
+        "exchangeCancellationResidualM3": -3.400058012914542e-16,
+        "surfaceRainfallM3": 0.008,
+        "surfaceInfiltrationM3": 0.0026711118456859487,
+        "surfaceBoundaryNetInflowM3": 4.4920315500485606e-17,
+        "surfaceEvaporationM3": 1.3235389938774308e-06,
+        "potentialSurfaceEvaporationM3": 1.3257977172352998e-06,
+        "unmetSurfaceEvaporationM3": 2.258734576567397e-09,
+        "surfaceEvaporationRoundoffM3": 1.1218698547048453e-14,
+        "balanceResidualM3": -6.457176851654839e-05
+      },
+      "evaluationMetrics": {
+        "specificationSha256": "1b1ab26a797c386bb558ddccc3fd518783c6f9fdfcbd72a9fe2e1bc475028d7d",
+        "status": "NUMERICAL_DIAGNOSTIC",
+        "rankingEligible": false,
+        "complete": true,
+        "raw": {
+          "outwardVolumeM3": 1.9357108508340772,
+          "peakOutwardM3s": 0.03198381086689337,
+          "depthAreaTimeM3Hours": 0.0009316305716644176
+        }
+      },
+      "resultSha256": "a5327cd520ccec1f07cb3175f42dc7e7fc8a6b90908bd446456b94cb396004d9",
+      "engineSha256": "93f694291d64e451528949ceb8d89468d3d6d50701d0fd4b811308c5e88d0d7c",
+      "surfaceBasins": {
+        "design": {
+          "schemaVersion": 1,
+          "method": "EXPLICIT_SURFACE_BASIN_EARTHWORK_V1",
+          "sourceModelSha256": "77ed0d0bb7fc9da0e19e43d32b820c5ce712ed44b6a270bb83aef63dc087b408",
+          "derivedModelSha256": "fec6da8005314435d16f7c0174941b410e34ec169262d34333b1a033cbb6f2e8",
+          "compilerSha256": "9b28517d7f67d84c1f5bd83a91d0e3e467d01c6833e25e08ff91624ba0f66f4d",
+          "facilities": [
+            {
+              "id": "Pond",
+              "portId": "WLBS_Pond",
+              "planAreaM2": 1.0,
+              "excavationM3": 0.45,
+              "lowestBoundaryElevationM": 1.0,
+              "storageToLowestBoundaryM3": 0.44999999999999996,
+              "capacityMethod": "DISCRETE_CENTROID_DEPTH_AT_LOWEST_BOUNDARY",
+              "geometryVerifiedOnSite": false
+            }
+          ],
+          "rainfallOwnershipUnchanged": true,
+          "additionalNetworkStorageM3": 0,
+          "rankingEligible": false,
+          "historicalReconstructionEligible": false,
+          "limitations": [
+            "설계 지형·재료·배수구이며 현장 형상/시공/단가 검증 아님",
+            "지표 지형과 같은 수량 소유권; 부분 영역 물수지를 별도 계측한 결과 아님",
+            "침투·증발은 기존 지표 모형의 근사와 관측 입력 한계 유지",
+            "배수구는 국부 개구부이며 접속관 마찰/막힘·3차원 수직 흐름 제외",
+            "격자 중심 수심 기반 저장량; 경계고 초과 물은 주변 지표와 같은 흐름으로 계산"
+          ],
+          "requestSha256": "2e059a4274c857e355062be0710e5565e8c207ed949bcab15df1104996521a7e"
+        },
+        "initial": {
+          "timeSeconds": 0.0,
+          "facilities": [
+            {
+              "id": "Pond",
+              "storageM3": 0.0,
+              "maximumDepthM": 0.0,
+              "maximumStageAboveLowestBoundaryM": 0.0
+            }
+          ]
+        },
+        "evaluationInitial": null,
+        "final": {
+          "timeSeconds": 120.0,
+          "facilities": [
+            {
+              "id": "Pond",
+              "storageM3": 0.013442474204821503,
+              "maximumDepthM": 0.05281209005604123,
+              "maximumStageAboveLowestBoundaryM": 0.0003507289328992247
+            }
+          ]
+        },
+        "includedInSurfaceStorageAndLosses": true,
+        "additionalStorageInCoupledBalanceM3": 0,
+        "separateRegionFluxLedgerAvailable": false,
+        "rankingEligible": false
+      }
+    },
+    "replay": {
+      "numericalStatus": "PASSED",
+      "networkConvergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 12145,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      },
+      "balance": {
+        "networkExternalInflowM3": 5.551115123125783e-16,
+        "networkExternalOutflowAndLossM3": 1.9357108508340866,
+        "surfaceExternalNetInflowM3": 0.005327564615319561,
+        "networkStorageM3": 0.05402780513058335,
+        "surfaceStorageM3": 0.015430782114081963,
+        "networkToSurfaceM3": 0.6270298070902478,
+        "surfaceToNetworkM3": 0.6169265895915031,
+        "exchangeCancellationResidualM3": -3.400058012914542e-16,
+        "surfaceRainfallM3": 0.008,
+        "surfaceInfiltrationM3": 0.0026711118456859487,
+        "surfaceBoundaryNetInflowM3": 4.4920315500485606e-17,
+        "surfaceEvaporationM3": 1.3235389938774308e-06,
+        "potentialSurfaceEvaporationM3": 1.3257977172352998e-06,
+        "unmetSurfaceEvaporationM3": 2.258734576567397e-09,
+        "surfaceEvaporationRoundoffM3": 1.1218698547048453e-14,
+        "balanceResidualM3": -6.457176851654839e-05
+      },
+      "evaluationMetrics": {
+        "specificationSha256": "1b1ab26a797c386bb558ddccc3fd518783c6f9fdfcbd72a9fe2e1bc475028d7d",
+        "status": "NUMERICAL_DIAGNOSTIC",
+        "rankingEligible": false,
+        "complete": true,
+        "raw": {
+          "outwardVolumeM3": 1.9357108508340772,
+          "peakOutwardM3s": 0.03198381086689337,
+          "depthAreaTimeM3Hours": 0.0009316305716644176
+        }
+      },
+      "resultSha256": "bc654e178d5b1c7b43aeee5bb314db5bcf59419f012753fb4047e12e0052956e",
+      "engineSha256": "93f694291d64e451528949ceb8d89468d3d6d50701d0fd4b811308c5e88d0d7c",
+      "surfaceBasins": {
+        "design": {
+          "schemaVersion": 1,
+          "method": "EXPLICIT_SURFACE_BASIN_EARTHWORK_V1",
+          "sourceModelSha256": "77ed0d0bb7fc9da0e19e43d32b820c5ce712ed44b6a270bb83aef63dc087b408",
+          "derivedModelSha256": "fec6da8005314435d16f7c0174941b410e34ec169262d34333b1a033cbb6f2e8",
+          "compilerSha256": "9b28517d7f67d84c1f5bd83a91d0e3e467d01c6833e25e08ff91624ba0f66f4d",
+          "facilities": [
+            {
+              "id": "Pond",
+              "portId": "WLBS_Pond",
+              "planAreaM2": 1.0,
+              "excavationM3": 0.45,
+              "lowestBoundaryElevationM": 1.0,
+              "storageToLowestBoundaryM3": 0.44999999999999996,
+              "capacityMethod": "DISCRETE_CENTROID_DEPTH_AT_LOWEST_BOUNDARY",
+              "geometryVerifiedOnSite": false
+            }
+          ],
+          "rainfallOwnershipUnchanged": true,
+          "additionalNetworkStorageM3": 0,
+          "rankingEligible": false,
+          "historicalReconstructionEligible": false,
+          "limitations": [
+            "설계 지형·재료·배수구이며 현장 형상/시공/단가 검증 아님",
+            "지표 지형과 같은 수량 소유권; 부분 영역 물수지를 별도 계측한 결과 아님",
+            "침투·증발은 기존 지표 모형의 근사와 관측 입력 한계 유지",
+            "배수구는 국부 개구부이며 접속관 마찰/막힘·3차원 수직 흐름 제외",
+            "격자 중심 수심 기반 저장량; 경계고 초과 물은 주변 지표와 같은 흐름으로 계산"
+          ],
+          "requestSha256": "2e059a4274c857e355062be0710e5565e8c207ed949bcab15df1104996521a7e"
+        },
+        "initial": {
+          "timeSeconds": 0.0,
+          "facilities": [
+            {
+              "id": "Pond",
+              "storageM3": 0.0,
+              "maximumDepthM": 0.0,
+              "maximumStageAboveLowestBoundaryM": 0.0
+            }
+          ]
+        },
+        "evaluationInitial": null,
+        "final": {
+          "timeSeconds": 120.0,
+          "facilities": [
+            {
+              "id": "Pond",
+              "storageM3": 0.013442474204821503,
+              "maximumDepthM": 0.05281209005604123,
+              "maximumStageAboveLowestBoundaryM": 0.0003507289328992247
+            }
+          ]
+        },
+        "includedInSurfaceStorageAndLosses": true,
+        "additionalStorageInCoupledBalanceM3": 0,
+        "separateRegionFluxLedgerAvailable": false,
+        "rankingEligible": false
+      }
+    },
+    "sealed": {
+      "numericalStatus": "PASSED",
+      "networkConvergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 12144,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      },
+      "balance": {
+        "networkExternalInflowM3": -1.609823385706477e-14,
+        "networkExternalOutflowAndLossM3": 1.937355849726642,
+        "surfaceExternalNetInflowM3": 0.007998674202274188,
+        "networkStorageM3": 0.05497147179462204,
+        "surfaceStorageM3": 0.015513770826117677,
+        "networkToSurfaceM3": 0.6269494699622612,
+        "surfaceToNetworkM3": 0.6194343733384297,
+        "exchangeCancellationResidualM3": 5.204170427930421e-16,
+        "surfaceRainfallM3": 0.008000000000000004,
+        "surfaceInfiltrationM3": 0.0,
+        "surfaceBoundaryNetInflowM3": 4.096745948828273e-17,
+        "surfaceEvaporationM3": 1.3257977274491392e-06,
+        "potentialSurfaceEvaporationM3": 1.3257977172352985e-06,
+        "unmetSurfaceEvaporationM3": 0.0,
+        "surfaceEvaporationRoundoffM3": 1.0213840703589337e-14,
+        "balanceResidualM3": -6.511645020888107e-05
+      },
+      "evaluationMetrics": {
+        "specificationSha256": "1b1ab26a797c386bb558ddccc3fd518783c6f9fdfcbd72a9fe2e1bc475028d7d",
+        "status": "NUMERICAL_DIAGNOSTIC",
+        "rankingEligible": false,
+        "complete": true,
+        "raw": {
+          "outwardVolumeM3": 1.937355849726643,
+          "peakOutwardM3s": 0.03198381086689337,
+          "depthAreaTimeM3Hours": 0.0009355657084756234
+        }
+      },
+      "resultSha256": "276a913e48eb9fe6acf920eed240bdf690626c7fc7e53c01a1fb3b7d478f5809",
+      "engineSha256": "93f694291d64e451528949ceb8d89468d3d6d50701d0fd4b811308c5e88d0d7c",
+      "surfaceBasins": {
+        "design": {
+          "schemaVersion": 1,
+          "method": "EXPLICIT_SURFACE_BASIN_EARTHWORK_V1",
+          "sourceModelSha256": "77ed0d0bb7fc9da0e19e43d32b820c5ce712ed44b6a270bb83aef63dc087b408",
+          "derivedModelSha256": "88bbdf075496c370f44776930d2220ac125f2ccdce82c80f425061c8f0022a58",
+          "compilerSha256": "9b28517d7f67d84c1f5bd83a91d0e3e467d01c6833e25e08ff91624ba0f66f4d",
+          "facilities": [
+            {
+              "id": "Pond",
+              "portId": "WLBS_Pond",
+              "planAreaM2": 1.0,
+              "excavationM3": 0.45,
+              "lowestBoundaryElevationM": 1.0,
+              "storageToLowestBoundaryM3": 0.44999999999999996,
+              "capacityMethod": "DISCRETE_CENTROID_DEPTH_AT_LOWEST_BOUNDARY",
+              "geometryVerifiedOnSite": false
+            }
+          ],
+          "rainfallOwnershipUnchanged": true,
+          "additionalNetworkStorageM3": 0,
+          "rankingEligible": false,
+          "historicalReconstructionEligible": false,
+          "limitations": [
+            "설계 지형·재료·배수구이며 현장 형상/시공/단가 검증 아님",
+            "지표 지형과 같은 수량 소유권; 부분 영역 물수지를 별도 계측한 결과 아님",
+            "침투·증발은 기존 지표 모형의 근사와 관측 입력 한계 유지",
+            "배수구는 국부 개구부이며 접속관 마찰/막힘·3차원 수직 흐름 제외",
+            "격자 중심 수심 기반 저장량; 경계고 초과 물은 주변 지표와 같은 흐름으로 계산"
+          ],
+          "requestSha256": "03f0f221ff2d72ebfe41391d29447cd5502554cb431316312a8b1a30fce2fb8c"
+        },
+        "initial": {
+          "timeSeconds": 0.0,
+          "facilities": [
+            {
+              "id": "Pond",
+              "storageM3": 0.0,
+              "maximumDepthM": 0.0,
+              "maximumStageAboveLowestBoundaryM": 0.0
+            }
+          ]
+        },
+        "evaluationInitial": null,
+        "final": {
+          "timeSeconds": 120.0,
+          "facilities": [
+            {
+              "id": "Pond",
+              "storageM3": 0.013524469674124122,
+              "maximumDepthM": 0.05305781985924371,
+              "maximumStageAboveLowestBoundaryM": 0.00036614709894422504
+            }
+          ]
+        },
+        "includedInSurfaceStorageAndLosses": true,
+        "additionalStorageInCoupledBalanceM3": 0,
+        "separateRegionFluxLedgerAvailable": false,
+        "rankingEligible": false
+      }
+    },
+    "step-50ms": {
+      "numericalStatus": "PASSED",
+      "networkConvergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 12002,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      },
+      "balance": {
+        "networkExternalInflowM3": 5.551115123125783e-15,
+        "networkExternalOutflowAndLossM3": 1.935627055335022,
+        "surfaceExternalNetInflowM3": 0.00533638923187326,
+        "networkStorageM3": 0.05411337032081699,
+        "surfaceStorageM3": 0.01543389097413062,
+        "networkToSurfaceM3": 0.6259067444200551,
+        "surfaceToNetworkM3": 0.6158092426776235,
+        "exchangeCancellationResidualM3": 8.257283745649602e-16,
+        "surfaceRainfallM3": 0.008000000000000142,
+        "surfaceInfiltrationM3": 0.0026622872559649916,
+        "surfaceBoundaryNetInflowM3": 3.771015827014631e-17,
+        "surfaceEvaporationM3": 1.3235121611538878e-06,
+        "potentialSurfaceEvaporationM3": 1.3257977172353097e-06,
+        "unmetSurfaceEvaporationM3": 2.2856522139180472e-09,
+        "surfaceEvaporationRoundoffM3": 9.6132495994706e-14,
+        "balanceResidualM3": -6.062570317601733e-05
+      },
+      "evaluationMetrics": {
+        "specificationSha256": "1b1ab26a797c386bb558ddccc3fd518783c6f9fdfcbd72a9fe2e1bc475028d7d",
+        "status": "NUMERICAL_DIAGNOSTIC",
+        "rankingEligible": false,
+        "complete": true,
+        "raw": {
+          "outwardVolumeM3": 1.9356270553350534,
+          "peakOutwardM3s": 0.03198381086689337,
+          "depthAreaTimeM3Hours": 0.000931515810621838
+        }
+      },
+      "resultSha256": "667a4e901cfeb1125a202f69e7a3295ef874dfc28807fc96fb104e11bc869d5f",
+      "engineSha256": "93f694291d64e451528949ceb8d89468d3d6d50701d0fd4b811308c5e88d0d7c",
+      "surfaceBasins": {
+        "design": {
+          "schemaVersion": 1,
+          "method": "EXPLICIT_SURFACE_BASIN_EARTHWORK_V1",
+          "sourceModelSha256": "9754cc938f22ad457ac5bad2eedfe7b65e10b117340dd7ac9ff78f691e3cbad5",
+          "derivedModelSha256": "779bb8b1ffbacc72901725750c3b28c4285e9dc8f8c181847ec1968fc3f2fb6c",
+          "compilerSha256": "9b28517d7f67d84c1f5bd83a91d0e3e467d01c6833e25e08ff91624ba0f66f4d",
+          "facilities": [
+            {
+              "id": "Pond",
+              "portId": "WLBS_Pond",
+              "planAreaM2": 1.0,
+              "excavationM3": 0.45,
+              "lowestBoundaryElevationM": 1.0,
+              "storageToLowestBoundaryM3": 0.44999999999999996,
+              "capacityMethod": "DISCRETE_CENTROID_DEPTH_AT_LOWEST_BOUNDARY",
+              "geometryVerifiedOnSite": false
+            }
+          ],
+          "rainfallOwnershipUnchanged": true,
+          "additionalNetworkStorageM3": 0,
+          "rankingEligible": false,
+          "historicalReconstructionEligible": false,
+          "limitations": [
+            "설계 지형·재료·배수구이며 현장 형상/시공/단가 검증 아님",
+            "지표 지형과 같은 수량 소유권; 부분 영역 물수지를 별도 계측한 결과 아님",
+            "침투·증발은 기존 지표 모형의 근사와 관측 입력 한계 유지",
+            "배수구는 국부 개구부이며 접속관 마찰/막힘·3차원 수직 흐름 제외",
+            "격자 중심 수심 기반 저장량; 경계고 초과 물은 주변 지표와 같은 흐름으로 계산"
+          ],
+          "requestSha256": "8b1518e4cbacdea47e6ab265290204849297f58a79ed92aa0a5bf6ad3892a68f"
+        },
+        "initial": {
+          "timeSeconds": 0.0,
+          "facilities": [
+            {
+              "id": "Pond",
+              "storageM3": 0.0,
+              "maximumDepthM": 0.0,
+              "maximumStageAboveLowestBoundaryM": 0.0
+            }
+          ]
+        },
+        "evaluationInitial": null,
+        "final": {
+          "timeSeconds": 120.0,
+          "facilities": [
+            {
+              "id": "Pond",
+              "storageM3": 0.013445185077481677,
+              "maximumDepthM": 0.05282365064015135,
+              "maximumStageAboveLowestBoundaryM": 0.00035077282568640733
+            }
+          ]
+        },
+        "includedInSurfaceStorageAndLosses": true,
+        "additionalStorageInCoupledBalanceM3": 0,
+        "separateRegionFluxLedgerAvailable": false,
+        "rankingEligible": false
+      }
+    }
+  },
+  "comparison": {
+    "exactReplay": true,
+    "step100Minus50": {
+      "outwardVolumeM3": 8.379549902381989e-05,
+      "peakOutwardM3s": 0.0,
+      "depthAreaTimeM3Hours": 1.1476104257960185e-07
+    },
+    "baselineMinusPermeable": {
+      "outwardVolumeM3": 0.014101599237087203,
+      "peakOutwardM3s": 3.828891044083127e-07,
+      "depthAreaTimeM3Hours": 0.0032552813560139987
+    }
+  },
+  "nativeTerrainTamperRejected": "EVALUATION_BASIN_NATIVE_SURFACE_MISMATCH",
+  "checks": {
+    "newContractAndNativeTests": 5,
+    "existingCouplingAndReaderTests": 18,
+    "existingEvaporationTests": 8
+  },
+  "preservedFailures": [
+    {
+      "directory": "data/runs/surface-basin-20261018-v2",
+      "code": "EVAPORATION_RUN_WINDOW_EXCEEDED"
+    },
+    {
+      "directory": "data/runs/surface-basin-20261018-v4",
+      "code": "ROUTING_NONCONVERGED",
+      "nonConvergedSteps": 64
+    }
+  ],
+  "limitations": [
+    "실제 서울 현장 지형·시설이나 시공/가격 검증 아님",
+    "120초 합성 유입/강우 사례와 실제 성동 2분·7일 관측 적용 사례를 구분",
+    "지표 격자 중심 수심·국부 배수구 평균 수두·문헌 물성·미보정 증발 전용 가정 유지",
+    "부분 저류지 경계 유량의 별도 원장은 없으며 전체 지표/관망 수지 안에서 계산",
+    "동시 지하 저류조 설계 합성·운영 설치/원가/현장 대조 연결 미완료"
+  ],
+  "artifact": {
+    "directory": "data/runs/surface-basin-20261018-bundle-v1",
+    "files": 805,
+    "manifestSha256": "b81dd99fc2c6a8699baf6c646c7de69b1e5e64870ffc08c65c9c48ac1debd487"
+  },
+  "followUpVerification": {
+    "dryHighGroundSummaryGuard": "PASSED",
+    "archivedRecordsReadWithCurrentGuard": 8,
+    "log": "tmp/surface-basin-contract-final.log",
+    "logSha256": "6ce08718e1d66ba605f5c02911d33529a0880beef631f026d261492ee57ea719",
+    "summaryCodeSha256": "230f97706e5aae3b6960dff02d7fc879398a169001f4f0303fe45471054af3a1",
+    "note": "원 실행 코드/805파일 묶음 유지. 높은 건조 지형을 수면 초과고로 오인하지 않는 요약 검사 추가; 기존 8결과 읽기 값 유지."
+  },
+  "projection": "COMPACT_SUMMARY_FULL_INPUTS_AND_RECORDS_IN_ARTIFACT"
+}

@@ -233,6 +233,40 @@ def _verify_connected_storage(model, network, result, root):
     return model | {'network': model['network'] | {'inputText': raw.decode()}}
 
 
+def _verify_surface_basins(model, surface, result, root):
+    if 'surfaceBasinDesign' not in model:
+        require('surfaceBasins' not in result, 'EVALUATION_BASIN_CONTEXT_MISMATCH')
+        return model
+    from waterleague_sim.engine.surface_basin import compile_basin, result_summary
+    from waterleague_sim.engine.flood_errors import FloodModelError
+    required = ('surface-basin-design.json', 'basin-coupled-input.json')
+    require(all(name in result['files'] for name in required), 'EVALUATION_BASIN_ARTIFACT_MISSING')
+    metadata, prepared = [_read(root/name) for name in required]
+    try:
+        expected_model, expected = compile_basin(model)
+        expected['compilerSha256'] = metadata['compilerSha256']
+        origin = _read(root/'evaluation-initial-state.json')['surface']['surface'] if 'initialization' in model else None
+        summary = result_summary(metadata, surface, origin)
+    except FloodModelError:
+        raise EvaluationError('EVALUATION_BASIN_INPUT_INVALID') from None
+    require(prepared == expected_model and expected == metadata and is_hash(metadata['compilerSha256'])
+        and result.get('surfaceBasins') == summary, 'EVALUATION_BASIN_CONTEXT_MISMATCH')
+    # 실행 지형·재료·면적 소유권을 원 요청의 설계 파생과 직접 대조한다.
+    actual = _read(root/'surface/surface-input.json')
+    for key in ('verticesM', 'triangles', 'elevationM', 'manningN', 'rainfallOwner', 'initialDepthM',
+                'infiltration', 'boundaryEdges', 'boundaryConditions', 'designTerrainProvenance'):
+        require(actual[key] == prepared['surface'][key], 'EVALUATION_BASIN_NATIVE_SURFACE_MISMATCH')
+    from waterleague_sim.ingestion.published_network import records
+    names = {row['portId'].upper()+suffix for row in metadata['facilities'] for suffix in ('_D', '_O')}
+    def rows(text):
+        return {name: [r['tokens'] for r in values if r['tokens'][0].upper() in names]
+                for name, values in records(text.encode())[1].items()
+                if any(r['tokens'][0].upper() in names for r in values)}
+    require(rows(prepared['network']['inputText']) == rows((root/'network/network.inp').read_text()),
+            'EVALUATION_BASIN_NATIVE_NETWORK_MISMATCH')
+    return prepared
+
+
 def read_coupled_record(directory, expected_result_sha256, context):
     """context는 서버가 고정한 시나리오·관측·설계 변경 계약이며 사용자 입력이 아니다."""
     root = Path(directory).resolve()
@@ -248,6 +282,7 @@ def read_coupled_record(directory, expected_result_sha256, context):
         model, network, surface = [_read(root / name) for name in required]
         _verify_files(root / 'network', network['files'])
         _verify_files(root / 'surface', surface['files'])
+        model = _verify_surface_basins(model, surface, result, root)
         model = _verify_connected_storage(model, network, result, root)
         model = _verify_initialization(model, network, surface, result, root)
         _verify_dry_policy(model, surface, result, root)
