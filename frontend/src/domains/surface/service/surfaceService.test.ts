@@ -1,6 +1,11 @@
 import { expect, test } from 'vitest';
 import type { SurfaceCatalog, SurfaceFrame } from '../entity/surface';
-import { assertSurfaceBinding, surfaceBounds, surfaceFrameIndex } from './surfaceService';
+import {
+  assertSurfaceBinding,
+  surfaceBounds,
+  surfaceFrameIndex,
+  liveSurfaceFrameIndex,
+} from './surfaceService';
 import { surfaceGeometry, surfacePlanPaths } from './surfaceGeometry';
 const catalog: SurfaceCatalog = {
   schemaVersion: 1,
@@ -59,6 +64,15 @@ test('계산·시각·격자 연결이 다른 응답 거부', () => {
   expect(() =>
     assertSurfaceBinding(catalog, { ...frame, cells: [{ ...frame.cells[0], triangleId: 2 }] }, 1)
   ).toThrow();
+});
+test('현재 침수 표시에서 오래된 재해 프레임·미래 프레임 제외', () => {
+  const start = Date.parse(catalog.startUtc);
+  expect(liveSurfaceFrameIndex(catalog, start - 1)).toBeNull();
+  expect(liveSurfaceFrameIndex(catalog, start + 2500)).toBe(1);
+  expect(liveSurfaceFrameIndex(catalog, start + 5000)).toBe(2);
+  expect(liveSurfaceFrameIndex(catalog, start + 305000)).toBe(2);
+  expect(liveSurfaceFrameIndex(catalog, start + 305001)).toBeNull();
+  expect(liveSurfaceFrameIndex(catalog, Date.parse('2026-10-18T09:00:00Z'))).toBeNull();
 });
 test('2D·3D 같은 젖은 격자와 좌표 표시, 원값과 수면 표고 불변', () => {
   const before = JSON.stringify(frame),

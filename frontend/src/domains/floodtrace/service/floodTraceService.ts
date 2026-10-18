@@ -11,4 +11,4 @@ export function visibleTraceTiles(event: TraceEvent | undefined, camera: PlanVie
     ) ?? []
   );
 }
-export const traceColor = '#985b8e';
+export const traceColor = '#2c9fc2';

@@ -80,13 +80,12 @@ function Explorer({
   const [infrastructureOpen, setInfrastructureOpen] = useState(false);
   const [facilityExpansionOpen, setFacilityExpansionOpen] = useState(false);
   const [assetsEnabled, setAssetsEnabled] = useState(true);
-  const [tracesEnabled, setTracesEnabled] = useState(false);
-  const [surfaceEnabled, setSurfaceEnabled] = useState(false);
+  const [tracesEnabled, setTracesEnabled] = useState(true);
+  const [surfaceEnabled, setSurfaceEnabled] = useState(true);
   const [surfaceMetric, setSurfaceMetric] = useState<SurfaceMetric>('depth');
   const [surfaceIndex, setSurfaceIndex] = useState<number | null>(null);
   const [surfaceRenderError, setSurfaceRenderError] = useState(false);
   const surfaceFailed = useCallback(() => setSurfaceRenderError(true), []);
-  const [referenceTraceEvent, setReferenceTraceEvent] = useState('seoul-20220808');
   const [traceRenderError, setTraceRenderError] = useState(false);
   const traceFailed = useCallback(() => setTraceRenderError(true), []);
   const [selectedAssetId, setSelectedAssetId] = useState('');
@@ -164,8 +163,7 @@ function Explorer({
     distance: 35000,
   });
   const navigationCamera = useRef(camera);
-  const traceEventId = researchMode ? eventId : referenceTraceEvent;
-  const traces = useFloodTraces(tracesEnabled, traceEventId, camera);
+  const traces = useFloodTraces(researchMode && tracesEnabled, eventId, camera);
   const publicAssets = useMemo(
     () =>
       assetsEnabled && infrastructure.catalog
@@ -242,7 +240,8 @@ function Explorer({
     researchMode ? research.at : null,
     camera,
     city,
-    researchMode ? null : surfaceIndex
+    researchMode ? null : surfaceIndex,
+    researchMode ? null : rainfall.now
   );
   useEffect(() => {
     setSurfaceIndex(null);
@@ -461,20 +460,75 @@ function Explorer({
 
   return (
     <main className="studio-layout play-layout shared-play-layout">
-      <header className="play-hud">
+      <header className="play-hud gameplay-hud">
         <div className="play-objective">
-          <span>WATER LEAGUE / {researchMode ? '재해 모드' : '주간 서울 대항전'}</span>
           <h1>
             {researchMode
               ? `${research.event?.eventDate.replaceAll('-', '. ') ?? ''} 집중호우`
               : '주간 서울 대항전'}
             {district && <small className="game-district-name"> · {district.name}</small>}
           </h1>
-          <small>
-            {researchMode
-              ? '서울 전역의 공개 후보에 설계하고, 관측 강우로 비교하세요.'
-              : '빈 위치를 찾아 설치하고, 우리 구의 빗물을 줄여보세요.'}
-          </small>
+        </div>
+        <div className="shared-toolbar gameplay-toolbar">
+          <label>
+            <MapPin size={15} />
+            <select
+              aria-label="서울 자치구 선택"
+              value={selected}
+              onChange={(e) => (e.target.value ? select(e.target.value) : reset())}
+            >
+              <option value="">서울 전체</option>
+              {city.districts.map((d) => (
+                <option key={d.id} value={d.id}>
+                  {d.name}
+                  {d.id === ownDistrictId ? ' · 내 소속 구' : ''} ·{' '}
+                  {shared.counts[d.id]?.toLocaleString('ko-KR') ?? '—'}곳
+                </option>
+              ))}
+            </select>
+          </label>
+          <details
+            className="gameplay-tools"
+            onClick={(event) => {
+              if (event.target instanceof Element && event.target.closest('button'))
+                event.currentTarget.open = false;
+            }}
+          >
+            <summary>
+              <Layers3 size={15} />
+              지도 도구
+            </summary>
+            <div>
+              <button
+                onClick={() => {
+                  if (account?.districtId) select(account.districtId);
+                  else onLogin();
+                }}
+              >
+                <MapPin size={14} />내 소속 구
+              </button>
+              <button aria-expanded={listOpen} onClick={() => setListOpen((v) => !v)}>
+                <List size={15} />
+                위치 목록
+              </button>
+              <button
+                aria-expanded={infrastructureOpen}
+                onClick={() => {
+                  setInfrastructureOpen((value) => !value);
+                  setFacilityExpansionOpen(false);
+                }}
+              >
+                <Layers3 size={15} />
+                공개 시설
+              </button>
+              {!researchMode && (
+                <button aria-expanded={rankingOpen} onClick={() => setRankingOpen((v) => !v)}>
+                  <Trophy size={15} />
+                  주간 순위
+                </button>
+              )}
+            </div>
+          </details>
         </div>
         <div className="play-resources">
           {researchMode ? (
@@ -506,71 +560,24 @@ function Explorer({
         </div>
       </header>
       <div className="design-main shared-map-column">
-        <div className="design-toolbar shared-toolbar">
-          <label>
-            <MapPin size={15} />
-            <select
-              aria-label="서울 자치구 선택"
-              value={selected}
-              onChange={(e) => (e.target.value ? select(e.target.value) : reset())}
-            >
-              <option value="">서울 전체</option>
-              {city.districts.map((d) => (
-                <option key={d.id} value={d.id}>
-                  {d.name}
-                  {d.id === ownDistrictId ? ' · 내 소속 구' : ''} ·{' '}
-                  {shared.counts[d.id]?.toLocaleString('ko-KR') ?? '—'}곳
-                </option>
-              ))}
-            </select>
-          </label>
-          <div>
-            <button
-              onClick={() => {
-                if (account?.districtId) select(account.districtId);
-                else onLogin();
-              }}
-            >
-              <MapPin size={14} />내 소속 구
-            </button>
-            <button aria-expanded={listOpen} onClick={() => setListOpen((v) => !v)}>
-              <List size={15} />
-              위치 목록
-            </button>
-            <button
-              aria-expanded={infrastructureOpen}
-              onClick={() => {
-                setInfrastructureOpen((value) => !value);
-                setFacilityExpansionOpen(false);
-              }}
-            >
-              <Layers3 size={15} />
-              공개 시설
-            </button>
-            {!researchMode && (
-              <button aria-expanded={rankingOpen} onClick={() => setRankingOpen((v) => !v)}>
-                <Trophy size={15} />
-                주간 순위
-              </button>
-            )}
-          </div>
-        </div>
-        <FloodTraceControls
-          enabled={tracesEnabled}
-          onEnabled={(value) => {
-            setTracesEnabled(value);
-            setTraceRenderError(false);
-          }}
-          eventId={traceEventId}
-          onEvent={setReferenceTraceEvent}
-          fixedEvent={researchMode}
-          catalog={traces.catalog}
-          event={traces.event}
-          loading={traces.loading}
-          error={traces.error}
-          renderError={traceRenderError}
-          retry={traces.retry}
-        />
+        {researchMode && (
+          <FloodTraceControls
+            enabled={tracesEnabled}
+            onEnabled={(value) => {
+              setTracesEnabled(value);
+              setTraceRenderError(false);
+            }}
+            eventId={eventId}
+            onEvent={() => {}}
+            fixedEvent={researchMode}
+            catalog={traces.catalog}
+            event={traces.event}
+            loading={traces.loading}
+            error={traces.error}
+            renderError={traceRenderError}
+            retry={traces.retry}
+          />
+        )}
         <section ref={stage} className="city-stage" aria-label="서울 전역 3D 지도">
           {flat ? (
             plan
@@ -898,6 +905,7 @@ function Explorer({
           </a>
         </section>
         <SurfaceControls
+          live={!researchMode}
           enabled={surfaceEnabled}
           onEnabled={setSurfaceEnabled}
           metric={surfaceMetric}

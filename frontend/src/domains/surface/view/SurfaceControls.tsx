@@ -11,6 +11,7 @@ export function SurfaceControls({
   hasSource,
   onSeek,
   renderError,
+  live = false,
 }: {
   enabled: boolean;
   onEnabled: (v: boolean) => void;
@@ -20,6 +21,7 @@ export function SurfaceControls({
   hasSource: boolean;
   onSeek: (index: number) => void;
   renderError: boolean;
+  live?: boolean;
 }) {
   const { catalog, frame, loading, error, retry } = state;
   const time =
@@ -28,12 +30,14 @@ export function SurfaceControls({
     <div className="surface-controls">
       <label>
         <input type="checkbox" checked={enabled} onChange={(e) => onEnabled(e.target.checked)} />
-        계산 침수
+        {live ? '현재 침수 계산' : '계산 침수'}
       </label>
       {enabled && (
         <>
           {!hasSource ? (
-            <span>내 시설 또는 완료한 재해 실행을 선택하세요.</span>
+            <span>
+              {live ? '현재 지도에 연결된 침수 계산 결과 없음' : '완료한 재해 실행을 선택하세요.'}
+            </span>
           ) : error ? (
             <span role="alert">
               {error} <button onClick={retry}>다시 확인</button>
@@ -58,15 +62,21 @@ export function SurfaceControls({
                   </span>
                 ))}
               </span>
-              <small>계산값 · 현장 검증 전 · 지표면 색상 표시</small>
-              <input
-                type="range"
-                aria-label="지표 계산 기록 시각"
-                min={0}
-                max={catalog.timesSeconds.length - 1}
-                value={state.index ?? 0}
-                onChange={(e) => onSeek(Number(e.target.value))}
-              />
+              <small>
+                {live
+                  ? '최근 5분 이내 계산값 · 관측 침수와 구분'
+                  : '계산값 · 현장 검증 전 · 지표면 색상 표시'}
+              </small>
+              {!live && (
+                <input
+                  type="range"
+                  aria-label="지표 계산 기록 시각"
+                  min={0}
+                  max={catalog.timesSeconds.length - 1}
+                  value={state.index ?? 0}
+                  onChange={(e) => onSeek(Number(e.target.value))}
+                />
+              )}
               {loading ? (
                 <span role="status">불러오는 중</span>
               ) : time ? (
@@ -75,7 +85,11 @@ export function SurfaceControls({
                   · {frame!.cells.length.toLocaleString()}격자
                 </time>
               ) : (
-                <small>선택 시각의 지표 계산 없음</small>
+                <small>
+                  {live
+                    ? '최근 5분 이내 지표 계산 없음 · 과거 결과 표시 중지'
+                    : '선택 시각의 지표 계산 없음'}
+                </small>
               )}
               <details>
                 <summary>계산 범위·출처</summary>

@@ -3,7 +3,12 @@ import type { City } from '../../city/entity/city';
 import type { PlanView } from '../../city/service/planNavigationService';
 import type { SurfaceCatalog, SurfaceFrame, SurfaceSource } from '../entity/surface';
 import { loadSurfaceCatalog, loadSurfaceFrame } from '../repository/surfaceRepository';
-import { assertSurfaceBinding, surfaceBounds, surfaceFrameIndex } from '../service/surfaceService';
+import {
+  assertSurfaceBinding,
+  surfaceBounds,
+  surfaceFrameIndex,
+  liveSurfaceFrameIndex,
+} from '../service/surfaceService';
 import { ApiError, errorMessage } from '../../../shared/exception/ApiError';
 
 export function useSurfacePlayback(
@@ -13,7 +18,8 @@ export function useSurfacePlayback(
   at: string | null,
   camera: PlanView,
   city: City,
-  manualIndex: number | null
+  manualIndex: number | null,
+  liveNow: number | null = null
 ) {
   const key = `${actor}/${source?.kind}/${source?.id}`;
   const [catalogState, setCatalog] = useState<{ key: string; value: SurfaceCatalog } | null>(null);
@@ -26,14 +32,36 @@ export function useSurfacePlayback(
   const [error, setError] = useState(''),
     [loading, setLoading] = useState(false);
   const [revision, setRevision] = useState(0);
+  const [visible, setVisible] = useState(() => !document.hidden);
+  useEffect(() => {
+    const onVisibility = () => setVisible(!document.hidden);
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => document.removeEventListener('visibilitychange', onVisibility);
+  }, []);
+  const [expiryNow, setExpiryNow] = useState(0);
+  const currentLiveTime = liveNow === null ? null : Math.max(liveNow, expiryNow);
   const catalog = enabled && catalogState?.key === key ? catalogState.value : null;
-  const index = catalog ? (manualIndex ?? surfaceFrameIndex(catalog, at)) : null;
+  const index = catalog
+    ? currentLiveTime !== null
+      ? liveSurfaceFrameIndex(catalog, currentLiveTime)
+      : (manualIndex ?? surfaceFrameIndex(catalog, at))
+    : null;
+  const refreshMinute = liveNow === null ? null : Math.floor(liveNow / 60000);
+  useEffect(() => {
+    if (currentLiveTime === null || !catalog || index === null) return;
+    const expires = Date.parse(catalog.startUtc) + catalog.timesSeconds[index] * 1000 + 300001;
+    const timer = window.setTimeout(
+      () => setExpiryNow(Date.now()),
+      Math.max(0, expires - Date.now())
+    );
+    return () => window.clearTimeout(timer);
+  }, [currentLiveTime, catalog, index]);
   const boundsKey = surfaceBounds(camera).join(',');
   useEffect(() => {
     setCatalog(null);
     setFrame(null);
     setError('');
-    if (!enabled || !source || !actor) return;
+    if (!enabled || !visible || !source || !actor) return;
     const controller = new AbortController();
     void loadSurfaceCatalog(source, controller.signal)
       .then((value) => {
@@ -51,7 +79,7 @@ export function useSurfacePlayback(
           );
       });
     return () => controller.abort();
-  }, [key, enabled, revision, city.originProjected]);
+  }, [key, enabled, visible, revision, city.originProjected, refreshMinute]);
   useEffect(() => {
     setFrame(null);
     setLoading(false);

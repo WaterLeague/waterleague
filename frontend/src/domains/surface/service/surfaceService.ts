@@ -17,6 +17,15 @@ export function surfaceFrameIndex(catalog: SurfaceCatalog, at: string | null) {
   }
   return Math.max(0, low - 1);
 }
+export function liveSurfaceFrameIndex(catalog: SurfaceCatalog, now: number) {
+  const start = Date.parse(catalog.startUtc);
+  if (!Number.isFinite(now) || !Number.isFinite(start)) return null;
+  for (let i = catalog.timesSeconds.length - 1; i >= 0; i--) {
+    const age = now - (start + catalog.timesSeconds[i] * 1000);
+    if (age >= 0) return age <= 300000 ? i : null;
+  }
+  return null;
+}
 export function surfaceBounds(camera: PlanView) {
   const radius = Math.ceil((camera.distance * 3) / 250) * 250;
   return [

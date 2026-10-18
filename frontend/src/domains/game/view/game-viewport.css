@@ -74,6 +74,88 @@ body:has(.game-shell.is-game) {
   padding: 7px 18px;
   font-size: 9px;
 }
+.game-shell.is-game > .shared-play-layout .play-hud.gameplay-hud {
+  display: grid;
+  grid-template-columns: auto minmax(210px, 1fr) auto;
+  gap: 8px 16px;
+  padding: 8px 16px;
+  min-height: 62px;
+}
+.gameplay-hud .play-objective {
+  min-width: 0;
+}
+.game-shell.is-game .gameplay-hud h1 {
+  font-size: 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.gameplay-hud .game-district-name {
+  display: none;
+}
+.game-shell.is-game .gameplay-hud .gameplay-toolbar {
+  background: transparent;
+  padding: 0;
+  min-height: 0;
+  min-width: 0;
+  justify-content: start;
+  flex-wrap: nowrap;
+  overflow: visible;
+}
+.gameplay-hud .gameplay-toolbar select {
+  color: #f4f6ee;
+  width: 135px;
+  font-size: 11px;
+}
+.gameplay-toolbar select option {
+  color: #29453d;
+  background: #fafbf6;
+}
+.gameplay-hud .gameplay-toolbar button {
+  padding: 7px;
+  color: #edf4e7;
+  border-color: #65817a;
+  background: transparent;
+  font-size: 10px;
+}
+.gameplay-hud .play-resources {
+  gap: 14px;
+  align-items: center;
+}
+.gameplay-hud .play-resources b,
+.gameplay-hud .game-live-clock {
+  font-size: 14px;
+}
+.gameplay-hud .play-resources > span,
+.gameplay-hud .game-live-clock {
+  gap: 3px;
+}
+@media (max-width: 1050px) {
+  .gameplay-hud .play-resources > span:last-child {
+    display: none;
+  }
+}
+@media (max-width: 700px) {
+  .game-shell.is-game > .shared-play-layout .play-hud.gameplay-hud {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .gameplay-hud .gameplay-toolbar {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+  .gameplay-hud .play-resources {
+    gap: 8px;
+  }
+  .gameplay-hud .play-resources b,
+  .gameplay-hud .game-live-clock,
+  .game-shell.is-game .gameplay-hud h1 {
+    font-size: 12px;
+  }
+  .gameplay-hud .disaster-back {
+    font-size: 0;
+    padding: 6px;
+  }
+}
 .game-shell.is-game .historical-weather {
   margin: 0;
   border: 0;
@@ -246,4 +328,40 @@ body:has(.game-shell.is-game) {
     left: 8px;
     max-width: calc(100% - 16px);
   }
+}
+
+.gameplay-tools {
+  position: relative;
+  flex: 0 0 auto;
+  font-size: 11px;
+}
+.gameplay-tools > summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px;
+  border: 1px solid #65817a;
+  border-radius: 3px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.gameplay-tools > summary::-webkit-details-marker {
+  display: none;
+}
+.gameplay-tools > div {
+  position: absolute;
+  z-index: 45;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 146px;
+  padding: 8px;
+  background: #19363a;
+  border: 1px solid #65817a;
+  border-radius: 4px;
+  box-shadow: 0 8px 24px #142e3040;
+}
+.gameplay-hud .gameplay-tools button {
+  width: 100%;
+  margin: 3px 0;
 }
