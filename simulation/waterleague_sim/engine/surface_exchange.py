@@ -116,8 +116,7 @@ class ExchangeSurfaceSession(SurfaceSession):
                 'EXCHANGE_STEP_INVALID')
         duration = milliseconds / 1000
         target = self.domain.get_time() + duration
-        for _ in self.domain.evolve(yieldstep=duration, finaltime=target, skip_initial_step=True):
-            pass
+        self._evolve_until(target)
         require(math.isclose(self.domain.get_time(), target, abs_tol=1e-8, rel_tol=0),
                 'EXCHANGE_SURFACE_TIME_MISMATCH')
         return self.port_state()

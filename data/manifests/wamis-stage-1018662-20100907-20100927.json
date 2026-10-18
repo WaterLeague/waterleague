@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "source": "WAMIS_PUBLIC_HOURLY_TABLE",
+  "stationId": "1018662",
+  "sourceUrl": "https://www.wamis.go.kr/wkw/wl_hrdata.do?code=1018662&name=Seoul",
+  "endpoint": "https://www.wamis.go.kr/wkw/wl_hrdata_list.do",
+  "method": "POST",
+  "parameters": {
+    "code": "1018662",
+    "date1": "20100907",
+    "date2": "20100927",
+    "name": ""
+  },
+  "retrievedAt": "2026-10-18T00:03:30.346070+00:00",
+  "sampleCount": 504,
+  "missingCount": 0,
+  "reference": "STATION_GAUGE_NOT_ABSOLUTE_ELEVATION",
+  "sourceQuality": "UNCORRECTED_PUBLIC_VALUE",
+  "absoluteDatumVerified": false,
+  "rankingEligible": false,
+  "normalizerSha256": "097c93deb968167e2487bf0ea23f4af6536d2af68eac5d822be3dd5991ac7a0d",
+  "files": {
+    "data/raw/wamis-stage-1018662-20100907-20100927/hourly-page.html": "4485ebc65e23c936d63196db9c12359ca8b82065b81727a24a0a4bbfd2e706dc",
+    "data/raw/wamis-stage-1018662-20100907-20100927/hourly.json": "6f7b59ecd675b00344c8d143b0d00854b30e1db018833dbcf1c97d1c2ce5fc56",
+    "data/raw/wamis-stage-1018662-20100907-20100927/normalized.json": "00fc92055d819fffe1a08bf9ed3523543362d3fdfac098d9a81b4a8405e54d08",
+    "data/raw/wamis-stage-1018662-20100907-20100927/station-page.html": "393c86c2406df9f6d3718e33af680dfec80a5a5bc738b0786c764c10fe09e38f"
+  }
+}

@@ -1,5 +1,6 @@
 """명시된 삼각 격자와 경계 조건을 사용하는 ANUGA 지표 흐름 어댑터."""
 import hashlib
+from bisect import bisect_left, bisect_right
 from importlib import metadata
 import json
 import math
@@ -8,6 +9,7 @@ import platform
 
 from waterleague_sim.engine.flood_errors import require
 from waterleague_sim.engine.swmm import ROOT
+from waterleague_sim.forcing.stage import clamp_clock_roundoff, compile_stage_boundaries, source_hash
 
 VERSION = '4.0.1'
 
@@ -86,6 +88,11 @@ class SurfaceSession:
                     'SURFACE_BOUNDARY_INVALID')
             boundaries[row[0], row[1]] = row[2]
         require(set(boundaries) == expected, 'SURFACE_BOUNDARY_INCOMPLETE')
+        self.stage_series = compile_stage_boundaries(model)
+        self.stage_knots = sorted({time for series in self.stage_series.values() for time in series.knots})
+        if self.stage_series:
+            require(set(self.stage_series) <= set(boundaries.values()), 'STAGE_BOUNDARY_UNUSED')
+            self.engine['stageAdapterSha256'] = source_hash()
         path = Path(directory).resolve()
         require(not path.exists(), 'SURFACE_OUTPUT_EXISTS')
         path.mkdir(parents=True)
@@ -113,6 +120,8 @@ class SurfaceSession:
                 require(type(spec.get('stageM')) in (float, int) and math.isfinite(spec['stageM']),
                         'SURFACE_BOUNDARY_INVALID')
                 boundary_objects[name] = anuga.Dirichlet_boundary([spec['stageM'], 0, 0])
+            elif name in self.stage_series:
+                boundary_objects[name] = anuga.Time_boundary(domain, function=self.stage_series[name])
             else:
                 require(False, 'SURFACE_BOUNDARY_UNSUPPORTED')
         domain.set_boundary(boundary_objects)
@@ -128,6 +137,10 @@ class SurfaceSession:
             'cfl': float(domain.get_cfl()), 'configuredMaximumStepSeconds': max_step,
             'algorithm': domain.get_algorithm_parameters()}
         (path / 'surface-numerics.json').write_text(json.dumps(self.numerics, allow_nan=False, indent=2) + '\n')
+        if self.stage_series:
+            (path / 'surface-stage-boundaries.json').write_text(json.dumps(
+                {name: series.summary for name, series in self.stage_series.items()},
+                ensure_ascii=False, allow_nan=False, indent=2) + '\n')
         self.owners = owners
         self.station_indices = None
         if model.get('rainfallStationIds') is not None:
@@ -200,10 +213,22 @@ class SurfaceSession:
         require(not self.finished and type(seconds) in (int, float)
                 and math.isfinite(seconds) and 0 < seconds <= 3600, 'SURFACE_STEP_INVALID')
         target = self.domain.get_time() + seconds
-        for _ in self.domain.evolve(yieldstep=seconds, finaltime=target, skip_initial_step=True):
-            pass
+        self._evolve_until(target)
         require(math.isclose(self.domain.get_time(), target, abs_tol=1e-9), 'SURFACE_TIME_MISMATCH')
         return self.snapshot()
+
+    def _evolve_until(self, target):
+        if self.stage_series:
+            target = clamp_clock_roundoff(target, 0, min(s.duration for s in self.stage_series.values()),
+                                           'STAGE_RUN_WINDOW_EXCEEDED')
+        # 관측 절점의 기울기 변화가 긴 내부 단계에 묻히지 않도록 분할한다.
+        begin = bisect_right(self.stage_knots, self.domain.get_time())
+        end = bisect_left(self.stage_knots, target)
+        stops = self.stage_knots[begin:end] + [target]
+        for stop in stops:
+            for _ in self.domain.evolve(yieldstep=stop - self.domain.get_time(), finaltime=stop,
+                                       skip_initial_step=True):
+                pass
 
     def finish(self):
         require(not self.finished, 'SURFACE_SESSION_FINISHED')
@@ -227,6 +252,8 @@ class SurfaceSession:
                             for p in sorted(self.directory.iterdir()) if p.is_file()}}
         if self.metrics is not None:
             result['evaluationMetrics'] = self.metrics.snapshot()
+        if self.stage_series:
+            result['stageBoundaries'] = {name: series.summary for name, series in self.stage_series.items()}
         if self.quality is not None:
             result['numericalQuality'] = self.quality.snapshot()
         (self.directory / 'surface-result.json').write_text(json.dumps(result, allow_nan=False, indent=2) + '\n')

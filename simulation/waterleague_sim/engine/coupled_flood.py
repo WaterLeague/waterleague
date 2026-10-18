@@ -9,6 +9,7 @@ from waterleague_sim.engine.flood_errors import FloodModelError, require
 from waterleague_sim.engine.flood_process import EngineProcess
 from waterleague_sim.engine.flood_metrics import specification_hash, validate_metrics
 from waterleague_sim.forcing.observed_rainfall import compile_rainfall, require_network_clock
+from waterleague_sim.forcing.stage import require_stage_clock
 
 
 def _write(path, value):
@@ -90,6 +91,8 @@ def _balance(network, surface, ports):
 
 def run_coupled(model, directory):
     _validate(model)
+    stages = require_stage_clock(model['surface'], duration=model['durationSeconds'],
+                                 rainfall=model.get('observedRainfall'), network=model['network'])
     observed = None
     if model.get('observedRainfall') is not None:
         require(not model.get('surfaceRainfall') and model['surface'].get('rainfallStationIds') is None,
@@ -120,7 +123,8 @@ def run_coupled(model, directory):
     if observed is not None:
         for row in observed.events:
             events.setdefault(row['timeMilliseconds'], []).append(('observedRainfall', row))
-    event_times = sorted(set(events) | {duration})
+    stage_times = {round(t * 1000) for series in stages.values() for t in series.knots}
+    event_times = sorted(set(events) | stage_times | {duration})
     clock, nstate, state = 0, None, None
     try:
         with EngineProcess('network_metrics' if metric_spec is not None else 'network_exchange',
