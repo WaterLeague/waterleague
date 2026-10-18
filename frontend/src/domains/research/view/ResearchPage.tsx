@@ -6,7 +6,7 @@ import { ResearchAnalysisWorkspace } from '../../analysis/view/ResearchAnalysisW
 import { UtilizationInbox } from '../../utilization/view/UtilizationInbox';
 import { ReviewWorkspace } from '../../utilization/view/ReviewWorkspace';
 import type { Account } from '../../account/entity/account';
-import type { Placement, Lab, RainfallCatalog } from '../../game/entity/game';
+import type { Placement, Lab } from '../../game/entity/game';
 import { useResearch } from '../controller/useResearch';
 import { CostPerformance, MetricsComparison } from './ResearchComparison';
 import { format, facilities } from '../../game/service/gameService';
@@ -15,13 +15,11 @@ import type { CandidateMap } from '../../catalog/entity/catalog';
 export function ResearchPage({
   account,
   lab,
-  catalog,
   map,
   onReplay,
 }: {
   account: Account | null;
   lab: Lab;
-  catalog: RainfallCatalog | null;
   map: CandidateMap | null;
   onReplay: (p: Placement[]) => void;
 }) {
@@ -178,9 +176,7 @@ export function ResearchPage({
           </div>
           <ResearchAnalysisWorkspace
             key={account.id + ':' + lab.modelHash}
-            source={detail}
             entries={entries}
-            catalog={catalog}
             lab={lab}
             map={map}
             organizationId={account.organizationId}

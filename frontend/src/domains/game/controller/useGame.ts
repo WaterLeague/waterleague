@@ -2,21 +2,13 @@ import { useState, useEffect, useCallback, useRef, useReducer } from 'react';
 import * as repo from '../repository/gameRepository';
 import * as auth from '../../account/repository/accountRepository';
 import type { Account } from '../../account/entity/account';
-import type {
-  Lab,
-  Placement,
-  Version,
-  Job,
-  StrategySummary,
-  RainfallCatalog,
-} from '../entity/game';
+import type { Lab, Placement, Version, Job, StrategySummary } from '../entity/game';
 import { errorMessage } from '../../../shared/exception/ApiError';
 import { onSessionExpired } from '../../../shared/repository/apiClient';
 import { placementHistoryReducer } from '../service/placementHistoryService';
 
 export function useGame() {
   const [lab, setLab] = useState<Lab | null>(null);
-  const [rainfallCatalog, setRainfallCatalog] = useState<RainfallCatalog | null>(null);
   const modelRequest = useRef(0);
   const [account, setAccount] = useState<Account | null>(null);
   const [history, dispatchHistory] = useReducer(placementHistoryReducer, {
@@ -65,14 +57,6 @@ export function useGame() {
       })
       .finally(() => {
         if (alive) setLoading(false);
-      });
-    repo
-      .loadRainfallCatalog()
-      .then((v) => {
-        if (alive) setRainfallCatalog(v);
-      })
-      .catch((e) => {
-        if (alive) setError(errorMessage(e));
       });
     auth
       .currentAccount()
@@ -246,7 +230,6 @@ export function useGame() {
   }
   return {
     lab,
-    rainfallCatalog,
     selectModel,
     account,
     setAccount,

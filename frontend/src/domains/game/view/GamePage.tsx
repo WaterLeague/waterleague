@@ -965,7 +965,6 @@ export function GamePage() {
           key={(g.account?.id ?? 'guest') + ':' + lab.modelHash}
           account={g.account}
           lab={lab}
-          catalog={g.rainfallCatalog}
           map={activeMap}
           onReplay={(p) => {
             g.newDesign();

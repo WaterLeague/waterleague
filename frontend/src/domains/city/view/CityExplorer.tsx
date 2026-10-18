@@ -33,7 +33,7 @@ import { loadSite, loadBuildingSite } from '../../installation/repository/instal
 import { ApiError } from '../../../shared/exception/ApiError';
 import './shared-play.css';
 import { siteKey } from '../../installation/entity/installation';
-import { LiveRainfallPanel } from '../../rainfall/view/LiveRainfallPanel';
+import '../../rainfall/view/rainfall.css';
 import { useHistorical } from '../../historical/controller/useHistorical';
 import { HistoricalPanel, HistoricalTimeline } from '../../historical/view/HistoricalPanel';
 import { useLiveRainfall } from '../../rainfall/controller/useLiveRainfall';
@@ -1036,17 +1036,15 @@ function Explorer({
           onSeek={seekSurface}
           renderError={surfaceRenderError}
         />
-        <details className="shared-rain-details">
-          <summary>
-            <CloudRain size={15} />
-            {researchMode ? '재해 강우 · 재생 조절' : '실시간 강우 · 관측 정보 보기'}
-          </summary>
-          {researchMode ? (
+        {researchMode && (
+          <details className="shared-rain-details">
+            <summary>
+              <CloudRain size={15} />
+              재해 시간 재생
+            </summary>
             <HistoricalTimeline state={research} />
-          ) : (
-            <LiveRainfallPanel districtId={selected} rainfall={rainfall} />
-          )}
-        </details>
+          </details>
+        )}
       </div>
       <FacilityExpansionPanel
         key={account ? `${account.id}:${account.role}:${account.approvalStatus}` : 'visitor'}
