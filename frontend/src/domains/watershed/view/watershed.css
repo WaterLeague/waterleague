@@ -318,3 +318,97 @@
 .watershed-costs a {
   overflow-wrap: anywhere;
 }
+.watershed-layout {
+  margin: 14px 0;
+  padding: 12px;
+  background: #eef2e8;
+  border: 1px solid #c6d2c0;
+  border-radius: 5px;
+}
+.watershed-layout header {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+.watershed-layout header span {
+  font-size: 10px;
+  color: #65735f;
+}
+.watershed-layout svg {
+  display: block;
+  width: 100%;
+  height: 320px;
+  margin: 8px 0;
+  background: #fafbf6;
+  border-radius: 3px;
+}
+.watershed-catchment {
+  fill: #d9e4d2;
+  stroke: #7c967c;
+  stroke-width: 1;
+  cursor: pointer;
+}
+.watershed-catchment:hover {
+  fill: #c9d9bd;
+}
+.watershed-catchment[data-selected='true'] {
+  fill: #efcf76;
+  stroke: #97712c;
+  stroke-width: 2;
+}
+.watershed-catchment:focus-visible {
+  outline: none;
+  stroke: #232e23;
+  stroke-width: 3;
+}
+.watershed-catchment[aria-disabled='true'] {
+  cursor: wait;
+}
+.watershed-connection-lines,
+.watershed-layout-labels {
+  pointer-events: none;
+}
+.watershed-connection-lines polyline {
+  stroke: #a7b9c0;
+  stroke-width: 1;
+  fill: none;
+}
+.watershed-connection-lines polyline[data-selected='true'] {
+  stroke: #356e83;
+  stroke-width: 2.5;
+}
+.watershed-connection-lines circle {
+  fill: #91a5aa;
+}
+.watershed-connection-lines circle[data-selected='true'] {
+  fill: #245f79;
+}
+.watershed-connection-lines circle[data-outfall='true'] {
+  fill: #173c5c;
+}
+.watershed-layout-labels {
+  fill: #294538;
+  paint-order: stroke;
+  stroke: #f8faf3;
+  stroke-width: 0.15em;
+  stroke-linejoin: round;
+}
+.watershed-layout-toolbar {
+  display: flex;
+  gap: 8px;
+}
+.watershed-layout-toolbar button {
+  background: #fffef8;
+  border: 1px solid #bacbb1;
+  border-radius: 3px;
+  color: #29453d;
+  padding: 6px 9px;
+}
+.watershed-layout-toolbar button[aria-pressed='true'] {
+  background: #304f3d;
+  color: #fffef5;
+}
+.watershed-layout-route {
+  color: #245f79;
+  font-weight: 700;
+}

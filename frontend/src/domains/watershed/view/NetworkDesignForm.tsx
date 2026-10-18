@@ -5,6 +5,7 @@ import { physicalAmount as number } from '../../physics/service/physicalValueFor
 import type { WatershedState } from '../controller/useWatershed';
 import { previewWatershedCosts } from '../service/watershedCosts';
 import { WatershedCosts } from './WatershedCosts';
+import { WatershedLayout } from './WatershedLayout';
 const areaAmount = (value: number) => value.toLocaleString('ko-KR', { maximumFractionDigits: 2 });
 const parameterLabels: Record<string, string> = {
   surfaceDepthMm: '표면 저류 깊이 (mm)',
@@ -106,6 +107,19 @@ export function NetworkDesignForm({
         공개 연구 관망의 집수구역에 연결합니다. 면적은 사용자가 정하는 설계값이며 현장 시공 가능
         면적은 미확인입니다.
       </p>
+      {catalog.layout && (
+        <WatershedLayout
+          layout={catalog.layout}
+          selectedId={catchmentId}
+          placements={state.drafts}
+          disabled={state.busy}
+          onSelect={(id) => {
+            setCatchment(id);
+            setError('');
+            setFeedback('');
+          }}
+        />
+      )}
       <label>
         집수구역
         <select

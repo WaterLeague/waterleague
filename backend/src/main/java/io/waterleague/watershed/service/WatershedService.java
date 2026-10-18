@@ -47,7 +47,11 @@ public class WatershedService {
         "costCatalogHash",
         WatershedCostRepository.HASH,
         "costCatalog",
-        costCatalog.value());
+        costCatalog.value(),
+        "layoutHash",
+        WatershedCatalogRepository.LAYOUT_HASH,
+        "layout",
+        catalog.layout());
   }
 
   public WatershedExperiment require(UUID owner, UUID id) {

@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { watershedCostCatalogDto, watershedCostSnapshotDto } from './watershedCostDto';
+import { watershedLayoutDto } from './watershedLayoutDto';
 const hash = z.string().regex(/^[a-f0-9]{64}$/);
 const amount = z.number().finite();
 export const networkFacilityDto = z.enum([
@@ -9,43 +10,60 @@ export const networkFacilityDto = z.enum([
   'RAINWATER_CISTERN',
 ]);
 export type NetworkFacility = z.infer<typeof networkFacilityDto>;
-export const watershedCatalogDto = z.object({
-  catalogHash: hash,
-  costCatalogHash: hash.optional(),
-  costCatalog: watershedCostCatalogDto.optional(),
-  catalog: z.object({
-    id: z.string(),
-    title: z.string(),
-    sourceUrl: z.url().startsWith('https://'),
-    attribution: z.object({ title: z.string(), authors: z.array(z.string()), year: z.number() }),
-    licence: z.object({ short_name: z.string(), url: z.url().regex(/^https?:\/\//) }),
-    catchments: z
-      .array(
+export const watershedCatalogDto = z
+  .object({
+    catalogHash: hash,
+    costCatalogHash: hash.optional(),
+    costCatalog: watershedCostCatalogDto.optional(),
+    layoutHash: hash.optional(),
+    layout: watershedLayoutDto.optional(),
+    catalog: z.object({
+      id: z.string(),
+      sourceOriginalSha256: hash,
+      title: z.string(),
+      sourceUrl: z.url().startsWith('https://'),
+      attribution: z.object({ title: z.string(), authors: z.array(z.string()), year: z.number() }),
+      licence: z.object({ short_name: z.string(), url: z.url().regex(/^https?:\/\//) }),
+      catchments: z
+        .array(
+          z.object({
+            id: z.string(),
+            areaM2: amount.positive(),
+            imperviousM2: amount.nonnegative(),
+            outletNodeId: z.string(),
+          })
+        )
+        .min(1),
+      templates: z.record(
+        networkFacilityDto,
         z.object({
-          id: z.string(),
-          areaM2: amount.positive(),
-          imperviousM2: amount.nonnegative(),
-          outletNodeId: z.string(),
+          label: z.string(),
+          parameters: z.record(z.string(), z.unknown()),
+          initialSaturationPercent: amount,
         })
-      )
-      .min(1),
-    templates: z.record(
-      networkFacilityDto,
-      z.object({
-        label: z.string(),
-        parameters: z.record(z.string(), z.unknown()),
-        initialSaturationPercent: amount,
-      })
-    ),
-    numericalProfile: z.object({ id: z.string() }),
-    rankingEligible: z.literal(false),
-    historicalReconstructionEligible: z.literal(false),
-    horizontalCrs: z.null(),
-    verticalDatum: z.null(),
-    completeInstalledCostKrw: z.null(),
-    limitations: z.array(z.string()),
-  }),
-});
+      ),
+      numericalProfile: z.object({ id: z.string() }),
+      rankingEligible: z.literal(false),
+      historicalReconstructionEligible: z.literal(false),
+      horizontalCrs: z.null(),
+      verticalDatum: z.null(),
+      completeInstalledCostKrw: z.null(),
+      limitations: z.array(z.string()),
+    }),
+  })
+  .superRefine((v, ctx) => {
+    if (
+      Boolean(v.layout) !== Boolean(v.layoutHash) ||
+      (v.layout &&
+        (v.layout.sourceOriginalSha256 !== v.catalog.sourceOriginalSha256 ||
+          v.layout.catchments.length !== v.catalog.catchments.length ||
+          v.layout.catchments.some(
+            (c) =>
+              !v.catalog.catchments.some((p) => p.id === c.id && p.outletNodeId === c.outletNodeId)
+          )))
+    )
+      ctx.addIssue({ code: 'custom', message: '표시 구역과 계산 구역 불일치' });
+  });
 export type WatershedCatalog = z.infer<typeof watershedCatalogDto>;
 export interface NetworkPlacement {
   id: string;
