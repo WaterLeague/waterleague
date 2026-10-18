@@ -663,6 +663,76 @@ class WatershedWorkflowTests {
   }
 
   @Test
+  void preservesMixedSurfaceCisternAndRejectsPerviousCapture() throws Exception {
+    var source = hydraulicCistern("Cistern1", "S1", "10");
+    var item =
+        new WatershedRequest.CisternItem(
+            source.id(),
+            source.catchmentId(),
+            source.captureAreaM2(),
+            source.areaM2(),
+            new BigDecimal("16.480"),
+            source.depthM(),
+            source.initialDepthM(),
+            new WatershedRequest.Port(
+                new BigDecimal("16.530"), new BigDecimal("0.040"), new BigDecimal("0.650"), true),
+            new WatershedRequest.Port(
+                new BigDecimal("18.030"), new BigDecimal("0.200"), new BigDecimal("0.650"), true));
+    var dto =
+        new WatershedRequest(
+            UUID.randomUUID(),
+            WatershedCatalogRepository.HASH,
+            List.of(),
+            null,
+            null,
+            null,
+            WatershedCostRepository.CISTERN_HASH,
+            null,
+            new WatershedRequest.CisternRequest(WatershedCatalogRepository.STORAGE_HASH, item));
+    var job = service.create(owner, dto);
+    assertThat(job.design().path("cistern").path("schemaVersion").asInt()).isEqualTo(2);
+    assertThat(service.create(owner, dto).id()).isEqualTo(job.id());
+    var stored = service.require(owner, job.id());
+    Files.writeString(
+        Path.of("../tmp/cistern-mixed-server-request.json"),
+        json.write(
+            Map.of(
+                "modelHash",
+                stored.modelHash(),
+                "inputHash",
+                stored.inputHash(),
+                "placements",
+                stored.placements())));
+    var excess =
+        new WatershedRequest.CisternItem(
+            item.id(),
+            item.catchmentId(),
+            new BigDecimal("30000"),
+            item.areaM2(),
+            item.invertM(),
+            item.depthM(),
+            item.initialDepthM(),
+            item.drain(),
+            item.overflow());
+    assertThatThrownBy(
+            () ->
+                service.create(
+                    owner,
+                    new WatershedRequest(
+                        UUID.randomUUID(),
+                        WatershedCatalogRepository.HASH,
+                        List.of(),
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        new WatershedRequest.CisternRequest(
+                            WatershedCatalogRepository.STORAGE_HASH, excess))))
+        .isInstanceOf(DomainException.class);
+  }
+
+  @Test
   void rejectsCisternSharedCatchmentAreaOverflowAndDuplicateIds() {
     for (var p :
         List.of(

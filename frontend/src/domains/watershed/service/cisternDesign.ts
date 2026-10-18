@@ -11,7 +11,7 @@ export function cisternCatchments(catalog: WatershedCatalog) {
     )
   );
   return catalog.catalog.catchments
-    .filter((c) => c.areaM2 === c.imperviousM2 && nodes.has(c.outletNodeId))
+    .filter((c) => c.imperviousM2 > 0 && c.imperviousM2 <= c.areaM2 && nodes.has(c.outletNodeId))
     .map((c) => ({ ...c, receiver: nodes.get(c.outletNodeId)! }));
 }
 export function validateCistern(
@@ -23,7 +23,7 @@ export function validateCistern(
   if (!p) return '';
   const host = cisternCatchments(catalog).find((c) => c.id === p.catchmentId);
   if (!host || !catalog.storageCatalogHash)
-    return '공개 원본의 전면 불투수 집수구역을 선택해 주세요.';
+    return '불투수면과 배수 절점이 확인된 공개 집수구역을 선택해 주세요.';
   if (!/^[A-Za-z][A-Za-z0-9_-]{0,23}$/.test(p.id) || ids.has(p.id.toUpperCase()))
     return '시설 식별자가 중복되거나 올바르지 않습니다.';
   if (lids.some((l) => l.catchmentId === p.catchmentId))
@@ -32,9 +32,9 @@ export function validateCistern(
     Number.isFinite(v) && Math.abs(v * 10 ** digits - Math.round(v * 10 ** digits)) < 1e-6;
   if (
     ![p.captureAreaM2, p.areaM2].every((v) => precision(v, 2) && v >= 0.01 && v <= 1e6) ||
-    p.captureAreaM2 + p.areaM2 > host.areaM2
+    p.captureAreaM2 + p.areaM2 > host.imperviousM2
   )
-    return '집수 면적과 덮개 면적의 합이 원 면적을 넘지 않아야 합니다.';
+    return '집수 면적과 덮개 면적의 합이 원 불투수 면적을 넘지 않아야 합니다.';
   if (
     ![p.invertM, p.depthM, p.initialDepthM].every((v) => precision(v, 3)) ||
     p.invertM < -1000 ||

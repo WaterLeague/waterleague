@@ -33,3 +33,41 @@ def design(raw, *, flap=True):
         'drain': {'crestM': .05, 'diameterM': .02, 'dischargeCoefficient': .65, 'flapGate': flap},
         'overflow': {'crestM': 1., 'diameterM': .1, 'dischargeCoefficient': .65, 'flapGate': flap},
         'evidence': 'NUMERICAL_DIAGNOSTIC_NOT_SEOUL_MEASUREMENT'}
+
+
+def hydrology_series(raw, directory):
+    """원 EPA 공개 C API의 보고 시계열 대조. 물리 상태·시간 간격 변경 없음."""
+    import ctypes as C
+    import math
+    import os
+    from pathlib import Path
+    import struct
+    from ..engine.flood_errors import require
+    from ..engine.swmm import library_path
+    from ..ingestion.published_network import records
+    directory=Path(directory);directory.mkdir(parents=True, exist_ok=False)
+    inp,rpt,out=[directory/name for name in ('input.inp','report.rpt','result.out')]
+    inp.write_bytes(raw)
+    rows=[r['tokens'] for r in records(raw)[1]['SUBCATCHMENTS']]
+    areas=[float(r[3])*10000 for r in rows]
+    lib=C.CDLL(str(library_path()))
+    require(lib.swmm_getVersion()==52004,'CISTERN_REFERENCE_VERSION_CHANGED')
+    lib.swmm_getSavedValue.argtypes=[C.c_int,C.c_int,C.c_int]
+    lib.swmm_getSavedValue.restype=C.c_double
+    def check(code): require(code==0,'CISTERN_REFERENCE_ENGINE_FAILED')
+    try:
+        check(lib.swmm_open(os.fsencode(inp),os.fsencode(rpt),os.fsencode(out)))
+        check(lib.swmm_start(1));elapsed=C.c_double()
+        while True:
+            check(lib.swmm_step(C.byref(elapsed)))
+            if elapsed.value==0: break
+        check(lib.swmm_end());check(lib.swmm_report())
+        footer=struct.unpack('<6i',out.read_bytes()[-24:])
+        require(footer[3]>0 and footer[4]==0 and footer[5]==516114522,'CISTERN_REFERENCE_OUTPUT_INVALID')
+        values={}
+        for label,prop in (('rainfallMmM2H',202),('evaporationMmM2Day',203),('infiltrationMmM2H',204),('runoffM3s',205)):
+            values[label]=[math.fsum(lib.swmm_getSavedValue(prop,i,period)*(1 if prop==205 else area)
+                for i,area in enumerate(areas)) for period in range(1,footer[3]+1)]
+        require(all(math.isfinite(v) for series in values.values() for v in series),'CISTERN_REFERENCE_NONFINITE')
+        return values
+    finally: lib.swmm_close()

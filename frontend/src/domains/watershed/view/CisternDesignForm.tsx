@@ -30,7 +30,7 @@ export function CisternDesignForm({
   const [error, setError] = useState('');
   const [feedback, setFeedback] = useState('');
   const host = hosts.find((c) => c.id === draft.catchmentId);
-  if (!host) return <p>이 원본에는 이용조를 연결할 수 있는 전면 불투수 집수구역이 없습니다.</p>;
+  if (!host) return <p>이 원본에는 불투수면과 배수 연결이 확인된 집수구역이 없습니다.</p>;
   function add() {
     const used = new Set(
       [...state.drafts, ...state.storageDrafts, ...state.conduitDrafts, ...state.pumpDrafts].map(
@@ -70,7 +70,7 @@ export function CisternDesignForm({
           disabled={state.busy}
           onSelect={(id) => {
             if (hosts.some((c) => c.id === id)) setDraft({ ...draft, catchmentId: id });
-            else setError('전면 불투수 집수구역만 연결할 수 있습니다.');
+            else setError('불투수면과 배수 절점이 확인된 집수구역을 선택해 주세요.');
           }}
         />
       )}
@@ -89,15 +89,17 @@ export function CisternDesignForm({
         </select>
       </label>
       <p>
-        원 면적 {number(host.areaM2)} m² · 연결 절점 {host.receiver.id} 높이{' '}
+        원 면적 {number(host.areaM2)} m² · 불투수 면적 {number(host.imperviousM2)} m² · 보존할 투수
+        면적 {number(host.areaM2 - host.imperviousM2)} m². 연결 절점 {host.receiver.id} 높이{' '}
         {number(host.receiver.invertM)}~{number(host.receiver.invertM + host.receiver.maxDepthM)} m.
         원 관망 수직 기준면은 미확인입니다.
       </p>
       <fieldset className="watershed-storage-fields" disabled={state.busy}>
         <legend>신규 시설 설계값</legend>
         <p>
-          실제 설치 시설의 관측값이 아닌 설계값을 입력합니다. 같은 집수구역에 다른 LID를 겹쳐 배분할
-          수 없습니다.
+          불투수면 중 집수할 면적과 물통 덮개 면적을 입력합니다. 기존 투수면의 침투는 유지합니다.
+          실제 설치 시설의 관측값이 아닌 설계값이며 같은 집수구역에 다른 LID를 겹쳐 배분할 수
+          없습니다.
         </p>
         <div className="watershed-inputs">
           {(

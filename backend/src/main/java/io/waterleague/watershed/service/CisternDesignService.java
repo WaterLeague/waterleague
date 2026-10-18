@@ -22,8 +22,9 @@ public final class CisternDesignService {
     for (var c : catalog.value().path("catchments"))
       if (c.path("id").asString().equals(p.catchmentId())) host = c;
     if (host == null
+        || host.path("imperviousM2").decimalValue().signum() <= 0
         || host.path("imperviousM2").decimalValue().compareTo(host.path("areaM2").decimalValue())
-            != 0
+            > 0
         || lids.stream().anyMatch(l -> l.catchmentId().equals(p.catchmentId()))
         || !ids.add(p.id().toUpperCase(Locale.ROOT))
         || !p.id().matches("[A-Za-z][A-Za-z0-9_-]{0,23}"))
@@ -35,14 +36,18 @@ public final class CisternDesignService {
     if (receiver == null
         || p.captureAreaM2().signum() <= 0
         || p.areaM2().signum() <= 0
-        || p.captureAreaM2().add(p.areaM2()).compareTo(host.path("areaM2").decimalValue()) > 0
+        || p.captureAreaM2().add(p.areaM2()).compareTo(host.path("imperviousM2").decimalValue()) > 0
         || p.depthM().signum() <= 0
         || p.initialDepthM().signum() < 0
         || p.initialDepthM().compareTo(p.depthM()) > 0
         || p.overflow().crestM().compareTo(p.drain().crestM()) <= 0)
       throw new DomainException(ErrorCode.PLACEMENT_INVALID);
     var result = new TreeMap<String, Object>();
-    result.put("schemaVersion", 1);
+    result.put(
+        "schemaVersion",
+        host.path("imperviousM2").decimalValue().compareTo(host.path("areaM2").decimalValue()) == 0
+            ? 1
+            : 2);
     result.put("catalogHash", request.catalogHash());
     result.put("sourceNetworkSha256", catalog.storage().path("baseNetworkSha256").asString());
     result.put("id", p.id());

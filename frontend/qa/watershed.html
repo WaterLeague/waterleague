@@ -30,6 +30,7 @@
         { StorageDesignForm },
         { ConduitDesignForm },
         { PumpDesignForm },
+        { CisternDesignForm },
         { WatershedResult },
         { watershedCatalogDto, watershedJobDto },
         { default: catalogRaw },
@@ -47,6 +48,7 @@
         import('/src/domains/watershed/view/StorageDesignForm.tsx'),
         import('/src/domains/watershed/view/ConduitDesignForm.tsx'),
         import('/src/domains/watershed/view/PumpDesignForm.tsx'),
+        import('/src/domains/watershed/view/CisternDesignForm.tsx'),
         import('/src/domains/watershed/view/WatershedResult.tsx'),
         import('/src/domains/watershed/dto/watershedDto.ts'),
         import('/src/domains/watershed/view/fixtures/catalog.json'),
@@ -92,6 +94,7 @@
         const [storageDrafts, setStorageDrafts] = React.useState([]);
         const [conduitDrafts, setConduitDrafts] = React.useState([]);
         const [pumpDrafts, setPumpDrafts] = React.useState([]);
+        const [cisternDraft, setCisternDraft] = React.useState(null);
         const [type, setType] = React.useState('BIORETENTION');
         const [job, setJob] = React.useState(original);
         React.useEffect(() => {
@@ -132,6 +135,8 @@
           setConduitDrafts,
           pumpDrafts,
           setPumpDrafts,
+          cisternDraft,
+          setCisternDraft,
           busy: false,
           submit: async () => {
             document.getElementById('submission').textContent =
@@ -141,6 +146,7 @@
                 storage: storageDrafts,
                 conduits: conduitDrafts,
                 pumps: pumpDrafts,
+                cistern: cisternDraft,
               }) +
               ' · 서버 요청 없음';
           },
@@ -164,13 +170,15 @@
             )
           ),
           React.createElement(
-            type === 'PUMP_STATION'
-              ? PumpDesignForm
-              : type === 'CONDUIT'
-                ? ConduitDesignForm
-                : type === 'UNDERGROUND_STORAGE'
-                  ? StorageDesignForm
-                  : NetworkDesignForm,
+            type === 'RAINWATER_CISTERN'
+              ? CisternDesignForm
+              : type === 'PUMP_STATION'
+                ? PumpDesignForm
+                : type === 'CONDUIT'
+                  ? ConduitDesignForm
+                  : type === 'UNDERGROUND_STORAGE'
+                    ? StorageDesignForm
+                    : NetworkDesignForm,
             { catalog, type, state }
           ),
           React.createElement(WatershedResult, { job })

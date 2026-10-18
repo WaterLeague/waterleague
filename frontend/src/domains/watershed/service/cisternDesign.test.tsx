@@ -21,7 +21,7 @@ const tank: CisternPlacement = {
   overflow: { crestM: 14.3, diameterM: 0.2, dischargeCoefficient: 0.65, flapGate: true },
 };
 it('공개 적격 집수·면적·배수 높이·다른 시설 중복 제한', () => {
-  expect(cisternCatchments(catalog).map((c) => c.id)).toEqual(['S9']);
+  expect(cisternCatchments(catalog)).toHaveLength(14);
   expect(validateCombinedDesign(catalog, [], [], [], [], tank)).toBe('');
   for (const changed of [
     { ...tank, catchmentId: 'S1' },
@@ -52,6 +52,17 @@ it('공개 적격 집수·면적·배수 높이·다른 시설 중복 제한', (
   expect(validateCombinedDesign(catalog, [{ ...lid, catchmentId: 'S1' }], [], [], [], tank)).toBe(
     ''
   );
+  const mixed = {
+    ...tank,
+    catchmentId: 'S1',
+    invertM: 16.48,
+    drain: { ...tank.drain, crestM: 16.53 },
+    overflow: { ...tank.overflow, crestM: 18.03 },
+  };
+  expect(validateCombinedDesign(catalog, [], [], [], [], mixed)).toBe('');
+  expect(
+    validateCombinedDesign(catalog, [], [], [], [], { ...mixed, captureAreaM2: 30000 })
+  ).toContain('불투수 면적');
 });
 it('명시적 단면 용량과 기존 공개 견적 비교 및 공통 입력 표시', () => {
   const quotes = previewCisternCosts(catalog, [], tank);
@@ -73,6 +84,7 @@ it('명시적 단면 용량과 기존 공개 견적 비교 및 공통 입력 표
   expect(html).toContain('초기 수심');
   expect(html).toContain('관망 역압');
   expect(html).toContain('역류 방지 플랩');
+  expect(html).toContain('보존할 투수');
   expect(html).not.toContain('value="12.75"');
 });
 

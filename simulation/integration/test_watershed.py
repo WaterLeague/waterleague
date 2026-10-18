@@ -225,3 +225,39 @@ class WatershedTests(unittest.TestCase):
         archive=ROOT/'tmp'/('member-cistern-hydraulics-'+str(identity))
         shutil.copytree(folder,archive)
         (ROOT/'tmp/cistern-hydraulic-last-artifacts.txt').write_text(str(archive))
+
+    def test_server_mixed_cistern_preserves_soil_and_impervious_allocation(self):
+        import shutil
+        from waterleague_sim.engine.swmm import ROOT
+        request=json.loads((ROOT/'tmp/cistern-mixed-server-request.json').read_text())
+        identity=uuid.uuid4()
+        self.conn.execute("INSERT INTO watershed_experiments(id,owner_id,request_key,model_hash,input_hash,placements,state,created_at) VALUES(%s,%s,%s,%s,%s,%s,'QUEUED',now())",
+            (identity,self.owner,uuid.uuid4(),request['modelHash'],request['inputHash'],request['placements']))
+        job=queue.claim(self.conn)
+        self.assertTrue(watershed.process(self.conn,job,self.artifacts))
+        row=self.conn.execute('SELECT * FROM watershed_experiments WHERE id=%s',(identity,)).fetchone()
+        self.assertEqual(row['state'],'SUCCEEDED',row['error_code'])
+        result=json.loads(row['result'])
+        self.assertEqual(result['numericalStatus'],'PASSED',result)
+        folder=self.artifacts/'watersheds'/str(identity)/str(job['lease_token'])
+        transformed=inputs(request)[5]['networkCistern']
+        partition=transformed['catchmentPartition']
+        self.assertEqual(transformed['schemaVersion'],2)
+        self.assertAlmostEqual(partition['preservedPerviousAreaM2'],9781.255728)
+        self.assertEqual(partition['captureAreaM2'],10)
+        self.assertAlmostEqual(partition['originalImperviousAreaM2'],28322.584272)
+        ledger=result['cases'][1]['networkCistern']['wholeRunLedger']['facilities'][0]
+        self.assertEqual(ledger['capacityM3'],4.7)
+        self.assertEqual(ledger['floodingM3'],0)
+        self.assertGreater(ledger['finalStorageM3'],0)
+        self.assertFalse(result['rankingEligible'])
+        self.assertIsNone(result['budgetChargedKrw'])
+        changed=json.loads(request['placements']);changed['cistern']['captureAreaM2']=30000
+        raw=json.dumps(changed,sort_keys=True)
+        with self.assertRaisesRegex(FloodModelError,'CAPTURE_FOOTPRINT_OVERLAP'):
+            inputs(request|{'placements':raw,'inputHash':hashlib.sha256((request['modelHash']+'\n'+raw).encode()).hexdigest()})
+        manifest=json.loads((folder/'manifest.json').read_text())
+        for name,sha in manifest.items(): self.assertEqual(hashlib.sha256((folder/name).read_bytes()).hexdigest(),sha)
+        archive=ROOT/'tmp'/('member-mixed-cistern-'+str(identity))
+        shutil.copytree(folder,archive)
+        (ROOT/'tmp/cistern-mixed-last-artifacts.txt').write_text(str(archive))
