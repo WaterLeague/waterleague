@@ -8,9 +8,9 @@ from waterleague_sim.forcing.surface_evaporation import TRANSFER
 from waterleague_sim.engine.surface_exchange import DRY_EXCHANGE_POLICY
 
 
-def inputs(design, *, days=7, step=60):
+def inputs(design, *, days=7, step=60, antecedent_reference=None):
     import numpy as np
-    network, rain, initialization = network_inputs(days)
+    network, rain, initialization = network_inputs(days, antecedent_reference=antecedent_reference)
     surface = mesh(2, 1, 200, 200, bed=lambda x, y: np.ones_like(x))
     network.update(coordinateSystem=surface['coordinateSystem'], verticalDatum=surface['verticalDatum'])
     text = network['inputText'].replace('OUT 0 FIXED 0 NO', 'OUT 0 FIXED 0 NO\nSURFACE 1 FIXED 1 NO')

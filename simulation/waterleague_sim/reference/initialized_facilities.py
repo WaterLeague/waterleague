@@ -1,12 +1,13 @@
 """실제 2022 관측과 합성 2ha 유역의 연결 시설 초기화 비교 입력."""
 from datetime import datetime, timedelta, timezone
+from copy import deepcopy
 import hashlib
 
 from waterleague_sim.engine.swmm import ROOT
 from waterleague_sim.forcing.network_initialization import METHOD
 
 
-def inputs(days=7):
+def inputs(days=7, *, antecedent_reference=None):
     if days not in (7, 14, 28):
         raise ValueError('초기화 비교 기간 오류')
     start=datetime(2022,8,8,9,tzinfo=timezone.utc)-timedelta(days=days)
@@ -58,5 +59,7 @@ LINKS ALL
       'stationByCatchment':{'S1':'421'},'stations':[{'file':'kma-421-202208081800-202208082359-disaster-v1.json','sha256':'21d21033308e31deafe9190f5a0723fded9e43562a0d7c5573cc94c3e99efd96'}],
       'evaporationReference':{'file':name,'sha256':hashlib.sha256((ROOT/'data/derived/evaporation'/name).read_bytes()).hexdigest()}}
     ref={'file':'seoul-20220808-421-14d-v1.json.gz','sha256':'95c290cbbaaee551c73e3f24795605945bcc4d978b2b6c225392f5aef1f7fe98'}
+    if antecedent_reference is not None:
+        ref = deepcopy(antecedent_reference)
     init={'schemaVersion':1,'method':METHOD,'days':days,'stations':[ref],'weatherReference':ref,'evidence':'실제 선행 강우·기상의 문헌 설계 초기화; 현장 관측 상태 아님'}
     return model,spec,init

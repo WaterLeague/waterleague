@@ -1,0 +1,2320 @@
+{
+  "schemaVersion": 1,
+  "classification": "OBSERVED_FORCING_SYNTHETIC_CONNECTED_DOMAIN",
+  "rankingEligible": false,
+  "antecedentReference": {
+    "file": "seoul-20220808-421-28d-v1.json.gz",
+    "sha256": "113dc1376856067904f1fe5ea5619105bb05b5160a042f50375955918e2c3f53"
+  },
+  "cases": {
+    "7d-0pct-60s": {
+      "status": "PASSED",
+      "complete": true,
+      "warmupDays": 7,
+      "initialSaturationPercent": 0,
+      "maximumExchangeMilliseconds": 60000,
+      "fixedInputSha256": "914e12fcb7a9edab42a4ee75e8acdbca3712db8633995b8ad51702032fa17e47",
+      "engineSha256": "29ccbca146210d50953ee8e891314ed97301b455cf887f989f8369ab058f1f7e",
+      "comparableEngineSha256": "7833e499a74194c47fefe9d7ce27f6b51a5ebb55af3b374203d9cffaf052f9de",
+      "inputSha256": "8748923b6d61108b4a208abb0d709ffa7f67a0a23bcc4d4cdd278a16dd338fbc",
+      "resultSha256": "6bed7b8cf4483041f51edd71fa20cf11ed7b8c864d430fbef8d36e6efd3599be",
+      "observables": {
+        "initial.networkStorageM3": 113.73061484551722,
+        "initial.surfaceStorageM3": 1098.46628862432,
+        "evaluation.outwardVolumeM3": 1779.4792811926513,
+        "evaluation.peakOutwardM3s": 0.13508303862618712,
+        "evaluation.depthAreaTimeM3Hours": 10930.234754854922,
+        "initial.facility.S1.WL_Trench.soilMoisture": null,
+        "initial.facility.S1.WL_Trench.surfaceDepthMm": 152.4,
+        "initial.facility.S1.WL_Trench.storageDepthMm": 914.4000000000001,
+        "initial.facility.S1.WL_Trench.finalStorageM3": 213.36000000000004,
+        "initial.facility.S1.WL_Swale.soilMoisture": null,
+        "initial.facility.S1.WL_Swale.surfaceDepthMm": 112.21092360385812,
+        "initial.facility.S1.WL_Swale.storageDepthMm": null,
+        "initial.facility.S1.WL_Swale.finalStorageM3": 10.299871206268902,
+        "initial.facility.S1.WL_Cistern.soilMoisture": null,
+        "initial.facility.S1.WL_Cistern.surfaceDepthMm": 0.0,
+        "initial.facility.S1.WL_Cistern.storageDepthMm": 2000.0000000000002,
+        "initial.facility.S1.WL_Cistern.finalStorageM3": 20.0,
+        "initial.facility.S1.WL_Bioretention.soilMoisture": 0.52,
+        "initial.facility.S1.WL_Bioretention.surfaceDepthMm": 152.4,
+        "initial.facility.S1.WL_Bioretention.storageDepthMm": 304.8,
+        "initial.facility.S1.WL_Bioretention.finalStorageM3": 54.559200000000004
+      },
+      "evaluationLedger": {
+        "durationSeconds": 21540.0,
+        "numericalStatus": "PASSED",
+        "routing": {
+          "totals": {
+            "dryWeatherInflowM3": 0.0,
+            "runoffInflowM3": 1720.5558168704754,
+            "groundwaterInflowM3": 0.0,
+            "rdiiInflowM3": 0.0,
+            "externalInflowM3": 4.123978480505082,
+            "outflowM3": 1779.4792811926943,
+            "floodingM3": 0.0,
+            "evaporationM3": 0.031976993752332206,
+            "seepageM3": 0.0,
+            "reactionLossM3": 0.0,
+            "initialStorageM3": 113.73061484551722,
+            "storageM3": 58.900048468078005
+          },
+          "balance": {
+            "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+            "totalInM3": 1838.4104101964977,
+            "totalOutIncludingStorageM3": 1838.4113066545247,
+            "residualM3": -0.0008964580270003353,
+            "continuityPercent": -4.876267138329127e-05,
+            "absoluteToleranceM3": 1e-08,
+            "allowedResidualM3": 18.384104101964976
+          }
+        },
+        "surface": {
+          "boundaryNetInflowM3": 4.146614429721228e-15,
+          "sourceNetInflowM3": 1281.5409497294331,
+          "rainfallM3": 1699.999999999986,
+          "infiltrationM3": 413.69586464831036,
+          "potentialSurfaceEvaporationM3": 0.6392071417664624,
+          "surfaceEvaporationM3": 0.639207141737149,
+          "unmetSurfaceEvaporationM3": 0.0,
+          "surfaceEvaporationRoundoffM3": -2.931344056378293e-11,
+          "durationSeconds": 21539.999999999884,
+          "initialStorageM3": 1098.46628862432,
+          "finalStorageM3": 2380.0072383536963,
+          "balanceResidualM3": 5.6843418860808015e-11
+        },
+        "facilities": {
+          "durationSeconds": 21540.0,
+          "facilities": [
+            {
+              "subcatchmentId": "S1",
+              "swmmId": "WL_Trench",
+              "inflowM3": 498.24105417763906,
+              "evaporationM3": 0.015980178537727596,
+              "infiltrationM3": 11.966666666469564,
+              "surfaceOutflowM3": 486.2584073324307,
+              "drainOutflowM3": 0.0,
+              "initialStorageM3": 213.36000000000004,
+              "finalStorageM3": 213.36000000000004,
+              "balanceResidualM3": 2.0099832909181714e-10,
+              "allowedResidualM3": 7.116010541776391,
+              "numericalStatus": "PASSED"
+            },
+            {
+              "subcatchmentId": "S1",
+              "swmmId": "WL_Swale",
+              "inflowM3": 199.29642167105555,
+              "evaporationM3": 0.003283220762295591,
+              "infiltrationM3": 2.7133982452496888,
+              "surfaceOutflowM3": 205.51941692144183,
+              "drainOutflowM3": 0.0,
+              "initialStorageM3": 10.299871206268902,
+              "finalStorageM3": 2.2861930691053045,
+              "balanceResidualM3": -0.9259985792346583,
+              "allowedResidualM3": 2.105222914565591,
+              "numericalStatus": "PASSED"
+            },
+            {
+              "subcatchmentId": "S1",
+              "swmmId": "WL_Cistern",
+              "inflowM3": 91.14821083552923,
+              "evaporationM3": 0.0,
+              "infiltrationM3": 0.0,
+              "surfaceOutflowM3": 91.14821083552847,
+              "drainOutflowM3": 0.0,
+              "initialStorageM3": 20.0,
+              "finalStorageM3": 20.0,
+              "balanceResidualM3": 7.531752999057062e-13,
+              "allowedResidualM3": 1.1114821083552924,
+              "numericalStatus": "PASSED"
+            },
+            {
+              "subcatchmentId": "S1",
+              "swmmId": "WL_Bioretention",
+              "inflowM3": 99.64821083552775,
+              "evaporationM3": 0.0031960357090685676,
+              "infiltrationM3": 2.3933333333668045,
+              "surfaceOutflowM3": 72.00339691925255,
+              "drainOutflowM3": 26.80484341867828,
+              "initialStorageM3": 54.559200000000004,
+              "finalStorageM3": 53.00340893041296,
+              "balanceResidualM3": -0.0007678018919250462,
+              "allowedResidualM3": 1.542081786374197,
+              "numericalStatus": "PASSED"
+            }
+          ],
+          "routingTotals": {
+            "dryWeatherInflowM3": 0.0,
+            "runoffInflowM3": 1720.5558168704754,
+            "groundwaterInflowM3": 0.0,
+            "rdiiInflowM3": 0.0,
+            "externalInflowM3": 4.123978480505082,
+            "outflowM3": 1779.4792811926943,
+            "floodingM3": 0.0,
+            "evaporationM3": 0.031976993752332206,
+            "seepageM3": 0.0,
+            "reactionLossM3": 0.0,
+            "initialStorageM3": 113.73061484551722,
+            "storageM3": 58.900048468078005
+          },
+          "routingBalance": {
+            "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+            "totalInM3": 1838.4104101964977,
+            "totalOutIncludingStorageM3": 1838.4113066545247,
+            "residualM3": -0.0008964580270003353,
+            "continuityPercent": -4.876267138329127e-05,
+            "absoluteToleranceM3": 1e-08,
+            "allowedResidualM3": 18.384104101964976
+          },
+          "numericalStatus": "PASSED",
+          "scope": "SEPARATE_FACILITY_AND_ROUTING_CONTROL_VOLUMES",
+          "scoreExcludesWarmup": true,
+          "peakFlowM3s": null,
+          "peakStatus": "NOT_DERIVED_FROM_SPARSE_FRAMES"
+        },
+        "ports": {
+          "inlet": {
+            "networkToSurfaceM3": 0.0,
+            "surfaceToNetworkM3": 4.123978480505327
+          }
+        },
+        "coupled": {
+          "initialStorageM3": 1212.1969034698373,
+          "finalStorageM3": 2438.907286821774,
+          "networkExternalInflowM3": 1720.5558168704752,
+          "networkExternalOutflowAndLossM3": 1779.5112581864466,
+          "surfaceExternalNetInflowM3": 1285.6649282099384,
+          "balanceResidualM3": -0.0008964579706116638,
+          "allowedResidualM3": 42.184185450082204,
+          "exchangeCancellationResidualM3": 0.0
+        },
+        "scope": "SEPARATE_FACILITIES_AND_COUPLED_ROUTING_SURFACE_CONTROL_VOLUMES"
+      },
+      "initialSurfaceInfiltrationState": {
+        "method": "GREEN_AMPT",
+        "engine": {
+          "schemaVersion": 1,
+          "engineVersion": "5.2.4",
+          "revision": "7952ca837988b1c32f791812eccc9fd64547e093",
+          "sourceArchiveSha256": "3f76a199573088ce47ff02491c529afb73d9953ee9d948dfc89dcd4981b4c0c0",
+          "originalInfiltrationSha256": "4b86c2080752bee770a4a2d1f8f6bdc5469a110305316440e2a7cba7dde31124",
+          "originalSolverCMakeSha256": "456578d247a73635199295a5e23700015bfcc4b7555fcf38e731aae98aa3c9df",
+          "extensionSha256": "64a760dea0d62a61a725b18c7238642236bf7de94d7107bc7d863264c8c1fbf2",
+          "builderSha256": "67a037820dc3fdbbdb8bc8b52d3fcf1aa691b5487c5cf0b7b648ed3865c71d5b",
+          "binarySha256": "1094b6adf1db496c1d11c40d337cef215a91a9b13b3a1189857fce28beb55592",
+          "openMP": false,
+          "modification": "BATCH_INTERFACE_NO_EPA_EQUATION_CHANGES",
+          "adapterSha256": "ef5a1878f721aa3fdd6545d331f8ab93595ad14dd3e9d69dbc4bccc8ca77c2dc"
+        },
+        "infiltrationM3": 1787.3836733045737,
+        "nativeSteps": 10124,
+        "effectivePerviousAreaM2": 20000.0,
+        "ownershipPolicy": "SURFACE_ONLY",
+        "rankingEligible": false,
+        "initialization": "EPA_INITIAL_DEFICIT_SEED",
+        "momentumPolicy": "PROPORTIONAL_WATER_WITHDRAWAL",
+        "recoveryFactor": 1.0,
+        "limitations": [
+          "토성 문헌값·초기 부족률은 현장 관측 함수율이 아님",
+          "부분 투수 영역은 삼각형 수심 공유 근사",
+          "EPA 회복식 상태이며 토양층·지하수·증발산 전체 물수지 아님"
+        ],
+        "triangles": [
+          2,
+          3
+        ],
+        "infiltrationByTriangleM3": [
+          880.5166183420051,
+          906.8670549625684
+        ],
+        "nativeStateFields": [
+          "IMD",
+          "F_ft",
+          "Fu_ft",
+          "Sat",
+          "T_seconds"
+        ],
+        "nativeState": [
+          [
+            0.0,
+            0.0695958461047214,
+            0.03004626062886658,
+            1.0,
+            44930.715894243556
+          ],
+          [
+            0.02531898228990833,
+            0.08517755656515341,
+            0.03004626062886658,
+            1.0,
+            44930.715894243556
+          ]
+        ]
+      },
+      "networkConvergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 626377,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      },
+      "dryExchangeRoundoff": {
+        "policy": "BOUNDED_DRY_TAIL_ROUNDOFF_V1",
+        "withdrawalShortfallM3": 2.633212843997574e-09,
+        "maximumTransferShortfallM3": 1e-09,
+        "maximumRunShortfallM3": 1e-08
+      }
+    },
+    "7d-100pct-60s": {
+      "status": "PASSED",
+      "complete": true,
+      "warmupDays": 7,
+      "initialSaturationPercent": 100,
+      "maximumExchangeMilliseconds": 60000,
+      "fixedInputSha256": "914e12fcb7a9edab42a4ee75e8acdbca3712db8633995b8ad51702032fa17e47",
+      "engineSha256": "29ccbca146210d50953ee8e891314ed97301b455cf887f989f8369ab058f1f7e",
+      "comparableEngineSha256": "7833e499a74194c47fefe9d7ce27f6b51a5ebb55af3b374203d9cffaf052f9de",
+      "inputSha256": "a2dba2fb54e3be72408dbc39891f1749ce25a824fc6f305653cf026eb5922fe1",
+      "resultSha256": "c66a4b20104d87439b8dbaf45b50df1ff5942dc8966949f2c8c24daf9cc18e51",
+      "observables": {
+        "initial.networkStorageM3": 113.717099791188,
+        "initial.surfaceStorageM3": 1098.46628862432,
+        "evaluation.outwardVolumeM3": 1779.465769510907,
+        "evaluation.peakOutwardM3s": 0.1350830270111617,
+        "evaluation.depthAreaTimeM3Hours": 10930.234754854922,
+        "initial.facility.S1.WL_Trench.soilMoisture": null,
+        "initial.facility.S1.WL_Trench.surfaceDepthMm": 152.4,
+        "initial.facility.S1.WL_Trench.storageDepthMm": 914.4000000000001,
+        "initial.facility.S1.WL_Trench.finalStorageM3": 213.36000000000004,
+        "initial.facility.S1.WL_Swale.soilMoisture": null,
+        "initial.facility.S1.WL_Swale.surfaceDepthMm": 112.21092360385812,
+        "initial.facility.S1.WL_Swale.storageDepthMm": null,
+        "initial.facility.S1.WL_Swale.finalStorageM3": 10.299871206268902,
+        "initial.facility.S1.WL_Cistern.soilMoisture": null,
+        "initial.facility.S1.WL_Cistern.surfaceDepthMm": 0.0,
+        "initial.facility.S1.WL_Cistern.storageDepthMm": 2000.0000000000002,
+        "initial.facility.S1.WL_Cistern.finalStorageM3": 20.0,
+        "initial.facility.S1.WL_Bioretention.soilMoisture": 0.52,
+        "initial.facility.S1.WL_Bioretention.surfaceDepthMm": 152.4,
+        "initial.facility.S1.WL_Bioretention.storageDepthMm": 304.8,
+        "initial.facility.S1.WL_Bioretention.finalStorageM3": 54.559200000000004
+      },
+      "evaluationLedger": {
+        "durationSeconds": 21540.0,
+        "numericalStatus": "PASSED",
+        "routing": {
+          "totals": {
+            "dryWeatherInflowM3": 0.0,
+            "runoffInflowM3": 1720.555816870459,
+            "groundwaterInflowM3": 0.0,
+            "rdiiInflowM3": 0.0,
+            "externalInflowM3": 4.123978480505082,
+            "outflowM3": 1779.4657695108983,
+            "floodingM3": 0.0,
+            "evaporationM3": 0.03197699375233398,
+            "seepageM3": 0.0,
+            "reactionLossM3": 0.0,
+            "initialStorageM3": 113.717099791188,
+            "storageM3": 58.90004506813916
+          },
+          "balance": {
+            "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+            "totalInM3": 1838.396895142152,
+            "totalOutIncludingStorageM3": 1838.3977915727899,
+            "residualM3": -0.0008964306377947651,
+            "continuityPercent": -4.876154002237093e-05,
+            "absoluteToleranceM3": 1e-08,
+            "allowedResidualM3": 18.383968951421522
+          }
+        },
+        "surface": {
+          "boundaryNetInflowM3": 4.146614429721228e-15,
+          "sourceNetInflowM3": 1281.5409497294331,
+          "rainfallM3": 1699.999999999986,
+          "infiltrationM3": 413.69586464831036,
+          "potentialSurfaceEvaporationM3": 0.6392071417664624,
+          "surfaceEvaporationM3": 0.639207141737149,
+          "unmetSurfaceEvaporationM3": 0.0,
+          "surfaceEvaporationRoundoffM3": -2.931344056378293e-11,
+          "durationSeconds": 21539.999999999884,
+          "initialStorageM3": 1098.46628862432,
+          "finalStorageM3": 2380.0072383536963,
+          "balanceResidualM3": 5.6843418860808015e-11
+        },
+        "facilities": {
+          "durationSeconds": 21540.0,
+          "facilities": [
+            {
+              "subcatchmentId": "S1",
+              "swmmId": "WL_Trench",
+              "inflowM3": 498.24105417763906,
+              "evaporationM3": 0.015980178537729373,
+              "infiltrationM3": 11.966666666469564,
+              "surfaceOutflowM3": 486.2584073324296,
+              "drainOutflowM3": 0.0,
+              "initialStorageM3": 213.36000000000004,
+              "finalStorageM3": 213.36000000000004,
+              "balanceResidualM3": 2.021351974690333e-10,
+              "allowedResidualM3": 7.116010541776391,
+              "numericalStatus": "PASSED"
+            },
+            {
+              "subcatchmentId": "S1",
+              "swmmId": "WL_Swale",
+              "inflowM3": 199.29642167105555,
+              "evaporationM3": 0.003283220762295591,
+              "infiltrationM3": 2.7133982452496888,
+              "surfaceOutflowM3": 205.51941692144183,
+              "drainOutflowM3": 0.0,
+              "initialStorageM3": 10.299871206268902,
+              "finalStorageM3": 2.2861930691053045,
+              "balanceResidualM3": -0.9259985792346583,
+              "allowedResidualM3": 2.105222914565591,
+              "numericalStatus": "PASSED"
+            },
+            {
+              "subcatchmentId": "S1",
+              "swmmId": "WL_Cistern",
+              "inflowM3": 91.14821083552923,
+              "evaporationM3": 0.0,
+              "infiltrationM3": 0.0,
+              "surfaceOutflowM3": 91.14821083552853,
+              "drainOutflowM3": 0.0,
+              "initialStorageM3": 20.0,
+              "finalStorageM3": 20.0,
+              "balanceResidualM3": 6.963318810448982e-13,
+              "allowedResidualM3": 1.1114821083552924,
+              "numericalStatus": "PASSED"
+            },
+            {
+              "subcatchmentId": "S1",
+              "swmmId": "WL_Bioretention",
+              "inflowM3": 99.64821083552775,
+              "evaporationM3": 0.0031960357090683456,
+              "infiltrationM3": 2.393333333293917,
+              "surfaceOutflowM3": 72.0033969192525,
+              "drainOutflowM3": 26.80484341874387,
+              "initialStorageM3": 54.559200000000004,
+              "finalStorageM3": 53.00340893041296,
+              "balanceResidualM3": -0.0007678018845638235,
+              "allowedResidualM3": 1.5420817863741232,
+              "numericalStatus": "PASSED"
+            }
+          ],
+          "routingTotals": {
+            "dryWeatherInflowM3": 0.0,
+            "runoffInflowM3": 1720.555816870459,
+            "groundwaterInflowM3": 0.0,
+            "rdiiInflowM3": 0.0,
+            "externalInflowM3": 4.123978480505082,
+            "outflowM3": 1779.4657695108983,
+            "floodingM3": 0.0,
+            "evaporationM3": 0.03197699375233398,
+            "seepageM3": 0.0,
+            "reactionLossM3": 0.0,
+            "initialStorageM3": 113.717099791188,
+            "storageM3": 58.90004506813916
+          },
+          "routingBalance": {
+            "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+            "totalInM3": 1838.396895142152,
+            "totalOutIncludingStorageM3": 1838.3977915727899,
+            "residualM3": -0.0008964306377947651,
+            "continuityPercent": -4.876154002237093e-05,
+            "absoluteToleranceM3": 1e-08,
+            "allowedResidualM3": 18.383968951421522
+          },
+          "numericalStatus": "PASSED",
+          "scope": "SEPARATE_FACILITY_AND_ROUTING_CONTROL_VOLUMES",
+          "scoreExcludesWarmup": true,
+          "peakFlowM3s": null,
+          "peakStatus": "NOT_DERIVED_FROM_SPARSE_FRAMES"
+        },
+        "ports": {
+          "inlet": {
+            "networkToSurfaceM3": 0.0,
+            "surfaceToNetworkM3": 4.123978480505327
+          }
+        },
+        "coupled": {
+          "initialStorageM3": 1212.183388415508,
+          "finalStorageM3": 2438.9072834218355,
+          "networkExternalInflowM3": 1720.5558168704588,
+          "networkExternalOutflowAndLossM3": 1779.4977465046506,
+          "surfaceExternalNetInflowM3": 1285.6649282099384,
+          "balanceResidualM3": -0.0008964305802692252,
+          "allowedResidualM3": 42.18405029926486,
+          "exchangeCancellationResidualM3": 0.0
+        },
+        "scope": "SEPARATE_FACILITIES_AND_COUPLED_ROUTING_SURFACE_CONTROL_VOLUMES"
+      },
+      "initialSurfaceInfiltrationState": {
+        "method": "GREEN_AMPT",
+        "engine": {
+          "schemaVersion": 1,
+          "engineVersion": "5.2.4",
+          "revision": "7952ca837988b1c32f791812eccc9fd64547e093",
+          "sourceArchiveSha256": "3f76a199573088ce47ff02491c529afb73d9953ee9d948dfc89dcd4981b4c0c0",
+          "originalInfiltrationSha256": "4b86c2080752bee770a4a2d1f8f6bdc5469a110305316440e2a7cba7dde31124",
+          "originalSolverCMakeSha256": "456578d247a73635199295a5e23700015bfcc4b7555fcf38e731aae98aa3c9df",
+          "extensionSha256": "64a760dea0d62a61a725b18c7238642236bf7de94d7107bc7d863264c8c1fbf2",
+          "builderSha256": "67a037820dc3fdbbdb8bc8b52d3fcf1aa691b5487c5cf0b7b648ed3865c71d5b",
+          "binarySha256": "1094b6adf1db496c1d11c40d337cef215a91a9b13b3a1189857fce28beb55592",
+          "openMP": false,
+          "modification": "BATCH_INTERFACE_NO_EPA_EQUATION_CHANGES",
+          "adapterSha256": "ef5a1878f721aa3fdd6545d331f8ab93595ad14dd3e9d69dbc4bccc8ca77c2dc"
+        },
+        "infiltrationM3": 1787.3836733045737,
+        "nativeSteps": 10124,
+        "effectivePerviousAreaM2": 20000.0,
+        "ownershipPolicy": "SURFACE_ONLY",
+        "rankingEligible": false,
+        "initialization": "EPA_INITIAL_DEFICIT_SEED",
+        "momentumPolicy": "PROPORTIONAL_WATER_WITHDRAWAL",
+        "recoveryFactor": 1.0,
+        "limitations": [
+          "토성 문헌값·초기 부족률은 현장 관측 함수율이 아님",
+          "부분 투수 영역은 삼각형 수심 공유 근사",
+          "EPA 회복식 상태이며 토양층·지하수·증발산 전체 물수지 아님"
+        ],
+        "triangles": [
+          2,
+          3
+        ],
+        "infiltrationByTriangleM3": [
+          880.5166183420051,
+          906.8670549625684
+        ],
+        "nativeStateFields": [
+          "IMD",
+          "F_ft",
+          "Fu_ft",
+          "Sat",
+          "T_seconds"
+        ],
+        "nativeState": [
+          [
+            0.0,
+            0.0695958461047214,
+            0.03004626062886658,
+            1.0,
+            44930.715894243556
+          ],
+          [
+            0.02531898228990833,
+            0.08517755656515341,
+            0.03004626062886658,
+            1.0,
+            44930.715894243556
+          ]
+        ]
+      },
+      "networkConvergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 626377,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      },
+      "dryExchangeRoundoff": {
+        "policy": "BOUNDED_DRY_TAIL_ROUNDOFF_V1",
+        "withdrawalShortfallM3": 2.633212843997574e-09,
+        "maximumTransferShortfallM3": 1e-09,
+        "maximumRunShortfallM3": 1e-08
+      }
+    },
+    "14d-0pct-60s": {
+      "status": "PASSED",
+      "complete": true,
+      "warmupDays": 14,
+      "initialSaturationPercent": 0,
+      "maximumExchangeMilliseconds": 60000,
+      "fixedInputSha256": "914e12fcb7a9edab42a4ee75e8acdbca3712db8633995b8ad51702032fa17e47",
+      "engineSha256": "29ccbca146210d50953ee8e891314ed97301b455cf887f989f8369ab058f1f7e",
+      "comparableEngineSha256": "7833e499a74194c47fefe9d7ce27f6b51a5ebb55af3b374203d9cffaf052f9de",
+      "inputSha256": "deadbddcc24005e7e8f7ce200671a8bfc20bebf2c52a30a0e1101666dc5178d8",
+      "resultSha256": "6cca952568077577a12b7421f730f5269252ccf031519812e5dbb5eccdc6aedd",
+      "observables": {
+        "initial.networkStorageM3": 113.73061486342314,
+        "initial.surfaceStorageM3": 1098.4662886243248,
+        "evaluation.outwardVolumeM3": 1779.4792812105516,
+        "evaluation.peakOutwardM3s": 0.13508303862620244,
+        "evaluation.depthAreaTimeM3Hours": 10930.234754855048,
+        "initial.facility.S1.WL_Trench.soilMoisture": null,
+        "initial.facility.S1.WL_Trench.surfaceDepthMm": 152.4,
+        "initial.facility.S1.WL_Trench.storageDepthMm": 914.4000000000001,
+        "initial.facility.S1.WL_Trench.finalStorageM3": 213.36000000000004,
+        "initial.facility.S1.WL_Swale.soilMoisture": null,
+        "initial.facility.S1.WL_Swale.surfaceDepthMm": 112.21092360385812,
+        "initial.facility.S1.WL_Swale.storageDepthMm": null,
+        "initial.facility.S1.WL_Swale.finalStorageM3": 10.299871206268902,
+        "initial.facility.S1.WL_Cistern.soilMoisture": null,
+        "initial.facility.S1.WL_Cistern.surfaceDepthMm": 0.0,
+        "initial.facility.S1.WL_Cistern.storageDepthMm": 2000.0000000000002,
+        "initial.facility.S1.WL_Cistern.finalStorageM3": 20.0,
+        "initial.facility.S1.WL_Bioretention.soilMoisture": 0.52,
+        "initial.facility.S1.WL_Bioretention.surfaceDepthMm": 152.4,
+        "initial.facility.S1.WL_Bioretention.storageDepthMm": 304.8,
+        "initial.facility.S1.WL_Bioretention.finalStorageM3": 54.559200000000004
+      },
+      "evaluationLedger": {
+        "durationSeconds": 21540.0,
+        "numericalStatus": "PASSED",
+        "routing": {
+          "totals": {
+            "dryWeatherInflowM3": 0.0,
+            "runoffInflowM3": 1720.5558168704906,
+            "groundwaterInflowM3": 0.0,
+            "rdiiInflowM3": 0.0,
+            "externalInflowM3": 4.123978480505703,
+            "outflowM3": 1779.4792812105234,
+            "floodingM3": 0.0,
+            "evaporationM3": 0.03197699375233398,
+            "seepageM3": 0.0,
+            "reactionLossM3": 0.0,
+            "initialStorageM3": 113.73061486342314,
+            "storageM3": 58.90004846808266
+          },
+          "balance": {
+            "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+            "totalInM3": 1838.4104102144195,
+            "totalOutIncludingStorageM3": 1838.4113066723583,
+            "residualM3": -0.0008964579387793492,
+            "continuityPercent": -4.876266658405141e-05,
+            "absoluteToleranceM3": 1e-08,
+            "allowedResidualM3": 18.384104102144196
+          }
+        },
+        "surface": {
+          "boundaryNetInflowM3": 2.1508314008404816e-14,
+          "sourceNetInflowM3": 1281.5409497294409,
+          "rainfallM3": 1699.9999999999982,
+          "infiltrationM3": 413.69586464831036,
+          "potentialSurfaceEvaporationM3": 0.639207141763336,
+          "surfaceEvaporationM3": 0.639207141738126,
+          "unmetSurfaceEvaporationM3": 0.0,
+          "surfaceEvaporationRoundoffM3": -2.5210056264768355e-11,
+          "durationSeconds": 21539.999999999767,
+          "initialStorageM3": 1098.4662886243248,
+          "finalStorageM3": 2380.0072383536494,
+          "balanceResidualM3": 1.1596057447604835e-10
+        },
+        "facilities": {
+          "durationSeconds": 21540.0,
+          "facilities": [
+            {
+              "subcatchmentId": "S1",
+              "swmmId": "WL_Trench",
+              "inflowM3": 498.24105417763644,
+              "evaporationM3": 0.015980178537727596,
+              "infiltrationM3": 11.966666666469564,
+              "surfaceOutflowM3": 486.2584073324217,
+              "drainOutflowM3": 0.0,
+              "initialStorageM3": 213.36000000000004,
+              "finalStorageM3": 213.36000000000004,
+              "balanceResidualM3": 2.0736479200422764e-10,
+              "allowedResidualM3": 7.116010541776364,
+              "numericalStatus": "PASSED"
+            },
+            {
+              "subcatchmentId": "S1",
+              "swmmId": "WL_Swale",
+              "inflowM3": 199.29642167105436,
+              "evaporationM3": 0.003283220762295591,
+              "infiltrationM3": 2.7133982452498415,
+              "surfaceOutflowM3": 205.5194169214471,
+              "drainOutflowM3": 0.0,
+              "initialStorageM3": 10.299871206268902,
+              "finalStorageM3": 2.2861930691053045,
+              "balanceResidualM3": -0.9259985792412806,
+              "allowedResidualM3": 2.1052229145656454,
+              "numericalStatus": "PASSED"
+            },
+            {
+              "subcatchmentId": "S1",
+              "swmmId": "WL_Cistern",
+              "inflowM3": 91.148210835529,
+              "evaporationM3": 0.0,
+              "infiltrationM3": 0.0,
+              "surfaceOutflowM3": 91.14821083552926,
+              "drainOutflowM3": 0.0,
+              "initialStorageM3": 20.0,
+              "finalStorageM3": 20.0,
+              "balanceResidualM3": -2.5579538487363607e-13,
+              "allowedResidualM3": 1.1114821083552926,
+              "numericalStatus": "PASSED"
+            },
+            {
+              "subcatchmentId": "S1",
+              "swmmId": "WL_Bioretention",
+              "inflowM3": 99.6482108355271,
+              "evaporationM3": 0.0031960357075455637,
+              "infiltrationM3": 2.393333333293917,
+              "surfaceOutflowM3": 72.00339691925242,
+              "drainOutflowM3": 26.80484341874501,
+              "initialStorageM3": 54.559200000000004,
+              "finalStorageM3": 53.00340893041296,
+              "balanceResidualM3": -0.0007678018847343537,
+              "allowedResidualM3": 1.5420817863741183,
+              "numericalStatus": "PASSED"
+            }
+          ],
+          "routingTotals": {
+            "dryWeatherInflowM3": 0.0,
+            "runoffInflowM3": 1720.5558168704906,
+            "groundwaterInflowM3": 0.0,
+            "rdiiInflowM3": 0.0,
+            "externalInflowM3": 4.123978480505703,
+            "outflowM3": 1779.4792812105234,
+            "floodingM3": 0.0,
+            "evaporationM3": 0.03197699375233398,
+            "seepageM3": 0.0,
+            "reactionLossM3": 0.0,
+            "initialStorageM3": 113.73061486342314,
+            "storageM3": 58.90004846808266
+          },
+          "routingBalance": {
+            "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+            "totalInM3": 1838.4104102144195,
+            "totalOutIncludingStorageM3": 1838.4113066723583,
+            "residualM3": -0.0008964579387793492,
+            "continuityPercent": -4.876266658405141e-05,
+            "absoluteToleranceM3": 1e-08,
+            "allowedResidualM3": 18.384104102144196
+          },
+          "numericalStatus": "PASSED",
+          "scope": "SEPARATE_FACILITY_AND_ROUTING_CONTROL_VOLUMES",
+          "scoreExcludesWarmup": true,
+          "peakFlowM3s": null,
+          "peakStatus": "NOT_DERIVED_FROM_SPARSE_FRAMES"
+        },
+        "ports": {
+          "inlet": {
+            "networkToSurfaceM3": 0.0,
+            "surfaceToNetworkM3": 4.123978480505205
+          }
+        },
+        "coupled": {
+          "initialStorageM3": 1212.196903487748,
+          "finalStorageM3": 2438.907286821732,
+          "networkExternalInflowM3": 1720.555816870491,
+          "networkExternalOutflowAndLossM3": 1779.5112582042757,
+          "surfaceExternalNetInflowM3": 1285.664928209946,
+          "balanceResidualM3": -0.0008964578223640274,
+          "allowedResidualM3": 42.18418545026008,
+          "exchangeCancellationResidualM3": 0.0
+        },
+        "scope": "SEPARATE_FACILITIES_AND_COUPLED_ROUTING_SURFACE_CONTROL_VOLUMES"
+      },
+      "initialSurfaceInfiltrationState": {
+        "method": "GREEN_AMPT",
+        "engine": {
+          "schemaVersion": 1,
+          "engineVersion": "5.2.4",
+          "revision": "7952ca837988b1c32f791812eccc9fd64547e093",
+          "sourceArchiveSha256": "3f76a199573088ce47ff02491c529afb73d9953ee9d948dfc89dcd4981b4c0c0",
+          "originalInfiltrationSha256": "4b86c2080752bee770a4a2d1f8f6bdc5469a110305316440e2a7cba7dde31124",
+          "originalSolverCMakeSha256": "456578d247a73635199295a5e23700015bfcc4b7555fcf38e731aae98aa3c9df",
+          "extensionSha256": "64a760dea0d62a61a725b18c7238642236bf7de94d7107bc7d863264c8c1fbf2",
+          "builderSha256": "67a037820dc3fdbbdb8bc8b52d3fcf1aa691b5487c5cf0b7b648ed3865c71d5b",
+          "binarySha256": "1094b6adf1db496c1d11c40d337cef215a91a9b13b3a1189857fce28beb55592",
+          "openMP": false,
+          "modification": "BATCH_INTERFACE_NO_EPA_EQUATION_CHANGES",
+          "adapterSha256": "ef5a1878f721aa3fdd6545d331f8ab93595ad14dd3e9d69dbc4bccc8ca77c2dc"
+        },
+        "infiltrationM3": 3589.5199070747803,
+        "nativeSteps": 20200,
+        "effectivePerviousAreaM2": 20000.0,
+        "ownershipPolicy": "SURFACE_ONLY",
+        "rankingEligible": false,
+        "initialization": "EPA_INITIAL_DEFICIT_SEED",
+        "momentumPolicy": "PROPORTIONAL_WATER_WITHDRAWAL",
+        "recoveryFactor": 1.0,
+        "limitations": [
+          "토성 문헌값·초기 부족률은 현장 관측 함수율이 아님",
+          "부분 투수 영역은 삼각형 수심 공유 근사",
+          "EPA 회복식 상태이며 토양층·지하수·증발산 전체 물수지 아님"
+        ],
+        "triangles": [
+          2,
+          3
+        ],
+        "infiltrationByTriangleM3": [
+          1773.037311905793,
+          1816.4825951689875
+        ],
+        "nativeStateFields": [
+          "IMD",
+          "F_ft",
+          "Fu_ft",
+          "Sat",
+          "T_seconds"
+        ],
+        "nativeState": [
+          [
+            0.0,
+            0.06959584610481755,
+            0.03004626062886658,
+            1.0,
+            44930.715894243556
+          ],
+          [
+            0.025318982289908358,
+            0.08517755656515343,
+            0.03004626062886658,
+            1.0,
+            44930.715894243556
+          ]
+        ]
+      },
+      "networkConvergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 1231171,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      },
+      "dryExchangeRoundoff": {
+        "policy": "BOUNDED_DRY_TAIL_ROUNDOFF_V1",
+        "withdrawalShortfallM3": 3.1194467484298878e-09,
+        "maximumTransferShortfallM3": 1e-09,
+        "maximumRunShortfallM3": 1e-08
+      }
+    },
+    "14d-100pct-60s": {
+      "status": "PASSED",
+      "complete": true,
+      "warmupDays": 14,
+      "initialSaturationPercent": 100,
+      "maximumExchangeMilliseconds": 60000,
+      "fixedInputSha256": "914e12fcb7a9edab42a4ee75e8acdbca3712db8633995b8ad51702032fa17e47",
+      "engineSha256": "29ccbca146210d50953ee8e891314ed97301b455cf887f989f8369ab058f1f7e",
+      "comparableEngineSha256": "7833e499a74194c47fefe9d7ce27f6b51a5ebb55af3b374203d9cffaf052f9de",
+      "inputSha256": "f7c19a475330437f637091dda621f8b05e8f9f5703774001fd96ff4ad3331e9d",
+      "resultSha256": "c77be8a4c2384fe7b2ebc0b3066f5bced4eae8b09830785940ef3e3e58b92e75",
+      "observables": {
+        "initial.networkStorageM3": 113.71709979118708,
+        "initial.surfaceStorageM3": 1098.4662886243248,
+        "evaluation.outwardVolumeM3": 1779.4657695109054,
+        "evaluation.peakOutwardM3s": 0.1350830270111617,
+        "evaluation.depthAreaTimeM3Hours": 10930.234754855048,
+        "initial.facility.S1.WL_Trench.soilMoisture": null,
+        "initial.facility.S1.WL_Trench.surfaceDepthMm": 152.4,
+        "initial.facility.S1.WL_Trench.storageDepthMm": 914.4000000000001,
+        "initial.facility.S1.WL_Trench.finalStorageM3": 213.36000000000004,
+        "initial.facility.S1.WL_Swale.soilMoisture": null,
+        "initial.facility.S1.WL_Swale.surfaceDepthMm": 112.21092360385812,
+        "initial.facility.S1.WL_Swale.storageDepthMm": null,
+        "initial.facility.S1.WL_Swale.finalStorageM3": 10.299871206268902,
+        "initial.facility.S1.WL_Cistern.soilMoisture": null,
+        "initial.facility.S1.WL_Cistern.surfaceDepthMm": 0.0,
+        "initial.facility.S1.WL_Cistern.storageDepthMm": 2000.0000000000002,
+        "initial.facility.S1.WL_Cistern.finalStorageM3": 20.0,
+        "initial.facility.S1.WL_Bioretention.soilMoisture": 0.52,
+        "initial.facility.S1.WL_Bioretention.surfaceDepthMm": 152.4,
+        "initial.facility.S1.WL_Bioretention.storageDepthMm": 304.8,
+        "initial.facility.S1.WL_Bioretention.finalStorageM3": 54.559200000000004
+      },
+      "evaluationLedger": {
+        "durationSeconds": 21540.0,
+        "numericalStatus": "PASSED",
+        "routing": {
+          "totals": {
+            "dryWeatherInflowM3": 0.0,
+            "runoffInflowM3": 1720.555816870486,
+            "groundwaterInflowM3": 0.0,
+            "rdiiInflowM3": 0.0,
+            "externalInflowM3": 4.123978480505703,
+            "outflowM3": 1779.4657695108235,
+            "floodingM3": 0.0,
+            "evaporationM3": 0.03197699375233398,
+            "seepageM3": 0.0,
+            "reactionLossM3": 0.0,
+            "initialStorageM3": 113.71709979118708,
+            "storageM3": 58.90004506813908
+          },
+          "balance": {
+            "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+            "totalInM3": 1838.396895142179,
+            "totalOutIncludingStorageM3": 1838.3977915727148,
+            "residualM3": -0.0008964305359313585,
+            "continuityPercent": -4.876153448148801e-05,
+            "absoluteToleranceM3": 1e-08,
+            "allowedResidualM3": 18.38396895142179
+          }
+        },
+        "surface": {
+          "boundaryNetInflowM3": 2.1508314008404816e-14,
+          "sourceNetInflowM3": 1281.5409497294409,
+          "rainfallM3": 1699.9999999999982,
+          "infiltrationM3": 413.69586464831036,
+          "potentialSurfaceEvaporationM3": 0.639207141763336,
+          "surfaceEvaporationM3": 0.639207141738126,
+          "unmetSurfaceEvaporationM3": 0.0,
+          "surfaceEvaporationRoundoffM3": -2.5210056264768355e-11,
+          "durationSeconds": 21539.999999999767,
+          "initialStorageM3": 1098.4662886243248,
+          "finalStorageM3": 2380.0072383536494,
+          "balanceResidualM3": 1.1596057447604835e-10
+        },
+        "facilities": {
+          "durationSeconds": 21540.0,
+          "facilities": [
+            {
+              "subcatchmentId": "S1",
+              "swmmId": "WL_Trench",
+              "inflowM3": 498.24105417763644,
+              "evaporationM3": 0.015980178553085977,
+              "infiltrationM3": 11.966666666469564,
+              "surfaceOutflowM3": 486.2584073324217,
+              "drainOutflowM3": 0.0,
+              "initialStorageM3": 213.36000000000004,
+              "finalStorageM3": 213.36000000000004,
+              "balanceResidualM3": 1.9201706891180947e-10,
+              "allowedResidualM3": 7.116010541776364,
+              "numericalStatus": "PASSED"
+            },
+            {
+              "subcatchmentId": "S1",
+              "swmmId": "WL_Swale",
+              "inflowM3": 199.29642167105436,
+              "evaporationM3": 0.003283220762295591,
+              "infiltrationM3": 2.7133982452498415,
+              "surfaceOutflowM3": 205.5194169214471,
+              "drainOutflowM3": 0.0,
+              "initialStorageM3": 10.299871206268902,
+              "finalStorageM3": 2.2861930691053045,
+              "balanceResidualM3": -0.9259985792412806,
+              "allowedResidualM3": 2.1052229145656454,
+              "numericalStatus": "PASSED"
+            },
+            {
+              "subcatchmentId": "S1",
+              "swmmId": "WL_Cistern",
+              "inflowM3": 91.148210835529,
+              "evaporationM3": 0.0,
+              "infiltrationM3": 0.0,
+              "surfaceOutflowM3": 91.14821083552954,
+              "drainOutflowM3": 0.0,
+              "initialStorageM3": 20.0,
+              "finalStorageM3": 20.0,
+              "balanceResidualM3": -5.400124791776761e-13,
+              "allowedResidualM3": 1.1114821083552955,
+              "numericalStatus": "PASSED"
+            },
+            {
+              "subcatchmentId": "S1",
+              "swmmId": "WL_Bioretention",
+              "inflowM3": 99.6482108355271,
+              "evaporationM3": 0.0031960357106166626,
+              "infiltrationM3": 2.39333333329391,
+              "surfaceOutflowM3": 72.00339691925248,
+              "drainOutflowM3": 26.804843418744923,
+              "initialStorageM3": 54.559200000000004,
+              "finalStorageM3": 53.00340893041296,
+              "balanceResidualM3": -0.0007678018878038984,
+              "allowedResidualM3": 1.5420817863741492,
+              "numericalStatus": "PASSED"
+            }
+          ],
+          "routingTotals": {
+            "dryWeatherInflowM3": 0.0,
+            "runoffInflowM3": 1720.555816870486,
+            "groundwaterInflowM3": 0.0,
+            "rdiiInflowM3": 0.0,
+            "externalInflowM3": 4.123978480505703,
+            "outflowM3": 1779.4657695108235,
+            "floodingM3": 0.0,
+            "evaporationM3": 0.03197699375233398,
+            "seepageM3": 0.0,
+            "reactionLossM3": 0.0,
+            "initialStorageM3": 113.71709979118708,
+            "storageM3": 58.90004506813908
+          },
+          "routingBalance": {
+            "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+            "totalInM3": 1838.396895142179,
+            "totalOutIncludingStorageM3": 1838.3977915727148,
+            "residualM3": -0.0008964305359313585,
+            "continuityPercent": -4.876153448148801e-05,
+            "absoluteToleranceM3": 1e-08,
+            "allowedResidualM3": 18.38396895142179
+          },
+          "numericalStatus": "PASSED",
+          "scope": "SEPARATE_FACILITY_AND_ROUTING_CONTROL_VOLUMES",
+          "scoreExcludesWarmup": true,
+          "peakFlowM3s": null,
+          "peakStatus": "NOT_DERIVED_FROM_SPARSE_FRAMES"
+        },
+        "ports": {
+          "inlet": {
+            "networkToSurfaceM3": 0.0,
+            "surfaceToNetworkM3": 4.123978480505205
+          }
+        },
+        "coupled": {
+          "initialStorageM3": 1212.183388415512,
+          "finalStorageM3": 2438.9072834217886,
+          "networkExternalInflowM3": 1720.5558168704865,
+          "networkExternalOutflowAndLossM3": 1779.4977465045758,
+          "surfaceExternalNetInflowM3": 1285.664928209946,
+          "balanceResidualM3": -0.0008964304197434103,
+          "allowedResidualM3": 42.184050299263646,
+          "exchangeCancellationResidualM3": 0.0
+        },
+        "scope": "SEPARATE_FACILITIES_AND_COUPLED_ROUTING_SURFACE_CONTROL_VOLUMES"
+      },
+      "initialSurfaceInfiltrationState": {
+        "method": "GREEN_AMPT",
+        "engine": {
+          "schemaVersion": 1,
+          "engineVersion": "5.2.4",
+          "revision": "7952ca837988b1c32f791812eccc9fd64547e093",
+          "sourceArchiveSha256": "3f76a199573088ce47ff02491c529afb73d9953ee9d948dfc89dcd4981b4c0c0",
+          "originalInfiltrationSha256": "4b86c2080752bee770a4a2d1f8f6bdc5469a110305316440e2a7cba7dde31124",
+          "originalSolverCMakeSha256": "456578d247a73635199295a5e23700015bfcc4b7555fcf38e731aae98aa3c9df",
+          "extensionSha256": "64a760dea0d62a61a725b18c7238642236bf7de94d7107bc7d863264c8c1fbf2",
+          "builderSha256": "67a037820dc3fdbbdb8bc8b52d3fcf1aa691b5487c5cf0b7b648ed3865c71d5b",
+          "binarySha256": "1094b6adf1db496c1d11c40d337cef215a91a9b13b3a1189857fce28beb55592",
+          "openMP": false,
+          "modification": "BATCH_INTERFACE_NO_EPA_EQUATION_CHANGES",
+          "adapterSha256": "ef5a1878f721aa3fdd6545d331f8ab93595ad14dd3e9d69dbc4bccc8ca77c2dc"
+        },
+        "infiltrationM3": 3589.5199070747803,
+        "nativeSteps": 20200,
+        "effectivePerviousAreaM2": 20000.0,
+        "ownershipPolicy": "SURFACE_ONLY",
+        "rankingEligible": false,
+        "initialization": "EPA_INITIAL_DEFICIT_SEED",
+        "momentumPolicy": "PROPORTIONAL_WATER_WITHDRAWAL",
+        "recoveryFactor": 1.0,
+        "limitations": [
+          "토성 문헌값·초기 부족률은 현장 관측 함수율이 아님",
+          "부분 투수 영역은 삼각형 수심 공유 근사",
+          "EPA 회복식 상태이며 토양층·지하수·증발산 전체 물수지 아님"
+        ],
+        "triangles": [
+          2,
+          3
+        ],
+        "infiltrationByTriangleM3": [
+          1773.037311905793,
+          1816.4825951689875
+        ],
+        "nativeStateFields": [
+          "IMD",
+          "F_ft",
+          "Fu_ft",
+          "Sat",
+          "T_seconds"
+        ],
+        "nativeState": [
+          [
+            0.0,
+            0.06959584610481755,
+            0.03004626062886658,
+            1.0,
+            44930.715894243556
+          ],
+          [
+            0.025318982289908358,
+            0.08517755656515343,
+            0.03004626062886658,
+            1.0,
+            44930.715894243556
+          ]
+        ]
+      },
+      "networkConvergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 1231171,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      },
+      "dryExchangeRoundoff": {
+        "policy": "BOUNDED_DRY_TAIL_ROUNDOFF_V1",
+        "withdrawalShortfallM3": 3.1194467484298878e-09,
+        "maximumTransferShortfallM3": 1e-09,
+        "maximumRunShortfallM3": 1e-08
+      }
+    },
+    "28d-0pct-60s": {
+      "status": "PASSED",
+      "complete": true,
+      "warmupDays": 28,
+      "initialSaturationPercent": 0,
+      "maximumExchangeMilliseconds": 60000,
+      "fixedInputSha256": "914e12fcb7a9edab42a4ee75e8acdbca3712db8633995b8ad51702032fa17e47",
+      "engineSha256": "29ccbca146210d50953ee8e891314ed97301b455cf887f989f8369ab058f1f7e",
+      "comparableEngineSha256": "7833e499a74194c47fefe9d7ce27f6b51a5ebb55af3b374203d9cffaf052f9de",
+      "inputSha256": "78dfca727fdfe7d289df84fdea88bd5df965839502eab5f4af513edbcd4b910d",
+      "resultSha256": "9ce832f94d0fde5ac4087d51f1c69c4711fc82eaef57e220fc151057534eff71",
+      "observables": {
+        "initial.networkStorageM3": 113.73061486342314,
+        "initial.surfaceStorageM3": 1098.4662886242957,
+        "evaluation.outwardVolumeM3": 1779.4792812105516,
+        "evaluation.peakOutwardM3s": 0.13508303862620244,
+        "evaluation.depthAreaTimeM3Hours": 10930.23475485515,
+        "initial.facility.S1.WL_Trench.soilMoisture": null,
+        "initial.facility.S1.WL_Trench.surfaceDepthMm": 152.4,
+        "initial.facility.S1.WL_Trench.storageDepthMm": 914.4000000000001,
+        "initial.facility.S1.WL_Trench.finalStorageM3": 213.36000000000004,
+        "initial.facility.S1.WL_Swale.soilMoisture": null,
+        "initial.facility.S1.WL_Swale.surfaceDepthMm": 112.21092360385812,
+        "initial.facility.S1.WL_Swale.storageDepthMm": null,
+        "initial.facility.S1.WL_Swale.finalStorageM3": 10.299871206268902,
+        "initial.facility.S1.WL_Cistern.soilMoisture": null,
+        "initial.facility.S1.WL_Cistern.surfaceDepthMm": 0.0,
+        "initial.facility.S1.WL_Cistern.storageDepthMm": 2000.0000000000002,
+        "initial.facility.S1.WL_Cistern.finalStorageM3": 20.0,
+        "initial.facility.S1.WL_Bioretention.soilMoisture": 0.52,
+        "initial.facility.S1.WL_Bioretention.surfaceDepthMm": 152.4,
+        "initial.facility.S1.WL_Bioretention.storageDepthMm": 304.8,
+        "initial.facility.S1.WL_Bioretention.finalStorageM3": 54.559200000000004
+      },
+      "evaluationLedger": {
+        "durationSeconds": 21540.0,
+        "numericalStatus": "PASSED",
+        "routing": {
+          "totals": {
+            "dryWeatherInflowM3": 0.0,
+            "runoffInflowM3": 1720.5558168704447,
+            "groundwaterInflowM3": 0.0,
+            "rdiiInflowM3": 0.0,
+            "externalInflowM3": 4.1239784805025685,
+            "outflowM3": 1779.4792812105388,
+            "floodingM3": 0.0,
+            "evaporationM3": 0.03197699372876173,
+            "seepageM3": 0.0,
+            "reactionLossM3": 0.0,
+            "initialStorageM3": 113.73061486342314,
+            "storageM3": 58.900048468082694
+          },
+          "balance": {
+            "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+            "totalInM3": 1838.4104102143704,
+            "totalOutIncludingStorageM3": 1838.4113066723503,
+            "residualM3": -0.0008964579799339845,
+            "continuityPercent": -4.876266882265162e-05,
+            "absoluteToleranceM3": 1e-08,
+            "allowedResidualM3": 18.384104102143706
+          }
+        },
+        "surface": {
+          "boundaryNetInflowM3": 3.9708011827362164e-15,
+          "sourceNetInflowM3": 1281.5409497296812,
+          "rainfallM3": 1700.0000000002174,
+          "infiltrationM3": 413.69586464829445,
+          "potentialSurfaceEvaporationM3": 0.6392071417694751,
+          "surfaceEvaporationM3": 0.639207141738126,
+          "unmetSurfaceEvaporationM3": 0.0,
+          "surfaceEvaporationRoundoffM3": -3.134914550173562e-11,
+          "durationSeconds": 21540.0,
+          "initialStorageM3": 1098.4662886242957,
+          "finalStorageM3": 2380.007238353956,
+          "balanceResidualM3": 2.091837814077735e-11
+        },
+        "facilities": {
+          "durationSeconds": 21540.0,
+          "facilities": [
+            {
+              "subcatchmentId": "S1",
+              "swmmId": "WL_Trench",
+              "inflowM3": 498.2410541776642,
+              "evaporationM3": 0.015980178553082425,
+              "infiltrationM3": 11.966666666469678,
+              "surfaceOutflowM3": 486.2584073324249,
+              "drainOutflowM3": 0.0,
+              "initialStorageM3": 213.36000000000004,
+              "finalStorageM3": 213.36000000000004,
+              "balanceResidualM3": 2.1645973902195692e-10,
+              "allowedResidualM3": 7.116010541776642,
+              "numericalStatus": "PASSED"
+            },
+            {
+              "subcatchmentId": "S1",
+              "swmmId": "WL_Swale",
+              "inflowM3": 199.29642167106567,
+              "evaporationM3": 0.0032832207623063603,
+              "infiltrationM3": 2.7133982452501826,
+              "surfaceOutflowM3": 205.51941692145226,
+              "drainOutflowM3": 0.0,
+              "initialStorageM3": 10.299871206268902,
+              "finalStorageM3": 2.2861930691053045,
+              "balanceResidualM3": -0.9259985792354826,
+              "allowedResidualM3": 2.1052229145657004,
+              "numericalStatus": "PASSED"
+            },
+            {
+              "subcatchmentId": "S1",
+              "swmmId": "WL_Cistern",
+              "inflowM3": 91.14821083552317,
+              "evaporationM3": 0.0,
+              "infiltrationM3": 0.0,
+              "surfaceOutflowM3": 91.14821083552894,
+              "drainOutflowM3": 0.0,
+              "initialStorageM3": 20.0,
+              "finalStorageM3": 20.0,
+              "balanceResidualM3": -5.7696070143720135e-12,
+              "allowedResidualM3": 1.1114821083552895,
+              "numericalStatus": "PASSED"
+            },
+            {
+              "subcatchmentId": "S1",
+              "swmmId": "WL_Bioretention",
+              "inflowM3": 99.64821083553272,
+              "evaporationM3": 0.0031960357075195844,
+              "infiltrationM3": 2.39333333329391,
+              "surfaceOutflowM3": 72.00339691925078,
+              "drainOutflowM3": 26.804843418744923,
+              "initialStorageM3": 54.559200000000004,
+              "finalStorageM3": 53.00340893041296,
+              "balanceResidualM3": -0.0007678018773447093,
+              "allowedResidualM3": 1.5420817863741008,
+              "numericalStatus": "PASSED"
+            }
+          ],
+          "routingTotals": {
+            "dryWeatherInflowM3": 0.0,
+            "runoffInflowM3": 1720.5558168704447,
+            "groundwaterInflowM3": 0.0,
+            "rdiiInflowM3": 0.0,
+            "externalInflowM3": 4.1239784805025685,
+            "outflowM3": 1779.4792812105388,
+            "floodingM3": 0.0,
+            "evaporationM3": 0.03197699372876173,
+            "seepageM3": 0.0,
+            "reactionLossM3": 0.0,
+            "initialStorageM3": 113.73061486342314,
+            "storageM3": 58.900048468082694
+          },
+          "routingBalance": {
+            "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+            "totalInM3": 1838.4104102143704,
+            "totalOutIncludingStorageM3": 1838.4113066723503,
+            "residualM3": -0.0008964579799339845,
+            "continuityPercent": -4.876266882265162e-05,
+            "absoluteToleranceM3": 1e-08,
+            "allowedResidualM3": 18.384104102143706
+          },
+          "numericalStatus": "PASSED",
+          "scope": "SEPARATE_FACILITY_AND_ROUTING_CONTROL_VOLUMES",
+          "scoreExcludesWarmup": true,
+          "peakFlowM3s": null,
+          "peakStatus": "NOT_DERIVED_FROM_SPARSE_FRAMES"
+        },
+        "ports": {
+          "inlet": {
+            "networkToSurfaceM3": 0.0,
+            "surfaceToNetworkM3": 4.123978480506079
+          }
+        },
+        "coupled": {
+          "initialStorageM3": 1212.1969034877188,
+          "finalStorageM3": 2438.9072868220387,
+          "networkExternalInflowM3": 1720.555816870441,
+          "networkExternalOutflowAndLossM3": 1779.5112582042675,
+          "surfaceExternalNetInflowM3": 1285.6649282101873,
+          "balanceResidualM3": -0.0008964579587882326,
+          "allowedResidualM3": 42.184185450263065,
+          "exchangeCancellationResidualM3": 0.0
+        },
+        "scope": "SEPARATE_FACILITIES_AND_COUPLED_ROUTING_SURFACE_CONTROL_VOLUMES"
+      },
+      "initialSurfaceInfiltrationState": {
+        "method": "GREEN_AMPT",
+        "engine": {
+          "schemaVersion": 1,
+          "engineVersion": "5.2.4",
+          "revision": "7952ca837988b1c32f791812eccc9fd64547e093",
+          "sourceArchiveSha256": "3f76a199573088ce47ff02491c529afb73d9953ee9d948dfc89dcd4981b4c0c0",
+          "originalInfiltrationSha256": "4b86c2080752bee770a4a2d1f8f6bdc5469a110305316440e2a7cba7dde31124",
+          "originalSolverCMakeSha256": "456578d247a73635199295a5e23700015bfcc4b7555fcf38e731aae98aa3c9df",
+          "extensionSha256": "64a760dea0d62a61a725b18c7238642236bf7de94d7107bc7d863264c8c1fbf2",
+          "builderSha256": "67a037820dc3fdbbdb8bc8b52d3fcf1aa691b5487c5cf0b7b648ed3865c71d5b",
+          "binarySha256": "1094b6adf1db496c1d11c40d337cef215a91a9b13b3a1189857fce28beb55592",
+          "openMP": false,
+          "modification": "BATCH_INTERFACE_NO_EPA_EQUATION_CHANGES",
+          "adapterSha256": "ef5a1878f721aa3fdd6545d331f8ab93595ad14dd3e9d69dbc4bccc8ca77c2dc"
+        },
+        "infiltrationM3": 6685.677229381877,
+        "nativeSteps": 40426,
+        "effectivePerviousAreaM2": 20000.0,
+        "ownershipPolicy": "SURFACE_ONLY",
+        "rankingEligible": false,
+        "initialization": "EPA_INITIAL_DEFICIT_SEED",
+        "momentumPolicy": "PROPORTIONAL_WATER_WITHDRAWAL",
+        "recoveryFactor": 1.0,
+        "limitations": [
+          "토성 문헌값·초기 부족률은 현장 관측 함수율이 아님",
+          "부분 투수 영역은 삼각형 수심 공유 근사",
+          "EPA 회복식 상태이며 토양층·지하수·증발산 전체 물수지 아님"
+        ],
+        "triangles": [
+          2,
+          3
+        ],
+        "infiltrationByTriangleM3": [
+          3319.5252904420686,
+          3366.151938939808
+        ],
+        "nativeStateFields": [
+          "IMD",
+          "F_ft",
+          "Fu_ft",
+          "Sat",
+          "T_seconds"
+        ],
+        "nativeState": [
+          [
+            0.0,
+            0.06959584610476292,
+            0.03004626062886658,
+            1.0,
+            44930.715894243556
+          ],
+          [
+            0.02531898228990833,
+            0.08517755656515336,
+            0.03004626062886658,
+            1.0,
+            44930.715894243556
+          ]
+        ]
+      },
+      "networkConvergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 2440820,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      },
+      "dryExchangeRoundoff": {
+        "policy": "BOUNDED_DRY_TAIL_ROUNDOFF_V1",
+        "withdrawalShortfallM3": 4.7631608076803515e-09,
+        "maximumTransferShortfallM3": 1e-09,
+        "maximumRunShortfallM3": 1e-08
+      }
+    },
+    "28d-100pct-60s": {
+      "status": "PASSED",
+      "complete": true,
+      "warmupDays": 28,
+      "initialSaturationPercent": 100,
+      "maximumExchangeMilliseconds": 60000,
+      "fixedInputSha256": "914e12fcb7a9edab42a4ee75e8acdbca3712db8633995b8ad51702032fa17e47",
+      "engineSha256": "29ccbca146210d50953ee8e891314ed97301b455cf887f989f8369ab058f1f7e",
+      "comparableEngineSha256": "7833e499a74194c47fefe9d7ce27f6b51a5ebb55af3b374203d9cffaf052f9de",
+      "inputSha256": "d284c332b165952807fec8a32767211bc6a58c00d3be548ff40a3aa1ca4c88a0",
+      "resultSha256": "e47e4ecd4c96e034654009a586cf37b4d8b44a6b743d778abacd6782f0df038a",
+      "observables": {
+        "initial.networkStorageM3": 113.71709979118708,
+        "initial.surfaceStorageM3": 1098.4662886242957,
+        "evaluation.outwardVolumeM3": 1779.465769510906,
+        "evaluation.peakOutwardM3s": 0.1350830270111617,
+        "evaluation.depthAreaTimeM3Hours": 10930.23475485515,
+        "initial.facility.S1.WL_Trench.soilMoisture": null,
+        "initial.facility.S1.WL_Trench.surfaceDepthMm": 152.4,
+        "initial.facility.S1.WL_Trench.storageDepthMm": 914.4000000000001,
+        "initial.facility.S1.WL_Trench.finalStorageM3": 213.36000000000004,
+        "initial.facility.S1.WL_Swale.soilMoisture": null,
+        "initial.facility.S1.WL_Swale.surfaceDepthMm": 112.21092360385812,
+        "initial.facility.S1.WL_Swale.storageDepthMm": null,
+        "initial.facility.S1.WL_Swale.finalStorageM3": 10.299871206268902,
+        "initial.facility.S1.WL_Cistern.soilMoisture": null,
+        "initial.facility.S1.WL_Cistern.surfaceDepthMm": 0.0,
+        "initial.facility.S1.WL_Cistern.storageDepthMm": 2000.0000000000002,
+        "initial.facility.S1.WL_Cistern.finalStorageM3": 20.0,
+        "initial.facility.S1.WL_Bioretention.soilMoisture": 0.52,
+        "initial.facility.S1.WL_Bioretention.surfaceDepthMm": 152.4,
+        "initial.facility.S1.WL_Bioretention.storageDepthMm": 304.8,
+        "initial.facility.S1.WL_Bioretention.finalStorageM3": 54.559200000000004
+      },
+      "evaluationLedger": {
+        "durationSeconds": 21540.0,
+        "numericalStatus": "PASSED",
+        "routing": {
+          "totals": {
+            "dryWeatherInflowM3": 0.0,
+            "runoffInflowM3": 1720.5558168704447,
+            "groundwaterInflowM3": 0.0,
+            "rdiiInflowM3": 0.0,
+            "externalInflowM3": 4.1239784805025685,
+            "outflowM3": 1779.465769510879,
+            "floodingM3": 0.0,
+            "evaporationM3": 0.03197699372876173,
+            "seepageM3": 0.0,
+            "reactionLossM3": 0.0,
+            "initialStorageM3": 113.71709979118708,
+            "storageM3": 58.90004506813913
+          },
+          "balance": {
+            "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+            "totalInM3": 1838.3968951421343,
+            "totalOutIncludingStorageM3": 1838.3977915727469,
+            "residualM3": -0.0008964306125562871,
+            "continuityPercent": -4.876153864951889e-05,
+            "absoluteToleranceM3": 1e-08,
+            "allowedResidualM3": 18.383968951421345
+          }
+        },
+        "surface": {
+          "boundaryNetInflowM3": 3.9708011827362164e-15,
+          "sourceNetInflowM3": 1281.5409497296812,
+          "rainfallM3": 1700.0000000002174,
+          "infiltrationM3": 413.69586464829445,
+          "potentialSurfaceEvaporationM3": 0.6392071417694751,
+          "surfaceEvaporationM3": 0.639207141738126,
+          "unmetSurfaceEvaporationM3": 0.0,
+          "surfaceEvaporationRoundoffM3": -3.134914550173562e-11,
+          "durationSeconds": 21540.0,
+          "initialStorageM3": 1098.4662886242957,
+          "finalStorageM3": 2380.007238353956,
+          "balanceResidualM3": 2.091837814077735e-11
+        },
+        "facilities": {
+          "durationSeconds": 21540.0,
+          "facilities": [
+            {
+              "subcatchmentId": "S1",
+              "swmmId": "WL_Trench",
+              "inflowM3": 498.2410541776642,
+              "evaporationM3": 0.015980178553082425,
+              "infiltrationM3": 11.966666666469564,
+              "surfaceOutflowM3": 486.2584073324256,
+              "drainOutflowM3": 0.0,
+              "initialStorageM3": 213.36000000000004,
+              "finalStorageM3": 213.36000000000004,
+              "balanceResidualM3": 2.1589130483334884e-10,
+              "allowedResidualM3": 7.116010541776642,
+              "numericalStatus": "PASSED"
+            },
+            {
+              "subcatchmentId": "S1",
+              "swmmId": "WL_Swale",
+              "inflowM3": 199.29642167106567,
+              "evaporationM3": 0.0032832207623063603,
+              "infiltrationM3": 2.7133982452501826,
+              "surfaceOutflowM3": 205.51941692145226,
+              "drainOutflowM3": 0.0,
+              "initialStorageM3": 10.299871206268902,
+              "finalStorageM3": 2.2861930691053045,
+              "balanceResidualM3": -0.9259985792354826,
+              "allowedResidualM3": 2.1052229145657004,
+              "numericalStatus": "PASSED"
+            },
+            {
+              "subcatchmentId": "S1",
+              "swmmId": "WL_Cistern",
+              "inflowM3": 91.14821083552317,
+              "evaporationM3": 0.0,
+              "infiltrationM3": 0.0,
+              "surfaceOutflowM3": 91.14821083552891,
+              "drainOutflowM3": 0.0,
+              "initialStorageM3": 20.0,
+              "finalStorageM3": 20.0,
+              "balanceResidualM3": -5.7411853049416095e-12,
+              "allowedResidualM3": 1.1114821083552893,
+              "numericalStatus": "PASSED"
+            },
+            {
+              "subcatchmentId": "S1",
+              "swmmId": "WL_Bioretention",
+              "inflowM3": 99.64821083553272,
+              "evaporationM3": 0.003196035707521361,
+              "infiltrationM3": 2.39333333329391,
+              "surfaceOutflowM3": 72.00339691925079,
+              "drainOutflowM3": 26.804843418744923,
+              "initialStorageM3": 54.559200000000004,
+              "finalStorageM3": 53.00340893041296,
+              "balanceResidualM3": -0.000767801877373131,
+              "allowedResidualM3": 1.542081786374101,
+              "numericalStatus": "PASSED"
+            }
+          ],
+          "routingTotals": {
+            "dryWeatherInflowM3": 0.0,
+            "runoffInflowM3": 1720.5558168704447,
+            "groundwaterInflowM3": 0.0,
+            "rdiiInflowM3": 0.0,
+            "externalInflowM3": 4.1239784805025685,
+            "outflowM3": 1779.465769510879,
+            "floodingM3": 0.0,
+            "evaporationM3": 0.03197699372876173,
+            "seepageM3": 0.0,
+            "reactionLossM3": 0.0,
+            "initialStorageM3": 113.71709979118708,
+            "storageM3": 58.90004506813913
+          },
+          "routingBalance": {
+            "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+            "totalInM3": 1838.3968951421343,
+            "totalOutIncludingStorageM3": 1838.3977915727469,
+            "residualM3": -0.0008964306125562871,
+            "continuityPercent": -4.876153864951889e-05,
+            "absoluteToleranceM3": 1e-08,
+            "allowedResidualM3": 18.383968951421345
+          },
+          "numericalStatus": "PASSED",
+          "scope": "SEPARATE_FACILITY_AND_ROUTING_CONTROL_VOLUMES",
+          "scoreExcludesWarmup": true,
+          "peakFlowM3s": null,
+          "peakStatus": "NOT_DERIVED_FROM_SPARSE_FRAMES"
+        },
+        "ports": {
+          "inlet": {
+            "networkToSurfaceM3": 0.0,
+            "surfaceToNetworkM3": 4.123978480506079
+          }
+        },
+        "coupled": {
+          "initialStorageM3": 1212.1833884154828,
+          "finalStorageM3": 2438.907283422095,
+          "networkExternalInflowM3": 1720.555816870441,
+          "networkExternalOutflowAndLossM3": 1779.4977465046077,
+          "surfaceExternalNetInflowM3": 1285.6649282101873,
+          "balanceResidualM3": -0.000896430591637909,
+          "allowedResidualM3": 42.18405029926703,
+          "exchangeCancellationResidualM3": 0.0
+        },
+        "scope": "SEPARATE_FACILITIES_AND_COUPLED_ROUTING_SURFACE_CONTROL_VOLUMES"
+      },
+      "initialSurfaceInfiltrationState": {
+        "method": "GREEN_AMPT",
+        "engine": {
+          "schemaVersion": 1,
+          "engineVersion": "5.2.4",
+          "revision": "7952ca837988b1c32f791812eccc9fd64547e093",
+          "sourceArchiveSha256": "3f76a199573088ce47ff02491c529afb73d9953ee9d948dfc89dcd4981b4c0c0",
+          "originalInfiltrationSha256": "4b86c2080752bee770a4a2d1f8f6bdc5469a110305316440e2a7cba7dde31124",
+          "originalSolverCMakeSha256": "456578d247a73635199295a5e23700015bfcc4b7555fcf38e731aae98aa3c9df",
+          "extensionSha256": "64a760dea0d62a61a725b18c7238642236bf7de94d7107bc7d863264c8c1fbf2",
+          "builderSha256": "67a037820dc3fdbbdb8bc8b52d3fcf1aa691b5487c5cf0b7b648ed3865c71d5b",
+          "binarySha256": "1094b6adf1db496c1d11c40d337cef215a91a9b13b3a1189857fce28beb55592",
+          "openMP": false,
+          "modification": "BATCH_INTERFACE_NO_EPA_EQUATION_CHANGES",
+          "adapterSha256": "ef5a1878f721aa3fdd6545d331f8ab93595ad14dd3e9d69dbc4bccc8ca77c2dc"
+        },
+        "infiltrationM3": 6685.677229381877,
+        "nativeSteps": 40426,
+        "effectivePerviousAreaM2": 20000.0,
+        "ownershipPolicy": "SURFACE_ONLY",
+        "rankingEligible": false,
+        "initialization": "EPA_INITIAL_DEFICIT_SEED",
+        "momentumPolicy": "PROPORTIONAL_WATER_WITHDRAWAL",
+        "recoveryFactor": 1.0,
+        "limitations": [
+          "토성 문헌값·초기 부족률은 현장 관측 함수율이 아님",
+          "부분 투수 영역은 삼각형 수심 공유 근사",
+          "EPA 회복식 상태이며 토양층·지하수·증발산 전체 물수지 아님"
+        ],
+        "triangles": [
+          2,
+          3
+        ],
+        "infiltrationByTriangleM3": [
+          3319.5252904420686,
+          3366.151938939808
+        ],
+        "nativeStateFields": [
+          "IMD",
+          "F_ft",
+          "Fu_ft",
+          "Sat",
+          "T_seconds"
+        ],
+        "nativeState": [
+          [
+            0.0,
+            0.06959584610476292,
+            0.03004626062886658,
+            1.0,
+            44930.715894243556
+          ],
+          [
+            0.02531898228990833,
+            0.08517755656515336,
+            0.03004626062886658,
+            1.0,
+            44930.715894243556
+          ]
+        ]
+      },
+      "networkConvergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 2440820,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      },
+      "dryExchangeRoundoff": {
+        "policy": "BOUNDED_DRY_TAIL_ROUNDOFF_V1",
+        "withdrawalShortfallM3": 4.7631608076803515e-09,
+        "maximumTransferShortfallM3": 1e-09,
+        "maximumRunShortfallM3": 1e-08
+      }
+    },
+    "28d-0pct-30s": {
+      "status": "PASSED",
+      "complete": true,
+      "warmupDays": 28,
+      "initialSaturationPercent": 0,
+      "maximumExchangeMilliseconds": 30000,
+      "fixedInputSha256": "914e12fcb7a9edab42a4ee75e8acdbca3712db8633995b8ad51702032fa17e47",
+      "engineSha256": "e9f8b73c1b531ce53ef0b1631e79e4c3b4189593fce65bed3de14c8fd6865e02",
+      "comparableEngineSha256": "7833e499a74194c47fefe9d7ce27f6b51a5ebb55af3b374203d9cffaf052f9de",
+      "inputSha256": "9336ae1b643cf7a3db92bcb03160bb34277353dec92da41b84674be076350dc6",
+      "resultSha256": "4033f0387d9786c3c74de4985206512ad5deeacf8649a022b1c2293fd2728e42",
+      "observables": {
+        "initial.networkStorageM3": 113.73091526106144,
+        "initial.surfaceStorageM3": 1098.454929865942,
+        "evaluation.outwardVolumeM3": 1779.4806494024308,
+        "evaluation.peakOutwardM3s": 0.13508312039293627,
+        "evaluation.depthAreaTimeM3Hours": 10930.172423601141,
+        "initial.facility.S1.WL_Trench.soilMoisture": null,
+        "initial.facility.S1.WL_Trench.surfaceDepthMm": 152.4,
+        "initial.facility.S1.WL_Trench.storageDepthMm": 914.4000000000001,
+        "initial.facility.S1.WL_Trench.finalStorageM3": 213.36000000000004,
+        "initial.facility.S1.WL_Swale.soilMoisture": null,
+        "initial.facility.S1.WL_Swale.surfaceDepthMm": 112.21092360385812,
+        "initial.facility.S1.WL_Swale.storageDepthMm": null,
+        "initial.facility.S1.WL_Swale.finalStorageM3": 10.299871206268902,
+        "initial.facility.S1.WL_Cistern.soilMoisture": null,
+        "initial.facility.S1.WL_Cistern.surfaceDepthMm": 0.0,
+        "initial.facility.S1.WL_Cistern.storageDepthMm": 2000.0000000000002,
+        "initial.facility.S1.WL_Cistern.finalStorageM3": 20.0,
+        "initial.facility.S1.WL_Bioretention.soilMoisture": 0.52,
+        "initial.facility.S1.WL_Bioretention.surfaceDepthMm": 152.4,
+        "initial.facility.S1.WL_Bioretention.storageDepthMm": 304.8,
+        "initial.facility.S1.WL_Bioretention.finalStorageM3": 54.559200000000004
+      },
+      "evaluationLedger": {
+        "durationSeconds": 21540.0,
+        "numericalStatus": "PASSED",
+        "routing": {
+          "totals": {
+            "dryWeatherInflowM3": 0.0,
+            "runoffInflowM3": 1720.5558168704456,
+            "groundwaterInflowM3": 0.0,
+            "rdiiInflowM3": 0.0,
+            "externalInflowM3": 4.125074993127791,
+            "outflowM3": 1779.480649402436,
+            "floodingM3": 0.0,
+            "evaporationM3": 0.03197699372876883,
+            "seepageM3": 0.0,
+            "reactionLossM3": 0.0,
+            "initialStorageM3": 113.73091526106144,
+            "storageM3": 58.900077439305726
+          },
+          "balance": {
+            "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+            "totalInM3": 1838.4118071246348,
+            "totalOutIncludingStorageM3": 1838.4127038354704,
+            "residualM3": -0.0008967108356046083,
+            "continuityPercent": -4.8776385798299864e-05,
+            "absoluteToleranceM3": 1e-08,
+            "allowedResidualM3": 18.38411807124635
+          }
+        },
+        "surface": {
+          "boundaryNetInflowM3": 2.2859603707046757e-15,
+          "sourceNetInflowM3": 1281.536687566233,
+          "rainfallM3": 1699.999999999999,
+          "infiltrationM3": 413.69903029820307,
+          "potentialSurfaceEvaporationM3": 0.6392071417367333,
+          "surfaceEvaporationM3": 0.6392071423260859,
+          "unmetSurfaceEvaporationM3": 0.0,
+          "surfaceEvaporationRoundoffM3": 5.893525667488575e-10,
+          "durationSeconds": 21540.0,
+          "initialStorageM3": 1098.454929865942,
+          "finalStorageM3": 2379.991617432309,
+          "balanceResidualM3": -1.3369572116062045e-10
+        },
+        "facilities": {
+          "durationSeconds": 21540.0,
+          "facilities": [
+            {
+              "subcatchmentId": "S1",
+              "swmmId": "WL_Trench",
+              "inflowM3": 498.2410541776642,
+              "evaporationM3": 0.015980178553082425,
+              "infiltrationM3": 11.966666666469678,
+              "surfaceOutflowM3": 486.2584073324249,
+              "drainOutflowM3": 0.0,
+              "initialStorageM3": 213.36000000000004,
+              "finalStorageM3": 213.36000000000004,
+              "balanceResidualM3": 2.1645973902195692e-10,
+              "allowedResidualM3": 7.116010541776642,
+              "numericalStatus": "PASSED"
+            },
+            {
+              "subcatchmentId": "S1",
+              "swmmId": "WL_Swale",
+              "inflowM3": 199.29642167106567,
+              "evaporationM3": 0.0032832207623063603,
+              "infiltrationM3": 2.7133982452501826,
+              "surfaceOutflowM3": 205.51941692145226,
+              "drainOutflowM3": 0.0,
+              "initialStorageM3": 10.299871206268902,
+              "finalStorageM3": 2.2861930691053045,
+              "balanceResidualM3": -0.9259985792354826,
+              "allowedResidualM3": 2.1052229145657004,
+              "numericalStatus": "PASSED"
+            },
+            {
+              "subcatchmentId": "S1",
+              "swmmId": "WL_Cistern",
+              "inflowM3": 91.14821083552317,
+              "evaporationM3": 0.0,
+              "infiltrationM3": 0.0,
+              "surfaceOutflowM3": 91.14821083552894,
+              "drainOutflowM3": 0.0,
+              "initialStorageM3": 20.0,
+              "finalStorageM3": 20.0,
+              "balanceResidualM3": -5.7696070143720135e-12,
+              "allowedResidualM3": 1.1114821083552895,
+              "numericalStatus": "PASSED"
+            },
+            {
+              "subcatchmentId": "S1",
+              "swmmId": "WL_Bioretention",
+              "inflowM3": 99.64821083553272,
+              "evaporationM3": 0.0031960357075195844,
+              "infiltrationM3": 2.39333333329391,
+              "surfaceOutflowM3": 72.00339691925078,
+              "drainOutflowM3": 26.804843418744923,
+              "initialStorageM3": 54.559200000000004,
+              "finalStorageM3": 53.00340893041296,
+              "balanceResidualM3": -0.0007678018773447093,
+              "allowedResidualM3": 1.5420817863741008,
+              "numericalStatus": "PASSED"
+            }
+          ],
+          "routingTotals": {
+            "dryWeatherInflowM3": 0.0,
+            "runoffInflowM3": 1720.5558168704456,
+            "groundwaterInflowM3": 0.0,
+            "rdiiInflowM3": 0.0,
+            "externalInflowM3": 4.125074993127791,
+            "outflowM3": 1779.480649402436,
+            "floodingM3": 0.0,
+            "evaporationM3": 0.03197699372876883,
+            "seepageM3": 0.0,
+            "reactionLossM3": 0.0,
+            "initialStorageM3": 113.73091526106144,
+            "storageM3": 58.900077439305726
+          },
+          "routingBalance": {
+            "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+            "totalInM3": 1838.4118071246348,
+            "totalOutIncludingStorageM3": 1838.4127038354704,
+            "residualM3": -0.0008967108356046083,
+            "continuityPercent": -4.8776385798299864e-05,
+            "absoluteToleranceM3": 1e-08,
+            "allowedResidualM3": 18.38411807124635
+          },
+          "numericalStatus": "PASSED",
+          "scope": "SEPARATE_FACILITY_AND_ROUTING_CONTROL_VOLUMES",
+          "scoreExcludesWarmup": true,
+          "peakFlowM3s": null,
+          "peakStatus": "NOT_DERIVED_FROM_SPARSE_FRAMES"
+        },
+        "ports": {
+          "inlet": {
+            "networkToSurfaceM3": 0.0,
+            "surfaceToNetworkM3": 4.125074993126264
+          }
+        },
+        "coupled": {
+          "initialStorageM3": 1212.1858451270034,
+          "finalStorageM3": 2438.8916948716146,
+          "networkExternalInflowM3": 1720.5558168704472,
+          "networkExternalOutflowAndLossM3": 1779.5126263961647,
+          "surfaceExternalNetInflowM3": 1285.6617625593592,
+          "balanceResidualM3": -0.0008967109693003295,
+          "allowedResidualM3": 42.18404321267779,
+          "exchangeCancellationResidualM3": 0.0
+        },
+        "scope": "SEPARATE_FACILITIES_AND_COUPLED_ROUTING_SURFACE_CONTROL_VOLUMES"
+      },
+      "initialSurfaceInfiltrationState": {
+        "method": "GREEN_AMPT",
+        "engine": {
+          "schemaVersion": 1,
+          "engineVersion": "5.2.4",
+          "revision": "7952ca837988b1c32f791812eccc9fd64547e093",
+          "sourceArchiveSha256": "3f76a199573088ce47ff02491c529afb73d9953ee9d948dfc89dcd4981b4c0c0",
+          "originalInfiltrationSha256": "4b86c2080752bee770a4a2d1f8f6bdc5469a110305316440e2a7cba7dde31124",
+          "originalSolverCMakeSha256": "456578d247a73635199295a5e23700015bfcc4b7555fcf38e731aae98aa3c9df",
+          "extensionSha256": "64a760dea0d62a61a725b18c7238642236bf7de94d7107bc7d863264c8c1fbf2",
+          "builderSha256": "67a037820dc3fdbbdb8bc8b52d3fcf1aa691b5487c5cf0b7b648ed3865c71d5b",
+          "binarySha256": "1094b6adf1db496c1d11c40d337cef215a91a9b13b3a1189857fce28beb55592",
+          "openMP": false,
+          "modification": "BATCH_INTERFACE_NO_EPA_EQUATION_CHANGES",
+          "adapterSha256": "ef5a1878f721aa3fdd6545d331f8ab93595ad14dd3e9d69dbc4bccc8ca77c2dc"
+        },
+        "infiltrationM3": 6684.463001870101,
+        "nativeSteps": 80704,
+        "effectivePerviousAreaM2": 20000.0,
+        "ownershipPolicy": "SURFACE_ONLY",
+        "rankingEligible": false,
+        "initialization": "EPA_INITIAL_DEFICIT_SEED",
+        "momentumPolicy": "PROPORTIONAL_WATER_WITHDRAWAL",
+        "recoveryFactor": 1.0,
+        "limitations": [
+          "토성 문헌값·초기 부족률은 현장 관측 함수율이 아님",
+          "부분 투수 영역은 삼각형 수심 공유 근사",
+          "EPA 회복식 상태이며 토양층·지하수·증발산 전체 물수지 아님"
+        ],
+        "triangles": [
+          2,
+          3
+        ],
+        "infiltrationByTriangleM3": [
+          3319.9872956628874,
+          3364.475706207213
+        ],
+        "nativeStateFields": [
+          "IMD",
+          "F_ft",
+          "Fu_ft",
+          "Sat",
+          "T_seconds"
+        ],
+        "nativeState": [
+          [
+            0.0,
+            0.06961077529241726,
+            0.03004626062886658,
+            1.0,
+            44930.715894243556
+          ],
+          [
+            0.02531898228994482,
+            0.08515195929295581,
+            0.03004626062886658,
+            1.0,
+            44930.715894243556
+          ]
+        ]
+      },
+      "networkConvergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 2440786,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      },
+      "dryExchangeRoundoff": {
+        "policy": "BOUNDED_DRY_TAIL_ROUNDOFF_V1",
+        "withdrawalShortfallM3": 1.6275896576805693e-09,
+        "maximumTransferShortfallM3": 1e-09,
+        "maximumRunShortfallM3": 1e-08
+      }
+    },
+    "replay-28d-0pct-60s": {
+      "status": "PASSED",
+      "complete": true,
+      "warmupDays": 28,
+      "initialSaturationPercent": 0,
+      "maximumExchangeMilliseconds": 60000,
+      "fixedInputSha256": "914e12fcb7a9edab42a4ee75e8acdbca3712db8633995b8ad51702032fa17e47",
+      "engineSha256": "29ccbca146210d50953ee8e891314ed97301b455cf887f989f8369ab058f1f7e",
+      "comparableEngineSha256": "7833e499a74194c47fefe9d7ce27f6b51a5ebb55af3b374203d9cffaf052f9de",
+      "inputSha256": "78dfca727fdfe7d289df84fdea88bd5df965839502eab5f4af513edbcd4b910d",
+      "resultSha256": "856184d7f6cabc248469120535e346b49e5e2efa77e5c8b35e96dc588c0755ce",
+      "observables": {
+        "initial.networkStorageM3": 113.73061486342314,
+        "initial.surfaceStorageM3": 1098.4662886242957,
+        "evaluation.outwardVolumeM3": 1779.4792812105516,
+        "evaluation.peakOutwardM3s": 0.13508303862620244,
+        "evaluation.depthAreaTimeM3Hours": 10930.23475485515,
+        "initial.facility.S1.WL_Trench.soilMoisture": null,
+        "initial.facility.S1.WL_Trench.surfaceDepthMm": 152.4,
+        "initial.facility.S1.WL_Trench.storageDepthMm": 914.4000000000001,
+        "initial.facility.S1.WL_Trench.finalStorageM3": 213.36000000000004,
+        "initial.facility.S1.WL_Swale.soilMoisture": null,
+        "initial.facility.S1.WL_Swale.surfaceDepthMm": 112.21092360385812,
+        "initial.facility.S1.WL_Swale.storageDepthMm": null,
+        "initial.facility.S1.WL_Swale.finalStorageM3": 10.299871206268902,
+        "initial.facility.S1.WL_Cistern.soilMoisture": null,
+        "initial.facility.S1.WL_Cistern.surfaceDepthMm": 0.0,
+        "initial.facility.S1.WL_Cistern.storageDepthMm": 2000.0000000000002,
+        "initial.facility.S1.WL_Cistern.finalStorageM3": 20.0,
+        "initial.facility.S1.WL_Bioretention.soilMoisture": 0.52,
+        "initial.facility.S1.WL_Bioretention.surfaceDepthMm": 152.4,
+        "initial.facility.S1.WL_Bioretention.storageDepthMm": 304.8,
+        "initial.facility.S1.WL_Bioretention.finalStorageM3": 54.559200000000004
+      },
+      "evaluationLedger": {
+        "durationSeconds": 21540.0,
+        "numericalStatus": "PASSED",
+        "routing": {
+          "totals": {
+            "dryWeatherInflowM3": 0.0,
+            "runoffInflowM3": 1720.5558168704447,
+            "groundwaterInflowM3": 0.0,
+            "rdiiInflowM3": 0.0,
+            "externalInflowM3": 4.1239784805025685,
+            "outflowM3": 1779.4792812105388,
+            "floodingM3": 0.0,
+            "evaporationM3": 0.03197699372876173,
+            "seepageM3": 0.0,
+            "reactionLossM3": 0.0,
+            "initialStorageM3": 113.73061486342314,
+            "storageM3": 58.900048468082694
+          },
+          "balance": {
+            "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+            "totalInM3": 1838.4104102143704,
+            "totalOutIncludingStorageM3": 1838.4113066723503,
+            "residualM3": -0.0008964579799339845,
+            "continuityPercent": -4.876266882265162e-05,
+            "absoluteToleranceM3": 1e-08,
+            "allowedResidualM3": 18.384104102143706
+          }
+        },
+        "surface": {
+          "boundaryNetInflowM3": 3.9708011827362164e-15,
+          "sourceNetInflowM3": 1281.5409497296812,
+          "rainfallM3": 1700.0000000002174,
+          "infiltrationM3": 413.69586464829445,
+          "potentialSurfaceEvaporationM3": 0.6392071417694751,
+          "surfaceEvaporationM3": 0.639207141738126,
+          "unmetSurfaceEvaporationM3": 0.0,
+          "surfaceEvaporationRoundoffM3": -3.134914550173562e-11,
+          "durationSeconds": 21540.0,
+          "initialStorageM3": 1098.4662886242957,
+          "finalStorageM3": 2380.007238353956,
+          "balanceResidualM3": 2.091837814077735e-11
+        },
+        "facilities": {
+          "durationSeconds": 21540.0,
+          "facilities": [
+            {
+              "subcatchmentId": "S1",
+              "swmmId": "WL_Trench",
+              "inflowM3": 498.2410541776642,
+              "evaporationM3": 0.015980178553082425,
+              "infiltrationM3": 11.966666666469678,
+              "surfaceOutflowM3": 486.2584073324249,
+              "drainOutflowM3": 0.0,
+              "initialStorageM3": 213.36000000000004,
+              "finalStorageM3": 213.36000000000004,
+              "balanceResidualM3": 2.1645973902195692e-10,
+              "allowedResidualM3": 7.116010541776642,
+              "numericalStatus": "PASSED"
+            },
+            {
+              "subcatchmentId": "S1",
+              "swmmId": "WL_Swale",
+              "inflowM3": 199.29642167106567,
+              "evaporationM3": 0.0032832207623063603,
+              "infiltrationM3": 2.7133982452501826,
+              "surfaceOutflowM3": 205.51941692145226,
+              "drainOutflowM3": 0.0,
+              "initialStorageM3": 10.299871206268902,
+              "finalStorageM3": 2.2861930691053045,
+              "balanceResidualM3": -0.9259985792354826,
+              "allowedResidualM3": 2.1052229145657004,
+              "numericalStatus": "PASSED"
+            },
+            {
+              "subcatchmentId": "S1",
+              "swmmId": "WL_Cistern",
+              "inflowM3": 91.14821083552317,
+              "evaporationM3": 0.0,
+              "infiltrationM3": 0.0,
+              "surfaceOutflowM3": 91.14821083552894,
+              "drainOutflowM3": 0.0,
+              "initialStorageM3": 20.0,
+              "finalStorageM3": 20.0,
+              "balanceResidualM3": -5.7696070143720135e-12,
+              "allowedResidualM3": 1.1114821083552895,
+              "numericalStatus": "PASSED"
+            },
+            {
+              "subcatchmentId": "S1",
+              "swmmId": "WL_Bioretention",
+              "inflowM3": 99.64821083553272,
+              "evaporationM3": 0.0031960357075195844,
+              "infiltrationM3": 2.39333333329391,
+              "surfaceOutflowM3": 72.00339691925078,
+              "drainOutflowM3": 26.804843418744923,
+              "initialStorageM3": 54.559200000000004,
+              "finalStorageM3": 53.00340893041296,
+              "balanceResidualM3": -0.0007678018773447093,
+              "allowedResidualM3": 1.5420817863741008,
+              "numericalStatus": "PASSED"
+            }
+          ],
+          "routingTotals": {
+            "dryWeatherInflowM3": 0.0,
+            "runoffInflowM3": 1720.5558168704447,
+            "groundwaterInflowM3": 0.0,
+            "rdiiInflowM3": 0.0,
+            "externalInflowM3": 4.1239784805025685,
+            "outflowM3": 1779.4792812105388,
+            "floodingM3": 0.0,
+            "evaporationM3": 0.03197699372876173,
+            "seepageM3": 0.0,
+            "reactionLossM3": 0.0,
+            "initialStorageM3": 113.73061486342314,
+            "storageM3": 58.900048468082694
+          },
+          "routingBalance": {
+            "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+            "totalInM3": 1838.4104102143704,
+            "totalOutIncludingStorageM3": 1838.4113066723503,
+            "residualM3": -0.0008964579799339845,
+            "continuityPercent": -4.876266882265162e-05,
+            "absoluteToleranceM3": 1e-08,
+            "allowedResidualM3": 18.384104102143706
+          },
+          "numericalStatus": "PASSED",
+          "scope": "SEPARATE_FACILITY_AND_ROUTING_CONTROL_VOLUMES",
+          "scoreExcludesWarmup": true,
+          "peakFlowM3s": null,
+          "peakStatus": "NOT_DERIVED_FROM_SPARSE_FRAMES"
+        },
+        "ports": {
+          "inlet": {
+            "networkToSurfaceM3": 0.0,
+            "surfaceToNetworkM3": 4.123978480506079
+          }
+        },
+        "coupled": {
+          "initialStorageM3": 1212.1969034877188,
+          "finalStorageM3": 2438.9072868220387,
+          "networkExternalInflowM3": 1720.555816870441,
+          "networkExternalOutflowAndLossM3": 1779.5112582042675,
+          "surfaceExternalNetInflowM3": 1285.6649282101873,
+          "balanceResidualM3": -0.0008964579587882326,
+          "allowedResidualM3": 42.184185450263065,
+          "exchangeCancellationResidualM3": 0.0
+        },
+        "scope": "SEPARATE_FACILITIES_AND_COUPLED_ROUTING_SURFACE_CONTROL_VOLUMES"
+      },
+      "initialSurfaceInfiltrationState": {
+        "method": "GREEN_AMPT",
+        "engine": {
+          "schemaVersion": 1,
+          "engineVersion": "5.2.4",
+          "revision": "7952ca837988b1c32f791812eccc9fd64547e093",
+          "sourceArchiveSha256": "3f76a199573088ce47ff02491c529afb73d9953ee9d948dfc89dcd4981b4c0c0",
+          "originalInfiltrationSha256": "4b86c2080752bee770a4a2d1f8f6bdc5469a110305316440e2a7cba7dde31124",
+          "originalSolverCMakeSha256": "456578d247a73635199295a5e23700015bfcc4b7555fcf38e731aae98aa3c9df",
+          "extensionSha256": "64a760dea0d62a61a725b18c7238642236bf7de94d7107bc7d863264c8c1fbf2",
+          "builderSha256": "67a037820dc3fdbbdb8bc8b52d3fcf1aa691b5487c5cf0b7b648ed3865c71d5b",
+          "binarySha256": "1094b6adf1db496c1d11c40d337cef215a91a9b13b3a1189857fce28beb55592",
+          "openMP": false,
+          "modification": "BATCH_INTERFACE_NO_EPA_EQUATION_CHANGES",
+          "adapterSha256": "ef5a1878f721aa3fdd6545d331f8ab93595ad14dd3e9d69dbc4bccc8ca77c2dc"
+        },
+        "infiltrationM3": 6685.677229381877,
+        "nativeSteps": 40426,
+        "effectivePerviousAreaM2": 20000.0,
+        "ownershipPolicy": "SURFACE_ONLY",
+        "rankingEligible": false,
+        "initialization": "EPA_INITIAL_DEFICIT_SEED",
+        "momentumPolicy": "PROPORTIONAL_WATER_WITHDRAWAL",
+        "recoveryFactor": 1.0,
+        "limitations": [
+          "토성 문헌값·초기 부족률은 현장 관측 함수율이 아님",
+          "부분 투수 영역은 삼각형 수심 공유 근사",
+          "EPA 회복식 상태이며 토양층·지하수·증발산 전체 물수지 아님"
+        ],
+        "triangles": [
+          2,
+          3
+        ],
+        "infiltrationByTriangleM3": [
+          3319.5252904420686,
+          3366.151938939808
+        ],
+        "nativeStateFields": [
+          "IMD",
+          "F_ft",
+          "Fu_ft",
+          "Sat",
+          "T_seconds"
+        ],
+        "nativeState": [
+          [
+            0.0,
+            0.06959584610476292,
+            0.03004626062886658,
+            1.0,
+            44930.715894243556
+          ],
+          [
+            0.02531898228990833,
+            0.08517755656515336,
+            0.03004626062886658,
+            1.0,
+            44930.715894243556
+          ]
+        ]
+      },
+      "networkConvergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 2440820,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      },
+      "dryExchangeRoundoff": {
+        "policy": "BOUNDED_DRY_TAIL_ROUNDOFF_V1",
+        "withdrawalShortfallM3": 4.7631608076803515e-09,
+        "maximumTransferShortfallM3": 1e-09,
+        "maximumRunShortfallM3": 1e-08
+      }
+    }
+  },
+  "runtime": {
+    "python": "3.12.14",
+    "system": "Darwin",
+    "machine": "arm64"
+  },
+  "limitations": [
+    "실제 강우·기상과 합성 지형/관망의 수치 진단; 서울 현장 침수 재현 아님",
+    "생물저류/침투 트렌치/빗물이용조 InitSat만 변경; 식생수로와 관망/지표 수량·토양 시드는 고정",
+    "시설 단면·원지반 침투·경사·조도·강우 공간 배정의 문헌값/설계 가정 유지",
+    "선행 총량 평균 배분·품질 경고 유지; 평가 관측 판정 완화 없음",
+    "고정한 합성 경계에서의 비교; 공개 관망 외부 유입·경계를 날짜 이동한 결과 아님",
+    "보편 수렴 인증·운영 초기화 정책 변경·경쟁 순위 발행 없음"
+  ],
+  "comparisons": {
+    "7d-wet-minus-dry": {
+      "status": "AVAILABLE",
+      "direction": "LEFT_MINUS_RIGHT",
+      "difference": {
+        "initial.networkStorageM3": -0.013515054329218401,
+        "initial.surfaceStorageM3": 0.0,
+        "evaluation.outwardVolumeM3": -0.013511681744375892,
+        "evaluation.peakOutwardM3s": -1.1615025413691527e-08,
+        "evaluation.depthAreaTimeM3Hours": 0.0,
+        "initial.facility.S1.WL_Trench.soilMoisture": null,
+        "initial.facility.S1.WL_Trench.surfaceDepthMm": 0.0,
+        "initial.facility.S1.WL_Trench.storageDepthMm": 0.0,
+        "initial.facility.S1.WL_Trench.finalStorageM3": 0.0,
+        "initial.facility.S1.WL_Swale.soilMoisture": null,
+        "initial.facility.S1.WL_Swale.surfaceDepthMm": 0.0,
+        "initial.facility.S1.WL_Swale.storageDepthMm": null,
+        "initial.facility.S1.WL_Swale.finalStorageM3": 0.0,
+        "initial.facility.S1.WL_Cistern.soilMoisture": null,
+        "initial.facility.S1.WL_Cistern.surfaceDepthMm": 0.0,
+        "initial.facility.S1.WL_Cistern.storageDepthMm": 0.0,
+        "initial.facility.S1.WL_Cistern.finalStorageM3": 0.0,
+        "initial.facility.S1.WL_Bioretention.soilMoisture": 0.0,
+        "initial.facility.S1.WL_Bioretention.surfaceDepthMm": 0.0,
+        "initial.facility.S1.WL_Bioretention.storageDepthMm": 0.0,
+        "initial.facility.S1.WL_Bioretention.finalStorageM3": 0.0
+      }
+    },
+    "14d-wet-minus-dry": {
+      "status": "AVAILABLE",
+      "direction": "LEFT_MINUS_RIGHT",
+      "difference": {
+        "initial.networkStorageM3": -0.013515072236060632,
+        "initial.surfaceStorageM3": 0.0,
+        "evaluation.outwardVolumeM3": -0.01351169964618748,
+        "evaluation.peakOutwardM3s": -1.1615040734769266e-08,
+        "evaluation.depthAreaTimeM3Hours": 0.0,
+        "initial.facility.S1.WL_Trench.soilMoisture": null,
+        "initial.facility.S1.WL_Trench.surfaceDepthMm": 0.0,
+        "initial.facility.S1.WL_Trench.storageDepthMm": 0.0,
+        "initial.facility.S1.WL_Trench.finalStorageM3": 0.0,
+        "initial.facility.S1.WL_Swale.soilMoisture": null,
+        "initial.facility.S1.WL_Swale.surfaceDepthMm": 0.0,
+        "initial.facility.S1.WL_Swale.storageDepthMm": null,
+        "initial.facility.S1.WL_Swale.finalStorageM3": 0.0,
+        "initial.facility.S1.WL_Cistern.soilMoisture": null,
+        "initial.facility.S1.WL_Cistern.surfaceDepthMm": 0.0,
+        "initial.facility.S1.WL_Cistern.storageDepthMm": 0.0,
+        "initial.facility.S1.WL_Cistern.finalStorageM3": 0.0,
+        "initial.facility.S1.WL_Bioretention.soilMoisture": 0.0,
+        "initial.facility.S1.WL_Bioretention.surfaceDepthMm": 0.0,
+        "initial.facility.S1.WL_Bioretention.storageDepthMm": 0.0,
+        "initial.facility.S1.WL_Bioretention.finalStorageM3": 0.0
+      }
+    },
+    "28d-wet-minus-dry": {
+      "status": "AVAILABLE",
+      "direction": "LEFT_MINUS_RIGHT",
+      "difference": {
+        "initial.networkStorageM3": -0.013515072236060632,
+        "initial.surfaceStorageM3": 0.0,
+        "evaluation.outwardVolumeM3": -0.01351169964550536,
+        "evaluation.peakOutwardM3s": -1.1615040734769266e-08,
+        "evaluation.depthAreaTimeM3Hours": 0.0,
+        "initial.facility.S1.WL_Trench.soilMoisture": null,
+        "initial.facility.S1.WL_Trench.surfaceDepthMm": 0.0,
+        "initial.facility.S1.WL_Trench.storageDepthMm": 0.0,
+        "initial.facility.S1.WL_Trench.finalStorageM3": 0.0,
+        "initial.facility.S1.WL_Swale.soilMoisture": null,
+        "initial.facility.S1.WL_Swale.surfaceDepthMm": 0.0,
+        "initial.facility.S1.WL_Swale.storageDepthMm": null,
+        "initial.facility.S1.WL_Swale.finalStorageM3": 0.0,
+        "initial.facility.S1.WL_Cistern.soilMoisture": null,
+        "initial.facility.S1.WL_Cistern.surfaceDepthMm": 0.0,
+        "initial.facility.S1.WL_Cistern.storageDepthMm": 0.0,
+        "initial.facility.S1.WL_Cistern.finalStorageM3": 0.0,
+        "initial.facility.S1.WL_Bioretention.soilMoisture": 0.0,
+        "initial.facility.S1.WL_Bioretention.surfaceDepthMm": 0.0,
+        "initial.facility.S1.WL_Bioretention.storageDepthMm": 0.0,
+        "initial.facility.S1.WL_Bioretention.finalStorageM3": 0.0
+      }
+    },
+    "14d-minus-7d-0pct": {
+      "status": "AVAILABLE",
+      "direction": "LEFT_MINUS_RIGHT",
+      "difference": {
+        "initial.networkStorageM3": 1.7905918525684683e-08,
+        "initial.surfaceStorageM3": 4.774847184307873e-12,
+        "evaluation.outwardVolumeM3": 1.7900219972943887e-08,
+        "evaluation.peakOutwardM3s": 1.532107773982716e-14,
+        "evaluation.depthAreaTimeM3Hours": 1.255102688446641e-10,
+        "initial.facility.S1.WL_Trench.soilMoisture": null,
+        "initial.facility.S1.WL_Trench.surfaceDepthMm": 0.0,
+        "initial.facility.S1.WL_Trench.storageDepthMm": 0.0,
+        "initial.facility.S1.WL_Trench.finalStorageM3": 0.0,
+        "initial.facility.S1.WL_Swale.soilMoisture": null,
+        "initial.facility.S1.WL_Swale.surfaceDepthMm": 0.0,
+        "initial.facility.S1.WL_Swale.storageDepthMm": null,
+        "initial.facility.S1.WL_Swale.finalStorageM3": 0.0,
+        "initial.facility.S1.WL_Cistern.soilMoisture": null,
+        "initial.facility.S1.WL_Cistern.surfaceDepthMm": 0.0,
+        "initial.facility.S1.WL_Cistern.storageDepthMm": 0.0,
+        "initial.facility.S1.WL_Cistern.finalStorageM3": 0.0,
+        "initial.facility.S1.WL_Bioretention.soilMoisture": 0.0,
+        "initial.facility.S1.WL_Bioretention.surfaceDepthMm": 0.0,
+        "initial.facility.S1.WL_Bioretention.storageDepthMm": 0.0,
+        "initial.facility.S1.WL_Bioretention.finalStorageM3": 0.0
+      }
+    },
+    "28d-minus-14d-0pct": {
+      "status": "AVAILABLE",
+      "direction": "LEFT_MINUS_RIGHT",
+      "difference": {
+        "initial.networkStorageM3": 0.0,
+        "initial.surfaceStorageM3": -2.9103830456733704e-11,
+        "evaluation.outwardVolumeM3": 0.0,
+        "evaluation.peakOutwardM3s": 0.0,
+        "evaluation.depthAreaTimeM3Hours": 1.0186340659856796e-10,
+        "initial.facility.S1.WL_Trench.soilMoisture": null,
+        "initial.facility.S1.WL_Trench.surfaceDepthMm": 0.0,
+        "initial.facility.S1.WL_Trench.storageDepthMm": 0.0,
+        "initial.facility.S1.WL_Trench.finalStorageM3": 0.0,
+        "initial.facility.S1.WL_Swale.soilMoisture": null,
+        "initial.facility.S1.WL_Swale.surfaceDepthMm": 0.0,
+        "initial.facility.S1.WL_Swale.storageDepthMm": null,
+        "initial.facility.S1.WL_Swale.finalStorageM3": 0.0,
+        "initial.facility.S1.WL_Cistern.soilMoisture": null,
+        "initial.facility.S1.WL_Cistern.surfaceDepthMm": 0.0,
+        "initial.facility.S1.WL_Cistern.storageDepthMm": 0.0,
+        "initial.facility.S1.WL_Cistern.finalStorageM3": 0.0,
+        "initial.facility.S1.WL_Bioretention.soilMoisture": 0.0,
+        "initial.facility.S1.WL_Bioretention.surfaceDepthMm": 0.0,
+        "initial.facility.S1.WL_Bioretention.storageDepthMm": 0.0,
+        "initial.facility.S1.WL_Bioretention.finalStorageM3": 0.0
+      }
+    },
+    "14d-minus-7d-100pct": {
+      "status": "AVAILABLE",
+      "direction": "LEFT_MINUS_RIGHT",
+      "difference": {
+        "initial.networkStorageM3": -9.237055564881302e-13,
+        "initial.surfaceStorageM3": 4.774847184307873e-12,
+        "evaluation.outwardVolumeM3": -1.5916157281026244e-12,
+        "evaluation.peakOutwardM3s": 0.0,
+        "evaluation.depthAreaTimeM3Hours": 1.255102688446641e-10,
+        "initial.facility.S1.WL_Trench.soilMoisture": null,
+        "initial.facility.S1.WL_Trench.surfaceDepthMm": 0.0,
+        "initial.facility.S1.WL_Trench.storageDepthMm": 0.0,
+        "initial.facility.S1.WL_Trench.finalStorageM3": 0.0,
+        "initial.facility.S1.WL_Swale.soilMoisture": null,
+        "initial.facility.S1.WL_Swale.surfaceDepthMm": 0.0,
+        "initial.facility.S1.WL_Swale.storageDepthMm": null,
+        "initial.facility.S1.WL_Swale.finalStorageM3": 0.0,
+        "initial.facility.S1.WL_Cistern.soilMoisture": null,
+        "initial.facility.S1.WL_Cistern.surfaceDepthMm": 0.0,
+        "initial.facility.S1.WL_Cistern.storageDepthMm": 0.0,
+        "initial.facility.S1.WL_Cistern.finalStorageM3": 0.0,
+        "initial.facility.S1.WL_Bioretention.soilMoisture": 0.0,
+        "initial.facility.S1.WL_Bioretention.surfaceDepthMm": 0.0,
+        "initial.facility.S1.WL_Bioretention.storageDepthMm": 0.0,
+        "initial.facility.S1.WL_Bioretention.finalStorageM3": 0.0
+      }
+    },
+    "28d-minus-14d-100pct": {
+      "status": "AVAILABLE",
+      "direction": "LEFT_MINUS_RIGHT",
+      "difference": {
+        "initial.networkStorageM3": 0.0,
+        "initial.surfaceStorageM3": -2.9103830456733704e-11,
+        "evaluation.outwardVolumeM3": 6.821210263296962e-13,
+        "evaluation.peakOutwardM3s": 0.0,
+        "evaluation.depthAreaTimeM3Hours": 1.0186340659856796e-10,
+        "initial.facility.S1.WL_Trench.soilMoisture": null,
+        "initial.facility.S1.WL_Trench.surfaceDepthMm": 0.0,
+        "initial.facility.S1.WL_Trench.storageDepthMm": 0.0,
+        "initial.facility.S1.WL_Trench.finalStorageM3": 0.0,
+        "initial.facility.S1.WL_Swale.soilMoisture": null,
+        "initial.facility.S1.WL_Swale.surfaceDepthMm": 0.0,
+        "initial.facility.S1.WL_Swale.storageDepthMm": null,
+        "initial.facility.S1.WL_Swale.finalStorageM3": 0.0,
+        "initial.facility.S1.WL_Cistern.soilMoisture": null,
+        "initial.facility.S1.WL_Cistern.surfaceDepthMm": 0.0,
+        "initial.facility.S1.WL_Cistern.storageDepthMm": 0.0,
+        "initial.facility.S1.WL_Cistern.finalStorageM3": 0.0,
+        "initial.facility.S1.WL_Bioretention.soilMoisture": 0.0,
+        "initial.facility.S1.WL_Bioretention.surfaceDepthMm": 0.0,
+        "initial.facility.S1.WL_Bioretention.storageDepthMm": 0.0,
+        "initial.facility.S1.WL_Bioretention.finalStorageM3": 0.0
+      }
+    },
+    "28d-60s-minus-30s": {
+      "status": "AVAILABLE",
+      "direction": "LEFT_MINUS_RIGHT",
+      "difference": {
+        "initial.networkStorageM3": -0.00030039763829847743,
+        "initial.surfaceStorageM3": 0.011358758353708254,
+        "evaluation.outwardVolumeM3": -0.0013681918792372016,
+        "evaluation.peakOutwardM3s": -8.176673382820354e-08,
+        "evaluation.depthAreaTimeM3Hours": 0.06233125400831341,
+        "initial.facility.S1.WL_Trench.soilMoisture": null,
+        "initial.facility.S1.WL_Trench.surfaceDepthMm": 0.0,
+        "initial.facility.S1.WL_Trench.storageDepthMm": 0.0,
+        "initial.facility.S1.WL_Trench.finalStorageM3": 0.0,
+        "initial.facility.S1.WL_Swale.soilMoisture": null,
+        "initial.facility.S1.WL_Swale.surfaceDepthMm": 0.0,
+        "initial.facility.S1.WL_Swale.storageDepthMm": null,
+        "initial.facility.S1.WL_Swale.finalStorageM3": 0.0,
+        "initial.facility.S1.WL_Cistern.soilMoisture": null,
+        "initial.facility.S1.WL_Cistern.surfaceDepthMm": 0.0,
+        "initial.facility.S1.WL_Cistern.storageDepthMm": 0.0,
+        "initial.facility.S1.WL_Cistern.finalStorageM3": 0.0,
+        "initial.facility.S1.WL_Bioretention.soilMoisture": 0.0,
+        "initial.facility.S1.WL_Bioretention.surfaceDepthMm": 0.0,
+        "initial.facility.S1.WL_Bioretention.storageDepthMm": 0.0,
+        "initial.facility.S1.WL_Bioretention.finalStorageM3": 0.0
+      }
+    }
+  },
+  "exactReplay": true,
+  "status": "PASSED",
+  "executionSummarySha256": "231dfc1210d370c7f421727bd89e16e79519872d5b6f889e81a2dffe871b63e0",
+  "executionManifestSha256": "522cd8cbf03c9158e6f4097f0ef6bea85cdf5af57329ee050bcfccb967bc73cf",
+  "analysisCode": {
+    "analysis/tmp/review_coupled_initialization_study.py": "7572c0257eba2a575d20b5472e3821a1193b96bd29ffbaa103b99045e0891711",
+    "analysis/simulation/waterleague_sim/evaluation/coupled_initialization_study.py": "86fbace616eb3771c4841ddd0e35ebb4a4a3c8fbe6364ee4f62b2fce22162633",
+    "analysis/simulation/tests/test_coupled_initialization_study.py": "228b8696357aa710d90a564b8d27ee1a59ad9c58b12a9030e3265ffe4aa3b7b1"
+  },
+  "analysisNote": "원 실행 8건·원 요약/매니페스트 보존; 시간 간격 외의 엔진·컴파일러·시설 카탈로그 동일성 추가 확인. 원 지표·기존 비교 값 변경 없음.",
+  "artifact": {
+    "directory": "data/runs/coupled-initialization-28d-20261018-v2",
+    "manifest": "analysis-manifest.json",
+    "manifestSha256": "eb4f95927db07ad798e6820821ffd307f23260a108b3f0c026d4ccf8e99fcccf",
+    "files": 5809,
+    "summarySha256": "fc312aef9bf0959b292dd023edaae88d257d1d870da0a44cb9e1ec4bf9f35221"
+  },
+  "preservedAttempt": {
+    "directory": "data/runs/coupled-initialization-28d-20261018-v1",
+    "status": "INTERRUPTED_AFTER_INVALID_SWALE_SEED",
+    "manifestSha256": "b0048fce85172d25fa57b8cde1417b911aadaa9b3a3ee1f5dcec688845a420c6"
+  }
+}
