@@ -1,6 +1,6 @@
 import { CloudRain, RefreshCw } from 'lucide-react';
 import type { useLiveRainfall } from '../controller/useLiveRainfall';
-import { rainCondition } from '../service/rainEffectService';
+import { rainCondition, rainEvidenceLabel } from '../service/rainEffectService';
 import './rainfall.css';
 const time = (value: string) =>
   new Date(value).toLocaleTimeString('ko-KR', {
@@ -45,7 +45,10 @@ export function LiveRainfallPanel({
               : station?.status === 'MISSING'
                 ? '관측 결측'
                 : '기상청 직접 조회'}{' '}
-            · {time(value.requestedObservationAt)} 관측
+            ·{' '}
+            {station?.observedAt
+              ? `${time(station.observedAt)} 강수량 관측`
+              : `${time(value.requestedObservationAt)} 조회 기준`}
           </span>
           {station ? (
             <>
@@ -53,6 +56,10 @@ export function LiveRainfallPanel({
                 {station.districtName} <small>{station.stationName} 관측소</small>
               </strong>
               <p className="live-rainfall-condition">{rainCondition(station, now)}</p>
+              <p>
+                {rainEvidenceLabel(station)}
+                {station.rainObservedAt ? ` · ${time(station.rainObservedAt)} 관측` : ''}
+              </p>
               <dl>
                 <div>
                   <dt>최근 60분</dt>

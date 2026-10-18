@@ -71,7 +71,7 @@ class LiveRainfallTests {
             () -> KmaObservationMapper.parse(response(row(at, "0") + "\n" + row(at, "0")), at))
         .isInstanceOf(DomainException.class);
     assertThatThrownBy(
-            () -> KmaObservationMapper.parse(response(row(at.minusSeconds(120), "0")), at))
+            () -> KmaObservationMapper.parse(response(row(at.minusSeconds(300), "0")), at))
         .isInstanceOf(DomainException.class);
     assertThatThrownBy(() -> KmaObservationMapper.parse("invalid provider output", at))
         .isInstanceOf(DomainException.class);
@@ -136,6 +136,37 @@ class LiveRainfallTests {
     Instant at = Instant.parse("2026-10-17T11:47:00Z");
     assertThatThrownBy(() -> KmaObservationMapper.parse(response(observed(at, "2", "5")), at))
         .isInstanceOf(DomainException.class);
+  }
+
+  @Test
+  void missingLatestMinuteKeepsPreviousObservationWithItsOriginalTime() {
+    Instant at = Instant.parse("2026-10-18T09:45:00Z");
+    var value =
+        KmaObservationMapper.parse(
+                response(
+                    observed(at.minusSeconds(120), "-99.9", "5")
+                        + "\n"
+                        + observed(at.minusSeconds(60), "-99.9", "5.5")
+                        + "\n"
+                        + observed(at, "-99.9", "-99.9").replace("3 8 10", "-99.9 -99.9 -99.9")),
+                at)
+            .get("421");
+    assertThat(value.observedAt()).isEqualTo(at.minusSeconds(60));
+    assertThat(value.oneMinuteMm()).isEqualByComparingTo("0.5");
+    assertThat(value.rainState()).isEqualTo("WET");
+  }
+
+  @Test
+  void zeroIncrementWithoutRainSensorDoesNotClaimDryWeather() {
+    Instant at = Instant.parse("2026-10-18T09:45:00Z");
+    var value =
+        KmaObservationMapper.parse(
+                response(observed(at.minusSeconds(60), "-1", "5") + "\n" + observed(at, "-1", "5")),
+                at)
+            .get("421");
+    assertThat(value.oneMinuteMm()).isZero();
+    assertThat(value.rainDetected()).isNull();
+    assertThat(value.rainState()).isEqualTo("UNKNOWN");
   }
 
   @Test

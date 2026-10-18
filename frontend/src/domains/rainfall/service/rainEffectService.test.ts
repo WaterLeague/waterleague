@@ -2,6 +2,7 @@ import { expect, it } from 'vitest';
 import {
   isRaining,
   rainCondition,
+  rainEvidenceLabel,
   rainParticleSeeds,
   rainSamplingWindow,
   rainVisualDensity,
@@ -25,6 +26,9 @@ const station: RainStation = {
   rainDetected: false,
   oneMinuteMm: 0,
   rainState: 'NO_RAIN_DETECTED',
+  rainObservedAt: new Date(at).toISOString(),
+  rainEvidence: 'AWS_RAIN_SENSOR',
+  presentWeatherCode: null,
   temperatureC: 20,
   humidityPercent: 60,
   windSpeedMs: 0,
@@ -43,9 +47,24 @@ it('과거 누적 강우와 결측·지연을 현재 비 효과로 사용하지 
   expect(isRaining(wet, at + 120000)).toBe(true);
   expect(isRaining(wet, at + 300001)).toBe(false);
   expect(isRaining(wet, at - 1)).toBe(false);
-  expect(isRaining({ ...wet, observedAt: null }, at)).toBe(false);
+  expect(isRaining({ ...wet, rainObservedAt: null }, at)).toBe(false);
   expect(isRaining({ ...wet, rainState: 'UNKNOWN' }, at)).toBe(false);
   expect(rainCondition(wet, at + 300001)).toBe('현재 강수 확인 불가');
+});
+it('강수량 0이어도 현천의 비 감지를 표시하고 별도 관측 시각으로 만료', () => {
+  const drizzle: RainStation = {
+    ...station,
+    rainState: 'WET',
+    rainDetected: null,
+    rainEvidence: 'AWS_PRESENT_WEATHER',
+    presentWeatherCode: 51,
+    observedAt: new Date(at - 600000).toISOString(),
+  };
+  expect(isRaining(drizzle, at + 120000)).toBe(true);
+  expect(rainEvidenceLabel(drizzle)).toBe('현천 관측 · 코드 51');
+  expect(isRaining(drizzle, at + 300001)).toBe(false);
+  expect(isRaining({ ...drizzle, rainState: 'SNOW' }, at)).toBe(false);
+  expect(rainCondition({ ...drizzle, rainState: 'SNOW' }, at)).toBe('최근 관측에서 눈 감지');
 });
 it('작은 확대·축소와 이동은 같은 비 입자 영역을 재사용', () => {
   const base = rainSamplingWindow([200100, 450100], 3000);

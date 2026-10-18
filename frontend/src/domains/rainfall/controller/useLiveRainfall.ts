@@ -61,14 +61,17 @@ export function useLiveRainfall(enabled = true) {
     };
   }, [refresh, enabled]);
   useEffect(() => {
+    const current = Date.now();
     const expiry = Math.min(
       ...(value?.districts.flatMap((d) =>
-        d.observedAt ? [Date.parse(d.observedAt) + 300001] : []
+        d.rainObservedAt && Date.parse(d.rainObservedAt) + 300001 > current
+          ? [Date.parse(d.rainObservedAt) + 300001]
+          : []
       ) ?? [])
     );
-    if (!Number.isFinite(expiry) || expiry <= Date.now()) return;
-    const timer = window.setTimeout(() => setNow(Date.now()), expiry - Date.now());
+    if (!Number.isFinite(expiry)) return;
+    const timer = window.setTimeout(() => setNow(Date.now()), expiry - current);
     return () => window.clearTimeout(timer);
-  }, [value]);
+  }, [value, now]);
   return { value, busy, error, now, visible, refresh };
 }

@@ -2,8 +2,8 @@ import type { LiveRainfall } from '../entity/liveRainfall';
 
 export type RainStation = LiveRainfall['districts'][number];
 export function observationFresh(station: RainStation, now: number) {
-  if (!station.observedAt) return false;
-  const age = now - Date.parse(station.observedAt);
+  if (!station.rainObservedAt) return false;
+  const age = now - Date.parse(station.rainObservedAt);
   return age >= 0 && age <= 300000;
 }
 export function isRaining(station: RainStation, now: number) {
@@ -12,8 +12,17 @@ export function isRaining(station: RainStation, now: number) {
 export function rainCondition(station: RainStation, now: number) {
   if (!observationFresh(station, now)) return '현재 강수 확인 불가';
   if (station.rainState === 'WET') return '최근 관측에서 비 감지';
+  if (station.rainState === 'SNOW') return '최근 관측에서 눈 감지';
   if (station.rainState === 'NO_RAIN_DETECTED') return '최근 관측에서 강수 미감지';
   return '현재 강수 확인 불가';
+}
+
+export function rainEvidenceLabel(station: RainStation) {
+  if (station.rainEvidence === 'AWS_PRESENT_WEATHER')
+    return `현천 관측 · 코드 ${station.presentWeatherCode ?? '미확인'}`;
+  if (station.rainEvidence === 'AWS_RAIN_SENSOR') return '강수감지 센서';
+  if (station.rainEvidence === 'AWS_MINUTE_INCREMENT') return '연속 1분 누적량 증가';
+  return '강수감지·현천 관측 없음 · 0mm만으로 비 없음 판정 불가';
 }
 
 type Point = [number, number];

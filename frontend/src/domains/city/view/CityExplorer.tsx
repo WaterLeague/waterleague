@@ -731,7 +731,7 @@ function Explorer({
                       ? `${wetDistricts.length}개 구에서 비 감지`
                       : unknownRainCount === 25
                         ? '현재 강수 확인 불가'
-                        : '현재 비 감지 구 없음'}
+                        : '관측으로 비가 확인된 구 없음'}
               {!researchMode && rainfall.value && unknownRainCount > 0 && unknownRainCount < 25
                 ? ` · ${unknownRainCount}개 구 미확인`
                 : ''}

@@ -20,14 +20,13 @@ public final class KmaObservationMapper {
       if (!text.startsWith("#START7777")
           || !text.stripTrailing().endsWith("#7777END")
           || !text.contains("RN-15m RN-60m RN-12H RN-DAY")) throw new IllegalArgumentException();
-      var rows = new HashMap<String, LiveObservation>();
-      var previous = new HashMap<String, LiveObservation>();
+      var observations = new HashMap<String, NavigableMap<Instant, LiveObservation>>();
       for (String line : text.split("\n")) {
         if (line.isBlank() || line.startsWith("#")) continue;
         String[] f = line.strip().split("\\s+");
         if (f.length != 18 || !f[1].matches("[0-9]{1,5}")) throw new IllegalArgumentException();
         Instant time = LocalDateTime.parse(f[0], TIME).atZone(KST).toInstant();
-        if (!time.equals(requested) && !time.equals(requested.minusSeconds(60)))
+        if (time.isAfter(requested) || time.isBefore(requested.minusSeconds(240)))
           throw new IllegalArgumentException();
         var value =
             new LiveObservation(
@@ -42,12 +41,19 @@ public final class KmaObservationMapper {
                 weather(f[14], 0, 100),
                 weather(f[7], 0, 150),
                 weather(f[15], 300, 1100));
-        var target = time.equals(requested) ? rows : previous;
-        if (target.put(f[1], value) != null) throw new IllegalArgumentException();
+        var target = observations.computeIfAbsent(f[1], id -> new TreeMap<>());
+        if (target.put(time, value) != null) throw new IllegalArgumentException();
       }
-      rows.replaceAll(
-          (id, current) -> {
-            var before = previous.get(id);
+      var rows = new HashMap<String, LiveObservation>();
+      observations.forEach(
+          (id, series) -> {
+            // 같은 직접 응답 안에서 최근 유효 관측을 선택하고 원 시각을 보존한다.
+            var current =
+                series.descendingMap().values().stream()
+                    .filter(LiveObservation::hasRainObservation)
+                    .findFirst()
+                    .orElse(series.lastEntry().getValue());
+            var before = series.get(current.observedAt().minusSeconds(60));
             BigDecimal minute = null;
             // 자정 초기화나 관측 역전을 실제 분 강우로 만들지 않는다.
             if (before != null
@@ -61,18 +67,20 @@ public final class KmaObservationMapper {
               var delta = current.dayMm().subtract(before.dayMm());
               if (delta.signum() >= 0) minute = delta;
             }
-            return new LiveObservation(
+            rows.put(
                 id,
-                current.observedAt(),
-                current.fifteenMinuteMm(),
-                current.sixtyMinuteMm(),
-                current.dayMm(),
-                current.rainDetected(),
-                minute,
-                current.temperatureC(),
-                current.humidityPercent(),
-                current.windSpeedMs(),
-                current.pressureHpa());
+                new LiveObservation(
+                    id,
+                    current.observedAt(),
+                    current.fifteenMinuteMm(),
+                    current.sixtyMinuteMm(),
+                    current.dayMm(),
+                    current.rainDetected(),
+                    minute,
+                    current.temperatureC(),
+                    current.humidityPercent(),
+                    current.windSpeedMs(),
+                    current.pressureHpa()));
           });
       return Map.copyOf(rows);
     } catch (RuntimeException e) {
@@ -82,7 +90,7 @@ public final class KmaObservationMapper {
 
   private static Boolean detection(String s) {
     var n = new BigDecimal(s);
-    if (n.compareTo(BigDecimal.valueOf(-50)) <= 0) return null;
+    if (n.signum() < 0) return null;
     if (n.signum() == 0) return false;
     if (n.compareTo(BigDecimal.ONE) == 0) return true;
     throw new IllegalArgumentException();
