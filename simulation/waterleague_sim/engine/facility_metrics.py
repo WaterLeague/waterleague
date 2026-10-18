@@ -1,9 +1,27 @@
 """관망 계산을 변경하지 않는 모든 외부 출구의 내부 단계 첨두 관측."""
 import ctypes as C
+from copy import deepcopy
 import json
 
 from . import facility_network, network, network_metrics
 from .flood_errors import require
+
+
+def evaluation_specification(model, seconds, outfalls):
+    specification = {'schemaVersion': 1, 'policyVersion': 'PUBLIC_NETWORK_ALL_OUTFALLS_v1',
+        'startMilliseconds': 0, 'endMilliseconds': round(seconds * 1000),
+        'networkOutfalls': sorted(outfalls)}
+    if model is None or 'evaluationWindow' not in model:
+        return specification
+    window = model['evaluationWindow']
+    require(isinstance(window, dict) and set(window) == {
+        'schemaVersion', 'startMilliseconds', 'endMilliseconds'}
+        and type(window['schemaVersion']) is int and window['schemaVersion'] == 1,
+        'FACILITY_METRICS_WINDOW_INVALID')
+    start, end = window['startMilliseconds'], window['endMilliseconds']
+    require(type(start) is int and type(end) is int and 0 <= start < end <= round(seconds * 1000),
+        'FACILITY_METRICS_WINDOW_INVALID')
+    return specification | deepcopy(window) | {'policyVersion': 'PUBLIC_NETWORK_ALL_OUTFALLS_WINDOW_v1'}
 
 
 def library_path():
@@ -48,11 +66,15 @@ class FacilityMetricsSession(facility_network.FacilityNetworkSession):
             # 선택 설계에 따라 유리한 출구를 고르지 않고 원 관망의 모든 외부 출구를 고정한다.
             self.metric_outfalls = sorted(k for k, v in self.initial['nodes'].items() if v['type'] == 1)
             require(self.metric_outfalls, 'NETWORK_METRICS_EXTERNAL_OUTFALL_REQUIRED')
-            self.metric_spec = {'schemaVersion': 1, 'policyVersion': 'PUBLIC_NETWORK_ALL_OUTFALLS_v1',
-                'startMilliseconds': 0, 'endMilliseconds': round(self.evaluation_seconds * 1000),
-                'networkOutfalls': self.metric_outfalls}
+            self.metric_spec = evaluation_specification(
+                self.original_model, self.evaluation_seconds, self.metric_outfalls)
+            start = self.metric_spec['startMilliseconds'] / 1000
+            end = self.metric_spec['endMilliseconds'] / 1000
             nodes = (C.c_int * len(self.metric_outfalls))(*(self.nodes[n] for n in self.metric_outfalls))
-            self._check(self.lib.wl_metricsBegin(0, self.evaluation_seconds, nodes, len(nodes)))
+            self._check(self.lib.wl_metricsBegin(start, end, nodes, len(nodes)))
+            if self.original_model is not None and 'evaluationWindow' in self.original_model:
+                (self.directory / 'evaluation-window.json').write_text(
+                    json.dumps(self.metric_spec, allow_nan=False, indent=2) + '\n')
             return self
         except BaseException:
             self.close()

@@ -8,6 +8,7 @@ from waterleague_sim.engine.flood_errors import FloodModelError, require
 from waterleague_sim.engine.flood_process import EngineProcess
 from waterleague_sim.engine.network import _TOTAL_FIELDS, sha256
 from waterleague_sim.engine.network_quality import routing_balance
+from waterleague_sim.engine.flood_metrics import specification_hash
 from waterleague_sim.forcing.network_initialization import prepare_initialized_network
 
 _CUMULATIVE = ('inflowM3', 'evaporationM3', 'infiltrationM3', 'surfaceOutflowM3', 'drainOutflowM3')
@@ -17,7 +18,7 @@ def _write(path, value):
     path.write_text(json.dumps(value, ensure_ascii=False, allow_nan=False, indent=2) + '\n')
 
 
-def evaluation_ledger(origin, final):
+def evaluation_ledger(origin, final, metrics=None):
     start, end = origin['totals']['timeSeconds'], final['totals']['timeSeconds']
     require(0 < start < end, 'FACILITY_INITIALIZATION_EVALUATION_INVALID')
     for state, expected in ((origin, start), (final, end)):
@@ -48,10 +49,36 @@ def evaluation_ledger(origin, final):
     routing = routing_balance(totals)
     passed = (all(row['numericalStatus'] == 'PASSED' for row in facilities)
               and abs(routing['residualM3']) <= routing['allowedResidualM3'])
-    return {'durationSeconds': end-start, 'facilities': facilities,
+    result = {'durationSeconds': end-start, 'facilities': facilities,
         'routingTotals': totals, 'routingBalance': routing, 'numericalStatus': 'PASSED' if passed else 'FAILED',
         'scope': 'SEPARATE_FACILITY_AND_ROUTING_CONTROL_VOLUMES', 'scoreExcludesWarmup': True,
         'peakFlowM3s': None, 'peakStatus': 'NOT_DERIVED_FROM_SPARSE_FRAMES'}
+    if metrics is not None:
+        require(isinstance(metrics, dict) and isinstance(metrics.get('specification'), dict),
+            'FACILITY_INITIALIZATION_METRICS_INVALID')
+        spec = metrics['specification']
+        outfalls = sorted(k for k, v in origin['nodes'].items() if v['type'] == 1)
+        require(spec == {'schemaVersion': 1, 'policyVersion': 'PUBLIC_NETWORK_ALL_OUTFALLS_WINDOW_v1',
+            'startMilliseconds': round(start*1000), 'endMilliseconds': round(end*1000),
+            'networkOutfalls': outfalls}
+            and metrics.get('specificationSha256') == specification_hash(spec)
+            and metrics.get('complete') is True
+            and isinstance(metrics.get('outfalls'), dict) and set(metrics['outfalls']) == set(outfalls),
+            'FACILITY_INITIALIZATION_METRICS_WINDOW_MISMATCH')
+        fields = ('outwardVolumeM3', 'inwardVolumeM3', 'peakOutwardM3s', 'peakInwardM3s',
+                  'peakOutwardTimeSeconds', 'peakInwardTimeSeconds', 'coveredSeconds', 'nativeSteps')
+        for row in [metrics.get('combined'), *metrics['outfalls'].values()]:
+            require(isinstance(row, dict) and set(row) == set(fields)
+                and all(type(row[k]) in (int, float) and math.isfinite(row[k]) and row[k] >= 0 for k in fields)
+                and math.isclose(row['coveredSeconds'], end-start, abs_tol=1e-7, rel_tol=0)
+                and start <= row['peakOutwardTimeSeconds'] <= end
+                and start <= row['peakInwardTimeSeconds'] <= end,
+                'FACILITY_INITIALIZATION_METRICS_INVALID')
+        result.update(peakFlowM3s=metrics['combined']['peakOutwardM3s'],
+            peakTimeSeconds=metrics['combined']['peakOutwardTimeSeconds'],
+            peakStatus='NATIVE_ALL_EXTERNAL_OUTFALLS_EVALUATION_WINDOW',
+            outfallMetrics=metrics)
+    return result
 
 
 def run_initialized_facilities(model, specification, initialization, design, directory):
@@ -70,7 +97,8 @@ def run_initialized_facilities(model, specification, initialization, design, dir
     (directory/'observed-network.inp').write_text(prepared.model['inputText'])
     origin, state = None, None
     try:
-        with EngineProcess('facility_network', prepared.model | {'inputText': raw.decode()},
+        window = {'schemaVersion': 1, 'startMilliseconds': warmup*1000, 'endMilliseconds': seconds*1000}
+        with EngineProcess('facility_metrics', prepared.model | {'inputText': raw.decode(), 'evaluationWindow': window},
                            directory/'network', evaluation_seconds=seconds) as process:
             state = process.info['initial']
             _write(directory/'seed-state.json', state)
@@ -88,9 +116,9 @@ def run_initialized_facilities(model, specification, initialization, design, dir
                         origin = state
                         _write(directory/'evaluation-initial-state.json', origin)
                 result = process.call('finish')
-        ledger = evaluation_ledger(origin, result['final'])
+        ledger = evaluation_ledger(origin, result['final'], result['evaluationMetrics'])
         passed = result['numericalStatus'] == ledger['numericalStatus'] == 'PASSED'
-        report = {'schemaVersion': 1, 'method': prepared.summary['method'], 'rankingEligible': False,
+        report = {'schemaVersion': 2, 'method': prepared.summary['method'], 'rankingEligible': False,
             'classification': 'OBSERVED_FORCING_REFERENCE_FACILITY_DESIGN_NOT_FIELD_VALIDATION',
             'numericalStatus': 'PASSED' if passed else 'FAILED', 'initialization': prepared.summary,
             'design': metadata, 'evaluationLedger': ledger, 'engine': result['engine'],

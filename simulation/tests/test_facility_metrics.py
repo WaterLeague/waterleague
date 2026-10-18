@@ -2,7 +2,9 @@
 from pathlib import Path
 import tempfile
 import unittest
-from waterleague_sim.engine.facility_metrics import library_path
+from copy import deepcopy
+from waterleague_sim.engine.facility_metrics import library_path, evaluation_specification
+from waterleague_sim.engine.flood_errors import FloodModelError
 from waterleague_sim.engine.flood_process import EngineProcess
 from waterleague_sim.engine.swmm import ROOT
 
@@ -57,6 +59,53 @@ LINKS ALL
 
 @unittest.skipUnless(library_path().exists(), '출구 관측 네이티브 빌드 필요')
 class FacilityMetricsTests(unittest.TestCase):
+    def test_window_rejects_outfall_selection_and_invalid_time_without_mutation(self):
+        window = {'schemaVersion': 1, 'startMilliseconds': 50037, 'endMilliseconds': 80037}
+        model = {'evaluationWindow': window}
+        original = deepcopy(model)
+        spec = evaluation_specification(model, 120, ['O2', 'O1'])
+        self.assertEqual(spec['networkOutfalls'], ['O1', 'O2'])
+        self.assertEqual(model, original)
+        for changed in (window | {'startMilliseconds': True}, window | {'endMilliseconds': 120001},
+                        window | {'startMilliseconds': -1}, window | {'endMilliseconds': 50037},
+                        window | {'endMilliseconds': 80037.0}, window | {'networkOutfalls': ['O2']},
+                        window | {'schemaVersion': True}, None):
+            with self.assertRaisesRegex(FloodModelError, 'METRICS_WINDOW_INVALID'):
+                evaluation_specification({'evaluationWindow': changed}, 120, ['O1', 'O2'])
+
+    def test_partitioned_windows_keep_hydraulics_and_exclude_outside_peaks(self):
+        with tempfile.TemporaryDirectory(dir=ROOT/'tmp', prefix='peak-window-') as temporary:
+            root = Path(temporary)
+            results = {}
+            text = MODEL.replace('END_TIME 00:02:00', 'END_TIME 00:02:01')
+            windows = [('whole', None), ('prior', (0, 50037)), ('event', (50037, 80037)),
+                       ('recovery', (80037, 120000)), ('event-coarse', (50037, 80037))]
+            for name, limits in windows:
+                model = {'inputText': text}
+                if limits:
+                    model['evaluationWindow'] = {'schemaVersion': 1, 'startMilliseconds': limits[0],
+                                                 'endMilliseconds': limits[1]}
+                with EngineProcess('facility_metrics', model, root/name, evaluation_seconds=120) as process:
+                    for _ in range(120 if name != 'event-coarse' else 2):
+                        process.call('advance', 1 if name != 'event-coarse' else 60)
+                    results[name] = process.call('finish')
+                self.assertTrue(results[name]['evaluationMetrics']['complete'])
+                self.assertEqual(results[name]['final'], results['whole']['final'])
+                self.assertEqual((root/name/'network.out').read_bytes(), (root/'whole/network.out').read_bytes())
+            for direction in ('outwardVolumeM3', 'inwardVolumeM3'):
+                total = results['whole']['evaluationMetrics']['combined'][direction]
+                self.assertAlmostEqual(total, sum(results[name]['evaluationMetrics']['combined'][direction]
+                    for name in ('prior', 'event', 'recovery')), places=10)
+            event = results['event']['evaluationMetrics']
+            self.assertEqual(event, results['event-coarse']['evaluationMetrics'])
+            self.assertAlmostEqual(event['combined']['coveredSeconds'], 30, places=7)
+            self.assertLess(event['outfalls']['O1']['peakOutwardM3s'],
+                            results['whole']['evaluationMetrics']['outfalls']['O1']['peakOutwardM3s']*.01)
+            self.assertGreater(event['outfalls']['O2']['peakOutwardM3s'], .09)
+            self.assertGreaterEqual(event['combined']['peakOutwardTimeSeconds'], 50.037)
+            self.assertLessEqual(event['combined']['peakOutwardTimeSeconds'], 80.037)
+            self.assertTrue((root/'event/evaluation-window.json').is_file())
+
     def test_simultaneous_peak_not_sum_of_peaks_and_frame_interval_does_not_change_physics(self):
         with tempfile.TemporaryDirectory(dir=ROOT/'tmp', prefix='peaks-') as temporary:
             root = Path(temporary)

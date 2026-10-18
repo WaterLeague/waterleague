@@ -8,7 +8,7 @@ import re
 import tempfile
 import unittest
 
-from waterleague_sim.engine import facility_network
+from waterleague_sim.engine import facility_metrics
 from waterleague_sim.engine.flood_errors import FloodModelError
 from waterleague_sim.engine.initialized_facilities import evaluation_ledger, run_initialized_facilities
 from waterleague_sim.forcing.network_initialization import prepare_initialized_network
@@ -80,7 +80,7 @@ class NetworkInitializationInputTests(unittest.TestCase):
                 prepare_initialized_network(candidate, spec, init)
 
 
-@unittest.skipUnless(facility_network.library_path().exists(), '연결 시설 엔진 설치 필요')
+@unittest.skipUnless(facility_metrics.library_path().exists(), '연결 시설 첨두 엔진 설치 필요')
 class InitializedFacilityNativeTests(unittest.TestCase):
     def test_observed_periods_seeds_window_balance_and_exact_replay(self):
         target = os.environ.get('INITIALIZED_FACILITY_EVIDENCE_DIR')
@@ -106,11 +106,12 @@ class InitializedFacilityNativeTests(unittest.TestCase):
             self.assertEqual(result['numericalStatus'],'PASSED')
             self.assertEqual(network['convergence']['nonConvergedSteps'],0)
             self.assertTrue(result['evaluationLedger']['scoreExcludesWarmup'])
-            self.assertIsNone(result['evaluationLedger']['peakFlowM3s'])
+            self.assertGreater(result['evaluationLedger']['peakFlowM3s'], 0)
+            self.assertGreaterEqual(result['evaluationLedger']['peakTimeSeconds'], days*86400)
             initial = json.loads((output/'evaluation-initial-state.json').read_text())
             self.assertEqual(initial['totals']['timeSeconds'], days*86400)
             self.assertEqual(len(initial['facilities']),4)
-            self.assertEqual(result['evaluationLedger'],evaluation_ledger(initial,network['final']))
+            self.assertEqual(result['evaluationLedger'],evaluation_ledger(initial,network['final'],network['evaluationMetrics']))
             self.assertGreater(next(u for u in initial['facilities'] if u['swmmId']=='WL_Bioretention')['soilMoisture'],.08)
             self.assertNotEqual(initial['facilities'],network['initial']['facilities'])
             for unit in result['evaluationLedger']['facilities']:
@@ -135,6 +136,18 @@ class InitializedFacilityNativeTests(unittest.TestCase):
         altered = deepcopy(final)
         altered['facilities'][0]['surfaceOutflowM3'] += 10000
         self.assertEqual(evaluation_ledger(original,altered)['numericalStatus'],'FAILED')
+        metrics = networks['14d-dry']['evaluationMetrics']
+        for key, value in (('complete', False), ('specificationSha256', '0'*64), ('outfalls', {})):
+            with self.assertRaisesRegex(FloodModelError, 'METRICS_WINDOW_MISMATCH'):
+                evaluation_ledger(original, final, metrics | {key: value})
+        shifted = deepcopy(metrics)
+        shifted['specification']['startMilliseconds'] -= 1000
+        with self.assertRaisesRegex(FloodModelError, 'METRICS_WINDOW_MISMATCH'):
+            evaluation_ledger(original, final, shifted)
+        malformed = deepcopy(metrics)
+        malformed['combined']['peakOutwardM3s'] = float('nan')
+        with self.assertRaisesRegex(FloodModelError, 'METRICS_INVALID'):
+            evaluation_ledger(original, final, malformed)
         def measures(result):
             return {'routingOutflowM3':result['evaluationLedger']['routingTotals']['outflowM3'],
                 'facilities':{row['swmmId']:{key:row[key] for key in ('inflowM3','evaporationM3',

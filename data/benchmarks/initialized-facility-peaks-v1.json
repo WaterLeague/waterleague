@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 1,
+  "classification": "OBSERVED_WEATHER_SYNTHETIC_NETWORK_NOT_SEOUL_FLOOD_RECONSTRUCTION",
+  "rankingEligible": false,
+  "cases": {
+    "7d-dry": {
+      "numericalStatus": "PASSED",
+      "warmupSeconds": 604800,
+      "evaluationSeconds": 21540.0,
+      "metrics": {
+        "outwardVolumeM3": 1775.4898584630237,
+        "inwardVolumeM3": 0.0,
+        "peakOutwardM3s": 0.13496727862470234,
+        "peakInwardM3s": 0.0,
+        "peakOutwardTimeSeconds": 618072.0,
+        "peakInwardTimeSeconds": 604800.0,
+        "coveredSeconds": 21540.0,
+        "nativeSteps": 21540.0
+      },
+      "evaluationSpecificationHash": "c8d3468d3028cbb4e84f3e2d21999f30fd52ed13f16e98cdbe1e8d9c5fe7bd87",
+      "wholeRunOutflowM3": 3222.0077606027553,
+      "routingResidualM3": -0.0009182027788483538,
+      "nativeOutputUnchanged": true
+    },
+    "7d-wet": {
+      "numericalStatus": "PASSED",
+      "warmupSeconds": 604800,
+      "evaluationSeconds": 21540.0,
+      "metrics": {
+        "outwardVolumeM3": 1775.4763039167399,
+        "inwardVolumeM3": 0.0,
+        "peakOutwardM3s": 0.13496726699896308,
+        "peakInwardM3s": 0.0,
+        "peakOutwardTimeSeconds": 618072.0,
+        "peakInwardTimeSeconds": 604800.0,
+        "coveredSeconds": 21540.0,
+        "nativeSteps": 21540.0
+      },
+      "evaluationSpecificationHash": "c8d3468d3028cbb4e84f3e2d21999f30fd52ed13f16e98cdbe1e8d9c5fe7bd87",
+      "wholeRunOutflowM3": 3374.444157846512,
+      "routingResidualM3": -0.000918173708669201,
+      "nativeOutputUnchanged": true
+    },
+    "14d-dry": {
+      "numericalStatus": "PASSED",
+      "warmupSeconds": 1209600,
+      "evaluationSeconds": 21540.0,
+      "metrics": {
+        "outwardVolumeM3": 1775.4898584810078,
+        "inwardVolumeM3": 0.0,
+        "peakOutwardM3s": 0.13496727862471744,
+        "peakInwardM3s": 0.0,
+        "peakOutwardTimeSeconds": 1222872.0,
+        "peakInwardTimeSeconds": 1209600.0,
+        "coveredSeconds": 21540.0,
+        "nativeSteps": 21540.0
+      },
+      "evaluationSpecificationHash": "ee9fc494d0b2f2896520ff13c16e09ca0febc1b4db5de8e26a725224830a1658",
+      "wholeRunOutflowM3": 4654.86666926192,
+      "routingResidualM3": -0.0009182028009036003,
+      "nativeOutputUnchanged": true
+    },
+    "14d-wet": {
+      "numericalStatus": "PASSED",
+      "warmupSeconds": 1209600,
+      "evaluationSeconds": 21540.0,
+      "metrics": {
+        "outwardVolumeM3": 1775.4763039167394,
+        "inwardVolumeM3": 0.0,
+        "peakOutwardM3s": 0.13496726699896308,
+        "peakInwardM3s": 0.0,
+        "peakOutwardTimeSeconds": 1222872.0,
+        "peakInwardTimeSeconds": 1209600.0,
+        "coveredSeconds": 21540.0,
+        "nativeSteps": 21540.0
+      },
+      "evaluationSpecificationHash": "ee9fc494d0b2f2896520ff13c16e09ca0febc1b4db5de8e26a725224830a1658",
+      "wholeRunOutflowM3": 4691.427663935056,
+      "routingResidualM3": -0.0009181736979826383,
+      "nativeOutputUnchanged": true
+    }
+  },
+  "verification": {
+    "tests": 10,
+    "status": "PASSED",
+    "displayFrameIndependent": true,
+    "fractionalWindowPartitionVolumeConserved": true,
+    "priorNativeOutputsUnchanged": true,
+    "archivedSourceReplay": {
+      "case": "14d-dry",
+      "nativeOutEqual": true,
+      "metricsEqual": true,
+      "statesEqual": true
+    }
+  },
+  "archive": {
+    "directory": "data/runs/initialized-facility-peaks-20261019-v1",
+    "manifestSha256": "c39e91b63ed76c98b009676f106586337ba6f7605baecee1f6a4f7f7108201fc",
+    "files": 958
+  },
+  "limitations": [
+    "성동 421의 2022 실제 강우·기상과 합성 2ha 관망·문헌 시설의 조합",
+    "평가 창 밖의 수분·저류 상태 유지; 초기화 유출·첨두는 성과에서 제외",
+    "서울 원 연구 관망의 2010 외부 유입을 다른 재해로 이동·반복하지 않음",
+    "사건별 상류 유입·실제 지형 연결·회원 재해 관망 계산·새 순위는 미완료"
+  ]
+}
