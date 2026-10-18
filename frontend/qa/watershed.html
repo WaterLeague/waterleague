@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>공개 관망 시설 설계 · 로컬 검증</title>
+  </head>
+  <body style="margin: 0; background: #f3f5ec; font: 14px system-ui; color: #29453d">
+    <header style="padding: 20px; border-bottom: 1px solid #cbd6c6">
+      <strong>로컬 QA · 제품 빌드 제외</strong>
+      <p>
+        서초 공개 관망의 실제 기준안·생물저류 계산 결과. QA 설계 제출은 서버에 저장하지 않습니다.
+      </p>
+      <button id="success">실제 결과</button><button id="failure">실패 표시 시험</button>
+      <p id="submission" role="status">설계 입력 대기</p>
+    </header>
+    <main id="root" style="max-width: 420px; margin: auto; padding: 24px"></main>
+    <script type="module">
+      if (!import.meta.env.DEV || !['localhost', '127.0.0.1', '[::1]'].includes(location.hostname))
+        throw new Error('로컬 개발 환경 전용');
+      const [
+        { default: React },
+        { createRoot },
+        { NetworkDesignForm },
+        { WatershedResult },
+        { watershedCatalogDto, watershedJobDto },
+        { default: catalogRaw },
+        { default: result },
+      ] = await Promise.all([
+        import('react'),
+        import('react-dom/client'),
+        import('/src/domains/watershed/view/NetworkDesignForm.tsx'),
+        import('/src/domains/watershed/view/WatershedResult.tsx'),
+        import('/src/domains/watershed/dto/watershedDto.ts'),
+        import('/src/domains/watershed/view/fixtures/catalog.json'),
+        import('/src/domains/watershed/view/fixtures/public-network-result.json'),
+        import('/src/domains/watershed/view/watershed.css'),
+      ]);
+      const catalog = watershedCatalogDto.parse(catalogRaw);
+      const original = watershedJobDto.parse({
+        id: '10000000-0000-4000-8000-000000000001',
+        catalogHash: result.catalogHash,
+        state: 'SUCCEEDED',
+        createdAt: '2026-10-18T00:00:00Z',
+        message: '',
+        result,
+        design: {
+          placements: [
+            {
+              id: 'Bio1',
+              facilityType: 'BIORETENTION',
+              subcatchmentId: 'S1',
+              areaM2: 100,
+              treatedImperviousM2: 1000,
+            },
+          ],
+        },
+      });
+      function Harness() {
+        const [drafts, setDrafts] = React.useState([]);
+        const [type, setType] = React.useState('BIORETENTION');
+        const [job, setJob] = React.useState(original);
+        React.useEffect(() => {
+          document.getElementById('success').onclick = () => setJob(original);
+          document.getElementById('failure').onclick = () =>
+            setJob(
+              watershedJobDto.parse({
+                ...original,
+                result: {
+                  ...result,
+                  numericalStatus: 'FAILED',
+                  signedReductionM3: null,
+                  cases: [
+                    result.cases[0],
+                    { id: 'strategy', numericalStatus: 'FAILED', failureCode: 'QA_ONLY' },
+                  ],
+                },
+              })
+            );
+        }, []);
+        const state = {
+          drafts,
+          setDrafts,
+          busy: false,
+          submit: async () => {
+            document.getElementById('submission').textContent =
+              'QA 제출 내용: ' + JSON.stringify(drafts) + ' · 서버 요청 없음';
+          },
+        };
+        return React.createElement(
+          'div',
+          { className: 'watershed-panel' },
+          React.createElement(
+            'label',
+            null,
+            '시설 종류',
+            React.createElement(
+              'select',
+              { value: type, onChange: (e) => setType(e.target.value) },
+              Object.entries(catalog.catalog.templates).map(([id, t]) =>
+                React.createElement('option', { key: id, value: id }, t.label)
+              )
+            )
+          ),
+          React.createElement(NetworkDesignForm, { catalog, type, state }),
+          React.createElement(WatershedResult, { job })
+        );
+      }
+      createRoot(document.getElementById('root')).render(React.createElement(Harness));
+    </script>
+  </body>
+</html>

@@ -1,0 +1,196 @@
+{
+  "catalogHash": "beaddba8868b6f1f6bbf35b1d53d4695a94db99498d8988f90d62013cf8f053c",
+  "catalog": {
+    "schemaVersion": 1,
+    "id": "seocho-published-v1",
+    "title": "서초 공개 연구 관망",
+    "classification": "PUBLISHED_RESEARCH_MODEL_NOT_OFFICIAL_ASSET_INVENTORY",
+    "sourceManifestSha256": "2104f9143e6deea2213c9f88219a2d23ddfb78b0dab61b961cb8ab362df1da98",
+    "sourceOriginalSha256": "8ce278a3d2b58df3c2a5fd1232160bcabb324389746ee0c878792acf91abbdbb",
+    "sourceMember": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures/Baseline/seocho2_baseline.inp",
+    "sourceUrl": "https://doi.org/10.17632/dzzwvd8rjk.3",
+    "attribution": {
+      "title": "Exploring the Network Structure of Coupled Green-Grey Infrastructure to Enhance Urban Pluvial Flood Resilience: A Scenario-Based Approach Focusing on ‘Centralized’ and ‘Decentralized’ Structures",
+      "authors": ["Samuel Park", "Jaekyoung Kim", "Hyeryeong Yun", "Junsuk Kang"],
+      "year": 2024
+    },
+    "licence": {
+      "id": "01d9c749-3c4d-4431-9df3-620b2dcfe144",
+      "short_name": "CC BY 4.0",
+      "full_name": "Creative Commons Attribution 4.0 International",
+      "description": "You can share, copy and modify this dataset so long as you give appropriate credit, provide a link to the CC BY license, and indicate if changes were made, but you may not do so in a way that suggests the rights holder has endorsed you or your use of the dataset. Note that further permission may be required for any content within the dataset that is identified as belonging to a third party.",
+      "url": "http://creativecommons.org/licenses/by/4.0",
+      "category": "Creative",
+      "customer_id": null
+    },
+    "facilityCatalogSha256": "f06a80aebb4fc674597e1da4ca2f829a58f1724de088d603bf81eb9068e9f0a2",
+    "designBasis": "PUBLIC_REFERENCE_DESIGN_NOT_SITE_MEASURED",
+    "numericalProfile": {
+      "id": "slot-62-5ms",
+      "options": {
+        "SURCHARGE_METHOD": "SLOT",
+        "MAX_TRIALS": 200,
+        "ROUTING_STEP": 0.0625,
+        "MINIMUM_STEP": 0.025
+      }
+    },
+    "catchments": [
+      {
+        "id": "S1",
+        "areaM2": 38103.84,
+        "imperviousM2": 28322.584271999996,
+        "outletNodeId": "J4"
+      },
+      {
+        "id": "S2",
+        "areaM2": 108416.49,
+        "imperviousM2": 82223.06601600001,
+        "outletNodeId": "J11"
+      },
+      {
+        "id": "S3",
+        "areaM2": 79086.48999999999,
+        "imperviousM2": 66835.992699,
+        "outletNodeId": "J1"
+      },
+      {
+        "id": "S5",
+        "areaM2": 117940.87,
+        "imperviousM2": 72120.842005,
+        "outletNodeId": "J14"
+      },
+      {
+        "id": "S6",
+        "areaM2": 54996.270000000004,
+        "imperviousM2": 34757.642640000005,
+        "outletNodeId": "J19"
+      },
+      {
+        "id": "S7",
+        "areaM2": 148818.99000000002,
+        "imperviousM2": 119323.06618200002,
+        "outletNodeId": "J15"
+      },
+      {
+        "id": "S8",
+        "areaM2": 129967.27,
+        "imperviousM2": 110264.23186800002,
+        "outletNodeId": "J7"
+      },
+      {
+        "id": "S9",
+        "areaM2": 13729.38,
+        "imperviousM2": 13729.38,
+        "outletNodeId": "J22"
+      },
+      {
+        "id": "S10",
+        "areaM2": 6035.22,
+        "imperviousM2": 5584.389066,
+        "outletNodeId": "J23"
+      },
+      {
+        "id": "S11",
+        "areaM2": 40905.74,
+        "imperviousM2": 24862.508772,
+        "outletNodeId": "J16"
+      },
+      {
+        "id": "S12",
+        "areaM2": 36104.57,
+        "imperviousM2": 35638.821047,
+        "outletNodeId": "J26"
+      },
+      {
+        "id": "S13",
+        "areaM2": 5947.13,
+        "imperviousM2": 5698.539965999999,
+        "outletNodeId": "J25"
+      },
+      {
+        "id": "S4",
+        "areaM2": 70708.22,
+        "imperviousM2": 69930.42958000001,
+        "outletNodeId": "J17"
+      },
+      {
+        "id": "S14",
+        "areaM2": 50885.27,
+        "imperviousM2": 50503.63047499999,
+        "outletNodeId": "J20"
+      }
+    ],
+    "templates": {
+      "BIORETENTION": {
+        "label": "생물저류시설",
+        "parameters": {
+          "surfaceDepthMm": 152.4,
+          "vegetationFraction": 0.1,
+          "soilDepthMm": 609.6,
+          "storageDepthMm": 304.8,
+          "storagePorosity": 0.3,
+          "nativeSeepageMmH": 4,
+          "nativeSeepageBasis": "DESIGN_ASSUMPTION",
+          "drain": {
+            "diameterMm": 25,
+            "dischargeCoefficient": 0.6,
+            "offsetMm": 152.4,
+            "delayHours": 0
+          }
+        },
+        "initialSaturationPercent": 0
+      },
+      "INFILTRATION_TRENCH": {
+        "label": "침투 트렌치",
+        "parameters": {
+          "surfaceDepthMm": 152.4,
+          "storageDepthMm": 914.4,
+          "storagePorosity": 0.3,
+          "nativeSeepageMmH": 4,
+          "nativeSeepageBasis": "DESIGN_ASSUMPTION",
+          "drain": null
+        },
+        "initialSaturationPercent": 0
+      },
+      "VEGETATIVE_SWALE": {
+        "label": "식생수로",
+        "parameters": {
+          "surfaceDepthMm": 304.8,
+          "vegetationFraction": 0.1,
+          "bottomWidthM": 1.2192,
+          "sideSlope": 3,
+          "slopePercent": 1,
+          "roughness": 0.15
+        },
+        "initialSaturationPercent": 0
+      },
+      "RAINWATER_CISTERN": {
+        "label": "빗물이용조",
+        "parameters": {
+          "storageDepthMm": 2000,
+          "drain": {
+            "diameterMm": 25,
+            "dischargeCoefficient": 0.6,
+            "offsetMm": 152.4,
+            "delayHours": 6
+          }
+        },
+        "initialSaturationPercent": 0
+      }
+    },
+    "rankingEligible": false,
+    "historicalReconstructionEligible": false,
+    "horizontalCrs": null,
+    "verticalDatum": null,
+    "completeInstalledCostKrw": null,
+    "limitations": [
+      "논문 PDF·부록 원본은 아직 미보관, 공개 출판 본문 확인과 구분",
+      "EPSG·수직 기준·시설 유효 시점은 계속 미확인",
+      "문헌의 단면·유입 추정값과 사후 공간자료를 2010 실측 입력으로 표시하지 않음",
+      "원 관망의 2010 강우·추정 외부 유입·초기 상태를 보존한 문헌 단면 설계 비교",
+      "시설 면적과 처리 불투수 면적은 사용자의 가상 설계이며 현장 설치 가능 범위 미확인",
+      "초기 포화도 0·문헌 단면·하부 침투 4mm/h는 설계 조건이며 현장 실측값 아님",
+      "좌표 정합·지표 결합·가격 미확정: 주간 설치·예산 차감·순위 게시 제외"
+    ]
+  }
+}

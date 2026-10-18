@@ -52,6 +52,7 @@ import { FloodTraceControls } from '../../floodtrace/view/FloodTraceControls';
 import { useSurfacePlayback } from '../../surface/controller/useSurfacePlayback';
 import { SurfaceControls } from '../../surface/view/SurfaceControls';
 import type { SurfaceMetric, SurfaceSource } from '../../surface/entity/surface';
+import { FacilityExpansionPanel } from '../../watershed/view/FacilityExpansionPanel';
 const CityScene = lazy(() => import('./CityScene'));
 type PlayProps = {
   account: Account | null;
@@ -78,6 +79,7 @@ function Explorer({
   const { terrain, error: terrainError } = useTerrain();
   const infrastructure = useInfrastructure();
   const [infrastructureOpen, setInfrastructureOpen] = useState(false);
+  const [facilityExpansionOpen, setFacilityExpansionOpen] = useState(false);
   const [assetsEnabled, setAssetsEnabled] = useState(true);
   const [tracesEnabled, setTracesEnabled] = useState(false);
   const [surfaceEnabled, setSurfaceEnabled] = useState(false);
@@ -185,6 +187,7 @@ function Explorer({
     setSelected(asset.districtId);
     setSelectedAssetId(asset.id);
     setInfrastructureOpen(true);
+    setFacilityExpansionOpen(false);
     setAssetsEnabled(true);
     setFocus((previous) => ({ center: asset.center, distance: 1000, key: previous.key + 1 }));
   }, []);
@@ -287,6 +290,7 @@ function Explorer({
   const chooseSite = useCallback(
     (value: SharedSite) => {
       setInfrastructureOpen(false);
+      setFacilityExpansionOpen(false);
       setSelectedAssetId('');
       selectionRequest.current++;
       setSelected(value.districtId);
@@ -335,6 +339,7 @@ function Explorer({
   const selectBuilding = useCallback(
     async (districtId: string, building: CityBuilding) => {
       setInfrastructureOpen(false);
+      setFacilityExpansionOpen(false);
       setSelectedAssetId('');
       const request = ++selectionRequest.current;
       setSelected(districtId);
@@ -535,7 +540,10 @@ function Explorer({
             </button>
             <button
               aria-expanded={infrastructureOpen}
-              onClick={() => setInfrastructureOpen((value) => !value)}
+              onClick={() => {
+                setInfrastructureOpen((value) => !value);
+                setFacilityExpansionOpen(false);
+              }}
             >
               <Layers3 size={15} />
               공개 시설
@@ -877,6 +885,7 @@ function Explorer({
                   aria-pressed={type === t}
                   onClick={() => {
                     setInfrastructureOpen(false);
+                    setFacilityExpansionOpen(false);
                     setSelectedAssetId('');
                     setType(t);
                     setOffset(0);
@@ -899,6 +908,18 @@ function Explorer({
               }}
             >
               전체
+            </button>
+            <button
+              className="facility-expand"
+              aria-expanded={facilityExpansionOpen}
+              onClick={() => {
+                setFacilityExpansionOpen((value) => !value);
+                setInfrastructureOpen(false);
+                setListOpen(false);
+              }}
+            >
+              <Layers3 size={20} />
+              <span>시설 12종</span>
             </button>
           </div>
           {(details.error || failed) && (
@@ -932,7 +953,25 @@ function Explorer({
           )}
         </details>
       </div>
-      {infrastructureOpen ? (
+      <FacilityExpansionPanel
+        key={account ? `${account.id}:${account.role}:${account.approvalStatus}` : 'visitor'}
+        account={account}
+        open={facilityExpansionOpen}
+        onClose={() => setFacilityExpansionOpen(false)}
+        onLogin={onLogin}
+        onMapFacility={(t) => {
+          setFacilityExpansionOpen(false);
+          setInfrastructureOpen(false);
+          setSelectedAssetId('');
+          setType(t);
+          setOffset(0);
+          setSite(null);
+          setFeedback('');
+          if (ownDistrictId && selected !== ownDistrictId) select(ownDistrictId);
+          setListOpen(true);
+        }}
+      />
+      {facilityExpansionOpen ? null : infrastructureOpen ? (
         <InfrastructurePanel
           catalog={infrastructure.catalog}
           error={infrastructure.error}

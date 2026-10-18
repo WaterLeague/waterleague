@@ -1,0 +1,292 @@
+.watershed-panel[hidden] {
+  display: none !important;
+}
+.watershed-panel {
+  color: #29453d;
+  font-size: 12px;
+  line-height: 1.65;
+}
+.watershed-panel h2 {
+  margin: 4px 0;
+  font-size: 20px;
+  letter-spacing: -0.7px;
+}
+.watershed-panel h3 {
+  margin: 22px 0 10px;
+  font-size: 14px;
+}
+.watershed-panel h3 small {
+  margin-left: 7px;
+  color: #6a7d70;
+  font-size: 11px;
+  font-weight: 400;
+}
+.watershed-panel p {
+  margin: 10px 0;
+}
+.watershed-heading,
+.watershed-result header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 8px;
+}
+.watershed-heading span {
+  font-size: 9px;
+  letter-spacing: 1.3px;
+  color: #697c6d;
+}
+.watershed-panel button {
+  cursor: pointer;
+  font: inherit;
+}
+.watershed-panel button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.watershed-panel button:focus-visible,
+.watershed-panel a:focus-visible,
+.watershed-panel summary:focus-visible {
+  outline: 2px solid #3d7056;
+  outline-offset: 3px;
+}
+.watershed-heading > button {
+  border: 0;
+  background: transparent;
+  padding: 4px;
+  color: inherit;
+}
+.watershed-facility-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.watershed-facility-grid button {
+  border: 1px solid #cbd6c6;
+  background: #f8faf3;
+  border-radius: 4px;
+  color: #304e40;
+  padding: 12px;
+  text-align: left;
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+.watershed-facility-grid button:hover {
+  background: #edf2e6;
+  border-color: #7e9875;
+}
+.watershed-facility-grid button[aria-pressed='true'] {
+  border-color: #416d50;
+  background: #e1ebd7;
+  box-shadow: inset 3px 0 #416d50;
+}
+.watershed-facility-grid span {
+  color: #637762;
+  font-size: 10px;
+}
+.watershed-panel label {
+  display: grid;
+  gap: 6px;
+  margin: 12px 0;
+  font-size: 11px;
+  font-weight: 600;
+}
+.watershed-panel select,
+.watershed-panel input {
+  width: 100%;
+  min-width: 0;
+  padding: 10px 8px;
+  background: #fffef8;
+  border: 1px solid #bdcbb8;
+  border-radius: 3px;
+  color: #29453d;
+  font: inherit;
+  box-sizing: border-box;
+}
+.watershed-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.watershed-capacity,
+.watershed-access {
+  padding: 10px 12px;
+  background: #edf1e5;
+}
+.watershed-panel details {
+  border-top: 1px solid #d2dccc;
+  padding: 12px 0;
+  margin-top: 12px;
+}
+.watershed-panel summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.watershed-panel ul {
+  padding-left: 18px;
+}
+.watershed-panel li {
+  margin: 6px 0;
+}
+.watershed-parameters {
+  margin: 8px 0;
+  font-size: 11px;
+}
+.watershed-parameters > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 10px;
+  padding: 4px 0;
+  border-bottom: 1px solid #e0e5d9;
+}
+.watershed-parameters dt {
+  color: #65735f;
+}
+.watershed-parameters dd {
+  margin: 0;
+  text-align: right;
+}
+.watershed-parameters .watershed-parameters {
+  margin: 0;
+}
+.watershed-panel .watershed-submit,
+.watershed-panel .watershed-secondary,
+.watershed-download {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  padding: 12px 8px;
+  border: 1px solid #395c46;
+  border-radius: 3px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.watershed-panel .watershed-submit {
+  background: #304f3d;
+  color: #fffef5;
+}
+.watershed-panel .watershed-secondary,
+.watershed-download {
+  background: #eef2e6;
+  color: #304f3d;
+}
+.watershed-drafts ul {
+  padding: 0;
+  list-style: none;
+}
+.watershed-drafts li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid #d5ddcd;
+}
+.watershed-drafts li div {
+  display: grid;
+}
+.watershed-drafts li span {
+  font-size: 10px;
+}
+.watershed-drafts button {
+  background: none;
+  border: 0;
+  color: #8a5b42;
+  padding: 5px;
+}
+.watershed-panel .watershed-warning {
+  padding: 12px;
+  background: #f3ecda;
+  color: #71542e;
+  font-size: 11px;
+  border-left: 2px solid #a58546;
+}
+.watershed-warning button {
+  margin: 6px;
+}
+.watershed-pass {
+  color: #416d50;
+}
+.watershed-result {
+  margin: 24px 0 10px;
+  border-top: 2px solid #587458;
+}
+.watershed-result h3 {
+  margin-top: 14px;
+}
+.watershed-status {
+  font-size: 10px;
+  padding: 4px 7px;
+  margin-top: 12px;
+  background: #e5ebdd;
+  white-space: nowrap;
+}
+.watershed-result time {
+  font-size: 10px;
+  color: #6a7869;
+}
+.watershed-effect {
+  display: grid;
+  gap: 4px;
+  margin: 10px 0;
+  padding: 12px;
+  background: #e8eedf;
+  border-left: 3px solid #6a845c;
+  font-variant-numeric: tabular-nums;
+}
+.watershed-effect strong {
+  font-size: 19px;
+  letter-spacing: -0.4px;
+}
+.watershed-effect small {
+  font-size: 10px;
+}
+.watershed-effect[data-direction='increase'] {
+  background: #f3e6d8;
+  border-color: #b57854;
+  color: #805234;
+}
+.watershed-case {
+  padding: 8px 0;
+  border-bottom: 1px solid #d6dece;
+}
+.watershed-facility-state {
+  margin: 10px 0;
+  padding: 10px;
+  background: #eef1e6;
+}
+.watershed-panel a {
+  color: #416a51;
+  overflow-wrap: anywhere;
+}
+.watershed-pending summary span {
+  font-weight: 400;
+  color: #70806b;
+}
+.watershed-pending > div {
+  display: grid;
+  grid-template-columns: 20px 1fr;
+  gap: 4px 8px;
+  padding: 12px 0;
+  border-bottom: 1px solid #d5ddce;
+  color: #637260;
+}
+.watershed-pending p {
+  grid-column: 2;
+  font-size: 11px;
+}
+.shared-play-layout .facility-dock .facility-expand {
+  border-left: 1px solid #bdcbb8;
+}
+@media (max-width: 650px) {
+  .shared-play-layout .facility-dock {
+    overflow-x: auto;
+    justify-content: flex-start;
+  }
+  .shared-play-layout .facility-dock button {
+    flex-shrink: 0;
+  }
+}
