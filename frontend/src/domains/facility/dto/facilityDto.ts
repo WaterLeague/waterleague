@@ -10,6 +10,11 @@ export const swaleDesignDto = z.object({
   slopeBasis: z.literal('REGIONAL_TERRAIN_PROXY_NOT_LONGITUDINAL_SURVEY'),
   outlet: z.literal('SURFACE_RUNOFF_UNCONNECTED_TO_NETWORK'),
 });
+export const trenchDesignDto = swaleDesignDto.extend({
+  topWidthM: z.literal(1),
+  slopeBasis: z.literal('LEVEL_STORAGE_DESIGN_NOT_SURVEY'),
+});
+export type TrenchDesign = z.infer<typeof trenchDesignDto>;
 export type SwaleDesign = z.infer<typeof swaleDesignDto>;
 const rainGardenBoundaryDto = z.object({
   method: z.literal('RG_NATIVE_SOIL_SEEPAGE_V1'),
@@ -20,6 +25,14 @@ const rainGardenBoundaryDto = z.object({
 });
 export const nativeSoilBoundaryDto = z.union([
   rainGardenBoundaryDto,
+  z.object({
+    method: z.literal('IT_NATIVE_SOIL_SEEPAGE_V1'),
+    seepageMmH: z.number().finite().positive(),
+    basis: z.literal('TEXTURE_CLASS_LITERATURE_ESTIMATE'),
+    liner: z.literal('UNLINED_DESIGN_NOT_SITE_CONFIRMED'),
+    storageThicknessMm: z.literal(914.4),
+    underdrain: z.literal('NONE_DIRECT_RAIN_INFILTRATION_DESIGN'),
+  }),
   z.object({
     method: z.literal('BC_NATIVE_SOIL_SEEPAGE_V1'),
     seepageMmH: z.number().finite().positive(),
@@ -58,6 +71,7 @@ export const facilityEvidenceDto = z.object({
   limitations: z.array(z.string()),
   nativeSoilBoundary: nativeSoilBoundaryDto.optional(),
   swaleDesign: swaleDesignDto.optional(),
+  trenchDesign: trenchDesignDto.optional(),
 });
 export const facilityCatalogDto = z
   .object({
@@ -65,6 +79,7 @@ export const facilityCatalogDto = z
       'EPA_LID_PUBLIC_DESIGNS_V1',
       'EPA_LID_PUBLIC_DESIGNS_V2',
       'EPA_LID_PUBLIC_DESIGNS_V3',
+      'EPA_LID_PUBLIC_DESIGNS_V4',
     ]),
     evidence: z.literal('PUBLIC_REFERENCE_DESIGN_NOT_SITE_MEASURED'),
     source: facilitySourceDto,
@@ -74,13 +89,17 @@ export const facilityCatalogDto = z
       GREEN_ROOF: facilityProfileDto,
       BIORETENTION: facilityProfileDto.optional(),
       VEGETATIVE_SWALE: facilityProfileDto.optional(),
+      INFILTRATION_TRENCH: facilityProfileDto.optional(),
     }),
     limitations: z.array(z.string()),
   })
   .refine(
     (value) =>
       (value.id === 'EPA_LID_PUBLIC_DESIGNS_V1' || value.profiles.BIORETENTION !== undefined) &&
-      (value.id !== 'EPA_LID_PUBLIC_DESIGNS_V3' || value.profiles.VEGETATIVE_SWALE !== undefined),
+      (!['EPA_LID_PUBLIC_DESIGNS_V3', 'EPA_LID_PUBLIC_DESIGNS_V4'].includes(value.id) ||
+        value.profiles.VEGETATIVE_SWALE !== undefined) &&
+      (value.id !== 'EPA_LID_PUBLIC_DESIGNS_V4' ||
+        value.profiles.INFILTRATION_TRENCH !== undefined),
     { message: '생물저류 설계 제원 누락' }
   );
 export type FacilityCatalog = z.infer<typeof facilityCatalogDto>;

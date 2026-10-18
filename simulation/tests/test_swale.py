@@ -15,9 +15,9 @@ from waterleague_sim.model_catalog import read_catalog
 
 def candidate():
     district = '2410520'
-    cell = next(c for c in shared_model.candidates(district).values() if 'VEGETATIVE_SWALE' in c['allowedTypes'])
+    cell = next(c for c in shared_model.candidates(district, 8).values() if 'VEGETATIVE_SWALE' in c['allowedTypes'])
     model, _, _ = shared_model.resolve({'district_id': district, 'cell_id': cell['id'],
-        'model_hash': shared_model.site_catalog()[district]['sha256']})
+        'model_hash': shared_model.site_catalog(8)[district]['sha256']})
     area = min(10, cell['physicalInputs']['swaleDesign']['maxAreaM2'])
     return model, {'cellId': cell['id'], 'facilityType': 'VEGETATIVE_SWALE', 'areaM2': area}
 
@@ -45,7 +45,7 @@ class SwaleTests(unittest.TestCase):
     def test_catalog_and_every_candidate_preserve_old_geometry(self):
         count = 0
         for district in shared_model.site_catalog():
-            current = shared_model.candidates(district)
+            current = shared_model.candidates(district, 8)
             previous = shared_model.candidates(district, 7)
             self.assertEqual(current.keys(), previous.keys())
             for key, cell in current.items():

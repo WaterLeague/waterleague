@@ -58,6 +58,7 @@ const icons = {
   GREEN_ROOF: House,
   BIORETENTION: Waves,
   VEGETATIVE_SWALE: Waves,
+  INFILTRATION_TRENCH: Waves,
 };
 export function GamePage() {
   const g = useGame();

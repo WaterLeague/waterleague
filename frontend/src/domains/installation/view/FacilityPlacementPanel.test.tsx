@@ -166,3 +166,74 @@ it('식생수로는 주간·재해 모두 폭 기준 한도 초과 설치 거부
       if (area === '10') expect(html).toContain('450,000원');
     }
 });
+
+it('침투 트렌치는 주간·재해 모두 폭 기준 한도 초과 설치 거부', () => {
+  const trench = siteDto.parse({
+    ...rawSite,
+    existingInfrastructure: null,
+    allowedTypes: ['INFILTRATION_TRENCH'],
+    unitCosts: { ...rawSite.unitCosts, INFILTRATION_TRENCH: 171429 },
+    costModel: {
+      ...rawSite.costModel,
+      facilities: {
+        ...rawSite.costModel.facilities,
+        INFILTRATION_TRENCH: { ...rawSite.costModel.facilities.RAIN_GARDEN, unitCost: 171429 },
+      },
+    },
+    physicalInputs: {
+      flowLengthM: 5,
+      runoffWidthM: 5,
+      widthMethod: 'FOOTPRINT_AREA_OVER_LONG_AXIS',
+      slopePercent: 1,
+      slopeMethod: 'NGII_2025_90M_HORN_TERRAIN_PROXY',
+      surfaceTag: null,
+      imperviousBasis: 'SURFACE_UNKNOWN_ASSUMPTION',
+      soilStatus: 'TEXTURE_CLASS_LITERATURE_ESTIMATE',
+      trenchDesign: {
+        method: 'CONTAINED_FIXED_WIDTH_STRAIGHT_DESIGN_V1',
+        topWidthM: 1,
+        maxAreaM2: 10,
+        maxLengthM: 10,
+        center: [0, 0],
+        direction: [1, 0],
+        coordinates: [
+          [-2.5, -1],
+          [2.5, -1],
+          [2.5, 1],
+          [-2.5, 1],
+          [-2.5, -1],
+        ],
+        slopeBasis: 'LEVEL_STORAGE_DESIGN_NOT_SURVEY',
+        outlet: 'SURFACE_RUNOFF_UNCONNECTED_TO_NETWORK',
+      },
+    },
+  });
+  for (const research of [false, true])
+    for (const area of ['10', '10.01']) {
+      const html = renderToStaticMarkup(
+        <FacilityPlacementPanel
+          {...props}
+          site={trench}
+          type="INFILTRATION_TRENCH"
+          area={area}
+          research={research}
+          budgetAccounting={{
+            version: 'SEOUL_RAINWATER_ACCOUNTING_V4',
+            programs: [],
+            facilities: [
+              {
+                facilityType: 'INFILTRATION_TRENCH',
+                programId: 'SEOUL_RAINWATER',
+                limitKrw: null,
+                allocatedKrw: 0,
+                availableKrw: 2_000_000_000,
+              },
+            ],
+          }}
+        />
+      );
+      expect(html).toContain('폭 1m 직선 배치 한도');
+      expect(html.includes('class="solid-button shared-install" disabled')).toBe(area === '10.01');
+      if (area === '10') expect(html).toContain('1,714,290원');
+    }
+});

@@ -27,8 +27,14 @@ public record SiteView(
     tools.jackson.databind.JsonNode initializationPolicy,
     tools.jackson.databind.JsonNode existingInfrastructure) {
   public BigDecimal maxAreaFor(io.waterleague.strategy.entity.FacilityType type) {
-    if (type != io.waterleague.strategy.entity.FacilityType.VEGETATIVE_SWALE) return maxAreaM2;
-    var limit = physicalInputs.path("swaleDesign").path("maxAreaM2");
+    String key =
+        switch (type) {
+          case VEGETATIVE_SWALE -> "swaleDesign";
+          case INFILTRATION_TRENCH -> "trenchDesign";
+          default -> null;
+        };
+    if (key == null) return maxAreaM2;
+    var limit = physicalInputs.path(key).path("maxAreaM2");
     if (!limit.isNumber() || limit.decimalValue().signum() <= 0)
       throw new io.waterleague.common.exception.DomainException(
           io.waterleague.common.exception.ErrorCode.PLACEMENT_INVALID);

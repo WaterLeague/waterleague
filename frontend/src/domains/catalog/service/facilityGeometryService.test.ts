@@ -171,3 +171,35 @@ it('식생수로는 설치 면적이 작아져도 폭 2m 유지와 길이만 축
   expect(Math.min(...shape.polygons.flat().map((p) => p[1]))).toBe(-1);
   expect(() => placementFootprint(cell, { ...p, areaM2: 10.01 })).toThrow();
 });
+
+it('침투 트렌치 면적을 줄여도 폭 1m와 도형 내부 유지', () => {
+  const d = {
+    method: 'CONTAINED_FIXED_WIDTH_STRAIGHT_DESIGN_V1' as const,
+    topWidthM: 1 as const,
+    maxLengthM: 10,
+    maxAreaM2: 10,
+    center: [0, 0] as [number, number],
+    direction: [1, 0] as [number, number],
+    coordinates: [
+      [-5, -0.5],
+      [5, -0.5],
+      [5, 0.5],
+      [-5, 0.5],
+      [-5, -0.5],
+    ] as [number, number][],
+    slopeBasis: 'LEVEL_STORAGE_DESIGN_NOT_SURVEY' as const,
+    outlet: 'SURFACE_RUNOFF_UNCONNECTED_TO_NETWORK' as const,
+  };
+  const cell = { coordinates: d.coordinates, areaM2: 10, physicalInputs: { trenchDesign: d } };
+  const result = placementFootprint(cell, {
+    cellId: 'T1',
+    facilityType: 'INFILTRATION_TRENCH',
+    areaM2: 2,
+  });
+  expect(result.area).toBeCloseTo(2);
+  expect(Math.max(...result.polygons.flat().map((p) => p[1]))).toBe(0.5);
+  expect(Math.min(...result.polygons.flat().map((p) => p[1]))).toBe(-0.5);
+  expect(() =>
+    placementFootprint(cell, { cellId: 'T1', facilityType: 'INFILTRATION_TRENCH', areaM2: 10.01 })
+  ).toThrow();
+});

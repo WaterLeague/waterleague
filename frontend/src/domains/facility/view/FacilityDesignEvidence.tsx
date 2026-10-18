@@ -3,7 +3,7 @@ import type { FacilityType } from '../../game/entity/game';
 import type { SharedSite } from '../../installation/entity/installation';
 import { useFacilityCatalog } from '../controller/useFacilityCatalog';
 export function FacilityDesignEvidence({ site, type }: { site: SharedSite; type: FacilityType }) {
-  const enabled = !!site.facilityDesignSet?.id.match(/^EPA_LID_PUBLIC_DESIGNS_V[123]$/);
+  const enabled = !!site.facilityDesignSet?.id.match(/^EPA_LID_PUBLIC_DESIGNS_V[1234]$/);
   const { catalog, failed } = useFacilityCatalog(enabled, site.facilityDesignSet?.id);
   if (!enabled) return null;
   if (failed)
@@ -21,7 +21,9 @@ export function FacilityDesignEvidence({ site, type }: { site: SharedSite; type:
           ? site.physicalInputs?.rainGardenBoundary
           : type === 'BIORETENTION'
             ? site.physicalInputs?.bioretentionBoundary
-            : undefined
+            : type === 'INFILTRATION_TRENCH'
+              ? site.physicalInputs?.trenchBoundary
+              : undefined
       }
     >
       {type === 'VEGETATIVE_SWALE' && site.physicalInputs?.swaleDesign && (
@@ -30,6 +32,13 @@ export function FacilityDesignEvidence({ site, type }: { site: SharedSite; type:
           {site.physicalInputs.swaleDesign.maxLengthM.toLocaleString('ko-KR')}m. 경사는 공개 DEM의
           지역 대용값이며 실제 수로 종단 측량값이 아닙니다. 주변 배수 유입과 관망 연결은
           미확인입니다.
+        </p>
+      )}
+      {type === 'INFILTRATION_TRENCH' && site.physicalInputs?.trenchDesign && (
+        <p>
+          폭 1m 개방형 쇄석 도랑 · 최대 길이{' '}
+          {site.physicalInputs.trenchDesign.maxLengthM.toLocaleString('ko-KR')}m. 하부 배수관 없는
+          설계이며 지하수·지장물·굴착 가능성과 외부 집수 연결은 미확인입니다.
         </p>
       )}
       {site.initializationPolicy && (

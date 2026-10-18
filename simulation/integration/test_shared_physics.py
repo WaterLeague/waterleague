@@ -218,3 +218,15 @@ class SharedPhysicsTests(unittest.TestCase):
             self.assertEqual(forcing['evaporation']['ratesMmDay'],[2]*6)
             self.assertEqual(len(forcing['evaporation']['hours']),1)
             self.assertTrue(forcing['sourceArchive']['complete'])
+
+    def test_trench_state_and_weekly_contribution_continue_without_duplicate_scoring(self):
+        from waterleague_sim.shared_model import candidates
+        district = '2419953'
+        cell = next(c for c in candidates(district).values()
+                    if 'INFILTRATION_TRENCH' in c['allowedTypes'])
+        area = min(1, cell['physicalInputs']['trenchDesign']['maxAreaM2'])
+        self.conn.execute("""UPDATE shared_installations SET cell_id=%s,occupied_site=%s,
+            model_hash=%s,facility_type='INFILTRATION_TRENCH',area_m2=%s,cost=%s WHERE id=%s""",
+            (cell['id'],district+':'+cell['id'],catalog()[1][district]['sha256'],area,area*171429,self.installation))
+        self.test_real_child_replays_preserved_input_and_refuses_revised_overlap()
+        self.warmup_fetch.assert_called_once()

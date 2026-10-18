@@ -2,16 +2,23 @@ import { ShapeUtils } from 'three/src/extras/ShapeUtils.js';
 import { Vector2 } from 'three/src/math/Vector2.js';
 import type { FacilityFootprint, MapPoint } from '../entity/facilityFootprint';
 import { CatalogError } from '../exception/CatalogError';
-import type { SwaleDesign } from '../../facility/dto/facilityDto';
+import type { SwaleDesign, TrenchDesign } from '../../facility/dto/facilityDto';
 import type { Placement } from '../../game/entity/game';
 
 export function placementFootprint(
-  cell: { coordinates: MapPoint[]; areaM2: number; physicalInputs?: { swaleDesign?: SwaleDesign } },
+  cell: {
+    coordinates: MapPoint[];
+    areaM2: number;
+    physicalInputs?: { swaleDesign?: SwaleDesign; trenchDesign?: TrenchDesign };
+  },
   placement: Placement
 ) {
-  if (placement.facilityType !== 'VEGETATIVE_SWALE')
+  if (!['VEGETATIVE_SWALE', 'INFILTRATION_TRENCH'].includes(placement.facilityType))
     return facilityFootprint(cell.coordinates, placement.areaM2 / cell.areaM2);
-  const d = cell.physicalInputs?.swaleDesign;
+  const d =
+    placement.facilityType === 'VEGETATIVE_SWALE'
+      ? cell.physicalInputs?.swaleDesign
+      : cell.physicalInputs?.trenchDesign;
   if (
     !d ||
     !Number.isFinite(placement.areaM2) ||

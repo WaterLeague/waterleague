@@ -32,6 +32,13 @@ export const facilities: Record<
     description: '폭 2m 직선 수로 설계. 공개 토성·지역 경사 후보에서 자체 강우만 처리.',
     color: '#68966b',
   },
+  INFILTRATION_TRENCH: {
+    name: '침투 트렌치',
+    short: '침투도랑',
+    intro: '쇄석 공극에 빗물을 담아 바닥으로 침투시키는 도랑.',
+    description: '폭 1m 개방 쇄석 도랑 설계. 지하 유공관·외부 집수 연결 없는 직접 강우 계산.',
+    color: '#8f9cb5',
+  },
   BIORETENTION: {
     name: '생물저류시설',
     short: '생물저류',

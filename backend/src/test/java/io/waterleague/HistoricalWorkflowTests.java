@@ -122,7 +122,56 @@ class HistoricalWorkflowTests {
                     new HistoricalRequest.Item(
                         site.cellId(), FacilityType.VEGETATIVE_SWALE, cap))));
     assertThat(service.require(owner, job.id()).placements())
-        .contains("VEGETATIVE_SWALE", site.modelHash(), "SEOUL_RAINWATER_ACCOUNTING_V3");
+        .contains("VEGETATIVE_SWALE", site.modelHash(), "SEOUL_RAINWATER_ACCOUNTING_V4");
+    assertThat(db.queryForObject("SELECT COUNT(*) FROM shared_installations", Integer.class))
+        .isEqualTo(before);
+  }
+
+  @Test
+  void trenchUsesSameFixedWidthCapInHistoricalRequests() {
+    int before = db.queryForObject("SELECT COUNT(*) FROM shared_installations", Integer.class);
+    String district = "2410520";
+    var site =
+        sites.district(district).values().stream()
+            .filter(
+                c ->
+                    c.allowedTypes().contains("INFILTRATION_TRENCH")
+                        && c.existingInfrastructure() == null)
+            .findFirst()
+            .orElseThrow();
+    var cap = site.maxAreaFor(FacilityType.INFILTRATION_TRENCH);
+    String model =
+        disasters.catalog().events().getFirst().regions().stream()
+            .filter(r -> r.districtId().equals(district))
+            .findFirst()
+            .orElseThrow()
+            .modelHash();
+    assertThatThrownBy(
+            () ->
+                service.create(
+                    owner,
+                    new HistoricalRequest(
+                        UUID.randomUUID(),
+                        district,
+                        model,
+                        List.of(
+                            new HistoricalRequest.Item(
+                                site.cellId(),
+                                FacilityType.INFILTRATION_TRENCH,
+                                cap.add(new BigDecimal("0.01")))))))
+        .isInstanceOf(DomainException.class);
+    var job =
+        service.create(
+            owner,
+            new HistoricalRequest(
+                UUID.randomUUID(),
+                district,
+                model,
+                List.of(
+                    new HistoricalRequest.Item(
+                        site.cellId(), FacilityType.INFILTRATION_TRENCH, cap))));
+    assertThat(service.require(owner, job.id()).placements())
+        .contains("INFILTRATION_TRENCH", site.modelHash(), "SEOUL_RAINWATER_ACCOUNTING_V4");
     assertThat(db.queryForObject("SELECT COUNT(*) FROM shared_installations", Integer.class))
         .isEqualTo(before);
   }
@@ -199,7 +248,7 @@ class HistoricalWorkflowTests {
             "publicAssetPolicy",
             "costSnapshotRaw",
             "costSnapshotSha256",
-            "SEOUL_RAINWATER_ACCOUNTING_V3",
+            "SEOUL_RAINWATER_ACCOUNTING_V4",
             "SEOUL_PERSONAL_FULL_2026_V3",
             "2000000000");
     assertThat(service.list(owner)).hasSize(1);

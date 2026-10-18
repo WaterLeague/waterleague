@@ -1,0 +1,26 @@
+{
+  "id": "lh-lid-maintenance-2022",
+  "title": "LID 시설의 유지관리 방안에 관한 연구",
+  "publisher": "한국토지주택공사 토지주택연구원",
+  "documentYear": 2022,
+  "url": "https://lh.or.kr/boardDownload.es?bid=0034&list_no=717595&seq=2",
+  "file": "data/private/facility-reference-20261019/lh-lid-maintenance-2022.pdf",
+  "sha256": "f934acd95edace10692b56322d969e3ea13dc0c97ff4d2d4c9f790b77f99f002",
+  "bytes": 16866857,
+  "pdfPages": 158,
+  "evidencePages": [
+    31,
+    43,
+    130,
+    131,
+    132,
+    140,
+    141
+  ],
+  "limitations": [
+    "최초 가격연도·부가세·설치비 공종 범위 미확정",
+    "표 3-17 대보수 금액은 주석의 1.2배 인상과 산술 불일치; 최초 설치비 원문 12,000,000원만 사용",
+    "C 시설 면적 171/170m² 불일치; 면적 70m²가 본문·표에서 일치하는 H 사례 사용",
+    "현재 서울 단가·EPA 설계 단면 일치 검증 없음"
+  ]
+}

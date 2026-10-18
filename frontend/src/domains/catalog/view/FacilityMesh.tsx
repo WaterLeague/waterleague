@@ -66,6 +66,7 @@ export function FacilityMesh({
     [cell.coordinates, cell.areaM2, cell.physicalInputs, placement.areaM2, placement.facilityType]
   );
   const paved = placement.facilityType === 'PERMEABLE_PAVEMENT';
+  const gravel = placement.facilityType === 'INFILTRATION_TRENCH';
   const roof = placement.facilityType === 'GREEN_ROOF';
   const resources = useMemo(() => {
     const top: number[] = [],
@@ -105,7 +106,7 @@ export function FacilityMesh({
     canvas.width = canvas.height = 64;
     const context = canvas.getContext('2d');
     if (!context) throw new CatalogError('INVALID_DATA');
-    context.fillStyle = paved ? '#96aeb1' : roof ? '#8eaa60' : '#687f48';
+    context.fillStyle = paved ? '#96aeb1' : gravel ? '#8f9cb5' : roof ? '#8eaa60' : '#687f48';
     context.fillRect(0, 0, 64, 64);
     context.strokeStyle = paved ? '#56777e' : '#526c3f';
     context.lineWidth = paved ? 3 : 1;
@@ -117,7 +118,13 @@ export function FacilityMesh({
       context.strokeRect(48, 32, 32, 32);
     } else {
       for (let i = 0; i < 24; i++) {
-        context.fillStyle = i % 3 === 0 ? '#c1bf79' : '#779155';
+        context.fillStyle = gravel
+          ? i % 3 === 0
+            ? '#d3d6da'
+            : '#637186'
+          : i % 3 === 0
+            ? '#c1bf79'
+            : '#779155';
         context.fillRect((i * 23) % 64, (i * 37) % 64, 3, 3);
       }
     }
@@ -126,7 +133,7 @@ export function FacilityMesh({
     result.colorSpace = THREE.SRGBColorSpace;
     result.anisotropy = 4;
     return result;
-  }, [paved, roof]);
+  }, [paved, roof, gravel]);
   const outline = useRef<THREE.LineSegments>(null);
   useLayoutEffect(() => {
     outline.current?.computeLineDistances();
@@ -148,7 +155,7 @@ export function FacilityMesh({
     >
       <mesh geometry={resources.sides} receiveShadow castShadow={!preview}>
         <meshStandardMaterial
-          color={paved ? '#4d7078' : '#827251'}
+          color={paved ? '#4d7078' : gravel ? '#637186' : '#827251'}
           roughness={1}
           transparent={preview || opacity < 1}
           opacity={(preview ? 0.45 : 1) * opacity}
@@ -171,7 +178,9 @@ export function FacilityMesh({
           <lineBasicMaterial color={paved ? '#4d7078' : '#5e633d'} />
         )}
       </lineSegments>
-      {!preview && !paved && <Planting footprint={footprint} roof={roof} opacity={opacity} />}
+      {!preview && !paved && !gravel && (
+        <Planting footprint={footprint} roof={roof} opacity={opacity} />
+      )}
     </group>
   );
 }

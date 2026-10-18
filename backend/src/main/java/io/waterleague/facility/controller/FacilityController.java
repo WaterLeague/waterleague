@@ -27,6 +27,14 @@ public class FacilityController {
   }
 
   @GetMapping("/epa-designs-v3")
+  public ResponseEntity<JsonNode> v3() {
+    return ResponseEntity.ok()
+        .eTag(service.v3Digest())
+        .cacheControl(CacheControl.maxAge(Duration.ofDays(1)).cachePublic().immutable())
+        .body(service.v3());
+  }
+
+  @GetMapping("/epa-designs-v4")
   public ResponseEntity<JsonNode> latest() {
     return ResponseEntity.ok()
         .eTag(service.latestDigest())

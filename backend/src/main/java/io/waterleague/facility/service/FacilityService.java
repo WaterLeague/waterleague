@@ -12,6 +12,14 @@ public class FacilityService {
     this.repository = repository;
   }
 
+  public JsonNode v3() {
+    return repository.v3();
+  }
+
+  public String v3Digest() {
+    return FacilityRepository.V3_SHA256;
+  }
+
   public JsonNode latest() {
     return repository.latest();
   }

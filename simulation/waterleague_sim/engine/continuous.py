@@ -68,6 +68,13 @@ def input_source(model, placements, evaporation):
             if (type(area) not in (int, float) or not math.isfinite(area)
                     or not 0 < area <= swale_design(model['cells'][0])['maxAreaM2']):
                 raise SimulationQualityError('LIVE_SWALE_DESIGN_INVALID')
+    for placement in placements:
+        if placement['facilityType'] == 'INFILTRATION_TRENCH':
+            from .facilities import trench_design
+            area = placement['areaM2']
+            if (type(area) not in (int, float) or not math.isfinite(area)
+                    or not 0 < area <= trench_design(model['cells'][0])['maxAreaM2']):
+                raise SimulationQualityError('LIVE_TRENCH_DESIGN_INVALID')
     # UTC 기준으로 시각을 고정해 서버 시간대에 따라 관측 구간이 달라지지 않게 한다.
     # EPA 날짜 차의 floor 연산으로 종료 1초가 잘리는 경우를 피한다. 실행은 관측 끝에서 중단한다.
     normalized = model | {'rainfall': model['rainfall'] | {

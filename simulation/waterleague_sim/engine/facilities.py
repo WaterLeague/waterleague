@@ -12,11 +12,13 @@ CATALOG_V2_SHA256 = '068094e1fb8214c60a86bcbc64e039964ba771beb90400702d34f6b741e
 CATALOG_V2_PATH = ROOT/'backend/src/main/resources/facilities/epa-designs-v2.json'
 CATALOG_V3_SHA256 = '2a703170835529fe4d9b2c729157a04b7555faf9a1097f481be4269bfe279d5c'
 CATALOG_V3_PATH = ROOT/'backend/src/main/resources/facilities/epa-designs-v3.json'
+CATALOG_V4_SHA256 = '8af82e01704cf1495f185d9a0a410898e6007a468274c905e75b939f9abde133'
+CATALOG_V4_PATH = ROOT/'backend/src/main/resources/facilities/epa-designs-v4.json'
 CATALOGS = {1: (CATALOG_PATH, CATALOG_SHA256), 2: (CATALOG_V2_PATH, CATALOG_V2_SHA256),
-            3: (CATALOG_V3_PATH, CATALOG_V3_SHA256)}
+            3: (CATALOG_V3_PATH, CATALOG_V3_SHA256), 4: (CATALOG_V4_PATH, CATALOG_V4_SHA256)}
 
 
-@lru_cache(maxsize=3)
+@lru_cache(maxsize=4)
 def catalog(version=1):
     if version not in CATALOGS:
         raise SimulationQualityError('LIVE_FACILITY_CATALOG_INVALID')
@@ -57,6 +59,30 @@ def swale_design(cell):
             or design.get('outlet') != 'SURFACE_RUNOFF_UNCONNECTED_TO_NETWORK'):
         raise SimulationQualityError('LIVE_SWALE_DESIGN_INVALID')
     return design
+
+
+def trench_design(cell):
+    physical = cell.get('physicalInputs', {})
+    design = physical.get('trenchDesign', {})
+    values = [physical.get('conductivityMmH'), design.get('maxAreaM2'), design.get('maxLengthM')]
+    if (any(type(v) not in (int, float) or not math.isfinite(v) for v in values)
+            or cell.get('kind') != 'GROUND' or 'INFILTRATION_TRENCH' not in cell['allowedTypes']
+            or physical.get('soilStatus') != 'TEXTURE_CLASS_LITERATURE_ESTIMATE'
+            or values[0] <= 0 or not 0 < values[1] <= cell['maxAreaM2'] or values[2] <= 0
+            or abs(values[1]-values[2]) > 1e-8 or design.get('topWidthM') != 1
+            or design.get('method') != 'CONTAINED_FIXED_WIDTH_STRAIGHT_DESIGN_V1'
+            or design.get('slopeBasis') != 'LEVEL_STORAGE_DESIGN_NOT_SURVEY'
+            or design.get('outlet') != 'SURFACE_RUNOFF_UNCONNECTED_TO_NETWORK'):
+        raise SimulationQualityError('LIVE_TRENCH_DESIGN_INVALID')
+    return design
+
+
+def trench_boundary(cell):
+    trench_design(cell)
+    return {'method': 'IT_NATIVE_SOIL_SEEPAGE_V1',
+            'seepageMmH': cell['physicalInputs']['conductivityMmH'],
+            'basis': 'TEXTURE_CLASS_LITERATURE_ESTIMATE', 'liner': 'UNLINED_DESIGN_NOT_SITE_CONFIRMED',
+            'storageThicknessMm': 914.4, 'underdrain': 'NONE_DIRECT_RAIN_INFILTRATION_DESIGN'}
 
 
 def bioretention_boundary(cell):
@@ -105,6 +131,14 @@ def apply(source, model):
             design = swale_design(cell)
             if version < 3 or not 0 < float(fields[3]) <= design['maxAreaM2']:
                 raise SimulationQualityError('LIVE_SWALE_DESIGN_INVALID')
+    trench = physical.get('trenchBoundary')
+    if trench is not None and trench != trench_boundary(cell):
+        raise SimulationQualityError('LIVE_TRENCH_DESIGN_INVALID')
+    for line in usages:
+        fields = line.split()
+        if fields[1:2] == ['IT'] and (version < 4 or trench is None
+                or not 0 < float(fields[3]) <= trench_design(cell)['maxAreaM2']):
+            raise SimulationQualityError('LIVE_TRENCH_DESIGN_INVALID')
     rows = []
     for profile in catalog(version)['profiles'].values():
         t = profile['type']
@@ -123,9 +157,9 @@ def apply(source, model):
         if t == 'RG' and boundary is not None:
             # 두께·공극 체적을 늘리지 않고 EPA 하부 침투 경계만 연결한다.
             rows.append(f'RG STORAGE 0 0 {boundary["seepageMmH"]} 0')
-        if t == 'BC':
+        if t in ('BC', 'IT'):
             void_ratio = p['storagePorosity']/(1-p['storagePorosity'])
-            rows.append(f'BC STORAGE {p["storageDepthMm"]} {void_ratio} {native_k} 0')
+            rows.append(f'{t} STORAGE {p["storageDepthMm"]} {void_ratio} {native_k} 0')
     lines, section = [], ''
     for line in source.splitlines():
         if line.startswith('['):
@@ -158,4 +192,7 @@ def evidence(facility, model=None):
         value['nativeSoilBoundary'] = copy.deepcopy(model['cells'][0]['physicalInputs']['bioretentionBoundary'])
     if facility == 'VEGETATIVE_SWALE' and model is not None:
         value['swaleDesign'] = copy.deepcopy(swale_design(model['cells'][0]))
+    if facility == 'INFILTRATION_TRENCH' and model is not None:
+        value['nativeSoilBoundary'] = copy.deepcopy(trench_boundary(model['cells'][0]))
+        value['trenchDesign'] = copy.deepcopy(trench_design(model['cells'][0]))
     return value

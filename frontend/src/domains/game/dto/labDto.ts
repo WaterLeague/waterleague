@@ -12,6 +12,7 @@ const facility = z.enum([
   'GREEN_ROOF',
   'BIORETENTION',
   'VEGETATIVE_SWALE',
+  'INFILTRATION_TRENCH',
 ]);
 export const labDto = z.object({
   modelHash: z.string().regex(/^[a-f0-9]{64}$/),
@@ -34,6 +35,7 @@ export const labDto = z.object({
       GREEN_ROOF: positive,
       BIORETENTION: positive.optional(),
       VEGETATIVE_SWALE: positive.optional(),
+      INFILTRATION_TRENCH: positive.optional(),
     }),
     costModel: z.object({
       source: z.object({ url: z.url({ protocol: /^https$/ }) }).nullish(),

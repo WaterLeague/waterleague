@@ -16,6 +16,7 @@ const icons = {
   GREEN_ROOF: House,
   BIORETENTION: Waves,
   VEGETATIVE_SWALE: Waves,
+  INFILTRATION_TRENCH: Waves,
 };
 type Placed = {
   facilityType: FacilityType;
@@ -191,11 +192,19 @@ export function FacilityPlacementPanel(p: FacilityPlacementProps) {
               />
               <div className="shared-area-limit">
                 최대 {maxArea.toLocaleString('ko-KR')} m² ·{' '}
-                {type === 'VEGETATIVE_SWALE' ? '폭 2m 직선 배치 한도' : '공개 도형 면적'}
+                {type === 'VEGETATIVE_SWALE'
+                  ? '폭 2m 직선 배치 한도'
+                  : type === 'INFILTRATION_TRENCH'
+                    ? '폭 1m 직선 배치 한도'
+                    : '공개 도형 면적'}
               </div>
-              {type === 'VEGETATIVE_SWALE' && (
+              {(type === 'VEGETATIVE_SWALE' || type === 'INFILTRATION_TRENCH') && (
                 <p className="micro-note">
-                  폭 2m × 길이 {(numericArea / 2 || 0).toLocaleString('ko-KR')}m
+                  폭 {type === 'VEGETATIVE_SWALE' ? 2 : 1}m × 길이{' '}
+                  {(numericArea / (type === 'VEGETATIVE_SWALE' ? 2 : 1) || 0).toLocaleString(
+                    'ko-KR'
+                  )}
+                  m
                 </p>
               )}
               <p className="micro-note">

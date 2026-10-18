@@ -10,6 +10,7 @@ const facility = z.enum([
   'GREEN_ROOF',
   'BIORETENTION',
   'VEGETATIVE_SWALE',
+  'INFILTRATION_TRENCH',
 ]);
 export const sharedConsentsDto = z.array(
   z.object({ organizationId: z.uuid(), name: z.string(), granted: z.boolean() })

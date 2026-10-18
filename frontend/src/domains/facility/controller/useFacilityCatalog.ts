@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { FacilityCatalog } from '../dto/facilityDto';
 import { loadFacilityCatalog } from '../repository/facilityRepository';
-export function useFacilityCatalog(enabled: boolean, id = 'EPA_LID_PUBLIC_DESIGNS_V3') {
+export function useFacilityCatalog(enabled: boolean, id = 'EPA_LID_PUBLIC_DESIGNS_V4') {
   const [catalog, setCatalog] = useState<FacilityCatalog | null>(null);
   const [failed, setFailed] = useState(false);
   useEffect(() => {

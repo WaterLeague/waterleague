@@ -10,6 +10,7 @@ const facility = z.enum([
   'GREEN_ROOF',
   'BIORETENTION',
   'VEGETATIVE_SWALE',
+  'INFILTRATION_TRENCH',
 ]);
 export const researchComparisonSummaryDto = z.object({
   id: z.uuid(),

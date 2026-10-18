@@ -1,0 +1,44 @@
+{
+  "version": "SEOUL_RAINWATER_ACCOUNTING_V4",
+  "budgetRuleVersion": "SEOUL_PERSONAL_FULL_2026_V3",
+  "programs": [
+    {
+      "id": "SEOUL_RAINWATER",
+      "name": "빗물관리시설 사업",
+      "limitKrw": 2000000000,
+      "sourceSha256": "899f375797620e01c7c6223518f4d02656512d92d85aa9c48dd234bb1141ab4e"
+    }
+  ],
+  "facilities": [
+    {
+      "facilityType": "RAIN_GARDEN",
+      "programId": "SEOUL_RAINWATER",
+      "limitKrw": null
+    },
+    {
+      "facilityType": "PERMEABLE_PAVEMENT",
+      "programId": "SEOUL_RAINWATER",
+      "limitKrw": null
+    },
+    {
+      "facilityType": "GREEN_ROOF",
+      "programId": "SEOUL_RAINWATER",
+      "limitKrw": null
+    },
+    {
+      "facilityType": "BIORETENTION",
+      "programId": "SEOUL_RAINWATER",
+      "limitKrw": null
+    },
+    {
+      "facilityType": "VEGETATIVE_SWALE",
+      "programId": "SEOUL_RAINWATER",
+      "limitKrw": null
+    },
+    {
+      "facilityType": "INFILTRATION_TRENCH",
+      "programId": "SEOUL_RAINWATER",
+      "limitKrw": null
+    }
+  ]
+}

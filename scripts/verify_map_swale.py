@@ -24,8 +24,8 @@ def main():
     directory = parser.parse_args().output.resolve()
     directory.mkdir(parents=True, exist_ok=False)
     district = '2410520'
-    entry = shared_model.site_catalog()[district]
-    cell = next(c for c in shared_model.candidates(district).values() if 'VEGETATIVE_SWALE' in c['allowedTypes'])
+    entry = shared_model.site_catalog(8)[district]
+    cell = next(c for c in shared_model.candidates(district, 8).values() if 'VEGETATIVE_SWALE' in c['allowedTypes'])
     model, _, _ = shared_model.resolve({'district_id':district,'cell_id':cell['id'],'model_hash':entry['sha256']})
     placement = {'cellId':cell['id'],'facilityType':'VEGETATIVE_SWALE','areaM2':cell['physicalInputs']['swaleDesign']['maxAreaM2']}
     records = read_catalog(ROOT/'data/models')
@@ -46,7 +46,7 @@ def main():
     for relative in ('backend/src/main/resources/shared-sites/catalog-v8.json',
                      'backend/src/main/resources/shared-sites/'+entry['file'],
                      'data/costs/lid-reference-v4.json','scripts/swale_geometry.py',
-                     'scripts/prepare_swale_sites.py','scripts/verify_map_swale.py'):
+                     'scripts/prepare_swale_sites.py','scripts/verify_map_swale.py','scripts/straight_footprint.py'):
         target=directory/'source'/relative;target.parent.mkdir(parents=True,exist_ok=True)
         shutil.copyfile(ROOT/relative,target)
     final=result['strategy']['final']

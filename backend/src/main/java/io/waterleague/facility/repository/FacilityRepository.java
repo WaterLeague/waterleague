@@ -16,12 +16,16 @@ public class FacilityRepository {
   private final JsonNode catalog;
   private final JsonNode legacy;
   private final JsonNode latest;
-  public static final String LATEST_SHA256 =
+  private final JsonNode v3;
+  public static final String V3_SHA256 =
       "2a703170835529fe4d9b2c729157a04b7555faf9a1097f481be4269bfe279d5c";
+  public static final String LATEST_SHA256 =
+      "8af82e01704cf1495f185d9a0a410898e6007a468274c905e75b939f9abde133";
 
   public FacilityRepository(JsonService json) throws IOException {
     catalog = load(json, 2, SHA256);
-    latest = load(json, 3, LATEST_SHA256);
+    latest = load(json, 4, LATEST_SHA256);
+    v3 = load(json, 3, V3_SHA256);
     legacy = load(json, 1, LEGACY_SHA256);
   }
 
@@ -32,6 +36,10 @@ public class FacilityRepository {
       if (!json.hash(raw).equals(hash)) throw new IllegalStateException("시설 제원 해시 오류");
       return json.tree(raw);
     }
+  }
+
+  public JsonNode v3() {
+    return v3.deepCopy();
   }
 
   public JsonNode latest() {

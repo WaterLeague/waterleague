@@ -27,6 +27,7 @@ export const costEstimateDto = z
       'GREEN_ROOF',
       'BIORETENTION',
       'VEGETATIVE_SWALE',
+      'INFILTRATION_TRENCH',
     ]),
     quantityM2: z.number().positive(),
     unitCostKrw: z.number().positive(),
