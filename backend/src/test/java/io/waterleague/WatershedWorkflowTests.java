@@ -594,4 +594,107 @@ class WatershedWorkflowTests {
         .isInstanceOf(DomainException.class);
     assertThat(service.list(owner)).isEmpty();
   }
+
+  WatershedRequest.CisternItem hydraulicCistern(String id, String host, String capture) {
+    return new WatershedRequest.CisternItem(
+        id,
+        host,
+        new BigDecimal(capture),
+        new BigDecimal("2.35"),
+        new BigDecimal("12.750"),
+        new BigDecimal("2.000"),
+        BigDecimal.ZERO,
+        new WatershedRequest.Port(
+            new BigDecimal("12.800"), new BigDecimal("0.040"), new BigDecimal("0.650"), true),
+        new WatershedRequest.Port(
+            new BigDecimal("14.300"), new BigDecimal("0.200"), new BigDecimal("0.650"), true));
+  }
+
+  @Test
+  void preservesHydraulicCisternRequestAndCapacityQuoteWithOtherCatchmentLid() throws Exception {
+    var item = hydraulicCistern("Cistern1", "S9", "10");
+    var dto =
+        new WatershedRequest(
+            UUID.randomUUID(),
+            WatershedCatalogRepository.HASH,
+            request(UUID.randomUUID(), "Bio1", "S1", "20", "100").placements(),
+            WatershedCostRepository.HASH,
+            null,
+            null,
+            WatershedCostRepository.CISTERN_HASH,
+            null,
+            new WatershedRequest.CisternRequest(WatershedCatalogRepository.STORAGE_HASH, item));
+    var job = service.create(owner, dto);
+    assertThat(service.create(owner, dto).id()).isEqualTo(job.id());
+    assertThat(job.design().path("cistern").path("subcatchmentId").asString()).isEqualTo("S9");
+    assertThat(
+            job.design()
+                .path("cisternCosting")
+                .path("items")
+                .get(0)
+                .path("capacityM3")
+                .decimalValue())
+        .isEqualByComparingTo("4.7");
+    assertThat(
+            job.design()
+                .path("cisternCosting")
+                .path("items")
+                .get(0)
+                .path("equivalentUnits")
+                .asInt())
+        .isEqualTo(2);
+    var stored = service.require(owner, job.id());
+    Files.writeString(
+        Path.of("../tmp/cistern-hydraulic-server-request.json"),
+        json.write(
+            Map.of(
+                "modelHash",
+                stored.modelHash(),
+                "inputHash",
+                stored.inputHash(),
+                "placements",
+                stored.placements())));
+    assertThat(
+            db.queryForObject(
+                "SELECT count(*) FROM budget_ledger_entries WHERE owner_id=?",
+                Integer.class,
+                owner))
+        .isZero();
+  }
+
+  @Test
+  void rejectsCisternSharedCatchmentAreaOverflowAndDuplicateIds() {
+    for (var p :
+        List.of(
+            hydraulicCistern("Cistern1", "S1", "10"),
+            hydraulicCistern("Cistern1", "S9", "13729.38"),
+            hydraulicCistern("Bio1", "S9", "10"))) {
+      var dto =
+          new WatershedRequest(
+              UUID.randomUUID(),
+              WatershedCatalogRepository.HASH,
+              request(UUID.randomUUID(), "Bio1", "S1", "20", "100").placements(),
+              null,
+              null,
+              null,
+              null,
+              null,
+              new WatershedRequest.CisternRequest(WatershedCatalogRepository.STORAGE_HASH, p));
+      assertThatThrownBy(() -> service.create(owner, dto)).isInstanceOf(DomainException.class);
+    }
+    var shared =
+        new WatershedRequest(
+            UUID.randomUUID(),
+            WatershedCatalogRepository.HASH,
+            request(UUID.randomUUID(), "Bio1", "S9", "20", "100").placements(),
+            null,
+            null,
+            null,
+            null,
+            null,
+            new WatershedRequest.CisternRequest(
+                WatershedCatalogRepository.STORAGE_HASH, hydraulicCistern("Cistern1", "S9", "10")));
+    assertThatThrownBy(() -> service.create(owner, shared)).isInstanceOf(DomainException.class);
+    assertThat(service.list(owner)).isEmpty();
+  }
 }

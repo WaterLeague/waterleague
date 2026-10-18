@@ -1,3 +1,5 @@
+import type { CisternPlacement } from '../dto/cisternDto';
+import { validateCistern } from './cisternDesign';
 import type { PumpPlacement } from '../dto/pumpDto';
 import { validatePumps } from './pumpDesign';
 import type { ConduitPlacement } from '../dto/conduitDto';
@@ -13,15 +15,16 @@ export function validateCombinedDesign(
   lids: NetworkPlacement[],
   tanks: StoragePlacement[],
   conduits: ConduitPlacement[] = [],
-  pumps: PumpPlacement[] = []
+  pumps: PumpPlacement[] = [],
+  cistern: CisternPlacement | null = null
 ) {
   if (lids.length) {
     const error = validateNetworkDesign(catalog, lids);
     if (error) return error;
   }
-  if (!lids.length && !tanks.length && !conduits.length && !pumps.length)
+  if (!lids.length && !tanks.length && !conduits.length && !pumps.length && !cistern)
     return '시설을 한 곳 이상 설계에 추가해 주세요.';
-  if (lids.length + tanks.length + conduits.length + pumps.length > 20)
+  if (lids.length + tanks.length + conduits.length + pumps.length + (cistern ? 1 : 0) > 20)
     return '한 설계에는 최대 20곳까지 추가할 수 있습니다.';
   const ids = new Set(lids.map((p) => p.id.toUpperCase()));
   for (const t of tanks) {
@@ -66,5 +69,9 @@ export function validateCombinedDesign(
     }
     if (t.overflow.crestM <= t.drain.crestM) return '비상 배수구는 일반 배수구보다 높아야 합니다.';
   }
-  return validateConduits(catalog, conduits, ids) || validatePumps(catalog, tanks, pumps, ids);
+  return (
+    validateConduits(catalog, conduits, ids) ||
+    validatePumps(catalog, tanks, pumps, ids) ||
+    validateCistern(catalog, cistern, lids, ids)
+  );
 }

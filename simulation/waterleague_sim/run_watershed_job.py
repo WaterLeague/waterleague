@@ -34,21 +34,21 @@ def inputs(request):
     design = json.loads(request['placements'])
     require(isinstance(design, dict) and isinstance(design.get('placements'), list)
             and design.get('schemaVersion') == 1 and design.get('basis') == catalog['designBasis']
-            and set(design) <= {'schemaVersion','basis','placements','costing','storage','conduits','cisternCosting','pumps'}, 'WATERSHED_DESIGN_INVALID')
+            and set(design) <= {'schemaVersion','basis','placements','costing','storage','conduits','cisternCosting','pumps','cistern'}, 'WATERSHED_DESIGN_INVALID')
     storage = design.get('storage', {})
     require(isinstance(storage, dict) and isinstance(storage.get('placements', []), list), 'WATERSHED_STORAGE_PLACEMENTS_INVALID')
     conduit_design=design.get('conduits', {})
     require(isinstance(conduit_design,dict) and isinstance(conduit_design.get('placements',[]),list),'WATERSHED_CONDUIT_PLACEMENTS_INVALID')
     pump_design = design.get('pumps', {})
     require(isinstance(pump_design, dict) and isinstance(pump_design.get('placements', []), list), 'WATERSHED_PUMP_PLACEMENTS_INVALID')
-    storage_count = len(pump_design.get('placements', [])) + len(storage.get('placements', [])) + len(conduit_design.get('placements',[]))
+    storage_count = (1 if 'cistern' in design else 0) + len(pump_design.get('placements', [])) + len(storage.get('placements', [])) + len(conduit_design.get('placements',[]))
     require(1 <= len(design['placements'])+storage_count <= 20, 'WATERSHED_DESIGN_INVALID')
     for p in design['placements']:
         template = catalog['templates'].get(p['facilityType'])
         require(template is not None and p['parameters'] == template['parameters']
                 and p['initialSaturationPercent'] == template['initialSaturationPercent']
                 and p['replacedImperviousM2'] == p['areaM2'], 'WATERSHED_TEMPLATE_CHANGED')
-    verify_costs({k: v for k, v in design.items() if k not in ('storage','conduits','cisternCosting','pumps')})
+    verify_costs({k: v for k, v in design.items() if k not in ('storage','conduits','cisternCosting','pumps','cistern')})
     from .costing.cistern_reference import verify as verify_cistern
     verify_cistern(design)
     manifest = ROOT/'data/manifests/mendeley-seocho-network-v3.json'
@@ -75,9 +75,18 @@ def inputs(request):
     if 'pumps' in design:
         from .watershed_pumps import compile as compile_pumps
         strategy, pump_metadata = compile_pumps(strategy, design['pumps'], base, [p['id'] for p in design['placements']+storage.get('placements',[])+conduit_design.get('placements',[])])
+    cistern_metadata = None
+    if 'cistern' in design:
+        from .watershed_cistern import compile as compile_cistern
+        all_ids = [p['id'] for group in (design['placements'], storage.get('placements', []),
+            conduit_design.get('placements', []), pump_design.get('placements', [])) for p in group]
+        strategy, cistern_metadata = compile_cistern(strategy, design['cistern'], base, design['placements'], all_ids)
     transformation = {'limitations': []}
     if design['placements']:
-        strategy, transformation = compile_design(strategy, {k: v for k, v in design.items() if k not in ('costing','storage','conduits','cisternCosting','pumps')})
+        strategy, transformation = compile_design(strategy, {k: v for k, v in design.items() if k not in ('costing','storage','conduits','cisternCosting','pumps','cistern')})
+    if cistern_metadata is not None:
+        transformation['networkCistern'] = cistern_metadata
+        transformation['limitations'] += cistern_metadata['limitations']
     if storage_metadata is not None:
         transformation['connectedStorage'] = storage_metadata
         transformation['limitations'] += storage_metadata['limitations']
@@ -98,7 +107,7 @@ def calculate(request, directory):
     directory.mkdir(parents=True, exist_ok=True)
     (directory/'network-layout.json').write_bytes(layout_raw)
     design = json.loads(request['placements'])
-    cost_raw = verify_costs({k: v for k, v in design.items() if k not in ('storage','conduits','cisternCosting','pumps')})
+    cost_raw = verify_costs({k: v for k, v in design.items() if k not in ('storage','conduits','cisternCosting','pumps','cistern')})
     from .costing.cistern_reference import verify as verify_cistern
     cistern_raw = verify_cistern(design)
     if cistern_raw is not None:
@@ -110,7 +119,7 @@ def calculate(request, directory):
     if cost_raw is not None:
         (directory/'cost-catalog.json').write_bytes(cost_raw)
         write(directory/'cost-snapshot.json', design['costing'])
-    if 'storage' in design:
+    if 'storage' in design or 'cistern' in design:
         from .watershed_storage import CATALOG as STORAGE_CATALOG
         (directory/'storage-connections.json').write_bytes(STORAGE_CATALOG.read_bytes())
     if 'conduits' in design:
@@ -171,6 +180,11 @@ def calculate(request, directory):
                 from .engine.connected_storage import result_summary
                 case['connectedStorage'] = result_summary(transformation['connectedStorage'], result['initial'], result['final'])
                 if case['connectedStorage']['numericalStatus'] != 'PASSED':
+                    case['numericalStatus'] = 'FAILED'
+            if name == 'strategy' and 'networkCistern' in transformation:
+                from .engine.connected_storage import result_summary
+                case['networkCistern'] = result_summary(transformation['networkCistern'], result['initial'], result['final'])
+                if case['networkCistern']['numericalStatus'] != 'PASSED':
                     case['numericalStatus'] = 'FAILED'
         except FloodModelError as error:
             case.update(numericalStatus='FAILED', failureCode=str(error))

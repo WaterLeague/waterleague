@@ -7,14 +7,21 @@ from ..ingestion.published_network import digest
 import json
 
 
-def snapshot(placements):
+def snapshot(placements, cistern=None):
     source = catalog()
     unit = Decimal(source['unitCapacityM3'])
     items = []
-    for p in sorted(placements, key=lambda p: p['id']):
+    quantities = list(placements)
+    if cistern is not None:
+        curve = cistern['depthAreaCurve']
+        require(len(curve) == 2 and curve[0]['depthM'] == 0
+            and curve[0]['areaM2'] == curve[1]['areaM2'] == cistern['footprintM2'], 'WATERSHED_CISTERN_QUOTE_GEOMETRY_INVALID')
+        quantities.append({'id': cistern['id'], 'facilityType': 'RAINWATER_CISTERN',
+            'capacityM3': Decimal(str(curve[1]['depthM']))*Decimal(str(curve[1]['areaM2']))})
+    for p in sorted(quantities, key=lambda p: p['id']):
         if p['facilityType'] != 'RAINWATER_CISTERN':
             continue
-        capacity = Decimal(str(p['areaM2'])) * Decimal(str(p['parameters']['storageDepthMm'])) / 1000
+        capacity = p['capacityM3'] if 'capacityM3' in p else Decimal(str(p['areaM2'])) * Decimal(str(p['parameters']['storageDepthMm'])) / 1000
         number = capacity / unit
         units = int(number) if number == number.to_integral_value() and 1 <= number <= 256 else None
         quotes = []
@@ -41,7 +48,7 @@ def snapshot(placements):
 def verify(design):
     if 'cisternCosting' not in design:
         return None
-    require(design['cisternCosting'] == snapshot(design['placements']), 'WATERSHED_CISTERN_COST_CHANGED')
+    require(design['cisternCosting'] == snapshot(design['placements'], design.get('cistern')), 'WATERSHED_CISTERN_COST_CHANGED')
     return CATALOG_PATH.read_bytes()
 
 

@@ -66,7 +66,8 @@ function Composer({ catalog, state }: { catalog: WatershedCatalog; state: Waters
       state.drafts,
       state.storageDrafts,
       state.conduitDrafts,
-      next
+      next,
+      state.cisternDraft
     );
     setError(invalid);
     setFeedback('');

@@ -1,3 +1,4 @@
+import type { CisternPlacement } from '../dto/cisternDto';
 import type { PumpPlacement } from '../dto/pumpDto';
 import type { ConduitPlacement } from '../dto/conduitDto';
 import type { StoragePlacement } from '../dto/storageDto';
@@ -20,6 +21,7 @@ export function useWatershed(account: Account | null, open: boolean) {
   const [catalog, setCatalog] = useState<WatershedCatalog | null>(null);
   const [jobs, setJobs] = useState<WatershedJob[]>([]);
   const [selectedId, setSelectedId] = useState('');
+  const [cisternDraft, setCisternDraft] = useState<CisternPlacement | null>(null);
   const [drafts, setDrafts] = useState<NetworkPlacement[]>([]);
   const [pumpDrafts, setPumpDrafts] = useState<PumpPlacement[]>([]);
   const [conduitDrafts, setConduitDrafts] = useState<ConduitPlacement[]>([]);
@@ -91,7 +93,8 @@ export function useWatershed(account: Account | null, open: boolean) {
       drafts,
       storageDrafts,
       conduitDrafts,
-      pumpDrafts
+      pumpDrafts,
+      cisternDraft
     );
     if (invalid) {
       setSubmitError(invalid);
@@ -99,9 +102,10 @@ export function useWatershed(account: Account | null, open: boolean) {
     }
     const fingerprint = JSON.stringify([
       designFingerprint(catalog.catalogHash, drafts, catalog.costCatalogHash),
-      drafts.some((p) => p.facilityType === 'RAINWATER_CISTERN')
+      cisternDraft || drafts.some((p) => p.facilityType === 'RAINWATER_CISTERN')
         ? catalog.cisternCostCatalogHash
         : null,
+      cisternDraft,
       catalog.pumpCatalogHash,
       [...pumpDrafts].sort((a, b) => a.id.localeCompare(b.id)),
       catalog.conduitCatalogHash,
@@ -133,11 +137,14 @@ export function useWatershed(account: Account | null, open: boolean) {
         conduitDrafts.length && catalog.conduitCatalogHash
           ? { catalogHash: catalog.conduitCatalogHash, placements: conduitDrafts }
           : undefined,
-        drafts.some((p) => p.facilityType === 'RAINWATER_CISTERN')
+        cisternDraft || drafts.some((p) => p.facilityType === 'RAINWATER_CISTERN')
           ? catalog.cisternCostCatalogHash
           : undefined,
         pumpDrafts.length && catalog.pumpCatalogHash
           ? { catalogHash: catalog.pumpCatalogHash, placements: pumpDrafts }
+          : undefined,
+        cisternDraft && catalog.storageCatalogHash
+          ? { catalogHash: catalog.storageCatalogHash, placement: cisternDraft }
           : undefined
       );
       if (!mounted.current || abort.signal.aborted) return;
@@ -163,6 +170,8 @@ export function useWatershed(account: Account | null, open: boolean) {
     job: jobs.find((j) => j.id === selectedId) ?? jobs[0] ?? null,
     drafts,
     setDrafts,
+    cisternDraft,
+    setCisternDraft,
     storageDrafts,
     setStorageDrafts,
     conduitDrafts,

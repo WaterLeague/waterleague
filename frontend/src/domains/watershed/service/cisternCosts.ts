@@ -1,25 +1,37 @@
+import type { CisternPlacement } from '../dto/cisternDto';
 import type { WatershedCatalog, NetworkPlacement } from '../dto/watershedDto';
 import { cisternCostSnapshotDto } from '../dto/cisternCostDto';
-export function previewCisternCosts(catalog: WatershedCatalog, placements: NetworkPlacement[]) {
+export function previewCisternCosts(
+  catalog: WatershedCatalog,
+  placements: NetworkPlacement[],
+  cistern?: CisternPlacement | null
+) {
   const source = catalog.cisternCostCatalog,
     hash = catalog.cisternCostCatalogHash;
   if (!source || !hash) return null;
   const cisterns = placements.filter((p) => p.facilityType === 'RAINWATER_CISTERN');
-  if (!cisterns.length) return null;
+  if (!cisterns.length && !cistern) return null;
   const depth = catalog.catalog.templates.RAINWATER_CISTERN.parameters.storageDepthMm;
   if (typeof depth !== 'number' || !Number.isInteger(depth)) return null;
-  const items = [...cisterns]
+  const quantities = cisterns.map((p) => ({ id: p.id, areaM2: p.areaM2, depthMm: depth }));
+  if (cistern)
+    quantities.push({
+      id: cistern.id,
+      areaM2: cistern.areaM2,
+      depthMm: Math.round(cistern.depthM * 1000),
+    });
+  const items = quantities
     .sort((a, b) => a.id.localeCompare(b.id))
     .map((p) => {
       // 면적 소수 둘째 자리와 mm 제원을 정수로 환산하여 용량의 정수배만 허용한다.
-      const scaled = Math.round(p.areaM2 * 100) * depth;
+      const scaled = Math.round(p.areaM2 * 100) * p.depthMm;
       const units =
         scaled % 235000 === 0 && scaled / 235000 >= 1 && scaled / 235000 <= 256
           ? scaled / 235000
           : null;
       return {
         placementId: p.id,
-        capacityM3: (p.areaM2 * depth) / 1000,
+        capacityM3: (p.areaM2 * p.depthMm) / 1000,
         equivalentUnits: units,
         status: units === null ? 'CAPACITY_NOT_MATCHED' : 'CAPACITY_EQUIVALENT_ONLY',
         quotes:

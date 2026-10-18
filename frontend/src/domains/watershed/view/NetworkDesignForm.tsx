@@ -98,7 +98,8 @@ export function NetworkDesignForm({
       next,
       state.storageDrafts,
       state.conduitDrafts,
-      state.pumpDrafts
+      state.pumpDrafts,
+      state.cisternDraft
     );
     if (invalid) {
       setError(invalid);

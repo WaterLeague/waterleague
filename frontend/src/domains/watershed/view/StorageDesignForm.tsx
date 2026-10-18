@@ -1,3 +1,4 @@
+import { HydraulicPortFields } from './HydraulicPortFields';
 import { useState } from 'react';
 import type { WatershedState } from '../controller/useWatershed';
 import type { WatershedCatalog } from '../dto/watershedDto';
@@ -71,7 +72,8 @@ function Composer({ catalog, state }: { catalog: WatershedCatalog; state: Waters
       state.drafts,
       next,
       state.conduitDrafts,
-      state.pumpDrafts
+      state.pumpDrafts,
+      state.cisternDraft
     );
     setError(invalid);
     setFeedback('');
@@ -158,46 +160,12 @@ function Composer({ catalog, state }: { catalog: WatershedCatalog; state: Waters
         <details>
           <summary>유입·배수 개구부와 역류 설정</summary>
           {(Object.keys(portNames) as (keyof typeof portNames)[]).map((kind) => (
-            <fieldset key={kind}>
-              <legend>
-                {portNames[kind]} ·{' '}
-                {kind === 'inlet' ? connection.inlet.id : connection.receiver.id}
-              </legend>
-              {(
-                [
-                  ['crestM', '개구부 하단 기준고 (m)', -1000, 10000],
-                  ['diameterM', '원형 구경 (m)', 0.001, 100],
-                  ['dischargeCoefficient', '방류계수', 0.001, 1],
-                ] as const
-              ).map(([key, label, min, max]) => (
-                <label key={key}>
-                  {label}
-                  <input
-                    type="number"
-                    min={min}
-                    max={max}
-                    step="0.001"
-                    value={Number.isFinite(draft[kind][key]) ? draft[kind][key] : ''}
-                    onChange={(e) =>
-                      setDraft({
-                        ...draft,
-                        [kind]: { ...draft[kind], [key]: e.target.valueAsNumber },
-                      })
-                    }
-                  />
-                </label>
-              ))}
-              <label className="watershed-check">
-                <input
-                  type="checkbox"
-                  checked={draft[kind].flapGate}
-                  onChange={(e) =>
-                    setDraft({ ...draft, [kind]: { ...draft[kind], flapGate: e.target.checked } })
-                  }
-                />
-                역류 방지 플랩
-              </label>
-            </fieldset>
+            <HydraulicPortFields
+              key={kind}
+              label={`${portNames[kind]} · ${kind === 'inlet' ? connection.inlet.id : connection.receiver.id}`}
+              value={draft[kind]}
+              onChange={(value) => setDraft({ ...draft, [kind]: value })}
+            />
           ))}
         </details>
       </fieldset>

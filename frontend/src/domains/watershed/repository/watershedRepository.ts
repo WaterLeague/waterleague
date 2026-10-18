@@ -1,3 +1,4 @@
+import type { CisternPlacement } from '../dto/cisternDto';
 import type { PumpPlacement } from '../dto/pumpDto';
 import type { ConduitPlacement } from '../dto/conduitDto';
 import type { StoragePlacement } from '../dto/storageDto';
@@ -20,7 +21,8 @@ export const submitWatershed = async (
   storage?: { catalogHash: string; placements: StoragePlacement[] },
   conduits?: { catalogHash: string; placements: ConduitPlacement[] },
   cisternCostCatalogHash?: string,
-  pumps?: { catalogHash: string; placements: PumpPlacement[] }
+  pumps?: { catalogHash: string; placements: PumpPlacement[] },
+  cistern?: { catalogHash: string; placement: CisternPlacement }
 ) =>
   watershedJobDto.parse(
     await api(
@@ -35,6 +37,7 @@ export const submitWatershed = async (
         conduits,
         cisternCostCatalogHash,
         pumps,
+        cistern,
       },
       signal
     )

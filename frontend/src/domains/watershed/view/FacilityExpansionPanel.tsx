@@ -1,3 +1,4 @@
+import { CisternDesignForm } from './CisternDesignForm';
 import { PumpDesignForm } from './PumpDesignForm';
 import { ConduitDesignForm } from './ConduitDesignForm';
 import { useState } from 'react';
@@ -148,7 +149,9 @@ export function FacilityExpansionPanel({
           )}
           {state.catalog &&
             type &&
-            (type === 'PUMP_STATION' ? (
+            (type === 'RAINWATER_CISTERN' ? (
+              <CisternDesignForm catalog={state.catalog} state={state} />
+            ) : type === 'PUMP_STATION' ? (
               <PumpDesignForm catalog={state.catalog} state={state} />
             ) : type === 'CONDUIT' ? (
               <ConduitDesignForm catalog={state.catalog} state={state} />
@@ -167,7 +170,8 @@ export function FacilityExpansionPanel({
                     {job.design.placements.length +
                       (job.design.storage?.placements.length ?? 0) +
                       (job.design.conduits?.placements.length ?? 0) +
-                      (job.design.pumps?.placements.length ?? 0)}
+                      (job.design.pumps?.placements.length ?? 0) +
+                      (job.design.cistern ? 1 : 0)}
                     곳 · {jobLabels[job.state]}
                   </option>
                 ))}

@@ -107,9 +107,10 @@ public class WatershedService {
             ? 0
             : dto.conduits().placements().size();
     int pumpCount = dto.pumps() == null ? 0 : dto.pumps().placements().size();
+    int cisternCount = dto.cistern() == null ? 0 : 1;
     if (dto.placements() == null
-        || dto.placements().size() + storageCount + conduitCount + pumpCount < 1
-        || dto.placements().size() + storageCount + conduitCount + pumpCount > 20)
+        || dto.placements().size() + storageCount + conduitCount + pumpCount + cisternCount < 1
+        || dto.placements().size() + storageCount + conduitCount + pumpCount + cisternCount > 20)
       throw new DomainException(ErrorCode.PLACEMENT_INVALID);
     for (var p :
         dto.placements().stream()
@@ -168,13 +169,16 @@ public class WatershedService {
     if (dto.storage() != null) design.put("storage", storage.compile(dto.storage(), ids));
     if (dto.conduits() != null) design.put("conduits", conduits.compile(dto.conduits(), ids));
     if (dto.pumps() != null) design.put("pumps", pumps.compile(dto.pumps(), dto.storage(), ids));
+    if (dto.cistern() != null)
+      design.put(
+          "cistern", CisternDesignService.compile(dto.cistern(), catalog, ids, dto.placements()));
     if (dto.costCatalogHash() != null && !dto.placements().isEmpty())
       design.put("costing", costs.snapshot(dto.costCatalogHash(), dto.placements()));
     if (dto.cisternCostCatalogHash() != null)
       design.put(
           "cisternCosting",
           CisternReferenceService.snapshot(
-              dto.cisternCostCatalogHash(), placements, costCatalog.cistern()));
+              dto.cisternCostCatalogHash(), placements, costCatalog.cistern(), dto.cistern()));
     String body = json.write(design);
     String hash = json.hash(dto.catalogHash() + "\n" + body);
     admission.lockAdmission();

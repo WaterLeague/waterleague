@@ -1,3 +1,4 @@
+import { StorageLedger } from './StorageLedger';
 import { PumpOperation } from './PumpOperation';
 import { WatershedPlayback } from './WatershedPlayback';
 import { CisternReferenceCosts } from './CisternReferenceCosts';
@@ -40,6 +41,14 @@ export function WatershedResult({ job }: { job: WatershedJob }) {
           </li>
         ))}
       </ul>
+      {job.design.cistern && (
+        <p>
+          {job.design.cistern.subcatchmentId} · 빗물이용조 · 집수{' '}
+          {number(job.design.cistern.captureAreaM2)} m² · 용량{' '}
+          {number(job.design.cistern.footprintM2 * job.design.cistern.depthAreaCurve[1].depthM)} m³
+          · 관망 수두 기반 배수·역류
+        </p>
+      )}
       {job.design.conduits?.placements.map((p) => (
         <div key={p.id} className="watershed-facility-state">
           <strong>{p.conduitId} · 배수관·암거 개량</strong>
@@ -114,33 +123,10 @@ export function WatershedResult({ job }: { job: WatershedJob }) {
               <WatershedPlayback key={job.id} jobId={job.id} layout={result.networkLayout.layout} />
             )}
           {strategy?.connectedStorage && (
-            <div aria-label="저류조 물수지">
-              <h3>저류조 물수지</h3>
-              {strategy.connectedStorage.wholeRunLedger.facilities.map((f) => (
-                <div key={f.id} className="watershed-facility-state">
-                  <strong>
-                    {f.id} · 설계 용량 {number(f.capacityM3)} m³
-                  </strong>
-                  <p>
-                    초기 {number(f.initialStorageM3)} → 최종 저류 {number(f.finalStorageM3)} m³
-                  </p>
-                  <p>
-                    유입 {number(f.inflowM3)} m³ · 유출·월류 {number(f.outflowIncludingFloodingM3)}{' '}
-                    m³
-                  </p>
-                  <p>미연결 지표 월류 {number(f.floodingM3)} m³</p>
-                  <p>
-                    물수지 잔차 {number(f.balanceResidualM3)} m³ · 허용{' '}
-                    {number(f.allowedResidualM3)} m³ ·{' '}
-                    {f.numericalStatus === 'PASSED' ? '통과' : '실패'}
-                  </p>
-                </div>
-              ))}
-              <p>
-                이 체적은 관망 전체 물수지에 포함됩니다. 수지 실패나 지표로 넘친 물의 미연결이
-                있으면 효과 비교를 보류합니다.
-              </p>
-            </div>
+            <StorageLedger title="저류조 물수지" summary={strategy.connectedStorage} />
+          )}
+          {strategy?.networkCistern && (
+            <StorageLedger title="빗물이용조 물수지" summary={strategy.networkCistern} />
           )}
           {comparable && (
             <>

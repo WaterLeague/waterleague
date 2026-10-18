@@ -13,7 +13,49 @@ public record WatershedRequest(
     @Valid StorageRequest storage,
     @Valid ConduitRequest conduits,
     @Pattern(regexp = "[a-f0-9]{64}") String cisternCostCatalogHash,
-    @Valid PumpRequest pumps) {
+    @Valid PumpRequest pumps,
+    @Valid CisternRequest cistern) {
+  public WatershedRequest(
+      UUID requestKey,
+      String catalogHash,
+      List<Item> placements,
+      String costCatalogHash,
+      StorageRequest storage,
+      ConduitRequest conduits,
+      String cisternCostCatalogHash,
+      PumpRequest pumps) {
+    this(
+        requestKey,
+        catalogHash,
+        placements,
+        costCatalogHash,
+        storage,
+        conduits,
+        cisternCostCatalogHash,
+        pumps,
+        null);
+  }
+
+  public record CisternRequest(
+      @NotBlank @Pattern(regexp = "[a-f0-9]{64}") String catalogHash,
+      @NotNull @Valid CisternItem placement) {}
+
+  public record CisternItem(
+      @NotBlank @Pattern(regexp = "[A-Za-z][A-Za-z0-9_-]{0,23}") String id,
+      @NotBlank @Size(max = 40) String catchmentId,
+      @NotNull @DecimalMin("0.01") @DecimalMax("1000000") @Digits(integer = 7, fraction = 2)
+          BigDecimal captureAreaM2,
+      @NotNull @DecimalMin("0.01") @DecimalMax("1000000") @Digits(integer = 7, fraction = 2)
+          BigDecimal areaM2,
+      @NotNull @DecimalMin("-1000") @DecimalMax("10000") @Digits(integer = 5, fraction = 3)
+          BigDecimal invertM,
+      @NotNull @DecimalMin("0.001") @DecimalMax("100") @Digits(integer = 3, fraction = 3)
+          BigDecimal depthM,
+      @NotNull @DecimalMin("0") @DecimalMax("100") @Digits(integer = 3, fraction = 3)
+          BigDecimal initialDepthM,
+      @NotNull @Valid Port drain,
+      @NotNull @Valid Port overflow) {}
+
   public WatershedRequest(
       UUID requestKey,
       String catalogHash,

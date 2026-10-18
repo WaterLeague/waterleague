@@ -14,12 +14,13 @@ export function WatershedDesignReview({
   catalog: WatershedCatalog;
   state: WatershedState;
 }) {
-  const cisternCosting = previewCisternCosts(catalog, state.drafts);
+  const cisternCosting = previewCisternCosts(catalog, state.drafts, state.cisternDraft);
   const count =
     state.drafts.length +
     state.storageDrafts.length +
     state.conduitDrafts.length +
-    state.pumpDrafts.length;
+    state.pumpDrafts.length +
+    (state.cisternDraft ? 1 : 0);
   const costing = state.drafts.length ? previewWatershedCosts(catalog, state.drafts) : null;
   return (
     <>
@@ -27,6 +28,24 @@ export function WatershedDesignReview({
         <h3>공동 설계 · {count}/20곳</h3>
         {!count && <p>시설을 추가한 뒤 기준안과 비교할 수 있습니다.</p>}
         <ul>
+          {state.cisternDraft && (
+            <li>
+              <div>
+                <strong>{state.cisternDraft.catchmentId} · 빗물이용조</strong>
+                <span>
+                  집수 {number(state.cisternDraft.captureAreaM2)} m² · 용량{' '}
+                  {number(state.cisternDraft.areaM2 * state.cisternDraft.depthM)} m³
+                </span>
+              </div>
+              <button
+                aria-label="이용조 수리 설계 삭제"
+                disabled={state.busy}
+                onClick={() => state.setCisternDraft(null)}
+              >
+                삭제
+              </button>
+            </li>
+          )}
           {state.drafts.map((p) => (
             <li key={p.id}>
               <div>

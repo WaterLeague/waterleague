@@ -1,6 +1,7 @@
 package io.waterleague.watershed.service;
 
 import io.waterleague.common.exception.*;
+import io.waterleague.watershed.dto.WatershedRequest;
 import io.waterleague.watershed.repository.WatershedCostRepository;
 import java.math.BigDecimal;
 import java.util.*;
@@ -11,17 +12,40 @@ public final class CisternReferenceService {
 
   public static Map<String, Object> snapshot(
       String hash, List<Map<String, Object>> placements, JsonNode source) {
+    return snapshot(hash, placements, source, null);
+  }
+
+  public static Map<String, Object> snapshot(
+      String hash,
+      List<Map<String, Object>> placements,
+      JsonNode source,
+      WatershedRequest.CisternRequest cistern) {
     if (!WatershedCostRepository.CISTERN_HASH.equals(hash))
       throw new DomainException(ErrorCode.CONFLICT);
     var items = new ArrayList<Map<String, Object>>();
     var unit = new BigDecimal(source.path("unitCapacityM3").asString());
-    for (var p : placements) {
+    var quantities = new ArrayList<>(placements);
+    if (cistern != null) {
+      var p = cistern.placement();
+      quantities.add(
+          Map.of(
+              "id",
+              p.id(),
+              "facilityType",
+              "RAINWATER_CISTERN",
+              "capacityM3",
+              p.areaM2().multiply(p.depthM())));
+    }
+    quantities.sort(Comparator.comparing(p -> p.get("id").toString()));
+    for (var p : quantities) {
       if (!"RAINWATER_CISTERN".equals(p.get("facilityType"))) continue;
       var parameters = (JsonNode) p.get("parameters");
       BigDecimal capacity =
-          ((BigDecimal) p.get("areaM2"))
-              .multiply(parameters.path("storageDepthMm").decimalValue())
-              .divide(new BigDecimal("1000"));
+          p.containsKey("capacityM3")
+              ? (BigDecimal) p.get("capacityM3")
+              : ((BigDecimal) p.get("areaM2"))
+                  .multiply(parameters.path("storageDepthMm").decimalValue())
+                  .divide(new BigDecimal("1000"));
       var division = capacity.divideAndRemainder(unit);
       Integer units =
           division[1].signum() == 0

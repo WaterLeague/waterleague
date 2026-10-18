@@ -1,3 +1,4 @@
+import { cisternDesignDto } from './cisternDto';
 import { pumpCatalogDto, pumpDesignDto, pumpOperationDto } from './pumpDto';
 import { cisternCostCatalogDto, cisternCostSnapshotDto } from './cisternCostDto';
 import { conduitCatalogDto, conduitDesignDto } from './conduitDto';
@@ -117,6 +118,7 @@ const caseDto = z.object({
     .optional(),
   conduitStateTimeSeconds: amount.nonnegative().optional(),
   connectedStorage: storageSummaryDto.optional(),
+  networkCistern: storageSummaryDto.optional(),
   pumpOperation: pumpOperationDto.optional(),
   id: z.enum(['baseline', 'strategy']),
   numericalStatus: z.enum(['PASSED', 'FAILED']),
@@ -213,17 +215,20 @@ export const watershedResultDto = z
           (!c.pumpOperation ||
             (c.pumpOperation.curveStatus === 'PASSED' &&
               c.pumpOperation.deliveryStatus === 'PASSED')) &&
-          (!c.connectedStorage ||
-            (c.connectedStorage.numericalStatus === 'PASSED' &&
-              c.connectedStorage.wholeRunLedger.numericalStatus === 'PASSED' &&
-              c.connectedStorage.wholeRunLedger.facilities.length > 0 &&
-              c.connectedStorage.wholeRunLedger.facilities.every(
-                (f) =>
-                  f.numericalStatus === 'PASSED' &&
-                  Math.abs(f.balanceResidualM3) <= f.allowedResidualM3 &&
-                  f.floodingM3 <= 1e-9 &&
-                  Math.max(f.initialStorageM3, f.finalStorageM3) <= f.capacityM3 + 1e-8
-              )))
+          [c.connectedStorage, c.networkCistern].every(
+            (s) =>
+              !s ||
+              (s.numericalStatus === 'PASSED' &&
+                s.wholeRunLedger.numericalStatus === 'PASSED' &&
+                s.wholeRunLedger.facilities.length > 0 &&
+                s.wholeRunLedger.facilities.every(
+                  (f) =>
+                    f.numericalStatus === 'PASSED' &&
+                    Math.abs(f.balanceResidualM3) <= f.allowedResidualM3 &&
+                    f.floodingM3 <= 1e-9 &&
+                    Math.max(f.initialStorageM3, f.finalStorageM3) <= f.capacityM3 + 1e-8
+                ))
+          )
       );
     if (!baseline || !strategy || (value.numericalStatus === 'PASSED' && !valid))
       ctx.addIssue({ code: 'custom', message: '계산 상태와 원 지표 불일치' });
@@ -268,6 +273,7 @@ export const watershedJobDto = z
     state: z.enum(['QUEUED', 'RUNNING', 'SUCCEEDED', 'FAILED', 'REJECTED']),
     createdAt: z.iso.datetime(),
     design: z.object({
+      cistern: cisternDesignDto.optional(),
       conduits: conduitDesignDto.optional(),
       pumps: pumpDesignDto.optional(),
       storage: storageDesignDto.optional(),
@@ -289,17 +295,42 @@ export const watershedJobDto = z
   })
   .superRefine((value, ctx) => {
     const references = value.design.cisternCosting;
-    const cisterns = value.design.placements.filter((p) => p.facilityType === 'RAINWATER_CISTERN');
+    const cisterns = value.design.placements
+      .filter((p) => p.facilityType === 'RAINWATER_CISTERN')
+      .map((p) => ({
+        id: p.id,
+        capacityM3:
+          typeof p.parameters?.storageDepthMm === 'number'
+            ? (p.areaM2 * p.parameters.storageDepthMm) / 1000
+            : NaN,
+      }));
+    const tank = value.design.cistern;
+    if (tank)
+      cisterns.push({ id: tank.id, capacityM3: tank.footprintM2 * tank.depthAreaCurve[1].depthM });
+    if (value.result) {
+      for (const c of value.result.cases) {
+        const ledger = c.networkCistern?.wholeRunLedger.facilities;
+        if (
+          (ledger &&
+            (c.id !== 'strategy' ||
+              !tank ||
+              ledger.length !== 1 ||
+              ledger[0].id !== tank.id ||
+              ledger[0].nodeId !== 'WLCT_' + tank.id ||
+              Math.abs(ledger[0].capacityM3 - tank.footprintM2 * tank.depthAreaCurve[1].depthM) >
+                1e-8)) ||
+          (c.id === 'strategy' && c.numericalStatus === 'PASSED' && tank && !ledger)
+        )
+          ctx.addIssue({ code: 'custom', message: '이용조 설계와 수리 계산 원장 불일치' });
+      }
+    }
     if (
       (references &&
         (references.items.length !== cisterns.length ||
           references.items.some(
             (i) =>
               !cisterns.some(
-                (p) =>
-                  p.id === i.placementId &&
-                  typeof p.parameters?.storageDepthMm === 'number' &&
-                  Math.abs((p.areaM2 * p.parameters.storageDepthMm) / 1000 - i.capacityM3) < 1e-9
+                (p) => p.id === i.placementId && Math.abs(p.capacityM3 - i.capacityM3) < 1e-9
               )
           ))) ||
       (value.result && JSON.stringify(value.result.cisternCosting) !== JSON.stringify(references))

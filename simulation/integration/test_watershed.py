@@ -194,3 +194,34 @@ class WatershedTests(unittest.TestCase):
         directory=self.artifacts/'watersheds'/str(identity)/str(job['lease_token'])
         manifest=json.loads((directory/'manifest.json').read_text());self.assertEqual(manifest['pump-curve.json'],PUMP_HASH)
         for name,sha in manifest.items(): self.assertEqual(hashlib.sha256((directory/name).read_bytes()).hexdigest(),sha)
+
+    def test_server_cistern_hydraulics_preserves_native_storage_and_quotes(self):
+        from pathlib import Path
+        import shutil
+        from waterleague_sim.engine.swmm import ROOT
+        request=json.loads((ROOT/'tmp/cistern-hydraulic-server-request.json').read_text())
+        identity=uuid.uuid4()
+        self.conn.execute("INSERT INTO watershed_experiments(id,owner_id,request_key,model_hash,input_hash,placements,state,created_at) VALUES(%s,%s,%s,%s,%s,%s,'QUEUED',now())",
+            (identity,self.owner,uuid.uuid4(),request['modelHash'],request['inputHash'],request['placements']))
+        job=queue.claim(self.conn)
+        self.assertTrue(watershed.process(self.conn,job,self.artifacts))
+        row=self.conn.execute('SELECT * FROM watershed_experiments WHERE id=%s',(identity,)).fetchone()
+        self.assertEqual(row['state'],'SUCCEEDED',row['error_code'])
+        result=json.loads(row['result']);design=json.loads(request['placements'])
+        self.assertEqual(result['numericalStatus'],'PASSED',result)
+        ledger=result['cases'][1]['networkCistern']['wholeRunLedger']['facilities'][0]
+        self.assertEqual(ledger['capacityM3'],4.7)
+        self.assertGreater(ledger['finalStorageM3'],2)
+        self.assertEqual(ledger['floodingM3'],0)
+        self.assertEqual(result['cisternCosting'],design['cisternCosting'])
+        self.assertEqual(len(result['cases'][1]['facilities']),1)
+        self.assertEqual(len(result['cases'][1]['nodeFlooding']['nodes']),29)
+        folder=self.artifacts/'watersheds'/str(identity)/str(job['lease_token'])
+        manifest=json.loads((folder/'manifest.json').read_text())
+        for name,sha in manifest.items(): self.assertEqual(hashlib.sha256((folder/name).read_bytes()).hexdigest(),sha)
+        changed=json.loads(request['placements']);changed['cistern']['subcatchmentId']='S1'
+        raw=json.dumps(changed,sort_keys=True)
+        with self.assertRaises(FloodModelError): inputs(request|{'placements':raw,'inputHash':hashlib.sha256((request['modelHash']+'\n'+raw).encode()).hexdigest()})
+        archive=ROOT/'tmp'/('member-cistern-hydraulics-'+str(identity))
+        shutil.copytree(folder,archive)
+        (ROOT/'tmp/cistern-hydraulic-last-artifacts.txt').write_text(str(archive))
