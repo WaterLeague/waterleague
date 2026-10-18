@@ -1,3 +1,4 @@
+import type { PublicFrame } from '../../surface/service/publicSurfaceService';
 import { publicInfrastructureBuildingIds } from '../../infrastructure/service/infrastructureService';
 import {
   useEffect,
@@ -356,6 +357,7 @@ function ProjectedLabels({
 }
 const CityScene = memo(function CityScene({
   surfaceFrame = null,
+  publicSurfaceFrames = [],
   surfaceMetric = 'depth',
   onSurfaceError,
   traceTiles,
@@ -394,6 +396,7 @@ const CityScene = memo(function CityScene({
   cisternGeometry?: CisternGeometryPreview | null;
   planningRoles?: ReadonlyMap<string, CisternSiteRole>;
   surfaceFrame?: SurfaceFrame | null;
+  publicSurfaceFrames?: PublicFrame[];
   surfaceMetric?: SurfaceMetric;
   onSurfaceError: () => void;
   traceTiles: TraceTile[];
@@ -454,6 +457,16 @@ const CityScene = memo(function CityScene({
           terrain={terrain}
           onError={onSurfaceError}
         />
+        {!surfaceFrame &&
+          publicSurfaceFrames.map((value) => (
+            <SurfaceLayer
+              key={value.id}
+              frame={value.frame}
+              metric={surfaceMetric}
+              terrain={terrain}
+              onError={onSurfaceError}
+            />
+          ))}
         <InfrastructureMarkers
           assets={facilityType ? [] : publicAssets}
           selectedId={selectedAssetId}

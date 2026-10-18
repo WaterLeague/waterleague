@@ -63,7 +63,7 @@ export function SurfaceControls({
             )}
             <small>
               {live
-                ? '최근 5분 이내 계산값 · 관측 침수와 구분'
+                ? '선택한 내 설계 · 최근 5분 이내 계산값 · 과거 침수 기록과 구분'
                 : '계산값 · 현장 검증 전 · 지표면 색상 표시'}
             </small>
             {!live && (

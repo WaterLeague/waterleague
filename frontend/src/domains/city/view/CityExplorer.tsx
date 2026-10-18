@@ -1,3 +1,5 @@
+import { usePublicSurfaces } from '../../surface/controller/usePublicSurfaces';
+import { PublicSurfaceControls } from '../../surface/view/PublicSurfaceControls';
 import { placementAreaLimit } from '../../installation/service/placementAreaLimit';
 import { lazy, Suspense, useEffect, useCallback, useState, useRef, useMemo } from 'react';
 import {
@@ -272,6 +274,7 @@ function Explorer({
   );
   const remaining = researchMode ? research.remaining : (budget.value?.remainingKrw ?? 0);
   const occupied = site ? ownInstallations.find((i) => siteKey(i) === siteKey(site)) : undefined;
+  const publicSurface = usePublicSurfaces(!researchMode, camera, city);
   const surfaceSource: SurfaceSource | null = researchMode
     ? research.job?.state === 'SUCCEEDED' && research.currentResult
       ? { kind: 'historical', id: research.job.id }
@@ -550,6 +553,7 @@ function Explorer({
     <CityPlan
       preview={preview}
       surfaceFrame={surface.frame}
+      publicSurfaceFrames={publicSurface.frames}
       surfaceMetric={surfaceMetric}
       traceTiles={traces.tiles}
       publicAssets={publicAssets}
@@ -714,6 +718,7 @@ function Explorer({
               >
                 <CityScene
                   surfaceFrame={surface.frame}
+                  publicSurfaceFrames={publicSurface.frames}
                   surfaceMetric={surfaceMetric}
                   onSurfaceError={surfaceFailed}
                   traceTiles={traces.tiles}
@@ -1005,15 +1010,24 @@ function Explorer({
             {city.attribution}
           </a>
         </section>
-        <SurfaceControls
-          live={!researchMode}
-          metric={surfaceMetric}
-          onMetric={setSurfaceMetric}
-          state={surface}
-          hasSource={!!surfaceSource}
-          onSeek={seekSurface}
-          renderError={surfaceRenderError}
-        />
+        {!researchMode && !surface.frame ? (
+          <PublicSurfaceControls
+            state={publicSurface}
+            metric={surfaceMetric}
+            onMetric={setSurfaceMetric}
+            renderError={surfaceRenderError}
+          />
+        ) : (
+          <SurfaceControls
+            live={!researchMode}
+            metric={surfaceMetric}
+            onMetric={setSurfaceMetric}
+            state={surface}
+            hasSource={!!surfaceSource}
+            onSeek={seekSurface}
+            renderError={surfaceRenderError}
+          />
+        )}
         {researchMode && (
           <HistoricalTimeline state={research} onInspect={(d) => chooseSite(d.site, true)} />
         )}
@@ -1179,7 +1193,7 @@ function Explorer({
             ? '높이 자료 연결 실패 · 평면 표시'
             : '지표면 높이 연결 중'}{' '}
         · 건물 높이 태그·층수 환산 포함 ·{' '}
-        {surface.frame
+        {surface.frame || publicSurface.frames.length
           ? '계산 침수는 별도 색상 레이어 · 표시 지형과 물리 기준고 구분'
           : '침수 깊이 표시 아님'}
         {assetsEnabled &&

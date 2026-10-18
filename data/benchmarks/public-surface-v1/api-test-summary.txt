@@ -1,0 +1,5 @@
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.650 s -- in io.waterleague.PublicSurfaceTests
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.333 s -- in io.waterleague.ApiSecurityTests
+[WARNING] Tests run: 4, Failures: 0, Errors: 0, Skipped: 1, Time elapsed: 0.100 s -- in io.waterleague.SurfacePlaybackTests
+[INFO] Tests run: 16, Failures: 0, Errors: 0, Skipped: 1
+[INFO] BUILD SUCCESS

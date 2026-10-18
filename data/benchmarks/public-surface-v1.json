@@ -1,0 +1,215 @@
+{
+  "schemaVersion": 1,
+  "classification": "PUBLIC_SURFACE_DELIVERY_AND_ACCESS_TEST_ONLY",
+  "createdAt": "2026-10-18T20:34:06.502812+00:00",
+  "baseCommit": "3cfe263c24fd9469a046a698139af07203509c7f",
+  "publicOperatingModelCount": 0,
+  "rankingEligible": false,
+  "backend": {
+    "passed": 15,
+    "skipped": 1,
+    "skippedReason": "기존 SURFACE_DIRECTION_PLAYBACK 외부 원본 지정 검사 미실행",
+    "command": "simulation/.venv/bin/python scripts/verify_league_postgres.py --suite public-surface",
+    "developmentDatabaseCountsUnchanged": true
+  },
+  "frontend": {
+    "passed": 12,
+    "buildPassed": true,
+    "changedFilesFormattingPassed": true,
+    "standaloneRainfallLabelInProductJavaScript": false
+  },
+  "browser": {
+    "engine": "Chrome 155 in-app browser",
+    "viewport": [
+      1280,
+      720
+    ],
+    "source": "frontend/qa/public-surface.html",
+    "cases": [
+      "두 독립 유역의 자동 2D/3D 표시",
+      "원 수심·속력·동/북 방향 전달",
+      "동일 목록 정기 갱신 후 프레임 재요청 없음: 최초 3요청→목록 갱신 후 4요청",
+      "최근 300초 만료 후 제거",
+      "게시 철회 후 제거",
+      "해시 변경 거부",
+      "조회 실패 후 제거",
+      "제품의 운영 모형 빈 목록 표시",
+      "데이터 탭의 별도 강우 항목 부재"
+    ],
+    "limits": [
+      "두 합성 격자의 전달 시험이며 서울 침수·수치 정확성·현장 검증 증거 아님",
+      "제품 API/운영 저장소에 합성 결과 게시 없음",
+      "대표 장면 전체 성능 측정에 해당하지 않음"
+    ]
+  },
+  "outstanding": [
+    "실제 연결 지형·관망·기준고·외곽 경계 입력",
+    "공개 기준안 생성·자동 게시 워커",
+    "서울 실제 현재 침수의 수치·현장 대조",
+    "전체 Goal의 나머지 명시 범위"
+  ],
+  "sourceFiles": [
+    {
+      "path": "backend/src/main/java/io/waterleague/common/security/SecurityConfiguration.java",
+      "bytes": 7372,
+      "sha256": "9757728090eb208937d80202f31d4c3dcf373c0c3d6cff2b5850732660a4ad91"
+    },
+    {
+      "path": "backend/src/main/java/io/waterleague/surface/entity/SurfacePublication.java",
+      "bytes": 412,
+      "sha256": "aa9f3c57fb519fb312e2d5ff314c6aac22d58b93055c2071f6d4d6c88a7009ef"
+    },
+    {
+      "path": "backend/src/main/java/io/waterleague/surface/controller/PublicSurfaceController.java",
+      "bytes": 1658,
+      "sha256": "860b9364239d3cf720f281b7f59f0389cc58b0c7786cbf4104a4d1fcf7e2b875"
+    },
+    {
+      "path": "backend/src/main/java/io/waterleague/surface/repository/PublicSurfaceModelRepository.java",
+      "bytes": 2992,
+      "sha256": "0c3d63330fac6e845b028ed36f0b46d80242b2bb551f49a80c9202af86eec6d1"
+    },
+    {
+      "path": "backend/src/main/java/io/waterleague/surface/service/PublicSurfaceService.java",
+      "bytes": 6334,
+      "sha256": "9b020dc5d056c7b6caf54aadb3bc7b61279ad902493a36faba32f700b249bdaa"
+    },
+    {
+      "path": "backend/src/main/java/io/waterleague/surface/view/PublicSurfaceView.java",
+      "bytes": 459,
+      "sha256": "4c160c6873eb2cf1e9e7531ffe0723baf214fd6f020b1fc3089b91a405a6e24d"
+    },
+    {
+      "path": "backend/src/main/resources/surface/public-models-v1.json",
+      "bytes": 220,
+      "sha256": "e4d5625e18077516f2d00c69fb2c6644765e5075bd6f2823578c0f791cd59fe3"
+    },
+    {
+      "path": "backend/src/test/java/io/waterleague/PublicSurfaceTests.java",
+      "bytes": 8741,
+      "sha256": "d049635e63870ecc987ff571ab492b5e3a6cb3454797afab793943c07977ab37"
+    },
+    {
+      "path": "backend/src/test/java/io/waterleague/ApiSecurityTests.java",
+      "bytes": 4833,
+      "sha256": "b9ad06c2c79e5cae9367a29cdd841841dc653c9d922f7bc7d2797c9f45f93f01"
+    },
+    {
+      "path": "frontend/src/domains/surface/controller/usePublicSurfaces.ts",
+      "bytes": 5798,
+      "sha256": "86c71d31e1d02ba53e6b1952e6194263afe661f7feb8701c3f8c79e4ed019b6e"
+    },
+    {
+      "path": "frontend/src/domains/surface/dto/publicSurfaceDto.ts",
+      "bytes": 1206,
+      "sha256": "7dbcd3013b662c42d56066240dae9cd97bdf9ec5748c152adfc7d854ea23a38a"
+    },
+    {
+      "path": "frontend/src/domains/surface/repository/publicSurfaceRepository.ts",
+      "bytes": 957,
+      "sha256": "9a9bc8005d3a2112b43bde77c99540c96434d15a6be27855a06a106af71e5551"
+    },
+    {
+      "path": "frontend/src/domains/surface/service/publicSurfaceService.ts",
+      "bytes": 1234,
+      "sha256": "40cf8747f636ba8c19c25aea396ff1b3458299c6a9d13d657f0e166949a4aaa5"
+    },
+    {
+      "path": "frontend/src/domains/surface/service/publicSurfaceService.test.ts",
+      "bytes": 3877,
+      "sha256": "322d7689a799c0931add3facea6945b336b8a9a84df87952d7b44dbdf8eff82a"
+    },
+    {
+      "path": "frontend/src/domains/surface/view/PublicSurfaceControls.tsx",
+      "bytes": 3234,
+      "sha256": "67b4e941a65f579533e74c9dc5232f9c14ddd113d5959f39cb1b22df9e1cab15"
+    },
+    {
+      "path": "frontend/src/domains/surface/view/SurfaceControls.tsx",
+      "bytes": 4361,
+      "sha256": "5ea1811f5467c92f40813f20e52f3aaf38e4d61b9609153595691cc0853d333b"
+    },
+    {
+      "path": "frontend/src/domains/city/view/CityExplorer.tsx",
+      "bytes": 47562,
+      "sha256": "93e12bc9ebf2f9ba8924eed0e26ae4c97ae7162b4d38289808755dd809529585"
+    },
+    {
+      "path": "frontend/src/domains/city/view/CityPlan.tsx",
+      "bytes": 14256,
+      "sha256": "0596cd05018764743662c0efdfe2635bb1ec76ec7f203f5d121734f876adb000"
+    },
+    {
+      "path": "frontend/src/domains/city/view/CityScene.tsx",
+      "bytes": 25898,
+      "sha256": "c04f218483f0d0e8df0a9293e4d9b7efd13cf990b65e8f84b30b9d85f701f2ce"
+    },
+    {
+      "path": "frontend/qa/public-surface.html",
+      "bytes": 7598,
+      "sha256": "9ca182959ce5d77cea581c4a3d7cb268c1a489f953721bcae32d151525a2dd54"
+    },
+    {
+      "path": "scripts/verify_league_postgres.py",
+      "bytes": 6155,
+      "sha256": "eaa8e0c375b79c96f717c163d195b6e0502aa2e151d08570968ea8d184a49a10"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "data/benchmarks/public-surface-v1/api-test-summary.txt",
+      "bytes": 438,
+      "sha256": "61e940e89c7af1b8dab7bbbdcaf44df2085a0b67a5ac4e4b27be454ff54cafff"
+    },
+    {
+      "path": "data/benchmarks/public-surface-v1/browser-checks.json",
+      "bytes": 920,
+      "sha256": "55df7ec3f11c2aeac4261c424ce554b2992394d2865fe9da7308a3aa0af29b03"
+    },
+    {
+      "path": "data/benchmarks/public-surface-v1/data-without-rainfall.png",
+      "bytes": 37084,
+      "sha256": "b87c0db0076114e52052d27fea2c48d4961a458effe82edd14682dc35591cab0"
+    },
+    {
+      "path": "data/benchmarks/public-surface-v1/expired.png",
+      "bytes": 38392,
+      "sha256": "6963f028c0253dee469cf80433be7ad0bc098899fb35690cae59fdc9cfc26229"
+    },
+    {
+      "path": "data/benchmarks/public-surface-v1/frontend-build.txt",
+      "bytes": 999,
+      "sha256": "fb104111e480e59d7f49dd7f7b408f7fd31ae3736b06b7a934e34f852f3277d6"
+    },
+    {
+      "path": "data/benchmarks/public-surface-v1/frontend-tests.txt",
+      "bytes": 348,
+      "sha256": "21b61f67ba8a8614a225f91f8ad19f23395fe98e80539e94e11e311158c970e6"
+    },
+    {
+      "path": "data/benchmarks/public-surface-v1/hash-rejected.png",
+      "bytes": 42101,
+      "sha256": "8df0d30b5e926638a0d952ca247acf821c7ae950092f133ff7513124117cd121"
+    },
+    {
+      "path": "data/benchmarks/public-surface-v1/product-checks.json",
+      "bytes": 499,
+      "sha256": "ce0d4586972d42ae0c64290b6d796d2eba6564aef8382f6ef824a3a9a237cf38"
+    },
+    {
+      "path": "data/benchmarks/public-surface-v1/public-current-response.json",
+      "bytes": 134,
+      "sha256": "980a2dfcbb73a80f9b330a121dbae707d7aec6434d5dfa7c39c5423c4a8bd708"
+    },
+    {
+      "path": "data/benchmarks/public-surface-v1/synthetic-two-basins.png",
+      "bytes": 51263,
+      "sha256": "8c88daf99010501cad31c63bb79cebbbee7bda7d576d8c80bbe271cbc3e92e96"
+    },
+    {
+      "path": "data/benchmarks/public-surface-v1/weekly-empty-public-models.png",
+      "bytes": 85317,
+      "sha256": "96b4c85e440b3e536d03f09996615f9e0820f9e99a5a6a34f2170d81a945cd93"
+    }
+  ]
+}

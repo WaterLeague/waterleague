@@ -1,0 +1,26 @@
+[
+  {
+    "case": "unchanged-minute-poll",
+    "state": "{\"mode\":\"fresh\",\"frames\":2,\"loading\":false,\"error\":\"\",\"requests\":4}"
+  },
+  {
+    "case": "changed-hash",
+    "state": "{\"mode\":\"tamper\",\"frames\":0,\"loading\":false,\"error\":\"계산 결과가 변경되었습니다. 다시 불러와 주세요.\",\"requests\":7}"
+  },
+  {
+    "case": "expiry-before",
+    "state": "{\"mode\":\"expiry\",\"frames\":2,\"loading\":false,\"error\":\"\",\"requests\":10}"
+  },
+  {
+    "case": "expiry-after",
+    "state": "{\"mode\":\"expiry\",\"frames\":0,\"loading\":false,\"error\":\"\",\"requests\":10}"
+  },
+  {
+    "case": "publication-removed",
+    "state": "{\"mode\":\"removed\",\"frames\":0,\"loading\":false,\"error\":\"\",\"requests\":14}"
+  },
+  {
+    "case": "fetch-failed",
+    "state": "{\"mode\":\"error\",\"frames\":0,\"loading\":false,\"error\":\"전달 오류 시험\",\"requests\":15}"
+  }
+]

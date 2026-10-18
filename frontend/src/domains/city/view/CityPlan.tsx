@@ -1,3 +1,4 @@
+import type { PublicFrame } from '../../surface/service/publicSurfaceService';
 import { publicInfrastructureBuildingIds } from '../../infrastructure/service/infrastructureService';
 import { memo, useMemo } from 'react';
 import type { City, CityBuilding, CityFocus, CityTile } from '../entity/city';
@@ -33,6 +34,7 @@ type Props = {
   planningRoles?: ReadonlyMap<string, CisternSiteRole>;
   preview?: { site: SharedSite; placement: Placement } | null;
   surfaceFrame?: SurfaceFrame | null;
+  publicSurfaceFrames?: PublicFrame[];
   surfaceMetric?: SurfaceMetric;
   traceTiles: TraceTile[];
   publicAssets: InfrastructureAsset[];
@@ -66,6 +68,7 @@ type Props = {
 export const CityPlan = memo(function CityPlan({
   preview = null,
   surfaceFrame = null,
+  publicSurfaceFrames = [],
   surfaceMetric = 'depth',
   traceTiles,
   publicAssets,
@@ -340,6 +343,10 @@ export const CityPlan = memo(function CityPlan({
       {cisternGeometry && <CisternLayoutPlan geometry={cisternGeometry} />}
       <FloodTracePlan tiles={traceTiles} />
       <SurfacePlan frame={surfaceFrame} metric={surfaceMetric} />
+      {!surfaceFrame &&
+        publicSurfaceFrames.map((value) => (
+          <SurfacePlan key={value.id} frame={value.frame} metric={surfaceMetric} />
+        ))}
       {installations.map((i) => (
         <circle
           key={i.id}

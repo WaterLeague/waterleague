@@ -57,6 +57,27 @@ class ApiSecurityTests {
   }
 
   @Test
+  void publicCurrentSurfaceIsEmptyWithoutExposingPrivateJobs() throws Exception {
+    String area = "?index=0&minX=-60000&minY=-60000&maxX=60000&maxY=60000";
+    var response = get("/api/v1/surface/current" + area);
+    assertThat(response.statusCode()).isEqualTo(200);
+    assertThat(response.body()).contains("\"runs\":[]", "\"serverNow\"");
+    assertThat(response.headers().firstValue("Cache-Control")).contains("no-store");
+    var unknown = get("/api/v1/surface/current/00000000-0000-4000-8000-000000000000/frame" + area);
+    assertThat(unknown.statusCode()).isEqualTo(404);
+    assertThat(unknown.body()).doesNotContain("stackTrace", "artifacts", "public-surface");
+    for (String path :
+        new String[] {
+          "/api/v1/historical/00000000-0000-4000-8000-000000000000/surface/catalog",
+          "/api/v1/installations/00000000-0000-4000-8000-000000000000/surface/frame" + area,
+          "/api/v1/research/installations/00000000-0000-4000-8000-000000000000/surface/catalog",
+          "/api/v1/surface/current/00000000-0000-4000-8000-000000000000/catalog"
+        }) {
+      assertThat(get(path).statusCode()).isEqualTo(401);
+    }
+  }
+
+  @Test
   void protectsInstitutionAndManagementEndpoints() throws Exception {
     for (String path :
         new String[] {

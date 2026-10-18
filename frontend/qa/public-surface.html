@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>공개 계산 자동 표시 전달 시험</title>
+  </head>
+  <body style="margin: 0; background: #f2f3ee; font: 14px system-ui">
+    <div id="root"></div>
+    <script type="module">
+      if (!import.meta.env.DEV || !['localhost', '127.0.0.1', '[::1]'].includes(location.hostname))
+        throw new Error('로컬 개발 환경 전용');
+      const [
+        { default: React },
+        { createRoot },
+        { CityPlan },
+        { default: CityScene },
+        { usePublicSurfaces },
+        { PublicSurfaceControls },
+      ] = await Promise.all([
+        import('react'),
+        import('react-dom/client'),
+        import('/src/domains/city/view/CityPlan.tsx'),
+        import('/src/domains/city/view/CityScene.tsx'),
+        import('/src/domains/surface/controller/usePublicSurfaces.ts'),
+        import('/src/domains/surface/view/PublicSurfaceControls.tsx'),
+      ]);
+      const city = await (await fetch('/data/seoul-v1/city.json')).json();
+      const focus = { center: [0, 0], distance: 800, key: 0 };
+      let generation = 1;
+      const catalogHash = (i) => (generation * 2 + i).toString(16).padStart(64, '0');
+      let mode = 'fresh',
+        last = new Date().toISOString(),
+        requests = 0;
+      const ids = ['00000000-0000-4000-8000-000000000001', '00000000-0000-4000-8000-000000000002'];
+      const runs = () =>
+        ids.map((id, i) => ({
+          id,
+          basinId: `transfer-test-${i}`,
+          name: `합성 전달 시험 ${i + 1}`,
+          inputBundleSha256: 'a'.repeat(64),
+          numericalPolicySha256: 'b'.repeat(64),
+          lastFrameAt: last,
+          catalog: {
+            schemaVersion: 2,
+            catalogSha256: catalogHash(i),
+            surfaceResultSha256: 'd'.repeat(64),
+            classification: 'PUBLIC_INPUT_UNCALIBRATED_CURRENT_BASELINE',
+            startUtc: last,
+            coordinateSystem: 'EPSG:5186',
+            originProjected: city.originProjected,
+            verticalPlacement: 'TERRAIN_DRAPED_SCALAR_NOT_WATER_ELEVATION',
+            triangleCount: 1,
+            timesSeconds: [0],
+            limitations: ['합성 격자 전달 시험. 서울 침수·물리 정확성 증거 아님.'],
+            flowDirectionMethod: 'SOURCE_MOMENTUM_LOCAL_PROJECTION_JACOBIAN_V1',
+          },
+        }));
+      const realFetch = window.fetch.bind(window);
+      window.fetch = async (input, init) => {
+        const url = new URL(String(input), location.href);
+        if (!url.pathname.startsWith('/api/v1/surface/current')) return realFetch(input, init);
+        requests++;
+        if (mode === 'error')
+          return new Response(JSON.stringify({ title: '전달 오류 시험' }), { status: 503 });
+        if (url.pathname === '/api/v1/surface/current')
+          return Response.json({
+            serverNow: new Date().toISOString(),
+            runs: mode === 'removed' ? [] : runs(),
+          });
+        const i = ids.indexOf(url.pathname.split('/')[5]);
+        if (i < 0) return new Response('', { status: 404 });
+        const x = i * 500 - 350;
+        return Response.json({
+          catalogSha256: mode === 'tamper' ? 'f'.repeat(64) : catalogHash(i),
+          sourceSha256: 'e'.repeat(64),
+          index: 0,
+          timeSeconds: 0,
+          wholeDomainStorageM3: 18000,
+          cells: [
+            {
+              triangleId: 0,
+              vertices: [
+                [x, -150],
+                [x + 300, -150],
+                [x, 150],
+              ],
+              depthM: 0.4,
+              speedMps: 0.5,
+              flowDirection: i ? [0, 1] : [1, 0],
+            },
+          ],
+        });
+      };
+      const common = {
+        city,
+        regions: [],
+        tiles: [],
+        focus,
+        selected: '',
+        ownDistrictId: null,
+        viewerId: null,
+        sites: [],
+        installations: [],
+        selectedSite: '',
+        facilityType: '',
+        eligibleRoofs: new Set(),
+        occupiedRoofs: new Set(),
+        wetDistricts: [],
+        animateRain: false,
+        rainAmounts: new Map(),
+        traceTiles: [],
+        publicAssets: [],
+        selectedAssetId: '',
+        onAsset: () => {},
+        onSite: () => {},
+        onBuilding: () => {},
+        onCamera: () => {},
+      };
+      const failed = () => {
+        document.body.dataset.failed = 'true';
+      };
+      function App() {
+        const [metric, setMetric] = React.useState('speed');
+        const state = usePublicSurfaces(true, focus, city);
+        const change = (value) => {
+          generation++;
+          mode = value;
+          last = new Date(Date.now() - (value === 'expiry' ? 295000 : 0)).toISOString();
+          state.retry();
+        };
+        return React.createElement(
+          React.Fragment,
+          null,
+          React.createElement(
+            'header',
+            { style: { padding: 16 } },
+            React.createElement('b', null, '합성 전달 시험 · 운영 침수 아님 · 개인 기록 변경 없음'),
+            React.createElement(
+              'p',
+              null,
+              '실제 공통 지도·자동 조회 훅 사용. 서버 대신 이 페이지 안의 응답만 대체.'
+            ),
+            ...[
+              ['fresh', '정상 두 유역'],
+              ['expiry', '5초 뒤 만료'],
+              ['removed', '게시 철회'],
+              ['tamper', '해시 불일치'],
+              ['error', '조회 실패'],
+            ].map(([value, text]) =>
+              React.createElement('button', { key: value, onClick: () => change(value) }, text)
+            ),
+            React.createElement(
+              'output',
+              { id: 'status', style: { display: 'block', marginTop: 8 } },
+              JSON.stringify({
+                mode,
+                frames: state.frames.length,
+                loading: state.loading,
+                error: state.error,
+                requests,
+              })
+            )
+          ),
+          React.createElement(PublicSurfaceControls, {
+            state,
+            metric,
+            onMetric: setMetric,
+            renderError: false,
+          }),
+          React.createElement(
+            'div',
+            { style: { display: 'grid', gridTemplateColumns: '1fr 1fr', height: '65vh' } },
+            React.createElement(
+              'div',
+              { style: { position: 'relative', overflow: 'hidden' } },
+              React.createElement(CityPlan, {
+                ...common,
+                camera: focus,
+                districtScores: null,
+                onDistrict: () => {},
+                onNavigate: () => {},
+                publicSurfaceFrames: state.frames,
+                surfaceMetric: metric,
+              })
+            ),
+            React.createElement(
+              'div',
+              { style: { position: 'relative', overflow: 'hidden' } },
+              React.createElement(CityScene, {
+                ...common,
+                terrain: null,
+                labels: new Map(),
+                onUnavailable: failed,
+                onTraceError: failed,
+                onSurfaceError: failed,
+                rainCamera: focus,
+                preview: null,
+                publicSurfaceFrames: state.frames,
+                surfaceMetric: metric,
+              })
+            )
+          )
+        );
+      }
+      createRoot(document.getElementById('root')).render(React.createElement(App));
+    </script>
+  </body>
+</html>

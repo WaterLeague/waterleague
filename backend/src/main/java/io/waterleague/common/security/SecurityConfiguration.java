@@ -55,6 +55,8 @@ public class SecurityConfiguration {
                         "/api/v1/lab/catalog",
                         "/api/v1/leaderboard",
                         "/api/v1/weekly",
+                        "/api/v1/surface/current",
+                        "/api/v1/surface/current/{id}/frame",
                         "/api/v1/weekly/sites/*/*",
                         "/api/v1/budget",
                         "/api/v1/facilities/epa-designs-v1",

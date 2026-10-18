@@ -1,0 +1,9 @@
+$ vitest run src/domains/surface/service/surfaceService.test.ts src/domains/surface/service/publicSurfaceService.test.ts
+
+ RUN  v4.1.11 /Users/1233day/Desktop/waterleague/frontend
+
+
+ Test Files  2 passed (2)
+      Tests  12 passed (12)
+   Start at  05:31:37
+   Duration  261ms (transform 73ms, setup 0ms, import 234ms, tests 55ms, environment 0ms)
