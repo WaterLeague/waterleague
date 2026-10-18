@@ -1,0 +1,505 @@
+{
+  "schemaVersion": 1,
+  "classification": "PUBLIC_MANUFACTURER_PUMP_CURVE_NUMERICAL_EVIDENCE",
+  "catalogHash": "f27bbf2baeb0c07848539aaf944c7771e0f391ee7c864166f2c646d180f5dde8",
+  "manufacturerPdfSha256": "359a742139ec004925f7190fcce8f7e0914206443e97fb05bf1cd07e8864a647",
+  "sourceUrl": "https://www.lenntech.com/Data-sheets/KSB-AmaCan-P-50-Hz-EN-L.pdf",
+  "sourcePage": 14,
+  "frequencyHz": 50,
+  "speedRpm": 1450,
+  "bladeAngleDeg": 17,
+  "engine": {
+    "schemaVersion": 1,
+    "engineVersion": "5.2.4",
+    "revision": "7952ca837988b1c32f791812eccc9fd64547e093",
+    "sourceArchiveSha256": "3f76a199573088ce47ff02491c529afb73d9953ee9d948dfc89dcd4981b4c0c0",
+    "metricsSha256": "9a90e94998318db8bc2e25997d4c076bd8b5f09b171df768de98c4ba1c6bd28d",
+    "pumpObserverSha256": "973e20a5e81855ced051a87ed3a1684ce246063a459301f5c6976ab7e5ab36a2",
+    "observerSha256": "c320fa1849cb4b03254167b107d1a9fefc7171b10c6ce397a0b82bb5c08c53e7",
+    "facilityObserverSha256": "fd6692274cec934d4f832223c69d8e3bdf31112fb02b875b153f70366cf21869",
+    "facilityObserverVersion": 1,
+    "metricsVersion": 1,
+    "pumpObserverVersion": 1,
+    "builderSha256": "0911b076d7c6c3db60c6138b613ae0e0f90829fb9d40faac99404d21fb17ba09",
+    "binarySha256": "7e776f4a1b9032e71e2beb0c1d85f6a09f270141074c4d290d22ab67dc89ccc9",
+    "modification": "READ_ONLY_PUMP_LID_AND_OUTFALL_METRICS_NO_SOLVER_CHANGES",
+    "adapterSha256": "6de77ee4fda573b5f3b98718ec65b4a344cb3e281e3167cc880fa9ba011a5c19",
+    "facilityMetricsAdapterSha256": "2a8fbb64df92edc48e9a11741ccb6d428a5bc7994a487733eb54583071cd0eb1",
+    "facilityAdapterSha256": "d8a17fe1650df27dc0a46f48deb92f6e4a04bf69fc6d17e383484ba962df75db",
+    "metricsAdapterSha256": "f0219c6affedd4b95b049815c4242b7fe8f56abe917b97f8c2d55ca2c65802df",
+    "baseAdapterSha256": "f9fa6734de7a3adc64f1bd456862d80260115c656a6bc1c0b090841883bfb0d7",
+    "qualityAdapterSha256": "c78323b383d37be56c34b8cc2d5084e4a92e3de6bbc2a818d914acbabf3eb930"
+  },
+  "syntheticCases": {
+    "normal": {
+      "outSha256": "22bcdff6809805e0b6e36e63b5cac9f0f0f19306283477976800486404ea7ba0",
+      "numericalStatus": "PASSED",
+      "pumpOperation": {
+        "method": "NATIVE_ROUTING_STEP_PUMP_OBSERVER_V1",
+        "pumps": [
+          {
+            "transferredM3": 80.00607041455093,
+            "runningSeconds": 335.9,
+            "flowingSeconds": 335.9,
+            "startCount": 1.0,
+            "peakFlowM3s": 0.2684550821987309,
+            "minimumOperatingHeadM": 2.005817140640472,
+            "maximumOperatingHeadM": 3.9225700001941903,
+            "outsideHeadCurveSeconds": 0.0,
+            "outsideFlowCurveSeconds": 0.0,
+            "inRangeShaftEnergyKwh": 0.9669234381907381,
+            "maximumRequiredNpshM": 5.456812711264854,
+            "observedSeconds": 600.0,
+            "routingSteps": 12000.0,
+            "linkId": "WLPU_Lift",
+            "curveStatus": "PASSED",
+            "shaftEnergyKwh": 0.9669234381907381,
+            "electricEnergyKwh": null,
+            "cavitationStatus": "NOT_EVALUATED",
+            "deliveryFloodingM3": 0.0,
+            "deliveryStatus": "PASSED"
+          }
+        ],
+        "volumeIntegration": "TRAPEZOIDAL_INTERNAL_TRANSFER_NOT_EXTERNAL_OUTFLOW",
+        "shaftPowerIntegration": "END_OF_NATIVE_STEP_RECTANGLE_MANUFACTURER_P_Q_CURVE",
+        "curveStatus": "PASSED",
+        "rankingEligible": false,
+        "deliveryStatus": "PASSED"
+      },
+      "convergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 12000,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      }
+    },
+    "replay": {
+      "outSha256": "22bcdff6809805e0b6e36e63b5cac9f0f0f19306283477976800486404ea7ba0",
+      "numericalStatus": "PASSED",
+      "pumpOperation": {
+        "method": "NATIVE_ROUTING_STEP_PUMP_OBSERVER_V1",
+        "pumps": [
+          {
+            "transferredM3": 80.00607041455093,
+            "runningSeconds": 335.9,
+            "flowingSeconds": 335.9,
+            "startCount": 1.0,
+            "peakFlowM3s": 0.2684550821987309,
+            "minimumOperatingHeadM": 2.005817140640472,
+            "maximumOperatingHeadM": 3.9225700001941903,
+            "outsideHeadCurveSeconds": 0.0,
+            "outsideFlowCurveSeconds": 0.0,
+            "inRangeShaftEnergyKwh": 0.9669234381907381,
+            "maximumRequiredNpshM": 5.456812711264854,
+            "observedSeconds": 600.0,
+            "routingSteps": 12000.0,
+            "linkId": "WLPU_Lift",
+            "curveStatus": "PASSED",
+            "shaftEnergyKwh": 0.9669234381907381,
+            "electricEnergyKwh": null,
+            "cavitationStatus": "NOT_EVALUATED",
+            "deliveryFloodingM3": 0.0,
+            "deliveryStatus": "PASSED"
+          }
+        ],
+        "volumeIntegration": "TRAPEZOIDAL_INTERNAL_TRANSFER_NOT_EXTERNAL_OUTFLOW",
+        "shaftPowerIntegration": "END_OF_NATIVE_STEP_RECTANGLE_MANUFACTURER_P_Q_CURVE",
+        "curveStatus": "PASSED",
+        "rankingEligible": false,
+        "deliveryStatus": "PASSED"
+      },
+      "convergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 12000,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      }
+    },
+    "old-observer": {
+      "outSha256": "22bcdff6809805e0b6e36e63b5cac9f0f0f19306283477976800486404ea7ba0",
+      "numericalStatus": "PASSED",
+      "convergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 12000,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      }
+    },
+    "higher-tail": {
+      "outSha256": "a0733d9c634c4d61e8fafeaba82493c676b38f027503e0cdf5c185b231a4450c",
+      "numericalStatus": "PASSED",
+      "pumpOperation": {
+        "method": "NATIVE_ROUTING_STEP_PUMP_OBSERVER_V1",
+        "pumps": [
+          {
+            "transferredM3": 80.00589242934981,
+            "runningSeconds": 375.95,
+            "flowingSeconds": 375.95,
+            "startCount": 1.0,
+            "peakFlowM3s": 0.2684550821987309,
+            "minimumOperatingHeadM": 2.005817140640472,
+            "maximumOperatingHeadM": 4.89115447034024,
+            "outsideHeadCurveSeconds": 0.0,
+            "outsideFlowCurveSeconds": 0.0,
+            "inRangeShaftEnergyKwh": 1.2507341201286186,
+            "maximumRequiredNpshM": 8.602300308104438,
+            "observedSeconds": 600.0,
+            "routingSteps": 12000.0,
+            "linkId": "WLPU_Lift",
+            "curveStatus": "PASSED",
+            "shaftEnergyKwh": 1.2507341201286186,
+            "electricEnergyKwh": null,
+            "cavitationStatus": "NOT_EVALUATED",
+            "deliveryFloodingM3": 0.0,
+            "deliveryStatus": "PASSED"
+          }
+        ],
+        "volumeIntegration": "TRAPEZOIDAL_INTERNAL_TRANSFER_NOT_EXTERNAL_OUTFLOW",
+        "shaftPowerIntegration": "END_OF_NATIVE_STEP_RECTANGLE_MANUFACTURER_P_Q_CURVE",
+        "curveStatus": "PASSED",
+        "rankingEligible": false,
+        "deliveryStatus": "PASSED"
+      },
+      "convergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 12000,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      }
+    },
+    "long-pipe": {
+      "outSha256": "f50632b959c9d55466a605cdb43afd06e6a41db7711b55d434b0b605510bc3c7",
+      "numericalStatus": "FAILED",
+      "pumpOperation": {
+        "method": "NATIVE_ROUTING_STEP_PUMP_OBSERVER_V1",
+        "pumps": [
+          {
+            "transferredM3": 80.0148746530222,
+            "runningSeconds": 347.05,
+            "flowingSeconds": 347.05,
+            "startCount": 1.0,
+            "peakFlowM3s": 0.26853627783820816,
+            "minimumOperatingHeadM": 2.0012296664965974,
+            "maximumOperatingHeadM": 5.106078642921034,
+            "outsideHeadCurveSeconds": 7.799999999999997,
+            "outsideFlowCurveSeconds": 0.0,
+            "inRangeShaftEnergyKwh": 1.0443110286905235,
+            "maximumRequiredNpshM": 9.149716,
+            "observedSeconds": 600.0,
+            "routingSteps": 12000.0,
+            "linkId": "WLPU_Lift",
+            "curveStatus": "FAILED",
+            "shaftEnergyKwh": null,
+            "electricEnergyKwh": null,
+            "cavitationStatus": "NOT_EVALUATED",
+            "deliveryFloodingM3": 0.0,
+            "deliveryStatus": "PASSED"
+          }
+        ],
+        "volumeIntegration": "TRAPEZOIDAL_INTERNAL_TRANSFER_NOT_EXTERNAL_OUTFLOW",
+        "shaftPowerIntegration": "END_OF_NATIVE_STEP_RECTANGLE_MANUFACTURER_P_Q_CURVE",
+        "curveStatus": "FAILED",
+        "rankingEligible": false,
+        "deliveryStatus": "PASSED"
+      },
+      "convergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 12000,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      }
+    },
+    "outside-head": {
+      "outSha256": "6ad182c93f7f0170fd75043c11ab09349bc486a9348a380c8b278039b6af54b6",
+      "numericalStatus": "FAILED",
+      "pumpOperation": {
+        "method": "NATIVE_ROUTING_STEP_PUMP_OBSERVER_V1",
+        "pumps": [
+          {
+            "transferredM3": 80.01240124134137,
+            "runningSeconds": 408.45,
+            "flowingSeconds": 408.45,
+            "startCount": 1.0,
+            "peakFlowM3s": 0.2684550821987309,
+            "minimumOperatingHeadM": 2.005817140640472,
+            "maximumOperatingHeadM": 7.875027391501647,
+            "outsideHeadCurveSeconds": 393.65,
+            "outsideFlowCurveSeconds": 0.0,
+            "inRangeShaftEnergyKwh": 1.4594540462639978,
+            "maximumRequiredNpshM": 9.149716,
+            "observedSeconds": 600.0,
+            "routingSteps": 12000.0,
+            "linkId": "WLPU_Lift",
+            "curveStatus": "FAILED",
+            "shaftEnergyKwh": null,
+            "electricEnergyKwh": null,
+            "cavitationStatus": "NOT_EVALUATED",
+            "deliveryFloodingM3": 0.0,
+            "deliveryStatus": "PASSED"
+          }
+        ],
+        "volumeIntegration": "TRAPEZOIDAL_INTERNAL_TRANSFER_NOT_EXTERNAL_OUTFLOW",
+        "shaftPowerIntegration": "END_OF_NATIVE_STEP_RECTANGLE_MANUFACTURER_P_Q_CURVE",
+        "curveStatus": "FAILED",
+        "rankingEligible": false,
+        "deliveryStatus": "PASSED"
+      },
+      "convergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 12000,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      }
+    },
+    "delivery-flood": {
+      "outSha256": "6322e8f3392b9dfa7fd297543026734c50e434f9d8429c160263dd50c0862a4e",
+      "numericalStatus": "FAILED",
+      "pumpOperation": {
+        "method": "NATIVE_ROUTING_STEP_PUMP_OBSERVER_V1",
+        "pumps": [
+          {
+            "transferredM3": 80.0083244941088,
+            "runningSeconds": 318.35,
+            "flowingSeconds": 318.35,
+            "startCount": 1.0,
+            "peakFlowM3s": 0.2684550821987309,
+            "minimumOperatingHeadM": 2.005817140640472,
+            "maximumOperatingHeadM": 3.310025541089668,
+            "outsideHeadCurveSeconds": 0.0,
+            "outsideFlowCurveSeconds": 0.0,
+            "inRangeShaftEnergyKwh": 0.8274141471887854,
+            "maximumRequiredNpshM": 5.456812711264854,
+            "observedSeconds": 600.0,
+            "routingSteps": 12000.0,
+            "linkId": "WLPU_Lift",
+            "curveStatus": "PASSED",
+            "shaftEnergyKwh": 0.8274141471887854,
+            "electricEnergyKwh": null,
+            "cavitationStatus": "NOT_EVALUATED",
+            "deliveryFloodingM3": 79.3814995424915,
+            "deliveryStatus": "FAILED"
+          }
+        ],
+        "volumeIntegration": "TRAPEZOIDAL_INTERNAL_TRANSFER_NOT_EXTERNAL_OUTFLOW",
+        "shaftPowerIntegration": "END_OF_NATIVE_STEP_RECTANGLE_MANUFACTURER_P_Q_CURVE",
+        "curveStatus": "PASSED",
+        "rankingEligible": false,
+        "deliveryStatus": "FAILED"
+      },
+      "convergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 12000,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      }
+    },
+    "dry": {
+      "outSha256": "58b20137d38e0f7186a2213ff4d6a5a776757423082748d074cdcbfb45756f95",
+      "numericalStatus": "PASSED",
+      "pumpOperation": {
+        "method": "NATIVE_ROUTING_STEP_PUMP_OBSERVER_V1",
+        "pumps": [
+          {
+            "transferredM3": 0.0,
+            "runningSeconds": 0.0,
+            "flowingSeconds": 0.0,
+            "startCount": 0.0,
+            "peakFlowM3s": 0.0,
+            "minimumOperatingHeadM": 0.0,
+            "maximumOperatingHeadM": 0.0,
+            "outsideHeadCurveSeconds": 0.0,
+            "outsideFlowCurveSeconds": 0.0,
+            "inRangeShaftEnergyKwh": 0.0,
+            "maximumRequiredNpshM": 0.0,
+            "observedSeconds": 600.0,
+            "routingSteps": 12000.0,
+            "linkId": "WLPU_Lift",
+            "curveStatus": "PASSED",
+            "shaftEnergyKwh": 0.0,
+            "electricEnergyKwh": null,
+            "cavitationStatus": "NOT_EVALUATED",
+            "deliveryFloodingM3": 0.0,
+            "deliveryStatus": "PASSED"
+          }
+        ],
+        "volumeIntegration": "TRAPEZOIDAL_INTERNAL_TRANSFER_NOT_EXTERNAL_OUTFLOW",
+        "shaftPowerIntegration": "END_OF_NATIVE_STEP_RECTANGLE_MANUFACTURER_P_Q_CURVE",
+        "curveStatus": "PASSED",
+        "rankingEligible": false,
+        "deliveryStatus": "PASSED"
+      },
+      "convergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 12000,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      }
+    },
+    "half-step": {
+      "outSha256": "f758b20bcf13accfcc5f0b6dc135da8def0ab649b32ee2a1c4377b20fcdc7423",
+      "numericalStatus": "PASSED",
+      "pumpOperation": {
+        "method": "NATIVE_ROUTING_STEP_PUMP_OBSERVER_V1",
+        "pumps": [
+          {
+            "transferredM3": 80.00609739263606,
+            "runningSeconds": 335.9,
+            "flowingSeconds": 335.9,
+            "startCount": 1.0,
+            "peakFlowM3s": 0.2685071549783146,
+            "minimumOperatingHeadM": 2.0029088523561858,
+            "maximumOperatingHeadM": 3.9225946667853298,
+            "outsideHeadCurveSeconds": 0.0,
+            "outsideFlowCurveSeconds": 0.0,
+            "inRangeShaftEnergyKwh": 0.9669229407766129,
+            "maximumRequiredNpshM": 5.462614031596542,
+            "observedSeconds": 600.0,
+            "routingSteps": 24000.0,
+            "linkId": "WLPU_Lift",
+            "curveStatus": "PASSED",
+            "shaftEnergyKwh": 0.9669229407766129,
+            "electricEnergyKwh": null,
+            "cavitationStatus": "NOT_EVALUATED",
+            "deliveryFloodingM3": 0.0,
+            "deliveryStatus": "PASSED"
+          }
+        ],
+        "volumeIntegration": "TRAPEZOIDAL_INTERNAL_TRANSFER_NOT_EXTERNAL_OUTFLOW",
+        "shaftPowerIntegration": "END_OF_NATIVE_STEP_RECTANGLE_MANUFACTURER_P_Q_CURVE",
+        "curveStatus": "PASSED",
+        "rankingEligible": false,
+        "deliveryStatus": "PASSED"
+      },
+      "convergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 24000,
+        "nonConvergedSteps": 0,
+        "nonConvergedPercent": 0.0
+      }
+    }
+  },
+  "publicNetworkComparison": {
+    "sourceUrl": "https://doi.org/10.17632/dzzwvd8rjk.3",
+    "sourceOriginalSha256": "8ce278a3d2b58df3c2a5fd1232160bcabb324389746ee0c878792acf91abbdbb",
+    "classification": "PUBLIC_NETWORK_WITH_EXPLICIT_STORAGE_AND_PUMP_DESIGN_NOT_EXISTING_ASSET",
+    "bundlePath": "data/runs/pump-seocho-design-v3",
+    "manifestSha256": "0259b4c4eb6c03575c313cb6053230952e8ac980e87b56f4d6903dd3c3287acb",
+    "numericalStatus": "PASSED",
+    "signedReductionM3": {
+      "outflowM3": -0.22000332176685333,
+      "floodingM3": -190.67366940621287
+    },
+    "pumpOperation": {
+      "method": "NATIVE_ROUTING_STEP_PUMP_OBSERVER_V1",
+      "pumps": [
+        {
+          "transferredM3": 191.1915986536587,
+          "runningSeconds": 864.3420000000042,
+          "flowingSeconds": 864.3420000000042,
+          "startCount": 3.0,
+          "peakFlowM3s": 0.2620480414158383,
+          "minimumOperatingHeadM": 2.3570255092904158,
+          "maximumOperatingHeadM": 4.911972412718082,
+          "outsideHeadCurveSeconds": 0.0,
+          "outsideFlowCurveSeconds": 0.0,
+          "inRangeShaftEnergyKwh": 2.742191155620825,
+          "maximumRequiredNpshM": 8.699732299086595,
+          "observedSeconds": 86339.0,
+          "routingSteps": 1392566.0,
+          "linkId": "WLPU_Lift",
+          "curveStatus": "PASSED",
+          "shaftEnergyKwh": 2.742191155620825,
+          "electricEnergyKwh": null,
+          "cavitationStatus": "NOT_EVALUATED",
+          "deliveryFloodingM3": 0.0,
+          "deliveryStatus": "PASSED"
+        }
+      ],
+      "volumeIntegration": "TRAPEZOIDAL_INTERNAL_TRANSFER_NOT_EXTERNAL_OUTFLOW",
+      "shaftPowerIntegration": "END_OF_NATIVE_STEP_RECTANGLE_MANUFACTURER_P_Q_CURVE",
+      "curveStatus": "PASSED",
+      "rankingEligible": false,
+      "deliveryStatus": "PASSED"
+    },
+    "replay": [
+      {
+        "id": "baseline",
+        "outSha256": "2e2fbf6fbb7ecc5477b898d32ebfd5578cdbe508b31c7032fdc49e3e258b9767",
+        "binaryEqual": true,
+        "pumpLedgerEqual": true,
+        "outfallMetricsEqual": true
+      },
+      {
+        "id": "strategy",
+        "outSha256": "82b66adda64a849081d8ff1653d763263a2fa0d145d917c66727ebcba9004441",
+        "binaryEqual": true,
+        "pumpLedgerEqual": true,
+        "outfallMetricsEqual": true
+      }
+    ],
+    "cases": [
+      {
+        "id": "baseline",
+        "inputSha256": "311ad23c31fe021ba33d0699f344f98410824504ed785ece235e388be08486ba",
+        "numericalStatus": "PASSED",
+        "numericalQuality": {
+          "policyVersion": "network-continuity-convergence-v2",
+          "continuityLimitPercent": 1,
+          "routingBalance": {
+            "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+            "totalInM3": 3699178.1129746106,
+            "totalOutIncludingStorageM3": 3699781.525566917,
+            "residualM3": -603.4125923062675,
+            "continuityPercent": -0.016312071867797866,
+            "absoluteToleranceM3": 1e-08,
+            "allowedResidualM3": 36991.78112974611
+          },
+          "allowedNonConvergedSteps": 0,
+          "failureReasons": [],
+          "status": "PASSED"
+        },
+        "convergence": {
+          "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+          "routingSteps": 1392566,
+          "nonConvergedSteps": 0,
+          "nonConvergedPercent": 0.0
+        }
+      },
+      {
+        "id": "strategy",
+        "inputSha256": "6d8ad2d1b489677af51c2b3aae26363613d531cb921547385f434347a32c97d0",
+        "numericalStatus": "PASSED",
+        "numericalQuality": {
+          "policyVersion": "network-continuity-convergence-v2",
+          "continuityLimitPercent": 1,
+          "routingBalance": {
+            "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+            "totalInM3": 3699178.1129909256,
+            "totalOutIncludingStorageM3": 3699781.387951535,
+            "residualM3": -603.2749606096186,
+            "continuityPercent": -0.016308351265677444,
+            "absoluteToleranceM3": 1e-08,
+            "allowedResidualM3": 36991.78112990926
+          },
+          "allowedNonConvergedSteps": 0,
+          "failureReasons": [],
+          "status": "PASSED"
+        },
+        "convergence": {
+          "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+          "routingSteps": 1392566,
+          "nonConvergedSteps": 0,
+          "nonConvergedPercent": 0.0
+        }
+      }
+    ]
+  },
+  "rankingEligible": false,
+  "siteValidation": false,
+  "limitations": [
+    "50Hz 제품의 공개 그래프 판독 제원이며 서울 기존 펌프 실측값 아님",
+    "NPSHa·최소 잠김·현장 손실·공사비 미확보",
+    "수치 검사 통과와 효과 개선은 별개; 공개 관망 비교의 월류 악화 보존",
+    "원본·파생 입력·코드·엔진·원장 보존, 회원 설계 화면과 운영 지도 설치는 미연결"
+  ]
+}
