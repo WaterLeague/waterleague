@@ -52,11 +52,14 @@ import { RiverLayer } from '../../surface/view/RiverLayer';
 import { WaterScene } from '../../surface/view/WaterScene';
 import { calmWater, type WaterWeather } from '../../surface/service/waterAppearanceService';
 import type { CisternGeometryPreview } from '../../installation/dto/cisternLayoutDto';
+import { createFloodField } from '../../urban/service/floodFieldService';
+import type { FloodStats } from '../../urban/service/floodMovementService';
 import type { LivePlace } from '../../urban/entity/liveUrban';
 import type { Street, UrbanTime, Population } from '../../urban/entity/urban';
 import { UrbanEnvironment } from '../../urban/view/UrbanEnvironment';
 import { BuildingMaterial } from '../../urban/view/BuildingMaterial';
 import { StreetLayer } from '../../urban/view/StreetLayer';
+import { mapNearPlane } from '../service/cameraDepthService';
 import { StreetLife } from '../../urban/view/StreetLife';
 const TerrainContext = createContext<Terrain | null>(null);
 const mapEvents: Parameters<typeof Canvas>[0]['events'] = (state) => ({
@@ -251,6 +254,16 @@ function Controls({
         camera.position.y,
         terrainHeight(terrain, [camera.position.x, -camera.position.z]) + 15
       );
+      if (camera instanceof THREE.PerspectiveCamera) {
+        // 서울 축척에서도 도로와 얕은 수면의 깊이 차이가 버퍼에서 소실되지 않게 한다.
+        const clearance =
+          camera.position.y - terrainHeight(terrain, [camera.position.x, -camera.position.z]);
+        const near = mapNearPlane(camera.position.distanceTo(target), clearance);
+        if (Math.abs(camera.near - near) > 0.01) {
+          camera.near = near;
+          camera.updateProjectionMatrix();
+        }
+      }
       const now = performance.now();
       if (!force && now - last.current < 350) return;
       last.current = now;
@@ -370,6 +383,8 @@ const CityScene = memo(function CityScene({
   streets,
   population,
   livePlaces,
+  historical,
+  onFloodStats,
   waterWeather = calmWater,
   surfaceFrame = null,
   publicSurfaceFrames = [],
@@ -412,6 +427,8 @@ const CityScene = memo(function CityScene({
   streets: Street[];
   population: Population | null;
   livePlaces: LivePlace[];
+  historical: boolean;
+  onFloodStats: (stats: FloodStats) => void;
   cisternGeometry?: CisternGeometryPreview | null;
   planningRoles?: ReadonlyMap<string, CisternSiteRole>;
   surfaceFrame?: SurfaceFrame | null;
@@ -450,6 +467,11 @@ const CityScene = memo(function CityScene({
   facilityType: FacilityType | '';
   viewerId: string | null;
 }) {
+  const flood = createFloodField(
+    surfaceFrame ? [surfaceFrame] : publicSurfaceFrames.map((value) => value.frame),
+    traceTiles,
+    historical
+  );
   const publicBuildings = useMemo(
     () => publicInfrastructureBuildingIds(publicAssets),
     [publicAssets]
@@ -532,6 +554,8 @@ const CityScene = memo(function CityScene({
               clock={urbanClock}
               population={population}
               livePlaces={livePlaces}
+              flood={flood}
+              onFloodStats={onFloodStats}
               city={city}
               animate={animateRain}
             />

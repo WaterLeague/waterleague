@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>침수 도로·이동체 검증</title>
+    <style>
+      body {
+        margin: 0;
+        background: #d9e5e7;
+        color: #203a42;
+        font: 14px system-ui;
+      }
+      header {
+        padding: 12px 18px;
+        background: #182f39;
+        color: #f0d6a7;
+      }
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+        padding: 12px 18px;
+      }
+      button,
+      select {
+        padding: 7px 12px;
+        border: 1px solid #9eafb1;
+        border-radius: 18px;
+        background: #f3f6f2;
+        color: #203a42;
+      }
+      button[aria-pressed='true'] {
+        background: #204b57;
+        color: white;
+      }
+      .status {
+        padding: 0 18px 10px;
+        display: flex;
+        gap: 18px;
+      }
+      input {
+        width: 180px;
+      }
+      canvas {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <header><b>침수 도로·보행 반응 검증</b> · 합성 입력 · 실제 관측/피해 통계 아님</header>
+    <div id="root"></div>
+    <script type="module">
+      if (!import.meta.env.DEV || !['localhost', '127.0.0.1', '[::1]'].includes(location.hostname))
+        throw new Error('로컬 개발 환경 전용');
+      const [
+        { default: React },
+        { createRoot },
+        { Canvas, useFrame },
+        { OrbitControls },
+        { WaterScene },
+        { SurfaceLayer },
+        { FloodTraceLayer },
+        { StreetLayer },
+        { StreetLife },
+        { createFloodField },
+        { useUrbanTime },
+      ] = await Promise.all([
+        import('react'),
+        import('react-dom/client'),
+        import('@react-three/fiber'),
+        import('@react-three/drei'),
+        import('/src/domains/surface/view/WaterScene.tsx'),
+        import('/src/domains/surface/view/SurfaceLayer.tsx'),
+        import('/src/domains/floodtrace/view/FloodTraceLayer.tsx'),
+        import('/src/domains/urban/view/StreetLayer.tsx'),
+        import('/src/domains/urban/view/StreetLife.tsx'),
+        import('/src/domains/urban/service/floodFieldService.ts'),
+        import('/src/domains/urban/controller/useUrbanTime.ts'),
+      ]);
+      const h = React.createElement,
+        origin = '2022-08-08T09:00:00Z',
+        epoch = Date.parse(origin),
+        weather = { wind: [2, 1], windSpeed: Math.sqrt(5), rain: 0 };
+      const roads = [-24, 0, 24, 54].map((y, i) => ({
+        id: 'fixture-road-' + i,
+        class: 'residential',
+        districtId: '1',
+        widthM: 8,
+        widthSource: 'DISPLAY_ASSUMPTION',
+        walk: false,
+        motor: true,
+        oneway: 0,
+        sidewalk: 'both',
+        bridge: i === 3,
+        coordinates: [
+          [-120, y],
+          [120, y],
+        ],
+      }));
+      const vertices = [
+        [
+          [-10, -40],
+          [40, -40],
+          [40, 65],
+        ],
+        [
+          [-10, -40],
+          [40, 65],
+          [-10, 65],
+        ],
+      ];
+      const traces = [
+        {
+          eventId: 'seoul-20220808',
+          id: 'fixture',
+          path: '',
+          triangleVertices: vertices.flat(2),
+        },
+      ];
+      const city = { districts: [{ id: '1', areaKm2: 1 }] },
+        population = {
+          event2022: { '20220808:1': Array(24).fill(30000) },
+          reference2025: Object.fromEntries(
+            Array.from({ length: 7 }, (_, i) => [i + ':1', Array(24).fill(30000)])
+          ),
+        };
+      function App() {
+        const [kind, setKind] = React.useState('shallow'),
+          [historical, setHistorical] = React.useState(true),
+          [playing, setPlaying] = React.useState(false),
+          [seconds, setSeconds] = React.useState(8),
+          [speed, setSpeed] = React.useState(1),
+          [stats, setStats] = React.useState({ stopped: 0, exposed: 0, avoiding: 0, stranded: 0 }),
+          [status, setStatus] = React.useState('형상 준비 중');
+        React.useEffect(() => {
+          if (!playing || !historical) return;
+          let at = performance.now();
+          const timer = setInterval(() => {
+            const next = performance.now();
+            setSeconds((s) => s + ((next - at) / 1000) * speed);
+            at = next;
+          }, 100);
+          return () => clearInterval(timer);
+        }, [playing, historical, speed]);
+        const clock = useUrbanTime(
+          historical,
+          new Date(epoch + seconds * 1000).toISOString(),
+          playing,
+          speed,
+          origin
+        );
+        const frame = React.useMemo(
+          () => ({
+            catalogSha256: 'a'.repeat(64),
+            sourceSha256: 'b'.repeat(64),
+            index: 0,
+            timeSeconds: 0,
+            wholeDomainStorageM3: 0,
+            cells: vertices.map((v, i) => ({
+              triangleId: i,
+              vertices: v,
+              depthM: kind === 'deep' ? 1.6 : 0.03,
+              speedMps: kind === 'deep' ? 1 : 0.1,
+              flowDirection: [1, 0],
+            })),
+          }),
+          [kind]
+        );
+        const isRecord = kind === 'record',
+          isDry = kind === 'dry',
+          field = createFloodField(
+            isRecord || isDry ? [] : [frame],
+            isRecord ? traces : [],
+            historical
+          );
+        const onStats = React.useCallback(
+          (value) =>
+            setStats((previous) =>
+              JSON.stringify(previous) === JSON.stringify(value) ? previous : value
+            ),
+          []
+        );
+        const failed = React.useCallback(() => setStatus('형상 오류'), []);
+        return h(
+          React.Fragment,
+          null,
+          h(
+            'div',
+            { className: 'controls' },
+            ...['shallow', 'deep', 'record', 'dry'].map((value, i) =>
+              h(
+                'button',
+                { key: value, 'aria-pressed': kind === value, onClick: () => setKind(value) },
+                ['얕은 침수 3cm', '깊은 침수 1.6m', '과거 침수흔적', '침수 해제'][i]
+              )
+            ),
+            h(
+              'button',
+              { onClick: () => setHistorical((v) => !v) },
+              historical ? '재해 시계 → 주간 시계' : '주간 시계 → 재해 시계'
+            ),
+            h('button', { onClick: () => setPlaying((v) => !v) }, playing ? '일시정지' : '재생'),
+            h(
+              'label',
+              null,
+              '배속 ',
+              h(
+                'select',
+                {
+                  'aria-label': '재생 배속',
+                  value: speed,
+                  onChange: (e) => setSpeed(Number(e.target.value)),
+                },
+                ...[1, 2, 3, 5, 10, 3600].map((v) => h('option', { key: v, value: v }, v + '×'))
+              )
+            ),
+            h(
+              'label',
+              null,
+              '재생 시각 ',
+              h('input', {
+                'aria-label': '재생 시각',
+                type: 'range',
+                min: 0,
+                max: 60,
+                step: 1,
+                value: Math.min(60, seconds),
+                onChange: (e) => {
+                  setPlaying(false);
+                  setSeconds(Number(e.target.value));
+                },
+              })
+            ),
+            h('output', null, seconds.toFixed(1) + '초')
+          ),
+          h(
+            'div',
+            { className: 'status' },
+            h(
+              'strong',
+              { role: 'status' },
+              `감속·정차 ${stats.stopped} · 침수 노출 ${stats.exposed} · 회피·대피 ${stats.avoiding} · 고립 ${stats.stranded}`
+            ),
+            h('span', null, status),
+            h('span', null, '뒤쪽 교량은 지표 침수 반응 제외')
+          ),
+          h(
+            'div',
+            { style: { height: 'calc(100dvh - 152px)' } },
+            h(
+              Canvas,
+              {
+                dpr: 1,
+                frameloop: 'always',
+                camera: { position: [75, 60, 115], near: 5, far: 1500, fov: 48 },
+                onCreated: ({ gl }) => {
+                  gl.debug.onShaderError = () => setStatus('셰이더 오류');
+                  setStatus('WebGL 렌더');
+                },
+              },
+              h(
+                WaterScene,
+                { animate: !historical || playing, clock },
+                h('color', { attach: 'background', args: ['#bacbd0'] }),
+                h('ambientLight', { intensity: 1.8 }),
+                h('directionalLight', { position: [-30, 60, 50], intensity: 2 }),
+                h(
+                  'mesh',
+                  { rotation: [-Math.PI / 2, 0, 0], position: [0, 0, 0] },
+                  h('planeGeometry', { args: [400, 300] }),
+                  h('meshStandardMaterial', { color: '#c4c8b7', roughness: 0.9 })
+                ),
+                h(StreetLayer, { roads, terrain: null, detail: true }),
+                h(StreetLife, {
+                  roads,
+                  terrain: null,
+                  center: [10, 0],
+                  distance: 200,
+                  clock,
+                  population,
+                  livePlaces: [],
+                  flood: field,
+                  onFloodStats: onStats,
+                  city,
+                  animate: !historical || playing,
+                }),
+                isRecord
+                  ? h(FloodTraceLayer, { tiles: traces, terrain: null, weather, onError: failed })
+                  : !isDry
+                    ? h(SurfaceLayer, {
+                        frame,
+                        metric: 'depth',
+                        terrain: null,
+                        weather,
+                        onError: failed,
+                      })
+                    : null,
+                ...[
+                  [-45, -13],
+                  [62, 36],
+                ].map(([x, z], i) =>
+                  h(
+                    'mesh',
+                    { key: i, position: [x, 8, z] },
+                    h('boxGeometry', { args: [9, 16, 8] }),
+                    h('meshStandardMaterial', { color: i ? '#b3b7bd' : '#d4ba9c' })
+                  )
+                ),
+                h(OrbitControls, {
+                  target: [10, 0, -8],
+                  minDistance: 12,
+                  maxDistance: 400,
+                  maxPolarAngle: Math.PI * 0.48,
+                })
+              )
+            )
+          )
+        );
+      }
+      createRoot(document.getElementById('root')).render(h(App));
+    </script>
+  </body>
+</html>

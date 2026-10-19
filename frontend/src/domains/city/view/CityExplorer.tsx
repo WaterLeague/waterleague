@@ -4,6 +4,7 @@ import { PublicSurfaceControls } from '../../surface/view/PublicSurfaceControls'
 import { placementAreaLimit } from '../../installation/service/placementAreaLimit';
 import { lazy, Suspense, useEffect, useCallback, useState, useRef, useMemo } from 'react';
 import { useUrbanTime } from '../../urban/controller/useUrbanTime';
+import { emptyFloodStats, type FloodStats } from '../../urban/service/floodMovementService';
 import { useLiveUrban } from '../../urban/controller/useLiveUrban';
 import { LiveUrbanSource } from '../../urban/view/LiveUrbanSource';
 import { useUrbanData } from '../../urban/controller/useUrbanData';
@@ -98,6 +99,14 @@ function Explorer({
   onExit,
 }: { city: City; regions: CityPlayRegion[]; eligibility: CityEligibility } & PlayProps) {
   const researchMode = mode === 'historical';
+  const [floodStats, setFloodStats] = useState<FloodStats>(emptyFloodStats);
+  const onFloodStats = useCallback(
+    (value: FloodStats) =>
+      setFloodStats((previous) =>
+        JSON.stringify(previous) === JSON.stringify(value) ? previous : value
+      ),
+    []
+  );
   const { terrain, error: terrainError } = useTerrain();
   const infrastructure = useInfrastructure();
   const [infrastructureOpen, setInfrastructureOpen] = useState(false);
@@ -831,6 +840,8 @@ function Explorer({
                   streets={urban.roads}
                   population={urban.population}
                   livePlaces={liveUrban.places}
+                  historical={researchMode}
+                  onFloodStats={onFloodStats}
                   surfaceFrame={surface.frame}
                   publicSurfaceFrames={publicSurface.frames}
                   surfaceMetric={surfaceMetric}
@@ -946,6 +957,21 @@ function Explorer({
             </div>
           </div>
           <div className="shared-map-legend">
+            {!flat && !failed && Object.values(floodStats).some((value) => value > 0) && (
+              <span
+                className="flood-response-legend"
+                role="status"
+                aria-label="주변 침수 반응 · 표시 객체 수"
+                title="주변 표시 객체의 반응이며 실제 피해 통계가 아닙니다. 과거 침수흔적은 사건 전체 범위입니다."
+              >
+                <i className="flood-response-dot" />
+                {floodStats.stopped > 0 && `감속·정차 ${floodStats.stopped} `}
+                {floodStats.exposed > 0 && `침수 노출 ${floodStats.exposed} `}
+                {floodStats.avoiding > 0 && `회피·대피 ${floodStats.avoiding} `}
+                {floodStats.stranded > 0 && `고립 ${floodStats.stranded}`}
+                <small>표시 객체</small>
+              </span>
+            )}
             <span>
               <i className="player-facility-legend" />
               사용자 시설

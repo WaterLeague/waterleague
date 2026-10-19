@@ -7,7 +7,8 @@ export function streetHeight(
   point: readonly [number, number],
   bridge: boolean
 ) {
-  return terrainMeshHeight(terrain, point) + (bridge ? 3 : 0.16);
+  // 도로의 표시 오프셋이 얕은 침수 수면(지형+0.02m)을 가리지 않도록 한다.
+  return terrainMeshHeight(terrain, point) + (bridge ? 3 : 0.004);
 }
 export function streetGeometry(roads: Street[], terrain: Terrain | null, detail: boolean) {
   const positions: number[] = [],
@@ -55,7 +56,7 @@ export function streetGeometry(roads: Street[], terrain: Terrain | null, detail:
         length = Math.hypot(b[0] - a[0], b[1] - a[1]);
       if (detail && road.motor && road.sidewalk !== 'no' && !/motorway|trunk/.test(road.class))
         quad(a, b, road.widthM + 2.8, sidewalk, road.bridge);
-      quad(a, b, road.widthM, road.walk ? walk : asphalt, road.bridge, 0.025);
+      quad(a, b, road.widthM, road.walk ? walk : asphalt, road.bridge, 0.004);
       if (detail && road.motor && road.widthM >= 7) {
         for (let s = Math.ceil(along / 12) * 12; s < along + length; s += 12) {
           const start = Math.max(0, s - along),
@@ -65,7 +66,7 @@ export function streetGeometry(roads: Street[], terrain: Terrain | null, detail:
             a[0] + ((b[0] - a[0]) * t) / length,
             a[1] + ((b[1] - a[1]) * t) / length,
           ];
-          quad(point(start), point(end), 0.2, paint, road.bridge, 0.055);
+          quad(point(start), point(end), 0.2, paint, road.bridge, 0.008);
         }
       }
       along += length;

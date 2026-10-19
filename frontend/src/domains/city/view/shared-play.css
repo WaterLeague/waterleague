@@ -563,3 +563,16 @@
 .budget-ledger button {
   margin-right: 8px;
 }
+
+.shared-map-legend .flood-response-legend {
+  color: #874a19;
+  gap: 0.35rem;
+}
+.shared-map-legend .flood-response-dot {
+  background: #ffbd45;
+  border-radius: 50%;
+}
+.shared-map-legend .flood-response-legend small {
+  opacity: 0.72;
+  font-size: 0.9em;
+}

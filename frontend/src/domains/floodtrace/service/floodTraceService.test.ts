@@ -32,13 +32,13 @@ test('표시 지형에만 투영하고 수심 생성 없이 2D와 같은 평면 
   });
   expect(Array.from(positions)).toEqual([
     0,
-    expect.closeTo(10.08),
+    expect.closeTo(10.016),
     -90,
     90,
-    expect.closeTo(30.08),
+    expect.closeTo(30.016),
     -90,
     0,
-    expect.closeTo(50.08),
+    expect.closeTo(50.016),
     -0,
   ]);
 });
