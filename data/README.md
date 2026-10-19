@@ -50,6 +50,8 @@ DEM은 90m 격자이며 수직 기준·표고 단위 필드 미제공. 토지피
 
 ## 수치지형도와 서비스용 저장 자료
 
+현재 화면 표기는 ‘2026-03-07 갱신 수치지형도’다. 브이월드 성동구 SHP 묶음 95도엽 중 아래 기존 4개 ZIP 및 내부 660파일 전체 일치를 확인했다. 배포 갱신일과 제작연도는 구분하며 [배포 대조 기록](manifests/vworld-seongdong-topography-20260307.json)에 출처·해시·적용 범위를 보존한다. 새 원본 묶음은 `private/vworld-seongdong-topography-20260307/`에 보관하고 Git에서 제외한다.
+
 2025년 1:1,000 수치지형도 4개 ZIP·4개 XML 및 추가 DXF·XML을 `private/seongsu-topography-20261017/originals/`에 복사하고 다운로드 원본과 해시 대조. 파일 10개의 출처·크기·SHA-256은 `manifests/seongsu-topography-sources.json`. 원본은 프로젝트에 보관하며 Git 제외, 서비스용 가공본과 출처 목록은 Git 포함.
 
 ```sh

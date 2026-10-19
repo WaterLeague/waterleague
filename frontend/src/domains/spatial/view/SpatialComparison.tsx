@@ -3,6 +3,7 @@ import { Layers3, RefreshCw, ArrowUpRight } from 'lucide-react';
 import type { CandidateMap } from '../../catalog/entity/catalog';
 import { useSpatial } from '../controller/useSpatial';
 import { displayPoint } from '../service/projectionService';
+import { topographySource } from '../service/spatialSourceService';
 
 export function SpatialComparison({
   map,
@@ -35,9 +36,8 @@ export function SpatialComparison({
         </button>
       </div>
       <p>
-        2025년 수치지형도의 건물 경계·지상 층수와 초기 OSM 경계를 대조합니다. 보관한 자료를
-        불러오며, 외부 API를 호출하지 않습니다. 새 플레이에는 현재 제공 중인 최신 지도를 자동
-        적용합니다.
+        {topographySource.label}의 건물 경계·지상 층수와 초기 OSM 경계를 대조합니다. 보관한 자료를
+        불러오며, 외부 API를 호출하지 않습니다.
       </p>
       {!authenticated && <p className="micro-note">로그인 후 조회할 수 있습니다.</p>}
       {spatial.error && (
@@ -130,20 +130,25 @@ export function SpatialComparison({
           )}
           <p className="micro-note">
             OSM은 중심점, 수치지형도는 영역 교차 기준으로 선택했습니다. 도엽 경계의 분할 도형을
-            합치지 않았으므로 건수 차이는 누락 건물 수가 아닙니다. 2025년 자료와 2024년 강우 당시
-            형상의 일치 여부는 확인되지 않았습니다. 층수를 높이나 지표고로 환산하지 않습니다.
+            합치지 않았으므로 건수 차이는 누락 건물 수가 아닙니다. 배포 갱신일은 원 도엽의
+            제작연도와 다르며, 2024년 강우 당시 형상의 일치 여부는 확인되지 않았습니다. 층수를
+            높이나 지표고로 환산하지 않습니다.
           </p>
           <p className="footnote">
             출처: {data.provider} · {data.layer} · 표시 좌표계 {data.requestedCrs}
             <br />
-            제작 {data.dataYear}년 · 취득 {new Date(data.retrievedAt).toLocaleString('ko-KR')} ·
-            원본 보관
+            배포 갱신 {topographySource.updatedAt} · 원 도엽 제작 {data.dataYear}년
+            <br />원 도엽 취득 {new Date(data.retrievedAt).toLocaleString('ko-KR')} · 원본 보관
             <br />
             고정 자료 버전 <code title={data.snapshotHash}>{data.snapshotHash.slice(0, 12)}</code>
             {' · '}공공누리 제1유형 · 수문 모델 입력과 별도
             <br />
             <a href={data.sourceUrl} target="_blank" rel="noreferrer">
               제공 항목과 이용 안내 <ArrowUpRight size={12} />
+            </a>
+            {' · '}
+            <a href={topographySource.url} target="_blank" rel="noreferrer">
+              브이월드 갱신 자료 <ArrowUpRight size={12} />
             </a>
           </p>
         </>

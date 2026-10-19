@@ -3,6 +3,7 @@ import { useBudget } from '../../budget/controller/useBudget';
 import { facilities, won } from '../../game/service/gameService';
 import type { FacilityType } from '../../game/entity/game';
 import costs from '../../../../../data/costs/lid-reference-v5.json';
+import { topographySource } from '../../spatial/service/spatialSourceService';
 import './data-page.css';
 
 const sources = [
@@ -19,11 +20,11 @@ const sources = [
     title: '건물·도로·주차장',
     icon: Map,
     provider: 'OpenStreetMap · 국토지리정보원',
-    description:
-      '서울 건물·도로·보행로·주차장은 2026년 10월 16일 OSM 자료를 사용합니다. 성수 건물 대조 자료는 2025년 수치지형도입니다.',
+    description: `서울 건물·도로·보행로·주차장은 2026년 10월 16일 OSM 자료를 사용합니다. 성수 건물 대조 자료는 ${topographySource.label}입니다.`,
     detail:
       '재해 모드도 현재 지도에서 진행합니다. 도로 폭·교량 높이·주차 칸 중 원자료에 없는 값은 표시용으로 구성합니다.',
     href: 'https://www.openstreetmap.org/copyright',
+    reference: { label: '수치지형도 갱신 자료', href: topographySource.url },
   },
   {
     title: '지형·토양',
@@ -75,7 +76,7 @@ export function DataPage({ accountId }: { accountId: string | null }) {
         <p>자료 출처와 게임 적용 범위</p>
       </header>
       <div className="data-source-grid">
-        {sources.map(({ title, icon: Icon, provider, description, detail, href }) => (
+        {sources.map(({ title, icon: Icon, provider, description, detail, href, reference }) => (
           <article className="data-source" key={title}>
             <div className="data-source-title">
               <Icon size={20} aria-hidden="true" />
@@ -87,6 +88,11 @@ export function DataPage({ accountId }: { accountId: string | null }) {
             <a href={href} target="_blank" rel="noreferrer">
               {provider.split(' · ')[0]} 출처 <ArrowUpRight size={14} aria-hidden="true" />
             </a>
+            {reference && (
+              <a href={reference.href} target="_blank" rel="noreferrer">
+                {reference.label} <ArrowUpRight size={14} aria-hidden="true" />
+              </a>
+            )}
           </article>
         ))}
       </div>

@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "provider": "국토지리정보원",
+  "distributor": "브이월드",
+  "title": "수치지형도v2.0(1:1000) 성동구 SHP 묶음",
+  "datasetId": "20250224DS00002",
+  "sourceUrl": "https://www.vworld.kr/dtmk/dtmk_ntads_s002.do?datIde=20250224DS00002&dsId=20250224DS00002&svcCde=MK&searchKeyword2=%EC%84%B1%EB%8F%99",
+  "distributionUpdatedAt": "2026-03-07",
+  "distributionReferenceDate": null,
+  "verifiedOn": "2026-10-20",
+  "package": {
+    "file": "2MAP1000_SHP_서울_성동구.zip",
+    "localPath": "data/private/vworld-seongdong-topography-20260307/2MAP1000_SHP_서울_성동구.zip",
+    "bytes": 17700818,
+    "sha256": "0f05914071c15218943bd472813d3b541f3d960f8b8b8d5e2285e1dd8918fd88",
+    "tileZipCount": 95,
+    "crcVerified": true
+  },
+  "matchedOriginalRegistry": "data/manifests/seongsu-topography-sources.json",
+  "matchedOriginalRegistrySha256": "d876b007b26eb40eca8e31ff967b36a311ab02c1e9b55e1e3c6e472263120ae7",
+  "matchedTiles": [
+    {
+      "tile": "377052201",
+      "sha256": "78c2e77cbb90b48be94c87e4bb815b6498b78c14bc42cf4d7b9b54d1052f97fe",
+      "bytes": 220570,
+      "identicalMemberCount": 144
+    },
+    {
+      "tile": "377052202",
+      "sha256": "02c4bf8bf053f35e0811b141507530bc6d450d9eefb003a81372af7aacd4a482",
+      "bytes": 200437,
+      "identicalMemberCount": 188
+    },
+    {
+      "tile": "377052211",
+      "sha256": "c33becacbfde9e862c59b49b87afeffc1bc7a15104ad1136ef264a76a1abdb9f",
+      "bytes": 250169,
+      "identicalMemberCount": 176
+    },
+    {
+      "tile": "377052212",
+      "sha256": "35d039f88fa61d16af24b1cce661105966e822bf7f651b5f4b2276d52169dc01",
+      "bytes": 196480,
+      "identicalMemberCount": 152
+    }
+  ],
+  "matchedTileCount": 4,
+  "identicalMemberCount": 660,
+  "matchedTileMetadata": {
+    "photographyYear": 2024,
+    "surveyYear": 2025,
+    "productionYear": 2025,
+    "registeredOn": "2026-01-14",
+    "basis": "EXISTING_COMPANION_XML_FOR_BYTE_IDENTICAL_TILE_ZIPS"
+  },
+  "unreviewedTileCount": 91,
+  "limitations": [
+    "배포 갱신일은 원 도엽의 제작연도·촬영연도가 아님",
+    "기존 4개 도엽은 ZIP 전체 및 내부 파일이 동일하며 기존 계산 입력·스냅샷 해시 불변",
+    "나머지 91개 도엽의 제작연도·형상 품질·게임 적용 미검토",
+    "브이월드 페이지의 라이선스 미지정 표기를 기존 도엽의 이용조건과 구분하며 새 원본 묶음은 Git 제외"
+  ]
+}
