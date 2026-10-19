@@ -69,7 +69,7 @@ it('중복 기준안·변화 부호 불일치·다른 카탈로그 결과 거부
   ).toBe(false);
   expect(watershedJobDto.safeParse({ ...job(), catalogHash: 'f'.repeat(64) }).success).toBe(false);
 });
-it('공통 시설창에 12군의 사용 범위를 구분하고 비회원 계산 결과 미노출', () => {
+it('공통 시설창의 사업별 12군과 미구현 버튼 비활성화', () => {
   const html = renderToStaticMarkup(
     <FacilityExpansionPanel
       account={null}
@@ -94,7 +94,15 @@ it('공통 시설창에 12군의 사용 범위를 구분하고 비회원 계산 
     '빗물펌프장',
   ])
     expect(html).toContain(name);
-  expect(html).toContain('설치 연결 중 · 예산 확인 중');
+  expect(html).not.toContain('설치 연결 중');
+  expect(html.match(/disabled=""/g)).toHaveLength(6);
+  for (const project of [
+    '빗물관리시설 확충',
+    '빗물저류시설 확충',
+    '하수관로·빗물받이 정비',
+    '빗물펌프장 신·증설',
+  ])
+    expect(html).toContain(project);
   expect(html).not.toContain('연결 유역 비교');
   expect(html).not.toContain('지도에 설치');
   expect(html.match(/생물저류시설/g)).toHaveLength(1);

@@ -22,6 +22,7 @@ export function SurfaceControls({
   const { catalog, frame, loading, error, retry } = state;
   const time =
     frame && catalog ? new Date(Date.parse(catalog.startUtc) + frame.timeSeconds * 1000) : null;
+  if (!hasSource && !error && !renderError) return null;
   return (
     <div className="surface-controls">
       <strong>{live ? '지금의 물 흐름' : '물 흐름 재생'}</strong>

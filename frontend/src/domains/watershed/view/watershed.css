@@ -613,3 +613,59 @@
 .watershed-playback code {
   overflow-wrap: anywhere;
 }
+
+.facility-project {
+  margin: 22px 0;
+}
+.facility-project > header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+.facility-project > header h3 {
+  margin: 0;
+  font-size: 13px;
+}
+.facility-project > header > span {
+  font-size: 11px;
+  color: #227267;
+  font-variant-numeric: tabular-nums;
+}
+.facility-project > small {
+  display: block;
+  color: #667d79;
+  margin: 3px 0 10px;
+}
+.facility-project .watershed-facility-grid {
+  margin-top: 10px;
+}
+.facility-project .watershed-facility-grid button {
+  border-radius: 12px;
+  padding: 14px;
+  background: #fff;
+  border-color: #d4e2dd;
+  min-height: 110px;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+}
+.facility-project .watershed-facility-grid button:not(:disabled):hover {
+  border-color: #27816d;
+  background: #eef9f4;
+}
+.facility-project .watershed-facility-grid button:disabled {
+  opacity: 0.55;
+  background: #edf1ef;
+}
+.facility-project .watershed-facility-grid button > svg {
+  color: #26816c;
+}
+.facility-project .watershed-facility-grid strong {
+  font-size: 13px;
+}
+.facility-project .watershed-facility-grid span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}

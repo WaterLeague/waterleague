@@ -360,3 +360,125 @@ body:has(.game-shell.is-game) {
   width: 100%;
   margin: 3px 0;
 }
+
+.map-layer-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  flex: 0 0 auto;
+  gap: 8px;
+  padding: 7px 14px;
+  background: #f7faf9;
+  border-bottom: 1px solid #d5e1dc;
+}
+.map-layer-bar .flood-trace-controls {
+  padding: 0;
+  border: 0;
+  background: none;
+}
+.public-facility-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  white-space: nowrap;
+  color: #355e54;
+  font-size: 11px;
+  cursor: pointer;
+}
+.public-facility-toggle input {
+  accent-color: #217767;
+}
+.game-weather {
+  position: relative;
+  z-index: 48;
+}
+.game-weather summary {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  cursor: pointer;
+  list-style: none;
+  padding: 5px 10px;
+  border: 1px solid #6f9c9633;
+  border-radius: 10px;
+  background: #ffffff09;
+}
+.game-weather summary::-webkit-details-marker {
+  display: none;
+}
+.game-weather summary span {
+  display: grid;
+  gap: 3px;
+  font-size: 10px;
+  color: #c9dfd9;
+}
+.game-weather summary strong {
+  font-size: 13px;
+  color: #fff;
+  font-weight: 650;
+}
+.game-weather[data-weather='rain'] summary > svg {
+  color: #7dd3fc;
+}
+.game-weather > div {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  min-width: 225px;
+  padding: 16px;
+  color: #e3f0ec;
+  background: #193c38;
+  border: 1px solid #507f72;
+  border-radius: 12px;
+  box-shadow: 0 10px 28px #07221f33;
+  font-size: 12px;
+}
+.game-weather p {
+  margin: 0 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.game-weather button {
+  margin-left: 12px;
+  padding: 5px 8px;
+  color: inherit;
+  border: 1px solid #68988b;
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+}
+.city-source-note {
+  position: relative;
+}
+.city-source-note summary {
+  cursor: pointer;
+}
+.city-source-note details[open] {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 49;
+  padding: 14px;
+  background: #f5f8f1;
+  border-top: 1px solid #b6c7b3;
+}
+.game-shell.is-game .facility-install-dock {
+  background: none;
+  border: none;
+  box-shadow: none;
+}
+.game-shell.is-game .facility-install-dock button {
+  padding: 14px 24px;
+  border-radius: 30px;
+  background: #164d42;
+  color: white;
+  border: 1px solid #4c937e;
+  box-shadow: 0 6px 24px #173e4433;
+  font-size: 13px;
+}
+.game-shell.is-game .facility-install-dock button:hover {
+  background: #236b58;
+}

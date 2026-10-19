@@ -1,3 +1,4 @@
+import { WeatherBadge } from '../../rainfall/view/WeatherBadge';
 import { usePublicSurfaces } from '../../surface/controller/usePublicSurfaces';
 import { PublicSurfaceControls } from '../../surface/view/PublicSurfaceControls';
 import { placementAreaLimit } from '../../installation/service/placementAreaLimit';
@@ -30,7 +31,7 @@ import { useInstallations } from '../../installation/controller/useInstallations
 import { SharedDistrictPanel } from '../../installation/view/SharedDistrictPanel';
 import type { SharedSite } from '../../installation/entity/installation';
 import type { FacilityType } from '../../game/entity/game';
-import { facilities, won } from '../../game/service/gameService';
+import { won } from '../../game/service/gameService';
 import { loadSite, loadBuildingSite } from '../../installation/repository/installationRepository';
 import { ApiError } from '../../../shared/exception/ApiError';
 import './shared-play.css';
@@ -663,6 +664,15 @@ function Explorer({
           </details>
         </div>
         <div className="play-resources">
+          {!researchMode && (
+            <WeatherBadge
+              value={rainfall.value}
+              districtId={selected}
+              now={rainfall.now}
+              busy={rainfall.busy}
+              retry={rainfall.refresh}
+            />
+          )}
           {researchMode ? (
             <GameClock at={research.at ?? undefined} label="KST · 재해 재생" />
           ) : (
@@ -679,7 +689,7 @@ function Explorer({
             <b>{budget.value ? won(remaining) : '조회 중'}</b>
           </span>
           <span>
-            {researchMode ? '연구 배치' : account ? '내 시설' : '서울 공유 시설'}
+            {researchMode ? '내 실험 시설' : account ? '내 시설' : '서울 공유 시설'}
             <b>
               {researchMode
                 ? research.current.length
@@ -692,20 +702,30 @@ function Explorer({
         </div>
       </header>
       <div className="design-main shared-map-column">
-        <FloodTraceControls
-          eventId={researchMode ? eventId : comparisonEventId}
-          onEvent={(value) => {
-            setComparisonEventId(value);
-            setTraceRenderError(false);
-          }}
-          fixedEvent={researchMode}
-          catalog={traces.catalog}
-          event={traces.event}
-          loading={traces.loading}
-          error={traces.error}
-          renderError={traceRenderError}
-          retry={traces.retry}
-        />
+        <div className="map-layer-bar">
+          <FloodTraceControls
+            eventId={researchMode ? eventId : comparisonEventId}
+            onEvent={(value) => {
+              setComparisonEventId(value);
+              setTraceRenderError(false);
+            }}
+            fixedEvent={researchMode}
+            catalog={traces.catalog}
+            event={traces.event}
+            loading={traces.loading}
+            error={traces.error}
+            renderError={traceRenderError}
+            retry={traces.retry}
+          />
+          <label className="public-facility-toggle">
+            <input
+              type="checkbox"
+              checked={assetsEnabled}
+              onChange={(e) => setAssetsEnabled(e.target.checked)}
+            />
+            공개 시설
+          </label>
+        </div>
         <section ref={stage} className="city-stage" aria-label="서울 전역 3D 지도">
           {flat ? (
             plan
@@ -849,7 +869,7 @@ function Explorer({
             )}
             <span>
               <i className="available" />
-              {type ? facilities[type].name + ' 후보' : '설치 후보'}
+              설치 가능
             </span>
             <span>
               <i className="unavailable" />
@@ -1100,8 +1120,6 @@ function Explorer({
           districtId={selected}
           historical={researchMode}
           eventId={researchMode ? eventId : ''}
-          enabled={assetsEnabled}
-          onToggle={() => setAssetsEnabled((value) => !value)}
         />
       ) : researchMode ? (
         <HistoricalPanel
@@ -1194,27 +1212,30 @@ function Explorer({
         </section>
       )}
       <footer className="city-source-note">
-        공개 형상 {city.sourceDate} ·{' '}
-        {terrain
-          ? 'Copernicus 공개 지표면 높이 · 90m 표시 격자'
-          : terrainError
-            ? '높이 자료 연결 실패 · 평면 표시'
-            : '지표면 높이 연결 중'}{' '}
-        · 건물 높이 태그·층수 환산 포함 ·{' '}
-        {surface.frame || publicSurface.frames.length
-          ? '계산 침수는 별도 색상 레이어 · 표시 지형과 물리 기준고 구분'
-          : '침수 깊이 표시 아님'}
-        {assetsEnabled &&
-          ' · 시설 위치: 서울특별시·강서구 / 공공누리 제1유형 · 시설 경계: OpenStreetMap / ODbL 1.0'}
-        {terrain && (
-          <>
-            {' '}
-            ·{' '}
-            <a href="/data/seoul-terrain-v1/attribution.txt" target="_blank" rel="noreferrer">
-              지표면 출처·이용조건
-            </a>
-          </>
-        )}
+        <details>
+          <summary>지도 자료·표시 범위</summary>
+          공개 형상 {city.sourceDate} ·{' '}
+          {terrain
+            ? 'Copernicus 공개 지표면 높이 · 90m 표시 격자'
+            : terrainError
+              ? '높이 자료 연결 실패 · 평면 표시'
+              : '지표면 높이 연결 중'}{' '}
+          · 건물 높이 태그·층수 환산 포함 ·{' '}
+          {surface.frame || publicSurface.frames.length
+            ? '계산 침수는 별도 색상 레이어 · 표시 지형과 물리 기준고 구분'
+            : '침수 깊이 표시 아님'}
+          {assetsEnabled &&
+            ' · 시설 위치: 서울특별시·강서구 / 공공누리 제1유형 · 시설 경계: OpenStreetMap / ODbL 1.0'}
+          {terrain && (
+            <>
+              {' '}
+              ·{' '}
+              <a href="/data/seoul-terrain-v1/attribution.txt" target="_blank" rel="noreferrer">
+                지표면 출처·이용조건
+              </a>
+            </>
+          )}
+        </details>
       </footer>
     </main>
   );

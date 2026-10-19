@@ -145,8 +145,6 @@ export function InfrastructurePanel({
   onClose,
   districtId,
   historical,
-  enabled,
-  onToggle,
   eventId = '',
 }: {
   catalog: InfrastructureCatalog | null;
@@ -157,8 +155,6 @@ export function InfrastructurePanel({
   onClose: () => void;
   districtId: string;
   historical: boolean;
-  enabled: boolean;
-  onToggle: () => void;
   eventId?: string;
 }) {
   const history = useEquipmentHistory(eventId);
@@ -193,9 +189,6 @@ export function InfrastructurePanel({
         </button>
       </header>
       <div className="infrastructure-scroll">
-        <label className="infrastructure-all">
-          <input type="checkbox" checked={enabled} onChange={onToggle} /> 지도에 공개 참고 위치 표시
-        </label>
         <p className="infrastructure-scope">
           {historical
             ? '현재 공개 참고 자료 · 당시 재현 입력과 분리'

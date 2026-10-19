@@ -13,6 +13,7 @@ export function PublicSurfaceControls({
   onMetric: (value: SurfaceMetric) => void;
   renderError: boolean;
 }) {
+  if (!state.frames.length && !state.error && !renderError) return null;
   return (
     <div className="surface-controls" aria-label="현재 공개 유역 계산">
       <strong>지금의 물 흐름</strong>
