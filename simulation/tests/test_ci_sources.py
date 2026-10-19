@@ -29,6 +29,8 @@ class CiSourceTests(unittest.TestCase):
         for path in (ROOT / 'data/derived/surface-antecedent').glob('*.gz'):
             value = json.loads(gzip.decompress(path.read_bytes()))
             archives.extend((value['rainfall'], value['evaporation']))
+        archives.extend(json.loads(gzip.decompress(path.read_bytes()))
+                        for path in (ROOT / 'data/derived/antecedent').glob('*.gz'))
         self.assertTrue(archives)
         for value in archives:
             for source in value['sourceRequests']:
