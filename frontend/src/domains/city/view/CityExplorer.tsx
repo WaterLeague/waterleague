@@ -23,6 +23,7 @@ import {
   Minus,
   MapPin,
   Layers3,
+  SlidersHorizontal,
   CloudRain,
   Grid2X2,
   House,
@@ -925,7 +926,7 @@ function Explorer({
               }}
             >
               <summary>
-                <Layers3 size={15} />
+                <SlidersHorizontal size={15} />
                 지도 도구
               </summary>
               <div>

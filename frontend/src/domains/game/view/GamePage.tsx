@@ -49,6 +49,7 @@ import { DisasterMode } from '../../disaster/view/DisasterMode';
 import { FullscreenButton } from './FullscreenButton';
 import './game-viewport.css';
 import { CityExplorer } from '../../city/view/CityExplorer';
+import { useGameInteractions } from '../../../shared/ui/useGameInteractions';
 const icons = {
   RAIN_GARDEN: Leaf,
   PERMEABLE_PAVEMENT: Grid2X2,
@@ -58,6 +59,7 @@ const icons = {
   INFILTRATION_TRENCH: Waves,
 };
 export function GamePage() {
+  useGameInteractions();
   const g = useGame();
   const shell = useRef<HTMLDivElement>(null);
   const [cityDistrict, setCityDistrict] = useState('');
