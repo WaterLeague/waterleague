@@ -90,7 +90,8 @@ def read_live_station(reference, start, end):
     return derived | {'sourceHash': sha(manifest), 'sourceHashKind': 'STATION_DERIVATION_BUNDLE'}, files
 
 
-def capture(surface, station_by_triangle, start, end, key, assignment_evidence):
+def capture(surface, station_by_triangle, start, end, key, assignment_evidence, *,
+            network=None, station_by_catchment=None):
     from waterleague_sim.forcing.observed_rainfall import compile_rainfall
     require(isinstance(station_by_triangle, list) and len(station_by_triangle) == len(surface['triangles'])
             and len(station_by_triangle) == len(surface['rainfallOwner']), 'LIVE_SURFACE_ASSIGNMENT_INVALID')
@@ -100,7 +101,13 @@ def capture(surface, station_by_triangle, start, end, key, assignment_evidence):
             and isinstance(sid, str) and re.fullmatch(r'\d{1,5}', sid))
             for owner, sid in zip(surface['rainfallOwner'], station_by_triangle)),
             'LIVE_SURFACE_ASSIGNMENT_INVALID')
-    stations = sorted({sid for sid in station_by_triangle if sid is not None})
+    network_stations = set()
+    if network is not None or station_by_catchment is not None:
+        from waterleague_sim.forcing.live_network_rainfall import validate_network
+        validate_network(network, {'startUtc':start.isoformat(), 'endUtc':end.isoformat(),
+                                  'stationByCatchment':station_by_catchment})
+        network_stations = set(station_by_catchment.values())
+    stations = sorted({sid for sid in station_by_triangle if sid is not None} | network_stations)
     require(0 < len(stations) <= 100 and start.utcoffset() is not None and end.utcoffset() is not None
             and start.second == end.second == start.microsecond == end.microsecond == 0
             and 0 < (end-start).total_seconds() <= 29*86400, 'LIVE_SURFACE_WINDOW_INVALID')
@@ -108,6 +115,8 @@ def capture(surface, station_by_triangle, start, end, key, assignment_evidence):
             'LIVE_SURFACE_ACQUISITION_LIMIT')
     spec = {'schemaVersion': 2, 'sourceType': METHOD, 'startUtc': start.isoformat(), 'endUtc': end.isoformat(),
             'stationByTriangle': station_by_triangle, 'assignmentEvidence': assignment_evidence, 'stations': []}
+    if network_stations:
+        spec['stationByCatchment'] = dict(station_by_catchment)
     size = 0
     for station in stations:
         _, sources = live.observed_forcing(station, start, end, key)
@@ -116,5 +125,5 @@ def capture(surface, station_by_triangle, start, end, key, assignment_evidence):
         spec['stations'].append({'stationId': station, 'responses': [
             {'rawUtf8': raw.decode('utf-8'), 'metadata': metadata} for raw, metadata in sources]})
     # 조회 응답은 메모리에서 검증하고 실제 실행의 재현 디렉터리에만 저장한다.
-    compile_rainfall(spec, surface, int((end-start).total_seconds()))
+    compile_rainfall(spec, surface, int((end-start).total_seconds()), network_stations=network_stations)
     return spec

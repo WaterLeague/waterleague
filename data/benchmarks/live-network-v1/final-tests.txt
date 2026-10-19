@@ -1,0 +1,15 @@
+test_capture_queries_union_once_and_checks_network_before_query (simulation.tests.test_live_network_rainfall.LiveNetworkTests.test_capture_queries_union_once_and_checks_network_before_query) ... ok
+test_cli_capture_path_and_shared_station_query_once (simulation.tests.test_live_network_rainfall.LiveNetworkTests.test_cli_capture_path_and_shared_station_query_once) ... ok
+test_mapping_clock_modifiers_and_unbound_surface_fail_closed (simulation.tests.test_live_network_rainfall.LiveNetworkTests.test_mapping_clock_modifiers_and_unbound_surface_fail_closed) ... ok
+test_missing_assignment_or_double_rainfall_rejected_before_output (simulation.tests.test_live_network_rainfall.LiveNetworkTests.test_missing_assignment_or_double_rainfall_rejected_before_output) ... ok
+test_native_inputs_and_replay_are_identical (simulation.tests.test_live_network_rainfall.LiveNetworkTests.test_native_inputs_and_replay_are_identical) ... WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+ok
+test_shared_sources_split_area_and_preserve_original_options (simulation.tests.test_live_network_rainfall.LiveNetworkTests.test_shared_sources_split_area_and_preserve_original_options) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 5.414s
+
+OK

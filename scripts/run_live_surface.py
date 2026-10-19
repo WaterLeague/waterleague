@@ -19,15 +19,24 @@ def execute(request, output, key):
             'LIVE_SURFACE_REQUEST_INVALID')
     require(request['mode'] in ('surface', 'coupled'), 'LIVE_SURFACE_REQUEST_INVALID')
     rainfall = request['rainfall']
-    require(isinstance(rainfall, dict) and set(rainfall) == {
+    require(isinstance(rainfall, dict) and (set(rainfall)-{'stationByCatchment'}) == {
         'startUtc', 'endUtc', 'stationByTriangle', 'assignmentEvidence'}, 'LIVE_SURFACE_REQUEST_INVALID')
     output = Path(output)
     require(not output.exists(), 'OBSERVED_SURFACE_OUTPUT_EXISTS')
     model = deepcopy(request['model'])
     coupled = request['mode'] == 'coupled'
     if coupled:
-        require(not any(model.get(k) for k in ('initialization', 'observedRainfall', 'surfaceRainfall',
-                'networkRainfallTriangles')), 'LIVE_SURFACE_FORCING_CONFLICT')
+        require(not any(model.get(k) for k in ('initialization', 'observedRainfall', 'surfaceRainfall')),
+                'LIVE_SURFACE_FORCING_CONFLICT')
+        require(not model.get('networkRainfallTriangles') or rainfall.get('stationByCatchment'),
+                'LIVE_SURFACE_FORCING_CONFLICT')
+        require(not rainfall.get('stationByCatchment') or not any(k in model for k in (
+                'connectedFacilityDesign', 'connectedStorageDesign', 'connectedPumpDesign')),
+                'LIVE_NETWORK_DESIGN_BINDING_UNSUPPORTED')
+        from waterleague_sim.engine.coupled_flood import _validate
+        _validate(model)
+    else:
+        require('stationByCatchment' not in rainfall, 'LIVE_SURFACE_REQUEST_INVALID')
     surface = model['surface'] if coupled else model
     start, end = utc(rainfall['startUtc']), utc(rainfall['endUtc'])
     require(surface.get('rainfallStationIds') is None, 'OBSERVED_RAIN_ASSIGNMENT_CONFLICT')
@@ -39,7 +48,9 @@ def execute(request, output, key):
         require(utc(surface['startUtc']) == start, 'LIVE_SURFACE_CLOCK_MISMATCH')
     if 'durationSeconds' in surface:
         require(surface['durationSeconds'] == (end-start).total_seconds(), 'LIVE_SURFACE_CLOCK_MISMATCH')
-    spec = capture(surface, rainfall['stationByTriangle'], start, end, key, rainfall['assignmentEvidence'])
+    binding = ({'network':model['network'], 'station_by_catchment':rainfall['stationByCatchment']}
+               if coupled and 'stationByCatchment' in rainfall else {})
+    spec = capture(surface, rainfall['stationByTriangle'], start, end, key, rainfall['assignmentEvidence'], **binding)
     if coupled:
         from waterleague_sim.engine.coupled_flood import run_coupled
         return run_coupled(model | {'observedRainfall':spec}, output)

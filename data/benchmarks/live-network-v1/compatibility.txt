@@ -1,0 +1,39 @@
+test_conflicting_forcing_window_and_missing_prior_rejected (simulation.tests.test_initialized_coupling.CoupledInitializationContractTests.test_conflicting_forcing_window_and_missing_prior_rejected) ... ok
+test_dry_exchange_shortfall_is_bounded_and_old_policy_unchanged (simulation.tests.test_initialized_coupling.CoupledInitializationContractTests.test_dry_exchange_shortfall_is_bounded_and_old_policy_unchanged) ... WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+ok
+test_real_sources_common_clock_ownership_and_original_unchanged (simulation.tests.test_initialized_coupling.CoupledInitializationContractTests.test_real_sources_common_clock_ownership_and_original_unchanged) ... ok
+test_coupled_observed_rain_enters_and_drains_with_matching_ledger (simulation.tests.test_observed_surface_rainfall.ObservedRainfallEngineTests.test_coupled_observed_rain_enters_and_drains_with_matching_ledger) ... WARNING: Could not import mpi4py - defining sequential interface
+ok
+test_full_observed_window_two_stations_and_replay (simulation.tests.test_observed_surface_rainfall.ObservedRainfallEngineTests.test_full_observed_window_two_stations_and_replay) ... WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+ok
+test_large_step_instability_is_retained_as_failure (simulation.tests.test_observed_surface_rainfall.ObservedRainfallEngineTests.test_large_step_instability_is_retained_as_failure) ... <workspace>/tmp/flood-venv/lib/python3.12/site-packages/anuga/shallow_water/shallow_water_domain.py:3086: UserWarning: 2 negative cells set to zero depth, adding 0.00175 m^3 (14% of the 0.0125 m^3 in the domain): possible loss of conservation.
+Consider using domain.report_water_volume_statistics() to check the extent of the problem
+  warnings.warn(msg)
+WARNING: Could not import mpi4py - defining sequential interface
+ok
+test_station_binding_rejects_direct_array_and_missing_station (simulation.tests.test_observed_surface_rainfall.ObservedRainfallEngineTests.test_station_binding_rejects_direct_array_and_missing_station) ... WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+ok
+test_area_owned_by_network_never_receives_surface_rain (simulation.tests.test_observed_surface_rainfall.ObservedRainfallTests.test_area_owned_by_network_never_receives_surface_rain) ... ok
+test_changed_derived_rain_is_rejected_even_when_its_hash_is_recomputed (simulation.tests.test_observed_surface_rainfall.ObservedRainfallTests.test_changed_derived_rain_is_rejected_even_when_its_hash_is_recomputed) ... ok
+test_conflicting_rain_and_inconsistent_network_clock_rejected_before_execution (simulation.tests.test_observed_surface_rainfall.ObservedRainfallTests.test_conflicting_rain_and_inconsistent_network_clock_rejected_before_execution) ... ok
+test_original_aws_is_rebuilt_and_simplified_schedule_preserves_zero_intervals (simulation.tests.test_observed_surface_rainfall.ObservedRainfallTests.test_original_aws_is_rebuilt_and_simplified_schedule_preserves_zero_intervals) ... ok
+test_utc_window_coverage_and_complete_station_assignment (simulation.tests.test_observed_surface_rainfall.ObservedRainfallTests.test_utc_window_coverage_and_complete_station_assignment) ... ok
+test_real_raw_rain_weather_reconstruction_and_portable_archive (simulation.tests.test_surface_initialization.AntecedentArchiveTests.test_real_raw_rain_weather_reconstruction_and_portable_archive) ... ok
+test_rehashed_derived_values_and_raw_missing_rejected (simulation.tests.test_surface_initialization.AntecedentArchiveTests.test_rehashed_derived_values_and_raw_missing_rejected) ... ok
+test_unsafe_reference_and_changed_archive_hash_rejected (simulation.tests.test_surface_initialization.AntecedentArchiveTests.test_unsafe_reference_and_changed_archive_hash_rejected) ... ok
+test_actual_period_binding_and_metrics_shift_preserve_original (simulation.tests.test_surface_initialization.SurfaceInitializationTests.test_actual_period_binding_and_metrics_shift_preserve_original) ... ok
+test_same_continuous_solution_with_readonly_evaluation_state (simulation.tests.test_surface_initialization.SurfaceInitializationTests.test_same_continuous_solution_with_readonly_evaluation_state) ... WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+ok
+test_duplicate_and_nonfinite_json_rejected (simulation.tests.test_replay_coupled_bundle.ReplayBundleValidationTests.test_duplicate_and_nonfinite_json_rejected) ... ok
+test_traversal_absolute_path_and_symlink_rejected (simulation.tests.test_replay_coupled_bundle.ReplayBundleValidationTests.test_traversal_absolute_path_and_symlink_rejected) ... ok
+test_unlisted_native_reference_rejected_before_loading_archived_code (simulation.tests.test_replay_coupled_bundle.ReplayBundleValidationTests.test_unlisted_native_reference_rejected_before_loading_archived_code) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 31.129s
+
+OK

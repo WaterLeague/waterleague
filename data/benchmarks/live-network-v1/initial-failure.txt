@@ -1,0 +1,24 @@
+test_capture_queries_union_once_and_checks_network_before_query (simulation.tests.test_live_network_rainfall.LiveNetworkTests.test_capture_queries_union_once_and_checks_network_before_query) ... ok
+test_mapping_clock_modifiers_and_unbound_surface_fail_closed (simulation.tests.test_live_network_rainfall.LiveNetworkTests.test_mapping_clock_modifiers_and_unbound_surface_fail_closed) ... ok
+test_missing_assignment_or_double_rainfall_rejected_before_output (simulation.tests.test_live_network_rainfall.LiveNetworkTests.test_missing_assignment_or_double_rainfall_rejected_before_output) ... ok
+test_native_inputs_and_replay_are_identical (simulation.tests.test_live_network_rainfall.LiveNetworkTests.test_native_inputs_and_replay_are_identical) ... WARNING: Could not import mpi4py - defining sequential interface
+ERROR
+test_shared_sources_split_area_and_preserve_original_options (simulation.tests.test_live_network_rainfall.LiveNetworkTests.test_shared_sources_split_area_and_preserve_original_options) ... ok
+
+======================================================================
+ERROR: test_native_inputs_and_replay_are_identical (simulation.tests.test_live_network_rainfall.LiveNetworkTests.test_native_inputs_and_replay_are_identical)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<workspace>/simulation/tests/test_live_network_rainfall.py", line 109, in test_native_inputs_and_replay_are_identical
+    first = run_coupled(model, root/'a')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<workspace>/simulation/waterleague_sim/engine/coupled_flood.py", line 375, in run_coupled
+    require(math.isclose(native_rain['hydrologyTimeSeconds'], model['durationSeconds'], abs_tol=.002)
+  File "<workspace>/simulation/waterleague_sim/engine/flood_errors.py", line 10, in require
+    raise FloodModelError(code)
+waterleague_sim.engine.flood_errors.FloodModelError: LIVE_NETWORK_RAIN_VOLUME_MISMATCH
+
+----------------------------------------------------------------------
+Ran 5 tests in 2.216s
+
+FAILED (errors=1)

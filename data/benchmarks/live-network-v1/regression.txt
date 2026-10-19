@@ -1,0 +1,69 @@
+test_capture_queries_union_once_and_checks_network_before_query (simulation.tests.test_live_network_rainfall.LiveNetworkTests.test_capture_queries_union_once_and_checks_network_before_query) ... ok
+test_cli_capture_path_and_shared_station_query_once (simulation.tests.test_live_network_rainfall.LiveNetworkTests.test_cli_capture_path_and_shared_station_query_once) ... ok
+test_mapping_clock_modifiers_and_unbound_surface_fail_closed (simulation.tests.test_live_network_rainfall.LiveNetworkTests.test_mapping_clock_modifiers_and_unbound_surface_fail_closed) ... ok
+test_missing_assignment_or_double_rainfall_rejected_before_output (simulation.tests.test_live_network_rainfall.LiveNetworkTests.test_missing_assignment_or_double_rainfall_rejected_before_output) ... ok
+test_native_inputs_and_replay_are_identical (simulation.tests.test_live_network_rainfall.LiveNetworkTests.test_native_inputs_and_replay_are_identical) ... WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+ok
+test_shared_sources_split_area_and_preserve_original_options (simulation.tests.test_live_network_rainfall.LiveNetworkTests.test_shared_sources_split_area_and_preserve_original_options) ... ok
+test_acquisition_resource_limit_rejects_without_queries_or_resolution_changes (simulation.tests.test_live_surface_rainfall.LiveSurfaceTests.test_acquisition_resource_limit_rejects_without_queries_or_resolution_changes) ... ok
+test_bad_source_metadata_hash_future_time_and_extra_fields_rejected (simulation.tests.test_live_surface_rainfall.LiveSurfaceTests.test_bad_source_metadata_hash_future_time_and_extra_fields_rejected) ... ok
+test_capture_deduplicates_stations_and_never_embeds_credentials (simulation.tests.test_live_surface_rainfall.LiveSurfaceTests.test_capture_deduplicates_stations_and_never_embeds_credentials) ... ok
+test_chunks_exactly_rebuild_same_observations_without_network (simulation.tests.test_live_surface_rainfall.LiveSurfaceTests.test_chunks_exactly_rebuild_same_observations_without_network) ... ok
+test_live_coupled_entry_does_not_override_existing_forcing (simulation.tests.test_live_surface_rainfall.LiveSurfaceTests.test_live_coupled_entry_does_not_override_existing_forcing) ... ok
+test_live_entry_refuses_existing_output_and_conflicting_clock_before_api (simulation.tests.test_live_surface_rainfall.LiveSurfaceTests.test_live_entry_refuses_existing_output_and_conflicting_clock_before_api) ... ok
+test_missing_minute_not_filled_and_changed_overlap_rejected_even_with_new_hash (simulation.tests.test_live_surface_rainfall.LiveSurfaceTests.test_missing_minute_not_filled_and_changed_overlap_rejected_even_with_new_hash) ... ok
+test_network_owned_area_and_schema_mismatch_rejected_before_capture (simulation.tests.test_live_surface_rainfall.LiveSurfaceTests.test_network_owned_area_and_schema_mismatch_rejected_before_capture) ... ok
+test_real_engines_preserve_frames_exchange_and_offline_replay (simulation.tests.test_live_surface_rainfall.LiveSurfaceTests.test_real_engines_preserve_frames_exchange_and_offline_replay) ... WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+ok
+test_duplicate_keys_and_numerical_evidence_promotion_rejected (simulation.tests.test_coupled_evaluation_adapter.CoupledEvaluationAdapterTests.test_duplicate_keys_and_numerical_evidence_promotion_rejected) ... ok
+test_failed_or_incomplete_quality_cannot_be_promoted_to_passed (simulation.tests.test_coupled_evaluation_adapter.CoupledEvaluationAdapterTests.test_failed_or_incomplete_quality_cannot_be_promoted_to_passed) ... ok
+test_nested_manifest_checked_even_when_outer_hashes_match (simulation.tests.test_coupled_evaluation_adapter.CoupledEvaluationAdapterTests.test_nested_manifest_checked_even_when_outer_hashes_match) ... ok
+test_outer_raw_metrics_cannot_disagree_with_engine_outputs (simulation.tests.test_coupled_evaluation_adapter.CoupledEvaluationAdapterTests.test_outer_raw_metrics_cannot_disagree_with_engine_outputs) ... ok
+test_result_and_report_tampering_rejected (simulation.tests.test_coupled_evaluation_adapter.CoupledEvaluationAdapterTests.test_result_and_report_tampering_rejected) ... ok
+test_surface_numerical_policy_is_bound_to_engine_context (simulation.tests.test_coupled_evaluation_adapter.CoupledEvaluationAdapterTests.test_surface_numerical_policy_is_bound_to_engine_context) ... ok
+test_traversal_and_symlink_rejected (simulation.tests.test_coupled_evaluation_adapter.CoupledEvaluationAdapterTests.test_traversal_and_symlink_rejected) ... ok
+test_verified_raw_values_and_engine_policy_binding (simulation.tests.test_coupled_evaluation_adapter.CoupledEvaluationAdapterTests.test_verified_raw_values_and_engine_policy_binding) ... ok
+test_version_two_requires_quality_artifact_and_matching_observer (simulation.tests.test_coupled_evaluation_adapter.CoupledEvaluationAdapterTests.test_version_two_requires_quality_artifact_and_matching_observer) ... ok
+test_available_surface_water_reduces_exchange_step (simulation.tests.test_coupled_flood.CoupledFloodTests.test_available_surface_water_reduces_exchange_step) ... WARNING: Could not import mpi4py - defining sequential interface
+ok
+test_dry_idle_and_rainfall_have_no_infinite_boundary_supply (simulation.tests.test_coupled_flood.CoupledFloodTests.test_dry_idle_and_rainfall_have_no_infinite_boundary_supply) ... WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+ok
+test_invalid_overlap_datums_and_ports_are_rejected (simulation.tests.test_coupled_flood.CoupledFloodTests.test_invalid_overlap_datums_and_ports_are_rejected) ... WARNING: Could not import mpi4py - defining sequential interface
+ok
+test_known_network_continuity_failure_is_not_promoted (simulation.tests.test_coupled_flood.CoupledFloodTests.test_known_network_continuity_failure_is_not_promoted) ... WARNING: Could not import mpi4py - defining sequential interface
+ok
+test_local_surcharge_wets_dry_downhill_cells (simulation.tests.test_coupled_flood.CoupledFloodTests.test_local_surcharge_wets_dry_downhill_cells) ... WARNING: Could not import mpi4py - defining sequential interface
+ok
+test_output_frame_frequency_does_not_change_physics (simulation.tests.test_coupled_flood.CoupledFloodTests.test_output_frame_frequency_does_not_change_physics) ... WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+ok
+test_surcharge_reentry_and_time_refinement (simulation.tests.test_coupled_flood.CoupledFloodTests.test_surcharge_reentry_and_time_refinement) ... WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+ok
+test_surface_withdrawal_is_atomic_and_reproducible (simulation.tests.test_coupled_flood.CoupledFloodTests.test_surface_withdrawal_is_atomic_and_reproducible) ... WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+ok
+test_unmapped_network_flooding_preserves_failed_step (simulation.tests.test_coupled_flood.CoupledFloodTests.test_unmapped_network_flooding_preserves_failed_step) ... WARNING: Could not import mpi4py - defining sequential interface
+ok
+test_missing_metrics_and_invalid_design_fail_before_output (simulation.tests.test_coupled_facilities.CoupledFacilityContractTests.test_missing_metrics_and_invalid_design_fail_before_output) ... ok
+test_coupled_storage_drainage_metrics_identity_and_failure (simulation.tests.test_coupled_facilities.CoupledFacilityNativeTests.test_coupled_storage_drainage_metrics_identity_and_failure) ... WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+ok
+test_all_cases_share_physics_and_28_day_observed_coverage (simulation.tests.test_coupled_initialization_study.CoupledInitializationStudyTests.test_all_cases_share_physics_and_28_day_observed_coverage) ... ok
+test_incorrect_clock_mixed_seeds_and_unmatched_step_rejected (simulation.tests.test_coupled_initialization_study.CoupledInitializationStudyTests.test_incorrect_clock_mixed_seeds_and_unmatched_step_rejected) ... ok
+test_material_geometry_and_initial_water_are_not_normalized_away (simulation.tests.test_coupled_initialization_study.CoupledInitializationStudyTests.test_material_geometry_and_initial_water_are_not_normalized_away) ... ok
+test_signed_difference_nulls_failure_and_confounded_conditions (simulation.tests.test_coupled_initialization_study.CoupledInitializationStudyTests.test_signed_difference_nulls_failure_and_confounded_conditions) ... ok
+
+----------------------------------------------------------------------
+Ran 39 tests in 36.367s
+
+OK

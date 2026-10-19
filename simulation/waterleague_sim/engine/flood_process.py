@@ -12,6 +12,8 @@ _METHODS = {
     'surface_exchange': frozenset(('snapshot', 'port_state', 'apply_exchange', 'advance_exchange',
                                    'set_rainfall', 'set_station_rainfall', 'store_frame', 'finish')),
 }
+_METHODS['network_rainfall'] = _METHODS['network_exchange']
+_METHODS['rainfall_metrics'] = _METHODS['network_exchange'] | {'metric_state'}
 _METHODS['network_metrics'] = _METHODS['network_exchange'] | {'metric_state'}
 _METHODS['facility_network'] = _METHODS['network']
 _METHODS['facility_metrics'] = _METHODS['network'] | {'metric_state'}
@@ -32,8 +34,12 @@ def _serve(connection, engine, model, directory, evaluation_seconds, native_dura
                                      'MKL_NUM_THREADS': '1', 'MPLBACKEND': 'Agg'})
     session = None
     try:
-        if engine in ('network', 'network_exchange', 'network_metrics', 'facility_network', 'facility_metrics', 'inlet_network', 'pump_network', 'coupled_facility_network', 'coupled_pump_network'):
-            if engine == 'coupled_pump_network':
+        if engine in ('network', 'network_exchange', 'network_metrics', 'network_rainfall', 'rainfall_metrics', 'facility_network', 'facility_metrics', 'inlet_network', 'pump_network', 'coupled_facility_network', 'coupled_pump_network'):
+            if engine == 'network_rainfall':
+                from waterleague_sim.engine.network_rainfall import RainfallNetworkSession as NetworkSession
+            elif engine == 'rainfall_metrics':
+                from waterleague_sim.engine.network_rainfall import RainfallMetricsSession as NetworkSession
+            elif engine == 'coupled_pump_network':
                 from waterleague_sim.engine.coupled_pump_network import CoupledPumpNetworkSession as NetworkSession
             elif engine == 'inlet_network':
                 from waterleague_sim.engine.inlet_network import InletNetworkSession as NetworkSession
@@ -80,7 +86,7 @@ def _serve(connection, engine, model, directory, evaluation_seconds, native_dura
         except (EOFError, BrokenPipeError, OSError):
             pass
     finally:
-        if engine in ('network', 'network_exchange', 'network_metrics', 'facility_network', 'facility_metrics', 'inlet_network', 'pump_network', 'coupled_facility_network', 'coupled_pump_network') and session is not None:
+        if engine in ('network', 'network_exchange', 'network_metrics', 'network_rainfall', 'rainfall_metrics', 'facility_network', 'facility_metrics', 'inlet_network', 'pump_network', 'coupled_facility_network', 'coupled_pump_network') and session is not None:
             session.close()
         connection.close()
 

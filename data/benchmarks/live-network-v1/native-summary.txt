@@ -1,0 +1,6 @@
+WARNING: Could not import mpi4py - defining sequential interface
+latest PASSED
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+past PASSED
+{"latestM3": 0.0, "pastM3": 35.85001227084725, "pastNativeResidualM3": -2.948752353404416e-13, "pastSurfaceResidualM3": -1.5615064796747902e-11}

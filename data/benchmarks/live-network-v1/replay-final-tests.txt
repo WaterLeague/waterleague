@@ -1,0 +1,8 @@
+test_duplicate_and_nonfinite_json_rejected (simulation.tests.test_replay_coupled_bundle.ReplayBundleValidationTests.test_duplicate_and_nonfinite_json_rejected) ... ok
+test_traversal_absolute_path_and_symlink_rejected (simulation.tests.test_replay_coupled_bundle.ReplayBundleValidationTests.test_traversal_absolute_path_and_symlink_rejected) ... ok
+test_unlisted_native_reference_rejected_before_loading_archived_code (simulation.tests.test_replay_coupled_bundle.ReplayBundleValidationTests.test_unlisted_native_reference_rejected_before_loading_archived_code) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.021s
+
+OK

@@ -1,0 +1,80 @@
+-- Could NOT find OpenMP_CXX (missing: OpenMP_CXX_FLAGS OpenMP_CXX_LIB_NAMES)
+-- Could NOT find OpenMP (missing: OpenMP_CXX_FOUND) (found version "5.1")
+-- Configuring done (0.2s)
+-- Generating done (0.1s)
+-- Build files have been written to: <workspace>/tmp/network-rainfall-swmm-build
+[  3%] Building C object src/outfile/CMakeFiles/swmm-output.dir/errormanager.c.o
+[  3%] Building C object src/outfile/CMakeFiles/swmm-output.dir/swmm_output.c.o
+[  6%] Building C object src/solver/CMakeFiles/swmm5.dir/controls.c.o
+[  6%] Building C object src/solver/CMakeFiles/swmm5.dir/climate.c.o
+[  8%] Building C object src/solver/CMakeFiles/swmm5.dir/culvert.c.o
+[ 10%] Linking C shared library libswmm-output.dylib
+[ 11%] Building C object src/solver/CMakeFiles/swmm5.dir/datetime.c.o
+[ 13%] Building C object src/solver/CMakeFiles/swmm5.dir/dwflow.c.o
+[ 13%] Built target swmm-output
+[ 15%] Building C object src/solver/CMakeFiles/swmm5.dir/dynwave.c.o
+[ 16%] Building C object src/solver/CMakeFiles/swmm5.dir/error.c.o
+[ 18%] Building C object src/solver/CMakeFiles/swmm5.dir/exfil.c.o
+[ 20%] Building C object src/solver/CMakeFiles/swmm5.dir/findroot.c.o
+[ 21%] Building C object src/solver/CMakeFiles/swmm5.dir/flowrout.c.o
+[ 23%] Building C object src/solver/CMakeFiles/swmm5.dir/forcmain.c.o
+[ 25%] Building C object src/solver/CMakeFiles/swmm5.dir/gage.c.o
+[ 26%] Building C object src/solver/CMakeFiles/swmm5.dir/gwater.c.o
+[ 28%] Building C object src/solver/CMakeFiles/swmm5.dir/hash.c.o
+[ 30%] Building C object src/solver/CMakeFiles/swmm5.dir/hotstart.c.o
+[ 31%] Building C object src/solver/CMakeFiles/swmm5.dir/iface.c.o
+[ 33%] Building C object src/solver/CMakeFiles/swmm5.dir/infil.c.o
+[ 35%] Building C object src/solver/CMakeFiles/swmm5.dir/inflow.c.o
+[ 36%] Building C object src/solver/CMakeFiles/swmm5.dir/inlet.c.o
+[ 41%] Building C object src/solver/CMakeFiles/swmm5.dir/inputrpt.c.o
+[ 41%] Building C object src/solver/CMakeFiles/swmm5.dir/input.c.o
+[ 41%] Building C object src/solver/CMakeFiles/swmm5.dir/keywords.c.o
+[ 43%] Building C object src/solver/CMakeFiles/swmm5.dir/kinwave.c.o
+[ 45%] Building C object src/solver/CMakeFiles/swmm5.dir/landuse.c.o
+[ 46%] Building C object src/solver/CMakeFiles/swmm5.dir/lid.c.o
+[ 48%] Building C object src/solver/CMakeFiles/swmm5.dir/lidproc.c.o
+[ 50%] Building C object src/solver/CMakeFiles/swmm5.dir/link.c.o
+[ 51%] Building C object src/solver/CMakeFiles/swmm5.dir/massbal.c.o
+[ 53%] Building C object src/solver/CMakeFiles/swmm5.dir/mathexpr.c.o
+[ 55%] Building C object src/solver/CMakeFiles/swmm5.dir/mempool.c.o
+[ 56%] Building C object src/solver/CMakeFiles/swmm5.dir/node.c.o
+[ 58%] Building C object src/solver/CMakeFiles/swmm5.dir/odesolve.c.o
+[ 60%] Building C object src/solver/CMakeFiles/swmm5.dir/output.c.o
+[ 61%] Building C object src/solver/CMakeFiles/swmm5.dir/project.c.o
+[ 63%] Building C object src/solver/CMakeFiles/swmm5.dir/qualrout.c.o
+[ 65%] Building C object src/solver/CMakeFiles/swmm5.dir/rain.c.o
+[ 66%] Building C object src/solver/CMakeFiles/swmm5.dir/rdii.c.o
+[ 68%] Building C object src/solver/CMakeFiles/swmm5.dir/report.c.o
+[ 70%] Building C object src/solver/CMakeFiles/swmm5.dir/roadway.c.o
+[ 71%] Building C object src/solver/CMakeFiles/swmm5.dir/routing.c.o
+[ 73%] Building C object src/solver/CMakeFiles/swmm5.dir/runoff.c.o
+[ 75%] Building C object src/solver/CMakeFiles/swmm5.dir/shape.c.o
+[ 76%] Building C object src/solver/CMakeFiles/swmm5.dir/snow.c.o
+[ 78%] Building C object src/solver/CMakeFiles/swmm5.dir/stats.c.o
+[ 80%] Building C object src/solver/CMakeFiles/swmm5.dir/statsrpt.c.o
+[ 81%] Building C object src/solver/CMakeFiles/swmm5.dir/street.c.o
+[ 83%] Building C object src/solver/CMakeFiles/swmm5.dir/subcatch.c.o
+[ 85%] Building C object src/solver/CMakeFiles/swmm5.dir/surfqual.c.o
+[ 86%] Building C object src/solver/CMakeFiles/swmm5.dir/swmm5.c.o
+[ 88%] Building C object src/solver/CMakeFiles/swmm5.dir/table.c.o
+[ 90%] Building C object src/solver/CMakeFiles/swmm5.dir/toposort.c.o
+[ 91%] Building C object src/solver/CMakeFiles/swmm5.dir/transect.c.o
+[ 93%] Building C object src/solver/CMakeFiles/swmm5.dir/treatmnt.c.o
+[ 95%] Building C object src/solver/CMakeFiles/swmm5.dir/xsect.c.o
+[ 96%] Linking C shared library libswmm5.dylib
+[ 96%] Built target swmm5
+[ 98%] Building C object src/run/CMakeFiles/runswmm.dir/main.c.o
+[100%] Linking C executable runswmm
+[100%] Built target runswmm
+-- Install configuration: "Release"
+-- Installing: <workspace>/tmp/network-rainfall-swmm-build/install/bin/libswmm-output.dylib
+-- Up-to-date: <workspace>/tmp/network-rainfall-swmm-build/install/cmake/swmm-output-config.cmake
+-- Up-to-date: <workspace>/tmp/network-rainfall-swmm-build/install/cmake/swmm-output-config-release.cmake
+-- Installing: <workspace>/tmp/network-rainfall-swmm-build/install/include/swmm_output.h
+-- Installing: <workspace>/tmp/network-rainfall-swmm-build/install/include/swmm_output_enums.h
+-- Up-to-date: <workspace>/tmp/network-rainfall-swmm-build/install/include/swmm_output_export.h
+-- Installing: <workspace>/tmp/network-rainfall-swmm-build/install/bin/libswmm5.dylib
+-- Up-to-date: <workspace>/tmp/network-rainfall-swmm-build/install/cmake/swmm5-config.cmake
+-- Up-to-date: <workspace>/tmp/network-rainfall-swmm-build/install/cmake/swmm5-config-release.cmake
+-- Installing: <workspace>/tmp/network-rainfall-swmm-build/install/include/swmm5.h
+-- Installing: <workspace>/tmp/network-rainfall-swmm-build/install/bin/runswmm

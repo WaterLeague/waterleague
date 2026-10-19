@@ -38,6 +38,9 @@ def engine_signature(network_result, surface_result, coupled_result):
     # 새 지표 설정을 고정하되 기존 보관 결과의 식별자는 소급 변경하지 않는다.
     if 'surfaceNumericalConfiguration' in coupled_result:
         identity['surfaceNumericalConfiguration'] = coupled_result['surfaceNumericalConfiguration']
+    if 'networkRainfall' in coupled_result:
+        identity['networkRainfallAdapterSha256'] = coupled_result['networkRainfall']['adapterSha256']
+        identity['directRainfallAdapters'] = coupled_result['observedRainfall']['directResponse']
     if 'initialization' in coupled_result:
         identity['initializationAdapterSha256'] = coupled_result['initialization']['adapterSha256']
     if 'networkNumericalProfile' in coupled_result:
@@ -321,6 +324,8 @@ def read_coupled_record(directory, expected_result_sha256, context):
         model = _verify_initialization(model, network, surface, result, root)
         _verify_dry_policy(model, surface, result, root)
         _verify_surface_policy(model, surface, result, root)
+        from .live_rainfall import verify as verify_live_rainfall
+        model = verify_live_rainfall(model, network, result, root, _read)
         _verify_connected_facilities(model, network, result, root)
         metrics = result['evaluationMetrics']
         require(metrics['specificationSha256'] == context['metricSpecificationSha256']

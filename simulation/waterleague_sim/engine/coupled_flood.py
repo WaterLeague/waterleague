@@ -157,16 +157,26 @@ def run_coupled(model, directory):
                                  rainfall=model.get('observedRainfall'), network=model['network'])
     network_stages = prepare_network_stage(model['network'] | {'ports': model['ports']},
                                            evaluation_seconds=model['durationSeconds'])
-    observed = None
+    observed, network_rainfall = None, None
     if model.get('observedRainfall') is not None:
-        # 직접 조회 형식은 관망 집수 강우의 같은 응답 결속 전까지 지표 소유 강우만 허용한다.
-        if model['observedRainfall'].get('schemaVersion') == 2:
-            require(not model.get('networkRainfallTriangles'), 'LIVE_SURFACE_NETWORK_FORCING_NOT_BOUND')
+        direct_network = (model['observedRainfall'].get('schemaVersion') == 2
+                          and bool(model.get('networkRainfallTriangles')))
+        network_stations = ()
+        if direct_network:
+            require(not any(k in model for k in ('initialization', 'connectedFacilityDesign',
+                    'connectedStorageDesign', 'connectedPumpDesign')), 'LIVE_NETWORK_DESIGN_BINDING_UNSUPPORTED')
+            from waterleague_sim.forcing.live_network_rainfall import validate_network, compile_network
+            validate_network(model['network'], model['observedRainfall'])
+            network_stations = set(model['observedRainfall']['stationByCatchment'].values())
         require(not model.get('surfaceRainfall') and model['surface'].get('rainfallStationIds') is None,
                 'COUPLED_RAINFALL_FORCING_CONFLICT')
         require_network_clock(model['network'], model['observedRainfall'])
         observed = (initialization.schedule if initialization is not None else
-                    compile_rainfall(model['observedRainfall'], model['surface'], model['durationSeconds']))
+                    compile_rainfall(model['observedRainfall'], model['surface'], model['durationSeconds'],
+                                     network_stations=network_stations))
+        if direct_network:
+            prepared_network, network_rainfall = compile_network(model['network'], model['observedRainfall'])
+            model = model | {'network':prepared_network}
     directory = Path(directory).resolve()
     require(not directory.exists(), 'COUPLED_OUTPUT_EXISTS')
     directory.mkdir(parents=True)
@@ -198,6 +208,9 @@ def run_coupled(model, directory):
         (directory / 'facility-network.inp').write_bytes(raw)
     if observed is not None:
         observed.archive(directory / 'observed-rainfall')
+    if network_rainfall is not None:
+        _write(directory / 'network-rainfall.json', network_rainfall)
+        (directory / 'rainfall-network.inp').write_text(model['network']['inputText'])
     ports = model['ports']
     network_model = model['network'] | {'ports': ports}
     surface_model = {'surface': model['surface'], 'ports': ports}
@@ -231,6 +244,8 @@ def run_coupled(model, directory):
     network_engine = ('coupled_pump_network' if pump_design is not None else
                       'coupled_facility_network' if facility_design is not None else
                       'network_metrics' if metric_spec is not None else 'network_exchange')
+    if network_rainfall is not None:
+        network_engine = 'rainfall_metrics' if metric_spec is not None else 'network_rainfall'
     try:
         with EngineProcess(network_engine,
                            network_model, directory / 'network',
@@ -354,6 +369,17 @@ def run_coupled(model, directory):
                     applied_rain = state.get('rainfallM3', state['externalSourceNetInflowM3'])
                     require(math.isclose(applied_rain, expected_rain,
                                         rel_tol=1e-8, abs_tol=1e-8), 'OBSERVED_RAIN_VOLUME_MISMATCH')
+                if network_rainfall is not None:
+                    native_rain = nresult['final']['rainfallInput']
+                    expected_network_rain = network_rainfall['expectedNetworkRainfallM3']
+                    # EPA의 반올림된 ha/ft² 상수 차이를 원 강우 잔차와 분리하며 엔진 값은 바꾸지 않는다.
+                    native_expected_rain = expected_network_rain * (.09290304 / (native_rain['nativeHectaresPerFt2']*10000))
+                    require(native_rain['nativeHectaresPerFt2'] == .92903e-5
+                            and math.isclose(native_rain['hydrologyTimeSeconds'], model['durationSeconds'], rel_tol=0, abs_tol=.002)
+                            and math.isclose(native_rain['declaredCatchmentAreaM2'],
+                                math.fsum(network_rainfall['catchmentAreasM2'].values()), rel_tol=1e-8, abs_tol=1e-8)
+                            and math.isclose(native_rain['grossRainfallM3'], native_expected_rain,
+                                rel_tol=1e-8, abs_tol=1e-8), 'LIVE_NETWORK_RAIN_VOLUME_MISMATCH')
                 result = {'schemaVersion': 1, 'classification': model['evidence'],
                     'method': 'EXPLICIT_NETWORK_EXCHANGE_THEN_SURFACE_FLOW',
                     'durationSeconds': model['durationSeconds'], 'steps': steps,
@@ -392,6 +418,15 @@ def run_coupled(model, directory):
                     result['observedRainfall'] = observed.summary | {
                         'appliedSurfaceRainfallM3': applied_rain,
                         'volumeResidualM3': applied_rain - expected_rain}
+                if network_rainfall is not None:
+                    result['networkRainfall'] = network_rainfall | {
+                        'nativeInput':native_rain,
+                        'expectedNativeNetworkRainfallM3':native_expected_rain,
+                        'nativeVolumeResidualM3':native_rain['grossRainfallM3']-native_expected_rain,
+                        'unitConversionDifferenceM3':native_expected_rain-expected_network_rain,
+                        'volumeResidualM3':native_rain['grossRainfallM3']-expected_network_rain,
+                        'expectedCombinedRainfallM3':expected_rain+expected_network_rain,
+                        'appliedCombinedRainfallM3':applied_rain+native_rain['grossRainfallM3']}
                 if initialization is not None:
                     result['initialization'] = initialization.summary | {'evaluationLedger': evaluation_balance,
                         'limitations': ['선행 시드·기간의 민감도 비교 필요; 현장 초기 상태 관측 아님',

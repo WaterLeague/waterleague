@@ -106,7 +106,7 @@ class RainfallSchedule:
             json.dumps(self.summary, ensure_ascii=False, allow_nan=False, indent=2) + '\n')
 
 
-def compile_rainfall(spec, surface, duration_seconds, root=ROOT):
+def compile_rainfall(spec, surface, duration_seconds, root=ROOT, *, network_stations=()):
     require(isinstance(spec, dict) and spec.get('schemaVersion') in (1, 2)
             and isinstance(spec.get('assignmentEvidence'), str) and spec['assignmentEvidence'].strip(),
             'OBSERVED_RAIN_SPECIFICATION_INVALID')
@@ -115,6 +115,11 @@ def compile_rainfall(spec, surface, duration_seconds, root=ROOT):
         from waterleague_sim.forcing.live_rainfall import METHOD, MAX_BYTES, read_live_station
         require(type(spec['schemaVersion']) is int and spec.get('sourceType') == METHOD,
                 'OBSERVED_RAIN_SPECIFICATION_INVALID')
+    require((not direct and not network_stations)
+            or (not network_stations and not spec.get('stationByCatchment')) or (direct
+            and isinstance(spec.get('stationByCatchment'), dict)
+            and set(network_stations) == set(spec['stationByCatchment'].values())),
+            'OBSERVED_RAIN_NETWORK_BINDING_REQUIRED')
     start, end = utc(spec.get('startUtc')), utc(spec.get('endUtc'))
     duration = (end - start).total_seconds()
     require(type(duration_seconds) is int and 0 < duration_seconds <= 60 * 100_000
@@ -161,17 +166,17 @@ def compile_rainfall(spec, surface, duration_seconds, root=ROOT):
             require(sum(len(raw) for raw in source_files.values()) <= MAX_BYTES,
                     'LIVE_SURFACE_RESPONSE_TOO_LARGE')
         depths[sid] = data['depthsMm'][int(offset // 60):int(offset // 60) + count]
-    require(set(stations) == set(areas), 'OBSERVED_RAIN_ASSIGNMENT_INCOMPLETE')
+    require(set(stations) == set(areas) | set(network_stations), 'OBSERVED_RAIN_ASSIGNMENT_INCOMPLETE')
     events, previous = [], None
     for index in range(count):
-        rates = {sid: float(Decimal(str(depths[sid][index])) * 60) for sid in sorted(stations)}
+        rates = {sid: float(Decimal(str(depths[sid][index])) * 60) for sid in sorted(areas)}
         if rates != previous:
             events.append({'timeMilliseconds': index * 60_000, 'ratesMmHByStation': rates})
         previous = rates
     for sid in sorted(stations):
         total = sum((Decimal(str(value)) for value in depths[sid]), Decimal(0))
-        summaries.append({'stationId': sid, 'surfaceAreaM2': areas[sid], 'depthMm': float(total),
-                          'expectedVolumeM3': float(total) * areas[sid] / 1000,
+        summaries.append({'stationId': sid, 'surfaceAreaM2': areas.get(sid, 0.), 'depthMm': float(total),
+                          'expectedVolumeM3': float(total) * areas.get(sid, 0.) / 1000,
                           'sourceSha256': stations[sid]['sourceHash'],
                           **({'sourceHashKind': stations[sid]['sourceHashKind'],
                               'responseSha256': stations[sid]['sourceHashes']} if direct else {})})

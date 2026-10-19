@@ -125,12 +125,22 @@ def replay(source, case, output, args):
         expected = load(case/'coupled-result.json')
         actual = run_coupled(load(case/'coupled-input.json'), output)
         fields = ('numericalStatus', 'balance', 'evaluationMetrics', 'connectedPumps',
-            'connectedStorage', 'surfaceBasins', 'connectedFacilities', 'initialization', 'networkNumericalProfile')
+            'connectedStorage', 'surfaceBasins', 'connectedFacilities', 'initialization', 'networkNumericalProfile',
+            'networkRainfall', 'observedRainfall')
     comparisons = {name: expected.get(name) == actual.get(name) for name in fields}
     native = ['network/network.out']
+    if 'networkRainfall' in expected:
+        native += ['rainfall-network.inp', 'network/network.inp', 'network-frames.jsonl']
+        native += [name for name in expected['files'] if name.startswith('surface/native-frames/')
+                   or 'ledger' in name]
+        for component in ('network', 'surface'):
+            original_engine = load(case/component/(component+'-result.json'))['engine']
+            replay_engine = load(output/component/(component+'-result.json'))['engine']
+            comparisons[component+'EngineIdentity'] = original_engine == replay_engine
     if 'initialization' in expected:
         native += ['evaluation-initial-state.json', 'evaluation-final-state.json']
-    native_hashes = {name: {'expected': sha(case/name), 'actual': sha(output/name)} for name in native}
+    native_hashes = {name: {'expected': sha(safe_path(case, name)),
+                            'actual': sha(safe_path(output, name))} for name in native}
     matched = all(comparisons.values()) and all(experiment_comparisons.values()) and all(
         row['expected'] == row['actual'] for row in native_hashes.values())
     report = {'schemaVersion': 1, 'status': 'MATCHED' if matched else 'DIFFERENT',
