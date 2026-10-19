@@ -1,0 +1,1262 @@
+{
+  "schemaVersion": 1,
+  "status": "MATCHED",
+  "source": "VERIFIED_ARCHIVED_CODE_BINARY_FORCING_ONLY",
+  "sourceManifestSha256": "53585ab01ec9334cac6581e01458aca1326e6172ebe65991f5f8d358e1a01515",
+  "case": "storm-design",
+  "originalNumericalStatus": "PASSED",
+  "replayedNumericalStatus": "PASSED",
+  "fields": {
+    "numericalStatus": true,
+    "balance": true,
+    "evaluationMetrics": true,
+    "connectedPumps": true,
+    "connectedStorage": true,
+    "surfaceBasins": true,
+    "connectedFacilities": true,
+    "initialization": true,
+    "networkNumericalProfile": true,
+    "networkRainfall": true,
+    "observedRainfall": true,
+    "networkEngineIdentity": true,
+    "surfaceEngineIdentity": true
+  },
+  "files": {
+    "network/network.out": {
+      "expected": "a80e44297ecf5e4ba27c319ef9a888264b941881e0131b50811b24e0f8ad09c7",
+      "actual": "a80e44297ecf5e4ba27c319ef9a888264b941881e0131b50811b24e0f8ad09c7"
+    },
+    "rainfall-network.inp": {
+      "expected": "fd7475b948631a8811fa3396f44be7141ca37ae54b4b19d38d255130aa4636ed",
+      "actual": "fd7475b948631a8811fa3396f44be7141ca37ae54b4b19d38d255130aa4636ed"
+    },
+    "network/network.inp": {
+      "expected": "fb6033e7bd0b343a5e176ac5b6a7cb4792ef469aff08bbfd480160edd81579dd",
+      "actual": "fb6033e7bd0b343a5e176ac5b6a7cb4792ef469aff08bbfd480160edd81579dd"
+    },
+    "network-frames.jsonl": {
+      "expected": "550e404a84b71e7569708c570779c6227df474abc41234c34ff7b3d89a93067f",
+      "actual": "550e404a84b71e7569708c570779c6227df474abc41234c34ff7b3d89a93067f"
+    },
+    "exchange-ledger.jsonl": {
+      "expected": "fe1130d63752bb8362de2a5f851ea86e417abc8bf9f1e94967bef1a1e828cbd5",
+      "actual": "fe1130d63752bb8362de2a5f851ea86e417abc8bf9f1e94967bef1a1e828cbd5"
+    },
+    "surface/native-frames/areas.bin": {
+      "expected": "99c07d2e12fad03f7bd815abeeadb4c8d8d716e4982f9287c5f7929e168103c4",
+      "actual": "99c07d2e12fad03f7bd815abeeadb4c8d8d716e4982f9287c5f7929e168103c4"
+    },
+    "surface/native-frames/catalog.json": {
+      "expected": "1589f1f03d73c4c2625b26a6214dd3c92f902671ae1e3d1aa793c205261c3e49",
+      "actual": "1589f1f03d73c4c2625b26a6214dd3c92f902671ae1e3d1aa793c205261c3e49"
+    },
+    "surface/native-frames/centroids.bin": {
+      "expected": "fab203c73e8c50de59aefd1da5281d42dad2d7d04d611e49a17d6fcf0b65ec87",
+      "actual": "fab203c73e8c50de59aefd1da5281d42dad2d7d04d611e49a17d6fcf0b65ec87"
+    },
+    "surface/native-frames/frame-00000.bin": {
+      "expected": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca",
+      "actual": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    "surface/native-frames/frame-00001.bin": {
+      "expected": "95092a8d115d8ad1e619edd24ea9025a7cdf43fa531261aab73568496d20607b",
+      "actual": "95092a8d115d8ad1e619edd24ea9025a7cdf43fa531261aab73568496d20607b"
+    },
+    "surface/native-frames/frame-00002.bin": {
+      "expected": "c12de6e491f9d678cc250dcf61be097ba211522715ac73241f0c63ac3d1d41fb",
+      "actual": "c12de6e491f9d678cc250dcf61be097ba211522715ac73241f0c63ac3d1d41fb"
+    },
+    "surface/native-frames/frame-00003.bin": {
+      "expected": "398161524681503edc7fbc014d7a2819e973bd183b6a56c28c78b90a845ea6cc",
+      "actual": "398161524681503edc7fbc014d7a2819e973bd183b6a56c28c78b90a845ea6cc"
+    },
+    "surface/native-frames/frame-00004.bin": {
+      "expected": "1742ce606d837ba36ccb099f355585538f38ddf19ea9e37c077ac19ccb52fb5f",
+      "actual": "1742ce606d837ba36ccb099f355585538f38ddf19ea9e37c077ac19ccb52fb5f"
+    },
+    "surface/native-frames/frame-00005.bin": {
+      "expected": "1f40df621b6ed1d9aeefc7cc8be60fa7efe903042d0930738f8c31f2e729fe30",
+      "actual": "1f40df621b6ed1d9aeefc7cc8be60fa7efe903042d0930738f8c31f2e729fe30"
+    },
+    "surface/native-frames/frame-00006.bin": {
+      "expected": "ca15cc5152380d59e4bf52bff70d42c4da70090b94316bf143597b444a8a51bc",
+      "actual": "ca15cc5152380d59e4bf52bff70d42c4da70090b94316bf143597b444a8a51bc"
+    },
+    "surface/native-frames/frame-00007.bin": {
+      "expected": "b9ed9a620a3c56a2905925cefc0771aa5e7ba2940fbd6fd55e25d5f78da6a164",
+      "actual": "b9ed9a620a3c56a2905925cefc0771aa5e7ba2940fbd6fd55e25d5f78da6a164"
+    },
+    "surface/native-frames/frame-00008.bin": {
+      "expected": "2c015c7dbf788f72eeccc2ce28e087115a82d770c21e7fb1a058d0be3fb27ea7",
+      "actual": "2c015c7dbf788f72eeccc2ce28e087115a82d770c21e7fb1a058d0be3fb27ea7"
+    },
+    "surface/native-frames/frame-00009.bin": {
+      "expected": "5cbff68b45caf63df93627e5a03fdb0f039fe809c7e0fbc28ded3a0374771182",
+      "actual": "5cbff68b45caf63df93627e5a03fdb0f039fe809c7e0fbc28ded3a0374771182"
+    },
+    "surface/native-frames/frame-00010.bin": {
+      "expected": "31f45d8c6e34ee22f8af79375660bc58a2ce9e41edbbd39a593b6ea5f948f275",
+      "actual": "31f45d8c6e34ee22f8af79375660bc58a2ce9e41edbbd39a593b6ea5f948f275"
+    },
+    "surface/native-frames/frame-00011.bin": {
+      "expected": "9d4b425901f8282aa975fb9fbd28a58c1b650fe05264a366a6887b19667f8cc3",
+      "actual": "9d4b425901f8282aa975fb9fbd28a58c1b650fe05264a366a6887b19667f8cc3"
+    },
+    "surface/native-frames/frame-00012.bin": {
+      "expected": "fe8a053d87b1323b75300909868d940c930e299069d71a53307f009a08085177",
+      "actual": "fe8a053d87b1323b75300909868d940c930e299069d71a53307f009a08085177"
+    },
+    "surface/native-frames/frame-00013.bin": {
+      "expected": "08221df67c2ad2a9d68e4bc6ddeac3eb69f568d90a6f2c9d1db8c63e30104611",
+      "actual": "08221df67c2ad2a9d68e4bc6ddeac3eb69f568d90a6f2c9d1db8c63e30104611"
+    },
+    "surface/native-frames/frame-00014.bin": {
+      "expected": "bc700c6c0852888987f3095ce077b84c5a0b1a5586b4a51e32753b9e682f6821",
+      "actual": "bc700c6c0852888987f3095ce077b84c5a0b1a5586b4a51e32753b9e682f6821"
+    },
+    "surface/native-frames/frame-00015.bin": {
+      "expected": "703a1e52fd0a9cd5d9eaf341698876f5a1ff8c8e23a99a6bda08476aa32ea3d4",
+      "actual": "703a1e52fd0a9cd5d9eaf341698876f5a1ff8c8e23a99a6bda08476aa32ea3d4"
+    },
+    "surface/native-frames/frame-00016.bin": {
+      "expected": "2320dd8c50882e77b492607c4dc32905c8f78dbf004f6d01ef6b0d681c78fa33",
+      "actual": "2320dd8c50882e77b492607c4dc32905c8f78dbf004f6d01ef6b0d681c78fa33"
+    },
+    "surface/native-frames/frame-00017.bin": {
+      "expected": "5ce86fc2e3732344af90607bff2b5c0ab8731a236288383f28cf031e61c72b69",
+      "actual": "5ce86fc2e3732344af90607bff2b5c0ab8731a236288383f28cf031e61c72b69"
+    },
+    "surface/native-frames/frame-00018.bin": {
+      "expected": "949e42659700c2cb27cfe485b532e98743bb6aebf91742388cfbcc6911856d64",
+      "actual": "949e42659700c2cb27cfe485b532e98743bb6aebf91742388cfbcc6911856d64"
+    },
+    "surface/native-frames/frame-00019.bin": {
+      "expected": "9ca8ea0b42427c9d0ffcfabcebf91e7336c3c0566f5316fdc23480811b8cc9be",
+      "actual": "9ca8ea0b42427c9d0ffcfabcebf91e7336c3c0566f5316fdc23480811b8cc9be"
+    },
+    "surface/native-frames/frame-00020.bin": {
+      "expected": "db37c7a6f53d0ba5b32d018355435087a66a4dcf964ad37579efde1aefee046e",
+      "actual": "db37c7a6f53d0ba5b32d018355435087a66a4dcf964ad37579efde1aefee046e"
+    },
+    "surface/native-frames/frame-00021.bin": {
+      "expected": "2a0e71c54ae6c97c685f657dc303181a5375c2e43d375d1f8b1964e9a7c12489",
+      "actual": "2a0e71c54ae6c97c685f657dc303181a5375c2e43d375d1f8b1964e9a7c12489"
+    },
+    "surface/native-frames/frame-00022.bin": {
+      "expected": "bc86b3b190a625fb9a786b88da8162e2493e3d7aa5bc38edbb55c8dda2505799",
+      "actual": "bc86b3b190a625fb9a786b88da8162e2493e3d7aa5bc38edbb55c8dda2505799"
+    },
+    "surface/native-frames/frame-00023.bin": {
+      "expected": "3c2b31fe8aea790fa3ce3bfef4251b7e6e2971360534e9af36cf46e37ec23197",
+      "actual": "3c2b31fe8aea790fa3ce3bfef4251b7e6e2971360534e9af36cf46e37ec23197"
+    },
+    "surface/native-frames/frame-00024.bin": {
+      "expected": "97e14dcbb8afe669253b52ffd05a848c406f8e9c214598f3bc8e0c65b4364b6b",
+      "actual": "97e14dcbb8afe669253b52ffd05a848c406f8e9c214598f3bc8e0c65b4364b6b"
+    },
+    "surface/native-frames/frame-00025.bin": {
+      "expected": "3ed1b5992c799f656ae7787fbb9e61916e76d713fb11c364e7cf6fe2403aad7c",
+      "actual": "3ed1b5992c799f656ae7787fbb9e61916e76d713fb11c364e7cf6fe2403aad7c"
+    },
+    "surface/native-frames/frame-00026.bin": {
+      "expected": "e11fd588c93bf3b7d4dc097dcbfe3b649663c7255f3cfc4ae5d8629685b0f2bd",
+      "actual": "e11fd588c93bf3b7d4dc097dcbfe3b649663c7255f3cfc4ae5d8629685b0f2bd"
+    },
+    "surface/native-frames/frame-00027.bin": {
+      "expected": "8ceaa597a7904a72400686acb01c748816626c1ee69b0d078882794d3d94961e",
+      "actual": "8ceaa597a7904a72400686acb01c748816626c1ee69b0d078882794d3d94961e"
+    },
+    "surface/native-frames/frame-00028.bin": {
+      "expected": "b36cbf29c18ebf883f96d1a5a65f75c22ca45c4c8e561c981c2948c12aa72e92",
+      "actual": "b36cbf29c18ebf883f96d1a5a65f75c22ca45c4c8e561c981c2948c12aa72e92"
+    },
+    "surface/native-frames/frame-00029.bin": {
+      "expected": "397083ee66445a7366e863743d9d0906a2821b428e2db01bf031bd2bb28a5710",
+      "actual": "397083ee66445a7366e863743d9d0906a2821b428e2db01bf031bd2bb28a5710"
+    },
+    "surface/native-frames/frame-00030.bin": {
+      "expected": "fa23fda377ea986f4a8b253f66d4c5451678c84b4ff44c63822617ef5e3ebdbe",
+      "actual": "fa23fda377ea986f4a8b253f66d4c5451678c84b4ff44c63822617ef5e3ebdbe"
+    },
+    "surface/native-frames/frame-00031.bin": {
+      "expected": "5454eef0f5cfdedea9ed9e781e22eb35c30186412b1ec39875852f33681034a7",
+      "actual": "5454eef0f5cfdedea9ed9e781e22eb35c30186412b1ec39875852f33681034a7"
+    },
+    "surface/native-frames/frame-00032.bin": {
+      "expected": "f12940781320bb33e00aa685c2edfe97a0750f8d58bfd1a8b6aed012f8db4e62",
+      "actual": "f12940781320bb33e00aa685c2edfe97a0750f8d58bfd1a8b6aed012f8db4e62"
+    },
+    "surface/native-frames/frame-00033.bin": {
+      "expected": "b67088a00eb36c270a648844c7c492f156074c0191ba41fbe6224526103df128",
+      "actual": "b67088a00eb36c270a648844c7c492f156074c0191ba41fbe6224526103df128"
+    },
+    "surface/native-frames/frame-00034.bin": {
+      "expected": "f0eb7beb3b600c4a57cb3df36dacadb432f545d785bedf418f0a27fab65f910b",
+      "actual": "f0eb7beb3b600c4a57cb3df36dacadb432f545d785bedf418f0a27fab65f910b"
+    },
+    "surface/native-frames/frame-00035.bin": {
+      "expected": "702c60cb108845e4231ce283c59249f823a88c99221a628559975e78a3fa9579",
+      "actual": "702c60cb108845e4231ce283c59249f823a88c99221a628559975e78a3fa9579"
+    },
+    "surface/native-frames/frame-00036.bin": {
+      "expected": "0e608e007cb99ae54bb93606c4c6d1a892872be5dac3d419982050416bd17c75",
+      "actual": "0e608e007cb99ae54bb93606c4c6d1a892872be5dac3d419982050416bd17c75"
+    },
+    "surface/native-frames/frame-00037.bin": {
+      "expected": "0fec3aea18f80ba3b7e1bfe36aeeacc1f4a5561192ca778b529042d9250c4a28",
+      "actual": "0fec3aea18f80ba3b7e1bfe36aeeacc1f4a5561192ca778b529042d9250c4a28"
+    },
+    "surface/native-frames/frame-00038.bin": {
+      "expected": "ce5da4119d64a59e907751af2adb328372db35149f5d0887d68600edbf54b3d4",
+      "actual": "ce5da4119d64a59e907751af2adb328372db35149f5d0887d68600edbf54b3d4"
+    },
+    "surface/native-frames/frame-00039.bin": {
+      "expected": "e6cc90b84ce4dd58818b655a9372c8b90d518cd9b5a23282f500be6fd37965a3",
+      "actual": "e6cc90b84ce4dd58818b655a9372c8b90d518cd9b5a23282f500be6fd37965a3"
+    },
+    "surface/native-frames/frame-00040.bin": {
+      "expected": "8f5c8dc623479e7cccdee827ffd35758b3636ab26cd584989486c4bb5c87e240",
+      "actual": "8f5c8dc623479e7cccdee827ffd35758b3636ab26cd584989486c4bb5c87e240"
+    },
+    "surface/native-frames/frame-00041.bin": {
+      "expected": "50d808bcf9784ca9512f6f3c083206f1255fcfb8d98c8436e16b22acf53d1572",
+      "actual": "50d808bcf9784ca9512f6f3c083206f1255fcfb8d98c8436e16b22acf53d1572"
+    },
+    "surface/native-frames/frame-00042.bin": {
+      "expected": "959211be5bfb58bf760ea61136636238da872c982a0b58ff573dfdd05bef1bc5",
+      "actual": "959211be5bfb58bf760ea61136636238da872c982a0b58ff573dfdd05bef1bc5"
+    },
+    "surface/native-frames/frame-00043.bin": {
+      "expected": "3813cec08d778aadc642b5f21d8c6a2670f762e567361e66a66df215e7d0d6f2",
+      "actual": "3813cec08d778aadc642b5f21d8c6a2670f762e567361e66a66df215e7d0d6f2"
+    },
+    "surface/native-frames/frame-00044.bin": {
+      "expected": "77790047cf72ce83e565f7d598653f8aaef27cf7ec4fccf8931658dfd1862fb2",
+      "actual": "77790047cf72ce83e565f7d598653f8aaef27cf7ec4fccf8931658dfd1862fb2"
+    },
+    "surface/native-frames/frame-00045.bin": {
+      "expected": "6957bf9e6f5d44179ec5f9cb0b6b340e7e823670bfd58cc8e0bb62da34a8c3af",
+      "actual": "6957bf9e6f5d44179ec5f9cb0b6b340e7e823670bfd58cc8e0bb62da34a8c3af"
+    },
+    "surface/native-frames/frame-00046.bin": {
+      "expected": "68bd902ac1bd0ad8efe2a6f0ec7fad7448adac4e4f96b22d483ec47b441c2ed0",
+      "actual": "68bd902ac1bd0ad8efe2a6f0ec7fad7448adac4e4f96b22d483ec47b441c2ed0"
+    },
+    "surface/native-frames/frame-00047.bin": {
+      "expected": "19c0cf0508d4409fef0451a7bc2728cefc7f0d1095237ef34adf167b3986c7b9",
+      "actual": "19c0cf0508d4409fef0451a7bc2728cefc7f0d1095237ef34adf167b3986c7b9"
+    },
+    "surface/native-frames/frame-00048.bin": {
+      "expected": "474191b880e2c37ba0f087536d4512cb30df26d0432f2652bdf9d4710e42f070",
+      "actual": "474191b880e2c37ba0f087536d4512cb30df26d0432f2652bdf9d4710e42f070"
+    },
+    "surface/native-frames/frame-00049.bin": {
+      "expected": "b5906abd000c17ceba4fa0f547c0db50ee54ff31770db59a7212fab2bca43f5a",
+      "actual": "b5906abd000c17ceba4fa0f547c0db50ee54ff31770db59a7212fab2bca43f5a"
+    },
+    "surface/native-frames/frame-00050.bin": {
+      "expected": "9db4fb6ffdcb7577695c2dc340e441319353960daf7ed31b7140257557429612",
+      "actual": "9db4fb6ffdcb7577695c2dc340e441319353960daf7ed31b7140257557429612"
+    },
+    "surface/native-frames/frame-00051.bin": {
+      "expected": "484a9b78d620910ffddff6f917c44afa9a46f20e36f74e8b306db848017cfa2f",
+      "actual": "484a9b78d620910ffddff6f917c44afa9a46f20e36f74e8b306db848017cfa2f"
+    },
+    "surface/native-frames/frame-00052.bin": {
+      "expected": "c6511dfc76d67b033853a68d65aae805401e5d2c6efd284dbfdbdabaf870031c",
+      "actual": "c6511dfc76d67b033853a68d65aae805401e5d2c6efd284dbfdbdabaf870031c"
+    },
+    "surface/native-frames/frame-00053.bin": {
+      "expected": "b2ccd0be08f9fd68da68466065c85fbc2f4099fbb7b8023b5501f4333e2b3dd9",
+      "actual": "b2ccd0be08f9fd68da68466065c85fbc2f4099fbb7b8023b5501f4333e2b3dd9"
+    },
+    "surface/native-frames/frame-00054.bin": {
+      "expected": "c9191d7b9a97a244d561d544634ec1c43c1f302055e16caedde9e724a267f88e",
+      "actual": "c9191d7b9a97a244d561d544634ec1c43c1f302055e16caedde9e724a267f88e"
+    },
+    "surface/native-frames/frame-00055.bin": {
+      "expected": "0f23af7a166fdf1004460030b785ef6c94e1ca0797c6b23f23ed91d2f5e1088a",
+      "actual": "0f23af7a166fdf1004460030b785ef6c94e1ca0797c6b23f23ed91d2f5e1088a"
+    },
+    "surface/native-frames/frame-00056.bin": {
+      "expected": "dc9b0a5af390e18af409115c87ad160a152c4c8aa386541150dde97b81423a08",
+      "actual": "dc9b0a5af390e18af409115c87ad160a152c4c8aa386541150dde97b81423a08"
+    },
+    "surface/native-frames/frame-00057.bin": {
+      "expected": "24057bc5ff06d70671cd1c995166c0e833b191fdcd2f4ca2cafb6a6ce72908f6",
+      "actual": "24057bc5ff06d70671cd1c995166c0e833b191fdcd2f4ca2cafb6a6ce72908f6"
+    },
+    "surface/native-frames/frame-00058.bin": {
+      "expected": "b4ecba5c3ea99d308f34e0ad4e6f3059013fd929dbcd1f2a4c3fb90a723dbe53",
+      "actual": "b4ecba5c3ea99d308f34e0ad4e6f3059013fd929dbcd1f2a4c3fb90a723dbe53"
+    },
+    "surface/native-frames/frame-00059.bin": {
+      "expected": "d1d1f89ea1f733a48b7509f9f77f60be61191f9c961d0ba8133b4900c540ab9e",
+      "actual": "d1d1f89ea1f733a48b7509f9f77f60be61191f9c961d0ba8133b4900c540ab9e"
+    },
+    "surface/native-frames/frame-00060.bin": {
+      "expected": "c4d0803bcc86a0b5fb603befc62c01fcc1ae4ea446125701e7152453d86bfa4a",
+      "actual": "c4d0803bcc86a0b5fb603befc62c01fcc1ae4ea446125701e7152453d86bfa4a"
+    },
+    "surface/native-frames/frame-00061.bin": {
+      "expected": "e2985ed634564804095fe26167c0c1e6a9fc0916381db6305b90b19851fa4639",
+      "actual": "e2985ed634564804095fe26167c0c1e6a9fc0916381db6305b90b19851fa4639"
+    },
+    "surface/native-frames/frame-00062.bin": {
+      "expected": "490bf3d8f1a484018352e5cd5273e310304a30920177f2f6c1b00d54e473c5ce",
+      "actual": "490bf3d8f1a484018352e5cd5273e310304a30920177f2f6c1b00d54e473c5ce"
+    },
+    "surface/native-frames/frame-00063.bin": {
+      "expected": "0aa596e43b70c3412d1a70c000e10211a8dbdc69635f39c62d53a32e941e12b2",
+      "actual": "0aa596e43b70c3412d1a70c000e10211a8dbdc69635f39c62d53a32e941e12b2"
+    },
+    "surface/native-frames/frame-00064.bin": {
+      "expected": "1c873b8175dd3072147ff3fd87cbd1dfd37a05a80454223aed73dd75bef44ba3",
+      "actual": "1c873b8175dd3072147ff3fd87cbd1dfd37a05a80454223aed73dd75bef44ba3"
+    },
+    "surface/native-frames/frame-00065.bin": {
+      "expected": "c50dd764f1b8d5a3a7bc60793373deb1f103964203aa3b1be3db1726e029d4e9",
+      "actual": "c50dd764f1b8d5a3a7bc60793373deb1f103964203aa3b1be3db1726e029d4e9"
+    },
+    "surface/native-frames/frame-00066.bin": {
+      "expected": "89333bc73e6af7ad16dc6ec81477a8bc84917eccaefe33d50592ffd9ff88db1a",
+      "actual": "89333bc73e6af7ad16dc6ec81477a8bc84917eccaefe33d50592ffd9ff88db1a"
+    },
+    "surface/native-frames/frame-00067.bin": {
+      "expected": "15f5bc33d0c2799db96b0901ba48d7750e39e89bd60db596a9b228f206dc6f6e",
+      "actual": "15f5bc33d0c2799db96b0901ba48d7750e39e89bd60db596a9b228f206dc6f6e"
+    },
+    "surface/native-frames/frame-00068.bin": {
+      "expected": "f497877047920ed48c633a5174ba54ed5a9038bb76bdb7d3ef7a3302ae857f02",
+      "actual": "f497877047920ed48c633a5174ba54ed5a9038bb76bdb7d3ef7a3302ae857f02"
+    },
+    "surface/native-frames/frame-00069.bin": {
+      "expected": "9a3d645ad0c89d30e6951dc8521c283058dbac3b7bda10197feda92c3d2203ef",
+      "actual": "9a3d645ad0c89d30e6951dc8521c283058dbac3b7bda10197feda92c3d2203ef"
+    },
+    "surface/native-frames/frame-00070.bin": {
+      "expected": "b1542c754cd6f1297e5165d74e49dd3804427ec8650824d2ca5581959fd1b343",
+      "actual": "b1542c754cd6f1297e5165d74e49dd3804427ec8650824d2ca5581959fd1b343"
+    },
+    "surface/native-frames/frame-00071.bin": {
+      "expected": "2521513da42248d95ab23bf4b330ed8e84f3c9223df831f9dc1dd1bfa92215af",
+      "actual": "2521513da42248d95ab23bf4b330ed8e84f3c9223df831f9dc1dd1bfa92215af"
+    },
+    "surface/native-frames/frame-00072.bin": {
+      "expected": "edcd7b6fda6b04b6f3c87b17f0279ea77104777b8c0d878398f143025d94da9f",
+      "actual": "edcd7b6fda6b04b6f3c87b17f0279ea77104777b8c0d878398f143025d94da9f"
+    },
+    "surface/native-frames/frame-00073.bin": {
+      "expected": "c388ad374557ea21ee8ec5cf3b496cad63d2134ca23bbcfe783b885fd659ee33",
+      "actual": "c388ad374557ea21ee8ec5cf3b496cad63d2134ca23bbcfe783b885fd659ee33"
+    },
+    "surface/native-frames/frame-00074.bin": {
+      "expected": "2178237a5c37a280e69b61faee8c1d9592b285d71d1e1c4599a2af9e8aa8514d",
+      "actual": "2178237a5c37a280e69b61faee8c1d9592b285d71d1e1c4599a2af9e8aa8514d"
+    },
+    "surface/native-frames/frame-00075.bin": {
+      "expected": "1108eedd205ec766d694378bbc39fb95b5ce51850eec63e49e6763118d930cd1",
+      "actual": "1108eedd205ec766d694378bbc39fb95b5ce51850eec63e49e6763118d930cd1"
+    },
+    "surface/native-frames/frame-00076.bin": {
+      "expected": "7ea1c026c4a585a4394863303b4874ff6503781e245b8ae7c07d73aac2b93515",
+      "actual": "7ea1c026c4a585a4394863303b4874ff6503781e245b8ae7c07d73aac2b93515"
+    },
+    "surface/native-frames/frame-00077.bin": {
+      "expected": "95f75f2404cecc48fb885227fef787e552725e0cf201d012f3c7bfbad1a1db8a",
+      "actual": "95f75f2404cecc48fb885227fef787e552725e0cf201d012f3c7bfbad1a1db8a"
+    },
+    "surface/native-frames/frame-00078.bin": {
+      "expected": "f1e4cf9295984ad54f194d06be831894951cbe070d33202c97df86bd2ac7b563",
+      "actual": "f1e4cf9295984ad54f194d06be831894951cbe070d33202c97df86bd2ac7b563"
+    },
+    "surface/native-frames/frame-00079.bin": {
+      "expected": "102f97c8cc613916734e5651984d12103bdd53304b84bce90f2e6689491877c6",
+      "actual": "102f97c8cc613916734e5651984d12103bdd53304b84bce90f2e6689491877c6"
+    },
+    "surface/native-frames/frame-00080.bin": {
+      "expected": "84bab343b25e176e0c528a27511ee3d0648fbcb35be53c3cc41e59eb5bf1c583",
+      "actual": "84bab343b25e176e0c528a27511ee3d0648fbcb35be53c3cc41e59eb5bf1c583"
+    },
+    "surface/native-frames/frame-00081.bin": {
+      "expected": "0b5b801e197ee04a3dfd18bd59955500712006ce89e79c7992561dbf9084072e",
+      "actual": "0b5b801e197ee04a3dfd18bd59955500712006ce89e79c7992561dbf9084072e"
+    },
+    "surface/native-frames/frame-00082.bin": {
+      "expected": "fe57f8b8706c8097f05ee97e98ab31ba0615a313d1a200bf1493cfd74658c960",
+      "actual": "fe57f8b8706c8097f05ee97e98ab31ba0615a313d1a200bf1493cfd74658c960"
+    },
+    "surface/native-frames/frame-00083.bin": {
+      "expected": "ee06d50d4920ccd7e903e6aef5ea373f6dc50f1902ee6bae69efd06591641f61",
+      "actual": "ee06d50d4920ccd7e903e6aef5ea373f6dc50f1902ee6bae69efd06591641f61"
+    },
+    "surface/native-frames/frame-00084.bin": {
+      "expected": "85b072e4bb61281f049fdd417ff207f648dc920afe4f51cb3454076f08f661a2",
+      "actual": "85b072e4bb61281f049fdd417ff207f648dc920afe4f51cb3454076f08f661a2"
+    },
+    "surface/native-frames/frame-00085.bin": {
+      "expected": "edb6c0baaa902fcb9d5739864e30f6095bf998209ca7f6ab5def5e1be9a337c1",
+      "actual": "edb6c0baaa902fcb9d5739864e30f6095bf998209ca7f6ab5def5e1be9a337c1"
+    },
+    "surface/native-frames/frame-00086.bin": {
+      "expected": "a34ae9f45b133f0c7624048f61bb43250c4cc5ee97b19f53d9fa487c63f6406b",
+      "actual": "a34ae9f45b133f0c7624048f61bb43250c4cc5ee97b19f53d9fa487c63f6406b"
+    },
+    "surface/native-frames/frame-00087.bin": {
+      "expected": "58c189f1efb9b26fb69222e58110dffb1b92bd586b184ec66274d2804ef7705f",
+      "actual": "58c189f1efb9b26fb69222e58110dffb1b92bd586b184ec66274d2804ef7705f"
+    },
+    "surface/native-frames/frame-00088.bin": {
+      "expected": "f9b9a002ce37a685fa9d9125f3074c170f092e490ff7a55d52f30b3afb019247",
+      "actual": "f9b9a002ce37a685fa9d9125f3074c170f092e490ff7a55d52f30b3afb019247"
+    },
+    "surface/native-frames/frame-00089.bin": {
+      "expected": "18675cc8a88b5da8f42d3c247f9005b8a7699d94a093bce1b298594efd82dc85",
+      "actual": "18675cc8a88b5da8f42d3c247f9005b8a7699d94a093bce1b298594efd82dc85"
+    },
+    "surface/native-frames/frame-00090.bin": {
+      "expected": "2871218aed5b6b92ca0a9687230445d72b03c9d8e1b0e5e47997ece7cdde1613",
+      "actual": "2871218aed5b6b92ca0a9687230445d72b03c9d8e1b0e5e47997ece7cdde1613"
+    },
+    "surface/native-frames/frame-00091.bin": {
+      "expected": "ee55d105c3784dc3777312dcd9f22208a8e9c07c05c339f397580bc2a9da8e71",
+      "actual": "ee55d105c3784dc3777312dcd9f22208a8e9c07c05c339f397580bc2a9da8e71"
+    },
+    "surface/native-frames/frame-00092.bin": {
+      "expected": "73f46fb9c48a48ae199ba93399aca8bca0e275327726bda8dd7f959c52edefb8",
+      "actual": "73f46fb9c48a48ae199ba93399aca8bca0e275327726bda8dd7f959c52edefb8"
+    },
+    "surface/native-frames/frame-00093.bin": {
+      "expected": "e0fe679770a1fbd1c91f2605ba2ab7f7d0eb0e73c3e31aaa5bbf5dd838f22df9",
+      "actual": "e0fe679770a1fbd1c91f2605ba2ab7f7d0eb0e73c3e31aaa5bbf5dd838f22df9"
+    },
+    "surface/native-frames/frame-00094.bin": {
+      "expected": "3b66c5b3a5a875902520477ed7087b6cd41e3d630e6c47beadb0b86193be39a0",
+      "actual": "3b66c5b3a5a875902520477ed7087b6cd41e3d630e6c47beadb0b86193be39a0"
+    },
+    "surface/native-frames/frame-00095.bin": {
+      "expected": "3dd56b1e0342b061bdfbb44deb7aea44a0e6e4f8046d4017d983ae837bdaf5b6",
+      "actual": "3dd56b1e0342b061bdfbb44deb7aea44a0e6e4f8046d4017d983ae837bdaf5b6"
+    },
+    "surface/native-frames/frame-00096.bin": {
+      "expected": "ee5d4cab531a19eb3b3fdb67431d6b68aa2d3b1ff470e777c5c8afa730f8ccb2",
+      "actual": "ee5d4cab531a19eb3b3fdb67431d6b68aa2d3b1ff470e777c5c8afa730f8ccb2"
+    },
+    "surface/native-frames/frame-00097.bin": {
+      "expected": "c9ab99f4acd900dd06dd664aea7f42a69cc91f4043ebda4d543ed11523cae77c",
+      "actual": "c9ab99f4acd900dd06dd664aea7f42a69cc91f4043ebda4d543ed11523cae77c"
+    },
+    "surface/native-frames/frame-00098.bin": {
+      "expected": "08fb2f7a842c55626ccb1abef15f52c5eac8cb325da3e9ef054e5093f6b7416b",
+      "actual": "08fb2f7a842c55626ccb1abef15f52c5eac8cb325da3e9ef054e5093f6b7416b"
+    },
+    "surface/native-frames/frame-00099.bin": {
+      "expected": "0fe8fed75d859a10f8bfab5640dcf85c6fd8b097d06af3a676bb0cc1c67b480b",
+      "actual": "0fe8fed75d859a10f8bfab5640dcf85c6fd8b097d06af3a676bb0cc1c67b480b"
+    },
+    "surface/native-frames/frame-00100.bin": {
+      "expected": "2b0a2b2db0d93fe8d211df618541f66a4775559f95f5daea9212b7b9ab2bd4ae",
+      "actual": "2b0a2b2db0d93fe8d211df618541f66a4775559f95f5daea9212b7b9ab2bd4ae"
+    },
+    "surface/native-frames/frame-00101.bin": {
+      "expected": "558568447c26e4acb6bcd54188727f4a3db03640f4d8fd09a48589e5fea6eb8b",
+      "actual": "558568447c26e4acb6bcd54188727f4a3db03640f4d8fd09a48589e5fea6eb8b"
+    },
+    "surface/native-frames/frame-00102.bin": {
+      "expected": "1cd0fec18693aa32bee227bfa17b6dbf1e8aa8100a016715ba9e8da953d2143b",
+      "actual": "1cd0fec18693aa32bee227bfa17b6dbf1e8aa8100a016715ba9e8da953d2143b"
+    },
+    "surface/native-frames/frame-00103.bin": {
+      "expected": "cb677001f78513e81f14caa3a7387074de11bfba4f2cef7d167c4b28938a4a34",
+      "actual": "cb677001f78513e81f14caa3a7387074de11bfba4f2cef7d167c4b28938a4a34"
+    },
+    "surface/native-frames/frame-00104.bin": {
+      "expected": "17221cc8682df7626a315dbfe7729b2e285f91fe48d0bc4543f684a60c3040a4",
+      "actual": "17221cc8682df7626a315dbfe7729b2e285f91fe48d0bc4543f684a60c3040a4"
+    },
+    "surface/native-frames/frame-00105.bin": {
+      "expected": "f02e8aa10f0289c1e04bd374664899ea5173e1f790b07fcde1afb4a5747c1406",
+      "actual": "f02e8aa10f0289c1e04bd374664899ea5173e1f790b07fcde1afb4a5747c1406"
+    },
+    "surface/native-frames/frame-00106.bin": {
+      "expected": "dd42bd97a3b40958a4d3fa83fea463b545dd75871c0280c3d2305dd0912874b5",
+      "actual": "dd42bd97a3b40958a4d3fa83fea463b545dd75871c0280c3d2305dd0912874b5"
+    },
+    "surface/native-frames/frame-00107.bin": {
+      "expected": "11f9e3f49e0cd3811887930a5b1179bc6fd7a8503b77860327b4b5807dd4ba42",
+      "actual": "11f9e3f49e0cd3811887930a5b1179bc6fd7a8503b77860327b4b5807dd4ba42"
+    },
+    "surface/native-frames/frame-00108.bin": {
+      "expected": "c708e9d52b154767b67f15aa6bad609ce4e1efdddf12b2c529d235371632c165",
+      "actual": "c708e9d52b154767b67f15aa6bad609ce4e1efdddf12b2c529d235371632c165"
+    },
+    "surface/native-frames/frame-00109.bin": {
+      "expected": "0512d81fa23b7b3233fcefcaf5473a984ff9644841d4af55b0c431d7b696ef94",
+      "actual": "0512d81fa23b7b3233fcefcaf5473a984ff9644841d4af55b0c431d7b696ef94"
+    },
+    "surface/native-frames/frame-00110.bin": {
+      "expected": "531a7db5e4a13199a9f73a1fbc5eaa2e3deb6d0275933b7b433ad86c72c15be2",
+      "actual": "531a7db5e4a13199a9f73a1fbc5eaa2e3deb6d0275933b7b433ad86c72c15be2"
+    },
+    "surface/native-frames/frame-00111.bin": {
+      "expected": "d0b7b9c512436456b87c3cfd52e676bcb31aadffbfaa558c5402fe9174644196",
+      "actual": "d0b7b9c512436456b87c3cfd52e676bcb31aadffbfaa558c5402fe9174644196"
+    },
+    "surface/native-frames/frame-00112.bin": {
+      "expected": "fdd3d3acd3ff84aff9aba2de35a83f7326dc89f14a5769230bfaab9fece36522",
+      "actual": "fdd3d3acd3ff84aff9aba2de35a83f7326dc89f14a5769230bfaab9fece36522"
+    },
+    "surface/native-frames/frame-00113.bin": {
+      "expected": "b376da5a3544d92931de41a7ecb3ce57a4e4d6105f4c14fd15040bbe0815e5b9",
+      "actual": "b376da5a3544d92931de41a7ecb3ce57a4e4d6105f4c14fd15040bbe0815e5b9"
+    },
+    "surface/native-frames/frame-00114.bin": {
+      "expected": "0192270140d65347b8e19e77ae95f7b7681616dde03e167e31bf30e014c4874f",
+      "actual": "0192270140d65347b8e19e77ae95f7b7681616dde03e167e31bf30e014c4874f"
+    },
+    "surface/native-frames/frame-00115.bin": {
+      "expected": "ae82c0a54a4fe9069f5accb112c0c94270e51c82d0eb5d442b0d09443590c9dd",
+      "actual": "ae82c0a54a4fe9069f5accb112c0c94270e51c82d0eb5d442b0d09443590c9dd"
+    },
+    "surface/native-frames/frame-00116.bin": {
+      "expected": "5b8f9b617ec9a69d2524e770e5210fc8d5c654df865e2de3966079af6d0d8a23",
+      "actual": "5b8f9b617ec9a69d2524e770e5210fc8d5c654df865e2de3966079af6d0d8a23"
+    },
+    "surface/native-frames/frame-00117.bin": {
+      "expected": "6604ed4ddfdc3e37f6e2313d29fa648d6e38c74e07f70c50a9e512f472491185",
+      "actual": "6604ed4ddfdc3e37f6e2313d29fa648d6e38c74e07f70c50a9e512f472491185"
+    },
+    "surface/native-frames/frame-00118.bin": {
+      "expected": "970759cdc55db9ce4778ceb6be2e4f0f28e7a51f5a192713c8ff9b1347c1de30",
+      "actual": "970759cdc55db9ce4778ceb6be2e4f0f28e7a51f5a192713c8ff9b1347c1de30"
+    },
+    "surface/native-frames/frame-00119.bin": {
+      "expected": "fc3cf089719a0bb5a49608d1e544b1b5362e4110384e6097b34e595d828edaca",
+      "actual": "fc3cf089719a0bb5a49608d1e544b1b5362e4110384e6097b34e595d828edaca"
+    },
+    "surface/native-frames/frame-00120.bin": {
+      "expected": "92ab99c262979dc16c345b4ca844007fc97691a150bd9bb6c40dc8c0468dbb38",
+      "actual": "92ab99c262979dc16c345b4ca844007fc97691a150bd9bb6c40dc8c0468dbb38"
+    },
+    "surface/native-frames/frame-00121.bin": {
+      "expected": "8b098a90de572a1d668c4b8dc207df29fac073a1d6e2202f8e2d3fa554df2378",
+      "actual": "8b098a90de572a1d668c4b8dc207df29fac073a1d6e2202f8e2d3fa554df2378"
+    },
+    "surface/native-frames/frame-00122.bin": {
+      "expected": "8a2e3afb04a95e3ea57c04e62ac26aaf0b7bbaa3b28828ba0d4bab19d11801d8",
+      "actual": "8a2e3afb04a95e3ea57c04e62ac26aaf0b7bbaa3b28828ba0d4bab19d11801d8"
+    },
+    "surface/native-frames/frame-00123.bin": {
+      "expected": "0bc141b754a7bc8f66ef1146dbd585f57cdcc24c238805e23dc0c36631317729",
+      "actual": "0bc141b754a7bc8f66ef1146dbd585f57cdcc24c238805e23dc0c36631317729"
+    },
+    "surface/native-frames/frame-00124.bin": {
+      "expected": "a16409f722bf374baf2e5ce0da226e31edb72e5176fcefcc330069f586cc66f0",
+      "actual": "a16409f722bf374baf2e5ce0da226e31edb72e5176fcefcc330069f586cc66f0"
+    },
+    "surface/native-frames/frame-00125.bin": {
+      "expected": "294fcb211e75de28be45ca8c6c8b325cc93d1b56b895b64df34635fb1e76ac0d",
+      "actual": "294fcb211e75de28be45ca8c6c8b325cc93d1b56b895b64df34635fb1e76ac0d"
+    },
+    "surface/native-frames/frame-00126.bin": {
+      "expected": "da9d7124d56b9b3e9093b34070a8241ed427012628bcc27819cc808a50fc59e8",
+      "actual": "da9d7124d56b9b3e9093b34070a8241ed427012628bcc27819cc808a50fc59e8"
+    },
+    "surface/native-frames/frame-00127.bin": {
+      "expected": "55afebba01061f1621acbcd98f8f60898af17f287fb7254633149ef2b6943069",
+      "actual": "55afebba01061f1621acbcd98f8f60898af17f287fb7254633149ef2b6943069"
+    },
+    "surface/native-frames/frame-00128.bin": {
+      "expected": "ab34b7d0495ecef7e08002450374b6bafabc7923c8f5a57284a120a44cbae80a",
+      "actual": "ab34b7d0495ecef7e08002450374b6bafabc7923c8f5a57284a120a44cbae80a"
+    },
+    "surface/native-frames/frame-00129.bin": {
+      "expected": "2c0143afc77258fb573528647a132539e4270356297ced1490deeb9ea2ea16f0",
+      "actual": "2c0143afc77258fb573528647a132539e4270356297ced1490deeb9ea2ea16f0"
+    },
+    "surface/native-frames/frame-00130.bin": {
+      "expected": "750c7d075fe28612bc99b583fa0fac8c816c7e02ee7b2fbec3a171767591395b",
+      "actual": "750c7d075fe28612bc99b583fa0fac8c816c7e02ee7b2fbec3a171767591395b"
+    },
+    "surface/native-frames/frame-00131.bin": {
+      "expected": "7de2aa0f51ca431e068275c177ac507c763471b6118844c6eb51690e3f357aec",
+      "actual": "7de2aa0f51ca431e068275c177ac507c763471b6118844c6eb51690e3f357aec"
+    },
+    "surface/native-frames/frame-00132.bin": {
+      "expected": "3cf6c441de056c936a0d43b6bcfb9f4702cbb47cbdda946b237270b89009cac8",
+      "actual": "3cf6c441de056c936a0d43b6bcfb9f4702cbb47cbdda946b237270b89009cac8"
+    },
+    "surface/native-frames/frame-00133.bin": {
+      "expected": "7c6b6ed6a3278da9d6cfe4aba60bbc13245fe07ddafdca2d7dcaa25d2a15ed9f",
+      "actual": "7c6b6ed6a3278da9d6cfe4aba60bbc13245fe07ddafdca2d7dcaa25d2a15ed9f"
+    },
+    "surface/native-frames/frame-00134.bin": {
+      "expected": "6a3bfb553eda41f3022963c19b07a1784a169ec0f384f0cd3339939b1ce3847d",
+      "actual": "6a3bfb553eda41f3022963c19b07a1784a169ec0f384f0cd3339939b1ce3847d"
+    },
+    "surface/native-frames/frame-00135.bin": {
+      "expected": "9dfe04fc5feb4dd88dc7343461608d56c6b336f651784362e02b882d453b6c85",
+      "actual": "9dfe04fc5feb4dd88dc7343461608d56c6b336f651784362e02b882d453b6c85"
+    },
+    "surface/native-frames/frame-00136.bin": {
+      "expected": "b05ce0fff45480fd5fda8f43ca11ee6f208cf213631a402a6b9b9f0c92fe3ac9",
+      "actual": "b05ce0fff45480fd5fda8f43ca11ee6f208cf213631a402a6b9b9f0c92fe3ac9"
+    },
+    "surface/native-frames/frame-00137.bin": {
+      "expected": "2f91147f887c7a7ec2018604ca92d96d6d768b9352c1b66d9e2a7324703cae08",
+      "actual": "2f91147f887c7a7ec2018604ca92d96d6d768b9352c1b66d9e2a7324703cae08"
+    },
+    "surface/native-frames/frame-00138.bin": {
+      "expected": "0912ba10f8f5abb4ebdd9f3cf2d8977a238b1da61278fd395c42475241815afa",
+      "actual": "0912ba10f8f5abb4ebdd9f3cf2d8977a238b1da61278fd395c42475241815afa"
+    },
+    "surface/native-frames/frame-00139.bin": {
+      "expected": "0abf30453f4523d724e5e970750ef287a2db1bd13ca5197a54497c4749c5d468",
+      "actual": "0abf30453f4523d724e5e970750ef287a2db1bd13ca5197a54497c4749c5d468"
+    },
+    "surface/native-frames/frame-00140.bin": {
+      "expected": "7be8bd73f1d3f1ec80ff0a96619667934c93378d7f22fb5faa6f796cb77a2bf5",
+      "actual": "7be8bd73f1d3f1ec80ff0a96619667934c93378d7f22fb5faa6f796cb77a2bf5"
+    },
+    "surface/native-frames/frame-00141.bin": {
+      "expected": "5b735519d7ca103c0911ea710e233baedd4b7b2866e9d14844a57bd7a735b79e",
+      "actual": "5b735519d7ca103c0911ea710e233baedd4b7b2866e9d14844a57bd7a735b79e"
+    },
+    "surface/native-frames/frame-00142.bin": {
+      "expected": "f70b715d1476528753f6d4eff66fb0482ace792ecaf13b77c32f10b937fda122",
+      "actual": "f70b715d1476528753f6d4eff66fb0482ace792ecaf13b77c32f10b937fda122"
+    },
+    "surface/native-frames/frame-00143.bin": {
+      "expected": "d6f9e8f475703b2263d3b4e7e4e0465658a1cc3828a2b8d67fad74e375880ac8",
+      "actual": "d6f9e8f475703b2263d3b4e7e4e0465658a1cc3828a2b8d67fad74e375880ac8"
+    },
+    "surface/native-frames/frame-00144.bin": {
+      "expected": "47abd6e956333a3457ea83eb0242bc04a0cbfb1523c0958b6f1138d4467d3830",
+      "actual": "47abd6e956333a3457ea83eb0242bc04a0cbfb1523c0958b6f1138d4467d3830"
+    },
+    "surface/native-frames/frame-00145.bin": {
+      "expected": "f5b6d4ca426950358e1353340b7f752e87fe3c68ade348f397bcc757b57af642",
+      "actual": "f5b6d4ca426950358e1353340b7f752e87fe3c68ade348f397bcc757b57af642"
+    },
+    "surface/native-frames/frame-00146.bin": {
+      "expected": "0c08ee8a3600eb41d511b49df9cda5c21460a25baa78535022cef00e8eaf9615",
+      "actual": "0c08ee8a3600eb41d511b49df9cda5c21460a25baa78535022cef00e8eaf9615"
+    },
+    "surface/native-frames/frame-00147.bin": {
+      "expected": "04d072ff90dda771870f4e2cb9dec9fd07f641e44e5ec6de7fc07c236d55a616",
+      "actual": "04d072ff90dda771870f4e2cb9dec9fd07f641e44e5ec6de7fc07c236d55a616"
+    },
+    "surface/native-frames/frame-00148.bin": {
+      "expected": "457a94a381d8dd78788b25835d433612c832aebf4d56f1dfddd7bb1cf776cb7b",
+      "actual": "457a94a381d8dd78788b25835d433612c832aebf4d56f1dfddd7bb1cf776cb7b"
+    },
+    "surface/native-frames/frame-00149.bin": {
+      "expected": "2600caa180a47d1d829803aea505d0ad1508975cd5085801e9e74fb959627229",
+      "actual": "2600caa180a47d1d829803aea505d0ad1508975cd5085801e9e74fb959627229"
+    },
+    "surface/native-frames/frame-00150.bin": {
+      "expected": "8fa8a8eb249e81047eb508ccea225e0f4a0975998760178aac2d131b002a4ff3",
+      "actual": "8fa8a8eb249e81047eb508ccea225e0f4a0975998760178aac2d131b002a4ff3"
+    },
+    "surface/native-frames/frame-00151.bin": {
+      "expected": "1563db8d9e936ad9c3eb8eb2119a6e643767621ca2fd73be87ee3ad94971db3a",
+      "actual": "1563db8d9e936ad9c3eb8eb2119a6e643767621ca2fd73be87ee3ad94971db3a"
+    },
+    "surface/native-frames/frame-00152.bin": {
+      "expected": "ab10680b573228b86aa997d01de21b722e8c23ad3f7a0dc8e54652fe3d86b462",
+      "actual": "ab10680b573228b86aa997d01de21b722e8c23ad3f7a0dc8e54652fe3d86b462"
+    },
+    "surface/native-frames/frame-00153.bin": {
+      "expected": "6594b0e8feecc593556a8f129be8fdd8f2d1ca0eb6472769c2349aea64bd0c46",
+      "actual": "6594b0e8feecc593556a8f129be8fdd8f2d1ca0eb6472769c2349aea64bd0c46"
+    },
+    "surface/native-frames/frame-00154.bin": {
+      "expected": "180382be7e67c59d37970cf9471da9a258e0f347f60a98df73baf4f19c44c53b",
+      "actual": "180382be7e67c59d37970cf9471da9a258e0f347f60a98df73baf4f19c44c53b"
+    },
+    "surface/native-frames/frame-00155.bin": {
+      "expected": "fd14a432ba7f8918ba7ddd2c8f381c9be8edad99dc18510700e10770e2934058",
+      "actual": "fd14a432ba7f8918ba7ddd2c8f381c9be8edad99dc18510700e10770e2934058"
+    },
+    "surface/native-frames/frame-00156.bin": {
+      "expected": "3a56c91e7f5f9a8aacd5d0ef4a553d7ac70a7a540ca88e05c151efb37b5de7a5",
+      "actual": "3a56c91e7f5f9a8aacd5d0ef4a553d7ac70a7a540ca88e05c151efb37b5de7a5"
+    },
+    "surface/native-frames/frame-00157.bin": {
+      "expected": "2479312bbbb74a8621d377d79aac84711c983b04f34916545e4d5fae2cbb2a6a",
+      "actual": "2479312bbbb74a8621d377d79aac84711c983b04f34916545e4d5fae2cbb2a6a"
+    },
+    "surface/native-frames/frame-00158.bin": {
+      "expected": "2f108172dc51902d5ce4ec7970f71ac4dbcdbca0b38505fb07f21cbc3216f2c4",
+      "actual": "2f108172dc51902d5ce4ec7970f71ac4dbcdbca0b38505fb07f21cbc3216f2c4"
+    },
+    "surface/native-frames/frame-00159.bin": {
+      "expected": "49ae674b7c1671c7fcb6174ea4029553a4bbd14f9f8224350926737a2537bc85",
+      "actual": "49ae674b7c1671c7fcb6174ea4029553a4bbd14f9f8224350926737a2537bc85"
+    },
+    "surface/native-frames/frame-00160.bin": {
+      "expected": "cbc50c7cb9c55d529714651e0dfa36a966055c32950ccb44ede07b4ee8633838",
+      "actual": "cbc50c7cb9c55d529714651e0dfa36a966055c32950ccb44ede07b4ee8633838"
+    },
+    "surface/native-frames/frame-00161.bin": {
+      "expected": "b2bc512400e7edd9afd7adabc89f1373a04e124780ae69c72cc384ec54c6d7a7",
+      "actual": "b2bc512400e7edd9afd7adabc89f1373a04e124780ae69c72cc384ec54c6d7a7"
+    },
+    "surface/native-frames/frame-00162.bin": {
+      "expected": "7bb65ae63ae09683fcfb651c8009d6621698ad0b8430960c393e2ba1811995f0",
+      "actual": "7bb65ae63ae09683fcfb651c8009d6621698ad0b8430960c393e2ba1811995f0"
+    },
+    "surface/native-frames/frame-00163.bin": {
+      "expected": "5183b6f2e39c784409de750ac334063fbaa4ed53a341d141465f0c2ac6444fa6",
+      "actual": "5183b6f2e39c784409de750ac334063fbaa4ed53a341d141465f0c2ac6444fa6"
+    },
+    "surface/native-frames/frame-00164.bin": {
+      "expected": "b047925915ac724236bda3d80ef5861aecc83e567d63730b7ff8336adc69d0fe",
+      "actual": "b047925915ac724236bda3d80ef5861aecc83e567d63730b7ff8336adc69d0fe"
+    },
+    "surface/native-frames/frame-00165.bin": {
+      "expected": "6e27f9a21dade56db34c31bb920e17b3cf55cef624baa9afb1675ba9d29c4eb0",
+      "actual": "6e27f9a21dade56db34c31bb920e17b3cf55cef624baa9afb1675ba9d29c4eb0"
+    },
+    "surface/native-frames/frame-00166.bin": {
+      "expected": "47f75513a1eeb8e3c5d3ff2d60112b7a092a52395f10eb3b1d5caba148f1a70d",
+      "actual": "47f75513a1eeb8e3c5d3ff2d60112b7a092a52395f10eb3b1d5caba148f1a70d"
+    },
+    "surface/native-frames/frame-00167.bin": {
+      "expected": "f61d456873c1f5a697d9b63ac76833f980e6e033591a0f6627093852b3b3bd29",
+      "actual": "f61d456873c1f5a697d9b63ac76833f980e6e033591a0f6627093852b3b3bd29"
+    },
+    "surface/native-frames/frame-00168.bin": {
+      "expected": "eb29ecff7443c42532d17ff0a847df2b0cf2619f124b95fe7d6aad65bb96f4bc",
+      "actual": "eb29ecff7443c42532d17ff0a847df2b0cf2619f124b95fe7d6aad65bb96f4bc"
+    },
+    "surface/native-frames/frame-00169.bin": {
+      "expected": "5791a241cd90954998760ab27939e0f58eed71b0dd9467e633abe20887cefe82",
+      "actual": "5791a241cd90954998760ab27939e0f58eed71b0dd9467e633abe20887cefe82"
+    },
+    "surface/native-frames/frame-00170.bin": {
+      "expected": "11dc8136ef297b9e371d2ab025f1f623cc7fa77ad9c3bd592736901fe7be316b",
+      "actual": "11dc8136ef297b9e371d2ab025f1f623cc7fa77ad9c3bd592736901fe7be316b"
+    },
+    "surface/native-frames/frame-00171.bin": {
+      "expected": "7728dfa60103848d2fd3ff35b0ae8fd569d6a02fbb87f767a3e0752e3f816b0e",
+      "actual": "7728dfa60103848d2fd3ff35b0ae8fd569d6a02fbb87f767a3e0752e3f816b0e"
+    },
+    "surface/native-frames/frame-00172.bin": {
+      "expected": "ffcdc80d40d8bbd54296d172b29e7869c221ce84aa33ff8e8b0acc1d358a79eb",
+      "actual": "ffcdc80d40d8bbd54296d172b29e7869c221ce84aa33ff8e8b0acc1d358a79eb"
+    },
+    "surface/native-frames/frame-00173.bin": {
+      "expected": "22d4b21a208a82f902f5a3e21a049e7c9f373845d46f0a91a438621f2aeda321",
+      "actual": "22d4b21a208a82f902f5a3e21a049e7c9f373845d46f0a91a438621f2aeda321"
+    },
+    "surface/native-frames/frame-00174.bin": {
+      "expected": "3047f058f2034db5345acf3935a642916967b93fe3b667af9c7d1390e04657bd",
+      "actual": "3047f058f2034db5345acf3935a642916967b93fe3b667af9c7d1390e04657bd"
+    },
+    "surface/native-frames/frame-00175.bin": {
+      "expected": "4ff8988765e50d1c9c68824629307aaa30a052be702af8635619c87a3839eeb6",
+      "actual": "4ff8988765e50d1c9c68824629307aaa30a052be702af8635619c87a3839eeb6"
+    },
+    "surface/native-frames/frame-00176.bin": {
+      "expected": "d82727e921f2f2d99223b82858ebde566ade312769729d9b36e7c44e76bb3990",
+      "actual": "d82727e921f2f2d99223b82858ebde566ade312769729d9b36e7c44e76bb3990"
+    },
+    "surface/native-frames/frame-00177.bin": {
+      "expected": "41593b15b7dc0253bb37853cd739cd05e66889515e0017a741e73e5a701b8b7f",
+      "actual": "41593b15b7dc0253bb37853cd739cd05e66889515e0017a741e73e5a701b8b7f"
+    },
+    "surface/native-frames/frame-00178.bin": {
+      "expected": "0a9b451ec3d6af217f62621e3a69e1861db51a7453f34dc542dbf576978f5ef1",
+      "actual": "0a9b451ec3d6af217f62621e3a69e1861db51a7453f34dc542dbf576978f5ef1"
+    },
+    "surface/native-frames/frame-00179.bin": {
+      "expected": "f35a4acb8125036b7b02f6c770afc45a03727102f65333dff501ae514ad5d26c",
+      "actual": "f35a4acb8125036b7b02f6c770afc45a03727102f65333dff501ae514ad5d26c"
+    },
+    "surface/native-frames/frame-00180.bin": {
+      "expected": "edafa6d556954944eeb5fa0b64b8680c3298e42118110da21912429469ccc43a",
+      "actual": "edafa6d556954944eeb5fa0b64b8680c3298e42118110da21912429469ccc43a"
+    },
+    "surface/native-frames/frame-00181.bin": {
+      "expected": "999d9fa7a80f93c79a411602304851faeaaf0991eea7e7aedc37a9b49f0f6d38",
+      "actual": "999d9fa7a80f93c79a411602304851faeaaf0991eea7e7aedc37a9b49f0f6d38"
+    },
+    "surface/native-frames/frame-00182.bin": {
+      "expected": "71c935c7676cdb8333e89d1f1e4bd49b9f75645f05941d7252a32b65ce37f7d8",
+      "actual": "71c935c7676cdb8333e89d1f1e4bd49b9f75645f05941d7252a32b65ce37f7d8"
+    },
+    "surface/native-frames/frame-00183.bin": {
+      "expected": "114b2fd9efa95e211afced72bcefa2b5ec17d3647a7e313924e8952ddcc12645",
+      "actual": "114b2fd9efa95e211afced72bcefa2b5ec17d3647a7e313924e8952ddcc12645"
+    },
+    "surface/native-frames/frame-00184.bin": {
+      "expected": "bfd0bd1848df0fed434c72ce72411634cbd3a943b1f4381d6974a8006efa4259",
+      "actual": "bfd0bd1848df0fed434c72ce72411634cbd3a943b1f4381d6974a8006efa4259"
+    },
+    "surface/native-frames/frame-00185.bin": {
+      "expected": "89b80bdf1cd5e522fdfbf3f39683fe7483e86d1f852e49c577005dab768a037f",
+      "actual": "89b80bdf1cd5e522fdfbf3f39683fe7483e86d1f852e49c577005dab768a037f"
+    },
+    "surface/native-frames/frame-00186.bin": {
+      "expected": "96a2ba0b89196e3f86101ec44e88f415e2ee4f31733f9f989bf94ade3e8daa6d",
+      "actual": "96a2ba0b89196e3f86101ec44e88f415e2ee4f31733f9f989bf94ade3e8daa6d"
+    },
+    "surface/native-frames/frame-00187.bin": {
+      "expected": "4b1f3cbdb4123eea379acf5676c0ecef0180baf1f34538b03d785582a600bb6e",
+      "actual": "4b1f3cbdb4123eea379acf5676c0ecef0180baf1f34538b03d785582a600bb6e"
+    },
+    "surface/native-frames/frame-00188.bin": {
+      "expected": "1e4cb1b6dab0550104a0332bcbfdc449c159c09a349e45d450fc4cd336c78ebb",
+      "actual": "1e4cb1b6dab0550104a0332bcbfdc449c159c09a349e45d450fc4cd336c78ebb"
+    },
+    "surface/native-frames/frame-00189.bin": {
+      "expected": "6f7fa2ed9d58862f48838dbfbed99a89115bed60045fa52d06a5e1efac46d84c",
+      "actual": "6f7fa2ed9d58862f48838dbfbed99a89115bed60045fa52d06a5e1efac46d84c"
+    },
+    "surface/native-frames/frame-00190.bin": {
+      "expected": "537955f72adebbddd90f291ce65934db9aaf53acb395078f8dac41b565f0d2c3",
+      "actual": "537955f72adebbddd90f291ce65934db9aaf53acb395078f8dac41b565f0d2c3"
+    },
+    "surface/native-frames/frame-00191.bin": {
+      "expected": "cb59a93bee0d79881a842231bbf639865886a8532e39eebeb9771fe6cd32e571",
+      "actual": "cb59a93bee0d79881a842231bbf639865886a8532e39eebeb9771fe6cd32e571"
+    },
+    "surface/native-frames/frame-00192.bin": {
+      "expected": "ae7067b1175a088644a198b13a10e86c23654c253ebdbb254ce30296ca907945",
+      "actual": "ae7067b1175a088644a198b13a10e86c23654c253ebdbb254ce30296ca907945"
+    },
+    "surface/native-frames/frame-00193.bin": {
+      "expected": "bf6a8c3710166ee8d09366b68c587ac551ae2fb3c656fc834218ff773a2f2526",
+      "actual": "bf6a8c3710166ee8d09366b68c587ac551ae2fb3c656fc834218ff773a2f2526"
+    },
+    "surface/native-frames/frame-00194.bin": {
+      "expected": "49cbac80f4249d91bc9ca7c6a8b4918c504129eea72f2c8f657a3d3853d1b265",
+      "actual": "49cbac80f4249d91bc9ca7c6a8b4918c504129eea72f2c8f657a3d3853d1b265"
+    },
+    "surface/native-frames/frame-00195.bin": {
+      "expected": "2467fe1707624dcb9f2019a02edda161d262b7666b259d9fa1c95f53291998b8",
+      "actual": "2467fe1707624dcb9f2019a02edda161d262b7666b259d9fa1c95f53291998b8"
+    },
+    "surface/native-frames/frame-00196.bin": {
+      "expected": "a25b333790ea7aa1934769f5ad79b1af6eb9aac915fbe5269f9d0c1f391e42c9",
+      "actual": "a25b333790ea7aa1934769f5ad79b1af6eb9aac915fbe5269f9d0c1f391e42c9"
+    },
+    "surface/native-frames/frame-00197.bin": {
+      "expected": "c6340343f58ce705fa0dbda74f95488d6c2d6a289e1b1240392382bddbb29ea6",
+      "actual": "c6340343f58ce705fa0dbda74f95488d6c2d6a289e1b1240392382bddbb29ea6"
+    },
+    "surface/native-frames/frame-00198.bin": {
+      "expected": "b8def439f4840987f55630c04a8b9c488981ebc667d950b16f83b40ecf16e2e3",
+      "actual": "b8def439f4840987f55630c04a8b9c488981ebc667d950b16f83b40ecf16e2e3"
+    },
+    "surface/native-frames/frame-00199.bin": {
+      "expected": "eeb1a93a55d9c7c4e801b36a822e53690e1ca34b47ed85a10ebc29eaf5e087b2",
+      "actual": "eeb1a93a55d9c7c4e801b36a822e53690e1ca34b47ed85a10ebc29eaf5e087b2"
+    },
+    "surface/native-frames/frame-00200.bin": {
+      "expected": "9bacd9d1bf605fe560660923ce2e7ac48c7def844d1be7ec559b7c9ecf1670b0",
+      "actual": "9bacd9d1bf605fe560660923ce2e7ac48c7def844d1be7ec559b7c9ecf1670b0"
+    },
+    "surface/native-frames/frame-00201.bin": {
+      "expected": "f737c7947847618bf534f11553bd9b5775a3f6099a6511da672e33c4249a4fb1",
+      "actual": "f737c7947847618bf534f11553bd9b5775a3f6099a6511da672e33c4249a4fb1"
+    },
+    "surface/native-frames/frame-00202.bin": {
+      "expected": "589f5e8f04aa958c95c6512d0af0aab5a2cbc5524d717d458be7f9bcea00975e",
+      "actual": "589f5e8f04aa958c95c6512d0af0aab5a2cbc5524d717d458be7f9bcea00975e"
+    },
+    "surface/native-frames/frame-00203.bin": {
+      "expected": "3e7a921999ca84f774d2d49ce0b9f93f7b704dfd0f47b4147acce3c136bd8c48",
+      "actual": "3e7a921999ca84f774d2d49ce0b9f93f7b704dfd0f47b4147acce3c136bd8c48"
+    },
+    "surface/native-frames/frame-00204.bin": {
+      "expected": "2eca523ce19f733bf38750e9a904ce8843302e1aad19b65bee09669b1b786e1b",
+      "actual": "2eca523ce19f733bf38750e9a904ce8843302e1aad19b65bee09669b1b786e1b"
+    },
+    "surface/native-frames/frame-00205.bin": {
+      "expected": "65b5031e637f57b605dc8261f57155213a7e398aaa54744c747331a683157a04",
+      "actual": "65b5031e637f57b605dc8261f57155213a7e398aaa54744c747331a683157a04"
+    },
+    "surface/native-frames/frame-00206.bin": {
+      "expected": "ab238a0d4552f8fd4365d34ac285631c916f69876533d43866858713c26aae33",
+      "actual": "ab238a0d4552f8fd4365d34ac285631c916f69876533d43866858713c26aae33"
+    },
+    "surface/native-frames/frame-00207.bin": {
+      "expected": "08a57d6fc44cbbfa1d9fca391ccc520a4822ad260c8dc6bd79a918d2d2d41534",
+      "actual": "08a57d6fc44cbbfa1d9fca391ccc520a4822ad260c8dc6bd79a918d2d2d41534"
+    },
+    "surface/native-frames/frame-00208.bin": {
+      "expected": "ae383b0ff94895a49f419015a6e3be54a988895555324611067fac368fd3671b",
+      "actual": "ae383b0ff94895a49f419015a6e3be54a988895555324611067fac368fd3671b"
+    },
+    "surface/native-frames/frame-00209.bin": {
+      "expected": "69acaa087e3b44cdd6e7312d34662972754b09f52a60fff9ee4234be15f9d1c1",
+      "actual": "69acaa087e3b44cdd6e7312d34662972754b09f52a60fff9ee4234be15f9d1c1"
+    },
+    "surface/native-frames/frame-00210.bin": {
+      "expected": "88bad2e795740d13f8c73e7e033a34c51bf2d6008394713d2c78027987c70251",
+      "actual": "88bad2e795740d13f8c73e7e033a34c51bf2d6008394713d2c78027987c70251"
+    },
+    "surface/native-frames/frame-00211.bin": {
+      "expected": "127a70c81c7d54fcc4bdd1509301220672a50509a3220b9ab50fb3d9895a84ed",
+      "actual": "127a70c81c7d54fcc4bdd1509301220672a50509a3220b9ab50fb3d9895a84ed"
+    },
+    "surface/native-frames/frame-00212.bin": {
+      "expected": "175828a37f93e169edf96c27cca79ebe854de9543f0756a391724a79560088df",
+      "actual": "175828a37f93e169edf96c27cca79ebe854de9543f0756a391724a79560088df"
+    },
+    "surface/native-frames/frame-00213.bin": {
+      "expected": "7f3f595772e7128effeccda4973cb37a90fa99912b347e9924ae09595d5b3f39",
+      "actual": "7f3f595772e7128effeccda4973cb37a90fa99912b347e9924ae09595d5b3f39"
+    },
+    "surface/native-frames/frame-00214.bin": {
+      "expected": "b2dc5f24bda8db0269d2e446d9a8d069319d74bdc36e291b0d00cc0bc7548023",
+      "actual": "b2dc5f24bda8db0269d2e446d9a8d069319d74bdc36e291b0d00cc0bc7548023"
+    },
+    "surface/native-frames/frame-00215.bin": {
+      "expected": "ca77c6904456518a00c51c8cae043a07253df7a38d1e2f717cf2fe72bc228870",
+      "actual": "ca77c6904456518a00c51c8cae043a07253df7a38d1e2f717cf2fe72bc228870"
+    },
+    "surface/native-frames/frame-00216.bin": {
+      "expected": "03faa8a25a0e7c8f1456d538ca2ad8bdfdee13d19780fbe4fc9c671d4f664e78",
+      "actual": "03faa8a25a0e7c8f1456d538ca2ad8bdfdee13d19780fbe4fc9c671d4f664e78"
+    },
+    "surface/native-frames/frame-00217.bin": {
+      "expected": "7297e042928958a0e0d4a6f9cc0da422f0e3428b8649b428db916dbed50e34ac",
+      "actual": "7297e042928958a0e0d4a6f9cc0da422f0e3428b8649b428db916dbed50e34ac"
+    },
+    "surface/native-frames/frame-00218.bin": {
+      "expected": "334ff3c7270f5de10a1a7688dbfbe1f427f814016e18f83a2f33ae3a5a08b538",
+      "actual": "334ff3c7270f5de10a1a7688dbfbe1f427f814016e18f83a2f33ae3a5a08b538"
+    },
+    "surface/native-frames/frame-00219.bin": {
+      "expected": "f745d4978d8ea0982f32b19d7d0bd6a85e1a12875ef7614abb141efa4fbee854",
+      "actual": "f745d4978d8ea0982f32b19d7d0bd6a85e1a12875ef7614abb141efa4fbee854"
+    },
+    "surface/native-frames/frame-00220.bin": {
+      "expected": "00d3218afb171262829c86db7b2b6aff5916c2398cf4021cbc8bcc11fc6d19e9",
+      "actual": "00d3218afb171262829c86db7b2b6aff5916c2398cf4021cbc8bcc11fc6d19e9"
+    },
+    "surface/native-frames/frame-00221.bin": {
+      "expected": "2cef38eabd6a76c28a64717d6189c2a9cc28b1d2ab6ea5ed2278b880748f48d1",
+      "actual": "2cef38eabd6a76c28a64717d6189c2a9cc28b1d2ab6ea5ed2278b880748f48d1"
+    },
+    "surface/native-frames/frame-00222.bin": {
+      "expected": "c6d05829c75767705d885b578a3521b79cc8b836d8c8fddf40de5bdf4953877b",
+      "actual": "c6d05829c75767705d885b578a3521b79cc8b836d8c8fddf40de5bdf4953877b"
+    },
+    "surface/native-frames/frame-00223.bin": {
+      "expected": "2993127502f285aaba4097d6dc87ca7101c26e37e8281164969dc8817552449a",
+      "actual": "2993127502f285aaba4097d6dc87ca7101c26e37e8281164969dc8817552449a"
+    },
+    "surface/native-frames/frame-00224.bin": {
+      "expected": "6912738609a31dc0f0d331c2ae59934fdb1166d5989d5f16817375cf6a3f6d28",
+      "actual": "6912738609a31dc0f0d331c2ae59934fdb1166d5989d5f16817375cf6a3f6d28"
+    },
+    "surface/native-frames/frame-00225.bin": {
+      "expected": "65fd32ffe025299ce9049027c7de0c6f4ca56f751469b55c58b50198d8fc9020",
+      "actual": "65fd32ffe025299ce9049027c7de0c6f4ca56f751469b55c58b50198d8fc9020"
+    },
+    "surface/native-frames/frame-00226.bin": {
+      "expected": "9d877cfe9bdc5a3ad834c6c20c1708998e00a15374056af00d05b6a0025954b1",
+      "actual": "9d877cfe9bdc5a3ad834c6c20c1708998e00a15374056af00d05b6a0025954b1"
+    },
+    "surface/native-frames/frame-00227.bin": {
+      "expected": "77b78da2fd36c692efcb4e5562dc1cb8938415e49bcc7dd679c186134c3d961d",
+      "actual": "77b78da2fd36c692efcb4e5562dc1cb8938415e49bcc7dd679c186134c3d961d"
+    },
+    "surface/native-frames/frame-00228.bin": {
+      "expected": "5f063ce35862292ccea206d577c2f0a184fa1809ec5f7c0a7e015e5c2e041f06",
+      "actual": "5f063ce35862292ccea206d577c2f0a184fa1809ec5f7c0a7e015e5c2e041f06"
+    },
+    "surface/native-frames/frame-00229.bin": {
+      "expected": "b478b083d63e08e76d1b83b51ea2721e521f15e8e5c3782bbdf5ac83d93b9bfa",
+      "actual": "b478b083d63e08e76d1b83b51ea2721e521f15e8e5c3782bbdf5ac83d93b9bfa"
+    },
+    "surface/native-frames/frame-00230.bin": {
+      "expected": "4c810124061e0191895150ff5b625ab495309bf6e45d4d7c1d4367fb5e542a9e",
+      "actual": "4c810124061e0191895150ff5b625ab495309bf6e45d4d7c1d4367fb5e542a9e"
+    },
+    "surface/native-frames/frame-00231.bin": {
+      "expected": "90cf1b1c142160b5eba9e60d440315f0323aa855e7c5e37632293654a66c797f",
+      "actual": "90cf1b1c142160b5eba9e60d440315f0323aa855e7c5e37632293654a66c797f"
+    },
+    "surface/native-frames/frame-00232.bin": {
+      "expected": "07f496c1b271f8ec8904cf9a2a1d4382a4761e911b6833f128cb82b5e00fce2b",
+      "actual": "07f496c1b271f8ec8904cf9a2a1d4382a4761e911b6833f128cb82b5e00fce2b"
+    },
+    "surface/native-frames/frame-00233.bin": {
+      "expected": "d3951c5c1cd1ac11df6da15f45cddf85100345062b1a084e05c7dd27737053d5",
+      "actual": "d3951c5c1cd1ac11df6da15f45cddf85100345062b1a084e05c7dd27737053d5"
+    },
+    "surface/native-frames/frame-00234.bin": {
+      "expected": "959aa547dc16531b8f152ab4acd56ab855023dba189b69e5a107a1c3d2280bc6",
+      "actual": "959aa547dc16531b8f152ab4acd56ab855023dba189b69e5a107a1c3d2280bc6"
+    },
+    "surface/native-frames/frame-00235.bin": {
+      "expected": "21638c533a8cae58cfa03c89fc7d3067dcb8737c21786dc597c291c62a2ee2dd",
+      "actual": "21638c533a8cae58cfa03c89fc7d3067dcb8737c21786dc597c291c62a2ee2dd"
+    },
+    "surface/native-frames/frame-00236.bin": {
+      "expected": "6f01601acb00a3be0f4abef7a05ebc7dd967a61bc2412300b97f92e80936bbc1",
+      "actual": "6f01601acb00a3be0f4abef7a05ebc7dd967a61bc2412300b97f92e80936bbc1"
+    },
+    "surface/native-frames/frame-00237.bin": {
+      "expected": "55e7a6ca002e0319f3659dbac0466d2c3e87bab81c95305f9e69b79ce66aa497",
+      "actual": "55e7a6ca002e0319f3659dbac0466d2c3e87bab81c95305f9e69b79ce66aa497"
+    },
+    "surface/native-frames/frame-00238.bin": {
+      "expected": "da1c57958245803429d92cf894ce2df63346971c11528dc7e7fb9d588612f6d8",
+      "actual": "da1c57958245803429d92cf894ce2df63346971c11528dc7e7fb9d588612f6d8"
+    },
+    "surface/native-frames/frame-00239.bin": {
+      "expected": "c414f82dc7acb60314128297a72833572f4b0c2674c8b1ba5b12398b3030e065",
+      "actual": "c414f82dc7acb60314128297a72833572f4b0c2674c8b1ba5b12398b3030e065"
+    },
+    "surface/native-frames/frame-00240.bin": {
+      "expected": "5e65e2a44336333ec43b05c001400f00af34315d5f5e224ebc37a0e4fc07feda",
+      "actual": "5e65e2a44336333ec43b05c001400f00af34315d5f5e224ebc37a0e4fc07feda"
+    },
+    "surface/native-frames/frame-00241.bin": {
+      "expected": "e54628f6dc90ce0be5b9efbee8b979a480c6e2500c351e2a366896f21a33afa4",
+      "actual": "e54628f6dc90ce0be5b9efbee8b979a480c6e2500c351e2a366896f21a33afa4"
+    },
+    "surface/native-frames/frame-00242.bin": {
+      "expected": "135c66eb4d292b8a448a11a658b06ba38c71e51ab11347bf0a9faa821ed3e531",
+      "actual": "135c66eb4d292b8a448a11a658b06ba38c71e51ab11347bf0a9faa821ed3e531"
+    },
+    "surface/native-frames/frame-00243.bin": {
+      "expected": "61b5a8858400de908afce38bada17a03d948f8ea728e3286c8d0e6b5f5f83b95",
+      "actual": "61b5a8858400de908afce38bada17a03d948f8ea728e3286c8d0e6b5f5f83b95"
+    },
+    "surface/native-frames/frame-00244.bin": {
+      "expected": "e5c5ed17002f66aa96700ae88cf25660e476022c86d7c7abc37c3216c883fabc",
+      "actual": "e5c5ed17002f66aa96700ae88cf25660e476022c86d7c7abc37c3216c883fabc"
+    },
+    "surface/native-frames/frame-00245.bin": {
+      "expected": "2a4f5b8a80dfcd1b2bf051d86c9e5ca1b6d784a3e2749e823ae128df6d8b5baa",
+      "actual": "2a4f5b8a80dfcd1b2bf051d86c9e5ca1b6d784a3e2749e823ae128df6d8b5baa"
+    },
+    "surface/native-frames/frame-00246.bin": {
+      "expected": "82bba3e3697357216c3a674d51cc4355dc41cdf2812cbbb4db5612dc6561d258",
+      "actual": "82bba3e3697357216c3a674d51cc4355dc41cdf2812cbbb4db5612dc6561d258"
+    },
+    "surface/native-frames/frame-00247.bin": {
+      "expected": "ec158966e8fa976a3c601b8bdf3cfd6159fae5d05451ddb41e46cb295ac0ebbe",
+      "actual": "ec158966e8fa976a3c601b8bdf3cfd6159fae5d05451ddb41e46cb295ac0ebbe"
+    },
+    "surface/native-frames/frame-00248.bin": {
+      "expected": "6829a0c492629f9f4c86ed1b9e01126295d6ec0efe90dbeadfdbc17d09710cc0",
+      "actual": "6829a0c492629f9f4c86ed1b9e01126295d6ec0efe90dbeadfdbc17d09710cc0"
+    },
+    "surface/native-frames/frame-00249.bin": {
+      "expected": "87a6b524a8cca734f398211886ed330fe5fde32e5d12585fb38b61c4e8fcc593",
+      "actual": "87a6b524a8cca734f398211886ed330fe5fde32e5d12585fb38b61c4e8fcc593"
+    },
+    "surface/native-frames/frame-00250.bin": {
+      "expected": "d9112c37e2003c116b68d3f000dac902c55d22705934784c0c1f6bd192743231",
+      "actual": "d9112c37e2003c116b68d3f000dac902c55d22705934784c0c1f6bd192743231"
+    },
+    "surface/native-frames/frame-00251.bin": {
+      "expected": "3dc77442012f9c8af2685a3109ae18e2da5f69aa663639ac8b6a9cf33fd8f362",
+      "actual": "3dc77442012f9c8af2685a3109ae18e2da5f69aa663639ac8b6a9cf33fd8f362"
+    },
+    "surface/native-frames/frame-00252.bin": {
+      "expected": "cc6c77331564305d30f9ffaa4156223580361be47b7f97874c9e2472ed334057",
+      "actual": "cc6c77331564305d30f9ffaa4156223580361be47b7f97874c9e2472ed334057"
+    },
+    "surface/native-frames/frame-00253.bin": {
+      "expected": "cd5abc894af8ea0c75c3f0171c012b4519609e0987afbd160fc67ac5737d1b77",
+      "actual": "cd5abc894af8ea0c75c3f0171c012b4519609e0987afbd160fc67ac5737d1b77"
+    },
+    "surface/native-frames/frame-00254.bin": {
+      "expected": "3af133c240cb34f068ba6ebe7aca0d4014fcd48eba66cba3efae767bd6e90d84",
+      "actual": "3af133c240cb34f068ba6ebe7aca0d4014fcd48eba66cba3efae767bd6e90d84"
+    },
+    "surface/native-frames/frame-00255.bin": {
+      "expected": "6691852ecad0a3276d5cc3b32a8ff49114f083ef685e497e59584e4b0cd2e821",
+      "actual": "6691852ecad0a3276d5cc3b32a8ff49114f083ef685e497e59584e4b0cd2e821"
+    },
+    "surface/native-frames/frame-00256.bin": {
+      "expected": "e452c48e1db953237fb5518dbb205aedcf731cf7789ffbed36336b875d9708c4",
+      "actual": "e452c48e1db953237fb5518dbb205aedcf731cf7789ffbed36336b875d9708c4"
+    },
+    "surface/native-frames/frame-00257.bin": {
+      "expected": "8ee8542a010265e2d24806ca6959a155c62d2838504273783a4834a3922ea2ce",
+      "actual": "8ee8542a010265e2d24806ca6959a155c62d2838504273783a4834a3922ea2ce"
+    },
+    "surface/native-frames/frame-00258.bin": {
+      "expected": "4936e972ae92b47ff4e1bb9fa680847f95451bbbd7f368b122b4bdc39ffe747f",
+      "actual": "4936e972ae92b47ff4e1bb9fa680847f95451bbbd7f368b122b4bdc39ffe747f"
+    },
+    "surface/native-frames/frame-00259.bin": {
+      "expected": "248119e83388e3d2e7118ba508dbe284eef663770c026baccc75d22cbc14efa6",
+      "actual": "248119e83388e3d2e7118ba508dbe284eef663770c026baccc75d22cbc14efa6"
+    },
+    "surface/native-frames/frame-00260.bin": {
+      "expected": "9a68b2c7ca4eed52b5238ad2e9b9de135a77ae1dd78782783cf10cd73213ca06",
+      "actual": "9a68b2c7ca4eed52b5238ad2e9b9de135a77ae1dd78782783cf10cd73213ca06"
+    },
+    "surface/native-frames/frame-00261.bin": {
+      "expected": "4f03c6470b7e770f8bb29ab06b20be2aa38317ed5ac5d85d5058b5daf01da32e",
+      "actual": "4f03c6470b7e770f8bb29ab06b20be2aa38317ed5ac5d85d5058b5daf01da32e"
+    },
+    "surface/native-frames/frame-00262.bin": {
+      "expected": "74d519bd0aef44dae9cc54023af2c7c6b627f0512aafe49e9b2c78bf759f232f",
+      "actual": "74d519bd0aef44dae9cc54023af2c7c6b627f0512aafe49e9b2c78bf759f232f"
+    },
+    "surface/native-frames/frame-00263.bin": {
+      "expected": "0f17955d3e70a5771bc274b2a8c62162163e49f72839f46b205e5bff43b2ac2c",
+      "actual": "0f17955d3e70a5771bc274b2a8c62162163e49f72839f46b205e5bff43b2ac2c"
+    },
+    "surface/native-frames/frame-00264.bin": {
+      "expected": "79082fc32250d6b04429f6ff5f026958dac4b4d25d2685e308620018637924cb",
+      "actual": "79082fc32250d6b04429f6ff5f026958dac4b4d25d2685e308620018637924cb"
+    },
+    "surface/native-frames/frame-00265.bin": {
+      "expected": "57aad6258c410ec892ca5954b6362f41963bdd9e6c2d74cb0231c8bbc205d8a8",
+      "actual": "57aad6258c410ec892ca5954b6362f41963bdd9e6c2d74cb0231c8bbc205d8a8"
+    },
+    "surface/native-frames/frame-00266.bin": {
+      "expected": "f93b32b9f5fd77d66754c4eb23b4bce4bdbb7d12b9f567d932d18fc231b02a78",
+      "actual": "f93b32b9f5fd77d66754c4eb23b4bce4bdbb7d12b9f567d932d18fc231b02a78"
+    },
+    "surface/native-frames/frame-00267.bin": {
+      "expected": "5d864808ee77aa52f7fadd2f39533b3f34020e7276d8b3b429332490a2281668",
+      "actual": "5d864808ee77aa52f7fadd2f39533b3f34020e7276d8b3b429332490a2281668"
+    },
+    "surface/native-frames/frame-00268.bin": {
+      "expected": "77726635dac96e10a2ec4509c90fd122260c84e23d20708b59d4b805226220e3",
+      "actual": "77726635dac96e10a2ec4509c90fd122260c84e23d20708b59d4b805226220e3"
+    },
+    "surface/native-frames/frame-00269.bin": {
+      "expected": "d00e638afc2914ac5c49f308dfda16c1a0808f0e001a25595f6a36f832825526",
+      "actual": "d00e638afc2914ac5c49f308dfda16c1a0808f0e001a25595f6a36f832825526"
+    },
+    "surface/native-frames/frame-00270.bin": {
+      "expected": "f43832e4b02b0d221e4c0ef7fd15eb3630d28ff29bd8ce1178a074f0ff6e9580",
+      "actual": "f43832e4b02b0d221e4c0ef7fd15eb3630d28ff29bd8ce1178a074f0ff6e9580"
+    },
+    "surface/native-frames/frame-00271.bin": {
+      "expected": "d1aae207db71bc92434d0368d59e4cd8a7716bef81f27c6335a3586c57b5511e",
+      "actual": "d1aae207db71bc92434d0368d59e4cd8a7716bef81f27c6335a3586c57b5511e"
+    },
+    "surface/native-frames/frame-00272.bin": {
+      "expected": "ee727f64c7655b60d2b0ce9cf61e6868deee5aa7125a6c5c69828283f4007924",
+      "actual": "ee727f64c7655b60d2b0ce9cf61e6868deee5aa7125a6c5c69828283f4007924"
+    },
+    "surface/native-frames/frame-00273.bin": {
+      "expected": "718d442037859ce6be5a01db6e0278c74f5d8f954a007cc71d5a3620689c2e4b",
+      "actual": "718d442037859ce6be5a01db6e0278c74f5d8f954a007cc71d5a3620689c2e4b"
+    },
+    "surface/native-frames/frame-00274.bin": {
+      "expected": "3f4adfdfb877a40103f8ceda4a4c9b9f71bc0306408201de010125d5d5813548",
+      "actual": "3f4adfdfb877a40103f8ceda4a4c9b9f71bc0306408201de010125d5d5813548"
+    },
+    "surface/native-frames/frame-00275.bin": {
+      "expected": "74c35503e6b7a44d9799b479ff478c58173336b81ccb5de293a298a34cb7960b",
+      "actual": "74c35503e6b7a44d9799b479ff478c58173336b81ccb5de293a298a34cb7960b"
+    },
+    "surface/native-frames/frame-00276.bin": {
+      "expected": "3eb8f695ac968b4878184e3356d8b0ff9fddd9a032d1c719053d3e929339ecd2",
+      "actual": "3eb8f695ac968b4878184e3356d8b0ff9fddd9a032d1c719053d3e929339ecd2"
+    },
+    "surface/native-frames/frame-00277.bin": {
+      "expected": "4da6d8c81e6772900c8661ea3e92dbeb8703b9428b71bf961fb4b960bbb498b0",
+      "actual": "4da6d8c81e6772900c8661ea3e92dbeb8703b9428b71bf961fb4b960bbb498b0"
+    },
+    "surface/native-frames/frame-00278.bin": {
+      "expected": "9d4fae6d5a39607faf28dfb5de928ab23c8dba77465f78af8d0f9f43056b9435",
+      "actual": "9d4fae6d5a39607faf28dfb5de928ab23c8dba77465f78af8d0f9f43056b9435"
+    },
+    "surface/native-frames/frame-00279.bin": {
+      "expected": "247b9fbb83008f3dde4391c5f462c69e436e35cb562b23257a9d2a273800eb45",
+      "actual": "247b9fbb83008f3dde4391c5f462c69e436e35cb562b23257a9d2a273800eb45"
+    },
+    "surface/native-frames/frame-00280.bin": {
+      "expected": "b1c46a879b0d4a88dea8da487e29c936fa6d366a94043f8a6a9fc2227b05c309",
+      "actual": "b1c46a879b0d4a88dea8da487e29c936fa6d366a94043f8a6a9fc2227b05c309"
+    },
+    "surface/native-frames/frame-00281.bin": {
+      "expected": "e6d8b5513e4ee62a22062ddb67880d7d43e64259db57ff2d2390e8e8fab89571",
+      "actual": "e6d8b5513e4ee62a22062ddb67880d7d43e64259db57ff2d2390e8e8fab89571"
+    },
+    "surface/native-frames/frame-00282.bin": {
+      "expected": "cdeefb8058ee785aa585e112788888f63bbf592ae70fda1d17ce861f2148b564",
+      "actual": "cdeefb8058ee785aa585e112788888f63bbf592ae70fda1d17ce861f2148b564"
+    },
+    "surface/native-frames/frame-00283.bin": {
+      "expected": "c49815ce14673e66eeb0c93ced355a59e1e59736ff4c7f382fab42e456c9a306",
+      "actual": "c49815ce14673e66eeb0c93ced355a59e1e59736ff4c7f382fab42e456c9a306"
+    },
+    "surface/native-frames/frame-00284.bin": {
+      "expected": "16314abff6f8516c918dfdc5c10665878ed315a5c3835a109018db63ccfced57",
+      "actual": "16314abff6f8516c918dfdc5c10665878ed315a5c3835a109018db63ccfced57"
+    },
+    "surface/native-frames/frame-00285.bin": {
+      "expected": "65eef37d456281b8930bdf2bce434845fbf7f3a3304bd83ba3a9a2d573732449",
+      "actual": "65eef37d456281b8930bdf2bce434845fbf7f3a3304bd83ba3a9a2d573732449"
+    },
+    "surface/native-frames/frame-00286.bin": {
+      "expected": "a3cd3c247d47f66e204b5c1c3b6af928d5b3235b52545502731b4dbdb64c6c42",
+      "actual": "a3cd3c247d47f66e204b5c1c3b6af928d5b3235b52545502731b4dbdb64c6c42"
+    },
+    "surface/native-frames/frame-00287.bin": {
+      "expected": "f37796a15f4371da2f488b563eb85ceae3c3d3e16c9400484663ad5680ff861b",
+      "actual": "f37796a15f4371da2f488b563eb85ceae3c3d3e16c9400484663ad5680ff861b"
+    },
+    "surface/native-frames/frame-00288.bin": {
+      "expected": "480983ab7e912df8fc55067b14aade7f698bb0114b9d46b30525048851ee8336",
+      "actual": "480983ab7e912df8fc55067b14aade7f698bb0114b9d46b30525048851ee8336"
+    },
+    "surface/native-frames/frame-00289.bin": {
+      "expected": "b8f338409f3a042a1b01ce3cba2c3e27cd99e75c6ebb0b07c441c40f39508454",
+      "actual": "b8f338409f3a042a1b01ce3cba2c3e27cd99e75c6ebb0b07c441c40f39508454"
+    },
+    "surface/native-frames/frame-00290.bin": {
+      "expected": "e45894d5bec57bc95f51fb08d9da9f04ae8e7093a4086050dc5c8cbb1b9fb59c",
+      "actual": "e45894d5bec57bc95f51fb08d9da9f04ae8e7093a4086050dc5c8cbb1b9fb59c"
+    },
+    "surface/native-frames/frame-00291.bin": {
+      "expected": "01bbff21b3cbf5cc08a537e648efaecb38ab72a15e8ce997688927092fea4d59",
+      "actual": "01bbff21b3cbf5cc08a537e648efaecb38ab72a15e8ce997688927092fea4d59"
+    },
+    "surface/native-frames/frame-00292.bin": {
+      "expected": "ae00b22b22f13df5bd3d0c71ef5daa9023a05fdc980ab339fc9b5cb60a1f1b53",
+      "actual": "ae00b22b22f13df5bd3d0c71ef5daa9023a05fdc980ab339fc9b5cb60a1f1b53"
+    },
+    "surface/native-frames/frame-00293.bin": {
+      "expected": "eb0bd7f9bbeca0877d7f78579ec3c6e51b94bf21ae26d0f239e4d56fce84d214",
+      "actual": "eb0bd7f9bbeca0877d7f78579ec3c6e51b94bf21ae26d0f239e4d56fce84d214"
+    },
+    "surface/native-frames/frame-00294.bin": {
+      "expected": "e6d3c1f522a6a7b5dbdc2a1143024e0a14f6bdadb62508b8411813c8e7b085c9",
+      "actual": "e6d3c1f522a6a7b5dbdc2a1143024e0a14f6bdadb62508b8411813c8e7b085c9"
+    },
+    "surface/native-frames/frame-00295.bin": {
+      "expected": "e4f0e87485e48c624635ae5bbb8bce67cb712e96b28b86dd9f7227443467b58b",
+      "actual": "e4f0e87485e48c624635ae5bbb8bce67cb712e96b28b86dd9f7227443467b58b"
+    },
+    "surface/native-frames/frame-00296.bin": {
+      "expected": "5ed7cd3564e95f539e8d6d2b2415024a27e35d4c2a5a25c44497f923b4817edb",
+      "actual": "5ed7cd3564e95f539e8d6d2b2415024a27e35d4c2a5a25c44497f923b4817edb"
+    },
+    "surface/native-frames/frame-00297.bin": {
+      "expected": "04e2918442d48944725c3700f08fdfb80b5702ff030054abca418605ca2060ce",
+      "actual": "04e2918442d48944725c3700f08fdfb80b5702ff030054abca418605ca2060ce"
+    },
+    "surface/native-frames/frame-00298.bin": {
+      "expected": "263d23901a677d0bce48ef38cbe724612639fe297fd3cca62e038e330d033c3c",
+      "actual": "263d23901a677d0bce48ef38cbe724612639fe297fd3cca62e038e330d033c3c"
+    },
+    "surface/native-frames/triangles.bin": {
+      "expected": "000266429b167e48d103aabbafd0dc1ad680adc067c6df56090e422ef511bebf",
+      "actual": "000266429b167e48d103aabbafd0dc1ad680adc067c6df56090e422ef511bebf"
+    },
+    "surface/native-frames/vertices.bin": {
+      "expected": "76f6adb1687ca7a46706a365956996a50c169f933529277c93d3018f478c7dd9",
+      "actual": "76f6adb1687ca7a46706a365956996a50c169f933529277c93d3018f478c7dd9"
+    }
+  }
+}

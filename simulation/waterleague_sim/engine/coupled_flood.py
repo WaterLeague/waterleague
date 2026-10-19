@@ -23,6 +23,9 @@ def _write(path, value):
 
 def _validate(model):
     require(model.get('schemaVersion') == 1 and model.get('evidence'), 'COUPLED_REFERENCE_REQUIRED')
+    if 'networkObserverPolicy' in model:
+        from waterleague_sim.forcing.live_network_rainfall import FACILITY_OBSERVER
+        require(model['networkObserverPolicy'] == FACILITY_OBSERVER, 'COUPLED_OBSERVER_POLICY_INVALID')
     surface, network = model['surface'], model['network']
     require(model.get('dryExchangePolicy') in (None, DRY_EXCHANGE_POLICY), 'EXCHANGE_DRY_POLICY_INVALID')
     if surface.get('infiltration') is not None:
@@ -106,6 +109,7 @@ def _balance(network, surface, ports):
 
 
 def run_coupled(model, directory):
+    source_hash = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
     _validate(model)
     facility_design = None
     storage_design, storage_raw, storage_summary = None, None, None
@@ -114,6 +118,16 @@ def run_coupled(model, directory):
     composition, composed_raw = None, None
     pump_design, pump_model = None, None
     numerical_profile, numerical_model = None, None
+    facility_rainfall, rainfall_network = None, None
+    direct_network = (model.get('observedRainfall', {}).get('schemaVersion') == 2
+                      and bool(model.get('networkRainfallTriangles')))
+    require('networkObserverPolicy' not in model or direct_network, 'COUPLED_OBSERVER_POLICY_INVALID')
+    if direct_network and 'connectedFacilityDesign' in model:
+        from waterleague_sim.forcing.live_network_rainfall import validate_facility_binding, compile_network
+        validate_facility_binding(model)
+        # 원 집수 강우를 먼저 결속한 뒤 시설을 배치해 같은 강우 면적과 원본 계보를 유지한다.
+        rainfall_network, facility_rainfall = compile_network(model['network'], model['observedRainfall'])
+        model = model | {'network': rainfall_network}
     if 'surfaceBasinDesign' in model:
         from waterleague_sim.engine.surface_basin import compile_basin
         model, basin_design = compile_basin(model)
@@ -157,16 +171,15 @@ def run_coupled(model, directory):
                                  rainfall=model.get('observedRainfall'), network=model['network'])
     network_stages = prepare_network_stage(model['network'] | {'ports': model['ports']},
                                            evaluation_seconds=model['durationSeconds'])
-    observed, network_rainfall = None, None
+    observed, network_rainfall = None, facility_rainfall
     if model.get('observedRainfall') is not None:
-        direct_network = (model['observedRainfall'].get('schemaVersion') == 2
-                          and bool(model.get('networkRainfallTriangles')))
         network_stations = ()
         if direct_network:
-            require(not any(k in model for k in ('initialization', 'connectedFacilityDesign',
+            require(not any(k in model for k in ('initialization',
                     'connectedStorageDesign', 'connectedPumpDesign')), 'LIVE_NETWORK_DESIGN_BINDING_UNSUPPORTED')
             from waterleague_sim.forcing.live_network_rainfall import validate_network, compile_network
-            validate_network(model['network'], model['observedRainfall'])
+            if facility_rainfall is None:
+                validate_network(model['network'], model['observedRainfall'])
             network_stations = set(model['observedRainfall']['stationByCatchment'].values())
         require(not model.get('surfaceRainfall') and model['surface'].get('rainfallStationIds') is None,
                 'COUPLED_RAINFALL_FORCING_CONFLICT')
@@ -174,9 +187,10 @@ def run_coupled(model, directory):
         observed = (initialization.schedule if initialization is not None else
                     compile_rainfall(model['observedRainfall'], model['surface'], model['durationSeconds'],
                                      network_stations=network_stations))
-        if direct_network:
+        if direct_network and facility_rainfall is None:
             prepared_network, network_rainfall = compile_network(model['network'], model['observedRainfall'])
             model = model | {'network':prepared_network}
+            rainfall_network = prepared_network
     directory = Path(directory).resolve()
     require(not directory.exists(), 'COUPLED_OUTPUT_EXISTS')
     directory.mkdir(parents=True)
@@ -210,7 +224,7 @@ def run_coupled(model, directory):
         observed.archive(directory / 'observed-rainfall')
     if network_rainfall is not None:
         _write(directory / 'network-rainfall.json', network_rainfall)
-        (directory / 'rainfall-network.inp').write_text(model['network']['inputText'])
+        (directory / 'rainfall-network.inp').write_text(rainfall_network['inputText'])
     ports = model['ports']
     network_model = model['network'] | {'ports': ports}
     surface_model = {'surface': model['surface'], 'ports': ports}
@@ -245,7 +259,8 @@ def run_coupled(model, directory):
                       'coupled_facility_network' if facility_design is not None else
                       'network_metrics' if metric_spec is not None else 'network_exchange')
     if network_rainfall is not None:
-        network_engine = 'rainfall_metrics' if metric_spec is not None else 'network_rainfall'
+        network_engine = ('coupled_rainfall_facility' if facility_design is not None or model.get('networkObserverPolicy') else
+                          'rainfall_metrics' if metric_spec is not None else 'network_rainfall')
     try:
         with EngineProcess(network_engine,
                            network_model, directory / 'network',
@@ -380,6 +395,8 @@ def run_coupled(model, directory):
                                 math.fsum(network_rainfall['catchmentAreasM2'].values()), rel_tol=1e-8, abs_tol=1e-8)
                             and math.isclose(native_rain['grossRainfallM3'], native_expected_rain,
                                 rel_tol=1e-8, abs_tol=1e-8), 'LIVE_NETWORK_RAIN_VOLUME_MISMATCH')
+                require(hashlib.sha256(Path(__file__).read_bytes()).hexdigest() == source_hash,
+                        'COUPLED_SOURCE_CHANGED_DURING_RUN')
                 result = {'schemaVersion': 1, 'classification': model['evidence'],
                     'method': 'EXPLICIT_NETWORK_EXCHANGE_THEN_SURFACE_FLOW',
                     'durationSeconds': model['durationSeconds'], 'steps': steps,
@@ -394,7 +411,7 @@ def run_coupled(model, directory):
                     'surfaceNumericalStatus': sresult['numericalStatus'],
                     'surfaceNumericalConfiguration': sresult['numericalConfiguration'],
                     'numericalStatus': 'PASSED' if passed else 'FAILED',
-                    'codeSha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+                    'codeSha256': source_hash,
                     'limitations': ['명시적 분할 오차의 교환 간격 세분 비교 필요',
                         '유입부 영역 평균 수두와 수평 운동량 없는 수직 유입 가정',
                         '관망 라우팅·지표 물수지 범위; 유역 토양·증발산 전체 수지 아님',

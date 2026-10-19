@@ -30,9 +30,9 @@ def execute(request, output, key):
                 'LIVE_SURFACE_FORCING_CONFLICT')
         require(not model.get('networkRainfallTriangles') or rainfall.get('stationByCatchment'),
                 'LIVE_SURFACE_FORCING_CONFLICT')
-        require(not rainfall.get('stationByCatchment') or not any(k in model for k in (
-                'connectedFacilityDesign', 'connectedStorageDesign', 'connectedPumpDesign')),
-                'LIVE_NETWORK_DESIGN_BINDING_UNSUPPORTED')
+        if rainfall.get('stationByCatchment'):
+            from waterleague_sim.forcing.live_network_rainfall import validate_facility_binding
+            validate_facility_binding(model)
         from waterleague_sim.engine.coupled_flood import _validate
         _validate(model)
     else:

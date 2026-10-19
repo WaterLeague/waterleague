@@ -1,0 +1,5 @@
+test_cover_unbound_design_and_existing_lid_rejected_before_acquisition (simulation.tests.test_live_coupled_facilities.LiveFacilityTests.test_cover_unbound_design_and_existing_lid_rejected_before_acquisition) ... ok
+test_real_engine_composition_replay_and_tampered_source (simulation.tests.test_live_coupled_facilities.LiveFacilityTests.test_real_engine_composition_replay_and_tampered_source) ... WARNING: Could not import mpi4py - defining sequential interface
+test_source_change_during_calculation_rejects_result (simulation.tests.test_live_coupled_facilities.LiveFacilityTests.test_source_change_during_calculation_rejects_result) ... WARNING: Could not import mpi4py - defining sequential interface
+Ran 3 tests in 12.979s
+OK

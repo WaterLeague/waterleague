@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "classification": "REAL_RAIN_SYNTHETIC_NETWORK_AND_TERRAIN_NOT_SEOUL",
+  "rankingEligible": false,
+  "sameEngineSha256": "4f57c0d5d9f711735f072e2463e53ea0299d89b66d92f5f0790d0984d7186127",
+  "sourceSha256": "b962600701e94d65327eba95b5228e71600025386f5a0bb2928f997c1f691b21",
+  "oldBaselineOutAndMetricsUnchanged": true,
+  "baselinePath": "data/runs/live-coupled-facility-baseline-20261019-v1",
+  "designPath": "data/runs/live-coupled-facilities-20261019-v1/storm-design",
+  "rawMetrics": {
+    "baseline": {
+      "outwardVolumeM3": 37.43045578058601,
+      "peakOutwardM3s": 0.03198419375599778,
+      "depthAreaTimeM3Hours": 4.801685565539295
+    },
+    "design": {
+      "outwardVolumeM3": 36.38383981675678,
+      "peakOutwardM3s": 0.03198419375599778,
+      "depthAreaTimeM3Hours": 4.801685565539295
+    }
+  },
+  "baselineMinusDesign": {
+    "outwardVolumeM3": 1.0466159638292254,
+    "peakOutwardM3s": 0.0,
+    "depthAreaTimeM3Hours": 0.0
+  },
+  "numericalStatus": {
+    "baseline": "PASSED",
+    "design": "PASSED"
+  },
+  "balance": {
+    "baseline": {
+      "networkExternalInflowM3": 28.4934557022918,
+      "networkExternalOutflowAndLossM3": 37.430455780590265,
+      "surfaceExternalNetInflowM3": 7.349999999984594,
+      "networkStorageM3": 0.0034467220795979738,
+      "surfaceStorageM3": 0.40939965712533666,
+      "networkToSurfaceM3": 0.647817181417972,
+      "surfaceToNetworkM3": 7.58841752392151,
+      "exchangeCancellationResidualM3": -6.217248937900877e-15,
+      "balanceResidualM3": -6.915582388566932e-05
+    },
+    "design": {
+      "networkExternalInflowM3": 27.447358473705005,
+      "networkExternalOutflowAndLossM3": 36.38383981675738,
+      "surfaceExternalNetInflowM3": 7.349999999984594,
+      "networkStorageM3": 0.003965433679280768,
+      "surfaceStorageM3": 0.40939965712533666,
+      "networkToSurfaceM3": 0.647817181417972,
+      "surfaceToNetworkM3": 7.58841752392151,
+      "exchangeCancellationResidualM3": -6.217248937900877e-15,
+      "balanceResidualM3": -6.913217747911427e-05
+    }
+  },
+  "facilityQuality": {
+    "policyVersion": "connected-lid-volume-balance-v1",
+    "failedFacilityIds": [],
+    "status": "PASSED",
+    "timeBasis": "NATIVE_HYDROLOGY_CLOCK_SEPARATE_FROM_ROUTING_CLOCK"
+  },
+  "evaluationVerified": true
+}

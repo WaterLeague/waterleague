@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "classification": "DIRECT_AWS_CONNECTED_LID_NETWORK_SURFACE_ENGINE_EVIDENCE_NOT_FIELD_VALIDATION",
+  "rankingEligible": false,
+  "publiclyPublished": false,
+  "actualSeoulOperationalBasins": 0,
+  "implemented": [
+    "직접 응답→집수 강우→개방형 시설→SWMM 관망·ANUGA 지표 계산 결속",
+    "생물저류시설·침투 트렌치·식생수로 공통 관측 엔진과 동일 기준안 비교",
+    "원문/원 INP/강우 INP/시설 INP/실제 실행 입력 검증",
+    "계산 중 결합 소스 변경과 변조 거부·시설 수지 실패 유지"
+  ],
+  "validation": {
+    "distinctTests": 38,
+    "finalNewPathTests": 3,
+    "finalNewPathIncluded": true,
+    "offlineReplayMatchedFiles": 309,
+    "offlineReplayMatchedFields": 13,
+    "secretScanFiles": 1482,
+    "knownConfiguredSecretAbsent": true,
+    "archivedSourceMatchesCurrent": true,
+    "commonObserverBaselineOutAndMetricsUnchanged": true
+  },
+  "archives": [
+    {
+      "path": "data/runs/live-coupled-facilities-20261019-v1.tar.gz",
+      "bytes": 64553285,
+      "sha256": "56583037e2f7bf0b890589bc041705be1d5ecf6d562e9ff9c9e16a5d7ea9d73f",
+      "manifestSha256": "53585ab01ec9334cac6581e01458aca1326e6172ebe65991f5f8d358e1a01515",
+      "verifiedFiles": 1141
+    },
+    {
+      "path": "data/runs/live-coupled-facility-baseline-20261019-v1.tar.gz",
+      "bytes": 29628622,
+      "sha256": "332d50fabefaf564e4e732072dcee1a75d44f85a755d4536303a6f1cb3fb55ef",
+      "manifestSha256": "0af8cc50e1232657c96b65f9fc5df9189690847a044f6f1e01fd125fbd8af085",
+      "verifiedFiles": 329
+    }
+  ],
+  "effectVerification": "data/benchmarks/live-coupled-facilities-v1/effect-verification.json",
+  "latest": {
+    "windowStartUtc": "2026-10-19T05:26:00+00:00",
+    "windowEndUtc": "2026-10-19T05:29:00+00:00",
+    "stations": [
+      "401",
+      "421"
+    ],
+    "rainMm": 0,
+    "numericalStatus": "PASSED",
+    "sameInputReplay": true
+  },
+  "storm": {
+    "windowStartUtc": "2022-08-08T10:01:00+00:00",
+    "windowEndUtc": "2022-08-08T14:59:00+00:00",
+    "usesPreviouslyArchivedUnmodifiedResponse": true,
+    "nominalRainfallM3": 35.85,
+    "nativeAppliedRainfallM3": 35.850012270847465,
+    "rawMetrics": {
+      "baseline": {
+        "outwardVolumeM3": 37.43045578058601,
+        "peakOutwardM3s": 0.03198419375599778,
+        "depthAreaTimeM3Hours": 4.801685565539295
+      },
+      "design": {
+        "outwardVolumeM3": 36.38383981675678,
+        "peakOutwardM3s": 0.03198419375599778,
+        "depthAreaTimeM3Hours": 4.801685565539295
+      }
+    },
+    "baselineMinusDesign": {
+      "outwardVolumeM3": 1.0466159638292254,
+      "peakOutwardM3s": 0.0,
+      "depthAreaTimeM3Hours": 0.0
+    }
+  },
+  "limits": [
+    "관망·지표 합성 형상/초기 상태, 실제 서울 공간/현장 검증 아님",
+    "7일 이상 선행·현재 증발/풍응력·경계의 조합 미완료",
+    "짧은 창의 침투 트렌치·식생수로 시설 수지 실패 원본 보존, 실패 순위 게시 금지",
+    "덮개형 이용조 강우 우회 연결 미확인으로 거부",
+    "저류조·펌프·지도 12종 전체 설치/게임 점수의 연결 완료 아님",
+    "첨두·침수 누적 개선 0, 유출 체적 효과를 다른 지표 효과로 대체하지 않음"
+  ],
+  "evidenceFiles": {
+    "data/benchmarks/live-coupled-facilities-v1/archive-manifest.json": "53585ab01ec9334cac6581e01458aca1326e6172ebe65991f5f8d358e1a01515",
+    "data/benchmarks/live-coupled-facilities-v1/common-baseline-manifest.json": "0af8cc50e1232657c96b65f9fc5df9189690847a044f6f1e01fd125fbd8af085",
+    "data/benchmarks/live-coupled-facilities-v1/common-observer-regression.txt": "78f06b36504f1d87ed9752bcc49dab23ac115353271045e90f8856b443114e36",
+    "data/benchmarks/live-coupled-facilities-v1/effect-verification.json": "e11fb8b0c713fa9d96692196b08597c722f84580f68f300be47d005b300b9253",
+    "data/benchmarks/live-coupled-facilities-v1/facilities-regression.txt": "dec324dad5dd2f6921f28ac3db249f6ad41c4e9dd52eeddc6c9d684e9c865ccc",
+    "data/benchmarks/live-coupled-facilities-v1/final-new-path.txt": "f52eb31a9504fd0912f7938b4bc2e907e37d1521161f487fc487172a31607710",
+    "data/benchmarks/live-coupled-facilities-v1/independent-replay.json": "b7d4547b5e0026abb5e7ce254eddb63b59ac9b2953b10e308152afbc46354563",
+    "data/benchmarks/live-coupled-facilities-v1/latest-summary.json": "bbc7b3cf6f401ff70bdb99aa3efada4c4dd8e967b4d95160e8c165ed3f1abf26",
+    "data/benchmarks/live-coupled-facilities-v1/public-and-forcing-regression.txt": "6d93ef6ffd812ac00e9817339edbb7608aef3efbf6d9980624747e60e3651ca9",
+    "data/benchmarks/live-coupled-facilities-v1/short-window-verification.json": "f8f61afe694c9fb60deca93cd4b4d95c474e6a5bdccb4f03f67b5caa6b27284a"
+  }
+}
