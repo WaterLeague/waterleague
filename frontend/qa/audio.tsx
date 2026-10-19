@@ -2,6 +2,7 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { GamePage } from '../src/domains/game/view/GamePage';
 import { GameAudioEngine } from '../src/domains/audio/service/gameAudioEngine';
+import { ContinuousSound, type AmbientKind } from '../src/domains/audio/service/soundSynthesis';
 import '../src/shared/ui/base.css';
 import '../src/shared/ui/game.css';
 import '../src/domains/game/view/play.css';
@@ -35,6 +36,19 @@ window.AudioContext = class extends NativeContext {
     node.connect(probe);
     this.probes.push(probe);
     return node;
+  }
+};
+const worklets = new Set<AudioWorkletNode>();
+const processorErrors: string[] = [];
+const NativeWorklet = window.AudioWorkletNode;
+window.AudioWorkletNode = class extends NativeWorklet {
+  constructor(context: BaseAudioContext, name: string, options?: AudioWorkletNodeOptions) {
+    super(context, name, options);
+    worklets.add(this);
+    this.port.addEventListener('message', (event) => {
+      if (event.data === 'ended') worklets.delete(this);
+    });
+    this.addEventListener('processorerror', () => processorErrors.push(name));
   }
 };
 let environment = { rain: 0, distance: 0, playing: false, speed: 1, flood: false };
@@ -72,7 +86,7 @@ async function rendered(
   mode = 'playing'
 ) {
   const context = new OfflineAudioContext(2, 48000, 24000);
-  const engine = new GameAudioEngine(context);
+  const engine = await GameAudioEngine.create(context);
   engine.listener([0, distance, 0], [0, -1, 0], [0, 0, -1]);
   engine.environment({
     playing: mode !== 'paused',
@@ -100,6 +114,29 @@ async function rendered(
   engine.dispose();
   return { rms: Math.sqrt(square / count), maximum };
 }
+async function continuousOutput(kind: AmbientKind) {
+  const context = new OfflineAudioContext(1, 24000 * 24, 24000);
+  const engine = await GameAudioEngine.create(context);
+  const source = new AudioWorkletNode(context, 'waterleague-continuous-sound', {
+    numberOfInputs: 0,
+    numberOfOutputs: 1,
+    outputChannelCount: [1],
+    processorOptions: { kind, seed: 17, channels: 1 },
+  });
+  source.connect(context.destination);
+  const result = (await context.startRendering()).getChannelData(0);
+  const expected = new Float32Array(result.length);
+  new ContinuousSound(kind, 24000).render(expected);
+  const difference = result.reduce(
+    (maximum, value, i) => Math.max(maximum, Math.abs(value - expected[i])),
+    0
+  );
+  source.port.postMessage({ stopAt: 0 });
+  source.disconnect();
+  source.port.close();
+  engine.dispose();
+  return `${kind}: ${difference < 1e-6 ? 'PASS' : 'FAIL'} 24초 연속 출력 · 블록 경계 오차 ${difference}`;
+}
 function AudioCheck() {
   const [state, setState] = React.useState('');
   const [results, setResults] = React.useState('미실행');
@@ -118,6 +155,10 @@ function AudioCheck() {
           rates: contexts
             .filter((v) => v.context.state === 'running')
             .flatMap((v) => [...v.sources].map((s) => Number(s.playbackRate.value.toFixed(2)))),
+          streamRates: [...worklets]
+            .filter((w) => w.context.state === 'running')
+            .map((w) => Number(w.parameters.get('rate')!.value.toFixed(2))),
+          processorErrors,
           environment,
           moving,
           installationSounds,
@@ -145,6 +186,8 @@ function AudioCheck() {
         `${kind}: ${pass ? 'PASS' : 'FAIL'} near=${near.rms.toFixed(6)} far=${far.rms.toFixed(6)} mute=${muted.rms.toFixed(7)} pause=${paused?.rms.toFixed(7) ?? '설치음 유지'}`
       );
     }
+    for (const kind of ['rain', 'water', 'car', 'walk'] as const)
+      rows.push(await continuousOutput(kind));
     setResults(rows.join('\n'));
   }
   return (

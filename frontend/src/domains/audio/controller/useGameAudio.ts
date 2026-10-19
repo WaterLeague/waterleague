@@ -41,7 +41,21 @@ export function useGameAudio(settings: {
       if (!context.current) {
         const next = new AudioContext({ latencyHint: 'interactive' });
         context.current = next;
-        engine.current = new GameAudioEngine(next);
+        void GameAudioEngine.create(next)
+          .then((audio) => {
+            if (context.current !== next || next.state === 'closed') {
+              audio.dispose();
+              return;
+            }
+            engine.current = audio;
+            audio.mute(!enabledRef.current || document.hidden);
+          })
+          .catch(() => {
+            if (context.current === next) {
+              setUnavailable(true);
+              void next.close().catch(() => {});
+            }
+          });
       }
       engine.current?.mute(false);
       if (context.current.state !== 'running') void context.current.resume().catch(() => {});

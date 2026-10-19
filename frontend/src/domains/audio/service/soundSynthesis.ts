@@ -1,56 +1,78 @@
-export type SoundKind = 'rain' | 'water' | 'car' | 'walk' | 'install';
+export type AmbientKind = 'rain' | 'water' | 'car' | 'walk';
+export type SoundKind = AmbientKind | 'install';
 
-// 관측 음원이 아닌 게임 효과음이다. 고정 시드로 재생성하며 외부 음원 요청이 없다.
-export function synthesizeSound(kind: SoundKind, sampleRate: number, seed = 17) {
-  const duration = kind === 'install' ? 0.6 : kind === 'walk' ? 1 : 4;
-  const loop = kind === 'rain' || kind === 'water' || kind === 'car';
-  const length = Math.round(sampleRate * duration);
-  const overlap = loop ? Math.round(sampleRate * 0.35) : 0;
-  const samples = new Float32Array(length + overlap);
-  let random = seed >>> 0 || 17,
-    low = 0,
+// 관측 음원이 아닌 게임 효과음이다. 블록 사이에 난수·필터·위상을 유지한다.
+export class ContinuousSound {
+  private random: number;
+  private low = 0;
+  private mid = 0;
+  private drift = 0;
+  private phase = 0;
+
+  constructor(
+    private readonly kind: AmbientKind,
+    private readonly sampleRate: number,
+    seed = 17
+  ) {
+    this.random = seed >>> 0 || 17;
+    this.phase = (this.random % 997) / 997;
+  }
+
+  render(output: Float32Array, rate = 1) {
+    if (!(rate > 0) || !Number.isFinite(rate)) {
+      output.fill(0);
+      return;
+    }
+    const lowAlpha = 1 - Math.exp((-870 * rate) / this.sampleRate);
+    const midAlpha = 1 - Math.exp((-8370 * rate) / this.sampleRate);
+    const driftAlpha = 1 - Math.exp((-2 * rate) / this.sampleRate);
+    const motorStep = Math.min(0.22, (58 * rate) / this.sampleRate);
+    const stepAdvance = (2 * rate) / this.sampleRate;
+    for (let i = 0; i < output.length; i++) {
+      this.random ^= this.random << 13;
+      this.random ^= this.random >>> 17;
+      this.random ^= this.random << 5;
+      const noise = (this.random >>> 0) / 2147483648 - 1;
+      this.low += lowAlpha * (noise - this.low);
+      this.mid += midAlpha * (noise - this.mid);
+      this.drift += driftAlpha * (noise - this.drift);
+      let value: number;
+      if (this.kind === 'rain') {
+        const swell = 0.88 + 0.06 * Math.tanh(this.drift * 30);
+        value = ((noise - this.mid) * 0.24 + this.mid * 0.9) * swell;
+      } else if (this.kind === 'water') {
+        const ripple = 0.75 + 0.12 * Math.tanh(this.drift * 30);
+        value = (this.low * 3.5 + this.mid * 0.48) * ripple;
+      } else if (this.kind === 'car') {
+        const angle = this.phase * Math.PI * 2;
+        value =
+          Math.sin(angle) * 0.11 + Math.sin(angle * 2) * 0.05 + this.low * 1.5 + this.mid * 0.25;
+        this.phase = (this.phase + motorStep) % 1;
+      } else {
+        const age = this.phase * 0.5;
+        const envelope = (1 - Math.exp(-age * 500)) * Math.exp(-age * 38);
+        value = (this.mid * 1.1 + Math.sin(2 * Math.PI * 92 * age) * 0.4) * envelope;
+        this.phase = (this.phase + stepAdvance) % 1;
+      }
+      output[i] = Math.max(-0.95, Math.min(0.95, value));
+    }
+  }
+}
+
+export function installationSound(sampleRate: number) {
+  const samples = new Float32Array(Math.round(sampleRate * 0.6));
+  let random = 17,
     mid = 0;
   for (let i = 0; i < samples.length; i++) {
     random ^= random << 13;
     random ^= random >>> 17;
     random ^= random << 5;
-    const noise = (random >>> 0) / 2147483648 - 1;
-    low += 0.018 * (noise - low);
-    mid += 0.16 * (noise - mid);
+    mid += 0.16 * ((random >>> 0) / 2147483648 - 1 - mid);
     const t = i / sampleRate;
-    let value: number;
-    if (kind === 'rain') {
-      const swell = 0.82 + 0.1 * Math.sin((t * Math.PI) / 2) + 0.08 * Math.sin(t * Math.PI * 2);
-      value = ((noise - mid) * 0.24 + mid * 0.9) * swell;
-    } else if (kind === 'water') {
-      const ripple = 0.65 + 0.2 * Math.sin(t * Math.PI * 1.5) + 0.15 * Math.sin(t * Math.PI * 4);
-      value = (low * 3.5 + mid * 0.48) * ripple;
-    } else if (kind === 'car') {
-      const motor = Math.sin(2 * Math.PI * 58 * t) * 0.11 + Math.sin(2 * Math.PI * 116 * t) * 0.05;
-      value = motor * (0.85 + 0.15 * Math.sin(t * Math.PI * 4)) + low * 1.5 + mid * 0.25;
-    } else if (kind === 'walk') {
-      const step = t % 0.5;
-      const envelope = Math.min(1, step / 0.004) * Math.exp(-step * 38);
-      value = (mid * 1.1 + Math.sin(2 * Math.PI * 92 * step) * 0.4) * envelope;
-    } else {
-      const strike = t % 0.15;
-      const tap = t < 0.3 ? mid * Math.exp(-strike * 65) * 0.8 : 0;
-      const chime = Math.sin(2 * Math.PI * (t < 0.15 ? 660 : 880) * t);
-      value = tap + chime * 0.15 * Math.min(1, t / 0.008) * Math.exp(-t * 6);
-    }
-    samples[i] = Math.max(-0.95, Math.min(0.95, value));
+    const tap = t < 0.3 ? mid * Math.exp(-(t % 0.15) * 65) * 0.8 : 0;
+    const chime = Math.sin(2 * Math.PI * (t < 0.15 ? 660 : 880) * t);
+    samples[i] = tap + chime * 0.15 * Math.min(1, t / 0.008) * Math.exp(-t * 6);
   }
-  if (loop) {
-    // 끝 이후의 연속 파형을 처음과 겹쳐 루프 경계에 무음 구간을 만들지 않는다.
-    for (let i = 0; i < overlap; i++) {
-      const mix = i / overlap;
-      const incoming = kind === 'car' ? mix : Math.sin((mix * Math.PI) / 2);
-      const outgoing = kind === 'car' ? 1 - mix : Math.cos((mix * Math.PI) / 2);
-      samples[i] = samples[i] * incoming + samples[length + i] * outgoing;
-    }
-    return samples.slice(0, length);
-  }
-  // 설치 충격음·발걸음의 개별 타격에만 짧은 시작·종료 완화를 적용한다.
   const fade = Math.floor(sampleRate * 0.008);
   for (let i = 0; i < fade; i++) {
     samples[i] *= i / fade;
