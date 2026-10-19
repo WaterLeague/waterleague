@@ -56,9 +56,33 @@
   color: var(--ui-accent);
   font-size: 12px;
 }
-.data-source > a {
-  margin-top: auto;
-  padding-top: 10px;
+.data-source h3 {
+  margin: 10px 0 8px;
+  font-size: 12px;
+  color: var(--ui-muted);
+}
+.data-dataset-list {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.data-dataset-list li {
+  padding: 10px 0;
+  border-top: 1px solid var(--ui-line);
+}
+.data-dataset-list a {
+  align-items: flex-start;
+  overflow-wrap: anywhere;
+}
+.data-dataset-list a svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.data-page .data-dataset-list p {
+  margin: 3px 0 0;
+  color: var(--ui-muted);
+  font-size: 11px;
 }
 .data-budget {
   display: flex;
