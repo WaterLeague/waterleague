@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "id": "EPA_REFERENCE_SURFACES_2026_V1",
+  "title": "공통 문헌 토양·표면 비교 조건",
+  "source": {
+    "title": "EPA Storm Water Management Model User's Manual Version 5.2",
+    "url": "https://nepis.epa.gov/Exe/ZyPDF.cgi/P10145M6.PDF?Dockey=P10145M6.PDF",
+    "file": "data/private/facility-reference-20261018/epa-swmm-users-5.2.pdf",
+    "sha256": "787c649c28a61035129956f8d83625246f196a737d69aa68636e5852c63b771a",
+    "bytes": 4348559,
+    "pagesPrinted": [
+      207,
+      210,
+      211,
+      270
+    ],
+    "pagesPdf": [
+      208,
+      211,
+      212,
+      271
+    ]
+  },
+  "soilScenario": {
+    "id": "EPA_A2_LOAM_REFERENCE",
+    "texture": "Loam",
+    "conductivityInH": 0.13,
+    "suctionIn": 3.5,
+    "conductivityMmH": 3.302,
+    "suctionMm": 88.9,
+    "porosity": 0.463,
+    "fieldCapacity": 0.232,
+    "wiltingPoint": 0.116,
+    "initialMoistureDeficit": 0.231,
+    "initializationBasis": "POROSITY_MINUS_FIELD_CAPACITY_SEED_NOT_OBSERVED",
+    "fieldSoilClassification": null,
+    "selectionBasis": "COMMON_COMPARISON_CONDITION_NOT_LOCATION_INFERENCE"
+  },
+  "surfaceScenarios": {
+    "ROOF_REFERENCE": {
+      "imperviousPercent": 100,
+      "nImpervious": 0.012,
+      "nPervious": 0.15,
+      "depressionMm": 1.27,
+      "depressionPerviousMm": 2.54,
+      "roughnessReference": "A.6 smooth concrete reference; roof material not observed",
+      "storageReference": "A.5 lower end impervious/lawn reference"
+    },
+    "PAVEMENT_REFERENCE": {
+      "imperviousPercent": 100,
+      "nImpervious": 0.012,
+      "nPervious": 0.15,
+      "depressionMm": 1.27,
+      "depressionPerviousMm": 2.54,
+      "roughnessReference": "A.6 smooth concrete reference; pavement material not observed",
+      "storageReference": "A.5 lower end impervious/lawn reference"
+    },
+    "DRY_CULTIVATION_REFERENCE": {
+      "imperviousPercent": 0,
+      "nImpervious": 0.012,
+      "nPervious": 0.06,
+      "depressionMm": 1.27,
+      "depressionPerviousMm": 2.54,
+      "roughnessReference": "A.6 cultivated soil residue below 20 percent reference; residue not observed",
+      "storageReference": "A.5 lawn lower end design reference; field storage not observed"
+    },
+    "GRASS_REFERENCE": {
+      "imperviousPercent": 0,
+      "nImpervious": 0.012,
+      "nPervious": 0.15,
+      "depressionMm": 1.27,
+      "depressionPerviousMm": 2.54,
+      "roughnessReference": "A.6 short prairie grass reference; orchard understory not observed",
+      "storageReference": "A.5 lawn lower end reference"
+    }
+  },
+  "slopeScenario": {
+    "valuePercent": 1,
+    "basis": "DECLARED_DESIGN_SCENARIO_NOT_SURVEY",
+    "selectionBasis": "COMMON_REFERENCE_CONDITION_WITHIN_EXISTING_PUBLIC_LID_DESIGN_RANGE"
+  },
+  "policy": {
+    "localSoilInferred": false,
+    "localSlopeInferred": false,
+    "pavedMaterialObserved": false,
+    "warmupRequired": true,
+    "constructionApproved": false,
+    "externalInflowConnected": false
+  },
+  "limitations": [
+    "공통 비교 조건이며 서울 개별 필지의 토성·물성·경사 실측값 아님",
+    "건물/도로 구분만으로 포장재·지붕 상태·시공 적합성 확정 금지",
+    "논·조림지는 이 독립 표면 시나리오에서 지원하지 않음",
+    "같은 강우·선행 상태·시나리오 버전의 기준안과 설계안만 비교"
+  ]
+}

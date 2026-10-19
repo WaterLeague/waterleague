@@ -1,0 +1,355 @@
+{
+  "budgetPolicySha256": "27b703134393cf4c78c6e7fcb6e74a4813e0c2a0f94d692c380e22dc55b3da40",
+  "costSourceSha256": "50f6e00757ecba3ed77a811b0fd9d03f72b800c0c47712093bf1adda99421036",
+  "counts": {
+    "EXPLORATORY_REFERENCE_SCENARIO": 1021578,
+    "UNSUPPORTED_SURFACE_PROCESS": 1522,
+    "records": 1023100
+  },
+  "database": "data/private/vworld-seoul-topography-20260307/play-v1/play.sqlite",
+  "districtKindCounts": {
+    "11110:GROUND": 13111,
+    "11110:ROOF": 30619,
+    "11140:GROUND": 7440,
+    "11140:ROOF": 20458,
+    "11170:GROUND": 11652,
+    "11170:ROOF": 30005,
+    "11200:GROUND": 9185,
+    "11200:ROOF": 21916,
+    "11215:GROUND": 10900,
+    "11215:ROOF": 29923,
+    "11230:GROUND": 11948,
+    "11230:ROOF": 31582,
+    "11260:GROUND": 14984,
+    "11260:ROOF": 30878,
+    "11290:GROUND": 16618,
+    "11290:ROOF": 42838,
+    "11305:GROUND": 13458,
+    "11305:ROOF": 31968,
+    "11320:GROUND": 9688,
+    "11320:ROOF": 20005,
+    "11350:GROUND": 12233,
+    "11350:ROOF": 23120,
+    "11380:GROUND": 15154,
+    "11380:ROOF": 35907,
+    "11410:GROUND": 11104,
+    "11410:ROOF": 27480,
+    "11440:GROUND": 12388,
+    "11440:ROOF": 29156,
+    "11470:GROUND": 9231,
+    "11470:ROOF": 22132,
+    "11500:GROUND": 16331,
+    "11500:ROOF": 31998,
+    "11530:GROUND": 12017,
+    "11530:ROOF": 28550,
+    "11545:GROUND": 7119,
+    "11545:ROOF": 20168,
+    "11560:GROUND": 12925,
+    "11560:ROOF": 30083,
+    "11590:GROUND": 9983,
+    "11590:ROOF": 26387,
+    "11620:GROUND": 14570,
+    "11620:ROOF": 40996,
+    "11650:GROUND": 17301,
+    "11650:ROOF": 21318,
+    "11680:GROUND": 17169,
+    "11680:ROOF": 30756,
+    "11710:GROUND": 11877,
+    "11710:ROOF": 30458,
+    "11740:GROUND": 11835,
+    "11740:ROOF": 24178
+  },
+  "facilityCodeSha256": "03c8607cb221c7c799d57589c5d711fc284f5999da6e8a2ed71c957395b6daec",
+  "facilityCounts": {
+    "BIORETENTION": 27671,
+    "GREEN_ROOF": 712879,
+    "INFILTRATION_TRENCH": 27113,
+    "PERMEABLE_PAVEMENT": 281028,
+    "RAIN_GARDEN": 27671,
+    "VEGETATIVE_SWALE": 24756
+  },
+  "facilityDesignSet": {
+    "id": "EPA_LID_PUBLIC_DESIGNS_V4",
+    "sha256": "8af82e01704cf1495f185d9a0a410898e6007a468274c905e75b939f9abde133"
+  },
+  "footprintCodeSha256": "ae583da9acd71db6613ac1cd4e0c8d4f43d8adcd7fa02a461a64692a5175e18c",
+  "generatorSha256": "87b24e561a22e270c474a6f66c0d44fa3a8223324929b923e2af5a31bfb88b95",
+  "geometryCodeSha256": "60fcac3e39ef0fb0425d42f3fe34e014ff29112ad7c84d2f525856bdd72befff",
+  "initializationCodeSha256": "ca770523b30f41407ef60cd48f28fcd16b303e5f347e4b8ee57b504059eb48c6",
+  "playBytes": 3829805056,
+  "playSha256": "4ec7535e7cbaf41dc73f73519d77ba11f956f4c75c1a574fffa08f16625919b7",
+  "policy": {
+    "constructionEligibility": "UNKNOWN",
+    "currentGeometryAppliedToHistoricalEvents": true,
+    "externalInflowConnected": false,
+    "facilityAndCostBindingComplete": true,
+    "fieldSlopeInferred": false,
+    "fieldSoilInferred": false,
+    "serviceMigrated": false
+  },
+  "profileCodeSha256": "91449e980a75b7f5b5c01ad28afa368a13142fcb845194c52c313ec2bcf84f87",
+  "queryPerformance": {
+    "cases": [
+      {
+        "boundsProjected": [
+          199854.38561101494,
+          553828.466,
+          200004.38561101494,
+          553978.466
+        ],
+        "districtId": "11110",
+        "firstMs": 12.630000011995435,
+        "maxMs": 12.630000011995435,
+        "medianMs": 3.192645963281393,
+        "records": 116
+      },
+      {
+        "boundsProjected": [
+          203899.54225604248,
+          551377.4775,
+          204049.54225604248,
+          551527.4775
+        ],
+        "districtId": "11200",
+        "firstMs": 13.622541911900043,
+        "maxMs": 13.622541911900043,
+        "medianMs": 4.208999569527805,
+        "records": 162
+      },
+      {
+        "boundsProjected": [
+          203620.38908278593,
+          541704.1089999999,
+          203770.38908278593,
+          541854.1089999999
+        ],
+        "districtId": "11650",
+        "firstMs": 6.976834032684565,
+        "maxMs": 6.976834032684565,
+        "medianMs": 1.9533755257725716,
+        "records": 67
+      }
+    ],
+    "initialHashSeconds": 1.9638577499426901,
+    "iterations": 10,
+    "playSha256": "4ec7535e7cbaf41dc73f73519d77ba11f956f4c75c1a574fffa08f16625919b7",
+    "readerSha256": "4a97961effb7d2d09de1195922726adc504854c2cf31c956ed4590d43a0b339b",
+    "scope": "LOCAL_READONLY_PYTHON_NOT_BROWSER_OR_API",
+    "viewportMetres": 150
+  },
+  "referenceCodeSha256": "0d1a18d17fac2000e1b7f573f62bb927ec5f9903e02e23c55f4f08eb445b924f",
+  "referenceConditions": {
+    "file": "backend/src/main/resources/facilities/reference-surfaces-v1.json",
+    "sha256": "164358be09db34872324d63ce10df84a23cac936e5f5a8c0dc5fb12d0269b1bc",
+    "sourceRetrievedAt": "2026-10-20"
+  },
+  "referenceScenario": {
+    "id": "EPA_REFERENCE_SURFACES_2026_V1",
+    "sha256": "164358be09db34872324d63ce10df84a23cac936e5f5a8c0dc5fb12d0269b1bc"
+  },
+  "reproducibility": {
+    "databaseByteIdentical": true,
+    "runs": 2,
+    "summaryByteIdentical": true
+  },
+  "schemaVersion": 1,
+  "serviceMigrated": false,
+  "sourceObjectsSha256": "2c514899f82d858b4386d489b4fd9fa691552b59704f88f93e5475cc33b8f7d0",
+  "sourceSitesSha256": "750a50db25f73299342c05201287ccef08da51cd47e97e8a22099d0dc2b26c34",
+  "status": "BOUND_REFERENCE_PLAY_CATALOG_NOT_SERVICE_MIGRATED",
+  "validation": {
+    "constructionApproved": false,
+    "counts": {
+      "EXPLORATORY_REFERENCE_SCENARIO": 1021578,
+      "UNSUPPORTED_SURFACE_PROCESS": 1522,
+      "records": 1023100
+    },
+    "districtCount": 25,
+    "engineValidation": {
+      "antecedentSpinupApplied": false,
+      "cases": [
+        {
+          "areaM2": 120.43,
+          "candidateId": "C0000fe65db41b6f0c5e9fa6d",
+          "costKrw": "67440800.00",
+          "directRainVolumeMatched": true,
+          "districtId": "11290",
+          "engine": {
+            "adapterSha256": "ddb0e6c0e04e40bb3085e762f91999fafc5a2096eb6d133142cd637ccc55ca79",
+            "binarySha256": "651e08796415344ebff4ffd709273499a3a0c098665de2589cc2ac3fcfd89183",
+            "designFootprintAdapterSha256": "ae583da9acd71db6613ac1cd4e0c8d4f43d8adcd7fa02a461a64692a5175e18c",
+            "engineVersion": "5.2.4",
+            "facilityAdapterSha256": "03c8607cb221c7c799d57589c5d711fc284f5999da6e8a2ed71c957395b6daec",
+            "geometryAdapterSha256": "60fcac3e39ef0fb0425d42f3fe34e014ff29112ad7c84d2f525856bdd72befff",
+            "modification": "READ_ONLY_OBSERVER_NO_SOLVER_CHANGES",
+            "observerSha256": "54c6b8ef6709b8231e69ed2a9431be3413961d9f0da0e3f010cb1bad9c311c8c",
+            "referenceConditionsAdapterSha256": "0d1a18d17fac2000e1b7f573f62bb927ec5f9903e02e23c55f4f08eb445b924f",
+            "referenceScenarioSha256": "164358be09db34872324d63ce10df84a23cac936e5f5a8c0dc5fb12d0269b1bc",
+            "revision": "7952ca837988b1c32f791812eccc9fd64547e093",
+            "schemaVersion": 1,
+            "sourceArchiveSha256": "3f76a199573088ce47ff02491c529afb73d9953ee9d948dfc89dcd4981b4c0c0"
+          },
+          "facilityType": "RAIN_GARDEN",
+          "geometrySha256": "8c66a3ff5a6268c3edc62424cfda0a479d92d3d464c035cdbcfbe7ec6fc34192",
+          "resultSha256": "64d3d3cdcc73b65722b7119a1bbb6297ee39d21be997f7284b80ebb82b2b987f"
+        },
+        {
+          "areaM2": 222.22,
+          "candidateId": "C000086bc7be76a845f9a9592",
+          "costKrw": "24444200.00",
+          "directRainVolumeMatched": true,
+          "districtId": "11350",
+          "engine": {
+            "adapterSha256": "ddb0e6c0e04e40bb3085e762f91999fafc5a2096eb6d133142cd637ccc55ca79",
+            "binarySha256": "651e08796415344ebff4ffd709273499a3a0c098665de2589cc2ac3fcfd89183",
+            "designFootprintAdapterSha256": "ae583da9acd71db6613ac1cd4e0c8d4f43d8adcd7fa02a461a64692a5175e18c",
+            "engineVersion": "5.2.4",
+            "facilityAdapterSha256": "03c8607cb221c7c799d57589c5d711fc284f5999da6e8a2ed71c957395b6daec",
+            "geometryAdapterSha256": "60fcac3e39ef0fb0425d42f3fe34e014ff29112ad7c84d2f525856bdd72befff",
+            "modification": "READ_ONLY_OBSERVER_NO_SOLVER_CHANGES",
+            "observerSha256": "54c6b8ef6709b8231e69ed2a9431be3413961d9f0da0e3f010cb1bad9c311c8c",
+            "referenceConditionsAdapterSha256": "0d1a18d17fac2000e1b7f573f62bb927ec5f9903e02e23c55f4f08eb445b924f",
+            "referenceScenarioSha256": "164358be09db34872324d63ce10df84a23cac936e5f5a8c0dc5fb12d0269b1bc",
+            "revision": "7952ca837988b1c32f791812eccc9fd64547e093",
+            "schemaVersion": 1,
+            "sourceArchiveSha256": "3f76a199573088ce47ff02491c529afb73d9953ee9d948dfc89dcd4981b4c0c0"
+          },
+          "facilityType": "PERMEABLE_PAVEMENT",
+          "geometrySha256": "b67eabe694032e590a4e47c62bc99a10e057c278ce3db91b3b93ea78503132e2",
+          "resultSha256": "bacbacac5cb600945d1ef567ede871ed9aa16e17735a059bfc69f7ae04dc9504"
+        },
+        {
+          "areaM2": 100.59,
+          "candidateId": "C00000ce622e09957b3ff9d76",
+          "costKrw": "35206500.00",
+          "directRainVolumeMatched": true,
+          "districtId": "11545",
+          "engine": {
+            "adapterSha256": "ddb0e6c0e04e40bb3085e762f91999fafc5a2096eb6d133142cd637ccc55ca79",
+            "binarySha256": "651e08796415344ebff4ffd709273499a3a0c098665de2589cc2ac3fcfd89183",
+            "designFootprintAdapterSha256": "ae583da9acd71db6613ac1cd4e0c8d4f43d8adcd7fa02a461a64692a5175e18c",
+            "engineVersion": "5.2.4",
+            "facilityAdapterSha256": "03c8607cb221c7c799d57589c5d711fc284f5999da6e8a2ed71c957395b6daec",
+            "geometryAdapterSha256": "60fcac3e39ef0fb0425d42f3fe34e014ff29112ad7c84d2f525856bdd72befff",
+            "modification": "READ_ONLY_OBSERVER_NO_SOLVER_CHANGES",
+            "observerSha256": "54c6b8ef6709b8231e69ed2a9431be3413961d9f0da0e3f010cb1bad9c311c8c",
+            "referenceConditionsAdapterSha256": "0d1a18d17fac2000e1b7f573f62bb927ec5f9903e02e23c55f4f08eb445b924f",
+            "referenceScenarioSha256": "164358be09db34872324d63ce10df84a23cac936e5f5a8c0dc5fb12d0269b1bc",
+            "revision": "7952ca837988b1c32f791812eccc9fd64547e093",
+            "schemaVersion": 1,
+            "sourceArchiveSha256": "3f76a199573088ce47ff02491c529afb73d9953ee9d948dfc89dcd4981b4c0c0"
+          },
+          "facilityType": "GREEN_ROOF",
+          "geometrySha256": "7dab122ef368605231d8bf12cb0fa6a346452f4e24f5ea0d807b86c20781871e",
+          "resultSha256": "557a9501bd6f8a390068486d81602af2d563ad90d8f7e1b62ef09a8065d38e66"
+        },
+        {
+          "areaM2": 120.43,
+          "candidateId": "C0000fe65db41b6f0c5e9fa6d",
+          "costKrw": "67440800.00",
+          "directRainVolumeMatched": true,
+          "districtId": "11290",
+          "engine": {
+            "adapterSha256": "ddb0e6c0e04e40bb3085e762f91999fafc5a2096eb6d133142cd637ccc55ca79",
+            "binarySha256": "651e08796415344ebff4ffd709273499a3a0c098665de2589cc2ac3fcfd89183",
+            "designFootprintAdapterSha256": "ae583da9acd71db6613ac1cd4e0c8d4f43d8adcd7fa02a461a64692a5175e18c",
+            "engineVersion": "5.2.4",
+            "facilityAdapterSha256": "03c8607cb221c7c799d57589c5d711fc284f5999da6e8a2ed71c957395b6daec",
+            "geometryAdapterSha256": "60fcac3e39ef0fb0425d42f3fe34e014ff29112ad7c84d2f525856bdd72befff",
+            "modification": "READ_ONLY_OBSERVER_NO_SOLVER_CHANGES",
+            "observerSha256": "54c6b8ef6709b8231e69ed2a9431be3413961d9f0da0e3f010cb1bad9c311c8c",
+            "referenceConditionsAdapterSha256": "0d1a18d17fac2000e1b7f573f62bb927ec5f9903e02e23c55f4f08eb445b924f",
+            "referenceScenarioSha256": "164358be09db34872324d63ce10df84a23cac936e5f5a8c0dc5fb12d0269b1bc",
+            "revision": "7952ca837988b1c32f791812eccc9fd64547e093",
+            "schemaVersion": 1,
+            "sourceArchiveSha256": "3f76a199573088ce47ff02491c529afb73d9953ee9d948dfc89dcd4981b4c0c0"
+          },
+          "facilityType": "BIORETENTION",
+          "geometrySha256": "8c66a3ff5a6268c3edc62424cfda0a479d92d3d464c035cdbcfbe7ec6fc34192",
+          "resultSha256": "8ab2c2a44f771c7cadb702e4720ce59f9f25e96eddb8f3409aa0dab63fc5fcf2"
+        },
+        {
+          "areaM2": 28.16,
+          "candidateId": "C0000fe65db41b6f0c5e9fa6d",
+          "costKrw": "1267200.00",
+          "directRainVolumeMatched": true,
+          "districtId": "11290",
+          "engine": {
+            "adapterSha256": "ddb0e6c0e04e40bb3085e762f91999fafc5a2096eb6d133142cd637ccc55ca79",
+            "binarySha256": "651e08796415344ebff4ffd709273499a3a0c098665de2589cc2ac3fcfd89183",
+            "designFootprintAdapterSha256": "ae583da9acd71db6613ac1cd4e0c8d4f43d8adcd7fa02a461a64692a5175e18c",
+            "engineVersion": "5.2.4",
+            "facilityAdapterSha256": "03c8607cb221c7c799d57589c5d711fc284f5999da6e8a2ed71c957395b6daec",
+            "geometryAdapterSha256": "60fcac3e39ef0fb0425d42f3fe34e014ff29112ad7c84d2f525856bdd72befff",
+            "modification": "READ_ONLY_OBSERVER_NO_SOLVER_CHANGES",
+            "observerSha256": "54c6b8ef6709b8231e69ed2a9431be3413961d9f0da0e3f010cb1bad9c311c8c",
+            "referenceConditionsAdapterSha256": "0d1a18d17fac2000e1b7f573f62bb927ec5f9903e02e23c55f4f08eb445b924f",
+            "referenceScenarioSha256": "164358be09db34872324d63ce10df84a23cac936e5f5a8c0dc5fb12d0269b1bc",
+            "revision": "7952ca837988b1c32f791812eccc9fd64547e093",
+            "schemaVersion": 1,
+            "sourceArchiveSha256": "3f76a199573088ce47ff02491c529afb73d9953ee9d948dfc89dcd4981b4c0c0"
+          },
+          "facilityType": "VEGETATIVE_SWALE",
+          "geometrySha256": "8c66a3ff5a6268c3edc62424cfda0a479d92d3d464c035cdbcfbe7ec6fc34192",
+          "resultSha256": "34ed2cb215e74bb31652ea01194465c71b5f405c5568466bd9940fb4d36899ef"
+        },
+        {
+          "areaM2": 14.09,
+          "candidateId": "C0000fe65db41b6f0c5e9fa6d",
+          "costKrw": "2415434.61",
+          "directRainVolumeMatched": true,
+          "districtId": "11290",
+          "engine": {
+            "adapterSha256": "ddb0e6c0e04e40bb3085e762f91999fafc5a2096eb6d133142cd637ccc55ca79",
+            "binarySha256": "651e08796415344ebff4ffd709273499a3a0c098665de2589cc2ac3fcfd89183",
+            "designFootprintAdapterSha256": "ae583da9acd71db6613ac1cd4e0c8d4f43d8adcd7fa02a461a64692a5175e18c",
+            "engineVersion": "5.2.4",
+            "facilityAdapterSha256": "03c8607cb221c7c799d57589c5d711fc284f5999da6e8a2ed71c957395b6daec",
+            "geometryAdapterSha256": "60fcac3e39ef0fb0425d42f3fe34e014ff29112ad7c84d2f525856bdd72befff",
+            "modification": "READ_ONLY_OBSERVER_NO_SOLVER_CHANGES",
+            "observerSha256": "54c6b8ef6709b8231e69ed2a9431be3413961d9f0da0e3f010cb1bad9c311c8c",
+            "referenceConditionsAdapterSha256": "0d1a18d17fac2000e1b7f573f62bb927ec5f9903e02e23c55f4f08eb445b924f",
+            "referenceScenarioSha256": "164358be09db34872324d63ce10df84a23cac936e5f5a8c0dc5fb12d0269b1bc",
+            "revision": "7952ca837988b1c32f791812eccc9fd64547e093",
+            "schemaVersion": 1,
+            "sourceArchiveSha256": "3f76a199573088ce47ff02491c529afb73d9953ee9d948dfc89dcd4981b4c0c0"
+          },
+          "facilityType": "INFILTRATION_TRENCH",
+          "geometrySha256": "8c66a3ff5a6268c3edc62424cfda0a479d92d3d464c035cdbcfbe7ec6fc34192",
+          "resultSha256": "b8bef8c9d570e150c76768d4c803ce8b35ead1ce2e7ffc951bdee7081e80a6d5"
+        }
+      ],
+      "forcingSourceSha256": "fff031781cebc7f1b1f8e6cd0ed284c2166f688d80a2c70a2e4c24ee2df438c3",
+      "forcingUse": "COMMON_OBSERVED_REPLAY_NOT_LOCAL_OBSERVATION",
+      "initialStateUse": "DECLARED_SEED_ENGINE_LINK_CHECK_NOT_EVENT_EVALUATION",
+      "rankingEligible": false
+    },
+    "facilityCounts": {
+      "BIORETENTION": 27671,
+      "GREEN_ROOF": 712879,
+      "INFILTRATION_TRENCH": 27113,
+      "PERMEABLE_PAVEMENT": 281028,
+      "RAIN_GARDEN": 27671,
+      "VEGETATIVE_SWALE": 24756
+    },
+    "localSoilSlopeMaterialConfirmed": false,
+    "playSha256": "4ec7535e7cbaf41dc73f73519d77ba11f956f4c75c1a574fffa08f16625919b7",
+    "readerSha256": "4a97961effb7d2d09de1195922726adc504854c2cf31c956ed4590d43a0b339b",
+    "schemaVersion": 1,
+    "serviceMigrated": false,
+    "sourceGeometryWkbByteIdentical": true,
+    "status": "PASS",
+    "surfaceCounts": {
+      "DRY_CULTIVATION_REFERENCE": 27102,
+      "GRASS_REFERENCE": 569,
+      "PAVEMENT_REFERENCE": 281028,
+      "ROOF_REFERENCE": 712879
+    },
+    "verifierSha256": "a7d6968628aaa6c7c59a9f8735cb1f6fab024ce9ae3c1a8f8b39c273afab00aa"
+  },
+  "versions": {
+    "geos": "3.14.1",
+    "shapely": "2.2.0",
+    "sqlite": "3.53.1"
+  }
+}

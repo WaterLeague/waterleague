@@ -44,59 +44,82 @@ def source_path(model):
 
 
 def swale_design(cell):
+    from ..spatial.reference_conditions import is_reference_soil, SLOPE_METHOD
     physical = cell.get('physicalInputs', {})
     design = physical.get('swaleDesign', {})
     values = [physical.get('slopePercent'), physical.get('conductivityMmH'),
               design.get('maxAreaM2'), design.get('maxLengthM')]
     if (any(type(v) not in (int, float) or not math.isfinite(v) for v in values)
             or cell.get('kind') != 'GROUND' or 'VEGETATIVE_SWALE' not in cell['allowedTypes']
-            or physical.get('soilStatus') != 'TEXTURE_CLASS_LITERATURE_ESTIMATE'
-            or physical.get('slopeMethod') != 'NGII_2025_90M_HORN_TERRAIN_PROXY'
+            or not ((physical.get('soilStatus') == 'TEXTURE_CLASS_LITERATURE_ESTIMATE'
+                     and physical.get('slopeMethod') == 'NGII_2025_90M_HORN_TERRAIN_PROXY')
+                    or (is_reference_soil(cell) and physical.get('slopeMethod') == SLOPE_METHOD))
             or not .5 <= values[0] <= 3 or values[1] <= 0
             or not 0 < values[2] <= cell['maxAreaM2'] or values[3] <= 0
             or abs(values[2]-2*values[3]) > 1e-8 or design.get('topWidthM') != 2
-            or design.get('method') != 'CONTAINED_FIXED_WIDTH_STRAIGHT_DESIGN_V1'
+            or design.get('method') not in ('CONTAINED_FIXED_WIDTH_STRAIGHT_DESIGN_V1', 'CONTAINED_COMPONENT_RECTANGLE_V2')
             or design.get('outlet') != 'SURFACE_RUNOFF_UNCONNECTED_TO_NETWORK'):
         raise SimulationQualityError('LIVE_SWALE_DESIGN_INVALID')
+    validate_design_geometry(cell, design)
     return design
 
 
 def trench_design(cell):
+    from ..spatial.reference_conditions import is_reference_soil
     physical = cell.get('physicalInputs', {})
     design = physical.get('trenchDesign', {})
     values = [physical.get('conductivityMmH'), design.get('maxAreaM2'), design.get('maxLengthM')]
     if (any(type(v) not in (int, float) or not math.isfinite(v) for v in values)
             or cell.get('kind') != 'GROUND' or 'INFILTRATION_TRENCH' not in cell['allowedTypes']
-            or physical.get('soilStatus') != 'TEXTURE_CLASS_LITERATURE_ESTIMATE'
+            or not (physical.get('soilStatus') == 'TEXTURE_CLASS_LITERATURE_ESTIMATE' or is_reference_soil(cell))
             or values[0] <= 0 or not 0 < values[1] <= cell['maxAreaM2'] or values[2] <= 0
             or abs(values[1]-values[2]) > 1e-8 or design.get('topWidthM') != 1
-            or design.get('method') != 'CONTAINED_FIXED_WIDTH_STRAIGHT_DESIGN_V1'
+            or design.get('method') not in ('CONTAINED_FIXED_WIDTH_STRAIGHT_DESIGN_V1', 'CONTAINED_COMPONENT_RECTANGLE_V2')
             or design.get('slopeBasis') != 'LEVEL_STORAGE_DESIGN_NOT_SURVEY'
             or design.get('outlet') != 'SURFACE_RUNOFF_UNCONNECTED_TO_NETWORK'):
         raise SimulationQualityError('LIVE_TRENCH_DESIGN_INVALID')
+    validate_design_geometry(cell, design)
     return design
+
+
+def validate_design_geometry(cell, design):
+    if 'geometry' in cell:
+        from ..spatial.design_footprint import validate
+        try:
+            validate(cell, design)
+        except ValueError:
+            raise SimulationQualityError('LIVE_CONTAINED_DESIGN_INVALID') from None
+    elif design.get('method') != 'CONTAINED_FIXED_WIDTH_STRAIGHT_DESIGN_V1':
+        raise SimulationQualityError('LIVE_CONTAINED_DESIGN_INVALID')
+
+
+def soil_basis(cell):
+    from ..spatial.reference_conditions import is_reference_soil, BASIS
+    return BASIS if is_reference_soil(cell) else 'TEXTURE_CLASS_LITERATURE_ESTIMATE'
 
 
 def trench_boundary(cell):
     trench_design(cell)
     return {'method': 'IT_NATIVE_SOIL_SEEPAGE_V1',
             'seepageMmH': cell['physicalInputs']['conductivityMmH'],
-            'basis': 'TEXTURE_CLASS_LITERATURE_ESTIMATE', 'liner': 'UNLINED_DESIGN_NOT_SITE_CONFIRMED',
+            'basis': soil_basis(cell), 'liner': 'UNLINED_DESIGN_NOT_SITE_CONFIRMED',
             'storageThicknessMm': 914.4, 'underdrain': 'NONE_DIRECT_RAIN_INFILTRATION_DESIGN'}
 
 
 def bioretention_boundary(cell):
+    from ..spatial.reference_conditions import is_reference_soil
     physical = cell.get('physicalInputs', {})
     rate = physical.get('conductivityMmH')
-    if (cell.get('kind') != 'GROUND' or physical.get('soilStatus') != 'TEXTURE_CLASS_LITERATURE_ESTIMATE'
+    if (cell.get('kind') != 'GROUND' or not (physical.get('soilStatus') == 'TEXTURE_CLASS_LITERATURE_ESTIMATE' or is_reference_soil(cell))
             or type(rate) not in (int, float) or not math.isfinite(rate) or rate <= 0):
         raise SimulationQualityError('LIVE_BIORETENTION_BOUNDARY_INVALID')
     return {'method': 'BC_NATIVE_SOIL_SEEPAGE_V1', 'seepageMmH': rate,
-            'basis': 'TEXTURE_CLASS_LITERATURE_ESTIMATE', 'liner': 'UNLINED_DESIGN_NOT_SITE_CONFIRMED',
+            'basis': soil_basis(cell), 'liner': 'UNLINED_DESIGN_NOT_SITE_CONFIRMED',
             'storageThicknessMm': 304.8, 'underdrain': 'NONE_DIRECT_RAIN_INFILTRATION_DESIGN'}
 
 
 def native_soil_boundary(cell, hydrology):
+    from ..spatial.reference_conditions import is_reference_soil, BASIS
     physical = cell.get('physicalInputs', {})
     rate = physical.get('conductivityMmH', hydrology['conductivityMmH'])
     if (cell.get('kind') != 'GROUND' or 'RAIN_GARDEN' not in cell['allowedTypes']
@@ -104,7 +127,7 @@ def native_soil_boundary(cell, hydrology):
             or not math.isfinite(rate) or rate <= 0):
         raise SimulationQualityError('LIVE_NATIVE_SOIL_BOUNDARY_INVALID')
     return {'method': 'RG_NATIVE_SOIL_SEEPAGE_V1', 'seepageMmH': rate,
-            'basis': ('TEXTURE_CLASS_LITERATURE_ESTIMATE'
+            'basis': (BASIS if is_reference_soil(cell) else 'TEXTURE_CLASS_LITERATURE_ESTIMATE'
                       if physical.get('soilStatus') == 'TEXTURE_CLASS_LITERATURE_ESTIMATE'
                       and 'conductivityMmH' in physical else 'UNRESOLVED_DESIGN_ASSUMPTION'),
             'liner': 'UNLINED_DESIGN_NOT_SITE_CONFIRMED', 'storageThicknessMm': 0}

@@ -198,6 +198,9 @@ def analyze(model, placement, evaporation, antecedent, directory, days=(7, 14), 
     for name in ('continuous.py', 'swmm.py', 'initialization.py', 'initialization_sensitivity.py', 'facilities.py', 'runoff_metrics.py'):
         (directory/name).write_bytes((Path(__file__).parent/name).read_bytes())
     (directory/'site_geometry.py').write_bytes((continuous.ROOT/'simulation/waterleague_sim/spatial/geometry.py').read_bytes())
+    for filename in ('reference_conditions.py', 'design_footprint.py'):
+        (directory/filename).write_bytes((continuous.ROOT/'simulation/waterleague_sim/spatial'/filename).read_bytes())
+    (directory/'reference-surfaces.json').write_bytes((continuous.ROOT/'backend/src/main/resources/facilities/reference-surfaces-v1.json').read_bytes())
     from .facilities import source_path
     (directory/'facility-designs.json').write_bytes(source_path(model).read_bytes())
     (directory/'lid_snapshot.inc').write_bytes((continuous.ROOT/'simulation/native/lid_snapshot.inc').read_bytes())

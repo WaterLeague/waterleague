@@ -39,7 +39,11 @@ def engine_identity():
     except (OSError, KeyError, ValueError):
         raise SimulationQualityError('LIVE_ENGINE_IDENTITY_INVALID') from None
     return identity | {'adapterSha256': digest(Path(__file__).read_bytes()),
-                       'geometryAdapterSha256': digest((ROOT/'simulation/waterleague_sim/spatial/geometry.py').read_bytes())}
+        'geometryAdapterSha256': digest((ROOT/'simulation/waterleague_sim/spatial/geometry.py').read_bytes()),
+        'facilityAdapterSha256': digest((Path(__file__).parent/'facilities.py').read_bytes()),
+        'referenceConditionsAdapterSha256': digest((ROOT/'simulation/waterleague_sim/spatial/reference_conditions.py').read_bytes()),
+        'designFootprintAdapterSha256': digest((ROOT/'simulation/waterleague_sim/spatial/design_footprint.py').read_bytes()),
+        'referenceScenarioSha256': digest((ROOT/'backend/src/main/resources/facilities/reference-surfaces-v1.json').read_bytes())}
 
 
 def validated_period(model):
@@ -163,6 +167,9 @@ def input_source(model, placements, evaporation):
 
 def apply_site_inputs(source, cell, placements):
     physical = cell['physicalInputs']
+    if physical.get('referenceScenario') is not None:
+        from ..spatial.reference_conditions import validate
+        validate(cell)
     required = ('runoffWidthM','flowLengthM','slopePercent')
     if (any(isinstance(physical.get(k),bool) or not isinstance(physical.get(k),(float,int))
             or not math.isfinite(physical[k]) for k in required)
@@ -171,6 +178,11 @@ def apply_site_inputs(source, cell, placements):
     for key in ('nImpervious','conductivityMmH','suctionMm'):
         if key in physical and (not isinstance(physical[key],(float,int)) or not math.isfinite(physical[key]) or physical[key]<=0):
             raise SimulationQualityError('LIVE_SITE_PHYSICS_INVALID')
+    for key in ('nPervious', 'depressionMm', 'depressionPerviousMm', 'imperviousPercent', 'initialMoistureDeficit'):
+        if key in physical and (type(physical[key]) not in (float, int) or not math.isfinite(physical[key]) or physical[key] < 0
+                or key == 'imperviousPercent' and physical[key] > 100
+                or key == 'initialMoistureDeficit' and physical[key] > 1):
+            raise SimulationQualityError('LIVE_SITE_PHYSICS_INVALID')
     lines=[]; section=''
     for line in source.splitlines():
         if line.startswith('['):section=line
@@ -178,10 +190,17 @@ def apply_site_inputs(source, cell, placements):
             f=line.split()
             if section=='[SUBCATCHMENTS]':
                 f[5]=str(physical['runoffWidthM']);f[6]=str(physical['slopePercent'])
+                if 'imperviousPercent' in physical:
+                    f[4] = str(physical['imperviousPercent'])
             elif section=='[SUBAREAS]' and 'nImpervious' in physical:
                 f[1]=str(physical['nImpervious'])
+                for index, key in ((2, 'nPervious'), (3, 'depressionMm'), (4, 'depressionPerviousMm')):
+                    if key in physical:
+                        f[index] = str(physical[key])
             elif section=='[INFILTRATION]' and 'conductivityMmH' in physical:
                 f[1]=str(physical['suctionMm']);f[2]=str(physical['conductivityMmH'])
+                if 'initialMoistureDeficit' in physical:
+                    f[3] = str(physical['initialMoistureDeficit'])
             elif section=='[LID_USAGE]':
                 # 미확정 세부 배치 모양은 후보와 같은 종횡비로 축소한 설계로 계산한다.
                 f[4]=str(physical['runoffWidthM']*math.sqrt(float(f[3])/cell['areaM2']))
@@ -353,6 +372,9 @@ def experiment(model, placement, directory, evaporation=None, *, installed_at=No
         (directory/f'{name}.json').write_text(json.dumps(value, ensure_ascii=False, allow_nan=False)+'\n')
     (directory/'continuous.py').write_bytes(Path(__file__).read_bytes())
     (directory/'site_geometry.py').write_bytes((ROOT/'simulation/waterleague_sim/spatial/geometry.py').read_bytes())
+    for filename in ('reference_conditions.py', 'design_footprint.py'):
+        (directory/filename).write_bytes((ROOT/'simulation/waterleague_sim/spatial'/filename).read_bytes())
+    (directory/'reference-surfaces.json').write_bytes((ROOT/'backend/src/main/resources/facilities/reference-surfaces-v1.json').read_bytes())
     (directory/'builder.py').write_bytes((Path(__file__).parent/'swmm.py').read_bytes())
     (directory/'lid_snapshot.inc').write_bytes((ROOT/'simulation/native/lid_snapshot.inc').read_bytes())
     (directory/'manifest.json').write_text(json.dumps({
