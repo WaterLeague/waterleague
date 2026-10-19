@@ -37,6 +37,7 @@ class WatershedWorkflowTests extends PostgresIntegrationTest {
   @Autowired SimulationRepository admission;
   @Autowired JsonService json;
   @Autowired JdbcTemplate db;
+  @org.junit.jupiter.api.io.TempDir Path outputDirectory;
   UUID owner;
 
   @BeforeEach
@@ -253,7 +254,7 @@ class WatershedWorkflowTests extends PostgresIntegrationTest {
                 Integer.class,
                 owner))
         .isZero();
-    Path output = Path.of("../tmp/cistern-server-request.json");
+    Path output = outputDirectory.resolve("cistern-server-request.json");
     var stored = service.require(owner, job.id());
     Files.writeString(
         output,
@@ -554,7 +555,7 @@ class WatershedWorkflowTests extends PostgresIntegrationTest {
         .isZero();
     var stored = service.require(owner, job.id());
     Files.writeString(
-        Path.of("../tmp/pump-server-request.json"),
+        outputDirectory.resolve("pump-server-request.json"),
         json.write(
             Map.of(
                 "modelHash",
@@ -645,7 +646,7 @@ class WatershedWorkflowTests extends PostgresIntegrationTest {
         .isEqualTo(2);
     var stored = service.require(owner, job.id());
     Files.writeString(
-        Path.of("../tmp/cistern-hydraulic-server-request.json"),
+        outputDirectory.resolve("cistern-hydraulic-server-request.json"),
         json.write(
             Map.of(
                 "modelHash",
@@ -694,7 +695,7 @@ class WatershedWorkflowTests extends PostgresIntegrationTest {
     assertThat(service.create(owner, dto).id()).isEqualTo(job.id());
     var stored = service.require(owner, job.id());
     Files.writeString(
-        Path.of("../tmp/cistern-mixed-server-request.json"),
+        outputDirectory.resolve("cistern-mixed-server-request.json"),
         json.write(
             Map.of(
                 "modelHash",

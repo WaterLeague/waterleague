@@ -29,6 +29,9 @@ class AntecedentArchiveTests(unittest.TestCase):
         self.assertEqual(len(self.rain['depthsMm']), 20160)
         self.assertAlmostEqual(sum(self.rain['depthsMm']), 239.)
         self.assertEqual(len(self.pet['ratesMmDay']), 20160)
+        archived_rates = json.loads(gzip.decompress(self.files[RELATIVE]))['evaporation']['ratesMmDay']
+        self.assertEqual(self.pet['ratesMmDay'], archived_rates)
+        self.assertEqual([v for part in self.pet['segments'] for v in part['ratesMmDay']], archived_rates)
         self.assertTrue(self.summary['qualityWarnings'])
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

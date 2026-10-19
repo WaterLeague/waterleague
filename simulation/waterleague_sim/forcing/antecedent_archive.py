@@ -9,6 +9,7 @@ import re
 from waterleague_sim.engine.flood_errors import FloodModelError, require
 from waterleague_sim.engine.swmm import ROOT
 from waterleague_sim.forcing.observed_rainfall import _json, _read, digest, utc
+from waterleague_sim.forcing.reconstruction import equivalent
 from waterleague_sim.ingestion import antecedent, daily_evaporation, evaporation, live
 from waterleague_sim.ingestion.rainfall import RainfallQualityError
 
@@ -102,11 +103,19 @@ def read_antecedent(reference, root=ROOT):
         if isinstance(error, FloodModelError):
             raise
         raise FloodModelError('SURFACE_ANTECEDENT_WEATHER_QUALITY_INVALID') from None
-    require(reconstructed['ratesMmDay'] == pet.get('ratesMmDay')
+    require(equivalent(reconstructed['ratesMmDay'], pet.get('ratesMmDay'))
             and reconstructed['sourceHashes'] == sorted(set(pet.get('sourceHashes', []))),
             'SURFACE_ANTECEDENT_WEATHER_DERIVATION_MISMATCH')
+    # 검증 후 입력은 보관값을 사용해 플랫폼의 마지막 자리 차이가 엔진 입력에 전파되지 않게 한다.
+    reconstructed['ratesMmDay'] = list(pet['ratesMmDay'])
+    offset = 0
+    for segment in reconstructed['segments']:
+        count = len(segment['ratesMmDay'])
+        segment['ratesMmDay'] = reconstructed['ratesMmDay'][offset:offset + count]
+        offset += count
     modules = [Path(__file__), Path(live.__file__), Path(antecedent.__file__),
-               Path(daily_evaporation.__file__), Path(evaporation.__file__)]
+               Path(daily_evaporation.__file__), Path(evaporation.__file__),
+               Path(__file__).with_name('reconstruction.py')]
     summary = {'method': 'RAW_RECONSTRUCTED_ANTECEDENT_AWS_AND_LAGGED_DAILY_FAO56',
         'startUtc': start.isoformat(), 'endUtc': end.isoformat(), 'minutes': minutes,
         'stationId': rain['stationId'], 'qualityWarnings': warnings, 'aggregatedRainIntervals': intervals,

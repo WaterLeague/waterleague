@@ -432,6 +432,9 @@ public class HistoricalService {
             null);
     if (guest == null) jobs.add(j, dto.requestKey());
     else jobs.addGuest(j, dto.requestKey(), guest);
-    return guest == null ? view(j) : guestView(j);
+    // 최초 응답도 DB의 시각 정밀도를 사용해 멱등 재요청과 일치시킨다.
+    return guest == null
+        ? view(jobs.get(owner, j.id()).orElseThrow())
+        : guestView(jobs.guestGet(guest, j.id()).orElseThrow());
   }
 }

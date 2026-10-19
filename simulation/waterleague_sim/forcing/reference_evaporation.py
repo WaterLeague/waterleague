@@ -12,6 +12,7 @@ from waterleague_sim.ingestion import evaporation as hourly
 from waterleague_sim.ingestion import daily_evaporation as daily
 from waterleague_sim.ingestion.live import ENDPOINT, LiveSourceError
 from waterleague_sim.forcing.stage import utc
+from waterleague_sim.forcing.reconstruction import equivalent
 
 
 def digest(raw):
@@ -128,7 +129,8 @@ def read_reference(reference, root=ROOT):
             require(len(used) == len(sources), 'REFERENCE_ET_UNUSED_SOURCE')
             compared = ('ratesMmDay', 'days', 'station', 'method', 'timePolicy', 'evidence')
             implementation_files = {'daily_evaporation.py': Path(daily.__file__)}
-        require(all(data.get(k) == rebuilt[k] for k in compared), 'REFERENCE_ET_DERIVATION_MISMATCH')
+        require(all(equivalent(data.get(k), rebuilt[k]) for k in compared),
+                'REFERENCE_ET_DERIVATION_MISMATCH')
         require(set(data.get('implementationHashes', {})) == set(implementation_files),
                 'REFERENCE_ET_IMPLEMENTATION_INVALID')
         for name, current in implementation_files.items():
@@ -142,6 +144,9 @@ def read_reference(reference, root=ROOT):
             files['original-calculation/' + name] = raw
             files[f'data/derived/evaporation/implementations/{expected_code}.py'] = raw
             files['reconstruction-calculation/' + name] = current.read_bytes()
+        comparison = Path(__file__).with_name('reconstruction.py')
+        files['reconstruction-calculation/reconstruction.py'] = comparison.read_bytes()
+        implementation_files['reconstruction.py'] = comparison
         return data, files, {name: digest(path.read_bytes()) for name, path in implementation_files.items()}
     except FloodModelError:
         raise

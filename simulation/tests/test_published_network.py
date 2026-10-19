@@ -108,9 +108,12 @@ class PublishedNativeTests(unittest.TestCase):
                 prepared, changes = execution_input(row['raw'])
                 (root / 'original.inp').write_bytes(row['raw'])
                 # 원 LID 출력도 임시 디렉터리 안에서만 생성하며 출처 파일을 덮어쓰지 않는다.
-                subprocess.run([str(network.library_path().parent / 'runswmm'), 'original.inp',
-                                'stock.rpt', 'stock.out'], cwd=root, check=True,
-                               capture_output=True, timeout=30)
+                # EPA의 상대 경로 realpath 버퍼를 피하고 작업 디렉터리의 절대 경로를 전달한다.
+                stock = subprocess.run([str(network.library_path().parent / 'runswmm'),
+                                        str(root / 'original.inp'), str(root / 'stock.rpt'),
+                                        str(root / 'stock.out')], cwd=root,
+                                       capture_output=True, text=True, timeout=30)
+                self.assertEqual(stock.returncode, 0, stock.stderr[-2000:])
                 with EngineProcess('network', prepared, root / 'observed', native_duration=True) as process:
                     result = process.call('run', 300)['result']
                 self.assertEqual(digest((root / 'stock.out').read_bytes()),

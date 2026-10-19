@@ -38,7 +38,7 @@ simulation/.venv/bin/python scripts/verify_league_postgres.py --suite backend
 
 수치 회귀는 `simulation/uv.lock`과 `uv sync --locked --extra flood`로 ANUGA·공간 의존성을 준비한다. 비상업용 Triangle·meshpy 제외 정책을 유지한다. `build_ci_engines.py`로 고정 EPA 원본의 13개 엔진 변형을 빌드한 뒤 `test_simulation.py`가 모든 시험 모듈을 4개 작업에 중복 없이 분배한다. 각 모듈을 별도 프로세스에서 실행해 EPA·ANUGA 네이티브 런타임의 교차 적재를 방지한다. 시험 제외나 오류 무시로 통과시키지 않는다. [uv 잠금·동기화 공식 문서](https://docs.astral.sh/uv/concepts/projects/sync/).
 
-`prepare_ci_sources.py`는 `simulation/tests/fixtures/public-sources-v1.json`의 원본 SHA-256·크기·경로를 검사한 공개 자료만 복원한다. 기상청 관측, Mendeley 공개 연구 모형(CC BY 4.0), 비용 근거 논문(CC BY-NC 3.0)의 출처와 이용 조건을 원문별로 보존한다. 이 자료의 이용 조건은 코드 라이선스와 별도이며 논문 원문은 비상업적 재현 시험용이다. 비밀키·개인자료는 묶음에 포함하지 않는다. 기존 파일이 다르거나 링크 경로이면 덮어쓰지 않고 실패한다.
+`prepare_ci_sources.py`는 `simulation/tests/fixtures/public-sources-v1.json`의 원본 SHA-256·크기·경로를 검사한 공개 자료만 복원한다. 기상청 관측, Mendeley 공개 연구 모형(CC BY 4.0), 비용 근거 논문(CC BY-NC 3.0)의 출처와 이용 조건을 원문별로 보존한다. 이 자료의 이용 조건은 코드 라이선스와 별도이며 논문 원문은 비상업적 재현 시험용이다. 평가 기상과 선행 14/28일 기상을 포함한 226개 원문을 제공하며, 모든 보관 기상 요청이 묶음에 포함되는지 검사한다. 비밀키·개인자료는 묶음에 포함하지 않는다. 기존 파일이 다르거나 링크 경로이면 덮어쓰지 않고 실패한다.
 
 큐 suite는 `test_worker_queue.py`만 실행한다. 재해·회원 설계 등 별도 준비 데이터가 필요한 suite는 해당 준비 흐름에서 실행한다. 프론트 포맷 검사는 생성된 `qa/*.local.json`을 제외하고 추적 중인 소스·시험 입력은 계속 검사한다.
 

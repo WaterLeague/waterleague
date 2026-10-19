@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "purpose": "공개 원문 재현 시험 전용 · 코드 라이선스와 별도",
-  "archiveSha256": "ca707d3f7546963bb23c3ec09f2d4a3cefdf9887d897bf475afec586fb86144f",
+  "archiveSha256": "a6ae481b65f212aed436ace88ba16b2c65129e842235f7c5629d0bdd6c3cd673",
   "files": [
     {
       "path": "data/raw/kma-disaster-pet-bcb2670316cd5737db4ac916.txt",
@@ -121,6 +121,1469 @@
       "sha256": "86a13d9656c47a56b5f75fd8bf1df7a20f48570258bd12aec46fd286d1925ab6",
       "source": "data/manifests/mendeley-seocho-network-v3.json",
       "licence": "CC BY 4.0 · Samuel Park 외, 2024, DOI 10.17632/dzzwvd8rjk.3"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-00e29e4bea49c091947e4fb1.txt",
+      "bytes": 48566,
+      "sha256": "ce92f8ae349dd2263ab5e41f8870222c9e5a74a47ff6ffe4daa98f44c3f970f7",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-03d89117d1fa889092f781f5.txt",
+      "bytes": 48566,
+      "sha256": "6c1830ad0a4d17f2ed9f723a1e2315e0f07f11120beaf6ce3c02411a7b9db78e",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-0604efe88b3aa24f313c78a9.txt",
+      "bytes": 24986,
+      "sha256": "e5c49983ec966c0e6014f96dd84baddfc707167b2a2f5ddfb2956443fc5abbdd",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-06ba04db652ec88d1b986cc7.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-0776300d0d0f87310fcd7fca.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-07eeec79e0e89afa92a510e7.txt",
+      "bytes": 48566,
+      "sha256": "02d5361e04ef9578f67e573213e88bd8578ea7589be3d90c177b8cd39b6956c5",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-0ac6857f1fc8f1f8fd6e20f1.txt",
+      "bytes": 4319,
+      "sha256": "00bccc56cfcac976a8c6fe931a63ca7857e4a5eecc94cf5ce778d784aa2e3e50",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-0b673811a47a103a7174965c.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-0d83333a7ce295928c0e3257.txt",
+      "bytes": 4319,
+      "sha256": "8a32153c84da4049a5800b6aa36d830ab7f85d4533722f36530c571f9c3cf2db",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-0db11c63a1264a63b576cb32.txt",
+      "bytes": 48566,
+      "sha256": "bec3e997c098ecd9daf5a9983a5394446eed57b08c550dfddb9d3da64a76db57",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-127d1da5e1e4813037668143.txt",
+      "bytes": 48566,
+      "sha256": "b76982d38ee9220124bb71c5a797bdf18b718a6fefe3d997d593224d49f9ca1a",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-12962b9c2be73365c424b3bd.txt",
+      "bytes": 48566,
+      "sha256": "15e98ec4f9c745204d5bc463eaca4aeaef9df59249f5435c597d48df151b7199",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-1332f6cffd7bbd3ef7ffd0c1.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-13e258ded54d12cd0df47d45.txt",
+      "bytes": 48566,
+      "sha256": "5421fecf10d2cc17d969ba0f274bad7dcf879c0b196baf7708150c17bec72816",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-1427b56ec009d1e8df737898.txt",
+      "bytes": 48566,
+      "sha256": "087d95fd5b90974fed378ea5d90dc91b719bf374ef8581e4b572e1bd20343b97",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-1434ebe7d0f0bc94b720cde5.txt",
+      "bytes": 4319,
+      "sha256": "82004a119b9082c79485ba96c11bed1bf9ea2d9be3a2cd0f436011478992efe7",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-171bef8e25c456fcfd89a370.txt",
+      "bytes": 48566,
+      "sha256": "1fe0311a891e4c4b661f496e8e75dd1d8f3fc89108f87bc87a1a36859735c6a7",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-189de2a8af0006ece855a43c.txt",
+      "bytes": 4319,
+      "sha256": "1c760de9fc6a52cb0e4bd4cb8a3b84074aaaaab9e8bee5e63fdeb98426d054a7",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-1911eaea4b12f26b9958eac3.txt",
+      "bytes": 48566,
+      "sha256": "e9275e1f7bf937aa8e720d8ddea26902cb2bc614a0671f07f8a743876917b391",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-195c793b87d8fdd26ae0dc46.txt",
+      "bytes": 48566,
+      "sha256": "c12c1ca6c4fb0a8eb279cb687ac685638804955e23a8629244d7104ae7b09715",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-1c57f01894c189455c86b628.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-1d12cfdb83acd7d011e851ce.txt",
+      "bytes": 48566,
+      "sha256": "aee01c77829a0c132fd09acde8873adbad5961abb5059fbfb1d97b50a150e1d7",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-2022da80c4d42d9cd6784671.txt",
+      "bytes": 48566,
+      "sha256": "dc94cdb313f8d9c05bf840e438525163e0d8850891ada89a96ac195c8a3ad65d",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-21eaf01c3598f5ccd1f6195e.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-26a6140d2b0d9ef43eb5c4ab.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-270506ed67c986f86dd2d487.txt",
+      "bytes": 48566,
+      "sha256": "104f2453d57ae3b95b557992f1ea06ec3d7f2e75ca1b7bb672c0687afd73604a",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-275805ca9bda01aaf0c1e0e2.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-2b86f22729f085183397176f.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-2b9abee59da9349678e23d85.txt",
+      "bytes": 48566,
+      "sha256": "7eca8870d757224d9a9c3edc83e4114655fd0a43b58a80a1decab10ccc5df8fd",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-2bbe79c5c8cd937961783edc.txt",
+      "bytes": 48566,
+      "sha256": "af87e65a8b1cc23ede96700911f3480302c3a30e19355af8a83cfc3befa091d1",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-2c69a06cf460f7250e558803.txt",
+      "bytes": 48566,
+      "sha256": "7412d708c3f9df90d27a2b3897bb37e7a1a1b019efccc9570de151a8dfa0ce6f",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-2c71f3334abeaad998bd97c3.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-2d3bfa404d8fa642fc32676c.txt",
+      "bytes": 48566,
+      "sha256": "edfe5feebfaab23f4cefc257ddad609e433644f111fed3c4010bea54007bf584",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-2dff249629857bc96d41784c.txt",
+      "bytes": 48566,
+      "sha256": "1589fc6a111f79cd7582d292206c030316da6bec390c702a473579ceb4bf1ae4",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-300ea4546596a92e9add5745.txt",
+      "bytes": 48566,
+      "sha256": "cdebc53f62e671fc0fcbfc07edf4da044618e7eb97677bf96093e6c12ec58024",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-328fd95cc225c4a59b72507c.txt",
+      "bytes": 48566,
+      "sha256": "2397c45e4c40c650c1907abb75f22fa160f139720711575b511676bd980c5a4d",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-32914aa303741c397ac0240e.txt",
+      "bytes": 48566,
+      "sha256": "4ad0ea0a817c4119f6b586032014cd40935dde1eb4414f4dc821351f3d54d4c9",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-331c382d0b008f27ddb756e1.txt",
+      "bytes": 48566,
+      "sha256": "5673507a9eb9fd559a8d44aa6ae917b0174cf6470b1696e56cad540ee97e18ee",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-335b80f4fb25c83ed5fa8d26.txt",
+      "bytes": 9397,
+      "sha256": "71dd6fd1a4f9c112586c575280bed399ddfc24e2901b4d59e269351e18cbcbd3",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-33d5794e09fe0da960335445.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-33f47da96fdd745b44d9b383.txt",
+      "bytes": 4319,
+      "sha256": "467081beca9a35b4d6a9f22dab0f18801fab1e14e05d395173f666edd336737a",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-33fe8476d05f81cf0c2a45e1.txt",
+      "bytes": 48566,
+      "sha256": "873d966b3ce7fbaa3f3eff39a7ea6d06b5df42c01d815c80444a1b024af2cfe1",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-3507397618f947b7416101d3.txt",
+      "bytes": 24986,
+      "sha256": "2385c89d60d15edc73c310e6c2e08f008a12e8143f1f9a618f85338c6ffe602b",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-35f2f8efe35c64e5789b282f.txt",
+      "bytes": 4319,
+      "sha256": "dfb96d17a1f9c29aa598697da39d0a7ae514290ce17681aa9f35859403707706",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-363a1c409a9292fbe5064903.txt",
+      "bytes": 4319,
+      "sha256": "6be20ff2e7719d06612a2010b5503b81282c5b29d093aa7b1339bd7112038238",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-36485a62a3a21458014b1e26.txt",
+      "bytes": 48566,
+      "sha256": "974f8aa40c9cd11c78fc5e569e89e79482f3376adf9c0e32d9ab8d066441c90d",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-36b998749bff7953c1268cc5.txt",
+      "bytes": 48566,
+      "sha256": "e68074101c2eba0382f1c805d5f5bda1c7f1bc4e2925bdf17819ba2d93583df9",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-387270042f50c00a592b4ca6.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-3b2bc05e70201b8883fd5757.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-3f03b225d11a8a2cf7870e2b.txt",
+      "bytes": 4319,
+      "sha256": "95a956e9e56da07be5f0ff725b63f7b2ab020acae24ded542807a47b81f3f78e",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-3fc144c6faa8758c2d416534.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-4132b2141939ade885e9fc60.txt",
+      "bytes": 48566,
+      "sha256": "2085f55e02fe473bb37e8db622ade88dda4eba6699b7f2241a5f24687448c6e7",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-455ba095c6d218d7d61c06c8.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-45b3141c306bbcc52bd2dba3.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-465ecae18c80273c64847d4b.txt",
+      "bytes": 48566,
+      "sha256": "fdae1a0eb9e0fbf53d0b775cc1b2e2945f4918f5ce7c9686d6966914d0a727ea",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-46a029fb2f7bbde6576e4774.txt",
+      "bytes": 48566,
+      "sha256": "a290aba0845c15ec9ac085f086d08e9f708fdb85daba80a90999f0a50047600f",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-46edc00e453f3c28306565a0.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-4a54157189d719351a25a4f7.txt",
+      "bytes": 4319,
+      "sha256": "73ffaff41c79764357128d9512c97851d5b7875839eba59c604df7aa3824ebf9",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-4c182af29d43ae8fc75c0f3a.txt",
+      "bytes": 48566,
+      "sha256": "0c7cc5e2ab33dad38dc5622e8367f611c7c1ee53a597d8ec8a35772db3ca9205",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-4c91f703a33655fde4581b07.txt",
+      "bytes": 48566,
+      "sha256": "9302ddc7312523333b3dbfea785c68e0191dc3164ec676daa6408208ea6300fc",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-4d6497a1421cb769fead1817.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-4e21703ca2c00b73d0b73fbe.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-4ff3d960ae37c76f0d5cb1da.txt",
+      "bytes": 4319,
+      "sha256": "b536fbd93d75735e7901b3629c105b96ca753a4e2e55be01bb7c26b3836b6bc5",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-50290d95d6b040da2004ab76.txt",
+      "bytes": 48566,
+      "sha256": "0f48afb1153d609cbdc8956df18a8970468e99070e13faeaf5ca748d18fcc1ee",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-5477748721ab2d871d2e5869.txt",
+      "bytes": 48566,
+      "sha256": "30001e0b6a98a230e1e49deaf8bb4c84a1b986991e04039d3d7648788cf11b5f",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-5477c12ad78aab3e17e64c28.txt",
+      "bytes": 48566,
+      "sha256": "afe60451f17ecd9d8dd6da98a8baeffab52761064ee1af436ec204313bf3b190",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-58af68ca04d1ca90664709b3.txt",
+      "bytes": 48566,
+      "sha256": "a74b428d867cec315ca3f36c3e24551d4212062e9a1395bab43f05996e2328f2",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-597b9c8f90bbb912b715e535.txt",
+      "bytes": 48566,
+      "sha256": "d0b18081e42abba0cbae49d619d72308b2d0df6fe4fe4d93a0a87c65c9fba34d",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-5a81a8ea35d0360a38445ea1.txt",
+      "bytes": 4319,
+      "sha256": "2348a0126db9440f2ba729cccfa37cc2faafbf9ef378dfdb94d779c83ea2cc18",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-5c45d1c172cd474b442066ab.txt",
+      "bytes": 48566,
+      "sha256": "45b1c20aa1fc73f01084bd10b7fe1eac9d0ff887d6db13ae9f990a313df9e25a",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-5d7b0aab24391acde7f9d266.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-5d8b85d38a4a1c876c6578a0.txt",
+      "bytes": 48566,
+      "sha256": "80437e325c710fa888ab80a92ad3582e4a226cb474d1bccae92f77681c0e81ce",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-5db0c7fafd88feeaf25aa78c.txt",
+      "bytes": 48566,
+      "sha256": "eb1445af9aca30e1ecaaa4af6b69efdf347e2c105d12855e2144ea383e86e20d",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-5ecd8296e7017a7fd71e0cad.txt",
+      "bytes": 48566,
+      "sha256": "596cf7822dd5a0de33fc7c9e8f7a4d6fbbf778f8a62e73294f467919311faec8",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-600835133575fb82f08f5d07.txt",
+      "bytes": 48566,
+      "sha256": "3dbbc8511d4dd5ffb799c36783367ca2930a3f4db9309072c07559f4c9c0b434",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-60a87d4640c9e94046a57d1a.txt",
+      "bytes": 48566,
+      "sha256": "53f7e9839b727e3d1e5c739060d54e654ec777054e4ef17cc6ee68ee07b15702",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-60b94ed3fa2ffeae68649eca.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-618e4e6049aeda70f3a7b791.txt",
+      "bytes": 48566,
+      "sha256": "08735923058c20249c528edc9fcf53b818eae3b8d9538884ec2b98636545c1a0",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-646a58be77987a1f070c5fb8.txt",
+      "bytes": 48566,
+      "sha256": "5e0434a8691da75ffdcd5543e90b667cfb732f338700f4d1ef668d3552f421e7",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-653e9c99b1461fba143cf80b.txt",
+      "bytes": 48566,
+      "sha256": "861aa4254f6e08b686eb4b4085e979daba3e9881cc9fa1812b916f4388968732",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-65b78b2760fe607cd90f5a30.txt",
+      "bytes": 24986,
+      "sha256": "1469712fccbbd435423fbaa8226c1b335c1d194b2f947b8ae0ade28a9f14bdca",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-6a623672dd1c572c6fb62ada.txt",
+      "bytes": 48566,
+      "sha256": "fb6e53a5250911b05e4d14a34cf93dc92aad72a24b284167adba2c8518d4a3e8",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-6a770623a281c6ae22ca7472.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-6aaab258e35dec89a2d8fc6b.txt",
+      "bytes": 48566,
+      "sha256": "548ac45edd633229222b0f0619960a62f13d0b1ae44b78f7d8eb0d6df525e513",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-6c4e0737dce3d7c107c77f86.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-6eedab14c5db737da24516ba.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-6f71d8daccd1580635b83f0e.txt",
+      "bytes": 48566,
+      "sha256": "96dca79330fbbc3a3c0229bd612d890829fadcaa3e298ad92aa37255b6c2a1e1",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-700b698001cef959166bd277.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-701d2eff149d2dc5264567ed.txt",
+      "bytes": 4319,
+      "sha256": "877f30bd368e5b239bdacdaf6aadce55b43459891b2b9f75775c4f20756c36e0",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-715f71c52c1591d234e073ee.txt",
+      "bytes": 48566,
+      "sha256": "dd4df6e1e03ca73af6bd4638ce07ab7eaf1b6db7930aac3389f6e9a08e909ba4",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-7215c553a7ac0d09ab6de75b.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-72afa07301348f09d10e53b1.txt",
+      "bytes": 48566,
+      "sha256": "9fe68e04bc6d6a0cc5e0d6c83f91d257fe14c84e63f33c0e29cb7266145bcedc",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-7333b19674a9f9dc73326604.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-73a9d89a6c54c84c05e0e327.txt",
+      "bytes": 48566,
+      "sha256": "2f358f08bf4431b7a4bad56aed70d91bad767f9bfdac07b2673f610e11932bfb",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-781be2eeed627b95c5497630.txt",
+      "bytes": 48566,
+      "sha256": "4f78b87c63e88eac8b2ccae3b30b6372a2eac2adcb9cc39b37506f2c59124973",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-7833143d35560c0a34c957a3.txt",
+      "bytes": 48566,
+      "sha256": "f0c9f2880f0ce9b18aad8dfffba90a20d972fac7a367cacd48a3b3ca8602a8a1",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-789b6aa03a765c931542212f.txt",
+      "bytes": 48566,
+      "sha256": "996f888e2e114604710fa90f119fb892d39fae328baddf77fa81560f17f4e5e1",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-78c93e2f4b61de650752827f.txt",
+      "bytes": 4319,
+      "sha256": "2c4a83d90470e1972f5786e945859216fe9211af65cbba123869785dcfcb15b7",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-7a22580e8994502965fdcfab.txt",
+      "bytes": 48566,
+      "sha256": "0eaab142bb3f5cdf08e8cf25f7b93e799d3bbd16720704a745333aeedf47009e",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-7de9e94bf3fd980c45c0d7b0.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-7ec3b30da32366d4f2c2309c.txt",
+      "bytes": 48566,
+      "sha256": "81110fbff2f9489ea119eb6aa5c30f241ddedf79ef936fa53112005702b50371",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-801c398bc7a543e74609be86.txt",
+      "bytes": 48566,
+      "sha256": "4e4574634f52ce4102ada366668d1bf69052b7591764d672db1d99e88dac580c",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-8023518484f84da73b454416.txt",
+      "bytes": 48566,
+      "sha256": "a0156193dcc36f1857f831045535f0758303e089a135e81bf1e11e036c2ea230",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-8085ea0eaa012fc3d2e94cda.txt",
+      "bytes": 48566,
+      "sha256": "f43d8e5ef4a41cdf4b3d6eb458eecd0ba106304d2e4c62d2bc3757e246c39523",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-82bce392fbff369fcaf3834e.txt",
+      "bytes": 48566,
+      "sha256": "49627eb4dce723d5ee6cea725283674b40752bd4d4b1c24de40a6c69101e4189",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-83154e4fb65e701a15c391f8.txt",
+      "bytes": 48566,
+      "sha256": "ad74b4bb5434d0581aea94521a693999da5ffca9ba2d15e97138f1cc2192c9e7",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-83e4f2db31da82f7f2d99621.txt",
+      "bytes": 32977,
+      "sha256": "23f64fcfde72775c72e9b06a400e7a35b6e511cad190cc44dc8384f260fa06b8",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-8463befa3188602b246a1e20.txt",
+      "bytes": 4319,
+      "sha256": "9e1e352722badb1d2079b2afed77ec82807a710bf7b260eb0144813773a6b57e",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-8588f103bddd410b6cb75c0f.txt",
+      "bytes": 48566,
+      "sha256": "c79a343009beeec8b0cdf99f12087a1b50145447b337ed2ec79257d9aa286282",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-8610aac23f3a48d6c6ee5c89.txt",
+      "bytes": 48566,
+      "sha256": "962d2861ed5c872b3854433609b2606062c5e9d456e5e5a970e8e4579080763a",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-88839920d0220a4af8f3ab14.txt",
+      "bytes": 48566,
+      "sha256": "43f376ffa610f456e9014fd0060ab84e3181ae92ae1badb62de62a31d965ca3e",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-897d647d3029ab21c35f0590.txt",
+      "bytes": 48566,
+      "sha256": "94066ed9f9103f383b53b69ab2e4a30eea46bb3e97f422b4adb5843ec4854619",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-89c7b8e9757c1634575b6488.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-8c360f80007cf8cb245118ac.txt",
+      "bytes": 48566,
+      "sha256": "0cd15d00cba934467355e82a78814a767c386b43afcc2574a6bd9c67316460f7",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-8f347e17c2f3363b68634421.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-91be64c8fbe3e3bf7b1ddf5e.txt",
+      "bytes": 48566,
+      "sha256": "4ec4064ca359c2f5c68086a3ba0f025fc96dc98486b73b7bd6568c3c70a33fc1",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-94f6b1aaeadcd0806fedbf4f.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-95e2b19e1be412083eb5de22.txt",
+      "bytes": 48566,
+      "sha256": "76cb405ac9634a52a5f5a0f0d10975785c5087679a26a18c1c033e0badfeaf32",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-96003099f12fda5dccb76aef.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-96ab47315b3879a3d30768d2.txt",
+      "bytes": 48566,
+      "sha256": "9be5e71287e720168573119f9e277e1983562b0156d999b940549400d56f05e4",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-970cf1671dcca946fa7d1af0.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-9832cff78cdfcca96fc2ad81.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-986df2b62e0f7dcce53edd14.txt",
+      "bytes": 48566,
+      "sha256": "b499f181a3e19bfea0e78c785fdc3dc7b7803e4950171de661932536e3817fed",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-9a5d4dff2fc85b1f15c6d5d8.txt",
+      "bytes": 9266,
+      "sha256": "c53773b0c54ae23a440fb4f07b75917d971e29e6a8881fd983db7c4d941cb28d",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-9c5371c42c648ce574f9c814.txt",
+      "bytes": 48566,
+      "sha256": "9ee7849a3ab2754f369734a8643549e19532a811c61e4ebd70d99f558255c026",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-9ed0dd94320f49c1c1c52dcb.txt",
+      "bytes": 4319,
+      "sha256": "661fc8db73d0873a575797db5554a0203376d09bf2e1f4aef15b17f6226ecc18",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-a043846e0902fc56357788f4.txt",
+      "bytes": 4319,
+      "sha256": "127913334dc8d01cf7c3e083863c2574c78d6800e362c008ed9601c6f6d276fb",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-a0630b8ec62c100d0dd20ae3.txt",
+      "bytes": 48566,
+      "sha256": "5dd791e9d54a3c0e171259b1fabc751f436b41327f6bbc175805287d4bc0e2cd",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-a1083113cf906571d62acbf9.txt",
+      "bytes": 48566,
+      "sha256": "d602e1764ceb98b8db31882411f077e6c375b7f12d3076f63d940ac55a5fb204",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-a17abd6157b782ac97688f95.txt",
+      "bytes": 48566,
+      "sha256": "fed36f0478a3e85fb6a7d440cb8e0c903aacd5a2ae89c9ab916143d4de4b51e2",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-a1e54d8efe7592946d6d63a5.txt",
+      "bytes": 48566,
+      "sha256": "4e2fa746b9b049256c1b5ec87eb5ac6f035aebf290df57ab233fe7c173289f49",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-a2731c50608ce590839a3b4d.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-a68ef24efd30b4f82738c012.txt",
+      "bytes": 4319,
+      "sha256": "5818f581c9d143bf888e19bbfc7eb4faeb8808fd8417ad65433ab16992af83ea",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-a79bb542a9a818bbc55742af.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-a865b0c14ac01231bbef839e.txt",
+      "bytes": 24986,
+      "sha256": "f3eb78f02f99d141cafb32d6b3e9f9a54e5330f573d2f75a933a27fb80998019",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-a9c9445deb824528f1d133c6.txt",
+      "bytes": 4319,
+      "sha256": "e87785b66d476316dfecde526ba6de3338aa279f7c83031904d8ded39532b5f3",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-acc2b37f04c05512cdee15a8.txt",
+      "bytes": 48566,
+      "sha256": "1d48eb7b5b369cda438c323dcbd98cf23a695a8abc7b9f7fe0b6f246f73df2c5",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-b287248bb6ae85b2078f9bb4.txt",
+      "bytes": 48566,
+      "sha256": "79c6b7e54bf8582462758a7763439f4cc2bc83342b373ac471cce261e9940ca6",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-b2c56a91b05ff860d4d91ab9.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-b3a83c7d8476479853969fa3.txt",
+      "bytes": 4319,
+      "sha256": "a3736d2404daa0dc9c6685e3726857a77de40690946682a78c044828a5804764",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-b3bc0585e07581d7a17b411d.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-b543afaf5cd1f6f80fce3fc5.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-b65f7b68e60d633ef5ff2dd1.txt",
+      "bytes": 4319,
+      "sha256": "f228af09410f5f414434e0fca54f9debbe1afb4835560d0b7e48d7c2d854b507",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-b8045a2fce749124582387b7.txt",
+      "bytes": 48566,
+      "sha256": "0b5ba0b169c6ef5618a472f5161a71c379f5ee4ace5750316da05dba84a2ca56",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-b83e184cd920753b1e22fc4a.txt",
+      "bytes": 48566,
+      "sha256": "76a23b5f5c16ff4e257b9fa10ca14a8229920a402cff2f130c62673243ccb36d",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-b94582ce81fb0a21d412b6d5.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-baae4ca629d63c5ef5f2ee3b.txt",
+      "bytes": 48566,
+      "sha256": "e9b107ffb90529c42837a6d25bda522bdc4963e57a97f8bd7d0f61901a6dab4c",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-bb2ef7acbb81c6ec0cdfc791.txt",
+      "bytes": 48566,
+      "sha256": "57bc6188043f32484129f68ef7a94a883da3ec88701c69fb505a2842e347a717",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-bb39e3c76ed8d2435c8daa94.txt",
+      "bytes": 4319,
+      "sha256": "57e8246921e5ee24811657b891dd4daa3ec5c4a293634bb9ad75201bedb0ba0c",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-bdb81390c0e0719a4e5f261d.txt",
+      "bytes": 48566,
+      "sha256": "9c0437e5d923d33d74a61ec84a086bb764156fed1c1ad17dcc8c3a94778ef077",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-c059e9574fa6fcbe0a43d727.txt",
+      "bytes": 48566,
+      "sha256": "b0a7404662a7d193594be44e3e56b8a67406e865f67a91709f67162570effe73",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-c0b0870c8ee53db3ba1e10a5.txt",
+      "bytes": 4319,
+      "sha256": "97a4ac58fc25db32acb485be252085f85e9c0aa3784d2ed6130ff7ab761f898f",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-c144f07e22b3135034751d22.txt",
+      "bytes": 48566,
+      "sha256": "c15e0e088d70d3097c365395af59f94300c44ea2b70e3a8a84741793ad2c6343",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-c1bfaf8dc2769d5203497ae0.txt",
+      "bytes": 48566,
+      "sha256": "ab2f0e92fca41e5ca3b35cb2f118f7af41281655bcde02e3e0a9e2c5b95a4236",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-c369bbd9db78c6d103732d5b.txt",
+      "bytes": 4319,
+      "sha256": "e8c7659dd64a4cedb5324585012c8c966fd045a44bc5cbf810deb1d79b4300bd",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-c50da154bfab811999119ace.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-c5ce0072e7d31430c5b03c02.txt",
+      "bytes": 48566,
+      "sha256": "d05f193e3fe8b474ccfd80cc3bc4ff1c10e72b61f69c5359f55aa2de75cc7a21",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-c79efc080e0f95189f6e8f3e.txt",
+      "bytes": 48566,
+      "sha256": "d503f6e3fcba711332543bce1b2b8c8b1ccfe098bcd53a4ac15e239eda98ba83",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-c8e6c497c70c018a8dbb2e2b.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-cce18bd5db08efa158a87a86.txt",
+      "bytes": 48566,
+      "sha256": "df293cbdf98fc681b682845c33e2955903ecba8db874cb959ea7c85c0bbdac86",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-cced63dbca07305d2dad84db.txt",
+      "bytes": 48566,
+      "sha256": "33f90bd42d5ce5b4238f2e3f6cfe764b11ca4189b29a6a7387f1fc1a9fc81d8c",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-cd39ed893adf4be8a8530b4e.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-cd60ef6402f7f5a06df50616.txt",
+      "bytes": 48566,
+      "sha256": "137adb268858690cb9a5945a8891ddbd2ffc2f7b20c1bfac6dbd8e875c148ae8",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-cf5313688c4285765714edf0.txt",
+      "bytes": 4319,
+      "sha256": "fa12a855bc4691f77adeb91ef876c1bb89e7a9f1c4b9cfb01a55948ac9bfa97c",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-d11adcd6e4619799a84cd681.txt",
+      "bytes": 4319,
+      "sha256": "38de3e435178ac79fb6a3fc931d0e07388223ebce36fcb67f940fa95292ac239",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-d143c3a69d9bab22b1786d27.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-d1830ca82d07748b935bbb33.txt",
+      "bytes": 48566,
+      "sha256": "073e5ba9546a4a36ebbfdc1a0a312c59016b469122332c61ab979e164dc41d87",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-d1849985cfec4da864a78bf8.txt",
+      "bytes": 4319,
+      "sha256": "1db384ee0613c8c6ff7979e128bfcc59d2ef375deed000faceed34968d64985d",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-d252af3448ac4af24d1ebbf4.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-d39238931dc111d9ef288f92.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-d51c1b76509c66ef96e56411.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-d5fb22260c86d46325008911.txt",
+      "bytes": 48566,
+      "sha256": "4c101aa095c1feff1b0a5b4b4db83482d0e2ce6a070dbedb83f9340fcecebb42",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-d77f96fb0d8490fb9d0524e8.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-d7e4c615df556b3248c0a702.txt",
+      "bytes": 48566,
+      "sha256": "e34e141354ddddf19d900f52725d803a6e42a146f5de6bb80279e96f1294abe8",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-d7f177f95f0737825cc2d59f.txt",
+      "bytes": 48566,
+      "sha256": "344efc4c581c608c3ffa2203d5b3dfdeda267e8a91d6284798251166cdd0ecc0",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-da664d538a3c48bd6c16d925.txt",
+      "bytes": 48566,
+      "sha256": "df857752cd41b0d73e637e64b39afd01c75e20060a20ac3e2b8da88ec1d6cd2a",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-daa6102ba4a945ba6381525e.txt",
+      "bytes": 48566,
+      "sha256": "95f8929b667309e0ab55e940b68e3c73e942e0e464e75cdc98798276e211534d",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-dd4e3b533eafa479d66962cf.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-ddd98dd8bfab93bb453fc113.txt",
+      "bytes": 48566,
+      "sha256": "f9791ddec1301e2c5c6e86097925cfe0dba967b827b4629eef0fe29978246fae",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-de1614c65a14eb9a07734c26.txt",
+      "bytes": 48566,
+      "sha256": "8b606e6bce55c902b75b5cd56ded7a5ca2a323d57587d336c4cbda140564dcdd",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-de745e3ba8cd45e85c5735e6.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-e07639adef11746416e50c50.txt",
+      "bytes": 48566,
+      "sha256": "fb6ac0fa740cc51c958e93fc58c6be0b8bbe90ca92157221cdc978324ce4f479",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-e2ad55cf0a97cbb804f8442c.txt",
+      "bytes": 48566,
+      "sha256": "6087367694046469066876e43af463ade4189c94f2e9abb592f43ed2ebd8ed39",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-e44e390a8df3dcf8a65beb67.txt",
+      "bytes": 48566,
+      "sha256": "8a7394cd91617f9eb625d617574b2ab15ae3c5886a4dd9682f8318d7d240f280",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-e4ca9c4429d7b899a6fd3e52.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-e62f6b0d8e87202a3d073995.txt",
+      "bytes": 48566,
+      "sha256": "2b486974e13cb55e973cb9afa9d2fb3d050ba8af6a915dbaeb4ab912fead651b",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-e7b5f16e6babe3556db11dc0.txt",
+      "bytes": 4319,
+      "sha256": "6f8a3b22ba033ff41fa2a808835532794a9a0c5f3d63a3ffdd4a78dbebf1d4c3",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-e93472e4b0f2e547cf90d676.txt",
+      "bytes": 48566,
+      "sha256": "55bd6fc5349b6db2865e9d883f02633af0dcf6d84a9c4807e9be33d390e88997",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-eb2df6aafc1c45f0049416d9.txt",
+      "bytes": 48566,
+      "sha256": "43f5d6244fd2b726f80eb4f584cfef5df4a40fe4d1162066de7296698cc682bc",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-ebad69f472595755c55d83f5.txt",
+      "bytes": 4319,
+      "sha256": "71bac93738eff6819f855c9b1b261a090ce90153b20420f92c207902a8305f87",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-ec009a2a73b56a18a31f8e50.txt",
+      "bytes": 48566,
+      "sha256": "3a0a29112453af2c70a7a171f99ec22344d26f0b60b1e28e134d51618c3058bc",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-ed60a3102ce60f30ac13e273.txt",
+      "bytes": 48566,
+      "sha256": "a42069aec2c5dd19557d73f0b34ce41779a904634acf4d3307df92f78bf54e26",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-edf66e0bffa9023b6c8e09b4.txt",
+      "bytes": 48566,
+      "sha256": "0562abf8227942ced9e786cdf02f14b566c474ad0927ae462fa4b55a6ddafca0",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-f05a2b5ac784613bcb5d9b98.txt",
+      "bytes": 48566,
+      "sha256": "abd44a5cd723e68fee594a7b557d4e3cd9109acc7854b12ab7ba429be99d9e08",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-f1463b2729a6c224f7fe9d0e.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-f21db8d1c7c155e3fcfb3efc.txt",
+      "bytes": 48566,
+      "sha256": "df8d89e93df847c9506252e1b522bf4a034ca2354ef506cbf8aca199a1b7e6df",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-f2d738dd9aadf91ad9699a88.txt",
+      "bytes": 48566,
+      "sha256": "5bec46d775edbb626e4c6fec1516bcb5a1326e96f803f70d1720fb913b9ffd43",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-f4426e4d67c003a05fe65487.txt",
+      "bytes": 48566,
+      "sha256": "064c2266dce407af8706bc3ff96ec03749acca16a01eb0822a51b1ab0362f50a",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-f4a2fef5317e962b44c6be25.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-f850a956b6fc76f293248aec.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-fb8d4fbe64eee465c132e225.txt",
+      "bytes": 48566,
+      "sha256": "4f357aaad33f11500d1280366d4facec2407c56ee0f58f65554c3950c554c081",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-fbca1c9611a4858f17dd805f.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-fdaa788af23870770ab38377.txt",
+      "bytes": 48566,
+      "sha256": "54f88f68073c992425e06a8c30bb05ea6d30f5c705c5eddf96305ff001f62475",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-fe34339065a906712a812c6a.txt",
+      "bytes": 48566,
+      "sha256": "71f23571cfbce6efabd806438bcea9cf84ec1eee569ba04e4380807da44cc642",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-fee40117efc6c08f34c81246.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-28d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-fef59d000324e08740ce84ff.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-ff195d7d841c58ccd12b807e.txt",
+      "bytes": 48566,
+      "sha256": "ca64e871bcd65bae56f1679e1f16487c5cba1a90d22940b19cd392ccb55166ab",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-ff6e349a22d725b23471a72f.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-ff77202fdddbff24b699734c.txt",
+      "bytes": 4320,
+      "sha256": "fc70210ef697dca7e7f92a2c857e4aa05091d4d37324fee990ca0aebf4aa2445",
+      "source": "data/derived/surface-antecedent/seoul-20220808-421-14d-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
     }
   ]
 }
