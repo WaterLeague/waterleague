@@ -36,6 +36,13 @@ class CiSourceTests(unittest.TestCase):
             for source in value['sourceRequests']:
                 self.assertEqual(source['sha256'], packaged.get(source['rawFile']), source['rawFile'])
 
+    def test_epa_reference_archive_is_pinned_for_offline_numerical_verification(self):
+        manifest = json.loads((ROOT / 'data/benchmarks/epa-applications-example1.json').read_bytes())
+        sources = json.loads((FIXTURES / 'public-sources-v1.json').read_bytes())['files']
+        row = next(row for row in sources if row['path'] == 'tmp/epa-reference/applications.zip')
+        self.assertEqual(row['sha256'], manifest['archiveSha256'])
+        self.assertEqual(row['bytes'], manifest['archiveBytes'])
+
     def test_linked_parent_is_rejected_before_writes(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary).resolve()

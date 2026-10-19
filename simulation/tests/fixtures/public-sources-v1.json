@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "purpose": "공개 원문 재현 시험 전용 · 코드 라이선스와 별도",
-  "archiveSha256": "6a7a5e367c97068dccb8795b448030cfd47df74447bd8a279ef88c284a8f88e6",
+  "archiveSha256": "763c9274b42125722813f7ec72312dbb718497a606765acf562e6d9dd5354afe",
   "files": [
     {
       "path": "data/raw/kma-disaster-pet-bcb2670316cd5737db4ac916.txt",
@@ -11685,6 +11685,13 @@
       "sha256": "897f969a2ad0344c64f4e070b0a95605e755dbe9a6644d8f35f9ae2ba4e56834",
       "source": "data/derived/antecedent/seoul-20220808-401-rain-v1.json.gz",
       "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "tmp/epa-reference/applications.zip",
+      "bytes": 6586620,
+      "sha256": "889dd60a53ac85f00ee90db947a67ddc6d0737f46acf818bf7c7c08ac272f0ea",
+      "source": "data/benchmarks/epa-applications-example1.json",
+      "licence": "EPA 공개 배포 교육 사례 · 원문 출처·조건 보존"
     }
   ]
 }

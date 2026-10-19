@@ -95,7 +95,7 @@ jobs:
       - run: bash scripts/build_swmm.sh
       - run: python scripts/build_ci_engines.py
       - name: EPA 참조 사례 실행·단위 대조와 인쇄 차이 기록
-        run: python scripts/verify_epa_reference.py --download --output tmp/epa-reference/ci
+        run: python scripts/verify_epa_reference.py --output tmp/epa-reference/ci
       - run: python scripts/test_simulation.py --shard ${{ matrix.shard }} --shards 4
       - run: python scripts/verify_snapshot.py
       - run: python scripts/verify_model.py
