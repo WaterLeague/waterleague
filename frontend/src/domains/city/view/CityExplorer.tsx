@@ -1,4 +1,6 @@
 import { mapCursors } from '../service/mapCursor';
+import { useGameAudio } from '../../audio/controller/useGameAudio';
+import { createFloodField } from '../../urban/service/floodFieldService';
 import { infrastructureFocus } from '../../infrastructure/service/infrastructureFocus';
 import { GameSelect } from '../../../shared/ui/GameSelect';
 import { MapActionDock } from './MapActionDock';
@@ -19,6 +21,8 @@ import { useUrbanData } from '../../urban/controller/useUrbanData';
 import {
   RotateCcw,
   CircleHelp,
+  Volume2,
+  VolumeX,
   Plus,
   Minus,
   MapPin,
@@ -124,7 +128,7 @@ function Explorer({
   const [infrastructureOpen, setInfrastructureOpen] = useState(false);
   const [facilityExpansionOpen, setFacilityExpansionOpen] = useState(false);
   const [cisternOpen, setCisternOpen] = useState(false);
-  const cistern = useCisternPlans(account, cisternOpen);
+  const cistern = useCisternPlans(account, cisternOpen, (site) => sound.installed(site));
   const [assetsEnabled, setAssetsEnabled] = useState(true);
   const [comparisonEventId, setComparisonEventId] = useState('');
   const surfaceEnabled = true;
@@ -417,6 +421,22 @@ function Explorer({
     researchMode ? null : surfaceIndex,
     researchMode ? null : rainfall.now
   );
+  const sound = useGameAudio({
+    camera: navigationCamera,
+    clock: urbanClock,
+    terrain,
+    flat: flat || failed,
+    flood: createFloodField(
+      surface.frame ? [surface.frame] : publicSurface.frames.map((value) => value.frame),
+      traces.tiles,
+      researchMode
+    ),
+    rain: viewedDistrictId
+      ? wetIds.has(viewedDistrictId)
+        ? (rainAmounts.get(viewedDistrictId) ?? 0.05)
+        : 0
+      : Math.max(0, ...wetDistricts.map((d) => rainAmounts.get(d.id) ?? 0.05)),
+  });
   useEffect(() => {
     setSurfaceIndex(null);
     setSurfaceRenderError(false);
@@ -1013,6 +1033,7 @@ function Explorer({
                 }
               >
                 <CityScene
+                  audio={sound.engine}
                   parking={urban.parking}
                   urbanClock={urbanClock}
                   streets={urban.roads}
@@ -1207,6 +1228,28 @@ function Explorer({
                   )}
                 </div>
               </details>
+              <button
+                type="button"
+                className="map-sound-toggle"
+                role="switch"
+                aria-label="게임 소리"
+                aria-checked={sound.enabled && !sound.unavailable}
+                disabled={sound.unavailable}
+                title={
+                  sound.unavailable
+                    ? '이 브라우저에서는 소리를 지원하지 않습니다'
+                    : sound.enabled
+                      ? '소리 끄기'
+                      : '소리 켜기'
+                }
+                onClick={sound.toggle}
+              >
+                {sound.enabled && !sound.unavailable ? (
+                  <Volume2 size={17} />
+                ) : (
+                  <VolumeX size={17} />
+                )}
+              </button>
             </div>
           </div>
           {listOpen && (
@@ -1500,6 +1543,7 @@ function Explorer({
         />
       ) : researchMode ? (
         <HistoricalPanel
+          onInstalled={sound.installed}
           onClose={closeInstallation}
           state={research}
           districtName={district?.name ?? ''}
@@ -1538,7 +1582,10 @@ function Explorer({
           onInstall={async (s, t, a) => {
             const ok = await shared.install(s, t, a);
             setBudgetRevision((v) => v + 1);
-            if (ok) setFeedback('설치 확정 · 이번 시즌 종료까지 유지됩니다');
+            if (ok) {
+              sound.installed(s);
+              setFeedback('설치 확정 · 이번 시즌 종료까지 유지됩니다');
+            }
             return ok;
           }}
           onLogin={onLogin}

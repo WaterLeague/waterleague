@@ -26,7 +26,11 @@ const emptyLayout: CisternLayoutFields = {
   rotation: '0',
 };
 
-export function useCisternPlans(account: Account | null, open: boolean) {
+export function useCisternPlans(
+  account: Account | null,
+  open: boolean,
+  onInstalled?: (site: SharedSite) => void
+) {
   const allowed = account?.role === 'MEMBER' && account.approvalStatus === 'APPROVED';
   const identity = account
     ? `${account.id}:${account.role}:${account.approvalStatus}:${account.districtId ?? ''}`
@@ -166,7 +170,10 @@ export function useCisternPlans(account: Account | null, open: boolean) {
       if (remove) await deleteCisternPlan(remove.id, abort.signal);
       else {
         const next = await saveCisternPlan(request!, abort.signal);
-        if (!abort.signal.aborted && current === epoch.current) setSaved(next);
+        if (!abort.signal.aborted && current === epoch.current) {
+          setSaved(next);
+          if (ground) onInstalled?.(ground);
+        }
       }
       if (!abort.signal.aborted && current === epoch.current) {
         if (remove?.id === saved?.id) setSaved(null);

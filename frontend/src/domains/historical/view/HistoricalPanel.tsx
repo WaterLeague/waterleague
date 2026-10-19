@@ -221,6 +221,7 @@ export function HistoricalTimeline({
   );
 }
 export function HistoricalPanel({
+  onInstalled,
   onClose,
   state: s,
   site,
@@ -233,6 +234,7 @@ export function HistoricalPanel({
   districtName,
 }: {
   state: HistoricalState;
+  onInstalled?: (site: SharedSite) => void;
   onClose?: () => void;
   site: SharedSite | null;
   type: FacilityType | '';
@@ -275,7 +277,7 @@ export function HistoricalPanel({
             : '재해 실험 배치 50곳을 모두 사용했습니다.'
       }
       onInstall={() => {
-        if (site && type) s.add(site, type, Number(area));
+        if (site && type && s.add(site, type, Number(area))) onInstalled?.(site);
       }}
       occupied={
         placed

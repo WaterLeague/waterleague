@@ -1,4 +1,5 @@
 import { streetLane } from '../service/streetLifeService';
+import type { AudioHandle, StreetSound } from '../../audio/entity/audio';
 import { memo, useEffect, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Color, InstancedMesh, MeshStandardMaterial, Object3D } from 'three';
@@ -25,6 +26,7 @@ import { parkingTrafficPaths } from '../service/parkingService';
 const LIMIT = 500;
 const PALETTE = ['#c9d3d8', '#f3e6c0', '#345e79', '#a33e33', '#252d34', '#d3caba'];
 export const StreetLife = memo(function StreetLife({
+  audio,
   roads,
   parking,
   terrain,
@@ -38,6 +40,7 @@ export const StreetLife = memo(function StreetLife({
   city,
   animate,
 }: {
+  audio?: AudioHandle;
   roads: Street[];
   parking?: ParkingData | null;
   terrain: Terrain | null;
@@ -61,6 +64,8 @@ export const StreetLife = memo(function StreetLife({
   const arms = useRef<InstancedMesh>(null),
     signals = useRef<InstancedMesh>(null);
   const lastReport = useRef({ time: 0, key: '' });
+  const lastSound = useRef(0);
+  useEffect(() => () => audio?.current?.actors([]), [audio]);
   useEffect(() => () => onFloodStats?.(emptyFloodStats), [onFloodStats]);
   const poles = useRef<InstancedMesh>(null),
     lamps = useRef<InstancedMesh>(null),
@@ -169,6 +174,8 @@ export const StreetLife = memo(function StreetLife({
       personCount = 0,
       signalCount = 0;
     const stats = { ...emptyFloodStats };
+    const collectSound = !!audio?.current?.active && performance.now() - lastSound.current >= 100;
+    const sounds: StreetSound[] = [];
     const put = (
       mesh: InstancedMesh | null,
       index: number,
@@ -288,6 +295,18 @@ export const StreetLife = memo(function StreetLife({
           continue;
         const height =
           streetHeight(terrain, [position.x, position.y], agent.path.road, position.segment) + 0.08;
+        if (
+          collectSound &&
+          animate &&
+          response.moving &&
+          (!clock.current.historical || clock.current.playing)
+        )
+          sounds.push({
+            id: `${agent.path.road.id}:${agent.walking}:${agent.seed}`,
+            kind: agent.walking ? 'walk' : 'car',
+            point: [position.x, height + (agent.walking ? 0.15 : 0.65), -position.y],
+            speed: response.action === 'braking' ? speed * 0.3 : speed,
+          });
         const affected = response.action !== 'moving';
         if (affected) {
           if (response.action === 'stranded') stats.stranded++;
@@ -475,6 +494,10 @@ export const StreetLife = memo(function StreetLife({
         lastReport.current = { time: performance.now(), key };
         onFloodStats(stats);
       }
+    }
+    if (collectSound) {
+      lastSound.current = performance.now();
+      audio?.current?.actors(sounds);
     }
     if (glow.current) glow.current.emissiveIntensity = (light?.night.value ?? 0) * 3;
     if (pools.current) pools.current.visible = (light?.night.value ?? 0) > 0.15;

@@ -130,6 +130,40 @@ function field(key: string, sources: (SurfaceFrame | TraceTile)[]) {
     cache = new WeakMap<StreetPath, Map<string, FloodRoute>>();
   return {
     key,
+    nearest(point: Point, radius: number) {
+      let result: { point: [number, number]; contact: FloodContact; distance: number } | null =
+        null;
+      const a: Point = [point[0] - radius, point[1] - radius];
+      const b: Point = [point[0] + radius, point[1] + radius];
+      for (const index of indices)
+        for (const triangle of index(a, b)) {
+          if (triangleIntersection(point, point, triangle.vertices)) {
+            return {
+              point: [...point] as [number, number],
+              contact: this.contact(point) ?? triangle.contact,
+              distance: 0,
+            };
+          }
+          for (let i = 0; i < 3; i++) {
+            const start = triangle.vertices[i],
+              end = triangle.vertices[(i + 1) % 3];
+            const dx = end[0] - start[0],
+              dy = end[1] - start[1];
+            const length2 = dx * dx + dy * dy;
+            const t = length2
+              ? Math.max(
+                  0,
+                  Math.min(1, ((point[0] - start[0]) * dx + (point[1] - start[1]) * dy) / length2)
+                )
+              : 0;
+            const closest: [number, number] = [start[0] + dx * t, start[1] + dy * t];
+            const distance = Math.hypot(closest[0] - point[0], closest[1] - point[1]);
+            if (distance <= radius && (!result || distance < result.distance))
+              result = { point: closest, contact: triangle.contact, distance };
+          }
+        }
+      return result;
+    },
     contact(point: Point): FloodContact | null {
       let found: FloodContact | null = null;
       for (const index of indices)

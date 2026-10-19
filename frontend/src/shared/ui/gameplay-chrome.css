@@ -1171,3 +1171,15 @@
     transition: none;
   }
 }
+.game-shell .map-sound-toggle[aria-checked='true'] {
+  color: #fff;
+  background: #496c70;
+}
+.game-shell .map-sound-toggle[aria-checked='false'] {
+  color: #8b6258;
+  background: #f1e5de;
+}
+.game-shell .map-sound-toggle:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

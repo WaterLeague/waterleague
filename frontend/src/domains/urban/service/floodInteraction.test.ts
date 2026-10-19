@@ -55,6 +55,20 @@ const record: TraceTile = {
   triangleVertices: [40, -10, 60, -10, 50, 10],
 };
 const contact: FloodContact = { kind: 'calculated', depth: 0.2, speed: 0.5, hazard: 1 };
+test('침수 음원은 정확한 삼각형 내부·가장 가까운 경계와 탐색 반경 사용', () => {
+  const field = createFloodField([frame()], [], false);
+  expect(field.nearest([50, 0], 1)?.distance).toBe(0);
+  expect(field.nearest([50, -20], 15)?.point).toEqual([50, -10]);
+  expect(field.nearest([50, -20], 9)).toBeNull();
+  expect(createFloodField([frame(0)], [], false).nearest([50, 0], 50)).toBeNull();
+});
+test('주간 비교용 과거 침수에는 소리가 없고 재해 기록에는 원 수심을 생성하지 않음', () => {
+  expect(createFloodField([], [record], false).nearest([50, 0], 10)).toBeNull();
+  expect(createFloodField([], [record], true).nearest([50, 0], 10)?.contact.depth).toBeNull();
+  expect(
+    createFloodField([frame(0.5), frame(1)], [record], true).nearest([50, 0], 10)?.contact.depth
+  ).toBe(1);
+});
 function route(from = 40, to = 60, value = contact): FloodRoute {
   const bands = [{ from, to, contact: value }];
   return { length: 100, bands, samples: bands };

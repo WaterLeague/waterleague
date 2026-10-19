@@ -256,6 +256,7 @@ export function useHistorical(
     };
     design.replace([...drafts, { site, facilityType: type, areaM2: area, marker }], elapsedSeconds);
     setError('');
+    return true;
   }
   function remove(id: string) {
     design.replace(

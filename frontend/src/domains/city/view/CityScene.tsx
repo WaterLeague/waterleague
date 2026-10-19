@@ -1,4 +1,6 @@
 import { scenePointer, clearScenePointer } from '../service/mapCursor';
+import type { AudioHandle } from '../../audio/entity/audio';
+import { CityAudioListener } from '../../audio/view/CityAudioListener';
 import { GroundCandidates } from '../../installation/view/GroundCandidates';
 import type { GroundCandidate } from '../../installation/service/candidateTilesService';
 import { pavementGeometry } from '../../catalog/service/pavementGeometryService';
@@ -423,6 +425,7 @@ function ProjectedLabels({
   return null;
 }
 const CityScene = memo(function CityScene({
+  audio,
   urbanClock,
   streets,
   parking,
@@ -473,6 +476,7 @@ const CityScene = memo(function CityScene({
   planningRoles,
   cisternGeometry,
 }: {
+  audio: AudioHandle;
   urbanClock: UrbanTime;
   streets: Street[];
   parking: ParkingData | null;
@@ -578,6 +582,7 @@ const CityScene = memo(function CityScene({
       gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
     >
       <TerrainContext.Provider value={terrain}>
+        <CityAudioListener audio={audio} />
         <UrbanEnvironment clock={urbanClock}>
           <WaterScene animate={animateRain} clock={urbanClock}>
             <InfrastructureFootprints
@@ -640,6 +645,7 @@ const CityScene = memo(function CityScene({
               onStreet={onStreet}
             />
             <StreetLife
+              audio={audio}
               roads={streets}
               parking={parking}
               terrain={terrain}
