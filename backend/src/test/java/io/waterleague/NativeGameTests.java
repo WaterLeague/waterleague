@@ -50,7 +50,7 @@ class NativeGameTests {
       }
     }
     Files.createDirectories(Path.of("target"));
-    Files.writeString(Path.of("target/native-game-cross-runtime-v1.json"), json.write(Map.of(
+    Files.writeString(Path.of("target/native-game-cross-runtime-v2.json"), json.write(Map.of(
         "catalogSha256", ObservedGameRepository.SHA256, "forcings", forcing)) + "\n");
   }
 
@@ -60,7 +60,7 @@ class NativeGameTests {
     String hash = repository.catalog().path("regions").get(0).path("defaultModelHash").asString();
     ((ObjectNode) repository.catalog()).put("id", "changed");
     ((ObjectNode) repository.require(hash).model()).put("districtId", "changed");
-    assertThat(repository.catalog().path("id").asString()).isEqualTo("SEOUL_NGII_GAME_V1");
+    assertThat(repository.catalog().path("id").asString()).isEqualTo("SEOUL_NGII_GAME_V2");
     assertThat(repository.require(hash).model().path("districtId").asString()).isEqualTo("11110");
     var rates = mock(RateLimitService.class);
     var client = MockMvcBuilders.standaloneSetup(new ObservedGameController(repository, rates, json))

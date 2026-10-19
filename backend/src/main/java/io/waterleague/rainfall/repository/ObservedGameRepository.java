@@ -13,7 +13,7 @@ import tools.jackson.databind.JsonNode;
 @Repository
 public class ObservedGameRepository {
   public static final String SHA256 =
-      "829fee0b07778352e193a8e9c206c574c68de119ea8840c8d7c73a7c8be3b45a";
+      "f08b92fa00db08126e86b379583299a831764b958a4f131de4647ebde95e6fdb";
   private final JsonNode catalog;
   private final Map<String, ObservedForcing> models;
   private final JsonNode events;
@@ -23,7 +23,7 @@ public class ObservedGameRepository {
       String raw = read("catalog.json", 512 * 1024);
       if (!json.hash(raw).equals(SHA256)) invalid();
       catalog = json.tree(raw);
-      if (!catalog.path("id").asString().equals("SEOUL_NGII_GAME_V1")
+      if (!catalog.path("id").asString().equals("SEOUL_NGII_GAME_V2")
           || catalog.path("schemaVersion").asInt() != 1
           || !catalog.path("coordinateSystem").asString().equals("EPSG:5186")
           || !catalog.path("siteCatalogSha256").asString().equals(
@@ -81,7 +81,7 @@ public class ObservedGameRepository {
     return value;
   }
   private static String read(String file, int maximum) throws IOException {
-    try (var input = new ClassPathResource("native-game/v1/" + file).getInputStream()) {
+    try (var input = new ClassPathResource("native-game/v2/" + file).getInputStream()) {
       byte[] raw = input.readNBytes(maximum + 1);
       if (raw.length > maximum) invalid();
       return new String(raw, StandardCharsets.UTF_8);

@@ -15,6 +15,18 @@ from waterleague_sim.spatial.play_catalog import NativeCatalogError
 
 
 class NativeGameTests(unittest.TestCase):
+    def test_station_distance_uses_integer_millimetres_and_preserves_the_old_producer(self):
+        candidates = {identifier: {'rainfall': {'stationMetadata': {'longitude': 127, 'latitude': 37}}}
+            for identifier in ('421', '108')}
+        with patch.object(generation.pyproj, 'Geod') as geod:
+            geod.return_value.inv.side_effect = [(0, 0, 2000.000000000001), (0, 0, 2000.000000000005)]
+            selected, distance = generation.nearest([200000, 550000], candidates)
+        self.assertIs(selected, candidates['108'])
+        self.assertEqual(distance, 2)
+        archived = generation.source.ROOT / 'backend/src/main/resources/native-game/v1'
+        registry = json.loads((archived / 'catalog.json').read_bytes())
+        self.assertEqual(registry['generatorSha256'], generation.spatial.file_sha256(archived / 'generator.py'))
+
     def test_all_bindings_keep_the_exact_observed_rainfall_without_legacy_geometry(self):
         registry = game_catalog.catalog()
         self.assertEqual(registry['generatorSha256'], generation.spatial.file_sha256(generation.__file__))
@@ -127,7 +139,7 @@ class NativeGameTests(unittest.TestCase):
 
     def test_published_runtime_evidence_binds_current_readers_and_all_regions(self):
         root = generation.source.ROOT
-        report = json.loads((root / 'data/benchmarks/native-game-runtime-v1.json').read_bytes())
+        report = json.loads((root / 'data/benchmarks/native-game-runtime-v2.json').read_bytes())
         self.assertEqual(report['catalogSha256'], game_catalog.SHA256)
         self.assertEqual(report['districtCount'], 25)
         self.assertEqual(report['observationBindingsCompared'], 100)

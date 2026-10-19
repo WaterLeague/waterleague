@@ -10,8 +10,8 @@ import stat
 from ..engine.swmm import ROOT
 from .play_catalog import NativeCatalogError
 
-DIRECTORY = ROOT / 'backend/src/main/resources/native-game/v1'
-SHA256 = '829fee0b07778352e193a8e9c206c574c68de119ea8840c8d7c73a7c8be3b45a'
+DIRECTORY = ROOT / 'backend/src/main/resources/native-game/v2'
+SHA256 = 'f08b92fa00db08126e86b379583299a831764b958a4f131de4647ebde95e6fdb'
 
 
 def _read(name, maximum=512 * 1024):
@@ -37,7 +37,7 @@ def _catalog():
     if hashlib.sha256(raw).hexdigest() != SHA256:
         raise NativeCatalogError('NATIVE_GAME_CATALOG_INVALID')
     value = json.loads(raw)
-    if value['id'] != 'SEOUL_NGII_GAME_V1' or len(value['regions']) != 25 or len(value['models']) != 100:
+    if value['id'] != 'SEOUL_NGII_GAME_V2' or len(value['regions']) != 25 or len(value['models']) != 100:
         raise NativeCatalogError('NATIVE_GAME_CATALOG_INVALID')
     return value
 

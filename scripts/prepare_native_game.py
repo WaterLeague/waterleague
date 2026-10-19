@@ -18,7 +18,7 @@ import prepare_seoul_topography as source
 import prepare_seoul_spatial as spatial
 from waterleague_sim.ingestion.kma import normalize
 
-OUTPUT = source.ROOT / 'backend/src/main/resources/native-game/v1'
+OUTPUT = source.ROOT / 'backend/src/main/resources/native-game/v2'
 EVENTS = source.ROOT / 'backend/src/main/resources/native-game/events-source-v1.json'
 BOUNDARIES = source.ROOT / 'data/derived/seoul-district-boundaries-v1.json'
 BOUNDARY_SHA256 = 'ff49da7030e1abcea4190aa3e3375714889fc537c2759cb4d220c04e764cf4c4'
@@ -183,13 +183,13 @@ def nearest(center, candidates):
     choices = []
     for station_id, value in candidates.items():
         station = value['rainfall']['stationMetadata']
-        distance = geod.inv(lon, lat, station['longitude'], station['latitude'])[2] / 1000
-        if distance <= 10:
-            choices.append((distance, station_id, value))
+        distance_mm = round(geod.inv(lon, lat, station['longitude'], station['latitude'])[2] * 1000)
+        if distance_mm <= 10_000_000:
+            choices.append((distance_mm, station_id, value))
     if not choices:
         raise source.TopographyDataError('10km 안에 보관 관측 창이 있는 지점 없음')
     distance, _, value = min(choices, key=lambda row: (row[0], row[1]))
-    return value, distance
+    return value, distance / 1_000_000
 
 
 def build(output):
@@ -281,11 +281,11 @@ def build(output):
                 and body['rainfall']['stationId'] == row['stationId'])
         antecedent['entries'] = [row for row in antecedent['entries'] if row['modelHashes']]
         verify_climate(bindings, pet, antecedent, input_hashes)
-        registry = {'schemaVersion': 1, 'id': 'SEOUL_NGII_GAME_V1', 'generatorSha256': code_sha,
+        registry = {'schemaVersion': 1, 'id': 'SEOUL_NGII_GAME_V2', 'generatorSha256': code_sha,
             'coordinateSystem': 'EPSG:5186', 'originProjected': [198128, 551989],
             'districtBoundarySha256': BOUNDARY_SHA256, 'siteCatalogSha256': PLAY_SHA256,
             'sceneCatalogSha256': '7af763a751b8d697ab0f0c7d09aaab3efe724c89bebc46f7ddaf9c565a48910a',
-            'selectionMethod': SELECTION, 'regions': regions, 'models': entries,
+            'selectionMethod': SELECTION, 'distancePolicy': 'GEODESIC_DISTANCE_INTEGER_MM_NOT_POSITIONAL_ACCURACY', 'regions': regions, 'models': entries,
             'implementationHashes': implementations,
             'versions': {'pyproj': pyproj.__version__, 'proj': pyproj.proj_version_str},
             'rainfallUse': 'ARCHIVED_OBSERVATIONS_ON_CURRENT_PUBLIC_GEOMETRY',

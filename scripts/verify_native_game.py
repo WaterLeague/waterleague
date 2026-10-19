@@ -51,7 +51,7 @@ def verify(proof_path):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--java-proof', type=Path, default=generation.source.ROOT / 'backend/target/native-game-cross-runtime-v1.json')
+    parser.add_argument('--java-proof', type=Path, default=generation.source.ROOT / 'backend/target/native-game-cross-runtime-v2.json')
     parser.add_argument('--report', type=Path, required=True)
     args = parser.parse_args()
     try:
