@@ -1,12 +1,26 @@
+import { buildingRaycast } from '../../city/service/buildingRaycastService';
+import { GeometryBufferCache } from '../../../shared/repository/geometryBufferCache';
+import { Sphere, Vector3 } from 'three';
 import { streetAtFace } from '../service/streetGeometryService';
 import { memo, useEffect, useState, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useUrbanLighting } from './UrbanEnvironment';
 import type { MeshStandardMaterial } from 'three';
-import { BufferAttribute, BufferGeometry, DoubleSide, Mesh } from 'three';
+import { BufferAttribute, BufferGeometry, DoubleSide } from 'three';
 import type { Street } from '../entity/urban';
 import type { Terrain } from '../../terrain/entity/terrain';
 import type { ParkingData } from '../entity/parking';
+type StreetBuffers = {
+  positions: Float32Array;
+  colors: Float32Array;
+  normals: Float32Array;
+  bounds: Float32Array;
+  ends: number[];
+  sphere: number[];
+};
+const bufferCache = new GeometryBufferCache<StreetBuffers>();
+const terrainIds = new WeakMap<object, number>();
+let terrainId = 0;
 export const StreetLayer = memo(function StreetLayer({
   roads,
   terrain,
@@ -30,6 +44,25 @@ export const StreetLayer = memo(function StreetLayer({
   useEffect(() => () => geometry?.dispose(), [geometry]);
   useEffect(() => {
     setFailed(false);
+    if (terrain && !terrainIds.has(terrain)) terrainIds.set(terrain, ++terrainId);
+    if (parking && !terrainIds.has(parking)) terrainIds.set(parking, ++terrainId);
+    const variant = `${terrain ? terrainIds.get(terrain) : 0}:${detail}:${parking ? terrainIds.get(parking) : 0}`;
+    const apply = (data: StreetBuffers) => {
+      const mesh = new BufferGeometry();
+      mesh.setAttribute('position', new BufferAttribute(data.positions, 3));
+      mesh.setAttribute('color', new BufferAttribute(data.colors, 3));
+      mesh.setAttribute('normal', new BufferAttribute(data.normals, 3));
+      mesh.userData.streetEnds = data.ends;
+      mesh.userData.streetIds = roads.map((road) => road.id);
+      mesh.userData.raycast = buildingRaycast(data);
+      mesh.boundingSphere = new Sphere(new Vector3(...data.sphere.slice(0, 3)), data.sphere[3]);
+      setGeometry(mesh);
+    };
+    const cached = bufferCache.get(roads, variant);
+    if (cached) {
+      apply(cached);
+      return;
+    }
     const worker = new Worker(new URL('../service/streetGeometry.worker.ts', import.meta.url), {
       type: 'module',
     });
@@ -39,20 +72,16 @@ export const StreetLayer = memo(function StreetLayer({
         worker.terminate();
         return;
       }
-      const mesh = new BufferGeometry();
-      mesh.setAttribute('position', new BufferAttribute(data.positions, 3));
-      mesh.setAttribute('color', new BufferAttribute(data.colors, 3));
-      mesh.userData.streetEnds = data.ends;
-      mesh.userData.streetIds = roads.map((road) => road.id);
-      mesh.computeVertexNormals();
-      mesh.computeBoundingSphere();
-      setGeometry(mesh);
+      bufferCache.put(roads, variant, data);
+      apply(data);
       worker.terminate();
     };
-    worker.onerror = () => {
+    const fail = () => {
       setFailed(true);
       worker.terminate();
     };
+    worker.onerror = fail;
+    worker.onmessageerror = fail;
     worker.postMessage({
       roads,
       terrain,
@@ -71,7 +100,7 @@ export const StreetLayer = memo(function StreetLayer({
     <mesh
       geometry={geometry}
       receiveShadow
-      raycast={onStreet ? Mesh.prototype.raycast : () => {}}
+      raycast={onStreet ? geometry.userData.raycast : () => {}}
       onClick={
         onStreet
           ? (event) => {

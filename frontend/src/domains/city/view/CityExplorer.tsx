@@ -1,3 +1,4 @@
+import { useGroundCandidates } from '../../installation/controller/useGroundCandidates';
 import { WeatherBadge } from '../../rainfall/view/WeatherBadge';
 import { usePublicSurfaces } from '../../surface/controller/usePublicSurfaces';
 import { PublicSurfaceControls } from '../../surface/view/PublicSurfaceControls';
@@ -259,6 +260,7 @@ function Explorer({
   });
   const navigationCamera = useRef(camera);
   const urban = useUrbanData(camera.center, camera.distance);
+  const groundCandidates = useGroundCandidates(camera.center, camera.distance);
   const liveUrban = useLiveUrban(camera.center, camera.distance, researchMode);
   const traces = useFloodTraces(true, researchMode ? eventId : comparisonEventId, camera);
   const eligibleRoofs = useMemo(
@@ -391,6 +393,18 @@ function Explorer({
           camera.distance * 1.3
     );
   }, [shared.mapSites, site, camera, cisternOpen, cistern.roof, cistern.ground, planningRoles]);
+  const closeInstallation = useCallback(() => {
+    selectionRequest.current++;
+    setFacilityExpansionOpen(false);
+    setListOpen(false);
+    setCisternOpen(false);
+    setSite(null);
+    setType('');
+    setSiteSurface('');
+    setOffset(0);
+    setSelectionError('');
+    setFeedback('');
+  }, []);
   const details = useCityTiles(city, camera);
   const labels = useRef(new Map<string, HTMLElement>());
   const labelLayer = useRef<HTMLDivElement>(null);
@@ -701,6 +715,8 @@ function Explorer({
       ownDistrictId={ownDistrictId ?? null}
       viewerId={viewerId ?? null}
       sites={visibleSites}
+      groundCandidates={groundCandidates.rows}
+      occupiedSites={ownSiteKeys}
       installations={shared.installations}
       installationBySite={layout.bySite}
       selectedSite={selectedSite}
@@ -753,7 +769,7 @@ function Explorer({
 
   return (
     <main
-      className={`studio-layout play-layout shared-play-layout${researchMode ? ' historical-play-layout' : ''}${!facilityExpansionOpen && !cisternOpen && !infrastructureOpen && !site && !selectionError && !ownInstallations.length ? ' shared-map-only' : ''}`}
+      className={`studio-layout play-layout shared-play-layout${researchMode ? ' historical-play-layout' : ''}${!facilityExpansionOpen && !cisternOpen && !infrastructureOpen && !site && !selectionError ? ' shared-map-only' : ''}`}
     >
       <header className="play-hud gameplay-hud">
         <div className="play-objective">
@@ -935,10 +951,13 @@ function Explorer({
                   focus={focus}
                   selected={selected}
                   onCamera={onCamera}
+                  onNavigate={onNavigate}
                   labels={labels.current}
                   onUnavailable={unavailable}
                   ownDistrictId={ownDistrictId ?? null}
                   sites={visibleSites}
+                  groundCandidates={groundCandidates.rows}
+                  occupiedSites={ownSiteKeys}
                   installations={shared.installations}
                   installationBySite={layout.bySite}
                   selectedSite={selectedSite}
@@ -1103,7 +1122,7 @@ function Explorer({
             >
               <div className="shared-list-heading">
                 <strong>{district?.name ?? '구 선택'} · 설치 위치</strong>
-                <button aria-label="위치 목록 닫기" onClick={() => setListOpen(false)}>
+                <button aria-label="위치 목록 닫기" onClick={closeInstallation}>
                   <X size={16} />
                 </button>
               </div>
@@ -1247,7 +1266,11 @@ function Explorer({
               aria-controls="facility-install-panel"
               onClick={() => {
                 setCisternOpen(false);
-                setFacilityExpansionOpen((value) => !value);
+                if (facilityExpansionOpen || listOpen || site || type) {
+                  closeInstallation();
+                  return;
+                }
+                setFacilityExpansionOpen(true);
                 setInfrastructureOpen(false);
                 setListOpen(false);
               }}
@@ -1300,12 +1323,8 @@ function Explorer({
             : budget.value
         }
         selectedMapFacility={type}
-        onAllCandidates={() => {
-          setType('');
-          setOffset(0);
-          setFacilityExpansionOpen(false);
-        }}
-        onClose={() => setFacilityExpansionOpen(false)}
+        onAllCandidates={closeInstallation}
+        onClose={closeInstallation}
         onLogin={onLogin}
         onCisternPlan={() => {
           setCisternOpen(true);
@@ -1334,7 +1353,7 @@ function Explorer({
       {facilityExpansionOpen ? null : cisternOpen ? (
         <CisternPlanPanel
           state={cistern}
-          onClose={() => setCisternOpen(false)}
+          onClose={closeInstallation}
           onLogin={onLogin}
           onLocate={locateCistern}
           onChoose={(role) => {
@@ -1358,6 +1377,7 @@ function Explorer({
         />
       ) : researchMode ? (
         <HistoricalPanel
+          onClose={closeInstallation}
           state={research}
           districts={city.districts}
           onInspect={(d) => {
@@ -1384,6 +1404,7 @@ function Explorer({
         />
       ) : (
         <SharedDistrictPanel
+          onClose={closeInstallation}
           account={account}
           districtId={selected}
           districtName={district?.name ?? ''}
@@ -1472,6 +1493,7 @@ function Explorer({
           {' · 도로 폭 결측·보도·교량 높이는 표시 가정 · 과거 도로망 복원 아님'}
           {' · 주차 칸·정차 차량 배치는 고정 게임 연출 · 실제 주차 점유율 아님'}
           {urban.error && ` · ${urban.error}`}
+          {groundCandidates.error && ` · ${groundCandidates.error}`}
           {urban.populationError && ` · ${urban.populationError}`}
           {assetsEnabled &&
             ' · 시설 위치: 서울특별시·강서구 / 공공누리 제1유형 · 시설 경계: OpenStreetMap / ODbL 1.0'}

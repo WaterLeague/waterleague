@@ -4,12 +4,19 @@ afterEach(() => vi.unstubAllGlobals());
 
 test('같은 공개 도로 타일 범위의 확대·축소는 요청과 형상을 재사용하며 다른 범위는 갱신', async () => {
   vi.resetModules();
-  const files = import.meta.glob<string>('../../../../public/data/seoul-streets-v1/**/*.json', {
-    query: '?raw',
-    import: 'default',
-  });
+  const files = import.meta.glob<string>(
+    [
+      '../../../../public/data/seoul-streets-v1/**/*.json',
+      '../../../../public/data/street-details-v1/**/*.json',
+    ],
+    {
+      query: '?raw',
+      import: 'default',
+    }
+  );
   const fetchMock = vi.fn(async (path: string) => {
-    if (!path.startsWith('/data/seoul-streets-v1/')) throw new Error('검증 범위 밖 요청');
+    if (!/^\/data\/(seoul-streets|street-details)-v1\//.test(path))
+      throw new Error('검증 범위 밖 요청');
     const raw = await files['../../../../public' + path]();
     return new Response(raw);
   });

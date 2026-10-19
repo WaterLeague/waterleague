@@ -53,14 +53,16 @@ export function usePlanNavigation(
     if (frame.current === null)
       frame.current = requestAnimationFrame(() => {
         frame.current = null;
-        setView(current.current);
+        const box = planBox(current.current, aspectRef.current);
+        svg.current?.setAttribute('viewBox', `${box.x} ${box.y} ${box.width} ${box.height}`);
       });
     // 지도 조작은 프레임별로 반영하고 타일·후보 조회용 카메라 보고는 합친다.
-    if (reportTimer.current === null)
-      reportTimer.current = window.setTimeout(() => {
-        reportTimer.current = null;
-        onCamera(current.current);
-      }, 200);
+    if (reportTimer.current !== null) clearTimeout(reportTimer.current);
+    reportTimer.current = window.setTimeout(() => {
+      reportTimer.current = null;
+      setView(current.current);
+      onCamera(current.current);
+    }, 200);
   }
   useEffect(() => {
     const element = svg.current;

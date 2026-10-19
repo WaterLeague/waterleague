@@ -585,3 +585,19 @@
   background: #ffd56d;
   border-color: #ba8427;
 }
+
+.installation-close {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  margin: 0 0 6px auto;
+  border: 1px solid #d4d8ce;
+  border-radius: 50%;
+  background: #fffdf7;
+  color: #3a5752;
+  cursor: pointer;
+}

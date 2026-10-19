@@ -1,10 +1,11 @@
+import { streetLane } from '../service/streetLifeService';
 import { memo, useEffect, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Color, InstancedMesh, MeshStandardMaterial, Object3D } from 'three';
 import type { Street, UrbanTime, Population } from '../entity/urban';
 import type { City } from '../../city/entity/city';
 import type { Terrain } from '../../terrain/entity/terrain';
-import { streetHeight } from '../service/streetGeometryService';
+import { streetHeight, hasInlineSidewalk } from '../service/streetGeometryService';
 import {
   distanceToStreet,
   streetSpeed,
@@ -101,7 +102,7 @@ export const StreetLife = memo(function StreetLife({
           const walking =
             (path.road.walk && path.road.class !== 'cycleway') ||
             (path.road.motor &&
-              path.road.sidewalk !== 'no' &&
+              hasInlineSidewalk(path.road) &&
               !/motorway|trunk/.test(path.road.class));
           const routes = [
             ...(walking ? [{ path, walking: true }] : []),
@@ -212,11 +213,7 @@ export const StreetLife = memo(function StreetLife({
       for (const agent of agents) {
         const baseDirection =
           (!agent.walking && agent.path.road.oneway) || (agent.seed > 0.5 ? 1 : -1);
-        const lane = agent.walking
-          ? agent.path.road.motor
-            ? agent.path.road.widthM / 2 + 0.7
-            : 0
-          : Math.min(2.5, agent.path.road.widthM * 0.23);
+        const lane = streetLane(agent.path.road, agent.walking, baseDirection);
         const normalSpeed = streetSpeed(agent.path, agent.seed, agent.walking);
         const route = flood.route(agent.path, agent.walking, baseDirection);
         let home =
@@ -290,7 +287,7 @@ export const StreetLife = memo(function StreetLife({
         )
           continue;
         const height =
-          streetHeight(terrain, [position.x, position.y], agent.path.road.bridge) + 0.08;
+          streetHeight(terrain, [position.x, position.y], agent.path.road, position.segment) + 0.08;
         const affected = response.action !== 'moving';
         if (affected) {
           if (response.action === 'stranded') stats.stranded++;
@@ -443,7 +440,7 @@ export const StreetLife = memo(function StreetLife({
     if (distance < 8500)
       for (const lamp of streetlights) {
         const p = pathPosition(lamp.path, lamp.at, lamp.path.road.widthM / 2 + 0.7, 1);
-        const height = streetHeight(terrain, [p.x, p.y], lamp.path.road.bridge);
+        const height = streetHeight(terrain, [p.x, p.y], lamp.path.road, p.segment);
         const n = lampCount++;
         put(poles.current, n, p.x, height + 3.7, -p.y, 0.14, 7.4, 0.14);
         put(lamps.current, n, p.x, height + 7.45, -p.y, 0.85, 0.22, 0.42);

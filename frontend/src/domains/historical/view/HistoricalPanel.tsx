@@ -212,6 +212,7 @@ export function HistoricalTimeline({
   );
 }
 export function HistoricalPanel({
+  onClose,
   state: s,
   site,
   type,
@@ -226,6 +227,7 @@ export function HistoricalPanel({
   onInspect,
 }: {
   state: HistoricalState;
+  onClose?: () => void;
   site: SharedSite | null;
   type: FacilityType | '';
   area: string;
@@ -246,6 +248,7 @@ export function HistoricalPanel({
   const finalLocked = !authenticated && s.duration > 0 && s.elapsedSeconds >= s.duration;
   return (
     <FacilityPlacementPanel
+      onClose={onClose}
       site={site}
       type={type}
       area={area}

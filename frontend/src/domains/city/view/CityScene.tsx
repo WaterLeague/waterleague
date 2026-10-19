@@ -1,3 +1,5 @@
+import { GroundCandidates } from '../../installation/view/GroundCandidates';
+import type { GroundCandidate } from '../../installation/service/candidateTilesService';
 import { pavementGeometry } from '../../catalog/service/pavementGeometryService';
 import { placementFootprint } from '../../catalog/service/facilityGeometryService';
 import { InstallationSymbols } from '../../installation/view/InstallationSymbols';
@@ -251,16 +253,18 @@ function Controls({
   focus,
   bounds,
   onCamera,
+  onNavigate,
   onUnavailable,
 }: {
   focus: CityFocus;
   bounds: City['bounds'];
   onCamera: (state: CameraState) => void;
+  onNavigate: (state: CameraState) => void;
   onUnavailable: () => void;
 }) {
   const terrain = useContext(TerrainContext);
   const controls = useRef<ComponentRef<typeof OrbitControls> | null>(null),
-    last = useRef(0);
+    reportTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const appliedFocus = useRef<number | null>(null);
   const { camera, gl, invalidate, size } = useThree();
   const report = useCallback(
@@ -285,16 +289,27 @@ function Controls({
           camera.updateProjectionMatrix();
         }
       }
-      const now = performance.now();
-      if (!force && now - last.current < 350) return;
-      last.current = now;
-      onCamera({
+      if (reportTimer.current) clearTimeout(reportTimer.current);
+      const state: CameraState = {
         center: [target.x, -target.z],
         distance: camera.position.distanceTo(target),
         heightM: focus.heightM,
-      });
+      };
+      onNavigate(state);
+      if (force) onCamera(state);
+      else
+        reportTimer.current = setTimeout(() => {
+          reportTimer.current = null;
+          onCamera(state);
+        }, 180);
     },
-    [camera, onCamera, terrain, focus.heightM]
+    [camera, onCamera, onNavigate, terrain, focus.heightM]
+  );
+  useEffect(
+    () => () => {
+      if (reportTimer.current) clearTimeout(reportTimer.current);
+    },
+    []
   );
   useEffect(() => watchContextLoss(gl.domElement, onUnavailable), [gl, onUnavailable]);
   useEffect(() => {
@@ -340,7 +355,7 @@ function Controls({
       enableDamping
       dampingFactor={0.12}
       onChange={() => report()}
-      onEnd={() => report(true)}
+      onEnd={() => report()}
     />
   );
 }
@@ -429,10 +444,13 @@ const CityScene = memo(function CityScene({
   focus,
   selected,
   onCamera,
+  onNavigate,
   labels,
   onUnavailable,
   ownDistrictId,
   sites,
+  groundCandidates,
+  occupiedSites,
   installations,
   installationBySite,
   selectedSite,
@@ -477,9 +495,12 @@ const CityScene = memo(function CityScene({
   focus: CityFocus;
   selected: string;
   onCamera: (state: CameraState) => void;
+  onNavigate: (state: CameraState) => void;
   labels: Map<string, HTMLElement>;
   onUnavailable: () => void;
   ownDistrictId: string | null;
+  groundCandidates: GroundCandidate[];
+  occupiedSites: ReadonlySet<string>;
   sites: SharedSite[];
   installations: SharedInstallation[];
   installationBySite: ReadonlyMap<string, InstallationLayout>;
@@ -635,6 +656,14 @@ const CityScene = memo(function CityScene({
               onFloodStats={reporters.parking}
               onParking={onParking}
             />
+            <GroundCandidates
+              rows={groundCandidates}
+              occupiedSites={occupiedSites}
+              terrain={terrain}
+              type={facilityType}
+              ownDistrictId={ownDistrictId}
+              onSelect={onSite}
+            />
             <RiverLayer city={city} terrain={terrain} weather={waterWeather} />
             {!terrain &&
               city.surfaces
@@ -694,7 +723,10 @@ const CityScene = memo(function CityScene({
                 )}
             {sites
               .filter(
-                (site) => site.districtId === selected || installationBySite.has(siteKey(site))
+                (site) =>
+                  (site.districtId === selected && site.cellId === selectedSite) ||
+                  installationBySite.has(siteKey(site)) ||
+                  planningRoles?.has(siteKey(site))
               )
               .map((site) => {
                 const installed = installationBySite.get(siteKey(site));
@@ -795,6 +827,7 @@ const CityScene = memo(function CityScene({
               focus={focus}
               bounds={city.bounds}
               onCamera={onCamera}
+              onNavigate={onNavigate}
               onUnavailable={onUnavailable}
             />
           </WaterScene>
@@ -856,7 +889,7 @@ function SiteSurface({
           color={color}
           side={THREE.DoubleSide}
           transparent
-          opacity={opacity * (selected ? 0.24 : 0.16)}
+          opacity={opacity * (selected ? 0.24 : 0.42)}
           depthTest={!selected}
           depthWrite={false}
           toneMapped={false}
@@ -951,7 +984,7 @@ function DistrictBuildings({
         <Buildings
           key={key}
           buildings={values.buildings}
-          available={values.eligible}
+          available={values.eligible && (!facilityType || facilityType === 'GREEN_ROOF')}
           opacity={buildingOpacity(
             values.eligible && (!facilityType || facilityType === 'GREEN_ROOF'),
             values.other

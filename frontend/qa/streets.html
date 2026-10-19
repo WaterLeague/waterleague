@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>공개 도로·교량 검증</title>
+    <style>
+      body {
+        margin: 0;
+        font: 14px system-ui;
+        color: #253d3c;
+        background: #e7eeea;
+      }
+      header {
+        height: 55px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 0 20px;
+      }
+      button,
+      input {
+        border: 1px solid #a4b5ac;
+        border-radius: 15px;
+        padding: 7px 12px;
+      }
+      input {
+        width: 70px;
+      }
+      #root {
+        height: calc(100vh - 55px);
+      }
+      p {
+        position: absolute;
+        bottom: 0;
+        left: 20px;
+        background: #fffd;
+        padding: 8px;
+        border-radius: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <b>실제 공개 도로 · 로컬 QA</b><button id="bridge">한강대교</button
+      ><button id="crossing">성수 횡단보도</button><label>X <input id="x" value="-1900" /></label
+      ><label>Y <input id="y" value="-5770" /></label
+      ><label>거리 <input id="distance" value="650" /></label><button id="move">이동</button
+      ><label><input type="checkbox" id="sites" style="width: auto" />설치 후보</label>
+    </header>
+    <div id="root"></div>
+    <p id="status">자료 확인 중</p>
+    <script type="module">
+      if (!import.meta.env.DEV || !['localhost', '127.0.0.1', '[::1]'].includes(location.hostname))
+        throw new Error('로컬 전용');
+      const [
+        { default: React },
+        { createRoot },
+        { Canvas, useThree },
+        { OrbitControls },
+        { loadCity },
+        { loadTerrain },
+        { loadStreets },
+        { StreetLayer },
+        { RiverLayer },
+        { WaterScene },
+        { TerrainSurface },
+        { calmWater },
+        { GroundCandidates },
+        { useGroundCandidates },
+      ] = await Promise.all([
+        import('react'),
+        import('react-dom/client'),
+        import('@react-three/fiber'),
+        import('@react-three/drei'),
+        import('/src/domains/city/repository/cityRepository'),
+        import('/src/domains/terrain/repository/terrainRepository'),
+        import('/src/domains/urban/repository/urbanRepository'),
+        import('/src/domains/urban/view/StreetLayer'),
+        import('/src/domains/surface/view/RiverLayer'),
+        import('/src/domains/surface/view/WaterScene'),
+        import('/src/domains/terrain/view/TerrainSurface'),
+        import('/src/domains/surface/service/waterAppearanceService'),
+        import('/src/domains/installation/view/GroundCandidates'),
+        import('/src/domains/installation/controller/useGroundCandidates'),
+      ]);
+      const h = React.createElement,
+        signal = new AbortController().signal;
+      const [city, terrain] = await Promise.all([loadCity(signal), loadTerrain(signal)]);
+      function View({ at }) {
+        const { camera, invalidate } = useThree();
+        React.useEffect(() => {
+          camera.position.set(at.x + at.d * 0.65, at.d * 0.6, -at.y + at.d * 0.65);
+          camera.lookAt(at.x, 25, -at.y);
+          invalidate();
+        }, [camera, at, invalidate]);
+        return h(OrbitControls, {
+          target: [at.x, 25, -at.y],
+          makeDefault: true,
+          enableDamping: true,
+          minDistance: 18,
+          maxDistance: 25000,
+        });
+      }
+      function App() {
+        const [at, setAt] = React.useState({ x: -1900, y: -5770, d: 650 }),
+          [roads, setRoads] = React.useState([]),
+          [sites, setSites] = React.useState(false);
+        const candidates = useGroundCandidates([at.x, at.y], at.d);
+        React.useEffect(() => {
+          const c = new AbortController();
+          loadStreets([at.x, at.y], at.d, c.signal)
+            .then((r) => {
+              setRoads(r);
+              document.getElementById('status').textContent =
+                `공개 중심선 ${r.length.toLocaleString()}개 · 횡단보도 ${r.filter((v) => v.footway === 'crossing').length}개 · 교량 ${r.filter((v) => v.bridge).length}개 | 높이·아치 치수는 표시 제원`;
+            })
+            .catch((e) => {
+              if (!c.signal.aborted) document.getElementById('status').textContent = String(e);
+            });
+          return () => c.abort();
+        }, [at]);
+        React.useEffect(() => {
+          const move = () =>
+            setAt({
+              x: Number(document.getElementById('x').value),
+              y: Number(document.getElementById('y').value),
+              d: Number(document.getElementById('distance').value),
+            });
+          document.getElementById('move').onclick = move;
+          document.getElementById('bridge').onclick = () => {
+            setAt({ x: -1900, y: -5770, d: 650 });
+          };
+          document.getElementById('crossing').onclick = async () => {
+            const r = await loadStreets([6800, -3500], 800, signal);
+            const c = r.find((v) => v.footway === 'crossing' && v.coordinates.length >= 2);
+            if (c) setAt({ x: c.coordinates[0][0], y: c.coordinates[0][1], d: 120 });
+          };
+          document.getElementById('sites').onchange = (e) => setSites(e.target.checked);
+        }, []);
+        return h(
+          Canvas,
+          { camera: { fov: 45, near: 1, far: 150000 }, dpr: [1, 1.25], frameloop: 'demand' },
+          h('color', { attach: 'background', args: ['#c7dce4'] }),
+          h('hemisphereLight', { args: ['#e5f2ff', '#8b937e', 2] }),
+          h('directionalLight', { position: [1000, 4000, 2000], intensity: 2 }),
+          h(View, { at }),
+          h(
+            WaterScene,
+            { animate: true },
+            h(TerrainSurface, { terrain, ownDistrictId: null, selected: '' }),
+            h(StreetLayer, { roads, terrain, detail: true }),
+            sites &&
+              h(GroundCandidates, {
+                rows: candidates.rows,
+                terrain,
+                type: '',
+                ownDistrictId: null,
+                onSelect: () => {},
+              }),
+            h(RiverLayer, { city, terrain, weather: calmWater })
+          )
+        );
+      }
+      createRoot(document.getElementById('root')).render(h(App));
+    </script>
+  </body>
+</html>

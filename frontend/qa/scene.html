@@ -28,6 +28,7 @@
         <button id="measure">10초 연속 렌더 측정</button>
         <button id="idle">3초 정지 렌더 측정</button>
         <button id="meshes">공개 건물 선택·재사용 측정</button>
+        <button id="cache">기기 지도 캐시 확인</button>
         <pre id="result" style="white-space: pre-wrap; max-height: 130px; overflow: auto">
 준비 중</pre>
       </details>
@@ -38,6 +39,33 @@
       if (!import.meta.env.DEV || !['localhost', '127.0.0.1', '[::1]'].includes(location.hostname))
         throw new Error('로컬 개발 환경 전용 화면');
       const out = document.getElementById('result');
+      document.getElementById('cache').onclick = async () => {
+        try {
+          const cache = await caches.open('waterleague-public-sha256-v1'),
+            keys = await cache.keys();
+          const values = await Promise.all(
+            keys.map(async (key) => ({
+              url: key.url,
+              bytes: Number((await cache.match(key))?.headers.get('Content-Length') ?? 0),
+            }))
+          );
+          out.textContent = JSON.stringify(
+            {
+              files: keys.length,
+              bytes: values.reduce((n, v) => n + v.bytes, 0),
+              onlyPublicHashFiles: values.every(
+                (v) =>
+                  new URL(v.url).pathname.startsWith('/data/') &&
+                  /^[a-f0-9]{64}$/.test(new URL(v.url).searchParams.get('sha256') ?? '')
+              ),
+            },
+            null,
+            2
+          );
+        } catch {
+          out.textContent = '기기 캐시 접근 불가';
+        }
+      };
       document.getElementById('meshes').onclick = async () => {
         out.textContent = '공개 형상 비교 중';
         try {

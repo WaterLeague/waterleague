@@ -1,4 +1,21 @@
 import type { Street } from '../entity/urban';
+export function sidewalkSides(road: Street) {
+  const present = (value: string | undefined, side: string) => {
+    if (value !== undefined) return value === 'yes' || value === 'both' || value === side;
+    return road.sidewalk === 'yes' || road.sidewalk === 'both' || road.sidewalk === side;
+  };
+  return [present(road.sidewalkLeft, 'left'), present(road.sidewalkRight, 'right')];
+}
+export function hasInlineSidewalk(road: Street) {
+  return sidewalkSides(road).some(Boolean);
+}
+export function streetLane(road: Street, walking: boolean, direction: number) {
+  if (!walking) return Math.min(2.5, road.widthM * 0.23);
+  if (!road.motor) return 0;
+  const [left, right] = sidewalkSides(road),
+    offset = road.widthM / 2 + 0.7;
+  return left && !right ? -offset * direction : right && !left ? offset * direction : offset;
+}
 export function stableSeed(id: string) {
   let value = 2166136261;
   for (let i = 0; i < id.length; i++) value = Math.imul(value ^ id.charCodeAt(i), 16777619);
@@ -48,6 +65,7 @@ export function pathPosition(path: StreetPath, distance: number, lane: number, d
     dy = length > 0 ? (b[1] - a[1]) / length : 0;
   // 한국의 우측 통행은 진행 방향의 오른쪽으로 이동시킨다.
   return {
+    segment: low - 1,
     x: a[0] + (b[0] - a[0]) * t + dy * lane * direction,
     y: a[1] + (b[1] - a[1]) * t - dx * lane * direction,
     angle: Math.atan2(dx * direction, -dy * direction),
@@ -75,10 +93,6 @@ export function travellingPosition(
 ) {
   const direction = (!walking && path.road.oneway) || (seed > 0.5 ? 1 : -1);
   const distance = (((travel + seed * path.length) % path.length) + path.length) % path.length;
-  const lane = walking
-    ? path.road.motor
-      ? path.road.widthM / 2 + 0.7
-      : 0
-    : Math.min(2.5, path.road.widthM * 0.23);
+  const lane = streetLane(path.road, walking, direction);
   return pathPosition(path, direction < 0 ? path.length - distance : distance, lane, direction);
 }

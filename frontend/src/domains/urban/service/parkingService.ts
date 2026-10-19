@@ -11,7 +11,10 @@ export function parkingDisplayRoads(roads: Street[], parking: ParkingData) {
   const widths = new Map(parking.displayRoadWidths.map((road) => [road.id, road.widthM]));
   return roads.map((road) => {
     const widthM = widths.get(road.id);
-    return road.bridge && road.widthSource === 'DISPLAY_ASSUMPTION' && widthM != null
+    return road.layer === undefined &&
+      road.bridge &&
+      road.widthSource === 'DISPLAY_ASSUMPTION' &&
+      widthM != null
       ? { ...road, widthM }
       : road;
   });

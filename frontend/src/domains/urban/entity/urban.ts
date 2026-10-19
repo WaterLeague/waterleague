@@ -11,6 +11,20 @@ export type Street = {
   sidewalk: string;
   bridge: boolean;
   coordinates: [number, number][];
+  footway?: string;
+  crossing?: string;
+  lanes?: number | null;
+  layer?: number;
+  bridgeName?: string;
+  structure?: string;
+  sidewalkLeft?: string;
+  sidewalkRight?: string;
+  service?: string;
+  elevationsM?: number[];
+  junctionStartM?: number;
+  junctionEndM?: number;
+  walkPolygons?: [number, number][][][];
+  structureSource?: string;
 };
 export type UrbanTime = RefObject<{
   historical: boolean;

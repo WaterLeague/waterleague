@@ -15,6 +15,7 @@ import { PhysicsPanel } from '../../physics/view/PhysicsPanel';
 import { InstallationCostRecord } from '../../cost/view/CostRecordEvidence';
 import { installationScore } from '../service/installationScore';
 export function SharedDistrictPanel({
+  onClose,
   account,
   districtId,
   districtName,
@@ -40,6 +41,7 @@ export function SharedDistrictPanel({
   account: Account | null;
   districtId: string;
   districtName: string;
+  onClose?: () => void;
   site: SharedSite | null;
   occupied?: SharedInstallation;
   ownInstallations: SharedInstallation[];
@@ -66,6 +68,7 @@ export function SharedDistrictPanel({
   const own = !!account && account.role === 'MEMBER' && account.districtId === districtId;
   return (
     <FacilityPlacementPanel
+      onClose={onClose}
       site={site}
       type={type}
       area={area}

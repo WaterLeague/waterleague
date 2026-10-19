@@ -39,11 +39,11 @@ export function siteAppearance({
       ? selectedSiteColor
       : installed
         ? '#367c51'
-        : eligible
+        : eligible && matches
           ? availableSiteColor
           : '#9caaa1',
     opacity: selected ? 1 : buildingOpacity(eligible && matches, otherDistrict),
-    fillOpacity: selected ? 0.24 : 0.16,
+    fillOpacity: selected ? 0.24 : 0.42,
     outlineOpacity: selected ? 1 : 0.8,
   };
 }

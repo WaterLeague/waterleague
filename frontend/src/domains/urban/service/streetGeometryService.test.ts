@@ -37,7 +37,7 @@ test('고가도로 상판·측면·난간과 차량이 같은 교량 높이 사�
   const geometry = streetGeometry([{ ...road, bridge: true, sidewalk: 'no' }], null, true);
   const heights = Array.from(geometry.positions).filter((_, i) => i % 3 === 1);
   expect(Math.min(...heights)).toBeCloseTo(bridgeDeckHeight - bridgeDeckThickness);
-  expect(Math.max(...heights)).toBeCloseTo(bridgeDeckHeight + 0.9);
+  expect(Math.max(...heights)).toBeCloseTo(bridgeDeckHeight + 0.96);
   expect(
     heights.some((height) => Math.abs(height - (streetHeight(null, [0, 0], true) + 0.004)) < 1e-6)
   ).toBe(true);

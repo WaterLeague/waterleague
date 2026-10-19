@@ -1,7 +1,7 @@
 import { placementAreaLimit } from '../../installation/service/placementAreaLimit';
 import { unitCost } from '../../game/service/gameService';
 import type { ReactNode } from 'react';
-import { Leaf, Grid2X2, House, Waves, Check, Trash2 } from 'lucide-react';
+import { Leaf, Grid2X2, House, Waves, Check, Trash2, X } from 'lucide-react';
 import type { SharedSite } from '../entity/installation';
 import type { FacilityType } from '../../game/entity/game';
 import { facilities, won } from '../../game/service/gameService';
@@ -28,6 +28,7 @@ type Placed = {
   planned?: boolean;
 };
 export type FacilityPlacementProps = {
+  onClose?: () => void;
   site: SharedSite | null;
   type: FacilityType | '';
   area: string;
@@ -74,6 +75,11 @@ export function FacilityPlacementPanel(p: FacilityPlacementProps) {
     cost <= Math.min(remaining, facilityAvailable);
   return (
     <aside className="inspector shared-inspector" aria-label="시설 설치">
+      {p.onClose && (
+        <button className="installation-close" aria-label="시설 설치 닫기" onClick={p.onClose}>
+          <X size={18} />
+        </button>
+      )}
       {p.feedback && (
         <div className="round-feedback" role="status">
           <strong>{p.feedback}</strong>

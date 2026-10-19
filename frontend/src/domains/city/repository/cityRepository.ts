@@ -1,3 +1,4 @@
+import { readPublicData } from '../../../shared/repository/publicDataCache';
 import { CityError } from '../exception/CityError';
 import { mapCity, mapCityTile } from '../mapper/cityMapper';
 import type { City, CityTile, TileEntry } from '../entity/city';
@@ -9,20 +10,7 @@ let cityCache: City | undefined;
 let regionsCache: import('../dto/cityPlayDto').CityPlayRegion[] | undefined;
 let eligibilityCache: import('../dto/cityEligibilityDto').CityEligibility | undefined;
 async function read(path: string, expected: string, signal: AbortSignal, maximum: number) {
-  try {
-    const response = await fetch(path, { signal, credentials: 'same-origin' });
-    if (!response.ok) throw new CityError('NETWORK');
-    const raw = await response.arrayBuffer();
-    if (raw.byteLength > maximum) throw new CityError('INVALID_DATA');
-    const hash = [...new Uint8Array(await crypto.subtle.digest('SHA-256', raw))]
-      .map((v) => v.toString(16).padStart(2, '0'))
-      .join('');
-    if (hash !== expected) throw new CityError('INVALID_DATA');
-    return JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(raw)) as unknown;
-  } catch (error) {
-    if (signal.aborted || error instanceof CityError) throw error;
-    throw new CityError('NETWORK');
-  }
+  return readPublicData(path, expected, maximum, signal);
 }
 export async function loadCity(signal: AbortSignal) {
   if (cityCache) return cityCache;

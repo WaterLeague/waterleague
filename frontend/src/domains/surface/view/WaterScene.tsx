@@ -5,6 +5,8 @@ import type { ReactNode } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import {
   DepthTexture,
+  Frustum,
+  Mesh,
   LinearFilter,
   Matrix4,
   Object3D,
@@ -62,6 +64,8 @@ export function WaterScene({
 }) {
   const { gl, scene, camera, size, invalidate } = useThree();
   const capture = useMemo(createSceneCapture, []);
+  const frustum = useMemo(() => new Frustum(), []),
+    projection = useMemo(() => new Matrix4(), []);
   const saved = useMemo(() => ({ viewport: new Vector4(), scissor: new Vector4() }), []);
   useEffect(() => () => capture.target.dispose(), [capture]);
   useEffect(() => {
@@ -99,6 +103,16 @@ export function WaterScene({
     capture.uniforms.waterCaptureReady.value = 0;
     if (!capture.objects.size || camera.position.y > 16000) return;
     camera.updateMatrixWorld();
+    frustum.setFromProjectionMatrix(
+      projection.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse)
+    );
+    if (
+      ![...capture.objects].some(
+        (object) =>
+          object.visible && (object instanceof Mesh ? frustum.intersectsObject(object) : true)
+      )
+    )
+      return;
     capture.uniforms.waterProjectionInverse.value.copy(camera.projectionMatrixInverse);
     capture.uniforms.waterViewInverse.value.copy(camera.matrixWorld);
     gl.getDrawingBufferSize(capture.uniforms.waterResolution.value);

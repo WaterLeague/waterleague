@@ -15,7 +15,7 @@ test('소속 구·후보·점유 구분의 불투명도', () => {
   expect(occupiedRoofSource('123', 'R1', { '123:R1': ['way/789'] })).toEqual(['way/789']);
 });
 
-test('다른 시설 후보도 같은 색과 경계를 유지하며 불투명도만 감소', () => {
+test('다른 시설 후보는 중립색과 낮은 불투명도로 유지', () => {
   const state = {
     eligible: true,
     matches: true,
@@ -26,7 +26,7 @@ test('다른 시설 후보도 같은 색과 경계를 유지하며 불투명도�
   const normal = siteAppearance(state);
   const dimmed = siteAppearance({ ...state, matches: false });
   expect(normal.color).toBe(availableSiteColor);
-  expect(dimmed.color).toBe(normal.color);
+  expect(dimmed.color).toBe('#9caaa1');
   expect(dimmed.fillOpacity).toBe(normal.fillOpacity);
   expect(dimmed.outlineOpacity).toBe(normal.outlineOpacity);
   expect(dimmed.opacity).toBeGreaterThan(0);

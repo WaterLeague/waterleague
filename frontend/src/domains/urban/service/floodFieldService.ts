@@ -1,3 +1,4 @@
+import { streetLane } from './streetLifeService';
 import type { SurfaceFrame } from '../../surface/entity/surface';
 import type { TraceTile } from '../../floodtrace/entity/floodTrace';
 import type { StreetPath } from './streetLifeService';
@@ -144,11 +145,7 @@ function field(key: string, sources: (SurfaceFrame | TraceTile)[]) {
       const bands: FloodBand[] = [];
       // 교량의 실제 노면 표고 없이 지표 수심을 교량 위 피해로 전용하지 않는다.
       if (!path.road.bridge) {
-        const lane = walking
-          ? path.road.motor
-            ? path.road.widthM / 2 + 0.7
-            : 0
-          : Math.min(2.5, path.road.widthM * 0.23);
+        const lane = streetLane(path.road, walking, direction);
         for (let i = 1; i < path.road.coordinates.length; i++) {
           const a = path.road.coordinates[i - 1],
             b = path.road.coordinates[i],

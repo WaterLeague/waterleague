@@ -10,9 +10,9 @@ export function useUrbanData(center: [number, number], distance: number) {
     [population, setPopulation] = useState<Population | null>(null),
     [error, setError] = useState(''),
     [populationError, setPopulationError] = useState('');
-  const x = Math.floor(center[0] / 1000) * 1000 + 500,
-    y = Math.floor(center[1] / 1000) * 1000 + 500;
-  const scale = distance > 9000 ? 10000 : distance > 2600 ? 2600 : distance > 1600 ? 1600 : 800;
+  const x = Math.round(center[0] / 200) * 200,
+    y = Math.round(center[1] / 200) * 200;
+  const scale = distance > 9000 ? 10000 : Math.max(400, Math.round(distance / 400) * 400);
   useEffect(() => {
     const controller = new AbortController();
     void loadPopulation(controller.signal)
