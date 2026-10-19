@@ -1,3 +1,4 @@
+import { scenePointer, clearScenePointer } from '../../city/service/mapCursor';
 import { buildingRaycast } from '../../city/service/buildingRaycastService';
 import { GeometryBufferCache } from '../../../shared/repository/geometryBufferCache';
 import { Sphere, Vector3 } from 'three';
@@ -99,6 +100,8 @@ export const StreetLayer = memo(function StreetLayer({
   return geometry ? (
     <mesh
       geometry={geometry}
+      onPointerMove={onStreet ? (event) => scenePointer(event, 'install') : undefined}
+      onPointerOut={clearScenePointer}
       receiveShadow
       raycast={onStreet ? geometry.userData.raycast : () => {}}
       onClick={

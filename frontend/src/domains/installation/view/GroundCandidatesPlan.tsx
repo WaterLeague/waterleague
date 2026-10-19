@@ -42,6 +42,7 @@ export const GroundCandidatesPlan = memo(function GroundCandidatesPlan({
         return (
           <path
             key={candidateKey(row)}
+            data-map-cursor={occupiedSites.has(candidateKey(row)) ? 'inspect' : 'install'}
             data-ground-candidate={candidateKey(row)}
             d={d}
             fillRule="evenodd"

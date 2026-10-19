@@ -1,3 +1,7 @@
+import { mapCursors } from '../service/mapCursor';
+import { infrastructureFocus } from '../../infrastructure/service/infrastructureFocus';
+import { GameSelect } from '../../../shared/ui/GameSelect';
+import { MapActionDock } from './MapActionDock';
 import { useGroundCandidates } from '../../installation/controller/useGroundCandidates';
 import { GameplayScoreboard } from './GameplayScoreboard';
 import { historicalTotal } from '../../historical/service/historicalTotal';
@@ -51,7 +55,7 @@ import {
   loadStreetSite,
   loadParkingSite,
 } from '../../installation/repository/installationRepository';
-import { ApiError } from '../../../shared/exception/ApiError';
+import { ApiError, errorMessage } from '../../../shared/exception/ApiError';
 import './shared-play.css';
 import { siteKey } from '../../installation/entity/installation';
 import '../../rainfall/view/rainfall.css';
@@ -264,6 +268,16 @@ function Explorer({
     if (initialDistrictId && !researchMode) select(initialDistrictId);
   }, [initialDistrictId, researchMode]);
   const stage = useRef<HTMLElement>(null);
+  const workspace = useRef<HTMLElement>(null);
+  const controlsBar = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!workspace.current || !controlsBar.current) return;
+    const observer = new ResizeObserver(([entry]) =>
+      workspace.current?.style.setProperty('--map-controls-height', `${entry.contentRect.height}px`)
+    );
+    observer.observe(controlsBar.current);
+    return () => observer.disconnect();
+  }, []);
   const urban = useUrbanData(camera.center, camera.distance);
   const groundCandidates = useGroundCandidates(camera.center, camera.distance);
   const liveUrban = useLiveUrban(camera.center, camera.distance, researchMode);
@@ -292,7 +306,14 @@ function Explorer({
     setFacilityExpansionOpen(false);
     setAssetsEnabled(true);
     const current = navigationCamera.current;
-    const target = selectionView({ center: asset.center, distance: 1000 }, current, true);
+    const target = infrastructureFocus(
+      asset,
+      stage.current?.clientWidth ?? 800,
+      stage.current?.clientHeight ?? 600,
+      current
+    );
+    navigationCamera.current = target;
+    setCamera(target);
     if (target !== current) setFocus((previous) => ({ ...target, key: previous.key + 1 }));
   }, []);
   const onNavigate = useCallback((value: typeof camera) => {
@@ -775,6 +796,13 @@ function Explorer({
 
   return (
     <main
+      ref={workspace}
+      style={
+        {
+          '--map-cursor-install': mapCursors.install,
+          '--map-cursor-inspect': mapCursors.inspect,
+        } as React.CSSProperties
+      }
       className={`studio-layout play-layout shared-play-layout${researchMode ? ' historical-play-layout' : ''}${!facilityExpansionOpen && !cisternOpen && !infrastructureOpen && !site && !selectionError ? ' shared-map-only' : ''}`}
     >
       <header className="play-hud gameplay-hud">
@@ -840,23 +868,22 @@ function Explorer({
         </div>
       </header>
       <div className="design-main shared-map-column">
-        <div className="map-layer-bar">
+        <div ref={controlsBar} className="map-layer-bar">
           <div className="shared-toolbar gameplay-toolbar">
             <label>
               <MapPin size={15} />
-              <select
-                aria-label="서울 자치구 선택"
+              <GameSelect
+                label="서울 자치구 선택"
                 value={viewedDistrictId}
-                onChange={(e) => (e.target.value ? select(e.target.value) : reset())}
-              >
-                <option value="">서울 전체</option>
-                {city.districts.map((d) => (
-                  <option key={d.id} value={d.id}>
-                    {d.name}
-                    {d.id === ownDistrictId ? ' · 내 소속 구' : ''}
-                  </option>
-                ))}
-              </select>
+                onChange={(id) => (id ? select(id) : reset())}
+                options={[
+                  { value: '', label: '서울 전체' },
+                  ...city.districts.map((d) => ({
+                    value: d.id,
+                    label: d.name + (d.id === ownDistrictId ? ' · 내 소속 구' : ''),
+                  })),
+                ]}
+              />
             </label>
             <details
               className="gameplay-tools"
@@ -1289,7 +1316,35 @@ function Explorer({
               <button onClick={shared.retrySites}>다시 조회</button>
             </div>
           )}
-          <div className="facility-dock facility-install-dock">
+          <MapActionDock
+            historical={researchMode}
+            research={research}
+            account={account}
+            budget={budget.value}
+            remaining={remaining}
+            ownInstallations={ownInstallations}
+            districts={city.districts}
+            onLogin={onLogin}
+            onHistoricalInspect={(d) => {
+              const start = research.event?.regions[0].start;
+              if (start)
+                research.setElapsedSeconds(
+                  (Date.parse(d.marker.installedAt) - Date.parse(start)) / 1000
+                );
+              research.setPlaying(false);
+              chooseSite(d.site, true);
+            }}
+            onInspect={(value) => {
+              const request = ++selectionRequest.current;
+              void loadSite(value.districtId, value.cellId)
+                .then((s) => {
+                  if (request === selectionRequest.current) chooseSite(s, true);
+                })
+                .catch((e) => {
+                  if (request === selectionRequest.current) setSelectionError(errorMessage(e));
+                });
+            }}
+          >
             <button
               className={facilityExpansionOpen ? 'selected' : ''}
               aria-expanded={facilityExpansionOpen}
@@ -1308,7 +1363,7 @@ function Explorer({
               <Layers3 size={20} />
               <span>시설 설치하기</span>
             </button>
-          </div>
+          </MapActionDock>
           {(details.error || failed) && (
             <p className="city-error" role="alert">
               {failed ? '3D 연결이 끊겨 2D 지도로 전환했습니다.' : details.error}
@@ -1409,16 +1464,6 @@ function Explorer({
         <HistoricalPanel
           onClose={closeInstallation}
           state={research}
-          districts={city.districts}
-          onInspect={(d) => {
-            const start = research.event?.regions[0].start;
-            if (start)
-              research.setElapsedSeconds(
-                (Date.parse(d.marker.installedAt) - Date.parse(start)) / 1000
-              );
-            research.setPlaying(false);
-            chooseSite(d.site, true);
-          }}
           districtName={district?.name ?? ''}
           site={site}
           type={type}
@@ -1428,7 +1473,6 @@ function Explorer({
             if (site) setArea(String(Math.min(Number(area) || 20, placementAreaLimit(site, next))));
           }}
           onArea={setArea}
-          onLogin={onLogin}
           authenticated={!!account}
           error={selectionError || budget.error}
         />
@@ -1440,17 +1484,6 @@ function Explorer({
           districtName={district?.name ?? ''}
           site={site}
           occupied={occupied}
-          ownInstallations={ownInstallations}
-          onSelectInstallation={async (value) => {
-            const request = ++selectionRequest.current;
-            try {
-              const target = await loadSite(value.districtId, value.cellId);
-              if (request === selectionRequest.current) chooseSite(target, true);
-            } catch {
-              if (request === selectionRequest.current)
-                setSelectionError('내 시설 위치를 불러오지 못했습니다.');
-            }
-          }}
           type={type}
           area={area}
           onType={(next) => {

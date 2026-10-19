@@ -1,3 +1,4 @@
+import { scenePointer, clearScenePointer } from '../../city/service/mapCursor';
 import { memo, useMemo, useEffect, useLayoutEffect, useRef } from 'react';
 import { useFrame, useThree, type ThreeEvent } from '@react-three/fiber';
 import { Color, InstancedMesh, Object3D, DoubleSide } from 'three';
@@ -174,6 +175,8 @@ export const ParkingLayer = memo(function ParkingLayer({
     <group>
       <mesh
         geometry={geometry.hit}
+        onPointerMove={(event) => scenePointer(event, 'install')}
+        onPointerOut={clearScenePointer}
         onClick={(event) => {
           event.stopPropagation();
           if (event.delta > 4) return;
@@ -217,6 +220,8 @@ export const ParkingLayer = memo(function ParkingLayer({
         ref={cars}
         args={[undefined, undefined, LIMIT]}
         frustumCulled={false}
+        onPointerMove={(event) => scenePointer(event, 'install')}
+        onPointerOut={clearScenePointer}
         onClick={(event) => selectCar(event)}
       >
         <boxGeometry />
@@ -226,6 +231,8 @@ export const ParkingLayer = memo(function ParkingLayer({
         ref={roofs}
         args={[undefined, undefined, LIMIT]}
         frustumCulled={false}
+        onPointerMove={(event) => scenePointer(event, 'install')}
+        onPointerOut={clearScenePointer}
         onClick={(event) => selectCar(event)}
       >
         <boxGeometry />
@@ -235,6 +242,8 @@ export const ParkingLayer = memo(function ParkingLayer({
         ref={wheels}
         args={[undefined, undefined, LIMIT * 4]}
         frustumCulled={false}
+        onPointerMove={(event) => scenePointer(event, 'install')}
+        onPointerOut={clearScenePointer}
         onClick={(event) => selectCar(event, true)}
       >
         <boxGeometry />

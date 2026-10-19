@@ -208,6 +208,9 @@ export const CityPlan = memo(function CityPlan({
     () =>
       buildings.map(({ building: b, path }) => (
         <path
+          data-map-cursor={
+            eligibleRoofs.has(b.id) && !occupiedRoofs.has(b.id) ? 'install' : 'inspect'
+          }
           key={b.id}
           d={path}
           fill={
@@ -257,6 +260,7 @@ export const CityPlan = memo(function CityPlan({
         .join(' ');
       return (
         <path
+          data-map-cursor={value.preview ? 'install' : 'inspect'}
           key={siteKey(value.site)}
           d={path}
           fill={facilities[value.placement.facilityType].color}
@@ -297,6 +301,7 @@ export const CityPlan = memo(function CityPlan({
             <path
               key={siteKey(site)}
               d={sitePaths.get(siteKey(site))}
+              data-map-cursor={installed || site.existingInfrastructure ? 'inspect' : 'install'}
               data-site-key={siteKey(site)}
               data-site-state={
                 chosen ? 'selected' : site.existingInfrastructure ? 'excluded' : 'candidate'
@@ -345,6 +350,7 @@ export const CityPlan = memo(function CityPlan({
       {...handlers}
       style={{ touchAction: 'none', userSelect: 'none', cursor: dragging ? 'grabbing' : 'grab' }}
       className="city-plan"
+      data-map-dragging={dragging}
       viewBox={`${box.x} ${box.y} ${box.width} ${box.height}`}
       role="group"
       aria-label="서울 25개 구 플레이 지도"
@@ -421,6 +427,7 @@ export const CityPlan = memo(function CityPlan({
                 r.crossing ? '#e8e5d4' : r.bridge ? '#4e606e' : r.walk ? '#b3ae9f' : '#667071'
               }
               strokeWidth={r.clipped ? 0 : r.width}
+              data-map-cursor="install"
               onClick={(event) => {
                 if (dragging || !onStreet) return;
                 const matrix = svg.current?.getScreenCTM();
@@ -447,6 +454,7 @@ export const CityPlan = memo(function CityPlan({
           role="button"
           tabIndex={0}
           aria-label="주차장 설치 위치 선택"
+          data-map-cursor="install"
           onClick={(event) => {
             if (dragging) return;
             const matrix = svg.current?.getScreenCTM();

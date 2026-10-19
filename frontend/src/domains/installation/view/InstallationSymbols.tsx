@@ -1,3 +1,4 @@
+import { scenePointer, clearScenePointer } from '../../city/service/mapCursor';
 import { memo, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Color, InstancedMesh, Matrix4, PerspectiveCamera, Vector3 } from 'three';
@@ -81,6 +82,8 @@ const KindSymbols = memo(function KindSymbols({
       frustumCulled={false}
       renderOrder={19}
       userData={{ installationMarker: true, symbolOnly: true, facilityKind: type }}
+      onPointerMove={(event) => scenePointer(event, 'inspect')}
+      onPointerOut={clearScenePointer}
       onClick={(event) => {
         if (event.delta > 5 || event.instanceId == null) return;
         event.stopPropagation();

@@ -17,6 +17,7 @@ export function InfrastructureSymbolsPlan({
     <g aria-label="공개 시설 형태 기호">
       {infrastructureMarkers(assets, distance, selectedId).map((asset) => (
         <g
+          data-map-cursor="inspect"
           key={asset.id}
           transform={`translate(${asset.center[0]} ${-asset.center[1]}) scale(${scale})`}
           fill={asset.id === selectedId ? '#dda62e' : infrastructureColor(asset)}

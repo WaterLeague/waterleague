@@ -5,7 +5,6 @@ import { Leaf, Grid2X2, House, Waves, Check, Trash2, X } from 'lucide-react';
 import type { SharedSite } from '../entity/installation';
 import type { FacilityType } from '../../game/entity/game';
 import { facilities, won } from '../../game/service/gameService';
-import { BudgetEvidence } from '../../budget/view/BudgetEvidence';
 import type { Budget, BudgetAccounting } from '../../budget/dto/budgetDto';
 import { CostEstimate } from './CostEstimate';
 import { FacilityDesignEvidence } from '../../facility/view/FacilityDesignEvidence';
@@ -265,20 +264,6 @@ export function FacilityPlacementPanel(p: FacilityPlacementProps) {
           {p.error}
         </p>
       )}
-      {p.budget && (
-        <div className="budget-box">
-          <span>{p.research ? '내 재해 설계' : '내 설치 예산'} 잔액</span>
-          <strong>{won(remaining)}</strong>
-          <div className="shared-budget-track">
-            <span
-              style={{
-                width: `${p.limit > 0 ? Math.max(0, Math.min(100, (remaining / p.limit) * 100)) : 0}%`,
-              }}
-            />
-          </div>
-        </div>
-      )}
-      <BudgetEvidence value={p.budget} research={p.research} accounting={p.budgetAccounting} />
       {site && !occupied && <PhysicalInputEvidence site={site} />}
       {p.children}
     </aside>

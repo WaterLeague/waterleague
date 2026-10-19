@@ -1,3 +1,4 @@
+import { scenePointer, clearScenePointer } from '../../city/service/mapCursor';
 import { memo, useEffect, useMemo } from 'react';
 import { DoubleSide, ShapeGeometry, ExtrudeGeometry } from 'three';
 import type { InfrastructureAsset } from '../entity/infrastructure';
@@ -35,6 +36,7 @@ export const InfrastructureFootprintsPlan = memo(function InfrastructureFootprin
           fillRule="evenodd"
           fill={asset.id === selectedId ? '#dda62e' : infrastructureColor(asset)}
           fillOpacity={asset.footprint?.buildingId ? 0.9 : 0.25}
+          data-map-cursor="inspect"
           onClick={(event) => {
             event.stopPropagation();
             onSelect?.(asset);
@@ -88,6 +90,8 @@ const FootprintMesh = memo(function FootprintMesh({
       geometry={geometry}
       renderOrder={5}
       userData={{ publicAssetMarker: true }}
+      onPointerMove={(event) => scenePointer(event, 'inspect')}
+      onPointerOut={clearScenePointer}
       onClick={(event) => {
         if (event.delta > 5) return;
         event.stopPropagation();

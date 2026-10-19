@@ -21,31 +21,14 @@ test('설계가 사건 시간축보다 먼저 복원되어도 화면 유지', ()
   expect(html).not.toContain('설치 시각 목록');
 });
 
-test('비회원도 누적 효과와 계산 버튼을 사용하고 제출은 로그인 요구', async () => {
+test('설치 패널에서 전체 목록·제출·중복 게스트 안내와 수동 계산 제거', async () => {
   const { HistoricalPanel } = await import('./HistoricalPanel');
-  const draft = {
-    site: { districtId: '2419953', cellId: 'QA', name: '시험 위치' },
-    facilityType: 'GREEN_ROOF',
-    areaM2: 10,
-    marker: { id: 'qa', installedAt: '2022-08-08T09:02:17Z' },
-  };
   const state = {
-    drafts: [draft],
-    current: [draft],
-    facilityStates: [
-      { draft, before: false, score: { differenceM3: -0.25, at: '2022-08-08T09:03:00Z' } },
-    ],
-    calculationsReady: true,
-    busy: false,
-    job: null,
-    currentResult: null,
-    lab: {},
-    design: { ready: true, revision: 0, saving: false, loading: false, error: '', guestCount: 0 },
-    submission: { records: [], busy: false, error: '', conflict: false },
+    drafts: [],
+    design: { ready: true },
     duration: 7200,
     elapsedSeconds: 180,
     budget: null,
-    accounting: null,
     remaining: 2000000000,
   } as unknown as HistoricalState;
   const html = renderToStaticMarkup(
@@ -56,37 +39,16 @@ test('비회원도 누적 효과와 계산 버튼을 사용하고 제출은 로�
       area="10"
       onType={() => {}}
       onArea={() => {}}
-      onLogin={() => {}}
       authenticated={false}
       error=""
       districtName="성동구"
-      onInspect={() => {}}
     />
   );
-  expect(html).toContain('누적 -0.25');
-  expect(html).toContain('설치 이후 효과 계산');
-  expect(html).not.toContain('로그인 후 계산');
-  expect(html).not.toContain('로그인 후 누적 효과 계산');
-  expect(html).toContain('로그인 후 제출');
-  expect(html).not.toContain('재현 자료 다운로드');
-  state.elapsedSeconds = state.duration;
-  const finished = renderToStaticMarkup(
-    <HistoricalPanel
-      state={state}
-      site={null}
-      type=""
-      area="10"
-      onType={() => {}}
-      onArea={() => {}}
-      onLogin={() => {}}
-      authenticated={false}
-      error=""
-      districtName="성동구"
-      onInspect={() => {}}
-    />
-  );
-  expect(finished).toContain('로그인하고 최종 점수 확인');
-  expect(finished).not.toContain('누적 -0.25');
+  expect(html).not.toContain('설치 이후 효과 계산');
+  expect(html).not.toContain('로그인 후 제출');
+  expect(html).not.toContain('게스트 플레이');
+  expect(html).not.toContain('체험 설계는 이 화면');
+  expect(html).not.toContain('내 설치 시설');
 });
 
 test('설치 지점은 접힌 재생 도구 밖의 타임라인에 기본 표시', () => {

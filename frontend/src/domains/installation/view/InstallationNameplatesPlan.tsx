@@ -39,6 +39,7 @@ export const InstallationNameplatesPlan = memo(function InstallationNameplatesPl
     <g aria-label="확대 지도 시설별 점수">
       {labels.map(({ id, x, y, value }) => (
         <g
+          data-map-cursor="inspect"
           key={id}
           transform={`translate(${box.x + x * scale} ${box.y + y * scale}) scale(${scale})`}
           role="button"

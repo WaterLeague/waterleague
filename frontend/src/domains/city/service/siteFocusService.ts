@@ -11,7 +11,8 @@ export function selectionView(fitted: PlanView, current: PlanView, fromMap = fal
 export function siteFocus(
   site: Pick<SharedSite, 'coordinates' | 'heightM' | 'kind'>,
   width: number,
-  height: number
+  height: number,
+  minimumDistance = 180
 ): PlanView {
   const xs = site.coordinates.map(([x]) => x),
     ys = site.coordinates.map(([, y]) => y);
@@ -25,7 +26,7 @@ export function siteFocus(
   const aspect = Math.max(0.2, width / Math.max(1, height));
   const horizontal = planScale * aspect * 0.82;
   const vertical = planScale * Math.max(0.35, (height - 240) / height);
-  let distance = 180;
+  let distance = minimumDistance;
   // 면적 대신 외곽·높이의 모든 꼭짓점을 투영하여 상하 HUD를 제외한 화면에 포함한다.
   for (const x of [west, east])
     for (const y of [south, north])

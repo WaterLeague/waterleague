@@ -1,5 +1,5 @@
+import { GameSelect } from '../../../shared/ui/GameSelect';
 import { HistoricalInstallationTrack } from './HistoricalInstallationTrack';
-import { HistoricalSubmissionPanel } from './HistoricalSubmissionPanel';
 import { InitializationEvidence } from '../../physics/view/InitializationEvidence';
 import { InitializationSensitivityEvidence } from '../../physics/view/InitializationSensitivityEvidence';
 import { physicalAmount } from '../../physics/service/physicalValueFormat';
@@ -9,7 +9,6 @@ import {
   Play,
   Pause,
   SlidersHorizontal,
-  Trash2,
   Leaf,
   Grid2X2,
   House,
@@ -120,17 +119,15 @@ export function HistoricalTimeline({
               }}
             />
           </HistoricalInstallationTrack>
-          <select
-            aria-label="재해 재생 속도"
-            value={s.speed}
-            onChange={(e) => s.setSpeed(Number(e.target.value))}
-          >
-            {[1, 2, 3, 5, 10, 60, 240, 900, 3600].map((v) => (
-              <option key={v} value={v}>
-                {v}배속
-              </option>
-            ))}
-          </select>
+          <GameSelect
+            label="재해 재생 속도"
+            value={String(s.speed)}
+            onChange={(v) => s.setSpeed(Number(v))}
+            options={[1, 2, 3, 5, 10, 60, 240, 900, 3600].map((v) => ({
+              value: String(v),
+              label: `${v}배속`,
+            }))}
+          />
         </>
       )}
       <details className="historical-playback-tools">
@@ -231,12 +228,9 @@ export function HistoricalPanel({
   area,
   onType,
   onArea,
-  onLogin,
   authenticated,
   error,
   districtName,
-  districts = [],
-  onInspect,
 }: {
   state: HistoricalState;
   onClose?: () => void;
@@ -245,12 +239,9 @@ export function HistoricalPanel({
   area: string;
   onType: (t: FacilityType) => void;
   onArea: (a: string) => void;
-  onLogin: () => void;
   authenticated: boolean;
   error: string;
   districtName: string;
-  districts?: { id: string; name: string }[];
-  onInspect: (draft: HistoricalDraft) => void;
 }) {
   const placed = s.drafts.find(
     (d) => d.site.districtId === site?.districtId && d.site.cellId === site?.cellId
@@ -297,91 +288,6 @@ export function HistoricalPanel({
       }
       error={error || s.error || s.job?.message}
     >
-      <div className="historical-design-sync" aria-label="재해 설계 저장">
-        <strong>
-          {authenticated
-            ? s.design.saving
-              ? '설계 저장 중'
-              : s.design.loading
-                ? '저장된 설계 확인 중'
-                : '설계 저장됨'
-            : '게스트 플레이 · 제출할 때 로그인'}
-        </strong>
-        {authenticated ? (
-          <small>설치·취소 시 저장 · 다시 접속해 이어서 실험</small>
-        ) : (
-          <small>체험 설계는 이 화면에서만 유지됩니다.</small>
-        )}
-        {s.design.error && (
-          <p role="alert">
-            {s.design.error}{' '}
-            <button onClick={s.design.retry}>
-              {s.design.conflict ? '저장된 설계 불러오기' : '다시 시도'}
-            </button>
-          </p>
-        )}
-        {authenticated && s.design.guestCount > 0 && (
-          <button disabled={!s.design.ready} onClick={s.design.importGuest}>
-            체험 설계 {s.design.guestCount}곳 가져오기
-          </button>
-        )}
-      </div>
-      <div className="historical-design-summary">
-        <strong>전체 실험 시설 · {s.drafts.length}곳</strong>
-        {s.facilityStates.map(({ draft: d, before, score, state, requestError }) => {
-          return (
-            <div key={d.marker.id}>
-              <span>
-                <button onClick={() => onInspect(d)}>
-                  {facilities[d.facilityType].name} · {d.site.name}
-                </button>{' '}
-                · {d.areaM2}m²
-                <small>
-                  {districts.find((r) => r.id === d.site.districtId)?.name ?? d.site.districtId} ·{' '}
-                  {time(d.marker.installedAt)} 설치{before ? ' 예정' : ''}
-                </small>
-                <small>
-                  {finalLocked ? (
-                    '최종 점수 · 로그인 후 확인'
-                  ) : before ? (
-                    '설치 전 · 누적 0 m³'
-                  ) : score ? (
-                    `누적 ${physicalAmount(score.differenceM3)} m³ · ${time(score.at)}까지`
-                  ) : requestError || ['FAILED', 'REJECTED'].includes(state ?? '') ? (
-                    <button
-                      onClick={() => void s.calculate(undefined, d.site.districtId)}
-                      disabled={!s.design.ready || !s.calculationsReady || s.busy}
-                    >
-                      계산 실패 · 이 구 다시 계산
-                    </button>
-                  ) : (
-                    '누적 효과 계산 중'
-                  )}
-                </small>
-              </span>
-              <button
-                aria-label={d.site.name + ' 시설 취소'}
-                disabled={!s.design.ready}
-                onClick={() => s.remove(d.marker.id)}
-              >
-                <Trash2 size={13} />
-              </button>
-            </div>
-          );
-        })}
-      </div>
-      <button
-        className="solid-button"
-        disabled={!s.design.ready || working || !s.current.length || !s.lab}
-        onClick={() => void s.calculate()}
-      >
-        {working
-          ? '설치 이후 효과 계산 중'
-          : s.currentResult
-            ? '같은 설계 다시 계산'
-            : '설치 이후 효과 계산'}
-      </button>
-
       {authenticated && placed?.site.initializationPolicy && (
         <div className="historical-sensitivity-action">
           <button
@@ -399,25 +305,6 @@ export function HistoricalPanel({
               : '선택 시설 한 곳의 건조·포화 시작 조건을 추가 계산합니다. 일반 계산보다 시간이 더 걸립니다.'}
           </p>
         </div>
-      )}
-      <HistoricalSubmissionPanel
-        submission={s.submission}
-        draftCount={s.drafts.length}
-        submit={s.submit}
-        authenticated={authenticated}
-        onLogin={onLogin}
-        designReady={s.design.ready}
-        designRevision={s.design.revision}
-        onReloadDesign={s.design.reload}
-      />
-      {finalLocked && (
-        <section className="historical-result" aria-label="최종 점수 로그인 안내">
-          <h3>재해 체험 종료</h3>
-          <p>설치와 진행 점수는 체험할 수 있습니다. 제출과 최종 점수 확인은 로그인이 필요합니다.</p>
-          <button className="solid-button" onClick={onLogin}>
-            로그인하고 최종 점수 확인
-          </button>
-        </section>
       )}
       {s.currentResult && !finalLocked && (
         <section className="historical-result" aria-label="과거 강우 비교 결과">

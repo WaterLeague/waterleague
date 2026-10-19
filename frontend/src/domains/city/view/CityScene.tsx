@@ -1,3 +1,4 @@
+import { scenePointer, clearScenePointer } from '../service/mapCursor';
 import { GroundCandidates } from '../../installation/view/GroundCandidates';
 import type { GroundCandidate } from '../../installation/service/candidateTilesService';
 import { pavementGeometry } from '../../catalog/service/pavementGeometryService';
@@ -156,6 +157,8 @@ function Buildings({
       geometry={geometry}
       castShadow
       receiveShadow
+      onPointerMove={(event) => scenePointer(event, available ? 'install' : 'inspect')}
+      onPointerOut={clearScenePointer}
       raycast={rendered!.raycast}
       rotation={[-Math.PI / 2, 0, 0]}
       onClick={(event) => {
@@ -563,6 +566,10 @@ const CityScene = memo(function CityScene({
   );
   return (
     <Canvas
+      onPointerMoveCapture={(event) => {
+        if (event.target instanceof HTMLCanvasElement)
+          event.target.style.cursor = event.buttons ? 'grabbing' : 'grab';
+      }}
       shadows
       events={mapEvents}
       frameloop="demand"
@@ -744,6 +751,7 @@ const CityScene = memo(function CityScene({
                   <group key={siteKey(site)}>
                     <SiteSurface
                       site={site}
+                      installed={!!installed || !!site.existingInfrastructure}
                       color={
                         planningRoles?.has(siteKey(site)) && !selectedSiteHere
                           ? cisternSiteColors[planningRoles.get(siteKey(site))!]
@@ -840,12 +848,14 @@ export default CityScene;
 
 function SiteSurface({
   site,
+  installed,
   color,
   opacity,
   selected,
   onClick,
 }: {
   site: SharedSite;
+  installed: boolean;
   color: string;
   opacity: number;
   selected: boolean;
@@ -877,6 +887,8 @@ function SiteSurface({
   return (
     <group>
       <mesh
+        onPointerMove={(event) => scenePointer(event, installed ? 'inspect' : 'install')}
+        onPointerOut={clearScenePointer}
         geometry={geometry.surface}
         renderOrder={selected ? 75 : 2}
         onClick={(event) => {

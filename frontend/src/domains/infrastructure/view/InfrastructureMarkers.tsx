@@ -1,3 +1,4 @@
+import { scenePointer, clearScenePointer } from '../../city/service/mapCursor';
 import { memo, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
@@ -59,7 +60,7 @@ const KindSymbols = memo(function KindSymbols({
     positions.forEach((position, i) => {
       const depth = -scratch.point.copy(position).applyMatrix4(camera.matrixWorldInverse).z;
       let scale =
-        depth > camera.near ? depth * perPixel * (assets[i].id === selectedId ? 16 : 11) : 0;
+        depth > camera.near ? depth * perPixel * (assets[i].id === selectedId ? 26 : 11) : 0;
       if (distance < 1600) scale = Math.min(scale, assets[i].footprint?.buildingId ? 2 : 4);
       scratch.matrix.makeScale(scale, scale, scale).setPosition(position);
       mesh.current!.setMatrixAt(i, scratch.matrix);
@@ -75,6 +76,8 @@ const KindSymbols = memo(function KindSymbols({
       frustumCulled={false}
       renderOrder={20}
       userData={{ publicAssetMarker: true, symbolOnly: true, facilityKind: assets[0].kind }}
+      onPointerMove={(event) => scenePointer(event, 'inspect')}
+      onPointerOut={clearScenePointer}
       onClick={(event) => {
         if (event.delta > 5 || event.instanceId == null) return;
         event.stopPropagation();
@@ -83,6 +86,8 @@ const KindSymbols = memo(function KindSymbols({
     >
       <meshStandardMaterial
         vertexColors
+        emissive="#b8a0d4"
+        emissiveIntensity={0.45}
         depthTest={distance < 1600 && !!assets[0].footprint?.buildingId}
         depthWrite={false}
         roughness={0.85}

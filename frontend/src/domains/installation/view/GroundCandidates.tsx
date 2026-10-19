@@ -1,3 +1,4 @@
+import { scenePointer, clearScenePointer } from '../../city/service/mapCursor';
 import { buildingRaycast } from '../../city/service/buildingRaycastService';
 import { GeometryBufferCache } from '../../../shared/repository/geometryBufferCache';
 import { Sphere, Vector3 } from 'three';
@@ -152,6 +153,15 @@ export const GroundCandidates = memo(function GroundCandidates({
       }
       material={material}
       renderOrder={4}
+      onPointerMove={(event) => {
+        const i = streetAtFace(shape.ends, event.faceIndex ?? -1);
+        if (i >= 0)
+          scenePointer(
+            event,
+            occupiedSites?.has(candidateKey(shape.rows[i])) ? 'inspect' : 'install'
+          );
+      }}
+      onPointerOut={clearScenePointer}
       onClick={(e) => {
         if (e.delta > 5) return;
         const i = streetAtFace(shape.ends, e.faceIndex ?? -1);

@@ -19,6 +19,7 @@ export function HistoricalSubmissionPanel({
   designReady = true,
   designRevision,
   onReloadDesign,
+  showAction = true,
 }: {
   submission: ReturnType<typeof useHistoricalSubmission>;
   draftCount: number;
@@ -28,6 +29,7 @@ export function HistoricalSubmissionPanel({
   designReady?: boolean;
   designRevision?: number;
   onReloadDesign?: () => void;
+  showAction?: boolean;
 }) {
   return (
     <section className="historical-submission" aria-label="재해 설계 제출">
@@ -39,15 +41,19 @@ export function HistoricalSubmissionPanel({
         현재 형상·과거 강우의 독립 표면 평가체적 순위입니다. 실제 재난 복원과 침수 총점은 아직
         제공하지 않습니다.
       </p>
-      <button
-        className="solid-button"
-        disabled={
-          authenticated && (!designReady || submission.busy || !draftCount || draftCount > 50)
-        }
-        onClick={() => (authenticated ? void submit() : onLogin())}
-      >
-        {submission.busy ? '설계 제출 중' : authenticated ? '설계 확정하고 제출' : '로그인 후 제출'}
-      </button>
+      {showAction && (
+        <button
+          className="solid-button"
+          disabled={!designReady || submission.busy || !draftCount || draftCount > 50}
+          onClick={() => (authenticated ? void submit() : onLogin())}
+        >
+          {submission.busy
+            ? '설계 제출 중'
+            : authenticated
+              ? '설계 확정하고 제출'
+              : '로그인 후 제출하기'}
+        </button>
+      )}
       {submission.error && <p role="alert">{submission.error}</p>}
       {submission.conflict && onReloadDesign && (
         <button disabled={submission.busy || !designReady} onClick={onReloadDesign}>

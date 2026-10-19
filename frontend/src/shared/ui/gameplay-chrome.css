@@ -458,3 +458,552 @@
 .game-shell .evidence-grid {
   grid-template-columns: 1fr;
 }
+
+/* 지도와 패널을 같은 행에 겹쳐 배치해 패널이 카메라와 상단 너비를 바꾸지 않게 한다. */
+.game-shell.is-game > .shared-play-layout,
+.game-shell.is-game > .shared-play-layout.shared-map-only {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  --map-controls-height: 48px;
+}
+.game-shell.is-game > .shared-play-layout > .gameplay-hud {
+  grid-area: 1 / 1;
+  z-index: 80;
+}
+.game-shell.is-game .shared-map-column {
+  grid-area: 2 / 1;
+  position: relative;
+}
+.game-shell.is-game .shared-play-layout .city-stage {
+  width: 100%;
+}
+.game-shell.is-game .shared-play-layout > :is(.shared-inspector, .infrastructure-panel) {
+  grid-area: 2 / 1;
+  z-index: 35;
+  justify-self: end;
+  align-self: stretch;
+  position: relative;
+  inset: auto;
+  width: min(360px, calc(100% - 32px));
+  max-height: none;
+  min-height: 0;
+  margin: calc(var(--map-controls-height) + 78px) 16px 100px 0;
+  border-radius: 24px;
+  padding: 24px;
+  overflow: auto;
+  box-shadow: 0 12px 36px #183c4920;
+}
+.game-shell.is-game .shared-play-layout > [hidden] {
+  display: none;
+}
+.game-shell .shared-play-layout .map-layer-bar {
+  position: absolute;
+  inset: 12px 16px auto;
+  z-index: 60;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  pointer-events: none;
+  gap: 10px;
+}
+.game-shell .map-layer-bar > * {
+  pointer-events: auto;
+}
+.game-shell .shared-play-layout .map-layer-bar .gameplay-toolbar {
+  gap: 10px;
+  background: transparent;
+}
+.game-shell .gameplay-toolbar > label,
+.game-shell .gameplay-tools,
+.game-shell .historical-timeline,
+.game-shell .map-layer-bar > .game-live-clock {
+  background: #fafcf5f5;
+  border: 1px solid #dce6da;
+  border-radius: 24px;
+  box-shadow: 0 4px 16px #294e5014;
+}
+.game-shell .gameplay-toolbar > label {
+  padding: 4px 8px;
+}
+.game-shell .gameplay-tools > summary {
+  padding: 13px 15px;
+  border-radius: 24px;
+}
+.game-shell .historical-timeline {
+  padding: 5px 9px;
+  flex-basis: 480px;
+  align-items: flex-start;
+}
+.game-shell .map-layer-bar > .game-live-clock {
+  padding: 12px 16px;
+}
+.game-shell .shared-play-layout .city-map-top {
+  top: calc(var(--map-controls-height) + 28px);
+}
+.game-shell .shared-location-list {
+  top: calc(var(--map-controls-height) + 28px);
+  max-height: calc(100% - var(--map-controls-height) - 150px);
+}
+.game-shell .game-select {
+  position: relative;
+  flex: 0 0 auto;
+  min-width: 0;
+  font-size: 12px;
+}
+.game-shell .game-select > button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  min-height: 34px;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 17px;
+  background: transparent;
+  color: var(--ui-ink);
+  white-space: nowrap;
+}
+.game-shell .game-select > button[aria-expanded='true'] {
+  background: #e5eee1;
+}
+.game-shell .gameplay-toolbar .game-select {
+  width: 137px;
+}
+.game-shell .historical-timeline > .game-select {
+  min-width: 78px;
+}
+.game-shell .game-select-options {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  z-index: 90;
+  width: max-content;
+  min-width: 100%;
+  max-width: calc(100vw - 40px);
+  max-height: min(360px, 48dvh);
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 7px;
+  border: 1px solid #d7e3d5;
+  border-radius: 19px;
+  background: #fafcf6;
+  box-shadow: 0 12px 28px #24484e24;
+}
+.game-shell .game-select-options [role='option'] {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  color: var(--ui-ink);
+}
+.game-shell .game-select-options [data-active='true'] {
+  background: #e9f0e4;
+}
+.game-shell .game-select-options [aria-selected='true'] {
+  color: #265c62;
+  font-weight: 650;
+  background: #dcebdd;
+}
+.game-shell .map-action-dock {
+  position: absolute;
+  z-index: 50;
+  bottom: 28px;
+  inset-inline: 24px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  pointer-events: none;
+}
+.game-shell .map-dock-left {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+.game-shell .map-dock-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.game-shell .map-action-dock :is(button, .hover-help, .installed-dock) {
+  pointer-events: auto;
+}
+.game-shell .install-action > button,
+.game-shell .submit-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 15px 21px;
+  min-height: 50px;
+  border-radius: 26px;
+  border: 0;
+  background: #315e65;
+  color: #fff;
+  font-size: 13px;
+  box-shadow:
+    0 4px 0 #204a50,
+    0 8px 20px #214b5126;
+  transition:
+    transform 160ms ease,
+    background 160ms ease;
+  white-space: nowrap;
+}
+.game-shell .submit-action {
+  background: #a36742;
+  box-shadow:
+    0 4px 0 #805032,
+    0 8px 20px #543e3320;
+}
+.game-shell .map-action-dock :is(.install-action > button, .submit-action):hover:enabled {
+  transform: translateY(-2px);
+}
+.game-shell .submit-action:disabled {
+  background: #a0a89f;
+  box-shadow: 0 3px 0 #7d887e;
+  color: #f3f6ef;
+  cursor: not-allowed;
+}
+.game-shell .installed-dock {
+  position: relative;
+  width: fit-content;
+}
+.game-shell .installed-trigger {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: #fafcf3f5;
+  border: 1px solid #d4e1d1;
+  border-radius: 20px;
+  padding: 10px 14px;
+  color: #355e63;
+  box-shadow: 0 3px 12px #214b5114;
+  font-size: 12px;
+}
+.game-shell .installed-trigger b {
+  background: #e0ebdb;
+  border-radius: 10px;
+  padding: 1px 7px;
+}
+.game-shell .hover-help {
+  position: relative;
+  outline-offset: 4px;
+}
+.game-shell .budget-dock {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 9px 15px;
+  min-width: 236px;
+  border: 1px solid #d9e3d4;
+  border-radius: 20px;
+  background: #fafcf4f5;
+  color: #355b60;
+  box-shadow: 0 4px 16px #294e5012;
+}
+.game-shell .budget-dock > div {
+  flex: 1;
+}
+.game-shell .budget-dock span {
+  display: block;
+  font-size: 11px;
+}
+.game-shell .budget-dock small {
+  display: block;
+  font-size: 10px;
+}
+.game-shell .dock-budget-track {
+  height: 5px;
+  border-radius: 5px;
+  background: #dfe7d9;
+  margin: 5px 0;
+  overflow: hidden;
+}
+.game-shell .dock-budget-track i {
+  display: block;
+  height: 100%;
+  background: #608d78;
+  border-radius: inherit;
+  transition: width 250ms ease;
+}
+.game-shell .dock-popover {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  left: 0;
+  z-index: 65;
+  width: min(355px, calc(100vw - 48px));
+  max-height: min(450px, 52dvh);
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 18px;
+  border: 1px solid #d6e2d1;
+  border-radius: 23px;
+  background: #fafcf5;
+  color: #34575b;
+  box-shadow: 0 12px 36px #24484e25;
+  font-size: 12px;
+  pointer-events: auto;
+}
+.game-shell .hover-help > .dock-popover {
+  display: none;
+}
+.game-shell .hover-help::before {
+  content: '';
+  position: absolute;
+  inset: -14px 0 100%;
+}
+.game-shell .hover-help:hover > .dock-popover,
+.game-shell .hover-help:focus-within > .dock-popover,
+.game-shell .hover-help.has-error > .dock-popover {
+  display: block;
+}
+.game-shell .submission-dock > .dock-popover {
+  left: auto;
+  right: 0;
+}
+.game-shell .dock-popover :is(p, details) {
+  margin: 10px 0;
+  line-height: 1.65;
+}
+.game-shell .dock-popover h3 {
+  font-size: 15px;
+}
+.game-shell .dock-popover .historical-submission {
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+.game-shell .installed-list {
+  width: min(390px, calc(100vw - 48px));
+}
+.game-shell .installed-list > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.game-shell .installed-list article {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 0;
+  border-top: 1px solid #dce6d7;
+}
+.game-shell .installed-locate {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  flex: 1;
+  text-align: left;
+  padding: 6px 0;
+}
+.game-shell .installed-locate span {
+  display: grid;
+  gap: 5px;
+}
+.game-shell .installed-locate small {
+  color: #74867a;
+}
+.game-shell .installed-remove {
+  padding: 8px;
+  border-radius: 12px;
+  background: #f0e8df;
+}
+.game-shell .city-stage canvas {
+  cursor: grab;
+}
+.game-shell .city-stage canvas:active {
+  cursor: grabbing;
+}
+.game-shell .disaster-card {
+  border: 1px solid #d4e1d3;
+  border-top: 1px solid #d4e1d3;
+  border-radius: 27px;
+  background: #fafcf5;
+  box-shadow: 0 4px 18px #2a514b0b;
+  transition:
+    transform 220ms ease,
+    box-shadow 220ms ease,
+    border-color 220ms ease;
+}
+.game-shell .disaster-card-art {
+  display: block;
+  height: 155px;
+  background: #dceade;
+  color: #547b72;
+  padding: 26px;
+}
+.game-shell .disaster-card-1 .disaster-card-art {
+  background: #dde8ed;
+  color: #557880;
+}
+.game-shell .disaster-card-2 .disaster-card-art {
+  background: #eee3d1;
+  color: #8c785b;
+}
+.game-shell .disaster-card-art svg {
+  transition: transform 300ms ease;
+}
+.game-shell .disaster-card-copy button {
+  border-radius: 17px;
+  background: #426f73;
+}
+.game-shell .disaster-card:hover,
+.game-shell .disaster-card:focus-within {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 32px #31564f20;
+  border-color: #9ebfac;
+}
+.game-shell .disaster-card:hover .disaster-card-art svg {
+  transform: translate(5px, -4px) rotate(-5deg);
+}
+.game-shell :is(.competition-page, .evidence-page, .disaster-lobby) {
+  animation: game-page-arrive 320ms ease both;
+}
+.game-shell :is(.evidence-grid > article, .weekly-tables > div) {
+  transition:
+    transform 200ms ease,
+    box-shadow 200ms ease;
+}
+.game-shell :is(.evidence-grid > article, .weekly-tables > div):hover {
+  transform: translateY(-3px);
+  box-shadow: 0 9px 24px #24484e12;
+}
+.game-shell .weekly-board tbody tr {
+  transition: background 160ms ease;
+}
+.game-shell .weekly-board tbody tr:hover {
+  background: #e3eddf;
+}
+@keyframes game-page-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(9px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (max-width: 850px) {
+  .game-shell .disaster-card-art {
+    height: 100%;
+    min-height: 150px;
+  }
+  .game-shell.is-game .shared-play-layout > :is(.shared-inspector, .infrastructure-panel) {
+    align-self: end;
+    width: min(420px, calc(100% - 32px));
+    max-height: 38%;
+    margin: 0 16px 108px;
+  }
+  .game-shell .budget-dock {
+    min-width: 190px;
+    padding: 9px 11px;
+  }
+}
+@media (max-width: 600px) {
+  .game-shell .map-action-dock {
+    inset-inline: 12px;
+    bottom: 24px;
+    gap: 8px;
+  }
+  .game-shell .map-dock-row {
+    gap: 7px;
+    flex-wrap: wrap;
+  }
+  .game-shell .install-action > button,
+  .game-shell .submit-action {
+    font-size: 11px;
+    padding: 12px 14px;
+    min-height: 44px;
+  }
+  .game-shell .budget-dock {
+    min-width: 0;
+    width: 185px;
+  }
+  .game-shell .submission-dock {
+    align-self: flex-end;
+  }
+  .game-shell .historical-timeline {
+    flex-basis: 100%;
+  }
+  .game-shell .map-layer-bar {
+    inset-inline: 10px;
+  }
+  .game-shell .disaster-card-art {
+    height: 120px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .game-shell
+    :is(
+      .competition-page,
+      .evidence-page,
+      .disaster-lobby,
+      .disaster-card,
+      .disaster-card-art svg,
+      .evidence-grid > article,
+      .weekly-tables > div,
+      .dock-budget-track,
+      .install-action > button,
+      .submit-action
+    ) {
+    animation: none;
+    transition: none;
+  }
+  .game-shell .disaster-card:hover,
+  .game-shell .disaster-card:focus-within,
+  .game-shell .disaster-card:hover .disaster-card-art svg,
+  .game-shell :is(.evidence-grid > article, .weekly-tables > div):hover {
+    transform: none;
+  }
+}
+
+.city-plan [data-map-cursor='install'] {
+  cursor: var(--map-cursor-install);
+}
+.city-plan [data-map-cursor='inspect'],
+.infrastructure-cluster,
+.installation-nameplate {
+  cursor: var(--map-cursor-inspect);
+}
+.dock-status {
+  max-width: 420px;
+  border-radius: 20px;
+  background: #fff8ee;
+  padding: 12px 16px;
+}
+
+.game-shell .disaster-card-copy {
+  padding: 24px;
+}
+.game-shell .disaster-card {
+  overflow: hidden;
+}
+.game-shell .disaster-card-art {
+  border-radius: 0;
+}
+.game-shell .shared-map-legend {
+  top: calc(var(--map-controls-height) + 78px);
+}
+@media (max-width: 600px) {
+  .game-shell .budget-dock > .dock-popover {
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    bottom: 130px;
+    width: auto;
+    max-height: 45dvh;
+  }
+}
+
+.city-plan[data-map-dragging='true'] * {
+  cursor: grabbing;
+}

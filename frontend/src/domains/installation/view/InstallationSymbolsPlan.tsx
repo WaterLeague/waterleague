@@ -26,6 +26,7 @@ export function InstallationSymbolsPlan({
     <g aria-label="사용자 시설 형태 기호">
       {installations.map((i) => (
         <g
+          data-map-cursor="inspect"
           key={i.id}
           transform={`translate(${i.center[0]} ${-i.center[1]}) scale(${scale})`}
           fill={siteKey(i) === selectedKey ? '#ffd15b' : facilities[i.facilityType].color}

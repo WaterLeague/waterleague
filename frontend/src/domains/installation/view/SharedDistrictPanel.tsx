@@ -1,5 +1,4 @@
 import { SiteScores } from '../../weekly/view/SiteScores';
-import { facilities } from '../../game/service/gameService';
 import { useState } from 'react';
 import { MapPin } from 'lucide-react';
 import type { Account } from '../../account/entity/account';
@@ -13,7 +12,6 @@ import type { Budget } from '../../budget/dto/budgetDto';
 import { FacilityPlacementPanel } from './FacilityPlacementPanel';
 import { PhysicsPanel } from '../../physics/view/PhysicsPanel';
 import { InstallationCostRecord } from '../../cost/view/CostRecordEvidence';
-import { installationScore } from '../service/installationScore';
 export function SharedDistrictPanel({
   onClose,
   account,
@@ -21,8 +19,6 @@ export function SharedDistrictPanel({
   districtName,
   site,
   occupied,
-  ownInstallations,
-  onSelectInstallation,
   type,
   area,
   onType,
@@ -44,8 +40,6 @@ export function SharedDistrictPanel({
   onClose?: () => void;
   site: SharedSite | null;
   occupied?: SharedInstallation;
-  ownInstallations: SharedInstallation[];
-  onSelectInstallation: (value: SharedInstallation) => void;
   type: FacilityType | '';
   area: string;
   onType: (t: FacilityType) => void;
@@ -141,31 +135,6 @@ export function SharedDistrictPanel({
           cellId={site.cellId}
           viewerId={account?.id ?? null}
         />
-      )}
-      {!!ownInstallations.length && (
-        <details className="weekly-site-scores" open>
-          <summary>내 시설 {ownInstallations.length}곳</summary>
-          {ownInstallations.map((value) => (
-            <button
-              key={value.id}
-              className="outline-button"
-              onClick={() => onSelectInstallation(value)}
-            >
-              {facilities[value.facilityType].name} · {value.cellId} ·{' '}
-              {value.areaM2.toLocaleString('ko-KR')} m²
-              <strong>{installationScore(value)}</strong>
-              {value.evaluatedThrough && (
-                <small>
-                  반영{' '}
-                  {new Date(value.evaluatedThrough).toLocaleTimeString('ko-KR', {
-                    timeZone: 'Asia/Seoul',
-                    hour12: false,
-                  })}
-                </small>
-              )}
-            </button>
-          ))}
-        </details>
       )}
       {occupied && (
         <>
