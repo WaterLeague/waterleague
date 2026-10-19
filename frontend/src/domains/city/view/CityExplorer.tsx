@@ -176,7 +176,7 @@ function Explorer({
   useEffect(() => {
     // 선택 단계가 바뀐 뒤 도착한 이전 위치 조회가 새 계획을 덮어쓰지 않게 한다.
     selectionRequest.current++;
-  }, [cisternOpen, cistern.role, account?.id, account?.districtId]);
+  }, [cisternOpen, cistern.role, account?.id, account?.districtId, mapFacilityType]);
   const [flat, setFlat] = useState(false),
     [failed, setFailed] = useState(false);
   const [focus, setFocus] = useState<CityFocus>({
@@ -356,8 +356,10 @@ function Explorer({
   }, []);
   const chooseSite = useCallback(
     (value: SharedSite, inspect = false) => {
+      const inspecting =
+        inspect || (!cisternOpen && !mapFacilityType && installationBySite.has(siteKey(value)));
       if (
-        !inspect &&
+        !inspecting &&
         mapFacilityType &&
         (!value.allowedTypes.includes(mapFacilityType) ||
           value.existingInfrastructure ||
@@ -384,7 +386,7 @@ function Explorer({
       setCamera(target);
       setSite(value);
       const chosen =
-        cisternOpen || inspect
+        cisternOpen || inspecting
           ? ''
           : value.allowedTypes.includes(type as FacilityType)
             ? type
@@ -857,6 +859,11 @@ function Explorer({
                   ? '선택 시설 설치 불가·내 설치'
                   : '후보 제외·내 설치'}
             </span>
+            {!mapFacilityType && shared.installations.length > 0 && (
+              <span title="떠 있는 시설 형태는 종류를 구분하는 기호이며 실제 시공 치수가 아닙니다.">
+                사용자 시설 · 형태 기호
+              </span>
+            )}
             {ownDistrict && (
               <span>
                 <i className="other" />

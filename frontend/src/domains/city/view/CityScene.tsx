@@ -1,3 +1,5 @@
+import { InstallationSymbols } from '../../installation/view/InstallationSymbols';
+import { installationSymbols } from '../../installation/service/installationSymbolsService';
 import type { PublicFrame } from '../../surface/service/publicSurfaceService';
 import { publicInfrastructureBuildingIds } from '../../infrastructure/service/infrastructureService';
 import {
@@ -53,8 +55,14 @@ const mapEvents: Parameters<typeof Canvas>[0]['events'] = (state) => ({
   filter: (items) =>
     items.sort(
       (a, b) =>
-        Number(b.object.userData.publicAssetMarker === true) -
-        Number(a.object.userData.publicAssetMarker === true)
+        Number(
+          b.object.userData.publicAssetMarker === true ||
+            b.object.userData.installationMarker === true
+        ) -
+        Number(
+          a.object.userData.publicAssetMarker === true ||
+            a.object.userData.installationMarker === true
+        )
     ),
 });
 type CameraState = Pick<CityFocus, 'center' | 'distance' | 'heightM'>;
@@ -435,6 +443,10 @@ const CityScene = memo(function CityScene({
     [publicAssets]
   );
   const overviewIds = useMemo(() => new Set(city.overviewBuildings.map((b) => b.id)), [city]);
+  const symbols = useMemo(
+    () => installationSymbols(installations, sites, viewerId, facilityType, rainCamera.distance),
+    [installations, sites, viewerId, facilityType, rainCamera.distance]
+  );
   return (
     <Canvas
       events={mapEvents}
@@ -608,34 +620,13 @@ const CityScene = memo(function CityScene({
             onSelect={() => onSite(siteKey(preview.site))}
           />
         )}
-        {installations
-          .filter((i) => !sites.some((s) => siteKey(s) === siteKey(i)))
-          .map((i) => (
-            <mesh
-              key={i.id}
-              position={[
-                i.center[0],
-                terrainHeight(terrain, i.center) + i.heightM + 3,
-                -i.center[1],
-              ]}
-              onClick={(e) => {
-                e.stopPropagation();
-                onSite(siteKey(i));
-              }}
-            >
-              <sphereGeometry
-                args={[Math.max(2, Math.min(80, rainCamera.distance * 0.004)), 8, 6]}
-              />
-              <meshStandardMaterial
-                color="#327b4f"
-                transparent
-                opacity={buildingOpacity(
-                  !facilityType || i.facilityType === facilityType,
-                  !!ownDistrictId && i.districtId !== ownDistrictId
-                )}
-              />
-            </mesh>
-          ))}
+        <InstallationSymbols
+          installations={symbols}
+          selectedKey={`${selected}:${selectedSite}`}
+          ownDistrictId={ownDistrictId}
+          terrain={terrain}
+          onSelect={onSite}
+        />
         <LiveRainScene
           districts={wetDistricts}
           amounts={rainAmounts}

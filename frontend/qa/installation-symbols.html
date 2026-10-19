@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>시설 3D·2D · 로컬 지도 검증</title>
+  </head>
+  <body>
+    <div id="root" class="game-shell is-game"></div>
+    <aside
+      style="
+        position: fixed;
+        right: 12px;
+        bottom: 10px;
+        z-index: 9999;
+        background: white;
+        border: 2px solid #536b52;
+        padding: 8px;
+        max-width: 380px;
+        font: 12px system-ui;
+      "
+    >
+      <b>로컬 QA · 실제 공개 후보 / 합성 설치 / 서버 쓰기 금지</b><br /><button id="gallery">
+        6종 형태 보기</button
+      ><button id="city">서울 지도 보기</button><button id="measure">10초 렌더 측정</button
+      ><button id="selection">다음 선택 응답 측정</button>
+      <pre id="report" style="max-height: 180px; overflow: auto; white-space: pre-wrap">
+후보 준비 중</pre>
+    </aside>
+    <script type="module">
+      if (!import.meta.env.DEV || !['localhost', '127.0.0.1', '[::1]'].includes(location.hostname))
+        throw new Error('로컬 전용');
+      const [
+        { default: React },
+        { createRoot },
+        { CityExplorer },
+        { loadSites },
+        { facilities },
+        { Canvas, addAfterEffect, invalidate },
+        { InstallationSymbols },
+        { InstallationSymbolsPlan },
+        { OrbitControls },
+      ] = await Promise.all([
+        import('react'),
+        import('react-dom/client'),
+        import('/src/domains/city/view/CityExplorer.tsx'),
+        import('/src/domains/installation/repository/installationRepository.ts'),
+        import('/src/domains/game/service/gameService.ts'),
+        import('@react-three/fiber'),
+        import('/src/domains/installation/view/InstallationSymbols.tsx'),
+        import('/src/domains/installation/view/InstallationSymbolsPlan.tsx'),
+        import('@react-three/drei'),
+        import('/src/shared/ui/base.css'),
+        import('/src/shared/ui/game.css'),
+        import('/src/domains/game/view/play.css'),
+      ]);
+      const { placementAreaLimit } =
+        await import('/src/domains/installation/service/placementAreaLimit.ts');
+      const h = React.createElement,
+        root = createRoot(document.getElementById('root')),
+        report = document.getElementById('report'),
+        originalFetch = window.fetch.bind(window),
+        types = Object.keys(facilities),
+        sites = [];
+      const region = (await (await originalFetch('/data/seoul-play-v2.json')).json()).regions.find(
+        (r) => r.districtId === '2419953'
+      );
+      for (const type of types) {
+        const page = await loadSites({
+          districtId: region.districtId,
+          x: region.center[0],
+          y: region.center[1],
+          offset: 0,
+          type,
+          vacant: false,
+        });
+        const candidate = page.sites.find(
+          (s) => !s.existingInfrastructure && !sites.some((v) => v.cellId === s.cellId)
+        );
+        if (!candidate) throw new Error('해당 종류의 공개 후보 없음');
+        sites.push(candidate);
+      }
+      const account = {
+        id: '00000000-0000-4000-8000-000000000001',
+        username: 'local-qa',
+        displayName: '로컬 시험 회원',
+        role: 'MEMBER',
+        memberType: 'PLAYER',
+        approvalStatus: 'APPROVED',
+        districtId: region.districtId,
+        organizationId: null,
+        affiliationType: 'RESIDENT',
+      };
+      const installations = sites.map((s, index) => ({
+        id: `00000000-0000-4000-8000-${String(index + 10).padStart(12, '0')}`,
+        ownerId: index === 0 ? account.id : '00000000-0000-4000-8000-000000000002',
+        ownerName: index === 0 ? '로컬 본인' : '로컬 다른 회원',
+        districtId: s.districtId,
+        cellId: s.cellId,
+        center: s.center,
+        heightM: s.heightM,
+        facilityType: types[index],
+        areaM2: Math.min(10, placementAreaLimit(s, types[index])),
+        cost: Math.min(10, placementAreaLimit(s, types[index])) * s.unitCosts[types[index]],
+        installedAt: new Date().toISOString(),
+        seasonEndsAt: '2026-10-25T15:00:00Z',
+      }));
+      window.fetch = async (url, init = {}) => {
+        const u = new URL(String(url), location.href);
+        if ((init.method ?? 'GET') !== 'GET') throw new Error('QA 서버 쓰기 금지');
+        if (u.pathname === '/api/v1/installations') return Response.json(installations);
+        if (u.pathname.startsWith('/api/v1/weekly/sites/')) {
+          const parts = u.pathname.split('/');
+          return Response.json({
+            installations: installations
+              .filter((i) => i.districtId === parts.at(-2) && i.cellId === parts.at(-1))
+              .map((i) => ({ ...i, scoreM3: null, evaluatedMinutes: 0, evaluatedThrough: null })),
+            nextAfterId: null,
+          });
+        }
+        return originalFetch(url, init);
+      };
+      let current = 'city',
+        measuring = false,
+        drawn = false,
+        stamps = [],
+        started = 0,
+        longTasks = [],
+        armed = false,
+        selectionStart = 0,
+        previousTitle = '';
+      new PerformanceObserver((list) =>
+        longTasks.push(
+          ...list.getEntries().map((e) => ({ start: e.startTime, duration: e.duration }))
+        )
+      ).observe({ type: 'longtask', buffered: true });
+      for (const name of [
+        'drawArrays',
+        'drawElements',
+        'drawArraysInstanced',
+        'drawElementsInstanced',
+      ]) {
+        const previous = WebGL2RenderingContext.prototype[name];
+        WebGL2RenderingContext.prototype[name] = function (...args) {
+          drawn = true;
+          return previous.apply(this, args);
+        };
+      }
+      addAfterEffect((t) => {
+        if (drawn && measuring) stamps.push(t);
+        drawn = false;
+      });
+      const startSelection = (e) => {
+        if (armed && !report.parentElement.contains(e.target)) {
+          previousTitle = document.querySelector('.shared-site-title')?.textContent ?? '';
+          selectionStart = performance.now();
+          armed = false;
+        }
+      };
+      document.addEventListener('click', startSelection, true);
+      document.addEventListener(
+        'keydown',
+        (e) => {
+          if (e.key === 'Enter' || e.key === ' ') startSelection(e);
+        },
+        true
+      );
+      new MutationObserver(() => {
+        const title = document.querySelector('.shared-site-title');
+        if (selectionStart && title && title.textContent !== previousTitle) {
+          const text = title.textContent;
+          const clickedAt = selectionStart;
+          selectionStart = 0;
+          requestAnimationFrame(() =>
+            requestAnimationFrame(() => {
+              report.textContent = JSON.stringify(
+                {
+                  selectionToPaintMs: performance.now() - clickedAt,
+                  selected: text,
+                  viewport: [innerWidth, innerHeight],
+                },
+                null,
+                2
+              );
+              selectionStart = 0;
+            })
+          );
+        }
+      }).observe(document.getElementById('root'), { childList: true, subtree: true });
+      function Gallery() {
+        const [selected, setSelected] = React.useState('');
+        const values = installations.map((i, n) => ({
+          ...i,
+          center: [((n % 3) - 1) * 12, (1 - Math.floor(n / 3)) * 10],
+          heightM: 0,
+        }));
+        return h(
+          'main',
+          {
+            style: { padding: 24, height: '100vh', boxSizing: 'border-box', background: '#edf0e7' },
+          },
+          h('h1', null, '사용자 설치 시설 6종 · 지도와 같은 렌더러'),
+          h(
+            'p',
+            null,
+            '위쪽: 입체 종류 기호 / 아래쪽: 2D 종류 기호. 크기·층두께는 실측값이 아닙니다.'
+          ),
+          h(
+            'div',
+            { style: { height: '48vh' } },
+            h(
+              Canvas,
+              { frameloop: 'demand', camera: { position: [0, 25, 30], fov: 45 } },
+              h('color', { attach: 'background', args: ['#e4e9df'] }),
+              h('ambientLight', { intensity: 2 }),
+              h('directionalLight', { position: [-10, 20, 15], intensity: 3 }),
+              h(InstallationSymbols, {
+                installations: values,
+                selectedKey: selected,
+                ownDistrictId: null,
+                terrain: null,
+                onSelect: setSelected,
+              }),
+              h(OrbitControls, { enablePan: false })
+            )
+          ),
+          h(
+            'svg',
+            { viewBox: '-22 -19 44 38', style: { height: '28vh', width: '100%' } },
+            h(InstallationSymbolsPlan, {
+              installations: values,
+              selectedKey: selected,
+              ownDistrictId: null,
+              scale: 1.4,
+              onSelect: setSelected,
+            })
+          ),
+          h('p', null, types.map((t) => facilities[t].name).join(' · ')),
+          h('p', { role: 'status' }, '선택: ' + selected)
+        );
+      }
+      function show(mode) {
+        current = mode;
+        root.render(
+          mode === 'city'
+            ? h(CityExplorer, {
+                account,
+                onLogin: () => {},
+                onAccount: () => {},
+                initialDistrictId: region.districtId,
+              })
+            : h(Gallery)
+        );
+        report.textContent = '실제 공개 후보 6곳 · 합성 회원/설치 · 계산/순위/서버 저장 없음';
+      }
+      document.getElementById('gallery').onclick = () => show('gallery');
+      document.getElementById('city').onclick = () => show('city');
+      document.getElementById('selection').onclick = () => {
+        armed = true;
+        report.textContent = '다음 지도 또는 목록 선택 대기';
+      };
+      document.getElementById('measure').onclick = () => {
+        if (measuring) return;
+        measuring = true;
+        stamps = [];
+        started = performance.now();
+        function tick() {
+          if (measuring) {
+            invalidate();
+            requestAnimationFrame(tick);
+          }
+        }
+        tick();
+        report.textContent = '10초 측정 중';
+        setTimeout(() => {
+          measuring = false;
+          const gaps = stamps
+            .slice(1)
+            .map((t, i) => t - stamps[i])
+            .sort((a, b) => a - b);
+          const canvas = document.querySelector('canvas');
+          report.textContent = JSON.stringify(
+            {
+              scene: current,
+              frames: stamps.length,
+              fps: ((stamps.length - 1) * 1000) / (stamps.at(-1) - stamps[0]),
+              p95Ms: gaps[Math.floor(gaps.length * 0.95)],
+              longTasks: longTasks.filter((t) => t.start >= started),
+              viewport: [innerWidth, innerHeight],
+              canvas: [canvas?.width, canvas?.height],
+              userAgent: navigator.userAgent,
+            },
+            null,
+            2
+          );
+        }, 10000);
+      };
+      show('city');
+    </script>
+  </body>
+</html>

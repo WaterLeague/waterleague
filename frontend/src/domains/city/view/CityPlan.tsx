@@ -1,3 +1,5 @@
+import { InstallationSymbolsPlan } from '../../installation/view/InstallationSymbolsPlan';
+import { installationSymbols } from '../../installation/service/installationSymbolsService';
 import type { PublicFrame } from '../../surface/service/publicSurfaceService';
 import { publicInfrastructureBuildingIds } from '../../infrastructure/service/infrastructureService';
 import { memo, useMemo } from 'react';
@@ -109,6 +111,10 @@ export const CityPlan = memo(function CityPlan({
     handlers,
   } = usePlanNavigation(requestedFocus, city.bounds, camera, onCamera, onNavigate);
   const overview = focus.distance >= 9000;
+  const symbols = useMemo(
+    () => installationSymbols(installations, sites, viewerId, facilityType, focus.distance),
+    [installations, sites, viewerId, facilityType, focus.distance]
+  );
   const paths = useMemo(
     () => ({
       boundary: polygonPath(city.boundary),
@@ -347,24 +353,13 @@ export const CityPlan = memo(function CityPlan({
         publicSurfaceFrames.map((value) => (
           <SurfacePlan key={value.id} frame={value.frame} metric={surfaceMetric} />
         ))}
-      {installations.map((i) => (
-        <circle
-          key={i.id}
-          cx={i.center[0]}
-          cy={-i.center[1]}
-          r={overview ? 95 : Math.max(2, focus.distance * 0.008)}
-          fill="#327b4f"
-          opacity={buildingOpacity(
-            !facilityType || i.facilityType === facilityType,
-            !!ownDistrictId && i.districtId !== ownDistrictId
-          )}
-          onClick={() => void onSite(siteKey(i))}
-        >
-          <title>
-            {i.ownerName} · {facilities[i.facilityType].name}
-          </title>
-        </circle>
-      ))}
+      <InstallationSymbolsPlan
+        installations={symbols}
+        selectedKey={`${selected}:${selectedSite}`}
+        ownDistrictId={ownDistrictId}
+        scale={box.height * 0.016}
+        onSelect={onSite}
+      />
       <InfrastructureSymbolsPlan
         assets={facilityType ? [] : publicAssets}
         selectedId={selectedAssetId}
