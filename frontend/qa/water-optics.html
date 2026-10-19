@@ -50,7 +50,12 @@
           },
         ],
       };
-      const weather = { wind: [3, 1], windSpeed: Math.sqrt(10), rain: 0.8 };
+      const weatherCases = [
+        { label: '합성 바람·강우', value: { wind: [3, 1], windSpeed: Math.sqrt(10), rain: 0.8 } },
+        { label: '무풍·강우 0', value: { wind: [0, 0], windSpeed: 0, rain: 0 } },
+        { label: '풍향 결측·풍속 3', value: { wind: [0, 0], windSpeed: 3, rain: 0 } },
+        { label: '관측 공백', value: { wind: [0, 0], rain: 0 } },
+      ];
       const frame = (depth) => ({
         catalogSha256: 'a'.repeat(64),
         sourceSha256: 'b'.repeat(64),
@@ -101,7 +106,9 @@
         const [natural, setNatural] = React.useState(false),
           [animate, setAnimate] = React.useState(true),
           [depth, setDepth] = React.useState(0.8),
-          [metric, setMetric] = React.useState('depth');
+          [metric, setMetric] = React.useState('depth'),
+          [weatherIndex, setWeatherIndex] = React.useState(0);
+        const weather = weatherCases[weatherIndex].value;
         const flood = React.useMemo(() => frame(depth), [depth]);
         return h(
           React.Fragment,
@@ -115,6 +122,11 @@
               natural ? '하천 → 침수' : '침수 → 하천'
             ),
             h('button', { onClick: () => setAnimate((v) => !v) }, animate ? '일시정지' : '재생'),
+            h(
+              'button',
+              { onClick: () => setWeatherIndex((v) => (v + 1) % weatherCases.length) },
+              weatherCases[weatherIndex].label
+            ),
             h(
               'button',
               { onClick: () => setDepth((v) => (v === 0.8 ? 2.4 : 0.8)) },

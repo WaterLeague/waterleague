@@ -104,11 +104,12 @@ const fragmentShader = `
     float radius = length(fract(p) - center);
     return sin((radius - age * 0.8) * 48.0) * exp(-abs(radius - age * 0.8) * 18.0) * (1.0 - age);
   }
-  vec2 surfaceSlope(vec2 p, vec2 axis, vec2 across, float wavelength, float phase) {
+  vec2 surfaceSlope(vec2 p, vec2 axis, vec2 across, float wavelength, float phase, float pulse) {
     vec2 q = vec2(dot(p, axis), dot(p, across)) * 6.283185 / wavelength;
     float visible = 1.0 - smoothstep(0.7, 2.4, max(fwidth(q.x), fwidth(q.y)));
-    float a = sin(q.x + sin(q.y * 0.73) * 0.85 - phase);
-    float b = cos(q.y * 0.87 + sin(q.x * 0.61) * 0.8 - phase * 0.71);
+    // 풍향이 없어도 제자리 진동을 유지하며 임의의 이류 방향은 만들지 않는다.
+    float a = sin(q.x + sin(q.y * 0.73) * 0.85 - phase) * cos(pulse);
+    float b = cos(q.y * 0.87 + sin(q.x * 0.61) * 0.8 - phase * 0.71) * sin(pulse * 0.83 + 0.7);
     return (axis * a + across * b * 0.65) * visible;
   }
   void main() {
@@ -119,13 +120,17 @@ const fragmentShader = `
       vec2 axis = windAxis();
       vec2 across = vec2(-axis.y, axis.x);
       float windPhase = waterTime * sqrt(gust) * 0.65 * step(0.001, length(wind));
+      float pulse = waterTime * 1.15;
       float resolved = 1.0 - smoothstep(0.35, 2.5, length(fwidth(p * 0.5)));
       float drops = (ring(p * 0.55) + ring(p * 0.55 + vec2(0.0, 1.0))) * min(rain * 0.5, 0.5);
-      float rough = min(0.04 + sqrt(gust) * 0.065, 0.26);
-      vec2 slope = surfaceSlope(p, axis, across, 2.5, windPhase * 1.8) * 0.55;
-      slope += surfaceSlope(p, axis, across, 18.0, windPhase * 0.85) * 0.65;
-      slope += surfaceSlope(p, axis, across, 95.0, windPhase * 0.46) * 0.75;
-      slope += surfaceSlope(p, axis, across, 450.0, windPhase * 0.22) * 0.4;
+      float rough = min(0.075 + sqrt(gust) * 0.065, 0.26);
+      vec2 slope = surfaceSlope(p, axis, across, 2.5, windPhase * 1.8, pulse * 1.3) * 0.55;
+      slope += surfaceSlope(p, axis, across, 18.0, windPhase * 1.2, pulse) * 0.65;
+      slope += surfaceSlope(p, axis, across, 95.0, windPhase * 0.9, pulse * 0.87) * 0.75;
+      slope += surfaceSlope(p, axis, across, 450.0, windPhase * 0.7, pulse * 0.73) * 0.55;
+      // 서울 전체 축척의 법선 표현만 보강하며 실제 파고·수심은 늘리지 않는다.
+      float overview = smoothstep(12.0, 65.0, length(fwidth(p)));
+      slope += surfaceSlope(p, axis, across, 1800.0, windPhase * 0.6, pulse * 0.65) * overview * 0.8;
       slope = slope * rough + vec2(drops) * resolved * 0.04;
       float h = waveHeight(p, vDepth);
       slope += vec2(h - waveHeight(p + vec2(0.2, 0.0), vDepth), h - waveHeight(p + vec2(0.0, 0.2), vDepth)) / 0.2;

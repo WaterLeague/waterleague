@@ -14,8 +14,11 @@ export function waterWeather(
         now - Date.parse(s.observedAt) >= 0 &&
         now - Date.parse(s.observedAt) <= 300000
     ) ?? [];
-  const winds = stations.filter(
-    (s) => s.windDirectionDeg != null && s.windDirectionDeg < 360 && s.windSpeedMs != null
+  const speeds = stations.filter(
+    (s) => s.windSpeedMs != null && Number.isFinite(s.windSpeedMs) && s.windSpeedMs >= 0
+  );
+  const winds = speeds.filter(
+    (s) => s.windDirectionDeg != null && s.windDirectionDeg >= 0 && s.windDirectionDeg < 360
   );
   // 기상 풍향은 불어오는 방위이므로 장면의 이동 방향과 z축을 함께 변환한다.
   const wind: [number, number] = winds.length
@@ -33,8 +36,9 @@ export function waterWeather(
   return {
     wind,
     rain: stations.length ? Math.max(...stations.map((s) => s.oneMinuteMm ?? 0)) : 0,
-    ...(winds.length
-      ? { windSpeed: winds.reduce((n, s) => n + s.windSpeedMs!, 0) / winds.length }
+    // 풍향 결측과 풍속 결측을 구분해 관측된 거칠기 입력을 보존한다.
+    ...(speeds.length
+      ? { windSpeed: speeds.reduce((n, s) => n + s.windSpeedMs!, 0) / speeds.length }
       : {}),
   };
 }
