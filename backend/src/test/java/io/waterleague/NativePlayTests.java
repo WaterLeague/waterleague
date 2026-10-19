@@ -148,6 +148,25 @@ class NativePlayTests {
   }
 
   @Test
+  void selectsTheFullSourceObjectAndPointWithoutFillingHolesOrUsingNearestCenters() {
+    var repository = new NativePlayRepository(bundle(temporary), json);
+    var roof = repository.atPoint(1, 1, "ROOF");
+    assertThatThrownBy(() -> repository.building("11110", "way/123")).isInstanceOf(DomainException.class);
+    assertThatThrownBy(() -> repository.atPoint(3, 3, "ROOF")).isInstanceOf(DomainException.class);
+    assertThatThrownBy(() -> repository.atPoint(15, 5, "GROUND")).isInstanceOf(DomainException.class);
+    var all = repository.nearest("11110", 0, 0, 0, null, null);
+    assertThat(all.count()).isEqualTo(3);
+    assertThat(all.cells()).hasSize(3);
+    assertThat(repository.nearest("11110", 0, 0, 0, 4, null).cells()).containsExactly(roof);
+    assertThat(repository.nearest("11110", 0, 0, 0, null, "ROAD_AREA").cells()).hasSize(1);
+    assertThat(repository.nearest("11110", 0, 0, 0, null, "OTHER").cells()).hasSize(2);
+    assertThat(repository.nearest("11110", 0, 0, 1, 4, null).cells()).isEmpty();
+    assertThatThrownBy(() -> repository.nearest("11110", 0, 0, 0, 64, null)).isInstanceOf(DomainException.class);
+    assertThatThrownBy(() -> repository.nearest("11110", 0, 0, 0, null, "ROAD_AREA' OR 1=1"))
+        .isInstanceOf(DomainException.class);
+  }
+
+  @Test
   void retainsHolesAndMultipartAndRejectsBrokenOrFalseAreaGeometry() {
     var shape = json.tree("""
         {"type":"MultiPolygon","coordinates":[

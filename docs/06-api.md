@@ -23,6 +23,8 @@
 | GET /spatial/play | 공개 원형 계산 자료의 해시·공통 조건·출처·정책; no-store |
 | GET /spatial/play/sites | 공개, 절대 EPSG:5186 범위의 전체 원형 후보 조회 |
 | GET /spatial/play/sites/{districtId}/{candidateId} | 공개 행정코드·후보 ID로 같은 원형/계산 조건 조회 |
+| GET /spatial/play/forcings | 원형 공간의 공개 행정구·보관 관측 창·재해/선행 기상 결속 목록·해시; no-store |
+| GET /spatial/play/forcings/{modelHash} | 등록된 불변 관측 입력 조회; 공간 후보·물리 모델과 분리 |
 | GET /strategies | 본인 저장 설계 목록 |
 | POST /strategies | 인증, 첫 불변 버전 저장 |
 | POST /strategies/{id}/versions | 소유자, 불변 배치·이력 저장 |
@@ -47,6 +49,8 @@
 모델 검증·배포 권한은 조직 회원의 리그 운영과 분리. 내부 워커 endpoint 외부 노출 금지. 현장 승인 맵과 공개 참고 지도·탐색 모델은 구분한다. 관리자 역할은 ADMIN, 모든 일반/조직 회원 역할은 MEMBER. 조직 회원의 연구·리그 권한은 승인 상태·회원 유형·소속·MFA로 검사한다.
 
 원형 조회의 `minx,miny,maxx,maxy`와 응답 `geometry`는 절대 EPSG:5186 미터 좌표다. 시야의 가로/세로는 각각 2,000m 이하, `limit` 기본 512·최대 2,000이다. 선택 `districtId`는 공개 자치구 코드, `kind`는 ROOF/GROUND다. `includeUnsupported=false`가 기본이며 true일 때 빈 허용 목록의 미지원 표면도 조회한다. 구멍/다중 면을 보존한 실제 도형으로 교차 판정한다. 범위 인덱스 검사 20,000개·본문 처리 16MiB·결과 한도를 넘으면 일부를 정상 목록으로 반환하지 않고 `SPATIAL_VIEW_TOO_DENSE` 422를 반환한다. 접속 주소별 분당 300회·동시 시야 조회 4개 상한과 429 응답을 적용한다. 모든 응답의 `catalogSha256`은 같은 불변 원형 DB를 가리킨다. 주간·재해 설치/제출의 공간 버전 동시 전환은 아직 미완료다.
+
+관측 결속은 별도 `catalogSha256`과 `siteCatalogSha256`으로 관측 창 목록과 원형 DB를 각각 고정한다. 25개 구별 기본 창 1개·재해 3개, 총 100개이며 `modelHash`는 관측 결속 원문의 해시다. 재해는 같은 지점의 7일 선행 관측이 보관된 경우만 선택한다. 관측 창별 보관·검사 통과 지점 안에서 공개 구 대표점과 10km 이내 최근접을 선택하며, 전체 AWS 중 최근접·현장 강우 대표성·사건 당시 지형 복원을 뜻하지 않는다. 후보 셀이나 OSM 모델을 관측 결속에 포함하지 않는다. 등록되지 않은 해시는 `MODEL_NOT_ELIGIBLE` 422, 잘못된 해시 형식은 `REQUEST_INVALID` 400, 접속 주소별 분당 300회 초과는 429다. 이 API 추가를 일반 게임의 입력 전환 완료로 표시하지 않는다.
 
 공동 시설 물리 상태는 `WAITING/RUNNING/READY/DELAYED/UNAVAILABLE`. `attemptedAt`과 `simulatedThrough` 구분, 실패 시 이전 성공 결과와 그 시각 유지. 무결과는 `result:null`이며 강우·수분·유출 0 대입 없음. 마지막 계산이 5분을 넘으면 지연 표시, 실행 작업이 240초를 넘으면 보류 표시. 결과는 관측소·계산 구간·EPA 버전·EXPLORATORY·누적 강우 체적/침투/증발/유출·현재 수분/저류·시설 표면 수심·토양수분·물수지 오차·증발/초기상태 가정만 공개. 원문·파일 경로·입력 hash·임대 토큰 미노출. 철거·미등록 시설 404. 분별 재현 입력은 별도 접근 통제 대상이며 이 공개 요약에서 제공하지 않음.
 

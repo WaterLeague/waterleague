@@ -142,6 +142,21 @@ PYTHONPATH=simulation simulation/.venv/bin/python scripts/verify_native_play_run
   --report tmp/native-play-runtime.json --engine-output tmp/native-play-engine
 ```
 
+### 원형 공간과 독립된 관측 창 결속
+
+`prepare_native_game.py`는 공개 자치구 경계의 5자리 코드·대표점과 원형 후보 DB 해시를 [관측 결속 목록](../backend/src/main/resources/native-game/v1/catalog.json)에 연결한다. 25개 구마다 2024-07-18 기본 창과 2022-08-08·2011-07-27·2010-09-21 재해 창을 따로 생성하며, 관측 결속 원문에 셀·OSM 형상/식별자·토양 가정을 넣지 않는다. 공간 후보 선택과 관측 입력을 같은 구 코드·공간 해시로 연결하는 준비 경로이며 일반 게임 전환과 구분한다.
+
+선정은 각 창의 보관·검사 통과 지점 안에서 대표점까지 WGS84 지오데식 거리가 가장 가까운 10km 이내 지점이다. 재해는 같은 관측소의 7일 선행 강우와 증발산이 확보된 지점만 사용한다. 기본 창 20개, 2010년 13개, 2011년 16개, 2022년 20개 지점의 집합을 원문에 남긴다. 모든 AWS 중 최근접 또는 구 전체/개별 시설의 현장 대표성으로 표시하지 않는다. 2026 형상에 과거 관측을 적용하며 사건 당시 자산·침수 상황을 복원하지 않는다.
+
+원 강우를 다시 정규화해 깊이·총량·시각·관측소를 대조하고 관측소 좌표의 원문/시점 메타자료·파일 해시를 보존한다. 75개 재해 결속은 사건 증발산과 10,080분 선행 강우·증발산의 원문·시간 연결을 검사한다. 기존 계산 시계열은 바꾸지 않고 새 결속 목록에서만 관측 해시를 연결한다. 코드·PROJ 버전·1,790개 입력 파일 해시·별도 Java/Python 조회 해시와 대조 결과는 [관측 런타임 기록](../data/benchmarks/native-game-runtime-v1.json)에 연결한다.
+
+```sh
+PYTHONPATH=simulation simulation/.venv/bin/python scripts/prepare_native_game.py
+# Java 시험의 100개 관측 원문과 워커 조회를 대조한다.
+PYTHONPATH=simulation simulation/.venv/bin/python scripts/verify_native_game.py \
+  --report tmp/native-game-runtime.json
+```
+
 ## 수치지형도 플레이 모델 연결
 
 2026-03-07 갱신 공개 수치지형도와 동일한 기존 4개 도엽의 건물 246개와 도로·철도·교량 면 경계를 별도 지도에 연결한다. 원 도엽의 제작연도는 2025년이며 배포 갱신일과 구분한다. EPSG:5186 원문 좌표에서 고정 원점을 뺀 미터 좌표를 사용하며 내부 구멍·복수 도형을 보존한다. 교통 면은 화면 경계로 절단하되 건물 원형은 보존한다. 층수×3.2m 및 층수 누락 시 9m는 시각화 가정으로만 사용한다. 평탄 지면 유지, 교량의 실제 고도·도로 경사 추정 금지.

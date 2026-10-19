@@ -229,6 +229,25 @@ cells = catalog.bounds([203899.54225604248, 551377.4775, 204049.54225604248, 551
 print(json.dumps({'catalogSha256': catalog.sha256, 'sites': cells}))
 """))
     assert worker_native == {key: native[key] for key in ('catalogSha256', 'sites')}
+    registry = client.api('/spatial/play/forcings')
+    assert registry['catalog']['siteCatalogSha256'] == spatial['catalogSha256']
+    assert len(registry['catalog']['regions']) == 25 and len(registry['catalog']['models']) == 100
+    forcing = {entry['sha256']: client.api('/spatial/play/forcings/' + entry['sha256'])
+               for entry in registry['catalog']['models']}
+    worker_forcing = json.loads(stack.python('worker', """
+import json
+from waterleague_sim.spatial import game_catalog
+values = {entry['sha256']: json.loads(game_catalog.forcing(entry['sha256']))
+          for entry in game_catalog.catalog()['models']}
+for checksum, value in values.items():
+    if 'disasterEvent' in value:
+        game_catalog.climate_binding('antecedent', checksum)
+        game_catalog.climate_binding('evaporation', checksum)
+print(json.dumps({'catalogSha256': game_catalog.SHA256, 'forcings': values}))
+"""))
+    assert worker_forcing == {'catalogSha256': registry['catalogSha256'], 'forcings': forcing}
+    assert client.api('/spatial/play/forcings/invalid', expected=400)['code'] == 'REQUEST_INVALID'
+    assert client.api('/spatial/play/forcings/' + '0' * 64, expected=422)['code'] == 'MODEL_NOT_ELIGIBLE'
     assert client.api(query + '&limit=1', expected=422)['code'] == 'SPATIAL_VIEW_TOO_DENSE'
     client.api('/spatial/play/sites?minx=0&miny=0&maxx=2001&maxy=1', expected=400)
     client.call('/api/v1/auth/register', {}, expected=403)
@@ -301,7 +320,8 @@ print('SWMM_REPLAY_OK')
         assert json.loads(archive.read('manifest.json')) == manifest
     return {'jobState': job['state'], 'manifestFiles': len(manifest), 'modelHash': model['modelHash'],
             'realSwmmReplay': True, 'restartPersistence': True, 'tlsVerified': True,
-            'nativeApiWorkerCellsMatched': len(native['sites']), 'nativeCatalogSha256': spatial['catalogSha256']}
+            'nativeApiWorkerCellsMatched': len(native['sites']), 'nativeCatalogSha256': spatial['catalogSha256'],
+            'nativeApiWorkerForcingsMatched': len(forcing), 'nativeForcingCatalogSha256': registry['catalogSha256']}
 
 
 def main():

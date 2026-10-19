@@ -10,27 +10,32 @@ import java.sql.*;
 import java.util.*;
 import java.util.concurrent.Semaphore;
 import org.springframework.stereotype.Repository;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import tools.jackson.databind.JsonNode;
 
 @Repository
-@ConditionalOnWebApplication
 public class NativePlayRepository {
   private final NativePlayBundle bundle;
   private final JsonService json;
-  private final Path database;
-  private final BasicFileAttributes identity;
-  private final JsonNode metadata;
+  private record State(Path database, BasicFileAttributes identity, JsonNode metadata) {}
+  private volatile State state;
   private final Set<String> districts;
   private final Semaphore queries = new Semaphore(4);
 
   public NativePlayRepository(NativePlayBundle bundle, JsonService json) {
     this.bundle = bundle;
     this.json = json;
+    var values = new HashSet<String>();
+    bundle.manifest().path("districtKindCounts").properties().forEach(entry -> values.add(entry.getKey().split(":")[0]));
+    districts = Set.copyOf(values);
+  }
+
+  private synchronized State state() {
+    if (state != null) return state;
     try {
-      database = bundle.database();
-      identity = Files.readAttributes(database, BasicFileAttributes.class, LinkOption.NOFOLLOW_LINKS);
-      try (var connection = connection(); var statement = connection.createStatement()) {
+      Path database = bundle.database();
+      var identity = Files.readAttributes(database, BasicFileAttributes.class, LinkOption.NOFOLLOW_LINKS);
+      JsonNode metadata;
+      try (var connection = open(database); var statement = connection.createStatement()) {
         try (var rows = statement.executeQuery("PRAGMA user_version")) {
           if (!rows.next() || rows.getInt(1) != 1) invalid();
         }
@@ -47,17 +52,23 @@ public class NativePlayRepository {
           || !metadata.path("sourceObjectsSha256").asString().equals(manifest.path("sourceObjectsSha256").asString())
           || !metadata.path("policy").path("externalInflowConnected").isBoolean()
           || metadata.path("policy").path("externalInflowConnected").asBoolean()) invalid();
-      var values = new HashSet<String>();
-      manifest.path("districtKindCounts").properties().forEach(entry -> values.add(entry.getKey().split(":")[0]));
-      districts = Set.copyOf(values);
+      state = new State(database, identity, metadata);
+      return state;
     } catch (Exception e) { throw new DomainException(ErrorCode.SPATIAL_DATA_INVALID); }
   }
 
   public Connection connection() throws Exception {
+    var value = state();
+    var database = value.database();
+    var identity = value.identity();
     var current = Files.readAttributes(database, BasicFileAttributes.class, LinkOption.NOFOLLOW_LINKS);
     if (current.isSymbolicLink() || !current.isRegularFile() || current.size() != identity.size()
         || !Objects.equals(current.fileKey(), identity.fileKey())
         || !current.lastModifiedTime().equals(identity.lastModifiedTime())) invalid();
+    return open(database);
+  }
+
+  private static Connection open(Path database) throws Exception {
     var connection = DriverManager.getConnection("jdbc:sqlite:" + database.toUri().toASCIIString() + "?mode=ro&immutable=1");
     try (var statement = connection.createStatement()) {
       statement.execute("PRAGMA trusted_schema=OFF");
@@ -67,7 +78,8 @@ public class NativePlayRepository {
     return connection;
   }
 
-  public JsonNode metadata() { return metadata.deepCopy(); }
+  public JsonNode metadata() { return state().metadata().deepCopy(); }
+  public JsonNode envelope() { return bundle.manifest(); }
   public String sha256() { return bundle.manifest().path("databaseSha256").asString(); }
 
   public JsonNode require(String district, String candidate) {
@@ -83,6 +95,62 @@ public class NativePlayRepository {
       }
     } catch (DomainException e) { throw e; }
     catch (Exception e) { throw new DomainException(ErrorCode.SPATIAL_DATA_INVALID); }
+  }
+
+  public JsonNode building(String district, String objectId) {
+    district(district);
+    if (objectId == null || !objectId.matches("ngii:N1A_B0010000:[a-f0-9]{64}")) requestInvalid();
+    try (var connection = connection(); var query = connection.prepareStatement(
+        "SELECT body FROM sites WHERE district_id=? AND object_id=? AND kind='ROOF' AND allowed_mask<>0")) {
+      query.setString(1, district); query.setString(2, objectId);
+      try (var rows = query.executeQuery()) {
+        if (!rows.next()) throw new DomainException(ErrorCode.RESOURCE_NOT_FOUND);
+        return json.tree(rows.getString(1));
+      }
+    } catch (DomainException e) { throw e; }
+    catch (Exception e) { throw new DomainException(ErrorCode.SPATIAL_DATA_INVALID); }
+  }
+
+  public JsonNode atPoint(double x, double y, String kind) {
+    var point = NativeGeometry.box(x, y, x, y);
+    return bounds(x - 1e-7, y - 1e-7, x + 1e-7, y + 1e-7, null, kind, 2000, false)
+        .stream().filter(cell -> NativeGeometry.polygon(cell.path("geometry"), cell.path("areaM2").asDouble()).covers(point))
+        .min(Comparator.comparing(cell -> cell.path("id").asString()))
+        .orElseThrow(() -> new DomainException(ErrorCode.RESOURCE_NOT_FOUND));
+  }
+
+  public record Page(List<JsonNode> cells, int count) {}
+  public Page nearest(String district, double x, double y, int offset, Integer mask, String role) {
+    district(district);
+    if (!Double.isFinite(x) || !Double.isFinite(y) || Math.abs(x) > 10_000_000 || Math.abs(y) > 10_000_000
+        || offset < 0 || offset > 300000
+        || mask != null && !Set.of(1, 2, 4, 8, 16, 32).contains(mask)
+        || role != null && !Set.of("ROAD_AREA", "SIDEWALK_AREA", "OTHER").contains(role)) requestInvalid();
+    String filter = "district_id=? AND allowed_mask<>0" + (mask == null ? "" : " AND allowed_mask & ? <> 0")
+        + (role == null ? "" : role.equals("OTHER") ? " AND role NOT IN ('ROAD_AREA','SIDEWALK_AREA')" : " AND role=?");
+    if (!queries.tryAcquire()) throw new DomainException(ErrorCode.RATE_LIMITED);
+    try (var connection = connection(); var count = connection.prepareStatement("SELECT COUNT(*) FROM sites WHERE " + filter);
+        var query = connection.prepareStatement("SELECT body FROM sites WHERE " + filter
+            + " ORDER BY (cx-?)*(cx-?)+(cy-?)*(cy-?),id LIMIT 200 OFFSET ?")) {
+      int index = 1;
+      for (var statement : List.of(count, query)) {
+        index = 1; statement.setString(index++, district);
+        if (mask != null) statement.setInt(index++, mask);
+        if (role != null && !role.equals("OTHER")) statement.setString(index++, role);
+      }
+      query.setDouble(index++, x); query.setDouble(index++, x);
+      query.setDouble(index++, y); query.setDouble(index++, y); query.setInt(index, offset);
+      int total;
+      try (var row = count.executeQuery()) {
+        if (!row.next()) invalid();
+        total = row.getInt(1);
+      }
+      var cells = new ArrayList<JsonNode>();
+      try (var rows = query.executeQuery()) { while (rows.next()) cells.add(json.tree(rows.getString(1))); }
+      return new Page(List.copyOf(cells), total);
+    } catch (DomainException e) { throw e; }
+    catch (Exception e) { throw new DomainException(ErrorCode.SPATIAL_DATA_INVALID); }
+    finally { queries.release(); }
   }
 
   public List<JsonNode> bounds(double minx, double miny, double maxx, double maxy,

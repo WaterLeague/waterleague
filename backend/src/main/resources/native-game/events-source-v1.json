@@ -1,0 +1,36 @@
+{
+  "events": [
+    {
+      "endKst": "202208082359",
+      "eventDate": "2022-08-08",
+      "evidenceTitle": "서울연구원 · 2022년 8월 집중호우 강우량과 피해특성",
+      "evidenceUrl": "https://www.si.re.kr/bbs/view.do?key=2024100042&pstSn=2208290002",
+      "id": "seoul-20220808",
+      "startKst": "202208081800",
+      "summary": "한강 이남 도심과 저지대 지하공간에 침수 피해가 발생한 집중호우. 8일 저녁 관측 창을 재생합니다.",
+      "title": "2022년 8월 수도권 집중호우"
+    },
+    {
+      "endKst": "201107271200",
+      "eventDate": "2011-07-27",
+      "evidenceTitle": "기상청 · 2011 서울특별시 기후변화 적응정보 보고서",
+      "evidenceUrl": "https://www.climate.go.kr/home/cc_data/2011_RRCC/2011_RRCC_01.pdf",
+      "id": "seoul-20110727",
+      "startKst": "201107270001",
+      "summary": "서울 도심 침수와 우면산 산사태가 발생한 집중호우. 27일 오전 강우를 재생하며 산사태는 계산하지 않습니다.",
+      "title": "2011년 7월 서울 집중호우"
+    },
+    {
+      "endKst": "201009212000",
+      "eventDate": "2010-09-21",
+      "evidenceTitle": "기상청 · 2011 서울특별시 기후변화 적응정보 보고서",
+      "evidenceUrl": "https://www.climate.go.kr/home/cc_data/2011_RRCC/2011_RRCC_01.pdf",
+      "id": "seoul-20100921",
+      "startKst": "201009211000",
+      "summary": "광화문 등 서울 시내 주택·도로 침수가 발생한 집중호우. 21일 낮과 저녁 관측 창을 재생합니다.",
+      "title": "2010년 추석 서울 집중호우"
+    }
+  ],
+  "schemaVersion": 1,
+  "sourceCatalogSha256": "cd5a24953234412b671bb2fa790d898f91b61c5557b22470f37471e9ec63c3ee"
+}

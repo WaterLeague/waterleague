@@ -33,6 +33,8 @@ class NativePlayFullCatalogTests {
           var cells = repository.bounds(x - 50, y - 50, x + 50, y + 50, district, null, 2000, false);
           assertThat(cells).anyMatch(cell -> cell.path("id").asString().equals(identifier));
           for (var cell : cells) assertThat(repository.require(district, cell.path("id").asString())).isEqualTo(cell);
+          var selected = repository.require(district, identifier);
+          assertThat(repository.building(district, selected.path("sourceObjectId").asString())).isEqualTo(selected);
           cases.add(Map.of("districtId", district, "bounds", List.of(x - 50, y - 50, x + 50, y + 50), "sites", cells));
         }
       }

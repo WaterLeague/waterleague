@@ -43,6 +43,8 @@ public class SecurityConfiguration {
                         "/api/v1/catalog",
                         "/api/v1/districts",
                         "/api/v1/spatial/play",
+                        "/api/v1/spatial/play/forcings",
+                        "/api/v1/spatial/play/forcings/{modelHash}",
                         "/api/v1/spatial/play/sites",
                         "/api/v1/spatial/play/sites/{districtId}/{candidateId}",
                         "/api/v1/disasters",

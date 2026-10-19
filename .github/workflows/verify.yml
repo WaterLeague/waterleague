@@ -56,6 +56,8 @@ jobs:
           python -m pip install uv==0.11.12
           uv sync --project simulation --locked
           PYTHONPATH=simulation simulation/.venv/bin/python scripts/verify_native_play_runtime.py --report tmp/native-play-ci.json
+          python scripts/prepare_ci_sources.py
+          PYTHONPATH=simulation simulation/.venv/bin/python scripts/verify_native_game.py --report tmp/native-game-ci.json
   frontend:
     runs-on: ubuntu-latest
     timeout-minutes: 10

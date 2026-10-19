@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "purpose": "공개 원문 재현 시험 전용 · 코드 라이선스와 별도",
-  "archiveSha256": "763c9274b42125722813f7ec72312dbb718497a606765acf562e6d9dd5354afe",
+  "archiveSha256": "c76580ff906781b0fab4c527a906b05ff1ded734f036b7db1335b38f35ef7cea",
   "files": [
     {
       "path": "data/raw/kma-disaster-pet-bcb2670316cd5737db4ac916.txt",
@@ -11684,6 +11684,531 @@
       "bytes": 48566,
       "sha256": "897f969a2ad0344c64f4e070b0a95605e755dbe9a6644d8f35f9ae2ba4e56834",
       "source": "data/derived/antecedent/seoul-20220808-401-rain-v1.json.gz",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-108-202208081800-202208082359.txt",
+      "bytes": 48435,
+      "sha256": "21c346aa5ca5542f260762ea6eec0e7516517a5abb2649b13575d398abde44cc",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-108-202407180500-202407182359.txt",
+      "bytes": 150615,
+      "sha256": "17bc07c7c47f7d9c4db164173da039b849bf1bb6f74d1a549f92a621ab25f120",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-110-201107270001-201107271200.txt",
+      "bytes": 95595,
+      "sha256": "57a7b8e5145d1cd7f74e92881ac1c49dfe52d93232ed5fdbc22252321e9dd188",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-400-201009211000-201009212000.txt",
+      "bytes": 80006,
+      "sha256": "93e83c7c2637f7a0ae7317d6e9c42c5a274bf17073a63a4c9c5d03614f543ff1",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-400-202407180500-202407182359.txt",
+      "bytes": 150615,
+      "sha256": "25f5d677755b965bc303968d6326e6d17df3deb959f4ee9547f9607a7d8351f7",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-401-201107270001-201107271200.txt",
+      "bytes": 95595,
+      "sha256": "27f1d5ab4415e776592f699441380709cf1cd5959585add51d3fe4954345f397",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-401-202407180500-202407182359.txt",
+      "bytes": 150615,
+      "sha256": "8fed446984c85658739058764e74263939f0a1c76fabaf86f776dfe3d0c3290d",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-402-201009211000-201009212000.txt",
+      "bytes": 80006,
+      "sha256": "cb4027af62c576a7d66c0f35927f64ce267604521618850ac5597977119c98cd",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-402-202407180500-202407182359.txt",
+      "bytes": 150615,
+      "sha256": "115f8cb2d3a4abf2911904d7afea0a95c03a2d4df9eda145e8c15735565f64f3",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-403-202208081800-202208082359.txt",
+      "bytes": 48435,
+      "sha256": "68d76c63e47d6b906be6d8f990e986191412ad4f14a3e92082add274bce992e7",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-403-202407180500-202407182359.txt",
+      "bytes": 150615,
+      "sha256": "b92665d6424025ccf175b0e6f21c7d7c48135c697a73f7b93093f425e628bfd1",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-404-202208081800-202208082359.txt",
+      "bytes": 48435,
+      "sha256": "a6c35a0d08f4d290afdb2ec01147ec71c202124f5a0ebf1ed36e5cb66ce8f051",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-405-201107270001-201107271200.txt",
+      "bytes": 95595,
+      "sha256": "6813cdb599551301783cee1857818e5b5e403750c65a61b366a0e46a98a0a3d4",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-405-202208081800-202208082359.txt",
+      "bytes": 48435,
+      "sha256": "a820c2e746cc54c87140f97c08a1c66bb6baa4363d069c43e0375b4c45ccc211",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-405-202407180500-202407182359.txt",
+      "bytes": 150615,
+      "sha256": "9092cd9e0704da7eec8edc35859da46574f6e3d00877f446dcdcfb1a4366f06a",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-406-201009211000-201009212000.txt",
+      "bytes": 80006,
+      "sha256": "3bde1282d766b9b7a3534c44f4353644ff1466c1a404c3dcc30329c98c367531",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-406-202407180500-202407182359.txt",
+      "bytes": 150615,
+      "sha256": "164c85ca3dbbbbd1bb22e8303b5128d26f111ce21cd6d863517f1a3093266b27",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-407-202208081800-202208082359.txt",
+      "bytes": 48435,
+      "sha256": "8161ed62b746001aaeb0e657a8d5f5b23d6302d0edae965bc28c57ca7457efcc",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-408-202208081800-202208082359.txt",
+      "bytes": 48435,
+      "sha256": "24eb9891ca8d58b0266d24edad985f421bfa6de2d94a0dfa137e3296b95b58ad",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-408-202407180500-202407182359.txt",
+      "bytes": 150615,
+      "sha256": "8253e2c59ee1a05c14cf0dfedf551e4163172da3e5786d51fb1436d7a6d16800",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-409-201009211000-201009212000.txt",
+      "bytes": 80006,
+      "sha256": "7a61e94afc52e9a88fe61dac89d94b4306231a6c137e4c487c1389161b18c9fb",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-409-201107270001-201107271200.txt",
+      "bytes": 95595,
+      "sha256": "509b9e528a3adec2f135b8cde2f78389a0d5f14a05ed9d6a497b976f01143f60",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-409-202208081800-202208082359.txt",
+      "bytes": 48435,
+      "sha256": "cf1cd5e608c24a55800701251901b5dee7038bce8b8d0d0ff8b0dde67c417be5",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-409-202407180500-202407182359.txt",
+      "bytes": 150615,
+      "sha256": "b93a73b4fe125a6f0b6ec13a46612db807103f5a67814a118cfbe1e2d8999a3f",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-411-201009211000-201009212000.txt",
+      "bytes": 80006,
+      "sha256": "52de91e5b0da9b5fd93056b9822415e35597025bc57a7226c5287c605fc446ea",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-411-201107270001-201107271200.txt",
+      "bytes": 95595,
+      "sha256": "300b564e75d06467eb36ca57689933fc311a20f71c57f9b500b3b3b9820ed26e",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-411-202208081800-202208082359.txt",
+      "bytes": 48435,
+      "sha256": "0ff7b86e4eeca5fc9bcde0f52acaf057587943d49f684d866e3f57fc486576bb",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-411-202407180500-202407182359.txt",
+      "bytes": 150615,
+      "sha256": "82882252e8ef98e3c609ae6fff9d5477e5061e1568abe41202250e5d7af6d74e",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-412-202208081800-202208082359.txt",
+      "bytes": 48435,
+      "sha256": "e58020852d5c7fefbd02133160de46917010570afd5dbf885d5be939495fc36a",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-412-202407180500-202407182359.txt",
+      "bytes": 150615,
+      "sha256": "f7f947d5d4bedfa8d7bb99ce9c9f5918997d3f112fb4c531f5b77eb1c2db7541",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-413-201009211000-201009212000.txt",
+      "bytes": 80006,
+      "sha256": "b1c85a2e6eb92b3fc2bd741befb2b0c2e908e98232c2456e1fc82261cb5c0e23",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-413-201107270001-201107271200.txt",
+      "bytes": 95595,
+      "sha256": "a1eda831a655f36ceb84cd7b4b7df3182d6618d48f48fbf01c92ded4aa193cca",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-413-202208081800-202208082359.txt",
+      "bytes": 48435,
+      "sha256": "2c626ae058a3005433f72f156d77c013a5b662bdb19629f39b553bff0ff19f48",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-413-202407180500-202407182359.txt",
+      "bytes": 150615,
+      "sha256": "179825a7074c1057fcfd90fafc2831bbfd95487a4106aaa04872843906e73d33",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-414-201009211000-201009212000.txt",
+      "bytes": 80006,
+      "sha256": "183add76a8cbefb488d850baebbcdf38c89e8bb1249c1482380f79f63acf4464",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-414-201107270001-201107271200.txt",
+      "bytes": 95595,
+      "sha256": "b74173019e3d468e78061984fc6e5f054b8071bc03001a7d3edd13d14e2541bb",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-414-202208081800-202208082359.txt",
+      "bytes": 48435,
+      "sha256": "492439ef470bd5b44771f00afbc180cb718438ffd45663884f285878c4c19fc9",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-415-201107270001-201107271200.txt",
+      "bytes": 95595,
+      "sha256": "5d47d56fd878ea18dcd67e832c8d6140f42f3e4ae91914c6126dfd4a5fd583e0",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-415-202208081800-202208082359.txt",
+      "bytes": 48435,
+      "sha256": "4300362bd87c63519c728470de952356a0425a35e9bf37938eb382cb5df7b11e",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-415-202407180500-202407182359.txt",
+      "bytes": 150615,
+      "sha256": "a0fc5a92151caff5eb6b1dd725ea2beab8d1fdb2dbc34f4c10d9dec4e0a5b58a",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-416-201107270001-201107271200.txt",
+      "bytes": 95595,
+      "sha256": "dd4156df34ad7334a0af62608031fa4cee00e8445793edc0e3611cb80d2537b3",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-418-201009211000-201009212000.txt",
+      "bytes": 80006,
+      "sha256": "adae9a06181cf7ea3779b8c4c2c58f7216045239fe71e8e55480ebc39811cf4a",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-418-201107270001-201107271200.txt",
+      "bytes": 95595,
+      "sha256": "915507d0716b316af033e3015ee08ab45f47d0fc6af9e96bf6ef44e01eb121ad",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-419-201107270001-201107271200.txt",
+      "bytes": 95595,
+      "sha256": "f6bde9a5ef88ce0d282d7cdb4d39ef0e2be7a3514d08275bf8fad62240513bb5",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-419-202208081800-202208082359.txt",
+      "bytes": 48435,
+      "sha256": "f685faf6408fa9d40c0fe529e83537bf51f918149747a6f908817b3d1f4c7af8",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-419-202407180500-202407182359.txt",
+      "bytes": 150615,
+      "sha256": "32332b7bbdec9fe43bb24ee92d22c8e8dfcb8bb7ce4f1f37b3264fff17f88420",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-421-201009211000-201009212000.txt",
+      "bytes": 80006,
+      "sha256": "f93d8d8989bc6f5178beaaef6a3df759a572ba1caa56174305f3472f7396ed01",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-421-201107270001-201107271200.txt",
+      "bytes": 95595,
+      "sha256": "be9e36671e780873f28c47f56d847c0bfd7fedd57ff9279ad431872605cdc205",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-421-202407180500-202407182359.txt",
+      "bytes": 150615,
+      "sha256": "6712538dd405583acee694e1c870cdca15ee16374dee5d75302f8fd96a8f1190",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-424-201107270001-201107271200.txt",
+      "bytes": 95595,
+      "sha256": "dfdc517ce381f72965183bda25b6b09b785ec10d2f0887b506f3c89a2da4410a",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-433-201009211000-201009212000.txt",
+      "bytes": 80006,
+      "sha256": "1ddf5a7533a232517f9ebcc21f71115690ed5e6da756dc8672671fa94532245c",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-437-201009211000-201009212000.txt",
+      "bytes": 80006,
+      "sha256": "0f230bcc4bfa244e1c91d55f9e8ae0e2a3408465dbc5ae693b2e287a15cbd4f8",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-437-201107270001-201107271200.txt",
+      "bytes": 95595,
+      "sha256": "17297c833885047be065911b1219c18759403a28270d7d9dbf6cc0f23db57ef6",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-437-202208081800-202208082359.txt",
+      "bytes": 48435,
+      "sha256": "4817250e680f49412800f37de3f4758f079765e0beebc24e56c323d26429d159",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-437-202407180500-202407182359.txt",
+      "bytes": 150615,
+      "sha256": "23be2891d0b640d38d9258373f74543ea5f9e68560165c7e26b0dcc8f7dc2ebf",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-509-201107270001-201107271200.txt",
+      "bytes": 95595,
+      "sha256": "10217242374d8ae51091312d5a7bcfb53425f8e878c9e53dda3ec364f584cc0f",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-509-202208081800-202208082359.txt",
+      "bytes": 48435,
+      "sha256": "17165fad9da01521a7b52cc184c132a16b35fdd1d30759f82437c0a9bd08506e",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-509-202407180500-202407182359.txt",
+      "bytes": 150615,
+      "sha256": "bbe2b56f6da5d8a246b531bfbd556e1c1c9136483b1ee586b445ff8165d027b5",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-510-201107270001-201107271200.txt",
+      "bytes": 95595,
+      "sha256": "cac3a5c125108992d7adb807e04d313e06919af3ac51e64ab001026d9e777fb8",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-510-202208081800-202208082359.txt",
+      "bytes": 48435,
+      "sha256": "4e86e29cdb8755e3a92b589b29fe2e7be8a2831b802f2c3c9d684b3911a717a3",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-510-202407180500-202407182359.txt",
+      "bytes": 150615,
+      "sha256": "ed5fffe10c8c8a21926fe0366d3ce878da0b35b96fa273a82dd677caf0cf2bfb",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-540-201009211000-201009212000.txt",
+      "bytes": 80006,
+      "sha256": "8843f44c7965580bcfa6126d9f49cf383461adaa8e2ec740825f4c006bc05a3a",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-540-202208081800-202208082359.txt",
+      "bytes": 48435,
+      "sha256": "97d0f636f18aa34ddd373456a18f3be161471732bfc9da0255c8423bfafbc473",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-540-202407180500-202407182359.txt",
+      "bytes": 150615,
+      "sha256": "de4b26925aaab822817bb2d450cb5c884e310ddbc8035a0e1793b68143f7b884",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-590-201009211000-201009212000.txt",
+      "bytes": 80006,
+      "sha256": "5cd546850ccb2ceb5b02a61b436d707fb2de205b228dcb3c9121c38cdc13c521",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-889-202208081800-202208082359.txt",
+      "bytes": 48435,
+      "sha256": "6f6708ada3273422de78c1152349a4f9bac9a0a45fd783a7d94d473341ae6f10",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-889-202407180500-202407182359.txt",
+      "bytes": 150615,
+      "sha256": "fe59ab84837ea89c27c6ae259feafc169cfa17ad9bf007c7d6ede6d83b1635a4",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-stations-aws-201009211000.txt",
+      "bytes": 132535,
+      "sha256": "e96062506aacc804204a73395a6d7eed00bd0df6469bdceae0cb7b9ea2e53a89",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-stations-aws-201009212000.txt",
+      "bytes": 132535,
+      "sha256": "e96062506aacc804204a73395a6d7eed00bd0df6469bdceae0cb7b9ea2e53a89",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-stations-aws-201107270001.txt",
+      "bytes": 133935,
+      "sha256": "48a496b27a6f66b95edd941db954251a865f44163a4d06fa6b52881ba2e7c5d2",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-stations-aws-201107271200.txt",
+      "bytes": 133935,
+      "sha256": "48a496b27a6f66b95edd941db954251a865f44163a4d06fa6b52881ba2e7c5d2",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-stations-aws-202208081800.txt",
+      "bytes": 145735,
+      "sha256": "51fbd9471a9770ad7b87cef615523b97e35462e50d951c506c0656000e638265",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-stations-aws-202208082359.txt",
+      "bytes": 145735,
+      "sha256": "51fbd9471a9770ad7b87cef615523b97e35462e50d951c506c0656000e638265",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-stations-aws-202407180500.txt",
+      "bytes": 146335,
+      "sha256": "27b797985d00160abb9cbc3b39eda4768fb6d7928072fa144596e946d1687a5f",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-stations-aws-202407182359.txt",
+      "bytes": 146335,
+      "sha256": "27b797985d00160abb9cbc3b39eda4768fb6d7928072fa144596e946d1687a5f",
+      "source": "backend/src/main/resources/native-game/v1/catalog.json",
       "licence": "기상청 공개 관측자료 · 출처 표시"
     },
     {
