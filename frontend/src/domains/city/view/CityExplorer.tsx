@@ -39,7 +39,11 @@ import './shared-play.css';
 import { siteKey } from '../../installation/entity/installation';
 import '../../rainfall/view/rainfall.css';
 import { useHistorical } from '../../historical/controller/useHistorical';
-import { HistoricalPanel, HistoricalTimeline } from '../../historical/view/HistoricalPanel';
+import {
+  HistoricalPanel,
+  HistoricalPlayback,
+  HistoricalTimeline,
+} from '../../historical/view/HistoricalPanel';
 import { useLiveRainfall } from '../../rainfall/controller/useLiveRainfall';
 import { isRaining } from '../../rainfall/service/rainEffectService';
 import { useReducedMotion } from '../../catalog/controller/useReducedMotion';
@@ -626,9 +630,36 @@ function Explorer({
     />
   );
 
+  const floodTraceControls = (
+    <FloodTraceControls
+      eventId={researchMode ? eventId : comparisonEventId}
+      onEvent={(value) => {
+        setComparisonEventId(value);
+        setTraceRenderError(false);
+      }}
+      fixedEvent={researchMode}
+      catalog={traces.catalog}
+      event={traces.event}
+      loading={traces.loading}
+      error={traces.error}
+      renderError={traceRenderError}
+      retry={traces.retry}
+    />
+  );
+  const publicFacilityToggle = (
+    <label className="public-facility-toggle">
+      <input
+        type="checkbox"
+        checked={assetsEnabled}
+        onChange={(e) => setAssetsEnabled(e.target.checked)}
+      />
+      공개 시설
+    </label>
+  );
+
   return (
     <main
-      className={`studio-layout play-layout shared-play-layout${!facilityExpansionOpen && !cisternOpen && !infrastructureOpen && !site && !ownInstallations.length ? ' shared-map-only' : ''}`}
+      className={`studio-layout play-layout shared-play-layout${researchMode ? ' historical-play-layout' : ''}${!facilityExpansionOpen && !cisternOpen && !infrastructureOpen && !site && !ownInstallations.length ? ' shared-map-only' : ''}`}
     >
       <header className="play-hud gameplay-hud">
         <div className="play-objective">
@@ -639,6 +670,7 @@ function Explorer({
             {district && <small className="game-district-name"> · {district.name}</small>}
           </h1>
         </div>
+        {researchMode && <HistoricalPlayback state={research} />}
         <div className="play-resources">
           {!researchMode && (
             <WeatherBadge
@@ -650,11 +682,7 @@ function Explorer({
               error={rainfall.error}
             />
           )}
-          {researchMode ? (
-            <GameClock at={research.at ?? undefined} label="KST · 재해 재생" />
-          ) : (
-            <GameClock />
-          )}
+          {!researchMode && <GameClock />}
           {researchMode && (
             <button className="disaster-back" onClick={onExit}>
               <ArrowLeft size={15} />
@@ -738,6 +766,12 @@ function Explorer({
                   <Layers3 size={15} />
                   공개 시설
                 </button>
+                {researchMode && (
+                  <div className="historical-map-options">
+                    {publicFacilityToggle}
+                    {floodTraceControls}
+                  </div>
+                )}
                 {!researchMode && (
                   <button aria-expanded={rankingOpen} onClick={() => setRankingOpen((v) => !v)}>
                     <Trophy size={15} />
@@ -747,28 +781,23 @@ function Explorer({
               </div>
             </details>
           </div>
-          <FloodTraceControls
-            eventId={researchMode ? eventId : comparisonEventId}
-            onEvent={(value) => {
-              setComparisonEventId(value);
-              setTraceRenderError(false);
-            }}
-            fixedEvent={researchMode}
-            catalog={traces.catalog}
-            event={traces.event}
-            loading={traces.loading}
-            error={traces.error}
-            renderError={traceRenderError}
-            retry={traces.retry}
-          />
-          <label className="public-facility-toggle">
-            <input
-              type="checkbox"
-              checked={assetsEnabled}
-              onChange={(e) => setAssetsEnabled(e.target.checked)}
-            />
-            공개 시설
-          </label>
+          {researchMode ? (
+            <HistoricalTimeline state={research} onInspect={(d) => chooseSite(d.site, true)}>
+              <SurfaceControls
+                metric={surfaceMetric}
+                onMetric={setSurfaceMetric}
+                state={surface}
+                hasSource={!!surfaceSource}
+                onSeek={seekSurface}
+                renderError={surfaceRenderError}
+              />
+            </HistoricalTimeline>
+          ) : (
+            <>
+              {floodTraceControls}
+              {publicFacilityToggle}
+            </>
+          )}
         </div>
         <section ref={stage} className="city-stage" aria-label="서울 전역 3D 지도">
           {flat ? (
@@ -1093,27 +1122,25 @@ function Explorer({
             {city.attribution}
           </a>
         </section>
-        {!researchMode && !surface.frame ? (
-          <PublicSurfaceControls
-            state={publicSurface}
-            metric={surfaceMetric}
-            onMetric={setSurfaceMetric}
-            renderError={surfaceRenderError}
-          />
-        ) : (
-          <SurfaceControls
-            live={!researchMode}
-            metric={surfaceMetric}
-            onMetric={setSurfaceMetric}
-            state={surface}
-            hasSource={!!surfaceSource}
-            onSeek={seekSurface}
-            renderError={surfaceRenderError}
-          />
-        )}
-        {researchMode && (
-          <HistoricalTimeline state={research} onInspect={(d) => chooseSite(d.site, true)} />
-        )}
+        {!researchMode &&
+          (!surface.frame ? (
+            <PublicSurfaceControls
+              state={publicSurface}
+              metric={surfaceMetric}
+              onMetric={setSurfaceMetric}
+              renderError={surfaceRenderError}
+            />
+          ) : (
+            <SurfaceControls
+              live={!researchMode}
+              metric={surfaceMetric}
+              onMetric={setSurfaceMetric}
+              state={surface}
+              hasSource={!!surfaceSource}
+              onSeek={seekSurface}
+              renderError={surfaceRenderError}
+            />
+          ))}
       </div>
       <FacilityExpansionPanel
         key={account ? `${account.id}:${account.role}:${account.approvalStatus}` : 'visitor'}

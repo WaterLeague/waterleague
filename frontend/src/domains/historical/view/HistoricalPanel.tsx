@@ -3,7 +3,19 @@ import { InitializationEvidence } from '../../physics/view/InitializationEvidenc
 import { InitializationSensitivityEvidence } from '../../physics/view/InitializationSensitivityEvidence';
 import { physicalAmount } from '../../physics/service/physicalValueFormat';
 import { FacilityProfileEvidence } from '../../facility/view/FacilityProfileEvidence';
-import { Play, Pause, Trash2, Leaf, Grid2X2, House, Waves, Sprout, Route } from 'lucide-react';
+import type { ReactNode } from 'react';
+import {
+  Play,
+  Pause,
+  SlidersHorizontal,
+  Trash2,
+  Leaf,
+  Grid2X2,
+  House,
+  Waves,
+  Sprout,
+  Route,
+} from 'lucide-react';
 import type { HistoricalState } from '../controller/useHistorical';
 import type { SharedSite } from '../../installation/entity/installation';
 import type { FacilityType } from '../../game/entity/game';
@@ -31,106 +43,51 @@ const icons = {
   VEGETATIVE_SWALE: Waves,
   INFILTRATION_TRENCH: Route,
 };
+const clockTime = new Intl.DateTimeFormat('ko-KR', {
+  hour: '2-digit',
+  minute: '2-digit',
+  second: '2-digit',
+  hourCycle: 'h23',
+  timeZone: 'Asia/Seoul',
+});
+export function HistoricalPlayback({ state: s }: { state: HistoricalState }) {
+  if (!s.frameCount) return null;
+  return (
+    <div className="historical-playback" role="group" aria-label="재해 재생 상태">
+      <button
+        className="historical-play-toggle"
+        aria-label={s.playing ? '재해 일시정지' : '재해 재생'}
+        onClick={() => s.setPlaying((v) => !v)}
+      >
+        {s.playing ? <Pause size={16} /> : <Play size={16} />}
+      </button>
+      <time dateTime={s.at ?? undefined}>
+        {s.at && clockTime.format(new Date(s.at))} <small>KST</small>
+      </time>
+      <strong>{s.selectedRain ? `1분 ${format.format(s.rainMm)} mm` : '강우 자료 없음'}</strong>
+    </div>
+  );
+}
 export function HistoricalTimeline({
   state: s,
   onInspect,
+  children,
 }: {
   state: HistoricalState;
   onInspect: (draft: HistoricalDraft) => void;
+  children?: ReactNode;
 }) {
-  const lanes: number[] = [];
-  const markers = (s.event && s.duration > 0 ? [...s.drafts] : [])
-    .sort((a, b) => Date.parse(a.marker.installedAt) - Date.parse(b.marker.installedAt))
-    .map((d) => {
-      const second =
-        (Date.parse(d.marker.installedAt) - Date.parse(s.event!.regions[0].start)) / 1000;
-      const position = (second / s.duration) * 100;
-      let lane = lanes.findIndex((end) => position - end >= 5);
-      if (lane < 0) lane = lanes.length;
-      lanes[lane] = position;
-      return { draft: d, second, position, lane };
-    });
+  const markers = (s.event && s.duration > 0 ? [...s.drafts] : []).sort(
+    (a, b) => Date.parse(a.marker.installedAt) - Date.parse(b.marker.installedAt)
+  );
   return (
-    <section className="historical-weather" aria-label="재해 시간 재생">
-      {s.event && (
-        <details className="historical-event-note">
-          <summary>사건 자료·계산 조건</summary>
-          <p>{s.event.summary}</p>
-          <a href={s.event.evidenceUrl} target="_blank" rel="noreferrer">
-            {s.event.evidenceTitle} ↗
-          </a>
-          <p>
-            {s.selectedRain &&
-              `${s.selectedRain.stationName} AWS · 대표 지점에서 ${s.selectedRain.distanceKm}km · 관측 창 누적 ${s.selectedRain.totalDepthMm}mm`}
-          </p>
-          <p>
-            현재 공개 지형에 당시 강우 적용 · 당시 침수 피해 복원 아님 · 구별 강우에 따라 빗줄기
-            표시
-          </p>
-        </details>
-      )}
-      {s.event && !s.selectedRain && (
-        <p role="status">
-          선택한 구의 이 사건 관측자료를 확보하지 못했습니다. 다른 지역의 값을 대신 표시하지
-          않습니다.
-        </p>
-      )}
+    <section className="historical-timeline" aria-label="재해 시간 재생">
       {s.frameCount > 0 && (
         <>
-          <div className="historical-clock">
-            <button
-              aria-label={s.playing ? '재해 일시정지' : '재해 재생'}
-              onClick={() => s.setPlaying((v) => !v)}
-            >
-              {s.playing ? <Pause size={16} /> : <Play size={16} />}
-            </button>
-            <time>{s.at && time(s.at)} KST</time>
-            <strong>
-              {s.selectedRain ? `1분 ${format.format(s.rainMm)} mm` : '선택 구 관측 없음'}
-            </strong>
-            <label>
-              속도
-              <select
-                aria-label="재해 재생 속도"
-                value={s.speed}
-                onChange={(e) => s.setSpeed(Number(e.target.value))}
-              >
-                {[1, 60, 240, 900, 3600].map((v) => (
-                  <option key={v} value={v}>
-                    {v === 1 ? '1배속 · 실제 시간' : `${v}배속`}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-          {!!markers.length && (
-            <div className="historical-installation-track" aria-label="설치 시각 목록">
-              <div style={{ height: Math.max(1, lanes.length) * 32 }}>
-                {markers.map(({ draft: d, second, position, lane }) => {
-                  const Icon = icons[d.facilityType];
-                  const label = `${facilities[d.facilityType].name} · ${time(d.marker.installedAt)} · ${d.site.name}`;
-                  return (
-                    <button
-                      key={d.marker.id}
-                      style={{ left: `${position}%`, top: lane * 32 }}
-                      title={label}
-                      aria-label={label}
-                      onClick={() => {
-                        s.setElapsedSeconds(second);
-                        s.setPlaying(false);
-                        onInspect(d);
-                      }}
-                    >
-                      <Icon size={17} />
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
           <input
             type="range"
             aria-label="재해 재생 시각"
+            aria-valuetext={s.at ? `${time(s.at)} KST` : undefined}
             min="0"
             max={s.duration}
             value={s.elapsedSeconds}
@@ -139,32 +96,105 @@ export function HistoricalTimeline({
               s.setPlaying(false);
             }}
           />
-          <div className="historical-jumps">
-            <button
-              onClick={() => {
-                s.setIndex(
-                  Math.max(
-                    0,
-                    (s.selectedRain ?? s.event!.regions[0]).depthsMm.findIndex((v) => v > 0)
-                  )
-                );
-                s.setPlaying(true);
-              }}
-            >
-              첫 비
-            </button>
-            <button
-              onClick={() => {
-                const r = (s.selectedRain ?? s.event!.regions[0]).depthsMm;
-                s.setIndex(r.indexOf(Math.max(...r)));
-                s.setPlaying(false);
-              }}
-            >
-              강우 최대
-            </button>
-          </div>
+          <select
+            aria-label="재해 재생 속도"
+            value={s.speed}
+            onChange={(e) => s.setSpeed(Number(e.target.value))}
+          >
+            {[1, 60, 240, 900, 3600].map((v) => (
+              <option key={v} value={v}>
+                {v}배속
+              </option>
+            ))}
+          </select>
         </>
       )}
+      <details className="historical-playback-tools">
+        <summary>
+          <SlidersHorizontal size={15} /> 재생 도구
+        </summary>
+        <div>
+          {s.frameCount > 0 && (
+            <div className="historical-jumps">
+              <button
+                onClick={() => {
+                  s.setIndex(
+                    Math.max(
+                      0,
+                      (s.selectedRain ?? s.event!.regions[0]).depthsMm.findIndex((v) => v > 0)
+                    )
+                  );
+                  s.setPlaying(true);
+                }}
+              >
+                첫 비
+              </button>
+              <button
+                onClick={() => {
+                  const rain = (s.selectedRain ?? s.event!.regions[0]).depthsMm;
+                  s.setIndex(rain.indexOf(Math.max(...rain)));
+                  s.setPlaying(false);
+                }}
+              >
+                강우 최대
+              </button>
+            </div>
+          )}
+          {!!markers.length && (
+            <div className="historical-installation-times" aria-label="설치 시각 목록">
+              {markers.map((draft) => {
+                const Icon = icons[draft.facilityType];
+                return (
+                  <button
+                    key={draft.marker.id}
+                    onClick={() => {
+                      s.setElapsedSeconds(
+                        (Date.parse(draft.marker.installedAt) -
+                          Date.parse(s.event!.regions[0].start)) /
+                          1000
+                      );
+                      s.setPlaying(false);
+                      onInspect(draft);
+                    }}
+                  >
+                    <Icon size={17} />
+                    <span>
+                      {facilities[draft.facilityType].name} · {draft.site.name}
+                      <time dateTime={draft.marker.installedAt}>
+                        {time(draft.marker.installedAt)} KST
+                      </time>
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+          {children}
+          {s.event && !s.selectedRain && (
+            <p role="status">
+              선택한 구의 이 사건 관측자료를 확보하지 못했습니다. 다른 지역의 값을 대신 표시하지
+              않습니다.
+            </p>
+          )}
+          {s.event && (
+            <details className="historical-event-note">
+              <summary>사건 자료·계산 조건</summary>
+              <p>{s.event.summary}</p>
+              <a href={s.event.evidenceUrl} target="_blank" rel="noreferrer">
+                {s.event.evidenceTitle} ↗
+              </a>
+              <p>
+                {s.selectedRain &&
+                  `${s.selectedRain.stationName} AWS · 대표 지점에서 ${s.selectedRain.distanceKm}km · 관측 창 누적 ${s.selectedRain.totalDepthMm}mm`}
+              </p>
+              <p>
+                현재 공개 지형에 당시 강우 적용 · 당시 침수 피해 복원 아님 · 구별 강우에 따라 빗줄기
+                표시
+              </p>
+            </details>
+          )}
+        </div>
+      </details>
     </section>
   );
 }

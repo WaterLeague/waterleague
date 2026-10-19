@@ -156,13 +156,6 @@ body:has(.game-shell.is-game) {
     padding: 6px;
   }
 }
-.game-shell.is-game .historical-weather {
-  margin: 0;
-  border: 0;
-  border-bottom: 1px solid #d0d7ca;
-  border-radius: 0;
-  padding: 15px;
-}
 .game-live-clock {
   font-size: 19px;
   color: #edf4dc;
