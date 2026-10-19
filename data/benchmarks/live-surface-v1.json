@@ -1,0 +1,314 @@
+{
+  "schemaVersion": 1,
+  "classification": "DIRECT_FORCING_ENGINE_DIAGNOSTIC_NOT_SEOUL",
+  "rankingEligible": false,
+  "publiclyPublished": false,
+  "tests": {
+    "regressionPassed": 30,
+    "finalNewTestsPassed": 9,
+    "overlappingTests": 8,
+    "distinctTestsPassed": 31,
+    "commands": [
+      "PYTHONPATH=simulation tmp/flood-venv/bin/python -m unittest simulation.tests.test_live_surface_rainfall simulation.tests.test_observed_surface_rainfall simulation.tests.test_surface_frames simulation.tests.test_surface_initialization simulation.tests.test_initialized_coupling",
+      "PYTHONPATH=simulation tmp/flood-venv/bin/python -m unittest simulation.tests.test_live_surface_rainfall"
+    ]
+  },
+  "latest": {
+    "numericalStatus": "PASSED",
+    "observedRainfall": {
+      "schemaVersion": 1,
+      "method": "OBSERVED_MINUTE_DEPTH_UNIFORM_WITHIN_INTERVAL",
+      "startUtc": "2026-10-19T04:07:00+00:00",
+      "endUtc": "2026-10-19T04:17:00+00:00",
+      "durationSeconds": 600,
+      "observedIntervalCount": 10,
+      "rateChangeCount": 1,
+      "stations": [
+        {
+          "stationId": "401",
+          "surfaceAreaM2": 200.0,
+          "depthMm": 0.0,
+          "expectedVolumeM3": 0.0,
+          "sourceSha256": "fd3b779b30bc190df613ca60ac7cebf90d598ed44da1956b3a2de80691799ae2",
+          "sourceHashKind": "STATION_DERIVATION_BUNDLE",
+          "responseSha256": [
+            "5aed8219cb827bb43a5676b6b92d7f55dbec110c99b4beb24f8f08dcfd9a3396"
+          ]
+        },
+        {
+          "stationId": "421",
+          "surfaceAreaM2": 200.0,
+          "depthMm": 0.0,
+          "expectedVolumeM3": 0.0,
+          "sourceSha256": "fe212ad7a4ade02896a14b638f33554142987ab8d1c950268ecb9c5167730863",
+          "sourceHashKind": "STATION_DERIVATION_BUNDLE",
+          "responseSha256": [
+            "4b5286cc2384e385c11b92b10bb64f49805dfeababdc87e60aeb5656fabb0535"
+          ]
+        }
+      ],
+      "expectedSurfaceRainfallM3": 0.0,
+      "assignmentEvidence": "최신 API의 합성 수조 격자 교차 배정 검사; 서울 유역·관측 공간 대표성 근거 아님",
+      "specificationSha256": "a7e69ed914edce14084e64d98e72b4253e3402685bec1ffada6ea7ee583e400a",
+      "sourceFiles": {
+        "direct-aws/5aed8219cb827bb43a5676b6b92d7f55dbec110c99b4beb24f8f08dcfd9a3396.txt": "5aed8219cb827bb43a5676b6b92d7f55dbec110c99b4beb24f8f08dcfd9a3396",
+        "direct-aws/5aed8219cb827bb43a5676b6b92d7f55dbec110c99b4beb24f8f08dcfd9a3396.json": "7fac39d63c84dbec11ec3906f273ed726fc8323c93a9dec44248396babc635de",
+        "direct-aws/station-401.json": "fd3b779b30bc190df613ca60ac7cebf90d598ed44da1956b3a2de80691799ae2",
+        "direct-aws/4b5286cc2384e385c11b92b10bb64f49805dfeababdc87e60aeb5656fabb0535.txt": "4b5286cc2384e385c11b92b10bb64f49805dfeababdc87e60aeb5656fabb0535",
+        "direct-aws/4b5286cc2384e385c11b92b10bb64f49805dfeababdc87e60aeb5656fabb0535.json": "4d5fb1f43eb8a71d5e18f856d97abada552ac2e9323d5507c1bff3a0f7ac34e2",
+        "direct-aws/station-421.json": "fe212ad7a4ade02896a14b638f33554142987ab8d1c950268ecb9c5167730863"
+      },
+      "adapterSha256": "8a308914b3b8dc2cdfaec65ea4f472f3f6917b9db66146dc527d5587ca12317d",
+      "limitations": [
+        "분 내부 일정 강도 가정; 초 단위 실측 아님",
+        "관측소→격자 배정은 명시한 공간 모형; 격자별 현장 관측 아님",
+        "관측 창 밖 외삽·무강우 보간 없음; 지형·관망·경계 검증과 별개"
+      ],
+      "directResponse": {
+        "method": "KMA_AWS_DIRECT_RESPONSE_V1",
+        "endpoint": "https://apihub.kma.go.kr/api/typ01/cgi-bin/url/nph-aws2_min",
+        "qualityPolicy": "COMPLETE_MINUTES_STRICT_ROLLING_CHECK",
+        "replayRequiresNetwork": false,
+        "adapterSha256": "2d795613cbc29b7327983906073b27af9cc9dff6156471b8179c7cd52fec5a3a",
+        "derivationCodeSha256": "14ce246909617af810e5712f80ae621da45872eb6223d856067002d85f3e5f60"
+      },
+      "appliedSurfaceRainfallM3": 0.0,
+      "volumeResidualM3": 0.0
+    },
+    "numericalQuality": {
+      "policyVersion": "SURFACE_NATIVE_BALANCE_v1",
+      "status": "PASSED",
+      "failureCode": null,
+      "nativeSteps": 6000,
+      "lastInternalTimeSeconds": 600.0,
+      "minimumStepSeconds": 0.0999999999321517,
+      "maximumStepSeconds": 0.1,
+      "maximumAbsoluteResidualM3": 0.0,
+      "maximumRelativeResidualPercent": 0.0,
+      "last": {
+        "timeSeconds": 600.0,
+        "storageM3": 0.0,
+        "boundaryNetInflowM3": 0.0,
+        "sourceNetInflowM3": 0.0,
+        "balanceResidualM3": 0.0,
+        "relativeResidualPercent": 0.0,
+        "minimumDepthM": 0.0
+      },
+      "relativeTolerancePercent": 1.0,
+      "absoluteToleranceM3": 1e-08,
+      "sourceSha256": "cd0494c23e2eaa2e3f7cf7feac6484937cd842140e9ee1ddaf003ac35c9281f1"
+    }
+  },
+  "past": {
+    "numericalStatus": "PASSED",
+    "observedRainfall": {
+      "schemaVersion": 1,
+      "method": "OBSERVED_MINUTE_DEPTH_UNIFORM_WITHIN_INTERVAL",
+      "startUtc": "2022-08-08T10:01:00+00:00",
+      "endUtc": "2022-08-08T14:59:00+00:00",
+      "durationSeconds": 17880,
+      "observedIntervalCount": 298,
+      "rateChangeCount": 189,
+      "stations": [
+        {
+          "stationId": "401",
+          "surfaceAreaM2": 200.0,
+          "depthMm": 285.0,
+          "expectedVolumeM3": 57.0,
+          "sourceSha256": "1a60e40c425e02fc41d584817d8f5af4eb5f6b97b8e4fbac255138220ccedbd1",
+          "sourceHashKind": "STATION_DERIVATION_BUNDLE",
+          "responseSha256": [
+            "c287353fd6f861a0af4167aabe5b18945f279975098202a9c66bf4d5b36ab50e"
+          ]
+        },
+        {
+          "stationId": "421",
+          "surfaceAreaM2": 200.0,
+          "depthMm": 73.5,
+          "expectedVolumeM3": 14.7,
+          "sourceSha256": "b13bf09a65bf6c3041bc3ffa36efb821a3da515b8278d38436c66b7a46632513",
+          "sourceHashKind": "STATION_DERIVATION_BUNDLE",
+          "responseSha256": [
+            "fd13e6e5d75707b75d13bb9b0a7860356172f0038d5bee9a68874b0f4f42c0e4"
+          ]
+        }
+      ],
+      "expectedSurfaceRainfallM3": 71.7,
+      "assignmentEvidence": "이미 확보한 공식 호우 원문 형식 호환 검사; 최신 조회·서울 유역 아님",
+      "specificationSha256": "b3dd750682783bfc5b3067d9331dee7f8582f039625100e509d668a77ec3590a",
+      "sourceFiles": {
+        "direct-aws/c287353fd6f861a0af4167aabe5b18945f279975098202a9c66bf4d5b36ab50e.txt": "c287353fd6f861a0af4167aabe5b18945f279975098202a9c66bf4d5b36ab50e",
+        "direct-aws/c287353fd6f861a0af4167aabe5b18945f279975098202a9c66bf4d5b36ab50e.json": "7ec28d3d2319e573645d2d37d27f025e7c643fe7e4e7358c44c3c01bdfbbe7ac",
+        "direct-aws/station-401.json": "1a60e40c425e02fc41d584817d8f5af4eb5f6b97b8e4fbac255138220ccedbd1",
+        "direct-aws/fd13e6e5d75707b75d13bb9b0a7860356172f0038d5bee9a68874b0f4f42c0e4.txt": "fd13e6e5d75707b75d13bb9b0a7860356172f0038d5bee9a68874b0f4f42c0e4",
+        "direct-aws/fd13e6e5d75707b75d13bb9b0a7860356172f0038d5bee9a68874b0f4f42c0e4.json": "504472da4aab3938553193bb9b8cb0b7589cc9f6745ffbd05bddc61e67ee85ca",
+        "direct-aws/station-421.json": "b13bf09a65bf6c3041bc3ffa36efb821a3da515b8278d38436c66b7a46632513"
+      },
+      "adapterSha256": "8a308914b3b8dc2cdfaec65ea4f472f3f6917b9db66146dc527d5587ca12317d",
+      "limitations": [
+        "분 내부 일정 강도 가정; 초 단위 실측 아님",
+        "관측소→격자 배정은 명시한 공간 모형; 격자별 현장 관측 아님",
+        "관측 창 밖 외삽·무강우 보간 없음; 지형·관망·경계 검증과 별개"
+      ],
+      "directResponse": {
+        "method": "KMA_AWS_DIRECT_RESPONSE_V1",
+        "endpoint": "https://apihub.kma.go.kr/api/typ01/cgi-bin/url/nph-aws2_min",
+        "qualityPolicy": "COMPLETE_MINUTES_STRICT_ROLLING_CHECK",
+        "replayRequiresNetwork": false,
+        "adapterSha256": "2d795613cbc29b7327983906073b27af9cc9dff6156471b8179c7cd52fec5a3a",
+        "derivationCodeSha256": "14ce246909617af810e5712f80ae621da45872eb6223d856067002d85f3e5f60"
+      },
+      "appliedSurfaceRainfallM3": 71.6999999998041,
+      "volumeResidualM3": -1.9589663224905962e-10
+    },
+    "numericalQuality": {
+      "policyVersion": "SURFACE_NATIVE_BALANCE_v1",
+      "status": "PASSED",
+      "failureCode": null,
+      "nativeSteps": 178837,
+      "lastInternalTimeSeconds": 17880.0,
+      "minimumStepSeconds": 5.4569682106375694e-11,
+      "maximumStepSeconds": 0.1,
+      "maximumAbsoluteResidualM3": 3.107913926214678e-11,
+      "maximumRelativeResidualPercent": 5.020862562558387e-11,
+      "last": {
+        "timeSeconds": 17880.0,
+        "storageM3": 71.69999999979544,
+        "boundaryNetInflowM3": 1.4585203910523136e-19,
+        "sourceNetInflowM3": 71.6999999998041,
+        "balanceResidualM3": 8.668621376273222e-12,
+        "relativeResidualPercent": 1.2090127442534039e-11,
+        "minimumDepthM": 0.17924999999943658
+      },
+      "relativeTolerancePercent": 1.0,
+      "absoluteToleranceM3": 1e-08,
+      "sourceSha256": "cd0494c23e2eaa2e3f7cf7feac6484937cd842140e9ee1ddaf003ac35c9281f1"
+    }
+  },
+  "replay": {
+    "offline": true,
+    "networkPolicy": "INET_CONNECT_DENIED_IN_REPLAY_PARENT_AND_ENGINE_CHILD",
+    "cases": {
+      "latest": {
+        "matchedFrameFiles": 7,
+        "engineIdentityMatched": true,
+        "fields": [
+          "numericalStatus",
+          "numericalConfiguration",
+          "numericalQuality",
+          "final",
+          "observedRainfall"
+        ]
+      },
+      "past-direct-format": {
+        "matchedFrameFiles": 195,
+        "engineIdentityMatched": true,
+        "fields": [
+          "numericalStatus",
+          "numericalConfiguration",
+          "numericalQuality",
+          "final",
+          "observedRainfall"
+        ]
+      }
+    }
+  },
+  "legacyInputCompatibility": {
+    "sameNativeFrames": 195,
+    "sameFinalState": true
+  },
+  "archives": [
+    {
+      "path": "data/runs/live-surface-20261019-v2/manifest.json",
+      "bytes": 106090,
+      "sha256": "26adc61404a90020ae662c42142802bd8e2b6e737d60f8952858a50a9f822b91",
+      "fileCount": 556
+    },
+    {
+      "path": "data/runs/live-surface-replay-20261019-v2/manifest.json",
+      "bytes": 66315,
+      "sha256": "a6e3a4b464290d696bf7d1c4c12f6790e58c31b874ad81df637346c0132892d5",
+      "fileCount": 344
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "simulation/waterleague_sim/forcing/live_rainfall.py",
+      "bytes": 6843,
+      "sha256": "2d795613cbc29b7327983906073b27af9cc9dff6156471b8179c7cd52fec5a3a"
+    },
+    {
+      "path": "simulation/waterleague_sim/forcing/observed_rainfall.py",
+      "bytes": 11258,
+      "sha256": "8a308914b3b8dc2cdfaec65ea4f472f3f6917b9db66146dc527d5587ca12317d"
+    },
+    {
+      "path": "simulation/waterleague_sim/engine/coupled_flood.py",
+      "bytes": 30604,
+      "sha256": "4340bda6a1cb57c83e5a4cade12d38616f2c7fb973c61ca9ee703c0481af0577"
+    },
+    {
+      "path": "scripts/run_live_surface.py",
+      "bytes": 3658,
+      "sha256": "a2d9b371095c7b171a84c123e0a415e3c37c478986596adcd3373b6a7b6c859f"
+    },
+    {
+      "path": "scripts/verify_live_surface.py",
+      "bytes": 7228,
+      "sha256": "22b357a1b7d2fcf0384d6a761e853a528e6b5a9ea742cbf80f4f788a38bb4954"
+    },
+    {
+      "path": "simulation/tests/test_live_surface_rainfall.py",
+      "bytes": 10955,
+      "sha256": "e6bf22a1571e629436a5f13c817f7d26e73a8b05d9150dc1919cc4bbd6f7150e"
+    }
+  ],
+  "evidenceFiles": [
+    {
+      "path": "data/benchmarks/live-surface-v1/final-tests.txt",
+      "bytes": 302,
+      "sha256": "3d252e27d217ec8af44affc1106b0fdbf35b7ccab8059781c8d7a2b32889f547"
+    },
+    {
+      "path": "data/benchmarks/live-surface-v1/native-manifest.json",
+      "bytes": 106090,
+      "sha256": "26adc61404a90020ae662c42142802bd8e2b6e737d60f8952858a50a9f822b91"
+    },
+    {
+      "path": "data/benchmarks/live-surface-v1/native-summary.txt",
+      "bytes": 378,
+      "sha256": "83e1c6f0d86d960c2eef06d86fa3f01329d86ffbeadfc5ff00c74bcc62d59c5b"
+    },
+    {
+      "path": "data/benchmarks/live-surface-v1/regression.txt",
+      "bytes": 2347,
+      "sha256": "dca93266b3eee5b50e502e3888997c9c32720f32fd6bcf8f97824cbefac31537"
+    },
+    {
+      "path": "data/benchmarks/live-surface-v1/replay-manifest.json",
+      "bytes": 66315,
+      "sha256": "a6e3a4b464290d696bf7d1c4c12f6790e58c31b874ad81df637346c0132892d5"
+    },
+    {
+      "path": "data/benchmarks/live-surface-v1/replay-summary.txt",
+      "bytes": 65,
+      "sha256": "4605641eee062fd7ea1ca223055fd3bdd3365f8f98309d0f77bdc8e529512534"
+    }
+  ],
+  "officialReference": "https://datawiki.kma.go.kr/doku.php?id=기상관측:지상:자동기상관측_aws",
+  "limitations": [
+    "최신 분 강우를 합성 폐쇄 수조에 적용한 입력·수지 검사",
+    "초기 건조 시드이며 실제 서울 지형·배수·선행 수분·현장 검증 아님",
+    "관망 소유 집수 강우의 같은 응답 결속·실시간 증발/바람/경계·공개 게시 워커 미완료",
+    "기관 리그·별도 강우 화면·운영 순위 변경 없음",
+    "관망 원 집수 강우가 있는 직접 조회 결합은 같은 응답 결속 미완료로 거부",
+    "설치된 ANUGA 실행 파일·패키지 해시는 재생에서 일치 확인; 다른 운영체제 바이너리 재현은 이번 범위 아님"
+  ],
+  "preservation": {
+    "oldInputVersionRetained": true,
+    "engineNumericsChanged": false,
+    "frontendChanged": false,
+    "productionDbWrites": false,
+    "liveApiKeyInOutput": false
+  }
+}

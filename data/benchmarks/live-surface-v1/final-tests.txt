@@ -1,0 +1,8 @@
+........WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+.
+----------------------------------------------------------------------
+Ran 9 tests in 3.622s
+
+OK

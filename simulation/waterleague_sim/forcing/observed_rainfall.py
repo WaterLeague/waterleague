@@ -107,9 +107,14 @@ class RainfallSchedule:
 
 
 def compile_rainfall(spec, surface, duration_seconds, root=ROOT):
-    require(isinstance(spec, dict) and spec.get('schemaVersion') == 1
+    require(isinstance(spec, dict) and spec.get('schemaVersion') in (1, 2)
             and isinstance(spec.get('assignmentEvidence'), str) and spec['assignmentEvidence'].strip(),
             'OBSERVED_RAIN_SPECIFICATION_INVALID')
+    direct = spec['schemaVersion'] == 2
+    if direct:
+        from waterleague_sim.forcing.live_rainfall import METHOD, MAX_BYTES, read_live_station
+        require(type(spec['schemaVersion']) is int and spec.get('sourceType') == METHOD,
+                'OBSERVED_RAIN_SPECIFICATION_INVALID')
     start, end = utc(spec.get('startUtc')), utc(spec.get('endUtc'))
     duration = (end - start).total_seconds()
     require(type(duration_seconds) is int and 0 < duration_seconds <= 60 * 100_000
@@ -145,13 +150,16 @@ def compile_rainfall(spec, surface, duration_seconds, root=ROOT):
     count = duration_seconds // 60
     for reference in references:
         require(isinstance(reference, dict), 'OBSERVED_RAIN_REFERENCE_INVALID')
-        data, files = read_station(reference, root)
+        data, files = read_live_station(reference, start, end) if direct else read_station(reference, root)
         sid = data['stationId']
         require(sid not in stations, 'OBSERVED_RAIN_DUPLICATE_STATION')
         a, b = utc(data['start']), utc(data['end'])
         offset = (start - a).total_seconds()
         require(a <= start < end <= b and offset % 60 == 0, 'OBSERVED_RAIN_COVERAGE_INCOMPLETE')
         stations[sid], source_files = data, source_files | files
+        if direct:
+            require(sum(len(raw) for raw in source_files.values()) <= MAX_BYTES,
+                    'LIVE_SURFACE_RESPONSE_TOO_LARGE')
         depths[sid] = data['depthsMm'][int(offset // 60):int(offset // 60) + count]
     require(set(stations) == set(areas), 'OBSERVED_RAIN_ASSIGNMENT_INCOMPLETE')
     events, previous = [], None
@@ -164,7 +172,9 @@ def compile_rainfall(spec, surface, duration_seconds, root=ROOT):
         total = sum((Decimal(str(value)) for value in depths[sid]), Decimal(0))
         summaries.append({'stationId': sid, 'surfaceAreaM2': areas[sid], 'depthMm': float(total),
                           'expectedVolumeM3': float(total) * areas[sid] / 1000,
-                          'sourceSha256': stations[sid]['sourceHash']})
+                          'sourceSha256': stations[sid]['sourceHash'],
+                          **({'sourceHashKind': stations[sid]['sourceHashKind'],
+                              'responseSha256': stations[sid]['sourceHashes']} if direct else {})})
     summary = {'schemaVersion': 1, 'method': 'OBSERVED_MINUTE_DEPTH_UNIFORM_WITHIN_INTERVAL',
                'startUtc': start.isoformat(), 'endUtc': end.isoformat(),
                'durationSeconds': duration_seconds, 'observedIntervalCount': count,
@@ -177,6 +187,13 @@ def compile_rainfall(spec, surface, duration_seconds, root=ROOT):
                'limitations': ['분 내부 일정 강도 가정; 초 단위 실측 아님',
                    '관측소→격자 배정은 명시한 공간 모형; 격자별 현장 관측 아님',
                    '관측 창 밖 외삽·무강우 보간 없음; 지형·관망·경계 검증과 별개']}
+    if direct:
+        from waterleague_sim.ingestion import live
+        summary['directResponse'] = {'method': METHOD, 'endpoint': live.ENDPOINT,
+            'qualityPolicy': 'COMPLETE_MINUTES_STRICT_ROLLING_CHECK',
+            'replayRequiresNetwork': False,
+            'adapterSha256': digest(Path(__file__).with_name('live_rainfall.py').read_bytes()),
+            'derivationCodeSha256': digest(Path(live.__file__).read_bytes())}
     return RainfallSchedule(events, summary, source_files)
 
 

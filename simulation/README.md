@@ -87,3 +87,14 @@ PYTHONPATH=simulation tmp/flood-venv/bin/python scripts/compare_connected_facili
 ```
 
 보관한 서초 연구 원본과 별도 시설 관측 엔진 필요. 원가 요청의 전체 참조를 먼저 검사하고, 기준안·개별 시설·이용조 개방안·공동안을 실행한다. 원문의 견적 항목·미분류 차액·문헌 유지비·미산정 시설 ID·원가 해시·원문/코드가 결과에 포함된다. 견적 부분합과 연간 비용은 분리되며 총공사비·현행 단가·재해 당시 가격은 미확정. 운영 설치/예산 차감/순위에 사용하는 경로가 아니다.
+
+## 직접 AWS 응답의 지표 계산
+
+`run_live_surface.py`는 입력 JSON의 `mode`(`surface`/`coupled`), 명시적인 `model`, `rainfall`의 `startUtc`·`endUtc`·`stationByTriangle`·`assignmentEvidence`를 사용한다. 현재 관측은 공식 API에서 직접 가져오고, 시간대/시계/소유권/분 관측을 검사한 뒤 실행 입력에만 원문을 보존한다. 인증키는 기존 로컬 설정의 `KMA_API_KEY`를 사용하며 저장 입력·로그·엔진 자식 프로세스에 넣지 않는다.
+
+```sh
+tmp/flood-venv/bin/python scripts/run_live_surface.py \
+  --input path/to/explicit-surface-request.json --output data/runs/new-surface-run
+```
+
+위 경로는 사용자가 마련한 명시적 입력 경로이며 제공된 실제 서울 모형을 뜻하지 않는다. 관망 집수 강우 결속·현재 기상 초기화/연장·공개 게시 워커는 아직 연결하지 않았으므로 자동 서울 침수 개방 명령이 아니다. `verify_live_surface.py --output data/runs/new-live-verification`은 최신 10분의 2관측소 응답과 이미 확보한 2022년 호우 원문을 합성 폐쇄 수조에 적용하는 수치 진단이다. 운영 지도·순위에는 기록하지 않는다. 오프라인 재생에는 실행의 `observed-surface-input.json`을 읽어 `forcing.surface_run.run_observed_surface(surface, observedRainfall, 새_출력_경로)`를 호출한다. 이 경로는 원문 해시와 분량을 다시 검사하며 API를 호출하지 않는다.

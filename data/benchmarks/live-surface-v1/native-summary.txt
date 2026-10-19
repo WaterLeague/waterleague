@@ -1,0 +1,7 @@
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+latest PASSED
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+past PASSED
+{"latestRainM3": 0.0, "pastRainM3": 71.7, "liveFilesMatched": 7, "legacyFilesMatched": 195}

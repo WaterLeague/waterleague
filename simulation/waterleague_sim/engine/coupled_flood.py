@@ -159,6 +159,9 @@ def run_coupled(model, directory):
                                            evaluation_seconds=model['durationSeconds'])
     observed = None
     if model.get('observedRainfall') is not None:
+        # 직접 조회 형식은 관망 집수 강우의 같은 응답 결속 전까지 지표 소유 강우만 허용한다.
+        if model['observedRainfall'].get('schemaVersion') == 2:
+            require(not model.get('networkRainfallTriangles'), 'LIVE_SURFACE_NETWORK_FORCING_NOT_BOUND')
         require(not model.get('surfaceRainfall') and model['surface'].get('rainfallStationIds') is None,
                 'COUPLED_RAINFALL_FORCING_CONFLICT')
         require_network_clock(model['network'], model['observedRainfall'])
