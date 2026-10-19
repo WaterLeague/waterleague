@@ -1,8 +1,8 @@
 import { memo, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
-import { useFrame } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
 import { Color, InstancedMesh, Matrix4, PerspectiveCamera, Vector3 } from 'three';
-import type { InfrastructureAsset } from '../entity/infrastructure';
+import type { InfrastructureAsset, InfrastructureMarker } from '../entity/infrastructure';
 import { infrastructureSymbolGeometry } from '../service/infrastructureShapeService';
 import type { Terrain } from '../../terrain/entity/terrain';
 import { terrainHeight } from '../../terrain/service/terrainService';
@@ -110,29 +110,85 @@ export const InfrastructureMarkers = memo(function InfrastructureMarkers(props: 
       {groups.map(([kind, assets]) => (
         <KindSymbols key={kind} {...props} assets={assets} />
       ))}
-      {markers
-        .filter((a) => (a.clusterCount ?? 0) > 1)
-        .map((a) => (
-          <Html
-            key={a.id}
-            center
-            position={[
-              a.center[0],
-              terrainHeight(props.terrain, a.center) + (a.footprint?.displayHeightM ?? 0) + 2,
-              -a.center[1],
-            ]}
-            zIndexRange={[10, 0]}
-          >
-            <button
-              className="infrastructure-cluster"
-              style={{ background: infrastructureColor(a) }}
-              onClick={() => props.onSelect(a)}
-              aria-label={`공개 시설 ${a.clusterCount}개 · 확대해서 보기`}
-            >
-              {a.clusterCount}
-            </button>
-          </Html>
-        ))}
+      <ClusterLabels markers={markers} terrain={props.terrain} onSelect={props.onSelect} />
     </>
   );
 });
+
+const screenCenter = (
+  _object: unknown,
+  _camera: unknown,
+  size: { width: number; height: number }
+): [number, number] => [size.width / 2, size.height / 2];
+
+function ClusterLabels({
+  markers,
+  terrain,
+  onSelect,
+}: {
+  markers: InfrastructureMarker[];
+  terrain: Terrain | null;
+  onSelect: (asset: InfrastructureAsset) => void;
+}) {
+  const labels = useRef(new Map<string, HTMLButtonElement>());
+  const invalidate = useThree((state) => state.invalidate);
+  const point = useMemo(() => new Vector3(), []);
+  const clusters = useMemo(() => markers.filter((a) => (a.clusterCount ?? 0) > 1), [markers]);
+  const last = useRef('');
+  useLayoutEffect(() => {
+    last.current = '';
+  }, [clusters, terrain]);
+  useFrame(({ camera, size }) => {
+    const signature = `${camera.matrixWorld.elements}:${camera.projectionMatrix.elements}:${size.width}:${size.height}`;
+    if (last.current === signature || labels.current.size !== clusters.length) return;
+    last.current = signature;
+    for (const asset of clusters) {
+      const element = labels.current.get(asset.id);
+      if (!element) continue;
+      point
+        .set(
+          asset.center[0],
+          terrainHeight(terrain, asset.center) + (asset.footprint?.displayHeightM ?? 0) + 2,
+          -asset.center[1]
+        )
+        .project(camera);
+      element.hidden = Math.abs(point.x) > 1 || Math.abs(point.y) > 1 || Math.abs(point.z) > 1;
+      if (!element.hidden)
+        element.style.transform = `translate(${((point.x + 1) * size.width) / 2}px,${((1 - point.y) * size.height) / 2}px) translate(-50%,-50%)`;
+    }
+  });
+  // 확대 경계마다 별도 React 루트를 제거하지 않고 한 DOM 영역에서 표식만 갱신한다.
+  return (
+    <Html
+      fullscreen
+      calculatePosition={screenCenter}
+      zIndexRange={[10, 0]}
+      style={{ pointerEvents: 'none' }}
+    >
+      {clusters.map((asset) => (
+        <button
+          key={asset.id}
+          hidden
+          ref={(element) => {
+            if (element) labels.current.set(asset.id, element);
+            else labels.current.delete(asset.id);
+            last.current = '';
+            invalidate();
+          }}
+          className="infrastructure-cluster"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            pointerEvents: 'auto',
+            background: infrastructureColor(asset),
+          }}
+          onClick={() => onSelect(asset)}
+          aria-label={`공개 시설 ${asset.clusterCount}개 · 확대해서 보기`}
+        >
+          {asset.clusterCount}
+        </button>
+      ))}
+    </Html>
+  );
+}

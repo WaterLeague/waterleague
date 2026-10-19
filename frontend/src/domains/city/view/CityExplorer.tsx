@@ -27,6 +27,7 @@ import { useMapLabelWheel } from '../controller/useMapLabelWheel';
 import type { City, CityFocus, CityBuilding } from '../entity/city';
 import type { CityEligibility } from '../dto/cityEligibilityDto';
 import { representativeInstallations } from '../../installation/service/memberSitesService';
+import { useInstallationLayout } from '../../installation/controller/useInstallationLayout';
 import { occupiedRoofSource } from '../service/siteVisibilityService';
 import { siteFocus, selectionView } from '../service/siteFocusService';
 import { zoomPlanView, type PlanView } from '../service/planNavigationService';
@@ -65,10 +66,8 @@ import { WeeklyBoard, scoreFormat } from '../../weekly/view/WeeklyBoard';
 import { useTerrain } from '../../terrain/controller/useTerrain';
 import { GameClock } from '../../game/view/GameClock';
 import { useInfrastructure } from '../../infrastructure/controller/useInfrastructure';
-import {
-  visibleInfrastructure,
-  unreservedRoofIds,
-} from '../../infrastructure/service/infrastructureService';
+import { useVisibleInfrastructure } from '../../infrastructure/controller/useVisibleInfrastructure';
+import { unreservedRoofIds } from '../../infrastructure/service/infrastructureService';
 import { InfrastructurePanel } from '../../infrastructure/view/InfrastructurePanel';
 import type { InfrastructureAsset } from '../../infrastructure/entity/infrastructure';
 import { useFloodTraces } from '../../floodtrace/controller/useFloodTraces';
@@ -266,17 +265,12 @@ function Explorer({
     () => unreservedRoofIds(eligibility.roofIds, infrastructure.catalog?.assets ?? null),
     [eligibility.roofIds, infrastructure.catalog]
   );
-  const publicAssets = useMemo(
-    () =>
-      assetsEnabled && infrastructure.catalog
-        ? visibleInfrastructure(
-            infrastructure.catalog.assets,
-            camera.center,
-            camera.distance,
-            selectedAssetId
-          )
-        : [],
-    [infrastructure.catalog, assetsEnabled, camera, selectedAssetId]
+  const publicAssets = useVisibleInfrastructure(
+    infrastructure.catalog?.assets,
+    assetsEnabled,
+    camera.center,
+    camera.distance,
+    selectedAssetId
   );
   const selectAsset = useCallback((asset: InfrastructureAsset) => {
     setCisternOpen(false);
@@ -338,19 +332,20 @@ function Explorer({
     () => representativeInstallations(shared.installations, viewerId ?? null),
     [shared.installations, viewerId]
   );
+  const layout = useInstallationLayout(shared.installations, viewerId ?? null);
   const occupiedRoofs = useMemo(
     () =>
       new Set(
-        shared.installations
+        layout.placements
           .filter((i) => i.ownerId === viewerId)
           .flatMap((i) => occupiedRoofSource(i.districtId, i.cellId, eligibility.legacySiteSources))
       ),
-    [shared.installations, viewerId, eligibility]
+    [layout.placements, viewerId, eligibility]
   );
   const ownInstallations = shared.installations.filter((i) => i.ownerId === viewerId);
   const ownSiteKeys = useMemo(
-    () => new Set(shared.installations.filter((i) => i.ownerId === viewerId).map(siteKey)),
-    [shared.installations, viewerId]
+    () => new Set(layout.placements.filter((i) => i.ownerId === viewerId).map(siteKey)),
+    [layout.placements, viewerId]
   );
   const remaining = researchMode ? research.remaining : (budget.value?.remainingKrw ?? 0);
   const occupied = site ? ownInstallations.find((i) => siteKey(i) === siteKey(site)) : undefined;
@@ -527,24 +522,28 @@ function Explorer({
   );
   const selectStreet = useCallback(
     async (sourceId: string, point: [number, number]) => {
-      if (mapFacilityType !== 'PERMEABLE_PAVEMENT' || cisternOpen) return;
+      if (cisternOpen || (mapFacilityType && mapFacilityType !== 'PERMEABLE_PAVEMENT')) return;
       const districtId = viewingDistrict(city.districts, point)?.id;
-      if (!districtId || (ownDistrictId && districtId !== ownDistrictId)) return;
+      if (!districtId) return;
       const request = ++selectionRequest.current;
       setSelectionError('');
       try {
         const value = await loadStreetSite(districtId, sourceId, point);
-        if (request === selectionRequest.current) chooseSite(value, false, true);
+        if (request === selectionRequest.current) chooseSite(value, !mapFacilityType, true);
       } catch (error) {
-        if (request === selectionRequest.current)
+        if (request === selectionRequest.current) {
+          setSite(null);
+          setInfrastructureOpen(false);
+          setFacilityExpansionOpen(false);
           setSelectionError(
             error instanceof ApiError && error.code === 'RESOURCE_NOT_FOUND'
               ? '이 구간에는 설치 가능한 투수포장 구역이 없습니다. 표시된 주변 후보를 선택해 주세요.'
               : '도로 위치를 불러오지 못했습니다. 다시 선택해 주세요.'
           );
+        }
       }
     },
-    [mapFacilityType, cisternOpen, city.districts, ownDistrictId, chooseSite]
+    [mapFacilityType, cisternOpen, city.districts, chooseSite]
   );
   const selectParking = useCallback(
     async (sourceId: string, point: [number, number]) => {
@@ -718,7 +717,7 @@ function Explorer({
       viewerId={viewerId ?? null}
       sites={visibleSites}
       installations={shared.installations}
-      installationBySite={installationBySite}
+      installationBySite={layout.bySite}
       selectedSite={selectedSite}
       facilityType={mapFacilityType}
       planningRoles={planningRoles}
@@ -956,7 +955,7 @@ function Explorer({
                   ownDistrictId={ownDistrictId ?? null}
                   sites={visibleSites}
                   installations={shared.installations}
-                  installationBySite={installationBySite}
+                  installationBySite={layout.bySite}
                   selectedSite={selectedSite}
                   onSite={selectSite}
                   onBuilding={selectBuilding}
@@ -1172,7 +1171,7 @@ function Explorer({
               )}
               {!selected ? (
                 <p>먼저 구를 선택해 주세요.</p>
-              ) : shared.siteBusy ? (
+              ) : shared.siteBusy && !shared.sites.length ? (
                 <p role="status">지도 주변 후보 조회 중</p>
               ) : shared.siteError ? (
                 <p role="alert">
@@ -1184,7 +1183,7 @@ function Explorer({
                   <p>
                     {shared.matchedCount.toLocaleString('ko-KR')}곳 · 현재 보는 위치에서 가까운 순
                   </p>
-                  <div className="shared-location-items">
+                  <div className="shared-location-items" aria-busy={shared.siteBusy}>
                     {shared.sites
                       .filter(
                         (s) =>

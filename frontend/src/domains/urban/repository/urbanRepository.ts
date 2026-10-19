@@ -56,6 +56,7 @@ export async function read(path: string, sha: string, bytes: number, signal: Abo
 }
 let catalog: z.infer<typeof catalogDto> | null = null;
 const cache = new Map<string, Street[]>();
+const selections = new Map<string, Street[]>();
 export async function loadStreets(center: [number, number], distance: number, signal: AbortSignal) {
   if (!catalog)
     catalog = catalogDto.parse(
@@ -77,6 +78,12 @@ export async function loadStreets(center: [number, number], distance: number, si
             t.bounds[1] < center[1] + radius &&
             t.bounds[3] > center[1] - radius
         );
+  const key = references
+    .map((ref) => ref.sha256)
+    .sort()
+    .join(',');
+  const selected = selections.get(key);
+  if (selected) return selected;
   const roads = await Promise.all(
     references.map(async (ref) => {
       if (cache.has(ref.sha256)) return cache.get(ref.sha256)!;
@@ -90,7 +97,12 @@ export async function loadStreets(center: [number, number], distance: number, si
       return value;
     })
   );
-  return [...new Map(roads.flat().map((r) => [r.id, r])).values()];
+  const result = [...new Map(roads.flat().map((r) => [r.id, r])).values()];
+  if (!signal.aborted) {
+    selections.set(key, result);
+    while (selections.size > 4) selections.delete(selections.keys().next().value!);
+  }
+  return result;
 }
 let population: Population | null = null;
 export async function loadPopulation(signal: AbortSignal) {

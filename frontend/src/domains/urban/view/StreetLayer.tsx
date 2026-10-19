@@ -75,6 +75,7 @@ export const StreetLayer = memo(function StreetLayer({
       onClick={
         onStreet
           ? (event) => {
+              if (event.delta > 4) return;
               const index = streetAtFace(geometry.userData.streetEnds, event.faceIndex ?? -1);
               if (index < 0) return;
               event.stopPropagation();

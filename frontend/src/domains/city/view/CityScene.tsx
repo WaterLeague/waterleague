@@ -27,7 +27,11 @@ import { polygonShapes } from '../../catalog/service/mapGeometryService';
 import { watchContextLoss } from '../../catalog/service/sceneLifecycleService';
 import { positionSceneLabels } from '../../catalog/service/sceneLabelService';
 
-import type { SharedSite, SharedInstallation } from '../../installation/entity/installation';
+import type {
+  SharedSite,
+  SharedInstallation,
+  InstallationLayout,
+} from '../../installation/entity/installation';
 import { siteKey } from '../../installation/entity/installation';
 import { buildingOpacity, otherDistrictOpacity } from '../service/siteVisibilityService';
 import {
@@ -69,7 +73,7 @@ import {
 import { StreetLife } from '../../urban/view/StreetLife';
 import { ParkingLayer } from '../../urban/view/ParkingLayer';
 import type { ParkingData } from '../../urban/entity/parking';
-import { visibleParkingLots, parkingOutsideFacilities } from '../../urban/service/parkingService';
+import { useParkingLots } from '../../urban/controller/useParkingLots';
 import { emptyFloodStats } from '../../urban/service/floodMovementService';
 const TerrainContext = createContext<Terrain | null>(null);
 const mapEvents: Parameters<typeof Canvas>[0]['events'] = (state) => ({
@@ -108,15 +112,15 @@ function Buildings({
   const [error, setError] = useState<Error | null>(null);
   useEffect(() => {
     const controller = new AbortController();
-    let geometry: THREE.BufferGeometry | undefined;
-    if (buildings.length)
+    if (!buildings.length) setRendered(null);
+    else
       void requestBuildingMesh(
         buildings.map((b) => ({ ...b, baseElevationM: terrainHeight(terrain, b.center) })),
         controller.signal
       )
         .then((data) => {
           if (controller.signal.aborted) return;
-          geometry = new THREE.BufferGeometry();
+          const geometry = new THREE.BufferGeometry();
           geometry.setAttribute('position', new THREE.BufferAttribute(data.positions, 3));
           geometry.setAttribute('normal', new THREE.BufferAttribute(data.normals, 3));
           geometry.computeBoundingSphere();
@@ -133,11 +137,12 @@ function Buildings({
         });
     return () => {
       controller.abort();
-      geometry?.dispose();
     };
   }, [buildings, terrain]);
+  // 대체 메시가 준비된 뒤 이전 GPU 버퍼를 해제해 비어 있는 프레임을 만들지 않는다.
+  useEffect(() => () => rendered?.geometry.dispose(), [rendered]);
   if (error) throw error;
-  const geometry = rendered?.source === buildings ? rendered.geometry : null;
+  const geometry = rendered?.geometry;
   return geometry ? (
     <mesh
       geometry={geometry}
@@ -150,7 +155,7 @@ function Buildings({
         const index = buildingFaceIndex(rendered!.ends, event.faceIndex);
         if (index >= 0) {
           event.stopPropagation();
-          onSelect(buildings[index]);
+          onSelect(rendered!.source[index]);
         }
       }}
     >
@@ -471,7 +476,7 @@ const CityScene = memo(function CityScene({
   ownDistrictId: string | null;
   sites: SharedSite[];
   installations: SharedInstallation[];
-  installationBySite: ReadonlyMap<string, SharedInstallation>;
+  installationBySite: ReadonlyMap<string, InstallationLayout>;
   selectedSite: string;
   onSite: (key: string) => void;
   wetDistricts: City['districts'];
@@ -488,14 +493,12 @@ const CityScene = memo(function CityScene({
   facilityType: FacilityType | '';
   viewerId: string | null;
 }) {
-  const parkingLots = useMemo(
-    () =>
-      parkingOutsideFacilities(
-        visibleParkingLots(parking?.lots ?? [], rainCamera.center, rainCamera.distance),
-        sites,
-        installationBySite
-      ),
-    [parking, rainCamera, sites, installationBySite]
+  const parkingLots = useParkingLots(
+    parking,
+    rainCamera.center,
+    rainCamera.distance,
+    sites,
+    installationBySite
   );
   const parkingSources = useMemo(() => new Set(parkingLots.map((lot) => lot.id)), [parkingLots]);
   const reactions = useRef({ traffic: emptyFloodStats, parking: emptyFloodStats });
@@ -601,7 +604,9 @@ const CityScene = memo(function CityScene({
               parking={parking}
               terrain={terrain}
               detail={rainCamera.distance < 4500}
-              onStreet={facilityType === 'PERMEABLE_PAVEMENT' ? onStreet : undefined}
+              onStreet={
+                !facilityType || facilityType === 'PERMEABLE_PAVEMENT' ? onStreet : undefined
+              }
             />
             <StreetLife
               roads={streets}

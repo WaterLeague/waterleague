@@ -2,7 +2,7 @@ import type { ParkingData, ParkingLot } from '../entity/parking';
 import { streetPath, type StreetPath } from './streetLifeService';
 import { inBuildingRing } from '../../city/service/buildingSelectionService';
 import { triangleIntersection } from './floodFieldService';
-import type { SharedInstallation, SharedSite } from '../../installation/entity/installation';
+import type { InstallationLayout, SharedSite } from '../../installation/entity/installation';
 import { siteKey } from '../../installation/entity/installation';
 import { placementFootprint } from '../../catalog/service/facilityGeometryService';
 import type { Street } from '../entity/urban';
@@ -17,10 +17,16 @@ export function parkingDisplayRoads(roads: Street[], parking: ParkingData) {
   });
 }
 
+export type ParkingObstacleSite = Pick<
+  SharedSite,
+  'districtId' | 'cellId' | 'kind' | 'coordinates' | 'areaM2'
+> & {
+  physicalInputs?: Pick<NonNullable<SharedSite['physicalInputs']>, 'swaleDesign' | 'trenchDesign'>;
+};
 export function parkingOutsideFacilities(
   lots: ParkingLot[],
-  sites: SharedSite[],
-  installed: ReadonlyMap<string, SharedInstallation>
+  sites: ParkingObstacleSite[],
+  installed: ReadonlyMap<string, InstallationLayout>
 ) {
   const obstacles = sites.flatMap((site) => {
     const placement = installed.get(siteKey(site));

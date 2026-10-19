@@ -50,24 +50,25 @@ export function useCityTiles(city: City, camera: { center: [number, number]; dis
     [error, setError] = useState(''),
     [busy, setBusy] = useState(false);
   const wanted = useMemo(() => nearbyTiles(city, camera.center, camera.distance), [city, camera]);
-  const key = wanted.map((t) => t.id).join(',');
+  const key = wanted
+    .map((t) => t.id)
+    .sort()
+    .join(',');
   useEffect(() => {
     const controller = new AbortController();
     setError('');
     setBusy(wanted.length > 0);
-    setTiles((previous) => previous.filter((t) => wanted.some((w) => w.id === t.id)));
-    // 동시에 네 타일만 전송해 이동 중 취소와 메모리 사용을 제한.
+    // 새 범위가 준비될 때까지 현재 메시를 유지하고 필요한 타일만 캐시에서 보충한다.
     async function run() {
+      const next: CityTile[] = [];
       for (let i = 0; i < wanted.length; i += 4) {
         const batch = await Promise.all(
           wanted.slice(i, i + 4).map((t) => loadCityTile(t, controller.signal))
         );
         if (controller.signal.aborted) return;
-        setTiles((previous) => [
-          ...previous.filter((t) => !batch.some((b) => b.id === t.id)),
-          ...batch,
-        ]);
+        next.push(...batch);
       }
+      if (!controller.signal.aborted) setTiles(next.sort((a, b) => a.id.localeCompare(b.id)));
     }
     void run()
       .catch((e) => {

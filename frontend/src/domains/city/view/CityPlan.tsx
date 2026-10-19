@@ -6,7 +6,11 @@ import { publicInfrastructureBuildingIds } from '../../infrastructure/service/in
 import { memo, useMemo } from 'react';
 import type { City, CityBuilding, CityFocus, CityTile } from '../entity/city';
 import type { CityPlayRegion } from '../dto/cityPlayDto';
-import type { SharedSite, SharedInstallation } from '../../installation/entity/installation';
+import type {
+  SharedSite,
+  SharedInstallation,
+  InstallationLayout,
+} from '../../installation/entity/installation';
 import type { FacilityType, Placement } from '../../game/entity/game';
 import { placementFootprint } from '../../catalog/service/facilityGeometryService';
 import { siteKey } from '../../installation/entity/installation';
@@ -33,7 +37,7 @@ import { CisternLayoutPlan } from '../../installation/view/CisternLayoutPlan';
 import type { CisternGeometryPreview } from '../../installation/dto/cisternLayoutDto';
 import type { Street } from '../../urban/entity/urban';
 import type { ParkingData } from '../../urban/entity/parking';
-import { visibleParkingLots, parkingOutsideFacilities } from '../../urban/service/parkingService';
+import { useParkingLots } from '../../urban/controller/useParkingLots';
 
 type Props = {
   streets: Street[];
@@ -57,7 +61,7 @@ type Props = {
   viewerId: string | null;
   sites: SharedSite[];
   installations: SharedInstallation[];
-  installationBySite: ReadonlyMap<string, SharedInstallation>;
+  installationBySite: ReadonlyMap<string, InstallationLayout>;
   selectedSite: string;
   facilityType: FacilityType | '';
   eligibleRoofs: ReadonlySet<string>;
@@ -123,14 +127,12 @@ export const CityPlan = memo(function CityPlan({
     handlers,
   } = usePlanNavigation(requestedFocus, city.bounds, camera, onCamera, onNavigate);
   const overview = focus.distance >= 9000;
-  const parkingLots = useMemo(
-    () =>
-      parkingOutsideFacilities(
-        visibleParkingLots(parking?.lots ?? [], focus.center, focus.distance),
-        sites,
-        installationBySite
-      ),
-    [parking, focus, sites, installationBySite]
+  const parkingLots = useParkingLots(
+    parking,
+    focus.center,
+    focus.distance,
+    sites,
+    installationBySite
   );
   const parkingSources = useMemo(() => new Set(parkingLots.map((lot) => lot.id)), [parkingLots]);
   const symbols = useMemo(
@@ -394,7 +396,7 @@ export const CityPlan = memo(function CityPlan({
       </g>
       <g
         fill="none"
-        pointerEvents={facilityType === 'PERMEABLE_PAVEMENT' ? 'stroke' : 'none'}
+        pointerEvents={!facilityType || facilityType === 'PERMEABLE_PAVEMENT' ? 'stroke' : 'none'}
         strokeLinecap="round"
         strokeLinejoin="round"
       >
@@ -408,7 +410,12 @@ export const CityPlan = memo(function CityPlan({
               stroke={r.bridge ? '#4e606e' : r.walk ? '#b3ae9f' : '#667071'}
               strokeWidth={r.width}
               onClick={(event) => {
-                if (dragging || facilityType !== 'PERMEABLE_PAVEMENT' || !onStreet) return;
+                if (
+                  dragging ||
+                  (facilityType && facilityType !== 'PERMEABLE_PAVEMENT') ||
+                  !onStreet
+                )
+                  return;
                 const matrix = svg.current?.getScreenCTM();
                 if (!matrix) return;
                 const point = new DOMPoint(event.clientX, event.clientY).matrixTransform(

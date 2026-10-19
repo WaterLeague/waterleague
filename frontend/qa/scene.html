@@ -20,18 +20,21 @@
         font: 11px system-ui;
       "
     >
-      <b>로컬 QA · 제품 빌드 제외</b><br />
-      <button id="loss">그래픽 연결 강제 손실</button>
-      <button id="block">다음 3D 초기화 차단</button>
-      <button id="allow">3D 초기화 허용</button>
-      <button id="measure">10초 연속 렌더 측정</button>
-      <button id="idle">3초 정지 렌더 측정</button>
-      <button id="meshes">공개 건물 선택·재사용 측정</button>
-      <pre id="result" style="white-space: pre-wrap; max-height: 130px; overflow: auto">
+      <details open>
+        <summary>로컬 QA · 제품 빌드 제외</summary>
+        <button id="loss">그래픽 연결 강제 손실</button>
+        <button id="block">다음 3D 초기화 차단</button>
+        <button id="allow">3D 초기화 허용</button>
+        <button id="measure">10초 연속 렌더 측정</button>
+        <button id="idle">3초 정지 렌더 측정</button>
+        <button id="meshes">공개 건물 선택·재사용 측정</button>
+        <pre id="result" style="white-space: pre-wrap; max-height: 130px; overflow: auto">
 준비 중</pre>
+      </details>
     </aside>
     <script type="module">
       import { addAfterEffect, invalidate } from '@react-three/fiber';
+      import { BufferGeometry, Object3D } from 'three';
       if (!import.meta.env.DEV || !['localhost', '127.0.0.1', '[::1]'].includes(location.hostname))
         throw new Error('로컬 개발 환경 전용 화면');
       const out = document.getElementById('result');
@@ -44,7 +47,19 @@
           out.textContent = String(error);
         }
       };
-      let geometryJobs = 0;
+      let geometryJobs = 0,
+        geometryDisposals = 0,
+        meshRemovals = 0;
+      const originalDispose = BufferGeometry.prototype.dispose;
+      BufferGeometry.prototype.dispose = function () {
+        geometryDisposals++;
+        return originalDispose.call(this);
+      };
+      const originalRemove = Object3D.prototype.remove;
+      Object3D.prototype.remove = function (...objects) {
+        meshRemovals += objects.filter((object) => object.isMesh).length;
+        return originalRemove.apply(this, objects);
+      };
       const WorkerOriginal = window.Worker;
       window.Worker = class extends WorkerOriginal {
         postMessage(...args) {
@@ -110,6 +125,8 @@
         if (measuring) return;
         stamps = [];
         const workerBefore = geometryJobs,
+          disposalsBefore = geometryDisposals,
+          removalsBefore = meshRemovals,
           started = performance.now();
         measuring = true;
         function tick() {
@@ -130,6 +147,8 @@
           out.textContent = JSON.stringify(
             {
               geometryJobs: geometryJobs - workerBefore,
+              geometryDisposals: geometryDisposals - disposalsBefore,
+              meshRemovals: meshRemovals - removalsBefore,
               longTasks: longTasks.filter((e) => e.start >= started),
               frames: stamps.length,
               elapsedMs: stamps.at(-1) - stamps[0],

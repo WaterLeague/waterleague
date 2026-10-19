@@ -29,7 +29,16 @@ export function useInstallations(query: SiteQuery, live = true) {
       void loadSites(JSON.parse(key) as SiteQuery, controller.signal)
         .then((page) => {
           if (!disposed) {
-            setSitePage({ scope, sites: page.sites });
+            setSitePage((previous) => {
+              const old = new Map(
+                previous.sites.map((site) => [`${site.districtId}:${site.cellId}`, site])
+              );
+              const sites = page.sites.map((site) => {
+                const cached = old.get(`${site.districtId}:${site.cellId}`);
+                return cached && JSON.stringify(cached) === JSON.stringify(site) ? cached : site;
+              });
+              return { scope, sites };
+            });
             setCounts(page.districtCounts);
             setMatchedCount(page.matchedCount);
           }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { Population, Street } from '../entity/urban';
 import { loadPopulation, loadStreets } from '../repository/urbanRepository';
 import { loadParking } from '../repository/parkingRepository';
@@ -34,7 +34,7 @@ export function useUrbanData(center: [number, number], distance: number) {
       ])
         .then(([v, p]) => {
           if (!controller.signal.aborted) {
-            setRoads(parkingDisplayRoads(v, p));
+            setRoads(v);
             setParking(p);
             setError('');
           }
@@ -48,5 +48,9 @@ export function useUrbanData(center: [number, number], distance: number) {
       controller.abort();
     };
   }, [x, y, scale]);
-  return { roads, parking, population, error, populationError };
+  const displayRoads = useMemo(
+    () => (parking ? parkingDisplayRoads(roads, parking) : roads),
+    [roads, parking]
+  );
+  return { roads: displayRoads, parking, population, error, populationError };
 }

@@ -1,7 +1,9 @@
 import { siteKey, type SharedInstallation } from '../entity/installation';
 
-export function representativeInstallations(values: SharedInstallation[], viewerId: string | null) {
-  const sites = new Map<string, SharedInstallation>();
+export function representativeInstallations<
+  T extends Pick<SharedInstallation, 'id' | 'districtId' | 'cellId' | 'ownerId'>,
+>(values: T[], viewerId: string | null) {
+  const sites = new Map<string, T>();
   for (const value of values) {
     const key = siteKey(value),
       previous = sites.get(key);

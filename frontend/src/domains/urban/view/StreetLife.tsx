@@ -80,10 +80,10 @@ export const StreetLife = memo(function StreetLife({
   const x = Math.round(center[0] / 100) * 100,
     y = Math.round(center[1] / 100) * 100;
   const radius = Math.max(450, Math.min(2800, Math.ceil(distance / 250) * 300));
+  const roadPaths = useMemo(() => roads.map(streetPath), [roads]);
   const paths = useMemo(
     () =>
-      roads
-        .map(streetPath)
+      roadPaths
         .map((path) => ({ path, distance: distanceToStreet(path, x, y) }))
         .filter((p) => p.path.length > 25 && p.distance < radius)
         .sort(
@@ -91,7 +91,7 @@ export const StreetLife = memo(function StreetLife({
             a.distance - b.distance || stableSeed(a.path.road.id) - stableSeed(b.path.road.id)
         )
         .map((p) => p.path),
-    [roads, x, y, radius]
+    [roadPaths, x, y, radius]
   );
   const parkingRoutes = useMemo(() => new Map(parking?.routes.map((r) => [r.id, r])), [parking]);
   const agents = useMemo(
