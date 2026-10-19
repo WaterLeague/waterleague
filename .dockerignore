@@ -27,6 +27,8 @@ frontend/qa/
 !data/models/**
 !data/costs/
 !data/costs/lid-reference-v5.json
+!data/manifests/
+!data/manifests/vworld-seongdong-topography-20260307.json
 !data/derived/
 !data/derived/cpu-reference.json
 !data/derived/cpu-reference-ngii-v2.json
