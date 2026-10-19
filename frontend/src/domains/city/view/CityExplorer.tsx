@@ -1099,6 +1099,7 @@ function Explorer({
       ) : researchMode ? (
         <HistoricalPanel
           state={research}
+          districts={city.districts}
           onInspect={(d) => {
             const start = research.event?.regions[0].start;
             if (start)

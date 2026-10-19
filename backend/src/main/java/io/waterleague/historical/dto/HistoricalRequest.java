@@ -14,7 +14,29 @@ public record HistoricalRequest(
     @NotNull @Size(min = 1, max = 50) List<@Valid Item> placements,
     @Size(min = 1, max = 20) String sensitivityCellId,
     @Pattern(regexp = "INSTALLATION_TIME_EXPERIMENT_V1") String temporalPolicy,
-    UUID parentExperimentId) {
+    UUID parentExperimentId,
+    @Positive Long designRevision,
+    @Pattern(regexp = "seoul-[0-9]{8}") String eventId) {
+  public HistoricalRequest(
+      UUID requestKey,
+      String districtId,
+      String modelHash,
+      List<Item> placements,
+      String sensitivityCellId,
+      String temporalPolicy,
+      UUID parentExperimentId) {
+    this(
+        requestKey,
+        districtId,
+        modelHash,
+        placements,
+        sensitivityCellId,
+        temporalPolicy,
+        parentExperimentId,
+        null,
+        null);
+  }
+
   public HistoricalRequest(
       UUID requestKey,
       String districtId,

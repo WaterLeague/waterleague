@@ -1,0 +1,3 @@
+Browser tab: 14, Title: "재해 여러 구 자동 계산 · 로컬 검증", URL: "http://127.0.0.1:5173/qa/historical-multidistrict.html".
+There has been no change in the accessibility tree.
+The focused UI element is 5 button 0초로 이동

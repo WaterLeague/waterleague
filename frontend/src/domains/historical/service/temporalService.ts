@@ -79,3 +79,62 @@ export function historicalScoreAt(result: NonNullable<HistoricalJob['result']>, 
     { at, differenceM3: 0, baselineAccountedM3: 0, designAccountedM3: 0 }
   );
 }
+
+export function historicalDistrictSignature(modelHash: string, drafts: HistoricalDraft[]) {
+  return JSON.stringify([
+    modelHash,
+    [...drafts]
+      .sort((a, b) => a.site.cellId.localeCompare(b.site.cellId))
+      .map((d) => [
+        d.site.cellId,
+        d.site.modelHash,
+        d.facilityType,
+        d.areaM2,
+        d.marker.installedAt,
+      ]),
+  ]);
+}
+type Region = { districtId: string; modelHash: string };
+export function nextHistoricalCalculation(
+  regions: Region[],
+  drafts: HistoricalDraft[],
+  jobs: Record<string, HistoricalJob>,
+  attempts: ReadonlyMap<string, string>
+) {
+  if (Object.values(jobs).some((j) => ['QUEUED', 'RUNNING'].includes(j.state))) return null;
+  for (const region of [...regions].sort((a, b) => a.districtId.localeCompare(b.districtId))) {
+    const selected = drafts.filter((d) => d.site.districtId === region.districtId);
+    if (!selected.length || matchesHistoricalDraft(jobs[region.modelHash] ?? null, selected))
+      continue;
+    const signature = historicalDistrictSignature(region.modelHash, selected);
+    if (attempts.get(region.districtId) !== signature) return { ...region, signature };
+  }
+  return null;
+}
+export function historicalFacilityStates(
+  regions: Region[],
+  drafts: HistoricalDraft[],
+  jobs: Record<string, HistoricalJob>,
+  at: string | null
+) {
+  return drafts.map((draft) => {
+    const region = regions.find((r) => r.districtId === draft.site.districtId);
+    const candidate = region ? jobs[region.modelHash] : undefined;
+    const matching = matchesHistoricalDraft(
+      candidate ?? null,
+      drafts.filter((d) => d.site.districtId === draft.site.districtId)
+    );
+    const job = matching ? candidate : undefined;
+    const result =
+      job?.state === 'SUCCEEDED'
+        ? job.result?.facilities?.find((f) => f.cellId === draft.site.cellId)
+        : undefined;
+    return {
+      draft,
+      state: job?.state,
+      jobId: job?.id,
+      before: !!at && Date.parse(at) < Date.parse(draft.marker.installedAt),
+      score: at && result?.frames ? scoreAt(result.frames, at) : null,
+    };
+  });
+}

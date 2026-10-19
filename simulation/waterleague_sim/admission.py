@@ -5,6 +5,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 POLICIES = {
+    'seoul-infrastructure-occupancy-20261019-v5': '5271ba50b87d0de090a6fdf5128c2e383ab67238b98d326e99abf1852d99af1a',
     'seoul-basin-footprints-20261018-v4': '5b15ba1ff3df4460f33a4bac3dd68485c082d7c56d75eec8653d8631444eb871',
     'seoul-basin-footprints-20261018-v3': '4937ca34cfeb59441ea80c539863f8359207e6ad27af7c227e600af523463d16',
     'seoul-basin-footprints-20261018-v2': '42595f660fa135279a87488c5cafe872326884562312d123394d5b197e93c3a0',

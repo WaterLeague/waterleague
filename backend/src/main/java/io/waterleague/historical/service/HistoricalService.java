@@ -32,6 +32,7 @@ public class HistoricalService {
   private final JsonService json;
   private final io.waterleague.disaster.service.DisasterService disasters;
   private final io.waterleague.cost.service.CostService costRecords;
+  private final io.waterleague.historical.repository.HistoricalDesignRepository designs;
 
   public HistoricalService(
       HistoricalRepository jobs,
@@ -43,7 +44,8 @@ public class HistoricalService {
       PlacementValidationService validation,
       JsonService json,
       io.waterleague.disaster.service.DisasterService disasters,
-      io.waterleague.cost.service.CostService costRecords) {
+      io.waterleague.cost.service.CostService costRecords,
+      io.waterleague.historical.repository.HistoricalDesignRepository designs) {
     this.jobs = jobs;
     this.budget = budget;
     this.admission = admission;
@@ -54,6 +56,7 @@ public class HistoricalService {
     this.json = json;
     this.disasters = disasters;
     this.costRecords = costRecords;
+    this.designs = designs;
   }
 
   public HistoricalExperiment require(UUID owner, UUID id) {
@@ -80,6 +83,9 @@ public class HistoricalService {
 
   @Transactional
   public HistoricalView create(UUID owner, HistoricalRequest dto) {
+    boolean savedDesign = dto.designRevision() != null;
+    if (savedDesign != (dto.eventId() != null) || (savedDesign && dto.temporalPolicy() == null))
+      throw new DomainException(ErrorCode.PLACEMENT_INVALID);
     if (dto.sensitivityCellId() != null
         && dto.placements().stream().noneMatch(p -> p.cellId().equals(dto.sensitivityCellId())))
       throw new DomainException(ErrorCode.PLACEMENT_INVALID);
@@ -157,13 +163,28 @@ public class HistoricalService {
     frozen.getFirst().put("budgetAccounting", accounting);
     frozen.getFirst().put("publicAssetPolicy", sites.publicAssetPolicy());
     String body = json.write(frozen), hash = json.hash(dto.modelHash() + "\n" + body);
+    // 편집 저장과 계산 승인 사이의 버전 확인을 같은 회원 잠금으로 직렬화한다.
     admission.lockAdmission();
-    admission.lockOwner(owner);
+    try {
+      admission.lockOwner(owner);
+    } catch (org.springframework.dao.EmptyResultDataAccessException e) {
+      throw new DomainException(ErrorCode.RESOURCE_NOT_FOUND);
+    }
     var previous = jobs.byKey(owner, dto.requestKey());
     if (previous.isPresent()) {
       // 원장 추가 전 입력도 같은 사용자 요청이면 기존 실행을 반환한다.
       var old = previous.get();
       var oldPlacements = json.tree(old.placements());
+      if (!Objects.equals(
+              oldPlacements.get(0).has("designRevision")
+                  ? oldPlacements.get(0).path("designRevision").longValue()
+                  : null,
+              dto.designRevision())
+          || !Objects.equals(
+              oldPlacements.get(0).has("designEventId")
+                  ? oldPlacements.get(0).path("designEventId").asString()
+                  : null,
+              dto.eventId())) throw new DomainException(ErrorCode.CONFLICT);
       if (!old.modelHash().equals(dto.modelHash())
           || !old.districtId().equals(dto.districtId())
           || oldPlacements.get(0).has("submissionPolicy")
@@ -200,6 +221,49 @@ public class HistoricalService {
       }
       return view(previous.get());
     }
+    var savedRows = new HashMap<String, tools.jackson.databind.JsonNode>();
+    if (savedDesign) {
+      var saved =
+          designs
+              .latest(owner, dto.eventId())
+              .orElseThrow(() -> new DomainException(ErrorCode.RESOURCE_NOT_FOUND));
+      if (saved.revision() != dto.designRevision())
+        throw new DomainException(ErrorCode.HISTORICAL_DESIGN_CONFLICT);
+      if (!json.hash(saved.snapshotRaw()).equals(saved.snapshotSha256()))
+        throw new DomainException(ErrorCode.HISTORICAL_DESIGN_INVALID);
+      var whole = new EnumMap<FacilityType, BigDecimal>(FacilityType.class);
+      for (var row : json.tree(saved.snapshotRaw()).path("placements")) {
+        var item = row.path("item");
+        whole.merge(
+            FacilityType.valueOf(item.path("facilityType").asString()),
+            row.path("cost").decimalValue(),
+            BigDecimal::add);
+        if (item.path("districtId").asString().equals(dto.districtId())) {
+          if (!row.path("rainfallModelHash").asString().equals(dto.modelHash()))
+            throw new DomainException(ErrorCode.PLACEMENT_INVALID);
+          savedRows.put(item.path("cellId").asString(), row);
+        }
+      }
+      // 다른 구의 계산을 순차 실행해도 설계 전체에 한 번 부여한 예산을 나눠 중복 사용하지 않는다.
+      var wholeAccounting = budget.validateDesign(whole);
+      if (savedRows.size() != dto.placements().size())
+        throw new DomainException(ErrorCode.PLACEMENT_INVALID);
+      for (var p : dto.placements()) {
+        var row = savedRows.get(p.cellId());
+        if (row == null
+            || !row.path("item").path("facilityType").asString().equals(p.facilityType().name())
+            || row.path("item").path("areaM2").decimalValue().compareTo(p.areaM2()) != 0
+            || !Instant.parse(row.path("item").path("installedAt").asString())
+                .equals(p.installedAt())
+            || !row.path("site").path("modelHash").asString().equals(p.siteModelHash()))
+          throw new DomainException(ErrorCode.PLACEMENT_INVALID);
+      }
+      frozen.getFirst().put("designRevision", saved.revision());
+      frozen.getFirst().put("designEventId", dto.eventId());
+      frozen.getFirst().put("designSnapshotRaw", saved.snapshotRaw());
+      frozen.getFirst().put("designSnapshotSha256", saved.snapshotSha256());
+      frozen.getFirst().put("wholeDesignBudgetAccounting", wholeAccounting);
+    }
     // 기존 요청은 원 입력으로 반환하고 새로운 배치만 현재 공개 경계와 대조한다.
     for (var p : dto.placements()) {
       var site = sites.requireInstallable(district.id(), p.cellId());
@@ -225,8 +289,19 @@ public class HistoricalService {
       var record =
           costRecords.snapshot(
               site, type, area, site.unitCosts().get(type.name()).multiply(area).setScale(2));
-      row.put("costSnapshotRaw", record.raw());
-      row.put("costSnapshotSha256", record.sha256());
+      var savedRow = savedRows.get(row.get("cellId"));
+      if (savedRow != null) {
+        if (savedRow
+                .path("cost")
+                .decimalValue()
+                .compareTo(site.unitCosts().get(type.name()).multiply(area))
+            != 0) throw new DomainException(ErrorCode.HISTORICAL_SITE_CHANGED);
+        row.put("costSnapshotRaw", savedRow.path("costSnapshotRaw").asString());
+        row.put("costSnapshotSha256", savedRow.path("costSnapshotSha256").asString());
+      } else {
+        row.put("costSnapshotRaw", record.raw());
+        row.put("costSnapshotSha256", record.sha256());
+      }
     }
     body = json.write(frozen);
     hash = json.hash(dto.modelHash() + "\n" + body);

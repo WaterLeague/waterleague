@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>재해 여러 구 자동 계산 · 로컬 검증</title>
+  </head>
+  <body style="margin: 0; background: #f2f3ee; color: #284133; font: 14px system-ui">
+    <header style="padding: 16px">
+      <strong>로컬 UI 검사 · 실제 공개 입력 SWMM 결과 · 합성 회원 · 서버 쓰기 없음</strong>
+      <p>선택 구는 고정한 채 저장된 두 구의 시설을 자동 계산. 저장·작업 큐 응답만 대체.</p>
+      <p id="requests" role="status">이번 접속 계산 요청 0회</p>
+    </header>
+    <main id="root" style="max-width: 1000px; margin: auto"></main>
+    <script type="module">
+      if (!import.meta.env.DEV || !['localhost', '127.0.0.1', '[::1]'].includes(location.hostname))
+        throw new Error('로컬 전용');
+      const [
+        { default: React },
+        { createRoot },
+        { useHistorical },
+        { HistoricalPanel, HistoricalTimeline },
+        { designMock },
+      ] = await Promise.all([
+        import('react'),
+        import('react-dom/client'),
+        import('/src/domains/historical/controller/useHistorical.ts'),
+        import('/src/domains/historical/view/HistoricalPanel.tsx'),
+        import('/qa/historical-design-mock.js'),
+        import('/src/shared/ui/base.css'),
+        import('/src/shared/ui/game.css'),
+        import('/src/domains/city/view/shared-play.css'),
+      ]);
+      const fixture = await (await fetch('/qa/historical-multidistrict.local.json')).json();
+      const budget = await (await fetch('/api/v1/budget')).json();
+      const sites = fixture.design.snapshot.placements.map((p) => p.site);
+      const design = designMock(fixture.design, sites, 'waterleague-qa-multidistrict-design-v1');
+      const jobs = new Map(
+        JSON.parse(sessionStorage.getItem('waterleague-qa-multidistrict-jobs-v1') ?? '[]')
+      );
+      const originalFetch = window.fetch.bind(window);
+      const requests = [];
+      let failNext = new URLSearchParams(location.search).has('failFirst');
+      window.fetch = async (url, init = {}) => {
+        const path = new URL(String(url), location.href).pathname;
+        if (path === '/api/v1/auth/csrf')
+          return Response.json({ token: 'local-only', headerName: 'X-CSRF-TOKEN' });
+        const saved = await design.fetch(url, init);
+        if (saved) return saved;
+        if (path === '/api/v1/historical' && (!init.method || init.method === 'GET'))
+          return Response.json([...jobs.values()]);
+        if (path === '/api/v1/historical/submissions') return Response.json([]);
+        if (path === '/api/v1/historical' && init.method === 'POST') {
+          const body = JSON.parse(init.body);
+          requests.push({
+            districtId: body.districtId,
+            revision: body.designRevision,
+            key: body.requestKey,
+          });
+          document.getElementById('requests').textContent =
+            '이번 접속 계산 요청 ' +
+            requests.length +
+            '회 · ' +
+            requests.map((r) => r.districtId + ' 저장본 ' + r.revision).join(' → ');
+          if (failNext) {
+            failNext = false;
+            throw new TypeError('로컬 응답 유실 시험');
+          }
+          if (body.designRevision !== design.read().revision)
+            return Response.json(
+              { title: '저장본 충돌', code: 'HISTORICAL_DESIGN_CONFLICT' },
+              { status: 409 }
+            );
+          const source = fixture.jobs.find(
+            (j) => j.districtId === body.districtId && j.modelHash === body.modelHash
+          );
+          if (
+            !source ||
+            body.placements.length !== source.placements.length ||
+            body.placements.some(
+              (p) =>
+                !source.placements.some(
+                  (q) =>
+                    q.cellId === p.cellId &&
+                    q.siteModelHash === p.siteModelHash &&
+                    q.facilityType === p.facilityType &&
+                    q.areaM2 === p.areaM2 &&
+                    Date.parse(q.installedAt) === Date.parse(p.installedAt)
+                )
+            )
+          )
+            throw new Error('실제 계산 외 QA 입력 거부');
+          const job = { ...source, id: body.requestKey, createdAt: new Date().toISOString() };
+          jobs.set(job.id, job);
+          sessionStorage.setItem('waterleague-qa-multidistrict-jobs-v1', JSON.stringify([...jobs]));
+          return Response.json({ ...job, state: 'QUEUED', result: null });
+        }
+        if (path.startsWith('/api/v1/historical/'))
+          return Response.json(jobs.get(path.split('/').pop()));
+        if (init.method && init.method !== 'GET') throw new Error('서버 쓰기 금지');
+        return originalFetch(url, init);
+      };
+      const account = {
+        id: '00000000-0000-0000-0000-000000000001',
+        role: 'MEMBER',
+        memberType: 'PLAYER',
+        approvalStatus: 'APPROVED',
+        displayName: '로컬 시험',
+        districtId: '2419953',
+      };
+      const h = React.createElement;
+      function App() {
+        const s = useHistorical(true, '2419953', account, budget, fixture.design.eventId);
+        const [selected, setSelected] = React.useState(
+          sites.find((s) => s.districtId === '2419953')
+        );
+        const inspect = (d) => {
+          setSelected(d.site);
+          document.getElementById('requests').textContent +=
+            ' · 선택 위치 ' + d.site.districtId + '/' + d.site.cellId;
+        };
+        return h(
+          React.Fragment,
+          null,
+          h(
+            'div',
+            { style: { display: 'flex', gap: 8, padding: 12 } },
+            ...[0, 137, 3717, 7200, 14400].map((t) =>
+              h(
+                'button',
+                {
+                  key: t,
+                  onClick: () => {
+                    s.setPlaying(false);
+                    s.setElapsedSeconds(t);
+                  },
+                },
+                t + '초로 이동'
+              )
+            ),
+            h(
+              'button',
+              {
+                onClick: () => {
+                  failNext = true;
+                },
+              },
+              '다음 요청 실패'
+            )
+          ),
+          h(HistoricalTimeline, { state: s, onInspect: inspect }),
+          h(
+            'section',
+            { style: { maxWidth: 480, margin: 'auto' } },
+            h(HistoricalPanel, {
+              state: s,
+              site: selected,
+              type: 'GREEN_ROOF',
+              area: '20',
+              onType: () => {},
+              onArea: () => {},
+              onLogin: () => {},
+              authenticated: true,
+              error: '',
+              districtName: '성동구',
+              districts: [
+                { id: '2410520', name: '강남구' },
+                { id: '2419953', name: '성동구' },
+              ],
+              onInspect: inspect,
+            })
+          )
+        );
+      }
+      createRoot(document.getElementById('root')).render(h(App));
+    </script>
+  </body>
+</html>

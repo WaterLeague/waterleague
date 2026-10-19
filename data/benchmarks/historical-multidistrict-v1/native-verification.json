@@ -1,0 +1,50 @@
+{
+  "classification": "SAVED_DESIGN_INDEPENDENT_SURFACES_TEST",
+  "rankingEligible": false,
+  "cases": [
+    {
+      "index": 0,
+      "districtId": "2410520",
+      "installedAt": "2022-08-08T09:02:17Z",
+      "resultPath": "historical/c6b04142-31f5-45c4-bc23-cdab505fc50f/9a13db36-945e-421b-91e5-e87127e23312/result.json",
+      "resultSha256": "8b96a91a35f6493d6b4b5eaeb89a8442b86094e80cdb5e9e1d074b50cd7feb9e",
+      "differenceM3": -0.00024224365165537165,
+      "nativeFiles": {
+        "0/baseline.inp": "c7b2d8ac1cf50e801541bd244fb2a375dca9fbad06932febd0a9d08542e29b54",
+        "0/baseline.out": "25790f65fbe9218a53962aac8b432ba66c55addb232d9958be7a24429c57ccc0",
+        "0/strategy.inp": "0f4d18dcbb9fa673656db0e192790eb698ffa7834d1f8bf1ca68dcf54a6d63d8",
+        "0/strategy.out": "76479b5e2e476fd068a7f91c2336afd91873a613dd42d832e07878887ad28be4"
+      }
+    },
+    {
+      "index": 1,
+      "districtId": "2419953",
+      "installedAt": "2022-08-08T10:01:57Z",
+      "resultPath": "historical/ca3dfd84-a7ef-445e-ad1a-a9587d0f28a2/42959e3f-3608-4e2a-9b4f-d3a7b3a9c2c2/result.json",
+      "resultSha256": "62399f45f2fbf387d6e7671209a92ddadaffbd10d41a0a7469e5f760dfb49403",
+      "differenceM3": -6.821792664624127e-05,
+      "nativeFiles": {
+        "0/baseline.inp": "a09297c88c157f2b25a51aa26040c0d0162602f4003e10a55a14cfc7600a44d7",
+        "0/baseline.out": "f3962b441b247447727a3f598f3f662dcb4d7bcdb1392d5c35a7e03c97401c2c",
+        "0/strategy.inp": "bc695f2644e636a4f4d8e7d9c89226a148d1d74f7a8cdc01f6587ca494a3bb0c",
+        "0/strategy.out": "d6a53822aeadf38acf01885a756f4ef194a6af0db7f80e1a24e0ae546e1b2a6a"
+      }
+    },
+    {
+      "index": 2,
+      "districtId": "2410520",
+      "installedAt": "2022-08-08T09:02:17Z",
+      "resultPath": "historical/b7cda683-6354-420d-a94b-14a896beefd8/eacccfbd-acba-4cf9-b3a3-ba167b378910/result.json",
+      "resultSha256": "8b96a91a35f6493d6b4b5eaeb89a8442b86094e80cdb5e9e1d074b50cd7feb9e",
+      "differenceM3": -0.00024224365165537165,
+      "nativeFiles": {
+        "0/baseline.inp": "c7b2d8ac1cf50e801541bd244fb2a375dca9fbad06932febd0a9d08542e29b54",
+        "0/baseline.out": "25790f65fbe9218a53962aac8b432ba66c55addb232d9958be7a24429c57ccc0",
+        "0/strategy.inp": "0f4d18dcbb9fa673656db0e192790eb698ffa7834d1f8bf1ca68dcf54a6d63d8",
+        "0/strategy.out": "76479b5e2e476fd068a7f91c2336afd91873a613dd42d832e07878887ad28be4"
+      }
+    }
+  ],
+  "sameInputNativeReplay": true,
+  "limitation": "두 구의 독립 표면 실제 엔진 실행; 연결 유역·현장 검증 아님"
+}

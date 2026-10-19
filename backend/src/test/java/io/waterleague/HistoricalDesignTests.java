@@ -30,6 +30,7 @@ class HistoricalDesignTests {
   }
 
   @Autowired HistoricalDesignService service;
+  @Autowired io.waterleague.historical.service.HistoricalService history;
   @Autowired SiteCatalogRepository sites;
   @Autowired AccountRepository accounts;
   @Autowired io.waterleague.disaster.service.DisasterService disasters;
@@ -248,5 +249,223 @@ class HistoricalDesignTests {
         .isInstanceOfSatisfying(
             DomainException.class,
             e -> assertThat(e.code()).isEqualTo(ErrorCode.HISTORICAL_DESIGN_INVALID));
+  }
+
+  io.waterleague.historical.dto.HistoricalRequest calculation(
+      UUID key, long revision, List<HistoricalDesignRequest.Item> items) {
+    String district = items.getFirst().districtId();
+    String model =
+        disasters.catalog().events().stream()
+            .filter(e -> e.id().equals(eventId))
+            .findFirst()
+            .orElseThrow()
+            .regions()
+            .stream()
+            .filter(r -> r.districtId().equals(district))
+            .findFirst()
+            .orElseThrow()
+            .modelHash();
+    return new io.waterleague.historical.dto.HistoricalRequest(
+        key,
+        district,
+        model,
+        items.stream()
+            .map(
+                p ->
+                    new io.waterleague.historical.dto.HistoricalRequest.Item(
+                        p.cellId(),
+                        p.facilityType(),
+                        p.areaM2(),
+                        p.installedAt(),
+                        sites.require(district, p.cellId()).modelHash()))
+            .toList(),
+        null,
+        "INSTALLATION_TIME_EXPERIMENT_V1",
+        null,
+        revision,
+        eventId);
+  }
+
+  @Test
+  void allDistrictCalculationsBindOneSavedDesignAndPreserveItsCostSource() throws Exception {
+    var items = new ArrayList<HistoricalDesignRequest.Item>();
+    for (String district : List.of("2410520", "2419953")) {
+      var site =
+          sites.district(district).values().stream()
+              .filter(
+                  v ->
+                      v.cellId().startsWith("RW")
+                          && v.existingInfrastructure() == null
+                          && v.maxAreaM2().compareTo(new BigDecimal("20")) >= 0)
+              .sorted(Comparator.comparing(io.waterleague.installation.view.SiteView::cellId))
+              .findFirst()
+              .orElseThrow();
+      items.add(
+          new HistoricalDesignRequest.Item(
+              UUID.randomUUID(),
+              district,
+              site.cellId(),
+              FacilityType.GREEN_ROOF,
+              new BigDecimal("20"),
+              start.plusSeconds(items.isEmpty() ? 137 : 3717)));
+    }
+    var saved = service.save(owner, eventId, request(0, items));
+    var exported = new ArrayList<Object>();
+    for (var p : items) {
+      var dto = calculation(UUID.randomUUID(), 1, List.of(p));
+      var job = history.create(owner, dto);
+      var row = job.placements().get(0);
+      assertThat(row.path("designSnapshotSha256").asString()).isEqualTo(saved.snapshotSha256());
+      assertThat(json.hash(row.path("designSnapshotRaw").asString()))
+          .isEqualTo(saved.snapshotSha256());
+      assertThat(
+              row.path("wholeDesignBudgetAccounting")
+                  .path("programs")
+                  .get(0)
+                  .path("allocatedKrw")
+                  .decimalValue())
+          .isEqualByComparingTo("14000000");
+      var source =
+          saved
+              .snapshot()
+              .path("placements")
+              .valueStream()
+              .filter(v -> v.path("item").path("districtId").asString().equals(p.districtId()))
+              .findFirst()
+              .orElseThrow();
+      assertThat(row.path("costSnapshotRaw")).isEqualTo(source.path("costSnapshotRaw"));
+      assertThat(history.create(owner, dto).id()).isEqualTo(job.id());
+      var original = history.require(owner, job.id());
+      exported.add(
+          Map.of(
+              "modelHash",
+              original.modelHash(),
+              "placements",
+              original.placements(),
+              "inputHash",
+              original.inputHash()));
+    }
+    String target = System.getProperty("waterleague.integration.design.run.fixture");
+    if (target != null)
+      java.nio.file.Files.writeString(
+          java.nio.file.Path.of(target),
+          json.write(Map.of("design", saved, "requests", exported)),
+          java.nio.file.StandardOpenOption.CREATE_NEW);
+    assertThat(
+            db.queryForObject(
+                "SELECT count(*) FROM historical_experiments WHERE owner_id=?",
+                Integer.class,
+                owner))
+        .isEqualTo(2);
+    assertThat(
+            db.queryForObject(
+                "SELECT count(*) FROM budget_ledger_entries WHERE owner_id=?",
+                Integer.class,
+                owner))
+        .isZero();
+  }
+
+  @Test
+  void staleForeignAndAlteredSavedDesignCalculationsAreRejectedAtomically() {
+    var p = item("2419953", "20", 137);
+    service.save(owner, eventId, request(0, List.of(p)));
+    var dto = calculation(UUID.randomUUID(), 1, List.of(p));
+    assertThatThrownBy(() -> history.create(UUID.randomUUID(), dto))
+        .isInstanceOf(DomainException.class);
+    var changed =
+        new HistoricalDesignRequest.Item(
+            p.id(),
+            p.districtId(),
+            p.cellId(),
+            p.facilityType(),
+            new BigDecimal("10"),
+            p.installedAt());
+    assertThatThrownBy(
+            () -> history.create(owner, calculation(UUID.randomUUID(), 1, List.of(changed))))
+        .isInstanceOf(DomainException.class);
+    var job = history.create(owner, dto);
+    service.save(owner, eventId, request(1, List.of()));
+    assertThat(history.create(owner, dto).id()).isEqualTo(job.id());
+    assertThatThrownBy(() -> history.create(owner, calculation(UUID.randomUUID(), 1, List.of(p))))
+        .isInstanceOfSatisfying(
+            DomainException.class,
+            e -> assertThat(e.code()).isEqualTo(ErrorCode.HISTORICAL_DESIGN_CONFLICT));
+    assertThatThrownBy(() -> history.create(owner, calculation(dto.requestKey(), 2, List.of(p))))
+        .isInstanceOfSatisfying(
+            DomainException.class, e -> assertThat(e.code()).isEqualTo(ErrorCode.CONFLICT));
+    assertThat(
+            db.queryForObject(
+                "SELECT count(*) FROM historical_experiments WHERE owner_id=?",
+                Integer.class,
+                owner))
+        .isEqualTo(1);
+  }
+
+  @Test
+  void executionRechecksWholeDesignBudgetEvenWhenSelectedDistrictFits() {
+    var a = item("2419953", "20", 137);
+    var saved = service.save(owner, eventId, request(0, List.of(a, item("2410520", "20", 197))));
+    var snapshot = saved.snapshot().deepCopy();
+    for (var row : snapshot.path("placements"))
+      if (!row.path("item").path("districtId").asString().equals(a.districtId()))
+        ((tools.jackson.databind.node.ObjectNode) row).put("cost", new BigDecimal("2000000000"));
+    // 저장 이후 한도에 맞지 않게 된 과거 설계도 실행 시 전체 사업군 한도로 거부한다.
+    String raw = json.write(snapshot);
+    db.update(
+        "UPDATE historical_design_revisions SET snapshot_raw=?,snapshot_sha256=? WHERE owner_id=?",
+        raw,
+        json.hash(raw),
+        owner);
+    assertThatThrownBy(() -> history.create(owner, calculation(UUID.randomUUID(), 1, List.of(a))))
+        .isInstanceOf(DomainException.class);
+    assertThat(
+            db.queryForObject(
+                "SELECT count(*) FROM historical_experiments WHERE owner_id=?",
+                Integer.class,
+                owner))
+        .isZero();
+  }
+
+  @Test
+  void simultaneousCancellationAndCalculationKeepOneConsistentSnapshot() throws Exception {
+    var p = item("2419953", "20", 137);
+    service.save(owner, eventId, request(0, List.of(p)));
+    var dto = calculation(UUID.randomUUID(), 1, List.of(p));
+    var gate = new CountDownLatch(1);
+    try (var pool = Executors.newVirtualThreadPerTaskExecutor()) {
+      var run =
+          pool.submit(
+              () -> {
+                gate.await();
+                try {
+                  return history
+                      .create(owner, dto)
+                      .placements()
+                      .get(0)
+                      .path("designRevision")
+                      .asLong();
+                } catch (DomainException e) {
+                  assertThat(e.code()).isEqualTo(ErrorCode.HISTORICAL_DESIGN_CONFLICT);
+                  return 0L;
+                }
+              });
+      var cancel =
+          pool.submit(
+              () -> {
+                gate.await();
+                return service.save(owner, eventId, request(1, List.of()));
+              });
+      gate.countDown();
+      assertThat(cancel.get(10, TimeUnit.SECONDS).revision()).isEqualTo(2);
+      long used = run.get(10, TimeUnit.SECONDS);
+      assertThat(used).isIn(0L, 1L);
+      assertThat(service.get(owner, eventId).snapshot().path("placements").size()).isZero();
+      assertThat(
+              db.queryForObject(
+                  "SELECT count(*) FROM historical_experiments WHERE owner_id=?",
+                  Long.class,
+                  owner))
+          .isEqualTo(used);
+    }
   }
 }

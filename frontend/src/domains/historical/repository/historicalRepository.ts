@@ -9,13 +9,15 @@ export const runHistorical = (
   drafts: HistoricalDraft[],
   requestKey: string,
   sensitivityCellId?: string,
-  parentExperimentId?: string
+  parentExperimentId?: string,
+  design?: { revision: number; eventId: string }
 ) =>
   api<HistoricalJob>('/historical', 'POST', {
     requestKey,
     districtId,
     modelHash,
     temporalPolicy,
+    ...(design ? { designRevision: design.revision, eventId: design.eventId } : {}),
     ...(parentExperimentId ? { parentExperimentId } : {}),
     ...(sensitivityCellId ? { sensitivityCellId } : {}),
     placements: drafts.map((d) => ({

@@ -1,0 +1,265 @@
+{
+  "schemaVersion": 1,
+  "classification": "MULTI_DISTRICT_SAVED_DESIGN_EXECUTION_AND_UI_TEST_ONLY",
+  "createdAt": "2026-10-19T04:04:33.885581+00:00",
+  "baseCommit": "c965ab231519f8f7d9a6ff520cbe82b9534cd404",
+  "rankingEligible": false,
+  "backend": {
+    "passed": 29,
+    "includesSeparateJvmRestart": true,
+    "command": "simulation/.venv/bin/python scripts/verify_league_postgres.py --suite historical-design",
+    "newCases": [
+      "다른 구 포함 공동 예산 재검사",
+      "저장 형상·시각·전체 선택 배치 결속",
+      "편집 이후 원 요청의 멱등 반환",
+      "오래된 버전·다른 소유자·수정된 입력 거부",
+      "설치 취소와 계산 승인 경합의 일관성"
+    ]
+  },
+  "worker": {
+    "passed": 1,
+    "nativeCalculations": 3,
+    "command": "simulation/.venv/bin/python scripts/verify_league_postgres.py --suite historical-design-run",
+    "inputSource": "SERVER_FROZEN_SAVED_DESIGN_REQUESTS",
+    "sameInputNativeAndResultReplay": true,
+    "caseSummary": [
+      {
+        "districtId": "2410520",
+        "installedAt": "2022-08-08T09:02:17Z",
+        "differenceM3": -0.00024224365165537165
+      },
+      {
+        "districtId": "2419953",
+        "installedAt": "2022-08-08T10:01:57Z",
+        "differenceM3": -6.821792664624127e-05
+      },
+      {
+        "districtId": "2410520",
+        "installedAt": "2022-08-08T09:02:17Z",
+        "differenceM3": -0.00024224365165537165
+      }
+    ],
+    "archivedFiles": 248,
+    "archive": {
+      "path": "data/runs/historical-multidistrict-20261019-v1/archive-manifest.json",
+      "bytes": 50677,
+      "sha256": "5a9f6d8f52da184575c88b621098e816c927a29298bf52bb216b6f4605ed2551"
+    }
+  },
+  "policyFix": {
+    "cause": "서버 공개 점유 정책 v5가 워커 재현 허용 목록에 미등록",
+    "version": "seoul-infrastructure-occupancy-20261019-v5",
+    "sha256": "5271ba50b87d0de090a6fdf5128c2e383ab67238b98d326e99abf1852d99af1a",
+    "previousVersionsPreserved": [
+      "v1",
+      "v2",
+      "v3",
+      "v4"
+    ],
+    "pythonTestsPassed": 3
+  },
+  "frontend": {
+    "passed": 11,
+    "buildPassed": true,
+    "changedFilesFormattingPassed": true,
+    "standaloneRainfallLabelInProductJavaScript": false
+  },
+  "browser": {
+    "source": "frontend/qa/historical-multidistrict.html",
+    "engine": "in-app browser",
+    "fixture": {
+      "path": "frontend/qa/historical-multidistrict.local.json",
+      "bytes": 454617,
+      "sha256": "02f91a23f4e34174b725431089dc84d0e3a5095c14dd2c0ecec5bad82d2b4aca"
+    },
+    "cases": [
+      "성동 선택 상태에서 강남·성동 2개 자동 요청",
+      "7200초 두 시설 음의 원 누적 효과 표시",
+      "설치 전으로 되감기 후 효과 제외",
+      "두 결과 복원 후 신규 요청 0회",
+      "한 구 요청 실패 뒤 다른 구 계산 완료",
+      "실패 구만 재시도 후 두 결과 표시",
+      "한 구 시설 취소·예산 복구·재접속 후 남은 구 결과 재사용"
+    ],
+    "observedAt7200SecondsM3": {
+      "2410520": -1.4345e-05,
+      "2419953": -2.538e-05
+    },
+    "displayValuesRounded": true,
+    "mocks": [
+      "합성 회원",
+      "저장 응답·큐 상태는 페이지 내부 대체"
+    ],
+    "physicsResults": "ACTUAL_NATIVE_SWMM_RESULTS",
+    "consoleErrors": 0,
+    "productionWrites": false
+  },
+  "preservation": {
+    "developmentRecordsUnchanged": true,
+    "developmentRecordCount": 0,
+    "existingEngineAndNumericalPolicyUnchanged": true,
+    "existingBudgetPolicyUnchanged": true,
+    "dependencyChange": false
+  },
+  "limitations": [
+    "독립 표면 결과의 구별 실행·편집 연결이며 연결 유역 합성 효과나 Shapley 총점 아님",
+    "현재 공개 형상과 과거 강우 시험이며 당시 서울 재난 복원 아님",
+    "작은 음의 차이는 물수지 오차 이상의 현장 악화로 확인되지 않음",
+    "전체 서울 실제 관망/지형/경계·12시설 전체 설치·예산·대표 성능 등 잔여 범위 유지",
+    "독립 임시 작업 공간에 보관된 코드만 사용한 완전 분리 재생은 이번 검사 범위 아님"
+  ],
+  "sourceFiles": [
+    {
+      "path": "backend/src/main/java/io/waterleague/historical/dto/HistoricalRequest.java",
+      "bytes": 2220,
+      "sha256": "a8e709d457ec7240811a2835963d1f94d17cd4f4ee6b9c771a632839b6d080ac"
+    },
+    {
+      "path": "backend/src/main/java/io/waterleague/historical/service/HistoricalService.java",
+      "bytes": 15612,
+      "sha256": "be93bb96435743f746b443d5db1e828635313cb77fbfcd2f1ec854256f977b39"
+    },
+    {
+      "path": "backend/src/test/java/io/waterleague/HistoricalDesignTests.java",
+      "bytes": 18686,
+      "sha256": "4d16c74399a9f56afdc50694699e7c04b389caca2bebc9c7acab5581abbc6657"
+    },
+    {
+      "path": "frontend/qa/historical-multidistrict.html",
+      "bytes": 7203,
+      "sha256": "b2d739eb65ae9acaff50baef312fa8187dc3fb55fa641a247447363a45061558"
+    },
+    {
+      "path": "frontend/src/domains/city/view/CityExplorer.tsx",
+      "bytes": 47599,
+      "sha256": "7769a40d8a7995fa12489ddceba7fe3bd8465e30dbe8388d7ecb8a36a92a769a"
+    },
+    {
+      "path": "frontend/src/domains/historical/controller/useHistorical.ts",
+      "bytes": 13349,
+      "sha256": "bd19f24146b2ba102840730d191115f7c5b142c1e4d5590104c708c3c5537d2a"
+    },
+    {
+      "path": "frontend/src/domains/historical/repository/historicalRepository.ts",
+      "bytes": 1132,
+      "sha256": "c31824c72fe2fa988c5a960c6a266057a0d889c3c0f851a9b1df176952b92ab8"
+    },
+    {
+      "path": "frontend/src/domains/historical/service/multiDistrictService.test.ts",
+      "bytes": 3905,
+      "sha256": "87ca32d206bd4024ce5002783f30f82699cdc15cdb993f5a4f67aeb3eb901a2d"
+    },
+    {
+      "path": "frontend/src/domains/historical/service/temporalService.ts",
+      "bytes": 4936,
+      "sha256": "c3826829a34486433531592887d59b453cac4ad8f9f31d1e71becf2eb52e0428"
+    },
+    {
+      "path": "frontend/src/domains/historical/view/HistoricalPanel.tsx",
+      "bytes": 16508,
+      "sha256": "60282f42219f42da98a4af22042937d27c2884089e755c15fb5e49e2df753643"
+    },
+    {
+      "path": "scripts/verify_league_postgres.py",
+      "bytes": 7655,
+      "sha256": "34e4b1d23dedd04d9d6029c9594fe0110a482c79234ade9f37201f7b3e215ae1"
+    },
+    {
+      "path": "simulation/integration/test_historical_design_run.py",
+      "bytes": 4219,
+      "sha256": "9e4a8b8143d00938133300fa1c726ed4fba5435086360100201bdfd4e0c9527d"
+    },
+    {
+      "path": "simulation/tests/test_basin_admission.py",
+      "bytes": 3055,
+      "sha256": "93b6c0fd2412bba4d42474c68346b30ef7a14e7fa8b550156fbc3cdcfd2e41cf"
+    },
+    {
+      "path": "simulation/waterleague_sim/admission.py",
+      "bytes": 1688,
+      "sha256": "e523a8f6256cb2d4b97f4599be9f57e07e3f25ff3952809422da6a05fd7fe1ca"
+    }
+  ],
+  "evidenceFiles": [
+    {
+      "path": "data/benchmarks/historical-multidistrict-v1/admission-test-summary.txt",
+      "bytes": 25,
+      "sha256": "c82bca3db1282aefa480fd41c77b70e52d5d7cc1ccb0576a5e6b8bd2fcdbf91e"
+    },
+    {
+      "path": "data/benchmarks/historical-multidistrict-v1/backend-final-summary.txt",
+      "bytes": 774,
+      "sha256": "d0b5c17810dec2f03d8f027db141eb90a10c956e5e71c63a2c15cbcf783d8088"
+    },
+    {
+      "path": "data/benchmarks/historical-multidistrict-v1/before-installation.txt",
+      "bytes": 241,
+      "sha256": "adccd8096aab3ae669c2fa258ff39e51e208e2b8aa2b80b97683d3ae87d5f3f4"
+    },
+    {
+      "path": "data/benchmarks/historical-multidistrict-v1/cancelled-district-after-reload.txt",
+      "bytes": 5082,
+      "sha256": "59abf94658710f777bc5d7eeec802c75cb714e937d25f17ef63f687211318f39"
+    },
+    {
+      "path": "data/benchmarks/historical-multidistrict-v1/development-db-preservation.json",
+      "bytes": 863,
+      "sha256": "cc64fd67e4315ef7c5fe4f91d80288a2bc5c9ccae79c048d9a984d017783585d"
+    },
+    {
+      "path": "data/benchmarks/historical-multidistrict-v1/failed-district-retried.txt",
+      "bytes": 5699,
+      "sha256": "3ce905b1ed4882a1d6704b381c23929efceb1e3ec332268fb7c1e15808036e48"
+    },
+    {
+      "path": "data/benchmarks/historical-multidistrict-v1/frontend-test-summary.txt",
+      "bytes": 54,
+      "sha256": "129604338fdbfd5f0c235514dc272b865a45178c9706199b3c7905cbe71d4ae8"
+    },
+    {
+      "path": "data/benchmarks/historical-multidistrict-v1/native-archive-manifest.json",
+      "bytes": 50677,
+      "sha256": "5a9f6d8f52da184575c88b621098e816c927a29298bf52bb216b6f4605ed2551"
+    },
+    {
+      "path": "data/benchmarks/historical-multidistrict-v1/native-verification.json",
+      "bytes": 2554,
+      "sha256": "060ced9899638e146fc5c2e42afc5be7e45f8d06b18eff2dd3365e8d2d307fe0"
+    },
+    {
+      "path": "data/benchmarks/historical-multidistrict-v1/one-district-failed-other-completed.txt",
+      "bytes": 5566,
+      "sha256": "9e75b44279b85fa2c778ab54f7fadd7ee671e98899995e22ec984166bc5edd8d"
+    },
+    {
+      "path": "data/benchmarks/historical-multidistrict-v1/restored-no-new-requests.txt",
+      "bytes": 5502,
+      "sha256": "33c7e7920cb23a94e4cd8e9810db85c5416b4ba7fc6794892b2f6aed0ad64c03"
+    },
+    {
+      "path": "data/benchmarks/historical-multidistrict-v1/server-worker-summary.txt",
+      "bytes": 798,
+      "sha256": "ec0c10a2b11339cf402dd943c424ae9dc0a13e3f4c7b3fb90cf2b619492e4c19"
+    },
+    {
+      "path": "data/benchmarks/historical-multidistrict-v1/two-districts-7200s.png",
+      "bytes": 30131,
+      "sha256": "61ee6ffe54f4e244666b230727d46cdd854d7f90f610d3daf9f128664af8247e"
+    },
+    {
+      "path": "data/benchmarks/historical-multidistrict-v1/two-districts-7200s.txt",
+      "bytes": 5552,
+      "sha256": "ef5e5e8dfebcb06bfb87762742339aa79397abae0e1a740ba183e564a0288f1f"
+    },
+    {
+      "path": "data/benchmarks/historical-multidistrict-v1/two-districts-effects.png",
+      "bytes": 42864,
+      "sha256": "9b0fef9b2b96a9eebaf49be46e5c53fb94bd811d7b0be3fd5e01de1b33d35f78"
+    },
+    {
+      "path": "data/benchmarks/historical-multidistrict-v1/final-readiness-check.txt",
+      "bytes": 5549,
+      "sha256": "9c14f230407777ddfdbaa5838c19a54c0c4e5f115fc3473704a0416fc3f06dee"
+    }
+  ]
+}

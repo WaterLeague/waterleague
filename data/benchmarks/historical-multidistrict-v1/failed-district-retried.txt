@@ -1,0 +1,118 @@
+Browser tab: 15, Title: "재해 여러 구 자동 계산 · 로컬 검증", URL: "http://127.0.0.1:5173/qa/historical-multidistrict.html?failFirst=1".
+0 AXWebArea 재해 여러 구 자동 계산 · 로컬 검증, URL: 127.0.0.1:5173/qa/historical-multidistrict.html?failFirst=1
+	1 container
+		2 text 로컬 UI 검사 · 실제 공개 입력 SWMM 결과 · 합성 회원 · 서버 쓰기 없음 선택 구는 고정한 채 저장된 두 구의 시설을 자동 계산. 저장·작업 큐 응답만 대체.
+		116 text 이번 접속 계산 요청 3회 · 2410520 저장본 1 → 2419953 저장본 1 → 2410520 저장본 1
+	4 container root
+		5 button 0초로 이동
+		6 button 137초로 이동
+		7 button 3717초로 이동
+		8 button 7200초로 이동
+		9 button 14400초로 이동
+		10 button 다음 요청 실패
+		11 container 재해 시간 재생
+			12 button (collapsed) 사건 자료·계산 조건, Secondary Actions: Expand
+				65 text 사건 자료·계산 조건
+			13 button 재해 재생
+			66 container
+				67 text 8. 8. 20:00:00  KST
+			68 text 1분 1 mm
+			14 container
+				69 text 속도
+				15 pop up button (collapsed, settable) Description: 재해 재생 속도, Value: 1배속 · 실제 시간, Secondary Actions: Expand
+					16 menu
+						17 (selected) 1배속 · 실제 시간
+						70 60배속
+						71 240배속
+						72 900배속
+						73 3600배속
+			18 container 설치 시각 목록
+				19 container
+					20 button 녹화지붕 · 8. 8. 18:02:17 · 옥상 RW1004913228
+					21 button 녹화지붕 · 8. 8. 19:01:57 · 옥상 RW1000976769
+			22 slider (settable, integer) Description: 재해 재생 시각, Value: 7200
+			23 button 첫 비
+			24 button 강우 최대
+		25 container 시설 설치
+			26 container
+				27 text 선택한 위치 성동구  ·  개인 재해 실험
+			28 text 옥상 후보
+			29 heading 옥상 RW1000976769, Value: 2
+				30 text 옥상 RW1000976769
+			31 heading 녹화지붕 설치 완료, Value: 3
+				74 text 녹화지붕 설치 완료
+			75 container
+				76 text 내 연구 설계  ·  20  m²
+			77 text 7,000,000원
+			32 button 설치 취소
+			33 text 내 재해 설계  잔액
+			34 text 1,986,000,000원
+			35 button (collapsed) 내 설계 · 시설별 사용액, Secondary Actions: Expand
+				36 text 내 설계
+				37 text  · 시설별 사용액
+			38 button (collapsed) 연구 예산 · 공개 근거, Secondary Actions: Expand
+				39 text 연구 예산
+				40 text  · 공개 근거
+			41 container 재해 설계 저장
+				42 text 설계 저장본 1
+				43 text 설치·취소 시 저장 · 다시 접속해 이어서 실험
+			44 container
+				45 text 전체 실험 시설 ·  2 곳
+			46 button 녹화지붕 · 옥상 RW1004913228
+				78 text 녹화지붕
+				79 text  ·
+				80 text 옥상 RW1004913228
+			47 text ·  20 m²
+			81 container
+				82 text 강남구  · 8. 8. 18:02:17  설치
+			117 text 누적 -0.000014345 m³ · 8. 8. 20:00:00까지
+			48 button 옥상 RW1004913228 연구 배치 제거
+			49 button 녹화지붕 · 옥상 RW1000976769
+				84 text 녹화지붕
+				85 text  ·
+				86 text 옥상 RW1000976769
+			50 text ·  20 m²
+			87 container
+				88 text 성동구  · 8. 8. 19:01:57  설치
+			89 text 누적 -0.00002538 m³ · 8. 8. 20:00:00까지
+			51 button 옥상 RW1000976769 연구 배치 제거
+			52 button 같은 설계 다시 계산
+			53 button 이 시설의 시작 수분 비교
+			90 text 선택 시설 한 곳의 건조·포화 시작 조건을 추가 계산합니다. 일반 계산보다 시간이 더 걸립니다.
+			54 container 재해 설계 제출
+				55 heading 설계 확정·기록 경쟁, Value: 3
+					56 text 설계 확정·기록 경쟁
+				57 container
+					58 text 모든 구의  2 곳을 설치 시각과 무관하게 사건 시작부터 종료까지 다시 계산합니다.
+				59 text 현재 형상·과거 강우의 독립 표면 평가체적 순위입니다. 실제 재난 복원과 침수 총점은 아직 제공하지 않습니다.
+				60 button 설계 확정하고 제출
+			91 container 과거 강우 비교 결과
+				92 heading 재생 시각까지 누적 효과, Value: 3
+					93 text 재생 시각까지 누적 효과
+				94 link Description: 재현 자료 다운로드, Value: 127.0.0.1:5173/api/v1/historical/01da9724-7df4-4342-ac6e-7ae9d3703ccb/bundle
+				95 text -0.00002538 m³
+				96 text 시설 없는 조건 대비 평가체적 감소
+				97 container
+					98 text 8. 8. 20:00:00 까지 · 분 종료 기록 · 미래 결과 제외
+				99 text 음수는 평가체적 증가를 뜻합니다.
+				100 definition list
+					101 container 시설 없음
+						102 text 시설 없음
+					103 container
+						104 text 2.8274 m³
+					105 container 현재 연구 설계
+						106 text 현재 연구 설계
+					107 container
+						108 text 2.8274 m³
+				109 text 선택한 표면의 유출·배수·순저류 합 비교입니다. 구 전체 유출량이나 실제 침수 예측이 아닙니다.
+				110 text 작은 차이는 물수지 오차보다 작을 수 있습니다. 현장 효과로 확정하지 않습니다.
+				111 button (collapsed) RW1000976769 · 설치부터 종료까지 전체 계산 상세, Secondary Actions: Expand
+					112 text RW1000976769
+					113 text  · 설치부터 종료까지 전체 계산 상세
+				114 button (collapsed) 계산 조건, Secondary Actions: Expand
+					115 text 계산 조건
+			61 container
+				62 text 공개 도형 기반 실험 후보 · 현장 시공 적합성 미확인
+				63 text 예산은 게임 설계 조건 · 면적 한계는 공개 도형 기준
+
+The focused UI element is 0 AXWebArea 재해 여러 구 자동 계산 · 로컬 검증, URL: 127.0.0.1:5173/qa/historical-multidistrict.html?failFirst=1

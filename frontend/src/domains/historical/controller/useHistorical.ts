@@ -18,6 +18,9 @@ import {
   historicalScoreAt,
   matchesHistoricalDraft,
   restoreHistoricalJobs,
+  nextHistoricalCalculation,
+  historicalDistrictSignature,
+  historicalFacilityStates,
 } from '../service/temporalService';
 import { useHistoricalSubmission } from './useHistoricalSubmission';
 import { useHistoricalDesign } from './useHistoricalDesign';
@@ -38,6 +41,7 @@ export function useHistorical(
   const [restoredJobs, setRestoredJobs] = useState('');
   const [jobs, setJobs] = useState<Record<string, HistoricalJob>>({});
   const [error, setError] = useState('');
+  const [calculationErrors, setCalculationErrors] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0),
     [playing, setPlaying] = useState(true);
@@ -50,8 +54,10 @@ export function useHistorical(
   const [speed, setSpeed] = useState(1);
   const accountId = useRef(account?.id);
   const epoch = useRef(0);
-  const pendingRequest = useRef<{ fingerprint: string; id: string; parent?: string } | null>(null);
-  const autoAttempt = useRef('');
+  const pendingRequests = useRef(
+    new Map<string, { fingerprint: string; id: string; parent?: string }>()
+  );
+  const autoAttempts = useRef(new Map<string, string>());
   const event = catalog?.events.find((e) => e.id === eventId);
   const selectedRain = event?.regions.find((r) => r.districtId === districtId);
   const hash = selectedRain?.modelHash ?? '';
@@ -89,8 +95,9 @@ export function useHistorical(
     setPlaying(true);
     setJobs({});
     setBusy(false);
-    pendingRequest.current = null;
-    autoAttempt.current = '';
+    pendingRequests.current.clear();
+    autoAttempts.current.clear();
+    setCalculationErrors({});
     epoch.current++;
   }, [eventId]);
   useEffect(() => {
@@ -115,8 +122,9 @@ export function useHistorical(
     if (accountId.current !== account?.id) {
       epoch.current++;
       setJobs({});
-      pendingRequest.current = null;
-      autoAttempt.current = '';
+      pendingRequests.current.clear();
+      autoAttempts.current.clear();
+      setCalculationErrors({});
       setError('');
       setBusy(false);
       accountId.current = account?.id;
@@ -159,6 +167,7 @@ export function useHistorical(
     if (duration && elapsedSeconds >= duration) setPlaying(false);
   }, [elapsedSeconds, duration]);
   useEffect(() => {
+    if (!enabled || !account) return;
     const activeJobs = Object.values(jobs).filter((j) => ['QUEUED', 'RUNNING'].includes(j.state));
     if (!activeJobs.length) return;
     let active = true,
@@ -173,8 +182,9 @@ export function useHistorical(
             ...previous,
             ...Object.fromEntries(updated.map((next) => [next.modelHash, next])),
           }));
-          if (updated.some((next) => next.state === 'FAILED' || next.state === 'REJECTED'))
-            pendingRequest.current = null;
+          for (const next of updated)
+            if (next.state === 'FAILED' || next.state === 'REJECTED')
+              pendingRequests.current.delete(next.districtId);
         }
       } catch (e) {
         if (active) setError(errorMessage(e));
@@ -186,7 +196,7 @@ export function useHistorical(
       active = false;
       clearInterval(timer);
     };
-  }, [jobs]);
+  }, [enabled, account?.id, jobs]);
   const current = drafts.filter((d) => d.site.districtId === districtId);
   const accounting = budget
     ? designAccounting(
@@ -246,39 +256,53 @@ export function useHistorical(
       elapsedSeconds
     );
   }
-  async function calculate(sensitivityCellId?: string) {
-    if (!design.ready || !lab || lab.modelHash !== hash || !account || !current.length || busy)
+  async function calculate(sensitivityCellId?: string, targetDistrictId = districtId) {
+    const region = event?.regions.find((r) => r.districtId === targetDistrictId);
+    const selected = drafts.filter((d) => d.site.districtId === targetDistrictId);
+    if (
+      !enabled ||
+      !design.ready ||
+      !design.revision ||
+      restoredJobs !== restoreKey ||
+      !region ||
+      !account ||
+      !selected.length ||
+      busy
+    )
       return;
     const generation = epoch.current;
     const fingerprint = JSON.stringify([
-      districtId,
-      lab.modelHash,
-      current.map((d) => [
-        d.site.cellId,
-        d.site.modelHash,
-        d.facilityType,
-        d.areaM2,
-        d.marker.installedAt,
-      ]),
+      design.revision,
+      historicalDistrictSignature(region.modelHash, selected),
       sensitivityCellId ?? null,
     ]);
-    if (pendingRequest.current?.fingerprint !== fingerprint)
-      pendingRequest.current = { fingerprint, id: crypto.randomUUID(), parent: job?.id };
+    if (['FAILED', 'REJECTED'].includes(jobs[region.modelHash]?.state ?? ''))
+      pendingRequests.current.delete(targetDistrictId);
+    let pending = pendingRequests.current.get(targetDistrictId);
+    if (pending?.fingerprint !== fingerprint) {
+      pending = { fingerprint, id: crypto.randomUUID(), parent: jobs[region.modelHash]?.id };
+      pendingRequests.current.set(targetDistrictId, pending);
+    }
     setBusy(true);
     setError('');
+    setCalculationErrors((v) => ({ ...v, [targetDistrictId]: '' }));
     try {
       const next = await runHistorical(
-        districtId,
-        lab.modelHash,
-        current,
-        pendingRequest.current.id,
+        targetDistrictId,
+        region.modelHash,
+        selected,
+        pending.id,
         sensitivityCellId,
-        pendingRequest.current.parent
+        pending.parent,
+        { revision: design.revision, eventId }
       );
       if (generation === epoch.current)
         setJobs((previous) => ({ ...previous, [next.modelHash]: next }));
     } catch (e) {
-      if (generation === epoch.current) setError(errorMessage(e));
+      if (generation === epoch.current) {
+        setError(errorMessage(e));
+        setCalculationErrors((v) => ({ ...v, [targetDistrictId]: errorMessage(e) }));
+      }
     } finally {
       if (generation === epoch.current) setBusy(false);
     }
@@ -295,49 +319,22 @@ export function useHistorical(
       ? job.result
       : null;
   const currentScore = currentResult && at ? historicalScoreAt(currentResult, at) : null;
-  const signature = JSON.stringify([
-    hash,
-    current.map((d) => [
-      d.site.cellId,
-      d.site.modelHash,
-      d.facilityType,
-      d.areaM2,
-      d.marker.installedAt,
-    ]),
-  ]);
   const calculateRef = useRef(calculate);
   calculateRef.current = calculate;
   useEffect(() => {
-    if (
-      !enabled ||
-      !design.ready ||
-      restoredJobs !== restoreKey ||
-      !account ||
-      !current.length ||
-      !lab ||
-      lab.modelHash !== hash ||
-      busy ||
-      Object.values(jobs).some((j) => ['QUEUED', 'RUNNING'].includes(j.state)) ||
-      matchesHistoricalDraft(job, current) ||
-      autoAttempt.current === signature
-    )
+    if (!enabled || !design.ready || restoredJobs !== restoreKey || !account || !event || busy)
       return;
+    const next = nextHistoricalCalculation(event.regions, drafts, jobs, autoAttempts.current);
+    if (!next) return;
     const timer = window.setTimeout(() => {
-      autoAttempt.current = signature;
-      void calculateRef.current();
+      autoAttempts.current.set(next.districtId, next.signature);
+      void calculateRef.current(undefined, next.districtId);
     }, 750);
     return () => window.clearTimeout(timer);
-  }, [
-    enabled,
-    account?.id,
-    lab?.modelHash,
-    signature,
-    busy,
-    jobs,
-    design.ready,
-    restoredJobs,
-    restoreKey,
-  ]);
+  }, [enabled, account?.id, event, drafts, busy, jobs, design.ready, restoredJobs, restoreKey]);
+  const facilityStates = historicalFacilityStates(event?.regions ?? [], drafts, jobs, at).map(
+    (v) => ({ ...v, requestError: calculationErrors[v.draft.site.districtId] ?? '' })
+  );
   return {
     design,
     submission,
@@ -365,6 +362,8 @@ export function useHistorical(
     job,
     currentResult,
     currentScore,
+    facilityStates,
+    calculationsReady: restoredJobs === restoreKey,
     error,
     busy,
     calculate,

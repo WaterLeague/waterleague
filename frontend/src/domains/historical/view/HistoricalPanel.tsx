@@ -9,7 +9,6 @@ import type { SharedSite } from '../../installation/entity/installation';
 import type { FacilityType } from '../../game/entity/game';
 import { facilities, format } from '../../game/service/gameService';
 import type { HistoricalDraft } from '../entity/historical';
-import { scoreAt } from '../service/temporalService';
 import './historical.css';
 import { FacilityPlacementPanel } from '../../installation/view/FacilityPlacementPanel';
 import { CostRecordEvidence } from '../../cost/view/CostRecordEvidence';
@@ -180,6 +179,7 @@ export function HistoricalPanel({
   authenticated,
   error,
   districtName,
+  districts = [],
   onInspect,
 }: {
   state: HistoricalState;
@@ -192,12 +192,14 @@ export function HistoricalPanel({
   authenticated: boolean;
   error: string;
   districtName: string;
+  districts?: { id: string; name: string }[];
   onInspect: (draft: HistoricalDraft) => void;
 }) {
   const placed = s.drafts.find(
     (d) => d.site.districtId === site?.districtId && d.site.cellId === site?.cellId
   );
-  const working = s.busy || s.job?.state === 'QUEUED' || s.job?.state === 'RUNNING';
+  const working =
+    !s.calculationsReady || s.busy || s.job?.state === 'QUEUED' || s.job?.state === 'RUNNING';
   return (
     <FacilityPlacementPanel
       site={site}
@@ -262,11 +264,8 @@ export function HistoricalPanel({
         )}
       </div>
       <div className="historical-design-summary">
-        <strong>이 구의 실험 시설 · {s.current.length}곳</strong>
-        {s.current.map((d) => {
-          const result = s.currentResult?.facilities?.find((f) => f.cellId === d.site.cellId);
-          const before = !!s.at && Date.parse(s.at) < Date.parse(d.marker.installedAt);
-          const score = result?.frames && s.at ? scoreAt(result.frames, s.at) : null;
+        <strong>전체 실험 시설 · {s.drafts.length}곳</strong>
+        {s.facilityStates.map(({ draft: d, before, score, state, requestError }) => {
           return (
             <div key={d.marker.id}>
               <span>
@@ -275,18 +274,28 @@ export function HistoricalPanel({
                 </button>{' '}
                 · {d.areaM2}m²
                 <small>
+                  {districts.find((r) => r.id === d.site.districtId)?.name ?? d.site.districtId} ·{' '}
                   {time(d.marker.installedAt)} 설치{before ? ' 예정' : ''}
                 </small>
                 <small>
-                  {before
-                    ? '설치 전 · 누적 0 m³'
-                    : score
-                      ? `누적 ${physicalAmount(score.differenceM3)} m³ · ${time(score.at)}까지`
-                      : authenticated
-                        ? ['FAILED', 'REJECTED'].includes(s.job?.state ?? '')
-                          ? '계산 실패 · 재시도 필요'
-                          : '누적 효과 계산 중'
-                        : '로그인 후 누적 효과 계산'}
+                  {before ? (
+                    '설치 전 · 누적 0 m³'
+                  ) : score ? (
+                    `누적 ${physicalAmount(score.differenceM3)} m³ · ${time(score.at)}까지`
+                  ) : authenticated ? (
+                    requestError || ['FAILED', 'REJECTED'].includes(state ?? '') ? (
+                      <button
+                        onClick={() => void s.calculate(undefined, d.site.districtId)}
+                        disabled={!s.design.ready || !s.calculationsReady || s.busy}
+                      >
+                        계산 실패 · 이 구 다시 계산
+                      </button>
+                    ) : (
+                      '누적 효과 계산 중'
+                    )
+                  ) : (
+                    '로그인 후 누적 효과 계산'
+                  )}
                 </small>
               </span>
               <button
