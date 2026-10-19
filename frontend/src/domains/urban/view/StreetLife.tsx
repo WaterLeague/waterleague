@@ -19,10 +19,13 @@ import { urbanTime } from '../service/urbanTimeService';
 import type { FloodField } from '../service/floodFieldService';
 import { floodMotion, emptyFloodStats, type FloodStats } from '../service/floodMovementService';
 import { useUrbanLighting } from './UrbanEnvironment';
+import type { ParkingData } from '../entity/parking';
+import { parkingTrafficPaths } from '../service/parkingService';
 const LIMIT = 500;
 const PALETTE = ['#c9d3d8', '#f3e6c0', '#345e79', '#a33e33', '#252d34', '#d3caba'];
 export const StreetLife = memo(function StreetLife({
   roads,
+  parking,
   terrain,
   center,
   distance,
@@ -35,6 +38,7 @@ export const StreetLife = memo(function StreetLife({
   animate,
 }: {
   roads: Street[];
+  parking?: ParkingData | null;
   terrain: Terrain | null;
   center: [number, number];
   distance: number;
@@ -89,6 +93,7 @@ export const StreetLife = memo(function StreetLife({
         .map((p) => p.path),
     [roads, x, y, radius]
   );
+  const parkingRoutes = useMemo(() => new Map(parking?.routes.map((r) => [r.id, r])), [parking]);
   const agents = useMemo(
     () =>
       paths
@@ -98,33 +103,34 @@ export const StreetLife = memo(function StreetLife({
             (path.road.motor &&
               path.road.sidewalk !== 'no' &&
               !/motorway|trunk/.test(path.road.class));
-          return [false, true]
-            .filter((walk) => (walk ? walking : path.road.motor))
-            .flatMap((walking) => {
-              const count = Math.min(
-                24,
-                Math.max(1, Math.floor(path.length / (walking ? 30 : 45)))
-              );
-              return Array.from({ length: count }, (_, i) => ({
-                path,
-                walking,
-                queue: i * 6,
-                reaction: {
-                  key: '',
-                  home: NaN,
-                  travel: 0,
-                  time: NaN,
-                  arc: NaN,
-                  direction: 1,
-                  heading: 1,
-                },
-                seed: (i + 0.25 + stableSeed(path.road.id + ':' + walking + ':' + i) * 0.5) / count,
-                budget: stableSeed(path.road.id + ':budget:' + walking + ':' + i),
-              }));
-            });
+          const routes = [
+            ...(walking ? [{ path, walking: true }] : []),
+            ...(path.road.motor && parking !== null
+              ? parkingTrafficPaths(path, parkingRoutes).map((path) => ({ path, walking: false }))
+              : []),
+          ];
+          return routes.flatMap(({ path, walking }) => {
+            const count = Math.min(24, Math.max(1, Math.floor(path.length / (walking ? 30 : 45))));
+            return Array.from({ length: count }, (_, i) => ({
+              path,
+              walking,
+              queue: i * 6,
+              reaction: {
+                key: '',
+                home: NaN,
+                travel: 0,
+                time: NaN,
+                arc: NaN,
+                direction: 1,
+                heading: 1,
+              },
+              seed: (i + 0.25 + stableSeed(path.road.id + ':' + walking + ':' + i) * 0.5) / count,
+              budget: stableSeed(path.road.id + ':budget:' + walking + ':' + i),
+            }));
+          });
         })
         .slice(0, 1600),
-    [paths]
+    [paths, parking, parkingRoutes]
   );
   const streetlights = useMemo(
     () =>

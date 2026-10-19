@@ -6,15 +6,18 @@ import type { MeshStandardMaterial } from 'three';
 import { BufferAttribute, BufferGeometry, DoubleSide, Mesh } from 'three';
 import type { Street } from '../entity/urban';
 import type { Terrain } from '../../terrain/entity/terrain';
+import type { ParkingData } from '../entity/parking';
 export const StreetLayer = memo(function StreetLayer({
   roads,
   terrain,
   detail,
+  parking,
   onStreet,
 }: {
   roads: Street[];
   terrain: Terrain | null;
   detail: boolean;
+  parking?: ParkingData | null;
   onStreet?: (sourceId: string, point: [number, number]) => void;
 }) {
   const [geometry, setGeometry] = useState<BufferGeometry | null>(null);
@@ -50,11 +53,19 @@ export const StreetLayer = memo(function StreetLayer({
       setFailed(true);
       worker.terminate();
     };
-    worker.postMessage({ roads, terrain, detail });
+    worker.postMessage({
+      roads,
+      terrain,
+      detail,
+      parkingAisles:
+        parking?.routes
+          .filter((route) => route.reason === 'OSM_PARKING_AISLE')
+          .map((route) => route.id) ?? [],
+    });
     return () => {
       worker.terminate();
     };
-  }, [roads, terrain, detail]);
+  }, [roads, terrain, detail, parking]);
   if (failed) throw new Error('도로 표시 실패');
   return geometry ? (
     <mesh

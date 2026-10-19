@@ -129,6 +129,14 @@ function field(key: string, sources: (SurfaceFrame | TraceTile)[]) {
     cache = new WeakMap<StreetPath, Map<string, FloodRoute>>();
   return {
     key,
+    contact(point: Point): FloodContact | null {
+      let found: FloodContact | null = null;
+      for (const index of indices)
+        for (const triangle of index(point, point))
+          if (triangleIntersection(point, point, triangle.vertices))
+            found = found ? stronger(found, triangle.contact) : triangle.contact;
+      return found;
+    },
     route(path: StreetPath, walking: boolean, direction: number): FloodRoute {
       const mode = walking + ':' + direction,
         saved = cache.get(path)?.get(mode);

@@ -132,6 +132,11 @@ public class InstallationService {
     return sites.building(districtId, sourceId);
   }
 
+  public io.waterleague.installation.view.SiteView parking(
+      String districtId, String sourceId, double x, double y) {
+    return sites.parking(districtId, sourceId, x, y);
+  }
+
   public io.waterleague.installation.view.SiteView site(String districtId, String cellId) {
     return sites.require(districtId, cellId);
   }

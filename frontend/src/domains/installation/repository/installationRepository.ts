@@ -68,3 +68,16 @@ export const loadStreetSite = async (
     )
   );
 };
+
+export const loadParkingSite = async (
+  districtId: string,
+  sourceId: string,
+  point: [number, number]
+) => {
+  const params = new URLSearchParams({ sourceId, x: String(point[0]), y: String(point[1]) });
+  return siteDto.parse(
+    await api<unknown>(
+      '/installations/sites/' + encodeURIComponent(districtId) + '/parking?' + params
+    )
+  );
+};

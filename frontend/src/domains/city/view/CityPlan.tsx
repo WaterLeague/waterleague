@@ -32,9 +32,12 @@ import type { SurfaceFrame, SurfaceMetric } from '../../surface/entity/surface';
 import { CisternLayoutPlan } from '../../installation/view/CisternLayoutPlan';
 import type { CisternGeometryPreview } from '../../installation/dto/cisternLayoutDto';
 import type { Street } from '../../urban/entity/urban';
+import type { ParkingData } from '../../urban/entity/parking';
+import { visibleParkingLots, parkingOutsideFacilities } from '../../urban/service/parkingService';
 
 type Props = {
   streets: Street[];
+  parking: ParkingData | null;
   cisternGeometry?: CisternGeometryPreview | null;
   planningRoles?: ReadonlyMap<string, CisternSiteRole>;
   preview?: { site: SharedSite; placement: Placement } | null;
@@ -66,6 +69,7 @@ type Props = {
   onSite: (key: string) => void;
   onBuilding: (districtId: string, building: CityBuilding) => void;
   onStreet?: (sourceId: string, point: [number, number]) => void;
+  onParking: (sourceId: string, point: [number, number]) => void;
   onCamera: (view: PlanView) => void;
   onNavigate: (view: PlanView) => void;
   camera: PlanView;
@@ -73,6 +77,7 @@ type Props = {
 };
 export const CityPlan = memo(function CityPlan({
   streets,
+  parking,
   preview = null,
   surfaceFrame = null,
   publicSurfaceFrames = [],
@@ -102,6 +107,7 @@ export const CityPlan = memo(function CityPlan({
   onSite,
   onBuilding,
   onStreet,
+  onParking,
   onCamera,
   onNavigate,
   camera,
@@ -117,6 +123,16 @@ export const CityPlan = memo(function CityPlan({
     handlers,
   } = usePlanNavigation(requestedFocus, city.bounds, camera, onCamera, onNavigate);
   const overview = focus.distance >= 9000;
+  const parkingLots = useMemo(
+    () =>
+      parkingOutsideFacilities(
+        visibleParkingLots(parking?.lots ?? [], focus.center, focus.distance),
+        sites,
+        installationBySite
+      ),
+    [parking, focus, sites, installationBySite]
+  );
+  const parkingSources = useMemo(() => new Set(parkingLots.map((lot) => lot.id)), [parkingLots]);
   const symbols = useMemo(
     () => installationSymbols(installations, sites, viewerId, facilityType, focus.distance),
     [installations, sites, viewerId, facilityType, focus.distance]
@@ -131,12 +147,15 @@ export const CityPlan = memo(function CityPlan({
   );
   const roadPaths = useMemo(
     () =>
-      streets.map((r) => ({
-        id: r.id,
-        width: r.widthM,
-        walk: r.walk,
-        path: r.coordinates.map(([x, y], i) => `${i ? 'L' : 'M'}${x},${-y}`).join(' '),
-      })),
+      [...streets]
+        .sort((a, b) => Number(a.bridge) - Number(b.bridge))
+        .map((r) => ({
+          id: r.id,
+          width: r.widthM,
+          walk: r.walk,
+          bridge: r.bridge,
+          path: r.coordinates.map(([x, y], i) => `${i ? 'L' : 'M'}${x},${-y}`).join(' '),
+        })),
     [streets]
   );
   const publicBuildings = useMemo(
@@ -245,6 +264,12 @@ export const CityPlan = memo(function CityPlan({
     () =>
       sites.map((site) => {
         const installed = installationBySite.get(siteKey(site));
+        const parkingSurface =
+          site.kind === 'GROUND' && site.sourceIds.some((id) => parkingSources.has(id));
+        const highlighted =
+          site.cellId === selectedSite ||
+          planningRoles?.has(siteKey(site)) ||
+          (facilityType && site.allowedTypes.includes(facilityType));
         return (
           <path
             key={siteKey(site)}
@@ -264,6 +289,9 @@ export const CityPlan = memo(function CityPlan({
               site.districtId === selected && site.cellId === selectedSite ? '#b87a13' : '#6c8069'
             }
             strokeWidth={site.districtId === selected && site.cellId === selectedSite ? 2 : 0.5}
+            fillOpacity={parkingSurface ? (highlighted ? 0.24 : 0) : 1}
+            strokeOpacity={parkingSurface ? (highlighted ? 0.65 : 0) : 1}
+            pointerEvents="all"
             opacity={buildingOpacity(
               !site.existingInfrastructure &&
                 (planningRoles?.has(siteKey(site)) ||
@@ -289,6 +317,7 @@ export const CityPlan = memo(function CityPlan({
       sites,
       installationBySite,
       sitePaths,
+      parkingSources,
       selected,
       selectedSite,
       planningRoles,
@@ -325,6 +354,44 @@ export const CityPlan = memo(function CityPlan({
       {paths.surfaces.map((s, i) => (
         <path key={i} d={s.path} fill={s.kind === 'water' ? '#81b1ba' : '#b4c8a3'} />
       ))}
+      <g pointerEvents="none">
+        {parkingLots.map((lot) => (
+          <g key={lot.id}>
+            <path d={polygonPath(lot.surfacePolygons)} fill="#858780" fillRule="evenodd" />
+            {lot.slots.map((slot, i) => (
+              <g key={i}>
+                <path
+                  d={polygonPath([[slot.corners]])}
+                  fill="none"
+                  stroke="#e5e0cf"
+                  strokeWidth={0.12}
+                />
+                {slot.seed < 0.65 && (
+                  <g
+                    transform={`rotate(${(-slot.angle * 180) / Math.PI},${slot.center[0]},${-slot.center[1]})`}
+                  >
+                    <rect
+                      x={slot.center[0] - 0.875}
+                      y={-slot.center[1] - 2.05}
+                      width={1.75}
+                      height={4.1}
+                      rx={0.2}
+                      fill={slot.seed < 0.3 ? '#dedbd1' : '#345e79'}
+                    />
+                    <rect
+                      x={slot.center[0] - 0.7}
+                      y={-slot.center[1] - 1.1}
+                      width={1.4}
+                      height={2.2}
+                      fill="#283b4c"
+                    />
+                  </g>
+                )}
+              </g>
+            ))}
+          </g>
+        ))}
+      </g>
       <g
         fill="none"
         pointerEvents={facilityType === 'PERMEABLE_PAVEMENT' ? 'stroke' : 'none'}
@@ -332,24 +399,58 @@ export const CityPlan = memo(function CityPlan({
         strokeLinejoin="round"
       >
         {roadPaths.map((r) => (
-          <path
-            key={r.id}
-            d={r.path}
-            stroke={r.walk ? '#b3ae9f' : '#667071'}
-            strokeWidth={r.width}
-            onClick={(event) => {
-              if (dragging || facilityType !== 'PERMEABLE_PAVEMENT' || !onStreet) return;
-              const matrix = svg.current?.getScreenCTM();
-              if (!matrix) return;
-              const point = new DOMPoint(event.clientX, event.clientY).matrixTransform(
-                matrix.inverse()
-              );
-              event.stopPropagation();
-              onStreet(r.id, [point.x, -point.y]);
-            }}
-          />
+          <g key={r.id}>
+            {r.bridge && (
+              <path d={r.path} stroke="#c6d0d2" strokeWidth={r.width + 1.1} pointerEvents="none" />
+            )}
+            <path
+              d={r.path}
+              stroke={r.bridge ? '#4e606e' : r.walk ? '#b3ae9f' : '#667071'}
+              strokeWidth={r.width}
+              onClick={(event) => {
+                if (dragging || facilityType !== 'PERMEABLE_PAVEMENT' || !onStreet) return;
+                const matrix = svg.current?.getScreenCTM();
+                if (!matrix) return;
+                const point = new DOMPoint(event.clientX, event.clientY).matrixTransform(
+                  matrix.inverse()
+                );
+                event.stopPropagation();
+                onStreet(r.id, [point.x, -point.y]);
+              }}
+            >
+              {r.bridge && <title>고가도로 · 지상 주차장과 높이 분리</title>}
+            </path>
+          </g>
         ))}
       </g>
+      {parkingLots.map((lot) => (
+        <path
+          key={'parking-hit:' + lot.id}
+          d={polygonPath(lot.polygons)}
+          fill="transparent"
+          fillRule="evenodd"
+          pointerEvents="all"
+          role="button"
+          tabIndex={0}
+          aria-label="주차장 설치 위치 선택"
+          onClick={(event) => {
+            if (dragging) return;
+            const matrix = svg.current?.getScreenCTM();
+            if (!matrix) return;
+            const point = new DOMPoint(event.clientX, event.clientY).matrixTransform(
+              matrix.inverse()
+            );
+            event.stopPropagation();
+            onParking(lot.id, [point.x, -point.y]);
+          }}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              onParking(lot.id, lot.slots[0]?.center ?? lot.polygons[0][0][0]);
+            }
+          }}
+        />
+      ))}
       {showLabels &&
         city.districts.map((d) => (
           <text

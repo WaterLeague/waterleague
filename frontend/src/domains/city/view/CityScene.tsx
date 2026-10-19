@@ -67,6 +67,10 @@ import {
   minimumGroundClearance,
 } from '../service/cameraDepthService';
 import { StreetLife } from '../../urban/view/StreetLife';
+import { ParkingLayer } from '../../urban/view/ParkingLayer';
+import type { ParkingData } from '../../urban/entity/parking';
+import { visibleParkingLots, parkingOutsideFacilities } from '../../urban/service/parkingService';
+import { emptyFloodStats } from '../../urban/service/floodMovementService';
 const TerrainContext = createContext<Terrain | null>(null);
 const mapEvents: Parameters<typeof Canvas>[0]['events'] = (state) => ({
   ...events(state),
@@ -392,6 +396,7 @@ function ProjectedLabels({
 const CityScene = memo(function CityScene({
   urbanClock,
   streets,
+  parking,
   population,
   livePlaces,
   historical,
@@ -428,6 +433,7 @@ const CityScene = memo(function CityScene({
   preview,
   onBuilding,
   onStreet,
+  onParking,
   eligibleRoofs,
   occupiedRoofs,
   facilityType,
@@ -437,6 +443,7 @@ const CityScene = memo(function CityScene({
 }: {
   urbanClock: UrbanTime;
   streets: Street[];
+  parking: ParkingData | null;
   population: Population | null;
   livePlaces: LivePlace[];
   historical: boolean;
@@ -475,11 +482,42 @@ const CityScene = memo(function CityScene({
   preview: { site: SharedSite; placement: Placement } | null;
   onBuilding: (districtId: string, b: CityBuilding) => void;
   onStreet?: (sourceId: string, point: [number, number]) => void;
+  onParking: (sourceId: string, point: [number, number]) => void;
   eligibleRoofs: ReadonlySet<string>;
   occupiedRoofs: ReadonlySet<string>;
   facilityType: FacilityType | '';
   viewerId: string | null;
 }) {
+  const parkingLots = useMemo(
+    () =>
+      parkingOutsideFacilities(
+        visibleParkingLots(parking?.lots ?? [], rainCamera.center, rainCamera.distance),
+        sites,
+        installationBySite
+      ),
+    [parking, rainCamera, sites, installationBySite]
+  );
+  const parkingSources = useMemo(() => new Set(parkingLots.map((lot) => lot.id)), [parkingLots]);
+  const reactions = useRef({ traffic: emptyFloodStats, parking: emptyFloodStats });
+  const reporters = useMemo(
+    () =>
+      Object.fromEntries(
+        ['traffic', 'parking'].map((kind) => [
+          kind,
+          (stats: FloodStats) => {
+            reactions.current[kind as 'traffic' | 'parking'] = stats;
+            const { traffic, parking } = reactions.current;
+            onFloodStats({
+              stopped: traffic.stopped + parking.stopped,
+              exposed: traffic.exposed + parking.exposed,
+              avoiding: traffic.avoiding + parking.avoiding,
+              stranded: traffic.stranded + parking.stranded,
+            });
+          },
+        ])
+      ) as Record<'traffic' | 'parking', (stats: FloodStats) => void>,
+    [onFloodStats]
+  );
   const flood = createFloodField(
     surfaceFrame ? [surfaceFrame] : publicSurfaceFrames.map((value) => value.frame),
     traceTiles,
@@ -560,12 +598,14 @@ const CityScene = memo(function CityScene({
             <Lines city={city} selected={selected} ownDistrictId={ownDistrictId} />
             <StreetLayer
               roads={streets}
+              parking={parking}
               terrain={terrain}
               detail={rainCamera.distance < 4500}
               onStreet={facilityType === 'PERMEABLE_PAVEMENT' ? onStreet : undefined}
             />
             <StreetLife
               roads={streets}
+              parking={parking}
               terrain={terrain}
               center={rainCamera.center}
               distance={rainCamera.distance}
@@ -573,9 +613,19 @@ const CityScene = memo(function CityScene({
               population={population}
               livePlaces={livePlaces}
               flood={flood}
-              onFloodStats={onFloodStats}
+              onFloodStats={reporters.traffic}
               city={city}
               animate={animateRain}
+            />
+            <ParkingLayer
+              lots={parkingLots}
+              terrain={terrain}
+              center={rainCamera.center}
+              flood={flood}
+              clock={urbanClock}
+              animate={animateRain}
+              onFloodStats={reporters.parking}
+              onParking={onParking}
             />
             <RiverLayer city={city} terrain={terrain} weather={waterWeather} />
             {!terrain &&
@@ -640,6 +690,12 @@ const CityScene = memo(function CityScene({
               )
               .map((site) => {
                 const installed = installationBySite.get(siteKey(site));
+                const parkingSurface =
+                  site.kind === 'GROUND' && site.sourceIds.some((id) => parkingSources.has(id));
+                const highlighted =
+                  site.cellId === selectedSite ||
+                  planningRoles?.has(siteKey(site)) ||
+                  (facilityType && site.allowedTypes.includes(facilityType));
                 const opacity = buildingOpacity(
                   !site.existingInfrastructure &&
                     (planningRoles?.has(siteKey(site)) ||
@@ -663,7 +719,8 @@ const CityScene = memo(function CityScene({
                                 ? '#d9d8cb'
                                 : '#b6c3ab'
                       }
-                      opacity={opacity}
+                      parkingSurface={parkingSurface}
+                      opacity={parkingSurface ? opacity * (highlighted ? 0.24 : 0) : opacity}
                       onClick={() => onSite(siteKey(site))}
                     />
                     {installed && (
@@ -753,11 +810,13 @@ export default CityScene;
 
 function SiteSurface({
   site,
+  parkingSurface,
   color,
   opacity,
   onClick,
 }: {
   site: SharedSite;
+  parkingSurface: boolean;
   color: string;
   opacity: number;
   onClick: () => void;
@@ -766,7 +825,7 @@ function SiteSurface({
   const polygons = useMemo(() => [[site.coordinates]], [site]);
   const streetGeometry = useMemo(
     () =>
-      site.physicalInputs?.streetPlacement
+      site.physicalInputs?.streetPlacement || parkingSurface
         ? pavementGeometry(
             placementFootprint(site, {
               cellId: site.cellId,
@@ -774,10 +833,10 @@ function SiteSurface({
               areaM2: site.maxAreaM2,
             }),
             terrain,
-            0.013
+            parkingSurface ? 0.007 : 0.013
           )
         : null,
-    [site, terrain]
+    [site, terrain, parkingSurface]
   );
   useEffect(
     () => () => {

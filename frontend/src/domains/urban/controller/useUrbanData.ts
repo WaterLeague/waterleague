@@ -1,8 +1,12 @@
 import { useEffect, useState } from 'react';
 import type { Population, Street } from '../entity/urban';
 import { loadPopulation, loadStreets } from '../repository/urbanRepository';
+import { loadParking } from '../repository/parkingRepository';
+import type { ParkingData } from '../entity/parking';
+import { parkingDisplayRoads } from '../service/parkingService';
 export function useUrbanData(center: [number, number], distance: number) {
   const [roads, setRoads] = useState<Street[]>([]),
+    [parking, setParking] = useState<ParkingData | null>(null),
     [population, setPopulation] = useState<Population | null>(null),
     [error, setError] = useState(''),
     [populationError, setPopulationError] = useState('');
@@ -24,15 +28,19 @@ export function useUrbanData(center: [number, number], distance: number) {
   useEffect(() => {
     const controller = new AbortController();
     const timer = window.setTimeout(() => {
-      void loadStreets([x, y], scale, controller.signal)
-        .then((v) => {
+      void Promise.all([
+        loadStreets([x, y], scale, controller.signal),
+        loadParking(controller.signal),
+      ])
+        .then(([v, p]) => {
           if (!controller.signal.aborted) {
-            setRoads(v);
+            setRoads(parkingDisplayRoads(v, p));
+            setParking(p);
             setError('');
           }
         })
         .catch(() => {
-          if (!controller.signal.aborted) setError('도로 자료를 불러오지 못했습니다.');
+          if (!controller.signal.aborted) setError('도로·주차장 자료를 불러오지 못했습니다.');
         });
     }, 150);
     return () => {
@@ -40,5 +48,5 @@ export function useUrbanData(center: [number, number], distance: number) {
       controller.abort();
     };
   }, [x, y, scale]);
-  return { roads, population, error, populationError };
+  return { roads, parking, population, error, populationError };
 }

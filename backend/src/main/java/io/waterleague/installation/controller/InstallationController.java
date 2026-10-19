@@ -57,6 +57,15 @@ public class InstallationController {
     return service.building(districtId, sourceId);
   }
 
+  @GetMapping("/sites/{districtId}/parking")
+  public io.waterleague.installation.view.SiteView parking(
+      @PathVariable String districtId,
+      @RequestParam String sourceId,
+      @RequestParam double x,
+      @RequestParam double y) {
+    return service.parking(districtId, sourceId, x, y);
+  }
+
   @GetMapping("/sites/{districtId}/{cellId}")
   public io.waterleague.installation.view.SiteView site(
       @PathVariable String districtId, @PathVariable String cellId) {

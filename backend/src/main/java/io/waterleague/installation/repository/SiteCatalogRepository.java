@@ -190,6 +190,23 @@ public class SiteCatalogRepository {
         .orElseThrow(() -> new DomainException(ErrorCode.RESOURCE_NOT_FOUND));
   }
 
+  public SiteView parking(String districtId, String sourceId, double x, double y) {
+    if (sourceId == null
+        || !sourceId.matches("(way|relation)/[0-9]{1,16}")
+        || !Double.isFinite(x)
+        || !Double.isFinite(y)
+        || Math.abs(x) > 100000
+        || Math.abs(y) > 100000) throw new DomainException(ErrorCode.REQUEST_INVALID);
+    return district(districtId).values().stream()
+        .filter(s -> s.kind().equals("GROUND") && s.sourceIds().contains(sourceId))
+        .filter(s -> !s.physicalInputs().has("streetPlacement"))
+        .filter(s -> Math.hypot(s.center().get(0) - x, s.center().get(1) - y) <= 30)
+        .min(Comparator.comparingDouble(
+            (SiteView s) -> Math.hypot(s.center().get(0) - x, s.center().get(1) - y))
+            .thenComparing(SiteView::cellId))
+        .orElseThrow(() -> new DomainException(ErrorCode.RESOURCE_NOT_FOUND));
+  }
+
   public SiteView require(String districtId, String cellId) {
     var site = district(districtId).get(cellId);
     if (site == null) throw new DomainException(ErrorCode.PLACEMENT_INVALID);

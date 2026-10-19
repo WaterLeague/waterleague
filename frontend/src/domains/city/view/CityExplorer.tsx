@@ -44,6 +44,7 @@ import {
   loadSite,
   loadBuildingSite,
   loadStreetSite,
+  loadParkingSite,
 } from '../../installation/repository/installationRepository';
 import { ApiError } from '../../../shared/exception/ApiError';
 import './shared-play.css';
@@ -545,6 +546,32 @@ function Explorer({
     },
     [mapFacilityType, cisternOpen, city.districts, ownDistrictId, chooseSite]
   );
+  const selectParking = useCallback(
+    async (sourceId: string, point: [number, number]) => {
+      const districtId = viewingDistrict(city.districts, point)?.id;
+      if (!districtId) return;
+      const request = ++selectionRequest.current;
+      setSelected(districtId);
+      setInfrastructureOpen(false);
+      setFacilityExpansionOpen(false);
+      setListOpen(false);
+      setSelectionError('');
+      try {
+        const value = await loadParkingSite(districtId, sourceId, point);
+        if (request === selectionRequest.current) chooseSite(value, true, true);
+      } catch (error) {
+        if (request === selectionRequest.current) {
+          setSite(null);
+          setSelectionError(
+            error instanceof ApiError && error.code === 'RESOURCE_NOT_FOUND'
+              ? '선택한 주차장 위치에는 공개자료로 확인된 설치 후보가 없습니다. 주변 주차 칸을 선택해 주세요.'
+              : '주차장 위치를 불러오지 못했습니다. 다시 선택해 주세요.'
+          );
+        }
+      }
+    },
+    [city.districts, chooseSite]
+  );
   const selectBuilding = useCallback(
     async (districtId: string, building: CityBuilding) => {
       if (
@@ -672,6 +699,7 @@ function Explorer({
   );
   const plan = (
     <CityPlan
+      parking={urban.parking}
       streets={urban.roads}
       preview={preview}
       surfaceFrame={surface.frame}
@@ -704,6 +732,7 @@ function Explorer({
       onSite={selectSite}
       onBuilding={selectBuilding}
       onStreet={selectStreet}
+      onParking={selectParking}
       onCamera={onCamera}
       onNavigate={onNavigate}
       camera={camera}
@@ -740,7 +769,7 @@ function Explorer({
 
   return (
     <main
-      className={`studio-layout play-layout shared-play-layout${researchMode ? ' historical-play-layout' : ''}${!facilityExpansionOpen && !cisternOpen && !infrastructureOpen && !site && !ownInstallations.length ? ' shared-map-only' : ''}`}
+      className={`studio-layout play-layout shared-play-layout${researchMode ? ' historical-play-layout' : ''}${!facilityExpansionOpen && !cisternOpen && !infrastructureOpen && !site && !selectionError && !ownInstallations.length ? ' shared-map-only' : ''}`}
     >
       <header className="play-hud gameplay-hud">
         <div className="play-objective">
@@ -893,6 +922,7 @@ function Explorer({
                 }
               >
                 <CityScene
+                  parking={urban.parking}
                   urbanClock={urbanClock}
                   streets={urban.roads}
                   population={urban.population}
@@ -931,6 +961,7 @@ function Explorer({
                   onSite={selectSite}
                   onBuilding={selectBuilding}
                   onStreet={selectStreet}
+                  onParking={selectParking}
                   wetDistricts={wetDistricts}
                   rainAmounts={rainAmounts}
                   rainCamera={camera}
@@ -1453,6 +1484,7 @@ function Explorer({
             <LiveUrbanSource places={liveUrban.current} now={liveUrban.checkedAt} />
           )}
           {' · 도로 폭 결측·보도·교량 높이는 표시 가정 · 과거 도로망 복원 아님'}
+          {' · 주차 칸·정차 차량 배치는 고정 게임 연출 · 실제 주차 점유율 아님'}
           {urban.error && ` · ${urban.error}`}
           {urban.populationError && ` · ${urban.populationError}`}
           {assetsEnabled &&
