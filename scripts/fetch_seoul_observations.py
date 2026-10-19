@@ -18,6 +18,7 @@ SOURCES = {
     'rain': ('OA-22715', '3', '1', 'seoul-rain-2021-2024.zip', 35_000_000),
     'stations': ('OA-22824', '2', '1', 'seoul-rain-stations-20260915.xlsx', 2_000_000),
     'sewer': ('OA-2527', '17', '3', 'seoul-sewer-2024.zip', 800_000_000),
+    'district-boundaries': ('OA-22161', '1', '3', 'seoul-district-boundaries-20231031.zip', 2_000_000),
 }
 
 

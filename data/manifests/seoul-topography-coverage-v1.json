@@ -1,0 +1,231 @@
+{
+  "boundaryContentSha256": "8e4c20aa88d2ff35fffaae4825a2a44ec979a0071f1b975e57ed628646203960",
+  "buildingPairCounts": {
+    "ATTRIBUTE_CONFLICT": 165,
+    "NOT_ON_BOTH_ORIGINAL_FRAME_EDGES": 13,
+    "NO_SHARED_EDGE": 51,
+    "SAME_TILE_DIFFERENT_RECORDS": 1556
+  },
+  "buildingRepeatedUfidGroups": 307,
+  "coverage": {
+    "additional5000M2": 315771.0273823366,
+    "cityAreaM2": 605754669.3574303,
+    "coverageMeaning": "REGISTERED_SHEET_EXTENT_NOT_ALL_FEATURES_PRESENT_OR_FIELD_ACCURACY",
+    "covered1000M2": 567797683.7674067,
+    "districts": {
+      "11110": {
+        "additional5000M2": 0.0,
+        "covered1000M2": 18912919.13973085,
+        "districtAreaM2": 23990642.890833005,
+        "name": "종로구",
+        "uncoveredM2": 5077723.751102128
+      },
+      "11140": {
+        "additional5000M2": 0.0,
+        "covered1000M2": 9990317.210177636,
+        "districtAreaM2": 9990317.210177647,
+        "name": "중구",
+        "uncoveredM2": 0.0
+      },
+      "11170": {
+        "additional5000M2": 0.0,
+        "covered1000M2": 21886943.525654417,
+        "districtAreaM2": 21892687.791600473,
+        "name": "용산구",
+        "uncoveredM2": 5744.265946087345
+      },
+      "11200": {
+        "additional5000M2": 0.0,
+        "covered1000M2": 16817016.473021053,
+        "districtAreaM2": 16817016.473021023,
+        "name": "성동구",
+        "uncoveredM2": 0.0
+      },
+      "11215": {
+        "additional5000M2": 0.0,
+        "covered1000M2": 16704052.141634105,
+        "districtAreaM2": 17049028.95025172,
+        "name": "광진구",
+        "uncoveredM2": 344976.80861760717
+      },
+      "11230": {
+        "additional5000M2": 0.0,
+        "covered1000M2": 14277373.428467501,
+        "districtAreaM2": 14277373.428467464,
+        "name": "동대문구",
+        "uncoveredM2": 0.0
+      },
+      "11260": {
+        "additional5000M2": 0.0,
+        "covered1000M2": 18422044.713896032,
+        "districtAreaM2": 18537445.6193026,
+        "name": "중랑구",
+        "uncoveredM2": 115400.90540660829
+      },
+      "11290": {
+        "additional5000M2": 0.0,
+        "covered1000M2": 21987437.3476655,
+        "districtAreaM2": 24578799.137697194,
+        "name": "성북구",
+        "uncoveredM2": 2591361.790031716
+      },
+      "11305": {
+        "additional5000M2": 0.0,
+        "covered1000M2": 17893927.14238098,
+        "districtAreaM2": 23638413.59710944,
+        "name": "강북구",
+        "uncoveredM2": 5744486.454728468
+      },
+      "11320": {
+        "additional5000M2": 0.0,
+        "covered1000M2": 14831898.952815866,
+        "districtAreaM2": 20705585.34177621,
+        "name": "도봉구",
+        "uncoveredM2": 5873686.388960285
+      },
+      "11350": {
+        "additional5000M2": 0.0,
+        "covered1000M2": 30132933.603550937,
+        "districtAreaM2": 35589181.08082521,
+        "name": "노원구",
+        "uncoveredM2": 5456247.477274354
+      },
+      "11380": {
+        "additional5000M2": 0.0,
+        "covered1000M2": 26541264.936383255,
+        "districtAreaM2": 29795671.76895443,
+        "name": "은평구",
+        "uncoveredM2": 3254406.8325711503
+      },
+      "11410": {
+        "additional5000M2": 0.0,
+        "covered1000M2": 17687797.702133905,
+        "districtAreaM2": 17687797.702133913,
+        "name": "서대문구",
+        "uncoveredM2": 3.847134193384858e-08
+      },
+      "11440": {
+        "additional5000M2": 0.0,
+        "covered1000M2": 23417060.288922373,
+        "districtAreaM2": 23862254.848917123,
+        "name": "마포구",
+        "uncoveredM2": 445194.55999477976
+      },
+      "11470": {
+        "additional5000M2": 0.0,
+        "covered1000M2": 17462672.590997815,
+        "districtAreaM2": 17462672.590997875,
+        "name": "양천구",
+        "uncoveredM2": 0.0
+      },
+      "11500": {
+        "additional5000M2": 315771.0273823367,
+        "covered1000M2": 40761310.67141211,
+        "districtAreaM2": 41456739.584961854,
+        "name": "강서구",
+        "uncoveredM2": 379657.8861674744
+      },
+      "11530": {
+        "additional5000M2": 0.0,
+        "covered1000M2": 20091507.344947755,
+        "districtAreaM2": 20097921.818586677,
+        "name": "구로구",
+        "uncoveredM2": 6414.473639017106
+      },
+      "11545": {
+        "additional5000M2": 0.0,
+        "covered1000M2": 12963424.522993112,
+        "districtAreaM2": 13021078.535346646,
+        "name": "금천구",
+        "uncoveredM2": 57654.01235351191
+      },
+      "11560": {
+        "additional5000M2": 0.0,
+        "covered1000M2": 24284187.11915172,
+        "districtAreaM2": 24523722.252341256,
+        "name": "영등포구",
+        "uncoveredM2": 239535.13318951664
+      },
+      "11590": {
+        "additional5000M2": 0.0,
+        "covered1000M2": 16382215.187987825,
+        "districtAreaM2": 16382215.187987868,
+        "name": "동작구",
+        "uncoveredM2": 0.0
+      },
+      "11620": {
+        "additional5000M2": 0.0,
+        "covered1000M2": 24667894.134519253,
+        "districtAreaM2": 29578708.13299318,
+        "name": "관악구",
+        "uncoveredM2": 4910813.998473921
+      },
+      "11650": {
+        "additional5000M2": 0.0,
+        "covered1000M2": 43876205.924422085,
+        "districtAreaM2": 46920554.89165699,
+        "name": "서초구",
+        "uncoveredM2": 3044348.9672348737
+      },
+      "11680": {
+        "additional5000M2": 0.0,
+        "covered1000M2": 39427843.831115685,
+        "districtAreaM2": 39488793.09147679,
+        "name": "강남구",
+        "uncoveredM2": 60949.26036103285
+      },
+      "11710": {
+        "additional5000M2": 0.0,
+        "covered1000M2": 33853024.221424796,
+        "districtAreaM2": 33853024.22142489,
+        "name": "송파구",
+        "uncoveredM2": 4.864399440215089e-08
+      },
+      "11740": {
+        "additional5000M2": 0.0,
+        "covered1000M2": 24524411.614087142,
+        "districtAreaM2": 24557023.210673504,
+        "name": "강동구",
+        "uncoveredM2": 32611.596586370066
+      }
+    },
+    "frameCodeMismatchFids": [],
+    "frameCountByScale": {
+      "1000": 2485,
+      "5000": 3
+    },
+    "missingFrameTiles": [],
+    "uncoveredM2": 37641214.56263838
+  },
+  "generatorSha256": "33d179380744ae16a4754d7af3279c2ff61053a1a52141f53c1cfb5da7c2f8e5",
+  "policy": {
+    "boundaryClipsHydrology": false,
+    "coordinateSnapping": false,
+    "fieldAccuracyVerified": false,
+    "geometryRepair": false,
+    "joinsApplied": false,
+    "serviceMigrated": false,
+    "ufidOnlyMerging": false
+  },
+  "schemaVersion": 1,
+  "sourceSpatialSha256": "4eeb19430451d115807398df34cea75557ff1c152438c56750c8b0fafa395373",
+  "distributionUpdatedAt": "2026-03-07",
+  "sourceManifest": "data/manifests/vworld-seoul-topography-20260307.json",
+  "sourceSpatialManifest": "data/manifests/seoul-spatial-catalog-v1.json",
+  "districtBoundary": {
+    "file": "data/derived/seoul-district-boundaries-v1.json",
+    "sha256": "ff49da7030e1abcea4190aa3e3375714889fc537c2759cb4d220c04e764cf4c4",
+    "sourceSha256": "abd34d82897f0c2191fe4095df55a4aacfe8fce815fa4dacf730cc34c6dd962c",
+    "name": "서울시 상권분석서비스(영역-자치구)",
+    "sourceUrl": "https://data.seoul.go.kr/dataList/OA-22161/A/1/datasetView.do",
+    "license": "KOGL-TYPE1",
+    "fileModifiedAt": "2023-10-31",
+    "geometryReferenceDate": null
+  },
+  "serviceMigrated": false,
+  "datasetName": "서울 수치지형도 원 도곽 피복·동일 UFID 건물 접합 검사",
+  "privateReport": {
+    "file": "data/private/vworld-seoul-topography-20260307/seam-audit-v1-final.json",
+    "sha256": "bbd0c81415375758bc98b459a007acddc01541c154ecfa5ff4738b93abf5f294"
+  }
+}

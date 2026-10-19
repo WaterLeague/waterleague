@@ -1,0 +1,16 @@
+{
+  "provider": "서울특별시",
+  "sourcePage": "https://data.seoul.go.kr/dataList/OA-22161/F/1/datasetView.do",
+  "endpoint": "https://datafile.seoul.go.kr/bigfile/iot/inf/nio_download.do?&useCache=false",
+  "method": "POST",
+  "parameters": {
+    "infId": "OA-22161",
+    "seqNo": "",
+    "seq": "1",
+    "infSeq": "3"
+  },
+  "filename": "seoul-district-boundaries-20231031.zip",
+  "sha256": "abd34d82897f0c2191fe4095df55a4aacfe8fce815fa4dacf730cc34c6dd962c",
+  "bytes": 488551,
+  "acquiredAt": "2026-10-19T20:12:52.593597+00:00"
+}

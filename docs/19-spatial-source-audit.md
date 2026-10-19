@@ -4,7 +4,7 @@
 
 ## 서울 25개 구 전환 계약
 
-2026-10-20 서울 25개 구의 `수치지형도v2.0(1:1000)` SHP ZIP과 데이터 설명서를 `data/private/vworld-seoul-topography-20260307/originals/`에 복사했다. [원본 목록](../data/manifests/vworld-seoul-topography-20260307.json)의 프로젝트 상대 경로·크기·SHA-256을 기준으로 읽으며 개인 다운로드 경로에 의존하지 않는다. 공통 입력 카탈로그의 수집·구성 검사를 완료했으며 일반 게임의 OSM 교체는 [P0 구현 계획](09-delivery.md#p0--서울-수치지형도-전환과-공통-공간-기반)의 미완료 항목이다. 아래 성수 4도엽의 기존 적용·재현 기록은 그대로 구분한다.
+2026-10-20 서울 25개 구의 `수치지형도v2.0(1:1000)` SHP ZIP과 데이터 설명서를 `data/private/vworld-seoul-topography-20260307/originals/`에 복사했다. [원본 목록](../data/manifests/vworld-seoul-topography-20260307.json)의 프로젝트 상대 경로·크기·SHA-256을 기준으로 읽으며 개인 다운로드 경로에 의존하지 않는다. 공통 입력·원 레코드 공간·객체 카탈로그와 지도 파일 생성 경로를 구현했으며 일반 게임의 OSM 교체는 [P0 구현 계획](09-delivery.md#p0--서울-수치지형도-전환과-공통-공간-기반)의 미완료 항목이다. 아래 성수 4도엽의 기존 적용·재현 기록은 그대로 구분한다.
 
 사전 검사: ZIP 25개 540,518,560바이트, 도엽 참조 3,075개, 고유 도엽 2,488개, 반복 참조 587개. 반복된 같은 도엽의 SHA-256 충돌은 없고 원본/고유 도엽 내부 CRC 검사 통과, 레이어는 121종이다. 선택한 건물·도로경계·교량·등고선·표고점의 PRJ 10,847건은 EPSG:5186이다. 이는 모든 레이어의 CRS·도형 유효성·서울 전역 피복·필드값의 완전성·실측 정확도 통과가 아니다. 상세 검사 파일은 원본 목록에 경로·해시로 결속했다.
 
@@ -61,6 +61,37 @@ simulation/.venv/bin/python scripts/verify_seoul_spatial.py \
 ```
 
 기본 공간 출력은 `data/private/vworld-seoul-topography-20260307/spatial-v1/`이다. 기존 출력 덮어쓰기·입력 해시 불일치를 거부한다. 공간 카탈로그·원 값 프로필·상세 진단은 Git 제외이며 [공개 공간 검사 요약](../data/manifests/seoul-spatial-catalog-v1.json)에 집계·원본/코드/산출물 해시·실행 도구 버전과 독립 GDAL 대조 결과만 보존한다. 검사 통과를 서울 전역 피복·도엽 접합·현장 정확도·게임 지도 전환 완료로 표시하지 않는다.
+
+### 자치구 소속·도곽 피복·공간 객체·지도 파생
+
+소속·집계 경계는 서울시 [상권분석서비스(영역-자치구), OA-22161](https://data.seoul.go.kr/dataList/OA-22161/A/1/datasetView.do)의 공개 25개 다각형과 행정코드를 사용한다. 공공누리 제1유형이며 서울특별시·서울신용보증재단 출처를 표시한다. 원 ZIP·PRJ·UTF-8 CPG·원 속성·행/도형 해시를 보존하고 EPSG:5181에서 5186으로 변환한다. 파일 수정일 2023-10-31은 실제 조사 기준일이 아니다. [경계 스냅샷](../data/derived/seoul-district-boundaries-v1.json)의 조사 기준일은 결측으로 유지한다. 원형 복구·단순화·수문 유역 절단은 수행하지 않는다.
+
+도엽 피복은 설명서 143쪽의 원 도곽선 `N1A_H0010000`·`N3A_H0010000`으로 검사한다. 객체 분포의 사각 범위나 수치지형도 행정 경계로 서울 면적을 대체하지 않는다. [도곽·접합 검사 요약](../data/manifests/seoul-topography-coverage-v1.json)의 면적은 **등록 도엽의 범위**이며 모든 지물이 존재하거나 현장 정확도가 검증됐다는 의미가 아니다. 확보한 1:1,000 도곽 밖을 1:5,000 또는 OSM 자료로 자동 채우지 않는다.
+
+`prepare_topography_objects.py`는 원 공간 카탈로그의 1:1,000 건물·도로면/중심선·보도·교량·터널·철도·하천수면·호소·경지계 면을 파생 객체로 연결한다. 원형의 양의 교차 면적/길이가 가장 큰 구를 소속으로 정하고 동률이면 공개 행정코드를 사용한다. 구별 교차량과 원형 전체를 함께 저장하며 구 경계로 자르지 않는다. 서울 밖에만 있는 원 레코드는 이 화면용 객체 목록에서 제외하지만 원 공간 카탈로그에 보존한다.
+
+- 도형 키는 레이어와 정규 순서 WKB의 SHA-256이다. 같은 레이어에서 좌표가 정확히 일치하는 도형만 묶고 대표 원 WKB와 모든 도엽·레코드·SHP/DBF 해시 대응을 보존한다. 좌표 스냅·근접 병합·UFID 단독 병합은 금지한다. 도형 그룹은 고유 시설 식별이 아니다.
+- UFID를 제외한 원 속성의 모든 차이를 보존하고 속성 충돌은 배치 제외 상태로 반환한다. 서로 다른 건물 도형의 양의 면적 겹침도 그대로 보존하며 해당 건물 모두를 배치 제외 상태로 반환한다. 겹친 면적을 두 번 집수면으로 배분하지 않는다.
+- 동일 UFID의 건물 조각은 속성 일치·면적 비중첩·공유 선·양쪽 원 도곽선에 놓인 공유 선·합집합 면적 보존이 모두 확인될 때만 접합 근거가 있다. 현재 대조에서 이 조건을 만족한 쌍은 없으며 접합을 적용하지 않는다. 같은 UFID의 별개 도형을 강제로 하나의 지붕으로 만들지 않는다.
+
+[객체 검사 요약](../data/manifests/seoul-topography-objects-v1.json)은 역할/구별 집계·출처/코드/객체 해시·배치 제외 정책만 공개한다. 원 레코드 대응·속성·WKB가 든 `objects.sqlite`와 접합 상세 기록은 Git 제외 경로에 보관한다.
+
+`prepare_topography_scene.py`는 같은 객체 ID·소속·원 면적/길이·배치 상태로 시야별 파일을 생성한다. 고정 원점 `[198128,551989]`을 뺀 EPSG:5186 미터 좌표를 사용하며 원 도형·구멍·다중 도형을 타일 경계로 자르거나 반올림하지 않는다. 대표점으로 파일을 배정하되 각 파일의 조회 범위는 객체 전체의 경계를 포함한다. 타일 좌표만으로 파일을 선택해 경계를 가로지르는 객체를 누락시키지 않는다. 계산은 이 표시 파일에서 재구성하지 않고 해시가 연결된 원 객체를 사용한다.
+
+건물 층수×3.2m는 표시 가정이고 유효한 정수 층수가 없으면 `UNKNOWN_HEIGHT_FLAT_DISPLAY`의 0.3m 평면 표시다. 도로의 일방통행 여부만으로 정/역방향을 추론하지 않고, 원 도로폭의 단위 미확인을 유지한다. 실제 주차 칸·교량 고도·시공 적합성·관망 연결을 생성하지 않는다. [지도 파생 요약](../data/manifests/seoul-topography-scene-v1.json)의 `serviceMigrated=false`는 일반 게임·후보/API/워커 전환과 브라우저 성능 시험이 남았음을 뜻한다. 현재 서비스 사용 자료가 바뀌기 전까지 프론트 데이터 페이지의 OSM 출처를 교체하지 않는다.
+
+```sh
+simulation/.venv/bin/python scripts/fetch_seoul_observations.py district-boundaries
+simulation/.venv/bin/python scripts/prepare_seoul_boundaries.py
+simulation/.venv/bin/python scripts/prepare_topography_objects.py
+simulation/.venv/bin/python scripts/audit_topography_seams.py \
+  --output data/private/vworld-seoul-topography-20260307/seam-audit-v1-final.json
+simulation/.venv/bin/python scripts/prepare_topography_scene.py
+simulation/.venv/bin/python scripts/verify_topography_scene.py \
+  --output data/private/vworld-seoul-topography-20260307/scene-verification-v1.json
+```
+
+기본 출력은 `objects-v1/`·`scene-v1/`이고 입력 불일치·기존 출력 덮어쓰기·생성 중 입력/코드 변경을 거부한다. 독립 출력은 `--output`으로 지정한다. 지도 대조는 전체 파일의 크기/해시·객체 중복/누락·원 형상/면적·파일 조회 범위를 검사하며 현장 정확도와 브라우저 성능 검증을 대신하지 않는다. NGII 지도 이용조건 근거는 [수치지도 V2.0 공공누리 제1유형](https://www.data.go.kr/data/15059719/fileData.do)이며 브이월드 배포 출처도 함께 표시한다.
 
 ## 수치지형도 플레이 모델 연결
 

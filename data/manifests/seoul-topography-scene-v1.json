@@ -1,0 +1,85 @@
+{
+  "catalog": {
+    "bytes": 2226970,
+    "sha256": "7af763a751b8d697ab0f0c7d09aaab3efe724c89bebc46f7ddaf9c565a48910a"
+  },
+  "counts": {
+    "BRIDGE_AREA": 3170,
+    "BUILDING_FOOTPRINT": 1014532,
+    "CULTIVATION_LANDSCAPE_AREA": 29319,
+    "LAKE_RESERVOIR_AREA": 2185,
+    "RAILWAY_AREA": 385,
+    "RAIL_CENTERLINE": 427,
+    "RIVER_WATER_AREA": 1926,
+    "ROAD_AREA": 338329,
+    "ROAD_CENTERLINE": 567296,
+    "SIDEWALK_AREA": 75116,
+    "TUNNEL_AREA": 291
+  },
+  "decoderSha256": "f4bda9a8047acf03951898cab87c2de73a06c54ba6589776b2ae1ccbac4d1d09",
+  "generatorSha256": "841a962ac7db94cc029c67b98930d1681603ae19dfcd7673116c2e5aabf51c10",
+  "objectsSha256": "2c514899f82d858b4386d489b4fd9fa691552b59704f88f93e5475cc33b8f7d0",
+  "schemaVersion": 1,
+  "serviceMigrated": false,
+  "sourceReaderSha256": "32a5c8d6182cbc5737e4fac7274118631bed87d3c7f99573f73d2e9aa3ec56cd",
+  "sourceSpatialSha256": "4eeb19430451d115807398df34cea75557ff1c152438c56750c8b0fafa395373",
+  "spatialReaderSha256": "d674b2f2fdd989a6b7f6ccfeabda62cc4f5e6fa6e64563f9494a2b5264e796b0",
+  "tileCount": 686,
+  "versions": {
+    "geos": "3.14.1",
+    "shapely": "2.2.0",
+    "sqlite": "3.53.1"
+  },
+  "distributionUpdatedAt": "2026-03-07",
+  "sourceManifest": "data/manifests/vworld-seoul-topography-20260307.json",
+  "sourceSpatialManifest": "data/manifests/seoul-spatial-catalog-v1.json",
+  "districtBoundary": {
+    "file": "data/derived/seoul-district-boundaries-v1.json",
+    "sha256": "ff49da7030e1abcea4190aa3e3375714889fc537c2759cb4d220c04e764cf4c4",
+    "sourceSha256": "abd34d82897f0c2191fe4095df55a4aacfe8fce815fa4dacf730cc34c6dd962c",
+    "name": "서울시 상권분석서비스(영역-자치구)",
+    "sourceUrl": "https://data.seoul.go.kr/dataList/OA-22161/A/1/datasetView.do",
+    "license": "KOGL-TYPE1",
+    "fileModifiedAt": "2023-10-31",
+    "geometryReferenceDate": null
+  },
+  "boundaryContentSha256": "8e4c20aa88d2ff35fffaae4825a2a44ec979a0071f1b975e57ed628646203960",
+  "datasetName": "서울 수치지형도 원 객체 대응 시야별 지도 파일",
+  "status": "DISPLAY_DERIVED_NOT_SERVICE_MIGRATED",
+  "privateDirectory": "data/private/vworld-seoul-topography-20260307/scene-v1",
+  "validation": {
+    "browserPerformanceVerified": false,
+    "catalogSha256": "7af763a751b8d697ab0f0c7d09aaab3efe724c89bebc46f7ddaf9c565a48910a",
+    "coordinateToleranceM": 1e-08,
+    "fieldAccuracyVerified": false,
+    "maximumTileBytes": 9613506,
+    "measureAbsoluteTolerance": 1e-06,
+    "measureRelativeTolerance": 1e-10,
+    "objectsCompared": 2032976,
+    "objectsSha256": "2c514899f82d858b4386d489b4fd9fa691552b59704f88f93e5475cc33b8f7d0",
+    "schemaVersion": 1,
+    "status": "PASS",
+    "tileCount": 686,
+    "totalTileBytes": 1580826355,
+    "verifierSha256": "3d8c5675dcb94b5d0dc23c98cf2a8d462015ee66ec2f857b440f8ad940bde325",
+    "versions": {
+      "geos": "3.14.1",
+      "shapely": "2.2.0",
+      "sqlite": "3.53.1"
+    }
+  },
+  "policy": {
+    "geometryClippedToTile": false,
+    "heightIsSurveyed": false,
+    "modelCalculationsFromDisplayGeometry": false,
+    "parkingStallsProvided": false,
+    "serviceMigrated": false,
+    "sourceScaleDenominator": 1000,
+    "unknownOneWayDirectionInferred": false
+  },
+  "validationReportSha256": "e6f69e210fd7c0e36bc44ad1f550715ac4cd1ce963be50b3dd68c6b1419abab4",
+  "reproducibility": {
+    "runs": 2,
+    "byteIdenticalFiles": 688
+  }
+}
