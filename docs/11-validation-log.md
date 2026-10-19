@@ -1,5 +1,7 @@
 # 검증 기록
 
+이 문서는 날짜별 당시 실행 증거다. 이후 삭제/변경된 화면·규칙·검사 건수는 현재 계약이 아니며, 현재 상태는 [제품](01-product.md)·[구현 목표](09-delivery.md)를 확인한다. 과거 검증 수치를 최신 실행 결과로 재표기하지 않는다.
+
 ## 2026-10-19 재해·스크롤 형상 재사용과 도로 직접 선택
 
 재해 점수 갱신으로 건물 점유 목록이 새 객체가 되어 메시 전체를 제거·재생성하는 경로를 확인했다. 설치 배치와 점수 데이터를 분리하고 공개 시설·주차장 가시 범위의 동일 목록을 재사용했다. 건물 타일의 순서 변경 재조회·단계별 제거를 없애고 도로 타일 조합 캐시·경로 재사용·동일 후보 객체 재사용을 적용했다. 실제 형상 교체 때는 대체 버퍼 준비 후 이전 버퍼를 해제한다.
@@ -81,7 +83,7 @@ npm 10의 dependency resolver 내부 오류로 설치 실패 후 pnpm으로 고�
 
 ## 브이월드 연결
 
-기존 `.env.local` 키 감지 후 공식 `LT_C_SPBD` 요청. 2026-10-16 초기 `INCORRECT_KEY` 응답, 사용자 등록 주소 수정 후 `OK`. 성수 영역 MultiPolygon 건물 10개 표본과 지상 층수 필드 확인, 실측 높이·지표고 항목 없음. 키·인증 URL·공간 원본 저장 없음. 현재 지도와 연구 모델은 변경하지 않음. 이용 범위와 편입 조건은 [브이월드 연결 결정](decisions/0004-vworld-access.md) 참조.
+기존 `.env.local` 키 감지 후 공식 `LT_C_SPBD` 요청. 2026-10-16 초기 `INCORRECT_KEY` 응답, 사용자 등록 주소 수정 후 `OK`. 성수 영역 MultiPolygon 건물 10개 표본과 지상 층수 필드 확인, 실측 높이·지표고 항목 없음. 키·인증 URL·공간 원본 저장 없음. 현재 지도와 연구 모델은 변경하지 않음. 이용 범위와 편입 조건은 [브이월드 연결 결정](12-data-access.md) 참조.
 
 화면 대조 연결: 고정 영역 전체 129개·양수 지상 층수 122개. 회원 서버 프록시를 통해 실제 브라우저 조회·OSM 중첩·건물 선택(지상 6층 표시) 확인. 비인증 요청 401, 좌표 범위·닫힌 링·페이지 총량·중복·외부 오류 비노출 검사. 서버 총 36개, 프론트 총 10개 검사 통과. 공개 모델 해시·SWMM 결과 변경 없음. 기관 UI 시험 후 공유 철회 확인, 시험 계정·기관 비활성화 및 MFA 등록 URI 정리.
 
@@ -140,7 +142,7 @@ G1 빗물정원 40㎡, 22,400,000원 설계로 실제 SWMM 작업 `0560e2ce-29a7
 
 ## 2026-10-16 토양 API 접근
 
-기존 브이월드 키로 고정 성수 구역 배수등급 2개·유효토심 1개·심토토성 2개 도형 조회 확인. 각 응답의 전체/현재 건수·필드명·형상 유형 점검, 별도 토양도 레이어 0개 확인. 접근 메타데이터만 기록하며 도형·속성값·인증 URL 저장 없음. 이용약관과 원자료 조사 시점·대표성 미확인으로 SWMM 모델 편입 제외. [접근 점검 문서](19-soil-data-access.md) 참조.
+기존 브이월드 키로 고정 성수 구역 배수등급 2개·유효토심 1개·심토토성 2개 도형 조회 확인. 각 응답의 전체/현재 건수·필드명·형상 유형 점검, 별도 토양도 레이어 0개 확인. 접근 메타데이터만 기록하며 도형·속성값·인증 URL 저장 없음. 이용약관과 원자료 조사 시점·대표성 미확인으로 SWMM 모델 편입 제외. [접근 점검 문서](12-data-access.md) 참조.
 
 ## 2026-10-16 리그 시설 제한·상금 안내
 
@@ -388,7 +390,7 @@ Python 94개 통과(새 공간+4개 실제 강우의 시설 3종·독립 재실�
 사용자 지정 2일 기한·서울 전역 확장 우선순위 반영. OSM 대한민국 원본을 프로젝트에 저장하고 제공처 체크섬 확인. 서울 25개 구·건물 166,238개를 623개 파일로 분할, 자체 저장 자료만 읽는 도시 도메인과 3D/2D·구 검색·확대·주변 건물·성수 도전 연결 구현. 원본 태그·층수 환산·표현 가정 구분, 지역별 계산 상태 명시. 기존 성수 지도·모델·저장 기록 변경 없음.
 
 변경 범위의 프런트 검사 2개·타입/빌드 통과. 모든 타일 바이트/SHA-256·고유 건물 ID·건수·25개 구·생성기 계보 검사 1개 통과. 실제 브라우저의 강남 검색/선택·7,338개 주변 건물·2D→3D·성수 도전 전환 확인, 새 세션 오류 로그 0개. 표식의 별도 React root 제거 후 화면 투영 DOM 표식 사용. 좁은 기본 화면에서 도시 경계가 잘리지 않도록 전체 보기 시점을 화면 비율에 맞게 설정. 이번 검사에서 회원/DB/계산/순위 쓰기 없음.
-# 2026-10-17 연속 물리 계산 기반
+## 2026-10-17 연속 물리 계산 기반
 
 EPA 5.2.4 원본 리비전 고정 후 읽기 전용 LID·수지 관측 함수 추가 빌드를 별도 생성. 기존 연구 바이너리·빌더 보존. 동일 입력·동일 종료 시점의 공식 바이너리와 새 바이너리 OUT 바이트 및 RPT 수지 구간 일치. 분별 상태 90분 접두 구간과 180분 연속 재생 접두 구간 일치, 시설 3종의 강우·월류·배수·건조·무강우 및 시변 증발 입력 검사 통과. 이 검사는 수치 경로 확인이며 현장 정확도 검증이 아님.
 
@@ -567,7 +569,7 @@ API 키를 비운 보관 원문 전용 재생성에서도 강우·증발산 52�
 같은 성동 실제 강우·기상·20㎡ 시설 12조건 재실행. 빗물정원 7일/건조 시드의 평가 침투 0→0.09028149m³, 14일/건조 0.39197894m³, 습윤 시드 약 0.39513933m³. 시작 수분율의 건습 차이는 7일 약 0.16370, 14일 약 0.02870으로 남음. 투수포장·녹화지붕의 동일 조건 수치 유지. 14일 결과를 수렴 인증으로 해석하지 않음. 수정 후 자료 `data/benchmarks/observed-spinup-seongdong-20220808-v2.json`, 산출물 `data/runs/initialization-seongdong-20220808-14d-v2`, 빗물정원 4조건의 동일 입력·엔진 재현 일치.
 
 브라우저 831×879의 주간·2022 재해 공통 패널에서 원지반 침투율 3.302mm/h·토성군 문헌 추정·차수막 미확인 표시 확인. 이전 입력의 침투 미연결 안내는 해당 보관 결과에만 표시. 두 모드 문서/뷰포트 높이 879px, 가로 831px 일치. 캡처 `tmp/native-soil-weekly.png`, `tmp/native-soil-disaster.png`.
-# 2026-10-18 관망·2D 계산 기반
+## 2026-10-18 관망·2D 계산 기반
 
 - 별도 EPA 5.2.4 DYNWAVE 빌드와 읽기 전용 관측 누적기. 수위·방향 유량·펌프·외부 유입·월류/방류·저류 기록, CMS API 반올림과 정확 SI 변환 구분. 기존 LID 바이너리 보존.
 - 공개 EPA Applications Manual 원본 Example3·Example8을 기존 공식 바이너리 CLI와 비교하여 OUT 바이트 동일. Example3 라우팅 오차 -0.049369%, 최소 낙차 적용 경고 1건 보존. Example8은 실제 곡선/제어로 펌프 최대 0.203881m³/s 계산되지만 라우팅 오차 -2.043002%로 1% 게이트 실패. 임계값 완화·입력 임의 수정·공식 모델 승격 없음.
@@ -1107,3 +1109,51 @@ API 키를 비운 보관 원문 전용 재생성에서도 강우·증발산 52�
 - 주간 첫 직접 조회에서 기상청 주 강우 응답 시간 초과와 보조 현천만 수신하는 상태 확인. 같은 공식 API의 개별 지점·전 지점 분 관측 재조회는 정상 응답. 2026-10-20 01:22 KST 로컬 API 재조회 0.86초, 25개 구 전부 CURRENT·분강우 0.0mm 확인. 강서 01:20, 나머지 01:21 원 관측 시각 유지. 이 시점에 구별 미연결 없음. 사용자가 앞서 보았던 구는 특정하지 못함.
 - 우량계 분강우가 정상이어도 강수감지 센서가 결측이면 상세 설명에서 확인 구 수를 적게 세던 문구 수정. 강우량 확인 수로 집계하고 1~3개 구 미확인 시 이름 표시. 비/눈 판정과 실제 0/결측 구분 유지, 원천/서버/모델/점수 입력 변경 없음.
 - 관련 2파일/9검사 및 타입/제품 빌드 통과. 브라우저 서울 전체 `강우량 25/25개 구 확인`·`1분 강우 0mm`, 관악구 원 관측 시각·분/시간/일누적 0mm 표시 확인. 증거 `output/ui-verification/rainfall-25-districts-20261020.png`. 기존 로컬 API·프론트·워커 유지.
+
+## 구현 계획에서 통합한 수치 검증 근거
+
+2026-10-20 문서 통합 시 기존 계획에만 있던 파일 참조를 보존한다. 아래는 기존 산출물 색인이며 이번에 해당 계산을 다시 실행했다는 뜻이 아니다. 개별 보고서의 입력·시점·실패/제한 범위가 기준이다.
+
+- [cistern-mixed-v1.json](../data/benchmarks/cistern-mixed-v1.json)
+- [cistern-network-v1.json](../data/benchmarks/cistern-network-v1.json)
+- [city-mesh-display-v1.json](../data/benchmarks/city-mesh-display-v1.json)
+- [connected-pumps-v1.json](../data/benchmarks/connected-pumps-v1.json)
+- [guest-historical-v1.json](../data/benchmarks/guest-historical-v1.json)
+- [historical-design-v1.json](../data/benchmarks/historical-design-v1.json)
+- [historical-initialization-v1.json](../data/benchmarks/historical-initialization-v1.json)
+- [historical-submission-v1.json](../data/benchmarks/historical-submission-v1.json)
+- [initialized-cistern-v1.json](../data/benchmarks/initialized-cistern-v1.json)
+- [initialized-facility-peaks-v1.json](../data/benchmarks/initialized-facility-peaks-v1.json)
+- [live-coupled-facilities-v1.json](../data/benchmarks/live-coupled-facilities-v1.json)
+- [live-network-v1.json](../data/benchmarks/live-network-v1.json)
+- [live-surface-v1.json](../data/benchmarks/live-surface-v1.json)
+- [map-swale-v1.json](../data/benchmarks/map-swale-v1.json)
+- [map-trench-v1.json](../data/benchmarks/map-trench-v1.json)
+- [observed-spinup-seongdong-20220808-28d-v1.json](../data/benchmarks/observed-spinup-seongdong-20220808-28d-v1.json)
+- [public-facilities-3d-v1.json](../data/benchmarks/public-facilities-3d-v1.json)
+- [public-surface-v1.json](../data/benchmarks/public-surface-v1.json)
+- [rainfall-ui-removal-v3.json](../data/benchmarks/rainfall-ui-removal-v3.json)
+- [saved-submission-v1.json](../data/benchmarks/saved-submission-v1.json)
+- [selected-runoff-metrics-v1.json](../data/benchmarks/selected-runoff-metrics-v1.json)
+- [surface-directions-v1.json](../data/benchmarks/surface-directions-v1.json)
+- [terrain-storage-v1.json](../data/benchmarks/terrain-storage-v1.json)
+- [watershed-member-cistern-cost-v1.json](../data/benchmarks/watershed-member-cistern-cost-v1.json)
+- [watershed-member-cistern-hydraulics-v1.json](../data/benchmarks/watershed-member-cistern-hydraulics-v1.json)
+- [watershed-member-conduit-v1.json](../data/benchmarks/watershed-member-conduit-v1.json)
+- [watershed-member-pump-v1.json](../data/benchmarks/watershed-member-pump-v1.json)
+- [watershed-member-storage-v1.json](../data/benchmarks/watershed-member-storage-v1.json)
+- [watershed-member-workflow-v1.json](../data/benchmarks/watershed-member-workflow-v1.json)
+- [watershed-node-flooding-v1.json](../data/benchmarks/watershed-node-flooding-v1.json)
+- [watershed-outfall-metrics-v1.json](../data/benchmarks/watershed-outfall-metrics-v1.json)
+- [watershed-playback-v1.json](../data/benchmarks/watershed-playback-v1.json)
+- [weekly-member-seasons-v1.json](../data/benchmarks/weekly-member-seasons-v1.json)
+
+## 2026-10-20 확장 목표 갱신·문서 통합 검증
+
+- `09-delivery.md`를 단일 확장 계획으로 갱신: 현재 구현/미완료, 배포 전 호환 의무 제거, 빗물이용조 완성 후 소형 빗물통 규격 추가, 연결 공개 유역, 지표/배점, LCC/관리/적합성, 성능·권한의 단계별 완료 기준 정리. 계획 체크는 미완료 상태 유지.
+- Markdown 48개 → 27개. 중복 세부 계약 13개와 이전 결정 문서 8개를 제품·UX·아키텍처·자료·운영·기관 계약으로 통합/삭제. README에 문서 역할과 진입 링크 정리. AGENTS.md 변경 없음.
+- 위치 독점·구별 예산·3종 시설·브이월드 실시간 조회·운영자 OTP 전달·초기 점수 제안 등 오래된 설명 정정. 연구용 카탈로그/서버 기능과 현재 기본 UI의 공개 범위 구분.
+- 남은 27개 문서의 상대 링크/앵커 160개, 단일 최상위 제목·코드 블록 닫힘 검사 통과. 삭제 파일 이름을 Markdown·코드·설정에서 검색해 잔여 참조 없음.
+- SQL/Java 마이그레이션의 CREATE TABLE 40개를 데이터 모델 문서와 대조. 현재 모델 카탈로그 227종·공개 지표 운영 registry 0종 확인. 기존 계획의 수치 보고서 경로 49개 보존, 그중 다른 문서에 없던 33개를 위 색인에 이관.
+- `git diff --check` 통과. 변경 범위는 Markdown만이며 앱/DB/계산 입력은 변경하지 않음. 전체 앱 빌드나 수치 시험을 새로 실행한 결과로 기록하지 않음.
+- 기존 로컬 API health `UP`, 프론트 HTTP 200 확인. 실행 중 서비스 중지/재시작 없음. 기존 미추적 수집 매니페스트와 `output/`는 변경/스테이징 대상에서 제외.

@@ -6,9 +6,9 @@
 
 서버 세션·프레임워크 사용. 운영 쿠키 __Host- 접두사, Secure·HttpOnly·SameSite=Lax·Path=/·Domain 미설정. 로그인·권한 변경 시 세션 회전, 유휴·절대 만료, 서버 로그아웃. 토큰 localStorage 저장 금지. [OWASP 세션 지침](https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html) 참고.
 
-Argon2id 최소 m=19MiB·t=2·p=1에서 성능 측정·상향. 비밀번호 길이 8~128자(2026-10-17 사용자 요청: 최소 8자). 회원가입 폼의 비밀번호 확인란 필수·불일치 제출 차단, 확인값의 서버 전송·저장 없음. 인증 실패 메시지 일반화, 가입·로그인·복구 rate limit. 이메일 검증·재설정·유출 비밀번호 검사·기관 MFA/IdP는 공개 운영 전 게이트. [OWASP 비밀번호 지침](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html) 참고.
+Argon2id 최소 m=19MiB·t=2·p=1에서 성능 측정·상향. 비밀번호 길이 8~128자(2026-10-17 사용자 요청: 최소 8자). 회원가입 폼의 비밀번호 확인란 필수·불일치 제출 차단, 확인값의 서버 전송·저장 없음. 인증 실패 메시지 일반화, 가입·로그인·복구 rate limit. 이메일 검증·재설정·유출 비밀번호 검사와 실제 운영 인증 흐름은 공개 운영 전 검증 항목이다. 관리자·조직 회원의 TOTP는 구현된 아래 경로를 사용한다. [OWASP 비밀번호 지침](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html) 참고.
 
-기관 인증 구현: [RFC 6238](https://www.rfc-editor.org/rfc/rfc6238) TOTP 6자리·30초·인접 1구간 허용, 사용 카운터 조건부 갱신으로 재사용 거부. 기관별 비밀은 계정 ID를 AAD로 한 AES-256-GCM 암호화 저장, `MFA_ENCRYPTION_KEY`는 DB와 분리. 키·등록 정보 부재 시 기관 로그인 거부. 공개 가입에서 등록·역할 변경 불가, 로컬 운영 명령에서 소속 확인 후 기존 계정 승격. 기관 MFA는 피싱 저항성을 제공하지 않으므로 운영 IdP/WebAuthn 도입 전 위험 검토 필요.
+기관 인증 구현: [RFC 6238](https://www.rfc-editor.org/rfc/rfc6238) TOTP 6자리·30초·인접 1구간 허용, 사용 카운터 조건부 갱신으로 재사용 거부. 기관별 비밀은 계정 ID를 AAD로 한 AES-256-GCM 암호화 저장, `MFA_ENCRYPTION_KEY`는 DB와 분리. 키 부재 시 등록/인증을 거부한다. 승인된 관리자·조직 회원은 비밀번호·CSRF·요청 제한을 검사한 임시 등록 세션에서 직접 인증 앱을 연결하고 OTP 검증 후 업무 세션을 받는다. 기존 비밀의 조회/덮어쓰기와 등록 전 업무 접근은 금지한다. 공개 가입으로 역할·조직 ID·승인 상태를 주입할 수 없으며 운영자가 회원 OTP 비밀을 받아 등록하는 절차는 사용하지 않는다. 기관 MFA는 피싱 저항성을 제공하지 않으므로 운영 IdP/WebAuthn 도입 전 위험 검토 필요.
 
 로그인 세션 절대 만료 8시간, 유휴 만료 30분. 매 요청 계정 활성 상태·현재 역할·기관 MFA 확인. 권한 변경·재등록 시 기존 세션 삭제. JSON 본문 64 KiB 상한, 전역 작업 입장 잠금으로 큐 상한 경합 차단.
 
@@ -41,3 +41,9 @@ Argon2id 최소 m=19MiB·t=2·p=1에서 성능 측정·상향. 비밀번호 길�
 ## 도시 공개 화면 수집 (2026-10-19)
 
 서버 고정 `https://data.seoul.go.kr/SeoulRtd/` 호스트와 두 서비스 이름만 사용한다. 브라우저는 자체 API만 호출하며 외부 인증키·사용자 쿠키를 전송하지 않는다. 일반 공개 페이지 Referer를 사용하되 TLS 인증서 검증·리디렉션 차단·Content-Type·크기·타임아웃을 유지한다. 입력 장소는 프로젝트에 고정한 카탈로그 해시로 검증한 이름으로 변환하며 사용자 URL/장소명을 외부 주소에 직접 연결하지 않는다. 원문 HTML·예보/과거 값·잘못된 시각·비유한 값·장소 불일치는 현재 관측으로 승격하지 않는다. `.env.local`의 `SEOUL_OPEN_DATA_KEY`는 프론트/워커 프로세스 상속에서 제거하며 이번 공개 HTTPS 경로는 키를 사용하지 않는다. 비암호화 HTTP API에 키를 보내는 대체 경로 없음.
+
+## 회원 승인과 관리자 경계
+
+역할은 ADMIN/MEMBER, 회원 유형은 PLAYER/BUSINESS/INSTITUTION/GOVERNMENT다. 단일 관리자는 DB 유일 제약과 비공개 초기화 명령으로 생성한다. 공개 가입·관리 API로 추가 관리자를 만들거나 관리자 자신의 권한/정지를 변경할 수 없다.
+
+PLAYER는 즉시 승인한다. 조직 회원은 PENDING으로 접수하며 관리자가 소속·이용 목적을 검토해 APPROVED/REJECTED/SUSPENDED 상태와 사유를 기록한다. 가입 시 조직명만 같다고 기존 조직에 자동 편입하지 않는다. 조직 승인 전 업무 세션을 발급하지 않으며, 승인된 조직/유형은 일반 회원이 변경하지 못한다. 승인/정지·MFA 재등록 시 기존 세션을 폐기한다. 관리자는 계정 운영 권한만으로 연구 자료를 열람하지 못한다.

@@ -10,25 +10,9 @@ python3 scripts/run_local.py api
 
 기본 127.0.0.1:8080. local 프로필은 HTTP 쿠키, 기본 프로필은 `__Host-waterleague` Secure·HttpOnly·SameSite. Java 25 필수. 테스트는 H2 PostgreSQL 모드이고 운영 큐는 실제 PostgreSQL의 SKIP LOCKED 사용.
 
-| API | 권한·기능 |
-| --- | --- |
-| GET `/api/v1/lab` | 고정 실험 모델·해시 |
-| GET `/api/v1/catalog`, `/api/v1/maps` | 출처·승인 맵; 현장 승인 맵 없음 |
-| GET `/api/v1/auth/csrf` | CSRF 토큰 |
-| POST `/api/v1/auth/register`, `/login`, `/logout` | 회원 인증·세션 회전 |
-| GET `/api/v1/auth/me` | 현재 회원 |
-| GET/POST `/api/v1/strategies` | 내 설계 목록·생성 |
-| GET `/api/v1/strategies/{id}` | 내 불변 버전 이력 |
-| POST `/api/v1/strategies/{id}/versions` | baseRevision 충돌 검사·저장 |
-| POST `/api/v1/simulations` | versionId·requestKey 멱등 큐 등록 |
-| GET `/api/v1/simulations`, `/{id}`, `/{id}/bundle` | 내 계산·재현 파일 |
-| GET `/api/v1/leaderboard` | 현재 모델의 제출 최고 기록 |
-| POST `/api/v1/submissions` | 서버 품질·해시·점수 검증 |
-| GET `/api/v1/organizations`, `/api/v1/consents` | 승인 기관·내 동의 |
-| PUT `/api/v1/consents/{id}` | 기관별 동의·철회 |
-| GET `/api/v1/research/strategies`, `/{id}`, `/{id}/bundle` | 기관 MFA·소속·동의·제출 버전 검증 |
+주간 설치·예산·재해 설계/게스트 계산·제출·기상·지도 API와 기관 연구 경로를 제공한다. endpoint·권한·한도는 [API 계약](../docs/06-api.md), 현재 화면 공개 범위는 [제품 계약](../docs/01-product.md)을 따른다. 과거 연구 큐의 한도를 모든 게임 작업에 일괄 적용하지 않는다.
 
-모든 상태 변경은 CSRF 검사, unknown 필드·본문 64 KiB 초과 거부. 계산 사용자당 동시 3개·전역 500개, 시설당 서버 단가, 원화 비용 저장. 기관 상세에는 계정명·비밀번호·미제출 후속 버전 제외.
+모든 상태 변경은 CSRF·소유권·승인 상태를 검사하고 내부 오류/비밀을 공통 응답에서 제거한다. 실제 스키마는 SQL/Java Flyway migration이 기준이며 개요는 [데이터 모델](../docs/05-data-model.md)에 둔다.
 
 ## 단일 관리자 초기화·회원 승인
 
@@ -47,4 +31,4 @@ python3 scripts/run_local.py provision
 
 승인된 조직 회원은 로그인 과정에서 인증 앱을 직접 등록한다. 비밀번호 확인·5분 등록 세션·OTP 검증 전에는 업무 세션이 발급되지 않는다. 이미 등록된 키는 등록 API로 조회·덮어쓰기 불가. 관리자가 회원 OTP를 전달하는 이전 명령은 제거했다. 기존 조직 계정은 마이그레이션 시 PENDING으로 전환된다.
 
-리그 API·승인 API 상세: [계약](../docs/06-api.md), [회원 승인 결정](../docs/decisions/0006-member-approval.md).
+리그 API·승인 API 상세: [계약](../docs/06-api.md), [회원 승인·보안](../docs/07-security.md).

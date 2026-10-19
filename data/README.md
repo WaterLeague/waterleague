@@ -1,5 +1,7 @@
 # 공개자료 탐색 기록
 
+이 파일은 저장/재취득 방법과 초기 성수 자료의 기록이다. 현재 서울 전역 지도·6종 시설·3개 재해 사건까지의 자료 목록은 [자료 계보](../docs/03-data-provenance.md), 확보 여부는 [접근 현황](../docs/12-data-access.md)을 따른다. 아래 초기 표본의 수량/한계를 현재 전체 범위로 읽지 않는다.
+
 2026-10-15 실제 다운로드 원본에서 생성. `manifests/public-data-audit.json`에 URL·SHA-256·취득시각·변환 스크립트 해시·제약 보존. 원본은 `raw/`에 로컬 저장, Git 제외.
 
 - 성수동 OSM: 원본 375,364바이트, 후보 경계 내 way 건물 94개. 실제 footprint만 활용, 수문모델 미승인. OSM 높이 표기도 현장 실측 확인을 의미하지 않음.
@@ -25,7 +27,7 @@ NOAA 자료의 항목·품질코드는 [NCEI ISD 안내](https://www.ncei.noaa.g
 
 ## 기상청 분자료
 
-비밀 설정은 프로젝트 루트 `.env.local` 한 곳 사용. `.env.example`을 복사하고 `KMA_API_KEY` 설정. 실제 파일은 Git 제외. 환경변수가 파일보다 우선. AWS 매분자료 API 활용신청 필요.
+비밀 설정은 프로젝트 루트 `.env.local` 한 곳 사용. 새 환경에서만 `.env.example`을 복사하고 `KMA_API_KEY`를 설정한다. 기존 `.env.local`과 승인된 키는 유지한다. 실제 파일은 Git 제외. 환경변수가 파일보다 우선. 처음 수집하는 환경에는 AWS 매분자료 권한이 필요하다. 현재 프로젝트의 승인된 권한을 다시 신청하지 않는다.
 
 ```sh
 simulation/.venv/bin/python scripts/fetch_kma.py
@@ -56,9 +58,9 @@ simulation/.venv/bin/python scripts/prepare_topography_buildings.py --check
 
 국토지리정보원 [수치지도V2.0](https://www.data.go.kr/data/15059719/fileData.do), 공공누리 제1유형(출처표시). 건물 `N1A_B0010000` 레이어 2,737도형 중 연구 영역과 양의 면적으로 교차하는 246도형을 선택. EPSG:5186 원문 PRJ와 CP949 속성을 읽고 검증한 EPSG:4326 경계·명칭·층수를 `backend/src/main/resources/spatial/seongsu-buildings.json`에 보관. 도형을 영역 경계로 자르거나 도엽별 조각을 병합하지 않음. 좌표 변환 근거와 해시는 `manifests/seongsu-topography-buildings.json`.
 
-API 서버는 시작 시 SHA-256·도형·메타데이터를 검사하고 불변 데이터를 재사용. 기상청·서울시 자료도 수집기에서 원본을 보관하고 검증한 파생자료를 게임·워커가 사용. 서비스 요청별 공공 API 호출 없음. 기존 브이월드 실시간 건물 조회 제거, 외부 API 키는 수집·진단 도구 전용. 새 자료는 별도 취득·검사 후 버전 갱신하며 과거 실행에 사용된 원본과 모델은 보존.
+API 서버는 고정 건물 스냅샷의 SHA-256·도형·메타데이터를 검사해 재사용한다. 과거 기상은 보관 원본/파생자료를 사용하고 주간 KMA·현재 서울 도시자료만 제한된 서버 실시간 경로로 조회한다. 브이월드 실시간 건물 조회는 제거했으며 외부 키는 브라우저/계산 자식 프로세스에 전달하지 않는다. 새 자료는 별도 취득·검사 후 버전 갱신하며 과거 실행에 사용된 원본과 모델은 보존.
 
-차기 모델의 실제 경계 후보는 `derived/seongsu-topography-candidates-v2.json`. `scripts/prepare_topography_candidates.py --check`가 원본 4개 도엽을 다시 읽어 같은 결과인지 검사한다. 건물 경계 기반 옥상 8개와 도로면 내부의 25m² 지상 5개, 건물·철도·교량 접촉 제외. 원본 ID/CRS/좌표/파생 면적/선정 정책 보존. 현재 운영 모델에 연결 전이며 실제 지붕·구조 하중·시공 허가·투수율·배수 연결을 검증했다는 의미가 아니다.
+성수 수치지형도 연구 모델의 경계 후보는 `derived/seongsu-topography-candidates-v2.json`. `scripts/prepare_topography_candidates.py --check`가 원본 4개 도엽을 다시 읽어 같은 결과인지 검사한다. 건물 경계 기반 옥상 8개와 도로면 내부의 25m² 지상 5개, 건물·철도·교량 접촉 제외. 원본 ID/CRS/좌표/파생 면적/선정 정책 보존. 수치지형도 연구 모델에 연결됐으나 실제 지붕·구조 하중·시공 허가·투수율·배수 연결을 검증했다는 의미가 아니다.
 
 ## EPA 참조 사례
 

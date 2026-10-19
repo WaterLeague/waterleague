@@ -1,65 +1,38 @@
-# 데이터 모델
+# 현재 데이터 모델
 
-UUID, UTC timestamptz, 비용·면적 고정 정밀도. FK·CHECK·UNIQUE·트랜잭션으로 불변식 보호. JSON은 불변 스냅샷·메타데이터 용도, 소유·권한·검증 상태는 관계형 컬럼.
+기준일: 2026-10-20. 실제 스키마의 기준은 [Flyway 마이그레이션](../backend/src/main/resources/db/migration)과 [Java 마이그레이션](../backend/src/main/java/db/migration)이다. 아래는 구현된 테이블의 책임 요약이며, 초기 기획의 개념 테이블을 실제 테이블처럼 나열하지 않는다. 배포 전 단일 구조 정리는 [확장 목표](09-delivery.md)에 따른다.
 
-아래 표는 초기 개념 모델이며 실제 테이블/컬럼 계약은 `backend/src/main/resources/db/migration/`의 적용 순서와 기능별 문서 참조. 사용자 정정 이후 회원은 `accounts`와 조직 유형/승인 상태로 구현하고, 관리자는 단일 계정. 비용은 KRW.
+UUID, UTC 시각, 비용·면적의 고정 정밀도를 사용한다. FK·CHECK·UNIQUE·트랜잭션으로 불변식을 보호한다. 소유·권한·상태는 관계형 데이터, JSON은 규칙·요청·결과의 스냅샷과 메타데이터에 사용한다.
 
-| 엔티티 | 주요 필드·제약 |
+| 영역 | 실제 테이블 |
 | --- | --- |
-| users | id, 정규화 email unique, nickname, password_hash, status |
-| organizations | id, name, verification_status |
-| organization_members | org_id, user_id, role, status, unique(org,user) |
-| data_sources | provider, source_uri, license, acquired_at, source_hash, coverage |
-| map_versions | map_id, version, boundary, CRS, source_manifest_hash |
-| model_versions | map_version_id, engine/build_hash, model_hash, validation_level, intended_use, status |
-| model_assumptions | parameter, value/unit, source_type, evidence, range |
-| validation_reports | model_version_id, report_hash, reviewer, metrics, scope, approved/revoked_at |
-| placement_cells | geometry, subcatchment_id, surface, max_area_m2, feasibility |
-| facility_versions | type, parameter_hash, allowed_surfaces, unit_cost_krw, physical_constraints |
-| rainfall_scenarios | source_id, station_id, start/end, interval_seconds, quality_status, data_hash |
-| leagues | org_id(nullable general), state, starts/ends_at, published_rules_hash |
-| league_rules | model_version, rainfall_hash, initial_state_hash, weights, budget, submission_limit |
-| league_participants | league_id, user_id, status, accepted_rules_hash, accepted_at |
-| strategies | owner_id, map_version_id, created_at |
-| strategy_versions | strategy_id, revision, placement_hash, rules_hash, canonical_json |
-| placement_events | strategy_id, sequence, server_received_at, operation, before/after, note |
-| strategy_permissions | version_id, scope, org_id, consent_version, granted/revoked_at |
-| simulation_runs | version_id, evaluation_hash, status, purpose, lease, attempt, metrics, quality_status |
-| run_artifacts | run_id, type, hash, size, storage_key, retention |
-| submissions | league_id, user_id, version_id, run_id, accepted_at, eligibility |
-| leaderboard_entries | league_id, user_id, best_submission_id, raw_score, unique(league,user) |
-| strategy_reviews | version_id, org_id, reviewer_id, state, note |
-| research_exports | requester/org, consent_snapshot, manifest_hash, expires/downloaded_at |
-| audit_events | actor/org, action, resource, outcome, trace_id, occurred_at |
+| 계정·기관·보안 | `accounts`, `organizations`, `account_mfa`, `account_reviews`, `rate_limits`, `audit_events`, `SPRING_SESSION`, `SPRING_SESSION_ATTRIBUTES` |
+| 저장 설계·계산 | `strategies`, `strategy_versions`, `simulation_jobs`, `queue_admission`, `submissions` |
+| 주간 설치·계산 | `shared_installations`, `shared_physics_jobs`, `shared_weekly_scores`, `budget_ledger_entries`, `shared_research_consents` |
+| 재해 설계·실험·제출 | `historical_design_revisions`, `historical_experiments`, `historical_submissions` |
+| 기관 리그 | `leagues`, `league_submissions`, `league_participants`, `league_participant_events`, `league_invitations`, `league_teams`, `league_team_members` |
+| 연구·목적별 동의 | `research_consents`, `utilization_requests`, `utilization_decisions`, `strategy_reviews` |
+| 비교·후보 탐색 | `rainfall_comparisons`, `rainfall_comparison_jobs`, `research_comparisons`, `research_searches`, `research_search_sources`, `research_candidates` |
+| 연결 유역·이용조 초안 | `watershed_experiments`, `cistern_map_plans` |
 
-## 불변 경계
+공개 지도·시설·강우·모델·정책은 고정 파일/카탈로그와 매니페스트도 사용한다. 모든 자료 버전을 별도 DB 테이블로 구현했다고 가정하지 않는다. 기관 서버 기능의 존재는 현재 화면 공개 여부와 별개다.
 
-맵·모델·시설·강우·규칙·전략 버전·공식 결과 덮어쓰기 금지. 보정은 새 버전, 편집은 새 revision. 승인 철회는 별도 이벤트와 신규 사용 차단. 기존 평가 조건 보존.
+## 입력·해시·결과
 
-## 해시
+실행에 사용한 배치·시설 제원·강우·초기 상태·평가 경계·엔진/코드·수치 정책·비용 출처를 요청/결과와 결속한다. SHA-256 규약에 키/셀 정렬·정밀도·UTF-8·UTC·비유한 값 거부를 포함한다. 닉네임·메모·동의는 물리 입력 해시에서 제외하되 권한·감사는 분리한다. 캐시가 있어도 기간·한도·동의·검증 수준을 재검사한다.
 
-`shared_physics_jobs`는 공동 설치 ID, 전체 계산 시작·끝, 작업 상태, 임대 토큰·만료, 생성·완료 시각, 요청 hash, 공개 결과 요약, 통제된 오류 코드를 보존. 새 관측 계산마다 새 행 생성, 성공 결과 수정 없음. 설치 행 잠금으로 작업 중복 방지, 결과 게시 시 유효 토큰·임대 시각 재검사. 원자료·분별 상태·요청·manifest는 작업/토큰별 비공개 산출물 경로 보관. 이전 입력을 해시로 연결하며 사용된 전체 관측을 재생. API DB 역할은 이 테이블 읽기만 허용.
+작업은 lease·만료·fencing token·요청 해시를 보존한다. 결과 게시 시 현재 유효한 작업 점유를 다시 검사하고 산출물은 작업/토큰별 비공개 경로에 보관한다. 완료 결과를 새 데이터로 덮어쓰지 않는다. 원자료·분별 상태·요청·manifest의 해시를 확인해 재생한다. 계산 완료와 수치 품질 통과는 별도 상태다.
 
-규약 버전 포함 SHA-256. 키 정렬·셀 ID 정렬·enum 고정·면적 정밀도 고정·UTF-8·UTC·비유한 수 거부. 저자·닉네임·메모·동의는 물리 해시에서 제외하되 접근 권한·기록은 분리.
+## 예산·설계 revision
 
-`evaluation_hash = hash(schema, model, engine_build, rainfall, initial_state, facility, placements, evaluation_boundary, time_settings, numerical_policy)`.
+`budget_ledger_entries`는 설치·회원, 사업군·시설, 배정/해제, 금액·시각·회계 버전·원 예산 정책을 기록한다. 설치/취소별 중복 기록은 유일 제약으로 막는다. 회원 잠금 뒤 예상 시설/사업 합계를 검사하고 설치와 원장을 함께 저장한다. 취소 허용 여부를 먼저 검사하며 허용된 취소는 최초 배정 금액/정책을 사용한다. 현재 정책은 개인 20억 원이며 별도 사업 재원을 만들어 더하지 않는다.
 
-순위 규칙 hash 별도 저장. 캐시가 있어도 기간·한도·동의·검증 수준 재검사.
+`historical_design_revisions`의 저장 설계와 제출 시 동결한 전체 사건 입력을 구분한다. 최신 revision 충돌과 멱등키의 다른 본문 재사용을 거부한다. `cistern_map_plans`는 `SPATIAL_DRAFT_NOT_INSTALLED` 초안으로, 설치·점유·예산 원장·점수가 아니다.
 
-## 이력·격리
+## 권한·이력
 
-서버가 수신·검증한 변경·계산·제출은 확정 이력. 클라이언트 시각·마우스 telemetry는 사용자 제공 자료로 구분. 순서·before/after·수신시각 보존, 불필요한 원시 행동 수집 기본 비활성.
+서버 수신·검증 시각을 확정 이력으로 사용하고 클라이언트 시각/마우스 정보와 구분한다. 불필요한 원시 행동 수집은 기본 비활성이다. 기관 조회는 조직·승인·동의 범위를 매번 검사하며 ID만 아는 것으로 접근할 수 없다. 공개 순위는 허용된 닉네임·결과 요약만 반환한다.
 
-기관 조회는 org_id·active membership·permission scope 필수. 공개 랭킹은 닉네임·허용 결과 요약만 반환. 전략 ID만 알면 열람 가능한 구조 금지.
+연구 비교는 원 소유자의 전략/계산을 참조하고 기관 소유로 복제하거나 자동 동의를 만들지 않는다. 동의 철회 뒤에도 소유자의 기록은 유지하되 기관 조회/다운로드를 차단한다. 패턴의 저장 계보·재계산·후보 생성은 [기관 분석](26-institution-analysis.md), 사업 목적 동의는 [동의 계약](17-utilization-consent.md)에 둔다.
 
-개인정보와 실험 데이터 분리. 탈퇴·동의 철회 처리와 보존기간은 운영 전 확정. 참조 무결성을 이유로 개인정보 무기한 보존 금지.
-
-## V9 기관 분석 연결
-
-`research_comparisons`는 organization_id, requested_by, source_job_id, comparison_id FK와 (organization_id, request_key) 유일성, comparison_id 유일성, request_hash, created_at 보존. 기존 `rainfall_comparisons`/`rainfall_comparison_jobs`와 원래 플레이어의 `strategies`/`strategy_versions`/`simulation_jobs`를 연결. 기관 소유 전략 복사·자동 제출·자동 동의 없음. 원본 동의 철회 후에도 소유자의 개인 기록은 보존하되 기관용 API가 현재 권한을 재검사. 패턴 집계는 현재 동의된 입력으로 매 요청 계산하며 공유 캐시/영속 집계 테이블 없음. [기관 분석 계약](26-institution-analysis.md) 참조.
-
-## 개인 설계 예산 원장
-
-`V17__budget_ledger.sql`의 `budget_ledger_entries`: 설치·회원 FK, 사업군·시설·배정/해제·원화 금액·발생/기록 시각·기록 출처·회계 버전·원 예산 정책. `(installation_id,event_type)` 고유 제약으로 설치/취소별 한 번만 기록. 이관은 `LEGACY_IMPORT`, 신규 트랜잭션은 `LIVE_TRANSACTION`; 원 정책 결측은 null 보존. 제거된 기존 설치도 배정과 해제를 모두 이관하고 원 설치 행 미변경.
-
-서비스는 회원 행을 잠근 뒤 예상 시설/사업 합계를 검사하고 설치 행과 원장을 함께 저장. 취소는 최초 배정 원장의 금액/정책/사업을 복사하여 가용액 복원. 저장소에 이력 수정/삭제 경로와 외부 원장 쓰기 API 없음. 잔액은 원장의 배정 합계−해제 합계로 집계. `SEOUL_RAINWATER_ACCOUNTING_V1`은 기존 `SEOUL_PERSONAL_FULL_2026_V3`의 20억 원과 공개 출처 해시를 참조하며 별도 재원을 생성하지 않음. 실사업 원가·회계 장부를 대신하지 않는 게임 설계 원장.
+개인정보와 실험 자료를 분리하고 보존·삭제·철회 범위를 관리한다. 참조 무결성을 이유로 개인정보를 무기한 보관하지 않는다. 기존 이관용 컬럼/분기는 현재 구현 사실이며 향후 호환 의무가 아니다.

@@ -1,5 +1,7 @@
 # API·오류 계약
 
+기준일: 2026-10-20. 현재 서버 계약이다. 연구/구형 설계 endpoint의 존재는 기본 UI 노출을 뜻하지 않는다. 아래 이전 schema 응답 설명은 현재 구현 사실이며 후속 구조 통합의 호환 의무가 아니다. 제품 규칙은 [제품](01-product.md), 확장은 [구현 목표](09-delivery.md)를 따른다.
+
 ## 설치 원가 기록 · 2026-10-18
 
 - `GET /api/v1/installations/{id}/cost`: 현재 공개 설치의 설치 당시 원가 내역. `RECORDED`는 `sha256`과 `estimate`(후보 해시·시설·수량·단가·예산 반영액·출처·미산정 항목), `NOT_RECORDED`는 두 필드 null. 이전 설치에 현재 가격을 계산해 채우지 않음. 철거·없는 설치는 404, 원문 해시나 설치 정보 불일치는 공통 `COST_DATA_INVALID` 503. 별도 상세 조회로 전체 지도 설치 목록의 응답 크기 유지.
@@ -8,7 +10,7 @@
 
 ## 공통 계약
 
-공통 경로 `/api/v1`, 동일 출처 JSON, 서버 세션. 상태 변경 CSRF 필수. UTC ISO 8601·필드별 SI 단위. 금액 KRW 정수 원. 아래는 2026-10-16 구현된 탐색 모델 계약.
+공통 경로 `/api/v1`, 동일 출처 JSON, 서버 세션. 상태 변경 CSRF 필수. UTC ISO 8601·필드별 SI 단위. 금액 KRW 정수 원. 아래 표는 인증·연구 설계 API이며 공통 게임 API는 다음 절을 함께 본다.
 
 | API | 권한·역할 |
 | --- | --- |
@@ -17,7 +19,7 @@
 | POST /auth/logout, GET /auth/me | 인증, 세션 폐기·본인 요약 |
 | GET /catalog, /maps | 공개 자료 목록·승인된 공식 맵 목록 |
 | GET /lab | 탐색 모델·셀·분강우·단가 근거·모델 해시 |
-| GET /spatial/buildings | 인증, 고정 성수 영역 브이월드 건물 대조; no-store·호출 제한 |
+| GET /spatial/buildings | 인증, 보관한 2025 수치지형도 건물 스냅샷·해시 검사; no-store·외부 호출 없음 |
 | GET /strategies | 본인 저장 설계 목록 |
 | POST /strategies | 인증, 첫 불변 버전 저장 |
 | POST /strategies/{id}/versions | 소유자, 불변 배치·이력 저장 |
@@ -28,7 +30,7 @@
 | POST /submissions | 소유자, 성공한 현재 모델 계산의 탐색 제출 |
 | GET /leaderboard | 현재 모델별 공개 최고기록, 서버 재계산 점수 |
 | GET /installations/{id}/physics | 공개 공동 시설의 계산 상태·마지막 성공 요약, no-store |
-| GET /facilities/epa-designs-v1 | 해시 고정 공개 시설 제원·문헌 범위·출처, ETag·공개 캐시 |
+| GET /facilities/epa-designs-v1 … v4 | 해시 고정 공개 시설 제원·문헌 범위·출처, ETag·공개 캐시 |
 | GET /organizations | 승인된 기관 목록 |
 | GET /consents, PUT /consents/{organizationId} | 본인 기관별 동의 조회·부여·철회 |
 | GET /research/strategies | MFA 인증 승인 기관, 동의된 현재 모델 제출 최대 100건 |
@@ -39,9 +41,32 @@
 | GET /research/comparisons/{id}/jobs/{jobId}/bundle | 현재 동의·기관 분석 그룹 연결 검사, 목적과 원본 연결 포함 ZIP |
 | POST /research/patterns | 동일 모델의 동의 제출 1~50개, 상위 고유 설계 1~20개와 경계 동점의 배치 기술 통계 |
 
-모델 검증·배포 권한은 조직 회원의 리그 운영과 분리. 내부 워커 endpoint 외부 노출 금지. 공식 맵 상세·강우 선택은 후속 구현 대상. 관리자 역할은 ADMIN, 모든 일반/조직 회원 역할은 MEMBER. 조직 회원의 연구·리그 권한은 승인 상태·회원 유형·소속·MFA로 검사한다.
+모델 검증·배포 권한은 조직 회원의 리그 운영과 분리. 내부 워커 endpoint 외부 노출 금지. 현장 승인 맵과 공개 참고 지도·탐색 모델은 구분한다. 관리자 역할은 ADMIN, 모든 일반/조직 회원 역할은 MEMBER. 조직 회원의 연구·리그 권한은 승인 상태·회원 유형·소속·MFA로 검사한다.
 
 공동 시설 물리 상태는 `WAITING/RUNNING/READY/DELAYED/UNAVAILABLE`. `attemptedAt`과 `simulatedThrough` 구분, 실패 시 이전 성공 결과와 그 시각 유지. 무결과는 `result:null`이며 강우·수분·유출 0 대입 없음. 마지막 계산이 5분을 넘으면 지연 표시, 실행 작업이 240초를 넘으면 보류 표시. 결과는 관측소·계산 구간·EPA 버전·EXPLORATORY·누적 강우 체적/침투/증발/유출·현재 수분/저류·시설 표면 수심·토양수분·물수지 오차·증발/초기상태 가정만 공개. 원문·파일 경로·입력 hash·임대 토큰 미노출. 철거·미등록 시설 404. 분별 재현 입력은 별도 접근 통제 대상이며 이 공개 요약에서 제공하지 않음.
+
+## 공통 게임 API
+
+| API | 현재 계약 |
+| --- | --- |
+| GET /installations | 활성 주간 시설·공개 닉네임·위치·이번 주 점수/평가 시각. 계산 전 점수는 null |
+| GET /installations/sites | 구·시야 x/y·offset·시설 type·vacant·surface로 후보 조회 |
+| GET /installations/sites/{districtId}/{cellId} | 공개 후보 상세 |
+| GET /installations/sites/{districtId}/building | 원 건물 sourceId로 후보 조회 |
+| GET /installations/sites/{districtId}/street, /parking | 원 sourceId와 클릭 좌표로 가까운 검증 후보 조회 |
+| POST /installations | 로그인·소속 구·본인 중복·면적·시설·예산·CSRF 검사 후 확정 |
+| DELETE /installations/{id} | 소유자 검사. 현재 주 잠긴 확정 시설의 취소 거부 |
+| GET /rainfall/live | 구별 현재 관측·유효 시각·결측 상태. 실제 무강우와 미확인 구분 |
+| GET /weekly, /budget | 주간 순위/기여와 개인 예산. 상세는 아래 계약 |
+| GET/POST /guest-historical | 비회원 세션별 실험·진행 전용 결과. 제출·최종 점수 제외 |
+| GET/POST /historical | 회원 소유 재해 실험·결과 |
+| GET/PUT /historical/designs/{eventId} | 회원 재해 전체 구 설계·revision |
+| POST /historical/designs/{eventId}/submissions | 최신 저장본과 hash를 동결한 사건 전체 제출 |
+| GET /historical/leaderboard/{eventId} | 인증된 회원의 사건별 최종 기록 경쟁 |
+| GET /surface/current | `index,minX,minY,maxX,maxY`로 현재 공개 지표 실행 목록 조회 |
+| GET /surface/current/{id}/frame | 같은 필수 범위/프레임 입력으로 공개 실행 프레임 조회 |
+
+현재 공개 지표 registry의 `models`는 비어 있다. API가 존재해도 서울 전역 실시간 침수 결과가 제공된다는 뜻은 아니다. 원자료/운영 모형의 검증과 등록은 [확장 계획](09-delivery.md)에 둔다.
 
 ## 회원 승인·리그
 
@@ -63,11 +88,11 @@
 
 리그 참가만으로 연구 동의를 부여하지 않는다. 조직 리그 결과는 주최 조직에 대한 별도 동의가 있는 경우에만 연구 열람·내보내기에 포함한다.
 
-리그 초안 추가 입력: `placementLimit`(배치 구역 수), `areaLimitM2`(합산 면적, 소수 두 자리), `award`(`prizeKrw`, `winnerCount`, `notice`). 새 규칙 버전 2에 포함하며 공개 후 고정. 필드 생략 시 모델 상한·상금 없음 적용, 기존 버전 1 규칙 원문·hash 유지. 제출은 저장 배치의 개수·면적을 서버에서 재검사하며 초과 시 422 `LEAGUE_RULES_MISMATCH`. [제한·상금 계약](20-league-limits-awards.md) 참조.
+리그 초안 추가 입력: `placementLimit`(배치 구역 수), `areaLimitM2`(합산 면적, 소수 두 자리), `award`(`prizeKrw`, `winnerCount`, `notice`). 참가 규칙을 포함한 schema 3에도 포함하며 공개 후 고정. 필드 생략 시 모델 상한·상금 없음 적용, 기존 버전 1 규칙 원문·hash 유지. 제출은 저장 배치의 개수·면적을 서버에서 재검사하며 초과 시 422 `LEAGUE_RULES_MISMATCH`. [제한·상금 계약](25-league-participation.md) 참조.
 
 ## 리그 참가·팀전 서버 API
 
-schema 3은 초안에 `participation: {access, admission, entryMode, teamSizeLimit}`를 포함. 값·이전 규칙 호환·개인/팀 한도는 [참가 계약](25-league-participation.md) 참조. 신규 초안 화면은 schema 3 참가 방식을 명시하며 기존 schema 1/2 규칙은 그대로 열람·제출.
+schema 3은 초안에 `participation: {access, admission, entryMode, teamSizeLimit}`를 포함. 값·이전 규칙 호환·개인/팀 한도는 [참가 계약](25-league-participation.md) 참조. 기관 리그 초안 구성요소는 schema 3 참가 방식을 명시하며 기존 schema 1/2 규칙은 그대로 열람·제출.
 
 | API | 입력·권한 |
 | --- | --- |
@@ -152,9 +177,9 @@ RFC 9457 `application/problem+json`: type, title, status, detail, instance, code
 
 ## 공동 배치예산·시설 비용
 
-`GET /api/v1/budget`는 `policy`(사업 총액 `limitKrw`·개인 한도 `personalLimitKrw` 각각 20억 원, `allocationScope=MEMBER`, 참고연도·출처·원문 해시·규칙 버전), 본인 활성 설치 비용 `allocatedKrw`, `remainingKrw`, `personal`을 반환. 익명은 사용액 0·한도 미리보기·`personal=false`; 다른 회원의 잔액 제공 없음. 본인 ID는 서버 인증에서 결정. 설치·철거 트랜잭션의 회원 행 잠금으로 동시 초과 지출 차단. 소속 구·공유 위치 점유 규칙 유지. 규칙 `SEOUL_PERSONAL_FULL_2026_V3`를 신규 설치 행 `budget_policy`와 재해 요청에 고정. 이전 구별 8천만 원 규칙은 기존 기록 재현에만 보존. 후보의 시설 단가·포함/제외 범위·출처와 저장 설치 비용은 변경하지 않음.
+`GET /api/v1/budget`는 `policy`(사업 총액 `limitKrw`·개인 한도 `personalLimitKrw` 각각 20억 원, `allocationScope=MEMBER`, 참고연도·출처·원문 해시·규칙 버전), 본인 활성 설치 비용 `allocatedKrw`, `remainingKrw`, `personal`을 반환. 익명은 사용액 0·한도 미리보기·`personal=false`; 다른 회원의 잔액 제공 없음. 본인 ID는 서버 인증에서 결정. 설치·철거 트랜잭션의 회원 행 잠금으로 동시 초과 지출 차단. 주간은 소속 구를 검사하며 본인 중복만 차단한다. 서로 다른 회원은 같은 위치에 독립 설치할 수 있다. 현재 주 확정 시설의 취소는 거부한다. 규칙 `SEOUL_PERSONAL_FULL_2026_V3`를 신규 설치 행 `budget_policy`와 재해 요청에 고정. 이전 구별 8천만 원 규칙은 기존 기록 재현에만 보존. 후보의 시설 단가·포함/제외 범위·출처와 저장 설치 비용은 변경하지 않음.
 
-예산 원장 확장 계약: 같은 응답의 `accounting`에 버전·사업군 한도/사용액/잔액·시설별 사용액/가용액 반환. 현재 세 시설은 같은 빗물관리 사업군의 20억 원을 공유하며 시설별 별도 한도는 `null`(별도 배정 없음). 가용액은 시설 잔액과 상위 사업 잔액 중 작은 값이며 시설별 가용액 합계를 전체 재원으로 표시하지 않음. 기존 설치의 원 비용·원 예산 정책·설치/취소 시각을 원장에 이관, 이관 기록임을 구분. 새 설치/취소는 회원 잠금과 같은 트랜잭션에서 한 번씩 기록, 실패 시 원장도 롤백. 취소는 가상 설계 배정의 해제이며 실제 공사비 환급이 아님.
+예산 원장 확장 계약: 같은 응답의 `accounting`에 버전·사업군 한도/사용액/잔액·시설별 사용액/가용액 반환. 현재 일반 설치 6종은 같은 빗물관리 사업군의 20억 원을 공유하며 시설별 별도 한도는 `null`(별도 배정 없음). 가용액은 시설 잔액과 상위 사업 잔액 중 작은 값이며 시설별 가용액 합계를 전체 재원으로 표시하지 않음. 기존 설치의 원 비용·원 예산 정책·설치/취소 시각을 원장에 이관, 이관 기록임을 구분. 새 설치/취소는 회원 잠금과 같은 트랜잭션에서 한 번씩 기록, 실패 시 원장도 롤백. 취소는 가상 설계 배정의 해제이며 실제 공사비 환급이 아님.
 
 `GET /api/v1/budget/ledger?beforeId=<커서>`는 인증된 본인의 원장만 50건씩 역순 조회. 시설·사업·설치 ID·배정/취소·원 비용·실제 발생/기록 시각·이관 여부·원 예산 정책을 제공. 수정/삭제 API 없음, 익명 조회 거부·타 회원 ID 입력 불가·`Cache-Control: no-store`. 재해 계산은 주간 원장을 차감하지 않고 같은 사업/시설 한도 규칙으로 별도 설계 비용을 검사하며 입력에 해당 원가/예산 집계를 고정. 사건 당시 예산의 검증 완료를 뜻하지 않음.
 
@@ -191,11 +216,11 @@ RFC 9457 `application/problem+json`: type, title, status, detail, instance, code
 - 작업 결과의 선택적 `surfacePlayback` 참조는 `schemaVersion:1,catalogSha256,surfaceResultSha256`로 고정. 해당 작업의 서버 lease 디렉터리 아래 `surface-playback/`만 조회. 클라이언트 경로·파일명·원본 URL 입력 금지. 현재 기존 시설 유출 작업에는 이 참조가 없으며 연결 유역 작업의 생성·게시 연동은 별도 진행.
 
 
-### 빗물이용조 지도 계획
+### 빗물이용조 지도 초안
 
-`GET|POST /api/v1/installations/cistern-plans`, `DELETE /api/v1/installations/cistern-plans/{id}`는 사용 가능한 MEMBER의 본인 계획에 한정. POST는 소속 구·지붕/지상 후보 종류·원본 해시·공개 면적·공개 저류 영역·현재 공유 설치 점유 검사. 면적 소수 둘째 자리·깊이 소수 셋째 자리 입력, 깊이 100m는 입력 범위 방어이며 현장 설계 허용치가 아님. 본인 잠금과 활성 입력 해시 고유 제약으로 동시 재시도에 같은 계획 반환, 활성 계획 20개 한도. 삭제는 원 스냅샷을 보존하는 논리 삭제.
+`GET|POST /api/v1/installations/cistern-plans`, `DELETE /api/v1/installations/cistern-plans/{id}`는 사용 가능한 MEMBER의 본인 계획에 한정. 현재 초안 POST는 소속 구·지붕/지상 후보 종류·원본 해시·공개 면적·공개 저류 영역·현재 공유 설치 점유 검사. 면적 소수 둘째 자리·깊이 소수 셋째 자리 입력, 깊이 100m는 입력 범위 방어이며 현장 설계 허용치가 아님. 본인 잠금과 활성 입력 해시 고유 제약으로 동시 재시도에 같은 계획 반환, 활성 계획 20개 한도. 삭제는 원 스냅샷을 보존하는 논리 삭제.
 
-응답의 `snapshot`은 두 후보 원 자료·설계 입력·단면적×깊이 용량·수평 중심 거리·공개 용량 참고 견적을 고정하며 `inputHash`는 저장 JSON 바이트의 SHA-256. 조회 때 해시 재검사, 클라이언트도 위치·원본 해시·용량·견적의 결속 검사. `status=SPATIAL_DRAFT_NOT_INSTALLED`, `installationReady=false`, `positionReserved=false` 고정. 주간·재해 공통 계획이며 특정 사건 당시 시설 복원·설치·계산 작업을 생성하지 않음. 기존 설치·예산·점수 API 불변.
+응답의 `snapshot`은 두 후보 원 자료·설계 입력·단면적×깊이 용량·수평 중심 거리·공개 용량 참고 견적을 고정하며 `inputHash`는 저장 JSON 바이트의 SHA-256. 조회 때 해시 재검사, 클라이언트도 위치·원본 해시·용량·견적의 결속 검사. `status=SPATIAL_DRAFT_NOT_INSTALLED`, `installationReady=false`, `positionReserved=false` 고정. 주간·재해 공통 계획이며 특정 사건 당시 시설 복원·설치·계산 작업을 생성하지 않음. 기존 설치·예산·점수와 분리된다. 실제 설치로 완성할 때 재해의 소속 구 제한 제거까지 [P1 완료 조건](09-delivery.md#p1--빗물이용시설-완성)에 포함한다.
 
 
 지도 계획 POST의 선택적 `tankLayout`은 내부 `widthM`, 벽 `wallThicknessM`, 후보 중심에서의 `offsetXM/offsetYM`, 지도 가로축 기준 반시계 `rotationDeg`를 받는다. 전체 유효성·정밀도와 원 도형 포함 검사 후 `schemaVersion=2` 및 계산한 `tankGeometry`를 고정 저장. 클라이언트가 전송한 임의 외곽 좌표를 신뢰하지 않는다. 값이 없는 기존 요청은 같은 v1 직렬화·해시·재시도 반환을 유지하며 v1 응답에는 형상 없음. 새 화면의 저장은 유효한 외곽 배치를 요구한다. 기초/여유고·구조·수리 연결을 검사한 설치 API가 아니며 위치 점유·예산 지출 없음.
