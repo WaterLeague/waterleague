@@ -10,6 +10,8 @@ import { LiveUrbanSource } from '../../urban/view/LiveUrbanSource';
 import { useUrbanData } from '../../urban/controller/useUrbanData';
 import {
   RotateCcw,
+  Plus,
+  Minus,
   MapPin,
   Layers3,
   CloudRain,
@@ -26,8 +28,8 @@ import type { City, CityFocus, CityBuilding } from '../entity/city';
 import type { CityEligibility } from '../dto/cityEligibilityDto';
 import { representativeInstallations } from '../../installation/service/memberSitesService';
 import { occupiedRoofSource } from '../service/siteVisibilityService';
-import { siteFocus } from '../service/siteFocusService';
-import type { PlanView } from '../service/planNavigationService';
+import { siteFocus, selectionView } from '../service/siteFocusService';
+import { zoomPlanView, type PlanView } from '../service/planNavigationService';
 import type { CityPlayRegion } from '../dto/cityPlayDto';
 import { ErrorBoundary } from '../../../shared/exception/ErrorBoundary';
 import { CityPlan } from './CityPlan';
@@ -38,7 +40,11 @@ import type { SharedSite } from '../../installation/entity/installation';
 import type { FacilityType } from '../../game/entity/game';
 import { facilities, won } from '../../game/service/gameService';
 import { viewingDistrict } from '../service/viewingDistrictService';
-import { loadSite, loadBuildingSite } from '../../installation/repository/installationRepository';
+import {
+  loadSite,
+  loadBuildingSite,
+  loadStreetSite,
+} from '../../installation/repository/installationRepository';
 import { ApiError } from '../../../shared/exception/ApiError';
 import './shared-play.css';
 import { siteKey } from '../../installation/entity/installation';
@@ -200,6 +206,7 @@ function Explorer({
   const [site, setSite] = useState<SharedSite | null>(null);
   const selectedSite = site?.cellId ?? '';
   const [type, setType] = useState<FacilityType | ''>('');
+  const [siteSurface, setSiteSurface] = useState<'' | 'ROADWAY' | 'WALKWAY' | 'OTHER'>('');
   const mapFacilityType = cisternOpen
     ? cistern.role === 'roof'
       ? 'GREEN_ROOF'
@@ -282,7 +289,9 @@ function Explorer({
     setInfrastructureOpen(true);
     setFacilityExpansionOpen(false);
     setAssetsEnabled(true);
-    setFocus((previous) => ({ center: asset.center, distance: 1000, key: previous.key + 1 }));
+    const current = navigationCamera.current;
+    const target = selectionView({ center: asset.center, distance: 1000 }, current, true);
+    if (target !== current) setFocus((previous) => ({ ...target, key: previous.key + 1 }));
   }, []);
   const onNavigate = useCallback((value: typeof camera) => {
     navigationCamera.current = value;
@@ -294,6 +303,7 @@ function Explorer({
       y: Math.round(camera.center[1]),
       offset,
       type: mapFacilityType,
+      surface: cisternOpen ? 'OTHER' : mapFacilityType === 'PERMEABLE_PAVEMENT' ? siteSurface : '',
       vacant: researchMode ? false : vacant,
     },
     !researchMode || cisternOpen
@@ -306,8 +316,18 @@ function Explorer({
     () =>
       research.drafts
         .filter((d) => researchVisibleKey.split(',').includes(d.marker.id))
-        .map((d) => ({ ...d.marker, ownerId: viewerId! })),
-    [research.drafts, researchVisibleKey, viewerId]
+        .map((d) => {
+          const score = research.facilityStates.find(
+            (state) => state.draft.marker.id === d.marker.id
+          )?.score;
+          return {
+            ...d.marker,
+            ownerId: viewerId!,
+            scoreM3: score?.differenceM3 ?? null,
+            evaluatedThrough: score?.at ?? null,
+          };
+        }),
+    [research.drafts, researchVisibleKey, research.facilityStates, viewerId]
   );
   const shared = {
     ...sharedData,
@@ -370,6 +390,7 @@ function Explorer({
     return [...values.values()].filter(
       (s) =>
         (!mapFacilityType ||
+          ownSiteKeys.has(siteKey(s)) ||
           (s.allowedTypes.includes(mapFacilityType) &&
             !s.existingInfrastructure &&
             !ownSiteKeys.has(siteKey(s)) &&
@@ -420,7 +441,7 @@ function Explorer({
     setFlat(true);
   }, []);
   const chooseSite = useCallback(
-    (value: SharedSite, inspect = false) => {
+    (value: SharedSite, inspect = false, fromMap = false) => {
       const inspecting =
         inspect || (!cisternOpen && !mapFacilityType && installationBySite.has(siteKey(value)));
       if (
@@ -442,10 +463,11 @@ function Explorer({
       setSelectedAssetId('');
       selectionRequest.current++;
       setSelected(value.districtId);
-      const target = siteFocus(
-        value,
-        stage.current?.clientWidth ?? 800,
-        stage.current?.clientHeight ?? 600
+      const current = navigationCamera.current;
+      const target = selectionView(
+        siteFocus(value, stage.current?.clientWidth ?? 800, stage.current?.clientHeight ?? 600),
+        current,
+        fromMap
       );
       navigationCamera.current = target;
       setCamera(target);
@@ -461,10 +483,12 @@ function Explorer({
       setFeedback('');
       setListOpen(cisternOpen && cistern.role === 'roof');
       setOffset(0);
-      setFocus((p) => ({
-        ...target,
-        key: p.key + 1,
-      }));
+      if (target !== current)
+        setFocus((p) => ({
+          ...target,
+          key: p.key + 1,
+          preserveAngle: target.distance === current.distance,
+        }));
     },
     [
       type,
@@ -486,19 +510,40 @@ function Explorer({
         (site && siteKey(site) === key ? site : null);
       setSelectionError('');
       if (found) {
-        chooseSite(found);
+        chooseSite(found, ownSiteKeys.has(key), true);
         return;
       }
       const [districtId, cellId] = key.split(':');
       try {
         const value = await loadSite(districtId, cellId);
-        if (request === selectionRequest.current) chooseSite(value);
+        if (request === selectionRequest.current) chooseSite(value, ownSiteKeys.has(key), true);
       } catch {
         if (request === selectionRequest.current)
           setSelectionError('위치 정보를 불러오지 못했습니다. 다시 선택해 주세요.');
       }
     },
-    [shared.sites, site, chooseSite]
+    [shared.sites, site, chooseSite, ownSiteKeys]
+  );
+  const selectStreet = useCallback(
+    async (sourceId: string, point: [number, number]) => {
+      if (mapFacilityType !== 'PERMEABLE_PAVEMENT' || cisternOpen) return;
+      const districtId = viewingDistrict(city.districts, point)?.id;
+      if (!districtId || (ownDistrictId && districtId !== ownDistrictId)) return;
+      const request = ++selectionRequest.current;
+      setSelectionError('');
+      try {
+        const value = await loadStreetSite(districtId, sourceId, point);
+        if (request === selectionRequest.current) chooseSite(value, false, true);
+      } catch (error) {
+        if (request === selectionRequest.current)
+          setSelectionError(
+            error instanceof ApiError && error.code === 'RESOURCE_NOT_FOUND'
+              ? '이 구간에는 설치 가능한 투수포장 구역이 없습니다. 표시된 주변 후보를 선택해 주세요.'
+              : '도로 위치를 불러오지 못했습니다. 다시 선택해 주세요.'
+          );
+      }
+    },
+    [mapFacilityType, cisternOpen, city.districts, ownDistrictId, chooseSite]
   );
   const selectBuilding = useCallback(
     async (districtId: string, building: CityBuilding) => {
@@ -521,7 +566,7 @@ function Explorer({
       setSelectionError('');
       try {
         const value = await loadBuildingSite(districtId, building.id);
-        if (request === selectionRequest.current) chooseSite(value);
+        if (request === selectionRequest.current) chooseSite(value, false, true);
       } catch (error) {
         if (request !== selectionRequest.current) return;
         setFeedback('선택한 건물 · ' + building.id);
@@ -565,10 +610,10 @@ function Explorer({
     setFocus((p) => ({ center: [0, 0], distance: 35000, key: p.key + 1, overview: true }));
   }, []);
   const locateCistern = (value: SharedSite) => {
-    const target = siteFocus(
-      value,
-      stage.current?.clientWidth ?? 800,
-      stage.current?.clientHeight ?? 600
+    const current = navigationCamera.current;
+    const target = selectionView(
+      siteFocus(value, stage.current?.clientWidth ?? 800, stage.current?.clientHeight ?? 600),
+      current
     );
     setSelected(value.districtId);
     setSite(value);
@@ -577,7 +622,18 @@ function Explorer({
     setListOpen(false);
     navigationCamera.current = target;
     setCamera(target);
-    setFocus((p) => ({ ...target, key: p.key + 1 }));
+    setFocus((p) => ({
+      ...target,
+      key: p.key + 1,
+      preserveAngle: target.distance === current.distance,
+    }));
+  };
+  const zoomMap = (factor: number) => {
+    const current = navigationCamera.current;
+    const target = zoomPlanView(current, current.center, factor);
+    navigationCamera.current = target;
+    setCamera(target);
+    setFocus((p) => ({ ...target, key: p.key + 1, preserveAngle: true }));
   };
   const district = city.districts.find((d) => d.id === selected);
   const ownDistrict = city.districts.find((d) => d.id === ownDistrictId);
@@ -647,6 +703,7 @@ function Explorer({
       onDistrict={select}
       onSite={selectSite}
       onBuilding={selectBuilding}
+      onStreet={selectStreet}
       onCamera={onCamera}
       onNavigate={onNavigate}
       camera={camera}
@@ -873,6 +930,7 @@ function Explorer({
                   selectedSite={selectedSite}
                   onSite={selectSite}
                   onBuilding={selectBuilding}
+                  onStreet={selectStreet}
                   wetDistricts={wetDistricts}
                   rainAmounts={rainAmounts}
                   rainCamera={camera}
@@ -950,6 +1008,12 @@ function Explorer({
               </button>
               <button aria-pressed={flat} onClick={() => setFlat(true)}>
                 2D
+              </button>
+              <button onClick={() => zoomMap(0.6)} aria-label="지도 확대" title="지도 확대">
+                <Plus size={16} />
+              </button>
+              <button onClick={() => zoomMap(1 / 0.6)} aria-label="지도 축소" title="지도 축소">
+                <Minus size={16} />
               </button>
               <button onClick={reset} aria-label="서울 전체 보기">
                 <RotateCcw size={15} />
@@ -1042,6 +1106,23 @@ function Explorer({
                         {facilities[value].name}
                       </option>
                     ))}
+                  </select>
+                </label>
+              )}
+              {!cisternOpen && type === 'PERMEABLE_PAVEMENT' && (
+                <label className="location-type-filter">
+                  <select
+                    aria-label="투수포장 설치 지면"
+                    value={siteSurface}
+                    onChange={(event) => {
+                      setSiteSurface(event.target.value as typeof siteSurface);
+                      setOffset(0);
+                    }}
+                  >
+                    <option value="">모든 지면</option>
+                    <option value="ROADWAY">차도</option>
+                    <option value="WALKWAY">인도·보행로</option>
+                    <option value="OTHER">주차장·기타 지상</option>
                   </select>
                 </label>
               )}
@@ -1191,7 +1272,16 @@ function Explorer({
         key={account ? `${account.id}:${account.role}:${account.approvalStatus}` : 'visitor'}
         account={account}
         open={facilityExpansionOpen}
-        budget={budget.value}
+        budget={
+          researchMode && research.budget && research.accounting
+            ? {
+                ...research.budget,
+                accounting: research.accounting,
+                remainingKrw: research.remaining,
+                allocatedKrw: research.budget.policy.personalLimitKrw - research.remaining,
+              }
+            : budget.value
+        }
         selectedMapFacility={type}
         onAllCandidates={() => {
           setType('');

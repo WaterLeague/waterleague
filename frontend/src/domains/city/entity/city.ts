@@ -10,4 +10,5 @@ export type CityFocus = {
   heightM?: number;
   key: number;
   overview?: boolean;
+  preserveAngle?: boolean;
 };

@@ -30,7 +30,7 @@ it('확대·축소와 배율 제한에서도 마우스 위치의 지도 좌표 �
     expect((anchor[1] - next.center[1]) / next.distance).toBeCloseTo(
       (anchor[1] - view.center[1]) / view.distance
     );
-    expect(next.distance).toBeGreaterThanOrEqual(180);
+    expect(next.distance).toBeGreaterThanOrEqual(18);
     expect(next.distance).toBeLessThanOrEqual(150000);
     expect(view.center).toEqual([200000, 550000]);
   }

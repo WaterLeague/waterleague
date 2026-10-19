@@ -88,3 +88,31 @@ test('비회원도 누적 효과와 계산 버튼을 사용하고 제출은 로�
   expect(finished).toContain('로그인하고 최종 점수 확인');
   expect(finished).not.toContain('누적 -0.25');
 });
+
+test('설치 지점은 접힌 재생 도구 밖의 타임라인에 기본 표시', () => {
+  const state = {
+    event: {
+      regions: [{ start: '2022-08-08T09:00:00Z' }],
+      summary: '',
+      evidenceUrl: '',
+      evidenceTitle: '',
+    },
+    duration: 3600,
+    frameCount: 60,
+    elapsedSeconds: 1800,
+    speed: 1,
+    drafts: [
+      {
+        facilityType: 'PERMEABLE_PAVEMENT',
+        site: { name: '차도 · 삼성로' },
+        marker: { id: 'road', installedAt: '2022-08-08T09:00:04Z' },
+      },
+    ],
+  } as unknown as HistoricalState;
+  const html = renderToStaticMarkup(<HistoricalTimeline state={state} onInspect={() => {}} />);
+  expect(html).toContain('타임라인 설치 기록');
+  expect(html).toContain('18:00:04 투수포장 · 차도 · 삼성로');
+  expect(html.indexOf('historical-time-pin')).toBeLessThan(
+    html.indexOf('historical-playback-tools')
+  );
+});

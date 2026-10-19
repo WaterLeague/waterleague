@@ -1,3 +1,4 @@
+import { HistoricalInstallationTrack } from './HistoricalInstallationTrack';
 import { HistoricalSubmissionPanel } from './HistoricalSubmissionPanel';
 import { InitializationEvidence } from '../../physics/view/InitializationEvidence';
 import { InitializationSensitivityEvidence } from '../../physics/view/InitializationSensitivityEvidence';
@@ -84,18 +85,30 @@ export function HistoricalTimeline({
     <section className="historical-timeline" aria-label="재해 시간 재생">
       {s.frameCount > 0 && (
         <>
-          <input
-            type="range"
-            aria-label="재해 재생 시각"
-            aria-valuetext={s.at ? `${time(s.at)} KST` : undefined}
-            min="0"
-            max={s.duration}
-            value={s.elapsedSeconds}
-            onChange={(e) => {
-              s.setElapsedSeconds(Number(e.target.value));
+          <HistoricalInstallationTrack
+            drafts={s.drafts}
+            start={s.event?.regions[0]?.start}
+            duration={s.duration}
+            elapsed={s.elapsedSeconds}
+            onSelect={(draft, seconds) => {
+              s.setElapsedSeconds(seconds);
               s.setPlaying(false);
+              onInspect(draft);
             }}
-          />
+          >
+            <input
+              type="range"
+              aria-label="재해 재생 시각"
+              aria-valuetext={s.at ? `${time(s.at)} KST` : undefined}
+              min="0"
+              max={s.duration}
+              value={s.elapsedSeconds}
+              onChange={(e) => {
+                s.setElapsedSeconds(Number(e.target.value));
+                s.setPlaying(false);
+              }}
+            />
+          </HistoricalInstallationTrack>
           <select
             aria-label="재해 재생 속도"
             value={s.speed}

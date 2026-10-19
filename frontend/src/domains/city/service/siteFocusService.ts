@@ -2,6 +2,12 @@ import type { SharedSite } from '../../installation/entity/installation';
 import type { PlanView } from './planNavigationService';
 import { planScale } from './planNavigationService';
 
+export function selectionView(fitted: PlanView, current: PlanView, fromMap = false): PlanView {
+  // 가까이서 클릭한 요소는 현재 시야를 보존하고 목록 이동도 기존 확대를 풀지 않는다.
+  if (fromMap && current.distance <= fitted.distance) return current;
+  return { ...fitted, distance: Math.min(current.distance, fitted.distance) };
+}
+
 export function siteFocus(
   site: Pick<SharedSite, 'coordinates' | 'heightM' | 'kind'>,
   width: number,

@@ -22,9 +22,9 @@ def source_counts(db):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--suite', choices=['guest-historical', 'historical-submit-design', 'historical-design-run', 'historical-design', 'public-surface', 'infrastructure', 'league', 'analysis', 'queue', 'budget', 'physics', 'weekly', 'historical', 'watershed', 'cistern-plan', 'shared-research', 'search', 'restore', 'all'], default='league')
+    parser.add_argument('--suite', choices=['street-placement', 'guest-historical', 'historical-submit-design', 'historical-design-run', 'historical-design', 'public-surface', 'infrastructure', 'league', 'analysis', 'queue', 'budget', 'physics', 'weekly', 'historical', 'watershed', 'cistern-plan', 'shared-research', 'search', 'restore', 'all'], default='league')
     suite = parser.parse_args().suite
-    test_class = {'guest-historical': 'GuestHistoricalTests,HistoricalWorkflowTests,HistoricalSubmissionTests,ApiSecurityTests','historical-submit-design': 'HistoricalSubmissionTests,HistoricalDesignTests,ApiSecurityTests',
+    test_class = {'street-placement': 'SharedInstallationTests,GuestHistoricalTests,HistoricalDesignTests,ApiSecurityTests', 'guest-historical': 'GuestHistoricalTests,HistoricalWorkflowTests,HistoricalSubmissionTests,ApiSecurityTests','historical-submit-design': 'HistoricalSubmissionTests,HistoricalDesignTests,ApiSecurityTests',
                   'historical-design-run': 'HistoricalDesignTests,HistoricalWorkflowTests,HistoricalSubmissionTests,ApiSecurityTests',
                   'historical-design': 'HistoricalDesignTests,HistoricalWorkflowTests,HistoricalSubmissionTests,ApiSecurityTests',
                   'public-surface': 'PublicSurfaceTests,SurfacePlaybackTests,ApiSecurityTests',

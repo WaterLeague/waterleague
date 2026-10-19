@@ -12,7 +12,8 @@ export function streetHeight(
 }
 export function streetGeometry(roads: Street[], terrain: Terrain | null, detail: boolean) {
   const positions: number[] = [],
-    colors: number[] = [];
+    colors: number[] = [],
+    ends: number[] = [];
   const asphalt = new Color('#667071'),
     walk = new Color('#b3ae9f'),
     sidewalk = new Color('#a6a698'),
@@ -72,6 +73,19 @@ export function streetGeometry(roads: Street[], terrain: Terrain | null, detail:
       along += length;
       if (positions.length > 12000000) throw new Error('도로 표시 형상 상한 초과');
     }
+    ends.push(positions.length / 9);
   }
-  return { positions: new Float32Array(positions), colors: new Float32Array(colors) };
+  return { positions: new Float32Array(positions), colors: new Float32Array(colors), ends };
+}
+
+export function streetAtFace(ends: readonly number[], face: number) {
+  if (!Number.isInteger(face) || face < 0 || face >= (ends.at(-1) ?? 0)) return -1;
+  let low = 0,
+    high = ends.length;
+  while (low < high) {
+    const mid = (low + high) >>> 1;
+    if (face < ends[mid]) high = mid;
+    else low = mid + 1;
+  }
+  return low;
 }

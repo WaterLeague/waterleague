@@ -96,7 +96,9 @@ export const siteDto = z.object({
     }),
   }),
   sourceIds: z.array(z.string()),
-  areaLimitBasis: z.literal('PUBLIC_FOOTPRINT_GEOMETRY').optional(),
+  areaLimitBasis: z
+    .enum(['PUBLIC_FOOTPRINT_GEOMETRY', 'PUBLIC_CENTERLINE_DESIGN_STRIP'])
+    .optional(),
   siteEligibility: z.literal('UNKNOWN').optional(),
   inflowPolicy: z.literal('DIRECT_RAINFALL_ONLY').optional(),
   facilityDesignSet: z
@@ -107,6 +109,16 @@ export const siteDto = z.object({
     .nullish(),
   physicalInputs: z
     .object({
+      streetPlacement: z
+        .object({
+          streetId: z.string().regex(/^way\/[0-9]+:[0-9]+$/),
+          role: z.enum(['ROADWAY', 'SIDEWALK', 'WALKWAY']),
+          widthM: z.number().positive(),
+          widthBasis: z.literal('DESIGN_ASSUMPTION'),
+          sourceDate: z.string(),
+          roadWidthBasis: z.enum(['OSM_WIDTH_TAG', 'DISPLAY_ASSUMPTION']),
+        })
+        .optional(),
       flowLengthM: z.number().positive(),
       runoffWidthM: z.number().positive(),
       widthMethod: z.literal('FOOTPRINT_AREA_OVER_LONG_AXIS'),

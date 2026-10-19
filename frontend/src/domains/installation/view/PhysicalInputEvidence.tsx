@@ -6,6 +6,13 @@ export function PhysicalInputEvidence({ site }: { site: SharedSite }) {
   return (
     <details className="budget-evidence">
       <summary>이 위치의 물리 계산 입력</summary>
+      {p.streetPlacement && (
+        <p>
+          {p.streetPlacement.role === 'ROADWAY' ? '차도' : '인도·보행로'} 폭{' '}
+          {p.streetPlacement.widthM}m 설계 구역입니다. 공개 중심선({p.streetPlacement.sourceDate}
+          )에서 만든 면적이며 실제 도로 부지 경계나 시공 승인 면적은 아닙니다.
+        </p>
+      )}
       <dl className="physical-input-values">
         <dt>도형 기반 유출 폭</dt>
         <dd>{number.format(p.runoffWidthM)} m</dd>

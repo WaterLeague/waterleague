@@ -1,3 +1,5 @@
+import type { Terrain } from '../../terrain/entity/terrain';
+import { pavementGeometry } from '../service/pavementGeometryService';
 import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import type { Cell, Placement } from '../../game/entity/game';
@@ -52,6 +54,7 @@ export function FacilityMesh({
   preview,
   onSelect,
   opacity = 1,
+  terrain = null,
 }: {
   cell: Pick<Cell, 'coordinates' | 'areaM2' | 'heightM'> & {
     physicalInputs?: SharedSite['physicalInputs'];
@@ -60,6 +63,7 @@ export function FacilityMesh({
   preview: boolean;
   onSelect: () => void;
   opacity?: number;
+  terrain?: Terrain | null;
 }) {
   const footprint = useMemo(
     () => placementFootprint(cell, placement),
@@ -68,7 +72,9 @@ export function FacilityMesh({
   const paved = placement.facilityType === 'PERMEABLE_PAVEMENT';
   const gravel = placement.facilityType === 'INFILTRATION_TRENCH';
   const roof = placement.facilityType === 'GREEN_ROOF';
+  const draped = paved && !!cell.physicalInputs?.streetPlacement;
   const resources = useMemo(() => {
+    if (draped) return pavementGeometry(footprint, terrain);
     const top: number[] = [],
       uv: number[] = [],
       sides: number[] = [],
@@ -100,7 +106,7 @@ export function FacilityMesh({
     const lines = new THREE.BufferGeometry();
     lines.setAttribute('position', new THREE.Float32BufferAttribute(outline, 3));
     return { surface, sides: geometry(sides), outline: lines };
-  }, [footprint]);
+  }, [footprint, draped, terrain]);
   const texture = useMemo(() => {
     const canvas = document.createElement('canvas');
     canvas.width = canvas.height = 64;
@@ -147,7 +153,7 @@ export function FacilityMesh({
   useEffect(() => () => texture.dispose(), [texture]);
   return (
     <group
-      position={[0, cell.heightM + 0.2, 0]}
+      position={[0, draped ? 0 : cell.heightM + 0.2, 0]}
       onClick={(event) => {
         event.stopPropagation();
         onSelect();

@@ -37,8 +37,18 @@ public class InstallationController {
       @RequestParam(defaultValue = "0") double y,
       @RequestParam(defaultValue = "0") int offset,
       @RequestParam(required = false) io.waterleague.strategy.entity.FacilityType type,
-      @RequestParam(defaultValue = "false") boolean vacant) {
-    return service.sites(districtId, x, y, offset, type, vacant);
+      @RequestParam(defaultValue = "false") boolean vacant,
+      @RequestParam(required = false) io.waterleague.installation.entity.SiteSurface surface) {
+    return service.sites(districtId, x, y, offset, type, vacant, surface);
+  }
+
+  @GetMapping("/sites/{districtId}/street")
+  public io.waterleague.installation.view.SiteView street(
+      @PathVariable String districtId,
+      @RequestParam String sourceId,
+      @RequestParam double x,
+      @RequestParam double y) {
+    return service.street(districtId, sourceId, x, y);
   }
 
   @GetMapping("/sites/{districtId}/building")

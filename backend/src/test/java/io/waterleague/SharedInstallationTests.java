@@ -45,6 +45,104 @@ class SharedInstallationTests {
   @Autowired io.waterleague.common.service.JsonService json;
 
   @Test
+  void streetPavementUsesImmutableSiteAreaCostAndOwnerRules() {
+    var owner = account("2410520");
+    var page =
+        service.sites(
+            "2410520",
+            0,
+            0,
+            0,
+            FacilityType.PERMEABLE_PAVEMENT,
+            true,
+            io.waterleague.installation.entity.SiteSurface.ROADWAY);
+    assertThat(page.sites()).isNotEmpty();
+    assertThat(page.sites()).allMatch(s -> s.allowedTypes().equals(List.of("PERMEABLE_PAVEMENT")));
+    var site =
+        page.sites().stream()
+            .filter(s -> s.maxAreaM2().compareTo(BigDecimal.TEN) >= 0)
+            .findFirst()
+            .orElseThrow();
+    var source = site.physicalInputs().path("streetPlacement").path("streetId").asString();
+    assertThat(
+            service
+                .street(site.districtId(), source, site.center().get(0), site.center().get(1))
+                .cellId())
+        .isEqualTo(site.cellId());
+    assertThatThrownBy(() -> service.street(site.districtId(), source, Double.NaN, 0))
+        .isInstanceOf(DomainException.class);
+    assertThatThrownBy(() -> service.street(site.districtId(), source, 99999, 99999))
+        .isInstanceOf(DomainException.class);
+    assertThatThrownBy(
+            () ->
+                service.install(
+                    owner.username(),
+                    new InstallRequest(
+                        site.districtId(),
+                        site.cellId(),
+                        FacilityType.RAIN_GARDEN,
+                        BigDecimal.ONE)))
+        .isInstanceOf(DomainException.class);
+    assertThatThrownBy(
+            () ->
+                service.install(
+                    owner.username(),
+                    new InstallRequest(
+                        site.districtId(),
+                        site.cellId(),
+                        FacilityType.PERMEABLE_PAVEMENT,
+                        site.maxAreaM2().add(new BigDecimal("0.01")))))
+        .isInstanceOf(DomainException.class);
+    var outsider = account("2419953");
+    assertThatThrownBy(
+            () ->
+                service.install(
+                    outsider.username(),
+                    new InstallRequest(
+                        site.districtId(),
+                        site.cellId(),
+                        FacilityType.PERMEABLE_PAVEMENT,
+                        BigDecimal.ONE)))
+        .isInstanceOf(DomainException.class);
+    var installed =
+        service.install(
+            owner.username(),
+            new InstallRequest(
+                site.districtId(), site.cellId(), FacilityType.PERMEABLE_PAVEMENT, BigDecimal.TEN));
+    assertThat(installed.modelHash()).isEqualTo(site.modelHash());
+    assertThat(installed.cost())
+        .isEqualByComparingTo(site.unitCosts().get("PERMEABLE_PAVEMENT").multiply(BigDecimal.TEN));
+    assertThatThrownBy(
+            () ->
+                service.install(
+                    owner.username(),
+                    new InstallRequest(
+                        site.districtId(),
+                        site.cellId(),
+                        FacilityType.PERMEABLE_PAVEMENT,
+                        BigDecimal.ONE)))
+        .isInstanceOf(DomainException.class);
+    var walkway =
+        service.sites(
+            "2410520",
+            0,
+            0,
+            0,
+            FacilityType.PERMEABLE_PAVEMENT,
+            true,
+            io.waterleague.installation.entity.SiteSurface.WALKWAY);
+    assertThat(walkway.sites()).isNotEmpty();
+    assertThat(walkway.sites())
+        .allMatch(
+            s ->
+                !s.physicalInputs()
+                    .path("streetPlacement")
+                    .path("role")
+                    .asString()
+                    .equals("ROADWAY"));
+  }
+
+  @Test
   void swaleRejectsAreaOutsideFixedWidthDesignAndSharesBudget() {
     var owner = account("2410520");
     var site =
@@ -297,18 +395,34 @@ class SharedInstallationTests {
     assertThat(before.getFirst().scoreM3()).isNull();
     var through = installed.installedAt().plusSeconds(1);
     var job = UUID.randomUUID();
-    db.update("""
+    db.update(
+        """
         INSERT INTO shared_physics_jobs(id,installation_id,simulation_start,requested_through,state,lease_token,created_at,finished_at,input_hash,result)
         VALUES(?,?,?,?,'SUCCEEDED',?,?,?,?,'{}')
-        """, job, installed.id(), java.sql.Timestamp.from(installed.installedAt()),
-        java.sql.Timestamp.from(through), UUID.randomUUID(), java.sql.Timestamp.from(through),
-        java.sql.Timestamp.from(through), "a".repeat(64));
-    var week = installed.installedAt().atZone(java.time.ZoneId.of("Asia/Seoul")).toLocalDate()
-        .with(java.time.temporal.TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY));
-    db.update("""
+        """,
+        job,
+        installed.id(),
+        java.sql.Timestamp.from(installed.installedAt()),
+        java.sql.Timestamp.from(through),
+        UUID.randomUUID(),
+        java.sql.Timestamp.from(through),
+        java.sql.Timestamp.from(through),
+        "a".repeat(64));
+    var week =
+        installed
+            .installedAt()
+            .atZone(java.time.ZoneId.of("Asia/Seoul"))
+            .toLocalDate()
+            .with(java.time.temporal.TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY));
+    db.update(
+        """
         INSERT INTO shared_weekly_scores(installation_id,week_start,score_m3,evaluated_minutes,evaluated_seconds,evaluated_through,source_job_id,rule_version)
         VALUES(?,?,1.25,1,1,?,?,'OBSERVED_ACCOUNTED_VOLUME_SECONDS_V2')
-        """, installed.id(), java.sql.Date.valueOf(week), java.sql.Timestamp.from(through), job);
+        """,
+        installed.id(),
+        java.sql.Date.valueOf(week),
+        java.sql.Timestamp.from(through),
+        job);
     var scored = service.activeViews().getFirst();
     assertThat(scored.ownerId()).isEqualTo(owner.id());
     assertThat(scored.scoreM3()).isEqualByComparingTo("1.25");
@@ -643,7 +757,7 @@ class SharedInstallationTests {
     var overview = service.sites(null, 0, 0, 0, null, false);
     assertThat(overview.districtCounts()).hasSize(25);
     assertThat(overview.districtCounts().values().stream().mapToInt(Integer::intValue).sum())
-        .isEqualTo(154784);
+        .isEqualTo(696270);
     var page = service.sites("2410520", 7239.5, -7741.5, 0, null, false);
     assertThat(page.sites()).hasSize(200);
     assertThat(page.matchedCount()).isGreaterThan(1000);

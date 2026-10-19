@@ -102,6 +102,63 @@ class GuestHistoricalTests {
   }
 
   @Test
+  void anonymousStreetPavementQueuesWithServerGeometryAndRejectsForgedArea() throws Exception {
+    var browser = client();
+    var template = item("2419953", 137);
+    var site =
+        sites.district("2419953").values().stream()
+            .filter(
+                s ->
+                    s.physicalInputs().has("streetPlacement")
+                        && s.maxAreaM2().compareTo(BigDecimal.TEN) >= 0)
+            .findFirst()
+            .orElseThrow();
+    var placement =
+        new HistoricalRequest.Item(
+            site.cellId(),
+            FacilityType.PERMEABLE_PAVEMENT,
+            BigDecimal.TEN,
+            template.placement().installedAt(),
+            site.modelHash());
+    var dto =
+        request(UUID.randomUUID(), List.of(new GuestHistoricalRequest.Item("2419953", placement)));
+    assertThat(post(browser, "/guest-historical", dto, true).statusCode()).isEqualTo(202);
+    var bad =
+        new HistoricalRequest.Item(
+            site.cellId(),
+            FacilityType.PERMEABLE_PAVEMENT,
+            site.maxAreaM2().add(new BigDecimal("0.01")),
+            template.placement().installedAt(),
+            site.modelHash());
+    assertThat(
+            post(
+                    browser,
+                    "/guest-historical",
+                    request(
+                        UUID.randomUUID(),
+                        List.of(new GuestHistoricalRequest.Item("2419953", bad))),
+                    true)
+                .statusCode())
+        .isEqualTo(422);
+    assertThat(
+            post(
+                    browser,
+                    "/installations",
+                    Map.of(
+                        "districtId",
+                        site.districtId(),
+                        "cellId",
+                        site.cellId(),
+                        "facilityType",
+                        "PERMEABLE_PAVEMENT",
+                        "areaM2",
+                        10),
+                    true)
+                .statusCode())
+        .isEqualTo(401);
+  }
+
+  @Test
   void anonymousCalculationIsSessionOwnedCsrfProtectedAndNeverSubmitted() throws Exception {
     int accounts = db.queryForObject("SELECT count(*) FROM accounts", Integer.class);
     var a = client();
@@ -159,17 +216,26 @@ class GuestHistoricalTests {
     var dto = request(UUID.randomUUID(), List.of(item("2419953", 137)));
     var created = post(browser, "/guest-historical", dto, true);
     var id = json.tree(created.body()).path("id").asString();
-    String result = """
+    String result =
+        """
         {"engineVersion":"test-only","validationLevel":"EXPLORATORY","start":"2022-08-08T09:00:00Z","end":"2022-08-08T09:03:00Z",
         "differenceM3":987,"baselineAccountedM3":999,"designAccountedM3":12,
         "frames":[{"at":"2022-08-08T09:01:00Z","differenceM3":1},{"at":"2022-08-08T09:02:00Z","differenceM3":2},{"at":"2022-08-08T09:03:00Z","differenceM3":987}],
         "facilities":[{"cellId":"TEST","runoffComparison":{"final":987},"frames":[{"at":"2022-08-08T09:01:00Z","differenceM3":1},{"at":"2022-08-08T09:03:00Z","differenceM3":987}]}]}
         """;
-    db.update("UPDATE historical_experiments SET state='SUCCEEDED',result=?,finished_at=CURRENT_TIMESTAMP WHERE id=?", result, UUID.fromString(id));
-    for (var response : List.of(get(browser,"/guest-historical/" + id), get(browser,"/guest-historical"), post(browser,"/guest-historical",dto,true))) {
+    db.update(
+        "UPDATE historical_experiments SET state='SUCCEEDED',result=?,finished_at=CURRENT_TIMESTAMP"
+            + " WHERE id=?",
+        result,
+        UUID.fromString(id));
+    for (var response :
+        List.of(
+            get(browser, "/guest-historical/" + id),
+            get(browser, "/guest-historical"),
+            post(browser, "/guest-historical", dto, true))) {
       assertThat(response.body()).doesNotContain("987", "runoffComparison");
     }
-    var preview = json.tree(get(browser,"/guest-historical/" + id).body()).path("result");
+    var preview = json.tree(get(browser, "/guest-historical/" + id).body()).path("result");
     assertThat(preview.has("differenceM3")).isFalse();
     assertThat(preview.path("frames").size()).isEqualTo(2);
     assertThat(preview.path("facilities").get(0).path("frames").size()).isEqualTo(1);

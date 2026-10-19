@@ -1,4 +1,5 @@
 import type { CityFocus } from '../entity/city';
+import { minimumMapDistance } from './cameraDepthService';
 
 export type PlanView = Pick<CityFocus, 'center' | 'distance' | 'heightM'>;
 export const planScale = Math.tan(Math.PI / 8);
@@ -26,7 +27,7 @@ export function initialPlanView(focus: CityFocus, bounds: number[], aspect = 1):
       };
 }
 export function zoomPlanView(view: PlanView, anchor: [number, number], factor: number): PlanView {
-  const distance = Math.max(180, Math.min(150000, view.distance * factor));
+  const distance = Math.max(minimumMapDistance, Math.min(150000, view.distance * factor));
   const ratio = distance / view.distance;
   return {
     ...view,

@@ -83,7 +83,13 @@ export function FacilityPlacementPanel(p: FacilityPlacementProps) {
       {site && (
         <>
           <span className="shared-site-kind">
-            {site.kind === 'ROOF' ? '옥상 후보' : '지상 주차장 후보'}
+            {site.kind === 'ROOF'
+              ? '옥상 후보'
+              : site.physicalInputs?.streetPlacement
+                ? site.physicalInputs.streetPlacement.role === 'ROADWAY'
+                  ? '차도 투수포장'
+                  : '인도·보행로 투수포장'
+                : '지상 주차장 후보'}
           </span>
           <h2 className="shared-site-title">{site.name}</h2>
           {site.existingInfrastructure && (
@@ -193,7 +199,9 @@ export function FacilityPlacementPanel(p: FacilityPlacementProps) {
                   ? '폭 2m 직선 배치 한도'
                   : type === 'INFILTRATION_TRENCH'
                     ? '폭 1m 직선 배치 한도'
-                    : '공개 도형 면적'}
+                    : site.physicalInputs?.streetPlacement
+                      ? '도로 중심선 기반 설계 면적'
+                      : '공개 도형 면적'}
               </div>
               {(type === 'VEGETATIVE_SWALE' || type === 'INFILTRATION_TRENCH') && (
                 <p className="micro-note">

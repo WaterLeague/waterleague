@@ -11,6 +11,7 @@ export type SiteQuery = {
   offset: number;
   type: FacilityType | '';
   vacant: boolean;
+  surface?: 'ROADWAY' | 'WALKWAY' | 'OTHER' | '';
 };
 export const loadSites = async (query: SiteQuery, signal?: AbortSignal) => {
   const params = new URLSearchParams({
@@ -20,6 +21,7 @@ export const loadSites = async (query: SiteQuery, signal?: AbortSignal) => {
     offset: String(query.offset),
     vacant: String(query.vacant),
   });
+  if (query.surface) params.set('surface', query.surface);
   if (query.type) params.set('type', query.type);
   return sitePageDto.parse(
     await api<unknown>('/installations/sites?' + params, 'GET', undefined, signal)
@@ -53,3 +55,16 @@ export const loadBuildingSite = async (districtId: string, sourceId: string) =>
         encodeURIComponent(sourceId)
     )
   );
+
+export const loadStreetSite = async (
+  districtId: string,
+  sourceId: string,
+  point: [number, number]
+) => {
+  const params = new URLSearchParams({ sourceId, x: String(point[0]), y: String(point[1]) });
+  return siteDto.parse(
+    await api<unknown>(
+      '/installations/sites/' + encodeURIComponent(districtId) + '/street?' + params
+    )
+  );
+};

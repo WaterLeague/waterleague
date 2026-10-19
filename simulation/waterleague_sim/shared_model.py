@@ -6,11 +6,11 @@ from functools import lru_cache
 from .engine.continuous import ROOT, digest
 from .model_catalog import read_catalog
 
-CATALOG_HASHES={9:'2c01768343c093e3afb21fa64c8e298cb79d2cb9371442be7a092ab63c9645de',8:'d58dbf9cf2d6b44342c8ca468d7d5d4f8d4145ef3946fd8d5789b8cacebab8d9',7:'de9a1bf428d4bd52604744213a33d5fa26fea84cab9297668064d58eb0be7469',6:'18a22093b2541ab05ed3fdee6a394a998bbfd5d092c6105cf787702f99bdf501',5:'450f016165b58477ba4fb09eb81aec08de93d6081cd367ddf9b906920d7c6e07',4:'f1f8d5f366cf47fff86319b27669bfb8e4a1fd3912d701b70b4b6e280e6fa66f',1:'f26b639dbdb2fee3c1aff172a19153868a07aa70735a6dfcfda863c3a38e8b64',
+CATALOG_HASHES={10:'2011b5356cf7885b8dbaa2f5e55446b71e82384023f98594e287f832574e5b42',9:'2c01768343c093e3afb21fa64c8e298cb79d2cb9371442be7a092ab63c9645de',8:'d58dbf9cf2d6b44342c8ca468d7d5d4f8d4145ef3946fd8d5789b8cacebab8d9',7:'de9a1bf428d4bd52604744213a33d5fa26fea84cab9297668064d58eb0be7469',6:'18a22093b2541ab05ed3fdee6a394a998bbfd5d092c6105cf787702f99bdf501',5:'450f016165b58477ba4fb09eb81aec08de93d6081cd367ddf9b906920d7c6e07',4:'f1f8d5f366cf47fff86319b27669bfb8e4a1fd3912d701b70b4b6e280e6fa66f',1:'f26b639dbdb2fee3c1aff172a19153868a07aa70735a6dfcfda863c3a38e8b64',
                 2:'009fcd085f476bbc96a41888646f284942cd69aae0b9405defcb2764a8d6d5ea',
                 3:'80e46a9c3821cdeff4b9acd839b264d810ba559202da828cdb8a6b45c04b15e4'}
 
-@lru_cache(maxsize=9)
+@lru_cache(maxsize=10)
 def site_catalog(version=9):
     path=ROOT/'backend/src/main/resources/shared-sites'/('catalog.json' if version==1 else f'catalog-v{version}.json')
     raw=path.read_bytes()
@@ -45,7 +45,7 @@ def resolve(installation):
     if installation['model_hash']==district['defaultModelHash']:
         cell=next(c for c in model['cells'] if c['id']==installation['cell_id'])
     else:
-        version=next((v for v in (9,8,7,6,5,4,3,2,1) if site_catalog(v)[district['districtId']]['sha256']==installation['model_hash']),None)
+        version=next((v for v in (10,9,8,7,6,5,4,3,2,1) if site_catalog(v)[district['districtId']]['sha256']==installation['model_hash']),None)
         if version is None:raise ValueError('LIVE_INSTALLATION_MODEL_INVALID')
         cell=candidates(district['districtId'],version)[installation['cell_id']]
     model['cells']=[copy.deepcopy(cell)]
@@ -54,7 +54,7 @@ def resolve(installation):
         'inflowPolicy':'DIRECT_RAINFALL_ONLY' if version>=2 else 'LEGACY_ALL_IMPERVIOUS_RUNOFF'}
     if version>=2:
         model['assumptions']=[s for s in model['assumptions'] if '60%' not in s and '80%' not in s]
-        model['assumptions']+=['공개 도형 면적 기준의 계산 경계; 실제 시공 가능 면적 미확인',
+        model['assumptions']+=[('공개 도로 중심선 기반 설계 띠 면적; 실측 부지 경계·시공 가능 면적 미확인' if version==10 else '공개 도형 면적 기준의 계산 경계; 실제 시공 가능 면적 미확인'),
             '배수 연결 미확인으로 시설 자체 강우만 처리; 외부 유입 없음']
     if version>=3:
         source=candidate_snapshot(district['districtId'],version)

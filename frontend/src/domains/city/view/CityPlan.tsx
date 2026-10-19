@@ -65,6 +65,7 @@ type Props = {
   onDistrict: (id: string) => void;
   onSite: (key: string) => void;
   onBuilding: (districtId: string, building: CityBuilding) => void;
+  onStreet?: (sourceId: string, point: [number, number]) => void;
   onCamera: (view: PlanView) => void;
   onNavigate: (view: PlanView) => void;
   camera: PlanView;
@@ -100,6 +101,7 @@ export const CityPlan = memo(function CityPlan({
   onDistrict,
   onSite,
   onBuilding,
+  onStreet,
   onCamera,
   onNavigate,
   camera,
@@ -323,13 +325,28 @@ export const CityPlan = memo(function CityPlan({
       {paths.surfaces.map((s, i) => (
         <path key={i} d={s.path} fill={s.kind === 'water' ? '#81b1ba' : '#b4c8a3'} />
       ))}
-      <g fill="none" pointerEvents="none" strokeLinecap="round" strokeLinejoin="round">
+      <g
+        fill="none"
+        pointerEvents={facilityType === 'PERMEABLE_PAVEMENT' ? 'stroke' : 'none'}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
         {roadPaths.map((r) => (
           <path
             key={r.id}
             d={r.path}
             stroke={r.walk ? '#b3ae9f' : '#667071'}
             strokeWidth={r.width}
+            onClick={(event) => {
+              if (dragging || facilityType !== 'PERMEABLE_PAVEMENT' || !onStreet) return;
+              const matrix = svg.current?.getScreenCTM();
+              if (!matrix) return;
+              const point = new DOMPoint(event.clientX, event.clientY).matrixTransform(
+                matrix.inverse()
+              );
+              event.stopPropagation();
+              onStreet(r.id, [point.x, -point.y]);
+            }}
           />
         ))}
       </g>

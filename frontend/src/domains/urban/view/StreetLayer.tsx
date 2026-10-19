@@ -1,18 +1,21 @@
+import { streetAtFace } from '../service/streetGeometryService';
 import { memo, useEffect, useState, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useUrbanLighting } from './UrbanEnvironment';
 import type { MeshStandardMaterial } from 'three';
-import { BufferAttribute, BufferGeometry, DoubleSide } from 'three';
+import { BufferAttribute, BufferGeometry, DoubleSide, Mesh } from 'three';
 import type { Street } from '../entity/urban';
 import type { Terrain } from '../../terrain/entity/terrain';
 export const StreetLayer = memo(function StreetLayer({
   roads,
   terrain,
   detail,
+  onStreet,
 }: {
   roads: Street[];
   terrain: Terrain | null;
   detail: boolean;
+  onStreet?: (sourceId: string, point: [number, number]) => void;
 }) {
   const [geometry, setGeometry] = useState<BufferGeometry | null>(null);
   const [failed, setFailed] = useState(false);
@@ -36,6 +39,8 @@ export const StreetLayer = memo(function StreetLayer({
       const mesh = new BufferGeometry();
       mesh.setAttribute('position', new BufferAttribute(data.positions, 3));
       mesh.setAttribute('color', new BufferAttribute(data.colors, 3));
+      mesh.userData.streetEnds = data.ends;
+      mesh.userData.streetIds = roads.map((road) => road.id);
       mesh.computeVertexNormals();
       mesh.computeBoundingSphere();
       setGeometry(mesh);
@@ -52,7 +57,21 @@ export const StreetLayer = memo(function StreetLayer({
   }, [roads, terrain, detail]);
   if (failed) throw new Error('도로 표시 실패');
   return geometry ? (
-    <mesh geometry={geometry} receiveShadow raycast={() => {}}>
+    <mesh
+      geometry={geometry}
+      receiveShadow
+      raycast={onStreet ? Mesh.prototype.raycast : () => {}}
+      onClick={
+        onStreet
+          ? (event) => {
+              const index = streetAtFace(geometry.userData.streetEnds, event.faceIndex ?? -1);
+              if (index < 0) return;
+              event.stopPropagation();
+              onStreet(geometry.userData.streetIds[index], [event.point.x, -event.point.z]);
+            }
+          : undefined
+      }
+    >
       <meshStandardMaterial
         ref={material}
         vertexColors

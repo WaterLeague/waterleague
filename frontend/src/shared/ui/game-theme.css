@@ -986,7 +986,7 @@
 }
 
 .game-shell .historical-play-layout .map-layer-bar {
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
 }
 .game-shell .historical-play-layout .map-layer-bar .gameplay-toolbar {
   flex: 0 0 auto;

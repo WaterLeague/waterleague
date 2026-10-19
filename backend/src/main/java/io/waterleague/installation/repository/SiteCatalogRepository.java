@@ -21,6 +21,7 @@ public class SiteCatalogRepository {
   private final LabModelRepository models;
   private final io.waterleague.infrastructure.repository.SurfaceOccupancyRepository occupancy;
   private final Map<String, JsonNode> entries = new LinkedHashMap<>();
+  private final Map<String, JsonNode> streetEntries = new LinkedHashMap<>();
   private final Map<String, Integer> counts = new LinkedHashMap<>();
   private final Map<String, Map<String, SiteView>> cache = new LinkedHashMap<>(8, .75f, true);
 
@@ -47,6 +48,19 @@ public class SiteCatalogRepository {
       counts.put(id, entry.path("count").asInt());
     }
     if (entries.size() != 25) throw new IllegalStateException("공동 후보 구 누락");
+    var streets = read("catalog-v10.json", false, 50000);
+    if (!json.hash(streets)
+        .equals("2011b5356cf7885b8dbaa2f5e55446b71e82384023f98594e287f832574e5b42"))
+      throw new IllegalStateException("도로 후보 목록 해시 오류");
+    for (var entry : json.tree(streets).path("entries")) {
+      String id = entry.path("districtId").asString();
+      districts.require(id);
+      if (streetEntries.put(id, entry) != null
+          || !entry.path("file").asString().equals(id + "-v10.json.gz"))
+        throw new IllegalStateException("도로 후보 목록 오류");
+      counts.compute(id, (key, count) -> count + entry.path("count").asInt());
+    }
+    if (streetEntries.size() != 25) throw new IllegalStateException("도로 후보 구 누락");
   }
 
   private String read(String name, boolean zipped, int max) throws IOException {
@@ -65,6 +79,8 @@ public class SiteCatalogRepository {
   public Map<String, String> versions() {
     var result = new TreeMap<String, String>();
     entries.forEach((id, entry) -> result.put(id, entry.path("sha256").asString()));
+    streetEntries.forEach(
+        (id, entry) -> result.put(id + ":streets", entry.path("sha256").asString()));
     return Collections.unmodifiableMap(result);
   }
 
@@ -73,18 +89,19 @@ public class SiteCatalogRepository {
     if (cached != null) return cached;
     var d = districts.require(id);
     var values = new LinkedHashMap<String, SiteView>();
-    var entry = entries.get(id);
-    try {
-      String raw = read(entry.path("file").asString(), true, 64 * 1024 * 1024);
-      String hash = entry.path("sha256").asString();
-      var snapshot = json.tree(raw);
-      if (!json.hash(raw).equals(hash)
-          || !snapshot.path("districtId").asString().equals(id)
-          || !snapshot.path("baseModelHash").asString().equals(d.modelHash()))
-        throw new IllegalStateException("공동 후보 무결성 오류");
-      append(values, id, snapshot, hash, List.of(0., 0.));
-    } catch (IOException e) {
-      throw new IllegalStateException("공동 후보 읽기 오류");
+    for (var entry : List.of(entries.get(id), streetEntries.get(id))) {
+      try {
+        String raw = read(entry.path("file").asString(), true, 64 * 1024 * 1024);
+        String hash = entry.path("sha256").asString();
+        var snapshot = json.tree(raw);
+        if (!json.hash(raw).equals(hash)
+            || !snapshot.path("districtId").asString().equals(id)
+            || !snapshot.path("baseModelHash").asString().equals(d.modelHash()))
+          throw new IllegalStateException("공동 후보 무결성 오류");
+        append(values, id, snapshot, hash, List.of(0., 0.));
+      } catch (IOException e) {
+        throw new IllegalStateException("공동 후보 읽기 오류");
+      }
     }
     if (values.size() != counts.get(id)) throw new IllegalStateException("공동 후보 개수 오류");
     var result = Collections.unmodifiableMap(values);
@@ -150,6 +167,26 @@ public class SiteCatalogRepository {
     return district(districtId).values().stream()
         .filter(s -> s.kind().equals("ROOF") && s.sourceIds().contains(sourceId))
         .findFirst()
+        .orElseThrow(() -> new DomainException(ErrorCode.RESOURCE_NOT_FOUND));
+  }
+
+  public SiteView street(String districtId, String sourceId, double x, double y) {
+    if (sourceId == null
+        || !sourceId.matches("way/[0-9]{1,16}:[0-9]{1,6}")
+        || !Double.isFinite(x)
+        || !Double.isFinite(y)
+        || Math.abs(x) > 100000
+        || Math.abs(y) > 100000) throw new DomainException(ErrorCode.REQUEST_INVALID);
+    return district(districtId).values().stream()
+        .filter(
+            s ->
+                sourceId.equals(
+                    s.physicalInputs().path("streetPlacement").path("streetId").asString()))
+        .filter(s -> Math.hypot(s.center().get(0) - x, s.center().get(1) - y) <= 30)
+        .min(
+            Comparator.comparingDouble(
+                    (SiteView s) -> Math.hypot(s.center().get(0) - x, s.center().get(1) - y))
+                .thenComparing(SiteView::cellId))
         .orElseThrow(() -> new DomainException(ErrorCode.RESOURCE_NOT_FOUND));
   }
 

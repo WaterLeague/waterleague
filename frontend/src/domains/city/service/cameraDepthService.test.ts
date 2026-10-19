@@ -11,7 +11,7 @@ function depthValues(distance: number, near: number) {
     Math.round((new Vector3(0, height, 0).project(camera).z * 0.5 + 0.5) * (2 ** 24 - 1))
   );
 }
-test.each([180, 1600, 4500])(
+test.each([18, 60, 180, 1600, 4500])(
   '지도 거리 %sm에서 보도·노면·차선·흔적·계산 수면의 24bit 깊이 순서 보존',
   (distance) => {
     const depths = depthValues(distance, mapNearPlane(distance, distance * 0.8));

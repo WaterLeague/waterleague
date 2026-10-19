@@ -1,3 +1,5 @@
+import { pavementGeometry } from '../../catalog/service/pavementGeometryService';
+import { placementFootprint } from '../../catalog/service/facilityGeometryService';
 import { InstallationSymbols } from '../../installation/view/InstallationSymbols';
 import { InstallationNameplates } from '../../installation/view/InstallationNameplates';
 import { installationSymbols } from '../../installation/service/installationSymbolsService';
@@ -59,7 +61,11 @@ import type { Street, UrbanTime, Population } from '../../urban/entity/urban';
 import { UrbanEnvironment } from '../../urban/view/UrbanEnvironment';
 import { BuildingMaterial } from '../../urban/view/BuildingMaterial';
 import { StreetLayer } from '../../urban/view/StreetLayer';
-import { mapNearPlane } from '../service/cameraDepthService';
+import {
+  mapNearPlane,
+  minimumMapDistance,
+  minimumGroundClearance,
+} from '../service/cameraDepthService';
 import { StreetLife } from '../../urban/view/StreetLife';
 const TerrainContext = createContext<Terrain | null>(null);
 const mapEvents: Parameters<typeof Canvas>[0]['events'] = (state) => ({
@@ -252,7 +258,7 @@ function Controls({
       camera.position.y += rise;
       camera.position.y = Math.max(
         camera.position.y,
-        terrainHeight(terrain, [camera.position.x, -camera.position.z]) + 15
+        terrainHeight(terrain, [camera.position.x, -camera.position.z]) + minimumGroundClearance
       );
       if (camera instanceof THREE.PerspectiveCamera) {
         // 서울 축척에서도 도로와 얕은 수면의 깊이 차이가 버퍼에서 소실되지 않게 한다.
@@ -297,7 +303,12 @@ function Controls({
         halfHeight * 0.6;
     }
     const elevation = terrainHeight(terrain, [x, y]) + (focus.heightM ?? 0);
-    camera.position.set(x, elevation + distance * 0.8, -y + distance * 0.6);
+    if (focus.preserveAngle && controls.current) {
+      const direction = camera.position.clone().sub(controls.current.target).normalize();
+      camera.position.set(x, elevation, -y).addScaledVector(direction, distance);
+    } else {
+      camera.position.set(x, elevation + distance * 0.8, -y + distance * 0.6);
+    }
     controls.current?.target.set(x, elevation, -y);
     controls.current?.update();
     report(true);
@@ -307,7 +318,7 @@ function Controls({
     <OrbitControls
       ref={controls}
       makeDefault
-      minDistance={180}
+      minDistance={minimumMapDistance}
       maxDistance={150000}
       maxPolarAngle={Math.PI * 0.46}
       screenSpacePanning={false}
@@ -416,6 +427,7 @@ const CityScene = memo(function CityScene({
   animateRain,
   preview,
   onBuilding,
+  onStreet,
   eligibleRoofs,
   occupiedRoofs,
   facilityType,
@@ -462,6 +474,7 @@ const CityScene = memo(function CityScene({
   waterWeather?: WaterWeather;
   preview: { site: SharedSite; placement: Placement } | null;
   onBuilding: (districtId: string, b: CityBuilding) => void;
+  onStreet?: (sourceId: string, point: [number, number]) => void;
   eligibleRoofs: ReadonlySet<string>;
   occupiedRoofs: ReadonlySet<string>;
   facilityType: FacilityType | '';
@@ -545,7 +558,12 @@ const CityScene = memo(function CityScene({
               <Surface polygons={city.boundary} color="#dfe3cf" />
             )}
             <Lines city={city} selected={selected} ownDistrictId={ownDistrictId} />
-            <StreetLayer roads={streets} terrain={terrain} detail={rainCamera.distance < 4500} />
+            <StreetLayer
+              roads={streets}
+              terrain={terrain}
+              detail={rainCamera.distance < 4500}
+              onStreet={facilityType === 'PERMEABLE_PAVEMENT' ? onStreet : undefined}
+            />
             <StreetLife
               roads={streets}
               terrain={terrain}
@@ -650,6 +668,7 @@ const CityScene = memo(function CityScene({
                     />
                     {installed && (
                       <FacilityMesh
+                        terrain={terrain}
                         cell={{
                           ...site,
                           heightM:
@@ -658,7 +677,11 @@ const CityScene = memo(function CityScene({
                         }}
                         placement={installed}
                         preview={false}
-                        opacity={opacity}
+                        opacity={
+                          !ownDistrictId || site.districtId === ownDistrictId
+                            ? 1
+                            : otherDistrictOpacity
+                        }
                         onSelect={() => onSite(siteKey(site))}
                       />
                     )}
@@ -668,6 +691,7 @@ const CityScene = memo(function CityScene({
             {cisternGeometry && <CisternLayoutMesh geometry={cisternGeometry} terrain={terrain} />}
             {preview && (
               <FacilityMesh
+                terrain={terrain}
                 cell={{
                   ...preview.site,
                   heightM:
@@ -740,6 +764,47 @@ function SiteSurface({
 }) {
   const terrain = useContext(TerrainContext);
   const polygons = useMemo(() => [[site.coordinates]], [site]);
+  const streetGeometry = useMemo(
+    () =>
+      site.physicalInputs?.streetPlacement
+        ? pavementGeometry(
+            placementFootprint(site, {
+              cellId: site.cellId,
+              facilityType: 'PERMEABLE_PAVEMENT',
+              areaM2: site.maxAreaM2,
+            }),
+            terrain,
+            0.013
+          )
+        : null,
+    [site, terrain]
+  );
+  useEffect(
+    () => () => {
+      if (streetGeometry) Object.values(streetGeometry).forEach((g) => g.dispose());
+    },
+    [streetGeometry]
+  );
+  if (streetGeometry)
+    return (
+      <mesh
+        geometry={streetGeometry.surface}
+        onClick={(event) => {
+          event.stopPropagation();
+          onClick();
+        }}
+        receiveShadow
+      >
+        <meshStandardMaterial
+          color={color}
+          side={THREE.DoubleSide}
+          roughness={1}
+          transparent
+          opacity={opacity * 0.8}
+          depthWrite={false}
+        />
+      </mesh>
+    );
   return (
     <Surface
       polygons={polygons}

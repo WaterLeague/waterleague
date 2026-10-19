@@ -56,16 +56,25 @@ public class InstallationService {
   }
 
   public List<io.waterleague.installation.view.InstallationView> activeViews() {
-    var week = seasons.now().atZone(java.time.ZoneId.of("Asia/Seoul")).toLocalDate()
-        .with(java.time.temporal.TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY));
+    var week =
+        seasons
+            .now()
+            .atZone(java.time.ZoneId.of("Asia/Seoul"))
+            .toLocalDate()
+            .with(java.time.temporal.TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY));
     // 지도 전체의 점수를 한 번에 조회해 표식별 추가 요청을 피한다.
     var scores = installations.currentScores(week);
-    return active().stream().map(i -> {
-      var value = view(i);
-      var score = scores.get(i.id());
-      return score == null ? value : io.waterleague.installation.mapper.InstallationMapper.scored(
-          value, score.scoreM3(), score.through());
-    }).toList();
+    return active().stream()
+        .map(
+            i -> {
+              var value = view(i);
+              var score = scores.get(i.id());
+              return score == null
+                  ? value
+                  : io.waterleague.installation.mapper.InstallationMapper.scored(
+                      value, score.scoreM3(), score.through());
+            })
+        .toList();
   }
 
   public io.waterleague.installation.view.SitePageView sites(
@@ -75,6 +84,17 @@ public class InstallationService {
       int offset,
       io.waterleague.strategy.entity.FacilityType type,
       boolean vacant) {
+    return sites(districtId, x, y, offset, type, vacant, null);
+  }
+
+  public io.waterleague.installation.view.SitePageView sites(
+      String districtId,
+      double x,
+      double y,
+      int offset,
+      io.waterleague.strategy.entity.FacilityType type,
+      boolean vacant,
+      io.waterleague.installation.entity.SiteSurface surface) {
     if (!Double.isFinite(x)
         || !Double.isFinite(y)
         || Math.abs(x) > 100000
@@ -88,6 +108,7 @@ public class InstallationService {
         sites.district(districtId).values().stream()
             .filter(v -> type == null || v.allowedTypes().contains(type.name()))
             .filter(v -> !vacant || v.existingInfrastructure() == null)
+            .filter(v -> surface == null || surface.matches(v))
             .sorted(
                 Comparator.comparingDouble(
                         (io.waterleague.installation.view.SiteView v) ->
@@ -100,6 +121,11 @@ public class InstallationService {
         matched.size(),
         offset,
         200);
+  }
+
+  public io.waterleague.installation.view.SiteView street(
+      String districtId, String sourceId, double x, double y) {
+    return sites.street(districtId, sourceId, x, y);
   }
 
   public io.waterleague.installation.view.SiteView building(String districtId, String sourceId) {

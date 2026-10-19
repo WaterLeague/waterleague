@@ -1,7 +1,16 @@
 import { expect, it } from 'vitest';
 import { PerspectiveCamera, Vector3 } from 'three';
-import { siteFocus } from './siteFocusService';
+import { siteFocus, selectionView } from './siteFocusService';
 import { zoomPlanView } from './planNavigationService';
+
+it('근접 지도 선택은 시야 전체 유지, 목록 선택은 확대 유지, 전체 보기 선택은 초점 이동', () => {
+  const fitted = { center: [100, 200] as [number, number], distance: 194.4, heightM: 20 };
+  const close = { center: [85, 190] as [number, number], distance: 18, heightM: 0 };
+  expect(selectionView(fitted, close, true)).toBe(close);
+  expect(selectionView(fitted, close)).toEqual({ ...fitted, distance: 18 });
+  expect(selectionView(fitted, { ...close, distance: 35000 }, true)).toEqual(fitted);
+  expect(close).toEqual({ center: [85, 190], distance: 18, heightM: 0 });
+});
 
 it('길쭉한 건물·대형 건물·고층 건물 전체를 화면과 HUD 여백 안에 포함', () => {
   for (const [width, height] of [

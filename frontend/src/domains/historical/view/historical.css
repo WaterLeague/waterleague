@@ -38,13 +38,13 @@
 .historical-timeline {
   display: flex;
   align-items: center;
-  flex: 1;
-  min-width: 0;
+  flex: 1 1 380px;
+  min-width: min(100%, 320px);
   gap: 12px;
   color: #35575b;
   font-size: 11px;
 }
-.historical-timeline > input {
+.historical-time-track > input {
   flex: 1;
   width: 100%;
   min-width: 60px;
@@ -290,4 +290,108 @@
 }
 .historical-design-sync small {
   color: #53635b;
+}
+
+.historical-time-track {
+  position: relative;
+  flex: 1;
+  min-width: 100px;
+  height: 48px;
+}
+.historical-time-track > input {
+  width: calc(100% - 24px);
+  margin-inline: 12px;
+}
+.historical-track-events {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.historical-time-pin,
+.historical-time-cluster {
+  position: absolute;
+  top: 26px;
+  transform: translateX(-50%);
+  pointer-events: auto;
+}
+.historical-time-pin::before,
+.historical-time-cluster::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  height: 9px;
+  width: 1px;
+  top: -9px;
+  background: #b17536;
+  pointer-events: none;
+}
+.historical-timeline .historical-time-pin,
+.historical-time-cluster > summary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  min-width: 22px;
+  height: 20px;
+  padding: 1px 4px;
+  border: 1px solid #b17536;
+  border-radius: 10px;
+  background: #fff2d8;
+  color: #744b1d;
+  cursor: pointer;
+  list-style: none;
+  font: inherit;
+}
+.historical-time-cluster > summary::-webkit-details-marker {
+  display: none;
+}
+.historical-time-pin[data-reached='false'],
+.historical-time-cluster[data-reached='false'] > summary {
+  background: #f9faf6;
+  border-style: dashed;
+  color: #76857d;
+}
+.historical-time-pin:hover,
+.historical-time-pin:focus-visible,
+.historical-time-cluster[open] > summary {
+  outline: 2px solid #e6b86a;
+  outline-offset: 1px;
+}
+.historical-time-choices {
+  position: absolute;
+  top: 26px;
+  z-index: 60;
+  min-width: 220px;
+  max-width: min(320px, 75vw);
+  max-height: 200px;
+  overflow: auto;
+  padding: 7px;
+  border: 1px solid #d6dfd5;
+  border-radius: 14px;
+  background: #fcfdf9;
+  box-shadow: 0 8px 24px #24484e20;
+}
+.historical-time-choices button {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  padding: 8px;
+  text-align: left;
+  white-space: normal;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+.historical-time-choices button > svg {
+  flex-shrink: 0;
+}
+.historical-time-choices button:hover {
+  background: #eaf0e5;
+}
+.historical-time-cluster[open] {
+  z-index: 70;
 }
