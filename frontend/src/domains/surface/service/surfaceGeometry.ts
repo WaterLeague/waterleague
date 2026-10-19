@@ -1,7 +1,11 @@
 import { Color } from 'three';
 import type { SurfaceFrame, SurfaceMetric } from '../entity/surface';
 import type { Terrain } from '../../terrain/entity/terrain';
-import { terrainHeight } from '../../terrain/service/terrainService';
+import {
+  drapeTriangle,
+  drapeSegment,
+  terrainMeshHeight,
+} from '../../terrain/service/terrainDrapeService';
 import { surfaceColor } from './surfaceService';
 import { arrowTriangles, surfaceDirections } from './surfaceDirections';
 export function surfaceGeometry(
@@ -25,7 +29,7 @@ export function surfaceGeometry(
     const key = p.join('/');
     let value = heightCache.get(key);
     if (value === undefined) {
-      value = terrainHeight(terrain, p) + 0.02;
+      value = terrainMeshHeight(terrain, p) + 0.02;
       heightCache.set(key, value);
     }
     return value;
@@ -47,7 +51,10 @@ export function surfaceGeometry(
     const [a, b, c] = cell.vertices;
     const cross = (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]);
     const points = cross < 0 ? [a, c, b] : [a, b, c];
-    points.forEach((p) => vertex(p, cell.depthM, 1, cell));
+    drapeTriangle([points[0], points[1], points[2]], terrain, (triangle) => {
+      if (positions.length >= 9000000) throw new Error('수심 표시 한도 초과');
+      triangle.forEach((p) => vertex(p, cell.depthM, 1, cell));
+    });
     for (let i = 0; i < 3; i++) {
       const a = points[i],
         b = points[(i + 1) % 3];
@@ -66,14 +73,15 @@ export function surfaceGeometry(
   }
   for (const { a, b, cell, floor } of edges.values()) {
     color.set(surfaceColor(cell, metric));
-    [
-      [a, floor],
-      [b, floor],
-      [b, cell.depthM],
-      [a, floor],
-      [b, cell.depthM],
-      [a, cell.depthM],
-    ].forEach(([p, d]) => vertex(p as Point, d as number, 0, cell));
+    for (const [start, end] of drapeSegment(a, b, terrain))
+      [
+        [start, floor],
+        [end, floor],
+        [end, cell.depthM],
+        [start, floor],
+        [end, cell.depthM],
+        [start, cell.depthM],
+      ].forEach(([p, d]) => vertex(p as Point, d as number, 0, cell));
   }
   const byId = new Map(cells.map((cell) => [cell.triangleId, cell]));
   arrows.forEach((arrow) => {

@@ -2,7 +2,7 @@ import { Color, ShapeGeometry } from 'three';
 import type { MapPolygons } from '../../catalog/service/mapGeometryService';
 import { polygonShapes } from '../../catalog/service/mapGeometryService';
 import type { Terrain } from '../../terrain/entity/terrain';
-import { terrainHeight } from '../../terrain/service/terrainService';
+import { drapeTriangle, terrainMeshHeight } from '../../terrain/service/terrainDrapeService';
 
 type Point = [number, number];
 type Triangle = [Point, Point, Point];
@@ -22,7 +22,13 @@ export function riverGeometry(surfaces: MapPolygons[], terrain: Terrain | null) 
         );
     shape.dispose();
   }
-  let planned = triangles.length;
+  const aligned: Triangle[] = [];
+  for (const triangle of triangles)
+    drapeTriangle(triangle, terrain, (piece) => {
+      if (aligned.length >= 1000000) throw new Error('하천 표시 한도 초과');
+      aligned.push(piece.map((p) => [p[0], p[1]]) as Triangle);
+    });
+  let planned = aligned.length;
   const positions: number[] = [];
   // 원 물 경계와 구멍을 유지한 삼각형 내부 분할로 긴 수면의 물결을 표현한다.
   const subdivide = ([a, b, c]: Triangle, level = 0) => {
@@ -36,10 +42,11 @@ export function riverGeometry(surfaces: MapPolygons[], terrain: Terrain | null) 
       subdivide([p, middle, other], level + 1);
       subdivide([middle, q, other], level + 1);
     } else {
-      for (const p of [a, b, c]) positions.push(p[0], terrainHeight(terrain, p) + 2, -p[1]);
+      if (positions.length >= 9000000) throw new Error('하천 표시 한도 초과');
+      for (const p of [a, b, c]) positions.push(p[0], terrainMeshHeight(terrain, p) + 0.25, -p[1]);
     }
   };
-  triangles.forEach((triangle) => subdivide(triangle));
+  aligned.forEach((triangle) => subdivide(triangle));
   const count = positions.length / 3;
   const colors = new Float32Array(positions.length),
     color = new Color('#287b91');

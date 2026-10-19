@@ -20,7 +20,7 @@ test('경계에 닿는 표시 타일 포함과 미확보 사건 제외', () => {
 });
 
 test('표시 지형에만 투영하고 수심 생성 없이 2D와 같은 평면 좌표 유지', () => {
-  const positions = tracePositions([{ triangleVertices: [0, 90, 90, 0, 45, 45] }], {
+  const positions = tracePositions([{ triangleVertices: [0, 90, 90, 90, 0, 0] }], {
     width: 2,
     height: 2,
     origin: [0, 90],
@@ -30,5 +30,15 @@ test('표시 지형에만 투영하고 수심 생성 없이 2D와 같은 평면 
     districts: new Uint8Array(4),
     cover: new Uint8Array(4),
   });
-  expect(Array.from(positions)).toEqual([0, 12, -90, 90, 72, -0, 45, 42, -45]);
+  expect(Array.from(positions)).toEqual([
+    0,
+    expect.closeTo(10.08),
+    -90,
+    90,
+    expect.closeTo(30.08),
+    -90,
+    0,
+    expect.closeTo(50.08),
+    -0,
+  ]);
 });

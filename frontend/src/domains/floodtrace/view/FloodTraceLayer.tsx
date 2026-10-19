@@ -3,16 +3,22 @@ import * as THREE from 'three';
 import type { TraceTile } from '../entity/floodTrace';
 import type { Terrain } from '../../terrain/entity/terrain';
 import { traceColor } from '../service/floodTraceService';
+import { WaterMaterial } from '../../surface/view/WaterMaterial';
+import { useWaterObject } from '../../surface/view/WaterScene';
+import { calmWater, type WaterWeather } from '../../surface/service/waterAppearanceService';
 
 export const FloodTraceLayer = memo(function FloodTraceLayer({
   tiles,
   terrain,
   onError,
+  weather = calmWater,
 }: {
   tiles: TraceTile[];
   terrain: Terrain | null;
   onError: () => void;
+  weather?: WaterWeather;
 }) {
+  const waterRef = useWaterObject();
   const [geometry, setGeometry] = useState<THREE.BufferGeometry | null>(null);
   useEffect(() => {
     if (!tiles.length) {
@@ -32,6 +38,15 @@ export const FloodTraceLayer = memo(function FloodTraceLayer({
       }
       mesh = new THREE.BufferGeometry();
       mesh.setAttribute('position', new THREE.BufferAttribute(event.data.positions, 3));
+      const count = event.data.positions.length / 3;
+      const colors = new Float32Array(count * 3);
+      const color = new THREE.Color(traceColor);
+      for (let i = 0; i < count; i++) colors.set(color.toArray(), i * 3);
+      mesh.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+      mesh.setAttribute('flow', new THREE.BufferAttribute(new Float32Array(count * 2), 2));
+      mesh.setAttribute('waterDepth', new THREE.BufferAttribute(new Float32Array(count), 1));
+      mesh.setAttribute('waterFace', new THREE.BufferAttribute(new Float32Array(count).fill(1), 1));
+      mesh.computeVertexNormals();
       mesh.computeBoundingSphere();
       setGeometry(mesh);
       worker.terminate();
@@ -51,15 +66,8 @@ export const FloodTraceLayer = memo(function FloodTraceLayer({
   }, [tiles, terrain, onError]);
   // 지표에 투영한 기록 범위이며 침수심 높이로 돌출하지 않는다.
   return geometry && tiles.length ? (
-    <mesh geometry={geometry} renderOrder={30} raycast={() => {}}>
-      <meshBasicMaterial
-        color={traceColor}
-        transparent
-        opacity={0.48}
-        depthTest={false}
-        depthWrite={false}
-        side={THREE.DoubleSide}
-      />
+    <mesh ref={waterRef} geometry={geometry} renderOrder={30} raycast={() => {}}>
+      <WaterMaterial record weather={weather} />
     </mesh>
   ) : null;
 });

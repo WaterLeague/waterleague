@@ -10,6 +10,7 @@ const waves = `
   uniform float gust;
   uniform float rain;
   uniform float natural;
+  uniform float record;
   vec2 windAxis() { return length(wind) > 0.001 ? normalize(wind) : vec2(1.0, 0.0); }
   float waveHeight(vec2 p, float depth) {
     vec2 axis = windAxis();
@@ -103,6 +104,13 @@ const fragmentShader = `
     float radius = length(fract(p) - center);
     return sin((radius - age * 0.8) * 48.0) * exp(-abs(radius - age * 0.8) * 18.0) * (1.0 - age);
   }
+  vec2 surfaceSlope(vec2 p, vec2 axis, vec2 across, float wavelength, float phase) {
+    vec2 q = vec2(dot(p, axis), dot(p, across)) * 6.283185 / wavelength;
+    float visible = 1.0 - smoothstep(0.7, 2.4, max(fwidth(q.x), fwidth(q.y)));
+    float a = sin(q.x + sin(q.y * 0.73) * 0.85 - phase);
+    float b = cos(q.y * 0.87 + sin(q.x * 0.61) * 0.8 - phase * 0.71);
+    return (axis * a + across * b * 0.65) * visible;
+  }
   void main() {
     if (vFace < -0.5) {
       gl_FragColor = vec4(vWaterColor, 1.0);
@@ -111,21 +119,29 @@ const fragmentShader = `
       vec2 axis = windAxis();
       vec2 across = vec2(-axis.y, axis.x);
       float windPhase = waterTime * sqrt(gust) * 0.65 * step(0.001, length(wind));
-      float rippleA = sin(dot(p, axis) * 2.7 - windPhase + sin(dot(p, across) * 0.63) * 0.7);
-      float rippleB = cos(dot(p, across) * 4.3 + rippleA * 0.7 - windPhase * 0.8) * 0.7 + sin(dot(p, axis + across) * 7.1 - windPhase * 1.4) * 0.3;
       float resolved = 1.0 - smoothstep(0.35, 2.5, length(fwidth(p * 0.5)));
       float drops = (ring(p * 0.55) + ring(p * 0.55 + vec2(0.0, 1.0))) * min(rain * 0.5, 0.5);
-      float rough = min(0.03 + sqrt(gust) * 0.035, 0.2);
-      vec2 slope = (axis * rippleA + across * rippleB * 0.55 + vec2(drops)) * resolved * rough;
+      float rough = min(0.04 + sqrt(gust) * 0.065, 0.26);
+      vec2 slope = surfaceSlope(p, axis, across, 2.5, windPhase * 1.8) * 0.55;
+      slope += surfaceSlope(p, axis, across, 18.0, windPhase * 0.85) * 0.65;
+      slope += surfaceSlope(p, axis, across, 95.0, windPhase * 0.46) * 0.75;
+      slope += surfaceSlope(p, axis, across, 450.0, windPhase * 0.22) * 0.4;
+      slope = slope * rough + vec2(drops) * resolved * 0.04;
       float h = waveHeight(p, vDepth);
       slope += vec2(h - waveHeight(p + vec2(0.2, 0.0), vDepth), h - waveHeight(p + vec2(0.0, 0.2), vDepth)) / 0.2;
       vec3 normal = vFace > 0.5 ? normalize(vec3(slope.x, 1.0, slope.y)) : normalize(vNormal);
       if (!gl_FrontFacing) normal = -normal;
       vec3 eye = normalize(cameraPosition - vWorld);
       float fresnel = 0.02 + 0.98 * pow(1.0 - max(dot(eye, normal), 0.0), 5.0);
-      vec3 sky = mix(vec3(0.48, 0.62, 0.68), vec3(0.78, 0.85, 0.86), clamp(normal.y, 0.0, 1.0));
+      vec3 skyRay = reflect(-eye, normal);
+      float skyGradient = smoothstep(-0.2, 0.8, skyRay.y);
+      vec3 sky = mix(vec3(0.42, 0.61, 0.69), vec3(0.10, 0.28, 0.40), skyGradient);
+      float clouds = smoothstep(0.0, 0.65, sin(skyRay.x * 9.0 + skyRay.z * 4.0) * cos(skyRay.z * 7.0 - skyRay.x * 3.0));
+      sky = mix(sky, vec3(0.76, 0.82, 0.83), clouds * 0.45);
+      sky = mix(sky, vec3(dot(sky, vec3(0.2126, 0.7152, 0.0722))), min(rain * 0.15, 0.4));
       vec3 base = vWaterColor;
       vec3 reflected = sky;
+      float sceneReflection = 0.0;
       if (waterCaptureReady > 0.5) {
         vec2 uv = gl_FragCoord.xy / waterResolution;
         vec2 refractedUv = clamp(uv + slope * 0.009, vec2(0.001), vec2(0.999));
@@ -134,18 +150,21 @@ const fragmentShader = `
         if (belowWorld.y > vWorld.y + 0.03) { refractedUv = uv; below = viewAt(uv); }
         vec3 viewPoint = (viewMatrix * vec4(vWorld, 1.0)).xyz;
         float thickness = max(0.0, length(below - viewPoint));
-        float transmission = exp(-thickness * mix(1.4, 0.24, natural)) * mix(0.16, 0.56, natural);
+        float transmission = mix(exp(-thickness * mix(1.4, 0.5, natural)) * mix(0.16, 0.38, natural), 0.32, record);
         base = mix(base, texture2D(waterSceneColor, refractedUv).rgb, transmission);
         if (vFace > 0.5 && length(viewPoint) < 12000.0) {
           vec4 hit = reflectionAt(viewPoint, normalize(mat3(viewMatrix) * normal));
           reflected = mix(sky, hit.rgb, hit.a);
+          sceneReflection = hit.a;
         }
       }
-      float reflectionWeight = mix(0.10, 0.38, natural) + fresnel * mix(0.18, 0.48, natural);
+      float reflectionWeight = mix(0.12, 0.18, natural) + fresnel * mix(0.20, 0.60, natural) + sceneReflection * natural * 0.2;
       vec3 result = mix(base, reflected, reflectionWeight);
       vec3 sun = normalize(vec3(-0.4, 0.8, 0.35));
       float glint = pow(max(dot(reflect(-sun, normal), eye), 0.0), mix(160.0, 64.0, min(gust / 15.0, 1.0)));
-      result += glint * 0.5 + drops * resolved * 0.025;
+      float crestLight = clamp(dot(normal, sun), 0.0, 1.0);
+      result *= 0.72 + crestLight * 0.4;
+      result += glint * 0.55 + drops * resolved * 0.025;
       result *= vFace > 0.5 ? 1.0 : 0.8;
       gl_FragColor = vec4(result, 1.0);
     }
@@ -155,9 +174,11 @@ const fragmentShader = `
 `;
 export const WaterMaterial = memo(function WaterMaterial({
   natural = false,
+  record = false,
   weather = calmWater,
 }: {
   natural?: boolean;
+  record?: boolean;
   weather?: WaterWeather;
 }) {
   const invalidate = useThree((s) => s.invalidate);
@@ -177,9 +198,10 @@ export const WaterMaterial = memo(function WaterMaterial({
         rain: { value: 0 },
         gust: { value: 0 },
         natural: { value: natural ? 1 : 0 },
+        record: { value: record ? 1 : 0 },
       },
     });
-  }, [natural, capture]);
+  }, [natural, record, capture]);
   useEffect(() => () => material?.dispose(), [material]);
   useEffect(() => {
     if (!material) return;

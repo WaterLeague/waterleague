@@ -477,7 +477,12 @@ const CityScene = memo(function CityScene({
             terrain={terrain}
             onSelect={onAsset}
           />
-          <FloodTraceLayer tiles={traceTiles} terrain={terrain} onError={onTraceError} />
+          <FloodTraceLayer
+            tiles={traceTiles}
+            terrain={terrain}
+            onError={onTraceError}
+            weather={waterWeather}
+          />
           <SurfaceLayer
             frame={surfaceFrame}
             metric={surfaceMetric}
