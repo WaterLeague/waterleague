@@ -1,0 +1,1 @@
+{"endpoint": "https://apihub.kma.go.kr/api/typ01/cgi-bin/url/nph-aws2_min", "fetchedAt": "2026-10-17T13:56:56.235988+00:00", "parameters": {"disp": "0", "help": "1", "stn": "421", "tm1": "202208081845", "tm2": "202208081948"}, "provider": "KMA_AWS_DIRECT", "purpose": "SIMULATION_USED_INPUT_ONLY", "sha256": "7235dec4c23d05b77e396f6b3cdc9a3a1244893b29019fb73a5d48932d94c270"}

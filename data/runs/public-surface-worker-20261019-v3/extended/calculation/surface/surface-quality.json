@@ -1,0 +1,23 @@
+{
+  "policyVersion": "SURFACE_NATIVE_BALANCE_v1",
+  "status": "PASSED",
+  "failureCode": null,
+  "nativeSteps": 1800,
+  "lastInternalTimeSeconds": 180.0,
+  "minimumStepSeconds": 0.09999999999999432,
+  "maximumStepSeconds": 0.1,
+  "maximumAbsoluteResidualM3": 1.7717272093875636e-11,
+  "maximumRelativeResidualPercent": 1.8727262218484465e-09,
+  "last": {
+    "timeSeconds": 180.0,
+    "storageM3": 0.9460684582104195,
+    "boundaryNetInflowM3": -5.513044604607702e-17,
+    "sourceNetInflowM3": 0.9460684582281368,
+    "balanceResidualM3": 1.7717272093875636e-11,
+    "relativeResidualPercent": 1.8727262218484465e-09,
+    "minimumDepthM": 0.004544274285872119
+  },
+  "relativeTolerancePercent": 1.0,
+  "absoluteToleranceM3": 1e-08,
+  "sourceSha256": "cd0494c23e2eaa2e3f7cf7feac6484937cd842140e9ee1ddaf003ac35c9281f1"
+}

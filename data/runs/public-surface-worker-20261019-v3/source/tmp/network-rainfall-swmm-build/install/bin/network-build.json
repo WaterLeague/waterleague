@@ -1,0 +1,16 @@
+{
+  "rainfallVersion": 1,
+  "rainfallSha256": "d1e4665a151ea909b1569e5b4e59cc312482d4c78447b6f9a235b99874d95116",
+  "schemaVersion": 1,
+  "engineVersion": "5.2.4",
+  "revision": "7952ca837988b1c32f791812eccc9fd64547e093",
+  "sourceArchiveSha256": "3f76a199573088ce47ff02491c529afb73d9953ee9d948dfc89dcd4981b4c0c0",
+  "observerSha256": "c320fa1849cb4b03254167b107d1a9fefc7171b10c6ce397a0b82bb5c08c53e7",
+  "binarySha256": "657f27497832162445646ff5b928b4ef8b4b94744e1621afab7154e9aa905800",
+  "modification": "READ_ONLY_RAINFALL_AND_METRICS_WITH_MILLISECOND_STRIDE_NO_SOLVER_EQUATION_CHANGES",
+  "exchangeVersion": 1,
+  "exchangeSha256": "ec7c05a52024831efc07657f823146351c70196181dc1e3e6358202ad05ef14f",
+  "metricsVersion": 1,
+  "metricsSha256": "9a90e94998318db8bc2e25997d4c076bd8b5f09b171df768de98c4ba1c6bd28d",
+  "builderSha256": "abbd2ac346d55c17678e0516219ce1c689a8155087f7b4e22f54bc4614a2afe4"
+}

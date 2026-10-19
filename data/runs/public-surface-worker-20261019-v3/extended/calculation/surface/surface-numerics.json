@@ -1,0 +1,25 @@
+{
+  "policyVersion": "ANUGA_DE0_INSCRIBED_RADIUS_v2",
+  "meshRadiusMethod": "INSCRIBED_CIRCLE_2_AREA_OVER_PERIMETER",
+  "minimumRadiusM": 1.4644660940672622,
+  "maximumRadiusM": 1.4644660940672622,
+  "cfl": 0.9,
+  "configuredMaximumStepSeconds": 0.1,
+  "algorithm": {
+    "minimum_allowed_height": 1e-12,
+    "maximum_allowed_speed": 0.0,
+    "minimum_storable_height": 0.001,
+    "g": 9.8,
+    "alpha_balance": 2.0,
+    "tight_slope_limiters": true,
+    "optimise_dry_cells": false,
+    "low_froude": 0,
+    "use_centroid_velocities": true,
+    "use_sloped_mannings": false,
+    "compute_fluxes_method": "DE",
+    "flow_algorithm": "DE0",
+    "CFL": 0.9,
+    "timestepping_method": "euler",
+    "extrapolate_velocity_second_order": true
+  }
+}

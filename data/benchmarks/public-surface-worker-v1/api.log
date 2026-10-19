@@ -1,0 +1,118 @@
+[INFO] Scanning for projects...
+[INFO] Loaded 24131 auto-discovered prefixes for remote repository central (prefixes-central.txt)
+[INFO] 
+[INFO] -------------------< io.waterleague:waterleague-api >-------------------
+[INFO] Building WaterLeague 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] Loaded 24131 auto-discovered prefixes for remote repository maven-central (prefixes-maven-central.txt)
+[WARNING] Could not transfer metadata /.meta/prefixes.txt from/to flyway-community-db-support (https://maven.pkg.github.com/flyway/flyway-community-db-support): HTTP Status: 401
+[WARNING] Could not transfer metadata /.meta/prefixes.txt from/to MavenFeed (https://red-gate.pkgs.visualstudio.com/MavenFeed/_packaging/MavenFeed/maven/v1/): HTTP Status: 401
+[INFO] 
+[INFO] --- resources:3.5.0:resources (default-resources) @ waterleague-api ---
+[INFO] Copying 4 resources from src/main/resources to target/classes
+[INFO] Copying 663 resources from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.15.0:compile (default-compile) @ waterleague-api ---
+[INFO] Loaded 74 auto-discovered prefixes for remote repository apache.snapshots (prefixes-apache.snapshots.txt)
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.5.0:testResources (default-testResources) @ waterleague-api ---
+[INFO] Copying 2 resources from src/test/resources to target/test-classes
+[INFO] 
+[INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ waterleague-api ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- surefire:3.5.6:test (default-test) @ waterleague-api ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running io.waterleague.PublicSurfaceTests
+Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build as described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+WARNING: A Java agent has been loaded dynamically (<HOME>/.m2/repository/net/bytebuddy/byte-buddy-agent/1.18.11/byte-buddy-agent-1.18.11.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.345 s -- in io.waterleague.PublicSurfaceTests
+[INFO] Running io.waterleague.ApiSecurityTests
+14:01:40.748 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [io.waterleague.ApiSecurityTests]: ApiSecurityTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+14:01:40.843 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration io.waterleague.WaterLeagueApplication for test class io.waterleague.ApiSecurityTests
+14:01:40.873 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [io.waterleague.ApiSecurityTests]: ApiSecurityTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+14:01:40.874 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration io.waterleague.WaterLeagueApplication for test class io.waterleague.ApiSecurityTests
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.1.1)
+
+2026-10-19T14:01:41.082+09:00  INFO 72667 --- [           main] io.waterleague.ApiSecurityTests          : Starting ApiSecurityTests using Java 25.0.2 with PID 72667 (started by 1233day in <PROJECT_ROOT>/backend)
+2026-10-19T14:01:41.083+09:00  INFO 72667 --- [           main] io.waterleague.ApiSecurityTests          : The following 1 profile is active: "local"
+2026-10-19T14:01:41.771+09:00  INFO 72667 --- [           main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 0 (http)
+2026-10-19T14:01:41.778+09:00  INFO 72667 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-10-19T14:01:41.779+09:00  INFO 72667 --- [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.24]
+2026-10-19T14:01:41.797+09:00  INFO 72667 --- [           main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 705 ms
+2026-10-19T14:01:41.938+09:00  INFO 72667 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-10-19T14:01:42.022+09:00  INFO 72667 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@c8ed958
+2026-10-19T14:01:42.022+09:00  INFO 72667 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-10-19T14:01:42.136+09:00  INFO 72667 --- [           main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:postgresql://127.0.0.1:55432/waterleague_league_test_351c4753f83e468d8f9453c8d008de2f (PostgreSQL 18.4)
+2026-10-19T14:01:42.163+09:00  INFO 72667 --- [           main] o.f.c.i.s.JdbcTableSchemaHistory         : Schema history table "public"."flyway_schema_history" does not exist yet
+2026-10-19T14:01:42.164+09:00  INFO 72667 --- [           main] o.f.core.internal.command.DbValidate     : Successfully validated 28 migrations (execution time 00:00.009s)
+2026-10-19T14:01:42.170+09:00  INFO 72667 --- [           main] o.f.c.i.s.JdbcTableSchemaHistory         : Creating Schema History table "public"."flyway_schema_history" ...
+2026-10-19T14:01:42.190+09:00  INFO 72667 --- [           main] o.f.core.internal.command.DbMigrate      : Current version of schema "public": << Empty Schema >>
+2026-10-19T14:01:42.196+09:00  INFO 72667 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "1 - accounts and experiments"
+2026-10-19T14:01:42.240+09:00  INFO 72667 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "2 - institution mfa and admission"
+2026-10-19T14:01:42.248+09:00  INFO 72667 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "3 - strategy currency"
+2026-10-19T14:01:42.252+09:00  INFO 72667 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "4 - institution leagues"
+2026-10-19T14:01:42.259+09:00  INFO 72667 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "5 - member approval"
+2026-10-19T14:01:42.274+09:00  INFO 72667 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "6 - rainfall comparisons"
+2026-10-19T14:01:42.281+09:00  INFO 72667 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "7 - utilization consent and reviews"
+2026-10-19T14:01:42.292+09:00  INFO 72667 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "8 - league participation"
+2026-10-19T14:01:42.307+09:00  INFO 72667 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "9 - institution research comparisons"
+2026-10-19T14:01:42.313+09:00  INFO 72667 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "10 - research candidate queue"
+2026-10-19T14:01:42.322+09:00  INFO 72667 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "11 - district shared installations"
+2026-10-19T14:01:42.328+09:00  INFO 72667 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "12 - shared physics jobs"
+2026-10-19T14:01:42.334+09:00  INFO 72667 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "13 - historical experiments"
+2026-10-19T14:01:42.342+09:00  INFO 72667 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "14 - shared weekly scores"
+2026-10-19T14:01:42.346+09:00  INFO 72667 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "15 - district budget policy"
+2026-10-19T14:01:42.350+09:00  INFO 72667 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "16 - shared research consent"
+2026-10-19T14:01:42.354+09:00  INFO 72667 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "17 - budget ledger"
+2026-10-19T14:01:42.361+09:00  INFO 72667 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "18 - installation admission evidence"
+2026-10-19T14:01:42.364+09:00  INFO 72667 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "19 - installation cost snapshot"
+2026-10-19T14:01:42.367+09:00  INFO 72667 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "20 - watershed experiments"
+2026-10-19T14:01:42.372+09:00  INFO 72667 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "21 - bioretention installations"
+2026-10-19T14:01:42.375+09:00  INFO 72667 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "22 - swale installations"
+2026-10-19T14:01:42.378+09:00  INFO 72667 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "23 - trench installations"
+2026-10-19T14:01:42.381+09:00  INFO 72667 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "24 - cistern map plans"
+2026-10-19T14:01:42.385+09:00  INFO 72667 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "25 - weekly member seasons"
+2026-10-19T14:01:42.393+09:00  INFO 72667 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "26 - historical submissions"
+2026-10-19T14:01:42.397+09:00  INFO 72667 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "27 - weekly installation seconds"
+2026-10-19T14:01:42.400+09:00  INFO 72667 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "28 - historical design revisions"
+2026-10-19T14:01:42.405+09:00  INFO 72667 --- [           main] o.f.core.internal.command.DbMigrate      : Successfully applied 28 migrations to schema "public", now at version v28 (execution time 00:00.120s)
+2026-10-19T14:01:42.932+09:00  INFO 72667 --- [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name users
+2026-10-19T14:01:43.173+09:00  INFO 72667 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2026-10-19T14:01:43.201+09:00  INFO 72667 --- [           main] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 60236 (http) with context path '/'
+2026-10-19T14:01:43.206+09:00  INFO 72667 --- [           main] io.waterleague.ApiSecurityTests          : Started ApiSecurityTests in 2.237 seconds (process running for 4.229)
+2026-10-19T14:01:43.283+09:00  INFO 72667 --- [o-auto-1-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-10-19T14:01:43.283+09:00  INFO 72667 --- [o-auto-1-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-10-19T14:01:43.284+09:00  INFO 72667 --- [o-auto-1-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.739 s -- in io.waterleague.ApiSecurityTests
+[INFO] Running io.waterleague.SurfacePlaybackTests
+[WARNING] Tests run: 4, Failures: 0, Errors: 0, Skipped: 1, Time elapsed: 0.098 s -- in io.waterleague.SurfacePlaybackTests
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 16, Failures: 0, Errors: 0, Skipped: 1
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  8.384 s
+[INFO] Finished at: 2026-10-19T14:01:43+09:00
+[INFO] ------------------------------------------------------------------------

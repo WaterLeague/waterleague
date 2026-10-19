@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "method": "OBSERVED_MINUTE_DEPTH_UNIFORM_WITHIN_INTERVAL",
+  "startUtc": "2022-08-08T10:46:00+00:00",
+  "endUtc": "2022-08-08T10:49:00+00:00",
+  "durationSeconds": 180,
+  "observedIntervalCount": 3,
+  "rateChangeCount": 2,
+  "stations": [
+    {
+      "stationId": "401",
+      "surfaceAreaM2": 0.0,
+      "depthMm": 2.0,
+      "expectedVolumeM3": 0.0,
+      "sourceSha256": "db0116dc402873df05509997a946cba0f62755abe3dfad60b93afb2ae563cc43",
+      "sourceHashKind": "STATION_DERIVATION_BUNDLE",
+      "responseSha256": [
+        "303f6630f168b825faea6108ae2be2f45442c9cfcb1e1d709d53eadc44b5382d",
+        "ae5d8da19d84e3111a28c1ecab97405b8fbbf7c534d7a7bbe51e3675d8f314da"
+      ]
+    },
+    {
+      "stationId": "421",
+      "surfaceAreaM2": 100.0,
+      "depthMm": 3.5,
+      "expectedVolumeM3": 0.35,
+      "sourceSha256": "8217b792916fc77c2749e59e955306f476ac229478c1e6ccb6714733b83265f4",
+      "sourceHashKind": "STATION_DERIVATION_BUNDLE",
+      "responseSha256": [
+        "7235dec4c23d05b77e396f6b3cdc9a3a1244893b29019fb73a5d48932d94c270",
+        "e6ecea52e555e838cc8ce790764305003eaeb75582b19583132161429be0b460"
+      ]
+    }
+  ],
+  "expectedSurfaceRainfallM3": 0.35,
+  "assignmentEvidence": "단위 검사 전용 합성 영역, 서울 배정 아님",
+  "specificationSha256": "7d8913c022d7de7c3299c1be3a882537f38adc5cd346129491d82baf7fe78f8c",
+  "sourceFiles": {
+    "direct-aws/7235dec4c23d05b77e396f6b3cdc9a3a1244893b29019fb73a5d48932d94c270.txt": "7235dec4c23d05b77e396f6b3cdc9a3a1244893b29019fb73a5d48932d94c270",
+    "direct-aws/7235dec4c23d05b77e396f6b3cdc9a3a1244893b29019fb73a5d48932d94c270.json": "b9a9e27ca36aee1ff6a1315b01cec698cee4601e9d94f8b5999e5f2194c27789",
+    "direct-aws/e6ecea52e555e838cc8ce790764305003eaeb75582b19583132161429be0b460.txt": "e6ecea52e555e838cc8ce790764305003eaeb75582b19583132161429be0b460",
+    "direct-aws/e6ecea52e555e838cc8ce790764305003eaeb75582b19583132161429be0b460.json": "96ff4e3154e80299546715a39c93d94b8b96eb8c757255cf2c4419c06430ad4c",
+    "direct-aws/station-421.json": "8217b792916fc77c2749e59e955306f476ac229478c1e6ccb6714733b83265f4",
+    "direct-aws/303f6630f168b825faea6108ae2be2f45442c9cfcb1e1d709d53eadc44b5382d.txt": "303f6630f168b825faea6108ae2be2f45442c9cfcb1e1d709d53eadc44b5382d",
+    "direct-aws/303f6630f168b825faea6108ae2be2f45442c9cfcb1e1d709d53eadc44b5382d.json": "6eca814cf6b07082212316076f86b6232ed85c7059f7b69e3359b505a10ff943",
+    "direct-aws/ae5d8da19d84e3111a28c1ecab97405b8fbbf7c534d7a7bbe51e3675d8f314da.txt": "ae5d8da19d84e3111a28c1ecab97405b8fbbf7c534d7a7bbe51e3675d8f314da",
+    "direct-aws/ae5d8da19d84e3111a28c1ecab97405b8fbbf7c534d7a7bbe51e3675d8f314da.json": "bcfb771d1292ae918c045c852a89361943f7920facbaa4ddaa2d5d8ac7ab44a9",
+    "direct-aws/station-401.json": "db0116dc402873df05509997a946cba0f62755abe3dfad60b93afb2ae563cc43"
+  },
+  "adapterSha256": "4afa6c31029b32dd0db0bc1f91b006a7aba9adf607428e2f14a6360eb0c153f6",
+  "limitations": [
+    "분 내부 일정 강도 가정; 초 단위 실측 아님",
+    "관측소→격자 배정은 명시한 공간 모형; 격자별 현장 관측 아님",
+    "관측 창 밖 외삽·무강우 보간 없음; 지형·관망·경계 검증과 별개"
+  ],
+  "directResponse": {
+    "method": "KMA_AWS_DIRECT_RESPONSE_V1",
+    "endpoint": "https://apihub.kma.go.kr/api/typ01/cgi-bin/url/nph-aws2_min",
+    "qualityPolicy": "COMPLETE_MINUTES_STRICT_ROLLING_CHECK",
+    "replayRequiresNetwork": false,
+    "adapterSha256": "a3d96d0cbf2eae7d21b2e82fa6b4becd33fc4057bd43ca7ca37e89ade1dffcdc",
+    "derivationCodeSha256": "14ce246909617af810e5712f80ae621da45872eb6223d856067002d85f3e5f60"
+  }
+}

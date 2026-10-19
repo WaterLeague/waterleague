@@ -1,0 +1,32 @@
+{
+  "version": "4.0.1",
+  "license": "Apache-2.0",
+  "releaseUrl": "https://github.com/anuga-community/anuga_core/releases/tag/4.0.1",
+  "tagObject": {
+    "sha": "643c14f4b92d605ca30f5d4e7d53256c8a5da453",
+    "type": "tag",
+    "url": "https://api.github.com/repos/anuga-community/anuga_core/git/tags/643c14f4b92d605ca30f5d4e7d53256c8a5da453"
+  },
+  "source": {
+    "url": "https://files.pythonhosted.org/packages/a2/c6/269002b2beee6e3a4fb11bfeb8db7e1cce40e3d5841cea86b557ec922410/anuga-4.0.1.tar.gz",
+    "sha256": "d58642f3ef993e9e7c82846405bc1760ded8f2a546a1ee091e4ccfa8d79a20fc",
+    "bytes": 56798642,
+    "path": "data/raw/anuga-4.0.1.tar.gz"
+  },
+  "licenseMember": "anuga-4.0.1/LICENSE.txt",
+  "licenseSha256": "651ee3f3218fac77df861a7c9f269a30b53c4833fa7d1dc077b9f523a0f1ccb0",
+  "dependencyLock": "simulation/uv.lock",
+  "excludedMeshGenerators": [
+    "meshpy",
+    "triangle"
+  ],
+  "meshPolicy": "EXPLICIT_TRIANGLES_NO_TRIANGLE_BACKEND",
+  "status": "NUMERICAL_EVALUATION_NOT_SITE_VALIDATION",
+  "sourceCommit": "7d701dc2bebc3ba2a7904e3e118115c8d172f89d",
+  "evaluatedWheel": {
+    "filename": "anuga-4.0.1-cp312-cp312-macosx_26_0_arm64.whl",
+    "url": "https://files.pythonhosted.org/packages/dd/b5/589823f0af1e9fad4526720e5eba1ab1cf9d98b72477de115fd3aff8ab41/anuga-4.0.1-cp312-cp312-macosx_26_0_arm64.whl",
+    "sha256": "0563b10e7ba0bbb9a1ce939005129ca7c0d9ca010224616cb0823d386e3b1da5",
+    "bytes": 3798103
+  }
+}

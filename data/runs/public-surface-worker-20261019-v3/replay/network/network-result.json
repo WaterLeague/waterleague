@@ -1,0 +1,290 @@
+{
+  "schemaVersion": 1,
+  "engine": {
+    "rainfallVersion": 1,
+    "rainfallSha256": "d1e4665a151ea909b1569e5b4e59cc312482d4c78447b6f9a235b99874d95116",
+    "schemaVersion": 1,
+    "engineVersion": "5.2.4",
+    "revision": "7952ca837988b1c32f791812eccc9fd64547e093",
+    "sourceArchiveSha256": "3f76a199573088ce47ff02491c529afb73d9953ee9d948dfc89dcd4981b4c0c0",
+    "observerSha256": "c320fa1849cb4b03254167b107d1a9fefc7171b10c6ce397a0b82bb5c08c53e7",
+    "binarySha256": "657f27497832162445646ff5b928b4ef8b4b94744e1621afab7154e9aa905800",
+    "modification": "READ_ONLY_RAINFALL_AND_METRICS_WITH_MILLISECOND_STRIDE_NO_SOLVER_EQUATION_CHANGES",
+    "exchangeVersion": 1,
+    "exchangeSha256": "ec7c05a52024831efc07657f823146351c70196181dc1e3e6358202ad05ef14f",
+    "metricsVersion": 1,
+    "metricsSha256": "9a90e94998318db8bc2e25997d4c076bd8b5f09b171df768de98c4ba1c6bd28d",
+    "builderSha256": "abbd2ac346d55c17678e0516219ce1c689a8155087f7b4e22f54bc4614a2afe4",
+    "adapterSha256": "13cebeb67d3f733a757654dea33790dff219f4f8b1ff7c103db77d9300abffa6",
+    "metricsAdapterSha256": "f0219c6affedd4b95b049815c4242b7fe8f56abe917b97f8c2d55ca2c65802df",
+    "exchangeAdapterSha256": "d7249d37122807c88629560a7285f5afd485b7870ecd3048045bd0233e5d7322",
+    "baseAdapterSha256": "f9fa6734de7a3adc64f1bd456862d80260115c656a6bc1c0b090841883bfb0d7",
+    "qualityAdapterSha256": "c78323b383d37be56c34b8cc2d5084e4a92e3de6bbc2a818d914acbabf3eb930",
+    "routingClock": {
+      "maximumSeconds": 0.01,
+      "minimumSeconds": 0.01,
+      "courantFactor": 0.75
+    }
+  },
+  "inputUnits": "CMS",
+  "internalVolumeConversionM3PerFt3": 0.028316846592000004,
+  "durationSeconds": 181.0,
+  "evaluationSeconds": 180,
+  "calendarDurationSeconds": 181.0,
+  "complete": true,
+  "timeWindowPolicy": "EXPLICIT_CALENDAR_EVALUATION",
+  "calendarShortfallSeconds": 0.0,
+  "initial": {
+    "totals": {
+      "timeSeconds": 0.0,
+      "initialStorageM3": 1.999777301694915,
+      "storageM3": 1.999777301694915,
+      "dryWeatherInflowM3": 0.0,
+      "runoffInflowM3": 0.0,
+      "groundwaterInflowM3": 0.0,
+      "rdiiInflowM3": 0.0,
+      "externalInflowM3": 0.0,
+      "outflowM3": 0.0,
+      "floodingM3": 0.0,
+      "evaporationM3": 0.0,
+      "seepageM3": 0.0,
+      "reactionLossM3": 0.0,
+      "balanceResidualM3": 0.0
+    },
+    "nodes": {
+      "TANK": {
+        "type": 2,
+        "headM": 1.9999999999999998,
+        "depthM": 1.9999999999999998,
+        "storageM3": 1.9997773016949152,
+        "lateralFlowM3s": 0.0,
+        "inflowM3s": 0.0,
+        "overflowM3s": 0.0,
+        "statisticFloodingM3": 0.0,
+        "statisticInflowIncludingInitialM3": 1.999777301694915,
+        "statisticOutflowM3": 0.0,
+        "floodingM3": 0.0,
+        "boundaryOutflowM3": 0.0,
+        "boundaryInflowM3": 0.0
+      },
+      "OUT": {
+        "type": 1,
+        "headM": 0.0,
+        "depthM": 0.0,
+        "storageM3": 0.0,
+        "lateralFlowM3s": 0.0,
+        "inflowM3s": 0.0,
+        "overflowM3s": 0.0,
+        "statisticFloodingM3": 0.0,
+        "statisticInflowIncludingInitialM3": 0.0,
+        "statisticOutflowM3": 0.0,
+        "floodingM3": 0.0,
+        "boundaryOutflowM3": 0.0,
+        "boundaryInflowM3": 0.0
+      },
+      "SURFACE": {
+        "type": 1,
+        "headM": 0.9999999999999999,
+        "depthM": 0.0,
+        "storageM3": 0.0,
+        "lateralFlowM3s": 0.0,
+        "inflowM3s": 0.0,
+        "overflowM3s": 0.0,
+        "statisticFloodingM3": 0.0,
+        "statisticInflowIncludingInitialM3": 0.0,
+        "statisticOutflowM3": 0.0,
+        "floodingM3": 0.0,
+        "boundaryOutflowM3": 0.0,
+        "boundaryInflowM3": 0.0
+      }
+    },
+    "links": {
+      "DRAIN": {
+        "type": 2,
+        "flowM3s": 0.0,
+        "depthM": 0.0,
+        "setting": 1.0
+      },
+      "INLET": {
+        "type": 2,
+        "flowM3s": 0.0,
+        "depthM": 0.0,
+        "setting": 1.0
+      }
+    },
+    "rainfallInput": {
+      "hydrologyTimeSeconds": 0.0,
+      "grossRainfallM3": 0.0,
+      "catchmentAreaM2": 100.00004305566021,
+      "declaredCatchmentAreaM2": 100.0,
+      "nativeHectaresPerFt2": 9.2903e-06
+    }
+  },
+  "final": {
+    "totals": {
+      "timeSeconds": 180.0,
+      "initialStorageM3": 1.999777301694915,
+      "storageM3": 0.01665283405606924,
+      "dryWeatherInflowM3": 0.0,
+      "runoffInflowM3": 0.09243913879905798,
+      "groundwaterInflowM3": 0.0,
+      "rdiiInflowM3": 0.0,
+      "externalInflowM3": 0.051722853225408184,
+      "outflowM3": 2.1273551910555115,
+      "floodingM3": 0.0,
+      "evaporationM3": 0.0,
+      "seepageM3": 0.0,
+      "reactionLossM3": 0.0,
+      "balanceResidualM3": -6.873139219945937e-05
+    },
+    "nodes": {
+      "TANK": {
+        "type": 2,
+        "headM": 0.016654688541524198,
+        "depthM": 0.016654688541524198,
+        "storageM3": 0.016652834056069245,
+        "lateralFlowM3s": 0.0008708668183748955,
+        "inflowM3s": 0.0012633016531664288,
+        "overflowM3s": 0.0,
+        "statisticFloodingM3": 0.0,
+        "statisticInflowIncludingInitialM3": 2.1439392937194257,
+        "statisticOutflowM3": 2.1273551910555115,
+        "floodingM3": 0.0,
+        "boundaryOutflowM3": 0.0,
+        "boundaryInflowM3": 0.0
+      },
+      "OUT": {
+        "type": 1,
+        "headM": 0.0,
+        "depthM": 0.0,
+        "storageM3": 0.0,
+        "lateralFlowM3s": 0.0,
+        "inflowM3s": 0.0012385129465096,
+        "overflowM3s": 0.0,
+        "statisticFloodingM3": 0.0,
+        "statisticInflowIncludingInitialM3": 1.4795638796019108,
+        "statisticOutflowM3": 1.4795638796019108,
+        "floodingM3": 0.0,
+        "boundaryOutflowM3": 1.479563879601902,
+        "boundaryInflowM3": 0.0
+      },
+      "SURFACE": {
+        "type": 1,
+        "headM": 1.0048763097435998,
+        "depthM": 0.004876309743599878,
+        "storageM3": 0.0,
+        "lateralFlowM3s": 0.0,
+        "inflowM3s": 0.0003924348347915334,
+        "overflowM3s": 0.0,
+        "statisticFloodingM3": 0.0,
+        "statisticInflowIncludingInitialM3": 0.6995141646790085,
+        "statisticOutflowM3": 0.6995141646790085,
+        "floodingM3": 0.0,
+        "boundaryOutflowM3": 0.6477913114535819,
+        "boundaryInflowM3": 0.05172285322540857
+      }
+    },
+    "links": {
+      "DRAIN": {
+        "type": 2,
+        "flowM3s": 0.0012385129465096,
+        "depthM": 0.1,
+        "setting": 1.0
+      },
+      "INLET": {
+        "type": 2,
+        "flowM3s": -0.0003924348347915334,
+        "depthM": 0.2,
+        "setting": 1.0
+      }
+    },
+    "rainfallInput": {
+      "hydrologyTimeSeconds": 180.0,
+      "grossRainfallM3": 0.2000000861113205,
+      "catchmentAreaM2": 100.00004305566021,
+      "declaredCatchmentAreaM2": 100.0,
+      "nativeHectaresPerFt2": 9.2903e-06
+    }
+  },
+  "forcing": [],
+  "runoffContinuityPercent": 9.999999974752427e-07,
+  "routingContinuityPercent": 9.999999974752427e-07,
+  "warningCount": 0,
+  "convergence": {
+    "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+    "routingSteps": 18000,
+    "nonConvergedSteps": 0,
+    "nonConvergedPercent": 0.0
+  },
+  "numericalQuality": {
+    "policyVersion": "network-continuity-convergence-v2",
+    "continuityLimitPercent": 1,
+    "routingBalance": {
+      "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+      "totalInM3": 2.1439392937193813,
+      "totalOutIncludingStorageM3": 2.1440080251115807,
+      "residualM3": -6.873139219942814e-05,
+      "continuityPercent": -0.0032058460050979573,
+      "absoluteToleranceM3": 1e-08,
+      "allowedResidualM3": 0.021439392937193814
+    },
+    "allowedNonConvergedSteps": 0,
+    "failureReasons": [],
+    "status": "PASSED"
+  },
+  "numericalConfiguration": {
+    "method": "EPA_5_2_4_NATIVE_SETTINGS_READ_ONLY",
+    "surchargeMethod": "EXTRAN",
+    "maximumRoutingStepSeconds": 0.01,
+    "minimumRoutingStepSeconds": 0.01,
+    "courantFactor": 0.75,
+    "minimumNumericalNodeAreaM2": 0.01,
+    "headConvergenceToleranceM": 1e-06,
+    "maximumTrials": 40,
+    "declaredInputOptions": {
+      "ROUTING_STEP": "0.01",
+      "MINIMUM_STEP": "0.01",
+      "VARIABLE_STEP": "0.75",
+      "MIN_SURFAREA": "0.01",
+      "HEAD_TOLERANCE": "0.000001",
+      "MAX_TRIALS": "40"
+    },
+    "defaultedInputOptions": [
+      "SURCHARGE_METHOD"
+    ]
+  },
+  "numericalStatus": "PASSED",
+  "files": {
+    "network.inp": "789e897c4b4163d60784f53166508bdbe56a42a0f498a4085eeab9fd684457d9",
+    "network.out": "c92a5c553e2ea5bbf4afce0b05f649db2a6fa60d525da7e7a357ca7f658b4c20",
+    "network.rpt": "c1e8ca7c5772f034060b7149a78ee4d548ed4491bb414d4bcab92bd12a7ee83a"
+  },
+  "evaluationMetrics": {
+    "specificationSha256": "0d754f967c37111546148b08fd4a2c725d65c7c639e9e489b97e05544f552b24",
+    "complete": true,
+    "method": "NATIVE_ROUTING_STEP_DIRECTIONAL_TRAPEZOIDAL_INTEGRAL",
+    "peakMethod": "SIMULTANEOUS_SELECTED_OUTFALL_SUM",
+    "outfalls": {
+      "OUT": {
+        "outwardVolumeM3": 1.4795638796019133,
+        "inwardVolumeM3": 0.0,
+        "peakOutwardM3s": 0.03198419375599778,
+        "peakInwardM3s": 0.0,
+        "peakOutwardTimeSeconds": 0.01,
+        "peakInwardTimeSeconds": 0.0,
+        "coveredSeconds": 180.0,
+        "nativeSteps": 18000.0
+      }
+    },
+    "combined": {
+      "outwardVolumeM3": 1.4795638796019133,
+      "inwardVolumeM3": 0.0,
+      "peakOutwardM3s": 0.03198419375599778,
+      "peakInwardM3s": 0.0,
+      "peakOutwardTimeSeconds": 0.01,
+      "peakInwardTimeSeconds": 0.0,
+      "coveredSeconds": 180.0,
+      "nativeSteps": 18000.0
+    }
+  }
+}

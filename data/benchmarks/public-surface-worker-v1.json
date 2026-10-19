@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "classification": "PUBLICATION_WORKER_CONTRACT_AND_NUMERICAL_EXTENSION_NOT_SEOUL_VALIDATION",
+  "rankingEligible": false,
+  "publiclyPublished": false,
+  "registeredProductionModels": 0,
+  "validation": {
+    "pythonPassed": 29,
+    "apiPassed": 15,
+    "apiSkipped": 1,
+    "sourceDatabaseCountsUnchanged": true,
+    "prefixFrames": 3,
+    "prefixLedgers": {
+      "exchange-ledger.jsonl": "639d43feb3c4cbf87ae165f772b6cca71ae4bb29bd0c09915d1e571949f90682",
+      "network-frames.jsonl": "982720f6363f1865fd82fe3541ecd5c2396caad3abf0cb8ae085e06d09652819"
+    },
+    "offlineMatchedFiles": 14,
+    "offlineNetworkBlocked": true,
+    "offlineSecretEnvironmentExcluded": true,
+    "archiveFiles": 286,
+    "replayFiles": 38,
+    "uiRainfallTextAbsentFromExistingProductionBundle": true,
+    "nativePublicationFixture": "임시 승인 필드의 게시 계약 검사; 운영 모형/실제 지형으로 등록하지 않음"
+  },
+  "artifacts": {
+    "archive": "data/runs/public-surface-worker-20261019-v3",
+    "archiveManifestSha256": "3e433534ff0589f4f328dd9fa00c35a1508a313385eab3f8987ac4f64613d92a",
+    "replay": "data/runs/public-surface-worker-replay-20261019-v1",
+    "replayManifestSha256": "94c174303098de9c180c7a4957f48d71c77fcf952f96673c4e5eb5ad555d76c9"
+  },
+  "limitations": [
+    "실제 서울 운영 모형 0개; 계산/게시 생산 경로와 현장 완성 구분",
+    "120→180초 합성 관망·지형, 원 호우 분할 시험 응답이며 새 공식 조회 원문 아님",
+    "7~28일 평가 전 기간 제외 계약과 해당 서울 모형의 시드/기간 수렴 증거는 별개",
+    "전체 이력 재생 최대 29일/120초 처리 제한; 네이티브 체크포인트·장기 속도·무기한 주 경계 유지 미완료",
+    "현재 증발/풍응력·현장 경계·추가 시설 조합·서울 침수/순위·전체 Goal 미완료"
+  ],
+  "files": {
+    "data/benchmarks/public-surface-worker-v1/api-summary.json": "9e4388be5e190b9fc0ab74276aaab7b6242adc16b3d1aca256ac7ed9ca866d73",
+    "data/benchmarks/public-surface-worker-v1/api.log": "0d42b6d4a5bd55126a36d4ce4b81f1022b3d27ac00fa5000b0ebbc4f5d4eaa42",
+    "data/benchmarks/public-surface-worker-v1/idle.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "data/benchmarks/public-surface-worker-v1/native-archive.log": "28c4ff125687aaa612c3bcbb5e1dc98104b8e397abe44c0e90c80e141637ded5",
+    "data/benchmarks/public-surface-worker-v1/offline-replay.log": "cd4d8c3712b748fc93298c5896cd9c4b0878235466c932345ec4f09de2bb5ee2",
+    "data/benchmarks/public-surface-worker-v1/python-final.log": "2d8749f815096f306b3da546d3a5c9f95635d33b26be500002455b0062aaa7a0"
+  }
+}

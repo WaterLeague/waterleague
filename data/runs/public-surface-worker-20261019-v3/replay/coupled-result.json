@@ -1,0 +1,457 @@
+{
+  "schemaVersion": 1,
+  "classification": "NUMERICAL_TEST_ONLY_NOT_SEOUL",
+  "method": "EXPLICIT_NETWORK_EXCHANGE_THEN_SURFACE_FLOW",
+  "durationSeconds": 180,
+  "steps": 1800,
+  "maximumExchangeMilliseconds": 100,
+  "smallestExchangeMilliseconds": 100,
+  "availabilityFractionLimit": 0.25,
+  "initialStorageM3": 1.999777301694915,
+  "balance": {
+    "networkExternalInflowM3": 0.0924391387990576,
+    "networkExternalOutflowAndLossM3": 1.4795638796019297,
+    "surfaceExternalNetInflowM3": 0.3499999999999612,
+    "networkStorageM3": 0.01665283405606924,
+    "surfaceStorageM3": 0.9460684582104195,
+    "networkToSurfaceM3": 0.6477913114535819,
+    "surfaceToNetworkM3": 0.05172285322540857,
+    "exchangeCancellationResidualM3": -2.220446049250313e-15,
+    "balanceResidualM3": -6.87313744849316e-05
+  },
+  "networkRoutingContinuityPercent": 9.999999974752427e-07,
+  "networkConvergence": {
+    "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+    "routingSteps": 18000,
+    "nonConvergedSteps": 0,
+    "nonConvergedPercent": 0.0
+  },
+  "networkNumericalConfiguration": {
+    "method": "EPA_5_2_4_NATIVE_SETTINGS_READ_ONLY",
+    "surchargeMethod": "EXTRAN",
+    "maximumRoutingStepSeconds": 0.01,
+    "minimumRoutingStepSeconds": 0.01,
+    "courantFactor": 0.75,
+    "minimumNumericalNodeAreaM2": 0.01,
+    "headConvergenceToleranceM": 1e-06,
+    "maximumTrials": 40,
+    "declaredInputOptions": {
+      "ROUTING_STEP": "0.01",
+      "MINIMUM_STEP": "0.01",
+      "VARIABLE_STEP": "0.75",
+      "MIN_SURFAREA": "0.01",
+      "HEAD_TOLERANCE": "0.000001",
+      "MAX_TRIALS": "40"
+    },
+    "defaultedInputOptions": [
+      "SURCHARGE_METHOD"
+    ]
+  },
+  "networkNumericalQuality": {
+    "policyVersion": "network-continuity-convergence-v2",
+    "continuityLimitPercent": 1,
+    "routingBalance": {
+      "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+      "totalInM3": 2.1439392937193813,
+      "totalOutIncludingStorageM3": 2.1440080251115807,
+      "residualM3": -6.873139219942814e-05,
+      "continuityPercent": -0.0032058460050979573,
+      "absoluteToleranceM3": 1e-08,
+      "allowedResidualM3": 0.021439392937193814
+    },
+    "allowedNonConvergedSteps": 0,
+    "failureReasons": [],
+    "status": "PASSED"
+  },
+  "networkNumericalStatus": "PASSED",
+  "surfaceNumericalStatus": "PASSED",
+  "surfaceNumericalConfiguration": {
+    "policyVersion": "ANUGA_DE0_INSCRIBED_RADIUS_v2",
+    "meshRadiusMethod": "INSCRIBED_CIRCLE_2_AREA_OVER_PERIMETER",
+    "minimumRadiusM": 1.4644660940672622,
+    "maximumRadiusM": 1.4644660940672622,
+    "cfl": 0.9,
+    "configuredMaximumStepSeconds": 0.1,
+    "algorithm": {
+      "minimum_allowed_height": 1e-12,
+      "maximum_allowed_speed": 0.0,
+      "minimum_storable_height": 0.001,
+      "g": 9.8,
+      "alpha_balance": 2.0,
+      "tight_slope_limiters": true,
+      "optimise_dry_cells": false,
+      "low_froude": 0,
+      "use_centroid_velocities": true,
+      "use_sloped_mannings": false,
+      "compute_fluxes_method": "DE",
+      "flow_algorithm": "DE0",
+      "CFL": 0.9,
+      "timestepping_method": "euler",
+      "extrapolate_velocity_second_order": true
+    }
+  },
+  "numericalStatus": "PASSED",
+  "codeSha256": "e31f79fd6ce4ac77aad11a8d1e7e342644ba8b20c674f91216823cc7be044677",
+  "limitations": [
+    "명시적 분할 오차의 교환 간격 세분 비교 필요",
+    "유입부 영역 평균 수두와 수평 운동량 없는 수직 유입 가정",
+    "관망 라우팅·지표 물수지 범위; 유역 토양·증발산 전체 수지 아님",
+    "연결되지 않은 노드 월류는 실패 처리, 임의 지표 위치 할당 없음"
+  ],
+  "files": {
+    "coupled-input.json": "3170102cee231d033df04be6af5a7acf1e97f7f5889938cc721f7cab4ca57573",
+    "exchange-ledger.jsonl": "871db04e2f213768042491cbeb4a1b05f3995d98b21a5134f71f8ea4120c64ed",
+    "network/network-result.json": "91a93a20d1f72abe4832abf93b33c2964407334e50996cfe70b497a4d73bc0f6",
+    "network/network.inp": "789e897c4b4163d60784f53166508bdbe56a42a0f498a4085eeab9fd684457d9",
+    "network/network.out": "c92a5c553e2ea5bbf4afce0b05f649db2a6fa60d525da7e7a357ca7f658b4c20",
+    "network/network.rpt": "c1e8ca7c5772f034060b7149a78ee4d548ed4491bb414d4bcab92bd12a7ee83a",
+    "network-frames.jsonl": "d371cf792fd55b8a2deb7d03c7fcb423eab5e7f5ed9a594badda8e331429dc8e",
+    "network-rainfall.json": "a1298cdd6623f9bd7f1c8e095e9c09bc442df4148d16c01bcf3f9af95896b602",
+    "observed-rainfall/direct-aws/303f6630f168b825faea6108ae2be2f45442c9cfcb1e1d709d53eadc44b5382d.json": "6eca814cf6b07082212316076f86b6232ed85c7059f7b69e3359b505a10ff943",
+    "observed-rainfall/direct-aws/303f6630f168b825faea6108ae2be2f45442c9cfcb1e1d709d53eadc44b5382d.txt": "303f6630f168b825faea6108ae2be2f45442c9cfcb1e1d709d53eadc44b5382d",
+    "observed-rainfall/direct-aws/7235dec4c23d05b77e396f6b3cdc9a3a1244893b29019fb73a5d48932d94c270.json": "b9a9e27ca36aee1ff6a1315b01cec698cee4601e9d94f8b5999e5f2194c27789",
+    "observed-rainfall/direct-aws/7235dec4c23d05b77e396f6b3cdc9a3a1244893b29019fb73a5d48932d94c270.txt": "7235dec4c23d05b77e396f6b3cdc9a3a1244893b29019fb73a5d48932d94c270",
+    "observed-rainfall/direct-aws/ae5d8da19d84e3111a28c1ecab97405b8fbbf7c534d7a7bbe51e3675d8f314da.json": "bcfb771d1292ae918c045c852a89361943f7920facbaa4ddaa2d5d8ac7ab44a9",
+    "observed-rainfall/direct-aws/ae5d8da19d84e3111a28c1ecab97405b8fbbf7c534d7a7bbe51e3675d8f314da.txt": "ae5d8da19d84e3111a28c1ecab97405b8fbbf7c534d7a7bbe51e3675d8f314da",
+    "observed-rainfall/direct-aws/e6ecea52e555e838cc8ce790764305003eaeb75582b19583132161429be0b460.json": "96ff4e3154e80299546715a39c93d94b8b96eb8c757255cf2c4419c06430ad4c",
+    "observed-rainfall/direct-aws/e6ecea52e555e838cc8ce790764305003eaeb75582b19583132161429be0b460.txt": "e6ecea52e555e838cc8ce790764305003eaeb75582b19583132161429be0b460",
+    "observed-rainfall/direct-aws/station-401.json": "db0116dc402873df05509997a946cba0f62755abe3dfad60b93afb2ae563cc43",
+    "observed-rainfall/direct-aws/station-421.json": "8217b792916fc77c2749e59e955306f476ac229478c1e6ccb6714733b83265f4",
+    "observed-rainfall/rainfall-summary.json": "33d6eed26003f159ba0488bd53aad67e753789031a8ae14174cfcd3d1de5bfc1",
+    "rainfall-network.inp": "789e897c4b4163d60784f53166508bdbe56a42a0f498a4085eeab9fd684457d9",
+    "surface/exchange-ports.json": "18c6840c505dfd15bf5f08beaa8a3d8c4fa4a6e7f96e47bcf4a821f56a77f82c",
+    "surface/native-frames/areas.bin": "99c07d2e12fad03f7bd815abeeadb4c8d8d716e4982f9287c5f7929e168103c4",
+    "surface/native-frames/catalog.json": "3ebad3daa309be73e93ec8eb70b3cb23b982b8c050f25816da13f55e7b700607",
+    "surface/native-frames/centroids.bin": "fab203c73e8c50de59aefd1da5281d42dad2d7d04d611e49a17d6fcf0b65ec87",
+    "surface/native-frames/frame-00000.bin": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca",
+    "surface/native-frames/frame-00001.bin": "bc7af0539cec9341896d523e262157aa1f23cdeea20e99299ded1253a9a03366",
+    "surface/native-frames/frame-00002.bin": "bb1363ae590023eeef13293afd68f4198e54adff2b67f4e4b1f8b90dff9c5aa9",
+    "surface/native-frames/frame-00003.bin": "e4a76510a5dcce76c767827e156af431ae0dab9afc0f8d33161242c131e5c0fe",
+    "surface/native-frames/triangles.bin": "000266429b167e48d103aabbafd0dc1ad680adc067c6df56090e422ef511bebf",
+    "surface/native-frames/vertices.bin": "76f6adb1687ca7a46706a365956996a50c169f933529277c93d3018f478c7dd9",
+    "surface/surface-exchange.jsonl": "aaf03cd589f395c9a2c3ebbaea94a684ff4421bc2e3ecc419b1dd89d9949c3be",
+    "surface/surface-input.json": "f466fe4425be7bb421c9476fb2bd0923b2d7341953aed7c69092864dbfe5ee7c",
+    "surface/surface-numerics.json": "5d0e08a69b5d490a1898e067302303cf714db3882c7ca03a95b863c4f29b4535",
+    "surface/surface-quality.json": "6e80183d45741f08fad6a13672e3375c6a78ac4a68205998788e2e80dff745f9",
+    "surface/surface-result.json": "9ccefe6f34b24f2487eacdec7d3edd9c53a853d03fc6c99b7a48c8ac10bce08a",
+    "surface/surface.sww": "10fbd7f6aa801f6839a6b7c3522e72a9330d43a09e0db5946176c9c5fe4825a2"
+  },
+  "observedRainfall": {
+    "schemaVersion": 1,
+    "method": "OBSERVED_MINUTE_DEPTH_UNIFORM_WITHIN_INTERVAL",
+    "startUtc": "2022-08-08T10:46:00+00:00",
+    "endUtc": "2022-08-08T10:49:00+00:00",
+    "durationSeconds": 180,
+    "observedIntervalCount": 3,
+    "rateChangeCount": 2,
+    "stations": [
+      {
+        "stationId": "401",
+        "surfaceAreaM2": 0.0,
+        "depthMm": 2.0,
+        "expectedVolumeM3": 0.0,
+        "sourceSha256": "db0116dc402873df05509997a946cba0f62755abe3dfad60b93afb2ae563cc43",
+        "sourceHashKind": "STATION_DERIVATION_BUNDLE",
+        "responseSha256": [
+          "303f6630f168b825faea6108ae2be2f45442c9cfcb1e1d709d53eadc44b5382d",
+          "ae5d8da19d84e3111a28c1ecab97405b8fbbf7c534d7a7bbe51e3675d8f314da"
+        ]
+      },
+      {
+        "stationId": "421",
+        "surfaceAreaM2": 100.0,
+        "depthMm": 3.5,
+        "expectedVolumeM3": 0.35,
+        "sourceSha256": "8217b792916fc77c2749e59e955306f476ac229478c1e6ccb6714733b83265f4",
+        "sourceHashKind": "STATION_DERIVATION_BUNDLE",
+        "responseSha256": [
+          "7235dec4c23d05b77e396f6b3cdc9a3a1244893b29019fb73a5d48932d94c270",
+          "e6ecea52e555e838cc8ce790764305003eaeb75582b19583132161429be0b460"
+        ]
+      }
+    ],
+    "expectedSurfaceRainfallM3": 0.35,
+    "assignmentEvidence": "단위 검사 전용 합성 영역, 서울 배정 아님",
+    "specificationSha256": "7d8913c022d7de7c3299c1be3a882537f38adc5cd346129491d82baf7fe78f8c",
+    "sourceFiles": {
+      "direct-aws/7235dec4c23d05b77e396f6b3cdc9a3a1244893b29019fb73a5d48932d94c270.txt": "7235dec4c23d05b77e396f6b3cdc9a3a1244893b29019fb73a5d48932d94c270",
+      "direct-aws/7235dec4c23d05b77e396f6b3cdc9a3a1244893b29019fb73a5d48932d94c270.json": "b9a9e27ca36aee1ff6a1315b01cec698cee4601e9d94f8b5999e5f2194c27789",
+      "direct-aws/e6ecea52e555e838cc8ce790764305003eaeb75582b19583132161429be0b460.txt": "e6ecea52e555e838cc8ce790764305003eaeb75582b19583132161429be0b460",
+      "direct-aws/e6ecea52e555e838cc8ce790764305003eaeb75582b19583132161429be0b460.json": "96ff4e3154e80299546715a39c93d94b8b96eb8c757255cf2c4419c06430ad4c",
+      "direct-aws/station-421.json": "8217b792916fc77c2749e59e955306f476ac229478c1e6ccb6714733b83265f4",
+      "direct-aws/303f6630f168b825faea6108ae2be2f45442c9cfcb1e1d709d53eadc44b5382d.txt": "303f6630f168b825faea6108ae2be2f45442c9cfcb1e1d709d53eadc44b5382d",
+      "direct-aws/303f6630f168b825faea6108ae2be2f45442c9cfcb1e1d709d53eadc44b5382d.json": "6eca814cf6b07082212316076f86b6232ed85c7059f7b69e3359b505a10ff943",
+      "direct-aws/ae5d8da19d84e3111a28c1ecab97405b8fbbf7c534d7a7bbe51e3675d8f314da.txt": "ae5d8da19d84e3111a28c1ecab97405b8fbbf7c534d7a7bbe51e3675d8f314da",
+      "direct-aws/ae5d8da19d84e3111a28c1ecab97405b8fbbf7c534d7a7bbe51e3675d8f314da.json": "bcfb771d1292ae918c045c852a89361943f7920facbaa4ddaa2d5d8ac7ab44a9",
+      "direct-aws/station-401.json": "db0116dc402873df05509997a946cba0f62755abe3dfad60b93afb2ae563cc43"
+    },
+    "adapterSha256": "4afa6c31029b32dd0db0bc1f91b006a7aba9adf607428e2f14a6360eb0c153f6",
+    "limitations": [
+      "분 내부 일정 강도 가정; 초 단위 실측 아님",
+      "관측소→격자 배정은 명시한 공간 모형; 격자별 현장 관측 아님",
+      "관측 창 밖 외삽·무강우 보간 없음; 지형·관망·경계 검증과 별개"
+    ],
+    "directResponse": {
+      "method": "KMA_AWS_DIRECT_RESPONSE_V1",
+      "endpoint": "https://apihub.kma.go.kr/api/typ01/cgi-bin/url/nph-aws2_min",
+      "qualityPolicy": "COMPLETE_MINUTES_STRICT_ROLLING_CHECK",
+      "replayRequiresNetwork": false,
+      "adapterSha256": "a3d96d0cbf2eae7d21b2e82fa6b4becd33fc4057bd43ca7ca37e89ade1dffcdc",
+      "derivationCodeSha256": "14ce246909617af810e5712f80ae621da45872eb6223d856067002d85f3e5f60"
+    },
+    "appliedSurfaceRainfallM3": 0.34999999999996123,
+    "volumeResidualM3": -3.8746783559417963e-14
+  },
+  "networkRainfall": {
+    "schemaVersion": 1,
+    "method": "DIRECT_AWS_NETWORK_GAGES_V1",
+    "startUtc": "2022-08-08T10:46:00+00:00",
+    "endUtc": "2022-08-08T10:49:00+00:00",
+    "stationByCatchment": {
+      "S1": "401"
+    },
+    "catchmentAreasM2": {
+      "S1": 100.0
+    },
+    "stations": [
+      {
+        "stationId": "401",
+        "catchmentAreaM2": 100.0,
+        "depthMm": 2.0,
+        "expectedVolumeM3": 0.2,
+        "responseSha256": [
+          "303f6630f168b825faea6108ae2be2f45442c9cfcb1e1d709d53eadc44b5382d",
+          "ae5d8da19d84e3111a28c1ecab97405b8fbbf7c534d7a7bbe51e3675d8f314da"
+        ],
+        "sourceSha256": "db0116dc402873df05509997a946cba0f62755abe3dfad60b93afb2ae563cc43"
+      }
+    ],
+    "expectedNetworkRainfallM3": 0.2,
+    "originalSha256": "7babedfa38b93a0a03b2e3545f9b5854c88abcdcbba47c57e4f8cbf90dbd3a7d",
+    "derivedSha256": "789e897c4b4163d60784f53166508bdbe56a42a0f498a4085eeab9fd684457d9",
+    "externalTimeSeries": [],
+    "adapterSha256": "a2386740387e12503157e595252a8dbd367ccfa0401762faf9e7747da7991940",
+    "rankingEligible": false,
+    "limitations": [
+      "명시한 관측소 배정과 분 내부 일정 강도 가정",
+      "원 증발·초기 상태 유지; 현재 기상 선행 초기화 완료가 아님",
+      "총 집수 강우 투입량 확인이며 토양·관망·지표 통합 수지 검증과 구분"
+    ],
+    "nativeInput": {
+      "hydrologyTimeSeconds": 180.0,
+      "grossRainfallM3": 0.2000000861113205,
+      "catchmentAreaM2": 100.00004305566021,
+      "declaredCatchmentAreaM2": 100.0,
+      "nativeHectaresPerFt2": 9.2903e-06
+    },
+    "expectedNativeNetworkRainfallM3": 0.20000008611132045,
+    "nativeVolumeResidualM3": 5.551115123125783e-17,
+    "unitConversionDifferenceM3": 8.611132043534475e-08,
+    "volumeResidualM3": 8.61113204908559e-08,
+    "expectedCombinedRainfallM3": 0.55,
+    "appliedCombinedRainfallM3": 0.5500000861112817
+  },
+  "surfaceFrames": {
+    "catalogFile": "surface/native-frames/catalog.json",
+    "sha256": "3ebad3daa309be73e93ec8eb70b3cb23b982b8c050f25816da13f55e7b700607",
+    "frameCount": 4,
+    "triangleCount": 16,
+    "type": "NATIVE_CENTROID_FLOAT64",
+    "rankingEligible": false
+  },
+  "surfaceNumericalQuality": {
+    "policyVersion": "SURFACE_NATIVE_BALANCE_v1",
+    "status": "PASSED",
+    "failureCode": null,
+    "nativeSteps": 1800,
+    "lastInternalTimeSeconds": 180.0,
+    "minimumStepSeconds": 0.09999999999999432,
+    "maximumStepSeconds": 0.1,
+    "maximumAbsoluteResidualM3": 1.7717272093875636e-11,
+    "maximumRelativeResidualPercent": 1.8727262218484465e-09,
+    "last": {
+      "timeSeconds": 180.0,
+      "storageM3": 0.9460684582104195,
+      "boundaryNetInflowM3": -5.513044604607702e-17,
+      "sourceNetInflowM3": 0.9460684582281368,
+      "balanceResidualM3": 1.7717272093875636e-11,
+      "relativeResidualPercent": 1.8727262218484465e-09,
+      "minimumDepthM": 0.004544274285872119
+    },
+    "relativeTolerancePercent": 1.0,
+    "absoluteToleranceM3": 1e-08,
+    "sourceSha256": "cd0494c23e2eaa2e3f7cf7feac6484937cd842140e9ee1ddaf003ac35c9281f1"
+  },
+  "evaluationMetrics": {
+    "specification": {
+      "endMilliseconds": 180000,
+      "evidence": "NUMERICAL_TEST_EXPOSURE_NOT_SEOUL",
+      "exposureTriangles": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "networkOutfalls": [
+        "OUT"
+      ],
+      "policyVersion": "NUMERICAL_TEST_ONLY_v1",
+      "schemaVersion": 1,
+      "startMilliseconds": 0,
+      "wetDepthThresholdM": 0.001
+    },
+    "specificationSha256": "0d754f967c37111546148b08fd4a2c725d65c7c639e9e489b97e05544f552b24",
+    "status": "NUMERICAL_DIAGNOSTIC",
+    "rankingEligible": false,
+    "complete": true,
+    "network": {
+      "specificationSha256": "0d754f967c37111546148b08fd4a2c725d65c7c639e9e489b97e05544f552b24",
+      "complete": true,
+      "method": "NATIVE_ROUTING_STEP_DIRECTIONAL_TRAPEZOIDAL_INTEGRAL",
+      "peakMethod": "SIMULTANEOUS_SELECTED_OUTFALL_SUM",
+      "outfalls": {
+        "OUT": {
+          "outwardVolumeM3": 1.4795638796019133,
+          "inwardVolumeM3": 0.0,
+          "peakOutwardM3s": 0.03198419375599778,
+          "peakInwardM3s": 0.0,
+          "peakOutwardTimeSeconds": 0.01,
+          "peakInwardTimeSeconds": 0.0,
+          "coveredSeconds": 180.0,
+          "nativeSteps": 18000.0
+        }
+      },
+      "combined": {
+        "outwardVolumeM3": 1.4795638796019133,
+        "inwardVolumeM3": 0.0,
+        "peakOutwardM3s": 0.03198419375599778,
+        "peakInwardM3s": 0.0,
+        "peakOutwardTimeSeconds": 0.01,
+        "peakInwardTimeSeconds": 0.0,
+        "coveredSeconds": 180.0,
+        "nativeSteps": 18000.0
+      }
+    },
+    "surface": {
+      "specificationSha256": "0d754f967c37111546148b08fd4a2c725d65c7c639e9e489b97e05544f552b24",
+      "adapterSha256": "30f830d17bcd174129dcdb79e3b85f684d08dee5337b8e7a964f340902da6f3c",
+      "complete": true,
+      "coveredSeconds": 179.99999999999338,
+      "nativeSteps": 1800,
+      "method": "NATIVE_STEP_LINEAR_DEPTH_TRAPEZOIDAL_INTEGRAL",
+      "maximumMethod": "NATIVE_STEP_ENDPOINTS_AND_INSTANT_EXCHANGES",
+      "exposureAreaM2": 200.0,
+      "depthAreaTimeM3Hours": 0.037372414342349544,
+      "maximumDepthM": 0.00657141316938481,
+      "maximumWetAreaM2": 200.0,
+      "wetDepthThresholdM": 0.001,
+      "triangles": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "areasM2": [
+        12.5,
+        12.5,
+        12.5,
+        12.5,
+        12.5,
+        12.5,
+        12.5,
+        12.5,
+        12.5,
+        12.5,
+        12.5,
+        12.5,
+        12.5,
+        12.5,
+        12.5,
+        12.5
+      ],
+      "depthTimeMHours": [
+        0.00017802983878662277,
+        0.0001722277119306805,
+        0.00015544699423277107,
+        0.00016163717102470786,
+        0.00019883531230021067,
+        0.00020189649419877722,
+        0.0002120801712722162,
+        0.00021786432014652337,
+        0.00017892918587573438,
+        0.00017230518972134664,
+        0.00015799463950627582,
+        0.00015940311298322224,
+        0.00019230263414285757,
+        0.00019961274622831978,
+        0.00021179616093031155,
+        0.00021943146410738598
+      ],
+      "wetDurationSeconds": [
+        139.8373206033918,
+        142.16167154850183,
+        155.03501522291452,
+        170.3151922516344,
+        178.89999999999338,
+        178.89999999999338,
+        178.89999999999338,
+        178.89999999999338,
+        140.6384054110604,
+        142.73952738831707,
+        158.61710280567905,
+        170.51925336529166,
+        178.89999999999338,
+        178.89999999999338,
+        178.89999999999338,
+        178.89999999999338
+      ],
+      "maximumDepthByTriangleM": [
+        0.005354315139994181,
+        0.005274082233484911,
+        0.004717330756746074,
+        0.004755288653973233,
+        0.005344241157520191,
+        0.00609160706402978,
+        0.006514218494989565,
+        0.006563087800394607,
+        0.00557363483290918,
+        0.005465112639259084,
+        0.004926947436939777,
+        0.005016256677003561,
+        0.005417474680805112,
+        0.006253942443866567,
+        0.006509460028137459,
+        0.00657141316938481
+      ]
+    },
+    "raw": {
+      "outwardVolumeM3": 1.4795638796019133,
+      "peakOutwardM3s": 0.03198419375599778,
+      "depthAreaTimeM3Hours": 0.037372414342349544
+    }
+  }
+}

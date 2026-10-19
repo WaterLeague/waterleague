@@ -1,0 +1,9 @@
+test_native_extension_preserves_earlier_water_state_and_offline_replay (simulation.tests.test_public_surface_worker.PublicSurfaceWorkerTests.test_native_extension_preserves_earlier_water_state_and_offline_replay) ... WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+WARNING: Could not import mpi4py - defining sequential interface
+ok
+
+----------------------------------------------------------------------
+Ran 1 test in 4.379s
+
+OK

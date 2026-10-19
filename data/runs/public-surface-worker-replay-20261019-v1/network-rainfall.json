@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "method": "DIRECT_AWS_NETWORK_GAGES_V1",
+  "startUtc": "2022-08-08T10:46:00+00:00",
+  "endUtc": "2022-08-08T10:49:00+00:00",
+  "stationByCatchment": {
+    "S1": "401"
+  },
+  "catchmentAreasM2": {
+    "S1": 100.0
+  },
+  "stations": [
+    {
+      "stationId": "401",
+      "catchmentAreaM2": 100.0,
+      "depthMm": 2.0,
+      "expectedVolumeM3": 0.2,
+      "responseSha256": [
+        "303f6630f168b825faea6108ae2be2f45442c9cfcb1e1d709d53eadc44b5382d",
+        "ae5d8da19d84e3111a28c1ecab97405b8fbbf7c534d7a7bbe51e3675d8f314da"
+      ],
+      "sourceSha256": "db0116dc402873df05509997a946cba0f62755abe3dfad60b93afb2ae563cc43"
+    }
+  ],
+  "expectedNetworkRainfallM3": 0.2,
+  "originalSha256": "7babedfa38b93a0a03b2e3545f9b5854c88abcdcbba47c57e4f8cbf90dbd3a7d",
+  "derivedSha256": "789e897c4b4163d60784f53166508bdbe56a42a0f498a4085eeab9fd684457d9",
+  "externalTimeSeries": [],
+  "adapterSha256": "a2386740387e12503157e595252a8dbd367ccfa0401762faf9e7747da7991940",
+  "rankingEligible": false,
+  "limitations": [
+    "명시한 관측소 배정과 분 내부 일정 강도 가정",
+    "원 증발·초기 상태 유지; 현재 기상 선행 초기화 완료가 아님",
+    "총 집수 강우 투입량 확인이며 토양·관망·지표 통합 수지 검증과 구분"
+  ]
+}

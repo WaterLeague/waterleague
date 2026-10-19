@@ -97,4 +97,22 @@ tmp/flood-venv/bin/python scripts/run_live_surface.py \
   --input path/to/explicit-surface-request.json --output data/runs/new-surface-run
 ```
 
-위 경로는 사용자가 마련한 명시적 입력 경로이며 제공된 실제 서울 모형을 뜻하지 않는다. 관망 집수 강우 결속·현재 기상 초기화/연장·공개 게시 워커는 아직 연결하지 않았으므로 자동 서울 침수 개방 명령이 아니다. `verify_live_surface.py --output data/runs/new-live-verification`은 최신 10분의 2관측소 응답과 이미 확보한 2022년 호우 원문을 합성 폐쇄 수조에 적용하는 수치 진단이다. 운영 지도·순위에는 기록하지 않는다. 오프라인 재생에는 실행의 `observed-surface-input.json`을 읽어 `forcing.surface_run.run_observed_surface(surface, observedRainfall, 새_출력_경로)`를 호출한다. 이 경로는 원문 해시와 분량을 다시 검사하며 API를 호출하지 않는다.
+위 경로는 사용자가 마련한 명시적 입력 경로이며 제공된 실제 서울 모형을 뜻하지 않는다. 기본 집수 관망의 직접 응답 결속은 구현했으며, 실제 서울 모형 등록·현재 증발/풍응력·현장 경계 검증은 남아 있다. 자동 서울 침수 개방 명령은 아니다. `verify_live_surface.py --output data/runs/new-live-verification`은 최신 10분의 2관측소 응답과 이미 확보한 2022년 호우 원문을 합성 폐쇄 수조에 적용하는 수치 진단이다. 운영 지도·순위에는 기록하지 않는다. 오프라인 재생에는 실행의 `observed-surface-input.json`을 읽어 `forcing.surface_run.run_observed_surface(surface, observedRainfall, 새_출력_경로)`를 호출한다. 이 경로는 원문 해시와 분량을 다시 검사하며 API를 호출하지 않는다.
+
+
+## 공개 현재 지표 결과 워커
+
+```sh
+# flood 선택 의존성과 고정 관망 관측 바이너리가 설치된 별도 Python 환경
+# 회원 작업 큐와 별도 프로세스, API와 같은 ARTIFACTS_PATH 사용
+tmp/flood-venv/bin/python scripts/run_public_surface.py --once
+# 반복 처리 시 --once 생략
+```
+
+백엔드와 같은 SHA-256 고정 `surface/public-models-v1.json`만 읽는다. 현재 운영 목록은 비어 있으므로 위 명령은 API 조회·계산·게시 없이 종료한다. 격리 시험 자료를 이 목록에 등록하지 않는다. 컨테이너의 기존 회원 워커 이미지에는 이 별도 ANUGA 실행 환경을 추가하지 않았으며 자동 실행 서비스로 오인하지 않는다.
+
+등록 항목의 `inputBundleSha256`에 해당하는 `data/public-surface/<hash>/manifest.json`과 모든 원 파일을 검사한다. `recipe.json`은 모형·고정 시작/평가 시각·강우 배정을, `numerical-policy.json`은 모형 원형 해시와 `engineSha256`을 고정한다. `input-evidence.json`에는 좌표/수직 기준·지형·관망·자산·외부 경계·건조/습윤 시드·더 긴 선행 기간 비교의 보관 파일 참조가 필요하다. 파일 존재·해시 검사는 현장 검증이나 수치 수렴 심사를 자동 대체하지 않는다. 실제 공개 근거 검토를 거친 버전만 코드의 고정 목록에 반영한다.
+
+`CONTINUOUS_REPLAY_FROM_FROZEN_ORIGIN_V1`은 선행 7~28일을 포함한 같은 초기 상태부터 기존 사용 응답과 새 구간을 재생한다. 선행 기간은 평가 지표에서 제외한다. 이전 실행 이후의 구간만 공식 API에서 직접 조회하며 겹치는 분이 달라지면 거부한다. 실제 엔진 메모리의 체크포인트 복구는 아니며 최대 29일·응답 32MiB·관측소×분 100,000 한도를 넘으면 실패한다. 장기 실행 속도와 시즌 경계 이후 무기한 상태 유지의 완료 증거가 아니다.
+
+유역별 실행 잠금·고유 실행 폴더·원자적 게시 인덱스를 사용한다. 게시 후 상태 저장 전 종료는 게시 원 묶음에서 복구하고, 손상된 계보를 새 건조 시작으로 바꾸지 않는다. 원 입력·관망 강우·전체 산출물 해시·고정 엔진·수치 통과·평가 완료·지도 범위·최종 시각 검사를 통과해야 공개한다. 120초 계산 제한·5분 최신성 제한 초과 시 게시하지 않으며 수치 간격/격자를 자동 완화하지 않는다. 원 코드·사용 응답·입출력·원 프레임·이전 실행 계보와 실패는 보존한다. 현재 풍응력/증발 및 추가 시설 조합, 실제 서울 유역 게시·장기 성능은 별도 남은 범위다.

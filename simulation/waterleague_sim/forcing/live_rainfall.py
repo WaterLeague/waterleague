@@ -29,12 +29,12 @@ def read_live_station(reference, start, end):
     station = reference['stationId']
     responses = reference['responses']
     require(isinstance(station, str) and re.fullmatch(r'\d{1,5}', station)
-            and isinstance(responses, list) and 0 < len(responses) <= 32,
+            and isinstance(responses, list) and 0 < len(responses) <= 29*1440+61,
             'LIVE_SURFACE_REFERENCE_INVALID')
     require(start.second == end.second == start.microsecond == end.microsecond == 0
             and 0 < (end-start).total_seconds() <= 29*86400, 'LIVE_SURFACE_WINDOW_INVALID')
     cursor = start - timedelta(minutes=61)
-    rows, files, hashes, size = {}, {}, [], 0
+    rows, files, hashes, seen_hashes, size = {}, {}, [], set(), 0
     for response in responses:
         require(isinstance(response, dict) and set(response) == {'rawUtf8', 'metadata'}
                 and isinstance(response['rawUtf8'], str), 'LIVE_SURFACE_RESPONSE_INVALID')
@@ -69,8 +69,9 @@ def read_live_station(reference, start, end):
             raise FloodModelError('LIVE_SURFACE_SOURCE_INVALID') from None
         cursor = b
         digest = sha(raw)
-        require(digest not in hashes, 'LIVE_SURFACE_DUPLICATE_RESPONSE')
+        require(digest not in seen_hashes, 'LIVE_SURFACE_DUPLICATE_RESPONSE')
         hashes.append(digest)
+        seen_hashes.add(digest)
         files[f'direct-aws/{digest}.txt'] = raw
         files[f'direct-aws/{digest}.json'] = encode(metadata)
     require(cursor == end, 'LIVE_SURFACE_COVERAGE_INCOMPLETE')
@@ -127,3 +128,38 @@ def capture(surface, station_by_triangle, start, end, key, assignment_evidence, 
     # 조회 응답은 메모리에서 검증하고 실제 실행의 재현 디렉터리에만 저장한다.
     compile_rainfall(spec, surface, int((end-start).total_seconds()), network_stations=network_stations)
     return spec
+
+
+def extend(specification, end, key):
+    """이미 계산에 사용한 원 응답을 보존하고 이후 관측 구간만 조회한다."""
+    from copy import deepcopy
+    require(isinstance(specification,dict) and specification.get('schemaVersion')==2
+            and specification.get('sourceType')==METHOD,'LIVE_SURFACE_EXTENSION_INVALID')
+    start, previous = utc(specification.get('startUtc')), utc(specification.get('endUtc'))
+    require(previous < end and (end-start).total_seconds()<=29*86400
+            and end.second==end.microsecond==0,'LIVE_SURFACE_EXTENSION_WINDOW_INVALID')
+    value=deepcopy(specification)
+    require(isinstance(value.get('stations'),list) and 0<len(value['stations'])<=100,
+            'LIVE_SURFACE_REFERENCE_INVALID')
+    stations=set()
+    total=0
+    for reference in value['stations']:
+        data,_=read_live_station(reference,start,previous)
+        sid=data['stationId']
+        require(sid not in stations,'LIVE_SURFACE_DUPLICATE_RESPONSE')
+        stations.add(sid)
+        total+=sum(len(r['rawUtf8'].encode()) for r in reference['responses'])
+    require(len(stations)*(end-start).total_seconds()/60<=100_000 and total<=MAX_BYTES,
+            'LIVE_SURFACE_ACQUISITION_LIMIT')
+    for reference in value['stations']:
+        cursor=previous
+        while cursor<end:
+            stop=min(cursor+timedelta(hours=23),end)
+            raw,metadata=live.fetch_range(reference['stationId'],cursor,stop,key)
+            total+=len(raw)
+            require(total<=MAX_BYTES,'LIVE_SURFACE_RESPONSE_TOO_LARGE')
+            reference['responses'].append({'rawUtf8':raw.decode('utf-8'),'metadata':metadata})
+            cursor=stop
+        read_live_station(reference,start,end)
+    value['endUtc']=end.isoformat()
+    return value
