@@ -20,6 +20,14 @@ public final class InstallationMapper {
         i.installedAt(),
         site.center(),
         site.heightM(),
-        i.seasonEndsAt());
+        i.seasonEndsAt(),
+        null,
+        null);
+  }
+
+  public static InstallationView scored(InstallationView v, java.math.BigDecimal score, java.time.Instant through) {
+    return new InstallationView(v.id(), v.districtId(), v.cellId(), v.ownerId(), v.ownerName(),
+        v.facilityType(), v.areaM2(), v.cost(), v.installedAt(), v.center(), v.heightM(),
+        v.seasonEndsAt(), score, through);
   }
 }

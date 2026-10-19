@@ -41,8 +41,7 @@ export function DisasterMode(props: {
   return (
     <main className="disaster-lobby">
       <header>
-        <span className="eyebrow">DISASTER ARCHIVE / SEOUL</span>
-        <h1>그날의 비, 다시 설계하다.</h1>
+        <h1>재해 기록 선택</h1>
         <p>
           실제 관측이 남아 있는 재난을 선택하세요. 서울 25개 구에서 당시의 비를 재생하며 시설을
           배치합니다.

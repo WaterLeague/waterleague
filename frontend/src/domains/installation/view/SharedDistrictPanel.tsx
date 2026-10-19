@@ -13,6 +13,7 @@ import type { Budget } from '../../budget/dto/budgetDto';
 import { FacilityPlacementPanel } from './FacilityPlacementPanel';
 import { PhysicsPanel } from '../../physics/view/PhysicsPanel';
 import { InstallationCostRecord } from '../../cost/view/CostRecordEvidence';
+import { installationScore } from '../service/installationScore';
 export function SharedDistrictPanel({
   account,
   districtId,
@@ -139,7 +140,7 @@ export function SharedDistrictPanel({
         />
       )}
       {!!ownInstallations.length && (
-        <details className="weekly-site-scores">
+        <details className="weekly-site-scores" open>
           <summary>내 시설 {ownInstallations.length}곳</summary>
           {ownInstallations.map((value) => (
             <button
@@ -149,6 +150,16 @@ export function SharedDistrictPanel({
             >
               {facilities[value.facilityType].name} · {value.cellId} ·{' '}
               {value.areaM2.toLocaleString('ko-KR')} m²
+              <strong>{installationScore(value)}</strong>
+              {value.evaluatedThrough && (
+                <small>
+                  반영{' '}
+                  {new Date(value.evaluatedThrough).toLocaleTimeString('ko-KR', {
+                    timeZone: 'Asia/Seoul',
+                    hour12: false,
+                  })}
+                </small>
+              )}
             </button>
           ))}
         </details>

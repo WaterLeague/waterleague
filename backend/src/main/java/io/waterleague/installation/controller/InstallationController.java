@@ -27,7 +27,7 @@ public class InstallationController {
 
   @GetMapping
   public List<InstallationView> list() {
-    return service.active().stream().map(service::view).toList();
+    return service.activeViews();
   }
 
   @GetMapping("/sites")

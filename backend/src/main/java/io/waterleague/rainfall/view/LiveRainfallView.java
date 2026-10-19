@@ -30,5 +30,6 @@ public record LiveRainfallView(
       BigDecimal temperatureC,
       BigDecimal humidityPercent,
       BigDecimal windSpeedMs,
-      BigDecimal pressureHpa) {}
+      BigDecimal pressureHpa,
+      BigDecimal windDirectionDeg) {}
 }

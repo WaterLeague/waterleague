@@ -35,3 +35,18 @@ describe('날씨 상태의 관측 공백 구분', () => {
     expect(weatherStatus(v, '3', now).kind).toBe('snow');
   });
 });
+
+it('감지 신호 결측에도 실제 관측된 분강우 0을 표시하고 지연·미래 관측은 제외', () => {
+  const v = value('UNKNOWN');
+  Object.assign(v.districts[0], { observedAt: new Date(now).toISOString(), oneMinuteMm: 0 });
+  expect(weatherStatus(v, '0', now).amount).toBe('1분 강우 0 mm');
+  expect(weatherStatus(v, '0', now).kind).toBe('unknown');
+  v.districts[0].observedAt = new Date(now - 300001).toISOString();
+  expect(weatherStatus(v, '0', now).amount).toBe('강우량 확인 불가');
+  v.districts[0].observedAt = new Date(now + 1000).toISOString();
+  expect(weatherStatus(v, '0', now).amount).toBe('강우량 확인 불가');
+});
+it('유효한 무강수 감지는 0으로 표시하고 비 감지 중 미확보량은 생성하지 않음', () => {
+  expect(weatherStatus(value('NO_RAIN_DETECTED'), '0', now).amount).toBe('1분 강우 0 mm');
+  expect(weatherStatus(value('WET'), '0', now).amount).toBe('강우량 확인 불가');
+});

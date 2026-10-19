@@ -6,4 +6,5 @@ import type {
 } from '../dto/infrastructureDto';
 export type InfrastructureCatalog = z.infer<typeof infrastructureDto>;
 export type InfrastructureAsset = z.infer<typeof infrastructureAssetDto>;
+export type InfrastructureMarker = InfrastructureAsset & { clusterCount?: number };
 export type InfrastructureSource = z.infer<typeof infrastructureSourceDto>;

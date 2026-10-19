@@ -37,9 +37,9 @@ export interface HistoricalJob {
   result: null | {
     engineVersion: string;
     validationLevel: 'EXPLORATORY';
-    differenceM3: number;
-    baselineAccountedM3: number;
-    designAccountedM3: number;
+    differenceM3?: number;
+    baselineAccountedM3?: number;
+    designAccountedM3?: number;
     stationName: string;
     start: string;
     end: string;

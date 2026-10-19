@@ -55,6 +55,19 @@ public class InstallationService {
     return installations.active();
   }
 
+  public List<io.waterleague.installation.view.InstallationView> activeViews() {
+    var week = seasons.now().atZone(java.time.ZoneId.of("Asia/Seoul")).toLocalDate()
+        .with(java.time.temporal.TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY));
+    // 지도 전체의 점수를 한 번에 조회해 표식별 추가 요청을 피한다.
+    var scores = installations.currentScores(week);
+    return active().stream().map(i -> {
+      var value = view(i);
+      var score = scores.get(i.id());
+      return score == null ? value : io.waterleague.installation.mapper.InstallationMapper.scored(
+          value, score.scoreM3(), score.through());
+    }).toList();
+  }
+
   public io.waterleague.installation.view.SitePageView sites(
       String districtId,
       double x,

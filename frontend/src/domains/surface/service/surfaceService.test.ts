@@ -155,6 +155,14 @@ test('2D·3D 화살표의 동서남북 방향 일치와 원 속력 불변', () =
     ).toBeGreaterThan(0);
     expect(surfaceDirectionPaths(value)[0].path).toContain(`${tip[0]},${-tip[1]}`);
     const geometry = surfaceGeometry(value, 'speed', null);
+    expect([...geometry.flows.slice(0, 6)]).toEqual(
+      Array.from({ length: 3 }, () => [
+        direction[0] * value.cells[0].speedMps,
+        -direction[1] * value.cells[0].speedMps,
+      ])
+        .flat()
+        .map((v) => expect.closeTo(v, 6))
+    );
     const expected = arrowTriangles.flat().flatMap((i) => {
       const p = arrows[0].points[i];
       return [p[0], 0.5, -p[1]];

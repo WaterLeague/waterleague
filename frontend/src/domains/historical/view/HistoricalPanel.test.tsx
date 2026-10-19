@@ -69,4 +69,22 @@ test('비회원도 누적 효과와 계산 버튼을 사용하고 제출은 로�
   expect(html).not.toContain('로그인 후 누적 효과 계산');
   expect(html).toContain('로그인 후 제출');
   expect(html).not.toContain('재현 자료 다운로드');
+  state.elapsedSeconds = state.duration;
+  const finished = renderToStaticMarkup(
+    <HistoricalPanel
+      state={state}
+      site={null}
+      type=""
+      area="10"
+      onType={() => {}}
+      onArea={() => {}}
+      onLogin={() => {}}
+      authenticated={false}
+      error=""
+      districtName="성동구"
+      onInspect={() => {}}
+    />
+  );
+  expect(finished).toContain('로그인하고 최종 점수 확인');
+  expect(finished).not.toContain('누적 -0.25');
 });

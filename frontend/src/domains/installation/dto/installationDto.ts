@@ -43,6 +43,8 @@ export const installationDto = z.object({
   seasonEndsAt: z.iso.datetime().nullish(),
   center: point,
   heightM: z.number().nonnegative(),
+  scoreM3: z.number().finite().nullable().optional(),
+  evaluatedThrough: z.iso.datetime().nullable().optional(),
 });
 export const siteDto = z.object({
   existingInfrastructure: z

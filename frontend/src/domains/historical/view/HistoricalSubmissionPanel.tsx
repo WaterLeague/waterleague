@@ -31,7 +31,8 @@ export function HistoricalSubmissionPanel({
 }) {
   return (
     <section className="historical-submission" aria-label="재해 설계 제출">
-      <h3>설계 확정·기록 경쟁</h3>
+      <h3>설계 확정·최종 점수</h3>
+      {!authenticated && <p>시설 설치·진행 점수 체험 가능 · 제출과 최종 점수는 로그인 후 확인</p>}
       {authenticated && !!designRevision && <p>확정할 설계 저장본 {designRevision}</p>}
       <p>모든 구의 {draftCount}곳을 설치 시각과 무관하게 사건 시작부터 종료까지 다시 계산합니다.</p>
       <p>

@@ -200,6 +200,7 @@ export function HistoricalPanel({
   );
   const working =
     !s.calculationsReady || s.busy || s.job?.state === 'QUEUED' || s.job?.state === 'RUNNING';
+  const finalLocked = !authenticated && s.duration > 0 && s.elapsedSeconds >= s.duration;
   return (
     <FacilityPlacementPanel
       site={site}
@@ -282,7 +283,9 @@ export function HistoricalPanel({
                   {time(d.marker.installedAt)} 설치{before ? ' 예정' : ''}
                 </small>
                 <small>
-                  {before ? (
+                  {finalLocked ? (
+                    '최종 점수 · 로그인 후 확인'
+                  ) : before ? (
                     '설치 전 · 누적 0 m³'
                   ) : score ? (
                     `누적 ${physicalAmount(score.differenceM3)} m³ · ${time(score.at)}까지`
@@ -349,7 +352,16 @@ export function HistoricalPanel({
         designRevision={s.design.revision}
         onReloadDesign={s.design.reload}
       />
-      {s.currentResult && (
+      {finalLocked && (
+        <section className="historical-result" aria-label="최종 점수 로그인 안내">
+          <h3>재해 체험 종료</h3>
+          <p>설치와 진행 점수는 체험할 수 있습니다. 제출과 최종 점수 확인은 로그인이 필요합니다.</p>
+          <button className="solid-button" onClick={onLogin}>
+            로그인하고 최종 점수 확인
+          </button>
+        </section>
+      )}
+      {s.currentResult && !finalLocked && (
         <section className="historical-result" aria-label="과거 강우 비교 결과">
           <h3>재생 시각까지 누적 효과</h3>
           {authenticated && (

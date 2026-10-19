@@ -6,6 +6,7 @@ import {
   publicInfrastructureBuildingIds,
   unreservedRoofIds,
   visibleInfrastructure,
+  infrastructureMarkers,
 } from './infrastructureService';
 import { InfrastructureEvidence } from '../view/InfrastructurePanel';
 import { InfrastructureFootprintsPlan } from '../view/InfrastructureFootprints';
@@ -17,10 +18,13 @@ const catalog = infrastructureDto.parse({
   assets: raw.assets.filter((a) => a.displayStatus === 'REFERENCE'),
 });
 
-it('전체 도시에서는 펌프와 저류 경계, 상세에서는 주변 공개 위치 표시와 선택 보존', () => {
+it('전체 도시부터 모든 공개 시설 표시와 상세 선택 보존', () => {
   const overview = visibleInfrastructure(catalog.assets, [0, 0], 35000, '');
-  expect(overview.length).toBe(136);
-  expect(overview.every((a) => a.kind === 'STORM_PUMP' || a.footprint)).toBe(true);
+  expect(overview.length).toBe(catalog.assets.length);
+  const markers = infrastructureMarkers(overview, 35000, '');
+  expect(markers.length).toBeLessThan(overview.length);
+  expect(markers.reduce((sum, a) => sum + (a.clusterCount ?? 1), 0)).toBe(overview.length);
+  expect(infrastructureMarkers(overview, 1000, '')).toEqual(overview);
   const selected = catalog.assets.find((a) => a.kind === 'RAINWATER_REUSE')!;
   expect(
     visibleInfrastructure(catalog.assets, selected.center, 1000, '').map((a) => a.id)

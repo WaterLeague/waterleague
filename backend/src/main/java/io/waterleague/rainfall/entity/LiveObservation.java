@@ -14,7 +14,14 @@ public record LiveObservation(
     BigDecimal temperatureC,
     BigDecimal humidityPercent,
     BigDecimal windSpeedMs,
-    BigDecimal pressureHpa) {
+    BigDecimal pressureHpa,
+    BigDecimal windDirectionDeg) {
+  public LiveObservation(String stationId, Instant observedAt, BigDecimal fifteenMinuteMm,
+      BigDecimal sixtyMinuteMm, BigDecimal dayMm, Boolean rainDetected, BigDecimal oneMinuteMm,
+      BigDecimal temperatureC, BigDecimal humidityPercent, BigDecimal windSpeedMs, BigDecimal pressureHpa) {
+    this(stationId, observedAt, fifteenMinuteMm, sixtyMinuteMm, dayMm, rainDetected, oneMinuteMm,
+        temperatureC, humidityPercent, windSpeedMs, pressureHpa, null);
+  }
   public String rainState() {
     if (Boolean.TRUE.equals(rainDetected) || (oneMinuteMm != null && oneMinuteMm.signum() > 0))
       return "WET";

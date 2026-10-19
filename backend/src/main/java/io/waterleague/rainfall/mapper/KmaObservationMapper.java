@@ -40,7 +40,8 @@ public final class KmaObservationMapper {
                 weather(f[8], -90, 60),
                 weather(f[14], 0, 100),
                 weather(f[7], 0, 150),
-                weather(f[15], 300, 1100));
+                weather(f[15], 300, 1100),
+                weather(f[6], 0, 360));
         var target = observations.computeIfAbsent(f[1], id -> new TreeMap<>());
         if (target.put(time, value) != null) throw new IllegalArgumentException();
       }
@@ -80,7 +81,8 @@ public final class KmaObservationMapper {
                     current.temperatureC(),
                     current.humidityPercent(),
                     current.windSpeedMs(),
-                    current.pressureHpa()));
+                    current.pressureHpa(),
+                    current.windDirectionDeg()));
           });
       return Map.copyOf(rows);
     } catch (RuntimeException e) {

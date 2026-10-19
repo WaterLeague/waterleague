@@ -13,6 +13,7 @@ export function surfaceGeometry(
   const arrows = metric === 'speed' ? surfaceDirections(frame) : [];
   const positions = new Float32Array(cells.length * 9 + arrows.length * 27),
     colors = new Float32Array(positions.length);
+  const flows = new Float32Array((positions.length / 3) * 2);
   const color = new Color();
   cells.forEach((cell, i) => {
     color.set(surfaceColor(cell, metric));
@@ -20,6 +21,11 @@ export function surfaceGeometry(
       // 표시 지표에 색상만 올리며 원 계산 수심을 수면 표고로 바꾸지 않는다.
       positions.set([p[0], terrainHeight(terrain, p) + 0.4, -p[1]], i * 9 + j * 3);
       colors.set([color.r, color.g, color.b], i * 9 + j * 3);
+      if (cell.flowDirection)
+        flows.set(
+          [cell.flowDirection[0] * cell.speedMps, -cell.flowDirection[1] * cell.speedMps],
+          i * 6 + j * 2
+        );
     });
   });
   arrows.forEach((arrow, index) => {
@@ -31,7 +37,7 @@ export function surfaceGeometry(
       colors.set([color.r, color.g, color.b], offset);
     });
   });
-  return { positions, colors };
+  return { positions, colors, flows };
 }
 export function surfacePlanPaths(frame: SurfaceFrame, metric: SurfaceMetric) {
   const paths = new Map<string, string[]>();

@@ -94,8 +94,10 @@ const FootprintMesh = memo(function FootprintMesh({
         onSelect?.(asset);
       }}
     >
-      <meshBasicMaterial
+      <meshStandardMaterial
         color={selected ? '#dda62e' : infrastructureColor(asset)}
+        roughness={0.48}
+        metalness={0.12}
         side={DoubleSide}
         transparent
         opacity={asset.footprint?.buildingId ? 1 : selected ? 0.45 : 0.25}

@@ -1,4 +1,5 @@
 import { InstallationSymbols } from '../../installation/view/InstallationSymbols';
+import { InstallationNameplates } from '../../installation/view/InstallationNameplates';
 import { installationSymbols } from '../../installation/service/installationSymbolsService';
 import type { PublicFrame } from '../../surface/service/publicSurfaceService';
 import { publicInfrastructureBuildingIds } from '../../infrastructure/service/infrastructureService';
@@ -47,6 +48,9 @@ import { FloodTraceLayer } from '../../floodtrace/view/FloodTraceLayer';
 import { SurfaceLayer } from '../../surface/view/SurfaceLayer';
 import type { SurfaceFrame, SurfaceMetric } from '../../surface/entity/surface';
 import { CisternLayoutMesh } from '../../installation/view/CisternLayoutMesh';
+import { RiverLayer } from '../../surface/view/RiverLayer';
+import { WaterAnimation } from '../../surface/view/WaterMaterial';
+import { calmWater, type WaterWeather } from '../../surface/service/waterAppearanceService';
 import type { CisternGeometryPreview } from '../../installation/dto/cisternLayoutDto';
 const TerrainContext = createContext<Terrain | null>(null);
 const mapEvents: Parameters<typeof Canvas>[0]['events'] = (state) => ({
@@ -243,6 +247,7 @@ function Controls({
   const terrain = useContext(TerrainContext);
   const controls = useRef<ComponentRef<typeof OrbitControls> | null>(null),
     last = useRef(0);
+  const appliedFocus = useRef<number | null>(null);
   const { camera, gl, invalidate, size } = useThree();
   const report = useCallback(
     (force = false) => {
@@ -269,6 +274,13 @@ function Controls({
   );
   useEffect(() => watchContextLoss(gl.domElement, onUnavailable), [gl, onUnavailable]);
   useEffect(() => {
+    // 패널 크기 변경이나 지형 로딩으로 사용자가 보고 있던 위치를 초기화하지 않는다.
+    if (appliedFocus.current === focus.key) {
+      report(true);
+      invalidate();
+      return;
+    }
+    appliedFocus.current = focus.key;
     let [x, y] = focus.center;
     let distance = focus.distance;
     if (focus.overview && camera instanceof THREE.PerspectiveCamera) {
@@ -344,8 +356,8 @@ function ProjectedLabels({
         id: location.id,
         x: ((point.x + 1) * size.width) / 2,
         y: ((1 - point.y) * size.height) / 2,
-        width: near ? 136 : 80,
-        height: near ? 30 : 26,
+        width: near ? 210 : 172,
+        height: 44,
         priority: location.districtId === selected ? 2 : 0,
       });
     }
@@ -364,6 +376,7 @@ function ProjectedLabels({
   return null;
 }
 const CityScene = memo(function CityScene({
+  waterWeather = calmWater,
   surfaceFrame = null,
   publicSurfaceFrames = [],
   surfaceMetric = 'depth',
@@ -431,6 +444,7 @@ const CityScene = memo(function CityScene({
   rainAmounts: ReadonlyMap<string, number | null>;
   rainCamera: CameraState;
   animateRain: boolean;
+  waterWeather?: WaterWeather;
   preview: { site: SharedSite; placement: Placement } | null;
   onBuilding: (districtId: string, b: CityBuilding) => void;
   eligibleRoofs: ReadonlySet<string>;
@@ -456,6 +470,7 @@ const CityScene = memo(function CityScene({
       gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
     >
       <TerrainContext.Provider value={terrain}>
+        <WaterAnimation animate={animateRain} />
         <InfrastructureFootprints
           assets={facilityType ? [] : publicAssets}
           selectedId={selectedAssetId}
@@ -468,6 +483,8 @@ const CityScene = memo(function CityScene({
           metric={surfaceMetric}
           terrain={terrain}
           onError={onSurfaceError}
+          animate={animateRain}
+          weather={waterWeather}
         />
         {!surfaceFrame &&
           publicSurfaceFrames.map((value) => (
@@ -477,15 +494,18 @@ const CityScene = memo(function CityScene({
               metric={surfaceMetric}
               terrain={terrain}
               onError={onSurfaceError}
+              animate={animateRain}
+              weather={waterWeather}
             />
           ))}
         <InfrastructureMarkers
+          distance={rainCamera.distance}
           assets={facilityType ? [] : publicAssets}
           selectedId={selectedAssetId}
           terrain={terrain}
           onSelect={onAsset}
         />
-        <color attach="background" args={['#e8e9dd']} />
+        <color attach="background" args={['#bac5c5']} />
         <ambientLight intensity={1.5} />
         <directionalLight position={[-20000, 30000, 10000]} intensity={2.2} />
         {terrain ? (
@@ -503,15 +523,18 @@ const CityScene = memo(function CityScene({
           <Surface polygons={city.boundary} color="#dfe3cf" />
         )}
         <Lines city={city} selected={selected} ownDistrictId={ownDistrictId} />
+        <RiverLayer city={city} terrain={terrain} animate={animateRain} weather={waterWeather} />
         {!terrain &&
-          city.surfaces.map((s, i) => (
-            <Surface
-              key={i}
-              polygons={s.polygons}
-              color={s.kind === 'water' ? '#81b1ba' : '#b4c8a3'}
-              height={s.kind === 'water' ? 4 : 2}
-            />
-          ))}
+          city.surfaces
+            .filter((s) => s.kind !== 'water')
+            .map((s, i) => (
+              <Surface
+                key={i}
+                polygons={s.polygons}
+                color={s.kind === 'water' ? '#81b1ba' : '#b4c8a3'}
+                height={s.kind === 'water' ? 4 : 2}
+              />
+            ))}
         <DistrictBuildings
           publicBuildings={publicBuildings}
           facilityType={facilityType}
@@ -628,6 +651,7 @@ const CityScene = memo(function CityScene({
           onSelect={onSite}
         />
         <LiveRainScene
+          externalClock
           districts={wetDistricts}
           amounts={rainAmounts}
           center={rainCamera.center}
@@ -636,6 +660,17 @@ const CityScene = memo(function CityScene({
           terrain={terrain}
         />
         <ProjectedLabels city={city} regions={regions} labels={labels} selected={selected} />
+        {!facilityType && (
+          <InstallationNameplates
+            center={rainCamera.center}
+            installations={installations}
+            terrain={terrain}
+            selectedKey={`${selected}:${selectedSite}`}
+            viewerId={viewerId}
+            distance={rainCamera.distance}
+            onSelect={onSite}
+          />
+        )}
         <Controls
           focus={focus}
           bounds={city.bounds}

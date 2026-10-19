@@ -108,7 +108,8 @@ public class LiveRainfallService {
                       v == null ? null : v.temperatureC(),
                       v == null ? null : v.humidityPercent(),
                       v == null ? null : v.windSpeedMs(),
-                      v == null ? null : v.pressureHpa());
+                      v == null ? null : v.pressureHpa(),
+                      v == null ? null : v.windDirectionDeg());
                 })
             .toList();
     return new LiveRainfallView(

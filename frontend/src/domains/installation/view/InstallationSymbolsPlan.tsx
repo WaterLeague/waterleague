@@ -3,6 +3,7 @@ import { siteKey } from '../entity/installation';
 import { facilitySymbolPaths } from '../../catalog/service/facilitySymbolService';
 import { facilities } from '../../game/service/gameService';
 import { otherDistrictOpacity } from '../../city/service/siteVisibilityService';
+import { installationScore } from '../service/installationScore';
 
 export function InstallationSymbolsPlan({
   installations,
@@ -42,7 +43,7 @@ export function InstallationSymbolsPlan({
             }
           }}
         >
-          <title>{`${i.ownerName} · ${facilities[i.facilityType].name} · 종류 기호, 실제 치수 아님`}</title>
+          <title>{`${i.ownerName} · ${facilities[i.facilityType].name} · ${installationScore(i)} · 종류 기호, 실제 치수 아님`}</title>
           {facilitySymbolPaths[i.facilityType].map((path, index) => (
             <path key={path} d={path} fill={index ? 'none' : undefined} />
           ))}

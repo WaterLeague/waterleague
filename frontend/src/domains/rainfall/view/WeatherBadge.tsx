@@ -8,12 +8,14 @@ export function WeatherBadge({
   now,
   busy,
   retry,
+  error = '',
 }: {
   value: LiveRainfall | null;
   districtId: string;
   now: number;
   busy: boolean;
   retry: () => void;
+  error?: string;
 }) {
   const weather = weatherStatus(value, districtId, now);
   const station = value?.districts.find((d) => d.districtId === districtId);
@@ -25,10 +27,19 @@ export function WeatherBadge({
         <span>
           {weather.place}
           <strong>{busy && !value ? '날씨 확인 중' : weather.label}</strong>
+          <small className="weather-rain-amount">{weather.amount}</small>
         </span>
       </summary>
       <div>
         <p>{weather.detail}</p>
+        {error && <p role="status">{error}</p>}
+        <p>{weather.amount}</p>
+        {station && station.observedAt && now - Date.parse(station.observedAt) <= 300000 && (
+          <p>
+            최근 1시간 {station.sixtyMinuteMm ?? '미확인'} mm · 오늘 누적{' '}
+            {station.dayMm ?? '미확인'} mm
+          </p>
+        )}
         {station && observationFresh(station, now) && (
           <p>
             {station.temperatureC != null && `${station.temperatureC}°C`}

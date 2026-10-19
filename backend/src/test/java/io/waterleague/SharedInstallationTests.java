@@ -288,6 +288,34 @@ class SharedInstallationTests {
     db.update("DELETE FROM shared_installations");
   }
 
+  @Test
+  void mapReturnsServerScoreAndObservationTimeForEachInstallation() {
+    var owner = account("2410520");
+    var installed = service.install(owner.username(), placement("2410520"));
+    var before = service.activeViews();
+    assertThat(before).hasSize(1);
+    assertThat(before.getFirst().scoreM3()).isNull();
+    var through = installed.installedAt().plusSeconds(1);
+    var job = UUID.randomUUID();
+    db.update("""
+        INSERT INTO shared_physics_jobs(id,installation_id,simulation_start,requested_through,state,lease_token,created_at,finished_at,input_hash,result)
+        VALUES(?,?,?,?,'SUCCEEDED',?,?,?,?,'{}')
+        """, job, installed.id(), java.sql.Timestamp.from(installed.installedAt()),
+        java.sql.Timestamp.from(through), UUID.randomUUID(), java.sql.Timestamp.from(through),
+        java.sql.Timestamp.from(through), "a".repeat(64));
+    var week = installed.installedAt().atZone(java.time.ZoneId.of("Asia/Seoul")).toLocalDate()
+        .with(java.time.temporal.TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY));
+    db.update("""
+        INSERT INTO shared_weekly_scores(installation_id,week_start,score_m3,evaluated_minutes,evaluated_seconds,evaluated_through,source_job_id,rule_version)
+        VALUES(?,?,1.25,1,1,?,?,'OBSERVED_ACCOUNTED_VOLUME_SECONDS_V2')
+        """, installed.id(), java.sql.Date.valueOf(week), java.sql.Timestamp.from(through), job);
+    var scored = service.activeViews().getFirst();
+    assertThat(scored.ownerId()).isEqualTo(owner.id());
+    assertThat(scored.scoreM3()).isEqualByComparingTo("1.25");
+    assertThat(scored.evaluatedThrough()).isEqualTo(through);
+    assertThat(scored.center()).isEqualTo(before.getFirst().center());
+  }
+
   Account account(String district) {
     UUID id = UUID.randomUUID();
     String name = "shared_" + id.toString().substring(0, 8);

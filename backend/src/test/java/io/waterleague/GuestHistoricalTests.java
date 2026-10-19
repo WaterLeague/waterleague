@@ -154,6 +154,28 @@ class GuestHistoricalTests {
   }
 
   @Test
+  void guestReadListAndIdempotentResponsesExcludeFinalScore() throws Exception {
+    var browser = client();
+    var dto = request(UUID.randomUUID(), List.of(item("2419953", 137)));
+    var created = post(browser, "/guest-historical", dto, true);
+    var id = json.tree(created.body()).path("id").asString();
+    String result = """
+        {"engineVersion":"test-only","validationLevel":"EXPLORATORY","start":"2022-08-08T09:00:00Z","end":"2022-08-08T09:03:00Z",
+        "differenceM3":987,"baselineAccountedM3":999,"designAccountedM3":12,
+        "frames":[{"at":"2022-08-08T09:01:00Z","differenceM3":1},{"at":"2022-08-08T09:02:00Z","differenceM3":2},{"at":"2022-08-08T09:03:00Z","differenceM3":987}],
+        "facilities":[{"cellId":"TEST","runoffComparison":{"final":987},"frames":[{"at":"2022-08-08T09:01:00Z","differenceM3":1},{"at":"2022-08-08T09:03:00Z","differenceM3":987}]}]}
+        """;
+    db.update("UPDATE historical_experiments SET state='SUCCEEDED',result=?,finished_at=CURRENT_TIMESTAMP WHERE id=?", result, UUID.fromString(id));
+    for (var response : List.of(get(browser,"/guest-historical/" + id), get(browser,"/guest-historical"), post(browser,"/guest-historical",dto,true))) {
+      assertThat(response.body()).doesNotContain("987", "runoffComparison");
+    }
+    var preview = json.tree(get(browser,"/guest-historical/" + id).body()).path("result");
+    assertThat(preview.has("differenceM3")).isFalse();
+    assertThat(preview.path("frames").size()).isEqualTo(2);
+    assertThat(preview.path("facilities").get(0).path("frames").size()).isEqualTo(1);
+  }
+
+  @Test
   void rejectsUnknownSiteFutureTimeAndDuplicateWholeDesign() throws Exception {
     var client = client();
     var item = item("2419953", 137);

@@ -16,4 +16,6 @@ public record InstallationView(
     Instant installedAt,
     java.util.List<Double> center,
     double heightM,
-    Instant seasonEndsAt) {}
+    Instant seasonEndsAt,
+    BigDecimal scoreM3,
+    Instant evaluatedThrough) {}

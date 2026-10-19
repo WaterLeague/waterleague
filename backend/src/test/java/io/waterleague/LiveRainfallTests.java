@@ -35,10 +35,22 @@ class LiveRainfallTests {
     assertThat(zero.temperatureC()).isEqualByComparingTo("20");
     assertThat(zero.humidityPercent()).isEqualByComparingTo("60");
     assertThat(zero.windSpeedMs()).isZero();
+    assertThat(zero.windDirectionDeg()).isZero();
     assertThat(zero.pressureHpa()).isEqualByComparingTo("1000");
     var missing = KmaObservationMapper.parse(response(row(at, "-99.9")), at).get("421");
     assertThat(missing.fifteenMinuteMm()).isNull();
     assertThat(missing.complete()).isFalse();
+  }
+
+  @Test
+  void preservesTenMinuteWindDirectionAndMissingValues() {
+    Instant at = Instant.parse("2026-10-17T11:47:00Z");
+    String observed = row(at, "0").replace("421 0 0 0 0 0 0 20", "421 0 0 0 0 225 3.5 20");
+    var wind = KmaObservationMapper.parse(response(observed), at).get("421");
+    assertThat(wind.windDirectionDeg()).isEqualByComparingTo("225");
+    assertThat(wind.windSpeedMs()).isEqualByComparingTo("3.5");
+    var missing = KmaObservationMapper.parse(response(observed.replace("225 3.5", "-99.9 3.5")), at).get("421");
+    assertThat(missing.windDirectionDeg()).isNull();
   }
 
   @Test

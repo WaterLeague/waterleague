@@ -33,6 +33,7 @@ export const liveRainfallDto = z
           temperatureC: z.number().finite().min(-90).max(60).nullable(),
           humidityPercent: z.number().finite().min(0).max(100).nullable(),
           windSpeedMs: z.number().finite().min(0).max(150).nullable(),
+          windDirectionDeg: z.number().finite().min(0).max(360).nullish(),
           pressureHpa: z.number().finite().min(300).max(1100).nullable(),
         })
       )

@@ -43,6 +43,23 @@ public class InstallationRepository {
         mapper);
   }
 
+  public record Score(UUID id, java.math.BigDecimal scoreM3, Instant through) {}
+
+  public Map<UUID, Score> currentScores(java.time.LocalDate week) {
+    var result = new HashMap<UUID, Score>();
+    db.query("""
+        SELECT s.installation_id,s.score_m3,s.evaluated_through
+        FROM shared_weekly_scores s JOIN shared_installations i ON i.id=s.installation_id
+        WHERE s.week_start=? AND i.removed_at IS NULL
+          AND (i.season_ends_at IS NULL OR i.season_ends_at>CURRENT_TIMESTAMP)
+        """, (org.springframework.jdbc.core.RowCallbackHandler) r -> {
+          var id = r.getObject("installation_id", UUID.class);
+          result.put(id, new Score(id, r.getBigDecimal("score_m3"),
+              r.getTimestamp("evaluated_through") == null ? null : r.getTimestamp("evaluated_through").toInstant()));
+        }, java.sql.Date.valueOf(week));
+    return result;
+  }
+
   public List<SharedInstallation> owned(UUID owner) {
     return db.query(
         "SELECT i.*,a.display_name FROM shared_installations i JOIN accounts a ON a.id=i.owner_id"

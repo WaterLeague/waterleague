@@ -82,11 +82,17 @@ public class HistoricalService {
   }
 
   public List<HistoricalView> guestList(String guest) {
-    return jobs.guestList(guest).stream().map(this::view).toList();
+    return jobs.guestList(guest).stream().map(this::guestView).toList();
+  }
+
+  private HistoricalView guestView(HistoricalExperiment job) {
+    var value = view(job);
+    return new HistoricalView(value.id(), value.districtId(), value.modelHash(), value.state(),
+        value.createdAt(), value.placements(), GuestResultPolicy.preview(json, value.result()), value.message());
   }
 
   public HistoricalView guestGet(String guest, UUID id) {
-    return view(
+    return guestView(
         jobs.guestGet(guest, id)
             .orElseThrow(() -> new DomainException(ErrorCode.RESOURCE_NOT_FOUND)));
   }
@@ -318,7 +324,7 @@ public class HistoricalService {
             || entry.path("areaM2").decimalValue().compareTo((BigDecimal) candidate.get("areaM2"))
                 != 0) throw new DomainException(ErrorCode.CONFLICT);
       }
-      return view(previous.get());
+      return guest == null ? view(previous.get()) : guestView(previous.get());
     }
     var savedRows = new HashMap<String, tools.jackson.databind.JsonNode>();
     if (savedDesign) {
@@ -426,6 +432,6 @@ public class HistoricalService {
             null);
     if (guest == null) jobs.add(j, dto.requestKey());
     else jobs.addGuest(j, dto.requestKey(), guest);
-    return view(j);
+    return guest == null ? view(j) : guestView(j);
   }
 }

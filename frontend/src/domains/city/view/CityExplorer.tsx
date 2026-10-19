@@ -31,7 +31,8 @@ import { useInstallations } from '../../installation/controller/useInstallations
 import { SharedDistrictPanel } from '../../installation/view/SharedDistrictPanel';
 import type { SharedSite } from '../../installation/entity/installation';
 import type { FacilityType } from '../../game/entity/game';
-import { won } from '../../game/service/gameService';
+import { facilities, won } from '../../game/service/gameService';
+import { viewingDistrict } from '../service/viewingDistrictService';
 import { loadSite, loadBuildingSite } from '../../installation/repository/installationRepository';
 import { ApiError } from '../../../shared/exception/ApiError';
 import './shared-play.css';
@@ -63,6 +64,9 @@ import { FacilityExpansionPanel } from '../../watershed/view/FacilityExpansionPa
 import { useCisternPlans } from '../../installation/controller/useCisternPlans';
 import { CisternPlanPanel } from '../../installation/view/CisternPlanPanel';
 import type { CisternSiteRole } from '../../installation/service/cisternPlanService';
+import { waterWeather } from '../../surface/service/waterAppearanceService';
+import { useArchivedWaterWeather } from '../../rainfall/controller/useArchivedWaterWeather';
+import { archivedWindAt } from '../../rainfall/service/archivedWeatherService';
 const CityScene = lazy(() => import('./CityScene'));
 type PlayProps = {
   account: Account | null;
@@ -108,7 +112,9 @@ function Explorer({
   const districtScore = (id: string) => {
     if (weekly.error) return '순위 갱신 지연';
     const score = weekly.value?.current.districts.find((d) => d.districtId === id);
-    return score?.rank ? `${score.rank}위 · ${scoreFormat.format(score.scoreM3)}m³` : '';
+    return score
+      ? `${score.rank ? `${score.rank}위 · ` : ''}총 점수 ${scoreFormat.format(score.scoreM3)} m³`
+      : '점수 조회 중';
   };
   const [selected, setSelected] = useState(
     researchMode ? (account?.districtId ?? '2419953') : initialDistrictId
@@ -145,6 +151,27 @@ function Explorer({
     [researchMode, research.event, research.index, rainfall.value]
   );
   const animateRain = rainfall.visible && !reducedMotion && (!researchMode || research.playing);
+  const archivedWeather = useArchivedWaterWeather(researchMode);
+  const archivedWind = archivedWindAt(archivedWeather, eventId, research.at);
+  const waterAppearance = useMemo(
+    () =>
+      researchMode
+        ? {
+            wind: [0, 0] as [number, number],
+            rain: research.selectedRain?.depthsMm[research.index] ?? 0,
+            windSpeed: archivedWind,
+          }
+        : waterWeather(rainfall.value, selected, rainfall.now),
+    [
+      researchMode,
+      research.selectedRain,
+      research.index,
+      rainfall.value,
+      selected,
+      rainfall.now,
+      archivedWind,
+    ]
+  );
   const [site, setSite] = useState<SharedSite | null>(null);
   const selectedSite = site?.cellId ?? '';
   const [type, setType] = useState<FacilityType | ''>('');
@@ -169,6 +196,10 @@ function Explorer({
   );
   const [area, setArea] = useState('20');
   const [listOpen, setListOpen] = useState(false);
+  const listOpenRef = useRef(listOpen);
+  useEffect(() => {
+    listOpenRef.current = listOpen;
+  }, [listOpen]);
   const [vacant, setVacant] = useState(false);
   const [offset, setOffset] = useState(0);
   const [feedback, setFeedback] = useState('');
@@ -232,8 +263,8 @@ function Explorer({
   const sharedData = useInstallations(
     {
       districtId: selected,
-      x: Math.round(camera.center[0] / 25) * 25,
-      y: Math.round(camera.center[1] / 25) * 25,
+      x: Math.round(camera.center[0]),
+      y: Math.round(camera.center[1]),
       offset,
       type: mapFacilityType,
       vacant: researchMode ? false : vacant,
@@ -340,7 +371,7 @@ function Explorer({
   const onCamera = useCallback((value: typeof camera) => {
     navigationCamera.current = value;
     setCamera((previous) => {
-      const threshold = Math.max(2, value.distance * 0.005);
+      const threshold = listOpenRef.current ? 1 : Math.max(2, value.distance * 0.005);
       return Math.hypot(
         previous.center[0] - value.center[0],
         previous.center[1] - value.center[1]
@@ -351,6 +382,12 @@ function Explorer({
         : value;
     });
   }, []);
+  useEffect(() => {
+    if (!listOpen) return;
+    setOffset(0);
+    const viewed = viewingDistrict(city.districts, camera.center);
+    if (viewed) setSelected(viewed.id);
+  }, [listOpen, city.districts, camera.center[0], camera.center[1]]);
   const unavailable = useCallback(() => {
     setFailed(true);
     setFlat(true);
@@ -544,13 +581,11 @@ function Explorer({
                 d.id,
                 weekly.error
                   ? '순위 갱신 지연'
-                  : score?.rank
-                    ? `${score.rank}위 · ${scoreFormat.format(score.scoreM3)}m³`
-                    : '',
+                  : `시설 ${shared.installations.filter((i) => i.districtId === d.id).length}개 · ${score ? `총 점수 ${scoreFormat.format(score.scoreM3)} m³` : '점수 조회 중'}`,
               ];
             })
           ),
-    [city, researchMode, weekly.value, weekly.error]
+    [city, researchMode, weekly.value, weekly.error, shared.installations]
   );
   const plan = (
     <CityPlan
@@ -592,7 +627,9 @@ function Explorer({
   );
 
   return (
-    <main className="studio-layout play-layout shared-play-layout">
+    <main
+      className={`studio-layout play-layout shared-play-layout${!facilityExpansionOpen && !cisternOpen && !infrastructureOpen && !site && !ownInstallations.length ? ' shared-map-only' : ''}`}
+    >
       <header className="play-hud gameplay-hud">
         <div className="play-objective">
           <h1>
@@ -602,67 +639,6 @@ function Explorer({
             {district && <small className="game-district-name"> · {district.name}</small>}
           </h1>
         </div>
-        <div className="shared-toolbar gameplay-toolbar">
-          <label>
-            <MapPin size={15} />
-            <select
-              aria-label="서울 자치구 선택"
-              value={selected}
-              onChange={(e) => (e.target.value ? select(e.target.value) : reset())}
-            >
-              <option value="">서울 전체</option>
-              {city.districts.map((d) => (
-                <option key={d.id} value={d.id}>
-                  {d.name}
-                  {d.id === ownDistrictId ? ' · 내 소속 구' : ''} ·{' '}
-                  {shared.counts[d.id]?.toLocaleString('ko-KR') ?? '—'}곳
-                </option>
-              ))}
-            </select>
-          </label>
-          <details
-            className="gameplay-tools"
-            onClick={(event) => {
-              if (event.target instanceof Element && event.target.closest('button'))
-                event.currentTarget.open = false;
-            }}
-          >
-            <summary>
-              <Layers3 size={15} />
-              지도 도구
-            </summary>
-            <div>
-              <button
-                onClick={() => {
-                  if (account?.districtId) select(account.districtId);
-                  else onLogin();
-                }}
-              >
-                <MapPin size={14} />내 소속 구
-              </button>
-              <button aria-expanded={listOpen} onClick={() => setListOpen((v) => !v)}>
-                <List size={15} />
-                위치 목록
-              </button>
-              <button
-                aria-expanded={infrastructureOpen}
-                onClick={() => {
-                  setInfrastructureOpen((value) => !value);
-                  setFacilityExpansionOpen(false);
-                }}
-              >
-                <Layers3 size={15} />
-                공개 시설
-              </button>
-              {!researchMode && (
-                <button aria-expanded={rankingOpen} onClick={() => setRankingOpen((v) => !v)}>
-                  <Trophy size={15} />
-                  주간 순위
-                </button>
-              )}
-            </div>
-          </details>
-        </div>
         <div className="play-resources">
           {!researchMode && (
             <WeatherBadge
@@ -671,6 +647,7 @@ function Explorer({
               now={rainfall.now}
               busy={rainfall.busy}
               retry={rainfall.refresh}
+              error={rainfall.error}
             />
           )}
           {researchMode ? (
@@ -703,6 +680,73 @@ function Explorer({
       </header>
       <div className="design-main shared-map-column">
         <div className="map-layer-bar">
+          <div className="shared-toolbar gameplay-toolbar">
+            <label>
+              <MapPin size={15} />
+              <select
+                aria-label="서울 자치구 선택"
+                value={selected}
+                onChange={(e) => (e.target.value ? select(e.target.value) : reset())}
+              >
+                <option value="">서울 전체</option>
+                {city.districts.map((d) => (
+                  <option key={d.id} value={d.id}>
+                    {d.name}
+                    {d.id === ownDistrictId ? ' · 내 소속 구' : ''} ·{' '}
+                    {shared.counts[d.id]?.toLocaleString('ko-KR') ?? '—'}곳
+                  </option>
+                ))}
+              </select>
+            </label>
+            <details
+              className="gameplay-tools"
+              onClick={(event) => {
+                if (event.target instanceof Element && event.target.closest('button'))
+                  event.currentTarget.open = false;
+              }}
+            >
+              <summary>
+                <Layers3 size={15} />
+                지도 도구
+              </summary>
+              <div>
+                <button
+                  onClick={() => {
+                    if (account?.districtId) select(account.districtId);
+                    else onLogin();
+                  }}
+                >
+                  <MapPin size={14} />내 소속 구
+                </button>
+                <button
+                  aria-expanded={listOpen}
+                  onClick={() => {
+                    setCamera(navigationCamera.current);
+                    setListOpen((v) => !v);
+                  }}
+                >
+                  <List size={15} />
+                  위치 목록
+                </button>
+                <button
+                  aria-expanded={infrastructureOpen}
+                  onClick={() => {
+                    setInfrastructureOpen((value) => !value);
+                    setFacilityExpansionOpen(false);
+                  }}
+                >
+                  <Layers3 size={15} />
+                  공개 시설
+                </button>
+                {!researchMode && (
+                  <button aria-expanded={rankingOpen} onClick={() => setRankingOpen((v) => !v)}>
+                    <Trophy size={15} />
+                    주간 순위
+                  </button>
+                )}
+              </div>
+            </details>
+          </div>
           <FloodTraceControls
             eventId={researchMode ? eventId : comparisonEventId}
             onEvent={(value) => {
@@ -774,6 +818,7 @@ function Explorer({
                   rainAmounts={rainAmounts}
                   rainCamera={camera}
                   animateRain={animateRain}
+                  waterWeather={waterAppearance}
                   preview={preview}
                 />
               </Suspense>
@@ -801,7 +846,7 @@ function Explorer({
                     />
                   )}
                   <small>
-                    {shared.installations.filter((i) => i.districtId === d.id).length}곳
+                    시설 {shared.installations.filter((i) => i.districtId === d.id).length}개
                     {!researchMode && districtScore(d.id) && ` · ${districtScore(d.id)}`}
                   </small>
                 </button>
@@ -817,8 +862,8 @@ function Explorer({
                   onClick={() => select(r.districtId)}
                   aria-label={`${r.districtName} 공유 설치 상태 보기`}
                 >
-                  ● {r.districtName} ·{' '}
-                  {shared.installations.filter((i) => i.districtId === r.districtId).length}곳
+                  ● {r.districtName} · 시설{' '}
+                  {shared.installations.filter((i) => i.districtId === r.districtId).length}개
                   {!researchMode &&
                     districtScore(r.districtId) &&
                     ` · ${districtScore(r.districtId)}`}
@@ -827,14 +872,6 @@ function Explorer({
             </div>
           )}
           <div className="city-map-top">
-            <span>
-              <Layers3 size={14} />{' '}
-              {researchMode
-                ? '25개 구 · 재해 모드'
-                : ownDistrict
-                  ? `내 소속 구 · ${ownDistrict.name}`
-                  : '25개 구 · 공동 지도'}
-            </span>
             <div>
               <button
                 aria-pressed={!flat}
@@ -861,27 +898,38 @@ function Explorer({
             </div>
           </div>
           <div className="shared-map-legend">
+            <span>
+              <i className="player-facility-legend" />
+              사용자 시설
+            </span>
+            <span>
+              <i className="river-legend" />
+              강·하천
+            </span>
+            <span>
+              <i className="flood-legend" />
+              계산 침수 · 수심/유속 색상
+            </span>
             {assetsEnabled && (
               <span>
                 <i className="infrastructure-legend" />
                 {researchMode ? '공개 시설 참고 · 당시 시설 아님' : '공개 시설 참고'}
               </span>
             )}
-            <span>
-              <i className="available" />
-              설치 가능
-            </span>
-            <span>
-              <i className="unavailable" />
-              {researchMode
-                ? '선택 시설 설치 불가'
-                : type
-                  ? '선택 시설 설치 불가·내 설치'
-                  : '후보 제외·내 설치'}
-            </span>
-            {!mapFacilityType && shared.installations.length > 0 && (
-              <span title="떠 있는 시설 형태는 종류를 구분하는 기호이며 실제 시공 치수가 아닙니다.">
-                사용자 시설 · 형태 기호
+            {mapFacilityType && (
+              <span>
+                <i className="available" />
+                설치 가능
+              </span>
+            )}
+            {mapFacilityType && (
+              <span>
+                <i className="unavailable" />
+                {researchMode
+                  ? '선택 시설 설치 불가'
+                  : type
+                    ? '선택 시설 설치 불가·내 설치'
+                    : '후보 제외·내 설치'}
               </span>
             )}
             {ownDistrict && (
@@ -904,6 +952,25 @@ function Explorer({
                   <X size={16} />
                 </button>
               </div>
+              {!cisternOpen && (
+                <label className="location-type-filter">
+                  <select
+                    aria-label="설치 위치 시설 종류"
+                    value={type}
+                    onChange={(e) => {
+                      setType(e.target.value as FacilityType | '');
+                      setOffset(0);
+                    }}
+                  >
+                    <option value="">모든 시설</option>
+                    {(Object.keys(facilities) as FacilityType[]).map((value) => (
+                      <option key={value} value={value}>
+                        {facilities[value].name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              )}
               {!researchMode && (
                 <label className="shared-vacant">
                   <input
@@ -929,8 +996,7 @@ function Explorer({
               ) : (
                 <>
                   <p>
-                    조건에 맞는 {shared.matchedCount.toLocaleString('ko-KR')}곳 · 지도 중심에서
-                    가까운 순
+                    {shared.matchedCount.toLocaleString('ko-KR')}곳 · 현재 보는 위치에서 가까운 순
                   </p>
                   <div className="shared-location-items">
                     {shared.sites
@@ -954,6 +1020,13 @@ function Explorer({
                               <strong>{s.name}</strong>
                             </span>
                             <small>
+                              {Math.round(
+                                Math.hypot(
+                                  s.center[0] - camera.center[0],
+                                  s.center[1] - camera.center[1]
+                                )
+                              ).toLocaleString('ko-KR')}{' '}
+                              m ·{' '}
                               {installed
                                 ? installed.ownerId === viewerId
                                   ? '내 시설 · 시즌 고정'
@@ -989,29 +1062,12 @@ function Explorer({
               )}
             </div>
           )}
-          <div className="shared-map-count" role="status">
-            {shared.siteError ? (
-              <>
-                <span>설치 후보 조회 실패</span>
-                <button onClick={shared.retrySites}>다시 조회</button>
-              </>
-            ) : Object.keys(shared.counts).length === 0 ? (
-              '설치 후보 조회 중'
-            ) : (
-              <>
-                {selected
-                  ? `${shared.counts[selected].toLocaleString('ko-KR')}곳의 공개 후보`
-                  : `서울 ${Object.values(shared.counts)
-                      .reduce((a, b) => a + b, 0)
-                      .toLocaleString('ko-KR')}곳의 공개 후보`}
-                <small>
-                  {selected
-                    ? '지도 이동 · 확대 또는 위치 목록에서 선택'
-                    : '구를 선택하면 설치 후보가 표시됩니다'}
-                </small>
-              </>
-            )}
-          </div>
+          {shared.siteError && (
+            <div className="shared-map-count" role="alert">
+              <span>설치 후보 조회 실패</span>
+              <button onClick={shared.retrySites}>다시 조회</button>
+            </div>
+          )}
           <div className="facility-dock facility-install-dock">
             <button
               className={facilityExpansionOpen ? 'selected' : ''}

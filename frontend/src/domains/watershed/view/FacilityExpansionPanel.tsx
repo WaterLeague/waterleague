@@ -86,14 +86,12 @@ export function FacilityExpansionPanel({
     >
       <header className="watershed-heading">
         <div>
-          <span>BUILD YOUR CITY</span>
           <h2>시설 설치하기</h2>
         </div>
         <button onClick={onClose} aria-label="시설 설치 패널 닫기">
           <X size={18} />
         </button>
       </header>
-      <p>시설을 고르고, 지도에서 설치할 위치를 선택하세요.</p>
       {projects.map((project) => {
         const program = budget?.accounting.programs.find((p) => p.id === project.id);
         return (

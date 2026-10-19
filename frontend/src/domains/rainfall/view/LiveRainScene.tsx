@@ -17,6 +17,7 @@ export function LiveRainScene({
   distance,
   animate,
   terrain,
+  externalClock = false,
 }: {
   districts: City['districts'];
   amounts: ReadonlyMap<string, number | null>;
@@ -24,6 +25,7 @@ export function LiveRainScene({
   distance: number;
   animate: boolean;
   terrain?: Terrain | null;
+  externalClock?: boolean;
 }) {
   const invalidate = useThree((s) => s.invalidate);
   const { x, y, radius, scale } = rainSamplingWindow(center, distance);
@@ -70,11 +72,11 @@ export function LiveRainScene({
   }, [seeds, height, length]);
   useEffect(() => () => geometry.dispose(), [geometry]);
   useEffect(() => {
-    if (!animate || !seeds.length) return;
+    if (externalClock || !animate || !seeds.length) return;
     invalidate();
     const timer = window.setInterval(invalidate, 1000 / 30);
     return () => window.clearInterval(timer);
-  }, [animate, seeds.length, invalidate]);
+  }, [animate, seeds.length, invalidate, externalClock]);
   useFrame(({ clock }) => {
     if (!animate) return;
     const positions = geometry.getAttribute('position') as THREE.BufferAttribute;

@@ -202,3 +202,8 @@ RFC 9457 `application/problem+json`: type, title, status, detail, instance, code
 
 
 2026-10-19 비회원 재해 체험: GET/POST `/api/v1/guest-historical`, GET `/api/v1/guest-historical/{id}`만 익명 허용. POST는 CSRF 필수. 소유권은 서버 세션 ID의 해시로 고정하고 외부 owner/guest 식별자 입력 금지. 전체 사건 설계(여러 구 최대 50곳)를 검증한 후 선택 구를 기존 SWMM 큐에 등록. 회원 행·원장·제출 생성 없음. 동일 세션/요청 키는 전체 설계가 같을 때만 재사용. 회원 작업과 전역 admission 잠금을 공유, 세션 동시 2개·전체 20개 및 세션/네트워크/전역 시간당 호출 한도. 세션 종료 후 이전 게스트 결과 조회 불가, 재현 원본은 불변 보존. 제출/다운로드·`/historical/leaderboard/{eventId}`는 기존 회원 보호 경로. 비회원은 주간 설치 불가.
+
+
+2026-10-19 지도 점수 응답: GET `/api/v1/installations`에 `scoreM3`(이번 KST 주간 서버 계산값, 미반영 null), `evaluatedThrough`(반영 원시각, 미반영 null) 추가. 기존 공개 설치 소유자 닉네임·위치 조회 권한 유지. 점수는 활성 시설에 대해 일괄 조회하고 클라이언트가 생성한 효과 수치 사용 금지. GET `/api/v1/rainfall/live`에 `windDirectionDeg`(AWS WD10, 0~360 또는 null) 추가. 360 무풍 코드는 시각 유향으로 변환하지 않으며 기존 WS10 풍속·관측 시각과 같은 행을 사용한다.
+
+게스트 재해 GET 목록·개별 조회·POST 멱등 재응답은 진행 전용 결과를 반환한다. 사건 전체 합계 3종·시설별 전체 기간 유출 비교·마지막 시계열 구간은 서버에서 제외한다. 원 계산 결과와 재현 원본은 DB에 보존하고 로그인 후 제출·최종 기록 경로는 기존 소유권·CSRF 검증을 유지한다.

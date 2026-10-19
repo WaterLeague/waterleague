@@ -1,7 +1,7 @@
 import { placementAreaLimit } from '../../installation/service/placementAreaLimit';
 import { unitCost } from '../../game/service/gameService';
 import type { ReactNode } from 'react';
-import { Leaf, Grid2X2, House, Waves, MapPin, Check, Trash2 } from 'lucide-react';
+import { Leaf, Grid2X2, House, Waves, Check, Trash2 } from 'lucide-react';
 import type { SharedSite } from '../entity/installation';
 import type { FacilityType } from '../../game/entity/game';
 import { facilities, won } from '../../game/service/gameService';
@@ -74,30 +74,13 @@ export function FacilityPlacementPanel(p: FacilityPlacementProps) {
     cost <= Math.min(remaining, facilityAvailable);
   return (
     <aside className="inspector shared-inspector" aria-label="시설 설치">
-      <div className="round-feedback" role="status">
-        <MapPin size={17} />
-        <div>
-          <strong>
-            {p.feedback || (site ? '선택한 위치' : '시설을 설치할 위치를 찾아보세요')}
-          </strong>
-          <span>
-            {p.districtName || '서울 25개 구'} · {p.context}
-          </span>
+      {p.feedback && (
+        <div className="round-feedback" role="status">
+          <strong>{p.feedback}</strong>
         </div>
-      </div>
+      )}
       {p.access}
-      {!site ? (
-        <div className="shared-selection-empty">
-          <Leaf size={30} />
-          <h2>작은 시설, 함께 만드는 변화</h2>
-          <p>시설을 고른 뒤 지도에 표시된 후보나 위치 목록에서 설치할 곳을 선택하세요.</p>
-          <p>
-            {p.research
-              ? '시간을 이동해 시설을 설치하고, 배속 재생으로 누적 효과를 확인하세요.'
-              : '내 소속 구에 설치할 수 있습니다. 다른 회원과 같은 위치도 사용할 수 있습니다.'}
-          </p>
-        </div>
-      ) : (
+      {site && (
         <>
           <span className="shared-site-kind">
             {site.kind === 'ROOF' ? '옥상 후보' : '지상 주차장 후보'}
@@ -284,11 +267,6 @@ export function FacilityPlacementPanel(p: FacilityPlacementProps) {
       <BudgetEvidence value={p.budget} research={p.research} accounting={p.budgetAccounting} />
       {site && !occupied && <PhysicalInputEvidence site={site} />}
       {p.children}
-      <p className="shared-evidence-note">
-        공개 도형 기반 실험 후보 · 현장 시공 적합성 미확인
-        <br />
-        예산은 게임 설계 조건 · 면적 한계는 공개 도형 기준
-      </p>
     </aside>
   );
 }

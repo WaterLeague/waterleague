@@ -1,19 +1,21 @@
 import type { InfrastructureAsset } from '../entity/infrastructure';
-import { infrastructureColor } from '../service/infrastructureService';
+import { infrastructureColor, infrastructureMarkers } from '../service/infrastructureService';
 export function InfrastructureSymbolsPlan({
   assets,
   selectedId,
   scale,
   onSelect,
+  distance,
 }: {
   assets: InfrastructureAsset[];
   selectedId: string;
   scale: number;
   onSelect: (asset: InfrastructureAsset) => void;
+  distance: number;
 }) {
   return (
     <g aria-label="공개 시설 형태 기호">
-      {assets.map((asset) => (
+      {infrastructureMarkers(assets, distance, selectedId).map((asset) => (
         <g
           key={asset.id}
           transform={`translate(${asset.center[0]} ${-asset.center[1]}) scale(${scale})`}
@@ -22,7 +24,11 @@ export function InfrastructureSymbolsPlan({
           strokeWidth={0.13}
           role="button"
           tabIndex={0}
-          aria-label={`${asset.name} 공개 시설`}
+          aria-label={
+            asset.clusterCount && asset.clusterCount > 1
+              ? `공개 시설 ${asset.clusterCount}개 · 확대해서 보기`
+              : `${asset.name} 공개 시설`
+          }
           onClick={(e) => {
             e.stopPropagation();
             onSelect(asset);
@@ -35,6 +41,18 @@ export function InfrastructureSymbolsPlan({
           }}
         >
           <title>{asset.name} · 시설 종류 기호, 실제 치수 아님</title>
+          {(asset.clusterCount ?? 0) > 1 && (
+            <text
+              y="-1.2"
+              textAnchor="middle"
+              fill="#46266a"
+              stroke="none"
+              fontSize="1.3"
+              fontWeight="800"
+            >
+              {asset.clusterCount}
+            </text>
+          )}
           {asset.kind === 'STORM_PUMP' ? (
             <>
               <path d="M-1 .8 V-.6 H.1 V.8 Z M.1 .1 H.9 V-.8 H.5 V-.3 H.1 Z" />

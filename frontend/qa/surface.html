@@ -60,6 +60,7 @@
       };
       function App() {
         const [metric, setMetric] = React.useState('depth');
+        const [animate, setAnimate] = React.useState(false);
         return React.createElement(
           React.Fragment,
           null,
@@ -79,6 +80,11 @@
                 onClick: () => setMetric((v) => (v === 'depth' ? 'speed' : 'depth')),
               },
               metric === 'depth' ? '수심 → 속력·흐름 방향' : '속력·흐름 방향 → 수심'
+            ),
+            React.createElement(
+              'button',
+              { onClick: () => setAnimate((v) => !v) },
+              animate ? '물 효과 정지' : '물 효과 재생'
             )
           ),
           React.createElement(
@@ -102,6 +108,7 @@
               { style: { position: 'relative', overflow: 'hidden' } },
               React.createElement(CityScene, {
                 ...common,
+                animateRain: animate,
                 terrain: null,
                 labels: new Map(),
                 onUnavailable: () => {},

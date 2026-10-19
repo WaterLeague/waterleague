@@ -1,4 +1,5 @@
 import { InstallationSymbolsPlan } from '../../installation/view/InstallationSymbolsPlan';
+import { InstallationNameplatesPlan } from '../../installation/view/InstallationNameplatesPlan';
 import { installationSymbols } from '../../installation/service/installationSymbolsService';
 import type { PublicFrame } from '../../surface/service/publicSurfaceService';
 import { publicInfrastructureBuildingIds } from '../../infrastructure/service/infrastructureService';
@@ -361,6 +362,7 @@ export const CityPlan = memo(function CityPlan({
         onSelect={onSite}
       />
       <InfrastructureSymbolsPlan
+        distance={focus.distance}
         assets={facilityType ? [] : publicAssets}
         selectedId={selectedAssetId}
         scale={box.height * 0.014}
@@ -372,6 +374,14 @@ export const CityPlan = memo(function CityPlan({
         scale={box.height}
         animate={animateRain}
       />
+      {!facilityType && focus.distance < detailLabelDistance && (
+        <InstallationNameplatesPlan
+          installations={installations}
+          viewerId={viewerId}
+          box={box}
+          onSelect={onSite}
+        />
+      )}
       {showLabels &&
         regions.map((r) => (
           <g

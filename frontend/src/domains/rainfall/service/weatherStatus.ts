@@ -22,10 +22,23 @@ export function weatherStatus(value: LiveRainfall | null, districtId: string, no
           : `${snow.length}개 구 눈`
         : kind === 'dry'
           ? '비·눈 없음'
-          : '날씨 확인 필요';
+          : '강수감지 미확인';
   const detail =
     districtId && fresh[0]
       ? `${fresh[0].stationName} · ${new Date(fresh[0].rainObservedAt!).toLocaleTimeString('ko-KR', { timeZone: 'Asia/Seoul', hour12: false })} 기준`
       : `${fresh.filter((s) => s.rainState !== 'UNKNOWN').length}/${districtId ? 1 : 25}개 구 최신 상태 확인`;
-  return { kind, label, place, detail };
+  const amounts = stations.map((s) => {
+    const age = s.observedAt ? now - Date.parse(s.observedAt) : Infinity;
+    if (age >= 0 && age <= 300000 && s.oneMinuteMm != null) return s.oneMinuteMm;
+    // 유효한 무강수 감지는 0으로 표시하고 관측 공백은 결측으로 유지한다.
+    return observationFresh(s, now) && s.rainState === 'NO_RAIN_DETECTED' ? 0 : null;
+  });
+  const known = amounts.filter((v): v is number => v !== null);
+  const number = new Intl.NumberFormat('ko-KR', { maximumFractionDigits: 2 });
+  const amount = !known.length
+    ? '강우량 확인 불가'
+    : districtId
+      ? `1분 강우 ${number.format(known[0])} mm`
+      : `1분 강우 ${number.format(Math.min(...known))}${Math.max(...known) !== Math.min(...known) ? `–${number.format(Math.max(...known))}` : ''} mm${known.length < 25 ? ` · ${known.length}/25개 구` : ''}`;
+  return { kind, label, place, detail, amount };
 }
