@@ -10,7 +10,7 @@
 
 ## 공통 계약
 
-공통 경로 `/api/v1`, 동일 출처 JSON, 서버 세션. 상태 변경 CSRF 필수. UTC ISO 8601·필드별 SI 단위. 금액 KRW 정수 원. 아래 표는 인증·연구 설계 API이며 공통 게임 API는 다음 절을 함께 본다.
+공통 경로 `/api/v1`, 동일 출처 JSON, 서버 세션. 상태 변경 CSRF 필수. UTC ISO 8601·필드별 SI 단위. 금액은 KRW이며 면적×단가의 계산 비용·원장은 소수 둘째 자리까지 보존한다. 아래 표는 인증·연구 설계 API이며 공통 게임 API는 다음 절을 함께 본다.
 
 | API | 권한·역할 |
 | --- | --- |
@@ -20,6 +20,9 @@
 | GET /catalog, /maps | 공개 자료 목록·승인된 공식 맵 목록 |
 | GET /lab | 탐색 모델·셀·분강우·단가 근거·모델 해시 |
 | GET /spatial/buildings | 인증, 보관한 2025 수치지형도 건물 스냅샷·해시 검사; no-store·외부 호출 없음 |
+| GET /spatial/play | 공개 원형 계산 자료의 해시·공통 조건·출처·정책; no-store |
+| GET /spatial/play/sites | 공개, 절대 EPSG:5186 범위의 전체 원형 후보 조회 |
+| GET /spatial/play/sites/{districtId}/{candidateId} | 공개 행정코드·후보 ID로 같은 원형/계산 조건 조회 |
 | GET /strategies | 본인 저장 설계 목록 |
 | POST /strategies | 인증, 첫 불변 버전 저장 |
 | POST /strategies/{id}/versions | 소유자, 불변 배치·이력 저장 |
@@ -42,6 +45,8 @@
 | POST /research/patterns | 동일 모델의 동의 제출 1~50개, 상위 고유 설계 1~20개와 경계 동점의 배치 기술 통계 |
 
 모델 검증·배포 권한은 조직 회원의 리그 운영과 분리. 내부 워커 endpoint 외부 노출 금지. 현장 승인 맵과 공개 참고 지도·탐색 모델은 구분한다. 관리자 역할은 ADMIN, 모든 일반/조직 회원 역할은 MEMBER. 조직 회원의 연구·리그 권한은 승인 상태·회원 유형·소속·MFA로 검사한다.
+
+원형 조회의 `minx,miny,maxx,maxy`와 응답 `geometry`는 절대 EPSG:5186 미터 좌표다. 시야의 가로/세로는 각각 2,000m 이하, `limit` 기본 512·최대 2,000이다. 선택 `districtId`는 공개 자치구 코드, `kind`는 ROOF/GROUND다. `includeUnsupported=false`가 기본이며 true일 때 빈 허용 목록의 미지원 표면도 조회한다. 구멍/다중 면을 보존한 실제 도형으로 교차 판정한다. 범위 인덱스 검사 20,000개·본문 처리 16MiB·결과 한도를 넘으면 일부를 정상 목록으로 반환하지 않고 `SPATIAL_VIEW_TOO_DENSE` 422를 반환한다. 접속 주소별 분당 300회·동시 시야 조회 4개 상한과 429 응답을 적용한다. 모든 응답의 `catalogSha256`은 같은 불변 원형 DB를 가리킨다. 주간·재해 설치/제출의 공간 버전 동시 전환은 아직 미완료다.
 
 공동 시설 물리 상태는 `WAITING/RUNNING/READY/DELAYED/UNAVAILABLE`. `attemptedAt`과 `simulatedThrough` 구분, 실패 시 이전 성공 결과와 그 시각 유지. 무결과는 `result:null`이며 강우·수분·유출 0 대입 없음. 마지막 계산이 5분을 넘으면 지연 표시, 실행 작업이 240초를 넘으면 보류 표시. 결과는 관측소·계산 구간·EPA 버전·EXPLORATORY·누적 강우 체적/침투/증발/유출·현재 수분/저류·시설 표면 수심·토양수분·물수지 오차·증발/초기상태 가정만 공개. 원문·파일 경로·입력 hash·임대 토큰 미노출. 철거·미등록 시설 404. 분별 재현 입력은 별도 접근 통제 대상이며 이 공개 요약에서 제공하지 않음.
 
@@ -136,7 +141,7 @@ RFC 9457 `application/problem+json`: type, title, status, detail, instance, code
 | 403 | ACCESS_DENIED, CSRF_INVALID |
 | 404 | RESOURCE_NOT_FOUND, 비공개 존재 여부 보호 |
 | 409 | RULES_CHANGED, IDEMPOTENCY_CONFLICT, SUBMISSION_LIMIT_REACHED |
-| 422 | PLACEMENT_INVALID, BUDGET_EXCEEDED, MODEL_NOT_ELIGIBLE, RAIN_QUALITY_FAILED |
+| 422 | PLACEMENT_INVALID, BUDGET_EXCEEDED, MODEL_NOT_ELIGIBLE, RAIN_QUALITY_FAILED, SPATIAL_VIEW_TOO_DENSE |
 | 429 | RATE_LIMITED, SIMULATION_QUOTA_EXCEEDED |
 | 503 | SIMULATION_UNAVAILABLE, DATASET_UNAVAILABLE |
 

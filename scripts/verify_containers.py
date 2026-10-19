@@ -212,6 +212,25 @@ def check_http(stack, state):
     for path in ('/.env.local', '/.git/config', '/actuator/health', '/assets/absent.js'):
         client.call(path, expected=404)
     client.api('/auth/me', expected=401)
+    spatial = client.api('/spatial/play')
+    assert spatial['catalogSha256'] == '4ec7535e7cbaf41dc73f73519d77ba11f956f4c75c1a574fffa08f16625919b7'
+    assert spatial['coordinateSystem'] == 'EPSG:5186'
+    query = '/spatial/play/sites?minx=203899.54225604248&miny=551377.4775&maxx=204049.54225604248&maxy=551527.4775&districtId=11200'
+    native = client.api(query)
+    assert native['catalogSha256'] == spatial['catalogSha256'] and len(native['sites']) == 162
+    cell = native['sites'][0]
+    single = client.api('/spatial/play/sites/11200/' + cell['id'])
+    assert single['site'] == cell and cell['geometryCrs'] == 'EPSG:5186'
+    worker_native = json.loads(stack.python('worker', """
+import json
+from waterleague_sim.spatial.play_bundle import open_catalog
+catalog = open_catalog()
+cells = catalog.bounds([203899.54225604248, 551377.4775, 204049.54225604248, 551527.4775], district='11200')
+print(json.dumps({'catalogSha256': catalog.sha256, 'sites': cells}))
+"""))
+    assert worker_native == {key: native[key] for key in ('catalogSha256', 'sites')}
+    assert client.api(query + '&limit=1', expected=422)['code'] == 'SPATIAL_VIEW_TOO_DENSE'
+    client.api('/spatial/play/sites?minx=0&miny=0&maxx=2001&maxy=1', expected=400)
     client.call('/api/v1/auth/register', {}, expected=403)
     _, headers = client.call('/api/v1/auth/csrf', headers={
         'Forwarded': 'proto=http;host=attacker.example', 'X-Forwarded-Proto': 'http',
@@ -281,7 +300,8 @@ print('SWMM_REPLAY_OK')
     with zipfile.ZipFile(io.BytesIO(repeated)) as archive:
         assert json.loads(archive.read('manifest.json')) == manifest
     return {'jobState': job['state'], 'manifestFiles': len(manifest), 'modelHash': model['modelHash'],
-            'realSwmmReplay': True, 'restartPersistence': True, 'tlsVerified': True}
+            'realSwmmReplay': True, 'restartPersistence': True, 'tlsVerified': True,
+            'nativeApiWorkerCellsMatched': len(native['sites']), 'nativeCatalogSha256': spatial['catalogSha256']}
 
 
 def main():

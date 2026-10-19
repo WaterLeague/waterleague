@@ -2,6 +2,7 @@ from contextlib import closing
 import json
 import hashlib
 import inspect
+import os
 from pathlib import Path
 import sqlite3
 import unittest
@@ -103,6 +104,14 @@ class NativePlayCatalogTests(unittest.TestCase):
         with self.assertRaises(fixtures.source.TopographyDataError):
             catalog.build(sites, objects, root / 'b')
         self.assertFalse((root / 'b').exists())
+
+    def test_first_read_access_time_change_is_not_source_mutation(self):
+        root, sites, objects, _ = self.inputs()
+        report = catalog.build(sites, objects, root / 'a')
+        path = root / 'a/play.sqlite'
+        os.utime(path, ns=(1, path.stat().st_mtime_ns))
+        reader = NativePlayCatalog(path, report['playSha256'])
+        self.assertEqual(len(reader.bounds([0, 0, 100, 100])), 3)
 
     def test_full_comparison_rejects_changed_body_even_after_local_file_rehash(self):
         root, sites, objects, _ = self.inputs()

@@ -33,6 +33,7 @@ public enum ErrorCode {
   SPATIAL_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "공간자료를 조회하지 못했습니다. 잠시 후 다시 시도해 주세요"),
   SPATIAL_ACCESS_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "공간자료 서비스의 인증 설정 확인이 필요합니다"),
   SPATIAL_DATA_INVALID(HttpStatus.SERVICE_UNAVAILABLE, "공간자료의 좌표·응답 품질 검사를 통과하지 못했습니다"),
+  SPATIAL_VIEW_TOO_DENSE(HttpStatus.UNPROCESSABLE_CONTENT, "조회 범위의 객체가 많습니다. 지도를 더 확대해 주세요"),
   LEAGUE_IMMUTABLE(HttpStatus.CONFLICT, "공개 상태 또는 규칙 버전을 확인해 주세요"),
   LEAGUE_CLOSED(HttpStatus.CONFLICT, "현재 제출을 받지 않는 리그입니다"),
   LEAGUE_RULES_MISMATCH(HttpStatus.UNPROCESSABLE_CONTENT, "리그의 모델·시설·실행 조건과 일치하지 않습니다"),

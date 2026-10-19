@@ -80,6 +80,10 @@ CI의 복원 시나리오는 고정 Ubuntu 24.04에서 공식 PGDG 저장소의 
 
 `docs/04-architecture.md`의 비공개 전용 디렉터리·128개/2 GiB/7일 상한 적용. 캐시는 재계산 가능한 임시 자료, `data/runs`의 작업별 재현 산출물과 다른 볼륨 경로 사용. 캐시 삭제는 기존 작업·순위·동의·다운로드 권한을 바꾸지 않음. 비활성화/경로 변경은 워커 설정으로만 수행. 로컬 파일 잠금·원자적 게시 범위이며 NFS·다중 호스트 공유나 동시 미스 계산 병합은 지원하지 않음. 실제 Oracle에서 캐시 읽기/쓰기 시간·적중률·보관량·큐 지연 실측 필요.
 
+원형 공간 자료는 계산 결과 캐시와 별도다. API/워커 이미지에 포함한 `native-play/v1`의 공개 압축 115파일 449,886,848바이트를 고정 매니페스트·조각별 압축/원문·전체 DB 해시로 확인해 복원한다. DB는 3,829,805,056바이트이며 결과 캐시의 2GiB/7일 삭제 정책에 포함하지 않는다. Compose는 같은 호스트 상태의 `cache/native-spatial`을 `NATIVE_SPATIAL_CACHE`로 공유하고 계산 결과는 `cache/results`를 사용한다. 버전 디렉터리 0700·DB 0400·Java/Python 공통 POSIX 잠금·임시 파일 동기화/원자적 게시를 적용한다. 손상된 기존 파일은 덮어쓰지 않고 시작/조회 오류로 보존한다. 비웹 마이그레이션은 이 DB를 복원하지 않는다. 별도 원자료 폴더나 외부 저장소 접속 없이 이미지의 공개 묶음으로 복원한다.
+
+API의 SQLite 네이티브 라이브러리는 이미지 빌드에서 해당 아키텍처용으로 추출한다. 읽기 전용 루트·`/tmp` noexec를 유지하며 JNI 경로를 고정한다. [SQLite JDBC 3.53.4.0](https://github.com/xerial/sqlite-jdbc/releases/tag/3.53.4.0)·[JTS 1.20.0](https://github.com/locationtech/jts/releases/tag/1.20.0)을 고정하고 Java 25·Linux ARM64에서 조회를 검증한다.
+
 
 ## 리그 참가 PostgreSQL 통합 검사
 

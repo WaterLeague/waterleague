@@ -48,6 +48,14 @@ jobs:
         env:
           WL_INTEGRATION_USER: waterleague_test
           WL_INTEGRATION_PASSWORD: local-ci-test-only
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.13'
+      - name: 공개 원형 자료의 API·워커 조회 일치 검증
+        run: |
+          python -m pip install uv==0.11.12
+          uv sync --project simulation --locked
+          PYTHONPATH=simulation simulation/.venv/bin/python scripts/verify_native_play_runtime.py --report tmp/native-play-ci.json
   frontend:
     runs-on: ubuntu-latest
     timeout-minutes: 10

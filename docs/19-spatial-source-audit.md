@@ -133,6 +133,15 @@ simulation/.venv/bin/python scripts/verify_native_play_catalog.py \
   --engine-output data/private/vworld-seoul-topography-20260307/play-engine-v1
 ```
 
+공개 실행 묶음은 `package_native_play.py`가 같은 DB를 32MiB 이하 원문 조각의 gzip으로 보존한다. [묶음 매니페스트](../backend/src/main/resources/native-play/v1/manifest.json)의 해시는 API와 워커 코드에 고정한다. 조각·전체 해시 확인 뒤 읽기 전용 DB로 원자 복원하고 같은 자료를 Java 공간 조회와 Python 시설 계산에서 사용한다. `GET /spatial/play`와 범위/ID 조회는 [API 계약](06-api.md)을 따른다. [런타임 대조](../data/benchmarks/native-play-runtime-v1.json)는 25개 구의 전체 후보 JSON 비교와 공개 묶음의 6종 실제 EPA 연결 증거다. 일반 게임의 지도·설치·제출 전환 완료로 표시하지 않는다.
+
+```sh
+simulation/.venv/bin/python scripts/package_native_play.py
+# Java의 공개 자료 시험이 기록한 조회 결과와 워커를 대조한다.
+PYTHONPATH=simulation simulation/.venv/bin/python scripts/verify_native_play_runtime.py \
+  --report tmp/native-play-runtime.json --engine-output tmp/native-play-engine
+```
+
 ## 수치지형도 플레이 모델 연결
 
 2026-03-07 갱신 공개 수치지형도와 동일한 기존 4개 도엽의 건물 246개와 도로·철도·교량 면 경계를 별도 지도에 연결한다. 원 도엽의 제작연도는 2025년이며 배포 갱신일과 구분한다. EPSG:5186 원문 좌표에서 고정 원점을 뺀 미터 좌표를 사용하며 내부 구멍·복수 도형을 보존한다. 교통 면은 화면 경계로 절단하되 건물 원형은 보존한다. 층수×3.2m 및 층수 누락 시 9m는 시각화 가정으로만 사용한다. 평탄 지면 유지, 교량의 실제 고도·도로 경사 추정 금지.

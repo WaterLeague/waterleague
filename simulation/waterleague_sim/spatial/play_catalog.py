@@ -30,15 +30,21 @@ def file_hash(path):
     return digest.hexdigest()
 
 
+def file_identity(path):
+    value = path.stat()
+    # 읽기만으로 바뀌는 접근 시각은 원본 변경 판정에서 제외한다.
+    return value.st_dev, value.st_ino, value.st_size, value.st_mtime_ns, value.st_ctime_ns
+
+
 class NativePlayCatalog:
     def __init__(self, path, expected_sha256):
         path = Path(path).absolute()
         try:
-            before = path.stat()
+            before = file_identity(path)
             if (not re.fullmatch('[a-f0-9]{64}', expected_sha256)
                     or path != path.resolve() or not path.is_file()
-                    or not 4096 <= before.st_size <= 16 * 1024**3
-                    or file_hash(path) != expected_sha256 or path.stat() != before):
+                    or not 4096 <= before[2] <= 16 * 1024**3
+                    or file_hash(path) != expected_sha256 or file_identity(path) != before):
                 raise NativeCatalogError('NATIVE_CATALOG_INVALID')
             self.path, self.sha256 = path, expected_sha256
             self._file_identity = before
@@ -56,7 +62,7 @@ class NativePlayCatalog:
             raise NativeCatalogError('NATIVE_CATALOG_INVALID') from None
 
     def connection(self):
-        if self.path.resolve() != self.path or self.path.stat() != self._file_identity:
+        if self.path.resolve() != self.path or file_identity(self.path) != self._file_identity:
             raise NativeCatalogError('NATIVE_CATALOG_CHANGED')
         database = sqlite3.connect('file:' + quote(str(self.path)) + '?mode=ro&immutable=1', uri=True)
         database.execute('PRAGMA trusted_schema=OFF')
