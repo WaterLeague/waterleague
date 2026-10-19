@@ -8,6 +8,17 @@ export const listSubmissions = (eventId: string) =>
   api<HistoricalSubmission[]>('/historical/submissions?eventId=' + encodeURIComponent(eventId));
 export const loadHistoricalBoard = (eventId: string) =>
   api<HistoricalBoard>('/historical/leaderboard/' + encodeURIComponent(eventId));
+export type SubmissionDesign = { revision: number; snapshotSha256: string };
+export const submitSavedHistorical = (
+  eventId: string,
+  requestKey: string,
+  design: SubmissionDesign
+) =>
+  api<HistoricalSubmission>(
+    '/historical/designs/' + encodeURIComponent(eventId) + '/submissions',
+    'POST',
+    { requestKey, ...design }
+  );
 export function submissionPlacements(
   drafts: HistoricalDraft[],
   jobs: Record<string, HistoricalJob>

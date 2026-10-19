@@ -5,12 +5,69 @@ import os
 import resource
 import sys
 from collections import defaultdict
+from datetime import datetime
+from decimal import Decimal
 from pathlib import Path
 
 from .engine.continuous import digest
 from .run_historical_job import calculate as district_calculate
 
 POLICY = 'FULL_EVENT_INDEPENDENT_SURFACES_V1'
+
+
+class HistoricalSubmissionError(ValueError):
+    def __init__(self):
+        super().__init__('HISTORICAL_SUBMISSION_DESIGN_MISMATCH')
+
+
+def verify_design(rows, rules):
+    keys = {'submissionDesignRevision', 'submissionDesignSnapshotRaw', 'submissionDesignSnapshotSha256'}
+    if not any(keys.intersection(row) for row in rows):
+        if json.loads(rows[0]['submissionRequestRaw']).get('mode') == 'SAVED_DESIGN_SUBMISSION_V1':
+            raise HistoricalSubmissionError()
+        return None
+    try:
+        head = rows[0]
+        if not keys <= head.keys() or any(keys.intersection(row) for row in rows[1:]):
+            raise HistoricalSubmissionError()
+        raw, sha = head['submissionDesignSnapshotRaw'], head['submissionDesignSnapshotSha256']
+        if not isinstance(raw, str) or len(raw.encode()) > 16*1024**2 or digest(raw.encode()) != sha:
+            raise HistoricalSubmissionError()
+        saved = json.loads(raw)
+        submitted = json.loads(head['submissionRequestRaw'])
+        ref = submitted['request']
+        if (type(head['submissionDesignRevision']) is not int or head['submissionDesignRevision'] < 1
+                or submitted['mode'] != 'SAVED_DESIGN_SUBMISSION_V1' or submitted['eventId'] != rules['eventId']
+                or ref['revision'] != head['submissionDesignRevision'] or ref['snapshotSha256'] != sha
+                or saved['schemaVersion'] != 1 or saved['eventId'] != rules['eventId']
+                or saved['budgetPolicy'] != rules['budgetPolicy']
+                or saved['publicAssetPolicy'] != rules['publicAssetPolicy']
+                or saved['budgetAccounting'] != head['budgetAccounting']
+                or len(saved['placements']) != len(rows)):
+            raise HistoricalSubmissionError()
+        original = {(r['item']['districtId'], r['item']['cellId']): r for r in saved['placements']}
+        if len(original) != len(rows):
+            raise HistoricalSubmissionError()
+        for row in rows:
+            source = original[(row['districtId'], row['cellId'])]
+            item = source['item']
+            at = datetime.fromisoformat(item['installedAt'])
+            if (any(row[k] != item[k] for k in ('facilityType', 'areaM2'))
+                    or datetime.fromisoformat(row['experimentInstalledAt']) != at
+                    or not datetime.fromisoformat(rules['start']) <= at < datetime.fromisoformat(rules['end'])
+                    or row['siteModelHash'] != source['site']['modelHash']
+                    or row['rainfallModelHash'] != source['rainfallModelHash']
+                    or row['costSnapshotRaw'] != source['costSnapshotRaw']
+                    or row['costSnapshotSha256'] != source['costSnapshotSha256']
+                    or digest(source['costSnapshotRaw'].encode()) != source['costSnapshotSha256']
+                    or Decimal(str(source['cost'])) != Decimal(str(json.loads(source['costSnapshotRaw'])['budgetChargeKrw']))
+                    or row['budgetPolicy'] != saved['budgetPolicy']
+                    or row['publicAssetPolicy'] != saved['publicAssetPolicy']):
+                raise HistoricalSubmissionError()
+        return {'revision': head['submissionDesignRevision'], 'snapshotSha256': sha,
+                'placementCount': len(rows)}
+    except (KeyError, TypeError, ValueError, ArithmeticError):
+        raise HistoricalSubmissionError() from None
 
 
 def calculate(request, directory):
@@ -23,9 +80,12 @@ def calculate(request, directory):
     rules = json.loads(rules_raw)
     if rules_hash != rows[0]['submissionRulesHash'] or rules['policy'] != POLICY:
         raise ValueError('HISTORICAL_SUBMISSION_RULES_INVALID')
+    design = verify_design(rows, rules)
     directory.mkdir(parents=True, exist_ok=True)
     (directory/'submission-rules.json').write_text(rules_raw)
     (directory/'submission-request.json').write_text(rows[0]['submissionRequestRaw'])
+    if design:
+        (directory/'submission-design.json').write_text(rows[0]['submissionDesignSnapshotRaw'])
     groups = defaultdict(list)
     seen = set()
     for row in rows:
@@ -55,7 +115,7 @@ def calculate(request, directory):
               for key in ('differenceM3', 'baselineAccountedM3', 'designAccountedM3')}
     if any(not math.isfinite(v) for v in values.values()):
         raise ValueError('HISTORICAL_SUBMISSION_METRICS_INVALID')
-    return {'schemaVersion': 1, 'submissionPolicy': POLICY, 'rulesHash': rules_hash,
+    result = {'schemaVersion': 1, 'submissionPolicy': POLICY, 'rulesHash': rules_hash,
             'eventId': rules['eventId'], 'validationLevel': 'EXPLORATORY',
             'scope': 'SELECTED_INDEPENDENT_SURFACES_ONLY', 'modelGrade': rules['modelGrade'],
             'officialTotalScore': None, 'totalScoreStatus': 'HELD_REQUIRED_INUNDATION_AND_CONNECTED_OUTLET_MISSING',
@@ -66,6 +126,9 @@ def calculate(request, directory):
                 '독립 표면 원 지표 합계; 연결 유역·지표 침수 효과 합계 아님',
                 '현재 게임 예산과 공개 참고비 사용; 사건 당시 확정 예산·가격 아님',
                 '미세한 효과 차이는 물수지 잔차보다 작을 수 있으며 현장 유의성 미검증']}
+    if design:
+        result['submittedDesign'] = design
+    return result
 
 
 def main():

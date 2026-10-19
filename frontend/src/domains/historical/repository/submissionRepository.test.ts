@@ -1,10 +1,22 @@
 import { describe, expect, it, vi } from 'vitest';
 import type { HistoricalDraft, HistoricalJob } from '../entity/historical';
-import { submissionPlacements, submitHistorical } from './submissionRepository';
+import {
+  submissionPlacements,
+  submitHistorical,
+  submitSavedHistorical,
+} from './submissionRepository';
 import { api } from '../../../shared/repository/apiClient';
 vi.mock('../../../shared/repository/apiClient', () => ({ api: vi.fn() }));
 
 describe('재해 확정 제출 입력', () => {
+  it('새 제출은 배치·단가를 다시 보내지 않고 확정한 저장본만 참조한다', async () => {
+    const design = { revision: 7, snapshotSha256: 'a'.repeat(64) };
+    await submitSavedHistorical('seoul-20220808', 'saved-retry-key', design);
+    expect(api).toHaveBeenLastCalledWith('/historical/designs/seoul-20220808/submissions', 'POST', {
+      requestKey: 'saved-retry-key',
+      ...design,
+    });
+  });
   it('다른 구의 배치도 전부 보내고 원 설치 시각과 실행 계보를 보존한다', async () => {
     const drafts = [
       {

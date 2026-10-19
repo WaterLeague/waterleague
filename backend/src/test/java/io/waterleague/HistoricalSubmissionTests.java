@@ -30,6 +30,7 @@ class HistoricalSubmissionTests {
 
   @Autowired HistoricalSubmissionService service;
   @Autowired HistoricalService history;
+  @Autowired HistoricalDesignService designService;
   @Autowired SiteCatalogRepository sites;
   @Autowired AccountRepository accounts;
   @Autowired io.waterleague.disaster.service.DisasterService disasters;
@@ -84,6 +85,193 @@ class HistoricalSubmissionTests {
 
   HistoricalSubmissionRequest request(List<HistoricalSubmissionRequest.Item> rows) {
     return new HistoricalSubmissionRequest(UUID.randomUUID(), eventId, rows);
+  }
+
+  io.waterleague.historical.dto.HistoricalDesignRequest.Item designItem(
+      String district, int second) {
+    var p = item(district, "20", second);
+    return new io.waterleague.historical.dto.HistoricalDesignRequest.Item(
+        UUID.randomUUID(),
+        p.districtId(),
+        p.cellId(),
+        p.facilityType(),
+        p.areaM2(),
+        p.installedAt());
+  }
+
+  io.waterleague.historical.dto.HistoricalDesignSubmissionRequest reference(
+      io.waterleague.historical.view.HistoricalDesignView saved) {
+    return new io.waterleague.historical.dto.HistoricalDesignSubmissionRequest(
+        UUID.randomUUID(), saved.revision(), saved.snapshotSha256());
+  }
+
+  Map<String, Object> nativeRequest(UUID id) {
+    var job = history.require(owner, id);
+    return Map.of(
+        "modelHash", job.modelHash(), "inputHash", job.inputHash(), "placements", job.placements());
+  }
+
+  @Test
+  void savedDesignSubmissionPreservesCostsAndSurvivesLaterCancellation() throws Exception {
+    var first = designItem("2419953", 137);
+    var second = designItem("2410520", 3717);
+    var design =
+        designService.save(
+            owner,
+            eventId,
+            new io.waterleague.historical.dto.HistoricalDesignRequest(
+                UUID.randomUUID(), 0, 3717, List.of(first, second)));
+    var ref = reference(design);
+    var submitted = service.submitSaved(owner, eventId, ref);
+    assertThat(submitted.designRevision()).isEqualTo(1L);
+    var original = nativeRequest(submitted.id());
+    var rows = json.tree(original.get("placements").toString());
+    assertThat(json.tree(rows.get(0).path("submissionDesignSnapshotRaw").asString()))
+        .isEqualTo(design.snapshot());
+    assertThat(rows.get(0).path("submissionDesignSnapshotSha256").asString())
+        .isEqualTo(design.snapshotSha256());
+    for (var row : rows) {
+      assertThat(row.has("installedAt")).isFalse();
+      var savedRow =
+          java.util.stream.StreamSupport.stream(
+                  design.snapshot().path("placements").spliterator(), false)
+              .filter(
+                  p ->
+                      p.path("item")
+                          .path("districtId")
+                          .asString()
+                          .equals(row.path("districtId").asString()))
+              .findFirst()
+              .orElseThrow();
+      assertThat(row.path("costSnapshotRaw")).isEqualTo(savedRow.path("costSnapshotRaw"));
+      assertThat(row.path("experimentInstalledAt"))
+          .isEqualTo(savedRow.path("item").path("installedAt"));
+    }
+    var cancelled =
+        designService.save(
+            owner,
+            eventId,
+            new io.waterleague.historical.dto.HistoricalDesignRequest(
+                UUID.randomUUID(), 1, 5000, List.of(first)));
+    assertThatThrownBy(() -> service.submitSaved(owner, eventId, reference(design)))
+        .isInstanceOfSatisfying(
+            DomainException.class,
+            e -> assertThat(e.code()).isEqualTo(ErrorCode.HISTORICAL_DESIGN_CONFLICT));
+    assertThat(service.submitSaved(owner, eventId, ref).id()).isEqualTo(submitted.id());
+    var next = service.submitSaved(owner, eventId, reference(cancelled));
+    assertThat(next.placementCount()).isEqualTo(1);
+    assertThat(nativeRequest(submitted.id())).isEqualTo(original);
+    var export = System.getProperty("waterleague.integration.submission.design.fixture");
+    if (export != null)
+      java.nio.file.Files.writeString(
+          java.nio.file.Path.of(export),
+          json.write(
+              Map.of(
+                  "design",
+                  design,
+                  "cancelledDesign",
+                  cancelled,
+                  "original",
+                  original,
+                  "cancelled",
+                  nativeRequest(next.id()))),
+          java.nio.file.StandardOpenOption.CREATE_NEW);
+  }
+
+  @Test
+  void savedDesignConcurrentSubmitIsIdempotentAndRejectsForeignOrAlteredReference()
+      throws Exception {
+    var design =
+        designService.save(
+            owner,
+            eventId,
+            new io.waterleague.historical.dto.HistoricalDesignRequest(
+                UUID.randomUUID(), 0, 137, List.of(designItem("2419953", 137))));
+    var ref = reference(design);
+    try (var executor = Executors.newFixedThreadPool(2)) {
+      var gate = new CountDownLatch(1);
+      Callable<UUID> call =
+          () -> {
+            gate.await();
+            return service.submitSaved(owner, eventId, ref).id();
+          };
+      var a = executor.submit(call);
+      var b = executor.submit(call);
+      gate.countDown();
+      assertThat(a.get(30, TimeUnit.SECONDS)).isEqualTo(b.get(30, TimeUnit.SECONDS));
+    }
+    assertThat(service.list(owner, eventId)).hasSize(1);
+    UUID foreign = UUID.randomUUID();
+    accounts.add(
+        new Account(
+            foreign,
+            "foreign_" + foreign.toString().substring(0, 8),
+            "다른 시험 회원",
+            "NOT_A_LOGIN",
+            "MEMBER",
+            "PLAYER",
+            "APPROVED",
+            null,
+            "",
+            "",
+            true,
+            "2410520",
+            "AFFILIATED"));
+    assertThatThrownBy(() -> service.submitSaved(foreign, eventId, ref))
+        .isInstanceOf(DomainException.class);
+    assertThatThrownBy(
+            () ->
+                service.submitSaved(
+                    owner,
+                    eventId,
+                    new io.waterleague.historical.dto.HistoricalDesignSubmissionRequest(
+                        UUID.randomUUID(), 1, "0".repeat(64))))
+        .isInstanceOfSatisfying(
+            DomainException.class,
+            e -> assertThat(e.code()).isEqualTo(ErrorCode.HISTORICAL_DESIGN_CONFLICT));
+    assertThatThrownBy(
+            () ->
+                service.submit(
+                    owner,
+                    new HistoricalSubmissionRequest(
+                        ref.requestKey(), eventId, List.of(item("2419953", "20", 137)))))
+        .isInstanceOfSatisfying(
+            DomainException.class, e -> assertThat(e.code()).isEqualTo(ErrorCode.CONFLICT));
+  }
+
+  @Test
+  void savedDesignHashOrPriceCorruptionDoesNotCreateAJob() {
+    var design =
+        designService.save(
+            owner,
+            eventId,
+            new io.waterleague.historical.dto.HistoricalDesignRequest(
+                UUID.randomUUID(), 0, 137, List.of(designItem("2419953", 137))));
+    db.update(
+        "UPDATE historical_design_revisions SET snapshot_raw=? WHERE owner_id=?", "{}", owner);
+    assertThatThrownBy(() -> service.submitSaved(owner, eventId, reference(design)))
+        .isInstanceOfSatisfying(
+            DomainException.class,
+            e -> assertThat(e.code()).isEqualTo(ErrorCode.HISTORICAL_DESIGN_INVALID));
+    var changed = (tools.jackson.databind.node.ObjectNode) json.tree(json.write(design.snapshot()));
+    ((tools.jackson.databind.node.ObjectNode) changed.path("placements").get(0)).put("cost", 1);
+    String raw = json.write(changed), hash = json.hash(raw);
+    db.update(
+        "UPDATE historical_design_revisions SET snapshot_raw=?,snapshot_sha256=? WHERE owner_id=?",
+        raw,
+        hash,
+        owner);
+    assertThatThrownBy(
+            () ->
+                service.submitSaved(
+                    owner,
+                    eventId,
+                    new io.waterleague.historical.dto.HistoricalDesignSubmissionRequest(
+                        UUID.randomUUID(), 1, hash)))
+        .isInstanceOfSatisfying(
+            DomainException.class,
+            e -> assertThat(e.code()).isEqualTo(ErrorCode.HISTORICAL_SITE_CHANGED));
+    assertThat(service.list(owner, eventId)).isEmpty();
   }
 
   @Test

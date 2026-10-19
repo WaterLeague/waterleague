@@ -339,7 +339,11 @@ export function useHistorical(
     design,
     submission,
     submit: async () => {
-      if (design.ready) await submission.submit(drafts, jobs);
+      if (design.ready && design.snapshotSha256 && drafts.length)
+        await submission.submit({
+          revision: design.revision,
+          snapshotSha256: design.snapshotSha256,
+        });
     },
     lab,
     events: catalog?.events ?? [],

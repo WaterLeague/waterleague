@@ -1,0 +1,38 @@
+Browser tab: 18, Title: "재해 저장본 확정 제출 · 로컬 검증", URL: "http://127.0.0.1:5173/qa/historical-submit.html".
+1 AXWebArea 재해 저장본 확정 제출 · 로컬 검증, URL: 127.0.0.1:5173/qa/historical-submit.html
+	2 container
+		3 text 로컬 UI QA · 실제 서버 입력·SWMM 결과 · 합성 회원·응답 · 운영 저장 없음
+		55 text 제출 요청 4회 · 생성 기록 2개 · 확정 저장본 2
+	5 container root
+		6 button 제출 내역 다시 불러오기
+		32 text 설치 시각 137초·3717초의 두 구 저장본. 확정 후 사건 전체 창 계산. 다른 창의 취소는 저장본 2.
+		33 button 다음 제출 응답 유실 재현
+		34 button 다른 창에서 취소 재현
+		35 container 재해 설계 제출
+			36 heading 설계 확정·기록 경쟁, Value: 3
+				37 text 설계 확정·기록 경쟁
+			38 container
+				39 text 확정할 설계 저장본  2
+			40 container
+				41 text 모든 구의  1 곳을 설치 시각과 무관하게 사건 시작부터 종료까지 다시 계산합니다.
+			42 text 현재 형상·과거 강우의 독립 표면 평가체적 순위입니다. 실제 재난 복원과 침수 총점은 아직 제공하지 않습니다.
+			43 button 설계 확정하고 제출
+			44 container
+				45 button (expanded) 내 제출 기록 · 2건, Secondary Actions: Collapse
+					46 text 내 제출 기록 · 
+					47 text 2
+					48 text 건
+				56 container
+					57 text 10. 19. 14:21:05  ·  1 곳  · 설계 저장본 2 확정
+				58 text 전체 기간 평가체적 감소 -0.00044877 m³ · 기록 경쟁 게시
+				59 container
+					60 text 8. 8. 18:00:00  –  8. 8. 23:59:00  KST
+				61 link Description: 제출 재현 자료 다운로드, Value: 127.0.0.1:5173/api/v1/historical/local-2/bundle
+				49 container
+					50 text 10. 19. 14:17:57  ·  2 곳  · 설계 저장본 1 확정
+				51 text 전체 기간 평가체적 감소 -0.00067061 m³ · 기록 경쟁 게시
+				52 container
+					53 text 8. 8. 18:00:00  –  8. 8. 23:59:00  KST
+				54 link Description: 제출 재현 자료 다운로드, Value: 127.0.0.1:5173/api/v1/historical/local-1/bundle
+
+The focused UI element is 1 AXWebArea 재해 저장본 확정 제출 · 로컬 검증, URL: 127.0.0.1:5173/qa/historical-submit.html

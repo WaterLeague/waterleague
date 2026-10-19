@@ -6,7 +6,9 @@ import io.waterleague.common.service.JsonService;
 import io.waterleague.cost.service.CostService;
 import io.waterleague.disaster.service.DisasterService;
 import io.waterleague.disaster.view.DisasterView;
+import io.waterleague.historical.dto.HistoricalDesignSubmissionRequest;
 import io.waterleague.historical.dto.HistoricalSubmissionRequest;
+import io.waterleague.historical.entity.HistoricalDesign;
 import io.waterleague.historical.entity.HistoricalExperiment;
 import io.waterleague.historical.repository.*;
 import io.waterleague.historical.view.HistoricalSubmissionView;
@@ -33,6 +35,7 @@ public class HistoricalSubmissionService {
   private final CostService costs;
   private final PlacementValidationService validation;
   private final JsonService json;
+  private final HistoricalDesignRepository designs;
 
   public HistoricalSubmissionService(
       HistoricalRepository jobs,
@@ -44,7 +47,8 @@ public class HistoricalSubmissionService {
       BudgetService budget,
       CostService costs,
       PlacementValidationService validation,
-      JsonService json) {
+      JsonService json,
+      HistoricalDesignRepository designs) {
     this.jobs = jobs;
     this.submissions = submissions;
     this.history = history;
@@ -55,6 +59,7 @@ public class HistoricalSubmissionService {
     this.costs = costs;
     this.validation = validation;
     this.json = json;
+    this.designs = designs;
   }
 
   private DisasterView.Event event(String id) {
@@ -66,16 +71,39 @@ public class HistoricalSubmissionService {
 
   @Transactional
   public HistoricalSubmissionView submit(UUID owner, HistoricalSubmissionRequest dto) {
-    if (dto.placements() == null || dto.placements().isEmpty() || dto.placements().size() > 50)
+    return create(owner, dto, null);
+  }
+
+  @Transactional
+  public HistoricalSubmissionView submitSaved(
+      UUID owner, String eventId, HistoricalDesignSubmissionRequest dto) {
+    return create(
+        owner, new HistoricalSubmissionRequest(dto.requestKey(), eventId, List.of()), dto);
+  }
+
+  private HistoricalSubmissionView create(
+      UUID owner, HistoricalSubmissionRequest dto, HistoricalDesignSubmissionRequest reference) {
+    if (reference == null
+        && (dto.placements() == null || dto.placements().isEmpty() || dto.placements().size() > 50))
       throw new DomainException(ErrorCode.PLACEMENT_INVALID);
-    var sorted =
+    List<HistoricalSubmissionRequest.Item> sorted =
         dto.placements().stream()
             .sorted(
                 Comparator.comparing(HistoricalSubmissionRequest.Item::districtId)
                     .thenComparing(HistoricalSubmissionRequest.Item::cellId))
             .toList();
     String raw =
-        json.write(new HistoricalSubmissionRequest(dto.requestKey(), dto.eventId(), sorted));
+        reference == null
+            ? json.write(new HistoricalSubmissionRequest(dto.requestKey(), dto.eventId(), sorted))
+            : json.write(
+                new TreeMap<>(
+                    Map.of(
+                        "mode",
+                        "SAVED_DESIGN_SUBMISSION_V1",
+                        "eventId",
+                        dto.eventId(),
+                        "request",
+                        reference)));
     admission.lockAdmission();
     admission.lockOwner(owner);
     var previous = jobs.byKey(owner, dto.requestKey());
@@ -85,6 +113,47 @@ public class HistoricalSubmissionService {
       return summary(previous.get());
     }
     var event = event(dto.eventId());
+    HistoricalDesign saved = null;
+    var savedRows = new HashMap<String, tools.jackson.databind.JsonNode>();
+    if (reference != null) {
+      saved =
+          designs
+              .latest(owner, dto.eventId())
+              .orElseThrow(() -> new DomainException(ErrorCode.RESOURCE_NOT_FOUND));
+      if (reference.revision() != saved.revision()
+          || !reference.snapshotSha256().equals(saved.snapshotSha256()))
+        throw new DomainException(ErrorCode.HISTORICAL_DESIGN_CONFLICT);
+      if (!json.hash(saved.snapshotRaw()).equals(saved.snapshotSha256()))
+        throw new DomainException(ErrorCode.HISTORICAL_DESIGN_INVALID);
+      var snapshot = json.tree(saved.snapshotRaw());
+      if (!snapshot.path("budgetPolicy").equals(json.tree(json.write(budget.policy())))
+          || !snapshot
+              .path("publicAssetPolicy")
+              .equals(json.tree(json.write(sites.publicAssetPolicy()))))
+        throw new DomainException(ErrorCode.HISTORICAL_SITE_CHANGED);
+      var items = new ArrayList<HistoricalSubmissionRequest.Item>();
+      for (var row : snapshot.path("placements")) {
+        var item = row.path("item");
+        String district = item.path("districtId").asString(), cell = item.path("cellId").asString();
+        savedRows.put(district + "/" + cell, row);
+        items.add(
+            new HistoricalSubmissionRequest.Item(
+                district,
+                cell,
+                FacilityType.valueOf(item.path("facilityType").asString()),
+                item.path("areaM2").decimalValue(),
+                Instant.parse(item.path("installedAt").asString()),
+                null));
+      }
+      if (items.isEmpty() || items.size() > 50 || savedRows.size() != items.size())
+        throw new DomainException(ErrorCode.PLACEMENT_INVALID);
+      sorted =
+          items.stream()
+              .sorted(
+                  Comparator.comparing(HistoricalSubmissionRequest.Item::districtId)
+                      .thenComparing(HistoricalSubmissionRequest.Item::cellId))
+              .toList();
+    }
     var regions = new TreeMap<String, DisasterView.Region>();
     event.regions().forEach(r -> regions.put(r.districtId(), r));
     var frozen = new ArrayList<Map<String, Object>>();
@@ -121,6 +190,14 @@ public class HistoricalSubmissionService {
               1);
       allocated.merge(p.facilityType(), amount, BigDecimal::add);
       var cost = costs.snapshot(site, p.facilityType(), p.areaM2(), amount.setScale(2));
+      var savedRow = savedRows.get(p.districtId() + "/" + p.cellId());
+      if (savedRow != null
+          && (!savedRow.path("site").path("modelHash").asString().equals(site.modelHash())
+              || !savedRow.path("rainfallModelHash").asString().equals(region.modelHash())
+              || savedRow.path("cost").decimalValue().compareTo(amount) != 0
+              || !json.hash(savedRow.path("costSnapshotRaw").asString())
+                  .equals(savedRow.path("costSnapshotSha256").asString())))
+        throw new DomainException(ErrorCode.HISTORICAL_SITE_CHANGED);
       var row = new TreeMap<String, Object>();
       row.put("districtId", p.districtId());
       row.put("cellId", p.cellId());
@@ -130,8 +207,12 @@ public class HistoricalSubmissionService {
       row.put("rainfallModelHash", region.modelHash());
       row.put("budgetPolicy", budget.policy());
       row.put("publicAssetPolicy", sites.publicAssetPolicy());
-      row.put("costSnapshotRaw", cost.raw());
-      row.put("costSnapshotSha256", cost.sha256());
+      row.put(
+          "costSnapshotRaw",
+          savedRow == null ? cost.raw() : savedRow.path("costSnapshotRaw").asString());
+      row.put(
+          "costSnapshotSha256",
+          savedRow == null ? cost.sha256() : savedRow.path("costSnapshotSha256").asString());
       row.put("experimentInstalledAt", p.installedAt().toString());
       if (p.experimentId() != null) row.put("parentExperimentId", p.experimentId().toString());
       frozen.add(row);
@@ -160,6 +241,12 @@ public class HistoricalSubmissionService {
     frozen.getFirst().put("submissionRulesHash", rulesHash);
     frozen.getFirst().put("submissionRequestRaw", raw);
     frozen.getFirst().put("budgetAccounting", accounting);
+    if (saved != null) {
+      // 확정 버튼이 가리킨 원 저장본을 제출에 묶고 실험 설치 시각은 계산 시각과 구분한다.
+      frozen.getFirst().put("submissionDesignRevision", saved.revision());
+      frozen.getFirst().put("submissionDesignSnapshotRaw", saved.snapshotRaw());
+      frozen.getFirst().put("submissionDesignSnapshotSha256", saved.snapshotSha256());
+    }
     String model = regions.get(sorted.getFirst().districtId()).modelHash(),
         body = json.write(frozen);
     if (jobs.active(owner) >= 2 || admission.totalActive() >= 20)
@@ -253,6 +340,9 @@ public class HistoricalSubmissionService {
         job.state(),
         job.createdAt(),
         json.tree(job.placements()).size(),
+        json.tree(job.placements()).get(0).has("submissionDesignRevision")
+            ? json.tree(job.placements()).get(0).path("submissionDesignRevision").longValue()
+            : null,
         result,
         Set.of("FAILED", "REJECTED").contains(job.state()) ? "전체 기간 계산 실패 · 순위 미게시" : "");
   }

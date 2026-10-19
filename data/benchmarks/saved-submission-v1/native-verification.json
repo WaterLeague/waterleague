@@ -1,0 +1,55 @@
+{
+  "classification": "SAVED_DESIGN_FINAL_SUBMISSION_INDEPENDENT_SURFACES",
+  "productionPublished": false,
+  "cases": [
+    {
+      "key": "original",
+      "path": "historical/dd02ab6e-7722-4208-b5aa-e6310d7b23b1/c1705d7b-a262-4082-b973-1f341a713522",
+      "differenceM3": -0.0006706068477768667,
+      "designRevision": 1,
+      "nativeFiles": {
+        "2410520/0/baseline.inp": "1d8382b5544f44b72eb88ca5d70adc99335740cb5e90f00c81f3ec96d90fa78a",
+        "2410520/0/baseline.out": "f0f8886ed669b19c3ed21c11386c0979af885805d9b50e054059902af6c13636",
+        "2410520/0/strategy.inp": "5386403419d6abad08e2a0f3a45112573d019d7bac3d021c183824edd72cbc15",
+        "2410520/0/strategy.out": "d78784f6de6523de2939fe33befd73deb4aa1df10c816b60be3bf8be69d35837",
+        "2419953/0/baseline.inp": "db72f6154c3b437d633b1bae9d37f194d167eabfd4a1e9cc42be6c769d360885",
+        "2419953/0/baseline.out": "1dd2e19040aacffced7b3f4869eef19876e51cf7187c6208901429e801f39669",
+        "2419953/0/strategy.inp": "73177ab5be1d75fade53502e80a0ff353157a66713a5337fe402cd52777c7938",
+        "2419953/0/strategy.out": "eed5a8cd981d2d324af5937035ecc2de46735b91ae45f190a14e9a342f51a949"
+      }
+    },
+    {
+      "key": "cancelled",
+      "path": "historical/f5e1a6bb-5374-4008-a7ec-86339f03365a/08444caa-e329-481e-b682-ddd55a40911d",
+      "differenceM3": -0.0004487733663296467,
+      "designRevision": 2,
+      "nativeFiles": {
+        "2419953/0/baseline.inp": "db72f6154c3b437d633b1bae9d37f194d167eabfd4a1e9cc42be6c769d360885",
+        "2419953/0/baseline.out": "1dd2e19040aacffced7b3f4869eef19876e51cf7187c6208901429e801f39669",
+        "2419953/0/strategy.inp": "73177ab5be1d75fade53502e80a0ff353157a66713a5337fe402cd52777c7938",
+        "2419953/0/strategy.out": "eed5a8cd981d2d324af5937035ecc2de46735b91ae45f190a14e9a342f51a949"
+      }
+    },
+    {
+      "key": "original",
+      "path": "historical/90660a1c-00ca-4a00-94ef-71a666d5b2b9/8da45de1-41c9-4561-b323-f3f081086749",
+      "differenceM3": -0.0006706068477768667,
+      "designRevision": 1,
+      "nativeFiles": {
+        "2410520/0/baseline.inp": "1d8382b5544f44b72eb88ca5d70adc99335740cb5e90f00c81f3ec96d90fa78a",
+        "2410520/0/baseline.out": "f0f8886ed669b19c3ed21c11386c0979af885805d9b50e054059902af6c13636",
+        "2410520/0/strategy.inp": "5386403419d6abad08e2a0f3a45112573d019d7bac3d021c183824edd72cbc15",
+        "2410520/0/strategy.out": "d78784f6de6523de2939fe33befd73deb4aa1df10c816b60be3bf8be69d35837",
+        "2419953/0/baseline.inp": "db72f6154c3b437d633b1bae9d37f194d167eabfd4a1e9cc42be6c769d360885",
+        "2419953/0/baseline.out": "1dd2e19040aacffced7b3f4869eef19876e51cf7187c6208901429e801f39669",
+        "2419953/0/strategy.inp": "73177ab5be1d75fade53502e80a0ff353157a66713a5337fe402cd52777c7938",
+        "2419953/0/strategy.out": "eed5a8cd981d2d324af5937035ecc2de46735b91ae45f190a14e9a342f51a949"
+      }
+    }
+  ],
+  "sameInputNativeReplay": true,
+  "corruptLineageRejected": true,
+  "limitations": [
+    "격리 DB 시험 회원; 연결 침수·당시 자산 복원·공식 총점 아님"
+  ]
+}

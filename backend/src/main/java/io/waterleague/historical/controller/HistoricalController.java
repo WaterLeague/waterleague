@@ -43,6 +43,18 @@ public class HistoricalController {
         .body(submissions.submit(owner, dto));
   }
 
+  @PostMapping("/designs/{eventId}/submissions")
+  public ResponseEntity<io.waterleague.historical.view.HistoricalSubmissionView> submitSaved(
+      Principal p,
+      @PathVariable String eventId,
+      @Valid @RequestBody io.waterleague.historical.dto.HistoricalDesignSubmissionRequest dto) {
+    var owner = accounts.current(p.getName()).id();
+    rates.check("historical-submit:" + owner, 20, 3600);
+    return ResponseEntity.accepted()
+        .cacheControl(CacheControl.noStore())
+        .body(submissions.submitSaved(owner, eventId, dto));
+  }
+
   @GetMapping("/submissions")
   public ResponseEntity<List<io.waterleague.historical.view.HistoricalSubmissionView>> submissions(
       Principal p, @RequestParam String eventId) {

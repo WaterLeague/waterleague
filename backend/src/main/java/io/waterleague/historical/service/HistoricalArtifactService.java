@@ -73,6 +73,13 @@ public class HistoricalArtifactService {
               .asString()
               .equals(json.tree(job.placements()).get(0).path("submissionRulesHash").asString()))
         throw invalid();
+      var head = json.tree(job.placements()).get(0);
+      if (submission
+          && head.has("submissionDesignSnapshotSha256")
+          && !manifest
+              .path("submission-design.json")
+              .asString()
+              .equals(head.path("submissionDesignSnapshotSha256").asString())) throw invalid();
       byte[] requestBytes =
           read(directory.resolve("request.json"), (submission ? 2048 : 256) * 1024);
       var request = json.tree(new String(requestBytes, StandardCharsets.UTF_8));

@@ -9,5 +9,6 @@ public record HistoricalSubmissionView(
     String state,
     Instant createdAt,
     int placementCount,
+    Long designRevision,
     JsonNode result,
     String message) {}

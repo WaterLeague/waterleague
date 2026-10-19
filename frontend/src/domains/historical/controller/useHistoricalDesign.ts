@@ -12,6 +12,7 @@ type State = {
   key: string;
   drafts: HistoricalDraft[];
   revision: number;
+  snapshotSha256: string | null;
   loaded: boolean;
   saving: boolean;
   error: string;
@@ -37,6 +38,7 @@ export function useHistoricalDesign(enabled: boolean, eventId: string, ownerId?:
       key,
       drafts: [],
       revision: 0,
+      snapshotSha256: null,
       loaded: false,
       saving: false,
       error: '',
@@ -67,6 +69,7 @@ export function useHistoricalDesign(enabled: boolean, eventId: string, ownerId?:
             loaded: true,
             drafts: restoreDesign(value, ownerId),
             revision: value.revision,
+            snapshotSha256: value.snapshotSha256,
             restoredSecond: value.snapshot?.elapsedSeconds ?? 0,
           });
       } catch (e) {
@@ -101,6 +104,7 @@ export function useHistoricalDesign(enabled: boolean, eventId: string, ownerId?:
                 ...s,
                 drafts,
                 revision: saved.revision,
+                snapshotSha256: saved.snapshotSha256,
                 saving: false,
                 pending: null,
                 error: '',
@@ -144,6 +148,7 @@ export function useHistoricalDesign(enabled: boolean, eventId: string, ownerId?:
   return {
     drafts: current?.drafts ?? [],
     revision: current?.revision ?? 0,
+    snapshotSha256: current?.snapshotSha256 ?? null,
     ready: !!current?.loaded && !current.saving && !current.pending,
     loading: enabled && !current?.loaded,
     saving: current?.saving ?? false,

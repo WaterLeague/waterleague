@@ -1,0 +1,262 @@
+{
+  "schemaVersion": 1,
+  "classification": "SAVED_DESIGN_FINAL_SUBMISSION_TEST_ONLY",
+  "createdAt": "2026-10-19T05:23:10.072663+00:00",
+  "baseCommit": "5a2104c4492f9da2c07e7f4e2926b8777a39dd40",
+  "rankingEligible": false,
+  "backend": {
+    "passed": 21,
+    "command": "simulation/.venv/bin/python scripts/verify_league_postgres.py --suite historical-submit-design",
+    "cases": [
+      "저장본/회원 소유/해시 결속",
+      "원가·설치 시각·사건 전체 창",
+      "편집 이후 멱등 요청 복원",
+      "동시 동일 요청 1개 생성",
+      "저장본/원가 변조·다른 회원·CSRF 거부",
+      "구형 요청 호환"
+    ]
+  },
+  "nativeWorker": {
+    "passed": 1,
+    "successfulSubmissions": 3,
+    "rejectedTamperedSubmission": 1,
+    "independentDistrictCalculations": 5,
+    "sameInputNativeFiles": 8,
+    "archivedFiles": 428,
+    "archive": {
+      "path": "data/runs/saved-submission-20261019-v1/archive-manifest.json",
+      "bytes": 90163,
+      "sha256": "d05125664d6d3e6c4f665d55760ec3374b95072e806ed10b808c463f46db45a0"
+    },
+    "negativeDifferencesM3": [
+      -0.0006706068477768667,
+      -0.0004487733663296467
+    ],
+    "sevenDayWarmupExcluded": true,
+    "fullEventApplied": true,
+    "originalCostsKrw": [
+      14000000,
+      7000000
+    ],
+    "posting": "ISOLATED_TEST_DATABASE_ONLY"
+  },
+  "frontend": {
+    "passed": 15,
+    "buildPassed": true,
+    "changedFilesFormattingPassed": true,
+    "dependencyChanges": false
+  },
+  "browser": {
+    "source": "frontend/qa/historical-submit.html",
+    "fixture": {
+      "path": "frontend/qa/saved-submission-fixture.local.json",
+      "bytes": 401517,
+      "sha256": "b54e34a5202433a72ae7277dd3a24c4007f7b28d3f784e10efde936c6093829b"
+    },
+    "engine": "in-app browser",
+    "cases": [
+      "응답 유실 후 2회 요청/1개 기록",
+      "다른 창 취소 후 저장본 충돌 안내",
+      "최신 저장본 다시 불러오기",
+      "새 저장본 제출 후 이전 기록·원 결과 보존"
+    ],
+    "accountAndQueueResponses": "LOCAL_MOCKS",
+    "outputs": "ACTUAL_NATIVE_SWMM_RESULTS",
+    "productionWrites": false
+  },
+  "preservation": {
+    "unchanged": true,
+    "tables": {
+      "historical_experiments": {
+        "count": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "historical_submissions": {
+        "count": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "historical_design_revisions": {
+        "count": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "shared_installations": {
+        "count": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "budget_ledger_entries": {
+        "count": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "limitation": "개발 원장 0건; 비어 있지 않은 설계·제출의 보존은 격리 DB에서 검증",
+    "health": "UP",
+    "anonymousDesign": 401,
+    "missingCsrf": 403
+  },
+  "limitations": [
+    "독립 표면 평가체적 합계이며 연결 유역 침수·Shapley 총점 아님",
+    "현재 형상·과거 강우 스트레스 시험으로 당시 시설/예산/가격 복원 아님",
+    "작은 음수는 현장 유의성·악화 검증 아님",
+    "전체 서울 공개 현재 계산 등록 유역 0개; 12시설 전체 설치·사업별 예산·실측 비교·대표 성능 등 미완료",
+    "네트워크 차단된 별도 작업 공간의 완전 독립 재생은 이번 검증 범위 아님"
+  ],
+  "sourceFiles": [
+    {
+      "path": "backend/src/main/java/io/waterleague/historical/controller/HistoricalController.java",
+      "bytes": 4752,
+      "sha256": "adcf5cd7369f1b514679af9c90ced1254ab90e35cd7f983505e0116cc37124cf"
+    },
+    {
+      "path": "backend/src/main/java/io/waterleague/historical/service/HistoricalArtifactService.java",
+      "bytes": 5186,
+      "sha256": "bf06c6cda9a710931c98901446d5e8872fc281a07aa4b321ec26fd688575b29e"
+    },
+    {
+      "path": "backend/src/main/java/io/waterleague/historical/service/HistoricalSubmissionService.java",
+      "bytes": 15302,
+      "sha256": "ff1bc7a1b5b54ba09140c965a0604da744b1ff2318f4c8770b5bf29182146b02"
+    },
+    {
+      "path": "backend/src/main/java/io/waterleague/historical/view/HistoricalSubmissionView.java",
+      "bytes": 318,
+      "sha256": "a1033eb4177020f356e076420efddd2e1fb5d85ca1b06525744e9ca0723bbb14"
+    },
+    {
+      "path": "backend/src/test/java/io/waterleague/ApiSecurityTests.java",
+      "bytes": 6028,
+      "sha256": "8d7ba228137efa8aa565c2a2cc3cfe4234f0bb04879b1cb12465925c8a49a1aa"
+    },
+    {
+      "path": "backend/src/test/java/io/waterleague/HistoricalSubmissionTests.java",
+      "bytes": 19480,
+      "sha256": "bd8f0e329cf75052cd45211464bad067f8b2d157f4f91cf0dd8bf5a9d330fa20"
+    },
+    {
+      "path": "frontend/qa/historical-submit.html",
+      "bytes": 6510,
+      "sha256": "08a46797942d1f0c979eda0d7d7e2456bb9a2bd768d8a1438420b934e1ad1e74"
+    },
+    {
+      "path": "frontend/src/domains/historical/controller/useHistorical.ts",
+      "bytes": 13484,
+      "sha256": "0eac2a16b72dd23f7a35a4325ef812aa810a2f5905daa5314927d45367a769bd"
+    },
+    {
+      "path": "frontend/src/domains/historical/controller/useHistoricalDesign.ts",
+      "bytes": 5511,
+      "sha256": "48c99811b223a776c3802bafc15bd9ef95c050fbcb56ff79907059265e206a35"
+    },
+    {
+      "path": "frontend/src/domains/historical/controller/useHistoricalSubmission.ts",
+      "bytes": 3509,
+      "sha256": "9bcf75feb0330a3a4e3d82775935683ebe7bfea887549c8fb1fba44ffc4df116"
+    },
+    {
+      "path": "frontend/src/domains/historical/entity/historicalSubmission.ts",
+      "bytes": 826,
+      "sha256": "25783132e99a8ae3310da682fe079b85336123eca3bc4da9dd2faa30e6c81e8e"
+    },
+    {
+      "path": "frontend/src/domains/historical/repository/submissionRepository.test.ts",
+      "bytes": 2087,
+      "sha256": "309bff497221495fbd540f631b661f9765cdda8826793b620d85f2078e667a7c"
+    },
+    {
+      "path": "frontend/src/domains/historical/repository/submissionRepository.ts",
+      "bytes": 1721,
+      "sha256": "37f508e5b2ae15a82a13c736299bfa3263e00d114e20b65175fa74e84d47d043"
+    },
+    {
+      "path": "frontend/src/domains/historical/view/HistoricalPanel.tsx",
+      "bytes": 16592,
+      "sha256": "95c962a8e9fc69e1d87117c1829c6f80ec8a95c5d7dc117f6169f196ee4194c7"
+    },
+    {
+      "path": "frontend/src/domains/historical/view/HistoricalSubmissionPanel.tsx",
+      "bytes": 3385,
+      "sha256": "a7342fa1c44a140605ed9086df7cca3e157c8910b31817c890c0f23ecc85d6a9"
+    },
+    {
+      "path": "scripts/verify_league_postgres.py",
+      "bytes": 8405,
+      "sha256": "a7f14950c1457f509b61597910430d42fdfc08b73ac53c5ef6c3bb980e1f32eb"
+    },
+    {
+      "path": "simulation/waterleague_sim/run_historical_submission.py",
+      "bytes": 8718,
+      "sha256": "4795a7e1c4ed7859c151ee47056a58fd0dd403a3c327b7b0e1a2c9149b0fc72b"
+    },
+    {
+      "path": "backend/src/main/java/io/waterleague/historical/dto/HistoricalDesignSubmissionRequest.java",
+      "bytes": 287,
+      "sha256": "f6e849ea64750c455913f443c76204062f8d3e0acc353e47fe0a44cc7dfcdbb4"
+    },
+    {
+      "path": "simulation/integration/test_saved_submission.py",
+      "bytes": 6258,
+      "sha256": "cadeabd9d2e44262064d800b66614038dcaa2c22891b5dad383234137f88f14e"
+    }
+  ],
+  "evidenceFiles": [
+    {
+      "path": "data/benchmarks/saved-submission-v1/cancelled-new-submission.png",
+      "bytes": 48125,
+      "sha256": "f681df263dcb936b858da2662eedcd06ad4b66acae4474582195de99cce60f2d"
+    },
+    {
+      "path": "data/benchmarks/saved-submission-v1/cancelled-new-submission.txt",
+      "bytes": 2266,
+      "sha256": "ad3f007445809b978e410ca3aff1f079e7ce083e2aef8013a249d8d7ac4c5545"
+    },
+    {
+      "path": "data/benchmarks/saved-submission-v1/conflict.png",
+      "bytes": 45897,
+      "sha256": "0cf0b03ec6155ae15b23b76e2608f20dac67d319568b3440091df237f3eb2ba3"
+    },
+    {
+      "path": "data/benchmarks/saved-submission-v1/conflict.txt",
+      "bytes": 2095,
+      "sha256": "5ad6b00af367b57aea10e25a2eeef70c449023d42443e4308d8f78b8c6e640ca"
+    },
+    {
+      "path": "data/benchmarks/saved-submission-v1/development-preservation.json",
+      "bytes": 921,
+      "sha256": "fe301044075b3990e29ebf71f8c68b3ca2a826c20a5eb76727eeb34dda88f44e"
+    },
+    {
+      "path": "data/benchmarks/saved-submission-v1/frontend-build.txt",
+      "bytes": 999,
+      "sha256": "a6844b9c3a3cd707cf2acf17bc49b577f605fd0ce768535a5ea5db4fbb65c73f"
+    },
+    {
+      "path": "data/benchmarks/saved-submission-v1/frontend-format.txt",
+      "bytes": 66,
+      "sha256": "17aa973d3f004560237d9a95171210b0671deff23d61628eecf7322ff5938f20"
+    },
+    {
+      "path": "data/benchmarks/saved-submission-v1/frontend-tests.txt",
+      "bytes": 245,
+      "sha256": "d8a71d5898158c75598447abebab33a2117ba8407265f1be168b0485a6ed6164"
+    },
+    {
+      "path": "data/benchmarks/saved-submission-v1/native-verification.json",
+      "bytes": 3076,
+      "sha256": "1d5f77eca22a3841ddbbbeab7f3fea5b37c8bfe295be2b4040283e0243709913"
+    },
+    {
+      "path": "data/benchmarks/saved-submission-v1/retry.png",
+      "bytes": 40612,
+      "sha256": "e34cf17add311a2c6f3394f9e30bbfdd7a564c209180a6dc3b289140cc8138bb"
+    },
+    {
+      "path": "data/benchmarks/saved-submission-v1/retry.txt",
+      "bytes": 315,
+      "sha256": "5c03b4739181c49e89efd14f97adb11586b1b006fdf0753e275ba3db05c3d39e"
+    },
+    {
+      "path": "data/benchmarks/saved-submission-v1/server-worker-summary.txt",
+      "bytes": 660,
+      "sha256": "a8332f6dec51c8d6863b8c547d6d39df8ccac7223e22dff9c21c94fb4ba7e06c"
+    }
+  ]
+}

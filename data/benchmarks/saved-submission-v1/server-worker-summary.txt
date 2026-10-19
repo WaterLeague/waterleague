@@ -1,0 +1,8 @@
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.683 s -- in io.waterleague.HistoricalSubmissionTests
+[INFO] Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.754 s -- in io.waterleague.HistoricalDesignTests
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.594 s -- in io.waterleague.ApiSecurityTests
+[INFO] Tests run: 21, Failures: 0, Errors: 0, Skipped: 0
+[INFO] BUILD SUCCESS
+test_saved_final_design_replay_cancelled_revision_and_corrupt_lineage (test_saved_submission.SavedSubmissionTests.test_saved_final_design_replay_cancelled_revision_and_corrupt_lineage) ... ok
+Ran 1 test in 10.726s
+OK

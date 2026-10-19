@@ -3,16 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>재해 전체 기간 제출 · 로컬 검증</title>
+    <title>재해 저장본 확정 제출 · 로컬 검증</title>
   </head>
   <body style="margin: 0; background: #f2f3ee; color: #284133; font: 14px system-ui">
     <header style="padding: 20px">
-      <strong>로컬 UI QA · 실제 SWMM 결과 · 합성 회원 · 서버 저장 없음</strong>
-      <p>
-        격리 PostgreSQL에서 서버가 고정한 두 구의 설계로 실행한 원 결과. 제출 큐·순위 응답만 로컬
-        대체.
-      </p>
-      <p id="status" role="status">제출 요청 0회</p>
+      <strong>로컬 UI QA · 실제 서버 입력·SWMM 결과 · 합성 회원·응답 · 운영 저장 없음</strong>
+      <p id="status" role="status">제출 요청 0회 · 생성 기록 0개</p>
     </header>
     <main id="root" style="max-width: 900px; margin: auto; padding: 20px"></main>
     <script type="module">
@@ -23,72 +19,73 @@
         { createRoot },
         { useHistoricalSubmission },
         { HistoricalSubmissionPanel },
-        { HistoricalBoard },
       ] = await Promise.all([
         import('react'),
         import('react-dom/client'),
         import('/src/domains/historical/controller/useHistoricalSubmission.ts'),
         import('/src/domains/historical/view/HistoricalSubmissionPanel.tsx'),
-        import('/src/domains/historical/view/HistoricalBoard.tsx'),
         import('/src/shared/ui/base.css'),
         import('/src/shared/ui/game.css'),
         import('/src/domains/historical/view/historical.css'),
       ]);
-      const output = await (await fetch('/qa/historical-submission-result.local.json')).json();
-      const request = await (await fetch('/qa/historical-submission-request.local.json')).json();
-      const frozen = JSON.parse(request.placements),
-        records = new Map(),
+      const fixture = await (await fetch('/qa/saved-submission-fixture.local.json')).json();
+      const refs = [fixture.design, fixture.cancelledDesign],
+        outputs = fixture.outputs;
+      const records = new Map(),
         originalFetch = window.fetch.bind(window);
-      let calls = 0,
-        next = 0;
-      const summary = (record) => ({
-        ...record,
-        result: record.state === 'SUCCEEDED' ? output : null,
+      let currentRevision = 1,
+        calls = 0,
+        loseNext = false;
+      const response = (data, status = 200) =>
+        Promise.resolve(
+          new Response(JSON.stringify(data), {
+            status,
+            headers: { 'Content-Type': 'application/json' },
+          })
+        );
+      const summary = (r) => ({
+        ...r,
+        result: r.state === 'SUCCEEDED' ? outputs[r.designRevision - 1] : null,
       });
       window.fetch = async (url, init = {}) => {
-        const path = String(url),
-          response = (data, status = 200) =>
-            Promise.resolve(
-              new Response(JSON.stringify(data), {
-                status,
-                headers: { 'Content-Type': 'application/json' },
-              })
-            );
+        const path = String(url);
         if (path === '/api/v1/auth/csrf')
           return response({ token: 'qa-only', headerName: 'X-CSRF-TOKEN' });
         if (path.startsWith('/api/v1/historical/submissions?'))
           return response([...records.values()].map(summary));
-        if (path === '/api/v1/historical/submissions' && init.method === 'POST') {
-          const body = JSON.parse(init.body);
-          if (
-            body.eventId !== output.eventId ||
-            body.placements.length !== frozen.length ||
-            body.placements.some(
-              (p) =>
-                !frozen.some(
-                  (f) =>
-                    p.districtId === f.districtId &&
-                    p.cellId === f.cellId &&
-                    p.facilityType === f.facilityType &&
-                    p.areaM2 === f.areaM2
-                )
-            )
-          )
-            throw new Error('원 실행과 다른 설계 거부');
+        if (
+          path === `/api/v1/historical/designs/${fixture.design.eventId}/submissions` &&
+          init.method === 'POST'
+        ) {
           calls++;
-          document.querySelector('#status').textContent =
-            `제출 요청 ${calls}회 · 구 ${new Set(body.placements.map((p) => p.districtId)).size}곳 · 시설 ${body.placements.length}곳`;
+          const body = JSON.parse(init.body);
           let record = [...records.values()].find((r) => r.key === body.requestKey);
           if (!record) {
+            const saved = refs[currentRevision - 1];
+            if (body.revision !== saved.revision || body.snapshotSha256 !== saved.snapshotSha256)
+              return response(
+                {
+                  code: 'HISTORICAL_DESIGN_CONFLICT',
+                  detail: '다른 화면에서 설계가 변경되었습니다. 저장된 설계를 다시 불러와 주세요',
+                },
+                409
+              );
             record = {
-              id: 'local-' + ++next,
+              id: 'local-' + (records.size + 1),
               key: body.requestKey,
               createdAt: new Date().toISOString(),
-              placementCount: body.placements.length,
+              placementCount: saved.snapshot.placements.length,
+              designRevision: saved.revision,
               state: 'QUEUED',
               message: '',
             };
             records.set(record.id, record);
+          }
+          document.querySelector('#status').textContent =
+            `제출 요청 ${calls}회 · 생성 기록 ${records.size}개 · 확정 저장본 ${record.designRevision}`;
+          if (loseNext) {
+            loseNext = false;
+            throw new TypeError('시험 응답 유실');
           }
           return response(summary(record));
         }
@@ -97,62 +94,55 @@
           record.state = 'SUCCEEDED';
           return response(summary(record));
         }
-        if (path.startsWith('/api/v1/historical/leaderboard/'))
-          return response({
-            eventId: output.eventId,
-            title: '2022. 08. 08 집중호우',
-            officialTotalScore: false,
-            groups: [...records.values()].some((r) => r.state === 'SUCCEEDED')
-              ? [
-                  {
-                    rulesHash: output.rulesHash,
-                    entries: [
-                      {
-                        id: 'local',
-                        displayName: '로컬 QA 회원',
-                        rank: 1,
-                        differenceM3: output.differenceM3,
-                        costKrw: 14000000,
-                        submittedAt: [...records.values()][0].createdAt,
-                      },
-                    ],
-                  },
-                ]
-              : [],
-          });
-        if (init.method && init.method !== 'GET') throw new Error('서버 쓰기 차단');
+        if (path.startsWith('/api/') && path !== '/api/v1/auth/csrf')
+          throw new Error('운영 API 접근 차단');
         return originalFetch(url, init);
       };
-      const drafts = frozen.map((f) => ({
-        site: { districtId: f.districtId, cellId: f.cellId },
-        facilityType: f.facilityType,
-        areaM2: f.areaM2,
-        marker: { installedAt: f.experimentInstalledAt },
-      }));
       function App() {
-        const submission = useHistoricalSubmission(true, 'local-only', output.eventId);
-        const [showBoard, setShowBoard] = React.useState(false);
+        const [design, setDesign] = React.useState(refs[0]);
+        const submission = useHistoricalSubmission(true, 'local-only', design.eventId);
         return React.createElement(
           React.Fragment,
           null,
           React.createElement(
             'p',
             null,
-            '실험 설치 시각: 두 구의 137초 / 197초. 제출 계산: 사건 시작부터 종료까지.'
+            '설치 시각 137초·3717초의 두 구 저장본. 확정 후 사건 전체 창 계산. 다른 창의 취소는 저장본 2.'
+          ),
+          React.createElement(
+            'button',
+            {
+              onClick: () => {
+                loseNext = true;
+              },
+            },
+            '다음 제출 응답 유실 재현'
+          ),
+          React.createElement(
+            'button',
+            {
+              onClick: () => {
+                currentRevision = 2;
+                document.querySelector('#status').textContent =
+                  '다른 창에서 한 시설 취소 · 서버 저장본 2 · 현재 화면 저장본 유지';
+              },
+            },
+            '다른 창에서 취소 재현'
           ),
           React.createElement(HistoricalSubmissionPanel, {
             submission,
-            draftCount: drafts.length,
-            submit: () => submission.submit(drafts, {}),
+            draftCount: design.snapshot.placements.length,
+            designRevision: design.revision,
+            designReady: true,
             authenticated: true,
             onLogin: () => {},
-          }),
-          React.createElement(
-            'button',
-            { onClick: () => setShowBoard((v) => !v) },
-            '재해 기록 경쟁 보기'
-          ),
-          showBoard && React.createElement(HistoricalBoard)
+            onReloadDesign: () => setDesign(refs[currentRevision - 1]),
+            submit: () =>
+              submission.submit({
+                revision: design.revision,
+                snapshotSha256: design.snapshotSha256,
+              }),
+          })
         );
       }
       function Shell() {

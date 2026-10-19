@@ -1,0 +1,29 @@
+{
+  "unchanged": true,
+  "tables": {
+    "historical_experiments": {
+      "count": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "historical_submissions": {
+      "count": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "historical_design_revisions": {
+      "count": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "shared_installations": {
+      "count": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "budget_ledger_entries": {
+      "count": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "limitation": "개발 원장 0건; 비어 있지 않은 설계·제출의 보존은 격리 DB에서 검증",
+  "health": "UP",
+  "anonymousDesign": 401,
+  "missingCsrf": 403
+}

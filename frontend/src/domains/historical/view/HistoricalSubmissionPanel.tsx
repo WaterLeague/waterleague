@@ -17,6 +17,8 @@ export function HistoricalSubmissionPanel({
   authenticated,
   onLogin,
   designReady = true,
+  designRevision,
+  onReloadDesign,
 }: {
   submission: ReturnType<typeof useHistoricalSubmission>;
   draftCount: number;
@@ -24,10 +26,13 @@ export function HistoricalSubmissionPanel({
   authenticated: boolean;
   onLogin: () => void;
   designReady?: boolean;
+  designRevision?: number;
+  onReloadDesign?: () => void;
 }) {
   return (
     <section className="historical-submission" aria-label="재해 설계 제출">
       <h3>설계 확정·기록 경쟁</h3>
+      {authenticated && !!designRevision && <p>확정할 설계 저장본 {designRevision}</p>}
       <p>모든 구의 {draftCount}곳을 설치 시각과 무관하게 사건 시작부터 종료까지 다시 계산합니다.</p>
       <p>
         현재 형상·과거 강우의 독립 표면 평가체적 순위입니다. 실제 재난 복원과 침수 총점은 아직
@@ -43,6 +48,11 @@ export function HistoricalSubmissionPanel({
         {submission.busy ? '설계 제출 중' : authenticated ? '설계 확정하고 제출' : '로그인 후 제출'}
       </button>
       {submission.error && <p role="alert">{submission.error}</p>}
+      {submission.conflict && onReloadDesign && (
+        <button disabled={submission.busy || !designReady} onClick={onReloadDesign}>
+          저장된 설계 다시 불러오기
+        </button>
+      )}
       {submission.records.length > 0 && (
         <details open>
           <summary>내 제출 기록 · {submission.records.length}건</summary>
@@ -50,6 +60,7 @@ export function HistoricalSubmissionPanel({
             <article key={record.id}>
               <strong>
                 {time(record.createdAt)} · {record.placementCount}곳
+                {record.designRevision != null && ` · 설계 저장본 ${record.designRevision} 확정`}
               </strong>
               <p>
                 {record.state === 'SUCCEEDED' && record.result

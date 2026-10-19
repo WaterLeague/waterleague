@@ -100,6 +100,19 @@ class ApiSecurityTests {
 
   @Test
   void rejectsWritesWithoutCsrf() throws Exception {
+    var submission =
+        client.send(
+            HttpRequest.newBuilder(
+                    URI.create(
+                        "http://127.0.0.1:"
+                            + port
+                            + "/api/v1/historical/designs/seoul-20220808/submissions"))
+                .POST(HttpRequest.BodyPublishers.ofString("{}"))
+                .header("Content-Type", "application/json")
+                .build(),
+            HttpResponse.BodyHandlers.ofString());
+    assertThat(submission.statusCode()).isEqualTo(403);
+    assertThat(submission.body()).doesNotContain("stackTrace", "snapshot_raw");
     var design =
         client.send(
             HttpRequest.newBuilder(

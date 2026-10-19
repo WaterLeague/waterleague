@@ -142,6 +142,7 @@ RFC 9457 `application/problem+json`: type, title, status, detail, instance, code
 - 결과의 선택 `initializationSensitivity`는 동일 7일 관측과 건조/포화 시드의 평가 시작 상태·평가 지표·차이·조건별 성공/실패 보고서. 식생수로 v2는 단일 시작 상태·원 지표만 반환하며 건습 차이 목록은 빈 배열. 조건 실패 시 `comparison.status=INCOMPLETE`, 범위·차이 null. 일반 결과·순위에 비교 효과 합산 없음. 소유자 전용 재현 ZIP에 `sensitivity/`의 원 입력·계산·실패·해시 포함, 기존 경로/크기/변조/심볼릭 링크 차단 유지.
 - `GET /api/v1/historical`, `GET /api/v1/historical/{id}`: 요청자 본인의 비공개 작업 목록·상태·결과.
 - `GET /api/v1/historical/{id}/bundle`: 본인 성공 작업의 해시 검증된 재현 묶음. 경로 이탈·심볼릭 링크·파일 변조 차단.
+- `POST /api/v1/historical/designs/{eventId}/submissions`: 본인 최신 저장본의 `requestKey`, `revision`, `snapshotSha256`만 입력. 서버가 불변 저장본의 전체 구 배치·원 설치 시각·원가를 가져와 사건 전체 기간 제출로 생성. 인증·CSRF·회원별 시간당 20회 제한·no-store 적용. 저장본 변경은 `HISTORICAL_DESIGN_CONFLICT` 409, 현재 형상/가격/정책 변경은 `HISTORICAL_SITE_CHANGED` 409, 다른 소유자의 설계는 조회 불가. 기존 요청 키 재전송은 이후 편집에도 원 제출 반환. 응답 `designRevision`은 구형 제출에서 null이며 기존 `/historical/submissions`와 원 요청·비용·결과 보존. 재현 묶음은 고정한 `submission-design.json` 해시 추가 검사.
 
 재해 설계 예산은 회원당 20억 원이며 여러 구의 설계 초안을 합산. 서울시 빗물관리시설 전체 사업 규모를 개인에게 적용한 게임 규칙으로 실제 지급액이 아님. 결과는 선택 표면의 기준 대비 유출·배수·순저류 체적 비교. 관망·실제 침수 복원 결과로 확대 해석 금지.
 

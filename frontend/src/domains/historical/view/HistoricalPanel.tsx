@@ -351,6 +351,8 @@ export function HistoricalPanel({
         authenticated={authenticated}
         onLogin={onLogin}
         designReady={s.design.ready}
+        designRevision={s.design.revision}
+        onReloadDesign={s.design.reload}
       />
       {s.currentResult && (
         <section className="historical-result" aria-label="과거 강우 비교 결과">

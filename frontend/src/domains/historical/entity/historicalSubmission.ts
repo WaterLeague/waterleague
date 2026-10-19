@@ -3,6 +3,7 @@ export interface HistoricalSubmission {
   state: 'QUEUED' | 'RUNNING' | 'SUCCEEDED' | 'FAILED' | 'REJECTED';
   createdAt: string;
   placementCount: number;
+  designRevision?: number | null;
   message: string;
   result: null | {
     submissionPolicy: 'FULL_EVENT_INDEPENDENT_SURFACES_V1';
