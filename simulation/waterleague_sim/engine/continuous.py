@@ -38,7 +38,8 @@ def engine_identity():
             raise ValueError()
     except (OSError, KeyError, ValueError):
         raise SimulationQualityError('LIVE_ENGINE_IDENTITY_INVALID') from None
-    return identity | {'adapterSha256': digest(Path(__file__).read_bytes())}
+    return identity | {'adapterSha256': digest(Path(__file__).read_bytes()),
+                       'geometryAdapterSha256': digest((ROOT/'simulation/waterleague_sim/spatial/geometry.py').read_bytes())}
 
 
 def validated_period(model):
@@ -61,6 +62,24 @@ def validated_period(model):
 
 def input_source(model, placements, evaporation):
     start, count = validated_period(model)
+    if 'geometry' in model['cells'][0]:
+        from ..spatial.geometry import SiteGeometryError, cell_geometry, dimensions
+        cell = model['cells'][0]
+        try:
+            if cell.get('geometryCrs') != 'EPSG:5186':
+                raise SiteGeometryError('SITE_METRIC_CRS_REQUIRED')
+            geometry = cell_geometry(cell)
+            if (type(cell['maxAreaM2']) not in (int, float) or not math.isfinite(cell['maxAreaM2'])
+                    or not 0 < cell['maxAreaM2'] <= geometry.area):
+                raise SiteGeometryError('SITE_POLYGON_LIMIT_INVALID')
+            expected = dimensions(geometry)
+            physical = cell['physicalInputs']
+            if (not isinstance(physical, dict) or physical.get('widthMethod') != expected['widthMethod']
+                    or any(not math.isclose(physical[key], expected[key], rel_tol=1e-10, abs_tol=1e-6)
+                           for key in ('flowLengthM', 'runoffWidthM'))):
+                raise SiteGeometryError('SITE_FLOW_DIMENSIONS_INVALID')
+        except (SiteGeometryError, KeyError, TypeError, ValueError):
+            raise SimulationQualityError('LIVE_SITE_GEOMETRY_INVALID') from None
     for placement in placements:
         if placement['facilityType'] == 'VEGETATIVE_SWALE':
             from .facilities import swale_design
@@ -333,6 +352,7 @@ def experiment(model, placement, directory, evaporation=None, *, installed_at=No
     for name, value in [('model', model), ('placement', placement), ('result', result)]:
         (directory/f'{name}.json').write_text(json.dumps(value, ensure_ascii=False, allow_nan=False)+'\n')
     (directory/'continuous.py').write_bytes(Path(__file__).read_bytes())
+    (directory/'site_geometry.py').write_bytes((ROOT/'simulation/waterleague_sim/spatial/geometry.py').read_bytes())
     (directory/'builder.py').write_bytes((Path(__file__).parent/'swmm.py').read_bytes())
     (directory/'lid_snapshot.inc').write_bytes((ROOT/'simulation/native/lid_snapshot.inc').read_bytes())
     (directory/'manifest.json').write_text(json.dumps({
