@@ -207,3 +207,7 @@ RFC 9457 `application/problem+json`: type, title, status, detail, instance, code
 2026-10-19 지도 점수 응답: GET `/api/v1/installations`에 `scoreM3`(이번 KST 주간 서버 계산값, 미반영 null), `evaluatedThrough`(반영 원시각, 미반영 null) 추가. 기존 공개 설치 소유자 닉네임·위치 조회 권한 유지. 점수는 활성 시설에 대해 일괄 조회하고 클라이언트가 생성한 효과 수치 사용 금지. GET `/api/v1/rainfall/live`에 `windDirectionDeg`(AWS WD10, 0~360 또는 null) 추가. 360 무풍 코드는 시각 유향으로 변환하지 않으며 기존 WS10 풍속·관측 시각과 같은 행을 사용한다.
 
 게스트 재해 GET 목록·개별 조회·POST 멱등 재응답은 진행 전용 결과를 반환한다. 사건 전체 합계 3종·시설별 전체 기간 유출 비교·마지막 시계열 구간은 서버에서 제외한다. 원 계산 결과와 재현 원본은 DB에 보존하고 로그인 후 제출·최종 기록 경로는 기존 소유권·CSRF 검증을 유지한다.
+
+## 도시 현재 표시 자료 (2026-10-19)
+
+`GET /api/v1/urban/live?places=POI001,POI068`은 비회원 조회, IP당 분당 30회, ID 1~6개·중복/미등록 ID 거부, `Cache-Control: no-store`. 고정 카탈로그 해시·공식 출처 URL·장소별 인구/도로 값을 반환한다. `population`은 `minimum/maximum/sourceHourKst/congestion/retrievedAt/validUntil/sourceSha256`, `traffic`은 `speedKmh/observedAt/retrievedAt/validUntil/sourceSha256`. 인구의 조회 시각을 관측 시각으로 제공하지 않는다. 인구/교통 실패 필드는 각각 null과 일반화한 상태 코드이며 외부 HTML·내부 예외·키·URL 쿼리를 응답에 전달하지 않는다. 과거 사건 계산·점수·랭킹 입력에 사용하지 않는 현재 표시 자료다.

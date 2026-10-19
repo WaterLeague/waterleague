@@ -7,12 +7,17 @@ import type { Terrain } from '../../terrain/entity/terrain';
 import { streetHeight } from '../service/streetGeometryService';
 import {
   distanceToStreet,
+  advanceTravel,
+  streetSpeed,
+  travellingPosition,
   movingPosition,
   pathPosition,
   stableSeed,
   streetPath,
 } from '../service/streetLifeService';
 import { displayDensity, populationAt } from '../service/populationService';
+import type { LivePlace } from '../entity/liveUrban';
+import { freshReading, livePlaceAt } from '../service/liveUrbanService';
 import { urbanTime } from '../service/urbanTimeService';
 import { useUrbanLighting } from './UrbanEnvironment';
 const LIMIT = 500;
@@ -24,6 +29,7 @@ export const StreetLife = memo(function StreetLife({
   distance,
   clock,
   population,
+  livePlaces,
   city,
   animate,
 }: {
@@ -33,6 +39,7 @@ export const StreetLife = memo(function StreetLife({
   distance: number;
   clock: UrbanTime;
   population: Population | null;
+  livePlaces: LivePlace[];
   city: City;
   animate: boolean;
 }) {
@@ -94,6 +101,7 @@ export const StreetLife = memo(function StreetLife({
                 (_, i) => ({
                   path,
                   walking,
+                  motion: { time: NaN, distance: 0 },
                   seed: stableSeed(path.road.id + ':' + walking + ':' + i),
                   budget: stableSeed(path.road.id + ':budget:' + walking + ':' + i),
                 })
@@ -124,8 +132,17 @@ export const StreetLife = memo(function StreetLife({
     if (!cars.current || !people.current || !poles.current) return;
     const at = urbanTime(clock);
     if (at == null) return;
-    if (animate || lastTime.current == null || !clock.current.playing) lastTime.current = at / 1000;
+    if (animate || lastTime.current == null || (clock.current.historical && !clock.current.playing))
+      lastTime.current = at / 1000;
     const time = lastTime.current;
+    const now = Date.now();
+    const currentPlaces = clock.current.historical
+      ? []
+      : livePlaces.map((place) => ({
+          ...place,
+          population: freshReading(place.population, now),
+          traffic: freshReading(place.traffic, now),
+        }));
     let carCount = 0,
       personCount = 0;
     const put = (
@@ -170,11 +187,46 @@ export const StreetLife = memo(function StreetLife({
     }
     if (distance < 8500)
       for (const agent of agents) {
-        const density = cached.values.get(agent.path.road.districtId) ?? 0.3;
+        let position = movingPosition(agent.path, time, agent.seed, agent.walking);
+        if (!clock.current.historical) {
+          const speed = streetSpeed(agent.path, agent.seed, agent.walking);
+          if (!Number.isFinite(agent.motion.time))
+            agent.motion = { time, distance: (time * speed) % agent.path.length };
+          position = travellingPosition(
+            agent.path,
+            agent.motion.distance,
+            agent.seed,
+            agent.walking
+          );
+          const place = livePlaceAt(currentPlaces, position.x, position.y);
+          const traffic = place?.traffic;
+          // 갱신된 속도를 이동량에 적분하여 자료 갱신 때 차량 위치가 튀지 않게 한다.
+          agent.motion = advanceTravel(
+            agent.motion,
+            time,
+            !agent.walking && traffic ? traffic.speedKmh / 3.6 : speed
+          );
+          position = travellingPosition(
+            agent.path,
+            agent.motion.distance,
+            agent.seed,
+            agent.walking
+          );
+        } else agent.motion.time = NaN;
+        const place = clock.current.historical
+          ? undefined
+          : livePlaceAt(currentPlaces, position.x, position.y);
+        const currentPopulation = place?.population;
+        const density =
+          currentPopulation && place
+            ? displayDensity(
+                (currentPopulation.minimum + currentPopulation.maximum) / 2,
+                place.areaKm2
+              )
+            : (cached.values.get(agent.path.road.districtId) ?? 0.3);
         if (agent.budget > Math.min(0.95, density * 0.6)) continue;
         if (agent.walking && (personCount >= 180 || distance > 4000)) continue;
         if (!agent.walking && carCount >= 300) continue;
-        const position = movingPosition(agent.path, time, agent.seed, agent.walking);
         if (
           Math.hypot(position.x - center[0], position.y - center[1]) > Math.max(750, distance * 0.9)
         )

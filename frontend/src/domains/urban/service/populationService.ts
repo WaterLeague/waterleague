@@ -20,5 +20,7 @@ export function populationAt(
 }
 export function displayDensity(people: number | undefined, areaKm2: number) {
   // 생활인구를 개별 차량·보행자의 관측으로 변환하지 않고 표시 예산만 비례 배분한다.
-  return people == null ? 0.3 : Math.max(0.08, Math.min(2, people / Math.max(1, areaKm2) / 15000));
+  return people == null
+    ? 0.3
+    : Math.max(0.08, Math.min(2, people / Math.max(0.001, areaKm2) / 15000));
 }

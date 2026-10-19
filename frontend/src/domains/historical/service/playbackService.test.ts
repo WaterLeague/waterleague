@@ -6,6 +6,11 @@ describe('실제 경과 시간 기반 재해 재생', () => {
     expect(rainfallFrame(playbackSecond(0, 59999, 1, 120), 2)).toBe(0);
     expect(rainfallFrame(playbackSecond(0, 60000, 1, 120), 2)).toBe(1);
   });
+  it.each([2, 3, 5, 10])('%i배속의 경과 시간과 분 관측 경계 보존', (speed) => {
+    expect(playbackSecond(50, 2000, speed, 120)).toBe(50 + 2 * speed);
+    expect(rainfallFrame(playbackSecond(0, 60000 / speed - 1, speed, 120), 2)).toBe(0);
+    expect(rainfallFrame(playbackSecond(0, 60000 / speed, speed, 120), 2)).toBe(1);
+  });
   it('늦은 콜백에서도 실제 경과 시간 반영 및 종료 범위 제한', () => {
     expect(playbackSecond(5, 3200, 1, 120)).toBe(8);
     expect(playbackSecond(60, 2000, 60, 120)).toBe(120);

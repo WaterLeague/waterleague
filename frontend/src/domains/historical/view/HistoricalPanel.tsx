@@ -101,7 +101,7 @@ export function HistoricalTimeline({
             value={s.speed}
             onChange={(e) => s.setSpeed(Number(e.target.value))}
           >
-            {[1, 60, 240, 900, 3600].map((v) => (
+            {[1, 2, 3, 5, 10, 60, 240, 900, 3600].map((v) => (
               <option key={v} value={v}>
                 {v}배속
               </option>

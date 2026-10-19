@@ -52,6 +52,7 @@ import { RiverLayer } from '../../surface/view/RiverLayer';
 import { WaterScene } from '../../surface/view/WaterScene';
 import { calmWater, type WaterWeather } from '../../surface/service/waterAppearanceService';
 import type { CisternGeometryPreview } from '../../installation/dto/cisternLayoutDto';
+import type { LivePlace } from '../../urban/entity/liveUrban';
 import type { Street, UrbanTime, Population } from '../../urban/entity/urban';
 import { UrbanEnvironment } from '../../urban/view/UrbanEnvironment';
 import { BuildingMaterial } from '../../urban/view/BuildingMaterial';
@@ -368,6 +369,7 @@ const CityScene = memo(function CityScene({
   urbanClock,
   streets,
   population,
+  livePlaces,
   waterWeather = calmWater,
   surfaceFrame = null,
   publicSurfaceFrames = [],
@@ -409,6 +411,7 @@ const CityScene = memo(function CityScene({
   urbanClock: UrbanTime;
   streets: Street[];
   population: Population | null;
+  livePlaces: LivePlace[];
   cisternGeometry?: CisternGeometryPreview | null;
   planningRoles?: ReadonlyMap<string, CisternSiteRole>;
   surfaceFrame?: SurfaceFrame | null;
@@ -467,7 +470,7 @@ const CityScene = memo(function CityScene({
     >
       <TerrainContext.Provider value={terrain}>
         <UrbanEnvironment clock={urbanClock}>
-          <WaterScene animate={animateRain}>
+          <WaterScene animate={animateRain} clock={urbanClock}>
             <InfrastructureFootprints
               assets={facilityType ? [] : publicAssets}
               selectedId={selectedAssetId}
@@ -528,6 +531,7 @@ const CityScene = memo(function CityScene({
               distance={rainCamera.distance}
               clock={urbanClock}
               population={population}
+              livePlaces={livePlaces}
               city={city}
               animate={animateRain}
             />
@@ -664,6 +668,7 @@ const CityScene = memo(function CityScene({
               onSelect={onSite}
             />
             <LiveRainScene
+              timeline={urbanClock}
               externalClock
               districts={wetDistricts}
               amounts={rainAmounts}

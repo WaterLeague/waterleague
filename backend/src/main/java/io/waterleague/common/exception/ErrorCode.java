@@ -39,6 +39,8 @@ public enum ErrorCode {
   LEAGUE_PARTICIPATION_CONFLICT(HttpStatus.CONFLICT, "참가 승인·팀 구성·최신 상태를 확인해 주세요"),
   LEAGUE_SUBMISSION_LIMIT(HttpStatus.CONFLICT, "이 리그의 제출 한도를 사용했습니다"),
   RAINFALL_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "실시간 강우를 조회하지 못했습니다. 잠시 후 다시 시도해 주세요"),
+  URBAN_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "실시간 도시 자료를 조회하지 못했습니다. 잠시 후 다시 시도해 주세요"),
+  URBAN_DATA_INVALID(HttpStatus.SERVICE_UNAVAILABLE, "실시간 도시 자료의 형식·시각을 확인하지 못했습니다"),
   RAINFALL_ACCESS_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "실시간 강우 API 인증 설정 확인이 필요합니다"),
   RAINFALL_DATA_INVALID(HttpStatus.SERVICE_UNAVAILABLE, "실시간 강우 응답의 관측 시각·형식을 확인하지 못했습니다"),
   DISTRICT_REQUIRED(HttpStatus.CONFLICT, "소속 구를 먼저 선택해 주세요"),

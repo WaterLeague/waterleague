@@ -53,15 +53,28 @@ export function pathPosition(path: StreetPath, distance: number, lane: number, d
     angle: Math.atan2(dx * direction, -dy * direction),
   };
 }
+export function streetSpeed(path: StreetPath, seed: number, walking: boolean) {
+  return walking ? 1.15 + seed * 0.35 : /motorway|trunk/.test(path.road.class) ? 15 : 6 + seed * 3;
+}
+export function advanceTravel(
+  previous: { time: number; distance: number },
+  time: number,
+  speed: number
+) {
+  const elapsed = Math.max(0, Math.min(2, time - previous.time));
+  return { time, distance: previous.distance + elapsed * speed };
+}
 export function movingPosition(path: StreetPath, time: number, seed: number, walking: boolean) {
+  return travellingPosition(path, time * streetSpeed(path, seed, walking), seed, walking);
+}
+export function travellingPosition(
+  path: StreetPath,
+  travel: number,
+  seed: number,
+  walking: boolean
+) {
   const direction = (!walking && path.road.oneway) || (seed > 0.5 ? 1 : -1);
-  const speed = walking
-    ? 1.15 + seed * 0.35
-    : /motorway|trunk/.test(path.road.class)
-      ? 15
-      : 6 + seed * 3;
-  const distance =
-    (((time * speed + seed * path.length) % path.length) + path.length) % path.length;
+  const distance = (((travel + seed * path.length) % path.length) + path.length) % path.length;
   const lane = walking
     ? path.road.motor
       ? path.road.widthM / 2 + 0.7

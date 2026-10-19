@@ -44,7 +44,7 @@ const streetsDto = z.object({
     )
     .max(30000),
 });
-async function read(path: string, sha: string, bytes: number, signal: AbortSignal) {
+export async function read(path: string, sha: string, bytes: number, signal: AbortSignal) {
   const response = await fetch(path, { signal, credentials: 'same-origin' });
   if (!response.ok) throw new CityError('NETWORK');
   const raw = await response.arrayBuffer();

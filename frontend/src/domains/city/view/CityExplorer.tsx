@@ -4,6 +4,8 @@ import { PublicSurfaceControls } from '../../surface/view/PublicSurfaceControls'
 import { placementAreaLimit } from '../../installation/service/placementAreaLimit';
 import { lazy, Suspense, useEffect, useCallback, useState, useRef, useMemo } from 'react';
 import { useUrbanTime } from '../../urban/controller/useUrbanTime';
+import { useLiveUrban } from '../../urban/controller/useLiveUrban';
+import { LiveUrbanSource } from '../../urban/view/LiveUrbanSource';
 import { useUrbanData } from '../../urban/controller/useUrbanData';
 import {
   RotateCcw,
@@ -126,7 +128,13 @@ function Explorer({
     researchMode ? (account?.districtId ?? '2419953') : initialDistrictId
   );
   const research = useHistorical(researchMode, selected, account, budget.value, eventId);
-  const urbanClock = useUrbanTime(researchMode, research.at, research.playing, research.speed);
+  const urbanClock = useUrbanTime(
+    researchMode,
+    research.at,
+    research.playing,
+    research.speed,
+    research.event?.regions[0]?.start
+  );
   const [rankingOpen, setRankingOpen] = useState(false);
   const ownDistrictId = researchMode && !cisternOpen ? null : account?.districtId;
   const viewerId = researchMode
@@ -235,6 +243,7 @@ function Explorer({
   });
   const navigationCamera = useRef(camera);
   const urban = useUrbanData(camera.center, camera.distance);
+  const liveUrban = useLiveUrban(camera.center, camera.distance, researchMode);
   const traces = useFloodTraces(true, researchMode ? eventId : comparisonEventId, camera);
   const eligibleRoofs = useMemo(
     () => unreservedRoofIds(eligibility.roofIds, infrastructure.catalog?.assets ?? null),
@@ -821,6 +830,7 @@ function Explorer({
                   urbanClock={urbanClock}
                   streets={urban.roads}
                   population={urban.population}
+                  livePlaces={liveUrban.places}
                   surfaceFrame={surface.frame}
                   publicSurfaceFrames={publicSurface.frames}
                   surfaceMetric={surfaceMetric}
@@ -1322,7 +1332,10 @@ function Explorer({
             ? eventId === 'seoul-20220808'
               ? ' · 인구 밀도: 2022-08-08~09 시간대별 생활인구(내국인)'
               : ' · 해당 사건의 시간대별 인구 미확보: 일반 교통·보행 연출'
-            : ' · 인구 밀도: 2025 요일·시간대 생활인구 참고값 · 실시간 인구 미연결'}
+            : ' · 인구 밀도: 서울시 공개 장소의 현재 인구 범위 · 장소 밖/자료 만료 시 2025 요일·시간대 참고값'}
+          {!researchMode && (
+            <LiveUrbanSource places={liveUrban.current} now={liveUrban.checkedAt} />
+          )}
           {' · 도로 폭 결측·보도·교량 높이는 표시 가정 · 과거 도로망 복원 아님'}
           {urban.error && ` · ${urban.error}`}
           {urban.populationError && ` · ${urban.populationError}`}

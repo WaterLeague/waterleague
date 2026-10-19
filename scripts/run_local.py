@@ -4,9 +4,9 @@ import os,sys,subprocess
 from pathlib import Path
 load()
 mode=sys.argv[1] if len(sys.argv)>1 else ''
-private_names={'DB_URL','DB_USER','DB_PASSWORD','DATABASE_URL','KMA_API_KEY','VWORLD_API_KEY','VWORLD_DOMAIN','MFA_ENCRYPTION_KEY'}
+private_names={'DB_URL','DB_USER','DB_PASSWORD','DATABASE_URL','KMA_API_KEY','VWORLD_API_KEY','VWORLD_DOMAIN','MFA_ENCRYPTION_KEY','SEOUL_OPEN_DATA_KEY'}
 required_names={
- 'api':{'DB_URL','DB_USER','DB_PASSWORD','MFA_ENCRYPTION_KEY','KMA_API_KEY'},
+ 'api':{'DB_URL','DB_USER','DB_PASSWORD','MFA_ENCRYPTION_KEY','KMA_API_KEY','SEOUL_OPEN_DATA_KEY'},
  'provision':{'DB_URL','DB_USER','DB_PASSWORD','MFA_ENCRYPTION_KEY'},
  'worker':{'DATABASE_URL','KMA_API_KEY'},
  'frontend':set(),

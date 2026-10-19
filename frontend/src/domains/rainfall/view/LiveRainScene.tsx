@@ -1,6 +1,8 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
+import type { UrbanTime } from '../../urban/entity/urban';
+import { urbanAnimationTime } from '../../urban/service/urbanTimeService';
 import type { Terrain } from '../../terrain/entity/terrain';
 import { terrainHeight } from '../../terrain/service/terrainService';
 import type { City } from '../../city/entity/city';
@@ -18,6 +20,7 @@ export function LiveRainScene({
   animate,
   terrain,
   externalClock = false,
+  timeline,
 }: {
   districts: City['districts'];
   amounts: ReadonlyMap<string, number | null>;
@@ -26,7 +29,9 @@ export function LiveRainScene({
   animate: boolean;
   terrain?: Terrain | null;
   externalClock?: boolean;
+  timeline?: UrbanTime;
 }) {
+  const animationTime = useRef(0);
   const invalidate = useThree((s) => s.invalidate);
   const { x, y, radius, scale } = rainSamplingWindow(center, distance);
   const near = distance < 9000;
@@ -78,15 +83,18 @@ export function LiveRainScene({
     return () => window.clearInterval(timer);
   }, [animate, seeds.length, invalidate, externalClock]);
   useFrame(({ clock }) => {
-    if (!animate) return;
+    if (timeline)
+      animationTime.current = urbanAnimationTime(timeline, animationTime.current, animate);
+    else if (animate) animationTime.current = clock.elapsedTime;
+    else return;
     const positions = geometry.getAttribute('position') as THREE.BufferAttribute;
     seeds.forEach(({ point: [x, y], phase, elevation }, i) => {
-      const top = elevation + height * (1 - ((clock.elapsedTime / 1.7 + phase) % 1));
+      const top = elevation + height * (1 - ((animationTime.current / 1.7 + phase) % 1));
       positions.setXYZ(i * 2, x, top + length, -y);
       positions.setXYZ(i * 2 + 1, x, top, -y);
     });
     positions.needsUpdate = true;
-  });
+  }, -0.15);
   return seeds.length ? (
     <lineSegments geometry={geometry} frustumCulled={false} raycast={() => {}}>
       <lineBasicMaterial color="#365f75" transparent opacity={0.65} depthWrite={false} />

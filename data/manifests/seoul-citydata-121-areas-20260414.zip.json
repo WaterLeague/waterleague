@@ -1,0 +1,16 @@
+{
+  "provider": "서울특별시",
+  "sourcePage": "https://data.seoul.go.kr/dataList/OA-21778/F/1/datasetView.do",
+  "endpoint": "https://datafile.seoul.go.kr/bigfile/iot/inf/nio_download.do?&useCache=false",
+  "method": "POST",
+  "parameters": {
+    "infId": "OA-21778",
+    "seqNo": "",
+    "seq": "16",
+    "infSeq": "2"
+  },
+  "filename": "seoul-citydata-121-areas-20260414.zip",
+  "sha256": "fda69cd2ee3812103931cfd0ef1a0146336f06a23b6e1c2e4f9e0653620262ac",
+  "bytes": 134502,
+  "acquiredAt": "2026-10-19T09:18:33.911263+00:00"
+}

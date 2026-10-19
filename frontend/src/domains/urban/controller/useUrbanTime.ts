@@ -4,9 +4,13 @@ export function useUrbanTime(
   historical: boolean,
   at: string | null,
   playing: boolean,
-  speed: number
+  speed: number,
+  start?: string
 ): UrbanTime {
+  const realtimeOrigin = useRef(Date.now());
+  const origin = historical && start ? Date.parse(start) : realtimeOrigin.current;
   const clock = useRef({
+    origin,
     historical,
     at: at ? Date.parse(at) : null,
     playing,
@@ -16,6 +20,7 @@ export function useUrbanTime(
   });
   useEffect(() => {
     clock.current = {
+      origin,
       historical,
       at: at ? Date.parse(at) : null,
       playing,
@@ -24,6 +29,6 @@ export function useUrbanTime(
       listeners: clock.current.listeners,
     };
     clock.current.listeners.forEach((listener) => listener());
-  }, [historical, at, playing, speed]);
+  }, [historical, at, playing, speed, origin]);
   return clock;
 }

@@ -18,6 +18,7 @@ export type UrbanTime = RefObject<{
   playing: boolean;
   speed: number;
   sampledAt: number;
+  origin?: number;
   listeners?: Set<() => void>;
 }>;
 export type Population = {

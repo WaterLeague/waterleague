@@ -51,6 +51,7 @@ public class SecurityConfiguration {
                         "/api/v1/installations/{id}/physics",
                         "/api/v1/installations/{id}/cost",
                         "/api/v1/rainfall/live",
+                        "/api/v1/urban/live",
                         "/api/v1/maps",
                         "/api/v1/lab",
                         "/api/v1/lab/catalog",

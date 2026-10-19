@@ -1,4 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef } from 'react';
+import type { UrbanTime } from '../../urban/entity/urban';
+import { urbanAnimationTime } from '../../urban/service/urbanTimeService';
 import type { ReactNode } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import {
@@ -49,7 +51,15 @@ export function useWaterObject() {
     [capture]
   );
 }
-export function WaterScene({ animate, children }: { animate: boolean; children: ReactNode }) {
+export function WaterScene({
+  animate,
+  clock,
+  children,
+}: {
+  animate: boolean;
+  clock?: UrbanTime;
+  children: ReactNode;
+}) {
   const { gl, scene, camera, size, invalidate } = useThree();
   const capture = useMemo(createSceneCapture, []);
   const saved = useMemo(() => ({ viewport: new Vector4(), scissor: new Vector4() }), []);
@@ -71,8 +81,21 @@ export function WaterScene({ animate, children }: { animate: boolean; children: 
     }, 1000 / 30);
     return () => window.clearInterval(timer);
   }, [animate, invalidate]);
+  useEffect(() => {
+    clock?.current.listeners?.add(invalidate);
+    const listeners = clock?.current.listeners;
+    return () => {
+      listeners?.delete(invalidate);
+    };
+  }, [clock, invalidate]);
   useFrame((_, delta) => {
-    if (animate && !document.hidden) capture.uniforms.waterTime.value += Math.min(delta, 0.1);
+    if (clock)
+      capture.uniforms.waterTime.value = urbanAnimationTime(
+        clock,
+        capture.uniforms.waterTime.value,
+        animate && !document.hidden
+      );
+    else if (animate && !document.hidden) capture.uniforms.waterTime.value += Math.min(delta, 0.1);
     capture.uniforms.waterCaptureReady.value = 0;
     if (!capture.objects.size || camera.position.y > 16000) return;
     camera.updateMatrixWorld();
