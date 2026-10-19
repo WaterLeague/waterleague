@@ -50,3 +50,32 @@ it('유효한 무강수 감지는 0으로 표시하고 비 감지 중 미확보�
   expect(weatherStatus(value('NO_RAIN_DETECTED'), '0', now).amount).toBe('1분 강우 0 mm');
   expect(weatherStatus(value('WET'), '0', now).amount).toBe('강우량 확인 불가');
 });
+
+it('강수감지 센서가 없어도 25개 구의 실제 분강우 확인 수와 시각 표시', () => {
+  const v = value('UNKNOWN');
+  for (const station of v.districts)
+    Object.assign(station, {
+      observedAt: new Date(now - 60000).toISOString(),
+      oneMinuteMm: 0,
+      rainObservedAt: null,
+    });
+  expect(weatherStatus(v, '', now).detail).toBe('강우량 25/25개 구 확인');
+  const observedTime = new Date(now - 60000).toLocaleTimeString('ko-KR', {
+    timeZone: 'Asia/Seoul',
+    hour12: false,
+  });
+  expect(weatherStatus(v, '4', now).detail).toBe(`지점4 · ${observedTime} 기준`);
+  expect(weatherStatus(v, '4', now).amount).toBe('1분 강우 0 mm');
+  expect(weatherStatus(v, '4', now).kind).toBe('unknown');
+});
+
+it('한 구의 분강우가 결측이면 실제 누락 구를 표시하며 다른 구의 0mm 유지', () => {
+  const v = value('UNKNOWN');
+  for (const station of v.districts)
+    Object.assign(station, { observedAt: new Date(now).toISOString(), oneMinuteMm: 0 });
+  v.districts[4].oneMinuteMm = null;
+  expect(weatherStatus(v, '', now).detail).toBe('강우량 24/25개 구 확인 · 미확인: 구4');
+  expect(weatherStatus(v, '4', now).detail).toBe('지점4 · 최신 1분 강우 미확인');
+  expect(weatherStatus(v, '4', now).amount).toBe('강우량 확인 불가');
+  expect(weatherStatus(v, '3', now).amount).toBe('1분 강우 0 mm');
+});

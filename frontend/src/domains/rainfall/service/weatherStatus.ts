@@ -23,17 +23,24 @@ export function weatherStatus(value: LiveRainfall | null, districtId: string, no
         : kind === 'dry'
           ? '비·눈 없음'
           : '강수감지 미확인';
-  const detail =
-    districtId && fresh[0]
-      ? `${fresh[0].stationName} · ${new Date(fresh[0].rainObservedAt!).toLocaleTimeString('ko-KR', { timeZone: 'Asia/Seoul', hour12: false })} 기준`
-      : `${fresh.filter((s) => s.rainState !== 'UNKNOWN').length}/${districtId ? 1 : 25}개 구 최신 상태 확인`;
-  const amounts = stations.map((s) => {
+  const observations = stations.map((s) => {
     const age = s.observedAt ? now - Date.parse(s.observedAt) : Infinity;
-    if (age >= 0 && age <= 300000 && s.oneMinuteMm != null) return s.oneMinuteMm;
+    if (age >= 0 && age <= 300000 && s.oneMinuteMm != null)
+      return { amount: s.oneMinuteMm, at: s.observedAt! };
     // 유효한 무강수 감지는 0으로 표시하고 관측 공백은 결측으로 유지한다.
-    return observationFresh(s, now) && s.rainState === 'NO_RAIN_DETECTED' ? 0 : null;
+    return observationFresh(s, now) && s.rainState === 'NO_RAIN_DETECTED'
+      ? { amount: 0, at: s.rainObservedAt! }
+      : null;
   });
-  const known = amounts.filter((v): v is number => v !== null);
+  const known = observations.flatMap((v) => (v ? [v.amount] : []));
+  const missing = stations.filter((_, i) => !observations[i]).map((s) => s.districtName);
+  const selected = observations[0];
+  // 강수감지 센서가 결측이어도 정상 우량계의 관측 범위를 누락으로 표시하지 않는다.
+  const detail = districtId
+    ? selected
+      ? `${stations[0].stationName} · ${new Date(selected.at).toLocaleTimeString('ko-KR', { timeZone: 'Asia/Seoul', hour12: false })} 기준`
+      : `${stations[0]?.stationName ?? '선택 지역'} · 최신 1분 강우 미확인`
+    : `강우량 ${known.length}/25개 구 확인${missing.length > 0 && missing.length <= 3 ? ` · 미확인: ${missing.join(', ')}` : ''}`;
   const number = new Intl.NumberFormat('ko-KR', { maximumFractionDigits: 2 });
   const amount = !known.length
     ? '강우량 확인 불가'
