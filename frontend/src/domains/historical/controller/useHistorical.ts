@@ -13,7 +13,12 @@ import { errorMessage } from '../../../shared/exception/ApiError';
 import type { HistoricalJob } from '../entity/historical';
 import type { Budget } from '../../budget/dto/budgetDto';
 import { designAccounting } from '../../budget/service/designAccounting';
-import { listHistorical, loadHistorical, runHistorical } from '../repository/historicalRepository';
+import {
+  listHistorical,
+  loadHistorical,
+  runHistorical,
+  runGuestHistorical,
+} from '../repository/historicalRepository';
 import {
   historicalScoreAt,
   matchesHistoricalDraft,
@@ -138,10 +143,10 @@ export function useHistorical(
   }, [design.restoreId, timeline?.start]);
   const restoreKey = `${account?.id}/${eventId}/${design.restoreId}`;
   useEffect(() => {
-    if (!enabled || !account || !event || !design.restoreId) return;
+    if (!enabled || !event || !design.restoreId) return;
     let active = true;
     const models = new Set(event.regions.map((r) => r.modelHash));
-    void listHistorical()
+    void listHistorical(!account)
       .then((values) => {
         if (!active) return;
         setJobs(restoreHistoricalJobs(values, models, drafts));
@@ -167,7 +172,7 @@ export function useHistorical(
     if (duration && elapsedSeconds >= duration) setPlaying(false);
   }, [elapsedSeconds, duration]);
   useEffect(() => {
-    if (!enabled || !account) return;
+    if (!enabled) return;
     const activeJobs = Object.values(jobs).filter((j) => ['QUEUED', 'RUNNING'].includes(j.state));
     if (!activeJobs.length) return;
     let active = true,
@@ -176,7 +181,9 @@ export function useHistorical(
       if (pending || document.hidden) return;
       pending = true;
       try {
-        const updated = await Promise.all(activeJobs.map((queued) => loadHistorical(queued.id)));
+        const updated = await Promise.all(
+          activeJobs.map((queued) => loadHistorical(queued.id, !account))
+        );
         if (active) {
           setJobs((previous) => ({
             ...previous,
@@ -262,10 +269,9 @@ export function useHistorical(
     if (
       !enabled ||
       !design.ready ||
-      !design.revision ||
+      (account && !design.revision) ||
       restoredJobs !== restoreKey ||
       !region ||
-      !account ||
       !selected.length ||
       busy
     )
@@ -275,6 +281,16 @@ export function useHistorical(
       design.revision,
       historicalDistrictSignature(region.modelHash, selected),
       sensitivityCellId ?? null,
+      !account
+        ? drafts.map((d) => [
+            d.site.districtId,
+            d.site.cellId,
+            d.site.modelHash,
+            d.facilityType,
+            d.areaM2,
+            d.marker.installedAt,
+          ])
+        : null,
     ]);
     if (['FAILED', 'REJECTED'].includes(jobs[region.modelHash]?.state ?? ''))
       pendingRequests.current.delete(targetDistrictId);
@@ -287,15 +303,17 @@ export function useHistorical(
     setError('');
     setCalculationErrors((v) => ({ ...v, [targetDistrictId]: '' }));
     try {
-      const next = await runHistorical(
-        targetDistrictId,
-        region.modelHash,
-        selected,
-        pending.id,
-        sensitivityCellId,
-        pending.parent,
-        { revision: design.revision, eventId }
-      );
+      const next = !account
+        ? await runGuestHistorical(eventId, targetDistrictId, drafts, pending.id)
+        : await runHistorical(
+            targetDistrictId,
+            region.modelHash,
+            selected,
+            pending.id,
+            sensitivityCellId,
+            pending.parent,
+            { revision: design.revision, eventId }
+          );
       if (generation === epoch.current)
         setJobs((previous) => ({ ...previous, [next.modelHash]: next }));
     } catch (e) {
@@ -322,8 +340,7 @@ export function useHistorical(
   const calculateRef = useRef(calculate);
   calculateRef.current = calculate;
   useEffect(() => {
-    if (!enabled || !design.ready || restoredJobs !== restoreKey || !account || !event || busy)
-      return;
+    if (!enabled || !design.ready || restoredJobs !== restoreKey || !event || busy) return;
     const next = nextHistoricalCalculation(event.regions, drafts, jobs, autoAttempts.current);
     if (!next) return;
     const timer = window.setTimeout(() => {

@@ -199,3 +199,6 @@ RFC 9457 `application/problem+json`: type, title, status, detail, instance, code
 
 
 지도 계획 POST의 선택적 `tankLayout`은 내부 `widthM`, 벽 `wallThicknessM`, 후보 중심에서의 `offsetXM/offsetYM`, 지도 가로축 기준 반시계 `rotationDeg`를 받는다. 전체 유효성·정밀도와 원 도형 포함 검사 후 `schemaVersion=2` 및 계산한 `tankGeometry`를 고정 저장. 클라이언트가 전송한 임의 외곽 좌표를 신뢰하지 않는다. 값이 없는 기존 요청은 같은 v1 직렬화·해시·재시도 반환을 유지하며 v1 응답에는 형상 없음. 새 화면의 저장은 유효한 외곽 배치를 요구한다. 기초/여유고·구조·수리 연결을 검사한 설치 API가 아니며 위치 점유·예산 지출 없음.
+
+
+2026-10-19 비회원 재해 체험: GET/POST `/api/v1/guest-historical`, GET `/api/v1/guest-historical/{id}`만 익명 허용. POST는 CSRF 필수. 소유권은 서버 세션 ID의 해시로 고정하고 외부 owner/guest 식별자 입력 금지. 전체 사건 설계(여러 구 최대 50곳)를 검증한 후 선택 구를 기존 SWMM 큐에 등록. 회원 행·원장·제출 생성 없음. 동일 세션/요청 키는 전체 설계가 같을 때만 재사용. 회원 작업과 전역 admission 잠금을 공유, 세션 동시 2개·전체 20개 및 세션/네트워크/전역 시간당 호출 한도. 세션 종료 후 이전 게스트 결과 조회 불가, 재현 원본은 불변 보존. 제출/다운로드·`/historical/leaderboard/{eventId}`는 기존 회원 보호 경로. 비회원은 주간 설치 불가.

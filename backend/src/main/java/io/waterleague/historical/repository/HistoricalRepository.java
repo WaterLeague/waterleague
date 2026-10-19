@@ -70,6 +70,60 @@ public class HistoricalRepository {
         event);
   }
 
+  public Optional<HistoricalExperiment> guestGet(String guest, UUID id) {
+    return db
+        .query(
+            "SELECT * FROM historical_experiments WHERE guest_key=? AND owner_id IS NULL AND id=?",
+            mapper,
+            guest,
+            id)
+        .stream()
+        .findFirst();
+  }
+
+  public Optional<HistoricalExperiment> guestByKey(String guest, UUID key) {
+    return db
+        .query(
+            "SELECT * FROM historical_experiments WHERE guest_key=? AND owner_id IS NULL AND"
+                + " request_key=?",
+            mapper,
+            guest,
+            key)
+        .stream()
+        .findFirst();
+  }
+
+  public List<HistoricalExperiment> guestList(String guest) {
+    return db.query(
+        "SELECT * FROM historical_experiments WHERE guest_key=? AND owner_id IS NULL ORDER BY"
+            + " created_at DESC,id DESC LIMIT 50",
+        mapper,
+        guest);
+  }
+
+  public int guestActive(String guest) {
+    return db.queryForObject(
+        "SELECT count(*) FROM historical_experiments WHERE guest_key=? AND state IN"
+            + " ('QUEUED','RUNNING')",
+        Integer.class,
+        guest);
+  }
+
+  public void addGuest(HistoricalExperiment j, UUID key, String guest) {
+    db.update(
+        "INSERT INTO"
+            + " historical_experiments(id,guest_key,request_key,district_id,model_hash,input_hash,placements,state,created_at)"
+            + " VALUES(?,?,?,?,?,?,?,'QUEUED',?)",
+        j.id(),
+        guest,
+        key,
+        j.districtId(),
+        j.modelHash(),
+        j.inputHash(),
+        j.placements(),
+        java.sql.Timestamp.from(j.createdAt()));
+  }
+
   public void add(HistoricalExperiment j, UUID key) {
     db.update(
         "INSERT INTO"

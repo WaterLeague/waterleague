@@ -39,7 +39,6 @@ import { Hydrograph } from './Hydrograph';
 import { CompetitionPage } from '../../league/view/CompetitionPage';
 import type { League } from '../../league/entity/league';
 import { exceedsLeagueLimits, totalArea } from '../../league/service/leagueService';
-import { ResearchPage } from '../../research/view/ResearchPage';
 import { SpatialComparison } from '../../spatial/view/SpatialComparison';
 import { MapViewport } from '../../catalog/view/MapViewport';
 import { RoundReport } from './RoundReport';
@@ -63,9 +62,9 @@ export function GamePage() {
   const shell = useRef<HTMLDivElement>(null);
   const [cityDistrict, setCityDistrict] = useState('');
   const catalog = useCatalog();
-  const [tab, setTab] = useState<
-    'city' | 'missions' | 'studio' | 'leaderboard' | 'research' | 'data' | 'admin'
-  >('city');
+  const [tab, setTab] = useState<'city' | 'missions' | 'studio' | 'leaderboard' | 'data' | 'admin'>(
+    'city'
+  );
   const [report, setReport] = useState(false);
   const [feedback, setFeedback] = useState('');
   const playHeading = useRef<HTMLHeadingElement>(null);
@@ -230,7 +229,6 @@ export function GamePage() {
                 ['missions', '재해 모드'],
                 ...(tab === 'studio' ? ([['studio', '플레이']] as const) : []),
                 ['leaderboard', '기록 경쟁'],
-                ['research', '연구실'],
                 ['data', '데이터'],
               ] as const)
           ).map(([id, label]) => (
@@ -948,28 +946,12 @@ export function GamePage() {
       ) : tab === 'leaderboard' ? (
         <CompetitionPage
           account={g.account}
+          onLogin={() => setAuth(true)}
           onWeeklyDistrict={(id) => {
             setCityDistrict(id);
             setTab('city');
           }}
           initialLeague={!!activeLeague}
-        />
-      ) : tab === 'research' ? (
-        <ResearchPage
-          key={(g.account?.id ?? 'guest') + ':' + lab.modelHash}
-          account={g.account}
-          lab={lab}
-          map={activeMap}
-          onReplay={(p) => {
-            g.newDesign();
-            setActiveLeague(null);
-            g.change(p);
-            g.setTitle('연구 기록 배치 검토');
-            setTab('studio');
-            g.setNotice(
-              '연구 기록의 배치를 불러왔습니다. 저장하면 내 설계로 새 버전이 생성됩니다.'
-            );
-          }}
         />
       ) : (
         <section className="full-page evidence-page">

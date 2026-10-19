@@ -7,8 +7,10 @@ export function CompetitionPage({
   account,
   initialLeague = false,
   onWeeklyDistrict,
+  onLogin,
 }: {
   account: Account | null;
+  onLogin: () => void;
   onWeeklyDistrict: (id: string) => void;
   initialLeague?: boolean;
 }) {
@@ -50,7 +52,17 @@ export function CompetitionPage({
           onDistrict={onWeeklyDistrict}
         />
       ) : mode === 'historical' ? (
-        <HistoricalBoard />
+        account ? (
+          <HistoricalBoard key={account.id} />
+        ) : (
+          <section className="full-page historical-board">
+            <h1>재해 실험 기록 경쟁</h1>
+            <p>제출한 설계의 최종 점수와 순위는 로그인 후 확인할 수 있습니다.</p>
+            <button className="solid-button" onClick={onLogin}>
+              로그인하고 최종 기록 보기
+            </button>
+          </section>
+        )
       ) : (
         <section className="full-page league-page" aria-label="기관 리그 준비 중">
           <h1>기관 리그</h1>

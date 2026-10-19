@@ -43,7 +43,8 @@ public class SecurityConfiguration {
                         "/api/v1/catalog",
                         "/api/v1/districts",
                         "/api/v1/disasters",
-                        "/api/v1/historical/leaderboard/*",
+                        "/api/v1/guest-historical",
+                        "/api/v1/guest-historical/{id}",
                         "/api/v1/installations",
                         "/api/v1/installations/sites",
                         "/api/v1/installations/sites/{districtId}/{cellId}",
@@ -77,6 +78,7 @@ public class SecurityConfiguration {
                     .permitAll()
                     .requestMatchers(
                         HttpMethod.POST,
+                        "/api/v1/guest-historical",
                         "/api/v1/auth/register",
                         "/api/v1/auth/login",
                         "/api/v1/auth/mfa/enrollment",

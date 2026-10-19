@@ -277,7 +277,7 @@ function Explorer({
   const occupied = site ? ownInstallations.find((i) => siteKey(i) === siteKey(site)) : undefined;
   const publicSurface = usePublicSurfaces(!researchMode, camera, city);
   const surfaceSource: SurfaceSource | null = researchMode
-    ? research.job?.state === 'SUCCEEDED' && research.currentResult
+    ? account && research.job?.state === 'SUCCEEDED' && research.currentResult
       ? { kind: 'historical', id: research.job.id }
       : null
     : occupied?.ownerId === account?.id && occupied

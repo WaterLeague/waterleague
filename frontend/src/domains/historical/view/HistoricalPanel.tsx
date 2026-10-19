@@ -245,10 +245,14 @@ export function HistoricalPanel({
               ? '설계 저장 중'
               : s.design.loading
                 ? '저장된 설계 확인 중'
-                : `설계 저장본 ${s.design.revision}`
-            : '비회원 체험 · 이 화면에서만 유지'}
+                : '설계 저장됨'
+            : '게스트 플레이 · 제출할 때 로그인'}
         </strong>
-        {authenticated && <small>설치·취소 시 저장 · 다시 접속해 이어서 실험</small>}
+        {authenticated ? (
+          <small>설치·취소 시 저장 · 다시 접속해 이어서 실험</small>
+        ) : (
+          <small>체험 설계는 이 화면에서만 유지됩니다.</small>
+        )}
         {s.design.error && (
           <p role="alert">
             {s.design.error}{' '}
@@ -282,24 +286,20 @@ export function HistoricalPanel({
                     '설치 전 · 누적 0 m³'
                   ) : score ? (
                     `누적 ${physicalAmount(score.differenceM3)} m³ · ${time(score.at)}까지`
-                  ) : authenticated ? (
-                    requestError || ['FAILED', 'REJECTED'].includes(state ?? '') ? (
-                      <button
-                        onClick={() => void s.calculate(undefined, d.site.districtId)}
-                        disabled={!s.design.ready || !s.calculationsReady || s.busy}
-                      >
-                        계산 실패 · 이 구 다시 계산
-                      </button>
-                    ) : (
-                      '누적 효과 계산 중'
-                    )
+                  ) : requestError || ['FAILED', 'REJECTED'].includes(state ?? '') ? (
+                    <button
+                      onClick={() => void s.calculate(undefined, d.site.districtId)}
+                      disabled={!s.design.ready || !s.calculationsReady || s.busy}
+                    >
+                      계산 실패 · 이 구 다시 계산
+                    </button>
                   ) : (
-                    '로그인 후 누적 효과 계산'
+                    '누적 효과 계산 중'
                   )}
                 </small>
               </span>
               <button
-                aria-label={d.site.name + ' 연구 배치 제거'}
+                aria-label={d.site.name + ' 시설 취소'}
                 disabled={!s.design.ready}
                 onClick={() => s.remove(d.marker.id)}
               >
@@ -309,23 +309,18 @@ export function HistoricalPanel({
           );
         })}
       </div>
-      {authenticated ? (
-        <button
-          className="solid-button"
-          disabled={!s.design.ready || working || !s.current.length || !s.lab}
-          onClick={() => void s.calculate()}
-        >
-          {working
-            ? '설치 이후 효과 계산 중'
-            : s.currentResult
-              ? '같은 설계 다시 계산'
-              : '설치 이후 효과 계산'}
-        </button>
-      ) : (
-        <button className="solid-button" onClick={onLogin}>
-          로그인 후 계산
-        </button>
-      )}
+      <button
+        className="solid-button"
+        disabled={!s.design.ready || working || !s.current.length || !s.lab}
+        onClick={() => void s.calculate()}
+      >
+        {working
+          ? '설치 이후 효과 계산 중'
+          : s.currentResult
+            ? '같은 설계 다시 계산'
+            : '설치 이후 효과 계산'}
+      </button>
+
       {authenticated && placed?.site.initializationPolicy && (
         <div className="historical-sensitivity-action">
           <button
@@ -357,9 +352,11 @@ export function HistoricalPanel({
       {s.currentResult && (
         <section className="historical-result" aria-label="과거 강우 비교 결과">
           <h3>재생 시각까지 누적 효과</h3>
-          <a className="text-button" href={`/api/v1/historical/${s.job!.id}/bundle`}>
-            재현 자료 다운로드
-          </a>
+          {authenticated && (
+            <a className="text-button" href={`/api/v1/historical/${s.job!.id}/bundle`}>
+              재현 자료 다운로드
+            </a>
+          )}
           <strong data-effect={(s.currentScore?.differenceM3 ?? 0) < 0 ? 'increase' : 'decrease'}>
             {s.currentScore
               ? `${physicalAmount(s.currentScore.differenceM3)} m³`
@@ -371,7 +368,7 @@ export function HistoricalPanel({
           <dl>
             <dt>시설 없음</dt>
             <dd>{s.currentScore ? physicalAmount(s.currentScore.baselineAccountedM3) : '—'}m³</dd>
-            <dt>현재 연구 설계</dt>
+            <dt>내 실험 설계</dt>
             <dd>{s.currentScore ? physicalAmount(s.currentScore.designAccountedM3) : '—'}m³</dd>
           </dl>
           <p>

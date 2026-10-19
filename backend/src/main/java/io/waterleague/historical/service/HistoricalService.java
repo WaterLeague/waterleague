@@ -81,8 +81,99 @@ public class HistoricalService {
     return jobs.list(owner).stream().map(this::view).toList();
   }
 
+  public List<HistoricalView> guestList(String guest) {
+    return jobs.guestList(guest).stream().map(this::view).toList();
+  }
+
+  public HistoricalView guestGet(String guest, UUID id) {
+    return view(
+        jobs.guestGet(guest, id)
+            .orElseThrow(() -> new DomainException(ErrorCode.RESOURCE_NOT_FOUND)));
+  }
+
+  @Transactional
+  public HistoricalView createGuest(
+      String guest, io.waterleague.historical.dto.GuestHistoricalRequest dto) {
+    var event =
+        disasters.catalog().events().stream()
+            .filter(e -> e.id().equals(dto.eventId()))
+            .findFirst()
+            .orElseThrow(() -> new DomainException(ErrorCode.PLACEMENT_INVALID));
+    var sorted =
+        dto.placements().stream()
+            .sorted(
+                Comparator.comparing(
+                        io.waterleague.historical.dto.GuestHistoricalRequest.Item::districtId)
+                    .thenComparing(i -> i.placement().cellId()))
+            .toList();
+    var allocated = new EnumMap<FacilityType, BigDecimal>(FacilityType.class);
+    var locations = new HashSet<String>();
+    for (var entry : sorted) {
+      var p = entry.placement();
+      var region =
+          event.regions().stream()
+              .filter(r -> r.districtId().equals(entry.districtId()))
+              .findFirst()
+              .orElseThrow(() -> new DomainException(ErrorCode.PLACEMENT_INVALID));
+      if (!locations.add(entry.districtId() + "/" + p.cellId())
+          || p.installedAt() == null
+          || p.installedAt().getNano() != 0
+          || p.installedAt().isBefore(Instant.parse(region.start()))
+          || !p.installedAt().isBefore(Instant.parse(region.end())))
+        throw new DomainException(ErrorCode.PLACEMENT_INVALID);
+      var site = sites.requireInstallable(entry.districtId(), p.cellId());
+      if (!site.modelHash().equals(p.siteModelHash()))
+        throw new DomainException(ErrorCode.HISTORICAL_SITE_CHANGED);
+      var types = new HashSet<FacilityType>();
+      site.allowedTypes().forEach(t -> types.add(FacilityType.valueOf(t)));
+      var units = new EnumMap<FacilityType, BigDecimal>(FacilityType.class);
+      site.unitCosts().forEach((t, v) -> units.put(FacilityType.valueOf(t), v));
+      var cost =
+          validation.validate(
+              List.of(new Placement(p.cellId(), p.facilityType(), p.areaM2())),
+              Map.of(
+                  p.cellId(),
+                  new PlacementCell(p.cellId(), types, site.maxAreaFor(p.facilityType()), true)),
+              units,
+              budget.limit(),
+              1);
+      allocated.merge(p.facilityType(), cost, BigDecimal::add);
+    }
+    // 비회원도 다른 구에 예산을 복제하지 않도록 전체 설계를 함께 검증한다.
+    var accounting = budget.validateDesign(allocated);
+    var region =
+        event.regions().stream()
+            .filter(r -> r.districtId().equals(dto.districtId()))
+            .findFirst()
+            .orElseThrow(() -> new DomainException(ErrorCode.PLACEMENT_INVALID));
+    var selected =
+        sorted.stream()
+            .filter(i -> i.districtId().equals(dto.districtId()))
+            .map(io.waterleague.historical.dto.GuestHistoricalRequest.Item::placement)
+            .toList();
+    if (selected.isEmpty()) throw new DomainException(ErrorCode.PLACEMENT_INVALID);
+    var request =
+        new HistoricalRequest(
+            dto.requestKey(),
+            dto.districtId(),
+            region.modelHash(),
+            selected,
+            null,
+            "INSTALLATION_TIME_EXPERIMENT_V1",
+            null);
+    var snapshot =
+        json.write(
+            Map.of("eventId", dto.eventId(), "placements", sorted, "budgetAccounting", accounting));
+    return createInternal(null, request, guest, snapshot);
+  }
+
   @Transactional
   public HistoricalView create(UUID owner, HistoricalRequest dto) {
+    return createInternal(owner, dto, null, null);
+  }
+
+  private HistoricalView createInternal(
+      UUID owner, HistoricalRequest dto, String guest, String guestSnapshot) {
     boolean savedDesign = dto.designRevision() != null;
     if (savedDesign != (dto.eventId() != null) || (savedDesign && dto.temporalPolicy() == null))
       throw new DomainException(ErrorCode.PLACEMENT_INVALID);
@@ -165,16 +256,24 @@ public class HistoricalService {
     String body = json.write(frozen), hash = json.hash(dto.modelHash() + "\n" + body);
     // 편집 저장과 계산 승인 사이의 버전 확인을 같은 회원 잠금으로 직렬화한다.
     admission.lockAdmission();
-    try {
-      admission.lockOwner(owner);
-    } catch (org.springframework.dao.EmptyResultDataAccessException e) {
-      throw new DomainException(ErrorCode.RESOURCE_NOT_FOUND);
-    }
-    var previous = jobs.byKey(owner, dto.requestKey());
+    if (guest == null)
+      try {
+        admission.lockOwner(owner);
+      } catch (org.springframework.dao.EmptyResultDataAccessException e) {
+        throw new DomainException(ErrorCode.RESOURCE_NOT_FOUND);
+      }
+    var previous =
+        guest == null
+            ? jobs.byKey(owner, dto.requestKey())
+            : jobs.guestByKey(guest, dto.requestKey());
     if (previous.isPresent()) {
       // 원장 추가 전 입력도 같은 사용자 요청이면 기존 실행을 반환한다.
       var old = previous.get();
       var oldPlacements = json.tree(old.placements());
+      if (guest != null
+          && !Objects.equals(
+              oldPlacements.get(0).path("guestDesignSnapshotRaw").asString(), guestSnapshot))
+        throw new DomainException(ErrorCode.CONFLICT);
       if (!Objects.equals(
               oldPlacements.get(0).has("designRevision")
                   ? oldPlacements.get(0).path("designRevision").longValue()
@@ -303,9 +402,14 @@ public class HistoricalService {
         row.put("costSnapshotSha256", record.sha256());
       }
     }
+    if (guest != null) {
+      frozen.getFirst().put("guestDesignSnapshotRaw", guestSnapshot);
+      frozen.getFirst().put("guestDesignSnapshotSha256", json.hash(guestSnapshot));
+    }
     body = json.write(frozen);
     hash = json.hash(dto.modelHash() + "\n" + body);
-    if (jobs.active(owner) >= 2 || admission.totalActive() >= 20)
+    if ((guest == null ? jobs.active(owner) : jobs.guestActive(guest)) >= 2
+        || admission.totalActive() >= 20)
       throw new DomainException(ErrorCode.SIMULATION_QUOTA_EXCEEDED);
     var j =
         new HistoricalExperiment(
@@ -320,7 +424,8 @@ public class HistoricalService {
             Instant.now(),
             null,
             null);
-    jobs.add(j, dto.requestKey());
+    if (guest == null) jobs.add(j, dto.requestKey());
+    else jobs.addGuest(j, dto.requestKey(), guest);
     return view(j);
   }
 }

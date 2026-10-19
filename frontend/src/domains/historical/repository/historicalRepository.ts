@@ -1,8 +1,10 @@
 import { api } from '../../../shared/repository/apiClient';
 import type { HistoricalJob, HistoricalDraft } from '../entity/historical';
 import { temporalPolicy } from '../service/temporalService';
-export const listHistorical = () => api<HistoricalJob[]>('/historical');
-export const loadHistorical = (id: string) => api<HistoricalJob>('/historical/' + id);
+export const listHistorical = (guest = false) =>
+  api<HistoricalJob[]>(guest ? '/guest-historical' : '/historical');
+export const loadHistorical = (id: string, guest = false) =>
+  api<HistoricalJob>((guest ? '/guest-historical/' : '/historical/') + id);
 export const runHistorical = (
   districtId: string,
   modelHash: string,
@@ -26,5 +28,27 @@ export const runHistorical = (
       facilityType: d.facilityType,
       areaM2: d.areaM2,
       installedAt: d.marker.installedAt,
+    })),
+  });
+
+export const runGuestHistorical = (
+  eventId: string,
+  districtId: string,
+  drafts: HistoricalDraft[],
+  requestKey: string
+) =>
+  api<HistoricalJob>('/guest-historical', 'POST', {
+    requestKey,
+    eventId,
+    districtId,
+    placements: drafts.map((d) => ({
+      districtId: d.site.districtId,
+      placement: {
+        cellId: d.site.cellId,
+        siteModelHash: d.site.modelHash,
+        facilityType: d.facilityType,
+        areaM2: d.areaM2,
+        installedAt: d.marker.installedAt,
+      },
     })),
   });

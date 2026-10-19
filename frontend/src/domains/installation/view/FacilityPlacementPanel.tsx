@@ -93,7 +93,7 @@ export function FacilityPlacementPanel(p: FacilityPlacementProps) {
           <p>시설을 고른 뒤 지도에 표시된 후보나 위치 목록에서 설치할 곳을 선택하세요.</p>
           <p>
             {p.research
-              ? '연구 배치는 이 재해의 비교 계산에 사용됩니다.'
+              ? '시간을 이동해 시설을 설치하고, 배속 재생으로 누적 효과를 확인하세요.'
               : '내 소속 구에 설치할 수 있습니다. 다른 회원과 같은 위치도 사용할 수 있습니다.'}
           </p>
         </div>

@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-19",
+  "scope": "GUEST_TEMPORAL_INDEPENDENT_SURFACE_EXPERIMENT",
+  "apiTests": 28,
+  "nativeTests": 1,
+  "frontendTests": 233,
+  "frontendBuild": "PASS",
+  "checks": [
+    "CSRF",
+    "SESSION_OWNERSHIP",
+    "LOGIN_REQUIRED_SUBMISSION_AND_FINAL_BOARD",
+    "WHOLE_DESIGN_BUDGET",
+    "CONCURRENT_ADMISSION",
+    "IDEMPOTENCY",
+    "FUTURE_INSTALLATION_REJECTION",
+    "PUBLIC_SITE_HASH",
+    "SAME_INPUT_NATIVE_REPLAY",
+    "NEGATIVE_EFFECT_PRESERVATION"
+  ],
+  "nativeRuns": 2,
+  "archive": "data/runs/guest-historical-20261019-v1.tar.gz",
+  "sha256": "bdb348eebd578e4ff755a933497e77c23f96a6404fcabea0316e9a54d70c18ec",
+  "fileCount": 183,
+  "localApi": {
+    "state": "SUCCEEDED",
+    "jobId": "ee1888ee-fedf-43ef-ab9a-aea891b18a78",
+    "differenceM3": -0.00020642590841646324,
+    "frames": 359,
+    "crossSession": 404
+  },
+  "preservedMemberRecords": true,
+  "localGuestTestJobs": 1,
+  "uiDirectVerification": "UNAVAILABLE_BROWSER_CONTROL_DISABLED",
+  "limits": [
+    "현재 형상·과거 강우의 독립 표면 결과",
+    "서울 연결 침수·총점 미완료",
+    "현장 검증 아님",
+    "대표 장치 UI 성능 미완료"
+  ]
+}
