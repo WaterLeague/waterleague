@@ -1,6 +1,6 @@
 import { expect, it } from 'vitest';
 import type { LiveRainfall } from '../../rainfall/entity/liveRainfall';
-import { waterWeather } from './waterAppearanceService';
+import { observedWind, waterWeather } from './waterAppearanceService';
 const now = Date.parse('2026-10-19T06:00:00Z');
 it('최신 선택 구의 기상 풍향을 이동 방향으로 변환하고 오래된 바람을 제외', () => {
   const value = {
@@ -41,4 +41,12 @@ it('무풍 코드·풍향 결측·관측 공백에서 임의 유향을 생성하
   } as LiveRainfall;
   expect(waterWeather(value, '', now).wind).toEqual([0, 0]);
   expect(waterWeather(null, '', now)).toEqual({ wind: [0, 0], rain: 0 });
+});
+it('관측 북풍·남풍의 지리 방향과 결측·비정상 풍향의 이동 중지', () => {
+  expect(observedWind(3, 0)[1]).toBeCloseTo(3);
+  expect(observedWind(3, 180)[1]).toBeCloseTo(-3);
+  for (const direction of [null, undefined, -1, 360, NaN, Infinity])
+    expect(observedWind(3, direction)).toEqual([0, 0]);
+  for (const speed of [null, undefined, 0, -1, NaN, Infinity])
+    expect(observedWind(speed, 90)).toEqual([0, 0]);
 });

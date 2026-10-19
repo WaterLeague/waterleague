@@ -5,22 +5,22 @@ import type { Terrain } from '../../terrain/entity/terrain';
 import { surfacePlanPaths } from '../service/surfaceGeometry';
 import { surfaceDirectionPaths } from '../service/surfaceDirections';
 import { WaterMaterial } from './WaterMaterial';
+import { useWaterObject } from './WaterScene';
 import { calmWater, type WaterWeather } from '../service/waterAppearanceService';
 export const SurfaceLayer = memo(function SurfaceLayer({
   frame,
   metric,
   terrain,
   onError,
-  animate = false,
   weather = calmWater,
 }: {
   frame: SurfaceFrame | null;
   metric: SurfaceMetric;
   terrain: Terrain | null;
   onError: () => void;
-  animate?: boolean;
   weather?: WaterWeather;
 }) {
+  const waterRef = useWaterObject();
   const [geometry, setGeometry] = useState<{
     frame: SurfaceFrame;
     metric: SurfaceMetric;
@@ -34,9 +34,21 @@ export const SurfaceLayer = memo(function SurfaceLayer({
       type: 'module',
     });
     worker.onmessage = (
-      event: MessageEvent<{ positions?: Float32Array; colors?: Float32Array; flows?: Float32Array }>
+      event: MessageEvent<{
+        positions?: Float32Array;
+        colors?: Float32Array;
+        flows?: Float32Array;
+        depths?: Float32Array;
+        faces?: Float32Array;
+      }>
     ) => {
-      if (!event.data.positions || !event.data.colors || !event.data.flows) {
+      if (
+        !event.data.positions ||
+        !event.data.colors ||
+        !event.data.flows ||
+        !event.data.depths ||
+        !event.data.faces
+      ) {
         onError();
         worker.terminate();
         return;
@@ -45,6 +57,9 @@ export const SurfaceLayer = memo(function SurfaceLayer({
       mesh.setAttribute('position', new THREE.BufferAttribute(event.data.positions, 3));
       mesh.setAttribute('color', new THREE.BufferAttribute(event.data.colors, 3));
       mesh.setAttribute('flow', new THREE.BufferAttribute(event.data.flows, 2));
+      mesh.setAttribute('waterDepth', new THREE.BufferAttribute(event.data.depths, 1));
+      mesh.setAttribute('waterFace', new THREE.BufferAttribute(event.data.faces, 1));
+      mesh.computeVertexNormals();
       mesh.computeBoundingSphere();
       setGeometry({ frame, metric, mesh });
       worker.terminate();
@@ -60,8 +75,8 @@ export const SurfaceLayer = memo(function SurfaceLayer({
     };
   }, [frame, metric, terrain, onError]);
   return geometry?.frame === frame && geometry?.metric === metric ? (
-    <mesh geometry={geometry.mesh} renderOrder={31} raycast={() => {}}>
-      <WaterMaterial animate={animate} weather={weather} />
+    <mesh ref={waterRef} geometry={geometry.mesh} renderOrder={31} raycast={() => {}}>
+      <WaterMaterial weather={weather} />
     </mesh>
   ) : null;
 });

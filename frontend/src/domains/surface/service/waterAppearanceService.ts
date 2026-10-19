@@ -38,3 +38,21 @@ export function waterWeather(
       : {}),
   };
 }
+
+export function observedWind(
+  speed: number | null | undefined,
+  fromDegrees: number | null | undefined
+): [number, number] {
+  if (
+    speed == null ||
+    !Number.isFinite(speed) ||
+    speed <= 0 ||
+    fromDegrees == null ||
+    !Number.isFinite(fromDegrees) ||
+    fromDegrees < 0 ||
+    fromDegrees >= 360
+  )
+    return [0, 0];
+  const angle = (fromDegrees * Math.PI) / 180;
+  return [-Math.sin(angle) * speed, Math.cos(angle) * speed];
+}

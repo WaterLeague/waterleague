@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>3D 수면 광학 검증</title>
+  </head>
+  <body style="margin: 0; background: #e8eeec; color: #24444d; font: 14px system-ui">
+    <header style="padding: 12px 20px">
+      <b>3D 수면 광학 · 합성 화면 시험 · 운영 관측 아님</b
+      ><span id="diagnostic" style="margin-left: 20px">렌더 확인 중</span>
+    </header>
+    <div id="root"></div>
+    <script type="module">
+      if (!import.meta.env.DEV || !['localhost', '127.0.0.1', '[::1]'].includes(location.hostname))
+        throw new Error('로컬 개발 환경 전용');
+      const [
+        { default: React },
+        { createRoot },
+        { Canvas, useFrame },
+        { OrbitControls },
+        { WaterScene },
+        { RiverLayer },
+        { SurfaceLayer },
+      ] = await Promise.all([
+        import('react'),
+        import('react-dom/client'),
+        import('@react-three/fiber'),
+        import('@react-three/drei'),
+        import('/src/domains/surface/view/WaterScene.tsx'),
+        import('/src/domains/surface/view/RiverLayer.tsx'),
+        import('/src/domains/surface/view/SurfaceLayer.tsx'),
+      ]);
+      const h = React.createElement;
+      const city = {
+        surfaces: [
+          {
+            kind: 'water',
+            polygons: [
+              [
+                [
+                  [-12, -12],
+                  [12, -12],
+                  [12, 12],
+                  [-12, 12],
+                  [-12, -12],
+                ],
+              ],
+            ],
+          },
+        ],
+      };
+      const weather = { wind: [3, 1], windSpeed: Math.sqrt(10), rain: 0.8 };
+      const frame = (depth) => ({
+        catalogSha256: 'a'.repeat(64),
+        sourceSha256: 'b'.repeat(64),
+        index: 0,
+        timeSeconds: 0,
+        wholeDomainStorageM3: 576 * depth,
+        cells: [
+          {
+            triangleId: 0,
+            vertices: [
+              [-12, -12],
+              [12, -12],
+              [12, 12],
+            ],
+            depthM: depth,
+            speedMps: 0.35,
+            flowDirection: [1, 0],
+          },
+          {
+            triangleId: 1,
+            vertices: [
+              [-12, -12],
+              [12, 12],
+              [-12, 12],
+            ],
+            depthM: depth,
+            speedMps: 0.35,
+            flowDirection: [1, 0],
+          },
+        ],
+      });
+      const failed = () => {
+        document.getElementById('diagnostic').textContent = '형상 실패';
+      };
+      function Status() {
+        const frames = React.useRef(0);
+        useFrame(({ gl }) => {
+          if (++frames.current === 8) {
+            const code = gl.getContext().getError();
+            document.getElementById('diagnostic').textContent = code
+              ? 'WebGL 오류 ' + code
+              : 'WebGL 정상 · 깊이·반사·굴절 렌더 완료';
+          }
+        });
+        return null;
+      }
+      function App() {
+        const [natural, setNatural] = React.useState(false),
+          [animate, setAnimate] = React.useState(true),
+          [depth, setDepth] = React.useState(0.8),
+          [metric, setMetric] = React.useState('depth');
+        const flood = React.useMemo(() => frame(depth), [depth]);
+        return h(
+          React.Fragment,
+          null,
+          h(
+            'div',
+            { style: { padding: '0 20px 12px', display: 'flex', gap: 10 } },
+            h(
+              'button',
+              { onClick: () => setNatural((v) => !v) },
+              natural ? '하천 → 침수' : '침수 → 하천'
+            ),
+            h('button', { onClick: () => setAnimate((v) => !v) }, animate ? '일시정지' : '재생'),
+            h(
+              'button',
+              { onClick: () => setDepth((v) => (v === 0.8 ? 2.4 : 0.8)) },
+              '수심 ' + depth + ' m'
+            ),
+            h(
+              'button',
+              { onClick: () => setMetric((v) => (v === 'depth' ? 'speed' : 'depth')) },
+              metric === 'depth' ? '수심 색상' : '유속 색상'
+            )
+          ),
+          h(
+            'div',
+            { style: { height: 'calc(100dvh - 88px)' } },
+            h(
+              Canvas,
+              {
+                frameloop: 'demand',
+                dpr: 1,
+                camera: { position: [24, 12, 26], near: 0.1, far: 300, fov: 45 },
+                onCreated: ({ gl }) => {
+                  gl.debug.onShaderError = (context, program, vertex, fragment) => {
+                    document.getElementById('diagnostic').textContent =
+                      '셰이더 오류: ' +
+                      context.getShaderInfoLog(vertex) +
+                      ' ' +
+                      context.getShaderInfoLog(fragment);
+                  };
+                },
+              },
+              h(
+                WaterScene,
+                { animate },
+                h('color', { attach: 'background', args: ['#a9bec7'] }),
+                h('ambientLight', { intensity: 1.4 }),
+                h('directionalLight', { position: [-10, 20, 10], intensity: 2 }),
+                h(
+                  'mesh',
+                  { rotation: [-Math.PI / 2, 0, 0], position: [0, -0.02, 0] },
+                  h('planeGeometry', { args: [100, 100] }),
+                  h('meshStandardMaterial', { color: '#c4c7b0', roughness: 0.9 })
+                ),
+                h(
+                  'mesh',
+                  { position: [-5, 4, -5] },
+                  h('boxGeometry', { args: [3, 8, 3] }),
+                  h('meshStandardMaterial', { color: '#bd3e28', roughness: 0.8 })
+                ),
+                h(
+                  'mesh',
+                  { position: [5, 3, -7] },
+                  h('boxGeometry', { args: [4, 6, 3] }),
+                  h('meshStandardMaterial', { color: '#245db0', roughness: 0.8 })
+                ),
+                h(
+                  'mesh',
+                  { position: [-1, 0.5, 6] },
+                  h('boxGeometry', { args: [3, 1, 3] }),
+                  h('meshStandardMaterial', { color: '#dddac5', roughness: 0.9 })
+                ),
+                natural
+                  ? h(RiverLayer, { city, terrain: null, weather })
+                  : h(SurfaceLayer, {
+                      frame: flood,
+                      metric,
+                      terrain: null,
+                      weather,
+                      onError: failed,
+                    }),
+                h(OrbitControls, {
+                  target: [0, 1, 0],
+                  minDistance: 6,
+                  maxDistance: 100,
+                  maxPolarAngle: Math.PI * 0.48,
+                }),
+                h(Status)
+              )
+            )
+          )
+        );
+      }
+      createRoot(document.getElementById('root')).render(h(App));
+    </script>
+  </body>
+</html>

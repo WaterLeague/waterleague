@@ -1,51 +1,73 @@
-import { memo, useEffect, useMemo } from 'react';
-import { BufferAttribute, Color, ShapeGeometry } from 'three';
-import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+import { memo, useEffect, useState } from 'react';
+import { BufferAttribute, BufferGeometry } from 'three';
 import type { City } from '../../city/entity/city';
 import type { Terrain } from '../../terrain/entity/terrain';
-import { polygonShapes } from '../../catalog/service/mapGeometryService';
-import { terrainHeight } from '../../terrain/service/terrainService';
 import type { WaterWeather } from '../service/waterAppearanceService';
+import type { riverGeometry } from '../service/riverGeometry';
 import { WaterMaterial } from './WaterMaterial';
+import { useWaterObject } from './WaterScene';
 export const RiverLayer = memo(function RiverLayer({
   city,
   terrain,
-  animate,
   weather,
 }: {
   city: City;
   terrain: Terrain | null;
-  animate: boolean;
   weather: WaterWeather;
 }) {
-  const geometry = useMemo(() => {
-    const parts = city.surfaces
-      .filter((s) => s.kind === 'water')
-      .map((s) => {
-        const g = new ShapeGeometry(polygonShapes(s.polygons));
-        const p = g.getAttribute('position');
-        const colors = new Float32Array(p.count * 3),
-          color = new Color('#358caa');
-        for (let i = 0; i < p.count; i++) {
-          const x = p.getX(i),
-            y = p.getY(i);
-          p.setXYZ(i, x, terrainHeight(terrain, [x, y]) + 2, -y);
-          colors.set(color.toArray(), i * 3);
-        }
-        g.setAttribute('color', new BufferAttribute(colors, 3));
-        g.setAttribute('flow', new BufferAttribute(new Float32Array(p.count * 2), 2));
-        return g;
-      });
-    if (!parts.length) return null;
-    const merged = mergeGeometries(parts);
-    parts.forEach((g) => g.dispose());
-    merged?.computeBoundingSphere();
-    return merged;
+  const waterRef = useWaterObject();
+  const [geometry, setGeometry] = useState<BufferGeometry | null>(null);
+  const [failed, setFailed] = useState(false);
+  useEffect(() => {
+    setGeometry(null);
+    setFailed(false);
+    let mesh: BufferGeometry | null = null;
+    const worker = new Worker(new URL('../service/riverGeometry.worker.ts', import.meta.url), {
+      type: 'module',
+    });
+    worker.onmessage = (
+      event: MessageEvent<ReturnType<typeof riverGeometry> & { failed?: boolean }>
+    ) => {
+      if (event.data.failed) {
+        setFailed(true);
+        worker.terminate();
+        return;
+      }
+      const { positions, colors, flows, depths, faces } = event.data;
+      mesh = new BufferGeometry();
+      mesh.setAttribute('position', new BufferAttribute(positions, 3));
+      mesh.setAttribute('color', new BufferAttribute(colors, 3));
+      mesh.setAttribute('flow', new BufferAttribute(flows, 2));
+      mesh.setAttribute('waterDepth', new BufferAttribute(depths, 1));
+      mesh.setAttribute('waterFace', new BufferAttribute(faces, 1));
+      mesh.computeVertexNormals();
+      mesh.computeBoundingSphere();
+      setGeometry(mesh);
+      worker.terminate();
+    };
+    worker.onerror = () => {
+      setFailed(true);
+      worker.terminate();
+    };
+    worker.postMessage({
+      surfaces: city.surfaces.filter((s) => s.kind === 'water').map((s) => s.polygons),
+      terrain,
+    });
+    return () => {
+      worker.terminate();
+      mesh?.dispose();
+    };
   }, [city, terrain]);
-  useEffect(() => () => geometry?.dispose(), [geometry]);
+  if (failed) throw new Error('수면 형상 표시 실패');
   return geometry ? (
-    <mesh geometry={geometry} renderOrder={3} raycast={() => {}} userData={{ naturalWater: true }}>
-      <WaterMaterial natural animate={animate} weather={weather} />
+    <mesh
+      ref={waterRef}
+      geometry={geometry}
+      renderOrder={3}
+      raycast={() => {}}
+      userData={{ naturalWater: true }}
+    >
+      <WaterMaterial natural weather={weather} />
     </mesh>
   ) : null;
 });

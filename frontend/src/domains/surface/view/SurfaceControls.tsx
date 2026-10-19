@@ -65,7 +65,7 @@ export function SurfaceControls({
             <small>
               {live
                 ? '선택한 내 설계 · 최근 5분 이내 계산값 · 과거 침수 기록과 구분'
-                : '계산값 · 현장 검증 전 · 지표면 색상 표시'}
+                : '계산 수심 · 표시 지형 기준의 상대 높이'}
             </small>
             {!live && (
               <input
@@ -98,6 +98,10 @@ export function SurfaceControls({
                   <p key={i}>{text}</p>
                 ))}
                 <p>원 계산 해시 {catalog.surfaceResultSha256}</p>
+                <p>
+                  입체 두께는 원 수심의 1:1 표현이며 표시 지형 기준입니다. 실제 수면 표고가
+                  아닙니다.
+                </p>
                 <p>표시 프레임으로 점수·첨두를 다시 계산하지 않습니다.</p>
                 {catalog.flowDirectionMethod && (
                   <p>

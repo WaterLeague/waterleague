@@ -68,7 +68,7 @@ import { FacilityExpansionPanel } from '../../watershed/view/FacilityExpansionPa
 import { useCisternPlans } from '../../installation/controller/useCisternPlans';
 import { CisternPlanPanel } from '../../installation/view/CisternPlanPanel';
 import type { CisternSiteRole } from '../../installation/service/cisternPlanService';
-import { waterWeather } from '../../surface/service/waterAppearanceService';
+import { observedWind, waterWeather } from '../../surface/service/waterAppearanceService';
 import { useArchivedWaterWeather } from '../../rainfall/controller/useArchivedWaterWeather';
 import { archivedWindAt } from '../../rainfall/service/archivedWeatherService';
 const CityScene = lazy(() => import('./CityScene'));
@@ -155,15 +155,15 @@ function Explorer({
     [researchMode, research.event, research.index, rainfall.value]
   );
   const animateRain = rainfall.visible && !reducedMotion && (!researchMode || research.playing);
-  const archivedWeather = useArchivedWaterWeather(researchMode);
-  const archivedWind = archivedWindAt(archivedWeather, eventId, research.at);
+  const archivedWeather = useArchivedWaterWeather(researchMode, eventId);
+  const archivedWind = archivedWindAt(archivedWeather, eventId, research.at, selected);
   const waterAppearance = useMemo(
     () =>
       researchMode
         ? {
-            wind: [0, 0] as [number, number],
+            wind: observedWind(archivedWind?.windSpeedMs, archivedWind?.windDirectionDeg),
             rain: research.selectedRain?.depthsMm[research.index] ?? 0,
-            windSpeed: archivedWind,
+            windSpeed: archivedWind?.windSpeedMs ?? undefined,
           }
         : waterWeather(rainfall.value, selected, rainfall.now),
     [
@@ -173,7 +173,8 @@ function Explorer({
       rainfall.value,
       selected,
       rainfall.now,
-      archivedWind,
+      archivedWind?.windSpeedMs,
+      archivedWind?.windDirectionDeg,
     ]
   );
   const [site, setSite] = useState<SharedSite | null>(null);
@@ -1305,8 +1306,9 @@ function Explorer({
               : '지표면 높이 연결 중'}{' '}
           · 건물 높이 태그·층수 환산 포함 ·{' '}
           {surface.frame || publicSurface.frames.length
-            ? '계산 침수는 별도 색상 레이어 · 표시 지형과 물리 기준고 구분'
+            ? '계산 침수는 원 수심의 상대 높이·색상 표시 · 실제 수면 표고 아님'
             : '침수 깊이 표시 아님'}
+          {' · 물결은 기상 기반 시각 효과 · 하천 실측 유속 아님'}
           {assetsEnabled &&
             ' · 시설 위치: 서울특별시·강서구 / 공공누리 제1유형 · 시설 경계: OpenStreetMap / ODbL 1.0'}
           {terrain && (

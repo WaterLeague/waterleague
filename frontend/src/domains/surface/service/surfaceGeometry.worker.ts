@@ -5,14 +5,14 @@ self.onmessage = (
   event: MessageEvent<{ frame: SurfaceFrame; metric: SurfaceMetric; terrain: Terrain | null }>
 ) => {
   try {
-    const { positions, colors, flows } = surfaceGeometry(
+    const { positions, colors, flows, depths, faces } = surfaceGeometry(
       event.data.frame,
       event.data.metric,
       event.data.terrain
     );
     self.postMessage(
-      { positions, colors, flows },
-      { transfer: [positions.buffer, colors.buffer, flows.buffer] }
+      { positions, colors, flows, depths, faces },
+      { transfer: [positions.buffer, colors.buffer, flows.buffer, depths.buffer, faces.buffer] }
     );
   } catch {
     self.postMessage({ failed: true });

@@ -81,20 +81,24 @@ test('현재 침수 표시에서 오래된 재해 프레임·미래 프레임 �
   expect(liveSurfaceFrameIndex(catalog, start + 305001)).toBeNull();
   expect(liveSurfaceFrameIndex(catalog, Date.parse('2026-10-18T09:00:00Z'))).toBeNull();
 });
-test('2D·3D 같은 젖은 격자와 좌표 표시, 원값과 수면 표고 불변', () => {
+test('같은 젖은 격자의 원 수심을 표시 지형의 상대 두께로 적용하고 원값 보존', () => {
   const before = JSON.stringify(frame),
     geometry = surfaceGeometry(frame, 'depth', null);
-  expect([...geometry.positions]).toEqual([
+  expect([...geometry.positions.slice(0, 9)]).toEqual([
     0,
-    expect.closeTo(0.4),
+    expect.closeTo(0.27),
     expect.closeTo(0),
     1,
-    expect.closeTo(0.4),
+    expect.closeTo(0.27),
     expect.closeTo(0),
     0,
-    expect.closeTo(0.4),
+    expect.closeTo(0.27),
     -1,
   ]);
+  expect(geometry.faces.filter((value) => value === 0)).toHaveLength(18);
+  expect(geometry.depths.every((value) => value === 0.25)).toBe(true);
+  const heights = [...geometry.positions].filter((_, index) => index % 3 === 1);
+  expect(Math.max(...heights) - Math.min(...heights)).toBeCloseTo(0.25);
   const paths = surfacePlanPaths(frame, 'depth');
   expect(paths).toHaveLength(1);
   expect(paths[0].path).toBe('M0,0L1,0L0,-1Z');
@@ -165,10 +169,10 @@ test('2D·3D 화살표의 동서남북 방향 일치와 원 속력 불변', () =
     );
     const expected = arrowTriangles.flat().flatMap((i) => {
       const p = arrows[0].points[i];
-      return [p[0], 0.5, -p[1]];
+      return [p[0], 0.25 + 0.02 + 0.035, -p[1]];
     });
-    expect([...geometry.positions.slice(9)]).toEqual(expected.map((v) => expect.closeTo(v, 6)));
-    expect(surfaceGeometry(value, 'depth', null).positions.length).toBe(9);
+    expect([...geometry.positions.slice(-27)]).toEqual(expected.map((v) => expect.closeTo(v, 6)));
+    expect(surfaceGeometry(value, 'depth', null).positions.length).toBe(63);
     expect(JSON.stringify(value)).toBe(before);
   }
 });
@@ -192,4 +196,27 @@ test('많은 격자는 공간별 원 방향을 선택하고 표시 상한 준수
   expect(arrows.length).toBeGreaterThan(100);
   expect(arrows.length).toBeLessThanOrEqual(maximumDirectionGlyphs);
   expect(surfaceDirections({ ...frame, cells: [...cells].reverse() })).toEqual(arrows);
+});
+
+test('같은 수심의 인접 격자에는 내부 벽을 만들지 않고 수심 차이만 연결', () => {
+  const first = frame.cells[0];
+  const other = {
+    ...first,
+    triangleId: 1,
+    vertices: [
+      [1, 0],
+      [1, 1],
+      [0, 1],
+    ] as [number, number][],
+  };
+  const equal = surfaceGeometry({ ...frame, cells: [first, other as typeof first] }, 'depth', null);
+  expect(equal.faces.filter((v) => v === 1)).toHaveLength(6);
+  expect(equal.faces.filter((v) => v === 0)).toHaveLength(24);
+  const stepped = surfaceGeometry(
+    { ...frame, cells: [first, { ...other, depthM: 0.8 } as typeof first] },
+    'depth',
+    null
+  );
+  expect(stepped.faces.filter((v) => v === 0)).toHaveLength(30);
+  expect(Math.max(...stepped.depths)).toBeCloseTo(0.8);
 });
