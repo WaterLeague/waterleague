@@ -1,7 +1,13 @@
 import { useEffect, useMemo } from 'react';
-import { MeshStandardMaterial } from 'three';
+import { Color, MeshStandardMaterial } from 'three';
 import { useUrbanLighting } from './UrbanEnvironment';
-export function BuildingMaterial({ opacity }: { opacity: number }) {
+export function BuildingMaterial({
+  opacity,
+  available = false,
+}: {
+  opacity: number;
+  available?: boolean;
+}) {
   const light = useUrbanLighting();
   const material = useMemo(() => {
     const value = new MeshStandardMaterial({
@@ -14,6 +20,8 @@ export function BuildingMaterial({ opacity }: { opacity: number }) {
     if (light)
       value.onBeforeCompile = (shader) => {
         shader.uniforms.cityNight = light.night;
+        shader.uniforms.availableRoof = { value: available ? 1 : 0 };
+        shader.uniforms.availableRoofColor = { value: new Color('#84c9ac') };
         shader.vertexShader =
           'varying vec3 cityPosition;\nvarying vec3 cityNormal;\n' + shader.vertexShader;
         shader.vertexShader = shader.vertexShader.replace(
@@ -21,8 +29,12 @@ export function BuildingMaterial({ opacity }: { opacity: number }) {
           '#include <worldpos_vertex>\n cityPosition=(modelMatrix*vec4(transformed,1.0)).xyz; cityNormal=normalize(mat3(modelMatrix)*objectNormal);'
         );
         shader.fragmentShader =
-          'uniform float cityNight;\nvarying vec3 cityPosition;\nvarying vec3 cityNormal;\n' +
+          'uniform float cityNight;\nuniform float availableRoof;\nuniform vec3 availableRoofColor;\nvarying vec3 cityPosition;\nvarying vec3 cityNormal;\n' +
           shader.fragmentShader;
+        shader.fragmentShader = shader.fragmentShader.replace(
+          '#include <color_fragment>',
+          '#include <color_fragment>\n diffuseColor.rgb=mix(diffuseColor.rgb,availableRoofColor,availableRoof*smoothstep(.7,.95,cityNormal.y));'
+        );
         shader.fragmentShader = shader.fragmentShader.replace(
           '#include <emissivemap_fragment>',
           `#include <emissivemap_fragment>
@@ -35,9 +47,9 @@ export function BuildingMaterial({ opacity }: { opacity: number }) {
       totalEmissiveRadiance+=windowColor*cityNight*wall*mix(.03,window*.9,resolved);`
         );
       };
-    value.customProgramCacheKey = () => 'urban-windows-v1';
+    value.customProgramCacheKey = () => 'urban-windows-roof-v2';
     return value;
-  }, [light, opacity]);
+  }, [light, opacity, available]);
   useEffect(() => () => material.dispose(), [material]);
   return <primitive object={material} attach="material" />;
 }

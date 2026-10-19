@@ -378,36 +378,19 @@ function Explorer({
     } else setSurfaceIndex(index);
   };
   const visibleSites = useMemo(() => {
-    const values = new Map(shared.sites.map((s) => [siteKey(s), s]));
+    const values = new Map(shared.mapSites.map((s) => [siteKey(s), s]));
     if (site) values.set(siteKey(site), site);
     if (cisternOpen)
       for (const value of [cistern.roof, cistern.ground])
         if (value) values.set(siteKey(value), value);
     return [...values.values()].filter(
       (s) =>
-        (!mapFacilityType ||
-          ownSiteKeys.has(siteKey(s)) ||
-          (s.allowedTypes.includes(mapFacilityType) &&
-            !s.existingInfrastructure &&
-            !ownSiteKeys.has(siteKey(s)) &&
-            (!ownDistrictId || s.districtId === ownDistrictId))) &&
-        (s === site ||
-          planningRoles.has(siteKey(s)) ||
-          Math.hypot(s.center[0] - camera.center[0], s.center[1] - camera.center[1]) <
-            camera.distance * 1.3)
+        s === site ||
+        planningRoles.has(siteKey(s)) ||
+        Math.hypot(s.center[0] - camera.center[0], s.center[1] - camera.center[1]) <
+          camera.distance * 1.3
     );
-  }, [
-    shared.sites,
-    site,
-    camera,
-    cisternOpen,
-    cistern.roof,
-    cistern.ground,
-    planningRoles,
-    mapFacilityType,
-    ownDistrictId,
-    ownSiteKeys,
-  ]);
+  }, [shared.mapSites, site, camera, cisternOpen, cistern.roof, cistern.ground, planningRoles]);
   const details = useCityTiles(city, camera);
   const labels = useRef(new Map<string, HTMLElement>());
   const labelLayer = useRef<HTMLDivElement>(null);
@@ -442,6 +425,7 @@ function Explorer({
         inspect || (!cisternOpen && !mapFacilityType && installationBySite.has(siteKey(value)));
       if (
         !inspecting &&
+        (!fromMap || cisternOpen) &&
         mapFacilityType &&
         (!value.allowedTypes.includes(mapFacilityType) ||
           value.existingInfrastructure ||
@@ -502,7 +486,7 @@ function Explorer({
     async (key: string) => {
       const request = ++selectionRequest.current;
       const found =
-        shared.sites.find((s) => siteKey(s) === key) ??
+        visibleSites.find((s) => siteKey(s) === key) ??
         (site && siteKey(site) === key ? site : null);
       setSelectionError('');
       if (found) {
@@ -518,18 +502,18 @@ function Explorer({
           setSelectionError('위치 정보를 불러오지 못했습니다. 다시 선택해 주세요.');
       }
     },
-    [shared.sites, site, chooseSite, ownSiteKeys]
+    [visibleSites, site, chooseSite, ownSiteKeys]
   );
   const selectStreet = useCallback(
     async (sourceId: string, point: [number, number]) => {
-      if (cisternOpen || (mapFacilityType && mapFacilityType !== 'PERMEABLE_PAVEMENT')) return;
+      if (cisternOpen) return;
       const districtId = viewingDistrict(city.districts, point)?.id;
       if (!districtId) return;
       const request = ++selectionRequest.current;
       setSelectionError('');
       try {
         const value = await loadStreetSite(districtId, sourceId, point);
-        if (request === selectionRequest.current) chooseSite(value, !mapFacilityType, true);
+        if (request === selectionRequest.current) chooseSite(value, false, true);
       } catch (error) {
         if (request === selectionRequest.current) {
           setSite(null);
@@ -543,7 +527,7 @@ function Explorer({
         }
       }
     },
-    [mapFacilityType, cisternOpen, city.districts, chooseSite]
+    [cisternOpen, city.districts, chooseSite]
   );
   const selectParking = useCallback(
     async (sourceId: string, point: [number, number]) => {
@@ -557,7 +541,7 @@ function Explorer({
       setSelectionError('');
       try {
         const value = await loadParkingSite(districtId, sourceId, point);
-        if (request === selectionRequest.current) chooseSite(value, true, true);
+        if (request === selectionRequest.current) chooseSite(value, false, true);
       } catch (error) {
         if (request === selectionRequest.current) {
           setSite(null);
@@ -574,6 +558,7 @@ function Explorer({
   const selectBuilding = useCallback(
     async (districtId: string, building: CityBuilding) => {
       if (
+        cisternOpen &&
         mapFacilityType &&
         (mapFacilityType !== 'GREEN_ROOF' ||
           !eligibleRoofs.has(building.id) ||
@@ -603,7 +588,7 @@ function Explorer({
         );
       }
     },
-    [chooseSite, mapFacilityType, eligibleRoofs, ownDistrictId, occupiedRoofs]
+    [chooseSite, cisternOpen, mapFacilityType, eligibleRoofs, ownDistrictId, occupiedRoofs]
   );
   const select = useCallback(
     (id: string) => {
@@ -1084,12 +1069,14 @@ function Explorer({
                 {researchMode ? '공개 시설 참고 · 당시 시설 아님' : '공개 시설 참고'}
               </span>
             )}
-            {mapFacilityType && (
-              <span>
-                <i className="available" />
-                설치 가능
-              </span>
-            )}
+            <span>
+              <i className="available" />
+              설치 가능
+            </span>
+            <span>
+              <i className="selected-site" />
+              선택 구역
+            </span>
             {mapFacilityType && (
               <span>
                 <i className="unavailable" />

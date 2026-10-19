@@ -33,7 +33,11 @@ import type {
   InstallationLayout,
 } from '../../installation/entity/installation';
 import { siteKey } from '../../installation/entity/installation';
-import { buildingOpacity, otherDistrictOpacity } from '../service/siteVisibilityService';
+import {
+  buildingOpacity,
+  otherDistrictOpacity,
+  siteAppearance,
+} from '../service/siteVisibilityService';
 import {
   cisternSiteColors,
   type CisternSiteRole,
@@ -96,10 +100,12 @@ type CameraState = Pick<CityFocus, 'center' | 'distance' | 'heightM'>;
 function Buildings({
   buildings,
   opacity = 1,
+  available = false,
   onSelect,
 }: {
   buildings: CityBuilding[];
   opacity?: number;
+  available?: boolean;
   onSelect: (b: CityBuilding) => void;
 }) {
   const terrain = useContext(TerrainContext);
@@ -159,7 +165,7 @@ function Buildings({
         }
       }}
     >
-      <BuildingMaterial opacity={opacity} />
+      <BuildingMaterial opacity={opacity} available={available} />
     </mesh>
   ) : null;
 }
@@ -500,7 +506,6 @@ const CityScene = memo(function CityScene({
     sites,
     installationBySite
   );
-  const parkingSources = useMemo(() => new Set(parkingLots.map((lot) => lot.id)), [parkingLots]);
   const reactions = useRef({ traffic: emptyFloodStats, parking: emptyFloodStats });
   const reporters = useMemo(
     () =>
@@ -532,8 +537,8 @@ const CityScene = memo(function CityScene({
   );
   const overviewIds = useMemo(() => new Set(city.overviewBuildings.map((b) => b.id)), [city]);
   const symbols = useMemo(
-    () => installationSymbols(installations, sites, viewerId, facilityType, rainCamera.distance),
-    [installations, sites, viewerId, facilityType, rainCamera.distance]
+    () => installationSymbols(installations, sites, viewerId, rainCamera.distance),
+    [installations, sites, viewerId, rainCamera.distance]
   );
   return (
     <Canvas
@@ -548,7 +553,7 @@ const CityScene = memo(function CityScene({
         <UrbanEnvironment clock={urbanClock}>
           <WaterScene animate={animateRain} clock={urbanClock}>
             <InfrastructureFootprints
-              assets={facilityType ? [] : publicAssets}
+              assets={publicAssets}
               selectedId={selectedAssetId}
               terrain={terrain}
               onSelect={onAsset}
@@ -579,7 +584,7 @@ const CityScene = memo(function CityScene({
               ))}
             <InfrastructureMarkers
               distance={rainCamera.distance}
-              assets={facilityType ? [] : publicAssets}
+              assets={publicAssets}
               selectedId={selectedAssetId}
               terrain={terrain}
               onSelect={onAsset}
@@ -604,9 +609,7 @@ const CityScene = memo(function CityScene({
               parking={parking}
               terrain={terrain}
               detail={rainCamera.distance < 4500}
-              onStreet={
-                !facilityType || facilityType === 'PERMEABLE_PAVEMENT' ? onStreet : undefined
-              }
+              onStreet={onStreet}
             />
             <StreetLife
               roads={streets}
@@ -695,37 +698,27 @@ const CityScene = memo(function CityScene({
               )
               .map((site) => {
                 const installed = installationBySite.get(siteKey(site));
-                const parkingSurface =
-                  site.kind === 'GROUND' && site.sourceIds.some((id) => parkingSources.has(id));
-                const highlighted =
-                  site.cellId === selectedSite ||
-                  planningRoles?.has(siteKey(site)) ||
-                  (facilityType && site.allowedTypes.includes(facilityType));
-                const opacity = buildingOpacity(
-                  !site.existingInfrastructure &&
-                    (planningRoles?.has(siteKey(site)) ||
-                      !facilityType ||
-                      site.allowedTypes.includes(facilityType)) &&
-                    (!installed || installed.ownerId !== viewerId),
-                  !!ownDistrictId && site.districtId !== ownDistrictId
-                );
+                const selectedSiteHere =
+                  site.districtId === selected && site.cellId === selectedSite;
+                const appearance = siteAppearance({
+                  eligible:
+                    !site.existingInfrastructure && (!installed || installed.ownerId !== viewerId),
+                  matches: !facilityType || site.allowedTypes.includes(facilityType),
+                  selected: selectedSiteHere,
+                  installed: !!installed,
+                  otherDistrict: !!ownDistrictId && site.districtId !== ownDistrictId,
+                });
                 return (
                   <group key={siteKey(site)}>
                     <SiteSurface
                       site={site}
                       color={
-                        site.districtId === selected && site.cellId === selectedSite
-                          ? '#ffd56d'
-                          : planningRoles?.has(siteKey(site))
-                            ? cisternSiteColors[planningRoles.get(siteKey(site))!]
-                            : installed
-                              ? '#367c51'
-                              : site.kind === 'ROOF'
-                                ? '#d9d8cb'
-                                : '#b6c3ab'
+                        planningRoles?.has(siteKey(site)) && !selectedSiteHere
+                          ? cisternSiteColors[planningRoles.get(siteKey(site))!]
+                          : appearance.color
                       }
-                      parkingSurface={parkingSurface}
-                      opacity={parkingSurface ? opacity * (highlighted ? 0.24 : 0) : opacity}
+                      selected={selectedSiteHere}
+                      opacity={appearance.opacity}
                       onClick={() => onSite(siteKey(site))}
                     />
                     {installed && (
@@ -739,11 +732,10 @@ const CityScene = memo(function CityScene({
                         }}
                         placement={installed}
                         preview={false}
-                        opacity={
-                          !ownDistrictId || site.districtId === ownDistrictId
-                            ? 1
-                            : otherDistrictOpacity
-                        }
+                        opacity={buildingOpacity(
+                          !facilityType || installed.facilityType === facilityType,
+                          !!ownDistrictId && site.districtId !== ownDistrictId
+                        )}
                         onSelect={() => onSite(siteKey(site))}
                       />
                     )}
@@ -762,16 +754,16 @@ const CityScene = memo(function CityScene({
                 }}
                 placement={preview.placement}
                 preview
-                opacity={
-                  !ownDistrictId || preview.site.districtId === ownDistrictId
-                    ? 1
-                    : otherDistrictOpacity
-                }
+                opacity={buildingOpacity(
+                  true,
+                  !!ownDistrictId && preview.site.districtId !== ownDistrictId
+                )}
                 onSelect={() => onSite(siteKey(preview.site))}
               />
             )}
             <InstallationSymbols
               installations={symbols}
+              facilityType={facilityType}
               selectedKey={`${selected}:${selectedSite}`}
               ownDistrictId={ownDistrictId}
               terrain={terrain}
@@ -815,70 +807,86 @@ export default CityScene;
 
 function SiteSurface({
   site,
-  parkingSurface,
   color,
   opacity,
+  selected,
   onClick,
 }: {
   site: SharedSite;
-  parkingSurface: boolean;
   color: string;
   opacity: number;
+  selected: boolean;
   onClick: () => void;
 }) {
   const terrain = useContext(TerrainContext);
-  const polygons = useMemo(() => [[site.coordinates]], [site]);
-  const streetGeometry = useMemo(
+  const geometry = useMemo(
     () =>
-      site.physicalInputs?.streetPlacement || parkingSurface
-        ? pavementGeometry(
-            placementFootprint(site, {
-              cellId: site.cellId,
-              facilityType: 'PERMEABLE_PAVEMENT',
-              areaM2: site.maxAreaM2,
-            }),
-            terrain,
-            parkingSurface ? 0.007 : 0.013
-          )
-        : null,
-    [site, terrain, parkingSurface]
+      pavementGeometry(
+        placementFootprint(site, {
+          cellId: site.cellId,
+          facilityType: 'PERMEABLE_PAVEMENT',
+          areaM2: site.maxAreaM2,
+        }),
+        site.kind === 'GROUND' ? terrain : null,
+        site.kind === 'GROUND' ? 0.013 : terrainHeight(terrain, site.center) + site.heightM + 0.11
+      ),
+    [site, terrain]
   );
-  useEffect(
-    () => () => {
-      if (streetGeometry) Object.values(streetGeometry).forEach((g) => g.dispose());
-    },
-    [streetGeometry]
-  );
-  if (streetGeometry)
-    return (
+  const outlinePoints = useMemo(() => {
+    const data = geometry.outline.getAttribute('position');
+    return Array.from({ length: data.count }, (_, i): [number, number, number] => [
+      data.getX(i),
+      data.getY(i),
+      data.getZ(i),
+    ]);
+  }, [geometry]);
+  useEffect(() => () => Object.values(geometry).forEach((value) => value.dispose()), [geometry]);
+  return (
+    <group>
       <mesh
-        geometry={streetGeometry.surface}
+        geometry={geometry.surface}
+        renderOrder={selected ? 75 : 2}
         onClick={(event) => {
+          if (event.delta > 5) return;
           event.stopPropagation();
           onClick();
         }}
-        receiveShadow
       >
-        <meshStandardMaterial
+        <meshBasicMaterial
           color={color}
           side={THREE.DoubleSide}
-          roughness={1}
           transparent
-          opacity={opacity * 0.8}
+          opacity={opacity * (selected ? 0.24 : 0.16)}
+          depthTest={!selected}
           depthWrite={false}
+          toneMapped={false}
         />
       </mesh>
-    );
-  return (
-    <Surface
-      polygons={polygons}
-      height={
-        terrainHeight(terrain, site.center) + (site.kind === 'ROOF' ? site.heightM : 0.2) + 0.1
-      }
-      color={color}
-      opacity={opacity}
-      onClick={onClick}
-    />
+      {selected ? (
+        <Line
+          points={outlinePoints}
+          segments
+          color={color}
+          lineWidth={2.5}
+          transparent
+          toneMapped={false}
+          depthTest={false}
+          depthWrite={false}
+          renderOrder={76}
+          raycast={() => {}}
+        />
+      ) : (
+        <lineSegments geometry={geometry.outline} renderOrder={3} raycast={() => {}}>
+          <lineBasicMaterial
+            color={color}
+            transparent
+            opacity={opacity * 0.8}
+            depthWrite={false}
+            toneMapped={false}
+          />
+        </lineSegments>
+      )}
+    </group>
   );
 }
 function inRing([x, y]: [number, number], ring: [number, number][]) {
@@ -939,22 +947,18 @@ function DistrictBuildings({
   }, [buildings, publicBuildings, city, ownDistrictId, eligibleRoofs, occupiedRoofs]);
   return (
     <>
-      {groups
-        .filter(
-          ([, values]) =>
-            !facilityType || (facilityType === 'GREEN_ROOF' && values.eligible && !values.other)
-        )
-        .map(([key, values]) => (
-          <Buildings
-            key={key}
-            buildings={values.buildings}
-            opacity={buildingOpacity(
-              values.eligible && (!facilityType || facilityType === 'GREEN_ROOF'),
-              values.other
-            )}
-            onSelect={selectBuilding}
-          />
-        ))}
+      {groups.map(([key, values]) => (
+        <Buildings
+          key={key}
+          buildings={values.buildings}
+          available={values.eligible}
+          opacity={buildingOpacity(
+            values.eligible && (!facilityType || facilityType === 'GREEN_ROOF'),
+            values.other
+          )}
+          onSelect={selectBuilding}
+        />
+      ))}
     </>
   );
 }

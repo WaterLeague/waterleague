@@ -41,16 +41,14 @@ test('여섯 유형의 유한 입체 형상과 서로 다른 형태, 원 입력 
   expect(new Set(shapes).size).toBe(6);
 });
 
-test('상세 도형의 중복 표식 제거·미로딩 위치 유지·시설 선택 중 우회 차단', () => {
+test('상세 도형의 중복 표식 제거·미로딩 위치 유지·지도 주변 시설 유지', () => {
   const sites = [{ districtId: 'A', cellId: 'G0' }] as SharedSite[];
   const before = JSON.stringify(installed);
-  expect(installationSymbols(installed, sites, null, '', 2400)).toHaveLength(6);
-  expect(installationSymbols(installed, sites, null, '', 2399).map((i) => i.cellId)).not.toContain(
+  expect(installationSymbols(installed, sites, null, 2400)).toHaveLength(6);
+  expect(installationSymbols(installed, sites, null, 2399).map((i) => i.cellId)).not.toContain(
     'G0'
   );
-  expect(installationSymbols(installed, [], null, '', 50)).toHaveLength(6);
-  for (const type of types)
-    expect(installationSymbols(installed, [], null, type, 5000)).toEqual([]);
+  expect(installationSymbols(installed, [], null, 50)).toHaveLength(6);
   expect(JSON.stringify(installed)).toBe(before);
 });
 
@@ -59,12 +57,11 @@ test('같은 위치의 회원 중 본인 우선·한 표식과 전체 원 기록
     ...installed,
     { ...installed[0], id: 'mine', ownerId: 'me', facilityType: 'GREEN_ROOF' as const },
   ];
-  const rows = installationSymbols(values, [], 'me', '', 5000);
+  const rows = installationSymbols(values, [], 'me', 5000);
   expect(rows).toHaveLength(6);
   expect(rows.find((i) => i.cellId === 'G0')?.id).toBe('mine');
   expect(
-    installationSymbols([...values].reverse(), [], 'me', '', 5000).find((i) => i.cellId === 'G0')
-      ?.id
+    installationSymbols([...values].reverse(), [], 'me', 5000).find((i) => i.cellId === 'G0')?.id
   ).toBe('mine');
   expect(values).toHaveLength(7);
 });
@@ -87,4 +84,22 @@ test('2D 기호의 유형·위치·선택과 접근 가능한 위치 조회', ()
   expect(html).toContain('translate(50 0) scale(10)');
   expect(html).toContain('#ffd15b');
   expect(html).toContain('opacity="0.16"');
+});
+
+test('시설 필터에서 다른 시설 기호도 투명도만 낮춰 유지', () => {
+  const html = renderToStaticMarkup(
+    <svg>
+      <InstallationSymbolsPlan
+        installations={installed}
+        selectedKey=""
+        ownDistrictId={null}
+        facilityType="GREEN_ROOF"
+        scale={10}
+        onSelect={() => {}}
+      />
+    </svg>
+  );
+  expect(html.match(/role="button"/g)).toHaveLength(6);
+  expect(html.match(/opacity="1"/g)).toHaveLength(1);
+  expect(html.match(/opacity="0.2"/g)).toHaveLength(5);
 });

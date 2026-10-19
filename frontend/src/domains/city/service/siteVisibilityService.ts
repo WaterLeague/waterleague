@@ -18,3 +18,32 @@ export function occupiedRoofSource(
   if (/^RR\d+$/.test(cellId)) return ['relation/' + cellId.slice(2)];
   return legacy[districtId + ':' + cellId] ?? [];
 }
+
+export const availableSiteColor = '#84c9ac';
+export const selectedSiteColor = '#ffd56d';
+export function siteAppearance({
+  eligible,
+  matches,
+  selected,
+  installed,
+  otherDistrict,
+}: {
+  eligible: boolean;
+  matches: boolean;
+  selected: boolean;
+  installed: boolean;
+  otherDistrict: boolean;
+}) {
+  return {
+    color: selected
+      ? selectedSiteColor
+      : installed
+        ? '#367c51'
+        : eligible
+          ? availableSiteColor
+          : '#9caaa1',
+    opacity: selected ? 1 : buildingOpacity(eligible && matches, otherDistrict),
+    fillOpacity: selected ? 0.24 : 0.16,
+    outlineOpacity: selected ? 1 : 0.8,
+  };
+}

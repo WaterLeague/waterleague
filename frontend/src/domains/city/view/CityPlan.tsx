@@ -16,7 +16,13 @@ import { placementFootprint } from '../../catalog/service/facilityGeometryServic
 import { siteKey } from '../../installation/entity/installation';
 import { facilities } from '../../game/service/gameService';
 import { polygonPath } from '../../catalog/service/mapGeometryService';
-import { buildingOpacity, otherDistrictOpacity } from '../service/siteVisibilityService';
+import {
+  buildingOpacity,
+  otherDistrictOpacity,
+  siteAppearance,
+  availableSiteColor,
+  selectedSiteColor,
+} from '../service/siteVisibilityService';
 import {
   cisternSiteColors,
   type CisternSiteRole,
@@ -134,10 +140,9 @@ export const CityPlan = memo(function CityPlan({
     sites,
     installationBySite
   );
-  const parkingSources = useMemo(() => new Set(parkingLots.map((lot) => lot.id)), [parkingLots]);
   const symbols = useMemo(
-    () => installationSymbols(installations, sites, viewerId, facilityType, focus.distance),
-    [installations, sites, viewerId, facilityType, focus.distance]
+    () => installationSymbols(installations, sites, viewerId, focus.distance),
+    [installations, sites, viewerId, focus.distance]
   );
   const paths = useMemo(
     () => ({
@@ -192,43 +197,36 @@ export const CityPlan = memo(function CityPlan({
   }
   const buildingLayer = useMemo(
     () =>
-      buildings
-        .filter(
-          ({ building: b }) =>
-            !facilityType ||
-            (facilityType === 'GREEN_ROOF' &&
+      buildings.map(({ building: b, path }) => (
+        <path
+          key={b.id}
+          d={path}
+          fill={
+            eligibleRoofs.has(b.id) && !occupiedRoofs.has(b.id) ? availableSiteColor : '#d9d8cb'
+          }
+          opacity={buildingOpacity(
+            (!facilityType || facilityType === 'GREEN_ROOF') &&
               eligibleRoofs.has(b.id) &&
-              !occupiedRoofs.has(b.id) &&
-              !otherBuilding(b))
-        )
-        .map(({ building: b, path }) => (
-          <path
-            key={b.id}
-            d={path}
-            fill="#d9d8cb"
-            opacity={buildingOpacity(
-              (!facilityType || facilityType === 'GREEN_ROOF') &&
-                eligibleRoofs.has(b.id) &&
-                !occupiedRoofs.has(b.id),
-              otherBuilding(b)
-            )}
-            stroke="#9eac96"
-            strokeWidth={0.5}
-            vectorEffect="non-scaling-stroke"
-            onClick={() => {
-              const d = city.districts.find((d) =>
-                d.polygons.some(
-                  (p) =>
-                    inBuildingRing(b.center, p[0]) &&
-                    !p.slice(1).some((h) => inBuildingRing(b.center, h))
-                )
-              );
-              if (d) void onBuilding(d.id, b);
-            }}
-          >
-            <title>{b.id} · 건물 선택</title>
-          </path>
-        )),
+              !occupiedRoofs.has(b.id),
+            otherBuilding(b)
+          )}
+          stroke="#9eac96"
+          strokeWidth={0.5}
+          vectorEffect="non-scaling-stroke"
+          onClick={() => {
+            const d = city.districts.find((d) =>
+              d.polygons.some(
+                (p) =>
+                  inBuildingRing(b.center, p[0]) &&
+                  !p.slice(1).some((h) => inBuildingRing(b.center, h))
+              )
+            );
+            if (d) void onBuilding(d.id, b);
+          }}
+        >
+          <title>{b.id} · 건물 선택</title>
+        </path>
+      )),
     [buildings, facilityType, eligibleRoofs, occupiedRoofs, ownDistrict, onBuilding, city]
   );
   const facilityLayer = useMemo(() => {
@@ -266,42 +264,34 @@ export const CityPlan = memo(function CityPlan({
     () =>
       sites.map((site) => {
         const installed = installationBySite.get(siteKey(site));
-        const parkingSurface =
-          site.kind === 'GROUND' && site.sourceIds.some((id) => parkingSources.has(id));
-        const highlighted =
-          site.cellId === selectedSite ||
-          planningRoles?.has(siteKey(site)) ||
-          (facilityType && site.allowedTypes.includes(facilityType));
+        const chosen = site.districtId === selected && site.cellId === selectedSite;
+        const appearance = siteAppearance({
+          eligible: !site.existingInfrastructure && (!installed || installed.ownerId !== viewerId),
+          matches: !facilityType || site.allowedTypes.includes(facilityType),
+          selected: chosen,
+          installed: !!installed,
+          otherDistrict: !!ownDistrictId && ownDistrictId !== site.districtId,
+        });
         return (
           <path
             key={siteKey(site)}
             d={sitePaths.get(siteKey(site))}
+            data-site-key={siteKey(site)}
+            data-site-state={
+              chosen ? 'selected' : site.existingInfrastructure ? 'excluded' : 'candidate'
+            }
             fill={
-              site.districtId === selected && site.cellId === selectedSite
-                ? '#ffd56d'
-                : planningRoles?.has(siteKey(site))
-                  ? cisternSiteColors[planningRoles.get(siteKey(site))!]
-                  : installed
-                    ? '#327f56'
-                    : site.kind === 'ROOF'
-                      ? '#d9d8cb'
-                      : '#b6c3ab'
+              planningRoles?.has(siteKey(site)) && !chosen
+                ? cisternSiteColors[planningRoles.get(siteKey(site))!]
+                : appearance.color
             }
-            stroke={
-              site.districtId === selected && site.cellId === selectedSite ? '#b87a13' : '#6c8069'
-            }
-            strokeWidth={site.districtId === selected && site.cellId === selectedSite ? 2 : 0.5}
-            fillOpacity={parkingSurface ? (highlighted ? 0.24 : 0) : 1}
-            strokeOpacity={parkingSurface ? (highlighted ? 0.65 : 0) : 1}
+            stroke={appearance.color}
+            strokeWidth={chosen ? 2.5 : 1}
+            vectorEffect="non-scaling-stroke"
+            fillOpacity={appearance.fillOpacity}
+            strokeOpacity={appearance.outlineOpacity}
             pointerEvents="all"
-            opacity={buildingOpacity(
-              !site.existingInfrastructure &&
-                (planningRoles?.has(siteKey(site)) ||
-                  !facilityType ||
-                  site.allowedTypes.includes(facilityType)) &&
-                (!installed || installed.ownerId !== viewerId),
-              !!ownDistrictId && ownDistrictId !== site.districtId
-            )}
+            opacity={appearance.opacity}
             onClick={() => onSite(siteKey(site))}
           >
             <title>
@@ -319,7 +309,6 @@ export const CityPlan = memo(function CityPlan({
       sites,
       installationBySite,
       sitePaths,
-      parkingSources,
       selected,
       selectedSite,
       planningRoles,
@@ -394,12 +383,7 @@ export const CityPlan = memo(function CityPlan({
           </g>
         ))}
       </g>
-      <g
-        fill="none"
-        pointerEvents={!facilityType || facilityType === 'PERMEABLE_PAVEMENT' ? 'stroke' : 'none'}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
+      <g fill="none" pointerEvents="stroke" strokeLinecap="round" strokeLinejoin="round">
         {roadPaths.map((r) => (
           <g key={r.id}>
             {r.bridge && (
@@ -410,12 +394,7 @@ export const CityPlan = memo(function CityPlan({
               stroke={r.bridge ? '#4e606e' : r.walk ? '#b3ae9f' : '#667071'}
               strokeWidth={r.width}
               onClick={(event) => {
-                if (
-                  dragging ||
-                  (facilityType && facilityType !== 'PERMEABLE_PAVEMENT') ||
-                  !onStreet
-                )
-                  return;
+                if (dragging || !onStreet) return;
                 const matrix = svg.current?.getScreenCTM();
                 if (!matrix) return;
                 const point = new DOMPoint(event.clientX, event.clientY).matrixTransform(
@@ -478,7 +457,7 @@ export const CityPlan = memo(function CityPlan({
         ))}
       {buildingLayer}
       <InfrastructureFootprintsPlan
-        assets={facilityType ? [] : publicAssets}
+        assets={publicAssets}
         selectedId={selectedAssetId}
         onSelect={onAsset}
       />
@@ -493,6 +472,7 @@ export const CityPlan = memo(function CityPlan({
         ))}
       <InstallationSymbolsPlan
         installations={symbols}
+        facilityType={facilityType}
         selectedKey={`${selected}:${selectedSite}`}
         ownDistrictId={ownDistrictId}
         scale={box.height * 0.016}
@@ -500,7 +480,7 @@ export const CityPlan = memo(function CityPlan({
       />
       <InfrastructureSymbolsPlan
         distance={focus.distance}
-        assets={facilityType ? [] : publicAssets}
+        assets={publicAssets}
         selectedId={selectedAssetId}
         scale={box.height * 0.014}
         onSelect={onAsset}
@@ -511,6 +491,21 @@ export const CityPlan = memo(function CityPlan({
         scale={box.height}
         animate={animateRain}
       />
+      {sites
+        .filter((site) => site.districtId === selected && site.cellId === selectedSite)
+        .map((site) => (
+          <path
+            key={'selection:' + siteKey(site)}
+            data-selected-site={siteKey(site)}
+            d={sitePaths.get(siteKey(site))}
+            fill={selectedSiteColor}
+            fillOpacity={0.18}
+            stroke={selectedSiteColor}
+            strokeWidth={2.5}
+            vectorEffect="non-scaling-stroke"
+            pointerEvents="none"
+          />
+        ))}
       {!facilityType && focus.distance < detailLabelDistance && (
         <InstallationNameplatesPlan
           installations={installations}

@@ -576,3 +576,12 @@
   opacity: 0.72;
   font-size: 0.9em;
 }
+
+.shared-map-legend .available {
+  background: #84c9ac;
+  border-color: #427d68;
+}
+.shared-map-legend .selected-site {
+  background: #ffd56d;
+  border-color: #ba8427;
+}

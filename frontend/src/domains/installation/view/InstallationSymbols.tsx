@@ -6,9 +6,12 @@ import { siteKey } from '../entity/installation';
 import type { Terrain } from '../../terrain/entity/terrain';
 import { terrainHeight } from '../../terrain/service/terrainService';
 import { facilitySymbolGeometry } from '../../catalog/service/facilitySymbolService';
-import { otherDistrictOpacity } from '../../city/service/siteVisibilityService';
+import { buildingOpacity } from '../../city/service/siteVisibilityService';
+
+import type { FacilityType } from '../../game/entity/game';
 
 type Props = {
+  facilityType?: FacilityType | '';
   installations: SharedInstallation[];
   selectedKey: string;
   ownDistrictId: string | null;
@@ -101,14 +104,16 @@ export const InstallationSymbols = memo(function InstallationSymbols(props: Prop
   const groups = useMemo(() => {
     const buckets = new Map<string, { installations: SharedInstallation[]; opacity: number }>();
     for (const i of props.installations) {
-      const opacity =
-        props.ownDistrictId && i.districtId !== props.ownDistrictId ? otherDistrictOpacity : 1;
+      const opacity = buildingOpacity(
+        !props.facilityType || i.facilityType === props.facilityType,
+        !!props.ownDistrictId && i.districtId !== props.ownDistrictId
+      );
       const key = `${i.facilityType}:${opacity}`;
       if (!buckets.has(key)) buckets.set(key, { installations: [], opacity });
       buckets.get(key)!.installations.push(i);
     }
     return [...buckets.entries()];
-  }, [props.installations, props.ownDistrictId]);
+  }, [props.installations, props.ownDistrictId, props.facilityType]);
   return (
     <>
       {groups.map(([key, group]) => (

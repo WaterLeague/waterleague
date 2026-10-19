@@ -1,64 +1,23 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { loadInstallations, loadSites, installSite } from '../repository/installationRepository';
+import { loadInstallations, installSite } from '../repository/installationRepository';
 import type { SharedInstallation, SharedSite } from '../entity/installation';
 import type { FacilityType } from '../../game/entity/game';
 import { errorMessage } from '../../../shared/exception/ApiError';
 import type { SiteQuery } from '../repository/installationRepository';
-const NO_SITES: SharedSite[] = [];
+import { useInstallationSites } from './useInstallationSites';
+import { mapSiteQuery } from '../service/mapSitesService';
 export function useInstallations(query: SiteQuery, live = true) {
-  const [sitePage, setSitePage] = useState<{ scope: string; sites: SharedSite[] }>({
-      scope: '',
-      sites: [],
-    }),
-    [installations, setInstallations] = useState<SharedInstallation[]>([]),
+  const [installations, setInstallations] = useState<SharedInstallation[]>([]),
     [error, setError] = useState(''),
     [busy, setBusy] = useState(false),
-    [counts, setCounts] = useState<Record<string, number>>({}),
-    [matchedCount, setMatchedCount] = useState(0),
-    [siteBusy, setSiteBusy] = useState(false),
-    [siteError, setSiteError] = useState(''),
     [revision, setRevision] = useState(0);
-  const key = JSON.stringify(query);
-  const scope = JSON.stringify([query.districtId, query.type, query.vacant, query.surface]);
-  useEffect(() => {
-    let disposed = false;
-    const controller = new AbortController();
-    setSiteBusy(true);
-    setSiteError('');
-    const timer = window.setTimeout(() => {
-      void loadSites(JSON.parse(key) as SiteQuery, controller.signal)
-        .then((page) => {
-          if (!disposed) {
-            setSitePage((previous) => {
-              const old = new Map(
-                previous.sites.map((site) => [`${site.districtId}:${site.cellId}`, site])
-              );
-              const sites = page.sites.map((site) => {
-                const cached = old.get(`${site.districtId}:${site.cellId}`);
-                return cached && JSON.stringify(cached) === JSON.stringify(site) ? cached : site;
-              });
-              return { scope, sites };
-            });
-            setCounts(page.districtCounts);
-            setMatchedCount(page.matchedCount);
-          }
-        })
-        .catch((e) => {
-          if (!disposed) {
-            setSitePage({ scope, sites: [] });
-            setSiteError(errorMessage(e));
-          }
-        })
-        .finally(() => {
-          if (!disposed) setSiteBusy(false);
-        });
-    }, 250);
-    return () => {
-      disposed = true;
-      clearTimeout(timer);
-      controller.abort();
-    };
-  }, [key, scope, revision]);
+  const context = useInstallationSites(mapSiteQuery(query), revision);
+  const filtered = useInstallationSites(
+    query,
+    revision,
+    !!(query.type || query.surface || query.vacant || query.offset)
+  );
+  const page = query.type || query.surface || query.vacant || query.offset ? filtered : context;
   const alive = useRef(false),
     loading = useRef<Promise<void> | null>(null);
   const refresh = useCallback(async (force = false) => {
@@ -120,12 +79,12 @@ export function useInstallations(query: SiteQuery, live = true) {
     }
   };
   return {
-    // 카메라 이동 중에는 이전 형상을 유지하되 구·시설 조건이 달라지면 즉시 숨긴다.
-    sites: sitePage.scope === scope ? sitePage.sites : NO_SITES,
-    counts,
-    matchedCount,
-    siteBusy,
-    siteError,
+    sites: page.sites,
+    mapSites: context.sites,
+    counts: context.counts,
+    matchedCount: page.matchedCount,
+    siteBusy: page.busy,
+    siteError: page.error || context.error,
     retrySites: () => setRevision((v) => v + 1),
     installations,
     error,
