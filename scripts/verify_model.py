@@ -34,6 +34,8 @@ import sys
 sys.path.insert(0, str(root/'simulation'))
 from waterleague_sim.model_catalog import read_catalog
 models=read_catalog(root/'data/models')
+events={event['id']:event for event in json.loads((root/'backend/src/main/resources/disasters/seoul-events-v1.json').read_text())['events']}
+assert all(len(event['models'])==25 for event in events.values())
 assert (root/'data/models/catalog.json').read_bytes()==(root/'backend/src/main/resources/models/catalog.json').read_bytes()
 for entry in json.loads((root/'data/models/catalog.json').read_text())['models']:
  data=models[entry['sha256']]
@@ -53,11 +55,24 @@ for entry in json.loads((root/'data/models/catalog.json').read_text())['models']
   assert item['geometrySourceHash']==json.loads((root/'data/manifests/seoul-city-v1.json').read_text())['sourceSha256']
   assert item['geometryModelGeneratorSha256']==hashlib.sha256((root/'scripts/prepare_seoul_play_models.py').read_bytes()).hexdigest()
   assert item['regionalRainfallUse'] in ('COMMON_OBSERVED_REPLAY_NOT_LOCAL_OBSERVATION', 'NEAREST_AWS_OBSERVED_REPLAY')
-  if item['regionalRainfallUse']=='NEAREST_AWS_OBSERVED_REPLAY':
+  if 'disasterEvent' in item:
+   event=events[item['disasterEvent']['id']]
+   assert item['disasterEvent']=={key:value for key,value in event.items() if key!='models'}
+   binding=next(row for row in event['models'] if row['districtId']==item['district']['id'])
+   assert binding['modelHash']==entry['sha256'] and binding['stationId']==rain['stationId']
+   assert binding['totalDepthMm']==rain['totalDepthMm']
+   selection=json.loads((root/'data/manifests'/f"{event['id']}-selection-v1.json").read_text())
+   assert selection['event']==item['disasterEvent']
+   selected=next(row for row in selection['selections'] if row['districtId']==item['district']['id'])
+   assert selected['status']=='ACCEPTED' and selected['stationId']==rain['stationId']
+   assert selected['rainfallId']==rain['id'] and selected['stationDistanceKm']==rain['stationDistanceKm']
+   assert selected['rainfallSha256']==hashlib.sha256((root/'data/derived/rainfall'/f"{rain['id']}.json").read_bytes()).hexdigest()
+  elif item['regionalRainfallUse']=='NEAREST_AWS_OBSERVED_REPLAY':
    assert item['rainfallModelGeneratorSha256']==hashlib.sha256((root/'scripts/prepare_seoul_regional_rainfall_models.py').read_bytes()).hexdigest()
    assert item['rainfallSelectionManifestSha256']==hashlib.sha256((root/'data/manifests/seoul-regional-rainfall-v1.json').read_bytes()).hexdigest()
  assert item['generatorSha256']==model['generatorSha256']
- assert rain['transformSha256']==model['rainfall']['transformSha256']
+ if 'disasterEvent' not in item:
+  assert rain['transformSha256']==model['rainfall']['transformSha256']
  assert len(rain['depthsMm'])>60 and all(x>=0 for x in rain['depthsMm'])
  assert sum(Decimal(str(x)) for x in rain['depthsMm'])==Decimal(str(rain['totalDepthMm']))
  assert (datetime.fromisoformat(rain['end'])-datetime.fromisoformat(rain['start'])).total_seconds()==len(rain['depthsMm'])*60
