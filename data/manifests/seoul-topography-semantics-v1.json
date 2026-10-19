@@ -1,0 +1,5834 @@
+{
+  "schemaVersion": 1,
+  "manual": {
+    "title": "전국 연속수치지형도 코드 및 레이어 설명서",
+    "version": "5.1.1",
+    "documentDate": "2014-12-30",
+    "sha256": "a392799ba4a7cead1dadaad7fd1ede9c0ea6a87b467fa8f8f51be5d96081e8d7",
+    "sourceManifest": "data/manifests/vworld-seoul-topography-20260307.json"
+  },
+  "layerNamingReferencePage": 2,
+  "valuePolicy": "EXACT_CODE_OR_UNIQUE_EXACT_MANUAL_LABEL_WITHOUT_DEFAULTS",
+  "layers": {
+    "N1A_A0010000": {
+      "name": "도로경계",
+      "scaleDenominator": 1000,
+      "shapeType": "Polygon",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1A_A0010000",
+        "N3A_A0010000",
+        "N4A_A0010000",
+        "N1L_A0010000",
+        "N3L_A0010000",
+        "N4L_A0010000"
+      ],
+      "manualListPage": 3,
+      "manualDetailPages": [
+        11
+      ],
+      "role": "ROAD_AREA",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        11
+      ]
+    },
+    "N1A_A0033320": {
+      "name": "인도(보도)",
+      "scaleDenominator": 1000,
+      "shapeType": "Polygon",
+      "manualMatch": "GEOMETRY_DIFFERS",
+      "manualLayers": [
+        "N1L_A0033320",
+        "N3L_A0033320"
+      ],
+      "manualListPage": 3,
+      "manualDetailPages": [
+        16
+      ],
+      "role": "SIDEWALK_AREA",
+      "fieldDomains": {
+        "재질": "sidewalkMaterial"
+      },
+      "manualFieldTablePages": [
+        16
+      ]
+    },
+    "N1A_A0043325": {
+      "name": "횡단보도",
+      "scaleDenominator": 1000,
+      "shapeType": "Polygon",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1A_A0043325"
+      ],
+      "manualListPage": 3,
+      "manualDetailPages": [
+        18
+      ],
+      "role": "CROSSWALK_AREA",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        18
+      ]
+    },
+    "N1A_A0053326": {
+      "name": "안전지대",
+      "scaleDenominator": 1000,
+      "shapeType": "Polygon",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1A_A0053326",
+        "N3A_A0053326"
+      ],
+      "manualListPage": 3,
+      "manualDetailPages": [
+        19
+      ],
+      "role": "TRAFFIC_SAFETY_AREA",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        19
+      ]
+    },
+    "N1A_A0063321": {
+      "name": "육교",
+      "scaleDenominator": 1000,
+      "shapeType": "Polygon",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1A_A0063321",
+        "N3A_A0063321"
+      ],
+      "manualListPage": 3,
+      "manualDetailPages": [
+        20
+      ],
+      "role": "PEDESTRIAN_OVERPASS_AREA",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        20
+      ]
+    },
+    "N1A_A0070000": {
+      "name": "교량",
+      "scaleDenominator": 1000,
+      "shapeType": "Polygon",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1A_A0070000",
+        "N3A_A0070000",
+        "N4A_A0070000"
+      ],
+      "manualListPage": 3,
+      "manualDetailPages": [
+        21
+      ],
+      "role": "BRIDGE_AREA",
+      "fieldDomains": {
+        "종류": "bridgeKind",
+        "재질": "bridgeMaterial"
+      },
+      "manualFieldTablePages": [
+        21
+      ]
+    },
+    "N1A_A0080000": {
+      "name": "교차로",
+      "scaleDenominator": 1000,
+      "shapeType": "Polygon",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1A_A0080000",
+        "N3A_A0080000"
+      ],
+      "manualListPage": 3,
+      "manualDetailPages": [
+        23
+      ],
+      "role": "INTERSECTION_AREA",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        23
+      ]
+    },
+    "N1A_A0090000": {
+      "name": "입체교차부",
+      "scaleDenominator": 1000,
+      "shapeType": "Polygon",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1A_A0090000",
+        "N3A_A0090000"
+      ],
+      "manualListPage": 3,
+      "manualDetailPages": [
+        24
+      ],
+      "role": "GRADE_SEPARATED_INTERSECTION_AREA",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        24
+      ]
+    },
+    "N1A_A0100000": {
+      "name": "인터체인지",
+      "scaleDenominator": 1000,
+      "shapeType": "Polygon",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1A_A0100000",
+        "N3A_A0100000",
+        "N4A_A0100000"
+      ],
+      "manualListPage": 3,
+      "manualDetailPages": [
+        26
+      ],
+      "role": "INTERCHANGE_AREA",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        26
+      ]
+    },
+    "N1A_A0110020": {
+      "name": "터널",
+      "scaleDenominator": 1000,
+      "shapeType": "Polygon",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1A_A0110020",
+        "N3A_A0110020",
+        "N4A_A0110020"
+      ],
+      "manualListPage": 3,
+      "manualDetailPages": [
+        27
+      ],
+      "role": "TUNNEL_AREA",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        27
+      ]
+    },
+    "N1A_A0160024": {
+      "name": "철도경계",
+      "scaleDenominator": 1000,
+      "shapeType": "Polygon",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1A_A0160024",
+        "N3A_A0160024",
+        "N4A_A0160024"
+      ],
+      "manualListPage": 4,
+      "manualDetailPages": [
+        33
+      ],
+      "role": "RAILWAY_AREA",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        33
+      ]
+    },
+    "N1A_A0191221": {
+      "name": "승강장",
+      "scaleDenominator": 1000,
+      "shapeType": "Polygon",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1A_A0191221",
+        "N3A_A0191221"
+      ],
+      "manualListPage": 4,
+      "manualDetailPages": [
+        38
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        38
+      ]
+    },
+    "N1A_A0201222": {
+      "name": "승강장의",
+      "scaleDenominator": 1000,
+      "shapeType": "Polygon",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1A_A0201222",
+        "N3A_A0201222",
+        "N4A_A0201222"
+      ],
+      "manualListPage": 4,
+      "manualDetailPages": [
+        39
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        39
+      ]
+    },
+    "N1A_B0010000": {
+      "name": "건물",
+      "scaleDenominator": 1000,
+      "shapeType": "Polygon",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1A_B0010000",
+        "N3A_B0010000",
+        "N4A_B0010000"
+      ],
+      "manualListPage": 4,
+      "manualDetailPages": [
+        42
+      ],
+      "role": "BUILDING_FOOTPRINT",
+      "fieldDomains": {
+        "종류": "buildingKind",
+        "용도": "buildingUse"
+      },
+      "manualFieldTablePages": [
+        42
+      ]
+    },
+    "N1A_C0032254": {
+      "name": "선착장",
+      "scaleDenominator": 1000,
+      "shapeType": "Polygon",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1A_C0032254",
+        "N3A_C0032254"
+      ],
+      "manualListPage": 5,
+      "manualDetailPages": [
+        49
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        49
+      ]
+    },
+    "N1A_C0170000": {
+      "name": "저장조",
+      "scaleDenominator": 1000,
+      "shapeType": "Polygon",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1A_C0170000"
+      ],
+      "manualListPage": 6,
+      "manualDetailPages": [
+        66
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        66
+      ]
+    },
+    "N1A_C0186115": {
+      "name": "탱크",
+      "scaleDenominator": 1000,
+      "shapeType": "Polygon",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1A_C0186115",
+        "N3A_C0186115"
+      ],
+      "manualListPage": 6,
+      "manualDetailPages": [
+        67
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        67
+      ]
+    },
+    "N1A_C0270000": {
+      "name": "야영지",
+      "scaleDenominator": 1000,
+      "shapeType": "Polygon",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1A_C0270000",
+        "N3A_C0270000"
+      ],
+      "manualListPage": 6,
+      "manualDetailPages": [
+        79
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        79
+      ]
+    },
+    "N1A_C0290000": {
+      "name": "묘지계",
+      "scaleDenominator": 1000,
+      "shapeType": "Polygon",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1A_C0290000",
+        "N3A_C0290000"
+      ],
+      "manualListPage": 6,
+      "manualDetailPages": [
+        81
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        81
+      ]
+    },
+    "N1A_C0305316": {
+      "name": "유적지",
+      "scaleDenominator": 1000,
+      "shapeType": "Polygon",
+      "manualMatch": "SCALE_NOT_LISTED",
+      "manualLayers": [
+        "N3A_C0305316",
+        "N4A_C0305316"
+      ],
+      "manualListPage": 7,
+      "manualDetailPages": [
+        82
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        82
+      ]
+    },
+    "N1A_C0390000": {
+      "name": "계단",
+      "scaleDenominator": 1000,
+      "shapeType": "Polygon",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1A_C0390000",
+        "N3A_C0390000"
+      ],
+      "manualListPage": 7,
+      "manualDetailPages": [
+        93
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        93
+      ]
+    },
+    "N1A_C0423365": {
+      "name": "주유소",
+      "scaleDenominator": 1000,
+      "shapeType": "Polygon",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1A_C0423365",
+        "N3A_C0423365"
+      ],
+      "manualListPage": 7,
+      "manualDetailPages": [
+        96
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        96
+      ]
+    },
+    "N1A_C0430000": {
+      "name": "주차장",
+      "scaleDenominator": 1000,
+      "shapeType": "Polygon",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1A_C0430000",
+        "N3A_C0430000"
+      ],
+      "manualListPage": 7,
+      "manualDetailPages": [
+        97
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        97
+      ]
+    },
+    "N1A_C0443363": {
+      "name": "휴게소",
+      "scaleDenominator": 1000,
+      "shapeType": "Polygon",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1A_C0443363",
+        "N3A_C0443363",
+        "N4A_C0443363"
+      ],
+      "manualListPage": 8,
+      "manualDetailPages": [
+        98
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        98
+      ]
+    },
+    "N1A_C0453322": {
+      "name": "지하도",
+      "scaleDenominator": 1000,
+      "shapeType": "Polygon",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1A_C0453322"
+      ],
+      "manualListPage": 8,
+      "manualDetailPages": [
+        99
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        99
+      ]
+    },
+    "N1A_C0470000": {
+      "name": "지하환기구",
+      "scaleDenominator": 1000,
+      "shapeType": "Polygon",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1A_C0470000"
+      ],
+      "manualListPage": 8,
+      "manualDetailPages": [
+        101
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        101
+      ]
+    },
+    "N1A_D0010000": {
+      "name": "경지계",
+      "scaleDenominator": 1000,
+      "shapeType": "Polygon",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1A_D0010000",
+        "N3A_D0010000"
+      ],
+      "manualListPage": 8,
+      "manualDetailPages": [
+        111
+      ],
+      "role": "CULTIVATION_LANDSCAPE_AREA",
+      "fieldDomains": {
+        "구분": "cultivationKind"
+      },
+      "manualFieldTablePages": [
+        111
+      ]
+    },
+    "N1A_E0010001": {
+      "name": "하천경계",
+      "scaleDenominator": 1000,
+      "shapeType": "Polygon",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1A_E0010001",
+        "N3A_E0010001",
+        "N4A_E0010001"
+      ],
+      "manualListPage": 9,
+      "manualDetailPages": [
+        117
+      ],
+      "role": "RIVER_BOUNDARY_AREA",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        117
+      ]
+    },
+    "N1A_E0032111": {
+      "name": "실폭하천",
+      "scaleDenominator": 1000,
+      "shapeType": "Polygon",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1A_E0032111",
+        "N3A_E0032111",
+        "N4A_E0032111"
+      ],
+      "manualListPage": 9,
+      "manualDetailPages": [
+        120
+      ],
+      "role": "RIVER_WATER_AREA",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        120
+      ]
+    },
+    "N1A_E0052114": {
+      "name": "호수/저수지",
+      "scaleDenominator": 1000,
+      "shapeType": "Polygon",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1A_E0052114",
+        "N3A_E0052114",
+        "N4A_E0052114"
+      ],
+      "manualListPage": 9,
+      "manualDetailPages": [
+        122
+      ],
+      "role": "LAKE_RESERVOIR_AREA",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        122
+      ]
+    },
+    "N1A_G0010000": {
+      "name": "행정경계(시도)",
+      "scaleDenominator": 1000,
+      "shapeType": "Polygon",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1A_G0010000",
+        "N3A_G0010000",
+        "N4A_G0010000"
+      ],
+      "manualListPage": 10,
+      "manualDetailPages": [
+        135
+      ],
+      "role": "ADMINISTRATIVE_AREA",
+      "fieldDomains": {
+        "구분": "administrativeLevel"
+      },
+      "manualFieldTablePages": [
+        135
+      ]
+    },
+    "N1A_G0020000": {
+      "name": "수부지형경계",
+      "scaleDenominator": 1000,
+      "shapeType": "Polygon",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1A_G0020000",
+        "N3A_G0020000",
+        "N4A_G0020000"
+      ],
+      "manualListPage": 10,
+      "manualDetailPages": [
+        139
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        139
+      ]
+    },
+    "N1A_H0010000": {
+      "name": "도곽선",
+      "scaleDenominator": 1000,
+      "shapeType": "Polygon",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1A_H0010000",
+        "N3A_H0010000",
+        "N4A_H0010000"
+      ],
+      "manualListPage": 10,
+      "manualDetailPages": [
+        143
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        143
+      ]
+    },
+    "N1L_A0010000": {
+      "name": "도로경계",
+      "scaleDenominator": 1000,
+      "shapeType": "Polyline",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1A_A0010000",
+        "N3A_A0010000",
+        "N4A_A0010000",
+        "N1L_A0010000",
+        "N3L_A0010000",
+        "N4L_A0010000"
+      ],
+      "manualListPage": 3,
+      "manualDetailPages": [
+        11
+      ],
+      "role": "ROAD_BOUNDARY_LINE",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        11
+      ]
+    },
+    "N1L_A0020000": {
+      "name": "도로중심선",
+      "scaleDenominator": 1000,
+      "shapeType": "Polyline",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1L_A0020000",
+        "N3L_A0020000",
+        "N4L_A0020000"
+      ],
+      "manualListPage": 3,
+      "manualDetailPages": [
+        13
+      ],
+      "role": "ROAD_CENTERLINE",
+      "fieldDomains": {
+        "도로구분": "roadClass",
+        "포장재질": "roadPavement",
+        "분리대유무": "median",
+        "일방통행": "oneWay"
+      },
+      "manualFieldTablePages": [
+        13
+      ]
+    },
+    "N1L_A0033330": {
+      "name": null,
+      "scaleDenominator": 1000,
+      "shapeType": "Polyline",
+      "manualMatch": "NOT_LISTED",
+      "manualLayers": [],
+      "manualListPage": null,
+      "manualDetailPages": [],
+      "role": "UNKNOWN",
+      "fieldDomains": {},
+      "manualFieldTablePages": []
+    },
+    "N1L_A0123373": {
+      "name": "터널입구",
+      "scaleDenominator": 1000,
+      "shapeType": "Polyline",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1L_A0123373",
+        "N3L_A0123373",
+        "N4L_A0123373"
+      ],
+      "manualListPage": 4,
+      "manualDetailPages": [
+        28
+      ],
+      "role": "TUNNEL_ENTRANCE_LINE",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        28
+      ]
+    },
+    "N1L_A0150000": {
+      "name": "철도",
+      "scaleDenominator": 1000,
+      "shapeType": "Polyline",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1L_A0150000"
+      ],
+      "manualListPage": 4,
+      "manualDetailPages": [
+        31
+      ],
+      "role": "RAIL_LINE",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        31
+      ]
+    },
+    "N1L_A0171119": {
+      "name": "철도중심선",
+      "scaleDenominator": 1000,
+      "shapeType": "Polyline",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1L_A0171119",
+        "N3L_A0171119",
+        "N4L_A0171119"
+      ],
+      "manualListPage": 4,
+      "manualDetailPages": [
+        34
+      ],
+      "role": "RAIL_CENTERLINE",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        34
+      ]
+    },
+    "N1L_B0020000": {
+      "name": "담장",
+      "scaleDenominator": 1000,
+      "shapeType": "Polyline",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1L_B0020000",
+        "N3L_B0020000"
+      ],
+      "manualListPage": 4,
+      "manualDetailPages": [
+        45
+      ],
+      "role": "BUILDING_AUXILIARY_LINE",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        45
+      ]
+    },
+    "N1L_C0050000": {
+      "name": "제방",
+      "scaleDenominator": 1000,
+      "shapeType": "Polyline",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1L_C0050000",
+        "N3L_C0050000",
+        "N4L_C0050000"
+      ],
+      "manualListPage": 5,
+      "manualDetailPages": [
+        51
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        51
+      ]
+    },
+    "N1L_C0060000": {
+      "name": "수문",
+      "scaleDenominator": 1000,
+      "shapeType": "Polyline",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1L_C0060000",
+        "N3L_C0060000"
+      ],
+      "manualListPage": 5,
+      "manualDetailPages": [
+        53
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        53
+      ]
+    },
+    "N1L_C0070000": {
+      "name": "암거",
+      "scaleDenominator": 1000,
+      "shapeType": "Polyline",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1L_C0070000",
+        "N3L_C0070000"
+      ],
+      "manualListPage": 5,
+      "manualDetailPages": [
+        55
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        55
+      ]
+    },
+    "N1L_C0080000": {
+      "name": "잔교",
+      "scaleDenominator": 1000,
+      "shapeType": "Polyline",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1L_C0080000",
+        "N3L_C0080000",
+        "N4L_C0080000"
+      ],
+      "manualListPage": 5,
+      "manualDetailPages": [
+        56
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        56
+      ]
+    },
+    "N1L_C0325315": {
+      "name": "성",
+      "scaleDenominator": 1000,
+      "shapeType": "Polyline",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1L_C0325315",
+        "N3L_C0325315",
+        "N4L_C0325315"
+      ],
+      "manualListPage": 7,
+      "manualDetailPages": [
+        84
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        84
+      ]
+    },
+    "N1L_C0463374": {
+      "name": "지하도입구",
+      "scaleDenominator": 1000,
+      "shapeType": "Polyline",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1L_C0463374"
+      ],
+      "manualListPage": 8,
+      "manualDetailPages": [
+        100
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        100
+      ]
+    },
+    "N1L_C0520000": {
+      "name": "도로분리대",
+      "scaleDenominator": 1000,
+      "shapeType": "Polyline",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1L_C0520000",
+        "N3L_C0520000"
+      ],
+      "manualListPage": 8,
+      "manualDetailPages": [
+        106
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        106
+      ]
+    },
+    "N1L_C0530000": {
+      "name": "방지책",
+      "scaleDenominator": 1000,
+      "shapeType": "Polyline",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1L_C0530000"
+      ],
+      "manualListPage": 8,
+      "manualDetailPages": [
+        107
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        107
+      ]
+    },
+    "N1L_E0020000": {
+      "name": "하천중심선",
+      "scaleDenominator": 1000,
+      "shapeType": "Polyline",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1L_E0020000",
+        "N3L_E0020000",
+        "N4L_E0020000"
+      ],
+      "manualListPage": 9,
+      "manualDetailPages": [
+        118
+      ],
+      "role": "RIVER_CENTERLINE",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        118
+      ]
+    },
+    "N1L_E0060000": {
+      "name": "용수로",
+      "scaleDenominator": 1000,
+      "shapeType": "Polyline",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1L_E0060000",
+        "N3L_E0060000",
+        "N4L_E0060000"
+      ],
+      "manualListPage": 9,
+      "manualDetailPages": [
+        123
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        123
+      ]
+    },
+    "N1L_F0010000": {
+      "name": "등고선",
+      "scaleDenominator": 1000,
+      "shapeType": "Polyline",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1L_F0010000",
+        "N3L_F0010000",
+        "N4L_F0010000"
+      ],
+      "manualListPage": 9,
+      "manualDetailPages": [
+        128
+      ],
+      "role": "CONTOUR_LINE",
+      "fieldDomains": {
+        "구분": "contourKind"
+      },
+      "manualFieldTablePages": [
+        128
+      ]
+    },
+    "N1L_F0030000": {
+      "name": "성/절토",
+      "scaleDenominator": 1000,
+      "shapeType": "Polyline",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1L_F0030000",
+        "N3L_F0030000",
+        "N4L_F0030000"
+      ],
+      "manualListPage": 9,
+      "manualDetailPages": [
+        131
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        131
+      ]
+    },
+    "N1L_F0040000": {
+      "name": "옹벽",
+      "scaleDenominator": 1000,
+      "shapeType": "Polyline",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1L_F0040000",
+        "N3L_F0040000"
+      ],
+      "manualListPage": 10,
+      "manualDetailPages": [
+        132
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        132
+      ]
+    },
+    "N1L_G0030000": {
+      "name": "기타경계",
+      "scaleDenominator": 1000,
+      "shapeType": "Polyline",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1L_G0030000",
+        "N3L_G0030000",
+        "N4L_G0030000"
+      ],
+      "manualListPage": 10,
+      "manualDetailPages": [
+        141
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        141
+      ]
+    },
+    "N1L_H0037335": {
+      "name": "격자",
+      "scaleDenominator": 1000,
+      "shapeType": "Polyline",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1L_H0037335"
+      ],
+      "manualListPage": 10,
+      "manualDetailPages": [
+        148
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        148
+      ]
+    },
+    "N1P_A0131122": {
+      "name": "정거장",
+      "scaleDenominator": 1000,
+      "shapeType": "Point",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1P_A0131122",
+        "N3P_A0131122",
+        "N4P_A0131122"
+      ],
+      "manualListPage": 4,
+      "manualDetailPages": [
+        29
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        29
+      ]
+    },
+    "N1P_A0140000": {
+      "name": "정류장",
+      "scaleDenominator": 1000,
+      "shapeType": "Point",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1P_A0140000"
+      ],
+      "manualListPage": 4,
+      "manualDetailPages": [
+        30
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        30
+      ]
+    },
+    "N1P_C0090000": {
+      "name": "우물/약수터",
+      "scaleDenominator": 1000,
+      "shapeType": "Point",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1P_C0090000",
+        "N3P_C0090000",
+        "N4P_C0090000"
+      ],
+      "manualListPage": 5,
+      "manualDetailPages": [
+        57
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        57
+      ]
+    },
+    "N1P_C0106312": {
+      "name": "관정",
+      "scaleDenominator": 1000,
+      "shapeType": "Point",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1P_C0106312"
+      ],
+      "manualListPage": 5,
+      "manualDetailPages": [
+        58
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        58
+      ]
+    },
+    "N1P_C0116313": {
+      "name": "분수",
+      "scaleDenominator": 1000,
+      "shapeType": "Point",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1P_C0116313"
+      ],
+      "manualListPage": 5,
+      "manualDetailPages": [
+        59
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        59
+      ]
+    },
+    "N1P_C0125335": {
+      "name": "온천",
+      "scaleDenominator": 1000,
+      "shapeType": "Point",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1P_C0125335",
+        "N3P_C0125335",
+        "N4P_C0125335"
+      ],
+      "manualListPage": 5,
+      "manualDetailPages": [
+        60
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        60
+      ]
+    },
+    "N1P_C0142263": {
+      "name": "낚시터",
+      "scaleDenominator": 1000,
+      "shapeType": "Point",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1P_C0142263",
+        "N3P_C0142263"
+      ],
+      "manualListPage": 5,
+      "manualDetailPages": [
+        62
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        62
+      ]
+    },
+    "N1P_C0200000": {
+      "name": "적치장",
+      "scaleDenominator": 1000,
+      "shapeType": "Point",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1P_C0200000",
+        "N3P_C0200000"
+      ],
+      "manualListPage": 6,
+      "manualDetailPages": [
+        69
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        69
+      ]
+    },
+    "N1P_C0220000": {
+      "name": "조명",
+      "scaleDenominator": 1000,
+      "shapeType": "Point",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1P_C0220000"
+      ],
+      "manualListPage": 6,
+      "manualDetailPages": [
+        71
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        71
+      ]
+    },
+    "N1P_C0230000": {
+      "name": "전력주/통신주",
+      "scaleDenominator": 1000,
+      "shapeType": "Point",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1P_C0230000"
+      ],
+      "manualListPage": 6,
+      "manualDetailPages": [
+        72
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        72
+      ]
+    },
+    "N1P_C0250000": {
+      "name": "소화전",
+      "scaleDenominator": 1000,
+      "shapeType": "Point",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1P_C0250000"
+      ],
+      "manualListPage": 6,
+      "manualDetailPages": [
+        76
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        76
+      ]
+    },
+    "N1P_C0260000": {
+      "name": "관측소",
+      "scaleDenominator": 1000,
+      "shapeType": "Point",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1P_C0260000",
+        "N3P_C0260000"
+      ],
+      "manualListPage": 6,
+      "manualDetailPages": [
+        77
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        77
+      ]
+    },
+    "N1P_C0285311": {
+      "name": "묘지",
+      "scaleDenominator": 1000,
+      "shapeType": "Point",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1P_C0285311",
+        "N3P_C0285311"
+      ],
+      "manualListPage": 6,
+      "manualDetailPages": [
+        80
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        80
+      ]
+    },
+    "N1P_C0310000": {
+      "name": "문화재",
+      "scaleDenominator": 1000,
+      "shapeType": "Point",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1P_C0310000",
+        "N3P_C0310000",
+        "N4P_C0310000"
+      ],
+      "manualListPage": 7,
+      "manualDetailPages": [
+        83
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        83
+      ]
+    },
+    "N1P_C0330000": {
+      "name": "비석/기념비",
+      "scaleDenominator": 1000,
+      "shapeType": "Point",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1P_C0330000",
+        "N3P_C0330000"
+      ],
+      "manualListPage": 7,
+      "manualDetailPages": [
+        85
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        85
+      ]
+    },
+    "N1P_C0340000": {
+      "name": "탑",
+      "scaleDenominator": 1000,
+      "shapeType": "Point",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1P_C0340000",
+        "N3P_C0340000"
+      ],
+      "manualListPage": 7,
+      "manualDetailPages": [
+        86
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        86
+      ]
+    },
+    "N1P_C0350000": {
+      "name": "동상",
+      "scaleDenominator": 1000,
+      "shapeType": "Point",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1P_C0350000"
+      ],
+      "manualListPage": 7,
+      "manualDetailPages": [
+        88
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        88
+      ]
+    },
+    "N1P_C0363361": {
+      "name": "공중전화",
+      "scaleDenominator": 1000,
+      "shapeType": "Point",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1P_C0363361"
+      ],
+      "manualListPage": 7,
+      "manualDetailPages": [
+        89
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        89
+      ]
+    },
+    "N1P_C0373362": {
+      "name": "우체통",
+      "scaleDenominator": 1000,
+      "shapeType": "Point",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1P_C0373362"
+      ],
+      "manualListPage": 7,
+      "manualDetailPages": [
+        90
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        90
+      ]
+    },
+    "N1P_C0380000": {
+      "name": "놀이시설",
+      "scaleDenominator": 1000,
+      "shapeType": "Point",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1P_C0380000",
+        "N3P_C0380000"
+      ],
+      "manualListPage": 7,
+      "manualDetailPages": [
+        91
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        91
+      ]
+    },
+    "N1P_C0400000": {
+      "name": "게시판",
+      "scaleDenominator": 1000,
+      "shapeType": "Point",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1P_C0400000"
+      ],
+      "manualListPage": 7,
+      "manualDetailPages": [
+        94
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        94
+      ]
+    },
+    "N1P_C0410000": {
+      "name": "표지",
+      "scaleDenominator": 1000,
+      "shapeType": "Point",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1P_C0410000"
+      ],
+      "manualListPage": 7,
+      "manualDetailPages": [
+        95
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        95
+      ]
+    },
+    "N1P_C0486353": {
+      "name": "굴뚝",
+      "scaleDenominator": 1000,
+      "shapeType": "Point",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1P_C0486353",
+        "N3P_C0486353"
+      ],
+      "manualListPage": 8,
+      "manualDetailPages": [
+        102
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        102
+      ]
+    },
+    "N1P_C0493376": {
+      "name": "신호등",
+      "scaleDenominator": 1000,
+      "shapeType": "Point",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1P_C0493376"
+      ],
+      "manualListPage": 8,
+      "manualDetailPages": [
+        103
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        103
+      ]
+    },
+    "N1P_C0503375": {
+      "name": "차단기",
+      "scaleDenominator": 1000,
+      "shapeType": "Point",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1P_C0503375"
+      ],
+      "manualListPage": 8,
+      "manualDetailPages": [
+        104
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        104
+      ]
+    },
+    "N1P_C0513369": {
+      "name": "도로반사경",
+      "scaleDenominator": 1000,
+      "shapeType": "Point",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1P_C0513369"
+      ],
+      "manualListPage": 8,
+      "manualDetailPages": [
+        105
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        105
+      ]
+    },
+    "N1P_C0540000": {
+      "name": "요금징수소",
+      "scaleDenominator": 1000,
+      "shapeType": "Point",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1P_C0540000",
+        "N3P_C0540000",
+        "N4P_C0540000"
+      ],
+      "manualListPage": 8,
+      "manualDetailPages": [
+        109
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        109
+      ]
+    },
+    "N1P_C0556354": {
+      "name": "헬기장",
+      "scaleDenominator": 1000,
+      "shapeType": "Point",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1P_C0556354",
+        "N3P_C0556354",
+        "N4P_C0556354"
+      ],
+      "manualListPage": 8,
+      "manualDetailPages": [
+        110
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        110
+      ]
+    },
+    "N1P_D0030000": {
+      "name": "독립수",
+      "scaleDenominator": 1000,
+      "shapeType": "Point",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1P_D0030000",
+        "N3P_D0030000"
+      ],
+      "manualListPage": 9,
+      "manualDetailPages": [
+        114
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        114
+      ]
+    },
+    "N1P_E0042326": {
+      "name": "유수방향",
+      "scaleDenominator": 1000,
+      "shapeType": "Point",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1P_E0042326",
+        "N3P_E0042326",
+        "N4P_E0042326"
+      ],
+      "manualListPage": 9,
+      "manualDetailPages": [
+        121
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        121
+      ]
+    },
+    "N1P_E0072325": {
+      "name": "폭포",
+      "scaleDenominator": 1000,
+      "shapeType": "Point",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1P_E0072325",
+        "N3P_E0072325",
+        "N4P_E0072325"
+      ],
+      "manualListPage": 9,
+      "manualDetailPages": [
+        125
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        125
+      ]
+    },
+    "N1P_F0020000": {
+      "name": "표고점",
+      "scaleDenominator": 1000,
+      "shapeType": "Point",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1P_F0020000",
+        "N3P_F0020000",
+        "N4P_F0020000"
+      ],
+      "manualListPage": 9,
+      "manualDetailPages": [
+        130
+      ],
+      "role": "ELEVATION_POINT",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        130
+      ]
+    },
+    "N1P_H0040000": {
+      "name": "지명",
+      "scaleDenominator": 1000,
+      "shapeType": "Point",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1P_H0040000",
+        "N3P_H0040000",
+        "N4P_H0040000"
+      ],
+      "manualListPage": 10,
+      "manualDetailPages": [
+        149
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        149
+      ]
+    },
+    "N1P_H0059153": {
+      "name": "산/산맥",
+      "scaleDenominator": 1000,
+      "shapeType": "Point",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1P_H0059153",
+        "N3P_H0059153",
+        "N4P_H0059153"
+      ],
+      "manualListPage": 10,
+      "manualDetailPages": [
+        153
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        153
+      ]
+    },
+    "N3A_A0010000": {
+      "name": "도로경계",
+      "scaleDenominator": 5000,
+      "shapeType": "Polygon",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1A_A0010000",
+        "N3A_A0010000",
+        "N4A_A0010000",
+        "N1L_A0010000",
+        "N3L_A0010000",
+        "N4L_A0010000"
+      ],
+      "manualListPage": 3,
+      "manualDetailPages": [
+        11
+      ],
+      "role": "ROAD_AREA",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        11
+      ]
+    },
+    "N3A_A0033320": {
+      "name": "인도(보도)",
+      "scaleDenominator": 5000,
+      "shapeType": "Polygon",
+      "manualMatch": "GEOMETRY_DIFFERS",
+      "manualLayers": [
+        "N1L_A0033320",
+        "N3L_A0033320"
+      ],
+      "manualListPage": 3,
+      "manualDetailPages": [
+        16
+      ],
+      "role": "SIDEWALK_AREA",
+      "fieldDomains": {
+        "재질": "sidewalkMaterial"
+      },
+      "manualFieldTablePages": [
+        16
+      ]
+    },
+    "N3A_A0043325": {
+      "name": "횡단보도",
+      "scaleDenominator": 5000,
+      "shapeType": "Polygon",
+      "manualMatch": "SCALE_NOT_LISTED",
+      "manualLayers": [
+        "N1A_A0043325"
+      ],
+      "manualListPage": 3,
+      "manualDetailPages": [
+        18
+      ],
+      "role": "CROSSWALK_AREA",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        18
+      ]
+    },
+    "N3A_A0080000": {
+      "name": "교차로",
+      "scaleDenominator": 5000,
+      "shapeType": "Polygon",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1A_A0080000",
+        "N3A_A0080000"
+      ],
+      "manualListPage": 3,
+      "manualDetailPages": [
+        23
+      ],
+      "role": "INTERSECTION_AREA",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        23
+      ]
+    },
+    "N3A_B0010000": {
+      "name": "건물",
+      "scaleDenominator": 5000,
+      "shapeType": "Polygon",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1A_B0010000",
+        "N3A_B0010000",
+        "N4A_B0010000"
+      ],
+      "manualListPage": 4,
+      "manualDetailPages": [
+        42
+      ],
+      "role": "BUILDING_FOOTPRINT",
+      "fieldDomains": {
+        "종류": "buildingKind",
+        "용도": "buildingUse"
+      },
+      "manualFieldTablePages": [
+        42
+      ]
+    },
+    "N3A_C0390000": {
+      "name": "계단",
+      "scaleDenominator": 5000,
+      "shapeType": "Polygon",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1A_C0390000",
+        "N3A_C0390000"
+      ],
+      "manualListPage": 7,
+      "manualDetailPages": [
+        93
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        93
+      ]
+    },
+    "N3A_D0010000": {
+      "name": "경지계",
+      "scaleDenominator": 5000,
+      "shapeType": "Polygon",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1A_D0010000",
+        "N3A_D0010000"
+      ],
+      "manualListPage": 8,
+      "manualDetailPages": [
+        111
+      ],
+      "role": "CULTIVATION_LANDSCAPE_AREA",
+      "fieldDomains": {
+        "구분": "cultivationKind"
+      },
+      "manualFieldTablePages": [
+        111
+      ]
+    },
+    "N3A_E0010001": {
+      "name": "하천경계",
+      "scaleDenominator": 5000,
+      "shapeType": "Polygon",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1A_E0010001",
+        "N3A_E0010001",
+        "N4A_E0010001"
+      ],
+      "manualListPage": 9,
+      "manualDetailPages": [
+        117
+      ],
+      "role": "RIVER_BOUNDARY_AREA",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        117
+      ]
+    },
+    "N3A_E0032111": {
+      "name": "실폭하천",
+      "scaleDenominator": 5000,
+      "shapeType": "Polygon",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1A_E0032111",
+        "N3A_E0032111",
+        "N4A_E0032111"
+      ],
+      "manualListPage": 9,
+      "manualDetailPages": [
+        120
+      ],
+      "role": "RIVER_WATER_AREA",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        120
+      ]
+    },
+    "N3A_G0010000": {
+      "name": "행정경계(시도)",
+      "scaleDenominator": 5000,
+      "shapeType": "Polygon",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1A_G0010000",
+        "N3A_G0010000",
+        "N4A_G0010000"
+      ],
+      "manualListPage": 10,
+      "manualDetailPages": [
+        135
+      ],
+      "role": "ADMINISTRATIVE_AREA",
+      "fieldDomains": {
+        "구분": "administrativeLevel"
+      },
+      "manualFieldTablePages": [
+        135
+      ]
+    },
+    "N3A_G0020000": {
+      "name": "수부지형경계",
+      "scaleDenominator": 5000,
+      "shapeType": "Polygon",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1A_G0020000",
+        "N3A_G0020000",
+        "N4A_G0020000"
+      ],
+      "manualListPage": 10,
+      "manualDetailPages": [
+        139
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        139
+      ]
+    },
+    "N3A_H0010000": {
+      "name": "도곽선",
+      "scaleDenominator": 5000,
+      "shapeType": "Polygon",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1A_H0010000",
+        "N3A_H0010000",
+        "N4A_H0010000"
+      ],
+      "manualListPage": 10,
+      "manualDetailPages": [
+        143
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        143
+      ]
+    },
+    "N3L_A0010000": {
+      "name": "도로경계",
+      "scaleDenominator": 5000,
+      "shapeType": "Polyline",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1A_A0010000",
+        "N3A_A0010000",
+        "N4A_A0010000",
+        "N1L_A0010000",
+        "N3L_A0010000",
+        "N4L_A0010000"
+      ],
+      "manualListPage": 3,
+      "manualDetailPages": [
+        11
+      ],
+      "role": "ROAD_BOUNDARY_LINE",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        11
+      ]
+    },
+    "N3L_A0020000": {
+      "name": "도로중심선",
+      "scaleDenominator": 5000,
+      "shapeType": "Polyline",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1L_A0020000",
+        "N3L_A0020000",
+        "N4L_A0020000"
+      ],
+      "manualListPage": 3,
+      "manualDetailPages": [
+        13
+      ],
+      "role": "ROAD_CENTERLINE",
+      "fieldDomains": {
+        "도로구분": "roadClass",
+        "포장재질": "roadPavement",
+        "분리대유무": "median",
+        "일방통행": "oneWay"
+      },
+      "manualFieldTablePages": [
+        13
+      ]
+    },
+    "N3L_B0020000": {
+      "name": "담장",
+      "scaleDenominator": 5000,
+      "shapeType": "Polyline",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1L_B0020000",
+        "N3L_B0020000"
+      ],
+      "manualListPage": 4,
+      "manualDetailPages": [
+        45
+      ],
+      "role": "BUILDING_AUXILIARY_LINE",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        45
+      ]
+    },
+    "N3L_C0050000": {
+      "name": "제방",
+      "scaleDenominator": 5000,
+      "shapeType": "Polyline",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1L_C0050000",
+        "N3L_C0050000",
+        "N4L_C0050000"
+      ],
+      "manualListPage": 5,
+      "manualDetailPages": [
+        51
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        51
+      ]
+    },
+    "N3L_C0070000": {
+      "name": "암거",
+      "scaleDenominator": 5000,
+      "shapeType": "Polyline",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1L_C0070000",
+        "N3L_C0070000"
+      ],
+      "manualListPage": 5,
+      "manualDetailPages": [
+        55
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        55
+      ]
+    },
+    "N3L_E0020000": {
+      "name": "하천중심선",
+      "scaleDenominator": 5000,
+      "shapeType": "Polyline",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1L_E0020000",
+        "N3L_E0020000",
+        "N4L_E0020000"
+      ],
+      "manualListPage": 9,
+      "manualDetailPages": [
+        118
+      ],
+      "role": "RIVER_CENTERLINE",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        118
+      ]
+    },
+    "N3L_F0010000": {
+      "name": "등고선",
+      "scaleDenominator": 5000,
+      "shapeType": "Polyline",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1L_F0010000",
+        "N3L_F0010000",
+        "N4L_F0010000"
+      ],
+      "manualListPage": 9,
+      "manualDetailPages": [
+        128
+      ],
+      "role": "CONTOUR_LINE",
+      "fieldDomains": {
+        "구분": "contourKind"
+      },
+      "manualFieldTablePages": [
+        128
+      ]
+    },
+    "N3L_F0040000": {
+      "name": "옹벽",
+      "scaleDenominator": 5000,
+      "shapeType": "Polyline",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1L_F0040000",
+        "N3L_F0040000"
+      ],
+      "manualListPage": 10,
+      "manualDetailPages": [
+        132
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        132
+      ]
+    },
+    "N3L_G0030000": {
+      "name": "기타경계",
+      "scaleDenominator": 5000,
+      "shapeType": "Polyline",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1L_G0030000",
+        "N3L_G0030000",
+        "N4L_G0030000"
+      ],
+      "manualListPage": 10,
+      "manualDetailPages": [
+        141
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        141
+      ]
+    },
+    "N3L_H0037335": {
+      "name": "격자",
+      "scaleDenominator": 5000,
+      "shapeType": "Polyline",
+      "manualMatch": "SCALE_NOT_LISTED",
+      "manualLayers": [
+        "N1L_H0037335"
+      ],
+      "manualListPage": 10,
+      "manualDetailPages": [
+        148
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        148
+      ]
+    },
+    "N3P_C0220000": {
+      "name": "조명",
+      "scaleDenominator": 5000,
+      "shapeType": "Point",
+      "manualMatch": "SCALE_NOT_LISTED",
+      "manualLayers": [
+        "N1P_C0220000"
+      ],
+      "manualListPage": 6,
+      "manualDetailPages": [
+        71
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        71
+      ]
+    },
+    "N3P_C0230000": {
+      "name": "전력주/통신주",
+      "scaleDenominator": 5000,
+      "shapeType": "Point",
+      "manualMatch": "SCALE_NOT_LISTED",
+      "manualLayers": [
+        "N1P_C0230000"
+      ],
+      "manualListPage": 6,
+      "manualDetailPages": [
+        72
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        72
+      ]
+    },
+    "N3P_C0250000": {
+      "name": "소화전",
+      "scaleDenominator": 5000,
+      "shapeType": "Point",
+      "manualMatch": "SCALE_NOT_LISTED",
+      "manualLayers": [
+        "N1P_C0250000"
+      ],
+      "manualListPage": 6,
+      "manualDetailPages": [
+        76
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        76
+      ]
+    },
+    "N3P_C0380000": {
+      "name": "놀이시설",
+      "scaleDenominator": 5000,
+      "shapeType": "Point",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1P_C0380000",
+        "N3P_C0380000"
+      ],
+      "manualListPage": 7,
+      "manualDetailPages": [
+        91
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        91
+      ]
+    },
+    "N3P_C0410000": {
+      "name": "표지",
+      "scaleDenominator": 5000,
+      "shapeType": "Point",
+      "manualMatch": "SCALE_NOT_LISTED",
+      "manualLayers": [
+        "N1P_C0410000"
+      ],
+      "manualListPage": 7,
+      "manualDetailPages": [
+        95
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        95
+      ]
+    },
+    "N3P_C0513369": {
+      "name": "도로반사경",
+      "scaleDenominator": 5000,
+      "shapeType": "Point",
+      "manualMatch": "SCALE_NOT_LISTED",
+      "manualLayers": [
+        "N1P_C0513369"
+      ],
+      "manualListPage": 8,
+      "manualDetailPages": [
+        105
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        105
+      ]
+    },
+    "N3P_D0030000": {
+      "name": "독립수",
+      "scaleDenominator": 5000,
+      "shapeType": "Point",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1P_D0030000",
+        "N3P_D0030000"
+      ],
+      "manualListPage": 9,
+      "manualDetailPages": [
+        114
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        114
+      ]
+    },
+    "N3P_E0042326": {
+      "name": "유수방향",
+      "scaleDenominator": 5000,
+      "shapeType": "Point",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1P_E0042326",
+        "N3P_E0042326",
+        "N4P_E0042326"
+      ],
+      "manualListPage": 9,
+      "manualDetailPages": [
+        121
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        121
+      ]
+    },
+    "N3P_F0020000": {
+      "name": "표고점",
+      "scaleDenominator": 5000,
+      "shapeType": "Point",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1P_F0020000",
+        "N3P_F0020000",
+        "N4P_F0020000"
+      ],
+      "manualListPage": 9,
+      "manualDetailPages": [
+        130
+      ],
+      "role": "ELEVATION_POINT",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        130
+      ]
+    },
+    "N3P_H0040000": {
+      "name": "지명",
+      "scaleDenominator": 5000,
+      "shapeType": "Point",
+      "manualMatch": "EXACT_LAYER",
+      "manualLayers": [
+        "N1P_H0040000",
+        "N3P_H0040000",
+        "N4P_H0040000"
+      ],
+      "manualListPage": 10,
+      "manualDetailPages": [
+        149
+      ],
+      "role": "REFERENCE_ONLY",
+      "fieldDomains": {},
+      "manualFieldTablePages": [
+        149
+      ]
+    }
+  },
+  "domains": {
+    "buildingKind": {
+      "BDK000": {
+        "label": "미분류",
+        "page": 42,
+        "status": "UNCLASSIFIED"
+      },
+      "BDK001": {
+        "label": "일반주택",
+        "page": 42,
+        "status": "KNOWN"
+      },
+      "BDK002": {
+        "label": "연립주택",
+        "page": 42,
+        "status": "KNOWN"
+      },
+      "BDK003": {
+        "label": "아파트",
+        "page": 42,
+        "status": "KNOWN"
+      },
+      "BDK004": {
+        "label": "주택외건물",
+        "page": 42,
+        "status": "KNOWN"
+      },
+      "BDK005": {
+        "label": "무벽건물",
+        "page": 42,
+        "status": "KNOWN"
+      },
+      "BDK006": {
+        "label": "온실",
+        "page": 43,
+        "status": "KNOWN"
+      },
+      "BDK007": {
+        "label": "공사중건물",
+        "page": 43,
+        "status": "KNOWN"
+      },
+      "BDK008": {
+        "label": "가건물",
+        "page": 43,
+        "status": "KNOWN"
+      }
+    },
+    "buildingUse": {
+      "BDS000": {
+        "label": "미분류",
+        "page": 43,
+        "status": "UNCLASSIFIED"
+      },
+      "BDS001": {
+        "label": "주택",
+        "page": 43,
+        "status": "KNOWN"
+      },
+      "BDS002": {
+        "label": "근린생활시설",
+        "page": 43,
+        "status": "KNOWN"
+      },
+      "BDS003": {
+        "label": "문화및집회시설",
+        "page": 43,
+        "status": "KNOWN"
+      },
+      "BDS004": {
+        "label": "종교시설",
+        "page": 43,
+        "status": "KNOWN"
+      },
+      "BDS005": {
+        "label": "판매시설",
+        "page": 43,
+        "status": "KNOWN"
+      },
+      "BDS006": {
+        "label": "운수시설",
+        "page": 43,
+        "status": "KNOWN"
+      },
+      "BDS007": {
+        "label": "의료시설",
+        "page": 43,
+        "status": "KNOWN"
+      },
+      "BDS008": {
+        "label": "교육연구시설",
+        "page": 43,
+        "status": "KNOWN"
+      },
+      "BDS009": {
+        "label": "노유자(노인및어린이)시설",
+        "page": 43,
+        "status": "KNOWN"
+      },
+      "BDS010": {
+        "label": "수련시설",
+        "page": 43,
+        "status": "KNOWN"
+      },
+      "BDS011": {
+        "label": "운동시설",
+        "page": 43,
+        "status": "KNOWN"
+      },
+      "BDS012": {
+        "label": "업무시설",
+        "page": 43,
+        "status": "KNOWN"
+      },
+      "BDS013": {
+        "label": "숙박시설",
+        "page": 43,
+        "status": "KNOWN"
+      },
+      "BDS014": {
+        "label": "위락시설",
+        "page": 43,
+        "status": "KNOWN"
+      },
+      "BDS015": {
+        "label": "공장",
+        "page": 43,
+        "status": "KNOWN"
+      },
+      "BDS016": {
+        "label": "창고시설",
+        "page": 43,
+        "status": "KNOWN"
+      },
+      "BDS017": {
+        "label": "위험물저장및처리시설",
+        "page": 43,
+        "status": "KNOWN"
+      },
+      "BDS018": {
+        "label": "자동차관련시설",
+        "page": 43,
+        "status": "KNOWN"
+      },
+      "BDS019": {
+        "label": "동물및식물관련시설",
+        "page": 43,
+        "status": "KNOWN"
+      },
+      "BDS020": {
+        "label": "분뇨및쓰레기처리시설",
+        "page": 43,
+        "status": "KNOWN"
+      },
+      "BDS021": {
+        "label": "교정및군사시설",
+        "page": 43,
+        "status": "KNOWN"
+      },
+      "BDS022": {
+        "label": "방송통신시설",
+        "page": 43,
+        "status": "KNOWN"
+      },
+      "BDS023": {
+        "label": "발전시설",
+        "page": 43,
+        "status": "KNOWN"
+      },
+      "BDS024": {
+        "label": "묘지관련시설",
+        "page": 43,
+        "status": "KNOWN"
+      },
+      "BDS025": {
+        "label": "관광휴게시설",
+        "page": 43,
+        "status": "KNOWN"
+      },
+      "BDS026": {
+        "label": "장례시설",
+        "page": 43,
+        "status": "KNOWN"
+      },
+      "BDS999": {
+        "label": "기타시설",
+        "page": 43,
+        "status": "OTHER"
+      }
+    },
+    "roadClass": {
+      "RDD000": {
+        "label": "미분류",
+        "page": 14,
+        "status": "UNCLASSIFIED",
+        "scales": [
+          1000,
+          5000,
+          25000
+        ]
+      },
+      "RDD001": {
+        "label": "고속국도",
+        "page": 14,
+        "status": "KNOWN",
+        "scales": [
+          1000,
+          5000,
+          25000
+        ]
+      },
+      "RDD002": {
+        "label": "일반국도",
+        "page": 14,
+        "status": "KNOWN",
+        "scales": [
+          1000,
+          5000,
+          25000
+        ]
+      },
+      "RDD003": {
+        "label": "지방도",
+        "page": 14,
+        "status": "KNOWN",
+        "scales": [
+          1000,
+          5000,
+          25000
+        ]
+      },
+      "RDD004": {
+        "label": "특별시도",
+        "page": 14,
+        "status": "KNOWN",
+        "scales": [
+          1000
+        ]
+      },
+      "RDD005": {
+        "label": "광역시도",
+        "page": 14,
+        "status": "KNOWN",
+        "scales": [
+          1000
+        ]
+      },
+      "RDD006": {
+        "label": "시도",
+        "page": 14,
+        "status": "KNOWN",
+        "scales": [
+          1000
+        ]
+      },
+      "RDD007": {
+        "label": "군도",
+        "page": 14,
+        "status": "KNOWN",
+        "scales": [
+          1000
+        ]
+      },
+      "RDD008": {
+        "label": "면리간도로",
+        "page": 14,
+        "status": "KNOWN",
+        "scales": [
+          1000,
+          5000,
+          25000
+        ]
+      },
+      "RDD009": {
+        "label": "소로",
+        "page": 14,
+        "status": "KNOWN",
+        "scales": [
+          1000,
+          5000,
+          25000
+        ]
+      }
+    },
+    "roadPavement": {
+      "RDQ000": {
+        "label": "미분류",
+        "page": 14,
+        "status": "UNCLASSIFIED",
+        "scales": [
+          1000,
+          5000,
+          25000
+        ]
+      },
+      "RDQ001": {
+        "label": "아스팔트",
+        "page": 14,
+        "status": "KNOWN",
+        "scales": [
+          1000
+        ]
+      },
+      "RDQ002": {
+        "label": "아스팔트콘크리트",
+        "page": 14,
+        "status": "KNOWN",
+        "scales": [
+          1000
+        ]
+      },
+      "RDQ003": {
+        "label": "콘크리트",
+        "page": 14,
+        "status": "KNOWN",
+        "scales": [
+          1000
+        ]
+      },
+      "RDQ004": {
+        "label": "블록",
+        "page": 14,
+        "status": "KNOWN",
+        "scales": [
+          1000
+        ]
+      },
+      "RDQ005": {
+        "label": "비포장",
+        "page": 14,
+        "status": "KNOWN",
+        "scales": [
+          1000,
+          5000,
+          25000
+        ]
+      },
+      "RDQ999": {
+        "label": "기타",
+        "page": 14,
+        "status": "OTHER",
+        "scales": [
+          1000
+        ]
+      },
+      "RDQ006": {
+        "label": "포장",
+        "page": 14,
+        "status": "KNOWN",
+        "scales": [
+          5000,
+          25000
+        ]
+      }
+    },
+    "median": {
+      "CSU000": {
+        "label": "미분류",
+        "page": 14,
+        "status": "UNCLASSIFIED"
+      },
+      "CSU001": {
+        "label": "유",
+        "page": 14,
+        "status": "KNOWN"
+      },
+      "CSU002": {
+        "label": "무",
+        "page": 14,
+        "status": "KNOWN"
+      }
+    },
+    "oneWay": {
+      "ITH000": {
+        "label": "미분류",
+        "page": 14,
+        "status": "UNCLASSIFIED"
+      },
+      "ITH001": {
+        "label": "일방통행",
+        "page": 14,
+        "status": "KNOWN"
+      },
+      "ITH002": {
+        "label": "양방통행",
+        "page": 14,
+        "status": "KNOWN"
+      }
+    },
+    "sidewalkMaterial": {
+      "SWQ000": {
+        "label": "미분류",
+        "page": 16,
+        "status": "UNCLASSIFIED"
+      },
+      "SWQ001": {
+        "label": "아스콘",
+        "page": 16,
+        "status": "KNOWN"
+      },
+      "SWQ002": {
+        "label": "콘크리트",
+        "page": 16,
+        "status": "KNOWN"
+      },
+      "SWQ003": {
+        "label": "블록",
+        "page": 16,
+        "status": "KNOWN"
+      },
+      "SWQ004": {
+        "label": "비포장",
+        "page": 16,
+        "status": "KNOWN"
+      },
+      "SWQ005": {
+        "label": "아스콘/블록",
+        "page": 16,
+        "status": "KNOWN"
+      },
+      "SWQ999": {
+        "label": "기타",
+        "page": 16,
+        "status": "OTHER"
+      }
+    },
+    "bridgeKind": {
+      "BRK000": {
+        "label": "미분류",
+        "page": 21,
+        "status": "UNCLASSIFIED"
+      },
+      "BRK001": {
+        "label": "도로교",
+        "page": 21,
+        "status": "KNOWN"
+      },
+      "BRK002": {
+        "label": "보도교",
+        "page": 21,
+        "status": "KNOWN"
+      },
+      "BRK003": {
+        "label": "철교",
+        "page": 21,
+        "status": "KNOWN"
+      }
+    },
+    "bridgeMaterial": {
+      "BRQ000": {
+        "label": "미분류",
+        "page": 21,
+        "status": "UNCLASSIFIED"
+      },
+      "BRQ001": {
+        "label": "콘크리트",
+        "page": 21,
+        "status": "KNOWN"
+      },
+      "BRQ002": {
+        "label": "강재",
+        "page": 21,
+        "status": "KNOWN"
+      },
+      "BRQ003": {
+        "label": "목재",
+        "page": 21,
+        "status": "KNOWN"
+      },
+      "BRQ004": {
+        "label": "석재",
+        "page": 22,
+        "status": "KNOWN"
+      },
+      "BRQ999": {
+        "label": "기타",
+        "page": 22,
+        "status": "OTHER"
+      }
+    },
+    "cultivationKind": {
+      "FLD000": {
+        "label": "미분류",
+        "page": 111,
+        "status": "UNCLASSIFIED"
+      },
+      "FLD001": {
+        "label": "논",
+        "page": 111,
+        "status": "KNOWN"
+      },
+      "FLD002": {
+        "label": "밭",
+        "page": 111,
+        "status": "KNOWN"
+      },
+      "FLD003": {
+        "label": "과수원",
+        "page": 111,
+        "status": "KNOWN"
+      },
+      "FLD004": {
+        "label": "목초지",
+        "page": 111,
+        "status": "KNOWN"
+      },
+      "FLD005": {
+        "label": "조림지",
+        "page": 111,
+        "status": "KNOWN"
+      }
+    },
+    "contourKind": {
+      "CTD000": {
+        "label": "미분류",
+        "page": 128,
+        "status": "UNCLASSIFIED",
+        "scales": [
+          1000,
+          5000,
+          25000
+        ]
+      },
+      "CTD001": {
+        "label": "계곡선",
+        "page": 128,
+        "status": "KNOWN",
+        "scales": [
+          1000,
+          5000,
+          25000
+        ]
+      },
+      "CTD002": {
+        "label": "주곡선",
+        "page": 128,
+        "status": "KNOWN",
+        "scales": [
+          1000,
+          5000,
+          25000
+        ]
+      },
+      "CTD003": {
+        "label": "간곡선",
+        "page": 128,
+        "status": "KNOWN",
+        "scales": [
+          1000,
+          5000
+        ]
+      },
+      "CTD004": {
+        "label": "조곡선",
+        "page": 128,
+        "status": "KNOWN",
+        "scales": [
+          1000
+        ]
+      }
+    },
+    "administrativeLevel": {
+      "HJD000": {
+        "label": "미분류",
+        "page": 137,
+        "status": "UNCLASSIFIED",
+        "scales": [
+          1000,
+          5000,
+          25000
+        ]
+      },
+      "HJD001": {
+        "label": "국경",
+        "page": 135,
+        "status": "KNOWN",
+        "scales": [
+          1000,
+          5000,
+          25000
+        ]
+      },
+      "HJD002": {
+        "label": "특별시",
+        "page": 135,
+        "status": "KNOWN",
+        "scales": [
+          1000,
+          5000,
+          25000
+        ]
+      },
+      "HJD003": {
+        "label": "광역시",
+        "page": 135,
+        "status": "KNOWN",
+        "scales": [
+          1000,
+          5000,
+          25000
+        ]
+      },
+      "HJD004": {
+        "label": "도",
+        "page": 135,
+        "status": "KNOWN",
+        "scales": [
+          1000,
+          5000,
+          25000
+        ]
+      },
+      "HJD005": {
+        "label": "시",
+        "page": 136,
+        "status": "KNOWN",
+        "scales": [
+          1000,
+          5000,
+          25000
+        ]
+      },
+      "HJD006": {
+        "label": "군",
+        "page": 137,
+        "status": "KNOWN",
+        "scales": [
+          1000,
+          5000,
+          25000
+        ]
+      },
+      "HJD007": {
+        "label": "구",
+        "page": 136,
+        "status": "KNOWN",
+        "scales": [
+          1000,
+          5000,
+          25000
+        ]
+      },
+      "HJD008": {
+        "label": "읍",
+        "page": 137,
+        "status": "KNOWN",
+        "scales": [
+          1000,
+          5000,
+          25000
+        ]
+      },
+      "HJD009": {
+        "label": "면",
+        "page": 137,
+        "status": "KNOWN",
+        "scales": [
+          1000,
+          5000,
+          25000
+        ]
+      },
+      "HJD010": {
+        "label": "법정동",
+        "page": 137,
+        "status": "KNOWN",
+        "scales": [
+          1000,
+          5000,
+          25000
+        ]
+      },
+      "HJD011": {
+        "label": "행정동",
+        "page": 137,
+        "status": "KNOWN",
+        "scales": [
+          1000
+        ]
+      },
+      "HJD012": {
+        "label": "리",
+        "page": 137,
+        "status": "KNOWN",
+        "scales": [
+          1000
+        ]
+      }
+    }
+  },
+  "fieldLabelAliases": {
+    "건물번호본번": "건물본번",
+    "건물번호부번": "건물부번",
+    "용도(설명)": "용도",
+    "관리기관(명칭)": "관리기관"
+  },
+  "fieldTablesByPage": {
+    "11": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "13": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "RDNU",
+        "label": "도로번호",
+        "type": "VARCHAR2(30)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "RDDV",
+        "label": "도로구분",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "STPT",
+        "label": "시점",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "EDPT",
+        "label": "종점",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "PVQT",
+        "label": "포장재질",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "DVYN",
+        "label": "분리대   유․무",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "RDLN",
+        "label": "차로수",
+        "type": "NUMBER(2)"
+      },
+      {
+        "id": "RVWD",
+        "label": "도로폭",
+        "type": "NUMBER(5,2)"
+      },
+      {
+        "id": "ONSD",
+        "label": "일방통행",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "REST",
+        "label": "기타",
+        "type": "VARCHAR2(50)"
+      },
+      {
+        "id": "RDNM",
+        "label": "도로명",
+        "type": "VARCHAR2(30)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "16": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "WIDT",
+        "label": "폭",
+        "type": "NUMBER(5,2)"
+      },
+      {
+        "id": "QUAL",
+        "label": "재질",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "BYYN",
+        "label": "자전거도로    유․무",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "KIND",
+        "label": "종류",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "18": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "19": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "STRU",
+        "label": "구조",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "20": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "LENG",
+        "label": "연장",
+        "type": "NUMBER(7,2)"
+      },
+      {
+        "id": "WIDT",
+        "label": "폭",
+        "type": "NUMBER(5,2)"
+      },
+      {
+        "id": "HEIG",
+        "label": "높이",
+        "type": "NUMBER(5,2)"
+      },
+      {
+        "id": "TYPE",
+        "label": "형태",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "REST",
+        "label": "기타",
+        "type": "VARCHAR2(50)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "21": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "KIND",
+        "label": "종류",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "LENG",
+        "label": "연장",
+        "type": "NUMBER(7,2)"
+      },
+      {
+        "id": "WIDT",
+        "label": "폭",
+        "type": "NUMBER(5,2)"
+      },
+      {
+        "id": "EYMD",
+        "label": "설치연도",
+        "type": "VARCHAR2(30)"
+      },
+      {
+        "id": "QUAL",
+        "label": "재질",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "RVNM",
+        "label": "하천명",
+        "type": "VARCHAR2(30)"
+      },
+      {
+        "id": "REST",
+        "label": "기타",
+        "type": "VARCHAR2(50)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "23": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "KIND",
+        "label": "종류",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "24": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "DIVI",
+        "label": "구분",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "LENG",
+        "label": "연장",
+        "type": "NUMBER(7,2)"
+      },
+      {
+        "id": "HEIG",
+        "label": "높이",
+        "type": "NUMBER(5,2)"
+      },
+      {
+        "id": "PSLD",
+        "label": "통과하중",
+        "type": "NUMBER(5,2)"
+      },
+      {
+        "id": "QUAL",
+        "label": "재질",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "SDWK",
+        "label": "보도",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "26": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "REST",
+        "label": "기타",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "27": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "LENG",
+        "label": "연장",
+        "type": "NUMBER(7,2)"
+      },
+      {
+        "id": "WIDT",
+        "label": "폭",
+        "type": "NUMBER(5,2)"
+      },
+      {
+        "id": "HEIG",
+        "label": "높이",
+        "type": "NUMBER(5,2)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "28": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "29": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "BJCD",
+        "label": "법정동코드",
+        "type": "VARCHAR2(10)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "30": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "SERV",
+        "label": "용도",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "BJCD",
+        "label": "법정동코드",
+        "type": "VARCHAR2(10)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "31": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "DIVI",
+        "label": "구분",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "MNGT",
+        "label": "관리기관",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "REST",
+        "label": "기타",
+        "type": "VARCHAR2(50)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "33": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "34": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "DIVI",
+        "label": "구분",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "STRU",
+        "label": "구조",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "MNGT",
+        "label": "관리기관",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "REST",
+        "label": "기타",
+        "type": "VARCHAR2(50)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "38": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "39": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "42": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "BJCD",
+        "label": "법정동코드",
+        "type": "VARCHAR2(10)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(254)"
+      },
+      {
+        "id": "DIVI",
+        "label": "구분",
+        "type": "VARCHAR2(20)"
+      },
+      {
+        "id": "KIND",
+        "label": "종류",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "SERV",
+        "label": "용도",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "ANNO",
+        "label": "주기",
+        "type": "VARCHAR2(254)"
+      },
+      {
+        "id": "NMLY",
+        "label": "층수",
+        "type": "NUMBER(3)"
+      },
+      {
+        "id": "RDNM",
+        "label": "도로명",
+        "type": "VARCHAR2(50)"
+      },
+      {
+        "id": "BONU",
+        "label": "건물번호본번",
+        "type": "NUMBER(4)"
+      },
+      {
+        "id": "BUNU",
+        "label": "건물번호부번",
+        "type": "NUMBER(4)"
+      },
+      {
+        "id": "POST",
+        "label": "우편번호",
+        "type": "VARCHAR2(10)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "45": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "DIVI",
+        "label": "구분",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "QUAL",
+        "label": "재질",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "49": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "SERV",
+        "label": "용도(설명)",
+        "type": "VARCHAR2(50)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "51": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "DIVI",
+        "label": "구분",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "QUAL",
+        "label": "재질",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "UDDI",
+        "label": "상/하구분",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "LENG",
+        "label": "연장",
+        "type": "NUMBER(7,2)"
+      },
+      {
+        "id": "HEIG",
+        "label": "높이",
+        "type": "NUMBER(5,2)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "53": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "DIVI",
+        "label": "구분",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "QUAL",
+        "label": "재질",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "55": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "56": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "SERV",
+        "label": "용도(설명)",
+        "type": "VARCHAR2(50)"
+      },
+      {
+        "id": "QUAL",
+        "label": "재질",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "57": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "TYPE",
+        "label": "형태",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "BJCD",
+        "label": "법정동코드",
+        "type": "VARCHAR2(10)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "58": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "SERV",
+        "label": "용도(설명)",
+        "type": "VARCHAR2(50)"
+      },
+      {
+        "id": "BJCD",
+        "label": "법정동코드",
+        "type": "VARCHAR2(10)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "59": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "BJCD",
+        "label": "법정동코드",
+        "type": "VARCHAR2(10)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "60": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "PRIN",
+        "label": "주성분",
+        "type": "VARCHAR2(50)"
+      },
+      {
+        "id": "REST",
+        "label": "기타",
+        "type": "VARCHAR2(50)"
+      },
+      {
+        "id": "BJCD",
+        "label": "법정동코드",
+        "type": "VARCHAR2(10)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "62": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "BJCD",
+        "label": "법정동코드",
+        "type": "VARCHAR2(10)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "66": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "DIVI",
+        "label": "구분",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "SERV",
+        "label": "용도(설명)",
+        "type": "VARCHAR2(50)"
+      },
+      {
+        "id": "MARA",
+        "label": "면적",
+        "type": "NUMBER(9,2)"
+      },
+      {
+        "id": "MNGT",
+        "label": "관리기관   (명칭)",
+        "type": "VARCHAR2(30)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "67": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "SERV",
+        "label": "용도(설명)",
+        "type": "VARCHAR2(50)"
+      },
+      {
+        "id": "MNGT",
+        "label": "관리기관   (명칭)",
+        "type": "VARCHAR2(30)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "69": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "SERV",
+        "label": "용도(설명)",
+        "type": "VARCHAR2(50)"
+      },
+      {
+        "id": "MNGT",
+        "label": "관리기관   (명칭)",
+        "type": "VARCHAR2(30)"
+      },
+      {
+        "id": "BJCD",
+        "label": "법정동코드",
+        "type": "VARCHAR2(10)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "71": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "DIVI",
+        "label": "구분",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "BJCD",
+        "label": "법정동코드",
+        "type": "VARCHAR2(10)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "72": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "DIVI",
+        "label": "구분",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "QUAL",
+        "label": "재질",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "BJCD",
+        "label": "법정동코드",
+        "type": "VARCHAR2(10)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "76": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "TYPE",
+        "label": "형태",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "MNGT",
+        "label": "관리기관  (명칭)",
+        "type": "VARCHAR2(30)"
+      },
+      {
+        "id": "BJCD",
+        "label": "법정동코드",
+        "type": "VARCHAR2(10)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "77": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "SERV",
+        "label": "용도",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "BJCD",
+        "label": "법정동코드",
+        "type": "VARCHAR2(10)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "79": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "REST",
+        "label": "기타",
+        "type": "VARCHAR2(50)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "80": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "BJCD",
+        "label": "법정동코드",
+        "type": "VARCHAR2(10)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "81": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "MNGT",
+        "label": "관리기관   (명칭)",
+        "type": "VARCHAR2(30)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "82": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "REST",
+        "label": "기타",
+        "type": "VARCHAR2(50)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "83": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "TYPE",
+        "label": "형태",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "BJCD",
+        "label": "법정동코드",
+        "type": "VARCHAR2(10)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "84": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "QUAL",
+        "label": "재질",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "85": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "DIVI",
+        "label": "구분",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "HEIG",
+        "label": "높이",
+        "type": "NUMBER(5.2)"
+      },
+      {
+        "id": "REST",
+        "label": "기타",
+        "type": "VARCHAR2(50)"
+      },
+      {
+        "id": "BJCD",
+        "label": "법정동코드",
+        "type": "VARCHAR2(10)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "86": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "DIVI",
+        "label": "구분",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "QUAL",
+        "label": "재질",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "REST",
+        "label": "기타",
+        "type": "VARCHAR2(50)"
+      },
+      {
+        "id": "BJCD",
+        "label": "법정동코드",
+        "type": "VARCHAR2(10)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "88": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "QUAL",
+        "label": "재질(설명)",
+        "type": "VARCHAR2(50)"
+      },
+      {
+        "id": "BJCD",
+        "label": "법정동코드",
+        "type": "VARCHAR2(10)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "89": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "BJCD",
+        "label": "법정동코드",
+        "type": "VARCHAR2(10)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "90": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "BJCD",
+        "label": "법정동코드",
+        "type": "VARCHAR2(10)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "91": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "DIVI",
+        "label": "구분",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "93": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "STRU",
+        "label": "구조",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "WIDT",
+        "label": "폭",
+        "type": "NUMBER(7,2)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "94": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "DIVI",
+        "label": "구분",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "BJCD",
+        "label": "법정동코드",
+        "type": "VARCHAR2(10)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "95": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "SERV",
+        "label": "용도",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "BJCD",
+        "label": "법정동코드",
+        "type": "VARCHAR2(10)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "96": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "KIND",
+        "label": "종류",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "BJCD",
+        "label": "법정동코드",
+        "type": "VARCHAR2(10)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "97": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "DIVI",
+        "label": "구분",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "PKNU",
+        "label": "수용량",
+        "type": "NUMBER(5)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "98": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "SERV",
+        "label": "용도",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "99": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "LENG",
+        "label": "연장",
+        "type": "NUMBER(7,2)"
+      },
+      {
+        "id": "WIDT",
+        "label": "폭",
+        "type": "NUMBER(5,2)"
+      },
+      {
+        "id": "HEIG",
+        "label": "높이",
+        "type": "NUMBER(5,2)"
+      },
+      {
+        "id": "REST",
+        "label": "기타",
+        "type": "VARCHAR2(50)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "100": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "SERV",
+        "label": "용도",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "MNGT",
+        "label": "관리기관   (명칭)",
+        "type": "VARCHAR2(30)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "101": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "SERV",
+        "label": "용도",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "MNGT",
+        "label": "관리기관   (명칭)",
+        "type": "VARCHAR2(30)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "102": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "BJCD",
+        "label": "법정동코드",
+        "type": "VARCHAR2(10)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "103": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "SERV",
+        "label": "용도",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "BJCD",
+        "label": "법정동코드",
+        "type": "VARCHAR2(10)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "104": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "DIVI",
+        "label": "구분",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "MNGT",
+        "label": "관리기관(명칭)",
+        "type": "VARCHAR2(30)"
+      },
+      {
+        "id": "BJCD",
+        "label": "법정동코드",
+        "type": "VARCHAR2(10)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "105": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "BJCD",
+        "label": "법정동코드",
+        "type": "VARCHAR2(10)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "106": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "STRU",
+        "label": "구조",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "107": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "QUAL",
+        "label": "재질",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "109": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "BJCD",
+        "label": "법정동코드",
+        "type": "VARCHAR2(10)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "110": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "SERV",
+        "label": "용도(설명)",
+        "type": "VARCHAR2(50)"
+      },
+      {
+        "id": "BJCD",
+        "label": "법정동코드",
+        "type": "VARCHAR2(10)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "111": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "DIVI",
+        "label": "구분",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "114": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "MNNU",
+        "label": "관리번호",
+        "type": "VARCHAR2(30)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "DIVI",
+        "label": "구분",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "RADI",
+        "label": "직경(둘레)",
+        "type": "NUMBER(7,2)"
+      },
+      {
+        "id": "HEIG",
+        "label": "높이",
+        "type": "NUMBER(5,2)"
+      },
+      {
+        "id": "TRAG",
+        "label": "수령",
+        "type": "NUMBER(5)"
+      },
+      {
+        "id": "TRKI",
+        "label": "수종(설명)",
+        "type": "VARCHAR2(50)"
+      },
+      {
+        "id": "REST",
+        "label": "기타",
+        "type": "VARCHAR2(50)"
+      },
+      {
+        "id": "BJCD",
+        "label": "법정동코드",
+        "type": "VARCHAR2(10)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "117": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "118": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "RVNU",
+        "label": "하천번호",
+        "type": "NUMBER(9)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "DIVI",
+        "label": "구분",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "TYPE",
+        "label": "형태",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "STAT",
+        "label": "상태",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "120": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "121": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "ANGL",
+        "label": "방향각도",
+        "type": "NUMBER(3)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "122": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "SERV",
+        "label": "용도(설명)",
+        "type": "VARCHAR2(50)"
+      },
+      {
+        "id": "MARA",
+        "label": "면적",
+        "type": "NUMBER(11,2)"
+      },
+      {
+        "id": "MNGT",
+        "label": "관리기관   (명칭)",
+        "type": "VARCHAR2(30)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "123": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "TYPE",
+        "label": "형태",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "SERV",
+        "label": "용도",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "LENG",
+        "label": "연장",
+        "type": "NUMBER(7,2)"
+      },
+      {
+        "id": "WIDT",
+        "label": "폭",
+        "type": "NUMBER(5,2)"
+      },
+      {
+        "id": "MNGT",
+        "label": "관리기관   (명칭)",
+        "type": "VARCHAR2(30)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "125": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "HEIG",
+        "label": "높이",
+        "type": "NUMBER(5,2)"
+      },
+      {
+        "id": "REST",
+        "label": "기타",
+        "type": "VARCHAR2(50)"
+      },
+      {
+        "id": "BJCD",
+        "label": "법정동코드",
+        "type": "VARCHAR2(10)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "128": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "DIVI",
+        "label": "구분",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "CONT",
+        "label": "등고수치",
+        "type": "NUMBER(7,2)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "130": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NUME",
+        "label": "수치",
+        "type": "NUMBER(7,2)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "131": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "DIVI",
+        "label": "구분",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "UDDI",
+        "label": "상하구분",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "132": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "KIND",
+        "label": "종류",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "UDDI",
+        "label": "상하구분",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "LENG",
+        "label": "연장",
+        "type": "NUMBER(7,2)"
+      },
+      {
+        "id": "HEIG",
+        "label": "높이",
+        "type": "NUMBER(5,2)"
+      },
+      {
+        "id": "QUAL",
+        "label": "재질",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "135": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "BJCD",
+        "label": "법정동코드",
+        "type": "VARCHAR2(10)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "DIVI",
+        "label": "구분",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "139": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "TYPE",
+        "label": "형태",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "141": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "SERV",
+        "label": "용도(설명)",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "143": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "DYCD",
+        "label": "도엽코드",
+        "type": "VARCHAR2(10)"
+      },
+      {
+        "id": "DYNM",
+        "label": "도엽명",
+        "type": "VARCHAR2(30)"
+      },
+      {
+        "id": "PRDT",
+        "label": "제작방법",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "SCAL",
+        "label": "축척",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "MCOM",
+        "label": "작업기관   (설명)",
+        "type": "VARCHAR2(50)"
+      },
+      {
+        "id": "MYMD",
+        "label": "제작년도",
+        "type": "VARCHAR2(4)"
+      },
+      {
+        "id": "MZON",
+        "label": "지구명",
+        "type": "VARCHAR2(20)"
+      },
+      {
+        "id": "PYMD",
+        "label": "촬영년도",
+        "type": "VARCHAR2(4)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "148": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "149": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "NAME",
+        "label": "명칭",
+        "type": "VARCHAR2(100)"
+      },
+      {
+        "id": "DIVI",
+        "label": "구분",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "TYPE",
+        "label": "형태",
+        "type": "VARCHAR2(6)"
+      },
+      {
+        "id": "BJCD",
+        "label": "법정동코드",
+        "type": "VARCHAR2(10)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ],
+    "153": [
+      {
+        "id": "UFID",
+        "label": "UFID",
+        "type": "VARCHAR2(34)"
+      },
+      {
+        "id": "MTNM",
+        "label": "산명",
+        "type": "VARCHAR2(30)"
+      },
+      {
+        "id": "HEIG",
+        "label": "높이",
+        "type": "NUMBER(7,2)"
+      },
+      {
+        "id": "BJCD",
+        "label": "법정동코드",
+        "type": "VARCHAR2(10)"
+      },
+      {
+        "id": "SCLS",
+        "label": "통합코드",
+        "type": "VARCHAR2(8)"
+      },
+      {
+        "id": "FMTA",
+        "label": "제작정보",
+        "type": "VARCHAR2(9)"
+      }
+    ]
+  }
+}

@@ -1,0 +1,6847 @@
+{
+  "codeStatusCounts": {
+    "N1A_A0033320": {
+      "재질": {
+        "KNOWN": 19406,
+        "OTHER": 1249,
+        "UNKNOWN_VALUE": 56735
+      }
+    },
+    "N1A_A0070000": {
+      "재질": {
+        "KNOWN": 3387,
+        "OTHER": 1
+      },
+      "종류": {
+        "KNOWN": 3388
+      }
+    },
+    "N1A_B0010000": {
+      "용도": {
+        "KNOWN": 893551,
+        "OTHER": 148748,
+        "UNKNOWN_VALUE": 1
+      },
+      "종류": {
+        "KNOWN": 1042300
+      }
+    },
+    "N1A_D0010000": {
+      "구분": {
+        "KNOWN": 35230
+      }
+    },
+    "N1A_G0010000": {
+      "구분": {
+        "KNOWN": 18314,
+        "UNKNOWN_VALUE": 8
+      }
+    },
+    "N1L_A0020000": {
+      "도로구분": {
+        "KNOWN": 581530
+      },
+      "분리대유무": {
+        "KNOWN": 581530
+      },
+      "일방통행": {
+        "KNOWN": 581530
+      },
+      "포장재질": {
+        "KNOWN": 552714,
+        "OTHER": 2783,
+        "UNKNOWN_VALUE": 26033
+      }
+    },
+    "N1L_F0010000": {
+      "구분": {
+        "KNOWN": 137108
+      }
+    },
+    "N3A_A0033320": {
+      "재질": {
+        "KNOWN": 8
+      }
+    },
+    "N3A_B0010000": {
+      "용도": {
+        "KNOWN": 70,
+        "OTHER": 81
+      },
+      "종류": {
+        "KNOWN": 151
+      }
+    },
+    "N3A_D0010000": {
+      "구분": {
+        "KNOWN": 30
+      }
+    },
+    "N3A_G0010000": {
+      "구분": {
+        "KNOWN": 23
+      }
+    },
+    "N3L_A0020000": {
+      "도로구분": {
+        "KNOWN": 1,
+        "OUTSIDE_LISTED_SCALE": 59
+      },
+      "분리대유무": {
+        "KNOWN": 60
+      },
+      "일방통행": {
+        "KNOWN": 60
+      },
+      "포장재질": {
+        "KNOWN": 6,
+        "OUTSIDE_LISTED_SCALE": 54
+      }
+    },
+    "N3L_F0010000": {
+      "구분": {
+        "KNOWN": 13
+      }
+    }
+  },
+  "coordinateOrder": "x=easting,y=northing",
+  "coordinateSystem": "EPSG:5186",
+  "counts": {
+    "INVALID": 65,
+    "VALID": 5386662,
+    "bboxMismatches": 0,
+    "deleted": 0,
+    "records": 5386727
+  },
+  "generatorSha256": "d674b2f2fdd989a6b7f6ccfeabda62cc4f5e6fa6e64563f9494a2b5264e796b0",
+  "invalidReasonCounts": {
+    "N1A_A0010000": {
+      "NO_CLOCKWISE_SHELL": 2,
+      "Ring Self-intersection": 2,
+      "Self-intersection": 2,
+      "UNCLOSED_OR_SHORT_RING": 1
+    },
+    "N1A_A0033320": {
+      "Ring Self-intersection": 4,
+      "Self-intersection": 4,
+      "UNCLOSED_OR_SHORT_RING": 15
+    },
+    "N1A_A0043325": {
+      "Self-intersection": 1,
+      "UNCLOSED_OR_SHORT_RING": 4
+    },
+    "N1A_A0053326": {
+      "INVALID_SHELL_WITH_HOLES": 1,
+      "Ring Self-intersection": 1,
+      "Self-intersection": 2,
+      "UNCLOSED_OR_SHORT_RING": 6
+    },
+    "N1A_A0063321": {
+      "Self-intersection": 4
+    },
+    "N1A_A0080000": {
+      "UNCLOSED_OR_SHORT_RING": 1
+    },
+    "N1A_A0090000": {
+      "Self-intersection": 1
+    },
+    "N1A_A0110020": {
+      "UNCLOSED_OR_SHORT_RING": 1
+    },
+    "N1A_C0390000": {
+      "Self-intersection": 2
+    },
+    "N1A_D0010000": {
+      "NO_CLOCKWISE_SHELL": 1,
+      "Self-intersection": 1,
+      "UNCLOSED_OR_SHORT_RING": 2
+    },
+    "N1A_E0052114": {
+      "Self-intersection": 1
+    },
+    "N1L_A0020000": {
+      "Too few points in geometry component": 5
+    },
+    "N1L_G0030000": {
+      "Too few points in geometry component": 1
+    }
+  },
+  "layerCounts": {
+    "N1A_A0010000": {
+      "INVALID": 7,
+      "VALID": 346597,
+      "layerInstances": 2369,
+      "records": 346604
+    },
+    "N1A_A0033320": {
+      "INVALID": 23,
+      "VALID": 77367,
+      "layerInstances": 2149,
+      "records": 77390
+    },
+    "N1A_A0043325": {
+      "INVALID": 5,
+      "VALID": 47061,
+      "layerInstances": 2025,
+      "records": 47066
+    },
+    "N1A_A0053326": {
+      "INVALID": 10,
+      "VALID": 16877,
+      "layerInstances": 2008,
+      "records": 16887
+    },
+    "N1A_A0063321": {
+      "INVALID": 4,
+      "VALID": 334,
+      "layerInstances": 252,
+      "records": 338
+    },
+    "N1A_A0070000": {
+      "VALID": 3388,
+      "layerInstances": 1181,
+      "records": 3388
+    },
+    "N1A_A0080000": {
+      "INVALID": 1,
+      "VALID": 106144,
+      "layerInstances": 2245,
+      "records": 106145
+    },
+    "N1A_A0090000": {
+      "INVALID": 1,
+      "VALID": 894,
+      "layerInstances": 535,
+      "records": 895
+    },
+    "N1A_A0100000": {
+      "VALID": 203,
+      "layerInstances": 96,
+      "records": 203
+    },
+    "N1A_A0110020": {
+      "INVALID": 1,
+      "VALID": 304,
+      "layerInstances": 177,
+      "records": 305
+    },
+    "N1A_A0160024": {
+      "VALID": 401,
+      "layerInstances": 341,
+      "records": 401
+    },
+    "N1A_A0191221": {
+      "VALID": 124,
+      "layerInstances": 45,
+      "records": 124
+    },
+    "N1A_A0201222": {
+      "VALID": 154,
+      "layerInstances": 72,
+      "records": 154
+    },
+    "N1A_B0010000": {
+      "VALID": 1042300,
+      "layerInstances": 2376,
+      "records": 1042300
+    },
+    "N1A_C0032254": {
+      "VALID": 13,
+      "layerInstances": 10,
+      "records": 13
+    },
+    "N1A_C0170000": {
+      "VALID": 54,
+      "layerInstances": 29,
+      "records": 54
+    },
+    "N1A_C0186115": {
+      "VALID": 1,
+      "layerInstances": 1,
+      "records": 1
+    },
+    "N1A_C0270000": {
+      "VALID": 2,
+      "layerInstances": 2,
+      "records": 2
+    },
+    "N1A_C0290000": {
+      "VALID": 4,
+      "layerInstances": 4,
+      "records": 4
+    },
+    "N1A_C0305316": {
+      "VALID": 8,
+      "layerInstances": 8,
+      "records": 8
+    },
+    "N1A_C0390000": {
+      "INVALID": 2,
+      "VALID": 41281,
+      "layerInstances": 2212,
+      "records": 41283
+    },
+    "N1A_C0423365": {
+      "VALID": 2201,
+      "layerInstances": 1127,
+      "records": 2201
+    },
+    "N1A_C0430000": {
+      "VALID": 1199,
+      "layerInstances": 717,
+      "records": 1199
+    },
+    "N1A_C0443363": {
+      "VALID": 3,
+      "layerInstances": 3,
+      "records": 3
+    },
+    "N1A_C0453322": {
+      "VALID": 14,
+      "layerInstances": 12,
+      "records": 14
+    },
+    "N1A_C0470000": {
+      "VALID": 13640,
+      "layerInstances": 1287,
+      "records": 13640
+    },
+    "N1A_D0010000": {
+      "INVALID": 4,
+      "VALID": 35226,
+      "layerInstances": 1501,
+      "records": 35230
+    },
+    "N1A_E0010001": {
+      "VALID": 3332,
+      "layerInstances": 1227,
+      "records": 3332
+    },
+    "N1A_E0032111": {
+      "VALID": 2098,
+      "layerInstances": 1208,
+      "records": 2098
+    },
+    "N1A_E0052114": {
+      "INVALID": 1,
+      "VALID": 2303,
+      "layerInstances": 1044,
+      "records": 2304
+    },
+    "N1A_G0010000": {
+      "VALID": 18322,
+      "layerInstances": 2485,
+      "records": 18322
+    },
+    "N1A_G0020000": {
+      "VALID": 1632,
+      "layerInstances": 388,
+      "records": 1632
+    },
+    "N1A_H0010000": {
+      "VALID": 2485,
+      "layerInstances": 2485,
+      "records": 2485
+    },
+    "N1L_A0010000": {
+      "VALID": 270841,
+      "layerInstances": 2343,
+      "records": 270841
+    },
+    "N1L_A0020000": {
+      "INVALID": 5,
+      "VALID": 581525,
+      "layerInstances": 2407,
+      "records": 581530
+    },
+    "N1L_A0033330": {
+      "VALID": 11019,
+      "layerInstances": 1375,
+      "records": 11019
+    },
+    "N1L_A0123373": {
+      "VALID": 233,
+      "layerInstances": 131,
+      "records": 233
+    },
+    "N1L_A0150000": {
+      "VALID": 7056,
+      "layerInstances": 338,
+      "records": 7056
+    },
+    "N1L_A0171119": {
+      "VALID": 442,
+      "layerInstances": 322,
+      "records": 442
+    },
+    "N1L_B0020000": {
+      "VALID": 702798,
+      "layerInstances": 2366,
+      "records": 702798
+    },
+    "N1L_C0050000": {
+      "VALID": 14790,
+      "layerInstances": 1114,
+      "records": 14790
+    },
+    "N1L_C0060000": {
+      "VALID": 1917,
+      "layerInstances": 419,
+      "records": 1917
+    },
+    "N1L_C0070000": {
+      "VALID": 21060,
+      "layerInstances": 1741,
+      "records": 21060
+    },
+    "N1L_C0080000": {
+      "VALID": 33,
+      "layerInstances": 22,
+      "records": 33
+    },
+    "N1L_C0325315": {
+      "VALID": 141,
+      "layerInstances": 53,
+      "records": 141
+    },
+    "N1L_C0463374": {
+      "VALID": 2143,
+      "layerInstances": 502,
+      "records": 2143
+    },
+    "N1L_C0520000": {
+      "VALID": 6014,
+      "layerInstances": 1585,
+      "records": 6014
+    },
+    "N1L_C0530000": {
+      "VALID": 52412,
+      "layerInstances": 2234,
+      "records": 52412
+    },
+    "N1L_E0020000": {
+      "VALID": 25917,
+      "layerInstances": 2004,
+      "records": 25917
+    },
+    "N1L_E0060000": {
+      "VALID": 485,
+      "layerInstances": 32,
+      "records": 485
+    },
+    "N1L_F0010000": {
+      "VALID": 137108,
+      "layerInstances": 2453,
+      "records": 137108
+    },
+    "N1L_F0030000": {
+      "VALID": 11699,
+      "layerInstances": 1286,
+      "records": 11699
+    },
+    "N1L_F0040000": {
+      "VALID": 177502,
+      "layerInstances": 2361,
+      "records": 177502
+    },
+    "N1L_G0030000": {
+      "INVALID": 1,
+      "VALID": 236484,
+      "layerInstances": 2422,
+      "records": 236485
+    },
+    "N1L_H0037335": {
+      "VALID": 24792,
+      "layerInstances": 2485,
+      "records": 24792
+    },
+    "N1P_A0131122": {
+      "VALID": 21,
+      "layerInstances": 20,
+      "records": 21
+    },
+    "N1P_A0140000": {
+      "VALID": 14117,
+      "layerInstances": 1826,
+      "records": 14117
+    },
+    "N1P_C0090000": {
+      "VALID": 153,
+      "layerInstances": 133,
+      "records": 153
+    },
+    "N1P_C0106312": {
+      "VALID": 29,
+      "layerInstances": 20,
+      "records": 29
+    },
+    "N1P_C0116313": {
+      "VALID": 625,
+      "layerInstances": 383,
+      "records": 625
+    },
+    "N1P_C0125335": {
+      "VALID": 1,
+      "layerInstances": 1,
+      "records": 1
+    },
+    "N1P_C0142263": {
+      "VALID": 2,
+      "layerInstances": 2,
+      "records": 2
+    },
+    "N1P_C0200000": {
+      "VALID": 12,
+      "layerInstances": 10,
+      "records": 12
+    },
+    "N1P_C0220000": {
+      "VALID": 499900,
+      "layerInstances": 2348,
+      "records": 499900
+    },
+    "N1P_C0230000": {
+      "VALID": 141723,
+      "layerInstances": 2082,
+      "records": 141723
+    },
+    "N1P_C0250000": {
+      "VALID": 60232,
+      "layerInstances": 1947,
+      "records": 60232
+    },
+    "N1P_C0260000": {
+      "VALID": 3,
+      "layerInstances": 3,
+      "records": 3
+    },
+    "N1P_C0285311": {
+      "VALID": 68083,
+      "layerInstances": 592,
+      "records": 68083
+    },
+    "N1P_C0310000": {
+      "VALID": 40,
+      "layerInstances": 24,
+      "records": 40
+    },
+    "N1P_C0330000": {
+      "VALID": 625,
+      "layerInstances": 199,
+      "records": 625
+    },
+    "N1P_C0340000": {
+      "VALID": 239,
+      "layerInstances": 173,
+      "records": 239
+    },
+    "N1P_C0350000": {
+      "VALID": 271,
+      "layerInstances": 176,
+      "records": 271
+    },
+    "N1P_C0363361": {
+      "VALID": 3264,
+      "layerInstances": 1311,
+      "records": 3264
+    },
+    "N1P_C0373362": {
+      "VALID": 817,
+      "layerInstances": 666,
+      "records": 817
+    },
+    "N1P_C0380000": {
+      "VALID": 14978,
+      "layerInstances": 1963,
+      "records": 14978
+    },
+    "N1P_C0400000": {
+      "VALID": 3119,
+      "layerInstances": 1171,
+      "records": 3119
+    },
+    "N1P_C0410000": {
+      "VALID": 67734,
+      "layerInstances": 2101,
+      "records": 67734
+    },
+    "N1P_C0486353": {
+      "VALID": 44,
+      "layerInstances": 36,
+      "records": 44
+    },
+    "N1P_C0493376": {
+      "VALID": 36855,
+      "layerInstances": 1842,
+      "records": 36855
+    },
+    "N1P_C0503375": {
+      "VALID": 32223,
+      "layerInstances": 2008,
+      "records": 32223
+    },
+    "N1P_C0513369": {
+      "VALID": 18568,
+      "layerInstances": 1998,
+      "records": 18568
+    },
+    "N1P_C0540000": {
+      "VALID": 1,
+      "layerInstances": 1,
+      "records": 1
+    },
+    "N1P_C0556354": {
+      "VALID": 14,
+      "layerInstances": 10,
+      "records": 14
+    },
+    "N1P_D0030000": {
+      "VALID": 343825,
+      "layerInstances": 2103,
+      "records": 343825
+    },
+    "N1P_E0042326": {
+      "VALID": 1958,
+      "layerInstances": 1099,
+      "records": 1958
+    },
+    "N1P_E0072325": {
+      "VALID": 6,
+      "layerInstances": 6,
+      "records": 6
+    },
+    "N1P_F0020000": {
+      "VALID": 7384,
+      "layerInstances": 2468,
+      "records": 7384
+    },
+    "N1P_H0040000": {
+      "VALID": 16669,
+      "layerInstances": 2480,
+      "records": 16669
+    },
+    "N1P_H0059153": {
+      "VALID": 17,
+      "layerInstances": 17,
+      "records": 17
+    },
+    "N3A_A0010000": {
+      "VALID": 38,
+      "layerInstances": 1,
+      "records": 38
+    },
+    "N3A_A0033320": {
+      "VALID": 8,
+      "layerInstances": 1,
+      "records": 8
+    },
+    "N3A_A0043325": {
+      "VALID": 4,
+      "layerInstances": 1,
+      "records": 4
+    },
+    "N3A_A0080000": {
+      "VALID": 9,
+      "layerInstances": 1,
+      "records": 9
+    },
+    "N3A_B0010000": {
+      "VALID": 151,
+      "layerInstances": 1,
+      "records": 151
+    },
+    "N3A_C0390000": {
+      "VALID": 6,
+      "layerInstances": 1,
+      "records": 6
+    },
+    "N3A_D0010000": {
+      "VALID": 30,
+      "layerInstances": 1,
+      "records": 30
+    },
+    "N3A_E0010001": {
+      "VALID": 6,
+      "layerInstances": 3,
+      "records": 6
+    },
+    "N3A_E0032111": {
+      "VALID": 6,
+      "layerInstances": 3,
+      "records": 6
+    },
+    "N3A_G0010000": {
+      "VALID": 23,
+      "layerInstances": 3,
+      "records": 23
+    },
+    "N3A_G0020000": {
+      "VALID": 2,
+      "layerInstances": 1,
+      "records": 2
+    },
+    "N3A_H0010000": {
+      "VALID": 3,
+      "layerInstances": 3,
+      "records": 3
+    },
+    "N3L_A0010000": {
+      "VALID": 65,
+      "layerInstances": 1,
+      "records": 65
+    },
+    "N3L_A0020000": {
+      "VALID": 60,
+      "layerInstances": 1,
+      "records": 60
+    },
+    "N3L_B0020000": {
+      "VALID": 84,
+      "layerInstances": 1,
+      "records": 84
+    },
+    "N3L_C0050000": {
+      "VALID": 2,
+      "layerInstances": 1,
+      "records": 2
+    },
+    "N3L_C0070000": {
+      "VALID": 3,
+      "layerInstances": 1,
+      "records": 3
+    },
+    "N3L_E0020000": {
+      "VALID": 2,
+      "layerInstances": 2,
+      "records": 2
+    },
+    "N3L_F0010000": {
+      "VALID": 13,
+      "layerInstances": 1,
+      "records": 13
+    },
+    "N3L_F0040000": {
+      "VALID": 27,
+      "layerInstances": 1,
+      "records": 27
+    },
+    "N3L_G0030000": {
+      "VALID": 13,
+      "layerInstances": 1,
+      "records": 13
+    },
+    "N3L_H0037335": {
+      "VALID": 31,
+      "layerInstances": 3,
+      "records": 31
+    },
+    "N3P_C0220000": {
+      "VALID": 51,
+      "layerInstances": 1,
+      "records": 51
+    },
+    "N3P_C0230000": {
+      "VALID": 12,
+      "layerInstances": 1,
+      "records": 12
+    },
+    "N3P_C0250000": {
+      "VALID": 1,
+      "layerInstances": 1,
+      "records": 1
+    },
+    "N3P_C0380000": {
+      "VALID": 1,
+      "layerInstances": 1,
+      "records": 1
+    },
+    "N3P_C0410000": {
+      "VALID": 1,
+      "layerInstances": 1,
+      "records": 1
+    },
+    "N3P_C0513369": {
+      "VALID": 2,
+      "layerInstances": 1,
+      "records": 2
+    },
+    "N3P_D0030000": {
+      "VALID": 41,
+      "layerInstances": 1,
+      "records": 41
+    },
+    "N3P_E0042326": {
+      "VALID": 3,
+      "layerInstances": 3,
+      "records": 3
+    },
+    "N3P_F0020000": {
+      "VALID": 4,
+      "layerInstances": 2,
+      "records": 4
+    },
+    "N3P_H0040000": {
+      "VALID": 31,
+      "layerInstances": 3,
+      "records": 31
+    }
+  },
+  "numericRanges": {
+    "N1A_A0033320": {
+      "폭": {
+        "maximumRawNumeric": "2000.0000",
+        "minimumRawNumeric": "0.0000",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      }
+    },
+    "N1A_A0063321": {
+      "높이": {
+        "maximumRawNumeric": "10.0000",
+        "minimumRawNumeric": "0.0000",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      },
+      "연장": {
+        "maximumRawNumeric": "275.0000",
+        "minimumRawNumeric": "0.0000",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      },
+      "폭": {
+        "maximumRawNumeric": "60.0000",
+        "minimumRawNumeric": "0.0000",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      }
+    },
+    "N1A_A0070000": {
+      "연장": {
+        "maximumRawNumeric": "4628.0000",
+        "minimumRawNumeric": "0.0000",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      },
+      "폭": {
+        "maximumRawNumeric": "120.0000",
+        "minimumRawNumeric": "0.0000",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      }
+    },
+    "N1A_A0090000": {
+      "높이": {
+        "maximumRawNumeric": "25.8000",
+        "minimumRawNumeric": "0.0000",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      },
+      "연장": {
+        "maximumRawNumeric": "22000.0000",
+        "minimumRawNumeric": "0.0000",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      },
+      "통과하중": {
+        "maximumRawNumeric": "50.0000",
+        "minimumRawNumeric": "0.0000",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      }
+    },
+    "N1A_A0110020": {
+      "높이": {
+        "maximumRawNumeric": "15.0000",
+        "minimumRawNumeric": "0.0000",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      },
+      "연장": {
+        "maximumRawNumeric": "6100.0000",
+        "minimumRawNumeric": "0.0000",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      },
+      "폭": {
+        "maximumRawNumeric": "47.4000",
+        "minimumRawNumeric": "0.0000",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      }
+    },
+    "N1A_B0010000": {
+      "건물본번": {
+        "maximumRawNumeric": "7354",
+        "minimumRawNumeric": "0",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      },
+      "건물부번": {
+        "maximumRawNumeric": "8069",
+        "minimumRawNumeric": "0",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      },
+      "층수": {
+        "maximumRawNumeric": "123",
+        "minimumRawNumeric": "1",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      }
+    },
+    "N1A_C0170000": {
+      "면적": {
+        "maximumRawNumeric": "506.2600",
+        "minimumRawNumeric": "0.3770",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      }
+    },
+    "N1A_C0390000": {
+      "폭": {
+        "maximumRawNumeric": "108.7000",
+        "minimumRawNumeric": "0.0000",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      }
+    },
+    "N1A_C0430000": {
+      "수용량": {
+        "maximumRawNumeric": "3200.0000",
+        "minimumRawNumeric": "0.0000",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      }
+    },
+    "N1A_C0453322": {
+      "높이": {
+        "maximumRawNumeric": "5.0000",
+        "minimumRawNumeric": "0.0000",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      },
+      "연장": {
+        "maximumRawNumeric": "223.6000",
+        "minimumRawNumeric": "10.9180",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      },
+      "폭": {
+        "maximumRawNumeric": "22.5000",
+        "minimumRawNumeric": "0.0000",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      }
+    },
+    "N1A_E0052114": {
+      "면적": {
+        "maximumRawNumeric": "49561.1320",
+        "minimumRawNumeric": "0.0000",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      }
+    },
+    "N1L_A0020000": {
+      "도로폭": {
+        "maximumRawNumeric": "115.3000",
+        "minimumRawNumeric": "0.0000",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      },
+      "차로수": {
+        "maximumRawNumeric": "16",
+        "minimumRawNumeric": "0",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      }
+    },
+    "N1L_A0033330": {
+      "폭": {
+        "maximumRawNumeric": "10.0000",
+        "minimumRawNumeric": "0.0000",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      }
+    },
+    "N1L_C0050000": {
+      "높이": {
+        "maximumRawNumeric": "14.0000",
+        "minimumRawNumeric": "0.0000",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      },
+      "연장": {
+        "maximumRawNumeric": "844.1400",
+        "minimumRawNumeric": "0.0000",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      }
+    },
+    "N1L_E0020000": {
+      "하천번호": {
+        "maximumRawNumeric": "1500321",
+        "minimumRawNumeric": "0",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      }
+    },
+    "N1L_E0060000": {
+      "연장": {
+        "maximumRawNumeric": "705.6660",
+        "minimumRawNumeric": "0.0000",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      },
+      "폭": {
+        "maximumRawNumeric": "2.1000",
+        "minimumRawNumeric": "0.0000",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      }
+    },
+    "N1L_F0010000": {
+      "등고수치": {
+        "maximumRawNumeric": "835.0000",
+        "minimumRawNumeric": "-5.0000",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      }
+    },
+    "N1L_F0040000": {
+      "높이": {
+        "maximumRawNumeric": "122.7300",
+        "minimumRawNumeric": "0.0000",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      },
+      "연장": {
+        "maximumRawNumeric": "574305.5350",
+        "minimumRawNumeric": "0.0000",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      }
+    },
+    "N1P_C0330000": {
+      "높이": {
+        "maximumRawNumeric": "12.0000",
+        "minimumRawNumeric": "0.0000",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      }
+    },
+    "N1P_D0030000": {
+      "높이": {
+        "maximumRawNumeric": "25.0000",
+        "minimumRawNumeric": "0.0000",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      },
+      "수령": {
+        "maximumRawNumeric": "1000.0000",
+        "minimumRawNumeric": "0.0000",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      },
+      "직경": {
+        "maximumRawNumeric": "690.0000",
+        "minimumRawNumeric": "0.0000",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      }
+    },
+    "N1P_E0072325": {
+      "높이": {
+        "maximumRawNumeric": "3.0000",
+        "minimumRawNumeric": "0.0000",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      }
+    },
+    "N1P_F0020000": {
+      "수치": {
+        "maximumRawNumeric": "836.3300",
+        "minimumRawNumeric": "-7.7170",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      }
+    },
+    "N1P_H0059153": {
+      "높이": {
+        "maximumRawNumeric": "295.7000",
+        "minimumRawNumeric": "0.0000",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      }
+    },
+    "N3A_A0033320": {
+      "폭": {
+        "maximumRawNumeric": "6.4000",
+        "minimumRawNumeric": "1.5000",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      }
+    },
+    "N3A_B0010000": {
+      "건물본번": {
+        "maximumRawNumeric": "156",
+        "minimumRawNumeric": "0",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      },
+      "건물부번": {
+        "maximumRawNumeric": "56",
+        "minimumRawNumeric": "0",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      },
+      "층수": {
+        "maximumRawNumeric": "3",
+        "minimumRawNumeric": "1",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      }
+    },
+    "N3A_C0390000": {
+      "폭": {
+        "maximumRawNumeric": "2.6000",
+        "minimumRawNumeric": "1.3000",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      }
+    },
+    "N3L_A0020000": {
+      "도로폭": {
+        "maximumRawNumeric": "9.6000",
+        "minimumRawNumeric": "0.5000",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      },
+      "차로수": {
+        "maximumRawNumeric": "2",
+        "minimumRawNumeric": "1",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      }
+    },
+    "N3L_C0050000": {
+      "높이": {
+        "maximumRawNumeric": "1.0000",
+        "minimumRawNumeric": "0.0000",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      },
+      "연장": {
+        "maximumRawNumeric": "82.1450",
+        "minimumRawNumeric": "82.0200",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      }
+    },
+    "N3L_E0020000": {
+      "하천번호": {
+        "maximumRawNumeric": "1000010",
+        "minimumRawNumeric": "1000010",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      }
+    },
+    "N3L_F0010000": {
+      "등고수치": {
+        "maximumRawNumeric": "30.0000",
+        "minimumRawNumeric": "5.0000",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      }
+    },
+    "N3L_F0040000": {
+      "높이": {
+        "maximumRawNumeric": "4.0000",
+        "minimumRawNumeric": "0.0000",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      },
+      "연장": {
+        "maximumRawNumeric": "74.5000",
+        "minimumRawNumeric": "0.9100",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      }
+    },
+    "N3P_D0030000": {
+      "높이": {
+        "maximumRawNumeric": "0.0000",
+        "minimumRawNumeric": "0.0000",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      },
+      "수령": {
+        "maximumRawNumeric": "0.0000",
+        "minimumRawNumeric": "0.0000",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      },
+      "직경": {
+        "maximumRawNumeric": "0.0000",
+        "minimumRawNumeric": "0.0000",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      }
+    },
+    "N3P_F0020000": {
+      "수치": {
+        "maximumRawNumeric": "23.6170",
+        "minimumRawNumeric": "2.9250",
+        "unit": "NOT_CONFIRMED_BY_CODE_MANUAL"
+      }
+    }
+  },
+  "numericStatusCounts": {
+    "N1A_A0033320": {
+      "폭": {
+        "VALUE": 77390
+      }
+    },
+    "N1A_A0063321": {
+      "높이": {
+        "VALUE": 338
+      },
+      "연장": {
+        "VALUE": 338
+      },
+      "폭": {
+        "VALUE": 338
+      }
+    },
+    "N1A_A0070000": {
+      "연장": {
+        "VALUE": 3388
+      },
+      "폭": {
+        "VALUE": 3388
+      }
+    },
+    "N1A_A0090000": {
+      "높이": {
+        "VALUE": 895
+      },
+      "연장": {
+        "VALUE": 895
+      },
+      "통과하중": {
+        "VALUE": 895
+      }
+    },
+    "N1A_A0110020": {
+      "높이": {
+        "VALUE": 305
+      },
+      "연장": {
+        "VALUE": 305
+      },
+      "폭": {
+        "VALUE": 305
+      }
+    },
+    "N1A_B0010000": {
+      "건물본번": {
+        "VALUE": 1042300
+      },
+      "건물부번": {
+        "VALUE": 1042300
+      },
+      "층수": {
+        "VALUE": 1042300
+      }
+    },
+    "N1A_C0170000": {
+      "면적": {
+        "VALUE": 54
+      }
+    },
+    "N1A_C0390000": {
+      "폭": {
+        "VALUE": 41283
+      }
+    },
+    "N1A_C0430000": {
+      "수용량": {
+        "VALUE": 1199
+      }
+    },
+    "N1A_C0453322": {
+      "높이": {
+        "VALUE": 14
+      },
+      "연장": {
+        "VALUE": 14
+      },
+      "폭": {
+        "VALUE": 14
+      }
+    },
+    "N1A_E0052114": {
+      "면적": {
+        "VALUE": 2304
+      }
+    },
+    "N1L_A0020000": {
+      "도로폭": {
+        "VALUE": 581530
+      },
+      "차로수": {
+        "VALUE": 581530
+      }
+    },
+    "N1L_A0033330": {
+      "폭": {
+        "VALUE": 11019
+      }
+    },
+    "N1L_C0050000": {
+      "높이": {
+        "VALUE": 14790
+      },
+      "연장": {
+        "VALUE": 14790
+      }
+    },
+    "N1L_E0020000": {
+      "하천번호": {
+        "VALUE": 25917
+      }
+    },
+    "N1L_E0060000": {
+      "연장": {
+        "VALUE": 485
+      },
+      "폭": {
+        "VALUE": 485
+      }
+    },
+    "N1L_F0010000": {
+      "등고수치": {
+        "VALUE": 137108
+      }
+    },
+    "N1L_F0040000": {
+      "높이": {
+        "VALUE": 177502
+      },
+      "연장": {
+        "VALUE": 177502
+      }
+    },
+    "N1P_C0330000": {
+      "높이": {
+        "VALUE": 625
+      }
+    },
+    "N1P_D0030000": {
+      "높이": {
+        "VALUE": 343825
+      },
+      "수령": {
+        "VALUE": 343825
+      },
+      "직경": {
+        "VALUE": 343825
+      }
+    },
+    "N1P_E0072325": {
+      "높이": {
+        "VALUE": 6
+      }
+    },
+    "N1P_F0020000": {
+      "수치": {
+        "VALUE": 7384
+      }
+    },
+    "N1P_H0059153": {
+      "높이": {
+        "VALUE": 17
+      }
+    },
+    "N3A_A0033320": {
+      "폭": {
+        "VALUE": 8
+      }
+    },
+    "N3A_B0010000": {
+      "건물본번": {
+        "VALUE": 151
+      },
+      "건물부번": {
+        "VALUE": 151
+      },
+      "층수": {
+        "VALUE": 151
+      }
+    },
+    "N3A_C0390000": {
+      "폭": {
+        "VALUE": 6
+      }
+    },
+    "N3L_A0020000": {
+      "도로폭": {
+        "VALUE": 60
+      },
+      "차로수": {
+        "VALUE": 60
+      }
+    },
+    "N3L_C0050000": {
+      "높이": {
+        "VALUE": 2
+      },
+      "연장": {
+        "VALUE": 2
+      }
+    },
+    "N3L_E0020000": {
+      "하천번호": {
+        "VALUE": 2
+      }
+    },
+    "N3L_F0010000": {
+      "등고수치": {
+        "VALUE": 13
+      }
+    },
+    "N3L_F0040000": {
+      "높이": {
+        "VALUE": 27
+      },
+      "연장": {
+        "VALUE": 27
+      }
+    },
+    "N3P_D0030000": {
+      "높이": {
+        "VALUE": 41
+      },
+      "수령": {
+        "VALUE": 41
+      },
+      "직경": {
+        "VALUE": 41
+      }
+    },
+    "N3P_F0020000": {
+      "수치": {
+        "VALUE": 4
+      }
+    }
+  },
+  "policy": {
+    "crossScaleMerging": false,
+    "geometryRepair": false,
+    "invalidExcludedFromCalculations": true,
+    "originalCoordinatePrecisionPreserved": true,
+    "seoulCoverageVerified": false,
+    "serviceMigrated": false,
+    "sourcePartMappingRetained": true,
+    "sourceVertexOrderPreserved": true,
+    "terrainInterpolation": false,
+    "tileSeamsVerified": false,
+    "ufidAssetMerging": false,
+    "verticalDatum": null
+  },
+  "readerSha256": "f4bda9a8047acf03951898cab87c2de73a06c54ba6589776b2ae1ccbac4d1d09",
+  "schemaComparisons": {
+    "N1A_A0010000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1A_A0033320": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 4,
+            "name": "폭",
+            "offset": 1,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 0,
+            "name": "재질",
+            "offset": 17,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 271,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "QUAL": "재질",
+          "UFID": "UFID",
+          "WIDT": "폭"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "BYYN",
+          "FMTA",
+          "KIND",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1A_A0043325": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1A_A0053326": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "구조",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "NAME": "명칭",
+          "STRU": "구조",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1A_A0063321": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 4,
+            "name": "연장",
+            "offset": 255,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 4,
+            "name": "폭",
+            "offset": 271,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 4,
+            "name": "높이",
+            "offset": 287,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 0,
+            "name": "형태",
+            "offset": 303,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "기타",
+            "offset": 557,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 811,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "HEIG": "높이",
+          "LENG": "연장",
+          "NAME": "명칭",
+          "REST": "기타",
+          "TYPE": "형태",
+          "UFID": "UFID",
+          "WIDT": "폭"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1A_A0070000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "종류",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 4,
+            "name": "연장",
+            "offset": 509,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 4,
+            "name": "폭",
+            "offset": 525,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 0,
+            "name": "설치연도",
+            "offset": 541,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "재질",
+            "offset": 795,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "하천명",
+            "offset": 1049,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "기타",
+            "offset": 1303,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 1557,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "EYMD": "설치연도",
+          "KIND": "종류",
+          "LENG": "연장",
+          "NAME": "명칭",
+          "QUAL": "재질",
+          "REST": "기타",
+          "RVNM": "하천명",
+          "UFID": "UFID",
+          "WIDT": "폭"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1A_A0080000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "종류",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "KIND": "종류",
+          "NAME": "명칭",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1A_A0090000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "구분",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 4,
+            "name": "연장",
+            "offset": 509,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 4,
+            "name": "높이",
+            "offset": 525,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 4,
+            "name": "통과하중",
+            "offset": 541,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 0,
+            "name": "재질",
+            "offset": 557,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "보도",
+            "offset": 811,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 1065,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "DIVI": "구분",
+          "HEIG": "높이",
+          "LENG": "연장",
+          "NAME": "명칭",
+          "PSLD": "통과하중",
+          "QUAL": "재질",
+          "SDWK": "보도",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1A_A0100000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "기타",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "NAME": "명칭",
+          "REST": "기타",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1A_A0110020": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 4,
+            "name": "연장",
+            "offset": 255,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 4,
+            "name": "폭",
+            "offset": 271,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 4,
+            "name": "높이",
+            "offset": 287,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 303,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "HEIG": "높이",
+          "LENG": "연장",
+          "NAME": "명칭",
+          "UFID": "UFID",
+          "WIDT": "폭"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1A_A0160024": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1A_A0191221": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "NAME": "명칭",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1A_A0201222": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "NAME": "명칭",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1A_B0010000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "구분",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "종류",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "용도",
+            "offset": 763,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "주기",
+            "offset": 1017,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "층수",
+            "offset": 1271,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 0,
+            "name": "측량방법",
+            "offset": 1287,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 1541,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "도로명",
+            "offset": 1795,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "건물본번",
+            "offset": 2049,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 0,
+            "name": "건물부번",
+            "offset": 2065,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 0,
+            "name": "우편번호",
+            "offset": 2081,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [
+          "측량방법"
+        ],
+        "manualMatchedFields": {
+          "ANNO": "주기",
+          "BONU": "건물본번",
+          "BUNU": "건물부번",
+          "DIVI": "구분",
+          "KIND": "종류",
+          "NAME": "명칭",
+          "NMLY": "층수",
+          "POST": "우편번호",
+          "RDNM": "도로명",
+          "SERV": "용도",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "BJCD",
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1A_C0032254": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "용도",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "NAME": "명칭",
+          "SERV": "용도",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1A_C0170000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "구분",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "용도",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 4,
+            "name": "면적",
+            "offset": 763,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 0,
+            "name": "관리기관",
+            "offset": 779,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 1033,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [
+          "관리기관"
+        ],
+        "manualMatchedFields": {
+          "DIVI": "구분",
+          "MARA": "면적",
+          "NAME": "명칭",
+          "SERV": "용도",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "MNGT",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1A_C0186115": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "용도",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "관리기관",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 763,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [
+          "관리기관"
+        ],
+        "manualMatchedFields": {
+          "NAME": "명칭",
+          "SERV": "용도",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "MNGT",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1A_C0270000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "기타",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "NAME": "명칭",
+          "REST": "기타",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1A_C0290000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "관리기관",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [
+          "관리기관"
+        ],
+        "manualMatchedFields": {
+          "NAME": "명칭",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "MNGT",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1A_C0305316": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "기타",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "NAME": "명칭",
+          "REST": "기타",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1A_C0390000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "구조",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 4,
+            "name": "폭",
+            "offset": 509,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 525,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "NAME": "명칭",
+          "STRU": "구조",
+          "UFID": "UFID",
+          "WIDT": "폭"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1A_C0423365": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "종류",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "KIND": "종류",
+          "NAME": "명칭",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "BJCD",
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1A_C0430000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "구분",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 4,
+            "name": "수용량",
+            "offset": 509,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 525,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "DIVI": "구분",
+          "NAME": "명칭",
+          "PKNU": "수용량",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1A_C0443363": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "용도",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "NAME": "명칭",
+          "SERV": "용도",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1A_C0453322": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 4,
+            "name": "연장",
+            "offset": 255,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 4,
+            "name": "폭",
+            "offset": 271,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 4,
+            "name": "높이",
+            "offset": 287,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 0,
+            "name": "기타",
+            "offset": 303,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 557,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "HEIG": "높이",
+          "LENG": "연장",
+          "NAME": "명칭",
+          "REST": "기타",
+          "UFID": "UFID",
+          "WIDT": "폭"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1A_C0470000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "용도",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "관리기관",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [
+          "관리기관"
+        ],
+        "manualMatchedFields": {
+          "SERV": "용도",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "MNGT",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1A_D0010000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "구분",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "DIVI": "구분",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1A_E0010001": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1A_E0032111": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1A_E0052114": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "용도",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 4,
+            "name": "면적",
+            "offset": 509,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 0,
+            "name": "관리기관",
+            "offset": 525,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 779,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [
+          "관리기관"
+        ],
+        "manualMatchedFields": {
+          "MARA": "면적",
+          "NAME": "명칭",
+          "SERV": "용도",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "MNGT",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1A_G0010000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "구분",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "DIVI": "구분",
+          "NAME": "명칭",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "BJCD",
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1A_G0020000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "형태",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "NAME": "명칭",
+          "TYPE": "형태",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1A_H0010000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "도엽명",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "도엽코드",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "DYCD": "도엽코드",
+          "DYNM": "도엽명",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "MCOM",
+          "MYMD",
+          "MZON",
+          "PRDT",
+          "PYMD",
+          "SCAL",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1L_A0010000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1L_A0020000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "도로번호",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "도로구분",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "시점",
+            "offset": 763,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "종점",
+            "offset": 1017,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "포장재질",
+            "offset": 1271,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "분리대유무",
+            "offset": 1525,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "차로수",
+            "offset": 1779,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 4,
+            "name": "도로폭",
+            "offset": 1795,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 0,
+            "name": "일방통행",
+            "offset": 1811,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "자동차전용",
+            "offset": 2065,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "기타",
+            "offset": 2319,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 2573,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "도로명",
+            "offset": 2827,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [
+          "자동차전용"
+        ],
+        "manualMatchedFields": {
+          "DVYN": "분리대유무",
+          "EDPT": "종점",
+          "NAME": "명칭",
+          "ONSD": "일방통행",
+          "PVQT": "포장재질",
+          "RDDV": "도로구분",
+          "RDLN": "차로수",
+          "RDNM": "도로명",
+          "RDNU": "도로번호",
+          "REST": "기타",
+          "RVWD": "도로폭",
+          "STPT": "시점",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1L_A0033330": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 4,
+            "name": "폭",
+            "offset": 1,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 0,
+            "name": "재질",
+            "offset": 17,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "구분",
+            "offset": 271,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 525,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [
+          "UFID",
+          "구분",
+          "재질",
+          "폭"
+        ],
+        "manualMatchedFields": {},
+        "manualTableAvailable": false,
+        "missingManualFields": []
+      }
+    ],
+    "N1L_A0123373": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "NAME": "명칭",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1L_A0150000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "구분",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "관리기관",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "기타",
+            "offset": 763,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 1017,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "DIVI": "구분",
+          "MNGT": "관리기관",
+          "NAME": "명칭",
+          "REST": "기타",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1L_A0171119": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "구분",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "구조",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "관리기관",
+            "offset": 763,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "기타",
+            "offset": 1017,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 1271,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "DIVI": "구분",
+          "MNGT": "관리기관",
+          "NAME": "명칭",
+          "REST": "기타",
+          "STRU": "구조",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1L_B0020000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "구분",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "재질",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "DIVI": "구분",
+          "QUAL": "재질",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1L_C0050000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "구분",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "재질",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "상하구분",
+            "offset": 763,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 4,
+            "name": "연장",
+            "offset": 1017,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 4,
+            "name": "높이",
+            "offset": 1033,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 1049,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [
+          "상하구분"
+        ],
+        "manualMatchedFields": {
+          "DIVI": "구분",
+          "HEIG": "높이",
+          "LENG": "연장",
+          "NAME": "명칭",
+          "QUAL": "재질",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS",
+          "UDDI"
+        ]
+      }
+    ],
+    "N1L_C0060000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "구분",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "재질",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "DIVI": "구분",
+          "QUAL": "재질",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1L_C0070000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1L_C0080000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "용도",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "재질",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 763,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "NAME": "명칭",
+          "QUAL": "재질",
+          "SERV": "용도",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1L_C0325315": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "재질",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "NAME": "명칭",
+          "QUAL": "재질",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1L_C0463374": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "용도",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "관리기관",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 763,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [
+          "관리기관"
+        ],
+        "manualMatchedFields": {
+          "NAME": "명칭",
+          "SERV": "용도",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "MNGT",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1L_C0520000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "구조",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "STRU": "구조",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1L_C0530000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "재질",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "NAME": "명칭",
+          "QUAL": "재질",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1L_E0020000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "하천번호",
+            "offset": 1,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 17,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "구분",
+            "offset": 271,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "측량방법",
+            "offset": 525,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 779,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [
+          "측량방법"
+        ],
+        "manualMatchedFields": {
+          "DIVI": "구분",
+          "NAME": "명칭",
+          "RVNU": "하천번호",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS",
+          "STAT",
+          "TYPE"
+        ]
+      }
+    ],
+    "N1L_E0060000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "형태",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "용도",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 4,
+            "name": "연장",
+            "offset": 763,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 4,
+            "name": "폭",
+            "offset": 779,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 0,
+            "name": "관리기관",
+            "offset": 795,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 1049,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [
+          "관리기관"
+        ],
+        "manualMatchedFields": {
+          "LENG": "연장",
+          "NAME": "명칭",
+          "SERV": "용도",
+          "TYPE": "형태",
+          "UFID": "UFID",
+          "WIDT": "폭"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "MNGT",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1L_F0010000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "구분",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 4,
+            "name": "등고수치",
+            "offset": 255,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 271,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "CONT": "등고수치",
+          "DIVI": "구분",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1L_F0030000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "구분",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "상하구분",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "DIVI": "구분",
+          "UDDI": "상하구분",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1L_F0040000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "종류",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "상하구분",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 4,
+            "name": "연장",
+            "offset": 509,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 4,
+            "name": "높이",
+            "offset": 525,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 0,
+            "name": "재질",
+            "offset": 541,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 795,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "HEIG": "높이",
+          "KIND": "종류",
+          "LENG": "연장",
+          "QUAL": "재질",
+          "UDDI": "상하구분",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1L_G0030000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "용도",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "SERV": "용도",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1L_H0037335": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1P_A0131122": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "NAME": "명칭",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "BJCD",
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1P_A0140000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "용도",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "NAME": "명칭",
+          "SERV": "용도",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "BJCD",
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1P_C0090000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "형태",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "NAME": "명칭",
+          "TYPE": "형태",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "BJCD",
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1P_C0106312": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "용도",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "NAME": "명칭",
+          "SERV": "용도",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "BJCD",
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1P_C0116313": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "NAME": "명칭",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "BJCD",
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1P_C0125335": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "주성분",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "기타",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 763,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "NAME": "명칭",
+          "PRIN": "주성분",
+          "REST": "기타",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "BJCD",
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1P_C0142263": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "NAME": "명칭",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "BJCD",
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1P_C0200000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "용도",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "관리기관",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 763,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [
+          "관리기관"
+        ],
+        "manualMatchedFields": {
+          "NAME": "명칭",
+          "SERV": "용도",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "BJCD",
+          "FMTA",
+          "MNGT",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1P_C0220000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "구분",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "DIVI": "구분",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "BJCD",
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1P_C0230000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "구분",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "재질",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "DIVI": "구분",
+          "QUAL": "재질",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "BJCD",
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1P_C0250000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "형태",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "관리기관",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [
+          "관리기관"
+        ],
+        "manualMatchedFields": {
+          "TYPE": "형태",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "BJCD",
+          "FMTA",
+          "MNGT",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1P_C0260000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "용도",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "NAME": "명칭",
+          "SERV": "용도",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "BJCD",
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1P_C0285311": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "BJCD",
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1P_C0310000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "형태",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "NAME": "명칭",
+          "TYPE": "형태",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "BJCD",
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1P_C0330000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "구분",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 4,
+            "name": "높이",
+            "offset": 509,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 0,
+            "name": "기타",
+            "offset": 525,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 779,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "DIVI": "구분",
+          "HEIG": "높이",
+          "NAME": "명칭",
+          "REST": "기타",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "BJCD",
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1P_C0340000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "구분",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "재질",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "기타",
+            "offset": 763,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 1017,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "DIVI": "구분",
+          "NAME": "명칭",
+          "QUAL": "재질",
+          "REST": "기타",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "BJCD",
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1P_C0350000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "재질",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [
+          "재질"
+        ],
+        "manualMatchedFields": {
+          "NAME": "명칭",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "BJCD",
+          "FMTA",
+          "QUAL",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1P_C0363361": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "BJCD",
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1P_C0373362": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "BJCD",
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1P_C0380000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "구분",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "DIVI": "구분",
+          "NAME": "명칭",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1P_C0400000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "구분",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "DIVI": "구분",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "BJCD",
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1P_C0410000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "용도",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "SERV": "용도",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "BJCD",
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1P_C0486353": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "BJCD",
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1P_C0493376": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "용도",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "SERV": "용도",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "BJCD",
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1P_C0503375": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "구분",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "관리기관",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "DIVI": "구분",
+          "MNGT": "관리기관",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "BJCD",
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1P_C0513369": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "BJCD",
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1P_C0540000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "NAME": "명칭",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "BJCD",
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1P_C0556354": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "용도",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "NAME": "명칭",
+          "SERV": "용도",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "BJCD",
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1P_D0030000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "관리번호",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "구분",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 4,
+            "name": "직경",
+            "offset": 763,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 4,
+            "name": "높이",
+            "offset": 779,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 4,
+            "name": "수령",
+            "offset": 795,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 0,
+            "name": "수종",
+            "offset": 811,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "기타",
+            "offset": 1065,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 1319,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [
+          "수종",
+          "직경"
+        ],
+        "manualMatchedFields": {
+          "DIVI": "구분",
+          "HEIG": "높이",
+          "MNNU": "관리번호",
+          "NAME": "명칭",
+          "REST": "기타",
+          "TRAG": "수령",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "BJCD",
+          "FMTA",
+          "RADI",
+          "SCLS",
+          "TRKI"
+        ]
+      }
+    ],
+    "N1P_E0042326": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "ANGL",
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1P_E0072325": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 4,
+            "name": "높이",
+            "offset": 255,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 0,
+            "name": "기타",
+            "offset": 271,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 525,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "HEIG": "높이",
+          "NAME": "명칭",
+          "REST": "기타",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "BJCD",
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1P_F0020000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 4,
+            "name": "수치",
+            "offset": 1,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 17,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "NUME": "수치",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1P_H0040000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "구분",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "형태",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 763,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "DIVI": "구분",
+          "NAME": "명칭",
+          "TYPE": "형태",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "BJCD",
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N1P_H0059153": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "산명",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 4,
+            "name": "높이",
+            "offset": 255,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 271,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "HEIG": "높이",
+          "MTNM": "산명",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "BJCD",
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N3A_A0010000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N3A_A0033320": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 4,
+            "name": "폭",
+            "offset": 1,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 0,
+            "name": "재질",
+            "offset": 17,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 271,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "QUAL": "재질",
+          "UFID": "UFID",
+          "WIDT": "폭"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "BYYN",
+          "FMTA",
+          "KIND",
+          "SCLS"
+        ]
+      }
+    ],
+    "N3A_A0043325": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N3A_A0080000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "종류",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "KIND": "종류",
+          "NAME": "명칭",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N3A_B0010000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "구분",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "종류",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "용도",
+            "offset": 763,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "주기",
+            "offset": 1017,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "층수",
+            "offset": 1271,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 0,
+            "name": "측량방법",
+            "offset": 1287,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 1541,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "도로명",
+            "offset": 1795,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "건물본번",
+            "offset": 2049,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 0,
+            "name": "건물부번",
+            "offset": 2065,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 0,
+            "name": "우편번호",
+            "offset": 2081,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [
+          "측량방법"
+        ],
+        "manualMatchedFields": {
+          "ANNO": "주기",
+          "BONU": "건물본번",
+          "BUNU": "건물부번",
+          "DIVI": "구분",
+          "KIND": "종류",
+          "NAME": "명칭",
+          "NMLY": "층수",
+          "POST": "우편번호",
+          "RDNM": "도로명",
+          "SERV": "용도",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "BJCD",
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N3A_C0390000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "구조",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 4,
+            "name": "폭",
+            "offset": 509,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 525,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "NAME": "명칭",
+          "STRU": "구조",
+          "UFID": "UFID",
+          "WIDT": "폭"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N3A_D0010000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "구분",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "DIVI": "구분",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N3A_E0010001": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N3A_E0032111": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N3A_G0010000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "구분",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "DIVI": "구분",
+          "NAME": "명칭",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "BJCD",
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N3A_G0020000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "형태",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "NAME": "명칭",
+          "TYPE": "형태",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N3A_H0010000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "도엽명",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "도엽코드",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "DYCD": "도엽코드",
+          "DYNM": "도엽명",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "MCOM",
+          "MYMD",
+          "MZON",
+          "PRDT",
+          "PYMD",
+          "SCAL",
+          "SCLS"
+        ]
+      }
+    ],
+    "N3L_A0010000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N3L_A0020000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "도로번호",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "도로구분",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "시점",
+            "offset": 763,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "종점",
+            "offset": 1017,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "포장재질",
+            "offset": 1271,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "분리대유무",
+            "offset": 1525,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "차로수",
+            "offset": 1779,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 4,
+            "name": "도로폭",
+            "offset": 1795,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 0,
+            "name": "일방통행",
+            "offset": 1811,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "자동차전용",
+            "offset": 2065,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "기타",
+            "offset": 2319,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 2573,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "도로명",
+            "offset": 2827,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [
+          "자동차전용"
+        ],
+        "manualMatchedFields": {
+          "DVYN": "분리대유무",
+          "EDPT": "종점",
+          "NAME": "명칭",
+          "ONSD": "일방통행",
+          "PVQT": "포장재질",
+          "RDDV": "도로구분",
+          "RDLN": "차로수",
+          "RDNM": "도로명",
+          "RDNU": "도로번호",
+          "REST": "기타",
+          "RVWD": "도로폭",
+          "STPT": "시점",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N3L_B0020000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "구분",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "재질",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "DIVI": "구분",
+          "QUAL": "재질",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N3L_C0050000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "구분",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "재질",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "상하구분",
+            "offset": 763,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 4,
+            "name": "연장",
+            "offset": 1017,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 4,
+            "name": "높이",
+            "offset": 1033,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 1049,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [
+          "상하구분"
+        ],
+        "manualMatchedFields": {
+          "DIVI": "구분",
+          "HEIG": "높이",
+          "LENG": "연장",
+          "NAME": "명칭",
+          "QUAL": "재질",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS",
+          "UDDI"
+        ]
+      }
+    ],
+    "N3L_C0070000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N3L_E0020000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "하천번호",
+            "offset": 1,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 17,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "구분",
+            "offset": 271,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "측량방법",
+            "offset": 525,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 779,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [
+          "측량방법"
+        ],
+        "manualMatchedFields": {
+          "DIVI": "구분",
+          "NAME": "명칭",
+          "RVNU": "하천번호",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS",
+          "STAT",
+          "TYPE"
+        ]
+      }
+    ],
+    "N3L_F0010000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "구분",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 4,
+            "name": "등고수치",
+            "offset": 255,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 271,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "CONT": "등고수치",
+          "DIVI": "구분",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N3L_F0040000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "종류",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "상하구분",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 4,
+            "name": "연장",
+            "offset": 509,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 4,
+            "name": "높이",
+            "offset": 525,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 0,
+            "name": "재질",
+            "offset": 541,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 795,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "HEIG": "높이",
+          "KIND": "종류",
+          "LENG": "연장",
+          "QUAL": "재질",
+          "UDDI": "상하구분",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N3L_G0030000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "용도",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "SERV": "용도",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N3L_H0037335": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N3P_C0220000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "구분",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "DIVI": "구분",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "BJCD",
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N3P_C0230000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "구분",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "재질",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "DIVI": "구분",
+          "QUAL": "재질",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "BJCD",
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N3P_C0250000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "형태",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "관리기관",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [
+          "관리기관"
+        ],
+        "manualMatchedFields": {
+          "TYPE": "형태",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "BJCD",
+          "FMTA",
+          "MNGT",
+          "SCLS"
+        ]
+      }
+    ],
+    "N3P_C0380000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "구분",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "DIVI": "구분",
+          "NAME": "명칭",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N3P_C0410000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "용도",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "SERV": "용도",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "BJCD",
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N3P_C0513369": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "BJCD",
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N3P_D0030000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "관리번호",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "구분",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 4,
+            "name": "직경",
+            "offset": 763,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 4,
+            "name": "높이",
+            "offset": 779,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 4,
+            "name": "수령",
+            "offset": 795,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 0,
+            "name": "수종",
+            "offset": 811,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "기타",
+            "offset": 1065,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 1319,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [
+          "수종",
+          "직경"
+        ],
+        "manualMatchedFields": {
+          "DIVI": "구분",
+          "HEIG": "높이",
+          "MNNU": "관리번호",
+          "NAME": "명칭",
+          "REST": "기타",
+          "TRAG": "수령",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "BJCD",
+          "FMTA",
+          "RADI",
+          "SCLS",
+          "TRKI"
+        ]
+      }
+    ],
+    "N3P_E0042326": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "ANGL",
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N3P_F0020000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 4,
+            "name": "수치",
+            "offset": 1,
+            "type": "N",
+            "width": 16
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 17,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "NUME": "수치",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ],
+    "N3P_H0040000": [
+      {
+        "actualSchema": [
+          {
+            "decimals": 0,
+            "name": "명칭",
+            "offset": 1,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "구분",
+            "offset": 255,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "형태",
+            "offset": 509,
+            "type": "C",
+            "width": 254
+          },
+          {
+            "decimals": 0,
+            "name": "UFID",
+            "offset": 763,
+            "type": "C",
+            "width": 254
+          }
+        ],
+        "extraActualFields": [],
+        "manualMatchedFields": {
+          "DIVI": "구분",
+          "NAME": "명칭",
+          "TYPE": "형태",
+          "UFID": "UFID"
+        },
+        "manualTableAvailable": true,
+        "missingManualFields": [
+          "BJCD",
+          "FMTA",
+          "SCLS"
+        ]
+      }
+    ]
+  },
+  "schemaVersion": 1,
+  "semanticsSha256": "d01293aa5a6d2da7b9562e6efe146d5677e9edf5f989622bce9dc388a2fccd8c",
+  "sourceCatalogSha256": "1b4695823e1b035c37e78ef881502a0adfa854234c7b7b73901126b1328c731e",
+  "sourceManifestSha256": "e9980c6ccd6be463a821bae45e58bae11a52f84856c7161da4dea7e346b79baa",
+  "sourceReaderSha256": "32a5c8d6182cbc5737e4fac7274118631bed87d3c7f99573f73d2e9aa3ec56cd",
+  "spatialBytes": 3915984896,
+  "spatialSha256": "4eeb19430451d115807398df34cea75557ff1c152438c56750c8b0fafa395373",
+  "status": "NATIVE_GEOMETRY_CATALOG_NOT_SERVICE_MIGRATED",
+  "versions": {
+    "geos": "3.14.1",
+    "shapely": "2.2.0",
+    "sqlite": "3.53.1"
+  },
+  "verifiedOn": "2026-10-20",
+  "distributionUpdatedAt": "2026-03-07",
+  "sourceSummary": "data/manifests/seoul-topography-catalog-v1.json",
+  "semanticsFile": "data/manifests/seoul-topography-semantics-v1.json",
+  "localCatalogDirectory": "data/private/vworld-seoul-topography-20260307/spatial-v1",
+  "reproducibility": {
+    "independentBuilds": 2,
+    "spatialBytesIdentical": true,
+    "summaryBytesIdentical": true,
+    "codeValueProfilesIdentical": true
+  },
+  "independentGdalComparison": {
+    "coordinateToleranceM": 1e-08,
+    "counts": {
+      "comparedValidGeometry": 10140
+    },
+    "fieldAccuracyValidated": false,
+    "gdalVersion": "GDAL 3.8.5, released 2024/04/02",
+    "layerCounts": {
+      "376080900:N1A_A0010000": {
+        "comparedValidGeometry": 86
+      },
+      "376080900:N1A_A0033320": {
+        "comparedValidGeometry": 2
+      },
+      "376080900:N1A_A0070000": {
+        "comparedValidGeometry": 3
+      },
+      "376080900:N1A_B0010000": {
+        "comparedValidGeometry": 101
+      },
+      "376080900:N1A_E0032111": {
+        "comparedValidGeometry": 2
+      },
+      "376080900:N1L_A0020000": {
+        "comparedValidGeometry": 142
+      },
+      "376080900:N1L_F0010000": {
+        "comparedValidGeometry": 38
+      },
+      "376080900:N1P_F0020000": {
+        "comparedValidGeometry": 3
+      },
+      "376081951:N1A_A0010000": {
+        "comparedValidGeometry": 90
+      },
+      "376081951:N1A_A0033320": {
+        "comparedValidGeometry": 48
+      },
+      "376081951:N1A_A0070000": {
+        "comparedValidGeometry": 4
+      },
+      "376081951:N1A_A0160024": {
+        "comparedValidGeometry": 1
+      },
+      "376081951:N1A_B0010000": {
+        "comparedValidGeometry": 285
+      },
+      "376081951:N1A_E0032111": {
+        "comparedValidGeometry": 2
+      },
+      "376081951:N1L_A0020000": {
+        "comparedValidGeometry": 143
+      },
+      "376081951:N1L_F0010000": {
+        "comparedValidGeometry": 27
+      },
+      "376081951:N1P_F0020000": {
+        "comparedValidGeometry": 3
+      },
+      "376082499:N1A_A0010000": {
+        "comparedValidGeometry": 164
+      },
+      "376082499:N1A_A0033320": {
+        "comparedValidGeometry": 57
+      },
+      "376082499:N1A_B0010000": {
+        "comparedValidGeometry": 537
+      },
+      "376082499:N1L_A0020000": {
+        "comparedValidGeometry": 265
+      },
+      "376082499:N1L_F0010000": {
+        "comparedValidGeometry": 66
+      },
+      "376082499:N1P_F0020000": {
+        "comparedValidGeometry": 3
+      },
+      "377050600:N1A_A0010000": {
+        "comparedValidGeometry": 131
+      },
+      "377050600:N1A_A0033320": {
+        "comparedValidGeometry": 72
+      },
+      "377050600:N1A_A0070000": {
+        "comparedValidGeometry": 2
+      },
+      "377050600:N1A_A0160024": {
+        "comparedValidGeometry": 5
+      },
+      "377050600:N1A_B0010000": {
+        "comparedValidGeometry": 388
+      },
+      "377050600:N1L_A0020000": {
+        "comparedValidGeometry": 212
+      },
+      "377050600:N1L_F0010000": {
+        "comparedValidGeometry": 9
+      },
+      "377050600:N1P_F0020000": {
+        "comparedValidGeometry": 3
+      },
+      "377051669:N1A_A0010000": {
+        "comparedValidGeometry": 148
+      },
+      "377051669:N1A_A0033320": {
+        "comparedValidGeometry": 60
+      },
+      "377051669:N1A_A0160024": {
+        "comparedValidGeometry": 1
+      },
+      "377051669:N1A_B0010000": {
+        "comparedValidGeometry": 642
+      },
+      "377051669:N1L_A0020000": {
+        "comparedValidGeometry": 244
+      },
+      "377051669:N1L_F0010000": {
+        "comparedValidGeometry": 11
+      },
+      "377051669:N1P_F0020000": {
+        "comparedValidGeometry": 3
+      },
+      "377052201:N1A_A0010000": {
+        "comparedValidGeometry": 174
+      },
+      "377052201:N1A_A0033320": {
+        "comparedValidGeometry": 52
+      },
+      "377052201:N1A_A0070000": {
+        "comparedValidGeometry": 4
+      },
+      "377052201:N1A_A0160024": {
+        "comparedValidGeometry": 1
+      },
+      "377052201:N1A_B0010000": {
+        "comparedValidGeometry": 760
+      },
+      "377052201:N1L_A0020000": {
+        "comparedValidGeometry": 291
+      },
+      "377052201:N1P_F0020000": {
+        "comparedValidGeometry": 3
+      },
+      "377052202:N1A_A0010000": {
+        "comparedValidGeometry": 113
+      },
+      "377052202:N1A_A0033320": {
+        "comparedValidGeometry": 59
+      },
+      "377052202:N1A_A0070000": {
+        "comparedValidGeometry": 2
+      },
+      "377052202:N1A_A0160024": {
+        "comparedValidGeometry": 1
+      },
+      "377052202:N1A_B0010000": {
+        "comparedValidGeometry": 465
+      },
+      "377052202:N1A_E0032111": {
+        "comparedValidGeometry": 1
+      },
+      "377052202:N1L_A0020000": {
+        "comparedValidGeometry": 182
+      },
+      "377052202:N1L_F0010000": {
+        "comparedValidGeometry": 3
+      },
+      "377052202:N1P_F0020000": {
+        "comparedValidGeometry": 3
+      },
+      "377052211:N1A_A0010000": {
+        "comparedValidGeometry": 185
+      },
+      "377052211:N1A_A0033320": {
+        "comparedValidGeometry": 43
+      },
+      "377052211:N1A_A0070000": {
+        "comparedValidGeometry": 4
+      },
+      "377052211:N1A_A0160024": {
+        "comparedValidGeometry": 1
+      },
+      "377052211:N1A_B0010000": {
+        "comparedValidGeometry": 805
+      },
+      "377052211:N1L_A0020000": {
+        "comparedValidGeometry": 300
+      },
+      "377052211:N1L_F0010000": {
+        "comparedValidGeometry": 2
+      },
+      "377052211:N1P_F0020000": {
+        "comparedValidGeometry": 3
+      },
+      "377052212:N1A_A0010000": {
+        "comparedValidGeometry": 158
+      },
+      "377052212:N1A_A0033320": {
+        "comparedValidGeometry": 42
+      },
+      "377052212:N1A_A0070000": {
+        "comparedValidGeometry": 2
+      },
+      "377052212:N1A_A0160024": {
+        "comparedValidGeometry": 1
+      },
+      "377052212:N1A_B0010000": {
+        "comparedValidGeometry": 707
+      },
+      "377052212:N1L_A0020000": {
+        "comparedValidGeometry": 261
+      },
+      "377052212:N1P_F0020000": {
+        "comparedValidGeometry": 3
+      },
+      "377052298:N1A_A0010000": {
+        "comparedValidGeometry": 159
+      },
+      "377052298:N1A_A0033320": {
+        "comparedValidGeometry": 24
+      },
+      "377052298:N1A_B0010000": {
+        "comparedValidGeometry": 787
+      },
+      "377052298:N1L_A0020000": {
+        "comparedValidGeometry": 272
+      },
+      "377052298:N1L_F0010000": {
+        "comparedValidGeometry": 8
+      },
+      "377052298:N1P_F0020000": {
+        "comparedValidGeometry": 3
+      },
+      "377090734:N1A_A0010000": {
+        "comparedValidGeometry": 38
+      },
+      "377090734:N1A_A0033320": {
+        "comparedValidGeometry": 3
+      },
+      "377090734:N1A_B0010000": {
+        "comparedValidGeometry": 114
+      },
+      "377090734:N1A_E0032111": {
+        "comparedValidGeometry": 1
+      },
+      "377090734:N1L_A0020000": {
+        "comparedValidGeometry": 60
+      },
+      "377090734:N1L_F0010000": {
+        "comparedValidGeometry": 34
+      },
+      "377090734:N1P_F0020000": {
+        "comparedValidGeometry": 3
+      }
+    },
+    "policy": "VALID_NATIVE_RECORDS_ONLY_NO_REPAIR_OR_REPROJECTION",
+    "readerSha256": "f4bda9a8047acf03951898cab87c2de73a06c54ba6589776b2ae1ccbac4d1d09",
+    "schemaVersion": 1,
+    "selectedTileIds": [
+      "376080900",
+      "376081951",
+      "376082499",
+      "377050600",
+      "377051669",
+      "377052201",
+      "377052202",
+      "377052211",
+      "377052212",
+      "377052298",
+      "377090734"
+    ],
+    "sourceCatalogSha256": "1b4695823e1b035c37e78ef881502a0adfa854234c7b7b73901126b1328c731e",
+    "verifierSha256": "1210659d0534f1fae5c00888657bfa2bd7f4652fe812caa05358df5c25cd9ab1"
+  },
+  "queryPerformance": {
+    "includesInitialFileHashVerification": false,
+    "cases": [
+      {
+        "extentM": [
+          250,
+          250
+        ],
+        "records": 212,
+        "elapsedSeconds": 0.011481416877359152,
+        "originalGeometryAreaEquality": true
+      },
+      {
+        "extentM": [
+          250,
+          250
+        ],
+        "records": 110,
+        "elapsedSeconds": 0.004651167197152972,
+        "originalGeometryAreaEquality": true
+      }
+    ]
+  }
+}

@@ -44,6 +44,24 @@ simulation/.venv/bin/python scripts/prepare_seoul_topography.py
 
 구성 검사 근거: [Esri SHP/SHX 기술 설명](https://www.esri.com/library/whitepapers/pdfs/shapefile.pdf), [GDAL Shapefile 문자셋](https://gdal.org/en/stable/drivers/vector/shapefile.html), [Python ZIP 해제 제한](https://docs.python.org/3.13/library/zipfile.html#decompression-pitfalls).
 
+### 원 레코드 공간 카탈로그
+
+`scripts/prepare_seoul_spatial.py`는 위 입력 카탈로그에서 모든 원 레코드의 도형·속성·출처를 `spatial.sqlite`로 정규화한다. 원 식별자와 SHP 레코드·DBF 행의 해시를 보존하고 유효 도형의 원 좌표 WKB·미터 면적/길이·부분 대응을 저장한다. 링을 자동으로 닫거나 방향을 뒤집거나 `make_valid`로 복구하지 않는다. 구멍은 ESRI의 시계 방향 외곽·반시계 방향 내부 링 규칙과 유일한 포함 관계가 확인될 때만 연결한다. 해석할 수 없는 링·자기교차·퇴화 선은 원본 대응과 오류 상태를 보존하고 계산용 면적을 부여하지 않는다.
+
+R-tree는 범위 후보 검색에만 사용하며 조회 결과는 원 WKB의 실제 교차로 다시 검사한다. 완성 파일에 인덱스 통계를 저장하고 조회는 범위 검색부터 수행한다. 지도 절단·단순화·공간 인덱스의 부동소수점 범위를 설치/집수 면적으로 사용하지 않는다. 동일한 조회 객체에 원 식별·형상·면적·속성·축척·공간 카탈로그 해시를 반환한다. 구 경계 병합·도엽 접합·후보 생성·모델 편입은 이 단계에 포함되지 않는다.
+
+[레이어 해석 계약](../data/manifests/seoul-topography-semantics-v1.json)에 설명서 해시·페이지, 실제 121종 레이어의 이름/도형/축척 대조, 필드표와 게임 관련 12개 코드군을 결속했다. 실제 레이어의 110종은 목록과 일치하고 8종은 해당 축척이 목록에 없으며, 2종은 공간형태가 다르고 1종은 목록에 없다. N3는 1:5,000 자료로 구분하며 N1의 1:1,000으로 표시하거나 도형을 합치지 않는다. 실제 보도 면 `N1A_A0033320`과 목록에 없는 선 `N1L_A0033330`을 같은 객체로 간주하지 않는다.
+
+코드 또는 설명서의 유일한 정확한 명칭만 해석한다. 결측·미분류·기타·미등록 값·설명서의 축척 범위 밖 값을 구분하고 알려진 코드로 대체하지 않는다. 복합 용도·미등재 포장 재료도 원문 그대로 보존한다. 다른 레이어의 중심선 속성을 도로 면 전체에 복사하지 않으며 일방통행 여부에서 선의 정/역방향을 결정하지 않는다. 원 수치 속성의 값/범위와 미확인 단위는 분리하므로 표고 수치로 지형·수직 기준·미세 경사를 생성하지 않는다. 나머지 코드군 해석과 설치 적합성 검증은 미완료 상태다.
+
+```sh
+simulation/.venv/bin/python scripts/prepare_seoul_spatial.py
+simulation/.venv/bin/python scripts/verify_seoul_spatial.py \
+  --output data/private/vworld-seoul-topography-20260307/gdal-spatial-v1.json
+```
+
+기본 공간 출력은 `data/private/vworld-seoul-topography-20260307/spatial-v1/`이다. 기존 출력 덮어쓰기·입력 해시 불일치를 거부한다. 공간 카탈로그·원 값 프로필·상세 진단은 Git 제외이며 [공개 공간 검사 요약](../data/manifests/seoul-spatial-catalog-v1.json)에 집계·원본/코드/산출물 해시·실행 도구 버전과 독립 GDAL 대조 결과만 보존한다. 검사 통과를 서울 전역 피복·도엽 접합·현장 정확도·게임 지도 전환 완료로 표시하지 않는다.
+
 ## 수치지형도 플레이 모델 연결
 
 2026-03-07 갱신 공개 수치지형도와 동일한 기존 4개 도엽의 건물 246개와 도로·철도·교량 면 경계를 별도 지도에 연결한다. 원 도엽의 제작연도는 2025년이며 배포 갱신일과 구분한다. EPSG:5186 원문 좌표에서 고정 원점을 뺀 미터 좌표를 사용하며 내부 구멍·복수 도형을 보존한다. 교통 면은 화면 경계로 절단하되 건물 원형은 보존한다. 층수×3.2m 및 층수 누락 시 9m는 시각화 가정으로만 사용한다. 평탄 지면 유지, 교량의 실제 고도·도로 경사 추정 금지.
