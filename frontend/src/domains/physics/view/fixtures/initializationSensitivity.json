@@ -148,7 +148,7 @@
         "warmupRainMm": 146.0,
         "scoreExcludesWarmup": true
       },
-      "runoffContinuityPercent": 9.999999974752427e-07,
+      "runoffContinuityPercent": 9.999999974752427e-7,
       "evaluationBalanceResidualM3": 0.0017670263770313
     },
     {
@@ -277,7 +277,7 @@
         "warmupRainMm": 146.0,
         "scoreExcludesWarmup": true
       },
-      "runoffContinuityPercent": 9.999999974752427e-07,
+      "runoffContinuityPercent": 9.999999974752427e-7,
       "evaluationBalanceResidualM3": 0.0017670263770384054
     }
   ],

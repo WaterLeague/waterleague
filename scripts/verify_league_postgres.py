@@ -22,7 +22,7 @@ def source_counts(db):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--suite', choices=['street-placement', 'guest-historical', 'historical-submit-design', 'historical-design-run', 'historical-design', 'public-surface', 'infrastructure', 'league', 'analysis', 'queue', 'budget', 'physics', 'weekly', 'historical', 'watershed', 'cistern-plan', 'shared-research', 'search', 'restore', 'all'], default='league')
+    parser.add_argument('--suite', choices=['street-placement', 'guest-historical', 'historical-submit-design', 'historical-design-run', 'historical-design', 'public-surface', 'infrastructure', 'league', 'analysis', 'queue', 'budget', 'physics', 'weekly', 'historical', 'watershed', 'cistern-plan', 'shared-research', 'search', 'restore', 'backend', 'all'], default='league')
     suite = parser.parse_args().suite
     test_class = {'street-placement': 'SharedInstallationTests,GuestHistoricalTests,HistoricalDesignTests,ApiSecurityTests', 'guest-historical': 'GuestHistoricalTests,HistoricalWorkflowTests,HistoricalSubmissionTests,ApiSecurityTests','historical-submit-design': 'HistoricalSubmissionTests,HistoricalDesignTests,ApiSecurityTests',
                   'historical-design-run': 'HistoricalDesignTests,HistoricalWorkflowTests,HistoricalSubmissionTests,ApiSecurityTests',
@@ -41,7 +41,8 @@ def main():
                   'shared-research': 'SharedResearchWorkflowTests',
                   'search': 'ResearchSearchWorkflowTests',
                   'restore': 'ResearchSearchWorkflowTests#replaysActualSwmmSourcesAndGeneratedCandidateBundleOnIsolatedPostgres',
-                  'all': 'LeagueParticipationWorkflowTests,ResearchAnalysisWorkflowTests,ResearchSearchWorkflowTests'}[suite]
+                  'backend': '*Tests',
+                  'all': 'LeagueParticipationWorkflowTests,ResearchAnalysisWorkflowTests,ResearchSearchWorkflowTests,SharedResearchWorkflowTests,BudgetLedgerWorkflowTests'}[suite]
     load()
     config = conninfo_to_dict(os.environ['DATABASE_URL'])
     if config.get('host') not in {'127.0.0.1', 'localhost', '::1'}:
@@ -72,6 +73,8 @@ def main():
         with path.open('x') as log:
             path.chmod(0o600)
             physical = ['-Dwaterleague.integration.python=' + sys.executable] if suite in {'search', 'restore'} else []
+            if suite != 'backend':
+                physical.append('-Dwaterleague.integration.preserve-fixtures=true')
             if suite == 'guest-historical':
                 physical.append('-Dwaterleague.integration.guest.fixture=' + str(path.with_suffix('.guest.json')))
             if suite == 'historical':
@@ -86,13 +89,13 @@ def main():
                 physical.append('-Dwaterleague.integration.restore=true')
             result = subprocess.run(
                 [str(ROOT / 'backend/mvnw'), '--batch-mode', '-Dtest=' + test_class,
-                 '-Dwaterleague.integration.jdbc=' + jdbc, *physical, 'test'],
-                cwd=ROOT / 'backend', env=env, stdout=log, stderr=subprocess.STDOUT, timeout=180)
+                 '-Dwaterleague.integration.jdbc=' + jdbc, *physical, 'verify' if suite == 'backend' else 'test'],
+                cwd=ROOT / 'backend', env=env, stdout=log, stderr=subprocess.STDOUT, timeout=600)
             if suite in {'historical-design', 'historical-design-run'} and result.returncode == 0:
                 result = subprocess.run(
                     [str(ROOT / 'backend/mvnw'), '--batch-mode', '-Dtest=HistoricalDesignRestartTests',
                      '-Dwaterleague.integration.jdbc=' + jdbc, *physical, 'test'],
-                    cwd=ROOT / 'backend', env=env, stdout=log, stderr=subprocess.STDOUT, timeout=180)
+                    cwd=ROOT / 'backend', env=env, stdout=log, stderr=subprocess.STDOUT, timeout=600)
             if suite in {'guest-historical', 'queue', 'physics', 'historical', 'watershed', 'historical-design-run', 'historical-submit-design'} and result.returncode == 0:
                 worker_env = env | {'WL_WORKER_TEST_DSN': make_conninfo(**(config | {'dbname': test_name})),
                                     'PYTHONPATH': str(ROOT / 'simulation')}
@@ -105,7 +108,7 @@ def main():
                 if suite == 'historical-design-run':
                     worker_env['WL_DESIGN_RUN_FIXTURE'] = str(path.with_suffix('.requests.json'))
                     worker_env['WL_DESIGN_RUN_EVIDENCE'] = str(path.with_suffix('.runs'))
-                pattern = ['-p', {'guest-historical':'test_guest_historical.py','historical-submit-design':'test_saved_submission.py','historical-design-run':'test_historical_design_run.py','physics':'test_shared_physics.py','historical':'test_historical.py','watershed':'test_watershed.py'}[suite]] if suite in {'guest-historical','physics','historical','watershed','historical-design-run','historical-submit-design'} else []
+                pattern = ['-p', {'guest-historical':'test_guest_historical.py','queue':'test_worker_queue.py','historical-submit-design':'test_saved_submission.py','historical-design-run':'test_historical_design_run.py','physics':'test_shared_physics.py','historical':'test_historical.py','watershed':'test_watershed.py'}[suite]] if suite in {'queue','guest-historical','physics','historical','watershed','historical-design-run','historical-submit-design'} else []
                 result = subprocess.run([sys.executable, '-m', 'unittest', 'discover', '-s', 'integration', *pattern, '-v'],
                     cwd=ROOT / 'simulation', env=worker_env, stdout=log, stderr=subprocess.STDOUT, timeout=240)
         with psycopg.connect(**config) as db:

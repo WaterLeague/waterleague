@@ -91,6 +91,11 @@ for role in ('wl_api', 'wl_worker'):
                        "UPDATE research_candidates SET placements='[]' WHERE false",
                        "UPDATE simulation_jobs SET input_hash='changed' WHERE false",
                        'DELETE FROM simulation_jobs WHERE false',
+                       'SELECT * FROM budget_ledger_entries',
+                       'SELECT * FROM historical_design_revisions',
+                       "UPDATE watershed_experiments SET placements='[]' WHERE false",
+                       "UPDATE historical_submissions SET rules_hash='changed' WHERE false",
+                       "UPDATE shared_weekly_scores SET rule_version='changed' WHERE false",
                        'UPDATE accounts SET enabled=false WHERE false']
         for statement in denied:
             try:
@@ -104,6 +109,10 @@ for role in ('wl_api', 'wl_worker'):
             db.execute('SELECT id,placements FROM strategy_versions LIMIT 1')
             db.execute("UPDATE simulation_jobs SET state='FAILED',result=NULL WHERE false")
             db.execute("UPDATE research_candidates SET state='FAILED',result=NULL WHERE false")
+            db.execute("UPDATE watershed_experiments SET state='FAILED',result=NULL WHERE false")
+            if role == 'wl_worker':
+                db.execute('UPDATE historical_submissions SET difference_m3=0 WHERE false')
+                db.execute('UPDATE shared_weekly_scores SET evaluated_seconds=1 WHERE false')
         flags = db.execute('SELECT rolsuper,rolcreatedb,rolcreaterole,rolbypassrls FROM pg_roles WHERE rolname=current_user').fetchone()
         assert not any(flags)
 print('DB_PERMISSIONS_OK')

@@ -1,0 +1,143 @@
+{
+  "basis": "CI 수정 전 3699915의 6종 연속 입력 · 합성 5분 강우 회귀 시험 전용",
+  "cases": [
+    {
+      "districtId": "2410520",
+      "siteVersion": 9,
+      "rainfall": {
+        "start": "2022-08-08T18:00:00+09:00",
+        "end": "2022-08-08T18:05:00+09:00",
+        "intervalSeconds": 60,
+        "depthsMm": [
+          1,
+          0,
+          2,
+          0,
+          1
+        ],
+        "totalDepthMm": 4
+      },
+      "placement": {
+        "cellId": "G1",
+        "facilityType": "RAIN_GARDEN",
+        "areaM2": 10
+      },
+      "inputSha256": "f3ec12a97477aaa1bad86c75c01207e85810c8bfada7d525ad2608518a23ef28"
+    },
+    {
+      "districtId": "2410520",
+      "siteVersion": 9,
+      "rainfall": {
+        "start": "2022-08-08T18:00:00+09:00",
+        "end": "2022-08-08T18:05:00+09:00",
+        "intervalSeconds": 60,
+        "depthsMm": [
+          1,
+          0,
+          2,
+          0,
+          1
+        ],
+        "totalDepthMm": 4
+      },
+      "placement": {
+        "cellId": "G1",
+        "facilityType": "PERMEABLE_PAVEMENT",
+        "areaM2": 10
+      },
+      "inputSha256": "d9d21fc558f3c62939fd35e166055b906c0ff843bd1c21bb429ef009a47a9805"
+    },
+    {
+      "districtId": "2410520",
+      "siteVersion": 9,
+      "rainfall": {
+        "start": "2022-08-08T18:00:00+09:00",
+        "end": "2022-08-08T18:05:00+09:00",
+        "intervalSeconds": 60,
+        "depthsMm": [
+          1,
+          0,
+          2,
+          0,
+          1
+        ],
+        "totalDepthMm": 4
+      },
+      "placement": {
+        "cellId": "R1",
+        "facilityType": "GREEN_ROOF",
+        "areaM2": 10
+      },
+      "inputSha256": "7bd38fb18f4b59ea0304ba987fe1c676f66965a9745c1ddd4a70a1436e5a48de"
+    },
+    {
+      "districtId": "2410520",
+      "siteVersion": 9,
+      "rainfall": {
+        "start": "2022-08-08T18:00:00+09:00",
+        "end": "2022-08-08T18:05:00+09:00",
+        "intervalSeconds": 60,
+        "depthsMm": [
+          1,
+          0,
+          2,
+          0,
+          1
+        ],
+        "totalDepthMm": 4
+      },
+      "placement": {
+        "cellId": "G1",
+        "facilityType": "BIORETENTION",
+        "areaM2": 10
+      },
+      "inputSha256": "eaadda8f6bb3d9a8f59f1d828d83f596815cb863ae797c2121b3062fb4b5ecc9"
+    },
+    {
+      "districtId": "2410520",
+      "siteVersion": 9,
+      "rainfall": {
+        "start": "2022-08-08T18:00:00+09:00",
+        "end": "2022-08-08T18:05:00+09:00",
+        "intervalSeconds": 60,
+        "depthsMm": [
+          1,
+          0,
+          2,
+          0,
+          1
+        ],
+        "totalDepthMm": 4
+      },
+      "placement": {
+        "cellId": "G1",
+        "facilityType": "VEGETATIVE_SWALE",
+        "areaM2": 9.99
+      },
+      "inputSha256": "fb7403d2a3215024043a867dd2aba1faa12ef6fff57becc7b3f91c1acc3bbe8d"
+    },
+    {
+      "districtId": "2410520",
+      "siteVersion": 9,
+      "rainfall": {
+        "start": "2022-08-08T18:00:00+09:00",
+        "end": "2022-08-08T18:05:00+09:00",
+        "intervalSeconds": 60,
+        "depthsMm": [
+          1,
+          0,
+          2,
+          0,
+          1
+        ],
+        "totalDepthMm": 4
+      },
+      "placement": {
+        "cellId": "G1",
+        "facilityType": "INFILTRATION_TRENCH",
+        "areaM2": 4.99
+      },
+      "inputSha256": "48e4718d669b5f5a3d6b08c23f0c1d41825a51265a96e61c8694a9688d31edc8"
+    }
+  ]
+}

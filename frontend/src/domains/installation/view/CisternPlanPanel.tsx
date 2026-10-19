@@ -127,9 +127,11 @@ export function CisternPlanPanel({
               내부 길이{' '}
               {s.geometry.internalLengthM.toLocaleString('ko-KR', { maximumFractionDigits: 3 })}m
               <br />
-              외곽 {s.geometry.outerWidthM.toLocaleString('ko-KR', {
+              외곽{' '}
+              {s.geometry.outerWidthM.toLocaleString('ko-KR', {
                 maximumFractionDigits: 3,
-              })} × {s.geometry.outerLengthM.toLocaleString('ko-KR', { maximumFractionDigits: 3 })}m
+              })}{' '}
+              × {s.geometry.outerLengthM.toLocaleString('ko-KR', { maximumFractionDigits: 3 })}m
             </p>
           )}
           {s.geometry && (

@@ -15,7 +15,7 @@ import tools.jackson.databind.ObjectMapper;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("local")
-class AccountFlowTests {
+class AccountFlowTests extends PostgresIntegrationTest {
   @Value("${local.server.port}")
   int port;
 

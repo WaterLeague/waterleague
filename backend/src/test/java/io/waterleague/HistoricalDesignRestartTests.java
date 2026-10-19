@@ -17,7 +17,7 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest
 @ActiveProfiles("local")
 @EnabledIfSystemProperty(named = "waterleague.integration.design.fixture", matches = ".+")
-class HistoricalDesignRestartTests {
+class HistoricalDesignRestartTests extends PostgresIntegrationTest {
   @org.springframework.test.context.DynamicPropertySource
   static void database(org.springframework.test.context.DynamicPropertyRegistry r) {
     SharedInstallationTests.integrationDatabase(r);

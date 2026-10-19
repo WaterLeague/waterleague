@@ -1,6 +1,6 @@
 # 공개자료 탐색 기록
 
-이 파일은 저장/재취득 방법과 초기 성수 자료의 기록이다. 현재 서울 전역 지도·6종 시설·3개 재해 사건까지의 자료 목록은 [자료 계보](../docs/03-data-provenance.md), 확보 여부는 [접근 현황](../docs/12-data-access.md)을 따른다. 아래 초기 표본의 수량/한계를 현재 전체 범위로 읽지 않는다.
+이 파일은 저장/재취득 방법과 초기 성수 자료의 기록이다. 현재 서울 전역 지도·6종 시설·3개 재해 사건까지의 자료 목록은 [자료 계보](../docs/03-data-provenance.md), 확보 여부는 [접근 현황](../docs/13-data-access.md)을 따른다. 아래 초기 표본의 수량/한계를 현재 전체 범위로 읽지 않는다.
 
 2026-10-15 실제 다운로드 원본에서 생성. `manifests/public-data-audit.json`에 URL·SHA-256·취득시각·변환 스크립트 해시·제약 보존. 원본은 `raw/`에 로컬 저장, Git 제외.
 
@@ -40,7 +40,7 @@ AWS 응답은 별도 QC 플래그를 포함하지 않으므로 자체 검사 결
 
 ## 공식 지형·토지피복 원본
 
-2026-10-17 사용자 직접 다운로드한 성동 37705의 2024/2025 DEM과 성동083의 2024 세분류 토지피복 확보. 원본은 `private/seongsu-official-20261017/`에 보존, Git 제외. 원본 구성 파일 hash·검사 도구 버전·품질 제한은 `manifests/seongsu-spatial-audit.json`, 검사 방법/결과는 [문서 28](../docs/28-spatial-source-audit.md) 참조.
+2026-10-17 사용자 직접 다운로드한 성동 37705의 2024/2025 DEM과 성동083의 2024 세분류 토지피복 확보. 원본은 `private/seongsu-official-20261017/`에 보존, Git 제외. 원본 구성 파일 hash·검사 도구 버전·품질 제한은 `manifests/seongsu-spatial-audit.json`, 검사 방법/결과는 [문서 19](../docs/19-spatial-source-audit.md) 참조.
 
 DEM은 90m 격자이며 수직 기준·표고 단위 필드 미제공. 토지피복은 잘못된 도로 도형이 실험 구역에 영향을 줄 수 있어 부분 면적만 계산. 원본 자동 복구·모델 편입·공개 배포 없음. 등록된 ZIP의 hash를 확인하는 `scripts/audit_spatial_sources.py`로 로컬에서 재검사. 원본/파생 좌표 재배포 조건과 정밀도 검토 후 새 모델 버전 결정.
 
@@ -64,4 +64,4 @@ API 서버는 고정 건물 스냅샷의 SHA-256·도형·메타데이터를 검
 
 ## EPA 참조 사례
 
-`benchmarks/epa-applications-example1.json`은 EPA Applications Manual의 Example 1 원본·인쇄 수치·충돌·판정 계약이다. `benchmarks/epa-applications-example1-result.json`은 고정 SWMM 5.2.4 실행의 공개 요약. 원본은 공식 주소에서 hash 검증 후 로컬/CI로 재취득한다. 미국 설계강우 교육 사례이며 서울 관측이나 시설 효과 자료로 혼용하지 않는다. 국제단위 변환·인쇄 참조 차이는 검토 필요 상태로 보존. 재현 명령과 판정 범위는 [문서 32](../docs/32-epa-reference-validation.md) 참조.
+`benchmarks/epa-applications-example1.json`은 EPA Applications Manual의 Example 1 원본·인쇄 수치·충돌·판정 계약이다. `benchmarks/epa-applications-example1-result.json`은 고정 SWMM 5.2.4 실행의 공개 요약. 원본은 공식 주소에서 hash 검증 후 로컬/CI로 재취득한다. 미국 설계강우 교육 사례이며 서울 관측이나 시설 효과 자료로 혼용하지 않는다. 국제단위 변환·인쇄 참조 차이는 검토 필요 상태로 보존. 재현 명령과 판정 범위는 [문서 20](../docs/20-epa-reference-validation.md) 참조.

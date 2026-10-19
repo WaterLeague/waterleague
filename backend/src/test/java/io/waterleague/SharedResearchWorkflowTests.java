@@ -26,7 +26,7 @@ import tools.jackson.databind.JsonNode;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("local")
-class SharedResearchWorkflowTests {
+class SharedResearchWorkflowTests extends PostgresIntegrationTest {
   static final Path ROOT;
 
   static {

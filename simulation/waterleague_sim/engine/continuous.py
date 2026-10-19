@@ -80,7 +80,20 @@ def input_source(model, placements, evaporation):
     normalized = model | {'rainfall': model['rainfall'] | {
         'start': start.isoformat(), 'end': (start+timedelta(minutes=count, seconds=1)).isoformat()}}
     # 작은 표면·실제 지형 경사에서 10초 적분의 초기 수지 오차를 줄인다.
-    source = make_input(normalized, placements, step_seconds=1 if model['cells'][0].get('physicalInputs') or model.get('facilityDesignSet') else 10)
+    source = make_input(normalized, [], step_seconds=1 if model['cells'][0].get('physicalInputs') or model.get('facilityDesignSet') else 10)
+    # 등록 모델의 고정 생성기는 보존하고 확장 시설 배치는 연속 계산 계층에서 구성한다.
+    identifiers = {'RAIN_GARDEN': 'RG', 'PERMEABLE_PAVEMENT': 'PP', 'GREEN_ROOF': 'GR',
+                   'BIORETENTION': 'BC', 'VEGETATIVE_SWALE': 'VS', 'INFILTRATION_TRENCH': 'IT'}
+    by_cell = {p['cellId']: p for p in placements}
+    usage = []
+    for cell in model['cells']:
+        placement = by_cell.get(cell['id'])
+        if placement is not None:
+            area = float(placement['areaM2'])
+            kind = identifiers[placement['facilityType']]
+            usage.append(f"{cell['id']} {kind} 1 {area} {math.sqrt(area):.6f} "
+                         f"{model['hydrology']['initialSaturationPercent']} 100 0 * OUT 0")
+    source = source.replace('[LID_USAGE]\n', '[LID_USAGE]\n' + '\n'.join(usage))
     if model.get('facilityDesignSet') is not None:
         rows = []
         for line in source.splitlines():

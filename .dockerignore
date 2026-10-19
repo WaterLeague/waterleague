@@ -14,6 +14,7 @@ frontend/qa/
 !simulation/tests/
 !simulation/tests/fixtures/
 !simulation/tests/fixtures/pattern-search-v1.json
+!simulation/tests/fixtures/member-cistern-costs-v1.json
 !simulation/waterleague_sim/
 !simulation/waterleague_sim/**
 !simulation/native/
@@ -24,6 +25,8 @@ frontend/qa/
 !data/
 !data/models/
 !data/models/**
+!data/costs/
+!data/costs/lid-reference-v5.json
 !data/derived/
 !data/derived/cpu-reference.json
 !data/derived/cpu-reference-ngii-v2.json

@@ -21,7 +21,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("local")
-class SharedInstallationTests {
+class SharedInstallationTests extends PostgresIntegrationTest {
   @org.springframework.test.context.DynamicPropertySource
   static void integrationDatabase(
       org.springframework.test.context.DynamicPropertyRegistry registry) {

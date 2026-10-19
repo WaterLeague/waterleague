@@ -26,7 +26,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("local")
-class BudgetLedgerWorkflowTests {
+class BudgetLedgerWorkflowTests extends PostgresIntegrationTest {
   @DynamicPropertySource
   static void database(DynamicPropertyRegistry r) {
     if (System.getProperty("waterleague.integration.jdbc") == null)

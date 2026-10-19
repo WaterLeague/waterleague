@@ -88,11 +88,11 @@
 
 리그 참가만으로 연구 동의를 부여하지 않는다. 조직 리그 결과는 주최 조직에 대한 별도 동의가 있는 경우에만 연구 열람·내보내기에 포함한다.
 
-리그 초안 추가 입력: `placementLimit`(배치 구역 수), `areaLimitM2`(합산 면적, 소수 두 자리), `award`(`prizeKrw`, `winnerCount`, `notice`). 참가 규칙을 포함한 schema 3에도 포함하며 공개 후 고정. 필드 생략 시 모델 상한·상금 없음 적용, 기존 버전 1 규칙 원문·hash 유지. 제출은 저장 배치의 개수·면적을 서버에서 재검사하며 초과 시 422 `LEAGUE_RULES_MISMATCH`. [제한·상금 계약](25-league-participation.md) 참조.
+리그 초안 추가 입력: `placementLimit`(배치 구역 수), `areaLimitM2`(합산 면적, 소수 두 자리), `award`(`prizeKrw`, `winnerCount`, `notice`). 참가 규칙을 포함한 schema 3에도 포함하며 공개 후 고정. 필드 생략 시 모델 상한·상금 없음 적용, 기존 버전 1 규칙 원문·hash 유지. 제출은 저장 배치의 개수·면적을 서버에서 재검사하며 초과 시 422 `LEAGUE_RULES_MISMATCH`. [제한·상금 계약](17-league-participation.md) 참조.
 
 ## 리그 참가·팀전 서버 API
 
-schema 3은 초안에 `participation: {access, admission, entryMode, teamSizeLimit}`를 포함. 값·이전 규칙 호환·개인/팀 한도는 [참가 계약](25-league-participation.md) 참조. 기관 리그 초안 구성요소는 schema 3 참가 방식을 명시하며 기존 schema 1/2 규칙은 그대로 열람·제출.
+schema 3은 초안에 `participation: {access, admission, entryMode, teamSizeLimit}`를 포함. 값·이전 규칙 호환·개인/팀 한도는 [참가 계약](17-league-participation.md) 참조. 기관 리그 초안 구성요소는 schema 3 참가 방식을 명시하며 기존 schema 1/2 규칙은 그대로 열람·제출.
 
 | API | 입력·권한 |
 | --- | --- |
@@ -117,9 +117,9 @@ schema 3은 초안에 `participation: {access, admission, entryMode, teamSizeLim
 
 ## 사업 활용 동의·기관 검토
 
-계산별 불변 요청, 소유자 승인/거절/철회, 기관 검토 이력, 커서 목록·목적별 재현 ZIP은 [활용 계약](17-utilization-consent.md) 참조. 연구 동의와 사업 활용 검토 동의는 독립 범위이며, 사업용 다운로드는 지정 요청의 승인 상태·계산·기관·소유자 상태를 준비 전후 확인한다. 관리자에게 자료 접근 권한을 부여하지 않는다.
+계산별 불변 요청, 소유자 승인/거절/철회, 기관 검토 이력, 커서 목록·목적별 재현 ZIP은 [활용 계약](16-utilization-consent.md) 참조. 연구 동의와 사업 활용 검토 동의는 독립 범위이며, 사업용 다운로드는 지정 요청의 승인 상태·계산·기관·소유자 상태를 준비 전후 확인한다. 관리자에게 자료 접근 권한을 부여하지 않는다.
 
-기관 재계산·패턴 통계의 요청/응답·권한·원본 소유권·한도·철회 계약은 [기관 분석 계약](26-institution-analysis.md) 참조. 서로 다른 모델의 패턴 혼합은 `ANALYSIS_INCOMPATIBLE` 422, 원본 미동의·타 조직 그룹은 404. 생성은 202, 동일 키/다른 내용 409, 활성 계산 한도 초과 429. 모든 분석 응답은 no-store.
+기관 재계산·패턴 통계의 요청/응답·권한·원본 소유권·한도·철회 계약은 [기관 분석 계약](18-institution-analysis.md) 참조. 서로 다른 모델의 패턴 혼합은 `ANALYSIS_INCOMPATIBLE` 422, 원본 미동의·타 조직 그룹은 404. 생성은 202, 동일 키/다른 내용 409, 활성 계산 한도 초과 429. 모든 분석 응답은 no-store.
 
 ## 배치 입력
 

@@ -11,7 +11,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("local")
-class ApiSecurityTests {
+class ApiSecurityTests extends PostgresIntegrationTest {
   @org.springframework.test.context.DynamicPropertySource
   static void integrationDatabase(
       org.springframework.test.context.DynamicPropertyRegistry registry) {

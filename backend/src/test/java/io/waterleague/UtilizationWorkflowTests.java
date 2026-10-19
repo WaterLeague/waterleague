@@ -22,11 +22,9 @@ import org.springframework.test.context.ActiveProfiles;
 import tools.jackson.databind.*;
 
 @SpringBootTest(
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    properties =
-        "spring.datasource.url=jdbc:h2:mem:utilization;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE")
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("local")
-class UtilizationWorkflowTests {
+class UtilizationWorkflowTests extends PostgresIntegrationTest {
   @Value("${local.server.port}")
   int port;
 

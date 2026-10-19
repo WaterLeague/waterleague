@@ -174,7 +174,9 @@ class ResultCacheTests(unittest.TestCase):
             raw_request = json.dumps(request, indent=len(directories) + 1).encode()
             cache._write(directory / 'request.json', raw_request)
             child_env = env | ({'SIMULATION_CACHE_ENABLED': 'false'} if label == 'disabled' else {})
-            subprocess.run([sys.executable, '-m', 'waterleague_sim.run_job', str(directory)], env=child_env, check=True, capture_output=True, timeout=90)
+            child = subprocess.run([sys.executable, '-m', 'waterleague_sim.run_job', str(directory)],
+                                   env=child_env, capture_output=True, text=True, timeout=90)
+            self.assertEqual(0, child.returncode, child.stderr[-3000:])
             self.assertEqual((directory / 'request.json').read_bytes(), raw_request)
             manifest = cache.decoded((directory / 'manifest.json').read_bytes())
             self.assertEqual(set(manifest), cache.FILES | {'request.json'})

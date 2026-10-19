@@ -5,8 +5,12 @@ COPY frontend/package.json frontend/pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
 COPY frontend/ ./
 COPY data/models/ /build/data/models/
+COPY data/costs/lid-reference-v5.json /build/data/costs/lid-reference-v5.json
 COPY backend/src/main/resources/infrastructure/ /build/backend/src/main/resources/infrastructure/
+COPY backend/src/main/resources/facilities/epa-designs-v1.json /build/backend/src/main/resources/facilities/epa-designs-v1.json
+COPY backend/src/test/resources/cistern-layout-cases.json /build/backend/src/test/resources/cistern-layout-cases.json
 COPY simulation/tests/fixtures/pattern-search-v1.json /build/simulation/tests/fixtures/pattern-search-v1.json
+COPY simulation/tests/fixtures/member-cistern-costs-v1.json /build/simulation/tests/fixtures/member-cistern-costs-v1.json
 RUN pnpm build
 
 FROM caddy:2.11.7-alpine@sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f

@@ -1,7 +1,7 @@
 name: 기반 검증
 on:
   push:
-    branches: [main, 'feat/**', 'fix/**']
+    branches: [main, dev, 'feat/**', 'fix/**']
   pull_request:
 permissions:
   contents: read
@@ -43,9 +43,7 @@ jobs:
           distribution: corretto
           java-version: '25'
           cache: maven
-      - run: ./mvnw --batch-mode verify
-        working-directory: backend
-      - run: ./mvnw --batch-mode -Dtest=LeagueParticipationWorkflowTests,ResearchAnalysisWorkflowTests,ResearchSearchWorkflowTests -Dwaterleague.integration.jdbc=jdbc:postgresql://127.0.0.1:5432/waterleague_test test
+      - run: ./mvnw --batch-mode -Dwaterleague.integration.jdbc=jdbc:postgresql://127.0.0.1:5432/waterleague_test verify
         working-directory: backend
         env:
           WL_INTEGRATION_USER: waterleague_test
@@ -64,27 +62,33 @@ jobs:
       - run: pnpm format:check && pnpm test && pnpm build && pnpm audit --audit-level=high
         working-directory: frontend
   data:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      MPLBACKEND: Agg
+      OPENBLAS_NUM_THREADS: 1
+      OMP_NUM_THREADS: 1
+      PYTHONPATH: simulation
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
         with:
           python-version: '3.13'
-      - name: 고정된 공간 분석 의존성 설치
+      - name: 잠금 파일의 수치·공간 의존성 설치
         run: |
-          python - <<'PY'
-          import pathlib, subprocess, sys, tomllib
-          dependencies = tomllib.loads(pathlib.Path('simulation/pyproject.toml').read_text())['project']['dependencies']
-          subprocess.run([sys.executable, '-m', 'pip', 'install', *dependencies], check=True)
-          PY
+          python -m pip install uv==0.11.12
+          uv sync --project simulation --locked --extra flood
+          echo "$GITHUB_WORKSPACE/simulation/.venv/bin" >> "$GITHUB_PATH"
+      - run: python scripts/prepare_ci_sources.py
       - run: bash scripts/build_swmm.sh
-      - run: test -f tmp/swmm-build/install/bin/libswmm5.so
-      - run: python scripts/build_live_swmm.py
+      - run: python scripts/build_ci_engines.py
       - name: EPA 참조 사례 실행·단위 대조와 인쇄 차이 기록
         run: python scripts/verify_epa_reference.py --download --output tmp/epa-reference/ci
-      - run: python -m unittest discover -s tests -v
-        working-directory: simulation
+      - run: python scripts/test_simulation.py --shard ${{ matrix.shard }} --shards 4
       - run: python scripts/verify_snapshot.py
       - run: python scripts/verify_model.py
       - run: python scripts/verify_shared_sites.py

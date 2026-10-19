@@ -20,11 +20,9 @@ import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
 @SpringBootTest(
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    properties =
-        "spring.datasource.url=jdbc:h2:mem:research_analysis;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE")
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("local")
-class ResearchAnalysisWorkflowTests {
+class ResearchAnalysisWorkflowTests extends PostgresIntegrationTest {
   @org.springframework.test.context.DynamicPropertySource
   static void integrationDatabase(
       org.springframework.test.context.DynamicPropertyRegistry registry) {

@@ -1,0 +1,146 @@
+.data-page-heading > p {
+  margin: 0 0 28px;
+  color: var(--ui-muted);
+  font-size: 14px;
+}
+.data-source-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.data-source {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 22px;
+  border: 1px solid var(--ui-line);
+  border-radius: 22px;
+  background: var(--ui-soft);
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease;
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .data-source:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px #294e500c;
+  }
+}
+.data-source-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.game-shell .data-source h2 {
+  margin: 0;
+  font-size: 18px;
+}
+.data-page p,
+.data-page dd {
+  font-size: 13px;
+  line-height: 1.8;
+}
+.data-source .data-provider {
+  margin: 8px 0 0;
+  color: var(--ui-accent);
+  font-size: 12px;
+}
+.data-page .data-detail {
+  color: var(--ui-muted);
+  font-size: 12px;
+}
+.data-page a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--ui-accent);
+  font-size: 12px;
+}
+.data-source > a {
+  margin-top: auto;
+  padding-top: 10px;
+}
+.data-budget {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 18px;
+  padding: 18px 22px;
+  border-radius: 20px;
+  background: var(--ui-soft);
+  border: 1px solid var(--ui-line);
+}
+.data-budget > span {
+  font-size: 13px;
+}
+.data-budget > strong {
+  font-size: 23px;
+}
+.data-budget > p {
+  flex-basis: 100%;
+  margin: 0;
+}
+.data-cost-scroll {
+  overflow-x: auto;
+  border: 1px solid var(--ui-line);
+  border-radius: 20px;
+}
+.data-cost-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  text-align: left;
+}
+.data-cost-table caption {
+  padding: 12px 15px;
+  text-align: left;
+  color: var(--ui-muted);
+}
+.data-cost-table th,
+.data-cost-table td {
+  padding: 15px;
+  border-bottom: 1px solid var(--ui-line);
+}
+.data-cost-table thead {
+  background: var(--ui-soft);
+}
+.data-cost-table tbody th {
+  font-weight: 600;
+  white-space: nowrap;
+}
+.data-cost-table td:nth-child(2) {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.data-cost-table tr:last-child > * {
+  border-bottom: 0;
+}
+.data-calculation dl > div {
+  display: grid;
+  grid-template-columns: 100px minmax(0, 1fr);
+  gap: 20px;
+  padding: 16px 0;
+  border-top: 1px solid var(--ui-line);
+}
+.data-calculation dt {
+  font-size: 13px;
+  font-weight: 600;
+}
+.data-calculation dd {
+  margin: 0;
+}
+@media (max-width: 640px) {
+  .data-source-grid {
+    grid-template-columns: 1fr;
+  }
+  .data-source {
+    padding: 18px;
+  }
+  .data-cost-table {
+    min-width: 560px;
+  }
+  .data-calculation dl > div {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+}

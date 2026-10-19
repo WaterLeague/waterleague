@@ -73,7 +73,18 @@ class WorkerQueueTests(unittest.TestCase):
             self.conn.execute("""INSERT INTO simulation_jobs(id,version_id,owner_id,request_key,
                 state,model_hash,input_hash,created_at) VALUES(%s,%s,%s,%s,'QUEUED',%s,%s,%s)""",
                 (job_id, self.version, self.owner, uuid.uuid4(), self.model_hash, self.input_hash, created))
-        else:
+        elif kind in {'HISTORICAL', 'WATERSHED'}:
+            columns = ['id', 'owner_id', 'request_key', 'model_hash', 'input_hash',
+                       'placements', 'state', 'created_at']
+            values = [job_id, self.owner, uuid.uuid4(), self.model_hash, self.input_hash,
+                      self.placements, 'QUEUED', created]
+            if kind == 'HISTORICAL':
+                columns.append('district_id')
+                values.append('2410520')
+            self.conn.execute(psycopg.sql.SQL('INSERT INTO {} ({}) VALUES ({})').format(
+                queue.table(kind), psycopg.sql.SQL(',').join(map(psycopg.sql.Identifier, columns)),
+                psycopg.sql.SQL(',').join(psycopg.sql.Placeholder() for _ in values)), values)
+        elif kind == 'RESEARCH_CANDIDATE':
             self.next_ordinal += 1
             ordinal = (self.next_ordinal - 1) % 4 + 1
             arm = 'PATTERN' if self.next_ordinal <= 4 else 'UNIFORM'
@@ -82,6 +93,8 @@ class WorkerQueueTests(unittest.TestCase):
                 model_hash,input_hash,cost,state,created_at)
                 VALUES(%s,%s,%s,%s,%s,%s,%s,22400000,'QUEUED',%s)""",
                 (job_id, self.group, arm, ordinal, self.placements, self.model_hash, input_hash, created))
+        else:
+            raise ValueError('알 수 없는 시험 큐')
         return job_id
 
     def row(self, kind, job_id):

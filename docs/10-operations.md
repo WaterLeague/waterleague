@@ -26,6 +26,22 @@ DB·모델·출처·결과 백업, 암호화·키 분리·복원 훈련. 복원 
 
 실행 가능한 로컬 검증 구성과 Linux amd64/arm64 증거는 이 문서의 컨테이너·HTTPS 계약 참조. `python3 scripts/verify_containers.py`는 별도 프로젝트·임의 loopback 포트·임시 비밀로 전체 HTTPS 계산을 검사 후 정리하며 기존 `.env.local`·개발 DB를 읽지 않음. Oracle 예산 표는 제안이고, CI Compose의 보수적 한도(API 2GB·DB 2GB·워커 2GB)를 운영 실측 결과로 해석하지 않음.
 
+## CI 재현 환경
+
+`main`, `dev`, `feat/**`, `fix/**` 푸시와 PR에서 `.github/workflows/verify.yml` 실행. 프론트 포맷·353개 단위 시험·빌드·의존성 감사, PostgreSQL API 회귀, 큐·검색·복원, Linux amd64/arm64 HTTPS 컨테이너 계산을 검사한다.
+
+백엔드 통합 시험은 운영과 같은 PostgreSQL에서 SQL 마이그레이션·부분 인덱스·제약을 검사한다. H2 대체 실행은 사용하지 않는다. `PostgresIntegrationTest`는 loopback의 전용 시험 DB 이름만 허용하고 전체 백엔드 회귀에서는 클래스 사이의 계정·작업·세션을 초기화한다. 여러 JVM·워커가 준비 자료를 이어 쓰는 개별 suite는 `preserve-fixtures` 시험 옵션으로 보존한다. 재시작 지속성 시험은 이전 JVM의 시험 자료를 보존한다. 운영 마이그레이션 원문과 기존 로컬 DB는 변경하지 않는다.
+
+```sh
+simulation/.venv/bin/python scripts/verify_league_postgres.py --suite backend
+```
+
+수치 회귀는 `simulation/uv.lock`과 `uv sync --locked --extra flood`로 ANUGA·공간 의존성을 준비한다. 비상업용 Triangle·meshpy 제외 정책을 유지한다. `build_ci_engines.py`로 고정 EPA 원본의 13개 엔진 변형을 빌드한 뒤 `test_simulation.py`가 모든 시험 모듈을 4개 작업에 중복 없이 분배한다. 각 모듈을 별도 프로세스에서 실행해 EPA·ANUGA 네이티브 런타임의 교차 적재를 방지한다. 시험 제외나 오류 무시로 통과시키지 않는다. [uv 잠금·동기화 공식 문서](https://docs.astral.sh/uv/concepts/projects/sync/).
+
+`prepare_ci_sources.py`는 `simulation/tests/fixtures/public-sources-v1.json`의 원본 SHA-256·크기·경로를 검사한 공개 자료만 복원한다. 기상청 관측, Mendeley 공개 연구 모형(CC BY 4.0), 비용 근거 논문(CC BY-NC 3.0)의 출처와 이용 조건을 원문별로 보존한다. 이 자료의 이용 조건은 코드 라이선스와 별도이며 논문 원문은 비상업적 재현 시험용이다. 비밀키·개인자료는 묶음에 포함하지 않는다. 기존 파일이 다르거나 링크 경로이면 덮어쓰지 않고 실패한다.
+
+큐 suite는 `test_worker_queue.py`만 실행한다. 재해·회원 설계 등 별도 준비 데이터가 필요한 suite는 해당 준비 흐름에서 실행한다. 프론트 포맷 검사는 생성된 `qa/*.local.json`을 제외하고 추적 중인 소스·시험 입력은 계속 검사한다.
+
 ## 로컬 복원 훈련 계약
 
 `verify_database_restore.py`는 운영 복구 명령이 아닌 격리된 복원 검사. 원본 DB의 REPEATABLE READ 스냅샷을 `pg_dump --snapshot`과 공유하고 새 `waterleague_restore_<무작위값>` DB에만 복원. 원본 DB 변경·기존 DB 덮어쓰기 금지. 생성한 DB만 마지막에 제거, 정상 종료·검사 실패 모두 임시 덤프 제거. 덤프 디렉터리 700·파일 600, 비밀값은 명령 인자·보고서·로그에 출력하지 않음.
@@ -119,4 +135,4 @@ Corretto 빌드 단계의 unzip으로 Maven Wrapper의 ZIP 형식과 저장소 S
 6. Oracle에서는 OS/ARM64·디스크·TLS·메일·기관 인증·보존정책·오프사이트 암호화 백업/키 복구·동시 1~2워커 실측을 추가 검증. 로컬/CI 성공만으로 공개 운영 승인 금지.
 
 
-실행 이력: 2026-10-17 Linux amd64/arm64 컨테이너 검증은 [검증 기록](11-validation-log.md)에 보존한다. 당시 성공은 현재 Oracle VM·도메인·성능 검증을 대신하지 않는다.
+실행 이력: 2026-10-17 Linux amd64/arm64 컨테이너 검증은 [검증 기록](12-validation-log.md)에 보존한다. 당시 성공은 현재 Oracle VM·도메인·성능 검증을 대신하지 않는다.

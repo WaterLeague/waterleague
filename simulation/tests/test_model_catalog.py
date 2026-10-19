@@ -10,15 +10,28 @@ ROOT = Path(__file__).resolve().parents[2]
 
 class ModelCatalogTests(unittest.TestCase):
     def test_registered_models_have_distinct_rainfall_and_unchanged_geometry(self):
-        models = [json.loads(data) for data in read_catalog(ROOT/'data/models').values()]
-        self.assertEqual(152, len(models))
+        catalog = read_catalog(ROOT/'data/models')
+        models = [json.loads(data) for data in catalog.values()]
+        regions = json.loads((ROOT/'data/manifests/seoul-play-v2.json').read_text())['regions']
+        events = json.loads((ROOT/'backend/src/main/resources/disasters/seoul-events-v1.json').read_text())['events']
+        expected_by_map = {r['mapId']: set(r['modelHashes']) for r in regions}
+        for event in events:
+            self.assertEqual(25, len(event['models']))
+            for model in event['models']:
+                expected_by_map['seoul-osm-v1-' + model['districtId']].add(model['modelHash'])
+        actual_by_map = {}
+        for model_hash, raw in catalog.items():
+            actual_by_map.setdefault(json.loads(raw).get('mapId', 'legacy'), set()).add(model_hash)
+        self.assertEqual(set(expected_by_map), {key for key in actual_by_map if key.startswith('seoul-osm-v1-')})
+        for map_id, expected_hashes in expected_by_map.items():
+            self.assertEqual(expected_hashes, actual_by_map[map_id])
         self.assertTrue({18.5, 55.0, 104.0, 109.7}.issubset({m['rainfall']['totalDepthMm'] for m in models}))
         families = {}
         for m in models:
             families.setdefault(m.get('mapId', 'legacy'), []).append(m)
         self.assertEqual(27, len(families))
         for map_id, family in families.items():
-            expected = len(next(r['modelHashes'] for r in json.loads((ROOT/'data/manifests/seoul-play-v2.json').read_text())['regions'] if r['mapId'] == map_id)) if map_id.startswith('seoul-osm-v1-') else 4
+            expected = len(expected_by_map[map_id]) if map_id.startswith('seoul-osm-v1-') else 4
             self.assertEqual(expected, len(family))
             self.assertTrue(all(m['cells'] == family[0]['cells'] for m in family))
 

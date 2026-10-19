@@ -5,7 +5,7 @@ Java 25·Spring Boot 4.1.1·PostgreSQL·Flyway·Spring Session JDBC. 계정·자
 ```sh
 # 저장소 루트, .env.local에 DB 설정 후
 python3 scripts/run_local.py api
-./backend/mvnw -f backend/pom.xml verify
+simulation/.venv/bin/python scripts/verify_league_postgres.py --suite backend
 ```
 
 기본 127.0.0.1:8080. local 프로필은 HTTP 쿠키, 기본 프로필은 `__Host-waterleague` Secure·HttpOnly·SameSite. Java 25 필수. 테스트는 H2 PostgreSQL 모드이고 운영 큐는 실제 PostgreSQL의 SKIP LOCKED 사용.

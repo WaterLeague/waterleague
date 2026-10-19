@@ -22,7 +22,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("local")
-class GuestHistoricalTests {
+class GuestHistoricalTests extends PostgresIntegrationTest {
   @org.springframework.test.context.DynamicPropertySource
   static void database(org.springframework.test.context.DynamicPropertyRegistry registry) {
     SharedInstallationTests.integrationDatabase(registry);

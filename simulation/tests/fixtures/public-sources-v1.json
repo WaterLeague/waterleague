@@ -1,0 +1,126 @@
+{
+  "schemaVersion": 1,
+  "purpose": "공개 원문 재현 시험 전용 · 코드 라이선스와 별도",
+  "archiveSha256": "ca707d3f7546963bb23c3ec09f2d4a3cefdf9887d897bf475afec586fb86144f",
+  "files": [
+    {
+      "path": "data/raw/kma-disaster-pet-bcb2670316cd5737db4ac916.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/evaporation/seoul-20220808-fao56-v1.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-b53c0978be6d35111764f32e.txt",
+      "bytes": 1135,
+      "sha256": "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+      "source": "data/derived/evaporation/seoul-20220808-fao56-v1.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-ed083f78fff67a041f62e3aa.txt",
+      "bytes": 14589,
+      "sha256": "1720e51ea3f6cd9f5fd8d7b15e1d8f9a0feec57567cd9c197239cfffeaccbdab",
+      "source": "data/derived/evaporation/seoul-20220808-fao56-v1.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-aa549fa6b7d01d1ebcbbd98f.txt",
+      "bytes": 48435,
+      "sha256": "0b734ca5301fa606eb60282c6946bd14db2d57954bfb57a8c393782d6dab0232",
+      "source": "data/derived/evaporation/seoul-20220808-fao56-v1.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-feae253eb42f68346ec8a6c5.txt",
+      "bytes": 1135,
+      "sha256": "93e731b5638f7e450afe68b9494f2a732b835b74df7d0eb286c4cfc6e1a5b1d6",
+      "source": "data/derived/evaporation/seoul-20100921-fao56-v1.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-4ade39a6f3850e8168019556.txt",
+      "bytes": 1135,
+      "sha256": "93e731b5638f7e450afe68b9494f2a732b835b74df7d0eb286c4cfc6e1a5b1d6",
+      "source": "data/derived/evaporation/seoul-20100921-fao56-v1.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-bee92fec0f165cb356618399.txt",
+      "bytes": 15657,
+      "sha256": "29efda4ea5af1fdf1a7142a6b5487b70f86fabbffc284c0863ebd3a04da66b78",
+      "source": "data/derived/evaporation/seoul-20100921-fao56-v1.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-70866610d1017a6305ba07e0.txt",
+      "bytes": 79875,
+      "sha256": "6d96a38ca45bf3b927e3ffb625f48c4cf82ecd3196185f9b113036bcfde9850e",
+      "source": "data/derived/evaporation/seoul-20100921-fao56-v1.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-1e84b50bde910679b664b38c.txt",
+      "bytes": 1135,
+      "sha256": "93e731b5638f7e450afe68b9494f2a732b835b74df7d0eb286c4cfc6e1a5b1d6",
+      "source": "data/derived/evaporation/seoul-20110727-fao56-v1.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-abce38d920aa098af2604f8f.txt",
+      "bytes": 1135,
+      "sha256": "93e731b5638f7e450afe68b9494f2a732b835b74df7d0eb286c4cfc6e1a5b1d6",
+      "source": "data/derived/evaporation/seoul-20110727-fao56-v1.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-disaster-pet-f72c83050d5362bfbc62526d.txt",
+      "bytes": 4319,
+      "sha256": "d43c9e27c255c3f383a14ce9f49f2e112297c6e8a3a0efbe3bdf953fb1ed0625",
+      "source": "data/derived/evaporation/seoul-20110727-fao56-v1.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-401-202208081800-202208082359.txt",
+      "bytes": 48435,
+      "sha256": "c287353fd6f861a0af4167aabe5b18945f279975098202a9c66bf4d5b36ab50e",
+      "source": "data/manifests/kma-401-202208081800-202208082359.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/raw/kma-421-202208081800-202208082359.txt",
+      "bytes": 48435,
+      "sha256": "fd13e6e5d75707b75d13bb9b0a7860356172f0038d5bee9a68874b0f4f42c0e4",
+      "source": "data/manifests/kma-421-202208081800-202208082359.json",
+      "licence": "기상청 공개 관측자료 · 출처 표시"
+    },
+    {
+      "path": "data/private/facility-reference-20261018/jkswe-lid-costs-2018.html",
+      "bytes": 507913,
+      "sha256": "28f0c3969bbc2f1dd08e03fec2fddb70bfdecdfc4032bd871158eb3a1734e207",
+      "source": "data/manifests/jkswe-cistern-costs-2018.json",
+      "licence": "CC BY-NC 3.0 · 백종석 외, 2018, DOI 10.15681/KSWE.2017.34.1.57"
+    },
+    {
+      "path": "data/raw/mendeley-seocho-v3/dataset.zip",
+      "bytes": 14148699,
+      "sha256": "b2b51c87b987323e49f24f166a7933bbbab6b8af9f0928fcf20cd039f77be71e",
+      "source": "data/manifests/mendeley-seocho-network-v3.json",
+      "licence": "CC BY 4.0 · Samuel Park 외, 2024, DOI 10.17632/dzzwvd8rjk.3"
+    },
+    {
+      "path": "data/raw/mendeley-seocho-v3/folders.json",
+      "bytes": 840,
+      "sha256": "5a1702b950de2cf20bb27ca2350c0baa15d4a97b8e97d0d08837f453db2d0c88",
+      "source": "data/manifests/mendeley-seocho-network-v3.json",
+      "licence": "CC BY 4.0 · Samuel Park 외, 2024, DOI 10.17632/dzzwvd8rjk.3"
+    },
+    {
+      "path": "data/raw/mendeley-seocho-v3/metadata.json",
+      "bytes": 3601,
+      "sha256": "86a13d9656c47a56b5f75fd8bf1df7a20f48570258bd12aec46fd286d1925ab6",
+      "source": "data/manifests/mendeley-seocho-network-v3.json",
+      "licence": "CC BY 4.0 · Samuel Park 외, 2024, DOI 10.17632/dzzwvd8rjk.3"
+    }
+  ]
+}

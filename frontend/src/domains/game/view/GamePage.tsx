@@ -17,13 +17,10 @@ import {
   House,
   Waves,
   LogOut,
-  Download,
   Trophy,
-  Info,
   FolderOpen,
   Menu,
   X,
-  Database,
   CircleHelp,
 } from 'lucide-react';
 import { useGame } from '../controller/useGame';
@@ -39,7 +36,7 @@ import { Hydrograph } from './Hydrograph';
 import { CompetitionPage } from '../../league/view/CompetitionPage';
 import type { League } from '../../league/entity/league';
 import { exceedsLeagueLimits, totalArea } from '../../league/service/leagueService';
-import { SpatialComparison } from '../../spatial/view/SpatialComparison';
+import { DataPage } from '../../catalog/view/DataPage';
 import { MapViewport } from '../../catalog/view/MapViewport';
 import { RoundReport } from './RoundReport';
 import { matchesEvaluatedDesign } from '../service/roundService';
@@ -957,108 +954,7 @@ export function GamePage() {
           initialLeague={!!activeLeague}
         />
       ) : (
-        <section className="full-page evidence-page">
-          <div className="page-eyebrow">
-            DATA & EVIDENCE <span>PUBLIC SOURCES</span>
-          </div>
-          <h1>
-            현실을 닮으려면,
-            <br />
-            가정부터 드러내야 합니다.
-          </h1>
-          <p className="lead">공개 원본, 처리 과정, 아직 모르는 부분을 함께 남깁니다.</p>
-          <div className="evidence-grid">
-            <article>
-              <Database />
-              <span className="state done">공개 공간자료</span>
-              <h2>{lab.model.mapTitle ?? '성수동'} 공개 건물 경계</h2>
-              <strong>
-                {activeMap?.buildings.length ?? '—'}
-                <small>개</small>
-              </strong>
-              <p>
-                {activeMap?.snapshot.title} · {activeMap?.snapshot.subtitle}
-              </p>
-              <p>
-                {activeMap?.snapshot.limitations
-                  .filter((text) => !text.includes('강우'))
-                  .join(' · ')}
-              </p>
-              <a href={mapEntry ? `/data/${mapEntry.file}` : undefined} download>
-                공간 파생자료 <Download size={14} />
-              </a>
-            </article>
-          </div>
-          <div className="scope-note">
-            <Info size={20} />
-            <p>
-              <b>현장 연구 적용 전</b> · 실제 배수경계·관망·지표고·토양·독립 유출 관측으로 보정과
-              검증이 필요합니다. 현재 점수로 공사 효과나 홍수위험을 결정할 수 없습니다.
-            </p>
-          </div>
-          {catalog.data && (
-            <SpatialComparison
-              key={g.account?.id ?? 'guest'}
-              map={catalog.data.map}
-              authenticated={!!g.account}
-            />
-          )}
-          <h2>원화 예산과 시설 단가</h2>
-          <p>
-            총 예산 {won(lab.model.budget)}. 진주상평 산업단지 공개 사업계획의 참고 단가입니다. 해당
-            지역의 실제 견적이 아닙니다.
-          </p>
-          <div className="placement-table">
-            {(Object.keys(facilities) as FacilityType[])
-              .filter((t) => lab.model.unitCosts[t] !== undefined)
-              .map((t) => (
-                <p key={t}>
-                  <b>{facilities[t].name}</b>
-                  <span>{won(unitCost(lab.model.unitCosts, t))}/m²</span>
-                </p>
-              ))}
-          </div>
-          <p className="footnote">
-            미포함: {lab.model.costModel.exclusions.join(' · ')}. 자료 공개연도 2022년, 단가
-            기준연도·부가세 포함 여부 미확인. 서울 지역·현재 물가·시설 규격 차이 미보정.
-          </p>
-          <p className="footnote">
-            <a href={lab.model.costModel.source?.url} target="_blank" rel="noreferrer">
-              참고 단가 원문 · 12쪽 <ArrowUpRight size={12} />
-            </a>
-          </p>
-          <h2>결과가 지나가는 검증</h2>
-          <div className="evidence-checks">
-            {[
-              '계산 입력·배치 해시',
-              '서버의 면적·시설·예산 검증',
-              'SWMM 오류·비유한 값·물수지 검사',
-              'API·CLI 일치와 시간간격 민감도 시험',
-              '유출·침투·저류 분리와 재현 묶음',
-            ].map((s) => (
-              <p key={s}>
-                <Check size={15} />
-                {s}
-              </p>
-            ))}
-          </div>
-          <p className="footnote">
-            출처:{' '}
-            <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">
-              OpenStreetMap / ODbL
-            </a>{' '}
-            ·{' '}
-            <a
-              href="https://www.epa.gov/water-research/storm-water-management-model-swmm"
-              target="_blank"
-              rel="noreferrer"
-            >
-              EPA SWMM
-            </a>
-            <br />
-            원본·변환·모델 버전은 다운로드와 연구 내보내기에 기록합니다.
-          </p>
-        </section>
+        <DataPage accountId={g.account?.id ?? null} />
       )}
       {auth && <AuthDialog onClose={() => setAuth(false)} onSuccess={g.setAccount} />}
     </div>

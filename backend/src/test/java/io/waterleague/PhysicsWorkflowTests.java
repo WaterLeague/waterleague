@@ -21,7 +21,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("local")
-class PhysicsWorkflowTests {
+class PhysicsWorkflowTests extends PostgresIntegrationTest {
   @org.springframework.test.context.DynamicPropertySource
   static void integrationDatabase(
       org.springframework.test.context.DynamicPropertyRegistry registry) {

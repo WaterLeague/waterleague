@@ -19,12 +19,9 @@ import org.springframework.test.context.ActiveProfiles;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
-@SpringBootTest(
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    properties =
-        "spring.datasource.url=jdbc:h2:mem:research;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE")
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("local")
-class ResearchWorkflowTests {
+class ResearchWorkflowTests extends PostgresIntegrationTest {
   @Value("${local.server.port}")
   int port;
 
@@ -338,7 +335,19 @@ class ResearchWorkflowTests {
   void separatesRainfallVersionsBoardsAndLeagueModels() throws Exception {
     var player = actor(null);
     var catalog = ok(player, "GET", "/lab/catalog", null, 200).get("models");
-    assertThat(catalog.size()).isEqualTo(152);
+    try (var source = getClass().getResourceAsStream("/models/catalog.json")) {
+      var registered =
+          json.readTree(new String(source.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8))
+              .path("models");
+      assertThat(
+              java.util.stream.StreamSupport.stream(catalog.spliterator(), false)
+                  .map(model -> model.path("modelHash").asString())
+                  .toList())
+          .containsExactlyInAnyOrderElementsOf(
+              java.util.stream.StreamSupport.stream(registered.spliterator(), false)
+                  .map(model -> model.path("sha256").asString())
+                  .toList());
+    }
     assertThat(
             java.util.stream.StreamSupport.stream(catalog.spliterator(), false)
                 .filter(
@@ -347,7 +356,7 @@ class ResearchWorkflowTests {
                             .asString()
                             .equals("NEAREST_AWS_OBSERVED_REPLAY"))
                 .count())
-        .isEqualTo(69);
+        .isEqualTo(144);
     String first = catalog.get(1).get("modelHash").asString();
     String second = catalog.get(2).get("modelHash").asString();
     assertThat(

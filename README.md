@@ -10,12 +10,12 @@
 | --- | --- |
 | 현재 게임 규칙·설치·예산·권한 | [제품](docs/01-product.md) · [화면·조작](docs/08-experience.md) |
 | 앞으로 구현할 목표·완료 조건 | [확장 계획](docs/09-delivery.md) |
-| 수치 의미·가정·검증 한계 | [연구 적합성](docs/02-scientific-validity.md) · [EPA 참조 검증](docs/32-epa-reference-validation.md) |
-| 공개자료·추가 확보 여부 | [출처](docs/03-data-provenance.md) · [자료 현황](docs/12-data-access.md) · [공간자료 검사](docs/28-spatial-source-audit.md) |
-| 강우·수위 자료와 비교 | [강우 카탈로그](docs/10-rainfall-catalog.md) · [서울 관측](docs/15-seoul-observations.md) · [관망·수위](docs/16-sewer-observations.md) |
+| 수치 의미·가정·검증 한계 | [연구 적합성](docs/02-scientific-validity.md) · [EPA 참조 검증](docs/20-epa-reference-validation.md) |
+| 공개자료·추가 확보 여부 | [출처](docs/03-data-provenance.md) · [자료 현황](docs/13-data-access.md) · [공간자료 검사](docs/19-spatial-source-audit.md) |
+| 강우·수위 자료와 비교 | [강우 카탈로그](docs/11-rainfall-catalog.md) · [서울 관측](docs/14-seoul-observations.md) · [관망·수위](docs/15-sewer-observations.md) |
 | 시스템·저장·API·보안 | [아키텍처](docs/04-architecture.md) · [데이터 모델](docs/05-data-model.md) · [API](docs/06-api.md) · [보안](docs/07-security.md) |
-| 기관 기능 | [리그](docs/25-league-participation.md) · [분석·후보 탐색](docs/26-institution-analysis.md) · [활용 동의](docs/17-utilization-consent.md) |
-| 실행·배포·검증 증거 | [운영](docs/10-operations.md) · [검증 이력](docs/11-validation-log.md) · [기여 규칙](CONTRIBUTING.md) |
+| 기관 기능 | [리그](docs/17-league-participation.md) · [분석·후보 탐색](docs/18-institution-analysis.md) · [활용 동의](docs/16-utilization-consent.md) |
+| 실행·배포·검증 증거 | [운영](docs/10-operations.md) · [검증 이력](docs/12-validation-log.md) · [기여 규칙](CONTRIBUTING.md) |
 
 현재 계약은 해당 기준 문서에만 적고 날짜별 시험 결과는 검증 이력에 남긴다. 과거 이력의 화면·정책을 현재 요구사항으로 읽지 않는다. 삭제·통합한 문서의 이전 내용은 Git 이력에서 확인할 수 있다.
 
@@ -52,7 +52,7 @@ macOS 다중 JDK 환경: `export JAVA_HOME=$(/usr/libexec/java_home -v 25)`. 개
 ## 검증
 
 ```sh
-./backend/mvnw -f backend/pom.xml verify
+simulation/.venv/bin/python scripts/verify_league_postgres.py --suite backend
 pnpm --dir frontend test
 pnpm --dir frontend build
 PYTHONPATH=simulation simulation/.venv/bin/python -m unittest discover -s simulation/tests -v

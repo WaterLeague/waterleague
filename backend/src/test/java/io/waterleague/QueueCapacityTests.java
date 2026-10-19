@@ -14,11 +14,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
-@SpringBootTest(
-    properties =
-        "spring.datasource.url=jdbc:h2:mem:queue_capacity;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE")
+@SpringBootTest
 @ActiveProfiles("local")
-class QueueCapacityTests {
+class QueueCapacityTests extends PostgresIntegrationTest {
   @org.springframework.test.context.DynamicPropertySource
   static void integrationDatabase(
       org.springframework.test.context.DynamicPropertyRegistry registry) {
