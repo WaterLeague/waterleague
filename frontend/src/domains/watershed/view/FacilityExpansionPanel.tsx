@@ -64,7 +64,6 @@ export function FacilityExpansionPanel({
   onClose,
   onMapFacility,
   selectedMapFacility = '',
-  onAllCandidates,
   budget,
 }: {
   account: Account | null;
@@ -72,7 +71,6 @@ export function FacilityExpansionPanel({
   onClose: () => void;
   onMapFacility: (type: FacilityType) => void;
   selectedMapFacility?: FacilityType | '';
-  onAllCandidates?: () => void;
   onLogin: () => void;
   onCisternPlan?: () => void;
   budget?: Budget | null;
@@ -88,7 +86,7 @@ export function FacilityExpansionPanel({
         <div>
           <h2>시설 설치하기</h2>
         </div>
-        <button onClick={onClose} aria-label="시설 설치 패널 닫기">
+        <button className="installation-close" onClick={onClose} aria-label="시설 설치 패널 닫기">
           <X size={18} />
         </button>
       </header>
@@ -98,9 +96,8 @@ export function FacilityExpansionPanel({
           <section className="facility-project" key={project.id} aria-label={project.name}>
             <header>
               <h3>{project.name}</h3>
-              <span>{program ? `잔액 ${won(program.remainingKrw)}` : '사업 예산 확인 중'}</span>
+              <span>{program ? `사업 예산 ${won(program.limitKrw)}` : '사업 예산 확인 중'}</span>
             </header>
-            {program && <small>공동 한도 {won(program.limitKrw)}</small>}
             <div className="watershed-facility-grid">
               {project.items.map(({ id, name, Icon, type }) => {
                 const allocation = budget?.accounting.facilities.find(
@@ -118,8 +115,15 @@ export function FacilityExpansionPanel({
                     <Icon size={22} />
                     <strong>{name}</strong>
                     {type ? (
-                      <span>
-                        {allocation ? `사용 가능 ${won(allocation.availableKrw)}` : '예산 확인 중'}
+                      <span className="facility-availability">
+                        {allocation ? (
+                          <>
+                            <span>잔액</span>
+                            <b>{won(allocation.availableKrw)}</b>
+                          </>
+                        ) : (
+                          '예산 확인 중'
+                        )}
                       </span>
                     ) : (
                       <span>
@@ -134,11 +138,6 @@ export function FacilityExpansionPanel({
         );
       })}
       <p className="micro-note">같은 사업의 시설은 공동 예산을 사용합니다.</p>
-      {onAllCandidates && (
-        <button className="watershed-all-candidates" onClick={onAllCandidates}>
-          시설 선택 해제
-        </button>
-      )}
     </aside>
   );
 }

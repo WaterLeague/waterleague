@@ -18,6 +18,7 @@ import { LiveUrbanSource } from '../../urban/view/LiveUrbanSource';
 import { useUrbanData } from '../../urban/controller/useUrbanData';
 import {
   RotateCcw,
+  CircleHelp,
   Plus,
   Minus,
   MapPin,
@@ -270,6 +271,26 @@ function Explorer({
   const stage = useRef<HTMLElement>(null);
   const workspace = useRef<HTMLElement>(null);
   const controlsBar = useRef<HTMLDivElement>(null);
+  const legendMenu = useRef<HTMLDetailsElement>(null);
+  useEffect(() => {
+    const closeOutside = (event: PointerEvent) => {
+      const menu = legendMenu.current;
+      if (menu?.open && !menu.contains(event.target as Node)) menu.open = false;
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      const menu = legendMenu.current;
+      if (event.key === 'Escape' && menu?.open) {
+        menu.open = false;
+        menu.querySelector('summary')?.focus();
+      }
+    };
+    document.addEventListener('pointerdown', closeOutside);
+    document.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.removeEventListener('pointerdown', closeOutside);
+      document.removeEventListener('keydown', closeOnEscape);
+    };
+  }, []);
   useEffect(() => {
     if (!workspace.current || !controlsBar.current) return;
     const observer = new ResizeObserver(([entry]) =>
@@ -784,14 +805,25 @@ function Explorer({
     />
   );
   const publicFacilityToggle = (
-    <label className="public-facility-toggle">
-      <input
-        type="checkbox"
-        checked={assetsEnabled}
-        onChange={(e) => setAssetsEnabled(e.target.checked)}
-      />
-      공개 시설
-    </label>
+    <button
+      type="button"
+      className="public-facility-toggle"
+      role="switch"
+      aria-label="공개 시설 표시"
+      aria-checked={assetsEnabled}
+      onClick={() => {
+        setAssetsEnabled(!assetsEnabled);
+        if (assetsEnabled) {
+          setInfrastructureOpen(false);
+          setSelectedAssetId('');
+        }
+      }}
+    >
+      <span>공개 시설 표시</span>
+      <span className="map-switch-track" aria-hidden="true">
+        <span />
+      </span>
+    </button>
   );
 
   return (
@@ -922,6 +954,7 @@ function Explorer({
                 <button
                   data-close-tools
                   aria-expanded={infrastructureOpen}
+                  disabled={!assetsEnabled}
                   onClick={() => {
                     setInfrastructureOpen((value) => !value);
                     setFacilityExpansionOpen(false);
@@ -1109,66 +1142,71 @@ function Explorer({
               <button onClick={reset} aria-label="서울 전체 보기">
                 <RotateCcw size={15} />
               </button>
+              <details ref={legendMenu} className="map-legend-menu">
+                <summary aria-label="지도 범례" title="지도 표시 안내">
+                  <CircleHelp size={17} />
+                </summary>
+                <div className="shared-map-legend" role="region" aria-label="지도 표시 안내">
+                  {!flat && !failed && Object.values(floodStats).some((value) => value > 0) && (
+                    <span
+                      className="flood-response-legend"
+                      role="status"
+                      aria-label="주변 침수 반응 · 표시 객체 수"
+                      title="주변 표시 객체의 반응이며 실제 피해 통계가 아닙니다. 과거 침수흔적은 사건 전체 범위입니다."
+                    >
+                      <i className="flood-response-dot" />
+                      {floodStats.stopped > 0 && `감속·정차 ${floodStats.stopped} `}
+                      {floodStats.exposed > 0 && `침수 노출 ${floodStats.exposed} `}
+                      {floodStats.avoiding > 0 && `회피·대피 ${floodStats.avoiding} `}
+                      {floodStats.stranded > 0 && `고립 ${floodStats.stranded}`}
+                      <small>표시 객체</small>
+                    </span>
+                  )}
+                  <span>
+                    <i className="player-facility-legend" />
+                    사용자 시설
+                  </span>
+                  <span>
+                    <i className="river-legend" />
+                    강·하천
+                  </span>
+                  <span>
+                    <i className="flood-legend" />
+                    계산 침수 · 수심/유속 색상
+                  </span>
+                  {assetsEnabled && (
+                    <span>
+                      <i className="infrastructure-legend" />
+                      {researchMode ? '공개 시설 참고 · 당시 시설 아님' : '공개 시설 참고'}
+                    </span>
+                  )}
+                  <span>
+                    <i className="available" />
+                    설치 가능
+                  </span>
+                  <span>
+                    <i className="selected-site" />
+                    선택 구역
+                  </span>
+                  {mapFacilityType && (
+                    <span>
+                      <i className="unavailable" />
+                      {researchMode
+                        ? '선택 시설 설치 불가'
+                        : type
+                          ? '선택 시설 설치 불가·내 설치'
+                          : '후보 제외·내 설치'}
+                    </span>
+                  )}
+                  {ownDistrict && (
+                    <span>
+                      <i className="other" />
+                      다른 구 · 조회만
+                    </span>
+                  )}
+                </div>
+              </details>
             </div>
-          </div>
-          <div className="shared-map-legend">
-            {!flat && !failed && Object.values(floodStats).some((value) => value > 0) && (
-              <span
-                className="flood-response-legend"
-                role="status"
-                aria-label="주변 침수 반응 · 표시 객체 수"
-                title="주변 표시 객체의 반응이며 실제 피해 통계가 아닙니다. 과거 침수흔적은 사건 전체 범위입니다."
-              >
-                <i className="flood-response-dot" />
-                {floodStats.stopped > 0 && `감속·정차 ${floodStats.stopped} `}
-                {floodStats.exposed > 0 && `침수 노출 ${floodStats.exposed} `}
-                {floodStats.avoiding > 0 && `회피·대피 ${floodStats.avoiding} `}
-                {floodStats.stranded > 0 && `고립 ${floodStats.stranded}`}
-                <small>표시 객체</small>
-              </span>
-            )}
-            <span>
-              <i className="player-facility-legend" />
-              사용자 시설
-            </span>
-            <span>
-              <i className="river-legend" />
-              강·하천
-            </span>
-            <span>
-              <i className="flood-legend" />
-              계산 침수 · 수심/유속 색상
-            </span>
-            {assetsEnabled && (
-              <span>
-                <i className="infrastructure-legend" />
-                {researchMode ? '공개 시설 참고 · 당시 시설 아님' : '공개 시설 참고'}
-              </span>
-            )}
-            <span>
-              <i className="available" />
-              설치 가능
-            </span>
-            <span>
-              <i className="selected-site" />
-              선택 구역
-            </span>
-            {mapFacilityType && (
-              <span>
-                <i className="unavailable" />
-                {researchMode
-                  ? '선택 시설 설치 불가'
-                  : type
-                    ? '선택 시설 설치 불가·내 설치'
-                    : '후보 제외·내 설치'}
-              </span>
-            )}
-            {ownDistrict && (
-              <span>
-                <i className="other" />
-                다른 구 · 조회만
-              </span>
-            )}
           </div>
           {listOpen && (
             <div
@@ -1408,7 +1446,6 @@ function Explorer({
             : budget.value
         }
         selectedMapFacility={type}
-        onAllCandidates={closeInstallation}
         onClose={closeInstallation}
         onLogin={onLogin}
         onCisternPlan={() => {

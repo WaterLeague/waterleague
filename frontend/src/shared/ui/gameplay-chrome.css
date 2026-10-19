@@ -1007,3 +1007,167 @@
 .city-plan[data-map-dragging='true'] * {
   cursor: grabbing;
 }
+
+/* 범례는 조작부에 붙여 열어 지도와 시설 패널의 너비를 유지한다. */
+.game-shell .shared-play-layout .city-map-top {
+  z-index: 65;
+}
+.game-shell .map-legend-menu {
+  position: relative;
+}
+.game-shell .map-legend-menu > summary {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  min-width: 36px;
+  padding: 7px 10px;
+  border-radius: 17px;
+  list-style: none;
+  cursor: pointer;
+  color: #50626a;
+}
+.game-shell .map-legend-menu > summary::-webkit-details-marker {
+  display: none;
+}
+.game-shell .map-legend-menu > summary:hover,
+.game-shell .map-legend-menu[open] > summary {
+  background: #e5eee1;
+  color: #315c51;
+}
+.game-shell .map-legend-menu > summary:focus-visible {
+  outline: 2px solid #426f73;
+  outline-offset: 2px;
+}
+.game-shell .shared-play-layout .map-legend-menu .shared-map-legend {
+  display: flex;
+  position: absolute;
+  top: calc(100% + 14px);
+  right: -4px;
+  left: auto;
+  width: max-content;
+  max-width: min(270px, calc(100vw - 40px));
+  max-height: 45dvh;
+  overflow: auto;
+  pointer-events: auto;
+  gap: 10px;
+  padding: 17px 19px;
+  background: var(--ui-paper);
+  border: 1px solid var(--ui-line);
+  border-radius: 20px;
+  box-shadow: 0 12px 32px #24484e20;
+  font-size: 11px;
+}
+.game-shell .map-legend-menu:not([open]) .shared-map-legend {
+  display: none;
+}
+.game-shell .gameplay-map-options .public-facility-toggle {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  border: 0;
+  background: transparent;
+  padding: 3px 0;
+  border-radius: 10px;
+  color: var(--ui-ink);
+  font-size: 12px;
+  cursor: pointer;
+}
+.game-shell .map-switch-track {
+  width: 38px;
+  height: 23px;
+  flex: 0 0 38px;
+  border: 1px solid #bdcbbf;
+  border-radius: 20px;
+  background: #e2e8de;
+  padding: 3px;
+  transition: background 160ms;
+}
+.game-shell .map-switch-track > span {
+  display: block;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #fffef8;
+  box-shadow: 0 1px 3px #24484e30;
+  transition: transform 160ms;
+}
+.game-shell .public-facility-toggle[aria-checked='true'] .map-switch-track {
+  background: #426f73;
+  border-color: #426f73;
+}
+.game-shell .public-facility-toggle[aria-checked='true'] .map-switch-track > span {
+  transform: translateX(15px);
+}
+.game-shell .public-facility-toggle:focus-visible {
+  outline: 2px solid #426f73;
+  outline-offset: 5px;
+}
+.game-shell .gameplay-tools > div > button:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+  background: transparent;
+}
+.game-shell #facility-install-panel .watershed-heading {
+  align-items: center;
+  margin-bottom: 22px;
+}
+.game-shell #facility-install-panel .watershed-heading h2 {
+  margin: 0;
+  font-size: 21px;
+}
+.game-shell .watershed-heading > .installation-close {
+  position: static;
+  flex: 0 0 34px;
+  margin: 0;
+  padding: 0;
+  border: 1px solid #d4d8ce;
+  border-radius: 50%;
+  background: #fffdf7;
+  color: #3a5752;
+}
+.game-shell #facility-install-panel .facility-project > header {
+  display: grid;
+  justify-content: start;
+  gap: 5px;
+  margin-bottom: 12px;
+}
+.game-shell #facility-install-panel .watershed-facility-grid {
+  grid-auto-rows: 1fr;
+}
+.game-shell #facility-install-panel .watershed-facility-grid > button {
+  width: 100%;
+  display: grid;
+  grid-template-rows: 46px 22px minmax(32px, auto);
+  justify-items: center;
+  align-items: center;
+  align-content: start;
+  gap: 7px;
+  min-height: 142px;
+  padding: 14px 6px;
+}
+.game-shell #facility-install-panel .watershed-facility-grid > button > strong {
+  line-height: 22px;
+  white-space: nowrap;
+}
+.game-shell #facility-install-panel .watershed-facility-grid > button > span {
+  align-self: start;
+  text-align: center;
+}
+.game-shell #facility-install-panel .facility-availability {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  font-variant-numeric: tabular-nums;
+}
+.game-shell #facility-install-panel .facility-availability b {
+  font-size: 10px;
+  font-weight: 550;
+  white-space: nowrap;
+}
+@media (prefers-reduced-motion: reduce) {
+  .game-shell .map-switch-track,
+  .game-shell .map-switch-track > span {
+    transition: none;
+  }
+}
