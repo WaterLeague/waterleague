@@ -1,0 +1,299 @@
+{
+  "schemaVersion": 1,
+  "provider": "국토지리정보원",
+  "distributor": "브이월드",
+  "title": "수치지형도v2.0(1:1000) 서울 25개 구 SHP 묶음",
+  "datasetId": "20250224DS00002",
+  "sourceUrl": "https://www.vworld.kr/dtmk/dtmk_ntads_s002.do?datIde=20250224DS00002&dsId=20250224DS00002&svcCde=MK&searchKeyword2=SHP_%EC%84%9C%EC%9A%B8",
+  "distributionUpdatedAt": "2026-03-07",
+  "distributionReferenceDate": null,
+  "copiedOn": "2026-10-20",
+  "verifiedOn": "2026-10-20",
+  "originalDirectory": "data/private/vworld-seoul-topography-20260307/originals",
+  "runtimeStatus": "COPIED_AND_INVENTORIED_NOT_MIGRATED",
+  "files": [
+    {
+      "role": "DISTRICT_TILE_PACKAGE",
+      "district": "강남구",
+      "file": "2MAP1000_SHP_서울_강남구.zip",
+      "localPath": "data/private/vworld-seoul-topography-20260307/originals/2MAP1000_SHP_서울_강남구.zip",
+      "bytes": 29004389,
+      "sha256": "4790b5fa300df1bdbed06037ed06445d74c5379aae21a8b88f012953dd2afe2d",
+      "tileZipCount": 207
+    },
+    {
+      "role": "DISTRICT_TILE_PACKAGE",
+      "district": "강동구",
+      "file": "2MAP1000_SHP_서울_강동구.zip",
+      "localPath": "data/private/vworld-seoul-topography-20260307/originals/2MAP1000_SHP_서울_강동구.zip",
+      "bytes": 18885961,
+      "sha256": "bca51485e012380cfaee6f30df33f259658859d8e290af9857fd72a88d4c8859",
+      "tileZipCount": 127
+    },
+    {
+      "role": "DISTRICT_TILE_PACKAGE",
+      "district": "강북구",
+      "file": "2MAP1000_SHP_서울_강북구.zip",
+      "localPath": "data/private/vworld-seoul-topography-20260307/originals/2MAP1000_SHP_서울_강북구.zip",
+      "bytes": 22535684,
+      "sha256": "18a3d5ae9336a00334eca41657fd3bd34132294be11247c605ec23454da65d7b",
+      "tileZipCount": 97
+    },
+    {
+      "role": "DISTRICT_TILE_PACKAGE",
+      "district": "강서구",
+      "file": "2MAP1000_SHP_서울_강서구.zip",
+      "localPath": "data/private/vworld-seoul-topography-20260307/originals/2MAP1000_SHP_서울_강서구.zip",
+      "bytes": 26700558,
+      "sha256": "28a50980f4b030be79ac78ff3fba5f626743f137424df8bc619a755caeac0f95",
+      "tileZipCount": 208
+    },
+    {
+      "role": "DISTRICT_TILE_PACKAGE",
+      "district": "관악구",
+      "file": "2MAP1000_SHP_서울_관악구.zip",
+      "localPath": "data/private/vworld-seoul-topography-20260307/originals/2MAP1000_SHP_서울_관악구.zip",
+      "bytes": 24985735,
+      "sha256": "7879ec877f9bc364428b7bd368d619d7bf12380c4e40c3701723f9a2f8ab67b3",
+      "tileZipCount": 126
+    },
+    {
+      "role": "DISTRICT_TILE_PACKAGE",
+      "district": "광진구",
+      "file": "2MAP1000_SHP_서울_광진구.zip",
+      "localPath": "data/private/vworld-seoul-topography-20260307/originals/2MAP1000_SHP_서울_광진구.zip",
+      "bytes": 15958461,
+      "sha256": "b330e9920e7ea74d1a3047b96d4993b3fcc77aa3f8377c3226d4c17650d6fdd0",
+      "tileZipCount": 93
+    },
+    {
+      "role": "DISTRICT_TILE_PACKAGE",
+      "district": "구로구",
+      "file": "2MAP1000_SHP_서울_구로구.zip",
+      "localPath": "data/private/vworld-seoul-topography-20260307/originals/2MAP1000_SHP_서울_구로구.zip",
+      "bytes": 23547727,
+      "sha256": "de0da5a6ee273330ed7920de72c6fdc4b6ca08df710c5c4765551dd96114df8b",
+      "tileZipCount": 121
+    },
+    {
+      "role": "DISTRICT_TILE_PACKAGE",
+      "district": "금천구",
+      "file": "2MAP1000_SHP_서울_금천구.zip",
+      "localPath": "data/private/vworld-seoul-topography-20260307/originals/2MAP1000_SHP_서울_금천구.zip",
+      "bytes": 14495345,
+      "sha256": "9fbd235a7ac7952b761fc3dd7c324439ae26165880ab882b2c96df0d902efcbf",
+      "tileZipCount": 78
+    },
+    {
+      "role": "DISTRICT_TILE_PACKAGE",
+      "district": "노원구",
+      "file": "2MAP1000_SHP_서울_노원구.zip",
+      "localPath": "data/private/vworld-seoul-topography-20260307/originals/2MAP1000_SHP_서울_노원구.zip",
+      "bytes": 24708029,
+      "sha256": "9871353e23c8045dacf25b8f37e5bef7bda5156123c442e1124201b9b044c815",
+      "tileZipCount": 153
+    },
+    {
+      "role": "DISTRICT_TILE_PACKAGE",
+      "district": "도봉구",
+      "file": "2MAP1000_SHP_서울_도봉구.zip",
+      "localPath": "data/private/vworld-seoul-topography-20260307/originals/2MAP1000_SHP_서울_도봉구.zip",
+      "bytes": 15683877,
+      "sha256": "7fc2164b9941333e226f29fe0cd7e54f45107b7fcc64c47b70fbee548d75058e",
+      "tileZipCount": 81
+    },
+    {
+      "role": "DISTRICT_TILE_PACKAGE",
+      "district": "동대문구",
+      "file": "2MAP1000_SHP_서울_동대문구.zip",
+      "localPath": "data/private/vworld-seoul-topography-20260307/originals/2MAP1000_SHP_서울_동대문구.zip",
+      "bytes": 17700771,
+      "sha256": "34695fd6eadb2adda099b9bc69385ffe2016746a7f4be8216621b5eca3ddfe30",
+      "tileZipCount": 81
+    },
+    {
+      "role": "DISTRICT_TILE_PACKAGE",
+      "district": "동작구",
+      "file": "2MAP1000_SHP_서울_동작구.zip",
+      "localPath": "data/private/vworld-seoul-topography-20260307/originals/2MAP1000_SHP_서울_동작구.zip",
+      "bytes": 21454514,
+      "sha256": "77d43e0ec52ebe320329fe3024ea178ee4766011554f1b62df67edba427bdd0b",
+      "tileZipCount": 98
+    },
+    {
+      "role": "DISTRICT_TILE_PACKAGE",
+      "district": "마포구",
+      "file": "2MAP1000_SHP_서울_마포구.zip",
+      "localPath": "data/private/vworld-seoul-topography-20260307/originals/2MAP1000_SHP_서울_마포구.zip",
+      "bytes": 22014352,
+      "sha256": "f91b1364f675d8990913a91655891533edb9785fa509354c9e5e65d24ef09f7c",
+      "tileZipCount": 132
+    },
+    {
+      "role": "DISTRICT_TILE_PACKAGE",
+      "district": "서대문구",
+      "file": "2MAP1000_SHP_서울_서대문구.zip",
+      "localPath": "data/private/vworld-seoul-topography-20260307/originals/2MAP1000_SHP_서울_서대문구.zip",
+      "bytes": 21104026,
+      "sha256": "1dc9a49dffd10593b00bb0c46896158d729bc44dba1c3c556eddbe119065be26",
+      "tileZipCount": 97
+    },
+    {
+      "role": "DISTRICT_TILE_PACKAGE",
+      "district": "서초구",
+      "file": "2MAP1000_SHP_서울_서초구.zip",
+      "localPath": "data/private/vworld-seoul-topography-20260307/originals/2MAP1000_SHP_서울_서초구.zip",
+      "bytes": 30473210,
+      "sha256": "21c9d605889105e5584df564fed576bc63887babc83fd48128129536319ea8bc",
+      "tileZipCount": 224
+    },
+    {
+      "role": "DISTRICT_TILE_PACKAGE",
+      "district": "성동구",
+      "file": "2MAP1000_SHP_서울_성동구.zip",
+      "localPath": "data/private/vworld-seoul-topography-20260307/originals/2MAP1000_SHP_서울_성동구.zip",
+      "bytes": 17700818,
+      "sha256": "0f05914071c15218943bd472813d3b541f3d960f8b8b8d5e2285e1dd8918fd88",
+      "tileZipCount": 95
+    },
+    {
+      "role": "DISTRICT_TILE_PACKAGE",
+      "district": "성북구",
+      "file": "2MAP1000_SHP_서울_성북구.zip",
+      "localPath": "data/private/vworld-seoul-topography-20260307/originals/2MAP1000_SHP_서울_성북구.zip",
+      "bytes": 28130557,
+      "sha256": "da26861ed67ff5f1b328b28d09e4723dac8ef06669ad768dac96fef705ed4385",
+      "tileZipCount": 122
+    },
+    {
+      "role": "DISTRICT_TILE_PACKAGE",
+      "district": "송파구",
+      "file": "2MAP1000_SHP_서울_송파구.zip",
+      "localPath": "data/private/vworld-seoul-topography-20260307/originals/2MAP1000_SHP_서울_송파구.zip",
+      "bytes": 25484059,
+      "sha256": "e5a83e26982a8d19e00db8f297af9632e7a25d6c72f67029e4fc61dd140bffca",
+      "tileZipCount": 177
+    },
+    {
+      "role": "DISTRICT_TILE_PACKAGE",
+      "district": "양천구",
+      "file": "2MAP1000_SHP_서울_양천구.zip",
+      "localPath": "data/private/vworld-seoul-topography-20260307/originals/2MAP1000_SHP_서울_양천구.zip",
+      "bytes": 19221092,
+      "sha256": "aeb5816bb77bab7f748922beddfa8d11405d64f767b1eb28133bd14af782759f",
+      "tileZipCount": 104
+    },
+    {
+      "role": "DISTRICT_TILE_PACKAGE",
+      "district": "영등포구",
+      "file": "2MAP1000_SHP_서울_영등포구.zip",
+      "localPath": "data/private/vworld-seoul-topography-20260307/originals/2MAP1000_SHP_서울_영등포구.zip",
+      "bytes": 20696265,
+      "sha256": "004b32b12c8fcfb4f3343c4f92387f4cdc186b5cf5c52ba52bdeb25d4073f891",
+      "tileZipCount": 131
+    },
+    {
+      "role": "DISTRICT_TILE_PACKAGE",
+      "district": "용산구",
+      "file": "2MAP1000_SHP_서울_용산구.zip",
+      "localPath": "data/private/vworld-seoul-topography-20260307/originals/2MAP1000_SHP_서울_용산구.zip",
+      "bytes": 17706713,
+      "sha256": "0a44f3788a4c71e91731a08be12e48eb254a3b381c5322cafb0a93223c7c474e",
+      "tileZipCount": 114
+    },
+    {
+      "role": "DISTRICT_TILE_PACKAGE",
+      "district": "은평구",
+      "file": "2MAP1000_SHP_서울_은평구.zip",
+      "localPath": "data/private/vworld-seoul-topography-20260307/originals/2MAP1000_SHP_서울_은평구.zip",
+      "bytes": 27229237,
+      "sha256": "9891600d9470c319487f2ce349cb3abf165d2b9c76e2af535edca0ca118a9d32",
+      "tileZipCount": 144
+    },
+    {
+      "role": "DISTRICT_TILE_PACKAGE",
+      "district": "종로구",
+      "file": "2MAP1000_SHP_서울_종로구.zip",
+      "localPath": "data/private/vworld-seoul-topography-20260307/originals/2MAP1000_SHP_서울_종로구.zip",
+      "bytes": 22956182,
+      "sha256": "e78507d03927b5238a60d0ea393c187474af80fdda2a459b6bd8ff683f4818a6",
+      "tileZipCount": 108
+    },
+    {
+      "role": "DISTRICT_TILE_PACKAGE",
+      "district": "중구",
+      "file": "2MAP1000_SHP_서울_중구.zip",
+      "localPath": "data/private/vworld-seoul-topography-20260307/originals/2MAP1000_SHP_서울_중구.zip",
+      "bytes": 12927382,
+      "sha256": "3f2186d2d1fa24934a7fa9c1a08eeebb655cefbc359613c2b7b2d0e24d89b5c7",
+      "tileZipCount": 60
+    },
+    {
+      "role": "DISTRICT_TILE_PACKAGE",
+      "district": "중랑구",
+      "file": "2MAP1000_SHP_서울_중랑구.zip",
+      "localPath": "data/private/vworld-seoul-topography-20260307/originals/2MAP1000_SHP_서울_중랑구.zip",
+      "bytes": 19213616,
+      "sha256": "51cd765b7d76252eda4821fa3ba125af3786516bffc18882e9d5680265e78a67",
+      "tileZipCount": 97
+    },
+    {
+      "role": "LAYER_CODE_REFERENCE",
+      "file": "연속수치지형도_데이터_설명서.pdf",
+      "localPath": "data/private/vworld-seoul-topography-20260307/originals/연속수치지형도_데이터_설명서.pdf",
+      "bytes": 755629,
+      "sha256": "a392799ba4a7cead1dadaad7fd1ede9c0ea6a87b467fa8f8f51be5d96081e8d7",
+      "title": "전국 연속수치지형도 코드 및 레이어 설명서",
+      "version": "5.1.1",
+      "documentDate": "2014-12-30",
+      "pageCount": 153,
+      "provenance": "USER_DOWNLOADED_PUBLIC_REFERENCE",
+      "sourceUrl": null,
+      "usage": "레이어·코드 해석 참고; 실제 SHP/DBF/PRJ와 대조. 현재 파일 스키마나 제작연도의 증거로 대체하지 않음"
+    }
+  ],
+  "inventory": {
+    "packageCount": 25,
+    "packageBytes": 540518560,
+    "tileReferences": 3075,
+    "uniqueTileCount": 2488,
+    "repeatedTileReferences": 587,
+    "conflictingTileVersions": [],
+    "crsForSelectedLayers": {
+      "5186": 10847
+    }
+  },
+  "archiveAudit": {
+    "localPath": "data/private/vworld-seoul-topography-20260307/audit/seoul-topography-package-audit.json",
+    "bytes": 95471,
+    "sha256": "1f877770e9cb01034f7998c4b7f7bd885e8c40e9dbc748a59832dff34b444e73",
+    "verifiedOn": "2026-10-20",
+    "layerTypeCount": 121,
+    "outerAndUniqueTileMemberCrcVerified": true,
+    "geometryValidityVerified": false,
+    "seoulCoverageVerified": false,
+    "crsSelectedLayerIds": [
+      "N1A_B0010000",
+      "N1A_A0010000",
+      "N1A_A0070000",
+      "N1L_F0010000",
+      "N1P_F0020000"
+    ]
+  },
+  "limitations": [
+    "원본 ZIP·내부 파일 CRC와 선택 레이어 CRS 및 DBF 구조 검사",
+    "원 도형의 유효성·서울 경계 안 피복 완전성·실측 정확도 검사 미수행",
+    "원 도형 건수는 도엽 경계 분할과 서울 밖 도형을 포함할 수 있어 고유 건물 수가 아님",
+    "배포 갱신일을 개별 도엽 제작연도로 사용하지 않음",
+    "게임 지도·모델 입력·점수 미변경",
+    "설명서 작성일·배포 갱신일·원 도엽 제작연도·프로젝트 복사일을 구분",
+    "원본은 프로젝트에 보관하고 Git 제외; 공개 목록은 좌표·계정 식별자 없이 경로·크기·해시만 보존",
+    "자료마다 이용조건·출처를 확인하며 기존 OSM 파생 자료의 출처·라이선스를 새 데이터에 전용하지 않음"
+  ],
+  "copyVerification": {
+    "fileCount": 26,
+    "totalBytes": 541274189,
+    "sourceAndProjectSha256Matched": true,
+    "downloadOriginalsPreserved": true
+  }
+}
