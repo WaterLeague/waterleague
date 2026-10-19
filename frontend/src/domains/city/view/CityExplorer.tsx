@@ -1,4 +1,7 @@
 import { useGroundCandidates } from '../../installation/controller/useGroundCandidates';
+import { GameplayScoreboard } from './GameplayScoreboard';
+import { historicalTotal } from '../../historical/service/historicalTotal';
+import { HistoricalWeatherBadge } from '../../historical/view/HistoricalWeatherBadge';
 import { WeatherBadge } from '../../rainfall/view/WeatherBadge';
 import { usePublicSurfaces } from '../../surface/controller/usePublicSurfaces';
 import { PublicSurfaceControls } from '../../surface/view/PublicSurfaceControls';
@@ -40,7 +43,7 @@ import { useInstallations } from '../../installation/controller/useInstallations
 import { SharedDistrictPanel } from '../../installation/view/SharedDistrictPanel';
 import type { SharedSite } from '../../installation/entity/installation';
 import type { FacilityType } from '../../game/entity/game';
-import { facilities, won } from '../../game/service/gameService';
+import { facilities } from '../../game/service/gameService';
 import { viewingDistrict } from '../service/viewingDistrictService';
 import {
   loadSite,
@@ -53,11 +56,7 @@ import './shared-play.css';
 import { siteKey } from '../../installation/entity/installation';
 import '../../rainfall/view/rainfall.css';
 import { useHistorical } from '../../historical/controller/useHistorical';
-import {
-  HistoricalPanel,
-  HistoricalPlayback,
-  HistoricalTimeline,
-} from '../../historical/view/HistoricalPanel';
+import { HistoricalPanel, HistoricalTimeline } from '../../historical/view/HistoricalPanel';
 import { useLiveRainfall } from '../../rainfall/controller/useLiveRainfall';
 import { isRaining } from '../../rainfall/service/rainEffectService';
 import { useReducedMotion } from '../../catalog/controller/useReducedMotion';
@@ -140,9 +139,17 @@ function Explorer({
       ? `${score.rank ? `${score.rank}위 · ` : ''}총 점수 ${scoreFormat.format(score.scoreM3)} m³`
       : '점수 조회 중';
   };
-  const [selected, setSelected] = useState(
-    researchMode ? (account?.districtId ?? '2419953') : initialDistrictId
+  const [selected, setSelected] = useState(initialDistrictId);
+  const [camera, setCamera] = useState<PlanView>({
+    center: [0, 0],
+    distance: 35000,
+  });
+  const navigationCamera = useRef(camera);
+  const viewedDistrict = useMemo(
+    () => (camera.distance >= 20000 ? undefined : viewingDistrict(city.districts, camera.center)),
+    [city.districts, camera.center, camera.distance]
   );
+  const viewedDistrictId = viewedDistrict?.id ?? '';
   const research = useHistorical(researchMode, selected, account, budget.value, eventId);
   const urbanClock = useUrbanTime(
     researchMode,
@@ -152,7 +159,7 @@ function Explorer({
     research.event?.regions[0]?.start
   );
   const [rankingOpen, setRankingOpen] = useState(false);
-  const ownDistrictId = researchMode && !cisternOpen ? null : account?.districtId;
+  const ownDistrictId = researchMode ? null : account?.districtId;
   const viewerId = researchMode
     ? (account?.id ?? '00000000-0000-0000-0000-000000000000')
     : account?.id;
@@ -183,22 +190,25 @@ function Explorer({
   );
   const animateRain = rainfall.visible && !reducedMotion && (!researchMode || research.playing);
   const archivedWeather = useArchivedWaterWeather(researchMode, eventId);
-  const archivedWind = archivedWindAt(archivedWeather, eventId, research.at, selected);
+  const archivedWind = archivedWindAt(archivedWeather, eventId, research.at, viewedDistrictId);
   const waterAppearance = useMemo(
     () =>
       researchMode
         ? {
             wind: observedWind(archivedWind?.windSpeedMs, archivedWind?.windDirectionDeg),
-            rain: research.selectedRain?.depthsMm[research.index] ?? 0,
+            rain:
+              research.event?.regions.find((r) => r.districtId === viewedDistrictId)?.depthsMm[
+                research.index
+              ] ?? 0,
             windSpeed: archivedWind?.windSpeedMs ?? undefined,
           }
-        : waterWeather(rainfall.value, selected, rainfall.now),
+        : waterWeather(rainfall.value, viewedDistrictId, rainfall.now),
     [
       researchMode,
-      research.selectedRain,
+      research.event,
       research.index,
       rainfall.value,
-      selected,
+      viewedDistrictId,
       rainfall.now,
       archivedWind?.windSpeedMs,
       archivedWind?.windDirectionDeg,
@@ -254,11 +264,6 @@ function Explorer({
     if (initialDistrictId && !researchMode) select(initialDistrictId);
   }, [initialDistrictId, researchMode]);
   const stage = useRef<HTMLElement>(null);
-  const [camera, setCamera] = useState<PlanView>({
-    center: [0, 0],
-    distance: 35000,
-  });
-  const navigationCamera = useRef(camera);
   const urban = useUrbanData(camera.center, camera.distance);
   const groundCandidates = useGroundCandidates(camera.center, camera.distance);
   const liveUrban = useLiveUrban(camera.center, camera.distance, researchMode);
@@ -660,6 +665,7 @@ function Explorer({
     setCamera(target);
     setFocus((p) => ({ ...target, key: p.key + 1, preserveAngle: true }));
   };
+  const disasterTotal = historicalTotal(research, !!account);
   const district = city.districts.find((d) => d.id === selected);
   const ownDistrict = city.districts.find((d) => d.id === ownDistrictId);
   const planned =
@@ -773,47 +779,64 @@ function Explorer({
     >
       <header className="play-hud gameplay-hud">
         <div className="play-objective">
+          {researchMode && (
+            <button
+              className="disaster-back"
+              onClick={onExit}
+              title="재난 다시 선택"
+              aria-label="재난 다시 선택"
+            >
+              <ArrowLeft size={16} />
+              <span>재난 다시 선택</span>
+            </button>
+          )}
           <h1>
             {researchMode
               ? `${research.event?.eventDate.replaceAll('-', '. ') ?? ''} 집중호우`
               : '주간 서울 대항전'}
-            {district && <small className="game-district-name"> · {district.name}</small>}
           </h1>
         </div>
-        {researchMode && <HistoricalPlayback state={research} />}
         <div className="play-resources">
-          {!researchMode && (
+          {researchMode ? (
+            <HistoricalWeatherBadge
+              state={research}
+              districtId={viewedDistrictId}
+              districtName={viewedDistrict?.name ?? ''}
+            />
+          ) : (
             <WeatherBadge
               value={rainfall.value}
-              districtId={selected}
+              districtId={viewedDistrictId}
               now={rainfall.now}
               busy={rainfall.busy}
               retry={rainfall.refresh}
               error={rainfall.error}
             />
           )}
-          {!researchMode && <GameClock />}
-          {researchMode && (
-            <button className="disaster-back" onClick={onExit}>
-              <ArrowLeft size={15} />
-              재난 다시 선택
-            </button>
-          )}
-          <span>
-            {researchMode ? '내 재해 설계 잔액' : account ? '내 설치 예산 잔액' : '1인당 설치 예산'}
-            <b>{budget.value ? won(remaining) : '조회 중'}</b>
-          </span>
-          <span>
-            {researchMode ? '내 실험 시설' : account ? '내 시설' : '서울 공유 시설'}
-            <b>
-              {researchMode
-                ? research.current.length
-                : account
+          <GameplayScoreboard
+            historical={researchMode}
+            authenticated={!!account}
+            weekly={researchMode ? null : weekly.value}
+            district={weekly.value?.current.districts.find(
+              (d) => d.districtId === account?.districtId
+            )}
+            count={
+              researchMode
+                ? disasterTotal.count
+                : account && shared.ready
                   ? ownInstallations.length
-                  : shared.installations.length}
-              <small> 곳</small>
-            </b>
-          </span>
+                  : null
+            }
+            score={
+              researchMode
+                ? disasterTotal.score
+                : account && weekly.value
+                  ? (weekly.value.current.own?.scoreM3 ??
+                    (shared.ready && !ownInstallations.length ? 0 : null))
+                  : null
+            }
+            locked={researchMode && disasterTotal.locked}
+          />
         </div>
       </header>
       <div className="design-main shared-map-column">
@@ -823,15 +846,14 @@ function Explorer({
               <MapPin size={15} />
               <select
                 aria-label="서울 자치구 선택"
-                value={selected}
+                value={viewedDistrictId}
                 onChange={(e) => (e.target.value ? select(e.target.value) : reset())}
               >
                 <option value="">서울 전체</option>
                 {city.districts.map((d) => (
                   <option key={d.id} value={d.id}>
                     {d.name}
-                    {d.id === ownDistrictId ? ' · 내 소속 구' : ''} ·{' '}
-                    {shared.counts[d.id]?.toLocaleString('ko-KR') ?? '—'}곳
+                    {d.id === ownDistrictId ? ' · 내 소속 구' : ''}
                   </option>
                 ))}
               </select>
@@ -839,7 +861,7 @@ function Explorer({
             <details
               className="gameplay-tools"
               onClick={(event) => {
-                if (event.target instanceof Element && event.target.closest('button'))
+                if (event.target instanceof Element && event.target.closest('[data-close-tools]'))
                   event.currentTarget.open = false;
               }}
             >
@@ -848,15 +870,19 @@ function Explorer({
                 지도 도구
               </summary>
               <div>
+                {!researchMode && (
+                  <button
+                    data-close-tools
+                    onClick={() => {
+                      if (account?.districtId) select(account.districtId);
+                      else onLogin();
+                    }}
+                  >
+                    <MapPin size={14} />내 소속 구
+                  </button>
+                )}
                 <button
-                  onClick={() => {
-                    if (account?.districtId) select(account.districtId);
-                    else onLogin();
-                  }}
-                >
-                  <MapPin size={14} />내 소속 구
-                </button>
-                <button
+                  data-close-tools
                   aria-expanded={listOpen}
                   onClick={() => {
                     setCamera(navigationCamera.current);
@@ -867,6 +893,7 @@ function Explorer({
                   위치 목록
                 </button>
                 <button
+                  data-close-tools
                   aria-expanded={infrastructureOpen}
                   onClick={() => {
                     setInfrastructureOpen((value) => !value);
@@ -876,23 +903,29 @@ function Explorer({
                   <Layers3 size={15} />
                   공개 시설
                 </button>
-                {researchMode && (
-                  <div className="historical-map-options">
-                    {publicFacilityToggle}
-                    {floodTraceControls}
-                  </div>
-                )}
                 {!researchMode && (
-                  <button aria-expanded={rankingOpen} onClick={() => setRankingOpen((v) => !v)}>
+                  <button
+                    data-close-tools
+                    aria-expanded={rankingOpen}
+                    onClick={() => setRankingOpen((v) => !v)}
+                  >
                     <Trophy size={15} />
                     주간 순위
                   </button>
                 )}
+                <div className="gameplay-map-options">
+                  {publicFacilityToggle}
+                  {floodTraceControls}
+                </div>
               </div>
             </details>
           </div>
           {researchMode ? (
-            <HistoricalTimeline state={research} onInspect={(d) => chooseSite(d.site, true)}>
+            <HistoricalTimeline
+              districtId={viewedDistrictId}
+              state={research}
+              onInspect={(d) => chooseSite(d.site, true)}
+            >
               <SurfaceControls
                 metric={surfaceMetric}
                 onMetric={setSurfaceMetric}
@@ -903,10 +936,7 @@ function Explorer({
               />
             </HistoricalTimeline>
           ) : (
-            <>
-              {floodTraceControls}
-              {publicFacilityToggle}
-            </>
+            <GameClock />
           )}
         </div>
         <section ref={stage} className="city-stage" aria-label="서울 전역 3D 지도">

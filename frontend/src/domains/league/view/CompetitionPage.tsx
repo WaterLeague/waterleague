@@ -20,7 +20,7 @@ export function CompetitionPage({
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, [mode]);
   return (
-    <>
+    <main className="competition-page">
       <div className="competition-switch" role="group" aria-label="기록 경쟁 유형">
         <button
           className={mode === 'general' ? 'active' : ''}
@@ -69,6 +69,6 @@ export function CompetitionPage({
           <p className="lead">준비 중입니다.</p>
         </section>
       )}
-    </>
+    </main>
   );
 }

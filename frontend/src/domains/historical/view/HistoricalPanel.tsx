@@ -4,7 +4,7 @@ import { InitializationEvidence } from '../../physics/view/InitializationEvidenc
 import { InitializationSensitivityEvidence } from '../../physics/view/InitializationSensitivityEvidence';
 import { physicalAmount } from '../../physics/service/physicalValueFormat';
 import { FacilityProfileEvidence } from '../../facility/view/FacilityProfileEvidence';
-import type { ReactNode } from 'react';
+import { useMemo, type ReactNode } from 'react';
 import {
   Play,
   Pause,
@@ -20,7 +20,7 @@ import {
 import type { HistoricalState } from '../controller/useHistorical';
 import type { SharedSite } from '../../installation/entity/installation';
 import type { FacilityType } from '../../game/entity/game';
-import { facilities, format } from '../../game/service/gameService';
+import { facilities } from '../../game/service/gameService';
 import type { HistoricalDraft } from '../entity/historical';
 import './historical.css';
 import { FacilityPlacementPanel } from '../../installation/view/FacilityPlacementPanel';
@@ -65,19 +65,29 @@ export function HistoricalPlayback({ state: s }: { state: HistoricalState }) {
       <time dateTime={s.at ?? undefined}>
         {s.at && clockTime.format(new Date(s.at))} <small>KST</small>
       </time>
-      <strong>{s.selectedRain ? `1분 ${format.format(s.rainMm)} mm` : '강우 자료 없음'}</strong>
     </div>
   );
 }
 export function HistoricalTimeline({
   state: s,
+  districtId = '',
   onInspect,
   children,
 }: {
   state: HistoricalState;
+  districtId?: string;
   onInspect: (draft: HistoricalDraft) => void;
   children?: ReactNode;
 }) {
+  const selectedRain = s.event?.regions.find((r) => r.districtId === districtId);
+  const rain = useMemo(() => {
+    if (districtId) return selectedRain?.depthsMm ?? [];
+    const regions = s.event?.regions ?? [];
+    // 전체 보기의 탐색은 실제 구별 관측 중 최댓값이 있는 분으로 이동한다.
+    return (regions[0]?.depthsMm ?? []).map((_, i) =>
+      Math.max(...regions.map((r) => r.depthsMm[i] ?? 0))
+    );
+  }, [s.event, districtId, selectedRain]);
   const markers = (s.event && s.duration > 0 ? [...s.drafts] : []).sort(
     (a, b) => Date.parse(a.marker.installedAt) - Date.parse(b.marker.installedAt)
   );
@@ -85,6 +95,7 @@ export function HistoricalTimeline({
     <section className="historical-timeline" aria-label="재해 시간 재생">
       {s.frameCount > 0 && (
         <>
+          <HistoricalPlayback state={s} />
           <HistoricalInstallationTrack
             drafts={s.drafts}
             start={s.event?.regions[0]?.start}
@@ -130,11 +141,12 @@ export function HistoricalTimeline({
           {s.frameCount > 0 && (
             <div className="historical-jumps">
               <button
+                disabled={!rain.length}
                 onClick={() => {
                   s.setIndex(
                     Math.max(
                       0,
-                      (s.selectedRain ?? s.event!.regions[0]).depthsMm.findIndex((v) => v > 0)
+                      rain.findIndex((v) => v > 0)
                     )
                   );
                   s.setPlaying(true);
@@ -143,8 +155,8 @@ export function HistoricalTimeline({
                 첫 비
               </button>
               <button
+                disabled={!rain.length}
                 onClick={() => {
-                  const rain = (s.selectedRain ?? s.event!.regions[0]).depthsMm;
                   s.setIndex(rain.indexOf(Math.max(...rain)));
                   s.setPlaying(false);
                 }}
@@ -183,7 +195,7 @@ export function HistoricalTimeline({
             </div>
           )}
           {children}
-          {s.event && !s.selectedRain && (
+          {s.event && districtId && !selectedRain && (
             <p role="status">
               선택한 구의 이 사건 관측자료를 확보하지 못했습니다. 다른 지역의 값을 대신 표시하지
               않습니다.
@@ -197,8 +209,8 @@ export function HistoricalTimeline({
                 {s.event.evidenceTitle} ↗
               </a>
               <p>
-                {s.selectedRain &&
-                  `${s.selectedRain.stationName} AWS · 대표 지점에서 ${s.selectedRain.distanceKm}km · 관측 창 누적 ${s.selectedRain.totalDepthMm}mm`}
+                {selectedRain &&
+                  `${selectedRain.stationName} AWS · 대표 지점에서 ${selectedRain.distanceKm}km · 관측 창 누적 ${selectedRain.totalDepthMm}mm`}
               </p>
               <p>
                 현재 공개 지형에 당시 강우 적용 · 당시 침수 피해 복원 아님 · 구별 강우에 따라 빗줄기

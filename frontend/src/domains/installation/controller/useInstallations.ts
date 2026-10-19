@@ -11,6 +11,7 @@ export function useInstallations(query: SiteQuery, live = true) {
     [error, setError] = useState(''),
     [busy, setBusy] = useState(false),
     [revision, setRevision] = useState(0);
+  const [ready, setReady] = useState(false);
   const context = useInstallationSites(mapSiteQuery(query), revision);
   const filtered = useInstallationSites(
     query,
@@ -31,6 +32,7 @@ export function useInstallations(query: SiteQuery, live = true) {
           JSON.stringify(previous) === JSON.stringify(v) ? previous : v
         );
         setError('');
+        setReady(true);
       }
     });
     loading.current = request;
@@ -79,6 +81,7 @@ export function useInstallations(query: SiteQuery, live = true) {
     }
   };
   return {
+    ready,
     sites: page.sites,
     mapSites: context.sites,
     counts: context.counts,

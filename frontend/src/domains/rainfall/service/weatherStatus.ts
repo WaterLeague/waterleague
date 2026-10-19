@@ -8,7 +8,7 @@ export function weatherStatus(value: LiveRainfall | null, districtId: string, no
   const rain = fresh.filter((s) => s.rainState === 'WET');
   const snow = fresh.filter((s) => s.rainState === 'SNOW');
   const dry = fresh.filter((s) => s.rainState === 'NO_RAIN_DETECTED');
-  const place = districtId ? (stations[0]?.districtName ?? '선택 지역') : '서울';
+  const place = districtId ? (stations[0]?.districtName ?? '선택 지역') : '서울 전체';
   const complete = stations.length === (districtId ? 1 : 25) && dry.length === stations.length;
   const kind = rain.length ? 'rain' : snow.length ? 'snow' : complete ? 'dry' : 'unknown';
   const label =

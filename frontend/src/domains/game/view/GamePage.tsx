@@ -237,6 +237,7 @@ export function GamePage() {
               aria-current={tab === id ? 'page' : undefined}
               className={tab === id ? 'active' : ''}
               onClick={() => {
+                if (id === 'city') setCityDistrict('');
                 setTab(id);
                 g.setNotice('');
               }}

@@ -50,7 +50,7 @@ export function HistoricalInstallationTrack({
   const label = (draft: HistoricalDraft) =>
     `${clock.format(new Date(draft.marker.installedAt))} ${facilities[draft.facilityType].name} · ${draft.site.name}`;
   return (
-    <div ref={track} className="historical-time-track">
+    <div ref={track} className="historical-time-track" data-has-markers={groups.length > 0}>
       {children}
       <div className="historical-track-events" aria-label="타임라인 설치 기록">
         {groups.map((group) => {
