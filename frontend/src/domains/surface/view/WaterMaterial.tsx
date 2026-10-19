@@ -3,6 +3,7 @@ import { useThree } from '@react-three/fiber';
 import { DoubleSide, ShaderMaterial, Vector2 } from 'three';
 import { calmWater, type WaterWeather } from '../service/waterAppearanceService';
 import { useWaterCapture } from './WaterScene';
+import { useUrbanLighting } from '../../urban/view/UrbanEnvironment';
 
 const waves = `
   uniform float waterTime;
@@ -11,6 +12,8 @@ const waves = `
   uniform float rain;
   uniform float natural;
   uniform float record;
+  uniform float daylightFactor;
+  uniform vec3 solarDirection;
   vec2 windAxis() { return length(wind) > 0.001 ? normalize(wind) : vec2(1.0, 0.0); }
   float waveHeight(vec2 p, float depth) {
     vec2 axis = windAxis();
@@ -144,7 +147,8 @@ const fragmentShader = `
       float clouds = smoothstep(0.0, 0.65, sin(skyRay.x * 9.0 + skyRay.z * 4.0) * cos(skyRay.z * 7.0 - skyRay.x * 3.0));
       sky = mix(sky, vec3(0.76, 0.82, 0.83), clouds * 0.45);
       sky = mix(sky, vec3(dot(sky, vec3(0.2126, 0.7152, 0.0722))), min(rain * 0.15, 0.4));
-      vec3 base = vWaterColor;
+      sky *= mix(0.045, 1.0, daylightFactor);
+      vec3 base = vWaterColor * mix(0.12, 1.0, daylightFactor);
       vec3 reflected = sky;
       float sceneReflection = 0.0;
       if (waterCaptureReady > 0.5) {
@@ -165,11 +169,11 @@ const fragmentShader = `
       }
       float reflectionWeight = mix(0.12, 0.18, natural) + fresnel * mix(0.20, 0.60, natural) + sceneReflection * natural * 0.2;
       vec3 result = mix(base, reflected, reflectionWeight);
-      vec3 sun = normalize(vec3(-0.4, 0.8, 0.35));
+      vec3 sun = normalize(solarDirection);
       float glint = pow(max(dot(reflect(-sun, normal), eye), 0.0), mix(160.0, 64.0, min(gust / 15.0, 1.0)));
       float crestLight = clamp(dot(normal, sun), 0.0, 1.0);
       result *= 0.72 + crestLight * 0.4;
-      result += glint * 0.55 + drops * resolved * 0.025;
+      result += glint * 0.55 * daylightFactor + drops * resolved * 0.025 * daylightFactor;
       result *= vFace > 0.5 ? 1.0 : 0.8;
       gl_FragColor = vec4(result, 1.0);
     }
@@ -188,6 +192,7 @@ export const WaterMaterial = memo(function WaterMaterial({
 }) {
   const invalidate = useThree((s) => s.invalidate);
   const capture = useWaterCapture();
+  const lighting = useUrbanLighting();
   const material = useMemo(() => {
     if (!capture) return null;
     return new ShaderMaterial({
@@ -199,6 +204,8 @@ export const WaterMaterial = memo(function WaterMaterial({
       side: DoubleSide,
       uniforms: {
         ...capture.uniforms,
+        daylightFactor: lighting?.day ?? { value: 1 },
+        solarDirection: lighting?.sunDirection ?? { value: [-0.4, 0.8, 0.35] },
         wind: { value: new Vector2() },
         rain: { value: 0 },
         gust: { value: 0 },
@@ -206,7 +213,7 @@ export const WaterMaterial = memo(function WaterMaterial({
         record: { value: record ? 1 : 0 },
       },
     });
-  }, [natural, record, capture]);
+  }, [natural, record, capture, lighting]);
   useEffect(() => () => material?.dispose(), [material]);
   useEffect(() => {
     if (!material) return;

@@ -621,7 +621,9 @@
     gap: 17px;
   }
   .game-shell .game-live-clock {
-    display: none;
+    display: flex;
+    padding-inline: 6px;
+    font-size: 12px;
   }
 }
 @media (max-width: 700px) {

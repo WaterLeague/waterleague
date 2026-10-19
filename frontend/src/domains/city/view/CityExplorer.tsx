@@ -3,6 +3,8 @@ import { usePublicSurfaces } from '../../surface/controller/usePublicSurfaces';
 import { PublicSurfaceControls } from '../../surface/view/PublicSurfaceControls';
 import { placementAreaLimit } from '../../installation/service/placementAreaLimit';
 import { lazy, Suspense, useEffect, useCallback, useState, useRef, useMemo } from 'react';
+import { useUrbanTime } from '../../urban/controller/useUrbanTime';
+import { useUrbanData } from '../../urban/controller/useUrbanData';
 import {
   RotateCcw,
   MapPin,
@@ -124,6 +126,7 @@ function Explorer({
     researchMode ? (account?.districtId ?? '2419953') : initialDistrictId
   );
   const research = useHistorical(researchMode, selected, account, budget.value, eventId);
+  const urbanClock = useUrbanTime(researchMode, research.at, research.playing, research.speed);
   const [rankingOpen, setRankingOpen] = useState(false);
   const ownDistrictId = researchMode && !cisternOpen ? null : account?.districtId;
   const viewerId = researchMode
@@ -231,6 +234,7 @@ function Explorer({
     distance: 35000,
   });
   const navigationCamera = useRef(camera);
+  const urban = useUrbanData(camera.center, camera.distance);
   const traces = useFloodTraces(true, researchMode ? eventId : comparisonEventId, camera);
   const eligibleRoofs = useMemo(
     () => unreservedRoofIds(eligibility.roofIds, infrastructure.catalog?.assets ?? null),
@@ -594,6 +598,7 @@ function Explorer({
   );
   const plan = (
     <CityPlan
+      streets={urban.roads}
       preview={preview}
       surfaceFrame={surface.frame}
       publicSurfaceFrames={publicSurface.frames}
@@ -813,6 +818,9 @@ function Explorer({
                 }
               >
                 <CityScene
+                  urbanClock={urbanClock}
+                  streets={urban.roads}
+                  population={urban.population}
                   surfaceFrame={surface.frame}
                   publicSurfaceFrames={publicSurface.frames}
                   surfaceMetric={surfaceMetric}
@@ -1309,6 +1317,15 @@ function Explorer({
             ? '계산 침수는 원 수심의 상대 높이·색상 표시 · 실제 수면 표고 아님'
             : '침수 깊이 표시 아님'}
           {' · 물결은 기상 기반 시각 효과 · 하천 실측 유속 아님'}
+          {' · 태양: 서울 좌표·재생 시각의 천문 계산 · 창문·가로등·차량·보행자: 게임 연출'}
+          {researchMode
+            ? eventId === 'seoul-20220808'
+              ? ' · 인구 밀도: 2022-08-08~09 시간대별 생활인구(내국인)'
+              : ' · 해당 사건의 시간대별 인구 미확보: 일반 교통·보행 연출'
+            : ' · 인구 밀도: 2025 요일·시간대 생활인구 참고값 · 실시간 인구 미연결'}
+          {' · 도로 폭 결측·보도·교량 높이는 표시 가정 · 과거 도로망 복원 아님'}
+          {urban.error && ` · ${urban.error}`}
+          {urban.populationError && ` · ${urban.populationError}`}
           {assetsEnabled &&
             ' · 시설 위치: 서울특별시·강서구 / 공공누리 제1유형 · 시설 경계: OpenStreetMap / ODbL 1.0'}
           {terrain && (

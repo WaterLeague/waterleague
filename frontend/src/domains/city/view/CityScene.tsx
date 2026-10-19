@@ -52,6 +52,11 @@ import { RiverLayer } from '../../surface/view/RiverLayer';
 import { WaterScene } from '../../surface/view/WaterScene';
 import { calmWater, type WaterWeather } from '../../surface/service/waterAppearanceService';
 import type { CisternGeometryPreview } from '../../installation/dto/cisternLayoutDto';
+import type { Street, UrbanTime, Population } from '../../urban/entity/urban';
+import { UrbanEnvironment } from '../../urban/view/UrbanEnvironment';
+import { BuildingMaterial } from '../../urban/view/BuildingMaterial';
+import { StreetLayer } from '../../urban/view/StreetLayer';
+import { StreetLife } from '../../urban/view/StreetLife';
 const TerrainContext = createContext<Terrain | null>(null);
 const mapEvents: Parameters<typeof Canvas>[0]['events'] = (state) => ({
   ...events(state),
@@ -122,6 +127,8 @@ function Buildings({
   return geometry ? (
     <mesh
       geometry={geometry}
+      castShadow
+      receiveShadow
       raycast={rendered!.raycast}
       rotation={[-Math.PI / 2, 0, 0]}
       onClick={(event) => {
@@ -133,13 +140,7 @@ function Buildings({
         }
       }}
     >
-      <meshStandardMaterial
-        color="#d9d8cb"
-        roughness={0.85}
-        transparent={opacity < 1}
-        opacity={opacity}
-        depthWrite={opacity === 1}
-      />
+      <BuildingMaterial opacity={opacity} />
     </mesh>
   ) : null;
 }
@@ -203,27 +204,15 @@ function Lines({
     g.setAttribute('position', new THREE.Float32BufferAttribute(points, 3));
     return g;
   }, [city, terrain]);
-  const roads = useMemo(() => {
-    const points: number[] = [];
-    for (const road of city.roads)
-      terrainLine(terrain, road.coordinates, 3).forEach((value) => points.push(value));
-    const g = new THREE.BufferGeometry();
-    g.setAttribute('position', new THREE.Float32BufferAttribute(points, 3));
-    return g;
-  }, [city, terrain]);
   useEffect(
     () => () => {
       geometry.dispose();
-      roads.dispose();
     },
-    [geometry, roads]
+    [geometry]
   );
   const district = city.districts.find((d) => d.id === selected);
   return (
     <>
-      <lineSegments geometry={roads}>
-        <lineBasicMaterial color="#bfc3b4" transparent opacity={0.65} />
-      </lineSegments>
       <lineSegments geometry={geometry}>
         <lineBasicMaterial color="#889b81" transparent opacity={0.65} />
       </lineSegments>
@@ -376,6 +365,9 @@ function ProjectedLabels({
   return null;
 }
 const CityScene = memo(function CityScene({
+  urbanClock,
+  streets,
+  population,
   waterWeather = calmWater,
   surfaceFrame = null,
   publicSurfaceFrames = [],
@@ -414,6 +406,9 @@ const CityScene = memo(function CityScene({
   planningRoles,
   cisternGeometry,
 }: {
+  urbanClock: UrbanTime;
+  streets: Street[];
+  population: Population | null;
   cisternGeometry?: CisternGeometryPreview | null;
   planningRoles?: ReadonlyMap<string, CisternSiteRole>;
   surfaceFrame?: SurfaceFrame | null;
@@ -463,6 +458,7 @@ const CityScene = memo(function CityScene({
   );
   return (
     <Canvas
+      shadows
       events={mapEvents}
       frameloop="demand"
       dpr={[1, 1.5]}
@@ -470,220 +466,232 @@ const CityScene = memo(function CityScene({
       gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
     >
       <TerrainContext.Provider value={terrain}>
-        <WaterScene animate={animateRain}>
-          <InfrastructureFootprints
-            assets={facilityType ? [] : publicAssets}
-            selectedId={selectedAssetId}
-            terrain={terrain}
-            onSelect={onAsset}
-          />
-          <FloodTraceLayer
-            tiles={traceTiles}
-            terrain={terrain}
-            onError={onTraceError}
-            weather={waterWeather}
-          />
-          <SurfaceLayer
-            frame={surfaceFrame}
-            metric={surfaceMetric}
-            terrain={terrain}
-            onError={onSurfaceError}
-            weather={waterWeather}
-          />
-          {!surfaceFrame &&
-            publicSurfaceFrames.map((value) => (
-              <SurfaceLayer
-                key={value.id}
-                frame={value.frame}
-                metric={surfaceMetric}
-                terrain={terrain}
-                onError={onSurfaceError}
-                weather={waterWeather}
-              />
-            ))}
-          <InfrastructureMarkers
-            distance={rainCamera.distance}
-            assets={facilityType ? [] : publicAssets}
-            selectedId={selectedAssetId}
-            terrain={terrain}
-            onSelect={onAsset}
-          />
-          <color attach="background" args={['#bac5c5']} />
-          <ambientLight intensity={1.5} />
-          <directionalLight position={[-20000, 30000, 10000]} intensity={2.2} />
-          {terrain ? (
-            <TerrainSurface terrain={terrain} ownDistrictId={ownDistrictId} selected={selected} />
-          ) : ownDistrictId ? (
-            city.districts.map((d) => (
-              <Surface
-                key={d.id}
-                polygons={d.polygons}
-                color={d.id === ownDistrictId ? '#a3c884' : '#bccbb0'}
-                opacity={d.id === ownDistrictId ? 1 : otherDistrictOpacity}
-              />
-            ))
-          ) : (
-            <Surface polygons={city.boundary} color="#dfe3cf" />
-          )}
-          <Lines city={city} selected={selected} ownDistrictId={ownDistrictId} />
-          <RiverLayer city={city} terrain={terrain} weather={waterWeather} />
-          {!terrain &&
-            city.surfaces
-              .filter((s) => s.kind !== 'water')
-              .map((s, i) => (
-                <Surface
-                  key={i}
-                  polygons={s.polygons}
-                  color={s.kind === 'water' ? '#81b1ba' : '#b4c8a3'}
-                  height={s.kind === 'water' ? 4 : 2}
+        <UrbanEnvironment clock={urbanClock}>
+          <WaterScene animate={animateRain}>
+            <InfrastructureFootprints
+              assets={facilityType ? [] : publicAssets}
+              selectedId={selectedAssetId}
+              terrain={terrain}
+              onSelect={onAsset}
+            />
+            <FloodTraceLayer
+              tiles={traceTiles}
+              terrain={terrain}
+              onError={onTraceError}
+              weather={waterWeather}
+            />
+            <SurfaceLayer
+              frame={surfaceFrame}
+              metric={surfaceMetric}
+              terrain={terrain}
+              onError={onSurfaceError}
+              weather={waterWeather}
+            />
+            {!surfaceFrame &&
+              publicSurfaceFrames.map((value) => (
+                <SurfaceLayer
+                  key={value.id}
+                  frame={value.frame}
+                  metric={surfaceMetric}
+                  terrain={terrain}
+                  onError={onSurfaceError}
+                  weather={waterWeather}
                 />
               ))}
-          <DistrictBuildings
-            publicBuildings={publicBuildings}
-            facilityType={facilityType}
-            eligibleRoofs={eligibleRoofs}
-            occupiedRoofs={occupiedRoofs}
-            buildings={city.overviewBuildings}
-            city={city}
-            ownDistrictId={ownDistrictId}
-            onBuilding={onBuilding}
-          />
-          {tiles.map((t) => (
-            <DetailBuildings
+            <InfrastructureMarkers
+              distance={rainCamera.distance}
+              assets={facilityType ? [] : publicAssets}
+              selectedId={selectedAssetId}
+              terrain={terrain}
+              onSelect={onAsset}
+            />
+            {terrain ? (
+              <TerrainSurface terrain={terrain} ownDistrictId={ownDistrictId} selected={selected} />
+            ) : ownDistrictId ? (
+              city.districts.map((d) => (
+                <Surface
+                  key={d.id}
+                  polygons={d.polygons}
+                  color={d.id === ownDistrictId ? '#a3c884' : '#bccbb0'}
+                  opacity={d.id === ownDistrictId ? 1 : otherDistrictOpacity}
+                />
+              ))
+            ) : (
+              <Surface polygons={city.boundary} color="#dfe3cf" />
+            )}
+            <Lines city={city} selected={selected} ownDistrictId={ownDistrictId} />
+            <StreetLayer roads={streets} terrain={terrain} detail={rainCamera.distance < 4500} />
+            <StreetLife
+              roads={streets}
+              terrain={terrain}
+              center={rainCamera.center}
+              distance={rainCamera.distance}
+              clock={urbanClock}
+              population={population}
+              city={city}
+              animate={animateRain}
+            />
+            <RiverLayer city={city} terrain={terrain} weather={waterWeather} />
+            {!terrain &&
+              city.surfaces
+                .filter((s) => s.kind !== 'water')
+                .map((s, i) => (
+                  <Surface
+                    key={i}
+                    polygons={s.polygons}
+                    color={s.kind === 'water' ? '#81b1ba' : '#b4c8a3'}
+                    height={s.kind === 'water' ? 4 : 2}
+                  />
+                ))}
+            <DistrictBuildings
               publicBuildings={publicBuildings}
-              exclude={overviewIds}
               facilityType={facilityType}
-              key={t.id}
               eligibleRoofs={eligibleRoofs}
               occupiedRoofs={occupiedRoofs}
-              buildings={t.buildings}
-              onBuilding={onBuilding}
+              buildings={city.overviewBuildings}
               city={city}
               ownDistrictId={ownDistrictId}
+              onBuilding={onBuilding}
             />
-          ))}
-          {ownDistrictId &&
-            city.districts
-              .find((d) => d.id === ownDistrictId)
-              ?.polygons.flatMap((p, i) =>
-                p.map((ring, j) => (
-                  <Line
-                    key={`${i}:${j}`}
-                    segments
-                    points={terrainLine(terrain, ring, 8).reduce<[number, number, number][]>(
-                      (out, value, index, values) => {
-                        if (index % 3 === 0)
-                          out.push([value, values[index + 1], values[index + 2]]);
-                        return out;
-                      },
-                      []
-                    )}
-                    color="#345d35"
-                    lineWidth={2.6}
-                  />
-                ))
-              )}
-          {sites
-            .filter((site) => site.districtId === selected || installationBySite.has(siteKey(site)))
-            .map((site) => {
-              const installed = installationBySite.get(siteKey(site));
-              const opacity = buildingOpacity(
-                !site.existingInfrastructure &&
-                  (planningRoles?.has(siteKey(site)) ||
-                    !facilityType ||
-                    site.allowedTypes.includes(facilityType)) &&
-                  (!installed || installed.ownerId !== viewerId),
-                !!ownDistrictId && site.districtId !== ownDistrictId
-              );
-              return (
-                <group key={siteKey(site)}>
-                  <SiteSurface
-                    site={site}
-                    color={
-                      site.districtId === selected && site.cellId === selectedSite
-                        ? '#ffd56d'
-                        : planningRoles?.has(siteKey(site))
-                          ? cisternSiteColors[planningRoles.get(siteKey(site))!]
-                          : installed
-                            ? '#367c51'
-                            : site.kind === 'ROOF'
-                              ? '#d9d8cb'
-                              : '#b6c3ab'
-                    }
-                    opacity={opacity}
-                    onClick={() => onSite(siteKey(site))}
-                  />
-                  {installed && (
-                    <FacilityMesh
-                      cell={{
-                        ...site,
-                        heightM:
-                          terrainHeight(terrain, site.center) +
-                          (site.kind === 'ROOF' ? site.heightM : 0.2),
-                      }}
-                      placement={installed}
-                      preview={false}
-                      opacity={opacity}
-                      onSelect={() => onSite(siteKey(site))}
+            {tiles.map((t) => (
+              <DetailBuildings
+                publicBuildings={publicBuildings}
+                exclude={overviewIds}
+                facilityType={facilityType}
+                key={t.id}
+                eligibleRoofs={eligibleRoofs}
+                occupiedRoofs={occupiedRoofs}
+                buildings={t.buildings}
+                onBuilding={onBuilding}
+                city={city}
+                ownDistrictId={ownDistrictId}
+              />
+            ))}
+            {ownDistrictId &&
+              city.districts
+                .find((d) => d.id === ownDistrictId)
+                ?.polygons.flatMap((p, i) =>
+                  p.map((ring, j) => (
+                    <Line
+                      key={`${i}:${j}`}
+                      segments
+                      points={terrainLine(terrain, ring, 8).reduce<[number, number, number][]>(
+                        (out, value, index, values) => {
+                          if (index % 3 === 0)
+                            out.push([value, values[index + 1], values[index + 2]]);
+                          return out;
+                        },
+                        []
+                      )}
+                      color="#345d35"
+                      lineWidth={2.6}
                     />
-                  )}
-                </group>
-              );
-            })}
-          {cisternGeometry && <CisternLayoutMesh geometry={cisternGeometry} terrain={terrain} />}
-          {preview && (
-            <FacilityMesh
-              cell={{
-                ...preview.site,
-                heightM:
-                  terrainHeight(terrain, preview.site.center) +
-                  (preview.site.kind === 'ROOF' ? preview.site.heightM : 0.2),
-              }}
-              placement={preview.placement}
-              preview
-              opacity={
-                !ownDistrictId || preview.site.districtId === ownDistrictId
-                  ? 1
-                  : otherDistrictOpacity
-              }
-              onSelect={() => onSite(siteKey(preview.site))}
-            />
-          )}
-          <InstallationSymbols
-            installations={symbols}
-            selectedKey={`${selected}:${selectedSite}`}
-            ownDistrictId={ownDistrictId}
-            terrain={terrain}
-            onSelect={onSite}
-          />
-          <LiveRainScene
-            externalClock
-            districts={wetDistricts}
-            amounts={rainAmounts}
-            center={rainCamera.center}
-            distance={rainCamera.distance}
-            animate={animateRain}
-            terrain={terrain}
-          />
-          <ProjectedLabels city={city} regions={regions} labels={labels} selected={selected} />
-          {!facilityType && (
-            <InstallationNameplates
-              center={rainCamera.center}
-              installations={installations}
-              terrain={terrain}
+                  ))
+                )}
+            {sites
+              .filter(
+                (site) => site.districtId === selected || installationBySite.has(siteKey(site))
+              )
+              .map((site) => {
+                const installed = installationBySite.get(siteKey(site));
+                const opacity = buildingOpacity(
+                  !site.existingInfrastructure &&
+                    (planningRoles?.has(siteKey(site)) ||
+                      !facilityType ||
+                      site.allowedTypes.includes(facilityType)) &&
+                    (!installed || installed.ownerId !== viewerId),
+                  !!ownDistrictId && site.districtId !== ownDistrictId
+                );
+                return (
+                  <group key={siteKey(site)}>
+                    <SiteSurface
+                      site={site}
+                      color={
+                        site.districtId === selected && site.cellId === selectedSite
+                          ? '#ffd56d'
+                          : planningRoles?.has(siteKey(site))
+                            ? cisternSiteColors[planningRoles.get(siteKey(site))!]
+                            : installed
+                              ? '#367c51'
+                              : site.kind === 'ROOF'
+                                ? '#d9d8cb'
+                                : '#b6c3ab'
+                      }
+                      opacity={opacity}
+                      onClick={() => onSite(siteKey(site))}
+                    />
+                    {installed && (
+                      <FacilityMesh
+                        cell={{
+                          ...site,
+                          heightM:
+                            terrainHeight(terrain, site.center) +
+                            (site.kind === 'ROOF' ? site.heightM : 0.2),
+                        }}
+                        placement={installed}
+                        preview={false}
+                        opacity={opacity}
+                        onSelect={() => onSite(siteKey(site))}
+                      />
+                    )}
+                  </group>
+                );
+              })}
+            {cisternGeometry && <CisternLayoutMesh geometry={cisternGeometry} terrain={terrain} />}
+            {preview && (
+              <FacilityMesh
+                cell={{
+                  ...preview.site,
+                  heightM:
+                    terrainHeight(terrain, preview.site.center) +
+                    (preview.site.kind === 'ROOF' ? preview.site.heightM : 0.2),
+                }}
+                placement={preview.placement}
+                preview
+                opacity={
+                  !ownDistrictId || preview.site.districtId === ownDistrictId
+                    ? 1
+                    : otherDistrictOpacity
+                }
+                onSelect={() => onSite(siteKey(preview.site))}
+              />
+            )}
+            <InstallationSymbols
+              installations={symbols}
               selectedKey={`${selected}:${selectedSite}`}
-              viewerId={viewerId}
-              distance={rainCamera.distance}
+              ownDistrictId={ownDistrictId}
+              terrain={terrain}
               onSelect={onSite}
             />
-          )}
-          <Controls
-            focus={focus}
-            bounds={city.bounds}
-            onCamera={onCamera}
-            onUnavailable={onUnavailable}
-          />
-        </WaterScene>
+            <LiveRainScene
+              externalClock
+              districts={wetDistricts}
+              amounts={rainAmounts}
+              center={rainCamera.center}
+              distance={rainCamera.distance}
+              animate={animateRain}
+              terrain={terrain}
+            />
+            <ProjectedLabels city={city} regions={regions} labels={labels} selected={selected} />
+            {!facilityType && (
+              <InstallationNameplates
+                center={rainCamera.center}
+                installations={installations}
+                terrain={terrain}
+                selectedKey={`${selected}:${selectedSite}`}
+                viewerId={viewerId}
+                distance={rainCamera.distance}
+                onSelect={onSite}
+              />
+            )}
+            <Controls
+              focus={focus}
+              bounds={city.bounds}
+              onCamera={onCamera}
+              onUnavailable={onUnavailable}
+            />
+          </WaterScene>
+        </UrbanEnvironment>
       </TerrainContext.Provider>
     </Canvas>
   );

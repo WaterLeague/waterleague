@@ -31,8 +31,10 @@ import { SurfacePlan } from '../../surface/view/SurfaceLayer';
 import type { SurfaceFrame, SurfaceMetric } from '../../surface/entity/surface';
 import { CisternLayoutPlan } from '../../installation/view/CisternLayoutPlan';
 import type { CisternGeometryPreview } from '../../installation/dto/cisternLayoutDto';
+import type { Street } from '../../urban/entity/urban';
 
 type Props = {
+  streets: Street[];
   cisternGeometry?: CisternGeometryPreview | null;
   planningRoles?: ReadonlyMap<string, CisternSiteRole>;
   preview?: { site: SharedSite; placement: Placement } | null;
@@ -69,6 +71,7 @@ type Props = {
   rainAmounts: ReadonlyMap<string, number | null>;
 };
 export const CityPlan = memo(function CityPlan({
+  streets,
   preview = null,
   surfaceFrame = null,
   publicSurfaceFrames = [],
@@ -120,12 +123,19 @@ export const CityPlan = memo(function CityPlan({
     () => ({
       boundary: polygonPath(city.boundary),
       districts: new Map(city.districts.map((d) => [d.id, polygonPath(d.polygons)])),
-      roads: city.roads
-        .map((r) => r.coordinates.map(([x, y], i) => `${i ? 'L' : 'M'}${x},${-y}`).join(' '))
-        .join(' '),
       surfaces: city.surfaces.map((s) => ({ kind: s.kind, path: polygonPath(s.polygons) })),
     }),
     [city]
+  );
+  const roadPaths = useMemo(
+    () =>
+      streets.map((r) => ({
+        id: r.id,
+        width: r.widthM,
+        walk: r.walk,
+        path: r.coordinates.map(([x, y], i) => `${i ? 'L' : 'M'}${x},${-y}`).join(' '),
+      })),
+    [streets]
   );
   const publicBuildings = useMemo(
     () => publicInfrastructureBuildingIds(publicAssets),
@@ -313,14 +323,16 @@ export const CityPlan = memo(function CityPlan({
       {paths.surfaces.map((s, i) => (
         <path key={i} d={s.path} fill={s.kind === 'water' ? '#81b1ba' : '#b4c8a3'} />
       ))}
-      <path
-        d={paths.roads}
-        fill="none"
-        stroke="#bfc3b4"
-        strokeWidth={1}
-        vectorEffect="non-scaling-stroke"
-        pointerEvents="none"
-      />
+      <g fill="none" pointerEvents="none" strokeLinecap="round" strokeLinejoin="round">
+        {roadPaths.map((r) => (
+          <path
+            key={r.id}
+            d={r.path}
+            stroke={r.walk ? '#b3ae9f' : '#667071'}
+            strokeWidth={r.width}
+          />
+        ))}
+      </g>
       {showLabels &&
         city.districts.map((d) => (
           <text

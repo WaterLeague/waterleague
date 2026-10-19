@@ -1,0 +1,16 @@
+{
+  "provider": "서울특별시",
+  "sourcePage": "https://data.seoul.go.kr/dataList/OA-15439/F/1/datasetView.do",
+  "endpoint": "https://datafile.seoul.go.kr/bigfile/iot/inf/nio_download.do?&useCache=false",
+  "method": "POST",
+  "parameters": {
+    "infId": "OA-15439",
+    "seqNo": "",
+    "seq": "9",
+    "infSeq": "3"
+  },
+  "filename": "seoul-people-2025.zip",
+  "sha256": "6485fb710154ad9aa412203f038bfe9d5b0999b445ea57fb3759f8adf427681a",
+  "bytes": 32988333,
+  "acquiredAt": "2026-10-19T08:44:28.214109+00:00"
+}
