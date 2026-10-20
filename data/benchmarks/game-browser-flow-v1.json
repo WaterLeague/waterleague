@@ -1,0 +1,116 @@
+{
+  "schemaVersion": 1,
+  "verifiedAt": "2026-10-20T16:27:55Z",
+  "implementationCommit": "422433597bb38753dace8ee40a6e1f7022f689c6",
+  "environment": {
+    "database": "isolated temporary PostgreSQL",
+    "api": "real packaged API",
+    "worker": "real SWMM worker",
+    "browser": "Chromium in-app browser",
+    "mockedObservations": false,
+    "sourceDatabaseModified": false
+  },
+  "historical": {
+    "eventId": "seoul-20220808",
+    "districtId": "11680",
+    "membershipDistrictId": "11200",
+    "facilityType": "GREEN_ROOF",
+    "areaM2": "20",
+    "costKRW": "7000000.00",
+    "designRevisionCount": 1,
+    "successfulFinalSubmissionCount": 2,
+    "requestInputHashes": [
+      "f93cd123b68ae1b44b4ce1d2988de7fa65c77185e3c501722409782f5071f831",
+      "60502885630f33a6d7da3f236f10a381e94763a63c5bd0053700d3e3c17d9a9e"
+    ],
+    "requestHashDifference": "Separate submission request keys preserved in request lineage.",
+    "byteIdenticalResubmissionFiles": [
+      "submission-design.json",
+      "11680/0/baseline.inp",
+      "11680/0/strategy.inp",
+      "11680/0/baseline.out",
+      "11680/0/strategy.out",
+      "11680/0/result.json"
+    ],
+    "sameExactScoreM3": "-0.000225653978418450",
+    "comparisonGroupHash": "eb1435b0174833dcee9282bda70bf4ee5080954d887341c955753924daadd5f7",
+    "scorePolicySha256": "1dd9440ce55aee1e8cddd072c0d69f2449c39ac8f7d6164ab722a9e82a7adc18",
+    "bundleFileCount": 108,
+    "bundleSha256": "c8534ce789659a41006d11ab8d553c2593d52b99a41bd6b005f1bc260b9108ae",
+    "allBundleHashesMatched": true,
+    "archiveFiles": {
+      "result.json": "33467895d475079d22d1d31e16b7418c392b58cab5a64d9844a5bb8c688b8b5b",
+      "submission-design.json": "eef06acb82bb946d91c59a4287fe7d340e497e868688b2270bc7f8dcbd25871a",
+      "score-context.json": "94e1fdf31e8c8bec3531c442ba96316210003de93c9dd85b20f2ea6f3a5751d3",
+      "11680/0/baseline.out": "c88a7ec1d481a4298e7faf34dc9ce48b4f95d6dadb93e3f5d91f5f3e04650839",
+      "11680/0/strategy.out": "2d32d75dd180ea9f84ddea55a57de357306fa4575b955527acef308db6e1eccc"
+    },
+    "reloadRestoredRevisionAndPlacement": true,
+    "separateResubmissionSameResult": true,
+    "requestKeyRetryIdempotencyTested": false,
+    "rankingVisibleInBrowser": true,
+    "apiDatabaseBundleLeaderboardExactScoreMatched": true,
+    "leaderboardBestEntryCount": 1
+  },
+  "weekly": {
+    "installation": {
+      "installed_at": "2026-10-21 01:22:02+09:00",
+      "area_m2": "20.00",
+      "cost": "7000000.00",
+      "district_id": "11200",
+      "physics_policy": "INSTALLATION_SECOND_V2",
+      "cell_id": "C289db0ff5ce17e109813d348"
+    },
+    "jobs": [
+      {
+        "state": "FAILED",
+        "error_code": "KMA_UNAVAILABLE",
+        "simulation_start": "2026-10-21 01:22:00+09:00",
+        "requested_through": "2026-10-21 01:23:00+09:00",
+        "input_hash": null
+      }
+    ],
+    "scoreRows": [],
+    "browserSourceUnavailableAndUncalculated": true,
+    "successfulCalculationVerified": false
+  },
+  "security": {
+    "anonymousMemberBundleStatus": 401,
+    "missingCsrfWriteStatus": 403
+  },
+  "limitations": [
+    "Single local browser and one green roof per mode; not target-device performance certification.",
+    "Direct-rain independent-surface model; no connected Seoul catchment or cistern installation.",
+    "Dry live observation is not a wet-weather field-validation claim.",
+    "Re-submission uses separate request keys; does not replace existing concurrent idempotency tests.",
+    "Weekly first calculation failed KMA_UNAVAILABLE; no zero replacement, fabricated observation, score or rank."
+  ],
+  "status": "HISTORICAL_BROWSER_PASSED_WEEKLY_SOURCE_UNAVAILABLE",
+  "cleanup": {
+    "databaseDropped": true,
+    "sourceCountsUnchanged": true,
+    "processesStopped": true
+  },
+  "evidence": {
+    "historical-submitted.png": {
+      "path": "tmp/game-browser-flow-v1/historical-submitted.png",
+      "sha256": "cc2adc304176650d9ff258436763f51ceef85f97cced17f6c7089c80b3caf462"
+    },
+    "historical-leaderboard.png": {
+      "path": "tmp/game-browser-flow-v1/historical-leaderboard.png",
+      "sha256": "21287517c5a85b64c7c1c8088110bb9d7a7b9a91755dcc11dd65fd560da33855"
+    },
+    "weekly-source-unavailable.png": {
+      "path": "tmp/game-browser-flow-v1/weekly-source-unavailable.png",
+      "sha256": "31a8db2c9c6a3cf362d74bbb3e0d9ccb4676263dbc3f525e640ddcc3025d9f55"
+    },
+    "verify.py": {
+      "path": "tmp/game-browser-flow-v1/verify.py",
+      "sha256": "cc146ae681446255658b832a5b69c62b96f74ee3d289def0858dd830ef546478"
+    },
+    "run.py": {
+      "path": "tmp/game-browser-flow-v1/run.py",
+      "sha256": "0da00b4de58e195dfe9dbd73f11dcfd3399ca10a1acdc7fff45e29e752d767df"
+    }
+  }
+}
