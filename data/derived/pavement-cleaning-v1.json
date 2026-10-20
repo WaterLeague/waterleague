@@ -1,0 +1,148 @@
+{
+  "schemaVersion": 1,
+  "id": "WINSTON_PICP_CLEANING_OBSERVATIONS_V1",
+  "classification": "PUBLISHED_FIELD_OBSERVATIONS_NOT_SEOUL_PREDICTION",
+  "source": {
+    "title": "투수포장 청소 전후 현장 침투시험 · Winston 외",
+    "doi": "10.1016/j.jenvman.2015.12.026",
+    "url": "https://repository.library.noaa.gov/view/noaa/57786",
+    "pdfUrl": "https://repository.library.noaa.gov/view/noaa/57786/noaa_57786_DS1.pdf",
+    "sha256": "9a9c9a4874d604b60c18f578edb28f02f00ee849f0dbcfba3ae53d1c61a9ce08",
+    "documentYear": 2016,
+    "version": "ACCEPTED_MANUSCRIPT",
+    "table": 3,
+    "pdfPages": [
+      26,
+      27,
+      29,
+      30
+    ]
+  },
+  "material": "PERMEABLE_INTERLOCKING_CONCRETE_PAVEMENT",
+  "measurement": "SURFACE_INFILTRATION_RATE",
+  "unit": "mm/min",
+  "testMethod": "ASTM_C1781_SINGLE_RING_CONSTANT_HEAD",
+  "pairs": [
+    {
+      "id": "PINEY_WOOD_2014_NEAR",
+      "site": "Piney Wood · 미국 노스캐롤라이나",
+      "campaign": "2014 가을",
+      "location": "유입 경계에서 2m 이내",
+      "method": "REGENERATIVE_AIR",
+      "passes": 5,
+      "before": {
+        "testCount": 6,
+        "min": 1.3,
+        "max": 10.8,
+        "median": 1.76,
+        "mean": 3.43,
+        "standardDeviation": 3.69
+      },
+      "after": {
+        "testCount": 6,
+        "min": 9.4,
+        "max": 165,
+        "median": 154,
+        "mean": 111,
+        "standardDeviation": 75.4
+      },
+      "pValue": 0.0167,
+      "statisticalTest": "STUDENT_T_TEST",
+      "newConditionValue": null,
+      "maintenanceCostKrw": null
+    },
+    {
+      "id": "PINEY_WOOD_2014_FAR",
+      "site": "Piney Wood · 미국 노스캐롤라이나",
+      "campaign": "2014 가을",
+      "location": "유입 경계에서 5m 이상",
+      "method": "REGENERATIVE_AIR",
+      "passes": 1,
+      "before": {
+        "testCount": 6,
+        "min": 135,
+        "max": 315,
+        "median": 231,
+        "mean": 229,
+        "standardDeviation": 77.7
+      },
+      "after": {
+        "testCount": 6,
+        "min": 103,
+        "max": 193,
+        "median": 143,
+        "mean": 146,
+        "standardDeviation": 36.7
+      },
+      "pValue": 0.0975,
+      "statisticalTest": "STUDENT_T_TEST",
+      "newConditionValue": null,
+      "maintenanceCostKrw": null
+    },
+    {
+      "id": "WILLOUGHBY_HILLS_2014",
+      "site": "Willoughby Hills · 미국 오하이오",
+      "campaign": "2014년 7월",
+      "location": "같은 주차장 시험 지점",
+      "method": "VACUUM_TRUCK_WITH_JOINT_STONE_REPLACEMENT",
+      "passes": 1,
+      "before": {
+        "testCount": 16,
+        "min": 1.54,
+        "max": 361,
+        "median": 64.4,
+        "mean": 100,
+        "standardDeviation": 108
+      },
+      "after": {
+        "testCount": 16,
+        "min": 33.9,
+        "max": 381,
+        "median": 173,
+        "mean": 173,
+        "standardDeviation": 114
+      },
+      "pValue": 0.0148,
+      "statisticalTest": "STUDENT_T_TEST",
+      "newConditionValue": null,
+      "maintenanceCostKrw": null
+    },
+    {
+      "id": "WILLOUGHBY_HILLS_2015",
+      "site": "Willoughby Hills · 미국 오하이오",
+      "campaign": "2015년 7월",
+      "location": "같은 주차장 시험 지점",
+      "method": "VACUUM_TRUCK",
+      "passes": 3,
+      "before": {
+        "testCount": 16,
+        "min": 0.81,
+        "max": 190,
+        "median": 4.39,
+        "mean": 36.4,
+        "standardDeviation": 63.7
+      },
+      "after": {
+        "testCount": 16,
+        "min": 8.52,
+        "max": 699,
+        "median": 148,
+        "mean": 202,
+        "standardDeviation": 192
+      },
+      "pValue": 0.002,
+      "statisticalTest": "STUDENT_T_TEST",
+      "newConditionValue": null,
+      "maintenanceCostKrw": null
+    }
+  ],
+  "simulationEligible": false,
+  "rankingEligible": false,
+  "limitations": [
+    "표면 침투시험의 집계값이며 재료 투수계수·서울 선택 위치의 관측값과 구분",
+    "장소·시기·시험 구역별 전후 쌍만 비교하며 다른 재료나 현장에 회복률 전용 없음",
+    "시공 직후 동일 지점 값·관리 비용 미제공; 신설 대비 회복률·비용효율 미산정",
+    "시험 횟수는 독립 현장 수가 아니며 원 표의 중앙값·평균·범위·표준편차 보존",
+    "차이는 관측 집계의 산술 차이; 청소의 인과 효과·예측값·게임 점수로 해석하지 않음"
+  ]
+}

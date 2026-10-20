@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "status": "PASS",
+  "scope": "PICP_FIELD_CLEANING_OBSERVATION_COMPARISON",
+  "publicSourceSha256": "9a9c9a4874d604b60c18f578edb28f02f00ee849f0dbcfba3ae53d1c61a9ce08",
+  "sourceTable": 3,
+  "visuallyCheckedPdfPage": 26,
+  "derivedCatalogSha256": "69a7449d84cbdc970f056923bbc4c1b223d896098e88de3298b6aaeab157def3",
+  "pairedGroups": 4,
+  "statisticalRows": 8,
+  "frontend": {
+    "filesPassed": 138,
+    "testsPassed": 471,
+    "typecheck": "PASS",
+    "build": "PASS",
+    "format": "PASS"
+  },
+  "container": {
+    "build": "PASS",
+    "imageId": "sha256:245d34c575201a16dc626cc3bbe3fe7976902967f753b6123cac6fb1ffb6e46f"
+  },
+  "verified": [
+    "원문 표 3의 장소·시기별 전후 쌍과 통계 보존",
+    "분당·시간당 단위 환산에서 시험 횟수·증감률 불변",
+    "음수·100% 초과 변화와 0 기준값 미산정",
+    "범위 오류·중복 구역·횟수 불일치·가짜 비용/신설 상태 거부",
+    "기존 투수포장 제원·재해 막힘 결과의 정적 표시 통합",
+    "개발 모듈 HTTP 제공·API 정상 상태"
+  ],
+  "runtime": {
+    "sourceAndDerivedHashesMatch": true,
+    "developmentModules": {
+      "/src/domains/facility/view/PavementCleaningEvidence.tsx": {
+        "status": 200,
+        "sha256": "52eef7645af0e9ab56149820d89d7348c4983efddcfbccf169c5faed61efcade"
+      },
+      "/src/domains/catalog/service/dataSourceService.ts": {
+        "status": 200,
+        "sha256": "62fb6b22ef9ad9b9ee7dea06031cded9cc748d47171a949c4633c9adf7daac47"
+      }
+    },
+    "apiHealth": "UP",
+    "browserInteractionVerified": false
+  },
+  "evaluationPolicyUnchanged": true,
+  "simulationInputChanged": false,
+  "sourceFiles": {
+    "data/derived/pavement-cleaning-v1.json": "69a7449d84cbdc970f056923bbc4c1b223d896098e88de3298b6aaeab157def3",
+    "data/manifests/winston-pavement-cleaning-2016.json": "deefa7bca986b8d7002ec587a657c8951064a14fafa5db0bbd23e2b8ed8cd516",
+    "deploy/web.Dockerfile": "b899ce184e535f51171b6cc0567570874b88c08a29cb60654c8769d90be8ac99",
+    "frontend/src/domains/facility/dto/pavementCleaningDto.ts": "37601776f19674aeae8e91567f60408abfe2b3d1d8689013fed2556837057ebe",
+    "frontend/src/domains/facility/service/pavementCleaningService.ts": "f31b753cb93863aaf0d7aa90fcc48f2bcba786eade15389935ef2b83188fc720",
+    "frontend/src/domains/facility/service/pavementCleaningService.test.tsx": "4ddf2af32458ca89c9214cacc60bc88d4ec60a4527c62939073514b82fce4186",
+    "frontend/src/domains/facility/view/PavementCleaningEvidence.tsx": "03d4c093b9177bcb283ec90ff8f46778915ddde735e286e13d250a7f958af314",
+    "frontend/src/domains/facility/view/pavement-cleaning.css": "2e1d4bf9d02ac8c5814b6e2212f070b731b6965eba02d29368a5a7daee06d896",
+    "frontend/src/domains/facility/view/FacilityProfileEvidence.tsx": "7e14a7522b39b4a472e4c67e272e6c7824d591c5c50358cb98eeede438e5b3ec",
+    "frontend/src/domains/facility/view/FacilityProfileEvidence.test.tsx": "d21cff511fc865b0e3793f445a6dd863054e1c07ff82549712137ee3c72feafd",
+    "frontend/src/domains/facility/view/PavementMaintenanceEvidence.tsx": "5f87700af472ca33e250e8065336094bc69db29728615de362b5b9b5ae6f98a1",
+    "frontend/src/domains/facility/view/PavementMaintenanceEvidence.test.tsx": "5e8de9a7e8ed24650c4f5afc40bb6d003646d0b62953c321d3a76d43dc4d138e",
+    "frontend/src/domains/catalog/service/dataSourceService.ts": "bda379e17c8ff90d6ea36eb6fba15eb4290d0258bd258b622d77cb662123bbc2"
+  },
+  "logs": {
+    "tmp/pavement-cleaning-frontend-tests-v2.log": "22ad0387909aa4c4b3bec2e0ea8d0cd228b67ad5b5cfb7cd37f2b3b9a4c2e0fd",
+    "tmp/pavement-cleaning-build-v2.log": "3e62339e0ba981c09d9c88cbddcd0983bf1aefa7b636b258a2914e9369455da7",
+    "tmp/pavement-cleaning-format-v2.log": "0436657fdec5c98f990a76906345a280e420156cb2aacfa9f1053822e4f9b221",
+    "tmp/pavement-cleaning-container-v1.log": "3591d61b1f2f426414ad3b30dca5d44ccb782928dca5078bf45ef45d487ce411"
+  },
+  "limitations": [
+    "실제 브라우저 조작·레이아웃·FPS 검증 아님",
+    "서울 현장 청소 효과·재료 투수계수·신설 대비 회복률·관리비 산정 아님",
+    "P2 일반 이용조 설치·P3 연결 유역·P5 전체 관리 시나리오·P6 전체 흐름 미완료"
+  ],
+  "previousCommitCi": {
+    "commit": "e7b1fb5af2e6a5f20774dbd9932977d1de06a6fc",
+    "url": "https://github.com/WaterLeague/waterleague/actions/runs/39449232288",
+    "conclusion": "success",
+    "successfulJobs": 11
+  }
+}

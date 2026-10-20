@@ -1,0 +1,26 @@
+.pavement-cleaning-evidence {
+  margin-block: 12px;
+  min-width: 0;
+}
+.pavement-cleaning-evidence .game-select {
+  margin-block: 8px;
+}
+.pavement-cleaning-evidence table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.pavement-cleaning-evidence caption {
+  text-align: left;
+  margin-block: 8px;
+}
+.pavement-cleaning-evidence :is(th, td) {
+  padding: 6px 4px;
+  border-bottom: 1px solid #d5dfd8;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+.pavement-cleaning-evidence th:first-child {
+  text-align: left;
+}

@@ -79,3 +79,17 @@ it('실제 원형 후보의 세 침투 시설에 공통 문헌 토양 근거 표
     expect(markup).not.toContain('공개 토성군·문헌 추정');
   }
 });
+
+it('현재 투수포장의 기존 제원 상세에 청소 실측 비교 통합', () => {
+  const parsed = facilityCatalogDto.parse(currentCatalog);
+  for (const type of ['PERMEABLE_PAVEMENT', 'GREEN_ROOF'] as const) {
+    const markup = renderToStaticMarkup(
+      <FacilityProfileEvidence
+        profile={parsed.profiles[type]}
+        source={parsed.source}
+        limitations={parsed.limitations}
+      />
+    );
+    expect(markup.includes('청소 전후 현장 측정 사례')).toBe(type === 'PERMEABLE_PAVEMENT');
+  }
+});

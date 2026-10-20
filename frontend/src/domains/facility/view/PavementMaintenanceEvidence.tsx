@@ -4,6 +4,7 @@ import {
 } from '../dto/pavementMaintenanceDto';
 import { physicalAmount as amount } from '../../physics/service/physicalValueFormat';
 import type { SensitivityMetrics } from '../../physics/dto/initializationSensitivityDto';
+import { PavementCleaningEvidence } from './PavementCleaningEvidence';
 import '../../physics/view/initializationSensitivity.css';
 
 const labels = { FRESH: '새 블록', DUST_96_G: '협잡물 96g', DUST_192_G: '협잡물 192g' };
@@ -75,8 +76,8 @@ export function PavementMaintenanceEvidence({ value }: { value: PavementMaintena
         </tbody>
       </table>
       <p>
-        실제 사용 연수나 청소 효과를 예측하지 않습니다. 청소 후 회복은 근거 미확보로 미산정입니다.
-        현재 설치 설계의 비용·효과·순위에는 합산하지 않습니다.
+        실제 사용 연수나 청소 효과를 예측하지 않습니다. 이 Type-A 블록의 청소 후 회복은 근거
+        미확보로 미산정입니다. 현재 설치 설계의 비용·효과·순위에는 합산하지 않습니다.
       </p>
       <details>
         <summary>실험 조건과 출처</summary>
@@ -89,6 +90,7 @@ export function PavementMaintenanceEvidence({ value }: { value: PavementMaintena
         <code className="hash-value">입력 SHA-256: {report.inputSha256}</code>
         <code className="hash-value">문헌 SHA-256: {report.source.sha256}</code>
       </details>
+      <PavementCleaningEvidence />
     </section>
   );
 }

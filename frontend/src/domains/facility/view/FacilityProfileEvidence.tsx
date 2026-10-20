@@ -1,5 +1,6 @@
 import { Fragment, type ReactNode } from 'react';
 import type { FacilityEvidence } from '../dto/facilityDto';
+import { PavementCleaningEvidence } from './PavementCleaningEvidence';
 import './facility-evidence.css';
 
 const labels: Record<string, string> = {
@@ -105,6 +106,7 @@ export function FacilityProfileEvidence({
         </p>
       )}
       {children}
+      {profile.type === 'PP' && <PavementCleaningEvidence />}
       {limitations.map((note) => (
         <p key={note}>{note}</p>
       ))}

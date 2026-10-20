@@ -168,6 +168,12 @@ export const dataSources: DataSource[] = [
           '표 7–9의 Type-A 블록 규격·막힘 실험값. 회원 재해 화면에서 선택한 투수포장에 새 블록·협잡물 96g·192g(시료 0.16m² 기준)의 투수 조건을 별도로 비교합니다. 실제 사용 연수·현장 열화·청소 회복의 예측이나 현재 설치 설계·비용·순위 변경은 아닙니다.',
       },
       {
+        name: '투수포장 청소 전후 현장 침투시험 · Winston 외 · 2016년',
+        href: 'https://repository.library.noaa.gov/view/noaa/57786',
+        detail:
+          '미국 맞물림 콘크리트 블록 포장의 4개 시험 구역·시기별 전후 측정값. 시설 제원과 막힘 비교에서 중앙값·평균·범위·편차를 확인할 수 있습니다. 서울 현장이나 Type-A 블록의 회복률·계산 입력·관리비로 전용하지 않습니다.',
+      },
+      {
         name: '2025년 스마트 생태공장 빗물저금통 규격서 · 신영델텍',
         href: 'https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R25BK01021248&bidPbancOrd=000&fileSeq=2&fileType=',
         detail: '명목 1.5톤 · STS304 · 장비 외형 1.8×0.8×1.45m, 실제 내부 수면적·유효 용량과 구분',

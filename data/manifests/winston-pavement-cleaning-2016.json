@@ -1,0 +1,32 @@
+{
+  "id": "winston-pavement-cleaning-2016",
+  "title": "투수포장 청소 전후 현장 침투시험 · Winston 외",
+  "doi": "10.1016/j.jenvman.2015.12.026",
+  "url": "https://repository.library.noaa.gov/view/noaa/57786",
+  "pdfUrl": "https://repository.library.noaa.gov/view/noaa/57786/noaa_57786_DS1.pdf",
+  "sha256": "9a9c9a4874d604b60c18f578edb28f02f00ee849f0dbcfba3ae53d1c61a9ce08",
+  "documentYear": 2016,
+  "version": "ACCEPTED_MANUSCRIPT",
+  "table": 3,
+  "pdfPages": [
+    26,
+    27,
+    29,
+    30
+  ],
+  "publisher": "Journal of Environmental Management · NOAA 저장소",
+  "file": "data/private/facility-reference-20261021/pavement-cleaning-2016.pdf",
+  "bytes": 1032933,
+  "classification": "PUBLISHED_FIELD_OBSERVATIONS_NOT_SEOUL_PREDICTION",
+  "derivedFile": "data/derived/pavement-cleaning-v1.json",
+  "derivedSha256": "69a7449d84cbdc970f056923bbc4c1b223d896098e88de3298b6aaeab157def3",
+  "license": "Accepted manuscript · Elsevier user license https://www.elsevier.com/open-access/userlicense/1.0/",
+  "redistribution": "원문 PDF 재배포 없이 표 3의 선택한 사실·수치와 출처 보관",
+  "limitations": [
+    "표면 침투시험의 집계값이며 재료 투수계수·서울 선택 위치의 관측값과 구분",
+    "장소·시기·시험 구역별 전후 쌍만 비교하며 다른 재료나 현장에 회복률 전용 없음",
+    "시공 직후 동일 지점 값·관리 비용 미제공; 신설 대비 회복률·비용효율 미산정",
+    "시험 횟수는 독립 현장 수가 아니며 원 표의 중앙값·평균·범위·표준편차 보존",
+    "차이는 관측 집계의 산술 차이; 청소의 인과 효과·예측값·게임 점수로 해석하지 않음"
+  ]
+}
