@@ -2,7 +2,6 @@
 import json
 import os
 import re
-import signal
 import subprocess
 import sys
 import uuid
@@ -16,6 +15,7 @@ from .installation_model import resolve, with_observed_forcing
 from .ingestion import source_archive
 from .weekly import aggregate as weekly_aggregate, publish as publish_weekly, RULE, SECOND_RULE, SECOND_POLICY
 from .evaluation import score_policy
+from .job_runtime import run_process, read_result
 
 
 def encode(value):
@@ -74,9 +74,11 @@ def claim(conn):
 
 def renew(conn, job):
     # 만료된 임대의 부활 없이 실제 수집 진행마다 소유 토큰을 확인한다.
-    changed = conn.execute("""UPDATE shared_physics_jobs SET lease_until=clock_timestamp()+interval '240 seconds'
-        WHERE id=%s AND lease_token=%s AND state='RUNNING' AND lease_until>clock_timestamp()""",
-        (job['id'],job['lease_token'])).rowcount
+    with conn.transaction():
+        conn.execute('SELECT id FROM shared_physics_jobs WHERE id=%s FOR UPDATE', (job['id'],)).fetchone()
+        changed = conn.execute("""UPDATE shared_physics_jobs SET lease_until=clock_timestamp()+interval '240 seconds'
+            WHERE id=%s AND lease_token=%s AND state='RUNNING' AND lease_until>clock_timestamp()""",
+            (job['id'],job['lease_token'])).rowcount
     if changed != 1:
         raise ValueError('LIVE_LEASE_LOST')
 
@@ -220,17 +222,13 @@ def process(conn, job, root):
             (path/Path(module).name).write_bytes((Path(__file__).parent/module).read_bytes())
         env = {k: v for k, v in os.environ.items() if k in ('PATH', 'LANG', 'LC_ALL', 'LIVE_SWMM_LIBRARY','NATIVE_SPATIAL_CACHE')}
         env['PYTHONPATH'] = str(ROOT/'simulation')
-        renew(conn,job)
-        child = subprocess.Popen([sys.executable, '-m', 'waterleague_sim.run_live_job', str(path)],
-                                 env=env, start_new_session=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         try:
-            if child.wait(timeout=90) != 0:
+            if run_process([sys.executable, '-m', 'waterleague_sim.run_live_job', str(path)],
+                           env=env, timeout=90, heartbeat=lambda: renew(conn,job)) != 0:
                 raise ValueError('LIVE_ENGINE_FAILED')
         except subprocess.TimeoutExpired:
-            os.killpg(child.pid, signal.SIGKILL)
-            child.wait()
             raise ValueError('LIVE_ENGINE_TIMEOUT') from None
-        result = json.loads((path/'result.json').read_text())
+        result = read_result(path/'result.json')
         if result.get('scoreContext') != comparison_context:
             raise ValueError('LIVE_SCORE_CONTEXT_INVALID')
         score_policy.verify(comparison_context, 'WEEKLY', rule)

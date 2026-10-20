@@ -1,5 +1,5 @@
 """PostgreSQL lease 큐. 작업마다 별도 프로세스·한정 경로·fencing 적용."""
-import os,sys,time,json,subprocess,hashlib,signal
+import os,sys,time,json,subprocess,hashlib
 from pathlib import Path
 import psycopg
 from psycopg.rows import dict_row
@@ -9,11 +9,12 @@ from local_config import load
 load()
 os.umask(0o077)
 from waterleague_sim.current_model_catalog import read_current_catalog
-from waterleague_sim.queue import claim, finish, TABLES
+from waterleague_sim.queue import claim, finish, renew, TABLES
 from waterleague_sim.runtime import database_url
 from waterleague_sim.shared_physics import run_once as run_shared_physics
 from waterleague_sim.historical import process as process_historical
 from waterleague_sim.watershed import process as process_watershed
+from waterleague_sim.job_runtime import run_process, read_result
 MODELS=read_current_catalog(ROOT/'data/models')
 ARTIFACTS=Path(os.environ.get('ARTIFACTS_PATH',ROOT/'data/runs')).resolve()
 
@@ -34,14 +35,15 @@ def process(conn,job):
    return finish(conn,job,'REJECTED',None,'INPUT_INVALID')
   (path/'request.json').write_text(json.dumps(payload,ensure_ascii=False));(path/'model-source.json').write_bytes(model_bytes)
   env={k:v for k,v in os.environ.items() if k in ['PATH','LANG','LC_ALL','SWMM_LIBRARY','SIMULATION_CACHE_PATH','SIMULATION_CACHE_ENABLED']};env['PYTHONPATH']=str(ROOT/'simulation')
-  child=subprocess.Popen([sys.executable,'-m','waterleague_sim.run_job',str(path)],env=env,start_new_session=True,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
   try:
-   code=child.wait(timeout=90)
+   code=run_process([sys.executable,'-m','waterleague_sim.run_job',str(path)],env=env,timeout=90,heartbeat=lambda: renew(conn,job))
    if code==0:
-    result=json.loads((path/'result.json').read_text());result['artifactToken']=str(job['lease_token']);result['modelHash']=job['model_hash'];result['inputHash']=job['input_hash'];state='SUCCEEDED';error=None
+    result=read_result(path/'result.json');result['artifactToken']=str(job['lease_token']);result['modelHash']=job['model_hash'];result['inputHash']=job['input_hash'];state='SUCCEEDED';error=None
    else:state='FAILED';error='SIMULATION_QUALITY_OR_ENGINE_FAILURE'
   except subprocess.TimeoutExpired:
-   os.killpg(child.pid,signal.SIGKILL);child.wait();state='FAILED';error='SIMULATION_TIMEOUT'
+   state='FAILED';error='SIMULATION_TIMEOUT'
+  except (OSError,ValueError):
+   state='FAILED';result=None;error='SIMULATION_RESULT_INVALID'
  saved=finish(conn,job,state,result,error)
  print('계산 작업',job['queue_kind'],job['id'],state if saved else 'LEASE_DISCARDED',flush=True)
  return saved

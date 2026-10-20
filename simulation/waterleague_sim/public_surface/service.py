@@ -4,7 +4,6 @@ import os
 from pathlib import Path
 import re
 import shutil
-import signal
 import subprocess
 import sys
 import uuid
@@ -17,6 +16,7 @@ from waterleague_sim.forcing.observed_rainfall import utc
 from waterleague_sim.presentation.surface_playback import export_playback
 from . import repository as repo
 from .recipe import request
+from waterleague_sim.job_runtime import run_process
 
 
 def now():
@@ -74,12 +74,10 @@ def snapshot(directory,bundle,manifest):
 def run_engine(directory):
     environment={k:v for k,v in os.environ.items() if k in ('PATH','LANG','LC_ALL','HOME','TMPDIR','KMA_API_KEY')}
     environment['PYTHONPATH']=str(repo.ROOT/'simulation')
-    child=subprocess.Popen([sys.executable,'-m','waterleague_sim.public_surface.run_job',str(directory)],
-        env=environment,start_new_session=True,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
     try:
-        code=child.wait(timeout=120)
+        code=run_process([sys.executable,'-m','waterleague_sim.public_surface.run_job',str(directory)],
+                         env=environment, timeout=120)
     except subprocess.TimeoutExpired:
-        os.killpg(child.pid,signal.SIGKILL);child.wait()
         raise FloodModelError('PUBLIC_SURFACE_CALCULATION_TIMEOUT') from None
     completion=repo.decode(repo.read(directory/'completion.json',maximum=4096)) if (directory/'completion.json').exists() else {}
     require(code==0 and completion.get('status')=='SUCCEEDED', 'PUBLIC_SURFACE_CALCULATION_FAILED')

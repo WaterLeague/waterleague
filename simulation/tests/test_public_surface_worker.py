@@ -18,6 +18,7 @@ from waterleague_sim.ingestion import live
 from waterleague_sim.public_surface import repository as repo, service
 from waterleague_sim.public_surface.recipe import request, POLICY
 from waterleague_sim.public_surface.run_job import execute
+from waterleague_sim import job_runtime
 from simulation.tests.test_live_surface_rainfall import START, END, response, specification
 from simulation.tests.test_live_network_rainfall import case
 
@@ -77,13 +78,13 @@ class PublicSurfaceWorkerTests(unittest.TestCase):
                     repo.load_registry(path,repo.sha(raw))
 
     def test_native_timeout_kills_process_group_without_publishing(self):
-        with tempfile.TemporaryDirectory() as temp,patch.object(service.subprocess,'Popen') as popen,patch.object(
-                service.os,'killpg') as kill:
+        with tempfile.TemporaryDirectory() as temp,patch.object(job_runtime.subprocess,'Popen') as popen,patch.object(
+                job_runtime.os,'killpg') as kill, patch.object(job_runtime.time,'monotonic',side_effect=[0,0,121]):
             child=popen.return_value;child.pid=123456
             child.wait.side_effect=[subprocess.TimeoutExpired('native',120),-9]
             with self.assertRaisesRegex(FloodModelError,'CALCULATION_TIMEOUT'):
                 service.run_engine(Path(temp).resolve())
-            kill.assert_called_once_with(child.pid,service.signal.SIGKILL)
+            kill.assert_called_once_with(child.pid,job_runtime.signal.SIGKILL)
             self.assertEqual(list(Path(temp).iterdir()),[])
             self.assertTrue(popen.call_args.kwargs['start_new_session'])
             self.assertNotIn('DB_PASSWORD',popen.call_args.kwargs['env'])

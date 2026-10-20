@@ -67,3 +67,16 @@ def finish(conn, job, state, result, error):
             """).format(table(job['queue_kind'])),
             (state, encoded, error, job['id'], job['lease_token'])).rowcount
     return count == 1
+
+
+def renew(conn, job):
+    with conn.transaction():
+        # 행 잠금 대기 중 만료된 임대는 새 유효기간으로 되살리지 않는다.
+        conn.execute(sql.SQL('SELECT id FROM {} WHERE id=%s FOR UPDATE')
+                     .format(table(job['queue_kind'])), (job['id'],)).fetchone()
+        changed = conn.execute(sql.SQL("""
+            UPDATE {} SET lease_until=clock_timestamp()+interval '180 seconds'
+            WHERE id=%s AND state='RUNNING' AND lease_token=%s AND lease_until>clock_timestamp()
+            """).format(table(job['queue_kind'])), (job['id'], job['lease_token'])).rowcount
+    if changed != 1:
+        raise ValueError('WORKER_LEASE_LOST')

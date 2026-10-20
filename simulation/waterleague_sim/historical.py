@@ -1,15 +1,14 @@
 """과거 강우 연구 계산 프로세스의 제한 실행·임대 결과 게시."""
 import json
 import os
-import signal
 import subprocess
 import sys
-import time
 from decimal import Decimal
 from pathlib import Path
 from .engine.continuous import ROOT
-from .queue import finish
+from .queue import finish, renew
 from .evaluation import score_policy
+from .job_runtime import run_process, read_result
 
 
 def process(conn, job, artifacts):
@@ -32,35 +31,19 @@ def process(conn, job, artifacts):
             request['scoreContext'] = score_policy.freeze('SUBMISSION', head['submissionRulesHash'])
             (path/'request.json').write_text(json.dumps(request, ensure_ascii=False)+'\n')
         module = 'run_historical_submission' if submission else 'run_historical_job'
-        child = subprocess.Popen([sys.executable,'-m','waterleague_sim.'+module,str(path)],
-            env=env,start_new_session=True,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
-        deadline = time.monotonic() + (600 if submission else 90)
-        while True:
-            try:
-                code = child.wait(timeout=min(30, max(.01,deadline-time.monotonic())))
-                break
-            except subprocess.TimeoutExpired:
-                if time.monotonic() >= deadline:
-                    raise
-                with conn.transaction():
-                    renewed = conn.execute("UPDATE historical_experiments SET lease_until=clock_timestamp()+interval '180 seconds'"
-                        " WHERE id=%s AND state='RUNNING' AND lease_token=%s AND lease_until>clock_timestamp()",
-                        (job['id'],job['lease_token'])).rowcount
-                if renewed != 1:
-                    os.killpg(child.pid,signal.SIGKILL); child.wait()
-                    return False
+        code = run_process([sys.executable,'-m','waterleague_sim.'+module,str(path)],
+                           env=env, timeout=600 if submission else 90, heartbeat=lambda: renew(conn, job))
         if code == 0:
-            result = json.loads((path/'result.json').read_text())
+            result = read_result(path/'result.json')
             if submission:
                 context = score_policy.verify(result.get('scoreContext'), 'SUBMISSION', head['submissionRulesHash'])
-                if context != request['scoreContext'] or result['rankingScoreM3Exact'] != format(score_policy.quantize(result['differenceM3'], 18), 'f'):
+                if (context != request['scoreContext'] or result.get('rulesHash') != head['submissionRulesHash']
+                        or result['rankingScoreM3Exact'] != format(score_policy.quantize(result['differenceM3'], 18), 'f')):
                     raise ValueError('LIVE_SCORE_CONTEXT_INVALID')
             error = None
     except subprocess.TimeoutExpired:
-        os.killpg(child.pid,signal.SIGKILL)
-        child.wait()
         error = 'HISTORICAL_ENGINE_TIMEOUT'
-    except (OSError,ValueError):
+    except (OSError,ValueError,KeyError,IndexError,TypeError):
         result, error = None, 'HISTORICAL_RESULT_INVALID'
     with conn.transaction():
         published = finish(conn,job,'SUCCEEDED' if result is not None else 'FAILED',result,error)

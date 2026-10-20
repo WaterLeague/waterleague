@@ -2,11 +2,11 @@
 import json
 import os
 from pathlib import Path
-import signal
 import subprocess
 import sys
 from .engine.swmm import ROOT
-from .queue import finish
+from .queue import finish, renew
+from .job_runtime import run_process, read_result
 
 
 def process(conn, job, artifacts):
@@ -19,15 +19,14 @@ def process(conn, job, artifacts):
     env['PYTHONPATH']=str(ROOT/'simulation')
     result,error=None,'WATERSHED_ENGINE_FAILED'
     try:
-        child=subprocess.Popen([sys.executable,'-m','waterleague_sim.run_watershed_job',str(directory)],
-            env=env,start_new_session=True,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
-        if child.wait(timeout=150)==0:
-            result=json.loads((directory/'result.json').read_text())
+        if run_process([sys.executable,'-m','waterleague_sim.run_watershed_job',str(directory)],
+                       env=env, timeout=150, heartbeat=lambda: renew(conn,job))==0:
+            result=read_result(directory/'result.json')
             if result.get('inputHash') != job['input_hash'] or result.get('catalogHash') != job['model_hash']:
                 raise ValueError('WATERSHED_RESULT_INVALID')
             error=None
     except subprocess.TimeoutExpired:
-        os.killpg(child.pid,signal.SIGKILL);child.wait();error='WATERSHED_ENGINE_TIMEOUT'
+        error='WATERSHED_ENGINE_TIMEOUT'
     except (OSError,ValueError):
         result=None;error='WATERSHED_RESULT_INVALID'
     return finish(conn,job,'SUCCEEDED' if result is not None else 'FAILED',result,error)

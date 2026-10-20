@@ -16,7 +16,7 @@ import psycopg
 from psycopg.conninfo import conninfo_to_dict
 from psycopg.rows import dict_row
 
-from waterleague_sim import queue, worker
+from waterleague_sim import queue, worker, historical, watershed
 from waterleague_sim.engine.swmm import library_path
 
 
@@ -228,6 +228,56 @@ class WorkerQueueTests(unittest.TestCase):
             self.assertTrue(worker.process(self.conn, queue.claim(self.conn)))
             self.assertEqual(self.row('RESEARCH_CANDIDATE', invalid)['error_code'], 'INPUT_INVALID')
             child.assert_not_called()
+
+    def test_renewal_wait_cannot_resurrect_expired_leases(self):
+        for kind in queue.TABLES:
+            with self.subTest(kind=kind):
+                identity = self.add(kind)
+                job = queue.claim(self.conn)
+                queue.renew(self.conn, job)
+                with self.assertRaisesRegex(ValueError, 'WORKER_LEASE_LOST'):
+                    queue.renew(self.conn, job | {'lease_token': uuid.uuid4()})
+                self.conn.execute(psycopg.sql.SQL(
+                    "UPDATE {} SET lease_until=clock_timestamp()+interval '300 milliseconds' WHERE id=%s"
+                ).format(queue.table(kind)), (identity,))
+                started = threading.Event()
+                def renew():
+                    with self.connection() as connection:
+                        started.set()
+                        queue.renew(connection, job)
+                with self.connection() as blocker, ThreadPoolExecutor(max_workers=1) as pool:
+                    with blocker.transaction():
+                        blocker.execute(psycopg.sql.SQL('SELECT id FROM {} WHERE id=%s FOR UPDATE')
+                                        .format(queue.table(kind)), (identity,))
+                        pending = pool.submit(renew)
+                        self.assertTrue(started.wait(timeout=2))
+                        with self.assertRaises(TimeoutError):
+                            pending.result(timeout=.5)
+                    with self.assertRaisesRegex(ValueError, 'WORKER_LEASE_LOST'):
+                        pending.result(timeout=3)
+                self.assertLessEqual(self.row(kind, identity)['lease_until'], datetime.now(timezone.utc))
+                replacement = queue.claim(self.conn)
+                self.assertNotEqual(replacement['lease_token'], job['lease_token'])
+                self.assertFalse(queue.finish(self.conn, job, 'SUCCEEDED', {'stale': True}, None))
+                self.assertTrue(queue.finish(self.conn, replacement, 'FAILED', None, 'TEST_DONE'))
+
+    def test_corrupt_result_fails_each_queue_without_stopping_next_job(self):
+        for index, kind in enumerate(queue.TABLES):
+            with self.subTest(kind=kind):
+                identity = self.add(kind, index, same_input=True)
+                job = queue.claim(self.conn)
+                module = historical if kind == 'HISTORICAL' else watershed if kind == 'WATERSHED' else worker
+                def corrupt(command, **_):
+                    (Path(command[-1])/'result.json').write_text('{"value":NaN}')
+                    return 0
+                with patch.object(worker, 'ARTIFACTS', self.artifacts), patch.object(
+                        module, 'run_process', side_effect=corrupt):
+                    self.assertTrue(worker.process(self.conn, job))
+                row = self.row(kind, identity)
+                self.assertEqual(row['state'], 'FAILED')
+                self.assertIsNone(row['result'])
+                self.assertTrue(row['error_code'].endswith('RESULT_INVALID'))
+        self.assertIsNone(queue.claim(self.conn))
 
     def test_real_engine_preserves_queue_ownership_and_separate_artifacts_with_cache_reuse(self):
         self.assertTrue(library_path().is_file(), '실제 SWMM 엔진 빌드 필요')

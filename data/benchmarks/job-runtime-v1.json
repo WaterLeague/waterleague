@@ -1,0 +1,212 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-20T15:30:33.560550+00:00",
+  "scope": "WORKER_PROCESS_LIFECYCLE_RESULT_BOUNDARY_AND_LEASE_FENCING",
+  "sourceFiles": [
+    {
+      "path": "simulation/waterleague_sim/job_runtime.py",
+      "sha256": "f60ec8b63140c128036e68f5248da8fd4fabc627e012255d07421420d705c19e",
+      "bytes": 4110
+    },
+    {
+      "path": "simulation/waterleague_sim/queue.py",
+      "sha256": "498582a070553bafc2db2eb06e3f461685875086eba1a5966ee962c1095aa0a4",
+      "bytes": 4099
+    },
+    {
+      "path": "simulation/waterleague_sim/worker.py",
+      "sha256": "34ac271d16fb493202743637f06952562af5639ea39edb65166a7fe183f177fd",
+      "bytes": 3562
+    },
+    {
+      "path": "simulation/waterleague_sim/historical.py",
+      "sha256": "fcc751367a003ac40040dd333ffdd008ebce647662f6fb79ae52de8839e72657",
+      "bytes": 3268
+    },
+    {
+      "path": "simulation/waterleague_sim/shared_physics.py",
+      "sha256": "8d453b556f7db5cfa0fed3bbedcfb4260f70480a91e043278b779a6254ea05ed",
+      "bytes": 18023
+    },
+    {
+      "path": "simulation/waterleague_sim/watershed.py",
+      "sha256": "a36a9ad5e2562e502b27f5e6e044f99b3afa7a7606bfa1cfc74f30c5aa2c95a9",
+      "bytes": 1564
+    },
+    {
+      "path": "simulation/waterleague_sim/public_surface/service.py",
+      "sha256": "5468b7874128b3fd287b1e7a31b6cf482200b0267fc425754d41c9af885366aa",
+      "bytes": 13510
+    },
+    {
+      "path": "simulation/tests/test_job_runtime.py",
+      "sha256": "9b720025178819ca2faecb315f53e4b941011486ab6b655199d8c0b748d9956b",
+      "bytes": 7641
+    },
+    {
+      "path": "simulation/tests/test_public_surface_worker.py",
+      "sha256": "00468a59a29929a9167e6136022db70938d704426c266c105d026485e5b96afb",
+      "bytes": 25017
+    },
+    {
+      "path": "simulation/integration/test_worker_queue.py",
+      "sha256": "5724523007027360fd3ae63b2d4d37febeebf10f00b96dc138fde43844a27a5d",
+      "bytes": 18622
+    },
+    {
+      "path": "simulation/integration/test_shared_physics.py",
+      "sha256": "568157020d710bfaca1a28f8b2e23f9c30be241140c94232e3deaeb4a56a9801",
+      "bytes": 23894
+    },
+    {
+      "path": "backend/src/main/resources/evaluation/game-score-policy-v1.json",
+      "sha256": "5fe5d37767ffb6a6ec327f4421d1d213d6df35ccf45fd57efcaffceeeb760c7c",
+      "bytes": 24278
+    }
+  ],
+  "processAndResultTests": {
+    "status": "PASSED",
+    "tests": 9,
+    "log": {
+      "path": "tmp/job-runtime-unit-v2.log",
+      "sha256": "452f3d1110bfa7fcd5b24a83c801fe283c283d29fd1a7f5b28ba5443b1995154",
+      "bytes": 1754
+    },
+    "cases": [
+      "ACTUAL_TIMEOUT_KILLS_CHILD_AND_DESCENDANT",
+      "RENEWAL_EXCEPTION_KILLS_CHILD_AND_DESCENDANT",
+      "SIGTERM_REAPS_GROUP",
+      "SIGTERM_DURING_SPAWN_REAPS_CHILD",
+      "SUCCESS_AND_EXIT_CODE_PRESERVED",
+      "EXPIRED_LEASE_DOES_NOT_START_CHILD",
+      "JSON_DUPLICATES_NONFINITE_INVALID_UTF8_DEPTH_REJECTED",
+      "OVERSIZE_SYMLINK_FIFO_NONFILE_REJECTED",
+      "PUBLIC_SURFACE_TIMEOUT_NOT_PUBLISHED"
+    ]
+  },
+  "integration": [
+    {
+      "suite": "queue-v2",
+      "status": "PASSED",
+      "sourceCountsUnchanged": true,
+      "javaTestsByPhase": [
+        1
+      ],
+      "pythonIntegrationTests": [
+        10
+      ],
+      "report": {
+        "path": "tmp/job-runtime-queue-v2.log",
+        "sha256": "6870c8acacbd9cf75c3ff827691e4c5c1d54fb919b9ff6628af485510756edc7",
+        "bytes": 157
+      },
+      "log": {
+        "path": "tmp/waterleague_queue_test_8b1a5fe3b9944dfdaca02ac2a9702da8.log",
+        "sha256": "391727b3bf3cfea2feefb5e68361122bf11f5c801bc1eb1e3c92d31e9bb2d8a6",
+        "bytes": 15938
+      }
+    },
+    {
+      "suite": "physics-v1",
+      "status": "PASSED",
+      "sourceCountsUnchanged": true,
+      "javaTestsByPhase": [
+        16,
+        1
+      ],
+      "pythonIntegrationTests": [
+        12
+      ],
+      "report": {
+        "path": "tmp/job-runtime-physics-v1.log",
+        "sha256": "19ba8bd494acb678576a7dae22689bfaaadbedf22141354f45b6153e491fab40",
+        "bytes": 157
+      },
+      "log": {
+        "path": "tmp/waterleague_queue_test_72880dd856fd48d18c856b6ba8a72bbc.log",
+        "sha256": "4d5b1a211a0ed88c0a0193e50c57be1ee022f78f2670ec2e392de07e690a584e",
+        "bytes": 31442
+      }
+    },
+    {
+      "suite": "submission-v1",
+      "status": "PASSED",
+      "sourceCountsUnchanged": true,
+      "javaTestsByPhase": [
+        25,
+        1
+      ],
+      "pythonIntegrationTests": [
+        1
+      ],
+      "report": {
+        "path": "tmp/job-runtime-submission-v1.log",
+        "sha256": "eaf772701c401a1bab8ab8cb5743c362c92f48e6780fd82bd7e69ed90d74b2fe",
+        "bytes": 157
+      },
+      "log": {
+        "path": "tmp/waterleague_queue_test_79be1440182f418baf2c5c4ce079d140.log",
+        "sha256": "0b872e12b5b94c43f1e0fb1b14351e9fa74a94a06f23ecdbef4632801d0273bd",
+        "bytes": 33847
+      }
+    },
+    {
+      "suite": "watershed-v1",
+      "status": "PASSED",
+      "sourceCountsUnchanged": true,
+      "javaTestsByPhase": [
+        25,
+        1
+      ],
+      "pythonIntegrationTests": [
+        8
+      ],
+      "report": {
+        "path": "tmp/job-runtime-watershed-v1.log",
+        "sha256": "b06444af9805cd5b58270133950749123c64e6f4696560e0360b8fa470ed1dfa",
+        "bytes": 157
+      },
+      "log": {
+        "path": "tmp/waterleague_queue_test_54b4511a659b4e1cb38e5014b5ebbd9f.log",
+        "sha256": "445090dda7f9a3f2c6c27e780d09f16239f8c1e9d4b7e2c933cf88fa63685800",
+        "bytes": 26279
+      }
+    }
+  ],
+  "package": {
+    "path": "tmp/job-runtime-package-v1.log",
+    "sha256": "cac3e12dacd33d279db5e667e87267e9c7b9d6148edbea7dbdb954409d4420a4",
+    "bytes": 2747
+  },
+  "limits": {
+    "resultFileBytes": 67108864,
+    "jsonContainerDepth": 128,
+    "personalAndHistoricalExperimentSeconds": 90,
+    "historicalSubmissionSeconds": 600,
+    "weeklySeconds": 90,
+    "watershedSeconds": 150,
+    "publicSurfaceSeconds": 120
+  },
+  "references": [
+    "https://docs.python.org/3.14/library/subprocess.html",
+    "https://www.postgresql.org/docs/18/transaction-iso.html"
+  ],
+  "limitations": [
+    "Weekly weather in isolated integration tests is synthetic test input only.",
+    "Saved historical submission uses the held public observation and current surface design fixtures.",
+    "No field hydraulic accuracy, full browser flows, map rendering, or device FPS validation.",
+    "Public production surface registry remains empty.",
+    "SIGKILL of the worker and machine failure are not graceful shutdown; database fencing remains required."
+  ],
+  "runtime": {
+    "health": "UP",
+    "sourceCountsUnchanged": true,
+    "publicCisternCatalogPreserved": true,
+    "scorePolicySha256": "5fe5d37767ffb6a6ec327f4421d1d213d6df35ccf45fd57efcaffceeeb760c7c",
+    "record": {
+      "path": "tmp/job-runtime-runtime-v1.json",
+      "sha256": "8674e0a57986f8dba7d6434d490721415a4ba2ffbc25485d70f3185be303ef5b",
+      "bytes": 417
+    }
+  }
+}

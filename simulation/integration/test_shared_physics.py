@@ -129,6 +129,29 @@ class SharedPhysicsTests(unittest.TestCase):
         retry = physics.claim(self.conn)
         self.assertEqual(retry['installation']['id'],self.installation)
 
+    def test_renewal_wait_crossing_deadline_does_not_revive_weekly_job(self):
+        job = physics.claim(self.conn)
+        self.conn.execute("UPDATE shared_physics_jobs SET lease_until=clock_timestamp()+interval '300 milliseconds' WHERE id=%s",
+                          (job['id'],))
+        started = threading.Event()
+        def renew():
+            with self.connection() as connection:
+                started.set()
+                physics.renew(connection, job)
+        with self.connection() as blocker, ThreadPoolExecutor(max_workers=1) as pool:
+            with blocker.transaction():
+                blocker.execute('SELECT id FROM shared_physics_jobs WHERE id=%s FOR UPDATE', (job['id'],))
+                pending = pool.submit(renew)
+                self.assertTrue(started.wait(timeout=2))
+                with self.assertRaises(TimeoutError):
+                    pending.result(timeout=.5)
+            with self.assertRaisesRegex(ValueError, 'LIVE_LEASE_LOST'):
+                pending.result(timeout=3)
+        row = self.conn.execute('SELECT * FROM shared_physics_jobs WHERE id=%s', (job['id'],)).fetchone()
+        self.assertLessEqual(row['lease_until'], datetime.now(timezone.utc))
+        self.assertIsNone(row['result'])
+        self.assertFalse(physics.finish(self.conn, job, {'stale': True}, 'a'*64, None))
+
     def forcing(self, station, start, end, key, heartbeat=None):
         if heartbeat is not None: heartbeat()
         def rows(begin, finish):
