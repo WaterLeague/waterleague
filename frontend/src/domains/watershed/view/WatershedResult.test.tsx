@@ -25,6 +25,34 @@ const job = () =>
       ],
     },
   });
+it('기준안·설계안별 계산 재사용을 구분하고 잘못된 실행 근거 거부', () => {
+  const value = job();
+  value.result!.cases.forEach((c, i) => {
+    c.execution = {
+      schema: 1,
+      scope: 'PUBLIC_NETWORK_CASE_V1',
+      mode: i === 0 ? 'REUSED' : 'COMPUTED',
+      computationKey: 'a'.repeat(64),
+    };
+  });
+  const html = renderToStaticMarkup(<WatershedResult job={watershedJobDto.parse(value)} />);
+  expect(html).toContain('동일 조건의 검증된 계산 결과 재사용');
+  expect(html).toContain('이번 요청에서 새로 계산');
+  for (const change of [
+    { schema: 2 },
+    { scope: 'OTHER' },
+    { mode: 'CACHED' },
+    { computationKey: 'invalid' },
+    { ownerId: 'PRIVATE' },
+  ]) {
+    const changed = structuredClone(value);
+    Object.assign(changed.result!.cases[0].execution!, change);
+    expect(watershedJobDto.safeParse(changed).success).toBe(false);
+  }
+  expect(renderToStaticMarkup(<WatershedResult job={job()} />)).not.toContain(
+    '이번 요청에서 새로 계산'
+  );
+});
 it('실제 관망 결과의 월류 감소와 외부 방류 증가를 별도 표시', () => {
   const html = renderToStaticMarkup(<WatershedResult job={job()} />);
   expect(html).toContain('51.338');

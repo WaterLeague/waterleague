@@ -142,6 +142,10 @@ def validate_files(files, identity):
 
 
 class ResultCache:
+    files = FILES
+    marker = MARKER
+    validate = staticmethod(validate_files)
+
     def __init__(self, root, *, max_entries=128, max_bytes=2 * 1024 ** 3, ttl_seconds=7 * 86400):
         self.root = Path(root).absolute()
         self.max_entries = max_entries
@@ -165,8 +169,8 @@ class ResultCache:
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
             try:
                 if not marker.exists():
-                    _write(marker, MARKER)
-                if _read(marker, 64) != MARKER:
+                    _write(marker, self.marker)
+                if _read(marker, 64) != self.marker:
                     raise CacheUnavailable('캐시 표식 불일치')
                 yield
             finally:
@@ -191,7 +195,7 @@ class ResultCache:
                     if age < -60 or age > self.ttl_seconds:
                         raise CacheInvalid('캐시 보관 기간 초과')
                     children = list(path.iterdir())
-                    if {p.name for p in children} != FILES | {'cache.json'}:
+                    if {p.name for p in children} != self.files | {'cache.json'}:
                         raise CacheInvalid('캐시 목록 오류')
                     if any(not stat.S_ISREG(p.lstat().st_mode) for p in children):
                         raise CacheInvalid('캐시 파일 형식 오류')
@@ -213,17 +217,17 @@ class ResultCache:
         _private_directory(path)
         metadata = decoded(_read(path / 'cache.json', 65536))
         if (set(metadata) != {'identity', 'files'} or metadata['identity'] != identity or
-                set(metadata['files']) != FILES or {p.name for p in path.iterdir()} != FILES | {'cache.json'}):
+                set(metadata['files']) != self.files or {p.name for p in path.iterdir()} != self.files | {'cache.json'}):
             raise CacheInvalid('캐시 식별자·목록 불일치')
         files = {}
         total = 0
-        for name in sorted(FILES):
+        for name in sorted(self.files):
             value = _read(path / name, MAX_ENTRY_BYTES - total)
             total += len(value)
             if digest(value) != metadata['files'][name]:
                 raise CacheInvalid('캐시 내용 해시 불일치')
             files[name] = value
-        validate_files(files, identity)
+        self.validate(files, identity)
         return files
 
     def load(self, key, identity):
@@ -245,7 +249,7 @@ class ResultCache:
             raise ValueError('캐시 키 불일치')
         temporary = None
         try:
-            validate_files(files, identity)
+            self.validate(files, identity)
             if sum(map(len, files.values())) + 65536 > self.max_bytes:
                 return False
             with self._guard():

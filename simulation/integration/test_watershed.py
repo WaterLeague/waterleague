@@ -5,6 +5,8 @@ import os
 from pathlib import Path
 import unittest
 import uuid
+import time
+from unittest.mock import patch
 import test_worker_queue as fixture
 from waterleague_sim import queue, watershed
 from waterleague_sim.run_watershed_job import CATALOG, CATALOG_HASH, inputs
@@ -21,6 +23,11 @@ class WatershedTests(unittest.TestCase):
     connection=fixture.WorkerQueueTests.connection
     def setUp(self):
         fixture.WorkerQueueTests.setUp(self)
+        configured = patch.dict(os.environ, {
+            'WATERSHED_CACHE_PATH': str(self.artifacts.parent/'network-cache'),
+            'SIMULATION_CACHE_ENABLED': 'true'})
+        configured.start()
+        self.addCleanup(configured.stop)
 
     def test_public_network_design_job_and_bound_artifacts(self):
         catalog=json.loads(CATALOG.read_text())
@@ -35,7 +42,9 @@ class WatershedTests(unittest.TestCase):
         self.conn.execute("INSERT INTO watershed_experiments(id,owner_id,request_key,model_hash,input_hash,placements,state,created_at) VALUES(%s,%s,%s,%s,%s,%s,'QUEUED',now())",(identity,self.owner,uuid.uuid4(),CATALOG_HASH,digest,raw))
         job=queue.claim(self.conn)
         self.assertEqual(job['queue_kind'],'WATERSHED')
+        started = time.perf_counter()
         self.assertTrue(watershed.process(self.conn,job,self.artifacts))
+        calculated_seconds = time.perf_counter()-started
         row=self.conn.execute('SELECT * FROM watershed_experiments WHERE id=%s',(identity,)).fetchone()
         self.assertEqual(row['state'],'SUCCEEDED',row['error_code'])
         result=json.loads(row['result'])
@@ -82,6 +91,49 @@ class WatershedTests(unittest.TestCase):
         design['placements'][0]['parameters']['nativeSeepageMmH']=1000
         changed=json.dumps(design,sort_keys=True)
         with self.assertRaises(FloodModelError): inputs(request | {'placements':changed,'inputHash':hashlib.sha256((CATALOG_HASH+'\n'+changed).encode()).hexdigest()})
+        other_owner, other_job = uuid.uuid4(), uuid.uuid4()
+        self.conn.execute("""INSERT INTO accounts(id,username,display_name,password_hash,role,
+            member_type,approval_status,enabled,created_at)
+            VALUES(%s,'cache_other','다른 소유자 캐시 시험','NOT_A_LOGIN','MEMBER','PLAYER','APPROVED',true,now())""",
+            (other_owner,))
+        self.conn.execute("INSERT INTO watershed_experiments(id,owner_id,request_key,model_hash,input_hash,placements,state,created_at) VALUES(%s,%s,%s,%s,%s,%s,'QUEUED',now())",
+            (other_job,other_owner,uuid.uuid4(),CATALOG_HASH,digest,raw))
+        claimed = queue.claim(self.conn)
+        self.assertEqual(claimed['owner_id'], other_owner)
+        started = time.perf_counter()
+        self.assertTrue(watershed.process(self.conn,claimed,self.artifacts))
+        reused_seconds = time.perf_counter()-started
+        other = self.conn.execute('SELECT * FROM watershed_experiments WHERE id=%s',(other_job,)).fetchone()
+        self.assertEqual(other['owner_id'], other_owner)
+        self.assertEqual(other['state'], 'SUCCEEDED', other['error_code'])
+        reused = json.loads(other['result'])
+        copied = self.artifacts/'watersheds'/str(other_job)/str(claimed['lease_token'])
+        self.assertEqual(json.loads((copied/'request.json').read_bytes()), request)
+        for old, new in zip(result['cases'], reused['cases']):
+            self.assertEqual(old['execution']['mode'], 'COMPUTED')
+            self.assertEqual(new['execution']['mode'], 'REUSED')
+            self.assertEqual(old['execution']['computationKey'], new['execution']['computationKey'])
+            self.assertEqual({k:v for k,v in old.items() if k!='execution'},
+                             {k:v for k,v in new.items() if k!='execution'})
+            for name in ('network.inp','network.rpt','network.out','network-frames.jsonl','network-result.json'):
+                first, second = directory/old['id']/name, copied/new['id']/name
+                self.assertEqual(first.read_bytes(), second.read_bytes())
+                self.assertNotEqual(first.stat().st_ino, second.stat().st_ino)
+        for path in (self.artifacts.parent/'network-cache').glob('*/*'):
+            if path.is_file():
+                self.assertNotIn(str(identity).encode(), path.read_bytes())
+                self.assertNotIn(str(self.owner).encode(), path.read_bytes())
+        verify_graph(self, copied, reused)
+        self.assertFalse(queue.finish(self.conn,claimed,'SUCCEEDED',{'stale':True},None))
+        reused_archive = ROOT/'tmp'/('flow-graph-network-reused-'+str(other_job))
+        shutil.copytree(copied, reused_archive)
+        (self.requests/'watershed-cache-evidence.json').write_text(json.dumps({
+            'calculatedSeconds': calculated_seconds, 'reusedSeconds': reused_seconds,
+            'computedDirectory': str(evidence), 'reusedDirectory': str(reused_archive),
+            'differentOwners': True, 'independentFiles': True, 'staleLeaseRejected': True,
+            'cases': [{'id':old['id'], 'computationKey':old['execution']['computationKey'],
+                       'physicalValuesEqual': True, 'inputOutputFramesEqual': True}
+                      for old in result['cases']]}))
 
     def test_storage_only_and_combined_native_water_balance(self):
         from waterleague_sim.watershed_storage import CATALOG_HASH as STORAGE_HASH
@@ -312,7 +364,9 @@ class WatershedTests(unittest.TestCase):
         from waterleague_sim.ingestion.published_network import records
         archives = []
         readback = []
-        for scenario in ('S9','S1','S9-closed','S9-pipe','S9-narrow'):
+        originals = {}
+        for label in ('S9','S1','S9-closed','S9-pipe','S9-narrow','S9-reused','S9-narrow-reused'):
+            scenario = label.removesuffix('-reused')
             host = scenario.split('-')[0]
             closed = scenario.endswith('-closed')
             request=json.loads((self.requests/('cistern-shared-'+scenario+'-server-request.json')).read_bytes())
@@ -326,6 +380,22 @@ class WatershedTests(unittest.TestCase):
             result=json.loads(row['result'])
             self.assertEqual(result['numericalStatus'],'FAILED' if scenario.endswith('-narrow') else 'PASSED',result)
             folder=self.artifacts/'watersheds'/str(identity)/str(job['lease_token'])
+            if label.endswith('-reused'):
+                original, original_folder = originals[scenario]
+                self.assertEqual(
+                    {k:v for k,v in original.items() if k not in ('cases','artifactFiles')},
+                    {k:v for k,v in result.items() if k not in ('cases','artifactFiles')})
+                for old, new in zip(original['cases'], result['cases']):
+                    native = json.loads((original_folder/old['id']/'network-result.json').read_bytes())
+                    self.assertEqual(new['execution']['mode'],
+                                     'REUSED' if native['numericalStatus']=='PASSED' else 'COMPUTED')
+                    self.assertEqual({k:v for k,v in old.items() if k!='execution'},
+                                     {k:v for k,v in new.items() if k!='execution'})
+                    for name in ('network.inp','network.out','network-frames.jsonl'):
+                        self.assertEqual((original_folder/old['id']/name).read_bytes(),
+                                         (folder/new['id']/name).read_bytes())
+            else:
+                originals[scenario] = result, folder
             verify_graph(self,folder,result)
             transformed=json.loads((folder/'design-transformation.json').read_bytes())
             partition=transformed['networkCistern']['catchmentPartition']
@@ -376,7 +446,7 @@ class WatershedTests(unittest.TestCase):
                 inputs(request|{'placements':raw,'inputHash':hashlib.sha256((request['modelHash']+'\n'+raw).encode()).hexdigest()})
             archive=ROOT/'tmp'/('member-shared-cistern-'+str(identity))
             shutil.copytree(folder,archive);archives.append(str(archive))
-            readback.append({'id':str(identity),'host':scenario,'artifactDirectory':str(archive),
+            readback.append({'id':str(identity),'host':label,'artifactDirectory':str(archive),
                              'resultSha256':hashlib.sha256((archive/'result.json').read_bytes()).hexdigest()})
         (ROOT/'tmp/cistern-shared-last-artifacts.json').write_text(json.dumps(archives))
         (self.requests/'watershed-readback.json').write_text(json.dumps({'ownerId':str(self.owner),'jobs':readback}))

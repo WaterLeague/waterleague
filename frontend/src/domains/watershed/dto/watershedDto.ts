@@ -114,6 +114,14 @@ const totals = z.object({
   balanceResidualM3: amount,
 });
 const caseDto = z.object({
+  execution: z
+    .strictObject({
+      schema: z.literal(1),
+      scope: z.literal('PUBLIC_NETWORK_CASE_V1'),
+      mode: z.enum(['COMPUTED', 'REUSED']),
+      computationKey: hash,
+    })
+    .optional(),
   nodeFlooding: nodeFloodingDto.optional(),
   conduits: z
     .array(z.object({ id: z.string(), conduitId: z.string(), flowM3s: amount, depthM: amount }))

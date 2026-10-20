@@ -1,0 +1,260 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-20",
+  "classification": "PUBLIC_NETWORK_CASE_CACHE_NOT_NEW_PHYSICAL_OBSERVATION",
+  "sourceHashes": {
+    ".env.example": "0caeee06655d624561978e3eb4cfae9c2f25fddce8443a4a4cdbb694e464b0ae",
+    ".github/workflows/verify.yml": "435babf45f3f4fbf56614a56c23c0e8bd9359a263c5a4612afdc1f3e55cd01be",
+    "backend/src/main/resources/evaluation/game-score-policy-v1.json": "63abf01fbb7e86b38e25b5987873a0b439e9211942cc63993368e16bcc3b42cf",
+    "backend/src/test/java/io/waterleague/WatershedReadbackTests.java": "c0ec73abac99a90fc35d6cf5c32076dac60f1489ae59f011e18674195585195f",
+    "frontend/src/domains/watershed/dto/watershedDto.ts": "fd045662d0d06f98ab022569673df306aaa4731b558b8b70411bf54d7712d0b7",
+    "frontend/src/domains/watershed/view/WatershedResult.tsx": "a6887a747a98ae1bead1f78f563265ca640f0d3735306ef71047ea06d1d2a245",
+    "frontend/src/domains/watershed/view/WatershedResult.test.tsx": "cceb16e1f74de4827999b3899c35b41a0ad04da49a7bb7971b77cd707545d24b",
+    "simulation/waterleague_sim/result_cache.py": "606dfaf5f56b057c8af5da4ba9a77d10ffdf792c7e06293abdc6a7ae20962401",
+    "simulation/waterleague_sim/watershed_cache.py": "5503424e9df6c0c67f8fe8dc669fd79ccfb44d89ca1afe4d24ccc9312e2154f6",
+    "simulation/waterleague_sim/run_watershed_job.py": "0fb651947a7f4f1cc1a55bfa347dc8645c5b3aa3e3bce97ecb833e4ce6af3761",
+    "simulation/waterleague_sim/watershed.py": "b9d9882b2ba5c3961a02f865fac7e7b13701b823010fb38c8e596e0e4a10172b",
+    "simulation/tests/test_result_cache.py": "b58a65ac991158101bb2609e373517ed5e79cc648ff51b47e65c5954cd302062",
+    "simulation/tests/test_watershed_cache.py": "ca3758833ac41f96ff2af4da766414be7dc7b4ce575bddb1090ebceb16ae6529",
+    "simulation/integration/test_watershed.py": "12bb079d100aac39384d731ff0d956706a79cbba3bd5bd5b19cfad534ec012d6",
+    "scripts/verify_watershed_cache.mjs": "2cb0c3677999be2186702b890cac1d48eb511b1f0b8d75e753e1e7a1ab77788e"
+  },
+  "environment": {
+    "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+    "machine": "arm64",
+    "engine": {
+      "schemaVersion": 1,
+      "engineVersion": "5.2.4",
+      "revision": "7952ca837988b1c32f791812eccc9fd64547e093",
+      "sourceArchiveSha256": "3f76a199573088ce47ff02491c529afb73d9953ee9d948dfc89dcd4981b4c0c0",
+      "nodeFloodDurationVersion": 2,
+      "nodeFloodDurationSha256": "36966a09ed0dad68b6cdca5770309ce3731bfedb1f00cd9dc5fe0a8e35e0d631",
+      "nodeFloodDurationBuilderSha256": "ae3b3a6a93703c32fb4e6fd795bdc831c1442f3bec456d7b2fbac9e0ab1ba2fb",
+      "metricsSha256": "9a90e94998318db8bc2e25997d4c076bd8b5f09b171df768de98c4ba1c6bd28d",
+      "observerSha256": "c320fa1849cb4b03254167b107d1a9fefc7171b10c6ce397a0b82bb5c08c53e7",
+      "facilityObserverSha256": "fd6692274cec934d4f832223c69d8e3bdf31112fb02b875b153f70366cf21869",
+      "facilityObserverVersion": 1,
+      "metricsVersion": 1,
+      "builderSha256": "5166d9bcac1151951558b422eff30edc5173e74b8c3e483d693724ce0fafe8cc",
+      "binarySha256": "76bf7d7bdda267ce67b5be88507c30100b86d856354fdfb1b85e705108f8a40c",
+      "modification": "READ_ONLY_LID_AND_NATIVE_OUTFALL_METRICS_NO_SOLVER_CHANGES",
+      "nodeFloodDurationAdapterSha256": "beef1e8ef5c3e8dec33a2dfc7d8e3835af5ffea1724026538ca7b14decc28f2e",
+      "adapterSha256": "ae6cb763d831cae6de367d180ee4d680acda9a841a1a48adb891c0fd104a72c5",
+      "facilityAdapterSha256": "d8a17fe1650df27dc0a46f48deb92f6e4a04bf69fc6d17e383484ba962df75db",
+      "metricsAdapterSha256": "f0219c6affedd4b95b049815c4242b7fe8f56abe917b97f8c2d55ca2c65802df",
+      "baseAdapterSha256": "f9fa6734de7a3adc64f1bd456862d80260115c656a6bc1c0b090841883bfb0d7",
+      "qualityAdapterSha256": "c78323b383d37be56c34b8cc2d5084e4a92e3de6bbc2a818d914acbabf3eb930",
+      "platform": "macOS-27.0.1-arm64-arm-64bit"
+    }
+  },
+  "limits": {
+    "entries": 128,
+    "totalBytes": 2147483648,
+    "entryBytes": 66060288,
+    "ttlSeconds": 604800,
+    "separateFromMapAndLegacyModelCache": true
+  },
+  "measurement": {
+    "scope": "SINGLE_LOCAL_WORKER_JOB_PAIR_INCLUDING_INPUT_VALIDATION_AND_ARTIFACTS",
+    "calculatedSeconds": 18.355694833000598,
+    "reusedSeconds": 0.4219718339991232,
+    "differentOwners": true,
+    "independentFiles": true,
+    "staleLeaseRejected": true,
+    "cases": [
+      {
+        "id": "baseline",
+        "computationKey": "b951b71237b73f2a001d9d7d4f139c07c430fc2d3e63006f40fa471e95698585",
+        "physicalValuesEqual": true,
+        "inputOutputFramesEqual": true
+      },
+      {
+        "id": "strategy",
+        "computationKey": "e9e1bcf5a6b98a72aae76ec84b8622eb6298725314980152fcde61e6de1bb762",
+        "physicalValuesEqual": true,
+        "inputOutputFramesEqual": true
+      }
+    ],
+    "notMeasured": [
+      "queueWait",
+      "HTTPTransfer",
+      "browserRendering",
+      "FPS",
+      "coldDisk",
+      "multipleHosts"
+    ]
+  },
+  "computedBundle": {
+    "path": "tmp/flow-graph-network-b679cc99-965c-4410-956e-3c606d10265c",
+    "resultSha256": "864c73db92f34860687c3b8e8cd23a26fa3cb50e91c4286bdce2cc7df1e7c6e2",
+    "manifestSha256": "cff2578aaf988b223019be5d58f90339ea1a4537f48f52a651b76451a93099be",
+    "requestSha256": "f0ebcec70fa0efd86348d9465b6415853643f9694188e04d03c1dcf97cf1f6ad",
+    "implementationArchiveSha256": "efa1e650548838d8e50d84676166e2845fdbf350d36c7072f32269e82c8eb36c"
+  },
+  "reusedBundle": {
+    "path": "tmp/flow-graph-network-reused-b65c8bd1-d61a-4dd7-a173-feed9e5269c7",
+    "resultSha256": "94fbd7b2577891c24b777010c4d219fce399e8bfe98280e2c63a36a0abcc1a4b",
+    "manifestSha256": "293449968eabc543e6375de7b2a8959140a4fbbbd08473209c7e46b559cb14f6",
+    "requestSha256": "f0ebcec70fa0efd86348d9465b6415853643f9694188e04d03c1dcf97cf1f6ad",
+    "implementationArchiveSha256": "efa1e650548838d8e50d84676166e2845fdbf350d36c7072f32269e82c8eb36c"
+  },
+  "preservedPhysics": {
+    "physicalResultEqualToPreviousCalculation": true,
+    "comparisonBaseline": "4762a033",
+    "cases": [
+      {
+        "case": "baseline",
+        "filesEqualToPreviousCalculation": {
+          "network.inp": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+          "network.out": "682eeb8bb19391dde81c640bc68f91de924852787689c89cbd46a3c771006c18",
+          "network-frames.jsonl": "fcf68c6322e80e4c4ac48d6ebf71620206a3ff0dd8e506b501f0ee60a8232538"
+        }
+      },
+      {
+        "case": "strategy",
+        "filesEqualToPreviousCalculation": {
+          "network.inp": "15efae167ee1e96279d3cc5f00881b883f38772b8111075c56c0e446c2bfeb98",
+          "network.out": "769332420a751c772db450c3d29cfa6ddcb3b7b8b32ee44894149607b85c416f",
+          "network-frames.jsonl": "3fadc1f52c0b54a2ad45ebf1484553d6090918bac4feb0977c62655687fdcf01"
+        }
+      }
+    ]
+  },
+  "independentReplay": {
+    "path": "tmp/flow-graph-network-reused-b65c8bd1-d61a-4dd7-a173-feed9e5269c7/cache-replay-v1/replay.json",
+    "sha256": "f3fe6d95d080c6b6257d721c0a63bfc7eb226c963f8c5240642bfd9242522c08",
+    "results": [
+      {
+        "id": "baseline",
+        "outSha256": "682eeb8bb19391dde81c640bc68f91de924852787689c89cbd46a3c771006c18",
+        "binaryEqual": true,
+        "metricsEqual": true,
+        "floodingDurationEqual": true,
+        "nodeFloodingEqual": true
+      },
+      {
+        "id": "strategy",
+        "outSha256": "769332420a751c772db450c3d29cfa6ddcb3b7b8b32ee44894149607b85c416f",
+        "binaryEqual": true,
+        "metricsEqual": true,
+        "floodingDurationEqual": true,
+        "nodeFloodingEqual": true
+      }
+    ]
+  },
+  "httpAndStaticView": {
+    "schemaVersion": 1,
+    "scope": "HTTP_WORKER_DTO_STATIC_RENDER_NOT_BROWSER",
+    "rows": [
+      {
+        "label": "S9",
+        "responseSha256": "494d66151bcee9bc43cd464e0066d2e71eed5914637efc33d7cb5ca2a0c01ffd",
+        "modes": [
+          "COMPUTED",
+          "COMPUTED"
+        ],
+        "numericalStatus": "PASSED",
+        "dtoAndStaticRenderPassed": true
+      },
+      {
+        "label": "S1",
+        "responseSha256": "5dc511bd47daf3e23cb023b5a04c2be4a9ec8b40f7989db7eb2e1664e222747e",
+        "modes": [
+          "COMPUTED",
+          "COMPUTED"
+        ],
+        "numericalStatus": "PASSED",
+        "dtoAndStaticRenderPassed": true
+      },
+      {
+        "label": "S9-closed",
+        "responseSha256": "95f70f751e761d99f38f15edba8788317305c54ed95c349f639ccb0295c975db",
+        "modes": [
+          "COMPUTED",
+          "COMPUTED"
+        ],
+        "numericalStatus": "PASSED",
+        "dtoAndStaticRenderPassed": true
+      },
+      {
+        "label": "S9-pipe",
+        "responseSha256": "75cbda483913295cbdcb34b33934068b1e9d43222a6807f7facc468d57ad3260",
+        "modes": [
+          "COMPUTED",
+          "COMPUTED"
+        ],
+        "numericalStatus": "PASSED",
+        "dtoAndStaticRenderPassed": true
+      },
+      {
+        "label": "S9-narrow",
+        "responseSha256": "690bea7f2bd75eaceb7ad247b22e938dabf73a121a0e0c2d3c48ab4951006265",
+        "modes": [
+          "COMPUTED",
+          "COMPUTED"
+        ],
+        "numericalStatus": "FAILED",
+        "dtoAndStaticRenderPassed": true
+      },
+      {
+        "label": "S9-reused",
+        "responseSha256": "a73e50aeee4371dd2761043254209f08c9378d953c12ee8f45002b6d24becba0",
+        "modes": [
+          "REUSED",
+          "REUSED"
+        ],
+        "numericalStatus": "PASSED",
+        "dtoAndStaticRenderPassed": true
+      },
+      {
+        "label": "S9-narrow-reused",
+        "responseSha256": "2d5ee5d41aecfec266c8f3c6c7666a2a9f31140ae011cdc9efb7b592f8e54905",
+        "modes": [
+          "REUSED",
+          "REUSED"
+        ],
+        "numericalStatus": "FAILED",
+        "dtoAndStaticRenderPassed": true
+      }
+    ]
+  },
+  "verification": {
+    "nativeCacheTests": 7,
+    "legacyCacheTests": 9,
+    "scorePolicyTests": 5,
+    "frontendFiles": 132,
+    "frontendTests": 448,
+    "typeAndProductionBuild": true,
+    "serverRequestTests": 22,
+    "actualWorkerTests": 8,
+    "authenticatedHttpReadbackTests": 1,
+    "sourceCountsUnchanged": true,
+    "logs": {
+      "tmp/watershed-cache-unit-v3.log": "c46d347a4039d6b63531f8eeffd97d9325a44174059e026ecf699e512f197847",
+      "tmp/watershed-cache-frontend-v1.log": "e21bef0ea114ace332217b1d59fdfc1af77371d66f120e563608f41f4ad742f4",
+      "tmp/watershed-cache-build-v1.log": "a797af22420237cdcfa2b1cec95124fd960a24e24fe2deea81a4ecced67dd401",
+      "tmp/waterleague_queue_test_27362291ad654617ba5fe75e1537b430.log": "4b7cc937382686459dcab750cfe766cb004fd51681c837b04a8156575b56b6be",
+      "tmp/watershed-cache-integration-v1.log": "bbd651ecfac5472fc43af8f3665fe12047860c94580226e761db254f2b5c350b",
+      "tmp/watershed-cache-readback-v1.json": "d978a6f9aa124885cfc4bd7ea661fbf5328b3e1592f17ab105fa007c5553fc30",
+      "tmp/watershed-cache-preservation-v1.json": "f73af6676fec8cd61ee9431b904e240a0370ad2ebd6c11f92514d603741fbdec",
+      "tmp/watershed-cache-replay-v1.log": "616b55656b907ae886b67fc5449e7d2f25959f1f921a9f84c1fd50bbd87f268b",
+      "tmp/watershed-cache-package-v1.log": "eb2969b8d1c694f0f9d918405004001d1abc6a5296ce87731ada5983f5c19dd4",
+      "tmp/watershed-cache-runtime-v1.json": "f844a82020c0c4a4c45993f3ee1430f2147d63bbd7c050915d03b1363bd721be"
+    },
+    "runtime": {
+      "health": "UP",
+      "scorePolicySha256": "63abf01fbb7e86b38e25b5987873a0b439e9211942cc63993368e16bcc3b42cf",
+      "sourceCountsUnchanged": true,
+      "publicCisternCatalogPreserved": true,
+      "jarSha256": "815470ec23b1cc1e33b645451311ad87d8cdc79ebb2581e8c1df7f6aab782176"
+    }
+  },
+  "limitations": [
+    "Same accepted model/design, native input, engine, implementation and runtime only",
+    "No user/account/job/request/lease metadata in cached native files",
+    "Current design, cost, storage, inlet flooding and comparison checks run again",
+    "Failed native calculation is not cached; later inlet/ledger failure stays withheld on reuse",
+    "Reporting timestamps belong to original native run; current job owns independent files and manifest",
+    "No shared NFS or multi-host cache guarantee; no browser/FPS or actual Seoul basin validation"
+  ]
+}

@@ -11,7 +11,7 @@ from zipfile import ZipFile, ZIP_DEFLATED
 from .engine import facility_metrics as facility_network
 from .engine.connected_facilities import compile_design, CATALOG_PATH, CATALOG_SHA256
 from .engine.flood_errors import FloodModelError, require
-from .engine.flood_process import EngineProcess
+from . import watershed_cache
 from .engine.swmm import ROOT
 from .ingestion.network_variant import derive
 from .ingestion.published_network import digest, load_archive, inspect_input
@@ -107,7 +107,8 @@ def inputs(request):
     return catalog, original, base, strategy, numerical, transformation, manifest
 
 
-def calculate(request, directory):
+def calculate(request, directory, cache_root=None):
+    implementation_hash = watershed_cache.implementation_hash()
     catalog, original, base, strategy, numerical, transformation, manifest = inputs(request)
     from .presentation.node_flooding import load_layout, summarize as node_flooding
     layout_raw, layout_snapshot = load_layout(catalog['sourceOriginalSha256'])
@@ -150,7 +151,8 @@ def calculate(request, directory):
         from .engine.connected_pumps import CATALOG as PUMP_CATALOG
         engine_module, engine_kind = pump_network, 'pump_network'
         (directory/'pump-curve.json').write_bytes(PUMP_CATALOG.read_bytes())
-    engine = engine_module.identity() | {'platform': platform.platform()}
+    engine_identity = engine_module.identity()
+    engine = engine_identity | {'platform': platform.platform()}
     require(digest((ROOT/'tmp/swmm/source.tar.gz').read_bytes()) == engine['sourceArchiveSha256'],
             'WATERSHED_ENGINE_SOURCE_CHANGED')
     for path, name in ((engine_module.library_path(), 'engine.bin'),
@@ -172,8 +174,9 @@ def calculate(request, directory):
         case = {'id': name, 'inputSha256': digest(raw)}
         (directory/(name+'-input.inp')).write_bytes(raw)
         try:
-            with EngineProcess(engine_kind, raw.decode(), target, native_duration=True) as process:
-                result = process.call('run', 300)['result']
+            result, execution = watershed_cache.run(
+                request, raw, engine_kind, engine_identity, target, cache_root)
+            case['execution'] = execution
             case.update({key: result[key] for key in ('numericalStatus', 'runoffContinuityPercent',
                 'routingContinuityPercent', 'numericalQuality', 'convergence', 'facilityQuality')})
             case.update({key: result[key] for key in ('timeWindowPolicy', 'calendarShortfallSeconds', 'complete')})
@@ -240,6 +243,7 @@ def calculate(request, directory):
     if any(m['status'] == 'WITHHELD' for m in result['metricComparison']['metrics']):
         result['signedReductionM3'] = result['signedPeakReductionM3s'] = None
     (directory/'raw_metrics.py').write_bytes((Path(__file__).parent/'evaluation/raw_metrics.py').read_bytes())
+    require(watershed_cache.implementation_hash() == implementation_hash, 'WATERSHED_IMPLEMENTATION_CHANGED')
     return result
 
 
@@ -250,7 +254,8 @@ def main():
     if sys.platform.startswith('linux'):
         resource.setrlimit(resource.RLIMIT_AS, (1536*1024*1024,1536*1024*1024))
     directory=Path(sys.argv[1])
-    result=calculate(json.loads((directory/'request.json').read_text()), directory)
+    result=calculate(json.loads((directory/'request.json').read_text()), directory,
+                     watershed_cache.configured_root())
     result['artifactFiles']={str(p.relative_to(directory)): digest(p.read_bytes())
         for p in sorted(directory.rglob('*')) if p.is_file()}
     write(directory/'result.json', result)

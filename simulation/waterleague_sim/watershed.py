@@ -14,7 +14,8 @@ def process(conn, job, artifacts):
     directory.mkdir(parents=True, exist_ok=False)
     request={'modelHash':job['model_hash'], 'inputHash':job['input_hash'], 'placements':job['placements']}
     (directory/'request.json').write_text(json.dumps(request, ensure_ascii=False)+'\n')
-    env={key:value for key,value in os.environ.items() if key in ('PATH','LANG','LC_ALL')}
+    env={key:value for key,value in os.environ.items()
+         if key in ('PATH','LANG','LC_ALL','SIMULATION_CACHE_ENABLED','WATERSHED_CACHE_PATH')}
     env['PYTHONPATH']=str(ROOT/'simulation')
     result,error=None,'WATERSHED_ENGINE_FAILED'
     try:

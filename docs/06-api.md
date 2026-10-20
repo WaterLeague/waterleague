@@ -172,6 +172,8 @@ RFC 9457 `application/problem+json`: type, title, status, detail, instance, code
 
 신규 성공 결과의 `result.execution`은 `schema: 1`, `mode: COMPUTED | REUSED`, 64자 SHA-256 `computationKey` 제공. 이전 결과에는 없을 수 있음. 재사용 여부는 평가 점수·리그 제출 자격·기관 동의를 변경하지 않음. 원본 다른 회원의 식별자·작업 ID는 제공하지 않으며 재현 ZIP도 현재 소유자/버전의 요청·이력으로 구성.
 
+공개 관망 결과는 각 `result.cases[].execution`에 `schema: 1`, `scope: PUBLIC_NETWORK_CASE_V1`, `mode: COMPUTED | REUSED`, `computationKey`를 제공한다. 이 값은 기준안/설계안의 원 관망 계산 재사용 여부다. 현재 작업의 설계·비용·저류/입구 월류 검사와 효과 비교 판정을 다시 적용하며 재사용으로 실패를 통과 처리하지 않는다. 기존 기록/엔진 실행 전 실패에는 없을 수 있다. 소유권·큐 한도·lease 검증·재현 파일 접근 권한은 동일하게 적용한다.
+
 ## 재해 모드 API 추가
 
 공개 연결 관망 연구 API는 `MEMBER` 인증·현재 승인 상태와 기존 CSRF 검사를 적용한다. `GET /api/v1/watersheds/catalog`는 불변 카탈로그 원문·SHA-256, 실제 공개 연구 관망의 14집수 면적/출구·4종 문헌 제원·미확인 조건 제공. `POST /api/v1/watersheds`는 `requestKey`, `catalogHash`, `placements[{id,catchmentId,facilityType,areaM2,treatedImperviousM2}]`를 받아 202 반환. 시설 면적 전체를 불투수 면적으로 대체하는 이 버전의 규칙과 서버 제원·시드를 고정하며, 같은 집수의 시설/처리 면적 합산·중복 ID·소스 해시·회원별 2개/전체 공용 20개 큐 한도 검사. 요청 키의 입력 변경은 409. 가격·소속 구 점유·주간 예산 차감 없음.

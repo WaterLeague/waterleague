@@ -229,6 +229,13 @@ export function WatershedResult({ job }: { job: WatershedJob }) {
                   {c.id === 'baseline' ? '시설 없는 기준안' : '시설 설계안'} ·{' '}
                   {c.numericalStatus === 'PASSED' ? '수치 검사 통과' : '실패'}
                 </strong>
+                {c.execution && (
+                  <p>
+                    {c.execution.mode === 'REUSED'
+                      ? '동일 조건의 검증된 계산 결과 재사용'
+                      : '이번 요청에서 새로 계산'}
+                  </p>
+                )}
                 {c.convergence && (
                   <p>비수렴 {c.convergence.nonConvergedSteps.toLocaleString('ko-KR')}회</p>
                 )}
