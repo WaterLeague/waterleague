@@ -168,7 +168,7 @@ PYTHONPATH=simulation simulation/.venv/bin/python scripts/verify_native_game.py 
 - 높낮이 배경은 [Copernicus 파생](../data/manifests/seoul-terrain-native-v1.json)의 90m 평균 DSM 격자와 원 수치지형도 수면, 인구는 [공개 구 코드 파생](../data/manifests/city-population-native-v1.json)을 사용한다. 지형·인구 생성은 공개 원문 해시·도구 버전·결측을 보존하며 OSM 경계/녹지/주차장으로 복귀하지 않는다. 도로 폭 단위·미확인 일방 방향·보행 연결·주차 칸·교량 고도를 생성하지 않는다. 차량 표시는 명시적 양방향 도로중심선 범위에 한정한다.
 - 현재 연구 API·워커의 `models/current/catalog.json`은 기존 수치지형도 연구 모델 4개만 등록한다. 일반 게임 원형 후보를 과거 OSM 연구 모델로 변환하지 않는다. 보관 모델·원 생성기·수치 재현 증거는 현재 서비스 목록과 분리해 유지한다. V30의 소속 구·종료/예산·설계 버전 분리는 [데이터 모델](05-data-model.md)을 따른다.
 
-브라우저 상세 지도·녹화지붕 설치/예산·시간축·2D/3D·게스트 최종 잠금과 데이터 페이지 390px 표시를 확인했다. 전체 대상 기기의 시간/메모리/FPS 측정·도엽 접합/표고 해석의 전체 승인·주간/회원 제출 전체 흐름은 P0/P6의 잔여 검증이다. 연결 유역·실측 토양/경사·시공·현장 침수 정확도는 이 전환으로 승인하지 않는다.
+브라우저 상세 지도·녹화지붕 설치/예산·시간축·2D/3D·게스트 최종 잠금과 데이터 페이지 390px 표시를 확인했다. 미해결 접합·높이 단위/수직 기준은 미지원·미확인 상태로 보존한다. 전체 대상 기기의 시간/메모리/FPS·콜드 로드·긴 재생·주간/회원 제출 전체 흐름은 P6의 잔여 검증이다. 연결 유역·실측 토양/경사·시공·현장 침수 정확도는 이 전환으로 승인하지 않는다.
 
 ```sh
 node scripts/verify_native_scene_frontend.mjs --report tmp/native-scene-frontend.json
@@ -176,6 +176,18 @@ simulation/.venv/bin/python scripts/verify_native_primary_runtime.py --report tm
 ```
 
 첫 명령은 원 장면 카탈로그와 해시 고정 원형 DB의 로컬 복원이 필요하다. 두 번째 명령은 로컬 API·실제 워커의 독립 게스트 시험을 실행한다. 기존 보고서와 재현 원본은 덮어쓰지 않는다.
+
+### 서울 등고선·표고점의 높이 기준 검사
+
+`audit_native_elevation.py`는 해시 고정 원 공간 DB를 읽기 전용으로 조회하여 등고선·표고점 144,509기록의 원 수치·분포·SHP 종류와 PRJ를 대조한다. [검사 기록](../data/manifests/seoul-topography-elevation-v1.json)에 소스/코드 해시·도엽별 건수·EPSG:5186 5km 격자의 도형 bbox 중심 분포·도구 버전을 보존한다. 격자 집계는 수문 유역·면적 계산이 아니다.
+
+1:1,000 등고선은 137,108기록·2,453개 비어 있지 않은 도엽, 표고점은 7,384기록·2,468개 도엽이다. 등고 원 수치는 −5.0000~835.0000, 표고점은 −7.7170~836.3300이며 음수·0을 임의 결측/정상 고도로 치환하지 않는다. 1:5,000 등고선 13·표고점 4기록은 별도 집계한다. 원 레코드 수를 고유 지형 지점 수로 표시하지 않는다.
+
+PRJ는 2축 EPSG:5186·수평 m를 확인하지만 높이 속성의 단위·수직 기준은 확인되지 않았다. 수평 좌표 단위를 높이 속성의 단위로 전용하지 않으며 EGM2008의 Copernicus DSM과 기준고를 자동 결합하지 않는다. 이 검사로 보간 지형·현장 경사·수문 지형을 생성하지 않는다. 현재 화면의 별도 90m DSM은 건물/수목을 포함한 표시 배경이며 도로 턱·배수구·미세 경사·수심 계산의 근거가 아니다.
+
+```sh
+simulation/.venv/bin/python scripts/audit_native_elevation.py --report tmp/native-elevation-audit.json
+```
 
 ## 수치지형도 플레이 모델 연결
 
