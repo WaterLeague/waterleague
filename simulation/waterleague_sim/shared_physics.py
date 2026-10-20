@@ -164,7 +164,8 @@ def process(conn, job, root):
         evaporation = reusable_observation_hour(previous_evaporation, covered, job['end'])
         weather_sources = []
         if evaporation is None:
-            evaporation, weather_sources = observed_evaporation(covered, job['end'], os.environ.get('KMA_API_KEY', ''))
+            evaporation, weather_sources = observed_evaporation(
+                covered, job['end'], os.environ.get('KMA_API_KEY', ''), heartbeat=lambda: renew(conn,job))
         evaporation = append_evaporation(previous_evaporation, len(observations), model['hydrology']['evaporationMmDay'], evaporation)
         forcing = extension | {'start': job['start'].isoformat(),
                                'observations': observations+extension['observations'],

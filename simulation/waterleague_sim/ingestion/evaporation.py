@@ -3,11 +3,7 @@ import hashlib
 import math
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from urllib.error import HTTPError
-from urllib.parse import urlencode
-from urllib.request import build_opener
-
-from .live import KST, LiveSourceError, NoRedirect, fetch_range, parse
+from .live import KST, LiveSourceError, fetch_range, parse, read_response
 from ..engine import evapotranspiration as formula
 
 HOURLY_URL = 'https://apihub.kma.go.kr/api/typ01/url/kma_sfctm3.php'
@@ -17,18 +13,10 @@ HOUR = timedelta(hours=1)
 MINUTE = timedelta(minutes=1)
 
 
-def fetch(endpoint, parameters, key):
+def fetch(endpoint, parameters, key, heartbeat=None):
     if not key or endpoint not in (HOURLY_URL, STATION_URL, 'https://apihub.kma.go.kr/api/typ01/url/kma_sfcdd3.php'):
         raise LiveSourceError('KMA_ACCESS_UNAVAILABLE')
-    try:
-        with build_opener(NoRedirect()).open(endpoint+'?'+urlencode(parameters | {'authKey': key}), timeout=30) as response:
-            raw = response.read(4_000_001)
-        if len(raw) > 4_000_000 or key.encode() in raw:
-            raise LiveSourceError('KMA_RESPONSE_INVALID')
-    except HTTPError as error:
-        raise LiveSourceError('KMA_ACCESS_UNAVAILABLE' if error.code in (401, 403) else 'KMA_UNAVAILABLE') from None
-    except (OSError, TimeoutError):
-        raise LiveSourceError('KMA_UNAVAILABLE') from None
+    raw = read_response(endpoint, parameters, key, heartbeat)
     return raw, {'provider': 'KMA_ASOS_DIRECT', 'endpoint': endpoint, 'parameters': parameters,
                  'fetchedAt': datetime.now(timezone.utc).isoformat(), 'sha256': hashlib.sha256(raw).hexdigest(),
                  'purpose': 'SIMULATION_USED_INPUT_ONLY'}
@@ -145,7 +133,7 @@ def derive(start, end, metadata, radiation, weather):
                             '직전 완료 시간 평균의 다음 시간 유지; 분별 기상 실측을 뜻하지 않음']}
 
 
-def observed_evaporation(start, end, key):
+def observed_evaporation(start, end, key, heartbeat=None):
     if (start.utcoffset() is None or end.utcoffset() is None or start.second or end.second
             or start.microsecond or end.microsecond or not 0 < (end-start).total_seconds() <= 23*3600):
         raise LiveSourceError('KMA_PET_RANGE_INVALID')
@@ -154,20 +142,20 @@ def observed_evaporation(start, end, key):
     lookback = first-timedelta(hours=36)
     sources, stations = [], []
     for at in (lookback, last):
-        raw, meta = fetch(STATION_URL, {'inf': 'AWS', 'stn': '108', 'tm': at.strftime('%Y%m%d%H%M'), 'help': '1'}, key)
+        raw, meta = fetch(STATION_URL, {'inf': 'AWS', 'stn': '108', 'tm': at.strftime('%Y%m%d%H%M'), 'help': '1'}, key, heartbeat=heartbeat)
         stations.append(station(raw))
         sources.append((raw, meta))
     if stations[0] != stations[1]:
         raise LiveSourceError('KMA_PET_STATION_CHANGED')
     raw, meta = fetch(HOURLY_URL, {'tm1': lookback.strftime('%Y%m%d%H%M'), 'tm2': last.strftime('%Y%m%d%H%M'),
-                                  'stn': '108', 'help': '1'}, key)
+                                  'stn': '108', 'help': '1'}, key, heartbeat=heartbeat)
     sources.append((raw, meta))
     radiation = radiation_rows(raw, lookback, last)
     weather_start = first-HOUR+MINUTE
     weather, cursor = {}, weather_start
     while cursor <= last:
         limit = min(last, cursor+timedelta(hours=6)-MINUTE)
-        raw, meta = fetch_range('108', cursor, limit, key)
+        raw, meta = fetch_range('108', cursor, limit, key, heartbeat=heartbeat)
         sources.append((raw, meta))
         weather.update(meteorology(raw, cursor, limit))
         cursor = limit+MINUTE

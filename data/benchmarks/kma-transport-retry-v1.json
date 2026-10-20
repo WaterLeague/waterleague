@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-21",
+  "status": "PASSED_BOUNDED_TRANSPORT_AND_WEEKLY_REGRESSION",
+  "baseCommit": "e579273e80bcd9e8ecea83b8609cef90e58ae582",
+  "sourceHashes": {
+    "simulation/waterleague_sim/ingestion/live.py": "e7c7fcf66f35391a44bc449e86c09d97a5ca438206ed6267d2d5cfc92cd2064c",
+    "simulation/waterleague_sim/ingestion/evaporation.py": "370e5b4da571bbd6f39007afb7d339f3f0f6411546cf70d913ef364e473e2b9f",
+    "simulation/waterleague_sim/ingestion/antecedent.py": "96b7c45d7c4965ff531fa9783575e7ba4c3a27c4cf142ce08f3edbed116de655",
+    "simulation/waterleague_sim/shared_physics.py": "f337b1c27e36cd62d3551e8add74cd3ed6290cc000980d571c97ef207b5ccdd5",
+    "simulation/tests/test_kma_transport.py": "95b11b3a262c5deac7254cda580a5d912429d0e5fcd9288020e97cda93f9ac25",
+    "simulation/tests/test_antecedent_sources.py": "e81c6bcbb5e5c4c46659170708e44e6a85d3f1109efc11508aaa4866c1101490",
+    "simulation/integration/test_shared_physics.py": "ab0aaf5c637089c5f8c81c1c96933adb599c90c4822d9450a45f9a6b09387af8",
+    "backend/src/main/resources/evaluation/game-score-policy-v1.json": "9082b8afd40fc0d61ffd93f5dbdc481820bf3689bdb4270aee9abfffe168da11"
+  },
+  "checks": {
+    "sameGetRetryPreservesOriginalResponse": true,
+    "permanentFailureNotRetried": true,
+    "oversizeAndSecretResponseRejected": true,
+    "retryAfterNotBypassedWithinCollection": true,
+    "smallerSuccessfulRangeRetained": true,
+    "leaseLostStopsRetry": true,
+    "noMissingObservationReplacement": true,
+    "rawResponseMetadataExcludesCredentials": true
+  },
+  "tests": {
+    "focusedUnitTests": 27,
+    "newTransportCases": 6,
+    "isolatedJavaWorkflowAndReadback": 17,
+    "isolatedPythonWeeklyCases": 12,
+    "sourceCountsUnchanged": true
+  },
+  "actualObservation": {
+    "status": "PASSED_REAL_KMA_REQUEST",
+    "stationId": "421",
+    "start": "2026-10-14T00:21:00+09:00",
+    "end": "2026-10-14T01:21:00+09:00",
+    "observedRows": 61,
+    "sha256": "a33be2833ffe792e9e31bf7632662be51a1f95ddf1b87d6db6aff2935545c9bf",
+    "transportPolicy": "BOUNDED_TWO_ATTEMPTS",
+    "fullWeeklyCalculationVerified": false
+  },
+  "logs": {
+    "tmp/kma-retry-unit-v1.log": "9074fece5b4cb92395b94632119c1b19b335603c089edfe9b2c6aa81cad70253",
+    "tmp/waterleague_queue_test_c981c39592ab40709c00b9e8f75b9e02.log": "d0b2e3388b1f99bfc0cd65e89fecd3686fc9e386555746e1c73dafafb6ce7a86",
+    "tmp/kma-retry-package-v1.log": "bd047de4627bcfc10919ed1614568ceadb16b17e846420c6fc243a2362567bcd"
+  },
+  "limitations": [
+    "주간 전체 실제 관측 계산·브라우저 재검증 미완료",
+    "격리 주간 회귀의 합성 강우는 시험 전용",
+    "HTTP 재시도는 성공 보장이나 관측 결측 복구가 아님",
+    "시도별 30초는 소켓 작업 제한이며 전체 실행 제한이 아님",
+    "별도 주간 작업 재선정은 기존 실패 후 5분 간격 유지",
+    "물리 방정식·누적 강우 정규화·점수 정의 변경 없음"
+  ]
+}

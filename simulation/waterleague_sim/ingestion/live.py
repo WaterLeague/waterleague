@@ -1,7 +1,13 @@
 """계산에 필요한 AWS 구간의 직접 조회·누적 강우 정규화. 최신 조회용 저장소 없음."""
 import hashlib
+import math
+import random
+import ssl
+import time
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal, InvalidOperation
+from email.utils import parsedate_to_datetime
+from http.client import IncompleteRead
 from urllib.error import HTTPError
 from urllib.parse import urlencode
 from urllib.request import HTTPRedirectHandler, build_opener
@@ -13,12 +19,59 @@ ENDPOINT = 'https://apihub.kma.go.kr/api/typ01/cgi-bin/url/nph-aws2_min'
 
 
 class LiveSourceError(ValueError):
-    pass
+    def __init__(self, code, *, can_reduce_range=True):
+        super().__init__(code)
+        self.can_reduce_range = can_reduce_range
 
 
 class NoRedirect(HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):
         return None
+
+
+def retry_delay(value):
+    if value is None:
+        return random.uniform(.5, 1)
+    try:
+        delay = float(int(value)) if value.isascii() and value.isdecimal() else (
+            parsedate_to_datetime(value)-datetime.now(timezone.utc)).total_seconds()
+        return max(0, delay) if math.isfinite(delay) and delay <= 2 else None
+    except (ValueError, TypeError, OverflowError):
+        return None
+
+
+def read_response(endpoint, parameters, key, heartbeat=None):
+    for attempt in range(2):
+        if heartbeat is not None:
+            heartbeat()
+        delay, reduce_range = None, True
+        try:
+            with build_opener(NoRedirect()).open(
+                    endpoint+'?'+urlencode(parameters | {'authKey': key}), timeout=30) as response:
+                raw = response.read(4_000_001)
+            if len(raw) > 4_000_000 or key.encode() in raw:
+                raise LiveSourceError('KMA_RESPONSE_INVALID')
+            return raw
+        except HTTPError as error:
+            status = error.code
+            retry_after = error.headers.get('Retry-After') if error.headers else None
+            error.close()
+            if status in (401, 403):
+                raise LiveSourceError('KMA_ACCESS_UNAVAILABLE') from None
+            if status in (408, 429, 500, 502, 503, 504):
+                delay = retry_delay(retry_after)
+            # 서버 대기 지시·호출 제한을 구간 분할 요청으로 우회하지 않는다.
+            reduce_range = status != 429 and retry_after is None and delay is not None
+        except (OSError, TimeoutError, IncompleteRead) as error:
+            if isinstance(getattr(error, 'reason', error), ssl.SSLCertVerificationError):
+                reduce_range = False
+            else:
+                delay = retry_delay(None)
+        if attempt or delay is None:
+            raise LiveSourceError('KMA_UNAVAILABLE', can_reduce_range=reduce_range) from None
+        if heartbeat is not None:
+            heartbeat()
+        time.sleep(delay)
 
 
 def number(value, minimum, maximum):
@@ -171,7 +224,7 @@ def normalized(rows, start, end, allow_gaps=False, rolling_warnings=None, interv
     return result
 
 
-def fetch_range(station, start, end, key):
+def fetch_range(station, start, end, key, heartbeat=None):
     if not key:
         raise LiveSourceError('KMA_ACCESS_UNAVAILABLE')
     if (not station.isdigit() or not 1 <= len(station) <= 5 or start.utcoffset() is None
@@ -181,15 +234,7 @@ def fetch_range(station, start, end, key):
     parameters = {'tm1': start.astimezone(KST).strftime('%Y%m%d%H%M'),
                   'tm2': end.astimezone(KST).strftime('%Y%m%d%H%M'),
                   'stn': station, 'disp': '0', 'help': '1'}
-    try:
-        with build_opener(NoRedirect()).open(ENDPOINT+'?'+urlencode(parameters | {'authKey': key}), timeout=30) as response:
-            raw = response.read(4_000_001)
-        if len(raw) > 4_000_000 or key.encode() in raw:
-            raise LiveSourceError('KMA_RESPONSE_INVALID')
-    except HTTPError as e:
-        raise LiveSourceError('KMA_ACCESS_UNAVAILABLE' if e.code in (401, 403) else 'KMA_UNAVAILABLE') from None
-    except (OSError, TimeoutError):
-        raise LiveSourceError('KMA_UNAVAILABLE') from None
+    raw = read_response(ENDPOINT, parameters, key, heartbeat)
     return raw, {'provider': 'KMA_AWS_DIRECT', 'endpoint': ENDPOINT, 'parameters': parameters,
                  'fetchedAt': datetime.now(timezone.utc).isoformat(),
                  'sha256': hashlib.sha256(raw).hexdigest(), 'purpose': 'SIMULATION_USED_INPUT_ONLY'}
@@ -200,16 +245,16 @@ def observed_forcing(station, start, end, key, chunk_hours=23, antecedent_qualit
         raise LiveSourceError('KMA_RANGE_INVALID')
     cursor = start-timedelta(minutes=61)
     rows, sources = {}, []
+    hours = min(chunk_hours, math.ceil((end-cursor).total_seconds()/3600))
     while cursor < end:
         if heartbeat is not None: heartbeat()
-        hours = chunk_hours
         while True:
             limit = min(end, cursor+timedelta(hours=hours))
             try:
-                raw, meta = fetch_range(station, cursor, limit, key)
+                raw, meta = fetch_range(station, cursor, limit, key, heartbeat=heartbeat)
                 break
             except LiveSourceError as error:
-                if str(error) != 'KMA_UNAVAILABLE' or hours == 1: raise
+                if str(error) != 'KMA_UNAVAILABLE' or not error.can_reduce_range or hours == 1: raise
                 hours = max(1,hours//2)
         values = parse(raw, station, cursor, limit)
         for at, value in values.items():

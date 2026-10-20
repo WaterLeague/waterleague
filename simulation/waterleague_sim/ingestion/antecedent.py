@@ -1,5 +1,6 @@
 """7일 선행 관측 강우·기상 입력. 최신 화면의 날씨 캐시로 사용하지 않음."""
 from datetime import timedelta
+from functools import partial
 from . import evaporation, live
 from .daily_evaporation import observed_daily
 from ..engine.initialization import MINUTES
@@ -13,7 +14,7 @@ def weather(start, end, key, daily_fetch=None, heartbeat=None):
         if heartbeat is not None: heartbeat()
         limit = min(end, cursor+timedelta(hours=23))
         if daily_fetch is None:
-            value, raw = evaporation.observed_evaporation(cursor, limit, key)
+            value, raw = evaporation.observed_evaporation(cursor, limit, key, heartbeat=heartbeat)
         else:
             # 과거 초기화는 이전 완료 일의 관측만 사용하여 미래 정보 혼입 방지.
             day = cursor.astimezone(live.KST).replace(hour=0, minute=0)
@@ -37,7 +38,8 @@ def weather(start, end, key, daily_fetch=None, heartbeat=None):
 def fetch(station, evaluation_start, key, daily_fetch=None, heartbeat=None):
     start = evaluation_start-timedelta(minutes=MINUTES)
     rain, sources = live.observed_forcing(station, start, evaluation_start, key, chunk_hours=6, antecedent_quality=True, heartbeat=heartbeat)
-    pet, raw = weather(start, evaluation_start, key, daily_fetch or evaporation.fetch, heartbeat)
+    pet, raw = weather(start, evaluation_start, key,
+                       daily_fetch or partial(evaporation.fetch, heartbeat=heartbeat), heartbeat)
     return {'rainfall': {k: rain[k] for k in ('start','end','stationId','intervalSeconds','sourceHashes','evidence','qualityWarnings','qualityPolicy','aggregatedRainIntervals')}
         | {'depthsMm': [r['depthMm'] for r in rain['observations']], 'depthMethods': [r['method'] for r in rain['observations']],
            'reconstructedMinutes': sum(r['method'].startswith('OBSERVED_ZERO_') for r in rain['observations'])}, 'evaporation': pet}, sources+raw

@@ -59,7 +59,8 @@ class SharedPhysicsTests(unittest.TestCase):
         return {'rainfall': {k: rain[k] for k in ('start','end','stationId','intervalSeconds','sourceHashes','evidence')}
             | {'depthsMm': [0]*(MINUTES-60)+[.3]*60}, 'evaporation': pet}, sources+weather
 
-    def evaporation(self, start, end, key):
+    def evaporation(self, start, end, key, heartbeat=None):
+        if heartbeat is not None: heartbeat()
         raw = b'SYNTHETIC_WEATHER_TEST_ONLY\n'; sha = physics.digest(raw)
         return {'method': 'SYNTHETIC_TEST_ONLY', 'sourceHashes': [sha], 'hours': [],
                 'ratesMmDay': [2]*int((end-start).total_seconds()/60)}, [(raw, {'sha256': sha, 'purpose': 'SYNTHETIC_TEST_ONLY'})]
@@ -258,7 +259,8 @@ class SharedPhysicsTests(unittest.TestCase):
         self.conn.execute('UPDATE shared_installations SET installed_at=%s WHERE id=%s',(start,self.installation))
         first=physics.claim(self.conn);first['end']=start+timedelta(minutes=5)
         self.conn.execute('UPDATE shared_physics_jobs SET requested_through=%s WHERE id=%s',(first['end'],first['id']))
-        def hourly_input(begin,end,key):
+        def hourly_input(begin,end,key,heartbeat=None):
+            if heartbeat is not None: heartbeat()
             value,sources=self.evaporation(begin,end,key)
             return value | {'method':'FAO56_HOURLY_LAGGED_ASOS_AWS_V1','evidence':'SYNTHETIC_TEST_ONLY',
                 'hours':[{'observationEnd':begin.replace(minute=0).isoformat(),'appliesFrom':begin.isoformat(),

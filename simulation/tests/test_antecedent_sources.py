@@ -30,7 +30,7 @@ class AntecedentSourcesTests(unittest.TestCase):
     def test_network_timeout_splits_request_without_filling_missing_data(self):
         start=datetime(2022,8,1,18,tzinfo=live.KST);end=start+timedelta(hours=1)
         calls=[]
-        def fetch(station,first,last,key):
+        def fetch(station,first,last,key,heartbeat=None):
             calls.append((first,last))
             if (last-first)>timedelta(hours=1): raise live.LiveSourceError('KMA_UNAVAILABLE')
             raise live.LiveSourceError('KMA_ACCESS_UNAVAILABLE')
