@@ -10,12 +10,14 @@ from .engine.continuous import ROOT, digest, experiment
 from .spatial.game_catalog import forcing
 from .installation_model import resolve, with_observed_forcing
 from .forcing.game_climate import load as load_climate
+from .engine.flow_connections import unique_surfaces
 
 
 def calculate(request, directory):
     source = forcing(request['modelHash'])
     observed = json.loads(source)
     placements = json.loads(request['placements'])
+    unique_surfaces(placements)
     if (digest((request['modelHash']+'\n'+request['placements']).encode()) != request['inputHash']
             or not 1 <= len(placements) <= 50):
         raise ValueError('HISTORICAL_INPUT_INVALID')

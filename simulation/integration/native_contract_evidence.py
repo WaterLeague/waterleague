@@ -3,6 +3,7 @@ import hashlib
 import json
 
 from waterleague_sim.spatial.play_bundle import open_catalog
+from waterleague_sim.engine.flow_connections import validate
 
 
 def verify(test, directory):
@@ -29,5 +30,22 @@ def verify(test, directory):
             test.assertEqual(hashlib.sha256((folder / name).read_bytes()).hexdigest(), sha)
         manifest = json.loads((folder / 'manifest.json').read_bytes())
         test.assertEqual(manifest['design-contract.json'], record['sha256'])
+        graph = record['flowGraph']
+        graph_raw = (folder / 'flow-graph.json').read_bytes()
+        test.assertEqual(graph, {'sha256': hashlib.sha256(graph_raw).hexdigest(), **json.loads(graph_raw)})
+        validate(graph)
+        test.assertEqual(graph['mode'], 'NATIVE_DIRECT_SURFACE')
+        test.assertEqual(manifest['flow-graph.json'], graph['sha256'])
+        test.assertEqual(graph['sourceHashes']['siteCatalog'], native.sha256)
+        test.assertEqual(graph['sourceHashes']['candidateGeometry'], cell['geometrySha256'])
+        test.assertEqual(graph['implementationSha256'], manifest['flow_connections.py'])
+        test.assertEqual(graph['evaluationPoints'][0]['start'], record['evaluation']['start'])
+        test.assertEqual(graph['evaluationPoints'][0]['end'], record['evaluation']['end'])
+        for name, sha in record['inputFiles'].items():
+            test.assertEqual(graph['sourceHashes'][name], sha)
+        for binding in graph['inputBindings']:
+            value = json.loads((folder/binding['source']).read_bytes())
+            for part in binding['pointer'].strip('/').split('/'):
+                value = value[int(part)] if isinstance(value, list) else value[part]
         count += 1
     test.assertGreater(count, 0)

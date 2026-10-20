@@ -8,6 +8,7 @@ from waterleague_sim import queue, watershed
 from waterleague_sim.run_watershed_job import CATALOG, CATALOG_HASH, inputs
 from waterleague_sim.engine.flood_errors import FloodModelError
 from waterleague_sim.costing.watershed import CATALOG as COST_CATALOG, CATALOG_HASH as COST_HASH, snapshot
+from flow_graph_evidence import verify as verify_graph
 
 
 class WatershedTests(unittest.TestCase):
@@ -50,6 +51,12 @@ class WatershedTests(unittest.TestCase):
         self.assertLess(result['signedReductionM3']['outflowM3'],0)
         self.assertGreater(result['signedReductionM3']['floodingM3'],0)
         directory=self.artifacts/'watersheds'/str(identity)/str(job['lease_token'])
+        verify_graph(self, directory, result)
+        import shutil
+        from waterleague_sim.engine.swmm import ROOT
+        evidence = ROOT/'tmp'/('flow-graph-network-'+str(identity))
+        shutil.copytree(directory, evidence)
+        (ROOT/'tmp/flow-graph-network-last-artifacts.txt').write_text(str(evidence))
         manifest=json.loads((directory/'manifest.json').read_text())
         for name,sha in manifest.items():
             self.assertEqual(hashlib.sha256((directory/name).read_bytes()).hexdigest(),sha)
@@ -143,6 +150,7 @@ class WatershedTests(unittest.TestCase):
         self.assertNotEqual(result['cases'][0]['totals'],result['cases'][1]['totals'])
         self.assertIsNone(result['completeInstalledCostKrw']);self.assertFalse(result['rankingEligible'])
         folder=self.artifacts/'watersheds'/str(identity)/str(job['lease_token'])
+        verify_graph(self, folder, result)
         manifest=json.loads((folder/'manifest.json').read_text())
         self.assertEqual(manifest['conduit-catalog.json'],PIPE_HASH)
         self.assertEqual((folder/'baseline-input.inp').read_bytes(),base)
@@ -166,6 +174,7 @@ class WatershedTests(unittest.TestCase):
         self.assertIsNone(result['completeInstalledCostKrw'])
         self.assertIsNone(result['budgetChargedKrw'])
         folder=self.artifacts/'watersheds'/str(identity)/str(job['lease_token'])
+        verify_graph(self, folder, result)
         manifest=json.loads((folder/'manifest.json').read_text())
         self.assertEqual(manifest['cistern-cost-catalog.json'],CATALOG_SHA256)
         self.assertEqual(manifest['cistern-quote-source.html'],design['cisternCosting']['source']['sha256'])
@@ -217,6 +226,7 @@ class WatershedTests(unittest.TestCase):
         self.assertEqual(len(result['cases'][1]['facilities']),1)
         self.assertEqual(len(result['cases'][1]['nodeFlooding']['nodes']),29)
         folder=self.artifacts/'watersheds'/str(identity)/str(job['lease_token'])
+        verify_graph(self, folder, result)
         manifest=json.loads((folder/'manifest.json').read_text())
         for name,sha in manifest.items(): self.assertEqual(hashlib.sha256((folder/name).read_bytes()).hexdigest(),sha)
         changed=json.loads(request['placements']);changed['cistern']['subcatchmentId']='S1'
@@ -241,6 +251,7 @@ class WatershedTests(unittest.TestCase):
         self.assertEqual(result['numericalStatus'],'PASSED',result)
         folder=self.artifacts/'watersheds'/str(identity)/str(job['lease_token'])
         transformed=inputs(request)[5]['networkCistern']
+        verify_graph(self, folder, result)
         partition=transformed['catchmentPartition']
         self.assertEqual(transformed['schemaVersion'],2)
         self.assertAlmostEqual(partition['preservedPerviousAreaM2'],9781.255728)

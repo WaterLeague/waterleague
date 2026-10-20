@@ -88,6 +88,19 @@ def replay(bundle, destination):
     destination=Path(destination).resolve()
     result=json.loads((bundle/'result.json').read_text())
     expected=result['artifactFiles']
+    if 'flowGraph' in result:
+        graph = result['flowGraph']
+        raw = (bundle/'flow-graph.json').read_bytes()
+        if (len(raw) > 4*1024*1024 or hashlib.sha256(raw).hexdigest() != graph['sha256']
+                or expected['flow-graph.json'] != graph['sha256']
+                or json.loads(raw) != {k:v for k,v in graph.items() if k != 'sha256'}):
+            raise ValueError('WATERSHED_REPLAY_FLOW_GRAPH_CHANGED')
+        for name, sha in {**graph['sourceHashes'], 'flow_connections.py': graph['implementationSha256']}.items():
+            path = bundle/name
+            if (Path(name).is_absolute() or len(Path(name).parts) != 1 or name in ('.', '..')
+                    or path.is_symlink() or path.resolve() != path or expected.get(name) != sha
+                    or hashlib.sha256(path.read_bytes()).hexdigest() != sha):
+                raise ValueError('WATERSHED_REPLAY_FLOW_GRAPH_SOURCE_CHANGED')
     for name in ('engine.bin','baseline/network.inp','strategy/network.inp',
                  'baseline/network.out','strategy/network.out'):
         path=bundle/name

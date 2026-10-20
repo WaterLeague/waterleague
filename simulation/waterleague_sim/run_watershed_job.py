@@ -16,6 +16,7 @@ from .engine.swmm import ROOT
 from .ingestion.network_variant import derive
 from .ingestion.published_network import digest, load_archive, inspect_input
 from .costing.watershed import verify as verify_costs
+from .engine.flow_connections import published_network, archive as archive_flow, encode
 
 CATALOG = ROOT / 'backend/src/main/resources/watersheds/seocho-published-v1.json'
 CATALOG_HASH = 'beaddba8868b6f1f6bbf35b1d53d4695a94db99498d8988f90d62013cf8f053c'
@@ -107,6 +108,7 @@ def calculate(request, directory):
     directory.mkdir(parents=True, exist_ok=True)
     (directory/'network-layout.json').write_bytes(layout_raw)
     design = json.loads(request['placements'])
+    (directory/'design.json').write_bytes(encode(design))
     cost_raw = verify_costs({k: v for k, v in design.items() if k not in ('storage','conduits','cisternCosting','pumps','cistern')})
     from .costing.cistern_reference import verify as verify_cistern
     cistern_raw = verify_cistern(design)
@@ -214,6 +216,12 @@ def calculate(request, directory):
         result['costing'] = design['costing']
     if cistern_raw is not None:
         result['cisternCosting'] = design['cisternCosting']
+    names = ('original.inp', 'baseline-input.inp', 'strategy-input.inp', 'design.json',
+             'catalog.json', 'source-manifest.json', 'design-transformation.json',
+             'numerical-transformation.json', 'facility-catalog.json')
+    result['flowGraph'] = published_network(original, base, strategy, design, transformation,
+        {name: digest((directory/name).read_bytes()) for name in names}, cases)
+    archive_flow(result['flowGraph'], directory)
     return result
 
 

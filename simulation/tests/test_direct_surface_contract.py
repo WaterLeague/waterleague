@@ -15,8 +15,10 @@ class DirectSurfaceContractTests(unittest.TestCase):
         self.root = Path(self.temporary.name)
         self.model = {
             'testOnly': 'NO_OBSERVATIONS_OR_EFFECT_CALCULATION',
+            'rainfall': {'testOnly': True}, 'hydrology': {'testOnly': True},
             'cells': [{'id': 'C' + 'a' * 24, 'allowedTypes': ['GREEN_ROOF'], 'maxAreaM2': 100,
-                       'areaM2': 100, 'geometryCrs': 'EPSG:5186', 'geometrySha256': 'b' * 64,
+                       'areaM2': 100, 'physicalInputs': {'testOnly': True},
+                       'geometryCrs': 'EPSG:5186', 'geometrySha256': 'b' * 64,
                        'sourceObjectId': 'test-only-object', 'districtId': '11200'}],
             'geometrySource': {'coordinateSystem': 'EPSG:5186', 'geometrySha256': 'b' * 64,
                                'sourceObjectId': 'test-only-object', 'playCatalogSha256': 'c' * 64,
@@ -32,6 +34,7 @@ class DirectSurfaceContractTests(unittest.TestCase):
                'runoffMetrics': {'start': '2022-08-08T09:00:17+00:00', 'end': '2022-08-08T09:02:00+00:00',
                                  'maximumStepSeconds': 1}}
         self.result = {'baseline': deepcopy(run), 'strategy': deepcopy(run), 'scoreRule': 'TEST_ONLY',
+                       'runoffComparison': {'method': 'TEST_ONLY'},
                        'installedAt': '2022-08-08T09:00:17+00:00'}
         self.cost = {'status': 'NOT_RECORDED', 'sha256': None, 'estimate': None}
         self.save_inputs()

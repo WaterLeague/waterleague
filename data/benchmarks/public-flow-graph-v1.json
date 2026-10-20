@@ -1,0 +1,357 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-20",
+  "classification": "LOCAL_PUBLIC_INPUT_FLOW_PROVENANCE_VERIFICATION",
+  "contractVersion": "PUBLIC_SOURCE_FLOW_GRAPH_V1",
+  "integrations": [
+    {
+      "suite": "physics",
+      "version": 2,
+      "guardStage": "BEFORE_FINAL_INTEGER_AREA_VALIDATION",
+      "javaTests": 16,
+      "workerTests": 11,
+      "report": "tmp/flow-graph-physics-v2.json",
+      "reportSha256": "59909e6ca14243f279cf3e6f3edba4686c9c804daa469a3ee207d2be364a3827",
+      "log": "tmp/waterleague_queue_test_edfa9558c385492ab86ade1850ec778f.log",
+      "logSha256": "ed8ebb4a236729ab5af34067d5b543ccb60ff63b86999ca3fa73e3a8be370661",
+      "sourceCountsUnchanged": true
+    },
+    {
+      "suite": "guest-historical",
+      "version": 2,
+      "guardStage": "BEFORE_FINAL_INTEGER_AREA_VALIDATION",
+      "javaTests": 31,
+      "workerTests": 1,
+      "report": "tmp/flow-graph-guest-historical-v2.json",
+      "reportSha256": "3558c79477d2ef10f0840aec09015006e13173f647cf48b62b6bd5d892b17c2b",
+      "log": "tmp/waterleague_queue_test_acd7420a298a43ffabdc632b573bfa3d.log",
+      "logSha256": "1054507589cb751deb298d8fe9bc04ff92f39c3247b237746e79947caedef96c",
+      "sourceCountsUnchanged": true
+    },
+    {
+      "suite": "watershed",
+      "version": 2,
+      "guardStage": "BEFORE_FINAL_INTEGER_AREA_VALIDATION",
+      "javaTests": 15,
+      "workerTests": 7,
+      "report": "tmp/flow-graph-watershed-v2.json",
+      "reportSha256": "e702d9e59e5f3668085860ec9825a9342e3da1e691421fd1d71f7124fddb0edc",
+      "log": "tmp/waterleague_queue_test_476de32bbf6a499a923110bfe32c8710.log",
+      "logSha256": "0ccc814f5c8e2f622250ba54b3a47ce662e37ac9365e615705203cdec01d6c52",
+      "sourceCountsUnchanged": true
+    },
+    {
+      "suite": "historical",
+      "version": 2,
+      "guardStage": "BEFORE_FINAL_INTEGER_AREA_VALIDATION",
+      "javaTests": 17,
+      "workerTests": 6,
+      "report": "tmp/flow-graph-historical-v2.json",
+      "reportSha256": "4c6637a3ce1ddb141a6aa3973ed707897a2102fda11cde3748a7908ca2b31eac",
+      "log": "tmp/waterleague_queue_test_802f3af3578246038dd8268337e940cf.log",
+      "logSha256": "786f4771842ed62f61e72b8604f2b2212eceac119875afaf185841172f295c20",
+      "sourceCountsUnchanged": true
+    },
+    {
+      "suite": "historical-design-run",
+      "version": 2,
+      "guardStage": "BEFORE_FINAL_INTEGER_AREA_VALIDATION",
+      "javaTests": 33,
+      "workerTests": 1,
+      "report": "tmp/flow-graph-historical-design-run-v2.json",
+      "reportSha256": "d5579abef5e64ba104f19e22ea489f583d745d700cf31bbd4d73bacc56e7f5b4",
+      "log": "tmp/waterleague_queue_test_33329e33bf3a4b388d6df4f863d89b57.log",
+      "logSha256": "8dacc53cc2ed4ecd290f756d998761a5e3fa2f3c9f348160a6d7e7c9b1de07e9",
+      "sourceCountsUnchanged": true
+    },
+    {
+      "suite": "historical-submit-design",
+      "version": 2,
+      "guardStage": "BEFORE_FINAL_INTEGER_AREA_VALIDATION",
+      "javaTests": 22,
+      "workerTests": 1,
+      "report": "tmp/flow-graph-historical-submit-design-v2.json",
+      "reportSha256": "880838cf433898880ba39f6dd15257df530daf5fdd4b7fbc6059aa97579e90c6",
+      "log": "tmp/waterleague_queue_test_c4d1b4f041de4eaf91f7a4136b236bcf.log",
+      "logSha256": "eae0c15081902f3cff98e1842d4cb94bacbc8b7c3b8e4e90c5c91d41d5315205",
+      "sourceCountsUnchanged": true
+    },
+    {
+      "suite": "guest-historical",
+      "version": 3,
+      "guardStage": "FINAL_INTEGER_AREA_VALIDATION",
+      "javaTests": 31,
+      "workerTests": 1,
+      "report": "tmp/flow-graph-guest-historical-v3.json",
+      "reportSha256": "0c81d5bb38a10221051c29e6e82f25df40fa63e30f308ecf865a4a6afb394e61",
+      "log": "tmp/waterleague_queue_test_47c782a44bfc4ae3bf2cddbf68e9a759.log",
+      "logSha256": "211def15aa6c88994f4d247c2620910c9523548ca3901a735ba5892a195908c4",
+      "sourceCountsUnchanged": true
+    },
+    {
+      "suite": "watershed",
+      "version": 3,
+      "guardStage": "FINAL_INTEGER_AREA_VALIDATION",
+      "javaTests": 15,
+      "workerTests": 7,
+      "report": "tmp/flow-graph-watershed-v3.json",
+      "reportSha256": "9b9269477960eec0117bea677548c841ac395b684c947d0263fd5d3c17c0a2b6",
+      "log": "tmp/waterleague_queue_test_262538b1ca4a4fe5800e7b37541afbb8.log",
+      "logSha256": "6d978908aa6df2c624069169c6570c72390fde222ae2e5cf523e1dd9b667fe3a",
+      "sourceCountsUnchanged": true
+    }
+  ],
+  "finalCodeHashes": {
+    "simulation/waterleague_sim/engine/flow_connections.py": "0478b3245b0e8bf13282f9b54b0e5fb4f990e080c623566b10253ef5a194600a",
+    "simulation/waterleague_sim/engine/direct_surface_contract.py": "8125fce09b04b38e9622282b7eb117e0c8eb11b8bd714004a0ea70d0a8ea9e22",
+    "simulation/waterleague_sim/run_historical_job.py": "bdbe833223ad2eb0ed524409a0d5c0914ce0af5b58dde134daa3b30f69e8e8e0",
+    "simulation/waterleague_sim/run_watershed_job.py": "1ee1943c3cf528e95d57c9ceddb42da7ef64a5e0ccdabccc0f4485df9094f91f",
+    "simulation/waterleague_sim/watershed_replay.py": "507284235596b575437a1baeabc47bca2f8ec6daa04271530a5680693f8ee139",
+    "frontend/src/domains/physics/dto/flowGraphDto.ts": "7ddacd4b8d8cb849f258ae66821ad304d9ee59e05b5ff39b15921998d90104c5",
+    "frontend/src/domains/physics/dto/designContractDto.ts": "26a6ddca7846d5640d7cfaf5247b15b46bbb416ff42d103e0767fbdec4201a36"
+  },
+  "unitVerification": {
+    "graphTests": 8,
+    "existingDirectSurfaceContractTests": 3,
+    "log": "tmp/flow-graph-unit-v3.log",
+    "logSha256": "00f3393b3e4353cdcd544571d3e2d86018e6135c96d75d76b13d587e476990d6",
+    "areaValidation": "EXACT_INTEGER_AT_1E_MINUS_18_M2_NOT_SOURCE_ACCURACY",
+    "largePlusTinyExcessRejected": true
+  },
+  "native": {
+    "fixture": "frontend/src/domains/physics/view/fixtures/nativeFlowGraph.json",
+    "fixtureSha256": "614a72086dc50c8fb3f1dab723ca001eff19f37df773401bc2aab7d36cb46fc2",
+    "sourceResultSha256": "8d2afae420c0bb685e4c5a55ab6295eb02b2e5c11fefd507eac20d347c4fd00c",
+    "graphSha256": "0238c835df57e11ecc5d453a828e0858649382fd14bfb56870b94d7dba64117e",
+    "implementationSha256": "0478b3245b0e8bf13282f9b54b0e5fb4f990e080c623566b10253ef5a194600a",
+    "nodes": 5,
+    "edges": 5,
+    "areaBudgets": 1,
+    "sourceHashes": {
+      "model.json": "d27e03a1b944140c9df909e1006a8ad4107468ca1e0dec5375ac6fe4facc5a2b",
+      "placement.json": "7de55169ac8612d45a2d802bb6918f690c811f2ff09ca82031e180bc25e251ce",
+      "baseline.inp": "efee137cb6469a2a309300dc6726689cf741a3693f7358fe24b9fda09e7df890",
+      "strategy.inp": "2fd7fad95260d3ecc67c3a7a8bff87463fce5bc7c02297678aed15cfea0c81e5",
+      "objectCatalog": "2c514899f82d858b4386d489b4fd9fa691552b59704f88f93e5475cc33b8f7d0",
+      "siteCatalog": "4ec7535e7cbaf41dc73f73519d77ba11f956f4c75c1a574fffa08f16625919b7",
+      "candidateGeometry": "06f0bcb8a79f082ad500dae94f77edb8e961e61dff48641a11e75e44ca20a2ef"
+    },
+    "comparisonEqualsExistingFrozenEvidence": true,
+    "baselineAndStrategyInpEqualExistingEvidence": true,
+    "spatialStatus": {
+      "horizontalCrs": "EPSG:5186",
+      "verticalDatum": "UNCONFIRMED",
+      "drainageNetworkLink": "UNCONNECTED",
+      "surfaceGridLink": "UNCONNECTED"
+    }
+  },
+  "networks": [
+    {
+      "artifactDirectory": "tmp/flow-graph-network-ea37738c-6dbc-440c-ada7-d55d48d743e6",
+      "inputHash": "058db9be840c4bc1cf6aa1ab0d8f9bbf0218fe85fbb690c146fd36ef5fdf3281",
+      "graphSha256": "587ba76e1354ec203958a7a8b93fbe732d7685e65e9df8282554e830b80d11aa",
+      "resultSha256": "d2b2b3b18aa55e3093b60cd828de22d1d763b334a87b9e0f74b939c9b696eb70",
+      "manifestSha256": "2f2acfe471429eae0a2a8861aa6e19e802ca0840e8e5219a9d88c1ec883bea4f",
+      "implementationSha256": "0478b3245b0e8bf13282f9b54b0e5fb4f990e080c623566b10253ef5a194600a",
+      "nodes": 57,
+      "edges": 57,
+      "areaBudgets": 28,
+      "inputBindings": 922,
+      "evaluationPoints": 4,
+      "sourceHashes": {
+        "original.inp": "8ce278a3d2b58df3c2a5fd1232160bcabb324389746ee0c878792acf91abbdbb",
+        "baseline-input.inp": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+        "strategy-input.inp": "15efae167ee1e96279d3cc5f00881b883f38772b8111075c56c0e446c2bfeb98",
+        "design.json": "f83135d92690010e3ddcc182fc5c01ea337f237e5d98529b340c7639adb6998b",
+        "catalog.json": "beaddba8868b6f1f6bbf35b1d53d4695a94db99498d8988f90d62013cf8f053c",
+        "source-manifest.json": "2104f9143e6deea2213c9f88219a2d23ddfb78b0dab61b961cb8ab362df1da98",
+        "design-transformation.json": "35d994da0c628594846b59bb5abe0215591f5c28b5fdc95d35378a4aeb64e6e6",
+        "numerical-transformation.json": "867445faaee2d6f8c21d90be6d9ea98fcdc3913246bbed4b90da880cc65e5536",
+        "facility-catalog.json": "f06a80aebb4fc674597e1da4ca2f829a58f1724de088d603bf81eb9068e9f0a2"
+      },
+      "spatialStatus": {
+        "horizontalCrs": "UNCONFIRMED",
+        "verticalDatum": "UNCONFIRMED",
+        "nativeMapLink": "UNCONNECTED",
+        "surfaceGridLink": "UNCONNECTED"
+      },
+      "numericalStatus": "PASSED"
+    },
+    {
+      "artifactDirectory": "tmp/member-cistern-hydraulics-5f70358b-38f7-47e7-a32c-5c7ccfd8c094",
+      "inputHash": "b4c149e0c93b4640e3cda0e96b3d00518bc67031bece4906d03733cbec7a337f",
+      "graphSha256": "c356956ea7d100e3d341f8508fc136de4fb6d8796fbde1869a0ccffd634e4fd5",
+      "resultSha256": "598226d912516aa1b8f95054447e0a47c36a3e07e3bdab5a78dbd5a4671c7469",
+      "manifestSha256": "00caef3877ec4422aea752f2366ab204d92e98d28c2e2e4f7a0981a8bff89d45",
+      "implementationSha256": "0478b3245b0e8bf13282f9b54b0e5fb4f990e080c623566b10253ef5a194600a",
+      "nodes": 59,
+      "edges": 61,
+      "areaBudgets": 28,
+      "inputBindings": 986,
+      "evaluationPoints": 4,
+      "sourceHashes": {
+        "original.inp": "8ce278a3d2b58df3c2a5fd1232160bcabb324389746ee0c878792acf91abbdbb",
+        "baseline-input.inp": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+        "strategy-input.inp": "17dfb84b7a19f43d3e82787f521629ea2b865b8cf5af21dd7cd86b76392e788d",
+        "design.json": "84f684593aaa5bc4733d714f4499361160809ce6aae3f0ebcb2126e550a913c6",
+        "catalog.json": "beaddba8868b6f1f6bbf35b1d53d4695a94db99498d8988f90d62013cf8f053c",
+        "source-manifest.json": "2104f9143e6deea2213c9f88219a2d23ddfb78b0dab61b961cb8ab362df1da98",
+        "design-transformation.json": "71d473ef4524976f3f09ddb641ca626fd1ef8f1e2dc74afe6d05d9c85a602c3a",
+        "numerical-transformation.json": "867445faaee2d6f8c21d90be6d9ea98fcdc3913246bbed4b90da880cc65e5536",
+        "facility-catalog.json": "f06a80aebb4fc674597e1da4ca2f829a58f1724de088d603bf81eb9068e9f0a2"
+      },
+      "spatialStatus": {
+        "horizontalCrs": "UNCONFIRMED",
+        "verticalDatum": "UNCONFIRMED",
+        "nativeMapLink": "UNCONNECTED",
+        "surfaceGridLink": "UNCONNECTED"
+      },
+      "numericalStatus": "PASSED"
+    },
+    {
+      "artifactDirectory": "tmp/member-mixed-cistern-171cf5a8-6cff-4d07-a4b7-6572040482ca",
+      "inputHash": "77b20066a03f64e086d5383c9d2eca4c9d37a37bba4871c1a80389133421e4b8",
+      "graphSha256": "63832a2ced2ee6a910a0caf43a2fb87c570d450c5865397014b9f97fb8aac1c2",
+      "resultSha256": "1d75f057db266c1534d33d81ff78ab5c5eff58807bf4afe8a8736696446e98c5",
+      "manifestSha256": "7bd1b8640099e5efdbe34255d2d4b7f372ed2bb566e4203cf1a113ec23b4bb1b",
+      "implementationSha256": "0478b3245b0e8bf13282f9b54b0e5fb4f990e080c623566b10253ef5a194600a",
+      "nodes": 59,
+      "edges": 59,
+      "areaBudgets": 28,
+      "inputBindings": 1043,
+      "evaluationPoints": 4,
+      "sourceHashes": {
+        "original.inp": "8ce278a3d2b58df3c2a5fd1232160bcabb324389746ee0c878792acf91abbdbb",
+        "baseline-input.inp": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+        "strategy-input.inp": "8754efe433ac6f197cc5240bb0f9806866457758fbcaf0d462483a3576ebcd0f",
+        "design.json": "2ecd6a4ebf65e8ae568a398f6a8cfe3f52024ebb3d7c994a8aa50293d5a50eb8",
+        "catalog.json": "beaddba8868b6f1f6bbf35b1d53d4695a94db99498d8988f90d62013cf8f053c",
+        "source-manifest.json": "2104f9143e6deea2213c9f88219a2d23ddfb78b0dab61b961cb8ab362df1da98",
+        "design-transformation.json": "5e3394f897a36717eb731f07a458cc77b68ec0fa50b035bca3ad2a6860c58fec",
+        "numerical-transformation.json": "867445faaee2d6f8c21d90be6d9ea98fcdc3913246bbed4b90da880cc65e5536",
+        "facility-catalog.json": "f06a80aebb4fc674597e1da4ca2f829a58f1724de088d603bf81eb9068e9f0a2"
+      },
+      "spatialStatus": {
+        "horizontalCrs": "UNCONFIRMED",
+        "verticalDatum": "UNCONFIRMED",
+        "nativeMapLink": "UNCONNECTED",
+        "surfaceGridLink": "UNCONNECTED"
+      },
+      "numericalStatus": "PASSED"
+    }
+  ],
+  "networkCasesEqualPreviousRuns": true,
+  "retainedGraphsRevalidatedByFinalGuard": [
+    {
+      "path": "tmp/waterleague_queue_test_acd7420a298a43ffabdc632b573bfa3d.guest-runs/historical/16b2aa44-3345-4ca2-ad63-b4680f6b23b4/4116aba2-e255-489a-9f15-a9a088e2cb6f/0/flow-graph.json",
+      "sha256": "af66bf52839724fe64bf282b32d8e34a9d87d2b03607286cb2677e5303112ddd"
+    },
+    {
+      "path": "tmp/waterleague_queue_test_acd7420a298a43ffabdc632b573bfa3d.guest-runs/historical/23c6c85c-8e86-41a8-ba2e-96ba71e20d5e/2700a616-455f-47ab-9697-d49a1c0dc110/0/flow-graph.json",
+      "sha256": "af66bf52839724fe64bf282b32d8e34a9d87d2b03607286cb2677e5303112ddd"
+    },
+    {
+      "path": "tmp/waterleague_queue_test_33329e33bf3a4b388d6df4f863d89b57.runs/historical/032d2b5b-f105-49f1-b286-1bcb803d6557/4d66bcfa-09cb-4d6d-9fcc-d618933b71ae/0/flow-graph.json",
+      "sha256": "19d44005697bc4e924f3da791c4220472ab871284a171aaed8fd741bda0e0ab9"
+    },
+    {
+      "path": "tmp/waterleague_queue_test_33329e33bf3a4b388d6df4f863d89b57.runs/historical/5638dc3b-c4b4-4fa6-a731-52d27bce422f/c1ec669a-7590-4842-8d24-368921f08c4f/0/flow-graph.json",
+      "sha256": "b3a3a53a24082b684b24ac72724aa21798e95608884ebb974572239f02f0309a"
+    },
+    {
+      "path": "tmp/waterleague_queue_test_33329e33bf3a4b388d6df4f863d89b57.runs/historical/da8414ed-f173-4960-bc0b-dab7f671b52a/056aef55-6bf3-4cb5-aafe-0e517c4cd78d/0/flow-graph.json",
+      "sha256": "19d44005697bc4e924f3da791c4220472ab871284a171aaed8fd741bda0e0ab9"
+    },
+    {
+      "path": "tmp/waterleague_queue_test_c4d1b4f041de4eaf91f7a4136b236bcf.runs/historical/214f4955-c311-4822-84f9-e9cd9f2b3a84/62ebb350-8cc8-4670-9345-3692e8bbe82a/11200/0/flow-graph.json",
+      "sha256": "df3a20114d80456f927ba331f70dc98a147703cb36d0e42c82cd40a61b625d89"
+    },
+    {
+      "path": "tmp/waterleague_queue_test_c4d1b4f041de4eaf91f7a4136b236bcf.runs/historical/214f4955-c311-4822-84f9-e9cd9f2b3a84/62ebb350-8cc8-4670-9345-3692e8bbe82a/11680/0/flow-graph.json",
+      "sha256": "330ce99d419d1a42d7957ce00543be46e83abfa775ccacad6bc41181ce0a0579"
+    },
+    {
+      "path": "tmp/waterleague_queue_test_c4d1b4f041de4eaf91f7a4136b236bcf.runs/historical/321240ce-2353-4917-93f5-7082f8be466d/ef898a97-fe16-4022-8a29-0a3e9ad6d39d/11200/0/flow-graph.json",
+      "sha256": "df3a20114d80456f927ba331f70dc98a147703cb36d0e42c82cd40a61b625d89"
+    },
+    {
+      "path": "tmp/waterleague_queue_test_c4d1b4f041de4eaf91f7a4136b236bcf.runs/historical/321240ce-2353-4917-93f5-7082f8be466d/ef898a97-fe16-4022-8a29-0a3e9ad6d39d/11680/0/flow-graph.json",
+      "sha256": "330ce99d419d1a42d7957ce00543be46e83abfa775ccacad6bc41181ce0a0579"
+    },
+    {
+      "path": "tmp/waterleague_queue_test_c4d1b4f041de4eaf91f7a4136b236bcf.runs/historical/3d11a333-32be-4794-807a-611acab9eed3/06070202-d598-4e7b-99b5-60cceff5d0e0/11200/0/flow-graph.json",
+      "sha256": "df3a20114d80456f927ba331f70dc98a147703cb36d0e42c82cd40a61b625d89"
+    },
+    {
+      "path": "tmp/waterleague_queue_test_47c782a44bfc4ae3bf2cddbf68e9a759.guest-runs/historical/23bc8f0c-8a23-421e-a67f-dd20019cdd31/c9a730b7-7a08-44fa-9564-de94644a5259/0/flow-graph.json",
+      "sha256": "0238c835df57e11ecc5d453a828e0858649382fd14bfb56870b94d7dba64117e"
+    },
+    {
+      "path": "tmp/waterleague_queue_test_47c782a44bfc4ae3bf2cddbf68e9a759.guest-runs/historical/e5ddb39a-e1ab-46f9-b268-e0b5cc3f90c0/73bbc149-81ee-477f-9518-1bbec626dbe1/0/flow-graph.json",
+      "sha256": "0238c835df57e11ecc5d453a828e0858649382fd14bfb56870b94d7dba64117e"
+    }
+  ],
+  "standaloneReplay": {
+    "source": "tmp/flow-graph-network-ea37738c-6dbc-440c-ada7-d55d48d743e6",
+    "graphSha256": "587ba76e1354ec203958a7a8b93fbe732d7685e65e9df8282554e830b80d11aa",
+    "replay": [
+      {
+        "id": "baseline",
+        "outSha256": "682eeb8bb19391dde81c640bc68f91de924852787689c89cbd46a3c771006c18",
+        "binaryEqual": true,
+        "metricsEqual": true,
+        "nodeFloodingEqual": true
+      },
+      {
+        "id": "strategy",
+        "outSha256": "769332420a751c772db450c3d29cfa6ddcb3b7b8b32ee44894149607b85c416f",
+        "binaryEqual": true,
+        "metricsEqual": true,
+        "nodeFloodingEqual": true
+      }
+    ]
+  },
+  "frontend": {
+    "filesPassed": 108,
+    "testsPassed": 370,
+    "typeCheck": true,
+    "productionBuild": true,
+    "formatCheck": true,
+    "browserProof": {
+      "fixtureGraphSha256": "af66bf52839724fe64bf282b32d8e34a9d87d2b03607286cb2677e5303112ddd",
+      "fixtureSourceResultSha256": "282987845ac78c898674a467fdd17fa2fabe77c792c72ae13ad968213685fb7a",
+      "mobileResult": {
+        "requestedViewport": [
+          390,
+          844
+        ],
+        "documentClientWidth": 375,
+        "documentScrollWidth": 375,
+        "tableWidth": 317
+      },
+      "screenshots": {
+        "output/qa/flow-graph-data-v1.png": "60bf17b3c5659a9fff56fea158a9fd51f82b266c62e75568de11d01f6efa3558",
+        "output/qa/flow-graph-result-desktop-v1.png": "301abba0eec471b8fe9fd2fd644fc8fc63c03d4c8d26c0435654cdb0bf4f5a58",
+        "output/qa/flow-graph-result-mobile-v1.png": "a9e398b4146f1fd59a17e86a31d8b9a8d9f70a91579a864009eb755a1208435b"
+      }
+    },
+    "browserComparisonUnchangedAfterFinalGuard": true
+  },
+  "priorCi": {
+    "commit": "1dfbebdeeda53e38de51d44126639d748d63b278",
+    "run": "https://github.com/WaterLeague/waterleague/actions/runs/39356912984",
+    "conclusion": "success"
+  },
+  "limits": {
+    "verifiedNativeMapToResearchNetworkLink": false,
+    "verifiedResearchHorizontalCrsOrVerticalDatum": false,
+    "connectedNativeSewerOrSurfaceGrid": false,
+    "publishedModelPromotedToFieldObservation": false,
+    "newPhysicalEffectsOrScoreRule": false,
+    "lifeCycleCostAdded": false,
+    "authenticatedBrowserEndToEndVerifiedInThisRecord": false,
+    "allTargetDevicePerformanceVerifiedInThisRecord": false,
+    "oldResultMetadataRewritten": false,
+    "browserProofScope": "EXISTING_RESULT_COMPONENT_AND_DATA_PAGE; PRE_FINAL_GUARD_GRAPH_METADATA_WITH_IDENTICAL_VISIBLE_METRICS"
+  }
+}

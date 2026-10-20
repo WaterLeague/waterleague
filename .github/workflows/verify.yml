@@ -136,6 +136,11 @@ jobs:
           uv sync --project simulation --locked
       - run: bash scripts/build_swmm.sh
       - run: simulation/.venv/bin/python scripts/build_live_swmm.py
+      - name: 공개 관망의 고정 입력·연결 지표 엔진 준비
+        run: |
+          simulation/.venv/bin/python scripts/prepare_ci_sources.py
+          simulation/.venv/bin/python scripts/build_facility_metrics_swmm.py
+          simulation/.venv/bin/python scripts/build_pump_network_swmm.py
       - name: 주간 연속 상태·경계·공통 설계 계약 검증
         run: simulation/.venv/bin/python scripts/verify_league_postgres.py --suite physics
       - name: 실제 재해 관측·초기화·전체 사건 제출 검증
@@ -146,6 +151,8 @@ jobs:
         run: simulation/.venv/bin/python scripts/verify_league_postgres.py --suite historical-design-run
       - name: 최종 설계 제출·취소 revision·변조 계보 검증
         run: simulation/.venv/bin/python scripts/verify_league_postgres.py --suite historical-submit-design
+      - name: 공개 관망의 집수·시설·출구 연결과 이용조·펌프 검증
+        run: simulation/.venv/bin/python scripts/verify_league_postgres.py --suite watershed
   worker-queue:
     runs-on: ubuntu-24.04
     timeout-minutes: 15

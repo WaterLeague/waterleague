@@ -116,8 +116,11 @@ def build(model, placement, result, directory, cost_record):
 
 
 def archive(model, placement, result, directory, cost_record):
+    from .flow_connections import direct_surface, archive as archive_flow
     directory = Path(directory)
     value = build(model, placement, result, directory, cost_record)
+    value['flowGraph'] = direct_surface(model, placement, result, value['inputFiles'])
+    archive_flow(value['flowGraph'], directory)
     raw = (json.dumps(value, ensure_ascii=False, sort_keys=True, allow_nan=False) + '\n').encode('utf-8')
     result['designContract'] = {'sha256': digest(raw), **value}
     (directory / 'design-contract.json').write_bytes(raw)

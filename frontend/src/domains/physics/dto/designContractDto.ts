@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { initializationDto } from './initializationDto';
+import { nativeFlowGraphDto } from './flowGraphDto';
 
 const sha = z.string().regex(/^[a-f0-9]{64}$/);
 const area = z.number().finite().positive();
@@ -83,6 +84,7 @@ export const designContractDto = z
       TIMESERIES: sha,
     }),
     implementationSha256: sha,
+    flowGraph: nativeFlowGraphDto.optional(),
   })
   .refine(
     (v) =>
@@ -90,5 +92,51 @@ export const designContractDto = z
       v.facility.areaM2 === v.connection.directRainAreaM2 &&
       Date.parse(v.evaluation.start) < Date.parse(v.evaluation.end) &&
       (v.cost.status === 'RECORDED') === (v.cost.snapshotSha256 !== null)
-  );
+  )
+  .refine((v) => {
+    const graph = v.flowGraph;
+    if (!graph) return true;
+    const candidate = 'candidate:' + v.spatial.candidateId;
+    const facility = 'facility:' + v.spatial.candidateId;
+    const outlet = 'surface-outlet:' + v.spatial.candidateId;
+    const remainder = 'remainder:' + v.spatial.candidateId;
+    const budget = graph.areaBudgets[0];
+    return (
+      graph.nodes.length === 5 &&
+      graph.sourceHashes.siteCatalog === v.spatial.playCatalogSha256 &&
+      graph.sourceHashes.objectCatalog === v.spatial.objectsSha256 &&
+      graph.sourceHashes.candidateGeometry === v.spatial.geometrySha256 &&
+      Object.entries(v.inputFiles).every(([name, hash]) => graph.sourceHashes[name] === hash) &&
+      graph.nodes.some(
+        (n) =>
+          n.id === candidate &&
+          n.candidateId === v.spatial.candidateId &&
+          n.districtId === v.spatial.districtId
+      ) &&
+      graph.nodes.some(
+        (n) =>
+          n.id === facility &&
+          n.facilityType === v.facility.type &&
+          Number(n.areaM2) === v.facility.areaM2
+      ) &&
+      graph.nodes.some(
+        (n) =>
+          n.id === 'object:' + v.spatial.sourceObjectId &&
+          n.sourceObjectId === v.spatial.sourceObjectId
+      ) &&
+      graph.areaBudgets.length === 1 &&
+      budget.sourceNodeId === candidate &&
+      budget.completePartition &&
+      budget.allocations.length === 2 &&
+      budget.allocations.some(
+        (a) => a.targetNodeId === facility && Number(a.areaM2) === v.facility.areaM2
+      ) &&
+      budget.allocations.some((a) => a.targetNodeId === remainder) &&
+      Number(budget.availableM2) === v.spatial.evaluationSurfaceAreaM2 &&
+      graph.evaluationPoints.length === 1 &&
+      graph.evaluationPoints[0].nodeId === outlet &&
+      Date.parse(graph.evaluationPoints[0].start) === Date.parse(v.evaluation.start) &&
+      Date.parse(graph.evaluationPoints[0].end) === Date.parse(v.evaluation.end)
+    );
+  });
 export type DesignContractData = z.infer<typeof designContractDto>;
