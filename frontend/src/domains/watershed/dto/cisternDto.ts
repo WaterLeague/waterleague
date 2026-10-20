@@ -20,7 +20,7 @@ const port = z.object({
 });
 export const cisternDesignDto = z
   .object({
-    schemaVersion: z.union([z.literal(1), z.literal(2)]),
+    schemaVersion: z.union([z.literal(1), z.literal(2), z.literal(3)]),
     catalogHash: z.string().regex(/^[a-f0-9]{64}$/),
     sourceNetworkSha256: z.string().regex(/^[a-f0-9]{64}$/),
     id: z.string(),

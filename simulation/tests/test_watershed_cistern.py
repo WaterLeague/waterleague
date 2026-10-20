@@ -38,3 +38,36 @@ class CisternTests(unittest.TestCase):
             with self.assertRaises(FloodModelError): inputs(packed(value))
         value=design();value.pop('cisternCosting');value['placements'][0]['subcatchmentId']='S9'
         with self.assertRaisesRegex(FloodModelError,'SHARED_CATCHMENT'): inputs(packed(value))
+
+    def test_shared_original_catchment_retargets_lid_only_to_free_impervious_partition(self):
+        value=design(); value.pop('cisternCosting'); value.pop('costing',None)
+        value['cistern']['schemaVersion']=3
+        value['placements'][0]['subcatchmentId']='S9'
+        result=inputs(packed(value))
+        transformation=result[5]
+        self.assertEqual(transformation['sourceDesign']['placements'][0]['subcatchmentId'],'S9')
+        self.assertEqual(transformation['sourceCatchmentAssignments'][0]['executionCatchmentId'],'S9')
+        partition=transformation['networkCistern']['catchmentPartition']
+        self.assertEqual(partition['coverId'],'WLCT_Cistern1_R')
+        self.assertEqual(transformation['facilities'][0]['subcatchmentId'],partition['imperviousBypassId'])
+        value['placements'][0]['treatedImperviousM2']=13729.38
+        with self.assertRaisesRegex(FloodModelError,'SHARED_CAPTURE_AREA_EXCEEDED'):
+            inputs(packed(value))
+
+    def test_multiple_lids_cannot_each_reuse_the_same_remaining_impervious_area(self):
+        value=design();value.pop('cisternCosting');value.pop('costing',None)
+        value['cistern'].update(schemaVersion=3,captureAreaM2=13567.03)
+        value['placements'][0]['subcatchmentId']='S9'
+        value['placements'].append(deepcopy(value['placements'][0])|{'id':'Second'})
+        with self.assertRaisesRegex(FloodModelError,'SHARED_CAPTURE_AREA_EXCEEDED'):
+            inputs(packed(value))
+
+    def test_covered_legacy_lid_cannot_drop_rainfall_inside_shared_cistern_partition(self):
+        from waterleague_sim.run_watershed_job import CATALOG
+        value=design();value.pop('cisternCosting');value.pop('costing',None)
+        value['cistern']['schemaVersion']=3
+        item=value['placements'][0]
+        item.update(subcatchmentId='S9',facilityType='RAINWATER_CISTERN')
+        item['parameters']=json.loads(CATALOG.read_bytes())['templates']['RAINWATER_CISTERN']['parameters']
+        with self.assertRaisesRegex(FloodModelError,'SHARED_COVERED_LID_UNSUPPORTED'):
+            inputs(packed(value))

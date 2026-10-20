@@ -54,7 +54,8 @@ class InitializationCollectionTests(unittest.TestCase):
         from waterleague_sim import run_historical_job
         for facility, policy in [('VEGETATIVE_SWALE', 'SELECTED_SURFACE_7_DAY_DRY_WET_V1'),
                                  ('GREEN_ROOF', 'SELECTED_SWALE_7_DAY_STATE_V2')]:
-            raw = json.dumps([{'facilityType': facility, 'initializationSensitivity': policy}])
+            raw = json.dumps([{'districtId': '11200', 'cellId': 'C' + 'a'*24,
+                               'facilityType': facility, 'initializationSensitivity': policy}])
             request = {'modelHash': 'test-model', 'placements': raw,
                        'inputHash': hashlib.sha256(('test-model\n'+raw).encode()).hexdigest()}
             with tempfile.TemporaryDirectory() as directory, patch.object(run_historical_job, 'forcing', return_value=b'{}'):

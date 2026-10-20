@@ -75,6 +75,9 @@ def main():
             physical = ['-Dwaterleague.integration.python=' + sys.executable] if suite in {'search', 'restore'} else []
             if suite != 'backend':
                 physical.append('-Dwaterleague.integration.preserve-fixtures=true')
+            if suite == 'watershed':
+                path.with_suffix('.fixtures').mkdir(mode=0o700)
+                physical.append('-Dwaterleague.integration.watershed.fixtures=' + str(path.with_suffix('.fixtures')))
             if suite == 'guest-historical':
                 physical.append('-Dwaterleague.integration.guest.fixture=' + str(path.with_suffix('.guest.json')))
             if suite == 'historical':
@@ -99,6 +102,8 @@ def main():
             if suite in {'guest-historical', 'queue', 'physics', 'historical', 'watershed', 'historical-design-run', 'historical-submit-design'} and result.returncode == 0:
                 worker_env = env | {'WL_WORKER_TEST_DSN': make_conninfo(**(config | {'dbname': test_name})),
                                     'PYTHONPATH': str(ROOT / 'simulation')}
+                if suite == 'watershed':
+                    worker_env['WL_WATERSHED_FIXTURES'] = str(path.with_suffix('.fixtures'))
                 if suite == 'guest-historical':
                     worker_env['WL_GUEST_FIXTURE'] = str(path.with_suffix('.guest.json'))
                     worker_env['WL_GUEST_EVIDENCE'] = str(path.with_suffix('.guest-runs'))
@@ -109,14 +114,25 @@ def main():
                     worker_env['WL_DESIGN_RUN_FIXTURE'] = str(path.with_suffix('.requests.json'))
                     worker_env['WL_DESIGN_RUN_EVIDENCE'] = str(path.with_suffix('.runs'))
                 pattern = ['-p', {'guest-historical':'test_guest_historical.py','queue':'test_worker_queue.py','historical-submit-design':'test_saved_submission.py','historical-design-run':'test_historical_design_run.py','physics':'test_shared_physics.py','historical':'test_historical.py','watershed':'test_watershed.py'}[suite]] if suite in {'queue','guest-historical','physics','historical','watershed','historical-design-run','historical-submit-design'} else []
-                result = subprocess.run([sys.executable, '-m', 'unittest', 'discover', '-s', 'integration', *pattern, '-v'],
-                    cwd=ROOT / 'simulation', env=worker_env, stdout=log, stderr=subprocess.STDOUT, timeout=240)
+                try:
+                    result = subprocess.run([sys.executable, '-m', 'unittest', 'discover', '-s', 'integration', *pattern, '-v'],
+                        cwd=ROOT / 'simulation', env=worker_env, stdout=log, stderr=subprocess.STDOUT,
+                        timeout=600 if suite == 'watershed' else 240)
+                except subprocess.TimeoutExpired:
+                    print(path.read_text(errors='replace')[-16000:], file=sys.stderr)
+                    raise
+                if suite == 'watershed' and result.returncode == 0:
+                    result = subprocess.run(
+                        [str(ROOT/'backend/mvnw'),'--batch-mode','-Dtest=WatershedReadbackTests',
+                         '-Dwaterleague.integration.jdbc='+jdbc,*physical,'test'],
+                        cwd=ROOT/'backend',env=env,stdout=log,stderr=subprocess.STDOUT,timeout=600)
         with psycopg.connect(**config) as db:
             after = source_counts(db)
         if before != after:
             raise RuntimeError('원본 자료 수 변경 확인 필요')
         print(json.dumps({'passed': result.returncode == 0, 'sourceCountsUnchanged': True, 'log': str(path)}, ensure_ascii=False))
         if result.returncode:
+            print(path.read_text(errors='replace')[-16000:], file=sys.stderr)
             raise SystemExit(result.returncode)
     finally:
         if created:

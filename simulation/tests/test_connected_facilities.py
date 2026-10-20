@@ -27,6 +27,14 @@ def baseline():
 
 
 class ConnectedFacilityTests(unittest.TestCase):
+    def test_fully_impervious_decimal_area_has_no_artificial_negative_pervious_remainder(self):
+        design = deepcopy(FIXTURE)
+        design['placements'] = design['placements'][:1]
+        raw = SOURCE.replace(b'1 80 100', b'1.371703 100 100')
+        _, metadata = compile_design(raw, design)
+        value = metadata['catchmentChanges'][0]
+        self.assertEqual(value['remainingImperviousM2'], value['remainingAreaM2'])
+
     def test_land_replacement_and_capture_use_remaining_impervious_area(self):
         design = deepcopy(FIXTURE)
         design['placements'] = design['placements'][:1]

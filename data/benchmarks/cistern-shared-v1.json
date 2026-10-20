@@ -1,0 +1,541 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-20",
+  "classification": "PUBLIC_NETWORK_SHARED_CISTERN_LID_API_WORKER_LOCAL_COMPONENT_VERIFICATION",
+  "method": "COVERED_CISTERN_DISJOINT_COVER_CAPTURE_DYNWAVE_V3",
+  "baseCommit": "897b8123629ee8f1c19c4fd2504e2a4ec17d13c0",
+  "implementationSha256": {
+    ".github/workflows/verify.yml": "e3802146519947ddbcc4cb73c4c6d21a12c8dfed2360986adb26a55f9cefcbd1",
+    "backend/src/main/java/io/waterleague/watershed/service/CisternDesignService.java": "db7b220097f825c1c8e8ad49c28f75d626dbd8deaa2885c7adeb2d3f159eaf27",
+    "backend/src/test/java/io/waterleague/WatershedReadbackTests.java": "2e173b60844117dcd7f490730397a041411943c3252e4f5f52cfe63d1dd62e58",
+    "backend/src/test/java/io/waterleague/WatershedWorkflowTests.java": "5b9ae64c8d3fa01a6b306eba8ea4178145ee03afcf14e36049203dc0d9a3303c",
+    "frontend/src/domains/watershed/dto/cisternDto.ts": "2acdba0b769fed140d30bb078135ba1837d514d7abe590cac7ea73dd5b198e35",
+    "frontend/src/domains/watershed/dto/storageDto.ts": "c65b5b1cf0fd51825969efb2794e45b2acffb20aedf55a6418779c95ee746296",
+    "frontend/src/domains/watershed/dto/watershedDto.ts": "1c367dde9bfa609e4f49fda1710eb4a7f657fd6038c102d5cc8edc1630851ddc",
+    "frontend/src/domains/watershed/service/cisternDesign.test.tsx": "eb81e26619bab71650aef6ee88eb45ca82c3a209577a3f963f5c00900ffa5506",
+    "frontend/src/domains/watershed/service/cisternDesign.ts": "8a3fdecd3bc82854ba20f19a48ef9e82df6a7e537b65e77d581b698b7e23211a",
+    "frontend/src/domains/watershed/view/CisternDesignForm.tsx": "f123a627fd106cadacc1162281075a33b0f832d63b18c7076dcacaa146256bb0",
+    "frontend/src/domains/watershed/view/SharedCisternResult.test.tsx": "f1ec6a2fdff1f0512b1145c3ce1e0581616f27a786df95ec5178c9fc71064d5e",
+    "frontend/src/domains/watershed/view/StorageLedger.tsx": "18ce1da89ae8d65d7dcdce96985dcb42fb8a5ba80e8f2e0185ff3e0a5fbf2d74",
+    "scripts/verify_league_postgres.py": "13f9c2c98856842fad4eb1f54b4c18249998b5f37a75f21d5a02573a2ef24085",
+    "simulation/integration/test_watershed.py": "5f5cb27cd974f316b6e685662bc6c844f37ed8ee680eec3692b66090277cdbad",
+    "simulation/tests/test_connected_facilities.py": "2e8e8a91d80f65f18a974184a7ea2a5d480d92508ce654533f5def86854f8092",
+    "simulation/tests/test_connected_storage.py": "eec6f5aead5c97f6e5e3e1138807e5cbe9334a0ff4308c8904e4949ddf8ab681",
+    "simulation/tests/test_initialization_study_collection.py": "5a4a7427618fe95f91b97e74edba6871169a344bea32935279fcee6693b4b8b0",
+    "simulation/tests/test_shared_cistern.py": "b139714a7896b4e166825287898279c1fa15c022e14684677bf2756de559eaa3",
+    "simulation/tests/test_watershed_cistern.py": "afacd9b2990b06e93bf13c60e98059cfe3ca8cac0d8250fc427735a731220d37",
+    "simulation/waterleague_sim/engine/cistern_network.py": "9b1cbb5860cd5c22bfd0f09d1fcb04576dfd0378ceb36849f7bf6fc6dca17218",
+    "simulation/waterleague_sim/engine/connected_facilities.py": "3e2a40622a929073cedb88f27be610b50fa104a6456c9652a36a393787b46958",
+    "simulation/waterleague_sim/engine/connected_storage.py": "3b95752d71f5424a8269df84bdbd389b8ac3904d69e4ea54d2025ba634bdd3e1",
+    "simulation/waterleague_sim/engine/flow_connections.py": "f1e974c7e5512adbb310de76da93de67ce1a53ff5a73aab96fba725616e94c53",
+    "simulation/waterleague_sim/run_watershed_job.py": "73325d77d5cab75f75921e7c9b452dbc2d4f86108ad8989a583bd6e5e9c56240",
+    "simulation/waterleague_sim/watershed_cistern.py": "ed3783b4d262a78237f4ab19b39267e564b68bde524ec3c7cf25aaff6bbd5ec2"
+  },
+  "publicBasis": [
+    "https://github.com/USEPA/Stormwater-Management-Model/blob/v5.2.4/src/solver/subcatch.c",
+    "https://github.com/USEPA/Stormwater-Management-Model/blob/v5.2.4/src/solver/node.c",
+    "https://github.com/USEPA/Stormwater-Management-Model/blob/v5.2.4/src/solver/swmm5.c"
+  ],
+  "nativeVolumeBasis": {
+    "id": "EPA_CMS_STORAGE_VOLUME_TO_EXACT_SI_V1",
+    "inputM3PerFt3": 0.02832,
+    "exactM3PerFt3": 0.028316846592,
+    "solverAndInputAdjusted": false
+  },
+  "integrations": [
+    {
+      "suite": "backend",
+      "tests": 262,
+      "skipped": 5,
+      "failures": 0,
+      "errors": 0,
+      "packageBuildPassed": true,
+      "sourceCountsUnchanged": true,
+      "report": {
+        "path": "tmp/cistern-shared-final-backend-v2.json",
+        "sha256": "165b49e586b8bc5adf162a69eeaedb179274206f85a5b92c97a547c90d7737ed"
+      },
+      "log": {
+        "path": "tmp/waterleague_league_test_625743bc89c54806940253fc34b142fb.log",
+        "sha256": "51fb1d3aac3e15746538e10756db4d4fbcc46698964e0087fedbb823ee2e6046"
+      }
+    },
+    {
+      "suite": "watershed",
+      "javaDesignTests": 16,
+      "workerTests": 8,
+      "authenticatedHttpReadbackTests": 1,
+      "ownerStatus": 200,
+      "otherMemberStatus": 404,
+      "anonymousStatus": 401,
+      "sourceCountsUnchanged": true,
+      "requestSource": "CURRENT_RUN_UNIQUE_FIXTURE_DIRECTORY",
+      "report": {
+        "path": "tmp/cistern-shared-final-watershed-v4.json",
+        "sha256": "38ac115e68b619d0e85f3fc6dcbf07faf07b6f406ea757ed3e77bb0f24c1d52f"
+      },
+      "log": {
+        "path": "tmp/waterleague_queue_test_dfa7e6d4dab14e9ca2b224ea25bf4696.log",
+        "sha256": "006c32b49b13c27459908dd8305807e7d42c4048b029ebd50c846a607dd4fbe8"
+      }
+    }
+  ],
+  "unitRegressions": {
+    "latestModules": {
+      "shared_cistern": 7,
+      "cistern_network": 4,
+      "watershed_cistern": 5,
+      "connected_facilities": 7,
+      "flow_connections": 8,
+      "connected_storage": 7,
+      "initialization_study_collection": 6,
+      "storage_composition": 5,
+      "initialized_cistern": 2
+    },
+    "logs": [
+      {
+        "path": "tmp/cistern-shared-regressions-v2.log",
+        "sha256": "aa4560b6486c1fd8cbf25e66ee4b0d0475d2f4253cd78c3c04b8a8951dedad01"
+      },
+      {
+        "path": "tmp/cistern-shared-numeric-regressions-v1.log",
+        "sha256": "4fc387fc3675a8a7c75e76044cf1f809e00f34edabba56f1dc07219ac641a650"
+      }
+    ]
+  },
+  "runs": [
+    {
+      "host": "S9",
+      "inputHash": "576cab30950d1c11f70d8fb3707b05ec3572317b81384706a2e69a9c557245f6",
+      "artifactDirectory": "tmp/member-shared-cistern-0ef86eb3-d3b7-4011-b635-a60b794f3b28",
+      "result": {
+        "path": "tmp/member-shared-cistern-0ef86eb3-d3b7-4011-b635-a60b794f3b28/result.json",
+        "sha256": "4f5936cfbe8b1667aac1556d1d2d157d563cb68fc8d0464d91b9311b6216f9e0"
+      },
+      "manifest": {
+        "path": "tmp/member-shared-cistern-0ef86eb3-d3b7-4011-b635-a60b794f3b28/manifest.json",
+        "sha256": "8150a23285d8a45d9440cc2484da4bd1a09178e2430c646301b92ae6b0954fb0"
+      },
+      "apiResponse": {
+        "path": "tmp/waterleague_queue_test_dfa7e6d4dab14e9ca2b224ea25bf4696.fixtures/api-view-S9.json",
+        "sha256": "900318f4debf60668b9e9ef0f6c66462f8d0e2c00d71de8eacb720cffe16b969"
+      },
+      "flowGraphSha256": "06fe5a2bd058ac2e954ace20b7a77a7a6c50e71a988d6ebf372f21f857df5a38",
+      "sourceHashes": {
+        "original.inp": "8ce278a3d2b58df3c2a5fd1232160bcabb324389746ee0c878792acf91abbdbb",
+        "baseline-input.inp": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+        "strategy-input.inp": "77c8311ab50ce2f6c934212c5066e73ef71e6873c371b1ec6e552008fceab2cc",
+        "design.json": "83a4c5fbabcb9d8f98d9fbfd882c82f703184a1413914238632b601feb0a8615",
+        "catalog.json": "beaddba8868b6f1f6bbf35b1d53d4695a94db99498d8988f90d62013cf8f053c",
+        "source-manifest.json": "2104f9143e6deea2213c9f88219a2d23ddfb78b0dab61b961cb8ab362df1da98",
+        "design-transformation.json": "1175bc1f69d39b3beffd7047a411c56356792a382f7983361f8078fc6971ccde",
+        "numerical-transformation.json": "867445faaee2d6f8c21d90be6d9ea98fcdc3913246bbed4b90da880cc65e5536",
+        "facility-catalog.json": "f06a80aebb4fc674597e1da4ca2f829a58f1724de088d603bf81eb9068e9f0a2"
+      },
+      "areaBudgetCount": 28,
+      "partition": {
+        "hostId": "S9",
+        "captureId": "WLCT_Cistern1_C",
+        "originalAreaM2": 13729.38,
+        "bypassAreaM2": 13719.38,
+        "captureAreaM2": 10.0,
+        "coverAreaM2": 2.35,
+        "originalWidthM": 50.0,
+        "bypassWidthM": 49.955023460637,
+        "captureWidthM": 0.0364182504963808,
+        "coverRainfallRoute": "DEDICATED_COVER_CATCHMENT_TO_ORIGINAL_OUTLET",
+        "rainfallCount": 1,
+        "captureBasis": "EXPLICIT_DESIGN_UNIFORM_IMPERVIOUS_PARTITION_NOT_MEASURED_ROOF",
+        "coverId": "WLCT_Cistern1_R",
+        "coverWidthM": 0.00855828886664948,
+        "imperviousBypassId": "S9",
+        "originalImperviousAreaM2": 13729.38,
+        "preservedPerviousAreaM2": 0.0,
+        "imperviousBypassAreaM2": 13717.029999999999,
+        "imperviousBypassWidthM": 49.955023460637,
+        "widthBasis": "PRESERVE_SWMM_ALPHA_WIDTH_PER_SURFACE_AREA"
+      },
+      "widthBinding": {
+        "sourceNetworkSha256": "438be4574620f87d79b9127040ff28988a84bceac79752f97a95be43e0c268d4",
+        "derivedNetworkSha256": "8abbc2343f648b67c8b94701223840e480ce851b81b3dab57cd6fa9008ca62c3",
+        "executionCatchmentId": "S9",
+        "totalAreaM2": 13717.029999999999,
+        "facilityAreaM2": 20.0,
+        "remainingNonLidAreaM2": 13697.029999999999,
+        "originalWidthM": 49.955023460637,
+        "remainingNonLidWidthM": 49.882186959644244,
+        "policy": "PRESERVE_ORIGINAL_IMPERVIOUS_WIDTH_PER_NON_LID_AREA"
+      },
+      "sourceCatchmentAssignments": [
+        {
+          "id": "Bio1",
+          "sourceCatchmentId": "S9",
+          "executionCatchmentId": "S9",
+          "policy": "EXCLUDE_CISTERN_CAPTURE_AND_COVER"
+        }
+      ],
+      "cisternLedger": {
+        "id": "Cistern1",
+        "nodeId": "WLCT_Cistern1",
+        "initialStorageM3": 0.0,
+        "inflowM3": 2.596165171746023,
+        "outflowIncludingFloodingM3": 0.0,
+        "floodingM3": 0.0,
+        "finalStorageM3": 2.595876090954302,
+        "capacityM3": 4.7,
+        "balanceResidualM3": 0.00028908079172085266,
+        "allowedResidualM3": 0.02596165171746023,
+        "numericalStatus": "PASSED",
+        "nativeCapacityM3": 4.699476658983051,
+        "volumeBasis": "EPA_CMS_STORAGE_VOLUME_TO_EXACT_SI_V1",
+        "initialAvailableM3": 4.699476658983051,
+        "finalAvailableM3": 2.103600568028749,
+        "reuseM3": null,
+        "reuseStatus": "NOT_CALCULATED_NO_USE_DEMAND"
+      },
+      "numericalStatus": "PASSED",
+      "rankingEligible": false
+    },
+    {
+      "host": "S1",
+      "inputHash": "3758bfb3b00c12e748618395a00e5fbbec7d9e7462db15d89f2921ef28c51376",
+      "artifactDirectory": "tmp/member-shared-cistern-45761fb7-225f-4298-82cc-e2fce4cd6cb5",
+      "result": {
+        "path": "tmp/member-shared-cistern-45761fb7-225f-4298-82cc-e2fce4cd6cb5/result.json",
+        "sha256": "4b4e01f9e2248a55eadcb9704fffc1fb486038236b74049736bf1ea574a6357b"
+      },
+      "manifest": {
+        "path": "tmp/member-shared-cistern-45761fb7-225f-4298-82cc-e2fce4cd6cb5/manifest.json",
+        "sha256": "9e0189f98881e06e4778df27fc63de397b906ad61db2a03419f78412f409de76"
+      },
+      "apiResponse": {
+        "path": "tmp/waterleague_queue_test_dfa7e6d4dab14e9ca2b224ea25bf4696.fixtures/api-view-S1.json",
+        "sha256": "6a826227657ad92c4005c8b56df889b85c3eabe40f13bd79fc6c1a82fd5ad96a"
+      },
+      "flowGraphSha256": "4df258ebff5e950ed68b5fe07b5bf33ffd1043a19a5647fc75963ef2f870b0e5",
+      "sourceHashes": {
+        "original.inp": "8ce278a3d2b58df3c2a5fd1232160bcabb324389746ee0c878792acf91abbdbb",
+        "baseline-input.inp": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+        "strategy-input.inp": "d37f0e5bb7418db7c2710c68c6b41907ca4a27f3e2aac9725aa02e593687fd0b",
+        "design.json": "a8092d6f36774dbcfa1c4374ccd9d1ca4bac3a1468c16312c4aeb3a29dcb556d",
+        "catalog.json": "beaddba8868b6f1f6bbf35b1d53d4695a94db99498d8988f90d62013cf8f053c",
+        "source-manifest.json": "2104f9143e6deea2213c9f88219a2d23ddfb78b0dab61b961cb8ab362df1da98",
+        "design-transformation.json": "75864cea8829e6bf0b486c5267d13ebf7cba5d0fa44b87039d00ef3bbdc7f9a4",
+        "numerical-transformation.json": "867445faaee2d6f8c21d90be6d9ea98fcdc3913246bbed4b90da880cc65e5536",
+        "facility-catalog.json": "f06a80aebb4fc674597e1da4ca2f829a58f1724de088d603bf81eb9068e9f0a2"
+      },
+      "areaBudgetCount": 28,
+      "partition": {
+        "hostId": "S1",
+        "captureId": "WLCT_Cistern1_C",
+        "originalAreaM2": 38103.84,
+        "bypassAreaM2": 38093.84,
+        "captureAreaM2": 10.0,
+        "coverAreaM2": 2.35,
+        "originalWidthM": 100.0,
+        "bypassWidthM": null,
+        "captureWidthM": 0.0353075125629906,
+        "coverRainfallRoute": "DEDICATED_COVER_CATCHMENT_TO_ORIGINAL_OUTLET",
+        "rainfallCount": 1,
+        "captureBasis": "EXPLICIT_DESIGN_UNIFORM_IMPERVIOUS_PARTITION_NOT_MEASURED_ROOF",
+        "imperviousBypassId": "WLCT_Cistern1_B",
+        "originalImperviousPercent": 74.33,
+        "originalImperviousAreaM2": 28322.584271999996,
+        "preservedPerviousAreaM2": 9781.255728,
+        "imperviousBypassAreaM2": 28310.234271999998,
+        "perviousWidthM": 100.0,
+        "imperviousBypassWidthM": 99.9563952219847,
+        "widthBasis": "PRESERVE_SWMM_ALPHA_WIDTH_PER_SURFACE_AREA",
+        "coverId": "WLCT_Cistern1_R",
+        "coverWidthM": 0.00829726545230279
+      },
+      "widthBinding": {
+        "sourceNetworkSha256": "63cbb3307aadba9934a15a6c43a1240de3af932095d943ec2ad2a13b136cae5a",
+        "derivedNetworkSha256": "dd8baff15df39d5ee5871f4a709abb6e77030a01a7692ee910cc8136913f0361",
+        "executionCatchmentId": "WLCT_Cistern1_B",
+        "totalAreaM2": 28310.234271999998,
+        "facilityAreaM2": 20.0,
+        "remainingNonLidAreaM2": 28290.234271999998,
+        "originalWidthM": 99.9563952219847,
+        "remainingNonLidWidthM": 99.88578019685872,
+        "policy": "PRESERVE_ORIGINAL_IMPERVIOUS_WIDTH_PER_NON_LID_AREA"
+      },
+      "sourceCatchmentAssignments": [
+        {
+          "id": "Bio1",
+          "sourceCatchmentId": "S1",
+          "executionCatchmentId": "WLCT_Cistern1_B",
+          "policy": "EXCLUDE_CISTERN_CAPTURE_AND_COVER"
+        }
+      ],
+      "cisternLedger": {
+        "id": "Cistern1",
+        "nodeId": "WLCT_Cistern1",
+        "initialStorageM3": 0.7049214988474577,
+        "inflowM3": 2.6006513599206116,
+        "outflowIncludingFloodingM3": 2.085244074906848,
+        "floodingM3": 0.0,
+        "finalStorageM3": 1.222591359030907,
+        "capacityM3": 4.7,
+        "balanceResidualM3": -0.0022625751696858654,
+        "allowedResidualM3": 0.03307835433937755,
+        "numericalStatus": "PASSED",
+        "nativeCapacityM3": 4.699476658983051,
+        "volumeBasis": "EPA_CMS_STORAGE_VOLUME_TO_EXACT_SI_V1",
+        "initialAvailableM3": 3.9945551601355933,
+        "finalAvailableM3": 3.4768852999521442,
+        "reuseM3": null,
+        "reuseStatus": "NOT_CALCULATED_NO_USE_DEMAND"
+      },
+      "numericalStatus": "PASSED",
+      "rankingEligible": false
+    }
+  ],
+  "frontendFixture": {
+    "path": "frontend/src/domains/watershed/view/fixtures/public-shared-cistern-job-v1.json",
+    "sha256": "8b5766c8bb99659694fd347ddbe118a5b9dc316662d9772ff88560e6c6d420c7"
+  },
+  "independentReplay": {
+    "report": {
+      "path": "tmp/cistern-shared-replay-v1.json",
+      "sha256": "5d181c107adb99444f17aa139313412bbf962a372fe78c04c86a838f1cd20ce1"
+    },
+    "runs": [
+      {
+        "source": "tmp/member-shared-cistern-52955cf4-be20-47af-a3d0-a21f8d01a4c7",
+        "destination": "tmp/cistern-shared-replay-a31e35a94b59418498e507543b85bda0",
+        "inputHash": "576cab30950d1c11f70d8fb3707b05ec3572317b81384706a2e69a9c557245f6",
+        "cases": [
+          {
+            "id": "baseline",
+            "outSha256": "682eeb8bb19391dde81c640bc68f91de924852787689c89cbd46a3c771006c18",
+            "binaryEqual": true,
+            "metricsEqual": true,
+            "nodeFloodingEqual": true
+          },
+          {
+            "id": "strategy",
+            "outSha256": "1026e4d6a95d32c64f255e6dbc1ad66db90237d29a986d6475baa030292810a2",
+            "binaryEqual": true,
+            "metricsEqual": true,
+            "nodeFloodingEqual": true
+          }
+        ]
+      },
+      {
+        "source": "tmp/member-shared-cistern-423563f8-200f-4957-8772-b4b877d242a6",
+        "destination": "tmp/cistern-shared-replay-dd301152cd6d46da9e9346184b460a0c",
+        "inputHash": "3758bfb3b00c12e748618395a00e5fbbec7d9e7462db15d89f2921ef28c51376",
+        "cases": [
+          {
+            "id": "baseline",
+            "outSha256": "682eeb8bb19391dde81c640bc68f91de924852787689c89cbd46a3c771006c18",
+            "binaryEqual": true,
+            "metricsEqual": true,
+            "nodeFloodingEqual": true
+          },
+          {
+            "id": "strategy",
+            "outSha256": "97aed0a41214d2cf07217e81de938e4f9d3aa7afb19d3530b45fa1a92aab44d5",
+            "binaryEqual": true,
+            "metricsEqual": true,
+            "nodeFloodingEqual": true
+          }
+        ]
+      }
+    ],
+    "scope": "SAME_CODE_PUBLIC_INPUT_PRIOR_WORKER_RUN_BEFORE_HTTP_TEST_REPAIR"
+  },
+  "existingPhysicalResults": {
+    "report": {
+      "path": "tmp/cistern-existing-physical-v1.json",
+      "sha256": "1e8850a1213770b8dad1415a60da03dffa9b23e21fdcfb43cd461fddc2d66df3"
+    },
+    "runs": [
+      {
+        "before": "tmp/flow-graph-network-ea37738c-6dbc-440c-ada7-d55d48d743e6",
+        "after": "tmp/flow-graph-network-90275a5b-ef57-4309-8c40-7e85179a9722",
+        "cases": [
+          {
+            "id": "baseline",
+            "files": [
+              {
+                "file": "baseline/network.inp",
+                "sha256": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+                "bytesEqual": true
+              },
+              {
+                "file": "baseline/network.out",
+                "sha256": "682eeb8bb19391dde81c640bc68f91de924852787689c89cbd46a3c771006c18",
+                "bytesEqual": true
+              }
+            ],
+            "totalsEqual": true,
+            "metricsEqual": true,
+            "nodeFloodingEqual": true
+          },
+          {
+            "id": "strategy",
+            "files": [
+              {
+                "file": "strategy/network.inp",
+                "sha256": "15efae167ee1e96279d3cc5f00881b883f38772b8111075c56c0e446c2bfeb98",
+                "bytesEqual": true
+              },
+              {
+                "file": "strategy/network.out",
+                "sha256": "769332420a751c772db450c3d29cfa6ddcb3b7b8b32ee44894149607b85c416f",
+                "bytesEqual": true
+              }
+            ],
+            "totalsEqual": true,
+            "metricsEqual": true,
+            "nodeFloodingEqual": true
+          }
+        ]
+      },
+      {
+        "before": "tmp/member-cistern-hydraulics-5f70358b-38f7-47e7-a32c-5c7ccfd8c094",
+        "after": "tmp/member-cistern-hydraulics-61bee3c1-84f9-4565-8b47-a4aff960bb71",
+        "cases": [
+          {
+            "id": "baseline",
+            "files": [
+              {
+                "file": "baseline/network.inp",
+                "sha256": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+                "bytesEqual": true
+              },
+              {
+                "file": "baseline/network.out",
+                "sha256": "682eeb8bb19391dde81c640bc68f91de924852787689c89cbd46a3c771006c18",
+                "bytesEqual": true
+              }
+            ],
+            "totalsEqual": true,
+            "metricsEqual": true,
+            "nodeFloodingEqual": true
+          },
+          {
+            "id": "strategy",
+            "files": [
+              {
+                "file": "strategy/network.inp",
+                "sha256": "17dfb84b7a19f43d3e82787f521629ea2b865b8cf5af21dd7cd86b76392e788d",
+                "bytesEqual": true
+              },
+              {
+                "file": "strategy/network.out",
+                "sha256": "8bfded44ca80863fa7487b7aecc4820638e766ac8eedafda9ff9855ddf95af44",
+                "bytesEqual": true
+              }
+            ],
+            "totalsEqual": true,
+            "metricsEqual": true,
+            "nodeFloodingEqual": true
+          }
+        ]
+      },
+      {
+        "before": "tmp/member-mixed-cistern-171cf5a8-6cff-4d07-a4b7-6572040482ca",
+        "after": "tmp/member-mixed-cistern-6f05e3ef-5d78-45ee-b8ea-22567f69dd68",
+        "cases": [
+          {
+            "id": "baseline",
+            "files": [
+              {
+                "file": "baseline/network.inp",
+                "sha256": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+                "bytesEqual": true
+              },
+              {
+                "file": "baseline/network.out",
+                "sha256": "682eeb8bb19391dde81c640bc68f91de924852787689c89cbd46a3c771006c18",
+                "bytesEqual": true
+              }
+            ],
+            "totalsEqual": true,
+            "metricsEqual": true,
+            "nodeFloodingEqual": true
+          },
+          {
+            "id": "strategy",
+            "files": [
+              {
+                "file": "strategy/network.inp",
+                "sha256": "8754efe433ac6f197cc5240bb0f9806866457758fbcaf0d462483a3576ebcd0f",
+                "bytesEqual": true
+              },
+              {
+                "file": "strategy/network.out",
+                "sha256": "5b49b10964764b631081dfa748e71f2a594047c33142e695865c13b5df3f8192",
+                "bytesEqual": true
+              }
+            ],
+            "totalsEqual": true,
+            "metricsEqual": true,
+            "nodeFloodingEqual": true
+          }
+        ]
+      }
+    ]
+  },
+  "frontend": {
+    "files": 109,
+    "tests": 372,
+    "typeBuildFormatPassed": true,
+    "report": {
+      "path": "tmp/cistern-shared-final-frontend-v2.json",
+      "sha256": "0c275c297e1c6cdabb082177caacd78dc79e582f64fce3bc8d4d12042a2bf8d2"
+    },
+    "scope": "ACTUAL_AUTHENTICATED_HTTP_DTO_PROJECTION_AND_LOCAL_EXISTING_COMPONENT_NOT_FULL_MEMBER_BROWSER_FLOW"
+  },
+  "browser": {
+    "scope": "LOCAL_EXISTING_STORAGE_LEDGER_WITH_ACTUAL_AUTHENTICATED_HTTP_DTO_PROJECTION",
+    "desktop": {
+      "clientWidth": 1280,
+      "ledgerWidth": 860,
+      "scrollWidth": 1280,
+      "viewportHeight": 720,
+      "viewportWidth": 1280
+    },
+    "mobile": {
+      "clientWidth": 390,
+      "ledgerWidth": 350,
+      "scrollWidth": 390,
+      "viewportHeight": 844,
+      "viewportWidth": 390
+    },
+    "screenshots": [
+      {
+        "path": "output/qa/cistern-shared-desktop-v1.png",
+        "sha256": "a4dc7cb468d96aa54b1d4df9524a0ddf05a4ba59b0c1146341918fa35974f76a"
+      },
+      {
+        "path": "output/qa/cistern-shared-mobile-v1.png",
+        "sha256": "8412290e3dd6ac26182af141e6e6928e08f98b50552d7d980ab677055eecc20a"
+      }
+    ],
+    "qaSource": {
+      "path": "tmp/cistern-shared-ui-v1.html",
+      "sha256": "91784a70287063ec62e5596b474c4ff9f63d6c621a267bfd4208274b2a8f42bb"
+    }
+  },
+  "ciRepair": {
+    "previousRun": "https://github.com/WaterLeague/waterleague/actions/runs/39360473515",
+    "previousFailureScope": [
+      "INITIALIZATION_POLICY_TEST_FIXTURE_LACKED_SURFACE_ID",
+      "WATERSHED_SUITE_240_SECOND_OBSERVATION_TIMEOUT"
+    ],
+    "watershedSuiteSeconds": 600,
+    "perWorkerLimitsAndNumericalThresholdsChanged": false,
+    "currentCiStatus": "PENDING_PUSH"
+  },
+  "limitations": [
+    "공개 연구 관망의 명시적 설계; 실제 지붕·홈통·서울 원형 지도 대응 미확인",
+    "일반 지도 확정 설치·예산·두 게임 모드 제출·소형 규격 통합 미완료",
+    "수요 근거 없는 재이용량 null; 저장량·배수를 소비량으로 간주하지 않음",
+    "공동 구역의 구형 덮개 RB LID 미지원; 다른 구역의 기존 연구 경로 완료로 확대하지 않음",
+    "실제 브라우저 회원 전체 흐름·대상 기기 전체 성능·현장 정확도 검증 아님"
+  ]
+}

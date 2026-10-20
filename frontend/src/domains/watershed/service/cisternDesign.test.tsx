@@ -38,7 +38,30 @@ it('공개 적격 집수·면적·배수 높이·다른 시설 중복 제한', (
     areaM2: 20,
     treatedImperviousM2: 100,
   };
-  expect(validateCombinedDesign(catalog, [lid], [], [], [], tank)).toContain('중복 배분');
+  expect(validateCombinedDesign(catalog, [lid], [], [], [], tank)).toBe('');
+  expect(
+    validateCombinedDesign(
+      catalog,
+      [{ ...lid, facilityType: 'RAINWATER_CISTERN' }],
+      [],
+      [],
+      [],
+      tank
+    )
+  ).toContain('덮개형 이용조');
+  expect(
+    validateCombinedDesign(catalog, [{ ...lid, treatedImperviousM2: 13700 }], [], [], [], tank)
+  ).toContain('원 불투수 면적');
+  expect(
+    validateCombinedDesign(
+      catalog,
+      [{ ...lid, areaM2: 12727.03, treatedImperviousM2: 0 }],
+      [],
+      [],
+      [],
+      { ...tank, captureAreaM2: 1000 }
+    )
+  ).toContain('전면 배치');
   expect(
     validateCombinedDesign(
       catalog,

@@ -26,15 +26,24 @@ export function validateCistern(
     return '불투수면과 배수 절점이 확인된 공개 집수구역을 선택해 주세요.';
   if (!/^[A-Za-z][A-Za-z0-9_-]{0,23}$/.test(p.id) || ids.has(p.id.toUpperCase()))
     return '시설 식별자가 중복되거나 올바르지 않습니다.';
-  if (lids.some((l) => l.catchmentId === p.catchmentId))
-    return '이용조 집수구역에 다른 시설을 중복 배분할 수 없습니다.';
   const precision = (v: number, digits: number) =>
     Number.isFinite(v) && Math.abs(v * 10 ** digits - Math.round(v * 10 ** digits)) < 1e-6;
   if (
     ![p.captureAreaM2, p.areaM2].every((v) => precision(v, 2) && v >= 0.01 && v <= 1e6) ||
-    p.captureAreaM2 + p.areaM2 > host.imperviousM2
+    Math.round(p.captureAreaM2 * 100) + Math.round(p.areaM2 * 100) > host.imperviousM2 * 100
   )
     return '집수 면적과 덮개 면적의 합이 원 불투수 면적을 넘지 않아야 합니다.';
+  const shared = lids.filter((l) => l.catchmentId === p.catchmentId);
+  if (shared.some((l) => l.facilityType === 'RAINWATER_CISTERN'))
+    return '같은 집수구역에 덮개형 이용조를 추가로 배분할 수 없습니다.';
+  const lidArea = shared.reduce((sum, l) => sum + Math.round(l.areaM2 * 100), 0);
+  const treated = shared.reduce((sum, l) => sum + Math.round(l.treatedImperviousM2 * 100), 0);
+  const free =
+    host.imperviousM2 * 100 - Math.round(p.captureAreaM2 * 100) - Math.round(p.areaM2 * 100);
+  if (lidArea + treated > free)
+    return '이용조 집수·덮개와 다른 시설의 설치·처리 면적 합이 원 불투수 면적을 넘습니다.';
+  if (shared.length > 0 && lidArea > 0.999 * free)
+    return '이용조 집수·덮개를 제외한 면적에 다른 시설을 전면 배치할 수 없습니다.';
   if (
     ![p.invertM, p.depthM, p.initialDepthM].every((v) => precision(v, 3)) ||
     p.invertM < -1000 ||

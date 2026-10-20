@@ -104,7 +104,7 @@ jobs:
       - run: python scripts/verify_shared_sites.py
   game-contract:
     runs-on: ubuntu-24.04
-    timeout-minutes: 25
+    timeout-minutes: 30
     services:
       postgres:
         image: postgres:18.4

@@ -322,6 +322,24 @@ export const watershedJobDto = z
           (c.id === 'strategy' && c.numericalStatus === 'PASSED' && tank && !ledger)
         )
           ctx.addIssue({ code: 'custom', message: '이용조 설계와 수리 계산 원장 불일치' });
+        if (
+          c.id === 'strategy' &&
+          c.numericalStatus === 'PASSED' &&
+          tank?.schemaVersion === 3 &&
+          (!ledger ||
+            ledger.some(
+              (r) =>
+                r.nativeCapacityM3 === undefined ||
+                r.initialAvailableM3 === undefined ||
+                r.finalAvailableM3 === undefined ||
+                r.reuseStatus !== 'NOT_CALCULATED_NO_USE_DEMAND' ||
+                r.reuseM3 !== null
+            ))
+        )
+          ctx.addIssue({
+            code: 'custom',
+            message: '공동 집수 이용조의 현재 용량·재이용 상태 누락',
+          });
       }
     }
     if (

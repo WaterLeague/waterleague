@@ -170,7 +170,9 @@ def compile_design(raw, design):
         row = catchments[catchment]
         try:
             area = number(float(row['tokens'][3]), positive=True) * 10_000
-            impervious = area * number(float(row['tokens'][4]), maximum=100) / 100
+            percent = number(float(row['tokens'][4]), maximum=100)
+            # 100%의 곱셈 반올림으로 불투수 면적이 원 면적을 넘지 않게 한다.
+            impervious = area if percent == 100 else area * percent / 100
         except ValueError:
             require(False, 'CONNECTED_FACILITY_SOURCE_AREA_INVALID')
         used = math.fsum(p['areaM2'] for p in items)

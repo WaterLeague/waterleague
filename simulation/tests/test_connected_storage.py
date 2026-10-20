@@ -95,6 +95,10 @@ class StorageContractTests(unittest.TestCase):
         ledger = storage_ledger(metadata, initial, final)
         self.assertEqual(ledger['numericalStatus'], 'PASSED')
         self.assertEqual(ledger['facilities'][0]['inflowM3'], 3)
+        item = ledger['facilities'][0]
+        self.assertEqual(item['nativeCapacityM3'], metadata['facilities'][0]['nativeCapacityM3'])
+        self.assertAlmostEqual(item['initialAvailableM3'], item['nativeCapacityM3']-.2)
+        self.assertAlmostEqual(item['finalAvailableM3'], item['nativeCapacityM3']-.3)
         self.assertAlmostEqual(ledger['facilities'][0]['balanceResidualM3'], 0)
         final['nodes']['WLST_Tank']['floodingM3'] = .1
         self.assertEqual(storage_ledger(metadata, initial, final)['numericalStatus'], 'FAILED')

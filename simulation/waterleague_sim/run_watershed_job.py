@@ -84,7 +84,14 @@ def inputs(request):
         strategy, cistern_metadata = compile_cistern(strategy, design['cistern'], base, design['placements'], all_ids)
     transformation = {'limitations': []}
     if design['placements']:
-        strategy, transformation = compile_design(strategy, {k: v for k, v in design.items() if k not in ('costing','storage','conduits','cisternCosting','pumps','cistern')})
+        from .watershed_cistern import prepare_lids
+        original_design = {k: v for k, v in design.items() if k not in ('costing','storage','conduits','cisternCosting','pumps','cistern')}
+        strategy, execution_design, assignments, width_binding = prepare_lids(strategy, original_design, cistern_metadata)
+        strategy, transformation = compile_design(strategy, execution_design)
+        if assignments:
+            transformation['sourceDesign'] = original_design
+            transformation['sourceCatchmentAssignments'] = assignments
+            transformation['sharedCatchmentWidth'] = width_binding
     if cistern_metadata is not None:
         transformation['networkCistern'] = cistern_metadata
         transformation['limitations'] += cistern_metadata['limitations']

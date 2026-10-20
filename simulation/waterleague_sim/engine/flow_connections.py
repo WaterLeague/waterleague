@@ -266,12 +266,13 @@ def published_network(original, baseline, strategy, design, transformation, sour
     for p in design['placements']:
         detail = facilities.get(p['id'].upper())
         require(detail is not None, 'FLOW_GRAPH_FACILITY_MISSING')
-        node, host = key('facility', p['id']), key('catchment', p['subcatchmentId'])
+        node, host = key('facility', p['id']), key('catchment', detail['subcatchmentId'])
         usage = [r for r in sections.get('LID_USAGE', [])
                  if r['tokens'][1].upper() == detail['swmmId'].upper()
-                 and r['tokens'][0].upper() == p['subcatchmentId'].upper()]
+                 and r['tokens'][0].upper() == detail['subcatchmentId'].upper()]
         require(len(usage) == 1, 'FLOW_GRAPH_FACILITY_USAGE_MISSING')
         nodes.append({'id': node, 'kind': 'LID_FACILITY', 'facilityType': p['facilityType'],
+                      'sourceCatchmentId': p['subcatchmentId'], 'executionCatchmentId': detail['subcatchmentId'],
                       **reference('strategy-input.inp', 'LID_USAGE', usage[0])})
         for kind in ('DIRECT_RAIN_AREA', 'ALLOCATED_IMPERVIOUS_RUNOFF'):
             edges.append({'id': kind + ':' + p['id'].upper(), 'from': host, 'to': node, 'kind': kind})
@@ -314,9 +315,15 @@ def published_network(original, baseline, strategy, design, transformation, sour
             capture, cover = decimal(partition['captureAreaM2']), decimal(partition['coverAreaM2'])
             allocate('impervious', target, capture, 'CISTERN_ROUTED_RUNOFF_NOT_DIRECT_RAIN', 'cistern-capture')
             bypass = key('catchment', partition.get('imperviousBypassId', partition['hostId']))
-            allocate('impervious', bypass, cover, 'CISTERN_COVER_RAIN_BYPASS', 'cistern-cover')
+            cover_target = key('catchment', partition['coverId']) if 'coverId' in partition else bypass
+            allocate('impervious', cover_target, cover, 'CISTERN_COVER_RAIN_BYPASS', 'cistern-cover')
             edges.append({'id': original_id + ':cistern-partition', 'from': original_id,
                           'to': key('catchment', partition['captureId']), 'kind': 'EXPLICIT_MODEL_PARTITION'})
+            for role, target_id in (('cover', partition.get('coverId')),
+                                    ('impervious-bypass', partition.get('imperviousBypassId'))):
+                if target_id is not None and target_id.upper() != t[0].upper():
+                    edges.append({'id': original_id + ':' + role, 'from': original_id,
+                                  'to': key('catchment', target_id), 'kind': 'EXPLICIT_MODEL_PARTITION'})
         edges.append({'id': original_id + ':source', 'from': original_id,
                       'to': key('catchment', t[0]), 'kind': 'SOURCE_MODEL_DERIVATION'})
         for pool, (available, allocations) in pools.items():

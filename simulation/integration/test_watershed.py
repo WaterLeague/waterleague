@@ -1,6 +1,8 @@
 """격리 DB의 회원 관망 요청·실제 공개 입력 계산·임대 보존 검증."""
 import hashlib
 import json
+import os
+from pathlib import Path
 import unittest
 import uuid
 import test_worker_queue as fixture
@@ -15,6 +17,7 @@ class WatershedTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         fixture.WorkerQueueTests.setUpClass.__func__(cls)
+        cls.requests = Path(os.environ['WL_WATERSHED_FIXTURES']).resolve(strict=True)
     connection=fixture.WorkerQueueTests.connection
     def setUp(self):
         fixture.WorkerQueueTests.setUp(self)
@@ -159,9 +162,10 @@ class WatershedTests(unittest.TestCase):
         from pathlib import Path
         from waterleague_sim.costing.cistern import CATALOG_SHA256
         from waterleague_sim.costing.cistern_reference import snapshot
-        design=json.loads((Path(__file__).parents[1]/'tests/fixtures/member-cistern-costs-v1.json').read_text())
-        raw=json.dumps(design,sort_keys=True)
-        digest=hashlib.sha256((CATALOG_HASH+'\n'+raw).encode()).hexdigest()
+        request=json.loads((self.requests/'cistern-server-request.json').read_bytes())
+        raw=request['placements'];design=json.loads(raw);digest=request['inputHash']
+        self.assertEqual(request['modelHash'],CATALOG_HASH)
+        self.assertEqual(hashlib.sha256((CATALOG_HASH+'\n'+raw).encode()).hexdigest(),digest)
         identity=uuid.uuid4()
         self.conn.execute("INSERT INTO watershed_experiments(id,owner_id,request_key,model_hash,input_hash,placements,state,created_at) VALUES(%s,%s,%s,%s,%s,%s,'QUEUED',now())",(identity,self.owner,uuid.uuid4(),CATALOG_HASH,digest,raw))
         job=queue.claim(self.conn)
@@ -185,7 +189,7 @@ class WatershedTests(unittest.TestCase):
         from pathlib import Path
         from waterleague_sim.engine.swmm import ROOT
         from waterleague_sim.engine.connected_pumps import CATALOG_HASH as PUMP_HASH
-        request=json.loads((ROOT/'tmp/pump-server-request.json').read_text())
+        request=json.loads((self.requests/'pump-server-request.json').read_text())
         identity=uuid.uuid4()
         self.conn.execute("INSERT INTO watershed_experiments(id,owner_id,request_key,model_hash,input_hash,placements,state,created_at) VALUES(%s,%s,%s,%s,%s,%s,'QUEUED',now())",(identity,self.owner,uuid.uuid4(),request['modelHash'],request['inputHash'],request['placements']))
         job=queue.claim(self.conn); self.assertTrue(watershed.process(self.conn,job,self.artifacts))
@@ -208,7 +212,7 @@ class WatershedTests(unittest.TestCase):
         from pathlib import Path
         import shutil
         from waterleague_sim.engine.swmm import ROOT
-        request=json.loads((ROOT/'tmp/cistern-hydraulic-server-request.json').read_text())
+        request=json.loads((self.requests/'cistern-hydraulic-server-request.json').read_text())
         identity=uuid.uuid4()
         self.conn.execute("INSERT INTO watershed_experiments(id,owner_id,request_key,model_hash,input_hash,placements,state,created_at) VALUES(%s,%s,%s,%s,%s,%s,'QUEUED',now())",
             (identity,self.owner,uuid.uuid4(),request['modelHash'],request['inputHash'],request['placements']))
@@ -239,7 +243,7 @@ class WatershedTests(unittest.TestCase):
     def test_server_mixed_cistern_preserves_soil_and_impervious_allocation(self):
         import shutil
         from waterleague_sim.engine.swmm import ROOT
-        request=json.loads((ROOT/'tmp/cistern-mixed-server-request.json').read_text())
+        request=json.loads((self.requests/'cistern-mixed-server-request.json').read_text())
         identity=uuid.uuid4()
         self.conn.execute("INSERT INTO watershed_experiments(id,owner_id,request_key,model_hash,input_hash,placements,state,created_at) VALUES(%s,%s,%s,%s,%s,%s,'QUEUED',now())",
             (identity,self.owner,uuid.uuid4(),request['modelHash'],request['inputHash'],request['placements']))
@@ -272,3 +276,57 @@ class WatershedTests(unittest.TestCase):
         archive=ROOT/'tmp'/('member-mixed-cistern-'+str(identity))
         shutil.copytree(folder,archive)
         (ROOT/'tmp/cistern-mixed-last-artifacts.txt').write_text(str(archive))
+
+    def test_z_server_shared_cistern_and_lid_preserve_disjoint_capture_and_original_source(self):
+        import shutil
+        from waterleague_sim.engine.swmm import ROOT
+        from waterleague_sim.ingestion.published_network import records
+        archives = []
+        readback = []
+        for host in ('S9','S1'):
+            request=json.loads((self.requests/('cistern-shared-'+host+'-server-request.json')).read_bytes())
+            identity=uuid.uuid4()
+            self.conn.execute("INSERT INTO watershed_experiments(id,owner_id,request_key,model_hash,input_hash,placements,state,created_at) VALUES(%s,%s,%s,%s,%s,%s,'QUEUED',now())",
+                (identity,self.owner,uuid.uuid4(),request['modelHash'],request['inputHash'],request['placements']))
+            job=queue.claim(self.conn)
+            self.assertTrue(watershed.process(self.conn,job,self.artifacts))
+            row=self.conn.execute('SELECT * FROM watershed_experiments WHERE id=%s',(identity,)).fetchone()
+            self.assertEqual(row['state'],'SUCCEEDED',row['error_code'])
+            result=json.loads(row['result'])
+            self.assertEqual(result['numericalStatus'],'PASSED',result)
+            folder=self.artifacts/'watersheds'/str(identity)/str(job['lease_token'])
+            verify_graph(self,folder,result)
+            transformed=json.loads((folder/'design-transformation.json').read_bytes())
+            partition=transformed['networkCistern']['catchmentPartition']
+            binding=transformed['sharedCatchmentWidth']
+            self.assertEqual(transformed['sourceDesign']['placements'][0]['subcatchmentId'],host)
+            self.assertEqual(binding['sourceNetworkSha256'],transformed['networkCistern']['derivedNetworkSha256'])
+            self.assertEqual(binding['derivedNetworkSha256'],transformed['originalSha256'])
+            rows={r['tokens'][0]:r['tokens'] for r in records((folder/'strategy-input.inp').read_bytes())[1]['SUBCATCHMENTS']}
+            lid=transformed['facilities'][0]
+            self.assertEqual(lid['subcatchmentId'],partition['imperviousBypassId'])
+            self.assertNotEqual(lid['subcatchmentId'],partition['coverId'])
+            self.assertNotEqual(lid['subcatchmentId'],partition['captureId'])
+            self.assertAlmostEqual(float(rows[lid['subcatchmentId']][5])/binding['remainingNonLidAreaM2'],
+                                   partition['originalWidthM']/partition['originalImperviousAreaM2'])
+            stored=result['cases'][1]['networkCistern']['wholeRunLedger']['facilities'][0]
+            self.assertEqual(stored['capacityM3'],4.7)
+            self.assertEqual(stored['floodingM3'],0)
+            from waterleague_sim.engine.connected_storage import CMS_STORAGE_VOLUME_SCALE
+            self.assertAlmostEqual(stored['initialStorageM3'],0.705*CMS_STORAGE_VOLUME_SCALE if host=='S1' else 0)
+            self.assertEqual(stored['reuseStatus'],'NOT_CALCULATED_NO_USE_DEMAND')
+            self.assertIsNone(stored['reuseM3'])
+            self.assertAlmostEqual(stored['nativeCapacityM3'],4.7*CMS_STORAGE_VOLUME_SCALE)
+            self.assertAlmostEqual(stored['finalAvailableM3'],stored['nativeCapacityM3']-stored['finalStorageM3'])
+            self.assertEqual(result['costing'],json.loads(request['placements'])['costing'])
+            self.assertFalse(result['rankingEligible']);self.assertIsNone(result['budgetChargedKrw'])
+            changed=json.loads(request['placements']);changed['cistern']['captureAreaM2']=1000000
+            raw=json.dumps(changed,sort_keys=True)
+            with self.assertRaisesRegex(FloodModelError,'SHARED_CAPTURE_AREA_EXCEEDED'):
+                inputs(request|{'placements':raw,'inputHash':hashlib.sha256((request['modelHash']+'\n'+raw).encode()).hexdigest()})
+            archive=ROOT/'tmp'/('member-shared-cistern-'+str(identity))
+            shutil.copytree(folder,archive);archives.append(str(archive))
+            readback.append({'id':str(identity),'host':host,'artifactDirectory':str(archive),
+                             'resultSha256':hashlib.sha256((archive/'result.json').read_bytes()).hexdigest()})
+        (ROOT/'tmp/cistern-shared-last-artifacts.json').write_text(json.dumps(archives))
+        (self.requests/'watershed-readback.json').write_text(json.dumps({'ownerId':str(self.owner),'jobs':readback}))
