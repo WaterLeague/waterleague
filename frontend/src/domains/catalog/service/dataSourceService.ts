@@ -197,6 +197,12 @@ export const dataSources: DataSource[] = [
         detail:
           '2025-08 발주 예산 2,200만 원(VAT 포함), 설계·장비·설치·시운전·기초/계장 범위. 낙찰가·서울 현장 설치비로 사용하지 않음',
       },
+      {
+        name: '2026년 스마트 생태공장 빗물저금통 구매사양서 · 세창스틸',
+        href: 'https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01629371&bidPbancOrd=000&fileSeq=3&fileType=&prcmBsneSeCd=01',
+        detail:
+          '2026-07 규격 · 5톤 탱크 3대, 대당 2,280×1,200×2,300mm. 기존 우수관 집수·지하저수조 공급·월류 배관의 구성만 확인되며 내부 단면·배출 높이·확정 설치비는 미제공입니다. 설치 규격이나 계산 입력으로 적용하지 않습니다.',
+      },
     ],
   },
 ];

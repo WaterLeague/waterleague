@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "id": "sechang-cistern-procurement-2026",
+  "retrievedOn": "2026-10-21",
+  "classification": "PUBLIC_PROCUREMENT_SPECIFICATION_NOT_INSTALLATION_READY",
+  "documentMonth": "2026-07",
+  "files": [
+    {
+      "file": "data/private/facility-reference-20261021/sechang-cistern-specification-2026.hwp",
+      "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01629371&bidPbancOrd=000&fileSeq=3&fileType=&prcmBsneSeCd=01",
+      "bytes": 28160,
+      "sha256": "2a6be1dd8d3f2ebc0fa751685085c581ef78f12d935f992cef4ddacd8f8bfe28",
+      "reference": "제1장 일반사항 3~4, 제2장 구매 사양 2.1"
+    }
+  ],
+  "declaredSpecification": {
+    "name": "2026년도 스마트 생태공장 구축 사업 구매사양서 · 세창스틸",
+    "purpose": "지붕 우수 집수·저장 및 지하저수조 연계 공급",
+    "tankCount": 3,
+    "nominalCapacityTonnesPerTank": 5,
+    "nominalTotalCapacityTonnes": 15,
+    "dimensionsMmPerTank": {
+      "width": 2280,
+      "depth": 1200,
+      "height": 2300
+    },
+    "dimensionBasis": "DECLARED_EQUIPMENT_DIMENSIONS_INTERNAL_EXTERNAL_NOT_SPECIFIED",
+    "material": "SUS_GRADE_NOT_SPECIFIED",
+    "collection": "기존 우수관 연계 집수",
+    "collectionPipeDesignation": "⌽50",
+    "collectionPipeDiameterMm": null,
+    "collectionPipeLimitation": "표기만 보존하며 관경의 단위·호칭경/내경 구분 미제공",
+    "filter": "WNF-100 초기우수배제 SUS 빗물여과기",
+    "overflow": "자동 넘침 방지 SUS 배관",
+    "certificationClaim": "규격서의 KSF4803 인증 요구 문구이며 제품 인증 검증 아님",
+    "supplyScope": [
+      "설계·사양서·도면·배치도·공정도",
+      "장비 일체·기초 앙카·전기/계장·제어반",
+      "제작·설치·시운전",
+      "관련 인허가 및 대관 업무"
+    ]
+  },
+  "unavailableInputs": {
+    "internalAreaM2": null,
+    "usableDepthM": null,
+    "drainElevationM": null,
+    "overflowElevationM": null,
+    "overflowDiameterM": null,
+    "pipeRouteAndInvertLevels": null,
+    "pumpCurve": null,
+    "reuseDemand": null,
+    "confirmedInstallationPriceKrw": null,
+    "constructionQuantities": null
+  },
+  "gameApplication": {
+    "installationReady": false,
+    "equipmentCatalogEntry": null,
+    "budgetPrice": null,
+    "hydraulicInput": null,
+    "use": "DATA_PAGE_REFERENCE_ONLY"
+  },
+  "limitations": [
+    "5톤 탱크 3대의 구성으로 단일 15톤 탱크가 아님",
+    "공칭 용량·장비 치수를 내부 수면적·유효 저류량으로 환산하지 않음",
+    "집수·월류 구성품의 명시는 실제 배관 경로·높이·배출 능력의 근거가 아님",
+    "구매사양서에 없는 발주 예산·낙찰가·공종별 단가는 다른 사이트의 표시로 보충하지 않음",
+    "공개 원문의 담당자·연락처는 파생 자료에 포함하지 않음"
+  ]
+}
