@@ -5,6 +5,7 @@ import type { SharedSite, SharedInstallation } from '../../installation/entity/i
 import type { FacilityType } from '../../game/entity/game';
 import type { CostRecord } from '../../cost/dto/costDto';
 import type { RunoffComparisonData } from '../../physics/dto/runoffComparisonDto';
+import type { DesignContractData } from '../../physics/dto/designContractDto';
 export interface HistoricalDraft {
   site: SharedSite;
   facilityType: FacilityType;
@@ -54,6 +55,7 @@ export interface HistoricalJob {
       facilityDesign?: FacilityEvidence | null;
       costRecord?: CostRecord;
       runoffComparison?: RunoffComparisonData;
+      designContract?: DesignContractData;
     }[];
     frames: {
       at: string;

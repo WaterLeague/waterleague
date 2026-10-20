@@ -7,6 +7,7 @@ import uuid
 from pathlib import Path
 import test_worker_queue as queue_fixture
 from waterleague_sim import queue, historical
+from native_contract_evidence import verify as verify_contract
 
 class GuestHistoricalTests(unittest.TestCase):
     @classmethod
@@ -38,6 +39,7 @@ class GuestHistoricalTests(unittest.TestCase):
             self.assertEqual(result['frames'][-1]['differenceM3'],result['differenceM3'])
             self.assertEqual(result['facilities'][0]['initialization']['warmupMinutes'],10080)
             path=artifacts/'historical'/str(identity)/str(job['lease_token'])
+            verify_contract(self, path)
             manifest=json.loads((path/'manifest.json').read_text())
             for name,digest in manifest.items():
                 self.assertEqual(hashlib.sha256((path/name).read_bytes()).hexdigest(),digest)

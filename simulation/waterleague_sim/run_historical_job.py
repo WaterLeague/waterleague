@@ -67,10 +67,12 @@ def calculate(request, directory):
         cost_record = archive_cost(placement, model, physical, directory/str(index))
         result = experiment(model, physical, directory/str(index), applied_evaporation,
                             installed_at=placement.get('installedAt') if temporal else None)
+        from .engine.direct_surface_contract import archive as archive_contract
+        contract = archive_contract(model, physical, result, directory/str(index), cost_record)
         assumptions.update(result['assumptions'])
         a, b = result['baseline']['final'], result['strategy']['final']
         results.append({k: v for k,v in placement.items() if k != 'costSnapshotRaw'} | {
-            'costRecord': cost_record, 'precipitationM3': b['precipitationM3'],
+            'costRecord': cost_record, 'designContract': contract, 'precipitationM3': b['precipitationM3'],
             'infiltrationM3': b['infiltrationM3'], 'storageM3': b['storageM3'],
             'evaporationM3': b['evaporationM3'],
             'baselineAccountedM3': a['accountedDischargeM3'], 'designAccountedM3': b['accountedDischargeM3'],

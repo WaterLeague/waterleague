@@ -102,6 +102,50 @@ jobs:
       - run: python scripts/verify_snapshot.py
       - run: python scripts/verify_model.py
       - run: python scripts/verify_shared_sites.py
+  game-contract:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:18.4
+        env:
+          POSTGRES_USER: waterleague_test
+          POSTGRES_PASSWORD: local-ci-test-only
+          POSTGRES_DB: waterleague_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://waterleague_test:local-ci-test-only@127.0.0.1:5432/waterleague_test
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad
+        with:
+          distribution: corretto
+          java-version: '25'
+          cache: maven
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.13'
+      - name: 잠금 파일의 공통 계산 의존성 설치
+        run: |
+          python -m pip install uv==0.11.12
+          uv sync --project simulation --locked
+      - run: bash scripts/build_swmm.sh
+      - run: simulation/.venv/bin/python scripts/build_live_swmm.py
+      - name: 주간 연속 상태·경계·공통 설계 계약 검증
+        run: simulation/.venv/bin/python scripts/verify_league_postgres.py --suite physics
+      - name: 실제 재해 관측·초기화·전체 사건 제출 검증
+        run: simulation/.venv/bin/python scripts/verify_league_postgres.py --suite historical
+      - name: 비회원 동결 요청·실제 워커 재현 검증
+        run: simulation/.venv/bin/python scripts/verify_league_postgres.py --suite guest-historical
+      - name: 회원 저장 설계·재시작·두 구 실험 검증
+        run: simulation/.venv/bin/python scripts/verify_league_postgres.py --suite historical-design-run
+      - name: 최종 설계 제출·취소 revision·변조 계보 검증
+        run: simulation/.venv/bin/python scripts/verify_league_postgres.py --suite historical-submit-design
   worker-queue:
     runs-on: ubuntu-24.04
     timeout-minutes: 15

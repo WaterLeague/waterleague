@@ -14,6 +14,7 @@ from waterleague_sim import shared_physics as physics
 from waterleague_sim import admission
 from contextlib import closing
 from waterleague_sim.spatial.play_bundle import open_catalog
+from native_contract_evidence import verify as verify_contract
 
 
 class SharedPhysicsTests(unittest.TestCase):
@@ -75,6 +76,10 @@ class SharedPhysicsTests(unittest.TestCase):
             self.assertTrue(physics.process(self.conn,job,root))
             row=self.conn.execute('SELECT * FROM shared_physics_jobs WHERE id=%s',(job['id'],)).fetchone()
             self.assertEqual(row['state'],'SUCCEEDED',row['error_code'])
+            path = Path(root) / 'shared-physics' / str(job['id']) / str(job['lease_token'])
+            verify_contract(self, path)
+            self.assertEqual(json.loads(row['result'])['designContract'],
+                             json.loads((path / 'result.json').read_bytes())['designContract'])
             score=self.conn.execute('SELECT SUM(evaluated_minutes) AS minutes FROM shared_weekly_scores WHERE installation_id=%s',(self.installation,)).fetchone()
             self.assertEqual(score['minutes'],4)
             self.conn.execute("UPDATE shared_physics_jobs SET created_at=now()-interval '61 seconds' WHERE id=%s",(job['id'],))

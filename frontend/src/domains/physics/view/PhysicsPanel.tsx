@@ -66,7 +66,9 @@ export function PhysicsPanel({ installationId }: { installationId: string }) {
               </div>
             )}
           </dl>
-          {result.runoffComparison && <RunoffComparison value={result.runoffComparison} />}
+          {result.runoffComparison && (
+            <RunoffComparison value={result.runoffComparison} contract={result.designContract} />
+          )}
           <details>
             <summary>계산 조건</summary>
             {result.initialization && <InitializationEvidence value={result.initialization} />}

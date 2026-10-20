@@ -1,4 +1,5 @@
 import { runoffComparisonDto } from '../dto/runoffComparisonDto';
+import { designContractDto } from '../dto/designContractDto';
 import { physicalAmount as amount } from '../service/physicalValueFormat';
 import './runoffComparison.css';
 const time = (v: string) =>
@@ -12,12 +13,18 @@ const time = (v: string) =>
     hourCycle: 'h23',
     timeZone: 'Asia/Seoul',
   });
-export function RunoffComparison({ value }: { value: unknown }) {
+export function RunoffComparison({ value, contract }: { value: unknown; contract?: unknown }) {
   const parsed = runoffComparisonDto.safeParse(value);
   if (!parsed.success) return <p role="status">이 기록의 유출 비교 자료를 확인하지 못했습니다.</p>;
   const result = parsed.data;
   const before = result.cases.find((c) => c.id === 'baseline')!;
   const after = result.cases.find((c) => c.id === 'strategy')!;
+  const parsedContract = designContractDto.safeParse(contract);
+  const design = parsedContract.success ? parsedContract.data : null;
+  const sameWindow =
+    design &&
+    Date.parse(design.evaluation.start) === Date.parse(before.metrics.start) &&
+    Date.parse(design.evaluation.end) === Date.parse(before.metrics.end);
   const rows = [
     ['유출·하부배수', before.dischargeM3, after.dischargeM3, 'm³'],
     ['시작 수분·저류', before.initialStorageM3, after.initialStorageM3, 'm³'],
@@ -32,6 +39,15 @@ export function RunoffComparison({ value }: { value: unknown }) {
       <p>
         {time(before.metrics.start)}–{time(before.metrics.end)} KST · 선행 기간 제외
       </p>
+      {contract !== undefined &&
+        (sameWindow ? (
+          <p>
+            평가 표면 {amount(design.spatial.evaluationSurfaceAreaM2)} m² · 시설 설치{' '}
+            {amount(design.facility.areaM2)} m² · 시설에 직접 내리는 강우만 유입
+          </p>
+        ) : (
+          <p role="status">이 기록의 설계·평가 범위 근거를 확인하지 못했습니다.</p>
+        ))}
       <div className="runoff-comparison-table">
         <table>
           <thead>

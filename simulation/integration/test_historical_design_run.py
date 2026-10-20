@@ -7,6 +7,7 @@ import unittest
 import uuid
 import test_worker_queue as fixture
 from waterleague_sim import queue, historical
+from native_contract_evidence import verify as verify_contract
 
 class HistoricalDesignRunTests(unittest.TestCase):
     @classmethod
@@ -47,6 +48,7 @@ class HistoricalDesignRunTests(unittest.TestCase):
             self.assertTrue(facility['initialization']['scoreExcludesWarmup'])
             self.assertEqual(facility['initialization']['warmupMinutes'],10080)
             root = self.artifacts/'historical'/str(identity)/str(job['lease_token'])
+            verify_contract(self, root)
             manifest = json.loads((root/'manifest.json').read_text())
             for name, expected in manifest.items():
                 self.assertEqual(hashlib.sha256((root/name).read_bytes()).hexdigest(), expected)

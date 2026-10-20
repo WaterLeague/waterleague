@@ -24,7 +24,7 @@ def main():
     from .admission import archive_native as archive
     archive(request.get('publicAssetPolicy'), path)
     from .costing.snapshot import archive as archive_cost
-    archive_cost(request, model, request['placement'], path)
+    cost_record = archive_cost(request, model, request['placement'], path)
     if model.get('initializationPolicy') is not None:
         from .engine.initialization import prepend
         raw = (path/'antecedent.json').read_bytes()
@@ -38,8 +38,10 @@ def main():
     if rule == SECOND_RULE and (not request.get('installedAt')
             or request.get('installationClock') != 'SERVER_SECOND_RESOLUTION_V1'):
         raise ValueError('LIVE_INSTALLATION_TIME_INVALID')
-    experiment(model, request['placement'], path, evaporation,
-               installed_at=request['installedAt'] if rule == SECOND_RULE else None)
+    result = experiment(model, request['placement'], path, evaporation,
+                        installed_at=request['installedAt'] if rule == SECOND_RULE else None)
+    from .engine.direct_surface_contract import archive as archive_contract
+    archive_contract(model, request['placement'], result, path, cost_record)
 
 
 if __name__ == '__main__':

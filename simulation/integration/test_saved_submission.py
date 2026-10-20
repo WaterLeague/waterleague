@@ -9,6 +9,7 @@ import unittest
 import uuid
 import test_worker_queue as fixture
 from waterleague_sim import queue, historical
+from native_contract_evidence import verify as verify_contract
 
 
 class SavedSubmissionTests(unittest.TestCase):
@@ -45,6 +46,7 @@ class SavedSubmissionTests(unittest.TestCase):
             row,path=self.enqueue(request)
             self.assertEqual(row['state'],'SUCCEEDED',row['error_code'])
             result=json.loads(row['result']);head=json.loads(request['placements'])[0]
+            verify_contract(self, path)
             self.assertEqual(result['submittedDesign']['snapshotSha256'],head['submissionDesignSnapshotSha256'])
             self.assertEqual(result['submittedDesign']['revision'],1 if key=='original' else 2)
             self.assertEqual((path/'submission-design.json').read_text(),head['submissionDesignSnapshotRaw'])

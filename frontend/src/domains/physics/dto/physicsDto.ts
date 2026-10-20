@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { initializationDto } from './initializationDto';
 import { facilityEvidenceDto } from '../../facility/dto/facilityDto';
 import { runoffComparisonDto } from './runoffComparisonDto';
+import { designContractDto } from './designContractDto';
 const value = z.number().finite();
 export const physicsDto = z.object({
   installationId: z.uuid(),
@@ -31,6 +32,7 @@ export const physicsDto = z.object({
       initialization: initializationDto.nullish(),
       facilityDesign: facilityEvidenceDto.nullish(),
       runoffComparison: runoffComparisonDto.nullish(),
+      designContract: designContractDto.optional(),
       inflowPolicy: z.enum(['DIRECT_RAINFALL_ONLY', 'LEGACY_ALL_IMPERVIOUS_RUNOFF']).nullish(),
       areaLimitBasis: z.string().nullish(),
     })

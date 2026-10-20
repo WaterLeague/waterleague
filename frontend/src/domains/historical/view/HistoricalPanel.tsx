@@ -350,7 +350,7 @@ export function HistoricalPanel({
                 f.runoffComparison && (
                   <details key={f.cellId}>
                     <summary>{f.cellId} · 설치부터 종료까지 전체 계산 상세</summary>
-                    <RunoffComparison value={f.runoffComparison} />
+                    <RunoffComparison value={f.runoffComparison} contract={f.designContract} />
                   </details>
                 )
             )}

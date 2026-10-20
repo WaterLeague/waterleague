@@ -13,6 +13,7 @@ from waterleague_sim import admission
 from waterleague_sim.spatial import game_catalog
 from waterleague_sim.spatial.play_bundle import open_catalog
 from waterleague_sim.forcing.archived_game_weather import read_source
+from native_contract_evidence import verify as verify_contract
 
 class HistoricalTests(unittest.TestCase):
     @classmethod
@@ -98,6 +99,7 @@ class HistoricalTests(unittest.TestCase):
             self.assertAlmostEqual(float(posted),result['differenceM3'])
             self.assertFalse(queue.finish(self.conn,job,'SUCCEEDED',{'stale':True},None))
             path=self.artifacts/'historical'/str(identity)/str(job['lease_token'])
+            verify_contract(self, path)
             manifest=json.loads((path/'manifest.json').read_text())
             for name,digest in manifest.items(): self.assertEqual(hashlib.sha256((path/name).read_bytes()).hexdigest(),digest)
             self.assertEqual(manifest['submission-rules.json'],rules_hash)
@@ -151,6 +153,7 @@ class HistoricalTests(unittest.TestCase):
                 self.assertTrue(facility['initialization']['scoreExcludesWarmup'])
                 self.assertGreater(facility['initialization']['preActivationSeconds'], 7*86400)
             path = self.artifacts/'historical'/str(identity)/str(job['lease_token'])
+            verify_contract(self, path)
             manifest = json.loads((path/'manifest.json').read_text())
             self.assertIn('0/temporal.py', manifest)
             self.assertEqual(manifest['0/temporal.py'], hashlib.sha256((path/'0/temporal.py').read_bytes()).hexdigest())
@@ -190,6 +193,7 @@ class HistoricalTests(unittest.TestCase):
         self.assertGreater(initialization['initialSoilMoisture'],.125)
         self.assertEqual(result['facilities'][0]['facilityDesign']['profile']['id'],'EPA_GR_150_V1')
         path=self.artifacts/'historical'/str(identity)/str(job['lease_token'])
+        verify_contract(self, path)
         manifest=json.loads((path/'manifest.json').read_text())
         self.assertEqual(manifest['rainfall-model.json'],model_hash)
         for file, digest in manifest.items(): self.assertEqual(hashlib.sha256((path/file).read_bytes()).hexdigest(),digest)
@@ -226,6 +230,7 @@ class HistoricalTests(unittest.TestCase):
         self.assertGreater(result['infiltrationM3'], 0)
         self.assertEqual(result['initialization']['warmupMinutes'], 10080)
         path = self.artifacts/'historical'/str(identity)/str(job['lease_token'])
+        verify_contract(self, path)
         manifest = json.loads((path/'manifest.json').read_text())
         self.assertEqual(manifest['0/facility-designs.json'], result['facilityDesign']['catalogSha256'])
 
@@ -257,6 +262,7 @@ class HistoricalTests(unittest.TestCase):
         self.assertGreater(result['infiltrationM3'], 0)
         self.assertEqual(result['initialization']['warmupMinutes'], 10080)
         path = self.artifacts/'historical'/str(identity)/str(job['lease_token'])
+        verify_contract(self, path)
         manifest = json.loads((path/'manifest.json').read_text())
         self.assertEqual(manifest['0/facility-designs.json'], result['facilityDesign']['catalogSha256'])
 
@@ -282,5 +288,6 @@ class HistoricalTests(unittest.TestCase):
         self.assertGreater(result['infiltrationM3'], 0)
         self.assertEqual(result['initialization']['warmupMinutes'], 10080)
         path = self.artifacts/'historical'/str(identity)/str(job['lease_token'])
+        verify_contract(self, path)
         manifest = json.loads((path/'manifest.json').read_text())
         self.assertEqual(manifest['0/facility-designs.json'], result['facilityDesign']['catalogSha256'])
