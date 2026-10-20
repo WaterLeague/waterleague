@@ -88,10 +88,12 @@ export function requestBuildingMesh(buildings: CityBuilding[], signal: AbortSign
       if (index >= 0) pending.splice(index, 1);
       job.reject(new DOMException('Aborted', 'AbortError'));
       if (active === job) {
-        // 동기 형상 계산은 메시지로 중단할 수 없으므로 이전 작업의 스레드를 종료한다.
-        stopWorker();
-        active = null;
-        drain();
+        // 취소 응답 뒤 다음 작업을 시작해 완성된 개별 건물 캐시를 보존한다.
+        try {
+          worker?.postMessage({ id: job.id, cancel: true });
+        } catch {
+          fail();
+        }
       }
     };
     const job: Job = {

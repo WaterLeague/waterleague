@@ -28,9 +28,9 @@ export class BuildingMeshCache {
     }
     const bytes =
       key.length * 2 +
-      data.positions.byteLength +
-      data.normals.byteLength +
-      data.bounds.byteLength +
+      data.positions.buffer.byteLength +
+      data.normals.buffer.byteLength +
+      data.bounds.buffer.byteLength +
       data.ends.length * 8;
     if (bytes > this.capacityBytes) return;
     while (this.bytes + bytes > this.capacityBytes && this.values.size) {

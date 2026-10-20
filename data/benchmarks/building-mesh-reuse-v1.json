@@ -1,0 +1,177 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-10-20",
+  "status": "SOURCE_GEOMETRY_WORKER_BUILD_PASSED_BROWSER_RECHECK_PENDING",
+  "publicGeometry": {
+    "schemaVersion": 1,
+    "status": "PASS",
+    "sourceCitySha256": "67a8b80b7036590973b7db99053521333f9405e1076a7939bfe491c43296dd6c",
+    "sourceTerrainSha256": "020aa06f0ce1eef85c13546c40c5a10ac604fad99b127cb7c9d6c0e58fec9bad",
+    "sourceTiles": [
+      {
+        "id": "3_6",
+        "sha256": "1803436ae84c1bf6a52c2d65c29848637cb1a26731f605361e34a9c58dd33717"
+      },
+      {
+        "id": "9_1",
+        "sha256": "f632e19602f7eac259484896d639f28341565b919c28392526e3bac3d07bed30"
+      }
+    ],
+    "buildingCount": 6000,
+    "node": "v22.13.1",
+    "platform": "darwin",
+    "arch": "arm64",
+    "allGeometryAttributesAndClickIndicesIdentical": true,
+    "coldMs": 93.905167,
+    "samples": [
+      {
+        "directMs": 45.86170900000002,
+        "reusedMs": 26.309834000000023,
+        "generated": 0,
+        "reused": 6000,
+        "cachedBytes": 16069980
+      },
+      {
+        "directMs": 24.90691700000002,
+        "reusedMs": 19.570832999999993,
+        "generated": 0,
+        "reused": 6000,
+        "cachedBytes": 16069980
+      },
+      {
+        "directMs": 26.414957999999956,
+        "reusedMs": 18.09733300000005,
+        "generated": 0,
+        "reused": 6000,
+        "cachedBytes": 16069980
+      },
+      {
+        "directMs": 41.09720800000002,
+        "reusedMs": 17.14766700000007,
+        "generated": 0,
+        "reused": 6000,
+        "cachedBytes": 16069980
+      },
+      {
+        "directMs": 27.523042000000032,
+        "reusedMs": 18.32166700000016,
+        "generated": 0,
+        "reused": 6000,
+        "cachedBytes": 16069980
+      }
+    ],
+    "fullRebuildMedianMs": 27.523042000000032,
+    "reusedMedianMs": 18.32166700000016,
+    "scope": "공개 서울 건물과 표시 지형의 CPU 생성·재사용 비교. 표시 묶음 변경은 시험용이며 실제 설치·브라우저 FPS·GPU 업로드 검증 제외",
+    "fullSourceComparison": {
+      "buildings": 1014532,
+      "tiles": 686,
+      "districts": {
+        "11110": 39282,
+        "11140": 26166,
+        "11170": 38010,
+        "11200": 32618,
+        "11215": 40112,
+        "11230": 47026,
+        "11260": 46519,
+        "11290": 58198,
+        "11305": 41358,
+        "11320": 29228,
+        "11350": 36699,
+        "11380": 47927,
+        "11410": 36493,
+        "11440": 39569,
+        "11470": 31785,
+        "11500": 49285,
+        "11530": 41906,
+        "11545": 28858,
+        "11560": 41934,
+        "11590": 38998,
+        "11620": 51513,
+        "11650": 40076,
+        "11680": 49287,
+        "11710": 46128,
+        "11740": 35557
+      },
+      "aggregateGeometrySha256": "3ce4061a005fb55c06e0ccd423834cc8f77a38e042c90e908110ca1d883ea36d"
+    },
+    "sourceHashes": {
+      "scripts/verify_building_mesh_reuse.mjs": "4927629516199de844361cbd2decae1220f475986a5c58651cd79fce0f7c9388",
+      "frontend/src/domains/city/service/buildingMeshService.ts": "aaeb7b7b1c8ed3938b8fc16f143d7647327c4ce73b98a35b5d0c4c96bf1e692b",
+      "frontend/src/domains/city/service/buildingGeometryService.ts": "a83a47485dc287128504b5cd3b8113301bff4cfc1ec167a29946b6da96d3ae2e",
+      "frontend/src/domains/city/service/buildingGeometry.worker.ts": "4f43a93f47607c47ec339c1d50f03abf24bf6af3b5521bb7713e68ffff97c6b1",
+      "frontend/src/domains/city/service/buildingMeshCache.ts": "2e6f2ee2592b026d2d6526de1487a15f9349afd0ac34920444513ae3d98fb345",
+      "frontend/src/domains/city/repository/buildingGeometryRepository.ts": "2191f2356dc362059faf5b4d69158a7ab3b2f4d26fcd0de0cba9508a68eef514",
+      "frontend/pnpm-lock.yaml": "9a9be01da14c5e957d836753e3157df3c41e260904f5ab1554364692f85f424d"
+    }
+  },
+  "compiledWorker": {
+    "schemaVersion": 1,
+    "status": "PASS",
+    "sourceCitySha256": "67a8b80b7036590973b7db99053521333f9405e1076a7939bfe491c43296dd6c",
+    "sourceTerrainSha256": "020aa06f0ce1eef85c13546c40c5a10ac604fad99b127cb7c9d6c0e58fec9bad",
+    "sourceTiles": [
+      {
+        "id": "3_6",
+        "sha256": "1803436ae84c1bf6a52c2d65c29848637cb1a26731f605361e34a9c58dd33717"
+      },
+      {
+        "id": "9_1",
+        "sha256": "f632e19602f7eac259484896d639f28341565b919c28392526e3bac3d07bed30"
+      }
+    ],
+    "buildingCount": 6000,
+    "node": "v22.13.1",
+    "platform": "darwin",
+    "arch": "arm64",
+    "allGeometryAttributesAndClickIndicesIdentical": true,
+    "bundle": "buildingGeometry.worker-CTI8CFUz.js",
+    "bundleSha256": "372ed9eb8ce26692ce31d8f6e472c4987025aec15584ab65446d525951ff8a32",
+    "requests": 7,
+    "checks": [
+      "배포 Worker 실행",
+      "버퍼 전송 후 재사용",
+      "건물 묶음 변경",
+      "취소 후 재개",
+      "잘못된 요청 후 복구",
+      "형상·선택 범위 동일"
+    ],
+    "scope": "Node 작업 스레드의 실제 배포 코드·메시지/버퍼 전송 검사. 브라우저 조작·FPS·GPU 검증 제외",
+    "sourceHashes": {
+      "scripts/verify_building_mesh_reuse.mjs": "4927629516199de844361cbd2decae1220f475986a5c58651cd79fce0f7c9388",
+      "frontend/src/domains/city/service/buildingMeshService.ts": "aaeb7b7b1c8ed3938b8fc16f143d7647327c4ce73b98a35b5d0c4c96bf1e692b",
+      "frontend/src/domains/city/service/buildingGeometryService.ts": "a83a47485dc287128504b5cd3b8113301bff4cfc1ec167a29946b6da96d3ae2e",
+      "frontend/src/domains/city/service/buildingGeometry.worker.ts": "4f43a93f47607c47ec339c1d50f03abf24bf6af3b5521bb7713e68ffff97c6b1",
+      "frontend/src/domains/city/service/buildingMeshCache.ts": "2e6f2ee2592b026d2d6526de1487a15f9349afd0ac34920444513ae3d98fb345",
+      "frontend/src/domains/city/repository/buildingGeometryRepository.ts": "2191f2356dc362059faf5b4d69158a7ab3b2f4d26fcd0de0cba9508a68eef514",
+      "frontend/pnpm-lock.yaml": "9a9be01da14c5e957d836753e3157df3c41e260904f5ab1554364692f85f424d"
+    }
+  },
+  "checks": {
+    "frontendFiles": 133,
+    "frontendTests": 455,
+    "repositoryRetest": 5,
+    "typecheckAndProductionBuild": true,
+    "productionSourceDataChanged": false,
+    "hydraulicInputsChanged": false,
+    "mainAggregateCacheMaximumBytes": 33554432,
+    "workerIndividualCacheMaximumBytes": 33554432,
+    "firstBuildFailure": "시험 코드의 findLast가 프로젝트 TypeScript 지원 범위 밖이어서 reverse/find로 변경 후 재검사 통과"
+  },
+  "artifacts": {
+    "tmp/building-mesh-public-v1.json": "ee5f0eaf338183b335c051713d591da2e729af619254fa424b86dc594e764654",
+    "tmp/building-mesh-public-v1.log": "4cc1337250972e88a40418b32ecc641da3f125a51ffde9af17bda2b79d394c18",
+    "tmp/building-mesh-worker-v1.json": "ba50aed7c2a0f017898c07059ff62c6535f91da8361b53f0caa2edc0efd6efac",
+    "tmp/building-mesh-worker-v1.log": "bea0917d0607e6802f56693c9f1667144f1a63d39f0e52a892c0df0788d5fbdd",
+    "tmp/building-mesh-frontend-v1.log": "7ee7adcf23244cce0986872682f4239e70b1944d46ad3a6fa7e43190abd5ca82",
+    "tmp/building-mesh-repository-v2.log": "e52630617aea394a4b2f985aa6859d8837413883819620ad14dc4181d773406c",
+    "tmp/building-mesh-build-v1.log": "3c47448541ddc827a46d63f0836091341e021d020d47ce26e7855ed4f7b30747",
+    "tmp/building-mesh-build-v2.log": "612088a354ded2ab6cd5e007d0eae4f97a668636fb4723332df7dad0e0b740e1"
+  },
+  "limitations": [
+    "CPU 측정은 단일 로컬 Node arm64 환경이며 브라우저 FPS·GPU 업로드·첫 화면 로딩 측정이 아님",
+    "coldMs는 새 캐시 첫 생성의 단일 관찰값이며 기존 첫 생성과의 성능 비교가 아님",
+    "표시 묶음 이동은 시험용이며 실제 회원 설치를 생성하거나 공개 자료를 변경하지 않음",
+    "원자료의 빈 영역·표고/높이 가정·현장 정확도 한계는 기존 공간 계약 유지"
+  ]
+}

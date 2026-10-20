@@ -78,3 +78,15 @@ test('메시·키 용량 상한과 최근 사용 순서·대형 메시 제외 �
   cache.clear();
   expect(cache.get('a')).toBeUndefined();
 });
+
+test('버퍼 일부 뷰도 원 버퍼 전체를 보관 용량에 포함', () => {
+  const mesh = {
+    positions: new Float32Array(1024).subarray(0, 9),
+    normals: new Float32Array(1024).subarray(0, 9),
+    bounds: new Float32Array(6),
+    ends: [1],
+  };
+  const cache = new BuildingMeshCache(212);
+  cache.put('a', mesh);
+  expect(cache.get('a')).toBeUndefined();
+});

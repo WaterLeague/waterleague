@@ -7,8 +7,7 @@ export type BuildingMeshData = {
   bounds: Float32Array;
   ends: number[];
 };
-export function buildBuildingMesh(buildings: CityBuilding[]): BuildingMeshData {
-  // 건물마다 임시 형상을 만들지 않고 원 도형을 한 번 삼각분할해 전송 버퍼에 쓴다.
+export function buildingMeshCapacity(buildings: CityBuilding[]): number {
   const capacity =
     buildings.reduce(
       (sum, building) =>
@@ -23,6 +22,11 @@ export function buildBuildingMesh(buildings: CityBuilding[]): BuildingMeshData {
       0
     ) * 3;
   if (capacity > 90000000) throw new Error('건물 표시 형상 상한 초과');
+  return capacity;
+}
+export function buildBuildingMesh(buildings: CityBuilding[]): BuildingMeshData {
+  // 건물마다 임시 형상을 만들지 않고 원 도형을 한 번 삼각분할해 전송 버퍼에 쓴다.
+  const capacity = buildingMeshCapacity(buildings);
   const positions = new Float32Array(capacity),
     normals = new Float32Array(capacity);
   const ends: number[] = [],
