@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "id": "PUBLIC_COST_PRESENT_VALUE_V1",
+  "method": "DISCOUNTED_CASH_FLOW_V1",
+  "timing": "INITIAL_AT_YEAR_ZERO_END_OF_YEAR",
+  "precision": "DECIMAL_50_SUM_THEN_HALF_EVEN_2",
+  "methodSource": {
+    "title": "NIST Handbook 135e2022-upd1",
+    "url": "https://nvlpubs.nist.gov/nistpubs/hb/2022/NIST.HB.135e2022-upd1.pdf",
+    "sha256": "d4f8e386ffe7f1be1de767ad9391f566003d1a0dd5774a082d6a9728de1eedc6",
+    "reference": "2.4.1.1; 5.1.1-5.1.2, equations 5-1 and 5-2",
+    "scope": "METHOD_ONLY_NO_US_PRICE_OR_DISCOUNT_RATE_TRANSFER"
+  },
+  "cisternScenario": {
+    "id": "JKSWE_2018_REPORTED_CISTERN_COST_ASSUMPTIONS",
+    "currency": "KRW",
+    "studyPeriodYears": 40,
+    "priceBaseYear": null,
+    "priceBasis": "CONSTANT",
+    "discountKind": "REAL",
+    "discountRate": "0.0089",
+    "source": {
+      "title": "친환경시범마을의 LID 적용에 따른 물순환 효과 및 비용편익 분석",
+      "url": "https://journal.cricit.kr/jkswe/XmlViewer/f253405",
+      "sha256": "28f0c3969bbc2f1dd08e03fec2fddb70bfdecdfc4032bd871158eb3a1734e207",
+      "reference": "2.5, table 8; 2.5.1.1, table 9; 3.2, equation 3",
+      "classification": "PUBLISHED_DESIGN_COST_ASSUMPTION_NOT_OBSERVED_OPERATION"
+    },
+    "sensitivity": [
+      {"id": "REPORTED_2007_REAL_RATE", "label": "논문 2007년 실질할인율", "rate": "0.0245", "reference": "table 8, 2007"},
+      {"id": "REPORTED_2016_REAL_RATE", "label": "논문 2016년 실질할인율", "rate": "0.0047", "reference": "table 8, 2016"}
+    ],
+    "limitations": [
+      "40년은 논문의 철근콘크리트 건축물 기준 분석기간이며 물통·펌프의 수명 또는 교체주기 아님",
+      "0.89%는 논문의 2007-2016년 평균 실질할인율이며 현재 서울의 공통 사업 할인율 아님",
+      "별도 할인율은 표 8에 기재된 연도의 감도 사례이며 미래 예측·확률 구간·최소/최대 범위 아님",
+      "원 견적 금액을 불변 가격으로 유지한 문헌 참고 계산이며 가격 기준연도·현재 물가로의 환산은 미확인",
+      "부가세·추가 시공·교체·철거/처분·잔존가치 미확정으로 전체 생애주기비용과 경제성 순위 미산정",
+      "강우 사건의 효과·저류량을 연간화하거나 생애 편익·재이용 수요·전력량으로 전환하지 않음"
+    ]
+  }
+}

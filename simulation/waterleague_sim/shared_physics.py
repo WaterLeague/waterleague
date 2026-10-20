@@ -253,6 +253,7 @@ def process(conn, job, root):
                   'runoffComparison': result.get('runoffComparison'),
                   'designContract': result['designContract'],
                   'scoreContext': result['scoreContext'],
+                  'lifeCycleCost': result['lifeCycleCost'],
                   'inflowPolicy': result['inflowPolicy'],
                   'areaLimitBasis': model['cells'][0].get('areaLimitBasis','LEGACY_DESIGN_RATIO')}
         weeks = weekly_aggregate(result['contribution'], score_start, job['end'], max(covered, score_start), rule=rule)

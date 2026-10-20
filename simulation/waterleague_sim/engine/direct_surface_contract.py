@@ -88,6 +88,17 @@ def build(model, placement, result, directory, cost_record):
                 raise DirectSurfaceContractError()
         elif cost_record != {'status': 'NOT_RECORDED', 'sha256': None, 'estimate': None}:
             raise DirectSurfaceContractError()
+        life_cycle = result.get('lifeCycleCost')
+        life_cycle_binding = None
+        if life_cycle is not None:
+            raw = (directory / 'life-cycle-cost.json').read_bytes()
+            if (json.loads(raw) != life_cycle
+                    or life_cycle['status'] not in ('UNAVAILABLE', 'PARTIAL', 'COMPLETE')
+                    or digest((directory / 'life-cycle-cost-plan.json').read_bytes()) != life_cycle['planSha256']
+                    or digest((directory / 'life-cycle-method.json').read_bytes()) != life_cycle['policySha256']):
+                raise DirectSurfaceContractError()
+            life_cycle_binding = {'reportSha256': digest(raw), 'planSha256': life_cycle['planSha256'],
+                                  'policySha256': life_cycle['policySha256']}
         return {
             'version': VERSION,
             'spatial': dict(geometry, candidateId=cell['id'], districtId=cell['districtId'],
@@ -107,7 +118,9 @@ def build(model, placement, result, directory, cost_record):
                       'rainfall': 'mm', 'cost': 'KRW'},
             'cost': {'status': cost_record['status'], 'snapshotSha256': cost_record['sha256'],
                      'sourceSha256': model['costSourceSha256'], 'budgetPolicy': model['budgetPolicy'],
-                     'completeInstalledCostStatus': 'UNCONFIRMED', 'lifeCycleCostStatus': 'NOT_CALCULATED'},
+                     'completeInstalledCostStatus': 'UNCONFIRMED',
+                     'lifeCycleCostStatus': life_cycle['status'] if life_cycle is not None else 'NOT_CALCULATED',
+                     'lifeCycleCost': life_cycle_binding},
             'engine': baseline['engine'], 'inputFiles': source_hashes, 'commonInpSections': common,
             'implementationSha256': digest(Path(__file__).read_bytes()),
         }

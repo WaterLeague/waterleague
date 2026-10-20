@@ -96,3 +96,20 @@ class DirectSurfaceContractTests(unittest.TestCase):
         self.assertEqual(json.loads((self.root / 'result.json').read_text())['designContract'], first)
         for name, sha in json.loads((self.root / 'manifest.json').read_text()).items():
             self.assertEqual(digest((self.root / name).read_bytes()), sha)
+
+    def test_cost_status_and_plan_lineage_are_bound_without_inventing_missing_terms(self):
+        from waterleague_sim.costing.life_cycle import archive_native
+        report = archive_native(self.cost, self.root)
+        self.result['lifeCycleCost'] = report
+        cost = self.build()['cost']
+        self.assertEqual(cost['lifeCycleCostStatus'], 'UNAVAILABLE')
+        self.assertEqual(cost['lifeCycleCost']['planSha256'], report['planSha256'])
+        self.assertEqual(cost['lifeCycleCost']['reportSha256'],
+                         digest((self.root / 'life-cycle-cost.json').read_bytes()))
+        self.result['lifeCycleCost']['status'] = 'COMPLETE'
+        with self.assertRaises(DirectSurfaceContractError):
+            self.build()
+        self.result['lifeCycleCost']['status'] = 'UNAVAILABLE'
+        (self.root / 'life-cycle-cost-plan.json').write_text('{}')
+        with self.assertRaises(DirectSurfaceContractError):
+            self.build()

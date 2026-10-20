@@ -64,7 +64,8 @@ export const designContractDto = z
       sourceSha256: sha,
       budgetPolicy: z.record(z.string(), z.unknown()),
       completeInstalledCostStatus: z.literal('UNCONFIRMED'),
-      lifeCycleCostStatus: z.literal('NOT_CALCULATED'),
+      lifeCycleCostStatus: z.enum(['NOT_CALCULATED', 'UNAVAILABLE', 'PARTIAL', 'COMPLETE']),
+      lifeCycleCost: z.object({ reportSha256: sha, planSha256: sha, policySha256: sha }).nullish(),
     }),
     engine: z.looseObject({
       engineVersion: z.literal('5.2.4'),
@@ -92,6 +93,9 @@ export const designContractDto = z
       v.facility.areaM2 === v.connection.directRainAreaM2 &&
       Date.parse(v.evaluation.start) < Date.parse(v.evaluation.end) &&
       (v.cost.status === 'RECORDED') === (v.cost.snapshotSha256 !== null)
+  )
+  .refine(
+    (v) => (v.cost.lifeCycleCostStatus === 'NOT_CALCULATED') === (v.cost.lifeCycleCost == null)
   )
   .refine((v) => {
     const graph = v.flowGraph;

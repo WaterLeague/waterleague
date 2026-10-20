@@ -4,6 +4,7 @@ import { Droplets } from 'lucide-react';
 import { usePhysics } from '../controller/usePhysics';
 import './physics.css';
 import { RunoffComparison } from './RunoffComparison';
+import { LifeCycleCostEvidence } from '../../cost/view/LifeCycleCostEvidence';
 const amount = (n: number | null, scale = 1) =>
   n === null
     ? '—'
@@ -71,6 +72,7 @@ export function PhysicsPanel({ installationId }: { installationId: string }) {
           )}
           <details>
             <summary>계산 조건</summary>
+            {result.lifeCycleCost && <LifeCycleCostEvidence value={result.lifeCycleCost} />}
             {result.initialization && <InitializationEvidence value={result.initialization} />}
             {result.facilityDesign && <FacilityProfileEvidence {...result.facilityDesign} />}
             <p>

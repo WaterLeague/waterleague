@@ -365,7 +365,9 @@ export function HistoricalPanel({
                       <summary>{f.cellId} · 시작 수분·시설 제원</summary>
                       {f.initialization && <InitializationEvidence value={f.initialization} />}
                       {f.facilityDesign && <FacilityProfileEvidence {...f.facilityDesign} />}
-                      {f.costRecord && <CostRecordEvidence value={f.costRecord} />}
+                      {f.costRecord && (
+                        <CostRecordEvidence value={f.costRecord} lifeCycleCost={f.lifeCycleCost} />
+                      )}
                     </details>
                   )
               )}

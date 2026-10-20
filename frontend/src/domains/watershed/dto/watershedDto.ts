@@ -9,6 +9,7 @@ import { watershedLayoutDto } from './watershedLayoutDto';
 import { watershedMetricsDto } from './watershedMetricsDto';
 import { nodeFloodingDto, floodAmountClose } from './nodeFloodingDto';
 import { metricComparisonDto } from '../../physics/dto/metricComparisonDto';
+import { cisternLifeCycleCostsDto } from '../../cost/dto/lifeCycleCostDto';
 const hash = z.string().regex(/^[a-f0-9]{64}$/);
 const amount = z.number().finite();
 export const networkFacilityDto = z.enum([
@@ -163,6 +164,7 @@ export const watershedResultDto = z
     budgetChargedKrw: z.null(),
     costing: watershedCostSnapshotDto.optional(),
     cisternCosting: cisternCostSnapshotDto.optional(),
+    cisternLifeCycleCosts: cisternLifeCycleCostsDto.optional(),
     limitations: z.array(z.string()),
     metricComparison: metricComparisonDto.optional(),
   })
@@ -419,6 +421,33 @@ export const watershedJobDto = z
     )
       ctx.addIssue({ code: 'custom', message: '이용조 견적과 설계·결과 불일치' });
     const pumps = value.design.pumps?.placements ?? [];
+    const finance = value.result?.cisternLifeCycleCosts;
+    if (
+      finance &&
+      (!references ||
+        finance.catalogHash !== references.catalogHash ||
+        finance.items.length !== references.items.length ||
+        finance.items.some((i) => {
+          const item = references.items.find((r) => r.placementId === i.placementId);
+          return (
+            !item ||
+            i.quotes.length !== item.quotes.length ||
+            i.quotes.some((q) => {
+              const quote = item.quotes.find((r) => r.id === q.id);
+              const initial = q.report.categories.find((c) => c.id === 'INITIAL');
+              return (
+                !quote ||
+                q.report.status !== 'PARTIAL' ||
+                q.report.currency !== 'KRW' ||
+                initial?.presentValue !== quote.quotedSubtotalKrw.toFixed(2) ||
+                q.report.functionalUnit !==
+                  `${item.equivalentUnits} x 2.35 m3 CAPACITY_EQUIVALENT_ONLY`
+              );
+            })
+          );
+        }))
+    )
+      ctx.addIssue({ code: 'custom', message: '이용조 견적과 생애비용 계산 입력 불일치' });
     if (value.result)
       for (const c of value.result.cases) {
         const expected = c.id === 'strategy' ? pumps : [];

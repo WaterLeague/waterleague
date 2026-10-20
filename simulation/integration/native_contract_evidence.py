@@ -29,6 +29,19 @@ def verify(test, directory):
         for name, sha in record['inputFiles'].items():
             test.assertEqual(hashlib.sha256((folder / name).read_bytes()).hexdigest(), sha)
         manifest = json.loads((folder / 'manifest.json').read_bytes())
+        from waterleague_sim.costing.life_cycle import evaluate
+        finance = result['lifeCycleCost']
+        plan = json.loads((folder / 'life-cycle-cost-plan.json').read_bytes())
+        test.assertEqual(finance, evaluate(plan))
+        test.assertEqual(finance['status'], 'UNAVAILABLE')
+        test.assertIsNone(finance['lifeCycleCost'])
+        test.assertFalse(finance['budgetChargeChanged'])
+        test.assertFalse(finance['physicalEffectAnnualized'])
+        test.assertEqual(record['cost']['lifeCycleCostStatus'], finance['status'])
+        test.assertEqual(record['cost']['lifeCycleCost']['reportSha256'], manifest['life-cycle-cost.json'])
+        test.assertEqual(finance['planSha256'], manifest['life-cycle-cost-plan.json'])
+        test.assertEqual(finance['policySha256'], manifest['life-cycle-method.json'])
+        (ROOT/'tmp/life-cycle-native-last.json').write_text(json.dumps(finance, ensure_ascii=False)+'\n')
         comparison = result['runoffComparison']
         assessment = comparison['metricComparison']
         test.assertEqual(len(assessment['metrics']), 9)

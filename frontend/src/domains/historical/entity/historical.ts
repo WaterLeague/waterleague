@@ -6,6 +6,7 @@ import type { FacilityType } from '../../game/entity/game';
 import type { CostRecord } from '../../cost/dto/costDto';
 import type { RunoffComparisonData } from '../../physics/dto/runoffComparisonDto';
 import type { DesignContractData } from '../../physics/dto/designContractDto';
+import type { LifeCycleCost } from '../../cost/dto/lifeCycleCostDto';
 export interface HistoricalDraft {
   site: SharedSite;
   facilityType: FacilityType;
@@ -54,6 +55,7 @@ export interface HistoricalJob {
       initialization?: InitializationEvidenceData | null;
       facilityDesign?: FacilityEvidence | null;
       costRecord?: CostRecord;
+      lifeCycleCost?: LifeCycleCost;
       runoffComparison?: RunoffComparisonData;
       designContract?: DesignContractData;
     }[];

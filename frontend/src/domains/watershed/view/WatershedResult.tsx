@@ -82,7 +82,12 @@ export function WatershedResult({ job }: { job: WatershedJob }) {
           지하 저류조 공사비 미산정 · 참고 공사비 부분합에 포함되지 않습니다.
         </p>
       )}
-      {job.design.cisternCosting && <CisternReferenceCosts costing={job.design.cisternCosting} />}
+      {job.design.cisternCosting && (
+        <CisternReferenceCosts
+          costing={job.design.cisternCosting}
+          lifeCycleCosts={job.result?.cisternLifeCycleCosts}
+        />
+      )}
       {job.design.costing && (
         <WatershedCosts
           costing={job.design.costing}

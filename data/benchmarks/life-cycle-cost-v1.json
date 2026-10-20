@@ -1,0 +1,1318 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-10-20",
+  "status": "NUMERIC_API_WORKER_DTO_PASSED_BROWSER_PENDING",
+  "methodSha256": "ae835ccb4566f1ecb42bc58acd8cc17bf6529b351640484e1b0e7a434a1bc15b",
+  "scorePolicySha256": "1ee8950b956374f82f8cfbb8db40be537454096df31ff2aa096ed214d393e779",
+  "sources": {
+    "schemaVersion": 1,
+    "id": "PUBLIC_COST_PRESENT_VALUE_V1",
+    "method": "DISCOUNTED_CASH_FLOW_V1",
+    "timing": "INITIAL_AT_YEAR_ZERO_END_OF_YEAR",
+    "precision": "DECIMAL_50_SUM_THEN_HALF_EVEN_2",
+    "methodSource": {
+      "title": "NIST Handbook 135e2022-upd1",
+      "url": "https://nvlpubs.nist.gov/nistpubs/hb/2022/NIST.HB.135e2022-upd1.pdf",
+      "sha256": "d4f8e386ffe7f1be1de767ad9391f566003d1a0dd5774a082d6a9728de1eedc6",
+      "reference": "2.4.1.1; 5.1.1-5.1.2, equations 5-1 and 5-2",
+      "scope": "METHOD_ONLY_NO_US_PRICE_OR_DISCOUNT_RATE_TRANSFER"
+    },
+    "cisternScenario": {
+      "id": "JKSWE_2018_REPORTED_CISTERN_COST_ASSUMPTIONS",
+      "currency": "KRW",
+      "studyPeriodYears": 40,
+      "priceBaseYear": null,
+      "priceBasis": "CONSTANT",
+      "discountKind": "REAL",
+      "discountRate": "0.0089",
+      "source": {
+        "title": "친환경시범마을의 LID 적용에 따른 물순환 효과 및 비용편익 분석",
+        "url": "https://journal.cricit.kr/jkswe/XmlViewer/f253405",
+        "sha256": "28f0c3969bbc2f1dd08e03fec2fddb70bfdecdfc4032bd871158eb3a1734e207",
+        "reference": "2.5, table 8; 2.5.1.1, table 9; 3.2, equation 3",
+        "classification": "PUBLISHED_DESIGN_COST_ASSUMPTION_NOT_OBSERVED_OPERATION"
+      },
+      "sensitivity": [
+        {
+          "id": "REPORTED_2007_REAL_RATE",
+          "label": "논문 2007년 실질할인율",
+          "rate": "0.0245",
+          "reference": "table 8, 2007"
+        },
+        {
+          "id": "REPORTED_2016_REAL_RATE",
+          "label": "논문 2016년 실질할인율",
+          "rate": "0.0047",
+          "reference": "table 8, 2016"
+        }
+      ],
+      "limitations": [
+        "40년은 논문의 철근콘크리트 건축물 기준 분석기간이며 물통·펌프의 수명 또는 교체주기 아님",
+        "0.89%는 논문의 2007-2016년 평균 실질할인율이며 현재 서울의 공통 사업 할인율 아님",
+        "별도 할인율은 표 8에 기재된 연도의 감도 사례이며 미래 예측·확률 구간·최소/최대 범위 아님",
+        "원 견적 금액을 불변 가격으로 유지한 문헌 참고 계산이며 가격 기준연도·현재 물가로의 환산은 미확인",
+        "부가세·추가 시공·교체·철거/처분·잔존가치 미확정으로 전체 생애주기비용과 경제성 순위 미산정",
+        "강우 사건의 효과·저류량을 연간화하거나 생애 편익·재이용 수요·전력량으로 전환하지 않음"
+      ]
+    }
+  },
+  "numericChecks": {
+    "unitTests": 6,
+    "independentFractionAndAnnuityMatched": true,
+    "contractTests": 4,
+    "scorePolicyTests": 5,
+    "missingInputsPreserved": true,
+    "cashflowAndPolicyTamperingRejected": true
+  },
+  "integration": {
+    "weekly": {
+      "javaTests": 17,
+      "pythonTests": 11,
+      "apiReadback": true
+    },
+    "historical": {
+      "javaTests": 19,
+      "pythonTests": 6,
+      "wholeEventSubmissionAndReplay": true
+    },
+    "watershed": {
+      "javaTests": 17,
+      "pythonTests": 8,
+      "apiReadback": true
+    },
+    "sourceDatabaseCountsUnchanged": true
+  },
+  "frontend": {
+    "files": 126,
+    "tests": 416,
+    "build": "PASS",
+    "format": "PASS",
+    "actualApiDto": {
+      "status": "PASS",
+      "weeklyResponses": 1,
+      "watershedResponses": 2,
+      "partialQuotes": 6,
+      "apiDtoMatched": true,
+      "changedPlanRejected": true,
+      "changedLedgerRejected": true,
+      "incompleteFullCostRejected": true,
+      "sourceHashes": {
+        "tmp/waterleague_queue_test_8c3e095085404629be8f45ab2f335b96.fixtures/physics-response.json": "10369b10af3844fc73852c00cf499f87b88f23bf98e255e467cebb7c12f27e3a",
+        "tmp/waterleague_queue_test_cade3c6120ef43ee9163c9db51addfac.fixtures/api-view-S1.json": "42158cd13c76d4ea516306bbba59ac8584cc19263112bf8080accc4ee032aa8e",
+        "tmp/waterleague_queue_test_cade3c6120ef43ee9163c9db51addfac.fixtures/api-view-S9.json": "f5c1bf466fe4f07cdfcf245a8c0f56652e88e299599e5cc9e8a88df69841d135"
+      },
+      "scope": "실제 격리 API·워커 결과의 화면 DTO 검사; 브라우저 표시 검증과 구분"
+    }
+  },
+  "publicCisternReference": {
+    "version": "DISCOUNTED_CASH_FLOW_V1",
+    "catalogHash": "63186839053e9a254bc42ba25765dfb78831d5621a3382e5abe0d110ddb7fe3b",
+    "policySha256": "ae835ccb4566f1ecb42bc58acd8cc17bf6529b351640484e1b0e7a434a1bc15b",
+    "items": [
+      {
+        "placementId": "PUBLIC_2_35_M3_QUOTE",
+        "quotes": [
+          {
+            "id": "A",
+            "report": {
+              "version": "DISCOUNTED_CASH_FLOW_V1",
+              "scenarioId": "JKSWE_2018_REPORTED_CISTERN_COST_ASSUMPTIONS",
+              "status": "PARTIAL",
+              "currency": "KRW",
+              "studyPeriodYears": 40,
+              "priceBaseYear": null,
+              "priceBasis": "CONSTANT",
+              "discountKind": "REAL",
+              "discountRates": [
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089"
+              ],
+              "functionalUnit": "1 x 2.35 m3 CAPACITY_EQUIVALENT_ONLY",
+              "classification": "PUBLISHED_DESIGN_COST_ASSUMPTION_NOT_OBSERVED_OPERATION",
+              "timing": "INITIAL_AT_YEAR_ZERO_END_OF_YEAR",
+              "precision": "DECIMAL_50_SUM_THEN_HALF_EVEN_2",
+              "planSha256": "ff74a535b7b828605430202354ce46f73b1cec5a443c535d32ab1b0b3787ae14",
+              "policySha256": "ae835ccb4566f1ecb42bc58acd8cc17bf6529b351640484e1b0e7a434a1bc15b",
+              "comparisonKey": null,
+              "lifeCycleCost": null,
+              "knownPresentValue": "10776371.82",
+              "annualRoundingDifference": "-0.04",
+              "categoryRoundingDifference": "0.00",
+              "missingInputs": [
+                "FUNCTIONAL_UNIT_UNVERIFIED",
+                "INCOMPLETE_DISPOSAL",
+                "INCOMPLETE_INITIAL",
+                "INCOMPLETE_REPLACEMENT",
+                "INCOMPLETE_RESIDUAL",
+                "PRICE_BASE_YEAR_MISSING"
+              ],
+              "categories": [
+                {
+                  "id": "INITIAL",
+                  "coverage": "PARTIAL",
+                  "presentValue": "5447000.00"
+                },
+                {
+                  "id": "OPERATION",
+                  "coverage": "COMPLETE",
+                  "presentValue": "1826418.04"
+                },
+                {
+                  "id": "INSPECTION_CLEANING",
+                  "coverage": "COMPLETE",
+                  "presentValue": "1676535.74"
+                },
+                {
+                  "id": "REPAIR",
+                  "coverage": "COMPLETE",
+                  "presentValue": "1826418.04"
+                },
+                {
+                  "id": "REPLACEMENT",
+                  "coverage": "UNPRICED",
+                  "presentValue": null
+                },
+                {
+                  "id": "DISPOSAL",
+                  "coverage": "UNPRICED",
+                  "presentValue": null
+                },
+                {
+                  "id": "RESIDUAL",
+                  "coverage": "UNPRICED",
+                  "presentValue": null
+                }
+              ],
+              "annualCashflows": [
+                {
+                  "year": 0,
+                  "cost": "5447000.00",
+                  "credit": "0.00",
+                  "presentValue": "5447000.00"
+                },
+                {
+                  "year": 1,
+                  "cost": "158940.00",
+                  "credit": "0.00",
+                  "presentValue": "157537.91"
+                },
+                {
+                  "year": 2,
+                  "cost": "158940.00",
+                  "credit": "0.00",
+                  "presentValue": "156148.19"
+                },
+                {
+                  "year": 3,
+                  "cost": "158940.00",
+                  "credit": "0.00",
+                  "presentValue": "154770.73"
+                },
+                {
+                  "year": 4,
+                  "cost": "158940.00",
+                  "credit": "0.00",
+                  "presentValue": "153405.43"
+                },
+                {
+                  "year": 5,
+                  "cost": "158940.00",
+                  "credit": "0.00",
+                  "presentValue": "152052.16"
+                },
+                {
+                  "year": 6,
+                  "cost": "158940.00",
+                  "credit": "0.00",
+                  "presentValue": "150710.84"
+                },
+                {
+                  "year": 7,
+                  "cost": "158940.00",
+                  "credit": "0.00",
+                  "presentValue": "149381.34"
+                },
+                {
+                  "year": 8,
+                  "cost": "158940.00",
+                  "credit": "0.00",
+                  "presentValue": "148063.58"
+                },
+                {
+                  "year": 9,
+                  "cost": "158940.00",
+                  "credit": "0.00",
+                  "presentValue": "146757.43"
+                },
+                {
+                  "year": 10,
+                  "cost": "158940.00",
+                  "credit": "0.00",
+                  "presentValue": "145462.82"
+                },
+                {
+                  "year": 11,
+                  "cost": "158940.00",
+                  "credit": "0.00",
+                  "presentValue": "144179.62"
+                },
+                {
+                  "year": 12,
+                  "cost": "158940.00",
+                  "credit": "0.00",
+                  "presentValue": "142907.74"
+                },
+                {
+                  "year": 13,
+                  "cost": "158940.00",
+                  "credit": "0.00",
+                  "presentValue": "141647.08"
+                },
+                {
+                  "year": 14,
+                  "cost": "158940.00",
+                  "credit": "0.00",
+                  "presentValue": "140397.54"
+                },
+                {
+                  "year": 15,
+                  "cost": "158940.00",
+                  "credit": "0.00",
+                  "presentValue": "139159.03"
+                },
+                {
+                  "year": 16,
+                  "cost": "158940.00",
+                  "credit": "0.00",
+                  "presentValue": "137931.44"
+                },
+                {
+                  "year": 17,
+                  "cost": "158940.00",
+                  "credit": "0.00",
+                  "presentValue": "136714.67"
+                },
+                {
+                  "year": 18,
+                  "cost": "158940.00",
+                  "credit": "0.00",
+                  "presentValue": "135508.65"
+                },
+                {
+                  "year": 19,
+                  "cost": "158940.00",
+                  "credit": "0.00",
+                  "presentValue": "134313.26"
+                },
+                {
+                  "year": 20,
+                  "cost": "158940.00",
+                  "credit": "0.00",
+                  "presentValue": "133128.42"
+                },
+                {
+                  "year": 21,
+                  "cost": "158940.00",
+                  "credit": "0.00",
+                  "presentValue": "131954.03"
+                },
+                {
+                  "year": 22,
+                  "cost": "158940.00",
+                  "credit": "0.00",
+                  "presentValue": "130790.00"
+                },
+                {
+                  "year": 23,
+                  "cost": "158940.00",
+                  "credit": "0.00",
+                  "presentValue": "129636.23"
+                },
+                {
+                  "year": 24,
+                  "cost": "158940.00",
+                  "credit": "0.00",
+                  "presentValue": "128492.65"
+                },
+                {
+                  "year": 25,
+                  "cost": "158940.00",
+                  "credit": "0.00",
+                  "presentValue": "127359.15"
+                },
+                {
+                  "year": 26,
+                  "cost": "158940.00",
+                  "credit": "0.00",
+                  "presentValue": "126235.65"
+                },
+                {
+                  "year": 27,
+                  "cost": "158940.00",
+                  "credit": "0.00",
+                  "presentValue": "125122.07"
+                },
+                {
+                  "year": 28,
+                  "cost": "158940.00",
+                  "credit": "0.00",
+                  "presentValue": "124018.31"
+                },
+                {
+                  "year": 29,
+                  "cost": "158940.00",
+                  "credit": "0.00",
+                  "presentValue": "122924.28"
+                },
+                {
+                  "year": 30,
+                  "cost": "158940.00",
+                  "credit": "0.00",
+                  "presentValue": "121839.90"
+                },
+                {
+                  "year": 31,
+                  "cost": "158940.00",
+                  "credit": "0.00",
+                  "presentValue": "120765.09"
+                },
+                {
+                  "year": 32,
+                  "cost": "158940.00",
+                  "credit": "0.00",
+                  "presentValue": "119699.77"
+                },
+                {
+                  "year": 33,
+                  "cost": "158940.00",
+                  "credit": "0.00",
+                  "presentValue": "118643.84"
+                },
+                {
+                  "year": 34,
+                  "cost": "158940.00",
+                  "credit": "0.00",
+                  "presentValue": "117597.22"
+                },
+                {
+                  "year": 35,
+                  "cost": "158940.00",
+                  "credit": "0.00",
+                  "presentValue": "116559.84"
+                },
+                {
+                  "year": 36,
+                  "cost": "158940.00",
+                  "credit": "0.00",
+                  "presentValue": "115531.61"
+                },
+                {
+                  "year": 37,
+                  "cost": "158940.00",
+                  "credit": "0.00",
+                  "presentValue": "114512.45"
+                },
+                {
+                  "year": 38,
+                  "cost": "158940.00",
+                  "credit": "0.00",
+                  "presentValue": "113502.28"
+                },
+                {
+                  "year": 39,
+                  "cost": "158940.00",
+                  "credit": "0.00",
+                  "presentValue": "112501.02"
+                },
+                {
+                  "year": 40,
+                  "cost": "158940.00",
+                  "credit": "0.00",
+                  "presentValue": "111508.59"
+                }
+              ],
+              "termsEvidence": {
+                "sha256": "28f0c3969bbc2f1dd08e03fec2fddb70bfdecdfc4032bd871158eb3a1734e207",
+                "reference": "2.5, table 8; 2.5.1.1, table 9; 3.2, equation 3"
+              },
+              "limitations": [
+                "40년은 논문의 철근콘크리트 건축물 기준 분석기간이며 물통·펌프의 수명 또는 교체주기 아님",
+                "0.89%는 논문의 2007-2016년 평균 실질할인율이며 현재 서울의 공통 사업 할인율 아님",
+                "별도 할인율은 표 8에 기재된 연도의 감도 사례이며 미래 예측·확률 구간·최소/최대 범위 아님",
+                "원 견적 금액을 불변 가격으로 유지한 문헌 참고 계산이며 가격 기준연도·현재 물가로의 환산은 미확인",
+                "부가세·추가 시공·교체·철거/처분·잔존가치 미확정으로 전체 생애주기비용과 경제성 순위 미산정",
+                "강우 사건의 효과·저류량을 연간화하거나 생애 편익·재이용 수요·전력량으로 전환하지 않음"
+              ],
+              "budgetChargeChanged": false,
+              "physicalEffectAnnualized": false,
+              "scoreUsed": false,
+              "sensitivity": [
+                {
+                  "id": "REPORTED_2007_REAL_RATE",
+                  "label": "논문 2007년 실질할인율",
+                  "rate": "0.0245",
+                  "knownPresentValue": "9470642.45",
+                  "lifeCycleCost": null,
+                  "status": "PARTIAL",
+                  "planSha256": "ec99c2fd93416dcd702c2b48511d50fc410c0ca1587afa98e08577f4eec6cdf9"
+                },
+                {
+                  "id": "REPORTED_2016_REAL_RATE",
+                  "label": "논문 2016년 실질할인율",
+                  "rate": "0.0047",
+                  "knownPresentValue": "11230396.23",
+                  "lifeCycleCost": null,
+                  "status": "PARTIAL",
+                  "planSha256": "25841995937a91f8fff1ba71b0861bd62f21b0c0cb4cffa772a3b939caa527b0"
+                }
+              ]
+            }
+          },
+          {
+            "id": "B",
+            "report": {
+              "version": "DISCOUNTED_CASH_FLOW_V1",
+              "scenarioId": "JKSWE_2018_REPORTED_CISTERN_COST_ASSUMPTIONS",
+              "status": "PARTIAL",
+              "currency": "KRW",
+              "studyPeriodYears": 40,
+              "priceBaseYear": null,
+              "priceBasis": "CONSTANT",
+              "discountKind": "REAL",
+              "discountRates": [
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089"
+              ],
+              "functionalUnit": "1 x 2.35 m3 CAPACITY_EQUIVALENT_ONLY",
+              "classification": "PUBLISHED_DESIGN_COST_ASSUMPTION_NOT_OBSERVED_OPERATION",
+              "timing": "INITIAL_AT_YEAR_ZERO_END_OF_YEAR",
+              "precision": "DECIMAL_50_SUM_THEN_HALF_EVEN_2",
+              "planSha256": "95cf12cb197760a05464ab234a19b9a7c4b4ddafdc750208ec7834a39e5ce1e7",
+              "policySha256": "ae835ccb4566f1ecb42bc58acd8cc17bf6529b351640484e1b0e7a434a1bc15b",
+              "comparisonKey": null,
+              "lifeCycleCost": null,
+              "knownPresentValue": "7543733.16",
+              "annualRoundingDifference": "0.01",
+              "categoryRoundingDifference": "0.00",
+              "missingInputs": [
+                "FUNCTIONAL_UNIT_UNVERIFIED",
+                "INCOMPLETE_DISPOSAL",
+                "INCOMPLETE_INITIAL",
+                "INCOMPLETE_REPLACEMENT",
+                "INCOMPLETE_RESIDUAL",
+                "PRICE_BASE_YEAR_MISSING"
+              ],
+              "categories": [
+                {
+                  "id": "INITIAL",
+                  "coverage": "PARTIAL",
+                  "presentValue": "3512000.00"
+                },
+                {
+                  "id": "OPERATION",
+                  "coverage": "COMPLETE",
+                  "presentValue": "1177598.71"
+                },
+                {
+                  "id": "INSPECTION_CLEANING",
+                  "coverage": "COMPLETE",
+                  "presentValue": "1676535.74"
+                },
+                {
+                  "id": "REPAIR",
+                  "coverage": "COMPLETE",
+                  "presentValue": "1177598.71"
+                },
+                {
+                  "id": "REPLACEMENT",
+                  "coverage": "UNPRICED",
+                  "presentValue": null
+                },
+                {
+                  "id": "DISPOSAL",
+                  "coverage": "UNPRICED",
+                  "presentValue": null
+                },
+                {
+                  "id": "RESIDUAL",
+                  "coverage": "UNPRICED",
+                  "presentValue": null
+                }
+              ],
+              "annualCashflows": [
+                {
+                  "year": 0,
+                  "cost": "3512000.00",
+                  "credit": "0.00",
+                  "presentValue": "3512000.00"
+                },
+                {
+                  "year": 1,
+                  "cost": "120240.00",
+                  "credit": "0.00",
+                  "presentValue": "119179.30"
+                },
+                {
+                  "year": 2,
+                  "cost": "120240.00",
+                  "credit": "0.00",
+                  "presentValue": "118127.97"
+                },
+                {
+                  "year": 3,
+                  "cost": "120240.00",
+                  "credit": "0.00",
+                  "presentValue": "117085.90"
+                },
+                {
+                  "year": 4,
+                  "cost": "120240.00",
+                  "credit": "0.00",
+                  "presentValue": "116053.03"
+                },
+                {
+                  "year": 5,
+                  "cost": "120240.00",
+                  "credit": "0.00",
+                  "presentValue": "115029.27"
+                },
+                {
+                  "year": 6,
+                  "cost": "120240.00",
+                  "credit": "0.00",
+                  "presentValue": "114014.54"
+                },
+                {
+                  "year": 7,
+                  "cost": "120240.00",
+                  "credit": "0.00",
+                  "presentValue": "113008.76"
+                },
+                {
+                  "year": 8,
+                  "cost": "120240.00",
+                  "credit": "0.00",
+                  "presentValue": "112011.86"
+                },
+                {
+                  "year": 9,
+                  "cost": "120240.00",
+                  "credit": "0.00",
+                  "presentValue": "111023.74"
+                },
+                {
+                  "year": 10,
+                  "cost": "120240.00",
+                  "credit": "0.00",
+                  "presentValue": "110044.35"
+                },
+                {
+                  "year": 11,
+                  "cost": "120240.00",
+                  "credit": "0.00",
+                  "presentValue": "109073.59"
+                },
+                {
+                  "year": 12,
+                  "cost": "120240.00",
+                  "credit": "0.00",
+                  "presentValue": "108111.40"
+                },
+                {
+                  "year": 13,
+                  "cost": "120240.00",
+                  "credit": "0.00",
+                  "presentValue": "107157.70"
+                },
+                {
+                  "year": 14,
+                  "cost": "120240.00",
+                  "credit": "0.00",
+                  "presentValue": "106212.41"
+                },
+                {
+                  "year": 15,
+                  "cost": "120240.00",
+                  "credit": "0.00",
+                  "presentValue": "105275.46"
+                },
+                {
+                  "year": 16,
+                  "cost": "120240.00",
+                  "credit": "0.00",
+                  "presentValue": "104346.77"
+                },
+                {
+                  "year": 17,
+                  "cost": "120240.00",
+                  "credit": "0.00",
+                  "presentValue": "103426.28"
+                },
+                {
+                  "year": 18,
+                  "cost": "120240.00",
+                  "credit": "0.00",
+                  "presentValue": "102513.90"
+                },
+                {
+                  "year": 19,
+                  "cost": "120240.00",
+                  "credit": "0.00",
+                  "presentValue": "101609.58"
+                },
+                {
+                  "year": 20,
+                  "cost": "120240.00",
+                  "credit": "0.00",
+                  "presentValue": "100713.23"
+                },
+                {
+                  "year": 21,
+                  "cost": "120240.00",
+                  "credit": "0.00",
+                  "presentValue": "99824.79"
+                },
+                {
+                  "year": 22,
+                  "cost": "120240.00",
+                  "credit": "0.00",
+                  "presentValue": "98944.19"
+                },
+                {
+                  "year": 23,
+                  "cost": "120240.00",
+                  "credit": "0.00",
+                  "presentValue": "98071.35"
+                },
+                {
+                  "year": 24,
+                  "cost": "120240.00",
+                  "credit": "0.00",
+                  "presentValue": "97206.22"
+                },
+                {
+                  "year": 25,
+                  "cost": "120240.00",
+                  "credit": "0.00",
+                  "presentValue": "96348.71"
+                },
+                {
+                  "year": 26,
+                  "cost": "120240.00",
+                  "credit": "0.00",
+                  "presentValue": "95498.77"
+                },
+                {
+                  "year": 27,
+                  "cost": "120240.00",
+                  "credit": "0.00",
+                  "presentValue": "94656.33"
+                },
+                {
+                  "year": 28,
+                  "cost": "120240.00",
+                  "credit": "0.00",
+                  "presentValue": "93821.32"
+                },
+                {
+                  "year": 29,
+                  "cost": "120240.00",
+                  "credit": "0.00",
+                  "presentValue": "92993.68"
+                },
+                {
+                  "year": 30,
+                  "cost": "120240.00",
+                  "credit": "0.00",
+                  "presentValue": "92173.34"
+                },
+                {
+                  "year": 31,
+                  "cost": "120240.00",
+                  "credit": "0.00",
+                  "presentValue": "91360.23"
+                },
+                {
+                  "year": 32,
+                  "cost": "120240.00",
+                  "credit": "0.00",
+                  "presentValue": "90554.30"
+                },
+                {
+                  "year": 33,
+                  "cost": "120240.00",
+                  "credit": "0.00",
+                  "presentValue": "89755.47"
+                },
+                {
+                  "year": 34,
+                  "cost": "120240.00",
+                  "credit": "0.00",
+                  "presentValue": "88963.70"
+                },
+                {
+                  "year": 35,
+                  "cost": "120240.00",
+                  "credit": "0.00",
+                  "presentValue": "88178.90"
+                },
+                {
+                  "year": 36,
+                  "cost": "120240.00",
+                  "credit": "0.00",
+                  "presentValue": "87401.03"
+                },
+                {
+                  "year": 37,
+                  "cost": "120240.00",
+                  "credit": "0.00",
+                  "presentValue": "86630.03"
+                },
+                {
+                  "year": 38,
+                  "cost": "120240.00",
+                  "credit": "0.00",
+                  "presentValue": "85865.82"
+                },
+                {
+                  "year": 39,
+                  "cost": "120240.00",
+                  "credit": "0.00",
+                  "presentValue": "85108.36"
+                },
+                {
+                  "year": 40,
+                  "cost": "120240.00",
+                  "credit": "0.00",
+                  "presentValue": "84357.57"
+                }
+              ],
+              "termsEvidence": {
+                "sha256": "28f0c3969bbc2f1dd08e03fec2fddb70bfdecdfc4032bd871158eb3a1734e207",
+                "reference": "2.5, table 8; 2.5.1.1, table 9; 3.2, equation 3"
+              },
+              "limitations": [
+                "40년은 논문의 철근콘크리트 건축물 기준 분석기간이며 물통·펌프의 수명 또는 교체주기 아님",
+                "0.89%는 논문의 2007-2016년 평균 실질할인율이며 현재 서울의 공통 사업 할인율 아님",
+                "별도 할인율은 표 8에 기재된 연도의 감도 사례이며 미래 예측·확률 구간·최소/최대 범위 아님",
+                "원 견적 금액을 불변 가격으로 유지한 문헌 참고 계산이며 가격 기준연도·현재 물가로의 환산은 미확인",
+                "부가세·추가 시공·교체·철거/처분·잔존가치 미확정으로 전체 생애주기비용과 경제성 순위 미산정",
+                "강우 사건의 효과·저류량을 연간화하거나 생애 편익·재이용 수요·전력량으로 전환하지 않음"
+              ],
+              "budgetChargeChanged": false,
+              "physicalEffectAnnualized": false,
+              "scoreUsed": false,
+              "sensitivity": [
+                {
+                  "id": "REPORTED_2007_REAL_RATE",
+                  "label": "논문 2007년 실질할인율",
+                  "rate": "0.0245",
+                  "knownPresentValue": "6555933.36",
+                  "lifeCycleCost": null,
+                  "status": "PARTIAL",
+                  "planSha256": "43df831c212604830d344e041783b61da805f8086c2516f07bd30303541876b0"
+                },
+                {
+                  "id": "REPORTED_2016_REAL_RATE",
+                  "label": "논문 2016년 실질할인율",
+                  "rate": "0.0047",
+                  "knownPresentValue": "7887208.02",
+                  "lifeCycleCost": null,
+                  "status": "PARTIAL",
+                  "planSha256": "b64d0e9053c164be62435c8a44c1f9819c6960f7cfffee93bd694d470707aa76"
+                }
+              ]
+            }
+          },
+          {
+            "id": "C",
+            "report": {
+              "version": "DISCOUNTED_CASH_FLOW_V1",
+              "scenarioId": "JKSWE_2018_REPORTED_CISTERN_COST_ASSUMPTIONS",
+              "status": "PARTIAL",
+              "currency": "KRW",
+              "studyPeriodYears": 40,
+              "priceBaseYear": null,
+              "priceBasis": "CONSTANT",
+              "discountKind": "REAL",
+              "discountRates": [
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089",
+                "0.0089"
+              ],
+              "functionalUnit": "1 x 2.35 m3 CAPACITY_EQUIVALENT_ONLY",
+              "classification": "PUBLISHED_DESIGN_COST_ASSUMPTION_NOT_OBSERVED_OPERATION",
+              "timing": "INITIAL_AT_YEAR_ZERO_END_OF_YEAR",
+              "precision": "DECIMAL_50_SUM_THEN_HALF_EVEN_2",
+              "planSha256": "bae906a114b068dac484b4951fe663b8c48236ffab1f0daf3208962e183d3caf",
+              "policySha256": "ae835ccb4566f1ecb42bc58acd8cc17bf6529b351640484e1b0e7a434a1bc15b",
+              "comparisonKey": null,
+              "lifeCycleCost": null,
+              "knownPresentValue": "6449480.79",
+              "annualRoundingDifference": "-0.01",
+              "categoryRoundingDifference": "0.01",
+              "missingInputs": [
+                "FUNCTIONAL_UNIT_UNVERIFIED",
+                "INCOMPLETE_DISPOSAL",
+                "INCOMPLETE_INITIAL",
+                "INCOMPLETE_REPLACEMENT",
+                "INCOMPLETE_RESIDUAL",
+                "PRICE_BASE_YEAR_MISSING"
+              ],
+              "categories": [
+                {
+                  "id": "INITIAL",
+                  "coverage": "PARTIAL",
+                  "presentValue": "2857000.00"
+                },
+                {
+                  "id": "OPERATION",
+                  "coverage": "COMPLETE",
+                  "presentValue": "957972.52"
+                },
+                {
+                  "id": "INSPECTION_CLEANING",
+                  "coverage": "COMPLETE",
+                  "presentValue": "1676535.74"
+                },
+                {
+                  "id": "REPAIR",
+                  "coverage": "COMPLETE",
+                  "presentValue": "957972.52"
+                },
+                {
+                  "id": "REPLACEMENT",
+                  "coverage": "UNPRICED",
+                  "presentValue": null
+                },
+                {
+                  "id": "DISPOSAL",
+                  "coverage": "UNPRICED",
+                  "presentValue": null
+                },
+                {
+                  "id": "RESIDUAL",
+                  "coverage": "UNPRICED",
+                  "presentValue": null
+                }
+              ],
+              "annualCashflows": [
+                {
+                  "year": 0,
+                  "cost": "2857000.00",
+                  "credit": "0.00",
+                  "presentValue": "2857000.00"
+                },
+                {
+                  "year": 1,
+                  "cost": "107140.00",
+                  "credit": "0.00",
+                  "presentValue": "106194.87"
+                },
+                {
+                  "year": 2,
+                  "cost": "107140.00",
+                  "credit": "0.00",
+                  "presentValue": "105258.07"
+                },
+                {
+                  "year": 3,
+                  "cost": "107140.00",
+                  "credit": "0.00",
+                  "presentValue": "104329.54"
+                },
+                {
+                  "year": 4,
+                  "cost": "107140.00",
+                  "credit": "0.00",
+                  "presentValue": "103409.19"
+                },
+                {
+                  "year": 5,
+                  "cost": "107140.00",
+                  "credit": "0.00",
+                  "presentValue": "102496.97"
+                },
+                {
+                  "year": 6,
+                  "cost": "107140.00",
+                  "credit": "0.00",
+                  "presentValue": "101592.80"
+                },
+                {
+                  "year": 7,
+                  "cost": "107140.00",
+                  "credit": "0.00",
+                  "presentValue": "100696.60"
+                },
+                {
+                  "year": 8,
+                  "cost": "107140.00",
+                  "credit": "0.00",
+                  "presentValue": "99808.30"
+                },
+                {
+                  "year": 9,
+                  "cost": "107140.00",
+                  "credit": "0.00",
+                  "presentValue": "98927.84"
+                },
+                {
+                  "year": 10,
+                  "cost": "107140.00",
+                  "credit": "0.00",
+                  "presentValue": "98055.15"
+                },
+                {
+                  "year": 11,
+                  "cost": "107140.00",
+                  "credit": "0.00",
+                  "presentValue": "97190.16"
+                },
+                {
+                  "year": 12,
+                  "cost": "107140.00",
+                  "credit": "0.00",
+                  "presentValue": "96332.80"
+                },
+                {
+                  "year": 13,
+                  "cost": "107140.00",
+                  "credit": "0.00",
+                  "presentValue": "95483.00"
+                },
+                {
+                  "year": 14,
+                  "cost": "107140.00",
+                  "credit": "0.00",
+                  "presentValue": "94640.70"
+                },
+                {
+                  "year": 15,
+                  "cost": "107140.00",
+                  "credit": "0.00",
+                  "presentValue": "93805.83"
+                },
+                {
+                  "year": 16,
+                  "cost": "107140.00",
+                  "credit": "0.00",
+                  "presentValue": "92978.32"
+                },
+                {
+                  "year": 17,
+                  "cost": "107140.00",
+                  "credit": "0.00",
+                  "presentValue": "92158.11"
+                },
+                {
+                  "year": 18,
+                  "cost": "107140.00",
+                  "credit": "0.00",
+                  "presentValue": "91345.14"
+                },
+                {
+                  "year": 19,
+                  "cost": "107140.00",
+                  "credit": "0.00",
+                  "presentValue": "90539.34"
+                },
+                {
+                  "year": 20,
+                  "cost": "107140.00",
+                  "credit": "0.00",
+                  "presentValue": "89740.65"
+                },
+                {
+                  "year": 21,
+                  "cost": "107140.00",
+                  "credit": "0.00",
+                  "presentValue": "88949.00"
+                },
+                {
+                  "year": 22,
+                  "cost": "107140.00",
+                  "credit": "0.00",
+                  "presentValue": "88164.34"
+                },
+                {
+                  "year": 23,
+                  "cost": "107140.00",
+                  "credit": "0.00",
+                  "presentValue": "87386.60"
+                },
+                {
+                  "year": 24,
+                  "cost": "107140.00",
+                  "credit": "0.00",
+                  "presentValue": "86615.72"
+                },
+                {
+                  "year": 25,
+                  "cost": "107140.00",
+                  "credit": "0.00",
+                  "presentValue": "85851.64"
+                },
+                {
+                  "year": 26,
+                  "cost": "107140.00",
+                  "credit": "0.00",
+                  "presentValue": "85094.30"
+                },
+                {
+                  "year": 27,
+                  "cost": "107140.00",
+                  "credit": "0.00",
+                  "presentValue": "84343.64"
+                },
+                {
+                  "year": 28,
+                  "cost": "107140.00",
+                  "credit": "0.00",
+                  "presentValue": "83599.60"
+                },
+                {
+                  "year": 29,
+                  "cost": "107140.00",
+                  "credit": "0.00",
+                  "presentValue": "82862.13"
+                },
+                {
+                  "year": 30,
+                  "cost": "107140.00",
+                  "credit": "0.00",
+                  "presentValue": "82131.16"
+                },
+                {
+                  "year": 31,
+                  "cost": "107140.00",
+                  "credit": "0.00",
+                  "presentValue": "81406.65"
+                },
+                {
+                  "year": 32,
+                  "cost": "107140.00",
+                  "credit": "0.00",
+                  "presentValue": "80688.52"
+                },
+                {
+                  "year": 33,
+                  "cost": "107140.00",
+                  "credit": "0.00",
+                  "presentValue": "79976.72"
+                },
+                {
+                  "year": 34,
+                  "cost": "107140.00",
+                  "credit": "0.00",
+                  "presentValue": "79271.21"
+                },
+                {
+                  "year": 35,
+                  "cost": "107140.00",
+                  "credit": "0.00",
+                  "presentValue": "78571.92"
+                },
+                {
+                  "year": 36,
+                  "cost": "107140.00",
+                  "credit": "0.00",
+                  "presentValue": "77878.80"
+                },
+                {
+                  "year": 37,
+                  "cost": "107140.00",
+                  "credit": "0.00",
+                  "presentValue": "77191.79"
+                },
+                {
+                  "year": 38,
+                  "cost": "107140.00",
+                  "credit": "0.00",
+                  "presentValue": "76510.85"
+                },
+                {
+                  "year": 39,
+                  "cost": "107140.00",
+                  "credit": "0.00",
+                  "presentValue": "75835.91"
+                },
+                {
+                  "year": 40,
+                  "cost": "107140.00",
+                  "credit": "0.00",
+                  "presentValue": "75166.92"
+                }
+              ],
+              "termsEvidence": {
+                "sha256": "28f0c3969bbc2f1dd08e03fec2fddb70bfdecdfc4032bd871158eb3a1734e207",
+                "reference": "2.5, table 8; 2.5.1.1, table 9; 3.2, equation 3"
+              },
+              "limitations": [
+                "40년은 논문의 철근콘크리트 건축물 기준 분석기간이며 물통·펌프의 수명 또는 교체주기 아님",
+                "0.89%는 논문의 2007-2016년 평균 실질할인율이며 현재 서울의 공통 사업 할인율 아님",
+                "별도 할인율은 표 8에 기재된 연도의 감도 사례이며 미래 예측·확률 구간·최소/최대 범위 아님",
+                "원 견적 금액을 불변 가격으로 유지한 문헌 참고 계산이며 가격 기준연도·현재 물가로의 환산은 미확인",
+                "부가세·추가 시공·교체·철거/처분·잔존가치 미확정으로 전체 생애주기비용과 경제성 순위 미산정",
+                "강우 사건의 효과·저류량을 연간화하거나 생애 편익·재이용 수요·전력량으로 전환하지 않음"
+              ],
+              "budgetChargeChanged": false,
+              "physicalEffectAnnualized": false,
+              "scoreUsed": false,
+              "sensitivity": [
+                {
+                  "id": "REPORTED_2007_REAL_RATE",
+                  "label": "논문 2007년 실질할인율",
+                  "rate": "0.0245",
+                  "knownPresentValue": "5569300.57",
+                  "lifeCycleCost": null,
+                  "status": "PARTIAL",
+                  "planSha256": "5aed3107158533a78a91170358c1f27811323042c3d53c3cd62c21eca590c4a9"
+                },
+                {
+                  "id": "REPORTED_2016_REAL_RATE",
+                  "label": "논문 2016년 실질할인율",
+                  "rate": "0.0047",
+                  "knownPresentValue": "6755534.49",
+                  "lifeCycleCost": null,
+                  "status": "PARTIAL",
+                  "planSha256": "7c5cf7bc2d0b7786fc258fd4fb1205a80772965792928824368134793299e5c1"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "nativeStatus": "UNAVAILABLE",
+  "budgetChargeChanged": false,
+  "physicalEffectAnnualized": false,
+  "fullLccOrEconomicRankingProvided": false,
+  "browser": {
+    "checked": false,
+    "reason": "BROWSER_URL_POLICY_BLOCKED"
+  },
+  "implementationHashes": {
+    "simulation/waterleague_sim/costing/life_cycle.py": "87deffc1bddd0065159928036060a443a1012116148d96d4ac5304a67348d8ae",
+    "simulation/waterleague_sim/engine/direct_surface_contract.py": "559790828c1adaed435c88e2ef0169fac0a68c991676085b8247a413f51c45f1",
+    "simulation/waterleague_sim/run_historical_job.py": "dce92220ac016cb10ea951d459ce282774f93de29953a1d09ff4e5feb6fbaec0",
+    "simulation/waterleague_sim/run_live_job.py": "67a69b4d6d136df11ecb7d8808251d311a716c3c7092a9fb7d2b42bc863e8e01",
+    "simulation/waterleague_sim/run_watershed_job.py": "30d3f33408233a33bb4ba72a7094d4e6d4135afde800036a117c993cfbc4ddb4",
+    "frontend/src/domains/cost/dto/lifeCycleCostDto.ts": "ce70edd1355021a04e09c8d28c36455874eb4397bca38220a6a7436ce248fd11",
+    "scripts/verify_life_cycle_frontend.mjs": "65221bf0979bf4e53594e85a634430dca8a5918e158fec1d89337c19c3798bba"
+  }
+}

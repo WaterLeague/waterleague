@@ -175,6 +175,18 @@ class WatershedTests(unittest.TestCase):
         result=json.loads(row['result'])
         self.assertEqual(result['numericalStatus'],'PASSED')
         self.assertEqual(result['cisternCosting'],snapshot(design['placements']))
+        finance = result['cisternLifeCycleCosts']
+        self.assertEqual(finance['catalogHash'], result['cisternCosting']['catalogHash'])
+        self.assertEqual(len(finance['items']), len(result['cisternCosting']['items']))
+        for item in finance['items']:
+            for quote in item['quotes']:
+                report = quote['report']
+                self.assertEqual(report['status'], 'PARTIAL')
+                self.assertIsNone(report['lifeCycleCost'])
+                self.assertIsNone(report['comparisonKey'])
+                self.assertEqual(len(report['sensitivity']), 2)
+                self.assertFalse(report['budgetChargeChanged'])
+                self.assertFalse(report['physicalEffectAnnualized'])
         self.assertIsNone(result['signedReductionM3'])
         self.assertIsNone(result['signedPeakReductionM3s'])
         withheld=[m for m in result['metricComparison']['metrics'] if m['status']=='WITHHELD']

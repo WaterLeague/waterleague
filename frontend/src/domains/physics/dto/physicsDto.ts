@@ -4,6 +4,7 @@ import { facilityEvidenceDto } from '../../facility/dto/facilityDto';
 import { runoffComparisonDto } from './runoffComparisonDto';
 import { designContractDto } from './designContractDto';
 import { scoreContextDto } from '../../evaluation/dto/scorePolicyDto';
+import { lifeCycleCostDto } from '../../cost/dto/lifeCycleCostDto';
 const value = z.number().finite();
 export const physicsDto = z
   .object({
@@ -36,6 +37,7 @@ export const physicsDto = z
         runoffComparison: runoffComparisonDto.nullish(),
         designContract: designContractDto.nullish(),
         scoreContext: scoreContextDto.refine((v) => v.mode === 'WEEKLY').nullish(),
+        lifeCycleCost: lifeCycleCostDto.nullish(),
         inflowPolicy: z.enum(['DIRECT_RAINFALL_ONLY', 'LEGACY_ALL_IMPERVIOUS_RUNOFF']).nullish(),
         areaLimitBasis: z.string().nullish(),
       })
@@ -44,4 +46,18 @@ export const physicsDto = z
   .refine(
     (v) => v.result?.runoffComparison?.schemaVersion !== 2 || v.result.designContract != null,
     { message: '현재 주간 결과의 공통 설계 근거 누락' }
+  )
+  .refine(
+    (v) => {
+      const report = v.result?.lifeCycleCost,
+        cost = v.result?.designContract?.cost;
+      return (
+        !report ||
+        (!!cost &&
+          cost.lifeCycleCostStatus === report.status &&
+          cost.lifeCycleCost?.planSha256 === report.planSha256 &&
+          cost.lifeCycleCost?.policySha256 === report.policySha256)
+      );
+    },
+    { message: '주간 설계 근거와 생애비용 기록 불일치' }
   );

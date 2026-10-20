@@ -26,6 +26,7 @@ def source_policy():
         'backend/src/main/resources/native-game/v2/catalog.json',
         'backend/src/main/resources/native-play/v1/manifest.json',
         'backend/src/main/resources/facilities/reference-surfaces-v1.json',
+        'backend/src/main/resources/facilities/life-cycle-method-v1.json',
         'backend/src/main/resources/budget/seoul-2026.json',
         'backend/src/main/resources/budget/seoul-accounting-v4.json',
         'scripts/build_score_policy.py',

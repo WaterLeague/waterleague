@@ -25,6 +25,8 @@ def main():
     archive(request.get('publicAssetPolicy'), path)
     from .costing.snapshot import archive as archive_cost
     cost_record = archive_cost(request, model, request['placement'], path)
+    from .costing.life_cycle import archive_native
+    life_cycle = archive_native(cost_record, path)
     if model.get('initializationPolicy') is not None:
         from .engine.initialization import prepend
         raw = (path/'antecedent.json').read_bytes()
@@ -45,6 +47,7 @@ def main():
                         installed_at=request['installedAt'] if rule == SECOND_RULE else None)
     score_policy.verify(context, 'WEEKLY', rule)
     result['scoreContext'] = context
+    result['lifeCycleCost'] = life_cycle
     from .engine.direct_surface_contract import archive as archive_contract
     archive_contract(model, request['placement'], result, path, cost_record)
 

@@ -122,6 +122,8 @@ def calculate(request, directory):
     if cistern_raw is not None:
         (directory/'cistern-cost-catalog.json').write_bytes(cistern_raw)
         write(directory/'cistern-cost-snapshot.json', design['cisternCosting'])
+        from .costing.life_cycle import archive_cistern
+        cistern_life_cycle = archive_cistern(design['cisternCosting'], directory)
         from .costing.cistern_reference import source_artifacts
         for name, raw in source_artifacts().items():
             (directory/name).write_bytes(raw)
@@ -223,6 +225,7 @@ def calculate(request, directory):
         result['costing'] = design['costing']
     if cistern_raw is not None:
         result['cisternCosting'] = design['cisternCosting']
+        result['cisternLifeCycleCosts'] = cistern_life_cycle
     names = ('original.inp', 'baseline-input.inp', 'strategy-input.inp', 'design.json',
              'catalog.json', 'source-manifest.json', 'design-transformation.json',
              'numerical-transformation.json', 'facility-catalog.json')

@@ -105,8 +105,9 @@ export function DataPage({ accountId }: { accountId: string | null }) {
         </div>
         <p className="data-detail">
           식생수로는 폭 2m 기준 길이 단가를 면적으로 환산했습니다. 침투도랑은 70m² 시설의 최초
-          설치비를 환산했습니다. 시설별 공사 범위가 다르며 유지관리·교체비를 포함한 생애주기비용은
-          아직 제공하지 않습니다.
+          설치비를 환산했습니다. 시설별 공사 범위가 다르며 전체 생애주기비용은 미산정입니다.
+          빗물이용조 견적에는 문헌의 기간·할인 가정에 따른 부분 현재가치를 별도로 제공합니다. 미확정
+          교체·처분비·잔존가치를 0원으로 채우거나 설치 예산·물리 점수에 합산하지 않습니다.
         </p>
       </section>
       <section className="data-calculation" aria-labelledby="data-calculation-title">

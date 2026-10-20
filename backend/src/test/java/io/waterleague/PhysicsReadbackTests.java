@@ -66,6 +66,9 @@ class PhysicsReadbackTests extends PostgresIntegrationTest {
     assertThat(result.path("runoffComparison")).isEqualTo(raw.path("runoffComparison"));
     assertThat(result.path("scoreContext")).isEqualTo(raw.path("scoreContext"));
     assertThat(result.path("scoreContext").path("sha256").asString()).matches("[a-f0-9]{64}");
+    assertThat(result.path("lifeCycleCost")).isEqualTo(raw.path("lifeCycleCost"));
+    assertThat(result.path("lifeCycleCost").path("status").asString()).isEqualTo("UNAVAILABLE");
+    assertThat(result.path("lifeCycleCost").path("lifeCycleCost").isNull()).isTrue();
     assertThat(result.path("runoffComparison").path("schemaVersion").asInt()).isEqualTo(2);
     assertThat(response.body())
         .doesNotContain("password", "lease_token", "costSnapshotRaw", "inputHash");

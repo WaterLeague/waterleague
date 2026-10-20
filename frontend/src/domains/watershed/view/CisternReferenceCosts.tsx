@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import type { CisternCostSnapshot } from '../dto/cisternCostDto';
+import type { CisternLifeCycleCosts } from '../../cost/dto/lifeCycleCostDto';
+import { LifeCycleCostEvidence } from '../../cost/view/LifeCycleCostEvidence';
 const won = (n: number) => `${n.toLocaleString('ko-KR')}원`;
 const labels = { BARREL: '물통', PIPE: '배관', PUMP: '펌프', LOG: '원문 Log 항목', ETC: '기타' };
 const annualLabels = {
@@ -11,9 +13,11 @@ const annualLabels = {
 export function CisternReferenceCosts({
   costing,
   preview = false,
+  lifeCycleCosts,
 }: {
   costing: CisternCostSnapshot;
   preview?: boolean;
+  lifeCycleCosts?: CisternLifeCycleCosts;
 }) {
   const [selected, setSelected] = useState('A');
   return (
@@ -37,6 +41,9 @@ export function CisternReferenceCosts({
       </label>
       {costing.items.map((item) => {
         const quote = item.quotes.find((q) => q.id === selected);
+        const lifeCycleCost = lifeCycleCosts?.items
+          .find((i) => i.placementId === item.placementId)
+          ?.quotes.find((q) => q.id === selected)?.report;
         return (
           <div className="watershed-facility-state" key={item.placementId}>
             <strong>
@@ -85,6 +92,7 @@ export function CisternReferenceCosts({
                       </div>
                     ))}
                   </dl>
+                  {lifeCycleCost && <LifeCycleCostEvidence value={lifeCycleCost} />}
                 </details>
               </>
             )}
