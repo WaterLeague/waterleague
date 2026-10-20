@@ -7,10 +7,12 @@ from waterleague_sim.engine.flood_errors import require
 
 
 class SurfaceEvaporation:
-    def __init__(self, domain, series, owners):
+    def __init__(self, domain, series, owners, surface_fractions=None):
         import numpy as np
         self.np, self.domain, self.series = np, domain, series
         self.indices = np.flatnonzero(np.asarray(owners) == 'SURFACE')
+        self.fractions = (np.ones(len(self.indices)) if surface_fractions is None
+                          else np.asarray(surface_fractions)[self.indices])
         require(len(self.indices) > 0, 'EVAPORATION_SURFACE_AREA_REQUIRED')
         self.cumulative = np.zeros(len(self.indices))
         self.potential_volume = 0.
@@ -26,7 +28,7 @@ class SurfaceEvaporation:
         z = domain.quantities['elevation'].centroid_values
         depth = stage[cells] - z[cells]
         require(np.all(np.isfinite(depth)) and np.all(depth >= -1e-10), 'EVAPORATION_NONPHYSICAL_DEPTH')
-        removal = np.minimum(potential_depth, np.maximum(0., depth))
+        removal = np.minimum(potential_depth, np.maximum(0., depth)) * self.fractions
         before = stage[cells].copy()
         stage[cells] = before - removal
         actual = before - stage[cells]
@@ -36,8 +38,8 @@ class SurfaceEvaporation:
             domain.quantities[name].centroid_values[cells] *= ratio
         volumes = actual * domain.areas[cells]
         self.cumulative += volumes
-        self.potential_volume += potential_depth * float(np.sum(domain.areas[cells]))
-        self.unmet_volume += float(np.dot(potential_depth - removal, domain.areas[cells]))
+        self.potential_volume += potential_depth * float(np.dot(domain.areas[cells], self.fractions))
+        self.unmet_volume += float(np.dot(potential_depth*self.fractions - removal, domain.areas[cells]))
         domain.fractional_step_volume_integral -= float(np.sum(volumes))
         self.steps += 1
 
@@ -48,7 +50,7 @@ class SurfaceEvaporation:
                 'surfaceEvaporationRoundoffM3': actual - (self.potential_volume - self.unmet_volume)}
 
     def summary(self, *, include_state=False):
-        area = float(self.np.sum(self.domain.areas[self.indices]))
+        area = float(self.np.dot(self.domain.areas[self.indices], self.fractions))
         expected = self.series.summary['potentialDepthMm'] * area / 1000
         complete = math.isclose(float(self.domain.get_time()), self.series.duration, abs_tol=1e-8, rel_tol=0)
         if complete:

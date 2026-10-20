@@ -162,7 +162,7 @@ class SoilBank:
 
 
 class SurfaceInfiltration:
-    def __init__(self, domain, rain, specification, owners):
+    def __init__(self, domain, rain, specification, owners, surface_fractions=None):
         import numpy as np
         self.np, self.domain, self.rain = np, domain, rain
         self.specification = validate(specification, owners)
@@ -173,6 +173,9 @@ class SurfaceInfiltration:
             parameters.extend([[row['suctionMm'], row['conductivityMmH'], row['initialMoistureDeficit']]]
                                * len(row['triangles']))
         self.indices, self.fractions = np.asarray(indices, dtype=int), np.asarray(fractions, dtype=float)
+        self.rainfall_fractions = (np.ones(len(owners)) if surface_fractions is None
+                                  else np.asarray(surface_fractions))
+        self.fractions *= self.rainfall_fractions[self.indices]
         self.cells, self.cell_inverse = np.unique(self.indices, return_inverse=True)
         self.bank = SoilBank(parameters) if parameters else None
         self.engine = self.bank.engine if self.bank else identity()
@@ -194,7 +197,8 @@ class SurfaceInfiltration:
         rain_depth = rates * dt
         require(np.all(depth >= rain_depth - 1e-10), 'SURFACE_INFILTRATION_RAIN_ORDER_INVALID')
         # 방금 더한 강우는 유입률로, 흐름 계산 후 남은 물은 고인 수심으로 전달한다.
-        infiltration = self.bank.advance(dt, rates, np.maximum(0., depth - rain_depth),
+        local_rates = rates / self.rainfall_fractions[cells]
+        infiltration = self.bank.advance(dt, local_rates, np.maximum(0., depth - rain_depth),
             modified=self.specification['method'] == 'MODIFIED_GREEN_AMPT',
             recovery=self.specification['recoveryFactor'])
         if self.specification['schemaVersion'] == 2:

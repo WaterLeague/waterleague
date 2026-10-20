@@ -172,6 +172,9 @@ def assign(model, soil, landcover):
 
 def infiltration_from_assignment(model, assignment, soil_parameters, cover_parameters, *, initialization):
     """전체 면적의 명시적 물리 근거가 있는 배정만 침투 입력으로 변환."""
+    from .rainfall_coverage import surface_fractions
+    require(all(value in (0, 1) for value in surface_fractions(model)),
+            'COVERAGE_RAIN_PARTITION_GEOMETRY_REQUIRED')
     require(assignment.get('schemaVersion') == 1 and assignment.get('triangles')
             and assignment.get('modelSha256') == digest(model),
             'COVERAGE_ASSIGNMENT_INVALID')

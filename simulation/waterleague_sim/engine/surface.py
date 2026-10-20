@@ -12,6 +12,7 @@ from waterleague_sim.engine.swmm import ROOT
 from waterleague_sim.forcing.stage import clamp_clock_roundoff, compile_stage_boundaries, source_hash
 from waterleague_sim.forcing.surface_evaporation import compile_evaporation
 from waterleague_sim.forcing.surface_wind import compile_wind
+from waterleague_sim.terrain.rainfall_coverage import surface_fractions, source_hash as partition_hash
 
 VERSION = '4.0.1'
 
@@ -153,6 +154,9 @@ class SurfaceSession:
                 {name: series.summary for name, series in self.stage_series.items()},
                 ensure_ascii=False, allow_nan=False, indent=2) + '\n')
         self.owners = owners
+        self.rainfall_fractions = np.asarray(surface_fractions(model), dtype=float)
+        if model.get('rainfallPartition') is not None:
+            self.engine['rainfallPartitionAdapterSha256'] = partition_hash()
         self.station_indices = None
         if model.get('rainfallStationIds') is not None:
             assignments = model['rainfallStationIds']
@@ -167,12 +171,13 @@ class SurfaceSession:
         self.infiltration = None
         if model.get('infiltration') is not None:
             from waterleague_sim.engine.surface_infiltration import SurfaceInfiltration
-            self.infiltration = SurfaceInfiltration(domain, self.rain, model['infiltration'], owners)
+            self.infiltration = SurfaceInfiltration(domain, self.rain, model['infiltration'], owners,
+                                                   self.rainfall_fractions)
             self.engine['infiltrationEngine'] = self.infiltration.engine
         self.evaporation = None
         if self.evaporation_series is not None:
             from waterleague_sim.engine.surface_evaporation import SurfaceEvaporation
-            self.evaporation = SurfaceEvaporation(domain, self.evaporation_series, owners)
+            self.evaporation = SurfaceEvaporation(domain, self.evaporation_series, owners, self.rainfall_fractions)
             self.engine['evaporationAdapterSha256'] = self.evaporation.source_hash
             self.engine['evaporationForcingSha256'] = self.evaporation_series.summary['adapterSha256']
             self.evaporation_series.archive(path / 'surface-evaporation-input')
@@ -209,7 +214,7 @@ class SurfaceSession:
         require(rates.shape == self.owners.shape and np.all(np.isfinite(rates))
                 and np.all(rates >= 0), 'SURFACE_RAINFALL_INVALID')
         require(np.all(rates[self.owners != 'SURFACE'] == 0), 'SURFACE_RAINFALL_DOUBLE_COUNT')
-        self.rain.set_rate(rates.copy())
+        self.rain.set_rate(rates * self.rainfall_fractions)
         self.forcing.append({'timeSeconds': self.domain.get_time(), 'ratesMmH': rates.tolist()})
 
     def set_station_rainfall(self, rates_by_station):
@@ -221,7 +226,7 @@ class SurfaceSession:
         rates = self.np.zeros(len(self.owners))
         for sid, indices in self.station_indices.items():
             rates[indices] = rates_by_station[sid]
-        self.rain.set_rate(rates)
+        self.rain.set_rate(rates * self.rainfall_fractions)
         self.forcing.append({'timeSeconds': self.domain.get_time(),
                              'ratesMmHByStation': dict(rates_by_station)})
 

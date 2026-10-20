@@ -65,7 +65,9 @@ def compile(model, network):
         'originalNetworkSha256': digest(original),
         'preparedNetworkSha256': digest(prepared),
         'sourceDesign': deepcopy(model['connectedCisternDesign']),
-        'sourceRainfallTriangles': deepcopy(model['networkRainfallTriangles']),
+        **({'sourceRainfallCoverage': deepcopy(model['networkRainfallCoverage'])}
+           if 'networkRainfallCoverage' in model else
+           {'sourceRainfallTriangles': deepcopy(model['networkRainfallTriangles'])}),
         'partitionGeometry': 'UNIFORM_DESIGN_WITHIN_ORIGINAL_CATCHMENT_NOT_SURVEYED_ROOF',
         'surfaceRainfallOwnershipUnchanged': True,
     }

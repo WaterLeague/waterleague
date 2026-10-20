@@ -130,6 +130,8 @@ def compile_rainfall(spec, surface, duration_seconds, root=ROOT, *, network_stat
     require(isinstance(assignments, list) and isinstance(owners, list) and isinstance(triangles, list)
             and 0 < len(assignments) == len(owners) == len(triangles) <= 200_000,
             'OBSERVED_RAIN_ASSIGNMENT_INVALID')
+    from waterleague_sim.terrain.rainfall_coverage import surface_fractions
+    fractions = surface_fractions(surface)
     areas = {}
     for index, (owner, station) in enumerate(zip(owners, assignments)):
         require(owner in ('SURFACE', 'NETWORK') and
@@ -146,7 +148,7 @@ def compile_rainfall(spec, surface, duration_seconds, root=ROOT, *, network_stat
             raise FloodModelError('OBSERVED_RAIN_MESH_INVALID') from None
         require(math.isfinite(area) and area > 0, 'OBSERVED_RAIN_MESH_INVALID')
         if station is not None:
-            areas.setdefault(station, []).append(area)
+            areas.setdefault(station, []).append(area * fractions[index])
     areas = {key: math.fsum(value) for key, value in areas.items()}
     references = spec.get('stations')
     require(isinstance(references, list) and 0 < len(references) <= 100,

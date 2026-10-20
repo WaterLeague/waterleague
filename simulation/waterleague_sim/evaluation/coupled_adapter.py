@@ -326,6 +326,8 @@ def read_coupled_record(directory, expected_result_sha256, context):
         _verify_files(root / 'network', network['files'])
         _verify_files(root / 'surface', surface['files'])
         original_model = model
+        from .rainfall_coverage import verify as verify_coverage
+        verify_coverage(model, surface, result, root, _read, file_digest)
         model = _verify_surface_basins(model, surface, result, root)
         model = _verify_connected_storage(model, network, result, root, original_model)
         from .pumps import verify_connected_pumps

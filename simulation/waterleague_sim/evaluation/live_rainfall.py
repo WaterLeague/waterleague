@@ -5,12 +5,13 @@ import json
 from .exception import require
 from waterleague_sim.forcing.live_network_rainfall import compile_network, validate_facility_binding, FACILITY_OBSERVER
 from waterleague_sim.forcing.live_rainfall import sha
+from waterleague_sim.terrain.rainfall_coverage import has_network_rainfall
 
 
 def verify(model, network, result, root, read):
     detail = result.get('networkRainfall')
     specification = model.get('observedRainfall', {})
-    bound = specification.get('schemaVersion') == 2 and bool(model.get('networkRainfallTriangles'))
+    bound = specification.get('schemaVersion') == 2 and has_network_rainfall(model)
     if 'networkObserverPolicy' in model:
         require(model['networkObserverPolicy'] == FACILITY_OBSERVER and bound
                 and network['engine'].get('facilityObserverVersion') == 1,

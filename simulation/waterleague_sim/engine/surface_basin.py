@@ -109,6 +109,10 @@ def compile_basin(model):
         cells = set(cells)
         require(not cells.intersection(occupied | exposed | port_cells)
             and all(surface['rainfallOwner'][i] == 'SURFACE' for i in cells), 'BASIN_OWNERSHIP_CONFLICT')
+        if surface.get('rainfallPartition') is not None:
+            from ..terrain.rainfall_coverage import surface_fractions
+            fractions = surface_fractions(surface)
+            require(all(fractions[i] == 1 for i in cells), 'BASIN_OWNERSHIP_CONFLICT')
         require(all(surface['initialDepthM'][i] == 0 for i in cells), 'BASIN_CONSTRUCTION_REQUIRES_DRY_SEED')
         seen, todo = set(), {min(cells)}
         while todo:

@@ -15,6 +15,7 @@ from waterleague_sim.engine.surface_infiltration import validate as validate_inf
 from waterleague_sim.forcing.surface_evaporation import require_evaporation_clock
 from waterleague_sim.forcing.surface_wind import require_wind_clock
 from waterleague_sim.engine.surface_exchange import DRY_EXCHANGE_POLICY, DRY_TRANSFER_TOLERANCE_M3
+from waterleague_sim.terrain.rainfall_coverage import has_network_rainfall
 
 
 def _write(path, value):
@@ -42,35 +43,40 @@ def _validate(model):
         validate_metrics(model['evaluationMetrics'], len(surface['triangles']), model['durationSeconds'])
         require(not any('evaluationMetrics' in part for part in (surface, network)),
                 'COUPLED_METRICS_SPECIFICATION_CONFLICT')
-    # 관망 강우 면적은 지정된 지표 격자와 일치해야 하며 직접 강우에서는 제외한다.
-    subcatchments, section = {}, ''
-    units = None
-    for line in network['inputText'].splitlines():
-        tokens = line.split(';', 1)[0].split()
-        if tokens and tokens[0].startswith('['):
-            section = tokens[0].upper()
-        elif tokens and section == '[OPTIONS]' and tokens[0].upper() == 'FLOW_UNITS':
-            units = tokens[1].upper()
-        elif tokens and section == '[SUBCATCHMENTS]':
-            subcatchments[tokens[0]] = float(tokens[3])
-    ownership = model.get('networkRainfallTriangles', {})
-    require(isinstance(ownership, dict) and set(ownership) == set(subcatchments),
-            'COUPLED_RAINFALL_OWNERSHIP_INCOMPLETE')
-    used = set()
-    for name, cells in ownership.items():
-        require(isinstance(cells, list) and cells and all(type(i) is int and 0 <= i < len(surface['triangles'])
-                for i in cells) and len(set(cells)) == len(cells) and not used.intersection(cells)
-                and all(surface['rainfallOwner'][i] == 'NETWORK' for i in cells),
-                'COUPLED_RAINFALL_OVERLAP')
-        used.update(cells)
-        area = 0.
-        for i in cells:
-            a, b, c = [surface['verticesM'][j] for j in surface['triangles'][i]]
-            area += abs((b[0]-a[0])*(c[1]-a[1]) - (b[1]-a[1])*(c[0]-a[0])) / 2
-        expected = subcatchments[name] * (10_000 if units == 'CMS' else 4046.8564224)
-        require(math.isclose(area, expected, abs_tol=1e-6, rel_tol=1e-6), 'COUPLED_RAINFALL_AREA_MISMATCH')
-    require(used == {i for i, owner in enumerate(surface['rainfallOwner']) if owner == 'NETWORK'},
-            'COUPLED_RAINFALL_OWNERSHIP_INCOMPLETE')
+    if 'networkRainfallCoverage' in model:
+        from waterleague_sim.terrain.rainfall_coverage import validate
+        validate(model)
+    else:
+        require('rainfallPartition' not in surface, 'RAIN_PARTITION_BINDING_REQUIRED')
+        # 관망 강우 면적은 지정된 지표 격자와 일치해야 하며 직접 강우에서는 제외한다.
+        subcatchments, section = {}, ''
+        units = None
+        for line in network['inputText'].splitlines():
+            tokens = line.split(';', 1)[0].split()
+            if tokens and tokens[0].startswith('['):
+                section = tokens[0].upper()
+            elif tokens and section == '[OPTIONS]' and tokens[0].upper() == 'FLOW_UNITS':
+                units = tokens[1].upper()
+            elif tokens and section == '[SUBCATCHMENTS]':
+                subcatchments[tokens[0]] = float(tokens[3])
+        ownership = model.get('networkRainfallTriangles', {})
+        require(isinstance(ownership, dict) and set(ownership) == set(subcatchments),
+                'COUPLED_RAINFALL_OWNERSHIP_INCOMPLETE')
+        used = set()
+        for name, cells in ownership.items():
+            require(isinstance(cells, list) and cells and all(type(i) is int and 0 <= i < len(surface['triangles'])
+                    for i in cells) and len(set(cells)) == len(cells) and not used.intersection(cells)
+                    and all(surface['rainfallOwner'][i] == 'NETWORK' for i in cells),
+                    'COUPLED_RAINFALL_OVERLAP')
+            used.update(cells)
+            area = 0.
+            for i in cells:
+                a, b, c = [surface['verticesM'][j] for j in surface['triangles'][i]]
+                area += abs((b[0]-a[0])*(c[1]-a[1]) - (b[1]-a[1])*(c[0]-a[0])) / 2
+            expected = subcatchments[name] * (10_000 if units == 'CMS' else 4046.8564224)
+            require(math.isclose(area, expected, abs_tol=1e-6, rel_tol=1e-6), 'COUPLED_RAINFALL_AREA_MISMATCH')
+        require(used == {i for i, owner in enumerate(surface['rainfallOwner']) if owner == 'NETWORK'},
+                'COUPLED_RAINFALL_OWNERSHIP_INCOMPLETE')
     for collection in ('networkForcing', 'surfaceRainfall'):
         events = model.get(collection, [])
         require(isinstance(events, list) and len(events) <= 100_000, 'COUPLED_FORCING_INVALID')
@@ -125,7 +131,7 @@ def run_coupled(model, directory):
     numerical_profile, numerical_model = None, None
     facility_rainfall, rainfall_network = None, None
     direct_network = (model.get('observedRainfall', {}).get('schemaVersion') == 2
-                      and bool(model.get('networkRainfallTriangles')))
+                      and has_network_rainfall(model))
     require('networkObserverPolicy' not in model or direct_network, 'COUPLED_OBSERVER_POLICY_INVALID')
     if direct_network and any(k in model for k in ('connectedFacilityDesign', 'connectedCisternDesign')):
         from waterleague_sim.forcing.live_network_rainfall import validate_facility_binding, compile_network
@@ -205,6 +211,10 @@ def run_coupled(model, directory):
     require(not directory.exists(), 'COUPLED_OUTPUT_EXISTS')
     directory.mkdir(parents=True)
     _write(directory / 'coupled-input.json', original_model)
+    if 'networkRainfallCoverage' in model:
+        from waterleague_sim.terrain import rainfall_coverage
+        _write(directory / 'rainfall-coverage.json', model['networkRainfallCoverage'])
+        (directory / 'rainfall_coverage.py').write_bytes(Path(rainfall_coverage.__file__).read_bytes())
     if cistern_design is not None:
         _write(directory / 'connected-cistern-design.json', cistern_design)
         (directory / 'cistern-network.inp').write_bytes(cistern_raw)
@@ -450,6 +460,10 @@ def run_coupled(model, directory):
                         '연결되지 않은 노드 월류는 실패 처리, 임의 지표 위치 할당 없음'],
                     'files': {str(p.relative_to(directory)): hashlib.sha256(p.read_bytes()).hexdigest()
                               for p in sorted(directory.rglob('*')) if p.is_file()}}
+                if 'networkRainfallCoverage' in model:
+                    result['rainfallCoverage'] = model['networkRainfallCoverage']['totals'] | {
+                        'method': 'GEOMETRIC_RAINFALL_PARTITION_V1',
+                        'coverageSha256': model['surface']['rainfallPartition']['coverageSha256']}
                 if model.get('dryExchangePolicy') is not None:
                     result['dryExchangeRoundoff'] = state['dryExchangeRoundoff']
                 if storage_summary is not None:
@@ -478,6 +492,10 @@ def run_coupled(model, directory):
                         'volumeResidualM3':native_rain['grossRainfallM3']-expected_network_rain,
                         'expectedCombinedRainfallM3':expected_rain+expected_network_rain,
                         'appliedCombinedRainfallM3':applied_rain+native_rain['grossRainfallM3']}
+                    if 'networkRainfallCoverage' in model:
+                        from waterleague_sim.terrain.rainfall_coverage import network_rainfall_difference
+                        result['networkRainfall']['geometricAreaDifference'] = network_rainfall_difference(
+                            model['networkRainfallCoverage'], network_rainfall)
                 if initialization is not None:
                     result['initialization'] = initialization.summary | {'evaluationLedger': evaluation_balance,
                         'limitations': ['선행 시드·기간의 민감도 비교 필요; 현장 초기 상태 관측 아님',
