@@ -168,16 +168,17 @@ export function FacilityMesh({
         onSelect();
       }}
     >
-      <mesh geometry={resources.sides} receiveShadow castShadow={!preview}>
+      <mesh geometry={resources.sides} receiveShadow castShadow={!preview} renderOrder={5}>
         <meshStandardMaterial
           color={paved ? '#4d7078' : gravel ? '#637186' : '#827251'}
           roughness={1}
           transparent={preview || opacity < 1}
           opacity={(preview ? 0.45 : 1) * opacity}
+          depthWrite={!preview && opacity === 1}
           side={THREE.DoubleSide}
         />
       </mesh>
-      <mesh geometry={resources.surface} receiveShadow>
+      <mesh geometry={resources.surface} receiveShadow renderOrder={5}>
         <meshStandardMaterial
           map={texture}
           roughness={1}
@@ -186,7 +187,7 @@ export function FacilityMesh({
           depthWrite={!preview && opacity === 1}
         />
       </mesh>
-      <lineSegments ref={outline} geometry={resources.outline}>
+      <lineSegments ref={outline} geometry={resources.outline} renderOrder={6}>
         {preview ? (
           <lineDashedMaterial color="#214e67" dashSize={1.5} gapSize={0.9} />
         ) : (

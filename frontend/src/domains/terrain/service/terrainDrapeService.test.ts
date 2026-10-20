@@ -3,6 +3,7 @@ import type { Terrain } from '../entity/terrain';
 import { drapeTriangle, drapeSegment, terrainMeshHeight } from './terrainDrapeService';
 import { surfaceGeometry } from '../../surface/service/surfaceGeometry';
 import type { SurfaceFrame } from '../../surface/entity/surface';
+import { floodSurfaceLift } from './surfaceDisplayService';
 
 const terrain: Terrain = {
   width: 3,
@@ -83,7 +84,7 @@ test('얕은 계산 수심이 원 수심 그대로 지형 위에 남고 흐름·
       points.reduce((n, p) => n + p[1], 0) / 3,
     ];
     const height = (mesh.positions[i + 1] + mesh.positions[i + 4] + mesh.positions[i + 7]) / 3;
-    expect(height - terrainMeshHeight(terrain, center)).toBeCloseTo(0.07, 5);
+    expect(height - terrainMeshHeight(terrain, center)).toBeCloseTo(floodSurfaceLift + 0.05, 5);
     expect(mesh.flows[(i / 3) * 2]).toBeCloseTo(0.4);
   }
   expect(surfaceArea).toBeCloseTo(200);

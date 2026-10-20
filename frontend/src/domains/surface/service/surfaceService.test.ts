@@ -7,6 +7,7 @@ import {
   liveSurfaceFrameIndex,
 } from './surfaceService';
 import { surfaceGeometry, surfacePlanPaths } from './surfaceGeometry';
+import { floodSurfaceLift } from '../../terrain/service/surfaceDisplayService';
 import {
   surfaceDirections,
   surfaceDirectionPaths,
@@ -86,13 +87,13 @@ test('같은 젖은 격자의 원 수심을 표시 지형의 상대 두께로 �
     geometry = surfaceGeometry(frame, 'depth', null);
   expect([...geometry.positions.slice(0, 9)]).toEqual([
     0,
-    expect.closeTo(0.27),
+    expect.closeTo(floodSurfaceLift + 0.25),
     expect.closeTo(0),
     1,
-    expect.closeTo(0.27),
+    expect.closeTo(floodSurfaceLift + 0.25),
     expect.closeTo(0),
     0,
-    expect.closeTo(0.27),
+    expect.closeTo(floodSurfaceLift + 0.25),
     -1,
   ]);
   expect(geometry.faces.filter((value) => value === 0)).toHaveLength(18);
@@ -169,7 +170,7 @@ test('2D·3D 화살표의 동서남북 방향 일치와 원 속력 불변', () =
     );
     const expected = arrowTriangles.flat().flatMap((i) => {
       const p = arrows[0].points[i];
-      return [p[0], 0.25 + 0.02 + 0.035, -p[1]];
+      return [p[0], 0.25 + floodSurfaceLift + 0.035, -p[1]];
     });
     expect([...geometry.positions.slice(-27)]).toEqual(expected.map((v) => expect.closeTo(v, 6)));
     expect(surfaceGeometry(value, 'depth', null).positions.length).toBe(63);

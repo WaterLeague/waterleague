@@ -1,4 +1,5 @@
 import type { FacilityType } from '../../game/entity/game';
+export { candidateSurfaceLift } from '../../terrain/service/surfaceDisplayService';
 export const candidateTypes = [
   'RAIN_GARDEN',
   'PERMEABLE_PAVEMENT',
@@ -14,8 +15,6 @@ export type GroundCandidate = [
   polygons: [number, number][][][],
 ];
 export const candidateKey = (row: GroundCandidate) => row[1] + ':' + row[0];
-// 도로·보도 표면 위에 후보를 표시하되 상부 건물·교량의 깊이 검사는 유지한다.
-export const candidateSurfaceLift = 0.18;
 export const candidateMask = (type: FacilityType | '') =>
   type ? 1 << candidateTypes.indexOf(type) : 0;
 export function candidateMatches(row: GroundCandidate, type: FacilityType | '') {

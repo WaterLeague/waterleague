@@ -1,6 +1,7 @@
 import { Color } from 'three';
 import type { SurfaceFrame, SurfaceMetric } from '../entity/surface';
 import type { Terrain } from '../../terrain/entity/terrain';
+import { floodSurfaceLift } from '../../terrain/service/surfaceDisplayService';
 import {
   drapeTriangle,
   drapeSegment,
@@ -29,7 +30,7 @@ export function surfaceGeometry(
     const key = p.join('/');
     let value = heightCache.get(key);
     if (value === undefined) {
-      value = terrainMeshHeight(terrain, p) + 0.02;
+      value = terrainMeshHeight(terrain, p) + floodSurfaceLift;
       heightCache.set(key, value);
     }
     return value;

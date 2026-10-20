@@ -1,6 +1,10 @@
 import { BufferGeometry, Float32BufferAttribute } from 'three';
 import type { Terrain } from '../../terrain/entity/terrain';
 import {
+  pavementSurfaceLift,
+  surfaceOutlineLift,
+} from '../../terrain/service/surfaceDisplayService';
+import {
   drapeSegment,
   drapeTriangle,
   terrainMeshHeight,
@@ -10,7 +14,7 @@ import type { FacilityFootprint } from '../entity/facilityFootprint';
 export function pavementGeometry(
   footprint: FacilityFootprint,
   terrain: Terrain | null,
-  lift = 0.014
+  lift = pavementSurfaceLift
 ) {
   const positions: number[] = [],
     uv: number[] = [],
@@ -28,7 +32,11 @@ export function pavementGeometry(
   for (const [a, b] of footprint.boundary)
     for (const segment of drapeSegment(a, b, terrain))
       for (const point of segment)
-        lines.push(point[0], terrainMeshHeight(terrain, point) + lift + 0.0005, -point[1]);
+        lines.push(
+          point[0],
+          terrainMeshHeight(terrain, point) + lift + surfaceOutlineLift,
+          -point[1]
+        );
   const surface = new BufferGeometry();
   surface.setAttribute('position', new Float32BufferAttribute(positions, 3));
   surface.setAttribute('uv', new Float32BufferAttribute(uv, 2));

@@ -4,6 +4,7 @@ import type { AudioHandle } from '../../audio/entity/audio';
 import { CityAudioListener } from '../../audio/view/CityAudioListener';
 import { GroundCandidates } from '../../installation/view/GroundCandidates';
 import type { GroundCandidate } from '../../installation/service/candidateTilesService';
+import { candidateSurfaceLift } from '../../terrain/service/surfaceDisplayService';
 import { pavementGeometry } from '../../catalog/service/pavementGeometryService';
 import { placementFootprint } from '../../catalog/service/facilityGeometryService';
 import { InstallationSymbols } from '../../installation/view/InstallationSymbols';
@@ -903,7 +904,7 @@ function SiteSurface({
         }),
         site.kind === 'GROUND' ? terrain : null,
         site.kind === 'GROUND'
-          ? 0.18
+          ? candidateSurfaceLift
           : buildingBaseElevation(terrain, site.polygons) + site.heightM + 0.11
       ),
     [site, terrain]

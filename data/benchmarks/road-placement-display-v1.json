@@ -1,0 +1,142 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-20T16:03:46.509441+00:00",
+  "baseCommit": "df7861b67b46a7fd60b0d05a62bc2ac4ee0be05c",
+  "classification": "DISPLAY_GEOMETRY_REGRESSION_NOT_FIELD_OR_BROWSER_VALIDATION",
+  "cause": {
+    "oldPavementLiftM": 0.014,
+    "roadLiftM": 0.016,
+    "sidewalkLiftM": 0.14,
+    "candidateLiftM": 0.18
+  },
+  "displayOnlyLiftM": {
+    "candidate": 0.18,
+    "pavement": 0.2,
+    "pavementOutline": 0.205,
+    "floodFloor": 0.22
+  },
+  "verification": {
+    "focusedTests": 23,
+    "fullFrontendFiles": 138,
+    "fullFrontendTests": 473,
+    "frontFaceFollowupTests": 3,
+    "typecheckAndBuild": "PASS",
+    "format": "PASS",
+    "loadingBoundary": "PASS",
+    "developmentModuleHttp": "PASS",
+    "apiHealth": "UP"
+  },
+  "cases": [
+    "실제 도로/보도 생성 형상과 후보/포장의 광선 깊이 순서",
+    "시설 앞면의 노출·빈 구멍·상부 교량 가림",
+    "경사면 20m² 부분 설치 면적 보존",
+    "1mm 침수의 포장 위 표시·원 수심 두께·프레임·흐름 보존",
+    "18/60/180/1600/4500m 시점의 24bit 깊이 분리"
+  ],
+  "limitations": [
+    "브라우저 화면·GPU·FPS 미재검증",
+    "합성 형상은 현장 관측 자료가 아님",
+    "표시 간격은 표고·포장 물리 두께·수문 입력이 아님",
+    "전체 검사 후 시설 앞면 전용 시험 보강과 해당 파일 3개 재검증",
+    "최초 로딩 검사 호출의 출력 경로 누락은 실행 전 거부, 올바른 경로의 재실행 통과"
+  ],
+  "sources": [
+    {
+      "path": "frontend/src/domains/catalog/service/pavementGeometryService.test.ts",
+      "sha256": "68840ae663b14c5c045fd1e6d7e0c936d124d1354262f0a5d720f09e4e5d8321",
+      "bytes": 6138
+    },
+    {
+      "path": "frontend/src/domains/catalog/service/pavementGeometryService.ts",
+      "sha256": "929dab17e44343059953c938d3ea0671c4e5901c208e7c782870c4a153ed2fd9",
+      "bytes": 1688
+    },
+    {
+      "path": "frontend/src/domains/catalog/view/FacilityMesh.tsx",
+      "sha256": "f8bdbfa1ed0e42ea7e5ac4957f3cf1453acd28f2892b682888d1f9c0ecc91249",
+      "bytes": 6990
+    },
+    {
+      "path": "frontend/src/domains/city/service/cameraDepthService.test.ts",
+      "sha256": "afa6f7bec1f7abb85c12d2728848e22d1ca5b511a6c95b631f020dc81a65b4d2",
+      "bytes": 1418
+    },
+    {
+      "path": "frontend/src/domains/city/view/CityScene.tsx",
+      "sha256": "9aa23025498b935895f5370fe4223904131e9d141693975acdb2e67bf4b3ffc7",
+      "bytes": 36608
+    },
+    {
+      "path": "frontend/src/domains/installation/service/candidateTilesService.ts",
+      "sha256": "9ee64e54af6daba9ea17c21dcb95b492e195058decd863a1e43bdd0dee7b0580",
+      "bytes": 2189
+    },
+    {
+      "path": "frontend/src/domains/surface/service/surfaceGeometry.ts",
+      "sha256": "b108280be58137336bb20e0b8e088e513a6969a74d3cda4356027c9ec28677b8",
+      "bytes": 4334
+    },
+    {
+      "path": "frontend/src/domains/surface/service/surfaceService.test.ts",
+      "sha256": "a0732685554c8f6a09d93917b29f6909591f9863ad1791f03ddde2c17e9fa967",
+      "bytes": 7993
+    },
+    {
+      "path": "frontend/src/domains/terrain/service/terrainDrapeService.test.ts",
+      "sha256": "3d3bb305390b95f60fb0d53ecc491c62535535d87dd80924d5ac9f7b94283794",
+      "bytes": 3473
+    },
+    {
+      "path": "frontend/src/domains/terrain/service/surfaceDisplayService.ts",
+      "sha256": "001cce48828a96a0db3bec76edfc060597b890454b3b0deaf334d8b03418df7b",
+      "bytes": 272
+    }
+  ],
+  "evidence": [
+    {
+      "path": "tmp/road-placement-focused-v1.log",
+      "sha256": "cbdbe887eddaa5b6457787b90b78a77eb2546b705d23d4919863bd5b4305cc2e",
+      "bytes": 527
+    },
+    {
+      "path": "tmp/road-placement-frontend-v1.log",
+      "sha256": "3d0c20ec178e10000a2b1b5a8121a31517cdc51c7de0273c5bb1ba068ad1fd4b",
+      "bytes": 251
+    },
+    {
+      "path": "tmp/road-placement-front-face-v1.log",
+      "sha256": "f4509769368f0aac897110c466b10b89c62c5ac490c6f2da8f9664492259380d",
+      "bytes": 298
+    },
+    {
+      "path": "tmp/road-placement-build-v1.log",
+      "sha256": "745d3ad01703b21377dfe2f3934ae511fd60d8a401a92429d90d2bf86e846537",
+      "bytes": 1957
+    },
+    {
+      "path": "tmp/road-placement-format-v1.log",
+      "sha256": "0436657fdec5c98f990a76906345a280e420156cb2aacfa9f1053822e4f9b221",
+      "bytes": 118
+    },
+    {
+      "path": "tmp/road-placement-loading-v1.log",
+      "sha256": "10f4fdc7aa35f92eb7a39ea55ad2b841bdd0132c64d539da8f9a2e711d323dfb",
+      "bytes": 600
+    },
+    {
+      "path": "tmp/road-placement-loading-v2.log",
+      "sha256": "3feafd866cfef515964c8397e833dfbb1b377300178f6b84277d8109a7535adc",
+      "bytes": 117
+    },
+    {
+      "path": "tmp/road-placement-loading-v2.json",
+      "sha256": "5c99fb9f9428a9c455fa107e149f5af74016b9da86e8f92373ebd94d5b5da272",
+      "bytes": 37783
+    },
+    {
+      "path": "tmp/road-placement-http-v1.json",
+      "sha256": "43df46d48f1c1f6f0ac9dff35e561acb2525750413f313bda5556e1faf4d3e55",
+      "bytes": 604
+    }
+  ]
+}
