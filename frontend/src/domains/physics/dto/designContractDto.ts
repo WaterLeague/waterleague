@@ -29,18 +29,20 @@ export const designContractDto = z
         'BIORETENTION',
         'VEGETATIVE_SWALE',
         'INFILTRATION_TRENCH',
+        'RAINWATER_CISTERN',
       ]),
       areaM2: area,
       designSet: z.object({ id: z.string(), sha256: sha }),
       referenceScenario: z.record(z.string(), z.unknown()),
     }),
     connection: z.object({
-      inflowPolicy: z.literal('DIRECT_RAINFALL_ONLY'),
-      directRainAreaM2: area,
+      inflowPolicy: z.enum(['DIRECT_RAINFALL_ONLY', 'SELECTED_ROOF_RUNOFF_TO_COVERED_CISTERN']),
+      directRainAreaM2: z.number().nonnegative(),
+      roofCollectionAreaM2: area.nullish(),
       externalCatchment: z.null(),
       drainageNode: z.null(),
       network: z.null(),
-      status: z.literal('UNCONNECTED_SURFACE_EXPLORATION'),
+      status: z.enum(['UNCONNECTED_SURFACE_EXPLORATION', 'ASSUMED_ROOF_CISTERN_CONNECTION']),
     }),
     evaluation: z.object({
       start: z.iso.datetime({ offset: true }),
@@ -92,7 +94,10 @@ export const designContractDto = z
   .refine(
     (v) =>
       v.facility.areaM2 <= v.spatial.evaluationSurfaceAreaM2 &&
-      v.facility.areaM2 === v.connection.directRainAreaM2 &&
+      (v.facility.type === 'RAINWATER_CISTERN'
+        ? v.connection.directRainAreaM2 === 0 &&
+          v.facility.areaM2 === v.connection.roofCollectionAreaM2
+        : v.facility.areaM2 === v.connection.directRainAreaM2) &&
       Date.parse(v.evaluation.start) < Date.parse(v.evaluation.end) &&
       (v.cost.status === 'RECORDED') === (v.cost.snapshotSha256 !== null)
   )

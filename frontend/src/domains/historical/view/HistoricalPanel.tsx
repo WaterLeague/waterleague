@@ -1,3 +1,4 @@
+import { facilityIcons } from '../../facility/view/facilityIcons';
 import { GameSelect } from '../../../shared/ui/GameSelect';
 import { HistoricalInstallationTrack } from './HistoricalInstallationTrack';
 import { InitializationEvidence } from '../../physics/view/InitializationEvidence';
@@ -6,17 +7,7 @@ import { physicalAmount } from '../../physics/service/physicalValueFormat';
 import { FacilityProfileEvidence } from '../../facility/view/FacilityProfileEvidence';
 import { PavementMaintenanceEvidence } from '../../facility/view/PavementMaintenanceEvidence';
 import { useMemo, type ReactNode } from 'react';
-import {
-  Play,
-  Pause,
-  SlidersHorizontal,
-  Leaf,
-  Grid2X2,
-  House,
-  Waves,
-  Sprout,
-  Route,
-} from 'lucide-react';
+import { Play, Pause, SlidersHorizontal } from 'lucide-react';
 import type { HistoricalState } from '../controller/useHistorical';
 import type { SharedSite } from '../../installation/entity/installation';
 import type { FacilityType } from '../../game/entity/game';
@@ -36,14 +27,7 @@ const time = (s: string) =>
     hourCycle: 'h23',
     timeZone: 'Asia/Seoul',
   });
-const icons = {
-  RAIN_GARDEN: Leaf,
-  PERMEABLE_PAVEMENT: Grid2X2,
-  GREEN_ROOF: House,
-  BIORETENTION: Sprout,
-  VEGETATIVE_SWALE: Waves,
-  INFILTRATION_TRENCH: Route,
-};
+
 const clockTime = new Intl.DateTimeFormat('ko-KR', {
   hour: '2-digit',
   minute: '2-digit',
@@ -166,7 +150,7 @@ export function HistoricalTimeline({
           {!!markers.length && (
             <div className="historical-installation-times" aria-label="설치 시각 목록">
               {markers.map((draft) => {
-                const Icon = icons[draft.facilityType];
+                const Icon = facilityIcons[draft.facilityType];
                 return (
                   <button
                     key={draft.marker.id}
@@ -375,6 +359,7 @@ export function HistoricalPanel({
                   <details key={f.cellId}>
                     <summary>{f.cellId} · 설치부터 종료까지 전체 계산 상세</summary>
                     <RunoffComparison value={f.runoffComparison} contract={f.designContract} />
+                    {f.cistern && <CisternGameEvidence value={f.cistern} />}
                   </details>
                 )
             )}
@@ -405,3 +390,4 @@ export function HistoricalPanel({
     </FacilityPlacementPanel>
   );
 }
+import { CisternGameEvidence } from '../../facility/view/CisternGameEvidence';

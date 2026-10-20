@@ -4,6 +4,14 @@ export const facilities: Record<
   FacilityType,
   { name: string; short: string; intro: string; description: string; color: string }
 > = {
+  RAINWATER_CISTERN: {
+    name: '빗물이용조',
+    short: '이용조',
+    color: '#548eae',
+    intro: '지붕의 빗물을 모아 저장하고 천천히 배출하는 시설.',
+    description:
+      '건물의 빗물을 지붕에서 모아 건물 옆 탱크에 저장합니다. 크기를 고르고 바로 설치하세요.',
+  },
   RAIN_GARDEN: {
     name: '빗물정원',
     short: '정원',

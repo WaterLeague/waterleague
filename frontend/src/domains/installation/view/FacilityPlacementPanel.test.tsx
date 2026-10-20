@@ -4,6 +4,7 @@ import nativeSites from '../__tests__/fixtures/nativeSites.json';
 const rawSite = nativeSites.reference;
 import { siteDto } from '../dto/installationDto';
 import { FacilityPlacementPanel, type FacilityPlacementProps } from './FacilityPlacementPanel';
+import cisternRules from '../../../../../backend/src/main/resources/facilities/cistern-game-v1.json';
 
 const site = siteDto.parse(rawSite);
 const props: FacilityPlacementProps = {
@@ -22,6 +23,34 @@ const props: FacilityPlacementProps = {
   busy: false,
   canInstall: true,
 };
+
+it('이용조는 건물의 크기 선택과 일반 설치 버튼을 제공하고 별도 설계를 요구하지 않음', () => {
+  const roof = siteDto.parse({
+    ...rawSite,
+    kind: 'ROOF',
+    existingInfrastructure: null,
+    maxAreaM2: 400,
+    allowedTypes: ['GREEN_ROOF', 'RAINWATER_CISTERN'],
+    unitCosts: { ...rawSite.unitCosts, RAINWATER_CISTERN: 12158 },
+    costModel: {
+      ...rawSite.costModel,
+      facilities: {
+        ...rawSite.costModel.facilities,
+        RAINWATER_CISTERN: cisternRules.cost,
+      },
+    },
+  });
+  const html = renderToStaticMarkup(
+    <FacilityPlacementPanel {...props} site={roof} type="RAINWATER_CISTERN" area="100" />
+  );
+  expect(html).toContain('이용조 크기 선택');
+  expect(html).toContain('소형');
+  expect(html).toContain('이용조 크기 조절');
+  expect(html).toContain('건물 옆 지상 탱크');
+  expect(html).not.toContain('계획 저장');
+  expect(html).not.toContain('탱크 깊이');
+  expect(html).not.toContain('type="number"');
+});
 
 it('주간·재해는 공개 위치점과 부지 미확인을 안내하고 원형 후보 설치 폼 제공', () => {
   for (const research of [false, true]) {

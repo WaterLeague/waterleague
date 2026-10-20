@@ -20,6 +20,10 @@ public class FacilityService {
     return FacilityRepository.V3_SHA256;
   }
 
+  public JsonNode v5() { return repository.v5(); }
+
+  public String v5Digest() { return FacilityRepository.V5_SHA256; }
+
   public JsonNode latest() {
     return repository.latest();
   }

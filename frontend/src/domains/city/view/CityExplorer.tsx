@@ -634,7 +634,7 @@ function Explorer({
       if (
         cisternOpen &&
         mapFacilityType &&
-        (mapFacilityType !== 'GREEN_ROOF' ||
+        (!['GREEN_ROOF', 'RAINWATER_CISTERN'].includes(mapFacilityType) ||
           !eligibleRoofs.has(building.id) ||
           occupiedRoofs.has(building.id) ||
           (ownDistrictId && districtId !== ownDistrictId))
@@ -1501,17 +1501,6 @@ function Explorer({
         selectedMapFacility={type}
         onClose={closeInstallation}
         onLogin={onLogin}
-        onCisternPlan={() => {
-          setCisternOpen(true);
-          setFacilityExpansionOpen(false);
-          setInfrastructureOpen(false);
-          setSelectedAssetId('');
-          setType('');
-          setSite(null);
-          setOffset(0);
-          setListOpen(true);
-          if (ownDistrictId && selected !== ownDistrictId) select(ownDistrictId);
-        }}
         onMapFacility={(t) => {
           setCisternOpen(false);
           setFacilityExpansionOpen(false);

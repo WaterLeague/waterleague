@@ -1,69 +1,96 @@
-import {
-  X,
-  Leaf,
-  Grid2X2,
-  House,
-  Waves,
-  Droplets,
-  Route,
-  Container,
-  Warehouse,
-  CircleDot,
-  Network,
-  Factory,
-  LockKeyhole,
-} from 'lucide-react';
+import { facilityIcons } from '../../facility/view/facilityIcons';
+import { X, LockKeyhole } from 'lucide-react';
 import type { Account } from '../../account/entity/account';
 import type { FacilityType } from '../../game/entity/game';
 import type { Budget } from '../../budget/dto/budgetDto';
 import { won } from '../../game/service/gameService';
 import './watershed.css';
+const descriptions = {
+  RAIN_GARDEN: '식물과 흙으로 빗물 흡수',
+  PERMEABLE_PAVEMENT: '틈새로 빗물이 스며드는 포장',
+  GREEN_ROOF: '지붕 위 식물층에 빗물 저장',
+  BIORETENTION: '흙과 자갈층에 빗물 저장·침투',
+  VEGETATIVE_SWALE: '풀을 심은 수로로 빗물 분산',
+  INFILTRATION_TRENCH: '자갈 도랑으로 빗물 침투',
+  CISTERN: '지붕 빗물을 건물 옆 탱크에 저장',
+  UNDERGROUND_STORAGE: '땅속 탱크에 빗물 저장',
+  DETENTION: '넓은 공간에 빗물을 잠시 저장',
+  INLET: '도로의 빗물을 배수관으로 전달',
+  CONDUIT: '빗물을 모아 배출하는 통로',
+  PUMP_STATION: '모인 빗물을 펌프로 배출',
+} as const;
 const projects = [
   {
     id: 'SEOUL_RAINWATER',
     name: '빗물관리시설 확충',
     items: [
-      { id: 'RAIN_GARDEN', name: '빗물정원', Icon: Leaf, type: 'RAIN_GARDEN' },
-      { id: 'PERMEABLE_PAVEMENT', name: '투수포장', Icon: Grid2X2, type: 'PERMEABLE_PAVEMENT' },
-      { id: 'GREEN_ROOF', name: '녹화지붕', Icon: House, type: 'GREEN_ROOF' },
-      { id: 'BIORETENTION', name: '생물저류시설', Icon: Waves, type: 'BIORETENTION' },
-      { id: 'VEGETATIVE_SWALE', name: '식생수로', Icon: Route, type: 'VEGETATIVE_SWALE' },
+      { id: 'RAIN_GARDEN', name: '빗물정원', Icon: facilityIcons.RAIN_GARDEN, type: 'RAIN_GARDEN' },
+      {
+        id: 'PERMEABLE_PAVEMENT',
+        name: '투수포장',
+        Icon: facilityIcons.PERMEABLE_PAVEMENT,
+        type: 'PERMEABLE_PAVEMENT',
+      },
+      { id: 'GREEN_ROOF', name: '녹화지붕', Icon: facilityIcons.GREEN_ROOF, type: 'GREEN_ROOF' },
+      {
+        id: 'BIORETENTION',
+        name: '생물저류시설',
+        Icon: facilityIcons.BIORETENTION,
+        type: 'BIORETENTION',
+      },
+      {
+        id: 'VEGETATIVE_SWALE',
+        name: '식생수로',
+        Icon: facilityIcons.VEGETATIVE_SWALE,
+        type: 'VEGETATIVE_SWALE',
+      },
       {
         id: 'INFILTRATION_TRENCH',
         name: '침투 트렌치',
-        Icon: Droplets,
+        Icon: facilityIcons.INFILTRATION_TRENCH,
         type: 'INFILTRATION_TRENCH',
       },
-      { id: 'CISTERN', name: '빗물이용조', Icon: Container, type: null },
+      {
+        id: 'CISTERN',
+        name: '빗물이용조',
+        Icon: facilityIcons.RAINWATER_CISTERN,
+        type: 'RAINWATER_CISTERN',
+      },
     ],
   },
   {
     id: 'STORAGE',
     name: '빗물저류시설 확충',
     items: [
-      { id: 'UNDERGROUND_STORAGE', name: '지하 저류조', Icon: Warehouse, type: null },
-      { id: 'DETENTION', name: '저류지·유수지', Icon: Waves, type: null },
+      {
+        id: 'UNDERGROUND_STORAGE',
+        name: '지하 저류조',
+        Icon: facilityIcons.UNDERGROUND_STORAGE,
+        type: null,
+      },
+      { id: 'DETENTION', name: '저류지·유수지', Icon: facilityIcons.DETENTION, type: null },
     ],
   },
   {
     id: 'DRAINAGE',
     name: '하수관로·빗물받이 정비',
     items: [
-      { id: 'INLET', name: '빗물받이', Icon: CircleDot, type: null },
-      { id: 'CONDUIT', name: '배수관·암거', Icon: Network, type: null },
+      { id: 'INLET', name: '빗물받이', Icon: facilityIcons.INLET, type: null },
+      { id: 'CONDUIT', name: '배수관·암거', Icon: facilityIcons.CONDUIT, type: null },
     ],
   },
   {
     id: 'PUMP',
     name: '빗물펌프장 신·증설',
-    items: [{ id: 'PUMP_STATION', name: '빗물펌프장', Icon: Factory, type: null }],
+    items: [
+      { id: 'PUMP_STATION', name: '빗물펌프장', Icon: facilityIcons.PUMP_STATION, type: null },
+    ],
   },
 ] as const;
 export function FacilityExpansionPanel({
   open,
   onClose,
   onMapFacility,
-  onCisternPlan,
   selectedMapFacility = '',
   budget,
 }: {
@@ -73,7 +100,6 @@ export function FacilityExpansionPanel({
   onMapFacility: (type: FacilityType) => void;
   selectedMapFacility?: FacilityType | '';
   onLogin: () => void;
-  onCisternPlan?: () => void;
   budget?: Budget | null;
 }) {
   return (
@@ -97,44 +123,36 @@ export function FacilityExpansionPanel({
           <section className="facility-project" key={project.id} aria-label={project.name}>
             <header>
               <h3>{project.name}</h3>
-              <span>{program ? `사업 예산 ${won(program.limitKrw)}` : '사업 예산 확인 중'}</span>
+              <div className="facility-project-budget">
+                <span>
+                  {program
+                    ? `사업 예산 ${won(program.limitKrw)}`
+                    : budget
+                      ? '사업 예산 미설정'
+                      : '사업 예산 확인 중'}
+                </span>
+                {program && <strong>잔액 {won(program.remainingKrw)}</strong>}
+              </div>
             </header>
             <div className="watershed-facility-grid">
               {project.items.map(({ id, name, Icon, type }) => {
-                const canPlan = id === 'CISTERN' && !!onCisternPlan;
-                const allocation = budget?.accounting.facilities.find(
-                  (f) => f.facilityType === type
-                );
                 return (
                   <button
                     key={id}
                     type="button"
-                    disabled={!type && !canPlan}
+                    disabled={!type}
                     aria-pressed={!!type && selectedMapFacility === type}
                     onClick={() => {
                       if (type) onMapFacility(type);
-                      else if (canPlan) onCisternPlan?.();
                     }}
                   >
                     <Icon size={22} />
                     <strong>{name}</strong>
-                    {type ? (
-                      <span className="facility-availability">
-                        {allocation ? (
-                          <>
-                            <span>잔액</span>
-                            <b>{won(allocation.availableKrw)}</b>
-                          </>
-                        ) : (
-                          '예산 확인 중'
-                        )}
-                      </span>
-                    ) : canPlan ? (
-                      <span>지도 계획 작성 · 설치 없음</span>
-                    ) : (
-                      <span>
+                    <span>{descriptions[id]}</span>
+                    {!type && (
+                      <small>
                         <LockKeyhole size={12} /> 준비 중
-                      </span>
+                      </small>
                     )}
                   </button>
                 );

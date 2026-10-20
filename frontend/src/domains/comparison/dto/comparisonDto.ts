@@ -10,6 +10,7 @@ const placement = z.object({
     'BIORETENTION',
     'VEGETATIVE_SWALE',
     'INFILTRATION_TRENCH',
+    'RAINWATER_CISTERN',
   ]),
   areaM2: z.number().positive(),
 });

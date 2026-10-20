@@ -1,0 +1,110 @@
+package io.waterleague;
+
+import static org.assertj.core.api.Assertions.*;
+
+import io.waterleague.account.entity.Account;
+import io.waterleague.account.repository.AccountRepository;
+import io.waterleague.budget.service.BudgetService;
+import io.waterleague.common.exception.DomainException;
+import io.waterleague.common.service.JsonService;
+import io.waterleague.disaster.service.DisasterService;
+import io.waterleague.historical.dto.*;
+import io.waterleague.historical.service.*;
+import io.waterleague.installation.dto.InstallRequest;
+import io.waterleague.installation.repository.SiteCatalogRepository;
+import io.waterleague.installation.service.InstallationService;
+import io.waterleague.physics.service.PhysicsService;
+import io.waterleague.strategy.entity.FacilityType;
+import java.math.BigDecimal;
+import java.nio.file.*;
+import java.time.Instant;
+import java.util.*;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.ActiveProfiles;
+
+@SpringBootTest
+@ActiveProfiles("local")
+class CisternGameWorkflowTests extends PostgresIntegrationTest {
+  @org.springframework.test.context.DynamicPropertySource
+  static void integrationDatabase(org.springframework.test.context.DynamicPropertyRegistry r) {
+    SharedInstallationTests.integrationDatabase(r);
+  }
+
+  @Autowired SiteCatalogRepository sites;
+  @Autowired InstallationService installations;
+  @Autowired AccountRepository accounts;
+  @Autowired BudgetService budgets;
+  @Autowired HistoricalDesignService designs;
+  @Autowired HistoricalSubmissionService submissions;
+  @Autowired DisasterService disasters;
+  @Autowired PhysicsService physics;
+  @Autowired JdbcTemplate db;
+  @Autowired JsonService json;
+
+  @Test
+  @DisabledIfSystemProperty(named = "waterleague.integration.cistern.readback", matches = "true")
+  void installsOnBuildingChargesBudgetAndSubmitsSavedGameDesign() throws Exception {
+    UUID owner = UUID.randomUUID();
+    String username = "cistern_" + owner.toString().substring(0, 8);
+    accounts.add(new Account(owner, username, "이용조 시험", "NOT_A_LOGIN", "MEMBER", "PLAYER",
+        "APPROVED", null, "", "", true, "11200", "AFFILIATED"));
+    var site = NativeSiteFixtures.sites(sites, "11200").values().stream()
+        .filter(s -> s.kind().equals("ROOF") && s.existingInfrastructure() == null
+            && s.maxAreaM2().compareTo(new BigDecimal("235")) >= 0).findFirst().orElseThrow();
+    assertThat(site.allowedTypes()).contains("RAINWATER_CISTERN");
+    var ground = NativeSiteFixtures.cell(sites, "11200", FacilityType.RAIN_GARDEN, 0);
+    assertThatThrownBy(() -> installations.install(username, new InstallRequest(
+        "11200", ground.cellId(), FacilityType.RAINWATER_CISTERN, BigDecimal.TEN)))
+        .isInstanceOf(DomainException.class);
+    var request = new InstallRequest("11200", site.cellId(), FacilityType.RAINWATER_CISTERN,
+        new BigDecimal("235"));
+    var installed = installations.install(username, request);
+    assertThat(installed.cost()).isEqualByComparingTo("2857130");
+    assertThat(budgets.view(owner).allocatedKrw()).isEqualByComparingTo(installed.cost());
+    assertThatThrownBy(() -> installations.install(username, request))
+        .isInstanceOf(DomainException.class);
+    assertThat(db.queryForObject("SELECT count(*) FROM budget_ledger_entries WHERE installation_id=?",
+        Integer.class, installed.id())).isEqualTo(1);
+
+    var event = disasters.catalog().events().stream()
+        .filter(e -> e.id().equals("seoul-20220808")).findFirst().orElseThrow();
+    var region = event.regions().stream().filter(r -> r.districtId().equals("11200"))
+        .findFirst().orElseThrow();
+    var design = designs.save(owner, event.id(), new HistoricalDesignRequest(UUID.randomUUID(),
+        0, 137, List.of(new HistoricalDesignRequest.Item(UUID.randomUUID(), "11200",
+        site.cellId(), FacilityType.RAINWATER_CISTERN, new BigDecimal("235"),
+        Instant.parse(region.start()).plusSeconds(137)))));
+    var reference = new HistoricalDesignSubmissionRequest(UUID.randomUUID(),
+        design.revision(), design.snapshotSha256());
+    var submitted = submissions.submitSaved(owner, event.id(), reference);
+    assertThat(submissions.submitSaved(owner, event.id(), reference).id()).isEqualTo(submitted.id());
+    assertThat(designs.get(owner, event.id()).snapshotSha256()).isEqualTo(design.snapshotSha256());
+    var export = System.getProperty("waterleague.integration.cistern.fixture");
+    if (export != null) Files.writeString(Path.of(export), json.write(Map.of(
+        "ownerId", owner, "installationId", installed.id(), "submissionId", submitted.id(),
+        "eventId", event.id(), "forcingHash", region.modelHash(), "site", site,
+        "costKrw", installed.cost(), "design", design)), StandardOpenOption.CREATE_NEW);
+  }
+
+  @Test
+  @EnabledIfSystemProperty(named = "waterleague.integration.cistern.readback", matches = "true")
+  void readsWorkerStorageAndPublishedSubmissionWithoutLosingCisternFields() throws Exception {
+    var data = json.tree(Files.readString(Path.of(
+        System.getProperty("waterleague.integration.cistern.fixture"))));
+    var id = UUID.fromString(data.path("installationId").asString());
+    var actual = physics.latest(id);
+    assertThat(actual.result()).isNotNull();
+    assertThat(actual.result().cistern().path("capacityM3").asDouble()).isEqualTo(2.35);
+    assertThat(actual.result().cistern().path("reuseM3").isNull()).isTrue();
+    var record = submissions.get(UUID.fromString(data.path("ownerId").asString()),
+        UUID.fromString(data.path("submissionId").asString()));
+    assertThat(record.state()).isEqualTo("SUCCEEDED");
+    assertThat(record.result().path("rankingStatus").asString()).isEqualTo("COMPARABLE");
+    assertThat(json.write(submissions.board(data.path("eventId").asString())))
+        .contains(data.path("submissionId").asString());
+  }
+}

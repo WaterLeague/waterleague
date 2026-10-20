@@ -15,8 +15,9 @@ WL_EXPORT int wl_hydrologySnapshot(double *v, int n)
     const double ftToMm = 304.8;
     TLidUnit *unit;
     TLidProc *proc;
-    int i;
-    if (!v || n != 20 || Nobjects[SUBCATCH] != 1 || !Subcatch)
+    int i, j, count = 0;
+    TLidUnit *found = NULL;
+    if (!v || n != 20 || Nobjects[SUBCATCH] < 1 || Nobjects[SUBCATCH] > 3 || !Subcatch)
         return -1;
     for (i = 0; i < n; i++) v[i] = -1.0;
     v[0] = NewRunoffTime / 1000.0;
@@ -26,11 +27,20 @@ WL_EXPORT int wl_hydrologySnapshot(double *v, int n)
     v[4] = RunoffTotals.runoff * ft3ToM3;
     v[5] = RunoffTotals.drains * ft3ToM3;
     v[6] = RunoffTotals.initStorage * ft3ToM3;
-    v[7] = subcatch_getStorage(0) * ft3ToM3;
-    v[8] = Subcatch[0].newRunoff * ft3ToM3;
-    if (!LidGroups || !LidGroups[0]) return 0;
-    if (!LidGroups[0]->lidList || LidGroups[0]->lidList->nextLidUnit) return -2;
-    unit = LidGroups[0]->lidList->lidUnit;
+    v[7] = 0.0;
+    v[8] = 0.0;
+    for (j = 0; j < Nobjects[SUBCATCH]; j++) {
+        v[7] += subcatch_getStorage(j) * ft3ToM3;
+        /* 지붕에서 용기로 옮긴 내부 유량을 출구 유량에 중복 합산하지 않는다. */
+        if (Subcatch[j].outSubcatch < 0) v[8] += Subcatch[j].newRunoff * ft3ToM3;
+        if (!LidGroups || !LidGroups[j]) continue;
+        if (!LidGroups[j]->lidList || LidGroups[j]->lidList->nextLidUnit) return -2;
+        found = LidGroups[j]->lidList->lidUnit;
+        count++;
+    }
+    if (count == 0) return 0;
+    if (count != 1) return -2;
+    unit = found;
     proc = &LidProcs[unit->lidIndex];
     v[9] = unit->surfaceDepth * ftToMm;
     if (proc->pavement.thickness > 0.0) v[10] = unit->paveDepth * ftToMm;

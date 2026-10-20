@@ -15,7 +15,7 @@ from shapely.geometry import box
 from ..engine.swmm import SimulationQualityError
 from .geometry import cell_geometry
 from .playing_profile import FACILITY_ORDER
-from . import reference_conditions
+from . import reference_conditions, cistern_game
 from .suitability import SiteSuitabilityError, require_explorable
 
 
@@ -59,6 +59,7 @@ class NativePlayCatalog:
                     or self._metadata['referenceScenario'] != reference_conditions.reference()
                     or self._metadata['policy']['externalInflowConnected'] is not False):
                 raise NativeCatalogError('NATIVE_CATALOG_CONDITIONS_INVALID')
+            self._metadata = cistern_game.metadata(self._metadata)
         except (OSError, KeyError, TypeError, IndexError, sqlite3.DatabaseError, json.JSONDecodeError):
             raise NativeCatalogError('NATIVE_CATALOG_INVALID') from None
 
@@ -101,7 +102,7 @@ class NativePlayCatalog:
             row = database.execute('SELECT body,district_id FROM sites WHERE id=?', (site_id,)).fetchone()
         if row is None or (district is not None and row[1] != self.district(district)):
             raise NativeCatalogError('NATIVE_SITE_NOT_FOUND')
-        return json.loads(row[0])
+        return cistern_game.cell(json.loads(row[0]))
 
     def bounds(self, bounds, *, district=None, kind=None, limit=512, include_unsupported=False):
         if (not isinstance(bounds, (tuple, list)) or len(bounds) != 4
@@ -130,7 +131,7 @@ class NativePlayCatalog:
             for scanned, (body,) in enumerate(database.execute(query, values), 1):
                 if scanned > 20000:
                     raise NativeCatalogError('NATIVE_VIEWPORT_TOO_DENSE')
-                cell = json.loads(body)
+                cell = cistern_game.cell(json.loads(body))
                 if cell_geometry(cell).intersects(viewport):
                     result.append(cell)
                     if len(result) > limit:
@@ -140,7 +141,7 @@ class NativePlayCatalog:
     def placement(self, site_id, facility, area_m2, *, district):
         cell = self.require(site_id, district)
         self._require_explorable(cell)
-        if facility not in FACILITY_ORDER or facility not in cell['allowedTypes']:
+        if facility not in (*FACILITY_ORDER, cistern_game.TYPE) or facility not in cell['allowedTypes']:
             raise NativeCatalogError('NATIVE_FACILITY_UNSUPPORTED')
         try:
             if type(area_m2) not in (int, float, str, Decimal) or len(str(area_m2)) > 64:
@@ -169,7 +170,7 @@ class NativePlayCatalog:
         except SimulationQualityError:
             raise NativeCatalogError('NATIVE_CATALOG_CONDITIONS_INVALID') from None
         keys = ('hydrology', 'unitCosts', 'costModel', 'costSourceSha256', 'budget', 'budgetPolicy',
-                'facilityDesignSet', 'initializationPolicy')
+                'facilityDesignSet', 'initializationPolicy', 'cisternGameSha256')
         model = {key: copy.deepcopy(self._metadata[key]) for key in keys}
         sources = cell.get('geometrySources', self._metadata)
         model.update(cells=[cell], mapId='SEOUL_NGII_REFERENCE_PLAY_V1',

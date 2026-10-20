@@ -100,6 +100,7 @@ def calculate(request, directory):
             'differenceM3': a['accountedDischargeM3']-b['accountedDischargeM3'],
             'runoffContinuityPercent': result['strategy']['runoffContinuityPercent'],
             'physicalInputs': model['cells'][0].get('physicalInputs'),
+            'cistern': result.get('cistern'),
             'facilityDesign': result.get('facilityDesign'), 'initialization': result.get('initialization')})
         results[-1]['runoffComparison'] = result['runoffComparison']
         if temporal:

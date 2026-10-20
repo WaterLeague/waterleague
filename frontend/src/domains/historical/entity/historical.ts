@@ -56,6 +56,7 @@ export interface HistoricalJob {
       frames?: HistoricalScoreFrame[];
       initialization?: InitializationEvidenceData | null;
       facilityDesign?: FacilityEvidence | null;
+      cistern?: CisternGameData | null;
       costRecord?: CostRecord;
       lifeCycleCost?: LifeCycleCost;
       runoffComparison?: RunoffComparisonData;
@@ -72,3 +73,4 @@ export interface HistoricalJob {
     }[];
   };
 }
+import type { CisternGameData } from '../../facility/dto/cisternGameDto';

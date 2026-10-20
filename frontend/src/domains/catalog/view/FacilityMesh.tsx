@@ -1,4 +1,5 @@
 import type { Terrain } from '../../terrain/entity/terrain';
+import { CisternInstallationMesh } from './CisternInstallationMesh';
 import { pavementGeometry } from '../service/pavementGeometryService';
 import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
@@ -78,6 +79,7 @@ export function FacilityMesh({
       placement.facilityType,
     ]
   );
+  const cistern = placement.facilityType === 'RAINWATER_CISTERN';
   const paved = placement.facilityType === 'PERMEABLE_PAVEMENT';
   const gravel = placement.facilityType === 'INFILTRATION_TRENCH';
   const roof = placement.facilityType === 'GREEN_ROOF';
@@ -121,7 +123,15 @@ export function FacilityMesh({
     canvas.width = canvas.height = 64;
     const context = canvas.getContext('2d');
     if (!context) throw new CatalogError('INVALID_DATA');
-    context.fillStyle = paved ? '#96aeb1' : gravel ? '#8f9cb5' : roof ? '#8eaa60' : '#687f48';
+    context.fillStyle = cistern
+      ? '#548eae'
+      : paved
+        ? '#96aeb1'
+        : gravel
+          ? '#8f9cb5'
+          : roof
+            ? '#8eaa60'
+            : '#687f48';
     context.fillRect(0, 0, 64, 64);
     context.strokeStyle = paved ? '#56777e' : '#526c3f';
     context.lineWidth = paved ? 3 : 1;
@@ -131,7 +141,7 @@ export function FacilityMesh({
       context.strokeRect(-16, 32, 32, 32);
       context.strokeRect(16, 32, 32, 32);
       context.strokeRect(48, 32, 32, 32);
-    } else {
+    } else if (!cistern) {
       for (let i = 0; i < 24; i++) {
         context.fillStyle = gravel
           ? i % 3 === 0
@@ -148,7 +158,7 @@ export function FacilityMesh({
     result.colorSpace = THREE.SRGBColorSpace;
     result.anisotropy = 4;
     return result;
-  }, [paved, roof, gravel]);
+  }, [paved, roof, gravel, cistern]);
   const outline = useRef<THREE.LineSegments>(null);
   useLayoutEffect(() => {
     outline.current?.computeLineDistances();
@@ -194,8 +204,17 @@ export function FacilityMesh({
           <lineBasicMaterial color={paved ? '#4d7078' : '#5e633d'} />
         )}
       </lineSegments>
-      {!preview && !paved && !gravel && (
+      {!preview && !paved && !gravel && !cistern && (
         <Planting footprint={footprint} roof={roof} opacity={opacity} />
+      )}
+      {cistern && (
+        <CisternInstallationMesh
+          cell={cell}
+          areaM2={placement.areaM2}
+          terrain={terrain}
+          opacity={opacity}
+          preview={preview}
+        />
       )}
     </group>
   );

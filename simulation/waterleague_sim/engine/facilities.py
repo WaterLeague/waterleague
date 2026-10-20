@@ -14,11 +14,13 @@ CATALOG_V3_SHA256 = '2a703170835529fe4d9b2c729157a04b7555faf9a1097f481be4269bfe2
 CATALOG_V3_PATH = ROOT/'backend/src/main/resources/facilities/epa-designs-v3.json'
 CATALOG_V4_SHA256 = '8af82e01704cf1495f185d9a0a410898e6007a468274c905e75b939f9abde133'
 CATALOG_V4_PATH = ROOT/'backend/src/main/resources/facilities/epa-designs-v4.json'
-CATALOGS = {1: (CATALOG_PATH, CATALOG_SHA256), 2: (CATALOG_V2_PATH, CATALOG_V2_SHA256),
+CATALOG_V5_PATH = ROOT/'backend/src/main/resources/facilities/epa-designs-v5.json'
+CATALOG_V5_SHA256 = '0b37b1779f60533bb344158eef8a6ec1510d60a533ec99d81c3e98324b02c62e'
+CATALOGS = {5: (CATALOG_V5_PATH, CATALOG_V5_SHA256), 1: (CATALOG_PATH, CATALOG_SHA256), 2: (CATALOG_V2_PATH, CATALOG_V2_SHA256),
             3: (CATALOG_V3_PATH, CATALOG_V3_SHA256), 4: (CATALOG_V4_PATH, CATALOG_V4_SHA256)}
 
 
-@lru_cache(maxsize=4)
+@lru_cache(maxsize=5)
 def catalog(version=1):
     if version not in CATALOGS:
         raise SimulationQualityError('LIVE_FACILITY_CATALOG_INVALID')
@@ -165,6 +167,8 @@ def apply(source, model):
     rows = []
     for profile in catalog(version)['profiles'].values():
         t = profile['type']
+        if t == 'RB':
+            continue
         p = {k: v['value'] for k, v in profile['parameters'].items()}
         rows += [f'{t} {t}', f'{t} SURFACE {p["surfaceDepthMm"]} {p["vegetationFraction"]} {p["surfaceRoughness"]} {slope} {p.get("sideSlope", 0)}']
         if 'soilDepthMm' in p:

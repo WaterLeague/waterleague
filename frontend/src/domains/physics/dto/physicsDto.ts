@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { cisternGameDto } from '../../facility/dto/cisternGameDto';
 import { initializationDto } from './initializationDto';
 import { facilityEvidenceDto } from '../../facility/dto/facilityDto';
 import { runoffComparisonDto } from './runoffComparisonDto';
@@ -34,11 +35,18 @@ export const physicsDto = z
         initialState: z.string(),
         initialization: initializationDto.nullish(),
         facilityDesign: facilityEvidenceDto.nullish(),
+        cistern: cisternGameDto.nullish(),
         runoffComparison: runoffComparisonDto.nullish(),
         designContract: designContractDto.nullish(),
         scoreContext: scoreContextDto.refine((v) => v.mode === 'WEEKLY').nullish(),
         lifeCycleCost: lifeCycleCostDto.nullish(),
-        inflowPolicy: z.enum(['DIRECT_RAINFALL_ONLY', 'LEGACY_ALL_IMPERVIOUS_RUNOFF']).nullish(),
+        inflowPolicy: z
+          .enum([
+            'DIRECT_RAINFALL_ONLY',
+            'LEGACY_ALL_IMPERVIOUS_RUNOFF',
+            'SELECTED_ROOF_RUNOFF_TO_COVERED_CISTERN',
+          ])
+          .nullish(),
         areaLimitBasis: z.string().nullish(),
       })
       .nullable(),

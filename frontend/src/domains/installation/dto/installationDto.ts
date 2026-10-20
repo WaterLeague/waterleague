@@ -13,6 +13,7 @@ const facility = z.enum([
   'BIORETENTION',
   'VEGETATIVE_SWALE',
   'INFILTRATION_TRENCH',
+  'RAINWATER_CISTERN',
 ]);
 const point = z.tuple([z.number().finite(), z.number().finite()]);
 export const publicAssetPolicyDto = z.object({
@@ -112,6 +113,7 @@ export const siteDto = z
       BIORETENTION: z.number().positive().optional(),
       VEGETATIVE_SWALE: z.number().positive().optional(),
       INFILTRATION_TRENCH: z.number().positive().optional(),
+      RAINWATER_CISTERN: z.number().positive().optional(),
     }),
     costSourceSha256: z.string().regex(/^[a-f0-9]{64}$/),
     costModel: z.object({
@@ -124,6 +126,7 @@ export const siteDto = z
         BIORETENTION: costSourceDto.optional(),
         VEGETATIVE_SWALE: costSourceDto.optional(),
         INFILTRATION_TRENCH: costSourceDto.optional(),
+        RAINWATER_CISTERN: costSourceDto.optional(),
       }),
     }),
     sourceIds: z.array(z.string()),

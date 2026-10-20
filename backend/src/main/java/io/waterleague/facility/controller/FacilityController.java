@@ -42,6 +42,13 @@ public class FacilityController {
         .body(service.latest());
   }
 
+  @GetMapping("/epa-designs-v5")
+  public ResponseEntity<JsonNode> v5() {
+    return ResponseEntity.ok().eTag(service.v5Digest())
+        .cacheControl(CacheControl.maxAge(Duration.ofDays(1)).cachePublic().immutable())
+        .body(service.v5());
+  }
+
   private ResponseEntity<JsonNode> response(boolean previous) {
     return ResponseEntity.ok()
         .eTag(service.digest(previous))

@@ -21,7 +21,7 @@ final class NativeSiteFixtures {
       var json = new JsonService(new ObjectMapper());
       var observations = new ObservedGameRepository(json);
       var nativeSites =
-          new NativePlayRepository(new NativePlayBundle(json, "../tmp/native-spatial"), json);
+          new NativePlayRepository(new NativePlayBundle(json, "../tmp/native-spatial"), json, new io.waterleague.installation.repository.CisternGameCatalog(json));
       return new SiteCatalogRepository(
           json,
           new DistrictRepository(json, observations),
@@ -73,7 +73,7 @@ final class NativeSiteFixtures {
                 .forEach(site -> values.put(site.cellId(), site));
           var json = new JsonService(new ObjectMapper());
           var nativeSites =
-              new NativePlayRepository(new NativePlayBundle(json, "../tmp/native-spatial"), json);
+              new NativePlayRepository(new NativePlayBundle(json, "../tmp/native-spatial"), json, new io.waterleague.installation.repository.CisternGameCatalog(json));
           try (var connection = nativeSites.connection();
               var query =
                   connection.prepareStatement(

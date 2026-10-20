@@ -32,6 +32,7 @@ export const leagueDto = z.object({
           'BIORETENTION',
           'VEGETATIVE_SWALE',
           'INFILTRATION_TRENCH',
+          'RAINWATER_CISTERN',
         ])
       )
       .min(1)

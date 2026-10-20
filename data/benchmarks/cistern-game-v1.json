@@ -1,0 +1,116 @@
+{
+  "schemaVersion": 1,
+  "checkedOn": "2026-10-21",
+  "scope": "BUILDING_CISTERN_GAME_INSTALLATION_BUDGET_OBSERVED_REPLAY_AND_SUBMISSION",
+  "status": "PASSED",
+  "fieldValidated": false,
+  "previousScopeDecision": "Earlier cistern exclusion superseded by explicit literature-based normal installation request. Other excluded expansions unchanged.",
+  "commands": [
+    "PYTHONPATH=simulation:simulation/tests simulation/.venv/bin/python -m unittest test_cistern_game test_continuous -q",
+    "./mvnw -q -Dtest=NativePlayTests test",
+    "simulation/.venv/bin/python scripts/verify_league_postgres.py --suite cistern-game",
+    "pnpm --dir frontend test (five affected suites plus two temporary actual-output DTO checks)",
+    "pnpm --dir frontend build",
+    "./mvnw -q -DskipTests package",
+    "python3 scripts/build_score_policy.py --check"
+  ],
+  "checks": {
+    "pythonNumerical": 7,
+    "javaNativeCandidates": 8,
+    "javaWorkflowExecuted": 2,
+    "javaWorkflowPhaseSkips": 2,
+    "pythonRealWorkerIntegration": 1,
+    "frontendUnitTests": 23,
+    "actualOutputDtoChecks": 2,
+    "dtoTimeHandling": "Server PhysicsView Instant UTC serialization applied before weekly schema parsing",
+    "sourceDatabaseCountsUnchanged": true
+  },
+  "workflow": {
+    "classification": "ISOLATED_DATABASE_REAL_OBSERVATION_REPLAY",
+    "forcingHash": "4766435318b68bcf399d072bb2bbcf9a0079d2f7df21cd984d774e578fa58aa0",
+    "warmupMinutes": 10080,
+    "weeklyMinutes": 60,
+    "budgetChargeKrw": 2857130,
+    "historicalCistern": {
+      "schemaVersion": 1,
+      "rulesSha256": "20da4bc15546b77aa680d07d61bc1d95a0f0c7aae95667d6c46fa080c2c270f3",
+      "roofCollectionAreaM2": 235,
+      "capacityM3": 2.35,
+      "initialStorageM3": 2.35,
+      "finalStorageM3": 2.313548438607982,
+      "inflowM3": 21.040193202607416,
+      "drainageM3": 4.456505080583446,
+      "overflowM3": 16.620249124930204,
+      "reuseM3": null,
+      "reuseStatus": "DEMAND_NOT_AVAILABLE",
+      "tankPosition": "SCHEMATIC_NOT_CONSTRUCTION_PLACEMENT",
+      "limitations": [
+        "이용조 용량/비용은 백종석 외 2018 논문(doi:10.15681/KSWE.2017.34.1.57)의 지붕 235m²·2.35m³·C 견적을 참조한다. 실제 제품·서울 시공 견적 아님",
+        "이용조 선택 면적은 지붕 집수면이다. 물통 배치는 기호이며 실제 탱크 설치 위치·구조 하중·배관 경로 승인 아님",
+        "깊이 1m·배수구·일정 단면·집수/비용 비례는 명시한 설계 가정. 문헌의 현장 검증 또는 논문 전체 재현 아님",
+        "이용조는 지붕 유출만 집수하며 덮개 탱크의 직접 강우·증발·침투는 없음. 탱크 계산 영역은 중복 강우가 없는 가상 용기이고 지붕/토지 면적을 추가 확보한 것으로 해석하지 않음",
+        "배수는 방류이며 실제 사용 수요·재이용량은 미산정. 저류량은 기존 체적 점수에서 영구 저감으로 인정하지 않음"
+      ]
+    },
+    "differenceM3": -0.003553843041629534,
+    "installationAndBudgetVerified": true,
+    "submissionAndScorePublished": true
+  },
+  "browser": {
+    "mode": "GUEST_HISTORICAL_UI",
+    "districtId": "11200",
+    "eventDate": "2022-08-08",
+    "buildingOnlyCandidateSelection": true,
+    "sizeSelection": "MEDIUM",
+    "roofCollectionAreaM2": 172.48,
+    "capacityM3": 1.7248,
+    "budgetChargeKrw": 2097012,
+    "remainingKrw": 1997902988,
+    "normalInstallationSuccess": true,
+    "roofCollectorAndGroundTankAndPipeDisplayed": true,
+    "sharedFacilityIcons": true,
+    "programRemainingBelowBudget": true,
+    "perFacilityBalanceRemoved": true,
+    "screenshots": {
+      "tmp/cistern-game-installed.png": "87d2a143a32661df2e81056fa0ff86051efa64cf38407e0c7373ebb9c1ba5926",
+      "tmp/cistern-game-install-menu.png": "802e5be1f6d2bd60cc8b1e854fa0009927ff26b6f6eded5a5cd3536f20d05e21",
+      "tmp/cistern-game-plan.png": "d34f04c6ed52132b6fc60d5ede872b02016a184bf03bda545040cc36f623b6ea"
+    },
+    "planViewDisplayed": true
+  },
+  "runtime": {
+    "health": "UP",
+    "scorePolicySha256": "2d821ecc9cdc9add252cbee94ce504b4231cfefc381517c9b6f7958df6e0a5e3",
+    "sourceCountsUnchanged": true,
+    "publicCisternCatalogPreserved": true,
+    "jarSha256": "5584b775c99a45e546d264d564993ee9bb01bf35e47696e4ca4be6f0a9f95f28"
+  },
+  "sourceHashes": {
+    "backend/src/main/resources/facilities/cistern-game-v1.json": "20da4bc15546b77aa680d07d61bc1d95a0f0c7aae95667d6c46fa080c2c270f3",
+    "backend/src/main/resources/facilities/epa-designs-v5.json": "0b37b1779f60533bb344158eef8a6ec1510d60a533ec99d81c3e98324b02c62e",
+    "backend/src/main/resources/budget/seoul-accounting-v5.json": "9cd704528e15074b4af80acaa4c80eec62da46767b07cd9a01a7c2a2cf2a21ba",
+    "data/costs/lid-reference-v6.json": "705731e90028359c3876e23a22e64d1ba86e814d84a2fa8d820b76dfe7acbe06",
+    "frontend/src/domains/installation/view/CisternSizeControl.tsx": "c14a00bc83dcdab6e44f2d08465ddd3bddd9d76d5b1ccbaef47fcf88f04ffeaf",
+    "frontend/src/domains/catalog/view/CisternInstallationMesh.tsx": "8bcac4c8794d579c5331c0d7e7cd1a75529faed960bea3532661fd7afd6c6eed",
+    "frontend/src/domains/catalog/service/cisternDisplayService.ts": "863943dc58f44c773ccd1742dfd261def506008e2c5838dd0a2e63881cc0206d",
+    "frontend/src/domains/facility/view/facilityIcons.ts": "a7cd9a5acb306cc7dd4bc3bce9453bb9dbb2ecf37c344bc7e23dac6dc6803f6d",
+    "frontend/src/domains/watershed/view/FacilityExpansionPanel.tsx": "8bf7435d13c1aee750bf27f648fc40e49dd8f0b40cb95230a8352a66b48e6e04"
+  },
+  "localEvidenceHashes": {
+    "tmp/cistern-game-python.log": "3d69c1cc4622cf11944f6e28655dbf9c9e7721196d10c04e92bec95dcfcd6ba7",
+    "tmp/cistern-game-java.log": "609342c5341677d85c6e038c36c90ebbd58423f1d52556ede56da93b5d9ea829",
+    "tmp/cistern-game-frontend-tests.log": "5b60e37a8bbfb659d9101184f645a421b775409d1d27db0aff292fea5e1aa4e4",
+    "tmp/cistern-game-build.log": "7afa0787b44d754820f4e1babd5622b53b82bf282e0381d7af49a13593c0335f",
+    "tmp/cistern-game-package.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "tmp/waterleague_league_test_236c09e38a3d4ecba74d12d0ed912ed6.log": "294f1a9a4aa72c114be02a5f6e041ccc40a35a0ca4ecdede127c1b5cb443ce70",
+    "tmp/waterleague_league_test_236c09e38a3d4ecba74d12d0ed912ed6.cistern-runs/verification.json": "20b7fceac8074450e2193b867648f39789092da084b76ef0fd1243af902d8156"
+  },
+  "limitations": [
+    "Literature-based exploratory tank, not field-calibrated infrastructure or a construction approval",
+    "Capacity and price scaling, depth and drainage are explicit assumptions",
+    "Roof runoff routed once to a covered tank with no direct rainfall",
+    "No real reuse demand; reuseM3 remains null; retained storage is excluded from permanent volume reduction credit",
+    "Tank beside-building position is schematic, not surveyed ground occupation or pipe geometry",
+    "No full regression or new device performance campaign"
+  ]
+}

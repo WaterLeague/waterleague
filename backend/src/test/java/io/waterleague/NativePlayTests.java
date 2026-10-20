@@ -37,7 +37,7 @@ class NativePlayTests {
   @Test
   void sharesThePythonFixtureGeometryConditionsAndReadOnlyDatabase() throws Exception {
     var source = bundle(temporary);
-    var repository = new NativePlayRepository(source, json);
+    var repository = new NativePlayRepository(source, json, new io.waterleague.installation.repository.CisternGameCatalog(json));
     assertThat(repository.bounds(2.5, 2.5, 3.5, 3.5, null, null, 100, false)).isEmpty();
     var values = repository.bounds(0, 0, 100, 100, "11110", null, 100, false);
     assertThat(values).hasSize(3);
@@ -60,7 +60,7 @@ class NativePlayTests {
   @Test
   void refusesTruncatedViewsWrongDistrictsAndChangedFiles() throws Exception {
     var source = bundle(temporary);
-    var repository = new NativePlayRepository(source, json);
+    var repository = new NativePlayRepository(source, json, new io.waterleague.installation.repository.CisternGameCatalog(json));
     assertThatThrownBy(() -> repository.bounds(0, 0, 100, 100, null, null, 1, false))
         .isInstanceOfSatisfying(DomainException.class, e -> assertThat(e.code()).isEqualTo(ErrorCode.SPATIAL_VIEW_TOO_DENSE));
     assertThatThrownBy(() -> repository.bounds(0, 0, 2001, 1, null, null, 2000, false))
@@ -148,8 +148,8 @@ class NativePlayTests {
   }
 
   @Test
-  void selectsTheFullSourceObjectAndPointWithoutFillingHolesOrUsingNearestCenters() {
-    var repository = new NativePlayRepository(bundle(temporary), json);
+  void selectsTheFullSourceObjectAndPointWithoutFillingHolesOrUsingNearestCenters() throws Exception {
+    var repository = new NativePlayRepository(bundle(temporary), json, new io.waterleague.installation.repository.CisternGameCatalog(json));
     var roof = repository.atPoint(1, 1, "ROOF");
     assertThatThrownBy(() -> repository.building("11110", "way/123")).isInstanceOf(DomainException.class);
     assertThatThrownBy(() -> repository.atPoint(3, 3, "ROOF")).isInstanceOf(DomainException.class);
@@ -161,7 +161,8 @@ class NativePlayTests {
     assertThat(repository.nearest("11110", 0, 0, 0, null, "ROAD_AREA").cells()).hasSize(1);
     assertThat(repository.nearest("11110", 0, 0, 0, null, "OTHER").cells()).hasSize(2);
     assertThat(repository.nearest("11110", 0, 0, 1, 4, null).cells()).isEmpty();
-    assertThatThrownBy(() -> repository.nearest("11110", 0, 0, 0, 64, null)).isInstanceOf(DomainException.class);
+    assertThat(repository.nearest("11110", 0, 0, 0, 64, null).cells()).containsExactly(roof);
+    assertThatThrownBy(() -> repository.nearest("11110", 0, 0, 0, 128, null)).isInstanceOf(DomainException.class);
     assertThatThrownBy(() -> repository.nearest("11110", 0, 0, 0, null, "ROAD_AREA' OR 1=1"))
         .isInstanceOf(DomainException.class);
   }
@@ -184,7 +185,7 @@ class NativePlayTests {
   @Test
   void exposesBoundedVersionedReadApiAndCommonErrors() throws Exception {
     var limits = mock(RateLimitService.class);
-    var controller = new NativePlayController(new NativePlayRepository(bundle(temporary), json), limits, json);
+    var controller = new NativePlayController(new NativePlayRepository(bundle(temporary), json, new io.waterleague.installation.repository.CisternGameCatalog(json)), limits, json);
     var client = MockMvcBuilders.standaloneSetup(controller).setControllerAdvice(new GlobalExceptionHandler()).build();
     client.perform(get("/api/v1/spatial/play")).andExpect(status().isOk())
         .andExpect(jsonPath("$.coordinateSystem").value("EPSG:5186"))

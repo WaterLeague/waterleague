@@ -113,7 +113,8 @@ def input_source(model, placements, evaporation, *, pavement_scenario=None):
     # 등록 모델의 고정 생성기는 보존하고 확장 시설 배치는 연속 계산 계층에서 구성한다.
     identifiers = {'RAIN_GARDEN': 'RG', 'PERMEABLE_PAVEMENT': 'PP', 'GREEN_ROOF': 'GR',
                    'BIORETENTION': 'BC', 'VEGETATIVE_SWALE': 'VS', 'INFILTRATION_TRENCH': 'IT'}
-    by_cell = {p['cellId']: p for p in placements}
+    cistern = next((p for p in placements if p['facilityType'] == 'RAINWATER_CISTERN'), None)
+    by_cell = {p['cellId']: p for p in placements if p is not cistern}
     usage = []
     for cell in model['cells']:
         placement = by_cell.get(cell['id'])
@@ -170,6 +171,13 @@ def input_source(model, placements, evaporation, *, pavement_scenario=None):
             at = start+timedelta(minutes=i)
             rows.append(f'PET_DATA {at:%m/%d/%Y} {at:%H:%M:%S} {value}')
         source = source.replace('[TIMESERIES]\n', '[TIMESERIES]\n'+'\n'.join(rows)+'\n')
+    if model.get('facilityDesignSet', {}).get('id') == 'EPA_LID_PUBLIC_DESIGNS_V5':
+        source = source.replace('[RAINGAGES]\n', '[RAINGAGES]\nWL_NO_RAIN VOLUME 0:01 1 TIMESERIES WL_ZERO\n')
+        rows = [f'WL_ZERO {at:%m/%d/%Y} {at:%H:%M:%S} 0' for at in (start, start+timedelta(minutes=1))]
+        source = source.replace('[TIMESERIES]\n', '[TIMESERIES]\n'+'\n'.join(rows)+'\n')
+    if cistern is not None:
+        from .cistern_game import apply as apply_cistern
+        source = apply_cistern(source, model, cistern)
     return source
 
 
@@ -247,6 +255,7 @@ def replay(model, placements, directory, label, evaporation=None, *, evaluation_
     source = input_source(model, placements, evaporation, pavement_scenario=pavement_scenario)
     inp, rpt, out = [directory/f'{label}.{ext}' for ext in ('inp', 'rpt', 'out')]
     inp.write_text(source)
+    subcatchments = len([line for line in source.split('[SUBCATCHMENTS]\n')[1].split('[')[0].splitlines() if line.strip()])
     lib = C.CDLL(str(library_path()))
     lib.wl_hydrologySnapshot.argtypes = [C.POINTER(C.c_double), C.c_int]
     lib.wl_hydrologySnapshot.restype = C.c_int
@@ -292,7 +301,7 @@ def replay(model, placements, directory, label, evaporation=None, *, evaluation_
             if lib.wl_hydrologySnapshot(metric_state, len(FIELDS)) != len(placements):
                 raise SimulationQualityError('LIVE_STATE_INVALID')
             # 고정 EPA lid.h의 CURRENT=1. 읽기 전용 getter이며 분별 기록에는 필드를 추가하지 않는다.
-            drain = lib.lid_getDrainFlow(0, 1) * 0.028316846592
+            drain = sum(lib.lid_getDrainFlow(i, 1) for i in range(subcatchments)) * 0.028316846592
             metrics.observe(metric_state[0], metric_state[8], drain)
             # 분 경계에서만 상태를 복사하여 1초 적분의 Python 변환 비용을 줄인다.
             seconds = elapsed.value*86400
@@ -371,6 +380,24 @@ def experiment(model, placement, directory, evaporation=None, *, installed_at=No
         result['installedAt'] = installed_at
         result['assumptions'] = list(model['assumptions']) + initialization['limitations']
         (directory/'temporal.py').write_bytes(Path(__file__).with_name('temporal.py').read_bytes())
+    if placement['facilityType'] == 'RAINWATER_CISTERN':
+        from ..spatial.cistern_game import PATH, SHA256, rules
+        result['inflowPolicy'] = 'SELECTED_ROOF_RUNOFF_TO_COVERED_CISTERN'
+        result['cistern'] = {'schemaVersion': 1, 'rulesSha256': SHA256,
+            'roofCollectionAreaM2': placement['areaM2'],
+            'capacityM3': placement['areaM2'] * rules()['capacityPerRoofAreaM'],
+            'initialStorageM3': strategy['initial']['lidStorageM3'],
+            'finalStorageM3': strategy['final']['lidStorageM3'],
+            'inflowM3': strategy['final']['lidInflowM3'] - strategy['initial']['lidInflowM3'],
+            'drainageM3': strategy['final']['lidDrainageTotalM3'] - strategy['initial']['lidDrainageTotalM3'],
+            'overflowM3': strategy['final']['lidSurfaceRunoffM3'] - strategy['initial']['lidSurfaceRunoffM3'],
+            'reuseM3': None, 'reuseStatus': 'DEMAND_NOT_AVAILABLE',
+            'tankPosition': 'SCHEMATIC_NOT_CONSTRUCTION_PLACEMENT',
+            'limitations': rules()['limitations']}
+        result['assumptions'] = list(result['assumptions']) + rules()['limitations']
+        (directory/'cistern-game.json').write_bytes(PATH.read_bytes())
+        (directory/'cistern_game_engine.py').write_bytes((Path(__file__).parent/'cistern_game.py').read_bytes())
+        (directory/'cistern_game_catalog.py').write_bytes((Path(__file__).parents[1]/'spatial/cistern_game.py').read_bytes())
     from .runoff_metrics import comparison
     result['runoffComparison'] = comparison(baseline, strategy)
     (directory/'runoff_metrics.py').write_bytes(Path(__file__).with_name('runoff_metrics.py').read_bytes())

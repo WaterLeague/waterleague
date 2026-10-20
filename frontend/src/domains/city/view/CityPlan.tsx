@@ -17,6 +17,7 @@ import type {
 } from '../../installation/entity/installation';
 import type { FacilityType, Placement } from '../../game/entity/game';
 import { placementFootprint } from '../../catalog/service/facilityGeometryService';
+import { cisternDisplay } from '../../catalog/service/cisternDisplayService';
 import { siteKey } from '../../installation/entity/installation';
 import { facilities } from '../../game/service/gameService';
 import { polygonPath } from '../../catalog/service/mapGeometryService';
@@ -223,12 +224,14 @@ export const CityPlan = memo(function CityPlan({
           fill={
             eligibleRoofs.has(b.id) &&
             !occupiedRoofs.has(b.id) &&
-            (!facilityType || facilityType === 'GREEN_ROOF')
+            (!facilityType || facilityType === 'GREEN_ROOF' || facilityType === 'RAINWATER_CISTERN')
               ? availableSiteColor
               : '#d9d8cb'
           }
           opacity={buildingOpacity(
-            (!facilityType || facilityType === 'GREEN_ROOF') &&
+            (!facilityType ||
+              facilityType === 'GREEN_ROOF' ||
+              facilityType === 'RAINWATER_CISTERN') &&
               eligibleRoofs.has(b.id) &&
               !occupiedRoofs.has(b.id),
             otherBuilding(b)
@@ -253,25 +256,52 @@ export const CityPlan = memo(function CityPlan({
     if (preview) values.push({ ...preview, preview: true });
     return values.map((value) => {
       const shape = placementFootprint(value.site, value.placement);
+      const cistern =
+        value.placement.facilityType === 'RAINWATER_CISTERN'
+          ? cisternDisplay(value.site, value.placement.areaM2)
+          : null;
       const path = shape.polygons
         .map((p) => p.map(([x, y], i) => `${i ? 'L' : 'M'}${x},${-y}`).join(' ') + 'Z')
         .join(' ');
       return (
-        <path
-          data-map-cursor={value.preview ? 'install' : 'inspect'}
-          key={siteKey(value.site)}
-          d={path}
-          fill={facilities[value.placement.facilityType].color}
-          fillOpacity={value.preview ? 0.55 : 0.9}
-          stroke={value.preview ? '#214e67' : '#426a49'}
-          strokeWidth={0.25}
-          strokeDasharray={value.preview ? '.8 .5' : undefined}
-          opacity={buildingOpacity(
-            !facilityType || value.placement.facilityType === facilityType,
-            !!ownDistrictId && ownDistrictId !== value.site.districtId
+        <g key={siteKey(value.site)} onClick={() => onSite(siteKey(value.site))}>
+          <path
+            data-map-cursor={value.preview ? 'install' : 'inspect'}
+            d={path}
+            fill={facilities[value.placement.facilityType].color}
+            fillOpacity={value.preview ? 0.55 : 0.9}
+            stroke={value.preview ? '#214e67' : '#426a49'}
+            strokeWidth={0.25}
+            strokeDasharray={value.preview ? '.8 .5' : undefined}
+            opacity={buildingOpacity(
+              !facilityType || value.placement.facilityType === facilityType,
+              !!ownDistrictId && ownDistrictId !== value.site.districtId
+            )}
+          />
+          {cistern && (
+            <g
+              data-cistern-installation={siteKey(value.site)}
+              opacity={value.preview ? 0.55 : 0.95}
+            >
+              <path
+                d={`M${cistern.roof[0]},${-cistern.roof[1]} L${cistern.center[0]},${-cistern.center[1]}`}
+                stroke="#315d73"
+                strokeWidth={0.18}
+                fill="none"
+              />
+              <rect
+                x={cistern.center[0] - cistern.widthM / 2}
+                y={-cistern.center[1] - cistern.widthM / 2}
+                width={cistern.widthM}
+                height={cistern.widthM}
+                rx={0.15}
+                fill="#548eae"
+                stroke="#305e76"
+                strokeWidth={0.15}
+              />
+            </g>
           )}
-          onClick={() => onSite(siteKey(value.site))}
-        />
+        </g>
       );
     });
   }, [sites, installationBySite, preview, facilityType, ownDistrictId, onSite]);

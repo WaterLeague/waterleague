@@ -44,8 +44,12 @@ export function RunoffComparison({ value, contract }: { value: unknown; contract
       {contract !== undefined &&
         (sameWindow ? (
           <p>
-            평가 표면 {amount(design.spatial.evaluationSurfaceAreaM2)} m² · 시설 설치{' '}
-            {amount(design.facility.areaM2)} m² · 시설에 직접 내리는 강우만 유입
+            평가 표면 {amount(design.spatial.evaluationSurfaceAreaM2)} m² ·{' '}
+            {design.facility.type === 'RAINWATER_CISTERN' ? '집수 지붕' : '시설 설치'}{' '}
+            {amount(design.facility.areaM2)} m² ·{' '}
+            {design.facility.type === 'RAINWATER_CISTERN'
+              ? '선택 지붕 유출을 건물 옆 이용조로 집수'
+              : '시설에 직접 내리는 강우만 유입'}
             {design.flowGraph && ' · 배수 관망·지표 침수 격자 미연결'}
           </p>
         ) : (

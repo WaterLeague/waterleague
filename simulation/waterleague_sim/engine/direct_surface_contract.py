@@ -103,6 +103,7 @@ def build(model, placement, result, directory, cost_record):
                 raise DirectSurfaceContractError()
             life_cycle_binding = {'reportSha256': digest(raw), 'planSha256': life_cycle['planSha256'],
                                   'policySha256': life_cycle['policySha256']}
+        cistern = placement['facilityType'] == 'RAINWATER_CISTERN'
         return {
             'version': VERSION,
             'suitability': suitability,
@@ -110,9 +111,11 @@ def build(model, placement, result, directory, cost_record):
                             evaluationSurfaceAreaM2=cell['areaM2']),
             'facility': {'type': placement['facilityType'], 'areaM2': area,
                          'designSet': model['facilityDesignSet'], 'referenceScenario': model['referenceScenario']},
-            'connection': {'inflowPolicy': 'DIRECT_RAINFALL_ONLY', 'directRainAreaM2': area,
+            'connection': {'inflowPolicy': 'SELECTED_ROOF_RUNOFF_TO_COVERED_CISTERN' if cistern else 'DIRECT_RAINFALL_ONLY',
+                           'directRainAreaM2': 0 if cistern else area,
+                           'roofCollectionAreaM2': area if cistern else None,
                            'externalCatchment': None, 'drainageNode': None, 'network': None,
-                           'status': 'UNCONNECTED_SURFACE_EXPLORATION'},
+                           'status': 'ASSUMED_ROOF_CISTERN_CONNECTION' if cistern else 'UNCONNECTED_SURFACE_EXPLORATION'},
             'evaluation': {'start': utc[0].isoformat(), 'end': utc[1].isoformat(), 'timeZone': 'UTC',
                            'scope': 'SELECTED_SURFACE_OUTLET_NOT_SEWER_OR_RIVER',
                            'runoffStepSeconds': 1, 'scoreRule': result['scoreRule'],

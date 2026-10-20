@@ -254,6 +254,7 @@ def process(conn, job, root):
                   'scoreContext': result['scoreContext'],
                   'lifeCycleCost': result['lifeCycleCost'],
                   'inflowPolicy': result['inflowPolicy'],
+                  'cistern': result.get('cistern'),
                   'areaLimitBasis': model['cells'][0].get('areaLimitBasis','LEGACY_DESIGN_RATIO')}
         weeks = weekly_aggregate(result['contribution'], score_start, job['end'], max(covered, score_start), rule=rule)
         saved = finish(conn, job, public, digest(request_raw), None, weeks, digest((path/'manifest.json').read_bytes()))

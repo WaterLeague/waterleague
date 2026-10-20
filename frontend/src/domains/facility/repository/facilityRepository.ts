@@ -9,7 +9,9 @@ export function loadFacilityCatalog(id = 'EPA_LID_PUBLIC_DESIGNS_V4') {
         ? 'v2'
         : id === 'EPA_LID_PUBLIC_DESIGNS_V3'
           ? 'v3'
-          : 'v4';
+          : id === 'EPA_LID_PUBLIC_DESIGNS_V5'
+            ? 'v5'
+            : 'v4';
   let request = pending.get(version);
   if (!request) {
     request = api<unknown>(`/facilities/epa-designs-${version}`)

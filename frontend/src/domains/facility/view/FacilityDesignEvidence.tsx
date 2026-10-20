@@ -3,7 +3,7 @@ import type { FacilityType } from '../../game/entity/game';
 import type { SharedSite } from '../../installation/entity/installation';
 import { useFacilityCatalog } from '../controller/useFacilityCatalog';
 export function FacilityDesignEvidence({ site, type }: { site: SharedSite; type: FacilityType }) {
-  const enabled = !!site.facilityDesignSet?.id.match(/^EPA_LID_PUBLIC_DESIGNS_V[1234]$/);
+  const enabled = !!site.facilityDesignSet?.id.match(/^EPA_LID_PUBLIC_DESIGNS_V[12345]$/);
   const { catalog, failed } = useFacilityCatalog(enabled, site.facilityDesignSet?.id);
   if (!enabled) return null;
   if (failed)
@@ -26,6 +26,14 @@ export function FacilityDesignEvidence({ site, type }: { site: SharedSite; type:
               : undefined
       }
     >
+      {type === 'RAINWATER_CISTERN' && (
+        <p>
+          선택 면적은 집수 지붕이며 저장 용량은 면적×0.01m입니다. 백종석 외 2018 논문의
+          235㎡·2.35㎥를 기준으로 깊이 1m와 배수구를 설계 가정으로 적용합니다. 지도 표시는 연결 대상
+          지붕의 기호로 실제 탱크 위치·하중·배관을 확인한 시공 승인이 아닙니다. 물은 배수·월류되며
+          재이용은 미산정입니다.
+        </p>
+      )}
       {type === 'VEGETATIVE_SWALE' && site.physicalInputs?.swaleDesign && (
         <p>
           폭 2m 직선 배치 · 최대 길이{' '}

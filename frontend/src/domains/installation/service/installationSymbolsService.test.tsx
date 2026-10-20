@@ -24,7 +24,7 @@ const installed = types.map((facilityType, n) => ({
   installedAt: '2026-10-19T00:00:00Z',
 })) as SharedInstallation[];
 
-test('여섯 유형의 유한 입체 형상과 서로 다른 형태, 원 입력 보존', () => {
+test('일곱 유형의 유한 입체 형상과 서로 다른 형태, 원 입력 보존', () => {
   const shapes = types.map((type) => {
     const geometry = facilitySymbolGeometry(type);
     const positions = geometry.getAttribute('position');
@@ -38,17 +38,17 @@ test('여섯 유형의 유한 입체 형상과 서로 다른 형태, 원 입력 
     geometry.dispose();
     return hash;
   });
-  expect(new Set(shapes).size).toBe(6);
+  expect(new Set(shapes).size).toBe(types.length);
 });
 
 test('상세 도형의 중복 표식 제거·미로딩 위치 유지·지도 주변 시설 유지', () => {
   const sites = [{ districtId: 'A', cellId: 'G0' }] as SharedSite[];
   const before = JSON.stringify(installed);
-  expect(installationSymbols(installed, sites, null, 2400)).toHaveLength(6);
+  expect(installationSymbols(installed, sites, null, 2400)).toHaveLength(types.length);
   expect(installationSymbols(installed, sites, null, 2399).map((i) => i.cellId)).not.toContain(
     'G0'
   );
-  expect(installationSymbols(installed, [], null, 50)).toHaveLength(6);
+  expect(installationSymbols(installed, [], null, 50)).toHaveLength(types.length);
   expect(JSON.stringify(installed)).toBe(before);
 });
 
@@ -58,12 +58,12 @@ test('같은 위치의 회원 중 본인 우선·한 표식과 전체 원 기록
     { ...installed[0], id: 'mine', ownerId: 'me', facilityType: 'GREEN_ROOF' as const },
   ];
   const rows = installationSymbols(values, [], 'me', 5000);
-  expect(rows).toHaveLength(6);
+  expect(rows).toHaveLength(types.length);
   expect(rows.find((i) => i.cellId === 'G0')?.id).toBe('mine');
   expect(
     installationSymbols([...values].reverse(), [], 'me', 5000).find((i) => i.cellId === 'G0')?.id
   ).toBe('mine');
-  expect(values).toHaveLength(7);
+  expect(values).toHaveLength(types.length + 1);
 });
 
 test('2D 기호의 유형·위치·선택과 접근 가능한 위치 조회', () => {
@@ -78,9 +78,11 @@ test('2D 기호의 유형·위치·선택과 접근 가능한 위치 조회', ()
       />
     </svg>
   );
-  expect(html.match(/role="button"/g)).toHaveLength(6);
-  expect(html.match(/실제 치수 아님/g)).toHaveLength(6);
-  expect(html).not.toContain('<circle');
+  expect(html.match(/role="button"/g)).toHaveLength(types.length);
+  expect(html.match(/실제 치수 아님/g)).toHaveLength(types.length);
+  expect(html).toContain('lucide-container');
+  expect(html).toContain('lucide-route');
+  expect(html).toContain('lucide-droplets');
   expect(html).toContain('translate(50 0) scale(10)');
   expect(html).toContain('#ffd15b');
   expect(html).toContain('opacity="0.16"');
@@ -99,7 +101,7 @@ test('시설 필터에서 다른 시설 기호도 투명도만 낮춰 유지', (
       />
     </svg>
   );
-  expect(html.match(/role="button"/g)).toHaveLength(6);
+  expect(html.match(/role="button"/g)).toHaveLength(types.length);
   expect(html.match(/opacity="1"/g)).toHaveLength(1);
-  expect(html.match(/opacity="0.2"/g)).toHaveLength(5);
+  expect(html.match(/opacity="0.2"/g)).toHaveLength(types.length - 1);
 });

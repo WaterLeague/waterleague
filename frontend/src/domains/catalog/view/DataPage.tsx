@@ -2,7 +2,7 @@ import { ArrowUpRight, CloudRain, Map, Waves, Users, Layers3, Leaf } from 'lucid
 import { useBudget } from '../../budget/controller/useBudget';
 import { facilities, won } from '../../game/service/gameService';
 import type { FacilityType } from '../../game/entity/game';
-import costs from '../../../../../data/costs/lid-reference-v5.json';
+import costs from '../../../../../data/costs/lid-reference-v6.json';
 import maintenance from '../../../../../data/facilities/maintenance-reference-v1.json';
 import suitability from '../../../../../backend/src/main/resources/facilities/site-suitability-v1.json';
 import { dataSources } from '../service/dataSourceService';
@@ -83,7 +83,7 @@ export function DataPage({ accountId }: { accountId: string | null }) {
           aria-label="시설별 설치비와 출처"
         >
           <table className="data-cost-table">
-            <caption>현재 설치 시설 6종의 면적당 단가</caption>
+            <caption>현재 설치 시설 7종의 면적당 단가</caption>
             <thead>
               <tr>
                 <th scope="col">시설</th>
@@ -241,10 +241,12 @@ export function DataPage({ accountId }: { accountId: string | null }) {
           <div>
             <dt>빗물이용시설</dt>
             <dd>
-              빗물이용조 확정 설치와 소형 빗물통은 미지원입니다. 지도에서 저장하는 지붕·지상 위치와
-              장비 배치는 초안이며 위치 예약·예산 차감·점수에 반영되지 않습니다. 공개 장비의 명목
-              용량·외형만으로 내부 저류 단면과 배수·월류 능력을 결정하지 않으며, 실제 사용 수요가
-              없는 재이용량은 미산정입니다.
+              빗물이용조는 건물을 고르고 크기를 선택하면 지붕 집수부와 건물 옆 지상 탱크가 함께
+              설치됩니다. 예산·주간 계산·재해 제출에 같은 규칙을 적용합니다. 용량은 집수 면적×0.01m,
+              비용은 면적당 12,158원이며 규모 비례·깊이 1m·자연배수는 문헌 기반 탐색 가정입니다.
+              실제 탱크 부지·시공·배관·사용 수요를 확인한 값은 아닙니다. 재이용량은 미산정이며
+              저장량을 영구 저감 점수로 더하지 않습니다. 소형·중형·대형은 게임 크기 선택이며 인증
+              제품 규격이 아닙니다.
             </dd>
           </div>
           <div>

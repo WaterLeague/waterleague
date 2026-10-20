@@ -53,9 +53,9 @@ def source_counts(db):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--suite', choices=['account', 'security', 'street-placement', 'guest-historical', 'historical-submit-design', 'historical-design-run', 'historical-design', 'public-surface', 'infrastructure', 'league', 'analysis', 'queue', 'budget', 'physics', 'weekly', 'historical', 'watershed', 'cistern-plan', 'shared-research', 'search', 'restore', 'backend', 'all'], default='league')
+    parser.add_argument('--suite', choices=['cistern-game', 'account', 'security', 'street-placement', 'guest-historical', 'historical-submit-design', 'historical-design-run', 'historical-design', 'public-surface', 'infrastructure', 'league', 'analysis', 'queue', 'budget', 'physics', 'weekly', 'historical', 'watershed', 'cistern-plan', 'shared-research', 'search', 'restore', 'backend', 'all'], default='league')
     suite = parser.parse_args().suite
-    test_class = {'account': 'AccountFlowTests,MfaTests', 'security': SECURITY_TESTS, 'street-placement': 'SharedInstallationTests,GuestHistoricalTests,HistoricalDesignTests,ApiSecurityTests', 'guest-historical': 'GuestHistoricalTests,HistoricalWorkflowTests,HistoricalSubmissionTests,ApiSecurityTests','historical-submit-design': 'HistoricalSubmissionTests,HistoricalDesignTests,ApiSecurityTests',
+    test_class = {'cistern-game': 'CisternGameWorkflowTests', 'account': 'AccountFlowTests,MfaTests', 'security': SECURITY_TESTS, 'street-placement': 'SharedInstallationTests,GuestHistoricalTests,HistoricalDesignTests,ApiSecurityTests', 'guest-historical': 'GuestHistoricalTests,HistoricalWorkflowTests,HistoricalSubmissionTests,ApiSecurityTests','historical-submit-design': 'HistoricalSubmissionTests,HistoricalDesignTests,ApiSecurityTests',
                   'historical-design-run': 'HistoricalDesignTests,HistoricalWorkflowTests,HistoricalSubmissionTests,ApiSecurityTests',
                   'historical-design': 'HistoricalDesignTests,HistoricalWorkflowTests,HistoricalSubmissionTests,ApiSecurityTests',
                   'public-surface': 'PublicSurfaceTests,SurfacePlaybackTests,ApiSecurityTests',
@@ -127,12 +127,27 @@ def main():
                 physical.append('-Dwaterleague.integration.submission.evidence=' + str(path.with_suffix('.runs')))
             if suite == 'historical-design-run':
                 physical.append('-Dwaterleague.integration.design.run.fixture=' + str(path.with_suffix('.requests.json')))
+            if suite == 'cistern-game':
+                physical.append('-Dwaterleague.integration.cistern.fixture=' + str(path.with_suffix('.cistern.json')))
             if suite == 'restore':
                 physical.append('-Dwaterleague.integration.restore=true')
             result = subprocess.run(
                 [str(ROOT / 'backend/mvnw'), '--batch-mode', '-Dtest=' + test_class,
                  '-Dwaterleague.integration.jdbc=' + jdbc, *physical, 'verify' if suite == 'backend' else 'test'],
                 cwd=ROOT / 'backend', env=env, stdout=log, stderr=subprocess.STDOUT, timeout=600)
+            if suite == 'cistern-game' and result.returncode == 0:
+                worker_env = env | {'WL_WORKER_TEST_DSN': make_conninfo(**(config | {'dbname': test_name})),
+                    'PYTHONPATH': str(ROOT / 'simulation'),
+                    'WL_CISTERN_GAME_FIXTURE': str(path.with_suffix('.cistern.json')),
+                    'WL_CISTERN_GAME_EVIDENCE': str(path.with_suffix('.cistern-runs'))}
+                result = subprocess.run([sys.executable, '-m', 'unittest', 'discover', '-s', 'integration',
+                    '-p', 'test_cistern_game.py', '-v'], cwd=ROOT / 'simulation', env=worker_env,
+                    stdout=log, stderr=subprocess.STDOUT, timeout=180)
+                if result.returncode == 0:
+                    result = subprocess.run([str(ROOT / 'backend/mvnw'), '--batch-mode',
+                        '-Dtest=CisternGameWorkflowTests', '-Dwaterleague.integration.jdbc=' + jdbc,
+                        *physical, '-Dwaterleague.integration.cistern.readback=true', 'test'],
+                        cwd=ROOT / 'backend', env=env, stdout=log, stderr=subprocess.STDOUT, timeout=180)
             if suite in {'historical-design', 'historical-design-run'} and result.returncode == 0:
                 result = subprocess.run(
                     [str(ROOT / 'backend/mvnw'), '--batch-mode', '-Dtest=HistoricalDesignRestartTests',

@@ -28,6 +28,7 @@ export const costEstimateDto = z
       'BIORETENTION',
       'VEGETATIVE_SWALE',
       'INFILTRATION_TRENCH',
+      'RAINWATER_CISTERN',
     ]),
     quantityM2: z.number().positive(),
     unitCostKrw: z.number().positive(),

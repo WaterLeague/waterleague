@@ -1,22 +1,9 @@
+import { facilityIcons } from '../../facility/view/facilityIcons';
 import { CisternDesignForm } from './CisternDesignForm';
 import { PumpDesignForm } from './PumpDesignForm';
 import { ConduitDesignForm } from './ConduitDesignForm';
 import { useState } from 'react';
-import {
-  X,
-  Leaf,
-  Grid2X2,
-  House,
-  Waves,
-  Droplets,
-  Route,
-  Container,
-  Warehouse,
-  Fence,
-  CircleDot,
-  Network,
-  Factory,
-} from 'lucide-react';
+import { X } from 'lucide-react';
 import type { Account } from '../../account/entity/account';
 import type { FacilityType } from '../../game/entity/game';
 import type { NetworkFacility } from '../dto/watershedDto';
@@ -26,27 +13,31 @@ import { NetworkDesignForm } from './NetworkDesignForm';
 import { jobLabels, WatershedResult } from './WatershedResult';
 import './watershed.css';
 const mapFacilities = [
-  { id: 'RAIN_GARDEN', name: '빗물정원', Icon: Leaf },
-  { id: 'PERMEABLE_PAVEMENT', name: '투수포장', Icon: Grid2X2 },
-  { id: 'GREEN_ROOF', name: '녹화지붕', Icon: House },
-  { id: 'BIORETENTION', name: '생물저류시설', Icon: Waves },
-  { id: 'VEGETATIVE_SWALE', name: '식생수로', Icon: Route },
-  { id: 'INFILTRATION_TRENCH', name: '침투 트렌치', Icon: Droplets },
+  { id: 'RAIN_GARDEN', name: '빗물정원', Icon: facilityIcons.RAIN_GARDEN },
+  { id: 'PERMEABLE_PAVEMENT', name: '투수포장', Icon: facilityIcons.PERMEABLE_PAVEMENT },
+  { id: 'GREEN_ROOF', name: '녹화지붕', Icon: facilityIcons.GREEN_ROOF },
+  { id: 'BIORETENTION', name: '생물저류시설', Icon: facilityIcons.BIORETENTION },
+  { id: 'VEGETATIVE_SWALE', name: '식생수로', Icon: facilityIcons.VEGETATIVE_SWALE },
+  { id: 'INFILTRATION_TRENCH', name: '침투 트렌치', Icon: facilityIcons.INFILTRATION_TRENCH },
 ] as const;
 const networkFacilities = [
-  { id: 'BIORETENTION', name: '생물저류시설', Icon: Waves },
-  { id: 'INFILTRATION_TRENCH', name: '침투 트렌치', Icon: Droplets },
-  { id: 'VEGETATIVE_SWALE', name: '식생수로', Icon: Route },
-  { id: 'RAINWATER_CISTERN', name: '빗물이용조', Icon: Container },
-  { id: 'UNDERGROUND_STORAGE', name: '지하 저류조', Icon: Warehouse },
-  { id: 'CONDUIT', name: '배수관·암거', Icon: Network },
-  { id: 'PUMP_STATION', name: '빗물펌프장', Icon: Factory },
+  { id: 'BIORETENTION', name: '생물저류시설', Icon: facilityIcons.BIORETENTION },
+  { id: 'INFILTRATION_TRENCH', name: '침투 트렌치', Icon: facilityIcons.INFILTRATION_TRENCH },
+  { id: 'VEGETATIVE_SWALE', name: '식생수로', Icon: facilityIcons.VEGETATIVE_SWALE },
+  { id: 'RAINWATER_CISTERN', name: '빗물이용조', Icon: facilityIcons.RAINWATER_CISTERN },
+  { id: 'UNDERGROUND_STORAGE', name: '지하 저류조', Icon: facilityIcons.UNDERGROUND_STORAGE },
+  { id: 'CONDUIT', name: '배수관·암거', Icon: facilityIcons.CONDUIT },
+  { id: 'PUMP_STATION', name: '빗물펌프장', Icon: facilityIcons.PUMP_STATION },
 ] as const;
 const pendingFacilities = [
-  { name: '저류지·유수지', Icon: Fence, reason: '수위별 저류 용량·월류 구조·부지·원가 연결 필요' },
+  {
+    name: '저류지·유수지',
+    Icon: facilityIcons.DETENTION,
+    reason: '수위별 저류 용량·월류 구조·부지·원가 연결 필요',
+  },
   {
     name: '빗물받이',
-    Icon: CircleDot,
+    Icon: facilityIcons.INLET,
     reason: '유입부 단면·기준고·관망과 지표의 같은 좌표계 연결 필요',
   },
 ];
@@ -113,7 +104,7 @@ export function WatershedResearchPanel({
       )}
       {onCisternPlan && (
         <button className="watershed-all-candidates" onClick={onCisternPlan}>
-          <Container size={17} /> 빗물이용조 · 지도에서 집수·저장 위치 계획
+          <facilityIcons.RAINWATER_CISTERN size={17} /> 빗물이용조 · 지도에서 집수·저장 위치 계획
         </button>
       )}
       <h3>

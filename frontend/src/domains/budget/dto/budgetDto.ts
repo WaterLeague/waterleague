@@ -6,6 +6,7 @@ const facilityType = z.enum([
   'BIORETENTION',
   'VEGETATIVE_SWALE',
   'INFILTRATION_TRENCH',
+  'RAINWATER_CISTERN',
 ]);
 const amount = z.number().finite().nonnegative();
 export const budgetAccountingDto = z.object({

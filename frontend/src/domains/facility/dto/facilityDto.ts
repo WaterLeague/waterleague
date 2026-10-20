@@ -93,6 +93,7 @@ export const facilityCatalogDto = z
       'EPA_LID_PUBLIC_DESIGNS_V2',
       'EPA_LID_PUBLIC_DESIGNS_V3',
       'EPA_LID_PUBLIC_DESIGNS_V4',
+      'EPA_LID_PUBLIC_DESIGNS_V5',
     ]),
     evidence: z.literal('PUBLIC_REFERENCE_DESIGN_NOT_SITE_MEASURED'),
     source: facilitySourceDto,
@@ -103,6 +104,7 @@ export const facilityCatalogDto = z
       BIORETENTION: facilityProfileDto.optional(),
       VEGETATIVE_SWALE: facilityProfileDto.optional(),
       INFILTRATION_TRENCH: facilityProfileDto.optional(),
+      RAINWATER_CISTERN: facilityProfileDto.optional(),
     }),
     limitations: z.array(z.string()),
   })
@@ -112,7 +114,8 @@ export const facilityCatalogDto = z
       (!['EPA_LID_PUBLIC_DESIGNS_V3', 'EPA_LID_PUBLIC_DESIGNS_V4'].includes(value.id) ||
         value.profiles.VEGETATIVE_SWALE !== undefined) &&
       (value.id !== 'EPA_LID_PUBLIC_DESIGNS_V4' ||
-        value.profiles.INFILTRATION_TRENCH !== undefined),
+        value.profiles.INFILTRATION_TRENCH !== undefined) &&
+      (value.id !== 'EPA_LID_PUBLIC_DESIGNS_V5' || value.profiles.RAINWATER_CISTERN !== undefined),
     { message: '생물저류 설계 제원 누락' }
   );
 export type FacilityCatalog = z.infer<typeof facilityCatalogDto>;

@@ -1,17 +1,10 @@
+import { facilityIcons } from '../../facility/view/facilityIcons';
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { Leaf, Grid2X2, House, Sprout, Waves, Route } from 'lucide-react';
+
 import type { HistoricalDraft } from '../entity/historical';
 import { facilities } from '../../game/service/gameService';
 import { installationTimelineGroups } from '../service/historicalTimelineService';
 
-const icons = {
-  RAIN_GARDEN: Leaf,
-  PERMEABLE_PAVEMENT: Grid2X2,
-  GREEN_ROOF: House,
-  BIORETENTION: Sprout,
-  VEGETATIVE_SWALE: Waves,
-  INFILTRATION_TRENCH: Route,
-};
 const clock = new Intl.DateTimeFormat('ko-KR', {
   hour: '2-digit',
   minute: '2-digit',
@@ -55,7 +48,7 @@ export function HistoricalInstallationTrack({
       <div className="historical-track-events" aria-label="타임라인 설치 기록">
         {groups.map((group) => {
           const event = group.events[0];
-          const Icon = icons[event.draft.facilityType];
+          const Icon = facilityIcons[event.draft.facilityType];
           const style = { left: `calc(12px + (100% - 24px) * ${group.position})` };
           const reached = event.seconds <= elapsed;
           return group.events.length === 1 ? (
@@ -91,7 +84,7 @@ export function HistoricalInstallationTrack({
                 }}
               >
                 {group.events.map((entry) => {
-                  const EntryIcon = icons[entry.draft.facilityType];
+                  const EntryIcon = facilityIcons[entry.draft.facilityType];
                   return (
                     <button
                       key={entry.draft.marker.id}

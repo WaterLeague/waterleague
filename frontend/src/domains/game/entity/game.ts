@@ -4,11 +4,16 @@ export type RainfallUse =
   | 'OBSERVED_REPLAY';
 export type LegacyFacilityType = 'RAIN_GARDEN' | 'PERMEABLE_PAVEMENT' | 'GREEN_ROOF';
 export type FacilityType =
-  LegacyFacilityType | 'BIORETENTION' | 'VEGETATIVE_SWALE' | 'INFILTRATION_TRENCH';
+  | LegacyFacilityType
+  | 'BIORETENTION'
+  | 'VEGETATIVE_SWALE'
+  | 'INFILTRATION_TRENCH'
+  | 'RAINWATER_CISTERN';
 export type UnitCosts = Record<LegacyFacilityType, number> & {
   BIORETENTION?: number;
   VEGETATIVE_SWALE?: number;
   INFILTRATION_TRENCH?: number;
+  RAINWATER_CISTERN?: number;
 };
 export interface Placement {
   cellId: string;

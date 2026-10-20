@@ -7,6 +7,7 @@ export const candidateTypes = [
   'BIORETENTION',
   'VEGETATIVE_SWALE',
   'INFILTRATION_TRENCH',
+  'RAINWATER_CISTERN',
 ] as const;
 export type GroundCandidate = [
   cellId: string,
@@ -18,7 +19,7 @@ export const candidateKey = (row: GroundCandidate) => row[1] + ':' + row[0];
 export const candidateMask = (type: FacilityType | '') =>
   type ? 1 << candidateTypes.indexOf(type) : 0;
 export function candidateMatches(row: GroundCandidate, type: FacilityType | '') {
-  return !type || !!(row[2] & candidateMask(type));
+  return !type || !!(row[2] & candidateMask(type === 'RAINWATER_CISTERN' ? 'GREEN_ROOF' : type));
 }
 export function candidateBounds(center: [number, number], distance: number) {
   const radius = Math.max(300, distance * 1.1);

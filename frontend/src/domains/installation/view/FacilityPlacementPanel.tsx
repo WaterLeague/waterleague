@@ -1,7 +1,9 @@
+import { facilityIcons } from '../../facility/view/facilityIcons';
 import { placementAreaLimit } from '../../installation/service/placementAreaLimit';
+import { CisternSizeControl } from './CisternSizeControl';
 import { unitCost } from '../../game/service/gameService';
 import type { ReactNode } from 'react';
-import { Leaf, Grid2X2, House, Waves, Check, Trash2, X } from 'lucide-react';
+import { Check, Trash2, X } from 'lucide-react';
 import type { SharedSite } from '../entity/installation';
 import type { FacilityType } from '../../game/entity/game';
 import { facilities, won } from '../../game/service/gameService';
@@ -10,14 +12,7 @@ import { CostEstimate } from './CostEstimate';
 import { FacilityDesignEvidence } from '../../facility/view/FacilityDesignEvidence';
 import { PhysicalInputEvidence } from './PhysicalInputEvidence';
 import { sitePlacementRestricted } from '../service/siteSuitabilityService';
-const icons = {
-  RAIN_GARDEN: Leaf,
-  PERMEABLE_PAVEMENT: Grid2X2,
-  GREEN_ROOF: House,
-  BIORETENTION: Waves,
-  VEGETATIVE_SWALE: Waves,
-  INFILTRATION_TRENCH: Waves,
-};
+
 type Placed = {
   facilityType: FacilityType;
   areaM2: number;
@@ -132,7 +127,10 @@ export function FacilityPlacementPanel(p: FacilityPlacementProps) {
                 {occupied.planned ? '설치 예정' : '설치 완료'}
               </h3>
               <p>
-                {occupied.ownerName} · {occupied.areaM2.toLocaleString('ko-KR')} m²
+                {occupied.ownerName} ·{' '}
+                {occupied.facilityType === 'RAINWATER_CISTERN'
+                  ? `이용조 ${(occupied.areaM2 * 0.01).toLocaleString('ko-KR')}㎥`
+                  : `${occupied.areaM2.toLocaleString('ko-KR')} m²`}
               </p>
               <strong>{won(occupied.cost)}</strong>
               {p.research && occupied.onRemove ? (
@@ -165,7 +163,7 @@ export function FacilityPlacementPanel(p: FacilityPlacementProps) {
             >
               <div className="facility-options" aria-label="설치 시설 종류">
                 {site.allowedTypes.map((t) => {
-                  const Icon = icons[t];
+                  const Icon = facilityIcons[t];
                   return (
                     <button
                       type="button"
@@ -183,39 +181,45 @@ export function FacilityPlacementPanel(p: FacilityPlacementProps) {
               {type && (
                 <p className="shared-facility-description">{facilities[type].description}</p>
               )}
-              <label className="area-input">
-                설치 면적{' '}
-                <span>
+              {type === 'RAINWATER_CISTERN' ? (
+                <CisternSizeControl area={numericArea} maxArea={maxArea} onArea={p.onArea} />
+              ) : (
+                <>
+                  <label className="area-input">
+                    설치 면적{' '}
+                    <span>
+                      <input
+                        type="number"
+                        min="0.01"
+                        max={maxArea}
+                        step="0.01"
+                        required
+                        value={area}
+                        onChange={(e) => p.onArea(e.target.value)}
+                      />{' '}
+                      m²
+                    </span>
+                  </label>
                   <input
-                    type="number"
+                    className="area-slider"
+                    aria-label="설치 면적 조절"
+                    type="range"
                     min="0.01"
                     max={maxArea}
                     step="0.01"
-                    required
-                    value={area}
+                    value={Math.min(maxArea, numericArea || 0.01)}
                     onChange={(e) => p.onArea(e.target.value)}
-                  />{' '}
-                  m²
-                </span>
-              </label>
-              <input
-                className="area-slider"
-                aria-label="설치 면적 조절"
-                type="range"
-                min="0.01"
-                max={maxArea}
-                step="0.01"
-                value={Math.min(maxArea, numericArea || 0.01)}
-                onChange={(e) => p.onArea(e.target.value)}
-              />
-              <div className="shared-area-limit">
-                최대 {maxArea.toLocaleString('ko-KR')} m² ·{' '}
-                {type === 'VEGETATIVE_SWALE'
-                  ? '폭 2m 직선 배치 한도'
-                  : type === 'INFILTRATION_TRENCH'
-                    ? '폭 1m 직선 배치 한도'
-                    : '원형 공개 도형의 설계 면적 상한'}
-              </div>
+                  />
+                  <div className="shared-area-limit">
+                    최대 {maxArea.toLocaleString('ko-KR')} m² ·{' '}
+                    {type === 'VEGETATIVE_SWALE'
+                      ? '폭 2m 직선 배치 한도'
+                      : type === 'INFILTRATION_TRENCH'
+                        ? '폭 1m 직선 배치 한도'
+                        : '원형 공개 도형의 설계 면적 상한'}
+                  </div>
+                </>
+              )}
               {(type === 'VEGETATIVE_SWALE' || type === 'INFILTRATION_TRENCH') && (
                 <p className="micro-note">
                   폭 {type === 'VEGETATIVE_SWALE' ? 2 : 1}m × 길이{' '}
@@ -225,12 +229,14 @@ export function FacilityPlacementPanel(p: FacilityPlacementProps) {
                   m
                 </p>
               )}
-              <p className="micro-note">
-                도형 밖 면적 배치만 제한합니다. 실제 시공 가능 면적과 구조안전은 확인되지
-                않았습니다.
-                {site.inflowPolicy === 'DIRECT_RAINFALL_ONLY' &&
-                  ' 시설 자체에 내리는 비만 계산하며, 주변 유출의 시설 유입은 가산하지 않습니다.'}
-              </p>
+              {type !== 'RAINWATER_CISTERN' && (
+                <p className="micro-note">
+                  도형 밖 면적 배치만 제한합니다. 실제 시공 가능 면적과 구조안전은 확인되지
+                  않았습니다.
+                  {site.inflowPolicy === 'DIRECT_RAINFALL_ONLY' &&
+                    ' 시설 자체에 내리는 비만 계산하며, 주변 유출의 시설 유입은 가산하지 않습니다.'}
+                </p>
+              )}
               {type && <FacilityDesignEvidence site={site} type={type} />}
               {type && (
                 <CostEstimate

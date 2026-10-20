@@ -67,6 +67,7 @@ export function PhysicsPanel({ installationId }: { installationId: string }) {
               </div>
             )}
           </dl>
+          {result.cistern && <CisternGameEvidence value={result.cistern} />}
           {result.runoffComparison && (
             <RunoffComparison value={result.runoffComparison} contract={result.designContract} />
           )}
@@ -85,7 +86,9 @@ export function PhysicsPanel({ installationId }: { installationId: string }) {
             <p>
               {result.inflowPolicy === 'DIRECT_RAINFALL_ONLY'
                 ? '시설 자체 강우만 처리하며, 배수 연결이 확인되지 않은 주변 표면의 유출은 가산하지 않습니다.'
-                : '기존 설치 당시의 유입 조건을 보존한 계산입니다.'}
+                : result.inflowPolicy === 'SELECTED_ROOF_RUNOFF_TO_COVERED_CISTERN'
+                  ? '선택한 지붕 유출을 덮개 이용조로 보내는 탐색 설계입니다. 배수는 방류이며 재이용량은 미산정입니다. 남은 저류량은 영구 저감으로 점수에 가산하지 않습니다.'
+                  : '기존 설치 당시의 유입 조건을 보존한 계산입니다.'}
             </p>
             <p>
               설치 당시 입력과 실제 기상자료로 계산한 결과입니다. 후보별 공간자료와 문헌 추정,
@@ -104,3 +107,4 @@ export function PhysicsPanel({ installationId }: { installationId: string }) {
     </section>
   );
 }
+import { CisternGameEvidence } from '../../facility/view/CisternGameEvidence';

@@ -20,7 +20,9 @@ def archive(request, model, placement, directory):
             raise CostEvidenceError()
         value = json.loads(raw, parse_float=Decimal)
         link = model['sharedSiteSource']
-        source = model['costModel']['facilities'][placement['facilityType']]
+        # 출처에 포함된 소수 규격도 원장과 같은 십진수로 비교한다.
+        source = json.loads(json.dumps(model['costModel']['facilities'][placement['facilityType']],
+                                       allow_nan=False), parse_float=Decimal)
         unit = Decimal(str(model['unitCosts'][placement['facilityType']]))
         area = Decimal(str(placement['areaM2']))
         amount = area * unit

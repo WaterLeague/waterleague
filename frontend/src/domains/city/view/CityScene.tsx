@@ -1009,9 +1009,15 @@ function DistrictBuildings({
         <Buildings
           key={key}
           buildings={values.buildings}
-          available={values.eligible && (!facilityType || facilityType === 'GREEN_ROOF')}
+          available={
+            values.eligible &&
+            (!facilityType || facilityType === 'GREEN_ROOF' || facilityType === 'RAINWATER_CISTERN')
+          }
           opacity={buildingOpacity(
-            values.eligible && (!facilityType || facilityType === 'GREEN_ROOF'),
+            values.eligible &&
+              (!facilityType ||
+                facilityType === 'GREEN_ROOF' ||
+                facilityType === 'RAINWATER_CISTERN'),
             values.other
           )}
           onSelect={selectBuilding}

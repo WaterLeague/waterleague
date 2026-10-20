@@ -136,6 +136,7 @@ def direct_surface(model, placement, result, input_files):
     cell, = model['cells']
     geometry = model['geometrySource']
     total, installed = decimal(cell['areaM2']), decimal(placement['areaM2'])
+    cistern = placement['facilityType'] == 'RAINWATER_CISTERN'
     require(installed <= decimal(cell['maxAreaM2']) <= total, 'FLOW_GRAPH_CAPTURE_AREA_EXCEEDED')
     candidate, facility, outlet, remainder = [prefix + cell['id'] for prefix in
                                              ('candidate:', 'facility:', 'surface-outlet:', 'remainder:')]
@@ -154,7 +155,10 @@ def direct_surface(model, placement, result, input_files):
              'districtId': cell['districtId'], 'areaM2': amount(total),
              'geometrySha256': cell['geometrySha256'], 'source': 'siteCatalog'},
             {'id': facility, 'kind': 'FACILITY', 'facilityType': placement['facilityType'],
-             'areaM2': amount(installed), 'source': 'placement.json'},
+             'areaM2': amount(installed), 'source': 'placement.json',
+             'areaRole': 'ROOF_COLLECTION_AREA' if cistern else 'FACILITY_FOOTPRINT',
+             **({'tankLocation': 'UNCONFIRMED', 'capacityM3': result['cistern']['capacityM3']}
+                if cistern else {})},
             {'id': remainder, 'kind': 'MODEL_SURFACE_REMAINDER', 'areaM2': amount(total-installed),
              'geometry': None, 'source': 'model.json'},
             {'id': outlet, 'kind': 'COMPUTATIONAL_SURFACE_OUTLET', 'drainageNodeId': None,
@@ -162,7 +166,7 @@ def direct_surface(model, placement, result, input_files):
         ],
         'edges': [
             {'id': 'source-candidate', 'from': original, 'to': candidate, 'kind': 'SOURCE_DERIVATION'},
-            {'id': 'facility-direct-rain', 'from': candidate, 'to': facility, 'kind': 'DIRECT_RAIN_AREA'},
+            {'id': 'facility-direct-rain', 'from': candidate, 'to': facility, 'kind': 'ASSUMED_ROOF_RUNOFF_COLLECTION' if placement['facilityType'] == 'RAINWATER_CISTERN' else 'DIRECT_RAIN_AREA'},
             {'id': 'remaining-direct-rain', 'from': candidate, 'to': remainder, 'kind': 'DIRECT_RAIN_AREA'},
             {'id': 'facility-outlet', 'from': facility, 'to': outlet, 'kind': 'SURFACE_AND_LID_DRAINAGE'},
             {'id': 'remainder-outlet', 'from': remainder, 'to': outlet, 'kind': 'BYPASS_SURFACE_RUNOFF'},
@@ -185,7 +189,9 @@ def direct_surface(model, placement, result, input_files):
                               'end': result['baseline']['final']['at'],
                               'method': result['runoffComparison']['method']}],
         'unresolved': ['EXTERNAL_CATCHMENT_AND_DRAINAGE_NETWORK_NOT_CONNECTED',
-                       'MODEL_AREA_REMAINDER_HAS_NO_MEASURED_SUBPOLYGON'],
+                       'MODEL_AREA_REMAINDER_HAS_NO_MEASURED_SUBPOLYGON']
+                      + (['TANK_LOCATION_AND_PIPE_ROUTE_UNCONFIRMED',
+                          'ROOF_COLLECTION_AND_DRAINAGE_ARE_DESIGN_ASSUMPTIONS'] if cistern else []),
     })
 
 

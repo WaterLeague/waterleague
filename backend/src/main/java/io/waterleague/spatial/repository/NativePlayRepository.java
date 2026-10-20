@@ -16,6 +16,7 @@ import tools.jackson.databind.JsonNode;
 public class NativePlayRepository {
   private final NativePlayBundle bundle;
   private final JsonService json;
+  private final io.waterleague.installation.repository.CisternGameCatalog cistern;
 
   private record State(Path database, BasicFileAttributes identity, JsonNode metadata) {}
 
@@ -24,9 +25,10 @@ public class NativePlayRepository {
   private final Semaphore queries = new Semaphore(4);
   private volatile Map<String, Integer> counts;
 
-  public NativePlayRepository(NativePlayBundle bundle, JsonService json) {
+  public NativePlayRepository(NativePlayBundle bundle, JsonService json, io.waterleague.installation.repository.CisternGameCatalog cistern) {
     this.bundle = bundle;
     this.json = json;
+    this.cistern = cistern;
     var values = new HashSet<String>();
     bundle
         .manifest()
@@ -104,7 +106,7 @@ public class NativePlayRepository {
   }
 
   public JsonNode metadata() {
-    return state().metadata().deepCopy();
+    return cistern.metadata(state().metadata());
   }
 
   public JsonNode envelope() {
@@ -143,7 +145,7 @@ public class NativePlayRepository {
       query.setString(2, candidate);
       try (var rows = query.executeQuery()) {
         if (!rows.next()) throw new DomainException(ErrorCode.RESOURCE_NOT_FOUND);
-        return json.tree(rows.getString(1));
+        return cistern.cell(json.tree(rows.getString(1)));
       }
     } catch (DomainException e) {
       throw e;
@@ -164,7 +166,7 @@ public class NativePlayRepository {
       query.setString(2, objectId);
       try (var rows = query.executeQuery()) {
         if (!rows.next()) throw new DomainException(ErrorCode.RESOURCE_NOT_FOUND);
-        return json.tree(rows.getString(1));
+        return cistern.cell(json.tree(rows.getString(1)));
       }
     } catch (DomainException e) {
       throw e;
@@ -194,7 +196,7 @@ public class NativePlayRepository {
         || Math.abs(y) > 10_000_000
         || offset < 0
         || offset > 300000
-        || mask != null && !Set.of(1, 2, 4, 8, 16, 32).contains(mask)
+        || mask != null && !Set.of(1, 2, 4, 8, 16, 32, 64).contains(mask)
         || role != null && !Set.of("ROAD_AREA", "SIDEWALK_AREA", "PARKING_AREA", "OTHER").contains(role))
       requestInvalid();
     String filter =
@@ -217,7 +219,7 @@ public class NativePlayRepository {
       for (var statement : List.of(count, query)) {
         index = 1;
         statement.setString(index++, district);
-        if (mask != null) statement.setInt(index++, mask);
+        if (mask != null) statement.setInt(index++, mask == 64 ? 4 : mask);
         if (role != null && !role.equals("OTHER")) statement.setString(index++, role);
       }
       query.setDouble(index++, x);
@@ -232,7 +234,7 @@ public class NativePlayRepository {
       }
       var cells = new ArrayList<JsonNode>();
       try (var rows = query.executeQuery()) {
-        while (rows.next()) cells.add(json.tree(rows.getString(1)));
+        while (rows.next()) cells.add(cistern.cell(json.tree(rows.getString(1))));
       }
       return new Page(List.copyOf(cells), total);
     } catch (DomainException e) {
@@ -294,7 +296,7 @@ public class NativePlayRepository {
           if (NativeGeometry.polygon(cell.path("geometry"), cell.path("areaM2").asDouble())
               .intersects(viewport)) {
             if (result.size() >= limit) dense();
-            result.add(cell);
+            result.add(cistern.cell(cell));
           }
         }
       }

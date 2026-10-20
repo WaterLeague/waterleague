@@ -17,6 +17,8 @@ public class FacilityRepository {
   private final JsonNode legacy;
   private final JsonNode latest;
   private final JsonNode v3;
+  private final JsonNode v5;
+  public static final String V5_SHA256 = "0b37b1779f60533bb344158eef8a6ec1510d60a533ec99d81c3e98324b02c62e";
   private final JsonNode pavementMaintenance;
   public static final String PAVEMENT_MAINTENANCE_SHA256 =
       "a9166ec93e6a6af4c460028f438c33fc67af0a1675502491e04f248c8e7dfd88";
@@ -28,6 +30,7 @@ public class FacilityRepository {
   public FacilityRepository(JsonService json) throws IOException {
     catalog = load(json, 2, SHA256);
     latest = load(json, 4, LATEST_SHA256);
+    v5 = load(json, 5, V5_SHA256);
     v3 = load(json, 3, V3_SHA256);
     legacy = load(json, 1, LEGACY_SHA256);
     pavementMaintenance =
@@ -53,6 +56,8 @@ public class FacilityRepository {
   public JsonNode v3() {
     return v3.deepCopy();
   }
+
+  public JsonNode v5() { return v5.deepCopy(); }
 
   public JsonNode latest() {
     return latest.deepCopy();

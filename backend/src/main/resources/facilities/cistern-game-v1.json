@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "id": "CISTERN_GAME_EXPLORATION_V1",
+  "facilityType": "RAINWATER_CISTERN",
+  "eligibleKind": "ROOF",
+  "baseFacility": "GREEN_ROOF",
+  "facilityDesignSet": {
+    "id": "EPA_LID_PUBLIC_DESIGNS_V5",
+    "sha256": "0b37b1779f60533bb344158eef8a6ec1510d60a533ec99d81c3e98324b02c62e"
+  },
+  "cost": {
+    "sourceTitle": "친환경시범마을의 LID 적용에 따른 물순환 효과 및 비용편익 분석",
+    "sourceUrl": "https://journal.cricit.kr/jkswe/XmlViewer/f253405",
+    "sourceSha256": "28f0c3969bbc2f1dd08e03fec2fddb70bfdecdfc4032bd871158eb3a1734e207",
+    "referenceYear": 2018,
+    "evidence": "PUBLISHED_QUOTE_WITH_EXPLICIT_AREA_SCALING_ASSUMPTION",
+    "scope": "지붕 집수면적 환산 이용조 참고비",
+    "unitCost": 12158,
+    "includes": [
+      "논문 C 업체 2.35m³ 물통·배관·펌프 등 참고 견적"
+    ],
+    "excludes": [
+      "현장 기초·굴착·구조 보강",
+      "부가세 포함 여부 미확인",
+      "서울 현재 물가 보정",
+      "실제 사용 수요·펌프 운전",
+      "유지관리"
+    ],
+    "note": "235m² 지붕·2.35m³·2,857,000원을 집수 면적당 12,158원으로 올림. 크기에 따른 비용 비례는 게임 가정이며 실제 규모별 견적 아님. 펌프 견적을 펌프 운전으로 계산하지 않음.",
+    "derivation": {
+      "roofAreaM2": 235,
+      "capacityM3": 2.35,
+      "referenceCostKrw": 2857000,
+      "formula": "ceil(2857000 / 235)",
+      "rounding": "CEILING_KRW_PER_M2",
+      "scaling": "EXPLICIT_GAME_ASSUMPTION_NOT_MARKET_PRICE"
+    }
+  },
+  "capacityPerRoofAreaM": 0.01,
+  "storageDepthMm": 1000,
+  "drainCoefficient": 10.10999884244483,
+  "drainExponent": 0.5,
+  "drainOffsetMm": 0,
+  "drainDelayHours": 0,
+  "limitations": [
+    "이용조 용량/비용은 백종석 외 2018 논문(doi:10.15681/KSWE.2017.34.1.57)의 지붕 235m²·2.35m³·C 견적을 참조한다. 실제 제품·서울 시공 견적 아님",
+    "이용조 선택 면적은 지붕 집수면이다. 물통 배치는 기호이며 실제 탱크 설치 위치·구조 하중·배관 경로 승인 아님",
+    "깊이 1m·배수구·일정 단면·집수/비용 비례는 명시한 설계 가정. 문헌의 현장 검증 또는 논문 전체 재현 아님",
+    "이용조는 지붕 유출만 집수하며 덮개 탱크의 직접 강우·증발·침투는 없음. 탱크 계산 영역은 중복 강우가 없는 가상 용기이고 지붕/토지 면적을 추가 확보한 것으로 해석하지 않음",
+    "배수는 방류이며 실제 사용 수요·재이용량은 미산정. 저류량은 기존 체적 점수에서 영구 저감으로 인정하지 않음"
+  ]
+}

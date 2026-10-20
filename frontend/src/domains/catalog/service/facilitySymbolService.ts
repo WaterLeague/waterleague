@@ -10,6 +10,7 @@ import type { FacilityType } from '../../game/entity/game';
 import { CatalogError } from '../exception/CatalogError';
 
 export const facilitySymbolPaths: Record<FacilityType, string[]> = {
+  RAINWATER_CISTERN: ['M-.8 -.7 H.8 V.7 H-.8 Z', 'M-.8 -.4 H.8 M.8 .4 H1.2 V.8'],
   RAIN_GARDEN: [
     'M-1 .7 Q-1.2 -.6 0 -.65 Q1.2 -.6 1 .7 Z',
     'M-.55 .15 L-.3 -.65 L0 .15 Z M.1 .3 L.4 -.4 L.7 .3 Z',
@@ -56,7 +57,11 @@ export function facilitySymbolGeometry(type: FacilityType) {
     add(new BoxGeometry(w, h, d), color, x, y, z);
   const plant = (x: number, z: number, base: number, height = 0.65) =>
     add(new ConeGeometry(0.22, height, 5), '#4b7843', x, base + height / 2, z);
-  if (type === 'PERMEABLE_PAVEMENT') {
+  if (type === 'RAINWATER_CISTERN') {
+    box(1.4, 1.3, 1.1, '#548eae');
+    box(1.5, 0.12, 1.2, '#b2c8d4', 0, 1.36);
+    box(0.5, 0.12, 0.12, '#7b929f', 0.85, 0.2);
+  } else if (type === 'PERMEABLE_PAVEMENT') {
     box(2, 0.12, 1.4, '#567e89');
     for (let x = 0; x < 4; x++)
       for (let z = 0; z < 3; z++)
