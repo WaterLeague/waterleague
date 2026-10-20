@@ -46,11 +46,25 @@
     }).observe({ type: 'longtask', buffered: true });
   addEventListener('DOMContentLoaded', () => {
     const panel = document.createElement('aside');
+    panel.id = 'native-load-panel';
     panel.style.cssText =
       'position:fixed;right:8px;top:8px;z-index:1000;background:white;border:2px solid #874;padding:8px;width:350px;font:11px system-ui';
     panel.innerHTML =
       '<strong>로컬 배포 빌드 로딩 계측</strong><p id="native-load-status"></p><button id="native-load-capture">현재 로딩 결과 기록</button><pre id="native-load-result" style="white-space:pre-wrap;max-height:200px;overflow:auto">측정 중</pre>';
     document.body.append(panel);
+    const toggle = document.createElement('button');
+    toggle.id = 'native-load-toggle';
+    toggle.style.cssText =
+      'position:fixed;right:8px;bottom:8px;z-index:1001;background:white;padding:6px;border:1px solid #874;font:11px system-ui';
+    toggle.textContent = '계측 숨기기';
+    toggle.setAttribute('aria-controls', panel.id);
+    toggle.setAttribute('aria-expanded', 'true');
+    toggle.onclick = () => {
+      panel.hidden = !panel.hidden;
+      toggle.textContent = panel.hidden ? '계측 보기' : '계측 숨기기';
+      toggle.setAttribute('aria-expanded', String(!panel.hidden));
+    };
+    document.body.append(toggle);
     const status = panel.querySelector('#native-load-status');
     const output = panel.querySelector('#native-load-result');
     const timer = setInterval(() => {
@@ -106,6 +120,7 @@
           userAgent: navigator.userAgent,
           productionBundle: true,
           tlsDeploymentMeasured: false,
+          labEndpointIntentionallyUnavailable: script.dataset.blockLab === 'true',
         },
         null,
         2

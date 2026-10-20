@@ -1,208 +1,37 @@
-import { unitCost } from '../service/gameService';
-import { useState, useEffect, useRef } from 'react';
-import {
-  ArrowRight,
-  ArrowUpRight,
-  CloudRain,
-  Layers3,
-  Plus,
-  Undo2,
-  Redo2,
-  Save,
-  Play,
-  Check,
-  Trash2,
-  Leaf,
-  Grid2X2,
-  House,
-  Waves,
-  LogOut,
-  Trophy,
-  FolderOpen,
-  Menu,
-  X,
-  CircleHelp,
-} from 'lucide-react';
-import { useGame } from '../controller/useGame';
-import { useCatalog } from '../../catalog/controller/useCatalog';
-import type { FacilityType } from '../entity/game';
-import { facilities, format, won, totalCost } from '../service/gameService';
-import * as repo from '../repository/gameRepository';
-import { logout } from '../../account/repository/accountRepository';
-import { ApprovalPage } from '../../administration/view/ApprovalPage';
+import { useEffect, useRef, useState } from 'react';
+import { ArrowUpRight, LogOut, X } from 'lucide-react';
+import { useAccountSession } from '../../account/controller/useAccountSession';
 import { memberTypeNames } from '../../account/entity/account';
 import { AuthDialog } from '../../account/view/AuthDialog';
-import { Hydrograph } from './Hydrograph';
+import { ApprovalPage } from '../../administration/view/ApprovalPage';
 import { CompetitionPage } from '../../league/view/CompetitionPage';
-import type { League } from '../../league/entity/league';
-import { exceedsLeagueLimits, totalArea } from '../../league/service/leagueService';
 import { DataPage } from '../../catalog/view/DataPage';
-import { MapViewport } from '../../catalog/view/MapViewport';
-import { RoundReport } from './RoundReport';
-import { matchesEvaluatedDesign } from '../service/roundService';
-import { assessPlacementDraft } from '../service/placementDraftService';
-import { PlayGuide } from './PlayGuide';
 import { DisasterMode } from '../../disaster/view/DisasterMode';
-import { FullscreenButton } from './FullscreenButton';
-import './game-viewport.css';
 import { CityExplorer } from '../../city/view/CityExplorer';
+import { FullscreenButton } from './FullscreenButton';
 import { useGameInteractions } from '../../../shared/ui/useGameInteractions';
-const icons = {
-  RAIN_GARDEN: Leaf,
-  PERMEABLE_PAVEMENT: Grid2X2,
-  GREEN_ROOF: House,
-  BIORETENTION: Waves,
-  VEGETATIVE_SWALE: Waves,
-  INFILTRATION_TRENCH: Waves,
-};
+import './game-viewport.css';
+
+type Tab = 'city' | 'missions' | 'leaderboard' | 'data' | 'admin';
+
 export function GamePage() {
   useGameInteractions();
-  const g = useGame();
+  const session = useAccountSession();
   const shell = useRef<HTMLDivElement>(null);
   const [cityDistrict, setCityDistrict] = useState('');
-  const [tab, setTab] = useState<'city' | 'missions' | 'studio' | 'leaderboard' | 'data' | 'admin'>(
-    'city'
-  );
-  const catalog = useCatalog(tab === 'studio');
-  const [report, setReport] = useState(false);
-  const [feedback, setFeedback] = useState('');
-  const playHeading = useRef<HTMLHeadingElement>(null);
-  const [showGuide, setShowGuide] = useState(true);
-  const guideToggle = useRef<HTMLButtonElement>(null);
-  const calculateButton = useRef<HTMLButtonElement>(null);
+  const [tab, setTab] = useState<Tab>('city');
+  const [auth, setAuth] = useState(false);
   useEffect(() => {
-    setReport(g.job?.state === 'SUCCEEDED');
-  }, [g.job?.id, g.job?.state]);
-  const [selected, setSelected] = useState<string | null>(null),
-    [type, setType] = useState<FacilityType>('RAIN_GARDEN'),
-    [area, setArea] = useState(40);
-  const [auth, setAuth] = useState(false),
-    [showList, setShowList] = useState(false),
-    [showSaves, setShowSaves] = useState(false);
-  const listToggle = useRef<HTMLButtonElement>(null);
-  const listPanel = useRef<HTMLDivElement>(null);
-  const areaInput = useRef<HTMLInputElement>(null);
-  const [focusEditor, setFocusEditor] = useState(false);
-  useEffect(() => {
-    if (showList) {
-      const panel = listPanel.current;
-      (
-        panel?.querySelector<HTMLButtonElement>('[aria-pressed="true"]') ??
-        panel?.querySelector<HTMLButtonElement>('[aria-pressed]')
-      )?.focus();
-    }
-  }, [showList]);
-  useEffect(() => {
-    if (focusEditor && areaInput.current) {
-      areaInput.current.focus();
-      setFocusEditor(false);
-    }
-  }, [focusEditor, selected]);
-  function closeList() {
-    setShowList(false);
-    listToggle.current?.focus();
-  }
-  useEffect(() => {
-    if (g.account?.role === 'ADMIN') setTab('admin');
-    else setTab((t) => (t === 'admin' ? 'missions' : t));
-  }, [g.account?.id, g.account?.role]);
+    if (session.account?.role === 'ADMIN') setTab('admin');
+    else setTab((current) => (current === 'admin' ? 'missions' : current));
+  }, [session.account?.id, session.account?.role]);
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, [tab]);
-  const [activeLeague, setActiveLeague] = useState<League | null>(null);
-  const lab = g.lab;
-  useEffect(() => {
-    setSelected(null);
-    setFeedback('');
-  }, [lab?.modelHash]);
-  const mapEntry = catalog.data?.maps.find((entry) =>
-    entry.modelHashes.includes(lab?.modelHash ?? '')
-  );
-  const activeMap = mapEntry?.map ?? null;
-  const mapError =
-    catalog.error ||
-    (catalog.data && lab && !activeMap ? '이 모델에 연결된 지도 버전을 찾을 수 없습니다.' : '');
-  useEffect(() => {
-    if (activeLeague && lab && activeLeague.rules.modelHash !== lab.modelHash)
-      setActiveLeague(null);
-  }, [lab?.modelHash, activeLeague]);
-  const budget = activeLeague?.rules.budget ?? lab?.model.budget ?? 0;
-  const allowedTypes =
-    activeLeague?.rules.allowedTypes ??
-    (Object.keys(facilities) as FacilityType[]).filter(
-      (t) => lab?.model.unitCosts[t] !== undefined
-    );
-  const cell = lab?.model.cells.find((c) => c.id === selected);
-  const placement = g.placements.find((p) => p.cellId === selected);
-  useEffect(() => {
-    if (placement) {
-      setType(placement.facilityType);
-      setArea(placement.areaM2);
-    }
-  }, [selected, placement?.facilityType, placement?.areaM2]);
-  const placementLimits = {
-    placementLimit: activeLeague?.rules.placementLimit ?? lab?.model.maxPlacements ?? 0,
-    areaLimitM2: activeLeague?.rules.areaLimitM2,
-  };
-  const currentExceedsLimits = exceedsLeagueLimits(g.placements, placementLimits);
-  const draft = lab
-    ? assessPlacementDraft(lab, g.placements, selected, type, area, {
-        ...placementLimits,
-        budget,
-        allowedTypes,
-      })
-    : null;
-  const draftArea = draft?.areaM2 ?? 0;
-  const cost = lab ? totalCost(lab, g.placements) : 0;
-  const canPlace = !!draft?.placement && !g.busy;
-  const preview =
-    canPlace && cell && (placement?.facilityType !== type || placement?.areaM2 !== draftArea)
-      ? { cellId: cell.id, facilityType: type, areaM2: draftArea }
-      : undefined;
-  function undo() {
-    g.undo();
-    setFeedback('배치 변경을 되돌렸습니다.');
-  }
-  function redo() {
-    g.redo();
-    setFeedback('배치 변경을 다시 적용했습니다.');
-  }
-  function select(id: string | null) {
-    setFeedback('');
-    const c = lab?.model.cells.find((c) => c.id === id || c.buildingId === id);
-    setSelected(c?.id ?? null);
-    if (c) {
-      const p = g.placements.find((p) => p.cellId === c.id);
-      setType(
-        p?.facilityType ?? c.allowedTypes.find((t) => allowedTypes.includes(t)) ?? c.allowedTypes[0]
-      );
-      setArea(p?.areaM2 ?? Math.min(40, c.maxAreaM2));
-    }
-  }
-  const result = g.job?.result;
-  const currentResult = lab
-    ? matchesEvaluatedDesign(g.job, g.evaluatedVersion, lab.modelHash, g.placements)
-    : false;
-  const working = g.busy || g.job?.state === 'QUEUED' || g.job?.state === 'RUNNING';
-  const showCurrentResult =
-    !!result &&
-    g.job?.state === 'SUCCEEDED' &&
-    currentResult &&
-    !preview &&
-    (!cell || !draft?.issue);
-  const guideStep = working
-    ? 2
-    : cell && (preview || draft?.issue)
-      ? 1
-      : g.placements.length
-        ? 2
-        : cell
-          ? 1
-          : 0;
   return (
     <div
       ref={shell}
-      className={`game-shell${['city', 'missions', 'studio'].includes(tab) ? ' is-game' : ''}${tab === 'studio' ? ' in-play' : ''}`}
+      className={`game-shell${['city', 'missions'].includes(tab) ? ' is-game' : ''}`}
     >
       <header className="topbar">
         <a className="wordmark" href="/" aria-label="WATER LEAGUE 홈">
@@ -218,7 +47,7 @@ export function GamePage() {
           </span>
         </a>
         <nav aria-label="주요 화면">
-          {(g.account?.role === 'ADMIN'
+          {(session.account?.role === 'ADMIN'
             ? ([
                 ['admin', '회원 관리'],
                 ['data', '데이터'],
@@ -226,7 +55,6 @@ export function GamePage() {
             : ([
                 ['city', '주간 서울 대항전'],
                 ['missions', '재해 모드'],
-                ...(tab === 'studio' ? ([['studio', '플레이']] as const) : []),
                 ['leaderboard', '기록 경쟁'],
                 ['data', '데이터'],
               ] as const)
@@ -238,7 +66,6 @@ export function GamePage() {
               onClick={() => {
                 if (id === 'city') setCityDistrict('');
                 setTab(id);
-                g.setNotice('');
               }}
             >
               {label}
@@ -246,26 +73,22 @@ export function GamePage() {
           ))}
         </nav>
         <div className="topbar-end">
-          {['city', 'missions', 'studio'].includes(tab) && <FullscreenButton target={shell} />}
-          {g.account ? (
+          {['city', 'missions'].includes(tab) && <FullscreenButton target={shell} />}
+          {session.account ? (
             <>
               <span className="account-name">
-                {g.account.displayName}
+                {session.account.displayName}
                 <small>
-                  {g.account.role === 'ADMIN' ? '관리자' : memberTypeNames[g.account.memberType!]}
+                  {session.account.role === 'ADMIN'
+                    ? '관리자'
+                    : memberTypeNames[session.account.memberType!]}
                 </small>
               </span>
               <button
                 className="icon-button"
                 aria-label="로그아웃"
-                onClick={() =>
-                  void g.action(async () => {
-                    await logout();
-                    g.setAccount(null);
-                    g.newDesign();
-                    setActiveLeague(null);
-                  })
-                }
+                disabled={session.busy}
+                onClick={() => void session.signOut()}
               >
                 <LogOut size={17} />
               </button>
@@ -277,686 +100,43 @@ export function GamePage() {
           )}
         </div>
       </header>
-      {activeLeague && tab === 'studio' && (
-        <div className="active-league-banner">
-          <div>
-            <span>기관 리그 설계</span>
-            <b>{activeLeague.title}</b>
-            <small>
-              예산 {won(budget)} · {allowedTypes.map((t) => facilities[t].name).join(' · ')}
-              {activeLeague.rules.placementLimit != null && (
-                <>
-                  {' '}
-                  · 최대 {activeLeague.rules.placementLimit}개 구역 ·{' '}
-                  {format.format(activeLeague.rules.areaLimitM2 ?? 0)} m²
-                </>
-              )}
-            </small>
-          </div>
-          <button className="outline-button" onClick={() => setTab('leaderboard')}>
-            고정 규칙·제출
-          </button>
-          <button className="text-button" onClick={() => setActiveLeague(null)}>
-            일반 설계로 전환
-          </button>
-        </div>
-      )}
-      {g.error && (
+      {session.error && (
         <div role="alert" className="global-message error">
-          {g.error}
-          <button aria-label="오류 알림 닫기" onClick={() => g.setError('')}>
+          {session.error}
+          <button aria-label="오류 알림 닫기" onClick={() => session.setError('')}>
             <X size={14} />
           </button>
         </div>
       )}
-      {g.notice && (
-        <div role="status" className="global-message">
-          <Check size={15} />
-          {g.notice}
-          <button aria-label="알림 닫기" onClick={() => g.setNotice('')}>
-            <X size={14} />
-          </button>
-        </div>
-      )}
-      {tab === 'city' ? (
+      {tab === 'admin' && session.account?.role === 'ADMIN' ? (
+        <ApprovalPage key={session.account.id} />
+      ) : tab === 'city' ? (
         <CityExplorer
           key="shared"
           initialDistrictId={cityDistrict}
-          account={g.account}
+          account={session.account}
           onLogin={() => setAuth(true)}
-          onAccount={g.setAccount}
+          onAccount={session.setAccount}
         />
-      ) : !lab ? (
-        <div className="empty-state">
-          <CloudRain size={38} />
-          <h2>{g.loading ? '설계실을 준비하고 있습니다.' : '서버에 연결할 수 없습니다.'}</h2>
-          <p>
-            {g.loading
-              ? '공개자료와 실험 조건을 불러오는 중'
-              : 'API 실행 상태를 확인한 뒤 다시 불러오세요.'}
-          </p>
-          {!g.loading && (
-            <button className="outline-button" onClick={() => location.reload()}>
-              다시 불러오기
-            </button>
-          )}
-        </div>
-      ) : tab === 'admin' && g.account?.role === 'ADMIN' ? (
-        <ApprovalPage key={g.account.id} />
       ) : tab === 'missions' ? (
-        <DisasterMode account={g.account} onLogin={() => setAuth(true)} onAccount={g.setAccount} />
-      ) : tab === 'studio' ? (
-        <div className="studio-layout play-layout">
-          <header className="play-hud">
-            <div className="play-objective">
-              <span>
-                {lab.model.mapTitle ?? '성수'} / {activeLeague ? '기관 리그' : '일반 도전'}
-              </span>
-              <h1 ref={playHeading} tabIndex={-1}>
-                {activeLeague?.title ?? '빗물이 머물 자리를 만드세요'}
-              </h1>
-            </div>
-            <div className="play-resources">
-              <span>
-                {report ? '계산한 배치 비용' : '남은 예산'}{' '}
-                <b>{won(report && g.evaluatedVersion ? g.evaluatedVersion.cost : budget - cost)}</b>
-              </span>
-              <span>
-                배치 구역{' '}
-                <b>
-                  {report && g.evaluatedVersion
-                    ? g.evaluatedVersion.placements.length
-                    : g.placements.length}
-                  <small> / {placementLimits.placementLimit}</small>
-                </b>
-              </span>
-            </div>
-            <div className="play-phase" aria-label="도전 진행 단계">
-              <span className={!working && !report ? 'active' : ''}>01 배치</span>
-              <ArrowRight size={12} />
-              <span className={working ? 'active' : ''}>02 계산</span>
-              <ArrowRight size={12} />
-              <span className={report ? 'active' : ''}>03 결과</span>
-            </div>
-            <button
-              ref={guideToggle}
-              className="play-help"
-              aria-expanded={showGuide && !report}
-              aria-controls="play-guide"
-              onClick={() => {
-                setReport(false);
-                setShowGuide((value) => report || !value);
-              }}
-            >
-              <CircleHelp size={16} /> 플레이 안내
-            </button>
-          </header>
-          {!report && showGuide && (
-            <PlayGuide
-              step={guideStep}
-              pending={
-                g.job?.state === 'QUEUED' || g.job?.state === 'RUNNING'
-                  ? g.job.state
-                  : g.busy
-                    ? 'REQUEST'
-                    : null
-              }
-              signedIn={!!g.account}
-              currentResult={showCurrentResult}
-              onChoose={() => setShowList(true)}
-              onEdit={() => setFocusEditor(true)}
-              onCalculate={() => {
-                if (showCurrentResult) setReport(true);
-                else calculateButton.current?.focus();
-              }}
-              onClose={() => {
-                setShowGuide(false);
-                guideToggle.current?.focus();
-              }}
-            />
-          )}
-          {report && g.job?.state === 'SUCCEEDED' && result ? (
-            <RoundReport
-              key={g.job.id}
-              job={g.job}
-              lab={lab}
-              map={activeMap}
-              evaluated={g.evaluatedVersion}
-              current={currentResult}
-              busy={g.busy}
-              league={!!activeLeague}
-              onRetry={() => {
-                setReport(false);
-                requestAnimationFrame(() => playHeading.current?.focus());
-              }}
-              onSubmit={() =>
-                void g.action(async () => {
-                  if (activeLeague) {
-                    setTab('leaderboard');
-                    return;
-                  }
-                  await repo.submit(g.job!.id);
-                  g.setNotice('탐색 기록 제출 완료');
-                })
-              }
-              onBoard={() => setTab('leaderboard')}
-            />
-          ) : (
-            <>
-              <main className="design-main">
-                <div className="design-toolbar">
-                  <div className="design-title">
-                    <input
-                      aria-label="설계 이름"
-                      maxLength={80}
-                      value={g.title}
-                      onChange={(e) => g.setTitle(e.target.value)}
-                    />
-                    <span>{g.version ? `저장 버전 ${g.version.revision}` : '새 설계'}</span>
-                  </div>
-                  <div>
-                    <button
-                      className="icon-button"
-                      aria-label="새 설계"
-                      onClick={() => {
-                        g.newDesign();
-                        select(null);
-                        setFeedback('');
-                      }}
-                    >
-                      <Plus size={18} />
-                    </button>
-                    <button
-                      className="icon-button"
-                      aria-label="저장한 설계"
-                      onClick={() => setShowSaves((v) => !v)}
-                    >
-                      <FolderOpen size={18} />
-                    </button>
-                    <button
-                      className="outline-button compact"
-                      disabled={g.busy}
-                      onClick={() => (g.account ? void g.action(g.save) : setAuth(true))}
-                    >
-                      <Save size={14} />
-                      저장
-                    </button>
-                  </div>
-                </div>
-                <section
-                  className="design-stage"
-                  aria-label="시설 배치 지도"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (
-                      g.busy ||
-                      e.altKey ||
-                      (!e.ctrlKey && !e.metaKey) ||
-                      (e.target instanceof Element &&
-                        e.target.closest(
-                          'input,textarea,select,[contenteditable]:not([contenteditable="false"]),[role="textbox"]'
-                        ))
-                    )
-                      return;
-                    const key = e.key.toLowerCase();
-                    const isRedo = (key === 'z' && e.shiftKey) || (key === 'y' && e.ctrlKey);
-                    if (isRedo && g.canRedo) {
-                      e.preventDefault();
-                      redo();
-                    } else if (key === 'z' && !e.shiftKey && g.canUndo) {
-                      e.preventDefault();
-                      undo();
-                    }
-                  }}
-                >
-                  <div className="scene-overline">
-                    <span>
-                      <i />
-                      공개 건물 경계
-                    </span>
-                    <span>표고 평탄화 · 설치 가능성 가정</span>
-                  </div>
-                  {mapError ? (
-                    <div className="empty-state">
-                      <p>{mapError}</p>
-                      <button onClick={catalog.retry}>다시 시도</button>
-                    </div>
-                  ) : activeMap ? (
-                    <MapViewport
-                      key={activeMap.snapshot.id}
-                      map={activeMap}
-                      cells={lab.model.cells}
-                      placements={g.placements}
-                      preview={preview}
-                      selectedCell={selected}
-                      onSelect={(id) => {
-                        select(id);
-                        if (id) setFocusEditor(true);
-                      }}
-                    />
-                  ) : (
-                    <div className="empty-state">실제 건물 경계 불러오는 중</div>
-                  )}
-                  <div className="scene-controls">
-                    <button
-                      ref={listToggle}
-                      aria-label="구역 목록"
-                      aria-expanded={showList}
-                      aria-controls="design-cell-list"
-                      onClick={() => setShowList((v) => !v)}
-                    >
-                      <Menu size={18} />
-                    </button>
-                  </div>
-                  {showList && (
-                    <div
-                      id="design-cell-list"
-                      className="cell-list"
-                      ref={listPanel}
-                      role="region"
-                      aria-label="실험 구역 선택"
-                      onKeyDown={(event) => {
-                        if (event.key === 'Escape') {
-                          event.preventDefault();
-                          closeList();
-                        }
-                      }}
-                    >
-                      <div className="cell-list-heading">
-                        <b>실험 구역 선택</b>
-                        <button
-                          className="icon-button"
-                          aria-label="구역 목록 닫기"
-                          onClick={closeList}
-                        >
-                          <X size={15} />
-                        </button>
-                      </div>
-                      {lab.model.cells.map((c) => (
-                        <button
-                          key={c.id}
-                          className={c.id === selected ? 'selected' : ''}
-                          aria-pressed={c.id === selected}
-                          aria-label={`${c.id} · ${c.name} · ${g.placements.some((p) => p.cellId === c.id) ? '배치됨' : '미배치'}`}
-                          onClick={() => {
-                            select(c.id);
-                            setShowList(false);
-                            setFocusEditor(true);
-                          }}
-                        >
-                          <span>
-                            {c.id} · {c.name}
-                          </span>
-                          {g.placements.some((p) => p.cellId === c.id) ? (
-                            <Check size={14} />
-                          ) : (
-                            <ArrowRight size={14} />
-                          )}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                  {showSaves && (
-                    <div className="saved-list">
-                      <div>
-                        <b>저장한 설계</b>
-                        <button
-                          className="icon-button"
-                          aria-label="저장 목록 닫기"
-                          onClick={() => setShowSaves(false)}
-                        >
-                          <X size={15} />
-                        </button>
-                      </div>
-                      {g.strategies.map((s) => (
-                        <button
-                          key={s.id}
-                          onClick={() => {
-                            void g.open(s.id);
-                            setShowSaves(false);
-                          }}
-                        >
-                          <b>{s.title}</b>
-                          <span>버전 {s.revision}</span>
-                        </button>
-                      ))}
-                      {!g.strategies.length && (
-                        <p>
-                          {g.account
-                            ? '저장한 설계가 없습니다.'
-                            : '로그인하면 설계를 저장할 수 있습니다.'}
-                        </p>
-                      )}
-                    </div>
-                  )}
-                  <div className="facility-dock">
-                    {allowedTypes.map((t) => {
-                      const Icon = icons[t];
-                      return (
-                        <button
-                          key={t}
-                          className={type === t ? 'selected' : ''}
-                          aria-pressed={type === t}
-                          aria-label={facilities[t].name}
-                          title={facilities[t].name}
-                          onClick={() => {
-                            setFeedback('');
-                            setType(t);
-                            if (!cell?.allowedTypes.includes(t)) {
-                              const c = lab.model.cells.find((c) => c.allowedTypes.includes(t));
-                              if (c) {
-                                select(c.id);
-                                setType(t);
-                              }
-                            }
-                          }}
-                        >
-                          <Icon size={20} />
-                          <span>{facilities[t].name}</span>
-                        </button>
-                      );
-                    })}
-                    <button
-                      className="history-button undo-button"
-                      aria-label="마지막 배치 변경 되돌리기"
-                      aria-keyshortcuts="Control+Z Meta+Z"
-                      title="배치 되돌리기 · Ctrl/⌘ Z"
-                      disabled={g.busy || !g.canUndo}
-                      onClick={undo}
-                    >
-                      <Undo2 size={18} />
-                    </button>
-                    <button
-                      className="history-button"
-                      aria-label="되돌린 배치 변경 다시 실행"
-                      aria-keyshortcuts="Control+Shift+Z Meta+Shift+Z Control+Y"
-                      title="배치 다시 실행 · Ctrl/⌘ Shift Z"
-                      disabled={g.busy || !g.canRedo}
-                      onClick={redo}
-                    >
-                      <Redo2 size={18} />
-                    </button>
-                  </div>
-                </section>
-                {g.job?.result && (
-                  <details className="play-chart">
-                    <summary>시설 전후 물 흐름</summary>
-                    <Hydrograph job={g.job} rainfall={lab.model.rainfall} />
-                  </details>
-                )}
-                <div className="studio-footnote">
-                  <span>
-                    <i />
-                    탐색 모델 · 현장 미검증
-                  </span>
-                  <button className="text-button" onClick={() => setTab('data')}>
-                    자료·가정 확인 <ArrowUpRight size={12} />
-                  </button>
-                </div>
-              </main>
-              <aside className="inspector" aria-label="시설 편집과 도전 실행">
-                <p className="placement-feedback" role="status">
-                  {feedback ||
-                    (cell
-                      ? '시설과 면적을 정한 뒤 배치하세요.'
-                      : '시설을 고르거나 지도에서 구역을 선택하세요.')}
-                </p>
-                <div className="inspector-top">
-                  <span className="eyebrow">
-                    {cell ? 'DESIGN A SURFACE' : 'BUILD YOUR STRATEGY'}
-                  </span>
-                  <Layers3 size={17} />
-                </div>
-                <h2>
-                  {cell
-                    ? cell.name
-                    : g.placements.length
-                      ? '다음 수를 선택하세요'
-                      : '첫 시설을 배치하세요'}
-                </h2>
-                <p className="panel-intro">
-                  {cell
-                    ? '설치할 시설과 면적을 선택하세요. 공개 사업계획 참고 단가로 비용을 계산합니다.'
-                    : '지도에서 표시된 구역을 선택하거나, 시설 도구로 첫 배치를 시작하세요.'}
-                </p>
-                {cell ? (
-                  <>
-                    <div className="cell-tag">
-                      <span>
-                        {cell.id} · {cell.kind === 'ROOF' ? '옥상' : '지상'} 실험 단위
-                      </span>
-                      <b>현장 적합성 미확인</b>
-                    </div>
-                    {activeLeague && !cell.allowedTypes.some((t) => allowedTypes.includes(t)) && (
-                      <p className="form-error">
-                        이 구역에는 리그에서 허용한 시설을 설치할 수 없습니다. 다른 구역을
-                        선택하세요.
-                      </p>
-                    )}
-                    <div className="facility-options">
-                      {cell.allowedTypes
-                        .filter((t) => allowedTypes.includes(t))
-                        .map((t) => {
-                          const Icon = icons[t];
-                          return (
-                            <button
-                              key={t}
-                              className={type === t ? 'active' : ''}
-                              aria-pressed={type === t}
-                              onClick={() => {
-                                setType(t);
-                                setFeedback('');
-                              }}
-                            >
-                              <Icon size={18} />
-                              {facilities[t].name}
-                            </button>
-                          );
-                        })}
-                    </div>
-                    <p className="facility-description">{facilities[type].description}</p>
-                    <label className="area-input">
-                      설치 면적{' '}
-                      <span>
-                        <input
-                          ref={areaInput}
-                          type="number"
-                          min="0.01"
-                          max={cell.maxAreaM2}
-                          step="0.01"
-                          value={area}
-                          aria-invalid={!!draft?.issue}
-                          aria-describedby="placement-draft-note"
-                          onChange={(e) => {
-                            setArea(Number(e.target.value));
-                            setFeedback('');
-                          }}
-                        />{' '}
-                        m²
-                      </span>
-                    </label>
-                    <input
-                      className="area-slider"
-                      aria-label="설치 면적 조절"
-                      type="range"
-                      min="0.01"
-                      max={cell.maxAreaM2}
-                      step="0.01"
-                      value={area}
-                      aria-describedby="placement-draft-note"
-                      onChange={(e) => {
-                        setArea(Number(e.target.value));
-                        setFeedback('');
-                      }}
-                    />
-                    <div className="area-range">
-                      <span>0.01 m²</span>
-                      <span>최대 {format.format(cell.maxAreaM2)} m²</span>
-                    </div>
-                    <div className="placement-cost">
-                      <span>추정 설치비</span>
-                      <strong>
-                        {Number.isFinite(draftArea) && draftArea > 0
-                          ? won(draftArea * unitCost(lab.model.unitCosts, type))
-                          : '—'}
-                      </strong>
-                    </div>
-                    {preview && draft?.projectedCost != null && (
-                      <p className="draft-cost">
-                        확정하면 총 {won(draft.projectedCost)} · 아직 반영 전
-                      </p>
-                    )}
-                    <p
-                      id="placement-draft-note"
-                      className={draft?.issue ? 'form-error' : 'draft-note'}
-                      role="status"
-                    >
-                      {draft?.message ||
-                        (preview
-                          ? '미리보기 중입니다. 배치 버튼을 눌러 확정하세요.'
-                          : '이 구역의 확정 배치와 같은 설정입니다.')}
-                    </p>
-                    <button
-                      className="primary-button"
-                      disabled={!canPlace}
-                      onClick={() => {
-                        g.change([
-                          ...g.placements.filter((p) => p.cellId !== cell.id),
-                          {
-                            cellId: cell.id,
-                            facilityType: type,
-                            areaM2: draftArea,
-                          },
-                        ]);
-                        setFeedback(
-                          `${cell.id} · ${facilities[type].name} ${format.format(draftArea)} m² ${placement ? '변경' : '배치'} 완료`
-                        );
-                      }}
-                    >
-                      {placement ? '배치 변경' : '이 구역에 배치'}
-                      <Plus size={16} />
-                    </button>
-                    {placement && (
-                      <button
-                        className="text-button remove-button"
-                        onClick={() => {
-                          g.change(g.placements.filter((p) => p.cellId !== cell.id));
-                          setFeedback(`${cell.id} 시설 제거 완료`);
-                        }}
-                      >
-                        <Trash2 size={14} />이 시설 제거
-                      </button>
-                    )}
-                  </>
-                ) : (
-                  <div className="facility-primer">
-                    {allowedTypes.map((facilityType) => {
-                      const Icon = icons[facilityType];
-                      return (
-                        <div key={facilityType}>
-                          <b>
-                            <Icon size={17} />
-                            {facilities[facilityType].name}
-                          </b>
-                          <p>{facilities[facilityType].intro}</p>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-                <div className="budget-box">
-                  <div>
-                    <span>추정 비용</span>
-                    <b>
-                      {won(cost)}
-                      <small> / {won(budget)}</small>
-                    </b>
-                  </div>
-                  <div className="budget-track">
-                    <i style={{ width: Math.min(100, (cost / budget) * 100) + '%' }} />
-                  </div>
-                  <span>
-                    {g.placements.length}개 시설 · 합계 {format.format(totalArea(g.placements))} m²
-                    · 공개계획 참고 단가 · 부대비용 별도
-                  </span>
-                </div>
-                <details className="play-note">
-                  <summary>이 선택을 한 이유 남기기</summary>
-                  <label className="design-note">
-                    설계 메모
-                    <textarea
-                      maxLength={2000}
-                      rows={2}
-                      value={g.note}
-                      onChange={(e) => g.setNote(e.target.value)}
-                      placeholder="어떤 선택을 했고, 왜 그렇게 배치했나요?"
-                    />
-                  </label>
-                </details>
-                <button
-                  ref={calculateButton}
-                  className="simulate-button"
-                  disabled={
-                    working ||
-                    !lab.model.simulationAvailable ||
-                    cost > budget ||
-                    currentExceedsLimits ||
-                    g.placements.some((p) => !allowedTypes.includes(p.facilityType))
-                  }
-                  onClick={() => (g.account ? void g.run() : setAuth(true))}
-                >
-                  <Play size={17} />
-                  {working
-                    ? g.job?.state === 'QUEUED'
-                      ? '계산 순서 대기'
-                      : '서버에서 계산 중'
-                    : preview
-                      ? '확정된 배치로 도전'
-                      : g.placements.length
-                        ? '이 배치로 도전'
-                        : '시설 없는 기준안 계산'}
-                  <ArrowRight size={16} />
-                </button>
-                {g.job?.state === 'FAILED' || g.job?.state === 'REJECTED' ? (
-                  <p className="form-error" role="alert">
-                    계산이 품질 검사를 통과하지 못했습니다. 코드: {g.job.errorCode}
-                  </p>
-                ) : null}
-                {working && (
-                  <p className="play-computing" role="status">
-                    {g.job?.state === 'QUEUED'
-                      ? '앞선 계산이 끝나면 시작합니다.'
-                      : '시설 전후 물 흐름을 계산하고 품질을 확인합니다.'}{' '}
-                    완료되면 결과 화면으로 이동합니다.
-                  </p>
-                )}
-                {result && (
-                  <button
-                    className="outline-button previous-result"
-                    onClick={() => setReport(true)}
-                  >
-                    <Trophy size={15} />{' '}
-                    {currentResult ? '계산 결과 다시 보기' : '이전 배치의 결과 보기'}
-                  </button>
-                )}
-              </aside>
-            </>
-          )}
-        </div>
+        <DisasterMode
+          account={session.account}
+          onLogin={() => setAuth(true)}
+          onAccount={session.setAccount}
+        />
       ) : tab === 'leaderboard' ? (
         <CompetitionPage
-          account={g.account}
+          account={session.account}
           onLogin={() => setAuth(true)}
           onWeeklyDistrict={(id) => {
             setCityDistrict(id);
             setTab('city');
           }}
-          initialLeague={!!activeLeague}
         />
       ) : (
-        <DataPage accountId={g.account?.id ?? null} />
+        <DataPage accountId={session.account?.id ?? null} />
       )}
-      {auth && <AuthDialog onClose={() => setAuth(false)} onSuccess={g.setAccount} />}
+      {auth && <AuthDialog onClose={() => setAuth(false)} onSuccess={session.setAccount} />}
     </div>
   );
 }
