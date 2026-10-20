@@ -20,6 +20,7 @@ it('미계산·계산된 0·악화 점수를 지도 점수판에서 구분', () 
           districtName: '성동구',
           rank: score === null ? null : 1,
           scoreM3: score,
+          scoreM3Exact: score === null ? null : score.toFixed(9),
           evaluatedSeconds: score === null ? 0 : 60,
           evaluatedMinutes: score === null ? 0 : 1,
           expectedSeconds: 60,

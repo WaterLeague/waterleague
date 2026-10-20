@@ -34,5 +34,6 @@ public record PhysicsView(
       JsonNode initialization,
       JsonNode facilityDesign,
       JsonNode runoffComparison,
-      JsonNode designContract) {}
+      JsonNode designContract,
+      JsonNode scoreContext) {}
 }

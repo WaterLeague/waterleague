@@ -76,12 +76,18 @@ export function HistoricalBoard() {
         </select>
       </label>
       <p>
-        사건 평가 창 전체를 계산한 제출만 게시합니다. 같은 입력·예산 규칙끼리 비교하고 회원별 최고
-        기록을 표시합니다.
+        사건 평가 창 전체를 계산한 제출만 게시합니다. 같은 입력·예산 규칙·계산 조건끼리 비교하고
+        회원별 최고 기록을 표시합니다.
       </p>
+      {!!board?.withheldSubmissionCount && (
+        <p role="status">
+          평가 조건이 확인되지 않은 {board.withheldSubmissionCount}건은 순위 게시를 보류합니다.
+        </p>
+      )}
       <p>
         음수는 평가체적 증가입니다. 미세한 차이는 수치 오차보다 작을 수 있습니다. 연결 유역
-        침수·첨두 지표가 없어 총점은 보류합니다.
+        침수·첨두 지표가 없어 총점은 보류합니다. 표시값은 반올림하며 순위는 소수 18자리 저장값으로
+        계산합니다.
       </p>
       {error ? (
         <p role="alert">{error}</p>
@@ -91,8 +97,9 @@ export function HistoricalBoard() {
         <p>이 사건의 완료된 제출 기록이 없습니다.</p>
       ) : (
         board.groups.map((group) => (
-          <section key={group.rulesHash}>
+          <section key={`${group.rulesHash}:${group.comparisonGroupHash}`}>
             <h2>평가 규칙 {group.rulesHash.slice(0, 12)}</h2>
+            <p>계산 조건 {group.comparisonGroupHash.slice(0, 12)} · 같은 저장값은 공동 순위</p>
             <div className="historical-board-scroll">
               <table>
                 <thead>
@@ -109,7 +116,9 @@ export function HistoricalBoard() {
                     <tr key={entry.id}>
                       <td>{entry.rank}</td>
                       <td>{entry.displayName}</td>
-                      <td>{physicalAmount(entry.differenceM3)} m³</td>
+                      <td title={`${entry.differenceM3Exact} m³`}>
+                        {physicalAmount(entry.differenceM3)} m³
+                      </td>
                       <td>{won(entry.costKrw)}</td>
                       <td>
                         {new Date(entry.submittedAt).toLocaleString('ko-KR', {

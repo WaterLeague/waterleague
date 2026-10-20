@@ -16,7 +16,9 @@
 
 현재 독립 표면의 `runoffComparison`과 공개 연구 관망의 `result`는 스키마 v2에서 `metricComparison`을 필수로 보관한다. 그 값은 `SIGNED_ABSOLUTE_PRIMARY_RELATIVE_AUXILIARY_V1` 원 지표 계약이다. 지표별 단위·경계·기준/설계 원값·부호 있는 절대 개선량·보조 개선율과 비교/미산정/보류 사유를 제공한다. 0·음수 기준의 비율은 null이며 절대 차이를 없애지 않는다. 연결되지 않은 관망/지표·미수집 지속시간·미확보 사용 수요는 null과 사유를 보존한다. 새 구형 RB LID 계산은 덮개 강우 우회 미계산으로 효과 비교를 보류하고 기존 두 변화량 필드도 null로 반환한다. 수치 검사 상태·원 계산값·과거 산출물은 유지하며 종합점수·비율 순위를 만들지 않는다.
 
-주간 구/개인 기록의 `scoreM3`는 평가 초가 0이면 null이며 순위도 null이다. 실제 평가를 거친 0과 음수는 수치로 반환한다. 일부 구간만 계산했으면 해당 구간의 부호 있는 합계와 평가/예상 초를 함께 제공하며 전체 구간 완료 전 우승 확정은 기존대로 금지한다.
+주간 `/weekly`는 `scorePolicy`와 기간별 `comparisonStatus`·`comparisonReason`·`comparisonGroupHash`를 제공한다. 구/개인 기록의 `scoreM3`·`scoreM3Exact`·순위는 평가 초가 0이면 null이다. 같은 계산 조건의 실제 0·음수는 수치와 소수 9자리 문자열로 반환한다. 일부 구간만 계산했으면 그 합계와 평가/예상 초를 제공하며 전체 구간 완료 전 우승 확정은 금지한다. 서로 다른 조건 또는 조건 미기록 점수가 있으면 기간 `status=WITHHELD`, 사유 `MIXED_COMPARISON_CONTEXTS` 또는 `COMPARISON_CONTEXT_MISSING`으로 합산 점수/순위·우승을 보류한다. 시설별 원 기록과 평가 초는 보존한다.
+
+재해 제출 규칙은 `scorePolicy`를 사전 동결한다. 제출 조회는 `rankingStatus`·`rankingScoreM3Exact`(소수 18자리)·`scoreContext`를 반환하며 조건 미기록 과거 결과는 원 지표와 `COMPARISON_CONTEXT_MISSING`을 유지한다. 인증된 `/historical/leaderboard/{eventId}`는 규칙/계산 집단별 `rulesHash`·`comparisonGroupHash`·`scorePolicySha256`와 상위 100개를 제공한다. 항목 `differenceM3Exact`가 정확한 순위 비교 값이며 조건 미확인 완료 기록 수는 `withheldSubmissionCount`다. 참가자 기준 정규화·임의 상한은 적용하지 않고 동일 저장값은 공동 순위(1·1·3), 동점 표시는 시각/ID 순서다. 기존 소유권·비회원 최종 잠금·no-store 정책은 유지한다.
 
 | API | 권한·역할 |
 | --- | --- |

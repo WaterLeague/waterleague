@@ -6,7 +6,16 @@ import {
   submitSavedHistorical,
 } from './submissionRepository';
 import { api } from '../../../shared/repository/apiClient';
-vi.mock('../../../shared/repository/apiClient', () => ({ api: vi.fn() }));
+vi.mock('../../../shared/repository/apiClient', () => ({
+  api: vi.fn(async () => ({
+    id: '00000000-0000-4000-8000-000000000001',
+    state: 'QUEUED',
+    createdAt: '2026-10-20T00:00:00Z',
+    placementCount: 1,
+    message: '',
+    result: null,
+  })),
+}));
 
 describe('재해 확정 제출 입력', () => {
   it('새 제출은 배치·단가를 다시 보내지 않고 확정한 저장본만 참조한다', async () => {

@@ -1,35 +1,4 @@
-export interface HistoricalSubmission {
-  id: string;
-  state: 'QUEUED' | 'RUNNING' | 'SUCCEEDED' | 'FAILED' | 'REJECTED';
-  createdAt: string;
-  placementCount: number;
-  designRevision?: number | null;
-  message: string;
-  result: null | {
-    submissionPolicy: 'FULL_EVENT_INDEPENDENT_SURFACES_V1';
-    rulesHash: string;
-    start: string;
-    end: string;
-    differenceM3: number;
-    baselineAccountedM3: number;
-    designAccountedM3: number;
-    totalScoreStatus: string;
-    assumptions: string[];
-  };
-}
-export interface HistoricalBoard {
-  eventId: string;
-  title: string;
-  officialTotalScore: false;
-  groups: {
-    rulesHash: string;
-    entries: {
-      id: string;
-      displayName: string;
-      rank: number;
-      differenceM3: number;
-      costKrw: number;
-      submittedAt: string;
-    }[];
-  }[];
-}
+import type { z } from 'zod';
+import type { historicalBoardDto, historicalSubmissionDto } from '../dto/submissionDto';
+export type HistoricalSubmission = z.infer<typeof historicalSubmissionDto>;
+export type HistoricalBoard = z.infer<typeof historicalBoardDto>;

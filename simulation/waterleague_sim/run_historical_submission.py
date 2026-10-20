@@ -12,6 +12,7 @@ from pathlib import Path
 from .engine.continuous import digest
 from .run_historical_job import calculate as district_calculate
 from .spatial.game_catalog import regions as current_regions
+from .evaluation import score_policy
 
 POLICY = 'FULL_EVENT_INDEPENDENT_SURFACES_V1'
 
@@ -81,8 +82,13 @@ def calculate(request, directory):
     rules = json.loads(rules_raw)
     if rules_hash != rows[0]['submissionRulesHash'] or rules['policy'] != POLICY:
         raise ValueError('HISTORICAL_SUBMISSION_RULES_INVALID')
+    raw, policy = score_policy.verified_policy()
+    if rules.get('scorePolicy') != {k: v for k, v in policy.items() if k != 'files'} | {'sha256': digest(raw)}:
+        raise ValueError('HISTORICAL_SUBMISSION_RULES_INVALID')
+    context = score_policy.verify(request.get('scoreContext'), 'SUBMISSION', rules_hash)
     design = verify_design(rows, rules)
     directory.mkdir(parents=True, exist_ok=True)
+    score_policy.archive(directory, context)
     (directory/'submission-rules.json').write_text(rules_raw)
     (directory/'submission-request.json').write_text(rows[0]['submissionRequestRaw'])
     if design:
@@ -117,6 +123,7 @@ def calculate(request, directory):
     if any(not math.isfinite(v) for v in values.values()):
         raise ValueError('HISTORICAL_SUBMISSION_METRICS_INVALID')
     result = {'schemaVersion': 1, 'submissionPolicy': POLICY, 'rulesHash': rules_hash,
+            'scoreContext': context, 'rankingScoreM3Exact': format(score_policy.quantize(values['differenceM3'], 18), 'f'),
             'eventId': rules['eventId'], 'validationLevel': 'EXPLORATORY',
             'scope': 'SELECTED_INDEPENDENT_SURFACES_ONLY', 'modelGrade': rules['modelGrade'],
             'officialTotalScore': None, 'totalScoreStatus': 'HELD_REQUIRED_INUNDATION_AND_CONNECTED_OUTLET_MISSING',
@@ -129,6 +136,7 @@ def calculate(request, directory):
                 '미세한 효과 차이는 물수지 잔차보다 작을 수 있으며 현장 유의성 미검증']}
     if design:
         result['submittedDesign'] = design
+    score_policy.verify(context, 'SUBMISSION', rules_hash)
     return result
 
 

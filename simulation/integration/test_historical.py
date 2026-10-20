@@ -61,6 +61,9 @@ class HistoricalTests(unittest.TestCase):
         rules = {'policy': POLICY, 'eventId': event['id'], 'rainfallModels': forcing,
                  'engineVersion': '5.2.4', 'start': rain['start'], 'end': rain['end'],
                  'modelGrade': 'CURRENT_GEOMETRY_HISTORICAL_RAINFALL_STRESS_TEST'}
+        from waterleague_sim.evaluation import score_policy
+        policy_raw, policy = score_policy.verified_policy()
+        rules['scorePolicy'] = {k: v for k, v in policy.items() if k != 'files'} | {'sha256': score_policy.digest(policy_raw)}
         rules_raw = json.dumps(rules, sort_keys=True)
         rules_hash = hashlib.sha256(rules_raw.encode()).hexdigest()
         totals, binaries = [], []

@@ -90,4 +90,17 @@ public class WeeklyRepository {
         Timestamp.from(start),
         java.sql.Date.valueOf(week));
   }
+
+  public List<String> comparisonGroups(LocalDate week, Instant start, Instant through) {
+    return db.query(
+        "SELECT DISTINCT s.comparison_group_hash FROM shared_weekly_scores s JOIN"
+            + " shared_installations i ON i.id=s.installation_id WHERE s.week_start=? AND"
+            + " i.source_retired_at IS NULL AND i.installed_at<? AND"
+            + " COALESCE(i.removed_at,i.season_ends_at,?::timestamptz)>?",
+        (r, n) -> r.getString(1),
+        java.sql.Date.valueOf(week),
+        Timestamp.from(through),
+        Timestamp.from(through),
+        Timestamp.from(start));
+  }
 }

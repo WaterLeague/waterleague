@@ -89,6 +89,7 @@ def main():
                 physical.append('-Dwaterleague.integration.design.fixture=' + str(path.with_suffix('.design.json')))
             if suite == 'historical-submit-design':
                 physical.append('-Dwaterleague.integration.submission.design.fixture=' + str(path.with_suffix('.submission.json')))
+                physical.append('-Dwaterleague.integration.submission.evidence=' + str(path.with_suffix('.runs')))
             if suite == 'historical-design-run':
                 physical.append('-Dwaterleague.integration.design.run.fixture=' + str(path.with_suffix('.requests.json')))
             if suite == 'restore':
@@ -132,6 +133,11 @@ def main():
                 if suite == 'physics' and result.returncode == 0:
                     result = subprocess.run(
                         [str(ROOT/'backend/mvnw'),'--batch-mode','-Dtest=PhysicsReadbackTests',
+                         '-Dwaterleague.integration.jdbc='+jdbc,*physical,'test'],
+                        cwd=ROOT/'backend',env=env,stdout=log,stderr=subprocess.STDOUT,timeout=600)
+                if suite == 'historical-submit-design' and result.returncode == 0:
+                    result = subprocess.run(
+                        [str(ROOT/'backend/mvnw'),'--batch-mode','-Dtest=HistoricalSubmissionReadbackTests',
                          '-Dwaterleague.integration.jdbc='+jdbc,*physical,'test'],
                         cwd=ROOT/'backend',env=env,stdout=log,stderr=subprocess.STDOUT,timeout=600)
         with psycopg.connect(**config) as db:

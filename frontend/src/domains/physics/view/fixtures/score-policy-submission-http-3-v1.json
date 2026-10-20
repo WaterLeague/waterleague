@@ -1,0 +1,63 @@
+{
+  "classification": "ACTUAL_AUTHENTICATED_HTTP_WITH_PUBLIC_HISTORICAL_WEATHER",
+  "sourceFile": "tmp/waterleague_queue_test_04a97ddf2c254328b8ed17ec56294ea5.runs/submission-http-91957dc4-fcea-4036-b67f-fab90891c7bf.json",
+  "sourceSha256": "3e7281610bc8056e1699aae838857e81bcd7a6d2b475597dc63ebd45aa62a380",
+  "value": {
+    "id": "91957dc4-fcea-4036-b67f-fab90891c7bf",
+    "state": "SUCCEEDED",
+    "createdAt": "2026-10-20T04:50:44.343304Z",
+    "placementCount": 2,
+    "designRevision": 1,
+    "result": {
+      "rankingStatus": "COMPARABLE",
+      "submissionPolicy": "FULL_EVENT_INDEPENDENT_SURFACES_V1",
+      "rulesHash": "d042a84ec6f119db58a4adf5a07babc7535790ff3bfc14f8039e12658637415a",
+      "start": "2022-08-08T09:00:00+00:00",
+      "end": "2022-08-08T14:59:00+00:00",
+      "differenceM3": -0.0006535096819968444,
+      "rankingScoreM3Exact": "-0.000653509681996844",
+      "scoreContext": {
+        "sha256": "cafbadb19b4a9fc52a81182d74a827b9046c36b0855fd060119db409f464f347",
+        "version": "ABSOLUTE_ACCOUNTED_VOLUME_RANKING_V1",
+        "policySha256": "ac3dd4f10239dfb19ddad7c6c651d452bfd90813941305232756d2302de54c1c",
+        "mode": "SUBMISSION",
+        "binding": "d042a84ec6f119db58a4adf5a07babc7535790ff3bfc14f8039e12658637415a",
+        "runtime": {
+          "engine": {
+            "schemaVersion": 1,
+            "engineVersion": "5.2.4",
+            "revision": "7952ca837988b1c32f791812eccc9fd64547e093",
+            "sourceArchiveSha256": "3f76a199573088ce47ff02491c529afb73d9953ee9d948dfc89dcd4981b4c0c0",
+            "observerSha256": "54c6b8ef6709b8231e69ed2a9431be3413961d9f0da0e3f010cb1bad9c311c8c",
+            "binarySha256": "651e08796415344ebff4ffd709273499a3a0c098665de2589cc2ac3fcfd89183",
+            "modification": "READ_ONLY_OBSERVER_NO_SOLVER_CHANGES",
+            "adapterSha256": "767a8f07a221e6b502faa2a6cd3d87e474e96e6de3e0b24a11ea82d839c91efe",
+            "geometryAdapterSha256": "60fcac3e39ef0fb0425d42f3fe34e014ff29112ad7c84d2f525856bdd72befff",
+            "facilityAdapterSha256": "03c8607cb221c7c799d57589c5d711fc284f5999da6e8a2ed71c957395b6daec",
+            "referenceConditionsAdapterSha256": "0d1a18d17fac2000e1b7f573f62bb927ec5f9903e02e23c55f4f08eb445b924f",
+            "designFootprintAdapterSha256": "ae583da9acd71db6613ac1cd4e0c8d4f43d8adcd7fa02a461a64692a5175e18c",
+            "referenceScenarioSha256": "164358be09db34872324d63ce10df84a23cac936e5f5a8c0dc5fb12d0269b1bc"
+          },
+          "python": "3.12.14",
+          "system": "Darwin",
+          "machine": "arm64",
+          "packages": {
+            "pyproj": "3.8.0",
+            "shapely": "2.2.0"
+          }
+        }
+      },
+      "baselineAccountedM3": 16.331546653153488,
+      "designAccountedM3": 16.332200162835484,
+      "totalScoreStatus": "HELD_REQUIRED_INUNDATION_AND_CONNECTED_OUTLET_MISSING",
+      "assumptions": [
+        "현재 공개 형상과 과거 강우의 스트레스 시험; 당시 재난 복원 아님",
+        "설치 시각과 무관하게 사건 평가 창 전체에 같은 설계 적용; 선행 기간 점수 제외",
+        "독립 표면 원 지표 합계; 연결 유역·지표 침수 효과 합계 아님",
+        "현재 게임 예산과 공개 참고비 사용; 사건 당시 확정 예산·가격 아님",
+        "미세한 효과 차이는 물수지 잔차보다 작을 수 있으며 현장 유의성 미검증"
+      ]
+    },
+    "message": ""
+  }
+}

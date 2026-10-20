@@ -64,6 +64,8 @@ class PhysicsReadbackTests extends PostgresIntegrationTest {
     assertThat(result.path("designContract")).isEqualTo(raw.path("designContract"));
     assertThat(result.path("designContract").path("sha256").asString()).matches("[a-f0-9]{64}");
     assertThat(result.path("runoffComparison")).isEqualTo(raw.path("runoffComparison"));
+    assertThat(result.path("scoreContext")).isEqualTo(raw.path("scoreContext"));
+    assertThat(result.path("scoreContext").path("sha256").asString()).matches("[a-f0-9]{64}");
     assertThat(result.path("runoffComparison").path("schemaVersion").asInt()).isEqualTo(2);
     assertThat(response.body())
         .doesNotContain("password", "lease_token", "costSnapshotRaw", "inputHash");
@@ -71,6 +73,8 @@ class PhysicsReadbackTests extends PostgresIntegrationTest {
         directory.resolve("physics-response.json"), response.body(), StandardOpenOption.CREATE_NEW);
     var weekly = get("/weekly");
     assertThat(weekly.statusCode()).isEqualTo(200);
+    assertThat(json.tree(weekly.body()).path("scorePolicy").path("tie").asString())
+        .isEqualTo("EXACT_STORED_DECIMAL_EQUALITY");
     boolean missing = false;
     for (var district : json.tree(weekly.body()).path("current").path("districts")) {
       if (district.path("evaluatedSeconds").asLong() == 0) {

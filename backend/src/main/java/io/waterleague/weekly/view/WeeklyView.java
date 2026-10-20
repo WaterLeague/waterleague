@@ -10,6 +10,7 @@ public record WeeklyView(
     Instant generatedAt,
     String ruleVersion,
     String validationLevel,
+    tools.jackson.databind.JsonNode scorePolicy,
     Period current,
     Period previous) {
   public record Period(
@@ -18,6 +19,9 @@ public record WeeklyView(
       Instant endsAt,
       Instant evaluatedTarget,
       String status,
+      String comparisonStatus,
+      String comparisonReason,
+      String comparisonGroupHash,
       long evaluatedSeconds,
       long expectedSeconds,
       List<District> districts,
@@ -44,6 +48,11 @@ public record WeeklyView(
       long evaluatedSeconds,
       long expectedSeconds) {
     @com.fasterxml.jackson.annotation.JsonProperty
+    public String scoreM3Exact() {
+      return scoreM3 == null ? null : scoreM3.toPlainString();
+    }
+
+    @com.fasterxml.jackson.annotation.JsonProperty
     public long evaluatedMinutes() {
       return (evaluatedSeconds + 59) / 60;
     }
@@ -62,6 +71,11 @@ public record WeeklyView(
       BigDecimal scoreM3,
       long evaluatedSeconds,
       long expectedSeconds) {
+    @com.fasterxml.jackson.annotation.JsonProperty
+    public String scoreM3Exact() {
+      return scoreM3 == null ? null : scoreM3.toPlainString();
+    }
+
     @com.fasterxml.jackson.annotation.JsonProperty
     public long evaluatedMinutes() {
       return (evaluatedSeconds + 59) / 60;

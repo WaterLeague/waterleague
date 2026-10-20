@@ -1,0 +1,56 @@
+{
+  "classification": "ACTUAL_AUTHENTICATED_HTTP_WITH_PUBLIC_HISTORICAL_WEATHER",
+  "sourceFile": "tmp/waterleague_queue_test_04a97ddf2c254328b8ed17ec56294ea5.runs/board-http.json",
+  "sourceSha256": "5f3ec681d8a600eefc2578216c0bf42af1c5f54a56b1aee20cd66c541db98696",
+  "value": {
+    "modelGrade": "CURRENT_GEOMETRY_HISTORICAL_RAINFALL_STRESS_TEST",
+    "policy": "FULL_EVENT_INDEPENDENT_SURFACES_V1",
+    "scorePolicy": {
+      "cohort": "POLICY_RUNTIME_TEMPORAL_RULE_AND_FROZEN_EVENT_RULES",
+      "compositeScore": null,
+      "direction": "HIGHER_SIGNED_IMPROVEMENT_IS_BETTER",
+      "metric": "surfaceAccountedVolumeM3",
+      "missingPolicy": "UNAVAILABLE_WITH_REASON_NO_ZERO_OR_REDISTRIBUTION",
+      "rank": "COMPETITION_1_1_3",
+      "relativeUsedForRanking": false,
+      "rounding": "HALF_EVEN",
+      "scope": "SELECTED_INDEPENDENT_SURFACES_ONLY",
+      "submissionDecimalPlaces": 18,
+      "submissionTieOrder": ["submittedAt", "id"],
+      "submissionWindow": "FULL_EVENT_AFTER_ANTECEDENT",
+      "tie": "EXACT_STORED_DECIMAL_EQUALITY",
+      "unit": "m3",
+      "version": "ABSOLUTE_ACCOUNTED_VOLUME_RANKING_V1",
+      "weeklyDecimalPlaces": 9,
+      "weeklyDistrictTieOrder": ["districtName", "districtId"],
+      "weeklyPlayerTieOrder": ["playerId"],
+      "weeklyWindow": "KST_MONDAY_INSTALLATION_AFTER_CONFIRMED_OBSERVATION",
+      "sha256": "ac3dd4f10239dfb19ddad7c6c651d452bfd90813941305232756d2302de54c1c"
+    },
+    "eventId": "seoul-20220808",
+    "groups": [
+      {
+        "entries": [
+          {
+            "differenceM3": -0.000465426724876927,
+            "differenceM3Exact": "-0.000465426724876927",
+            "rulesHash": "d042a84ec6f119db58a4adf5a07babc7535790ff3bfc14f8039e12658637415a",
+            "scorePolicySha256": "ac3dd4f10239dfb19ddad7c6c651d452bfd90813941305232756d2302de54c1c",
+            "id": "6f23f4d7-a6f0-4412-91c2-1984cad673c8",
+            "displayName": "큐 시험",
+            "costKrw": 7000000.0,
+            "submittedAt": "2026-10-20T04:50:38.870885Z",
+            "comparisonGroupHash": "cafbadb19b4a9fc52a81182d74a827b9046c36b0855fd060119db409f464f347",
+            "rank": 1
+          }
+        ],
+        "scorePolicySha256": "ac3dd4f10239dfb19ddad7c6c651d452bfd90813941305232756d2302de54c1c",
+        "comparisonGroupHash": "cafbadb19b4a9fc52a81182d74a827b9046c36b0855fd060119db409f464f347",
+        "rulesHash": "d042a84ec6f119db58a4adf5a07babc7535790ff3bfc14f8039e12658637415a"
+      }
+    ],
+    "title": "2022년 8월 수도권 집중호우",
+    "officialTotalScore": false,
+    "withheldSubmissionCount": 0
+  }
+}

@@ -15,6 +15,7 @@ from .ingestion.evaporation import observed_evaporation, append_evaporation, reu
 from .installation_model import resolve, with_observed_forcing
 from .ingestion import source_archive
 from .weekly import aggregate as weekly_aggregate, publish as publish_weekly, RULE, SECOND_RULE, SECOND_POLICY
+from .evaluation import score_policy
 
 
 def encode(value):
@@ -104,6 +105,8 @@ def process(conn, job, root):
         timed = job['installation'].get('physics_policy') == SECOND_POLICY
         score_start = job['installation']['installed_at'] if timed else job['start']
         rule = SECOND_RULE if timed else RULE
+        comparison_context = score_policy.freeze('WEEKLY', rule)
+        job['score_context'] = comparison_context
         engine = engine_identity()
         observations, source_hashes, previous_ref, previous_result = [], [], None, None
         previous_evaporation = None
@@ -119,6 +122,7 @@ def process(conn, job, root):
             req = json.loads(req_raw)
             forcing = json.loads(raw)
             if (digest(req_raw) != previous['input_hash'] or digest(raw) != req['forcingSha256']
+                    or req.get('scoreContext') != comparison_context
                     or {k:v for k,v in req['engine'].items() if k!='adapterSha256'} != {k:v for k,v in engine.items() if k!='adapterSha256'}
                     or req.get('weeklyRuleVersion', RULE) != rule
                     or (timed and datetime.fromisoformat(req.get('installedAt', '')) != score_start)
@@ -193,6 +197,7 @@ def process(conn, job, root):
                    'modelSha256': digest(source), 'forcingSha256': digest(forcing_raw),
                    'siteModelHash': job['installation']['model_hash'], 'placement': placement, 'engine': engine,
                    'weeklyRuleVersion': rule,
+                   'scoreContext': comparison_context,
                    'weeklyCodeSha256': digest((Path(__file__).parent/'weekly.py').read_bytes())}
         if timed:
             request['installedAt'] = score_start.isoformat()
@@ -226,6 +231,9 @@ def process(conn, job, root):
             child.wait()
             raise ValueError('LIVE_ENGINE_TIMEOUT') from None
         result = json.loads((path/'result.json').read_text())
+        if result.get('scoreContext') != comparison_context:
+            raise ValueError('LIVE_SCORE_CONTEXT_INVALID')
+        score_policy.verify(comparison_context, 'WEEKLY', rule)
         if previous_result is not None:
             # 어댑터 수정 후에도 기존 관측 구간의 최종 상태가 같아야 연속 결과를 게시한다.
             prefix_index = int((covered-job['start']).total_seconds()/60)-1
@@ -244,6 +252,7 @@ def process(conn, job, root):
                   'initialization': result.get('initialization'), 'facilityDesign': result.get('facilityDesign'),
                   'runoffComparison': result.get('runoffComparison'),
                   'designContract': result['designContract'],
+                  'scoreContext': result['scoreContext'],
                   'inflowPolicy': result['inflowPolicy'],
                   'areaLimitBasis': model['cells'][0].get('areaLimitBasis','LEGACY_DESIGN_RATIO')}
         weeks = weekly_aggregate(result['contribution'], score_start, job['end'], max(covered, score_start), rule=rule)

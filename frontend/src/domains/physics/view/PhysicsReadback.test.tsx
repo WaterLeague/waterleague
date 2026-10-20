@@ -1,6 +1,6 @@
 import { expect, it } from 'vitest';
 import physics from './fixtures/rawMetrics-physics-http-v1.json';
-import weekly from './fixtures/rawMetrics-weekly-http-v1.json';
+import weekly from './fixtures/score-policy-weekly-http-v1.json';
 import { physicsDto } from '../dto/physicsDto';
 import { weeklyDto } from '../../weekly/dto/weeklyDto';
 

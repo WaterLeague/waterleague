@@ -3,6 +3,7 @@ import { initializationDto } from './initializationDto';
 import { facilityEvidenceDto } from '../../facility/dto/facilityDto';
 import { runoffComparisonDto } from './runoffComparisonDto';
 import { designContractDto } from './designContractDto';
+import { scoreContextDto } from '../../evaluation/dto/scorePolicyDto';
 const value = z.number().finite();
 export const physicsDto = z
   .object({
@@ -34,6 +35,7 @@ export const physicsDto = z
         facilityDesign: facilityEvidenceDto.nullish(),
         runoffComparison: runoffComparisonDto.nullish(),
         designContract: designContractDto.nullish(),
+        scoreContext: scoreContextDto.refine((v) => v.mode === 'WEEKLY').nullish(),
         inflowPolicy: z.enum(['DIRECT_RAINFALL_ONLY', 'LEGACY_ALL_IMPERVIOUS_RUNOFF']).nullish(),
         areaLimitBasis: z.string().nullish(),
       })

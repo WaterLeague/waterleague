@@ -1,0 +1,815 @@
+{
+  "schemaVersion": 1,
+  "classification": "CURRENT_DIRECT_SURFACE_SCORE_COMPARISON_CONTEXT_VERIFICATION",
+  "date": "2026-10-20",
+  "productionRankingSeeded": false,
+  "policy": {
+    "file": "backend/src/main/resources/evaluation/game-score-policy-v1.json",
+    "sha256": "ac3dd4f10239dfb19ddad7c6c651d452bfd90813941305232756d2302de54c1c",
+    "bytes": 22376
+  },
+  "policyVersion": "ABSOLUTE_ACCOUNTED_VOLUME_RANKING_V1",
+  "sourceFilesVerified": 178,
+  "precision": {
+    "weeklyDecimalPlaces": 9,
+    "submissionDecimalPlaces": 18,
+    "rounding": "HALF_EVEN",
+    "tie": "EXACT_STORED_DECIMAL_EQUALITY",
+    "rank": "COMPETITION_1_1_3",
+    "relativeUsedForRanking": false,
+    "compositeScore": null
+  },
+  "checks": [
+    "평가 전 정책·코드/자료·실행 환경·시간 규칙 동결",
+    "실행 중 코드 교체와 잘못된 규칙/조건 거부",
+    "주간 조건 혼합·미기록의 합산/순위/우승 보류와 원 시설 기록 보존",
+    "재해 규칙/실행 집단별 회원 최고·상위 100개·공동 순위",
+    "원 지표·정확한 소수 문자열·0/음수 보존",
+    "저장 해상도 내 개선·동점·낮은 참가자 추가의 기존 점수 불변",
+    "동결 요청→워커→원장→실제 인증/공개 HTTP→프론트 DTO 일치",
+    "비회원 최종 조회 401·다른 회원 상세 404·no-store",
+    "기존 공개 설계 INP/OUT·원 물리 값 보존"
+  ],
+  "backend": {
+    "report": {
+      "file": "tmp/score-policy-backend-v2.json",
+      "sha256": "092d9eae889723db07914d7853f9afd88dd719aefc3380103e1c3f7ac8877764",
+      "bytes": 158
+    },
+    "log": {
+      "file": "tmp/waterleague_league_test_95cc9ed099284895b322e57d2278409f.log",
+      "sha256": "2e653804f9f31600aed89d39d158ba654d20d9154e6825039ba5d83c41abd4e8",
+      "bytes": 137634
+    },
+    "passed": true,
+    "sourceCountsUnchanged": true,
+    "javaClasses": [
+      {
+        "class": "io.waterleague.PhysicsWorkflowTests",
+        "run": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.WatershedWorkflowTests",
+        "run": 16,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.ComparisonWorkflowTests",
+        "run": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.WatershedLayoutTests",
+        "run": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.CisternLayoutTests",
+        "run": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.BudgetLedgerWorkflowTests",
+        "run": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.PhysicsReadbackTests",
+        "run": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 1
+      },
+      {
+        "class": "io.waterleague.WatershedReadbackTests",
+        "run": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 1
+      },
+      {
+        "class": "io.waterleague.BudgetAllocationTests",
+        "run": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.WatershedPlaybackTests",
+        "run": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 1
+      },
+      {
+        "class": "io.waterleague.PatternAnalysisTests",
+        "run": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.ComparisonCompatibilityTests",
+        "run": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.PublicSurfaceTests",
+        "run": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.ResearchSearchWorkflowTests",
+        "run": 11,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 1
+      },
+      {
+        "class": "io.waterleague.InfrastructureCatalogTests",
+        "run": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.HistoricalSubmissionTests",
+        "run": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.HistoricalWorkflowTests",
+        "run": 10,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.WeeklyWorkflowTests",
+        "run": 10,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.ModelEligibilityTests",
+        "run": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.NativeGameTests",
+        "run": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.NativeSpatialMigrationTests",
+        "run": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.SpatialMapperTests",
+        "run": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.NativePlayFullCatalogTests",
+        "run": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.WaterLeagueApplicationTests",
+        "run": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.NativeGroundLookupTests",
+        "run": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.QueueCapacityTests",
+        "run": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.ContainerPolicyTests",
+        "run": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.ResearchWorkflowTests",
+        "run": 14,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.PlacementValidationTests",
+        "run": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.CandidateGenerationTests",
+        "run": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.SharedResearchWorkflowTests",
+        "run": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.FloodTraceTests",
+        "run": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.HistoricalDesignTests",
+        "run": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.HistoricalSubmissionReadbackTests",
+        "run": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 1
+      },
+      {
+        "class": "io.waterleague.LiveRainfallTests",
+        "run": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.HistoricalDesignRestartTests",
+        "run": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 1
+      },
+      {
+        "class": "io.waterleague.UtilizationWorkflowTests",
+        "run": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.ApiSecurityTests",
+        "run": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.MfaTests",
+        "run": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.CisternMapPlanTests",
+        "run": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.SurfacePlaybackTests",
+        "run": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 1
+      },
+      {
+        "class": "io.waterleague.ResearchAnalysisWorkflowTests",
+        "run": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.SpatialSnapshotTests",
+        "run": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.AccountFlowTests",
+        "run": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.JsonServiceOrderingTests",
+        "run": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.PresentWeatherTests",
+        "run": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.NativePlayTests",
+        "run": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.EquipmentHistoryTests",
+        "run": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.SharedInstallationTests",
+        "run": 14,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.ScoreQualityTests",
+        "run": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.GuestHistoricalTests",
+        "run": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.UrbanLiveTests",
+        "run": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.LeagueParticipationWorkflowTests",
+        "run": 11,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    ]
+  },
+  "physics": {
+    "report": {
+      "file": "tmp/score-policy-physics-v3.json",
+      "sha256": "63c5b7bd65753567bb64cc93a229e5b0464c4a27eae0f535508501ea5582060d",
+      "bytes": 157
+    },
+    "log": {
+      "file": "tmp/waterleague_queue_test_22fc7437e03249159176e87e6817f3e1.log",
+      "sha256": "4de0b8908a968d8ea39f4a3ff1b474b009d8eb0b5bb9630c95775a9c35b6ebfc",
+      "bytes": 31164
+    },
+    "passed": true,
+    "sourceCountsUnchanged": true,
+    "javaClasses": [
+      {
+        "class": "io.waterleague.PhysicsWorkflowTests",
+        "run": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.SharedInstallationTests",
+        "run": 14,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.PhysicsReadbackTests",
+        "run": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    ],
+    "workerTests": 11,
+    "httpTests": 1,
+    "weatherClassification": "SYNTHETIC_TEST_ONLY"
+  },
+  "historical": {
+    "report": {
+      "file": "tmp/score-policy-historical-v1.json",
+      "sha256": "c2d7decc46a60b9097e230d5136da40c2ba1e8fd13d9782d56b1f35bd0297fea",
+      "bytes": 157
+    },
+    "log": {
+      "file": "tmp/waterleague_queue_test_fb669281c24d4b49a7c44a1d75da8083.log",
+      "sha256": "8effa530e618937c6b129604e64ba55436338977fb69e4a9a5b2167beaf32fc0",
+      "bytes": 19202
+    },
+    "passed": true,
+    "sourceCountsUnchanged": true,
+    "javaClasses": [
+      {
+        "class": "io.waterleague.HistoricalSubmissionTests",
+        "run": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.HistoricalWorkflowTests",
+        "run": 10,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    ],
+    "workerTests": 6,
+    "weatherClassification": "ARCHIVED_PUBLIC_KMA_OBSERVATION"
+  },
+  "savedSubmission": {
+    "report": {
+      "file": "tmp/score-policy-submission-v1.json",
+      "sha256": "e31b237fb329ae934c9f3e090df86dea82e6acfa3b571d7f2ce03addf1c049de",
+      "bytes": 157
+    },
+    "log": {
+      "file": "tmp/waterleague_queue_test_04a97ddf2c254328b8ed17ec56294ea5.log",
+      "sha256": "9fd1990e2b65f2f3e5a6e3a3bce6f310a1b673ea17eef3daaf8310273b2954d9",
+      "bytes": 34258
+    },
+    "passed": true,
+    "sourceCountsUnchanged": true,
+    "javaClasses": [
+      {
+        "class": "io.waterleague.HistoricalSubmissionTests",
+        "run": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.HistoricalDesignTests",
+        "run": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.ApiSecurityTests",
+        "run": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "io.waterleague.HistoricalSubmissionReadbackTests",
+        "run": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    ],
+    "workerTests": 1,
+    "httpTests": 1,
+    "weatherClassification": "ARCHIVED_PUBLIC_KMA_OBSERVATION"
+  },
+  "pythonUnits": [
+    {
+      "file": "tmp/score-policy-unit-v3.log",
+      "sha256": "a1e5bea3b2cab3f923c5aa6cf5495547be7f7e2a4bcc795b5c001da0fd2d4cba",
+      "bytes": 888,
+      "tests": 5,
+      "passed": true
+    },
+    {
+      "file": "tmp/score-policy-weekly-unit-v1.log",
+      "sha256": "b8cc75dfbe2b40e2f3acf5fbc9c4b9c9ba9a7f55681dcf00eb37c51913e5e894",
+      "bytes": 650,
+      "tests": 4,
+      "passed": true
+    }
+  ],
+  "frontend": {
+    "log": {
+      "file": "tmp/score-policy-final-frontend-v1.log",
+      "sha256": "8b1a1b0da3f71d20e15994e377f999fd0645f9c47a81499f600debae50b92ab6",
+      "bytes": 2454
+    },
+    "files": 115,
+    "tests": 391,
+    "format": true,
+    "typesAndProductionBuild": true
+  },
+  "httpFixtures": [
+    {
+      "file": "frontend/src/domains/physics/view/fixtures/score-policy-board-http-v1.json",
+      "sha256": "0f29c91e3aa47ae58b96631c9e193180deaae40166c6ca4b8dde0c41b954237c",
+      "bytes": 2591,
+      "source": {
+        "file": "tmp/waterleague_queue_test_04a97ddf2c254328b8ed17ec56294ea5.runs/board-http.json",
+        "sha256": "5f3ec681d8a600eefc2578216c0bf42af1c5f54a56b1aee20cd66c541db98696",
+        "bytes": 1862
+      },
+      "classification": "ACTUAL_AUTHENTICATED_HTTP_WITH_PUBLIC_HISTORICAL_WEATHER"
+    },
+    {
+      "file": "frontend/src/domains/physics/view/fixtures/score-policy-submission-http-1-v1.json",
+      "sha256": "f5da87115d7b57e5948de64f746c3d86eeb81ae9b7cb6b1b491f0ad31d4d6a5b",
+      "bytes": 3439,
+      "source": {
+        "file": "tmp/waterleague_queue_test_04a97ddf2c254328b8ed17ec56294ea5.runs/submission-http-2904802f-1162-4c94-8a2a-ab4438c4f7f6.json",
+        "sha256": "ec7e8955d1ba53f30b055f407c640e14241e77d45d34319abd33910a07794b18",
+        "bytes": 2548
+      },
+      "classification": "ACTUAL_AUTHENTICATED_HTTP_WITH_PUBLIC_HISTORICAL_WEATHER"
+    },
+    {
+      "file": "frontend/src/domains/physics/view/fixtures/score-policy-submission-http-2-v1.json",
+      "sha256": "63567c1e93e7f0d3ebe9d9aef0ee58030e179dfd0c8cbf701f9019d34a15f037",
+      "bytes": 3438,
+      "source": {
+        "file": "tmp/waterleague_queue_test_04a97ddf2c254328b8ed17ec56294ea5.runs/submission-http-6f23f4d7-a6f0-4412-91c2-1984cad673c8.json",
+        "sha256": "dafeee9e28ca3730ef9015198306d71ca6ef85c997e61849ac114f6f7377c346",
+        "bytes": 2547
+      },
+      "classification": "ACTUAL_AUTHENTICATED_HTTP_WITH_PUBLIC_HISTORICAL_WEATHER"
+    },
+    {
+      "file": "frontend/src/domains/physics/view/fixtures/score-policy-submission-http-3-v1.json",
+      "sha256": "cbf14149acadca1b6289cb4c33cc241a9fd9b9000e679635a5aa3e7c6862eb8a",
+      "bytes": 3439,
+      "source": {
+        "file": "tmp/waterleague_queue_test_04a97ddf2c254328b8ed17ec56294ea5.runs/submission-http-91957dc4-fcea-4036-b67f-fab90891c7bf.json",
+        "sha256": "3e7281610bc8056e1699aae838857e81bcd7a6d2b475597dc63ebd45aa62a380",
+        "bytes": 2548
+      },
+      "classification": "ACTUAL_AUTHENTICATED_HTTP_WITH_PUBLIC_HISTORICAL_WEATHER"
+    },
+    {
+      "file": "frontend/src/domains/physics/view/fixtures/score-policy-weekly-http-v1.json",
+      "sha256": "15799701b7b2aac3148b5b333d522b7c98bd7142c7c60c3a99a3f9ba9f0179d1",
+      "bytes": 18369,
+      "source": {
+        "file": "tmp/waterleague_queue_test_22fc7437e03249159176e87e6817f3e1.fixtures/weekly-response.json",
+        "sha256": "f9daa0e05c385f28d6f0ddffabd014de4cd832a4aad3a304b0a4e4c8d150e666",
+        "bytes": 11132
+      },
+      "classification": "ACTUAL_PUBLIC_HTTP_RESPONSE_WITH_SYNTHETIC_TEST_WEATHER"
+    }
+  ],
+  "submissionArchives": [
+    {
+      "key": "original",
+      "manifest": {
+        "file": "tmp/waterleague_queue_test_04a97ddf2c254328b8ed17ec56294ea5.runs/historical/2904802f-1162-4c94-8a2a-ab4438c4f7f6/64b84998-95c0-4a8e-af6f-7276112a04a2/manifest.json",
+        "sha256": "d5b40c42fe4991725153beb89ec2ab1f34fb634c0afdd476dd4fcef9ec4cd81b",
+        "bytes": 23294
+      },
+      "result": {
+        "file": "tmp/waterleague_queue_test_04a97ddf2c254328b8ed17ec56294ea5.runs/historical/2904802f-1162-4c94-8a2a-ab4438c4f7f6/64b84998-95c0-4a8e-af6f-7276112a04a2/result.json",
+        "sha256": "bfafe22b7dceeddecba8c034a62d4d7d4c9c0c466e68d655dda5720c5b55d720",
+        "bytes": 228634
+      },
+      "request": {
+        "file": "tmp/waterleague_queue_test_04a97ddf2c254328b8ed17ec56294ea5.runs/historical/2904802f-1162-4c94-8a2a-ab4438c4f7f6/64b84998-95c0-4a8e-af6f-7276112a04a2/request.json",
+        "sha256": "9514bb5f6d7505ae84d291e60eeda54b43bbb69c45bae9d52797ebebc0e6bead",
+        "bytes": 49673
+      },
+      "scoreContext": {
+        "file": "tmp/waterleague_queue_test_04a97ddf2c254328b8ed17ec56294ea5.runs/historical/2904802f-1162-4c94-8a2a-ab4438c4f7f6/64b84998-95c0-4a8e-af6f-7276112a04a2/score-context.json",
+        "sha256": "5f9bc87de3c2f07652e65fef6c775ad4a70c3c4934bf77078b6f08d6b2ca3b85",
+        "bytes": 1395
+      },
+      "comparisonGroupHash": "cafbadb19b4a9fc52a81182d74a827b9046c36b0855fd060119db409f464f347",
+      "rankingScoreM3Exact": "-0.000653509681996844",
+      "nativeFiles": {
+        "11200/0/baseline.inp": "1ffffb03310fc90102d3e42f1186ecd9c650584fe36d9b9ab79e7d10804a68df",
+        "11200/0/baseline.out": "d1203c25f4dd94feb3f15428a1c45726cf4451d7c7eb8613e1f372ee11b01661",
+        "11200/0/strategy.inp": "9283ae69da4ded853fb8370249f77529cc35b4824b5b5fb19d3afd5c48bb3387",
+        "11200/0/strategy.out": "17bcc0e6658c9dcfb8143b99cb185c46057c045606a28947108d28e3b8ed1eac",
+        "11680/0/baseline.inp": "b05aec77601614fae8e89c8ceebbe4f8de8d611e95bb9d5c39c72046e1cb5745",
+        "11680/0/baseline.out": "22616e9941be6ed3b4d9c4af844409bf46a9bbad07602f0e93c301bf9d24edf7",
+        "11680/0/strategy.inp": "87a8fc14312a1c1cfdb17471a2696e5f1f17222071c4dfc31e9284cf5bffdc46",
+        "11680/0/strategy.out": "719ec7a805fedf759fdbc03ebe97e89fe71a9ebb41c64a8ce68d2569257607e3"
+      }
+    },
+    {
+      "key": "cancelled",
+      "manifest": {
+        "file": "tmp/waterleague_queue_test_04a97ddf2c254328b8ed17ec56294ea5.runs/historical/6f23f4d7-a6f0-4412-91c2-1984cad673c8/32bbddb9-033e-42ae-b179-c9f56dc74ff9/manifest.json",
+        "sha256": "5465210cbf0e38322d2fb3885def193737e3f3a09f910bf3859a7fd6f090bfa6",
+        "bytes": 12101
+      },
+      "result": {
+        "file": "tmp/waterleague_queue_test_04a97ddf2c254328b8ed17ec56294ea5.runs/historical/6f23f4d7-a6f0-4412-91c2-1984cad673c8/32bbddb9-033e-42ae-b179-c9f56dc74ff9/result.json",
+        "sha256": "6fd4f47c1e927dfb2e14cdec0584915db503337116b8b9313192b036d4932a6c",
+        "bytes": 121783
+      },
+      "request": {
+        "file": "tmp/waterleague_queue_test_04a97ddf2c254328b8ed17ec56294ea5.runs/historical/6f23f4d7-a6f0-4412-91c2-1984cad673c8/32bbddb9-033e-42ae-b179-c9f56dc74ff9/request.json",
+        "sha256": "c19e656437c0a8d86313cbf2fb49310a2654642479f2ef626d847f3fa2ca55b7",
+        "bytes": 31920
+      },
+      "scoreContext": {
+        "file": "tmp/waterleague_queue_test_04a97ddf2c254328b8ed17ec56294ea5.runs/historical/6f23f4d7-a6f0-4412-91c2-1984cad673c8/32bbddb9-033e-42ae-b179-c9f56dc74ff9/score-context.json",
+        "sha256": "5f9bc87de3c2f07652e65fef6c775ad4a70c3c4934bf77078b6f08d6b2ca3b85",
+        "bytes": 1395
+      },
+      "comparisonGroupHash": "cafbadb19b4a9fc52a81182d74a827b9046c36b0855fd060119db409f464f347",
+      "rankingScoreM3Exact": "-0.000465426724876927",
+      "nativeFiles": {
+        "11200/0/baseline.inp": "1ffffb03310fc90102d3e42f1186ecd9c650584fe36d9b9ab79e7d10804a68df",
+        "11200/0/baseline.out": "d1203c25f4dd94feb3f15428a1c45726cf4451d7c7eb8613e1f372ee11b01661",
+        "11200/0/strategy.inp": "9283ae69da4ded853fb8370249f77529cc35b4824b5b5fb19d3afd5c48bb3387",
+        "11200/0/strategy.out": "17bcc0e6658c9dcfb8143b99cb185c46057c045606a28947108d28e3b8ed1eac"
+      }
+    },
+    {
+      "key": "original",
+      "manifest": {
+        "file": "tmp/waterleague_queue_test_04a97ddf2c254328b8ed17ec56294ea5.runs/historical/91957dc4-fcea-4036-b67f-fab90891c7bf/2de93c87-9c32-4410-a349-299a4e1199a2/manifest.json",
+        "sha256": "29fdbc1498e8017ef92c84ef5001171329ee0dd5269552bff3bea6c3fe344a10",
+        "bytes": 23294
+      },
+      "result": {
+        "file": "tmp/waterleague_queue_test_04a97ddf2c254328b8ed17ec56294ea5.runs/historical/91957dc4-fcea-4036-b67f-fab90891c7bf/2de93c87-9c32-4410-a349-299a4e1199a2/result.json",
+        "sha256": "bfafe22b7dceeddecba8c034a62d4d7d4c9c0c466e68d655dda5720c5b55d720",
+        "bytes": 228634
+      },
+      "request": {
+        "file": "tmp/waterleague_queue_test_04a97ddf2c254328b8ed17ec56294ea5.runs/historical/91957dc4-fcea-4036-b67f-fab90891c7bf/2de93c87-9c32-4410-a349-299a4e1199a2/request.json",
+        "sha256": "9514bb5f6d7505ae84d291e60eeda54b43bbb69c45bae9d52797ebebc0e6bead",
+        "bytes": 49673
+      },
+      "scoreContext": {
+        "file": "tmp/waterleague_queue_test_04a97ddf2c254328b8ed17ec56294ea5.runs/historical/91957dc4-fcea-4036-b67f-fab90891c7bf/2de93c87-9c32-4410-a349-299a4e1199a2/score-context.json",
+        "sha256": "5f9bc87de3c2f07652e65fef6c775ad4a70c3c4934bf77078b6f08d6b2ca3b85",
+        "bytes": 1395
+      },
+      "comparisonGroupHash": "cafbadb19b4a9fc52a81182d74a827b9046c36b0855fd060119db409f464f347",
+      "rankingScoreM3Exact": "-0.000653509681996844",
+      "nativeFiles": {
+        "11200/0/baseline.inp": "1ffffb03310fc90102d3e42f1186ecd9c650584fe36d9b9ab79e7d10804a68df",
+        "11200/0/baseline.out": "d1203c25f4dd94feb3f15428a1c45726cf4451d7c7eb8613e1f372ee11b01661",
+        "11200/0/strategy.inp": "9283ae69da4ded853fb8370249f77529cc35b4824b5b5fb19d3afd5c48bb3387",
+        "11200/0/strategy.out": "17bcc0e6658c9dcfb8143b99cb185c46057c045606a28947108d28e3b8ed1eac",
+        "11680/0/baseline.inp": "b05aec77601614fae8e89c8ceebbe4f8de8d611e95bb9d5c39c72046e1cb5745",
+        "11680/0/baseline.out": "22616e9941be6ed3b4d9c4af844409bf46a9bbad07602f0e93c301bf9d24edf7",
+        "11680/0/strategy.inp": "87a8fc14312a1c1cfdb17471a2696e5f1f17222071c4dfc31e9284cf5bffdc46",
+        "11680/0/strategy.out": "719ec7a805fedf759fdbc03ebe97e89fe71a9ebb41c64a8ce68d2569257607e3"
+      }
+    }
+  ],
+  "physicalPreservation": {
+    "file": "tmp/score-policy-physical-preservation-v1.json",
+    "sha256": "8f896c3c6c967ddcd8788c829cba4708da6e6748057d057f9ddd998f879525a5",
+    "bytes": 617
+  },
+  "browser": {
+    "screenshots": [
+      {
+        "file": "output/qa/score-policy-main-v1.png",
+        "sha256": "922ef5927af36f8f91da29caf45ed47e1f1cd41c8ce50bc0da2f6093a2e33f69",
+        "bytes": 52386
+      },
+      {
+        "file": "output/qa/score-policy-data-v2.png",
+        "sha256": "2334d1e0141b4d1b6337feb8441ecfa96e7f86551ffb56099133aa1655e7d07a",
+        "bytes": 75967
+      },
+      {
+        "file": "output/qa/score-policy-weekly-desktop-v1.png",
+        "sha256": "be5b30cb6f8c724db280e797d544d5b29a0b9d0fae9cf4a27261516ea8d86005",
+        "bytes": 37356
+      },
+      {
+        "file": "output/qa/score-policy-weekly-mobile-v1.png",
+        "sha256": "90c15becbe8eec66e9d3a1a4674958daef3e5ebe1928096b6f3c489512842ca8",
+        "bytes": 26471
+      },
+      {
+        "file": "output/qa/score-policy-submission-desktop-v1.png",
+        "sha256": "3565d9d9479149734d4af7f15c8d2213b48c52d39d744bf13432af0749940def",
+        "bytes": 39307
+      },
+      {
+        "file": "output/qa/score-policy-submission-mobile-v3.png",
+        "sha256": "67bdb755b4ca2384fd43152b2cf59ba3452865c4214c4b27ccf38a5bac3e0562",
+        "bytes": 29234
+      }
+    ],
+    "weeklyMobile": {
+      "viewportWidth": 390,
+      "documentWidth": 375,
+      "tableWidths": [
+        324,
+        339
+      ]
+    },
+    "submissionMobile": {
+      "viewportWidth": 390,
+      "documentWidth": 375,
+      "panelWidth": 335
+    },
+    "temporaryQaSource": {
+      "file": "tmp/score-policy-ui-v1.html",
+      "sha256": "7ff4565b00210877e3c9e1da81f185da26b5cbc0d1e1f5f7c566e4e6c2e2ae2c",
+      "bytes": 2147
+    },
+    "temporaryQaRemoved": true,
+    "excludedTrials": [
+      "output/qa/score-policy-submission-mobile-v1.png: 크기 전환 직후 이전 프레임",
+      "output/qa/score-policy-submission-mobile-v2.png: 저장값이 화면 아래에 있어 최종 증거 제외"
+    ]
+  },
+  "runtime": {
+    "file": "tmp/score-policy-local-runtime-v1.json",
+    "sha256": "77ef14009049830509768aefbff101f99daec6b0112cae289dfdd70b772ac1e6",
+    "bytes": 560
+  },
+  "priorCi": {
+    "commit": "f7b9b3aceb9df46eadc5f7ae1cf93708202609e8",
+    "run": "https://github.com/WaterLeague/waterleague/actions/runs/39370208302",
+    "conclusion": "success"
+  },
+  "excludedInitialRuns": [
+    {
+      "file": "tmp/score-policy-backend-v1.json",
+      "reason": "시험 계정 이름 32자 제한 초과 2건 수정 뒤 전체 재검증"
+    },
+    {
+      "file": "tmp/score-policy-physics-v1.json",
+      "reason": "실행 중 파일 교체 방지 보강 전 예비 실행; 최종 v3 사용"
+    }
+  ],
+  "limitations": [
+    "현재 6종 직접 강우 독립 표면의 체적 차이 순위; 연결 유역 순위 아님",
+    "저장 정밀도와 실제 엔진·물수지·현장 정확도 구분",
+    "주간 합성 기상과 원장 경계값은 격리 시험 전용이며 운영 관측/순위로 게시하지 않음",
+    "공통 컴포넌트 브라우저 검증이며 실제 회원 브라우저 전체 제출 흐름/P6 성능 완료 아님",
+    "기존 코드/자료/조건 미기록 원장에 현재 조건 소급 부여 없음"
+  ]
+}

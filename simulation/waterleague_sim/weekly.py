@@ -1,6 +1,7 @@
 """분별 물리 산출물의 주간 합산·기존 적립 구간 보존."""
 from datetime import datetime, timedelta, timezone
-from decimal import Decimal, ROUND_HALF_EVEN
+from decimal import Decimal
+from .evaluation.score_policy import quantize, verify
 
 KST = timezone(timedelta(hours=9))
 PRECISION = Decimal('0.000000001')
@@ -21,7 +22,7 @@ def aggregate(frames, start, end, covered, *, rule=RULE):
         expected = last_time.replace(second=0, microsecond=0)+timedelta(minutes=1)
         if (rule == RULE and last_time.second) or at != expected or not cumulative.is_finite() or abs(cumulative) >= Decimal('1e15'):
             raise ValueError('LIVE_WEEKLY_INPUT_INVALID')
-        cumulative = cumulative.quantize(PRECISION, rounding=ROUND_HALF_EVEN)
+        cumulative = quantize(cumulative, 9)
         day = last_time.astimezone(KST).date()
         week = day-timedelta(days=day.weekday())
         value = weeks.setdefault(week, {'score': Decimal(0), 'minutes': 0, 'through': at,
@@ -43,20 +44,29 @@ def aggregate(frames, start, end, covered, *, rule=RULE):
 
 
 def publish(conn, job, weeks):
+    context = job.get('score_context')
+    if not context or context.get('mode') != 'WEEKLY':
+        raise ValueError('LIVE_SCORE_CONTEXT_INVALID')
+    verify(context, 'WEEKLY', context['binding'])
+    if any(value['rule'] != context['binding'] for value in weeks.values()):
+        raise ValueError('LIVE_SCORE_CONTEXT_INVALID')
     previous = {r['week_start']: r for r in conn.execute(
         'SELECT * FROM shared_weekly_scores WHERE installation_id=%s FOR UPDATE', (job['installation']['id'],)).fetchall()}
     for week, old in previous.items():
         current = weeks.get(week)
         if (current is None or old['score_m3'] != current['prefixScore']
+                or old.get('comparison_group_hash') != context['sha256']
+                or old.get('score_policy_sha256') != context['policySha256']
                 or old['evaluated_minutes'] != current['prefixMinutes']
                 or old['evaluated_through'] != current['prefixThrough'] or old['rule_version'] != current['rule']
                 or (old.get('evaluated_seconds') or old['evaluated_minutes']*60) != current['prefixSeconds']):
             raise ValueError('LIVE_WEEKLY_PREFIX_CHANGED')
     for week, value in weeks.items():
         conn.execute('''INSERT INTO shared_weekly_scores(installation_id,week_start,score_m3,
-            evaluated_minutes,evaluated_through,source_job_id,rule_version,evaluated_seconds) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)
+            evaluated_minutes,evaluated_through,source_job_id,rule_version,evaluated_seconds,
+            score_policy_sha256,comparison_group_hash) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
             ON CONFLICT(installation_id,week_start) DO UPDATE SET score_m3=EXCLUDED.score_m3,
             evaluated_minutes=EXCLUDED.evaluated_minutes,evaluated_seconds=EXCLUDED.evaluated_seconds,evaluated_through=EXCLUDED.evaluated_through,
             source_job_id=EXCLUDED.source_job_id WHERE shared_weekly_scores.evaluated_through<EXCLUDED.evaluated_through''',
             (job['installation']['id'], week, value['score'], value['minutes'], value['through'], job['id'], value['rule'],
-             value['seconds'] if value['rule'] == SECOND_RULE else None))
+             value['seconds'] if value['rule'] == SECOND_RULE else None, context['policySha256'], context['sha256']))

@@ -363,6 +363,91 @@ class HistoricalSubmissionTests extends PostgresIntegrationTest {
   }
 
   @Test
+  void storedDecimalImprovementAndCompetitionTiesAreIndependentOfDisplayRounding() {
+    var scores =
+        List.of(
+            "100000000000000.000000000000000002",
+            "100000000000000.000000000000000001",
+            "100000000000000.000000000000000001");
+    for (String score : scores) {
+      var participant = UUID.randomUUID();
+      accounts.add(
+          new Account(
+              participant,
+              "rank_" + participant.toString().substring(0, 8),
+              "정밀도 시험",
+              "NOT_A_LOGIN",
+              "MEMBER",
+              "PLAYER",
+              "APPROVED",
+              null,
+              "",
+              "",
+              true,
+              "11680",
+              "AFFILIATED"));
+      var job = service.submit(participant, request(List.of(item("11200", "20", 10))));
+      db.update(
+          "UPDATE historical_experiments SET state='SUCCEEDED',result='{}' WHERE id=?", job.id());
+      db.update(
+          "UPDATE historical_submissions SET"
+              + " difference_m3=?,score_policy_sha256=?,comparison_group_hash=? WHERE job_id=?",
+          new BigDecimal(score),
+          "c".repeat(64),
+          "d".repeat(64),
+          job.id());
+    }
+    var entries =
+        json.tree(json.write(service.board(eventId))).path("groups").get(0).path("entries");
+    assertThat(entries.get(0).path("rank").asInt()).isEqualTo(1);
+    assertThat(entries.get(1).path("rank").asInt()).isEqualTo(2);
+    assertThat(entries.get(2).path("rank").asInt()).isEqualTo(2);
+    assertThat(entries.get(0).path("differenceM3Exact").asString()).isEqualTo(scores.getFirst());
+    assertThat(entries.get(1).path("differenceM3Exact").asString()).isEqualTo(scores.get(1));
+  }
+
+  @Test
+  void sameRulesDifferentRuntimeRemainSeparateAndMissingContextIsNotRanked() {
+    var dto = request(List.of(item("11200", "20", 10)));
+    var a = service.submit(owner, dto);
+    var b = service.submit(owner, request(dto.placements()));
+    db.update(
+        "UPDATE historical_experiments SET state='SUCCEEDED',result='{}' WHERE id IN (?,?)",
+        a.id(),
+        b.id());
+    var c = service.submit(owner, request(dto.placements()));
+    for (var job : List.of(a, b, c)) {
+      db.update(
+          "UPDATE historical_experiments SET state='SUCCEEDED',result='{}' WHERE id=?", job.id());
+      db.update("UPDATE historical_submissions SET difference_m3=1 WHERE job_id=?", job.id());
+    }
+    db.update(
+        "UPDATE historical_submissions SET score_policy_sha256=?,comparison_group_hash=? WHERE"
+            + " job_id=?",
+        "a".repeat(64),
+        "b".repeat(64),
+        a.id());
+    db.update(
+        "UPDATE historical_submissions SET score_policy_sha256=?,comparison_group_hash=? WHERE"
+            + " job_id=?",
+        "a".repeat(64),
+        "c".repeat(64),
+        b.id());
+    var board = json.tree(json.write(service.board(eventId)));
+    assertThat(board.path("groups").size()).isEqualTo(2);
+    assertThat(board.path("withheldSubmissionCount").asInt()).isEqualTo(1);
+    assertThat(board.path("groups").get(0).path("rulesHash").asString())
+        .isEqualTo(board.path("groups").get(1).path("rulesHash").asString());
+    assertThat(
+            board.path("groups").get(0).path("entries").get(0).path("differenceM3Exact").asString())
+        .isEqualTo("1.000000000000000000");
+    var frozen = json.tree(history.require(owner, a.id()).placements()).get(0);
+    var rules = json.tree(frozen.path("submissionRulesRaw").asString());
+    assertThat(rules.path("scorePolicy").path("rounding").asString()).isEqualTo("HALF_EVEN");
+    assertThat(rules.path("scorePolicy").path("sha256").asString()).hasSize(64);
+  }
+
+  @Test
   void boardSeparatesRulesKeepsNegativeAndExcludesFailuresAndUnapprovedMembers() {
     var dto = request(List.of(item("11200", "20", 10)));
     var a = service.submit(owner, dto);
@@ -385,6 +470,14 @@ class HistoricalSubmissionTests extends PostgresIntegrationTest {
     var b = service.submit(owner, request(List.of(item("11200", "20", 20))));
     db.update("UPDATE historical_experiments SET state='SUCCEEDED',result='{}' WHERE id=?", b.id());
     db.update("UPDATE historical_submissions SET difference_m3=-0.5 WHERE job_id=?", b.id());
+    // 원장 조회 규칙만 검증하는 시험용 실행 조건이며 실제 수문 결과가 아니다.
+    db.update(
+        "UPDATE historical_submissions SET score_policy_sha256=?,comparison_group_hash=? WHERE"
+            + " job_id IN (?,?)",
+        "c".repeat(64),
+        "d".repeat(64),
+        a.id(),
+        b.id());
     var board = json.tree(json.write(service.board(eventId)));
     assertThat(board.path("groups").size()).isEqualTo(1);
     assertThat(board.path("groups").get(0).path("entries").size()).isEqualTo(1);

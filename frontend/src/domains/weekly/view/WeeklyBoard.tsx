@@ -59,13 +59,21 @@ export function WeeklyBoard({
             <strong>
               {period.status === 'FINAL'
                 ? '집계 완료'
-                : period.status === 'PROVISIONAL'
-                  ? '누락 구간 계산 대기'
-                  : period.status === 'EMPTY'
-                    ? '평가 기록 없음'
-                    : '진행 중'}
+                : period.status === 'WITHHELD'
+                  ? '평가 조건 확인 · 순위 보류'
+                  : period.status === 'PROVISIONAL'
+                    ? '누락 구간 계산 대기'
+                    : period.status === 'EMPTY'
+                      ? '평가 기록 없음'
+                      : '진행 중'}
             </strong>
           </div>
+          {period.status === 'WITHHELD' && (
+            <p role="status">
+              평가 조건이 다르거나 확인되지 않은 기록이 있어 합산·순위를 보류합니다. 시설별 원
+              기록은 보존됩니다.
+            </p>
+          )}
           <div className="weekly-last-winner">
             <Trophy size={16} />
             <span>
@@ -73,15 +81,25 @@ export function WeeklyBoard({
                 ? `지난주 우승 · ${winners}`
                 : value?.previous.status === 'PROVISIONAL'
                   ? '지난주 결과는 미평가 구간이 있어 잠정 상태입니다.'
-                  : '지난주 확정 우승 구 없음'}
+                  : value?.previous.status === 'WITHHELD'
+                    ? '지난주 결과는 평가 조건 확인으로 보류 상태입니다.'
+                    : '지난주 확정 우승 구 없음'}
             </span>
           </div>
           {period.own && (
             <p className="weekly-own">
-              내 기록 · {period.own.rank === null ? '계산 대기' : `${period.own.rank}위`} ·{' '}
+              내 기록 ·{' '}
+              {period.status === 'WITHHELD'
+                ? '순위 보류'
+                : period.own.rank === null
+                  ? '계산 대기'
+                  : `${period.own.rank}위`}{' '}
+              ·{' '}
               {period.own.scoreM3 !== null
                 ? `${scoreFormat.format(period.own.scoreM3)}m³`
-                : '미계산'}
+                : period.status === 'WITHHELD'
+                  ? '합산 보류'
+                  : '미계산'}
               {evaluatedSeconds(period.own) < expectedSeconds(period.own)
                 ? ' · 일부 구간 미평가'
                 : ''}
@@ -113,7 +131,13 @@ export function WeeklyBoard({
                           </button>
                           {evaluatedSeconds(d) < expectedSeconds(d) && <small>일부 미평가</small>}
                         </th>
-                        <td>{d.scoreM3 === null ? '미계산' : scoreFormat.format(d.scoreM3)}</td>
+                        <td title={d.scoreM3Exact === null ? undefined : `${d.scoreM3Exact} m³`}>
+                          {d.scoreM3 === null
+                            ? period.status === 'WITHHELD' && evaluatedSeconds(d) > 0
+                              ? '합산 보류'
+                              : '미계산'
+                            : scoreFormat.format(d.scoreM3)}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -158,7 +182,13 @@ export function WeeklyBoard({
                               {evaluatedSeconds(p) < expectedSeconds(p) ? ' · 일부 미평가' : ''}
                             </small>
                           </th>
-                          <td>{p.scoreM3 === null ? '미계산' : scoreFormat.format(p.scoreM3)}</td>
+                          <td title={p.scoreM3Exact === null ? undefined : `${p.scoreM3Exact} m³`}>
+                            {p.scoreM3 === null
+                              ? period.status === 'WITHHELD' && evaluatedSeconds(p) > 0
+                                ? '합산 보류'
+                                : '미계산'
+                              : scoreFormat.format(p.scoreM3)}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -173,7 +203,8 @@ export function WeeklyBoard({
               <summary>기여 점수와 집계 기준</summary>
               <p>
                 시설 없는 조건과 설치 조건의 유출·배수·순저류 체적 차이입니다. 음수도 반영하며
-                순위는 반올림 전 값으로 계산합니다. 같은 점수는 공동 순위입니다.
+                표시값은 반올림하며 순위는 소수 9자리 저장값으로 계산합니다. 같은 저장값은 공동
+                순위입니다.
               </p>
               <p>
                 실험 조건의 계산 기여이며 실제 현장 저감량은 아닙니다. 계산이 빠진 종료 주는 우승을

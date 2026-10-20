@@ -20,12 +20,17 @@ public class WeeklyService {
   private final WeeklyRepository scores;
   private final DistrictRepository districts;
   private final AccountRepository accounts;
+  private final io.waterleague.evaluation.service.ScorePolicyService scorePolicy;
 
   public WeeklyService(
-      WeeklyRepository scores, DistrictRepository districts, AccountRepository accounts) {
+      WeeklyRepository scores,
+      DistrictRepository districts,
+      AccountRepository accounts,
+      io.waterleague.evaluation.service.ScorePolicyService scorePolicy) {
     this.scores = scores;
     this.districts = districts;
     this.accounts = accounts;
+    this.scorePolicy = scorePolicy;
   }
 
   @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ)
@@ -39,6 +44,7 @@ public class WeeklyService {
         now,
         "OBSERVED_ACCOUNTED_VOLUME_SECONDS_V2",
         "EXPLORATORY",
+        scorePolicy.descriptor(),
         period(monday, now, own),
         period(monday.minusWeeks(1), now, own));
   }
@@ -73,6 +79,17 @@ public class WeeklyService {
       throw new DomainException(ErrorCode.SIMULATION_UNAVAILABLE);
     long expected = rows.stream().mapToLong(WeeklyContribution::expectedSeconds).sum();
     long evaluated = rows.stream().mapToLong(WeeklyContribution::evaluatedSeconds).sum();
+    var contexts = scores.comparisonGroups(week, start, target);
+    boolean withheld = evaluated > 0 && (contexts.size() != 1 || contexts.contains(null));
+    String comparisonStatus = evaluated == 0 ? "UNAVAILABLE" : withheld ? "WITHHELD" : "COMPARABLE";
+    String comparisonReason =
+        evaluated == 0
+            ? "NO_EVALUATED_RECORDS"
+            : !withheld
+                ? null
+                : contexts.contains(null)
+                    ? "COMPARISON_CONTEXT_MISSING"
+                    : "MIXED_COMPARISON_CONTEXTS";
     var districtRows = new ArrayList<WeeklyView.District>();
     for (var district : districts.all()) {
       var members = rows.stream().filter(r -> r.districtId().equals(district.id())).toList();
@@ -81,17 +98,22 @@ public class WeeklyService {
               district.id(),
               district.name(),
               null,
-              members.stream()
-                  .map(WeeklyContribution::scoreM3)
-                  .reduce(BigDecimal.ZERO, BigDecimal::add),
+              withheld
+                  ? BigDecimal.ZERO
+                  : members.stream()
+                      .map(WeeklyContribution::scoreM3)
+                      .reduce(BigDecimal.ZERO, BigDecimal::add),
               members.stream().mapToLong(WeeklyContribution::evaluatedSeconds).sum(),
               members.stream().mapToLong(WeeklyContribution::expectedSeconds).sum()));
     }
     districtRows.sort(
-        Comparator.comparing((WeeklyView.District r) -> r.evaluatedSeconds() == 0)
-            .thenComparing(WeeklyView.District::scoreM3, Comparator.reverseOrder())
-            .thenComparing(WeeklyView.District::districtName)
-            .thenComparing(WeeklyView.District::districtId));
+        withheld
+            ? Comparator.comparing(WeeklyView.District::districtName)
+                .thenComparing(WeeklyView.District::districtId)
+            : Comparator.comparing((WeeklyView.District r) -> r.evaluatedSeconds() == 0)
+                .thenComparing(WeeklyView.District::scoreM3, Comparator.reverseOrder())
+                .thenComparing(WeeklyView.District::districtName)
+                .thenComparing(WeeklyView.District::districtId));
     var rankedDistricts = new ArrayList<WeeklyView.District>();
     int rank = 0, index = 0;
     BigDecimal last = null;
@@ -103,17 +125,19 @@ public class WeeklyService {
           new WeeklyView.District(
               row.districtId(),
               row.districtName(),
-              row.evaluatedSeconds() == 0 ? null : rank,
-              row.evaluatedSeconds() == 0 ? null : row.scoreM3(),
+              row.evaluatedSeconds() == 0 || withheld ? null : rank,
+              row.evaluatedSeconds() == 0 || withheld ? null : row.scoreM3(),
               row.evaluatedSeconds(),
               row.expectedSeconds()));
       if (row.evaluatedSeconds() > 0) last = row.scoreM3();
     }
     rows = new ArrayList<>(rows);
     rows.sort(
-        Comparator.comparing((WeeklyContribution r) -> r.evaluatedSeconds() == 0)
-            .thenComparing(WeeklyContribution::scoreM3, Comparator.reverseOrder())
-            .thenComparing(WeeklyContribution::playerId));
+        withheld
+            ? Comparator.comparing(WeeklyContribution::playerId)
+            : Comparator.comparing((WeeklyContribution r) -> r.evaluatedSeconds() == 0)
+                .thenComparing(WeeklyContribution::scoreM3, Comparator.reverseOrder())
+                .thenComparing(WeeklyContribution::playerId));
     var players = new ArrayList<WeeklyView.Player>();
     rank = 0;
     index = 0;
@@ -128,8 +152,8 @@ public class WeeklyService {
               row.playerId(),
               row.nickname(),
               row.districtId(),
-              row.evaluatedSeconds() == 0 ? null : rank,
-              row.evaluatedSeconds() == 0 ? null : row.scoreM3(),
+              row.evaluatedSeconds() == 0 || withheld ? null : rank,
+              row.evaluatedSeconds() == 0 || withheld ? null : row.scoreM3(),
               row.evaluatedSeconds(),
               row.expectedSeconds());
       if (row.playerId().equals(own)) self = player;
@@ -138,11 +162,13 @@ public class WeeklyService {
     }
     boolean closed = !now.isBefore(end);
     String status =
-        expected == 0
-            ? "EMPTY"
-            : !closed
-                ? "IN_PROGRESS"
-                : evaluated == expected && target.equals(end) ? "FINAL" : "PROVISIONAL";
+        withheld
+            ? "WITHHELD"
+            : expected == 0
+                ? "EMPTY"
+                : !closed
+                    ? "IN_PROGRESS"
+                    : evaluated == expected && target.equals(end) ? "FINAL" : "PROVISIONAL";
     var winners =
         status.equals("FINAL")
             ? rankedDistricts.stream()
@@ -156,6 +182,9 @@ public class WeeklyService {
         end,
         target,
         status,
+        comparisonStatus,
+        comparisonReason,
+        !withheld && contexts.size() == 1 ? contexts.getFirst() : null,
         evaluated,
         expected,
         List.copyOf(rankedDistricts),

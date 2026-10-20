@@ -36,6 +36,7 @@ public class HistoricalSubmissionService {
   private final PlacementValidationService validation;
   private final JsonService json;
   private final HistoricalDesignRepository designs;
+  private final io.waterleague.evaluation.service.ScorePolicyService scorePolicy;
 
   public HistoricalSubmissionService(
       HistoricalRepository jobs,
@@ -48,7 +49,8 @@ public class HistoricalSubmissionService {
       CostService costs,
       PlacementValidationService validation,
       JsonService json,
-      HistoricalDesignRepository designs) {
+      HistoricalDesignRepository designs,
+      io.waterleague.evaluation.service.ScorePolicyService scorePolicy) {
     this.jobs = jobs;
     this.submissions = submissions;
     this.history = history;
@@ -60,6 +62,7 @@ public class HistoricalSubmissionService {
     this.validation = validation;
     this.json = json;
     this.designs = designs;
+    this.scorePolicy = scorePolicy;
   }
 
   private DisasterView.Event event(String id) {
@@ -226,6 +229,7 @@ public class HistoricalSubmissionService {
     rules.put("engineVersion", "5.2.4");
     rules.put("metric", "BASELINE_MINUS_STRATEGY_RUNOFF_DRAINAGE_AND_NET_STORAGE_M3");
     rules.put("officialTotalScore", false);
+    rules.put("scorePolicy", scorePolicy.descriptor());
     rules.put("budgetPolicy", budget.policy());
     rules.put("budgetAccountingPolicy", budget.validateDesign(Map.of()));
     rules.put("siteCatalogs", sites.versions());
@@ -278,7 +282,7 @@ public class HistoricalSubmissionService {
     var event = event(eventId);
     var groups = new LinkedHashMap<String, List<Map<String, Object>>>();
     for (var row : submissions.board(eventId)) {
-      String key = (String) row.get("rulesHash");
+      String key = row.get("rulesHash") + ":" + row.get("comparisonGroupHash");
       var group = groups.computeIfAbsent(key, k -> new ArrayList<>());
       if (group.size() >= 100) continue;
       var entry = new LinkedHashMap<>(row);
@@ -301,9 +305,23 @@ public class HistoricalSubmissionService {
         "CURRENT_GEOMETRY_HISTORICAL_RAINFALL_STRESS_TEST",
         "officialTotalScore",
         false,
+        "scorePolicy",
+        scorePolicy.descriptor(),
+        "withheldSubmissionCount",
+        submissions.withheldCount(eventId),
         "groups",
         groups.entrySet().stream()
-            .map(g -> Map.of("rulesHash", g.getKey(), "entries", g.getValue()))
+            .map(
+                g ->
+                    Map.of(
+                        "rulesHash",
+                        g.getValue().getFirst().get("rulesHash"),
+                        "comparisonGroupHash",
+                        g.getValue().getFirst().get("comparisonGroupHash"),
+                        "scorePolicySha256",
+                        g.getValue().getFirst().get("scorePolicySha256"),
+                        "entries",
+                        g.getValue()))
             .toList());
   }
 
@@ -323,6 +341,11 @@ public class HistoricalSubmissionService {
     if (job.result() != null) {
       var source = json.tree(job.result());
       result = (tools.jackson.databind.node.ObjectNode) json.tree("{}");
+      result.put(
+          "rankingStatus",
+          source.path("scoreContext").isObject() && source.path("rankingScoreM3Exact").isString()
+              ? "COMPARABLE"
+              : "COMPARISON_CONTEXT_MISSING");
       for (var field :
           List.of(
               "submissionPolicy",
@@ -330,6 +353,8 @@ public class HistoricalSubmissionService {
               "start",
               "end",
               "differenceM3",
+              "rankingScoreM3Exact",
+              "scoreContext",
               "baselineAccountedM3",
               "designAccountedM3",
               "totalScoreStatus",

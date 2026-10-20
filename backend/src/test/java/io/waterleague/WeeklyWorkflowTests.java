@@ -90,16 +90,66 @@ class WeeklyWorkflowTests extends PostgresIntegrationTest {
         "b".repeat(64));
     db.update(
         """
-        INSERT INTO shared_weekly_scores(installation_id,week_start,score_m3,evaluated_minutes,evaluated_through,source_job_id,rule_version)
-        VALUES(?,?,?,?,?,?,'OBSERVED_ACCOUNTED_VOLUME_V1')
+        INSERT INTO shared_weekly_scores(installation_id,week_start,score_m3,evaluated_minutes,evaluated_through,source_job_id,rule_version,score_policy_sha256,comparison_group_hash)
+        VALUES(?,?,?,?,?,?,'OBSERVED_ACCOUNTED_VOLUME_V1',?,?)
         """,
         installation,
         java.sql.Date.valueOf(week),
         new BigDecimal(score),
         minutes,
         Timestamp.from(through),
-        job);
+        job,
+        "c".repeat(64),
+        "d".repeat(64));
     return installation;
+  }
+
+  @Test
+  void mixedOrMissingExecutionConditionsWithholdAggregateAndKeepOriginalRecords() {
+    var a =
+        contribution(
+            "11200", "context_a_" + UUID.randomUUID().toString().substring(0, 8), "1.25", 10);
+    var b =
+        contribution(
+            "11680", "context_b_" + UUID.randomUUID().toString().substring(0, 8), "2.5", 10);
+    db.update(
+        "UPDATE shared_weekly_scores SET comparison_group_hash=? WHERE installation_id=?",
+        "e".repeat(64),
+        b);
+    var mixed = service.dashboard(null).previous();
+    assertThat(mixed.status()).isEqualTo("WITHHELD");
+    assertThat(mixed.comparisonReason()).isEqualTo("MIXED_COMPARISON_CONTEXTS");
+    assertThat(mixed.evaluatedSeconds()).isEqualTo(1200);
+    assertThat(mixed.players()).allMatch(p -> p.scoreM3() == null && p.rank() == null);
+    assertThat(mixed.districts()).allMatch(p -> p.scoreM3() == null && p.rank() == null);
+    assertThat(mixed.winnerDistrictIds()).isEmpty();
+    assertThat(
+            db.queryForObject("SELECT SUM(score_m3) FROM shared_weekly_scores", BigDecimal.class))
+        .isEqualByComparingTo("3.75");
+    db.update(
+        "UPDATE shared_weekly_scores SET score_policy_sha256=NULL,comparison_group_hash=NULL WHERE"
+            + " installation_id=?",
+        a);
+    assertThat(service.dashboard(null).previous().comparisonReason())
+        .isEqualTo("COMPARISON_CONTEXT_MISSING");
+  }
+
+  @Test
+  void precisionIncrementChangesRankAndAddingLowerParticipantPreservesExistingScores() {
+    String name = "precise_" + UUID.randomUUID().toString().substring(0, 8);
+    contribution("11200", name, "1.000000001", 10);
+    contribution("11680", name + "b", "1.000000000", 10);
+    contribution("11110", name + "c", "1.000000000", 10);
+    var original = service.dashboard(name).previous();
+    assertThat(original.players().stream().map(p -> p.rank()).toList()).containsExactly(1, 2, 2);
+    var encoded = json.tree(json.write(original));
+    assertThat(encoded.path("players").get(0).path("scoreM3Exact").asString())
+        .isEqualTo("1.000000001");
+    contribution("11140", name + "d", "-0.000000001", 10);
+    var extended = service.dashboard(name).previous();
+    assertThat(extended.players().subList(0, 3)).isEqualTo(original.players());
+    assertThat(extended.players().getLast().rank()).isEqualTo(4);
+    assertThat(extended.own().scoreM3()).isEqualByComparingTo("1.000000001");
   }
 
   @Test

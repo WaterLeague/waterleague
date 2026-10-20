@@ -29,7 +29,11 @@ export function GameplayScoreboard({
           <span>
             우리 구 총점
             <b>
-              {district?.scoreM3 == null ? '미계산' : scoreFormat.format(district.scoreM3)}
+              {district?.scoreM3 == null
+                ? weekly?.current.status === 'WITHHELD'
+                  ? '합산 보류'
+                  : '미계산'
+                : scoreFormat.format(district.scoreM3)}
               {district?.scoreM3 != null && <small> m³</small>}
             </b>
           </span>
@@ -46,12 +50,21 @@ export function GameplayScoreboard({
         <span>
           내 총점
           <b>
-            {locked ? '로그인 필요' : score == null ? '미계산' : scoreFormat.format(score)}
+            {locked
+              ? '로그인 필요'
+              : !historical && weekly?.current.status === 'WITHHELD'
+                ? '합산 보류'
+                : score == null
+                  ? '미계산'
+                  : scoreFormat.format(score)}
             {!locked && score !== null && <small> m³</small>}
           </b>
         </span>
       </div>
       {weekly?.current.status === 'PROVISIONAL' && <span className="score-provisional">잠정</span>}
+      {!historical && weekly?.current.status === 'WITHHELD' && (
+        <span className="score-provisional">평가 조건 확인 · 순위 보류</span>
+      )}
     </div>
   );
 }

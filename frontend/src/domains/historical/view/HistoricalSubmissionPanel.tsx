@@ -71,7 +71,7 @@ export function HistoricalSubmissionPanel({
               </strong>
               <p>
                 {record.state === 'SUCCEEDED' && record.result
-                  ? `전체 기간 평가체적 감소 ${physicalAmount(record.result.differenceM3)} m³ · 기록 경쟁 게시`
+                  ? `전체 기간 평가체적 감소 ${physicalAmount(record.result.differenceM3)} m³ · ${record.result.rankingStatus === 'COMPARABLE' ? '같은 계산 조건의 기록 경쟁 게시' : '평가 조건 미확인 · 순위 보류'}`
                   : record.state === 'QUEUED'
                     ? '전체 기간 계산 대기'
                     : record.state === 'RUNNING'
@@ -83,6 +83,9 @@ export function HistoricalSubmissionPanel({
                   <p>
                     {time(record.result.start)} – {time(record.result.end)} KST
                   </p>
+                  {record.result.rankingScoreM3Exact != null && (
+                    <p>순위 기준 {record.result.rankingScoreM3Exact} m³ · 동일 저장값 공동 순위</p>
+                  )}
                   <a href={`/api/v1/historical/${record.id}/bundle`}>제출 재현 자료 다운로드</a>
                 </>
               )}

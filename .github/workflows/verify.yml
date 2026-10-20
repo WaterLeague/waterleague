@@ -43,6 +43,8 @@ jobs:
           distribution: corretto
           java-version: '25'
           cache: maven
+      - name: 평가 코드·자료 정책 고정 검사
+        run: python3 scripts/build_score_policy.py --check
       - run: ./mvnw --batch-mode -Dwaterleague.integration.jdbc=jdbc:postgresql://127.0.0.1:5432/waterleague_test verify
         working-directory: backend
         env:

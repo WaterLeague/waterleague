@@ -1,24 +1,27 @@
 import { api } from '../../../shared/repository/apiClient';
 import type { HistoricalDraft, HistoricalJob } from '../entity/historical';
-import type { HistoricalSubmission, HistoricalBoard } from '../entity/historicalSubmission';
+import { historicalSubmissionDto, historicalBoardDto } from '../dto/submissionDto';
 
 export const loadSubmission = (id: string) =>
-  api<HistoricalSubmission>('/historical/submissions/' + id);
+  api('/historical/submissions/' + id).then((v) => historicalSubmissionDto.parse(v));
 export const listSubmissions = (eventId: string) =>
-  api<HistoricalSubmission[]>('/historical/submissions?eventId=' + encodeURIComponent(eventId));
+  api('/historical/submissions?eventId=' + encodeURIComponent(eventId)).then((v) =>
+    historicalSubmissionDto.array().parse(v)
+  );
 export const loadHistoricalBoard = (eventId: string) =>
-  api<HistoricalBoard>('/historical/leaderboard/' + encodeURIComponent(eventId));
+  api('/historical/leaderboard/' + encodeURIComponent(eventId)).then((v) =>
+    historicalBoardDto.parse(v)
+  );
 export type SubmissionDesign = { revision: number; snapshotSha256: string };
 export const submitSavedHistorical = (
   eventId: string,
   requestKey: string,
   design: SubmissionDesign
 ) =>
-  api<HistoricalSubmission>(
-    '/historical/designs/' + encodeURIComponent(eventId) + '/submissions',
-    'POST',
-    { requestKey, ...design }
-  );
+  api('/historical/designs/' + encodeURIComponent(eventId) + '/submissions', 'POST', {
+    requestKey,
+    ...design,
+  }).then((v) => historicalSubmissionDto.parse(v));
 export function submissionPlacements(
   drafts: HistoricalDraft[],
   jobs: Record<string, HistoricalJob>
@@ -39,4 +42,6 @@ export const submitHistorical = (
   requestKey: string,
   placements: ReturnType<typeof submissionPlacements>
 ) =>
-  api<HistoricalSubmission>('/historical/submissions', 'POST', { eventId, requestKey, placements });
+  api('/historical/submissions', 'POST', { eventId, requestKey, placements }).then((v) =>
+    historicalSubmissionDto.parse(v)
+  );

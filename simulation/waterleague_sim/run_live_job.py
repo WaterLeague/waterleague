@@ -38,8 +38,13 @@ def main():
     if rule == SECOND_RULE and (not request.get('installedAt')
             or request.get('installationClock') != 'SERVER_SECOND_RESOLUTION_V1'):
         raise ValueError('LIVE_INSTALLATION_TIME_INVALID')
+    from .evaluation import score_policy
+    context = score_policy.verify(request.get('scoreContext'), 'WEEKLY', rule)
+    score_policy.archive(path, context)
     result = experiment(model, request['placement'], path, evaporation,
                         installed_at=request['installedAt'] if rule == SECOND_RULE else None)
+    score_policy.verify(context, 'WEEKLY', rule)
+    result['scoreContext'] = context
     from .engine.direct_surface_contract import archive as archive_contract
     archive_contract(model, request['placement'], result, path, cost_record)
 
