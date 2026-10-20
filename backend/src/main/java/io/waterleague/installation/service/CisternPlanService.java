@@ -63,9 +63,14 @@ public class CisternPlanService {
     var account = accounts.lock(member(username).id());
     if (!account.usable() || !account.role().equals("MEMBER"))
       throw new CisternPlanException(ErrorCode.ACCESS_DENIED);
-    if (account.districtId() == null) throw new CisternPlanException(ErrorCode.DISTRICT_REQUIRED);
-    if (!account.districtId().equals(request.districtId()))
-      throw new CisternPlanException(ErrorCode.DISTRICT_ACCESS_DENIED);
+    if (request.mode() != null && !Set.of("WEEKLY", "HISTORICAL").contains(request.mode()))
+      throw new CisternPlanException(ErrorCode.PLACEMENT_INVALID);
+    boolean historical = "HISTORICAL".equals(request.mode());
+    if (!historical) {
+      if (account.districtId() == null) throw new CisternPlanException(ErrorCode.DISTRICT_REQUIRED);
+      if (!account.districtId().equals(request.districtId()))
+        throw new CisternPlanException(ErrorCode.DISTRICT_ACCESS_DENIED);
+    }
     var roof = sites.requireInstallable(request.districtId(), request.roofCellId());
     var ground = sites.requireInstallable(request.districtId(), request.groundCellId());
     if (!roof.modelHash().equals(request.roofModelHash())
@@ -88,7 +93,9 @@ public class CisternPlanService {
             || request.tankDepthM().signum() <= 0
             || request.tankAreaM2().compareTo(ground.maxAreaM2()) > 0)
       throw new CisternPlanException(ErrorCode.PLACEMENT_INVALID);
-    if (plans.occupied(request.districtId(), request.roofCellId(), request.groundCellId()))
+    // 재해 공간 초안은 현재 주간 설치의 점유와 독립적으로 비교한다.
+    if (!historical
+        && plans.occupied(request.districtId(), request.roofCellId(), request.groundCellId()))
       throw new CisternPlanException(ErrorCode.SITE_OCCUPIED);
     var snapshot = new TreeMap<String, Object>();
     snapshot.put("schemaVersion", equipment ? 3 : request.tankLayout() == null ? 1 : 2);

@@ -124,7 +124,12 @@ function Explorer({
   const [infrastructureOpen, setInfrastructureOpen] = useState(false);
   const [facilityExpansionOpen, setFacilityExpansionOpen] = useState(false);
   const [cisternOpen, setCisternOpen] = useState(false);
-  const cistern = useCisternPlans(account, cisternOpen, (site) => sound.installed(site));
+  const cistern = useCisternPlans(
+    account,
+    cisternOpen,
+    researchMode ? 'HISTORICAL' : 'WEEKLY',
+    (site) => sound.installed(site)
+  );
   const [assetsEnabled, setAssetsEnabled] = useState(true);
   const [comparisonEventId, setComparisonEventId] = useState('');
   const surfaceEnabled = true;
@@ -394,7 +399,7 @@ function Explorer({
   );
   const shared = {
     ...sharedData,
-    installations: researchMode && !cisternOpen ? researchMarkers : sharedData.installations,
+    installations: researchMode ? researchMarkers : sharedData.installations,
   };
   const installationBySite = useMemo(
     () => representativeInstallations(shared.installations, viewerId ?? null),
@@ -1504,7 +1509,7 @@ function Explorer({
           setSite(null);
           setOffset(0);
           setListOpen(true);
-          if (account?.districtId && selected !== account.districtId) select(account.districtId);
+          if (ownDistrictId && selected !== ownDistrictId) select(ownDistrictId);
         }}
         onMapFacility={(t) => {
           setCisternOpen(false);

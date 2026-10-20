@@ -11,6 +11,7 @@ import { cisternEquipmentGeometry, cisternGeometry } from '../service/cisternLay
 const hash = z.string().regex(/^[a-f0-9]{64}$/);
 export const cisternPlanRequestDto = z
   .object({
+    mode: z.enum(['WEEKLY', 'HISTORICAL']).optional(),
     districtId: z.string().regex(/^11\d{3}$/),
     roofCellId: z.string().regex(/^C[a-f0-9]{24}$/),
     groundCellId: z.string().regex(/^C[a-f0-9]{24}$/),
@@ -133,4 +134,5 @@ export const cisternPlanDto = z
       ctx.addIssue({ code: 'custom', message: '이용조 지도 계획의 위치·용량 불일치' });
   });
 export type CisternPlanRequest = z.infer<typeof cisternPlanRequestDto>;
+export type CisternPlanMode = 'WEEKLY' | 'HISTORICAL';
 export type CisternPlan = z.infer<typeof cisternPlanDto>;

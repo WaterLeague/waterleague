@@ -173,6 +173,7 @@ it('공개 장비 선택의 표시·공종·공사비 미확정과 저장 구분
   const noop = () => {},
     plan = cisternPlanDto.parse(draft());
   const state: CisternPlanState = {
+    mode: 'WEEKLY',
     allowed: true,
     specifications: [spec],
     specification: spec,
@@ -197,7 +198,7 @@ it('공개 장비 선택의 표시·공종·공사비 미확정과 저장 구분
     busy: false,
     loading: false,
     select: () => true,
-    restore: noop,
+    restore: () => true,
     valid: true,
     save: async () => {},
     remove: async () => {},

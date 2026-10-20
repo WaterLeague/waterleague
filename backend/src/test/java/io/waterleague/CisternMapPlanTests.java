@@ -11,6 +11,10 @@ import io.waterleague.installation.service.*;
 import io.waterleague.installation.view.SiteView;
 import io.waterleague.strategy.entity.FacilityType;
 import java.math.BigDecimal;
+import java.net.*;
+import java.net.http.*;
+import java.nio.file.*;
+import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.*;
 import org.junit.jupiter.api.*;
@@ -19,7 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("local")
 class CisternMapPlanTests extends PostgresIntegrationTest {
   @org.springframework.test.context.DynamicPropertySource
@@ -36,6 +40,12 @@ class CisternMapPlanTests extends PostgresIntegrationTest {
   @Autowired JdbcTemplate db;
   @Autowired io.waterleague.budget.service.BudgetService budget;
   @Autowired jakarta.validation.Validator validator;
+  @Autowired io.waterleague.common.service.JsonService json;
+  @Autowired org.springframework.security.crypto.password.PasswordEncoder passwords;
+
+  @org.springframework.beans.factory.annotation.Value("${local.server.port}")
+  int port;
+
   SiteView roof, ground;
 
   @BeforeEach
@@ -79,7 +89,7 @@ class CisternMapPlanTests extends PostgresIntegrationTest {
             "",
             true,
             district,
-            "AFFILIATED");
+            district == null ? null : "AFFILIATED");
     accounts.add(value);
     return value;
   }
@@ -94,6 +104,147 @@ class CisternMapPlanTests extends PostgresIntegrationTest {
         new BigDecimal("20"),
         BigDecimal.ONE,
         new BigDecimal("2.350"));
+  }
+
+  CisternPlanRequest mode(CisternPlanRequest r, String mode) {
+    return new CisternPlanRequest(
+        r.districtId(),
+        r.roofCellId(),
+        r.groundCellId(),
+        r.roofModelHash(),
+        r.groundModelHash(),
+        r.captureAreaM2(),
+        r.tankAreaM2(),
+        r.tankDepthM(),
+        r.tankLayout(),
+        r.equipment(),
+        mode);
+  }
+
+  @Test
+  void historicalPlansAllowForeignAndUnaffiliatedMembersWithoutSharingWeeklyOccupancy() {
+    var owner = account("11200");
+    var foreign = account("11710");
+    var unaffiliated = account(null);
+    var r = request();
+    var weekly = service.save(owner.username(), r);
+    assertThat(service.save(owner.username(), mode(r, "WEEKLY")).id()).isEqualTo(weekly.id());
+    var installed =
+        installations.install(
+            owner.username(),
+            new InstallRequest(
+                r.districtId(),
+                r.groundCellId(),
+                FacilityType.valueOf(ground.allowedTypes().getFirst()),
+                BigDecimal.ONE));
+    for (var member : List.of(foreign, unaffiliated)) {
+      var before = budget.view(member.id()).remainingKrw();
+      assertThatThrownBy(() -> service.save(member.username(), r))
+          .isInstanceOf(DomainException.class);
+      var historical = service.save(member.username(), mode(r, "HISTORICAL"));
+      assertThat(historical.snapshot().path("request").path("mode").asString())
+          .isEqualTo("HISTORICAL");
+      assertThat(historical.snapshot().path("installationReady").asBoolean()).isFalse();
+      assertThat(service.save(member.username(), mode(r, "HISTORICAL")).id())
+          .isEqualTo(historical.id());
+      assertThat(budget.view(member.id()).remainingKrw()).isEqualByComparingTo(before);
+      assertThat(service.list(member.username())).hasSize(1);
+      assertThatThrownBy(
+              () ->
+                  installations.install(
+                      member.username(),
+                      new InstallRequest(
+                          r.districtId(), r.roofCellId(), FacilityType.GREEN_ROOF, BigDecimal.ONE)))
+          .isInstanceOf(DomainException.class);
+    }
+    assertThat(installations.active()).hasSize(1);
+    assertThat(installations.active().getFirst().id()).isEqualTo(installed.id());
+    assertThatThrownBy(() -> service.save(owner.username(), r))
+        .isInstanceOfSatisfying(
+            DomainException.class, e -> assertThat(e.code()).isEqualTo(ErrorCode.SITE_OCCUPIED));
+    assertThatThrownBy(() -> service.save(foreign.username(), mode(r, "OTHER")))
+        .isInstanceOfSatisfying(
+            DomainException.class,
+            e -> assertThat(e.code()).isEqualTo(ErrorCode.PLACEMENT_INVALID));
+    assertThat(validator.validate(mode(r, "OTHER"))).isNotEmpty();
+  }
+
+  HttpResponse<String> http(HttpClient client, String method, String path, Object body, String csrf)
+      throws Exception {
+    var builder =
+        HttpRequest.newBuilder(URI.create("http://127.0.0.1:" + port + "/api/v1" + path))
+            .timeout(Duration.ofSeconds(30));
+    if (csrf != null) builder.header("X-CSRF-TOKEN", csrf);
+    if (body != null) builder.header("Content-Type", "application/json");
+    return client.send(
+        builder
+            .method(
+                method,
+                body == null
+                    ? HttpRequest.BodyPublishers.noBody()
+                    : HttpRequest.BodyPublishers.ofString(json.write(body)))
+            .build(),
+        HttpResponse.BodyHandlers.ofString());
+  }
+
+  HttpClient login(Account account) throws Exception {
+    var password = UUID.randomUUID() + "Aa9!";
+    db.update(
+        "UPDATE accounts SET password_hash=? WHERE id=?", passwords.encode(password), account.id());
+    var client =
+        HttpClient.newBuilder()
+            .cookieHandler(new CookieManager(null, CookiePolicy.ACCEPT_ALL))
+            .build();
+    var csrf =
+        json.tree(http(client, "GET", "/auth/csrf", null, null).body()).path("token").asString();
+    assertThat(
+            http(
+                    client,
+                    "POST",
+                    "/auth/login",
+                    Map.of("username", account.username(), "password", password),
+                    csrf)
+                .statusCode())
+        .isEqualTo(200);
+    return client;
+  }
+
+  @Test
+  void historicalHttpRequestReadbackKeepsCsrfOwnershipAndWeeklyRestrictions() throws Exception {
+    var foreign = account("11710");
+    var owner = login(foreign);
+    var r = request();
+    var csrf =
+        json.tree(http(owner, "GET", "/auth/csrf", null, null).body()).path("token").asString();
+    String path = "/installations/cistern-plans";
+    assertThat(http(HttpClient.newHttpClient(), "GET", path, null, null).statusCode())
+        .isEqualTo(401);
+    assertThat(http(owner, "POST", path, mode(r, "HISTORICAL"), null).statusCode()).isEqualTo(403);
+    assertThat(http(owner, "POST", path, r, csrf).statusCode()).isEqualTo(403);
+    assertThat(http(owner, "POST", path, mode(r, "OTHER"), csrf).statusCode()).isEqualTo(400);
+    var response = http(owner, "POST", path, mode(r, "HISTORICAL"), csrf);
+    assertThat(response.statusCode()).isEqualTo(200);
+    var plan = json.tree(response.body());
+    assertThat(plan.path("snapshot").path("request").path("mode").asString())
+        .isEqualTo("HISTORICAL");
+    var loaded = http(owner, "GET", path, null, null);
+    assertThat(json.tree(loaded.body()).get(0)).isEqualTo(plan);
+    var again = http(owner, "POST", path, mode(r, "HISTORICAL"), csrf);
+    assertThat(json.tree(again.body()).path("id")).isEqualTo(plan.path("id"));
+    var other = login(account("11710"));
+    var otherCsrf =
+        json.tree(http(other, "GET", "/auth/csrf", null, null).body()).path("token").asString();
+    assertThat(json.tree(http(other, "GET", path, null, null).body()).isEmpty()).isTrue();
+    assertThat(
+            http(other, "DELETE", path + "/" + plan.path("id").asString(), null, otherCsrf)
+                .statusCode())
+        .isEqualTo(404);
+    String output = System.getProperty("waterleague.integration.cistern.fixture");
+    if (output != null)
+      Files.writeString(Path.of(output), response.body(), StandardOpenOption.CREATE_NEW);
+    db.update("UPDATE accounts SET approval_status='SUSPENDED' WHERE id=?", foreign.id());
+    assertThat(http(owner, "POST", path, mode(r, "HISTORICAL"), csrf).statusCode()).isEqualTo(403);
+    assertThat(installations.active()).isEmpty();
   }
 
   @Test

@@ -31,6 +31,9 @@ export function CisternPlanPanel({
       </header>
       <p>
         빗물을 모을 지붕과 탱크를 둘 땅을 선택하세요. 두 위치의 공개 경계를 함께 확인할 수 있습니다.
+        {s.mode === 'HISTORICAL'
+          ? ' 재해 계획은 소속 구와 관계없이 서울 전역에서 저장할 수 있습니다.'
+          : ' 주간 계획은 내 소속 구에서 저장할 수 있습니다.'}
       </p>
       <div className="cistern-plan-steps">
         {(['roof', 'ground'] as const).map((role, index) => {
@@ -220,12 +223,12 @@ export function CisternPlanPanel({
               <button
                 disabled={s.busy}
                 onClick={() => {
-                  s.restore(plan);
-                  onLocate(plan.snapshot.roof);
+                  if (s.restore(plan)) onLocate(plan.snapshot.roof);
                 }}
               >
                 {plan.snapshot.roof.name} → {plan.snapshot.ground.name}
                 <small>
+                  {plan.snapshot.request.mode === 'HISTORICAL' ? '재해 계획 · ' : '주간 계획 · '}
                   {plan.snapshot.equipmentSpecification
                     ? `${plan.snapshot.equipmentSpecification.name} · 명목 `
                     : '설계 '}

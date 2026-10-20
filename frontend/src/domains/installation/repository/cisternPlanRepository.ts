@@ -3,7 +3,11 @@ import { loadCisternSpecifications } from '../../facility/repository/cisternSpec
 import { ApiError } from '../../../shared/exception/ApiError';
 import type { CisternPlan } from '../dto/cisternPlanDto';
 import { api } from '../../../shared/repository/apiClient';
-import { cisternPlanDto, type CisternPlanRequest } from '../dto/cisternPlanDto';
+import {
+  cisternPlanDto,
+  cisternPlanRequestDto,
+  type CisternPlanRequest,
+} from '../dto/cisternPlanDto';
 const path = '/installations/cistern-plans';
 async function verifySpecifications(plans: CisternPlan[], signal?: AbortSignal) {
   if (plans.some((p) => p.snapshot.equipmentSpecification)) {
@@ -28,12 +32,18 @@ export const loadCisternPlans = async (signal?: AbortSignal) =>
       .parse(await api<unknown>(path, 'GET', undefined, signal)),
     signal
   );
-export const saveCisternPlan = async (request: CisternPlanRequest, signal?: AbortSignal) =>
-  (
+export const saveCisternPlan = async (request: CisternPlanRequest, signal?: AbortSignal) => {
+  const result = (
     await verifySpecifications(
       [cisternPlanDto.parse(await api<unknown>(path, 'POST', request, signal))],
       signal
     )
   )[0];
+  const canonical = (value: CisternPlanRequest) =>
+    JSON.stringify(cisternPlanRequestDto.parse({ ...value, mode: value.mode ?? 'WEEKLY' }));
+  if (canonical(request) !== canonical(result.snapshot.request))
+    throw new ApiError(502, 'INVALID_DATA', '저장 요청과 반환된 이용조 계획이 일치하지 않습니다.');
+  return result;
+};
 export const deleteCisternPlan = (id: string, signal?: AbortSignal) =>
   api<void>(`${path}/${encodeURIComponent(id)}`, 'DELETE', undefined, signal);

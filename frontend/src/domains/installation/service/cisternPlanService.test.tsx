@@ -1,21 +1,31 @@
-import { expect, it } from 'vitest';
+import { afterEach, expect, it, vi } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import nativeSites from '../__tests__/fixtures/nativeSites.json';
 const rawSite = nativeSites.ground;
 import catalogRaw from '../../watershed/view/fixtures/catalog.json';
 import { siteDto } from '../dto/installationDto';
 import { cisternPlanDto } from '../dto/cisternPlanDto';
-import { cisternRequest, cisternSelectionError } from './cisternPlanService';
+import {
+  cisternRequest,
+  cisternSelectionError,
+  cisternPlanRequestForMode,
+} from './cisternPlanService';
 import { watershedCatalogDto } from '../../watershed/dto/watershedDto';
 import { previewCisternCosts } from '../../watershed/service/cisternCosts';
 import { CisternPlanPanel } from '../view/CisternPlanPanel';
 import type { CisternPlanState } from '../controller/useCisternPlans';
 import { cisternGeometry } from './cisternLayoutService';
+import { saveCisternPlan } from '../repository/cisternPlanRepository';
+import { resetSessionToken } from '../../../shared/repository/apiClient';
 
 // 공개 후보 구조를 사용하는 단위 검사이며 운영 입지·설계 자료로 사용하지 않는다.
 const ground = siteDto.parse(rawSite);
 const roof = siteDto.parse(nativeSites.roof);
 const catalog = watershedCatalogDto.parse(catalogRaw);
+afterEach(() => {
+  vi.unstubAllGlobals();
+  resetSessionToken();
+});
 function draft() {
   return {
     id: '10000000-0000-4000-8000-000000000001',
@@ -56,6 +66,53 @@ it('지붕·지상의 종류, 소속 구, 점유와 공개 저류 경계에 따�
     ''
   );
 });
+it('재해 계획의 전 구역 선택과 주간 소속 구·점유 제한 분리', () => {
+  const request = cisternRequest(roof, ground, '20', '1', '2.35')!;
+  expect(cisternSelectionError(roof, 'roof', '11110', true, 'HISTORICAL')).toBe('');
+  expect(cisternSelectionError(ground, 'ground', null, true, 'HISTORICAL')).toBe('');
+  expect(cisternSelectionError(ground, 'roof', null, true, 'HISTORICAL')).toContain('지붕');
+  expect(
+    cisternSelectionError(
+      {
+        ...ground,
+        existingInfrastructure: {
+          policy: {
+            version: 'seoul-native-infrastructure-20261020-v1',
+            sha256: 'a'.repeat(64),
+            sourceSha256: 'b'.repeat(64),
+            scope: 'CURRENT_MAPPED_GROUND_AND_RESERVED_BUILDINGS',
+            historicalExistenceVerified: false,
+          },
+          assets: [
+            {
+              districtId: ground.districtId,
+              cellId: ground.cellId,
+              siteModelHash: ground.modelHash,
+              assetId: 'test-basin',
+              assetName: '검사 시설',
+              overlapAreaM2: 1,
+            },
+          ],
+        },
+      },
+      'ground',
+      null,
+      false,
+      'HISTORICAL'
+    )
+  ).toContain('공개 시설');
+  expect(cisternPlanRequestForMode(request, 'HISTORICAL', null)?.mode).toBe('HISTORICAL');
+  expect(cisternPlanRequestForMode(request, 'WEEKLY', '11110')).toBeNull();
+  expect(cisternPlanRequestForMode(request, 'WEEKLY', null)).toBeNull();
+  expect(
+    cisternPlanRequestForMode({ ...request, mode: 'HISTORICAL' }, 'WEEKLY', roof.districtId)
+  ).toEqual(request);
+  const plan = draft();
+  Object.assign(plan.snapshot.request, { mode: 'HISTORICAL' });
+  expect(cisternPlanDto.safeParse(plan).success).toBe(true);
+  Object.assign(plan.snapshot.request, { mode: 'UNKNOWN' });
+  expect(cisternPlanDto.safeParse(plan).success).toBe(false);
+});
 it('공개 면적 한계와 입력 정밀도·종류·구 불일치 차단', () => {
   expect(cisternRequest(roof, ground, '20', '1', '2.350')?.tankDepthM).toBe(2.35);
   for (const values of [
@@ -77,9 +134,36 @@ it('이용조 공간 초안도 금지·미충족 조건부의 선택·저장 차
       blockedGround = { ...ground, siteEligibility };
     expect(cisternSelectionError(blockedRoof, 'roof', null, false)).toContain('안전 조건');
     expect(cisternSelectionError(blockedGround, 'ground', null, false)).toContain('안전 조건');
+    expect(cisternSelectionError(blockedRoof, 'roof', null, false, 'HISTORICAL')).toContain(
+      '안전 조건'
+    );
+    expect(cisternSelectionError(blockedGround, 'ground', null, false, 'HISTORICAL')).toContain(
+      '안전 조건'
+    );
     expect(cisternRequest(blockedRoof, ground, '20', '1', '2')).toBeNull();
     expect(cisternRequest(roof, blockedGround, '20', '1', '2')).toBeNull();
   }
+});
+it('저장 요청의 모드·집수량과 응답 대조 및 이전 주간 형식 호환', async () => {
+  const plan = cisternPlanDto.parse(draft());
+  const requested = { ...plan.snapshot.request, mode: 'HISTORICAL' as const };
+  let response = structuredClone(plan);
+  const fetchMock = vi.fn(async (url: string, _options?: RequestInit) =>
+    Response.json(
+      url.endsWith('/auth/csrf') ? { token: 'test-csrf', headerName: 'X-CSRF-TOKEN' } : response
+    )
+  );
+  vi.stubGlobal('fetch', fetchMock);
+  await expect(saveCisternPlan(requested)).rejects.toMatchObject({ code: 'INVALID_DATA' });
+  response.snapshot.request.mode = 'HISTORICAL';
+  expect((await saveCisternPlan(requested)).snapshot.request.mode).toBe('HISTORICAL');
+  expect(JSON.parse(fetchMock.mock.calls.at(-1)![1]!.body as string)).toEqual(requested);
+  response.snapshot.request.captureAreaM2 = requested.captureAreaM2 - 1;
+  await expect(saveCisternPlan(requested)).rejects.toMatchObject({ code: 'INVALID_DATA' });
+  response = structuredClone(plan);
+  expect((await saveCisternPlan({ ...plan.snapshot.request, mode: 'WEEKLY' })).id).toBe(plan.id);
+  response.snapshot.request.mode = 'WEEKLY';
+  expect((await saveCisternPlan(plan.snapshot.request)).id).toBe(plan.id);
 });
 it('복원 응답의 원본 버전·두 위치·용량·견적 결속 검사', () => {
   expect(cisternPlanDto.safeParse(draft()).success).toBe(true);
@@ -150,6 +234,7 @@ it('저장된 참고 견적과 계획 안내를 표시하고 비회원 저장 �
   const plan = cisternPlanDto.parse(draft());
   const noop = () => {};
   const state: CisternPlanState = {
+    mode: 'WEEKLY',
     allowed: true,
     specifications: [],
     specification: null,
@@ -174,7 +259,7 @@ it('저장된 참고 견적과 계획 안내를 표시하고 비회원 저장 �
     busy: false,
     loading: false,
     select: () => true,
-    restore: noop,
+    restore: () => true,
     valid: true,
     save: async () => {},
     remove: async () => {},
@@ -187,6 +272,16 @@ it('저장된 참고 견적과 계획 안내를 표시하고 비회원 저장 �
   expect(html).toContain('5,447,000원');
   expect(html).toContain('위치 예약 및 설치 없음');
   expect(html).not.toContain('이 위치에 설치');
+  expect(html).toContain('내 소속 구');
+  expect(html).toContain('주간 계획');
+  const historical = structuredClone(plan);
+  historical.snapshot.request.mode = 'HISTORICAL';
+  const disasterHtml = renderToStaticMarkup(
+    <CisternPlanPanel {...props} state={{ ...state, mode: 'HISTORICAL', plans: [historical] }} />
+  );
+  expect(disasterHtml).toContain('서울 전역');
+  expect(disasterHtml).toContain('재해 계획');
+  expect(disasterHtml).not.toContain('내 소속 구');
   const visitor = renderToStaticMarkup(
     <CisternPlanPanel {...props} state={{ ...state, allowed: false, plans: [], saved: null }} />
   );

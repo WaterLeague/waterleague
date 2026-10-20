@@ -16,7 +16,38 @@ public record CisternPlanRequest(
     @DecimalMin("0.001") @DecimalMax("100") @Digits(integer = 3, fraction = 3)
         BigDecimal tankDepthM,
     @Valid @JsonInclude(JsonInclude.Include.NON_NULL) CisternLayoutRequest tankLayout,
-    @Valid @JsonInclude(JsonInclude.Include.NON_NULL) CisternEquipmentRequest equipment) {
+    @Valid @JsonInclude(JsonInclude.Include.NON_NULL) CisternEquipmentRequest equipment,
+    @Pattern(regexp = "WEEKLY|HISTORICAL") @JsonInclude(JsonInclude.Include.NON_NULL) String mode) {
+  public CisternPlanRequest {
+    // 기존 주간 초안과 명시적 주간 요청의 입력 해시를 동일하게 유지한다.
+    if ("WEEKLY".equals(mode)) mode = null;
+  }
+
+  public CisternPlanRequest(
+      String districtId,
+      String roofCellId,
+      String groundCellId,
+      String roofModelHash,
+      String groundModelHash,
+      BigDecimal captureAreaM2,
+      BigDecimal tankAreaM2,
+      BigDecimal tankDepthM,
+      CisternLayoutRequest tankLayout,
+      CisternEquipmentRequest equipment) {
+    this(
+        districtId,
+        roofCellId,
+        groundCellId,
+        roofModelHash,
+        groundModelHash,
+        captureAreaM2,
+        tankAreaM2,
+        tankDepthM,
+        tankLayout,
+        equipment,
+        null);
+  }
+
   @AssertTrue(message = "공개 장비와 내부 단면 설계 중 하나만 선택해야 합니다")
   @com.fasterxml.jackson.annotation.JsonIgnore
   public boolean isDesignModeValid() {

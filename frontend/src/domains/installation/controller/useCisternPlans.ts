@@ -5,9 +5,10 @@ import { cisternEquipmentGeometry, parseCisternEquipment } from '../service/cist
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { Account } from '../../account/entity/account';
 import type { SharedSite } from '../entity/installation';
-import type { CisternPlan } from '../dto/cisternPlanDto';
+import type { CisternPlan, CisternPlanMode } from '../dto/cisternPlanDto';
 import {
   cisternRequest,
+  cisternPlanRequestForMode,
   cisternSelectionError,
   type CisternSiteRole,
 } from '../service/cisternPlanService';
@@ -33,12 +34,15 @@ const emptyLayout: CisternLayoutFields = {
 export function useCisternPlans(
   account: Account | null,
   open: boolean,
+  mode: CisternPlanMode,
   onInstalled?: (site: SharedSite) => void
 ) {
   const allowed = account?.role === 'MEMBER' && account.approvalStatus === 'APPROVED';
   const identity = account
-    ? `${account.id}:${account.role}:${account.approvalStatus}:${account.districtId ?? ''}`
-    : 'visitor';
+    ? `${account.id}:${account.role}:${account.approvalStatus}:${account.districtId ?? ''}:${mode}`
+    : `visitor:${mode}`;
+  const latestIdentity = useRef(identity);
+  latestIdentity.current = identity;
   const [specifications, setSpecifications] = useState<CisternSpecification[]>([]);
   const [specificationId, setSpecificationId] = useState('');
   const [specificationError, setSpecificationError] = useState('');
@@ -89,16 +93,30 @@ export function useCisternPlans(
     setLoading(true);
     void loadCisternPlans(abort.signal)
       .then((values) => {
-        if (!abort.signal.aborted && current === epoch.current) {
+        if (
+          !abort.signal.aborted &&
+          current === epoch.current &&
+          latestIdentity.current === identity
+        ) {
           setPlans(values);
           setError('');
         }
       })
       .catch((e) => {
-        if (!abort.signal.aborted && current === epoch.current) setError(errorMessage(e));
+        if (
+          !abort.signal.aborted &&
+          current === epoch.current &&
+          latestIdentity.current === identity
+        )
+          setError(errorMessage(e));
       })
       .finally(() => {
-        if (!abort.signal.aborted && current === epoch.current) setLoading(false);
+        if (
+          !abort.signal.aborted &&
+          current === epoch.current &&
+          latestIdentity.current === identity
+        )
+          setLoading(false);
       });
     return () => abort.abort();
   }, [open, allowed, identity, revision]);
@@ -126,7 +144,13 @@ export function useCisternPlans(
   }, [open, revision]);
   const select = useCallback(
     (site: SharedSite, occupied: boolean) => {
-      const message = cisternSelectionError(site, role, account?.districtId ?? null, occupied);
+      const message = cisternSelectionError(
+        site,
+        role,
+        account?.districtId ?? null,
+        occupied,
+        mode
+      );
       if (message) {
         setError(message);
         return false;
@@ -149,10 +173,17 @@ export function useCisternPlans(
       }
       return true;
     },
-    [role, account?.districtId, roof?.districtId, ground?.districtId, ground?.cellId]
+    [role, account?.districtId, roof?.districtId, ground?.districtId, ground?.cellId, mode]
   );
   function restore(plan: CisternPlan) {
     const s = plan.snapshot;
+    const invalid =
+      cisternSelectionError(s.roof, 'roof', account?.districtId ?? null, false, mode) ||
+      cisternSelectionError(s.ground, 'ground', account?.districtId ?? null, false, mode);
+    if (invalid) {
+      setError(invalid);
+      return false;
+    }
     setRoof(s.roof);
     setGround(s.ground);
     setCapture(String(s.request.captureAreaM2));
@@ -183,6 +214,7 @@ export function useCisternPlans(
     setSaved(plan);
     setRole('ground');
     setError('');
+    return true;
   }
   function edit(key: 'capture' | 'area' | 'depth', value: string) {
     setSaved(null);
@@ -213,13 +245,23 @@ export function useCisternPlans(
   );
   const geometry = specificationId ? equipmentGeometry : manualGeometry;
   const baseRequest = currentScope ? cisternRequest(roof, ground, capture, area, depth) : null;
-  const request = specificationId
+  const geometryRequest = specificationId
     ? specification && equipment && equipmentGeometry?.contained
       ? cisternEquipmentPlanRequest(roof, ground, capture, equipment, specification)
       : null
     : baseRequest && manualGeometry?.contained && layout
       ? { ...baseRequest, tankLayout: layout }
       : null;
+  const selectionValid =
+    roof &&
+    ground &&
+    !cisternSelectionError(roof, 'roof', account?.districtId ?? null, false, mode) &&
+    !cisternSelectionError(ground, 'ground', account?.districtId ?? null, false, mode);
+  const request = cisternPlanRequestForMode(
+    selectionValid ? geometryRequest : null,
+    mode,
+    account?.districtId ?? null
+  );
   async function mutate(remove?: CisternPlan) {
     if (!allowed || posting.current || (!remove && !request)) return;
     const abort = new AbortController(),
@@ -231,25 +273,35 @@ export function useCisternPlans(
       if (remove) await deleteCisternPlan(remove.id, abort.signal);
       else {
         const next = await saveCisternPlan(request!, abort.signal);
-        if (!abort.signal.aborted && current === epoch.current) {
+        if (
+          !abort.signal.aborted &&
+          current === epoch.current &&
+          latestIdentity.current === identity
+        ) {
           setSaved(next);
           if (ground) onInstalled?.(ground);
         }
       }
-      if (!abort.signal.aborted && current === epoch.current) {
+      if (
+        !abort.signal.aborted &&
+        current === epoch.current &&
+        latestIdentity.current === identity
+      ) {
         if (remove?.id === saved?.id) setSaved(null);
         setRevision((v) => v + 1);
       }
     } catch (e) {
-      if (!abort.signal.aborted && current === epoch.current) setError(errorMessage(e));
+      if (!abort.signal.aborted && current === epoch.current && latestIdentity.current === identity)
+        setError(errorMessage(e));
     } finally {
-      if (current === epoch.current) {
+      if (current === epoch.current && latestIdentity.current === identity) {
         setBusy(false);
         posting.current = null;
       }
     }
   }
   return {
+    mode,
     allowed,
     specifications,
     specification,

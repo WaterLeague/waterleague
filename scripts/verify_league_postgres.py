@@ -81,6 +81,8 @@ def main():
             if suite == 'physics':
                 path.with_suffix('.fixtures').mkdir(mode=0o700)
                 physical.append('-Dwaterleague.integration.physics.fixtures=' + str(path.with_suffix('.fixtures')))
+            if suite == 'cistern-plan':
+                physical.append('-Dwaterleague.integration.cistern.fixture=' + str(path.with_suffix('.cistern.json')))
             if suite == 'guest-historical':
                 physical.append('-Dwaterleague.integration.guest.fixture=' + str(path.with_suffix('.guest.json')))
             if suite == 'historical':
