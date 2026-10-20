@@ -108,9 +108,7 @@ export function WatershedFloodMap({
                 }}
                 vectorEffect="non-scaling-stroke"
               >
-                <title>
-                  {n.id} · 설치 전 {number(n.baselineM3)} → 설치 후 {number(n.strategyM3)} m³
-                </title>
+                <title>{`${n.id} · 설치 전 ${number(n.baselineM3)} → 설치 후 ${number(n.strategyM3)} m³`}</title>
               </circle>
               {(n.id === selected.id || n.kind === 'OUTFALL') && (
                 <text

@@ -173,10 +173,7 @@ export function WatershedPlaybackView({
                     }
                   }}
                 >
-                  <title>
-                    {l.id} · 정의 방향 {l.fromNode} → {l.toNode} ·{' '}
-                    {value ? number(value.flowM3s) + ' m³/s' : '기록 없음'}
-                  </title>
+                  <title>{`${l.id} · 정의 방향 ${l.fromNode} → ${l.toNode} · ${value ? number(value.flowM3s) + ' m³/s' : '기록 없음'}`}</title>
                 </polyline>
               );
             })}
@@ -205,9 +202,7 @@ export function WatershedPlaybackView({
                     }
                   }}
                 >
-                  <title>
-                    {n.id} · {value ? number(value.depthM) + ' m' : '기록 없음'}
-                  </title>
+                  <title>{`${n.id} · ${value ? number(value.depthM) + ' m' : '기록 없음'}`}</title>
                 </circle>
               );
             })}

@@ -89,9 +89,7 @@ export function WatershedLayout({
               }
             }}
           >
-            <title>
-              {c.id} · 배수 절점 {c.outletNodeId}
-            </title>
+            <title>{`${c.id} · 배수 절점 ${c.outletNodeId}`}</title>
           </polygon>
         ))}
         <g className="watershed-connection-lines" aria-hidden="true">
@@ -141,9 +139,7 @@ export function WatershedLayout({
                     }
                   }}
                 >
-                  <title>
-                    {l.id} · {l.fromNode} → {l.toNode}
-                  </title>
+                  <title>{`${l.id} · ${l.fromNode} → ${l.toNode}`}</title>
                 </polyline>
               ))}
           </g>
