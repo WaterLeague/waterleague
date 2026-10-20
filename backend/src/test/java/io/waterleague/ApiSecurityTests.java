@@ -46,6 +46,24 @@ class ApiSecurityTests extends PostgresIntegrationTest {
   }
 
   @Test
+  void groundClickUsesCanonicalCandidateDistrictWithoutRequiringAuthentication() throws Exception {
+    var response =
+        get("/api/v1/installations/sites/ground?x=13281.03424519865&y=-4865.481269954937");
+    assertThat(response.statusCode()).isEqualTo(200);
+    var json =
+        new io.waterleague.common.service.JsonService(new tools.jackson.databind.ObjectMapper());
+    var site = json.tree(response.body());
+    assertThat(site.path("districtId").asString()).isEqualTo("11740");
+    assertThat(site.path("cellId").asString()).isEqualTo("C0200c7ec7a1b9b5da35791c6");
+    assertThat(response.headers().firstValue("Cache-Control"))
+        .hasValueSatisfying(value -> assertThat(value).contains("no-store"));
+    assertThat(get("/api/v1/installations/sites/ground?x=NaN&y=0").statusCode()).isEqualTo(400);
+    var missing = get("/api/v1/installations/sites/ground?x=99999&y=99999");
+    assertThat(missing.statusCode()).isEqualTo(404);
+    assertThat(missing.body()).doesNotContain("stackTrace", "Exception", "jdbc:");
+  }
+
+  @Test
   void nativeInfrastructureStaysPublicWithoutOpeningOtherVersionsOrPrivateEndpoints()
       throws Exception {
     var current = get("/api/v1/infrastructure/seoul-native-infrastructure-20261020-v1");

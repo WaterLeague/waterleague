@@ -64,13 +64,10 @@ class SharedInstallationTests extends PostgresIntegrationTest {
             .findFirst()
             .orElseThrow();
 
-    assertThat(
-            service.ground(site.districtId(), site.center().get(0), site.center().get(1)).cellId())
+    assertThat(service.ground(site.center().get(0), site.center().get(1)).cellId())
         .isEqualTo(site.cellId());
-    assertThatThrownBy(() -> service.ground(site.districtId(), Double.NaN, 0))
-        .isInstanceOf(DomainException.class);
-    assertThatThrownBy(() -> service.ground(site.districtId(), 99999, 99999))
-        .isInstanceOf(DomainException.class);
+    assertThatThrownBy(() -> service.ground(Double.NaN, 0)).isInstanceOf(DomainException.class);
+    assertThatThrownBy(() -> service.ground(99999, 99999)).isInstanceOf(DomainException.class);
     assertThatThrownBy(
             () ->
                 service.install(

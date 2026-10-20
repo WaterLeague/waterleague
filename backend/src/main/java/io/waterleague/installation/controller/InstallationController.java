@@ -52,14 +52,11 @@ public class InstallationController {
     return service.building(districtId, sourceId);
   }
 
-  @GetMapping("/sites/{districtId}/ground")
+  @GetMapping("/sites/ground")
   public io.waterleague.installation.view.SiteView ground(
-      @PathVariable String districtId,
-      @RequestParam double x,
-      @RequestParam double y,
-      HttpServletRequest request) {
+      @RequestParam double x, @RequestParam double y, HttpServletRequest request) {
     checkRead(request);
-    return service.ground(districtId, x, y);
+    return service.ground(x, y);
   }
 
   @GetMapping("/sites/{districtId}/{cellId}")

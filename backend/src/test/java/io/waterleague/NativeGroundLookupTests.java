@@ -19,8 +19,7 @@ class NativeGroundLookupTests {
   @Test
   void selectsTheOriginalCandidateAtItsExactPointAndPreservesEveryRing() throws Exception {
     var candidate = NativeSiteFixtures.cell(sites, "11680", FacilityType.PERMEABLE_PAVEMENT, 0);
-    var selected =
-        sites.ground(candidate.districtId(), candidate.center().get(0), candidate.center().get(1));
+    var selected = sites.ground(candidate.center().get(0), candidate.center().get(1));
     assertThat(selected.cellId()).isEqualTo(candidate.cellId());
     assertThat(selected.polygons()).isEqualTo(candidate.polygons());
     assertThat(selected.sourceIds()).allMatch(id -> id.startsWith("ngii:"));
@@ -56,12 +55,24 @@ class NativeGroundLookupTests {
   }
 
   @Test
-  void rejectsNonFiniteOutsideAndOtherDistrictPointsWithoutNearestFallback() {
+  void rejectsNonFiniteAndOutsidePointsWithoutNearestFallback() {
     for (double x : new double[] {Double.NaN, Double.POSITIVE_INFINITY, 100001, 99999})
-      assertThatThrownBy(() -> sites.ground("11680", x, 0)).isInstanceOf(DomainException.class);
-    var candidate = NativeSiteFixtures.cell(sites, "11680", FacilityType.PERMEABLE_PAVEMENT, 0);
-    assertThatThrownBy(
-            () -> sites.ground("11200", candidate.center().get(0), candidate.center().get(1)))
-        .isInstanceOf(DomainException.class);
+      assertThatThrownBy(() -> sites.ground(x, 0)).isInstanceOf(DomainException.class);
+  }
+
+  @Test
+  void returnsTheCanonicalCandidateDistrictAcrossAdministrativeEdges() {
+    for (var entry :
+        new String[][] {
+          {"11740", "C0200c7ec7a1b9b5da35791c6"},
+          {"11110", "C024f3dcd1567599f45327d03"},
+          {"11680", "C03e26bb0db0cfcbfec2333e3"}
+        }) {
+      var expected = sites.require(entry[0], entry[1]);
+      var selected = sites.ground(expected.center().get(0), expected.center().get(1));
+      assertThat(selected.districtId()).isEqualTo(entry[0]);
+      assertThat(selected.cellId()).isEqualTo(entry[1]);
+      assertThat(selected.polygons()).isEqualTo(expected.polygons());
+    }
   }
 }

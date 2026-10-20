@@ -221,6 +221,11 @@ def check_http(stack, state):
     cell = native['sites'][0]
     single = client.api('/spatial/play/sites/11200/' + cell['id'])
     assert single['site'] == cell and cell['geometryCrs'] == 'EPSG:5186'
+    boundary = client.api('/installations/sites/ground?x=13281.03424519865&y=-4865.481269954937')
+    assert boundary['districtId'] == '11740' and boundary['cellId'] == 'C0200c7ec7a1b9b5da35791c6'
+    assert boundary == client.api('/installations/sites/11740/' + boundary['cellId'])
+    client.api('/installations/sites/ground?x=NaN&y=0', expected=400)
+    client.api('/installations/sites/ground?x=99999&y=99999', expected=404)
     worker_native = json.loads(stack.python('worker', """
 import json
 from waterleague_sim.spatial.play_bundle import open_catalog

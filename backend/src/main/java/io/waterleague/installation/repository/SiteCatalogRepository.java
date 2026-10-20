@@ -75,13 +75,10 @@ public class SiteCatalogRepository {
     return view(nativeSites.building(districtId, sourceId), nativeSites.metadata());
   }
 
-  public SiteView ground(String districtId, double x, double y) {
-    districts.require(districtId);
+  public SiteView ground(double x, double y) {
     if (!Double.isFinite(x) || !Double.isFinite(y) || Math.abs(x) > 100000 || Math.abs(y) > 100000)
       throw new DomainException(ErrorCode.REQUEST_INVALID);
     var cell = nativeSites.atPoint(x + ORIGIN_X, y + ORIGIN_Y, "GROUND");
-    if (!cell.path("districtId").asString().equals(districtId))
-      throw new DomainException(ErrorCode.RESOURCE_NOT_FOUND);
     return view(cell, nativeSites.metadata());
   }
 

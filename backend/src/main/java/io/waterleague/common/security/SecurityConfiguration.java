@@ -52,6 +52,7 @@ public class SecurityConfiguration {
                         "/api/v1/guest-historical/{id}",
                         "/api/v1/installations",
                         "/api/v1/installations/sites",
+                        "/api/v1/installations/sites/ground",
                         "/api/v1/installations/sites/{districtId}/{cellId}",
                         "/api/v1/installations/{id}/physics",
                         "/api/v1/installations/{id}/cost",

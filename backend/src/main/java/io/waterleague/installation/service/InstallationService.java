@@ -111,8 +111,8 @@ public class InstallationService {
     return sites.building(districtId, sourceId);
   }
 
-  public io.waterleague.installation.view.SiteView ground(String districtId, double x, double y) {
-    return sites.ground(districtId, x, y);
+  public io.waterleague.installation.view.SiteView ground(double x, double y) {
+    return sites.ground(x, y);
   }
 
   public io.waterleague.installation.view.SiteView site(String districtId, String cellId) {

@@ -597,12 +597,10 @@ function Explorer({
   const selectStreet = useCallback(
     async (_sourceId: string, point: [number, number]) => {
       if (cisternOpen) return;
-      const districtId = viewingDistrict(city.districts, point)?.id;
-      if (!districtId) return;
       const request = ++selectionRequest.current;
       setSelectionError('');
       try {
-        const value = await loadGroundSite(districtId, point);
+        const value = await loadGroundSite(point);
         if (request === selectionRequest.current) chooseSite(value, false, true);
       } catch (error) {
         if (request === selectionRequest.current) {
@@ -617,7 +615,7 @@ function Explorer({
         }
       }
     },
-    [cisternOpen, city.districts, chooseSite]
+    [cisternOpen, chooseSite]
   );
   const selectBuilding = useCallback(
     async (districtId: string, building: CityBuilding) => {

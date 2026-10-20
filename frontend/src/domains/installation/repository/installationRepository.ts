@@ -56,11 +56,7 @@ export const loadBuildingSite = async (districtId: string, sourceId: string) =>
     )
   );
 
-export const loadGroundSite = async (districtId: string, point: [number, number]) => {
+export const loadGroundSite = async (point: [number, number]) => {
   const params = new URLSearchParams({ x: String(point[0]), y: String(point[1]) });
-  return siteDto.parse(
-    await api<unknown>(
-      '/installations/sites/' + encodeURIComponent(districtId) + '/ground?' + params
-    )
-  );
+  return siteDto.parse(await api<unknown>('/installations/sites/ground?' + params));
 };
