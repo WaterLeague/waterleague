@@ -85,13 +85,39 @@ class AccountFlowTests extends PostgresIntegrationTest {
 
   @Test
   void rejectsRoleInjectionAndBadCredentials() throws Exception {
+    String username = "role_" + UUID.randomUUID().toString().substring(0, 8);
+    var valid =
+        Map.<String, Object>of(
+            "username", username,
+            "password", "long-valid-password",
+            "memberType", "PLAYER",
+            "organizationName", "",
+            "purpose", "",
+            "districtId", "11680",
+            "affiliationType", "RESIDENT");
+    // 필수 입력 누락이 아닌 권한 필드 추가 자체의 거부를 확인한다.
+    for (var injected :
+        Map.<String, Object>of(
+                "role", "ADMIN",
+                "organizationId", UUID.randomUUID().toString(),
+                "approvalStatus", "APPROVED")
+            .entrySet()) {
+      var forged = new HashMap<>(valid);
+      forged.put(injected.getKey(), injected.getValue());
+      assertThat(call("/auth/register", json.writeValueAsString(forged), csrf()).statusCode())
+          .isEqualTo(400);
+      assertThat(
+              db.queryForObject(
+                  "SELECT count(*) FROM accounts WHERE username=?", Integer.class, username))
+          .isZero();
+    }
+    var accepted = call("/auth/register", json.writeValueAsString(valid), csrf());
+    assertThat(accepted.statusCode()).isEqualTo(200);
+    assertThat(json.readTree(accepted.body()).path("role").asString()).isEqualTo("MEMBER");
     assertThat(
-            call(
-                    "/auth/register",
-                    "{\"username\":\"badrole\",\"password\":\"long-valid-password\",\"role\":\"INSTITUTION\"}",
-                    csrf())
-                .statusCode())
-        .isEqualTo(400);
+            db.queryForObject(
+                "SELECT organization_id FROM accounts WHERE username=?", UUID.class, username))
+        .isNull();
     assertThat(
             call(
                     "/auth/login",

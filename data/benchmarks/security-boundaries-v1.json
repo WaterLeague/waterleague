@@ -1,0 +1,318 @@
+{
+  "schemaVersion": 1,
+  "checkedOn": "2026-10-21",
+  "scope": "CURRENT_SERVER_AUTHORIZATION_BUDGET_IDEMPOTENCY_LEASE_AND_ARTIFACT_BOUNDARIES",
+  "command": "simulation/.venv/bin/python scripts/verify_league_postgres.py --suite security",
+  "status": "PASSED",
+  "java": {
+    "tests": 64,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "classes": [
+      {
+        "class": "AccountFlowTests",
+        "tests": 2,
+        "cases": [
+          "persistsSessionProtectsRoleAndRotatesCsrf",
+          "rejectsRoleInjectionAndBadCredentials"
+        ],
+        "reportSha256": "68a97a938dc275c9625d49beaca2ae5802c50ec7f7d56975f5961c3288a79274",
+        "testSourceSha256": "1197dc2d896e01808978731483ad5cfd85bfd839e43f9e9dd2aff8e37c4f7515"
+      },
+      {
+        "class": "ApiSecurityTests",
+        "tests": 7,
+        "cases": [
+          "publicEquipmentCatalogKeepsExactSourceHashAndPrivateDraftBoundary",
+          "groundClickUsesCanonicalCandidateDistrictWithoutRequiringAuthentication",
+          "rejectsWritesWithoutCsrf",
+          "protectsInstitutionAndManagementEndpoints",
+          "publicCurrentSurfaceIsEmptyWithoutExposingPrivateJobs",
+          "publicCatalogReportsUnavailabilityWithoutInventedMaps",
+          "nativeInfrastructureStaysPublicWithoutOpeningOtherVersionsOrPrivateEndpoints"
+        ],
+        "reportSha256": "fb82d9d39a98017b173b8efb3be8dff2a883f9a8276cd8eee2f770d4ce2b2013",
+        "testSourceSha256": "062767073a348905a9936e10c503afa040643e947437855f5ab798c3c09b9554"
+      },
+      {
+        "class": "GuestHistoricalTests",
+        "tests": 8,
+        "cases": [
+          "anonymousStreetPavementQueuesWithServerGeometryAndRejectsForgedArea",
+          "concurrentGuestRequestsCannotExceedAdmissionLimit",
+          "freezesServerValidatedGuestInputForNativeWorker",
+          "rejectsUnknownSiteFutureTimeAndDuplicateWholeDesign",
+          "anonymousCalculationIsSessionOwnedCsrfProtectedAndNeverSubmitted",
+          "wholeDesignIdempotencyAndQueueLimitSurviveMultipleRequests",
+          "guestReadListAndIdempotentResponsesExcludeFinalScore",
+          "wholeDesignRejectsCombinedBudgetExcessAcrossDistricts"
+        ],
+        "reportSha256": "bdcacf9027adbf7f393414234fe770b9399406eff1cf033770efd8f036ef9949",
+        "testSourceSha256": "b640ab45356ba896ed5edc7b73c577be4f6cfd7d8be5340b4448a41183866d9a"
+      },
+      {
+        "class": "ResearchWorkflowTests",
+        "tests": 5,
+        "cases": [
+          "protectsOwnershipAndImmutableRevisionAndServerBudget",
+          "separatesSingleAdminFromMembersAndEnforcesApprovalAndMfaEnrollment",
+          "recomputesScoreAndRestrictsInstitutionAndRevocation",
+          "requiresInstitutionMfaRejectsReplayAndCapsBody",
+          "rejectsChangedEngineAndUnavailableOrganization"
+        ],
+        "reportSha256": "0a78c925355883d20d2ae83963b9f539fa900e70383d216da8e05b8c14365eb1",
+        "testSourceSha256": "3aaa91fd5b6dda976b6c7f836e40b5384fc1c04af05b238e92f75c475493ebdb"
+      },
+      {
+        "class": "UtilizationWorkflowTests",
+        "tests": 4,
+        "cases": [
+          "paginatesEqualTimestampsWithoutForeignCursors",
+          "recordsAppendOnlyReviewsAndRetainsOwnerVisibilityAfterWithdrawal",
+          "serializesConcurrentRequestsAndDecisionsAndRollsBackFailedEvents",
+          "separatesResearchAndApplicationPermissionAndProtectsFrozenScope"
+        ],
+        "reportSha256": "1fda5f172f778aec732a03e2bb9d1c2f6889fabcf47bdab54d34d9aa69a7b86c",
+        "testSourceSha256": "b670895e3b98f6aeefd8457c5bf867bd2d48793fc4c339537eda74eb675f86fc"
+      },
+      {
+        "class": "LeagueParticipationWorkflowTests",
+        "tests": 11,
+        "cases": [
+          "sharesTeamQuotaFreezesRosterAndBlocksIneligibleMembers",
+          "protectsPrivateDiscoveryRotatesTokensAndRequiresAdmission",
+          "retainsPrivateRejectionSummaryWithoutGrantingRules",
+          "serializesApprovalRevocationAgainstSubmission",
+          "paginatesParticipantsAndRejectsMissingMfaAndCsrf",
+          "ranksBestTeamEntryAndPreservesIndividualResearchConsent",
+          "preservesReviewHistoryRevisionAndSubmissionQuotaAfterReentry",
+          "keepsOrganizerRejectionAcrossOpenLeagueReapplications",
+          "rejectsInvalidRulesAndDisablesPrivateActionsAfterCancellation",
+          "freezesConcurrentTeamJoinAndRejectsCrossLeagueCodeAndHash",
+          "serializesLastTeamSlotAndSeparatesInvitationPurposes"
+        ],
+        "reportSha256": "9b82232150084bb478667602ebf0a186901a004ceb965dda4b2a0dca2a143e4a",
+        "testSourceSha256": "567a3ac6bf551aaf8266e12f91b65b473f16acff1a244208b6ea004e058354e9"
+      },
+      {
+        "class": "SharedInstallationTests",
+        "tests": 4,
+        "cases": [
+          "oneMemberConcurrentSameSiteHasOneAllocation",
+          "oldGeometryIdentifiersCannotAllocateBudgetOrResolveToNativeCandidates",
+          "personalBudgetSerializesConcurrentSpendingAndIsolatesMembers",
+          "existingMembersChooseOnceAndCannotInstallElsewhere"
+        ],
+        "reportSha256": "d9247cba29e374ea089a20682f9881ab8791a07d9d576b9d06570bcaf2b0c63d",
+        "testSourceSha256": "1da4341c686befd8e58d4b768ea8ff018cf45535bfe460d964eb9ef4d6c7176e"
+      },
+      {
+        "class": "BudgetLedgerWorkflowTests",
+        "tests": 2,
+        "cases": [
+          "failuresRollbackAndConcurrentSeasonExpiryOnlyReleasesOnce",
+          "ledgerIsPrivatePagedAndFrozenAcrossRelease"
+        ],
+        "reportSha256": "06c2202e3e1815ed028a07388b87505e02fd3c11108ecc03b2ca2aede40cd7d8",
+        "testSourceSha256": "5c8853a11cf147dd8e9995a8425c11c7969f41492133ea14fe86fff13b64bd5b"
+      },
+      {
+        "class": "HistoricalDesignTests",
+        "tests": 3,
+        "cases": [
+          "staleForeignAndAlteredSavedDesignCalculationsAreRejectedAtomically",
+          "simultaneousCancellationAndCalculationKeepOneConsistentSnapshot",
+          "storedSnapshotTamperingFailsClosed"
+        ],
+        "reportSha256": "029d36f32b946853d4c8df9543048e43d37a9d603cb26c7c4ba5eae7616679f1",
+        "testSourceSha256": "8ba51ce6bca117e5699a9963779a1b20d2bf4207fdef51c04289dbee8972b51a"
+      },
+      {
+        "class": "HistoricalSubmissionTests",
+        "tests": 9,
+        "cases": [
+          "storedDecimalImprovementAndCompetitionTiesAreIndependentOfDisplayRounding",
+          "savedDesignConcurrentSubmitIsIdempotentAndRejectsForeignOrAlteredReference",
+          "boardSeparatesRulesKeepsNegativeAndExcludesFailuresAndUnapprovedMembers",
+          "sameRulesDifferentRuntimeRemainSeparateAndMissingContextIsNotRanked",
+          "preservesNestedSubmissionBundleAndRejectsTampering(Path)",
+          "freezesAllDistrictsAndRetriesOneJobConcurrently",
+          "savedDesignHashOrPriceCorruptionDoesNotCreateAJob",
+          "rejectsCrossDistrictBudgetDuplicateAndForeignParentAtomically",
+          "savedDesignSubmissionPreservesCostsAndSurvivesLaterCancellation"
+        ],
+        "reportSha256": "e6b93b19643afb107ccad4308e7d43a1c281c03f42ec097d6fb63b2189950ceb",
+        "testSourceSha256": "6f0d1f716d345753df77bc0348469beb3ed96bc4ac65499433ecad5f2fcc2942"
+      },
+      {
+        "class": "WatershedWorkflowTests",
+        "tests": 2,
+        "cases": [
+          "bindsExportedFilesToDatabaseResultAndRejectsLinks(Path)",
+          "freezesConduitOriginalAndKeepsCanonicalRequestsAndOwnerBoundary"
+        ],
+        "reportSha256": "1e22fb46f2d10497fcfa51facb364e2630566f521ff43c76c57696d8b19610ac",
+        "testSourceSha256": "d48ae4bdfe42388774ab380ac71994c143a20ac9c9b46815d9f1ecdaedcdfaac"
+      },
+      {
+        "class": "CisternMapPlanTests",
+        "tests": 4,
+        "cases": [
+          "concurrentRetryCreatesOneDraft",
+          "historicalHttpRequestReadbackKeepsCsrfOwnershipAndWeeklyRestrictions",
+          "ownerAndDistrictIsolationAndRevocation",
+          "staleAreaOccupiedAndTamperedRecordsRejected"
+        ],
+        "reportSha256": "d44f52e53ec0f02f42f65f24deb2f4bb800efe886e4713247114c1e7e1836857",
+        "testSourceSha256": "b94a23a425f32b645891ece1bca8aa7d61fd147c351771bf94f14e223a99fccd"
+      },
+      {
+        "class": "PhysicsWorkflowTests",
+        "tests": 2,
+        "cases": [
+          "preservesLastValidResultWithTimestampWhenNewObservationsFail",
+          "exposesPublicStatusWithoutPrivateArtifactsOrInventedZeros"
+        ],
+        "reportSha256": "42120f691e30c401f4468dd98f6d4d25136f34556c31d6e991985c0bb0812b97",
+        "testSourceSha256": "5d15d1cb7ee65e033fb676e26a771f6e26e87f3f729207a20f6c4c890494f28e"
+      },
+      {
+        "class": "QueueCapacityTests",
+        "tests": 1,
+        "cases": [
+          "sharesGlobalAndOrganizationCapacityWithoutGivingCandidatesPersonalOwnership"
+        ],
+        "reportSha256": "160378e0b68ab1c59a5c2cc436d090297f5a24869cb1d07cf32f57dfa6fc4bad",
+        "testSourceSha256": "11791d8660e570aca2dd93b5c6aa5c619209957585e50059aaadf2a15c17349e"
+      }
+    ]
+  },
+  "python": {
+    "queueIntegrationTests": 10,
+    "processAndResultTests": 8,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "actualSwmmExecutionAndCacheReuse": true,
+    "allArtifactHashesChecked": true,
+    "artifactFilesPerComputedOrReusedResearchRun": 18
+  },
+  "coverage": {
+    "guest": [
+      "SESSION_OWNER_READ",
+      "CSRF_REQUIRED",
+      "NO_FINAL_SCORE_IN_READ_LIST_AND_IDEMPOTENT_RESPONSES",
+      "NO_WEEKLY_INSTALLATION_SUBMISSION_OR_BUNDLE"
+    ],
+    "member": [
+      "SOURCE_GEOMETRY_AND_DISTRICT_BOUNDARY",
+      "PRIVATE_BUDGET_LEDGER",
+      "CONCURRENT_BUDGET_AND_SITE_ALLOCATION",
+      "SAVED_DESIGN_OWNER_REVISION_HASH",
+      "IDEMPOTENT_CONCURRENT_SUBMISSION",
+      "RESULT_HASH_PATH_AND_SYMLINK_REJECTION"
+    ],
+    "institution": [
+      "PUBLIC_ROLE_INJECTION_REJECTED",
+      "PENDING_ACCOUNT_HAS_NO_WORK_SESSION",
+      "SINGLE_ADMIN_SEPARATION",
+      "SELF_MFA_ENROLLMENT_OTP_REPLAY_REJECTION",
+      "SUSPENDED_SESSION_INVALIDATED",
+      "ORGANIZATION_AND_LEAGUE_OWNER",
+      "RESEARCH_CONSENT_WITHDRAWAL_BLOCKS_READ_AND_BUNDLE",
+      "APPLICATION_CONSENT_SCOPE_REVISION_AND_HASH"
+    ],
+    "worker": [
+      "CONCURRENT_CLAIM_ONCE",
+      "EXPIRED_REPLACED_LEASE_PUBLICATION_REJECTED",
+      "LOCK_WAIT_EXPIRY_RECHECK",
+      "RENEWAL_CANNOT_RESURRECT_EXPIRED_LEASE",
+      "BAD_INPUT_HASH_BEFORE_ENGINE",
+      "CORRUPT_RESULT_FAILS_WITHOUT_STOPPING_NEXT_JOB",
+      "DEADLINE_RENEWAL_FAILURE_SIGTERM_REAPS_PROCESS_GROUP",
+      "RESULT_SIZE_DEPTH_SYMLINK_NONFINITE_DUPLICATE_KEY_UTF8_LIMITS"
+    ]
+  },
+  "source": {
+    "baseCommit": "8a09d3163fdf842fcfdf5655c644f63c0ebf30a6",
+    "backendMainFileCount": 1628,
+    "backendMainTreeSha256": "63560cf7b67c5c4a2d67725f5b65691e182d3c2492a65919984839f0bd0d323b",
+    "backendTreeHashMethod": "SHA256_OF_SORTED_RELATIVE_PATH_TAB_FILE_SHA256_LINES_WITH_NO_TRAILING_NEWLINE",
+    "files": {
+      "scripts/verify_league_postgres.py": "93d783f7749848be78f3f817989fb93e3fb893ddeb6b91d533ee6dabe878b994",
+      "simulation/integration/test_worker_queue.py": "5724523007027360fd3ae63b2d4d37febeebf10f00b96dc138fde43844a27a5d",
+      "simulation/tests/test_job_runtime.py": "9b720025178819ca2faecb315f53e4b941011486ab6b655199d8c0b748d9956b",
+      "simulation/waterleague_sim/queue.py": "498582a070553bafc2db2eb06e3f461685875086eba1a5966ee962c1095aa0a4",
+      "simulation/waterleague_sim/job_runtime.py": "f60ec8b63140c128036e68f5248da8fd4fabc627e012255d07421420d705c19e",
+      "simulation/waterleague_sim/worker.py": "34ac271d16fb493202743637f06952562af5639ea39edb65166a7fe183f177fd",
+      "simulation/waterleague_sim/historical.py": "fcc751367a003ac40040dd333ffdd008ebce647662f6fb79ae52de8839e72657",
+      "simulation/waterleague_sim/watershed.py": "a36a9ad5e2562e502b27f5e6e044f99b3afa7a7606bfa1cfc74f30c5aa2c95a9",
+      "simulation/waterleague_sim/shared_physics.py": "f337b1c27e36cd62d3551e8add74cd3ed6290cc000980d571c97ef207b5ccdd5",
+      "backend/src/main/resources/evaluation/game-score-policy-v1.json": "5d918d61ee48cd12bf4743dd4c87044496e8cd8bcbe2fb6d48f291d30cb04311"
+    }
+  },
+  "evidence": {
+    "report": "tmp/security-boundaries-v1/run.json",
+    "reportSha256": "34110b0e7286bccb0a6ab3085db15c29b2905b225cee32d987eb577253f02491",
+    "log": "tmp/waterleague_queue_test_44c30533c6ea4c28ab1bd01f13a721ca.log",
+    "logSha256": "a801a2e3cdaa29c4de811906be67458269755ba34fb4e1b744f30f50a14cd325"
+  },
+  "preservation": {
+    "sourceDatabaseCountsUnchanged": true,
+    "isolatedDatabaseRemoved": true,
+    "originalApiHealth": "UP",
+    "applicationRuntimeRestarted": false
+  },
+  "limitations": [
+    "권한/거부 시험의 일부 결과는 격리 DB에 주입한 시험 전용 값이며 실제 관측·운영 점수가 아님",
+    "공통 큐의 실제 SWMM 실행·재사용과 기관/개인 경계를 검증했으며 연결 서울 유역의 수문 정확도는 검증하지 않음",
+    "브라우저 두 모드의 실제 계산 증거는 기존 game-browser-flow-v1 및 game-browser-weekly-v1과 별도",
+    "공개 배포 TLS·메일·IdP와 대상 기기 성능·미구현 이용조 확정 설치는 이 묶음의 통과 범위가 아님"
+  ],
+  "initialRunNote": "java/python/source/evidence는 가입 권한 시험 보강 전 64+10+8 실행 시점의 근거이며 후속 실행으로 덮어쓰지 않음",
+  "accountFollowup": {
+    "command": "simulation/.venv/bin/python scripts/verify_league_postgres.py --suite account",
+    "status": "PASSED",
+    "reason": "정상 가입 입력에 역할·기관 ID·승인 상태를 각각 추가해 필수 입력 누락과 권한 주입 거부를 구분",
+    "java": {
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "classes": [
+        {
+          "class": "AccountFlowTests",
+          "tests": 2,
+          "cases": [
+            "persistsSessionProtectsRoleAndRotatesCsrf",
+            "rejectsRoleInjectionAndBadCredentials"
+          ],
+          "reportSha256": "f86c358e58a4826d706a73d071c8450b545c3cc3258047f3c5742eae72053095",
+          "testSourceSha256": "f78bd21bfdd6282b4fbe9500c2eb8c77e130f3e3ae311b5cdbd2719aa9289efa"
+        },
+        {
+          "class": "MfaTests",
+          "tests": 1,
+          "cases": [
+            "matchesRfc6238Sha1TestVectors"
+          ],
+          "reportSha256": "aee9c5f37bf6a3a665420cd4e000dfeccad455af150acd28fb9f7297e58d22b7",
+          "testSourceSha256": "a6bd5f5643ed68248a5d3c4a510310fabc84f51b500780951e6d103fd16d5c9a"
+        }
+      ]
+    },
+    "source": {
+      "verificationScriptSha256": "5827ffd5738ddb68a6ceb93db144410478dfa4bcd5c0853857ff8bdcf6b28849",
+      "applicationCodeUnchangedSinceInitialRun": true
+    },
+    "evidence": {
+      "report": "tmp/security-boundaries-v1/account-run.json",
+      "reportSha256": "856be9fc3e6d7e0864e0cb07acf7b3ee59b1c278d916e2c082eb38234ec20060",
+      "log": "tmp/waterleague_league_test_068ea8b247b04a5bbfe7cc8fa08e0171.log",
+      "logSha256": "60af07a291e71ae27f14e0c7ed3d3826fad6aac45e39e8f0acbf12678e84c417"
+    },
+    "sourceDatabaseCountsUnchanged": true,
+    "isolatedDatabaseRemoved": true
+  }
+}

@@ -11,6 +11,37 @@ from psycopg import sql
 from psycopg.conninfo import conninfo_to_dict, make_conninfo
 from local_config import ROOT, load
 
+SECURITY_TESTS = ','.join((
+    'AccountFlowTests',
+    'ApiSecurityTests',
+    'GuestHistoricalTests',
+    'ResearchWorkflowTests#protectsOwnershipAndImmutableRevisionAndServerBudget'
+    '+recomputesScoreAndRestrictsInstitutionAndRevocation'
+    '+requiresInstitutionMfaRejectsReplayAndCapsBody'
+    '+rejectsChangedEngineAndUnavailableOrganization'
+    '+separatesSingleAdminFromMembersAndEnforcesApprovalAndMfaEnrollment',
+    'UtilizationWorkflowTests',
+    'LeagueParticipationWorkflowTests',
+    'SharedInstallationTests#oneMemberConcurrentSameSiteHasOneAllocation'
+    '+personalBudgetSerializesConcurrentSpendingAndIsolatesMembers'
+    '+existingMembersChooseOnceAndCannotInstallElsewhere'
+    '+oldGeometryIdentifiersCannotAllocateBudgetOrResolveToNativeCandidates',
+    'BudgetLedgerWorkflowTests#ledgerIsPrivatePagedAndFrozenAcrossRelease'
+    '+failuresRollbackAndConcurrentSeasonExpiryOnlyReleasesOnce',
+    'HistoricalDesignTests#storedSnapshotTamperingFailsClosed'
+    '+staleForeignAndAlteredSavedDesignCalculationsAreRejectedAtomically'
+    '+simultaneousCancellationAndCalculationKeepOneConsistentSnapshot',
+    'HistoricalSubmissionTests',
+    'WatershedWorkflowTests#bindsExportedFilesToDatabaseResultAndRejectsLinks'
+    '+freezesConduitOriginalAndKeepsCanonicalRequestsAndOwnerBoundary',
+    'CisternMapPlanTests#historicalHttpRequestReadbackKeepsCsrfOwnershipAndWeeklyRestrictions'
+    '+ownerAndDistrictIsolationAndRevocation'
+    '+staleAreaOccupiedAndTamperedRecordsRejected'
+    '+concurrentRetryCreatesOneDraft',
+    'PhysicsWorkflowTests',
+    'QueueCapacityTests',
+))
+
 
 def source_counts(db):
     if db.execute("SELECT to_regclass('public.simulation_jobs')").fetchone()[0] is None:
@@ -22,9 +53,9 @@ def source_counts(db):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--suite', choices=['street-placement', 'guest-historical', 'historical-submit-design', 'historical-design-run', 'historical-design', 'public-surface', 'infrastructure', 'league', 'analysis', 'queue', 'budget', 'physics', 'weekly', 'historical', 'watershed', 'cistern-plan', 'shared-research', 'search', 'restore', 'backend', 'all'], default='league')
+    parser.add_argument('--suite', choices=['account', 'security', 'street-placement', 'guest-historical', 'historical-submit-design', 'historical-design-run', 'historical-design', 'public-surface', 'infrastructure', 'league', 'analysis', 'queue', 'budget', 'physics', 'weekly', 'historical', 'watershed', 'cistern-plan', 'shared-research', 'search', 'restore', 'backend', 'all'], default='league')
     suite = parser.parse_args().suite
-    test_class = {'street-placement': 'SharedInstallationTests,GuestHistoricalTests,HistoricalDesignTests,ApiSecurityTests', 'guest-historical': 'GuestHistoricalTests,HistoricalWorkflowTests,HistoricalSubmissionTests,ApiSecurityTests','historical-submit-design': 'HistoricalSubmissionTests,HistoricalDesignTests,ApiSecurityTests',
+    test_class = {'account': 'AccountFlowTests,MfaTests', 'security': SECURITY_TESTS, 'street-placement': 'SharedInstallationTests,GuestHistoricalTests,HistoricalDesignTests,ApiSecurityTests', 'guest-historical': 'GuestHistoricalTests,HistoricalWorkflowTests,HistoricalSubmissionTests,ApiSecurityTests','historical-submit-design': 'HistoricalSubmissionTests,HistoricalDesignTests,ApiSecurityTests',
                   'historical-design-run': 'HistoricalDesignTests,HistoricalWorkflowTests,HistoricalSubmissionTests,ApiSecurityTests',
                   'historical-design': 'HistoricalDesignTests,HistoricalWorkflowTests,HistoricalSubmissionTests,ApiSecurityTests',
                   'public-surface': 'PublicSurfaceTests,SurfacePlaybackTests,ApiSecurityTests',
@@ -47,7 +78,7 @@ def main():
     config = conninfo_to_dict(os.environ['DATABASE_URL'])
     if config.get('host') not in {'127.0.0.1', 'localhost', '::1'}:
         raise SystemExit('로컬 PostgreSQL만 허용')
-    prefix = {'guest-historical': 'waterleague_queue_test_','historical-submit-design': 'waterleague_queue_test_', 'historical-design-run': 'waterleague_queue_test_', 'queue': 'waterleague_queue_test_', 'physics': 'waterleague_queue_test_', 'historical': 'waterleague_queue_test_', 'watershed': 'waterleague_queue_test_', 'search': 'waterleague_search_test_',
+    prefix = {'security': 'waterleague_queue_test_', 'guest-historical': 'waterleague_queue_test_','historical-submit-design': 'waterleague_queue_test_', 'historical-design-run': 'waterleague_queue_test_', 'queue': 'waterleague_queue_test_', 'physics': 'waterleague_queue_test_', 'historical': 'waterleague_queue_test_', 'watershed': 'waterleague_queue_test_', 'search': 'waterleague_search_test_',
               'restore': 'waterleague_search_test_'}
     test_name = prefix.get(suite, 'waterleague_league_test_') + uuid.uuid4().hex
     path = ROOT / 'tmp' / (test_name + '.log')
@@ -73,7 +104,7 @@ def main():
         with path.open('x') as log:
             path.chmod(0o600)
             physical = ['-Dwaterleague.integration.python=' + sys.executable] if suite in {'search', 'restore'} else []
-            if suite != 'backend':
+            if suite not in {'backend', 'security'}:
                 physical.append('-Dwaterleague.integration.preserve-fixtures=true')
             if suite == 'watershed':
                 path.with_suffix('.fixtures').mkdir(mode=0o700)
@@ -107,7 +138,7 @@ def main():
                     [str(ROOT / 'backend/mvnw'), '--batch-mode', '-Dtest=HistoricalDesignRestartTests',
                      '-Dwaterleague.integration.jdbc=' + jdbc, *physical, 'test'],
                     cwd=ROOT / 'backend', env=env, stdout=log, stderr=subprocess.STDOUT, timeout=600)
-            if suite in {'guest-historical', 'queue', 'physics', 'historical', 'watershed', 'historical-design-run', 'historical-submit-design'} and result.returncode == 0:
+            if suite in {'security', 'guest-historical', 'queue', 'physics', 'historical', 'watershed', 'historical-design-run', 'historical-submit-design'} and result.returncode == 0:
                 worker_env = env | {'WL_WORKER_TEST_DSN': make_conninfo(**(config | {'dbname': test_name})),
                                     'PYTHONPATH': str(ROOT / 'simulation')}
                 if suite == 'watershed':
@@ -124,7 +155,7 @@ def main():
                 if suite == 'historical':
                     worker_env['WL_PAVEMENT_FIXTURE'] = str(path.with_suffix('.pavement.json'))
                     worker_env['WL_PAVEMENT_EVIDENCE'] = str(path.with_suffix('.pavement-runs'))
-                pattern = ['-p', {'guest-historical':'test_guest_historical.py','queue':'test_worker_queue.py','historical-submit-design':'test_saved_submission.py','historical-design-run':'test_historical_design_run.py','physics':'test_shared_physics.py','historical':'test_historical.py','watershed':'test_watershed.py'}[suite]] if suite in {'queue','guest-historical','physics','historical','watershed','historical-design-run','historical-submit-design'} else []
+                pattern = ['-p', {'security':'test_worker_queue.py','guest-historical':'test_guest_historical.py','queue':'test_worker_queue.py','historical-submit-design':'test_saved_submission.py','historical-design-run':'test_historical_design_run.py','physics':'test_shared_physics.py','historical':'test_historical.py','watershed':'test_watershed.py'}[suite]] if suite in {'security','queue','guest-historical','physics','historical','watershed','historical-design-run','historical-submit-design'} else []
                 durations = ['--durations', '0'] if suite == 'watershed' else []
                 try:
                     result = subprocess.run([sys.executable, '-m', 'unittest', 'discover', '-s', 'integration', *pattern, '-v', *durations],
@@ -134,6 +165,12 @@ def main():
                 except subprocess.TimeoutExpired:
                     print(path.read_text(errors='replace')[-16000:], file=sys.stderr)
                     raise
+                if suite == 'security' and result.returncode == 0:
+                    result = subprocess.run(
+                        [sys.executable, '-m', 'unittest', 'discover', '-s', 'tests',
+                         '-p', 'test_job_runtime.py', '-v'],
+                        cwd=ROOT/'simulation', env=worker_env, stdout=log,
+                        stderr=subprocess.STDOUT, timeout=60)
                 if suite == 'watershed' and result.returncode == 0:
                     result = subprocess.run(
                         [str(ROOT/'backend/mvnw'),'--batch-mode','-Dtest=WatershedReadbackTests',
