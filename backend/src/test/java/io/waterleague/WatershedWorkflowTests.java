@@ -41,6 +41,30 @@ class WatershedWorkflowTests extends PostgresIntegrationTest {
   @org.junit.jupiter.api.io.TempDir Path outputDirectory;
   UUID owner;
 
+  @Test
+  void freezesMapLocationAssumptionAndRejectsUnknownProfile() throws Exception {
+    var original = request(UUID.randomUUID(), "MapBio", "S2", "100", "1000");
+    var mapped = new WatershedRequest(original.requestKey(), original.catalogHash(),
+        original.placements(), null, null, null, null, null, null,
+        WatershedCatalogRepository.GEOREFERENCE_HASH);
+    var job = service.create(owner, mapped);
+    var stored = service.require(owner, job.id());
+    var design = json.tree(stored.placements());
+    assertThat(design.path("locationReference").path("profileSha256").asString())
+        .isEqualTo(WatershedCatalogRepository.GEOREFERENCE_HASH);
+    assertThat(design.path("locationReference").path("sourceCrsVerified").asBoolean()).isFalse();
+    assertThat(design.path("placements").get(0).path("subcatchmentId").asString()).isEqualTo("S2");
+    assertThat(service.create(owner, mapped).id()).isEqualTo(job.id());
+    assertThatThrownBy(() -> service.create(owner, original)).isInstanceOf(DomainException.class);
+    var invalid = new WatershedRequest(UUID.randomUUID(), original.catalogHash(),
+        original.placements(), null, null, null, null, null, null, "0".repeat(64));
+    assertThatThrownBy(() -> service.create(owner, invalid)).isInstanceOf(DomainException.class);
+    assertThat(service.catalog()).containsEntry("georeferenceHash", WatershedCatalogRepository.GEOREFERENCE_HASH);
+    Files.writeString(outputDirectory.resolve("location-server-request.json"),
+        json.write(Map.of("modelHash", stored.modelHash(), "inputHash", stored.inputHash(),
+            "placements", stored.placements())));
+  }
+
   @AfterEach
   void exportWorkerRequestsForThisVerificationRun() throws Exception {
     String configured = System.getProperty("waterleague.integration.watershed.fixtures");

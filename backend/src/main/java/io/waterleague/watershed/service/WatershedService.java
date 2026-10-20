@@ -57,6 +57,8 @@ public class WatershedService {
     result.put("costCatalog", costCatalog.value());
     result.put("layoutHash", WatershedCatalogRepository.LAYOUT_HASH);
     result.put("layout", catalog.layout());
+    result.put("georeferenceHash", WatershedCatalogRepository.GEOREFERENCE_HASH);
+    result.put("georeference", catalog.georeference());
     result.put("storageCatalogHash", WatershedCatalogRepository.STORAGE_HASH);
     result.put("storageCatalog", catalog.storage());
     result.put("conduitCatalogHash", WatershedCatalogRepository.CONDUIT_HASH);
@@ -179,6 +181,17 @@ public class WatershedService {
           "cisternCosting",
           CisternReferenceService.snapshot(
               dto.cisternCostCatalogHash(), placements, costCatalog.cistern(), dto.cistern()));
+    if (dto.georeferenceHash() != null) {
+      if (!WatershedCatalogRepository.GEOREFERENCE_HASH.equals(dto.georeferenceHash()))
+        throw new DomainException(ErrorCode.REQUEST_INVALID);
+      var profile = catalog.georeference();
+      var reference = new TreeMap<String, Object>();
+      reference.put("profileSha256", dto.georeferenceHash());
+      for (String field : List.of("id", "method", "sourceLayoutSha256", "sourceOriginalSha256",
+          "evidenceSha256", "assumedSourceCrs", "horizontalCrs", "sourceCrsVerified"))
+        reference.put(field, profile.path(field));
+      design.put("locationReference", reference);
+    }
     String body = json.write(design);
     String hash = json.hash(dto.catalogHash() + "\n" + body);
     admission.lockAdmission();

@@ -1,0 +1,534 @@
+{
+  "schemaVersion": 1,
+  "verifiedAtKst": "2026-10-21",
+  "classification": "PUBLIC_RESEARCH_NETWORK_MAP_GAME_INTEGRATION",
+  "scope": "CURRENT_CITY_EXPLORER_MAP_TO_EXISTING_NETWORK_WORKER_WITH_FROZEN_LOCATION_ASSUMPTION",
+  "sources": {
+    "backend/src/main/resources/watersheds/seocho-layout-v1.json": "fa3e4d833650df5c40d933bd0b289dd029a54e0beb73fad9b9d3ef239cb0236d",
+    "backend/src/main/resources/watersheds/seocho-georeference-v1.json": "36a477f877d0d0fc4518f5e7664497e6e36798299745880932d5b43148ac01ab",
+    "data/benchmarks/seocho-road-registration-v1.json": "5b537d4b85533e2fb9d3e9928b52199aa07a8520fd5490289d47f94d39940071",
+    "scripts/prepare_seocho_georeference.py": "73b3b944089fb751ddea995911e6c82b49adb53e67cdb3b6ac564cc332665910",
+    "scripts/verify_seocho_map.mjs": "86920f5459f4575bf82a3bdf5158a69f5efe52925c4cc787b915e099c01335c6"
+  },
+  "roadAudit": {
+    "versions": {
+      "epsg": "v12.029",
+      "geos": "3.14.1",
+      "proj": "9.8.1",
+      "pyproj": "3.8.0",
+      "shapely": "2.2.0"
+    },
+    "nodes": 28,
+    "conduitSamples": 478,
+    "comparison": [
+      {
+        "sourceCrsHypothesis": "EPSG:2097",
+        "roadCount": 3743,
+        "nodes": {
+          "complete": true,
+          "coveredCount": 28,
+          "lengthWeightedMeanM": null,
+          "maxM": 86.34253160739286,
+          "meanM": 36.131612863241905,
+          "medianM": 26.644584284965724,
+          "sampleCount": 28
+        },
+        "conduits": {
+          "complete": true,
+          "coveredCount": 478,
+          "lengthWeightedMeanM": 38.0530155877051,
+          "maxM": 101.85154414968594,
+          "meanM": 38.045103253967504,
+          "medianM": 32.07770125328366,
+          "sampleCount": 478
+        }
+      },
+      {
+        "sourceCrsHypothesis": "EPSG:5174",
+        "roadCount": 4246,
+        "nodes": {
+          "complete": true,
+          "coveredCount": 28,
+          "lengthWeightedMeanM": null,
+          "maxM": 73.49402110723108,
+          "meanM": 18.63186421252133,
+          "medianM": 13.299781682919171,
+          "sampleCount": 28
+        },
+        "conduits": {
+          "complete": true,
+          "coveredCount": 478,
+          "lengthWeightedMeanM": 19.629089478523834,
+          "maxM": 106.88034023503276,
+          "meanM": 19.613736610657195,
+          "medianM": 13.526064911747717,
+          "sampleCount": 478
+        }
+      },
+      {
+        "sourceCrsHypothesis": "EPSG:5181",
+        "roadCount": 3815,
+        "nodes": {
+          "complete": true,
+          "coveredCount": 28,
+          "lengthWeightedMeanM": null,
+          "maxM": 70.545030472957,
+          "meanM": 4.6588968585683475,
+          "medianM": 1.0013459245963052,
+          "sampleCount": 28
+        },
+        "conduits": {
+          "complete": true,
+          "coveredCount": 478,
+          "lengthWeightedMeanM": 3.078768110158895,
+          "maxM": 67.1648480721699,
+          "meanM": 3.0805017438651796,
+          "medianM": 1.028095347414067,
+          "sampleCount": 478
+        }
+      },
+      {
+        "sourceCrsHypothesis": "EPSG:5186",
+        "roadCount": 0,
+        "nodes": {
+          "complete": false,
+          "coveredCount": 0,
+          "lengthWeightedMeanM": null,
+          "maxM": null,
+          "meanM": null,
+          "medianM": null,
+          "sampleCount": 28
+        },
+        "conduits": {
+          "complete": false,
+          "coveredCount": 0,
+          "lengthWeightedMeanM": null,
+          "maxM": null,
+          "meanM": null,
+          "medianM": null,
+          "sampleCount": 478
+        }
+      }
+    ],
+    "profileAndEvidenceReplayByteIdentical": true
+  },
+  "workerReadback": {
+    "schemaVersion": 1,
+    "scope": "SERVER_REQUEST_NATIVE_WORKER_DTO_STATIC_RENDER_NOT_BROWSER_HTTP",
+    "requestSha256": "b5f9ebc19116ccaee52fe3667ec7d9f7739300ddb5c3540c319f41f2d8f1b468",
+    "inputHash": "80b8d15d73252d8f95f13a946ec93666281ee031d2a1c37390c5610bfb2702ec",
+    "resultSha256": "b0bf843c39cd1512f66552f1f92a8bcbc244ddb0be3bedfb2d7a7b6803e01efe",
+    "manifestSha256": "a5ddef9046369d548ac997dc32ea55da3d2cf5ba8920d731e4b133cdedf993ad",
+    "artifactsVerified": 31,
+    "locationReference": {
+      "assumedSourceCrs": "EPSG:5181",
+      "evidenceSha256": "5b537d4b85533e2fb9d3e9928b52199aa07a8520fd5490289d47f94d39940071",
+      "horizontalCrs": "EPSG:5186",
+      "id": "SEOCHO_ROAD_SUPPORTED_LOCATION_V1",
+      "method": "ROAD_SUPPORTED_CRS_HYPOTHESIS_V1",
+      "profileSha256": "36a477f877d0d0fc4518f5e7664497e6e36798299745880932d5b43148ac01ab",
+      "sourceCrsVerified": false,
+      "sourceLayoutSha256": "fa3e4d833650df5c40d933bd0b289dd029a54e0beb73fad9b9d3ef239cb0236d",
+      "sourceOriginalSha256": "8ce278a3d2b58df3c2a5fd1232160bcabb324389746ee0c878792acf91abbdbb"
+    },
+    "placements": [
+      {
+        "areaM2": 100,
+        "facilityType": "BIORETENTION",
+        "id": "MapBio",
+        "initialSaturationPercent": 0,
+        "parameters": {
+          "drain": {
+            "delayHours": 0,
+            "diameterMm": 25,
+            "dischargeCoefficient": 0.6,
+            "offsetMm": 152.4
+          },
+          "nativeSeepageBasis": "DESIGN_ASSUMPTION",
+          "nativeSeepageMmH": 4,
+          "soilDepthMm": 609.6,
+          "storageDepthMm": 304.8,
+          "storagePorosity": 0.3,
+          "surfaceDepthMm": 152.4,
+          "vegetationFraction": 0.1
+        },
+        "replacedImperviousM2": 100,
+        "subcatchmentId": "S2",
+        "treatedImperviousM2": 1000
+      }
+    ],
+    "numericalStatus": "PASSED",
+    "signedReductionM3": {
+      "outflowM3": -4.1903729466721416,
+      "floodingM3": 51.02976803854108
+    },
+    "signedPeakReductionM3s": 0,
+    "metricComparison": {
+      "schemaVersion": 1,
+      "method": "SIGNED_ABSOLUTE_PRIMARY_RELATIVE_AUXILIARY_V1",
+      "scope": "PUBLISHED_NETWORK_REFERENCE_DESIGN",
+      "window": {
+        "kind": "ELAPSED_SECONDS",
+        "start": 0,
+        "end": 86339,
+        "specificationSha256": "d1d16a03051f33f0bfe03343dd7862c21a2e796442175798e85d664ff4cc72c2"
+      },
+      "primaryMetricId": null,
+      "compositeScore": null,
+      "relativeUsedForRanking": false,
+      "metrics": [
+        {
+          "id": "surfaceDischargeM3",
+          "unit": "m3",
+          "boundary": "SELECTED_SURFACE_OUTLET",
+          "preferredDirection": "DECREASE",
+          "status": "UNAVAILABLE",
+          "reason": "DIFFERENT_EVALUATION_BOUNDARY",
+          "baseline": null,
+          "strategy": null,
+          "signedImprovement": null,
+          "relativeImprovementPercent": null,
+          "relativeStatus": "NOT_COMPARABLE"
+        },
+        {
+          "id": "surfaceAccountedVolumeM3",
+          "unit": "m3",
+          "boundary": "SELECTED_SURFACE_OUTLET_WITH_NET_STORAGE",
+          "preferredDirection": "DECREASE",
+          "status": "UNAVAILABLE",
+          "reason": "DIFFERENT_EVALUATION_BOUNDARY",
+          "baseline": null,
+          "strategy": null,
+          "signedImprovement": null,
+          "relativeImprovementPercent": null,
+          "relativeStatus": "NOT_COMPARABLE"
+        },
+        {
+          "id": "surfacePeakM3s",
+          "unit": "m3/s",
+          "boundary": "SELECTED_SURFACE_OUTLET",
+          "preferredDirection": "DECREASE",
+          "status": "UNAVAILABLE",
+          "reason": "DIFFERENT_EVALUATION_BOUNDARY",
+          "baseline": null,
+          "strategy": null,
+          "signedImprovement": null,
+          "relativeImprovementPercent": null,
+          "relativeStatus": "NOT_COMPARABLE"
+        },
+        {
+          "id": "networkOutflowM3",
+          "unit": "m3",
+          "boundary": "ALL_NETWORK_EXTERNAL_OUTFALLS",
+          "preferredDirection": "DECREASE",
+          "status": "COMPARABLE",
+          "reason": null,
+          "baseline": 2180749.855360638,
+          "strategy": 2180754.0457335846,
+          "signedImprovement": -4.1903729466721416,
+          "relativeImprovementPercent": -0.00019215284762585323,
+          "relativeStatus": "COMPUTED"
+        },
+        {
+          "id": "networkPeakM3s",
+          "unit": "m3/s",
+          "boundary": "ALL_NETWORK_EXTERNAL_OUTFALLS",
+          "preferredDirection": "DECREASE",
+          "status": "COMPARABLE",
+          "reason": null,
+          "baseline": 39.04103494825935,
+          "strategy": 39.04103494825935,
+          "signedImprovement": 0,
+          "relativeImprovementPercent": 0,
+          "relativeStatus": "COMPUTED"
+        },
+        {
+          "id": "networkFloodingM3",
+          "unit": "m3",
+          "boundary": "NETWORK_EXTERNAL_NODE_FLOODING",
+          "preferredDirection": "DECREASE",
+          "status": "COMPARABLE",
+          "reason": null,
+          "baseline": 1507902.468925209,
+          "strategy": 1507851.4391571705,
+          "signedImprovement": 51.02976803854108,
+          "relativeImprovementPercent": 0.003384155745491529,
+          "relativeStatus": "COMPUTED"
+        },
+        {
+          "id": "networkFloodingSeconds",
+          "unit": "s",
+          "boundary": "NETWORK_EXTERNAL_NODE_FLOODING",
+          "preferredDirection": "DECREASE",
+          "status": "COMPARABLE",
+          "reason": null,
+          "baseline": 43592.200000000004,
+          "strategy": 43599.51599999999,
+          "signedImprovement": -7.315999999984342,
+          "relativeImprovementPercent": -0.016782818944637668,
+          "relativeStatus": "COMPUTED"
+        },
+        {
+          "id": "surfaceDepthAreaTimeM3Hours",
+          "unit": "m3*h",
+          "boundary": "CONNECTED_SURFACE_GRID",
+          "preferredDirection": "DECREASE",
+          "status": "UNAVAILABLE",
+          "reason": "NO_SURFACE_GRID",
+          "baseline": null,
+          "strategy": null,
+          "signedImprovement": null,
+          "relativeImprovementPercent": null,
+          "relativeStatus": "NOT_COMPARABLE"
+        },
+        {
+          "id": "reusedVolumeM3",
+          "unit": "m3",
+          "boundary": "VERIFIED_USE_DEMAND",
+          "preferredDirection": "INCREASE",
+          "status": "UNAVAILABLE",
+          "reason": "NO_USE_DEMAND",
+          "baseline": null,
+          "strategy": null,
+          "signedImprovement": null,
+          "relativeImprovementPercent": null,
+          "relativeStatus": "NOT_COMPARABLE"
+        }
+      ]
+    },
+    "cases": [
+      {
+        "id": "baseline",
+        "totals": {
+          "timeSeconds": 86339,
+          "initialStorageM3": 0.32019239999999993,
+          "storageM3": 11131.689178989987,
+          "dryWeatherInflowM3": 0,
+          "runoffInflowM3": 229448.4376731979,
+          "groundwaterInflowM3": 0,
+          "rdiiInflowM3": 0,
+          "externalInflowM3": 3469729.3551090127,
+          "outflowM3": 2180749.855360638,
+          "floodingM3": 1507902.468925209,
+          "evaporationM3": 0,
+          "seepageM3": 0,
+          "reactionLossM3": 0,
+          "balanceResidualM3": -605.9004902264769
+        },
+        "numericalStatus": "PASSED",
+        "evaluationMetrics": {
+          "specificationSha256": "d1d16a03051f33f0bfe03343dd7862c21a2e796442175798e85d664ff4cc72c2",
+          "complete": true,
+          "method": "NATIVE_ROUTING_STEP_DIRECTIONAL_TRAPEZOIDAL_INTEGRAL",
+          "peakMethod": "SIMULTANEOUS_SELECTED_OUTFALL_SUM",
+          "outfalls": {
+            "Out1": {
+              "outwardVolumeM3": 1698113.0619242836,
+              "inwardVolumeM3": 0,
+              "peakOutwardM3s": 21.6348078727807,
+              "peakInwardM3s": 0,
+              "peakOutwardTimeSeconds": 51893.095,
+              "peakInwardTimeSeconds": 0,
+              "coveredSeconds": 86339,
+              "nativeSteps": 1392566
+            },
+            "Out2": {
+              "outwardVolumeM3": 482636.79340946407,
+              "inwardVolumeM3": 0,
+              "peakOutwardM3s": 17.406227075478647,
+              "peakInwardM3s": 0,
+              "peakOutwardTimeSeconds": 57599.699,
+              "peakInwardTimeSeconds": 0,
+              "coveredSeconds": 86339,
+              "nativeSteps": 1392566
+            }
+          },
+          "combined": {
+            "outwardVolumeM3": 2180749.8553501973,
+            "inwardVolumeM3": 0,
+            "peakOutwardM3s": 39.04103494825935,
+            "peakInwardM3s": 0,
+            "peakOutwardTimeSeconds": 57599.699,
+            "peakInwardTimeSeconds": 0,
+            "coveredSeconds": 86339,
+            "nativeSteps": 1392566
+          },
+          "floodingDuration": {
+            "floodingSeconds": 43592.200000000004,
+            "coveredSeconds": 86339,
+            "nativeSteps": 1392566,
+            "startSeconds": 0,
+            "endSeconds": 86339,
+            "schemaVersion": 1,
+            "method": "NATIVE_EXTERNAL_FLOODING_ANY_NODE_WINDOW_SECONDS_V1",
+            "complete": true
+          },
+          "specification": {
+            "schemaVersion": 1,
+            "policyVersion": "PUBLIC_NETWORK_ALL_OUTFALLS_v1",
+            "startMilliseconds": 0,
+            "endMilliseconds": 86339000,
+            "networkOutfalls": [
+              "Out1",
+              "Out2"
+            ]
+          }
+        }
+      },
+      {
+        "id": "strategy",
+        "totals": {
+          "timeSeconds": 86339,
+          "initialStorageM3": 0.32019239999999993,
+          "storageM3": 11132.567143053486,
+          "dryWeatherInflowM3": 0,
+          "runoffInflowM3": 229403.34991304067,
+          "groundwaterInflowM3": 0,
+          "rdiiInflowM3": 0,
+          "externalInflowM3": 3469729.3551090127,
+          "outflowM3": 2180754.0457335846,
+          "floodingM3": 1507851.4391571705,
+          "evaporationM3": 0,
+          "seepageM3": 0,
+          "reactionLossM3": 0,
+          "balanceResidualM3": -605.0268193555239
+        },
+        "numericalStatus": "PASSED",
+        "evaluationMetrics": {
+          "specificationSha256": "d1d16a03051f33f0bfe03343dd7862c21a2e796442175798e85d664ff4cc72c2",
+          "complete": true,
+          "method": "NATIVE_ROUTING_STEP_DIRECTIONAL_TRAPEZOIDAL_INTEGRAL",
+          "peakMethod": "SIMULTANEOUS_SELECTED_OUTFALL_SUM",
+          "outfalls": {
+            "Out1": {
+              "outwardVolumeM3": 1698117.2520193965,
+              "inwardVolumeM3": 0,
+              "peakOutwardM3s": 21.6348078727807,
+              "peakInwardM3s": 0,
+              "peakOutwardTimeSeconds": 51893.095,
+              "peakInwardTimeSeconds": 0,
+              "coveredSeconds": 86339,
+              "nativeSteps": 1392566
+            },
+            "Out2": {
+              "outwardVolumeM3": 482636.7936875324,
+              "inwardVolumeM3": 0,
+              "peakOutwardM3s": 17.406227075478647,
+              "peakInwardM3s": 0,
+              "peakOutwardTimeSeconds": 57599.699,
+              "peakInwardTimeSeconds": 0,
+              "coveredSeconds": 86339,
+              "nativeSteps": 1392566
+            }
+          },
+          "combined": {
+            "outwardVolumeM3": 2180754.0457232716,
+            "inwardVolumeM3": 0,
+            "peakOutwardM3s": 39.04103494825935,
+            "peakInwardM3s": 0,
+            "peakOutwardTimeSeconds": 57599.699,
+            "peakInwardTimeSeconds": 0,
+            "coveredSeconds": 86339,
+            "nativeSteps": 1392566
+          },
+          "floodingDuration": {
+            "floodingSeconds": 43599.51599999999,
+            "coveredSeconds": 86339,
+            "nativeSteps": 1392566,
+            "startSeconds": 0,
+            "endSeconds": 86339,
+            "schemaVersion": 1,
+            "method": "NATIVE_EXTERNAL_FLOODING_ANY_NODE_WINDOW_SECONDS_V1",
+            "complete": true
+          },
+          "specification": {
+            "schemaVersion": 1,
+            "policyVersion": "PUBLIC_NETWORK_ALL_OUTFALLS_v1",
+            "startMilliseconds": 0,
+            "endMilliseconds": 86339000,
+            "networkOutfalls": [
+              "Out1",
+              "Out2"
+            ]
+          }
+        }
+      }
+    ],
+    "dtoAndStaticRenderPassed": true,
+    "invalidLocationCasesRejected": 5
+  },
+  "verification": {
+    "georeferencePythonTests": 6,
+    "watershedJavaWorkflowTests": 26,
+    "watershedJavaLayoutTests": 2,
+    "actualWatershedWorkerTests": 9,
+    "existingOwnerHttpReadbackTests": 1,
+    "frontendFiles": 143,
+    "frontendTests": 494,
+    "frontendProductionBuild": "PASSED",
+    "backendPackage": "PASSED",
+    "invalidLocationResponseCasesRejected": 5,
+    "originalDatabaseCountsUnchanged": true,
+    "mapLocationMetadataLeavesHydraulicInputsUnchanged": true,
+    "workerLogSha256": "01aebc4bc3d7a741e552b6328de8901453fc32bcb034561dde19fcc659ef7684"
+  },
+  "browser": {
+    "mode": "LOCAL_QA_REAL_CITY_EXPLORER_WITH_MOCKED_MEMBER_CATALOG_JOB_ENDPOINTS",
+    "postReachedProductionServer": false,
+    "threeDimensionalClickSelected": "S7",
+    "twoDimensionalKeyboardSelected": "S2",
+    "requestPlacement": {
+      "facilityType": "BIORETENTION",
+      "catchmentId": "S2",
+      "areaM2": 100,
+      "treatedImperviousM2": 1000
+    },
+    "requestGeoreferenceHash": "36a477f877d0d0fc4518f5e7664497e6e36798299745880932d5b43148ac01ab",
+    "accountChangeClearedDraftsAndJobs": true,
+    "accountChangeResetPumpSelectionToBioretention": true,
+    "mapSelectionEnabledAfterAccountChange": true,
+    "modeSwitchSequence": [
+      "3D",
+      "2D",
+      "3D",
+      "2D"
+    ],
+    "s2SelectionPreserved": true,
+    "publicClusterLabelsAfterRemount": 37,
+    "freshTabConsoleErrors": [],
+    "screenshot": "data/benchmarks/seocho-map-v1.png",
+    "screenshotSha256": "81f1021127880ff9a34d2c4d79ce7f305a6af63d4e47277b896494ba33fffec2"
+  },
+  "runtime": {
+    "health": "UP",
+    "scorePolicyMatched": true,
+    "scorePolicySha256": "c22572a801824c389c3b65b4af1290f36523f5f4aa4c53d8aed3676b3f6327ea",
+    "jobCountsUnchanged": true,
+    "activeJobsBeforeRestart": 0,
+    "currentCostSourceSha256": "864d0313414b1e5450b90df147eed292af9605d26c6efd051304435791dc1a2c",
+    "unitCostsKrwPerM2": {
+      "BIORETENTION": 632381,
+      "GREEN_ROOF": 350000,
+      "INFILTRATION_TRENCH": 171429,
+      "PERMEABLE_PAVEMENT": 123733,
+      "RAINWATER_CISTERN": 12158,
+      "RAIN_GARDEN": 632381,
+      "VEGETATIVE_SWALE": 50817
+    },
+    "personalBudgetKrw": 2000000000
+  },
+  "reproduction": [
+    "PYTHONPATH=simulation simulation/.venv/bin/python -m unittest simulation/tests/test_seocho_georeference.py",
+    "simulation/.venv/bin/python scripts/prepare_seocho_georeference.py --evidence tmp/seocho-road-registration-replay-v1.json --profile tmp/seocho-georeference-replay-v1.json",
+    "simulation/.venv/bin/python scripts/verify_league_postgres.py --suite watershed",
+    "node scripts/verify_seocho_map.mjs <reported-log-basename>.fixtures"
+  ],
+  "limitations": [
+    "원 CRS·수직 기준 미확인; 도로 대조에 근거한 위치 가정",
+    "출판 2010년 강우·2018~2022년 통계 기반 추정 외부 유입 유지",
+    "월류 감소 51.029768m³와 외부 방류 증가 4.190373m³를 별도 보존; 현장 성능 보장 아님",
+    "기준/설계 물수지 잔차 약 -605.900490/-605.026819m³ 보존; 미세한 효과의 현장 유의성 미검증",
+    "현재 주간/재해 강우·예산·순위 및 지표 수심 결합 미완료",
+    "브라우저 요청 형식 검증과 별도 실제 서버/워커 검증의 범위 구분"
+  ]
+}

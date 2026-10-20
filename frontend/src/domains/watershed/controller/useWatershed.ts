@@ -18,6 +18,7 @@ const userError = (e: unknown) =>
   e instanceof ApiError ? e.message : '관망 자료를 확인하지 못했습니다. 다시 조회해 주세요.';
 export function useWatershed(account: Account | null, open: boolean) {
   const allowed = account?.role === 'MEMBER' && account.approvalStatus === 'APPROVED';
+  const [owner, setOwner] = useState(account?.id);
   const [catalog, setCatalog] = useState<WatershedCatalog | null>(null);
   const [jobs, setJobs] = useState<WatershedJob[]>([]);
   const [selectedId, setSelectedId] = useState('');
@@ -37,6 +38,22 @@ export function useWatershed(account: Account | null, open: boolean) {
   const post = useRef<AbortController | null>(null);
   const requestKeys = useRef(new Map<string, string>());
   useEffect(() => {
+    setOwner(account?.id);
+    queryEpoch.current++;
+    post.current?.abort();
+    requestKeys.current.clear();
+    setJobs([]);
+    setCatalog(null);
+    setSelectedId('');
+    setDrafts([]);
+    setStorageDrafts([]);
+    setConduitDrafts([]);
+    setPumpDrafts([]);
+    setCisternDraft(null);
+    setQueryError('');
+    setSubmitError('');
+  }, [account?.id, account?.role, account?.approvalStatus]);
+  useEffect(() => {
     mounted.current = true;
     return () => {
       mounted.current = false;
@@ -49,7 +66,7 @@ export function useWatershed(account: Account | null, open: boolean) {
     const epoch = ++queryEpoch.current;
     let timer: ReturnType<typeof setTimeout>;
     let attempts = 0;
-    let availableCatalog = catalog;
+    let availableCatalog: WatershedCatalog | null = null;
     const poll = async () => {
       if (abort.signal.aborted || epoch !== queryEpoch.current) return;
       if (document.hidden) {
@@ -85,7 +102,7 @@ export function useWatershed(account: Account | null, open: boolean) {
       abort.abort();
       clearTimeout(timer);
     };
-  }, [open, allowed, revision]);
+  }, [open, allowed, account?.id, revision]);
   async function submit() {
     if (!allowed || !catalog || submitting.current) return;
     const invalid = validateCombinedDesign(
@@ -101,6 +118,7 @@ export function useWatershed(account: Account | null, open: boolean) {
       return;
     }
     const fingerprint = JSON.stringify([
+      catalog.georeferenceHash,
       designFingerprint(catalog.catalogHash, drafts, catalog.costCatalogHash),
       cisternDraft || drafts.some((p) => p.facilityType === 'RAINWATER_CISTERN')
         ? catalog.cisternCostCatalogHash
@@ -145,7 +163,8 @@ export function useWatershed(account: Account | null, open: boolean) {
           : undefined,
         cisternDraft && catalog.storageCatalogHash
           ? { catalogHash: catalog.storageCatalogHash, placement: cisternDraft }
-          : undefined
+          : undefined,
+        catalog.georeferenceHash
       );
       if (!mounted.current || abort.signal.aborted) return;
       setJobs((previous) => [job, ...previous.filter((v) => v.id !== job.id)].slice(0, 50));
@@ -164,21 +183,24 @@ export function useWatershed(account: Account | null, open: boolean) {
   return {
     allowed,
     catalog,
-    jobs,
-    selectedId,
+    jobs: owner === account?.id && allowed ? jobs : [],
+    selectedId: owner === account?.id && allowed ? selectedId : '',
     selectJob: setSelectedId,
-    job: jobs.find((j) => j.id === selectedId) ?? jobs[0] ?? null,
-    drafts,
+    job:
+      owner === account?.id && allowed
+        ? (jobs.find((j) => j.id === selectedId) ?? jobs[0] ?? null)
+        : null,
+    drafts: owner === account?.id && allowed ? drafts : [],
     setDrafts,
-    cisternDraft,
+    cisternDraft: owner === account?.id && allowed ? cisternDraft : null,
     setCisternDraft,
-    storageDrafts,
+    storageDrafts: owner === account?.id && allowed ? storageDrafts : [],
     setStorageDrafts,
-    conduitDrafts,
+    conduitDrafts: owner === account?.id && allowed ? conduitDrafts : [],
     setConduitDrafts,
-    pumpDrafts,
+    pumpDrafts: owner === account?.id && allowed ? pumpDrafts : [],
     setPumpDrafts,
-    error: submitError || queryError,
+    error: owner === account?.id && allowed ? submitError || queryError : '',
     busy,
     loading,
     submit,

@@ -1,5 +1,7 @@
 # API·오류 계약
 
+2026-10-21 연결 유역 위치 계약: 회원용 `GET /api/v1/watersheds/catalog`은 선택적 쌍 `georeferenceHash`·`georeference`를 제공한다. 원 `layout`·`layoutHash`는 변경하지 않는다. 새 위치 자료는 원 도형/원 INP 해시·도로 대조 근거·EPSG:5181 가정·EPSG:5186 표시 좌표를 보관하고 `sourceCrsVerified=false`, `rankingEligible=false`다. 화면은 ID·연결·선언 길이·가산값 100km 변환의 일치를 검사한다. `POST /api/v1/watersheds`의 선택적 `georeferenceHash`를 서버 허용 버전과 비교한 뒤 `design.locationReference`에 원본/근거/위치 해시와 가정 분류를 고정하고 입력 해시·멱등 비교에 포함한다. 위치 버전을 생략한 기존 입력은 유지한다. 워커는 같은 분류와 원본을 재검사하고 `result.locationReference`·`location-profile.json` 및 매니페스트에 보존한다. 화면은 설계/결과의 위치 버전 불일치·한쪽 누락·확정 좌표계 위장을 거부한다. 기존 소유권·조회 권한·CSRF·작업 제한은 유지하며 계정 전환 때 초안/기록/진행 중 응답을 격리한다.
+
 기준일: 2026-10-20. 현재 서버 계약이다. 연구/구형 설계 endpoint의 존재는 기본 UI 노출을 뜻하지 않는다. 아래 이전 schema 응답 설명은 현재 구현 사실이며 후속 구조 통합의 호환 의무가 아니다. 제품 규칙은 [제품](01-product.md), 확장은 [구현 목표](09-delivery.md)를 따른다.
 
 ## 설치 원가 기록 · 2026-10-18

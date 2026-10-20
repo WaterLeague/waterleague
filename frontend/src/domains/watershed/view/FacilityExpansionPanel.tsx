@@ -93,6 +93,7 @@ export function FacilityExpansionPanel({
   onMapFacility,
   selectedMapFacility = '',
   budget,
+  onConnectedDesign,
 }: {
   account: Account | null;
   open: boolean;
@@ -101,6 +102,7 @@ export function FacilityExpansionPanel({
   selectedMapFacility?: FacilityType | '';
   onLogin: () => void;
   budget?: Budget | null;
+  onConnectedDesign?: () => void;
 }) {
   return (
     <aside
@@ -162,6 +164,11 @@ export function FacilityExpansionPanel({
         );
       })}
       <p className="micro-note">같은 사업의 시설은 공동 예산을 사용합니다.</p>
+      {onConnectedDesign && (
+        <button className="watershed-all-candidates" onClick={onConnectedDesign}>
+          서초 연결 유역에서 설계 비교
+        </button>
+      )}
     </aside>
   );
 }

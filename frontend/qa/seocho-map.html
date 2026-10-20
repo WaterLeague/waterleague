@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>서초 지도 연결 · 로컬 QA</title>
+  </head>
+  <body>
+    <header style="height: 72px; box-sizing: border-box; padding: 8px 12px; background: #fff5d8">
+      <strong>로컬 QA · 현재 게임 지도와 공개 관망 · 서버 저장 없는 요청 검사</strong>
+      <p
+        id="request"
+        role="status"
+        style="max-height: 28px; overflow: auto; overflow-wrap: anywhere"
+      >
+        지도에서 구역을 선택하고 설계에 추가하세요.
+      </p>
+      <button id="switch-account">다른 시험 회원으로 전환</button>
+    </header>
+    <main id="root" class="game-shell is-game" style="height: calc(100dvh - 72px)"></main>
+    <script type="module">
+      if (!import.meta.env.DEV || !['localhost', '127.0.0.1', '[::1]'].includes(location.hostname))
+        throw new Error('로컬 개발 환경 전용');
+      await import('/src/domains/game/view/game-viewport.css');
+      const [
+        { default: React },
+        { createRoot },
+        { CityExplorer },
+        { default: catalog },
+        { default: raw },
+      ] = await Promise.all([
+        import('react'),
+        import('react-dom/client'),
+        import('/src/domains/city/view/CityExplorer.tsx'),
+        import('/src/domains/watershed/view/fixtures/catalog.json'),
+        import('/src/domains/watershed/view/fixtures/seocho-georeference-v1.json?raw'),
+        import('/src/shared/ui/base.css'),
+        import('/src/shared/ui/game.css'),
+        import('/src/domains/game/view/play.css'),
+        import('/src/shared/ui/game-theme.css'),
+        import('/src/shared/ui/gameplay-chrome.css'),
+      ]);
+      const hash = '36a477f877d0d0fc4518f5e7664497e6e36798299745880932d5b43148ac01ab';
+      const catalogResponse = { ...catalog, georeferenceHash: hash, georeference: JSON.parse(raw) };
+      const originalFetch = window.fetch.bind(window);
+      let jobs = [];
+      window.fetch = async (input, init = {}) => {
+        const url = String(input);
+        if (url.endsWith('/watersheds/catalog')) return Response.json(catalogResponse);
+        if (url.endsWith('/watersheds') && init.method === 'POST') {
+          const request = JSON.parse(init.body);
+          document.getElementById('request').textContent =
+            '실제 전송 형식 검사: ' + JSON.stringify(request);
+          const job = {
+            id: crypto.randomUUID(),
+            catalogHash: catalog.catalogHash,
+            state: 'QUEUED',
+            createdAt: new Date().toISOString(),
+            message: 'QA 요청만 확인 · 서버 계산 미제출',
+            result: null,
+            design: {
+              placements: request.placements.map((p) => ({
+                ...p,
+                subcatchmentId: p.catchmentId,
+              })),
+            },
+          };
+          jobs = [job];
+          return Response.json(job);
+        }
+        if (url.endsWith('/watersheds')) return Response.json(jobs);
+        if (init.method && !['GET', 'HEAD'].includes(init.method))
+          throw new Error('QA에서 다른 쓰기 금지');
+        return originalFetch(input, init);
+      };
+      const first = {
+        id: '10000000-0000-4000-8000-000000000001',
+        username: 'map-qa',
+        displayName: '지도 시험',
+        role: 'MEMBER',
+        memberType: 'PLAYER',
+        approvalStatus: 'APPROVED',
+        organizationId: null,
+        districtId: '11650',
+        affiliationType: 'AFFILIATED',
+      };
+      function App() {
+        const [account, setAccount] = React.useState(first);
+        React.useEffect(() => {
+          document.getElementById('switch-account').onclick = () => {
+            jobs = [];
+            setAccount({ ...first, id: '10000000-0000-4000-8000-000000000002' });
+            document.getElementById('request').textContent =
+              '시험 회원 전환 · 이전 설계/기록 비노출 검사';
+          };
+        }, []);
+        return React.createElement(CityExplorer, {
+          account,
+          onAccount: setAccount,
+          onLogin: () => {},
+          initialDistrictId: '11650',
+        });
+      }
+      createRoot(document.getElementById('root')).render(React.createElement(App));
+    </script>
+  </body>
+</html>

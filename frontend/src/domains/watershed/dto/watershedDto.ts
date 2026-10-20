@@ -6,6 +6,11 @@ import { storageCatalogDto, storageDesignDto, storageSummaryDto } from './storag
 import { z } from 'zod';
 import { watershedCostCatalogDto, watershedCostSnapshotDto } from './watershedCostDto';
 import { watershedLayoutDto } from './watershedLayoutDto';
+import {
+  watershedGeoreferenceDto,
+  sameSourceGeometry,
+  locationReferenceDto,
+} from './watershedGeoreferenceDto';
 import { watershedMetricsDto } from './watershedMetricsDto';
 import { nodeFloodingDto, floodAmountClose } from './nodeFloodingDto';
 import { metricComparisonDto } from '../../physics/dto/metricComparisonDto';
@@ -34,6 +39,8 @@ export const watershedCatalogDto = z
     costCatalog: watershedCostCatalogDto.optional(),
     layoutHash: hash.optional(),
     layout: watershedLayoutDto.optional(),
+    georeferenceHash: hash.optional(),
+    georeference: watershedGeoreferenceDto.optional(),
     catalog: z.object({
       id: z.string(),
       sourceOriginalSha256: hash,
@@ -69,6 +76,16 @@ export const watershedCatalogDto = z
     }),
   })
   .superRefine((v, ctx) => {
+    const geo = v.georeference;
+    if (
+      Boolean(geo) !== Boolean(v.georeferenceHash) ||
+      (geo &&
+        (!v.layout ||
+          geo.sourceLayoutSha256 !== v.layoutHash ||
+          geo.sourceOriginalSha256 !== v.catalog.sourceOriginalSha256 ||
+          !sameSourceGeometry(geo, v.layout!)))
+    )
+      ctx.addIssue({ code: 'custom', message: '관망 위치 가정과 원 계산 구역 불일치' });
     if (Boolean(v.pumpCatalog) !== Boolean(v.pumpCatalogHash))
       ctx.addIssue({ code: 'custom', message: '펌프 곡선·해시 누락' });
     if (Boolean(v.cisternCostCatalog) !== Boolean(v.cisternCostCatalogHash))
@@ -159,6 +176,7 @@ export const watershedResultDto = z
     schemaVersion: z.union([z.literal(1), z.literal(2)]).default(1),
     catalogHash: hash,
     classification: z.literal('PUBLIC_NETWORK_REFERENCE_DESIGN_COMPARISON'),
+    locationReference: locationReferenceDto.optional(),
     networkLayout: z.object({ sha256: hash, layout: watershedLayoutDto }).optional(),
     engine: z.object({ engineVersion: z.string() }),
     numericalProfile: z.object({ id: z.string() }),
@@ -365,6 +383,7 @@ export const watershedJobDto = z
     state: z.enum(['QUEUED', 'RUNNING', 'SUCCEEDED', 'FAILED', 'REJECTED']),
     createdAt: z.iso.datetime(),
     design: z.object({
+      locationReference: locationReferenceDto.optional(),
       cistern: cisternDesignDto.optional(),
       conduits: conduitDesignDto.optional(),
       pumps: pumpDesignDto.optional(),
@@ -387,6 +406,12 @@ export const watershedJobDto = z
   })
   .superRefine((value, ctx) => {
     const references = value.design.cisternCosting;
+    if (
+      value.result &&
+      JSON.stringify(value.design.locationReference) !==
+        JSON.stringify(value.result.locationReference)
+    )
+      ctx.addIssue({ code: 'custom', message: '설계와 결과의 위치 가정 불일치' });
     if (
       value.result?.schemaVersion === 2 &&
       value.design.placements.some((p) => p.facilityType === 'RAINWATER_CISTERN') &&

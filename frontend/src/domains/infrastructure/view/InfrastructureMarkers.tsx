@@ -1,7 +1,7 @@
 import { scenePointer, clearScenePointer } from '../../city/service/mapCursor';
 import { memo, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
-import { Html } from '@react-three/drei';
+import { SceneHtmlLayer } from '../../catalog/view/SceneHtmlLayer';
 import { Color, InstancedMesh, Matrix4, PerspectiveCamera, Vector3 } from 'three';
 import type { InfrastructureAsset, InfrastructureMarker } from '../entity/infrastructure';
 import { infrastructureSymbolGeometry } from '../service/infrastructureShapeService';
@@ -120,12 +120,6 @@ export const InfrastructureMarkers = memo(function InfrastructureMarkers(props: 
   );
 });
 
-const screenCenter = (
-  _object: unknown,
-  _camera: unknown,
-  size: { width: number; height: number }
-): [number, number] => [size.width / 2, size.height / 2];
-
 function ClusterLabels({
   markers,
   terrain,
@@ -164,12 +158,7 @@ function ClusterLabels({
   });
   // 확대 경계마다 별도 React 루트를 제거하지 않고 한 DOM 영역에서 표식만 갱신한다.
   return (
-    <Html
-      fullscreen
-      calculatePosition={screenCenter}
-      zIndexRange={[10, 0]}
-      style={{ pointerEvents: 'none' }}
-    >
+    <SceneHtmlLayer zIndex={10}>
       {clusters.map((asset) => (
         <button
           key={asset.id}
@@ -194,6 +183,6 @@ function ClusterLabels({
           {asset.clusterCount}
         </button>
       ))}
-    </Html>
+    </SceneHtmlLayer>
   );
 }

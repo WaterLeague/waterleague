@@ -1,5 +1,5 @@
 import { memo, useEffect, useMemo, useRef } from 'react';
-import { Html } from '@react-three/drei';
+import { SceneHtmlLayer } from '../../catalog/view/SceneHtmlLayer';
 import { useFrame } from '@react-three/fiber';
 import { Vector3 } from 'three';
 import type { SharedInstallation } from '../entity/installation';
@@ -89,7 +89,7 @@ export const InstallationNameplates = memo(function InstallationNameplates({
     }
   });
   return (
-    <Html fullscreen zIndexRange={[12, 0]} style={{ pointerEvents: 'none' }}>
+    <SceneHtmlLayer zIndex={12}>
       <div className="installation-nameplates">
         {values.map((i) => (
           <button
@@ -108,6 +108,6 @@ export const InstallationNameplates = memo(function InstallationNameplates({
           </button>
         ))}
       </div>
-    </Html>
+    </SceneHtmlLayer>
   );
 });

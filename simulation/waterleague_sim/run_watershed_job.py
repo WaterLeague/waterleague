@@ -12,6 +12,7 @@ from .engine import facility_metrics as facility_network
 from .engine.connected_facilities import compile_design, CATALOG_PATH, CATALOG_SHA256
 from .engine.flood_errors import FloodModelError, require
 from . import watershed_cache
+from .watershed_location import verify as verify_location
 from .engine.swmm import ROOT
 from .ingestion.network_variant import derive
 from .ingestion.published_network import digest, load_archive, inspect_input
@@ -35,7 +36,8 @@ def inputs(request):
     design = json.loads(request['placements'])
     require(isinstance(design, dict) and isinstance(design.get('placements'), list)
             and design.get('schemaVersion') == 1 and design.get('basis') == catalog['designBasis']
-            and set(design) <= {'schemaVersion','basis','placements','costing','storage','conduits','cisternCosting','pumps','cistern'}, 'WATERSHED_DESIGN_INVALID')
+            and set(design) <= {'schemaVersion','basis','placements','costing','storage','conduits','cisternCosting','pumps','cistern','locationReference'}, 'WATERSHED_DESIGN_INVALID')
+    verify_location(design, catalog['sourceOriginalSha256'])
     storage = design.get('storage', {})
     require(isinstance(storage, dict) and isinstance(storage.get('placements', []), list), 'WATERSHED_STORAGE_PLACEMENTS_INVALID')
     conduit_design=design.get('conduits', {})
@@ -49,7 +51,7 @@ def inputs(request):
         require(template is not None and p['parameters'] == template['parameters']
                 and p['initialSaturationPercent'] == template['initialSaturationPercent']
                 and p['replacedImperviousM2'] == p['areaM2'], 'WATERSHED_TEMPLATE_CHANGED')
-    verify_costs({k: v for k, v in design.items() if k not in ('storage','conduits','cisternCosting','pumps','cistern')})
+    verify_costs({k: v for k, v in design.items() if k not in ('storage','conduits','cisternCosting','pumps','cistern','locationReference')})
     from .costing.cistern_reference import verify as verify_cistern
     verify_cistern(design)
     manifest = ROOT/'data/manifests/mendeley-seocho-network-v3.json'
@@ -85,7 +87,7 @@ def inputs(request):
     transformation = {'limitations': []}
     if design['placements']:
         from .watershed_cistern import prepare_lids
-        original_design = {k: v for k, v in design.items() if k not in ('costing','storage','conduits','cisternCosting','pumps','cistern')}
+        original_design = {k: v for k, v in design.items() if k not in ('costing','storage','conduits','cisternCosting','pumps','cistern','locationReference')}
         strategy, execution_design, assignments, width_binding = prepare_lids(strategy, original_design, cistern_metadata)
         strategy, transformation = compile_design(strategy, execution_design)
         if assignments:
@@ -117,7 +119,10 @@ def calculate(request, directory, cache_root=None):
     (directory/'network-layout.json').write_bytes(layout_raw)
     design = json.loads(request['placements'])
     (directory/'design.json').write_bytes(encode(design))
-    cost_raw = verify_costs({k: v for k, v in design.items() if k not in ('storage','conduits','cisternCosting','pumps','cistern')})
+    location_raw = verify_location(design, catalog['sourceOriginalSha256'])
+    if location_raw is not None:
+        (directory/'location-profile.json').write_bytes(location_raw)
+    cost_raw = verify_costs({k: v for k, v in design.items() if k not in ('storage','conduits','cisternCosting','pumps','cistern','locationReference')})
     from .costing.cistern_reference import verify as verify_cistern
     cistern_raw = verify_cistern(design)
     if cistern_raw is not None:
@@ -228,6 +233,8 @@ def calculate(request, directory, cache_root=None):
             '원본 EXTRAN 수치 실패를 보존하고 별도 SLOT 파생 입력으로 계산; 원본의 달력 종료보다 1초 짧은 엔진 평가 창',
             '첨두는 같은 시각의 모든 외부 출구 유량 합의 최댓값이며 출구별 최댓값의 합이 아님',
             '외부 출구 첨두는 공개 연구 관망의 계산값이며 실제 하류 침수 위험도·현장 효과 확정값이 아님; 필수 지표 침수 미확보로 총점 없음']}
+    if location_raw is not None:
+        result['locationReference'] = design['locationReference']
     if cost_raw is not None:
         result['costing'] = design['costing']
     if cistern_raw is not None:

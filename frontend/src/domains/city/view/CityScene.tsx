@@ -1,5 +1,7 @@
 import { scenePointer, clearScenePointer } from '../service/mapCursor';
 import { CityCoverage } from './CityCoverage';
+import { WatershedMapMesh } from '../../watershed/view/WatershedMapMesh';
+import type { WatershedMapSelection } from '../../watershed/service/watershedMap';
 import type { AudioHandle } from '../../audio/entity/audio';
 import { CityAudioListener } from '../../audio/view/CityAudioListener';
 import { GroundCandidates } from '../../installation/view/GroundCandidates';
@@ -98,6 +100,8 @@ const mapEvents: Parameters<typeof Canvas>[0]['events'] = (state) => ({
   filter: (items) =>
     items.sort(
       (a, b) =>
+        2 * Number(b.object.userData.watershedSelection === true) -
+        2 * Number(a.object.userData.watershedSelection === true) +
         Number(
           b.object.userData.publicAssetMarker === true ||
             b.object.userData.installationMarker === true
@@ -486,7 +490,9 @@ const CityScene = memo(function CityScene({
   viewerId,
   planningRoles,
   cisternGeometry,
+  watershed,
 }: {
+  watershed?: WatershedMapSelection | null;
   audio: AudioHandle;
   urbanClock: UrbanTime;
   streets: Street[];
@@ -813,6 +819,7 @@ const CityScene = memo(function CityScene({
                 );
               })}
             {cisternGeometry && <CisternLayoutMesh geometry={cisternGeometry} terrain={terrain} />}
+            {watershed && <WatershedMapMesh {...watershed} terrain={terrain} />}
             {preview && (
               <FacilityMesh
                 terrain={terrain}

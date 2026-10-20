@@ -16,6 +16,36 @@ from flow_graph_evidence import verify as verify_graph
 
 
 class WatershedTests(unittest.TestCase):
+    def test_server_map_location_preserves_hydraulics_and_artifacts(self):
+        from waterleague_sim.watershed_location import HASH, PROFILE
+        request = json.loads((self.requests/'location-server-request.json').read_bytes())
+        design = json.loads(request['placements'])
+        self.assertEqual(design['placements'][0]['subcatchmentId'], 'S2')
+        before = dict(design)
+        before.pop('locationReference')
+        body = json.dumps(before)
+        plain = request | {'placements': body, 'inputHash': hashlib.sha256((CATALOG_HASH+'\n'+body).encode()).hexdigest()}
+        self.assertEqual(inputs(request)[1:6], inputs(plain)[1:6])
+        identity = uuid.uuid4()
+        self.conn.execute("INSERT INTO watershed_experiments(id,owner_id,request_key,model_hash,input_hash,placements,state,created_at) VALUES(%s,%s,%s,%s,%s,%s,'QUEUED',now())",
+                          (identity, self.owner, uuid.uuid4(), request['modelHash'], request['inputHash'], request['placements']))
+        job = queue.claim(self.conn)
+        self.assertTrue(watershed.process(self.conn, job, self.artifacts))
+        row = self.conn.execute('SELECT * FROM watershed_experiments WHERE id=%s', (identity,)).fetchone()
+        self.assertEqual(row['state'], 'SUCCEEDED', row['error_code'])
+        result = json.loads(row['result'])
+        self.assertEqual(result['numericalStatus'], 'PASSED')
+        self.assertEqual(result['locationReference'], design['locationReference'])
+        directory = self.artifacts/'watersheds'/str(identity)/str(job['lease_token'])
+        self.assertEqual((directory/'location-profile.json').read_bytes(), PROFILE.read_bytes())
+        manifest = json.loads((directory/'manifest.json').read_bytes())
+        self.assertEqual(manifest['location-profile.json'], HASH)
+        for name, sha in manifest.items():
+            self.assertEqual(hashlib.sha256((directory/name).read_bytes()).hexdigest(), sha)
+        import shutil
+        target = self.requests/'location-result'
+        shutil.copytree(directory, target)
+
     @classmethod
     def setUpClass(cls):
         fixture.WorkerQueueTests.setUpClass.__func__(cls)

@@ -83,6 +83,9 @@ import { useSurfacePlayback } from '../../surface/controller/useSurfacePlayback'
 import { SurfaceControls } from '../../surface/view/SurfaceControls';
 import type { SurfaceMetric, SurfaceSource } from '../../surface/entity/surface';
 import { FacilityExpansionPanel } from '../../watershed/view/FacilityExpansionPanel';
+import { ConnectedWatershedPanel } from '../../watershed/view/ConnectedWatershedPanel';
+import { useWatershed } from '../../watershed/controller/useWatershed';
+import { watershedMap } from '../../watershed/service/watershedMap';
 import { useCisternPlans } from '../../installation/controller/useCisternPlans';
 import { CisternPlanPanel } from '../../installation/view/CisternPlanPanel';
 import type { CisternSiteRole } from '../../installation/service/cisternPlanService';
@@ -124,6 +127,25 @@ function Explorer({
   const infrastructure = useInfrastructure();
   const [infrastructureOpen, setInfrastructureOpen] = useState(false);
   const [facilityExpansionOpen, setFacilityExpansionOpen] = useState(false);
+  const [connectedOpen, setConnectedOpen] = useState(false);
+  const [connectedSelectionEnabled, setConnectedSelectionEnabled] = useState(true);
+  const [connectedCatchment, setConnectedCatchment] = useState('S1');
+  const connected = useWatershed(account, connectedOpen);
+  const connectedMap = useMemo(
+    () =>
+      connectedOpen && connected.allowed && connected.catalog?.georeference
+        ? watershedMap(connected.catalog.georeference, city)
+        : null,
+    [connectedOpen, connected.allowed, connected.catalog, city]
+  );
+  const watershed = connectedMap
+    ? {
+        map: connectedMap,
+        selectedId: connectedCatchment,
+        onSelect: setConnectedCatchment,
+        disabled: connected.busy || !connectedSelectionEnabled,
+      }
+    : null;
   const [cisternOpen, setCisternOpen] = useState(false);
   const cistern = useCisternPlans(
     account,
@@ -275,6 +297,15 @@ function Explorer({
     key: 0,
     overview: true,
   });
+  const locateWatershed = useCallback(() => {
+    if (!connectedMap) return;
+    setFocus((previous) => ({
+      center: connectedMap.center,
+      distance: connectedMap.distance,
+      key: previous.key + 1,
+    }));
+  }, [connectedMap]);
+  useEffect(locateWatershed, [locateWatershed]);
   useEffect(() => {
     if (initialDistrictId && !researchMode) select(initialDistrictId);
   }, [initialDistrictId, researchMode]);
@@ -340,6 +371,7 @@ function Explorer({
     selectedAssetId
   );
   const selectAsset = useCallback((asset: InfrastructureAsset) => {
+    setConnectedOpen(false);
     setCisternOpen(false);
     setType('');
     selectionRequest.current++;
@@ -483,6 +515,7 @@ function Explorer({
     );
   }, [shared.mapSites, site, camera, cisternOpen, cistern.roof, cistern.ground, planningRoles]);
   const closeInstallation = useCallback(() => {
+    setConnectedOpen(false);
     selectionRequest.current++;
     setFacilityExpansionOpen(false);
     setListOpen(false);
@@ -758,6 +791,7 @@ function Explorer({
   );
   const plan = (
     <CityPlan
+      watershed={watershed}
       parking={urban.parking}
       streets={urban.roads}
       topography={topography}
@@ -848,7 +882,7 @@ function Explorer({
           '--map-cursor-inspect': mapCursors.inspect,
         } as React.CSSProperties
       }
-      className={`studio-layout play-layout shared-play-layout${researchMode ? ' historical-play-layout' : ''}${!facilityExpansionOpen && !cisternOpen && !infrastructureOpen && !site && !selectionError ? ' shared-map-only' : ''}`}
+      className={`studio-layout play-layout shared-play-layout${researchMode ? ' historical-play-layout' : ''}${!connectedOpen && !facilityExpansionOpen && !cisternOpen && !infrastructureOpen && !site && !selectionError ? ' shared-map-only' : ''}`}
     >
       <header className="play-hud gameplay-hud">
         <div className="play-objective">
@@ -1024,6 +1058,7 @@ function Explorer({
                 }
               >
                 <CityScene
+                  watershed={watershed}
                   audio={sound.engine}
                   parking={urban.parking}
                   urbanClock={urbanClock}
@@ -1441,6 +1476,7 @@ function Explorer({
               aria-expanded={facilityExpansionOpen}
               aria-controls="facility-install-panel"
               onClick={() => {
+                setConnectedOpen(false);
                 setCisternOpen(false);
                 if (facilityExpansionOpen || listOpen || site || type) {
                   closeInstallation();
@@ -1485,6 +1521,12 @@ function Explorer({
           ))}
       </div>
       <FacilityExpansionPanel
+        onConnectedDesign={() => {
+          closeInstallation();
+          setInfrastructureOpen(false);
+          setConnectedSelectionEnabled(true);
+          setConnectedOpen(true);
+        }}
         key={account ? `${account.id}:${account.role}:${account.approvalStatus}` : 'visitor'}
         account={account}
         open={facilityExpansionOpen}
@@ -1514,7 +1556,18 @@ function Explorer({
           setListOpen(true);
         }}
       />
-      {facilityExpansionOpen ? null : cisternOpen ? (
+      {connectedOpen ? (
+        <ConnectedWatershedPanel
+          key={`connected:${account?.id ?? 'visitor'}`}
+          state={connected}
+          selectedId={connectedCatchment}
+          onSelect={setConnectedCatchment}
+          onClose={closeInstallation}
+          onLogin={onLogin}
+          onLocate={locateWatershed}
+          onMapSelection={setConnectedSelectionEnabled}
+        />
+      ) : facilityExpansionOpen ? null : cisternOpen ? (
         <CisternPlanPanel
           state={cistern}
           onClose={closeInstallation}

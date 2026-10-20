@@ -55,12 +55,21 @@ export function NetworkDesignForm({
   type,
   catalog,
   state,
+  selectedCatchmentId,
+  onSelectCatchment,
 }: {
   type: NetworkFacility;
   catalog: WatershedCatalog;
   state: WatershedState;
+  selectedCatchmentId?: string;
+  onSelectCatchment?: (id: string) => void;
 }) {
-  const [catchmentId, setCatchment] = useState(catalog.catalog.catchments[0].id);
+  const [localCatchmentId, setLocalCatchment] = useState(catalog.catalog.catchments[0].id);
+  const catchmentId = selectedCatchmentId ?? localCatchmentId;
+  const setCatchment = (id: string) => {
+    setLocalCatchment(id);
+    onSelectCatchment?.(id);
+  };
   const [area, setArea] = useState('');
   const [treated, setTreated] = useState('');
   const [error, setError] = useState('');

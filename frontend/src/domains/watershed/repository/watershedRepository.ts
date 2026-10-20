@@ -22,7 +22,8 @@ export const submitWatershed = async (
   conduits?: { catalogHash: string; placements: ConduitPlacement[] },
   cisternCostCatalogHash?: string,
   pumps?: { catalogHash: string; placements: PumpPlacement[] },
-  cistern?: { catalogHash: string; placement: CisternPlacement }
+  cistern?: { catalogHash: string; placement: CisternPlacement },
+  georeferenceHash?: string
 ) =>
   watershedJobDto.parse(
     await api(
@@ -38,6 +39,7 @@ export const submitWatershed = async (
         cisternCostCatalogHash,
         pumps,
         cistern,
+        georeferenceHash,
       },
       signal
     )

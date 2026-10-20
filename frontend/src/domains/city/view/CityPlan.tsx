@@ -42,6 +42,8 @@ import { InfrastructureFootprintsPlan } from '../../infrastructure/view/Infrastr
 import type { TraceTile } from '../../floodtrace/entity/floodTrace';
 import { FloodTracePlan } from '../../floodtrace/view/FloodTracePlan';
 import { SurfacePlan } from '../../surface/view/SurfacePlan';
+import { WatershedMapPlan } from '../../watershed/view/WatershedMapPlan';
+import type { WatershedMapSelection } from '../../watershed/service/watershedMap';
 import type { SurfaceFrame, SurfaceMetric } from '../../surface/entity/surface';
 import { CisternLayoutPlan } from '../../installation/view/CisternLayoutPlan';
 import type { CisternMapPreview } from '../../installation/dto/cisternLayoutDto';
@@ -53,6 +55,7 @@ import { TopographyPlan } from '../../topography/view/TopographyPlan';
 import type { TopographyView } from '../../topography/entity/topography';
 
 type Props = {
+  watershed?: WatershedMapSelection | null;
   topography: TopographyView;
   streets: Street[];
   parking: ParkingData | null;
@@ -96,6 +99,7 @@ type Props = {
   rainAmounts: ReadonlyMap<string, number | null>;
 };
 export const CityPlan = memo(function CityPlan({
+  watershed,
   topography,
   streets,
   parking,
@@ -566,6 +570,7 @@ export const CityPlan = memo(function CityPlan({
         scale={box.height * 0.014}
         onSelect={onAsset}
       />
+      {watershed && <WatershedMapPlan {...watershed} />}
       <LiveRainPlan
         districts={wetDistricts}
         amounts={rainAmounts}

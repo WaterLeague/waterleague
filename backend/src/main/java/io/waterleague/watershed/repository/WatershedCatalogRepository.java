@@ -15,6 +15,8 @@ public class WatershedCatalogRepository {
       "beaddba8868b6f1f6bbf35b1d53d4695a94db99498d8988f90d62013cf8f053c";
   public static final String LAYOUT_HASH =
       "fa3e4d833650df5c40d933bd0b289dd029a54e0beb73fad9b9d3ef239cb0236d";
+  public static final String GEOREFERENCE_HASH =
+      "36a477f877d0d0fc4518f5e7664497e6e36798299745880932d5b43148ac01ab";
   public static final String STORAGE_HASH =
       "f2df891f3914de02c37ff7ae09f6d5a849ef6f69dae85e25e562e5a44cffc105";
   public static final String CONDUIT_HASH =
@@ -23,6 +25,7 @@ public class WatershedCatalogRepository {
   private final JsonNode storage;
   private final JsonNode catalog;
   private final JsonNode layout;
+  private final JsonNode georeference;
 
   public WatershedCatalogRepository(JsonService json) throws java.io.IOException {
     pumps = load(json, "facilities/ksb-pump-curve-v1.json", PUMP_HASH);
@@ -32,10 +35,16 @@ public class WatershedCatalogRepository {
     storage = load(json, "watersheds/seocho-storage-connections-v1.json", STORAGE_HASH);
     catalog = load(json, "watersheds/seocho-published-v1.json", HASH);
     layout = load(json, "watersheds/seocho-layout-v1.json", LAYOUT_HASH);
+    georeference = load(json, "watersheds/seocho-georeference-v1.json", GEOREFERENCE_HASH);
     if (!storage.path("sourceCatalogSha256").asString().equals(HASH))
       throw new IllegalStateException("저류조 연결 원본 불일치");
     if (!layout.path("sourceOriginalSha256").equals(catalog.path("sourceOriginalSha256")))
       throw new IllegalStateException("관망 표시 원본 불일치");
+    if (!georeference.path("sourceLayoutSha256").asString().equals(LAYOUT_HASH)
+        || !georeference.path("sourceOriginalSha256").equals(catalog.path("sourceOriginalSha256"))
+        || !georeference.path("sourceCrsVerified").isBoolean()
+        || georeference.path("sourceCrsVerified").asBoolean())
+      throw new IllegalStateException("관망 위치 가정 원본 불일치");
   }
 
   private JsonNode load(JsonService json, String path, String hash) throws java.io.IOException {
@@ -66,5 +75,9 @@ public class WatershedCatalogRepository {
 
   public JsonNode layout() {
     return layout.deepCopy();
+  }
+
+  public JsonNode georeference() {
+    return georeference.deepCopy();
   }
 }

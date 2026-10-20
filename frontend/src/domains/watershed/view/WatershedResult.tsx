@@ -39,6 +39,12 @@ export function WatershedResult({ job }: { job: WatershedJob }) {
         <span className="watershed-status">{jobLabels[job.state]}</span>
       </header>
       <time dateTime={job.createdAt}>{new Date(job.createdAt).toLocaleString('ko-KR')}</time>
+      {job.design.locationReference && (
+        <p>
+          지도 위치 가정 {job.design.locationReference.assumedSourceCrs} · 제출 당시 원본 고정 · 원
+          좌표계 미확인
+        </p>
+      )}
       <ul>
         {job.design.placements.map((p) => (
           <li key={p.id}>
