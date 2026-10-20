@@ -6219,6 +6219,319 @@
       "geometryMs": 34.879208000000006,
       "terrainApplied": true,
       "scope": "CPU 형상 검사; 브라우저 화면 미검증"
+    },
+    "streetMeshReuse": {
+      "checkedAt": "2026-10-20",
+      "status": "PUBLIC_GEOMETRY_AND_PRODUCTION_WORKER_PASSED_BROWSER_RECHECK_PENDING",
+      "geometry": {
+        "schemaVersion": 1,
+        "status": "PASS",
+        "indexSha256": "ff393811d4cc32cdde64dec47a1d31b855b65b3b879e9be3dd3cb0472a432aee",
+        "terrainSha256": "020aa06f0ce1eef85c13546c40c5a10ac604fad99b127cb7c9d6c0e58fec9bad",
+        "testedFootbridges": 268,
+        "testedNamedBridgeGroups": 977,
+        "comparedVertices": 34435746,
+        "cases": [
+          {
+            "name": "반포대교",
+            "groups": 99,
+            "roads": 469,
+            "steps": [
+              {
+                "detail": true,
+                "offsetM": [
+                  0,
+                  0
+                ],
+                "fullRebuildMs": 1035.2824170000001,
+                "incrementalMs": 874.0981249999999,
+                "regenerated": 469,
+                "reused": 0,
+                "cachedBytes": 50331232,
+                "vertices": 1358991
+              },
+              {
+                "detail": true,
+                "offsetM": [
+                  500,
+                  0
+                ],
+                "fullRebuildMs": 718.8276660000001,
+                "incrementalMs": 346.0475000000001,
+                "regenerated": 274,
+                "reused": 195,
+                "cachedBytes": 50331260,
+                "vertices": 1361511
+              },
+              {
+                "detail": true,
+                "offsetM": [
+                  500,
+                  500
+                ],
+                "fullRebuildMs": 764.5766250000001,
+                "incrementalMs": 258.81954199999973,
+                "regenerated": 120,
+                "reused": 349,
+                "cachedBytes": 50331482,
+                "vertices": 1386354
+              },
+              {
+                "detail": true,
+                "offsetM": [
+                  0,
+                  0
+                ],
+                "fullRebuildMs": 666.2294579999998,
+                "incrementalMs": 233.69979199999943,
+                "regenerated": 191,
+                "reused": 278,
+                "cachedBytes": 50329910,
+                "vertices": 1358991
+              },
+              {
+                "detail": false,
+                "offsetM": [
+                  0,
+                  0
+                ],
+                "fullRebuildMs": 162.55641699999978,
+                "incrementalMs": 148.13979199999994,
+                "regenerated": 293,
+                "reused": 176,
+                "cachedBytes": 50249956,
+                "vertices": 282534
+              },
+              {
+                "detail": false,
+                "offsetM": [
+                  500,
+                  0
+                ],
+                "fullRebuildMs": 150.91820899999948,
+                "incrementalMs": 29.055250000000342,
+                "regenerated": 0,
+                "reused": 469,
+                "cachedBytes": 50249956,
+                "vertices": 282534
+              }
+            ]
+          },
+          {
+            "name": "청담대교",
+            "groups": 44,
+            "roads": 353,
+            "steps": [
+              {
+                "detail": true,
+                "offsetM": [
+                  0,
+                  0
+                ],
+                "fullRebuildMs": 1559.6060000000007,
+                "incrementalMs": 1608.9548749999994,
+                "regenerated": 353,
+                "reused": 0,
+                "cachedBytes": 50330694,
+                "vertices": 1594668
+              },
+              {
+                "detail": true,
+                "offsetM": [
+                  500,
+                  0
+                ],
+                "fullRebuildMs": 1602.5149999999994,
+                "incrementalMs": 396.5438749999994,
+                "regenerated": 203,
+                "reused": 150,
+                "cachedBytes": 50330330,
+                "vertices": 1701747
+              },
+              {
+                "detail": true,
+                "offsetM": [
+                  500,
+                  500
+                ],
+                "fullRebuildMs": 1571.3751250000005,
+                "incrementalMs": 325.17283399999906,
+                "regenerated": 187,
+                "reused": 166,
+                "cachedBytes": 50330832,
+                "vertices": 1714803
+              },
+              {
+                "detail": true,
+                "offsetM": [
+                  0,
+                  0
+                ],
+                "fullRebuildMs": 1677.8974999999991,
+                "incrementalMs": 285.86262499999975,
+                "regenerated": 207,
+                "reused": 146,
+                "cachedBytes": 50330108,
+                "vertices": 1594668
+              },
+              {
+                "detail": false,
+                "offsetM": [
+                  0,
+                  0
+                ],
+                "fullRebuildMs": 202.99895800000013,
+                "incrementalMs": 198.73283400000037,
+                "regenerated": 245,
+                "reused": 108,
+                "cachedBytes": 45118312,
+                "vertices": 231897
+              },
+              {
+                "detail": false,
+                "offsetM": [
+                  500,
+                  0
+                ],
+                "fullRebuildMs": 197.35725000000093,
+                "incrementalMs": 30.62774999999965,
+                "regenerated": 0,
+                "reused": 353,
+                "cachedBytes": 45118312,
+                "vertices": 231897
+              }
+            ]
+          },
+          {
+            "name": "한강대교",
+            "groups": 85,
+            "roads": 532,
+            "steps": [
+              {
+                "detail": true,
+                "offsetM": [
+                  0,
+                  0
+                ],
+                "fullRebuildMs": 1774.5717079999995,
+                "incrementalMs": 1872.523041999999,
+                "regenerated": 532,
+                "reused": 0,
+                "cachedBytes": 50331552,
+                "vertices": 2191089
+              },
+              {
+                "detail": true,
+                "offsetM": [
+                  500,
+                  0
+                ],
+                "fullRebuildMs": 1763.047333999999,
+                "incrementalMs": 770.2631250000013,
+                "regenerated": 317,
+                "reused": 215,
+                "cachedBytes": 50329602,
+                "vertices": 2239374
+              },
+              {
+                "detail": true,
+                "offsetM": [
+                  500,
+                  500
+                ],
+                "fullRebuildMs": 1708.8602500000015,
+                "incrementalMs": 520.2587089999979,
+                "regenerated": 288,
+                "reused": 244,
+                "cachedBytes": 50331192,
+                "vertices": 2002878
+              },
+              {
+                "detail": true,
+                "offsetM": [
+                  0,
+                  0
+                ],
+                "fullRebuildMs": 1788.055375,
+                "incrementalMs": 567.2359589999978,
+                "regenerated": 325,
+                "reused": 207,
+                "cachedBytes": 50330044,
+                "vertices": 2191089
+              },
+              {
+                "detail": false,
+                "offsetM": [
+                  0,
+                  0
+                ],
+                "fullRebuildMs": 169.60041700000147,
+                "incrementalMs": 205.13204100000075,
+                "regenerated": 340,
+                "reused": 192,
+                "cachedBytes": 49889852,
+                "vertices": 294573
+              },
+              {
+                "detail": false,
+                "offsetM": [
+                  500,
+                  0
+                ],
+                "fullRebuildMs": 167.01079200000095,
+                "incrementalMs": 30.665375000000495,
+                "regenerated": 0,
+                "reused": 532,
+                "cachedBytes": 49889852,
+                "vertices": 294573
+              }
+            ]
+          }
+        ],
+        "allGeometryAttributesAndClickIndicesIdentical": true,
+        "scope": "공개 교량·육교와 실제 표시 지형의 CPU 형상 생성 비교. 브라우저 FPS·GPU 업로드·화면 검증 제외"
+      },
+      "workerTransport": {
+        "schemaVersion": 1,
+        "status": "PASS",
+        "bundle": "streetGeometry.worker-DtrEk_yr.js",
+        "bundleSha256": "7c018c6df05d40bcff6dda97c86b60a00b852d6119af0ad866e9839b93747cad",
+        "indexSha256": "ff393811d4cc32cdde64dec47a1d31b855b65b3b879e9be3dd3cb0472a432aee",
+        "requests": 5,
+        "roads": 30,
+        "vertices": 70611,
+        "checks": [
+          "실제 배포 작업 스레드 실행",
+          "버퍼 이전 후 캐시 재사용",
+          "미전달 지형 버전 거부",
+          "실행 중 취소",
+          "취소 뒤 재개",
+          "기존 전체 형상·클릭 인덱스 일치"
+        ],
+        "scope": "Node 작업 스레드의 실제 배포 계산 코드·메시지 전송 검사. 브라우저 조작·FPS 검증 제외"
+      },
+      "sourceSha256": {
+        "frontend/src/domains/urban/service/streetGeometryService.ts": "6c897c2bc0dd1a44ac5ad5edef31a4403f650b98d91eb55bfb3558c4a50d930a",
+        "frontend/src/domains/urban/service/streetMeshService.ts": "4d0b2edc984e99e7d23c00eec1128530bc83ada49c2fda909dbcbf26dbdd813e",
+        "frontend/src/domains/urban/service/streetGeometry.worker.ts": "e5481da22dae3f10142cd0a8a04683e641795bc2a04940bfd7c4f1edca47efc3",
+        "frontend/src/domains/urban/repository/streetGeometryRepository.ts": "e3b52b83439f802de0355ac72e11162366286fcb17240029a266c0c81c61e983",
+        "frontend/src/domains/urban/view/StreetLayer.tsx": "eceeeab6a62616fe5ec66345ffb8204112a54295e7664f23e9b4bfb4d967cc53",
+        "scripts/verify_street_mesh_reuse.mjs": "dcb3279c9be25f070fcee3178417f62031d392bc655e2462b217de086db0b012"
+      },
+      "reproduce": [
+        "pnpm --dir frontend build",
+        "node scripts/verify_street_mesh_reuse.mjs --report <new-report.json>",
+        "node scripts/verify_street_mesh_reuse.mjs --worker --report <new-worker-report.json>"
+      ],
+      "cacheLimitsBytes": {
+        "workerRoadParts": 50331648,
+        "mainCombinedRoads": 50331648
+      },
+      "limitations": [
+        "동일 로컬 환경의 CPU 형상 생성 측정이며 브라우저 FPS·GPU 업로드·화면 검증 아님",
+        "초기 생성 속도는 사례별 개선/증가가 섞이며 전체 첫 로드 개선으로 일반화하지 않음",
+        "같은 시야가 한도를 넘으면 보관하지 못한 일부 도로는 다시 계산"
+      ]
     }
   },
   "frontendTests": {

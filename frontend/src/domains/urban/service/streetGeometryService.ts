@@ -85,6 +85,30 @@ export function streetOffsets(points: Point[], offset: number): Point[] {
     return [p[0] + mx * scale, p[1] + my * scale];
   });
 }
+export function streetDetailEnabled(
+  road: Street,
+  detailed: boolean,
+  detailCenter?: Point
+): boolean {
+  return (
+    detailed &&
+    (!detailCenter ||
+      road.coordinates.some((p, i) => {
+        const q = road.coordinates[Math.max(0, i - 1)];
+        const dx = p[0] - q[0],
+          dy = p[1] - q[1];
+        const t = Math.max(
+          0,
+          Math.min(
+            1,
+            ((detailCenter[0] - q[0]) * dx + (detailCenter[1] - q[1]) * dy) /
+              (dx * dx + dy * dy || 1)
+          )
+        );
+        return Math.hypot(q[0] + dx * t - detailCenter[0], q[1] + dy * t - detailCenter[1]) < 1400;
+      }))
+  );
+}
 export function streetGeometry(
   roads: Street[],
   terrain: Terrain | null,
@@ -147,25 +171,7 @@ export function streetGeometry(
     }
   };
   for (const road of roads) {
-    const detail =
-      detailed &&
-      (!detailCenter ||
-        road.coordinates.some((p, i) => {
-          const q = road.coordinates[Math.max(0, i - 1)];
-          const dx = p[0] - q[0],
-            dy = p[1] - q[1];
-          const t = Math.max(
-            0,
-            Math.min(
-              1,
-              ((detailCenter[0] - q[0]) * dx + (detailCenter[1] - q[1]) * dy) /
-                (dx * dx + dy * dy || 1)
-            )
-          );
-          return (
-            Math.hypot(q[0] + dx * t - detailCenter[0], q[1] + dy * t - detailCenter[1]) < 1400
-          );
-        }));
+    const detail = streetDetailEnabled(road, detailed, detailCenter);
     if (road.nativeSourceRole) {
       const bridgeHeight =
         road.bridge && road.nativePolygons && !road.nativeBridgeProfiles?.length

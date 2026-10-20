@@ -1,6 +1,7 @@
 import { scenePointer, clearScenePointer } from '../../city/service/mapCursor';
 import { buildingRaycast } from '../../city/service/buildingRaycastService';
-import { GeometryBufferCache } from '../../../shared/repository/geometryBufferCache';
+import { requestStreetMesh } from '../repository/streetGeometryRepository';
+import type { StreetBuffers } from '../service/streetMeshService';
 import { Sphere, Vector3 } from 'three';
 import { streetAtFace } from '../service/streetGeometryService';
 import { memo, useEffect, useState } from 'react';
@@ -8,17 +9,6 @@ import { BufferAttribute, BufferGeometry, DoubleSide } from 'three';
 import type { Street } from '../entity/urban';
 import type { Terrain } from '../../terrain/entity/terrain';
 import type { ParkingData } from '../entity/parking';
-type StreetBuffers = {
-  positions: Float32Array;
-  colors: Float32Array;
-  normals: Float32Array;
-  bounds: Float32Array;
-  ends: number[];
-  sphere: number[];
-};
-const bufferCache = new GeometryBufferCache<StreetBuffers>();
-const terrainIds = new WeakMap<object, number>();
-let terrainId = 0;
 export const StreetLayer = memo(function StreetLayer({
   roads,
   terrain,
@@ -36,15 +26,14 @@ export const StreetLayer = memo(function StreetLayer({
 }) {
   const [geometry, setGeometry] = useState<BufferGeometry | null>(null);
   const [failed, setFailed] = useState(false);
-  const centerX = center ? Math.round(center[0] / 500) * 500 : undefined;
-  const centerY = center ? Math.round(center[1] / 500) * 500 : undefined;
+  const centerX = detail && center ? Math.round(center[0] / 500) * 500 : undefined;
+  const centerY = detail && center ? Math.round(center[1] / 500) * 500 : undefined;
   useEffect(() => () => geometry?.dispose(), [geometry]);
   useEffect(() => {
     setFailed(false);
-    if (terrain && !terrainIds.has(terrain)) terrainIds.set(terrain, ++terrainId);
-    if (parking && !terrainIds.has(parking)) terrainIds.set(parking, ++terrainId);
-    const variant = `${terrain ? terrainIds.get(terrain) : 0}:${detail}:${centerX}:${centerY}:${parking ? terrainIds.get(parking) : 0}`;
+    const request = new AbortController();
     const apply = (data: StreetBuffers) => {
+      if (request.signal.aborted) return;
       const mesh = new BufferGeometry();
       mesh.setAttribute('position', new BufferAttribute(data.positions, 3));
       mesh.setAttribute('color', new BufferAttribute(data.colors, 3));
@@ -55,43 +44,21 @@ export const StreetLayer = memo(function StreetLayer({
       mesh.boundingSphere = new Sphere(new Vector3(...data.sphere.slice(0, 3)), data.sphere[3]);
       setGeometry(mesh);
     };
-    const cached = bufferCache.get(roads, variant);
-    if (cached) {
-      apply(cached);
-      return;
-    }
-    const worker = new Worker(new URL('../service/streetGeometry.worker.ts', import.meta.url), {
-      type: 'module',
-    });
-    worker.onmessage = ({ data }) => {
-      if (data.failed) {
-        setFailed(true);
-        worker.terminate();
-        return;
-      }
-      bufferCache.put(roads, variant, data);
-      apply(data);
-      worker.terminate();
-    };
-    const fail = () => {
-      setFailed(true);
-      worker.terminate();
-    };
-    worker.onerror = fail;
-    worker.onmessageerror = fail;
-    worker.postMessage({
+    void requestStreetMesh(
       roads,
       terrain,
       detail,
-      detailCenter: centerX !== undefined && centerY !== undefined ? [centerX, centerY] : undefined,
-      parkingAisles:
-        parking?.routes
-          .filter((route) => route.reason === 'OSM_PARKING_AISLE')
-          .map((route) => route.id) ?? [],
-    });
-    return () => {
-      worker.terminate();
-    };
+      parking?.routes
+        .filter((route) => route.reason === 'OSM_PARKING_AISLE')
+        .map((route) => route.id) ?? [],
+      centerX !== undefined && centerY !== undefined ? [centerX, centerY] : undefined,
+      request.signal
+    )
+      .then(apply)
+      .catch(() => {
+        if (!request.signal.aborted) setFailed(true);
+      });
+    return () => request.abort();
   }, [roads, terrain, detail, parking, centerX, centerY]);
   if (failed) throw new Error('도로 표시 실패');
   return geometry ? (
