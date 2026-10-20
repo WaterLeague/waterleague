@@ -117,6 +117,8 @@ Java 25·Spring Boot·React 19·TypeScript·Three.js/R3F를 사용한다. 정확
 
 `presentation/surface_playback.py`는 `NativeFrameReader`로 전체 원본 무결성·수지를 확인한 뒤 원 지형 WKT·원점에서 도시 EPSG:5186 원점으로 수평 좌표만 변환한다. 비근사 변환을 사용하고 변환식·정확도 메타데이터 보존. 원 수심·운동량 바이너리를 그대로 복사하며 표시 지표 높이와 물리 기준고를 혼합하지 않는다. `surface-playback/catalog.json` 해시를 작업 결과에 고정한 실행만 서버 도메인의 repository→service→controller에서 조회한다. 요청마다 권한과 해시를 검사하며 권한 캐시는 사용하지 않는다.
 
+공개 기준안 워커는 `frontend/public/data/seoul-native-v1/city.json`을 현재 프론트와 같은 고정 SHA-256으로 확인하고 계산 전 재현 묶음의 `source/` 아래에 원 바이트를 보관한다. 게시 때 이 보관본의 해시·수치지형도 ID·EPSG:5186·지도 원점을 다시 검사한다. 누락/변조 시 해당 실행을 실패 처리하고 이전 `seoul-v1` 파일로 복귀하지 않는다. 지도 결속 검증은 지형·관망·수직 기준을 갖춘 운영 유역의 등록과 별개이며 현재 공개 모형 목록은 비어 있다.
+
 공통 `CityExplorer`의 계산 침수 제어와 `SurfacePlan/SurfaceLayer`를 주간·재해 지도에 연결. 2D/3D는 동일 격자·수심/속력 색상표·실제 기록 시각 사용. 3D는 Worker의 Float32 표시 형상만 사용하며 원 Float64 계산값 불변. 표시 지형+2cm 위에 원 수심의 상대 두께를 1:1로 올리고 외곽·수심 단차의 측면을 생성한다. 수직 기준 계약 `TERRAIN_DRAPED_SCALAR_NOT_WATER_ELEVATION`을 유지하며 실제 절대 수면고로 승격하지 않는다. 지도 투영 전 운동량을 방향 화살표로 사용하지 않는다. 재해는 공통 강우 시간축과 연동, 주간은 선택한 본인 설치의 저장 프레임 조회. 시간 밖 외삽 금지, 이동 요청 250ms 조정 및 이전 요청 취소. 결과 없는 작업의 안내·좌표 원점 불일치·오래된 다른 실행 응답 거부. 결과 전체 정확도·30fps·서울 연결 유역의 운영 게시 완료는 이 전달 기능만으로 주장하지 않는다.
 
 

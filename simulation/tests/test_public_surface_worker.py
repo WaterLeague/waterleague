@@ -59,6 +59,60 @@ def policy_bundle(root):
 
 
 class PublicSurfaceWorkerTests(unittest.TestCase):
+    def test_snapshot_freezes_current_native_map_and_rejects_modified_copy(self):
+        raw, city = repo.city_source(repo.ROOT)
+        frontend = (repo.ROOT/'frontend/src/domains/city/repository/cityRepository.ts').read_text()
+        self.assertIn(f"export const CITY_HASH = '{repo.CITY_SHA256}'", frontend)
+        self.assertIn("export const CITY_PATH = '/data/seoul-native-v1/city.json'", frontend)
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp).resolve()
+            _, bundle, manifest, _ = policy_bundle(root/'bundles')
+            local = root/'checkout'
+            current = local/repo.CITY_FILE
+            current.parent.mkdir(parents=True)
+            current.write_bytes(raw)
+            old = local/'frontend/public/data/seoul-v1/city.json'
+            old.parent.mkdir(parents=True)
+            old.write_bytes(b'{"coordinateSystem":"EPSG:5186","originProjected":[198128,551989]}')
+            directory = root/'run'
+            directory.mkdir()
+            with patch.object(repo, 'ROOT', local):
+                service.snapshot(directory, bundle, manifest)
+            saved = directory/'source'/repo.CITY_FILE
+            self.assertEqual(saved.read_bytes(), raw)
+            self.assertEqual(repo.city_source(directory/'source')[1], city)
+            self.assertFalse((directory/'source/frontend/public/data/seoul-v1/city.json').exists())
+            saved.write_bytes(raw+b'\n')
+            with self.assertRaisesRegex(FloodModelError, 'HASH_OR_SIZE_MISMATCH'):
+                repo.city_source(directory/'source')
+            current.write_bytes(raw+b'\n')
+            next_run = root/'next-run'
+            next_run.mkdir()
+            with patch.object(repo, 'ROOT', local), self.assertRaisesRegex(
+                    FloodModelError, 'HASH_OR_SIZE_MISMATCH'):
+                service.snapshot(next_run, bundle, manifest)
+            self.assertEqual(list(next_run.iterdir()), [])
+
+    def test_missing_current_map_never_falls_back_to_legacy_or_starts_engine(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp).resolve()
+            model, bundle, manifest, recipe = policy_bundle(root/'bundles')
+            local = root/'checkout'
+            old = local/'frontend/public/data/seoul-v1/city.json'
+            old.parent.mkdir(parents=True)
+            old.write_bytes(b'{"coordinateSystem":"EPSG:5186","originProjected":[198128,551989]}')
+            artifacts = root/'artifacts'
+            with patch.object(repo, 'ROOT', local), patch.object(repo, 'load_registry',
+                    return_value={model['id']: model}), patch.object(repo, 'load_bundle',
+                    return_value=(bundle, manifest, recipe)), patch.object(service, 'run_engine') as run:
+                self.assertTrue(service.run_once(artifacts, clock=lambda: END+timedelta(minutes=2)))
+            run.assert_not_called()
+            state = repo.decode(repo.read(artifacts/'public-surface/state/fixture-only.json'))
+            self.assertEqual(state['status'], 'FAILED')
+            self.assertEqual(state['errorCode'], 'PUBLIC_SURFACE_MAP_UNAVAILABLE')
+            self.assertEqual(repo.decode(repo.read(artifacts/'public-surface/current.json'))['runs'], [])
+            self.assertEqual(repo.load_registry(), {})
+
     def test_research_cistern_does_not_become_public_baseline(self):
         value = fixture()
         value['model']['connectedCisternDesign'] = {'schemaVersion': 1}
@@ -228,8 +282,10 @@ class PublicSurfaceWorkerTests(unittest.TestCase):
             surface=repo.decode(repo.read(directory/'calculation/surface/surface-result.json'))
             policy={'schemaVersion':1,'engineSha256':service.engine_signature(network,surface,result)}
             repo.atomic_json(directory/'input-bundle/numerical-policy.json',policy)
-            repo.atomic_json(directory/'source/frontend/public/data/seoul-v1/city.json',
-                             {'coordinateSystem':'EPSG:5186','originProjected':[198128.,551989.]})
+            city_raw, _ = repo.city_source(repo.ROOT)
+            city_path = directory/'source'/repo.CITY_FILE
+            city_path.parent.mkdir(parents=True)
+            city_path.write_bytes(city_raw)
             registered={'id':'test-only-unregistered','classification':repo.CLASSIFICATION,'bounds':[-100,-100,100,100],
                 'inputBundleSha256':'0'*64,'numericalPolicySha256':repo.sha(repo.encode(policy))}
             identifier,token=uuid.uuid4(),uuid.uuid4()
@@ -241,6 +297,11 @@ class PublicSurfaceWorkerTests(unittest.TestCase):
                 self.assertEqual(repo.read(directory/'surface-playback'/frame['file']),
                                  repo.read(directory/'calculation/surface/native-frames'/frame['file']))
             shutil.rmtree(directory/'surface-playback')
+            city_path.write_bytes(city_raw+b'\n')
+            with self.assertRaisesRegex(FloodModelError, 'HASH_OR_SIZE_MISMATCH'):
+                service.publication(registered,directory,identifier,token,END,END+timedelta(minutes=2))
+            self.assertFalse((directory/'surface-playback').exists())
+            city_path.write_bytes(city_raw)
             with self.assertRaisesRegex(FloodModelError,'EXPIRED_OR_UNBOUND'):
                 service.publication(registered,directory,identifier,token,END,END+timedelta(minutes=6))
             path=directory/'calculation/network/network.inp';raw=repo.read(path)

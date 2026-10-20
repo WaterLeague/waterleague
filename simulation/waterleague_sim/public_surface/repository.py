@@ -16,6 +16,8 @@ from waterleague_sim.engine.swmm import ROOT
 REGISTRY = ROOT/'backend/src/main/resources/surface/public-models-v1.json'
 REGISTRY_SHA256 = 'e4d5625e18077516f2d00c69fb2c6644765e5075bd6f2823578c0f791cd59fe3'
 CLASSIFICATION = 'PUBLIC_INPUT_UNCALIBRATED_CURRENT_BASELINE'
+CITY_FILE = 'frontend/public/data/seoul-native-v1/city.json'
+CITY_SHA256 = '67a8b80b7036590973b7db99053521333f9405e1076a7939bfe491c43296dd6c'
 
 
 def sha(raw):
@@ -63,6 +65,20 @@ def read(path, *, maximum=32*1024**2, expected=None):
     require(len(raw)<=maximum and (expected is None or sha(raw)==expected),
             'PUBLIC_SURFACE_HASH_OR_SIZE_MISMATCH')
     return raw
+
+
+def city_source(root):
+    try:
+        raw = read(safe_path(root, CITY_FILE), maximum=8*1024**2, expected=CITY_SHA256)
+    except OSError:
+        raise FloodModelError('PUBLIC_SURFACE_MAP_UNAVAILABLE') from None
+    city = decode(raw)
+    require(isinstance(city, dict) and city.get('schemaVersion') == 2
+            and city.get('id') == 'seoul-ngii-20260307'
+            and city.get('coordinateSystem') == 'EPSG:5186'
+            and city.get('originProjected') == [198128., 551989.],
+            'PUBLIC_SURFACE_MAP_BINDING_INVALID')
+    return raw, city
 
 
 def load_registry(path=REGISTRY, expected=REGISTRY_SHA256):

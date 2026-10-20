@@ -52,6 +52,11 @@ def index_update(artifacts, model, row, models, clock):
 
 
 def snapshot(directory,bundle,manifest):
+    # 현재 지도가 없거나 변조됐으면 계산 전에 중단하며 이전 공간으로 대체하지 않는다.
+    city_raw, _ = repo.city_source(repo.ROOT)
+    city_target = repo.safe_path(directory/'source', repo.CITY_FILE)
+    city_target.parent.mkdir(parents=True, exist_ok=True)
+    city_target.write_bytes(city_raw)
     for name,expected in manifest['files'].items():
         target=repo.safe_path(directory/'input-bundle',name)
         target.parent.mkdir(parents=True,exist_ok=True)
@@ -62,7 +67,7 @@ def snapshot(directory,bundle,manifest):
     sources+=[repo.ROOT/name for name in ('simulation/uv.lock','simulation/pyproject.toml',
         'scripts/run_public_surface.py','scripts/local_config.py',
         'scripts/build_rainfall_swmm.py','scripts/build_network_swmm.py','scripts/build_live_swmm.py',
-        'data/manifests/anuga-4.0.1.json','frontend/public/data/seoul-v1/city.json')]
+        'data/manifests/anuga-4.0.1.json')]
     for engine in ('network-rainfall-swmm','network-metrics-swmm','network-exchange-swmm'):
         sources+=list((repo.ROOT/f'tmp/{engine}-build/install/bin').glob('*'))
     for source in sources:
@@ -110,7 +115,7 @@ def publication(model,directory,identifier,token,cutoff,clock):
     except EvaluationError:
         raise FloodModelError('PUBLIC_SURFACE_RESULT_INTEGRITY_FAILED') from None
     require(verified['complete'],'PUBLIC_SURFACE_RESULT_INCOMPLETE')
-    city=repo.decode(repo.read(directory/'source/frontend/public/data/seoul-v1/city.json'))
+    _, city = repo.city_source(directory/'source')
     surface=directory/'calculation/surface'
     result_hash=repo.sha(repo.read(surface/'surface-result.json'))
     descriptor=export_playback(surface,result_hash,directory/'surface-playback',city)
