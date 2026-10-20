@@ -29,6 +29,8 @@ def main():
     parser.add_argument('--manifest', type=Path, default=ROOT / 'data/manifests/mendeley-seocho-network-v3.json')
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--run', action='store_true')
+    parser.add_argument('--include-pre-report', action='store_true',
+                        help='원 보고 이전 구간을 진단 출력에만 포함, 물리 입력·게임 평가 미변경')
     args = parser.parse_args()
     output = args.output.resolve()
     require(not output.exists(), 'PUBLISHED_OUTPUT_EXISTS')
@@ -63,11 +65,14 @@ def main():
             'areaHa': row['audit']['areaHa'], 'counts': row['audit']['counts'],
             'rankingEligible': False, 'fieldValidated': False, 'executionStatus': 'NOT_REQUESTED'}
         try:
-            text, transformations = execution_input(row['raw'])
+            text, transformations = execution_input(row['raw'], include_pre_report=args.include_pre_report)
             (directory / 'execution.inp').write_bytes(text.encode())
             write(directory / 'transformations.json', transformations)
             case['executionSha256'] = transformations['executionSha256']
-            case['reportPathsDisabled'] = len(transformations['changes'])
+            case['reportPathsDisabled'] = sum(change['section'] == 'LID_USAGE'
+                                             for change in transformations['changes'])
+            case['reportingWindow'] = transformations['reportingWindow']
+            case['declaredHydraulicProperties'] = row['audit']['declaredHydraulicProperties']
             case['preservedNonfiniteTokenCount'] = len(transformations['preservedNonfiniteUnusedTokens'])
             if args.run:
                 result = run_case(text, directory)

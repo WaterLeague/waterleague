@@ -76,6 +76,30 @@ class PublishedNetworkTests(unittest.TestCase):
             with self.assertRaisesRegex(FloodModelError, 'MANIFEST_DUPLICATE'):
                 load_archive(root, root / 'manifest.json')
 
+    def test_pre_report_diagnostic_is_explicit_and_changes_only_reporting_options(self):
+        raw = MINIMAL + '''[OPTIONS]
+START_DATE 08/07/2022
+START_TIME 23:00:00
+REPORT_START_DATE 08/08/2022 ; 원 보고 시작
+REPORT_START_TIME 00:00:00
+END_DATE 08/11/2022
+END_TIME 00:00:00
+'''.encode()
+        self.assertEqual(execution_input(raw)[0].encode(), raw)
+        prepared, changes = execution_input(raw, include_pre_report=True)
+        expected = raw.replace(b'REPORT_START_DATE 08/08/2022', b'REPORT_START_DATE 08/07/2022').replace(
+            b'REPORT_START_TIME 00:00:00', b'REPORT_START_TIME 23:00:00')
+        self.assertEqual(prepared.encode(), expected)
+        self.assertEqual(changes['reportingWindow']['addedReportSeconds'], 3600)
+        self.assertEqual(len(changes['changes']), 2)
+        self.assertFalse(changes['physicsValuesChanged'])
+        self.assertFalse(changes['rankingEligible'])
+        self.assertIsNone(changes['reportingWindow']['timeZone'])
+        for invalid in (MINIMAL, raw.replace(b'08/08/2022', b'08/06/2022'),
+                        raw.replace(b'08/08/2022', b'08/12/2022')):
+            with self.assertRaisesRegex(FloodModelError, 'REPORT_WINDOW'):
+                execution_input(invalid, include_pre_report=True)
+
 
 @unittest.skipUnless(ARCHIVE.exists() and network.library_path().exists(), '공개 원본과 고정 EPA 빌드 필요')
 class PublishedNativeTests(unittest.TestCase):

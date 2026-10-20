@@ -1,0 +1,136 @@
+{
+  "schemaVersion": 1,
+  "datasetId": "xxpjg3fnf3",
+  "version": 1,
+  "doi": "10.17632/xxpjg3fnf3.1",
+  "pageUrl": "https://data.mendeley.com/datasets/xxpjg3fnf3/1",
+  "downloadUrl": "https://data.mendeley.com/public-api/zip/xxpjg3fnf3/download/1",
+  "acquiredAt": "2026-10-20T17:15:24.876951+00:00",
+  "publishedAt": "2024-02-27T17:49:51.469Z",
+  "classification": "PUBLISHED_RESEARCH_MODEL_NOT_OFFICIAL_ASSET_INVENTORY",
+  "licence": {
+    "id": "01d9c749-3c4d-4431-9df3-620b2dcfe144",
+    "short_name": "CC BY 4.0",
+    "full_name": "Creative Commons Attribution 4.0 International",
+    "description": "You can share, copy and modify this dataset so long as you give appropriate credit, provide a link to the CC BY license, and indicate if changes were made, but you may not do so in a way that suggests the rights holder has endorsed you or your use of the dataset. Note that further permission may be required for any content within the dataset that is identified as belonging to a third party.",
+    "url": "http://creativecommons.org/licenses/by/4.0",
+    "category": "Creative",
+    "customer_id": null
+  },
+  "attribution": {
+    "title": "Heuristic Approach to Urban Sewershed Delineation for Urban Flood Modeling",
+    "authors": [
+      "Samuel Park",
+      "Jaekyoung Kim",
+      "Junsuk Kang"
+    ],
+    "year": 2024
+  },
+  "relatedStudy": {
+    "doi": "10.1016/j.jwpe.2024.106129",
+    "url": "https://www.sciencedirect.com/science/article/pii/S2214714424013618",
+    "verification": "PUBLISHER_PUBLIC_ABSTRACT_ONLY",
+    "independentValidationReproduced": false
+  },
+  "archive": {
+    "file": "data/raw/mendeley-seocho-heuristic-v1/dataset.zip",
+    "bytes": 39436379,
+    "sha256": "2b51f6ab324d5db07be25e5b3ebba13d487ce98557dd0dcf12aa0ff732e98f8d"
+  },
+  "metadataFiles": {
+    "data/raw/mendeley-seocho-heuristic-v1/metadata.json": "9597c77438df9818b101f7bae96058f3ef098d524536fcee8ae4bb43e4f04cbb"
+  },
+  "members": [
+    {
+      "member": "Heuristic Approach to Urban Sewershed Delineation for Urban Flood Modeling/Heuristic sewershed model/Heuristic_sewershed_F2022.ini",
+      "bytes": 4856,
+      "sha256": "8a5ceb0cadcfe88d33ff435e49905d3e0db50f940464e38b4a32f964566ed075"
+    },
+    {
+      "member": "Heuristic Approach to Urban Sewershed Delineation for Urban Flood Modeling/Heuristic sewershed model/Heuristic_sewershed_F2012.inp",
+      "bytes": 641497,
+      "sha256": "174fbfcc9c9077e242c8d61ea9c0bbaae7eaa57fd4bd18e427c633373aebedb7"
+    },
+    {
+      "member": "Heuristic Approach to Urban Sewershed Delineation for Urban Flood Modeling/Heuristic sewershed model/Heuristic_sewershed_F2022.rpt",
+      "bytes": 74249,
+      "sha256": "7d4a51f299b6213ddca39424acebd0f77fe087db5765ecf50caedf27b783ad01"
+    },
+    {
+      "member": "Heuristic Approach to Urban Sewershed Delineation for Urban Flood Modeling/Heuristic sewershed model/Heuristic_sewershed_F2012.ini",
+      "bytes": 4882,
+      "sha256": "7791328e1e94e8a4e5bcc26442f338ac1435bc57c942a34c8991605ad7222103"
+    },
+    {
+      "member": "Heuristic Approach to Urban Sewershed Delineation for Urban Flood Modeling/Heuristic sewershed model/Heuristic_sewershed_F2012.rpt",
+      "bytes": 71130,
+      "sha256": "2926074f307c2cc7a26745df4a59c5f9cc7f94aa6eb56cf567fa8820470be159"
+    },
+    {
+      "member": "Heuristic Approach to Urban Sewershed Delineation for Urban Flood Modeling/Heuristic sewershed model/Heuristic_sewershed_F2022.inp",
+      "bytes": 641497,
+      "sha256": "571af4e103f3a314b04a201f2fe179b442f1ecce626e05971f2882a8a71fed5f"
+    },
+    {
+      "member": "Heuristic Approach to Urban Sewershed Delineation for Urban Flood Modeling/Heuristic sewershed model/Heuristic_sewershed_F2012.out",
+      "bytes": 30063748,
+      "sha256": "5edadd5b9ef2fcd3fa3373584c4aa10ac752f6e1431017c28259970dc3127c2e"
+    },
+    {
+      "member": "Heuristic Approach to Urban Sewershed Delineation for Urban Flood Modeling/Heuristic sewershed model/Heuristic_sewershed_F2022.out",
+      "bytes": 30063748,
+      "sha256": "ac3728bff5b5201d09a225a83c2b93992872ce16906d0a288dbc8d396de6e2b0"
+    },
+    {
+      "member": "Heuristic Approach to Urban Sewershed Delineation for Urban Flood Modeling/Pre-defined sewershed model/Predefined_sewershed_F2022.rpt",
+      "bytes": 68048,
+      "sha256": "46ad04f4a9159515f4467c0bb53649143cea73408a3bb495c1bb5681be77990f"
+    },
+    {
+      "member": "Heuristic Approach to Urban Sewershed Delineation for Urban Flood Modeling/Pre-defined sewershed model/Predefined_sewershed_F2012.inp",
+      "bytes": 321153,
+      "sha256": "694782b3a0c8a3c6ebf7778591dda301b1c499e673747a2632a7f65ec576c97d"
+    },
+    {
+      "member": "Heuristic Approach to Urban Sewershed Delineation for Urban Flood Modeling/Pre-defined sewershed model/Predefined_sewershed_F2012.rpt",
+      "bytes": 65809,
+      "sha256": "3d72e7224c6e0aec019bf85d0423d804095faf43f1263f69940164770f13831f"
+    },
+    {
+      "member": "Heuristic Approach to Urban Sewershed Delineation for Urban Flood Modeling/Pre-defined sewershed model/Predefined_sewershed_F2022.inp",
+      "bytes": 321153,
+      "sha256": "738d9d3c7f38c8a3e052cb6c0410954d40a9d4db3f750f732a72e4bb2b6efd94"
+    },
+    {
+      "member": "Heuristic Approach to Urban Sewershed Delineation for Urban Flood Modeling/Pre-defined sewershed model/Predefined_sewershed_F2012.ini",
+      "bytes": 4826,
+      "sha256": "c38df67623e37bd184fb8e5b482af7428b1f680061014a8c7aff2a3186319f5d"
+    },
+    {
+      "member": "Heuristic Approach to Urban Sewershed Delineation for Urban Flood Modeling/Pre-defined sewershed model/Predefined_sewershed_F2022.ini",
+      "bytes": 4836,
+      "sha256": "54a3e044f4fe0b03a1e17e299a9e2212247bf3cf85d338c4d978af8a885f0c34"
+    },
+    {
+      "member": "Heuristic Approach to Urban Sewershed Delineation for Urban Flood Modeling/Pre-defined sewershed model/Predefined_sewershed_F2022.out",
+      "bytes": 27021518,
+      "sha256": "8472b55b2197a07479e7c1e294e67f6ec39243eb03b5681d247ba60ea64cef74"
+    },
+    {
+      "member": "Heuristic Approach to Urban Sewershed Delineation for Urban Flood Modeling/Pre-defined sewershed model/Predefined_sewershed_F2012.out",
+      "bytes": 27021518,
+      "sha256": "ec713e44991f417f2f28471863d7c253833a0f1d013ab83e06c112482f57d1af"
+    }
+  ],
+  "rankingEligible": false,
+  "fieldValidated": false,
+  "horizontalCrs": null,
+  "verticalDatum": null,
+  "limitations": [
+    "연구자가 공개한 2012/2022년 관망 입력 4종이며 공식 현장 자산 목록 아님",
+    "수평 좌표계·수직 기준·시설 유효 시점·관측 수위 원문 미포함",
+    "논문의 관측 대조 성능을 현재 엔진의 현장 검증으로 전용하지 않음",
+    "내장 강우의 관측소·시간대·외부 유입 계보와 지표 유입/하류 경계 미검증",
+    "지형 원본·원형 수치지형도 대응 미확보, 게임·2D 운영 모델 미등록"
+  ]
+}

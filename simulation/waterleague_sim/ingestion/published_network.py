@@ -1,5 +1,6 @@
 """공개 연구 INP의 출처·연결·미확인 입력을 보존하는 가져오기."""
 from collections import defaultdict
+from datetime import datetime
 import hashlib
 import json
 import math
@@ -157,16 +158,21 @@ def inspect_input(raw):
         'counts': {section: len(rows) for section, rows in sections.items()},
         'areaHa': sum(row['areaDeclared'] for row in areas) if options.get('FLOW_UNITS') == 'CMS' else None,
         'nodes': network_nodes, 'conduits': network_links, 'catchments': areas,
+        'declaredHydraulicProperties': {
+            'distinctCrossSectionDefinitions': len({
+                tuple(link['crossSection']) for link in network_links if link['crossSection'] is not None}),
+            'roughnessValues': sorted({link['roughness'] for link in network_links})},
         'topology': {'missingReferences': missing, 'nodesWithoutDirectedOutfallPath': sorted(set(nodes) - reached)},
         'nonfiniteTokens': nonfinite, 'externalFileReferences': external,
         'sourceRecords': sections,
         'limitations': ['좌표계·수직 기준·자산 유효 기간 미명시',
-            '내장 강우·외부 유입 계보 미확인', '연구 입력의 균일 단면·조도·초기 상태와 추정값 보존',
+            '내장 강우·외부 유입 계보 미확인', '연구 입력의 단면·조도·초기 상태와 추정값 보존',
             '원 관망의 월류 손실은 지표 침수 수심/확산 결과가 아님']}
 
 
-def execution_input(raw):
-    """물리값은 그대로 두고 연구 원본의 LID 상세 출력 파일만 비활성화."""
+def execution_input(raw, *, include_pre_report=False):
+    """물리값을 보존하고 명시적으로 선택한 진단 출력 변경만 기록."""
+    require(type(include_pre_report) is bool, 'PUBLISHED_REPORT_POLICY_INVALID')
     text, sections = records(raw)
     audit = inspect_input(raw)
     require(set(sections) <= _EXEC_SECTIONS, 'PUBLISHED_EXECUTION_SECTION_UNSUPPORTED')
@@ -179,6 +185,35 @@ def execution_input(raw):
                 and row['value'].lower() == 'nan' for row in audit['nonfiniteTokens']),
             'PUBLISHED_EXECUTION_NONFINITE_PHYSICS')
     lines, changes = text.splitlines(keepends=True), []
+    reporting = None
+    if include_pre_report:
+        options = audit['options']
+        try:
+            start = datetime.strptime(options['START_DATE'] + ' ' + options['START_TIME'], '%m/%d/%Y %H:%M:%S')
+            report = datetime.strptime(options['REPORT_START_DATE'] + ' ' + options['REPORT_START_TIME'],
+                                       '%m/%d/%Y %H:%M:%S')
+            end = datetime.strptime(options['END_DATE'] + ' ' + options['END_TIME'], '%m/%d/%Y %H:%M:%S')
+        except (KeyError, ValueError):
+            require(False, 'PUBLISHED_REPORT_WINDOW_EXPLICIT_REQUIRED')
+        require(start <= report < end, 'PUBLISHED_REPORT_WINDOW_INVALID')
+        reporting = {'originalReportStart': report.isoformat(), 'executionReportStart': start.isoformat(),
+                     'addedReportSeconds': (report - start).total_seconds(),
+                     'timeZone': None, 'evaluationUse': 'DIAGNOSTIC_ONLY_NOT_GAME_SCORE'}
+        # 초기화·강우·종료 시각을 바꾸지 않고 기존 보고 이전 상태도 기록한다.
+        for row in sections['OPTIONS']:
+            tokens = row['tokens']
+            if tokens[0].upper() not in ('REPORT_START_DATE', 'REPORT_START_TIME'):
+                continue
+            wanted = options[tokens[0].upper().removeprefix('REPORT_')]
+            if tokens[1] == wanted:
+                continue
+            old = lines[row['line'] - 1]
+            matches = list(re.finditer(r'[^\s;]+', old))
+            span = matches[1].span()
+            lines[row['line'] - 1] = old[:span[0]] + wanted + old[span[1]:]
+            changes.append({'line': row['line'], 'section': 'OPTIONS', 'tokenIndex': 1,
+                            'option': tokens[0].upper(), 'before': tokens[1], 'after': wanted,
+                            'reason': 'INCLUDE_PRE_REPORT_DIAGNOSTIC_ONLY'})
     for row in sections.get('LID_USAGE', []):
         tokens = row['tokens']
         if len(tokens) < 9 or tokens[8] == '*':
@@ -196,6 +231,7 @@ def execution_input(raw):
         'executionSha256': digest(prepared.encode()), 'changes': changes,
         'bomRemoved': raw.startswith(b'\xef\xbb\xbf'), 'physicsValuesChanged': False,
         'diagnosticOnly': True, 'rankingEligible': False,
+        'reportingWindow': reporting,
         'preservedNonfiniteUnusedTokens': audit['nonfiniteTokens']}
 
 

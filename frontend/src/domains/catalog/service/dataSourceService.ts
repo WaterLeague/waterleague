@@ -163,6 +163,18 @@ export const dataSources: DataSource[] = [
         detail: '2016년 공개 설계 문헌 · 시설 단면·재료·투수·저류 제원',
       },
       {
+        name: '서초 공개 관망·녹색인프라 연구 입력 · Park 외 · 2024년 v3',
+        href: 'https://data.mendeley.com/datasets/dzzwvd8rjk/3',
+        detail:
+          '9개 설계 시나리오의 원본·수치 재현 근거. 서울시 공식 관망 현황이 아니며 좌표계·수직 기준·현장 연결은 미확인입니다.',
+      },
+      {
+        name: '서초 유역 구분 비교 연구 입력 · Park 외 · 2024년 v1',
+        href: 'https://data.mendeley.com/datasets/xxpjg3fnf3/1',
+        detail:
+          '136관로·133접합점, 29개/7개 집수구역의 2012·2022년 입력 4종을 보관했습니다. 보고 구간만 확장한 진단 계산에서 내부 비수렴이 확인됐습니다. 좌표·높이 기준과 관측 수위 원문이 없어 지도 설치·게임 순위·현장 침수 예측에는 적용하지 않습니다.',
+      },
+      {
         name: '투수 포장 블록 성능이 도시 물순환에 미치는 영향 검토 · 2025년',
         href: 'https://jkwra.or.kr/articles/xml/N8x4/',
         detail:

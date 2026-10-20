@@ -1,0 +1,348 @@
+{
+  "schemaVersion": 1,
+  "checkedOn": "2026-10-21",
+  "classification": "PUBLISHED_SEWERSHED_REPORT_WINDOW_DIAGNOSTIC",
+  "sourceManifest": "data/manifests/mendeley-seocho-heuristic-v1.json",
+  "sourceManifestSha256": "e322eff9d15f470c0a25bf1f95d013a1dfebb4320a12d07416304690534c2d0c",
+  "sourceArchiveSha256": "2b51f6ab324d5db07be25e5b3ebba13d487ce98557dd0dcf12aa0ff732e98f8d",
+  "engine": {
+    "schemaVersion": 1,
+    "engineVersion": "5.2.4",
+    "revision": "7952ca837988b1c32f791812eccc9fd64547e093",
+    "sourceArchiveSha256": "3f76a199573088ce47ff02491c529afb73d9953ee9d948dfc89dcd4981b4c0c0",
+    "observerSha256": "c320fa1849cb4b03254167b107d1a9fefc7171b10c6ce397a0b82bb5c08c53e7",
+    "binarySha256": "673a83f39ec76e9e26c64702a68101b2cadfe113aaa879c5637baedefd4aaac5",
+    "modification": "READ_ONLY_OBSERVER_NO_SOLVER_CHANGES",
+    "adapterSha256": "f9fa6734de7a3adc64f1bd456862d80260115c656a6bc1c0b090841883bfb0d7",
+    "platform": "macOS-27.0.1-arm64-arm-64bit",
+    "qualityAdapterSha256": "c78323b383d37be56c34b8cc2d5084e4a92e3de6bbc2a818d914acbabf3eb930"
+  },
+  "originalUnmodifiedExecution": {
+    "status": "REJECTED",
+    "cases": 4,
+    "reason": "NETWORK_REQUIRES_DYNWAVE_AND_FULL_REPORT_WINDOW"
+  },
+  "reportingPolicy": {
+    "optInFlag": "--include-pre-report",
+    "physicsValuesChanged": false,
+    "changedOptions": [
+      "REPORT_START_DATE",
+      "REPORT_START_TIME"
+    ],
+    "addedReportSeconds": 3600,
+    "timeZone": null,
+    "scoreWindowChanged": false
+  },
+  "cases": [
+    {
+      "id": "case-00",
+      "member": "Heuristic Approach to Urban Sewershed Delineation for Urban Flood Modeling/Heuristic sewershed model/Heuristic_sewershed_F2012.inp",
+      "sourceSha256": "174fbfcc9c9077e242c8d61ea9c0bbaae7eaa57fd4bd18e427c633373aebedb7",
+      "areaHa": 1062.98,
+      "rankingEligible": false,
+      "fieldValidated": false,
+      "executionStatus": "COMPLETED",
+      "executionSha256": "a99b21bb4cd70e95334b5ae63dd5a845cdfc8681b72fae830a0c3aaf2bcdff56",
+      "reportPathsDisabled": 0,
+      "reportingWindow": {
+        "originalReportStart": "2012-08-14T00:00:00",
+        "executionReportStart": "2012-08-13T23:00:00",
+        "addedReportSeconds": 3600.0,
+        "timeZone": null,
+        "evaluationUse": "DIAGNOSTIC_ONLY_NOT_GAME_SCORE"
+      },
+      "declaredHydraulicProperties": {
+        "distinctCrossSectionDefinitions": 55,
+        "roughnessValues": [
+          0.011
+        ]
+      },
+      "preservedNonfiniteTokenCount": 0,
+      "numericalStatus": "FAILED",
+      "complete": true,
+      "convergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 262800,
+        "nonConvergedSteps": 2407,
+        "nonConvergedPercent": 0.9159056316590564
+      },
+      "timeWindowPolicy": "NATIVE_DURATION_DIAGNOSTIC",
+      "calendarShortfallSeconds": 1.0,
+      "warningCount": 2,
+      "runoffContinuityPercent": -0.01746710017323494,
+      "routingContinuityPercent": -0.03267361596226692,
+      "counts": {
+        "SUBCATCHMENTS": 29,
+        "JUNCTIONS": 133,
+        "OUTFALLS": 2,
+        "CONDUITS": 136,
+        "INFLOWS": 20,
+        "TIMESERIES": 4380
+      },
+      "topology": {
+        "missingReferences": [],
+        "nodesWithoutDirectedOutfallPath": []
+      },
+      "nonfiniteTokenCount": 0,
+      "externalFileReferenceCount": 0,
+      "failureReasons": [
+        "ROUTING_NONCONVERGED"
+      ],
+      "originalReportStart": "2012-08-14T00:00:00",
+      "executionReportStart": "2012-08-13T23:00:00",
+      "transformationsSha256": "3fbf1e27b68066299fbabe8fa5a00da0d89a10d035eb374744b27a40bb7569fc",
+      "resultSha256": "fa20e20c0457f699b480c51e9c1bc6e9149f32a3618b8f28ca90d54308c5b4e3"
+    },
+    {
+      "id": "case-01",
+      "member": "Heuristic Approach to Urban Sewershed Delineation for Urban Flood Modeling/Heuristic sewershed model/Heuristic_sewershed_F2022.inp",
+      "sourceSha256": "571af4e103f3a314b04a201f2fe179b442f1ecce626e05971f2882a8a71fed5f",
+      "areaHa": 1062.98,
+      "rankingEligible": false,
+      "fieldValidated": false,
+      "executionStatus": "COMPLETED",
+      "executionSha256": "45826a4e6afcc2d9ac8a691e2b7ed573793e83cc7ff1aa0517178432d354a9d1",
+      "reportPathsDisabled": 0,
+      "reportingWindow": {
+        "originalReportStart": "2022-08-08T00:00:00",
+        "executionReportStart": "2022-08-07T23:00:00",
+        "addedReportSeconds": 3600.0,
+        "timeZone": null,
+        "evaluationUse": "DIAGNOSTIC_ONLY_NOT_GAME_SCORE"
+      },
+      "declaredHydraulicProperties": {
+        "distinctCrossSectionDefinitions": 55,
+        "roughnessValues": [
+          0.011
+        ]
+      },
+      "preservedNonfiniteTokenCount": 0,
+      "numericalStatus": "FAILED",
+      "complete": true,
+      "convergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 262800,
+        "nonConvergedSteps": 5492,
+        "nonConvergedPercent": 2.0898021308980215
+      },
+      "timeWindowPolicy": "NATIVE_DURATION_DIAGNOSTIC",
+      "calendarShortfallSeconds": 1.0,
+      "warningCount": 2,
+      "runoffContinuityPercent": -0.01974540390074253,
+      "routingContinuityPercent": -0.03435058519244194,
+      "counts": {
+        "SUBCATCHMENTS": 29,
+        "JUNCTIONS": 133,
+        "OUTFALLS": 2,
+        "CONDUITS": 136,
+        "INFLOWS": 20,
+        "TIMESERIES": 4380
+      },
+      "topology": {
+        "missingReferences": [],
+        "nodesWithoutDirectedOutfallPath": []
+      },
+      "nonfiniteTokenCount": 0,
+      "externalFileReferenceCount": 0,
+      "failureReasons": [
+        "ROUTING_NONCONVERGED"
+      ],
+      "originalReportStart": "2022-08-08T00:00:00",
+      "executionReportStart": "2022-08-07T23:00:00",
+      "transformationsSha256": "9b9bce1a4bc5dc993099ae3be2f41370e9597ccc088104e9541af233335ae567",
+      "resultSha256": "321fc81e80af3b68ba6fe8316c92027ccddbfdb7d462ff86e5cd4007177ffc12"
+    },
+    {
+      "id": "case-02",
+      "member": "Heuristic Approach to Urban Sewershed Delineation for Urban Flood Modeling/Pre-defined sewershed model/Predefined_sewershed_F2012.inp",
+      "sourceSha256": "694782b3a0c8a3c6ebf7778591dda301b1c499e673747a2632a7f65ec576c97d",
+      "areaHa": 1063.4,
+      "rankingEligible": false,
+      "fieldValidated": false,
+      "executionStatus": "COMPLETED",
+      "executionSha256": "92351a2670babbca9c38d53acdc535ee85daa0824f2fd74629b3cfd8b236fa62",
+      "reportPathsDisabled": 0,
+      "reportingWindow": {
+        "originalReportStart": "2012-08-14T00:00:00",
+        "executionReportStart": "2012-08-13T23:00:00",
+        "addedReportSeconds": 3600.0,
+        "timeZone": null,
+        "evaluationUse": "DIAGNOSTIC_ONLY_NOT_GAME_SCORE"
+      },
+      "declaredHydraulicProperties": {
+        "distinctCrossSectionDefinitions": 55,
+        "roughnessValues": [
+          0.011
+        ]
+      },
+      "preservedNonfiniteTokenCount": 0,
+      "numericalStatus": "FAILED",
+      "complete": true,
+      "convergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 262800,
+        "nonConvergedSteps": 1324,
+        "nonConvergedPercent": 0.5038051750380518
+      },
+      "timeWindowPolicy": "NATIVE_DURATION_DIAGNOSTIC",
+      "calendarShortfallSeconds": 1.0,
+      "warningCount": 2,
+      "runoffContinuityPercent": -0.005580727476626635,
+      "routingContinuityPercent": -0.02548023872077465,
+      "counts": {
+        "SUBCATCHMENTS": 7,
+        "JUNCTIONS": 133,
+        "OUTFALLS": 2,
+        "CONDUITS": 136,
+        "INFLOWS": 20,
+        "TIMESERIES": 4380
+      },
+      "topology": {
+        "missingReferences": [],
+        "nodesWithoutDirectedOutfallPath": []
+      },
+      "nonfiniteTokenCount": 0,
+      "externalFileReferenceCount": 0,
+      "failureReasons": [
+        "ROUTING_NONCONVERGED"
+      ],
+      "originalReportStart": "2012-08-14T00:00:00",
+      "executionReportStart": "2012-08-13T23:00:00",
+      "transformationsSha256": "8e5638ee74f5dbc145e34c37efac11acd929cc738a42d83733170d396d6b43d5",
+      "resultSha256": "b1800117c685a66752a66940c279e65fb8d9d9e0ce2f9fab13da4230b876451e"
+    },
+    {
+      "id": "case-03",
+      "member": "Heuristic Approach to Urban Sewershed Delineation for Urban Flood Modeling/Pre-defined sewershed model/Predefined_sewershed_F2022.inp",
+      "sourceSha256": "738d9d3c7f38c8a3e052cb6c0410954d40a9d4db3f750f732a72e4bb2b6efd94",
+      "areaHa": 1063.4,
+      "rankingEligible": false,
+      "fieldValidated": false,
+      "executionStatus": "COMPLETED",
+      "executionSha256": "60b017ae8ad91c04774a364875d387b6652bfdc69d03ef700ff15d38b405846a",
+      "reportPathsDisabled": 0,
+      "reportingWindow": {
+        "originalReportStart": "2022-08-08T00:00:00",
+        "executionReportStart": "2022-08-07T23:00:00",
+        "addedReportSeconds": 3600.0,
+        "timeZone": null,
+        "evaluationUse": "DIAGNOSTIC_ONLY_NOT_GAME_SCORE"
+      },
+      "declaredHydraulicProperties": {
+        "distinctCrossSectionDefinitions": 55,
+        "roughnessValues": [
+          0.011
+        ]
+      },
+      "preservedNonfiniteTokenCount": 0,
+      "numericalStatus": "FAILED",
+      "complete": true,
+      "convergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "routingSteps": 262800,
+        "nonConvergedSteps": 2996,
+        "nonConvergedPercent": 1.1400304414003044
+      },
+      "timeWindowPolicy": "NATIVE_DURATION_DIAGNOSTIC",
+      "calendarShortfallSeconds": 1.0,
+      "warningCount": 2,
+      "runoffContinuityPercent": -0.007250262890011072,
+      "routingContinuityPercent": -0.022521784529089928,
+      "counts": {
+        "SUBCATCHMENTS": 7,
+        "JUNCTIONS": 133,
+        "OUTFALLS": 2,
+        "CONDUITS": 136,
+        "INFLOWS": 20,
+        "TIMESERIES": 4380
+      },
+      "topology": {
+        "missingReferences": [],
+        "nodesWithoutDirectedOutfallPath": []
+      },
+      "nonfiniteTokenCount": 0,
+      "externalFileReferenceCount": 0,
+      "failureReasons": [
+        "ROUTING_NONCONVERGED"
+      ],
+      "originalReportStart": "2022-08-08T00:00:00",
+      "executionReportStart": "2022-08-07T23:00:00",
+      "transformationsSha256": "acc6a2b6629c16f74eb0cea05c5c1116282536d083265e6acb29ed828863fc47",
+      "resultSha256": "035b294b2b58c5937a90cfaa2b6cb866690a3a4e517fde644c091d42eb7d5946"
+    }
+  ],
+  "originalReportingComparison": {
+    "case": "case-01",
+    "comparison": "ALL_OUTPUT_FLOAT_BYTES_AT_EVERY_ORIGINAL_REPORT_TIME",
+    "original": {
+      "periods": 4320,
+      "bytesPerPeriod": 6956,
+      "subcatchments": 29,
+      "nodes": 135,
+      "links": 136,
+      "resultStart": 6848
+    },
+    "extended": {
+      "periods": 4379,
+      "bytesPerPeriod": 6956,
+      "subcatchments": 29,
+      "nodes": 135,
+      "links": 136,
+      "resultStart": 6848
+    },
+    "matchedPeriods": 4320,
+    "addedPeriods": 59,
+    "identical": true,
+    "originalOutputSha256": "9ef9c6ae77f945b89d983bbe9e1499515effdcfcabca21d73bd5c6948821876f",
+    "extendedOutputSha256": "e4b2472dbc5702aef16380da988a83d176cbe92fe8593ea5365c0bccdfbda3cb",
+    "engine": {
+      "schemaVersion": 1,
+      "engineVersion": "5.2.4",
+      "revision": "7952ca837988b1c32f791812eccc9fd64547e093",
+      "sourceArchiveSha256": "3f76a199573088ce47ff02491c529afb73d9953ee9d948dfc89dcd4981b4c0c0",
+      "observerSha256": "c320fa1849cb4b03254167b107d1a9fefc7171b10c6ce397a0b82bb5c08c53e7",
+      "binarySha256": "673a83f39ec76e9e26c64702a68101b2cadfe113aaa879c5637baedefd4aaac5",
+      "modification": "READ_ONLY_OBSERVER_NO_SOLVER_CHANGES",
+      "adapterSha256": "f9fa6734de7a3adc64f1bd456862d80260115c656a6bc1c0b090841883bfb0d7",
+      "platform": "macOS-27.0.1-arm64-arm-64bit",
+      "qualityAdapterSha256": "c78323b383d37be56c34b8cc2d5084e4a92e3de6bbc2a818d914acbabf3eb930"
+    },
+    "scope": "REPORTING_CHANGE_ONLY_NOT_FIELD_VALIDATION",
+    "sourceInputSha256": "571af4e103f3a314b04a201f2fe179b442f1ecce626e05971f2882a8a71fed5f",
+    "publishedOutputSha256": "ac3728bff5b5201d09a225a83c2b93992872ce16906d0a288dbc8d396de6e2b0",
+    "publishedOutputBytesEqual": false
+  },
+  "reproduction": [
+    "simulation/.venv/bin/python scripts/prepare_published_network.py --manifest data/manifests/mendeley-seocho-heuristic-v1.json --output <new-directory> --include-pre-report --run"
+  ],
+  "evidenceFiles": {
+    "tmp/seocho-heuristic-v1/execution/manifest.json": "eb6c9622db061fbbc71abd91e1f65176acc9c3acc5eb099c911e1eb00464b45b",
+    "tmp/seocho-heuristic-v1/full-report-execution/manifest.json": "7c93366f52b6c2646c021f425af9da84378feb026d92152a95fa5679b0cf87fc",
+    "tmp/seocho-heuristic-v1/compare-report-window.py": "9ac9bb884899acc6cac8d31eb0cf16573f68899ac94b5f6c14ff65c3597fd090",
+    "tmp/seocho-heuristic-v1/original-report-comparison/comparison.json": "e4cd2c27af265126b3919cbb94cbc236aef955d80f49b862e93fb4e4d76db77c",
+    "tmp/seocho-heuristic-v1/original-report-comparison/original.inp": "571af4e103f3a314b04a201f2fe179b442f1ecce626e05971f2882a8a71fed5f",
+    "tmp/seocho-heuristic-v1/original-report-comparison/original.rpt": "6f4381391f41f3cfb839cec9d7e5d9a0761025f7a7f63f7c1a131319a011fa7c",
+    "tmp/seocho-heuristic-v1/original-report-comparison/original.out": "9ef9c6ae77f945b89d983bbe9e1499515effdcfcabca21d73bd5c6948821876f"
+  },
+  "rankingEligible": false,
+  "fieldValidated": false,
+  "publicSurfaceModelRegistered": false,
+  "horizontalCrs": null,
+  "verticalDatum": null,
+  "limitations": [
+    "연구자가 공개한 2012/2022년 관망 입력 4종이며 공식 현장 자산 목록 아님",
+    "수평 좌표계·수직 기준·시설 유효 시점·관측 수위 원문 미포함",
+    "논문의 관측 대조 성능을 현재 엔진의 현장 검증으로 전용하지 않음",
+    "내장 강우의 관측소·시간대·외부 유입 계보와 지표 유입/하류 경계 미검증",
+    "지형 원본·원형 수치지형도 대응 미확보, 게임·2D 운영 모델 미등록",
+    "원 INI 저장 설정은 5.2.2, 실제 공개 OUT 4개 헤더는 5.2.4로 구분. 공개 생성 바이너리 해시는 미제공",
+    "수치 비수렴을 보존하며 시간 간격 세분 실험·현장 대조는 수행하지 않음",
+    "보고 확장으로 통계 집계 범위가 바뀌므로 원 보고 통계를 동일 평가 지표로 혼합하지 않음"
+  ],
+  "publishedEngineDeclarations": {
+    "iniVersion": 52002,
+    "outputHeaderVersion": 52004,
+    "allOutputFilesChecked": 4,
+    "interpretation": "INI_EDITOR_SETTINGS_AND_ACTUAL_OUT_HEADER_DISTINGUISHED"
+  }
+}
