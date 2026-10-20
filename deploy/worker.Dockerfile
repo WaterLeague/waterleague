@@ -27,6 +27,12 @@ COPY simulation/native/lid_snapshot.inc /app/simulation/native/lid_snapshot.inc
 COPY scripts/local_config.py /app/scripts/local_config.py
 COPY scripts/build_score_policy.py /app/scripts/build_score_policy.py
 COPY backend/src/main/java/io/waterleague/evaluation/service/ScorePolicyService.java /app/backend/src/main/java/io/waterleague/evaluation/service/ScorePolicyService.java
+COPY backend/src/main/java/io/waterleague/cost/repository/GamePriceCatalog.java /app/backend/src/main/java/io/waterleague/cost/repository/GamePriceCatalog.java
+COPY backend/src/main/java/io/waterleague/cost/service/CostService.java /app/backend/src/main/java/io/waterleague/cost/service/CostService.java
+COPY backend/src/main/java/io/waterleague/historical/service/HistoricalService.java /app/backend/src/main/java/io/waterleague/historical/service/HistoricalService.java
+COPY backend/src/main/java/io/waterleague/historical/service/HistoricalDesignService.java /app/backend/src/main/java/io/waterleague/historical/service/HistoricalDesignService.java
+COPY backend/src/main/java/io/waterleague/spatial/repository/NativePlayRepository.java /app/backend/src/main/java/io/waterleague/spatial/repository/NativePlayRepository.java
+COPY backend/src/main/java/io/waterleague/installation/repository/CisternGameCatalog.java /app/backend/src/main/java/io/waterleague/installation/repository/CisternGameCatalog.java
 COPY backend/src/main/java/io/waterleague/installation/entity/SiteSuitability.java /app/backend/src/main/java/io/waterleague/installation/entity/SiteSuitability.java
 COPY backend/src/main/java/io/waterleague/installation/repository/SiteCatalogRepository.java /app/backend/src/main/java/io/waterleague/installation/repository/SiteCatalogRepository.java
 COPY backend/src/main/java/io/waterleague/weekly/service/WeeklyService.java /app/backend/src/main/java/io/waterleague/weekly/service/WeeklyService.java

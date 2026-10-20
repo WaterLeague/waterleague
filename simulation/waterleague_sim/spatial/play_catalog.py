@@ -60,6 +60,8 @@ class NativePlayCatalog:
                     or self._metadata['policy']['externalInflowConnected'] is not False):
                 raise NativeCatalogError('NATIVE_CATALOG_CONDITIONS_INVALID')
             self._metadata = cistern_game.metadata(self._metadata)
+            from ..costing.game_prices import apply
+            self._metadata = apply(self._metadata)
         except (OSError, KeyError, TypeError, IndexError, sqlite3.DatabaseError, json.JSONDecodeError):
             raise NativeCatalogError('NATIVE_CATALOG_INVALID') from None
 

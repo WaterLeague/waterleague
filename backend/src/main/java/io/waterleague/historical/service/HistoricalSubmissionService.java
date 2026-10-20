@@ -178,6 +178,15 @@ public class HistoricalSubmissionService {
           throw new DomainException(ErrorCode.PLACEMENT_INVALID);
       }
       var site = sites.requireInstallable(p.districtId(), p.cellId());
+      var savedRow = savedRows.get(p.districtId() + "/" + p.cellId());
+      if (savedRow != null)
+        site =
+            costs.recordedSite(
+                site,
+                p.facilityType(),
+                p.areaM2(),
+                savedRow.path("costSnapshotRaw").asString(),
+                savedRow.path("costSnapshotSha256").asString());
       var types = new HashSet<FacilityType>();
       site.allowedTypes().forEach(t -> types.add(FacilityType.valueOf(t)));
       var units = new EnumMap<FacilityType, BigDecimal>(FacilityType.class);
@@ -193,7 +202,6 @@ public class HistoricalSubmissionService {
               1);
       allocated.merge(p.facilityType(), amount, BigDecimal::add);
       var cost = costs.snapshot(site, p.facilityType(), p.areaM2(), amount.setScale(2));
-      var savedRow = savedRows.get(p.districtId() + "/" + p.cellId());
       if (savedRow != null
           && (!savedRow.path("site").path("modelHash").asString().equals(site.modelHash())
               || !savedRow.path("rainfallModelHash").asString().equals(region.modelHash())

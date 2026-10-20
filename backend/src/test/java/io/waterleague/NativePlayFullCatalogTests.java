@@ -15,7 +15,7 @@ class NativePlayFullCatalogTests {
       throws Exception {
     var json = new JsonService(new ObjectMapper());
     var source = new NativePlayBundle(json, Path.of("../tmp/native-spatial").toAbsolutePath().normalize().toString());
-    var repository = new NativePlayRepository(source, json, new io.waterleague.installation.repository.CisternGameCatalog(json));
+    var repository = new NativePlayRepository(source, json, new io.waterleague.installation.repository.CisternGameCatalog(json), new io.waterleague.cost.repository.GamePriceCatalog(json));
     assertThat(source.manifest().path("recordCount").asInt()).isEqualTo(1_024_232);
     var districts = new TreeSet<String>();
     source.manifest().path("districtKindCounts").properties()

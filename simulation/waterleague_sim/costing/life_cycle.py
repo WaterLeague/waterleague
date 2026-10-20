@@ -169,7 +169,7 @@ def native_plan(record):
     recorded = record.get('status') == 'RECORDED'
     value = record['estimate'] if recorded else None
     ev = {'sha256':value['costSourceSha256'] if recorded else POLICY_SHA256,
-          'reference':'PUBLIC_REFERENCE_QUANTITY_V1; unpricedItems' if recorded else '설치 당시 원가 미기록'}
+          'reference':value['version']+'; unpricedItems' if recorded else '설치 당시 원가 미기록'}
     return {'scenarioId':'NATIVE_COST_INPUTS_UNCONFIRMED', 'currency':'KRW', 'studyPeriodYears':None,
             'priceBaseYear':None,'priceBasis':'CONSTANT','discountKind':None,'discountRates':None,
             'termsEvidence':source, 'functionalUnit':str(value['quantityM2'])+' m2 '+value['facilityType'] if recorded else 'UNKNOWN',

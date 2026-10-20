@@ -1,0 +1,956 @@
+{
+  "currentCostSourceSha256": "864d0313414b1e5450b90df147eed292af9605d26c6efd051304435791dc1a2c",
+  "estimateSha256": "2099cbb6202d4c63d6c9e686bbe2b8c97dba0635063cfcb69dabf82704617d27",
+  "generatorSha256": "6bb2c828ca93c44bc3f5c17348db8eb0ac726d5d42d49cd90f63e808b9a906ac",
+  "id": "KICT_202608_GAME_PRICES_V1",
+  "previousCostSourceSha256": "6c5f0e9dc9034189da2ddbc5de56a5382f364af41edb4f48ffde2a050c8b346c",
+  "schemaVersion": 1,
+  "versions": {
+    "50f6e00757ecba3ed77a811b0fd9d03f72b800c0c47712093bf1adda99421036": {
+      "costModel": {
+        "currency": "KRW",
+        "facilities": {
+          "BIORETENTION": {
+            "evidence": "PUBLIC_PLAN_REFERENCE_SITE_TRANSFER_UNVERIFIED",
+            "excludes": [
+              "실시설계·감리",
+              "별도 토공",
+              "철거·폐기",
+              "토지",
+              "구조보강",
+              "유지관리·모니터링",
+              "예비비"
+            ],
+            "includes": [
+              "시설 설치"
+            ],
+            "note": "서울 지역·현재 물가·규격 미보정, 부가세 포함 여부 미확인; 원문 243m²·136,080,000원 기준 면적 외삽. EPA 단면과 규격 일치 미확인",
+            "referenceYear": 2022,
+            "scope": "식생체류지 면적 기준 설치 참고비",
+            "sourceSha256": "0efc54c3c884441d810ce28abb8928d758d98eb152fb71aac38791327b2d7414",
+            "sourceTitle": "진주상평 일반산업단지 저탄소 그린산업단지 조성사업 사업계획서",
+            "sourceUrl": "https://jinjucci.korcham.net/file/dext5uploaddata/2022/0718_%EC%A7%84%EC%A3%BC%EC%8B%9C_%EC%A0%80%ED%83%84%EC%86%8C%20%EA%B7%B8%EB%A6%B0%EC%82%B0%EC%97%85%EB%8B%A8%EC%A7%80%20%EC%A1%B0%EC%84%B1%EC%82%AC%EC%97%85_%EC%82%AC%EC%97%85%EA%B3%84%ED%9A%8D%EC%84%9C%20(%EC%9E%85%EC%A3%BC%EA%B8%B0%EC%97%85%ED%98%91%EC%9D%98%EC%B2%B4).pdf",
+            "unitCost": 560000
+          },
+          "GREEN_ROOF": {
+            "evidence": "PUBLIC_SEOUL_PROGRAM_APPROXIMATE_TOTAL",
+            "excludes": [
+              "현장별 추가 공사 미확정",
+              "유지관리 미산정"
+            ],
+            "includes": [
+              "구조안전진단",
+              "설계",
+              "공사"
+            ],
+            "note": "공식 안내의 35만원/㎡ 내외 추정. 구조·현장 조건에 따라 변동, 70% 보조율 차감 없음. 기준 가격연도·부가세 포함 여부 미확인",
+            "referenceYear": 2025,
+            "scope": "진단·설계·공사 포함 사업비 참고",
+            "sourceSha256": "0f4852e2778a3ba3c5db034527e22ce124dccb65b1a59d8c9bf3d1c1bf950a01",
+            "sourceTitle": "동대문구 옥상녹화 사업비 산정 안내",
+            "sourceUrl": "https://www.ddm.go.kr/www/selectBbsNttView.do?bbsNo=278&key=2143&nttNo=107220",
+            "unitCost": 350000
+          },
+          "INFILTRATION_TRENCH": {
+            "derivation": {
+              "formula": "ceil(12000000 / 70)",
+              "priceYear": null,
+              "rounding": "CEILING_KRW_PER_M2",
+              "sourceAreaM2": 70,
+              "sourceInitialCostKrw": 12000000,
+              "sourcePdfPages": [
+                43,
+                141
+              ],
+              "sourcePrintedPages": [
+                28,
+                126
+              ]
+            },
+            "evidence": "PUBLIC_RESEARCH_REFERENCE_SITE_TRANSFER_UNVERIFIED",
+            "excludes": [
+              "공종별 포함 범위 미확정",
+              "현재 서울 물가 보정",
+              "현장별 추가 공사",
+              "유지관리·준설",
+              "지하 관로형 트렌치 공사"
+            ],
+            "includes": [
+              "원문의 최초 설치비 총액"
+            ],
+            "note": "원문 28쪽·126쪽 H 시설 70m²·최초 설치비 1,200만원. 면적당 171,429원으로 원 단위 올림. 2022는 문서 연도이며 최초 가격연도·부가세 미확인. EPA 단면·서울 현장과 규격 일치 미확인. 대보수 금액·물가 1.2배는 적용하지 않음.",
+            "referenceYear": 2022,
+            "scope": "개방 쇄석 침투도랑 면적 환산 설치 참고비",
+            "sourceSha256": "f934acd95edace10692b56322d969e3ea13dc0c97ff4d2d4c9f790b77f99f002",
+            "sourceTitle": "LID 시설의 유지관리 방안에 관한 연구 · 침투도랑 H 최초 설치비",
+            "sourceUrl": "https://lh.or.kr/boardDownload.es?bid=0034&list_no=717595&seq=2",
+            "unitCost": 171429
+          },
+          "PERMEABLE_PAVEMENT": {
+            "evidence": "PUBLIC_PLAN_REFERENCE_SITE_TRANSFER_UNVERIFIED",
+            "excludes": [
+              "실시설계·감리",
+              "별도 토공",
+              "철거·폐기",
+              "토지",
+              "구조보강",
+              "유지관리·모니터링",
+              "예비비"
+            ],
+            "includes": [
+              "시설 설치"
+            ],
+            "note": "서울 지역·현재 물가·규격 미보정, 부가세 포함 여부 미확인",
+            "referenceYear": 2022,
+            "scope": "시설 설치 참고비",
+            "sourceSha256": "0efc54c3c884441d810ce28abb8928d758d98eb152fb71aac38791327b2d7414",
+            "sourceTitle": "진주상평 일반산업단지 저탄소 그린산업단지 조성사업 사업계획서",
+            "sourceUrl": "https://jinjucci.korcham.net/file/dext5uploaddata/2022/0718_%EC%A7%84%EC%A3%BC%EC%8B%9C_%EC%A0%80%ED%83%84%EC%86%8C%20%EA%B7%B8%EB%A6%B0%EC%82%B0%EC%97%85%EB%8B%A8%EC%A7%80%20%EC%A1%B0%EC%84%B1%EC%82%AC%EC%97%85_%EC%82%AC%EC%97%85%EA%B3%84%ED%9A%8D%EC%84%9C%20(%EC%9E%85%EC%A3%BC%EA%B8%B0%EC%97%85%ED%98%91%EC%9D%98%EC%B2%B4).pdf",
+            "unitCost": 110000
+          },
+          "RAIN_GARDEN": {
+            "evidence": "PUBLIC_PLAN_REFERENCE_SITE_TRANSFER_UNVERIFIED",
+            "excludes": [
+              "실시설계·감리",
+              "별도 토공",
+              "철거·폐기",
+              "토지",
+              "구조보강",
+              "유지관리·모니터링",
+              "예비비"
+            ],
+            "includes": [
+              "시설 설치"
+            ],
+            "note": "서울 지역·현재 물가·규격 미보정, 부가세 포함 여부 미확인",
+            "referenceYear": 2022,
+            "scope": "시설 설치 참고비",
+            "sourceSha256": "0efc54c3c884441d810ce28abb8928d758d98eb152fb71aac38791327b2d7414",
+            "sourceTitle": "진주상평 일반산업단지 저탄소 그린산업단지 조성사업 사업계획서",
+            "sourceUrl": "https://jinjucci.korcham.net/file/dext5uploaddata/2022/0718_%EC%A7%84%EC%A3%BC%EC%8B%9C_%EC%A0%80%ED%83%84%EC%86%8C%20%EA%B7%B8%EB%A6%B0%EC%82%B0%EC%97%85%EB%8B%A8%EC%A7%80%20%EC%A1%B0%EC%84%B1%EC%82%AC%EC%97%85_%EC%82%AC%EC%97%85%EA%B3%84%ED%9A%8D%EC%84%9C%20(%EC%9E%85%EC%A3%BC%EA%B8%B0%EC%97%85%ED%98%91%EC%9D%98%EC%B2%B4).pdf",
+            "unitCost": 560000
+          },
+          "VEGETATIVE_SWALE": {
+            "derivation": {
+              "designTopWidthM": 2,
+              "formula": "114390000 / 1271 / 2",
+              "headerUnitConflict": true,
+              "sourceLengthM": 1271,
+              "sourcePages": [
+                11,
+                12
+              ],
+              "sourceSubtotalKrw": 114390000,
+              "unitCostKrwPerM": 90000
+            },
+            "evidence": "PUBLIC_PLAN_REFERENCE_SITE_TRANSFER_UNVERIFIED",
+            "excludes": [
+              "실시설계·감리",
+              "별도 토공",
+              "철거·폐기",
+              "토지",
+              "구조보강",
+              "유지관리·모니터링",
+              "예비비"
+            ],
+            "includes": [
+              "시설 설치"
+            ],
+            "note": "원문 11쪽 폭 1.5/2m, 12쪽 1,271m·114,390,000원으로 90,000원/m 산출. 표 머리의 천원/㎡와 행 단위 불일치 보존. 폭 2m 설계에서 45,000원/㎡로 환산. 서울 현재 견적·실제 단면·부가세 미확인.",
+            "referenceYear": 2022,
+            "scope": "폭 2m 식생수로의 길이 환산 설치 참고비",
+            "sourceSha256": "0efc54c3c884441d810ce28abb8928d758d98eb152fb71aac38791327b2d7414",
+            "sourceTitle": "진주상평 일반산업단지 저탄소 그린산업단지 조성사업 사업계획서",
+            "sourceUrl": "https://jinjucci.korcham.net/file/dext5uploaddata/2022/0718_%EC%A7%84%EC%A3%BC%EC%8B%9C_%EC%A0%80%ED%83%84%EC%86%8C%20%EA%B7%B8%EB%A6%B0%EC%82%B0%EC%97%85%EB%8B%A8%EC%A7%80%20%EC%A1%B0%EC%84%B1%EC%82%AC%EC%97%85_%EC%82%AC%EC%97%85%EA%B3%84%ED%9A%8D%EC%84%9C%20(%EC%9E%85%EC%A3%BC%EA%B8%B0%EC%97%85%ED%98%91%EC%9D%98%EC%B2%B4).pdf",
+            "unitCost": 45000
+          }
+        },
+        "previousSha256": "9f9b235f0294d72b1821bfa3c7c014282889dfc8d21dbf70043c2a8e5eda417c",
+        "schemaVersion": 5,
+        "unit": "KRW_PER_SQUARE_METRE"
+      },
+      "unitCosts": {
+        "BIORETENTION": 560000,
+        "GREEN_ROOF": 350000,
+        "INFILTRATION_TRENCH": 171429,
+        "PERMEABLE_PAVEMENT": 110000,
+        "RAIN_GARDEN": 560000,
+        "VEGETATIVE_SWALE": 45000
+      }
+    },
+    "6c5f0e9dc9034189da2ddbc5de56a5382f364af41edb4f48ffde2a050c8b346c": {
+      "costModel": {
+        "currency": "KRW",
+        "facilities": {
+          "BIORETENTION": {
+            "evidence": "PUBLIC_PLAN_REFERENCE_SITE_TRANSFER_UNVERIFIED",
+            "excludes": [
+              "실시설계·감리",
+              "별도 토공",
+              "철거·폐기",
+              "토지",
+              "구조보강",
+              "유지관리·모니터링",
+              "예비비"
+            ],
+            "includes": [
+              "시설 설치"
+            ],
+            "note": "서울 지역·현재 물가·규격 미보정, 부가세 포함 여부 미확인; 원문 243m²·136,080,000원 기준 면적 외삽. EPA 단면과 규격 일치 미확인",
+            "referenceYear": 2022,
+            "scope": "식생체류지 면적 기준 설치 참고비",
+            "sourceSha256": "0efc54c3c884441d810ce28abb8928d758d98eb152fb71aac38791327b2d7414",
+            "sourceTitle": "진주상평 일반산업단지 저탄소 그린산업단지 조성사업 사업계획서",
+            "sourceUrl": "https://jinjucci.korcham.net/file/dext5uploaddata/2022/0718_%EC%A7%84%EC%A3%BC%EC%8B%9C_%EC%A0%80%ED%83%84%EC%86%8C%20%EA%B7%B8%EB%A6%B0%EC%82%B0%EC%97%85%EB%8B%A8%EC%A7%80%20%EC%A1%B0%EC%84%B1%EC%82%AC%EC%97%85_%EC%82%AC%EC%97%85%EA%B3%84%ED%9A%8D%EC%84%9C%20(%EC%9E%85%EC%A3%BC%EA%B8%B0%EC%97%85%ED%98%91%EC%9D%98%EC%B2%B4).pdf",
+            "unitCost": 560000
+          },
+          "GREEN_ROOF": {
+            "evidence": "PUBLIC_SEOUL_PROGRAM_APPROXIMATE_TOTAL",
+            "excludes": [
+              "현장별 추가 공사 미확정",
+              "유지관리 미산정"
+            ],
+            "includes": [
+              "구조안전진단",
+              "설계",
+              "공사"
+            ],
+            "note": "공식 안내의 35만원/㎡ 내외 추정. 구조·현장 조건에 따라 변동, 70% 보조율 차감 없음. 기준 가격연도·부가세 포함 여부 미확인",
+            "referenceYear": 2025,
+            "scope": "진단·설계·공사 포함 사업비 참고",
+            "sourceSha256": "0f4852e2778a3ba3c5db034527e22ce124dccb65b1a59d8c9bf3d1c1bf950a01",
+            "sourceTitle": "동대문구 옥상녹화 사업비 산정 안내",
+            "sourceUrl": "https://www.ddm.go.kr/www/selectBbsNttView.do?bbsNo=278&key=2143&nttNo=107220",
+            "unitCost": 350000
+          },
+          "INFILTRATION_TRENCH": {
+            "derivation": {
+              "formula": "ceil(12000000 / 70)",
+              "priceYear": null,
+              "rounding": "CEILING_KRW_PER_M2",
+              "sourceAreaM2": 70,
+              "sourceInitialCostKrw": 12000000,
+              "sourcePdfPages": [
+                43,
+                141
+              ],
+              "sourcePrintedPages": [
+                28,
+                126
+              ]
+            },
+            "evidence": "PUBLIC_RESEARCH_REFERENCE_SITE_TRANSFER_UNVERIFIED",
+            "excludes": [
+              "공종별 포함 범위 미확정",
+              "현재 서울 물가 보정",
+              "현장별 추가 공사",
+              "유지관리·준설",
+              "지하 관로형 트렌치 공사"
+            ],
+            "includes": [
+              "원문의 최초 설치비 총액"
+            ],
+            "note": "원문 28쪽·126쪽 H 시설 70m²·최초 설치비 1,200만원. 면적당 171,429원으로 원 단위 올림. 2022는 문서 연도이며 최초 가격연도·부가세 미확인. EPA 단면·서울 현장과 규격 일치 미확인. 대보수 금액·물가 1.2배는 적용하지 않음.",
+            "referenceYear": 2022,
+            "scope": "개방 쇄석 침투도랑 면적 환산 설치 참고비",
+            "sourceSha256": "f934acd95edace10692b56322d969e3ea13dc0c97ff4d2d4c9f790b77f99f002",
+            "sourceTitle": "LID 시설의 유지관리 방안에 관한 연구 · 침투도랑 H 최초 설치비",
+            "sourceUrl": "https://lh.or.kr/boardDownload.es?bid=0034&list_no=717595&seq=2",
+            "unitCost": 171429
+          },
+          "PERMEABLE_PAVEMENT": {
+            "evidence": "PUBLIC_PLAN_REFERENCE_SITE_TRANSFER_UNVERIFIED",
+            "excludes": [
+              "실시설계·감리",
+              "별도 토공",
+              "철거·폐기",
+              "토지",
+              "구조보강",
+              "유지관리·모니터링",
+              "예비비"
+            ],
+            "includes": [
+              "시설 설치"
+            ],
+            "note": "서울 지역·현재 물가·규격 미보정, 부가세 포함 여부 미확인",
+            "referenceYear": 2022,
+            "scope": "시설 설치 참고비",
+            "sourceSha256": "0efc54c3c884441d810ce28abb8928d758d98eb152fb71aac38791327b2d7414",
+            "sourceTitle": "진주상평 일반산업단지 저탄소 그린산업단지 조성사업 사업계획서",
+            "sourceUrl": "https://jinjucci.korcham.net/file/dext5uploaddata/2022/0718_%EC%A7%84%EC%A3%BC%EC%8B%9C_%EC%A0%80%ED%83%84%EC%86%8C%20%EA%B7%B8%EB%A6%B0%EC%82%B0%EC%97%85%EB%8B%A8%EC%A7%80%20%EC%A1%B0%EC%84%B1%EC%82%AC%EC%97%85_%EC%82%AC%EC%97%85%EA%B3%84%ED%9A%8D%EC%84%9C%20(%EC%9E%85%EC%A3%BC%EA%B8%B0%EC%97%85%ED%98%91%EC%9D%98%EC%B2%B4).pdf",
+            "unitCost": 110000
+          },
+          "RAINWATER_CISTERN": {
+            "derivation": {
+              "capacityM3": 2.35,
+              "formula": "ceil(2857000 / 235)",
+              "referenceCostKrw": 2857000,
+              "roofAreaM2": 235,
+              "rounding": "CEILING_KRW_PER_M2",
+              "scaling": "EXPLICIT_GAME_ASSUMPTION_NOT_MARKET_PRICE"
+            },
+            "evidence": "PUBLISHED_QUOTE_WITH_EXPLICIT_AREA_SCALING_ASSUMPTION",
+            "excludes": [
+              "현장 기초·굴착·구조 보강",
+              "부가세 포함 여부 미확인",
+              "서울 현재 물가 보정",
+              "실제 사용 수요·펌프 운전",
+              "유지관리"
+            ],
+            "includes": [
+              "논문 C 업체 2.35m³ 물통·배관·펌프 등 참고 견적"
+            ],
+            "note": "235m² 지붕·2.35m³·2,857,000원을 집수 면적당 12,158원으로 올림. 크기에 따른 비용 비례는 게임 가정이며 실제 규모별 견적 아님. 펌프 견적을 펌프 운전으로 계산하지 않음.",
+            "referenceYear": 2018,
+            "scope": "지붕 집수면적 환산 이용조 참고비",
+            "sourceSha256": "28f0c3969bbc2f1dd08e03fec2fddb70bfdecdfc4032bd871158eb3a1734e207",
+            "sourceTitle": "친환경시범마을의 LID 적용에 따른 물순환 효과 및 비용편익 분석",
+            "sourceUrl": "https://journal.cricit.kr/jkswe/XmlViewer/f253405",
+            "unitCost": 12158
+          },
+          "RAIN_GARDEN": {
+            "evidence": "PUBLIC_PLAN_REFERENCE_SITE_TRANSFER_UNVERIFIED",
+            "excludes": [
+              "실시설계·감리",
+              "별도 토공",
+              "철거·폐기",
+              "토지",
+              "구조보강",
+              "유지관리·모니터링",
+              "예비비"
+            ],
+            "includes": [
+              "시설 설치"
+            ],
+            "note": "서울 지역·현재 물가·규격 미보정, 부가세 포함 여부 미확인",
+            "referenceYear": 2022,
+            "scope": "시설 설치 참고비",
+            "sourceSha256": "0efc54c3c884441d810ce28abb8928d758d98eb152fb71aac38791327b2d7414",
+            "sourceTitle": "진주상평 일반산업단지 저탄소 그린산업단지 조성사업 사업계획서",
+            "sourceUrl": "https://jinjucci.korcham.net/file/dext5uploaddata/2022/0718_%EC%A7%84%EC%A3%BC%EC%8B%9C_%EC%A0%80%ED%83%84%EC%86%8C%20%EA%B7%B8%EB%A6%B0%EC%82%B0%EC%97%85%EB%8B%A8%EC%A7%80%20%EC%A1%B0%EC%84%B1%EC%82%AC%EC%97%85_%EC%82%AC%EC%97%85%EA%B3%84%ED%9A%8D%EC%84%9C%20(%EC%9E%85%EC%A3%BC%EA%B8%B0%EC%97%85%ED%98%91%EC%9D%98%EC%B2%B4).pdf",
+            "unitCost": 560000
+          },
+          "VEGETATIVE_SWALE": {
+            "derivation": {
+              "designTopWidthM": 2,
+              "formula": "114390000 / 1271 / 2",
+              "headerUnitConflict": true,
+              "sourceLengthM": 1271,
+              "sourcePages": [
+                11,
+                12
+              ],
+              "sourceSubtotalKrw": 114390000,
+              "unitCostKrwPerM": 90000
+            },
+            "evidence": "PUBLIC_PLAN_REFERENCE_SITE_TRANSFER_UNVERIFIED",
+            "excludes": [
+              "실시설계·감리",
+              "별도 토공",
+              "철거·폐기",
+              "토지",
+              "구조보강",
+              "유지관리·모니터링",
+              "예비비"
+            ],
+            "includes": [
+              "시설 설치"
+            ],
+            "note": "원문 11쪽 폭 1.5/2m, 12쪽 1,271m·114,390,000원으로 90,000원/m 산출. 표 머리의 천원/㎡와 행 단위 불일치 보존. 폭 2m 설계에서 45,000원/㎡로 환산. 서울 현재 견적·실제 단면·부가세 미확인.",
+            "referenceYear": 2022,
+            "scope": "폭 2m 식생수로의 길이 환산 설치 참고비",
+            "sourceSha256": "0efc54c3c884441d810ce28abb8928d758d98eb152fb71aac38791327b2d7414",
+            "sourceTitle": "진주상평 일반산업단지 저탄소 그린산업단지 조성사업 사업계획서",
+            "sourceUrl": "https://jinjucci.korcham.net/file/dext5uploaddata/2022/0718_%EC%A7%84%EC%A3%BC%EC%8B%9C_%EC%A0%80%ED%83%84%EC%86%8C%20%EA%B7%B8%EB%A6%B0%EC%82%B0%EC%97%85%EB%8B%A8%EC%A7%80%20%EC%A1%B0%EC%84%B1%EC%82%AC%EC%97%85_%EC%82%AC%EC%97%85%EA%B3%84%ED%9A%8D%EC%84%9C%20(%EC%9E%85%EC%A3%BC%EA%B8%B0%EC%97%85%ED%98%91%EC%9D%98%EC%B2%B4).pdf",
+            "unitCost": 45000
+          }
+        },
+        "previousSha256": "9f9b235f0294d72b1821bfa3c7c014282889dfc8d21dbf70043c2a8e5eda417c",
+        "schemaVersion": 5,
+        "unit": "KRW_PER_SQUARE_METRE"
+      },
+      "unitCosts": {
+        "BIORETENTION": 560000,
+        "GREEN_ROOF": 350000,
+        "INFILTRATION_TRENCH": 171429,
+        "PERMEABLE_PAVEMENT": 110000,
+        "RAINWATER_CISTERN": 12158,
+        "RAIN_GARDEN": 560000,
+        "VEGETATIVE_SWALE": 45000
+      }
+    },
+    "864d0313414b1e5450b90df147eed292af9605d26c6efd051304435791dc1a2c": {
+      "costModel": {
+        "currency": "KRW",
+        "facilities": {
+          "BIORETENTION": {
+            "evidence": "PUBLIC_PLAN_INDEX_ADJUSTED_WITH_EXPLICIT_PRICE_PERIOD_ASSUMPTION",
+            "excludes": [
+              "실시설계·감리",
+              "별도 토공",
+              "철거·폐기",
+              "토지",
+              "구조보강",
+              "유지관리·모니터링",
+              "예비비"
+            ],
+            "includes": [
+              "시설 설치"
+            ],
+            "note": "2022년 사업계획 가격을 같은 해 연평균 지수의 가격으로 가정한 2026년 8월 추정. 실제 기준월·서울 지역/규격·부가세 미확인. 공종 지수는 대용값이며 최신 현장 견적 아님.",
+            "originalNote": "서울 지역·현재 물가·규격 미보정, 부가세 포함 여부 미확인; 원문 243m²·136,080,000원 기준 면적 외삽. EPA 단면과 규격 일치 미확인",
+            "priceAdjustment": {
+              "adjustedUnitCostKrw": 632381,
+              "assumedBasePriceYear": 2022,
+              "baseMonthSensitivityKrwPerM2": [
+                615088,
+                672653
+              ],
+              "baseMonthlyIndices": [
+                {
+                  "cell": "JI19",
+                  "periodLabel": "2022년 1월",
+                  "value": 120.1
+                },
+                {
+                  "cell": "JJ19",
+                  "periodLabel": "2022년 2월",
+                  "value": 121.44
+                },
+                {
+                  "cell": "JK19",
+                  "periodLabel": "2022년 3월",
+                  "value": 123.39
+                },
+                {
+                  "cell": "JL19",
+                  "periodLabel": "2022년 4월",
+                  "value": 126.67
+                },
+                {
+                  "cell": "JM19",
+                  "periodLabel": "2022년 5월",
+                  "value": 128.22
+                },
+                {
+                  "cell": "JN19",
+                  "periodLabel": "2022년 6월",
+                  "value": 129.86
+                },
+                {
+                  "cell": "JO19",
+                  "periodLabel": "2022년 7월",
+                  "value": 130.09
+                },
+                {
+                  "cell": "JP19",
+                  "periodLabel": "2022년 8월",
+                  "value": 129.74
+                },
+                {
+                  "cell": "JQ19",
+                  "periodLabel": "2022년 9월",
+                  "value": 131.04
+                },
+                {
+                  "cell": "JR19",
+                  "periodLabel": "2022년 10월",
+                  "value": 131.32
+                },
+                {
+                  "cell": "JS19",
+                  "periodLabel": "2022년 11월",
+                  "value": 131.34
+                },
+                {
+                  "cell": "JT19",
+                  "periodLabel": "2022년 12월",
+                  "value": 129.77
+                }
+              ],
+              "basePeriodBasis": "PUBLIC_PLAN_YEAR_ANNUAL_MEAN_PROXY_NOT_VERIFIED_QUOTE_DATE",
+              "currency": "KRW",
+              "formula": "ceil(originalUnitCostKrw * targetIndex * 12 / sum(baseMonthlyIndices))",
+              "indexBaseYear": 2020,
+              "indexManifestSha256": "2d3dbe7742bdedfb7a1a09b18d53a6448be9709a78d5260ec1754c94e4eef766",
+              "indexPublishedAt": "2026-09-30",
+              "indexSeries": "도시토목",
+              "indexSourceUrl": "https://cost.kict.re.kr/#/notice/file/detail/47229",
+              "indexWorkbookSha256": "763dc705bb8aef5e89c7b9582691da3478554493c8b863c5122d1f46cd68ea90",
+              "method": "KICT_MONTHLY_INDEX_RATIO_ANNUAL_PROXY_V1",
+              "observedBasePriceYear": null,
+              "originalUnitCostKrw": 560000,
+              "rounding": "CEILING_KRW_PER_M2_FINAL_ONLY",
+              "sensitivityMeaning": "2022_MONTH_CHOICE_ONLY_NOT_MARKET_PRICE_RANGE_OR_CONFIDENCE_INTERVAL",
+              "seriesRole": "CONSTRUCTION_TYPE_PROXY_NOT_BILL_OF_QUANTITIES_MATCH",
+              "targetIndex": {
+                "cell": "LL19",
+                "periodLabel": "2026년 8월\n(잠정)",
+                "value": 144.26
+              },
+              "targetPeriod": "2026-08",
+              "targetProvisional": true
+            },
+            "referenceYear": 2022,
+            "scope": "식생체류지 면적 기준 설치 참고비",
+            "sourceSha256": "0efc54c3c884441d810ce28abb8928d758d98eb152fb71aac38791327b2d7414",
+            "sourceTitle": "진주상평 일반산업단지 저탄소 그린산업단지 조성사업 사업계획서",
+            "sourceUrl": "https://jinjucci.korcham.net/file/dext5uploaddata/2022/0718_%EC%A7%84%EC%A3%BC%EC%8B%9C_%EC%A0%80%ED%83%84%EC%86%8C%20%EA%B7%B8%EB%A6%B0%EC%82%B0%EC%97%85%EB%8B%A8%EC%A7%80%20%EC%A1%B0%EC%84%B1%EC%82%AC%EC%97%85_%EC%82%AC%EC%97%85%EA%B3%84%ED%9A%8D%EC%84%9C%20(%EC%9E%85%EC%A3%BC%EA%B8%B0%EC%97%85%ED%98%91%EC%9D%98%EC%B2%B4).pdf",
+            "unitCost": 632381
+          },
+          "GREEN_ROOF": {
+            "evidence": "PUBLIC_SEOUL_PROGRAM_APPROXIMATE_TOTAL",
+            "excludes": [
+              "현장별 추가 공사 미확정",
+              "유지관리 미산정"
+            ],
+            "includes": [
+              "구조안전진단",
+              "설계",
+              "공사"
+            ],
+            "note": "공식 안내의 35만원/㎡ 내외 추정. 구조·현장 조건에 따라 변동, 70% 보조율 차감 없음. 기준 가격연도·부가세 포함 여부 미확인",
+            "referenceYear": 2025,
+            "scope": "진단·설계·공사 포함 사업비 참고",
+            "sourceSha256": "0f4852e2778a3ba3c5db034527e22ce124dccb65b1a59d8c9bf3d1c1bf950a01",
+            "sourceTitle": "동대문구 옥상녹화 사업비 산정 안내",
+            "sourceUrl": "https://www.ddm.go.kr/www/selectBbsNttView.do?bbsNo=278&key=2143&nttNo=107220",
+            "unitCost": 350000
+          },
+          "INFILTRATION_TRENCH": {
+            "derivation": {
+              "formula": "ceil(12000000 / 70)",
+              "priceYear": null,
+              "rounding": "CEILING_KRW_PER_M2",
+              "sourceAreaM2": 70,
+              "sourceInitialCostKrw": 12000000,
+              "sourcePdfPages": [
+                43,
+                141
+              ],
+              "sourcePrintedPages": [
+                28,
+                126
+              ]
+            },
+            "evidence": "PUBLIC_RESEARCH_REFERENCE_SITE_TRANSFER_UNVERIFIED",
+            "excludes": [
+              "공종별 포함 범위 미확정",
+              "현재 서울 물가 보정",
+              "현장별 추가 공사",
+              "유지관리·준설",
+              "지하 관로형 트렌치 공사"
+            ],
+            "includes": [
+              "원문의 최초 설치비 총액"
+            ],
+            "note": "원문 28쪽·126쪽 H 시설 70m²·최초 설치비 1,200만원. 면적당 171,429원으로 원 단위 올림. 2022는 문서 연도이며 최초 가격연도·부가세 미확인. EPA 단면·서울 현장과 규격 일치 미확인. 대보수 금액·물가 1.2배는 적용하지 않음.",
+            "referenceYear": 2022,
+            "scope": "개방 쇄석 침투도랑 면적 환산 설치 참고비",
+            "sourceSha256": "f934acd95edace10692b56322d969e3ea13dc0c97ff4d2d4c9f790b77f99f002",
+            "sourceTitle": "LID 시설의 유지관리 방안에 관한 연구 · 침투도랑 H 최초 설치비",
+            "sourceUrl": "https://lh.or.kr/boardDownload.es?bid=0034&list_no=717595&seq=2",
+            "unitCost": 171429
+          },
+          "PERMEABLE_PAVEMENT": {
+            "evidence": "PUBLIC_PLAN_INDEX_ADJUSTED_WITH_EXPLICIT_PRICE_PERIOD_ASSUMPTION",
+            "excludes": [
+              "실시설계·감리",
+              "별도 토공",
+              "철거·폐기",
+              "토지",
+              "구조보강",
+              "유지관리·모니터링",
+              "예비비"
+            ],
+            "includes": [
+              "시설 설치"
+            ],
+            "note": "2022년 사업계획 가격을 같은 해 연평균 지수의 가격으로 가정한 2026년 8월 추정. 실제 기준월·서울 지역/규격·부가세 미확인. 공종 지수는 대용값이며 최신 현장 견적 아님.",
+            "originalNote": "서울 지역·현재 물가·규격 미보정, 부가세 포함 여부 미확인",
+            "priceAdjustment": {
+              "adjustedUnitCostKrw": 123733,
+              "assumedBasePriceYear": 2022,
+              "baseMonthSensitivityKrwPerM2": [
+                120406,
+                131502
+              ],
+              "baseMonthlyIndices": [
+                {
+                  "cell": "JI12",
+                  "periodLabel": "2022년 1월",
+                  "value": 120.99
+                },
+                {
+                  "cell": "JJ12",
+                  "periodLabel": "2022년 2월",
+                  "value": 122.02
+                },
+                {
+                  "cell": "JK12",
+                  "periodLabel": "2022년 3월",
+                  "value": 123.89
+                },
+                {
+                  "cell": "JL12",
+                  "periodLabel": "2022년 4월",
+                  "value": 127.55
+                },
+                {
+                  "cell": "JM12",
+                  "periodLabel": "2022년 5월",
+                  "value": 129.35
+                },
+                {
+                  "cell": "JN12",
+                  "periodLabel": "2022년 6월",
+                  "value": 130.65
+                },
+                {
+                  "cell": "JO12",
+                  "periodLabel": "2022년 7월",
+                  "value": 131.28
+                },
+                {
+                  "cell": "JP12",
+                  "periodLabel": "2022년 8월",
+                  "value": 130.52
+                },
+                {
+                  "cell": "JQ12",
+                  "periodLabel": "2022년 9월",
+                  "value": 131.63
+                },
+                {
+                  "cell": "JR12",
+                  "periodLabel": "2022년 10월",
+                  "value": 131.94
+                },
+                {
+                  "cell": "JS12",
+                  "periodLabel": "2022년 11월",
+                  "value": 132.14
+                },
+                {
+                  "cell": "JT12",
+                  "periodLabel": "2022년 12월",
+                  "value": 131.09
+                }
+              ],
+              "basePeriodBasis": "PUBLIC_PLAN_YEAR_ANNUAL_MEAN_PROXY_NOT_VERIFIED_QUOTE_DATE",
+              "currency": "KRW",
+              "formula": "ceil(originalUnitCostKrw * targetIndex * 12 / sum(baseMonthlyIndices))",
+              "indexBaseYear": 2020,
+              "indexManifestSha256": "2d3dbe7742bdedfb7a1a09b18d53a6448be9709a78d5260ec1754c94e4eef766",
+              "indexPublishedAt": "2026-09-30",
+              "indexSeries": "도로시설",
+              "indexSourceUrl": "https://cost.kict.re.kr/#/notice/file/detail/47229",
+              "indexWorkbookSha256": "763dc705bb8aef5e89c7b9582691da3478554493c8b863c5122d1f46cd68ea90",
+              "method": "KICT_MONTHLY_INDEX_RATIO_ANNUAL_PROXY_V1",
+              "observedBasePriceYear": null,
+              "originalUnitCostKrw": 110000,
+              "rounding": "CEILING_KRW_PER_M2_FINAL_ONLY",
+              "sensitivityMeaning": "2022_MONTH_CHOICE_ONLY_NOT_MARKET_PRICE_RANGE_OR_CONFIDENCE_INTERVAL",
+              "seriesRole": "CONSTRUCTION_TYPE_PROXY_NOT_BILL_OF_QUANTITIES_MATCH",
+              "targetIndex": {
+                "cell": "LL12",
+                "periodLabel": "2026년 8월\n(잠정)",
+                "value": 144.64
+              },
+              "targetPeriod": "2026-08",
+              "targetProvisional": true
+            },
+            "referenceYear": 2022,
+            "scope": "시설 설치 참고비",
+            "sourceSha256": "0efc54c3c884441d810ce28abb8928d758d98eb152fb71aac38791327b2d7414",
+            "sourceTitle": "진주상평 일반산업단지 저탄소 그린산업단지 조성사업 사업계획서",
+            "sourceUrl": "https://jinjucci.korcham.net/file/dext5uploaddata/2022/0718_%EC%A7%84%EC%A3%BC%EC%8B%9C_%EC%A0%80%ED%83%84%EC%86%8C%20%EA%B7%B8%EB%A6%B0%EC%82%B0%EC%97%85%EB%8B%A8%EC%A7%80%20%EC%A1%B0%EC%84%B1%EC%82%AC%EC%97%85_%EC%82%AC%EC%97%85%EA%B3%84%ED%9A%8D%EC%84%9C%20(%EC%9E%85%EC%A3%BC%EA%B8%B0%EC%97%85%ED%98%91%EC%9D%98%EC%B2%B4).pdf",
+            "unitCost": 123733
+          },
+          "RAINWATER_CISTERN": {
+            "derivation": {
+              "capacityM3": 2.35,
+              "formula": "ceil(2857000 / 235)",
+              "referenceCostKrw": 2857000,
+              "roofAreaM2": 235,
+              "rounding": "CEILING_KRW_PER_M2",
+              "scaling": "EXPLICIT_GAME_ASSUMPTION_NOT_MARKET_PRICE"
+            },
+            "evidence": "PUBLISHED_QUOTE_WITH_EXPLICIT_AREA_SCALING_ASSUMPTION",
+            "excludes": [
+              "현장 기초·굴착·구조 보강",
+              "부가세 포함 여부 미확인",
+              "서울 현재 물가 보정",
+              "실제 사용 수요·펌프 운전",
+              "유지관리"
+            ],
+            "includes": [
+              "논문 C 업체 2.35m³ 물통·배관·펌프 등 참고 견적"
+            ],
+            "note": "235m² 지붕·2.35m³·2,857,000원을 집수 면적당 12,158원으로 올림. 크기에 따른 비용 비례는 게임 가정이며 실제 규모별 견적 아님. 펌프 견적을 펌프 운전으로 계산하지 않음.",
+            "referenceYear": 2018,
+            "scope": "지붕 집수면적 환산 이용조 참고비",
+            "sourceSha256": "28f0c3969bbc2f1dd08e03fec2fddb70bfdecdfc4032bd871158eb3a1734e207",
+            "sourceTitle": "친환경시범마을의 LID 적용에 따른 물순환 효과 및 비용편익 분석",
+            "sourceUrl": "https://journal.cricit.kr/jkswe/XmlViewer/f253405",
+            "unitCost": 12158
+          },
+          "RAIN_GARDEN": {
+            "evidence": "PUBLIC_PLAN_INDEX_ADJUSTED_WITH_EXPLICIT_PRICE_PERIOD_ASSUMPTION",
+            "excludes": [
+              "실시설계·감리",
+              "별도 토공",
+              "철거·폐기",
+              "토지",
+              "구조보강",
+              "유지관리·모니터링",
+              "예비비"
+            ],
+            "includes": [
+              "시설 설치"
+            ],
+            "note": "2022년 사업계획 가격을 같은 해 연평균 지수의 가격으로 가정한 2026년 8월 추정. 실제 기준월·서울 지역/규격·부가세 미확인. 공종 지수는 대용값이며 최신 현장 견적 아님.",
+            "originalNote": "서울 지역·현재 물가·규격 미보정, 부가세 포함 여부 미확인",
+            "priceAdjustment": {
+              "adjustedUnitCostKrw": 632381,
+              "assumedBasePriceYear": 2022,
+              "baseMonthSensitivityKrwPerM2": [
+                615088,
+                672653
+              ],
+              "baseMonthlyIndices": [
+                {
+                  "cell": "JI19",
+                  "periodLabel": "2022년 1월",
+                  "value": 120.1
+                },
+                {
+                  "cell": "JJ19",
+                  "periodLabel": "2022년 2월",
+                  "value": 121.44
+                },
+                {
+                  "cell": "JK19",
+                  "periodLabel": "2022년 3월",
+                  "value": 123.39
+                },
+                {
+                  "cell": "JL19",
+                  "periodLabel": "2022년 4월",
+                  "value": 126.67
+                },
+                {
+                  "cell": "JM19",
+                  "periodLabel": "2022년 5월",
+                  "value": 128.22
+                },
+                {
+                  "cell": "JN19",
+                  "periodLabel": "2022년 6월",
+                  "value": 129.86
+                },
+                {
+                  "cell": "JO19",
+                  "periodLabel": "2022년 7월",
+                  "value": 130.09
+                },
+                {
+                  "cell": "JP19",
+                  "periodLabel": "2022년 8월",
+                  "value": 129.74
+                },
+                {
+                  "cell": "JQ19",
+                  "periodLabel": "2022년 9월",
+                  "value": 131.04
+                },
+                {
+                  "cell": "JR19",
+                  "periodLabel": "2022년 10월",
+                  "value": 131.32
+                },
+                {
+                  "cell": "JS19",
+                  "periodLabel": "2022년 11월",
+                  "value": 131.34
+                },
+                {
+                  "cell": "JT19",
+                  "periodLabel": "2022년 12월",
+                  "value": 129.77
+                }
+              ],
+              "basePeriodBasis": "PUBLIC_PLAN_YEAR_ANNUAL_MEAN_PROXY_NOT_VERIFIED_QUOTE_DATE",
+              "currency": "KRW",
+              "formula": "ceil(originalUnitCostKrw * targetIndex * 12 / sum(baseMonthlyIndices))",
+              "indexBaseYear": 2020,
+              "indexManifestSha256": "2d3dbe7742bdedfb7a1a09b18d53a6448be9709a78d5260ec1754c94e4eef766",
+              "indexPublishedAt": "2026-09-30",
+              "indexSeries": "도시토목",
+              "indexSourceUrl": "https://cost.kict.re.kr/#/notice/file/detail/47229",
+              "indexWorkbookSha256": "763dc705bb8aef5e89c7b9582691da3478554493c8b863c5122d1f46cd68ea90",
+              "method": "KICT_MONTHLY_INDEX_RATIO_ANNUAL_PROXY_V1",
+              "observedBasePriceYear": null,
+              "originalUnitCostKrw": 560000,
+              "rounding": "CEILING_KRW_PER_M2_FINAL_ONLY",
+              "sensitivityMeaning": "2022_MONTH_CHOICE_ONLY_NOT_MARKET_PRICE_RANGE_OR_CONFIDENCE_INTERVAL",
+              "seriesRole": "CONSTRUCTION_TYPE_PROXY_NOT_BILL_OF_QUANTITIES_MATCH",
+              "targetIndex": {
+                "cell": "LL19",
+                "periodLabel": "2026년 8월\n(잠정)",
+                "value": 144.26
+              },
+              "targetPeriod": "2026-08",
+              "targetProvisional": true
+            },
+            "referenceYear": 2022,
+            "scope": "시설 설치 참고비",
+            "sourceSha256": "0efc54c3c884441d810ce28abb8928d758d98eb152fb71aac38791327b2d7414",
+            "sourceTitle": "진주상평 일반산업단지 저탄소 그린산업단지 조성사업 사업계획서",
+            "sourceUrl": "https://jinjucci.korcham.net/file/dext5uploaddata/2022/0718_%EC%A7%84%EC%A3%BC%EC%8B%9C_%EC%A0%80%ED%83%84%EC%86%8C%20%EA%B7%B8%EB%A6%B0%EC%82%B0%EC%97%85%EB%8B%A8%EC%A7%80%20%EC%A1%B0%EC%84%B1%EC%82%AC%EC%97%85_%EC%82%AC%EC%97%85%EA%B3%84%ED%9A%8D%EC%84%9C%20(%EC%9E%85%EC%A3%BC%EA%B8%B0%EC%97%85%ED%98%91%EC%9D%98%EC%B2%B4).pdf",
+            "unitCost": 632381
+          },
+          "VEGETATIVE_SWALE": {
+            "derivation": {
+              "designTopWidthM": 2,
+              "formula": "114390000 / 1271 / 2",
+              "headerUnitConflict": true,
+              "sourceLengthM": 1271,
+              "sourcePages": [
+                11,
+                12
+              ],
+              "sourceSubtotalKrw": 114390000,
+              "unitCostKrwPerM": 90000
+            },
+            "evidence": "PUBLIC_PLAN_INDEX_ADJUSTED_WITH_EXPLICIT_PRICE_PERIOD_ASSUMPTION",
+            "excludes": [
+              "실시설계·감리",
+              "별도 토공",
+              "철거·폐기",
+              "토지",
+              "구조보강",
+              "유지관리·모니터링",
+              "예비비"
+            ],
+            "includes": [
+              "시설 설치"
+            ],
+            "note": "2022년 사업계획 가격을 같은 해 연평균 지수의 가격으로 가정한 2026년 8월 추정. 실제 기준월·서울 지역/규격·부가세 미확인. 공종 지수는 대용값이며 최신 현장 견적 아님.",
+            "originalNote": "원문 11쪽 폭 1.5/2m, 12쪽 1,271m·114,390,000원으로 90,000원/m 산출. 표 머리의 천원/㎡와 행 단위 불일치 보존. 폭 2m 설계에서 45,000원/㎡로 환산. 서울 현재 견적·실제 단면·부가세 미확인.",
+            "priceAdjustment": {
+              "adjustedUnitCostKrw": 50817,
+              "assumedBasePriceYear": 2022,
+              "baseMonthSensitivityKrwPerM2": [
+                49427,
+                54053
+              ],
+              "baseMonthlyIndices": [
+                {
+                  "cell": "JI19",
+                  "periodLabel": "2022년 1월",
+                  "value": 120.1
+                },
+                {
+                  "cell": "JJ19",
+                  "periodLabel": "2022년 2월",
+                  "value": 121.44
+                },
+                {
+                  "cell": "JK19",
+                  "periodLabel": "2022년 3월",
+                  "value": 123.39
+                },
+                {
+                  "cell": "JL19",
+                  "periodLabel": "2022년 4월",
+                  "value": 126.67
+                },
+                {
+                  "cell": "JM19",
+                  "periodLabel": "2022년 5월",
+                  "value": 128.22
+                },
+                {
+                  "cell": "JN19",
+                  "periodLabel": "2022년 6월",
+                  "value": 129.86
+                },
+                {
+                  "cell": "JO19",
+                  "periodLabel": "2022년 7월",
+                  "value": 130.09
+                },
+                {
+                  "cell": "JP19",
+                  "periodLabel": "2022년 8월",
+                  "value": 129.74
+                },
+                {
+                  "cell": "JQ19",
+                  "periodLabel": "2022년 9월",
+                  "value": 131.04
+                },
+                {
+                  "cell": "JR19",
+                  "periodLabel": "2022년 10월",
+                  "value": 131.32
+                },
+                {
+                  "cell": "JS19",
+                  "periodLabel": "2022년 11월",
+                  "value": 131.34
+                },
+                {
+                  "cell": "JT19",
+                  "periodLabel": "2022년 12월",
+                  "value": 129.77
+                }
+              ],
+              "basePeriodBasis": "PUBLIC_PLAN_YEAR_ANNUAL_MEAN_PROXY_NOT_VERIFIED_QUOTE_DATE",
+              "currency": "KRW",
+              "formula": "ceil(originalUnitCostKrw * targetIndex * 12 / sum(baseMonthlyIndices))",
+              "indexBaseYear": 2020,
+              "indexManifestSha256": "2d3dbe7742bdedfb7a1a09b18d53a6448be9709a78d5260ec1754c94e4eef766",
+              "indexPublishedAt": "2026-09-30",
+              "indexSeries": "도시토목",
+              "indexSourceUrl": "https://cost.kict.re.kr/#/notice/file/detail/47229",
+              "indexWorkbookSha256": "763dc705bb8aef5e89c7b9582691da3478554493c8b863c5122d1f46cd68ea90",
+              "method": "KICT_MONTHLY_INDEX_RATIO_ANNUAL_PROXY_V1",
+              "observedBasePriceYear": null,
+              "originalUnitCostKrw": 45000,
+              "rounding": "CEILING_KRW_PER_M2_FINAL_ONLY",
+              "sensitivityMeaning": "2022_MONTH_CHOICE_ONLY_NOT_MARKET_PRICE_RANGE_OR_CONFIDENCE_INTERVAL",
+              "seriesRole": "CONSTRUCTION_TYPE_PROXY_NOT_BILL_OF_QUANTITIES_MATCH",
+              "targetIndex": {
+                "cell": "LL19",
+                "periodLabel": "2026년 8월\n(잠정)",
+                "value": 144.26
+              },
+              "targetPeriod": "2026-08",
+              "targetProvisional": true
+            },
+            "referenceYear": 2022,
+            "scope": "폭 2m 식생수로의 길이 환산 설치 참고비",
+            "sourceSha256": "0efc54c3c884441d810ce28abb8928d758d98eb152fb71aac38791327b2d7414",
+            "sourceTitle": "진주상평 일반산업단지 저탄소 그린산업단지 조성사업 사업계획서",
+            "sourceUrl": "https://jinjucci.korcham.net/file/dext5uploaddata/2022/0718_%EC%A7%84%EC%A3%BC%EC%8B%9C_%EC%A0%80%ED%83%84%EC%86%8C%20%EA%B7%B8%EB%A6%B0%EC%82%B0%EC%97%85%EB%8B%A8%EC%A7%80%20%EC%A1%B0%EC%84%B1%EC%82%AC%EC%97%85_%EC%82%AC%EC%97%85%EA%B3%84%ED%9A%8D%EC%84%9C%20(%EC%9E%85%EC%A3%BC%EA%B8%B0%EC%97%85%ED%98%91%EC%9D%98%EC%B2%B4).pdf",
+            "unitCost": 50817
+          }
+        },
+        "previousSha256": "6c5f0e9dc9034189da2ddbc5de56a5382f364af41edb4f48ffde2a050c8b346c",
+        "schemaVersion": 7,
+        "unit": "KRW_PER_SQUARE_METRE"
+      },
+      "unitCosts": {
+        "BIORETENTION": 632381,
+        "GREEN_ROOF": 350000,
+        "INFILTRATION_TRENCH": 171429,
+        "PERMEABLE_PAVEMENT": 123733,
+        "RAINWATER_CISTERN": 12158,
+        "RAIN_GARDEN": 632381,
+        "VEGETATIVE_SWALE": 50817
+      }
+    }
+  }
+}

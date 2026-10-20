@@ -123,6 +123,18 @@ public class HistoricalService {
                         io.waterleague.historical.dto.GuestHistoricalRequest.Item::districtId)
                     .thenComparing(i -> i.placement().cellId()))
             .toList();
+    var previous = jobs.guestByKey(guest, dto.requestKey());
+    if (previous.isPresent()) {
+      var job = previous.get();
+      var original =
+          json.tree(json.tree(job.placements()).get(0).path("guestDesignSnapshotRaw").asString());
+      if (!job.districtId().equals(dto.districtId())
+          || !original.path("eventId").asString().equals(dto.eventId())
+          || !original.path("placements").equals(json.tree(json.write(sorted))))
+        throw new DomainException(ErrorCode.CONFLICT);
+      // 재전송은 최초 계산을 반환하므로 이후 단가로 예산을 다시 검사하지 않는다.
+      return guestView(job);
+    }
     var allocated = new EnumMap<FacilityType, BigDecimal>(FacilityType.class);
     var locations = new HashSet<String>();
     for (var entry : sorted) {
@@ -231,9 +243,9 @@ public class HistoricalService {
           || !parent.districtId().equals(dto.districtId()))
         throw new DomainException(ErrorCode.PLACEMENT_INVALID);
     }
-    var cells = new HashMap<String, PlacementCell>();
-    var costs = new EnumMap<FacilityType, BigDecimal>(FacilityType.class);
-    var physical = new ArrayList<Placement>();
+    if (dto.placements().isEmpty() || dto.placements().size() > 50)
+      throw new DomainException(ErrorCode.PLACEMENT_INVALID);
+    var locations = new HashSet<String>();
     var frozen = new ArrayList<Map<String, Object>>();
     var allocated = new EnumMap<FacilityType, BigDecimal>(FacilityType.class);
     for (var p :
@@ -241,15 +253,7 @@ public class HistoricalService {
             .sorted(Comparator.comparing(HistoricalRequest.Item::cellId))
             .toList()) {
       var c = sites.requireInstallable(district.id(), p.cellId());
-      var types = new HashSet<FacilityType>();
-      for (var t : c.allowedTypes()) types.add(FacilityType.valueOf(t));
-      cells.put(
-          c.cellId(), new PlacementCell(c.cellId(), types, c.maxAreaFor(p.facilityType()), true));
-      c.unitCosts().forEach((t, n) -> costs.put(FacilityType.valueOf(t), n));
-      physical.add(new Placement(p.cellId(), p.facilityType(), p.areaM2()));
-      var unitCost = c.unitCosts().get(p.facilityType().name());
-      if (unitCost == null) throw new DomainException(ErrorCode.PLACEMENT_INVALID);
-      allocated.merge(p.facilityType(), unitCost.multiply(p.areaM2()).setScale(2), BigDecimal::add);
+      if (!locations.add(p.cellId())) throw new DomainException(ErrorCode.PLACEMENT_INVALID);
       frozen.add(
           new TreeMap<>(
               Map.of(
@@ -272,13 +276,7 @@ public class HistoricalService {
     }
     if (dto.parentExperimentId() != null)
       frozen.getFirst().put("parentExperimentId", dto.parentExperimentId().toString());
-    var cost = validation.validate(physical, cells, costs, budget.limit(), 50);
-    if (cost.compareTo(allocated.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add)) != 0)
-      throw new DomainException(ErrorCode.PLACEMENT_INVALID);
-    var accounting = budget.validateDesign(allocated);
-    frozen.getFirst().put("budgetAccounting", accounting);
     frozen.getFirst().put("publicAssetPolicy", sites.publicAssetPolicy());
-    String body = json.write(frozen), hash = json.hash(dto.modelHash() + "\n" + body);
     // 편집 저장과 계산 승인 사이의 버전 확인을 같은 회원 잠금으로 직렬화한다.
     admission.lockAdmission();
     if (guest == null)
@@ -409,6 +407,33 @@ public class HistoricalService {
     }
     for (var row : frozen) {
       var site = sites.require(district.id(), (String) row.get("cellId"));
+      var type = (FacilityType) row.get("facilityType");
+      var area = (BigDecimal) row.get("areaM2");
+      var savedRow = savedRows.get(row.get("cellId"));
+      if (savedRow != null)
+        site =
+            costRecords.recordedSite(
+                site,
+                type,
+                area,
+                savedRow.path("costSnapshotRaw").asString(),
+                savedRow.path("costSnapshotSha256").asString());
+      var types = new HashSet<FacilityType>();
+      site.allowedTypes().forEach(t -> types.add(FacilityType.valueOf(t)));
+      var units = new EnumMap<FacilityType, BigDecimal>(FacilityType.class);
+      site.unitCosts().forEach((t, v) -> units.put(FacilityType.valueOf(t), v));
+      var amount =
+          validation
+              .validate(
+                  List.of(new Placement(site.cellId(), type, area)),
+                  Map.of(
+                      site.cellId(),
+                      new PlacementCell(site.cellId(), types, site.maxAreaFor(type), true)),
+                  units,
+                  budget.limit(),
+                  1)
+              .setScale(2);
+      allocated.merge(type, amount, BigDecimal::add);
       if (row.get("cellId").equals(dto.sensitivityCellId())) {
         if (site.initializationPolicy() == null
             || site.initializationPolicy().isNull()
@@ -433,12 +458,7 @@ public class HistoricalService {
             facilities.pavementMaintenance().path("id").asString());
         row.put("pavementMaintenanceCatalogSha256", FacilityRepository.PAVEMENT_MAINTENANCE_SHA256);
       }
-      var type = (FacilityType) row.get("facilityType");
-      var area = (BigDecimal) row.get("areaM2");
-      var record =
-          costRecords.snapshot(
-              site, type, area, site.unitCosts().get(type.name()).multiply(area).setScale(2));
-      var savedRow = savedRows.get(row.get("cellId"));
+      var record = costRecords.snapshot(site, type, area, amount);
       if (savedRow != null) {
         if (savedRow
                 .path("cost")
@@ -452,12 +472,13 @@ public class HistoricalService {
         row.put("costSnapshotSha256", record.sha256());
       }
     }
+    frozen.getFirst().put("budgetAccounting", budget.validateDesign(allocated));
     if (guest != null) {
       frozen.getFirst().put("guestDesignSnapshotRaw", guestSnapshot);
       frozen.getFirst().put("guestDesignSnapshotSha256", json.hash(guestSnapshot));
     }
-    body = json.write(frozen);
-    hash = json.hash(dto.modelHash() + "\n" + body);
+    String body = json.write(frozen);
+    String hash = json.hash(dto.modelHash() + "\n" + body);
     if ((guest == null ? jobs.active(owner) : jobs.guestActive(guest)) >= 2
         || admission.totalActive() >= 20)
       throw new DomainException(ErrorCode.SIMULATION_QUOTA_EXCEEDED);

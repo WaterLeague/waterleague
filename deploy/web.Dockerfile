@@ -7,10 +7,16 @@ COPY frontend/ ./
 COPY data/models/ /build/data/models/
 COPY data/costs/lid-reference-v5.json /build/data/costs/lid-reference-v5.json
 COPY data/derived/pavement-cleaning-v1.json /build/data/derived/pavement-cleaning-v1.json
+COPY data/facilities/maintenance-reference-v1.json /build/data/facilities/maintenance-reference-v1.json
 COPY data/manifests/vworld-seongdong-topography-20260307.json /build/data/manifests/vworld-seongdong-topography-20260307.json
 COPY backend/src/main/resources/infrastructure/ /build/backend/src/main/resources/infrastructure/
 COPY backend/src/main/resources/facilities/epa-designs-v1.json /build/backend/src/main/resources/facilities/epa-designs-v1.json
 COPY backend/src/main/resources/facilities/epa-designs-v4.json /build/backend/src/main/resources/facilities/epa-designs-v4.json
+COPY backend/src/main/resources/facilities/epa-designs-v5.json /build/backend/src/main/resources/facilities/epa-designs-v5.json
+COPY backend/src/main/resources/facilities/cistern-game-v1.json /build/backend/src/main/resources/facilities/cistern-game-v1.json
+COPY backend/src/main/resources/facilities/cistern-specifications-v1.json /build/backend/src/main/resources/facilities/cistern-specifications-v1.json
+COPY backend/src/main/resources/facilities/site-suitability-v1.json /build/backend/src/main/resources/facilities/site-suitability-v1.json
+COPY backend/src/main/resources/facilities/game-prices-202608-v1.json /build/backend/src/main/resources/facilities/game-prices-202608-v1.json
 COPY backend/src/main/resources/evaluation/game-score-policy-v1.json /build/backend/src/main/resources/evaluation/game-score-policy-v1.json
 COPY backend/src/test/resources/cistern-layout-cases.json /build/backend/src/test/resources/cistern-layout-cases.json
 COPY simulation/tests/fixtures/pattern-search-v1.json /build/simulation/tests/fixtures/pattern-search-v1.json

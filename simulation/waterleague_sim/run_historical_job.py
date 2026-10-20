@@ -61,6 +61,8 @@ def calculate(request, directory):
     for index, placement in enumerate(placements):
         model, _, _ = resolve({'district_id': placement['districtId'], 'cell_id': placement['cellId'],
                                'model_hash': placement['siteModelHash'],
+                               'cost_snapshot': placement.get('costSnapshotRaw'),
+                               'cost_snapshot_sha256': placement.get('costSnapshotSha256'),
                                'budget_policy': placement.get('budgetPolicy')})
         if observed['mapId'] != 'seoul-ngii-v1-'+placement['districtId']:
             raise ValueError('HISTORICAL_DISTRICT_INVALID')

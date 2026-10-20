@@ -38,6 +38,24 @@ export function CostScope({
           <dd>미확인</dd>
         </div>
       </dl>
+      {source.priceAdjustment && (
+        <>
+          <p>2026년 8월 가격 추정 · 잠정 공사비지수 적용</p>
+          <p>
+            원 단가 {won(source.priceAdjustment.originalUnitCostKrw)}/m² → {won(unit)}/m². 실제 견적
+            기준월이 없어 2022년 연평균을 기준 시점으로 가정했습니다.
+          </p>
+          <p>
+            {source.priceAdjustment.indexSeries} 지수 비율을 적용하고 최종 원 단가에서 올림했습니다.
+            기준월 선택에 따른 범위는 {won(source.priceAdjustment.baseMonthSensitivityKrwPerM2[0])}~
+            {won(source.priceAdjustment.baseMonthSensitivityKrwPerM2[1])}/m²이며 시장 견적 범위는
+            아닙니다.
+          </p>
+          <a href={source.priceAdjustment.indexSourceUrl} target="_blank" rel="noreferrer">
+            KICT 건설공사비지수 · 2026-09-30 공표 ↗
+          </a>
+        </>
+      )}
       <p>포함: {source.includes.join(' · ')}</p>
       <ul aria-label="미산정 비용">
         {source.excludes.map((label, i) => (

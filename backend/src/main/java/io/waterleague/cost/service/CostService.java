@@ -15,12 +15,21 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CostService {
+  private static final tools.jackson.databind.ObjectReader EXACT_JSON =
+      new tools.jackson.databind.ObjectMapper()
+          .reader()
+          .with(tools.jackson.databind.DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS);
   private final JsonService json;
   private final CostRepository repository;
+  private final io.waterleague.cost.repository.GamePriceCatalog prices;
 
-  public CostService(JsonService json, CostRepository repository) {
+  public CostService(
+      JsonService json,
+      CostRepository repository,
+      io.waterleague.cost.repository.GamePriceCatalog prices) {
     this.json = json;
     this.repository = repository;
+    this.prices = prices;
   }
 
   public CostSnapshot snapshot(
@@ -39,7 +48,9 @@ public class CostService {
           || !source.path("sourceSha256").asString().matches("[a-f0-9]{64}"))
         throw new CostException();
       var value = new LinkedHashMap<String, Object>();
-      value.put("version", "PUBLIC_REFERENCE_QUANTITY_V1");
+      boolean indexed = source.has("priceAdjustment");
+      value.put(
+          "version", indexed ? "PUBLIC_REFERENCE_QUANTITY_V2" : "PUBLIC_REFERENCE_QUANTITY_V1");
       value.put("currency", "KRW");
       value.put("districtId", site.districtId());
       value.put("cellId", site.cellId());
@@ -52,7 +63,9 @@ public class CostService {
       value.put("completeInstalledCostKrw", null);
       value.put("priceBaseYear", null);
       value.put("vat", "UNCONFIRMED");
-      value.put("priceAdjustment", "NONE");
+      value.put(
+          "priceAdjustment",
+          indexed ? source.path("priceAdjustment").path("method").asString() : "NONE");
       value.put("currentPriceVerified", false);
       value.put("historicalPriceEligible", false);
       value.put("costSourceSha256", site.costSourceSha256());
@@ -99,7 +112,8 @@ public class CostService {
       if (row.raw() == null || !json.hash(row.raw()).equals(row.sha256()))
         throw new CostException();
       var value = json.tree(row.raw());
-      if (!value.path("version").asString().equals("PUBLIC_REFERENCE_QUANTITY_V1")
+      if (!Set.of("PUBLIC_REFERENCE_QUANTITY_V1", "PUBLIC_REFERENCE_QUANTITY_V2")
+              .contains(value.path("version").asString())
           || !value.path("districtId").asString().equals(row.districtId())
           || !value.path("cellId").asString().equals(row.cellId())
           || !value.path("siteModelHash").asString().equals(row.modelHash())
@@ -111,5 +125,40 @@ public class CostService {
     } catch (RuntimeException e) {
       throw new CostException();
     }
+  }
+
+  public SiteView recordedSite(
+      SiteView current, FacilityType type, BigDecimal area, String raw, String sha) {
+    try {
+      if (raw == null || raw.length() > 65536 || !json.hash(raw).equals(sha))
+        throw new CostException();
+      var record = json.tree(raw);
+      var site = prices.site(current, record.path("costSourceSha256").asString());
+      var expected = snapshot(site, type, area, site.unitCosts().get(type.name()).multiply(area));
+      if (!same(EXACT_JSON.readTree(expected.raw()), EXACT_JSON.readTree(raw)))
+        throw new CostException();
+      return site;
+    } catch (RuntimeException e) {
+      throw new CostException();
+    }
+  }
+
+  private static boolean same(
+      tools.jackson.databind.JsonNode a, tools.jackson.databind.JsonNode b) {
+    if (a == null || b == null) return a == b;
+    // 10과 10.00의 표기 차이는 허용하되 금액은 십진수 원값으로 비교한다.
+    if (a.isNumber() && b.isNumber()) return a.decimalValue().compareTo(b.decimalValue()) == 0;
+    if (a.isObject() && b.isObject()) {
+      if (a.size() != b.size()) return false;
+      for (var entry : a.properties())
+        if (!same(entry.getValue(), b.get(entry.getKey()))) return false;
+      return true;
+    }
+    if (a.isArray() && b.isArray()) {
+      if (a.size() != b.size()) return false;
+      for (int i = 0; i < a.size(); i++) if (!same(a.get(i), b.get(i))) return false;
+      return true;
+    }
+    return a.equals(b);
   }
 }

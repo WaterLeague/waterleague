@@ -9,7 +9,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 BASE = ROOT / 'data/costs/lid-reference-v6.json'
 INDEX = ROOT / 'data/manifests/kict-construction-index-202608.json'
-OUTPUT = ROOT / 'data/costs/lid-index-estimates-202608-v1.json'
+OUTPUT = ROOT / 'data/costs/lid-index-estimates-202608-v2.json'
 SERIES = {'RAIN_GARDEN': '도시토목', 'BIORETENTION': '도시토목',
           'VEGETATIVE_SWALE': '도시토목', 'PERMEABLE_PAVEMENT': '도로시설'}
 
@@ -75,8 +75,9 @@ def build():
         }
         facilities[facility] = source
     return {
-        'schemaVersion': 1, 'id': 'KICT_202608_GAME_PRICE_ESTIMATES_V1',
-        'status': 'CALCULATED_INPUT_NOT_YET_ACTIVE_GAME_PRICES',
+        'schemaVersion': 1, 'id': 'KICT_202608_GAME_PRICE_ESTIMATES_V2',
+        'status': 'INDEX_ADJUSTED_GAME_PRICE_INPUT',
+        'supersedesSha256': sha((ROOT / 'data/costs/lid-index-estimates-202608-v1.json').read_bytes()),
         'currency': 'KRW', 'unit': 'KRW_PER_SQUARE_METRE',
         'sourceCostCatalogSha256': sha(base_raw), 'indexManifestSha256': sha(index_raw),
         'generatorSha256': sha(Path(__file__).read_bytes()), 'facilities': facilities,
@@ -88,7 +89,7 @@ def build():
         'limitations': ['2026-08 지수는 잠정치이며 해당 공표본을 고정',
             '실제 공사 견적·계약금액 조정·시설 간 전체 생애비용 비교가 아님',
             '기존 예산 지출·설계·제출 비용의 소급 변경 없음',
-            '현재 서버 설치비 적용과 버전별 원가 재생 통합 검증이 남은 구현'],
+            '신규 설치의 공표 단가와 기존 설치에 보관한 단가를 구별'],
     }
 
 

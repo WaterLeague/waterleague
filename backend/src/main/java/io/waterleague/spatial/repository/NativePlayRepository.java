@@ -17,6 +17,7 @@ public class NativePlayRepository {
   private final NativePlayBundle bundle;
   private final JsonService json;
   private final io.waterleague.installation.repository.CisternGameCatalog cistern;
+  private final io.waterleague.cost.repository.GamePriceCatalog prices;
 
   private record State(Path database, BasicFileAttributes identity, JsonNode metadata) {}
 
@@ -25,10 +26,15 @@ public class NativePlayRepository {
   private final Semaphore queries = new Semaphore(4);
   private volatile Map<String, Integer> counts;
 
-  public NativePlayRepository(NativePlayBundle bundle, JsonService json, io.waterleague.installation.repository.CisternGameCatalog cistern) {
+  public NativePlayRepository(
+      NativePlayBundle bundle,
+      JsonService json,
+      io.waterleague.installation.repository.CisternGameCatalog cistern,
+      io.waterleague.cost.repository.GamePriceCatalog prices) {
     this.bundle = bundle;
     this.json = json;
     this.cistern = cistern;
+    this.prices = prices;
     var values = new HashSet<String>();
     bundle
         .manifest()
@@ -106,7 +112,7 @@ public class NativePlayRepository {
   }
 
   public JsonNode metadata() {
-    return cistern.metadata(state().metadata());
+    return prices.metadata(cistern.metadata(state().metadata()));
   }
 
   public JsonNode envelope() {
@@ -197,7 +203,8 @@ public class NativePlayRepository {
         || offset < 0
         || offset > 300000
         || mask != null && !Set.of(1, 2, 4, 8, 16, 32, 64).contains(mask)
-        || role != null && !Set.of("ROAD_AREA", "SIDEWALK_AREA", "PARKING_AREA", "OTHER").contains(role))
+        || role != null
+            && !Set.of("ROAD_AREA", "SIDEWALK_AREA", "PARKING_AREA", "OTHER").contains(role))
       requestInvalid();
     String filter =
         "district_id=? AND allowed_mask<>0"

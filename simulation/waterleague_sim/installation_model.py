@@ -15,6 +15,8 @@ def resolve(installation):
             or not catalog.accepts_catalog(registry[district]['siteCatalogSha256'])):
         raise ValueError('LIVE_INSTALLATION_MODEL_INVALID')
     model = catalog.model(installation.get('cell_id'), district=district)
+    from .costing.game_prices import apply, recorded_version
+    model = apply(model, recorded_version(installation.get('cost_snapshot'), installation.get('cost_snapshot_sha256')))
     model['mapId'] = 'seoul-ngii-v1-' + district
     policy = installation.get('budget_policy')
     if policy is not None:

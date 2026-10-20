@@ -6,7 +6,7 @@
 
 - `GET /api/v1/installations/{id}/cost`: 현재 공개 설치의 설치 당시 원가 내역. `RECORDED`는 `sha256`과 `estimate`(후보 해시·시설·수량·단가·예산 반영액·출처·미산정 항목), `NOT_RECORDED`는 두 필드 null. 이전 설치에 현재 가격을 계산해 채우지 않음. 철거·없는 설치는 404, 원문 해시나 설치 정보 불일치는 공통 `COST_DATA_INVALID` 503. 별도 상세 조회로 전체 지도 설치 목록의 응답 크기 유지.
 - 신규 주간 설치의 `cost_snapshot` 원문·SHA-256은 같은 트랜잭션에 저장. 재해 신규 요청은 각 배치의 `costSnapshotRaw`·`costSnapshotSha256`을 서버가 생성해 입력 해시에 포함. 클라이언트가 가격을 제출하지 않음. 같은 요청 키의 과거 실행은 기존 원문 반환.
-- 워커는 설치 당시 후보/수량/시설/단가 자료와 스냅샷을 대조하고 원문을 `cost-snapshot.json`에 보존. 재해 결과의 시설별 `costRecord`는 검증한 같은 내역이며 기존 소유권·재현 다운로드 경계 적용. 완전한 공사비·가격 기준연도는 null, 현재/당시 가격 검증 여부 false. 기존 원화 예산 정책·단가·물리 계산 변경 없음.
+- 워커는 설치 당시 후보/수량/시설/단가 자료와 스냅샷을 대조하고 원문을 `cost-snapshot.json`에 보존. 재해 결과의 시설별 `costRecord`는 검증한 같은 내역이며 기존 소유권·재현 다운로드 경계 적용. 완전한 공사비·실제 견적 가격 기준연도는 null, 현재/당시 가격 검증 여부 false. 지수 환산 시설은 `PUBLIC_REFERENCE_QUANTITY_V2`, `priceAdjustment=KICT_MONTHLY_INDEX_RATIO_ANNUAL_PROXY_V1`과 출처 내부의 원 단가·12개 기준월 지수·목표 지수·가정·잠정 여부를 반환. 환산하지 않은 시설과 과거 원가는 V1 유지. 신규 단가와 현재 20억 원 예산 한도·기존 지출을 구별하며 물리 계수는 변경하지 않음.
 
 ## 배출 중심시각 · 2026-10-21
 
@@ -200,7 +200,7 @@ RFC 9457 `application/problem+json`: type, title, status, detail, instance, code
 - 선택 결과 `pavementMaintenanceComparison`은 새 블록·협잡물 96g·192g의 고정 재료 조건, 동일 선행 7일/전체 사건 창의 원 지표·새 블록 대비 차이·성공/실패·출처/입력 해시 반환. 실패 조건이 있으면 `INCOMPLETE`·차이 null, 청소 회복은 `UNAVAILABLE`·값 null, `rankingEligible=false`. 일반 누적 효과·비용·순위와 분리. 소유자 재현 묶음의 `pavement-comparison/`에 입력/원 계산/정책/코드/manifest 보관.
 - `GET /api/v1/historical`, `GET /api/v1/historical/{id}`: 요청자 본인의 비공개 작업 목록·상태·결과.
 - `GET /api/v1/historical/{id}/bundle`: 본인 성공 작업의 해시 검증된 재현 묶음. 경로 이탈·심볼릭 링크·파일 변조 차단.
-- `POST /api/v1/historical/designs/{eventId}/submissions`: 본인 최신 저장본의 `requestKey`, `revision`, `snapshotSha256`만 입력. 서버가 불변 저장본의 전체 구 배치·원 설치 시각·원가를 가져와 사건 전체 기간 제출로 생성. 인증·CSRF·회원별 시간당 20회 제한·no-store 적용. 저장본 변경은 `HISTORICAL_DESIGN_CONFLICT` 409, 현재 형상/가격/정책 변경은 `HISTORICAL_SITE_CHANGED` 409, 다른 소유자의 설계는 조회 불가. 기존 요청 키 재전송은 이후 편집에도 원 제출 반환. 응답 `designRevision`은 구형 제출에서 null이며 기존 `/historical/submissions`와 원 요청·비용·결과 보존. 재현 묶음은 고정한 `submission-design.json` 해시 추가 검사.
+- `POST /api/v1/historical/designs/{eventId}/submissions`: 본인 최신 저장본의 `requestKey`, `revision`, `snapshotSha256`만 입력. 서버가 불변 저장본의 전체 구 배치·원 설치 시각·원가를 가져와 사건 전체 기간 제출로 생성. 인증·CSRF·회원별 시간당 20회 제한·no-store 적용. 저장본 변경은 `HISTORICAL_DESIGN_CONFLICT` 409, 현재 형상/예산 정책 변경은 `HISTORICAL_SITE_CHANGED` 409, 다른 소유자의 설계는 조회 불가. 저장 원가의 허용 가격 버전을 복원하므로 공표 단가 변경만으로 기존 설계를 거부하지 않음. 미등록 가격 버전·재해시한 원가 변조는 `COST_DATA_INVALID` 503. 기존 요청 키 재전송은 이후 편집에도 원 제출 반환. 응답 `designRevision`은 구형 제출에서 null이며 기존 `/historical/submissions`와 원 요청·비용·결과 보존. 재현 묶음은 고정한 `submission-design.json` 해시 추가 검사.
 
 재해 설계 예산은 회원당 20억 원이며 여러 구의 설계 초안을 합산. 서울시 빗물관리시설 전체 사업 규모를 개인에게 적용한 게임 규칙으로 실제 지급액이 아님. 결과는 선택 표면의 기준 대비 유출·배수·순저류 체적 비교. 관망·실제 침수 복원 결과로 확대 해석 금지.
 
@@ -210,9 +210,9 @@ RFC 9457 `application/problem+json`: type, title, status, detail, instance, code
 
 ## 공동 배치예산·시설 비용
 
-`GET /api/v1/budget`는 `policy`(사업 총액 `limitKrw`·개인 한도 `personalLimitKrw` 각각 20억 원, `allocationScope=MEMBER`, 참고연도·출처·원문 해시·규칙 버전), 본인 활성 설치 비용 `allocatedKrw`, `remainingKrw`, `personal`을 반환. 익명은 사용액 0·한도 미리보기·`personal=false`; 다른 회원의 잔액 제공 없음. 본인 ID는 서버 인증에서 결정. 설치·철거 트랜잭션의 회원 행 잠금으로 동시 초과 지출 차단. 주간은 소속 구를 검사하며 본인 중복만 차단한다. 서로 다른 회원은 같은 위치에 독립 설치할 수 있다. 현재 주 확정 시설의 취소는 거부한다. 규칙 `SEOUL_PERSONAL_FULL_2026_V3`를 신규 설치 행 `budget_policy`와 재해 요청에 고정. 이전 구별 8천만 원 규칙은 기존 기록 재현에만 보존. 후보의 시설 단가·포함/제외 범위·출처와 저장 설치 비용은 변경하지 않음.
+`GET /api/v1/budget`는 `policy`(사업 총액 `limitKrw`·개인 한도 `personalLimitKrw` 각각 20억 원, `allocationScope=MEMBER`, 참고연도·출처·원문 해시·규칙 버전), 본인 활성 설치 비용 `allocatedKrw`, `remainingKrw`, `personal`을 반환. 익명은 사용액 0·한도 미리보기·`personal=false`; 다른 회원의 잔액 제공 없음. 본인 ID는 서버 인증에서 결정. 설치·철거 트랜잭션의 회원 행 잠금으로 동시 초과 지출 차단. 주간은 소속 구를 검사하며 본인 중복만 차단한다. 서로 다른 회원은 같은 위치에 독립 설치할 수 있다. 현재 주 확정 시설의 취소는 거부한다. 규칙 `SEOUL_PERSONAL_FULL_2026_V3`를 신규 설치 행 `budget_policy`와 재해 요청에 고정. 이전 구별 8천만 원 규칙은 기존 기록 재현에만 보존. 신규 후보의 공표 단가와 기존 시설의 저장 단가를 구별하며 원가·포함/제외 범위·출처·원 지출은 보존. 가격 환산으로 게임 예산을 자동 증액하지 않음.
 
-예산 원장 확장 계약: 같은 응답의 `accounting`에 버전·사업군 한도/사용액/잔액·시설별 사용액/가용액 반환. 현재 일반 설치 6종은 같은 빗물관리 사업군의 20억 원을 공유하며 시설별 별도 한도는 `null`(별도 배정 없음). 가용액은 시설 잔액과 상위 사업 잔액 중 작은 값이며 시설별 가용액 합계를 전체 재원으로 표시하지 않음. 기존 설치의 원 비용·원 예산 정책·설치/취소 시각을 원장에 이관, 이관 기록임을 구분. 새 설치/취소는 회원 잠금과 같은 트랜잭션에서 한 번씩 기록, 실패 시 원장도 롤백. 취소는 가상 설계 배정의 해제이며 실제 공사비 환급이 아님.
+예산 원장 확장 계약: 같은 응답의 `accounting`에 버전·사업군 한도/사용액/잔액·시설별 사용액/가용액 반환. 현재 일반 설치 7종은 같은 빗물관리 사업군의 20억 원을 공유하며 시설별 별도 한도는 `null`(별도 배정 없음). 가용액은 시설 잔액과 상위 사업 잔액 중 작은 값이며 시설별 가용액 합계를 전체 재원으로 표시하지 않음. 기존 설치의 원 비용·원 예산 정책·설치/취소 시각을 원장에 이관, 이관 기록임을 구분. 새 설치/취소는 회원 잠금과 같은 트랜잭션에서 한 번씩 기록, 실패 시 원장도 롤백. 취소는 가상 설계 배정의 해제이며 실제 공사비 환급이 아님.
 
 `GET /api/v1/budget/ledger?beforeId=<커서>`는 인증된 본인의 원장만 50건씩 역순 조회. 시설·사업·설치 ID·배정/취소·원 비용·실제 발생/기록 시각·이관 여부·원 예산 정책을 제공. 수정/삭제 API 없음, 익명 조회 거부·타 회원 ID 입력 불가·`Cache-Control: no-store`. 재해 계산은 주간 원장을 차감하지 않고 같은 사업/시설 한도 규칙으로 별도 설계 비용을 검사하며 입력에 해당 원가/예산 집계를 고정. 사건 당시 예산의 검증 완료를 뜻하지 않음.
 

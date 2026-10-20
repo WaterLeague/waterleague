@@ -1,0 +1,159 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-21",
+  "classification": "INDEX_ESTIMATE_AND_ISOLATED_GAME_WORKFLOW_NOT_MARKET_OR_FIELD_VALIDATION",
+  "sourceHashes": {
+    "backend/src/main/java/io/waterleague/cost/repository/GamePriceCatalog.java": "b6f06b7cb15fbf5918c29370d57339fb15d29c57b3ff555e6aa4ab9515c1d286",
+    "backend/src/main/java/io/waterleague/cost/service/CostService.java": "6305ab0bfa5daad4199c3acf25a61e440a7150bbc360f075f9a0707eeb4b2bd8",
+    "backend/src/main/java/io/waterleague/historical/service/HistoricalService.java": "b138c4b3b52ffdad372aeee23ff5f2dda82ad072b02ac7442499a41456194341",
+    "backend/src/main/java/io/waterleague/historical/service/HistoricalSubmissionService.java": "93b597dd35f9bbbde979a162241e680fbde48a0996c31d620063730a604783fd",
+    "backend/src/main/java/io/waterleague/spatial/repository/NativePlayRepository.java": "02435dcbe404eb88b5bda30aeefd599e05b4e1d5ba68cdda9eedac76954d6117",
+    "backend/src/main/resources/budget/seoul-2026.json": "27b703134393cf4c78c6e7fcb6e74a4813e0c2a0f94d692c380e22dc55b3da40",
+    "backend/src/main/resources/budget/seoul-accounting-v5.json": "9cd704528e15074b4af80acaa4c80eec62da46767b07cd9a01a7c2a2cf2a21ba",
+    "backend/src/main/resources/evaluation/game-score-policy-v1.json": "1ee7b6061e57522c83fe7e3d5c4d64dad0e8c296b8988d1d49747608eac1f3d4",
+    "backend/src/main/resources/facilities/cistern-game-v1.json": "20da4bc15546b77aa680d07d61bc1d95a0f0c7aae95667d6c46fa080c2c270f3",
+    "backend/src/main/resources/facilities/game-prices-202608-v1.json": "00b489edc185338156d660e16aca57bd3890f1314110c4db6b6e191044f22cb3",
+    "backend/src/test/java/io/waterleague/NativePlayFullCatalogTests.java": "10777c52ee737e1b6819570df13b1f4f9ee9027a30dff66a55f5a5c3079da43c",
+    "backend/src/test/java/io/waterleague/NativePlayTests.java": "5a975a65ac2af233b500cd885c5e7341eeed7489369f3bc56d0b8125ca842331",
+    "backend/src/test/java/io/waterleague/NativeSiteFixtures.java": "baf65702ac4d6c7f72d22dac2df1935d948c093a83e714b5de3d368115eb36d1",
+    "backend/src/test/java/io/waterleague/PriceVersionWorkflowTests.java": "8cd16920564e5688d08597b417ecc22d51ba2d6d2c939345259cf987e5cf81f3",
+    "backend/src/test/java/io/waterleague/SharedInstallationTests.java": "b1f6fd32c671da2052291bcb6d4bf56a2fda33a9f3fda247415920ae5afec6b7",
+    "data/costs/lid-index-estimates-202608-v2.json": "2099cbb6202d4c63d6c9e686bbe2b8c97dba0635063cfcb69dabf82704617d27",
+    "data/costs/lid-reference-v5.json": "50f6e00757ecba3ed77a811b0fd9d03f72b800c0c47712093bf1adda99421036",
+    "data/costs/lid-reference-v6.json": "705731e90028359c3876e23a22e64d1ba86e814d84a2fa8d820b76dfe7acbe06",
+    "data/manifests/kict-construction-index-202608.json": "2d3dbe7742bdedfb7a1a09b18d53a6448be9709a78d5260ec1754c94e4eef766",
+    "deploy/web.Dockerfile": "a0043157a8e88088327e2955a40ef450c2dadd26664d3fcb0798acddd120d23d",
+    "deploy/worker.Dockerfile": "727d46a648cf0de6d56e663244aa69d5a8b9cc04fb09ef6809f409e6b72dbedd",
+    "frontend/src/domains/catalog/service/dataSourceService.ts": "436aff81e62bc82182873749c4eadde2d4b6a568920f1f5e29bdedd5855f9166",
+    "frontend/src/domains/catalog/view/DataPage.tsx": "4e5968632b0631b817d5da922c3502adabe4934c1d8082faa0cfae507fb4907f",
+    "frontend/src/domains/cost/dto/costDto.ts": "179b44a5f469b8e1fe44b90cadd5ad8a9135159da509638f1801947ee99415a9",
+    "frontend/src/domains/cost/dto/priceAdjustmentDto.ts": "239577e49b3885854d33123b6e63ac2534fb870692246f95f3f9468cfd78fc22",
+    "frontend/src/domains/cost/view/CostRecordEvidence.test.tsx": "ec60a3bd4d6c6a130d501b611e544bb1e3757c1f24834a54afa36ccdf3b91c0b",
+    "frontend/src/domains/cost/view/CostScope.tsx": "064f5639d0e28432a6f57f17fcd4924f459306fbae4ff77762cb1881514369ab",
+    "frontend/src/domains/cost/view/fixtures/indexed-server-records-v1.json": "1212a8492c3eecfad9f3301877ff5461f8d70313aeb5fa0780491868f630d6f6",
+    "scripts/build_game_price_catalog.py": "6bb2c828ca93c44bc3f5c17348db8eb0ac726d5d42d49cd90f63e808b9a906ac",
+    "scripts/build_game_price_estimates.py": "c13fb1c83effc81df36ac339a55b533e9716f10f56f0a34f86b9c81d58e7d728",
+    "scripts/verify_league_postgres.py": "a007096dd045ef19b0f9ab69714349178d7fc623a9ba440838c9d9444ed520d9",
+    "simulation/integration/test_price_versions.py": "025fc6352294709d051e393f98f7a59f19987751bb6ed0ee4af072db759cf238",
+    "simulation/tests/test_game_prices.py": "388613a5839473ddaeab3c39e8bdfe231bf07acc8614bbf34c2452810e7dc761",
+    "simulation/waterleague_sim/costing/game_prices.py": "3f5838972110864e0034236deeed4428bc6b690f0cf4d918d104647d2df937f4",
+    "simulation/waterleague_sim/costing/life_cycle.py": "cc05062e25f613586d43e2e2ae48dde8a63c7702144e71853922d59ffe7e90f3",
+    "simulation/waterleague_sim/costing/snapshot.py": "0368dce0a80a65efe62e53217f6d98cb0e024f4bd157455868cce44f1bc9bc26",
+    "simulation/waterleague_sim/evaluation/score_policy.py": "7fad810e802dfac24bbdbc686793367fe1210bf693b657e3736849c2a73ae5dc",
+    "simulation/waterleague_sim/installation_model.py": "ec29fc7f549b4f811240202b7a6b521764066a808b74da64365cff4ee45b57de",
+    "simulation/waterleague_sim/run_historical_job.py": "540c857033d2aec0fbd6d7c5de8bcb94266182423042e58ebd969525f351c6c0",
+    "simulation/waterleague_sim/spatial/play_catalog.py": "f0631ea56b0b1dc6abb5708acba2e154c0db1c3b981ce932bebb9f5a7e8106dc"
+  },
+  "pricePolicy": {
+    "catalogSha256": "00b489edc185338156d660e16aca57bd3890f1314110c4db6b6e191044f22cb3",
+    "currentCostSourceSha256": "864d0313414b1e5450b90df147eed292af9605d26c6efd051304435791dc1a2c",
+    "acceptedVersions": [
+      "50f6e00757ecba3ed77a811b0fd9d03f72b800c0c47712093bf1adda99421036",
+      "6c5f0e9dc9034189da2ddbc5de56a5382f364af41edb4f48ffde2a050c8b346c",
+      "864d0313414b1e5450b90df147eed292af9605d26c6efd051304435791dc1a2c"
+    ],
+    "targetPeriod": "2026-08",
+    "targetProvisional": true,
+    "assumedBasePriceYear": 2022,
+    "observedBasePriceYear": null,
+    "unitCostsKrwPerM2": {
+      "BIORETENTION": 632381,
+      "GREEN_ROOF": 350000,
+      "INFILTRATION_TRENCH": 171429,
+      "PERMEABLE_PAVEMENT": 123733,
+      "RAINWATER_CISTERN": 12158,
+      "RAIN_GARDEN": 632381,
+      "VEGETATIVE_SWALE": 50817
+    },
+    "personalGameBudgetKrw": 2000000000
+  },
+  "verification": {
+    "pythonFocusedTests": 7,
+    "frontendFiles": 140,
+    "frontendTests": 483,
+    "priceWorkflow": {
+      "javaTests": 1,
+      "observedWorkerTests": 1,
+      "weeklyInstallations": 2,
+      "historicalJobs": 3,
+      "oldPavement10M2Krw": 1100000,
+      "newPavement10M2Krw": 1237330,
+      "mixedSavedDesignKrw": 2337330,
+      "storedCostsAndLedgerUnchanged": true,
+      "guestRetryAndCalculationCompleted": true,
+      "sixFacilityPriceRestored": true,
+      "unregisteredOrRehashedChangedCostRejected": true
+    },
+    "installationRegressionJavaTests": 38,
+    "savedSubmissionRegression": {
+      "javaTests": 25,
+      "observedWorkerTests": 1,
+      "readbackJavaTests": 1
+    },
+    "sourceCountsUnchanged": true,
+    "frontendBuildPassed": true,
+    "backendPackagePassed": true,
+    "priceGeneratorsAndScorePolicyMatched": true,
+    "packaging": {
+      "webExternalImports": 18,
+      "workerPolicyFiles": 205,
+      "allCopySourcesCovered": true,
+      "imageBuildExecuted": false
+    },
+    "runtime": {
+      "health": "UP",
+      "scorePolicyMatched": true,
+      "scorePolicySha256": "1ee7b6061e57522c83fe7e3d5c4d64dad0e8c296b8988d1d49747608eac1f3d4",
+      "jobCountsUnchanged": true,
+      "activeJobsBeforeRestart": 0,
+      "currentCostSourceSha256": "864d0313414b1e5450b90df147eed292af9605d26c6efd051304435791dc1a2c",
+      "unitCostsKrwPerM2": {
+        "BIORETENTION": 632381,
+        "GREEN_ROOF": 350000,
+        "INFILTRATION_TRENCH": 171429,
+        "PERMEABLE_PAVEMENT": 123733,
+        "RAINWATER_CISTERN": 12158,
+        "RAIN_GARDEN": 632381,
+        "VEGETATIVE_SWALE": 50817
+      },
+      "personalBudgetKrw": 2000000000
+    },
+    "logs": {
+      "tmp/index-price-python-final.log": "72f35ab7931b1e0e00c7d8d0a6d5cbec7d0f434a8942db28a6c947405c03490c",
+      "tmp/index-price-frontend-actual.log": "52b09a681e737b7721c77bd5a6f5ca943e9e8b44d40aa1deb023555cc2f3f753",
+      "tmp/index-price-final-build.log": "a118e11e5f44ee33cfb68c81ae4a9e130a4fcf09c0158bd632fa61e59d512e4a",
+      "tmp/index-price-package.log": "ba5ba017ce148cfe03ceb81aff4f963bb49aa23f76e09b4c3cb8fa6a2c979af7",
+      "tmp/index-price-regression-verified.log": "81e5409a96119fe5f3de6ebf31aad556e1a7d34bacb7e182aa897df6c3470a2b",
+      "tmp/waterleague_league_test_c9794d56e8684b0b8e12a5c61f3be8f2.log": "7b7f3db6f9a46667f2383eda9b46d573e21f78fc73c722a58de34049b8655281",
+      "tmp/index-price-workflow-complete.log": "a3f271486b4596b98bb2dbe781e738e4a9bdc6a3b7ac982c2379f09b96153493",
+      "tmp/waterleague_league_test_4bf80d7543ac4d5ebc26e7b2e91de6ed.log": "87bc4b9b8717aabf3ad82cf53c64ef86e4ffaf7d57e783b42cc5363ebbbfe48a",
+      "tmp/waterleague_league_test_4bf80d7543ac4d5ebc26e7b2e91de6ed.price-runs/verification.json": "5a38eeb732a6bddbcbec9dbdce9e602142658677372dfe7e3700a9f25320ae3e",
+      "tmp/index-price-submit-regression.log": "22510d71fe7727635c1d175891515230cb18cdfe4118ab5c0ab341a9e143c5ca",
+      "tmp/waterleague_queue_test_740559821b38407b9e6d69f9fcda0c8c.log": "8c548c1c59d54410a41b03dad0c64fd83486ecdde093232d66b44c4141fb49e6",
+      "tmp/index-price-package-inputs.json": "7c139462b75546ea3ef900828f8948b42ca74a91fc8c8a78226e02af62a63838",
+      "tmp/index-price-runtime.json": "1344307a9ba22c856aec8fc7bab8973f23646e24984febb03b3a4284ca0780f8"
+    },
+    "browser": {
+      "screenshot": "data/benchmarks/index-price-game-v1.png",
+      "sha256": "63675402f048370ba3bea42f3c27b0ce13f07cbd7023b7cf32a682f2f5fcef84",
+      "observed": [
+        "7 facility prices",
+        "2 billion KRW preview",
+        "2026-08 provisional index",
+        "2022 annual mean assumption",
+        "KICT source link"
+      ],
+      "notVerified": [
+        "full installation UI in this pass",
+        "multi-device performance"
+      ]
+    }
+  },
+  "limitations": [
+    "2022년 연평균은 실제 견적 기준월을 대신한 명시적 가정",
+    "지수는 공종 대용값이며 서울 현장 견적·확정 공사비·시장 신뢰구간 아님",
+    "녹화지붕 후속 가격과 가격 시점 미확인 침투도랑·이용조의 별도 추정 미완료",
+    "전체 생애비용·재이용 수요·연결 유역 미완료",
+    "가격 변경은 물리 입력·체적 점수 산식·게임 예산 총액을 변경하지 않음"
+  ]
+}

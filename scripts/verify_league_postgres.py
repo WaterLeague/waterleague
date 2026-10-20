@@ -53,9 +53,9 @@ def source_counts(db):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--suite', choices=['cistern-game', 'account', 'security', 'street-placement', 'guest-historical', 'historical-submit-design', 'historical-design-run', 'historical-design', 'public-surface', 'infrastructure', 'league', 'analysis', 'queue', 'budget', 'physics', 'weekly', 'historical', 'watershed', 'cistern-plan', 'shared-research', 'search', 'restore', 'backend', 'all'], default='league')
+    parser.add_argument('--suite', choices=['prices', 'cistern-game', 'account', 'security', 'street-placement', 'guest-historical', 'historical-submit-design', 'historical-design-run', 'historical-design', 'public-surface', 'infrastructure', 'league', 'analysis', 'queue', 'budget', 'physics', 'weekly', 'historical', 'watershed', 'cistern-plan', 'shared-research', 'search', 'restore', 'backend', 'all'], default='league')
     suite = parser.parse_args().suite
-    test_class = {'cistern-game': 'CisternGameWorkflowTests', 'account': 'AccountFlowTests,MfaTests', 'security': SECURITY_TESTS, 'street-placement': 'SharedInstallationTests,GuestHistoricalTests,HistoricalDesignTests,ApiSecurityTests', 'guest-historical': 'GuestHistoricalTests,HistoricalWorkflowTests,HistoricalSubmissionTests,ApiSecurityTests','historical-submit-design': 'HistoricalSubmissionTests,HistoricalDesignTests,ApiSecurityTests',
+    test_class = {'prices':'PriceVersionWorkflowTests', 'cistern-game': 'CisternGameWorkflowTests', 'account': 'AccountFlowTests,MfaTests', 'security': SECURITY_TESTS, 'street-placement': 'SharedInstallationTests,GuestHistoricalTests,HistoricalDesignTests,ApiSecurityTests', 'guest-historical': 'GuestHistoricalTests,HistoricalWorkflowTests,HistoricalSubmissionTests,ApiSecurityTests','historical-submit-design': 'HistoricalSubmissionTests,HistoricalDesignTests,ApiSecurityTests',
                   'historical-design-run': 'HistoricalDesignTests,HistoricalWorkflowTests,HistoricalSubmissionTests,ApiSecurityTests',
                   'historical-design': 'HistoricalDesignTests,HistoricalWorkflowTests,HistoricalSubmissionTests,ApiSecurityTests',
                   'public-surface': 'PublicSurfaceTests,SurfacePlaybackTests,ApiSecurityTests',
@@ -127,6 +127,8 @@ def main():
                 physical.append('-Dwaterleague.integration.submission.evidence=' + str(path.with_suffix('.runs')))
             if suite == 'historical-design-run':
                 physical.append('-Dwaterleague.integration.design.run.fixture=' + str(path.with_suffix('.requests.json')))
+            if suite == 'prices':
+                physical.append('-Dwaterleague.integration.prices.fixture=' + str(path.with_suffix('.prices.json')))
             if suite == 'cistern-game':
                 physical.append('-Dwaterleague.integration.cistern.fixture=' + str(path.with_suffix('.cistern.json')))
             if suite == 'restore':
@@ -135,6 +137,13 @@ def main():
                 [str(ROOT / 'backend/mvnw'), '--batch-mode', '-Dtest=' + test_class,
                  '-Dwaterleague.integration.jdbc=' + jdbc, *physical, 'verify' if suite == 'backend' else 'test'],
                 cwd=ROOT / 'backend', env=env, stdout=log, stderr=subprocess.STDOUT, timeout=600)
+            if suite == 'prices' and result.returncode == 0:
+                worker_env = env | {'WL_WORKER_TEST_DSN': make_conninfo(**(config | {'dbname': test_name})),
+                    'PYTHONPATH': str(ROOT/'simulation'), 'WL_PRICE_FIXTURE': str(path.with_suffix('.prices.json')),
+                    'WL_PRICE_EVIDENCE': str(path.with_suffix('.price-runs'))}
+                result = subprocess.run([sys.executable,'-m','unittest','discover','-s','integration',
+                    '-p','test_price_versions.py','-v'], cwd=ROOT/'simulation', env=worker_env,
+                    stdout=log, stderr=subprocess.STDOUT, timeout=300)
             if suite == 'cistern-game' and result.returncode == 0:
                 worker_env = env | {'WL_WORKER_TEST_DSN': make_conninfo(**(config | {'dbname': test_name})),
                     'PYTHONPATH': str(ROOT / 'simulation'),

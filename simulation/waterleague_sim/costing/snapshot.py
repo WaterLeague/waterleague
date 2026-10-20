@@ -27,12 +27,12 @@ def archive(request, model, placement, directory):
         area = Decimal(str(placement['areaM2']))
         amount = area * unit
         expected = {
-            'version': 'PUBLIC_REFERENCE_QUANTITY_V1', 'currency': 'KRW',
+            'version': 'PUBLIC_REFERENCE_QUANTITY_V2' if 'priceAdjustment' in source else 'PUBLIC_REFERENCE_QUANTITY_V1', 'currency': 'KRW',
             'districtId': link['districtId'], 'siteModelHash': link['siteCatalogHash'],
             'cellId': placement['cellId'], 'facilityType': placement['facilityType'],
             'quantityM2': area, 'unitCostKrw': unit, 'referenceSubtotalKrw': amount,
             'budgetChargeKrw': amount, 'completeInstalledCostKrw': None, 'priceBaseYear': None,
-            'vat': 'UNCONFIRMED', 'priceAdjustment': 'NONE', 'currentPriceVerified': False,
+            'vat': 'UNCONFIRMED', 'priceAdjustment': source.get('priceAdjustment', {}).get('method', 'NONE'), 'currentPriceVerified': False,
             'historicalPriceEligible': False, 'costSourceSha256': model['costSourceSha256'],
             'source': source,
             'lines': [{'id': 'REFERENCE_INSTALLATION', 'label': source['scope'], 'quantity': area,

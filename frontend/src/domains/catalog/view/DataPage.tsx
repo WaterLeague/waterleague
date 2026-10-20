@@ -2,7 +2,7 @@ import { ArrowUpRight, CloudRain, Map, Waves, Users, Layers3, Leaf } from 'lucid
 import { useBudget } from '../../budget/controller/useBudget';
 import { facilities, won } from '../../game/service/gameService';
 import type { FacilityType } from '../../game/entity/game';
-import costs from '../../../../../data/costs/lid-reference-v6.json';
+import prices from '../../../../../backend/src/main/resources/facilities/game-prices-202608-v1.json';
 import maintenance from '../../../../../data/facilities/maintenance-reference-v1.json';
 import suitability from '../../../../../backend/src/main/resources/facilities/site-suitability-v1.json';
 import { dataSources } from '../service/dataSourceService';
@@ -16,6 +16,9 @@ const sourceIcons = {
   population: Users,
   simulation: Leaf,
 };
+
+const costs =
+  prices.versions[prices.currentCostSourceSha256 as keyof typeof prices.versions].costModel;
 
 const suitabilityLabels: Record<string, { label: string; condition: string }> = {
   PROHIBITED: { label: '금지', condition: '공개 근거로 금지 조건 확인' },
@@ -93,8 +96,8 @@ export function DataPage({ accountId }: { accountId: string | null }) {
               </tr>
             </thead>
             <tbody>
-              {(Object.keys(costs.facilities) as FacilityType[]).map((type) => {
-                const cost = costs.facilities[type];
+              {Object.entries(costs.facilities).map(([key, cost]) => {
+                const type = key as FacilityType;
                 return (
                   <tr key={type}>
                     <th scope="row">{facilities[type].name}</th>
@@ -113,6 +116,16 @@ export function DataPage({ accountId }: { accountId: string | null }) {
           </table>
         </div>
         <p className="data-detail">
+          빗물정원·생물저류·식생수로·투수포장의 신규 참고 단가는 2026년 8월 잠정 공사비지수로
+          환산했습니다. 실제 견적 기준월이 없어 2022년 연평균을 가정했으며 기존 저장 비용은
+          유지합니다.{' '}
+          <a
+            href="https://cost.kict.re.kr/#/notice/file/detail/47229"
+            target="_blank"
+            rel="noreferrer"
+          >
+            KICT 지수 근거 ↗
+          </a>{' '}
           식생수로는 폭 2m 기준 길이 단가를 면적으로 환산했습니다. 침투도랑은 70m² 시설의 최초
           설치비를 환산했습니다. 시설별 공사 범위가 다르며 전체 생애주기비용은 미산정입니다.
           빗물이용조 견적에는 문헌의 기간·할인 가정에 따른 부분 현재가치를 별도로 제공합니다. 미확정

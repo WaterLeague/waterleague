@@ -1,22 +1,31 @@
 import { z } from 'zod';
+import { indexedEvidence, indexMethod, priceAdjustmentDto } from './priceAdjustmentDto';
 
 const hash = z.string().regex(/^[a-f0-9]{64}$/);
 const amount = z.number().finite().nonnegative();
-export const costSourceDto = z.object({
-  unitCost: z.number().positive(),
-  sourceTitle: z.string(),
-  sourceUrl: z.url().startsWith('https://'),
-  sourceSha256: hash,
-  referenceYear: z.number().int(),
-  evidence: z.string(),
-  scope: z.string(),
-  includes: z.array(z.string()),
-  excludes: z.array(z.string()),
-  note: z.string(),
-});
+export const costSourceDto = z
+  .object({
+    unitCost: z.number().positive(),
+    sourceTitle: z.string(),
+    sourceUrl: z.url().startsWith('https://'),
+    sourceSha256: hash,
+    referenceYear: z.number().int(),
+    evidence: z.string(),
+    scope: z.string(),
+    includes: z.array(z.string()),
+    excludes: z.array(z.string()),
+    note: z.string(),
+    originalNote: z.string().optional(),
+    priceAdjustment: priceAdjustmentDto.optional(),
+  })
+  .refine((v) =>
+    v.priceAdjustment
+      ? v.evidence === indexedEvidence && v.unitCost === v.priceAdjustment.adjustedUnitCostKrw
+      : v.evidence !== indexedEvidence
+  );
 export const costEstimateDto = z
   .object({
-    version: z.literal('PUBLIC_REFERENCE_QUANTITY_V1'),
+    version: z.enum(['PUBLIC_REFERENCE_QUANTITY_V1', 'PUBLIC_REFERENCE_QUANTITY_V2']),
     currency: z.literal('KRW'),
     districtId: z.string(),
     cellId: z.string(),
@@ -37,7 +46,7 @@ export const costEstimateDto = z
     completeInstalledCostKrw: z.null(),
     priceBaseYear: z.null(),
     vat: z.literal('UNCONFIRMED'),
-    priceAdjustment: z.literal('NONE'),
+    priceAdjustment: z.enum(['NONE', indexMethod]),
     currentPriceVerified: z.literal(false),
     historicalPriceEligible: z.literal(false),
     costSourceSha256: hash,
@@ -60,6 +69,9 @@ export const costEstimateDto = z
   })
   .refine(
     (v) =>
+      (v.source.priceAdjustment
+        ? v.version === 'PUBLIC_REFERENCE_QUANTITY_V2' && v.priceAdjustment === indexMethod
+        : v.version === 'PUBLIC_REFERENCE_QUANTITY_V1' && v.priceAdjustment === 'NONE') &&
       v.unitCostKrw === v.source.unitCost &&
       v.referenceSubtotalKrw === v.budgetChargeKrw &&
       Math.abs(v.quantityM2 * v.unitCostKrw - v.referenceSubtotalKrw) < 0.005 &&

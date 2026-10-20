@@ -157,7 +157,7 @@ class SharedInstallationTests extends PostgresIntegrationTest {
         service.install(
             owner.username(),
             new InstallRequest("11680", site.cellId(), FacilityType.VEGETATIVE_SWALE, cap));
-    var charge = cap.multiply(new BigDecimal("45000"));
+    var charge = cap.multiply(new BigDecimal("50817"));
     assertThat(installed.cost()).isEqualByComparingTo(charge);
     assertThat(budget.view(owner.id()).remainingKrw())
         .isEqualByComparingTo(budget.limit().subtract(charge));
@@ -289,11 +289,11 @@ class SharedInstallationTests extends PostgresIntegrationTest {
             owner.username(),
             new InstallRequest(
                 "11680", eligible.cellId(), FacilityType.BIORETENTION, new BigDecimal("20")));
-    assertThat(installed.cost()).isEqualByComparingTo("11200000");
-    assertThat(budget.view(owner.id()).remainingKrw()).isEqualByComparingTo("1988800000");
+    assertThat(installed.cost()).isEqualByComparingTo("12647620");
+    assertThat(budget.view(owner.id()).remainingKrw()).isEqualByComparingTo("1987352380");
     assertThat(budget.view(owner.id()).accounting().facilities())
-        .hasSize(6)
-        .allSatisfy(f -> assertThat(f.availableKrw()).isEqualByComparingTo("1988800000"));
+        .hasSize(7)
+        .allSatisfy(f -> assertThat(f.availableKrw()).isEqualByComparingTo("1987352380"));
     assertThat(costs.active(installed.id()).estimate().path("completeInstalledCostKrw").isNull())
         .isTrue();
     assertThatThrownBy(
@@ -322,7 +322,7 @@ class SharedInstallationTests extends PostgresIntegrationTest {
     var record = costs.active(installed.id());
     assertThat(record.status()).isEqualTo("RECORDED");
     var value = record.estimate();
-    assertThat(value.path("budgetChargeKrw").decimalValue()).isEqualByComparingTo("2227500");
+    assertThat(value.path("budgetChargeKrw").decimalValue()).isEqualByComparingTo("2505593.25");
     assertThat(value.path("lines").get(0).path("quantity").decimalValue())
         .isEqualByComparingTo("20.25");
     assertThat(value.path("source").path("referenceYear").intValue()).isEqualTo(2022);
@@ -339,7 +339,7 @@ class SharedInstallationTests extends PostgresIntegrationTest {
     assertThat(record.sha256()).isEqualTo(json.hash(raw));
     db.update(
         "UPDATE shared_installations SET cost_snapshot=? WHERE id=?",
-        raw.replace("2227500", "1"),
+        raw.replace("2505593.25", "1"),
         installed.id());
     assertThatThrownBy(() -> costs.active(installed.id()))
         .isInstanceOfSatisfying(
@@ -532,7 +532,7 @@ class SharedInstallationTests extends PostgresIntegrationTest {
     }
     var installed = service.active().getFirst();
     assertThat(service.active()).hasSize(2);
-    assertThat(installed.cost()).isEqualByComparingTo("2200000");
+    assertThat(installed.cost()).isEqualByComparingTo("2474660");
     assertThat(installed.installedAt().getNano()).isZero();
     assertThat(
             db.queryForObject(
@@ -574,7 +574,7 @@ class SharedInstallationTests extends PostgresIntegrationTest {
                 .toInstant())
         .isEqualTo(installed.seasonEndsAt());
     assertThat(budget.view(owner.id()).allocatedKrw()).isZero();
-    assertThat(budget.view(other.id()).allocatedKrw()).isEqualByComparingTo("2200000");
+    assertThat(budget.view(other.id()).allocatedKrw()).isEqualByComparingTo("2474660");
   }
 
   @Test
@@ -656,7 +656,7 @@ class SharedInstallationTests extends PostgresIntegrationTest {
       for (var f : futures) outcomes.add(f.get(10, TimeUnit.SECONDS));
       assertThat(outcomes).containsExactlyInAnyOrder("INSTALLED", "BUDGET_EXCEEDED");
     }
-    assertThat(budget.view(owner.id()).remainingKrw()).isEqualByComparingTo("1050000");
+    assertThat(budget.view(owner.id()).remainingKrw()).isEqualByComparingTo("775340");
     assertThat(budget.view(other.id()).remainingKrw()).isEqualByComparingTo("2000000000");
     var independent =
         service.install(
@@ -667,7 +667,7 @@ class SharedInstallationTests extends PostgresIntegrationTest {
                     .cellId(),
                 FacilityType.PERMEABLE_PAVEMENT,
                 new BigDecimal("20")));
-    assertThat(budget.view(other.id()).remainingKrw()).isEqualByComparingTo("1997800000");
+    assertThat(budget.view(other.id()).remainingKrw()).isEqualByComparingTo("1997525340");
     assertThat(budget.view(null).personal()).isFalse();
     assertThat(budget.view(null).allocatedKrw()).isZero();
     assertThat(
@@ -684,7 +684,7 @@ class SharedInstallationTests extends PostgresIntegrationTest {
         .contains("seoul-native-infrastructure-20261020-v1", "historicalExistenceVerified");
     seasons.closeOwnerAt(other.id(), independent.seasonEndsAt());
     assertThat(budget.view(other.id()).remainingKrw()).isEqualByComparingTo("2000000000");
-    assertThat(budget.view(owner.id()).remainingKrw()).isEqualByComparingTo("1050000");
+    assertThat(budget.view(owner.id()).remainingKrw()).isEqualByComparingTo("775340");
   }
 
   @Test
