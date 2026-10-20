@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "version": "PUBLIC_CISTERN_SPECIFICATIONS_V1",
+  "specifications": [
+    {
+      "id": "SINYOUNG_STS_1500L_2025",
+      "name": "신영델텍 2025 공개 규격 · 1.5톤 이용조",
+      "material": "STS304",
+      "nominalCapacityM3": 1.5,
+      "capacityBasis": "NOMINAL_WATER_TONNE_EQUIVALENT_NOT_MEASURED_USABLE_VOLUME",
+      "declaredCapacity": "제작용량 1.5톤",
+      "equipmentDimensionsM": {
+        "length": 1.8,
+        "width": 0.8,
+        "height": 1.45
+      },
+      "dimensionBasis": "EQUIPMENT_ENVELOPE_NOT_INTERNAL_STORAGE",
+      "hydraulics": {
+        "internalAreaM2": null,
+        "usableDepthM": null,
+        "drainElevationM": null,
+        "overflowElevationM": null,
+        "overflowDiameterM": null,
+        "pumpCurve": null,
+        "reuseDemand": null
+      },
+      "pumpDutyPoint": {
+        "model": "SC1S-80/096",
+        "flowLMin": 50,
+        "headM": 25,
+        "powerHp": 1.2,
+        "basis": "SINGLE_DUTY_POINT_NOT_PUMP_CURVE"
+      },
+      "procurement": {
+        "classification": "PROJECT_BUDGET_NOT_TRANSACTION_PRICE",
+        "basisMonth": "2025-08",
+        "currency": "KRW",
+        "netKrw": 20000000,
+        "vatKrw": 2000000,
+        "grossKrw": 22000000,
+        "confirmedInstallationPriceKrw": null,
+        "scope": [
+          "설계·도면·사양서",
+          "제작·납품·설치·시운전",
+          "장비 일체·제어반",
+          "기초·계장 공사",
+          "관련 인허가·대관 업무"
+        ],
+        "limitations": [
+          "공개 발주 예산이며 낙찰·실거래 금액 미확인",
+          "경남 함안 사업으로 서울 현장 공사비 전용 불가",
+          "배관 길이·기초 치수·철거 등 상세 수량/공종 미확인"
+        ]
+      },
+      "sources": [
+        {
+          "title": "2025년 스마트 생태공장 구축사업 빗물저금통 규격서 · 신영델텍",
+          "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R25BK01021248&bidPbancOrd=000&fileSeq=2&fileType=",
+          "sha256": "22103bbab91b6bb4d68bcb40199bd8717667b1b8c568c66c655808fba428835e",
+          "pages": [
+            2,
+            5
+          ]
+        },
+        {
+          "title": "2025년 스마트 생태공장 구축사업 빗물저금통 공고서 · 신영델텍",
+          "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R25BK01021248&bidPbancOrd=000&fileSeq=1&fileType=",
+          "sha256": "2e897c8cd96a5dccf28c53876aafe87dc3f4aa17c0214e650c2c52457910ac06",
+          "pages": [
+            2
+          ]
+        }
+      ],
+      "installationReady": false,
+      "limitations": [
+        "외형은 장비 공간 검토용이며 내부 수면적·유효 저류 깊이로 환산하지 않음",
+        "공칭 1.5톤을 물 1톤≈1m³의 표기 관례로 환산하며 실측 유효 용량이 아님",
+        "규격서의 현장맞춤 제작 가능 문구와 기초·정비 공간 미확정 유지",
+        "월류관·배수구 높이/구경·홈통 경로·펌프 곡선·사용 수요 미확인",
+        "원형 후보의 경계 포함은 현장 시공 승인이나 설치·예산/점수 확정이 아님"
+      ]
+    }
+  ]
+}

@@ -151,6 +151,12 @@ it('저장된 참고 견적과 계획 안내를 표시하고 비회원 저장 �
   const noop = () => {};
   const state: CisternPlanState = {
     allowed: true,
+    specifications: [],
+    specification: null,
+    specificationId: '',
+    specificationError: '',
+    specificationsLoading: false,
+    chooseSpecification: noop,
     role: 'ground',
     setRole: noop,
     roof,

@@ -12,10 +12,42 @@ public record CisternPlanRequest(
     @NotBlank @Pattern(regexp = "[a-f0-9]{64}") String roofModelHash,
     @NotBlank @Pattern(regexp = "[a-f0-9]{64}") String groundModelHash,
     @NotNull @DecimalMin("0.01") @Digits(integer = 8, fraction = 2) BigDecimal captureAreaM2,
-    @NotNull @DecimalMin("0.01") @Digits(integer = 8, fraction = 2) BigDecimal tankAreaM2,
-    @NotNull @DecimalMin("0.001") @DecimalMax("100") @Digits(integer = 3, fraction = 3)
+    @DecimalMin("0.01") @Digits(integer = 8, fraction = 2) BigDecimal tankAreaM2,
+    @DecimalMin("0.001") @DecimalMax("100") @Digits(integer = 3, fraction = 3)
         BigDecimal tankDepthM,
-    @Valid @JsonInclude(JsonInclude.Include.NON_NULL) CisternLayoutRequest tankLayout) {
+    @Valid @JsonInclude(JsonInclude.Include.NON_NULL) CisternLayoutRequest tankLayout,
+    @Valid @JsonInclude(JsonInclude.Include.NON_NULL) CisternEquipmentRequest equipment) {
+  @AssertTrue(message = "공개 장비와 내부 단면 설계 중 하나만 선택해야 합니다")
+  @com.fasterxml.jackson.annotation.JsonIgnore
+  public boolean isDesignModeValid() {
+    return equipment != null
+        ? tankAreaM2 == null && tankDepthM == null && tankLayout == null
+        : tankAreaM2 != null && tankDepthM != null;
+  }
+
+  public CisternPlanRequest(
+      String districtId,
+      String roofCellId,
+      String groundCellId,
+      String roofModelHash,
+      String groundModelHash,
+      BigDecimal captureAreaM2,
+      BigDecimal tankAreaM2,
+      BigDecimal tankDepthM,
+      CisternLayoutRequest tankLayout) {
+    this(
+        districtId,
+        roofCellId,
+        groundCellId,
+        roofModelHash,
+        groundModelHash,
+        captureAreaM2,
+        tankAreaM2,
+        tankDepthM,
+        tankLayout,
+        null);
+  }
+
   public CisternPlanRequest(
       String districtId,
       String roofCellId,
@@ -34,6 +66,7 @@ public record CisternPlanRequest(
         captureAreaM2,
         tankAreaM2,
         tankDepthM,
+        null,
         null);
   }
 }

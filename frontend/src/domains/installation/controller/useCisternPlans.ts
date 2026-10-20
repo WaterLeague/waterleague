@@ -1,3 +1,7 @@
+import type { CisternSpecification } from '../../facility/dto/cisternSpecificationDto';
+import { loadCisternSpecifications } from '../../facility/repository/cisternSpecificationRepository';
+import { cisternEquipmentPlanRequest } from '../service/cisternPlanService';
+import { cisternEquipmentGeometry, parseCisternEquipment } from '../service/cisternLayoutService';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { Account } from '../../account/entity/account';
 import type { SharedSite } from '../entity/installation';
@@ -35,6 +39,10 @@ export function useCisternPlans(
   const identity = account
     ? `${account.id}:${account.role}:${account.approvalStatus}:${account.districtId ?? ''}`
     : 'visitor';
+  const [specifications, setSpecifications] = useState<CisternSpecification[]>([]);
+  const [specificationId, setSpecificationId] = useState('');
+  const [specificationError, setSpecificationError] = useState('');
+  const [specificationsLoading, setSpecificationsLoading] = useState(false);
   const [scope, setScope] = useState(identity);
   const [role, setRole] = useState<CisternSiteRole>('roof');
   const [roof, setRoof] = useState<SharedSite | null>(null),
@@ -63,6 +71,7 @@ export function useCisternPlans(
     setArea('');
     setDepth('');
     setLayoutFields(emptyLayout);
+    setSpecificationId('');
     setRole('roof');
     setError('');
     setBusy(false);
@@ -93,6 +102,28 @@ export function useCisternPlans(
       });
     return () => abort.abort();
   }, [open, allowed, identity, revision]);
+  useEffect(() => {
+    if (!open) return;
+    const abort = new AbortController();
+    setSpecificationsLoading(true);
+    void loadCisternSpecifications(abort.signal)
+      .then((catalog) => {
+        if (!abort.signal.aborted) {
+          setSpecifications(catalog.specifications);
+          setSpecificationError('');
+        }
+      })
+      .catch((e) => {
+        if (!abort.signal.aborted) {
+          setSpecifications([]);
+          setSpecificationError(errorMessage(e));
+        }
+      })
+      .finally(() => {
+        if (!abort.signal.aborted) setSpecificationsLoading(false);
+      });
+    return () => abort.abort();
+  }, [open, revision]);
   const select = useCallback(
     (site: SharedSite, occupied: boolean) => {
       const message = cisternSelectionError(site, role, account?.districtId ?? null, occupied);
@@ -125,8 +156,9 @@ export function useCisternPlans(
     setRoof(s.roof);
     setGround(s.ground);
     setCapture(String(s.request.captureAreaM2));
-    setArea(String(s.request.tankAreaM2));
-    setDepth(String(s.request.tankDepthM));
+    setArea(s.request.tankAreaM2 === null ? '' : String(s.request.tankAreaM2));
+    setDepth(s.request.tankDepthM === null ? '' : String(s.request.tankDepthM));
+    setSpecificationId(s.request.equipment?.specificationId ?? '');
     const l = s.request.tankLayout;
     setLayoutFields(
       l
@@ -139,6 +171,15 @@ export function useCisternPlans(
           }
         : emptyLayout
     );
+    if (s.request.equipment) {
+      const e = s.request.equipment;
+      setLayoutFields({
+        ...emptyLayout,
+        east: String(e.offsetXM),
+        north: String(e.offsetYM),
+        rotation: String(e.rotationDeg),
+      });
+    }
     setSaved(plan);
     setRole('ground');
     setError('');
@@ -149,16 +190,36 @@ export function useCisternPlans(
   }
   const currentScope = scope === identity;
   const layout = useMemo(() => parseCisternLayout(layoutFields), [layoutFields]);
-  const geometry = useMemo(
+  const manualGeometry = useMemo(
     () =>
       currentScope && ground && layout
         ? cisternGeometry(ground, Number(area), Number(depth), layout)
         : null,
     [currentScope, ground, layout, area, depth]
   );
+  const specification = currentScope
+    ? (specifications.find((v) => v.id === specificationId) ?? null)
+    : null;
+  const equipment = useMemo(
+    () => (specification ? parseCisternEquipment(layoutFields, specification.id) : null),
+    [layoutFields, specification]
+  );
+  const equipmentGeometry = useMemo(
+    () =>
+      currentScope && ground && specification && equipment
+        ? cisternEquipmentGeometry(ground, specification, equipment)
+        : null,
+    [currentScope, ground, specification, equipment]
+  );
+  const geometry = specificationId ? equipmentGeometry : manualGeometry;
   const baseRequest = currentScope ? cisternRequest(roof, ground, capture, area, depth) : null;
-  const request =
-    baseRequest && geometry?.contained && layout ? { ...baseRequest, tankLayout: layout } : null;
+  const request = specificationId
+    ? specification && equipment && equipmentGeometry?.contained
+      ? cisternEquipmentPlanRequest(roof, ground, capture, equipment, specification)
+      : null
+    : baseRequest && manualGeometry?.contained && layout
+      ? { ...baseRequest, tankLayout: layout }
+      : null;
   async function mutate(remove?: CisternPlan) {
     if (!allowed || posting.current || (!remove && !request)) return;
     const abort = new AbortController(),
@@ -190,6 +251,15 @@ export function useCisternPlans(
   }
   return {
     allowed,
+    specifications,
+    specification,
+    specificationId: currentScope ? specificationId : '',
+    specificationError,
+    specificationsLoading,
+    chooseSpecification: (id: string) => {
+      setSaved(null);
+      setSpecificationId(id);
+    },
     role,
     setRole,
     roof: currentScope ? roof : null,

@@ -1,9 +1,17 @@
+import type { CisternSpecification } from '../../facility/dto/cisternSpecificationDto';
+import { CISTERN_SPECIFICATIONS_HASH } from '../../facility/dto/cisternSpecificationDto';
+import { cisternEquipmentRequestDto } from '../dto/cisternLayoutDto';
 import type { MapPoint } from '../../catalog/entity/facilityFootprint';
 import {
   facilityPolygonFootprint,
   polygonArea,
 } from '../../catalog/service/facilityGeometryService';
-import type { CisternGeometryPreview, CisternLayoutRequest } from '../dto/cisternLayoutDto';
+import type {
+  CisternEquipmentRequest,
+  CisternEquipmentPreview,
+  CisternGeometryPreview,
+  CisternLayoutRequest,
+} from '../dto/cisternLayoutDto';
 import type { SharedSite } from '../entity/installation';
 import { cisternLayoutRequestDto } from '../dto/cisternLayoutDto';
 export type CisternLayoutFields = Record<'width' | 'wall' | 'east' | 'north' | 'rotation', string>;
@@ -61,6 +69,30 @@ export function cisternGeometry(
   const length = area / w,
     ow = w + 2 * wall,
     ol = length + 2 * wall;
+  const shape = rectangleGeometry(ground, ow, ol, r, dx, dy);
+  if (!shape) return null;
+  return {
+    method: 'RECTANGULAR_INTERNAL_SECTION_WITH_WALL_V1',
+    sourceModelHash: ground.modelHash,
+    ...shape,
+    internalWidthM: w,
+    internalLengthM: length,
+    wallThicknessM: wall,
+    outerWidthM: ow,
+    outerLengthM: ol,
+    storageDepthM: depth,
+    rotationDeg: r,
+  };
+}
+
+function rectangleGeometry(
+  ground: Pick<SharedSite, 'polygons' | 'center'>,
+  ow: number,
+  ol: number,
+  r: number,
+  dx: number,
+  dy: number
+) {
   const center: MapPoint = [ground.center[0] + dx, ground.center[1] + dy];
   const angle = (r * Math.PI) / 180,
     c = Math.cos(angle),
@@ -100,17 +132,63 @@ export function cisternGeometry(
   ]);
   coordinates.push(coordinates[0]);
   return {
-    method: 'RECTANGULAR_INTERNAL_SECTION_WITH_WALL_V1',
-    sourceModelHash: ground.modelHash,
     center,
-    internalWidthM: w,
-    internalLengthM: length,
-    wallThicknessM: wall,
-    outerWidthM: ow,
-    outerLengthM: ol,
-    storageDepthM: depth,
-    rotationDeg: r,
     coordinates,
     contained: Math.abs(ow * ol - covered) <= Math.max(1e-8, ow * ol * 1e-9),
   };
+}
+
+export function parseCisternEquipment(
+  fields: CisternLayoutFields,
+  specificationId: string
+): CisternEquipmentRequest | null {
+  if (
+    !/^-?\d+(\.\d{1,3})?$/.test(fields.east) ||
+    !/^-?\d+(\.\d{1,3})?$/.test(fields.north) ||
+    !/^\d+(\.\d{1,2})?$/.test(fields.rotation)
+  )
+    return null;
+  const parsed = cisternEquipmentRequestDto.safeParse({
+    specificationId,
+    catalogSha256: CISTERN_SPECIFICATIONS_HASH,
+    offsetXM: Number(fields.east),
+    offsetYM: Number(fields.north),
+    rotationDeg: Number(fields.rotation),
+  });
+  return parsed.success ? parsed.data : null;
+}
+export function cisternEquipmentGeometry(
+  ground: Pick<SharedSite, 'polygons' | 'center' | 'modelHash'>,
+  spec: CisternSpecification,
+  request: CisternEquipmentRequest
+): CisternEquipmentPreview | null {
+  if (
+    !cisternEquipmentRequestDto.safeParse(request).success ||
+    request.specificationId !== spec.id ||
+    request.catalogSha256 !== CISTERN_SPECIFICATIONS_HASH
+  )
+    return null;
+  const { width, length, height } = spec.equipmentDimensionsM;
+  if ([width, length, height].some((v) => !Number.isFinite(v) || v <= 0)) return null;
+  const shape = rectangleGeometry(
+    ground,
+    width,
+    length,
+    request.rotationDeg,
+    request.offsetXM,
+    request.offsetYM
+  );
+  return shape
+    ? {
+        ...shape,
+        method: 'PUBLIC_EQUIPMENT_ENVELOPE_V1',
+        sourceModelHash: ground.modelHash,
+        specificationId: spec.id,
+        catalogSha256: request.catalogSha256,
+        widthM: width,
+        lengthM: length,
+        heightM: height,
+        rotationDeg: request.rotationDeg,
+      }
+    : null;
 }

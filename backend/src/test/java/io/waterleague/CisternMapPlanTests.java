@@ -278,6 +278,95 @@ class CisternMapPlanTests extends PostgresIntegrationTest {
     assertThat(installations.active()).isEmpty();
   }
 
+  @Autowired io.waterleague.facility.repository.CisternSpecificationRepository specifications;
+
+  CisternPlanRequest equipmentRequest(String id, String hash, BigDecimal offset) {
+    var r = request();
+    return new CisternPlanRequest(
+        r.districtId(),
+        r.roofCellId(),
+        r.groundCellId(),
+        r.roofModelHash(),
+        r.groundModelHash(),
+        r.captureAreaM2(),
+        null,
+        null,
+        null,
+        new CisternEquipmentRequest(id, hash, offset, BigDecimal.ZERO, BigDecimal.ZERO));
+  }
+
+  @Test
+  void publicEquipmentRetainsSourceNominalCapacityAndNoSpending() {
+    var owner = account("11200");
+    var before = budget.view(owner.id()).remainingKrw();
+    var r =
+        equipmentRequest(
+            "SINYOUNG_STS_1500L_2025",
+            io.waterleague.facility.repository.CisternSpecificationRepository.HASH,
+            BigDecimal.ZERO);
+    assertThat(validator.validate(r)).isEmpty();
+    var first = service.save(owner.username(), r);
+    var s = first.snapshot();
+    assertThat(s.path("schemaVersion").asInt()).isEqualTo(3);
+    assertThat(s.path("capacityM3").decimalValue()).isEqualByComparingTo("1.5");
+    var g = s.path("equipmentGeometry");
+    assertThat(g.path("widthM").asDouble()).isEqualTo(0.8);
+    assertThat(g.path("lengthM").asDouble()).isEqualTo(1.8);
+    assertThat(g.path("heightM").asDouble()).isEqualTo(1.45);
+    assertThat(g.path("sourceModelHash").asString()).isEqualTo(ground.modelHash());
+    assertThat(s.path("equipmentSpecification"))
+        .isEqualTo(
+            specifications.require(r.equipment().specificationId(), r.equipment().catalogSha256()));
+    assertThat(s.path("equipmentSpecification").path("hydraulics").path("internalAreaM2").isNull())
+        .isTrue();
+    assertThat(
+            s.path("equipmentSpecification")
+                .path("procurement")
+                .path("confirmedInstallationPriceKrw")
+                .isNull())
+        .isTrue();
+    assertThat(s.path("tankGeometry").isMissingNode()).isTrue();
+    assertThat(s.path("request").path("tankAreaM2").isNull()).isTrue();
+    assertThat(s.path("installationReady").asBoolean()).isFalse();
+    assertThat(s.path("positionReserved").asBoolean()).isFalse();
+    assertThat(service.save(owner.username(), r).id()).isEqualTo(first.id());
+    assertThat(service.list(owner.username()).getFirst().snapshot()).isEqualTo(s);
+    assertThat(installations.active()).isEmpty();
+    assertThat(budget.view(owner.id()).remainingKrw()).isEqualByComparingTo(before);
+    var hybrid =
+        new CisternPlanRequest(
+            r.districtId(),
+            r.roofCellId(),
+            r.groundCellId(),
+            r.roofModelHash(),
+            r.groundModelHash(),
+            r.captureAreaM2(),
+            BigDecimal.ONE,
+            BigDecimal.ONE,
+            null,
+            r.equipment());
+    assertThat(validator.validate(hybrid)).isNotEmpty();
+    assertThatThrownBy(() -> service.save(owner.username(), hybrid))
+        .isInstanceOf(DomainException.class);
+    for (var invalid :
+        List.of(
+            equipmentRequest("UNKNOWN", r.equipment().catalogSha256(), BigDecimal.ZERO),
+            equipmentRequest(r.equipment().specificationId(), "0".repeat(64), BigDecimal.ZERO),
+            equipmentRequest(
+                r.equipment().specificationId(),
+                r.equipment().catalogSha256(),
+                new BigDecimal("10000")))) {
+      assertThatThrownBy(() -> service.save(owner.username(), invalid))
+          .isInstanceOf(DomainException.class);
+    }
+    assertThat(service.list(owner.username())).hasSize(1);
+    db.update(
+        "UPDATE cistern_map_plans SET snapshot_text=replace(snapshot_text, '1.45', '1.46') WHERE"
+            + " id=?",
+        first.id());
+    assertThatThrownBy(() -> service.list(owner.username())).isInstanceOf(DomainException.class);
+  }
+
   @Test
   void concurrentRetryCreatesOneDraft() throws Exception {
     var owner = account("11200");

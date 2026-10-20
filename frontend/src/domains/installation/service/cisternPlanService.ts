@@ -57,3 +57,38 @@ export function cisternRequest(
     tankDepthM: values[2],
   };
 }
+
+export function cisternEquipmentPlanRequest(
+  roof: SharedSite | null,
+  ground: SharedSite | null,
+  capture: string,
+  equipment: import('../dto/cisternLayoutDto').CisternEquipmentRequest,
+  specification: import('../../facility/dto/cisternSpecificationDto').CisternSpecification
+): CisternPlanRequest | null {
+  if (
+    !roof ||
+    !ground ||
+    cisternSelectionError(roof, 'roof', null, false) ||
+    cisternSelectionError(ground, 'ground', null, false) ||
+    roof.districtId !== ground.districtId ||
+    !/^\d+(\.\d{1,2})?$/.test(capture) ||
+    !Number.isFinite(Number(capture)) ||
+    Number(capture) <= 0 ||
+    Number(capture) > roof.maxAreaM2 ||
+    specification.equipmentDimensionsM.width * specification.equipmentDimensionsM.length >
+      ground.maxAreaM2 ||
+    equipment.specificationId !== specification.id
+  )
+    return null;
+  return {
+    districtId: roof.districtId,
+    roofCellId: roof.cellId,
+    groundCellId: ground.cellId,
+    roofModelHash: roof.modelHash,
+    groundModelHash: ground.modelHash,
+    captureAreaM2: Number(capture),
+    tankAreaM2: null,
+    tankDepthM: null,
+    equipment,
+  };
+}

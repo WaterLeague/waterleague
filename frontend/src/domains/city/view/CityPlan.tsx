@@ -43,7 +43,7 @@ import { FloodTracePlan } from '../../floodtrace/view/FloodTraceLayer';
 import { SurfacePlan } from '../../surface/view/SurfaceLayer';
 import type { SurfaceFrame, SurfaceMetric } from '../../surface/entity/surface';
 import { CisternLayoutPlan } from '../../installation/view/CisternLayoutPlan';
-import type { CisternGeometryPreview } from '../../installation/dto/cisternLayoutDto';
+import type { CisternMapPreview } from '../../installation/dto/cisternLayoutDto';
 import type { Street } from '../../urban/entity/urban';
 import type { ParkingData } from '../../urban/entity/parking';
 import { useParkingLots } from '../../urban/controller/useParkingLots';
@@ -55,7 +55,7 @@ type Props = {
   topography: TopographyView;
   streets: Street[];
   parking: ParkingData | null;
-  cisternGeometry?: CisternGeometryPreview | null;
+  cisternGeometry?: CisternMapPreview | null;
   planningRoles?: ReadonlyMap<string, CisternSiteRole>;
   preview?: { site: SharedSite; placement: Placement } | null;
   surfaceFrame?: SurfaceFrame | null;

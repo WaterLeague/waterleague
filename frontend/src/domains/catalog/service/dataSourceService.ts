@@ -145,10 +145,11 @@ export const dataSources: DataSource[] = [
   {
     id: 'simulation',
     title: '시설 제원·물 계산',
-    provider: '미국 환경보호청(EPA)',
+    provider: '미국 환경보호청(EPA) · 나라장터 공개 규격',
     description:
       '설치 시설 6종의 단면·침투·저류·배수를 계산합니다. 외부 배수 연결이 확인되지 않은 위치에는 시설에 직접 내리는 비만 유입합니다.',
-    detail: '빗물이용조는 설계 초안 단계입니다. 현재 일반 설치·예산·점수에 포함되지 않습니다.',
+    detail:
+      '빗물이용조는 직접 설계와 공개 1.5톤 규격의 외형 배치·저장을 제공합니다. 내부 저류 단면·월류 경로·확정 공사비가 미확인인 공간 초안이며 일반 설치·예산·점수에 포함되지 않습니다.',
     datasets: [
       {
         name: 'Storm Water Management Model(SWMM) 5.2.4',
@@ -159,6 +160,17 @@ export const dataSources: DataSource[] = [
         name: 'SWMM Reference Manual Volume III · Chapter 6',
         href: 'https://nepis.epa.gov/Exe/ZyPDF.cgi/P100P2NY.PDF?Dockey=P100P2NY.PDF',
         detail: '2016년 공개 설계 문헌 · 시설 단면·재료·투수·저류 제원',
+      },
+      {
+        name: '2025년 스마트 생태공장 빗물저금통 규격서 · 신영델텍',
+        href: 'https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R25BK01021248&bidPbancOrd=000&fileSeq=2&fileType=',
+        detail: '명목 1.5톤 · STS304 · 장비 외형 1.8×0.8×1.45m, 실제 내부 수면적·유효 용량과 구분',
+      },
+      {
+        name: '2025년 스마트 생태공장 빗물저금통 공고서 · 신영델텍',
+        href: 'https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R25BK01021248&bidPbancOrd=000&fileSeq=1&fileType=',
+        detail:
+          '2025-08 발주 예산 2,200만 원(VAT 포함), 설계·장비·설치·시운전·기초/계장 범위. 낙찰가·서울 현장 설치비로 사용하지 않음',
       },
     ],
   },

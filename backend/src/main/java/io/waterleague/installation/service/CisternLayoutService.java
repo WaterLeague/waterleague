@@ -1,11 +1,14 @@
 package io.waterleague.installation.service;
 
 import io.waterleague.common.exception.ErrorCode;
+import io.waterleague.installation.dto.CisternEquipmentRequest;
 import io.waterleague.installation.dto.CisternLayoutRequest;
 import io.waterleague.installation.exception.CisternPlanException;
+import io.waterleague.installation.view.CisternEquipmentView;
 import io.waterleague.installation.view.CisternLayoutView;
 import java.awt.geom.*;
 import java.util.*;
+import tools.jackson.databind.JsonNode;
 
 public final class CisternLayoutService {
   private CisternLayoutService() {}
@@ -37,6 +40,73 @@ public final class CisternLayoutService {
         || polygons.isEmpty()
         || polygons.size() > 1000) throw new CisternPlanException(ErrorCode.PLACEMENT_INVALID);
     double length = areaM2 / width, outerWidth = width + 2 * wall, outerLength = length + 2 * wall;
+    var rectangle = rectangle(polygons, x, y, outerWidth, outerLength, rotation);
+    return new CisternLayoutView(
+        "RECTANGULAR_INTERNAL_SECTION_WITH_WALL_V1",
+        sourceHash,
+        rectangle.center(),
+        width,
+        length,
+        wall,
+        outerWidth,
+        outerLength,
+        depthM,
+        rotation,
+        rectangle.coordinates(),
+        true);
+  }
+
+  public static CisternEquipmentView equipment(
+      List<List<List<List<Double>>>> polygons,
+      List<Double> origin,
+      String sourceHash,
+      JsonNode specification,
+      CisternEquipmentRequest request) {
+    var dimensions = specification.path("equipmentDimensionsM");
+    double width = dimensions.path("width").asDouble(),
+        length = dimensions.path("length").asDouble(),
+        height = dimensions.path("height").asDouble();
+    double x = origin.get(0) + request.offsetXM().doubleValue(),
+        y = origin.get(1) + request.offsetYM().doubleValue(),
+        rotation = request.rotationDeg().doubleValue();
+    if (!Double.isFinite(height) || height <= 0)
+      throw new CisternPlanException(ErrorCode.PLACEMENT_INVALID);
+    var rectangle = rectangle(polygons, x, y, width, length, rotation);
+    // 외형만 검사하며 장비 공간을 내부 저류 단면으로 바꾸지 않는다.
+    return new CisternEquipmentView(
+        "PUBLIC_EQUIPMENT_ENVELOPE_V1",
+        sourceHash,
+        request.specificationId(),
+        request.catalogSha256(),
+        rectangle.center(),
+        width,
+        length,
+        height,
+        rotation,
+        rectangle.coordinates(),
+        true);
+  }
+
+  private record Rectangle(List<Double> center, List<List<Double>> coordinates) {}
+
+  private static Rectangle rectangle(
+      List<List<List<List<Double>>>> polygons,
+      double x,
+      double y,
+      double outerWidth,
+      double outerLength,
+      double rotation) {
+    if (!Double.isFinite(x)
+        || !Double.isFinite(y)
+        || !Double.isFinite(outerWidth)
+        || !Double.isFinite(outerLength)
+        || outerWidth <= 0
+        || outerLength <= 0
+        || !Double.isFinite(rotation)
+        || rotation < 0
+        || rotation >= 360
+        || polygons.isEmpty()
+        || polygons.size() > 1000) throw new CisternPlanException(ErrorCode.PLACEMENT_INVALID);
     double angle = Math.toRadians(rotation), c = Math.cos(angle), s = Math.sin(angle);
     var points = new ArrayList<List<Double>>();
     var local = new ArrayList<List<Double>>();
@@ -70,19 +140,7 @@ public final class CisternLayoutService {
     // 큰 투영 좌표의 상쇄 오차를 줄여 외곽 전체와 오목한 경계의 교차 면적을 검사한다.
     if (area(outside) > Math.max(1e-8, outerWidth * outerLength * 1e-9))
       throw new CisternPlanException(ErrorCode.PLACEMENT_INVALID);
-    return new CisternLayoutView(
-        "RECTANGULAR_INTERNAL_SECTION_WITH_WALL_V1",
-        sourceHash,
-        List.of(x, y),
-        width,
-        length,
-        wall,
-        outerWidth,
-        outerLength,
-        depthM,
-        rotation,
-        points,
-        true);
+    return new Rectangle(List.of(x, y), points);
   }
 
   private static Path2D.Double path(List<List<Double>> ring) {

@@ -1,3 +1,4 @@
+import { CisternSpecificationDetails } from './CisternSpecificationDetails';
 import { Container, House, MapPin, X } from 'lucide-react';
 import type { CisternPlanState } from '../controller/useCisternPlans';
 import type { SharedSite } from '../entity/installation';
@@ -16,7 +17,7 @@ export function CisternPlanPanel({
   onLocate: (site: SharedSite) => void;
   onLogin: () => void;
 }) {
-  const capacity = Number(s.area) * Number(s.depth);
+  const capacity = s.specification?.nominalCapacityM3 ?? Number(s.area) * Number(s.depth);
   return (
     <aside className="shared-inspector cistern-plan-panel" aria-label="빗물이용조 지도 계획">
       <header className="watershed-heading">
@@ -70,28 +71,54 @@ export function CisternPlanPanel({
       >
         <fieldset disabled={s.busy}>
           <legend>탱크 설계</legend>
+          <label className="cistern-specification-choice">
+            규격 선택
+            <select
+              value={s.specificationId}
+              onChange={(e) => s.chooseSpecification(e.target.value)}
+              disabled={s.specificationsLoading}
+            >
+              <option value="">직접 입력 · 내부 단면 설계</option>
+              {s.specifications.map((spec) => (
+                <option key={spec.id} value={spec.id}>
+                  {spec.name}
+                </option>
+              ))}
+            </select>
+          </label>
+          {s.specificationsLoading && <p role="status">공개 규격 조회 중…</p>}
+          {s.specificationError && (
+            <p role="alert">
+              {s.specificationError}
+              <button type="button" onClick={s.retry}>
+                다시 조회
+              </button>
+            </p>
+          )}
           {(
             [
               ['capture', '집수 면적 (m²)', s.roof?.maxAreaM2, '0.01'],
               ['area', '내부 수면적 (m²)', s.ground?.maxAreaM2, '0.01'],
               ['depth', '저류 깊이 (m)', 100, '0.001'],
             ] as const
-          ).map(([key, label, max, step]) => (
-            <label key={key}>
-              {label}
-              <input
-                type="number"
-                min={step}
-                max={max}
-                step={step}
-                required
-                value={s[key]}
-                onChange={(e) => s.edit(key, e.target.value)}
-              />
-            </label>
-          ))}
+          )
+            .filter(([key]) => !s.specificationId || key === 'capture')
+            .map(([key, label, max, step]) => (
+              <label key={key}>
+                {label}
+                <input
+                  type="number"
+                  min={step}
+                  max={max}
+                  step={step}
+                  required
+                  value={s[key]}
+                  onChange={(e) => s.edit(key, e.target.value)}
+                />
+              </label>
+            ))}
           <strong>
-            설계 용량{' '}
+            {s.specificationId ? '명목 용량' : '설계 용량'}{' '}
             {capacity > 0 && Number.isFinite(capacity)
               ? capacity.toLocaleString('ko-KR', { maximumFractionDigits: 4 })
               : '—'}{' '}
@@ -108,30 +135,27 @@ export function CisternPlanPanel({
               ['north', '북쪽 이동 (m)', -100000, 100000, '0.001'],
               ['rotation', '회전 (°)', 0, 359.99, '0.01'],
             ] as const
-          ).map(([key, label, min, max, step]) => (
-            <label key={key}>
-              {label}
-              <input
-                type="number"
-                min={min}
-                max={max}
-                step={step}
-                required
-                value={s.layoutFields[key]}
-                onChange={(e) => s.editLayout(key, e.target.value)}
-              />
-            </label>
-          ))}
+          )
+            .filter(([key]) => !s.specificationId || (key !== 'width' && key !== 'wall'))
+            .map(([key, label, min, max, step]) => (
+              <label key={key}>
+                {label}
+                <input
+                  type="number"
+                  min={min}
+                  max={max}
+                  step={step}
+                  required
+                  value={s.layoutFields[key]}
+                  onChange={(e) => s.editLayout(key, e.target.value)}
+                />
+              </label>
+            ))}
           {s.geometry && (
             <p className="cistern-layout-summary">
-              내부 길이{' '}
-              {s.geometry.internalLengthM.toLocaleString('ko-KR', { maximumFractionDigits: 3 })}m
-              <br />
-              외곽{' '}
-              {s.geometry.outerWidthM.toLocaleString('ko-KR', {
-                maximumFractionDigits: 3,
-              })}{' '}
-              × {s.geometry.outerLengthM.toLocaleString('ko-KR', { maximumFractionDigits: 3 })}m
+              {s.geometry.method === 'PUBLIC_EQUIPMENT_ENVELOPE_V1'
+                ? `장비 외형 폭 ${s.geometry.widthM} × 길이 ${s.geometry.lengthM} × 높이 ${s.geometry.heightM}m`
+                : `내부 길이 ${s.geometry.internalLengthM.toLocaleString('ko-KR', { maximumFractionDigits: 3 })}m · 외곽 ${s.geometry.outerWidthM.toLocaleString('ko-KR', { maximumFractionDigits: 3 })} × ${s.geometry.outerLengthM.toLocaleString('ko-KR', { maximumFractionDigits: 3 })}m`}
             </p>
           )}
           {s.geometry && (
@@ -143,9 +167,13 @@ export function CisternPlanPanel({
           )}
         </fieldset>
         <p className="micro-note">
-          후보 중심에서 이동 · 지도 가로축 0°. 지도에는 저류공간과 벽체의 설계 범위를 표시합니다.
+          후보 중심에서 이동 · 지도 가로축 0°.{' '}
+          {s.specificationId
+            ? '지도에는 규격서의 장비 외형을 표시합니다.'
+            : '지도에는 저류공간과 벽체의 설계 범위를 표시합니다.'}
           기초·여유고·실제 홈통·배수 연결은 포함하지 않습니다.
         </p>
+        {s.specification && <CisternSpecificationDetails specification={s.specification} />}
         {s.allowed ? (
           <button
             className="solid-button shared-install"
@@ -173,7 +201,9 @@ export function CisternPlanPanel({
       {s.saved && (
         <>
           <p role="status">지도 계획 저장됨 · 두 위치의 원자료 버전 보존</p>
-          <CisternReferenceCosts costing={s.saved.snapshot.referenceCosts} />
+          {!s.saved.snapshot.equipmentSpecification && (
+            <CisternReferenceCosts costing={s.saved.snapshot.referenceCosts} />
+          )}
         </>
       )}
       <section className="cistern-plan-history">
@@ -196,6 +226,9 @@ export function CisternPlanPanel({
               >
                 {plan.snapshot.roof.name} → {plan.snapshot.ground.name}
                 <small>
+                  {plan.snapshot.equipmentSpecification
+                    ? `${plan.snapshot.equipmentSpecification.name} · 명목 `
+                    : '설계 '}
                   {plan.snapshot.capacityM3.toLocaleString('ko-KR')} m³ ·{' '}
                   {new Date(plan.createdAt).toLocaleDateString('ko-KR')}
                 </small>

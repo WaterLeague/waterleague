@@ -69,7 +69,8 @@
   gap: 12px;
   font-size: 13px;
 }
-.cistern-plan-panel input {
+.cistern-plan-panel input,
+.cistern-plan-panel select {
   width: 100%;
   min-width: 0;
   padding: 9px;
@@ -110,4 +111,18 @@
   display: block;
   color: #60716a;
   margin-top: 5px;
+}
+
+.cistern-plan-panel .cistern-specification-choice {
+  grid-template-columns: 1fr;
+}
+.cistern-specification-details {
+  font-size: 12px;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+  margin-bottom: 16px;
+}
+.cistern-specification-details summary {
+  cursor: pointer;
+  font-weight: 700;
 }

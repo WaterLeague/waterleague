@@ -36,6 +36,21 @@ class ApiSecurityTests extends PostgresIntegrationTest {
   }
 
   @Test
+  void publicEquipmentCatalogKeepsExactSourceHashAndPrivateDraftBoundary() throws Exception {
+    var response = get("/api/v1/facilities/cistern-specifications-v1");
+    String hash = io.waterleague.facility.repository.CisternSpecificationRepository.HASH;
+    var json =
+        new io.waterleague.common.service.JsonService(new tools.jackson.databind.ObjectMapper());
+    assertThat(response.statusCode()).isEqualTo(200);
+    assertThat(json.hash(response.body())).isEqualTo(hash);
+    assertThat(response.headers().firstValue("ETag")).contains("\"" + hash + "\"");
+    assertThat(response.headers().firstValue("Cache-Control"))
+        .hasValueSatisfying(v -> assertThat(v).contains("public", "immutable"));
+    assertThat(get("/api/v1/installations/cistern-plans").statusCode()).isEqualTo(401);
+    assertThat(get("/api/v1/facilities/cistern-specifications-v2").statusCode()).isEqualTo(401);
+  }
+
+  @Test
   void publicCatalogReportsUnavailabilityWithoutInventedMaps() throws Exception {
     var catalog = get("/api/v1/catalog");
     assertThat(catalog.statusCode()).isEqualTo(200);

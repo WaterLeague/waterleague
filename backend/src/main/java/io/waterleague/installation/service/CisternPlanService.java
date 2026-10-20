@@ -4,6 +4,7 @@ import io.waterleague.account.repository.AccountRepository;
 import io.waterleague.account.service.AccountService;
 import io.waterleague.common.exception.ErrorCode;
 import io.waterleague.common.service.JsonService;
+import io.waterleague.facility.repository.CisternSpecificationRepository;
 import io.waterleague.installation.dto.CisternPlanRequest;
 import io.waterleague.installation.entity.CisternPlan;
 import io.waterleague.installation.exception.CisternPlanException;
@@ -25,6 +26,7 @@ public class CisternPlanService {
   private final AccountService auth;
   private final JsonService json;
   private final WatershedCostRepository costs;
+  private final CisternSpecificationRepository specifications;
 
   public CisternPlanService(
       CisternPlanRepository plans,
@@ -32,13 +34,15 @@ public class CisternPlanService {
       AccountRepository accounts,
       AccountService auth,
       JsonService json,
-      WatershedCostRepository costs) {
+      WatershedCostRepository costs,
+      CisternSpecificationRepository specifications) {
     this.plans = plans;
     this.sites = sites;
     this.accounts = accounts;
     this.auth = auth;
     this.json = json;
     this.costs = costs;
+    this.specifications = specifications;
   }
 
   private io.waterleague.account.entity.Account member(String username) {
@@ -71,20 +75,50 @@ public class CisternPlanService {
         || !"GROUND".equals(ground.kind())
         || roof.cellId().equals(ground.cellId())
         || request.captureAreaM2().signum() <= 0
-        || request.tankAreaM2().signum() <= 0
-        || request.tankDepthM().signum() <= 0
-        || request.captureAreaM2().compareTo(roof.maxAreaM2()) > 0
-        || request.tankAreaM2().compareTo(ground.maxAreaM2()) > 0)
+        || request.captureAreaM2().compareTo(roof.maxAreaM2()) > 0)
+      throw new CisternPlanException(ErrorCode.PLACEMENT_INVALID);
+    boolean equipment = request.equipment() != null;
+    if (equipment
+        ? request.tankAreaM2() != null
+            || request.tankDepthM() != null
+            || request.tankLayout() != null
+        : request.tankAreaM2() == null
+            || request.tankDepthM() == null
+            || request.tankAreaM2().signum() <= 0
+            || request.tankDepthM().signum() <= 0
+            || request.tankAreaM2().compareTo(ground.maxAreaM2()) > 0)
       throw new CisternPlanException(ErrorCode.PLACEMENT_INVALID);
     if (plans.occupied(request.districtId(), request.roofCellId(), request.groundCellId()))
       throw new CisternPlanException(ErrorCode.SITE_OCCUPIED);
     var snapshot = new TreeMap<String, Object>();
-    snapshot.put("schemaVersion", request.tankLayout() == null ? 1 : 2);
+    snapshot.put("schemaVersion", equipment ? 3 : request.tankLayout() == null ? 1 : 2);
     snapshot.put("status", "SPATIAL_DRAFT_NOT_INSTALLED");
     snapshot.put("request", request);
     snapshot.put("roof", roof);
     snapshot.put("ground", ground);
-    var capacity = request.tankAreaM2().multiply(request.tankDepthM());
+    java.math.BigDecimal capacity;
+    if (equipment) {
+      var specification =
+          specifications.require(
+              request.equipment().specificationId(), request.equipment().catalogSha256());
+      var geometry =
+          CisternLayoutService.equipment(
+              ground.polygons(),
+              ground.center(),
+              ground.modelHash(),
+              specification,
+              request.equipment());
+      if (java.math.BigDecimal.valueOf(geometry.widthM())
+              .multiply(java.math.BigDecimal.valueOf(geometry.lengthM()))
+              .compareTo(ground.maxAreaM2())
+          > 0) throw new CisternPlanException(ErrorCode.PLACEMENT_INVALID);
+      capacity = specification.path("nominalCapacityM3").decimalValue();
+      snapshot.put("equipmentSpecification", specification);
+      snapshot.put("equipmentGeometry", geometry);
+      snapshot.put("capacityBasis", specification.path("capacityBasis").asString());
+    } else {
+      capacity = request.tankAreaM2().multiply(request.tankDepthM());
+    }
     snapshot.put("capacityM3", capacity);
     if (request.tankLayout() != null)
       snapshot.put(
@@ -120,9 +154,11 @@ public class CisternPlanService {
         "limitations",
         List.of(
             "지붕·지상 후보의 원 경계이며 실제 홈통·배수관 경로 미확인",
-            request.tankLayout() == null
-                ? "단면적·깊이는 설계값이며 지상 후보 안의 실제 탱크 형상 배치·바닥 높이 미확인"
-                : "탱크 외곽의 공개 도형 포함만 확인한 설계이며 기초·여유고·구조·지장물·실제 바닥 높이 미확인",
+            equipment
+                ? "공개 장비 외형의 공간 검토이며 내부 수리 단면·월류/배수 경로·설치 공사비 미확정"
+                : request.tankLayout() == null
+                    ? "단면적·깊이는 설계값이며 지상 후보 안의 실제 탱크 형상 배치·바닥 높이 미확인"
+                    : "탱크 외곽의 공개 도형 포함만 확인한 설계이며 기초·여유고·구조·지장물·실제 바닥 높이 미확인",
             "직선 중심 간 거리는 수평 참고 거리이며 실제 배관 길이·낙차가 아님",
             "설계 초안 저장은 위치 예약·설치·예산 차감·점수 부여가 아님"));
     String raw = json.write(snapshot), hash = json.hash(raw);

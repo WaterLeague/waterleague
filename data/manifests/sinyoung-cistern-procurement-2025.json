@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "sinyoung-cistern-procurement-2025",
+  "retrievedOn": "2026-10-20",
+  "classification": "PUBLIC_PROCUREMENT_SPECIFICATION_AND_PROJECT_BUDGET",
+  "files": [
+    {
+      "file": "data/private/facility-reference-20261020/sinyoung-cistern-2025-tender.pdf",
+      "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R25BK01021248&bidPbancOrd=000&fileSeq=1&fileType=",
+      "bytes": 78922,
+      "sha256": "2e897c8cd96a5dccf28c53876aafe87dc3f4aa17c0214e650c2c52457910ac06"
+    },
+    {
+      "file": "data/private/facility-reference-20261020/sinyoung-cistern-2025-specification.pdf",
+      "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R25BK01021248&bidPbancOrd=000&fileSeq=2&fileType=",
+      "bytes": 88888,
+      "sha256": "22103bbab91b6bb4d68bcb40199bd8717667b1b8c568c66c655808fba428835e"
+    }
+  ],
+  "catalogFile": "backend/src/main/resources/facilities/cistern-specifications-v1.json",
+  "catalogSha256": "6fdf0d866bb28901196cd4354a786228fa1a53b77a3d8c8e805e5d9744edde17",
+  "limitations": [
+    "발주 예산은 낙찰/실거래 설치비와 구분",
+    "공개 규격의 외형과 공칭 용량을 내부 수리 단면으로 추정하지 않음",
+    "원본 담당자 연락처는 공개 파생물에 포함하지 않음"
+  ]
+}

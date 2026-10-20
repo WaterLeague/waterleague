@@ -68,7 +68,7 @@ import { CisternLayoutMesh } from '../../installation/view/CisternLayoutMesh';
 import { RiverLayer } from '../../surface/view/RiverLayer';
 import { WaterScene } from '../../surface/view/WaterScene';
 import { calmWater, type WaterWeather } from '../../surface/service/waterAppearanceService';
-import type { CisternGeometryPreview } from '../../installation/dto/cisternLayoutDto';
+import type { CisternMapPreview } from '../../installation/dto/cisternLayoutDto';
 import { createFloodField } from '../../urban/service/floodFieldService';
 import type { FloodStats } from '../../urban/service/floodMovementService';
 import type { LivePlace } from '../../urban/entity/liveUrban';
@@ -495,7 +495,7 @@ const CityScene = memo(function CityScene({
   livePlaces: LivePlace[];
   historical: boolean;
   onFloodStats: (stats: FloodStats) => void;
-  cisternGeometry?: CisternGeometryPreview | null;
+  cisternGeometry?: CisternMapPreview | null;
   planningRoles?: ReadonlyMap<string, CisternSiteRole>;
   surfaceFrame?: SurfaceFrame | null;
   publicSurfaceFrames?: PublicFrame[];
