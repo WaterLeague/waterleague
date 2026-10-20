@@ -11,6 +11,26 @@ def verify(test, folder, result):
     test.assertEqual(value, {'sha256': hashlib.sha256(raw).hexdigest(), **json.loads(raw)})
     validate(value)
     manifest = json.loads((folder/'manifest.json').read_bytes())
+    assessment = result['metricComparison']
+    test.assertEqual(len(assessment['metrics']), 9)
+    test.assertIsNone(assessment['compositeScore'])
+    test.assertFalse(assessment['relativeUsedForRanking'])
+    before, after = result['cases']
+    for m in assessment['metrics']:
+        if m['status'] == 'COMPARABLE':
+            test.assertEqual(m['signedImprovement'], m['baseline']-m['strategy'])
+            if m['baseline'] <= 0:
+                test.assertIsNone(m['relativeImprovementPercent'])
+            else:
+                test.assertAlmostEqual(m['relativeImprovementPercent'],m['signedImprovement']/m['baseline']*100)
+        elif m['status'] == 'UNAVAILABLE':
+            test.assertIsNone(m['baseline']);test.assertIsNone(m['strategy'])
+        else:
+            test.assertIsNone(result['signedReductionM3']);test.assertIsNone(result['signedPeakReductionM3s'])
+    metric = next(m for m in assessment['metrics'] if m['id'] == 'networkFloodingM3')
+    test.assertEqual(metric['baseline'], before['totals']['floodingM3'])
+    test.assertEqual(metric['strategy'], after['totals']['floodingM3'])
+    test.assertEqual(manifest['raw_metrics.py'], hashlib.sha256((folder/'raw_metrics.py').read_bytes()).hexdigest())
     test.assertEqual(manifest['flow-graph.json'], value['sha256'])
     test.assertEqual(value['implementationSha256'], manifest['flow_connections.py'])
     for name, sha in value['sourceHashes'].items():

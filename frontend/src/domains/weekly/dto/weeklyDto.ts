@@ -1,18 +1,28 @@
 import { z } from 'zod';
 const contribution = {
   rank: z.number().int().positive().nullable(),
-  scoreM3: z.number().finite(),
+  scoreM3: z.number().finite().nullable(),
   evaluatedMinutes: z.number().int().nonnegative(),
   evaluatedSeconds: z.number().int().nonnegative().optional(),
   expectedMinutes: z.number().int().nonnegative(),
   expectedSeconds: z.number().int().nonnegative().optional(),
 };
-const player = z.object({
-  ...contribution,
-  playerId: z.uuid(),
-  nickname: z.string(),
-  districtId: z.string(),
-});
+const computed = (v: {
+  scoreM3: number | null;
+  rank: number | null;
+  evaluatedSeconds?: number;
+  evaluatedMinutes: number;
+}) =>
+  ((v.evaluatedSeconds ?? v.evaluatedMinutes * 60) === 0) === (v.scoreM3 === null) &&
+  (v.scoreM3 !== null || v.rank === null);
+const player = z
+  .object({
+    ...contribution,
+    playerId: z.uuid(),
+    nickname: z.string(),
+    districtId: z.string(),
+  })
+  .refine(computed, { message: '미평가 기록의 점수·순위 불일치' });
 const period = z.object({
   weekStart: z.iso.date(),
   startsAt: z.iso.datetime(),
@@ -24,7 +34,11 @@ const period = z.object({
   expectedMinutes: z.number().int().nonnegative(),
   expectedSeconds: z.number().int().nonnegative().optional(),
   districts: z
-    .array(z.object({ ...contribution, districtId: z.string(), districtName: z.string() }))
+    .array(
+      z
+        .object({ ...contribution, districtId: z.string(), districtName: z.string() })
+        .refine(computed, { message: '미평가 기록의 점수·순위 불일치' })
+    )
     .length(25),
   players: z.array(player).max(100),
   participantCount: z.number().int().nonnegative(),

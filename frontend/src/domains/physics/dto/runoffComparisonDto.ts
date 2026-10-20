@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { metricComparisonDto } from './metricComparisonDto';
 const n = z.number().finite();
 const at = z.iso.datetime({ offset: true });
 const method = z.literal('NATIVE_RUNOFF_STEP_SURFACE_PLUS_DRAIN_V1');
@@ -53,7 +54,7 @@ const row = z
   });
 export const runoffComparisonDto = z
   .object({
-    schemaVersion: z.literal(1),
+    schemaVersion: z.union([z.literal(1), z.literal(2)]),
     method,
     cases: z.array(row).length(2),
     dischargeReductionM3: n,
@@ -61,6 +62,7 @@ export const runoffComparisonDto = z
     accountedReductionM3: n,
     peakReductionM3s: n,
     limitations: z.array(z.string()),
+    metricComparison: metricComparisonDto.optional(),
   })
   .refine((v) => {
     const a = v.cases.find((c) => c.id === 'baseline'),
@@ -68,12 +70,31 @@ export const runoffComparisonDto = z
     return (
       !!a &&
       !!b &&
+      (v.schemaVersion !== 2 || v.metricComparison !== undefined) &&
       a.metrics.start === b.metrics.start &&
       a.metrics.end === b.metrics.end &&
       close(v.dischargeReductionM3, a.dischargeM3 - b.dischargeM3) &&
       close(v.netStorageIncreaseM3, b.netStorageM3 - a.netStorageM3) &&
       close(v.accountedReductionM3, a.accountedDischargeM3 - b.accountedDischargeM3) &&
-      close(v.peakReductionM3s, a.metrics.peakM3s - b.metrics.peakM3s)
+      close(v.peakReductionM3s, a.metrics.peakM3s - b.metrics.peakM3s) &&
+      (!v.metricComparison ||
+        (v.metricComparison.scope === 'SELECTED_INDEPENDENT_SURFACE' &&
+          v.metricComparison.window?.kind === 'UTC' &&
+          v.metricComparison.window.start === a.metrics.start &&
+          v.metricComparison.window.end === a.metrics.end &&
+          v.metricComparison.metrics.every((m) => {
+            const raw =
+              m.id === 'surfaceDischargeM3'
+                ? [a.dischargeM3, b.dischargeM3]
+                : m.id === 'surfaceAccountedVolumeM3'
+                  ? [a.accountedDischargeM3, b.accountedDischargeM3]
+                  : m.id === 'surfacePeakM3s'
+                    ? [a.metrics.peakM3s, b.metrics.peakM3s]
+                    : null;
+            return raw
+              ? m.status === 'COMPARABLE' && m.baseline === raw[0] && m.strategy === raw[1]
+              : m.status === 'UNAVAILABLE';
+          })))
     );
   });
 export type RunoffComparisonData = z.infer<typeof runoffComparisonDto>;

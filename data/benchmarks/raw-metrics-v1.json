@@ -1,0 +1,546 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-20",
+  "classification": "LOCAL_RAW_PERFORMANCE_UNIT_API_WORKER_RENDER_VERIFICATION",
+  "method": "SIGNED_ABSOLUTE_PRIMARY_RELATIVE_AUXILIARY_V1",
+  "baseCommit": "8fafb03cbfb72f833ba3b5eef2fd6735a6e12508",
+  "changes": {
+    "nativeRunoffComparisonSchema": 2,
+    "publicNetworkResultSchema": 2,
+    "metricCount": 9,
+    "primarySurfaceMetric": "surfaceAccountedVolumeM3",
+    "primaryResearchNetworkMetric": null,
+    "compositeScore": null,
+    "relativeUsedForRanking": false,
+    "physicalSolverChanged": false,
+    "scoreAndDatabaseValuesRewritten": false
+  },
+  "implementationSha256": {
+    "backend/src/main/java/io/waterleague/physics/view/PhysicsView.java": "627aebf51dedd95f48e8f09ca32c2ef67ce3f54e8952c7a239c2ed0e8f2b14f3",
+    "backend/src/main/java/io/waterleague/weekly/service/WeeklyService.java": "2199c7c82ba16fcd8411164f427e0d2ac10897bcb4d8898ffd9a36af091fb49e",
+    "backend/src/test/java/io/waterleague/GuestHistoricalTests.java": "b640ab45356ba896ed5edc7b73c577be4f6cfd7d8be5340b4448a41183866d9a",
+    "backend/src/test/java/io/waterleague/PhysicsReadbackTests.java": "346fff9ad1b7914b74cb76a4ae987881e43380d69ad3dc0e1c441233ae8988bb",
+    "backend/src/test/java/io/waterleague/WeeklyWorkflowTests.java": "2be70dcf0d49e2b14f83f040b324a674c8609c931219388c18b6d0f5c9b0b142",
+    "frontend/src/domains/catalog/view/DataPage.tsx": "29f35b6adb506427eba011c15969b7411174aa7df74ddb61a6f5b72f855f4fe5",
+    "frontend/src/domains/city/view/CityExplorer.tsx": "29fed26af0699fbb6664c86a71670ec838ffa75b5e2d048403688514dc6e614f",
+    "frontend/src/domains/city/view/GameplayScoreboard.test.tsx": "9d1c3d440f0c81b8d68b9435c5a9571f9f67bdbd5cc7a49bd1a18d4c3a257e65",
+    "frontend/src/domains/city/view/GameplayScoreboard.tsx": "b0a54a40a31dbeecc2e61005fe5d5e479ab9119368e0d5ae529381d9dc964ae2",
+    "frontend/src/domains/installation/service/installationScore.ts": "4100e728ed1d1a2ada8205e6d9db6c537e4e93049d0142d9abb755ab349d6293",
+    "frontend/src/domains/physics/dto/metricComparisonDto.ts": "be626f4f1fae3df548760bf2d25f6322359d0d8d4e8b9b2a25b6b7ce8c57579e",
+    "frontend/src/domains/physics/dto/physicsDto.ts": "bb5f938e6d637e60287df08598a12034b3fa52f10bbccd2f8053465eb6600dce",
+    "frontend/src/domains/physics/dto/runoffComparisonDto.ts": "ab5ce694413897bf10d5b2fd278bd7a4feb10f9dccd5bec3309102db6c508711",
+    "frontend/src/domains/physics/view/PhysicsReadback.test.tsx": "2115c23d389986f40830d548885506937cdafd4f4184974c147ce5f7ba56dc32",
+    "frontend/src/domains/physics/view/RawMetricsResult.test.tsx": "3500464dcbfb8269a7e24483f56663548c5519d9df452953a751bdab885c9582",
+    "frontend/src/domains/physics/view/RelativeImprovement.test.tsx": "f901bd666b2f4af051c26dfbbd14e175d78c2ecdca8aeef37208ee130ab559ec",
+    "frontend/src/domains/physics/view/RelativeImprovement.tsx": "5e941f2c18ecd96e685f23fe9c8eb828651b6aac9af08b0e5c3c8672bf271efa",
+    "frontend/src/domains/physics/view/RunoffComparison.tsx": "227d2b89a16e25b18f0bd78bbf1cd165c2652cd7362b0adbc181051cbe7bf82b",
+    "frontend/src/domains/watershed/dto/watershedDto.ts": "ddb2fe893e0004f8937303fecddd45cdbe453c1b35518a1328787a8ee23e3bf0",
+    "frontend/src/domains/watershed/service/cisternCosts.test.tsx": "0e57b9eb0774d0aae3926fd0bc8b647f332aae4b6176cd8d254d2a2e0fe0e074",
+    "frontend/src/domains/watershed/view/WatershedPeaks.tsx": "d940c5091909a72f914db0ce47a208949896f9654bd0dc23d19c945feb1ac67d",
+    "frontend/src/domains/watershed/view/WatershedResult.tsx": "9bfc2c0bb719d0b4a387ddab1a7fda31fd61bf2657b4de520cfe186ac65b99e4",
+    "frontend/src/domains/weekly/dto/weeklyDto.ts": "c8b0f852ca07b3b738554703d39046c4148a6128fbcf3f650e5c70f1a179a726",
+    "frontend/src/domains/weekly/service/scoreFormat.ts": "08e886d797987a8d00a4590e8a656be26b44579125e81d280c569ea24b8c79e0",
+    "frontend/src/domains/weekly/view/SiteScores.tsx": "d4f5715561d3a73fcc7942a243a103097a8a93753b53bbd72fe7ae007eb00952",
+    "frontend/src/domains/weekly/view/WeeklyBoard.tsx": "e93d44fe1bd86af70bb8f285e270bf7e4a23a754e9ace093fe2634a86832fd30",
+    "scripts/verify_league_postgres.py": "5b549272324521b94c3d3abbe1afb0e4bc0a4f61d3f6370d6bf3581feba9aa0e",
+    "simulation/integration/flow_graph_evidence.py": "1fbe2425a9ed117898334bbf129dd29200a84ee487f144547259f54e1ef6fc66",
+    "simulation/integration/native_contract_evidence.py": "ba981cf145b13f985f53e70208c1b4610b1c281eb2c907f193eacaf3a32148a1",
+    "simulation/integration/test_watershed.py": "a5b0c05ebcaa56dc19ed34514bec04034dcd2e9899e55fa6745060b35bdce979",
+    "simulation/tests/test_flow_connections.py": "a0ddf0a7a5708d7589e0e1da1f179efce96f1b97729bab70360026bee448e2d7",
+    "simulation/tests/test_raw_metrics.py": "d26d5496281b402731b857cb2478f09d838132ece91bdf4244f35585904af3f9",
+    "simulation/waterleague_sim/engine/continuous.py": "767a8f07a221e6b502faa2a6cd3d87e474e96e6de3e0b24a11ea82d839c91efe",
+    "simulation/waterleague_sim/engine/flow_connections.py": "c8dab1f35b6e0156079486b7955e1c672c9e7e9d33cc26eb63ba8a786947a759",
+    "simulation/waterleague_sim/engine/runoff_metrics.py": "3935e0c10986fdea6f7b971b19f3faffd4f0a8b7742ba1100bdf507fee691ea1",
+    "simulation/waterleague_sim/evaluation/raw_metrics.py": "b9c6c0d414237f42dfd5131208c33dfe28c983222227ca412836787aa27aa7e5",
+    "simulation/waterleague_sim/run_watershed_job.py": "9ab2b117fd7741845743893664db94298bce15d0f716bfeb2ac16c836acf68d6"
+  },
+  "integrations": [
+    {
+      "suite": "backend",
+      "report": {
+        "path": "tmp/raw-metrics-backend-v3.json",
+        "sha256": "6e5bb78f9f52d8139abbf6b859a1c7001cdd8ebae33e0f83ef1ea110584b67b6"
+      },
+      "log": {
+        "path": "tmp/waterleague_league_test_77930ba3d7974185bc6a957404c7b097.log",
+        "sha256": "852863f1b4d135bd1947981f64819e8ebd20aa3e7baa091da09a9b3bf3b5031f"
+      },
+      "javaInvocations": [
+        {
+          "tests": 264,
+          "skipped": 6,
+          "failures": 0,
+          "errors": 0
+        }
+      ],
+      "workerTests": [],
+      "sourceCountsUnchanged": true
+    },
+    {
+      "suite": "physics",
+      "report": {
+        "path": "tmp/raw-metrics-physics-v3.json",
+        "sha256": "4f3ad7a443e094faca39f1cc6ce2dd1ae41a955e321c1d93226dbd3e326746f1"
+      },
+      "log": {
+        "path": "tmp/waterleague_queue_test_7b874931080f4153b97d8b617594a8dd.log",
+        "sha256": "353697595da95b52dbf08eefcff1767c8228bfb0b04f0062e867e231602d5e64"
+      },
+      "javaInvocations": [
+        {
+          "tests": 16,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0
+        },
+        {
+          "tests": 1,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0
+        }
+      ],
+      "workerTests": [
+        11
+      ],
+      "sourceCountsUnchanged": true
+    },
+    {
+      "suite": "watershed",
+      "report": {
+        "path": "tmp/raw-metrics-watershed-v2.json",
+        "sha256": "3696dcb270f503bb49e95e266395955d364993a7f5a3c096fd60f561951541a5"
+      },
+      "log": {
+        "path": "tmp/waterleague_queue_test_342b96ffe6cc4f06bb52855c81268c94.log",
+        "sha256": "b5634d4d26025d8b9724e6a98274ac818ef5c938a6ce436fa574095116c66b36"
+      },
+      "javaInvocations": [
+        {
+          "tests": 16,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0
+        },
+        {
+          "tests": 1,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0
+        }
+      ],
+      "workerTests": [
+        8
+      ],
+      "sourceCountsUnchanged": true
+    },
+    {
+      "suite": "historical",
+      "report": {
+        "path": "tmp/raw-metrics-historical-v2.json",
+        "sha256": "dd7c5e64679c8b340fbe79058a23a1b0b466697cf3f437a5ec104e43a5e60fad"
+      },
+      "log": {
+        "path": "tmp/waterleague_queue_test_50d33cf47d4b43bb9bb8dd90f4550c4c.log",
+        "sha256": "948579c2e864e62cde132b8a5042d9565d47a304efe18d9349130e12b89fbed4"
+      },
+      "javaInvocations": [
+        {
+          "tests": 17,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0
+        }
+      ],
+      "workerTests": [
+        6
+      ],
+      "sourceCountsUnchanged": true
+    },
+    {
+      "suite": "guest-historical",
+      "report": {
+        "path": "tmp/raw-metrics-guest-historical-v2.json",
+        "sha256": "2a2c56af36b1aabaafd7f9404b97d24755b73133e5151c6bba075b70391bcdd9"
+      },
+      "log": {
+        "path": "tmp/waterleague_queue_test_dc243639697845d2aaeb635dfaf43942.log",
+        "sha256": "3434bd6e8309f9c560834f21ae319047dc0747efdd262aed1c391b931ea23893"
+      },
+      "javaInvocations": [
+        {
+          "tests": 31,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0
+        }
+      ],
+      "workerTests": [
+        1
+      ],
+      "sourceCountsUnchanged": true
+    },
+    {
+      "suite": "historical-design-run",
+      "report": {
+        "path": "tmp/raw-metrics-historical-design-run-v2.json",
+        "sha256": "b2e3270c7a6faa736069137ccd1b6a3fc6a80042e7c07d8750473fe63070f58c"
+      },
+      "log": {
+        "path": "tmp/waterleague_queue_test_b622139ac2264c0da3fa640b47389dd8.log",
+        "sha256": "09fa65b9c6edbbd9b683ae8c68c280762ef7f68aed46953aad7e9a256e522fae"
+      },
+      "javaInvocations": [
+        {
+          "tests": 32,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0
+        },
+        {
+          "tests": 1,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0
+        }
+      ],
+      "workerTests": [
+        1
+      ],
+      "sourceCountsUnchanged": true
+    },
+    {
+      "suite": "historical-submit-design",
+      "report": {
+        "path": "tmp/raw-metrics-historical-submit-design-v2.json",
+        "sha256": "398ecb33efe6baae284cb2ca598b2a6f2b2750f292dbd513df4ba4e5adff25e9"
+      },
+      "log": {
+        "path": "tmp/waterleague_queue_test_906ebc4c44dd4998ae5d1a633d3c495f.log",
+        "sha256": "299ca53ec021a8f813cf21c6ab25b77e473a2bf7fd10b71b8b0868965d13a5dd"
+      },
+      "javaInvocations": [
+        {
+          "tests": 22,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0
+        }
+      ],
+      "workerTests": [
+        1
+      ],
+      "sourceCountsUnchanged": true
+    }
+  ],
+  "unitTests": {
+    "moduleCounts": [
+      4,
+      2,
+      9,
+      3
+    ],
+    "log": {
+      "path": "tmp/raw-metrics-final-unit-v1.log",
+      "sha256": "439432289b5d4a3829bda188004bce0375dc2baef2dbe1b1d34c98d16b2f1031"
+    }
+  },
+  "frontend": {
+    "testFiles": 113,
+    "tests": 384,
+    "formatTypeAndProductionBuildPassed": true,
+    "log": {
+      "path": "tmp/raw-metrics-final-frontend-v3.log",
+      "sha256": "99edb21200da5d10098bff4bcd6bef6d553c394e7cfbdd3cd14c8d83187170bf"
+    },
+    "fixtures": [
+      {
+        "fixture": {
+          "path": "frontend/src/domains/physics/view/fixtures/rawMetricCases.json",
+          "sha256": "3ca55a85856247e5a6cedeb02380503f9d232e712df53230550764021edf360b"
+        },
+        "classification": "NUMERICAL_TEST_ONLY_NOT_OBSERVATIONS"
+      },
+      {
+        "fixture": {
+          "path": "frontend/src/domains/physics/view/fixtures/rawMetrics-native-v1.json",
+          "sha256": "211225dc93e784ce8df62884ea997924ed52347f3c932c5577f4af1dbf72f955"
+        },
+        "classification": "ACTUAL_NATIVE_WORKER_RESULT_PROJECTION",
+        "original": {
+          "path": "tmp/waterleague_queue_test_906ebc4c44dd4998ae5d1a633d3c495f.runs/historical/fd45a15f-16fb-4156-aff3-2a480de38c07/eecacf87-126d-4607-99a2-42836d9ed2c9/11200/0/result.json",
+          "sha256": "49765d92d0a8b36cb114fc8eef5538aa84e92751a9d421510c8a70e65de1515f"
+        }
+      },
+      {
+        "fixture": {
+          "path": "frontend/src/domains/physics/view/fixtures/rawMetrics-network-v1.json",
+          "sha256": "c8e153321c3a6ade511053f0abf4676be3091dee154d56c37c536d064464692f"
+        },
+        "classification": "ACTUAL_AUTHENTICATED_HTTP_WORKER_DTO_PROJECTION",
+        "original": {
+          "path": "tmp/waterleague_queue_test_342b96ffe6cc4f06bb52855c81268c94.fixtures/api-view-S1.json",
+          "sha256": "5e3e434c11c6eac9cb9e863fea1a544e0a9437831594f0cf923269e6a4c98150"
+        }
+      },
+      {
+        "fixture": {
+          "path": "frontend/src/domains/physics/view/fixtures/rawMetrics-physics-http-v1.json",
+          "sha256": "a7b02fbbd5f4da61e200bd53edfb0e764527415f0a9cc5859da06627e2550111"
+        },
+        "classification": "ACTUAL_PUBLIC_HTTP_RESPONSE_WITH_SYNTHETIC_TEST_WEATHER",
+        "original": {
+          "path": "tmp/waterleague_queue_test_7b874931080f4153b97d8b617594a8dd.fixtures/physics-response.json",
+          "sha256": "11e8deb9ce0ab5ff21e17aa5a7c8daedc3f26b69e0e5dd63983a93733ae46f09"
+        }
+      },
+      {
+        "fixture": {
+          "path": "frontend/src/domains/physics/view/fixtures/rawMetrics-weekly-http-v1.json",
+          "sha256": "29145859252b717ab1f865c79492c5ca3717c40206eee39e92f6a843ca86907a"
+        },
+        "classification": "ACTUAL_PUBLIC_HTTP_RESPONSE_WITH_SYNTHETIC_TEST_WEATHER",
+        "original": {
+          "path": "tmp/waterleague_queue_test_7b874931080f4153b97d8b617594a8dd.fixtures/weekly-response.json",
+          "sha256": "f76c8b75f5f76f9844f593beb3c32836e7bbe18f93dc769c79edd855500de2d1"
+        }
+      },
+      {
+        "fixture": {
+          "path": "frontend/src/domains/physics/view/fixtures/rawMetrics-withheld-v1.json",
+          "sha256": "f0578e7cb61945c54a43adba1ed83ed62833c3d4061f6a88330b17485a2b3c69"
+        },
+        "classification": "ACTUAL_WORKER_RESULT_DTO_PROJECTION",
+        "original": {
+          "path": "tmp/raw-metrics-withheld-855347f8-82a9-4887-957d-801d8b776ff8/result.json",
+          "sha256": "e1f673bf13f5c80f6ec57d9f5f146533a85d87e4738ee4dd8aef499b168f65b8"
+        }
+      }
+    ]
+  },
+  "physicalPreservation": {
+    "report": {
+      "path": "tmp/raw-metrics-physical-preservation-v1.json",
+      "sha256": "20217db6d5acb50934943f7d045ed965d8795d4bf8554caf9902528b4c357b1a"
+    },
+    "runs": [
+      {
+        "before": "tmp/member-shared-cistern-0ef86eb3-d3b7-4011-b635-a60b794f3b28",
+        "after": "tmp/member-shared-cistern-a305d75d-ecdc-40fd-8e19-f29622bed416",
+        "inputHash": "576cab30950d1c11f70d8fb3707b05ec3572317b81384706a2e69a9c557245f6",
+        "files": [
+          {
+            "name": "baseline/network.inp",
+            "sha256": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+            "bytesEqual": true
+          },
+          {
+            "name": "baseline/network.out",
+            "sha256": "682eeb8bb19391dde81c640bc68f91de924852787689c89cbd46a3c771006c18",
+            "bytesEqual": true
+          },
+          {
+            "name": "strategy/network.inp",
+            "sha256": "77c8311ab50ce2f6c934212c5066e73ef71e6873c371b1ec6e552008fceab2cc",
+            "bytesEqual": true
+          },
+          {
+            "name": "strategy/network.out",
+            "sha256": "1026e4d6a95d32c64f255e6dbc1ad66db90237d29a986d6475baa030292810a2",
+            "bytesEqual": true
+          }
+        ],
+        "nativeMetricsEqual": true
+      },
+      {
+        "before": "tmp/member-shared-cistern-45761fb7-225f-4298-82cc-e2fce4cd6cb5",
+        "after": "tmp/member-shared-cistern-5fd49194-a712-46e1-8420-0c1099e025e1",
+        "inputHash": "3758bfb3b00c12e748618395a00e5fbbec7d9e7462db15d89f2921ef28c51376",
+        "files": [
+          {
+            "name": "baseline/network.inp",
+            "sha256": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+            "bytesEqual": true
+          },
+          {
+            "name": "baseline/network.out",
+            "sha256": "682eeb8bb19391dde81c640bc68f91de924852787689c89cbd46a3c771006c18",
+            "bytesEqual": true
+          },
+          {
+            "name": "strategy/network.inp",
+            "sha256": "d37f0e5bb7418db7c2710c68c6b41907ca4a27f3e2aac9725aa02e593687fd0b",
+            "bytesEqual": true
+          },
+          {
+            "name": "strategy/network.out",
+            "sha256": "97aed0a41214d2cf07217e81de938e4f9d3aa7afb19d3530b45fa1a92aab44d5",
+            "bytesEqual": true
+          }
+        ],
+        "nativeMetricsEqual": true
+      }
+    ]
+  },
+  "independentReplay": {
+    "report": {
+      "path": "tmp/raw-metrics-independent-replay-v1.json",
+      "sha256": "de8c203d8387c152adef3e660eacb34c254697b1958e7359059537ddbb8a6679"
+    },
+    "runs": [
+      {
+        "source": "tmp/member-shared-cistern-a305d75d-ecdc-40fd-8e19-f29622bed416",
+        "destination": "tmp/raw-metrics-replay-99cafa84546946898dece6d40f97c97d",
+        "cases": [
+          {
+            "id": "baseline",
+            "outSha256": "682eeb8bb19391dde81c640bc68f91de924852787689c89cbd46a3c771006c18",
+            "binaryEqual": true,
+            "metricsEqual": true,
+            "nodeFloodingEqual": true
+          },
+          {
+            "id": "strategy",
+            "outSha256": "1026e4d6a95d32c64f255e6dbc1ad66db90237d29a986d6475baa030292810a2",
+            "binaryEqual": true,
+            "metricsEqual": true,
+            "nodeFloodingEqual": true
+          }
+        ]
+      },
+      {
+        "source": "tmp/member-shared-cistern-5fd49194-a712-46e1-8420-0c1099e025e1",
+        "destination": "tmp/raw-metrics-replay-cfa1d91acd174cbbacfaf09d703a5ad2",
+        "cases": [
+          {
+            "id": "baseline",
+            "outSha256": "682eeb8bb19391dde81c640bc68f91de924852787689c89cbd46a3c771006c18",
+            "binaryEqual": true,
+            "metricsEqual": true,
+            "nodeFloodingEqual": true
+          },
+          {
+            "id": "strategy",
+            "outSha256": "97aed0a41214d2cf07217e81de938e4f9d3aa7afb19d3530b45fa1a92aab44d5",
+            "binaryEqual": true,
+            "metricsEqual": true,
+            "nodeFloodingEqual": true
+          }
+        ]
+      },
+      {
+        "source": "tmp/raw-metrics-withheld-855347f8-82a9-4887-957d-801d8b776ff8",
+        "destination": "tmp/raw-metrics-replay-6ad7159023db41f0b379e40f2e68fc83",
+        "cases": [
+          {
+            "id": "baseline",
+            "outSha256": "682eeb8bb19391dde81c640bc68f91de924852787689c89cbd46a3c771006c18",
+            "binaryEqual": true,
+            "metricsEqual": true,
+            "nodeFloodingEqual": true
+          },
+          {
+            "id": "strategy",
+            "outSha256": "80a6788ec3366539710c3714355c5f5ac7fc40e62a60f7830a07c83237a1bedc",
+            "binaryEqual": true,
+            "metricsEqual": true,
+            "nodeFloodingEqual": true
+          }
+        ]
+      }
+    ],
+    "scope": "INP_OUT_OUTFALL_AND_NODE_FLOODING_NOT_FIELD_VALIDATION"
+  },
+  "mainApi": {
+    "report": {
+      "path": "tmp/raw-metrics-local-api-v1.json",
+      "sha256": "2c524e5a6b67102f0f5a1accb6c5618860b692872a4f947d3ebc8f654556b1e4"
+    },
+    "result": {
+      "classification": "LOCAL_MAIN_API_VERIFIED_PACKAGE_UPDATE",
+      "pid": 97754,
+      "healthy": true,
+      "sourceCountsUnchanged": true,
+      "beforeCounts": [
+        13,
+        2,
+        0,
+        36,
+        5
+      ],
+      "afterCounts": [
+        13,
+        2,
+        0,
+        36,
+        5
+      ],
+      "weeklySha256": "528115825019849ad559e2fa41553c8d34a26e9cb57638150eac8470087e42cb",
+      "jarSha256": "ddcdee12cb07d96cd0346ae7d01d5bd106b1fc5d81f6c5c5e7174277431f5e6c"
+    }
+  },
+  "browser": {
+    "scope": "LOCAL_PUBLIC_APP_AND_EXISTING_COMPONENTS_NOT_FULL_MEMBER_BROWSER_FLOW",
+    "desktop": {
+      "clientWidth": 1280,
+      "scrollWidth": 1280,
+      "tableWidth": 834,
+      "viewportHeight": 720,
+      "viewportWidth": 1280
+    },
+    "mobile": {
+      "clientWidth": 390,
+      "scrollWidth": 390,
+      "tableWidth": 324,
+      "viewportHeight": 844,
+      "viewportWidth": 390
+    },
+    "dataPage": {
+      "calculationHeadingTop": 318.0859375,
+      "clientWidth": 1265,
+      "scrollWidth": 1265
+    },
+    "screenshots": [
+      {
+        "path": "output/qa/raw-metrics-main-v1.png",
+        "sha256": "b79520067ccdbe6697787c68bbb86800f3988c7ff64ccc4d2d5ef1411fb55572"
+      },
+      {
+        "path": "output/qa/raw-metrics-data-v3.png",
+        "sha256": "71a81ad8c8be95be8cbe6057b856c72fcad6d4366cd19537aa172f64356f4173"
+      },
+      {
+        "path": "output/qa/raw-metrics-comparison-desktop-v2.png",
+        "sha256": "72aaebc94668d590a712f9455fbee505c4a285d6e82e461a9a6e796129ec8b10"
+      },
+      {
+        "path": "output/qa/raw-metrics-comparison-mobile-v2.png",
+        "sha256": "b2a46a9a14dceb3aca7f554ae1e7bb0d88f95e2e69ffc3165ba652b8b95b46cf"
+      }
+    ],
+    "excludedTrials": [
+      "output/qa/raw-metrics-comparison-desktop-v1.png",
+      "output/qa/raw-metrics-data-v1.png",
+      "output/qa/raw-metrics-data-v2.png"
+    ],
+    "qaSource": {
+      "path": "tmp/raw-metrics-ui-v1.html",
+      "sha256": "0650f199daffb0a4b720ff3faea3cada8112dc79b75e26113158d3ea2e9b8733"
+    }
+  },
+  "previousCi": {
+    "completeSuccess": "https://github.com/WaterLeague/waterleague/actions/runs/39365497286",
+    "secondRunFailure": "https://github.com/WaterLeague/waterleague/actions/runs/39365480995",
+    "secondFailureReason": "GUEST_TEST_NUMERIC_SENTINEL_MATCHED_OPAQUE_IDENTIFIER_SUBSTRING",
+    "repair": "STRUCTURED_RESULT_FIELDS_AND_FINAL_FRAMES_WITH_NON_SCORE_SENTINEL_COUNTEREXAMPLE",
+    "newCommitStatus": "PENDING_PUSH"
+  },
+  "limitations": [
+    "현재 6종 독립 표면과 공개 연구 관망의 원 지표 비교이며 실제 연결 유역·현장 정확도 검증 아님",
+    "주간 통합 HTTP 시험의 기상은 시험용 합성 자료이며 운영 관측으로 사용하지 않음",
+    "주간·재해 회원 브라우저 전체 설치/제출 흐름·대상 기기 전체 성능 검증과 구분",
+    "월류 지속시간·지표 수심/유속·재이용 사용 수요는 미수집/미연결 상태 유지",
+    "공개 연구 관망의 종합점수·순위 없음; 보조 비율을 주간/재해 점수에 합산하지 않음",
+    "기존 원 물리 입력·결과는 보존하며 구형 RB 설계의 현재 효과 표시는 보류"
+  ]
+}

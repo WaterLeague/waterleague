@@ -73,6 +73,7 @@ class WeeklyWorkflowTests extends PostgresIntegrationTest {
         "a".repeat(64),
         Timestamp.from(end.minusSeconds(600)),
         Timestamp.from(end));
+    if (minutes == 0) return installation;
     Instant through = end.minusSeconds((10 - minutes) * 60L);
     db.update(
         """
@@ -102,6 +103,41 @@ class WeeklyWorkflowTests extends PostgresIntegrationTest {
   }
 
   @Test
+  void unevaluatedScoresRemainNullWhileComputedZeroAndNegativeValuesStayNumeric() {
+    String name = "missing_" + UUID.randomUUID().toString().substring(0, 8);
+    contribution("11200", name, "0", 0);
+    contribution("11680", name + "z", "0", 10);
+    contribution("11110", name + "n", "-0.125", 10);
+    var result = service.dashboard(name).previous();
+    assertThat(result.own().scoreM3()).isNull();
+    assertThat(result.own().rank()).isNull();
+    assertThat(result.own().evaluatedSeconds()).isZero();
+    assertThat(
+            result.districts().stream()
+                .filter(d -> d.districtId().equals("11200"))
+                .findFirst()
+                .orElseThrow()
+                .scoreM3())
+        .isNull();
+    assertThat(
+            result.districts().stream()
+                .filter(d -> d.districtId().equals("11680"))
+                .findFirst()
+                .orElseThrow()
+                .scoreM3())
+        .isEqualByComparingTo("0");
+    assertThat(
+            result.players().stream()
+                .filter(p -> p.nickname().endsWith("n"))
+                .findFirst()
+                .orElseThrow()
+                .scoreM3())
+        .isEqualByComparingTo("-0.125");
+    assertThat(result.winnerDistrictIds()).isEmpty();
+    assertThat(json.tree(json.write(result)).path("own").path("scoreM3").isNull()).isTrue();
+  }
+
+  @Test
   void tiesSumExactlyAndMissingMinutePreventsWinner() {
     String name = "weekly_" + UUID.randomUUID().toString().substring(0, 8);
     contribution("11200", name, "1.25", 10);
@@ -116,10 +152,12 @@ class WeeklyWorkflowTests extends PostgresIntegrationTest {
     assertThat(
             pending.districts().stream()
                 .map(d -> d.scoreM3())
+                .filter(Objects::nonNull)
                 .reduce(BigDecimal.ZERO, BigDecimal::add))
         .isEqualByComparingTo(
             pending.players().stream()
                 .map(p -> p.scoreM3())
+                .filter(Objects::nonNull)
                 .reduce(BigDecimal.ZERO, BigDecimal::add));
     assertThat(pending.own().nickname()).isEqualTo("시험 " + name);
     db.update(

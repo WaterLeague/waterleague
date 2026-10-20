@@ -80,7 +80,7 @@ def comparison(baseline, strategy):
             'nativeIntegralDifferenceM3': difference, 'metrics': metrics})
     a, b = cases
     require(a['metrics']['start'] == b['metrics']['start'] and a['metrics']['end'] == b['metrics']['end'])
-    return {'schemaVersion': 1, 'method': METHOD, 'cases': cases,
+    value = {'schemaVersion': 2, 'method': METHOD, 'cases': cases,
         'dischargeReductionM3': a['dischargeM3'] - b['dischargeM3'],
         'netStorageIncreaseM3': b['netStorageM3'] - a['netStorageM3'],
         'accountedReductionM3': a['accountedDischargeM3'] - b['accountedDischargeM3'],
@@ -89,3 +89,6 @@ def comparison(baseline, strategy):
             '첨두는 내부 유출 계산 구간의 평균률 최대값과 그 구간 종료 시각',
             '선행 초기화 제외·평가 종료 후 방류 미포함; 잔여 저류를 영구 저감으로 취급하지 않음',
             '개별 표면 첨두 합산으로 연결 유역 첨두를 만들지 않음']}
+    from ..evaluation.raw_metrics import surface
+    value['metricComparison'] = surface(value)
+    return value

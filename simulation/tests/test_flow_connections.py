@@ -62,6 +62,16 @@ class FlowConnectionTests(unittest.TestCase):
         self.assertNotEqual(cover['targetNodeId'], capture['targetNodeId'])
         self.assertEqual(budgets['source-catchment:S1:pervious']['availableM2'], '20')
 
+    def test_covered_lid_does_not_claim_excluded_cover_rain_as_modeled_direct_rain(self):
+        design=deepcopy(FIXTURE)
+        design['placements']=[next(p for p in design['placements'] if p['facilityType']=='RAINWATER_CISTERN')]
+        value,_=self.network(design=design)
+        lid=next(n for n in value['nodes'] if n['kind']=='LID_FACILITY')
+        self.assertEqual(lid['coverRainfallStatus'],'EXCLUDED_WITHOUT_MODELED_BYPASS')
+        self.assertFalse(any(e['kind']=='DIRECT_RAIN_AREA' and e['to']==lid['id'] for e in value['edges']))
+        roles=[a['role'] for b in value['areaBudgets'] for a in b['allocations'] if a['targetNodeId']==lid['id']]
+        self.assertIn('UNMODELED_COVER_RAIN',roles);self.assertNotIn('FACILITY_DIRECT_RAIN',roles)
+
     def test_rejects_reused_allocations_excess_area_missing_nodes_nonfinite_and_malformed_rows(self):
         valid, _ = self.network()
         mutations = (

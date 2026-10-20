@@ -2,7 +2,7 @@ import { scoreDuration } from '../service/scoreDuration';
 import { useSiteScores } from '../controller/useSiteScores';
 import { facilities } from '../../game/service/gameService';
 import type { SiteScoresPage } from '../dto/siteScoresDto';
-import { scoreFormat } from './WeeklyBoard';
+import { scoreFormat } from '../service/scoreFormat';
 export function SiteScoreRows({
   value,
   viewerId,

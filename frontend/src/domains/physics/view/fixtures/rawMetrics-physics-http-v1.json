@@ -1,0 +1,629 @@
+{
+  "classification": "ACTUAL_PUBLIC_HTTP_RESPONSE_WITH_SYNTHETIC_TEST_WEATHER",
+  "sourceFile": "tmp/waterleague_queue_test_7b874931080f4153b97d8b617594a8dd.fixtures/physics-response.json",
+  "sourceSha256": "11e8deb9ce0ab5ff21e17aa5a7c8daedc3f26b69e0e5dd63983a93733ae46f09",
+  "value": {
+    "installationId": "ae522efd-1d67-4d98-83ca-44f3be9e6411",
+    "status": "DELAYED",
+    "message": "이전 계산 결과입니다. 최신 관측까지 계산이 진행 중입니다",
+    "attemptedAt": "2026-10-20T04:08:54.025794Z",
+    "simulatedThrough": "2026-10-20T03:16:00Z",
+    "result": {
+      "stationId": "408",
+      "stationName": "동대문",
+      "simulationStart": "2026-10-20T03:10:00Z",
+      "simulatedThrough": "2026-10-20T03:16:00Z",
+      "engineVersion": "5.2.4",
+      "validationLevel": "EXPLORATORY",
+      "precipitationM3": 0.21678993334030405,
+      "infiltrationM3": 0.09459571064715955,
+      "evaporationM3": 0.0009203237654645093,
+      "runoffM3": 0.08799649806284514,
+      "storageM3": 1.1320241200150083,
+      "surfaceDepthMm": 0,
+      "soilMoisture": 0.11245901639342464,
+      "storageDepthMm": null,
+      "runoffContinuityPercent": 9.999999974752427e-7,
+      "evaporationMethod": "FAO56_HOURLY_LAGGED_ASOS_AWS_V1",
+      "initialState": "OBSERVED_7_DAY_CONTINUOUS_SPINUP_V1",
+      "initialization": {
+        "method": "OBSERVED_7_DAY_CONTINUOUS_SPINUP_V1",
+        "warmupMinutes": 10080,
+        "initialSoilMoisture": 0.10950819672129512,
+        "initialStorageM3": 1.098727187638739,
+        "warmupRainMm": 18,
+        "scoreExcludesWarmup": true,
+        "evaluationStart": "2026-10-20T12:10:00+09:00",
+        "aggregateDerivedMinutes": 0,
+        "rainfallSourceHashes": [
+          "da96f4787078f8005ce1bb48d18835f1c3efb405ed7627888917788b658f7e6e"
+        ],
+        "evaporationSourceHashes": [
+          "92593a9937e51dfea76d65aa0732b2a47344e5febbfa3d8e14fe2ca5bab955d5"
+        ],
+        "seed": "WILTING_POINT_AND_EMPTY_STORAGE",
+        "limitations": [
+          "선행 7일 이전 수분 실측 미확보로 시들음점·빈 저류층에서 재생",
+          "관측 기상 기반 모델 상태이며 현장 토양수분 측정값 아님",
+          "시설이 선행 기간에 존재한 조건의 초기화이며 시공 직후 반입토 수분 복원 아님",
+          "7일은 초기화 계산 기간이며 장기 건조기 초기조건의 완전 수렴을 보장하지 않음"
+        ]
+      },
+      "facilityDesign": {
+        "catalogSha256": "8af82e01704cf1495f185d9a0a410898e6007a468274c905e75b939f9abde133",
+        "evidence": "PUBLIC_REFERENCE_DESIGN_NOT_SITE_MEASURED",
+        "source": {
+          "title": "EPA SWMM Reference Manual Volume III, Chapter 6",
+          "url": "https://nepis.epa.gov/Exe/ZyPDF.cgi/P100P2NY.PDF?Dockey=P100P2NY.PDF",
+          "sha256": "e276e6be2f4bdd18d312535ff4f29fce85e5afa60ecdfea5b4992d2c336a1f57",
+          "year": 2016,
+          "pages": [127, 128, 130, 132, 129]
+        },
+        "profile": {
+          "id": "EPA_RG_610_V1",
+          "name": "식재토 610mm 빗물정원",
+          "summary": "식재토 610mm · 표면 저류 152.4mm",
+          "type": "RG",
+          "parameters": {
+            "surfaceDepthMm": {
+              "value": 152.4,
+              "unit": "mm",
+              "reference": "Table 6-2",
+              "basis": "PUBLIC_RANGE_DESIGN_SELECTION",
+              "range": [152.4, 304.8]
+            },
+            "vegetationFraction": {
+              "value": 0.1,
+              "unit": "fraction",
+              "reference": "Table 6-2",
+              "basis": "PUBLIC_RANGE_DESIGN_SELECTION",
+              "range": [0, 0.2]
+            },
+            "surfaceRoughness": {
+              "value": 0,
+              "unit": "s/m^(1/3)",
+              "reference": "SWMM surface overflow option",
+              "basis": "DESIGN_INSTANT_OVERFLOW"
+            },
+            "soilDepthMm": {
+              "value": 610,
+              "unit": "mm",
+              "reference": "Table 6-2",
+              "basis": "PUBLIC_RANGE_DESIGN_SELECTION",
+              "range": [609.6, 1219.2]
+            },
+            "porosity": {
+              "value": 0.52,
+              "unit": "fraction",
+              "reference": "Table 6-3",
+              "basis": "PUBLISHED_TYPICAL_DERIVED_SOIL"
+            },
+            "fieldCapacity": {
+              "value": 0.15,
+              "unit": "fraction",
+              "reference": "Table 6-3",
+              "basis": "PUBLISHED_TYPICAL_DERIVED_SOIL"
+            },
+            "wiltingPoint": {
+              "value": 0.08,
+              "unit": "fraction",
+              "reference": "Table 6-3",
+              "basis": "PUBLISHED_TYPICAL_DERIVED_SOIL"
+            },
+            "conductivityMmH": {
+              "value": 119.38,
+              "unit": "mm/h",
+              "reference": "Table 6-3: 4.7 in/h",
+              "basis": "PUBLISHED_TYPICAL_DERIVED_SOIL"
+            },
+            "conductivitySlope": {
+              "value": 39.3,
+              "unit": "dimensionless",
+              "reference": "Table 6-3",
+              "basis": "PUBLISHED_TYPICAL_DERIVED_SOIL"
+            },
+            "suctionMm": {
+              "value": 48.26,
+              "unit": "mm",
+              "reference": "Table 6-3: 1.9 in",
+              "basis": "PUBLISHED_TYPICAL_DERIVED_SOIL"
+            }
+          }
+        },
+        "limitations": [
+          "공개 문헌 범위 안에서 선택한 게임 설계 제원; 서울 현장 실측·인증 제품값 아님",
+          "빗물정원 토양값은 문헌의 대표 배합 추정값; 지반 토성과 구분",
+          "옥상 구조하중·실제 배수구·방수층·시공 적합성 미검증",
+          "신설·미막힘 조건; 노후 막힘과 유지관리 이력 미확보",
+          "공개 비용 참고 단가는 이 단면의 시공 견적과 일치 검증되지 않음",
+          "생물저류시설은 하부 배수관 없는 비차수 설계; 현장 지하수·지장물·다짐 확인 전 실험 후보",
+          "시설 자체 강우만 처리하며 외부 유입·관망 배수 연결을 임의 생성하지 않음",
+          "식생수로는 90m DEM 지역 경사 0.5~3% 대용값·공개 토성 후보의 폭 2m 직선 설계; 실제 수로 종단 경사·출구·지장물 미확인",
+          "침투 트렌치는 폭 1m 개방 쇄석 도랑 설계; 관로형 지하 트렌치와 구분. 원지반 토성군 침투 추정이며 지하수·지장물·굴착 가능성·측벽 침투·실제 집수 연결 미확인"
+        ],
+        "nativeSoilBoundary": {
+          "method": "RG_NATIVE_SOIL_SEEPAGE_V1",
+          "seepageMmH": 3.302,
+          "basis": "PUBLIC_REFERENCE_SCENARIO_NOT_LOCAL_MEASUREMENT",
+          "liner": "UNLINED_DESIGN_NOT_SITE_CONFIRMED",
+          "storageThicknessMm": 0
+        }
+      },
+      "runoffComparison": {
+        "schemaVersion": 2,
+        "method": "NATIVE_RUNOFF_STEP_SURFACE_PLUS_DRAIN_V1",
+        "cases": [
+          {
+            "id": "baseline",
+            "dischargeM3": 0.09383801378493892,
+            "initialStorageM3": 0.47545884218829704,
+            "finalStorageM3": 0.49423210078560215,
+            "netStorageM3": 0.01877325859730511,
+            "accountedDischargeM3": 0.112611272382244,
+            "precipitationM3": 0.21678993334030405,
+            "infiltrationM3": 0.10319755234210493,
+            "evaporationM3": 0.0010036570987978707,
+            "balanceResidualM3": -0.00002254848284274913,
+            "nativeIntegralDifferenceM3": 8.326672684688674e-17,
+            "metrics": {
+              "method": "NATIVE_RUNOFF_STEP_SURFACE_PLUS_DRAIN_V1",
+              "scope": "SELECTED_SURFACE_OUTLET_NOT_SEWER_OR_RIVER",
+              "start": "2026-10-20T03:10:00+00:00",
+              "end": "2026-10-20T03:16:00+00:00",
+              "stepCount": 360,
+              "maximumStepSeconds": 1,
+              "observedSeconds": 360,
+              "dischargeIntegralM3": 0.093838013784939,
+              "peakM3s": 0.0002809679174287076,
+              "peakAt": "2026-10-20T03:16:00+00:00",
+              "minimumComponentRateM3s": 0,
+              "peakTimeConvention": "END_OF_NATIVE_RUNOFF_INTERVAL",
+              "implementationSha256": "3935e0c10986fdea6f7b971b19f3faffd4f0a8b7742ba1100bdf507fee691ea1"
+            }
+          },
+          {
+            "id": "strategy",
+            "dischargeM3": 0.08799649806284514,
+            "initialStorageM3": 1.098727187638739,
+            "finalStorageM3": 1.1320241200150083,
+            "netStorageM3": 0.033296932376269295,
+            "accountedDischargeM3": 0.12129343043911445,
+            "precipitationM3": 0.21678993334030405,
+            "infiltrationM3": 0.09459571064715955,
+            "evaporationM3": 0.0009203237654645093,
+            "balanceResidualM3": -0.000019531511434439652,
+            "nativeIntegralDifferenceM3": -4.163336342344337e-17,
+            "metrics": {
+              "method": "NATIVE_RUNOFF_STEP_SURFACE_PLUS_DRAIN_V1",
+              "scope": "SELECTED_SURFACE_OUTLET_NOT_SEWER_OR_RIVER",
+              "start": "2026-10-20T03:10:00+00:00",
+              "end": "2026-10-20T03:16:00+00:00",
+              "stepCount": 360,
+              "maximumStepSeconds": 1,
+              "observedSeconds": 360,
+              "dischargeIntegralM3": 0.0879964980628451,
+              "peakM3s": 0.00026192102104887215,
+              "peakAt": "2026-10-20T03:16:00+00:00",
+              "minimumComponentRateM3s": 0,
+              "peakTimeConvention": "END_OF_NATIVE_RUNOFF_INTERVAL",
+              "implementationSha256": "3935e0c10986fdea6f7b971b19f3faffd4f0a8b7742ba1100bdf507fee691ea1"
+            }
+          }
+        ],
+        "dischargeReductionM3": 0.005841515722093779,
+        "netStorageIncreaseM3": 0.014523673778964186,
+        "accountedReductionM3": -0.008682158056870448,
+        "peakReductionM3s": 0.000019046896379835477,
+        "limitations": [
+          "선택 표면 출구의 유출·하부배수 합이며 하수관·하천·구 전체 첨두 아님",
+          "첨두는 내부 유출 계산 구간의 평균률 최대값과 그 구간 종료 시각",
+          "선행 초기화 제외·평가 종료 후 방류 미포함; 잔여 저류를 영구 저감으로 취급하지 않음",
+          "개별 표면 첨두 합산으로 연결 유역 첨두를 만들지 않음"
+        ],
+        "metricComparison": {
+          "schemaVersion": 1,
+          "method": "SIGNED_ABSOLUTE_PRIMARY_RELATIVE_AUXILIARY_V1",
+          "scope": "SELECTED_INDEPENDENT_SURFACE",
+          "window": {
+            "kind": "UTC",
+            "start": "2026-10-20T03:10:00+00:00",
+            "end": "2026-10-20T03:16:00+00:00"
+          },
+          "primaryMetricId": "surfaceAccountedVolumeM3",
+          "compositeScore": null,
+          "relativeUsedForRanking": false,
+          "metrics": [
+            {
+              "id": "surfaceDischargeM3",
+              "unit": "m3",
+              "boundary": "SELECTED_SURFACE_OUTLET",
+              "preferredDirection": "DECREASE",
+              "status": "COMPARABLE",
+              "reason": null,
+              "baseline": 0.09383801378493892,
+              "strategy": 0.08799649806284514,
+              "signedImprovement": 0.005841515722093779,
+              "relativeImprovementPercent": 6.225105888836862,
+              "relativeStatus": "COMPUTED"
+            },
+            {
+              "id": "surfaceAccountedVolumeM3",
+              "unit": "m3",
+              "boundary": "SELECTED_SURFACE_OUTLET_WITH_NET_STORAGE",
+              "preferredDirection": "DECREASE",
+              "status": "COMPARABLE",
+              "reason": null,
+              "baseline": 0.112611272382244,
+              "strategy": 0.12129343043911445,
+              "signedImprovement": -0.008682158056870448,
+              "relativeImprovementPercent": -7.709848111297434,
+              "relativeStatus": "COMPUTED"
+            },
+            {
+              "id": "surfacePeakM3s",
+              "unit": "m3/s",
+              "boundary": "SELECTED_SURFACE_OUTLET",
+              "preferredDirection": "DECREASE",
+              "status": "COMPARABLE",
+              "reason": null,
+              "baseline": 0.0002809679174287076,
+              "strategy": 0.00026192102104887215,
+              "signedImprovement": 0.000019046896379835477,
+              "relativeImprovementPercent": 6.77902892050599,
+              "relativeStatus": "COMPUTED"
+            },
+            {
+              "id": "networkOutflowM3",
+              "unit": "m3",
+              "boundary": "ALL_NETWORK_EXTERNAL_OUTFALLS",
+              "preferredDirection": "DECREASE",
+              "status": "UNAVAILABLE",
+              "reason": "NO_CONVEYANCE_NETWORK",
+              "baseline": null,
+              "strategy": null,
+              "signedImprovement": null,
+              "relativeImprovementPercent": null,
+              "relativeStatus": "NOT_COMPARABLE"
+            },
+            {
+              "id": "networkPeakM3s",
+              "unit": "m3/s",
+              "boundary": "ALL_NETWORK_EXTERNAL_OUTFALLS",
+              "preferredDirection": "DECREASE",
+              "status": "UNAVAILABLE",
+              "reason": "NO_CONVEYANCE_NETWORK",
+              "baseline": null,
+              "strategy": null,
+              "signedImprovement": null,
+              "relativeImprovementPercent": null,
+              "relativeStatus": "NOT_COMPARABLE"
+            },
+            {
+              "id": "networkFloodingM3",
+              "unit": "m3",
+              "boundary": "NETWORK_EXTERNAL_NODE_FLOODING",
+              "preferredDirection": "DECREASE",
+              "status": "UNAVAILABLE",
+              "reason": "NO_CONVEYANCE_NETWORK",
+              "baseline": null,
+              "strategy": null,
+              "signedImprovement": null,
+              "relativeImprovementPercent": null,
+              "relativeStatus": "NOT_COMPARABLE"
+            },
+            {
+              "id": "networkFloodingSeconds",
+              "unit": "s",
+              "boundary": "NETWORK_EXTERNAL_NODE_FLOODING",
+              "preferredDirection": "DECREASE",
+              "status": "UNAVAILABLE",
+              "reason": "NO_CONVEYANCE_NETWORK",
+              "baseline": null,
+              "strategy": null,
+              "signedImprovement": null,
+              "relativeImprovementPercent": null,
+              "relativeStatus": "NOT_COMPARABLE"
+            },
+            {
+              "id": "surfaceDepthAreaTimeM3Hours",
+              "unit": "m3*h",
+              "boundary": "CONNECTED_SURFACE_GRID",
+              "preferredDirection": "DECREASE",
+              "status": "UNAVAILABLE",
+              "reason": "NO_SURFACE_GRID",
+              "baseline": null,
+              "strategy": null,
+              "signedImprovement": null,
+              "relativeImprovementPercent": null,
+              "relativeStatus": "NOT_COMPARABLE"
+            },
+            {
+              "id": "reusedVolumeM3",
+              "unit": "m3",
+              "boundary": "VERIFIED_USE_DEMAND",
+              "preferredDirection": "INCREASE",
+              "status": "UNAVAILABLE",
+              "reason": "NO_USE_DEMAND",
+              "baseline": null,
+              "strategy": null,
+              "signedImprovement": null,
+              "relativeImprovementPercent": null,
+              "relativeStatus": "NOT_COMPARABLE"
+            }
+          ]
+        }
+      },
+      "designContract": {
+        "sha256": "eaff595a57188d835d979c74e8528748d3017a9da1acb458b24130f7efbea414",
+        "version": "NATIVE_DIRECT_SURFACE_COMPARISON_V1",
+        "spatial": {
+          "coordinateSystem": "EPSG:5186",
+          "playCatalogSha256": "4ec7535e7cbaf41dc73f73519d77ba11f956f4c75c1a574fffa08f16625919b7",
+          "sitesSha256": "750a50db25f73299342c05201287ccef08da51cd47e97e8a22099d0dc2b26c34",
+          "objectsSha256": "2c514899f82d858b4386d489b4fd9fa691552b59704f88f93e5475cc33b8f7d0",
+          "geometrySha256": "8c66a3ff5a6268c3edc62424cfda0a479d92d3d464c035cdbcfbe7ec6fc34192",
+          "sourceObjectId": "ngii:N1A_D0010000:8c66a3ff5a6268c3edc62424cfda0a479d92d3d464c035cdbcfbe7ec6fc34192",
+          "candidateId": "C0000fe65db41b6f0c5e9fa6d",
+          "districtId": "11290",
+          "evaluationSurfaceAreaM2": 120.43875000016952
+        },
+        "facility": {
+          "type": "RAIN_GARDEN",
+          "areaM2": 10,
+          "designSet": {
+            "id": "EPA_LID_PUBLIC_DESIGNS_V4",
+            "sha256": "8af82e01704cf1495f185d9a0a410898e6007a468274c905e75b939f9abde133"
+          },
+          "referenceScenario": {
+            "id": "EPA_REFERENCE_SURFACES_2026_V1",
+            "sha256": "164358be09db34872324d63ce10df84a23cac936e5f5a8c0dc5fb12d0269b1bc"
+          }
+        },
+        "connection": {
+          "inflowPolicy": "DIRECT_RAINFALL_ONLY",
+          "directRainAreaM2": 10,
+          "externalCatchment": null,
+          "drainageNode": null,
+          "network": null,
+          "status": "UNCONNECTED_SURFACE_EXPLORATION"
+        },
+        "evaluation": {
+          "start": "2026-10-20T03:10:00+00:00",
+          "end": "2026-10-20T03:16:00+00:00",
+          "timeZone": "UTC",
+          "scope": "SELECTED_SURFACE_OUTLET_NOT_SEWER_OR_RIVER",
+          "runoffStepSeconds": 1,
+          "scoreRule": "BASELINE_MINUS_STRATEGY_RUNOFF_DRAINAGE_AND_NET_STORAGE_M3",
+          "initialization": {
+            "method": "OBSERVED_7_DAY_CONTINUOUS_SPINUP_V1",
+            "warmupMinutes": 10080,
+            "initialSoilMoisture": 0.10950819672129512,
+            "initialStorageM3": 1.098727187638739,
+            "warmupRainMm": 18,
+            "scoreExcludesWarmup": true,
+            "evaluationStart": "2026-10-20T12:10:00+09:00",
+            "aggregateDerivedMinutes": 0,
+            "rainfallSourceHashes": [
+              "da96f4787078f8005ce1bb48d18835f1c3efb405ed7627888917788b658f7e6e"
+            ],
+            "evaporationSourceHashes": [
+              "92593a9937e51dfea76d65aa0732b2a47344e5febbfa3d8e14fe2ca5bab955d5"
+            ],
+            "seed": "WILTING_POINT_AND_EMPTY_STORAGE",
+            "limitations": [
+              "선행 7일 이전 수분 실측 미확보로 시들음점·빈 저류층에서 재생",
+              "관측 기상 기반 모델 상태이며 현장 토양수분 측정값 아님",
+              "시설이 선행 기간에 존재한 조건의 초기화이며 시공 직후 반입토 수분 복원 아님",
+              "7일은 초기화 계산 기간이며 장기 건조기 초기조건의 완전 수렴을 보장하지 않음"
+            ]
+          },
+          "windowMethod": "FULL_EVENT_AFTER_ANTECEDENT"
+        },
+        "units": {
+          "coordinate": "m",
+          "area": "m2",
+          "volume": "m3",
+          "flow": "m3/s",
+          "rainfall": "mm",
+          "cost": "KRW"
+        },
+        "cost": {
+          "status": "NOT_RECORDED",
+          "snapshotSha256": null,
+          "sourceSha256": "50f6e00757ecba3ed77a811b0fd9d03f72b800c0c47712093bf1adda99421036",
+          "budgetPolicy": {
+            "allocationScope": "MEMBER",
+            "limitKrw": 2000000000,
+            "note": "서울시 2026년 빗물관리시설 확충사업 총사업비 20억 원을 참고한 1인당 게임 설계 예산. 서울시 모든 분야의 총예산이나 실제 개인 배정액이 아님. 각 회원은 독립된 20억 원을 사용하며 철거 시 본인 가용액 복원, 주간 초기화 없음. 재해 설계는 별도의 20억 원 한도이며 여러 구의 배치를 합산.",
+            "personalLimitKrw": 2000000000,
+            "referenceYear": 2026,
+            "ruleVersion": "SEOUL_PERSONAL_FULL_2026_V3",
+            "sourceSha256": "899f375797620e01c7c6223518f4d02656512d92d85aa9c48dd234bb1141ab4e",
+            "sourceTitle": "서울시 2026년 빗물관리시설 확충사업",
+            "sourceUrl": "https://www.seoul.go.kr/news/news_report.do?nttNo=454536&srchCtgry=471"
+          },
+          "completeInstalledCostStatus": "UNCONFIRMED",
+          "lifeCycleCostStatus": "NOT_CALCULATED"
+        },
+        "engine": {
+          "engineVersion": "5.2.4",
+          "binarySha256": "651e08796415344ebff4ffd709273499a3a0c098665de2589cc2ac3fcfd89183",
+          "adapterSha256": "767a8f07a221e6b502faa2a6cd3d87e474e96e6de3e0b24a11ea82d839c91efe",
+          "schemaVersion": 1,
+          "revision": "7952ca837988b1c32f791812eccc9fd64547e093",
+          "sourceArchiveSha256": "3f76a199573088ce47ff02491c529afb73d9953ee9d948dfc89dcd4981b4c0c0",
+          "observerSha256": "54c6b8ef6709b8231e69ed2a9431be3413961d9f0da0e3f010cb1bad9c311c8c",
+          "modification": "READ_ONLY_OBSERVER_NO_SOLVER_CHANGES",
+          "geometryAdapterSha256": "60fcac3e39ef0fb0425d42f3fe34e014ff29112ad7c84d2f525856bdd72befff",
+          "facilityAdapterSha256": "03c8607cb221c7c799d57589c5d711fc284f5999da6e8a2ed71c957395b6daec",
+          "referenceConditionsAdapterSha256": "0d1a18d17fac2000e1b7f573f62bb927ec5f9903e02e23c55f4f08eb445b924f",
+          "designFootprintAdapterSha256": "ae583da9acd71db6613ac1cd4e0c8d4f43d8adcd7fa02a461a64692a5175e18c",
+          "referenceScenarioSha256": "164358be09db34872324d63ce10df84a23cac936e5f5a8c0dc5fb12d0269b1bc"
+        },
+        "inputFiles": {
+          "model.json": "10fe31541ca19ab36505b24f303bf9b29d1252656d241b770c7632fef2054ea5",
+          "placement.json": "e2fb74577628b2f39f0458e84ff024903266003ab99cec1d8f0e93decb7bbf4b",
+          "baseline.inp": "fb142b3514d361e9baec0ab4aa98a7a424f56ce88d35ae29f7544dee2917a65d",
+          "strategy.inp": "7a9d4052bbd9ae2dca826242d7a52624b71b1146ba77b0f8dbbad177c9a51be5"
+        },
+        "commonInpSections": {
+          "OPTIONS": "30cbf91a029e0ee61c92caaa9ce057d266720c1ea62b212131c8e5a873afb985",
+          "RAINGAGES": "9685ba5b49c8d474d0be2a84e1d882b958a1ebf4d8391ca895714f7ef9abaaca",
+          "EVAPORATION": "afb6bc827f65cd98fe11e434dd652ca2257a554bf2fd90f01e39919589c3289d",
+          "TIMESERIES": "69eddf4db22c5d9683b3ce6d35d51bcbaa413fbe564f37c57b47e620ea34f0dc"
+        },
+        "implementationSha256": "8125fce09b04b38e9622282b7eb117e0c8eb11b8bd714004a0ea70d0a8ea9e22",
+        "flowGraph": {
+          "sha256": "4fb364ab4934d32121c48dc66d41884e23b1765c1e0d82686d006c446402a183",
+          "version": "PUBLIC_SOURCE_FLOW_GRAPH_V1",
+          "mode": "NATIVE_DIRECT_SURFACE",
+          "implementationSha256": "c8dab1f35b6e0156079486b7955e1c672c9e7e9d33cc26eb63ba8a786947a759",
+          "sourceHashes": {
+            "model.json": "10fe31541ca19ab36505b24f303bf9b29d1252656d241b770c7632fef2054ea5",
+            "placement.json": "e2fb74577628b2f39f0458e84ff024903266003ab99cec1d8f0e93decb7bbf4b",
+            "baseline.inp": "fb142b3514d361e9baec0ab4aa98a7a424f56ce88d35ae29f7544dee2917a65d",
+            "strategy.inp": "7a9d4052bbd9ae2dca826242d7a52624b71b1146ba77b0f8dbbad177c9a51be5",
+            "objectCatalog": "2c514899f82d858b4386d489b4fd9fa691552b59704f88f93e5475cc33b8f7d0",
+            "siteCatalog": "4ec7535e7cbaf41dc73f73519d77ba11f956f4c75c1a574fffa08f16625919b7",
+            "candidateGeometry": "8c66a3ff5a6268c3edc62424cfda0a479d92d3d464c035cdbcfbe7ec6fc34192"
+          },
+          "spatialStatus": {
+            "horizontalCrs": "EPSG:5186",
+            "verticalDatum": "UNCONFIRMED",
+            "drainageNetworkLink": "UNCONNECTED",
+            "surfaceGridLink": "UNCONNECTED"
+          },
+          "nodes": [
+            {
+              "id": "object:ngii:N1A_D0010000:8c66a3ff5a6268c3edc62424cfda0a479d92d3d464c035cdbcfbe7ec6fc34192",
+              "kind": "SPATIAL_OBJECT",
+              "source": "objectCatalog",
+              "sourceObjectId": "ngii:N1A_D0010000:8c66a3ff5a6268c3edc62424cfda0a479d92d3d464c035cdbcfbe7ec6fc34192"
+            },
+            {
+              "id": "candidate:C0000fe65db41b6f0c5e9fa6d",
+              "kind": "INSTALLATION_CANDIDATE",
+              "source": "siteCatalog",
+              "candidateId": "C0000fe65db41b6f0c5e9fa6d",
+              "districtId": "11290",
+              "areaM2": "120.43875000016952"
+            },
+            {
+              "id": "facility:C0000fe65db41b6f0c5e9fa6d",
+              "kind": "FACILITY",
+              "source": "placement.json",
+              "facilityType": "RAIN_GARDEN",
+              "areaM2": "10"
+            },
+            {
+              "id": "remainder:C0000fe65db41b6f0c5e9fa6d",
+              "kind": "MODEL_SURFACE_REMAINDER",
+              "source": "model.json",
+              "areaM2": "110.43875000016952"
+            },
+            {
+              "id": "surface-outlet:C0000fe65db41b6f0c5e9fa6d",
+              "kind": "COMPUTATIONAL_SURFACE_OUTLET",
+              "source": "model.json"
+            }
+          ],
+          "edges": [
+            {
+              "id": "source-candidate",
+              "from": "object:ngii:N1A_D0010000:8c66a3ff5a6268c3edc62424cfda0a479d92d3d464c035cdbcfbe7ec6fc34192",
+              "to": "candidate:C0000fe65db41b6f0c5e9fa6d",
+              "kind": "SOURCE_DERIVATION"
+            },
+            {
+              "id": "facility-direct-rain",
+              "from": "candidate:C0000fe65db41b6f0c5e9fa6d",
+              "to": "facility:C0000fe65db41b6f0c5e9fa6d",
+              "kind": "DIRECT_RAIN_AREA"
+            },
+            {
+              "id": "remaining-direct-rain",
+              "from": "candidate:C0000fe65db41b6f0c5e9fa6d",
+              "to": "remainder:C0000fe65db41b6f0c5e9fa6d",
+              "kind": "DIRECT_RAIN_AREA"
+            },
+            {
+              "id": "facility-outlet",
+              "from": "facility:C0000fe65db41b6f0c5e9fa6d",
+              "to": "surface-outlet:C0000fe65db41b6f0c5e9fa6d",
+              "kind": "SURFACE_AND_LID_DRAINAGE"
+            },
+            {
+              "id": "remainder-outlet",
+              "from": "remainder:C0000fe65db41b6f0c5e9fa6d",
+              "to": "surface-outlet:C0000fe65db41b6f0c5e9fa6d",
+              "kind": "BYPASS_SURFACE_RUNOFF"
+            }
+          ],
+          "areaBudgets": [
+            {
+              "id": "candidate:C0000fe65db41b6f0c5e9fa6d",
+              "sourceNodeId": "candidate:C0000fe65db41b6f0c5e9fa6d",
+              "availableM2": "120.43875000016952",
+              "unit": "m2",
+              "surfaceClass": "TOTAL",
+              "completePartition": true,
+              "allocations": [
+                {
+                  "id": "facility-direct-rain",
+                  "targetNodeId": "facility:C0000fe65db41b6f0c5e9fa6d",
+                  "areaM2": "10"
+                },
+                {
+                  "id": "remaining-direct-rain",
+                  "targetNodeId": "remainder:C0000fe65db41b6f0c5e9fa6d",
+                  "areaM2": "110.43875000016952"
+                }
+              ]
+            }
+          ],
+          "inputBindings": [
+            {
+              "nodeId": "candidate:C0000fe65db41b6f0c5e9fa6d",
+              "role": "RAINFALL",
+              "source": "model.json",
+              "pointer": "/rainfall"
+            },
+            {
+              "nodeId": "candidate:C0000fe65db41b6f0c5e9fa6d",
+              "role": "SOIL_AND_COVER_REFERENCE",
+              "source": "model.json",
+              "pointer": "/cells/0/physicalInputs"
+            },
+            {
+              "nodeId": "candidate:C0000fe65db41b6f0c5e9fa6d",
+              "role": "INITIAL_STATE_PARAMETERS",
+              "source": "model.json",
+              "pointer": "/hydrology"
+            },
+            {
+              "nodeId": "candidate:C0000fe65db41b6f0c5e9fa6d",
+              "role": "INITIAL_STATE_POLICY",
+              "source": "model.json",
+              "pointer": "/initialization"
+            }
+          ],
+          "evaluationPoints": [
+            {
+              "nodeId": "surface-outlet:C0000fe65db41b6f0c5e9fa6d",
+              "kind": "COMPUTED_SURFACE_OUTLET",
+              "start": "2026-10-20T03:10:00+00:00",
+              "end": "2026-10-20T03:16:00+00:00",
+              "method": "NATIVE_RUNOFF_STEP_SURFACE_PLUS_DRAIN_V1"
+            }
+          ],
+          "unresolved": [
+            "EXTERNAL_CATCHMENT_AND_DRAINAGE_NETWORK_NOT_CONNECTED",
+            "MODEL_AREA_REMAINDER_HAS_NO_MEASURED_SUBPOLYGON"
+          ]
+        }
+      },
+      "inflowPolicy": "DIRECT_RAINFALL_ONLY",
+      "areaLimitBasis": "PUBLIC_NATIVE_DESIGN_GEOMETRY"
+    }
+  }
+}

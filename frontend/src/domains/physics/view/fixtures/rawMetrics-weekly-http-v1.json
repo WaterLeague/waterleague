@@ -1,0 +1,556 @@
+{
+  "classification": "ACTUAL_PUBLIC_HTTP_RESPONSE_WITH_SYNTHETIC_TEST_WEATHER",
+  "sourceFile": "tmp/waterleague_queue_test_7b874931080f4153b97d8b617594a8dd.fixtures/weekly-response.json",
+  "sourceSha256": "f76c8b75f5f76f9844f593beb3c32836e7bbe18f93dc769c79edd855500de2d1",
+  "value": {
+    "generatedAt": "2026-10-20T04:09:06.275847Z",
+    "ruleVersion": "OBSERVED_ACCOUNTED_VOLUME_SECONDS_V2",
+    "validationLevel": "EXPLORATORY",
+    "current": {
+      "weekStart": "2026-10-19",
+      "startsAt": "2026-10-18T15:00:00Z",
+      "endsAt": "2026-10-25T15:00:00Z",
+      "evaluatedTarget": "2026-10-20T04:07:00Z",
+      "status": "IN_PROGRESS",
+      "evaluatedMinutes": 6,
+      "evaluatedSeconds": 360,
+      "expectedMinutes": 57,
+      "expectedSeconds": 3420,
+      "districts": [
+        {
+          "rank": 1,
+          "scoreM3": -0.008682158,
+          "evaluatedMinutes": 6,
+          "evaluatedSeconds": 360,
+          "expectedMinutes": 57,
+          "expectedSeconds": 3420,
+          "districtId": "11290",
+          "districtName": "성북구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11680",
+          "districtName": "강남구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11740",
+          "districtName": "강동구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11305",
+          "districtName": "강북구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11500",
+          "districtName": "강서구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11620",
+          "districtName": "관악구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11215",
+          "districtName": "광진구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11530",
+          "districtName": "구로구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11545",
+          "districtName": "금천구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11350",
+          "districtName": "노원구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11320",
+          "districtName": "도봉구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11230",
+          "districtName": "동대문구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11590",
+          "districtName": "동작구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11440",
+          "districtName": "마포구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11410",
+          "districtName": "서대문구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11650",
+          "districtName": "서초구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11200",
+          "districtName": "성동구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11710",
+          "districtName": "송파구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11470",
+          "districtName": "양천구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11560",
+          "districtName": "영등포구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11170",
+          "districtName": "용산구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11380",
+          "districtName": "은평구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11110",
+          "districtName": "종로구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11140",
+          "districtName": "중구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11260",
+          "districtName": "중랑구"
+        }
+      ],
+      "players": [
+        {
+          "rank": 1,
+          "scoreM3": -0.008682158,
+          "evaluatedMinutes": 6,
+          "evaluatedSeconds": 360,
+          "expectedMinutes": 57,
+          "expectedSeconds": 3420,
+          "playerId": "67108db9-a183-4a74-a06c-3b28379e04eb",
+          "nickname": "큐 시험",
+          "districtId": "11290"
+        }
+      ],
+      "participantCount": 1,
+      "own": null,
+      "winnerDistrictIds": []
+    },
+    "previous": {
+      "weekStart": "2026-10-12",
+      "startsAt": "2026-10-11T15:00:00Z",
+      "endsAt": "2026-10-18T15:00:00Z",
+      "evaluatedTarget": "2026-10-18T15:00:00Z",
+      "status": "EMPTY",
+      "evaluatedMinutes": 0,
+      "evaluatedSeconds": 0,
+      "expectedMinutes": 0,
+      "expectedSeconds": 0,
+      "districts": [
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11680",
+          "districtName": "강남구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11740",
+          "districtName": "강동구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11305",
+          "districtName": "강북구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11500",
+          "districtName": "강서구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11620",
+          "districtName": "관악구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11215",
+          "districtName": "광진구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11530",
+          "districtName": "구로구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11545",
+          "districtName": "금천구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11350",
+          "districtName": "노원구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11320",
+          "districtName": "도봉구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11230",
+          "districtName": "동대문구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11590",
+          "districtName": "동작구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11440",
+          "districtName": "마포구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11410",
+          "districtName": "서대문구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11650",
+          "districtName": "서초구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11200",
+          "districtName": "성동구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11290",
+          "districtName": "성북구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11710",
+          "districtName": "송파구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11470",
+          "districtName": "양천구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11560",
+          "districtName": "영등포구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11170",
+          "districtName": "용산구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11380",
+          "districtName": "은평구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11110",
+          "districtName": "종로구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11140",
+          "districtName": "중구"
+        },
+        {
+          "rank": null,
+          "scoreM3": null,
+          "evaluatedMinutes": 0,
+          "evaluatedSeconds": 0,
+          "expectedMinutes": 0,
+          "expectedSeconds": 0,
+          "districtId": "11260",
+          "districtName": "중랑구"
+        }
+      ],
+      "players": [],
+      "participantCount": 0,
+      "own": null,
+      "winnerDistrictIds": []
+    }
+  }
+}

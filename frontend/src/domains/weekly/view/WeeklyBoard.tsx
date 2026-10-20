@@ -3,7 +3,8 @@ import { useState } from 'react';
 import { Trophy } from 'lucide-react';
 import type { WeeklySnapshot } from '../dto/weeklyDto';
 import './weekly.css';
-export const scoreFormat = new Intl.NumberFormat('ko-KR', { maximumFractionDigits: 3 });
+export { scoreFormat } from '../service/scoreFormat';
+import { scoreFormat } from '../service/scoreFormat';
 const date = (s: string) =>
   new Date(s).toLocaleString('ko-KR', {
     month: 'numeric',
@@ -78,7 +79,7 @@ export function WeeklyBoard({
           {period.own && (
             <p className="weekly-own">
               내 기록 · {period.own.rank === null ? '계산 대기' : `${period.own.rank}위`} ·{' '}
-              {evaluatedSeconds(period.own)
+              {period.own.scoreM3 !== null
                 ? `${scoreFormat.format(period.own.scoreM3)}m³`
                 : '미계산'}
               {evaluatedSeconds(period.own) < expectedSeconds(period.own)
@@ -112,7 +113,7 @@ export function WeeklyBoard({
                           </button>
                           {evaluatedSeconds(d) < expectedSeconds(d) && <small>일부 미평가</small>}
                         </th>
-                        <td>{evaluatedSeconds(d) ? scoreFormat.format(d.scoreM3) : '—'}</td>
+                        <td>{d.scoreM3 === null ? '미계산' : scoreFormat.format(d.scoreM3)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -157,7 +158,7 @@ export function WeeklyBoard({
                               {evaluatedSeconds(p) < expectedSeconds(p) ? ' · 일부 미평가' : ''}
                             </small>
                           </th>
-                          <td>{evaluatedSeconds(p) ? scoreFormat.format(p.scoreM3) : '—'}</td>
+                          <td>{p.scoreM3 === null ? '미계산' : scoreFormat.format(p.scoreM3)}</td>
                         </tr>
                       ))}
                     </tbody>

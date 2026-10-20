@@ -78,6 +78,9 @@ def main():
             if suite == 'watershed':
                 path.with_suffix('.fixtures').mkdir(mode=0o700)
                 physical.append('-Dwaterleague.integration.watershed.fixtures=' + str(path.with_suffix('.fixtures')))
+            if suite == 'physics':
+                path.with_suffix('.fixtures').mkdir(mode=0o700)
+                physical.append('-Dwaterleague.integration.physics.fixtures=' + str(path.with_suffix('.fixtures')))
             if suite == 'guest-historical':
                 physical.append('-Dwaterleague.integration.guest.fixture=' + str(path.with_suffix('.guest.json')))
             if suite == 'historical':
@@ -124,6 +127,11 @@ def main():
                 if suite == 'watershed' and result.returncode == 0:
                     result = subprocess.run(
                         [str(ROOT/'backend/mvnw'),'--batch-mode','-Dtest=WatershedReadbackTests',
+                         '-Dwaterleague.integration.jdbc='+jdbc,*physical,'test'],
+                        cwd=ROOT/'backend',env=env,stdout=log,stderr=subprocess.STDOUT,timeout=600)
+                if suite == 'physics' and result.returncode == 0:
+                    result = subprocess.run(
+                        [str(ROOT/'backend/mvnw'),'--batch-mode','-Dtest=PhysicsReadbackTests',
                          '-Dwaterleague.integration.jdbc='+jdbc,*physical,'test'],
                         cwd=ROOT/'backend',env=env,stdout=log,stderr=subprocess.STDOUT,timeout=600)
         with psycopg.connect(**config) as db:

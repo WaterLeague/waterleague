@@ -274,7 +274,10 @@ def published_network(original, baseline, strategy, design, transformation, sour
         nodes.append({'id': node, 'kind': 'LID_FACILITY', 'facilityType': p['facilityType'],
                       'sourceCatchmentId': p['subcatchmentId'], 'executionCatchmentId': detail['subcatchmentId'],
                       **reference('strategy-input.inp', 'LID_USAGE', usage[0])})
-        for kind in ('DIRECT_RAIN_AREA', 'ALLOCATED_IMPERVIOUS_RUNOFF'):
+        covered = p['facilityType'] == 'RAINWATER_CISTERN'
+        if covered:
+            nodes[-1]['coverRainfallStatus'] = 'EXCLUDED_WITHOUT_MODELED_BYPASS'
+        for kind in (('ALLOCATED_IMPERVIOUS_RUNOFF',) if covered else ('DIRECT_RAIN_AREA', 'ALLOCATED_IMPERVIOUS_RUNOFF')):
             edges.append({'id': kind + ':' + p['id'].upper(), 'from': host, 'to': node, 'kind': kind})
         edges.append({'id': key('lid-outlet', p['id']), 'from': node,
                       'to': key('node', detail['outletNodeId']), 'kind': 'SURFACE_AND_LID_DRAINAGE'})
@@ -305,8 +308,9 @@ def published_network(original, baseline, strategy, design, transformation, sour
             removed, footprint, captured = (decimal(p[k]) for k in
                                             ('replacedImperviousM2', 'areaM2', 'treatedImperviousM2'))
             require(removed <= footprint, 'FLOW_GRAPH_CAPTURE_AREA_EXCEEDED')
-            allocate('impervious', facility, removed, 'FACILITY_DIRECT_RAIN', p['id'] + ':footprint-imp')
-            allocate('pervious', facility, footprint-removed, 'FACILITY_DIRECT_RAIN', p['id'] + ':footprint-perv')
+            direct_role = 'UNMODELED_COVER_RAIN' if p['facilityType'] == 'RAINWATER_CISTERN' else 'FACILITY_DIRECT_RAIN'
+            allocate('impervious', facility, removed, direct_role, p['id'] + ':footprint-imp')
+            allocate('pervious', facility, footprint-removed, direct_role, p['id'] + ':footprint-perv')
             allocate('impervious', facility, captured, 'ROUTED_RUNOFF_NOT_ADDITIONAL_RAIN', p['id'] + ':capture')
         bypass = key('catchment', t[0])
         if cistern and cistern['catchmentPartition']['hostId'].upper() == t[0].upper():

@@ -217,7 +217,7 @@ class GuestHistoricalTests extends PostgresIntegrationTest {
     var id = json.tree(created.body()).path("id").asString();
     String result =
         """
-        {"engineVersion":"test-only","validationLevel":"EXPLORATORY","start":"2022-08-08T09:00:00Z","end":"2022-08-08T09:03:00Z",
+        {"engineVersion":"test-only-987","validationLevel":"EXPLORATORY","start":"2022-08-08T09:00:00Z","end":"2022-08-08T09:03:00Z",
         "differenceM3":987,"baselineAccountedM3":999,"designAccountedM3":12,
         "frames":[{"at":"2022-08-08T09:01:00Z","differenceM3":1},{"at":"2022-08-08T09:02:00Z","differenceM3":2},{"at":"2022-08-08T09:03:00Z","differenceM3":987}],
         "facilities":[{"cellId":"TEST","runoffComparison":{"final":987},"frames":[{"at":"2022-08-08T09:01:00Z","differenceM3":1},{"at":"2022-08-08T09:03:00Z","differenceM3":987}]}]}
@@ -232,7 +232,27 @@ class GuestHistoricalTests extends PostgresIntegrationTest {
             get(browser, "/guest-historical/" + id),
             get(browser, "/guest-historical"),
             post(browser, "/guest-historical", dto, true))) {
-      assertThat(response.body()).doesNotContain("987", "runoffComparison");
+      assertThat(response.statusCode()).isIn(200, 202);
+      var value = json.tree(response.body());
+      var records = new ArrayList<tools.jackson.databind.JsonNode>();
+      if (value.isArray()) value.forEach(records::add);
+      else records.add(value);
+      assertThat(records).hasSize(1);
+      for (var record : records) {
+        var previewResult = record.path("result");
+        assertThat(previewResult.path("engineVersion").asString()).isEqualTo("test-only-987");
+        for (String field : List.of("differenceM3", "baselineAccountedM3", "designAccountedM3"))
+          assertThat(previewResult.has(field)).isFalse();
+        assertThat(previewResult.path("frames").size()).isEqualTo(2);
+        for (var frame : previewResult.path("frames"))
+          assertThat(frame.path("differenceM3").asDouble()).isNotEqualTo(987);
+        for (var facility : previewResult.path("facilities")) {
+          assertThat(facility.has("runoffComparison")).isFalse();
+          assertThat(facility.path("frames").size()).isEqualTo(1);
+          for (var frame : facility.path("frames"))
+            assertThat(frame.path("differenceM3").asDouble()).isNotEqualTo(987);
+        }
+      }
     }
     var preview = json.tree(get(browser, "/guest-historical/" + id).body()).path("result");
     assertThat(preview.has("differenceM3")).isFalse();

@@ -141,7 +141,9 @@ function Explorer({
     if (weekly.error) return '순위 갱신 지연';
     const score = weekly.value?.current.districts.find((d) => d.districtId === id);
     return score
-      ? `${score.rank ? `${score.rank}위 · ` : ''}총 점수 ${scoreFormat.format(score.scoreM3)} m³`
+      ? score.scoreM3 === null
+        ? '점수 미계산'
+        : `${score.rank ? `${score.rank}위 · ` : ''}총 점수 ${scoreFormat.format(score.scoreM3)} m³`
       : '점수 조회 중';
   };
   const [selected, setSelected] = useState(initialDistrictId);
@@ -738,7 +740,7 @@ function Explorer({
                 d.id,
                 weekly.error
                   ? '순위 갱신 지연'
-                  : `시설 ${shared.installations.filter((i) => i.districtId === d.id).length}개 · ${score ? `총 점수 ${scoreFormat.format(score.scoreM3)} m³` : '점수 조회 중'}`,
+                  : `시설 ${shared.installations.filter((i) => i.districtId === d.id).length}개 · ${score ? (score.scoreM3 === null ? '점수 미계산' : `총 점수 ${scoreFormat.format(score.scoreM3)} m³`) : '점수 조회 중'}`,
               ];
             })
           ),
@@ -891,8 +893,7 @@ function Explorer({
               researchMode
                 ? disasterTotal.score
                 : account && weekly.value
-                  ? (weekly.value.current.own?.scoreM3 ??
-                    (shared.ready && !ownInstallations.length ? 0 : null))
+                  ? (weekly.value.current.own?.scoreM3 ?? null)
                   : null
             }
             locked={researchMode && disasterTotal.locked}

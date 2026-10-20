@@ -202,7 +202,7 @@ def calculate(request, directory):
     if passed:
         passed = (cases[0]['evaluationMetrics']['specificationSha256']
                   == cases[1]['evaluationMetrics']['specificationSha256'])
-    result = {'schemaVersion': 1, 'catalogHash': CATALOG_HASH, 'inputHash': request['inputHash'],
+    result = {'schemaVersion': 2, 'catalogHash': CATALOG_HASH, 'inputHash': request['inputHash'],
         'classification': 'PUBLIC_NETWORK_REFERENCE_DESIGN_COMPARISON', 'engine': engine,
         'numericalProfile': catalog['numericalProfile'],
         'networkLayout': layout_snapshot,
@@ -229,6 +229,11 @@ def calculate(request, directory):
     result['flowGraph'] = published_network(original, base, strategy, design, transformation,
         {name: digest((directory/name).read_bytes()) for name in names}, cases)
     archive_flow(result['flowGraph'], directory)
+    from .evaluation.raw_metrics import network
+    result['metricComparison'] = network(result)
+    if any(m['status'] == 'WITHHELD' for m in result['metricComparison']['metrics']):
+        result['signedReductionM3'] = result['signedPeakReductionM3s'] = None
+    (directory/'raw_metrics.py').write_bytes((Path(__file__).parent/'evaluation/raw_metrics.py').read_bytes())
     return result
 
 

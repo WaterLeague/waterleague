@@ -8,6 +8,7 @@ import { watershedCostCatalogDto, watershedCostSnapshotDto } from './watershedCo
 import { watershedLayoutDto } from './watershedLayoutDto';
 import { watershedMetricsDto } from './watershedMetricsDto';
 import { nodeFloodingDto, floodAmountClose } from './nodeFloodingDto';
+import { metricComparisonDto } from '../../physics/dto/metricComparisonDto';
 const hash = z.string().regex(/^[a-f0-9]{64}$/);
 const amount = z.number().finite();
 export const networkFacilityDto = z.enum([
@@ -146,6 +147,7 @@ const caseDto = z.object({
 });
 export const watershedResultDto = z
   .object({
+    schemaVersion: z.union([z.literal(1), z.literal(2)]).default(1),
     catalogHash: hash,
     classification: z.literal('PUBLIC_NETWORK_REFERENCE_DESIGN_COMPARISON'),
     networkLayout: z.object({ sha256: hash, layout: watershedLayoutDto }).optional(),
@@ -162,10 +164,56 @@ export const watershedResultDto = z
     costing: watershedCostSnapshotDto.optional(),
     cisternCosting: cisternCostSnapshotDto.optional(),
     limitations: z.array(z.string()),
+    metricComparison: metricComparisonDto.optional(),
   })
   .superRefine((value, ctx) => {
     const baseline = value.cases.find((c) => c.id === 'baseline');
     const strategy = value.cases.find((c) => c.id === 'strategy');
+    const assessment = value.metricComparison;
+    if (value.schemaVersion === 2 && !assessment)
+      ctx.addIssue({ code: 'custom', message: '현재 원 지표 비교 계약 누락' });
+    const withheld = assessment?.metrics.some((m) => m.status === 'WITHHELD') ?? false;
+    if (assessment) {
+      if (assessment.scope !== 'PUBLISHED_NETWORK_REFERENCE_DESIGN')
+        ctx.addIssue({ code: 'custom', message: '관망 평가 범위 불일치' });
+      for (const m of assessment.metrics) {
+        const raw =
+          m.id === 'networkOutflowM3'
+            ? [baseline?.totals?.outflowM3, strategy?.totals?.outflowM3]
+            : m.id === 'networkFloodingM3'
+              ? [baseline?.totals?.floodingM3, strategy?.totals?.floodingM3]
+              : m.id === 'networkPeakM3s'
+                ? [
+                    baseline?.evaluationMetrics?.combined.peakOutwardM3s,
+                    strategy?.evaluationMetrics?.combined.peakOutwardM3s,
+                  ]
+                : null;
+        if (
+          raw
+            ? m.baseline !== (raw[0] ?? null) ||
+              m.strategy !== (raw[1] ?? null) ||
+              (m.status === 'COMPARABLE' && value.numericalStatus !== 'PASSED')
+            : m.status !== 'UNAVAILABLE'
+        )
+          ctx.addIssue({ code: 'custom', message: '원 관망 지표와 비교 원값 불일치' });
+      }
+      const window = assessment.window,
+        bm = baseline?.evaluationMetrics,
+        sm = strategy?.evaluationMetrics;
+      if (
+        assessment.metrics.some((m) => m.status === 'COMPARABLE') &&
+        (window?.kind !== 'ELAPSED_SECONDS' ||
+          !bm?.complete ||
+          !sm?.complete ||
+          window.specificationSha256 !== bm.specificationSha256 ||
+          bm.specificationSha256 !== sm.specificationSha256 ||
+          window.start !== bm.specification.startMilliseconds / 1000 ||
+          window.end !== bm.specification.endMilliseconds / 1000)
+      )
+        ctx.addIssue({ code: 'custom', message: '원 관망 평가 창과 비교 범위 불일치' });
+      if (withheld && (value.signedReductionM3 !== null || value.signedPeakReductionM3s != null))
+        ctx.addIssue({ code: 'custom', message: '보류한 비교의 개선량 표시 금지' });
+    }
     const layout = value.networkLayout;
     if (!layout && value.cases.some((c) => c.nodeFlooding))
       ctx.addIssue({ code: 'custom', message: '절점 월류의 원본 관망도 누락' });
@@ -238,7 +286,11 @@ export const watershedResultDto = z
       ctx.addIssue({ code: 'custom', message: '실패한 계산의 첨두 비교 금지' });
     const bm = baseline?.evaluationMetrics;
     const sm = strategy?.evaluationMetrics;
-    if (value.numericalStatus === 'PASSED' && (bm || sm || value.signedPeakReductionM3s != null)) {
+    if (
+      value.numericalStatus === 'PASSED' &&
+      !withheld &&
+      (bm || sm || value.signedPeakReductionM3s != null)
+    ) {
       if (
         !bm?.complete ||
         !sm?.complete ||
@@ -251,7 +303,7 @@ export const watershedResultDto = z
       )
         ctx.addIssue({ code: 'custom', message: '첨두 비교의 평가 범위·변화량 불일치' });
     }
-    if (value.numericalStatus === 'PASSED') {
+    if (value.numericalStatus === 'PASSED' && !withheld) {
       if (!value.signedReductionM3) ctx.addIssue({ code: 'custom', message: '효과 비교 누락' });
       else if (baseline?.totals && strategy?.totals) {
         for (const metric of ['floodingM3', 'outflowM3'] as const) {
@@ -295,6 +347,18 @@ export const watershedJobDto = z
   })
   .superRefine((value, ctx) => {
     const references = value.design.cisternCosting;
+    if (
+      value.result?.schemaVersion === 2 &&
+      value.design.placements.some((p) => p.facilityType === 'RAINWATER_CISTERN') &&
+      value.result.metricComparison?.metrics.some(
+        (m) =>
+          m.id.startsWith('network') &&
+          m.id !== 'networkFloodingSeconds' &&
+          (m.status !== 'WITHHELD' ||
+            (m.reason !== 'UNMODELED_COVER_RAIN' && m.reason !== 'NUMERICAL_FAILURE'))
+      )
+    )
+      ctx.addIssue({ code: 'custom', message: '구형 덮개 이용조의 비교 보류 사유 누락' });
     const cisterns = value.design.placements
       .filter((p) => p.facilityType === 'RAINWATER_CISTERN')
       .map((p) => ({

@@ -33,5 +33,6 @@ public record PhysicsView(
       String areaLimitBasis,
       JsonNode initialization,
       JsonNode facilityDesign,
-      JsonNode runoffComparison) {}
+      JsonNode runoffComparison,
+      JsonNode designContract) {}
 }

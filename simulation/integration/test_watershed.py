@@ -175,6 +175,11 @@ class WatershedTests(unittest.TestCase):
         result=json.loads(row['result'])
         self.assertEqual(result['numericalStatus'],'PASSED')
         self.assertEqual(result['cisternCosting'],snapshot(design['placements']))
+        self.assertIsNone(result['signedReductionM3'])
+        self.assertIsNone(result['signedPeakReductionM3s'])
+        withheld=[m for m in result['metricComparison']['metrics'] if m['status']=='WITHHELD']
+        self.assertEqual(len(withheld),3)
+        self.assertTrue(all(m['reason']=='UNMODELED_COVER_RAIN' and m['signedImprovement'] is None for m in withheld))
         self.assertIsNone(result['completeInstalledCostKrw'])
         self.assertIsNone(result['budgetChargedKrw'])
         folder=self.artifacts/'watersheds'/str(identity)/str(job['lease_token'])
@@ -184,6 +189,11 @@ class WatershedTests(unittest.TestCase):
         self.assertEqual(manifest['cistern-quote-source.html'],design['cisternCosting']['source']['sha256'])
         self.assertEqual(json.loads((folder/'cistern-cost-snapshot.json').read_text()),design['cisternCosting'])
         self.assertEqual(self.conn.execute('SELECT count(*) AS n FROM budget_ledger_entries WHERE owner_id=%s',(self.owner,)).fetchone()['n'],0)
+        import shutil
+        from waterleague_sim.engine.swmm import ROOT
+        archive=ROOT/'tmp'/('raw-metrics-withheld-'+str(identity))
+        shutil.copytree(folder,archive)
+        (ROOT/'tmp/raw-metrics-withheld-last-artifacts.txt').write_text(str(archive))
 
     def test_server_pump_request_runs_with_storage_and_preserves_native_ledger(self):
         from pathlib import Path

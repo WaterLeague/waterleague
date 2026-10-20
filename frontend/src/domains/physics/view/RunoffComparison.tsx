@@ -2,6 +2,7 @@ import { runoffComparisonDto } from '../dto/runoffComparisonDto';
 import { designContractDto } from '../dto/designContractDto';
 import { physicalAmount as amount } from '../service/physicalValueFormat';
 import './runoffComparison.css';
+import { RelativeImprovement } from './RelativeImprovement';
 const time = (v: string) =>
   new Date(v).toLocaleString('ko-KR', {
     year: 'numeric',
@@ -73,12 +74,21 @@ export function RunoffComparison({ value, contract }: { value: unknown; contract
           </tbody>
         </table>
       </div>
-      <p className="runoff-comparison-change">
-        유출·배수 {amount(result.dischargeReductionM3)} m³ 감소 · 첨두{' '}
-        {amount(result.peakReductionM3s)} m³/s 감소
-      </p>
+      {(
+        [
+          ['평가체적 차이', 'surfaceAccountedVolumeM3', result.accountedReductionM3, 'm³'],
+          ['유출·배수 차이', 'surfaceDischargeM3', result.dischargeReductionM3, 'm³'],
+          ['선택 표면 첨두 차이', 'surfacePeakM3s', result.peakReductionM3s, 'm³/s'],
+        ] as const
+      ).map(([label, id, difference, unit]) => (
+        <p key={id} className="runoff-comparison-change">
+          {label} {amount(difference)} {unit}{' '}
+          <RelativeImprovement metric={result.metricComparison?.metrics.find((m) => m.id === id)} />
+        </p>
+      ))}
       <p>
-        음수는 증가입니다. 평가체적은 유출·배수에 순저류 변화를 더한 값이며, 남은 물을 영구 저감으로
+        차이는 설치 전에서 설치 후를 뺀 값이며 음수는 악화입니다. 개선율은 보조값이며 순위에
+        사용하지 않습니다. 평가체적은 유출·배수에 순저류 변화를 더한 값이며, 남은 물을 영구 저감으로
         계산하지 않습니다.
       </p>
       <details>

@@ -1,0 +1,1377 @@
+{
+  "evidence": "ACTUAL_WORKER_RESULT_DTO_PROJECTION",
+  "sourceFile": "tmp/raw-metrics-withheld-855347f8-82a9-4887-957d-801d8b776ff8/result.json",
+  "sourceSha256": "e1f673bf13f5c80f6ec57d9f5f146533a85d87e4738ee4dd8aef499b168f65b8",
+  "value": {
+    "schemaVersion": 2,
+    "catalogHash": "beaddba8868b6f1f6bbf35b1d53d4695a94db99498d8988f90d62013cf8f053c",
+    "classification": "PUBLIC_NETWORK_REFERENCE_DESIGN_COMPARISON",
+    "networkLayout": {
+      "sha256": "fa3e4d833650df5c40d933bd0b289dd029a54e0beb73fad9b9d3ef239cb0236d",
+      "layout": {
+        "schemaVersion": 1,
+        "id": "SEOCHO_PUBLISHED_NATIVE_LAYOUT_V1",
+        "sourceOriginalSha256": "8ce278a3d2b58df3c2a5fd1232160bcabb324389746ee0c878792acf91abbdbb",
+        "sourceUrl": "https://doi.org/10.17632/dzzwvd8rjk.3",
+        "classification": "PUBLISHED_MODEL_COORDINATES_NOT_GEOREFERENCED",
+        "coordinateUnitsDeclared": "Meters",
+        "horizontalCrs": null,
+        "nodes": [
+          {
+            "id": "J1",
+            "kind": "JUNCTION",
+            "coordinate": [202601.168, 442961.602]
+          },
+          {
+            "id": "J2",
+            "kind": "JUNCTION",
+            "coordinate": [202521.561, 443170.109]
+          },
+          {
+            "id": "J3",
+            "kind": "JUNCTION",
+            "coordinate": [202498.399, 443231.836]
+          },
+          {
+            "id": "J4",
+            "kind": "JUNCTION",
+            "coordinate": [202288.408, 443151.411]
+          },
+          {
+            "id": "J5",
+            "kind": "JUNCTION",
+            "coordinate": [202648.524, 443285.61]
+          },
+          {
+            "id": "J6",
+            "kind": "JUNCTION",
+            "coordinate": [202350.733, 443619.418]
+          },
+          {
+            "id": "J7",
+            "kind": "JUNCTION",
+            "coordinate": [202281.609, 443802.428]
+          },
+          {
+            "id": "J8",
+            "kind": "JUNCTION",
+            "coordinate": [202208.801, 443995.636]
+          },
+          {
+            "id": "J9",
+            "kind": "JUNCTION",
+            "coordinate": [202146.481, 444160.221]
+          },
+          {
+            "id": "J10",
+            "kind": "JUNCTION",
+            "coordinate": [201989.452, 444319.27]
+          },
+          {
+            "id": "J11",
+            "kind": "JUNCTION",
+            "coordinate": [202328.778, 442933.839]
+          },
+          {
+            "id": "J12",
+            "kind": "JUNCTION",
+            "coordinate": [202382.604, 443078.32]
+          },
+          {
+            "id": "J13",
+            "kind": "JUNCTION",
+            "coordinate": [202371.272, 443116.282]
+          },
+          {
+            "id": "J14",
+            "kind": "JUNCTION",
+            "coordinate": [202164.182, 443548.877]
+          },
+          {
+            "id": "J15",
+            "kind": "JUNCTION",
+            "coordinate": [201971.124, 444100.137]
+          },
+          {
+            "id": "J16",
+            "kind": "JUNCTION",
+            "coordinate": [201850.463, 444275.498]
+          },
+          {
+            "id": "J17",
+            "kind": "JUNCTION",
+            "coordinate": [202780.566, 442940.071]
+          },
+          {
+            "id": "J18",
+            "kind": "JUNCTION",
+            "coordinate": [202709.175, 443127.331]
+          },
+          {
+            "id": "J19",
+            "kind": "JUNCTION",
+            "coordinate": [202569.509, 443491.651]
+          },
+          {
+            "id": "J20",
+            "kind": "JUNCTION",
+            "coordinate": [202499.818, 443675.794]
+          },
+          {
+            "id": "J21",
+            "kind": "JUNCTION",
+            "coordinate": [202586.507, 443709.79]
+          },
+          {
+            "id": "J22",
+            "kind": "JUNCTION",
+            "coordinate": [202524.74, 443870.059]
+          },
+          {
+            "id": "J23",
+            "kind": "JUNCTION",
+            "coordinate": [202448.825, 444071.843]
+          },
+          {
+            "id": "J24",
+            "kind": "JUNCTION",
+            "coordinate": [202378.78, 444252.87]
+          },
+          {
+            "id": "J25",
+            "kind": "JUNCTION",
+            "coordinate": [202313.055, 444425.682]
+          },
+          {
+            "id": "J26",
+            "kind": "JUNCTION",
+            "coordinate": [202129.294, 444365.884]
+          },
+          {
+            "id": "Out1",
+            "kind": "OUTFALL",
+            "coordinate": [201689.304, 444365.884]
+          },
+          {
+            "id": "Out2",
+            "kind": "OUTFALL",
+            "coordinate": [202023.274, 444489.398]
+          }
+        ],
+        "links": [
+          {
+            "id": "C1",
+            "fromNode": "J1",
+            "toNode": "J2",
+            "points": [
+              [202601.168, 442961.602],
+              [202521.561, 443170.109]
+            ],
+            "lengthDeclaredM": 200
+          },
+          {
+            "id": "C2",
+            "fromNode": "J2",
+            "toNode": "J3",
+            "points": [
+              [202521.561, 443170.109],
+              [202498.399, 443231.836]
+            ],
+            "lengthDeclaredM": 65
+          },
+          {
+            "id": "C3",
+            "fromNode": "J11",
+            "toNode": "J12",
+            "points": [
+              [202328.778, 442933.839],
+              [202382.604, 443078.32]
+            ],
+            "lengthDeclaredM": 200
+          },
+          {
+            "id": "C4",
+            "fromNode": "J12",
+            "toNode": "J13",
+            "points": [
+              [202382.604, 443078.32],
+              [202371.272, 443116.282]
+            ],
+            "lengthDeclaredM": 40
+          },
+          {
+            "id": "C5",
+            "fromNode": "J13",
+            "toNode": "J2",
+            "points": [
+              [202371.272, 443116.282],
+              [202521.561, 443170.109]
+            ],
+            "lengthDeclaredM": 160
+          },
+          {
+            "id": "C6",
+            "fromNode": "J4",
+            "toNode": "J3",
+            "points": [
+              [202288.408, 443151.411],
+              [202498.399, 443231.836]
+            ],
+            "lengthDeclaredM": 200
+          },
+          {
+            "id": "C7",
+            "fromNode": "J3",
+            "toNode": "J5",
+            "points": [
+              [202498.399, 443231.836],
+              [202648.524, 443285.61]
+            ],
+            "lengthDeclaredM": 160
+          },
+          {
+            "id": "C8",
+            "fromNode": "J17",
+            "toNode": "J18",
+            "points": [
+              [202780.566, 442940.071],
+              [202709.175, 443127.331]
+            ],
+            "lengthDeclaredM": 200
+          },
+          {
+            "id": "C9",
+            "fromNode": "J18",
+            "toNode": "J5",
+            "points": [
+              [202709.175, 443127.331],
+              [202648.524, 443285.61]
+            ],
+            "lengthDeclaredM": 200
+          },
+          {
+            "id": "C10",
+            "fromNode": "J5",
+            "toNode": "J19",
+            "points": [
+              [202648.524, 443285.61],
+              [202569.509, 443491.651]
+            ],
+            "lengthDeclaredM": 200
+          },
+          {
+            "id": "C11",
+            "fromNode": "J19",
+            "toNode": "J20",
+            "points": [
+              [202569.509, 443491.651],
+              [202499.818, 443675.794]
+            ],
+            "lengthDeclaredM": 200
+          },
+          {
+            "id": "C12",
+            "fromNode": "J20",
+            "toNode": "J21",
+            "points": [
+              [202499.818, 443675.794],
+              [202586.507, 443709.79]
+            ],
+            "lengthDeclaredM": 100
+          },
+          {
+            "id": "C13",
+            "fromNode": "J21",
+            "toNode": "J22",
+            "points": [
+              [202586.507, 443709.79],
+              [202524.74, 443870.059]
+            ],
+            "lengthDeclaredM": 200
+          },
+          {
+            "id": "C14",
+            "fromNode": "J22",
+            "toNode": "J23",
+            "points": [
+              [202524.74, 443870.059],
+              [202448.825, 444071.843]
+            ],
+            "lengthDeclaredM": 200
+          },
+          {
+            "id": "C15",
+            "fromNode": "J23",
+            "toNode": "J24",
+            "points": [
+              [202448.825, 444071.843],
+              [202378.78, 444252.87]
+            ],
+            "lengthDeclaredM": 200
+          },
+          {
+            "id": "C16",
+            "fromNode": "J24",
+            "toNode": "J25",
+            "points": [
+              [202378.78, 444252.87],
+              [202313.055, 444425.682]
+            ],
+            "lengthDeclaredM": 200
+          },
+          {
+            "id": "C17",
+            "fromNode": "J25",
+            "toNode": "J26",
+            "points": [
+              [202313.055, 444425.682],
+              [202129.294, 444365.884]
+            ],
+            "lengthDeclaredM": 120
+          },
+          {
+            "id": "C18",
+            "fromNode": "J26",
+            "toNode": "J10",
+            "points": [
+              [202129.294, 444365.884],
+              [201989.452, 444319.27]
+            ],
+            "lengthDeclaredM": 130
+          },
+          {
+            "id": "C19",
+            "fromNode": "J14",
+            "toNode": "J6",
+            "points": [
+              [202164.182, 443548.877],
+              [202350.733, 443619.418]
+            ],
+            "lengthDeclaredM": 200
+          },
+          {
+            "id": "C20",
+            "fromNode": "J6",
+            "toNode": "J7",
+            "points": [
+              [202350.733, 443619.418],
+              [202281.609, 443802.428]
+            ],
+            "lengthDeclaredM": 200
+          },
+          {
+            "id": "C21",
+            "fromNode": "J7",
+            "toNode": "J8",
+            "points": [
+              [202281.609, 443802.428],
+              [202208.801, 443995.636]
+            ],
+            "lengthDeclaredM": 200
+          },
+          {
+            "id": "C22",
+            "fromNode": "J8",
+            "toNode": "J9",
+            "points": [
+              [202208.801, 443995.636],
+              [202146.481, 444160.221]
+            ],
+            "lengthDeclaredM": 200
+          },
+          {
+            "id": "C23",
+            "fromNode": "J15",
+            "toNode": "J9",
+            "points": [
+              [201971.124, 444100.137],
+              [202146.481, 444160.221]
+            ],
+            "lengthDeclaredM": 200
+          },
+          {
+            "id": "C24",
+            "fromNode": "J9",
+            "toNode": "Out2",
+            "points": [
+              [202146.481, 444160.221],
+              [202023.274, 444489.398]
+            ],
+            "lengthDeclaredM": 400
+          },
+          {
+            "id": "C25",
+            "fromNode": "J10",
+            "toNode": "J16",
+            "points": [
+              [201989.452, 444319.27],
+              [201850.463, 444275.498]
+            ],
+            "lengthDeclaredM": 200
+          },
+          {
+            "id": "C26",
+            "fromNode": "J16",
+            "toNode": "Out1",
+            "points": [
+              [201850.463, 444275.498],
+              [201689.304, 444365.884]
+            ],
+            "lengthDeclaredM": 200
+          }
+        ],
+        "catchments": [
+          {
+            "id": "S1",
+            "outletNodeId": "J4",
+            "points": [
+              [202197.011, 443099.082],
+              [202493.661, 443213.432],
+              [202508.581, 443172.002],
+              [202363.561, 443119.792],
+              [202375.991, 443080.022],
+              [202277.381, 442813.192],
+              [202197.011, 443099.082]
+            ]
+          },
+          {
+            "id": "S2",
+            "outletNodeId": "J11",
+            "points": [
+              [202515.08, 443163.21],
+              [202375.45, 443114.73],
+              [202387.88, 443078.69],
+              [202309.99, 442874.01],
+              [202283.47, 442801.09],
+              [202313.72, 442688.4],
+              [202629.02, 442744.33],
+              [202592.14, 442958.53],
+              [202515.08, 443163.21]
+            ]
+          },
+          {
+            "id": "S3",
+            "outletNodeId": "J1",
+            "points": [
+              [202513.01, 443220.8],
+              [202650.15, 443272.59],
+              [202795.16, 442883.54],
+              [202834.52, 442780.38],
+              [202647.66, 442746.82],
+              [202609.55, 442967.24],
+              [202513.01, 443220.8]
+            ]
+          },
+          {
+            "id": "S5",
+            "outletNodeId": "J14",
+            "points": [
+              [202075.48, 443503.37],
+              [202346.45, 443606.95],
+              [202482.35, 443244.83],
+              [202186.52, 443128.82],
+              [202075.48, 443503.37]
+            ]
+          },
+          {
+            "id": "S6",
+            "outletNodeId": "J19",
+            "points": [
+              [202365.51, 443614.41],
+              [202498.09, 443663.3],
+              [202636.48, 443299.52],
+              [202503.89, 443250.63],
+              [202365.51, 443614.41]
+            ]
+          },
+          {
+            "id": "S7",
+            "outletNodeId": "J15",
+            "points": [
+              [201908.1, 444050.69],
+              [202143.43, 444141.84],
+              [202337.34, 443627.25],
+              [202069.68, 443521.19],
+              [201908.1, 444050.69]
+            ]
+          },
+          {
+            "id": "S8",
+            "outletNodeId": "J7",
+            "points": [
+              [202160.83, 444149.3],
+              [202378.77, 444233.82],
+              [202576.81, 443715.92],
+              [202357.22, 443631.4],
+              [202160.83, 444149.3]
+            ]
+          },
+          {
+            "id": "S9",
+            "outletNodeId": "J22",
+            "points": [
+              [202457.9, 444065.19],
+              [202492.71, 444079.69],
+              [202622.8, 443732.49],
+              [202589.24, 443718.4],
+              [202457.9, 444065.19]
+            ]
+          },
+          {
+            "id": "S10",
+            "outletNodeId": "J23",
+            "points": [
+              [202391.61, 444237.55],
+              [202451.69, 444082.18],
+              [202486.08, 444094.19],
+              [202425.59, 444249.57],
+              [202391.61, 444237.55]
+            ]
+          },
+          {
+            "id": "S11",
+            "outletNodeId": "J16",
+            "points": [
+              [201844.29, 444249.98],
+              [202072.17, 444328.7],
+              [202127.69, 444172.92],
+              [201897.32, 444087.57],
+              [201844.29, 444249.98]
+            ]
+          },
+          {
+            "id": "S12",
+            "outletNodeId": "J26",
+            "points": [
+              [202091.23, 444329.53],
+              [202310.4, 444412.39],
+              [202366.34, 444270.28],
+              [202145.92, 444185.35],
+              [202091.23, 444329.53]
+            ]
+          },
+          {
+            "id": "S13",
+            "outletNodeId": "J25",
+            "points": [
+              [202322.01, 444417.78],
+              [202374.21, 444274.84],
+              [202411.5, 444289.76],
+              [202357.64, 444431.45],
+              [202322.01, 444417.78]
+            ]
+          },
+          {
+            "id": "S4",
+            "outletNodeId": "J17",
+            "points": [
+              [202846.85, 442783.11],
+              [202977.86, 442805.45],
+              [202779.85, 443322.39],
+              [202657.29, 443275],
+              [202846.85, 442783.11]
+            ]
+          },
+          {
+            "id": "S14",
+            "outletNodeId": "J20",
+            "points": [
+              [202646.12, 443304.96],
+              [202769.23, 443351.26],
+              [202630.59, 443714.32],
+              [202508.58, 443668.84],
+              [202646.12, 443304.96]
+            ]
+          }
+        ],
+        "limitations": [
+          "원본 INP의 좌표와 집수 경계를 그대로 표시; 서울 지도 좌표 변환 미적용",
+          "집수구역은 계산 경계이며 실제 시설 부지·시공 가능 면적이 아님",
+          "화살표는 관로의 정의 방향이며 계산 유량·역류 방향이 아님",
+          "구역별 설계 개수는 면적 배분이며 개별 시설의 실제 위치를 뜻하지 않음"
+        ]
+      }
+    },
+    "engine": {
+      "engineVersion": "5.2.4"
+    },
+    "numericalProfile": {
+      "id": "slot-62-5ms"
+    },
+    "numericalStatus": "PASSED",
+    "cases": [
+      {
+        "nodeFlooding": {
+          "schemaVersion": 1,
+          "method": "NATIVE_ROUTING_STEP_FLOODING_TRAPEZOIDAL_INTEGRAL",
+          "layoutSha256": "fa3e4d833650df5c40d933bd0b289dd029a54e0beb73fad9b9d3ef239cb0236d",
+          "startSeconds": 0,
+          "endSeconds": 86339,
+          "nodes": [
+            {
+              "id": "J1",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 0
+            },
+            {
+              "id": "J2",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 0
+            },
+            {
+              "id": "J3",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 897.6866419442144
+            },
+            {
+              "id": "J4",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 0
+            },
+            {
+              "id": "J5",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 64.14032070511955
+            },
+            {
+              "id": "J6",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 0
+            },
+            {
+              "id": "J7",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 0
+            },
+            {
+              "id": "J8",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 0
+            },
+            {
+              "id": "J9",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 244.14453493970424
+            },
+            {
+              "id": "J10",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 109918.59811781252
+            },
+            {
+              "id": "J11",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 0
+            },
+            {
+              "id": "J12",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 0
+            },
+            {
+              "id": "J13",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 0
+            },
+            {
+              "id": "J14",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 0
+            },
+            {
+              "id": "J15",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 0
+            },
+            {
+              "id": "J16",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 298620.2031132404
+            },
+            {
+              "id": "J17",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 0
+            },
+            {
+              "id": "J18",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 0
+            },
+            {
+              "id": "J19",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 90.75686803778727
+            },
+            {
+              "id": "J20",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 65198.225233518875
+            },
+            {
+              "id": "J21",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 367321.35430941416
+            },
+            {
+              "id": "J22",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 146493.95459466407
+            },
+            {
+              "id": "J23",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 190476.70667910887
+            },
+            {
+              "id": "J24",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 20.81103560715516
+            },
+            {
+              "id": "J25",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 257178.76254941762
+            },
+            {
+              "id": "J26",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 71377.12492669026
+            },
+            {
+              "id": "Out1",
+              "kind": "OUTFALL",
+              "mapped": true,
+              "floodingM3": 0
+            },
+            {
+              "id": "Out2",
+              "kind": "OUTFALL",
+              "mapped": true,
+              "floodingM3": 0
+            }
+          ],
+          "totalFloodingM3": 1507902.468925209,
+          "sumNodeFloodingM3": 1507902.4689251008,
+          "balanceDifferenceM3": -1.0826624929904938e-7
+        },
+        "id": "baseline",
+        "numericalStatus": "PASSED",
+        "complete": true,
+        "evaluationMetrics": {
+          "specificationSha256": "d1d16a03051f33f0bfe03343dd7862c21a2e796442175798e85d664ff4cc72c2",
+          "complete": true,
+          "method": "NATIVE_ROUTING_STEP_DIRECTIONAL_TRAPEZOIDAL_INTEGRAL",
+          "peakMethod": "SIMULTANEOUS_SELECTED_OUTFALL_SUM",
+          "specification": {
+            "schemaVersion": 1,
+            "policyVersion": "PUBLIC_NETWORK_ALL_OUTFALLS_v1",
+            "startMilliseconds": 0,
+            "endMilliseconds": 86339000,
+            "networkOutfalls": ["Out1", "Out2"]
+          },
+          "outfalls": {
+            "Out1": {
+              "outwardVolumeM3": 1698113.0619242836,
+              "inwardVolumeM3": 0,
+              "peakOutwardM3s": 21.6348078727807,
+              "peakInwardM3s": 0,
+              "peakOutwardTimeSeconds": 51893.095,
+              "peakInwardTimeSeconds": 0,
+              "coveredSeconds": 86339,
+              "nativeSteps": 1392566
+            },
+            "Out2": {
+              "outwardVolumeM3": 482636.79340946407,
+              "inwardVolumeM3": 0,
+              "peakOutwardM3s": 17.406227075478647,
+              "peakInwardM3s": 0,
+              "peakOutwardTimeSeconds": 57599.699,
+              "peakInwardTimeSeconds": 0,
+              "coveredSeconds": 86339,
+              "nativeSteps": 1392566
+            }
+          },
+          "combined": {
+            "outwardVolumeM3": 2180749.8553501973,
+            "inwardVolumeM3": 0,
+            "peakOutwardM3s": 39.04103494825935,
+            "peakInwardM3s": 0,
+            "peakOutwardTimeSeconds": 57599.699,
+            "peakInwardTimeSeconds": 0,
+            "coveredSeconds": 86339,
+            "nativeSteps": 1392566
+          }
+        },
+        "totals": {
+          "floodingM3": 1507902.468925209,
+          "outflowM3": 2180749.855360638,
+          "storageM3": 11131.689178989987,
+          "balanceResidualM3": -605.9004902264769
+        },
+        "calendarShortfallSeconds": 1,
+        "runoffContinuityPercent": -0.09872203320264816,
+        "routingContinuityPercent": -0.016379326581954956,
+        "convergence": {
+          "nonConvergedSteps": 0
+        },
+        "facilities": []
+      },
+      {
+        "nodeFlooding": {
+          "schemaVersion": 1,
+          "method": "NATIVE_ROUTING_STEP_FLOODING_TRAPEZOIDAL_INTEGRAL",
+          "layoutSha256": "fa3e4d833650df5c40d933bd0b289dd029a54e0beb73fad9b9d3ef239cb0236d",
+          "startSeconds": 0,
+          "endSeconds": 86339,
+          "nodes": [
+            {
+              "id": "J1",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 0
+            },
+            {
+              "id": "J2",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 0
+            },
+            {
+              "id": "J3",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 896.2692651481225
+            },
+            {
+              "id": "J4",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 0
+            },
+            {
+              "id": "J5",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 64.12860985850341
+            },
+            {
+              "id": "J6",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 0
+            },
+            {
+              "id": "J7",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 0
+            },
+            {
+              "id": "J8",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 0
+            },
+            {
+              "id": "J9",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 244.14453677372364
+            },
+            {
+              "id": "J10",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 109918.5981178125
+            },
+            {
+              "id": "J11",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 0
+            },
+            {
+              "id": "J12",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 0
+            },
+            {
+              "id": "J13",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 0
+            },
+            {
+              "id": "J14",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 0
+            },
+            {
+              "id": "J15",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 0
+            },
+            {
+              "id": "J16",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 298620.2031132404
+            },
+            {
+              "id": "J17",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 0
+            },
+            {
+              "id": "J18",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 0
+            },
+            {
+              "id": "J19",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 90.96157144996668
+            },
+            {
+              "id": "J20",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 65195.64340108006
+            },
+            {
+              "id": "J21",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 367319.8851401643
+            },
+            {
+              "id": "J22",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 146492.29615999045
+            },
+            {
+              "id": "J23",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 190475.16668821717
+            },
+            {
+              "id": "J24",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 20.811035607172187
+            },
+            {
+              "id": "J25",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 257178.7625494176
+            },
+            {
+              "id": "J26",
+              "kind": "JUNCTION",
+              "mapped": true,
+              "floodingM3": 71377.1249266903
+            },
+            {
+              "id": "Out1",
+              "kind": "OUTFALL",
+              "mapped": true,
+              "floodingM3": 0
+            },
+            {
+              "id": "Out2",
+              "kind": "OUTFALL",
+              "mapped": true,
+              "floodingM3": 0
+            }
+          ],
+          "totalFloodingM3": 1507893.995115391,
+          "sumNodeFloodingM3": 1507893.9951154504,
+          "balanceDifferenceM3": 5.9371814131736755e-8
+        },
+        "id": "strategy",
+        "numericalStatus": "PASSED",
+        "complete": true,
+        "evaluationMetrics": {
+          "specificationSha256": "d1d16a03051f33f0bfe03343dd7862c21a2e796442175798e85d664ff4cc72c2",
+          "complete": true,
+          "method": "NATIVE_ROUTING_STEP_DIRECTIONAL_TRAPEZOIDAL_INTEGRAL",
+          "peakMethod": "SIMULTANEOUS_SELECTED_OUTFALL_SUM",
+          "specification": {
+            "schemaVersion": 1,
+            "policyVersion": "PUBLIC_NETWORK_ALL_OUTFALLS_v1",
+            "startMilliseconds": 0,
+            "endMilliseconds": 86339000,
+            "networkOutfalls": ["Out1", "Out2"]
+          },
+          "outfalls": {
+            "Out1": {
+              "outwardVolumeM3": 1698112.9715668913,
+              "inwardVolumeM3": 0,
+              "peakOutwardM3s": 21.6348078727807,
+              "peakInwardM3s": 0,
+              "peakOutwardTimeSeconds": 51893.095,
+              "peakInwardTimeSeconds": 0,
+              "coveredSeconds": 86339,
+              "nativeSteps": 1392566
+            },
+            "Out2": {
+              "outwardVolumeM3": 482636.79376512853,
+              "inwardVolumeM3": 0,
+              "peakOutwardM3s": 17.406227075478647,
+              "peakInwardM3s": 0,
+              "peakOutwardTimeSeconds": 57599.699,
+              "peakInwardTimeSeconds": 0,
+              "coveredSeconds": 86339,
+              "nativeSteps": 1392566
+            }
+          },
+          "combined": {
+            "outwardVolumeM3": 2180749.76534846,
+            "inwardVolumeM3": 0,
+            "peakOutwardM3s": 39.04103494825935,
+            "peakInwardM3s": 0,
+            "peakOutwardTimeSeconds": 57599.699,
+            "peakInwardTimeSeconds": 0,
+            "coveredSeconds": 86339,
+            "nativeSteps": 1392566
+          }
+        },
+        "totals": {
+          "floodingM3": 1507893.995115391,
+          "outflowM3": 2180749.7653589314,
+          "storageM3": 11131.688289422069,
+          "balanceResidualM3": -604.9052099706532
+        },
+        "calendarShortfallSeconds": 1,
+        "runoffContinuityPercent": -0.09835019707679749,
+        "routingContinuityPercent": -0.01635245606303215,
+        "convergence": {
+          "nonConvergedSteps": 0
+        },
+        "facilities": [
+          {
+            "swmmId": "WL_Cistern2",
+            "subcatchmentId": "S1",
+            "areaM2": 1,
+            "surfaceDepthMm": 0,
+            "soilMoisture": null,
+            "finalStorageM3": 2,
+            "balanceResidualM3": 7.105427357601002e-15,
+            "numericalStatus": "PASSED"
+          },
+          {
+            "swmmId": "WL_Cistern1",
+            "subcatchmentId": "S1",
+            "areaM2": 2.35,
+            "surfaceDepthMm": 0,
+            "soilMoisture": null,
+            "finalStorageM3": 4.7,
+            "balanceResidualM3": 0,
+            "numericalStatus": "PASSED"
+          }
+        ]
+      }
+    ],
+    "signedReductionM3": null,
+    "signedPeakReductionM3s": null,
+    "rankingEligible": false,
+    "historicalReconstructionEligible": false,
+    "completeInstalledCostKrw": null,
+    "budgetChargedKrw": null,
+    "cisternCosting": {
+      "schemaVersion": 1,
+      "catalogHash": "63186839053e9a254bc42ba25765dfb78831d5621a3382e5abe0d110ddb7fe3b",
+      "method": "CAPACITY_EQUIVALENT_QUOTES_NOT_ASSEMBLY_MATCH_V1",
+      "unitCapacityM3": 2.35,
+      "source": {
+        "title": "친환경시범마을의 LID 적용에 따른 물순환 효과 및 비용편익 분석",
+        "url": "https://journal.cricit.kr/jkswe/XmlViewer/f253405",
+        "publicationYear": 2018,
+        "priceYear": null,
+        "quoteDate": null,
+        "sha256": "28f0c3969bbc2f1dd08e03fec2fddb70bfdecdfc4032bd871158eb3a1734e207",
+        "reference": "2.4.2.1, 2.5.1.1, Table 9",
+        "licence": "CC BY-NC 3.0",
+        "licenceUrl": "http://creativecommons.org/licenses/by-nc/3.0/"
+      },
+      "limitations": [
+        "2.35m³ 단위 설비 견적이며 임의 용량의 비례 단가가 아님",
+        "공개 업체 견적 세 건의 범위이며 확률적 신뢰구간이나 현재 시장 가격 범위가 아님",
+        "견적 용량 일치는 자재 규격·시공 조건·계산 단면의 일치 증거가 아님",
+        "원문의 미기재 항목은 null이며 무상 자재 또는 공사비 0으로 해석하지 않음",
+        "펌프 견적 포함은 펌프 곡선·재이용 수요·수질 성능의 확보를 뜻하지 않음",
+        "논문의 보조율을 차감하지 않으며 별도 미확정 공종·세금은 총공사비로 포함되지 않음",
+        "문헌의 연간 유지비 가정은 물리 계산의 실제 전력·운전·재이용량과 독립",
+        "현재 사업 한도·재해 당시 예산·가격 또는 운영 설치 승인으로 사용하지 않음"
+      ],
+      "completeInstalledCostKrw": null,
+      "budgetChargedKrw": null,
+      "items": [
+        {
+          "placementId": "Cistern1",
+          "capacityM3": 4.7,
+          "equivalentUnits": 2,
+          "status": "CAPACITY_EQUIVALENT_ONLY",
+          "quotes": [
+            {
+              "id": "A",
+              "quotedSubtotalKrw": 10894000,
+              "materialsKrw": 10298000,
+              "components": {
+                "BARREL": 6204000,
+                "PIPE": 1694000,
+                "PUMP": 1476000,
+                "LOG": 594000,
+                "ETC": 330000
+              },
+              "unclassifiedDifferenceKrw": 596000,
+              "annualComponentsKrw": {
+                "ELECTRICITY": 32682,
+                "MONITORING": 76258,
+                "REPAIR_LABOUR_ETC": 108940,
+                "CLEANING": 100000
+              },
+              "annualEstimateKrw": 317880
+            },
+            {
+              "id": "B",
+              "quotedSubtotalKrw": 7024000,
+              "materialsKrw": 5922000,
+              "components": {
+                "BARREL": 2842000,
+                "PIPE": 1430000,
+                "PUMP": 1100000,
+                "LOG": 550000,
+                "ETC": null
+              },
+              "unclassifiedDifferenceKrw": 1102000,
+              "annualComponentsKrw": {
+                "ELECTRICITY": 21072,
+                "MONITORING": 49168,
+                "REPAIR_LABOUR_ETC": 70240,
+                "CLEANING": 100000
+              },
+              "annualEstimateKrw": 240480
+            },
+            {
+              "id": "C",
+              "quotedSubtotalKrw": 5714000,
+              "materialsKrw": 5714000,
+              "components": {
+                "BARREL": 2466000,
+                "PIPE": 1084000,
+                "PUMP": 900000,
+                "LOG": null,
+                "ETC": 1264000
+              },
+              "unclassifiedDifferenceKrw": 0,
+              "annualComponentsKrw": {
+                "ELECTRICITY": 17142,
+                "MONITORING": 39998,
+                "REPAIR_LABOUR_ETC": 57140,
+                "CLEANING": 100000
+              },
+              "annualEstimateKrw": 214280
+            }
+          ]
+        },
+        {
+          "placementId": "Cistern2",
+          "capacityM3": 2,
+          "equivalentUnits": null,
+          "status": "CAPACITY_NOT_MATCHED",
+          "quotes": []
+        }
+      ]
+    },
+    "limitations": [
+      "논문 PDF·부록 원본은 아직 미보관, 공개 출판 본문 확인과 구분",
+      "EPSG·수직 기준·시설 유효 시점은 계속 미확인",
+      "문헌의 단면·유입 추정값과 사후 공간자료를 2010 실측 입력으로 표시하지 않음",
+      "원 관망의 2010 강우·추정 외부 유입·초기 상태를 보존한 문헌 단면 설계 비교",
+      "시설 면적과 처리 불투수 면적은 사용자의 가상 설계이며 현장 설치 가능 범위 미확인",
+      "초기 포화도 0·문헌 단면·하부 침투 4mm/h는 설계 조건이며 현장 실측값 아님",
+      "좌표 정합·지표 결합·가격 미확정: 주간 설치·예산 차감·순위 게시 제외",
+      "공개 문헌의 설계 범위이며 서울 현장 또는 특정 제품의 실측 제원이 아님",
+      "시설 위치·대체 면적·집수 연결·초기 포화도·배수구 규격·하부 침투율은 명시된 설계 입력",
+      "기존 집수구역 출구를 계승하며 새로운 무한 방류구를 생성하지 않음",
+      "SWMM LID 배수는 수신 관망 수두의 역압이나 지하수에 의한 침투 저하를 완전하게 연결하지 않음",
+      "덮개 이용조 면적의 직접 강우는 제외, 덮개에서 외부로 떨어지는 물의 별도 경로 미구현",
+      "이용조 방류는 관망 배수이며 수요·수질 근거 없는 재이용 점수 없음",
+      "공사비·입지·현장 연결 검증 전 신규 시설의 운영 설치 및 순위 미개방",
+      "월류 체적은 지표 침수 깊이·면적·지속시간의 대체 지표가 아님",
+      "원본 EXTRAN 수치 실패를 보존하고 별도 SLOT 파생 입력으로 계산; 원본의 달력 종료보다 1초 짧은 엔진 평가 창",
+      "첨두는 같은 시각의 모든 외부 출구 유량 합의 최댓값이며 출구별 최댓값의 합이 아님",
+      "외부 출구 첨두는 공개 연구 관망의 계산값이며 실제 하류 침수 위험도·현장 효과 확정값이 아님; 필수 지표 침수 미확보로 총점 없음"
+    ],
+    "metricComparison": {
+      "schemaVersion": 1,
+      "method": "SIGNED_ABSOLUTE_PRIMARY_RELATIVE_AUXILIARY_V1",
+      "scope": "PUBLISHED_NETWORK_REFERENCE_DESIGN",
+      "window": {
+        "kind": "ELAPSED_SECONDS",
+        "start": 0,
+        "end": 86339,
+        "specificationSha256": "d1d16a03051f33f0bfe03343dd7862c21a2e796442175798e85d664ff4cc72c2"
+      },
+      "primaryMetricId": null,
+      "compositeScore": null,
+      "relativeUsedForRanking": false,
+      "metrics": [
+        {
+          "id": "surfaceDischargeM3",
+          "unit": "m3",
+          "boundary": "SELECTED_SURFACE_OUTLET",
+          "preferredDirection": "DECREASE",
+          "status": "UNAVAILABLE",
+          "reason": "DIFFERENT_EVALUATION_BOUNDARY",
+          "baseline": null,
+          "strategy": null,
+          "signedImprovement": null,
+          "relativeImprovementPercent": null,
+          "relativeStatus": "NOT_COMPARABLE"
+        },
+        {
+          "id": "surfaceAccountedVolumeM3",
+          "unit": "m3",
+          "boundary": "SELECTED_SURFACE_OUTLET_WITH_NET_STORAGE",
+          "preferredDirection": "DECREASE",
+          "status": "UNAVAILABLE",
+          "reason": "DIFFERENT_EVALUATION_BOUNDARY",
+          "baseline": null,
+          "strategy": null,
+          "signedImprovement": null,
+          "relativeImprovementPercent": null,
+          "relativeStatus": "NOT_COMPARABLE"
+        },
+        {
+          "id": "surfacePeakM3s",
+          "unit": "m3/s",
+          "boundary": "SELECTED_SURFACE_OUTLET",
+          "preferredDirection": "DECREASE",
+          "status": "UNAVAILABLE",
+          "reason": "DIFFERENT_EVALUATION_BOUNDARY",
+          "baseline": null,
+          "strategy": null,
+          "signedImprovement": null,
+          "relativeImprovementPercent": null,
+          "relativeStatus": "NOT_COMPARABLE"
+        },
+        {
+          "id": "networkOutflowM3",
+          "unit": "m3",
+          "boundary": "ALL_NETWORK_EXTERNAL_OUTFALLS",
+          "preferredDirection": "DECREASE",
+          "status": "WITHHELD",
+          "reason": "UNMODELED_COVER_RAIN",
+          "baseline": 2180749.855360638,
+          "strategy": 2180749.7653589314,
+          "signedImprovement": null,
+          "relativeImprovementPercent": null,
+          "relativeStatus": "NOT_COMPARABLE"
+        },
+        {
+          "id": "networkPeakM3s",
+          "unit": "m3/s",
+          "boundary": "ALL_NETWORK_EXTERNAL_OUTFALLS",
+          "preferredDirection": "DECREASE",
+          "status": "WITHHELD",
+          "reason": "UNMODELED_COVER_RAIN",
+          "baseline": 39.04103494825935,
+          "strategy": 39.04103494825935,
+          "signedImprovement": null,
+          "relativeImprovementPercent": null,
+          "relativeStatus": "NOT_COMPARABLE"
+        },
+        {
+          "id": "networkFloodingM3",
+          "unit": "m3",
+          "boundary": "NETWORK_EXTERNAL_NODE_FLOODING",
+          "preferredDirection": "DECREASE",
+          "status": "WITHHELD",
+          "reason": "UNMODELED_COVER_RAIN",
+          "baseline": 1507902.468925209,
+          "strategy": 1507893.995115391,
+          "signedImprovement": null,
+          "relativeImprovementPercent": null,
+          "relativeStatus": "NOT_COMPARABLE"
+        },
+        {
+          "id": "networkFloodingSeconds",
+          "unit": "s",
+          "boundary": "NETWORK_EXTERNAL_NODE_FLOODING",
+          "preferredDirection": "DECREASE",
+          "status": "UNAVAILABLE",
+          "reason": "NOT_COLLECTED",
+          "baseline": null,
+          "strategy": null,
+          "signedImprovement": null,
+          "relativeImprovementPercent": null,
+          "relativeStatus": "NOT_COMPARABLE"
+        },
+        {
+          "id": "surfaceDepthAreaTimeM3Hours",
+          "unit": "m3*h",
+          "boundary": "CONNECTED_SURFACE_GRID",
+          "preferredDirection": "DECREASE",
+          "status": "UNAVAILABLE",
+          "reason": "NO_SURFACE_GRID",
+          "baseline": null,
+          "strategy": null,
+          "signedImprovement": null,
+          "relativeImprovementPercent": null,
+          "relativeStatus": "NOT_COMPARABLE"
+        },
+        {
+          "id": "reusedVolumeM3",
+          "unit": "m3",
+          "boundary": "VERIFIED_USE_DEMAND",
+          "preferredDirection": "INCREASE",
+          "status": "UNAVAILABLE",
+          "reason": "NO_USE_DEMAND",
+          "baseline": null,
+          "strategy": null,
+          "signedImprovement": null,
+          "relativeImprovementPercent": null,
+          "relativeStatus": "NOT_COMPARABLE"
+        }
+      ]
+    }
+  }
+}

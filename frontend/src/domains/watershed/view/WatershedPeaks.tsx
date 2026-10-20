@@ -1,5 +1,7 @@
 import type { WatershedMetrics } from '../dto/watershedMetricsDto';
 import { physicalAmount as number } from '../../physics/service/physicalValueFormat';
+import { RelativeImprovement } from '../../physics/view/RelativeImprovement';
+import type { ComparedMetric } from '../../physics/dto/metricComparisonDto';
 const elapsed = (seconds: number) => {
   const ms = Math.round(seconds * 1000);
   return `${Math.floor(ms / 3600000)}시간 ${Math.floor(ms / 60000) % 60}분 ${((ms % 60000) / 1000).toLocaleString('ko-KR', { maximumFractionDigits: 3 })}초`;
@@ -8,10 +10,12 @@ export function WatershedPeaks({
   baseline,
   strategy,
   reduction,
+  metric,
 }: {
   baseline: WatershedMetrics;
   strategy: WatershedMetrics;
   reduction: number;
+  metric?: ComparedMetric;
 }) {
   return (
     <section aria-label="고정 외부 출구 첨두 비교">
@@ -29,6 +33,7 @@ export function WatershedPeaks({
           {number(strategy.combined.peakOutwardM3s)} m³/s
         </small>
         <small>기준 − 설계: {number(reduction)} m³/s</small>
+        <RelativeImprovement metric={metric} />
       </div>
       <details>
         <summary>출구별 최대 유량·발생 시각</summary>

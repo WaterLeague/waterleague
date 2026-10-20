@@ -1,5 +1,5 @@
 import type { WeeklySnapshot } from '../../weekly/dto/weeklyDto';
-import { scoreFormat } from '../../weekly/view/WeeklyBoard';
+import { scoreFormat } from '../../weekly/service/scoreFormat';
 
 export function GameplayScoreboard({
   historical,
@@ -29,8 +29,8 @@ export function GameplayScoreboard({
           <span>
             우리 구 총점
             <b>
-              {district ? scoreFormat.format(district.scoreM3) : '—'}
-              <small> m³</small>
+              {district?.scoreM3 == null ? '미계산' : scoreFormat.format(district.scoreM3)}
+              {district?.scoreM3 != null && <small> m³</small>}
             </b>
           </span>
         </div>
@@ -46,8 +46,8 @@ export function GameplayScoreboard({
         <span>
           내 총점
           <b>
-            {locked ? '로그인 필요' : score == null ? '—' : scoreFormat.format(score)}
-            {!locked && <small> m³</small>}
+            {locked ? '로그인 필요' : score == null ? '미계산' : scoreFormat.format(score)}
+            {!locked && score !== null && <small> m³</small>}
           </b>
         </span>
       </div>

@@ -10,11 +10,13 @@ import { previewCisternCosts } from './cisternCosts';
 import { CisternReferenceCosts } from '../view/CisternReferenceCosts';
 const catalog = watershedCatalogDto.parse(catalogRaw);
 const expected = cisternCostSnapshotDto.parse(evidence.cisternCosting);
-it('실제 회원 계산의 견적과 결과 일치·중복 미산정 카드 제거', () => {
+it('실제 회원 계산의 견적 보존과 구형 덮개 이용조 효과 비교 보류', () => {
   const job = watershedJobDto.parse(actual);
   const html = renderToStaticMarkup(<WatershedResult job={job} />);
   expect(html).toContain('저장된 빗물이용조 견적');
-  expect(html).toContain('8.4738 m³ 감소');
+  expect(html).not.toContain('8.4738 m³ 감소');
+  expect(html).toContain('덮개 강우의 별도 배수 경로가 없는 구형 이용조');
+  expect(html).toContain('효과 비교를 보류');
   expect(html).not.toContain('진주 사업계획');
   const changed = structuredClone(actual);
   changed.result.cisternCosting.items[0].quotes[0].quotedSubtotalKrw += 1;

@@ -9,6 +9,7 @@ import { WatershedPeaks } from './WatershedPeaks';
 import { WatershedFloodMap } from './WatershedFloodMap';
 import { networkNames } from '../service/watershedDesign';
 import { physicalAmount as number } from '../../physics/service/physicalValueFormat';
+import { RelativeImprovement } from '../../physics/view/RelativeImprovement';
 const totalAmount = (value: number) =>
   value !== 0 && Math.abs(value) < 0.000001
     ? number(value)
@@ -24,8 +25,12 @@ export function WatershedResult({ job }: { job: WatershedJob }) {
   const result = job.result;
   const baseline = result?.cases.find((c) => c.id === 'baseline');
   const strategy = result?.cases.find((c) => c.id === 'strategy');
+  const unmodeledCover = job.design.placements.some((p) => p.facilityType === 'RAINWATER_CISTERN');
   const comparable =
-    job.state === 'SUCCEEDED' && result?.numericalStatus === 'PASSED' && result.signedReductionM3;
+    !unmodeledCover &&
+    job.state === 'SUCCEEDED' &&
+    result?.numericalStatus === 'PASSED' &&
+    result.signedReductionM3;
   return (
     <section className="watershed-result" aria-label="관망 계산 결과">
       <header>
@@ -117,6 +122,12 @@ export function WatershedResult({ job }: { job: WatershedJob }) {
               : '수치 검사 실패 · 효과 비교 보류'}
           </p>
           <PumpOperation job={job} />
+          {unmodeledCover && (
+            <p role="status">
+              덮개 강우의 별도 배수 경로가 없는 구형 이용조 설계입니다. 원 계산값은 보관하며 효과
+              비교를 보류합니다.
+            </p>
+          )}
           {job.state === 'SUCCEEDED' &&
             result.networkLayout &&
             result.cases.every((c) => c.complete) && (
@@ -154,6 +165,13 @@ export function WatershedResult({ job }: { job: WatershedJob }) {
                       {reduction < 0 ? '증가' : reduction > 0 ? '감소' : '변화 없음'}
                     </strong>
                     <small>기준 − 설계: {number(reduction)} m³</small>
+                    <RelativeImprovement
+                      metric={result.metricComparison?.metrics.find(
+                        (m) =>
+                          m.id ===
+                          (metric === 'floodingM3' ? 'networkFloodingM3' : 'networkOutflowM3')
+                      )}
+                    />
                     <small>
                       기준 {totalAmount(baseline!.totals![metric])} → 설계{' '}
                       {totalAmount(strategy!.totals![metric])} m³
@@ -172,6 +190,7 @@ export function WatershedResult({ job }: { job: WatershedJob }) {
                   baseline={baseline.evaluationMetrics}
                   strategy={strategy.evaluationMetrics}
                   reduction={result.signedPeakReductionM3s}
+                  metric={result.metricComparison?.metrics.find((m) => m.id === 'networkPeakM3s')}
                 />
               ) : (
                 <p>이전 계산 기록에는 출구 첨두가 수집되지 않았습니다.</p>

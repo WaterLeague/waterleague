@@ -1,0 +1,117 @@
+{
+  "classification": "NUMERICAL_TEST_ONLY_NOT_OBSERVATIONS",
+  "cases": [
+    {
+      "id": "zero-baseline",
+      "metric": {
+        "id": "surfaceAccountedVolumeM3",
+        "unit": "m3",
+        "boundary": "SELECTED_SURFACE_OUTLET_WITH_NET_STORAGE",
+        "preferredDirection": "DECREASE",
+        "status": "COMPARABLE",
+        "reason": null,
+        "baseline": 0,
+        "strategy": 2,
+        "signedImprovement": -2,
+        "relativeImprovementPercent": null,
+        "relativeStatus": "ZERO_BASELINE"
+      }
+    },
+    {
+      "id": "computed-zero",
+      "metric": {
+        "id": "surfaceAccountedVolumeM3",
+        "unit": "m3",
+        "boundary": "SELECTED_SURFACE_OUTLET_WITH_NET_STORAGE",
+        "preferredDirection": "DECREASE",
+        "status": "COMPARABLE",
+        "reason": null,
+        "baseline": 0,
+        "strategy": 0,
+        "signedImprovement": 0,
+        "relativeImprovementPercent": null,
+        "relativeStatus": "ZERO_BASELINE"
+      }
+    },
+    {
+      "id": "negative-baseline",
+      "metric": {
+        "id": "surfaceAccountedVolumeM3",
+        "unit": "m3",
+        "boundary": "SELECTED_SURFACE_OUTLET_WITH_NET_STORAGE",
+        "preferredDirection": "DECREASE",
+        "status": "COMPARABLE",
+        "reason": null,
+        "baseline": -1,
+        "strategy": -2,
+        "signedImprovement": 1,
+        "relativeImprovementPercent": null,
+        "relativeStatus": "NEGATIVE_BASELINE"
+      }
+    },
+    {
+      "id": "over-100",
+      "metric": {
+        "id": "surfaceAccountedVolumeM3",
+        "unit": "m3",
+        "boundary": "SELECTED_SURFACE_OUTLET_WITH_NET_STORAGE",
+        "preferredDirection": "DECREASE",
+        "status": "COMPARABLE",
+        "reason": null,
+        "baseline": 2,
+        "strategy": -1,
+        "signedImprovement": 3,
+        "relativeImprovementPercent": 150.0,
+        "relativeStatus": "COMPUTED"
+      }
+    },
+    {
+      "id": "tiny-negative",
+      "metric": {
+        "id": "surfaceAccountedVolumeM3",
+        "unit": "m3",
+        "boundary": "SELECTED_SURFACE_OUTLET_WITH_NET_STORAGE",
+        "preferredDirection": "DECREASE",
+        "status": "COMPARABLE",
+        "reason": null,
+        "baseline": 1e-18,
+        "strategy": 2e-18,
+        "signedImprovement": -1e-18,
+        "relativeImprovementPercent": -100.0,
+        "relativeStatus": "COMPUTED"
+      }
+    },
+    {
+      "id": "not-representable",
+      "metric": {
+        "id": "surfaceAccountedVolumeM3",
+        "unit": "m3",
+        "boundary": "SELECTED_SURFACE_OUTLET_WITH_NET_STORAGE",
+        "preferredDirection": "DECREASE",
+        "status": "COMPARABLE",
+        "reason": null,
+        "baseline": 1e-300,
+        "strategy": 1e300,
+        "signedImprovement": -1e300,
+        "relativeImprovementPercent": null,
+        "relativeStatus": "NUMERIC_RANGE_EXCEEDED"
+      }
+    },
+    {
+      "id": "not-measured",
+      "metric": {
+        "id": "reusedVolumeM3",
+        "unit": "m3",
+        "boundary": "VERIFIED_USE_DEMAND",
+        "preferredDirection": "INCREASE",
+        "status": "UNAVAILABLE",
+        "reason": "NO_USE_DEMAND",
+        "baseline": null,
+        "strategy": null,
+        "signedImprovement": null,
+        "relativeImprovementPercent": null,
+        "relativeStatus": "NOT_COMPARABLE"
+      }
+    }
+  ]
+}

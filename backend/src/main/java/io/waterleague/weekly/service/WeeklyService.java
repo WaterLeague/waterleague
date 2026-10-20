@@ -104,7 +104,7 @@ public class WeeklyService {
               row.districtId(),
               row.districtName(),
               row.evaluatedSeconds() == 0 ? null : rank,
-              row.scoreM3(),
+              row.evaluatedSeconds() == 0 ? null : row.scoreM3(),
               row.evaluatedSeconds(),
               row.expectedSeconds()));
       if (row.evaluatedSeconds() > 0) last = row.scoreM3();
@@ -129,7 +129,7 @@ public class WeeklyService {
               row.nickname(),
               row.districtId(),
               row.evaluatedSeconds() == 0 ? null : rank,
-              row.scoreM3(),
+              row.evaluatedSeconds() == 0 ? null : row.scoreM3(),
               row.evaluatedSeconds(),
               row.expectedSeconds());
       if (row.playerId().equals(own)) self = player;

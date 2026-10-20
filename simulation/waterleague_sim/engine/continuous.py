@@ -361,6 +361,7 @@ def experiment(model, placement, directory, evaporation=None, *, installed_at=No
     from .runoff_metrics import comparison
     result['runoffComparison'] = comparison(baseline, strategy)
     (directory/'runoff_metrics.py').write_bytes(Path(__file__).with_name('runoff_metrics.py').read_bytes())
+    (directory/'raw_metrics.py').write_bytes((Path(__file__).parents[1]/'evaluation/raw_metrics.py').read_bytes())
     if model.get('facilityDesignSet') is not None:
         from .facilities import evidence, source_path
         result['facilityDesign'] = evidence(placement['facilityType'], model)
