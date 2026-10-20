@@ -63,6 +63,7 @@ export function FacilityExpansionPanel({
   open,
   onClose,
   onMapFacility,
+  onCisternPlan,
   selectedMapFacility = '',
   budget,
 }: {
@@ -100,16 +101,19 @@ export function FacilityExpansionPanel({
             </header>
             <div className="watershed-facility-grid">
               {project.items.map(({ id, name, Icon, type }) => {
+                const canPlan = id === 'CISTERN' && !!onCisternPlan;
                 const allocation = budget?.accounting.facilities.find(
                   (f) => f.facilityType === type
                 );
                 return (
                   <button
                     key={id}
-                    disabled={!type}
+                    type="button"
+                    disabled={!type && !canPlan}
                     aria-pressed={!!type && selectedMapFacility === type}
                     onClick={() => {
                       if (type) onMapFacility(type);
+                      else if (canPlan) onCisternPlan?.();
                     }}
                   >
                     <Icon size={22} />
@@ -125,6 +129,8 @@ export function FacilityExpansionPanel({
                           '예산 확인 중'
                         )}
                       </span>
+                    ) : canPlan ? (
+                      <span>지도 계획 작성 · 설치 없음</span>
                     ) : (
                       <span>
                         <LockKeyhole size={12} /> 준비 중

@@ -69,7 +69,7 @@ it('중복 기준안·변화 부호 불일치·다른 카탈로그 결과 거부
   ).toBe(false);
   expect(watershedJobDto.safeParse({ ...job(), catalogHash: 'f'.repeat(64) }).success).toBe(false);
 });
-it('공통 시설창의 사업별 12군과 미구현 버튼 비활성화', () => {
+it('공통 시설창의 사업별 12군과 이용조 계획 진입·미구현 설치 구분', () => {
   const html = renderToStaticMarkup(
     <FacilityExpansionPanel
       account={null}
@@ -77,6 +77,7 @@ it('공통 시설창의 사업별 12군과 미구현 버튼 비활성화', () =>
       onClose={() => {}}
       onLogin={() => {}}
       onMapFacility={() => {}}
+      onCisternPlan={() => {}}
     />
   );
   for (const name of [
@@ -95,7 +96,23 @@ it('공통 시설창의 사업별 12군과 미구현 버튼 비활성화', () =>
   ])
     expect(html).toContain(name);
   expect(html).not.toContain('설치 연결 중');
-  expect(html.match(/disabled=""/g)).toHaveLength(6);
+  expect(html.match(/disabled=""/g)).toHaveLength(5);
+  const cisternButton = html
+    .match(/<button\b[^>]*>[\s\S]*?<\/button>/g)
+    ?.find((button) => button.includes('<strong>빗물이용조</strong>'));
+  expect(cisternButton).toContain('지도 계획 작성 · 설치 없음');
+  expect(cisternButton).not.toContain('disabled');
+  const withoutPlan = renderToStaticMarkup(
+    <FacilityExpansionPanel
+      account={null}
+      open
+      onClose={() => {}}
+      onLogin={() => {}}
+      onMapFacility={() => {}}
+    />
+  );
+  expect(withoutPlan.match(/disabled=""/g)).toHaveLength(6);
+  expect(withoutPlan).not.toContain('지도 계획 작성');
   for (const project of [
     '빗물관리시설 확충',
     '빗물저류시설 확충',
