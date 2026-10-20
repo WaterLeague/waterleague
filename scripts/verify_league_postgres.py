@@ -120,10 +120,12 @@ def main():
                     worker_env['WL_DESIGN_RUN_FIXTURE'] = str(path.with_suffix('.requests.json'))
                     worker_env['WL_DESIGN_RUN_EVIDENCE'] = str(path.with_suffix('.runs'))
                 pattern = ['-p', {'guest-historical':'test_guest_historical.py','queue':'test_worker_queue.py','historical-submit-design':'test_saved_submission.py','historical-design-run':'test_historical_design_run.py','physics':'test_shared_physics.py','historical':'test_historical.py','watershed':'test_watershed.py'}[suite]] if suite in {'queue','guest-historical','physics','historical','watershed','historical-design-run','historical-submit-design'} else []
+                durations = ['--durations', '0'] if suite == 'watershed' else []
                 try:
-                    result = subprocess.run([sys.executable, '-m', 'unittest', 'discover', '-s', 'integration', *pattern, '-v'],
+                    result = subprocess.run([sys.executable, '-m', 'unittest', 'discover', '-s', 'integration', *pattern, '-v', *durations],
                         cwd=ROOT / 'simulation', env=worker_env, stdout=log, stderr=subprocess.STDOUT,
-                        timeout=600 if suite == 'watershed' else 240)
+                        # 관망 묶음 전체의 관측 대기이며 개별 워커·엔진 실행 제한과 구분한다.
+                        timeout=1200 if suite == 'watershed' else 240)
                 except subprocess.TimeoutExpired:
                     print(path.read_text(errors='replace')[-16000:], file=sys.stderr)
                     raise
