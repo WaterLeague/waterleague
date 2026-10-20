@@ -32,6 +32,7 @@ def source_policy():
         'backend/src/main/resources/budget/seoul-2026.json',
         'backend/src/main/resources/budget/seoul-accounting-v5.json',
         'backend/src/main/resources/facilities/cistern-game-v1.json',
+        'backend/src/main/resources/facilities/cistern-demand-v1.json',
         'backend/src/main/resources/facilities/game-prices-202608-v1.json',
         'backend/src/main/java/io/waterleague/cost/repository/GamePriceCatalog.java',
         'backend/src/main/java/io/waterleague/cost/service/CostService.java',

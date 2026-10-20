@@ -52,6 +52,17 @@ export const physicsDto = z
       .nullable(),
   })
   .refine(
+    (v) => {
+      const demand = v.result?.cistern?.demandScenario;
+      return (
+        !demand ||
+        (Date.parse(demand.evaluationStart) === Date.parse(v.result!.simulationStart) &&
+          Date.parse(demand.evaluationEnd) === Date.parse(v.result!.simulatedThrough))
+      );
+    },
+    { message: '주간 평가와 이용조 수요 비교 기간 불일치' }
+  )
+  .refine(
     (v) => (v.result?.runoffComparison?.schemaVersion ?? 1) < 2 || v.result?.designContract != null,
     { message: '현재 주간 결과의 공통 설계 근거 누락' }
   )

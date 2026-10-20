@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>빗물이용조 수요 비교 · 로컬 검증</title>
+  </head>
+  <body style="margin: 0; background: #f2f3ee; font: 14px system-ui; color: #284133">
+    <header style="padding: 20px; border-bottom: 1px solid #cad5c5">
+      <strong>로컬 QA · 제품 빌드 제외</strong>
+      <p>2022. 08. 08 관측 강우 · 현재 공개 지붕 · 선행 7일 · 실제 워커 결과</p>
+      <label for="period">평가 기간</label>
+      <select id="period">
+        <option value="weekly">주간 60분</option>
+        <option value="fullEvent">전체 사건 제출</option>
+      </select>
+    </header>
+    <main id="root" style="max-width: 560px; padding: 16px; margin: auto"></main>
+    <script type="module">
+      if (!import.meta.env.DEV || !['localhost', '127.0.0.1', '[::1]'].includes(location.hostname))
+        throw new Error('로컬 개발 환경 전용');
+      const [
+        { default: React },
+        { createRoot },
+        { CisternGameEvidence },
+        { cisternGameDto },
+        { default: fixture },
+      ] = await Promise.all([
+        import('react'),
+        import('react-dom/client'),
+        import('/src/domains/facility/view/CisternGameEvidence.tsx'),
+        import('/src/domains/facility/dto/cisternGameDto.ts'),
+        import('/src/domains/facility/view/fixtures/cistern-demand-v1.json'),
+      ]);
+      const root = createRoot(document.getElementById('root'));
+      const select = document.getElementById('period');
+      function render(key) {
+        root.render(
+          React.createElement(CisternGameEvidence, { value: cisternGameDto.parse(fixture[key]) })
+        );
+      }
+      select.onchange = () => render(select.value);
+      render('weekly');
+    </script>
+  </body>
+</html>

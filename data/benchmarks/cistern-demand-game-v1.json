@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 1,
+  "id": "CISTERN_DEMAND_GAME_V1",
+  "verifiedAt": "2026-10-21",
+  "classification": "ISOLATED_DATABASE_ARCHIVED_OBSERVATIONS_AND_SEPARATE_NUMERICAL_TESTS",
+  "fieldValidated": false,
+  "goalComplete": false,
+  "scenarioId": "JKSWE_2018_AREA_EQUIVALENT_UNIFORM_DEMAND_V1",
+  "catalogSha256": "906a613dee765bb00ed476c7a4f5b6d08df2ad7858b6ca4c93a19d10f1bb292e",
+  "scorePolicySha256": "76d6f19924ba8497bd25aebd6ef268d81505cb3a39e631257b6fe201b0b87d6b",
+  "forcingHash": "4766435318b68bcf399d072bb2bbcf9a0079d2f7df21cd984d774e578fa58aa0",
+  "warmupMinutes": 10080,
+  "sourceCountsUnchanged": true,
+  "observedCases": [
+    {
+      "evaluationStart": "2022-08-08T09:02:17+00:00",
+      "evaluationEnd": "2022-08-08T14:59:00+00:00",
+      "evaluationSeconds": 21403.0,
+      "demandM3": 0.04979170138888889,
+      "suppliedM3": 0.049791701389118925,
+      "unmetDemandM3": 0,
+      "initialStorageM3": 2.35,
+      "finalStorageM3": 2.35,
+      "overflowM3": 20.53754446656842,
+      "balanceResidualM3": -7.105427357601002e-13,
+      "files": {
+        "cistern_demand.inp": "89368061e1fa637f8947e939984f6916ef0ca6865ccd9272c36f9b5d198beab0",
+        "cistern_demand.rpt": "79b0416161d3da0d57fb3d6b1ca2dcaca3fd4bbf56d65a023a4cefce53fa44dd",
+        "cistern_demand.out": "d76165140a8e721c681b44cb5a8874f7a89651e4c2d9cba7cee17e1fd6d2b9cd",
+        "cistern-demand.json": "906a613dee765bb00ed476c7a4f5b6d08df2ad7858b6ca4c93a19d10f1bb292e",
+        "cistern-demand-run.json": "f1cae5548ea2d3ec923ec31b0918d3c13c9ab96d5f470c75938b8e3d40ab06ae",
+        "cistern_demand.py": "b9bc38efe25efe15a29ae78b4f65fcfc29ae277b576f5f37f04c6b91b2eceb08"
+      }
+    },
+    {
+      "evaluationStart": "2022-08-08T09:00:00+00:00",
+      "evaluationEnd": "2022-08-08T14:59:00+00:00",
+      "evaluationSeconds": 21540.0,
+      "demandM3": 0.050110416666666664,
+      "suppliedM3": 0.050110416666898194,
+      "unmetDemandM3": 0,
+      "initialStorageM3": 2.35,
+      "finalStorageM3": 2.35,
+      "overflowM3": 20.990082785941233,
+      "balanceResidualM3": -7.140954494389007e-13,
+      "files": {
+        "cistern_demand.inp": "89368061e1fa637f8947e939984f6916ef0ca6865ccd9272c36f9b5d198beab0",
+        "cistern_demand.rpt": "a3ad6112fe8b9051753af1771443e8a7582afb4ded88ff30684aa58d0fe29780",
+        "cistern_demand.out": "d76165140a8e721c681b44cb5a8874f7a89651e4c2d9cba7cee17e1fd6d2b9cd",
+        "cistern-demand.json": "906a613dee765bb00ed476c7a4f5b6d08df2ad7858b6ca4c93a19d10f1bb292e",
+        "cistern-demand-run.json": "733ad4e67174f15c92fe23136b78942344435d94934744f561404a5ffb84f917",
+        "cistern_demand.py": "b9bc38efe25efe15a29ae78b4f65fcfc29ae277b576f5f37f04c6b91b2eceb08"
+      }
+    },
+    {
+      "evaluationStart": "2022-08-08T09:00:00+00:00",
+      "evaluationEnd": "2022-08-08T10:00:00+00:00",
+      "evaluationSeconds": 3600.0,
+      "demandM3": 0.008374999999999999,
+      "suppliedM3": 0.008375000000038879,
+      "unmetDemandM3": 0,
+      "initialStorageM3": 2.35,
+      "finalStorageM3": 2.35,
+      "overflowM3": 3.6251464581865243,
+      "balanceResidualM3": -1.9451107391432743e-13,
+      "files": {
+        "cistern_demand.inp": "71de9fa258d3fe52f3f8084ea998b2ed2c165c7fddecffd08a3fc1faf8e21b26",
+        "cistern_demand.rpt": "acb9eafed73da46b5e396e6dfd42320123e5eb65eb98cf780ef4dfcb8b1b0277",
+        "cistern_demand.out": "5c74b84b4dea031d2c88a69f640216404f6095c1b3409261e665290d948e90d7",
+        "cistern-demand.json": "906a613dee765bb00ed476c7a4f5b6d08df2ad7858b6ca4c93a19d10f1bb292e",
+        "cistern-demand-run.json": "7209a04f90bcf20afe2324e79257957446e339b8c28cdce73166ec5f3b197404",
+        "cistern_demand.py": "b9bc38efe25efe15a29ae78b4f65fcfc29ae277b576f5f37f04c6b91b2eceb08"
+      }
+    }
+  ],
+  "numericalChecks": [
+    "FULL_TANK_201_LITRES_86400_SECONDS",
+    "DRY_ZERO_SUPPLY_WITH_POSITIVE_UNMET_DEMAND",
+    "WATER_LIMITED_PARTIAL_SUPPLY",
+    "PARTIAL_AND_FULL_ROOF_MASS_AND_CAPACITY",
+    "EXTENDED_REPLAY_PREFIX_IDENTITY",
+    "SEVEN_DAY_SPINUP_AND_137_SECOND_INSTALL_BOUNDARY",
+    "PRIMARY_NATURAL_DRAIN_INP_AND_STATES_UNCHANGED",
+    "SEPARATE_UNMODIFIED_EPA_OUTPUT_BYTE_IDENTITY",
+    "UNKNOWN_SCENARIO_FOREIGN_FACILITY_TAMPERED_SOURCE_AND_EXCESS_SUPPLY_REJECTED"
+  ],
+  "workerIntegration": {
+    "weeklySeconds": 3600,
+    "experimentSeconds": 21403,
+    "submissionSeconds": 21540,
+    "httpViewVerified": true,
+    "budgetAndScorePreserved": true,
+    "threeJobsElapsedSeconds": 20.05,
+    "perJobDeadlineSeconds": 90
+  },
+  "tests": {
+    "cisternPython": 21,
+    "continuousRegression": 4,
+    "scorePolicy": 5,
+    "frontendAllBeforeFinalHttpTest": {
+      "files": 141,
+      "tests": 487
+    },
+    "frontendFinalAffected": {
+      "files": 7,
+      "tests": 27
+    },
+    "installationAndGuestSecurityJava": 38
+  },
+  "screenshot": "data/benchmarks/cistern-demand-game-v1.png",
+  "limitations": [
+    "문헌 가정 기반 잠재 공급이며 관측 사용량 아님",
+    "수요 운전은 기본 자연배수와 별도 비교",
+    "수질·실제 공급 설비·하수 환류·에너지·운영비 미계산",
+    "비교 결과는 기존 순위에 가산하지 않음",
+    "연결 유역과 전체 목표 통합은 미완료"
+  ],
+  "runtime": {
+    "health": "UP",
+    "scorePolicyMatched": true,
+    "jobCountsUnchanged": true,
+    "activeJobsBeforeRestart": 0
+  }
+}

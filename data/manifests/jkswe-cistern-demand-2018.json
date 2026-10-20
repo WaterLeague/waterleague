@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "JKSWE_CISTERN_DEMAND_2018",
+  "source": {
+    "title": "친환경시범마을의 LID 적용에 따른 물순환 효과 및 비용편익 분석",
+    "authors": [
+      "백종석",
+      "이상진",
+      "신현석",
+      "김형산"
+    ],
+    "url": "https://journal.cricit.kr/jkswe/XmlViewer/f253405",
+    "doi": "10.15681/KSWE.2017.34.1.57",
+    "publicationYear": 2018,
+    "publicationMonth": "2018-01",
+    "sha256": "28f0c3969bbc2f1dd08e03fec2fddb70bfdecdfc4032bd871158eb3a1734e207",
+    "reference": "2.4.2.1, 2.5.2.1, Table 12",
+    "licence": "CC BY-NC 3.0",
+    "licenceUrl": "http://creativecommons.org/licenses/by-nc/3.0/"
+  },
+  "raw": {
+    "path": "data/private/facility-reference-20261018/jkswe-lid-costs-2018.html",
+    "bytes": 507913,
+    "sha256": "28f0c3969bbc2f1dd08e03fec2fddb70bfdecdfc4032bd871158eb3a1734e207"
+  },
+  "extraction": {
+    "method": "MANUAL_SECTIONS_2_4_2_1_2_5_2_1_TABLE_12",
+    "catalogPath": "backend/src/main/resources/facilities/cistern-demand-v1.json",
+    "catalogSha256": "906a613dee765bb00ed476c7a4f5b6d08df2ad7858b6ca4c93a19d10f1bb292e"
+  },
+  "classification": "PUBLISHED_DEMAND_ASSUMPTION_NOT_OBSERVED_BUILDING_USE",
+  "notes": [
+    "지붕 235m²당 하루 0.201m³를 면적 비례·하루 균등 조건으로 사용",
+    "기초 상수도 통계 2015년, 화성시 가구원 통계 수록 2005~2015년; 현재 서울 건물 사용량 아님",
+    "원문 0.0351mm/h 보존, 깊이 1m 탱크의 별도 바닥 면적에서 일수요를 재환산",
+    "Water 2024 16(1)96 Table 4의 용도별 수요 조건을 검토; 대상지 인구·녹지·도로 수치 이식 없음"
+  ]
+}

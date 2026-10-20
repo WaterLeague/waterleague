@@ -64,7 +64,7 @@ def validated_period(model):
         raise SimulationQualityError('LIVE_FORCING_INVALID') from None
 
 
-def input_source(model, placements, evaporation, *, pavement_scenario=None):
+def input_source(model, placements, evaporation, *, pavement_scenario=None, cistern_scenario=None):
     start, count = validated_period(model)
     if placements:
         from ..spatial.suitability import SiteSuitabilityError, require_explorable
@@ -177,7 +177,9 @@ def input_source(model, placements, evaporation, *, pavement_scenario=None):
         source = source.replace('[TIMESERIES]\n', '[TIMESERIES]\n'+'\n'.join(rows)+'\n')
     if cistern is not None:
         from .cistern_game import apply as apply_cistern
-        source = apply_cistern(source, model, cistern)
+        source = apply_cistern(source, model, cistern, demand_scenario=cistern_scenario)
+    elif cistern_scenario is not None:
+        raise SimulationQualityError('CISTERN_DEMAND_PLACEMENT_REQUIRED')
     return source
 
 
@@ -230,7 +232,7 @@ def apply_site_inputs(source, cell, placements):
     return '\n'.join(lines)+'\n'
 
 def replay(model, placements, directory, label, evaporation=None, *, evaluation_start_seconds=None,
-           pavement_scenario=None):
+           pavement_scenario=None, cistern_scenario=None):
     start, count = validated_period(model)
     step = 1 if model['cells'][0].get('physicalInputs') or model.get('facilityDesignSet') else 10
     evaluation_start = model.get('initialization', {}).get('warmupMinutes', 0) * 60
@@ -252,7 +254,8 @@ def replay(model, placements, directory, label, evaporation=None, *, evaluation_
             or isinstance(p['areaM2'], bool) or not math.isfinite(p['areaM2'])
             or not 0 < p['areaM2'] <= cell['maxAreaM2'] for p in placements)):
         raise SimulationQualityError('LIVE_PLACEMENT_INVALID')
-    source = input_source(model, placements, evaporation, pavement_scenario=pavement_scenario)
+    source = input_source(model, placements, evaporation, pavement_scenario=pavement_scenario,
+                          cistern_scenario=cistern_scenario)
     inp, rpt, out = [directory/f'{label}.{ext}' for ext in ('inp', 'rpt', 'out')]
     inp.write_text(source)
     subcatchments = len([line for line in source.split('[SUBCATCHMENTS]\n')[1].split('[')[0].splitlines() if line.strip()])
@@ -394,6 +397,9 @@ def experiment(model, placement, directory, evaporation=None, *, installed_at=No
             'reuseM3': None, 'reuseStatus': 'DEMAND_NOT_AVAILABLE',
             'tankPosition': 'SCHEMATIC_NOT_CONSTRUCTION_PLACEMENT',
             'limitations': rules()['limitations']}
+        from .cistern_demand import analyze
+        result['cistern']['demandScenario'] = analyze(
+            model, placement, directory, evaporation, evaluation_start_seconds=offset)
         result['assumptions'] = list(result['assumptions']) + rules()['limitations']
         (directory/'cistern-game.json').write_bytes(PATH.read_bytes())
         (directory/'cistern_game_engine.py').write_bytes((Path(__file__).parent/'cistern_game.py').read_bytes())

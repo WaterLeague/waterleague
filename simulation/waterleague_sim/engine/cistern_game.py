@@ -4,7 +4,7 @@ from ..spatial.cistern_game import rules, TYPE
 from .swmm import SimulationQualityError
 
 
-def apply(source, model, placement):
+def apply(source, model, placement, *, demand_scenario=None):
     cell = model['cells'][0]
     area = placement['areaM2']
     if (cell['kind'] != 'ROOF' or TYPE not in cell['allowedTypes']
@@ -15,6 +15,10 @@ def apply(source, model, placement):
     rule = rules()
     volume = area * rule['capacityPerRoofAreaM']
     tank_area = volume / (rule['storageDepthMm'] / 1000)
+    if demand_scenario is not None:
+        from .cistern_demand import parameters
+        demand = parameters(demand_scenario, area, tank_area)
+        rule = rule | demand['drain']
     sections, current = {}, None
     for line in source.splitlines():
         if line.startswith('['):

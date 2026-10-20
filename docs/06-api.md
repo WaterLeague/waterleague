@@ -277,3 +277,6 @@ RFC 9457 `application/problem+json`: type, title, status, detail, instance, code
 기존 설치·재해 저장/계산/제출의 `facilityType`에 `RAINWATER_CISTERN`을 추가한다. `areaM2`는 선택 건물의 집수 지붕 면적이며 용량은 ×0.01m³, 예산은 ×12,158원이다. 별도 계획/설계 API를 호출하지 않는다. 서버는 원형 `ROOF` 후보·본인 중복·소속 구·공통 개인 예산·현장 금지 조건을 기존 규칙대로 검사한다. 가까운 후보 검색의 bit64는 기존 지붕 후보를 반환한다.
 
 `GET /api/v1/facilities/epa-designs-v5`는 7종 제원과 명시한 가정을 제공한다. 원형 공간 DB 해시는 보존하고 `cistern-game-v1.json`의 별도 규칙 해시를 비용 출처·설계·점수 정책에 결속한다. 예산 사업 원장은 `SEOUL_RAINWATER_ACCOUNTING_V5`를 사용한다. 주간 `result.cistern`, 재해 시설별 `cistern`에는 `capacityM3`, `roofCollectionAreaM2`, `initialStorageM3`, `finalStorageM3`, `inflowM3`, `drainageM3`, `overflowM3`, `reuseM3:null`, 가정/규칙 해시를 반환한다. 두 모드 모두 최종 수치는 서버 계산이며 게스트 최종 점수 잠금·소유권·제출 멱등 규칙은 동일하다.
+
+
+일반 이용조 수요 비교: 신규 주간 물리/회원 재해 실험/전체 사건 제출의 시설 `cistern.demandScenario`는 선택적 schemaVersion 1 객체다. 고정 시나리오 ID·카탈로그/INP 해시·근거·평가 시작/종료·평가 초·면적/용량·일수요·평가 수요·잠재 공급·부족·공급 비율·초기/최종 저류·유입·월류·물수지 잔차를 반환한다. `rankingEligible=false`, `observedReuseM3=null`이며 기본 `cistern.reuseM3=null`과 자연배수 계산은 보존한다. 미포함 과거 결과에 새 시나리오를 추정하여 채우지 않는다. 게스트 최종 결과 잠금은 그대로 적용한다.

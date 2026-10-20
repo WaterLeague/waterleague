@@ -220,7 +220,7 @@ class GuestHistoricalTests extends PostgresIntegrationTest {
         {"engineVersion":"test-only-987","validationLevel":"EXPLORATORY","start":"2022-08-08T09:00:00Z","end":"2022-08-08T09:03:00Z",
         "differenceM3":987,"baselineAccountedM3":999,"designAccountedM3":12,
         "frames":[{"at":"2022-08-08T09:01:00Z","differenceM3":1},{"at":"2022-08-08T09:02:00Z","differenceM3":2},{"at":"2022-08-08T09:03:00Z","differenceM3":987}],
-        "facilities":[{"cellId":"TEST","runoffComparison":{"final":987},"frames":[{"at":"2022-08-08T09:01:00Z","differenceM3":1},{"at":"2022-08-08T09:03:00Z","differenceM3":987}]}]}
+        "facilities":[{"cellId":"TEST","cistern":{"demandScenario":{"suppliedM3":987}},"runoffComparison":{"final":987},"frames":[{"at":"2022-08-08T09:01:00Z","differenceM3":1},{"at":"2022-08-08T09:03:00Z","differenceM3":987}]}]}
         """;
     db.update(
         "UPDATE historical_experiments SET state='SUCCEEDED',result=?,finished_at=CURRENT_TIMESTAMP"
@@ -248,6 +248,7 @@ class GuestHistoricalTests extends PostgresIntegrationTest {
           assertThat(frame.path("differenceM3").asDouble()).isNotEqualTo(987);
         for (var facility : previewResult.path("facilities")) {
           assertThat(facility.has("runoffComparison")).isFalse();
+          assertThat(facility.has("cistern")).isFalse();
           assertThat(facility.path("frames").size()).isEqualTo(1);
           for (var frame : facility.path("frames"))
             assertThat(frame.path("differenceM3").asDouble()).isNotEqualTo(987);

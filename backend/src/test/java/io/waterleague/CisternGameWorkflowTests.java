@@ -17,6 +17,8 @@ import io.waterleague.physics.service.PhysicsService;
 import io.waterleague.strategy.entity.FacilityType;
 import java.math.BigDecimal;
 import java.nio.file.*;
+import java.net.URI;
+import java.net.http.*;
 import java.time.Instant;
 import java.util.*;
 import org.junit.jupiter.api.Test;
@@ -26,7 +28,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("local")
 class CisternGameWorkflowTests extends PostgresIntegrationTest {
   @org.springframework.test.context.DynamicPropertySource
@@ -40,10 +42,12 @@ class CisternGameWorkflowTests extends PostgresIntegrationTest {
   @Autowired BudgetService budgets;
   @Autowired HistoricalDesignService designs;
   @Autowired HistoricalSubmissionService submissions;
+  @Autowired HistoricalService history;
   @Autowired DisasterService disasters;
   @Autowired PhysicsService physics;
   @Autowired JdbcTemplate db;
   @Autowired JsonService json;
+  @org.springframework.beans.factory.annotation.Value("${local.server.port}") int port;
 
   @Test
   @DisabledIfSystemProperty(named = "waterleague.integration.cistern.readback", matches = "true")
@@ -78,6 +82,11 @@ class CisternGameWorkflowTests extends PostgresIntegrationTest {
         0, 137, List.of(new HistoricalDesignRequest.Item(UUID.randomUUID(), "11200",
         site.cellId(), FacilityType.RAINWATER_CISTERN, new BigDecimal("235"),
         Instant.parse(region.start()).plusSeconds(137)))));
+    var experiment = history.create(owner, new HistoricalRequest(UUID.randomUUID(), "11200",
+        region.modelHash(), List.of(new HistoricalRequest.Item(site.cellId(),
+            FacilityType.RAINWATER_CISTERN, new BigDecimal("235"),
+            Instant.parse(region.start()).plusSeconds(137), site.modelHash())),
+        null, "INSTALLATION_TIME_EXPERIMENT_V1", null, design.revision(), event.id()));
     var reference = new HistoricalDesignSubmissionRequest(UUID.randomUUID(),
         design.revision(), design.snapshotSha256());
     var submitted = submissions.submitSaved(owner, event.id(), reference);
@@ -86,6 +95,7 @@ class CisternGameWorkflowTests extends PostgresIntegrationTest {
     var export = System.getProperty("waterleague.integration.cistern.fixture");
     if (export != null) Files.writeString(Path.of(export), json.write(Map.of(
         "ownerId", owner, "installationId", installed.id(), "submissionId", submitted.id(),
+        "experimentId", experiment.id(),
         "eventId", event.id(), "forcingHash", region.modelHash(), "site", site,
         "costKrw", installed.cost(), "design", design)), StandardOpenOption.CREATE_NEW);
   }
@@ -100,6 +110,25 @@ class CisternGameWorkflowTests extends PostgresIntegrationTest {
     assertThat(actual.result()).isNotNull();
     assertThat(actual.result().cistern().path("capacityM3").asDouble()).isEqualTo(2.35);
     assertThat(actual.result().cistern().path("reuseM3").isNull()).isTrue();
+    var demand = actual.result().cistern().path("demandScenario");
+    assertThat(demand.path("status").asString()).isEqualTo("SUCCEEDED");
+    assertThat(demand.path("evaluationSeconds").asDouble()).isEqualTo(3600);
+    assertThat(demand.path("rankingEligible").asBoolean()).isFalse();
+    assertThat(demand.path("observedReuseM3").isNull()).isTrue();
+    var response = HttpClient.newHttpClient().send(HttpRequest.newBuilder(
+        URI.create("http://127.0.0.1:" + port + "/api/v1/installations/" + id + "/physics"))
+        .GET().build(), HttpResponse.BodyHandlers.ofString());
+    assertThat(response.statusCode()).isEqualTo(200);
+    assertThat(json.tree(response.body()).path("result").path("cistern").path("demandScenario"))
+        .isEqualTo(demand);
+    Files.writeString(Path.of(System.getProperty("waterleague.integration.cistern.fixture")
+        + ".http.json"), response.body(), StandardOpenOption.CREATE_NEW);
+    var experiment = history.view(history.require(UUID.fromString(data.path("ownerId").asString()),
+        UUID.fromString(data.path("experimentId").asString())));
+    var experimentDemand = experiment.result().path("facilities").get(0).path("cistern").path("demandScenario");
+    assertThat(experiment.state()).isEqualTo("SUCCEEDED");
+    assertThat(experimentDemand.path("evaluationSeconds").asDouble()).isEqualTo(21403);
+    assertThat(experimentDemand.path("observedReuseM3").isNull()).isTrue();
     var comparison = actual.result().runoffComparison();
     assertThat(comparison.path("schemaVersion").asInt()).isEqualTo(3);
     assertThat(comparison.path("detention").path("status").asString()).isEqualTo("COMPARABLE");
@@ -114,6 +143,11 @@ class CisternGameWorkflowTests extends PostgresIntegrationTest {
         "SELECT result::text FROM historical_experiments WHERE id=?", String.class, record.id()));
     var submittedComparison = stored.path("districts").get(0).path("result")
         .path("facilities").get(0).path("runoffComparison");
+    var submittedDemand = stored.path("districts").get(0).path("result")
+        .path("facilities").get(0).path("cistern").path("demandScenario");
+    assertThat(submittedDemand.path("status").asString()).isEqualTo("SUCCEEDED");
+    assertThat(submittedDemand.path("suppliedM3").asDouble()).isGreaterThan(0);
+    assertThat(submittedDemand.path("rankingEligible").asBoolean()).isFalse();
     assertThat(submittedComparison.path("schemaVersion").asInt()).isEqualTo(3);
     assertThat(submittedComparison.path("detention").path("centroidDelaySeconds").isNumber()).isTrue();
     assertThat(json.write(submissions.board(data.path("eventId").asString())))

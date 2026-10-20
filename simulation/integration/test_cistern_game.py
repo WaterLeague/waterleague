@@ -72,8 +72,25 @@ class CisternGameWorkflowTests(unittest.TestCase):
             self.assertEqual(weekly['cistern']['capacityM3'], 2.35)
             self.assertEqual(weekly['initialization']['warmupMinutes'], 10080)
             self.assertIsNone(weekly['cistern']['reuseM3'])
+            weekly_demand = weekly['cistern']['demandScenario']
+            self.assertEqual(weekly_demand['evaluationSeconds'], 3600)
+            self.assertAlmostEqual(weekly_demand['demandM3'], .201 / 24)
+            self.assertLessEqual(weekly_demand['suppliedM3'], weekly_demand['demandM3'] + 1e-10)
+            self.assertFalse(weekly_demand['rankingEligible'])
             self.assertEqual(db.execute('SELECT sum(evaluated_minutes) AS n FROM shared_weekly_scores WHERE installation_id=%s',
                 (installation,)).fetchone()['n'], 60)
+            experiment = queue.claim(db)
+            self.assertEqual(str(experiment['id']), fixture['experimentId'])
+            self.assertTrue(historical.process(db, experiment, root))
+            row = db.execute('SELECT * FROM historical_experiments WHERE id=%s', (experiment['id'],)).fetchone()
+            self.assertEqual(row['state'], 'SUCCEEDED', row['error_code'])
+            experiment_result = json.loads(row['result'])
+            experiment_cistern = experiment_result['facilities'][0]['cistern']
+            experiment_demand = experiment_cistern['demandScenario']
+            self.assertEqual(experiment_demand['evaluationSeconds'], 21403)
+            self.assertEqual(datetime.fromisoformat(experiment_demand['evaluationStart']), start + timedelta(seconds=137))
+            self.assertAlmostEqual(experiment_demand['demandM3'], .201 * 21403 / 86400)
+            self.assertIsNone(experiment_demand['observedReuseM3'])
             submitted = queue.claim(db)
             self.assertEqual(str(submitted['id']), fixture['submissionId'])
             self.assertTrue(historical.process(db, submitted, root))
@@ -86,6 +103,11 @@ class CisternGameWorkflowTests(unittest.TestCase):
             self.assertEqual(facility['costRecord']['estimate']['budgetChargeKrw'], fixture['costKrw'])
             self.assertIsNone(facility['cistern']['reuseM3'])
             self.assertGreater(facility['cistern']['overflowM3'], 0)
+            final_demand = facility['cistern']['demandScenario']
+            self.assertGreater(final_demand['suppliedM3'], 0)
+            self.assertEqual(final_demand['evaluationStart'], final['start'])
+            self.assertEqual(final_demand['evaluationEnd'], final['end'])
+            self.assertIsNone(final_demand['observedReuseM3'])
             score = db.execute('SELECT difference_m3 FROM historical_submissions WHERE job_id=%s',
                 (submitted['id'],)).fetchone()['difference_m3']
             self.assertAlmostEqual(float(score), final['differenceM3'])
@@ -96,5 +118,6 @@ class CisternGameWorkflowTests(unittest.TestCase):
                 'weeklyMinutes': 60, 'warmupMinutes': 10080, 'budgetChargeKrw': fixture['costKrw'],
                 'historicalCistern': facility['cistern'], 'differenceM3': final['differenceM3'],
                 'weeklyResult': weekly, 'designContract': facility['designContract'],
+                'experimentCistern': experiment_cistern,
                 'installationAndBudgetVerified': True, 'submissionAndScorePublished': True,
             }, ensure_ascii=False, indent=2) + '\n')
