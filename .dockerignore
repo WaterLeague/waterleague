@@ -11,6 +11,7 @@ frontend/coverage/
 frontend/qa/
 !simulation/
 !simulation/pyproject.toml
+!simulation/uv.lock
 !simulation/tests/
 !simulation/tests/fixtures/
 !simulation/tests/fixtures/pattern-search-v1.json
@@ -22,6 +23,7 @@ frontend/qa/
 !scripts/
 !scripts/local_config.py
 !scripts/build_live_swmm.py
+!scripts/build_score_policy.py
 !data/
 !data/models/
 !data/models/**

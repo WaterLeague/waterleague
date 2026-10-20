@@ -72,7 +72,7 @@ def grant():
         db.execute('GRANT SELECT,INSERT ON shared_physics_jobs TO wl_worker')
         db.execute('GRANT UPDATE(state,lease_until,finished_at,input_hash,result,error_code,artifact_manifest_hash) ON shared_physics_jobs TO wl_worker')
         db.execute('GRANT SELECT ON simulation_jobs,research_candidates,historical_experiments,watershed_experiments,queue_admission TO wl_worker')
-        db.execute('GRANT SELECT(job_id,rules_hash),UPDATE(difference_m3) ON historical_submissions TO wl_worker')
+        db.execute('GRANT SELECT(job_id,rules_hash),UPDATE(difference_m3,score_policy_sha256,comparison_group_hash) ON historical_submissions TO wl_worker')
         db.execute('GRANT SELECT(id,placements) ON strategy_versions TO wl_worker')
         db.execute('GRANT UPDATE(id) ON queue_admission TO wl_worker')
         for table in ('simulation_jobs', 'research_candidates', 'historical_experiments', 'watershed_experiments'):

@@ -95,6 +95,8 @@ for role in ('wl_api', 'wl_worker'):
                        'SELECT * FROM historical_design_revisions',
                        "UPDATE watershed_experiments SET placements='[]' WHERE false",
                        "UPDATE historical_submissions SET rules_hash='changed' WHERE false",
+                       "UPDATE historical_submissions SET cost=0 WHERE false",
+                       "DELETE FROM historical_submissions WHERE false",
                        "UPDATE shared_weekly_scores SET rule_version='changed' WHERE false",
                        'UPDATE accounts SET enabled=false WHERE false']
         for statement in denied:
@@ -111,7 +113,7 @@ for role in ('wl_api', 'wl_worker'):
             db.execute("UPDATE research_candidates SET state='FAILED',result=NULL WHERE false")
             db.execute("UPDATE watershed_experiments SET state='FAILED',result=NULL WHERE false")
             if role == 'wl_worker':
-                db.execute('UPDATE historical_submissions SET difference_m3=0 WHERE false')
+                db.execute("UPDATE historical_submissions SET difference_m3=0,score_policy_sha256=repeat('a',64),comparison_group_hash=repeat('b',64) WHERE false")
                 db.execute('UPDATE shared_weekly_scores SET evaluated_seconds=1 WHERE false')
         flags = db.execute('SELECT rolsuper,rolcreatedb,rolcreaterole,rolbypassrls FROM pg_roles WHERE rolname=current_user').fetchone()
         assert not any(flags)
@@ -213,7 +215,7 @@ def check_http(stack, state):
         client.call(path, expected=404)
     client.api('/auth/me', expected=401)
     spatial = client.api('/spatial/play')
-    assert spatial['catalogSha256'] == '4ec7535e7cbaf41dc73f73519d77ba11f956f4c75c1a574fffa08f16625919b7'
+    assert spatial['catalogSha256'] == 'd2d9ea2a888ee01d59f253b3848c3c30fdf4b6b3f03662b1202dc9b7a48b88b9'
     assert spatial['coordinateSystem'] == 'EPSG:5186'
     query = '/spatial/play/sites?minx=203899.54225604248&miny=551377.4775&maxx=204049.54225604248&maxy=551527.4775&districtId=11200'
     native = client.api(query)
@@ -235,13 +237,19 @@ print(json.dumps({'catalogSha256': catalog.sha256, 'sites': cells}))
 """))
     assert worker_native == {key: native[key] for key in ('catalogSha256', 'sites')}
     registry = client.api('/spatial/play/forcings')
-    assert registry['catalog']['siteCatalogSha256'] == spatial['catalogSha256']
+    source_catalog = registry['catalog']['siteCatalogSha256']
+    assert source_catalog == spatial['catalogSha256'] or any(
+        extension['baseCatalogSha256'] == source_catalog
+        and extension['id'] == 'NGII_PARKING_CANDIDATES_V1'
+        for extension in spatial['catalog'].get('extensions', []))
     assert len(registry['catalog']['regions']) == 25 and len(registry['catalog']['models']) == 100
     forcing = {entry['sha256']: client.api('/spatial/play/forcings/' + entry['sha256'])
                for entry in registry['catalog']['models']}
     worker_forcing = json.loads(stack.python('worker', """
 import json
 from waterleague_sim.spatial import game_catalog
+from waterleague_sim.spatial.play_bundle import open_catalog
+assert open_catalog().accepts_catalog(game_catalog.catalog()['siteCatalogSha256'])
 values = {entry['sha256']: json.loads(game_catalog.forcing(entry['sha256']))
           for entry in game_catalog.catalog()['models']}
 for checksum, value in values.items():

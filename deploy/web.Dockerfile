@@ -9,6 +9,7 @@ COPY data/costs/lid-reference-v5.json /build/data/costs/lid-reference-v5.json
 COPY data/manifests/vworld-seongdong-topography-20260307.json /build/data/manifests/vworld-seongdong-topography-20260307.json
 COPY backend/src/main/resources/infrastructure/ /build/backend/src/main/resources/infrastructure/
 COPY backend/src/main/resources/facilities/epa-designs-v1.json /build/backend/src/main/resources/facilities/epa-designs-v1.json
+COPY backend/src/main/resources/evaluation/game-score-policy-v1.json /build/backend/src/main/resources/evaluation/game-score-policy-v1.json
 COPY backend/src/test/resources/cistern-layout-cases.json /build/backend/src/test/resources/cistern-layout-cases.json
 COPY simulation/tests/fixtures/pattern-search-v1.json /build/simulation/tests/fixtures/pattern-search-v1.json
 COPY simulation/tests/fixtures/member-cistern-costs-v1.json /build/simulation/tests/fixtures/member-cistern-costs-v1.json

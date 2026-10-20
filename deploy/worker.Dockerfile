@@ -22,8 +22,15 @@ COPY --from=build /opt/swmm /opt/swmm
 COPY --from=build /opt/live-swmm /opt/live-swmm
 WORKDIR /app
 COPY simulation/waterleague_sim /app/simulation/waterleague_sim
+COPY simulation/pyproject.toml simulation/uv.lock /app/simulation/
 COPY simulation/native/lid_snapshot.inc /app/simulation/native/lid_snapshot.inc
 COPY scripts/local_config.py /app/scripts/local_config.py
+COPY scripts/build_score_policy.py /app/scripts/build_score_policy.py
+COPY backend/src/main/java/io/waterleague/evaluation/service/ScorePolicyService.java /app/backend/src/main/java/io/waterleague/evaluation/service/ScorePolicyService.java
+COPY backend/src/main/java/io/waterleague/weekly/service/WeeklyService.java /app/backend/src/main/java/io/waterleague/weekly/service/WeeklyService.java
+COPY backend/src/main/java/io/waterleague/weekly/repository/WeeklyRepository.java /app/backend/src/main/java/io/waterleague/weekly/repository/WeeklyRepository.java
+COPY backend/src/main/java/io/waterleague/historical/service/HistoricalSubmissionService.java /app/backend/src/main/java/io/waterleague/historical/service/HistoricalSubmissionService.java
+COPY backend/src/main/java/io/waterleague/historical/repository/HistoricalSubmissionRepository.java /app/backend/src/main/java/io/waterleague/historical/repository/HistoricalSubmissionRepository.java
 COPY data/models /app/data/models
 COPY backend/src/main/resources/shared-sites /app/backend/src/main/resources/shared-sites
 COPY backend/src/main/resources/facilities /app/backend/src/main/resources/facilities
@@ -33,6 +40,8 @@ COPY backend/src/main/resources/native-weather /app/backend/src/main/resources/n
 COPY backend/src/main/resources/infrastructure/native-v1 /app/backend/src/main/resources/infrastructure/native-v1
 COPY backend/src/main/resources/infrastructure/seoul-basin-footprints-*.json /app/backend/src/main/resources/infrastructure/
 COPY backend/src/main/resources/districts /app/backend/src/main/resources/districts
+COPY backend/src/main/resources/budget /app/backend/src/main/resources/budget
+COPY backend/src/main/resources/evaluation /app/backend/src/main/resources/evaluation
 COPY deploy/database.py /app/deploy/database.py
 ENV PYTHONPATH=/app/simulation PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 SWMM_LIBRARY=/opt/swmm/bin/libswmm5.so LIVE_SWMM_LIBRARY=/opt/live-swmm/bin/libswmm5.so
 USER 10001:10001
