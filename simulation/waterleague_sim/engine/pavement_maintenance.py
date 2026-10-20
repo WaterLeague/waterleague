@@ -49,7 +49,7 @@ def scenario(identifier):
 
 def validate_request(model, placements):
     from .facilities import model_version
-    if (model_version(model) != 4 or len(placements) != 1
+    if (model_version(model) not in (4, 5) or len(placements) != 1
             or placements[0].get('facilityType') != 'PERMEABLE_PAVEMENT'
             or model.get('sharedSiteSource', {}).get('inflowPolicy') != 'DIRECT_RAINFALL_ONLY'):
         raise SimulationQualityError('PAVEMENT_COMPARISON_REQUEST_INVALID')

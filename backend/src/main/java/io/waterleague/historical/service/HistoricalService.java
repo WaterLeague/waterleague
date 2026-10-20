@@ -425,7 +425,8 @@ public class HistoricalService {
         if (site.initializationPolicy() == null
             || site.initializationPolicy().isNull()
             || site.facilityDesignSet() == null
-            || !site.facilityDesignSet().path("id").asString().equals("EPA_LID_PUBLIC_DESIGNS_V4"))
+            || !Set.of("EPA_LID_PUBLIC_DESIGNS_V4", "EPA_LID_PUBLIC_DESIGNS_V5")
+                .contains(site.facilityDesignSet().path("id").asString()))
           throw new DomainException(ErrorCode.SIMULATION_UNAVAILABLE);
         row.put(
             "pavementMaintenanceComparison",

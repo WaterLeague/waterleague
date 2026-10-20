@@ -16,7 +16,7 @@ from waterleague_sim.engine import pavement_maintenance as study
 def comparison_inputs():
     _, _, pet, prior = inputs()
     model, placement = model_for('PERMEABLE_PAVEMENT', [100, 100]+[0]*8)
-    model['facilityDesignSet'] = facilities.design_set(4)
+    model['facilityDesignSet'] = facilities.design_set(5)
     model['sharedSiteSource'] = {'inflowPolicy': 'DIRECT_RAINFALL_ONLY'}
     model['rainfall']['stationId'] = '108'
     from waterleague_sim.engine.initialization_sensitivity import window
@@ -24,6 +24,23 @@ def comparison_inputs():
 
 
 class PavementMaintenanceTests(unittest.TestCase):
+    def test_cistern_catalog_preserves_previous_pavement_comparison_input(self):
+        model, placement, pet, _ = comparison_inputs()
+        previous = model | {'facilityDesignSet': facilities.design_set(4)}
+        self.assertEqual(facilities.catalog(4)['profiles']['PERMEABLE_PAVEMENT'],
+                         facilities.catalog(5)['profiles']['PERMEABLE_PAVEMENT'])
+        for identifier in ('FRESH', 'DUST_96_G', 'DUST_192_G'):
+            old = continuous.input_source(previous, [placement], pet, pavement_scenario=identifier)
+            new = continuous.input_source(model, [placement], pet, pavement_scenario=identifier)
+            # v5의 미사용 덮개 강우계 정의만 추가되며 시설·강우·수리 입력은 동일하다.
+            added = [line for line in new.splitlines() if line.startswith(('WL_NO_RAIN ', 'WL_ZERO '))]
+            self.assertEqual(added, ['WL_NO_RAIN VOLUME 0:01 1 TIMESERIES WL_ZERO',
+                'WL_ZERO 10/12/2026 00:00:00 0', 'WL_ZERO 10/12/2026 00:01:00 0'])
+            self.assertEqual(old.splitlines(), [line for line in new.splitlines() if line not in added])
+        forged = model | {'facilityDesignSet': facilities.design_set(5) | {'sha256': '0' * 64}}
+        with self.assertRaisesRegex(continuous.SimulationQualityError, 'DESIGN_INVALID'):
+            study.validate_request(forged, [placement])
+
     def test_fixed_measured_states_change_only_pavement_row(self):
         model, placement, pet, prior = comparison_inputs()
         expanded, forcing = initialization.prepend(model, pet, prior)

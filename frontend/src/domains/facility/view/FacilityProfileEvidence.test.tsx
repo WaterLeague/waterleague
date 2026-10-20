@@ -2,10 +2,20 @@ import { expect, it } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import catalog from '../../../../../backend/src/main/resources/facilities/epa-designs-v1.json';
 import currentCatalog from '../../../../../backend/src/main/resources/facilities/epa-designs-v4.json';
+import cisternCatalog from '../../../../../backend/src/main/resources/facilities/epa-designs-v5.json';
 import actualSite from '../../installation/__tests__/fixtures/nativeInfiltrationSite.json';
 import { siteDto } from '../../installation/dto/installationDto';
 import { facilityCatalogDto, facilityEvidenceDto } from '../dto/facilityDto';
 import { FacilityProfileEvidence } from './FacilityProfileEvidence';
+
+it('이용조가 추가된 설계도 이전 여섯 시설의 제원을 모두 요구', () => {
+  expect(facilityCatalogDto.safeParse(cisternCatalog).success).toBe(true);
+  for (const facility of Object.keys(cisternCatalog.profiles)) {
+    const changed = structuredClone(cisternCatalog);
+    Reflect.deleteProperty(changed.profiles, facility);
+    expect(facilityCatalogDto.safeParse(changed).success, facility).toBe(false);
+  }
+});
 
 it('공개 제원 원본의 값·문헌 범위·가정과 보관 해시 표시', () => {
   const parsed = facilityCatalogDto.parse(catalog);

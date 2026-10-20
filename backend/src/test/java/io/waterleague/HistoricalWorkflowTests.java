@@ -226,7 +226,7 @@ class HistoricalWorkflowTests extends PostgresIntegrationTest {
         .contains(
             "VEGETATIVE_SWALE",
             site.modelHash(),
-            "SEOUL_RAINWATER_ACCOUNTING_V4",
+            "SEOUL_RAINWATER_ACCOUNTING_V5",
             "SELECTED_SWALE_7_DAY_STATE_V2")
         .doesNotContain("SELECTED_SURFACE_7_DAY_DRY_WET_V1");
     assertThat(service.create(owner, stateRequest).id()).isEqualTo(job.id());
@@ -286,7 +286,7 @@ class HistoricalWorkflowTests extends PostgresIntegrationTest {
                     new HistoricalRequest.Item(
                         site.cellId(), FacilityType.INFILTRATION_TRENCH, cap))));
     assertThat(service.require(owner, job.id()).placements())
-        .contains("INFILTRATION_TRENCH", site.modelHash(), "SEOUL_RAINWATER_ACCOUNTING_V4");
+        .contains("INFILTRATION_TRENCH", site.modelHash(), "SEOUL_RAINWATER_ACCOUNTING_V5");
     assertThat(db.queryForObject("SELECT COUNT(*) FROM shared_installations", Integer.class))
         .isEqualTo(before);
   }
@@ -332,7 +332,7 @@ class HistoricalWorkflowTests extends PostgresIntegrationTest {
             "publicAssetPolicy",
             "costSnapshotRaw",
             "costSnapshotSha256",
-            "SEOUL_RAINWATER_ACCOUNTING_V4",
+            "SEOUL_RAINWATER_ACCOUNTING_V5",
             "SEOUL_PERSONAL_FULL_2026_V3",
             "2000000000");
     assertThat(service.list(owner)).hasSize(1);
@@ -384,6 +384,7 @@ class HistoricalWorkflowTests extends PostgresIntegrationTest {
             .findFirst()
             .orElseThrow();
     var plain = request(UUID.randomUUID(), site.cellId(), FacilityType.PERMEABLE_PAVEMENT, "1.00");
+    assertThat(site.facilityDesignSet().path("id").asString()).isEqualTo("EPA_LID_PUBLIC_DESIGNS_V5");
     var comparison =
         new HistoricalRequest(
             plain.requestKey(),

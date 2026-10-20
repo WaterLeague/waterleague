@@ -111,12 +111,16 @@ export const facilityCatalogDto = z
   .refine(
     (value) =>
       (value.id === 'EPA_LID_PUBLIC_DESIGNS_V1' || value.profiles.BIORETENTION !== undefined) &&
-      (!['EPA_LID_PUBLIC_DESIGNS_V3', 'EPA_LID_PUBLIC_DESIGNS_V4'].includes(value.id) ||
+      (![
+        'EPA_LID_PUBLIC_DESIGNS_V3',
+        'EPA_LID_PUBLIC_DESIGNS_V4',
+        'EPA_LID_PUBLIC_DESIGNS_V5',
+      ].includes(value.id) ||
         value.profiles.VEGETATIVE_SWALE !== undefined) &&
-      (value.id !== 'EPA_LID_PUBLIC_DESIGNS_V4' ||
+      (!['EPA_LID_PUBLIC_DESIGNS_V4', 'EPA_LID_PUBLIC_DESIGNS_V5'].includes(value.id) ||
         value.profiles.INFILTRATION_TRENCH !== undefined) &&
       (value.id !== 'EPA_LID_PUBLIC_DESIGNS_V5' || value.profiles.RAINWATER_CISTERN !== undefined),
-    { message: '생물저류 설계 제원 누락' }
+    { message: '설계 버전에 필요한 시설 제원 누락' }
   );
 export type FacilityCatalog = z.infer<typeof facilityCatalogDto>;
 export type FacilityEvidence = z.infer<typeof facilityEvidenceDto>;

@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-21",
+  "classification": "VERSION_COMPATIBILITY_REGRESSION_NOT_FIELD_VALIDATION",
+  "sourceHashes": {
+    "backend/src/main/java/io/waterleague/historical/service/HistoricalService.java": "60049915925e6625e8fc544a8e2e23c8efd27897c44489f71eeb86c18b15260d",
+    "backend/src/main/resources/evaluation/game-score-policy-v1.json": "273c1aa33fcd6be4f2d45024e620ab4c4923acd3174629ea60d0934232cdf35e",
+    "backend/src/main/resources/facilities/epa-designs-v4.json": "8af82e01704cf1495f185d9a0a410898e6007a468274c905e75b939f9abde133",
+    "backend/src/main/resources/facilities/epa-designs-v5.json": "0b37b1779f60533bb344158eef8a6ec1510d60a533ec99d81c3e98324b02c62e",
+    "backend/src/test/java/io/waterleague/HistoricalWorkflowTests.java": "6de6727f670e88f48c2b295856bdabce998bee5f62c7193c5f4ac470c7f584dc",
+    "backend/src/test/java/io/waterleague/HistoricalPavementReadbackTests.java": "8e260f5ae20fd359eddf2bdb2b914175edfc538410a4fbbda2ab9ac8d0c7c513",
+    "frontend/src/domains/facility/dto/facilityDto.ts": "874c46eb9db2fc3390769b9a09bc2719c9b98bf5b5abd520c95c7779b1a051b2",
+    "frontend/src/domains/facility/view/FacilityProfileEvidence.test.tsx": "30a3ebc2c3e77ef0226aa2b3db9b76b8a4995bd9dd32c5f16e9e09485f3b9d6a",
+    "simulation/waterleague_sim/engine/pavement_maintenance.py": "f5474e2af175bf960148414b6136eab798fda108009d7542928b8dcdd460087c",
+    "simulation/tests/test_pavement_maintenance.py": "41503f59ba2eff9e0b000f976a536efc110f1ebaaf1080cea837fad997946899",
+    "simulation/integration/test_historical.py": "31c2f435e39726827ca8806f0cc6220052fcc842e1e38a7388d1f6d5f6f8f1a2",
+    "scripts/verify_league_postgres.py": "7a27d68eb4e4cbadc3314349c0ec7ab1abbb5ab05ac09dc39078669305deee45"
+  },
+  "verification": {
+    "pythonFocusedTests": 6,
+    "frontendFiles": 3,
+    "frontendTests": 11,
+    "isolatedPostgres": {
+      "requestAndSubmissionTests": 20,
+      "observedSwmmWorkerTests": 7,
+      "readbackTests": 1,
+      "passed": true,
+      "sourceCountsUnchanged": true
+    },
+    "frontendBuildPassed": true,
+    "backendPackagePassed": true,
+    "scorePolicyCheckPassed": true,
+    "inputComparison": "Identical v4/v5 pavement inputs for FRESH, DUST_96_G and DUST_192_G except three unused zero-rain definitions",
+    "logs": {
+      "tmp/pavement-v5-unit.log": "5903a222db5148f4c53c9917c6b80467f8b5fc75ae7706a20056a21d4c83b936",
+      "tmp/pavement-v5-frontend.log": "54bb04b4f92ccbc6e83305fd2a1b44e547448a1b0362b1f188420554e90ac8bf",
+      "tmp/pavement-v5-build.log": "94b5f0ca954d8cdba9666128c86b7272836e5a80524ccb1430c365849add0084",
+      "tmp/pavement-v5-package.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tmp/pavement-v5-workflow-recheck.log": "d3de8444fa815067b48fcbab98099f5c1064b1ebaecaef7c996017988a6386d7",
+      "tmp/waterleague_queue_test_58738d55626346858d15e4ba2c20afc0.log": "fcff368f436a88e3614feaa064be80c2978c49ad6cdc768cf5a2809a4ef3e869",
+      "tmp/pavement-v5-runtime.json": "bd5e2aaa63a1a34148b54ef3b01b6953157ccd751f88ae130318fb4a924782e2"
+    },
+    "runtime": {
+      "health": "UP",
+      "scorePolicyMatched": true,
+      "jobCountsUnchanged": true,
+      "activeJobsBeforeRestart": 0
+    }
+  },
+  "limitations": [
+    "고정 재료 상태의 비교이며 청소 후 회복·노후화 예측 아님",
+    "일반 설계 계수·점수 산식·비용 변경 없음",
+    "서울 현장 유역 검증이나 전체 시설 회귀 아님"
+  ]
+}
