@@ -30,10 +30,14 @@ def verify(model, network, result, root, read):
     original = root/'network/network-original.inp'
     actual = original if network.get('stageBoundaries') else root/'network/network.inp'
     physical = prepared['inputText'].encode()
+    cistern = None
+    if 'connectedCisternDesign' in model:
+        from ..engine.coupled_cistern import compile as compile_cistern
+        physical, cistern = compile_cistern(model, prepared)
     if 'connectedFacilityDesign' in model:
-        from waterleague_sim.engine.connected_facilities import compile_design
+        from ..engine.coupled_cistern import facilities
         validate_facility_binding(model)
-        physical, design = compile_design(physical, model['connectedFacilityDesign'])
+        physical, design = facilities(physical, model['connectedFacilityDesign'], cistern)
         require(read(root/'connected-facility-design.json') == design
                 and (root/'facility-network.inp').read_bytes() == physical,
                 'EVALUATION_LIVE_FACILITY_COMPOSITION_MISMATCH')

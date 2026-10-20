@@ -71,6 +71,10 @@ def main():
     if args.kind == 'coupled' and 'initialization' in load(case/'coupled-result.json'):
         require(all(str((case/name).relative_to(bundle)) in files for name in
             ('evaluation-initial-state.json', 'evaluation-final-state.json')), 'REPLAY_CASE_MISSING')
+    if args.kind == 'coupled' and 'connectedCistern' in load(case/'coupled-result.json'):
+        require(all(str((case/name).relative_to(bundle)) in files for name in
+            ('connected-cistern-design.json', 'cistern-network.inp',
+             'cistern-evaluation-initial.json', 'cistern-evaluation-final.json')), 'REPLAY_CASE_MISSING')
     output = args.output.resolve()
     require(not output.exists() and not output.is_relative_to(bundle), 'REPLAY_OUTPUT_INVALID')
     require('source/simulation/waterleague_sim/engine/coupled_flood.py' in files, 'REPLAY_SOURCE_MISSING')
@@ -125,7 +129,7 @@ def replay(source, case, output, args):
         expected = load(case/'coupled-result.json')
         actual = run_coupled(load(case/'coupled-input.json'), output)
         fields = ('numericalStatus', 'balance', 'evaluationMetrics', 'connectedPumps',
-            'connectedStorage', 'surfaceBasins', 'connectedFacilities', 'initialization', 'networkNumericalProfile',
+            'connectedStorage', 'connectedCistern', 'surfaceBasins', 'connectedFacilities', 'initialization', 'networkNumericalProfile',
             'networkRainfall', 'observedRainfall')
     comparisons = {name: expected.get(name) == actual.get(name) for name in fields}
     native = ['network/network.out']
@@ -139,6 +143,9 @@ def replay(source, case, output, args):
             comparisons[component+'EngineIdentity'] = original_engine == replay_engine
     if 'initialization' in expected:
         native += ['evaluation-initial-state.json', 'evaluation-final-state.json']
+    if 'connectedCistern' in expected:
+        native += ['connected-cistern-design.json', 'cistern-network.inp',
+                   'cistern-evaluation-initial.json', 'cistern-evaluation-final.json']
     native_hashes = {name: {'expected': sha(safe_path(case, name)),
                             'actual': sha(safe_path(output, name))} for name in native}
     matched = all(comparisons.values()) and all(experiment_comparisons.values()) and all(

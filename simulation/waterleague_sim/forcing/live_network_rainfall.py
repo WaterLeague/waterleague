@@ -21,12 +21,16 @@ def validate_facility_binding(model):
     require(not any(k in model for k in ('initialization', 'connectedStorageDesign', 'connectedPumpDesign')),
             'LIVE_NETWORK_DESIGN_BINDING_UNSUPPORTED')
     design = model.get('connectedFacilityDesign')
+    if 'connectedCisternDesign' in model:
+        from ..engine.coupled_cistern import validate
+        validate(model)
     if design is not None:
         require(not any(k in model for k in ('surfaceBasinDesign', 'networkNumericalProfile')),
                 'LIVE_NETWORK_DESIGN_BINDING_UNSUPPORTED')
         from waterleague_sim.engine.connected_facilities import compile_design
         require(model.get('evaluationMetrics') is not None, 'COUPLED_FACILITY_METRICS_REQUIRED')
-        compile_design(model['network']['inputText'].encode(), design)
+        if 'connectedCisternDesign' not in model:
+            compile_design(model['network']['inputText'].encode(), design)
         # 덮개형 RB가 제외한 덮개 강우를 우회시키는 지리 배정 전에는 물량 소실을 허용하지 않는다.
         require(all(row['facilityType'] in ('BIORETENTION', 'INFILTRATION_TRENCH', 'VEGETATIVE_SWALE')
                     for row in design['placements']), 'LIVE_FACILITY_COVER_RAIN_ROUTING_REQUIRED')

@@ -8,6 +8,22 @@ from scripts.replay_coupled_bundle import load, safe_path, main, sha
 
 
 class ReplayBundleValidationTests(unittest.TestCase):
+    def test_cistern_period_state_must_be_in_verified_manifest(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            names = ('coupled-input.json', 'coupled-result.json', 'network/network.out',
+                     'connected-cistern-design.json', 'cistern-network.inp')
+            for name in names:
+                path = root/'case'/name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(json.dumps({'connectedCistern': {}}) if name == 'coupled-result.json' else '{}')
+            manifest = root/'manifest.json'
+            manifest.write_text(json.dumps({'files': {f'case/{name}': sha(root/'case'/name) for name in names}}))
+            args = ['replay', '--bundle', str(root), '--case', 'case',
+                    '--manifest-sha256', sha(manifest), '--output', str(root/'result')]
+            with patch('sys.argv', args), self.assertRaisesRegex(ValueError, 'REPLAY_CASE_MISSING'):
+                main()
+
     def test_traversal_absolute_path_and_symlink_rejected(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory).resolve()

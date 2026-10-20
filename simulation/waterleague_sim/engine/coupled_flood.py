@@ -83,6 +83,9 @@ def _validate(model):
                     and time >= previous and key not in seen and row.get('evidence'), 'COUPLED_FORCING_INVALID')
             previous = time
             seen.add(key)
+    if 'connectedCisternDesign' in model:
+        from .coupled_cistern import validate
+        validate(model)
 
 
 def _balance(network, surface, ports):
@@ -112,6 +115,8 @@ def run_coupled(model, directory):
     source_hash = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
     _validate(model)
     facility_design = None
+    cistern_design, cistern_raw, cistern_summary = None, None, None
+    cistern_origin, cistern_final = None, None
     storage_design, storage_raw, storage_summary = None, None, None
     original_model = model
     basin_design, basin_model = None, None
@@ -122,12 +127,16 @@ def run_coupled(model, directory):
     direct_network = (model.get('observedRainfall', {}).get('schemaVersion') == 2
                       and bool(model.get('networkRainfallTriangles')))
     require('networkObserverPolicy' not in model or direct_network, 'COUPLED_OBSERVER_POLICY_INVALID')
-    if direct_network and 'connectedFacilityDesign' in model:
+    if direct_network and any(k in model for k in ('connectedFacilityDesign', 'connectedCisternDesign')):
         from waterleague_sim.forcing.live_network_rainfall import validate_facility_binding, compile_network
         validate_facility_binding(model)
         # 원 집수 강우를 먼저 결속한 뒤 시설을 배치해 같은 강우 면적과 원본 계보를 유지한다.
         rainfall_network, facility_rainfall = compile_network(model['network'], model['observedRainfall'])
         model = model | {'network': rainfall_network}
+    if 'connectedCisternDesign' in model:
+        from .coupled_cistern import compile as compile_cistern
+        cistern_raw, cistern_design = compile_cistern(original_model, model['network'])
+        model = model | {'network': model['network'] | {'inputText': cistern_raw.decode()}}
     if 'surfaceBasinDesign' in model:
         from waterleague_sim.engine.surface_basin import compile_basin
         model, basin_design = compile_basin(model)
@@ -160,8 +169,8 @@ def run_coupled(model, directory):
         _validate(model)
     if 'connectedFacilityDesign' in model:
         require(model.get('evaluationMetrics') is not None, 'COUPLED_FACILITY_METRICS_REQUIRED')
-        from waterleague_sim.engine.connected_facilities import compile_design
-        raw, facility_design = compile_design(model['network']['inputText'].encode(), model['connectedFacilityDesign'])
+        from .coupled_cistern import facilities
+        raw, facility_design = facilities(model['network']['inputText'].encode(), model['connectedFacilityDesign'], cistern_design)
         model = model | {'network': model['network'] | {'inputText': raw.decode()}}
     require_wind_clock(model['surface'], duration=model['durationSeconds'],
                        rainfall=model.get('observedRainfall'), network=model['network'])
@@ -195,6 +204,9 @@ def run_coupled(model, directory):
     require(not directory.exists(), 'COUPLED_OUTPUT_EXISTS')
     directory.mkdir(parents=True)
     _write(directory / 'coupled-input.json', original_model)
+    if cistern_design is not None:
+        _write(directory / 'connected-cistern-design.json', cistern_design)
+        (directory / 'cistern-network.inp').write_bytes(cistern_raw)
     if basin_design is not None:
         _write(directory / 'surface-basin-design.json', basin_design)
         _write(directory / 'basin-coupled-input.json', basin_model)
@@ -251,7 +263,7 @@ def run_coupled(model, directory):
         stage_times.update(round(t * 1000) for t in evaporation.knots)
     if initialization is not None:
         stage_times.add(initialization.summary['warmupSeconds'] * 1000)
-    if pump_design is not None:
+    if pump_design is not None or cistern_design is not None:
         stage_times.update(metric_spec[k] for k in ('startMilliseconds', 'endMilliseconds'))
     event_times = sorted(set(events) | stage_times | {duration})
     clock, nstate, state = 0, None, None
@@ -268,6 +280,9 @@ def run_coupled(model, directory):
             with EngineProcess('surface_exchange', surface_model, directory / 'surface') as surface:
                 state = surface.call('port_state')
                 nstate = network.info['initial']
+                if cistern_design is not None and metric_spec['startMilliseconds'] == 0:
+                    cistern_origin = nstate
+                    _write(directory / 'cistern-evaluation-initial.json', cistern_origin)
                 if facility_design is not None:
                     expected = {(row['subcatchmentId'], row['swmmId']) for row in facility_design['facilities']}
                     actual = [(row['subcatchmentId'], row['swmmId']) for row in nstate['facilities']]
@@ -330,6 +345,13 @@ def run_coupled(model, directory):
                         applied = surface.call('apply_exchange', transfers)
                         state = surface.call('advance_exchange', step)
                         clock += step
+                        if cistern_design is not None:
+                            if clock == metric_spec['startMilliseconds']:
+                                cistern_origin = network.call('snapshot')
+                                _write(directory / 'cistern-evaluation-initial.json', cistern_origin)
+                            if clock == metric_spec['endMilliseconds']:
+                                cistern_final = network.call('snapshot')
+                                _write(directory / 'cistern-evaluation-final.json', cistern_final)
                         require(math.isclose(state['timeSeconds'], clock / 1000, abs_tol=1e-8, rel_tol=0),
                                 'COUPLED_CLOCK_MISMATCH')
                         balance = _balance(nstate, state, new_ports)
@@ -368,6 +390,14 @@ def run_coupled(model, directory):
                     require(math.isclose(evaluation_balance['surface']['rainfallM3'], expected,
                             abs_tol=1e-8, rel_tol=1e-8), 'OBSERVED_EVALUATION_RAIN_VOLUME_MISMATCH')
                 nresult, sresult = network.call('finish'), surface.call('finish')
+                if cistern_design is not None:
+                    from .connected_storage import result_summary, storage_ledger
+                    require(cistern_origin is not None and cistern_final is not None,
+                            'COUPLED_CISTERN_EVALUATION_BOUNDARY_MISSING')
+                    cistern_summary = result_summary(cistern_design, nresult['initial'], nresult['final'])
+                    cistern_summary['evaluationLedger'] = storage_ledger(cistern_design, cistern_origin, cistern_final)
+                    if cistern_summary['evaluationLedger']['numericalStatus'] != 'PASSED':
+                        cistern_summary['numericalStatus'] = 'FAILED'
                 if storage_design is not None:
                     from waterleague_sim.engine.connected_storage import result_summary
                     storage_summary = result_summary(storage_design, nresult['initial'], nresult['final'],
@@ -378,6 +408,7 @@ def run_coupled(model, directory):
                 passed = (nresult['numericalStatus'] == sresult['numericalStatus'] == 'PASSED'
                           and abs(residual) <= max(1e-8, .01 * scale)
                           and (storage_summary is None or storage_summary['numericalStatus'] == 'PASSED')
+                          and (cistern_summary is None or cistern_summary['numericalStatus'] == 'PASSED')
                           and (evaluation_balance is None or evaluation_balance['numericalStatus'] == 'PASSED'))
                 if observed is not None:
                     expected_rain = observed.summary['expectedSurfaceRainfallM3']
@@ -422,6 +453,8 @@ def run_coupled(model, directory):
                     result['dryExchangeRoundoff'] = state['dryExchangeRoundoff']
                 if storage_summary is not None:
                     result['connectedStorage'] = storage_summary
+                if cistern_summary is not None:
+                    result['connectedCistern'] = cistern_summary
                 if pump_design is not None:
                     from waterleague_sim.engine.coupled_pumps import summary as pump_summary
                     result['connectedPumps'] = pump_summary(pump_design, nresult['pumpOperation'])

@@ -175,9 +175,20 @@ def _verify_connected_facilities(model, network, result, root):
     require(all(name in result['files'] for name in required), 'EVALUATION_FACILITY_ARTIFACT_MISSING')
     detail = result.get('connectedFacilities')
     design = _read(root / required[0])
+    if 'connectedCisternDesign' in model:
+        from ..engine.coupled_cistern import facilities
+        raw, expected = facilities(model['network']['inputText'].encode(),
+            model['connectedFacilityDesign'], _read(root/'connected-cistern-design.json'))
+        require(design == expected and (root/'facility-network.inp').read_bytes() == raw,
+                'EVALUATION_CISTERN_FACILITY_COMPOSITION_MISMATCH')
+        source_design = design.get('sourceDesign', design['design'])
+        source_hash = expected['originalSha256']
+    else:
+        source_design = design['design']
+        source_hash = hashlib.sha256(model['network']['inputText'].encode()).hexdigest()
     require(isinstance(detail, dict) and detail.get('design') == design
-            and design['design'] == model['connectedFacilityDesign']
-            and design['originalSha256'] == hashlib.sha256(model['network']['inputText'].encode()).hexdigest()
+            and source_design == model['connectedFacilityDesign']
+            and design['originalSha256'] == source_hash
             and design['derivedSha256'] == result['files']['facility-network.inp']
             and network['engine'].get('facilityObserverVersion') == 1
             and detail.get('initial') == network['initial']['facilities'] == _read(root / required[2])
@@ -326,6 +337,8 @@ def read_coupled_record(directory, expected_result_sha256, context):
         _verify_surface_policy(model, surface, result, root)
         from .live_rainfall import verify as verify_live_rainfall
         model = verify_live_rainfall(model, network, result, root, _read)
+        from .cistern import verify as verify_cistern
+        model = verify_cistern(original_model, model, network, result, root, _read)
         _verify_connected_facilities(model, network, result, root)
         metrics = result['evaluationMetrics']
         require(metrics['specificationSha256'] == context['metricSpecificationSha256']

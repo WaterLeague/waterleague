@@ -209,7 +209,16 @@ def compile_cistern(raw, design):
     # 원 행 외의 수문 입력·배수 연결과 주석은 유지한다.
     comment = lines[row['line']-1].split(';', 1)
     lines[row['line']-1] = ' '.join(remaining) + (' ;'+comment[1].rstrip('\r\n') if len(comment)>1 else '') + ending
-    for section, rows in added.items():
+    if added.get('CONDUITS') and 'XSECTIONS' in sections:
+        # EPA는 단면을 읽을 때 관종·관로 순번이 필요하므로 새 관로 절을 기존 단면보다 앞에 둔다.
+        index = next(i for i, line in enumerate(lines) if line.split(';', 1)[0].strip().upper() == '[XSECTIONS]')
+        if 'CONDUITS' not in sections:
+            lines[index:index] = ['[CONDUITS]'+ending, ending]
+        else:
+            conduit_index = next(i for i, line in enumerate(lines) if line.split(';', 1)[0].strip().upper() == '[CONDUITS]')
+            require(conduit_index < index, 'CISTERN_SOURCE_SECTION_ORDER_UNSUPPORTED')
+    for section in sorted(added, key=lambda name: name == 'XSECTIONS'):
+        rows = added[section]
         if rows: append_section(lines, section, rows, ending)
     result = ''.join(lines).encode()
     require(len(result) <= 2_000_000, 'CISTERN_INPUT_TOO_LARGE')

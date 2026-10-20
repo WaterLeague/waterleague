@@ -58,6 +58,12 @@ def policy_bundle(root):
 
 
 class PublicSurfaceWorkerTests(unittest.TestCase):
+    def test_research_cistern_does_not_become_public_baseline(self):
+        value = fixture()
+        value['model']['connectedCisternDesign'] = {'schemaVersion': 1}
+        with self.assertRaisesRegex(FloodModelError, 'PUBLIC_SURFACE_FORCING_COMPOSITION_UNSUPPORTED'):
+            request(value, END)
+
     def test_registry_rejects_invalid_geography_and_metadata(self):
         with tempfile.TemporaryDirectory() as temp:
             root=Path(temp).resolve();model,*_=policy_bundle(root/'bundles')

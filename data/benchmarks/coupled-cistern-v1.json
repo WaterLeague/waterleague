@@ -1,0 +1,1026 @@
+{
+  "schemaVersion": 1,
+  "checkedOn": "2026-10-21",
+  "classification": "SYNTHETIC_NETWORK_TERRAIN_WITH_ARCHIVED_OR_EXPLICIT_TEST_RAIN_NOT_SEOUL",
+  "productionPublished": false,
+  "rankingEligible": false,
+  "sourceHashes": {
+    "backend/src/main/resources/evaluation/game-score-policy-v1.json": "baff42292c2f607ffe7d6f49125b62f927b437e8a852747fc05cd3b5dde67528",
+    "docs/02-scientific-validity.md": "2cdf21b33240d0343628c5c952074307aca8ab9aafa2b49f02d4077db0da074f",
+    "docs/09-delivery.md": "5ba9de4bf6d2c210adcbff5ced94fdd2cecac709d0eba291ed081153e28f9922",
+    "scripts/replay_coupled_bundle.py": "06377c71780c8e90eaf3a08f861bd82b5452a0ed0d99409edf885d8f25bc98f3",
+    "simulation/tests/test_coupled_cistern.py": "70a5f2f8dc103aa486d1096962e169cb89e0bf9b7bbcd435cad602b5b6a499ed",
+    "simulation/tests/test_public_surface_worker.py": "de1dadb964b91d491670029cfc70a70f0cfe26483d338119feef57174f3a3768",
+    "simulation/tests/test_replay_coupled_bundle.py": "36445d4228a6d7df3a3a5172d234e7ad4c3ca3d7a4dcd3a7aed38446e2d17c2f",
+    "simulation/waterleague_sim/engine/cistern_network.py": "3bee1a2b78314502cf4da90479c6c9a20ea8e4d68c17ec16509fe9e3b822a2bd",
+    "simulation/waterleague_sim/engine/coupled_cistern.py": "0860b8a4fe389114f5025917fe66b16611f5764fd106a298462ab23cc1641af8",
+    "simulation/waterleague_sim/engine/coupled_flood.py": "526ad47fcf9c0c7812812b9e58ee896372c5fe30e23885fbb4280864a38d2c10",
+    "simulation/waterleague_sim/evaluation/cistern.py": "f718deaf70bd6d60b009095bc67d70609bbb56e76a643db83eb03c55e2bd2f36",
+    "simulation/waterleague_sim/evaluation/coupled_adapter.py": "30af8c98638963c89519656fd073c49d49c7fd90a2e09874a75f3dbadb20182c",
+    "simulation/waterleague_sim/evaluation/live_rainfall.py": "5985de584f8fec41cc51a914c564e60e45482ea7e93459d3341e514e33472b09",
+    "simulation/waterleague_sim/forcing/live_network_rainfall.py": "fb1ce37e43b845e5299d5d5e3ad5b3d81469c2810ec16d8c8ec7b78003bae8e5",
+    "simulation/waterleague_sim/public_surface/recipe.py": "9336358d2b9fba0a2fc30e9f4d9285e8edeab6898c3761ee489ab9bfe6b199e0"
+  },
+  "scope": [
+    "보관 AWS 강우와 명시적 수치 시험 강우의 이용조·관망·지표 결합",
+    "같은 집수구역 LID의 집수/덮개 중복 제외",
+    "전체 실행·부분 평가 창의 수리 원장 대조",
+    "원 요청·강우·이용조·시설 INP 재생성·변조 거부"
+  ],
+  "cases": {
+    "baseline": {
+      "numericalStatus": "PASSED",
+      "networkStatus": "PASSED",
+      "surfaceStatus": "PASSED",
+      "rawMetrics": {
+        "outwardVolumeM3": 1.4094653418761596,
+        "peakOutwardM3s": 0.03198419375599778,
+        "depthAreaTimeM3Hours": 0.022692005887433975
+      },
+      "balance": {
+        "networkExternalInflowM3": 0.038960305575761384,
+        "networkExternalOutflowAndLossM3": 1.4094653418761824,
+        "surfaceExternalNetInflowM3": 0.19999999999997803,
+        "networkStorageM3": 0.015565457052214467,
+        "surfaceStorageM3": 0.8137757259826572,
+        "networkToSurfaceM3": 0.6477913114535819,
+        "surfaceToNetworkM3": 0.0340155854587923,
+        "exchangeCancellationResidualM3": -1.5543122344752192e-15,
+        "balanceResidualM3": -6.891764039995696e-05
+      },
+      "rainfallKind": "ARCHIVED_AWS_RESPONSE",
+      "sourceFiles": {
+        "coupled-input.json": {
+          "path": "tmp/coupled-cistern-v5/baseline/coupled-input.json",
+          "sha256": "3b051716b518fcb1bb4403eb5e2de0cea32f2b7b4ed56109e948bf932615e500"
+        },
+        "coupled-result.json": {
+          "path": "tmp/coupled-cistern-v5/baseline/coupled-result.json",
+          "sha256": "700bd0050e613c65b46425b84f62fe460c12add132afa8ffbb06a515c46cab7c"
+        },
+        "network/network.inp": {
+          "path": "tmp/coupled-cistern-v5/baseline/network/network.inp",
+          "sha256": "d8ce694960bc55f72820b5cfeddfec1c7d65084d3e2786664bdff036703dfe28"
+        },
+        "network/network.out": {
+          "path": "tmp/coupled-cistern-v5/baseline/network/network.out",
+          "sha256": "b64fa93064cfe787f1ad91aee05518e2db7c3c4a92d74c9c4f55c8c8d003f0a4"
+        }
+      }
+    },
+    "cistern": {
+      "numericalStatus": "PASSED",
+      "networkStatus": "PASSED",
+      "surfaceStatus": "PASSED",
+      "rawMetrics": {
+        "outwardVolumeM3": 1.4032076082636904,
+        "peakOutwardM3s": 0.03198419375599778,
+        "depthAreaTimeM3Hours": 0.02269175873679388
+      },
+      "balance": {
+        "networkExternalInflowM3": 0.038960305575761,
+        "networkExternalOutflowAndLossM3": 1.4032076082636697,
+        "surfaceExternalNetInflowM3": 0.1999999999999777,
+        "networkStorageM3": 0.021830262943993713,
+        "surfaceStorageM3": 0.8137677555028006,
+        "networkToSurfaceM3": 0.6477831171739258,
+        "surfaceToNetworkM3": 0.034015361659167874,
+        "exchangeCancellationResidualM3": 1.1102230246251565e-16,
+        "balanceResidualM3": -6.801943981071812e-05
+      },
+      "rainfallKind": "ARCHIVED_AWS_RESPONSE",
+      "sourceFiles": {
+        "coupled-input.json": {
+          "path": "tmp/coupled-cistern-v5/cistern/coupled-input.json",
+          "sha256": "af0edab5301d2dc73fed96c02ba0e38f4fbc4f95bb7004b1880434114c9b7512"
+        },
+        "coupled-result.json": {
+          "path": "tmp/coupled-cistern-v5/cistern/coupled-result.json",
+          "sha256": "5efbf55b8fc319170091681d2be792b1c92ce2e1e2b320b4d3a0b38777f13cf2"
+        },
+        "network/network.inp": {
+          "path": "tmp/coupled-cistern-v5/cistern/network/network.inp",
+          "sha256": "b698107a56e0bec96da01157ae81171b03d2f1b43f02629cf7bc440512d37f71"
+        },
+        "network/network.out": {
+          "path": "tmp/coupled-cistern-v5/cistern/network/network.out",
+          "sha256": "c1e81ecdcbb69bcad422466e5641b8b738f78e299d6473aae4c1b7b15c388e00"
+        },
+        "connected-cistern-design.json": {
+          "path": "tmp/coupled-cistern-v5/cistern/connected-cistern-design.json",
+          "sha256": "bcc88e4e2fd949cec2263705e96918f11390d31a4e534e7077ffebb56ff52367"
+        },
+        "cistern-network.inp": {
+          "path": "tmp/coupled-cistern-v5/cistern/cistern-network.inp",
+          "sha256": "b698107a56e0bec96da01157ae81171b03d2f1b43f02629cf7bc440512d37f71"
+        },
+        "cistern-evaluation-initial.json": {
+          "path": "tmp/coupled-cistern-v5/cistern/cistern-evaluation-initial.json",
+          "sha256": "a84f6bc94b230b43641aa05292f292eb16847f10aa97a9fc8cec1d201e1209f1"
+        },
+        "cistern-evaluation-final.json": {
+          "path": "tmp/coupled-cistern-v5/cistern/cistern-evaluation-final.json",
+          "sha256": "8edca270be7b0c4051ea25af4cb2c1f4d628f2fa4024743662250e50d46bb163"
+        }
+      },
+      "cisternStatus": "PASSED",
+      "evaluationLedger": {
+        "startSeconds": 0.0,
+        "endSeconds": 120.0,
+        "facilities": [
+          {
+            "id": "Cistern",
+            "nodeId": "WLCT_Cistern",
+            "initialStorageM3": 0.0,
+            "inflowM3": 0.007792061115152153,
+            "outflowIncludingFloodingM3": 0.0,
+            "floodingM3": 0.0,
+            "finalStorageM3": 0.0077911934757504174,
+            "capacityM3": 1.4,
+            "balanceResidualM3": 8.67639401735433e-07,
+            "allowedResidualM3": 7.792061115152153e-05,
+            "numericalStatus": "PASSED",
+            "nativeCapacityM3": 1.3998441111864406,
+            "volumeBasis": "EPA_CMS_STORAGE_VOLUME_TO_EXACT_SI_V1",
+            "initialAvailableM3": 1.3998441111864406,
+            "finalAvailableM3": 1.3920529177106902,
+            "reuseM3": null,
+            "reuseStatus": "NOT_CALCULATED_NO_USE_DEMAND",
+            "drainOperation": "GRAVITY_ORIFICE"
+          }
+        ],
+        "scope": "NATIVE_STORAGE_NODE_BALANCE_ALREADY_INCLUDED_IN_NETWORK_ROUTING",
+        "numericalStatus": "PASSED"
+      },
+      "partition": {
+        "hostId": "S1",
+        "captureId": "WLCT_Cistern_C",
+        "originalAreaM2": 100.0,
+        "bypassAreaM2": 80.0,
+        "captureAreaM2": 20.0,
+        "coverAreaM2": 1.0,
+        "originalWidthM": 10.0,
+        "bypassWidthM": 8.0,
+        "captureWidthM": 2.0,
+        "coverRainfallRoute": "BYPASS_CATCHMENT_TO_ORIGINAL_OUTLET",
+        "rainfallCount": 1,
+        "captureBasis": "EXPLICIT_DESIGN_UNIFORM_IMPERVIOUS_PARTITION_NOT_MEASURED_ROOF"
+      }
+    },
+    "replay": {
+      "numericalStatus": "PASSED",
+      "networkStatus": "PASSED",
+      "surfaceStatus": "PASSED",
+      "rawMetrics": {
+        "outwardVolumeM3": 1.4032076082636904,
+        "peakOutwardM3s": 0.03198419375599778,
+        "depthAreaTimeM3Hours": 0.02269175873679388
+      },
+      "balance": {
+        "networkExternalInflowM3": 0.038960305575761,
+        "networkExternalOutflowAndLossM3": 1.4032076082636697,
+        "surfaceExternalNetInflowM3": 0.1999999999999777,
+        "networkStorageM3": 0.021830262943993713,
+        "surfaceStorageM3": 0.8137677555028006,
+        "networkToSurfaceM3": 0.6477831171739258,
+        "surfaceToNetworkM3": 0.034015361659167874,
+        "exchangeCancellationResidualM3": 1.1102230246251565e-16,
+        "balanceResidualM3": -6.801943981071812e-05
+      },
+      "rainfallKind": "ARCHIVED_AWS_RESPONSE",
+      "sourceFiles": {
+        "coupled-input.json": {
+          "path": "tmp/coupled-cistern-v5/replay/coupled-input.json",
+          "sha256": "af0edab5301d2dc73fed96c02ba0e38f4fbc4f95bb7004b1880434114c9b7512"
+        },
+        "coupled-result.json": {
+          "path": "tmp/coupled-cistern-v5/replay/coupled-result.json",
+          "sha256": "e717ce2ed203abeee41167fc49c70f252d872ba166f560bf3243d0f4ac362ed2"
+        },
+        "network/network.inp": {
+          "path": "tmp/coupled-cistern-v5/replay/network/network.inp",
+          "sha256": "b698107a56e0bec96da01157ae81171b03d2f1b43f02629cf7bc440512d37f71"
+        },
+        "network/network.out": {
+          "path": "tmp/coupled-cistern-v5/replay/network/network.out",
+          "sha256": "c1e81ecdcbb69bcad422466e5641b8b738f78e299d6473aae4c1b7b15c388e00"
+        },
+        "connected-cistern-design.json": {
+          "path": "tmp/coupled-cistern-v5/replay/connected-cistern-design.json",
+          "sha256": "bcc88e4e2fd949cec2263705e96918f11390d31a4e534e7077ffebb56ff52367"
+        },
+        "cistern-network.inp": {
+          "path": "tmp/coupled-cistern-v5/replay/cistern-network.inp",
+          "sha256": "b698107a56e0bec96da01157ae81171b03d2f1b43f02629cf7bc440512d37f71"
+        },
+        "cistern-evaluation-initial.json": {
+          "path": "tmp/coupled-cistern-v5/replay/cistern-evaluation-initial.json",
+          "sha256": "a84f6bc94b230b43641aa05292f292eb16847f10aa97a9fc8cec1d201e1209f1"
+        },
+        "cistern-evaluation-final.json": {
+          "path": "tmp/coupled-cistern-v5/replay/cistern-evaluation-final.json",
+          "sha256": "8edca270be7b0c4051ea25af4cb2c1f4d628f2fa4024743662250e50d46bb163"
+        }
+      },
+      "cisternStatus": "PASSED",
+      "evaluationLedger": {
+        "startSeconds": 0.0,
+        "endSeconds": 120.0,
+        "facilities": [
+          {
+            "id": "Cistern",
+            "nodeId": "WLCT_Cistern",
+            "initialStorageM3": 0.0,
+            "inflowM3": 0.007792061115152153,
+            "outflowIncludingFloodingM3": 0.0,
+            "floodingM3": 0.0,
+            "finalStorageM3": 0.0077911934757504174,
+            "capacityM3": 1.4,
+            "balanceResidualM3": 8.67639401735433e-07,
+            "allowedResidualM3": 7.792061115152153e-05,
+            "numericalStatus": "PASSED",
+            "nativeCapacityM3": 1.3998441111864406,
+            "volumeBasis": "EPA_CMS_STORAGE_VOLUME_TO_EXACT_SI_V1",
+            "initialAvailableM3": 1.3998441111864406,
+            "finalAvailableM3": 1.3920529177106902,
+            "reuseM3": null,
+            "reuseStatus": "NOT_CALCULATED_NO_USE_DEMAND",
+            "drainOperation": "GRAVITY_ORIFICE"
+          }
+        ],
+        "scope": "NATIVE_STORAGE_NODE_BALANCE_ALREADY_INCLUDED_IN_NETWORK_ROUTING",
+        "numericalStatus": "PASSED"
+      },
+      "partition": {
+        "hostId": "S1",
+        "captureId": "WLCT_Cistern_C",
+        "originalAreaM2": 100.0,
+        "bypassAreaM2": 80.0,
+        "captureAreaM2": 20.0,
+        "coverAreaM2": 1.0,
+        "originalWidthM": 10.0,
+        "bypassWidthM": 8.0,
+        "captureWidthM": 2.0,
+        "coverRainfallRoute": "BYPASS_CATCHMENT_TO_ORIGINAL_OUTLET",
+        "rainfallCount": 1,
+        "captureBasis": "EXPLICIT_DESIGN_UNIFORM_IMPERVIOUS_PARTITION_NOT_MEASURED_ROOF"
+      }
+    },
+    "shared": {
+      "numericalStatus": "PASSED",
+      "networkStatus": "PASSED",
+      "surfaceStatus": "PASSED",
+      "rawMetrics": {
+        "outwardVolumeM3": 1.3967011154079625,
+        "peakOutwardM3s": 0.03198419375599778,
+        "depthAreaTimeM3Hours": 0.022691507042559674
+      },
+      "balance": {
+        "networkExternalInflowM3": 0.030778641439668,
+        "networkExternalOutflowAndLossM3": 1.3967011154079632,
+        "surfaceExternalNetInflowM3": 0.19999999999997758,
+        "networkStorageM3": 0.020163251250727134,
+        "surfaceStorageM3": 0.8137596442932188,
+        "networkToSurfaceM3": 0.6477745141841205,
+        "surfaceToNetworkM3": 0.034014869878988434,
+        "exchangeCancellationResidualM3": 5.551115123125783e-16,
+        "balanceResidualM3": -6.806781734858269e-05
+      },
+      "rainfallKind": "ARCHIVED_AWS_RESPONSE",
+      "sourceFiles": {
+        "coupled-input.json": {
+          "path": "tmp/coupled-cistern-v5/shared/coupled-input.json",
+          "sha256": "6cf2cc25c0017aa3b8bf02ee3ddf02073a65382b4ef3e9a2b0c9df704cc7551b"
+        },
+        "coupled-result.json": {
+          "path": "tmp/coupled-cistern-v5/shared/coupled-result.json",
+          "sha256": "f10f15cfbb891d44b76c8f1e7a6c7ba40309e90c628d7152bb2e9821d15561dc"
+        },
+        "network/network.inp": {
+          "path": "tmp/coupled-cistern-v5/shared/network/network.inp",
+          "sha256": "2993046695d109ec0e0f7373826d8d0f6e67e6234869d1fae63e2c8c6035ea99"
+        },
+        "network/network.out": {
+          "path": "tmp/coupled-cistern-v5/shared/network/network.out",
+          "sha256": "1da35cbf93c60cbb2bfa09038abeaf2b2f517327abe20f379b69204e6bd489a6"
+        },
+        "connected-cistern-design.json": {
+          "path": "tmp/coupled-cistern-v5/shared/connected-cistern-design.json",
+          "sha256": "96171eeaf4c120686b49c6487dd2dd4eee79869c18b3336e38c9cae6d395da5a"
+        },
+        "cistern-network.inp": {
+          "path": "tmp/coupled-cistern-v5/shared/cistern-network.inp",
+          "sha256": "b745c3e1f8444d39adc14ee6d8c9cca7aa18eb0c24c84a9029355c760182ccc5"
+        },
+        "cistern-evaluation-initial.json": {
+          "path": "tmp/coupled-cistern-v5/shared/cistern-evaluation-initial.json",
+          "sha256": "194993775d85f99c69895cd34d5ab8ad686e1cd55a1008bd72c8be8c3734ad65"
+        },
+        "cistern-evaluation-final.json": {
+          "path": "tmp/coupled-cistern-v5/shared/cistern-evaluation-final.json",
+          "sha256": "346b01fe8e8ed6c646aa00dbbb75f6d3c5d00ccd8a9b2529dee5a0a3c96ad3bf"
+        }
+      },
+      "cisternStatus": "PASSED",
+      "evaluationLedger": {
+        "startSeconds": 0.0,
+        "endSeconds": 120.0,
+        "facilities": [
+          {
+            "id": "Cistern",
+            "nodeId": "WLCT_Cistern",
+            "initialStorageM3": 0.0,
+            "inflowM3": 0.007792061115152153,
+            "outflowIncludingFloodingM3": 0.0,
+            "floodingM3": 0.0,
+            "finalStorageM3": 0.0077911934757504174,
+            "capacityM3": 1.4,
+            "balanceResidualM3": 8.67639401735433e-07,
+            "allowedResidualM3": 7.792061115152153e-05,
+            "numericalStatus": "PASSED",
+            "nativeCapacityM3": 1.3998441111864406,
+            "volumeBasis": "EPA_CMS_STORAGE_VOLUME_TO_EXACT_SI_V1",
+            "initialAvailableM3": 1.3998441111864406,
+            "finalAvailableM3": 1.3920529177106902,
+            "reuseM3": null,
+            "reuseStatus": "NOT_CALCULATED_NO_USE_DEMAND",
+            "drainOperation": "GRAVITY_ORIFICE"
+          }
+        ],
+        "scope": "NATIVE_STORAGE_NODE_BALANCE_ALREADY_INCLUDED_IN_NETWORK_ROUTING",
+        "numericalStatus": "PASSED"
+      },
+      "partition": {
+        "hostId": "S1",
+        "captureId": "WLCT_Cistern_C",
+        "originalAreaM2": 100.0,
+        "bypassAreaM2": 80.0,
+        "captureAreaM2": 20.0,
+        "coverAreaM2": 1.0,
+        "originalWidthM": 10.0,
+        "bypassWidthM": 7.9,
+        "captureWidthM": 2.0,
+        "coverRainfallRoute": "DEDICATED_COVER_CATCHMENT_TO_ORIGINAL_OUTLET",
+        "rainfallCount": 1,
+        "captureBasis": "EXPLICIT_DESIGN_UNIFORM_IMPERVIOUS_PARTITION_NOT_MEASURED_ROOF",
+        "coverId": "WLCT_Cistern_R",
+        "coverWidthM": 0.1,
+        "imperviousBypassId": "S1",
+        "originalImperviousAreaM2": 100.0,
+        "preservedPerviousAreaM2": 0.0,
+        "imperviousBypassAreaM2": 79.0,
+        "imperviousBypassWidthM": 7.9,
+        "widthBasis": "PRESERVE_SWMM_ALPHA_WIDTH_PER_SURFACE_AREA"
+      }
+    },
+    "closed-window": {
+      "numericalStatus": "PASSED",
+      "networkStatus": "PASSED",
+      "surfaceStatus": "PASSED",
+      "rawMetrics": {
+        "outwardVolumeM3": 0.6650353254444806,
+        "peakOutwardM3s": 0.01845976372794502,
+        "depthAreaTimeM3Hours": 0.01152198272908207
+      },
+      "balance": {
+        "networkExternalInflowM3": 0.038960305575761,
+        "networkExternalOutflowAndLossM3": 1.4032076082636697,
+        "surfaceExternalNetInflowM3": 0.1999999999999777,
+        "networkStorageM3": 0.32179685819823334,
+        "surfaceStorageM3": 0.8137677555028006,
+        "networkToSurfaceM3": 0.6477831171739258,
+        "surfaceToNetworkM3": 0.034015361659167874,
+        "exchangeCancellationResidualM3": 1.1102230246251565e-16,
+        "balanceResidualM3": -6.801943981293856e-05
+      },
+      "rainfallKind": "ARCHIVED_AWS_RESPONSE",
+      "sourceFiles": {
+        "coupled-input.json": {
+          "path": "tmp/coupled-cistern-v5/closed-window/coupled-input.json",
+          "sha256": "7eff29908f3b3d4b257886cfbaa4c13e71f64c39ac2090209cbce75d68e1445c"
+        },
+        "coupled-result.json": {
+          "path": "tmp/coupled-cistern-v5/closed-window/coupled-result.json",
+          "sha256": "2861719524988bed721be0c741344edb923c4ccd3fa9e4639b06dae339b9d087"
+        },
+        "network/network.inp": {
+          "path": "tmp/coupled-cistern-v5/closed-window/network/network.inp",
+          "sha256": "151f5fc535e24d7a261ef36cd976bb60e8f94fa6b659b30152f85392aedd887c"
+        },
+        "network/network.out": {
+          "path": "tmp/coupled-cistern-v5/closed-window/network/network.out",
+          "sha256": "b5be054322505d45481ae93675b8c34052aed9930738a1455cca78239c92949d"
+        },
+        "connected-cistern-design.json": {
+          "path": "tmp/coupled-cistern-v5/closed-window/connected-cistern-design.json",
+          "sha256": "4241078abd98ebdf57ac6d753604b3cfb52ea7546f6cf2a42585436bf9f84d96"
+        },
+        "cistern-network.inp": {
+          "path": "tmp/coupled-cistern-v5/closed-window/cistern-network.inp",
+          "sha256": "151f5fc535e24d7a261ef36cd976bb60e8f94fa6b659b30152f85392aedd887c"
+        },
+        "cistern-evaluation-initial.json": {
+          "path": "tmp/coupled-cistern-v5/closed-window/cistern-evaluation-initial.json",
+          "sha256": "a9775e9a95766d730c807550d2f98c8342a39004d39eee96d0ee48f536bc31cb"
+        },
+        "cistern-evaluation-final.json": {
+          "path": "tmp/coupled-cistern-v5/closed-window/cistern-evaluation-final.json",
+          "sha256": "35f24f214236ada33ea83e50b3338e73a0f7bbd0597f825cb0df4025938fc680"
+        }
+      },
+      "cisternStatus": "PASSED",
+      "evaluationLedger": {
+        "startSeconds": 30.0,
+        "endSeconds": 90.0,
+        "facilities": [
+          {
+            "id": "Cistern",
+            "nodeId": "WLCT_Cistern",
+            "initialStorageM3": 0.3001327976960764,
+            "inflowM3": 0.003123432601072784,
+            "outflowIncludingFloodingM3": 0.0,
+            "floodingM3": 0.0,
+            "finalStorageM3": 0.30325588250557317,
+            "capacityM3": 1.4,
+            "balanceResidualM3": 3.477915760385919e-07,
+            "allowedResidualM3": 0.003032562302971492,
+            "numericalStatus": "PASSED",
+            "nativeCapacityM3": 1.3998441111864406,
+            "volumeBasis": "EPA_CMS_STORAGE_VOLUME_TO_EXACT_SI_V1",
+            "initialAvailableM3": 1.0997113134903642,
+            "finalAvailableM3": 1.0965882286808675,
+            "reuseM3": null,
+            "reuseStatus": "NOT_CALCULATED_NO_USE_DEMAND",
+            "drainOperation": "CLOSED_NO_WITHDRAWAL"
+          }
+        ],
+        "scope": "NATIVE_STORAGE_NODE_BALANCE_ALREADY_INCLUDED_IN_NETWORK_ROUTING",
+        "numericalStatus": "PASSED"
+      },
+      "partition": {
+        "hostId": "S1",
+        "captureId": "WLCT_Cistern_C",
+        "originalAreaM2": 100.0,
+        "bypassAreaM2": 80.0,
+        "captureAreaM2": 20.0,
+        "coverAreaM2": 1.0,
+        "originalWidthM": 10.0,
+        "bypassWidthM": 8.0,
+        "captureWidthM": 2.0,
+        "coverRainfallRoute": "BYPASS_CATCHMENT_TO_ORIGINAL_OUTLET",
+        "rainfallCount": 1,
+        "captureBasis": "EXPLICIT_DESIGN_UNIFORM_IMPERVIOUS_PARTITION_NOT_MEASURED_ROOF"
+      }
+    },
+    "pipes-dry-network": {
+      "numericalStatus": "FAILED",
+      "networkStatus": "FAILED",
+      "surfaceStatus": "PASSED",
+      "rawMetrics": {
+        "outwardVolumeM3": 0.01965736346665169,
+        "peakOutwardM3s": 0.0006109292349768757,
+        "depthAreaTimeM3Hours": 0.0024774087280053205
+      },
+      "balance": {
+        "networkExternalInflowM3": 0.03896030557576086,
+        "networkExternalOutflowAndLossM3": 0.019657363466651905,
+        "surfaceExternalNetInflowM3": 0.19999999999999218,
+        "networkStorageM3": 0.0236401530591563,
+        "surfaceStorageM3": 0.19705115199755707,
+        "networkToSurfaceM3": 0.0,
+        "surfaceToNetworkM3": 0.0029488479902966694,
+        "exchangeCancellationResidualM3": 0.0,
+        "balanceResidualM3": -0.0013784869601431993
+      },
+      "rainfallKind": "ARCHIVED_AWS_RESPONSE",
+      "sourceFiles": {
+        "coupled-input.json": {
+          "path": "tmp/coupled-cistern-v5/pipes-dry-network/coupled-input.json",
+          "sha256": "d79154267d003725d497bebf069b95af4b52a840310642377979bf1dcaecc413"
+        },
+        "coupled-result.json": {
+          "path": "tmp/coupled-cistern-v5/pipes-dry-network/coupled-result.json",
+          "sha256": "2a84b1992f0aef7329419e09ffa79bae97fdccce04bd55fb06f0ce9eedc01251"
+        },
+        "network/network.inp": {
+          "path": "tmp/coupled-cistern-v5/pipes-dry-network/network/network.inp",
+          "sha256": "49ef148c8bd65087d7f56ccd2b9d2786db42aee85ff88c2bc45d4c8d7eb3b166"
+        },
+        "network/network.out": {
+          "path": "tmp/coupled-cistern-v5/pipes-dry-network/network/network.out",
+          "sha256": "15500461d095a6e824fa1cb83d1848f0c443ddd493a01116ac608ee23092e677"
+        },
+        "connected-cistern-design.json": {
+          "path": "tmp/coupled-cistern-v5/pipes-dry-network/connected-cistern-design.json",
+          "sha256": "cd453c9cf5c6da209f526ececde0f12599818eb9680829254366b69ea2b5ca54"
+        },
+        "cistern-network.inp": {
+          "path": "tmp/coupled-cistern-v5/pipes-dry-network/cistern-network.inp",
+          "sha256": "49ef148c8bd65087d7f56ccd2b9d2786db42aee85ff88c2bc45d4c8d7eb3b166"
+        },
+        "cistern-evaluation-initial.json": {
+          "path": "tmp/coupled-cistern-v5/pipes-dry-network/cistern-evaluation-initial.json",
+          "sha256": "f0f323742772726fcf00efb44d0b7788bd618caf38d8d1d36212226946ccd90a"
+        },
+        "cistern-evaluation-final.json": {
+          "path": "tmp/coupled-cistern-v5/pipes-dry-network/cistern-evaluation-final.json",
+          "sha256": "928511b4f4c02b8a6b20be3839eaafedb36cebe197a8c5100f89f2a9693488e0"
+        }
+      },
+      "cisternStatus": "FAILED",
+      "evaluationLedger": {
+        "startSeconds": 0.0,
+        "endSeconds": 120.0,
+        "facilities": [
+          {
+            "id": "Cistern",
+            "nodeId": "WLCT_Cistern",
+            "initialStorageM3": 0.0,
+            "inflowM3": 0.0015577733913872975,
+            "outflowIncludingFloodingM3": 0.0,
+            "floodingM3": 0.0,
+            "finalStorageM3": 0.0013289083630755798,
+            "capacityM3": 1.4,
+            "balanceResidualM3": 0.00022886502831171774,
+            "allowedResidualM3": 1.5577733913872976e-05,
+            "numericalStatus": "FAILED",
+            "nativeCapacityM3": 1.3998441111864406,
+            "volumeBasis": "EPA_CMS_STORAGE_VOLUME_TO_EXACT_SI_V1",
+            "initialAvailableM3": 1.3998441111864406,
+            "finalAvailableM3": 1.398515202823365,
+            "reuseM3": null,
+            "reuseStatus": "NOT_CALCULATED_NO_USE_DEMAND",
+            "drainOperation": "GRAVITY_ORIFICE"
+          }
+        ],
+        "inletPipe": {
+          "nodeId": "WLCT_Cistern_U",
+          "linkId": "WLCT_Cistern_I",
+          "initialDepthM": 0.0,
+          "finalDepthM": 0.023923895232431464,
+          "floodingM3": 0.0,
+          "numericalStatus": "PASSED",
+          "scope": "UNCONNECTED_INLET_FLOODING_ALREADY_INCLUDED_IN_NETWORK"
+        },
+        "outletPipes": {
+          "drain": {
+            "nodeId": "WLCT_Cistern_DJ",
+            "linkId": "WLCT_Cistern_DC",
+            "receiverNodeId": "TANK",
+            "initialDepthM": 0.0,
+            "finalDepthM": 0.0015364009792068034,
+            "floodingM3": 0.0,
+            "numericalStatus": "PASSED",
+            "scope": "UNCONNECTED_OUTLET_FLOODING_ALREADY_INCLUDED_IN_NETWORK"
+          },
+          "overflow": {
+            "nodeId": "WLCT_Cistern_OJ",
+            "linkId": "WLCT_Cistern_OC",
+            "receiverNodeId": "TANK",
+            "initialDepthM": 0.0,
+            "finalDepthM": 0.0015364009792068034,
+            "floodingM3": 0.0,
+            "numericalStatus": "PASSED",
+            "scope": "UNCONNECTED_OUTLET_FLOODING_ALREADY_INCLUDED_IN_NETWORK"
+          }
+        },
+        "scope": "NATIVE_STORAGE_NODE_BALANCE_ALREADY_INCLUDED_IN_NETWORK_ROUTING",
+        "numericalStatus": "FAILED"
+      },
+      "partition": {
+        "hostId": "S1",
+        "captureId": "WLCT_Cistern_C",
+        "originalAreaM2": 100.0,
+        "bypassAreaM2": 80.0,
+        "captureAreaM2": 20.0,
+        "coverAreaM2": 1.0,
+        "originalWidthM": 10.0,
+        "bypassWidthM": 8.0,
+        "captureWidthM": 2.0,
+        "coverRainfallRoute": "BYPASS_CATCHMENT_TO_ORIGINAL_OUTLET",
+        "rainfallCount": 1,
+        "captureBasis": "EXPLICIT_DESIGN_UNIFORM_IMPERVIOUS_PARTITION_NOT_MEASURED_ROOF"
+      }
+    },
+    "mixed-shared": {
+      "numericalStatus": "PASSED",
+      "networkStatus": "PASSED",
+      "surfaceStatus": "PASSED",
+      "rawMetrics": {
+        "outwardVolumeM3": 1.3926666450264231,
+        "peakOutwardM3s": 0.03198419375599778,
+        "depthAreaTimeM3Hours": 0.022691379316564116
+      },
+      "balance": {
+        "networkExternalInflowM3": 0.02686014535240694,
+        "networkExternalOutflowAndLossM3": 1.3926666450264453,
+        "surfaceExternalNetInflowM3": 0.19999999999997814,
+        "networkStorageM3": 0.020283191680298296,
+        "surfaceStorageM3": 0.8137555250442158,
+        "networkToSurfaceM3": 0.6477702805922734,
+        "surfaceToNetworkM3": 0.034014755536238395,
+        "exchangeCancellationResidualM3": 9.992007221626409e-16,
+        "balanceResidualM3": -6.791470365963281e-05
+      },
+      "rainfallKind": "ARCHIVED_AWS_RESPONSE",
+      "sourceFiles": {
+        "coupled-input.json": {
+          "path": "tmp/coupled-cistern-v5/mixed-shared/coupled-input.json",
+          "sha256": "a75dc883af0391ac9b479d662247d55d4dd261b2d20dbb91774cc5720e79407b"
+        },
+        "coupled-result.json": {
+          "path": "tmp/coupled-cistern-v5/mixed-shared/coupled-result.json",
+          "sha256": "a3051ba2f4fc8732e62c31de17a5db91f175f49597404095ecf96230f23e51d4"
+        },
+        "network/network.inp": {
+          "path": "tmp/coupled-cistern-v5/mixed-shared/network/network.inp",
+          "sha256": "be743f4decb9b0303609fbf03dd707f913e0d8e11405c38179aacf73095841d4"
+        },
+        "network/network.out": {
+          "path": "tmp/coupled-cistern-v5/mixed-shared/network/network.out",
+          "sha256": "dcb6793b9ee5239f14a33381812f374f44c981830fca40b54a519c74042d768b"
+        },
+        "connected-cistern-design.json": {
+          "path": "tmp/coupled-cistern-v5/mixed-shared/connected-cistern-design.json",
+          "sha256": "a76160229ee237dc8cdf72f17b483e6393e5bd8a2824e56bbd449bb9434bd231"
+        },
+        "cistern-network.inp": {
+          "path": "tmp/coupled-cistern-v5/mixed-shared/cistern-network.inp",
+          "sha256": "e7bffda91d9f1029a754c9b99ebb58f234512f1c07923b7976c00df14be7cf3f"
+        },
+        "cistern-evaluation-initial.json": {
+          "path": "tmp/coupled-cistern-v5/mixed-shared/cistern-evaluation-initial.json",
+          "sha256": "a587a2a93a09f3eaa92c3fe317e5974730342e491510c5b48195f968d46af90d"
+        },
+        "cistern-evaluation-final.json": {
+          "path": "tmp/coupled-cistern-v5/mixed-shared/cistern-evaluation-final.json",
+          "sha256": "48c7a6d6d9ede1f447efc13dbb1222bb9acdf62a606d43a325c2558f4e52f8ce"
+        }
+      },
+      "cisternStatus": "PASSED",
+      "evaluationLedger": {
+        "startSeconds": 0.0,
+        "endSeconds": 120.0,
+        "facilities": [
+          {
+            "id": "Cistern",
+            "nodeId": "WLCT_Cistern",
+            "initialStorageM3": 0.0,
+            "inflowM3": 0.009103930689659893,
+            "outflowIncludingFloodingM3": 0.0,
+            "floodingM3": 0.0,
+            "finalStorageM3": 0.009102916974692813,
+            "capacityM3": 1.4,
+            "balanceResidualM3": 1.013714967079693e-06,
+            "allowedResidualM3": 9.103930689659893e-05,
+            "numericalStatus": "PASSED",
+            "nativeCapacityM3": 1.3998441111864406,
+            "volumeBasis": "EPA_CMS_STORAGE_VOLUME_TO_EXACT_SI_V1",
+            "initialAvailableM3": 1.3998441111864406,
+            "finalAvailableM3": 1.3907411942117478,
+            "reuseM3": null,
+            "reuseStatus": "NOT_CALCULATED_NO_USE_DEMAND",
+            "drainOperation": "GRAVITY_ORIFICE"
+          }
+        ],
+        "scope": "NATIVE_STORAGE_NODE_BALANCE_ALREADY_INCLUDED_IN_NETWORK_ROUTING",
+        "numericalStatus": "PASSED"
+      },
+      "partition": {
+        "hostId": "S1",
+        "captureId": "WLCT_Cistern_C",
+        "originalAreaM2": 100.0,
+        "bypassAreaM2": 80.0,
+        "captureAreaM2": 20.0,
+        "coverAreaM2": 1.0,
+        "originalWidthM": 10.0,
+        "bypassWidthM": null,
+        "captureWidthM": 2.5,
+        "coverRainfallRoute": "DEDICATED_COVER_CATCHMENT_TO_ORIGINAL_OUTLET",
+        "rainfallCount": 1,
+        "captureBasis": "EXPLICIT_DESIGN_UNIFORM_IMPERVIOUS_PARTITION_NOT_MEASURED_ROOF",
+        "imperviousBypassId": "WLCT_Cistern_B",
+        "originalImperviousPercent": 80.0,
+        "originalImperviousAreaM2": 80.0,
+        "preservedPerviousAreaM2": 20.0,
+        "imperviousBypassAreaM2": 59.0,
+        "perviousWidthM": 10.0,
+        "imperviousBypassWidthM": 7.375,
+        "widthBasis": "PRESERVE_SWMM_ALPHA_WIDTH_PER_SURFACE_AREA",
+        "coverId": "WLCT_Cistern_R",
+        "coverWidthM": 0.125
+      }
+    },
+    "synthetic-rain": {
+      "numericalStatus": "PASSED",
+      "networkStatus": "PASSED",
+      "surfaceStatus": "PASSED",
+      "rawMetrics": {
+        "outwardVolumeM3": 2.4173322017973287,
+        "peakOutwardM3s": 0.03198419375599778,
+        "depthAreaTimeM3Hours": 0.020732571566660207
+      },
+      "balance": {
+        "networkExternalInflowM3": 1.7169712424265835,
+        "networkExternalOutflowAndLossM3": 2.417332201797312,
+        "surfaceExternalNetInflowM3": -9.89438093460656e-17,
+        "networkStorageM3": 0.6640251161663271,
+        "surfaceStorageM3": 0.6354027618617114,
+        "networkToSurfaceM3": 0.6635909936079728,
+        "surfaceToNetworkM3": 0.028188231746290524,
+        "exchangeCancellationResidualM3": 0.0,
+        "balanceResidualM3": -1.1535703851817125e-05
+      },
+      "rainfallKind": "EXPLICIT_NUMERICAL_TEST_RAIN",
+      "sourceFiles": {
+        "coupled-input.json": {
+          "path": "tmp/coupled-cistern-v5/synthetic-rain/coupled-input.json",
+          "sha256": "10f3ff91b625293dbb9f1be10f505be0da1a3b912eb65fa204b85aa6cd5c318d"
+        },
+        "coupled-result.json": {
+          "path": "tmp/coupled-cistern-v5/synthetic-rain/coupled-result.json",
+          "sha256": "2f776d4ab7502073e9afd169ae23c5fe2881f054591716de6c67647a86792b3b"
+        },
+        "network/network.inp": {
+          "path": "tmp/coupled-cistern-v5/synthetic-rain/network/network.inp",
+          "sha256": "61d03e42b2b59d86f41002a9d704b68fb2bb55c34bca9127cf8a5f32d6e21f4f"
+        },
+        "network/network.out": {
+          "path": "tmp/coupled-cistern-v5/synthetic-rain/network/network.out",
+          "sha256": "f7e38412f757ef3e5bcd135f6809235e57b58633f672c95e01988e34e8ed00a5"
+        },
+        "connected-cistern-design.json": {
+          "path": "tmp/coupled-cistern-v5/synthetic-rain/connected-cistern-design.json",
+          "sha256": "df061f4e73663c323008145c9075843e639b1eb19e0876fdca83aecbb7b704e0"
+        },
+        "cistern-network.inp": {
+          "path": "tmp/coupled-cistern-v5/synthetic-rain/cistern-network.inp",
+          "sha256": "61d03e42b2b59d86f41002a9d704b68fb2bb55c34bca9127cf8a5f32d6e21f4f"
+        },
+        "cistern-evaluation-initial.json": {
+          "path": "tmp/coupled-cistern-v5/synthetic-rain/cistern-evaluation-initial.json",
+          "sha256": "eda1eed0983fef9088128403a4e64233d6e73b84292442b35b46e1259c9cfe15"
+        },
+        "cistern-evaluation-final.json": {
+          "path": "tmp/coupled-cistern-v5/synthetic-rain/cistern-evaluation-final.json",
+          "sha256": "09fb9eb3cfe33bc33416f882d4c73d7365d3de56d3649515112ccc0cfc799cc1"
+        }
+      },
+      "cisternStatus": "PASSED",
+      "evaluationLedger": {
+        "startSeconds": 0.0,
+        "endSeconds": 120.0,
+        "facilities": [
+          {
+            "id": "Cistern",
+            "nodeId": "WLCT_Cistern",
+            "initialStorageM3": 0.0,
+            "inflowM3": 0.34339424848531797,
+            "outflowIncludingFloodingM3": 0.0001899868525132396,
+            "floodingM3": 0.0,
+            "finalStorageM3": 0.3431662143252334,
+            "capacityM3": 1.4,
+            "balanceResidualM3": 3.804730757128727e-05,
+            "allowedResidualM3": 0.00343394248485318,
+            "numericalStatus": "PASSED",
+            "nativeCapacityM3": 1.3998441111864406,
+            "volumeBasis": "EPA_CMS_STORAGE_VOLUME_TO_EXACT_SI_V1",
+            "initialAvailableM3": 1.3998441111864406,
+            "finalAvailableM3": 1.0566778968612072,
+            "reuseM3": null,
+            "reuseStatus": "NOT_CALCULATED_NO_USE_DEMAND",
+            "drainOperation": "GRAVITY_ORIFICE"
+          }
+        ],
+        "scope": "NATIVE_STORAGE_NODE_BALANCE_ALREADY_INCLUDED_IN_NETWORK_ROUTING",
+        "numericalStatus": "PASSED"
+      },
+      "partition": {
+        "hostId": "S1",
+        "captureId": "WLCT_Cistern_C",
+        "originalAreaM2": 100.0,
+        "bypassAreaM2": 80.0,
+        "captureAreaM2": 20.0,
+        "coverAreaM2": 1.0,
+        "originalWidthM": 10.0,
+        "bypassWidthM": 8.0,
+        "captureWidthM": 2.0,
+        "coverRainfallRoute": "BYPASS_CATCHMENT_TO_ORIGINAL_OUTLET",
+        "rainfallCount": 1,
+        "captureBasis": "EXPLICIT_DESIGN_UNIFORM_IMPERVIOUS_PARTITION_NOT_MEASURED_ROOF"
+      }
+    }
+  },
+  "verification": {
+    "path": "tmp/coupled-cistern-v5/verification.json",
+    "sha256": "bcb74b4a7616faea244f579c2e9eb5fa239af829c267bcc18eedcac514e4e0a7"
+  },
+  "tests": [
+    {
+      "suite": "관련 계산·평가·재현 회귀",
+      "tests": 43,
+      "status": "PASSED",
+      "log": {
+        "path": "tmp/coupled-cistern-regression-v1.log",
+        "sha256": "d51375d6cc6eee240bccdbcaaf98aff3381a5df3c93b7a8a728096b45e37665d"
+      }
+    },
+    {
+      "suite": "보관 파일·공개 게시 경계",
+      "tests": 7,
+      "status": "PASSED",
+      "log": {
+        "path": "tmp/coupled-cistern-boundary-v2.log",
+        "sha256": "fbd8a559f720292b1a26948093d66810f93ae58120726e82879479f51fb55d52"
+      }
+    }
+  ],
+  "backendPackage": {
+    "status": "PASSED",
+    "log": {
+      "path": "tmp/coupled-cistern-backend-package-v2.log",
+      "sha256": "310775a0f129d189faff622a40302aacfdb9fa703d31a7824bfa490e032f41c4"
+    }
+  },
+  "bundle": {
+    "path": "tmp/coupled-cistern-bundle-v1/manifest.json",
+    "sha256": "ddf8be5ecb7dd91b777f653d33be2a74a12f88568148cadef9401aeea144bf31"
+  },
+  "independentReplays": {
+    "shared": {
+      "schemaVersion": 1,
+      "status": "MATCHED",
+      "source": "VERIFIED_ARCHIVED_CODE_BINARY_FORCING_ONLY",
+      "sourceManifestSha256": "ddf8be5ecb7dd91b777f653d33be2a74a12f88568148cadef9401aeea144bf31",
+      "case": "shared",
+      "originalNumericalStatus": "PASSED",
+      "replayedNumericalStatus": "PASSED",
+      "fields": {
+        "numericalStatus": true,
+        "balance": true,
+        "evaluationMetrics": true,
+        "connectedPumps": true,
+        "connectedStorage": true,
+        "connectedCistern": true,
+        "surfaceBasins": true,
+        "connectedFacilities": true,
+        "initialization": true,
+        "networkNumericalProfile": true,
+        "networkRainfall": true,
+        "observedRainfall": true,
+        "networkEngineIdentity": true,
+        "surfaceEngineIdentity": true
+      },
+      "files": {
+        "network/network.out": {
+          "expected": "1da35cbf93c60cbb2bfa09038abeaf2b2f517327abe20f379b69204e6bd489a6",
+          "actual": "1da35cbf93c60cbb2bfa09038abeaf2b2f517327abe20f379b69204e6bd489a6"
+        },
+        "rainfall-network.inp": {
+          "expected": "d8ce694960bc55f72820b5cfeddfec1c7d65084d3e2786664bdff036703dfe28",
+          "actual": "d8ce694960bc55f72820b5cfeddfec1c7d65084d3e2786664bdff036703dfe28"
+        },
+        "network/network.inp": {
+          "expected": "2993046695d109ec0e0f7373826d8d0f6e67e6234869d1fae63e2c8c6035ea99",
+          "actual": "2993046695d109ec0e0f7373826d8d0f6e67e6234869d1fae63e2c8c6035ea99"
+        },
+        "network-frames.jsonl": {
+          "expected": "c09bc88549e7de91babfaf421b9f5e56ed9a4b7b67f5af3853bd819c6522c704",
+          "actual": "c09bc88549e7de91babfaf421b9f5e56ed9a4b7b67f5af3853bd819c6522c704"
+        },
+        "exchange-ledger.jsonl": {
+          "expected": "1cfd32ed01b38661d3585ef46357db074ec0aa410348d5aba35076c2a7b02e60",
+          "actual": "1cfd32ed01b38661d3585ef46357db074ec0aa410348d5aba35076c2a7b02e60"
+        },
+        "connected-cistern-design.json": {
+          "expected": "96171eeaf4c120686b49c6487dd2dd4eee79869c18b3336e38c9cae6d395da5a",
+          "actual": "96171eeaf4c120686b49c6487dd2dd4eee79869c18b3336e38c9cae6d395da5a"
+        },
+        "cistern-network.inp": {
+          "expected": "b745c3e1f8444d39adc14ee6d8c9cca7aa18eb0c24c84a9029355c760182ccc5",
+          "actual": "b745c3e1f8444d39adc14ee6d8c9cca7aa18eb0c24c84a9029355c760182ccc5"
+        },
+        "cistern-evaluation-initial.json": {
+          "expected": "194993775d85f99c69895cd34d5ab8ad686e1cd55a1008bd72c8be8c3734ad65",
+          "actual": "194993775d85f99c69895cd34d5ab8ad686e1cd55a1008bd72c8be8c3734ad65"
+        },
+        "cistern-evaluation-final.json": {
+          "expected": "346b01fe8e8ed6c646aa00dbbb75f6d3c5d00ccd8a9b2529dee5a0a3c96ad3bf",
+          "actual": "346b01fe8e8ed6c646aa00dbbb75f6d3c5d00ccd8a9b2529dee5a0a3c96ad3bf"
+        }
+      }
+    },
+    "failed-pipes": {
+      "schemaVersion": 1,
+      "status": "MATCHED",
+      "source": "VERIFIED_ARCHIVED_CODE_BINARY_FORCING_ONLY",
+      "sourceManifestSha256": "ddf8be5ecb7dd91b777f653d33be2a74a12f88568148cadef9401aeea144bf31",
+      "case": "pipes-dry-network",
+      "originalNumericalStatus": "FAILED",
+      "replayedNumericalStatus": "FAILED",
+      "fields": {
+        "numericalStatus": true,
+        "balance": true,
+        "evaluationMetrics": true,
+        "connectedPumps": true,
+        "connectedStorage": true,
+        "connectedCistern": true,
+        "surfaceBasins": true,
+        "connectedFacilities": true,
+        "initialization": true,
+        "networkNumericalProfile": true,
+        "networkRainfall": true,
+        "observedRainfall": true,
+        "networkEngineIdentity": true,
+        "surfaceEngineIdentity": true
+      },
+      "files": {
+        "network/network.out": {
+          "expected": "15500461d095a6e824fa1cb83d1848f0c443ddd493a01116ac608ee23092e677",
+          "actual": "15500461d095a6e824fa1cb83d1848f0c443ddd493a01116ac608ee23092e677"
+        },
+        "rainfall-network.inp": {
+          "expected": "8fad853584ca914648222621823473f01cc3230578a3bde6a3a0f00eaf10e592",
+          "actual": "8fad853584ca914648222621823473f01cc3230578a3bde6a3a0f00eaf10e592"
+        },
+        "network/network.inp": {
+          "expected": "49ef148c8bd65087d7f56ccd2b9d2786db42aee85ff88c2bc45d4c8d7eb3b166",
+          "actual": "49ef148c8bd65087d7f56ccd2b9d2786db42aee85ff88c2bc45d4c8d7eb3b166"
+        },
+        "network-frames.jsonl": {
+          "expected": "0fe98e19e2006ebd353215bfd18fa4249fb44f841e1a357100c4e847a64ef129",
+          "actual": "0fe98e19e2006ebd353215bfd18fa4249fb44f841e1a357100c4e847a64ef129"
+        },
+        "exchange-ledger.jsonl": {
+          "expected": "ac2b092de68774865ca10bc6ddeba603f13e3b0ce3b08305bf55e422423f23aa",
+          "actual": "ac2b092de68774865ca10bc6ddeba603f13e3b0ce3b08305bf55e422423f23aa"
+        },
+        "connected-cistern-design.json": {
+          "expected": "cd453c9cf5c6da209f526ececde0f12599818eb9680829254366b69ea2b5ca54",
+          "actual": "cd453c9cf5c6da209f526ececde0f12599818eb9680829254366b69ea2b5ca54"
+        },
+        "cistern-network.inp": {
+          "expected": "49ef148c8bd65087d7f56ccd2b9d2786db42aee85ff88c2bc45d4c8d7eb3b166",
+          "actual": "49ef148c8bd65087d7f56ccd2b9d2786db42aee85ff88c2bc45d4c8d7eb3b166"
+        },
+        "cistern-evaluation-initial.json": {
+          "expected": "f0f323742772726fcf00efb44d0b7788bd618caf38d8d1d36212226946ccd90a",
+          "actual": "f0f323742772726fcf00efb44d0b7788bd618caf38d8d1d36212226946ccd90a"
+        },
+        "cistern-evaluation-final.json": {
+          "expected": "928511b4f4c02b8a6b20be3839eaafedb36cebe197a8c5100f89f2a9693488e0",
+          "actual": "928511b4f4c02b8a6b20be3839eaafedb36cebe197a8c5100f89f2a9693488e0"
+        }
+      }
+    }
+  },
+  "runtime": {
+    "apiPid": 61098,
+    "workerPid": 61117,
+    "health": "UP",
+    "scorePolicySha256": "baff42292c2f607ffe7d6f49125b62f927b437e8a852747fc05cd3b5dde67528",
+    "sourceCountsUnchanged": true,
+    "before": [
+      13,
+      2,
+      0,
+      0,
+      0
+    ],
+    "after": [
+      13,
+      2,
+      0,
+      0,
+      0
+    ],
+    "publicCisternCatalogPreserved": true,
+    "jarSha256": "104dad5d40211fe155f1a8a923085cecb291241a40a35a36bd8a3a0a150145f8"
+  },
+  "retainedDiagnostics": [
+    {
+      "kind": "접속관의 초기 하류 역압·미연결 월류",
+      "file": {
+        "path": "tmp/coupled-cistern-v3/pipes/coupled-failure.json",
+        "sha256": "b587c630a32a874440b889208dd8c3d6ca39365266f72dde98fc222df7b9eb31"
+      },
+      "status": "FAILED"
+    },
+    {
+      "kind": "작은 유입량 접속관 수지 초과",
+      "case": "pipes-dry-network",
+      "status": "FAILED",
+      "routingVolumeResidualM3": -0.00137848697228167
+    }
+  ],
+  "limitations": [
+    "합성 관망·지표의 계산 경로 검증이며 서울 현장 배수 연결·침수 재현 아님",
+    "지붕·배관 실제 위치·유효 공사비·일반 지도 설치/예산/순위는 미확정",
+    "초기 관망 역압과 접속관 건습 수치 실패는 기준 완화 없이 보존",
+    "원 삼각형 내 균질 집수 분할이며 실제 지붕 경계 생성 없음",
+    "미연결 이용조·입구·출구 월류는 성공 결과를 게시하지 않음",
+    "기존 선행 초기화·다른 지하/지표 저류·펌프·수치 프로필의 추가 조합 미지원",
+    "수요가 없어 재이용량 null 유지",
+    "프론트·브라우저·화면 성능 검증 범위 아님"
+  ]
+}

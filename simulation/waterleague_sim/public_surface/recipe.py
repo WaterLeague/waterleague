@@ -28,7 +28,7 @@ def request(recipe, cutoff):
             and surface.get('frameOutput',{}).get('type')=='NATIVE_CENTROID_FLOAT64',
             'PUBLIC_SURFACE_INPUT_EVIDENCE_REQUIRED')
     require(not any(k in model for k in ('observedRainfall','initialization','surfaceRainfall',
-        'connectedFacilityDesign','connectedStorageDesign','connectedPumpDesign')),
+        'connectedFacilityDesign','connectedStorageDesign','connectedPumpDesign','connectedCisternDesign')),
         'PUBLIC_SURFACE_FORCING_COMPOSITION_UNSUPPORTED')
     _,sections=records(network['inputText'].encode())
     options={r['tokens'][0].upper():r['tokens'][1] for r in sections['OPTIONS'] if len(r['tokens'])==2}
