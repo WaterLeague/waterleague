@@ -73,6 +73,8 @@ jobs:
         working-directory: frontend
       - run: pnpm format:check && pnpm test && pnpm build && pnpm audit --audit-level=high
         working-directory: frontend
+      - name: 평면·3D 화면의 배포 로딩 경계 검증
+        run: node scripts/verify_frontend_loading.mjs tmp/frontend-loading-ci.json
   data:
     strategy:
       fail-fast: false

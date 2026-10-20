@@ -6532,6 +6532,168 @@
         "초기 생성 속도는 사례별 개선/증가가 섞이며 전체 첫 로드 개선으로 일반화하지 않음",
         "같은 시야가 한도를 넘으면 보관하지 못한 일부 도로는 다시 계산"
       ]
+    },
+    "initialModuleLoading": {
+      "checkedAt": "2026-10-20",
+      "status": "PASSED",
+      "scope": "PRODUCTION_MODULE_GRAPH_NOT_NETWORK_TIMING_OR_BROWSER_FPS",
+      "initialDefinition": "HTML_ENTRY_STATIC_IMPORT_CLOSURE_EXCLUDING_DYNAMIC_MAP_PRELOAD",
+      "nodeVersion": "v22.13.1",
+      "gzipMethod": "NODE_ZLIB_GZIP_SYNC_DEFAULT_LEVEL_6_NOT_SERVER_TRANSFER_MEASUREMENT",
+      "baselineCommit": "ae538ca5c267b40b78645f301e7ccfa058649217",
+      "reproduce": "node scripts/verify_frontend_loading.mjs tmp/frontend-loading-check.json",
+      "before": {
+        "entryStaticJsBytes": 1649046,
+        "entryStaticGzipBytes": 477157,
+        "allApplicationJsBytes": 1763761,
+        "allApplicationGzipBytes": 515373,
+        "entryRendererModules": [
+          "frontend/node_modules/.pnpm/three@0.186.1/node_modules/three/build/three.module.js",
+          "frontend/node_modules/.pnpm/@react-three+fiber@9.8.2_@types+react@19.3.0_react-dom@19.3.1_react@19.3.1__react@19.3.1_three@0.186.1/node_modules/@react-three/fiber/dist/events-e51d7528.esm.js"
+        ],
+        "files": [
+          {
+            "file": "assets/index-DnveG-q5.js",
+            "bytes": 1648320,
+            "gzipBytes": 476728,
+            "sha256": "00d0bf9101a743331a8b10042c32caad8b1ef9252ce1378af851a6b2291bb66c",
+            "initial": true
+          },
+          {
+            "file": "assets/CityScene-B2RmOWJr.js",
+            "bytes": 114715,
+            "gzipBytes": 38216,
+            "sha256": "01a3df517ddbf554ec4bc6c73179f95731969cee7c57c1ee92e46628aa88911f",
+            "initial": false
+          },
+          {
+            "file": "assets/rolldown-runtime-XKyaHtl9.js",
+            "bytes": 726,
+            "gzipBytes": 429,
+            "sha256": "548d1dbf321e7d2ae804fcc158b588706a7c52f8ca175de1490c6ccb4dbe55b7",
+            "initial": true
+          }
+        ]
+      },
+      "after": {
+        "entryStaticJsBytes": 1095871,
+        "entryStaticGzipBytes": 329711,
+        "allApplicationJsBytes": 1768644,
+        "allApplicationGzipBytes": 516644,
+        "entryRendererModules": [],
+        "files": [
+          {
+            "file": "assets/index-Cvg1Scoz.js",
+            "bytes": 1095145,
+            "gzipBytes": 329282,
+            "sha256": "3ba766d9cef3f17fe5a34e3506ba423367030f31f56cfc2da0ce1a8f7eb693e7",
+            "initial": true
+          },
+          {
+            "file": "assets/CityScene-DJL8pTN9.js",
+            "bytes": 672773,
+            "gzipBytes": 186933,
+            "sha256": "71e4c533966fcd750d774819893f63f8dabf7203b796bf0946d18f8502cc61d1",
+            "initial": false
+          },
+          {
+            "file": "assets/rolldown-runtime-XKyaHtl9.js",
+            "bytes": 726,
+            "gzipBytes": 429,
+            "sha256": "548d1dbf321e7d2ae804fcc158b588706a7c52f8ca175de1490c6ccb4dbe55b7",
+            "initial": true
+          }
+        ]
+      },
+      "entryStaticJsReductionPercent": 33.545,
+      "entryStaticGzipReductionPercent": 30.901,
+      "layers": [
+        {
+          "plan": "city/view/CityCoveragePlan.tsx",
+          "scene": "city/view/CityCoverage.tsx",
+          "planInitiallyAvailable": true,
+          "sceneDeferred": true
+        },
+        {
+          "plan": "infrastructure/view/InfrastructureFootprintsPlan.tsx",
+          "scene": "infrastructure/view/InfrastructureFootprints.tsx",
+          "planInitiallyAvailable": true,
+          "sceneDeferred": true
+        },
+        {
+          "plan": "floodtrace/view/FloodTracePlan.tsx",
+          "scene": "floodtrace/view/FloodTraceLayer.tsx",
+          "planInitiallyAvailable": true,
+          "sceneDeferred": true
+        },
+        {
+          "plan": "surface/view/SurfacePlan.tsx",
+          "scene": "surface/view/SurfaceLayer.tsx",
+          "planInitiallyAvailable": true,
+          "sceneDeferred": true
+        }
+      ],
+      "unchangedRenderingBodies": [
+        {
+          "plan": "city/view/CityCoveragePlan.tsx",
+          "scene": "city/view/CityCoverage.tsx",
+          "planBodySha256": "24e386f5b11e90efeff34b416fd4434eddd15fbf94f98296b0bb4c0365f7cacd",
+          "sceneBodySha256": "e64ea95531892d5112b602c5c2ac6e86a443d7a1f83857e10313038e00385b91",
+          "bodiesByteIdentical": true
+        },
+        {
+          "plan": "infrastructure/view/InfrastructureFootprintsPlan.tsx",
+          "scene": "infrastructure/view/InfrastructureFootprints.tsx",
+          "planBodySha256": "db5705643748fdb581f0d86b420f49a5408d5c9eaf7612b069bd597368a0bc2f",
+          "sceneBodySha256": "09427199a1b8166077deb85f68aa4286116be70be3c6bd7fd7c546bb40d6049a",
+          "bodiesByteIdentical": true
+        },
+        {
+          "plan": "floodtrace/view/FloodTracePlan.tsx",
+          "scene": "floodtrace/view/FloodTraceLayer.tsx",
+          "planBodySha256": "23f83b22c9ede159a76137a77bb7b1b1ad398b3f9a174a98d1a1b94c340f0974",
+          "sceneBodySha256": "f98829880f1954e4d2d2463aa953d12f05fb2aa24cdac6d5ab6cba249b7dd8e0",
+          "bodiesByteIdentical": true
+        },
+        {
+          "plan": "surface/view/SurfacePlan.tsx",
+          "scene": "surface/view/SurfaceLayer.tsx",
+          "planBodySha256": "3233c92ca23ca30000334758355050013c2ee92f7af2389b8f797b0641907544",
+          "sceneBodySha256": "1e231ac92267d806bc6ba747b6decd0df9ed7141a7723e524053d58fe00c1e24",
+          "bodiesByteIdentical": true
+        }
+      ],
+      "codeSha256": {
+        "frontend/src/domains/city/view/CityCoverage.tsx": "26f36d493c483a88ba4637bccbacfa18d45431bb2b4d67de67d97cfd8ccd61df",
+        "frontend/src/domains/city/view/CityCoveragePlan.tsx": "590fef6134fff879b0f5204c670b0bdce9f7c7dabb328a1c9fb89fcdedbf15b9",
+        "frontend/src/domains/city/view/CityExplorer.tsx": "60e6a29fd96b1e92a5a42cfc5c5cbcd670a70e952349eacf560853ba81ddab51",
+        "frontend/src/domains/city/view/CityPlan.tsx": "ba899753ab646cf99f7af0f400036967af9b06bd2cc4dc07f33bdf99e92afc49",
+        "frontend/src/domains/floodtrace/view/FloodTraceLayer.tsx": "8e2b6378c002da8ac462803cd756bdda1f8e51b075ee62660675363c259e0c9b",
+        "frontend/src/domains/floodtrace/view/FloodTracePlan.tsx": "246bf36e52fbe8e59371df1a2da8f1c4c4e904b75640b59462649d2d470b492f",
+        "frontend/src/domains/infrastructure/view/InfrastructureFootprints.tsx": "5d0d76657b2c6198f93f777742c5543c559790a47de05dbd79bc7b4133b18bf2",
+        "frontend/src/domains/infrastructure/view/InfrastructureFootprintsPlan.tsx": "3099c7174804908384875001d011eccfcbee6221b3c1d1a3621540dcfa5ec265",
+        "frontend/src/domains/surface/view/SurfaceLayer.tsx": "cab1ccd8a0578eed830f3dea648f781a62e906cad0d77f63321a8cd4f4202cc9",
+        "frontend/src/domains/surface/view/SurfacePlan.tsx": "8eb64509b6f8fbbba4af08687e2c647b096dde182f3ef14a3508b523f11963ef",
+        "scripts/verify_frontend_loading.mjs": "4e3bcf1f81f63cae8cdee8bb0bd4f027214eb4f627865ea6c6f0c8d64b27c337"
+      },
+      "beforeReport": "tmp/frontend-loading-before-v1.json",
+      "beforeReportSha256": "a45f366e6286471fa1e1146ee9e90065cea00061c1feaf637614308e64024cb8",
+      "afterReport": "tmp/frontend-loading-final-v2.json",
+      "afterReportSha256": "1451247a0638fd7224e824f7b2aedc0177870f2dad8166b2a0d3a87e084f84c4",
+      "frontendTests": {
+        "files": 131,
+        "tests": 442,
+        "log": "tmp/frontend-loading-tests-v2.log"
+      },
+      "productionBuild": {
+        "passed": true,
+        "log": "tmp/frontend-loading-build-v2.log"
+      },
+      "limitations": [
+        "정적 진입 의존성 크기이며 지도 진입의 동적 선취득을 제외한 값",
+        "3D 포함 전체 JavaScript·Worker·공간 자료 다운로드 감소율이 아님",
+        "실제 브라우저 로딩 시간·메모리·FPS 미측정"
+      ]
     }
   },
   "frontendTests": {

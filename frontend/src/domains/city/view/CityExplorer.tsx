@@ -89,7 +89,8 @@ import type { CisternSiteRole } from '../../installation/service/cisternPlanServ
 import { observedWind, waterWeather } from '../../surface/service/waterAppearanceService';
 import { useArchivedWaterWeather } from '../../rainfall/controller/useArchivedWaterWeather';
 import { archivedWindAt } from '../../rainfall/service/archivedWeatherService';
-const CityScene = lazy(() => import('./CityScene'));
+const loadCityScene = () => import('./CityScene');
+const CityScene = lazy(loadCityScene);
 type PlayProps = {
   account: Account | null;
   onLogin: () => void;
@@ -1685,6 +1686,10 @@ export function CityExplorer({
   initialDistrictId,
 }: PlayProps) {
   const { city, regions, error, retry } = useCity();
+  useEffect(() => {
+    // 도시 기본 자료를 기다리는 동안 3D 코드도 받아 첫 장면의 추가 대기를 줄인다.
+    void loadCityScene().catch(() => {});
+  }, []);
   if (!city)
     return (
       <main className="empty-state" role={error ? 'alert' : 'status'}>
@@ -1712,4 +1717,4 @@ export function CityExplorer({
     />
   );
 }
-import { CityCoverageNotice } from './CityCoverage';
+import { CityCoverageNotice } from './CityCoveragePlan';

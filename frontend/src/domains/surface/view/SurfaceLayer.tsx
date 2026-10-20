@@ -1,9 +1,7 @@
-import { memo, useEffect, useMemo, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import * as THREE from 'three';
 import type { SurfaceFrame, SurfaceMetric } from '../entity/surface';
 import type { Terrain } from '../../terrain/entity/terrain';
-import { surfacePlanPaths } from '../service/surfaceGeometry';
-import { surfaceDirectionPaths } from '../service/surfaceDirections';
 import { WaterMaterial } from './WaterMaterial';
 import { useWaterObject } from './WaterScene';
 import { calmWater, type WaterWeather } from '../service/waterAppearanceService';
@@ -79,27 +77,4 @@ export const SurfaceLayer = memo(function SurfaceLayer({
       <WaterMaterial weather={weather} />
     </mesh>
   ) : null;
-});
-export const SurfacePlan = memo(function SurfacePlan({
-  frame,
-  metric,
-}: {
-  frame: SurfaceFrame | null;
-  metric: SurfaceMetric;
-}) {
-  const paths = useMemo(() => (frame ? surfacePlanPaths(frame, metric) : []), [frame, metric]);
-  const arrows = useMemo(
-    () => (frame && metric === 'speed' ? surfaceDirectionPaths(frame) : []),
-    [frame, metric]
-  );
-  return (
-    <g pointerEvents="none" opacity={0.72}>
-      {paths.map((p) => (
-        <path key={p.color} d={p.path} fill={p.color} />
-      ))}
-      {arrows.map((p) => (
-        <path key={p.triangleId} data-flow-direction={p.triangleId} d={p.path} fill={p.color} />
-      ))}
-    </g>
-  );
 });

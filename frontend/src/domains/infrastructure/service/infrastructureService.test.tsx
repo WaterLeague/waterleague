@@ -9,7 +9,7 @@ import {
   infrastructureMarkers,
 } from './infrastructureService';
 import { InfrastructureEvidence } from '../view/InfrastructurePanel';
-import { InfrastructureFootprintsPlan } from '../view/InfrastructureFootprints';
+import { InfrastructureFootprintsPlan } from '../view/InfrastructureFootprintsPlan';
 const catalog = infrastructureDto.parse({
   ...raw,
   sha256: 'a'.repeat(64),
