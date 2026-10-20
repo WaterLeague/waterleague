@@ -1,0 +1,264 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-20",
+  "classification": "PUBLIC_LABORATORY_FIXED_MATERIAL_COMPARISON_NOT_FIELD_MAINTENANCE_PREDICTION",
+  "sourceHashes": {
+    "backend/src/main/java/io/waterleague/facility/repository/FacilityRepository.java": "50be855c601fec84508e789d4185f7de404bbd05cee5ba45eb89cb852be22678",
+    "backend/src/main/java/io/waterleague/historical/dto/HistoricalRequest.java": "4c2b7e21246fce00471d28de9144ba1ed5c9bdec2f91b407ced8ed52fba207b6",
+    "backend/src/main/java/io/waterleague/historical/service/HistoricalArtifactService.java": "64812c320220842b5e2ac1887bcc101f0346505d4e9cde08d766406b90942734",
+    "backend/src/main/java/io/waterleague/historical/service/HistoricalService.java": "5164f5cd4b3ef702b9c039110b3c6918fb0527bcf490561c4cdf726188cc5884",
+    "backend/src/main/resources/evaluation/game-score-policy-v1.json": "991e4398731dad5efdb99000b565b2dde9c26be8c3f43722b48c885dd83776ac",
+    "backend/src/main/resources/facilities/pavement-maintenance-v1.json": "a9166ec93e6a6af4c460028f438c33fc67af0a1675502491e04f248c8e7dfd88",
+    "backend/src/test/java/io/waterleague/HistoricalPavementReadbackTests.java": "8e260f5ae20fd359eddf2bdb2b914175edfc538410a4fbbda2ab9ac8d0c7c513",
+    "backend/src/test/java/io/waterleague/HistoricalWorkflowTests.java": "32ea1c6b7d24a6beb704dc0054127cde4f4743c5a4f468d02074e28beccacae2",
+    "data/manifests/kwra-pavement-clogging-2025.json": "2d3eb1e56e7e935c0d2b78f2cc93b13d22d87bd672949744adf8c6534e42ee19",
+    "deploy/web.Dockerfile": "ae308a9574bf25b712fc3dff961f2313544e8df9b36782cc9eeeb2a589641a26",
+    "frontend/src/domains/catalog/service/dataSourceService.ts": "5bdcd17a4d2e114c72504cd045f7ca1b0cf408e315a7529184799ed5bf280f22",
+    "frontend/src/domains/facility/dto/pavementMaintenanceDto.ts": "d9aa5ade7840f366a3c10f3fdeb351c2d286cc2a0c380ed35046351914782dbc",
+    "frontend/src/domains/facility/view/PavementMaintenanceEvidence.test.tsx": "43262d8cf8af65550110230213a493f031a8e51bb0c5e6a1ac6ac9ad8842d590",
+    "frontend/src/domains/facility/view/PavementMaintenanceEvidence.tsx": "15dc53b1311d5fa259e4207ddf31c79ee9d8b2fe232a18fdbc631522c4f8cba8",
+    "frontend/src/domains/facility/view/fixtures/pavementMaintenance-public-v1.json": "40ba48d0965757bd6fae40386b337284e75da2d25ef29bb7e691175a290d2447",
+    "frontend/src/domains/historical/controller/useHistorical.ts": "cb984da97c92bbc3551043f6bab6f4d961c7be3c10026201efde8e622b11dfc6",
+    "frontend/src/domains/historical/entity/historical.ts": "af974cf1318f065a7f1206f0dd636713291df3707f87fc42eded0d32a3111360",
+    "frontend/src/domains/historical/repository/historicalRepository.test.ts": "91c2e02672d812ed0ba3bdf05aa2dfe53dc2223ac23508bc0fe7b845a32f2169",
+    "frontend/src/domains/historical/repository/historicalRepository.ts": "834bf99d32ec9986c8a57ab0eb5ea248bf262ecb8dd1004da6189e17bad0d0d5",
+    "frontend/src/domains/historical/view/HistoricalPanel.tsx": "ab355aed3f527be6263339c2648d3eed688c8cbd81382115a441a127f7a52d64",
+    "scripts/verify_league_postgres.py": "b8c9b6fa0e2cad020c004c7c86512ab13fbdc16f30f8753f88da99a434323cd9",
+    "scripts/verify_pavement_maintenance.py": "fd2bf6342ffd284b1aaed7a5e977288785c74bc5aeb4a09f9b79585301eab330",
+    "simulation/integration/test_historical.py": "31c2f435e39726827ca8806f0cc6220052fcc842e1e38a7388d1f6d5f6f8f1a2",
+    "simulation/tests/test_pavement_maintenance.py": "a7090df3ee5bf1c909af2ea19c989304a439536d5aa37fcca0ab34f7be221be7",
+    "simulation/waterleague_sim/engine/continuous.py": "7aded98e499c9bd157f4c5f3e0256c5576023334c9937727ff4d483a28e87016",
+    "simulation/waterleague_sim/engine/pavement_maintenance.py": "45a47c9a33b26a98f7653c1c1c43f059204802b99db6436666052a3001c52207",
+    "simulation/waterleague_sim/evaluation/score_policy.py": "89651975a147199c032623b45e15b5c45480ab1ac711dbcc487b40a60b26ae86",
+    "simulation/waterleague_sim/run_historical_job.py": "f345906789da6048b6176c0adaa892fc223165d21f0a9227ed77b5ab14acb767"
+  },
+  "publicObservedRainfallReplay": {
+    "candidateId": "C00071b7edb4724da5d9c0e3b",
+    "cases": [
+      {
+        "evaluationBalanceResidualM3": -0.0061704097382850875,
+        "id": "FRESH",
+        "metrics": {
+          "contributionM3": 8.216342087371313,
+          "evaluatedDischargeM3": 1.368081134324848,
+          "evaluatedEvaporationM3": 0.013306375069791931,
+          "evaluatedInfiltrationM3": 8.225615501973905,
+          "initialLidStorageM3": 23.811772671091223,
+          "initialPavementDepthMm": 0.0,
+          "initialSoilMoisture": null,
+          "initialStorageDepthMm": 163.45374250205305,
+          "initialStorageM3": 23.811772671091223,
+          "initialSurfaceDepthMm": 0.0,
+          "peakDischargeMean1MinM3s": 0.0015783607704719352
+        },
+        "runoffContinuityPercent": 9.999999974752427e-07
+      },
+      {
+        "evaluationBalanceResidualM3": -0.0061704097382850875,
+        "id": "DUST_96_G",
+        "metrics": {
+          "contributionM3": 8.216342087371313,
+          "evaluatedDischargeM3": 1.368081134324848,
+          "evaluatedEvaporationM3": 0.013306375069791931,
+          "evaluatedInfiltrationM3": 8.225615501973905,
+          "initialLidStorageM3": 23.811772671091223,
+          "initialPavementDepthMm": 0.0,
+          "initialSoilMoisture": null,
+          "initialStorageDepthMm": 163.45374250205305,
+          "initialStorageM3": 23.811772671091223,
+          "initialSurfaceDepthMm": 0.0,
+          "peakDischargeMean1MinM3s": 0.0015783607704719352
+        },
+        "runoffContinuityPercent": 9.999999974752427e-07
+      },
+      {
+        "evaluationBalanceResidualM3": -0.0061704097382850875,
+        "id": "DUST_192_G",
+        "metrics": {
+          "contributionM3": 8.216342087371313,
+          "evaluatedDischargeM3": 1.368081134324848,
+          "evaluatedEvaporationM3": 0.013306375069791931,
+          "evaluatedInfiltrationM3": 8.225615501973905,
+          "initialLidStorageM3": 23.811772671091223,
+          "initialPavementDepthMm": 0.0,
+          "initialSoilMoisture": null,
+          "initialStorageDepthMm": 163.45374250205305,
+          "initialStorageM3": 23.811772671091223,
+          "initialSurfaceDepthMm": 0.0,
+          "peakDischargeMean1MinM3s": 0.0015783607704719352
+        },
+        "runoffContinuityPercent": 9.999999974752427e-07
+      }
+    ],
+    "catalogSha256": "a9166ec93e6a6af4c460028f438c33fc67af0a1675502491e04f248c8e7dfd88",
+    "commonConditionsPreserved": true,
+    "districtId": "11200",
+    "eventId": "seoul-20220808",
+    "fieldValidated": false,
+    "geometrySha256": "239e87c9458166bc3221e0bf1fb18ffa43d1b6280c5185d13601854c340edc32",
+    "nativeFiles": {
+      "DUST_192_G.inp": "d9cca91416133b1c7732a7a347d02f312d9fa92686fbebbb7561d71376ef9436",
+      "DUST_192_G.out": "28e58db58936ab3214268d8166db02bcbb044cc02e33ba49bce162465eaa04de",
+      "DUST_96_G.inp": "87c5793442b5221fbf75cdf3a3dd9fab2f533cc655a032c272be4ce0b71eb761",
+      "DUST_96_G.out": "28e58db58936ab3214268d8166db02bcbb044cc02e33ba49bce162465eaa04de",
+      "FRESH.inp": "259d0be4335de52087f1c13e92e58afd48fe8dc5ff29ca88ba7054d2c7d5c93b",
+      "FRESH.out": "28e58db58936ab3214268d8166db02bcbb044cc02e33ba49bce162465eaa04de",
+      "baseline.inp": "24ae6f8f989f8f2ac75962b0a00a0a5c90855cabce760ffe0f0990e4600d327b",
+      "baseline.out": "736ad3b910a9794d7aa30eb6c2f97c0125358ac31af34d309bc6f72e150bbf36"
+    },
+    "nativeReplayByteIdentical": true,
+    "ordinaryDesignInputUnchanged": true,
+    "rainfallModelSha256": "4766435318b68bcf399d072bb2bbcf9a0079d2f7df21cd984d774e578fa58aa0",
+    "rankingEligible": false,
+    "resultSha256": "73c82d54dd779e1a5c937d0e28af88c3870fe7f34ab3b2d95c38739a885ea45b",
+    "schemaVersion": 1,
+    "serviceIntegrated": false,
+    "sourcePdfSha256": "67216d02adb3c1c632da7585756df150620d50b886a8cab2ff40d4113e3fe9df",
+    "sourcePolicySha256": "991e4398731dad5efdb99000b565b2dde9c26be8c3f43722b48c885dd83776ac",
+    "status": "PASS",
+    "verifierSha256": "fd2bf6342ffd284b1aaed7a5e977288785c74bc5aeb4a09f9b79585301eab330"
+  },
+  "serviceIntegration": {
+    "classification": "ACTUAL_SERVER_FROZEN_REQUEST_AND_WORKER_RESULT",
+    "serverRequestsPassed": 20,
+    "workerTestsPassed": 7,
+    "authenticatedHttpTestsPassed": 1,
+    "ordinaryDesignNativeFilesUnchanged": true,
+    "ordinaryMetricsUnchanged": true,
+    "actualComparison": {
+      "cellId": "C3a0c4eb7c4e0d209fa26b2d3",
+      "areaM2": 1.0,
+      "evaluationStart": "2022-08-08T09:00:00+00:00",
+      "evaluationEnd": "2022-08-08T14:59:00+00:00",
+      "status": "SUCCEEDED",
+      "inputSha256": "1716276fd50b3c43a5625c3fc51e8187f95584bc734de7e0c90b20ebda87b8ad",
+      "contributionsM3": [
+        0.01973221915550316,
+        0.01973221915550316,
+        0.01973221915550316
+      ]
+    },
+    "http": {
+      "ownerResultStatus": 200,
+      "ownerBundleStatus": 200,
+      "otherOwnerStatus": 404,
+      "anonymousStatus": 401,
+      "cacheControl": "no-store",
+      "allBundleHashesVerified": true,
+      "comparisonMatchesWorker": true
+    },
+    "evidence": [
+      {
+        "file": "tmp/waterleague_queue_test_6d87192d1c934d4ab114bfc2be04ae95.log",
+        "sha256": "7249fd4efeaad14dd108c5dbc39cfa696c1d409cb2b3088131416dbeede80b42"
+      },
+      {
+        "file": "tmp/waterleague_queue_test_6d87192d1c934d4ab114bfc2be04ae95.pavement-runs/evidence.json",
+        "sha256": "0f9d21be762f0c7fd7b1a096122e7cdca0f92ac58951e8a8ada288c5cf5cbad2"
+      },
+      {
+        "file": "tmp/waterleague_queue_test_6d87192d1c934d4ab114bfc2be04ae95.pavement-runs/request.json",
+        "sha256": "67774903e35845b317883f579fc98400bc18a922f5e6d30a63e16709c1bbdb2a"
+      },
+      {
+        "file": "tmp/waterleague_queue_test_6d87192d1c934d4ab114bfc2be04ae95.pavement-runs/comparison.json",
+        "sha256": "80abe76c52a415bd3de2e0a4f38264784c39a3cddf23a27a800709be55234e71"
+      },
+      {
+        "file": "tmp/waterleague_queue_test_6d87192d1c934d4ab114bfc2be04ae95.pavement-runs/http-result.json",
+        "sha256": "e3a848c602c6a243cb432f9ab5968998d331920b90ff2a06b6933f8e15be7041"
+      },
+      {
+        "file": "tmp/waterleague_queue_test_6d87192d1c934d4ab114bfc2be04ae95.pavement-runs/http-bundle.zip",
+        "sha256": "af3ae723161b77f10b6ac8011b5ccb61730ff13eb6aca7a5f23a35e2f1eb6feb"
+      }
+    ]
+  },
+  "verification": {
+    "pythonRelatedTestsPassed": 24,
+    "backendBeforeArtifactPathExtension": {
+      "total": 285,
+      "passed": 278,
+      "skipped": 7,
+      "failures": 0,
+      "log": {
+        "file": "tmp/waterleague_league_test_2404fe0c2a374370bf59e0dd482169a1.log",
+        "sha256": "d721422f44591cd2ce189cfaa1cb87d8b0bc2255170eed5d9a36a395d709af96"
+      }
+    },
+    "frontend": {
+      "files": 136,
+      "testsPassed": 462,
+      "typecheck": true,
+      "productionBuild": true,
+      "format": true,
+      "finalActualHttpProjectionTestsPassed": 4
+    },
+    "containerBuild": {
+      "stage": "deploy/web.Dockerfile build",
+      "passed": true,
+      "priorCiFailure": "https://github.com/WaterLeague/waterleague/actions/runs/39431604647",
+      "correction": "Include epa-designs-v4.json referenced by existing frontend tests; no production guard relaxation"
+    },
+    "logs": [
+      {
+        "file": "tmp/pavement-maintenance-regression-v2.log",
+        "sha256": "b874072f884779fe9db49f3316ff0ba360553fe4fdd3f3c09a06c87034ea5d76"
+      },
+      {
+        "file": "tmp/pavement-maintenance-frontend-tests-v1.log",
+        "sha256": "ec2dafbb0014b6715b08f545af7465d6eccba10a6d30d8f1feec2f0fe73f443e"
+      },
+      {
+        "file": "tmp/pavement-maintenance-frontend-build-v1.log",
+        "sha256": "9aa37b9cd4d9e7350b2a4cde395bc27c7413126d8a5e989b3956b861916857ff"
+      },
+      {
+        "file": "tmp/pavement-maintenance-frontend-format-v1.log",
+        "sha256": "0436657fdec5c98f990a76906345a280e420156cb2aacfa9f1053822e4f9b221"
+      },
+      {
+        "file": "tmp/pavement-maintenance-container-build-v1.log",
+        "sha256": "c9265180650be83a98bec81e2873cc675b66d774cf341df7645c2674d9844a34"
+      },
+      {
+        "file": "tmp/pavement-maintenance-package-v2.log",
+        "sha256": "de3501b85086742653e5c314949eb082b9656ba120c91edee11a74b0d5baf826"
+      },
+      {
+        "file": "tmp/pavement-maintenance-http-view-v1.log",
+        "sha256": "ed5f12ac293d6e0a3b98024e478fb8fe570d4eb395219b47c2980eaf2541394c"
+      }
+    ]
+  },
+  "runtime": {
+    "health": "UP",
+    "scorePolicySha256": "991e4398731dad5efdb99000b565b2dde9c26be8c3f43722b48c885dd83776ac",
+    "sourceCountsUnchanged": true,
+    "before": [
+      13,
+      2,
+      0,
+      0,
+      0
+    ],
+    "after": [
+      13,
+      2,
+      0,
+      0,
+      0
+    ],
+    "publicCisternCatalogPreserved": true,
+    "jarSha256": "81d985309b453146d5c1eca5c6924138eee9119197129b52ffd24f7bbc61c8e3"
+  },
+  "limitations": [
+    "Laboratory flow/area value used as a fixed material sensitivity proxy; not field-certified material conductivity",
+    "Clogged porosity unmeasured; 60 mm and initial 20% porosity held common",
+    "No conversion of experimental dust-equivalent years to game time; no cleaning recovery or maintenance cost invented",
+    "Both public candidates returned equal effects for all three conductivities; no forced deterioration or cleaning benefit",
+    "Ordinary placement, installation timing, cost and ranking unchanged; comparison is not a new installed material",
+    "Synthetic rain used only in engine unit tests; public replay and integration use actual archived observations",
+    "Static markup and API verification do not establish browser layout, FPS, field accuracy or completion of P5/P6"
+  ]
+}

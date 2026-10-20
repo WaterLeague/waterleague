@@ -26,6 +26,17 @@ def calculate(request, directory):
                         or not isinstance(p.get('installedAt'), str) for p in placements):
         raise ValueError('HISTORICAL_TEMPORAL_POLICY_INVALID')
     selected = [p for p in placements if 'initializationSensitivity' in p]
+    pavement = [p for p in placements if 'pavementMaintenanceComparison' in p
+                or 'pavementMaintenanceCatalogSha256' in p]
+    if pavement:
+        from .engine import pavement_maintenance
+        if (len(pavement) != 1 or selected
+                or pavement[0].get('facilityType') != 'PERMEABLE_PAVEMENT'
+                or pavement[0].get('pavementMaintenanceComparison')
+                    != pavement_maintenance.catalog()['id']
+                or pavement[0].get('pavementMaintenanceCatalogSha256')
+                    != pavement_maintenance.CATALOG_SHA256):
+            raise ValueError('HISTORICAL_PAVEMENT_COMPARISON_INVALID')
     if (len(selected) > 1 or any(p['initializationSensitivity'] not in
             ('SELECTED_SURFACE_7_DAY_DRY_WET_V1', 'SELECTED_SWALE_7_DAY_STATE_V2') for p in selected)
             or any((p['initializationSensitivity'] == 'SELECTED_SWALE_7_DAY_STATE_V2')
@@ -45,6 +56,7 @@ def calculate(request, directory):
                   for i, rain in enumerate(observed['rainfall']['depthsMm'])]
     antecedent = None
     sensitivity_input = None
+    pavement_input = None
     assumptions = {'관망 없는 독립 표면 계산', '관측소 강우의 선택 표면 대표성 미검증'}
     for index, placement in enumerate(placements):
         model, _, _ = resolve({'district_id': placement['districtId'], 'cell_id': placement['cellId'],
@@ -58,6 +70,10 @@ def calculate(request, directory):
             if model.get('initializationPolicy') is None or model.get('facilityDesignSet') is None:
                 raise ValueError('HISTORICAL_SENSITIVITY_UNAVAILABLE')
             sensitivity_input = model
+        if placement in pavement:
+            if model.get('initializationPolicy') is None:
+                raise ValueError('HISTORICAL_PAVEMENT_COMPARISON_UNAVAILABLE')
+            pavement_input = model
         applied_evaporation = evaporation
         if model.get('initializationPolicy') is not None:
             from .engine.initialization import prepend
@@ -125,6 +141,10 @@ def calculate(request, directory):
         report = analyze(sensitivity_input, physical, evaporation, antecedent, directory/'sensitivity',
                          days=(7,), schema_version=version)
         output['initializationSensitivity'] = report
+    if pavement:
+        physical = {k: pavement[0][k] for k in ('cellId', 'facilityType', 'areaM2')}
+        output['pavementMaintenanceComparison'] = pavement_maintenance.analyze(
+            pavement_input, physical, evaporation, antecedent, directory/'pavement-comparison')
     return output
 
 

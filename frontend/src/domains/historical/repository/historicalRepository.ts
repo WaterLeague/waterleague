@@ -12,7 +12,8 @@ export const runHistorical = (
   requestKey: string,
   sensitivityCellId?: string,
   parentExperimentId?: string,
-  design?: { revision: number; eventId: string }
+  design?: { revision: number; eventId: string },
+  pavementComparisonCellId?: string
 ) =>
   api<HistoricalJob>('/historical', 'POST', {
     requestKey,
@@ -22,6 +23,7 @@ export const runHistorical = (
     ...(design ? { designRevision: design.revision, eventId: design.eventId } : {}),
     ...(parentExperimentId ? { parentExperimentId } : {}),
     ...(sensitivityCellId ? { sensitivityCellId } : {}),
+    ...(pavementComparisonCellId ? { pavementComparisonCellId } : {}),
     placements: drafts.map((d) => ({
       cellId: d.site.cellId,
       siteModelHash: d.site.modelHash,

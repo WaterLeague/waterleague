@@ -372,6 +372,106 @@ class HistoricalWorkflowTests extends PostgresIntegrationTest {
   }
 
   @Test
+  void freezesPavementComparisonWithoutChangingDesignAndRejectsConflictingRetries()
+      throws Exception {
+    var site =
+        NativeSiteFixtures.sites(sites, "11200").values().stream()
+            .filter(
+                s ->
+                    s.allowedTypes().contains("PERMEABLE_PAVEMENT")
+                        && s.existingInfrastructure() == null
+                        && s.maxAreaM2().compareTo(BigDecimal.ONE) >= 0)
+            .findFirst()
+            .orElseThrow();
+    var plain = request(UUID.randomUUID(), site.cellId(), FacilityType.PERMEABLE_PAVEMENT, "1.00");
+    var comparison =
+        new HistoricalRequest(
+            plain.requestKey(),
+            "11200",
+            hash,
+            plain.placements(),
+            null,
+            null,
+            null,
+            null,
+            null,
+            site.cellId());
+    var job = service.create(owner, comparison);
+    var stored = service.require(owner, job.id());
+    assertThat(stored.placements())
+        .contains(
+            "KWRA_TYPE_A_CLOGGING_REFERENCE_V1",
+            io.waterleague.facility.repository.FacilityRepository.PAVEMENT_MAINTENANCE_SHA256);
+    assertThat(stored.inputHash()).isEqualTo(json.hash(hash + "\n" + stored.placements()));
+    assertThat(service.create(owner, comparison).id()).isEqualTo(job.id());
+    assertThatThrownBy(() -> service.create(owner, plain))
+        .isInstanceOfSatisfying(
+            DomainException.class, e -> assertThat(e.code()).isEqualTo(ErrorCode.CONFLICT));
+    for (var invalid :
+        List.of(
+            new HistoricalRequest(
+                UUID.randomUUID(),
+                "11200",
+                hash,
+                plain.placements(),
+                site.cellId(),
+                null,
+                null,
+                null,
+                null,
+                site.cellId()),
+            new HistoricalRequest(
+                UUID.randomUUID(),
+                "11200",
+                hash,
+                plain.placements(),
+                null,
+                null,
+                null,
+                null,
+                null,
+                cell))) {
+      assertThatThrownBy(() -> service.create(owner, invalid))
+          .isInstanceOfSatisfying(
+              DomainException.class,
+              e -> assertThat(e.code()).isEqualTo(ErrorCode.PLACEMENT_INVALID));
+    }
+    var roof = request(UUID.randomUUID(), cell, FacilityType.GREEN_ROOF, "1.00");
+    assertThatThrownBy(
+            () ->
+                service.create(
+                    owner,
+                    new HistoricalRequest(
+                        roof.requestKey(),
+                        "11200",
+                        hash,
+                        roof.placements(),
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        cell)))
+        .isInstanceOfSatisfying(
+            DomainException.class,
+            e -> assertThat(e.code()).isEqualTo(ErrorCode.PLACEMENT_INVALID));
+    var export = System.getProperty("waterleague.integration.pavement.request");
+    if (export != null)
+      java.nio.file.Files.writeString(
+          java.nio.file.Path.of(export),
+          json.write(
+              Map.of(
+                  "districtId",
+                  stored.districtId(),
+                  "modelHash",
+                  stored.modelHash(),
+                  "inputHash",
+                  stored.inputHash(),
+                  "placements",
+                  stored.placements())));
+  }
+
+  @Test
   void freezesSelectedSensitivityAndRejectsChangedRetriesOrUnplacedTargets() {
     var dto = request(UUID.randomUUID(), cell, FacilityType.GREEN_ROOF, "1.00");
     var selected =
@@ -502,6 +602,9 @@ class HistoricalWorkflowTests extends PostgresIntegrationTest {
                         placements))));
     var hashes = new TreeMap<String, String>();
     values.put("sensitivity/sensitivity.json", "{\"test\":\"preserved\"}");
+    values.put("pavement-comparison/FRESH.inp", "시험 전용 새 블록 입력");
+    values.put("pavement-comparison/DUST_96_G.out", "시험 전용 막힘 출력");
+    values.put("pavement-comparison/code/engine/__init__.py", "# 시험 전용\n");
     for (var entry : values.entrySet()) {
       java.nio.file.Files.createDirectories(directory.resolve(entry.getKey()).getParent());
       java.nio.file.Files.writeString(directory.resolve(entry.getKey()), entry.getValue());
@@ -516,7 +619,24 @@ class HistoricalWorkflowTests extends PostgresIntegrationTest {
       java.util.zip.ZipEntry entry;
       while ((entry = zip.getNextEntry()) != null) names.add(entry.getName());
     }
-    assertThat(names).contains("sensitivity/sensitivity.json");
+    assertThat(names)
+        .contains(
+            "sensitivity/sensitivity.json",
+            "pavement-comparison/FRESH.inp",
+            "pavement-comparison/DUST_96_G.out",
+            "pavement-comparison/code/engine/__init__.py");
+    for (String invalid :
+        List.of(
+            "pavement-comparison/../../outside.py",
+            "pavement-comparison/CLEANED.out",
+            "pavement-comparison/code/engine/.secret",
+            "pavement-comparison/code/engine/run.sh")) {
+      hashes.put(invalid, json.hash("시험"));
+      java.nio.file.Files.writeString(directory.resolve("manifest.json"), json.write(hashes));
+      assertThatThrownBy(() -> artifacts.bundle(job)).isInstanceOf(DomainException.class);
+      hashes.remove(invalid);
+    }
+    java.nio.file.Files.writeString(directory.resolve("manifest.json"), json.write(hashes));
     java.nio.file.Files.writeString(directory.resolve("sensitivity/sensitivity.json"), "변경된 비교");
     assertThatThrownBy(() -> artifacts.bundle(job)).isInstanceOf(DomainException.class);
     java.nio.file.Files.writeString(

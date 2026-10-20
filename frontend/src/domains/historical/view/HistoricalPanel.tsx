@@ -4,6 +4,7 @@ import { InitializationEvidence } from '../../physics/view/InitializationEvidenc
 import { InitializationSensitivityEvidence } from '../../physics/view/InitializationSensitivityEvidence';
 import { physicalAmount } from '../../physics/service/physicalValueFormat';
 import { FacilityProfileEvidence } from '../../facility/view/FacilityProfileEvidence';
+import { PavementMaintenanceEvidence } from '../../facility/view/PavementMaintenanceEvidence';
 import { useMemo, type ReactNode } from 'react';
 import {
   Play,
@@ -306,6 +307,23 @@ export function HistoricalPanel({
               ? '식생수로의 선행 관측 이후 상태를 확인합니다. 초기 포화도는 적용되지 않아 건습 비교를 제공하지 않습니다.'
               : '선택 시설 한 곳의 건조·포화 시작 조건을 추가 계산합니다. 일반 계산보다 시간이 더 걸립니다.'}
           </p>
+          {placed.facilityType === 'PERMEABLE_PAVEMENT' && (
+            <>
+              <button
+                className="outline-button"
+                disabled={!s.design.ready || working || !s.selectedRain}
+                onClick={() =>
+                  void s.calculate(undefined, placed.site.districtId, placed.site.cellId)
+                }
+              >
+                이 위치의 투수포장 막힘 조건 비교
+              </button>
+              <p>
+                공개 실험의 새 블록·협잡물 두 조건을 비교합니다. 설치 설계와 순위는 그대로
+                유지됩니다.
+              </p>
+            </>
+          )}
         </div>
       )}
       {s.currentResult && !finalLocked && (
@@ -341,6 +359,12 @@ export function HistoricalPanel({
               <InitializationSensitivityEvidence
                 value={s.currentResult.initializationSensitivity}
               />
+            </details>
+          )}
+          {s.currentResult.pavementMaintenanceComparison && (
+            <details>
+              <summary>사건 전체 창의 투수포장 막힘 비교 · 누적 효과와 별도</summary>
+              <PavementMaintenanceEvidence value={s.currentResult.pavementMaintenanceComparison} />
             </details>
           )}
           {s.currentResult.facilities

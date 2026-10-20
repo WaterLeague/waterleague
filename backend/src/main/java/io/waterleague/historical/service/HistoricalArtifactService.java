@@ -96,7 +96,10 @@ public class HistoricalArtifactService {
           String pattern =
               submission
                   ? "(?:(?:11[0-9]{3}/)?[0-9]{1,2}/|11[0-9]{3}/)?[a-z][a-z0-9_.-]{0,70}"
-                  : "(?:[0-9]{1,2}/|sensitivity/)?[a-z][a-z0-9_.-]{0,70}";
+                  : "(?:[0-9]{1,2}/|sensitivity/)?[a-z][a-z0-9_.-]{0,70}"
+                        + "|pavement-comparison/(?:(?:FRESH|DUST_96_G|DUST_192_G)\\.(?:inp|out|rpt|json)"
+                        + "|[a-z][a-z0-9_.-]{0,70}"
+                        + "|code/(?:[a-z_][a-z0-9_]{0,70}/){0,3}[a-z_][a-z0-9_]{0,70}\\.py)";
           if (!name.matches(pattern) || name.contains("..")) throw invalid();
           byte[] bytes = read(directory.resolve(name), 64 * 1024 * 1024);
           total += bytes.length;

@@ -3,6 +3,7 @@ import hashlib
 import gzip
 from contextlib import closing
 import json
+import os
 import unittest
 import uuid
 from datetime import datetime, timedelta
@@ -49,6 +50,66 @@ class HistoricalTests(unittest.TestCase):
     connection = queue_fixture.WorkerQueueTests.connection
     def setUp(self):
         queue_fixture.WorkerQueueTests.setUp(self)
+
+    # 후속 인증 HTTP 검사가 마지막 작업의 DB와 산출물을 읽도록 끝에 실행한다.
+    def test_z_server_frozen_pavement_comparison_and_ordinary_design_are_separate(self):
+        fixture = os.environ.get('WL_PAVEMENT_FIXTURE')
+        if not fixture:
+            self.skipTest('서버 동결 요청 필요')
+        destination = os.environ.get('WL_PAVEMENT_EVIDENCE')
+        if destination:
+            target = Path(destination)
+            target.mkdir(mode=0o700)
+            self.artifacts = target/'artifacts'
+        request = json.loads(Path(fixture).read_text())
+        self.assertEqual(request['inputHash'], hashlib.sha256(
+            (request['modelHash']+'\n'+request['placements']).encode()).hexdigest())
+        original_rows = json.loads(request['placements'])
+        self.assertEqual(len(original_rows), 1)
+        outcomes = []
+        for comparison in (True, False):
+            rows = json.loads(request['placements'])
+            if not comparison:
+                for row in rows:
+                    row.pop('pavementMaintenanceComparison', None)
+                    row.pop('pavementMaintenanceCatalogSha256', None)
+            body = request['placements'] if comparison else json.dumps(rows, ensure_ascii=False)
+            input_hash = hashlib.sha256((request['modelHash']+'\n'+body).encode()).hexdigest()
+            identity = uuid.uuid4()
+            self.conn.execute("""INSERT INTO historical_experiments
+                (id,owner_id,request_key,district_id,model_hash,input_hash,placements,state,created_at)
+                VALUES(%s,%s,%s,%s,%s,%s,%s,'QUEUED',now())""",
+                (identity, self.owner, uuid.uuid4(), request['districtId'], request['modelHash'], input_hash, body))
+            job = queue.claim(self.conn)
+            self.assertTrue(historical.process(self.conn, job, self.artifacts))
+            row = self.conn.execute('SELECT * FROM historical_experiments WHERE id=%s', (identity,)).fetchone()
+            self.assertEqual(row['state'], 'SUCCEEDED', row['error_code'])
+            result = json.loads(row['result'])
+            path = self.artifacts/'historical'/str(identity)/str(job['lease_token'])
+            outcomes.append((result, path))
+            self.assertFalse(queue.finish(self.conn, job, 'SUCCEEDED', {'stale': True}, None))
+        report = outcomes[0][0]['pavementMaintenanceComparison']
+        self.assertEqual(report['status'], 'SUCCEEDED')
+        self.assertFalse(report['rankingEligible'])
+        self.assertEqual(report['cleaningRecovery']['value'], None)
+        self.assertNotIn('pavementMaintenanceComparison', outcomes[1][0])
+        for key in ('differenceM3', 'baselineAccountedM3', 'designAccountedM3', 'frames'):
+            self.assertEqual(outcomes[0][0][key], outcomes[1][0][key])
+        for name in ('baseline.inp', 'baseline.out', 'strategy.inp', 'strategy.out'):
+            self.assertEqual((outcomes[0][1]/'0'/name).read_bytes(),
+                             (outcomes[1][1]/'0'/name).read_bytes())
+        manifest = json.loads((outcomes[0][1]/'manifest.json').read_text())
+        self.assertEqual(manifest['pavement-comparison/input.json'], report['inputSha256'])
+        self.assertTrue(all('pavement-comparison/'+case['scenario']['id']+'.out' in manifest
+                            for case in report['cases']))
+        if destination:
+            (target/'comparison.json').write_text(json.dumps(report, ensure_ascii=False, allow_nan=False)+'\n')
+            (target/'request.json').write_bytes(Path(fixture).read_bytes())
+            (target/'evidence.json').write_text(json.dumps({
+                'classification': 'ACTUAL_SERVER_FROZEN_REQUEST_AND_WORKER_RESULT',
+                'ordinaryDesignNativeFilesUnchanged': True, 'ordinaryMetricsUnchanged': True,
+                'sourceManifest': manifest,
+            }, ensure_ascii=False, allow_nan=False)+'\n')
 
     def test_full_event_submission_two_districts_ignores_install_times_and_publishes_once(self):
         from waterleague_sim.run_historical_submission import POLICY

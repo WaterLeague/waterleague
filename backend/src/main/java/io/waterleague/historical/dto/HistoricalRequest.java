@@ -16,7 +16,31 @@ public record HistoricalRequest(
     @Pattern(regexp = "INSTALLATION_TIME_EXPERIMENT_V1") String temporalPolicy,
     UUID parentExperimentId,
     @Positive Long designRevision,
-    @Pattern(regexp = "seoul-[0-9]{8}") String eventId) {
+    @Pattern(regexp = "seoul-[0-9]{8}") String eventId,
+    @Pattern(regexp = "C[a-f0-9]{24}") String pavementComparisonCellId) {
+  public HistoricalRequest(
+      UUID requestKey,
+      String districtId,
+      String modelHash,
+      List<Item> placements,
+      String sensitivityCellId,
+      String temporalPolicy,
+      UUID parentExperimentId,
+      Long designRevision,
+      String eventId) {
+    this(
+        requestKey,
+        districtId,
+        modelHash,
+        placements,
+        sensitivityCellId,
+        temporalPolicy,
+        parentExperimentId,
+        designRevision,
+        eventId,
+        null);
+  }
+
   public HistoricalRequest(
       UUID requestKey,
       String districtId,

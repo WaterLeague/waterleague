@@ -87,6 +87,8 @@ def main():
                 physical.append('-Dwaterleague.integration.guest.fixture=' + str(path.with_suffix('.guest.json')))
             if suite == 'historical':
                 physical.append('-Dwaterleague.integration.historical.request=' + str(path.with_suffix('.request.json')))
+                physical.append('-Dwaterleague.integration.pavement.request=' + str(path.with_suffix('.pavement.json')))
+                physical.append('-Dwaterleague.integration.pavement.evidence=' + str(path.with_suffix('.pavement-runs')))
             if suite in {'historical-design', 'historical-design-run'}:
                 physical.append('-Dwaterleague.integration.design.fixture=' + str(path.with_suffix('.design.json')))
             if suite == 'historical-submit-design':
@@ -119,6 +121,9 @@ def main():
                 if suite == 'historical-design-run':
                     worker_env['WL_DESIGN_RUN_FIXTURE'] = str(path.with_suffix('.requests.json'))
                     worker_env['WL_DESIGN_RUN_EVIDENCE'] = str(path.with_suffix('.runs'))
+                if suite == 'historical':
+                    worker_env['WL_PAVEMENT_FIXTURE'] = str(path.with_suffix('.pavement.json'))
+                    worker_env['WL_PAVEMENT_EVIDENCE'] = str(path.with_suffix('.pavement-runs'))
                 pattern = ['-p', {'guest-historical':'test_guest_historical.py','queue':'test_worker_queue.py','historical-submit-design':'test_saved_submission.py','historical-design-run':'test_historical_design_run.py','physics':'test_shared_physics.py','historical':'test_historical.py','watershed':'test_watershed.py'}[suite]] if suite in {'queue','guest-historical','physics','historical','watershed','historical-design-run','historical-submit-design'} else []
                 durations = ['--durations', '0'] if suite == 'watershed' else []
                 try:
@@ -142,6 +147,11 @@ def main():
                 if suite == 'historical-submit-design' and result.returncode == 0:
                     result = subprocess.run(
                         [str(ROOT/'backend/mvnw'),'--batch-mode','-Dtest=HistoricalSubmissionReadbackTests',
+                         '-Dwaterleague.integration.jdbc='+jdbc,*physical,'test'],
+                        cwd=ROOT/'backend',env=env,stdout=log,stderr=subprocess.STDOUT,timeout=600)
+                if suite == 'historical' and result.returncode == 0:
+                    result = subprocess.run(
+                        [str(ROOT/'backend/mvnw'),'--batch-mode','-Dtest=HistoricalPavementReadbackTests',
                          '-Dwaterleague.integration.jdbc='+jdbc,*physical,'test'],
                         cwd=ROOT/'backend',env=env,stdout=log,stderr=subprocess.STDOUT,timeout=600)
         with psycopg.connect(**config) as db:

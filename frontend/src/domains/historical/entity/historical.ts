@@ -7,6 +7,7 @@ import type { CostRecord } from '../../cost/dto/costDto';
 import type { RunoffComparisonData } from '../../physics/dto/runoffComparisonDto';
 import type { DesignContractData } from '../../physics/dto/designContractDto';
 import type { LifeCycleCost } from '../../cost/dto/lifeCycleCostDto';
+import type { PavementMaintenanceComparison } from '../../facility/dto/pavementMaintenanceDto';
 export interface HistoricalDraft {
   site: SharedSite;
   facilityType: FacilityType;
@@ -48,6 +49,7 @@ export interface HistoricalJob {
     assumptions: string[];
     temporalPolicy?: 'INSTALLATION_TIME_EXPERIMENT_V1';
     initializationSensitivity?: InitializationSensitivityData;
+    pavementMaintenanceComparison?: PavementMaintenanceComparison;
     facilities?: {
       cellId: string;
       installedAt?: string;

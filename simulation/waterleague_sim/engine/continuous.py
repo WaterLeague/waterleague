@@ -64,7 +64,7 @@ def validated_period(model):
         raise SimulationQualityError('LIVE_FORCING_INVALID') from None
 
 
-def input_source(model, placements, evaporation):
+def input_source(model, placements, evaporation, *, pavement_scenario=None):
     start, count = validated_period(model)
     if placements:
         from ..spatial.suitability import SiteSuitabilityError, require_explorable
@@ -153,6 +153,9 @@ def input_source(model, placements, evaporation):
     if model.get('facilityDesignSet') is not None:
         from .facilities import apply
         source = apply(source, model)
+    if pavement_scenario is not None:
+        from .pavement_maintenance import apply as apply_pavement_scenario
+        source = apply_pavement_scenario(source, model, placements, pavement_scenario)
     if evaporation is not None:
         values = evaporation['ratesMmDay']
         if (len(values) != count or not evaporation.get('method') or not evaporation.get('sourceHashes')
@@ -218,7 +221,8 @@ def apply_site_inputs(source, cell, placements):
         lines.append(line)
     return '\n'.join(lines)+'\n'
 
-def replay(model, placements, directory, label, evaporation=None, *, evaluation_start_seconds=None):
+def replay(model, placements, directory, label, evaporation=None, *, evaluation_start_seconds=None,
+           pavement_scenario=None):
     start, count = validated_period(model)
     step = 1 if model['cells'][0].get('physicalInputs') or model.get('facilityDesignSet') else 10
     evaluation_start = model.get('initialization', {}).get('warmupMinutes', 0) * 60
@@ -240,7 +244,7 @@ def replay(model, placements, directory, label, evaporation=None, *, evaluation_
             or isinstance(p['areaM2'], bool) or not math.isfinite(p['areaM2'])
             or not 0 < p['areaM2'] <= cell['maxAreaM2'] for p in placements)):
         raise SimulationQualityError('LIVE_PLACEMENT_INVALID')
-    source = input_source(model, placements, evaporation)
+    source = input_source(model, placements, evaporation, pavement_scenario=pavement_scenario)
     inp, rpt, out = [directory/f'{label}.{ext}' for ext in ('inp', 'rpt', 'out')]
     inp.write_text(source)
     lib = C.CDLL(str(library_path()))
@@ -320,6 +324,9 @@ def replay(model, placements, directory, label, evaporation=None, *, evaluation_
             'runoffMetrics': metrics.finish(),
             'runoffContinuityPercent': errors[0].value, 'warnings': warnings,
             'engine': identity, 'routingStatus': 'NOT_APPLICABLE_NO_CONVEYANCE_NETWORK'}
+    if pavement_scenario is not None:
+        from .pavement_maintenance import scenario
+        result['pavementScenario'] = scenario(pavement_scenario)
     if evaluation_start_seconds is not None:
         if evaluation_origin is None:
             raise SimulationQualityError('HISTORICAL_INSTALLATION_STATE_MISSING')

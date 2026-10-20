@@ -244,7 +244,11 @@ export function useHistorical(
       elapsedSeconds
     );
   }
-  async function calculate(sensitivityCellId?: string, targetDistrictId = districtId) {
+  async function calculate(
+    sensitivityCellId?: string,
+    targetDistrictId = districtId,
+    pavementComparisonCellId?: string
+  ) {
     const region = event?.regions.find((r) => r.districtId === targetDistrictId);
     const selected = drafts.filter((d) => d.site.districtId === targetDistrictId);
     if (
@@ -262,6 +266,7 @@ export function useHistorical(
       design.revision,
       historicalDistrictSignature(region.modelHash, selected),
       sensitivityCellId ?? null,
+      pavementComparisonCellId ?? null,
       !account
         ? drafts.map((d) => [
             d.site.districtId,
@@ -293,7 +298,8 @@ export function useHistorical(
             pending.id,
             sensitivityCellId,
             pending.parent,
-            { revision: design.revision, eventId }
+            { revision: design.revision, eventId },
+            pavementComparisonCellId
           );
       if (generation === epoch.current)
         setJobs((previous) => ({ ...previous, [next.modelHash]: next }));

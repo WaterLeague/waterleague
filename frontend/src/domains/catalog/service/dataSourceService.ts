@@ -145,7 +145,7 @@ export const dataSources: DataSource[] = [
   {
     id: 'simulation',
     title: '시설 제원·물 계산',
-    provider: '미국 환경보호청(EPA) · 나라장터 공개 규격',
+    provider: '미국 환경보호청(EPA) · 한국수자원학회 · 나라장터 공개 규격',
     description:
       '설치 시설 6종의 단면·침투·저류·배수를 계산합니다. 외부 배수 연결이 확인되지 않은 위치에는 시설에 직접 내리는 비만 유입합니다.',
     detail:
@@ -160,6 +160,12 @@ export const dataSources: DataSource[] = [
         name: 'SWMM Reference Manual Volume III · Chapter 6',
         href: 'https://nepis.epa.gov/Exe/ZyPDF.cgi/P100P2NY.PDF?Dockey=P100P2NY.PDF',
         detail: '2016년 공개 설계 문헌 · 시설 단면·재료·투수·저류 제원',
+      },
+      {
+        name: '투수 포장 블록 성능이 도시 물순환에 미치는 영향 검토 · 2025년',
+        href: 'https://jkwra.or.kr/articles/xml/N8x4/',
+        detail:
+          '표 7–9의 Type-A 블록 규격·막힘 실험값. 회원 재해 화면에서 선택한 투수포장에 새 블록·협잡물 96g·192g(시료 0.16m² 기준)의 투수 조건을 별도로 비교합니다. 실제 사용 연수·현장 열화·청소 회복의 예측이나 현재 설치 설계·비용·순위 변경은 아닙니다.',
       },
       {
         name: '2025년 스마트 생태공장 빗물저금통 규격서 · 신영델텍',

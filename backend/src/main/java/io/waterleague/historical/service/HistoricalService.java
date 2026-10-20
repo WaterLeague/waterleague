@@ -3,6 +3,7 @@ package io.waterleague.historical.service;
 import io.waterleague.common.exception.*;
 import io.waterleague.common.service.JsonService;
 import io.waterleague.district.repository.DistrictRepository;
+import io.waterleague.facility.repository.FacilityRepository;
 import io.waterleague.historical.dto.HistoricalRequest;
 import io.waterleague.historical.entity.HistoricalExperiment;
 import io.waterleague.historical.repository.HistoricalRepository;
@@ -33,6 +34,7 @@ public class HistoricalService {
   private final io.waterleague.disaster.service.DisasterService disasters;
   private final io.waterleague.cost.service.CostService costRecords;
   private final io.waterleague.historical.repository.HistoricalDesignRepository designs;
+  private final FacilityRepository facilities;
 
   public HistoricalService(
       HistoricalRepository jobs,
@@ -45,7 +47,8 @@ public class HistoricalService {
       JsonService json,
       io.waterleague.disaster.service.DisasterService disasters,
       io.waterleague.cost.service.CostService costRecords,
-      io.waterleague.historical.repository.HistoricalDesignRepository designs) {
+      io.waterleague.historical.repository.HistoricalDesignRepository designs,
+      FacilityRepository facilities) {
     this.jobs = jobs;
     this.budget = budget;
     this.admission = admission;
@@ -57,6 +60,7 @@ public class HistoricalService {
     this.disasters = disasters;
     this.costRecords = costRecords;
     this.designs = designs;
+    this.facilities = facilities;
   }
 
   public HistoricalExperiment require(UUID owner, UUID id) {
@@ -193,6 +197,14 @@ public class HistoricalService {
     if (dto.sensitivityCellId() != null
         && dto.placements().stream().noneMatch(p -> p.cellId().equals(dto.sensitivityCellId())))
       throw new DomainException(ErrorCode.PLACEMENT_INVALID);
+    if (dto.pavementComparisonCellId() != null
+        && (dto.sensitivityCellId() != null
+            || dto.placements().stream()
+                .noneMatch(
+                    p ->
+                        p.cellId().equals(dto.pavementComparisonCellId())
+                            && p.facilityType() == FacilityType.PERMEABLE_PAVEMENT)))
+      throw new DomainException(ErrorCode.PLACEMENT_INVALID);
     var district = districts.require(dto.districtId());
     disasters.requireModel(dto.districtId(), dto.modelHash());
     var model = models.require(dto.modelHash());
@@ -323,6 +335,19 @@ public class HistoricalService {
                 && !Set.of(SENSITIVITY_POLICY, SWALE_STATE_POLICY)
                     .contains(entry.path("initializationSensitivity").asString())))
           throw new DomainException(ErrorCode.CONFLICT);
+        boolean requestedPavement = candidate.get("cellId").equals(dto.pavementComparisonCellId());
+        if (requestedPavement != entry.has("pavementMaintenanceComparison")
+            || requestedPavement != entry.has("pavementMaintenanceCatalogSha256")
+            || (requestedPavement
+                && (!entry
+                        .path("pavementMaintenanceComparison")
+                        .asString()
+                        .equals(facilities.pavementMaintenance().path("id").asString())
+                    || !entry
+                        .path("pavementMaintenanceCatalogSha256")
+                        .asString()
+                        .equals(FacilityRepository.PAVEMENT_MAINTENANCE_SHA256))))
+          throw new DomainException(ErrorCode.CONFLICT);
         if (!entry.path("cellId").asString().equals(candidate.get("cellId"))
             || !entry
                 .path("facilityType")
@@ -395,6 +420,17 @@ public class HistoricalService {
             row.get("facilityType") == FacilityType.VEGETATIVE_SWALE
                 ? SWALE_STATE_POLICY
                 : SENSITIVITY_POLICY);
+      }
+      if (row.get("cellId").equals(dto.pavementComparisonCellId())) {
+        if (site.initializationPolicy() == null
+            || site.initializationPolicy().isNull()
+            || site.facilityDesignSet() == null
+            || !site.facilityDesignSet().path("id").asString().equals("EPA_LID_PUBLIC_DESIGNS_V4"))
+          throw new DomainException(ErrorCode.SIMULATION_UNAVAILABLE);
+        row.put(
+            "pavementMaintenanceComparison",
+            facilities.pavementMaintenance().path("id").asString());
+        row.put("pavementMaintenanceCatalogSha256", FacilityRepository.PAVEMENT_MAINTENANCE_SHA256);
       }
       var type = (FacilityType) row.get("facilityType");
       var area = (BigDecimal) row.get("areaM2");

@@ -17,6 +17,9 @@ public class FacilityRepository {
   private final JsonNode legacy;
   private final JsonNode latest;
   private final JsonNode v3;
+  private final JsonNode pavementMaintenance;
+  public static final String PAVEMENT_MAINTENANCE_SHA256 =
+      "a9166ec93e6a6af4c460028f438c33fc67af0a1675502491e04f248c8e7dfd88";
   public static final String V3_SHA256 =
       "2a703170835529fe4d9b2c729157a04b7555faf9a1097f481be4269bfe279d5c";
   public static final String LATEST_SHA256 =
@@ -27,15 +30,24 @@ public class FacilityRepository {
     latest = load(json, 4, LATEST_SHA256);
     v3 = load(json, 3, V3_SHA256);
     legacy = load(json, 1, LEGACY_SHA256);
+    pavementMaintenance =
+        loadPath(json, "facilities/pavement-maintenance-v1.json", PAVEMENT_MAINTENANCE_SHA256);
   }
 
   private JsonNode load(JsonService json, int version, String hash) throws IOException {
-    try (var stream =
-        new ClassPathResource("facilities/epa-designs-v" + version + ".json").getInputStream()) {
+    return loadPath(json, "facilities/epa-designs-v" + version + ".json", hash);
+  }
+
+  private JsonNode loadPath(JsonService json, String path, String hash) throws IOException {
+    try (var stream = new ClassPathResource(path).getInputStream()) {
       var raw = new String(stream.readNBytes(100000), StandardCharsets.UTF_8);
       if (!json.hash(raw).equals(hash)) throw new IllegalStateException("시설 제원 해시 오류");
       return json.tree(raw);
     }
+  }
+
+  public JsonNode pavementMaintenance() {
+    return pavementMaintenance.deepCopy();
   }
 
   public JsonNode v3() {

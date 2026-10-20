@@ -1,0 +1,102 @@
+{
+  "schemaVersion": 1,
+  "id": "KWRA_TYPE_A_CLOGGING_REFERENCE_V1",
+  "evidence": "PUBLISHED_LABORATORY_MATERIAL_SCENARIO_NOT_SITE_MEASURED",
+  "source": {
+    "title": "투수 포장 블록 성능이 도시 물순환에 미치는 영향 검토",
+    "doi": "10.3741/JKWRA.2025.58.9.721",
+    "url": "https://jkwra.or.kr/articles/pdf/N8x4/kwra-2025-058-09-0.pdf",
+    "sha256": "67216d02adb3c1c632da7585756df150620d50b886a8cab2ff40d4113e3fe9df",
+    "documentYear": 2025
+  },
+  "references": {
+    "material": "p.726, Table 7, Type-A",
+    "dust": "p.726, Table 8",
+    "permeability": "p.728, Table 9, Type-A raw (*)"
+  },
+  "specimen": {
+    "widthMm": 200,
+    "lengthMm": 200,
+    "depthMm": 60,
+    "initialPorosity": 0.2,
+    "blockCount": 4,
+    "testAreaM2": 0.16
+  },
+  "rawRows": [
+    {
+      "dustG": 0.0,
+      "permeabilityMmS": 3.49
+    },
+    {
+      "dustG": 19.2,
+      "permeabilityMmS": 3.4
+    },
+    {
+      "dustG": 38.4,
+      "permeabilityMmS": 2.55
+    },
+    {
+      "dustG": 57.6,
+      "permeabilityMmS": 2.5
+    },
+    {
+      "dustG": 76.8,
+      "permeabilityMmS": 2.33
+    },
+    {
+      "dustG": 96.0,
+      "permeabilityMmS": 2.12
+    },
+    {
+      "dustG": 115.2,
+      "permeabilityMmS": 2.18
+    },
+    {
+      "dustG": 134.4,
+      "permeabilityMmS": 1.84
+    },
+    {
+      "dustG": 153.6,
+      "permeabilityMmS": 1.83
+    },
+    {
+      "dustG": 172.8,
+      "permeabilityMmS": 1.33
+    },
+    {
+      "dustG": 192.0,
+      "permeabilityMmS": 1.4
+    }
+  ],
+  "cases": [
+    {
+      "id": "FRESH",
+      "label": "협잡물 투입 전",
+      "row": 0
+    },
+    {
+      "id": "DUST_96_G",
+      "label": "협잡물 96g 투입",
+      "row": 5
+    },
+    {
+      "id": "DUST_192_G",
+      "label": "협잡물 192g 투입",
+      "row": 10
+    }
+  ],
+  "method": "FIXED_PERMEABILITY_MATERIAL_COMPARISON_V1",
+  "scope": "INDEPENDENT_SURFACE_CONDUCTIVITY_SENSITIVITY",
+  "fixedAssumptions": [
+    "포장 두께 60mm·공극률 20%·불투수비율 0을 세 조건에 공통 적용; 막힘 후 공극 체적 변화는 미측정으로 재현하지 않음",
+    "하부 쇄석층·원지반·시설 면적·강우·증발산·초기화 절차는 선택 후보의 공통 설계 조건 유지",
+    "각 투수값을 선행 계산과 평가 기간 동안 고정; 동적 막힘·연수 진행·자동 청소·초기 저장량 강제 비우기 없음",
+    "논문에서 투수계수로 보고한 유량/면적 값을 mm/h로 환산한 참조 민감도이며 해당 현장의 투수 성능 예측 아님"
+  ],
+  "cleaningRecovery": {
+    "status": "UNAVAILABLE",
+    "reason": "MATCHED_MATERIAL_CLEANING_MEASUREMENTS_NOT_PUBLISHED",
+    "value": null
+  },
+  "rankingEligible": false
+}

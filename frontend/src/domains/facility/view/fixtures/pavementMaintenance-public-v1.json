@@ -1,0 +1,508 @@
+{
+  "classification": "ACTUAL_AUTHENTICATED_HTTP_COMPARISON_PROJECTION",
+  "sourceFile": "tmp/waterleague_queue_test_6d87192d1c934d4ab114bfc2be04ae95.pavement-runs/http-result.json",
+  "sourceSha256": "e3a848c602c6a243cb432f9ab5968998d331920b90ff2a06b6933f8e15be7041",
+  "value": {
+    "schemaVersion": 1,
+    "method": "FIXED_PERMEABILITY_MATERIAL_COMPARISON_V1",
+    "scope": "INDEPENDENT_SURFACE_CONDUCTIVITY_SENSITIVITY",
+    "status": "SUCCEEDED",
+    "inputSha256": "1716276fd50b3c43a5625c3fc51e8187f95584bc734de7e0c90b20ebda87b8ad",
+    "sourcePolicySha256": "991e4398731dad5efdb99000b565b2dde9c26be8c3f43722b48c885dd83776ac",
+    "catalogSha256": "a9166ec93e6a6af4c460028f438c33fc67af0a1675502491e04f248c8e7dfd88",
+    "source": {
+      "title": "투수 포장 블록 성능이 도시 물순환에 미치는 영향 검토",
+      "doi": "10.3741/JKWRA.2025.58.9.721",
+      "url": "https://jkwra.or.kr/articles/pdf/N8x4/kwra-2025-058-09-0.pdf",
+      "sha256": "67216d02adb3c1c632da7585756df150620d50b886a8cab2ff40d4113e3fe9df",
+      "documentYear": 2025
+    },
+    "specimen": {
+      "widthMm": 200,
+      "lengthMm": 200,
+      "depthMm": 60,
+      "initialPorosity": 0.2,
+      "blockCount": 4,
+      "testAreaM2": 0.16
+    },
+    "cellId": "C3a0c4eb7c4e0d209fa26b2d3",
+    "areaM2": 1.0,
+    "facilityType": "PERMEABLE_PAVEMENT",
+    "evaluationStart": "2022-08-08T09:00:00+00:00",
+    "evaluationEnd": "2022-08-08T14:59:00+00:00",
+    "cases": [
+      {
+        "scenario": {
+          "id": "FRESH",
+          "label": "협잡물 투입 전",
+          "row": 0,
+          "dustG": 0.0,
+          "permeabilityMmS": 3.49,
+          "catalogId": "KWRA_TYPE_A_CLOGGING_REFERENCE_V1",
+          "catalogSha256": "a9166ec93e6a6af4c460028f438c33fc67af0a1675502491e04f248c8e7dfd88",
+          "pavementDepthMm": 60,
+          "pavementPorosity": 0.2,
+          "conductivityMmH": 12564.0,
+          "imperviousFraction": 0,
+          "cloggingFactor": 0,
+          "timePolicy": "FIXED_THROUGH_SPINUP_AND_EVENT_NO_AUTOMATIC_AGING_OR_CLEANING"
+        },
+        "status": "SUCCEEDED",
+        "metrics": {
+          "initialSoilMoisture": null,
+          "initialStorageM3": 0.06256164043578871,
+          "initialLidStorageM3": 0.05719309379615513,
+          "initialSurfaceDepthMm": 0.0,
+          "initialPavementDepthMm": 0.0,
+          "initialStorageDepthMm": 163.45374250205305,
+          "evaluatedDischargeM3": 0.2248926077521779,
+          "evaluatedEvaporationM3": 0.00011426471788193032,
+          "evaluatedInfiltrationM3": 0.019756966666603246,
+          "peakDischargeMean1MinM3s": 7.74075396952234e-5,
+          "contributionM3": 0.01973221915550316
+        },
+        "initialization": {
+          "method": "OBSERVED_7_DAY_CONTINUOUS_SPINUP_V1",
+          "evaluationStart": "2022-08-08T09:00:00+00:00",
+          "warmupMinutes": 10080,
+          "evidence": "MODEL_DERIVED_NOT_MEASURED_SOIL_MOISTURE",
+          "rainfallSourceHashes": [
+            "ce92f8ae349dd2263ab5e41f8870222c9e5a74a47ff6ffe4daa98f44c3f970f7",
+            "bec3e997c098ecd9daf5a9983a5394446eed57b08c550dfddb9d3da64a76db57",
+            "1fe0311a891e4c4b661f496e8e75dd1d8f3fc89108f87bc87a1a36859735c6a7",
+            "e9275e1f7bf937aa8e720d8ddea26902cb2bc614a0671f07f8a743876917b391",
+            "aee01c77829a0c132fd09acde8873adbad5961abb5059fbfb1d97b50a150e1d7",
+            "104f2453d57ae3b95b557992f1ea06ec3d7f2e75ca1b7bb672c0687afd73604a",
+            "1589fc6a111f79cd7582d292206c030316da6bec390c702a473579ceb4bf1ae4",
+            "71dd6fd1a4f9c112586c575280bed399ddfc24e2901b4d59e269351e18cbcbd3",
+            "873d966b3ce7fbaa3f3eff39a7ea6d06b5df42c01d815c80444a1b024af2cfe1",
+            "0c7cc5e2ab33dad38dc5622e8367f611c7c1ee53a597d8ec8a35772db3ca9205",
+            "9302ddc7312523333b3dbfea785c68e0191dc3164ec676daa6408208ea6300fc",
+            "0f48afb1153d609cbdc8956df18a8970468e99070e13faeaf5ca748d18fcc1ee",
+            "d0b18081e42abba0cbae49d619d72308b2d0df6fe4fe4d93a0a87c65c9fba34d",
+            "5e0434a8691da75ffdcd5543e90b667cfb732f338700f4d1ef668d3552f421e7",
+            "548ac45edd633229222b0f0619960a62f13d0b1ae44b78f7d8eb0d6df525e513",
+            "f0c9f2880f0ce9b18aad8dfffba90a20d972fac7a367cacd48a3b3ca8602a8a1",
+            "a0156193dcc36f1857f831045535f0758303e089a135e81bf1e11e036c2ea230",
+            "962d2861ed5c872b3854433609b2606062c5e9d456e5e5a970e8e4579080763a",
+            "4ec4064ca359c2f5c68086a3ba0f025fc96dc98486b73b7bd6568c3c70a33fc1",
+            "9be5e71287e720168573119f9e277e1983562b0156d999b940549400d56f05e4",
+            "d602e1764ceb98b8db31882411f077e6c375b7f12d3076f63d940ac55a5fb204",
+            "4e2fa746b9b049256c1b5ec87eb5ac6f035aebf290df57ab233fe7c173289f49",
+            "0b5ba0b169c6ef5618a472f5161a71c379f5ee4ace5750316da05dba84a2ca56",
+            "073e5ba9546a4a36ebbfdc1a0a312c59016b469122332c61ab979e164dc41d87",
+            "6087367694046469066876e43af463ade4189c94f2e9abb592f43ed2ebd8ed39",
+            "8a7394cd91617f9eb625d617574b2ab15ae3c5886a4dd9682f8318d7d240f280",
+            "3a0a29112453af2c70a7a171f99ec22344d26f0b60b1e28e134d51618c3058bc",
+            "71f23571cfbce6efabd806438bcea9cf84ec1eee569ba04e4380807da44cc642",
+            "ca64e871bcd65bae56f1679e1f16487c5cba1a90d22940b19cd392ccb55166ab"
+          ],
+          "evaporationSourceHashes": [
+            "127913334dc8d01cf7c3e083863c2574c78d6800e362c008ed9601c6f6d276fb",
+            "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+            "38de3e435178ac79fb6a3fc931d0e07388223ebce36fcb67f940fa95292ac239",
+            "661fc8db73d0873a575797db5554a0203376d09bf2e1f4aef15b17f6226ecc18",
+            "6f8a3b22ba033ff41fa2a808835532794a9a0c5f3d63a3ffdd4a78dbebf1d4c3",
+            "71bac93738eff6819f855c9b1b261a090ce90153b20420f92c207902a8305f87",
+            "73ffaff41c79764357128d9512c97851d5b7875839eba59c604df7aa3824ebf9",
+            "8a32153c84da4049a5800b6aa36d830ab7f85d4533722f36530c571f9c3cf2db",
+            "a3736d2404daa0dc9c6685e3726857a77de40690946682a78c044828a5804764"
+          ],
+          "antecedentEvaporationMethod": "OBSERVED_ANTECEDENT_WEATHER_V1",
+          "rainfallQualityWarnings": [
+            {
+              "at": "2022-08-08T03:42:00+00:00",
+              "counterDepthMm": 1.0,
+              "rollingDerivedDepthMm": 1.5,
+              "windowMinutes": 15
+            },
+            {
+              "at": "2022-08-08T03:44:00+00:00",
+              "counterDepthMm": 1.0,
+              "rollingDerivedDepthMm": 1.5,
+              "windowMinutes": 15
+            },
+            {
+              "at": "2022-08-08T03:45:00+00:00",
+              "counterDepthMm": 1.0,
+              "rollingDerivedDepthMm": 0.75,
+              "windowMinutes": 15
+            },
+            {
+              "at": "2022-08-08T04:30:00+00:00",
+              "counterDepthMm": 0.5,
+              "rollingDerivedDepthMm": 0.75,
+              "windowMinutes": 60
+            },
+            {
+              "at": "2022-08-08T04:55:00+00:00",
+              "counterDepthMm": 0.0,
+              "rollingDerivedDepthMm": 0.5,
+              "windowMinutes": 15
+            }
+          ],
+          "zeroCounterDerivedMinutes": 15,
+          "aggregatedRainIntervals": [
+            {
+              "end": "2022-08-08T03:31:00+00:00",
+              "minutes": 2,
+              "start": "2022-08-08T03:29:00+00:00",
+              "timeDistribution": "UNIFORM_NOT_MINUTE_OBSERVATIONS",
+              "totalMm": 0.5
+            }
+          ],
+          "aggregateDerivedMinutes": 2,
+          "seed": "WILTING_POINT_AND_EMPTY_STORAGE",
+          "limitations": [
+            "선행 7일 이전 수분 실측 미확보로 시들음점·빈 저류층에서 재생",
+            "관측 기상 기반 모델 상태이며 현장 토양수분 측정값 아님",
+            "시설이 선행 기간에 존재한 조건의 초기화이며 시공 직후 반입토 수분 복원 아님",
+            "7일은 초기화 계산 기간이며 장기 건조기 초기조건의 완전 수렴을 보장하지 않음",
+            "선행 강우 일누적 차분과 이동합 불일치 경고 보존; 원문 일누적을 우선한 초기화",
+            "선행 통신 결측은 누적 관측 또는 동일 지점 시간 강우의 총량을 평균 강도로 적용; 분별 관측 복원 아님"
+          ],
+          "initialSoilMoisture": null,
+          "initialStorageM3": 0.06256164043578871,
+          "initialSurfaceDepthMm": 0.0,
+          "initialStorageDepthMm": 163.45374250205305,
+          "warmupRainMm": 146.0,
+          "scoreExcludesWarmup": true
+        },
+        "runoffContinuityPercent": 9.999999974752427e-7,
+        "evaluationBalanceResidualM3": 3.1910456821937494e-6,
+        "inputSha256": "6c17138f93fc99302aa3da1a9a6dbf465723b7da8277460dac01ae5b4ed6791f"
+      },
+      {
+        "scenario": {
+          "id": "DUST_96_G",
+          "label": "협잡물 96g 투입",
+          "row": 5,
+          "dustG": 96.0,
+          "permeabilityMmS": 2.12,
+          "catalogId": "KWRA_TYPE_A_CLOGGING_REFERENCE_V1",
+          "catalogSha256": "a9166ec93e6a6af4c460028f438c33fc67af0a1675502491e04f248c8e7dfd88",
+          "pavementDepthMm": 60,
+          "pavementPorosity": 0.2,
+          "conductivityMmH": 7632.0,
+          "imperviousFraction": 0,
+          "cloggingFactor": 0,
+          "timePolicy": "FIXED_THROUGH_SPINUP_AND_EVENT_NO_AUTOMATIC_AGING_OR_CLEANING"
+        },
+        "status": "SUCCEEDED",
+        "metrics": {
+          "initialSoilMoisture": null,
+          "initialStorageM3": 0.06256164043578871,
+          "initialLidStorageM3": 0.05719309379615513,
+          "initialSurfaceDepthMm": 0.0,
+          "initialPavementDepthMm": 0.0,
+          "initialStorageDepthMm": 163.45374250205305,
+          "evaluatedDischargeM3": 0.2248926077521779,
+          "evaluatedEvaporationM3": 0.00011426471788193032,
+          "evaluatedInfiltrationM3": 0.019756966666603246,
+          "peakDischargeMean1MinM3s": 7.74075396952234e-5,
+          "contributionM3": 0.01973221915550316
+        },
+        "initialization": {
+          "method": "OBSERVED_7_DAY_CONTINUOUS_SPINUP_V1",
+          "evaluationStart": "2022-08-08T09:00:00+00:00",
+          "warmupMinutes": 10080,
+          "evidence": "MODEL_DERIVED_NOT_MEASURED_SOIL_MOISTURE",
+          "rainfallSourceHashes": [
+            "ce92f8ae349dd2263ab5e41f8870222c9e5a74a47ff6ffe4daa98f44c3f970f7",
+            "bec3e997c098ecd9daf5a9983a5394446eed57b08c550dfddb9d3da64a76db57",
+            "1fe0311a891e4c4b661f496e8e75dd1d8f3fc89108f87bc87a1a36859735c6a7",
+            "e9275e1f7bf937aa8e720d8ddea26902cb2bc614a0671f07f8a743876917b391",
+            "aee01c77829a0c132fd09acde8873adbad5961abb5059fbfb1d97b50a150e1d7",
+            "104f2453d57ae3b95b557992f1ea06ec3d7f2e75ca1b7bb672c0687afd73604a",
+            "1589fc6a111f79cd7582d292206c030316da6bec390c702a473579ceb4bf1ae4",
+            "71dd6fd1a4f9c112586c575280bed399ddfc24e2901b4d59e269351e18cbcbd3",
+            "873d966b3ce7fbaa3f3eff39a7ea6d06b5df42c01d815c80444a1b024af2cfe1",
+            "0c7cc5e2ab33dad38dc5622e8367f611c7c1ee53a597d8ec8a35772db3ca9205",
+            "9302ddc7312523333b3dbfea785c68e0191dc3164ec676daa6408208ea6300fc",
+            "0f48afb1153d609cbdc8956df18a8970468e99070e13faeaf5ca748d18fcc1ee",
+            "d0b18081e42abba0cbae49d619d72308b2d0df6fe4fe4d93a0a87c65c9fba34d",
+            "5e0434a8691da75ffdcd5543e90b667cfb732f338700f4d1ef668d3552f421e7",
+            "548ac45edd633229222b0f0619960a62f13d0b1ae44b78f7d8eb0d6df525e513",
+            "f0c9f2880f0ce9b18aad8dfffba90a20d972fac7a367cacd48a3b3ca8602a8a1",
+            "a0156193dcc36f1857f831045535f0758303e089a135e81bf1e11e036c2ea230",
+            "962d2861ed5c872b3854433609b2606062c5e9d456e5e5a970e8e4579080763a",
+            "4ec4064ca359c2f5c68086a3ba0f025fc96dc98486b73b7bd6568c3c70a33fc1",
+            "9be5e71287e720168573119f9e277e1983562b0156d999b940549400d56f05e4",
+            "d602e1764ceb98b8db31882411f077e6c375b7f12d3076f63d940ac55a5fb204",
+            "4e2fa746b9b049256c1b5ec87eb5ac6f035aebf290df57ab233fe7c173289f49",
+            "0b5ba0b169c6ef5618a472f5161a71c379f5ee4ace5750316da05dba84a2ca56",
+            "073e5ba9546a4a36ebbfdc1a0a312c59016b469122332c61ab979e164dc41d87",
+            "6087367694046469066876e43af463ade4189c94f2e9abb592f43ed2ebd8ed39",
+            "8a7394cd91617f9eb625d617574b2ab15ae3c5886a4dd9682f8318d7d240f280",
+            "3a0a29112453af2c70a7a171f99ec22344d26f0b60b1e28e134d51618c3058bc",
+            "71f23571cfbce6efabd806438bcea9cf84ec1eee569ba04e4380807da44cc642",
+            "ca64e871bcd65bae56f1679e1f16487c5cba1a90d22940b19cd392ccb55166ab"
+          ],
+          "evaporationSourceHashes": [
+            "127913334dc8d01cf7c3e083863c2574c78d6800e362c008ed9601c6f6d276fb",
+            "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+            "38de3e435178ac79fb6a3fc931d0e07388223ebce36fcb67f940fa95292ac239",
+            "661fc8db73d0873a575797db5554a0203376d09bf2e1f4aef15b17f6226ecc18",
+            "6f8a3b22ba033ff41fa2a808835532794a9a0c5f3d63a3ffdd4a78dbebf1d4c3",
+            "71bac93738eff6819f855c9b1b261a090ce90153b20420f92c207902a8305f87",
+            "73ffaff41c79764357128d9512c97851d5b7875839eba59c604df7aa3824ebf9",
+            "8a32153c84da4049a5800b6aa36d830ab7f85d4533722f36530c571f9c3cf2db",
+            "a3736d2404daa0dc9c6685e3726857a77de40690946682a78c044828a5804764"
+          ],
+          "antecedentEvaporationMethod": "OBSERVED_ANTECEDENT_WEATHER_V1",
+          "rainfallQualityWarnings": [
+            {
+              "at": "2022-08-08T03:42:00+00:00",
+              "counterDepthMm": 1.0,
+              "rollingDerivedDepthMm": 1.5,
+              "windowMinutes": 15
+            },
+            {
+              "at": "2022-08-08T03:44:00+00:00",
+              "counterDepthMm": 1.0,
+              "rollingDerivedDepthMm": 1.5,
+              "windowMinutes": 15
+            },
+            {
+              "at": "2022-08-08T03:45:00+00:00",
+              "counterDepthMm": 1.0,
+              "rollingDerivedDepthMm": 0.75,
+              "windowMinutes": 15
+            },
+            {
+              "at": "2022-08-08T04:30:00+00:00",
+              "counterDepthMm": 0.5,
+              "rollingDerivedDepthMm": 0.75,
+              "windowMinutes": 60
+            },
+            {
+              "at": "2022-08-08T04:55:00+00:00",
+              "counterDepthMm": 0.0,
+              "rollingDerivedDepthMm": 0.5,
+              "windowMinutes": 15
+            }
+          ],
+          "zeroCounterDerivedMinutes": 15,
+          "aggregatedRainIntervals": [
+            {
+              "end": "2022-08-08T03:31:00+00:00",
+              "minutes": 2,
+              "start": "2022-08-08T03:29:00+00:00",
+              "timeDistribution": "UNIFORM_NOT_MINUTE_OBSERVATIONS",
+              "totalMm": 0.5
+            }
+          ],
+          "aggregateDerivedMinutes": 2,
+          "seed": "WILTING_POINT_AND_EMPTY_STORAGE",
+          "limitations": [
+            "선행 7일 이전 수분 실측 미확보로 시들음점·빈 저류층에서 재생",
+            "관측 기상 기반 모델 상태이며 현장 토양수분 측정값 아님",
+            "시설이 선행 기간에 존재한 조건의 초기화이며 시공 직후 반입토 수분 복원 아님",
+            "7일은 초기화 계산 기간이며 장기 건조기 초기조건의 완전 수렴을 보장하지 않음",
+            "선행 강우 일누적 차분과 이동합 불일치 경고 보존; 원문 일누적을 우선한 초기화",
+            "선행 통신 결측은 누적 관측 또는 동일 지점 시간 강우의 총량을 평균 강도로 적용; 분별 관측 복원 아님"
+          ],
+          "initialSoilMoisture": null,
+          "initialStorageM3": 0.06256164043578871,
+          "initialSurfaceDepthMm": 0.0,
+          "initialStorageDepthMm": 163.45374250205305,
+          "warmupRainMm": 146.0,
+          "scoreExcludesWarmup": true
+        },
+        "runoffContinuityPercent": 9.999999974752427e-7,
+        "evaluationBalanceResidualM3": 3.1910456821937494e-6,
+        "inputSha256": "8ed72d5a0567d2824960a01f0cb7215be31bbd5fa06c10bb202f4fc16b051825"
+      },
+      {
+        "scenario": {
+          "id": "DUST_192_G",
+          "label": "협잡물 192g 투입",
+          "row": 10,
+          "dustG": 192.0,
+          "permeabilityMmS": 1.4,
+          "catalogId": "KWRA_TYPE_A_CLOGGING_REFERENCE_V1",
+          "catalogSha256": "a9166ec93e6a6af4c460028f438c33fc67af0a1675502491e04f248c8e7dfd88",
+          "pavementDepthMm": 60,
+          "pavementPorosity": 0.2,
+          "conductivityMmH": 5040.0,
+          "imperviousFraction": 0,
+          "cloggingFactor": 0,
+          "timePolicy": "FIXED_THROUGH_SPINUP_AND_EVENT_NO_AUTOMATIC_AGING_OR_CLEANING"
+        },
+        "status": "SUCCEEDED",
+        "metrics": {
+          "initialSoilMoisture": null,
+          "initialStorageM3": 0.06256164043578871,
+          "initialLidStorageM3": 0.05719309379615513,
+          "initialSurfaceDepthMm": 0.0,
+          "initialPavementDepthMm": 0.0,
+          "initialStorageDepthMm": 163.45374250205305,
+          "evaluatedDischargeM3": 0.2248926077521779,
+          "evaluatedEvaporationM3": 0.00011426471788193032,
+          "evaluatedInfiltrationM3": 0.019756966666603246,
+          "peakDischargeMean1MinM3s": 7.74075396952234e-5,
+          "contributionM3": 0.01973221915550316
+        },
+        "initialization": {
+          "method": "OBSERVED_7_DAY_CONTINUOUS_SPINUP_V1",
+          "evaluationStart": "2022-08-08T09:00:00+00:00",
+          "warmupMinutes": 10080,
+          "evidence": "MODEL_DERIVED_NOT_MEASURED_SOIL_MOISTURE",
+          "rainfallSourceHashes": [
+            "ce92f8ae349dd2263ab5e41f8870222c9e5a74a47ff6ffe4daa98f44c3f970f7",
+            "bec3e997c098ecd9daf5a9983a5394446eed57b08c550dfddb9d3da64a76db57",
+            "1fe0311a891e4c4b661f496e8e75dd1d8f3fc89108f87bc87a1a36859735c6a7",
+            "e9275e1f7bf937aa8e720d8ddea26902cb2bc614a0671f07f8a743876917b391",
+            "aee01c77829a0c132fd09acde8873adbad5961abb5059fbfb1d97b50a150e1d7",
+            "104f2453d57ae3b95b557992f1ea06ec3d7f2e75ca1b7bb672c0687afd73604a",
+            "1589fc6a111f79cd7582d292206c030316da6bec390c702a473579ceb4bf1ae4",
+            "71dd6fd1a4f9c112586c575280bed399ddfc24e2901b4d59e269351e18cbcbd3",
+            "873d966b3ce7fbaa3f3eff39a7ea6d06b5df42c01d815c80444a1b024af2cfe1",
+            "0c7cc5e2ab33dad38dc5622e8367f611c7c1ee53a597d8ec8a35772db3ca9205",
+            "9302ddc7312523333b3dbfea785c68e0191dc3164ec676daa6408208ea6300fc",
+            "0f48afb1153d609cbdc8956df18a8970468e99070e13faeaf5ca748d18fcc1ee",
+            "d0b18081e42abba0cbae49d619d72308b2d0df6fe4fe4d93a0a87c65c9fba34d",
+            "5e0434a8691da75ffdcd5543e90b667cfb732f338700f4d1ef668d3552f421e7",
+            "548ac45edd633229222b0f0619960a62f13d0b1ae44b78f7d8eb0d6df525e513",
+            "f0c9f2880f0ce9b18aad8dfffba90a20d972fac7a367cacd48a3b3ca8602a8a1",
+            "a0156193dcc36f1857f831045535f0758303e089a135e81bf1e11e036c2ea230",
+            "962d2861ed5c872b3854433609b2606062c5e9d456e5e5a970e8e4579080763a",
+            "4ec4064ca359c2f5c68086a3ba0f025fc96dc98486b73b7bd6568c3c70a33fc1",
+            "9be5e71287e720168573119f9e277e1983562b0156d999b940549400d56f05e4",
+            "d602e1764ceb98b8db31882411f077e6c375b7f12d3076f63d940ac55a5fb204",
+            "4e2fa746b9b049256c1b5ec87eb5ac6f035aebf290df57ab233fe7c173289f49",
+            "0b5ba0b169c6ef5618a472f5161a71c379f5ee4ace5750316da05dba84a2ca56",
+            "073e5ba9546a4a36ebbfdc1a0a312c59016b469122332c61ab979e164dc41d87",
+            "6087367694046469066876e43af463ade4189c94f2e9abb592f43ed2ebd8ed39",
+            "8a7394cd91617f9eb625d617574b2ab15ae3c5886a4dd9682f8318d7d240f280",
+            "3a0a29112453af2c70a7a171f99ec22344d26f0b60b1e28e134d51618c3058bc",
+            "71f23571cfbce6efabd806438bcea9cf84ec1eee569ba04e4380807da44cc642",
+            "ca64e871bcd65bae56f1679e1f16487c5cba1a90d22940b19cd392ccb55166ab"
+          ],
+          "evaporationSourceHashes": [
+            "127913334dc8d01cf7c3e083863c2574c78d6800e362c008ed9601c6f6d276fb",
+            "2b5e6fe71068e4c0b5bfed55980c64635261e2b526f1fd9ec0142f971fa63234",
+            "38de3e435178ac79fb6a3fc931d0e07388223ebce36fcb67f940fa95292ac239",
+            "661fc8db73d0873a575797db5554a0203376d09bf2e1f4aef15b17f6226ecc18",
+            "6f8a3b22ba033ff41fa2a808835532794a9a0c5f3d63a3ffdd4a78dbebf1d4c3",
+            "71bac93738eff6819f855c9b1b261a090ce90153b20420f92c207902a8305f87",
+            "73ffaff41c79764357128d9512c97851d5b7875839eba59c604df7aa3824ebf9",
+            "8a32153c84da4049a5800b6aa36d830ab7f85d4533722f36530c571f9c3cf2db",
+            "a3736d2404daa0dc9c6685e3726857a77de40690946682a78c044828a5804764"
+          ],
+          "antecedentEvaporationMethod": "OBSERVED_ANTECEDENT_WEATHER_V1",
+          "rainfallQualityWarnings": [
+            {
+              "at": "2022-08-08T03:42:00+00:00",
+              "counterDepthMm": 1.0,
+              "rollingDerivedDepthMm": 1.5,
+              "windowMinutes": 15
+            },
+            {
+              "at": "2022-08-08T03:44:00+00:00",
+              "counterDepthMm": 1.0,
+              "rollingDerivedDepthMm": 1.5,
+              "windowMinutes": 15
+            },
+            {
+              "at": "2022-08-08T03:45:00+00:00",
+              "counterDepthMm": 1.0,
+              "rollingDerivedDepthMm": 0.75,
+              "windowMinutes": 15
+            },
+            {
+              "at": "2022-08-08T04:30:00+00:00",
+              "counterDepthMm": 0.5,
+              "rollingDerivedDepthMm": 0.75,
+              "windowMinutes": 60
+            },
+            {
+              "at": "2022-08-08T04:55:00+00:00",
+              "counterDepthMm": 0.0,
+              "rollingDerivedDepthMm": 0.5,
+              "windowMinutes": 15
+            }
+          ],
+          "zeroCounterDerivedMinutes": 15,
+          "aggregatedRainIntervals": [
+            {
+              "end": "2022-08-08T03:31:00+00:00",
+              "minutes": 2,
+              "start": "2022-08-08T03:29:00+00:00",
+              "timeDistribution": "UNIFORM_NOT_MINUTE_OBSERVATIONS",
+              "totalMm": 0.5
+            }
+          ],
+          "aggregateDerivedMinutes": 2,
+          "seed": "WILTING_POINT_AND_EMPTY_STORAGE",
+          "limitations": [
+            "선행 7일 이전 수분 실측 미확보로 시들음점·빈 저류층에서 재생",
+            "관측 기상 기반 모델 상태이며 현장 토양수분 측정값 아님",
+            "시설이 선행 기간에 존재한 조건의 초기화이며 시공 직후 반입토 수분 복원 아님",
+            "7일은 초기화 계산 기간이며 장기 건조기 초기조건의 완전 수렴을 보장하지 않음",
+            "선행 강우 일누적 차분과 이동합 불일치 경고 보존; 원문 일누적을 우선한 초기화",
+            "선행 통신 결측은 누적 관측 또는 동일 지점 시간 강우의 총량을 평균 강도로 적용; 분별 관측 복원 아님"
+          ],
+          "initialSoilMoisture": null,
+          "initialStorageM3": 0.06256164043578871,
+          "initialSurfaceDepthMm": 0.0,
+          "initialStorageDepthMm": 163.45374250205305,
+          "warmupRainMm": 146.0,
+          "scoreExcludesWarmup": true
+        },
+        "runoffContinuityPercent": 9.999999974752427e-7,
+        "evaluationBalanceResidualM3": 3.1910456821937494e-6,
+        "inputSha256": "e599a50fce2eac8896483c1dc9dbe9dbd89d36877dc4fb575c9325e719b3b4af"
+      }
+    ],
+    "differencesFromFresh": [
+      {
+        "scenarioId": "DUST_96_G",
+        "minusFresh": {
+          "initialSoilMoisture": null,
+          "initialStorageM3": 0.0,
+          "initialLidStorageM3": 0.0,
+          "initialSurfaceDepthMm": 0.0,
+          "initialPavementDepthMm": 0.0,
+          "initialStorageDepthMm": 0.0,
+          "evaluatedDischargeM3": 0.0,
+          "evaluatedEvaporationM3": 0.0,
+          "evaluatedInfiltrationM3": 0.0,
+          "peakDischargeMean1MinM3s": 0.0,
+          "contributionM3": 0.0
+        }
+      },
+      {
+        "scenarioId": "DUST_192_G",
+        "minusFresh": {
+          "initialSoilMoisture": null,
+          "initialStorageM3": 0.0,
+          "initialLidStorageM3": 0.0,
+          "initialSurfaceDepthMm": 0.0,
+          "initialPavementDepthMm": 0.0,
+          "initialStorageDepthMm": 0.0,
+          "evaluatedDischargeM3": 0.0,
+          "evaluatedEvaporationM3": 0.0,
+          "evaluatedInfiltrationM3": 0.0,
+          "peakDischargeMean1MinM3s": 0.0,
+          "contributionM3": 0.0
+        }
+      }
+    ],
+    "rankingEligible": false,
+    "cleaningRecovery": {
+      "status": "UNAVAILABLE",
+      "reason": "MATCHED_MATERIAL_CLEANING_MEASUREMENTS_NOT_PUBLISHED",
+      "value": null
+    },
+    "limitations": [
+      "포장 두께 60mm·공극률 20%·불투수비율 0을 세 조건에 공통 적용; 막힘 후 공극 체적 변화는 미측정으로 재현하지 않음",
+      "하부 쇄석층·원지반·시설 면적·강우·증발산·초기화 절차는 선택 후보의 공통 설계 조건 유지",
+      "각 투수값을 선행 계산과 평가 기간 동안 고정; 동적 막힘·연수 진행·자동 청소·초기 저장량 강제 비우기 없음",
+      "논문에서 투수계수로 보고한 유량/면적 값을 mm/h로 환산한 참조 민감도이며 해당 현장의 투수 성능 예측 아님",
+      "기존 설치의 재료·비용·결과·순위는 변경하지 않는 별도 문헌 재료 비교",
+      "새 블록과 협잡물 조건의 차이이며 실제 사용 연수·관리 지연 기간의 예측 아님",
+      "현장 설치 인증·완성 포장체의 열화·청소 효과 검증 아님"
+    ]
+  }
+}

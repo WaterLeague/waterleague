@@ -28,6 +28,7 @@ def source_policy():
         'backend/src/main/resources/facilities/reference-surfaces-v1.json',
         'backend/src/main/resources/facilities/life-cycle-method-v1.json',
         'backend/src/main/resources/facilities/site-suitability-v1.json',
+        'backend/src/main/resources/facilities/pavement-maintenance-v1.json',
         'backend/src/main/resources/budget/seoul-2026.json',
         'backend/src/main/resources/budget/seoul-accounting-v4.json',
         'scripts/build_score_policy.py',

@@ -1,0 +1,31 @@
+{
+  "id": "kwra-pavement-clogging-2025",
+  "title": "투수 포장 블록 성능이 도시 물순환에 미치는 영향 검토",
+  "publisher": "한국수자원학회",
+  "documentYear": 2025,
+  "doi": "10.3741/JKWRA.2025.58.9.721",
+  "url": "https://jkwra.or.kr/articles/pdf/N8x4/kwra-2025-058-09-0.pdf",
+  "file": "data/private/facility-reference-20261020/pavement-block-2025.pdf",
+  "sha256": "67216d02adb3c1c632da7585756df150620d50b886a8cab2ff40d4113e3fe9df",
+  "bytes": 1736181,
+  "pdfPages": 13,
+  "evidencePages": [
+    6,
+    7,
+    8
+  ],
+  "sourceTables": [
+    7,
+    8,
+    9
+  ],
+  "classification": "LABORATORY_CLOGGING_TEST_NOT_FIELD_AGING",
+  "limitations": [
+    "본문의 Type-A 공극률 7.84%는 표 7의 휨강도와 일치하며 공극률 20.0%와 불일치; 표 7의 명시된 열 사용",
+    "표 9의 원 실험값(*)만 사용; 보정값(**)·회귀식(***)·다른 블록의 값을 혼합하지 않음",
+    "투수계수는 논문의 유량/시료 면적 산정값; 현장 포장 재료 성적서나 부지 실측값 아님",
+    "연수는 누적 협잡물 투입의 실험 환산값이며 실제 수년간 현장 관측 아님",
+    "막힘 후 공극률·청소 후 회복·공종별 비용 미제공; 추가 수치 생성 없음",
+    "원문 재배포 없이 사실·숫자와 출처를 사용; 원문 이용조건은 발행처 기준"
+  ]
+}
