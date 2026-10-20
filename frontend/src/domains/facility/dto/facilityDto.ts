@@ -25,7 +25,7 @@ const rainGardenBoundaryDto = z.object({
   basis: z.enum([
     'TEXTURE_CLASS_LITERATURE_ESTIMATE',
     'UNRESOLVED_DESIGN_ASSUMPTION',
-    'PUBLIC_REFERENCE_SCENARIO',
+    'PUBLIC_REFERENCE_SCENARIO_NOT_LOCAL_MEASUREMENT',
   ]),
   liner: z.literal('UNLINED_DESIGN_NOT_SITE_CONFIRMED'),
   storageThicknessMm: z.literal(0),
@@ -35,7 +35,10 @@ export const nativeSoilBoundaryDto = z.union([
   z.object({
     method: z.literal('IT_NATIVE_SOIL_SEEPAGE_V1'),
     seepageMmH: z.number().finite().positive(),
-    basis: z.enum(['TEXTURE_CLASS_LITERATURE_ESTIMATE', 'PUBLIC_REFERENCE_SCENARIO']),
+    basis: z.enum([
+      'TEXTURE_CLASS_LITERATURE_ESTIMATE',
+      'PUBLIC_REFERENCE_SCENARIO_NOT_LOCAL_MEASUREMENT',
+    ]),
     liner: z.literal('UNLINED_DESIGN_NOT_SITE_CONFIRMED'),
     storageThicknessMm: z.literal(914.4),
     underdrain: z.literal('NONE_DIRECT_RAIN_INFILTRATION_DESIGN'),
@@ -43,7 +46,10 @@ export const nativeSoilBoundaryDto = z.union([
   z.object({
     method: z.literal('BC_NATIVE_SOIL_SEEPAGE_V1'),
     seepageMmH: z.number().finite().positive(),
-    basis: z.enum(['TEXTURE_CLASS_LITERATURE_ESTIMATE', 'PUBLIC_REFERENCE_SCENARIO']),
+    basis: z.enum([
+      'TEXTURE_CLASS_LITERATURE_ESTIMATE',
+      'PUBLIC_REFERENCE_SCENARIO_NOT_LOCAL_MEASUREMENT',
+    ]),
     liner: z.literal('UNLINED_DESIGN_NOT_SITE_CONFIRMED'),
     storageThicknessMm: z.literal(304.8),
     underdrain: z.literal('NONE_DIRECT_RAIN_INFILTRATION_DESIGN'),
