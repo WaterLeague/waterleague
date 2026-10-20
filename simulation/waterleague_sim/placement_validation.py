@@ -1,5 +1,6 @@
 """계산 입력의 시설·면적·원화 예산 검증."""
 from decimal import Decimal
+from .spatial.suitability import require_explorable
 
 
 def cost(model, placements):
@@ -13,6 +14,7 @@ def cost(model, placements):
         area = Decimal(str(p['areaM2']))
         if not cell or p['cellId'] in seen or p['facilityType'] not in cell['allowedTypes'] or not area.is_finite() or area <= 0 or area > Decimal(str(cell['maxAreaM2'])) or area.normalize().as_tuple().exponent < -2:
             raise ValueError('배치 조건 오류')
+        require_explorable(cell)
         seen.add(p['cellId'])
         total += area * Decimal(str(model['unitCosts'][p['facilityType']]))
     if total > Decimal(str(model['budget'])):

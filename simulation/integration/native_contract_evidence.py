@@ -29,6 +29,11 @@ def verify(test, directory):
         for name, sha in record['inputFiles'].items():
             test.assertEqual(hashlib.sha256((folder / name).read_bytes()).hexdigest(), sha)
         manifest = json.loads((folder / 'manifest.json').read_bytes())
+        from waterleague_sim.spatial.suitability import assess
+        test.assertEqual(record['suitability'], assess(cell))
+        test.assertEqual(record['suitability']['status'], 'UNKNOWN')
+        test.assertFalse(record['suitability']['constructionApproved'])
+        test.assertEqual(record['suitability']['policySha256'], manifest['site-suitability-policy.json'])
         from waterleague_sim.costing.life_cycle import evaluate
         finance = result['lifeCycleCost']
         plan = json.loads((folder / 'life-cycle-cost-plan.json').read_bytes())

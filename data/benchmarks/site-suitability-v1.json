@@ -1,0 +1,1031 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-10-20",
+  "status": "PASS",
+  "scope": "원형 후보의 조건별 상태·안전 제약과 결과 결속; 현장 관측·시공 승인 아님",
+  "policySha256": "7d4d0956aedf86f35957f6371251e909b94ad4c155817012af23b3d6c49cce64",
+  "catalogScan": {
+    "status": "PASS",
+    "catalogSha256": "d2d9ea2a888ee01d59f253b3848c3c30fdf4b6b3f03662b1202dc9b7a48b88b9",
+    "checkedCandidates": 1022710,
+    "districts": 25,
+    "allSiteConditionsUnconfirmed": true,
+    "rows": [
+      [
+        "11110",
+        "GROUND",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        13166
+      ],
+      [
+        "11110",
+        "ROOF",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        30619
+      ],
+      [
+        "11140",
+        "GROUND",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        7470
+      ],
+      [
+        "11140",
+        "ROOF",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        20458
+      ],
+      [
+        "11170",
+        "GROUND",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        11684
+      ],
+      [
+        "11170",
+        "ROOF",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        30005
+      ],
+      [
+        "11200",
+        "GROUND",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        9216
+      ],
+      [
+        "11200",
+        "ROOF",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        21916
+      ],
+      [
+        "11215",
+        "GROUND",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        10942
+      ],
+      [
+        "11215",
+        "ROOF",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        29923
+      ],
+      [
+        "11230",
+        "GROUND",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        11986
+      ],
+      [
+        "11230",
+        "ROOF",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        31582
+      ],
+      [
+        "11260",
+        "GROUND",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        15034
+      ],
+      [
+        "11260",
+        "ROOF",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        30878
+      ],
+      [
+        "11290",
+        "GROUND",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        16650
+      ],
+      [
+        "11290",
+        "ROOF",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        42838
+      ],
+      [
+        "11305",
+        "GROUND",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        13478
+      ],
+      [
+        "11305",
+        "ROOF",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        31968
+      ],
+      [
+        "11320",
+        "GROUND",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        9724
+      ],
+      [
+        "11320",
+        "ROOF",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        20005
+      ],
+      [
+        "11350",
+        "GROUND",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        12257
+      ],
+      [
+        "11350",
+        "ROOF",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        23120
+      ],
+      [
+        "11380",
+        "GROUND",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        15131
+      ],
+      [
+        "11380",
+        "ROOF",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        35907
+      ],
+      [
+        "11410",
+        "GROUND",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        11142
+      ],
+      [
+        "11410",
+        "ROOF",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        27480
+      ],
+      [
+        "11440",
+        "GROUND",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        12454
+      ],
+      [
+        "11440",
+        "ROOF",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        29156
+      ],
+      [
+        "11470",
+        "GROUND",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        9290
+      ],
+      [
+        "11470",
+        "ROOF",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        22132
+      ],
+      [
+        "11500",
+        "GROUND",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        15074
+      ],
+      [
+        "11500",
+        "ROOF",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        31998
+      ],
+      [
+        "11530",
+        "GROUND",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        12050
+      ],
+      [
+        "11530",
+        "ROOF",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        28550
+      ],
+      [
+        "11545",
+        "GROUND",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        7150
+      ],
+      [
+        "11545",
+        "ROOF",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        20168
+      ],
+      [
+        "11560",
+        "GROUND",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        12996
+      ],
+      [
+        "11560",
+        "ROOF",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        30083
+      ],
+      [
+        "11590",
+        "GROUND",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        10009
+      ],
+      [
+        "11590",
+        "ROOF",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        26387
+      ],
+      [
+        "11620",
+        "GROUND",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        14599
+      ],
+      [
+        "11620",
+        "ROOF",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        40996
+      ],
+      [
+        "11650",
+        "GROUND",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        17279
+      ],
+      [
+        "11650",
+        "ROOF",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        21318
+      ],
+      [
+        "11680",
+        "GROUND",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        17255
+      ],
+      [
+        "11680",
+        "ROOF",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        30756
+      ],
+      [
+        "11710",
+        "GROUND",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        11926
+      ],
+      [
+        "11710",
+        "ROOF",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        30458
+      ],
+      [
+        "11740",
+        "GROUND",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        11869
+      ],
+      [
+        "11740",
+        "ROOF",
+        "UNKNOWN",
+        "UNKNOWN",
+        null,
+        24178
+      ]
+    ],
+    "seconds": 54.01576908300012
+  },
+  "javaPythonCases": {
+    "aggregate-does-not-fill-missing": {
+      "version": "SITE_SUITABILITY_V1",
+      "policySha256": "7d4d0956aedf86f35957f6371251e909b94ad4c155817012af23b3d6c49cce64",
+      "status": "UNKNOWN",
+      "explorationAllowed": true,
+      "constructionApproved": false,
+      "checks": [
+        {
+          "id": "SLOPE",
+          "status": "UNKNOWN",
+          "reason": "이 위치의 공개 근거 미확보",
+          "evidence": null
+        },
+        {
+          "id": "ROOF_STRUCTURAL_LOAD",
+          "status": "UNKNOWN",
+          "reason": "이 위치의 공개 근거 미확보",
+          "evidence": null
+        },
+        {
+          "id": "WATERPROOFING",
+          "status": "UNKNOWN",
+          "reason": "이 위치의 공개 근거 미확보",
+          "evidence": null
+        },
+        {
+          "id": "DRAINAGE",
+          "status": "UNKNOWN",
+          "reason": "이 위치의 공개 근거 미확보",
+          "evidence": null
+        }
+      ]
+    },
+    "aggregate-prohibited": {
+      "version": "SITE_SUITABILITY_V1",
+      "policySha256": "7d4d0956aedf86f35957f6371251e909b94ad4c155817012af23b3d6c49cce64",
+      "status": "PROHIBITED",
+      "explorationAllowed": false,
+      "constructionApproved": false,
+      "checks": [
+        {
+          "id": "SOIL",
+          "status": "UNKNOWN",
+          "reason": "이 위치의 공개 근거 미확보",
+          "evidence": null
+        },
+        {
+          "id": "SLOPE",
+          "status": "UNKNOWN",
+          "reason": "이 위치의 공개 근거 미확보",
+          "evidence": null
+        },
+        {
+          "id": "GROUNDWATER",
+          "status": "UNKNOWN",
+          "reason": "이 위치의 공개 근거 미확보",
+          "evidence": null
+        },
+        {
+          "id": "UNDERGROUND_UTILITIES",
+          "status": "UNKNOWN",
+          "reason": "이 위치의 공개 근거 미확보",
+          "evidence": null
+        },
+        {
+          "id": "TRAFFIC_LOAD",
+          "status": "UNKNOWN",
+          "reason": "이 위치의 공개 근거 미확보",
+          "evidence": null
+        },
+        {
+          "id": "DRAINAGE",
+          "status": "UNKNOWN",
+          "reason": "이 위치의 공개 근거 미확보",
+          "evidence": null
+        }
+      ]
+    },
+    "all-roof-conditions-confirmed": {
+      "version": "SITE_SUITABILITY_V1",
+      "policySha256": "7d4d0956aedf86f35957f6371251e909b94ad4c155817012af23b3d6c49cce64",
+      "status": "ELIGIBLE",
+      "explorationAllowed": true,
+      "constructionApproved": false,
+      "checks": [
+        {
+          "id": "SLOPE",
+          "status": "ELIGIBLE",
+          "reason": "시험 전용 조건",
+          "evidence": {
+            "title": "TEST_ONLY · 실제 현장 근거 아님",
+            "url": "https://example.org/test-only",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "reference": "시험 전용 판정표"
+          }
+        },
+        {
+          "id": "ROOF_STRUCTURAL_LOAD",
+          "status": "ELIGIBLE",
+          "reason": "시험 전용 조건",
+          "evidence": {
+            "title": "TEST_ONLY · 실제 현장 근거 아님",
+            "url": "https://example.org/test-only",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "reference": "시험 전용 판정표"
+          }
+        },
+        {
+          "id": "WATERPROOFING",
+          "status": "ELIGIBLE",
+          "reason": "시험 전용 조건",
+          "evidence": {
+            "title": "TEST_ONLY · 실제 현장 근거 아님",
+            "url": "https://example.org/test-only",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "reference": "시험 전용 판정표"
+          }
+        },
+        {
+          "id": "DRAINAGE",
+          "status": "ELIGIBLE",
+          "reason": "시험 전용 조건",
+          "evidence": {
+            "title": "TEST_ONLY · 실제 현장 근거 아님",
+            "url": "https://example.org/test-only",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "reference": "시험 전용 판정표"
+          }
+        }
+      ]
+    },
+    "ground-condition-pending": {
+      "version": "SITE_SUITABILITY_V1",
+      "policySha256": "7d4d0956aedf86f35957f6371251e909b94ad4c155817012af23b3d6c49cce64",
+      "status": "CONDITIONAL",
+      "explorationAllowed": false,
+      "constructionApproved": false,
+      "checks": [
+        {
+          "id": "SOIL",
+          "status": "UNKNOWN",
+          "reason": "이 위치의 공개 근거 미확보",
+          "evidence": null
+        },
+        {
+          "id": "SLOPE",
+          "status": "UNKNOWN",
+          "reason": "이 위치의 공개 근거 미확보",
+          "evidence": null
+        },
+        {
+          "id": "GROUNDWATER",
+          "status": "CONDITIONAL",
+          "reason": "시험 전용 조건",
+          "evidence": {
+            "title": "TEST_ONLY · 실제 현장 근거 아님",
+            "url": "https://example.org/test-only",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "reference": "시험 전용 판정표"
+          }
+        },
+        {
+          "id": "UNDERGROUND_UTILITIES",
+          "status": "UNKNOWN",
+          "reason": "이 위치의 공개 근거 미확보",
+          "evidence": null
+        },
+        {
+          "id": "TRAFFIC_LOAD",
+          "status": "UNKNOWN",
+          "reason": "이 위치의 공개 근거 미확보",
+          "evidence": null
+        },
+        {
+          "id": "DRAINAGE",
+          "status": "UNKNOWN",
+          "reason": "이 위치의 공개 근거 미확보",
+          "evidence": null
+        }
+      ]
+    },
+    "one-missing-stays-unknown": {
+      "version": "SITE_SUITABILITY_V1",
+      "policySha256": "7d4d0956aedf86f35957f6371251e909b94ad4c155817012af23b3d6c49cce64",
+      "status": "UNKNOWN",
+      "explorationAllowed": true,
+      "constructionApproved": false,
+      "checks": [
+        {
+          "id": "SLOPE",
+          "status": "UNKNOWN",
+          "reason": "이 위치의 공개 근거 미확보",
+          "evidence": null
+        },
+        {
+          "id": "ROOF_STRUCTURAL_LOAD",
+          "status": "UNKNOWN",
+          "reason": "이 위치의 공개 근거 미확보",
+          "evidence": null
+        },
+        {
+          "id": "WATERPROOFING",
+          "status": "UNKNOWN",
+          "reason": "이 위치의 공개 근거 미확보",
+          "evidence": null
+        },
+        {
+          "id": "DRAINAGE",
+          "status": "ELIGIBLE",
+          "reason": "시험 전용 조건",
+          "evidence": {
+            "title": "TEST_ONLY · 실제 현장 근거 아님",
+            "url": "https://example.org/test-only",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "reference": "시험 전용 판정표"
+          }
+        }
+      ]
+    },
+    "prohibited-before-conditional": {
+      "version": "SITE_SUITABILITY_V1",
+      "policySha256": "7d4d0956aedf86f35957f6371251e909b94ad4c155817012af23b3d6c49cce64",
+      "status": "PROHIBITED",
+      "explorationAllowed": false,
+      "constructionApproved": false,
+      "checks": [
+        {
+          "id": "SOIL",
+          "status": "CONDITIONAL",
+          "reason": "시험 전용 조건",
+          "evidence": {
+            "title": "TEST_ONLY · 실제 현장 근거 아님",
+            "url": "https://example.org/test-only",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "reference": "시험 전용 판정표"
+          }
+        },
+        {
+          "id": "SLOPE",
+          "status": "UNKNOWN",
+          "reason": "이 위치의 공개 근거 미확보",
+          "evidence": null
+        },
+        {
+          "id": "GROUNDWATER",
+          "status": "UNKNOWN",
+          "reason": "이 위치의 공개 근거 미확보",
+          "evidence": null
+        },
+        {
+          "id": "UNDERGROUND_UTILITIES",
+          "status": "UNKNOWN",
+          "reason": "이 위치의 공개 근거 미확보",
+          "evidence": null
+        },
+        {
+          "id": "TRAFFIC_LOAD",
+          "status": "UNKNOWN",
+          "reason": "이 위치의 공개 근거 미확보",
+          "evidence": null
+        },
+        {
+          "id": "DRAINAGE",
+          "status": "UNKNOWN",
+          "reason": "이 위치의 공개 근거 미확보",
+          "evidence": null
+        }
+      ]
+    },
+    "roof-load-prohibited": {
+      "version": "SITE_SUITABILITY_V1",
+      "policySha256": "7d4d0956aedf86f35957f6371251e909b94ad4c155817012af23b3d6c49cce64",
+      "status": "PROHIBITED",
+      "explorationAllowed": false,
+      "constructionApproved": false,
+      "checks": [
+        {
+          "id": "SLOPE",
+          "status": "UNKNOWN",
+          "reason": "이 위치의 공개 근거 미확보",
+          "evidence": null
+        },
+        {
+          "id": "ROOF_STRUCTURAL_LOAD",
+          "status": "PROHIBITED",
+          "reason": "시험 전용 조건",
+          "evidence": {
+            "title": "TEST_ONLY · 실제 현장 근거 아님",
+            "url": "https://example.org/test-only",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "reference": "시험 전용 판정표"
+          }
+        },
+        {
+          "id": "WATERPROOFING",
+          "status": "UNKNOWN",
+          "reason": "이 위치의 공개 근거 미확보",
+          "evidence": null
+        },
+        {
+          "id": "DRAINAGE",
+          "status": "ELIGIBLE",
+          "reason": "시험 전용 조건",
+          "evidence": {
+            "title": "TEST_ONLY · 실제 현장 근거 아님",
+            "url": "https://example.org/test-only",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "reference": "시험 전용 판정표"
+          }
+        }
+      ]
+    },
+    "unknown-ground": {
+      "version": "SITE_SUITABILITY_V1",
+      "policySha256": "7d4d0956aedf86f35957f6371251e909b94ad4c155817012af23b3d6c49cce64",
+      "status": "UNKNOWN",
+      "explorationAllowed": true,
+      "constructionApproved": false,
+      "checks": [
+        {
+          "id": "SOIL",
+          "status": "UNKNOWN",
+          "reason": "이 위치의 공개 근거 미확보",
+          "evidence": null
+        },
+        {
+          "id": "SLOPE",
+          "status": "UNKNOWN",
+          "reason": "이 위치의 공개 근거 미확보",
+          "evidence": null
+        },
+        {
+          "id": "GROUNDWATER",
+          "status": "UNKNOWN",
+          "reason": "이 위치의 공개 근거 미확보",
+          "evidence": null
+        },
+        {
+          "id": "UNDERGROUND_UTILITIES",
+          "status": "UNKNOWN",
+          "reason": "이 위치의 공개 근거 미확보",
+          "evidence": null
+        },
+        {
+          "id": "TRAFFIC_LOAD",
+          "status": "UNKNOWN",
+          "reason": "이 위치의 공개 근거 미확보",
+          "evidence": null
+        },
+        {
+          "id": "DRAINAGE",
+          "status": "UNKNOWN",
+          "reason": "이 위치의 공개 근거 미확보",
+          "evidence": null
+        }
+      ]
+    },
+    "unknown-roof": {
+      "version": "SITE_SUITABILITY_V1",
+      "policySha256": "7d4d0956aedf86f35957f6371251e909b94ad4c155817012af23b3d6c49cce64",
+      "status": "UNKNOWN",
+      "explorationAllowed": true,
+      "constructionApproved": false,
+      "checks": [
+        {
+          "id": "SLOPE",
+          "status": "UNKNOWN",
+          "reason": "이 위치의 공개 근거 미확보",
+          "evidence": null
+        },
+        {
+          "id": "ROOF_STRUCTURAL_LOAD",
+          "status": "UNKNOWN",
+          "reason": "이 위치의 공개 근거 미확보",
+          "evidence": null
+        },
+        {
+          "id": "WATERPROOFING",
+          "status": "UNKNOWN",
+          "reason": "이 위치의 공개 근거 미확보",
+          "evidence": null
+        },
+        {
+          "id": "DRAINAGE",
+          "status": "UNKNOWN",
+          "reason": "이 위치의 공개 근거 미확보",
+          "evidence": null
+        }
+      ]
+    }
+  },
+  "frontendApi": {
+    "status": "PASS",
+    "javaCases": 9,
+    "actualWorkerReadback": true,
+    "restrictedResultRejected": true,
+    "sourceHashes": {
+      "tmp/site-suitability-java-v1.json": "392ab7f41da859025afc5ab648024e3ba1881ff6a8b308369f1028a75a9cbb34",
+      "tmp/waterleague_queue_test_2d31ae82728e402884cfeebdc4ff1cee.fixtures/physics-response.json": "4107202cc32c70b4970ea19bd6216766badc57e6b985399880ada51e621ed590"
+    },
+    "scope": "실제 API·워커 DTO와 시험 전용 경계 판정; 브라우저 검증·현장 안전 확인과 구분"
+  },
+  "checks": {
+    "javaPythonBoundaryCases": 9,
+    "boundaryScope": "SYNTHETIC_TEST_ONLY_NO_FIELD_OBSERVATIONS",
+    "backend": {
+      "tests": 273,
+      "passed": 266,
+      "skipped": 7,
+      "failures": 0,
+      "errors": 0
+    },
+    "frontend": {
+      "files": 127,
+      "tests": 420,
+      "build": true,
+      "format": true
+    },
+    "python": {
+      "siteSuitability": 3,
+      "directContract": 5,
+      "nativeCatalog": 19,
+      "continuous": 4,
+      "scorePolicy": 5,
+      "flowConnections": 9
+    },
+    "weekly": {
+      "javaTests": 17,
+      "workerTests": 11,
+      "httpReadback": true,
+      "sourceCountsUnchanged": true
+    },
+    "historical": {
+      "javaTests": 19,
+      "workerTests": 6,
+      "fullEventSubmission": true,
+      "sourceCountsUnchanged": true
+    },
+    "prohibitedAndConditionalBlocked": true,
+    "missingNotPromotedToEligible": true,
+    "constructionApprovalNeverInferred": true,
+    "workerImagePolicySourcesCovered": 184
+  },
+  "unchangedPhysicalInputsAndOutputs": [
+    {
+      "facility": "bioretention",
+      "file": "baseline.inp",
+      "sha256": "d873eda919ba22426daffe0561ad8299affa4cd0c8c6f7e425bab534ec1a5b7b"
+    },
+    {
+      "facility": "bioretention",
+      "file": "strategy.inp",
+      "sha256": "7ae7d3506c68c25ed83340b1f069a5c2a212b83efe2cb0574a4686ae6248417d"
+    },
+    {
+      "facility": "bioretention",
+      "file": "baseline.out",
+      "sha256": "eb7b65f2d91fb0199ce4a2d0aee272a149914aa8953bd0c33e2ba27f3f88d926"
+    },
+    {
+      "facility": "bioretention",
+      "file": "strategy.out",
+      "sha256": "933f1f1cdbf031631d71f7556268da2fc3bc1c254ff6b3df69d32bfca85d40f0"
+    },
+    {
+      "facility": "green_roof",
+      "file": "baseline.inp",
+      "sha256": "e5ee5a6918de2a2f75275112fd845ddf1ab4537b2c2d07a9ed6580f221ec25d6"
+    },
+    {
+      "facility": "green_roof",
+      "file": "strategy.inp",
+      "sha256": "c910c84fcead59e7ec8c58920e26fdd7d22342b7056f495e0a107ba836c59204"
+    },
+    {
+      "facility": "green_roof",
+      "file": "baseline.out",
+      "sha256": "30982085613d8cab0cb42a6b6b71db052fbdc6b2c92836a8884b6ecf1a1e63c7"
+    },
+    {
+      "facility": "green_roof",
+      "file": "strategy.out",
+      "sha256": "6d9cd5e25fb7fb663df722a54c2137a5b1d5e82fb1d6464466d90779220ff3f0"
+    },
+    {
+      "facility": "infiltration_trench",
+      "file": "baseline.inp",
+      "sha256": "d873eda919ba22426daffe0561ad8299affa4cd0c8c6f7e425bab534ec1a5b7b"
+    },
+    {
+      "facility": "infiltration_trench",
+      "file": "strategy.inp",
+      "sha256": "60e80e7f7ed8f8d2e265776ca090415c6d1b13998fa7e042b0563ee0ca6ffd6f"
+    },
+    {
+      "facility": "infiltration_trench",
+      "file": "baseline.out",
+      "sha256": "eb7b65f2d91fb0199ce4a2d0aee272a149914aa8953bd0c33e2ba27f3f88d926"
+    },
+    {
+      "facility": "infiltration_trench",
+      "file": "strategy.out",
+      "sha256": "66b5087bc96f50f086f162108ce2528e63d66da79602dfcf82ec4350fd68e6be"
+    },
+    {
+      "facility": "permeable_pavement",
+      "file": "baseline.inp",
+      "sha256": "3603994b364fb260ba6552025e087184846cae07f3750a6126ed5ccde322f0da"
+    },
+    {
+      "facility": "permeable_pavement",
+      "file": "strategy.inp",
+      "sha256": "35c128af810bfb255b4079568c5cbd8d74ff25a3d6fd99c3055c4b1e2563e0c4"
+    },
+    {
+      "facility": "permeable_pavement",
+      "file": "baseline.out",
+      "sha256": "ea72c40fb9bd5fc0537e80fa58df496d21723b403b44c4447b042952bfa8f69b"
+    },
+    {
+      "facility": "permeable_pavement",
+      "file": "strategy.out",
+      "sha256": "dada92ae24a90a27ca0995e42fe225f4fa0b50e2992c71f927253ac42b8c730d"
+    },
+    {
+      "facility": "rain_garden",
+      "file": "baseline.inp",
+      "sha256": "d873eda919ba22426daffe0561ad8299affa4cd0c8c6f7e425bab534ec1a5b7b"
+    },
+    {
+      "facility": "rain_garden",
+      "file": "strategy.inp",
+      "sha256": "acca137cb9fc2eb8457dae9941012066e2b27156a3bc63df56f81d902dc695cd"
+    },
+    {
+      "facility": "rain_garden",
+      "file": "baseline.out",
+      "sha256": "eb7b65f2d91fb0199ce4a2d0aee272a149914aa8953bd0c33e2ba27f3f88d926"
+    },
+    {
+      "facility": "rain_garden",
+      "file": "strategy.out",
+      "sha256": "7960f799df4891d755606a79ca909534bb215ed044ce12a713899437390b895b"
+    },
+    {
+      "facility": "vegetative_swale",
+      "file": "baseline.inp",
+      "sha256": "d873eda919ba22426daffe0561ad8299affa4cd0c8c6f7e425bab534ec1a5b7b"
+    },
+    {
+      "facility": "vegetative_swale",
+      "file": "strategy.inp",
+      "sha256": "4fb28a461b023abe7e9d20a314f54ae83a08338e738bc73b5f549ea9f065f2e2"
+    },
+    {
+      "facility": "vegetative_swale",
+      "file": "baseline.out",
+      "sha256": "eb7b65f2d91fb0199ce4a2d0aee272a149914aa8953bd0c33e2ba27f3f88d926"
+    },
+    {
+      "facility": "vegetative_swale",
+      "file": "strategy.out",
+      "sha256": "46780fb4d7a510887b09e25148f5edcd39cd9bc145f39e7711af65de32a29da1"
+    }
+  ],
+  "sourceHashes": {
+    "backend/src/main/java/io/waterleague/common/exception/ErrorCode.java": "9a7f886d7fb9fd34d2326a240f89b30f6ffb2e67398111e36fb3749a78585701",
+    "backend/src/main/java/io/waterleague/historical/service/HistoricalService.java": "46b5a1a2cea3be7e763aae0d6853e56ad99a95a98122628f64c9bf757b903962",
+    "backend/src/main/java/io/waterleague/installation/entity/SiteSuitability.java": "67444d9d0d3a2395e55f0fbda63c403820721cc66eca80f2b6ce0f9eb6f11915",
+    "backend/src/main/java/io/waterleague/installation/repository/SiteCatalogRepository.java": "e0be81876a8e49dc9aa34c9c8913c265da4d7ded9f15f8a73dd4f9e5484383f9",
+    "backend/src/main/java/io/waterleague/installation/view/SiteView.java": "7f036f97aa1ddf86e7d69d2f6625a1629d097adbe0689da5ffbe8d5d1fd00a7a",
+    "backend/src/main/resources/evaluation/game-score-policy-v1.json": "6ac0fdeac8ff3c0f88b19f1f8afbca5da2f828b0a3af070386b9fb75a2aa9683",
+    "backend/src/main/resources/facilities/site-suitability-v1.json": "7d4d0956aedf86f35957f6371251e909b94ad4c155817012af23b3d6c49cce64",
+    "deploy/worker.Dockerfile": "bebd2e9023037cbccb7dbf86f7746806c502d5106d59b507890ae29042bdfb15",
+    "frontend/src/domains/catalog/service/dataSourceService.ts": "ace408bd3e044cc27aeda3bf748bb41d2b1ae1827b29d9a31d30e57babf12b36",
+    "frontend/src/domains/installation/dto/installationDto.ts": "1d276a25d8c25b70b85929b5b5032ffd9e064c3837e5e81b09881c322f774391",
+    "frontend/src/domains/installation/dto/siteSuitabilityDto.ts": "703419a4e64e4b3362feb29233c18c0c114a6fe9d1207adb4a6204529bc3398e",
+    "frontend/src/domains/installation/service/cisternPlanService.ts": "0281cb3d8c30278e95f1b4bc9931d4069c45efc66b3be71336c1d3b195471bc6",
+    "frontend/src/domains/installation/service/siteSuitabilityService.ts": "41d8545fb4ac28111065aa2ab975a8d69df2cb097e473d5ca0d163a3cb7c14a2",
+    "frontend/src/domains/installation/view/FacilityPlacementPanel.tsx": "921c0e86d73d028bb0f21cdcf5a92dcbf25858ea802aaa6fb0d3a74922f34d1d",
+    "frontend/src/domains/installation/view/PhysicalInputEvidence.tsx": "f9b0f132bfa38c49121672c2fa030dfff9cc2e992cbf2a1e5fe30799a63abc53",
+    "frontend/src/domains/installation/view/SiteSuitabilityEvidence.tsx": "f8aae4abf1a5f346a75abc20454e77df914040d468c114e2991f868b0d471b31",
+    "frontend/src/domains/physics/dto/designContractDto.ts": "7b33e81baab6bd0e1ef55da5b1959f48b62d7df4cda49b9b6ff7cdbb85b803d7",
+    "frontend/src/domains/physics/view/RunoffComparison.tsx": "27c1c4bc81646aa78ff0adf0afa08604190a919871a12fcf6330c7647e2b36ad",
+    "scripts/verify_site_suitability_frontend.mjs": "d4fd8efc87edd02f10d5d7761fbdcd5259d8c0a6675d8251fd6e83fa7f75279c",
+    "simulation/waterleague_sim/engine/continuous.py": "7339202ff032d4660e0e3f8349fa7da8c87a99d232361f276b613ecb3de3950f",
+    "simulation/waterleague_sim/engine/direct_surface_contract.py": "86f4c8eb67d8df07ba5445afec16567fc4aa442bac49e5bb1172f9b81f57a048",
+    "simulation/waterleague_sim/engine/swmm.py": "d477d8d376d45d2cc60275aa8229b49ddbd1712046b0618bf1e45813780d5afc",
+    "simulation/waterleague_sim/evaluation/score_policy.py": "fe813b554dc55e233d3de69e1676fe3ec9e50d5f559976d205614cc27bd884de",
+    "simulation/waterleague_sim/placement_validation.py": "32927afefcc3965700bb9189cf1b1398e90891df168b403dbd8b8beea9f0e42b",
+    "simulation/waterleague_sim/spatial/play_catalog.py": "ea0e2db2ea54897c6a9c49cd05772ab45619510c11991923872acf0006f4834b",
+    "simulation/waterleague_sim/spatial/suitability.py": "e0f4e69d1ae353ac3fa85f748c316cf8291b197fe77d04dedc8e4d77fd51c2e0"
+  },
+  "testFixtureSha256": "554da8e0941f0b1e5deac6b9ca453739cf248a35f041e0b5fb68a3099b453e98",
+  "validationLogs": {
+    "tmp/site-suitability-backend-v1.log": "13635f81d8e548a454c49fe0d5f4166b28b6e64e97379eb2f3274f2614621d7f",
+    "tmp/waterleague_league_test_b54065fd72ab43dc8f18e71f99472a6d.log": "fa0ba2f8852d759f30f9d8ffc9830ac8bb9a4417c8abf8e0093b3a6742c10963",
+    "tmp/waterleague_queue_test_2d31ae82728e402884cfeebdc4ff1cee.log": "2de8efaa14a4a6d7021defc509ae243ed921a9539dc0f0f9c4c142061bb3a33d",
+    "tmp/waterleague_queue_test_eab326961d554be7b19cbdd26f096bc9.log": "f329e1c3acdd3dc36d9262205b24208201e02f8fda5a6b0f60966b12f8bdf340",
+    "tmp/site-suitability-frontend-v2.log": "80c3b5e42682de24c9cd0538fdf812a783ea7c758b32706eddfcdb8b4ed40e8a",
+    "tmp/site-suitability-build-v2.log": "6bfe449ff89a35bfbe0393f5a0c132abaeabdd275f869b00aed278912308eb79"
+  },
+  "browser": {
+    "verified": false,
+    "reason": "기존 로컬 URL의 브라우저 접근 정책 차단; 우회 없이 API·DTO·정적 렌더 검증 수행"
+  },
+  "runtimeApi": {
+    "http200": 6,
+    "distinctCandidates": 3,
+    "namesAndAddressesRetained": true,
+    "wholeSuitabilityMatchedWorker": true,
+    "responseEvidenceSha256": "2f26bec4e003ccc3ce87bd2ab733d48a397fd9de941a94408c6a749b4aef033e"
+  }
+}

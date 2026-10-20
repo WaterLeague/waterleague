@@ -66,6 +66,12 @@ def validated_period(model):
 
 def input_source(model, placements, evaporation):
     start, count = validated_period(model)
+    if placements:
+        from ..spatial.suitability import SiteSuitabilityError, require_explorable
+        try:
+            require_explorable(model['cells'][0])
+        except SiteSuitabilityError as error:
+            raise SimulationQualityError(str(error)) from None
     if 'geometry' in model['cells'][0]:
         from ..spatial.geometry import SiteGeometryError, cell_geometry, dimensions
         cell = model['cells'][0]

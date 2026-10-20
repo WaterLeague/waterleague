@@ -1,0 +1,20 @@
+{
+  "version": "SITE_SUITABILITY_V1",
+  "scope": "MAP_EXPLORATION_NOT_CONSTRUCTION_APPROVAL",
+  "priority": ["PROHIBITED", "CONDITIONAL", "UNKNOWN", "ELIGIBLE"],
+  "explorationAllowed": ["UNKNOWN", "ELIGIBLE"],
+  "conditions": [
+    {"id": "SOIL", "kinds": ["GROUND"]},
+    {"id": "SLOPE", "kinds": ["GROUND", "ROOF"]},
+    {"id": "GROUNDWATER", "kinds": ["GROUND"]},
+    {"id": "UNDERGROUND_UTILITIES", "kinds": ["GROUND"]},
+    {"id": "TRAFFIC_LOAD", "kinds": ["GROUND"]},
+    {"id": "ROOF_STRUCTURAL_LOAD", "kinds": ["ROOF"]},
+    {"id": "WATERPROOFING", "kinds": ["ROOF"]},
+    {"id": "DRAINAGE", "kinds": ["GROUND", "ROOF"]}
+  ],
+  "unknownReason": "이 위치의 공개 근거 미확보",
+  "conditionalRule": "명시된 조건이 충족되어 근거와 함께 ELIGIBLE로 갱신될 때까지 배치·계산 보류",
+  "constructionApproved": false,
+  "score": null
+}

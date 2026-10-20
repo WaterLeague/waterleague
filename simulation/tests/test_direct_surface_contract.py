@@ -16,7 +16,7 @@ class DirectSurfaceContractTests(unittest.TestCase):
         self.model = {
             'testOnly': 'NO_OBSERVATIONS_OR_EFFECT_CALCULATION',
             'rainfall': {'testOnly': True}, 'hydrology': {'testOnly': True},
-            'cells': [{'id': 'C' + 'a' * 24, 'allowedTypes': ['GREEN_ROOF'], 'maxAreaM2': 100,
+            'cells': [{'id': 'C' + 'a' * 24, 'kind': 'ROOF', 'allowedTypes': ['GREEN_ROOF'], 'maxAreaM2': 100,
                        'areaM2': 100, 'physicalInputs': {'testOnly': True},
                        'geometryCrs': 'EPSG:5186', 'geometrySha256': 'b' * 64,
                        'sourceObjectId': 'test-only-object', 'districtId': '11200'}],
@@ -51,6 +51,8 @@ class DirectSurfaceContractTests(unittest.TestCase):
 
     def test_records_exact_inputs_utc_area_units_and_explicit_unconnected_missing_cost(self):
         value = self.build()
+        self.assertEqual(value['suitability']['status'], 'UNKNOWN')
+        self.assertFalse(value['suitability']['constructionApproved'])
         self.assertEqual(value['evaluation']['start'], '2022-08-08T09:00:17+00:00')
         self.assertEqual(value['spatial']['evaluationSurfaceAreaM2'], 100)
         self.assertEqual(value['connection']['directRainAreaM2'], 20)
@@ -96,6 +98,14 @@ class DirectSurfaceContractTests(unittest.TestCase):
         self.assertEqual(json.loads((self.root / 'result.json').read_text())['designContract'], first)
         for name, sha in json.loads((self.root / 'manifest.json').read_text()).items():
             self.assertEqual(digest((self.root / name).read_bytes()), sha)
+        self.assertEqual(first['suitability']['policySha256'],
+                         digest((self.root / 'site-suitability-policy.json').read_bytes()))
+
+    def test_restricted_condition_cannot_be_hidden_in_saved_result(self):
+        self.model['cells'][0]['constructionEligibility'] = 'PROHIBITED'
+        self.save_inputs()
+        with self.assertRaises(DirectSurfaceContractError):
+            self.build()
 
     def test_cost_status_and_plan_lineage_are_bound_without_inventing_missing_terms(self):
         from waterleague_sim.costing.life_cycle import archive_native

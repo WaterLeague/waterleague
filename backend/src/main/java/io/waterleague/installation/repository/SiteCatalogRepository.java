@@ -5,6 +5,7 @@ import io.waterleague.common.service.JsonService;
 import io.waterleague.district.repository.DistrictRepository;
 import io.waterleague.infrastructure.repository.SurfaceOccupancyRepository;
 import io.waterleague.installation.entity.SiteSurface;
+import io.waterleague.installation.entity.SiteSuitability;
 import io.waterleague.installation.view.*;
 import io.waterleague.spatial.repository.NativePlayRepository;
 import io.waterleague.spatial.service.NativeGeometry;
@@ -93,7 +94,9 @@ public class SiteCatalogRepository {
   }
 
   public SiteView requireInstallable(String districtId, String cellId) {
-    return require(districtId, cellId);
+    var site = require(districtId, cellId);
+    site.suitability().requireExplorable();
+    return site;
   }
 
   public JsonNode publicAssetPolicy() {
@@ -129,6 +132,7 @@ public class SiteCatalogRepository {
     var label = cell.path("displayName").isString()
         ? new SiteLabelRepository.Label(cell.path("displayName").asString(), null)
         : labels.require(id);
+    var suitability = SiteSuitability.assess(cell);
     return new SiteView(
         districtId,
         id,
@@ -144,7 +148,7 @@ public class SiteCatalogRepository {
         nativeSites.sha256(),
         sourceIds,
         cell.path("areaLimitBasis").asString(),
-        cell.path("siteEligibility").asString(),
+        suitability.status(),
         cell.path("inflowPolicy").asString(),
         metadata.path("costModel").deepCopy(),
         metadata.path("costSourceSha256").asString(),
@@ -154,7 +158,8 @@ public class SiteCatalogRepository {
         null,
         cell.path("role").asString(),
         references.forCandidate(districtId, id),
-        label.address());
+        label.address(),
+        suitability);
   }
 
   private static List<JsonNode> iterable(JsonNode value) {

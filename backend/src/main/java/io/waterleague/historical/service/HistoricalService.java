@@ -228,7 +228,7 @@ public class HistoricalService {
         dto.placements().stream()
             .sorted(Comparator.comparing(HistoricalRequest.Item::cellId))
             .toList()) {
-      var c = sites.require(district.id(), p.cellId());
+      var c = sites.requireInstallable(district.id(), p.cellId());
       var types = new HashSet<FacilityType>();
       for (var t : c.allowedTypes()) types.add(FacilityType.valueOf(t));
       cells.put(

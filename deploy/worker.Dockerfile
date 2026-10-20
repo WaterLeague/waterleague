@@ -27,6 +27,8 @@ COPY simulation/native/lid_snapshot.inc /app/simulation/native/lid_snapshot.inc
 COPY scripts/local_config.py /app/scripts/local_config.py
 COPY scripts/build_score_policy.py /app/scripts/build_score_policy.py
 COPY backend/src/main/java/io/waterleague/evaluation/service/ScorePolicyService.java /app/backend/src/main/java/io/waterleague/evaluation/service/ScorePolicyService.java
+COPY backend/src/main/java/io/waterleague/installation/entity/SiteSuitability.java /app/backend/src/main/java/io/waterleague/installation/entity/SiteSuitability.java
+COPY backend/src/main/java/io/waterleague/installation/repository/SiteCatalogRepository.java /app/backend/src/main/java/io/waterleague/installation/repository/SiteCatalogRepository.java
 COPY backend/src/main/java/io/waterleague/weekly/service/WeeklyService.java /app/backend/src/main/java/io/waterleague/weekly/service/WeeklyService.java
 COPY backend/src/main/java/io/waterleague/weekly/repository/WeeklyRepository.java /app/backend/src/main/java/io/waterleague/weekly/repository/WeeklyRepository.java
 COPY backend/src/main/java/io/waterleague/historical/service/HistoricalSubmissionService.java /app/backend/src/main/java/io/waterleague/historical/service/HistoricalSubmissionService.java

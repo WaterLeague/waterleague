@@ -16,6 +16,7 @@ from ..engine.swmm import SimulationQualityError
 from .geometry import cell_geometry
 from .playing_profile import FACILITY_ORDER
 from . import reference_conditions
+from .suitability import SiteSuitabilityError, require_explorable
 
 
 class NativeCatalogError(ValueError):
@@ -138,6 +139,7 @@ class NativePlayCatalog:
 
     def placement(self, site_id, facility, area_m2, *, district):
         cell = self.require(site_id, district)
+        self._require_explorable(cell)
         if facility not in FACILITY_ORDER or facility not in cell['allowedTypes']:
             raise NativeCatalogError('NATIVE_FACILITY_UNSUPPORTED')
         try:
@@ -159,6 +161,7 @@ class NativePlayCatalog:
 
     def model(self, site_id, *, district):
         cell = self.require(site_id, district)
+        self._require_explorable(cell)
         if not cell['allowedTypes']:
             raise NativeCatalogError('NATIVE_FACILITY_UNSUPPORTED')
         try:
@@ -177,3 +180,10 @@ class NativePlayCatalog:
                 'inflowPolicy': 'DIRECT_RAINFALL_ONLY'}, referenceScenario=copy.deepcopy(self._metadata['referenceScenario']),
             assumptions=copy.deepcopy(self._metadata['limitations']))
         return model
+
+    @staticmethod
+    def _require_explorable(cell):
+        try:
+            require_explorable(cell)
+        except SiteSuitabilityError as error:
+            raise NativeCatalogError(str(error)) from None

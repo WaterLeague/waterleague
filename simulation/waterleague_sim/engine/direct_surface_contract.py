@@ -38,6 +38,10 @@ def build(model, placement, result, directory, cost_record):
     try:
         directory = Path(directory)
         cell, = model['cells']
+        from ..spatial.suitability import require_explorable
+        suitability = require_explorable(cell)
+        if suitability is None:
+            raise DirectSurfaceContractError()
         geometry, link = model['geometrySource'], model['sharedSiteSource']
         area = placement['areaM2']
         if (cell['id'] != placement['cellId'] or placement['facilityType'] not in cell['allowedTypes']
@@ -101,6 +105,7 @@ def build(model, placement, result, directory, cost_record):
                                   'policySha256': life_cycle['policySha256']}
         return {
             'version': VERSION,
+            'suitability': suitability,
             'spatial': dict(geometry, candidateId=cell['id'], districtId=cell['districtId'],
                             evaluationSurfaceAreaM2=cell['areaM2']),
             'facility': {'type': placement['facilityType'], 'areaM2': area,
@@ -130,6 +135,7 @@ def build(model, placement, result, directory, cost_record):
 
 def archive(model, placement, result, directory, cost_record):
     from .flow_connections import direct_surface, archive as archive_flow
+    from ..spatial import suitability
     directory = Path(directory)
     value = build(model, placement, result, directory, cost_record)
     value['flowGraph'] = direct_surface(model, placement, result, value['inputFiles'])
@@ -138,6 +144,8 @@ def archive(model, placement, result, directory, cost_record):
     result['designContract'] = {'sha256': digest(raw), **value}
     (directory / 'design-contract.json').write_bytes(raw)
     (directory / 'direct_surface_contract.py').write_bytes(Path(__file__).read_bytes())
+    (directory / 'site-suitability-policy.json').write_bytes(suitability.POLICY_RAW)
+    (directory / 'site_suitability.py').write_bytes(Path(suitability.__file__).read_bytes())
     (directory / 'result.json').write_text(json.dumps(result, ensure_ascii=False, allow_nan=False) + '\n')
     (directory / 'manifest.json').write_text(json.dumps({p.name: digest(p.read_bytes())
         for p in sorted(directory.iterdir()) if p.is_file() and p.name != 'manifest.json'}, indent=2) + '\n')

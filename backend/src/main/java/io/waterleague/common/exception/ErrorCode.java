@@ -27,6 +27,8 @@ public enum ErrorCode {
   UTILIZATION_CONFLICT(HttpStatus.CONFLICT, "기존 요청 또는 최신 동의 상태를 확인해 주세요"),
   RESULT_QUALITY_FAILED(HttpStatus.UNPROCESSABLE_CONTENT, "계산 품질 검사를 통과하지 못했습니다"),
   PLACEMENT_INVALID(HttpStatus.UNPROCESSABLE_CONTENT, "설치 조건을 확인해 주세요"),
+  SITE_SUITABILITY_RESTRICTED(
+      HttpStatus.UNPROCESSABLE_CONTENT, "이 위치는 금지 조건 또는 미충족 안전 조건이 있어 배치·계산할 수 없습니다"),
   BUDGET_EXCEEDED(HttpStatus.UNPROCESSABLE_CONTENT, "설치 예산을 초과했습니다"),
   BUDGET_DATA_INVALID(HttpStatus.SERVICE_UNAVAILABLE, "예산 기록을 확인하지 못했습니다. 잠시 후 다시 시도해 주세요"),
   COST_DATA_INVALID(HttpStatus.SERVICE_UNAVAILABLE, "원가 기록을 확인하지 못했습니다. 잠시 후 다시 시도해 주세요"),

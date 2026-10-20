@@ -9,6 +9,7 @@ import type { Budget, BudgetAccounting } from '../../budget/dto/budgetDto';
 import { CostEstimate } from './CostEstimate';
 import { FacilityDesignEvidence } from '../../facility/view/FacilityDesignEvidence';
 import { PhysicalInputEvidence } from './PhysicalInputEvidence';
+import { sitePlacementRestricted } from '../service/siteSuitabilityService';
 const icons = {
   RAIN_GARDEN: Leaf,
   PERMEABLE_PAVEMENT: Grid2X2,
@@ -65,6 +66,7 @@ export function FacilityPlacementPanel(p: FacilityPlacementProps) {
   const valid =
     p.budgetReady &&
     !!site &&
+    !sitePlacementRestricted(site) &&
     !site.existingInfrastructure &&
     !!type &&
     site.allowedTypes.includes(type) &&
@@ -100,6 +102,11 @@ export function FacilityPlacementPanel(p: FacilityPlacementProps) {
           </span>
           <h2 className="shared-site-title">{site.name}</h2>
           {site.address && <p className="shared-site-address">{site.address}</p>}
+          {sitePlacementRestricted(site) && (
+            <p className="shared-error" role="alert">
+              금지 조건 또는 미충족 안전 조건이 있어 배치·계산할 수 없습니다.
+            </p>
+          )}
           {site.existingInfrastructure && (
             <div className="shared-readonly" role="note">
               <strong>공개 지도 시설 영역 · 신규 설치 제외</strong>

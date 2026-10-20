@@ -70,12 +70,14 @@
     "VEGETATIVE_SWALE": 24756
   },
   "implementationFiles": {
+    "backend/src/main/resources/facilities/site-suitability-v1.json": "7d4d0956aedf86f35957f6371251e909b94ad4c155817012af23b3d6c49cce64",
     "scripts/prepare_native_parking_sites.py": "653648a56daaaf8acf5f7189810f86f40591fae55ecb59ee7f79d24370d7cb2f",
     "scripts/verify_native_parking_sites.py": "df7a98634a78ff2f2c082eaf462aa0a1cfeaceef40b0d59edd6ed3c5f36615fe",
     "simulation/waterleague_sim/installation_model.py": "a29f709781b4ada6a986ad7648395792ebdc7161a92ae704362d6197ce4314bc",
     "simulation/waterleague_sim/spatial/play_bundle.py": "7e6486c9e89d30513af1aa2ee0965e2d66995c389ea7587a1a68b5bd8178b62d",
-    "simulation/waterleague_sim/spatial/play_catalog.py": "603691f98c9241b1e895185145f6fd6093f313a8ed5b7e8d53de7f2cee543618",
-    "simulation/waterleague_sim/spatial/reference_conditions.py": "a1b986739914c32cdcc4f9519ba21ef4892ea060f6ce10782a3a59d274044d36"
+    "simulation/waterleague_sim/spatial/play_catalog.py": "ea0e2db2ea54897c6a9c49cd05772ab45619510c11991923872acf0006f4834b",
+    "simulation/waterleague_sim/spatial/reference_conditions.py": "a1b986739914c32cdcc4f9519ba21ef4892ea060f6ce10782a3a59d274044d36",
+    "simulation/waterleague_sim/spatial/suitability.py": "e0f4e69d1ae353ac3fa85f748c316cf8291b197fe77d04dedc8e4d77fd51c2e0"
   },
   "localSoilSlopeMaterialConfirmed": false,
   "playBytes": 3838205952,
@@ -94,7 +96,7 @@
         "directRainVolumeMatched": true,
         "districtId": "11380",
         "engine": {
-          "adapterSha256": "767a8f07a221e6b502faa2a6cd3d87e474e96e6de3e0b24a11ea82d839c91efe",
+          "adapterSha256": "7339202ff032d4660e0e3f8349fa7da8c87a99d232361f276b613ecb3de3950f",
           "binarySha256": "651e08796415344ebff4ffd709273499a3a0c098665de2589cc2ac3fcfd89183",
           "designFootprintAdapterSha256": "ae583da9acd71db6613ac1cd4e0c8d4f43d8adcd7fa02a461a64692a5175e18c",
           "engineVersion": "5.2.4",
@@ -108,14 +110,14 @@
           "schemaVersion": 1,
           "sourceArchiveSha256": "3f76a199573088ce47ff02491c529afb73d9953ee9d948dfc89dcd4981b4c0c0"
         },
-        "resultSha256": "9f68763deb04c172a743f9543fbf90b9891be035a6114d091c2bc7026fde4046"
+        "resultSha256": "af26f3cb4c4b640b7444d3df0446125806613e56264c2471f1004c69088ffe1e"
       },
       {
         "candidateId": "C342a8577788053d4a1298cd9",
         "directRainVolumeMatched": true,
         "districtId": "11380",
         "engine": {
-          "adapterSha256": "767a8f07a221e6b502faa2a6cd3d87e474e96e6de3e0b24a11ea82d839c91efe",
+          "adapterSha256": "7339202ff032d4660e0e3f8349fa7da8c87a99d232361f276b613ecb3de3950f",
           "binarySha256": "651e08796415344ebff4ffd709273499a3a0c098665de2589cc2ac3fcfd89183",
           "designFootprintAdapterSha256": "ae583da9acd71db6613ac1cd4e0c8d4f43d8adcd7fa02a461a64692a5175e18c",
           "engineVersion": "5.2.4",
@@ -129,14 +131,14 @@
           "schemaVersion": 1,
           "sourceArchiveSha256": "3f76a199573088ce47ff02491c529afb73d9953ee9d948dfc89dcd4981b4c0c0"
         },
-        "resultSha256": "06421e52a4030a4f8d59496398f55445a8216579d9850f09b68634069b25cf40"
+        "resultSha256": "081aa8f2ab945d15ce6ec11232116328625c45e0c935c5a193963ab00a87a840"
       },
       {
         "candidateId": "Cf76d02fe14f95cb21ec11352",
         "directRainVolumeMatched": true,
         "districtId": "11380",
         "engine": {
-          "adapterSha256": "767a8f07a221e6b502faa2a6cd3d87e474e96e6de3e0b24a11ea82d839c91efe",
+          "adapterSha256": "7339202ff032d4660e0e3f8349fa7da8c87a99d232361f276b613ecb3de3950f",
           "binarySha256": "651e08796415344ebff4ffd709273499a3a0c098665de2589cc2ac3fcfd89183",
           "designFootprintAdapterSha256": "ae583da9acd71db6613ac1cd4e0c8d4f43d8adcd7fa02a461a64692a5175e18c",
           "engineVersion": "5.2.4",
@@ -150,7 +152,7 @@
           "schemaVersion": 1,
           "sourceArchiveSha256": "3f76a199573088ce47ff02491c529afb73d9953ee9d948dfc89dcd4981b4c0c0"
         },
-        "resultSha256": "be01813d10b26af1500e3f885c35e7e24bf3e888235999842e5b0c9143782cdf"
+        "resultSha256": "fb4d78e9bc66cd66f206cc130a0e6ec96c0eb64177d9c8a3629b7f781c6cda72"
       }
     ],
     "previousInstallationsCompatible": true,

@@ -1,11 +1,13 @@
 import type { SharedSite } from '../entity/installation';
+import { SiteSuitabilityEvidence } from './SiteSuitabilityEvidence';
 const number = new Intl.NumberFormat('ko-KR', { maximumFractionDigits: 3 });
 export function PhysicalInputEvidence({ site }: { site: SharedSite }) {
   const p = site.physicalInputs;
   if (!p) return null;
   return (
     <details className="budget-evidence">
-      <summary>이 위치의 물리 계산 입력</summary>
+      <summary>이 위치의 계산 입력·현장 적합성</summary>
+      {site.suitability && <SiteSuitabilityEvidence value={site.suitability} />}
       <dl className="physical-input-values">
         <dt>도형 기반 유출 폭</dt>
         <dd>{number.format(p.runoffWidthM)} m</dd>

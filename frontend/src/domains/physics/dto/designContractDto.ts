@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { initializationDto } from './initializationDto';
 import { nativeFlowGraphDto } from './flowGraphDto';
+import { siteSuitabilityDto } from '../../installation/dto/siteSuitabilityDto';
 
 const sha = z.string().regex(/^[a-f0-9]{64}$/);
 const area = z.number().finite().positive();
@@ -8,6 +9,7 @@ export const designContractDto = z
   .object({
     sha256: sha,
     version: z.literal('NATIVE_DIRECT_SURFACE_COMPARISON_V1'),
+    suitability: siteSuitabilityDto.refine((value) => value.explorationAllowed).optional(),
     spatial: z.object({
       coordinateSystem: z.literal('EPSG:5186'),
       playCatalogSha256: sha,

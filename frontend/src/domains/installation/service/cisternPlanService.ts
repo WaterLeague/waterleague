@@ -1,5 +1,6 @@
 import type { SharedSite } from '../entity/installation';
 import type { CisternPlanRequest } from '../dto/cisternPlanDto';
+import { sitePlacementRestricted } from './siteSuitabilityService';
 export type CisternSiteRole = 'roof' | 'ground';
 export const cisternSiteColors = { roof: '#4badd0', ground: '#559e8d' } as const;
 export function cisternSelectionError(
@@ -14,6 +15,8 @@ export function cisternSelectionError(
       ? '집수할 지붕 후보를 선택해 주세요.'
       : '탱크를 둘 지상 후보를 선택해 주세요.';
   if (occupied) return '이미 시설이 설치된 위치입니다. 다른 위치를 선택해 주세요.';
+  if (sitePlacementRestricted(site))
+    return '금지 조건 또는 미충족 안전 조건이 있는 위치입니다. 다른 위치를 선택해 주세요.';
   if (site.existingInfrastructure)
     return '공개 시설 영역과 겹치는 후보입니다. 다른 위치를 선택해 주세요.';
   return '';
@@ -29,6 +32,8 @@ export function cisternRequest(
   if (
     !roof ||
     !ground ||
+    sitePlacementRestricted(roof) ||
+    sitePlacementRestricted(ground) ||
     roof.districtId !== ground.districtId ||
     roof.kind !== 'ROOF' ||
     ground.kind !== 'GROUND' ||

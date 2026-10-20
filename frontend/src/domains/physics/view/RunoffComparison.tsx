@@ -3,6 +3,7 @@ import { designContractDto } from '../dto/designContractDto';
 import { physicalAmount as amount } from '../service/physicalValueFormat';
 import './runoffComparison.css';
 import { RelativeImprovement } from './RelativeImprovement';
+import { SiteSuitabilityEvidence } from '../../installation/view/SiteSuitabilityEvidence';
 const time = (v: string) =>
   new Date(v).toLocaleString('ko-KR', {
     year: 'numeric',
@@ -113,6 +114,12 @@ export function RunoffComparison({ value, contract }: { value: unknown; contract
           다시 구하지 않습니다.
         </p>
       </details>
+      {sameWindow && design.suitability && (
+        <details>
+          <summary>계산 당시 현장 적합성</summary>
+          <SiteSuitabilityEvidence value={design.suitability} />
+        </details>
+      )}
     </section>
   );
 }

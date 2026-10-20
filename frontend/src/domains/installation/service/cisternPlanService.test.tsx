@@ -71,6 +71,16 @@ it('공개 면적 한계와 입력 정밀도·종류·구 불일치 차단', () 
   expect(cisternRequest(roof, { ...ground, districtId: '0000000' }, '20', '1', '2')).toBeNull();
   expect(cisternRequest(ground, roof, '20', '1', '2')).toBeNull();
 });
+it('이용조 공간 초안도 금지·미충족 조건부의 선택·저장 차단', () => {
+  for (const siteEligibility of ['PROHIBITED', 'CONDITIONAL'] as const) {
+    const blockedRoof = { ...roof, siteEligibility },
+      blockedGround = { ...ground, siteEligibility };
+    expect(cisternSelectionError(blockedRoof, 'roof', null, false)).toContain('안전 조건');
+    expect(cisternSelectionError(blockedGround, 'ground', null, false)).toContain('안전 조건');
+    expect(cisternRequest(blockedRoof, ground, '20', '1', '2')).toBeNull();
+    expect(cisternRequest(roof, blockedGround, '20', '1', '2')).toBeNull();
+  }
+});
 it('복원 응답의 원본 버전·두 위치·용량·견적 결속 검사', () => {
   expect(cisternPlanDto.safeParse(draft()).success).toBe(true);
   const changes = [

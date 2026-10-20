@@ -43,6 +43,8 @@
 
 현장 적합성 `ELIGIBLE/CONDITIONAL/PROHIBITED/UNKNOWN` 기록. 게임 배치 허용과 현장 시공 승인 분리. 같은 유입면적의 시설 간 중복 할당 금지.
 
+`SITE_SUITABILITY_V1`은 지상에 토양·경사·지하수·지하 지장물·교통 하중·배수, 옥상에 경사·구조 하중·방수·배수 조건을 적용한다. 원 후보의 조건별 판정에는 사유·공개 출처 URL/해시·참조 위치가 필요하며 결측은 `UNKNOWN`이다. 문헌 참조 경사·토양·표시 높이로 현장 조건을 채우지 않는다. 어느 항목이든 `PROHIBITED`면 배치·계산을 차단하고, 명시한 안전 조건의 충족이 미확인인 `CONDITIONAL`도 근거를 갱신하기 전에는 보류한다. 그 외 미확인은 지도 탐색만 허용하며 모든 상태의 `constructionApproved`는 false다. 조건별 근거가 모두 허용이어야 `ELIGIBLE`이며 기존 집계의 금지·조건부는 세부 결측으로 지우지 않는다. 이 정책은 임의 점수·실현성 등급을 산정하지 않는다.
+
 ## 모델 연결
 
 `cellId → footprint → subcatchmentId → inflow allocation → LID_CONTROLS/LID_USAGE`.

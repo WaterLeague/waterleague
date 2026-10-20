@@ -1,0 +1,172 @@
+{
+  "scope": "SYNTHETIC_TEST_ONLY_NO_FIELD_OBSERVATIONS",
+  "cases": [
+    {
+      "id": "unknown-roof",
+      "cell": {
+        "kind": "ROOF",
+        "siteEligibility": "UNKNOWN"
+      },
+      "expected": "UNKNOWN"
+    },
+    {
+      "id": "unknown-ground",
+      "cell": {
+        "kind": "GROUND"
+      },
+      "expected": "UNKNOWN"
+    },
+    {
+      "id": "aggregate-does-not-fill-missing",
+      "cell": {
+        "kind": "ROOF",
+        "siteEligibility": "ELIGIBLE"
+      },
+      "expected": "UNKNOWN"
+    },
+    {
+      "id": "all-roof-conditions-confirmed",
+      "cell": {
+        "kind": "ROOF",
+        "siteConditions": {
+          "SLOPE": {
+            "status": "ELIGIBLE",
+            "reason": "시험 전용 조건",
+            "evidence": {
+              "title": "TEST_ONLY · 실제 현장 근거 아님",
+              "url": "https://example.org/test-only",
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "reference": "시험 전용 판정표"
+            }
+          },
+          "ROOF_STRUCTURAL_LOAD": {
+            "status": "ELIGIBLE",
+            "reason": "시험 전용 조건",
+            "evidence": {
+              "title": "TEST_ONLY · 실제 현장 근거 아님",
+              "url": "https://example.org/test-only",
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "reference": "시험 전용 판정표"
+            }
+          },
+          "WATERPROOFING": {
+            "status": "ELIGIBLE",
+            "reason": "시험 전용 조건",
+            "evidence": {
+              "title": "TEST_ONLY · 실제 현장 근거 아님",
+              "url": "https://example.org/test-only",
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "reference": "시험 전용 판정표"
+            }
+          },
+          "DRAINAGE": {
+            "status": "ELIGIBLE",
+            "reason": "시험 전용 조건",
+            "evidence": {
+              "title": "TEST_ONLY · 실제 현장 근거 아님",
+              "url": "https://example.org/test-only",
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "reference": "시험 전용 판정표"
+            }
+          }
+        }
+      },
+      "expected": "ELIGIBLE"
+    },
+    {
+      "id": "one-missing-stays-unknown",
+      "cell": {
+        "kind": "ROOF",
+        "siteConditions": {
+          "DRAINAGE": {
+            "status": "ELIGIBLE",
+            "reason": "시험 전용 조건",
+            "evidence": {
+              "title": "TEST_ONLY · 실제 현장 근거 아님",
+              "url": "https://example.org/test-only",
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "reference": "시험 전용 판정표"
+            }
+          }
+        }
+      },
+      "expected": "UNKNOWN"
+    },
+    {
+      "id": "ground-condition-pending",
+      "cell": {
+        "kind": "GROUND",
+        "siteConditions": {
+          "GROUNDWATER": {
+            "status": "CONDITIONAL",
+            "reason": "시험 전용 조건",
+            "evidence": {
+              "title": "TEST_ONLY · 실제 현장 근거 아님",
+              "url": "https://example.org/test-only",
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "reference": "시험 전용 판정표"
+            }
+          }
+        }
+      },
+      "expected": "CONDITIONAL"
+    },
+    {
+      "id": "roof-load-prohibited",
+      "cell": {
+        "kind": "ROOF",
+        "siteConditions": {
+          "ROOF_STRUCTURAL_LOAD": {
+            "status": "PROHIBITED",
+            "reason": "시험 전용 조건",
+            "evidence": {
+              "title": "TEST_ONLY · 실제 현장 근거 아님",
+              "url": "https://example.org/test-only",
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "reference": "시험 전용 판정표"
+            }
+          },
+          "DRAINAGE": {
+            "status": "ELIGIBLE",
+            "reason": "시험 전용 조건",
+            "evidence": {
+              "title": "TEST_ONLY · 실제 현장 근거 아님",
+              "url": "https://example.org/test-only",
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "reference": "시험 전용 판정표"
+            }
+          }
+        }
+      },
+      "expected": "PROHIBITED"
+    },
+    {
+      "id": "aggregate-prohibited",
+      "cell": {
+        "kind": "GROUND",
+        "constructionEligibility": "PROHIBITED"
+      },
+      "expected": "PROHIBITED"
+    },
+    {
+      "id": "prohibited-before-conditional",
+      "cell": {
+        "kind": "GROUND",
+        "siteEligibility": "PROHIBITED",
+        "siteConditions": {
+          "SOIL": {
+            "status": "CONDITIONAL",
+            "reason": "시험 전용 조건",
+            "evidence": {
+              "title": "TEST_ONLY · 실제 현장 근거 아님",
+              "url": "https://example.org/test-only",
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "reference": "시험 전용 판정표"
+            }
+          }
+        }
+      },
+      "expected": "PROHIBITED"
+    }
+  ]
+}
