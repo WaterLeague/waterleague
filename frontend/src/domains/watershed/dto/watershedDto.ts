@@ -389,6 +389,16 @@ export const watershedJobDto = z
         )
           ctx.addIssue({ code: 'custom', message: '이용조 설계와 수리 계산 원장 불일치' });
         if (
+          ledger &&
+          tank &&
+          ledger.some(
+            (r) =>
+              (r.drainOperation ?? 'GRAVITY_ORIFICE') !==
+              ('mode' in tank.drain ? 'CLOSED_NO_WITHDRAWAL' : 'GRAVITY_ORIFICE')
+          )
+        )
+          ctx.addIssue({ code: 'custom', message: '이용조 배출 조건과 계산 원장 불일치' });
+        if (
           c.id === 'strategy' &&
           c.numericalStatus === 'PASSED' &&
           tank?.schemaVersion === 3 &&

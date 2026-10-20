@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 1,
+  "id": "magok-cistern-procurement-2025",
+  "retrievedOn": "2026-10-20",
+  "classification": "PUBLIC_PROCUREMENT_EXAMPLE_DESIGN_NOT_AS_BUILT",
+  "archive": {
+    "file": "data/private/facility-reference-20261020/magok-tank-documents-2025.zip",
+    "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R25BK00628120&bidPbancOrd=000&fileSeq=2&fileType=",
+    "bytes": 9049926,
+    "sha256": "4ac77b5e57094ae6449346c8773ad7d48f3dd0226fb7bf5927e3e73eb5e9d907"
+  },
+  "files": [
+    {
+      "file": "data/private/facility-reference-20261020/magok-tank-description-2025.hwp",
+      "archiveEntry": "A-1. 물품설명서(마곡 10-2단지 아파트 건설공사 물탱크 및 빗물저장탱크 구매설치).hwp",
+      "bytes": 52224,
+      "sha256": "9c37048d6c39171a7cdea96d82e771a14f0013759d450d5c5c3af824f0d05c54"
+    },
+    {
+      "file": "data/private/facility-reference-20261020/magok-tank-bill-2025.xlsx",
+      "archiveEntry": "A-2. 물량내역서(마곡 10-2단지 아파트 건설공사 물탱크 및 빗물저장탱크 구매설치).xlsx",
+      "bytes": 575114,
+      "sha256": "bb9972b8de07c91d148868be6b8fa2898bf7c324e39cf1fa44a1f737544e8c90"
+    },
+    {
+      "file": "data/private/facility-reference-20261020/magok-tank-specification-2025.hwp",
+      "archiveEntry": "A-3. 시방서(마곡 10-2단지 아파트 건설공사 물탱크 및 빗물저장탱크 구매설치).hwp",
+      "bytes": 923136,
+      "sha256": "5748202bded30b2c23fe828c4c7fb9bd8bb6aea22af8781e2e980e0f999db7a8"
+    },
+    {
+      "file": "data/private/facility-reference-20261020/magok-tank-drawings-2025.pdf",
+      "archiveEntry": "A-4. 도면(마곡 10-2단지 아파트 건설공사 물탱크 및 빗물저장탱크 구매설치).pdf",
+      "bytes": 3815844,
+      "sha256": "ce3087b8e8e623599c17bd60a333e438b1b65b975c8a4810422351c78b75b213"
+    }
+  ],
+  "evidence": {
+    "procurementYear": 2025,
+    "drawingMonth": "2023-07",
+    "tankQuantity": {
+      "value": 1,
+      "source": "bill",
+      "sheet": "내역서",
+      "cell": "D6"
+    },
+    "declaredTankDimensions": {
+      "value": "{(10000W×4500L)+(8000W×2500L)}×5000H (325TON)",
+      "unit": "mm",
+      "source": "bill",
+      "sheet": "내역서",
+      "cell": "B6"
+    },
+    "declaredPlanCapacityM3": {
+      "value": 273,
+      "source": "drawings",
+      "page": 15,
+      "drawing": "MR-001"
+    },
+    "declaredPlanWaterDepthM": {
+      "value": 4.2,
+      "source": "drawings",
+      "page": 18,
+      "drawing": "MR-004"
+    },
+    "dimensionalCrossCheck": {
+      "planAreaM2": 65,
+      "nominalPrismVolumeM3": 325,
+      "planVolumeAtWaterDepthM3": 273,
+      "basis": "DOCUMENT_DIMENSIONS_ONLY_NOT_MEASURED_USABLE_VOLUME",
+      "deductedColumnDisplacementM3": null
+    },
+    "dischargeOperation": {
+      "source": "drawings",
+      "page": 15,
+      "drawing": "MR-001",
+      "pumpCount": 2,
+      "standbyCount": 1,
+      "singleDutyPoint": {
+        "flowM3Min": 1.2,
+        "headM": 10,
+        "powerKw": 7.5
+      },
+      "pumpCurve": null,
+      "designNotes": [
+        "계획된 빗물저류조 용량을 4시간 안에 모두 배출",
+        "빗물저류조 만수위시 가동",
+        "강우예보시 기존 저장된 빗물 배출"
+      ],
+      "operatingSchedule": null,
+      "reuseDemand": null
+    },
+    "itemPrice": {
+      "value": null,
+      "currency": "KRW",
+      "source": "bill",
+      "sheet": "내역서",
+      "blankUnitPriceCells": [
+        "E6",
+        "G6",
+        "I6"
+      ],
+      "basis": "UNPRICED_BILL_NOT_ZERO_PRICE"
+    }
+  },
+  "application": {
+    "installedCatalogEntry": false,
+    "hydraulicParameterImport": false,
+    "use": "일반 배출 중지와 자연배수 조건 구분의 공개 운전 방식 참고"
+  },
+  "limitations": [
+    "물품설명서가 예시 도면과 현장별 제작을 명시하므로 실제 준공 시설로 취급하지 않음",
+    "325톤 규격 체적·273m³ 계획 용량·기둥 변위를 구분하고 유효 수리 단면 자동 생성 금지",
+    "펌프 단일 사양점은 성능곡선이 아니며 4시간 배출 문구로 일정 유량·운전 시각 생성 금지",
+    "계획 조경용 재이용은 실제 사용 수요가 아니며 자동 비움·재이용 저감량 생성 금지",
+    "단가 공란은 0원이 아니며 물탱크와 빗물저장탱크의 묶음 발주 총액을 개별 설치비로 배분하지 않음",
+    "공개 문서의 개인 이름·연락처·서명은 파생물에 포함하지 않음"
+  ]
+}

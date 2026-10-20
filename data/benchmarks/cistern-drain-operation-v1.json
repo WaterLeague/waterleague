@@ -1,0 +1,132 @@
+{
+  "schemaVersion": 1,
+  "id": "cistern-drain-operation-v1",
+  "verifiedOn": "2026-10-20",
+  "classification": "PUBLIC_RESEARCH_NETWORK_EXPLICIT_DESIGN_NOT_FIELD_VALIDATION",
+  "sourceReference": "data/manifests/magok-cistern-procurement-2025.json",
+  "sourceReferenceSha256": "e869efa04eb1524eae9ea890d4de0586938ed67f7077ca8dc7afffe7d276af47",
+  "codeSha256": {
+    "backend/src/main/java/io/waterleague/watershed/dto/WatershedRequest.java": "ef7f5026cc2feb0a34725ef451a626bac66e6c1305e9952b4f8c748774c8572d",
+    "backend/src/main/java/io/waterleague/watershed/service/CisternDesignService.java": "a747ebb07fe9fdfb0b118aff8f18f5de473c55932c01d90b0339b6add2775720",
+    "simulation/waterleague_sim/engine/cistern_network.py": "295b6a24782187d23e1c5acff913df614f4ae2aa130c913a647d91565f2ea474",
+    "simulation/waterleague_sim/engine/connected_storage.py": "2472fce0fed22c31f217bf2979e9a86da9c55bd7a042e7e3d075174127915d08",
+    "simulation/tests/test_closed_cistern.py": "51837bc6b9c82f00b7b6f936bfbf431ace5e0e6a43a58f32e464f587bb97be74",
+    "frontend/src/domains/watershed/dto/cisternDto.ts": "5c63fd2edfd8c94a95a88d43553f6443bffa99e86db3c9cd1ec4102f1f9032e6",
+    "frontend/src/domains/watershed/dto/watershedDto.ts": "4ed4635207d049bd29037cdcd04b92ed202da3e73c220ec6e172e9ed2336f0a0"
+  },
+  "checks": {
+    "nativeDiagnostics": [
+      "dry-partial-storage-retention",
+      "dry-empty",
+      "rainfall-inflow-and-emergency-outflow",
+      "full-tank-emergency-outflow",
+      "gravity-discharge-comparison",
+      "identical-dry-replay"
+    ],
+    "cisternSimulationTests": 22,
+    "isolatedServerTests": 19,
+    "actualWorkerTests": 8,
+    "ownerHttpReadbackTests": 1,
+    "frontendActualResponseCount": 3,
+    "requestContradictionRejected": true,
+    "missingOrDifferentDrainLedgerRejected": true,
+    "sourceDatabaseCountsUnchanged": true,
+    "browserVerified": false
+  },
+  "cases": [
+    {
+      "scenario": "S9",
+      "httpResponseSha256": "0da50e9dd861c2c01dbf1e3e74278bca3436a8dfc05ae7df9bd0cfd9aa411f9c",
+      "resultSha256": "2b3fb57ab624cf3436190bebb31499543d428fc210fd3a8237bd9848b6136d7e",
+      "strategyInputSha256": "77c8311ab50ce2f6c934212c5066e73ef71e6873c371b1ec6e552008fceab2cc",
+      "baselineInputSha256": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+      "ledger": {
+        "id": "Cistern1",
+        "nodeId": "WLCT_Cistern1",
+        "capacityM3": 4.7,
+        "nativeCapacityM3": 4.699476658983051,
+        "volumeBasis": "EPA_CMS_STORAGE_VOLUME_TO_EXACT_SI_V1",
+        "initialAvailableM3": 4.699476658983051,
+        "finalAvailableM3": 2.103600568028749,
+        "reuseM3": null,
+        "reuseStatus": "NOT_CALCULATED_NO_USE_DEMAND",
+        "drainOperation": "GRAVITY_ORIFICE",
+        "initialStorageM3": 0,
+        "inflowM3": 2.596165171746023,
+        "outflowIncludingFloodingM3": 0,
+        "floodingM3": 0,
+        "finalStorageM3": 2.595876090954302,
+        "balanceResidualM3": 0.00028908079172085266,
+        "allowedResidualM3": 0.02596165171746023,
+        "numericalStatus": "PASSED"
+      },
+      "artifactManifestFile": "tmp/member-shared-cistern-d7d49e13-59e4-4b21-bb68-241ee83f1390/manifest.json"
+    },
+    {
+      "scenario": "S1",
+      "httpResponseSha256": "69a046145b9ce18370d6623b31c9a8e9a8cf4032651b09e9ad3f0873fef563d2",
+      "resultSha256": "da9f96509a48fdf6dcb8e273779839eb79a94a754c90c20e515814c72614d230",
+      "strategyInputSha256": "d37f0e5bb7418db7c2710c68c6b41907ca4a27f3e2aac9725aa02e593687fd0b",
+      "baselineInputSha256": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+      "ledger": {
+        "id": "Cistern1",
+        "nodeId": "WLCT_Cistern1",
+        "capacityM3": 4.7,
+        "nativeCapacityM3": 4.699476658983051,
+        "volumeBasis": "EPA_CMS_STORAGE_VOLUME_TO_EXACT_SI_V1",
+        "initialAvailableM3": 3.9945551601355933,
+        "finalAvailableM3": 3.4768852999521442,
+        "reuseM3": null,
+        "reuseStatus": "NOT_CALCULATED_NO_USE_DEMAND",
+        "drainOperation": "GRAVITY_ORIFICE",
+        "initialStorageM3": 0.7049214988474577,
+        "inflowM3": 2.6006513599206116,
+        "outflowIncludingFloodingM3": 2.085244074906848,
+        "floodingM3": 0,
+        "finalStorageM3": 1.222591359030907,
+        "balanceResidualM3": -0.0022625751696858654,
+        "allowedResidualM3": 0.03307835433937755,
+        "numericalStatus": "PASSED"
+      },
+      "artifactManifestFile": "tmp/member-shared-cistern-e4c5eabf-fabe-465a-9ebf-7d566f7866a6/manifest.json"
+    },
+    {
+      "scenario": "S9-closed",
+      "httpResponseSha256": "f878ec653bfe9f87e12ee654f14f3e98fee4752e54a31386a796c6f03588e98f",
+      "resultSha256": "81833f518ad2af3731c3944ec2c83c7873a8ddb083abc3ef1d52eed8698fa225",
+      "strategyInputSha256": "cf89a4cbea4624045b44d0277b102624f2993d1fd3ade8ad4355c27808dce0a4",
+      "baselineInputSha256": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+      "ledger": {
+        "id": "Cistern1",
+        "nodeId": "WLCT_Cistern1",
+        "capacityM3": 4.7,
+        "nativeCapacityM3": 4.699476658983051,
+        "volumeBasis": "EPA_CMS_STORAGE_VOLUME_TO_EXACT_SI_V1",
+        "initialAvailableM3": 3.9945551601355933,
+        "finalAvailableM3": 1.398679069181353,
+        "reuseM3": null,
+        "reuseStatus": "NOT_CALCULATED_NO_USE_DEMAND",
+        "drainOperation": "CLOSED_NO_WITHDRAWAL",
+        "initialStorageM3": 0.7049214988474577,
+        "inflowM3": 2.596165171746039,
+        "outflowIncludingFloodingM3": 0,
+        "floodingM3": 0,
+        "finalStorageM3": 3.300797589801698,
+        "balanceResidualM3": 0.00028908079179856827,
+        "allowedResidualM3": 0.03301086670593496,
+        "numericalStatus": "PASSED"
+      },
+      "artifactManifestFile": "tmp/member-shared-cistern-21453cb0-9f9b-4a91-a786-cc69ea2054bf/manifest.json"
+    }
+  ],
+  "limitations": [
+    "공개 연구 관망의 원 입력과 명시적 설계 계산이며 마곡 시설이나 서울 현장 관측 재현이 아님",
+    "마곡 도면의 펌프 운전·강우예보 제어·설치비를 계산 입력으로 자동 전용하지 않음",
+    "사용 수요 미확보 재이용량은 null, 설치 예산·순위와 별도",
+    "일반 배출 중지는 계산 전체 기간의 고정 조건이며 시각별 밸브/펌프 조작 기능이 아님"
+  ],
+  "reproduce": [
+    "simulation/.venv/bin/python scripts/verify_league_postgres.py --suite watershed",
+    "cd simulation && .venv/bin/python -m unittest discover -s tests -p \"*cistern*.py\" -v"
+  ]
+}

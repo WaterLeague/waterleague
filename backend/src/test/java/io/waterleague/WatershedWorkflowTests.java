@@ -37,6 +37,7 @@ class WatershedWorkflowTests extends PostgresIntegrationTest {
   @Autowired SimulationRepository admission;
   @Autowired JsonService json;
   @Autowired JdbcTemplate db;
+  @Autowired jakarta.validation.Validator validator;
   @org.junit.jupiter.api.io.TempDir Path outputDirectory;
   UUID owner;
 
@@ -786,60 +787,74 @@ class WatershedWorkflowTests extends PostgresIntegrationTest {
     assertThat(service.list(owner)).isEmpty();
   }
 
-  @Test
-  void bindsDisjointCisternCaptureCoverAndLidsFromTheSameOriginalCatchment() throws Exception {
-    for (String host : List.of("S9", "S1")) {
-      var item = hydraulicCistern("Cistern1", host, "10");
-      if (host.equals("S1"))
-        item =
-            new WatershedRequest.CisternItem(
-                item.id(),
-                host,
-                item.captureAreaM2(),
-                item.areaM2(),
-                new BigDecimal("16.480"),
-                item.depthM(),
-                new BigDecimal("0.300"),
-                new WatershedRequest.Port(
-                    new BigDecimal("16.530"),
-                    new BigDecimal("0.040"),
-                    new BigDecimal("0.650"),
-                    true),
-                new WatershedRequest.Port(
-                    new BigDecimal("18.030"),
-                    new BigDecimal("0.200"),
-                    new BigDecimal("0.650"),
-                    true));
-      var dto =
-          new WatershedRequest(
-              UUID.randomUUID(),
-              WatershedCatalogRepository.HASH,
-              request(UUID.randomUUID(), "Bio1", host, "20", "100").placements(),
-              WatershedCostRepository.HASH,
+  @org.junit.jupiter.params.ParameterizedTest
+  @org.junit.jupiter.params.provider.ValueSource(strings = {"S9", "S1", "S9-closed"})
+  void bindsDisjointCisternCaptureCoverAndLidsFromTheSameOriginalCatchment(String scenario)
+      throws Exception {
+    String host = scenario.startsWith("S9") ? "S9" : "S1";
+    var item = hydraulicCistern("Cistern1", host, "10");
+    if (host.equals("S1"))
+      item =
+          new WatershedRequest.CisternItem(
+              item.id(),
+              host,
+              item.captureAreaM2(),
+              item.areaM2(),
+              new BigDecimal("16.480"),
+              item.depthM(),
+              new BigDecimal("0.300"),
+              new WatershedRequest.Port(
+                  new BigDecimal("16.530"), new BigDecimal("0.040"), new BigDecimal("0.650"), true),
+              new WatershedRequest.Port(
+                  new BigDecimal("18.030"),
+                  new BigDecimal("0.200"),
+                  new BigDecimal("0.650"),
+                  true));
+    if (scenario.endsWith("-closed"))
+      item =
+          new WatershedRequest.CisternItem(
+              item.id(),
+              host,
+              item.captureAreaM2(),
+              item.areaM2(),
+              item.invertM(),
+              item.depthM(),
+              new BigDecimal("0.300"),
               null,
-              null,
-              WatershedCostRepository.CISTERN_HASH,
-              null,
-              new WatershedRequest.CisternRequest(WatershedCatalogRepository.STORAGE_HASH, item));
-      var job = service.create(owner, dto);
-      assertThat(service.create(owner, dto).id()).isEqualTo(job.id());
-      assertThat(job.design().path("cistern").path("schemaVersion").asInt()).isEqualTo(3);
-      assertThat(job.design().path("placements").get(0).path("subcatchmentId").asString())
-          .isEqualTo(host);
-      var stored = service.require(owner, job.id());
-      Files.writeString(
-          outputDirectory.resolve("cistern-shared-" + host + "-server-request.json"),
-          json.write(
-              Map.of(
-                  "modelHash",
-                  stored.modelHash(),
-                  "inputHash",
-                  stored.inputHash(),
-                  "placements",
-                  stored.placements())));
-      assertThatThrownBy(() -> service.require(UUID.randomUUID(), job.id()))
-          .isInstanceOf(DomainException.class);
-    }
+              item.overflow(),
+              true);
+    var dto =
+        new WatershedRequest(
+            UUID.randomUUID(),
+            WatershedCatalogRepository.HASH,
+            request(UUID.randomUUID(), "Bio1", host, "20", "100").placements(),
+            WatershedCostRepository.HASH,
+            null,
+            null,
+            WatershedCostRepository.CISTERN_HASH,
+            null,
+            new WatershedRequest.CisternRequest(WatershedCatalogRepository.STORAGE_HASH, item));
+    var job = service.create(owner, dto);
+    assertThat(service.create(owner, dto).id()).isEqualTo(job.id());
+    assertThat(job.design().path("cistern").path("schemaVersion").asInt()).isEqualTo(3);
+    if (scenario.endsWith("-closed"))
+      assertThat(job.design().path("cistern").path("drain").path("mode").asString())
+          .isEqualTo("CLOSED_NO_WITHDRAWAL");
+    assertThat(job.design().path("placements").get(0).path("subcatchmentId").asString())
+        .isEqualTo(host);
+    var stored = service.require(owner, job.id());
+    Files.writeString(
+        outputDirectory.resolve("cistern-shared-" + scenario + "-server-request.json"),
+        json.write(
+            Map.of(
+                "modelHash",
+                stored.modelHash(),
+                "inputHash",
+                stored.inputHash(),
+                "placements",
+                stored.placements())));
+    assertThatThrownBy(() -> service.require(UUID.randomUUID(), job.id()))
+        .isInstanceOf(DomainException.class);
     assertThat(
             db.queryForObject(
                 "SELECT count(*) FROM budget_ledger_entries WHERE owner_id=?",
@@ -879,5 +894,34 @@ class WatershedWorkflowTests extends PostgresIntegrationTest {
             new WatershedRequest.CisternRequest(
                 WatershedCatalogRepository.STORAGE_HASH, hydraulicCistern("Cistern1", "S9", "10")));
     assertThatThrownBy(() -> service.create(owner, covered)).isInstanceOf(DomainException.class);
+  }
+
+  @Test
+  void rejectsMissingDrainAndClosedDrainWithAnActivePort() {
+    var item = hydraulicCistern("Cistern1", "S9", "10");
+    for (boolean closed : List.of(false, true)) {
+      var invalid =
+          new WatershedRequest.CisternItem(
+              item.id(),
+              item.catchmentId(),
+              item.captureAreaM2(),
+              item.areaM2(),
+              item.invertM(),
+              item.depthM(),
+              item.initialDepthM(),
+              closed ? item.drain() : null,
+              item.overflow(),
+              closed);
+      assertThat(validator.validate(invalid)).isNotEmpty();
+      assertThatThrownBy(
+              () ->
+                  CisternDesignService.compile(
+                      new WatershedRequest.CisternRequest(
+                          WatershedCatalogRepository.STORAGE_HASH, invalid),
+                      catalog,
+                      new HashSet<>(),
+                      List.of()))
+          .isInstanceOf(DomainException.class);
+    }
   }
 }

@@ -18,6 +18,8 @@ public final class CisternDesignService {
     if (!WatershedCatalogRepository.STORAGE_HASH.equals(request.catalogHash()))
       throw new DomainException(ErrorCode.CONFLICT);
     var p = request.placement();
+    if (!p.isDrainConfigurationValid()) throw new DomainException(ErrorCode.PLACEMENT_INVALID);
+    boolean closed = Boolean.TRUE.equals(p.drainClosed());
     JsonNode host = null, receiver = null;
     for (var c : catalog.value().path("catchments"))
       if (c.path("id").asString().equals(p.catchmentId())) host = c;
@@ -52,7 +54,7 @@ public final class CisternDesignService {
         || p.depthM().signum() <= 0
         || p.initialDepthM().signum() < 0
         || p.initialDepthM().compareTo(p.depthM()) > 0
-        || p.overflow().crestM().compareTo(p.drain().crestM()) <= 0)
+        || (!closed && p.overflow().crestM().compareTo(p.drain().crestM()) <= 0))
       throw new DomainException(ErrorCode.PLACEMENT_INVALID);
     var result = new TreeMap<String, Object>();
     result.put(
@@ -76,7 +78,8 @@ public final class CisternDesignService {
         List.of(
             Map.of("depthM", BigDecimal.ZERO, "areaM2", number(p.areaM2())),
             Map.of("depthM", number(p.depthM()), "areaM2", number(p.areaM2()))));
-    result.put("drain", port(p.drain(), receiver, p));
+    result.put(
+        "drain", closed ? Map.of("mode", "CLOSED_NO_WITHDRAWAL") : port(p.drain(), receiver, p));
     result.put("overflow", port(p.overflow(), receiver, p));
     result.put("evidence", "회원 지정 집수·밀폐 이용조 설계; 실제 지붕·홈통·설치 높이 측정값 아님");
     return result;

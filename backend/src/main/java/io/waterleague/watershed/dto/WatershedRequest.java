@@ -1,5 +1,6 @@
 package io.waterleague.watershed.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
@@ -53,8 +54,38 @@ public record WatershedRequest(
           BigDecimal depthM,
       @NotNull @DecimalMin("0") @DecimalMax("100") @Digits(integer = 3, fraction = 3)
           BigDecimal initialDepthM,
-      @NotNull @Valid Port drain,
-      @NotNull @Valid Port overflow) {}
+      @Valid Port drain,
+      @NotNull @Valid Port overflow,
+      Boolean drainClosed) {
+    public CisternItem(
+        String id,
+        String catchmentId,
+        BigDecimal captureAreaM2,
+        BigDecimal areaM2,
+        BigDecimal invertM,
+        BigDecimal depthM,
+        BigDecimal initialDepthM,
+        Port drain,
+        Port overflow) {
+      this(
+          id,
+          catchmentId,
+          captureAreaM2,
+          areaM2,
+          invertM,
+          depthM,
+          initialDepthM,
+          drain,
+          overflow,
+          false);
+    }
+
+    @AssertTrue
+    @JsonIgnore
+    public boolean isDrainConfigurationValid() {
+      return Boolean.TRUE.equals(drainClosed) ? drain == null : drain != null;
+    }
+  }
 
   public WatershedRequest(
       UUID requestKey,

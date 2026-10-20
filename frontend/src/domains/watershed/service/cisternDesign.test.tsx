@@ -9,7 +9,7 @@ import { validateCombinedDesign } from './storageDesign';
 import { previewCisternCosts } from './cisternCosts';
 import { CisternDesignForm } from '../view/CisternDesignForm';
 const catalog = watershedCatalogDto.parse(catalogRaw);
-const tank: CisternPlacement = {
+const tank = {
   id: 'Cistern1',
   catchmentId: 'S9',
   captureAreaM2: 10,
@@ -19,7 +19,7 @@ const tank: CisternPlacement = {
   initialDepthM: 0,
   drain: { crestM: 12.8, diameterM: 0.04, dischargeCoefficient: 0.65, flapGate: true },
   overflow: { crestM: 14.3, diameterM: 0.2, dischargeCoefficient: 0.65, flapGate: true },
-};
+} satisfies CisternPlacement;
 it('공개 적격 집수·면적·배수 높이·다른 시설 중복 제한', () => {
   expect(cisternCatchments(catalog)).toHaveLength(14);
   expect(validateCombinedDesign(catalog, [], [], [], [], tank)).toBe('');
@@ -109,6 +109,23 @@ it('명시적 단면 용량과 기존 공개 견적 비교 및 공통 입력 표
   expect(html).toContain('역류 방지 플랩');
   expect(html).toContain('보존할 투수');
   expect(html).not.toContain('value="12.75"');
+  expect(html).toContain('일반 배출 중지 · 비상 배수만 허용');
+});
+
+it('배출 중지 명시와 배수구 동시 입력·누락을 구분', () => {
+  expect(
+    validateCombinedDesign(catalog, [], [], [], [], {
+      ...tank,
+      drainClosed: true,
+      drain: null,
+    })
+  ).toBe('');
+  for (const invalid of [
+    { ...tank, drainClosed: true },
+    { ...tank, drainClosed: false, drain: null },
+    { ...tank, drain: null },
+  ])
+    expect(validateCombinedDesign(catalog, [], [], [], [], invalid)).toContain('배출 중지');
 });
 
 import actual from '../view/fixtures/public-hydraulic-cistern-job.json';
@@ -132,4 +149,25 @@ it('실제 회원 계산의 이용조 원장·견적·악화 표시와 변조 �
     if (change === 'quote') copy.design.cistern!.footprintM2 = 3;
     expect(watershedJobDto.safeParse(copy).success).toBe(false);
   }
+});
+
+it('배출 중지 결과는 같은 배출 조건의 원장을 요구하며 자연배수 원장으로 대체 불가', () => {
+  const value = structuredClone(actual) as unknown as {
+    design: { cistern: { drain: unknown } };
+    result: {
+      cases: {
+        networkCistern?: { wholeRunLedger: { facilities: { drainOperation?: string }[] } };
+      }[];
+    };
+  };
+  value.design.cistern.drain = { mode: 'CLOSED_NO_WITHDRAWAL' };
+  expect(watershedJobDto.safeParse(value).success).toBe(false);
+  value.result.cases[1].networkCistern!.wholeRunLedger.facilities[0].drainOperation =
+    'CLOSED_NO_WITHDRAWAL';
+  const parsed = watershedJobDto.parse(value);
+  expect(renderToStaticMarkup(<WatershedResult job={parsed} />)).toContain(
+    '일반 배출 중지 · 비상 배수만 허용'
+  );
+  value.design.cistern.drain = { ...tank.drain, mode: 'CLOSED_NO_WITHDRAWAL' };
+  expect(watershedJobDto.safeParse(value).success).toBe(false);
 });

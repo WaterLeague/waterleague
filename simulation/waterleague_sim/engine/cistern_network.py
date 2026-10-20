@@ -152,7 +152,11 @@ def compile_cistern(raw, design):
     for i, p in enumerate(design['depthAreaCurve']):
         added['CURVES'].append(f'{curve} {"STORAGE " if i == 0 else ""}{p["depthM"]:.15g} {p["areaM2"]:.15g}')
     ports = {}
+    closed = design['drain'] == {'mode': 'CLOSED_NO_WITHDRAWAL'}
     for kind, suffix in (('drain', 'D'), ('overflow', 'O')):
+        # 배출 중지 설계에는 가상 자연배수구를 추가하지 않는다.
+        if kind == 'drain' and closed:
+            continue
         p = design[kind]
         require(isinstance(p, dict) and set(p) == {'crestM', 'diameterM', 'dischargeCoefficient', 'flapGate'},
                 'CISTERN_PORT_INVALID')
@@ -169,7 +173,8 @@ def compile_cistern(raw, design):
             f'{coefficient:.15g} {"YES" if p["flapGate"] else "NO"} 0')
         added['XSECTIONS'].append(f'{link} CIRCULAR {diameter:.15g} 0 0 0')
         ports[kind] = {'linkId': link, 'nodeId': host[2], **deepcopy(p)}
-    require(design['overflow']['crestM'] > design['drain']['crestM'], 'CISTERN_OVERFLOW_LEVEL_INVALID')
+    if not closed:
+        require(design['overflow']['crestM'] > design['drain']['crestM'], 'CISTERN_OVERFLOW_LEVEL_INVALID')
     ending = '\r\n' if '\r\n' in text else '\n'
     lines = text.splitlines(keepends=True)
     row = next(r for r in sections['SUBCATCHMENTS'] if r['tokens'][0].upper() == host_id)
@@ -208,10 +213,13 @@ def compile_cistern(raw, design):
             'coverRainfallRoute': 'DEDICATED_COVER_CATCHMENT_TO_ORIGINAL_OUTLET',
             'widthBasis': 'PRESERVE_SWMM_ALPHA_WIDTH_PER_SURFACE_AREA'})
         limitations.append('덮개·이용조 집수를 제외한 불투수 우회면만 다른 LID 배분 가능; 시설 배수 재포집 없음')
+    if closed:
+        limitations.append('평가 전 기간 일반 배출 중지 설계; 자동 비움·펌프 운전·재이용 없음, 비상구만 관망 연결')
     method = SHARED_METHOD if split_cover else MIXED_METHOD if mixed else METHOD
     return result, {'schemaVersion': design['schemaVersion'], 'method': method, 'source': SOURCE,
         'sourceNetworkSha256': digest(raw), 'derivedNetworkSha256': digest(result),
         'compilerSha256': digest(Path(__file__).read_bytes()), 'design': deepcopy(design),
+        'drainOperation': 'CLOSED_NO_WITHDRAWAL' if closed else 'GRAVITY_ORIFICE',
         'catchmentPartition': partition,
         'facilities': [{'id': design['id'], 'nodeId': name, 'facilityType': 'RAINWATER_CISTERN',
             'capacityM3': volume, **volume_properties(volume), 'ports': ports, 'directRainfallM3': 0, 'evaporationFactor': 0,

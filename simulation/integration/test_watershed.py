@@ -305,8 +305,10 @@ class WatershedTests(unittest.TestCase):
         from waterleague_sim.ingestion.published_network import records
         archives = []
         readback = []
-        for host in ('S9','S1'):
-            request=json.loads((self.requests/('cistern-shared-'+host+'-server-request.json')).read_bytes())
+        for scenario in ('S9','S1','S9-closed'):
+            host = scenario.split('-')[0]
+            closed = scenario.endswith('-closed')
+            request=json.loads((self.requests/('cistern-shared-'+scenario+'-server-request.json')).read_bytes())
             identity=uuid.uuid4()
             self.conn.execute("INSERT INTO watershed_experiments(id,owner_id,request_key,model_hash,input_hash,placements,state,created_at) VALUES(%s,%s,%s,%s,%s,%s,'QUEUED',now())",
                 (identity,self.owner,uuid.uuid4(),request['modelHash'],request['inputHash'],request['placements']))
@@ -335,7 +337,13 @@ class WatershedTests(unittest.TestCase):
             self.assertEqual(stored['capacityM3'],4.7)
             self.assertEqual(stored['floodingM3'],0)
             from waterleague_sim.engine.connected_storage import CMS_STORAGE_VOLUME_SCALE
-            self.assertAlmostEqual(stored['initialStorageM3'],0.705*CMS_STORAGE_VOLUME_SCALE if host=='S1' else 0)
+            self.assertAlmostEqual(stored['initialStorageM3'],0.705*CMS_STORAGE_VOLUME_SCALE if host=='S1' or closed else 0)
+            self.assertEqual(stored['drainOperation'], 'CLOSED_NO_WITHDRAWAL' if closed else 'GRAVITY_ORIFICE')
+            if closed:
+                self.assertNotIn(b'WLCT_Cistern1_D ', (folder/'strategy-input.inp').read_bytes())
+                self.assertGreaterEqual(stored['finalStorageM3'], stored['initialStorageM3'])
+                self.assertIn('overflow', transformed['networkCistern']['facilities'][0]['ports'])
+                self.assertNotIn('drain', transformed['networkCistern']['facilities'][0]['ports'])
             self.assertEqual(stored['reuseStatus'],'NOT_CALCULATED_NO_USE_DEMAND')
             self.assertIsNone(stored['reuseM3'])
             self.assertAlmostEqual(stored['nativeCapacityM3'],4.7*CMS_STORAGE_VOLUME_SCALE)
@@ -348,7 +356,7 @@ class WatershedTests(unittest.TestCase):
                 inputs(request|{'placements':raw,'inputHash':hashlib.sha256((request['modelHash']+'\n'+raw).encode()).hexdigest()})
             archive=ROOT/'tmp'/('member-shared-cistern-'+str(identity))
             shutil.copytree(folder,archive);archives.append(str(archive))
-            readback.append({'id':str(identity),'host':host,'artifactDirectory':str(archive),
+            readback.append({'id':str(identity),'host':scenario,'artifactDirectory':str(archive),
                              'resultSha256':hashlib.sha256((archive/'result.json').read_bytes()).hexdigest()})
         (ROOT/'tmp/cistern-shared-last-artifacts.json').write_text(json.dumps(archives))
         (self.requests/'watershed-readback.json').write_text(json.dumps({'ownerId':str(self.owner),'jobs':readback}))

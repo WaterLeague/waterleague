@@ -8,11 +8,12 @@ export interface CisternPlacement {
   invertM: number;
   depthM: number;
   initialDepthM: number;
-  drain: StoragePort;
+  drain: StoragePort | null;
+  drainClosed?: boolean;
   overflow: StoragePort;
 }
 const number = z.number().finite();
-const port = z.object({
+const port = z.strictObject({
   crestM: number,
   diameterM: number.positive(),
   dischargeCoefficient: number.positive().max(1),
@@ -32,7 +33,7 @@ export const cisternDesignDto = z
     depthAreaCurve: z
       .array(z.object({ depthM: number.nonnegative(), areaM2: number.positive() }))
       .length(2),
-    drain: port,
+    drain: z.union([port, z.strictObject({ mode: z.literal('CLOSED_NO_WITHDRAWAL') })]),
     overflow: port,
   })
   .superRefine((v, ctx) => {

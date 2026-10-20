@@ -114,6 +114,22 @@ class WatershedReadbackTests extends PostgresIntegrationTest {
       assertThat(value.path("state").asString()).isEqualTo("SUCCEEDED");
       assertThat(value.path("result")).isEqualTo(json.tree(raw));
       assertThat(value.path("design").path("cistern").path("schemaVersion").asInt()).isEqualTo(3);
+      if (job.path("host").asString().endsWith("-closed")) {
+        assertThat(value.path("design").path("cistern").path("drain").path("mode").asString())
+            .isEqualTo("CLOSED_NO_WITHDRAWAL");
+        assertThat(
+                value
+                    .path("result")
+                    .path("cases")
+                    .get(1)
+                    .path("networkCistern")
+                    .path("wholeRunLedger")
+                    .path("facilities")
+                    .get(0)
+                    .path("drainOperation")
+                    .asString())
+            .isEqualTo("CLOSED_NO_WITHDRAWAL");
+      }
       Files.writeString(
           directory.resolve("api-view-" + job.path("host").asString() + ".json"),
           response.body(),

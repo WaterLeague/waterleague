@@ -55,7 +55,9 @@ export function validateCistern(
   )
     return '이용조의 높이·깊이·초기 수심을 입력해 주세요.';
   const n = host.receiver;
-  for (const r of [p.drain, p.overflow]) {
+  if (p.drainClosed === true ? p.drain !== null : p.drain === null)
+    return '일반 배출 중지 여부와 배수구 설정을 확인해 주세요.';
+  for (const r of [...(p.drain ? [p.drain] : []), p.overflow]) {
     if (
       ![r.crestM, r.diameterM, r.dischargeCoefficient].every((v) => precision(v, 3)) ||
       r.diameterM < 0.001 ||
@@ -69,5 +71,7 @@ export function validateCistern(
     )
       return '배수구 전체가 이용조와 연결 절점의 바닥·상단 사이에 들어가야 합니다.';
   }
-  return p.overflow.crestM <= p.drain.crestM ? '비상 배수구는 일반 배수구보다 높아야 합니다.' : '';
+  return p.drain && p.overflow.crestM <= p.drain.crestM
+    ? '비상 배수구는 일반 배수구보다 높아야 합니다.'
+    : '';
 }

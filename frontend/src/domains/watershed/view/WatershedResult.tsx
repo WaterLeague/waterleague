@@ -51,7 +51,10 @@ export function WatershedResult({ job }: { job: WatershedJob }) {
           {job.design.cistern.subcatchmentId} · 빗물이용조 · 집수{' '}
           {number(job.design.cistern.captureAreaM2)} m² · 용량{' '}
           {number(job.design.cistern.footprintM2 * job.design.cistern.depthAreaCurve[1].depthM)} m³
-          · 관망 수두 기반 배수·역류
+          {' · '}
+          {'mode' in job.design.cistern.drain
+            ? '일반 배출 중지 · 비상 배수만 허용'
+            : '관망 수두 기반 배수·역류'}
         </p>
       )}
       {job.design.conduits?.placements.map((p) => (

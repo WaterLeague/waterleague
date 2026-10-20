@@ -35,6 +35,8 @@ export function WatershedDesignReview({
                 <span>
                   집수 {number(state.cisternDraft.captureAreaM2)} m² · 용량{' '}
                   {number(state.cisternDraft.areaM2 * state.cisternDraft.depthM)} m³
+                  {' · '}
+                  {state.cisternDraft.drainClosed ? '일반 배출 중지' : '자연배수'}
                 </span>
               </div>
               <button

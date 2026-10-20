@@ -216,7 +216,8 @@ def storage_ledger(metadata, origin, final):
             item.update(nativeCapacityM3=native_capacity, volumeBasis=design['volumeBasis'],
                         initialAvailableM3=native_capacity-initial, finalAvailableM3=native_capacity-stored)
         if design.get('facilityType') == 'RAINWATER_CISTERN':
-            item.update(reuseM3=None, reuseStatus='NOT_CALCULATED_NO_USE_DEMAND')
+            item.update(reuseM3=None, reuseStatus='NOT_CALCULATED_NO_USE_DEMAND',
+                        drainOperation=metadata.get('drainOperation', 'GRAVITY_ORIFICE'))
         rows.append(item)
     return {'startSeconds': start, 'endSeconds': end, 'facilities': rows,
         'scope': 'NATIVE_STORAGE_NODE_BALANCE_ALREADY_INCLUDED_IN_NETWORK_ROUTING',

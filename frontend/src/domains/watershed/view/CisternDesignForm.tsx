@@ -24,6 +24,7 @@ export function CisternDesignForm({
     invertM: NaN,
     depthM: NaN,
     initialDepthM: NaN,
+    drainClosed: false,
     drain: { crestM: NaN, diameterM: NaN, dischargeCoefficient: NaN, flapGate: true },
     overflow: { crestM: NaN, diameterM: NaN, dischargeCoefficient: NaN, flapGate: true },
   }));
@@ -129,14 +130,48 @@ export function CisternDesignForm({
           {Number.isFinite(draft.areaM2 * draft.depthM) ? number(draft.areaM2 * draft.depthM) : '—'}{' '}
           m³
         </strong>
-        {(['drain', 'overflow'] as const).map((kind) => (
+        <label>
+          일반 배출 방식
+          <select
+            value={draft.drainClosed ? 'closed' : 'gravity'}
+            onChange={(e) =>
+              setDraft({
+                ...draft,
+                drainClosed: e.target.value === 'closed',
+                drain:
+                  e.target.value === 'closed'
+                    ? null
+                    : {
+                        crestM: NaN,
+                        diameterM: NaN,
+                        dischargeCoefficient: NaN,
+                        flapGate: true,
+                      },
+              })
+            }
+          >
+            <option value="gravity">자연배수 · 관망 수두 반영</option>
+            <option value="closed">일반 배출 중지 · 비상 배수만 허용</option>
+          </select>
+        </label>
+        {draft.drainClosed && (
+          <p>
+            평가 기간 동안 일반 배출과 펌프 사용을 중지하는 설계입니다. 저장된 물을 자동으로
+            비우거나 재이용량으로 계산하지 않습니다.
+          </p>
+        )}
+        {draft.drain && (
           <HydraulicPortFields
-            key={kind}
-            label={kind === 'drain' ? '일반 배수구' : '비상 배수구'}
-            value={draft[kind]}
-            onChange={(value) => setDraft({ ...draft, [kind]: value })}
+            label="일반 배수구"
+            value={draft.drain}
+            onChange={(drain) => setDraft({ ...draft, drain })}
           />
-        ))}
+        )}
+        <HydraulicPortFields
+          label="비상 배수구"
+          value={draft.overflow}
+          onChange={(overflow) => setDraft({ ...draft, overflow })}
+        />
       </fieldset>
       <p className="watershed-warning">
         관망 역압으로 배수가 막히거나 용량을 넘칠 수 있습니다. 홈통 수리·실제 지붕·선행 관측 초기

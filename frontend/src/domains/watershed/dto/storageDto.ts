@@ -80,6 +80,7 @@ export const storageSummaryDto = z.object({
           finalAvailableM3: number.optional(),
           reuseM3: z.null().optional(),
           reuseStatus: z.literal('NOT_CALCULATED_NO_USE_DEMAND').optional(),
+          drainOperation: z.enum(['GRAVITY_ORIFICE', 'CLOSED_NO_WITHDRAWAL']).optional(),
           initialStorageM3: number,
           inflowM3: number,
           outflowIncludingFloodingM3: number,
