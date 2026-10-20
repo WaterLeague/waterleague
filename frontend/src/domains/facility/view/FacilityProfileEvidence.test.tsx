@@ -1,6 +1,9 @@
 import { expect, it } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import catalog from '../../../../../backend/src/main/resources/facilities/epa-designs-v1.json';
+import currentCatalog from '../../../../../backend/src/main/resources/facilities/epa-designs-v4.json';
+import actualSite from '../../installation/__tests__/fixtures/nativeInfiltrationSite.json';
+import { siteDto } from '../../installation/dto/installationDto';
 import { facilityCatalogDto, facilityEvidenceDto } from '../dto/facilityDto';
 import { FacilityProfileEvidence } from './FacilityProfileEvidence';
 
@@ -52,4 +55,27 @@ it('계산 당시 원지반 경계와 이전 입력의 침투 미연결 구분',
   );
   expect(previous).toContain('침투량을 0으로');
   expect(previous).not.toContain('3.302 mm/h');
+});
+
+it('실제 원형 후보의 세 침투 시설에 공통 문헌 토양 근거 표시', () => {
+  const site = siteDto.parse(actualSite);
+  const parsed = facilityCatalogDto.parse(currentCatalog);
+  const boundaries = [
+    ['RAIN_GARDEN', site.physicalInputs?.rainGardenBoundary],
+    ['BIORETENTION', site.physicalInputs?.bioretentionBoundary],
+    ['INFILTRATION_TRENCH', site.physicalInputs?.trenchBoundary],
+  ] as const;
+  for (const [facility, nativeSoilBoundary] of boundaries) {
+    const evidence = facilityEvidenceDto.parse({
+      ...parsed,
+      profile: parsed.profiles[facility],
+      catalogSha256: 'c'.repeat(64),
+      nativeSoilBoundary,
+    });
+    const markup = renderToStaticMarkup(<FacilityProfileEvidence {...evidence} />);
+    expect(markup).toContain('3.302 mm/h');
+    expect(markup).toContain('공통 문헌 토양 조건·현장 실측 아님');
+    expect(markup).not.toContain('토성 미확보·설계 가정');
+    expect(markup).not.toContain('공개 토성군·문헌 추정');
+  }
 });

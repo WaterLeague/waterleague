@@ -29,9 +29,11 @@ export function FacilityDesignEvidence({ site, type }: { site: SharedSite; type:
       {type === 'VEGETATIVE_SWALE' && site.physicalInputs?.swaleDesign && (
         <p>
           폭 2m 직선 배치 · 최대 길이{' '}
-          {site.physicalInputs.swaleDesign.maxLengthM.toLocaleString('ko-KR')}m. 경사는 공개 DEM의
-          지역 대용값이며 실제 수로 종단 측량값이 아닙니다. 주변 배수 유입과 관망 연결은
-          미확인입니다.
+          {site.physicalInputs.swaleDesign.maxLengthM.toLocaleString('ko-KR')}m. 경사는{' '}
+          {site.physicalInputs.swaleDesign.slopeBasis === 'PUBLIC_DESIGN_SLOPE_NOT_SURVEY'
+            ? '공통 문헌 설계 조건'
+            : '공개 DEM의 지역 대용값'}
+          이며 실제 수로 종단 측량값이 아닙니다. 주변 배수 유입과 관망 연결은 미확인입니다.
         </p>
       )}
       {type === 'INFILTRATION_TRENCH' && site.physicalInputs?.trenchDesign && (

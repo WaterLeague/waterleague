@@ -37,6 +37,11 @@ const bases: Record<string, string> = {
   DESIGN_INSTANT_OVERFLOW: '즉시 월류 설계 조건',
   DESIGN_NEW_UNCLOGGED: '신설·미막힘 설계 조건',
 };
+const soilBases: Record<NonNullable<FacilityEvidence['nativeSoilBoundary']>['basis'], string> = {
+  TEXTURE_CLASS_LITERATURE_ESTIMATE: '공개 토성군·문헌 추정',
+  PUBLIC_REFERENCE_SCENARIO_NOT_LOCAL_MEASUREMENT: '공통 문헌 토양 조건·현장 실측 아님',
+  UNRESOLVED_DESIGN_ASSUMPTION: '토성 미확보·설계 가정',
+};
 const display = (value: number, unit: string) =>
   unit === 'fraction'
     ? `${(value * 100).toLocaleString('ko-KR', { maximumFractionDigits: 3 })}%`
@@ -86,9 +91,7 @@ export function FacilityProfileEvidence({
         <>
           <p>
             원지반 침투율 {display(nativeSoilBoundary.seepageMmH, 'mm/h')} ·{' '}
-            {nativeSoilBoundary.basis === 'TEXTURE_CLASS_LITERATURE_ESTIMATE'
-              ? '공개 토성군·문헌 추정'
-              : '토성 미확보·설계 가정'}
+            {soilBases[nativeSoilBoundary.basis]}
           </p>
           <p>
             차수막 없는 설계 조건입니다. 실제 부지의 차수막·지하수·다짐 상태는 확인되지 않았습니다.

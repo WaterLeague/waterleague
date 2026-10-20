@@ -1,10 +1,15 @@
 # 검증 기록
 
+## 2026-10-20 시설 상세의 문헌 토양·경사 근거 구분
+
+- 현재 원형 후보의 `PUBLIC_REFERENCE_SCENARIO_NOT_LOCAL_MEASUREMENT`를 일반적인 미확보 설계 가정으로 표시하던 부분을 공통 문헌 토양 조건으로 구분. 식생수로의 `PUBLIC_DESIGN_SLOPE_NOT_SURVEY`도 기존 DEM 지역 대용 경사 설명과 분리. 후보와 계산 결과가 공유하는 시설 제원 표시에 적용하며 원 물리 입력·계산값·자료 버전은 보존.
+- 실제 원형 API 응답의 빗물정원·생물저류·침투도랑·식생수로와 기존 지형 대용 조건을 포함한 프론트 관련 11개·타입 검사 통과. 브라우저 조작 검증과 구분하며 데이터 페이지의 자료 범위 변경 없음.
+
 ## 2026-10-20 관망 통합 검증의 독립 실행
 
 - `8def5568`의 [CI](https://github.com/WaterLeague/waterleague/actions/runs/39424515385/job/118634008896)에서 서버 22개와 관망 워커 7개 통과 후 마지막 공동 집수 시험 중 전체 워커 묶음의 600초 대기 초과. 나머지 CI 작업 9개는 성공했으나 전체 CI 성공으로 처리하지 않음.
 - 관망 고정 입력/지표 엔진·월류 시간/캐시 단위 검사·서버→워커→인증 조회를 독립 `watershed-contract` 작업으로 이동. 기존 `game-contract`의 실행 명령을 두 작업에 모두 보존했으며 관망 묶음 대기만 1,200초로 조정. 개별 워커/엔진 제한·수치 기준·검사 항목·운영 코드 변경 없음. 완료 시 개별 시험 소요 시간 기록 추가.
-- YAML 구조·기존 명령 보존·평가 정책 일치 확인. 격리 PostgreSQL 재검증에서 서버 22개·실제 워커 8개·인증 HTTP 조회 1개 통과. 워커 전체 243.654초, 마지막 공동 집수 시험 96.416초. 원 개발 자료 수 보존·격리 DB 정리 확인. 근거: `tmp/watershed-ci-isolation-v1.log`, `tmp/waterleague_queue_test_9e922ea4adb84bcfa83feaeb1bee2b42.log`. 원격의 변경 후 성공은 별도 확인 대상이며 데이터 페이지 추가 수정 없음.
+- YAML 구조·기존 명령 보존·평가 정책 일치 확인. 격리 PostgreSQL 재검증에서 서버 22개·실제 워커 8개·인증 HTTP 조회 1개 통과. 워커 전체 243.654초, 마지막 공동 집수 시험 96.416초. 원 개발 자료 수 보존·격리 DB 정리 확인. 근거: `tmp/watershed-ci-isolation-v1.log`, `tmp/waterleague_queue_test_9e922ea4adb84bcfa83feaeb1bee2b42.log`. 변경 후 `19a5fed1`의 [전체 CI 11개 작업](https://github.com/WaterLeague/waterleague/actions/runs/39429203720)이 성공했으며 관망 작업에서도 `passed`·`sourceCountsUnchanged` 확인. 데이터 페이지 추가 수정 없음.
 
 ## 2026-10-20 건물별 표시 형상 재사용·이동 중 취소
 
