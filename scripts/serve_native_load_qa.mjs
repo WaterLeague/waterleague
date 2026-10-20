@@ -8,14 +8,26 @@ import { preview } from "../frontend/node_modules/vite/dist/node/index.js";
 
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const blockLab = process.argv.includes("--block-lab");
-assert.ok(process.argv.slice(2).every((value) => value === "--block-lab"));
+const interaction = process.argv.includes("--interaction");
+assert.ok(
+  process.argv
+    .slice(2)
+    .every((value) => ["--block-lab", "--interaction"].includes(value)),
+);
 const frontend = path.join(root, "frontend");
 const directory = path.join(root, "tmp/native-load-qa-" + Date.now());
 const hash = (raw) => createHash("sha256").update(raw).digest("hex");
 const html = await readFile(path.join(frontend, "dist/index.html"), "utf8");
-const instrumentation = await readFile(
+const loadingMetrics = await readFile(
   path.join(frontend, "qa/nativeLoadMetrics.js"),
 );
+const instrumentation = interaction
+  ? Buffer.concat([
+      loadingMetrics,
+      Buffer.from("\n"),
+      await readFile(path.join(root, "scripts/native_interaction_metrics.js")),
+    ])
+  : loadingMetrics;
 const city = await readFile(
   path.join(frontend, "dist/data/seoul-native-v1/city.json"),
 );
@@ -94,5 +106,6 @@ console.log(
     citySha256: citySha,
     instrumentationSha256: hash(instrumentation),
     labEndpointIntentionallyUnavailable: blockLab,
+    interactionMetricsEnabled: interaction,
   }),
 );

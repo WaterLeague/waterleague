@@ -1,0 +1,776 @@
+{
+  "schemaVersion": 1,
+  "checkedOn": "2026-10-21",
+  "status": "MEASURED_LOCAL_SINGLE_DEVICE_NOT_P6_COMPLETE",
+  "scope": "CURRENT_PRODUCTION_MAP_INTERACTION_AND_OBSERVED_RAIN_REPLAY",
+  "reproduce": "node scripts/serve_native_load_qa.mjs --interaction",
+  "browser": "Codex in-app browser Chromium 155",
+  "source": {
+    "sourceCommit": "417685efb837a8729afc4982853f78dbeaeb36b3",
+    "frontendSourceFiles": 696,
+    "frontendSourceTreeSha256": "848c1516222c0d07120dd47cf3e640a2781b8c899ba54d865b17a37b77bd5927",
+    "sourceTreeHashMethod": "SHA256_SORTED_RELATIVE_PATH_TAB_FILE_SHA256_LINES_NO_TRAILING_NEWLINE",
+    "distIndexSha256": "a649ff9b6783d6f91b81267f14c611a0a4e9affac3a6fc0011eb3774f20e3839",
+    "instrumentationRunSha256": "0bad0580edb2c1907345b61b15e6d0581440e60f367c5a1a2e66f43e9c9edef7",
+    "instrumentationSourceSha256": "b956cc90bf9e1960b2c5a2db6cccb24d0c04deae8517e65bd58ee7533d0ba9fb",
+    "previewServerSourceSha256": "1600676d9d204e9344179baf677118d0b53b88229892533f751906eb80918c95",
+    "hardware": {
+      "cpu": "Apple M4 Pro",
+      "ramBytes": 25769803776,
+      "architecture": "arm64"
+    },
+    "instrumentationRunDifference": "저장 실행본과 커밋 소스의 차이는 포맷·한글 주석이며 실행본 해시를 별도 보존",
+    "loadedAssetsSha256": {
+      "/assets/rolldown-runtime-XKyaHtl9.js": "548d1dbf321e7d2ae804fcc158b588706a7c52f8ca175de1490c6ccb4dbe55b7",
+      "/assets/index-BXh1xcsI.js": "4b1cc6b62525adf012882487da5426a9e3b6fb9653360c2d78269662815f4259",
+      "/assets/index-BR7sqad6.css": "0b6155485e41cfcc7af1468e9d74be6b52237ef67b9b3a474e4d4ab19d8bd27c",
+      "/assets/CityScene-BWUZ-Zvs.js": "5d4756c9b1c0b90b1d733cbdefc05f5f36f0ff2caaab00f68f523e5413e22eae",
+      "/assets/nativeBridgeData.worker-DKMi8Inh.js": "885b71cd0c2863decb213f0a15a5c55213e31ccadbb8ee509ab9f78944a9ce17",
+      "/assets/streetGeometry.worker-DtrEk_yr.js": "7c018c6df05d40bcff6dda97c86b60a00b852d6119af0ad866e9839b93747cad",
+      "/assets/buildingGeometry.worker-CTI8CFUz.js": "372ed9eb8ce26692ce31d8f6e472c4987025aec15584ab65446d525951ff8a32",
+      "/assets/riverGeometry.worker-DR0Eedio.js": "22a856c3799bcf31863189fc2b41d9229ee81fee20ae658ec8cca06ff50a1429",
+      "/assets/topographyGeometry.worker-BmvE-Zy2.js": "8d65e7b8ff2e59b40b96e567447e58a311463130694280804fbfedb265b46d04",
+      "/assets/candidateGeometry.worker-CklDIqQo.js": "ba2e1e661cc069eb0a16ec7779c32e7ea75ee4e0e38cfa1c94d52406c82c4be0",
+      "/assets/traceGeometry.worker-Cc4T7Kl1.js": "b266192b61c24fb0cf56b84d476ca9537cc3d534ab7143f63fbfa03bed80d2c3"
+    }
+  },
+  "viewport": [
+    1280,
+    720
+  ],
+  "canvas": [
+    1920,
+    831
+  ],
+  "initialLoad": {
+    "citySha256": "67a8b80b7036590973b7db99053521333f9405e1076a7939bfe491c43296dd6c",
+    "cacheNamesAtStart": [],
+    "firstWebglDrawMs": 806.3000000044703,
+    "firstMapDomMs": 585.8000000044703,
+    "capturedAtMs": 3089.9000000059605,
+    "pendingFetches": 0,
+    "transferredBytes": 6893870,
+    "approximateChromiumHeap": {
+      "usedJSHeapSize": 157173704,
+      "totalJSHeapSize": 202958436,
+      "jsHeapSizeLimit": 4395630592,
+      "scope": "BROWSER_ESTIMATE_NOT_TOTAL_PROCESS_GPU_OR_WORKERS"
+    }
+  },
+  "interaction": {
+    "schemaVersion": 1,
+    "scope": "INSTRUMENTED_BROWSER_CALLBACK_AND_WEBGL_DRAW_FRAMES_NOT_GPU_PRESENT_TIME",
+    "heapScope": "CHROMIUM_ESTIMATE_NOT_TOTAL_PROCESS_GPU_OR_WORKERS",
+    "samples": [
+      {
+        "sequence": 1,
+        "label": "overview",
+        "durationMs": 23607.39999999851,
+        "callbackFrames": 2717,
+        "drawFrames": 743,
+        "drawCalls": 604764,
+        "callbackFps": 115.09103077849198,
+        "observedDrawFps": 31.473182137806234,
+        "intervalMs": {
+          "p50": 8.30000000000291,
+          "p95": 9.799999999999272,
+          "p99": 10.299999999999272,
+          "max": 334.89999999999964,
+          "over50": 6,
+          "over100": 2
+        },
+        "memory": [
+          {
+            "atMs": 0,
+            "usedJSHeapSize": 267745278,
+            "totalJSHeapSize": 329011574
+          },
+          {
+            "atMs": 5002.799999995528,
+            "usedJSHeapSize": 857660136,
+            "totalJSHeapSize": 926638096
+          },
+          {
+            "atMs": 10011.099999995531,
+            "usedJSHeapSize": 873734716,
+            "totalJSHeapSize": 928780900
+          },
+          {
+            "atMs": 15019.39999999553,
+            "usedJSHeapSize": 1082185991,
+            "totalJSHeapSize": 1145594419
+          },
+          {
+            "atMs": 20027.79999999553,
+            "usedJSHeapSize": 1083429646,
+            "totalJSHeapSize": 1149799222
+          },
+          {
+            "atMs": 23607.39999999851,
+            "usedJSHeapSize": 1086923794,
+            "totalJSHeapSize": 1152683610
+          }
+        ],
+        "gpuObjectsAtStart": [
+          {
+            "lost": false,
+            "objects": {
+              "Texture": 5,
+              "Framebuffer": 3,
+              "Buffer": 131,
+              "Program": 16
+            }
+          }
+        ],
+        "gpuObjectsAtEnd": [
+          {
+            "lost": false,
+            "objects": {
+              "Texture": 7,
+              "Framebuffer": 4,
+              "Buffer": 656,
+              "Program": 42
+            }
+          }
+        ],
+        "visibilityAtStart": "visible",
+        "visibilityAtEnd": "visible"
+      },
+      {
+        "sequence": 2,
+        "label": "rain-replay-and-facility-switch",
+        "durationMs": 69493.80000000447,
+        "callbackFrames": 8284,
+        "drawFrames": 2157,
+        "drawCalls": 1614470,
+        "callbackFps": 119.20487870859655,
+        "observedDrawFps": 31.03874014660101,
+        "intervalMs": {
+          "p50": 8.30000000000291,
+          "p95": 9.69999999999709,
+          "p99": 10.19999999999709,
+          "max": 315.1999999999971,
+          "over50": 1,
+          "over100": 1
+        },
+        "memory": [
+          {
+            "atMs": 0,
+            "usedJSHeapSize": 780936243,
+            "totalJSHeapSize": 886371287
+          },
+          {
+            "atMs": 5003.5,
+            "usedJSHeapSize": 796769190,
+            "totalJSHeapSize": 886535182
+          },
+          {
+            "atMs": 10011.699999999997,
+            "usedJSHeapSize": 812645028,
+            "totalJSHeapSize": 886535636
+          },
+          {
+            "atMs": 15020,
+            "usedJSHeapSize": 829852406,
+            "totalJSHeapSize": 888210786
+          },
+          {
+            "atMs": 20028.300000000003,
+            "usedJSHeapSize": 837524002,
+            "totalJSHeapSize": 896175278
+          },
+          {
+            "atMs": 25028.300000000003,
+            "usedJSHeapSize": 853142768,
+            "totalJSHeapSize": 903253176
+          },
+          {
+            "atMs": 30028.5,
+            "usedJSHeapSize": 843178354,
+            "totalJSHeapSize": 911117506
+          },
+          {
+            "atMs": 35036.600000000006,
+            "usedJSHeapSize": 860924588,
+            "totalJSHeapSize": 918195404
+          },
+          {
+            "atMs": 40044.8,
+            "usedJSHeapSize": 776449841,
+            "totalJSHeapSize": 905270529
+          },
+          {
+            "atMs": 45045.2,
+            "usedJSHeapSize": 781006923,
+            "totalJSHeapSize": 906936095
+          },
+          {
+            "atMs": 50053.2,
+            "usedJSHeapSize": 805476444,
+            "totalJSHeapSize": 906938664
+          },
+          {
+            "atMs": 55061.5,
+            "usedJSHeapSize": 801838622,
+            "totalJSHeapSize": 906938674
+          },
+          {
+            "atMs": 60068.7,
+            "usedJSHeapSize": 799457020,
+            "totalJSHeapSize": 906938684
+          },
+          {
+            "atMs": 65069.7,
+            "usedJSHeapSize": 796268322,
+            "totalJSHeapSize": 906938694
+          },
+          {
+            "atMs": 69493.80000000447,
+            "usedJSHeapSize": 807229425,
+            "totalJSHeapSize": 906939345
+          }
+        ],
+        "gpuObjectsAtStart": [
+          {
+            "lost": true,
+            "objects": {
+              "Texture": 5,
+              "Framebuffer": 3,
+              "Buffer": 85,
+              "Program": 31
+            }
+          },
+          {
+            "lost": false,
+            "objects": {
+              "Texture": 9,
+              "Framebuffer": 5,
+              "Buffer": 841,
+              "Program": 57
+            }
+          }
+        ],
+        "gpuObjectsAtEnd": [
+          {
+            "lost": true,
+            "objects": {
+              "Texture": 5,
+              "Framebuffer": 3,
+              "Buffer": 85,
+              "Program": 31
+            }
+          },
+          {
+            "lost": false,
+            "objects": {
+              "Texture": 9,
+              "Framebuffer": 5,
+              "Buffer": 310,
+              "Program": 56
+            }
+          }
+        ],
+        "visibilityAtStart": "visible",
+        "visibilityAtEnd": "visible"
+      },
+      {
+        "sequence": 3,
+        "label": "two-dimensional-release-and-return",
+        "durationMs": 20231.5,
+        "callbackFrames": 2286,
+        "drawFrames": 187,
+        "drawCalls": 36465,
+        "callbackFps": 112.99211625435584,
+        "observedDrawFps": 9.243012134542669,
+        "intervalMs": {
+          "p50": 8.300000000017462,
+          "p95": 9.80000000000291,
+          "p99": 16.29999999998836,
+          "max": 349.79999999998836,
+          "over50": 5,
+          "over100": 5
+        },
+        "memory": [
+          {
+            "atMs": 0,
+            "usedJSHeapSize": 815149545,
+            "totalJSHeapSize": 906942581
+          },
+          {
+            "atMs": 5004.29999999702,
+            "usedJSHeapSize": 806322711,
+            "totalJSHeapSize": 906942591
+          },
+          {
+            "atMs": 10004.399999997026,
+            "usedJSHeapSize": 938144298,
+            "totalJSHeapSize": 995515878
+          },
+          {
+            "atMs": 15012.599999997008,
+            "usedJSHeapSize": 819775228,
+            "totalJSHeapSize": 987107672
+          },
+          {
+            "atMs": 20087.699999997014,
+            "usedJSHeapSize": 597903134,
+            "totalJSHeapSize": 730915042
+          },
+          {
+            "atMs": 20231.5,
+            "usedJSHeapSize": 582835815,
+            "totalJSHeapSize": 730915075
+          }
+        ],
+        "gpuObjectsAtStart": [
+          {
+            "lost": true,
+            "objects": {
+              "Texture": 5,
+              "Framebuffer": 3,
+              "Buffer": 85,
+              "Program": 31
+            }
+          },
+          {
+            "lost": false,
+            "objects": {
+              "Texture": 9,
+              "Framebuffer": 5,
+              "Buffer": 310,
+              "Program": 56
+            }
+          }
+        ],
+        "gpuObjectsAtEnd": [
+          {
+            "lost": true,
+            "objects": {
+              "Texture": 5,
+              "Framebuffer": 3,
+              "Buffer": 85,
+              "Program": 31
+            }
+          },
+          {
+            "lost": true,
+            "objects": {
+              "Texture": 7,
+              "Framebuffer": 4,
+              "Buffer": 85,
+              "Program": 42
+            }
+          }
+        ],
+        "visibilityAtStart": "visible",
+        "visibilityAtEnd": "visible"
+      },
+      {
+        "sequence": 4,
+        "label": "three-dimensional-return-extended-rain-replay",
+        "durationMs": 212327.80000000447,
+        "callbackFrames": 24930,
+        "drawFrames": 5838,
+        "drawCalls": 1102143,
+        "callbackFps": 117.41279286084759,
+        "observedDrawFps": 27.495222010494516,
+        "intervalMs": {
+          "p50": 8.300000000017462,
+          "p95": 9.700000000011642,
+          "p99": 10.299999999988358,
+          "max": 248.70000000001164,
+          "over50": 19,
+          "over100": 4
+        },
+        "memory": [
+          {
+            "atMs": 0,
+            "usedJSHeapSize": 605256863,
+            "totalJSHeapSize": 732001231
+          },
+          {
+            "atMs": 5004.100000000006,
+            "usedJSHeapSize": 688500885,
+            "totalJSHeapSize": 813299361
+          },
+          {
+            "atMs": 10012.399999999994,
+            "usedJSHeapSize": 701475151,
+            "totalJSHeapSize": 813299391
+          },
+          {
+            "atMs": 15012.600000000006,
+            "usedJSHeapSize": 695150631,
+            "totalJSHeapSize": 813325651
+          },
+          {
+            "atMs": 20020.70000000001,
+            "usedJSHeapSize": 708995745,
+            "totalJSHeapSize": 813325681
+          },
+          {
+            "atMs": 25029.20000000001,
+            "usedJSHeapSize": 695764383,
+            "totalJSHeapSize": 813325711
+          },
+          {
+            "atMs": 30029.29999999999,
+            "usedJSHeapSize": 710263497,
+            "totalJSHeapSize": 813325741
+          },
+          {
+            "atMs": 35037.20000000001,
+            "usedJSHeapSize": 722352835,
+            "totalJSHeapSize": 813325771
+          },
+          {
+            "atMs": 40037.20000000001,
+            "usedJSHeapSize": 708086901,
+            "totalJSHeapSize": 813325801
+          },
+          {
+            "atMs": 45037.20000000001,
+            "usedJSHeapSize": 723416459,
+            "totalJSHeapSize": 813325831
+          },
+          {
+            "atMs": 50045.70000000001,
+            "usedJSHeapSize": 736206113,
+            "totalJSHeapSize": 813325861
+          },
+          {
+            "atMs": 55053.79999999999,
+            "usedJSHeapSize": 722911983,
+            "totalJSHeapSize": 813325891
+          },
+          {
+            "atMs": 60054.100000000006,
+            "usedJSHeapSize": 735766709,
+            "totalJSHeapSize": 813325921
+          },
+          {
+            "atMs": 65062.100000000006,
+            "usedJSHeapSize": 749689583,
+            "totalJSHeapSize": 813325951
+          },
+          {
+            "atMs": 70070.29999999999,
+            "usedJSHeapSize": 735129897,
+            "totalJSHeapSize": 813325981
+          },
+          {
+            "atMs": 75070.4,
+            "usedJSHeapSize": 735101989,
+            "totalJSHeapSize": 813350605
+          },
+          {
+            "atMs": 80070.4,
+            "usedJSHeapSize": 746343104,
+            "totalJSHeapSize": 813350620
+          },
+          {
+            "atMs": 85070.70000000001,
+            "usedJSHeapSize": 758353849,
+            "totalJSHeapSize": 817021509
+          },
+          {
+            "atMs": 90078.6,
+            "usedJSHeapSize": 772185710,
+            "totalJSHeapSize": 820691666
+          },
+          {
+            "atMs": 95086.1,
+            "usedJSHeapSize": 767140939,
+            "totalJSHeapSize": 826759315
+          },
+          {
+            "atMs": 100086.9,
+            "usedJSHeapSize": 782982732,
+            "totalJSHeapSize": 833408744
+          },
+          {
+            "atMs": 105086.9,
+            "usedJSHeapSize": 793215708,
+            "totalJSHeapSize": 842212792
+          },
+          {
+            "atMs": 110095.20000000001,
+            "usedJSHeapSize": 565618057,
+            "totalJSHeapSize": 611699385
+          },
+          {
+            "atMs": 115095.20000000001,
+            "usedJSHeapSize": 566393407,
+            "totalJSHeapSize": 604438235
+          },
+          {
+            "atMs": 120095.5,
+            "usedJSHeapSize": 563837393,
+            "totalJSHeapSize": 609833293
+          },
+          {
+            "atMs": 125103.5,
+            "usedJSHeapSize": 556562175,
+            "totalJSHeapSize": 645613983
+          },
+          {
+            "atMs": 130111.79999999999,
+            "usedJSHeapSize": 579621967,
+            "totalJSHeapSize": 646520927
+          },
+          {
+            "atMs": 135111.8,
+            "usedJSHeapSize": 599217129,
+            "totalJSHeapSize": 648485229
+          },
+          {
+            "atMs": 140120.09999999998,
+            "usedJSHeapSize": 584739838,
+            "totalJSHeapSize": 655399650
+          },
+          {
+            "atMs": 145120.09999999998,
+            "usedJSHeapSize": 618961691,
+            "totalJSHeapSize": 665427799
+          },
+          {
+            "atMs": 150120.09999999998,
+            "usedJSHeapSize": 621319459,
+            "totalJSHeapSize": 673199635
+          },
+          {
+            "atMs": 155178.3,
+            "usedJSHeapSize": 631473431,
+            "totalJSHeapSize": 680131759
+          },
+          {
+            "atMs": 160178.3,
+            "usedJSHeapSize": 616215371,
+            "totalJSHeapSize": 688698283
+          },
+          {
+            "atMs": 165186.59999999998,
+            "usedJSHeapSize": 637633523,
+            "totalJSHeapSize": 692892687
+          },
+          {
+            "atMs": 170186.59999999998,
+            "usedJSHeapSize": 626212435,
+            "totalJSHeapSize": 698154819
+          },
+          {
+            "atMs": 175186.59999999998,
+            "usedJSHeapSize": 639044455,
+            "totalJSHeapSize": 703998695
+          },
+          {
+            "atMs": 180194.8,
+            "usedJSHeapSize": 649617091,
+            "totalJSHeapSize": 709823419
+          },
+          {
+            "atMs": 185203.40000000002,
+            "usedJSHeapSize": 643546746,
+            "totalJSHeapSize": 711658574
+          },
+          {
+            "atMs": 190210,
+            "usedJSHeapSize": 552729971,
+            "totalJSHeapSize": 581434655
+          },
+          {
+            "atMs": 195210.7,
+            "usedJSHeapSize": 553831861,
+            "totalJSHeapSize": 582763445
+          },
+          {
+            "atMs": 200211.5,
+            "usedJSHeapSize": 554064541,
+            "totalJSHeapSize": 582763445
+          },
+          {
+            "atMs": 205219.40000000002,
+            "usedJSHeapSize": 553538986,
+            "totalJSHeapSize": 581714914
+          },
+          {
+            "atMs": 210228.2,
+            "usedJSHeapSize": 554138058,
+            "totalJSHeapSize": 582501346
+          },
+          {
+            "atMs": 212327.80000000447,
+            "usedJSHeapSize": 556479196,
+            "totalJSHeapSize": 584288256
+          }
+        ],
+        "gpuObjectsAtStart": [
+          {
+            "lost": true,
+            "objects": {
+              "Texture": 5,
+              "Framebuffer": 3,
+              "Buffer": 85,
+              "Program": 31
+            }
+          },
+          {
+            "lost": true,
+            "objects": {
+              "Texture": 7,
+              "Framebuffer": 4,
+              "Buffer": 85,
+              "Program": 42
+            }
+          }
+        ],
+        "gpuObjectsAtEnd": [
+          {
+            "lost": true,
+            "objects": {
+              "Texture": 5,
+              "Framebuffer": 3,
+              "Buffer": 85,
+              "Program": 31
+            }
+          },
+          {
+            "lost": true,
+            "objects": {
+              "Texture": 7,
+              "Framebuffer": 4,
+              "Buffer": 85,
+              "Program": 42
+            }
+          },
+          {
+            "lost": false,
+            "objects": {
+              "Texture": 9,
+              "Framebuffer": 5,
+              "Buffer": 258,
+              "Program": 82
+            }
+          }
+        ],
+        "visibilityAtStart": "visible",
+        "visibilityAtEnd": "visible"
+      }
+    ]
+  },
+  "sequenceDescriptions": [
+    "서울 전체에서 성동구 진입과 한 단계 확대; overview 레이블은 구 진입 전 입력값",
+    "2022-08-08 관측 재생 중 성동구 투수포장/차도 선택, 광나루로 도로 · 6257 원 후보 선택과 20→800m² 미리보기",
+    "3D에서 2D로 전환하고 기존 WebGL 컨텍스트가 모두 lost임을 확인; return 레이블과 달리 복귀는 다음 구간",
+    "3D 복귀 후 1배속 재생·240배속 전환으로 같은 관측 창 끝까지 재생; 마지막 정지 구간을 포함한 평균이므로 일정 강우의 정상 상태 FPS가 아님"
+  ],
+  "roadPreview": {
+    "district": "11200",
+    "label": "광나루로 도로 · 6257",
+    "candidateAreaM2": 2346.23,
+    "previewAreaM2": 800,
+    "previewReferenceCostKrw": 88000000,
+    "candidateBoundaryAndPreviewVisible": true,
+    "confirmedInstallation": false
+  },
+  "playback": {
+    "maxSeconds": 21540,
+    "minSeconds": 0,
+    "valueSeconds": 21540,
+    "pausedAtEnd": true,
+    "endLabel": "23:59:00 KST",
+    "acceleratedRate": 240
+  },
+  "finalLoad": {
+    "capturedAtMs": 362634.80000000447,
+    "fetches": 143,
+    "pendingFetches": 0,
+    "cancelledFetches": 0,
+    "transferredBytes": 40663409,
+    "approximateChromiumHeap": {
+      "usedJSHeapSize": 554920149,
+      "totalJSHeapSize": 584312289,
+      "jsHeapSizeLimit": 4395630592,
+      "scope": "BROWSER_ESTIMATE_NOT_TOTAL_PROCESS_GPU_OR_WORKERS"
+    }
+  },
+  "resourceGroups": {
+    "other": {
+      "requests": 138,
+      "transferredBytes": 33100138
+    },
+    "candidates": {
+      "requests": 1,
+      "transferredBytes": 67469
+    },
+    "features": {
+      "requests": 1,
+      "transferredBytes": 85754
+    },
+    "tiles": {
+      "requests": 24,
+      "transferredBytes": 7410048
+    }
+  },
+  "browserErrors": 0,
+  "browserWarnings": [
+    "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead."
+  ],
+  "screenshots": {
+    "road-preview-800m2.png": {
+      "file": "data/benchmarks/native-interaction-v1/road-preview-800m2.png",
+      "sha256": "8a5ebbd54ee11bf41cc91cd475ababc6fbff6e826d56dc988508e8b78a4a1e01"
+    },
+    "final-replay.png": {
+      "file": "data/benchmarks/native-interaction-v1/final-replay.png",
+      "sha256": "85d355bb4c7e78a39cac463768d661d629496c271aca5b96354d4312d57071bb"
+    }
+  },
+  "evidence": {
+    "first-load.json": {
+      "file": "tmp/native-interaction-v1/first-load.json",
+      "sha256": "587714ebf6fbe8ec19e932e157321ca70fc02814ce194d4b3121355360e651c1"
+    },
+    "segments.json": {
+      "file": "tmp/native-interaction-v1/segments.json",
+      "sha256": "a40a3f22636ad678d01a26951fe3c21755bc38e54b6bed735007d4b55f61395f"
+    },
+    "final-load.json": {
+      "file": "tmp/native-interaction-v1/final-load.json",
+      "sha256": "c03c2879acefdc6e31023b7bf019ce3a83d04fdf307b322a925602995ccf3d3e"
+    },
+    "browser-log.json": {
+      "file": "tmp/native-interaction-v1/browser-log.json",
+      "sha256": "81fcb535287f3031c531c3eecdc6fab124910a585c893e7b106815474e1a6ef8"
+    },
+    "playback-end.json": {
+      "file": "tmp/native-interaction-v1/playback-end.json",
+      "sha256": "06474fdb209cf8dcd040ae227e4a863fe1b2627a2ded4761288218d96e1b03b6"
+    }
+  },
+  "limitations": [
+    "단일 Apple M4 Pro·24GiB·로컬 HTTP·1280×720 화면이며 다른 기기/망/공개 배포 성능 미검증",
+    "requestAnimationFrame 간격과 WebGL 호출이 있었던 구간을 세며 GPU 완료/화면 제시 FPS와 구분",
+    "계측 자체의 비용과 원 컨텍스트/객체 참조 보존을 포함; JS heap은 Chromium 추정치이며 전체 프로세스·Worker·GPU 메모리나 누수 판정 아님",
+    "2D 혼합 구간의 낮은 그리기 빈도는 3D 성능 저하가 아니라 렌더러 전환을 포함한 값",
+    "가속 관측 강우 재생이며 계산 침수 프레임/연결 유역·시설 계산·설치/예산 확정·제출 검증 아님",
+    "확정 도로 시설·긴 실제 시간 스트레스·강제 GPU/망 실패 복구·모바일 실기기 검증 잔여",
+    "Three.js의 Clock 폐기 예정·PCFSoftShadowMap 대체 경고 2종 보존; 화면 오류는 관측하지 않았으나 의존성 경고 해소는 이번 범위가 아님",
+    "JS heap 최고치는 5초 간격 표본의 최고값이며 표본 사이의 순간 최대값 미측정"
+  ],
+  "reproductionPreview": {
+    "status": "PASSED",
+    "instrumentationSha256": "842e45c45832ee06aed47912d1a269520073af2bc74bf0a39bc3fdb48d17c4ff",
+    "sameSourceBytes": true,
+    "productionFilesUnmodified": true
+  },
+  "validation": {
+    "scriptSyntax": "PASSED",
+    "scriptFormat": "PASSED",
+    "previewSourceBytes": "MATCH",
+    "evidenceHashes": "MATCH",
+    "temporaryPreviewServersStopped": true,
+    "existingDevelopmentServicesRetained": true
+  }
+}
