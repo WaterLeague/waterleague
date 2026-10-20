@@ -19,12 +19,13 @@ class GuestHistoricalTests(unittest.TestCase):
     def test_guest_native_calculation_and_identical_replay_without_ranking(self):
         request=json.loads(Path(os.environ['WL_GUEST_FIXTURE']).read_text())
         artifacts=Path(os.environ['WL_GUEST_EVIDENCE'])
+        district=json.loads(request['placements'])[0]['districtId']
         guest='f'*64
         outputs=[]
         hashes=[]
         for _ in range(2):
             identity=uuid.uuid4()
-            self.conn.execute("INSERT INTO historical_experiments(id,guest_key,request_key,district_id,model_hash,input_hash,placements,state,created_at) VALUES(%s,%s,%s,'2419953',%s,%s,%s,'QUEUED',now())",(identity,guest,uuid.uuid4(),request['modelHash'],request['inputHash'],request['placements']))
+            self.conn.execute("INSERT INTO historical_experiments(id,guest_key,request_key,district_id,model_hash,input_hash,placements,state,created_at) VALUES(%s,%s,%s,%s,%s,%s,%s,'QUEUED',now())",(identity,guest,uuid.uuid4(),district,request['modelHash'],request['inputHash'],request['placements']))
             job=queue.claim(self.conn)
             self.assertIsNone(job['owner_id'])
             self.assertTrue(historical.process(self.conn,job,artifacts))
