@@ -1,0 +1,124 @@
+{
+  "version": "PUBLIC_MAINTENANCE_REFERENCE_V1",
+  "scope": "PUBLISHED_INSPECTION_GUIDANCE_NOT_SITE_ASSESSMENT",
+  "score": null,
+  "grade": null,
+  "scoreStatus": "UNAVAILABLE_NO_VALIDATED_SCORING_RUBRIC",
+  "sources": {
+    "LH_2022": {
+      "title": "LID 시설의 유지관리 방안에 관한 연구",
+      "publisher": "한국토지주택공사 토지주택연구원",
+      "year": 2022,
+      "url": "https://lh.or.kr/boardDownload.es?bid=0034&list_no=717595&seq=2",
+      "sha256": "f934acd95edace10692b56322d969e3ea13dc0c97ff4d2d4c9f790b77f99f002"
+    },
+    "EPA_2016": {
+      "title": "Operation and Maintenance of Green Infrastructure Receiving Runoff from Roads and Parking Lots",
+      "publisher": "US EPA Region 5",
+      "year": 2016,
+      "url": "https://www.epa.gov/sites/default/files/2016-11/documents/final_gi_maintenance_508.pdf",
+      "sha256": "3cb0d542d58c4dd736e7f1e5dd67a70d6e7edf57ca3480f77f91bc3c1865cb32"
+    }
+  },
+  "facilities": [
+    {
+      "type": "RAIN_GARDEN",
+      "label": "빗물정원",
+      "checks": "흙 유실·퇴적, 넘침 입구의 막힘, 식물 생육",
+      "frequency": "월 1회 유입부, 6개월마다 식생, 연 1회 시설 전반. 장마 전후·호우 시 추가 확인.",
+      "source": "LH_2022",
+      "reference": "표 3-6 · 본문 106쪽",
+      "pdfPages": [120, 121]
+    },
+    {
+      "type": "PERMEABLE_PAVEMENT",
+      "label": "투수포장",
+      "checks": "토사 유입·공극 막힘, 포장 침하·파손",
+      "frequency": "월 1회 퇴적물·유입부, 연 1회 포장 상태. 장마 전후·호우 시 추가 확인.",
+      "source": "LH_2022",
+      "reference": "표 3-13 · 본문 120쪽",
+      "pdfPages": [135]
+    },
+    {
+      "type": "GREEN_ROOF",
+      "label": "녹화지붕",
+      "checks": "흙 유실, 방수·뿌리 차단층, 식물 생육·한파 손상",
+      "frequency": "월 1회 이물질·호우 영향, 6개월마다 식생, 연 1회 토양·방수 상태.",
+      "source": "LH_2022",
+      "reference": "표 3-9 · 본문 113쪽",
+      "pdfPages": [128]
+    },
+    {
+      "type": "BIORETENTION",
+      "label": "생물저류시설",
+      "checks": "퇴적·식생·입출구 막힘, 고인 물, 배수관이 있는 경우 관내 정체",
+      "frequency": "적어도 연 1회 점검을 권고. 강우 48시간 후에도 물이 남으면 침투·배수 원인 조사.",
+      "source": "EPA_2016",
+      "reference": "Inspection and Assessment · 7~9쪽",
+      "pdfPages": [7, 8, 9],
+      "limitation": "도로·주차장 유출을 받는 시설의 미국 지침. 서울 현장 주기·성능 기준으로 확정하지 않음."
+    },
+    {
+      "type": "VEGETATIVE_SWALE",
+      "label": "식생수로",
+      "checks": "수로·비탈면 훼손, 넘침 입구의 막힘, 식생·토양 상태",
+      "frequency": "월 1회 유입부, 6개월마다 식생, 연 1회 수로 전반. 장마 전후·호우 시 추가 확인.",
+      "source": "LH_2022",
+      "reference": "표 3-5 · 본문 103쪽",
+      "pdfPages": [117, 118]
+    },
+    {
+      "type": "INFILTRATION_TRENCH",
+      "label": "침투 트렌치",
+      "checks": "쇄석 배수층·입출구 막힘, 주변 흙 유실·형태 변화",
+      "frequency": "월 1회 퇴적·호우 영향, 연 1회 배수·형태. 막힘 확인 시 쇄석 재포설 검토.",
+      "source": "LH_2022",
+      "reference": "표 3-10 · 본문 116쪽",
+      "pdfPages": [130, 131],
+      "limitation": "현재 개방 쇄석층 설계의 관리 참고. 지하 침투관형 트렌치의 별도 지침과 구분."
+    },
+    {
+      "type": "RAINWATER_HARVESTING_REFERENCE",
+      "label": "빗물이용시설 · 참고",
+      "checks": "집수부 오염·막힘, 수위·펌프·월류 부속, 저장·배관 손상과 누수",
+      "frequency": "월 1회 집수·전처리, 6개월마다 설비, 연 1회 구조·배관 점검.",
+      "source": "LH_2022",
+      "reference": "표 3-14 · 본문 122쪽",
+      "pdfPages": [135, 136, 137],
+      "limitation": "문헌의 빗물저금통 관리 항목. 소형/대형 규격이나 확정 설치·비용·사용 수요의 증거가 아님."
+    }
+  ],
+  "assessmentRequirements": [
+    "시설·위치·규격과 연결된 공개 점검 기록 및 출처·버전",
+    "점검·보수 시각과 평가 기간, 관리 주체와 접근 가능 여부",
+    "항목별 측정 방법·단위·결측 및 동일 조건의 정비 전후 성능",
+    "규격·가격 시점·포함 공종이 확인된 점검·청소·수선 비용",
+    "가중치·등급 경계·불확실성·결측 처리의 사전 검증"
+  ],
+  "decisionRules": [
+    {
+      "id": "REFERENCE_ONLY",
+      "label": "문헌 근거만 확보",
+      "condition": "관리 항목·주기는 있으나 해당 시설의 점검·관리 이력이 없음",
+      "result": "참고 항목만 제공. 현장 상태·관리 점수 미산정."
+    },
+    {
+      "id": "INVESTIGATION_REQUIRED",
+      "label": "이상 징후 확인",
+      "condition": "해당 위치·시점의 공개 기록에 막힘·손상·정체 등 확인",
+      "result": "원인 조사·조치 근거 필요. 징후를 효과계수·감점으로 환산하지 않음."
+    },
+    {
+      "id": "EVIDENCE_RECORDED",
+      "label": "점검·정비 근거 확보",
+      "condition": "같은 시설의 점검·정비 전후 기록과 방법·시점 확인",
+      "result": "확인된 항목·원값만 비교. 검증된 배점 기준이 없으면 점수·등급 미산정."
+    }
+  ],
+  "limitations": [
+    "점검 주기는 문헌의 권고이며 실제 점검 이행·현장 관리 의무·시설 수명을 뜻하지 않음",
+    "자료가 없는 위치의 관리 상태를 정상·관리 지연·노후 상태로 추정하지 않음",
+    "문헌 주기를 사건 시간축의 자동 노후화·청소·수리계수 변화·비용으로 환산하지 않음",
+    "관리·실현성 점수는 체적 차이 순위에 합산하지 않음"
+  ]
+}

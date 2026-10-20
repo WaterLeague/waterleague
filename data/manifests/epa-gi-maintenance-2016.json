@@ -1,0 +1,25 @@
+{
+  "id": "epa-gi-maintenance-2016",
+  "title": "Operation and Maintenance of Green Infrastructure Receiving Runoff from Roads and Parking Lots",
+  "publisher": "US EPA Region 5",
+  "documentYear": 2016,
+  "documentMonth": 9,
+  "url": "https://www.epa.gov/sites/default/files/2016-11/documents/final_gi_maintenance_508.pdf",
+  "landingUrl": "https://www.epa.gov/green-infrastructure/operation-and-maintenance-green-infrastructure-receiving-runoff-roads-and",
+  "file": "data/private/facility-reference-20261021/epa-gi-maintenance-2016.pdf",
+  "sha256": "3cb0d542d58c4dd736e7f1e5dd67a70d6e7edf57ca3480f77f91bc3c1865cb32",
+  "bytes": 9305486,
+  "pdfPages": 23,
+  "retrievedAt": "2026-10-20T17:05:23.455602+00:00",
+  "evidencePages": [
+    7,
+    8,
+    9
+  ],
+  "appliedScope": "생물저류의 관리 접근·전처리·육안/침투 점검 참고와 추가 조사 신호",
+  "limitations": [
+    "도로·주차장 유출을 받는 미국 시설의 지침이며 서울 개별 현장 주기나 법적 의무로 전용하지 않음",
+    "48시간 물고임은 원인 조사 신호이며 성능 저감률·점수·현장 배수 설계 기준으로 전용하지 않음",
+    "문헌의 다른 시설 복원 사례 효과율·비용·처분 기준을 현재 시설에 적용하지 않음"
+  ]
+}

@@ -139,6 +139,29 @@
 .data-cost-table tr:last-child > * {
   border-bottom: 0;
 }
+.data-maintenance-reference {
+  margin-top: 20px;
+}
+.data-maintenance-reference summary {
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+}
+.data-maintenance-reference h3,
+.data-assessment-rules dt {
+  font-size: 13px;
+  font-weight: 600;
+}
+.data-assessment-rules dd {
+  margin: 6px 0 16px;
+}
+.data-reference-table td:nth-child(2) {
+  white-space: normal;
+}
+.data-reference-table td {
+  min-width: 140px;
+  line-height: 1.7;
+}
 .data-calculation dl > div {
   display: grid;
   grid-template-columns: 100px minmax(0, 1fr);
