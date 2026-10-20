@@ -7,6 +7,7 @@ import subprocess
 import tarfile
 
 from build_live_swmm import ROOT, REVISION, ARCHIVE_HASH
+from attach_node_flood_duration import attach
 
 
 def main():
@@ -47,6 +48,8 @@ def main():
             # EPA는 포착 절점의 월류를 외부 손실에서 제외하고 다음 단계에 지표로 반환한다.
             observed = observed.replace(flooding,
                 b'else if (Node[j].inlet != CAPTURE && Node[j].newVolume <= Node[j].fullVolume)')
+            observed, duration_hashes = attach(observed, ROOT)
+            hashes.update(duration_hashes)
             path.write_bytes(path.read_bytes() + b'\nstatic void wl_metricsObserve(double before);\n'
                              + observed + b'\n' + metrics)
             hashes['metricsSha256'] = hashlib.sha256(metrics).hexdigest()

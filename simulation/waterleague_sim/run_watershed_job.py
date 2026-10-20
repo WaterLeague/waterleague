@@ -161,6 +161,7 @@ def calculate(request, directory):
         files = [*sorted((ROOT/'simulation/waterleague_sim').rglob('*.py')),
                  ROOT/'simulation/native/network_snapshot.inc', ROOT/'simulation/native/connected_lid_snapshot.inc',
                  ROOT/'simulation/native/network_metrics.inc',
+                 ROOT/'simulation/native/node_flood_duration.inc', ROOT/'scripts/attach_node_flood_duration.py',
                  ROOT/'scripts/build_facility_metrics_swmm.py', ROOT/'scripts/build_pump_network_swmm.py', ROOT/'simulation/native/pump_snapshot.inc', ROOT/'scripts/build_live_swmm.py',
                  ROOT/'simulation/pyproject.toml', ROOT/'simulation/uv.lock']
         for path in files:

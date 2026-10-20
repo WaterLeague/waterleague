@@ -6,6 +6,7 @@ export const nodeFloodingDto = z
   .object({
     schemaVersion: z.literal(1),
     method: z.literal('NATIVE_ROUTING_STEP_FLOODING_TRAPEZOIDAL_INTEGRAL'),
+    durationMethod: z.literal('NATIVE_EXTERNAL_FLOODING_END_STEP_SECONDS_V1').optional(),
     layoutSha256: z.string().regex(/^[a-f0-9]{64}$/),
     startSeconds: z.literal(0),
     endSeconds: amount.positive(),
@@ -16,6 +17,7 @@ export const nodeFloodingDto = z
           kind: z.enum(['JUNCTION', 'OUTFALL', 'STORAGE']),
           mapped: z.boolean(),
           floodingM3: amount,
+          floodingSeconds: amount.optional(),
         })
       )
       .min(1)
@@ -33,5 +35,15 @@ export const nodeFloodingDto = z
       !floodAmountClose(v.balanceDifferenceM3, v.sumNodeFloodingM3 - v.totalFloodingM3)
     )
       ctx.addIssue({ code: 'custom', message: '절점 월류 합계·원장 불일치' });
+    if (
+      v.nodes.some(
+        (n) =>
+          (v.durationMethod !== undefined) !== (n.floodingSeconds !== undefined) ||
+          (n.floodingSeconds !== undefined &&
+            (n.floodingSeconds > v.endSeconds + 1e-6 ||
+              (n.kind === 'OUTFALL' && n.floodingSeconds !== 0)))
+      )
+    )
+      ctx.addIssue({ code: 'custom', message: '절점 월류 시간·계산 기간 불일치' });
   });
 export type NodeFlooding = z.infer<typeof nodeFloodingDto>;

@@ -71,6 +71,8 @@ class InletNativeTests(unittest.TestCase):
         self.assertGreater(normal['capturedM3'], 0)
         self.assertLess(results['clogged']['inletOperation']['inlets'][0]['capturedM3'], normal['capturedM3'])
         self.assertGreater(results['backflow']['inletOperation']['inlets'][0]['backflowM3'], 0)
+        self.assertEqual(results['backflow']['final']['nodes']['S']['floodingSeconds'], 0)
+        self.assertGreater(results['backflow']['final']['nodes']['S']['statisticFloodingM3'], 0)
         self.assertGreater(results['sag']['inletOperation']['inlets'][0]['capturedM3'], 0)
         self.assertGreater(results['street']['inletOperation']['inlets'][0]['capturedM3'], 0)
         for other in ('replay',):

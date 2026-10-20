@@ -7,6 +7,7 @@ import subprocess
 import tarfile
 
 from build_live_swmm import ROOT, REVISION, ARCHIVE_HASH
+from attach_node_flood_duration import attach
 
 
 def main():
@@ -41,6 +42,8 @@ def main():
                 raise ValueError('FACILITY_METRICS_HOOK_MISMATCH')
             observed = raw.replace(hook,
                 b'    wl_metricsObserve(before / 1000.0);\n' + hook)
+            observed, duration_hashes = attach(observed, ROOT)
+            hashes.update(duration_hashes)
             path.write_bytes(path.read_bytes() + b'\nstatic void wl_metricsObserve(double before);\n'
                              + observed + b'\n' + metrics)
             hashes['metricsSha256'] = hashlib.sha256(metrics).hexdigest()

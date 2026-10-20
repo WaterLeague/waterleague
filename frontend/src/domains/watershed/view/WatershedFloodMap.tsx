@@ -148,11 +148,32 @@ export function WatershedFloodMap({
         <p>
           설치 전 {number(selected.baselineM3)} → 설치 후 {number(selected.strategyM3)} m³
         </p>
+        {selected.baselineSeconds !== null &&
+        selected.strategySeconds !== null &&
+        selected.reductionSeconds !== null ? (
+          <p>
+            월류 발생 시간 · 설치 전 {number(selected.baselineSeconds)} → 설치 후{' '}
+            {number(selected.strategySeconds)}초 · {number(Math.abs(selected.reductionSeconds))}초{' '}
+            {selected.reductionSeconds > 0
+              ? '감소'
+              : selected.reductionSeconds < 0
+                ? '증가'
+                : '변화 없음'}
+          </p>
+        ) : (
+          <p>월류 발생 시간 · 이 기록에는 시간 자료가 없습니다.</p>
+        )}
       </div>
       <p>
         계산 시작부터 {number(baseline.endSeconds)}초까지 누적한 월류량입니다. 지표 침수 깊이·침수
         구역을 뜻하지 않습니다.
       </p>
+      {baseline.durationMethod && (
+        <small>
+          월류 발생 시간은 이 지점에서 관망 밖으로 물이 넘친 계산 단계의 누적 시간입니다. 지표에
+          물이 고인 시간은 제외하며, 여러 지점의 시간을 더하지 않습니다.
+        </small>
+      )}
       <small>공개 연구 모형의 원본 좌표 · 서울 지도 위치 정합 전</small>
       {unmapped.length > 0 && (
         <details>
@@ -160,6 +181,7 @@ export function WatershedFloodMap({
           {unmapped.map((n) => (
             <p key={n.id}>
               {n.id} · 월류 {number(n.floodingM3)} m³ · 지도 표시 제외
+              {n.floodingSeconds !== undefined && ` · 월류 발생 ${number(n.floodingSeconds)}초`}
             </p>
           ))}
         </details>

@@ -73,6 +73,14 @@ def observed_run(engine, paths, metrics, node_flooding=None, pump_operation=None
                 values = (ctypes.c_double * 6)()
                 check(engine.wl_nodeVolumes(engine.swmm_getIndex(2, node['id'].encode()), values, 6))
                 nodes_equal = nodes_equal and values[3] == node['floodingM3']
+                if node_flooding.get('durationMethod') is not None:
+                    if node_flooding['durationMethod'] != 'NATIVE_EXTERNAL_FLOODING_END_STEP_SECONDS_V1':
+                        raise ValueError('WATERSHED_REPLAY_DURATION_METHOD_INVALID')
+                    engine.wl_floodDurationRead.argtypes = [ctypes.c_int, ctypes.POINTER(ctypes.c_double), ctypes.c_int]
+                    duration = (ctypes.c_double*3)()
+                    check(engine.wl_floodDurationRead(engine.swmm_getIndex(2, node['id'].encode()), duration, 3))
+                    nodes_equal = (nodes_equal and duration[0] == node['floodingSeconds']
+                        and abs(duration[1]-node_flooding['endSeconds']) <= 1e-6)
         check(engine.swmm_end())
         check(engine.swmm_report())
         return (dict(zip(ids, rows[:-1])) == metrics['outfalls'] and rows[-1] == metrics['combined'], nodes_equal)

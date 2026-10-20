@@ -116,6 +116,8 @@ class FacilityMetricsTests(unittest.TestCase):
                 with EngineProcess(engine, MODEL, root/name, native_duration=True) as process:
                     results.append(process.call('run', interval)['result'])
             self.assertEqual(results[1]['evaluationMetrics'], results[2]['evaluationMetrics'])
+            self.assertEqual(results[1]['final']['nodes'], results[2]['final']['nodes'])
+            self.assertTrue(all(n['floodingSeconds'] == 0 for n in results[1]['final']['nodes'].values()))
             for name in ('fine', 'coarse'):
                 self.assertEqual((root/'old/network.out').read_bytes(), (root/name/'network.out').read_bytes())
             metrics = results[1]['evaluationMetrics']

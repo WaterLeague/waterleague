@@ -4,6 +4,7 @@ import math
 
 from waterleague_sim.engine.flood_errors import require
 from waterleague_sim.engine.swmm import ROOT
+from waterleague_sim.engine.node_flood_duration import METHOD as DURATION_METHOD
 from waterleague_sim.ingestion.published_network import digest
 
 LAYOUT = ROOT/'backend/src/main/resources/watersheds/seocho-layout-v1.json'
@@ -29,6 +30,11 @@ def summarize(initial, final, layout, delivery_nodes=(), inlet_nodes=()):
             and all(n['floodingM3'] == 0 for n in initial['nodes'].values()),
             'WATERSHED_NODE_FLOODING_WINDOW_INVALID')
     rows = []
+    duration = final.get('nodeFloodingDurationMethod')
+    has_seconds = any('floodingSeconds' in n for n in (*initial['nodes'].values(), *nodes.values()))
+    require((duration is None and not has_seconds and 'nodeFloodingDurationMethod' not in initial)
+            or duration == initial.get('nodeFloodingDurationMethod') == DURATION_METHOD,
+            'WATERSHED_NODE_FLOODING_DURATION_METHOD_INVALID')
     for name, node in nodes.items():
         require(finite(node['floodingM3']) and type(node['type']) is int
                 and node['type'] in (0, 1, 2), 'WATERSHED_NODE_FLOODING_INVALID')
@@ -41,12 +47,20 @@ def summarize(initial, final, layout, delivery_nodes=(), inlet_nodes=()):
                     'WATERSHED_NODE_LOCATION_MISSING')
         rows.append({'id': name, 'kind': ('JUNCTION', 'OUTFALL', 'STORAGE')[node['type']],
                      'mapped': name in source, 'floodingM3': node['floodingM3']})
+        if duration is not None:
+            seconds = node.get('floodingSeconds')
+            require(initial['nodes'][name].get('floodingSeconds') == 0 and finite(seconds)
+                    and seconds <= final['totals']['timeSeconds'] + 1e-6
+                    and (node['type'] != 1 or seconds == 0),
+                    'WATERSHED_NODE_FLOODING_DURATION_INVALID')
+            rows[-1]['floodingSeconds'] = seconds
     total = final['totals']['floodingM3']
     end = final['totals']['timeSeconds']
     summed = math.fsum(n['floodingM3'] for n in rows)
     require(finite(total) and finite(end) and end > 0 and
             math.isclose(total, summed, rel_tol=1e-9, abs_tol=1e-8),
             'WATERSHED_NODE_FLOODING_TOTAL_MISMATCH')
-    return {'schemaVersion': 1, 'method': METHOD, 'startSeconds': 0, 'endSeconds': end,
+    return ({'schemaVersion': 1, 'method': METHOD, 'startSeconds': 0, 'endSeconds': end,
             'layoutSha256': LAYOUT_HASH, 'nodes': rows, 'totalFloodingM3': total,
             'sumNodeFloodingM3': summed, 'balanceDifferenceM3': summed-total}
+            | ({'durationMethod': duration} if duration is not None else {}))

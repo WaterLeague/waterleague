@@ -3,7 +3,7 @@ import ctypes as C
 from copy import deepcopy
 import json
 
-from . import facility_network, network, network_metrics
+from . import facility_network, network, network_metrics, node_flood_duration
 from .flood_errors import require
 
 
@@ -44,14 +44,14 @@ def identity():
     ):
         require(build.get(key) == network.sha256(network.ROOT / relative),
                 'FACILITY_METRICS_ENGINE_IDENTITY_INVALID')
-    return build | {'adapterSha256': network.sha256(__file__),
+    return build | node_flood_duration.identity(build) | {'adapterSha256': network.sha256(__file__),
         'facilityAdapterSha256': network.sha256(facility_network.__file__),
         'metricsAdapterSha256': network.sha256(network_metrics.__file__),
         'baseAdapterSha256': network.sha256(network.__file__),
         'qualityAdapterSha256': network.sha256(network.ROOT / 'simulation/waterleague_sim/engine/network_quality.py')}
 
 
-class FacilityMetricsSession(facility_network.FacilityNetworkSession):
+class FacilityMetricsSession(node_flood_duration.NodeFloodDurationMixin, facility_network.FacilityNetworkSession):
     engine_path = staticmethod(library_path)
     engine_identity = staticmethod(identity)
     metric_state = network_metrics.MetricsNetworkSession.metric_state

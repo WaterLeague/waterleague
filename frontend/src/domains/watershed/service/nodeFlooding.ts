@@ -14,6 +14,12 @@ export function compareNodeFlooding(baseline: NodeFlooding, strategy: NodeFloodi
         baselineM3: n.floodingM3,
         strategyM3: target.floodingM3,
         reductionM3: n.floodingM3 - target.floodingM3,
+        baselineSeconds: n.floodingSeconds ?? null,
+        strategySeconds: target.floodingSeconds ?? null,
+        reductionSeconds:
+          n.floodingSeconds !== undefined && target.floodingSeconds !== undefined
+            ? n.floodingSeconds - target.floodingSeconds
+            : null,
       };
     });
 }

@@ -1,0 +1,517 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-20",
+  "classification": "PUBLIC_RESEARCH_NETWORK_NODE_FLOOD_DURATION_NOT_SURFACE_INUNDATION",
+  "rankingEligible": false,
+  "method": "NATIVE_EXTERNAL_FLOODING_END_STEP_SECONDS_V1",
+  "durationCondition": "END_OF_NATIVE_ROUTING_STEP: type != OUTFALL AND inlet != CAPTURE AND newVolume <= fullVolume AND overflow > 0",
+  "aggregation": "SUM_OF_ACTIVE_NATIVE_STEP_SECONDS_PER_NODE_NO_CROSS_NODE_SUM",
+  "window": "FULL_RUN_START_ZERO_TO_NODE_FLOODING_END_SECONDS",
+  "networkWideDurationCalculated": false,
+  "sourceHashes": {
+    "frontend/src/domains/catalog/service/dataSourceService.ts": "006798d788ac73f680b8e4affc02c4b0c020a880d92b48d449393e4d343f96f9",
+    "frontend/src/domains/watershed/dto/nodeFloodingDto.ts": "8a19733375129eb5f3e36ec3fe5820d5c4413a50224c63da0d0b178f73786248",
+    "frontend/src/domains/watershed/dto/watershedDto.ts": "521bd93c165b3813fa32234b3ff54aab3a6fab694031cd56898d394c8458fae0",
+    "frontend/src/domains/watershed/service/nodeFlooding.test.tsx": "3bd988ef3dedbef16a20cdc9d30082111610db8559ec391cbd50dd6eabfcaa49",
+    "frontend/src/domains/watershed/service/nodeFlooding.ts": "e595750b593a63458f640eba255aaf15a6ff5b65534253c68291efeabb3091af",
+    "frontend/src/domains/watershed/view/WatershedFloodMap.tsx": "9fcdbce55a8ffb73a09a3d1dfd8c667c4f7e286474f09e7d7b6beeb3e46dbb66",
+    "scripts/attach_node_flood_duration.py": "bfadf2789077074084534eda7d694130fbe56551704ff3394e9caf57e9355328",
+    "scripts/build_facility_metrics_swmm.py": "5166d9bcac1151951558b422eff30edc5173e74b8c3e483d693724ce0fafe8cc",
+    "scripts/build_inlet_network_swmm.py": "8340ba181c2fbf0adff90c5cb92e32dd2d0b81413b03ee008237c09f1159d0be",
+    "scripts/build_pump_network_swmm.py": "e372cd233498d4f45d4e9c96287fd6a4f8f3ce91fdc43a823e9a75cfe4016d5f",
+    "scripts/verify_node_flood_duration.mjs": "f92ea974d5d4d8fe1202b9934ccd753155733539e8acf96f1f1894077929e865",
+    "simulation/integration/test_watershed.py": "fe4295761217569a478e37ec5f561398e73962ef18d3c28c64528a1946e682c1",
+    "simulation/native/node_flood_duration.inc": "47ed5fb450e33813989a14a8d7ce083d1860bf4a35f04cfff084ca05b23742b9",
+    "simulation/tests/test_connected_inlets.py": "46b8f1eff31c7ec07fe0d40818ffbd44601fbf0cf1316f79e6c9dd26c8641904",
+    "simulation/tests/test_facility_metrics.py": "15f2853258207bf6be9b60450e423082ff3aca9e7ccb92f0ccc54e1255272124",
+    "simulation/tests/test_node_flood_duration.py": "05e09ea931fd49a9cef4e8d1d39860717c4311ce1862189d2032dd8f14a73b5a",
+    "simulation/tests/test_node_flooding.py": "90f24417ddc5c6c694773e63eae25401710aa39c5181c08966f9dc56b986bf95",
+    "simulation/waterleague_sim/engine/facility_metrics.py": "b432bce03cd3a44cf96f114deb60dacfc72d00f7be4d2ffca6c2f46dade3ec21",
+    "simulation/waterleague_sim/engine/inlet_network.py": "8ff94ec83956925941ffae18661b7ba57bb44381ebd78d9c21335af7d2105972",
+    "simulation/waterleague_sim/engine/node_flood_duration.py": "7f3d5ea955d234b92618ef3173c4174dec0b73f927c4f6266ba7c11e40cf43f7",
+    "simulation/waterleague_sim/engine/pump_network.py": "1e8fe516cd5bfc6b2a88550678f74ea44ba13985502d77abbf14be76932023b5",
+    "simulation/waterleague_sim/presentation/node_flooding.py": "2a64ac40dca3a5dfd200621cb6db036c8fca58dd8718697d65420bd01c65931d",
+    "simulation/waterleague_sim/run_watershed_job.py": "a54298263ab72dcc59a6048c6984640b6100b7e9ce54adf87f7d340a687af772",
+    "simulation/waterleague_sim/watershed_replay.py": "62956973127fb1719977a7bd6a14b6e6ab0afbe5cd70f1493271e04cbb445801"
+  },
+  "bundle": {
+    "path": "tmp/flow-graph-network-61eb0fcc-7972-4f49-8c77-300622e7768d",
+    "resultSha256": "3e95d0fbd3779e05101db1f3d6f0766198430956d60fc77556f7eed550a8d232",
+    "manifestSha256": "46e959220e5b6849f5372dce1f9ce62b8b63cc9a5159ea5fe8cf0878b841c22d",
+    "implementationArchiveSha256": "c17ae31e3c4b561c2cf9688f2bec89f17329923f414e2e1fa210b8c73d9e9e9e",
+    "engineBuild": {
+      "schemaVersion": 1,
+      "engineVersion": "5.2.4",
+      "revision": "7952ca837988b1c32f791812eccc9fd64547e093",
+      "sourceArchiveSha256": "3f76a199573088ce47ff02491c529afb73d9953ee9d948dfc89dcd4981b4c0c0",
+      "nodeFloodDurationVersion": 1,
+      "nodeFloodDurationSha256": "47ed5fb450e33813989a14a8d7ce083d1860bf4a35f04cfff084ca05b23742b9",
+      "nodeFloodDurationBuilderSha256": "bfadf2789077074084534eda7d694130fbe56551704ff3394e9caf57e9355328",
+      "metricsSha256": "9a90e94998318db8bc2e25997d4c076bd8b5f09b171df768de98c4ba1c6bd28d",
+      "observerSha256": "c320fa1849cb4b03254167b107d1a9fefc7171b10c6ce397a0b82bb5c08c53e7",
+      "facilityObserverSha256": "fd6692274cec934d4f832223c69d8e3bdf31112fb02b875b153f70366cf21869",
+      "facilityObserverVersion": 1,
+      "metricsVersion": 1,
+      "builderSha256": "5166d9bcac1151951558b422eff30edc5173e74b8c3e483d693724ce0fafe8cc",
+      "binarySha256": "fea8d198962e3e7e39ff2383c04a5c90023600e6e9631493c22e08d4045899b3",
+      "modification": "READ_ONLY_LID_AND_NATIVE_OUTFALL_METRICS_NO_SOLVER_CHANGES"
+    }
+  },
+  "cases": [
+    {
+      "id": "baseline",
+      "inputSha256": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+      "endSeconds": 86339.0,
+      "durationMethod": "NATIVE_EXTERNAL_FLOODING_END_STEP_SECONDS_V1",
+      "nodes": [
+        {
+          "id": "J1",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 0.0
+        },
+        {
+          "id": "J2",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 0.0
+        },
+        {
+          "id": "J3",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 454.8940000000148
+        },
+        {
+          "id": "J4",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 0.0
+        },
+        {
+          "id": "J5",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 166.84200000001874
+        },
+        {
+          "id": "J6",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 0.0
+        },
+        {
+          "id": "J7",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 0.0
+        },
+        {
+          "id": "J8",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 0.0
+        },
+        {
+          "id": "J9",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 1868.9280000000072
+        },
+        {
+          "id": "J10",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 24193.76399999998
+        },
+        {
+          "id": "J11",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 0.0
+        },
+        {
+          "id": "J12",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 0.0
+        },
+        {
+          "id": "J13",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 0.0
+        },
+        {
+          "id": "J14",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 0.0
+        },
+        {
+          "id": "J15",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 0.0
+        },
+        {
+          "id": "J16",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 19608.553999999996
+        },
+        {
+          "id": "J17",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 0.0
+        },
+        {
+          "id": "J18",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 0.0
+        },
+        {
+          "id": "J19",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 502.20000000004075
+        },
+        {
+          "id": "J20",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 17975.10199999999
+        },
+        {
+          "id": "J21",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 19725.176000000014
+        },
+        {
+          "id": "J22",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 23833.791999999987
+        },
+        {
+          "id": "J23",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 43592.200000000004
+        },
+        {
+          "id": "J24",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 10384.503999999994
+        },
+        {
+          "id": "J25",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 19559.140000000007
+        },
+        {
+          "id": "J26",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 24357.133999999984
+        },
+        {
+          "id": "Out1",
+          "kind": "OUTFALL",
+          "mapped": true,
+          "floodingSeconds": 0.0
+        },
+        {
+          "id": "Out2",
+          "kind": "OUTFALL",
+          "mapped": true,
+          "floodingSeconds": 0.0
+        }
+      ]
+    },
+    {
+      "id": "strategy",
+      "inputSha256": "15efae167ee1e96279d3cc5f00881b883f38772b8111075c56c0e446c2bfeb98",
+      "endSeconds": 86339.0,
+      "durationMethod": "NATIVE_EXTERNAL_FLOODING_END_STEP_SECONDS_V1",
+      "nodes": [
+        {
+          "id": "J1",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 0.0
+        },
+        {
+          "id": "J2",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 0.0
+        },
+        {
+          "id": "J3",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 454.2739999999467
+        },
+        {
+          "id": "J4",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 0.0
+        },
+        {
+          "id": "J5",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 166.09799999999814
+        },
+        {
+          "id": "J6",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 0.0
+        },
+        {
+          "id": "J7",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 0.0
+        },
+        {
+          "id": "J8",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 0.0
+        },
+        {
+          "id": "J9",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 1868.9280000000072
+        },
+        {
+          "id": "J10",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 24193.76399999998
+        },
+        {
+          "id": "J11",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 0.0
+        },
+        {
+          "id": "J12",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 0.0
+        },
+        {
+          "id": "J13",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 0.0
+        },
+        {
+          "id": "J14",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 0.0
+        },
+        {
+          "id": "J15",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 0.0
+        },
+        {
+          "id": "J16",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 19608.553999999996
+        },
+        {
+          "id": "J17",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 0.0
+        },
+        {
+          "id": "J18",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 0.0
+        },
+        {
+          "id": "J19",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 502.88199999997596
+        },
+        {
+          "id": "J20",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 17974.481999999975
+        },
+        {
+          "id": "J21",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 19726.663999999997
+        },
+        {
+          "id": "J22",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 23826.661999999997
+        },
+        {
+          "id": "J23",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 43600.88
+        },
+        {
+          "id": "J24",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 10384.503999999994
+        },
+        {
+          "id": "J25",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 19559.140000000007
+        },
+        {
+          "id": "J26",
+          "kind": "JUNCTION",
+          "mapped": true,
+          "floodingSeconds": 24357.133999999984
+        },
+        {
+          "id": "Out1",
+          "kind": "OUTFALL",
+          "mapped": true,
+          "floodingSeconds": 0.0
+        },
+        {
+          "id": "Out2",
+          "kind": "OUTFALL",
+          "mapped": true,
+          "floodingSeconds": 0.0
+        }
+      ]
+    }
+  ],
+  "replay": [
+    {
+      "id": "baseline",
+      "outSha256": "682eeb8bb19391dde81c640bc68f91de924852787689c89cbd46a3c771006c18",
+      "binaryEqual": true,
+      "metricsEqual": true,
+      "nodeFloodingEqual": true
+    },
+    {
+      "id": "strategy",
+      "outSha256": "769332420a751c772db450c3d29cfa6ddcb3b7b8b32ee44894149607b85c416f",
+      "binaryEqual": true,
+      "metricsEqual": true,
+      "nodeFloodingEqual": true
+    }
+  ],
+  "officialEngineComparison": [
+    {
+      "case": "baseline",
+      "officialOutputEqual": true,
+      "outSha256": "682eeb8bb19391dde81c640bc68f91de924852787689c89cbd46a3c771006c18"
+    },
+    {
+      "case": "strategy",
+      "officialOutputEqual": true,
+      "outSha256": "769332420a751c772db450c3d29cfa6ddcb3b7b8b32ee44894149607b85c416f"
+    }
+  ],
+  "previousPublicBaselineOutputUnchanged": true,
+  "checks": {
+    "nativeAndContractTests": 17,
+    "policyAndRawMetricTests": 9,
+    "serverWorkflowTests": 22,
+    "workerIntegrationTests": 8,
+    "ownerHttpReadbackTests": 1,
+    "httpDtoStaticRenderResponses": 5,
+    "frontendTestFiles": 131,
+    "frontendTests": 444,
+    "frontendTypeAndProductionBuild": "PASSED",
+    "sourceCountsUnchanged": true,
+    "runtimeHealth": "UP",
+    "durationTestsRerunAfterFrameChecks": 2
+  },
+  "reports": {
+    "tmp/node-duration-python-v1.log": "f89a309a406b0a6b1dac31f69cbcf56079303b4e2ca66f4a174e04070b36386a",
+    "tmp/node-duration-native-v2.log": "08fff721e0cb9a1019b3aa262a1a3eda4c786c3517978c09751b6cd8044fbd7a",
+    "tmp/node-duration-policy-v1.log": "a3b7c9bc35e2c3e655505ad0d1e5cea33872eb954f7767fa421a4f0e54487c60",
+    "tmp/waterleague_queue_test_a4b0720411d84610b8b0b1e2aec2e6e4.log": "c4aafa5bcba0efa3d3eaebbd0cf6414f9acde095b02e610b27da36dba91b0db0",
+    "tmp/node-duration-readback-v1.json": "099e064f59bf61b5d446b4cff450184faa366303d64aec9b3c0965f57bca4ca4",
+    "tmp/node-duration-frontend-tests-v1.log": "2b9a1eed1c4520262c4d81c5f2a8fae3950d72d944ca7299eda058ad18a40421",
+    "tmp/node-duration-frontend-build-v1.log": "a3240fddb33cfd702b9a1a0fa47775cfb517dc9a61c52edb295f6e1d9cddf5ff",
+    "tmp/node-duration-runtime-v1.json": "139ad396d8b88247fc44dff7ab971457dc88820efd65fb4b2f3b62cbbd3ed68c"
+  },
+  "staticRenderEvidence": {
+    "schemaVersion": 1,
+    "scope": "HTTP_WORKER_DTO_STATIC_RENDER_NOT_BROWSER",
+    "rows": [
+      {
+        "scenario": "S9",
+        "sourceResponseFile": "tmp/waterleague_queue_test_a4b0720411d84610b8b0b1e2aec2e6e4.fixtures/api-view-S9.json",
+        "sourceResponseSha256": "3c94ccc3b4be698b1a9a3c8f47fa13f7b5fdcb5c86751fd5d9bd68dad9c8ef28",
+        "numericalStatus": "PASSED",
+        "dtoAndStaticRenderPassed": true
+      },
+      {
+        "scenario": "S1",
+        "sourceResponseFile": "tmp/waterleague_queue_test_a4b0720411d84610b8b0b1e2aec2e6e4.fixtures/api-view-S1.json",
+        "sourceResponseSha256": "752fd71265f476a2dbd5f249cd669aebf871a947ba947ac5d078164059dcd86d",
+        "numericalStatus": "PASSED",
+        "dtoAndStaticRenderPassed": true
+      },
+      {
+        "scenario": "S9-closed",
+        "sourceResponseFile": "tmp/waterleague_queue_test_a4b0720411d84610b8b0b1e2aec2e6e4.fixtures/api-view-S9-closed.json",
+        "sourceResponseSha256": "d325beb4b4e7bf317195798803873637247fc43c46aa65d6c0735c2ad576262b",
+        "numericalStatus": "PASSED",
+        "dtoAndStaticRenderPassed": true
+      },
+      {
+        "scenario": "S9-pipe",
+        "sourceResponseFile": "tmp/waterleague_queue_test_a4b0720411d84610b8b0b1e2aec2e6e4.fixtures/api-view-S9-pipe.json",
+        "sourceResponseSha256": "7152655a19f411c73bcf2f2f5e61cc7a211aca7616ab8de18985328032726ea7",
+        "numericalStatus": "PASSED",
+        "dtoAndStaticRenderPassed": true
+      },
+      {
+        "scenario": "S9-narrow",
+        "sourceResponseFile": "tmp/waterleague_queue_test_a4b0720411d84610b8b0b1e2aec2e6e4.fixtures/api-view-S9-narrow.json",
+        "sourceResponseSha256": "3e5a0c4058b22d450eb4cec349d22e06ab240f2c2569f175a9877e7cfc6c34a9",
+        "numericalStatus": "FAILED",
+        "dtoAndStaticRenderPassed": true
+      }
+    ]
+  },
+  "frontendFixtureSha256": "80ee189d525952e1b24df3ac7422bcc3e08a36606e42b090cf623a5dbc3cb9cd",
+  "limitations": [
+    "공개 연구 관망의 계산값이며 서울 현장 관측·지표 침수 시간 아님",
+    "EPA 보고서의 침수/저류 시간 및 0.01시간 반올림과 구분",
+    "단계 끝 월류 조건에 따른 시간 이산화이며 정확한 실제 발생 시각으로 해석하지 않음",
+    "지점 시간을 더하지 않으며 공통 평가 창의 관망 전체 중복 없는 발생 시간은 미산정",
+    "이전 결과는 변경하지 않으며 시간 필드 누락은 0초가 아닌 자료 없음",
+    "브라우저 조작·화면 배치·FPS 검증 아님"
+  ]
+}

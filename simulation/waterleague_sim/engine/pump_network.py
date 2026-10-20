@@ -3,7 +3,7 @@ import ctypes as C
 import json
 import math
 
-from . import network, facility_metrics
+from . import network, facility_metrics, node_flood_duration
 from .flood_errors import require
 from ..ingestion.published_network import records
 
@@ -31,7 +31,7 @@ def identity():
         ('pumpObserverSha256', 'simulation/native/pump_snapshot.inc'),
         ('builderSha256', 'scripts/build_pump_network_swmm.py')):
         require(build.get(key) == network.sha256(network.ROOT/source), 'PUMP_ENGINE_IDENTITY_INVALID')
-    return build | {'adapterSha256': network.sha256(__file__),
+    return build | node_flood_duration.identity(build) | {'adapterSha256': network.sha256(__file__),
         'facilityMetricsAdapterSha256': network.sha256(facility_metrics.__file__),
         'facilityAdapterSha256': network.sha256(network.ROOT/'simulation/waterleague_sim/engine/facility_network.py'),
         'metricsAdapterSha256': network.sha256(network.ROOT/'simulation/waterleague_sim/engine/network_metrics.py'),

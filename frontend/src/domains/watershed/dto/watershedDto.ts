@@ -251,9 +251,10 @@ export const watershedResultDto = z
       if (
         baseline?.nodeFlooding &&
         strategy?.nodeFlooding &&
-        baseline.nodeFlooding.endSeconds !== strategy.nodeFlooding.endSeconds
+        (baseline.nodeFlooding.endSeconds !== strategy.nodeFlooding.endSeconds ||
+          baseline.nodeFlooding.durationMethod !== strategy.nodeFlooding.durationMethod)
       )
-        ctx.addIssue({ code: 'custom', message: '절점 월류 비교 기간 불일치' });
+        ctx.addIssue({ code: 'custom', message: '절점 월류 비교 기간·시간 산정 방식 불일치' });
     }
     const valid =
       baseline &&
