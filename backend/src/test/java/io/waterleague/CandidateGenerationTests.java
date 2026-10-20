@@ -28,9 +28,12 @@ class CandidateGenerationTests {
   final LabModel model;
 
   CandidateGenerationTests() throws Exception {
-    repository = new LabModelRepository(json);
+    String raw = Files.readString(Path.of("src/main/resources/models/seongsu-lab.json"));
+    assertThat(json.hash(raw)).isEqualTo(LegacyModelFixtures.HASH);
+    model = new LabModel(LegacyModelFixtures.HASH, raw, json.tree(raw));
+    repository = org.mockito.Mockito.mock(LabModelRepository.class);
+    org.mockito.Mockito.when(repository.require(LegacyModelFixtures.HASH)).thenReturn(model);
     models = new LabModelService(repository, validation);
-    model = repository.require(LegacyModelFixtures.HASH);
   }
 
   SearchSample sample(int id, String cell, String area, String score) {

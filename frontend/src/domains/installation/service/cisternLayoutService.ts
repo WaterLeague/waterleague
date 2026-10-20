@@ -1,5 +1,8 @@
 import type { MapPoint } from '../../catalog/entity/facilityFootprint';
-import { facilityFootprint, polygonArea } from '../../catalog/service/facilityGeometryService';
+import {
+  facilityPolygonFootprint,
+  polygonArea,
+} from '../../catalog/service/facilityGeometryService';
 import type { CisternGeometryPreview, CisternLayoutRequest } from '../dto/cisternLayoutDto';
 import type { SharedSite } from '../entity/installation';
 import { cisternLayoutRequestDto } from '../dto/cisternLayoutDto';
@@ -39,7 +42,7 @@ function clip(points: MapPoint[], axis: number, bound: number, sign: number): Ma
   return result;
 }
 export function cisternGeometry(
-  ground: Pick<SharedSite, 'coordinates' | 'center' | 'modelHash'>,
+  ground: Pick<SharedSite, 'polygons' | 'center' | 'modelHash'>,
   area: number,
   depth: number,
   layout: CisternLayoutRequest
@@ -62,14 +65,18 @@ export function cisternGeometry(
   const angle = (r * Math.PI) / 180,
     c = Math.cos(angle),
     s = Math.sin(angle);
-  const local = ground.coordinates.map(([x, y]): MapPoint => [
-    c * (x - center[0]) + s * (y - center[1]),
-    -s * (x - center[0]) + c * (y - center[1]),
-  ]);
+  const local = ground.polygons.map((component) =>
+    component.map((ring) =>
+      ring.map(([x, y]): MapPoint => [
+        c * (x - center[0]) + s * (y - center[1]),
+        -s * (x - center[0]) + c * (y - center[1]),
+      ])
+    )
+  );
   let covered: number;
   try {
     // 오목한 경계도 삼각형별 교차 면적을 합산해 네 꼭짓점만 들어가는 배치를 거부한다.
-    covered = facilityFootprint(local, 1).polygons.reduce((sum, p) => {
+    covered = facilityPolygonFootprint(local, 1).polygons.reduce((sum, p) => {
       for (const [axis, bound, sign] of [
         [0, ow / 2, 1],
         [0, -ow / 2, -1],

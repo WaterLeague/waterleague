@@ -9,24 +9,22 @@ self.onmessage = ({ data }: { data: { rows: GroundCandidate[]; terrain: Terrain 
       masks: number[] = [],
       ends: number[] = [];
     for (const row of data.rows) {
-      const rings = [row[3], ...(row[4] ?? [])].map((r) => {
-        const p: Vector2[] = [];
-        for (let i = 0; i < r.length - 2; i += 2) p.push(new Vector2(r[i], r[i + 1]));
-        return p;
-      });
-      const points = rings.flat();
-      for (const indices of ShapeUtils.triangulateShape(rings[0], rings.slice(1))) {
-        const triangle = indices.map((i) => [points[i].x, points[i].y] as [number, number]) as [
-          [number, number],
-          [number, number],
-          [number, number],
-        ];
-        drapeTriangle(triangle, data.terrain, (t) => {
-          for (const p of t) {
-            positions.push(p[0], terrainMeshHeight(data.terrain, p) + 0.014, -p[1]);
-            masks.push(row[2]);
-          }
-        });
+      for (const component of row[3]) {
+        const rings = component.map((ring) => ring.slice(0, -1).map(([x, y]) => new Vector2(x, y)));
+        const points = rings.flat();
+        for (const indices of ShapeUtils.triangulateShape(rings[0], rings.slice(1))) {
+          const triangle = indices.map((i) => [points[i].x, points[i].y] as [number, number]) as [
+            [number, number],
+            [number, number],
+            [number, number],
+          ];
+          drapeTriangle(triangle, data.terrain, (t) => {
+            for (const p of t) {
+              positions.push(p[0], terrainMeshHeight(data.terrain, p) + 0.014, -p[1]);
+              masks.push(row[2]);
+            }
+          });
+        }
       }
       ends.push(positions.length / 9);
     }

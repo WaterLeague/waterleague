@@ -1,0 +1,696 @@
+{
+  "roof": {
+    "districtId": "11680",
+    "cellId": "C2aff114990a6c1cf975253b5",
+    "name": "강남구 옥상 후보",
+    "kind": "ROOF",
+    "polygons": [
+      [
+        [
+          [3547.679999999993, -4231.300000000047],
+          [3547.2000000000116, -4231.959999999963],
+          [3544.3099999999977, -4235.640000000014],
+          [3543.3699999999953, -4236.739999999991],
+          [3542.6900000000023, -4237.420000000042],
+          [3542.4500000000116, -4237.260000000009],
+          [3541.7600000000093, -4236.609999999986],
+          [3540.899999999994, -4235.430000000051],
+          [3540.420000000013, -4234.430000000051],
+          [3540.350000000006, -4234.199999999953],
+          [3540.3099999999977, -4234.010000000009],
+          [3540.320000000007, -4233.819999999949],
+          [3540.3800000000047, -4233.650000000023],
+          [3541.2000000000116, -4232.609999999986],
+          [3541.720000000001, -4231.939999999944],
+          [3542.3399999999965, -4231.410000000033],
+          [3543.2699999999895, -4230.630000000005],
+          [3545.070000000007, -4229.510000000009],
+          [3547.0100000000093, -4228.300000000047],
+          [3548.2399999999907, -4227.939999999944],
+          [3548.2999999999884, -4228.739999999991],
+          [3548.290000000008, -4229.030000000028],
+          [3548.2600000000093, -4229.439999999944],
+          [3548.209999999992, -4229.729999999981],
+          [3548.079999999987, -4230.189999999944],
+          [3547.9800000000105, -4230.510000000009],
+          [3547.679999999993, -4231.300000000047]
+        ]
+      ]
+    ],
+    "center": [3543.5355842391145, -4233.130000000005],
+    "heightM": 3.2,
+    "areaM2": 35.61079999994473,
+    "maxAreaM2": 35.61,
+    "allowedTypes": ["GREEN_ROOF"],
+    "unitCosts": {
+      "GREEN_ROOF": 350000,
+      "BIORETENTION": 560000,
+      "INFILTRATION_TRENCH": 171429,
+      "RAIN_GARDEN": 560000,
+      "VEGETATIVE_SWALE": 45000,
+      "PERMEABLE_PAVEMENT": 110000
+    },
+    "modelHash": "4ec7535e7cbaf41dc73f73519d77ba11f956f4c75c1a574fffa08f16625919b7",
+    "sourceIds": [
+      "ngii:N1A_B0010000:e5011b2be647290d5068a45c7e6097649b61ae50d41a1bf7a8ad351740a8b5d0"
+    ],
+    "areaLimitBasis": "PUBLIC_NATIVE_DESIGN_GEOMETRY",
+    "siteEligibility": "UNKNOWN",
+    "inflowPolicy": "DIRECT_RAINFALL_ONLY",
+    "costModel": {
+      "currency": "KRW",
+      "facilities": {
+        "BIORETENTION": {
+          "evidence": "PUBLIC_PLAN_REFERENCE_SITE_TRANSFER_UNVERIFIED",
+          "excludes": [
+            "실시설계·감리",
+            "별도 토공",
+            "철거·폐기",
+            "토지",
+            "구조보강",
+            "유지관리·모니터링",
+            "예비비"
+          ],
+          "includes": ["시설 설치"],
+          "note": "서울 지역·현재 물가·규격 미보정, 부가세 포함 여부 미확인; 원문 243m²·136,080,000원 기준 면적 외삽. EPA 단면과 규격 일치 미확인",
+          "referenceYear": 2022,
+          "scope": "식생체류지 면적 기준 설치 참고비",
+          "sourceSha256": "0efc54c3c884441d810ce28abb8928d758d98eb152fb71aac38791327b2d7414",
+          "sourceTitle": "진주상평 일반산업단지 저탄소 그린산업단지 조성사업 사업계획서",
+          "sourceUrl": "https://jinjucci.korcham.net/file/dext5uploaddata/2022/0718_%EC%A7%84%EC%A3%BC%EC%8B%9C_%EC%A0%80%ED%83%84%EC%86%8C%20%EA%B7%B8%EB%A6%B0%EC%82%B0%EC%97%85%EB%8B%A8%EC%A7%80%20%EC%A1%B0%EC%84%B1%EC%82%AC%EC%97%85_%EC%82%AC%EC%97%85%EA%B3%84%ED%9A%8D%EC%84%9C%20(%EC%9E%85%EC%A3%BC%EA%B8%B0%EC%97%85%ED%98%91%EC%9D%98%EC%B2%B4).pdf",
+          "unitCost": 560000
+        },
+        "GREEN_ROOF": {
+          "evidence": "PUBLIC_SEOUL_PROGRAM_APPROXIMATE_TOTAL",
+          "excludes": ["현장별 추가 공사 미확정", "유지관리 미산정"],
+          "includes": ["구조안전진단", "설계", "공사"],
+          "note": "공식 안내의 35만원/㎡ 내외 추정. 구조·현장 조건에 따라 변동, 70% 보조율 차감 없음. 기준 가격연도·부가세 포함 여부 미확인",
+          "referenceYear": 2025,
+          "scope": "진단·설계·공사 포함 사업비 참고",
+          "sourceSha256": "0f4852e2778a3ba3c5db034527e22ce124dccb65b1a59d8c9bf3d1c1bf950a01",
+          "sourceTitle": "동대문구 옥상녹화 사업비 산정 안내",
+          "sourceUrl": "https://www.ddm.go.kr/www/selectBbsNttView.do?bbsNo=278&key=2143&nttNo=107220",
+          "unitCost": 350000
+        },
+        "INFILTRATION_TRENCH": {
+          "derivation": {
+            "formula": "ceil(12000000 / 70)",
+            "priceYear": null,
+            "rounding": "CEILING_KRW_PER_M2",
+            "sourceAreaM2": 70,
+            "sourceInitialCostKrw": 12000000,
+            "sourcePdfPages": [43, 141],
+            "sourcePrintedPages": [28, 126]
+          },
+          "evidence": "PUBLIC_RESEARCH_REFERENCE_SITE_TRANSFER_UNVERIFIED",
+          "excludes": [
+            "공종별 포함 범위 미확정",
+            "현재 서울 물가 보정",
+            "현장별 추가 공사",
+            "유지관리·준설",
+            "지하 관로형 트렌치 공사"
+          ],
+          "includes": ["원문의 최초 설치비 총액"],
+          "note": "원문 28쪽·126쪽 H 시설 70m²·최초 설치비 1,200만원. 면적당 171,429원으로 원 단위 올림. 2022는 문서 연도이며 최초 가격연도·부가세 미확인. EPA 단면·서울 현장과 규격 일치 미확인. 대보수 금액·물가 1.2배는 적용하지 않음.",
+          "referenceYear": 2022,
+          "scope": "개방 쇄석 침투도랑 면적 환산 설치 참고비",
+          "sourceSha256": "f934acd95edace10692b56322d969e3ea13dc0c97ff4d2d4c9f790b77f99f002",
+          "sourceTitle": "LID 시설의 유지관리 방안에 관한 연구 · 침투도랑 H 최초 설치비",
+          "sourceUrl": "https://lh.or.kr/boardDownload.es?bid=0034&list_no=717595&seq=2",
+          "unitCost": 171429
+        },
+        "PERMEABLE_PAVEMENT": {
+          "evidence": "PUBLIC_PLAN_REFERENCE_SITE_TRANSFER_UNVERIFIED",
+          "excludes": [
+            "실시설계·감리",
+            "별도 토공",
+            "철거·폐기",
+            "토지",
+            "구조보강",
+            "유지관리·모니터링",
+            "예비비"
+          ],
+          "includes": ["시설 설치"],
+          "note": "서울 지역·현재 물가·규격 미보정, 부가세 포함 여부 미확인",
+          "referenceYear": 2022,
+          "scope": "시설 설치 참고비",
+          "sourceSha256": "0efc54c3c884441d810ce28abb8928d758d98eb152fb71aac38791327b2d7414",
+          "sourceTitle": "진주상평 일반산업단지 저탄소 그린산업단지 조성사업 사업계획서",
+          "sourceUrl": "https://jinjucci.korcham.net/file/dext5uploaddata/2022/0718_%EC%A7%84%EC%A3%BC%EC%8B%9C_%EC%A0%80%ED%83%84%EC%86%8C%20%EA%B7%B8%EB%A6%B0%EC%82%B0%EC%97%85%EB%8B%A8%EC%A7%80%20%EC%A1%B0%EC%84%B1%EC%82%AC%EC%97%85_%EC%82%AC%EC%97%85%EA%B3%84%ED%9A%8D%EC%84%9C%20(%EC%9E%85%EC%A3%BC%EA%B8%B0%EC%97%85%ED%98%91%EC%9D%98%EC%B2%B4).pdf",
+          "unitCost": 110000
+        },
+        "RAIN_GARDEN": {
+          "evidence": "PUBLIC_PLAN_REFERENCE_SITE_TRANSFER_UNVERIFIED",
+          "excludes": [
+            "실시설계·감리",
+            "별도 토공",
+            "철거·폐기",
+            "토지",
+            "구조보강",
+            "유지관리·모니터링",
+            "예비비"
+          ],
+          "includes": ["시설 설치"],
+          "note": "서울 지역·현재 물가·규격 미보정, 부가세 포함 여부 미확인",
+          "referenceYear": 2022,
+          "scope": "시설 설치 참고비",
+          "sourceSha256": "0efc54c3c884441d810ce28abb8928d758d98eb152fb71aac38791327b2d7414",
+          "sourceTitle": "진주상평 일반산업단지 저탄소 그린산업단지 조성사업 사업계획서",
+          "sourceUrl": "https://jinjucci.korcham.net/file/dext5uploaddata/2022/0718_%EC%A7%84%EC%A3%BC%EC%8B%9C_%EC%A0%80%ED%83%84%EC%86%8C%20%EA%B7%B8%EB%A6%B0%EC%82%B0%EC%97%85%EB%8B%A8%EC%A7%80%20%EC%A1%B0%EC%84%B1%EC%82%AC%EC%97%85_%EC%82%AC%EC%97%85%EA%B3%84%ED%9A%8D%EC%84%9C%20(%EC%9E%85%EC%A3%BC%EA%B8%B0%EC%97%85%ED%98%91%EC%9D%98%EC%B2%B4).pdf",
+          "unitCost": 560000
+        },
+        "VEGETATIVE_SWALE": {
+          "derivation": {
+            "designTopWidthM": 2,
+            "formula": "114390000 / 1271 / 2",
+            "headerUnitConflict": true,
+            "sourceLengthM": 1271,
+            "sourcePages": [11, 12],
+            "sourceSubtotalKrw": 114390000,
+            "unitCostKrwPerM": 90000
+          },
+          "evidence": "PUBLIC_PLAN_REFERENCE_SITE_TRANSFER_UNVERIFIED",
+          "excludes": [
+            "실시설계·감리",
+            "별도 토공",
+            "철거·폐기",
+            "토지",
+            "구조보강",
+            "유지관리·모니터링",
+            "예비비"
+          ],
+          "includes": ["시설 설치"],
+          "note": "원문 11쪽 폭 1.5/2m, 12쪽 1,271m·114,390,000원으로 90,000원/m 산출. 표 머리의 천원/㎡와 행 단위 불일치 보존. 폭 2m 설계에서 45,000원/㎡로 환산. 서울 현재 견적·실제 단면·부가세 미확인.",
+          "referenceYear": 2022,
+          "scope": "폭 2m 식생수로의 길이 환산 설치 참고비",
+          "sourceSha256": "0efc54c3c884441d810ce28abb8928d758d98eb152fb71aac38791327b2d7414",
+          "sourceTitle": "진주상평 일반산업단지 저탄소 그린산업단지 조성사업 사업계획서",
+          "sourceUrl": "https://jinjucci.korcham.net/file/dext5uploaddata/2022/0718_%EC%A7%84%EC%A3%BC%EC%8B%9C_%EC%A0%80%ED%83%84%EC%86%8C%20%EA%B7%B8%EB%A6%B0%EC%82%B0%EC%97%85%EB%8B%A8%EC%A7%80%20%EC%A1%B0%EC%84%B1%EC%82%AC%EC%97%85_%EC%82%AC%EC%97%85%EA%B3%84%ED%9A%8D%EC%84%9C%20(%EC%9E%85%EC%A3%BC%EA%B8%B0%EC%97%85%ED%98%91%EC%9D%98%EC%B2%B4).pdf",
+          "unitCost": 45000
+        }
+      },
+      "previousSha256": "9f9b235f0294d72b1821bfa3c7c014282889dfc8d21dbf70043c2a8e5eda417c",
+      "schemaVersion": 5,
+      "unit": "KRW_PER_SQUARE_METRE"
+    },
+    "costSourceSha256": "50f6e00757ecba3ed77a811b0fd9d03f72b800c0c47712093bf1adda99421036",
+    "physicalInputs": {
+      "depressionMm": 1.27,
+      "depressionPerviousMm": 2.54,
+      "flowLengthM": 10.905962745851985,
+      "geometrySourceIds": [
+        "ngii:N1A_B0010000:e5011b2be647290d5068a45c7e6097649b61ae50d41a1bf7a8ad351740a8b5d0"
+      ],
+      "imperviousBasis": "PUBLIC_REFERENCE_SURFACE_SCENARIO_NOT_SURVEY",
+      "imperviousPercent": 100,
+      "localMaterialStatus": "UNRESOLVED",
+      "localSlopeStatus": "UNRESOLVED",
+      "localSoilStatus": "UNRESOLVED",
+      "nImpervious": 0.012,
+      "nPervious": 0.15,
+      "referenceScenario": {
+        "id": "EPA_REFERENCE_SURFACES_2026_V1",
+        "sha256": "164358be09db34872324d63ce10df84a23cac936e5f5a8c0dc5fb12d0269b1bc"
+      },
+      "runoffWidthM": 3.265259640969256,
+      "slopeMethod": "PUBLIC_REFERENCE_SURFACE_SCENARIO",
+      "slopePercent": 1,
+      "soilStatus": "NOT_APPLICABLE_ROOF",
+      "surfaceScenarioId": "ROOF_REFERENCE",
+      "surfaceTag": null,
+      "widthMethod": "FOOTPRINT_AREA_OVER_LONG_AXIS"
+    },
+    "facilityDesignSet": {
+      "id": "EPA_LID_PUBLIC_DESIGNS_V4",
+      "sha256": "8af82e01704cf1495f185d9a0a410898e6007a468274c905e75b939f9abde133"
+    },
+    "initializationPolicy": {
+      "method": "OBSERVED_7_DAY_CONTINUOUS_SPINUP_V1",
+      "warmupMinutes": 10080
+    },
+    "existingInfrastructure": null,
+    "sourceRole": "BUILDING_FOOTPRINT",
+    "referenceInfrastructure": null
+  },
+  "reference": {
+    "districtId": "11110",
+    "cellId": "Ce4940cd5759dd1e09980f0b0",
+    "name": "종로구 지상 후보",
+    "kind": "GROUND",
+    "polygons": [
+      [
+        [
+          [932.3999999999942, 1470.667999999947],
+          [931.5499999999884, 1449.6600000000326],
+          [931.5100000000093, 1448.579999999958],
+          [915.5199999999895, 1449.1800000000512],
+          [915.570000000007, 1450.2900000000373],
+          [915.8999999999942, 1458.9499999999534],
+          [915.8999999999942, 1471.0500000000466],
+          [915.8099999999977, 1478.6899999999441],
+          [915.7900000000081, 1480.890000000014],
+          [915.9200000000128, 1484.0100000000093],
+          [916.0400000000081, 1487.5],
+          [916.75, 1490.969999999972],
+          [917.320000000007, 1494.859999999986],
+          [933.2480000000214, 1492.8270000000484],
+          [932.9349999999977, 1483.3549999999814],
+          [932.3999999999942, 1470.667999999947]
+        ]
+      ]
+    ],
+    "center": [924.2160973831196, 1474.8699999999953],
+    "heightM": 0.05,
+    "areaM2": 740.7749825000834,
+    "maxAreaM2": 740.77,
+    "allowedTypes": ["PERMEABLE_PAVEMENT"],
+    "unitCosts": {
+      "GREEN_ROOF": 350000,
+      "BIORETENTION": 560000,
+      "INFILTRATION_TRENCH": 171429,
+      "RAIN_GARDEN": 560000,
+      "VEGETATIVE_SWALE": 45000,
+      "PERMEABLE_PAVEMENT": 110000
+    },
+    "modelHash": "4ec7535e7cbaf41dc73f73519d77ba11f956f4c75c1a574fffa08f16625919b7",
+    "sourceIds": [
+      "ngii:N1A_A0010000:52ddcf1e015621a710f8223b5dc452fd0f6afe12c0c5a01f294359a8b60df99f"
+    ],
+    "areaLimitBasis": "PUBLIC_NATIVE_DESIGN_GEOMETRY",
+    "siteEligibility": "UNKNOWN",
+    "inflowPolicy": "DIRECT_RAINFALL_ONLY",
+    "costModel": {
+      "currency": "KRW",
+      "facilities": {
+        "BIORETENTION": {
+          "evidence": "PUBLIC_PLAN_REFERENCE_SITE_TRANSFER_UNVERIFIED",
+          "excludes": [
+            "실시설계·감리",
+            "별도 토공",
+            "철거·폐기",
+            "토지",
+            "구조보강",
+            "유지관리·모니터링",
+            "예비비"
+          ],
+          "includes": ["시설 설치"],
+          "note": "서울 지역·현재 물가·규격 미보정, 부가세 포함 여부 미확인; 원문 243m²·136,080,000원 기준 면적 외삽. EPA 단면과 규격 일치 미확인",
+          "referenceYear": 2022,
+          "scope": "식생체류지 면적 기준 설치 참고비",
+          "sourceSha256": "0efc54c3c884441d810ce28abb8928d758d98eb152fb71aac38791327b2d7414",
+          "sourceTitle": "진주상평 일반산업단지 저탄소 그린산업단지 조성사업 사업계획서",
+          "sourceUrl": "https://jinjucci.korcham.net/file/dext5uploaddata/2022/0718_%EC%A7%84%EC%A3%BC%EC%8B%9C_%EC%A0%80%ED%83%84%EC%86%8C%20%EA%B7%B8%EB%A6%B0%EC%82%B0%EC%97%85%EB%8B%A8%EC%A7%80%20%EC%A1%B0%EC%84%B1%EC%82%AC%EC%97%85_%EC%82%AC%EC%97%85%EA%B3%84%ED%9A%8D%EC%84%9C%20(%EC%9E%85%EC%A3%BC%EA%B8%B0%EC%97%85%ED%98%91%EC%9D%98%EC%B2%B4).pdf",
+          "unitCost": 560000
+        },
+        "GREEN_ROOF": {
+          "evidence": "PUBLIC_SEOUL_PROGRAM_APPROXIMATE_TOTAL",
+          "excludes": ["현장별 추가 공사 미확정", "유지관리 미산정"],
+          "includes": ["구조안전진단", "설계", "공사"],
+          "note": "공식 안내의 35만원/㎡ 내외 추정. 구조·현장 조건에 따라 변동, 70% 보조율 차감 없음. 기준 가격연도·부가세 포함 여부 미확인",
+          "referenceYear": 2025,
+          "scope": "진단·설계·공사 포함 사업비 참고",
+          "sourceSha256": "0f4852e2778a3ba3c5db034527e22ce124dccb65b1a59d8c9bf3d1c1bf950a01",
+          "sourceTitle": "동대문구 옥상녹화 사업비 산정 안내",
+          "sourceUrl": "https://www.ddm.go.kr/www/selectBbsNttView.do?bbsNo=278&key=2143&nttNo=107220",
+          "unitCost": 350000
+        },
+        "INFILTRATION_TRENCH": {
+          "derivation": {
+            "formula": "ceil(12000000 / 70)",
+            "priceYear": null,
+            "rounding": "CEILING_KRW_PER_M2",
+            "sourceAreaM2": 70,
+            "sourceInitialCostKrw": 12000000,
+            "sourcePdfPages": [43, 141],
+            "sourcePrintedPages": [28, 126]
+          },
+          "evidence": "PUBLIC_RESEARCH_REFERENCE_SITE_TRANSFER_UNVERIFIED",
+          "excludes": [
+            "공종별 포함 범위 미확정",
+            "현재 서울 물가 보정",
+            "현장별 추가 공사",
+            "유지관리·준설",
+            "지하 관로형 트렌치 공사"
+          ],
+          "includes": ["원문의 최초 설치비 총액"],
+          "note": "원문 28쪽·126쪽 H 시설 70m²·최초 설치비 1,200만원. 면적당 171,429원으로 원 단위 올림. 2022는 문서 연도이며 최초 가격연도·부가세 미확인. EPA 단면·서울 현장과 규격 일치 미확인. 대보수 금액·물가 1.2배는 적용하지 않음.",
+          "referenceYear": 2022,
+          "scope": "개방 쇄석 침투도랑 면적 환산 설치 참고비",
+          "sourceSha256": "f934acd95edace10692b56322d969e3ea13dc0c97ff4d2d4c9f790b77f99f002",
+          "sourceTitle": "LID 시설의 유지관리 방안에 관한 연구 · 침투도랑 H 최초 설치비",
+          "sourceUrl": "https://lh.or.kr/boardDownload.es?bid=0034&list_no=717595&seq=2",
+          "unitCost": 171429
+        },
+        "PERMEABLE_PAVEMENT": {
+          "evidence": "PUBLIC_PLAN_REFERENCE_SITE_TRANSFER_UNVERIFIED",
+          "excludes": [
+            "실시설계·감리",
+            "별도 토공",
+            "철거·폐기",
+            "토지",
+            "구조보강",
+            "유지관리·모니터링",
+            "예비비"
+          ],
+          "includes": ["시설 설치"],
+          "note": "서울 지역·현재 물가·규격 미보정, 부가세 포함 여부 미확인",
+          "referenceYear": 2022,
+          "scope": "시설 설치 참고비",
+          "sourceSha256": "0efc54c3c884441d810ce28abb8928d758d98eb152fb71aac38791327b2d7414",
+          "sourceTitle": "진주상평 일반산업단지 저탄소 그린산업단지 조성사업 사업계획서",
+          "sourceUrl": "https://jinjucci.korcham.net/file/dext5uploaddata/2022/0718_%EC%A7%84%EC%A3%BC%EC%8B%9C_%EC%A0%80%ED%83%84%EC%86%8C%20%EA%B7%B8%EB%A6%B0%EC%82%B0%EC%97%85%EB%8B%A8%EC%A7%80%20%EC%A1%B0%EC%84%B1%EC%82%AC%EC%97%85_%EC%82%AC%EC%97%85%EA%B3%84%ED%9A%8D%EC%84%9C%20(%EC%9E%85%EC%A3%BC%EA%B8%B0%EC%97%85%ED%98%91%EC%9D%98%EC%B2%B4).pdf",
+          "unitCost": 110000
+        },
+        "RAIN_GARDEN": {
+          "evidence": "PUBLIC_PLAN_REFERENCE_SITE_TRANSFER_UNVERIFIED",
+          "excludes": [
+            "실시설계·감리",
+            "별도 토공",
+            "철거·폐기",
+            "토지",
+            "구조보강",
+            "유지관리·모니터링",
+            "예비비"
+          ],
+          "includes": ["시설 설치"],
+          "note": "서울 지역·현재 물가·규격 미보정, 부가세 포함 여부 미확인",
+          "referenceYear": 2022,
+          "scope": "시설 설치 참고비",
+          "sourceSha256": "0efc54c3c884441d810ce28abb8928d758d98eb152fb71aac38791327b2d7414",
+          "sourceTitle": "진주상평 일반산업단지 저탄소 그린산업단지 조성사업 사업계획서",
+          "sourceUrl": "https://jinjucci.korcham.net/file/dext5uploaddata/2022/0718_%EC%A7%84%EC%A3%BC%EC%8B%9C_%EC%A0%80%ED%83%84%EC%86%8C%20%EA%B7%B8%EB%A6%B0%EC%82%B0%EC%97%85%EB%8B%A8%EC%A7%80%20%EC%A1%B0%EC%84%B1%EC%82%AC%EC%97%85_%EC%82%AC%EC%97%85%EA%B3%84%ED%9A%8D%EC%84%9C%20(%EC%9E%85%EC%A3%BC%EA%B8%B0%EC%97%85%ED%98%91%EC%9D%98%EC%B2%B4).pdf",
+          "unitCost": 560000
+        },
+        "VEGETATIVE_SWALE": {
+          "derivation": {
+            "designTopWidthM": 2,
+            "formula": "114390000 / 1271 / 2",
+            "headerUnitConflict": true,
+            "sourceLengthM": 1271,
+            "sourcePages": [11, 12],
+            "sourceSubtotalKrw": 114390000,
+            "unitCostKrwPerM": 90000
+          },
+          "evidence": "PUBLIC_PLAN_REFERENCE_SITE_TRANSFER_UNVERIFIED",
+          "excludes": [
+            "실시설계·감리",
+            "별도 토공",
+            "철거·폐기",
+            "토지",
+            "구조보강",
+            "유지관리·모니터링",
+            "예비비"
+          ],
+          "includes": ["시설 설치"],
+          "note": "원문 11쪽 폭 1.5/2m, 12쪽 1,271m·114,390,000원으로 90,000원/m 산출. 표 머리의 천원/㎡와 행 단위 불일치 보존. 폭 2m 설계에서 45,000원/㎡로 환산. 서울 현재 견적·실제 단면·부가세 미확인.",
+          "referenceYear": 2022,
+          "scope": "폭 2m 식생수로의 길이 환산 설치 참고비",
+          "sourceSha256": "0efc54c3c884441d810ce28abb8928d758d98eb152fb71aac38791327b2d7414",
+          "sourceTitle": "진주상평 일반산업단지 저탄소 그린산업단지 조성사업 사업계획서",
+          "sourceUrl": "https://jinjucci.korcham.net/file/dext5uploaddata/2022/0718_%EC%A7%84%EC%A3%BC%EC%8B%9C_%EC%A0%80%ED%83%84%EC%86%8C%20%EA%B7%B8%EB%A6%B0%EC%82%B0%EC%97%85%EB%8B%A8%EC%A7%80%20%EC%A1%B0%EC%84%B1%EC%82%AC%EC%97%85_%EC%82%AC%EC%97%85%EA%B3%84%ED%9A%8D%EC%84%9C%20(%EC%9E%85%EC%A3%BC%EA%B8%B0%EC%97%85%ED%98%91%EC%9D%98%EC%B2%B4).pdf",
+          "unitCost": 45000
+        }
+      },
+      "previousSha256": "9f9b235f0294d72b1821bfa3c7c014282889dfc8d21dbf70043c2a8e5eda417c",
+      "schemaVersion": 5,
+      "unit": "KRW_PER_SQUARE_METRE"
+    },
+    "costSourceSha256": "50f6e00757ecba3ed77a811b0fd9d03f72b800c0c47712093bf1adda99421036",
+    "physicalInputs": {
+      "conductivityMmH": 3.302,
+      "depressionMm": 1.27,
+      "depressionPerviousMm": 2.54,
+      "flowLengthM": 45.71539322866203,
+      "geometrySourceIds": [
+        "ngii:N1A_A0010000:52ddcf1e015621a710f8223b5dc452fd0f6afe12c0c5a01f294359a8b60df99f"
+      ],
+      "imperviousBasis": "PUBLIC_REFERENCE_SURFACE_SCENARIO_NOT_SURVEY",
+      "imperviousPercent": 100,
+      "initialMoistureDeficit": 0.231,
+      "localMaterialStatus": "UNRESOLVED",
+      "localSlopeStatus": "UNRESOLVED",
+      "localSoilStatus": "UNRESOLVED",
+      "nImpervious": 0.012,
+      "nPervious": 0.15,
+      "referenceScenario": {
+        "id": "EPA_REFERENCE_SURFACES_2026_V1",
+        "sha256": "164358be09db34872324d63ce10df84a23cac936e5f5a8c0dc5fb12d0269b1bc"
+      },
+      "runoffWidthM": 16.204060168417016,
+      "slopeMethod": "PUBLIC_REFERENCE_SURFACE_SCENARIO",
+      "slopePercent": 1,
+      "soilStatus": "PUBLIC_REFERENCE_SCENARIO",
+      "suctionMm": 88.9,
+      "surfaceScenarioId": "PAVEMENT_REFERENCE",
+      "surfaceTag": null,
+      "widthMethod": "FOOTPRINT_AREA_OVER_LONG_AXIS"
+    },
+    "facilityDesignSet": {
+      "id": "EPA_LID_PUBLIC_DESIGNS_V4",
+      "sha256": "8af82e01704cf1495f185d9a0a410898e6007a468274c905e75b939f9abde133"
+    },
+    "initializationPolicy": {
+      "method": "OBSERVED_7_DAY_CONTINUOUS_SPINUP_V1",
+      "warmupMinutes": 10080
+    },
+    "existingInfrastructure": null,
+    "sourceRole": "ROAD_AREA",
+    "referenceInfrastructure": {
+      "references": [
+        {
+          "assetId": "OA-21193:6108",
+          "assetName": "기타 침투시설 · 등록 1545",
+          "cellId": "Ce4940cd5759dd1e09980f0b0",
+          "districtId": "11110",
+          "footprintVerified": false,
+          "relation": "PUBLIC_POINT_COVERED_BY_NATIVE_CANDIDATE",
+          "siteModelHash": "4ec7535e7cbaf41dc73f73519d77ba11f956f4c75c1a574fffa08f16625919b7",
+          "verticalLayer": "UNKNOWN"
+        }
+      ],
+      "policy": {
+        "sha256": "386b77e33b647a879527251c7dceb091ab4507479ee77b189b35f8cd3da7b44f",
+        "scope": "CURRENT_NATIVE_POINT_ASSOCIATIONS_REFERENCE_ONLY",
+        "historicalExistenceVerified": false,
+        "siteCatalogSha256": "4ec7535e7cbaf41dc73f73519d77ba11f956f4c75c1a574fffa08f16625919b7",
+        "sourceSha256": "d0ef74f9cf919a18f766f27b540c72119fc1d4f2583fc1525d4c289791f1fa94",
+        "confirmedFootprintCount": 0,
+        "version": "seoul-native-infrastructure-20261020-v1"
+      }
+    }
+  },
+  "ground": {
+    "districtId": "11680",
+    "cellId": "C568718a66e486e3e9b27c6b0",
+    "name": "강남구 지상 후보",
+    "kind": "GROUND",
+    "polygons": [
+      [
+        [
+          [4081.6630000000005, -3832.957000000053],
+          [4081.6660000000265, -3844.851000000024],
+          [4072.9400000000023, -3843.7600000000093],
+          [4079.140000000014, -3835.859999999986],
+          [4081.6630000000005, -3832.957000000053]
+        ]
+      ]
+    ],
+    "center": [4078.8523642592772, -3839.810000000056],
+    "heightM": 0.05,
+    "areaM2": 52.85843550017079,
+    "maxAreaM2": 52.85,
+    "allowedTypes": ["PERMEABLE_PAVEMENT"],
+    "unitCosts": {
+      "GREEN_ROOF": 350000,
+      "BIORETENTION": 560000,
+      "INFILTRATION_TRENCH": 171429,
+      "RAIN_GARDEN": 560000,
+      "VEGETATIVE_SWALE": 45000,
+      "PERMEABLE_PAVEMENT": 110000
+    },
+    "modelHash": "4ec7535e7cbaf41dc73f73519d77ba11f956f4c75c1a574fffa08f16625919b7",
+    "sourceIds": [
+      "ngii:N1A_A0010000:980b00692ed9d8a2e853df4aaab9971e8251dfbfdf466397b5ad7cf69b3d470c"
+    ],
+    "areaLimitBasis": "PUBLIC_NATIVE_DESIGN_GEOMETRY",
+    "siteEligibility": "UNKNOWN",
+    "inflowPolicy": "DIRECT_RAINFALL_ONLY",
+    "costModel": {
+      "currency": "KRW",
+      "facilities": {
+        "BIORETENTION": {
+          "evidence": "PUBLIC_PLAN_REFERENCE_SITE_TRANSFER_UNVERIFIED",
+          "excludes": [
+            "실시설계·감리",
+            "별도 토공",
+            "철거·폐기",
+            "토지",
+            "구조보강",
+            "유지관리·모니터링",
+            "예비비"
+          ],
+          "includes": ["시설 설치"],
+          "note": "서울 지역·현재 물가·규격 미보정, 부가세 포함 여부 미확인; 원문 243m²·136,080,000원 기준 면적 외삽. EPA 단면과 규격 일치 미확인",
+          "referenceYear": 2022,
+          "scope": "식생체류지 면적 기준 설치 참고비",
+          "sourceSha256": "0efc54c3c884441d810ce28abb8928d758d98eb152fb71aac38791327b2d7414",
+          "sourceTitle": "진주상평 일반산업단지 저탄소 그린산업단지 조성사업 사업계획서",
+          "sourceUrl": "https://jinjucci.korcham.net/file/dext5uploaddata/2022/0718_%EC%A7%84%EC%A3%BC%EC%8B%9C_%EC%A0%80%ED%83%84%EC%86%8C%20%EA%B7%B8%EB%A6%B0%EC%82%B0%EC%97%85%EB%8B%A8%EC%A7%80%20%EC%A1%B0%EC%84%B1%EC%82%AC%EC%97%85_%EC%82%AC%EC%97%85%EA%B3%84%ED%9A%8D%EC%84%9C%20(%EC%9E%85%EC%A3%BC%EA%B8%B0%EC%97%85%ED%98%91%EC%9D%98%EC%B2%B4).pdf",
+          "unitCost": 560000
+        },
+        "GREEN_ROOF": {
+          "evidence": "PUBLIC_SEOUL_PROGRAM_APPROXIMATE_TOTAL",
+          "excludes": ["현장별 추가 공사 미확정", "유지관리 미산정"],
+          "includes": ["구조안전진단", "설계", "공사"],
+          "note": "공식 안내의 35만원/㎡ 내외 추정. 구조·현장 조건에 따라 변동, 70% 보조율 차감 없음. 기준 가격연도·부가세 포함 여부 미확인",
+          "referenceYear": 2025,
+          "scope": "진단·설계·공사 포함 사업비 참고",
+          "sourceSha256": "0f4852e2778a3ba3c5db034527e22ce124dccb65b1a59d8c9bf3d1c1bf950a01",
+          "sourceTitle": "동대문구 옥상녹화 사업비 산정 안내",
+          "sourceUrl": "https://www.ddm.go.kr/www/selectBbsNttView.do?bbsNo=278&key=2143&nttNo=107220",
+          "unitCost": 350000
+        },
+        "INFILTRATION_TRENCH": {
+          "derivation": {
+            "formula": "ceil(12000000 / 70)",
+            "priceYear": null,
+            "rounding": "CEILING_KRW_PER_M2",
+            "sourceAreaM2": 70,
+            "sourceInitialCostKrw": 12000000,
+            "sourcePdfPages": [43, 141],
+            "sourcePrintedPages": [28, 126]
+          },
+          "evidence": "PUBLIC_RESEARCH_REFERENCE_SITE_TRANSFER_UNVERIFIED",
+          "excludes": [
+            "공종별 포함 범위 미확정",
+            "현재 서울 물가 보정",
+            "현장별 추가 공사",
+            "유지관리·준설",
+            "지하 관로형 트렌치 공사"
+          ],
+          "includes": ["원문의 최초 설치비 총액"],
+          "note": "원문 28쪽·126쪽 H 시설 70m²·최초 설치비 1,200만원. 면적당 171,429원으로 원 단위 올림. 2022는 문서 연도이며 최초 가격연도·부가세 미확인. EPA 단면·서울 현장과 규격 일치 미확인. 대보수 금액·물가 1.2배는 적용하지 않음.",
+          "referenceYear": 2022,
+          "scope": "개방 쇄석 침투도랑 면적 환산 설치 참고비",
+          "sourceSha256": "f934acd95edace10692b56322d969e3ea13dc0c97ff4d2d4c9f790b77f99f002",
+          "sourceTitle": "LID 시설의 유지관리 방안에 관한 연구 · 침투도랑 H 최초 설치비",
+          "sourceUrl": "https://lh.or.kr/boardDownload.es?bid=0034&list_no=717595&seq=2",
+          "unitCost": 171429
+        },
+        "PERMEABLE_PAVEMENT": {
+          "evidence": "PUBLIC_PLAN_REFERENCE_SITE_TRANSFER_UNVERIFIED",
+          "excludes": [
+            "실시설계·감리",
+            "별도 토공",
+            "철거·폐기",
+            "토지",
+            "구조보강",
+            "유지관리·모니터링",
+            "예비비"
+          ],
+          "includes": ["시설 설치"],
+          "note": "서울 지역·현재 물가·규격 미보정, 부가세 포함 여부 미확인",
+          "referenceYear": 2022,
+          "scope": "시설 설치 참고비",
+          "sourceSha256": "0efc54c3c884441d810ce28abb8928d758d98eb152fb71aac38791327b2d7414",
+          "sourceTitle": "진주상평 일반산업단지 저탄소 그린산업단지 조성사업 사업계획서",
+          "sourceUrl": "https://jinjucci.korcham.net/file/dext5uploaddata/2022/0718_%EC%A7%84%EC%A3%BC%EC%8B%9C_%EC%A0%80%ED%83%84%EC%86%8C%20%EA%B7%B8%EB%A6%B0%EC%82%B0%EC%97%85%EB%8B%A8%EC%A7%80%20%EC%A1%B0%EC%84%B1%EC%82%AC%EC%97%85_%EC%82%AC%EC%97%85%EA%B3%84%ED%9A%8D%EC%84%9C%20(%EC%9E%85%EC%A3%BC%EA%B8%B0%EC%97%85%ED%98%91%EC%9D%98%EC%B2%B4).pdf",
+          "unitCost": 110000
+        },
+        "RAIN_GARDEN": {
+          "evidence": "PUBLIC_PLAN_REFERENCE_SITE_TRANSFER_UNVERIFIED",
+          "excludes": [
+            "실시설계·감리",
+            "별도 토공",
+            "철거·폐기",
+            "토지",
+            "구조보강",
+            "유지관리·모니터링",
+            "예비비"
+          ],
+          "includes": ["시설 설치"],
+          "note": "서울 지역·현재 물가·규격 미보정, 부가세 포함 여부 미확인",
+          "referenceYear": 2022,
+          "scope": "시설 설치 참고비",
+          "sourceSha256": "0efc54c3c884441d810ce28abb8928d758d98eb152fb71aac38791327b2d7414",
+          "sourceTitle": "진주상평 일반산업단지 저탄소 그린산업단지 조성사업 사업계획서",
+          "sourceUrl": "https://jinjucci.korcham.net/file/dext5uploaddata/2022/0718_%EC%A7%84%EC%A3%BC%EC%8B%9C_%EC%A0%80%ED%83%84%EC%86%8C%20%EA%B7%B8%EB%A6%B0%EC%82%B0%EC%97%85%EB%8B%A8%EC%A7%80%20%EC%A1%B0%EC%84%B1%EC%82%AC%EC%97%85_%EC%82%AC%EC%97%85%EA%B3%84%ED%9A%8D%EC%84%9C%20(%EC%9E%85%EC%A3%BC%EA%B8%B0%EC%97%85%ED%98%91%EC%9D%98%EC%B2%B4).pdf",
+          "unitCost": 560000
+        },
+        "VEGETATIVE_SWALE": {
+          "derivation": {
+            "designTopWidthM": 2,
+            "formula": "114390000 / 1271 / 2",
+            "headerUnitConflict": true,
+            "sourceLengthM": 1271,
+            "sourcePages": [11, 12],
+            "sourceSubtotalKrw": 114390000,
+            "unitCostKrwPerM": 90000
+          },
+          "evidence": "PUBLIC_PLAN_REFERENCE_SITE_TRANSFER_UNVERIFIED",
+          "excludes": [
+            "실시설계·감리",
+            "별도 토공",
+            "철거·폐기",
+            "토지",
+            "구조보강",
+            "유지관리·모니터링",
+            "예비비"
+          ],
+          "includes": ["시설 설치"],
+          "note": "원문 11쪽 폭 1.5/2m, 12쪽 1,271m·114,390,000원으로 90,000원/m 산출. 표 머리의 천원/㎡와 행 단위 불일치 보존. 폭 2m 설계에서 45,000원/㎡로 환산. 서울 현재 견적·실제 단면·부가세 미확인.",
+          "referenceYear": 2022,
+          "scope": "폭 2m 식생수로의 길이 환산 설치 참고비",
+          "sourceSha256": "0efc54c3c884441d810ce28abb8928d758d98eb152fb71aac38791327b2d7414",
+          "sourceTitle": "진주상평 일반산업단지 저탄소 그린산업단지 조성사업 사업계획서",
+          "sourceUrl": "https://jinjucci.korcham.net/file/dext5uploaddata/2022/0718_%EC%A7%84%EC%A3%BC%EC%8B%9C_%EC%A0%80%ED%83%84%EC%86%8C%20%EA%B7%B8%EB%A6%B0%EC%82%B0%EC%97%85%EB%8B%A8%EC%A7%80%20%EC%A1%B0%EC%84%B1%EC%82%AC%EC%97%85_%EC%82%AC%EC%97%85%EA%B3%84%ED%9A%8D%EC%84%9C%20(%EC%9E%85%EC%A3%BC%EA%B8%B0%EC%97%85%ED%98%91%EC%9D%98%EC%B2%B4).pdf",
+          "unitCost": 45000
+        }
+      },
+      "previousSha256": "9f9b235f0294d72b1821bfa3c7c014282889dfc8d21dbf70043c2a8e5eda417c",
+      "schemaVersion": 5,
+      "unit": "KRW_PER_SQUARE_METRE"
+    },
+    "costSourceSha256": "50f6e00757ecba3ed77a811b0fd9d03f72b800c0c47712093bf1adda99421036",
+    "physicalInputs": {
+      "conductivityMmH": 3.302,
+      "depressionMm": 1.27,
+      "depressionPerviousMm": 2.54,
+      "flowLengthM": 11.801733094647808,
+      "geometrySourceIds": [
+        "ngii:N1A_A0010000:980b00692ed9d8a2e853df4aaab9971e8251dfbfdf466397b5ad7cf69b3d470c"
+      ],
+      "imperviousBasis": "PUBLIC_REFERENCE_SURFACE_SCENARIO_NOT_SURVEY",
+      "imperviousPercent": 100,
+      "initialMoistureDeficit": 0.231,
+      "localMaterialStatus": "UNRESOLVED",
+      "localSlopeStatus": "UNRESOLVED",
+      "localSoilStatus": "UNRESOLVED",
+      "nImpervious": 0.012,
+      "nPervious": 0.15,
+      "referenceScenario": {
+        "id": "EPA_REFERENCE_SURFACES_2026_V1",
+        "sha256": "164358be09db34872324d63ce10df84a23cac936e5f5a8c0dc5fb12d0269b1bc"
+      },
+      "runoffWidthM": 4.478870609617715,
+      "slopeMethod": "PUBLIC_REFERENCE_SURFACE_SCENARIO",
+      "slopePercent": 1,
+      "soilStatus": "PUBLIC_REFERENCE_SCENARIO",
+      "suctionMm": 88.9,
+      "surfaceScenarioId": "PAVEMENT_REFERENCE",
+      "surfaceTag": null,
+      "widthMethod": "FOOTPRINT_AREA_OVER_LONG_AXIS"
+    },
+    "facilityDesignSet": {
+      "id": "EPA_LID_PUBLIC_DESIGNS_V4",
+      "sha256": "8af82e01704cf1495f185d9a0a410898e6007a468274c905e75b939f9abde133"
+    },
+    "initializationPolicy": {
+      "method": "OBSERVED_7_DAY_CONTINUOUS_SPINUP_V1",
+      "warmupMinutes": 10080
+    },
+    "existingInfrastructure": null,
+    "sourceRole": "ROAD_AREA",
+    "referenceInfrastructure": null
+  }
+}

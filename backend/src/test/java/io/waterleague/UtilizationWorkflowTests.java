@@ -21,8 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import tools.jackson.databind.*;
 
-@SpringBootTest(
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("local")
 class UtilizationWorkflowTests extends PostgresIntegrationTest {
   @Value("${local.server.port}")
@@ -110,7 +109,7 @@ class UtilizationWorkflowTests extends PostgresIntegrationTest {
                 "title",
                 "활용 동의 시험",
                 "modelHash",
-                LegacyModelFixtures.HASH,
+                NativeResearchFixtures.HASH,
                 "placements",
                 List.of(),
                 "designNote",
@@ -130,7 +129,7 @@ class UtilizationWorkflowTests extends PostgresIntegrationTest {
     var result =
         Map.of(
             "modelHash",
-            LegacyModelFixtures.HASH,
+            NativeResearchFixtures.HASH,
             "inputHash",
             version.get("inputHash").asString(),
             "validationLevel",

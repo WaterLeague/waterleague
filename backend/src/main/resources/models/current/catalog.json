@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "defaultModelHash": "618cc8cc889c36953891e8e62ff42e1702f675dcfa1fd2b7218873cca005d2fa",
+  "models": [
+    {
+      "id": "seongsu-ngii-v2-108-20240718",
+      "file": "seongsu-ngii-v2-108-20240718.json",
+      "sha256": "c55a68302a99b815a25c7f403a38fa7e395f6635037c6abbaa6a2a6436a6c684"
+    },
+    {
+      "id": "seongsu-ngii-v2-421-20240622",
+      "file": "seongsu-ngii-v2-421-20240622.json",
+      "sha256": "0bd06d394f6dd0d36b0e98fc1f32ea7b2bc00597b0c0aaa944d097733f9de0b2"
+    },
+    {
+      "id": "seongsu-ngii-v2-421-20240702",
+      "file": "seongsu-ngii-v2-421-20240702.json",
+      "sha256": "53955844bce2e3717530d8605cb59f386b67e2b4dc6c47bbd53cc4c25d0e9009"
+    },
+    {
+      "id": "seongsu-ngii-v2-421-20240718",
+      "file": "seongsu-ngii-v2-421-20240718.json",
+      "sha256": "618cc8cc889c36953891e8e62ff42e1702f675dcfa1fd2b7218873cca005d2fa"
+    }
+  ]
+}

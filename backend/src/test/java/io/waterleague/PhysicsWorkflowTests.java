@@ -36,6 +36,7 @@ class PhysicsWorkflowTests extends PostgresIntegrationTest {
   @Autowired InstallationService installations;
   @Autowired io.waterleague.weekly.service.WeeklySeasonService seasons;
   @Autowired io.waterleague.installation.repository.InstallationRepository installationRecords;
+  @Autowired io.waterleague.installation.repository.SiteCatalogRepository sites;
   UUID installation;
   String username;
   final HttpClient client = HttpClient.newHttpClient();
@@ -61,13 +62,17 @@ class PhysicsWorkflowTests extends PostgresIntegrationTest {
             "",
             "",
             true,
-            "2410520",
+            "11680",
             "AFFILIATED"));
     installation =
         installations
             .install(
                 username,
-                new InstallRequest("2410520", "G1", FacilityType.RAIN_GARDEN, BigDecimal.TEN))
+                new InstallRequest(
+                    "11680",
+                    NativeSiteFixtures.cell(sites, "11680", FacilityType.RAIN_GARDEN, 0).cellId(),
+                    FacilityType.RAIN_GARDEN,
+                    BigDecimal.TEN))
             .id();
   }
 
@@ -110,7 +115,11 @@ class PhysicsWorkflowTests extends PostgresIntegrationTest {
     assertThat(response.body())
         .contains("\"status\":\"WAITING\"", "\"result\":null")
         .doesNotContain("lease", "inputHash", "password");
-    assertThat(get("/api/v1/installations/sites/2410520/G1").statusCode()).isEqualTo(200);
+    assertThat(
+            get("/api/v1/installations/sites/11680/"
+                    + NativeSiteFixtures.cell(sites, "11680", FacilityType.RAIN_GARDEN, 0).cellId())
+                .statusCode())
+        .isEqualTo(200);
     var id = job("RUNNING", Instant.now(), Instant.now().minusSeconds(120), null, null);
     assertThat(physics().body()).contains("\"status\":\"RUNNING\"");
     db.update(
@@ -131,7 +140,10 @@ class PhysicsWorkflowTests extends PostgresIntegrationTest {
     assertThat(get("/api/v1/facilities/epa-designs-v2").body()).doesNotContain("VEGETATIVE_SWALE");
     assertThat(get("/api/v1/facilities/epa-designs-v3").body())
         .contains("EPA_VS_250_2000_V1", "VEGETATIVE_SWALE");
-    assertThat(get("/api/v1/installations/sites/2410520/G1").body())
+    assertThat(
+            get("/api/v1/installations/sites/11680/"
+                    + NativeSiteFixtures.cell(sites, "11680", FacilityType.RAIN_GARDEN, 0).cellId())
+                .body())
         .contains(
             "OBSERVED_7_DAY_CONTINUOUS_SPINUP_V1",
             "RG_NATIVE_SOIL_SEEPAGE_V1",

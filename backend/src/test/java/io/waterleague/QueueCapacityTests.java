@@ -60,7 +60,7 @@ class QueueCapacityTests extends PostgresIntegrationTest {
             + " VALUES(?,?,1,?,?,'[]','[]','큐 상한 시험',0,'KRW',CURRENT_TIMESTAMP)",
         version,
         strategy,
-        LegacyModelFixtures.HASH,
+        NativeResearchFixtures.HASH,
         "a".repeat(64));
     List<UUID> candidates = new ArrayList<>();
     for (int i = 0; i < 499; i++) {
@@ -74,7 +74,7 @@ class QueueCapacityTests extends PostgresIntegrationTest {
           owner,
           UUID.randomUUID(),
           "b".repeat(64),
-          LegacyModelFixtures.HASH,
+          NativeResearchFixtures.HASH,
           "c".repeat(64));
       db.update(
           "INSERT INTO"
@@ -82,7 +82,7 @@ class QueueCapacityTests extends PostgresIntegrationTest {
               + " VALUES(?,?,'PATTERN',1,'[]',?,?,0,'QUEUED',CURRENT_TIMESTAMP)",
           candidate,
           group,
-          LegacyModelFixtures.HASH,
+          NativeResearchFixtures.HASH,
           "d".repeat(64));
       candidates.add(candidate);
     }
@@ -117,7 +117,7 @@ class QueueCapacityTests extends PostgresIntegrationTest {
         "INSERT INTO rainfall_comparison_jobs(comparison_id,ordinal,model_hash,job_id)"
             + " VALUES(?,0,?,?)",
         comparison,
-        LegacyModelFixtures.HASH,
+        NativeResearchFixtures.HASH,
         first.id());
     db.update(
         "INSERT INTO"

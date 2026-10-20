@@ -49,7 +49,9 @@ class LiveRainfallTests {
     var wind = KmaObservationMapper.parse(response(observed), at).get("421");
     assertThat(wind.windDirectionDeg()).isEqualByComparingTo("225");
     assertThat(wind.windSpeedMs()).isEqualByComparingTo("3.5");
-    var missing = KmaObservationMapper.parse(response(observed.replace("225 3.5", "-99.9 3.5")), at).get("421");
+    var missing =
+        KmaObservationMapper.parse(response(observed.replace("225 3.5", "-99.9 3.5")), at)
+            .get("421");
     assertThat(missing.windDirectionDeg()).isNull();
   }
 
@@ -189,7 +191,7 @@ class LiveRainfallTests {
         .thenReturn(
             List.of(
                 new io.waterleague.district.entity.District(
-                    "2419947", "성동구", "map", "hash", List.of(0.0, 0.0), "421", "성동")));
+                    "11140", "성동구", "map", "hash", List.of(0.0, 0.0), "421", "성동")));
     when(source.fetch(any()))
         .thenAnswer(call -> response(row(call.getArgument(0), "0")))
         .thenThrow(new DomainException(ErrorCode.RAINFALL_UNAVAILABLE));

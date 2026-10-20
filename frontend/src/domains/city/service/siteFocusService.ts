@@ -9,13 +9,13 @@ export function selectionView(fitted: PlanView, current: PlanView, fromMap = fal
 }
 
 export function siteFocus(
-  site: Pick<SharedSite, 'coordinates' | 'heightM' | 'kind'>,
+  site: Pick<SharedSite, 'polygons' | 'heightM' | 'kind'>,
   width: number,
   height: number,
   minimumDistance = 180
 ): PlanView {
-  const xs = site.coordinates.map(([x]) => x),
-    ys = site.coordinates.map(([, y]) => y);
+  const xs = site.polygons.flat(2).map(([x]) => x),
+    ys = site.polygons.flat(2).map(([, y]) => y);
   const west = Math.min(...xs),
     east = Math.max(...xs);
   const south = Math.min(...ys),

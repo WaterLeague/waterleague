@@ -1,18 +1,17 @@
 import type { FacilityType } from '../../game/entity/game';
-export const candidateTypes: FacilityType[] = [
+export const candidateTypes = [
   'RAIN_GARDEN',
   'PERMEABLE_PAVEMENT',
   'GREEN_ROOF',
   'BIORETENTION',
   'VEGETATIVE_SWALE',
   'INFILTRATION_TRENCH',
-];
+] as const;
 export type GroundCandidate = [
   cellId: string,
   districtId: string,
   mask: number,
-  coordinates: number[],
-  holes?: number[][],
+  polygons: [number, number][][][],
 ];
 export const candidateKey = (row: GroundCandidate) => row[1] + ':' + row[0];
 export const candidateMask = (type: FacilityType | '') =>

@@ -8,13 +8,13 @@ sys.path.insert(0,str(ROOT/'scripts'))
 from local_config import load
 load()
 os.umask(0o077)
-from waterleague_sim.model_catalog import read_catalog
+from waterleague_sim.current_model_catalog import read_current_catalog
 from waterleague_sim.queue import claim, finish, TABLES
 from waterleague_sim.runtime import database_url
 from waterleague_sim.shared_physics import run_once as run_shared_physics
 from waterleague_sim.historical import process as process_historical
 from waterleague_sim.watershed import process as process_watershed
-MODELS=read_catalog(ROOT/'data/models')
+MODELS=read_current_catalog(ROOT/'data/models')
 ARTIFACTS=Path(os.environ.get('ARTIFACTS_PATH',ROOT/'data/runs')).resolve()
 
 def process(conn,job):
@@ -47,6 +47,8 @@ def process(conn,job):
  return saved
 
 def main():
+ from waterleague_sim.spatial.play_bundle import open_catalog
+ open_catalog()
  with psycopg.connect(database_url(),autocommit=True,row_factory=dict_row) as conn:
   # SWMM은 프로세스별 전역 상태를 사용하므로 이 워커에서는 한 작업씩 실행한다.
   while True:

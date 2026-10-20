@@ -1,5 +1,3 @@
-import { topographySource } from '../../spatial/service/spatialSourceService';
-
 type DatasetReference = {
   name: string;
   href: string;
@@ -24,7 +22,7 @@ export const dataSources: DataSource[] = [
     title: '강우·바람',
     provider: '기상청',
     description:
-      '주간은 현재 관측, 재해는 2022.08.08 · 2011.07.27 · 2010.09.21 관측을 사용합니다. 두 모드 모두 서울 25개 구에 관측소를 연결합니다.',
+      '주간은 현재 관측, 재해는 2022.08.08 · 2011.07.27 · 2010.09.21 관측을 사용합니다. 두 모드 모두 서울 25개 구에 관측소를 연결하며 재해는 같은 지점의 7일 선행 기상을 적용합니다.',
     detail: '비가 오지 않은 유효 관측은 0mm, 결측·지연은 미확인으로 표시합니다.',
     datasets: [
       {
@@ -41,48 +39,44 @@ export const dataSources: DataSource[] = [
   },
   {
     id: 'geometry',
-    title: '건물·도로·주차장',
-    provider: 'OpenStreetMap · Geofabrik · 국토지리정보원',
+    title: '건물·도로·설치 경계',
+    provider: '국토지리정보원 · 서울특별시 · 서울신용보증재단',
     description:
-      '서울 전역의 건물·도로·보행로·주차장과 설치 후보를 구성합니다. 수치지형도는 성수 건물 경계 대조에 사용합니다.',
+      '서울 25개 구의 수치지형도에서 건물·도로면·보도·설치 후보를 구성합니다. 같은 원형 도형과 공개 행정구 코드를 화면·선택·계산에 연결합니다.',
     detail:
-      '재해 모드도 현재 지도에서 진행합니다. 도로 폭·교량 높이·주차 칸 중 원자료에 없는 값은 표시용으로 구성합니다.',
+      '재해도 2026년 갱신 형상에서 진행합니다. 1:1,000 도곽은 약 567.8km²를 덮습니다. 1:5,000만 있는 약 0.3km²와 도곽 미피복 약 37.6km²는 후보를 만들어 채우지 않습니다. 미확인 높이·도로 폭·통행 방향·주차 칸은 실측값으로 채우지 않습니다.',
     datasets: [
       {
-        name: 'OpenStreetMap 대한민국 추출본 · south-korea-261016.osm.pbf',
-        href: 'https://download.geofabrik.de/asia/south-korea.html',
-        detail: '2026-10-16 기준 · 서울 경계·도시 형상·공개 저류 영역·펌프장 건물',
+        name: '수치지형도 v2.0(1:1,000) · 서울 25개 구 SHP',
+        href: 'https://www.data.go.kr/data/15059719/fileData.do',
+        detail: '2026-03-07 배포 갱신 · 도엽 제작연도·촬영연도와 구분, 구멍·다중 면 원형 보존',
       },
       {
-        name: '수치지형도 v2.0(1:1,000) · 성동구 SHP',
-        href: topographySource.url,
-        detail: `${topographySource.updatedAt} 갱신 · 성수 주변 4개 도엽의 건물 대조`,
+        name: '서울시 상권분석서비스(영역-자치구)(OA-22161)',
+        href: seoulDataset('OA-22161', 'A'),
+        detail: '5자리 자치구 코드·소속·집계 경계, 수문 유역 경계로 사용하지 않음',
       },
     ],
   },
   {
     id: 'terrain',
     title: '지형·토양',
-    provider: 'Copernicus · 국립농업과학원 · 브이월드 · EPA',
+    provider: 'Copernicus · EPA',
     description:
-      '도시 높낮이를 표시하고 시설 위치별 토성·문헌 추정 투수계수를 연결합니다. 원본 지형은 표시용 90m 격자로 변환합니다.',
+      '도시 높낮이는 Copernicus DSM의 90m 표시 격자를 사용합니다. 시설 비교는 공통 Loam 문헌 토양·경사 1%의 참조 시나리오이며 현장 토양·경사를 관측한 값이 아닙니다.',
     detail:
       '표시 지형은 정밀 배수 지형이 아닙니다. 지하수·구조 하중·매설물 등 현장 시공 조건은 미확인입니다.',
     datasets: [
       {
         name: 'Copernicus DEM GLO-30 · 2021 배포본',
         href: 'https://registry.opendata.aws/copernicus-dem/',
-        detail: '30m DSM 원본 → 90m 표시 격자·시설 위치의 지역 경사 참고',
-      },
-      {
-        name: '토양도 · 심토토성(LT_C_ASITDEEPSOIL)',
-        href: 'https://www.vworld.kr/dev/v4dv_2ddataguide2_s002.do?svcIde=asitdeepsoil&apiVer=2',
-        detail: '공개 토성 분류 · 현장 침투율 실측값은 아님',
+        detail:
+          '30m DSM 원본 → 90m 표시 격자, 건물·수목을 포함하며 수문 계산 입력으로 사용하지 않음',
       },
       {
         name: 'Storm Water Management Model User’s Manual Version 5.2',
         href: 'https://nepis.epa.gov/Exe/ZyPURL.cgi?Dockey=P10145M6.TXT',
-        detail: '토성별 수문 매개변수의 문헌 근거',
+        detail: 'Loam 침투·보수·조도와 시설 단면의 문헌 참조, 현장 시공 적합성은 미확인',
       },
     ],
   },

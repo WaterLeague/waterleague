@@ -21,7 +21,7 @@ def main():
             or request['engine'] != engine_identity()):
         raise ValueError('LIVE_REQUEST_HASH_INVALID')
     model, evaporation = json.loads(source), json.loads(forcing).get('evaporation')
-    from .admission import archive
+    from .admission import archive_native as archive
     archive(request.get('publicAssetPolicy'), path)
     from .costing.snapshot import archive as archive_cost
     archive_cost(request, model, request['placement'], path)

@@ -13,7 +13,7 @@ export const disasterCatalogDto = z.object({
         regions: z
           .array(
             z.object({
-              districtId: z.string().regex(/^[0-9]{7}$/),
+              districtId: z.string().regex(/^11[0-9]{3}$/),
               modelHash: z.string().regex(/^[a-f0-9]{64}$/),
               stationName: z.string(),
               stationId: z.string(),

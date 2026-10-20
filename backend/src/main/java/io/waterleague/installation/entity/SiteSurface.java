@@ -5,12 +5,17 @@ public enum SiteSurface {
   WALKWAY,
   OTHER;
 
+  public String nativeRole() {
+    return switch (this) {
+      case ROADWAY -> "ROAD_AREA";
+      case WALKWAY -> "SIDEWALK_AREA";
+      case OTHER -> "OTHER";
+    };
+  }
+
   public boolean matches(io.waterleague.installation.view.SiteView site) {
-    var placement = site.physicalInputs().path("streetPlacement");
-    if (this == OTHER) return placement.isMissingNode();
-    var role = placement.path("role").asString();
-    return this == ROADWAY
-        ? role.equals("ROADWAY")
-        : role.equals("SIDEWALK") || role.equals("WALKWAY");
+    return this == OTHER
+        ? !java.util.Set.of("ROAD_AREA", "SIDEWALK_AREA").contains(site.sourceRole())
+        : nativeRole().equals(site.sourceRole());
   }
 }

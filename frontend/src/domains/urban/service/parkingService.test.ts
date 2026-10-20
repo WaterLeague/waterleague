@@ -167,12 +167,16 @@ test('화면 주변만 표시하고 빗물정원과 겹친 주차 칸 제외·�
     cellId: 'p',
     kind: 'GROUND',
     areaM2: 100,
-    coordinates: [
-      [0, 0],
-      [10, 0],
-      [10, 10],
-      [0, 10],
-      [0, 0],
+    polygons: [
+      [
+        [
+          [0, 0],
+          [10, 0],
+          [10, 10],
+          [0, 10],
+          [0, 0],
+        ],
+      ],
     ],
   } as SharedSite;
   const installation = { facilityType: 'RAIN_GARDEN', areaM2: 100 } as SharedInstallation;

@@ -1,37 +1,20 @@
 import { afterEach, expect, test, vi } from 'vitest';
+import snapshot from '../../../../public/data/city-population-native-v1.json?raw';
 
 afterEach(() => vi.unstubAllGlobals());
 
-test('같은 공개 도로 타일 범위의 확대·축소는 요청과 형상을 재사용하며 다른 범위는 갱신', async () => {
+test('공개 생활인구의 원형 행정구 코드·결측 유지와 같은 원문 재사용', async () => {
   vi.resetModules();
-  const files = import.meta.glob<string>(
-    [
-      '../../../../public/data/seoul-streets-v1/**/*.json',
-      '../../../../public/data/street-details-v1/**/*.json',
-    ],
-    {
-      query: '?raw',
-      import: 'default',
-    }
-  );
-  const fetchMock = vi.fn(async (path: string) => {
-    if (!/^\/data\/(seoul-streets|street-details)-v1\//.test(path))
-      throw new Error('검증 범위 밖 요청');
-    const raw = await files['../../../../public' + path]();
-    return new Response(raw);
-  });
-  vi.stubGlobal('fetch', fetchMock);
-  const { loadStreets } = await import('./urbanRepository');
+  const fetcher = vi.fn(async () => new Response(snapshot));
+  vi.stubGlobal('fetch', fetcher);
+  const { loadPopulation } = await import('./urbanRepository');
   const signal = new AbortController().signal;
-  const first = await loadStreets([500, 500], 800, signal);
-  const requests = fetchMock.mock.calls.length;
-  expect(first.length).toBeGreaterThan(0);
-  expect(await loadStreets([500, 500], 810, signal)).toBe(first);
-  expect(fetchMock).toHaveBeenCalledTimes(requests);
-  const moved = await loadStreets([6500, -4500], 800, signal);
-  expect(moved).not.toBe(first);
-  expect(moved.map((road) => road.id)).not.toEqual(first.map((road) => road.id));
-  const afterMove = fetchMock.mock.calls.length;
-  expect(await loadStreets([500, 500], 800, signal)).toBe(first);
-  expect(fetchMock).toHaveBeenCalledTimes(afterMove);
+  const population = await loadPopulation(signal);
+  expect(await loadPopulation(signal)).toBe(population);
+  expect(fetcher).toHaveBeenCalledOnce();
+  expect(Object.keys(population.event2022)).toHaveLength(50);
+  expect(Object.keys(population.reference2025)).toHaveLength(175);
+  for (const key of Object.keys(population.reference2025))
+    expect(key).toMatch(/^[0-6]:11[0-9]{3}$/);
+  expect(population.event2022['20110727:11200']).toBeUndefined();
 });

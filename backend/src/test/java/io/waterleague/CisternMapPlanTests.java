@@ -45,7 +45,7 @@ class CisternMapPlanTests extends PostgresIntegrationTest {
     db.update("DELETE FROM shared_physics_jobs");
     db.update("DELETE FROM budget_ledger_entries");
     db.update("DELETE FROM shared_installations");
-    var all = sites.district("2419953").values();
+    var all = NativeSiteFixtures.sites(sites, "11200").values();
     roof =
         all.stream()
             .filter(s -> s.kind().equals("ROOF") && s.maxAreaM2().doubleValue() > 20)
@@ -98,7 +98,7 @@ class CisternMapPlanTests extends PostgresIntegrationTest {
 
   @Test
   void immutableSourceCostsIdempotencyAndNoSpending() {
-    var owner = account("2419953");
+    var owner = account("11200");
     var before = budget.view(owner.id()).remainingKrw();
     var first = service.save(owner.username(), request());
     var again = service.save(owner.username(), request());
@@ -126,9 +126,9 @@ class CisternMapPlanTests extends PostgresIntegrationTest {
 
   @Test
   void ownerAndDistrictIsolationAndRevocation() {
-    var owner = account("2419953");
-    var other = account("2419953");
-    var foreign = account("2419954");
+    var owner = account("11200");
+    var other = account("11200");
+    var foreign = account("11710");
     var first = service.save(owner.username(), request());
     assertThat(service.list(other.username())).isEmpty();
     assertThatThrownBy(() -> service.remove(other.username(), first.id()))
@@ -153,7 +153,7 @@ class CisternMapPlanTests extends PostgresIntegrationTest {
 
   @Test
   void staleAreaOccupiedAndTamperedRecordsRejected() {
-    var owner = account("2419953");
+    var owner = account("11200");
     var r = request();
     assertThatThrownBy(
             () ->
@@ -199,7 +199,10 @@ class CisternMapPlanTests extends PostgresIntegrationTest {
         installations.install(
             owner.username(),
             new InstallRequest(
-                r.districtId(), r.groundCellId(), FacilityType.PERMEABLE_PAVEMENT, BigDecimal.ONE));
+                r.districtId(),
+                r.groundCellId(),
+                FacilityType.valueOf(ground.allowedTypes().getFirst()),
+                BigDecimal.ONE));
     assertThatThrownBy(() -> service.save(owner.username(), r))
         .isInstanceOfSatisfying(
             DomainException.class, e -> assertThat(e.code()).isEqualTo(ErrorCode.SITE_OCCUPIED));
@@ -214,7 +217,7 @@ class CisternMapPlanTests extends PostgresIntegrationTest {
 
   @Test
   void geometryBindingPersistenceAndOldSnapshotPreservation() {
-    var owner = account("2419953");
+    var owner = account("11200");
     var r = request();
     var old = service.save(owner.username(), r);
     assertThat(old.snapshot().path("request").has("tankLayout")).isFalse();
@@ -277,7 +280,7 @@ class CisternMapPlanTests extends PostgresIntegrationTest {
 
   @Test
   void concurrentRetryCreatesOneDraft() throws Exception {
-    var owner = account("2419953");
+    var owner = account("11200");
     var start = new CountDownLatch(1);
     try (var pool = Executors.newFixedThreadPool(2)) {
       Callable<UUID> action =

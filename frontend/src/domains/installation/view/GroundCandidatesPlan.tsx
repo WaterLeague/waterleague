@@ -23,14 +23,9 @@ export const GroundCandidatesPlan = memo(function GroundCandidatesPlan({
     () =>
       rows.map((row) => ({
         row,
-        d: [row[3], ...(row[4] ?? [])]
-          .map(
-            (r) =>
-              Array.from(
-                { length: r.length / 2 },
-                (_, i) => `${i ? 'L' : 'M'}${r[i * 2]},${-r[i * 2 + 1]}`
-              ).join(' ') + 'Z'
-          )
+        d: row[3]
+          .flat()
+          .map((ring) => ring.map(([x, y], i) => `${i ? 'L' : 'M'}${x},${-y}`).join(' ') + 'Z')
           .join(' '),
       })),
     [rows]

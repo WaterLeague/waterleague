@@ -3,224 +3,160 @@ package io.waterleague.installation.repository;
 import io.waterleague.common.exception.*;
 import io.waterleague.common.service.JsonService;
 import io.waterleague.district.repository.DistrictRepository;
-import io.waterleague.installation.view.SiteView;
-import io.waterleague.model.repository.LabModelRepository;
-import java.io.*;
+import io.waterleague.infrastructure.repository.SurfaceOccupancyRepository;
+import io.waterleague.installation.entity.SiteSurface;
+import io.waterleague.installation.view.*;
+import io.waterleague.spatial.repository.NativePlayRepository;
+import io.waterleague.spatial.service.NativeGeometry;
+import io.waterleague.strategy.entity.FacilityType;
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.zip.GZIPInputStream;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Repository;
 import tools.jackson.databind.JsonNode;
 
 @Repository
 public class SiteCatalogRepository {
-  private final JsonService json;
+  public static final double ORIGIN_X = 198128, ORIGIN_Y = 551989;
+  private final NativePlayRepository nativeSites;
   private final DistrictRepository districts;
-  private final LabModelRepository models;
-  private final io.waterleague.infrastructure.repository.SurfaceOccupancyRepository occupancy;
-  private final Map<String, JsonNode> entries = new LinkedHashMap<>();
-  private final Map<String, JsonNode> streetEntries = new LinkedHashMap<>();
-  private final Map<String, Integer> counts = new LinkedHashMap<>();
-  private final Map<String, Map<String, SiteView>> cache = new LinkedHashMap<>(8, .75f, true);
+  private final SurfaceOccupancyRepository references;
+  private final JsonService json;
 
   public SiteCatalogRepository(
       JsonService json,
       DistrictRepository districts,
-      LabModelRepository models,
-      io.waterleague.infrastructure.repository.SurfaceOccupancyRepository occupancy)
-      throws IOException {
+      NativePlayRepository nativeSites,
+      SurfaceOccupancyRepository references) {
     this.json = json;
     this.districts = districts;
-    this.models = models;
-    this.occupancy = occupancy;
-    var source = read("catalog-v9.json", false, 50000);
-    if (!json.hash(source)
-        .equals("2c01768343c093e3afb21fa64c8e298cb79d2cb9371442be7a092ab63c9645de"))
-      throw new IllegalStateException("공동 후보 목록 해시 오류");
-    for (var entry : json.tree(source).path("entries")) {
-      String id = entry.path("districtId").asString();
-      var district = districts.require(id);
-      if (entries.put(id, entry) != null
-          || !entry.path("file").asString().equals(id + "-v9.json.gz"))
-        throw new IllegalStateException("공동 후보 목록 오류");
-      counts.put(id, entry.path("count").asInt());
-    }
-    if (entries.size() != 25) throw new IllegalStateException("공동 후보 구 누락");
-    var streets = read("catalog-v10.json", false, 50000);
-    if (!json.hash(streets)
-        .equals("2011b5356cf7885b8dbaa2f5e55446b71e82384023f98594e287f832574e5b42"))
-      throw new IllegalStateException("도로 후보 목록 해시 오류");
-    for (var entry : json.tree(streets).path("entries")) {
-      String id = entry.path("districtId").asString();
-      districts.require(id);
-      if (streetEntries.put(id, entry) != null
-          || !entry.path("file").asString().equals(id + "-v10.json.gz"))
-        throw new IllegalStateException("도로 후보 목록 오류");
-      counts.compute(id, (key, count) -> count + entry.path("count").asInt());
-    }
-    if (streetEntries.size() != 25) throw new IllegalStateException("도로 후보 구 누락");
-  }
-
-  private String read(String name, boolean zipped, int max) throws IOException {
-    try (var source = new ClassPathResource("shared-sites/" + name).getInputStream();
-        var input = zipped ? new GZIPInputStream(source) : source) {
-      var bytes = input.readNBytes(max + 1);
-      if (bytes.length > max) throw new IOException("공동 후보 크기 초과");
-      return new String(bytes, StandardCharsets.UTF_8);
-    }
+    this.nativeSites = nativeSites;
+    this.references = references;
   }
 
   public Map<String, Integer> counts() {
-    return Collections.unmodifiableMap(counts);
+    return nativeSites.supportedCounts();
   }
 
   public Map<String, String> versions() {
-    var result = new TreeMap<String, String>();
-    entries.forEach((id, entry) -> result.put(id, entry.path("sha256").asString()));
-    streetEntries.forEach(
-        (id, entry) -> result.put(id + ":streets", entry.path("sha256").asString()));
-    return Collections.unmodifiableMap(result);
+    var values = new TreeMap<String, String>();
+    districts.all().forEach(district -> values.put(district.id(), nativeSites.sha256()));
+    return Map.copyOf(values);
   }
 
-  public synchronized Map<String, SiteView> district(String id) {
-    var cached = cache.get(id);
-    if (cached != null) return cached;
-    var d = districts.require(id);
-    var values = new LinkedHashMap<String, SiteView>();
-    for (var entry : List.of(entries.get(id), streetEntries.get(id))) {
-      try {
-        String raw = read(entry.path("file").asString(), true, 64 * 1024 * 1024);
-        String hash = entry.path("sha256").asString();
-        var snapshot = json.tree(raw);
-        if (!json.hash(raw).equals(hash)
-            || !snapshot.path("districtId").asString().equals(id)
-            || !snapshot.path("baseModelHash").asString().equals(d.modelHash()))
-          throw new IllegalStateException("공동 후보 무결성 오류");
-        append(values, id, snapshot, hash, List.of(0., 0.));
-      } catch (IOException e) {
-        throw new IllegalStateException("공동 후보 읽기 오류");
-      }
-    }
-    if (values.size() != counts.get(id)) throw new IllegalStateException("공동 후보 개수 오류");
-    var result = Collections.unmodifiableMap(values);
-    cache.put(id, result);
-    while (cache.size() > 4) cache.remove(cache.keySet().iterator().next());
-    return result;
-  }
-
-  private void append(
-      Map<String, SiteView> output,
+  public SitePageView nearest(
       String districtId,
-      JsonNode model,
-      String hash,
-      List<Double> origin) {
-    var costs = new LinkedHashMap<String, BigDecimal>();
-    for (var t : io.waterleague.strategy.entity.FacilityType.values())
-      costs.put(t.name(), model.path("unitCosts").path(t.name()).decimalValue());
-    for (var cell : model.path("cells")) {
-      var coordinates = new ArrayList<List<Double>>();
-      for (var p : cell.path("coordinates"))
-        coordinates.add(
-            List.of(p.get(0).asDouble() + origin.get(0), p.get(1).asDouble() + origin.get(1)));
-      var types = new ArrayList<String>();
-      for (var t : cell.path("allowedTypes")) types.add(t.asString());
-      var sources = new ArrayList<String>();
-      for (var source : cell.path("sourceIds")) sources.add(source.asString());
-      if (sources.isEmpty() && cell.has("buildingId"))
-        sources.add(cell.path("buildingId").asString());
-      var site =
-          new SiteView(
-              districtId,
-              cell.path("id").asString(),
-              cell.path("name").asString(),
-              cell.path("kind").asString(),
-              List.copyOf(coordinates),
-              List.of(
-                  cell.path("center").get(0).asDouble() + origin.get(0),
-                  cell.path("center").get(1).asDouble() + origin.get(1)),
-              cell.path("heightM").asDouble(),
-              cell.path("areaM2").asDouble(),
-              cell.path("maxAreaM2").decimalValue(),
-              List.copyOf(types),
-              Map.copyOf(costs),
-              hash,
-              List.copyOf(sources),
-              cell.path("areaLimitBasis").asString(),
-              cell.path("siteEligibility").asString(),
-              cell.path("inflowPolicy").asString(),
-              model.path("costModel"),
-              model.path("costSourceSha256").asString(),
-              cell.path("physicalInputs"),
-              model.path("facilityDesignSet"),
-              model.path("initializationPolicy"),
-              occupancy.exclusion(
-                  districtId, cell.path("id").asString(), hash, cell.path("kind").asString()));
-      if (output.put(site.cellId(), site) != null) throw new IllegalStateException("공동 후보 중복");
-    }
+      double x,
+      double y,
+      int offset,
+      FacilityType type,
+      boolean vacant,
+      SiteSurface surface) {
+    districts.require(districtId);
+    String role = surface == null ? null : surface.nativeRole();
+    var result =
+        nativeSites.nearest(
+            districtId,
+            x + ORIGIN_X,
+            y + ORIGIN_Y,
+            offset,
+            type == null ? null : 1 << type.ordinal(),
+            role);
+    var metadata = nativeSites.metadata();
+    return new SitePageView(
+        result.cells().stream().map(cell -> view(cell, metadata)).toList(),
+        counts(),
+        result.count(),
+        offset,
+        200);
   }
 
   public SiteView building(String districtId, String sourceId) {
-    if (sourceId == null || !sourceId.matches("(way|relation)/[0-9]{1,16}"))
+    districts.require(districtId);
+    return view(nativeSites.building(districtId, sourceId), nativeSites.metadata());
+  }
+
+  public SiteView ground(String districtId, double x, double y) {
+    districts.require(districtId);
+    if (!Double.isFinite(x) || !Double.isFinite(y) || Math.abs(x) > 100000 || Math.abs(y) > 100000)
       throw new DomainException(ErrorCode.REQUEST_INVALID);
-    return district(districtId).values().stream()
-        .filter(s -> s.kind().equals("ROOF") && s.sourceIds().contains(sourceId))
-        .findFirst()
-        .orElseThrow(() -> new DomainException(ErrorCode.RESOURCE_NOT_FOUND));
-  }
-
-  public SiteView street(String districtId, String sourceId, double x, double y) {
-    if (sourceId == null
-        || !sourceId.matches("way/[0-9]{1,16}:[0-9]{1,6}")
-        || !Double.isFinite(x)
-        || !Double.isFinite(y)
-        || Math.abs(x) > 100000
-        || Math.abs(y) > 100000) throw new DomainException(ErrorCode.REQUEST_INVALID);
-    return district(districtId).values().stream()
-        .filter(
-            s ->
-                sourceId.equals(
-                    s.physicalInputs().path("streetPlacement").path("streetId").asString()))
-        .filter(s -> Math.hypot(s.center().get(0) - x, s.center().get(1) - y) <= 30)
-        .min(
-            Comparator.comparingDouble(
-                    (SiteView s) -> Math.hypot(s.center().get(0) - x, s.center().get(1) - y))
-                .thenComparing(SiteView::cellId))
-        .orElseThrow(() -> new DomainException(ErrorCode.RESOURCE_NOT_FOUND));
-  }
-
-  public SiteView parking(String districtId, String sourceId, double x, double y) {
-    if (sourceId == null
-        || !sourceId.matches("(way|relation)/[0-9]{1,16}")
-        || !Double.isFinite(x)
-        || !Double.isFinite(y)
-        || Math.abs(x) > 100000
-        || Math.abs(y) > 100000) throw new DomainException(ErrorCode.REQUEST_INVALID);
-    return district(districtId).values().stream()
-        .filter(s -> s.kind().equals("GROUND") && s.sourceIds().contains(sourceId))
-        .filter(s -> !s.physicalInputs().has("streetPlacement"))
-        .filter(s -> Math.hypot(s.center().get(0) - x, s.center().get(1) - y) <= 30)
-        .min(Comparator.comparingDouble(
-            (SiteView s) -> Math.hypot(s.center().get(0) - x, s.center().get(1) - y))
-            .thenComparing(SiteView::cellId))
-        .orElseThrow(() -> new DomainException(ErrorCode.RESOURCE_NOT_FOUND));
+    var cell = nativeSites.atPoint(x + ORIGIN_X, y + ORIGIN_Y, "GROUND");
+    if (!cell.path("districtId").asString().equals(districtId))
+      throw new DomainException(ErrorCode.RESOURCE_NOT_FOUND);
+    return view(cell, nativeSites.metadata());
   }
 
   public SiteView require(String districtId, String cellId) {
-    var site = district(districtId).get(cellId);
-    if (site == null) throw new DomainException(ErrorCode.PLACEMENT_INVALID);
-    return site;
+    districts.require(districtId);
+    var cell = nativeSites.require(districtId, cellId);
+    if (cell.path("allowedTypes").isEmpty()) throw new DomainException(ErrorCode.PLACEMENT_INVALID);
+    return view(cell, nativeSites.metadata());
   }
 
   public SiteView requireInstallable(String districtId, String cellId) {
-    var site = require(districtId, cellId);
-    if (site.existingInfrastructure() != null)
-      throw new DomainException(ErrorCode.EXISTING_INFRASTRUCTURE);
-    return site;
+    return require(districtId, cellId);
   }
 
   public JsonNode publicAssetPolicy() {
-    return occupancy.evidence();
+    return references.evidence();
+  }
+
+  private SiteView view(JsonNode cell, JsonNode metadata) {
+    NativeGeometry.polygon(cell.path("geometry"), cell.path("areaM2").asDouble());
+    var components = new ArrayList<List<List<List<Double>>>>();
+    var geometry = cell.path("geometry");
+    var source =
+        geometry.path("type").asString().equals("Polygon")
+            ? List.of(geometry.path("coordinates"))
+            : iterable(geometry.path("coordinates"));
+    for (var part : source) {
+      var rings = new ArrayList<List<List<Double>>>();
+      for (var ring : part) {
+        var points = new ArrayList<List<Double>>();
+        for (var point : ring)
+          points.add(
+              List.of(point.get(0).asDouble() - ORIGIN_X, point.get(1).asDouble() - ORIGIN_Y));
+        rings.add(List.copyOf(points));
+      }
+      components.add(List.copyOf(rings));
+    }
+    var costs = new LinkedHashMap<String, BigDecimal>();
+    for (var type : FacilityType.values())
+      costs.put(type.name(), metadata.path("unitCosts").path(type.name()).decimalValue());
+    var types = iterable(cell.path("allowedTypes")).stream().map(JsonNode::asString).toList();
+    var sourceIds = iterable(cell.path("sourceIds")).stream().map(JsonNode::asString).toList();
+    var center = cell.path("centerProjected");
+    String districtId = cell.path("districtId").asString(), id = cell.path("id").asString();
+    return new SiteView(
+        districtId,
+        id,
+        districts.require(districtId).name()
+            + (cell.path("kind").asString().equals("ROOF") ? " 옥상 후보" : " 지상 후보"),
+        cell.path("kind").asString(),
+        List.copyOf(components),
+        List.of(center.get(0).asDouble() - ORIGIN_X, center.get(1).asDouble() - ORIGIN_Y),
+        cell.path("heightM").asDouble(),
+        cell.path("areaM2").asDouble(),
+        cell.path("maxAreaM2").decimalValue(),
+        types,
+        Map.copyOf(costs),
+        nativeSites.sha256(),
+        sourceIds,
+        cell.path("areaLimitBasis").asString(),
+        cell.path("siteEligibility").asString(),
+        cell.path("inflowPolicy").asString(),
+        metadata.path("costModel").deepCopy(),
+        metadata.path("costSourceSha256").asString(),
+        cell.path("physicalInputs").deepCopy(),
+        metadata.path("facilityDesignSet").deepCopy(),
+        metadata.path("initializationPolicy").deepCopy(),
+        null,
+        cell.path("role").asString(),
+        references.forCandidate(districtId, id));
+  }
+
+  private static List<JsonNode> iterable(JsonNode value) {
+    var result = new ArrayList<JsonNode>();
+    value.forEach(result::add);
+    return List.copyOf(result);
   }
 }

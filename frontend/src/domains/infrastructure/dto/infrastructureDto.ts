@@ -89,7 +89,7 @@ export const infrastructureSourceDto = z.object({
 });
 export const infrastructureDto = z
   .object({
-    version: z.literal('seoul-public-20261019-v3'),
+    version: z.literal('seoul-native-infrastructure-20261020-v1'),
     sha256: z.string().regex(/^[a-f0-9]{64}$/),
     usage: z.literal('REFERENCE_ONLY'),
     statusCounts: z.record(z.string(), z.number().int().nonnegative()),

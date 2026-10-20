@@ -56,28 +56,11 @@ export const loadBuildingSite = async (districtId: string, sourceId: string) =>
     )
   );
 
-export const loadStreetSite = async (
-  districtId: string,
-  sourceId: string,
-  point: [number, number]
-) => {
-  const params = new URLSearchParams({ sourceId, x: String(point[0]), y: String(point[1]) });
+export const loadGroundSite = async (districtId: string, point: [number, number]) => {
+  const params = new URLSearchParams({ x: String(point[0]), y: String(point[1]) });
   return siteDto.parse(
     await api<unknown>(
-      '/installations/sites/' + encodeURIComponent(districtId) + '/street?' + params
-    )
-  );
-};
-
-export const loadParkingSite = async (
-  districtId: string,
-  sourceId: string,
-  point: [number, number]
-) => {
-  const params = new URLSearchParams({ sourceId, x: String(point[0]), y: String(point[1]) });
-  return siteDto.parse(
-    await api<unknown>(
-      '/installations/sites/' + encodeURIComponent(districtId) + '/parking?' + params
+      '/installations/sites/' + encodeURIComponent(districtId) + '/ground?' + params
     )
   );
 };

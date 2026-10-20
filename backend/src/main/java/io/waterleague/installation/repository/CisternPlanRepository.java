@@ -25,8 +25,8 @@ public class CisternPlanRepository {
 
   public List<CisternPlan> owned(UUID owner) {
     return db.query(
-        "SELECT * FROM cistern_map_plans WHERE owner_id=? AND deleted_at IS NULL ORDER BY"
-            + " created_at DESC,id LIMIT 20",
+        "SELECT * FROM cistern_map_plans WHERE source_dataset='SEOUL_NGII_GAME_V2' AND owner_id=?"
+            + " AND deleted_at IS NULL ORDER BY created_at DESC,id LIMIT 20",
         mapper,
         owner);
   }
@@ -46,7 +46,7 @@ public class CisternPlanRepository {
     return Boolean.TRUE.equals(
         db.queryForObject(
             "SELECT EXISTS(SELECT 1 FROM shared_installations WHERE district_id=? AND cell_id IN"
-                + " (?,?) AND removed_at IS NULL)",
+                + " (?,?) AND source_retired_at IS NULL AND removed_at IS NULL)",
             Boolean.class,
             district,
             roof,
@@ -55,8 +55,8 @@ public class CisternPlanRepository {
 
   public boolean remove(UUID owner, UUID id) {
     return db.update(
-            "UPDATE cistern_map_plans SET deleted_at=? WHERE owner_id=? AND id=? AND deleted_at IS"
-                + " NULL",
+            "UPDATE cistern_map_plans SET deleted_at=? WHERE source_dataset='SEOUL_NGII_GAME_V2'"
+                + " AND owner_id=? AND id=? AND deleted_at IS NULL",
             Timestamp.from(Instant.now()),
             owner,
             id)

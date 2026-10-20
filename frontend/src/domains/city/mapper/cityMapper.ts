@@ -8,7 +8,7 @@ export function mapCity(value: unknown) {
     new Set(data.districts.map((d) => d.id)).size !== 25 ||
     new Set(data.tiles.map((t) => t.id)).size !== data.tiles.length ||
     data.tiles.reduce((n, t) => n + t.buildingCount, 0) !== data.buildingCount ||
-    data.tiles.some((t) => t.file !== `tiles/${t.id}.json`)
+    data.tiles.some((t) => t.file !== `tiles/${t.id}.json.gz`)
   )
     throw new CityError('INVALID_DATA');
   return data;

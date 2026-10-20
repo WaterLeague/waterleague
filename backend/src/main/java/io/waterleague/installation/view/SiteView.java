@@ -8,7 +8,7 @@ public record SiteView(
     String cellId,
     String name,
     String kind,
-    List<List<Double>> coordinates,
+    List<List<List<List<Double>>>> polygons,
     List<Double> center,
     double heightM,
     double areaM2,
@@ -25,7 +25,9 @@ public record SiteView(
     tools.jackson.databind.JsonNode physicalInputs,
     tools.jackson.databind.JsonNode facilityDesignSet,
     tools.jackson.databind.JsonNode initializationPolicy,
-    tools.jackson.databind.JsonNode existingInfrastructure) {
+    tools.jackson.databind.JsonNode existingInfrastructure,
+    String sourceRole,
+    tools.jackson.databind.JsonNode referenceInfrastructure) {
   public BigDecimal maxAreaFor(io.waterleague.strategy.entity.FacilityType type) {
     String key =
         switch (type) {

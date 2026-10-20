@@ -56,7 +56,7 @@ class AccountFlowTests extends PostgresIntegrationTest {
                 "purpose",
                 "",
                 "districtId",
-                "2410520",
+                "11680",
                 "affiliationType",
                 "RESIDENT"));
     var token = csrf();
@@ -77,8 +77,7 @@ class AccountFlowTests extends PostgresIntegrationTest {
     assertThat(
             call(
                     "/auth/login",
-                    json.writeValueAsString(
-                        Map.of("username", name, "password", "Test8pw!")),
+                    json.writeValueAsString(Map.of("username", name, "password", "Test8pw!")),
                     csrf())
                 .statusCode())
         .isEqualTo(200);

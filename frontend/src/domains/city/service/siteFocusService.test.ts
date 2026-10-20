@@ -31,7 +31,11 @@ it('길쭉한 건물·대형 건물·고층 건물 전체를 화면과 HUD 여�
         [0, north],
         [0, 0],
       ];
-      const focus = siteFocus({ coordinates, heightM: roof, kind: 'ROOF' }, width, height);
+      const focus = siteFocus(
+        { polygons: [[coordinates]], heightM: roof, kind: 'ROOF' },
+        width,
+        height
+      );
       const target = new Vector3(focus.center[0], focus.heightM, -focus.center[1]);
       const camera = new PerspectiveCamera(45, width / height, 1, 200000);
       camera.position.copy(target).add(new Vector3(0, focus.distance * 0.8, focus.distance * 0.6));
@@ -57,7 +61,9 @@ it('지상 시설은 지면을 보고 2D 확대 후에도 건물 목표 높이�
     [30, 20],
     [0, 20],
   ];
-  expect(siteFocus({ coordinates, heightM: 40, kind: 'GROUND' }, 600, 600).heightM).toBe(0);
-  const focus = siteFocus({ coordinates, heightM: 100, kind: 'ROOF' }, 600, 600);
+  expect(
+    siteFocus({ polygons: [[coordinates]], heightM: 40, kind: 'GROUND' }, 600, 600).heightM
+  ).toBe(0);
+  const focus = siteFocus({ polygons: [[coordinates]], heightM: 100, kind: 'ROOF' }, 600, 600);
   expect(zoomPlanView(focus, [10, 10], 1.5).heightM).toBe(50);
 });

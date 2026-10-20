@@ -3,36 +3,39 @@ const hash = z.string().regex(/^[a-f0-9]{64}$/);
 export const cityPlayDto = z
   .object({
     schemaVersion: z.literal(1),
-    rainfallUse: z.enum([
-      'COMMON_OBSERVED_REPLAY_NOT_LOCAL_OBSERVATION',
-      'COMMON_AND_NEAREST_AWS_OBSERVED_REPLAY',
-    ]),
+    id: z.literal('SEOUL_NGII_GAME_V2'),
+    rainfallUse: z.literal('ARCHIVED_OBSERVATIONS_ON_CURRENT_PUBLIC_GEOMETRY'),
+    siteCatalogSha256: hash,
     regions: z
       .array(
         z.object({
-          districtId: z.string().regex(/^\d+$/),
+          districtId: z.string().regex(/^11\d{3}$/),
           districtName: z.string(),
-          mapId: z.string().regex(/^seoul-osm-v1-\d+$/),
+          mapId: z.string().regex(/^seoul-ngii-v1-11\d{3}$/),
           defaultModelHash: hash,
-          modelHashes: z.array(hash).min(3).max(6),
-          defaultRainfall: z
-            .object({
-              stationId: z.string(),
-              stationName: z.string(),
-              distanceKm: z.number().finite().nonnegative().max(10),
-              use: z.literal('NEAREST_AWS_OBSERVED_REPLAY'),
-            })
-            .optional(),
+          modelHashes: z.array(hash).length(4),
+          defaultRainfall: z.object({
+            stationId: z.string(),
+            stationName: z.string(),
+            distanceKm: z.number().nonnegative().max(10),
+            use: z.literal('NEAREST_ARCHIVED_QUALITY_CHECKED_AWS_WITHIN_10KM'),
+          }),
           center: z.tuple([z.number().finite(), z.number().finite()]),
-          roofCount: z.literal(8),
-          groundCount: z.literal(5),
+          roofCount: z.number().int().nonnegative(),
+          groundCount: z.number().int().nonnegative(),
+          siteCatalogSha256: hash,
+          eventModelHashes: z.record(z.string(), hash),
         })
       )
       .length(25),
   })
   .refine(
-    (r) =>
-      new Set(r.regions.map((x) => x.districtId)).size === 25 &&
-      r.regions.every((x) => x.modelHashes.includes(x.defaultModelHash))
+    (value) =>
+      new Set(value.regions.map((row) => row.districtId)).size === 25 &&
+      value.regions.every(
+        (row) =>
+          row.modelHashes.includes(row.defaultModelHash) &&
+          row.siteCatalogSha256 === value.siteCatalogSha256
+      )
   );
 export type CityPlayRegion = z.infer<typeof cityPlayDto>['regions'][number];

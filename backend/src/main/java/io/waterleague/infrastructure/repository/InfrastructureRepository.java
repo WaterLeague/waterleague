@@ -1,8 +1,8 @@
 package io.waterleague.infrastructure.repository;
 
+import io.waterleague.common.exception.*;
 import io.waterleague.common.service.JsonService;
 import io.waterleague.infrastructure.entity.InfrastructureAsset;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import org.springframework.core.io.ClassPathResource;
@@ -11,70 +11,60 @@ import tools.jackson.databind.JsonNode;
 
 @Repository
 public class InfrastructureRepository {
-  public static final String VERSION = "seoul-public-20261019-v3";
-  public static final String V2_SHA256 =
-      "325bb73079cd70017a57a0d346e93c6f0a8376af181542dfa461fa746aa21764";
+  public static final String VERSION = "seoul-native-infrastructure-20261020-v1";
   public static final String SHA256 =
-      "44af12ac60cc058bc867b5b82f11afcfe53cf6da7afef37f85660f96cb10854a";
-  private static final String PREVIOUS_SHA256 =
+      "d0ef74f9cf919a18f766f27b540c72119fc1d4f2583fc1525d4c289791f1fa94";
+  private static final String HISTORY_LOCATION_SHA256 =
       "6b1ff662e040eca3d5da5cdc9ff5c58127bc14f0752f3ddd3ea9796debea79fb";
   private final List<InfrastructureAsset> records;
   private final List<JsonNode> sources;
-  private final Set<String> previousAssetIds = new HashSet<>();
-  private final Set<String> previousSourceIds = new HashSet<>();
 
-  public InfrastructureRepository(JsonService json) throws IOException {
-    try (var stream =
-        new ClassPathResource("infrastructure/" + VERSION + ".json").getInputStream()) {
-      String raw = new String(stream.readNBytes(2_000_000), StandardCharsets.UTF_8);
-      if (!json.hash(raw).equals(SHA256)) throw new IllegalStateException("공개 시설 자료 해시 오류");
+  public InfrastructureRepository(JsonService json) {
+    try (var input =
+        new ClassPathResource("infrastructure/native-v1/catalog.json").getInputStream()) {
+      String raw = new String(input.readNBytes(2_000_001), StandardCharsets.UTF_8);
+      if (!json.hash(raw).equals(SHA256)) invalid();
       var root = json.tree(raw);
-      if (!VERSION.equals(root.path("version").asString()))
-        throw new IllegalStateException("공개 시설 자료 버전 오류");
-      // 이력이 참조하는 이전 카탈로그의 모든 기록·출처가 변경 없이 포함됐는지 확인한다.
-      try (var prior =
-          new ClassPathResource("infrastructure/seoul-public-20261018-v2.json").getInputStream()) {
-        String oldRaw = new String(prior.readNBytes(2_000_000), StandardCharsets.UTF_8);
-        if (!json.hash(oldRaw).equals(V2_SHA256)) throw new IllegalStateException("이전 시설 자료 해시 오류");
-        var old = json.tree(oldRaw);
-        for (String field : List.of("assets", "sources")) {
-          var current = new HashMap<String, JsonNode>();
-          for (var node : root.path(field)) current.put(node.path("id").asString(), node);
-          for (var node : old.path(field)) {
-            (field.equals("assets") ? previousAssetIds : previousSourceIds)
-                .add(node.path("id").asString());
-            if (!node.equals(current.get(node.path("id").asString())))
-              throw new IllegalStateException("이전 시설 기록 변경");
-          }
-        }
-      }
-      var assets = new ArrayList<InfrastructureAsset>();
+      if (!VERSION.equals(root.path("version").asString())) invalid();
+      var items = new ArrayList<InfrastructureAsset>();
       var provenance = new ArrayList<JsonNode>();
-      for (var source : root.path("sources")) provenance.add(source.deepCopy());
-      for (var asset : root.path("assets"))
-        assets.add(json.read(json.write(asset), InfrastructureAsset.class));
-      records = List.copyOf(assets);
+      var sourceIds = new HashSet<String>();
+      for (var source : root.path("sources")) {
+        if (!sourceIds.add(source.path("id").asString())
+            || !source.path("license").asString().equals("KOGL_TYPE_1")) invalid();
+        provenance.add(source.deepCopy());
+      }
+      var ids = new HashSet<String>();
+      for (var node : root.path("assets")) {
+        var asset = json.read(json.write(node), InfrastructureAsset.class);
+        if (!ids.add(asset.id())
+            || !sourceIds.contains(asset.sourceId())
+            || asset.footprint() != null && !asset.footprint().isNull()
+            || !asset.geometryEvidence().equals("LOCATION_POINT")
+            || !asset.verticalLayer().equals("UNKNOWN")) invalid();
+        items.add(asset);
+      }
+      records = List.copyOf(items);
       sources = List.copyOf(provenance);
+    } catch (Exception e) {
+      throw new DomainException(ErrorCode.SPATIAL_DATA_INVALID);
     }
   }
 
-  public List<InfrastructureAsset> records(boolean previous) {
-    if (previous) return records.stream().filter(a -> previousAssetIds.contains(a.id())).toList();
+  public List<InfrastructureAsset> records() {
     return records;
   }
 
-  public List<InfrastructureAsset> records() {
-    return records(false);
+  public List<JsonNode> sources() {
+    return sources.stream().map(JsonNode::deepCopy).toList();
   }
 
-  public boolean hasUnchangedCatalog(String hash) {
-    return SHA256.equals(hash) || V2_SHA256.equals(hash) || PREVIOUS_SHA256.equals(hash);
+  public boolean hasArchivedLocationSource(String hash) {
+    // 설비 이력의 원 위치점 목록은 보존하되 현재 지도 형상으로 조회하지 않는다.
+    return HISTORY_LOCATION_SHA256.equals(hash);
   }
 
-  public List<JsonNode> sources(boolean previous) {
-    return sources.stream()
-        .filter(s -> !previous || previousSourceIds.contains(s.path("id").asString()))
-        .map(JsonNode::deepCopy)
-        .toList();
+  private static void invalid() {
+    throw new DomainException(ErrorCode.SPATIAL_DATA_INVALID);
   }
 }

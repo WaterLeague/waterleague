@@ -1,56 +1,23 @@
 import { useEffect, useMemo, useState } from 'react';
-import type { Population, Street } from '../entity/urban';
-import { loadPopulation, loadStreets } from '../repository/urbanRepository';
-import { loadParking } from '../repository/parkingRepository';
+import type { CityTile } from '../../city/entity/city';
+import type { Population } from '../entity/urban';
 import type { ParkingData } from '../entity/parking';
-import { parkingDisplayRoads } from '../service/parkingService';
-export function useUrbanData(center: [number, number], distance: number) {
-  const [roads, setRoads] = useState<Street[]>([]),
-    [parking, setParking] = useState<ParkingData | null>(null),
-    [population, setPopulation] = useState<Population | null>(null),
-    [error, setError] = useState(''),
-    [populationError, setPopulationError] = useState('');
-  const x = Math.round(center[0] / 200) * 200,
-    y = Math.round(center[1] / 200) * 200;
-  const scale = distance > 9000 ? 10000 : Math.max(400, Math.round(distance / 400) * 400);
+import { nativeStreets } from '../service/nativeStreetService';
+import { loadPopulation } from '../repository/urbanRepository';
+export function useUrbanData(tiles: CityTile[]) {
+  const roads = useMemo(() => nativeStreets(tiles), [tiles]);
+  const [population, setPopulation] = useState<Population | null>(null);
+  const [populationError, setPopulationError] = useState('');
   useEffect(() => {
-    const controller = new AbortController();
-    void loadPopulation(controller.signal)
+    const request = new AbortController();
+    void loadPopulation(request.signal)
       .then((value) => {
-        if (!controller.signal.aborted) setPopulation(value);
+        if (!request.signal.aborted) setPopulation(value);
       })
       .catch(() => {
-        if (!controller.signal.aborted)
-          setPopulationError('인구 자료 연결 실패 · 일반 교통·보행 연출');
+        if (!request.signal.aborted) setPopulationError('생활인구 공개자료 조회 지연');
       });
-    return () => controller.abort();
+    return () => request.abort();
   }, []);
-  useEffect(() => {
-    const controller = new AbortController();
-    const timer = window.setTimeout(() => {
-      void Promise.all([
-        loadStreets([x, y], scale, controller.signal),
-        loadParking(controller.signal),
-      ])
-        .then(([v, p]) => {
-          if (!controller.signal.aborted) {
-            setRoads(v);
-            setParking(p);
-            setError('');
-          }
-        })
-        .catch(() => {
-          if (!controller.signal.aborted) setError('도로·주차장 자료를 불러오지 못했습니다.');
-        });
-    }, 150);
-    return () => {
-      clearTimeout(timer);
-      controller.abort();
-    };
-  }, [x, y, scale]);
-  const displayRoads = useMemo(
-    () => (parking ? parkingDisplayRoads(roads, parking) : roads),
-    [roads, parking]
-  );
-  return { roads: displayRoads, parking, population, error, populationError };
+  return { roads, parking: null as ParkingData | null, population, error: '', populationError };
 }

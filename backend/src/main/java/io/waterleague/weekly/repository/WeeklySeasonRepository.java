@@ -28,7 +28,8 @@ public class WeeklySeasonRepository {
   public List<UUID> dueOwners() {
     return db.query(
         "SELECT DISTINCT owner_id FROM shared_installations WHERE removed_at IS NULL AND"
-            + " season_ends_at<=CURRENT_TIMESTAMP ORDER BY owner_id LIMIT 250",
+            + " (season_ends_at<=CURRENT_TIMESTAMP OR source_retired_at<=CURRENT_TIMESTAMP) ORDER"
+            + " BY owner_id LIMIT 250",
         (r, n) -> r.getObject("owner_id", UUID.class));
   }
 
@@ -36,16 +37,18 @@ public class WeeklySeasonRepository {
     // JDBC의 마이크로초 반올림으로 시즌 종료 전에 예산이 반환되지 않도록 내림한다.
     return db.query(
         "SELECT id FROM shared_installations WHERE owner_id=? AND removed_at IS NULL AND"
-            + " season_ends_at<=? ORDER BY id FOR UPDATE",
+            + " (season_ends_at<=? OR source_retired_at<=?) ORDER BY id FOR UPDATE",
         (r, n) -> r.getObject("id", UUID.class),
         owner,
+        Timestamp.from(at.truncatedTo(ChronoUnit.MICROS)),
         Timestamp.from(at.truncatedTo(ChronoUnit.MICROS)));
   }
 
   public void close(UUID id) {
     db.update(
-        "UPDATE shared_installations SET removed_at=season_ends_at,occupied_site=NULL WHERE id=?"
-            + " AND removed_at IS NULL",
+        "UPDATE shared_installations SET removed_at=CASE WHEN source_retired_at IS NULL THEN"
+            + " season_ends_at ELSE LEAST(source_retired_at,season_ends_at) END,occupied_site=NULL"
+            + " WHERE id=? AND removed_at IS NULL",
         id);
   }
 }

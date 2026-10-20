@@ -57,8 +57,7 @@ class InitializationCollectionTests(unittest.TestCase):
             raw = json.dumps([{'facilityType': facility, 'initializationSensitivity': policy}])
             request = {'modelHash': 'test-model', 'placements': raw,
                        'inputHash': hashlib.sha256(('test-model\n'+raw).encode()).hexdigest()}
-            with tempfile.TemporaryDirectory() as directory, patch.object(run_historical_job, 'read_catalog',
-                    return_value={'test-model': '{}'}):
+            with tempfile.TemporaryDirectory() as directory, patch.object(run_historical_job, 'forcing', return_value=b'{}'):
                 target = Path(directory)/'run'
                 with self.assertRaisesRegex(ValueError, 'HISTORICAL_SENSITIVITY_INVALID'):
                     run_historical_job.calculate(request, target)

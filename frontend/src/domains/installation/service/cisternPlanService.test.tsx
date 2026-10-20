@@ -1,6 +1,7 @@
 import { expect, it } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
-import rawSite from '../view/fixtures/basinSite.json';
+import nativeSites from '../__tests__/fixtures/nativeSites.json';
+const rawSite = nativeSites.ground;
 import catalogRaw from '../../watershed/view/fixtures/catalog.json';
 import { siteDto } from '../dto/installationDto';
 import { cisternPlanDto } from '../dto/cisternPlanDto';
@@ -12,13 +13,8 @@ import type { CisternPlanState } from '../controller/useCisternPlans';
 import { cisternGeometry } from './cisternLayoutService';
 
 // 공개 후보 구조를 사용하는 단위 검사이며 운영 입지·설계 자료로 사용하지 않는다.
-const ground = siteDto.parse({ ...rawSite, cellId: 'GTEST', existingInfrastructure: null });
-const roof = siteDto.parse({
-  ...ground,
-  cellId: 'RTEST',
-  kind: 'ROOF',
-  allowedTypes: ['GREEN_ROOF'],
-});
+const ground = siteDto.parse(rawSite);
+const roof = siteDto.parse(nativeSites.roof);
 const catalog = watershedCatalogDto.parse(catalogRaw);
 function draft() {
   return {
@@ -56,7 +52,9 @@ it('지붕·지상의 종류, 소속 구, 점유와 공개 저류 경계에 따�
   expect(cisternSelectionError(roof, 'ground', null, false)).toContain('지상');
   expect(cisternSelectionError(ground, 'ground', '0000000', false)).toContain('소속 구');
   expect(cisternSelectionError(ground, 'ground', ground.districtId, true)).toContain('이미');
-  expect(cisternSelectionError(siteDto.parse(rawSite), 'ground', null, false)).toContain('시설');
+  expect(cisternSelectionError(siteDto.parse(nativeSites.reference), 'ground', null, false)).toBe(
+    ''
+  );
 });
 it('공개 면적 한계와 입력 정밀도·종류·구 불일치 차단', () => {
   expect(cisternRequest(roof, ground, '20', '1', '2.350')?.tankDepthM).toBe(2.35);
@@ -103,13 +101,17 @@ it('형상 포함 계획의 수량·배치 결속과 이전 면적 계획 구분
   const site = {
     ...base.snapshot.ground,
     center: [0, 0] as [number, number],
-    coordinates: [
-      [-5, -5],
-      [5, -5],
-      [5, 5],
-      [-5, 5],
-      [-5, -5],
-    ] as [number, number][],
+    polygons: [
+      [
+        [
+          [-5, -5],
+          [5, -5],
+          [5, 5],
+          [-5, 5],
+          [-5, -5],
+        ] as [number, number][],
+      ],
+    ],
   };
   const layout = { widthM: 1, wallThicknessM: 0.1, offsetXM: 0, offsetYM: 0, rotationDeg: 0 };
   const value = {

@@ -3,6 +3,7 @@ package io.waterleague.installation.controller;
 import io.waterleague.installation.dto.InstallRequest;
 import io.waterleague.installation.service.InstallationService;
 import io.waterleague.installation.view.InstallationView;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.security.Principal;
 import java.util.*;
@@ -38,38 +39,38 @@ public class InstallationController {
       @RequestParam(defaultValue = "0") int offset,
       @RequestParam(required = false) io.waterleague.strategy.entity.FacilityType type,
       @RequestParam(defaultValue = "false") boolean vacant,
-      @RequestParam(required = false) io.waterleague.installation.entity.SiteSurface surface) {
+      @RequestParam(required = false) io.waterleague.installation.entity.SiteSurface surface,
+      HttpServletRequest request) {
+    checkRead(request);
     return service.sites(districtId, x, y, offset, type, vacant, surface);
-  }
-
-  @GetMapping("/sites/{districtId}/street")
-  public io.waterleague.installation.view.SiteView street(
-      @PathVariable String districtId,
-      @RequestParam String sourceId,
-      @RequestParam double x,
-      @RequestParam double y) {
-    return service.street(districtId, sourceId, x, y);
   }
 
   @GetMapping("/sites/{districtId}/building")
   public io.waterleague.installation.view.SiteView building(
-      @PathVariable String districtId, @RequestParam String sourceId) {
+      @PathVariable String districtId, @RequestParam String sourceId, HttpServletRequest request) {
+    checkRead(request);
     return service.building(districtId, sourceId);
   }
 
-  @GetMapping("/sites/{districtId}/parking")
-  public io.waterleague.installation.view.SiteView parking(
+  @GetMapping("/sites/{districtId}/ground")
+  public io.waterleague.installation.view.SiteView ground(
       @PathVariable String districtId,
-      @RequestParam String sourceId,
       @RequestParam double x,
-      @RequestParam double y) {
-    return service.parking(districtId, sourceId, x, y);
+      @RequestParam double y,
+      HttpServletRequest request) {
+    checkRead(request);
+    return service.ground(districtId, x, y);
   }
 
   @GetMapping("/sites/{districtId}/{cellId}")
   public io.waterleague.installation.view.SiteView site(
-      @PathVariable String districtId, @PathVariable String cellId) {
+      @PathVariable String districtId, @PathVariable String cellId, HttpServletRequest request) {
+    checkRead(request);
     return service.site(districtId, cellId);
+  }
+
+  private void checkRead(HttpServletRequest request) {
+    rates.check("native-site:" + json.hash(request.getRemoteAddr()), 300, 60);
   }
 
   @PostMapping

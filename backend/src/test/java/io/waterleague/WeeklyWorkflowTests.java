@@ -104,9 +104,9 @@ class WeeklyWorkflowTests extends PostgresIntegrationTest {
   @Test
   void tiesSumExactlyAndMissingMinutePreventsWinner() {
     String name = "weekly_" + UUID.randomUUID().toString().substring(0, 8);
-    contribution("2419953", name, "1.25", 10);
-    contribution("2419953", name + "c", "0.75", 10);
-    UUID delayed = contribution("2410520", name + "b", "2", 9);
+    contribution("11200", name, "1.25", 10);
+    contribution("11200", name + "c", "0.75", 10);
+    UUID delayed = contribution("11680", name + "b", "2", 9);
     var pending = service.dashboard(name).previous();
     assertThat(pending.status()).isEqualTo("PROVISIONAL");
     assertThat(pending.expectedMinutes() - pending.evaluatedMinutes()).isEqualTo(1);
@@ -129,15 +129,14 @@ class WeeklyWorkflowTests extends PostgresIntegrationTest {
         delayed);
     var completed = service.dashboard(null).previous();
     assertThat(completed.status()).isEqualTo("FINAL");
-    assertThat(completed.winnerDistrictIds()).containsExactlyInAnyOrder("2419953", "2410520");
+    assertThat(completed.winnerDistrictIds()).containsExactlyInAnyOrder("11200", "11680");
     assertThat(completed.own()).isNull();
   }
 
   @Test
   void expiredSeasonCapsExpectedMinutesBeforeCleanupAndPreservesFinalRank() {
     var installation =
-        contribution(
-            "2419953", "season_" + UUID.randomUUID().toString().substring(0, 8), "1.25", 10);
+        contribution("11200", "season_" + UUID.randomUUID().toString().substring(0, 8), "1.25", 10);
     var original = service.dashboard(null).previous();
     db.update(
         "UPDATE shared_installations SET"
@@ -171,8 +170,7 @@ class WeeklyWorkflowTests extends PostgresIntegrationTest {
     assertThat(empty.status()).isEqualTo("EMPTY");
     assertThat(empty.districts()).hasSize(25).allMatch(d -> d.rank() == null);
     assertThat(empty.players()).isEmpty();
-    contribution(
-        "2419953", "negative_" + UUID.randomUUID().toString().substring(0, 8), "-0.125", 10);
+    contribution("11200", "negative_" + UUID.randomUUID().toString().substring(0, 8), "-0.125", 10);
     var result = service.dashboard(null).previous();
     assertThat(result.players().getFirst().scoreM3()).isEqualByComparingTo("-0.125");
     assertThat(result.winnerDistrictIds()).isEmpty();
@@ -181,8 +179,7 @@ class WeeklyWorkflowTests extends PostgresIntegrationTest {
   @Test
   void partialMinuteUsesSecondsAndDoesNotFinalizeWithOneSecondMissing() {
     var id =
-        contribution(
-            "2419953", "partial_" + UUID.randomUUID().toString().substring(0, 8), "0.25", 1);
+        contribution("11200", "partial_" + UUID.randomUUID().toString().substring(0, 8), "0.25", 1);
     db.update(
         "UPDATE shared_installations SET"
             + " installed_at=?,season_ends_at=?,physics_policy='INSTALLATION_SECOND_V2' WHERE id=?",
@@ -217,8 +214,7 @@ class WeeklyWorkflowTests extends PostgresIntegrationTest {
   @Test
   void legacyPartialMinuteStillUsesOriginalStartAndDuration() {
     var id =
-        contribution(
-            "2419953", "legacy_" + UUID.randomUUID().toString().substring(0, 8), "0.5", 10);
+        contribution("11200", "legacy_" + UUID.randomUUID().toString().substring(0, 8), "0.5", 10);
     db.update(
         "UPDATE shared_installations SET installed_at=installed_at-interval '42.5 seconds' WHERE"
             + " id=?",

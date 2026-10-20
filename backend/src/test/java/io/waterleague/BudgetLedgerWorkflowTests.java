@@ -73,7 +73,7 @@ class BudgetLedgerWorkflowTests extends PostgresIntegrationTest {
             "",
             "",
             true,
-            "2410520",
+            "11680",
             "AFFILIATED");
     accounts.add(account);
     var actor =
@@ -107,7 +107,12 @@ class BudgetLedgerWorkflowTests extends PostgresIntegrationTest {
 
   InstallRequest request(String cell) {
     return new InstallRequest(
-        "2410520", cell, FacilityType.PERMEABLE_PAVEMENT, new BigDecimal("20"));
+        "11680",
+        cell.equals("G1")
+            ? NativeSiteFixtures.cell(sites, "11680", FacilityType.PERMEABLE_PAVEMENT, 0).cellId()
+            : cell,
+        FacilityType.PERMEABLE_PAVEMENT,
+        new BigDecimal("20"));
   }
 
   @Test
@@ -117,7 +122,7 @@ class BudgetLedgerWorkflowTests extends PostgresIntegrationTest {
     var anon = new Actor(null, HttpClient.newHttpClient());
     assertThat(get(anon, "/budget/ledger").statusCode()).isEqualTo(401);
     var candidates =
-        sites.district("2410520").values().stream()
+        NativeSiteFixtures.sites(sites, "11680").values().stream()
             .filter(
                 site ->
                     site.allowedTypes().contains("PERMEABLE_PAVEMENT")
@@ -214,7 +219,12 @@ class BudgetLedgerWorkflowTests extends PostgresIntegrationTest {
     var one = installations.install(a.account().username(), request("G1"));
     var two = installations.install(b.account().username(), request("G1"));
     var anonymous = new Actor(null, HttpClient.newHttpClient());
-    var response = get(anonymous, "/weekly/sites/2410520/G1");
+    var response =
+        get(
+            anonymous,
+            "/weekly/sites/11680/"
+                + NativeSiteFixtures.cell(sites, "11680", FacilityType.PERMEABLE_PAVEMENT, 0)
+                    .cellId());
     assertThat(response.statusCode()).isEqualTo(200);
     assertThat(response.body()).contains(one.id().toString(), two.id().toString());
     var page = json.tree(response.body());
@@ -224,7 +234,15 @@ class BudgetLedgerWorkflowTests extends PostgresIntegrationTest {
       assertThat(row.path("seasonEndsAt").asString()).isEqualTo(one.seasonEndsAt().toString());
     }
     assertThat(response.body()).doesNotContain("password", "sourceBudgetPolicy", "costSnapshot");
-    assertThat(get(anonymous, "/weekly/sites/2410520/G1?after=invalid").statusCode())
+    assertThat(
+            get(
+                    anonymous,
+                    "/weekly/sites/11680/"
+                        + NativeSiteFixtures.cell(
+                                sites, "11680", FacilityType.PERMEABLE_PAVEMENT, 0)
+                            .cellId()
+                        + "?after=invalid")
+                .statusCode())
         .isEqualTo(400);
   }
 

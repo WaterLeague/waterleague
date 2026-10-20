@@ -42,9 +42,9 @@ public class HistoricalSubmissionRepository {
             + " OVER(PARTITION BY j.owner_id,s.rules_hash ORDER BY s.difference_m3"
             + " DESC,j.created_at,j.id) choice FROM historical_submissions s JOIN"
             + " historical_experiments j ON j.id=s.job_id JOIN accounts a ON a.id=j.owner_id WHERE"
-            + " s.event_id=? AND j.state='SUCCEEDED' AND s.difference_m3 IS NOT NULL AND"
-            + " a.enabled=true AND a.approval_status='APPROVED') ranked WHERE choice=1) board"
-            + " WHERE board_position<=100 ORDER BY"
+            + " s.event_id=? AND j.source_dataset='SEOUL_NGII_GAME_V2' AND j.state='SUCCEEDED' AND"
+            + " s.difference_m3 IS NOT NULL AND a.enabled=true AND a.approval_status='APPROVED')"
+            + " ranked WHERE choice=1) board WHERE board_position<=100 ORDER BY"
             + " rules_hash,difference_m3 DESC,created_at,id",
         (r, n) ->
             Map.<String, Object>of(

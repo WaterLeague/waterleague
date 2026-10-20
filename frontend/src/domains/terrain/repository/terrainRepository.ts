@@ -4,16 +4,16 @@ import type { Terrain } from '../entity/terrain';
 const sha = z.string().regex(/^[a-f0-9]{64}$/);
 const file = z.object({ sha256: sha, bytes: z.number().int().positive().max(1000000) });
 const metadata = z.object({
-  id: z.literal('seoul-copernicus-dsm-90m-v1'),
-  width: z.literal(415),
+  id: z.literal('seoul-copernicus-dsm-native-90m-v1'),
+  width: z.literal(416),
   height: z.literal(340),
   origin: z.tuple([z.number().finite(), z.number().finite()]),
   spacing: z.tuple([z.literal(90), z.literal(-90)]),
-  districtIds: z.array(z.string()).length(25),
+  districtIds: z.array(z.string().regex(/^11\d{3}$/)).length(25),
   files: z.object({ 'height-f32le.bin': file, 'district-u8.bin': file, 'cover-u8.bin': file }),
   modelInput: z.literal(false),
 });
-const ROOT = '/data/seoul-terrain-v1/';
+const ROOT = '/data/seoul-terrain-native-v1/';
 let cached: Terrain | null = null;
 async function read(file: string, hash: string, signal: AbortSignal, bytes: number) {
   const response = await fetch(ROOT + file, { signal, credentials: 'same-origin' });
@@ -29,7 +29,7 @@ export async function loadTerrain(signal: AbortSignal): Promise<Terrain> {
   if (cached) return cached;
   const raw = await read(
     'terrain.json',
-    '67feb6746bef04546da5dc9314e100b4829a45346938d9458eb09d62421c5f8b',
+    '020aa06f0ce1eef85c13546c40c5a10ac604fad99b127cb7c9d6c0e58fec9bad',
     signal,
     20000
   );

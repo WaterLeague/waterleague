@@ -46,13 +46,13 @@ class ApiSecurityTests extends PostgresIntegrationTest {
   }
 
   @Test
-  void publicInfrastructureVersionsStayReadableWithoutOpeningPrivateEndpoints() throws Exception {
-    var current = get("/api/v1/infrastructure/seoul-public-20261019-v3");
-    var old = get("/api/v1/infrastructure/seoul-public-20261018-v2");
+  void nativeInfrastructureStaysPublicWithoutOpeningOtherVersionsOrPrivateEndpoints()
+      throws Exception {
+    var current = get("/api/v1/infrastructure/seoul-native-infrastructure-20261020-v1");
     assertThat(current.statusCode()).isEqualTo(200);
-    assertThat(old.statusCode()).isEqualTo(200);
-    assertThat(current.body()).contains("PUBLIC_MAPPED_BUILDING", "W653831038");
-    assertThat(old.body()).doesNotContain("PUBLIC_MAPPED_BUILDING");
+    assertThat(current.body()).contains("LOCATION_POINT", "UNKNOWN");
+    assertThat(current.body()).doesNotContain("PUBLIC_MAPPED_BUILDING", "PUBLIC_MAPPED_FOOTPRINT");
+    assertThat(get("/api/v1/infrastructure/seoul-public-20261018-v2").statusCode()).isEqualTo(401);
     assertThat(get("/api/v1/infrastructure/unknown").statusCode()).isEqualTo(401);
   }
 

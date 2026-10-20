@@ -9,7 +9,9 @@ it('서버와 같은 경계·벽체·회전·오목 도형 사례 및 좌표 이
     for (const offset of [0, 203000]) {
       const ground = {
         center: e.center.map((v) => v + offset) as MapPoint,
-        coordinates: e.ring.map((p) => p.map((v) => v + offset) as MapPoint),
+        polygons: e.polygons.map((part) =>
+          part.map((ring) => ring.map((p) => p.map((v) => v + offset) as MapPoint))
+        ),
         modelHash: 'a'.repeat(64),
       };
       const g = cisternGeometry(ground, e.area, e.depth, e.layout)!;
@@ -21,7 +23,10 @@ it('서버와 같은 경계·벽체·회전·오목 도형 사례 및 좌표 이
             expect(g.coordinates[i][j] - offset).toBeCloseTo(e.expected[i][j], 8);
       expect(
         cisternGeometry(
-          { ...ground, coordinates: [...ground.coordinates].reverse() },
+          {
+            ...ground,
+            polygons: ground.polygons.map((part) => part.map((ring) => [...ring].reverse())),
+          },
           e.area,
           e.depth,
           e.layout
@@ -44,7 +49,7 @@ it('미입력·범위·정밀도 오류 거부와 실제 외곽의 색상 분리
     const g = cisternGeometry(
       {
         center: e.center as MapPoint,
-        coordinates: e.ring as MapPoint[],
+        polygons: e.polygons as MapPoint[][][],
         modelHash: 'a'.repeat(64),
       },
       e.area,

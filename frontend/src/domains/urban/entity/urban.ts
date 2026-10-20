@@ -4,7 +4,10 @@ export type Street = {
   class: string;
   districtId: string;
   widthM: number;
-  widthSource: 'OSM_WIDTH_TAG' | 'DISPLAY_ASSUMPTION';
+  widthSource: 'OSM_WIDTH_TAG' | 'DISPLAY_ASSUMPTION' | 'NOT_CONFIRMED';
+  nativeSourceRole?: string;
+  nativeTrafficDirection?: 'BIDIRECTIONAL' | 'UNKNOWN';
+  nativePolygons?: [number, number][][][];
   walk: boolean;
   motor: boolean;
   oneway: number;

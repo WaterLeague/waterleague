@@ -98,7 +98,7 @@ class SharedResearchWorkflowTests extends PostgresIntegrationTest {
             "",
             "",
             true,
-            "2419953",
+            "11200",
             "AFFILIATED"));
     var actor =
         new Actor(
@@ -251,9 +251,9 @@ class SharedResearchWorkflowTests extends PostgresIntegrationTest {
     db.update(
         "INSERT INTO"
             + " shared_installations(id,occupied_site,district_id,cell_id,owner_id,model_hash,facility_type,area_m2,cost,installed_at)"
-            + " VALUES(?,?,'2419953','G1',?,?,'RAIN_GARDEN',10,5600000,?)",
+            + " VALUES(?,?,'11200','G1',?,?,'RAIN_GARDEN',10,5600000,?)",
         i,
-        "2419953:G1",
+        "11200:G1",
         a.id(),
         modelHash,
         java.sql.Timestamp.from(start));
@@ -591,9 +591,9 @@ class SharedResearchWorkflowTests extends PostgresIntegrationTest {
     db.update(
         "INSERT INTO"
             + " shared_installations(id,occupied_site,district_id,cell_id,owner_id,model_hash,facility_type,area_m2,cost,installed_at,budget_policy)"
-            + " VALUES(?,?,'2419953','DO_NOT_EXPORT',?,?,'RAIN_GARDEN',10,1000,now(),?)",
+            + " VALUES(?,?,'11200','DO_NOT_EXPORT',?,?,'RAIN_GARDEN',10,1000,now(),?)",
         unrelated,
-        "2419953:DO_NOT_EXPORT",
+        "11200:DO_NOT_EXPORT",
         owner.id(),
         "a".repeat(64),
         "{\"marker\":\"DO_NOT_EXPORT\"}");

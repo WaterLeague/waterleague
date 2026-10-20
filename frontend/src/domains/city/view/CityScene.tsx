@@ -521,7 +521,7 @@ const CityScene = memo(function CityScene({
   preview: { site: SharedSite; placement: Placement } | null;
   onBuilding: (districtId: string, b: CityBuilding) => void;
   onStreet?: (sourceId: string, point: [number, number]) => void;
-  onParking: (sourceId: string, point: [number, number]) => void;
+  onParking?: (sourceId: string, point: [number, number]) => void;
   eligibleRoofs: ReadonlySet<string>;
   occupiedRoofs: ReadonlySet<string>;
   facilityType: FacilityType | '';
@@ -695,7 +695,6 @@ const CityScene = memo(function CityScene({
               eligibleRoofs={eligibleRoofs}
               occupiedRoofs={occupiedRoofs}
               buildings={city.overviewBuildings}
-              city={city}
               ownDistrictId={ownDistrictId}
               onBuilding={onBuilding}
             />
@@ -709,7 +708,6 @@ const CityScene = memo(function CityScene({
                 occupiedRoofs={occupiedRoofs}
                 buildings={t.buildings}
                 onBuilding={onBuilding}
-                city={city}
                 ownDistrictId={ownDistrictId}
               />
             ))}
@@ -940,19 +938,9 @@ function SiteSurface({
     </group>
   );
 }
-function inRing([x, y]: [number, number], ring: [number, number][]) {
-  let inside = false;
-  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
-    const [a, b] = ring[i],
-      [c, d] = ring[j];
-    if (b > y !== d > y && x < ((c - a) * (y - b)) / (d - b) + a) inside = !inside;
-  }
-  return inside;
-}
 function DistrictBuildings({
   buildings,
   publicBuildings,
-  city,
   ownDistrictId,
   onBuilding,
   eligibleRoofs,
@@ -961,7 +949,6 @@ function DistrictBuildings({
 }: {
   buildings: CityBuilding[];
   publicBuildings: ReadonlySet<string>;
-  city: City;
   ownDistrictId: string | null;
   onBuilding: (districtId: string, b: CityBuilding) => void;
   eligibleRoofs: ReadonlySet<string>;
@@ -969,33 +956,23 @@ function DistrictBuildings({
   facilityType: FacilityType | '';
 }) {
   function selectBuilding(b: CityBuilding) {
-    const district = city.districts.find((d) =>
-      d.polygons.some(
-        (p) => inRing(b.center, p[0]) && !p.slice(1).some((hole) => inRing(b.center, hole))
-      )
-    );
-    if (district) onBuilding(district.id, b);
+    onBuilding(b.districtId, b);
   }
   const groups = useMemo(() => {
-    const district = city.districts.find((d) => d.id === ownDistrictId);
     const buckets = new Map<
       string,
       { eligible: boolean; other: boolean; buildings: CityBuilding[] }
     >();
     for (const b of buildings) {
       if (publicBuildings.has(b.id)) continue;
-      const other =
-        !!district &&
-        !district.polygons.some(
-          (p) => inRing(b.center, p[0]) && !p.slice(1).some((h) => inRing(b.center, h))
-        );
+      const other = !!ownDistrictId && b.districtId !== ownDistrictId;
       const eligible = eligibleRoofs.has(b.id) && !occupiedRoofs.has(b.id);
       const key = `${eligible}:${other}`;
       if (!buckets.has(key)) buckets.set(key, { eligible, other, buildings: [] });
       buckets.get(key)!.buildings.push(b);
     }
     return [...buckets.entries()];
-  }, [buildings, publicBuildings, city, ownDistrictId, eligibleRoofs, occupiedRoofs]);
+  }, [buildings, publicBuildings, ownDistrictId, eligibleRoofs, occupiedRoofs]);
   return (
     <>
       {groups.map(([key, values]) => (

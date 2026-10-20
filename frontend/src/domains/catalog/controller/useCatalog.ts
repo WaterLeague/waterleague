@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { loadCatalog } from '../repository/catalogRepository';
-export function useCatalog() {
+export function useCatalog(enabled = true) {
   const [data, setData] = useState<Awaited<ReturnType<typeof loadCatalog>> | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [attempt, setAttempt] = useState(0);
   useEffect(() => {
+    if (!enabled) return;
     const abort = new AbortController();
     setError(null);
     loadCatalog(abort.signal)
@@ -16,6 +17,6 @@ export function useCatalog() {
           setError(error instanceof Error ? error.message : '자료 연결을 확인해 주세요.');
       });
     return () => abort.abort();
-  }, [attempt]);
+  }, [enabled, attempt]);
   return { data, error, retry: () => setAttempt((a) => a + 1) };
 }

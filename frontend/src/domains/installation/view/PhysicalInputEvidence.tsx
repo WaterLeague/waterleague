@@ -6,62 +6,50 @@ export function PhysicalInputEvidence({ site }: { site: SharedSite }) {
   return (
     <details className="budget-evidence">
       <summary>이 위치의 물리 계산 입력</summary>
-      {p.streetPlacement && (
-        <p>
-          {p.streetPlacement.role === 'ROADWAY' ? '차도' : '인도·보행로'} 폭{' '}
-          {p.streetPlacement.widthM}m 설계 구역입니다. 공개 중심선({p.streetPlacement.sourceDate}
-          )에서 만든 면적이며 실제 도로 부지 경계나 시공 승인 면적은 아닙니다.
-        </p>
-      )}
       <dl className="physical-input-values">
         <dt>도형 기반 유출 폭</dt>
         <dd>{number.format(p.runoffWidthM)} m</dd>
         <dt>도형 장축 길이</dt>
         <dd>{number.format(p.flowLengthM)} m</dd>
         <dt>경사</dt>
-        <dd>
-          {number.format(p.slopePercent)}% ·{' '}
-          {p.slopeMethod === 'NGII_2025_90M_HORN_TERRAIN_PROXY'
-            ? '공개 DEM 산정'
-            : '자료 미확보·설계값'}
-        </dd>
-        <dt>포장·지붕 재질</dt>
-        <dd>{p.surfaceTag ?? '태그 미확보'}</dd>
+        <dd>{number.format(p.slopePercent)}% · 공통 비교 설계값</dd>
+        <dt>현장 표면 재료</dt>
+        <dd>미확인</dd>
         {p.nImpervious !== undefined && (
           <>
-            <dt>표면 조도</dt>
-            <dd>{p.nImpervious} · 재질별 문헌값</dd>
+            <dt>불투수 참조 조도</dt>
+            <dd>{p.nImpervious} · 공통 문헌값</dd>
           </>
         )}
         {site.kind === 'GROUND' && (
           <>
-            <dt>심토토성</dt>
-            <dd>{p.soilClass ?? '단일 토성 확인 불가'}</dd>
-          </>
-        )}
-        {p.conductivityMmH !== undefined && (
-          <>
-            <dt>원지반 투수계수</dt>
-            <dd>{number.format(p.conductivityMmH)} mm/h · 토성군 문헌 추정</dd>
+            <dt>현장 토성</dt>
+            <dd>미확인</dd>
+            <dt>참조 토양</dt>
+            <dd>Loam 문헌 시나리오</dd>
+            {p.conductivityMmH !== undefined && (
+              <>
+                <dt>참조 투수계수</dt>
+                <dd>{number.format(p.conductivityMmH)} mm/h</dd>
+              </>
+            )}
           </>
         )}
       </dl>
-      <p>유출 폭은 면적을 도형 장축으로 나눈 값입니다. 실제 배수구 방향은 확인되지 않았습니다.</p>
-      {p.slopeMethod === 'NGII_2025_90M_HORN_TERRAIN_PROXY' && (
-        <p>
-          2025 국토지리정보원 90m DEM의 지역 경사입니다. 개별 포장면의 실측 경사나 옥상 경사가
-          아닙니다.
-        </p>
-      )}
-      {p.conductivityRangeMmH && (
-        <p>
-          토성군 문헌 범위 {p.conductivityRangeMmH.map((v) => number.format(v)).join('–')} mm/h 중
-          낮은 값으로 계산합니다. 도시 성토·다짐 상태와 시공 재료는 별도입니다.
-        </p>
-      )}
       <p>
-        기준 표면 불투수율 100%는 선택한 옥상·포장면의 모델 조건이며 서울 전체의 비율이 아닙니다.
+        유출 폭은 면적/장축의 집약 값입니다. 분리된 면 사이의 흐름과 실제 배수구 방향은
+        미확인입니다.
       </p>
+      <p>
+        지붕·포장면은 불투수 참조, 경지계는 공개 분류별 투수 참조 조건으로 비교합니다. 현장
+        경사·재료·토양과 시공 적합성은 미확인입니다.
+      </p>
+      {!!site.referenceInfrastructure?.references.length && (
+        <p>
+          공개 시설 위치점 {site.referenceInfrastructure.references.length}개가 후보 안에 있습니다.
+          실제 부지·수직 위치·운영 여부의 확인은 필요합니다.
+        </p>
+      )}
       <a
         href="https://nepis.epa.gov/Exe/ZyPURL.cgi?Dockey=P10145M6.TXT"
         target="_blank"

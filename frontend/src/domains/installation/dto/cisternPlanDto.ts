@@ -5,9 +5,9 @@ import { cisternLayoutRequestDto, cisternGeometryDto } from './cisternLayoutDto'
 import { cisternGeometry } from '../service/cisternLayoutService';
 const hash = z.string().regex(/^[a-f0-9]{64}$/);
 export const cisternPlanRequestDto = z.object({
-  districtId: z.string().regex(/^\d{7}$/),
-  roofCellId: z.string().regex(/^R[A-Z0-9-]{1,19}$/),
-  groundCellId: z.string().regex(/^G[A-Z0-9-]{1,19}$/),
+  districtId: z.string().regex(/^11\d{3}$/),
+  roofCellId: z.string().regex(/^C[a-f0-9]{24}$/),
+  groundCellId: z.string().regex(/^C[a-f0-9]{24}$/),
   roofModelHash: hash,
   groundModelHash: hash,
   captureAreaM2: z.number().finite().positive(),

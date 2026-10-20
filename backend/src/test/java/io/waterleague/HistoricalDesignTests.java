@@ -56,7 +56,7 @@ class HistoricalDesignTests extends PostgresIntegrationTest {
             "",
             "",
             true,
-            "2410520",
+            "11680",
             "AFFILIATED"));
     var event = disasters.catalog().events().getFirst();
     eventId = event.id();
@@ -65,7 +65,7 @@ class HistoricalDesignTests extends PostgresIntegrationTest {
 
   HistoricalDesignRequest.Item item(String district, String area, int second) {
     var site =
-        sites.district(district).values().stream()
+        NativeSiteFixtures.sites(sites, district).values().stream()
             .filter(
                 s ->
                     s.existingInfrastructure() == null
@@ -97,7 +97,7 @@ class HistoricalDesignTests extends PostgresIntegrationTest {
         service.save(
             owner,
             eventId,
-            request(0, List.of(item("2419953", "20", 137), item("2410520", "20", 197))));
+            request(0, List.of(item("11200", "20", 137), item("11680", "20", 197))));
     assertThat(first.revision()).isEqualTo(1);
     assertThat(first.snapshot().path("placements").size()).isEqualTo(2);
     var again = new HistoricalDesignRepository(db).latest(owner, eventId).orElseThrow();
@@ -132,8 +132,8 @@ class HistoricalDesignTests extends PostgresIntegrationTest {
 
   @Test
   void simultaneousDifferentEditsAcceptOneRevisionAndRetryIsIdempotent() throws Exception {
-    var a = request(0, List.of(item("2419953", "20", 137)));
-    var b = request(0, List.of(item("2410520", "20", 197)));
+    var a = request(0, List.of(item("11200", "20", 137)));
+    var b = request(0, List.of(item("11680", "20", 197)));
     var gate = new CountDownLatch(1);
     try (var threads = Executors.newFixedThreadPool(2)) {
       var outcomes = new ArrayList<Future<String>>();
@@ -172,7 +172,7 @@ class HistoricalDesignTests extends PostgresIntegrationTest {
 
   @Test
   void locationTimeBudgetAndPublicOccupancyFailuresDoNotAppend() {
-    var p = item("2419953", "20", 137);
+    var p = item("11200", "20", 137);
     assertThatThrownBy(() -> service.save(owner, eventId, request(0, List.of(p, p))))
         .isInstanceOf(DomainException.class);
     var future =
@@ -190,20 +190,15 @@ class HistoricalDesignTests extends PostgresIntegrationTest {
                 service.save(
                     owner,
                     eventId,
-                    request(0, List.of(item("2419953", "3000", 20), item("2410520", "3000", 40)))))
+                    request(0, List.of(item("11200", "3000", 20), item("11680", "3000", 40)))))
         .isInstanceOfSatisfying(
             DomainException.class, e -> assertThat(e.code()).isEqualTo(ErrorCode.BUDGET_EXCEEDED));
-    var occupied =
-        sites.district("2419953").values().stream()
-            .filter(s -> s.existingInfrastructure() != null)
-            .findFirst()
-            .orElseThrow();
     var invalid =
         new HistoricalDesignRequest.Item(
             UUID.randomUUID(),
-            occupied.districtId(),
-            occupied.cellId(),
-            FacilityType.valueOf(occupied.allowedTypes().getFirst()),
+            p.districtId(),
+            "RW653831038",
+            p.facilityType(),
             BigDecimal.ONE,
             start);
     assertThatThrownBy(() -> service.save(owner, eventId, request(0, List.of(invalid))))
@@ -213,7 +208,7 @@ class HistoricalDesignTests extends PostgresIntegrationTest {
 
   @Test
   void ownershipEventAndImmutableFacilityIdentityRemainSeparate() {
-    var p = item("2419953", "20", 137);
+    var p = item("11200", "20", 137);
     var first = service.save(owner, eventId, request(0, List.of(p)));
     assertThat(service.get(UUID.randomUUID(), eventId).revision()).isZero();
     assertThatThrownBy(() -> service.revision(UUID.randomUUID(), eventId, 1))
@@ -234,7 +229,7 @@ class HistoricalDesignTests extends PostgresIntegrationTest {
             start.plusSeconds(200));
     assertThatThrownBy(() -> service.save(owner, eventId, request(1, List.of(changed))))
         .isInstanceOf(DomainException.class);
-    var second = service.save(owner, eventId, request(1, List.of(p, item("2410520", "20", 197))));
+    var second = service.save(owner, eventId, request(1, List.of(p, item("11680", "20", 197))));
     assertThat(second.snapshot().path("placements"))
         .contains(first.snapshot().path("placements").get(0));
     assertThat(service.revision(owner, eventId, 1).snapshotSha256())
@@ -243,7 +238,7 @@ class HistoricalDesignTests extends PostgresIntegrationTest {
 
   @Test
   void storedSnapshotTamperingFailsClosed() {
-    service.save(owner, eventId, request(0, List.of(item("2419953", "20", 137))));
+    service.save(owner, eventId, request(0, List.of(item("11200", "20", 137))));
     db.update("UPDATE historical_design_revisions SET snapshot_raw='{}' WHERE owner_id=?", owner);
     assertThatThrownBy(() -> service.get(owner, eventId))
         .isInstanceOfSatisfying(
@@ -289,12 +284,12 @@ class HistoricalDesignTests extends PostgresIntegrationTest {
   @Test
   void allDistrictCalculationsBindOneSavedDesignAndPreserveItsCostSource() throws Exception {
     var items = new ArrayList<HistoricalDesignRequest.Item>();
-    for (String district : List.of("2410520", "2419953")) {
+    for (String district : List.of("11680", "11200")) {
       var site =
-          sites.district(district).values().stream()
+          NativeSiteFixtures.sites(sites, district).values().stream()
               .filter(
                   v ->
-                      v.cellId().startsWith("RW")
+                      v.kind().equals("ROOF")
                           && v.existingInfrastructure() == null
                           && v.maxAreaM2().compareTo(new BigDecimal("20")) >= 0)
               .sorted(Comparator.comparing(io.waterleague.installation.view.SiteView::cellId))
@@ -367,7 +362,7 @@ class HistoricalDesignTests extends PostgresIntegrationTest {
 
   @Test
   void staleForeignAndAlteredSavedDesignCalculationsAreRejectedAtomically() {
-    var p = item("2419953", "20", 137);
+    var p = item("11200", "20", 137);
     service.save(owner, eventId, request(0, List.of(p)));
     var dto = calculation(UUID.randomUUID(), 1, List.of(p));
     assertThatThrownBy(() -> history.create(UUID.randomUUID(), dto))
@@ -403,8 +398,8 @@ class HistoricalDesignTests extends PostgresIntegrationTest {
 
   @Test
   void executionRechecksWholeDesignBudgetEvenWhenSelectedDistrictFits() {
-    var a = item("2419953", "20", 137);
-    var saved = service.save(owner, eventId, request(0, List.of(a, item("2410520", "20", 197))));
+    var a = item("11200", "20", 137);
+    var saved = service.save(owner, eventId, request(0, List.of(a, item("11680", "20", 197))));
     var snapshot = saved.snapshot().deepCopy();
     for (var row : snapshot.path("placements"))
       if (!row.path("item").path("districtId").asString().equals(a.districtId()))
@@ -428,7 +423,7 @@ class HistoricalDesignTests extends PostgresIntegrationTest {
 
   @Test
   void simultaneousCancellationAndCalculationKeepOneConsistentSnapshot() throws Exception {
-    var p = item("2419953", "20", 137);
+    var p = item("11200", "20", 137);
     service.save(owner, eventId, request(0, List.of(p)));
     var dto = calculation(UUID.randomUUID(), 1, List.of(p));
     var gate = new CountDownLatch(1);

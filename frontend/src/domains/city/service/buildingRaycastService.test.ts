@@ -15,12 +15,15 @@ import type { CityBuilding } from '../entity/city';
 
 const buildings: CityBuilding[] = [
   {
-    id: 'way/1',
+    id: 'ngii:N1A_B0010000:' + '1'.repeat(64),
     center: [15, 15],
     areaM2: 800,
     heightM: 20,
     baseElevationM: 100,
-    heightSource: 'OSM_HEIGHT_TAG',
+    heightSource: 'FLOOR_COUNT_DISPLAY_ASSUMPTION',
+    districtId: '11200',
+    candidateId: null,
+    geometryEligibility: 'GEOMETRY_ONLY',
     polygons: [
       [
         [
@@ -41,12 +44,15 @@ const buildings: CityBuilding[] = [
     ],
   },
   {
-    id: 'way/2',
+    id: 'ngii:N1A_B0010000:' + '2'.repeat(64),
     center: [60, 15],
     areaM2: 900,
     heightM: 40,
     baseElevationM: 130,
-    heightSource: 'OSM_HEIGHT_TAG',
+    heightSource: 'FLOOR_COUNT_DISPLAY_ASSUMPTION',
+    districtId: '11200',
+    candidateId: null,
+    geometryEligibility: 'GEOMETRY_ONLY',
     polygons: [
       [
         [

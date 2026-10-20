@@ -17,8 +17,8 @@ class InfrastructureCatalogTests {
       throws Exception {
     var repository = new InfrastructureRepository(json);
     var view = new InfrastructureService(repository, new InfrastructureMapper()).referenceCatalog();
-    assertThat(repository.records()).hasSize(1707);
-    assertThat(view.assets()).hasSize(1615);
+    assertThat(repository.records()).hasSize(1696);
+    assertThat(view.assets()).hasSize(1604);
     assertThat(view.statusCounts())
         .containsEntry("SOURCE_DELETED", 90L)
         .containsEntry("DELETE_FLAG_UNKNOWN", 2L);
@@ -31,7 +31,7 @@ class InfrastructureCatalogTests {
               assertThat(a.operationStatus()).isEqualTo("UNKNOWN");
               assertThat(a.geometryEvidence())
                   .isEqualTo(
-                      a.footprint() == null
+                      a.footprint() == null || a.footprint().isNull()
                           ? "LOCATION_POINT"
                           : a.footprint().has("buildingId")
                               ? "PUBLIC_MAPPED_BUILDING"
@@ -40,30 +40,25 @@ class InfrastructureCatalogTests {
               assertThat(a.districtId()).isNotBlank();
             });
     assertThat(json.write(view)).doesNotContain("data/raw", "sourceProperties", "downloadForm");
-    assertThat(view.sources()).hasSize(11);
+    assertThat(view.sources()).hasSize(9);
     assertThat(view.sources().getFirst().path("fileModifiedAt").asString()).isEqualTo("2022-04-03");
     assertThat(view.sources().getFirst().path("portalUpdatedAt").asString())
         .isEqualTo("2026-10-03");
   }
 
   @Test
-  void mappedBasinsPreserveGeometryWithoutInventingCapacityOrHistoricalExistence()
-      throws Exception {
+  void pointReferencesDoNotInventFacilitiesFootprintsOrHistoricalOperations() throws Exception {
     var view =
         new InfrastructureService(new InfrastructureRepository(json), new InfrastructureMapper())
             .referenceCatalog();
-    var basins = view.assets().stream().filter(a -> a.kind().equals("RETENTION_BASIN")).toList();
-    assertThat(basins).hasSize(3);
-    assertThat(basins)
+    assertThat(view.assets())
         .allSatisfy(
-            a -> {
-              assertThat(a.kind()).isEqualTo("RETENTION_BASIN");
-              assertThat(a.verticalLayer()).isEqualTo("MAPPED_SURFACE");
-              assertThat(a.pumpSpecs().isNull()).isTrue();
-              assertThat(a.footprint().path("polygons").size()).isPositive();
-              assertThat(a.footprint().path("areaM2").asDouble()).isPositive();
-              assertThat(a.footprint().path("basis").asString())
-                  .isEqualTo("PUBLIC_OSM_MAPPING_NOT_SURVEYED_OR_AS_BUILT");
+            asset -> {
+              assertThat(asset.geometryEvidence()).isEqualTo("LOCATION_POINT");
+              assertThat(asset.footprint() == null || asset.footprint().isNull()).isTrue();
+              assertThat(asset.verticalLayer()).isEqualTo("UNKNOWN");
+              assertThat(asset.hydraulicStatus()).isEqualTo("UNCONNECTED");
+              assertThat(asset.districtId()).matches("11[0-9]{3}");
             });
   }
 
@@ -85,34 +80,25 @@ class InfrastructureCatalogTests {
   }
 
   @Test
-  void preservesPreviousCatalogAndMapsEightExplicitPumpBuildingsWithoutHistoricalClaims()
-      throws Exception {
-    var repository = new InfrastructureRepository(json);
-    var service = new InfrastructureService(repository, new InfrastructureMapper());
-    var old = service.referenceCatalog(true);
-    assertThat(old.version()).isEqualTo("seoul-public-20261018-v2");
-    assertThat(old.sha256()).isEqualTo(InfrastructureRepository.V2_SHA256);
-    assertThat(old.assets()).hasSize(1607);
-    assertThat(service.referenceCatalog().assets()).containsAll(old.assets());
-    var buildings =
-        service.referenceCatalog().assets().stream()
-            .filter(a -> a.geometryEvidence().equals("PUBLIC_MAPPED_BUILDING"))
-            .toList();
-    assertThat(buildings)
-        .hasSize(8)
-        .allSatisfy(
-            a -> {
-              assertThat(a.footprint().path("buildingId").asString()).startsWith("W");
-              assertThat(a.footprint().path("heightBasis").asString())
-                  .isEqualTo("EXISTING_CITY_DISPLAY_ASSUMPTION");
-              assertThat(a.validFrom()).isNull();
-              assertThat(a.hydraulicStatus()).isEqualTo("UNCONNECTED");
-            });
+  void nativePointAssociationsPreserveUnknownFootprintsAndThePinnedCatalog() throws Exception {
     var policy = new io.waterleague.infrastructure.repository.SurfaceOccupancyRepository(json);
-    for (var building : buildings) {
-      String cell = "R" + building.footprint().path("buildingId").asString();
-      assertThatThrownBy(() -> policy.exclusion(building.districtId(), cell, "wrong-hash", "ROOF"))
-          .isInstanceOf(IllegalStateException.class);
+    assertThat(policy.evidence().path("confirmedFootprintCount").asInt()).isZero();
+    assertThat(policy.evidence().path("historicalExistenceVerified").asBoolean()).isFalse();
+    assertThat(policy.evidence().path("sourceSha256").asString())
+        .isEqualTo(InfrastructureRepository.SHA256);
+    try (var input =
+        getClass().getResourceAsStream("/infrastructure/native-v1/associations.json")) {
+      var source =
+          json.tree(new String(input.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8));
+      assertThat(source.path("associations")).hasSize(1104);
+      assertThat(source.path("exclusions")).isEmpty();
+      for (var row : source.path("associations")) {
+        var references =
+            policy.forCandidate(row.path("districtId").asString(), row.path("cellId").asString());
+        assertThat(references.path("references")).contains(row);
+        assertThat(row.path("footprintVerified").asBoolean()).isFalse();
+        assertThat(row.path("verticalLayer").asString()).isEqualTo("UNKNOWN");
+      }
     }
   }
 }

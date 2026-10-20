@@ -294,7 +294,7 @@ export function HistoricalPanel({
         <div className="historical-sensitivity-action">
           <button
             className="outline-button"
-            disabled={!s.design.ready || working || !s.lab}
+            disabled={!s.design.ready || working || !s.selectedRain}
             onClick={() => void s.calculate(placed.site.cellId)}
           >
             {placed.facilityType === 'VEGETATIVE_SWALE'

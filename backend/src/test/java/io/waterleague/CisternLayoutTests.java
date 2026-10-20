@@ -13,6 +13,7 @@ class CisternLayoutTests {
   record Example(
       String name,
       List<List<Double>> ring,
+      List<List<List<List<Double>>>> polygons,
       List<Double> center,
       double area,
       double depth,
@@ -31,11 +32,23 @@ class CisternLayoutTests {
                   .map(p -> List.of(p.get(0) + offset, p.get(1) + offset))
                   .toList();
           var center = List.of(example.center().get(0) + offset, example.center().get(1) + offset);
+          var polygons =
+              example.polygons().stream()
+                  .map(
+                      part ->
+                          part.stream()
+                              .map(
+                                  boundary ->
+                                      boundary.stream()
+                                          .map(p -> List.of(p.get(0) + offset, p.get(1) + offset))
+                                          .toList())
+                              .toList())
+                  .toList();
           if (!example.contained()) {
             assertThatThrownBy(
                     () ->
                         CisternLayoutService.build(
-                            ring,
+                            polygons,
                             center,
                             "a".repeat(64),
                             example.area(),
@@ -47,7 +60,12 @@ class CisternLayoutTests {
           }
           var geometry =
               CisternLayoutService.build(
-                  ring, center, "a".repeat(64), example.area(), example.depth(), example.layout());
+                  polygons,
+                  center,
+                  "a".repeat(64),
+                  example.area(),
+                  example.depth(),
+                  example.layout());
           assertThat(geometry.contained()).as(example.name()).isTrue();
           assertThat(geometry.internalWidthM() * geometry.internalLengthM())
               .isCloseTo(example.area(), within(1e-8));
@@ -56,8 +74,19 @@ class CisternLayoutTests {
               for (int j = 0; j < 2; j++)
                 assertThat(geometry.coordinates().get(i).get(j) - offset)
                     .isCloseTo(example.expected().get(i).get(j), within(1e-8));
-          var reversed = new ArrayList<>(ring);
-          Collections.reverse(reversed);
+          var reversed =
+              polygons.stream()
+                  .map(
+                      part ->
+                          part.stream()
+                              .map(
+                                  boundary -> {
+                                    var points = new ArrayList<>(boundary);
+                                    Collections.reverse(points);
+                                    return List.copyOf(points);
+                                  })
+                              .toList())
+                  .toList();
           assertThat(
                   CisternLayoutService.build(
                       reversed,

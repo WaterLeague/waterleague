@@ -12,8 +12,8 @@ public record HistoricalSubmissionRequest(
     @NotBlank @Pattern(regexp = "seoul-[0-9]{8}") String eventId,
     @NotNull @Size(min = 1, max = 50) List<@Valid Item> placements) {
   public record Item(
-      @NotBlank @Pattern(regexp = "[0-9]{7}") String districtId,
-      @NotBlank @Size(max = 20) String cellId,
+      @NotBlank @Pattern(regexp = "11[0-9]{3}") String districtId,
+      @NotBlank @Pattern(regexp = "C[a-f0-9]{24}") String cellId,
       @NotNull FacilityType facilityType,
       @NotNull @DecimalMin("0.01") @Digits(integer = 10, fraction = 2) BigDecimal areaM2,
       @NotNull Instant installedAt,

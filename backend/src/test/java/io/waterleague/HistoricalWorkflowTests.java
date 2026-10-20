@@ -35,7 +35,7 @@ class HistoricalWorkflowTests extends PostgresIntegrationTest {
   @Autowired io.waterleague.disaster.service.DisasterService disasters;
   @Autowired JdbcTemplate db;
   @Autowired io.waterleague.common.service.JsonService json;
-  @Autowired io.waterleague.model.repository.LabModelRepository models;
+  @Autowired io.waterleague.rainfall.repository.ObservedGameRepository models;
   UUID owner;
   String cell;
   String hash;
@@ -57,33 +57,30 @@ class HistoricalWorkflowTests extends PostgresIntegrationTest {
             "",
             "",
             true,
-            "2410520",
+            "11680",
             "AFFILIATED"));
     hash =
         disasters.catalog().events().getFirst().regions().stream()
-            .filter(r -> r.districtId().equals("2419953"))
+            .filter(r -> r.districtId().equals("11200"))
             .findFirst()
             .orElseThrow()
             .modelHash();
     cell =
-        sites.district("2419953").keySet().stream()
-            .filter(id -> id.startsWith("RW"))
+        NativeSiteFixtures.sites(sites, "11200").keySet().stream()
+            .filter(id -> sites.require("11200", id).kind().equals("ROOF"))
             .findFirst()
             .orElseThrow();
   }
 
   HistoricalRequest request(UUID key, String id, FacilityType type, String amount) {
     return new HistoricalRequest(
-        key,
-        "2419953",
-        hash,
-        List.of(new HistoricalRequest.Item(id, type, new BigDecimal(amount))));
+        key, "11200", hash, List.of(new HistoricalRequest.Item(id, type, new BigDecimal(amount))));
   }
 
   HistoricalRequest timed(UUID key, Instant at, UUID parent) {
     return new HistoricalRequest(
         key,
-        "2419953",
+        "11200",
         hash,
         List.of(new HistoricalRequest.Item(cell, FacilityType.GREEN_ROOF, BigDecimal.ONE, at)),
         null,
@@ -94,14 +91,14 @@ class HistoricalWorkflowTests extends PostgresIntegrationTest {
   @Test
   void restoredDesignMustBindItsSavedSiteVersionAndKeepLegacyRetries() {
     var key = UUID.randomUUID();
-    var site = sites.require("2419953", cell);
+    var site = sites.require("11200", cell);
     var at =
         Instant.parse(models.require(hash).model().path("rainfall").path("start").asString())
             .plusSeconds(137);
     var wrong =
         new HistoricalRequest(
             key,
-            "2419953",
+            "11200",
             hash,
             List.of(
                 new HistoricalRequest.Item(
@@ -117,7 +114,7 @@ class HistoricalWorkflowTests extends PostgresIntegrationTest {
     var right =
         new HistoricalRequest(
             key,
-            "2419953",
+            "11200",
             hash,
             List.of(
                 new HistoricalRequest.Item(
@@ -187,9 +184,9 @@ class HistoricalWorkflowTests extends PostgresIntegrationTest {
   @Test
   void swaleUsesSameFixedWidthCapInHistoricalRequests() {
     int before = db.queryForObject("SELECT COUNT(*) FROM shared_installations", Integer.class);
-    String district = "2410520";
+    String district = "11680";
     var site =
-        sites.district(district).values().stream()
+        NativeSiteFixtures.sites(sites, district).values().stream()
             .filter(
                 c ->
                     c.allowedTypes().contains("VEGETATIVE_SWALE")
@@ -248,9 +245,9 @@ class HistoricalWorkflowTests extends PostgresIntegrationTest {
   @Test
   void trenchUsesSameFixedWidthCapInHistoricalRequests() {
     int before = db.queryForObject("SELECT COUNT(*) FROM shared_installations", Integer.class);
-    String district = "2410520";
+    String district = "11680";
     var site =
-        sites.district(district).values().stream()
+        NativeSiteFixtures.sites(sites, district).values().stream()
             .filter(
                 c ->
                     c.allowedTypes().contains("INFILTRATION_TRENCH")
@@ -295,59 +292,28 @@ class HistoricalWorkflowTests extends PostgresIntegrationTest {
   }
 
   @Test
-  void newHistoricalDesignRejectsCurrentMappedBasinButExistingRequestRemainsReplayable() {
-    String district = "2419954";
+  void pointReferenceRetainsUnknownSiteConditionsAndCurrentRequestIdempotency() throws Exception {
+    var site = NativeSiteFixtures.reference(sites);
     String model =
         disasters.catalog().events().getFirst().regions().stream()
-            .filter(r -> r.districtId().equals(district))
+            .filter(region -> region.districtId().equals(site.districtId()))
             .findFirst()
             .orElseThrow()
             .modelHash();
-    var key = UUID.randomUUID();
-    var blocked =
+    var dto =
         new HistoricalRequest(
-            key,
-            district,
+            UUID.randomUUID(),
+            site.districtId(),
             model,
             List.of(
                 new HistoricalRequest.Item(
-                    "G20695-54482", FacilityType.PERMEABLE_PAVEMENT, BigDecimal.ONE)));
-    assertThatThrownBy(() -> service.create(owner, blocked))
-        .isInstanceOfSatisfying(
-            DomainException.class,
-            e -> assertThat(e.code()).isEqualTo(ErrorCode.EXISTING_INFRASTRUCTURE));
-    assertThat(service.list(owner)).isEmpty();
-    var site =
-        sites.district(district).values().stream()
-            .filter(
-                s ->
-                    s.existingInfrastructure() == null
-                        && s.allowedTypes().contains("PERMEABLE_PAVEMENT"))
-            .findFirst()
-            .orElseThrow();
-    var job =
-        service.create(
-            owner,
-            new HistoricalRequest(
-                key,
-                district,
-                model,
-                List.of(
-                    new HistoricalRequest.Item(
-                        site.cellId(), FacilityType.PERMEABLE_PAVEMENT, BigDecimal.ONE))));
-    var old = json.tree(service.require(owner, job.id()).placements());
-    var row = (tools.jackson.databind.node.ObjectNode) old.get(0);
-    row.put("cellId", "G20695-54482");
-    row.remove("publicAssetPolicy");
-    String body = json.write(old), oldHash = json.hash(model + "\n" + body);
-    db.update(
-        "UPDATE historical_experiments SET placements=?,input_hash=? WHERE id=?",
-        body,
-        oldHash,
-        job.id());
-    assertThat(service.create(owner, blocked).id()).isEqualTo(job.id());
-    assertThat(service.require(owner, job.id()).placements()).isEqualTo(body);
-    assertThat(service.require(owner, job.id()).inputHash()).isEqualTo(oldHash);
+                    site.cellId(), FacilityType.PERMEABLE_PAVEMENT, BigDecimal.ONE)));
+    var job = service.create(owner, dto);
+    assertThat(service.create(owner, dto).id()).isEqualTo(job.id());
+    assertThat(site.referenceInfrastructure().path("references")).isNotEmpty();
+    assertThat(site.siteEligibility()).isEqualTo("UNKNOWN");
+    assertThat(service.require(owner, job.id()).placements())
+        .contains(site.cellId(), site.modelHash());
   }
 
   @Test
@@ -450,7 +416,7 @@ class HistoricalWorkflowTests extends PostgresIntegrationTest {
         new HistoricalRequest(
             dto.requestKey(),
             dto.districtId(),
-            districts.require("2410520").modelHash(),
+            districts.require("11680").modelHash(),
             dto.placements());
     assertThatThrownBy(() -> service.create(owner, wrong)).isInstanceOf(DomainException.class);
     assertThatThrownBy(
@@ -464,12 +430,12 @@ class HistoricalWorkflowTests extends PostgresIntegrationTest {
                     owner,
                     new HistoricalRequest(
                         UUID.randomUUID(),
-                        "2419953",
+                        "11200",
                         hash,
                         List.of(dto.placements().getFirst(), dto.placements().getFirst()))))
         .isInstanceOf(DomainException.class);
     var largeRoofs =
-        sites.district("2419953").values().stream()
+        NativeSiteFixtures.sites(sites, "11200").values().stream()
             .filter(
                 s ->
                     s.allowedTypes().contains("GREEN_ROOF")
@@ -485,7 +451,7 @@ class HistoricalWorkflowTests extends PostgresIntegrationTest {
     assertThatThrownBy(
             () ->
                 service.create(
-                    owner, new HistoricalRequest(UUID.randomUUID(), "2419953", hash, largeRoofs)))
+                    owner, new HistoricalRequest(UUID.randomUUID(), "11200", hash, largeRoofs)))
         .isInstanceOfSatisfying(
             DomainException.class, e -> assertThat(e.code()).isEqualTo(ErrorCode.BUDGET_EXCEEDED));
     assertThat(service.list(owner)).isEmpty();
@@ -507,7 +473,7 @@ class HistoricalWorkflowTests extends PostgresIntegrationTest {
         new io.waterleague.historical.entity.HistoricalExperiment(
             id,
             owner,
-            "2419953",
+            "11200",
             modelHash,
             inputHash,
             placements,

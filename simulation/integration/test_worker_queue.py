@@ -31,9 +31,10 @@ class WorkerQueueTests(unittest.TestCase):
             raise RuntimeError('전용 로컬 임시 DB 필요')
         if config.get('dbname') == conninfo_to_dict(os.environ.get('DATABASE_URL', '')).get('dbname'):
             raise RuntimeError('원본 DB 사용 거부')
-        cls.source = (worker.ROOT / 'data/models/seongsu-lab.json').read_bytes()
+        current = json.loads((worker.ROOT / 'data/models/current/catalog.json').read_bytes())
+        cls.source = worker.MODELS[current['defaultModelHash']]
         cls.model_hash = hashlib.sha256(cls.source).hexdigest()
-        cls.placements = '[{"cellId":"G1","facilityType":"RAIN_GARDEN","areaM2":40}]'
+        cls.placements = '[{"cellId":"G1","facilityType":"RAIN_GARDEN","areaM2":20}]'
         cls.input_hash = hashlib.sha256((cls.model_hash + '\n' + cls.placements).encode()).hexdigest()
 
     def connection(self):
@@ -55,7 +56,7 @@ class WorkerQueueTests(unittest.TestCase):
                           (strategy, self.owner))
         self.conn.execute("""INSERT INTO strategy_versions(id,strategy_id,revision,model_hash,
             input_hash,placements,events,design_note,cost,currency,created_at)
-            VALUES(%s,%s,1,%s,%s,%s,'[]','시험용',22400000,'KRW',now())""",
+            VALUES(%s,%s,1,%s,%s,%s,'[]','시험용',11200000,'KRW',now())""",
             (self.version, strategy, self.model_hash, self.input_hash, self.placements))
         self.conn.execute("""INSERT INTO research_searches(id,organization_id,requested_by,request_key,
             request_hash,model_hash,budget_krw,seed,top_k,candidates_per_arm,provenance,provenance_hash,created_at)
@@ -80,7 +81,7 @@ class WorkerQueueTests(unittest.TestCase):
                       self.placements, 'QUEUED', created]
             if kind == 'HISTORICAL':
                 columns.append('district_id')
-                values.append('2410520')
+                values.append('11680')
             self.conn.execute(psycopg.sql.SQL('INSERT INTO {} ({}) VALUES ({})').format(
                 queue.table(kind), psycopg.sql.SQL(',').join(map(psycopg.sql.Identifier, columns)),
                 psycopg.sql.SQL(',').join(psycopg.sql.Placeholder() for _ in values)), values)
@@ -91,7 +92,7 @@ class WorkerQueueTests(unittest.TestCase):
             input_hash = self.input_hash if same_input else hashlib.sha256(str(job_id).encode()).hexdigest()
             self.conn.execute("""INSERT INTO research_candidates(id,search_id,arm,ordinal,placements,
                 model_hash,input_hash,cost,state,created_at)
-                VALUES(%s,%s,%s,%s,%s,%s,%s,22400000,'QUEUED',%s)""",
+                VALUES(%s,%s,%s,%s,%s,%s,%s,11200000,'QUEUED',%s)""",
                 (job_id, self.group, arm, ordinal, self.placements, self.model_hash, input_hash, created))
         else:
             raise ValueError('알 수 없는 시험 큐')

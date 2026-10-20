@@ -11,7 +11,7 @@ export function infrastructureFocus(
   const fitted = footprint
     ? siteFocus(
         {
-          coordinates: footprint.polygons.flat(2),
+          polygons: footprint.polygons,
           kind: footprint.buildingId ? 'ROOF' : 'GROUND',
           heightM: footprint.displayHeightM ?? 0,
         },

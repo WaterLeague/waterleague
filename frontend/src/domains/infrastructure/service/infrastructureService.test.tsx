@@ -1,6 +1,6 @@
 import { expect, it } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
-import raw from '../../../../../backend/src/main/resources/infrastructure/seoul-public-20261019-v3.json';
+import raw from '../../../../../backend/src/main/resources/infrastructure/native-v1/catalog.json';
 import { infrastructureDto } from '../dto/infrastructureDto';
 import {
   publicInfrastructureBuildingIds,
@@ -34,25 +34,15 @@ it('전체 도시부터 모든 공개 시설 표시와 상세 선택 보존', ()
   ]);
 });
 
-it('지도 도형과 위치점을 구분하고 설치 제외·용량 미확인·ODbL 출처 표시', () => {
-  const asset = catalog.assets.find((a) => a.name === '잠실유수지')!;
-  const source = catalog.sources.find((s) => s.id === asset.sourceId)!;
-  const html = renderToStaticMarkup(
-    <InfrastructureEvidence asset={asset} source={source} historical />
-  );
-  expect(html).toContain('OpenStreetMap 도형 원문');
-  expect(html).toContain('ODbL 1.0');
-  expect(html).toContain('새 게임 시설을 설치할 수 없습니다');
-  expect(html).toContain('용량·현재 운영·과거 존속은 미확인');
-  expect(html).not.toContain('시설 기호는 부지 경계가 아닙니다');
+it('현재 공개 자료는 위치점으로 제공하며 시설 부지 경계를 생성하지 않음', () => {
+  expect(catalog.assets.every((asset) => asset.geometryEvidence === 'LOCATION_POINT')).toBe(true);
+  expect(catalog.assets.every((asset) => asset.footprint == null)).toBe(true);
   const layer = renderToStaticMarkup(
     <svg>
-      <InfrastructureFootprintsPlan assets={catalog.assets} selectedId={asset.id} />
+      <InfrastructureFootprintsPlan assets={catalog.assets} selectedId="" />
     </svg>
   );
-  expect(layer.match(/<path/g)).toHaveLength(11);
-  expect(layer).toContain('fill-rule="evenodd"');
-  expect(layer.match(/fill="#dda62e"/g)).toHaveLength(1);
+  expect(layer).not.toContain('<path');
 });
 
 it('자료 기준일·분당 양수량과 당시 재현 미확인을 함께 표시', () => {
@@ -70,32 +60,9 @@ it('자료 기준일·분당 양수량과 당시 재현 미확인을 함께 표�
   expect(infrastructureDto.safeParse({ ...catalog, usage: 'CALIBRATED' }).success).toBe(false);
 });
 
-it('공개 건물 도형과 높이 가정을 구분하고 3D 기호 치수를 계산값으로 안내하지 않음', () => {
-  const asset = catalog.assets.find((a) => a.footprint?.buildingId === 'W653831038')!;
-  const html = renderToStaticMarkup(
-    <InfrastructureEvidence
-      asset={asset}
-      source={catalog.sources.find((s) => s.id === asset.sourceId)!}
-      historical={false}
-    />
-  );
-  expect(html).toContain('같은 원본 건물의 옥상 후보');
-  expect(html).toContain('표시용 가정');
-  expect(html).toContain('실제 치수·용량·운전 상태를 나타내지 않습니다');
-  expect(asset.geometryEvidence).toBe('PUBLIC_MAPPED_BUILDING');
-  expect(publicInfrastructureBuildingIds(catalog.assets)).toContain('way/653831038');
-  expect(publicInfrastructureBuildingIds(catalog.assets).size).toBe(8);
-  expect(
-    infrastructureDto.safeParse({
-      ...catalog,
-      assets: [{ ...asset, footprint: { ...asset.footprint, displayHeightM: undefined } }],
-    }).success
-  ).toBe(false);
-});
-
-it('공개 시설 표시를 끄더라도 건물 후보 예약을 적용하고 자료 결측은 후보로 열지 않음', () => {
-  const original = new Set(['way/653831038', 'way/865253154']);
-  expect([...unreservedRoofIds(original, catalog.assets)]).toEqual(['way/865253154']);
-  expect(unreservedRoofIds(original, null).size).toBe(0);
-  expect(original.size).toBe(2);
+it('공개 위치점으로 지붕 후보를 예약하거나 높이·시설 경계를 추정하지 않음', () => {
+  expect(publicInfrastructureBuildingIds(catalog.assets).size).toBe(0);
+  const roofs = new Set(['ngii:N1A_B0010000:' + '1'.repeat(64)]);
+  expect([...unreservedRoofIds(roofs, catalog.assets)]).toEqual([...roofs]);
+  expect(roofs.size).toBe(1);
 });

@@ -90,7 +90,7 @@ public class CisternPlanService {
       snapshot.put(
           "tankGeometry",
           CisternLayoutService.build(
-              ground.coordinates(),
+              ground.polygons(),
               ground.center(),
               ground.modelHash(),
               request.tankAreaM2().doubleValue(),

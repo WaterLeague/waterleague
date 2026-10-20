@@ -21,12 +21,14 @@ export const publicAssetPolicyDto = z.object({
     'seoul-basin-footprints-20261018-v3',
     'seoul-basin-footprints-20261018-v4',
     'seoul-infrastructure-occupancy-20261019-v5',
+    'seoul-native-infrastructure-20261020-v1',
   ]),
   sha256: z.string().regex(/^[a-f0-9]{64}$/),
   sourceSha256: z.string().regex(/^[a-f0-9]{64}$/),
   scope: z.enum([
     'CURRENT_MAPPED_GEOMETRY_NEW_GROUND_PLACEMENTS_ONLY',
     'CURRENT_MAPPED_GROUND_AND_RESERVED_BUILDINGS',
+    'CURRENT_NATIVE_POINT_ASSOCIATIONS_REFERENCE_ONLY',
   ]),
   historicalExistenceVerified: z.literal(false),
 });
@@ -68,7 +70,32 @@ export const siteDto = z.object({
   cellId: z.string(),
   name: z.string(),
   kind: z.enum(['ROOF', 'GROUND']),
-  coordinates: z.array(point).min(4),
+  polygons: z
+    .array(z.array(z.array(point).min(4).max(20000)).min(1).max(500))
+    .min(1)
+    .max(1000),
+  sourceRole: z.enum([
+    'BUILDING_FOOTPRINT',
+    'ROAD_AREA',
+    'SIDEWALK_AREA',
+    'CULTIVATION_LANDSCAPE_AREA',
+  ]),
+  referenceInfrastructure: z
+    .object({
+      policy: publicAssetPolicyDto,
+      references: z
+        .array(
+          z.object({
+            assetId: z.string(),
+            assetName: z.string(),
+            relation: z.literal('PUBLIC_POINT_COVERED_BY_NATIVE_CANDIDATE'),
+            verticalLayer: z.literal('UNKNOWN'),
+            footprintVerified: z.literal(false),
+          })
+        )
+        .max(1000),
+    })
+    .nullish(),
   center: point,
   heightM: z.number().nonnegative(),
   areaM2: z.number().positive(),
@@ -96,9 +123,7 @@ export const siteDto = z.object({
     }),
   }),
   sourceIds: z.array(z.string()),
-  areaLimitBasis: z
-    .enum(['PUBLIC_FOOTPRINT_GEOMETRY', 'PUBLIC_CENTERLINE_DESIGN_STRIP'])
-    .optional(),
+  areaLimitBasis: z.enum(['PUBLIC_NATIVE_DESIGN_GEOMETRY']).optional(),
   siteEligibility: z.literal('UNKNOWN').optional(),
   inflowPolicy: z.literal('DIRECT_RAINFALL_ONLY').optional(),
   facilityDesignSet: z
@@ -123,7 +148,7 @@ export const siteDto = z.object({
       runoffWidthM: z.number().positive(),
       widthMethod: z.literal('FOOTPRINT_AREA_OVER_LONG_AXIS'),
       slopePercent: z.number().nonnegative(),
-      slopeMethod: z.enum(['NGII_2025_90M_HORN_TERRAIN_PROXY', 'UNRESOLVED_DESIGN_ASSUMPTION']),
+      slopeMethod: z.enum(['PUBLIC_REFERENCE_SURFACE_SCENARIO']),
       terrainResolutionM: z.number().positive().optional(),
       nImpervious: z.number().positive().optional(),
       surfaceTag: z.string().nullable(),

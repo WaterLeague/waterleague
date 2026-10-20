@@ -104,37 +104,15 @@ public class InstallationService {
     if (districtId == null || districtId.isEmpty())
       return new io.waterleague.installation.view.SitePageView(
           List.of(), sites.counts(), 0, 0, 200);
-    var matched =
-        sites.district(districtId).values().stream()
-            .filter(v -> type == null || v.allowedTypes().contains(type.name()))
-            .filter(v -> !vacant || v.existingInfrastructure() == null)
-            .filter(v -> surface == null || surface.matches(v))
-            .sorted(
-                Comparator.comparingDouble(
-                        (io.waterleague.installation.view.SiteView v) ->
-                            Math.hypot(v.center().get(0) - x, v.center().get(1) - y))
-                    .thenComparing(v -> v.cellId()))
-            .toList();
-    return new io.waterleague.installation.view.SitePageView(
-        matched.stream().skip(offset).limit(200).toList(),
-        sites.counts(),
-        matched.size(),
-        offset,
-        200);
-  }
-
-  public io.waterleague.installation.view.SiteView street(
-      String districtId, String sourceId, double x, double y) {
-    return sites.street(districtId, sourceId, x, y);
+    return sites.nearest(districtId, x, y, offset, type, vacant, surface);
   }
 
   public io.waterleague.installation.view.SiteView building(String districtId, String sourceId) {
     return sites.building(districtId, sourceId);
   }
 
-  public io.waterleague.installation.view.SiteView parking(
-      String districtId, String sourceId, double x, double y) {
-    return sites.parking(districtId, sourceId, x, y);
+  public io.waterleague.installation.view.SiteView ground(String districtId, double x, double y) {
+    return sites.ground(districtId, x, y);
   }
 
   public io.waterleague.installation.view.SiteView site(String districtId, String cellId) {

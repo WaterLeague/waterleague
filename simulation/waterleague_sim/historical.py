@@ -16,7 +16,7 @@ def process(conn, job, artifacts):
     path.mkdir(parents=True,exist_ok=False)
     request = {'modelHash': job['model_hash'], 'placements': job['placements'], 'inputHash': job['input_hash']}
     (path/'request.json').write_text(json.dumps(request,ensure_ascii=False)+'\n')
-    env = {k:v for k,v in os.environ.items() if k in ('PATH','LANG','LC_ALL','LIVE_SWMM_LIBRARY')}
+    env = {k:v for k,v in os.environ.items() if k in ('PATH','LANG','LC_ALL','LIVE_SWMM_LIBRARY','NATIVE_SPATIAL_CACHE')}
     env['PYTHONPATH'] = str(ROOT/'simulation')
     result, error = None, 'HISTORICAL_ENGINE_FAILED'
     try:

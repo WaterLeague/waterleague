@@ -20,10 +20,20 @@ export function nearbyTiles(city: City, center: [number, number], distance: numb
       return d(a) - d(b) || a.id.localeCompare(b.id);
     })
     .slice(0, 9);
-  let count = 0;
+  let count = 0,
+    features = 0,
+    bytes = 0;
   return candidates.filter((tile, index) => {
-    if (index > 0 && count + tile.buildingCount > 7000) return false;
+    if (
+      index > 0 &&
+      (count + tile.buildingCount > 7000 ||
+        features + tile.featureCount > 12000 ||
+        bytes + tile.bytes > 24 * 1024 * 1024)
+    )
+      return false;
     count += tile.buildingCount;
+    features += tile.featureCount;
+    bytes += tile.bytes;
     return true;
   });
 }

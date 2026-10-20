@@ -22,7 +22,7 @@ export function parkingDisplayRoads(roads: Street[], parking: ParkingData) {
 
 export type ParkingObstacleSite = Pick<
   SharedSite,
-  'districtId' | 'cellId' | 'kind' | 'coordinates' | 'areaM2'
+  'districtId' | 'cellId' | 'kind' | 'polygons' | 'areaM2'
 > & {
   physicalInputs?: Pick<NonNullable<SharedSite['physicalInputs']>, 'swaleDesign' | 'trenchDesign'>;
 };

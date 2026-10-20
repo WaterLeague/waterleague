@@ -1,3 +1,4 @@
+import { nativeSurfaceColor } from '../../urban/service/nativeStreetService';
 import { GroundCandidatesPlan } from '../../installation/view/GroundCandidatesPlan';
 import type { GroundCandidate } from '../../installation/service/candidateTilesService';
 import { InstallationSymbolsPlan } from '../../installation/view/InstallationSymbolsPlan';
@@ -29,7 +30,6 @@ import {
   cisternSiteColors,
   type CisternSiteRole,
 } from '../../installation/service/cisternPlanService';
-import { inBuildingRing } from '../service/buildingSelectionService';
 import { LiveRainPlan } from '../../rainfall/view/LiveRainPlan';
 import { detailLabelDistance } from '../service/cityService';
 import { usePlanNavigation } from '../controller/usePlanNavigation';
@@ -83,7 +83,7 @@ type Props = {
   onSite: (key: string) => void;
   onBuilding: (districtId: string, building: CityBuilding) => void;
   onStreet?: (sourceId: string, point: [number, number]) => void;
-  onParking: (sourceId: string, point: [number, number]) => void;
+  onParking?: (sourceId: string, point: [number, number]) => void;
   onCamera: (view: PlanView) => void;
   onNavigate: (view: PlanView) => void;
   camera: PlanView;
@@ -160,16 +160,22 @@ export const CityPlan = memo(function CityPlan({
   );
   const roadPaths = useMemo(
     () =>
-      [...streets]
+      streets
+        .filter((r) => !r.nativeSourceRole || !!r.nativePolygons)
         .sort((a, b) => Number(a.bridge) - Number(b.bridge))
         .map((r) => ({
           id: r.id,
+          nativeFill: r.nativeSourceRole ? nativeSurfaceColor(r.nativeSourceRole) : null,
           width: r.widthM,
           walk: r.walk,
           bridge: r.bridge,
           crossing: r.footway === 'crossing',
           unmarked: r.crossing === 'unmarked' || r.crossing === 'no',
-          clipped: r.walkPolygons ? polygonPath(r.walkPolygons) : null,
+          clipped: r.nativePolygons
+            ? polygonPath(r.nativePolygons)
+            : r.walkPolygons
+              ? polygonPath(r.walkPolygons)
+              : null,
           path: r.coordinates.map(([x, y], i) => `${i ? 'L' : 'M'}${x},${-y}`).join(' '),
         })),
     [streets]
@@ -190,19 +196,12 @@ export const CityPlan = memo(function CityPlan({
     [city, tiles, publicBuildings]
   );
   const sitePaths = useMemo(
-    () => new Map(sites.map((s) => [siteKey(s), polygonPath([[s.coordinates]])])),
+    () => new Map(sites.map((s) => [siteKey(s), polygonPath(s.polygons)])),
     [sites]
   );
-  const ownDistrict = city.districts.find((d) => d.id === ownDistrictId);
   const showLabels = focus.distance >= detailLabelDistance;
   function otherBuilding(b: CityBuilding) {
-    return (
-      !!ownDistrict &&
-      !ownDistrict.polygons.some(
-        (p) =>
-          inBuildingRing(b.center, p[0]) && !p.slice(1).some((h) => inBuildingRing(b.center, h))
-      )
-    );
+    return !!ownDistrictId && b.districtId !== ownDistrictId;
   }
   const buildingLayer = useMemo(
     () =>
@@ -229,21 +228,12 @@ export const CityPlan = memo(function CityPlan({
           stroke="#9eac96"
           strokeWidth={0.5}
           vectorEffect="non-scaling-stroke"
-          onClick={() => {
-            const d = city.districts.find((d) =>
-              d.polygons.some(
-                (p) =>
-                  inBuildingRing(b.center, p[0]) &&
-                  !p.slice(1).some((h) => inBuildingRing(b.center, h))
-              )
-            );
-            if (d) void onBuilding(d.id, b);
-          }}
+          onClick={() => void onBuilding(b.districtId, b)}
         >
           <title>{b.id} · 건물 선택</title>
         </path>
       )),
-    [buildings, facilityType, eligibleRoofs, occupiedRoofs, ownDistrict, onBuilding, city]
+    [buildings, facilityType, eligibleRoofs, occupiedRoofs, ownDistrictId, onBuilding]
   );
   const facilityLayer = useMemo(() => {
     const values: { site: SharedSite; placement: Placement; preview: boolean }[] = sites.flatMap(
@@ -410,7 +400,7 @@ export const CityPlan = memo(function CityPlan({
           </g>
         ))}
       </g>
-      <g fill="none" pointerEvents="stroke" strokeLinecap="round" strokeLinejoin="round">
+      <g fill="none" pointerEvents="visiblePainted" strokeLinecap="round" strokeLinejoin="round">
         {roadPaths.map((r) => (
           <g key={r.id}>
             {r.bridge && (
@@ -418,7 +408,7 @@ export const CityPlan = memo(function CityPlan({
             )}
             <path
               d={r.clipped ?? r.path}
-              fill={r.clipped ? '#b3ae9f' : undefined}
+              fill={r.nativeFill ?? (r.clipped ? '#b3ae9f' : undefined)}
               fillRule="evenodd"
               strokeDasharray={r.crossing && !r.unmarked ? '.5 .7' : undefined}
               strokeLinecap={r.crossing ? 'butt' : undefined}
@@ -463,12 +453,12 @@ export const CityPlan = memo(function CityPlan({
               matrix.inverse()
             );
             event.stopPropagation();
-            onParking(lot.id, [point.x, -point.y]);
+            onParking?.(lot.id, [point.x, -point.y]);
           }}
           onKeyDown={(event) => {
             if (event.key === 'Enter' || event.key === ' ') {
               event.preventDefault();
-              onParking(lot.id, lot.slots[0]?.center ?? lot.polygons[0][0][0]);
+              onParking?.(lot.id, lot.slots[0]?.center ?? lot.polygons[0][0][0]);
             }
           }}
         />

@@ -5,10 +5,11 @@ import { CatalogError } from '../exception/CatalogError';
 import { toCandidateMap } from '../mapper/catalogMapper';
 const registryDto = z.object({
   schemaVersion: z.literal(1),
+  defaultMapId: z.literal('seongsu-ngii-2025-v2'),
   maps: z
     .array(
       z.object({
-        id: z.string(),
+        id: z.literal('seongsu-ngii-2025-v2'),
         file: z.string().regex(/^[a-z0-9-]+\.json$/),
         sha256: z.string().regex(/^[a-f0-9]{64}$/),
         context: sceneContextSourceDto.optional(),
@@ -33,7 +34,11 @@ async function read(path: string, signal: AbortSignal, expectedHash?: string): P
 }
 async function readCatalog(signal: AbortSignal) {
   const [registryData, rainData] = await Promise.all([
-    read('/data/maps.json', signal),
+    read(
+      '/data/current-maps.json',
+      signal,
+      '3f77c767a5b31505ba70fc3139fd51836ae6213d92eda6c1301dc1e64fb06ad7'
+    ),
     read('/data/rainfall-audit.json', signal),
   ]);
   const registry = registryDto.parse(registryData);
@@ -58,9 +63,9 @@ async function readCatalog(signal: AbortSignal) {
       };
     })
   );
-  const legacy = maps.find((m) => m.file === 'seongsu.json');
-  if (!legacy) throw new CatalogError('INVALID_DATA');
-  return { maps, map: legacy.map, rainfall: rainAuditDto.parse(rainData) };
+  const current = maps.find((m) => m.id === registry.defaultMapId);
+  if (!current) throw new CatalogError('INVALID_DATA');
+  return { maps, map: current.map, rainfall: rainAuditDto.parse(rainData) };
 }
 
 export async function loadCatalog(signal: AbortSignal) {

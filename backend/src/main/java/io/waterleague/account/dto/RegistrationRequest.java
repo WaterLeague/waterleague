@@ -9,5 +9,5 @@ public record RegistrationRequest(
     @NotNull MemberType memberType,
     @NotNull @Size(max = 100) String organizationName,
     @NotNull @Size(max = 2000) String purpose,
-    @NotBlank @Pattern(regexp = "[0-9]{7}") String districtId,
+    @NotBlank @Pattern(regexp = "11[0-9]{3}") String districtId,
     @NotNull @Pattern(regexp = "RESIDENT|AFFILIATED") String affiliationType) {}

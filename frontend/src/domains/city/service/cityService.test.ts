@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import snapshot from '../../../../public/data/seoul-v1/city.json';
+import snapshot from '../../../../public/data/seoul-native-v1/city.json';
 import { mapCity, mapCityTile } from '../mapper/cityMapper';
 import { nearbyTiles } from './cityService';
 const city = mapCity(snapshot);
@@ -20,9 +20,10 @@ describe('서울 전역 자료와 부분 로딩', () => {
   });
   it('건물 타일의 식별자·건수·잘못된 높이 거부', () => {
     const data = {
-      schemaVersion: 1,
+      schemaVersion: 2,
       id: '0_0',
       buildings: [structuredClone(city.overviewBuildings[0])],
+      nativeFeatures: [],
     };
     expect(mapCityTile(data, '0_0', 1).buildings).toHaveLength(1);
     expect(() => mapCityTile(data, 'wrong', 1)).toThrow();

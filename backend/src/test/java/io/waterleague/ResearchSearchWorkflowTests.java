@@ -19,8 +19,7 @@ import org.springframework.test.context.ActiveProfiles;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
-@SpringBootTest(
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("local")
 class ResearchSearchWorkflowTests extends PostgresIntegrationTest {
   @org.springframework.test.context.DynamicPropertySource
@@ -122,9 +121,9 @@ class ResearchSearchWorkflowTests extends PostgresIntegrationTest {
         "title",
         "검증 설계",
         "modelHash",
-        LegacyModelFixtures.HASH,
+        NativeResearchFixtures.HASH,
         "placements",
-        List.of(Map.of("cellId", "G1", "facilityType", "RAIN_GARDEN", "areaM2", 40)),
+        List.of(Map.of("cellId", "G1", "facilityType", "RAIN_GARDEN", "areaM2", 10)),
         "designNote",
         note,
         "baseRevision",
@@ -141,7 +140,7 @@ class ResearchSearchWorkflowTests extends PostgresIntegrationTest {
     return successfulJob(
         player,
         discharge,
-        List.of(Map.of("cellId", "G1", "facilityType", "RAIN_GARDEN", "areaM2", 40)));
+        List.of(Map.of("cellId", "G1", "facilityType", "RAIN_GARDEN", "areaM2", 10)));
   }
 
   JsonNode successfulJob(Actor player, int discharge, List<Map<String, Object>> placements)
@@ -156,11 +155,11 @@ class ResearchSearchWorkflowTests extends PostgresIntegrationTest {
             "/simulations",
             Map.of("versionId", v.get("id").asString(), "requestKey", UUID.randomUUID()),
             202);
-    var m = (JsonNode) model.view(LegacyModelFixtures.HASH).get("model");
+    var m = (JsonNode) model.view(NativeResearchFixtures.HASH).get("model");
     var result =
         Map.of(
             "modelHash",
-            LegacyModelFixtures.HASH,
+            NativeResearchFixtures.HASH,
             "inputHash",
             v.get("inputHash").asString(),
             "validationLevel",
@@ -196,7 +195,7 @@ class ResearchSearchWorkflowTests extends PostgresIntegrationTest {
     ok(owner, "PUT", "/consents/" + organization(org), Map.of("granted", granted), 200);
   }
 
-  JsonNode submitted(Actor owner, int discharge, int area) throws Exception {
+  JsonNode submitted(Actor owner, int discharge, double area) throws Exception {
     var job =
         successfulJob(
             owner,
@@ -395,7 +394,7 @@ class ResearchSearchWorkflowTests extends PostgresIntegrationTest {
     var owner = actor(null);
     var org = institution();
     var other = institution();
-    var sources = List.of(submitted(owner, 90, 20), submitted(owner, 95, 40));
+    var sources = List.of(submitted(owner, 90, 5), submitted(owner, 95, 10));
     int beforeVersions = versions(owner),
         beforeJobs = db.queryForObject("SELECT COUNT(*) FROM simulation_jobs", Integer.class);
     UUID key = UUID.randomUUID();
@@ -459,7 +458,7 @@ class ResearchSearchWorkflowTests extends PostgresIntegrationTest {
     var org = institution();
     var other = institution();
     var sources =
-        List.of(submitted(owner, 90, 20), submitted(owner, 95, 30), submitted(excluded, 99, 40));
+        List.of(submitted(owner, 90, 5), submitted(owner, 95, 7.5), submitted(excluded, 99, 10));
     for (var a : List.of(owner, excluded)) {
       share(a, org, true);
       share(a, other, true);
@@ -519,7 +518,7 @@ class ResearchSearchWorkflowTests extends PostgresIntegrationTest {
   void defaultsToEqualThreeCandidateArmsAndNeverUsesReportedScoreForComparison() throws Exception {
     var owner = actor(null);
     var org = institution();
-    var sources = List.of(submitted(owner, 90, 20), submitted(owner, 95, 40));
+    var sources = List.of(submitted(owner, 90, 5), submitted(owner, 95, 10));
     share(owner, org, true);
     var request = new HashMap<>(searchRequest(sources, UUID.randomUUID(), 1));
     request.remove("candidatesPerArm");
@@ -546,7 +545,7 @@ class ResearchSearchWorkflowTests extends PostgresIntegrationTest {
     var a = actor(null);
     var b = actor(null);
     var org = institution();
-    var sources = List.of(submitted(a, 90, 20), submitted(b, 95, 40));
+    var sources = List.of(submitted(a, 90, 5), submitted(b, 95, 10));
     share(a, org, true);
     share(b, org, true);
     UUID key = UUID.randomUUID();
@@ -610,7 +609,7 @@ class ResearchSearchWorkflowTests extends PostgresIntegrationTest {
   void rollsBackSearchSourcesAndAllCandidatesAfterLateInsertFailure() throws Exception {
     var owner = actor(null);
     var org = institution();
-    var sources = List.of(submitted(owner, 90, 20), submitted(owner, 95, 40));
+    var sources = List.of(submitted(owner, 90, 5), submitted(owner, 95, 10));
     share(owner, org, true);
     String constraint = "reject_search_" + UUID.randomUUID().toString().replace("-", "");
     // 새 기관의 후보 두 번째 행에서만 실패시키고 앞서 삽입한 행도 함께 취소되는지 확인한다.
@@ -636,8 +635,8 @@ class ResearchSearchWorkflowTests extends PostgresIntegrationTest {
   void rejectsMixedModelsPhysicalDuplicatesInvalidBudgetAndCorruptSource() throws Exception {
     var owner = actor(null);
     var org = institution();
-    var a = submitted(owner, 90, 20);
-    var b = submitted(owner, 95, 40);
+    var a = submitted(owner, 90, 5);
+    var b = submitted(owner, 95, 10);
     share(owner, org, true);
     var sources = List.of(a, b);
     var invalid = new HashMap<>(searchRequest(sources, UUID.randomUUID(), 1));
@@ -645,7 +644,7 @@ class ResearchSearchWorkflowTests extends PostgresIntegrationTest {
     assertThat(call(org, "POST", "/research/searches", invalid).statusCode()).isEqualTo(422);
     invalid.put("budgetKrw", new java.math.BigDecimal("99999999.5"));
     assertThat(call(org, "POST", "/research/searches", invalid).statusCode()).isEqualTo(400);
-    var duplicate = submitted(owner, 90, 20);
+    var duplicate = submitted(owner, 90, 5);
     var same =
         call(
             org,
@@ -659,7 +658,7 @@ class ResearchSearchWorkflowTests extends PostgresIntegrationTest {
         "modelHash",
         models.all().stream()
             .map(m -> m.hash())
-            .filter(h -> !h.equals(LegacyModelFixtures.HASH))
+            .filter(h -> !h.equals(NativeResearchFixtures.HASH))
             .findFirst()
             .orElseThrow());
     var v = ok(owner, "POST", "/strategies", body, 200);
@@ -695,7 +694,7 @@ class ResearchSearchWorkflowTests extends PostgresIntegrationTest {
   void checksProvenanceCandidateAndArtifactIntegrityBeforeExport() throws Exception {
     var owner = actor(null);
     var org = institution();
-    var sources = List.of(submitted(owner, 90, 20), submitted(owner, 95, 40));
+    var sources = List.of(submitted(owner, 90, 5), submitted(owner, 95, 10));
     share(owner, org, true);
     var c =
         ok(org, "POST", "/research/searches", searchRequest(sources, UUID.randomUUID(), 1), 202);
@@ -753,7 +752,7 @@ class ResearchSearchWorkflowTests extends PostgresIntegrationTest {
     var owner = actor(null);
     var org = institution();
     var colleague = actor(organization(org));
-    var sources = List.of(submitted(owner, 90, 20), submitted(owner, 95, 40));
+    var sources = List.of(submitted(owner, 90, 5), submitted(owner, 95, 10));
     share(owner, org, true);
     var request = searchRequest(sources, UUID.randomUUID(), 1);
     var template = new org.springframework.transaction.support.TransactionTemplate(transactions);
@@ -796,12 +795,12 @@ class ResearchSearchWorkflowTests extends PostgresIntegrationTest {
   void combinedRainfallAndCandidateCapacityCannotExceedOrganizationAllowance() throws Exception {
     var org = institution();
     var sourceOwner = actor(null);
-    var source = submitted(sourceOwner, 90, 40);
+    var source = submitted(sourceOwner, 90, 10);
     share(sourceOwner, org, true);
     ok(org, "POST", "/research/comparisons", request(source, UUID.randomUUID(), 3), 202);
     var a = actor(null);
     var b = actor(null);
-    var sources = List.of(submitted(a, 90, 20), submitted(b, 95, 40));
+    var sources = List.of(submitted(a, 90, 5), submitted(b, 95, 10));
     share(a, org, true);
     share(b, org, true);
     assertThat(
@@ -812,7 +811,7 @@ class ResearchSearchWorkflowTests extends PostgresIntegrationTest {
     assertThat(candidateCount(org)).isZero();
     ok(org, "POST", "/research/searches", searchRequest(sources, UUID.randomUUID(), 3), 202);
     var another = actor(null);
-    var original = submitted(another, 90, 40);
+    var original = submitted(another, 90, 10);
     share(another, org, true);
     assertThat(
             call(org, "POST", "/research/comparisons", request(original, UUID.randomUUID(), 2))
@@ -901,7 +900,7 @@ class ResearchSearchWorkflowTests extends PostgresIntegrationTest {
     List<JsonNode> sources = new ArrayList<>();
     List<String> candidates = new ArrayList<>();
     try {
-      for (int area : List.of(20, 40)) {
+      for (int area : List.of(5, 10)) {
         var body = new HashMap<>(draft(0, "격리 SWMM 재현 시험"));
         body.put(
             "placements",

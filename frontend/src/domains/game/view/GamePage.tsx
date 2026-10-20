@@ -60,10 +60,10 @@ export function GamePage() {
   const g = useGame();
   const shell = useRef<HTMLDivElement>(null);
   const [cityDistrict, setCityDistrict] = useState('');
-  const catalog = useCatalog();
   const [tab, setTab] = useState<'city' | 'missions' | 'studio' | 'leaderboard' | 'data' | 'admin'>(
     'city'
   );
+  const catalog = useCatalog(tab === 'studio');
   const [report, setReport] = useState(false);
   const [feedback, setFeedback] = useState('');
   const playHeading = useRef<HTMLHeadingElement>(null);

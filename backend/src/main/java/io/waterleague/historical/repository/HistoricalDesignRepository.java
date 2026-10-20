@@ -27,8 +27,8 @@ public class HistoricalDesignRepository {
   public Optional<HistoricalDesign> latest(UUID owner, String event) {
     return db
         .query(
-            "SELECT * FROM historical_design_revisions WHERE owner_id=? AND event_id=? ORDER BY"
-                + " revision DESC LIMIT 1",
+            "SELECT * FROM historical_design_revisions WHERE source_dataset='SEOUL_NGII_GAME_V2'"
+                + " AND owner_id=? AND event_id=? ORDER BY revision DESC LIMIT 1",
             mapper,
             owner,
             event)
@@ -39,7 +39,8 @@ public class HistoricalDesignRepository {
   public Optional<HistoricalDesign> byKey(UUID owner, UUID key) {
     return db
         .query(
-            "SELECT * FROM historical_design_revisions WHERE owner_id=? AND request_key=?",
+            "SELECT * FROM historical_design_revisions WHERE source_dataset='SEOUL_NGII_GAME_V2'"
+                + " AND owner_id=? AND request_key=?",
             mapper,
             owner,
             key)
@@ -50,8 +51,8 @@ public class HistoricalDesignRepository {
   public Optional<HistoricalDesign> revision(UUID owner, String event, long revision) {
     return db
         .query(
-            "SELECT * FROM historical_design_revisions WHERE owner_id=? AND event_id=? AND"
-                + " revision=?",
+            "SELECT * FROM historical_design_revisions WHERE source_dataset='SEOUL_NGII_GAME_V2'"
+                + " AND owner_id=? AND event_id=? AND revision=?",
             mapper,
             owner,
             event,

@@ -1,3 +1,4 @@
+import { nativeSurfaceColor } from './nativeStreetService';
 import { Color, ShapeUtils, Vector2 } from 'three';
 import type { Street } from '../entity/urban';
 import type { Terrain } from '../../terrain/entity/terrain';
@@ -89,6 +90,31 @@ export function streetGeometry(
     }
   };
   for (const road of roads) {
+    if (road.nativeSourceRole) {
+      if (road.nativePolygons)
+        for (const component of road.nativePolygons) {
+          const rings = component.map((ring) =>
+            ring.slice(0, -1).map(([x, y]) => new Vector2(x, y))
+          );
+          const points = rings.flat();
+          const color = new Color(nativeSurfaceColor(road.nativeSourceRole));
+          for (const ids of ShapeUtils.triangulateShape(rings[0], rings.slice(1))) {
+            const triangle = ids.map((id) => [points[id].x, points[id].y] as Point) as [
+              Point,
+              Point,
+              Point,
+            ];
+            drapeTriangle(triangle, terrain, (part) => {
+              for (const p of part) {
+                positions.push(p[0], terrainMeshHeight(terrain, p) + 0.008, -p[1]);
+                colors.push(color.r, color.g, color.b);
+              }
+            });
+          }
+        }
+      ends.push(positions.length / 9);
+      continue;
+    }
     const path = streetPath(road),
       parking = aisleIds.has(road.id),
       crossing = road.footway === 'crossing';

@@ -25,7 +25,7 @@ public class EquipmentHistoryRepository {
       if (!json.hash(raw).equals(SHA256)) throw new IllegalStateException("시설 이력 해시 오류");
       var root = json.tree(raw);
       if (!VERSION.equals(root.path("version").asString())
-          || !locations.hasUnchangedCatalog(root.path("locationCatalogSha256").asString()))
+          || !locations.hasArchivedLocationSource(root.path("locationCatalogSha256").asString()))
         throw new IllegalStateException("시설 이력 출처 연결 오류");
       source = root.path("source").deepCopy();
       var items = new ArrayList<EquipmentHistory>();

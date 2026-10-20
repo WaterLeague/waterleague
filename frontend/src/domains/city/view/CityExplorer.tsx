@@ -39,10 +39,8 @@ import {
 import { useCity, useCityTiles } from '../controller/useCity';
 import { useMapLabelWheel } from '../controller/useMapLabelWheel';
 import type { City, CityFocus, CityBuilding } from '../entity/city';
-import type { CityEligibility } from '../dto/cityEligibilityDto';
 import { representativeInstallations } from '../../installation/service/memberSitesService';
 import { useInstallationLayout } from '../../installation/controller/useInstallationLayout';
-import { occupiedRoofSource } from '../service/siteVisibilityService';
 import { siteFocus, selectionView } from '../service/siteFocusService';
 import { zoomPlanView, type PlanView } from '../service/planNavigationService';
 import type { CityPlayRegion } from '../dto/cityPlayDto';
@@ -58,8 +56,7 @@ import { viewingDistrict } from '../service/viewingDistrictService';
 import {
   loadSite,
   loadBuildingSite,
-  loadStreetSite,
-  loadParkingSite,
+  loadGroundSite,
 } from '../../installation/repository/installationRepository';
 import { ApiError, errorMessage } from '../../../shared/exception/ApiError';
 import './shared-play.css';
@@ -77,7 +74,6 @@ import { useTerrain } from '../../terrain/controller/useTerrain';
 import { GameClock } from '../../game/view/GameClock';
 import { useInfrastructure } from '../../infrastructure/controller/useInfrastructure';
 import { useVisibleInfrastructure } from '../../infrastructure/controller/useVisibleInfrastructure';
-import { unreservedRoofIds } from '../../infrastructure/service/infrastructureService';
 import { InfrastructurePanel } from '../../infrastructure/view/InfrastructurePanel';
 import type { InfrastructureAsset } from '../../infrastructure/entity/infrastructure';
 import { useFloodTraces } from '../../floodtrace/controller/useFloodTraces';
@@ -105,7 +101,6 @@ type PlayProps = {
 function Explorer({
   city,
   regions,
-  eligibility,
   account,
   onLogin,
   onAccount,
@@ -113,7 +108,7 @@ function Explorer({
   initialDistrictId = '',
   eventId = '',
   onExit,
-}: { city: City; regions: CityPlayRegion[]; eligibility: CityEligibility } & PlayProps) {
+}: { city: City; regions: CityPlayRegion[] } & PlayProps) {
   const researchMode = mode === 'historical';
   const [floodStats, setFloodStats] = useState<FloodStats>(emptyFloodStats);
   const onFloodStats = useCallback(
@@ -253,7 +248,6 @@ function Explorer({
   useEffect(() => {
     listOpenRef.current = listOpen;
   }, [listOpen]);
-  const [vacant, setVacant] = useState(false);
   const [offset, setOffset] = useState(0);
   const [feedback, setFeedback] = useState('');
   const [selectionError, setSelectionError] = useState('');
@@ -304,13 +298,27 @@ function Explorer({
     observer.observe(controlsBar.current);
     return () => observer.disconnect();
   }, []);
-  const urban = useUrbanData(camera.center, camera.distance);
+  const details = useCityTiles(city, camera);
+  const urban = useUrbanData(details.tiles);
+  const nativeBuildings = useMemo(
+    () => [
+      ...new Map(
+        [...city.overviewBuildings, ...details.tiles.flatMap((tile) => tile.buildings)].map(
+          (building) => [building.id, building]
+        )
+      ).values(),
+    ],
+    [city.overviewBuildings, details.tiles]
+  );
   const groundCandidates = useGroundCandidates(camera.center, camera.distance);
   const liveUrban = useLiveUrban(camera.center, camera.distance, researchMode);
   const traces = useFloodTraces(true, researchMode ? eventId : comparisonEventId, camera);
   const eligibleRoofs = useMemo(
-    () => unreservedRoofIds(eligibility.roofIds, infrastructure.catalog?.assets ?? null),
-    [eligibility.roofIds, infrastructure.catalog]
+    () =>
+      new Set(
+        nativeBuildings.filter((building) => building.candidateId).map((building) => building.id)
+      ),
+    [nativeBuildings]
   );
   const publicAssets = useVisibleInfrastructure(
     infrastructure.catalog?.assets,
@@ -352,8 +360,8 @@ function Explorer({
       y: Math.round(camera.center[1]),
       offset,
       type: mapFacilityType,
-      surface: cisternOpen ? 'OTHER' : mapFacilityType === 'PERMEABLE_PAVEMENT' ? siteSurface : '',
-      vacant: researchMode ? false : vacant,
+      surface: !cisternOpen && mapFacilityType === 'PERMEABLE_PAVEMENT' ? siteSurface : '',
+      vacant: false,
     },
     !researchMode || cisternOpen
   );
@@ -387,15 +395,16 @@ function Explorer({
     [shared.installations, viewerId]
   );
   const layout = useInstallationLayout(shared.installations, viewerId ?? null);
-  const occupiedRoofs = useMemo(
-    () =>
-      new Set(
-        layout.placements
-          .filter((i) => i.ownerId === viewerId)
-          .flatMap((i) => occupiedRoofSource(i.districtId, i.cellId, eligibility.legacySiteSources))
-      ),
-    [layout.placements, viewerId, eligibility]
-  );
+  const occupiedRoofs = useMemo(() => {
+    const occupied = new Set(
+      layout.placements.filter((value) => value.ownerId === viewerId).map((value) => value.cellId)
+    );
+    return new Set(
+      nativeBuildings
+        .filter((building) => building.candidateId && occupied.has(building.candidateId))
+        .map((building) => building.id)
+    );
+  }, [layout.placements, viewerId, nativeBuildings]);
   const ownInstallations = shared.installations.filter((i) => i.ownerId === viewerId);
   const ownSiteKeys = useMemo(
     () => new Set(layout.placements.filter((i) => i.ownerId === viewerId).map(siteKey)),
@@ -473,7 +482,6 @@ function Explorer({
     setSelectionError('');
     setFeedback('');
   }, []);
-  const details = useCityTiles(city, camera);
   const labels = useRef(new Map<string, HTMLElement>());
   const labelLayer = useRef<HTMLDivElement>(null);
   useMapLabelWheel(labelLayer, flat);
@@ -587,14 +595,14 @@ function Explorer({
     [visibleSites, site, chooseSite, ownSiteKeys]
   );
   const selectStreet = useCallback(
-    async (sourceId: string, point: [number, number]) => {
+    async (_sourceId: string, point: [number, number]) => {
       if (cisternOpen) return;
       const districtId = viewingDistrict(city.districts, point)?.id;
       if (!districtId) return;
       const request = ++selectionRequest.current;
       setSelectionError('');
       try {
-        const value = await loadStreetSite(districtId, sourceId, point);
+        const value = await loadGroundSite(districtId, point);
         if (request === selectionRequest.current) chooseSite(value, false, true);
       } catch (error) {
         if (request === selectionRequest.current) {
@@ -603,39 +611,13 @@ function Explorer({
           setFacilityExpansionOpen(false);
           setSelectionError(
             error instanceof ApiError && error.code === 'RESOURCE_NOT_FOUND'
-              ? '이 구간에는 설치 가능한 투수포장 구역이 없습니다. 표시된 주변 후보를 선택해 주세요.'
+              ? '이 지점에는 설치 후보가 없습니다. 건물·수면 등이 제외된 주변 경계를 선택해 주세요.'
               : '도로 위치를 불러오지 못했습니다. 다시 선택해 주세요.'
           );
         }
       }
     },
     [cisternOpen, city.districts, chooseSite]
-  );
-  const selectParking = useCallback(
-    async (sourceId: string, point: [number, number]) => {
-      const districtId = viewingDistrict(city.districts, point)?.id;
-      if (!districtId) return;
-      const request = ++selectionRequest.current;
-      setSelected(districtId);
-      setInfrastructureOpen(false);
-      setFacilityExpansionOpen(false);
-      setListOpen(false);
-      setSelectionError('');
-      try {
-        const value = await loadParkingSite(districtId, sourceId, point);
-        if (request === selectionRequest.current) chooseSite(value, false, true);
-      } catch (error) {
-        if (request === selectionRequest.current) {
-          setSite(null);
-          setSelectionError(
-            error instanceof ApiError && error.code === 'RESOURCE_NOT_FOUND'
-              ? '선택한 주차장 위치에는 공개자료로 확인된 설치 후보가 없습니다. 주변 주차 칸을 선택해 주세요.'
-              : '주차장 위치를 불러오지 못했습니다. 다시 선택해 주세요.'
-          );
-        }
-      }
-    },
-    [city.districts, chooseSite]
   );
   const selectBuilding = useCallback(
     async (districtId: string, building: CityBuilding) => {
@@ -662,7 +644,7 @@ function Explorer({
         if (request === selectionRequest.current) chooseSite(value, false, true);
       } catch (error) {
         if (request !== selectionRequest.current) return;
-        setFeedback('선택한 건물 · ' + building.id);
+        setFeedback('선택한 건물');
         setSelectionError(
           error instanceof ApiError && error.code === 'RESOURCE_NOT_FOUND'
             ? '이 건물은 공개자료 기준의 설치 후보에 포함되지 않았습니다. 주변의 표시된 후보를 선택해 주세요.'
@@ -801,7 +783,6 @@ function Explorer({
       onSite={selectSite}
       onBuilding={selectBuilding}
       onStreet={selectStreet}
-      onParking={selectParking}
       onCamera={onCamera}
       onNavigate={onNavigate}
       camera={camera}
@@ -1076,7 +1057,6 @@ function Explorer({
                   onSite={selectSite}
                   onBuilding={selectBuilding}
                   onStreet={selectStreet}
-                  onParking={selectParking}
                   wetDistricts={wetDistricts}
                   rainAmounts={rainAmounts}
                   rainCamera={camera}
@@ -1297,21 +1277,7 @@ function Explorer({
                     <option value="">모든 지면</option>
                     <option value="ROADWAY">차도</option>
                     <option value="WALKWAY">인도·보행로</option>
-                    <option value="OTHER">주차장·기타 지상</option>
                   </select>
-                </label>
-              )}
-              {!researchMode && (
-                <label className="shared-vacant">
-                  <input
-                    type="checkbox"
-                    checked={vacant}
-                    onChange={(e) => {
-                      setVacant(e.target.checked);
-                      setOffset(0);
-                    }}
-                  />
-                  공개 시설 영역 제외
                 </label>
               )}
               {!selected ? (
@@ -1668,8 +1634,8 @@ export function CityExplorer({
   onExit,
   initialDistrictId,
 }: PlayProps) {
-  const { city, regions, eligibility, error, retry } = useCity();
-  if (!city || !eligibility)
+  const { city, regions, error, retry } = useCity();
+  if (!city)
     return (
       <main className="empty-state" role={error ? 'alert' : 'status'}>
         <h1>{error ? '서울 지도를 불러오지 못했습니다' : '서울 지도를 준비하고 있습니다'}</h1>
@@ -1689,7 +1655,6 @@ export function CityExplorer({
       eventId={eventId}
       onExit={onExit}
       city={city}
-      eligibility={eligibility}
       regions={regions}
       account={account}
       onLogin={onLogin}

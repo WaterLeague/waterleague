@@ -38,8 +38,8 @@ public class InstallationRepository {
   public List<SharedInstallation> active() {
     return db.query(
         "SELECT i.*,a.display_name FROM shared_installations i JOIN accounts a ON a.id=i.owner_id"
-            + " WHERE removed_at IS NULL AND (season_ends_at IS NULL OR"
-            + " season_ends_at>CURRENT_TIMESTAMP) ORDER BY district_id,cell_id",
+            + " WHERE source_retired_at IS NULL AND removed_at IS NULL AND (season_ends_at IS NULL"
+            + " OR season_ends_at>CURRENT_TIMESTAMP) ORDER BY district_id,cell_id",
         mapper);
   }
 
@@ -47,24 +47,34 @@ public class InstallationRepository {
 
   public Map<UUID, Score> currentScores(java.time.LocalDate week) {
     var result = new HashMap<UUID, Score>();
-    db.query("""
+    db.query(
+        """
         SELECT s.installation_id,s.score_m3,s.evaluated_through
         FROM shared_weekly_scores s JOIN shared_installations i ON i.id=s.installation_id
-        WHERE s.week_start=? AND i.removed_at IS NULL
+        WHERE s.week_start=? AND i.source_retired_at IS NULL AND i.removed_at IS NULL
           AND (i.season_ends_at IS NULL OR i.season_ends_at>CURRENT_TIMESTAMP)
-        """, (org.springframework.jdbc.core.RowCallbackHandler) r -> {
-          var id = r.getObject("installation_id", UUID.class);
-          result.put(id, new Score(id, r.getBigDecimal("score_m3"),
-              r.getTimestamp("evaluated_through") == null ? null : r.getTimestamp("evaluated_through").toInstant()));
-        }, java.sql.Date.valueOf(week));
+        """,
+        (org.springframework.jdbc.core.RowCallbackHandler)
+            r -> {
+              var id = r.getObject("installation_id", UUID.class);
+              result.put(
+                  id,
+                  new Score(
+                      id,
+                      r.getBigDecimal("score_m3"),
+                      r.getTimestamp("evaluated_through") == null
+                          ? null
+                          : r.getTimestamp("evaluated_through").toInstant()));
+            },
+        java.sql.Date.valueOf(week));
     return result;
   }
 
   public List<SharedInstallation> owned(UUID owner) {
     return db.query(
         "SELECT i.*,a.display_name FROM shared_installations i JOIN accounts a ON a.id=i.owner_id"
-            + " WHERE removed_at IS NULL AND (season_ends_at IS NULL OR"
-            + " season_ends_at>CURRENT_TIMESTAMP) AND owner_id=?",
+            + " WHERE source_retired_at IS NULL AND removed_at IS NULL AND (season_ends_at IS NULL"
+            + " OR season_ends_at>CURRENT_TIMESTAMP) AND owner_id=?",
         mapper,
         owner);
   }

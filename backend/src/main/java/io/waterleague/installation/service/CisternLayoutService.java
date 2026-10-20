@@ -11,7 +11,7 @@ public final class CisternLayoutService {
   private CisternLayoutService() {}
 
   public static CisternLayoutView build(
-      List<List<Double>> ring,
+      List<List<List<List<Double>>>> polygons,
       List<Double> origin,
       String sourceHash,
       double areaM2,
@@ -34,8 +34,8 @@ public final class CisternLayoutService {
         || !Double.isFinite(rotation)
         || rotation < 0
         || rotation >= 360
-        || ring.size() < 4
-        || ring.size() > 500) throw new CisternPlanException(ErrorCode.PLACEMENT_INVALID);
+        || polygons.isEmpty()
+        || polygons.size() > 1000) throw new CisternPlanException(ErrorCode.PLACEMENT_INVALID);
     double length = areaM2 / width, outerWidth = width + 2 * wall, outerLength = length + 2 * wall;
     double angle = Math.toRadians(rotation), c = Math.cos(angle), s = Math.sin(angle);
     var points = new ArrayList<List<Double>>();
@@ -47,9 +47,26 @@ public final class CisternLayoutService {
       points.add(List.of(x + px, y + py));
     }
     points.add(points.getFirst());
-    var relative = ring.stream().map(p -> List.of(p.get(0) - x, p.get(1) - y)).toList();
+    Area permitted = new Area();
+    int count = 0;
+    for (var rings : polygons) {
+      if (rings.isEmpty() || rings.size() > 500)
+        throw new CisternPlanException(ErrorCode.PLACEMENT_INVALID);
+      Area component = null;
+      for (var ring : rings) {
+        if (ring.size() < 4
+            || (count += ring.size()) > 1000000
+            || !ring.getFirst().equals(ring.getLast()))
+          throw new CisternPlanException(ErrorCode.PLACEMENT_INVALID);
+        var relative = ring.stream().map(p -> List.of(p.get(0) - x, p.get(1) - y)).toList();
+        var shape = new Area(path(relative));
+        if (component == null) component = shape;
+        else component.subtract(shape);
+      }
+      permitted.add(component);
+    }
     Area outside = new Area(path(local));
-    outside.subtract(new Area(path(relative)));
+    outside.subtract(permitted);
     // 큰 투영 좌표의 상쇄 오차를 줄여 외곽 전체와 오목한 경계의 교차 면적을 검사한다.
     if (area(outside) > Math.max(1e-8, outerWidth * outerLength * 1e-9))
       throw new CisternPlanException(ErrorCode.PLACEMENT_INVALID);

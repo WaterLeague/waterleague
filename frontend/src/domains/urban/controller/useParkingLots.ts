@@ -33,11 +33,11 @@ export function useParkingLots(
           site.kind === 'GROUND' && placement && placement.facilityType !== 'PERMEABLE_PAVEMENT'
         );
       })
-      .map(({ districtId, cellId, kind, coordinates, areaM2, physicalInputs }) => ({
+      .map(({ districtId, cellId, kind, polygons, areaM2, physicalInputs }) => ({
         districtId,
         cellId,
         kind,
-        coordinates,
+        polygons,
         areaM2,
         physicalInputs: {
           swaleDesign: physicalInputs?.swaleDesign,

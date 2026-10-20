@@ -78,7 +78,7 @@ class GuestHistoricalTests extends PostgresIntegrationTest {
             .findFirst()
             .orElseThrow();
     var site =
-        sites.district(district).values().stream()
+        NativeSiteFixtures.sites(sites, district).values().stream()
             .filter(
                 s ->
                     s.allowedTypes().contains("GREEN_ROOF")
@@ -98,18 +98,18 @@ class GuestHistoricalTests extends PostgresIntegrationTest {
 
   GuestHistoricalRequest request(UUID key, List<GuestHistoricalRequest.Item> items) {
     return new GuestHistoricalRequest(
-        key, disasters.catalog().events().getFirst().id(), "2419953", items);
+        key, disasters.catalog().events().getFirst().id(), "11200", items);
   }
 
   @Test
   void anonymousStreetPavementQueuesWithServerGeometryAndRejectsForgedArea() throws Exception {
     var browser = client();
-    var template = item("2419953", 137);
+    var template = item("11200", 137);
     var site =
-        sites.district("2419953").values().stream()
+        NativeSiteFixtures.sites(sites, "11200").values().stream()
             .filter(
                 s ->
-                    s.physicalInputs().has("streetPlacement")
+                    s.sourceRole().equals("ROAD_AREA")
                         && s.maxAreaM2().compareTo(BigDecimal.TEN) >= 0)
             .findFirst()
             .orElseThrow();
@@ -121,7 +121,7 @@ class GuestHistoricalTests extends PostgresIntegrationTest {
             template.placement().installedAt(),
             site.modelHash());
     var dto =
-        request(UUID.randomUUID(), List.of(new GuestHistoricalRequest.Item("2419953", placement)));
+        request(UUID.randomUUID(), List.of(new GuestHistoricalRequest.Item("11200", placement)));
     assertThat(post(browser, "/guest-historical", dto, true).statusCode()).isEqualTo(202);
     var bad =
         new HistoricalRequest.Item(
@@ -135,8 +135,7 @@ class GuestHistoricalTests extends PostgresIntegrationTest {
                     browser,
                     "/guest-historical",
                     request(
-                        UUID.randomUUID(),
-                        List.of(new GuestHistoricalRequest.Item("2419953", bad))),
+                        UUID.randomUUID(), List.of(new GuestHistoricalRequest.Item("11200", bad))),
                     true)
                 .statusCode())
         .isEqualTo(422);
@@ -163,7 +162,7 @@ class GuestHistoricalTests extends PostgresIntegrationTest {
     int accounts = db.queryForObject("SELECT count(*) FROM accounts", Integer.class);
     var a = client();
     var b = client();
-    var dto = request(UUID.randomUUID(), List.of(item("2419953", 137)));
+    var dto = request(UUID.randomUUID(), List.of(item("11200", 137)));
     assertThat(post(a, "/guest-historical", dto, false).statusCode()).isEqualTo(403);
     var created = post(a, "/guest-historical", dto, true);
     assertThat(created.statusCode()).isEqualTo(202);
@@ -193,12 +192,12 @@ class GuestHistoricalTests extends PostgresIntegrationTest {
   @Test
   void wholeDesignIdempotencyAndQueueLimitSurviveMultipleRequests() throws Exception {
     var client = client();
-    var items = List.of(item("2419953", 137), item("2410520", 377));
+    var items = List.of(item("11200", 137), item("11680", 377));
     var dto = request(UUID.randomUUID(), items);
     var first = post(client, "/guest-historical", dto, true);
     assertThat(first.statusCode()).isEqualTo(202);
     assertThat(post(client, "/guest-historical", dto, true).body()).isEqualTo(first.body());
-    var changed = request(dto.requestKey(), List.of(items.getFirst(), item("2410520", 378)));
+    var changed = request(dto.requestKey(), List.of(items.getFirst(), item("11680", 378)));
     assertThat(post(client, "/guest-historical", changed, true).statusCode()).isEqualTo(409);
     assertThat(
             post(client, "/guest-historical", request(UUID.randomUUID(), items), true).statusCode())
@@ -213,7 +212,7 @@ class GuestHistoricalTests extends PostgresIntegrationTest {
   @Test
   void guestReadListAndIdempotentResponsesExcludeFinalScore() throws Exception {
     var browser = client();
-    var dto = request(UUID.randomUUID(), List.of(item("2419953", 137)));
+    var dto = request(UUID.randomUUID(), List.of(item("11200", 137)));
     var created = post(browser, "/guest-historical", dto, true);
     var id = json.tree(created.body()).path("id").asString();
     String result =
@@ -244,7 +243,7 @@ class GuestHistoricalTests extends PostgresIntegrationTest {
   @Test
   void rejectsUnknownSiteFutureTimeAndDuplicateWholeDesign() throws Exception {
     var client = client();
-    var item = item("2419953", 137);
+    var item = item("11200", 137);
     var p = item.placement();
     var bad =
         new GuestHistoricalRequest.Item(
@@ -288,7 +287,7 @@ class GuestHistoricalTests extends PostgresIntegrationTest {
                   start.await();
                   try {
                     service.createGuest(
-                        "c".repeat(64), request(UUID.randomUUID(), List.of(item("2419953", 137))));
+                        "c".repeat(64), request(UUID.randomUUID(), List.of(item("11200", 137))));
                     return true;
                   } catch (io.waterleague.common.exception.DomainException e) {
                     return false;
@@ -307,10 +306,10 @@ class GuestHistoricalTests extends PostgresIntegrationTest {
   void wholeDesignRejectsCombinedBudgetExcessAcrossDistricts() throws Exception {
     var items = new ArrayList<GuestHistoricalRequest.Item>();
     var total = BigDecimal.ZERO;
-    for (var district : List.of("2419953", "2410520")) {
+    for (var district : List.of("11200", "11680")) {
       var at = item(district, 137).placement().installedAt();
       var candidates =
-          sites.district(district).values().stream()
+          NativeSiteFixtures.sites(sites, district).values().stream()
               .filter(
                   s ->
                       s.allowedTypes().contains("GREEN_ROOF") && s.existingInfrastructure() == null)
@@ -345,7 +344,7 @@ class GuestHistoricalTests extends PostgresIntegrationTest {
 
   @Test
   void freezesServerValidatedGuestInputForNativeWorker() throws Exception {
-    var dto = request(UUID.randomUUID(), List.of(item("2419953", 137), item("2410520", 377)));
+    var dto = request(UUID.randomUUID(), List.of(item("11200", 137), item("11680", 377)));
     var job = service.createGuest("a".repeat(64), dto);
     var row =
         db.queryForMap(
@@ -368,6 +367,6 @@ class GuestHistoricalTests extends PostgresIntegrationTest {
                 .get(0)
                 .path("guestDesignSnapshotRaw")
                 .asString())
-        .contains("2410520", "2419953");
+        .contains("11680", "11200");
   }
 }

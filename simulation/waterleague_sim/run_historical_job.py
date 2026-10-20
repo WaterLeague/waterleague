@@ -7,14 +7,13 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 from .engine.continuous import ROOT, digest, experiment
-from .model_catalog import read_catalog
-from .shared_model import resolve, with_observed_forcing
-from .historical_evaporation import load as load_evaporation
+from .spatial.game_catalog import forcing
+from .installation_model import resolve, with_observed_forcing
+from .forcing.game_climate import load as load_climate
 
 
 def calculate(request, directory):
-    models = read_catalog(ROOT/'data/models')
-    source = models[request['modelHash']]
+    source = forcing(request['modelHash'])
     observed = json.loads(source)
     placements = json.loads(request['placements'])
     if (digest((request['modelHash']+'\n'+request['placements']).encode()) != request['inputHash']
@@ -31,10 +30,10 @@ def calculate(request, directory):
                    != (p['facilityType'] == 'VEGETATIVE_SWALE') for p in selected)):
         raise ValueError('HISTORICAL_SENSITIVITY_INVALID')
     directory.mkdir(parents=True, exist_ok=True)
-    from .admission import archive
+    from .admission import archive_native as archive
     archive(placements[0].get('publicAssetPolicy'), directory)
     (directory/'rainfall-model.json').write_bytes(source)
-    evaporation = load_evaporation(request['modelHash'], observed, directory)
+    evaporation, prior = load_climate(request['modelHash'], observed, directory)
     results, frames = [], []
     event_start = datetime.fromisoformat(observed['rainfall']['start'])
     if temporal:
@@ -49,7 +48,7 @@ def calculate(request, directory):
         model, _, _ = resolve({'district_id': placement['districtId'], 'cell_id': placement['cellId'],
                                'model_hash': placement['siteModelHash'],
                                'budget_policy': placement.get('budgetPolicy')})
-        if observed['mapId'] != 'seoul-osm-v1-'+placement['districtId']:
+        if observed['mapId'] != 'seoul-ngii-v1-'+placement['districtId']:
             raise ValueError('HISTORICAL_DISTRICT_INVALID')
         model['rainfall'] = observed['rainfall']
         model = with_observed_forcing(model, evaporation)
@@ -59,10 +58,9 @@ def calculate(request, directory):
             sensitivity_input = model
         applied_evaporation = evaporation
         if model.get('initializationPolicy') is not None:
-            from .historical_antecedent import load as load_antecedent
             from .engine.initialization import prepend
             if antecedent is None:
-                antecedent = load_antecedent(request['modelHash'], directory)
+                antecedent = prior
             model, applied_evaporation = prepend(model, evaporation, antecedent)
         physical = {k: placement[k] for k in ('cellId','facilityType','areaM2')}
         from .costing.snapshot import archive as archive_cost

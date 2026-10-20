@@ -47,7 +47,7 @@ public class WeeklyService {
   public io.waterleague.weekly.view.SiteScorePage siteScores(
       String district, String cell, UUID after) {
     districts.require(district);
-    if (cell == null || !cell.matches("[A-Za-z0-9_-]{1,20}"))
+    if (cell == null || !cell.matches("C[a-f0-9]{24}"))
       throw new DomainException(ErrorCode.REQUEST_INVALID);
     var week =
         scores

@@ -56,7 +56,9 @@ export function FacilityMesh({
   opacity = 1,
   terrain = null,
 }: {
-  cell: Pick<Cell, 'coordinates' | 'areaM2' | 'heightM'> & {
+  cell: Pick<Cell, 'areaM2' | 'heightM'> & {
+    coordinates?: Cell['coordinates'];
+    polygons?: SharedSite['polygons'];
     physicalInputs?: SharedSite['physicalInputs'];
   };
   placement: Placement;
@@ -67,12 +69,19 @@ export function FacilityMesh({
 }) {
   const footprint = useMemo(
     () => placementFootprint(cell, placement),
-    [cell.coordinates, cell.areaM2, cell.physicalInputs, placement.areaM2, placement.facilityType]
+    [
+      cell.coordinates,
+      cell.polygons,
+      cell.areaM2,
+      cell.physicalInputs,
+      placement.areaM2,
+      placement.facilityType,
+    ]
   );
   const paved = placement.facilityType === 'PERMEABLE_PAVEMENT';
   const gravel = placement.facilityType === 'INFILTRATION_TRENCH';
   const roof = placement.facilityType === 'GREEN_ROOF';
-  const draped = paved && !!cell.physicalInputs?.streetPlacement;
+  const draped = paved && (!!cell.polygons || !!cell.physicalInputs?.streetPlacement);
   const resources = useMemo(() => {
     if (draped) return pavementGeometry(footprint, terrain);
     const top: number[] = [],

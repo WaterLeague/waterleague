@@ -57,7 +57,7 @@ class HistoricalSubmissionTests extends PostgresIntegrationTest {
             "",
             "",
             true,
-            "2410520",
+            "11680",
             "AFFILIATED"));
     var event = disasters.catalog().events().getFirst();
     eventId = event.id();
@@ -66,7 +66,7 @@ class HistoricalSubmissionTests extends PostgresIntegrationTest {
 
   HistoricalSubmissionRequest.Item item(String district, String area, int second) {
     var site =
-        sites.district(district).values().stream()
+        NativeSiteFixtures.sites(sites, district).values().stream()
             .filter(
                 s ->
                     s.existingInfrastructure() == null
@@ -113,8 +113,8 @@ class HistoricalSubmissionTests extends PostgresIntegrationTest {
 
   @Test
   void savedDesignSubmissionPreservesCostsAndSurvivesLaterCancellation() throws Exception {
-    var first = designItem("2419953", 137);
-    var second = designItem("2410520", 3717);
+    var first = designItem("11200", 137);
+    var second = designItem("11680", 3717);
     var design =
         designService.save(
             owner,
@@ -186,7 +186,7 @@ class HistoricalSubmissionTests extends PostgresIntegrationTest {
             owner,
             eventId,
             new io.waterleague.historical.dto.HistoricalDesignRequest(
-                UUID.randomUUID(), 0, 137, List.of(designItem("2419953", 137))));
+                UUID.randomUUID(), 0, 137, List.of(designItem("11200", 137))));
     var ref = reference(design);
     try (var executor = Executors.newFixedThreadPool(2)) {
       var gate = new CountDownLatch(1);
@@ -215,7 +215,7 @@ class HistoricalSubmissionTests extends PostgresIntegrationTest {
             "",
             "",
             true,
-            "2410520",
+            "11680",
             "AFFILIATED"));
     assertThatThrownBy(() -> service.submitSaved(foreign, eventId, ref))
         .isInstanceOf(DomainException.class);
@@ -234,7 +234,7 @@ class HistoricalSubmissionTests extends PostgresIntegrationTest {
                 service.submit(
                     owner,
                     new HistoricalSubmissionRequest(
-                        ref.requestKey(), eventId, List.of(item("2419953", "20", 137)))))
+                        ref.requestKey(), eventId, List.of(item("11200", "20", 137)))))
         .isInstanceOfSatisfying(
             DomainException.class, e -> assertThat(e.code()).isEqualTo(ErrorCode.CONFLICT));
   }
@@ -246,7 +246,7 @@ class HistoricalSubmissionTests extends PostgresIntegrationTest {
             owner,
             eventId,
             new io.waterleague.historical.dto.HistoricalDesignRequest(
-                UUID.randomUUID(), 0, 137, List.of(designItem("2419953", 137))));
+                UUID.randomUUID(), 0, 137, List.of(designItem("11200", 137))));
     db.update(
         "UPDATE historical_design_revisions SET snapshot_raw=? WHERE owner_id=?", "{}", owner);
     assertThatThrownBy(() -> service.submitSaved(owner, eventId, reference(design)))
@@ -276,7 +276,7 @@ class HistoricalSubmissionTests extends PostgresIntegrationTest {
 
   @Test
   void freezesAllDistrictsAndRetriesOneJobConcurrently() throws Exception {
-    var dto = request(List.of(item("2419953", "20", 137), item("2410520", "20", 197)));
+    var dto = request(List.of(item("11200", "20", 137), item("11680", "20", 197)));
     try (var executor = Executors.newFixedThreadPool(2)) {
       var gate = new CountDownLatch(1);
       Callable<UUID> call =
@@ -311,8 +311,8 @@ class HistoricalSubmissionTests extends PostgresIntegrationTest {
         .contains(
             "FULL_EVENT_INDEPENDENT_SURFACES_V1",
             "experimentInstalledAt",
-            "2419953",
-            "2410520",
+            "11200",
+            "11680",
             "costSnapshotRaw",
             "budgetAccounting",
             "submissionRequestRaw");
@@ -340,11 +340,10 @@ class HistoricalSubmissionTests extends PostgresIntegrationTest {
     assertThatThrownBy(
             () ->
                 service.submit(
-                    owner,
-                    request(List.of(item("2419953", "3000", 20), item("2410520", "3000", 40)))))
+                    owner, request(List.of(item("11200", "3000", 20), item("11680", "3000", 40)))))
         .isInstanceOfSatisfying(
             DomainException.class, e -> assertThat(e.code()).isEqualTo(ErrorCode.BUDGET_EXCEEDED));
-    var p = item("2419953", "20", 137);
+    var p = item("11200", "20", 137);
     assertThatThrownBy(() -> service.submit(owner, request(List.of(p, p))))
         .isInstanceOf(DomainException.class);
     var invalid =
@@ -365,7 +364,7 @@ class HistoricalSubmissionTests extends PostgresIntegrationTest {
 
   @Test
   void boardSeparatesRulesKeepsNegativeAndExcludesFailuresAndUnapprovedMembers() {
-    var dto = request(List.of(item("2419953", "20", 10)));
+    var dto = request(List.of(item("11200", "20", 10)));
     var a = service.submit(owner, dto);
     var p = dto.placements().getFirst();
     assertThatThrownBy(
@@ -383,7 +382,7 @@ class HistoricalSubmissionTests extends PostgresIntegrationTest {
             DomainException.class, e -> assertThat(e.code()).isEqualTo(ErrorCode.CONFLICT));
     db.update("UPDATE historical_experiments SET state='SUCCEEDED',result='{}' WHERE id=?", a.id());
     db.update("UPDATE historical_submissions SET difference_m3=-0.25 WHERE job_id=?", a.id());
-    var b = service.submit(owner, request(List.of(item("2419953", "20", 20))));
+    var b = service.submit(owner, request(List.of(item("11200", "20", 20))));
     db.update("UPDATE historical_experiments SET state='SUCCEEDED',result='{}' WHERE id=?", b.id());
     db.update("UPDATE historical_submissions SET difference_m3=-0.5 WHERE job_id=?", b.id());
     var board = json.tree(json.write(service.board(eventId)));
@@ -433,7 +432,7 @@ class HistoricalSubmissionTests extends PostgresIntegrationTest {
                 rules,
                 "submission-request.json",
                 "{}",
-                "2410520/0/strategy.inp",
+                "11680/0/strategy.inp",
                 "PUBLIC_TEST_INPUT"));
     var hashes = new TreeMap<String, String>();
     for (var f : files.entrySet()) {
@@ -446,7 +445,7 @@ class HistoricalSubmissionTests extends PostgresIntegrationTest {
         new io.waterleague.historical.entity.HistoricalExperiment(
             id,
             owner,
-            "2410520",
+            "11680",
             model,
             hash,
             placements,
@@ -457,14 +456,14 @@ class HistoricalSubmissionTests extends PostgresIntegrationTest {
             null);
     var artifacts = new HistoricalArtifactService(root.toString(), json);
     assertThat(artifacts.bundle(job)).isNotEmpty();
-    java.nio.file.Files.writeString(directory.resolve("2410520/0/strategy.inp"), "CHANGED");
+    java.nio.file.Files.writeString(directory.resolve("11680/0/strategy.inp"), "CHANGED");
     assertThatThrownBy(() -> artifacts.bundle(job)).isInstanceOf(DomainException.class);
     java.nio.file.Files.writeString(
-        directory.resolve("2410520/0/strategy.inp"), files.get("2410520/0/strategy.inp"));
-    java.nio.file.Files.delete(directory.resolve("2410520/0/strategy.inp"));
+        directory.resolve("11680/0/strategy.inp"), files.get("11680/0/strategy.inp"));
+    java.nio.file.Files.delete(directory.resolve("11680/0/strategy.inp"));
     var outside = root.resolve("outside.inp");
     java.nio.file.Files.writeString(outside, "PUBLIC_TEST_INPUT");
-    java.nio.file.Files.createSymbolicLink(directory.resolve("2410520/0/strategy.inp"), outside);
+    java.nio.file.Files.createSymbolicLink(directory.resolve("11680/0/strategy.inp"), outside);
     assertThatThrownBy(() -> artifacts.bundle(job)).isInstanceOf(DomainException.class);
   }
 }

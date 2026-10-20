@@ -3,7 +3,7 @@ import { infrastructureDto } from '../dto/infrastructureDto';
 import type { InfrastructureCatalog } from '../entity/infrastructure';
 let pending: Promise<InfrastructureCatalog> | null = null;
 export function loadInfrastructure() {
-  pending ??= api<unknown>('/infrastructure/seoul-public-20261019-v3')
+  pending ??= api<unknown>('/infrastructure/seoul-native-infrastructure-20261020-v1')
     .then((value) => infrastructureDto.parse(value))
     .catch((error) => {
       pending = null;

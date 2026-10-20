@@ -11,25 +11,36 @@ from unittest.mock import patch
 
 import test_worker_queue as queue_fixture
 from waterleague_sim import shared_physics as physics
-from waterleague_sim.shared_model import catalog
+from waterleague_sim import admission
+from contextlib import closing
+from waterleague_sim.spatial.play_bundle import open_catalog
 
 
 class SharedPhysicsTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         queue_fixture.WorkerQueueTests.setUpClass.__func__(cls)
+        cls.native = open_catalog()
+        cls.cell = cls.native.require('C0000fe65db41b6f0c5e9fa6d', '11290')
+        policy = json.loads((physics.ROOT / 'backend/src/main/resources/infrastructure/native-v1/associations.json').read_bytes())
+        cls.asset_policy = {key: policy[key] for key in
+            ('version', 'sourceSha256', 'siteCatalogSha256', 'scope', 'historicalExistenceVerified')}
+        cls.asset_policy.update(sha256=admission.NATIVE_SHA256, confirmedFootprintCount=0)
+        with closing(cls.native.connection()) as db:
+            cls.second_cell = db.execute("SELECT id FROM sites WHERE district_id='11290' AND allowed_mask&1=1 AND id<>? ORDER BY id LIMIT 1", (cls.cell['id'],)).fetchone()[0]
 
     connection = queue_fixture.WorkerQueueTests.connection
 
     def setUp(self):
         queue_fixture.WorkerQueueTests.setUp(self)
         self.installation = uuid.uuid4()
-        model_hash = catalog()[0]['2419953']['defaultModelHash']
+        model_hash = self.native.sha256
         start = datetime.now(timezone.utc).replace(second=0, microsecond=0)-timedelta(minutes=10)
         self.conn.execute("""INSERT INTO shared_installations(id,occupied_site,district_id,cell_id,
-            owner_id,model_hash,facility_type,area_m2,cost,installed_at)
-            VALUES(%s,'2419953:G1','2419953','G1',%s,%s,'RAIN_GARDEN',10,1000000,%s)""",
-            (self.installation, self.owner, model_hash, start))
+            owner_id,model_hash,facility_type,area_m2,cost,installed_at,admission_snapshot)
+            VALUES(%s,%s,'11290',%s,%s,%s,'RAIN_GARDEN',10,5600000,%s,%s)""",
+            (self.installation, '11290:'+self.cell['id'], self.cell['id'], self.owner, model_hash, start,
+             json.dumps(self.asset_policy)))
         evaporation = patch.object(physics, 'observed_evaporation', side_effect=self.evaporation)
         evaporation.start()
         self.addCleanup(evaporation.stop)
@@ -56,7 +67,7 @@ class SharedPhysicsTests(unittest.TestCase):
         start = self.conn.execute('SELECT installed_at FROM shared_installations WHERE id=%s', (self.installation,)).fetchone()['installed_at']
         end = start + timedelta(minutes=4)
         self.conn.execute("UPDATE shared_installations SET season_ends_at=%s,occupied_site=%s WHERE id=%s",
-                          (end, str(self.owner)+':2419953:G1', self.installation))
+                          (end, str(self.owner)+':11290:'+self.cell['id'], self.installation))
         job=physics.claim(self.conn)
         self.assertEqual(job['end'],end)
         self.assertEqual(job['start'],start)
@@ -105,8 +116,8 @@ class SharedPhysicsTests(unittest.TestCase):
         second = uuid.uuid4()
         self.conn.execute("""INSERT INTO shared_installations(id,occupied_site,district_id,cell_id,
             owner_id,model_hash,facility_type,area_m2,cost,installed_at)
-            SELECT %s,'2419953:G2',district_id,'G2',owner_id,model_hash,facility_type,area_m2,cost,installed_at
-            FROM shared_installations WHERE id=%s""", (second,self.installation))
+            SELECT %s,%s,district_id,%s,owner_id,model_hash,facility_type,area_m2,cost,installed_at
+            FROM shared_installations WHERE id=%s""", (second,'11290:'+self.second_cell,self.second_cell,self.installation))
         ready = physics.claim(self.conn)
         self.assertEqual(ready['installation']['id'],second)
         self.conn.execute("UPDATE shared_physics_jobs SET finished_at=now()-interval '301 seconds' WHERE id=%s", (job['id'],))
@@ -127,7 +138,7 @@ class SharedPhysicsTests(unittest.TestCase):
             'sourceHashes': [sha], 'evidence': 'SYNTHETIC_TEST_ONLY'}, [(raw, {'sha256': sha, 'purpose': 'SYNTHETIC_TEST_ONLY'})]
 
     def test_new_footprint_boundary_runs_without_unverified_external_inflow(self):
-        new_hash=catalog()[1]['2419953']['sha256']
+        new_hash=self.native.sha256
         self.conn.execute('UPDATE shared_installations SET model_hash=%s,area_m2=25 WHERE id=%s',(new_hash,self.installation))
         job=physics.claim(self.conn)
         with tempfile.TemporaryDirectory() as root, patch.object(physics,'observed_forcing',side_effect=self.forcing):
@@ -136,7 +147,7 @@ class SharedPhysicsTests(unittest.TestCase):
             self.assertEqual(row['state'],'SUCCEEDED',row['error_code'])
             result=json.loads(row['result'])
             self.assertEqual(result['inflowPolicy'],'DIRECT_RAINFALL_ONLY')
-            self.assertEqual(result['areaLimitBasis'],'PUBLIC_FOOTPRINT_GEOMETRY')
+            self.assertEqual(result['areaLimitBasis'],'PUBLIC_NATIVE_DESIGN_GEOMETRY')
             self.assertEqual(result['facilityDesign']['nativeSoilBoundary']['method'], 'RG_NATIVE_SOIL_SEEPAGE_V1')
             self.assertEqual(result['initialState'],'OBSERVED_7_DAY_CONTINUOUS_SPINUP_V1')
             self.assertTrue(result['initialization']['scoreExcludesWarmup'])
@@ -210,7 +221,7 @@ class SharedPhysicsTests(unittest.TestCase):
 
     def test_observed_initialization_is_frozen_across_replays(self):
         self.conn.execute('UPDATE shared_installations SET model_hash=%s WHERE id=%s',
-                          (catalog()[1]['2419953']['sha256'], self.installation))
+                          (self.native.sha256, self.installation))
         self.test_real_child_replays_preserved_input_and_refuses_revised_overlap()
         self.warmup_fetch.assert_called_once()
 
@@ -243,14 +254,12 @@ class SharedPhysicsTests(unittest.TestCase):
             self.assertTrue(forcing['sourceArchive']['complete'])
 
     def test_trench_state_and_weekly_contribution_continue_without_duplicate_scoring(self):
-        from waterleague_sim.shared_model import candidates
-        district = '2419953'
-        cell = next(c for c in candidates(district).values()
-                    if 'INFILTRATION_TRENCH' in c['allowedTypes'])
+        district = '11290'
+        cell = self.cell
         area = min(1, cell['physicalInputs']['trenchDesign']['maxAreaM2'])
         self.conn.execute("""UPDATE shared_installations SET cell_id=%s,occupied_site=%s,
             model_hash=%s,facility_type='INFILTRATION_TRENCH',area_m2=%s,cost=%s WHERE id=%s""",
-            (cell['id'],district+':'+cell['id'],catalog()[1][district]['sha256'],area,area*171429,self.installation))
+            (cell['id'],district+':'+cell['id'],self.native.sha256,area,area*171429,self.installation))
         self.test_real_child_replays_preserved_input_and_refuses_revised_overlap()
         self.warmup_fetch.assert_called_once()
 
@@ -258,7 +267,7 @@ class SharedPhysicsTests(unittest.TestCase):
         self.conn.execute("""UPDATE shared_installations SET model_hash=%s,
             installed_at=installed_at+interval '17 seconds',season_ends_at=installed_at+interval '7 days',
             physics_policy='INSTALLATION_SECOND_V2',occupied_site=CAST(owner_id AS TEXT)||':'||district_id||':'||cell_id WHERE id=%s""",
-            (catalog()[1]['2419953']['sha256'],self.installation))
+            (self.native.sha256,self.installation))
         self.test_real_child_replays_preserved_input_and_refuses_revised_overlap()
         row=self.conn.execute('SELECT SUM(evaluated_seconds) seconds,SUM(evaluated_minutes) minutes FROM shared_weekly_scores WHERE installation_id=%s',(self.installation,)).fetchone()
         self.assertEqual(row['seconds'],row['minutes']*60-17)
@@ -268,7 +277,7 @@ class SharedPhysicsTests(unittest.TestCase):
         self.conn.execute("""UPDATE shared_installations SET model_hash=%s,
             season_ends_at=installed_at+interval '1 minute',installed_at=installed_at+interval '59 seconds',
             physics_policy='INSTALLATION_SECOND_V2',occupied_site=CAST(owner_id AS TEXT)||':'||district_id||':'||cell_id WHERE id=%s""",
-            (catalog()[1]['2419953']['sha256'],self.installation))
+            (self.native.sha256,self.installation))
         job=physics.claim(self.conn)
         self.assertIsNotNone(job)
         with tempfile.TemporaryDirectory() as root, patch.object(physics,'observed_forcing',side_effect=self.forcing):

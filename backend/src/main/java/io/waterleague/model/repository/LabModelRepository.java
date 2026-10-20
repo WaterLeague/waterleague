@@ -15,7 +15,11 @@ public class LabModelRepository {
   private final String defaultHash;
 
   public LabModelRepository(JsonService json) throws java.io.IOException {
-    var catalog = json.tree(read("catalog.json"));
+    String catalogSource = read("current/catalog.json");
+    if (!json.hash(catalogSource)
+        .equals("0835043218ada24eb9a58f6fb0ac9b7382d8394499f8176fbe289896ab4d506b"))
+      throw new IllegalStateException("현재 연구 모델 목록 해시 오류");
+    var catalog = json.tree(catalogSource);
     if (catalog.path("schemaVersion").asInt() != 1
         || !catalog.path("models").isArray()
         || catalog.path("models").size() < 1
@@ -31,9 +35,10 @@ public class LabModelRepository {
           || entries.containsKey(hash)
           || !ids.add(id)
           || !files.add(name)) throw new IllegalStateException("모델 식별자 오류");
-      String source = read(name);
+      String source = read("current/" + name);
       var model = json.tree(source);
       if (!json.hash(source).equals(hash)
+          || !model.path("mapId").asString().equals("seongsu-ngii-2025-v2")
           || !id.equals(model.path("id").asString())
           || !model.path("simulationAvailable").asBoolean()
           || model.path("officialEvaluationAvailable").asBoolean()

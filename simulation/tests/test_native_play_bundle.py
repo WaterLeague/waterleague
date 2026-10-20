@@ -113,7 +113,7 @@ class NativePlayBundleTests(unittest.TestCase):
 
     def test_runtime_evidence_binds_both_current_readers_and_all_districts(self):
         root = fixtures.catalog.source.ROOT
-        value = json.loads((root / 'data/benchmarks/native-play-runtime-v1.json').read_text())
+        value = json.loads((root / 'data/benchmarks/native-play-runtime-v2.json').read_text())
         self.assertEqual(value['verifierSha256'], play_bundle.file_hash(Path(runtime_verification.__file__)))
         self.assertEqual(value['bundleSha256'], play_bundle.MANIFEST_SHA256)
         self.assertEqual(value['workerBundleReaderSha256'], play_bundle.file_hash(Path(play_bundle.__file__)))

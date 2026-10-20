@@ -19,8 +19,7 @@ import org.springframework.test.context.ActiveProfiles;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
-@SpringBootTest(
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("local")
 class ResearchAnalysisWorkflowTests extends PostgresIntegrationTest {
   @org.springframework.test.context.DynamicPropertySource
@@ -118,9 +117,9 @@ class ResearchAnalysisWorkflowTests extends PostgresIntegrationTest {
         "title",
         "검증 설계",
         "modelHash",
-        LegacyModelFixtures.HASH,
+        NativeResearchFixtures.HASH,
         "placements",
-        List.of(Map.of("cellId", "G1", "facilityType", "RAIN_GARDEN", "areaM2", 40)),
+        List.of(Map.of("cellId", "G1", "facilityType", "RAIN_GARDEN", "areaM2", 10)),
         "designNote",
         note,
         "baseRevision",
@@ -137,7 +136,7 @@ class ResearchAnalysisWorkflowTests extends PostgresIntegrationTest {
     return successfulJob(
         player,
         discharge,
-        List.of(Map.of("cellId", "G1", "facilityType", "RAIN_GARDEN", "areaM2", 40)));
+        List.of(Map.of("cellId", "G1", "facilityType", "RAIN_GARDEN", "areaM2", 10)));
   }
 
   JsonNode successfulJob(Actor player, int discharge, List<Map<String, Object>> placements)
@@ -152,11 +151,11 @@ class ResearchAnalysisWorkflowTests extends PostgresIntegrationTest {
             "/simulations",
             Map.of("versionId", v.get("id").asString(), "requestKey", UUID.randomUUID()),
             202);
-    var m = (JsonNode) model.view(LegacyModelFixtures.HASH).get("model");
+    var m = (JsonNode) model.view(NativeResearchFixtures.HASH).get("model");
     var result =
         Map.of(
             "modelHash",
-            LegacyModelFixtures.HASH,
+            NativeResearchFixtures.HASH,
             "inputHash",
             v.get("inputHash").asString(),
             "validationLevel",
@@ -192,7 +191,7 @@ class ResearchAnalysisWorkflowTests extends PostgresIntegrationTest {
     ok(owner, "PUT", "/consents/" + organization(org), Map.of("granted", granted), 200);
   }
 
-  JsonNode submitted(Actor owner, int discharge, int area) throws Exception {
+  JsonNode submitted(Actor owner, int discharge, double area) throws Exception {
     var job =
         successfulJob(
             owner,
@@ -265,7 +264,7 @@ class ResearchAnalysisWorkflowTests extends PostgresIntegrationTest {
     var owner = actor(null);
     var org = institution();
     var other = institution();
-    var job = submitted(owner, 90, 40);
+    var job = submitted(owner, 90, 10);
     var key = UUID.randomUUID();
     var request = request(job, key, 3);
     assertThat(call(org, "POST", "/research/comparisons", request).statusCode()).isEqualTo(404);
@@ -342,7 +341,7 @@ class ResearchAnalysisWorkflowTests extends PostgresIntegrationTest {
     var owner = actor(null);
     var org = institution();
     var other = institution();
-    var job = submitted(owner, 90, 40);
+    var job = submitted(owner, 90, 10);
     share(owner, org, true);
     share(owner, other, true);
     var c = ok(org, "POST", "/research/comparisons", request(job, UUID.randomUUID(), 2), 202);
@@ -425,7 +424,7 @@ class ResearchAnalysisWorkflowTests extends PostgresIntegrationTest {
   void rejectsInsufficientCapacityAndRollsBackAllDerivedRowsOnLateFailure() throws Exception {
     var owner = actor(null);
     var org = institution();
-    var job = submitted(owner, 90, 40);
+    var job = submitted(owner, 90, 10);
     share(owner, org, true);
     for (int i = 0; i < 2; i++)
       ok(
@@ -467,7 +466,7 @@ class ResearchAnalysisWorkflowTests extends PostgresIntegrationTest {
   void serializesDuplicateRequestsAndConflictingQueueAdmission() throws Exception {
     var owner = actor(null);
     var org = institution();
-    var job = submitted(owner, 90, 40);
+    var job = submitted(owner, 90, 10);
     share(owner, org, true);
     var request = request(job, UUID.randomUUID(), 2);
     try (var pool = java.util.concurrent.Executors.newFixedThreadPool(2)) {
@@ -507,12 +506,12 @@ class ResearchAnalysisWorkflowTests extends PostgresIntegrationTest {
     var org = institution();
     for (int i = 0; i < 3; i++) {
       var owner = actor(null);
-      var job = submitted(owner, 90, 40);
+      var job = submitted(owner, 90, 10);
       share(owner, org, true);
       ok(org, "POST", "/research/comparisons", request(job, UUID.randomUUID(), 3), 202);
     }
     var fourth = actor(null);
-    var job = submitted(fourth, 90, 40);
+    var job = submitted(fourth, 90, 10);
     share(fourth, org, true);
     assertThat(
             call(org, "POST", "/research/comparisons", request(job, UUID.randomUUID(), 2))
@@ -594,8 +593,8 @@ class ResearchAnalysisWorkflowTests extends PostgresIntegrationTest {
     var owner = actor(null);
     var org = institution();
     var a = submitted(owner, 90, 10);
-    var b = submitted(owner, 95, 20);
-    var c = submitted(owner, 95, 30);
+    var b = submitted(owner, 95, 5);
+    var c = submitted(owner, 95, 7.5);
     var duplicate = submitted(owner, 90, 10);
     var ids =
         List.of(
@@ -617,7 +616,7 @@ class ResearchAnalysisWorkflowTests extends PostgresIntegrationTest {
     assertThat(view.path("maximumScore").decimalValue()).isEqualByComparingTo("10");
     assertThat(view.path("minimumScore").decimalValue()).isEqualByComparingTo("5");
     assertThat(view.path("placements").get(0).path("meanInstalledAreaM2").decimalValue())
-        .isEqualByComparingTo("20");
+        .isEqualByComparingTo("7.5");
     assertThat(view.toString()).doesNotContain("designNote", "username", "ownerId");
     assertThat(call(owner, "POST", "/research/patterns", body).statusCode()).isEqualTo(403);
     assertThat(
@@ -636,7 +635,7 @@ class ResearchAnalysisWorkflowTests extends PostgresIntegrationTest {
         "modelHash",
         models.all().stream()
             .map(m -> m.hash())
-            .filter(h -> !h.equals(LegacyModelFixtures.HASH))
+            .filter(h -> !h.equals(NativeResearchFixtures.HASH))
             .findFirst()
             .orElseThrow());
     var version = ok(owner, "POST", "/strategies", foreignBody, 200);

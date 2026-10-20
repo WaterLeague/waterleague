@@ -1,13 +1,16 @@
 import { z } from 'zod';
 export const swaleDesignDto = z.object({
-  method: z.literal('CONTAINED_FIXED_WIDTH_STRAIGHT_DESIGN_V1'),
+  method: z.enum(['CONTAINED_FIXED_WIDTH_STRAIGHT_DESIGN_V1', 'CONTAINED_COMPONENT_RECTANGLE_V2']),
   topWidthM: z.literal(2),
   maxLengthM: z.number().positive(),
   maxAreaM2: z.number().positive(),
   center: z.tuple([z.number().finite(), z.number().finite()]),
   direction: z.tuple([z.number().finite(), z.number().finite()]),
   coordinates: z.array(z.tuple([z.number().finite(), z.number().finite()])).length(5),
-  slopeBasis: z.literal('REGIONAL_TERRAIN_PROXY_NOT_LONGITUDINAL_SURVEY'),
+  slopeBasis: z.enum([
+    'REGIONAL_TERRAIN_PROXY_NOT_LONGITUDINAL_SURVEY',
+    'PUBLIC_DESIGN_SLOPE_NOT_SURVEY',
+  ]),
   outlet: z.literal('SURFACE_RUNOFF_UNCONNECTED_TO_NETWORK'),
 });
 export const trenchDesignDto = swaleDesignDto.extend({
@@ -19,7 +22,11 @@ export type SwaleDesign = z.infer<typeof swaleDesignDto>;
 const rainGardenBoundaryDto = z.object({
   method: z.literal('RG_NATIVE_SOIL_SEEPAGE_V1'),
   seepageMmH: z.number().finite().positive(),
-  basis: z.enum(['TEXTURE_CLASS_LITERATURE_ESTIMATE', 'UNRESOLVED_DESIGN_ASSUMPTION']),
+  basis: z.enum([
+    'TEXTURE_CLASS_LITERATURE_ESTIMATE',
+    'UNRESOLVED_DESIGN_ASSUMPTION',
+    'PUBLIC_REFERENCE_SCENARIO',
+  ]),
   liner: z.literal('UNLINED_DESIGN_NOT_SITE_CONFIRMED'),
   storageThicknessMm: z.literal(0),
 });
@@ -28,7 +35,7 @@ export const nativeSoilBoundaryDto = z.union([
   z.object({
     method: z.literal('IT_NATIVE_SOIL_SEEPAGE_V1'),
     seepageMmH: z.number().finite().positive(),
-    basis: z.literal('TEXTURE_CLASS_LITERATURE_ESTIMATE'),
+    basis: z.enum(['TEXTURE_CLASS_LITERATURE_ESTIMATE', 'PUBLIC_REFERENCE_SCENARIO']),
     liner: z.literal('UNLINED_DESIGN_NOT_SITE_CONFIRMED'),
     storageThicknessMm: z.literal(914.4),
     underdrain: z.literal('NONE_DIRECT_RAIN_INFILTRATION_DESIGN'),
@@ -36,7 +43,7 @@ export const nativeSoilBoundaryDto = z.union([
   z.object({
     method: z.literal('BC_NATIVE_SOIL_SEEPAGE_V1'),
     seepageMmH: z.number().finite().positive(),
-    basis: z.literal('TEXTURE_CLASS_LITERATURE_ESTIMATE'),
+    basis: z.enum(['TEXTURE_CLASS_LITERATURE_ESTIMATE', 'PUBLIC_REFERENCE_SCENARIO']),
     liner: z.literal('UNLINED_DESIGN_NOT_SITE_CONFIRMED'),
     storageThicknessMm: z.literal(304.8),
     underdrain: z.literal('NONE_DIRECT_RAIN_INFILTRATION_DESIGN'),

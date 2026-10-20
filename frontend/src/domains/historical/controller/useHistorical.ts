@@ -2,8 +2,7 @@ import { placementAreaLimit } from '../../installation/service/placementAreaLimi
 import { unitCost } from '../../game/service/gameService';
 import { playbackSecond, rainfallFrame } from '../service/playbackService';
 import { useEffect, useRef, useState } from 'react';
-import { loadLab } from '../../game/repository/gameRepository';
-import type { Lab, FacilityType } from '../../game/entity/game';
+import type { FacilityType } from '../../game/entity/game';
 import type { DisasterCatalog } from '../../disaster/entity/disaster';
 import { loadDisasters } from '../../disaster/repository/disasterRepository';
 import type { Account } from '../../account/entity/account';
@@ -40,7 +39,6 @@ export function useHistorical(
   const [catalog, setCatalog] = useState<DisasterCatalog | null>(null);
   const eventId = initialEventId;
   const submission = useHistoricalSubmission(enabled, account?.id, eventId);
-  const [lab, setLab] = useState<Lab | null>(null);
   const design = useHistoricalDesign(enabled, eventId, account?.id);
   const drafts = design.drafts;
   const [restoredJobs, setRestoredJobs] = useState('');
@@ -105,24 +103,6 @@ export function useHistorical(
     setCalculationErrors({});
     epoch.current++;
   }, [eventId]);
-  useEffect(() => {
-    setLab(null);
-    if (!enabled || !hash) return;
-    let active = true;
-    loadLab(hash)
-      .then((v) => {
-        if (active) {
-          setLab(v);
-          setError('');
-        }
-      })
-      .catch((e) => {
-        if (active) setError(errorMessage(e));
-      });
-    return () => {
-      active = false;
-    };
-  }, [enabled, hash]);
   useEffect(() => {
     if (accountId.current !== account?.id) {
       epoch.current++;
@@ -332,7 +312,7 @@ export function useHistorical(
     : null;
   const currentResult =
     job?.state === 'SUCCEEDED' &&
-    job.modelHash === lab?.modelHash &&
+    job.modelHash === hash &&
     job.districtId === districtId &&
     matchesHistoricalDraft(job, current)
       ? job.result
@@ -363,7 +343,6 @@ export function useHistorical(
           snapshotSha256: design.snapshotSha256,
         });
     },
-    lab,
     events: catalog?.events ?? [],
     event,
     eventId,

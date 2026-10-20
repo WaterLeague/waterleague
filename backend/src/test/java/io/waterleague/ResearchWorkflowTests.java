@@ -104,9 +104,9 @@ class ResearchWorkflowTests extends PostgresIntegrationTest {
         "title",
         "검증 설계",
         "modelHash",
-        LegacyModelFixtures.HASH,
+        NativeResearchFixtures.HASH,
         "placements",
-        List.of(Map.of("cellId", "G1", "facilityType", "RAIN_GARDEN", "areaM2", 40)),
+        List.of(Map.of("cellId", "G1", "facilityType", "RAIN_GARDEN", "areaM2", 10)),
         "designNote",
         note,
         "baseRevision",
@@ -123,7 +123,7 @@ class ResearchWorkflowTests extends PostgresIntegrationTest {
     var other = actor(null);
     var v = create(owner);
     String id = v.get("strategyId").asString();
-    assertThat(v.get("cost").decimalValue()).isEqualByComparingTo("22400000");
+    assertThat(v.get("cost").decimalValue()).isEqualByComparingTo("5600000");
     assertThat(call(other, "GET", "/strategies/" + id, null).statusCode()).isEqualTo(404);
     assertThat(call(other, "POST", "/strategies/" + id + "/versions", draft(1, "침입")).statusCode())
         .isEqualTo(404);
@@ -203,7 +203,7 @@ class ResearchWorkflowTests extends PostgresIntegrationTest {
     var result =
         Map.of(
             "modelHash",
-            LegacyModelFixtures.HASH,
+            NativeResearchFixtures.HASH,
             "inputHash",
             v.get("inputHash").asString(),
             "validationLevel",
@@ -236,12 +236,13 @@ class ResearchWorkflowTests extends PostgresIntegrationTest {
         200);
     var details = ok(a, "GET", "/research/strategies/" + id, null, 200);
     assertThat(details.get("history").size()).isEqualTo(1);
-    assertThat(details.get("lab").get("modelHash").asString()).isEqualTo(LegacyModelFixtures.HASH);
+    assertThat(details.get("lab").get("modelHash").asString())
+        .isEqualTo(NativeResearchFixtures.HASH);
     assertThat(details.toString()).doesNotContain("미제출 비공개 후속 메모", "passwordHash", "username");
     // 이전 계산은 현재 강우로 대체하지 않고 해시가 일치하는 보관 모델을 사용한다.
     var archived =
         (tools.jackson.databind.node.ObjectNode)
-            json.valueToTree(model.view(LegacyModelFixtures.HASH).get("model"));
+            json.valueToTree(model.view(NativeResearchFixtures.HASH).get("model"));
     ((tools.jackson.databind.node.ObjectNode) archived.get("rainfall")).put("source", "이전 시험 강우");
     String source = json.writeValueAsString(archived);
     String archiveHash = documentJson.hash(source);
@@ -314,28 +315,32 @@ class ResearchWorkflowTests extends PostgresIntegrationTest {
     var player = actor(null);
     var current = ok(player, "GET", "/lab", null, 200);
     String hash = current.path("modelHash").asString();
-    assertThat(hash).isNotEqualTo(LegacyModelFixtures.HASH);
+    assertThat(hash).isNotEqualTo(NativeResearchFixtures.HASH);
     assertThat(current.path("model").path("mapId").asString()).isEqualTo("seongsu-ngii-2025-v2");
     var input = new HashMap<>(draft(0, "신규 공개 지도 검사"));
     input.put("modelHash", hash);
+    input.put(
+        "placements", List.of(Map.of("cellId", "G1", "facilityType", "RAIN_GARDEN", "areaM2", 40)));
     assertThat(call(player, "POST", "/strategies", input).statusCode()).isEqualTo(422);
     input.put(
         "placements", List.of(Map.of("cellId", "G1", "facilityType", "RAIN_GARDEN", "areaM2", 20)));
     var version = ok(player, "POST", "/strategies", input, 200);
     assertThat(version.path("modelHash").asString()).isEqualTo(hash);
     var legacy = ok(player, "POST", "/strategies", draft(0, "이전 지도 검사"), 200);
-    assertThat(legacy.path("modelHash").asString()).isEqualTo(LegacyModelFixtures.HASH);
+    assertThat(legacy.path("modelHash").asString()).isEqualTo(NativeResearchFixtures.HASH);
     var compatibility = new io.waterleague.comparison.service.ComparisonCompatibilityService();
-    var original = ok(player, "GET", "/lab?modelHash=" + LegacyModelFixtures.HASH, null, 200);
-    assertThatThrownBy(() -> compatibility.require(original.path("model"), current.path("model")))
-        .isInstanceOf(io.waterleague.comparison.exception.IncompatibleComparisonException.class);
+    var original = ok(player, "GET", "/lab?modelHash=" + NativeResearchFixtures.HASH, null, 200);
+    assertThatCode(() -> compatibility.require(original.path("model"), current.path("model")))
+        .doesNotThrowAnyException();
+    assertThat(call(player, "GET", "/lab?modelHash=" + LegacyModelFixtures.HASH, null).statusCode())
+        .isEqualTo(404);
   }
 
   @Test
   void separatesRainfallVersionsBoardsAndLeagueModels() throws Exception {
     var player = actor(null);
     var catalog = ok(player, "GET", "/lab/catalog", null, 200).get("models");
-    try (var source = getClass().getResourceAsStream("/models/catalog.json")) {
+    try (var source = getClass().getResourceAsStream("/models/current/catalog.json")) {
       var registered =
           json.readTree(new String(source.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8))
               .path("models");
@@ -356,7 +361,7 @@ class ResearchWorkflowTests extends PostgresIntegrationTest {
                             .asString()
                             .equals("NEAREST_AWS_OBSERVED_REPLAY"))
                 .count())
-        .isEqualTo(144);
+        .isZero();
     String first = catalog.get(1).get("modelHash").asString();
     String second = catalog.get(2).get("modelHash").asString();
     assertThat(
@@ -446,7 +451,7 @@ class ResearchWorkflowTests extends PostgresIntegrationTest {
   Map<String, Object> leagueDraft(int revision, int limit, long budget) {
     return Map.of(
         "modelHash",
-        LegacyModelFixtures.HASH,
+        NativeResearchFixtures.HASH,
         "baseRevision",
         revision,
         "title",
@@ -485,7 +490,7 @@ class ResearchWorkflowTests extends PostgresIntegrationTest {
     return successfulJob(
         player,
         discharge,
-        List.of(Map.of("cellId", "G1", "facilityType", "RAIN_GARDEN", "areaM2", 40)));
+        List.of(Map.of("cellId", "G1", "facilityType", "RAIN_GARDEN", "areaM2", 10)));
   }
 
   JsonNode successfulJob(Actor player, int discharge, List<Map<String, Object>> placements)
@@ -500,11 +505,11 @@ class ResearchWorkflowTests extends PostgresIntegrationTest {
             "/simulations",
             Map.of("versionId", v.get("id").asString(), "requestKey", UUID.randomUUID()),
             202);
-    var m = (JsonNode) model.view(LegacyModelFixtures.HASH).get("model");
+    var m = (JsonNode) model.view(NativeResearchFixtures.HASH).get("model");
     var result =
         Map.of(
             "modelHash",
-            LegacyModelFixtures.HASH,
+            NativeResearchFixtures.HASH,
             "inputHash",
             v.get("inputHash").asString(),
             "validationLevel",
@@ -598,7 +603,7 @@ class ResearchWorkflowTests extends PostgresIntegrationTest {
     var player = actor(null);
     var input = new HashMap<>(leagueDraft(0, 10, 300000000));
     input.put("placementLimit", 1);
-    input.put("areaLimitM2", 40);
+    input.put("areaLimitM2", 10);
     var draft = ok(org, "POST", "/institution/leagues", input, 200);
     var league =
         ok(
@@ -614,7 +619,7 @@ class ResearchWorkflowTests extends PostgresIntegrationTest {
         successfulJob(
             player,
             90,
-            List.of(Map.of("cellId", "G1", "facilityType", "RAIN_GARDEN", "areaM2", 40.01)));
+            List.of(Map.of("cellId", "G1", "facilityType", "RAIN_GARDEN", "areaM2", 10.01)));
     var count =
         successfulJob(
             player,
@@ -627,7 +632,7 @@ class ResearchWorkflowTests extends PostgresIntegrationTest {
     assertThat(call(player, "POST", endpoint, leagueSubmission(league, count)).statusCode())
         .isEqualTo(422);
     input.put("placementLimit", 2);
-    input.put("areaLimitM2", 40.03);
+    input.put("areaLimitM2", 10.03);
     var other = ok(org, "POST", "/institution/leagues", input, 200);
     other =
         ok(
@@ -641,8 +646,8 @@ class ResearchWorkflowTests extends PostgresIntegrationTest {
             player,
             90,
             List.of(
-                Map.of("cellId", "G1", "facilityType", "RAIN_GARDEN", "areaM2", 10.01),
-                Map.of("cellId", "G2", "facilityType", "RAIN_GARDEN", "areaM2", 30.02)));
+                Map.of("cellId", "G1", "facilityType", "RAIN_GARDEN", "areaM2", 2.51),
+                Map.of("cellId", "G2", "facilityType", "RAIN_GARDEN", "areaM2", 7.52)));
     ok(
         player,
         "POST",
@@ -714,7 +719,8 @@ class ResearchWorkflowTests extends PostgresIntegrationTest {
         .isEqualTo(409);
     var detail = ok(player, "GET", "/leagues/" + id, null, 200);
     assertThat(detail.get("league").get("rules").get("official").asBoolean()).isFalse();
-    assertThat(detail.get("lab").get("modelHash").asString()).isEqualTo(LegacyModelFixtures.HASH);
+    assertThat(detail.get("lab").get("modelHash").asString())
+        .isEqualTo(NativeResearchFixtures.HASH);
     var rulesText =
         db.queryForObject(
             "SELECT rules FROM leagues WHERE id=?", String.class, UUID.fromString(id));
@@ -763,7 +769,12 @@ class ResearchWorkflowTests extends PostgresIntegrationTest {
             ok(org, "GET", "/research/strategies/" + jobId, null, 200).get("leagueContexts").size())
         .isEqualTo(1);
     assertThat(
-            ok(org, "GET", "/research/strategies?modelHash=" + LegacyModelFixtures.HASH, null, 200)
+            ok(
+                    org,
+                    "GET",
+                    "/research/strategies?modelHash=" + NativeResearchFixtures.HASH,
+                    null,
+                    200)
                 .toString())
         .contains(jobId);
     assertThat(call(other, "GET", "/research/strategies/" + jobId, null).statusCode())
@@ -926,7 +937,7 @@ class ResearchWorkflowTests extends PostgresIntegrationTest {
             "purpose",
             "빗물 설계 연구",
             "districtId",
-            "2410520",
+            "11680",
             "affiliationType",
             "AFFILIATED");
     var pending = ok(applicant, "POST", "/auth/register", registration, 200);

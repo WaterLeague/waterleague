@@ -48,9 +48,9 @@
 
 모델 검증·배포 권한은 조직 회원의 리그 운영과 분리. 내부 워커 endpoint 외부 노출 금지. 현장 승인 맵과 공개 참고 지도·탐색 모델은 구분한다. 관리자 역할은 ADMIN, 모든 일반/조직 회원 역할은 MEMBER. 조직 회원의 연구·리그 권한은 승인 상태·회원 유형·소속·MFA로 검사한다.
 
-원형 조회의 `minx,miny,maxx,maxy`와 응답 `geometry`는 절대 EPSG:5186 미터 좌표다. 시야의 가로/세로는 각각 2,000m 이하, `limit` 기본 512·최대 2,000이다. 선택 `districtId`는 공개 자치구 코드, `kind`는 ROOF/GROUND다. `includeUnsupported=false`가 기본이며 true일 때 빈 허용 목록의 미지원 표면도 조회한다. 구멍/다중 면을 보존한 실제 도형으로 교차 판정한다. 범위 인덱스 검사 20,000개·본문 처리 16MiB·결과 한도를 넘으면 일부를 정상 목록으로 반환하지 않고 `SPATIAL_VIEW_TOO_DENSE` 422를 반환한다. 접속 주소별 분당 300회·동시 시야 조회 4개 상한과 429 응답을 적용한다. 모든 응답의 `catalogSha256`은 같은 불변 원형 DB를 가리킨다. 주간·재해 설치/제출의 공간 버전 동시 전환은 아직 미완료다.
+원형 조회의 `minx,miny,maxx,maxy`와 응답 `geometry`는 절대 EPSG:5186 미터 좌표다. 시야의 가로/세로는 각각 2,000m 이하, `limit` 기본 512·최대 2,000이다. 선택 `districtId`는 공개 자치구 코드, `kind`는 ROOF/GROUND다. `includeUnsupported=false`가 기본이며 true일 때 빈 허용 목록의 미지원 표면도 조회한다. 구멍/다중 면을 보존한 실제 도형으로 교차 판정한다. 범위 인덱스 검사 20,000개·본문 처리 16MiB·결과 한도를 넘으면 일부를 정상 목록으로 반환하지 않고 `SPATIAL_VIEW_TOO_DENSE` 422를 반환한다. 접속 주소별 분당 300회·동시 시야 조회 4개 상한과 429 응답을 적용한다. 모든 응답의 `catalogSha256`은 같은 불변 원형 DB를 가리킨다. 현재 주간·재해 설치/제출은 같은 원형 DB 해시와 공개 5자리 구 코드를 사용한다. 설치 후보 ID는 `C`와 소문자 16진수 24자리다.
 
-관측 결속은 별도 `catalogSha256`과 `siteCatalogSha256`으로 관측 창 목록과 원형 DB를 각각 고정한다. 25개 구별 기본 창 1개·재해 3개, 총 100개이며 `modelHash`는 관측 결속 원문의 해시다. 재해는 같은 지점의 7일 선행 관측이 보관된 경우만 선택한다. 관측 창별 보관·검사 통과 지점 안에서 공개 구 대표점과 10km 이내 최근접을 선택하며, 전체 AWS 중 최근접·현장 강우 대표성·사건 당시 지형 복원을 뜻하지 않는다. 후보 셀이나 OSM 모델을 관측 결속에 포함하지 않는다. 등록되지 않은 해시는 `MODEL_NOT_ELIGIBLE` 422, 잘못된 해시 형식은 `REQUEST_INVALID` 400, 접속 주소별 분당 300회 초과는 429다. 이 API 추가를 일반 게임의 입력 전환 완료로 표시하지 않는다.
+관측 결속은 별도 `catalogSha256`과 `siteCatalogSha256`으로 관측 창 목록과 원형 DB를 각각 고정한다. 25개 구별 기본 창 1개·재해 3개, 총 100개이며 `modelHash`는 관측 결속 원문의 해시다. 재해는 같은 지점의 7일 선행 관측이 보관된 경우만 선택한다. 관측 창별 보관·검사 통과 지점 안에서 공개 구 대표점과 10km 이내 최근접을 선택하며, 전체 AWS 중 최근접·현장 강우 대표성·사건 당시 지형 복원을 뜻하지 않는다. 후보 셀이나 OSM 모델을 관측 결속에 포함하지 않는다. 등록되지 않은 해시는 `MODEL_NOT_ELIGIBLE` 422, 잘못된 해시 형식은 `REQUEST_INVALID` 400, 접속 주소별 분당 300회 초과는 429다. 현재 재해/주간의 관측 결속은 이 목록을 사용하며 공간 형상과 별도 해시로 관리한다. 현재 게임 데이터셋은 `SEOUL_NGII_GAME_V2`다.
 
 공동 시설 물리 상태는 `WAITING/RUNNING/READY/DELAYED/UNAVAILABLE`. `attemptedAt`과 `simulatedThrough` 구분, 실패 시 이전 성공 결과와 그 시각 유지. 무결과는 `result:null`이며 강우·수분·유출 0 대입 없음. 마지막 계산이 5분을 넘으면 지연 표시, 실행 작업이 240초를 넘으면 보류 표시. 결과는 관측소·계산 구간·EPA 버전·EXPLORATORY·누적 강우 체적/침투/증발/유출·현재 수분/저류·시설 표면 수심·토양수분·물수지 오차·증발/초기상태 가정만 공개. 원문·파일 경로·입력 hash·임대 토큰 미노출. 철거·미등록 시설 404. 분별 재현 입력은 별도 접근 통제 대상이며 이 공개 요약에서 제공하지 않음.
 
@@ -62,7 +62,7 @@
 | GET /installations/sites | 구·시야 x/y·offset·시설 type·vacant·surface로 후보 조회 |
 | GET /installations/sites/{districtId}/{cellId} | 공개 후보 상세 |
 | GET /installations/sites/{districtId}/building | 원 건물 sourceId로 후보 조회 |
-| GET /installations/sites/{districtId}/street, /parking | 원 sourceId와 클릭 좌표로 가까운 검증 후보 조회 |
+| GET /installations/sites/{districtId}/ground | 화면 상대 미터 x/y의 실제 점을 포함하는 원형 지상 후보 조회 |
 | POST /installations | 로그인·소속 구·본인 중복·면적·시설·예산·CSRF 검사 후 확정 |
 | DELETE /installations/{id} | 소유자 검사. 현재 주 잠긴 확정 시설의 취소 거부 |
 | GET /rainfall/live | 구별 현재 관측·유효 시각·결측 상태. 실제 무강우와 미확인 구분 |
@@ -210,9 +210,9 @@ RFC 9457 `application/problem+json`: type, title, status, detail, instance, code
 
 ### 공개 기존 시설 참고 카탈로그
 
-`GET /api/v1/infrastructure/seoul-public-20261018-v2`는 비회원 조회 가능. 원본 해시를 검사한 프로젝트 보관 카탈로그에서 표시 가능한 1,607기록·10개 출처·삭제/결측 집계를 반환하며 외부 API를 호출하지 않음. `usage=REFERENCE_ONLY`, 운영 미확인·유효 시작/끝 null·관망 미연결 유지. 위치점 1,604건과 공개 지도 지표 저류 도형 3건을 구분. 후자는 `footprint`의 다중 도형/구멍·면적·OSM 출처·자료시점·분류 근거·정책 버전을 제공. 원본 내부 속성과 로컬 파일 경로는 응답에서 제외. ETag·공개 불변 캐시 제공. 실제 운영 중 시설 수·재해 당시 시설 목록·계산 자산 API가 아님. 강서구 호기별 양수량은 원문 단위 m³/min, 유수지 용량은 시설별 한 번만 표시. v1 파일은 재현용 보존.
+`GET /api/v1/infrastructure/seoul-native-infrastructure-20261020-v1`은 비회원 조회 가능. 공개 위치점 원본 9종·1,696기록 중 표시 가능한 1,604기록을 반환한다. 삭제 90건·위치/상태 미확인 2건을 보존하고 외부 API를 호출하지 않는다. `usage=REFERENCE_ONLY`, 운영 미확인·유효 시작/끝 null·관망 미연결·수직 층위 UNKNOWN이다. 현재 확인된 시설 부지 도형은 0개다. ETag·공개 불변 캐시를 제공하며 원문 속성·로컬 경로는 노출하지 않는다. 강서구 양수량 단위 m³/min·시설별 유수지 용량과 광진구 공개 설비 이력의 원문 대응을 유지한다. 이전 OSM 도형 목록은 보관 근거이며 현재 조회의 대체 입력으로 사용하지 않는다.
 
-후보의 선택적 `existingInfrastructure`는 현재 도형 교차에 의한 신규 설치 제외 정책·시설 식별자·교차 면적. `vacant=true`에서 해당 후보 제외, 신규 공동 설치·재해 요청은 `EXISTING_INFRASTRUCTURE`(409)로 차단. 후보 수·기존 물리 모델 해시는 변경하지 않으며 이전 설치 철거/조회와 동일 연구 요청 키의 재조회는 유지. 신규 설치 `admission_snapshot`과 재해 불변 입력의 `publicAssetPolicy`에 당시 정책 고정. 기존 행의 미기록은 null로 보존.
+후보의 선택적 `referenceInfrastructure`는 공개 위치점이 실제 후보 도형 안에 포함된 대응 1,104건이다. 부지·시공 가능성·운영·과거 존속 확인이 아니므로 설치 제외·점유로 사용하지 않는다. 당시 참고 정책의 버전·원문 해시·공간 해시는 설치 `admission_snapshot`과 재해 입력의 `publicAssetPolicy`에 고정한다. 현재 `exclusions`는 빈 목록이며 위치점 근접만으로 이전 `EXISTING_INFRASTRUCTURE` 차단을 유지하지 않는다.
 
 ### 지표 수심·속력 결과 조회
 
@@ -246,6 +246,4 @@ RFC 9457 `application/problem+json`: type, title, status, detail, instance, code
 
 `GET /api/v1/urban/live?places=POI001,POI068`은 비회원 조회, IP당 분당 30회, ID 1~6개·중복/미등록 ID 거부, `Cache-Control: no-store`. 고정 카탈로그 해시·공식 출처 URL·장소별 인구/도로 값을 반환한다. `population`은 `minimum/maximum/sourceHourKst/congestion/retrievedAt/validUntil/sourceSha256`, `traffic`은 `speedKmh/observedAt/retrievedAt/validUntil/sourceSha256`. 인구의 조회 시각을 관측 시각으로 제공하지 않는다. 인구/교통 실패 필드는 각각 null과 일반화한 상태 코드이며 외부 HTML·내부 예외·키·URL 쿼리를 응답에 전달하지 않는다. 과거 사건 계산·점수·랭킹 입력에 사용하지 않는 현재 표시 자료다.
 
-2026-10-19 도로 투수포장: `/installations/sites`의 선택 필터 `surface=ROADWAY|WALKWAY|OTHER`는 차도, 인도·보행로, 기존 옥상·지상 후보를 구분한다. 미지정은 전체다. `/installations/sites/{districtId}/street?sourceId=way/{id}:{part}&x=...&y=...`는 해당 공개 도로의 가까운 검증 후보만 반환한다. 좌표·원본 식별자 검증, 구 경계, 30m 탐색 한도 적용. 설치 요청은 기존 서버 후보·시설 유형·면적·예산·소유 및 인증 검증을 그대로 사용하며 클라이언트가 도로 형상이나 점수 계수를 제출하지 않는다. v9과 추가 v10 후보는 각 원본 해시로 불변 보존한다.
-
-2026-10-19 주차장 직접 선택: `GET /installations/sites/{districtId}/parking?sourceId=way/{id}|relation/{id}&x=...&y=...`는 클릭한 주차장 원본 식별자와 같은 지상 후보 중 30m 이내의 가장 가까운 위치를 반환한다. 도로 띠·옥상은 제외한다. 비로그인 조회 허용, 원본 ID·유한 좌표·좌표 범위·구 경계 검증, 미확보는 404. 시설 확정·권한·소속 구·면적·점수 계약은 기존 설치 경로 유지. 주차장 바닥·정차 차량·2D 주차장 면의 클릭을 연결하며, 조회 실패도 지도 전용 화면에 숨기지 않고 기존 패널에 표시한다.
+현재 원형 지상 선택: `/installations/sites`의 `surface=ROADWAY|WALKWAY|OTHER`는 각각 원 도로면·보도·그 외 원형 역할을 필터링하며 미지정은 전체다. `/installations/sites/{districtId}/ground?x=...&y=...`는 도시 원점 `[198128,551989]`에서 이동한 미터 좌표의 점을 포함하는 실제 지상 후보를 반환한다. 유한 좌표·범위·공개 구 소속을 검사하고 구멍·수면·제외 영역·먼 위치는 404다. 다른 후보까지 30m 확장하지 않는다. `/building?sourceId=ngii:{layer}:{sha256}`는 동일 원 객체의 옥상 후보를 조회한다. 과거 OSM `/street`·`/parking` 조회는 현재 제공하지 않는다. 시설 확정의 소속·시설 유형·면적·예산·CSRF는 서버에서 재검사한다.

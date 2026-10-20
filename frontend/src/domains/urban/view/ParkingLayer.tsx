@@ -34,7 +34,7 @@ export const ParkingLayer = memo(function ParkingLayer({
   clock: UrbanTime;
   animate: boolean;
   onFloodStats: (stats: FloodStats) => void;
-  onParking: (sourceId: string, point: [number, number]) => void;
+  onParking?: (sourceId: string, point: [number, number]) => void;
 }) {
   const geometry = useMemo(() => parkingGeometry(lots, terrain), [lots, terrain]);
   useEffect(
@@ -169,7 +169,7 @@ export const ParkingLayer = memo(function ParkingLayer({
     event.stopPropagation();
     if (event.delta > 4 || event.instanceId == null) return;
     const slot = slots[wheel ? Math.floor(event.instanceId / 4) : event.instanceId];
-    if (slot) onParking(slot.lotId, slot.center);
+    if (slot) onParking?.(slot.lotId, slot.center);
   };
   return (
     <group>
@@ -181,7 +181,7 @@ export const ParkingLayer = memo(function ParkingLayer({
           event.stopPropagation();
           if (event.delta > 4) return;
           const index = streetAtFace(geometry.hitEnds, event.faceIndex ?? -1);
-          if (index >= 0) onParking(lots[index].id, [event.point.x, -event.point.z]);
+          if (index >= 0) onParking?.(lots[index].id, [event.point.x, -event.point.z]);
         }}
       >
         <meshBasicMaterial

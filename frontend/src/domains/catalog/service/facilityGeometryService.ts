@@ -7,14 +7,18 @@ import type { Placement } from '../../game/entity/game';
 
 export function placementFootprint(
   cell: {
-    coordinates: MapPoint[];
+    coordinates?: MapPoint[];
+    polygons?: MapPoint[][][];
     areaM2: number;
     physicalInputs?: { swaleDesign?: SwaleDesign; trenchDesign?: TrenchDesign };
   },
   placement: Placement
 ) {
   if (!['VEGETATIVE_SWALE', 'INFILTRATION_TRENCH'].includes(placement.facilityType))
-    return facilityFootprint(cell.coordinates, placement.areaM2 / cell.areaM2);
+    return facilityPolygonFootprint(
+      cell.polygons ?? [[cell.coordinates ?? []]],
+      placement.areaM2 / cell.areaM2
+    );
   const d =
     placement.facilityType === 'VEGETATIVE_SWALE'
       ? cell.physicalInputs?.swaleDesign
@@ -27,6 +31,7 @@ export function placementFootprint(
   )
     throw new CatalogError('INVALID_DATA');
   const [dx, dy] = d.direction;
+  const offset = d.method === 'CONTAINED_COMPONENT_RECTANGLE_V2' ? [198128, 551989] : [0, 0];
   const halfLength = placement.areaM2 / d.topWidthM / 2;
   const points = [
     [-1, -1],
@@ -34,8 +39,8 @@ export function placementFootprint(
     [1, 1],
     [-1, 1],
   ].map(([s, t]): MapPoint => [
-    d.center[0] + dx * s * halfLength - (dy * t * d.topWidthM) / 2,
-    d.center[1] + dy * s * halfLength + (dx * t * d.topWidthM) / 2,
+    d.center[0] - offset[0] + dx * s * halfLength - (dy * t * d.topWidthM) / 2,
+    d.center[1] - offset[1] + dy * s * halfLength + (dx * t * d.topWidthM) / 2,
   ]);
   return facilityFootprint(points, 1);
 }
@@ -113,21 +118,63 @@ export function facilityFootprint(coordinates: MapPoint[], ratio: number): Facil
         throw new CatalogError('INVALID_DATA');
     }
   }
-  const triangles = ShapeUtils.triangulateShape(
-    points.map(([x, y]) => new Vector2(x, y)),
-    []
-  ).map((ids) => {
-    const triangle = ids.map((id) => points[id]);
-    if (cross(triangle[0], triangle[1], triangle[2]) < 0) triangle.reverse();
-    return triangle;
-  });
+  return facilityPolygonFootprint([[points]], ratio);
+}
+
+export function facilityPolygonFootprint(
+  components: MapPoint[][][],
+  ratio: number
+): FacilityFootprint {
+  if (
+    !Number.isFinite(ratio) ||
+    ratio <= 0 ||
+    ratio > 1 ||
+    components.length < 1 ||
+    components.length > 1000
+  )
+    throw new CatalogError('INVALID_DATA');
+  const triangles: MapPoint[][] = [];
+  const points: MapPoint[] = [];
+  let originalArea = 0;
+  for (const component of components) {
+    if (!component.length || component.length > 500) throw new CatalogError('INVALID_DATA');
+    const rings = component.map((ring) => {
+      if (
+        ring.length < 3 ||
+        ring.length > 20000 ||
+        ring.some((p) => p.length !== 2 || p.some((n) => !Number.isFinite(n)))
+      )
+        throw new CatalogError('INVALID_DATA');
+      const copy = ring.map((p): MapPoint => [...p]);
+      if (same(copy[0], copy[copy.length - 1])) copy.pop();
+      return copy;
+    });
+    const area =
+      polygonArea(rings[0]) - rings.slice(1).reduce((sum, ring) => sum + polygonArea(ring), 0);
+    if (!Number.isFinite(area) || area <= epsilon) throw new CatalogError('INVALID_DATA');
+    originalArea += area;
+    const flat = rings.flat();
+    points.push(...flat);
+    if (points.length > 1000000) throw new CatalogError('INVALID_DATA');
+    const vectors = rings.map((ring) => ring.map(([x, y]) => new Vector2(x, y)));
+    for (const indices of ShapeUtils.triangulateShape(vectors[0], vectors.slice(1))) {
+      const triangle = indices.map((id) => flat[id]);
+      if (cross(triangle[0], triangle[1], triangle[2]) < 0) triangle.reverse();
+      triangles.push(triangle);
+    }
+  }
   if (
     Math.abs(triangles.reduce((sum, t) => sum + polygonArea(t), 0) - originalArea) >
     Math.max(epsilon, originalArea * 1e-9)
   )
     throw new CatalogError('INVALID_DATA');
-  const min = [0, 1].map((axis) => Math.min(...points.map((p) => p[axis])));
-  const max = [0, 1].map((axis) => Math.max(...points.map((p) => p[axis])));
+  const min = [Infinity, Infinity],
+    max = [-Infinity, -Infinity];
+  for (const point of points)
+    for (const axis of [0, 1]) {
+      min[axis] = Math.min(min[axis], point[axis]);
+      max[axis] = Math.max(max[axis], point[axis]);
+    }
   const axis = max[0] - min[0] >= max[1] - min[1] ? 0 : 1;
   let low = min[axis],
     high = max[axis];

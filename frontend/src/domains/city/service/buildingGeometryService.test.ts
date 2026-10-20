@@ -23,20 +23,26 @@ test('별도 스레드 전송 형상의 구멍·높이·면 순서와 원본 선
   ];
   const buildings: CityBuilding[] = [
     {
-      id: 'way/1',
+      id: 'ngii:N1A_B0010000:' + '1'.repeat(64),
       polygons: [[outer, hole]],
       heightM: 12,
       center: [15, 15],
       areaM2: 800,
-      heightSource: 'OSM_HEIGHT_TAG',
+      heightSource: 'FLOOR_COUNT_DISPLAY_ASSUMPTION',
+      districtId: '11200',
+      candidateId: null,
+      geometryEligibility: 'GEOMETRY_ONLY',
     },
     {
-      id: 'way/2',
+      id: 'ngii:N1A_B0010000:' + '2'.repeat(64),
       polygons: [[outer.map(([x, y]) => [x + 50, y])]],
       heightM: 35,
       center: [65, 15],
       areaM2: 900,
-      heightSource: 'OSM_HEIGHT_TAG',
+      heightSource: 'FLOOR_COUNT_DISPLAY_ASSUMPTION',
+      districtId: '11200',
+      candidateId: null,
+      geometryEligibility: 'GEOMETRY_ONLY',
     },
   ];
   const before = structuredClone(buildings);

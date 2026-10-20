@@ -1,31 +1,20 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { City, CityTile } from '../entity/city';
-import {
-  loadCity,
-  loadCityTile,
-  loadCityPlayRegions,
-  loadCityEligibility,
-} from '../repository/cityRepository';
-import type { CityEligibility } from '../dto/cityEligibilityDto';
+import { loadCity, loadCityTile, loadCityPlayRegions } from '../repository/cityRepository';
 import type { CityPlayRegion } from '../dto/cityPlayDto';
 import { CityError } from '../exception/CityError';
 import { errorMessage } from '../../../shared/exception/ApiError';
 import { nearbyTiles } from '../service/cityService';
 export function useCity() {
   const [city, setCity] = useState<City | null>(null),
-    [eligibility, setEligibility] = useState<CityEligibility | null>(null),
     [regions, setRegions] = useState<CityPlayRegion[]>([]),
     [error, setError] = useState(''),
     [attempt, setAttempt] = useState(0);
   useEffect(() => {
     const controller = new AbortController();
     setError('');
-    void Promise.all([
-      loadCity(controller.signal),
-      loadCityPlayRegions(controller.signal),
-      loadCityEligibility(controller.signal),
-    ])
-      .then(([v, play, eligible]) => {
+    void Promise.all([loadCity(controller.signal), loadCityPlayRegions(controller.signal)])
+      .then(([v, play]) => {
         if (
           play.some(
             (r) => !v.districts.some((d) => d.id === r.districtId && d.name === r.districtName)
@@ -34,7 +23,6 @@ export function useCity() {
           throw new CityError('INVALID_DATA');
         if (!controller.signal.aborted) {
           setRegions(play);
-          setEligibility(eligible);
           setCity(v);
         }
       })
@@ -43,7 +31,7 @@ export function useCity() {
       });
     return () => controller.abort();
   }, [attempt]);
-  return { city, regions, eligibility, error, retry: () => setAttempt((v) => v + 1) };
+  return { city, regions, error, retry: () => setAttempt((v) => v + 1) };
 }
 export function useCityTiles(city: City, camera: { center: [number, number]; distance: number }) {
   const [tiles, setTiles] = useState<CityTile[]>([]),

@@ -1,5 +1,6 @@
 """공개 조각의 제한 크기·해시 검증 후 불변 계산 DB를 원자적으로 복원."""
 from contextlib import contextmanager
+from functools import lru_cache
 import fcntl
 import gzip
 import hashlib
@@ -114,8 +115,13 @@ def materialize(bundle, cache, expected_sha256=MANIFEST_SHA256):
         raise NativeCatalogError('NATIVE_BUNDLE_INVALID') from None
 
 
-def open_catalog():
-    cache = Path(os.environ.get('NATIVE_SPATIAL_CACHE', ROOT / 'tmp/native-spatial'))
-    path = materialize(BUNDLE, cache)
-    manifest = read_manifest(BUNDLE, MANIFEST_SHA256)
+@lru_cache(maxsize=1)
+def _open_catalog(bundle, cache, checksum):
+    path = materialize(bundle, cache, checksum)
+    manifest = read_manifest(bundle, checksum)
     return NativePlayCatalog(path, manifest['databaseSha256'])
+
+
+def open_catalog():
+    cache = Path(os.environ.get('NATIVE_SPATIAL_CACHE', ROOT / 'tmp/native-spatial')).absolute()
+    return _open_catalog(BUNDLE, cache, MANIFEST_SHA256)

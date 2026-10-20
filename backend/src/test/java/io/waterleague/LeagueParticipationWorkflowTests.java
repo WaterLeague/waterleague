@@ -19,8 +19,7 @@ import org.springframework.test.context.ActiveProfiles;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
-@SpringBootTest(
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("local")
 class LeagueParticipationWorkflowTests extends PostgresIntegrationTest {
   @org.springframework.test.context.DynamicPropertySource
@@ -118,9 +117,9 @@ class LeagueParticipationWorkflowTests extends PostgresIntegrationTest {
         "title",
         "검증 설계",
         "modelHash",
-        LegacyModelFixtures.HASH,
+        NativeResearchFixtures.HASH,
         "placements",
-        List.of(Map.of("cellId", "G1", "facilityType", "RAIN_GARDEN", "areaM2", 40)),
+        List.of(Map.of("cellId", "G1", "facilityType", "RAIN_GARDEN", "areaM2", 10)),
         "designNote",
         note,
         "baseRevision",
@@ -130,7 +129,7 @@ class LeagueParticipationWorkflowTests extends PostgresIntegrationTest {
   Map<String, Object> leagueDraft(int revision, int limit, long budget) {
     return Map.of(
         "modelHash",
-        LegacyModelFixtures.HASH,
+        NativeResearchFixtures.HASH,
         "baseRevision",
         revision,
         "title",
@@ -159,7 +158,7 @@ class LeagueParticipationWorkflowTests extends PostgresIntegrationTest {
     return successfulJob(
         player,
         discharge,
-        List.of(Map.of("cellId", "G1", "facilityType", "RAIN_GARDEN", "areaM2", 40)));
+        List.of(Map.of("cellId", "G1", "facilityType", "RAIN_GARDEN", "areaM2", 10)));
   }
 
   JsonNode successfulJob(Actor player, int discharge, List<Map<String, Object>> placements)
@@ -174,11 +173,11 @@ class LeagueParticipationWorkflowTests extends PostgresIntegrationTest {
             "/simulations",
             Map.of("versionId", v.get("id").asString(), "requestKey", UUID.randomUUID()),
             202);
-    var m = (JsonNode) model.view(LegacyModelFixtures.HASH).get("model");
+    var m = (JsonNode) model.view(NativeResearchFixtures.HASH).get("model");
     var result =
         Map.of(
             "modelHash",
-            LegacyModelFixtures.HASH,
+            NativeResearchFixtures.HASH,
             "inputHash",
             v.get("inputHash").asString(),
             "validationLevel",

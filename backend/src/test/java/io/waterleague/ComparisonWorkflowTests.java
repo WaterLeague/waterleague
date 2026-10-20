@@ -97,9 +97,9 @@ class ComparisonWorkflowTests extends PostgresIntegrationTest {
         "title",
         "검증 설계",
         "modelHash",
-        LegacyModelFixtures.HASH,
+        NativeResearchFixtures.HASH,
         "placements",
-        List.of(Map.of("cellId", "G1", "facilityType", "RAIN_GARDEN", "areaM2", 40)),
+        List.of(Map.of("cellId", "G1", "facilityType", "RAIN_GARDEN", "areaM2", 10)),
         "designNote",
         note,
         "baseRevision",
@@ -194,7 +194,7 @@ class ComparisonWorkflowTests extends PostgresIntegrationTest {
     assertThat(ownerVersions(owner)).isEqualTo(1);
     assertThat(ok(owner, "GET", "/comparisons", null, 200).size()).isZero();
     var duplicate = new HashMap<>(comparison(source, UUID.randomUUID(), 2));
-    duplicate.put("modelHashes", List.of(LegacyModelFixtures.HASH, LegacyModelFixtures.HASH));
+    duplicate.put("modelHashes", List.of(NativeResearchFixtures.HASH, NativeResearchFixtures.HASH));
     assertThat(call(owner, "POST", "/comparisons", duplicate).statusCode()).isEqualTo(400);
   }
 

@@ -12,7 +12,7 @@ from pathlib import Path
 from .engine.continuous import ROOT, digest, engine_identity
 from .ingestion.live import observed_forcing
 from .ingestion.evaporation import observed_evaporation, append_evaporation, reusable_observation_hour
-from .shared_model import resolve, with_observed_forcing
+from .installation_model import resolve, with_observed_forcing
 from .ingestion import source_archive
 from .weekly import aggregate as weekly_aggregate, publish as publish_weekly, RULE, SECOND_RULE, SECOND_POLICY
 
@@ -31,7 +31,7 @@ def claim(conn):
             finished_at=clock_timestamp(),lease_until=NULL WHERE state='RUNNING' AND lease_until<=clock_timestamp()""")
         installation = conn.execute("""
             SELECT i.* FROM shared_installations i
-            WHERE date_trunc('minute',LEAST(COALESCE(i.removed_at,i.season_ends_at,clock_timestamp()),clock_timestamp()-interval '2 minutes'))
+            WHERE i.source_retired_at IS NULL AND date_trunc('minute',LEAST(COALESCE(i.removed_at,i.season_ends_at,clock_timestamp()),clock_timestamp()-interval '2 minutes'))
                 > date_trunc('minute',i.installed_at)+CASE WHEN i.installed_at=date_trunc('minute',i.installed_at)
                     OR i.physics_policy='INSTALLATION_SECOND_V2' THEN interval '0 minutes' ELSE interval '1 minute' END
               AND NOT EXISTS(SELECT 1 FROM shared_physics_jobs j WHERE j.installation_id=i.id AND j.state='RUNNING')
@@ -213,7 +213,7 @@ def process(conn, job, root):
         (path/'request.json').write_bytes(request_raw)
         for module in ('engine/evapotranspiration.py', 'ingestion/evaporation.py', 'ingestion/daily_evaporation.py', 'ingestion/antecedent.py', 'ingestion/live.py', 'weekly.py'):
             (path/Path(module).name).write_bytes((Path(__file__).parent/module).read_bytes())
-        env = {k: v for k, v in os.environ.items() if k in ('PATH', 'LANG', 'LC_ALL', 'LIVE_SWMM_LIBRARY')}
+        env = {k: v for k, v in os.environ.items() if k in ('PATH', 'LANG', 'LC_ALL', 'LIVE_SWMM_LIBRARY','NATIVE_SPATIAL_CACHE')}
         env['PYTHONPATH'] = str(ROOT/'simulation')
         renew(conn,job)
         child = subprocess.Popen([sys.executable, '-m', 'waterleague_sim.run_live_job', str(path)],

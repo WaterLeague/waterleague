@@ -28,7 +28,7 @@ public class WeeklyRepository {
         SELECT i.id,i.owner_id,a.display_name,i.facility_type,i.area_m2,i.installed_at,i.season_ends_at,s.score_m3,COALESCE(s.evaluated_seconds,s.evaluated_minutes*60,0) evaluated_seconds,s.evaluated_through
         FROM shared_installations i JOIN accounts a ON a.id=i.owner_id
         LEFT JOIN shared_weekly_scores s ON s.installation_id=i.id AND s.week_start=?
-        WHERE i.district_id=? AND i.cell_id=? AND i.removed_at IS NULL
+        WHERE i.source_retired_at IS NULL AND i.district_id=? AND i.cell_id=? AND i.removed_at IS NULL
           AND (i.season_ends_at IS NULL OR i.season_ends_at>CURRENT_TIMESTAMP) AND i.id>?
         ORDER BY i.id LIMIT 51
         """,
@@ -63,7 +63,7 @@ public class WeeklyRepository {
               WHEN i.installed_at=date_trunc('minute',i.installed_at) THEN interval '0 minutes'
               ELSE interval '1 minute' END END,?::timestamptz) AS begins,
             LEAST(date_trunc('minute',COALESCE(i.removed_at,i.season_ends_at,?::timestamptz)),?::timestamptz) AS ends
-          FROM shared_installations i WHERE i.installed_at<?::timestamptz
+          FROM shared_installations i WHERE i.source_retired_at IS NULL AND i.installed_at<?::timestamptz
             AND (COALESCE(i.removed_at,i.season_ends_at) IS NULL OR COALESCE(i.removed_at,i.season_ends_at)>?::timestamptz)
         )
         SELECT p.owner_id,a.display_name,p.district_id,COALESCE(SUM(s.score_m3),0) AS score,

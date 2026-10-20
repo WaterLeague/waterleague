@@ -11,6 +11,7 @@ from pathlib import Path
 
 from .engine.continuous import digest
 from .run_historical_job import calculate as district_calculate
+from .spatial.game_catalog import regions as current_regions
 
 POLICY = 'FULL_EVENT_INDEPENDENT_SURFACES_V1'
 
@@ -90,7 +91,7 @@ def calculate(request, directory):
     seen = set()
     for row in rows:
         key = (row['districtId'], row['cellId'])
-        if (key in seen or not row['districtId'].isdigit() or len(row['districtId']) != 7
+        if (key in seen or not row['districtId'].isdigit() or row['districtId'] not in current_regions()
                 or row['rainfallModelHash'] != rules['rainfallModels'].get(row['districtId'])
                 or any(k in row for k in ('installedAt', 'temporalPolicy', 'initializationSensitivity'))):
             raise ValueError('HISTORICAL_SUBMISSION_PLACEMENT_INVALID')

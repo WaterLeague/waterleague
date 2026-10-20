@@ -3,11 +3,14 @@ import { buildBuildingMesh } from '../service/buildingGeometryService';
 import type { CityBuilding } from '../entity/city';
 
 const building: CityBuilding = {
-  id: 'way/1',
+  id: 'ngii:N1A_B0010000:' + '1'.repeat(64),
   heightM: 12,
   center: [15, 15],
   areaM2: 900,
-  heightSource: 'OSM_HEIGHT_TAG',
+  heightSource: 'FLOOR_COUNT_DISPLAY_ASSUMPTION',
+  districtId: '11200',
+  candidateId: null,
+  geometryEligibility: 'GEOMETRY_ONLY',
   polygons: [
     [
       [

@@ -46,10 +46,10 @@ class SharedInstallationTests extends PostgresIntegrationTest {
 
   @Test
   void streetPavementUsesImmutableSiteAreaCostAndOwnerRules() {
-    var owner = account("2410520");
+    var owner = account("11680");
     var page =
         service.sites(
-            "2410520",
+            "11680",
             0,
             0,
             0,
@@ -63,15 +63,13 @@ class SharedInstallationTests extends PostgresIntegrationTest {
             .filter(s -> s.maxAreaM2().compareTo(BigDecimal.TEN) >= 0)
             .findFirst()
             .orElseThrow();
-    var source = site.physicalInputs().path("streetPlacement").path("streetId").asString();
+
     assertThat(
-            service
-                .street(site.districtId(), source, site.center().get(0), site.center().get(1))
-                .cellId())
+            service.ground(site.districtId(), site.center().get(0), site.center().get(1)).cellId())
         .isEqualTo(site.cellId());
-    assertThatThrownBy(() -> service.street(site.districtId(), source, Double.NaN, 0))
+    assertThatThrownBy(() -> service.ground(site.districtId(), Double.NaN, 0))
         .isInstanceOf(DomainException.class);
-    assertThatThrownBy(() -> service.street(site.districtId(), source, 99999, 99999))
+    assertThatThrownBy(() -> service.ground(site.districtId(), 99999, 99999))
         .isInstanceOf(DomainException.class);
     assertThatThrownBy(
             () ->
@@ -93,7 +91,7 @@ class SharedInstallationTests extends PostgresIntegrationTest {
                         FacilityType.PERMEABLE_PAVEMENT,
                         site.maxAreaM2().add(new BigDecimal("0.01")))))
         .isInstanceOf(DomainException.class);
-    var outsider = account("2419953");
+    var outsider = account("11200");
     assertThatThrownBy(
             () ->
                 service.install(
@@ -124,7 +122,7 @@ class SharedInstallationTests extends PostgresIntegrationTest {
         .isInstanceOf(DomainException.class);
     var walkway =
         service.sites(
-            "2410520",
+            "11680",
             0,
             0,
             0,
@@ -132,21 +130,14 @@ class SharedInstallationTests extends PostgresIntegrationTest {
             true,
             io.waterleague.installation.entity.SiteSurface.WALKWAY);
     assertThat(walkway.sites()).isNotEmpty();
-    assertThat(walkway.sites())
-        .allMatch(
-            s ->
-                !s.physicalInputs()
-                    .path("streetPlacement")
-                    .path("role")
-                    .asString()
-                    .equals("ROADWAY"));
+    assertThat(walkway.sites()).allMatch(s -> s.sourceRole().equals("SIDEWALK_AREA"));
   }
 
   @Test
   void swaleRejectsAreaOutsideFixedWidthDesignAndSharesBudget() {
-    var owner = account("2410520");
+    var owner = account("11680");
     var site =
-        sites.district("2410520").values().stream()
+        NativeSiteFixtures.sites(sites, "11680").values().stream()
             .filter(
                 s ->
                     s.allowedTypes().contains("VEGETATIVE_SWALE")
@@ -160,7 +151,7 @@ class SharedInstallationTests extends PostgresIntegrationTest {
                 service.install(
                     owner.username(),
                     new InstallRequest(
-                        "2410520",
+                        "11680",
                         site.cellId(),
                         FacilityType.VEGETATIVE_SWALE,
                         cap.add(new BigDecimal("0.01")))))
@@ -168,7 +159,7 @@ class SharedInstallationTests extends PostgresIntegrationTest {
     var installed =
         service.install(
             owner.username(),
-            new InstallRequest("2410520", site.cellId(), FacilityType.VEGETATIVE_SWALE, cap));
+            new InstallRequest("11680", site.cellId(), FacilityType.VEGETATIVE_SWALE, cap));
     var charge = cap.multiply(new BigDecimal("45000"));
     assertThat(installed.cost()).isEqualByComparingTo(charge);
     assertThat(budget.view(owner.id()).remainingKrw())
@@ -188,12 +179,12 @@ class SharedInstallationTests extends PostgresIntegrationTest {
                 service.install(
                     owner.username(),
                     new InstallRequest(
-                        "2410520", site.cellId(), FacilityType.RAIN_GARDEN, BigDecimal.ONE)))
+                        "11680", site.cellId(), FacilityType.RAIN_GARDEN, BigDecimal.ONE)))
         .isInstanceOf(DomainException.class);
     seasons.closeOwnerAt(owner.id(), installed.seasonEndsAt());
     assertThat(budget.view(owner.id()).remainingKrw()).isEqualByComparingTo("2000000000");
     var roof =
-        sites.district("2410520").values().stream()
+        NativeSiteFixtures.sites(sites, "11680").values().stream()
             .filter(s -> s.kind().equals("ROOF"))
             .findFirst()
             .orElseThrow();
@@ -202,15 +193,15 @@ class SharedInstallationTests extends PostgresIntegrationTest {
                 service.install(
                     owner.username(),
                     new InstallRequest(
-                        "2410520", roof.cellId(), FacilityType.VEGETATIVE_SWALE, BigDecimal.ONE)))
+                        "11680", roof.cellId(), FacilityType.VEGETATIVE_SWALE, BigDecimal.ONE)))
         .isInstanceOf(DomainException.class);
   }
 
   @Test
   void trenchRejectsAreaOutsideFixedWidthDesignAndSharesBudget() {
-    var owner = account("2410520");
+    var owner = account("11680");
     var site =
-        sites.district("2410520").values().stream()
+        NativeSiteFixtures.sites(sites, "11680").values().stream()
             .filter(
                 s ->
                     s.allowedTypes().contains("INFILTRATION_TRENCH")
@@ -224,7 +215,7 @@ class SharedInstallationTests extends PostgresIntegrationTest {
                 service.install(
                     owner.username(),
                     new InstallRequest(
-                        "2410520",
+                        "11680",
                         site.cellId(),
                         FacilityType.INFILTRATION_TRENCH,
                         cap.add(new BigDecimal("0.01")))))
@@ -232,7 +223,7 @@ class SharedInstallationTests extends PostgresIntegrationTest {
     var installed =
         service.install(
             owner.username(),
-            new InstallRequest("2410520", site.cellId(), FacilityType.INFILTRATION_TRENCH, cap));
+            new InstallRequest("11680", site.cellId(), FacilityType.INFILTRATION_TRENCH, cap));
     var charge = cap.multiply(new BigDecimal("171429"));
     assertThat(installed.cost()).isEqualByComparingTo(charge);
     assertThat(budget.view(owner.id()).remainingKrw())
@@ -253,12 +244,12 @@ class SharedInstallationTests extends PostgresIntegrationTest {
                 service.install(
                     owner.username(),
                     new InstallRequest(
-                        "2410520", site.cellId(), FacilityType.RAIN_GARDEN, BigDecimal.ONE)))
+                        "11680", site.cellId(), FacilityType.RAIN_GARDEN, BigDecimal.ONE)))
         .isInstanceOf(DomainException.class);
     seasons.closeOwnerAt(owner.id(), installed.seasonEndsAt());
     assertThat(budget.view(owner.id()).remainingKrw()).isEqualByComparingTo("2000000000");
     var roof =
-        sites.district("2410520").values().stream()
+        NativeSiteFixtures.sites(sites, "11680").values().stream()
             .filter(s -> s.kind().equals("ROOF"))
             .findFirst()
             .orElseThrow();
@@ -267,18 +258,15 @@ class SharedInstallationTests extends PostgresIntegrationTest {
                 service.install(
                     owner.username(),
                     new InstallRequest(
-                        "2410520",
-                        roof.cellId(),
-                        FacilityType.INFILTRATION_TRENCH,
-                        BigDecimal.ONE)))
+                        "11680", roof.cellId(), FacilityType.INFILTRATION_TRENCH, BigDecimal.ONE)))
         .isInstanceOf(DomainException.class);
   }
 
   @Test
   void bioretentionUsesPublicSoilAndSharedBudgetWhileRejectingRoofAndDuplicate() {
-    var owner = account("2410520");
+    var owner = account("11680");
     var eligible =
-        sites.district("2410520").values().stream()
+        NativeSiteFixtures.sites(sites, "11680").values().stream()
             .filter(
                 site ->
                     site.allowedTypes().contains("BIORETENTION")
@@ -286,24 +274,24 @@ class SharedInstallationTests extends PostgresIntegrationTest {
             .findFirst()
             .orElseThrow();
     var roof =
-        sites.district("2410520").values().stream()
+        NativeSiteFixtures.sites(sites, "11680").values().stream()
             .filter(site -> site.kind().equals("ROOF"))
             .findFirst()
             .orElseThrow();
     assertThat(eligible.physicalInputs().path("soilStatus").asString())
-        .isEqualTo("TEXTURE_CLASS_LITERATURE_ESTIMATE");
+        .isEqualTo("PUBLIC_REFERENCE_SCENARIO");
     assertThatThrownBy(
             () ->
                 service.install(
                     owner.username(),
                     new InstallRequest(
-                        "2410520", roof.cellId(), FacilityType.BIORETENTION, BigDecimal.TEN)))
+                        "11680", roof.cellId(), FacilityType.BIORETENTION, BigDecimal.TEN)))
         .isInstanceOf(DomainException.class);
     var installed =
         service.install(
             owner.username(),
             new InstallRequest(
-                "2410520", eligible.cellId(), FacilityType.BIORETENTION, new BigDecimal("20")));
+                "11680", eligible.cellId(), FacilityType.BIORETENTION, new BigDecimal("20")));
     assertThat(installed.cost()).isEqualByComparingTo("11200000");
     assertThat(budget.view(owner.id()).remainingKrw()).isEqualByComparingTo("1988800000");
     assertThat(budget.view(owner.id()).accounting().facilities())
@@ -316,7 +304,7 @@ class SharedInstallationTests extends PostgresIntegrationTest {
                 service.install(
                     owner.username(),
                     new InstallRequest(
-                        "2410520", eligible.cellId(), FacilityType.BIORETENTION, BigDecimal.TEN)))
+                        "11680", eligible.cellId(), FacilityType.BIORETENTION, BigDecimal.TEN)))
         .isInstanceOf(DomainException.class);
     seasons.closeOwnerAt(owner.id(), installed.seasonEndsAt());
     assertThat(budget.view(owner.id()).remainingKrw()).isEqualByComparingTo("2000000000");
@@ -324,12 +312,16 @@ class SharedInstallationTests extends PostgresIntegrationTest {
 
   @Test
   void costEvidenceFreezesQuantitySourceAndUnknownCostsWithoutRetrofittingOldRecords() {
-    var owner = account("2410520");
+    var owner = account("11680");
     var installed =
         service.install(
             owner.username(),
             new InstallRequest(
-                "2410520", "G1", FacilityType.PERMEABLE_PAVEMENT, new BigDecimal("20.25")));
+                "11680",
+                NativeSiteFixtures.cell(sites, "11680", FacilityType.PERMEABLE_PAVEMENT, 0)
+                    .cellId(),
+                FacilityType.PERMEABLE_PAVEMENT,
+                new BigDecimal("20.25")));
     var record = costs.active(installed.id());
     assertThat(record.status()).isEqualTo("RECORDED");
     var value = record.estimate();
@@ -388,8 +380,8 @@ class SharedInstallationTests extends PostgresIntegrationTest {
 
   @Test
   void mapReturnsServerScoreAndObservationTimeForEachInstallation() {
-    var owner = account("2410520");
-    var installed = service.install(owner.username(), placement("2410520"));
+    var owner = account("11680");
+    var installed = service.install(owner.username(), placement("11680"));
     var before = service.activeViews();
     assertThat(before).hasSize(1);
     assertThat(before.getFirst().scoreM3()).isNull();
@@ -454,96 +446,63 @@ class SharedInstallationTests extends PostgresIntegrationTest {
 
   InstallRequest placement(String district) {
     return new InstallRequest(
-        district, "G1", FacilityType.PERMEABLE_PAVEMENT, new BigDecimal("20.00"));
+        district,
+        NativeSiteFixtures.cell(sites, district, FacilityType.PERMEABLE_PAVEMENT, 0).cellId(),
+        FacilityType.PERMEABLE_PAVEMENT,
+        new BigDecimal("20.00"));
   }
 
   @Test
-  void mappedGroundExclusionRejectsBeforeSpendingAndVacantFilterUsesSameRule() {
-    String district = "2419954";
-    var owner = account(district);
-    var blocked = service.site(district, "G20695-54482");
-    assertThat(blocked.existingInfrastructure().path("assets").get(0).path("assetName").asString())
-        .isEqualTo("잠실유수지");
-    assertThat(
-            sites.district(district).values().stream()
-                .filter(s -> s.existingInfrastructure() != null)
-                .count())
-        .isEqualTo(86);
-    assertThat(sites.district(district).values().stream().filter(s -> s.kind().equals("ROOF")))
-        .allMatch(s -> s.existingInfrastructure() == null);
-    assertThatThrownBy(
-            () ->
-                service.install(
-                    owner.username(),
-                    new InstallRequest(
-                        district,
-                        blocked.cellId(),
-                        FacilityType.PERMEABLE_PAVEMENT,
-                        BigDecimal.ONE)))
-        .isInstanceOfSatisfying(
-            DomainException.class,
-            e -> assertThat(e.code()).isEqualTo(ErrorCode.EXISTING_INFRASTRUCTURE));
-    assertThat(service.active()).isEmpty();
-    assertThat(budget.view(owner.id()).remainingKrw()).isEqualByComparingTo("2000000000");
-    assertThat(db.queryForObject("SELECT COUNT(*) FROM budget_ledger_entries", Integer.class))
-        .isZero();
-    var all =
-        service.sites(district, blocked.center().get(0), blocked.center().get(1), 0, null, false);
-    var vacant =
-        service.sites(district, blocked.center().get(0), blocked.center().get(1), 0, null, true);
-    assertThat(all.matchedCount() - vacant.matchedCount()).isEqualTo(86);
-    assertThat(vacant.sites()).allMatch(s -> s.existingInfrastructure() == null);
+  void publicPointReferenceDoesNotInventFootprintOrConstructionApproval() throws Exception {
+    var reference = NativeSiteFixtures.reference(sites);
+    var owner = account(reference.districtId());
+    assertThat(reference.referenceInfrastructure().path("references")).isNotEmpty();
+    assertThat(reference.existingInfrastructure()).isNull();
+    assertThat(reference.siteEligibility()).isEqualTo("UNKNOWN");
+    var installed =
+        service.install(
+            owner.username(),
+            new InstallRequest(
+                reference.districtId(),
+                reference.cellId(),
+                FacilityType.PERMEABLE_PAVEMENT,
+                BigDecimal.TEN));
+    assertThat(installed.modelHash()).isEqualTo(reference.modelHash());
+    assertThat(budget.view(owner.id()).allocatedKrw()).isEqualByComparingTo(installed.cost());
   }
 
   @Test
-  void mappedPumpBuildingRejectsInstallationBeforeSpendingAndPreservesOtherRoofs() {
-    String district = "2419953";
-    var owner = account(district);
-    var blocked = service.site(district, "RW653831038");
-    assertThat(blocked.existingInfrastructure().path("assets").get(0).path("assetName").asString())
-        .isEqualTo("금호빗물펌프장");
-    assertThatThrownBy(
-            () ->
-                service.install(
-                    owner.username(),
-                    new InstallRequest(
-                        district, blocked.cellId(), FacilityType.GREEN_ROOF, BigDecimal.TEN)))
-        .isInstanceOfSatisfying(
-            DomainException.class,
-            e -> assertThat(e.code()).isEqualTo(ErrorCode.EXISTING_INFRASTRUCTURE));
+  void oldGeometryIdentifiersCannotAllocateBudgetOrResolveToNativeCandidates() {
+    var owner = account("11200");
+    for (var old : List.of("RW653831038", "G20695-54482", "R1")) {
+      assertThatThrownBy(
+              () ->
+                  service.install(
+                      owner.username(),
+                      new InstallRequest("11200", old, FacilityType.GREEN_ROOF, BigDecimal.TEN)))
+          .isInstanceOf(DomainException.class);
+    }
     assertThat(budget.view(owner.id()).remainingKrw()).isEqualByComparingTo("2000000000");
     assertThat(db.queryForObject("SELECT COUNT(*) FROM budget_ledger_entries", Integer.class))
         .isZero();
-    assertThat(service.active()).isEmpty();
-    var all =
-        service.sites(district, blocked.center().get(0), blocked.center().get(1), 0, null, false);
-    var vacant =
-        service.sites(district, blocked.center().get(0), blocked.center().get(1), 0, null, true);
-    assertThat(all.matchedCount() - vacant.matchedCount()).isEqualTo(1);
-    assertThat(vacant.sites()).allMatch(site -> site.existingInfrastructure() == null);
-    assertThat(
-            sites.district(district).values().stream()
-                .filter(site -> site.kind().equals("ROOF") && site.existingInfrastructure() == null)
-                .count())
-        .isPositive();
   }
 
   @Test
   void existingMembersChooseOnceAndCannotInstallElsewhere() {
     var a = account(null);
-    assertThatThrownBy(() -> service.install(a.username(), placement("2410520")))
+    assertThatThrownBy(() -> service.install(a.username(), placement("11680")))
         .isInstanceOfSatisfying(
             DomainException.class,
             e -> assertThat(e.code()).isEqualTo(ErrorCode.DISTRICT_REQUIRED));
     var updated =
-        auth.selectDistrict(a.username(), new DistrictSelectionRequest("2410520", "AFFILIATED"));
-    assertThat(updated.districtId()).isEqualTo("2410520");
+        auth.selectDistrict(a.username(), new DistrictSelectionRequest("11680", "AFFILIATED"));
+    assertThat(updated.districtId()).isEqualTo("11680");
     assertThatThrownBy(
             () ->
                 auth.selectDistrict(
-                    a.username(), new DistrictSelectionRequest("2414774", "RESIDENT")))
+                    a.username(), new DistrictSelectionRequest("11590", "RESIDENT")))
         .isInstanceOf(DomainException.class);
-    assertThatThrownBy(() -> service.install(a.username(), placement("2414774")))
+    assertThatThrownBy(() -> service.install(a.username(), placement("11590")))
         .isInstanceOfSatisfying(
             DomainException.class,
             e -> assertThat(e.code()).isEqualTo(ErrorCode.DISTRICT_ACCESS_DENIED));
@@ -552,8 +511,8 @@ class SharedInstallationTests extends PostgresIntegrationTest {
 
   @Test
   void membersCanShareLocationWhileOwnDuplicateAndSeasonRemovalAreRejected() throws Exception {
-    var a = account("2410520");
-    var b = account("2410520");
+    var a = account("11680");
+    var b = account("11680");
     var start = new CountDownLatch(1);
     try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
       var futures = new ArrayList<Future<String>>();
@@ -563,7 +522,7 @@ class SharedInstallationTests extends PostgresIntegrationTest {
                 () -> {
                   start.await();
                   try {
-                    service.install(actor.username(), placement("2410520"));
+                    service.install(actor.username(), placement("11680"));
                     return "INSTALLED";
                   } catch (DomainException e) {
                     return e.code().name();
@@ -595,7 +554,7 @@ class SharedInstallationTests extends PostgresIntegrationTest {
                 assertThat(e.code())
                     .isEqualTo(
                         io.waterleague.common.exception.ErrorCode.SEASON_INSTALLATION_LOCKED));
-    assertThatThrownBy(() -> service.install(owner.username(), placement("2410520")))
+    assertThatThrownBy(() -> service.install(owner.username(), placement("11680")))
         .isInstanceOfSatisfying(
             DomainException.class,
             e ->
@@ -623,7 +582,7 @@ class SharedInstallationTests extends PostgresIntegrationTest {
 
   @Test
   void oneMemberConcurrentSameSiteHasOneAllocation() throws Exception {
-    var a = account("2410520");
+    var a = account("11680");
     var start = new CountDownLatch(1);
     try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
       var futures = new ArrayList<Future<String>>();
@@ -633,7 +592,7 @@ class SharedInstallationTests extends PostgresIntegrationTest {
                 () -> {
                   start.await();
                   try {
-                    service.install(a.username(), placement("2410520"));
+                    service.install(a.username(), placement("11680"));
                     return "INSTALLED";
                   } catch (DomainException e) {
                     return e.code().name();
@@ -652,13 +611,13 @@ class SharedInstallationTests extends PostgresIntegrationTest {
 
   @Test
   void personalBudgetSerializesConcurrentSpendingAndIsolatesMembers() throws Exception {
-    String district = "2410520";
+    String district = "11680";
     var owner = account(district);
     var other = account(district);
     // 실제 서버 설치로 한도 직전까지 배정하고 서로 다른 시설의 경합을 검사한다.
     var remainingArea = new BigDecimal("5705");
     for (var site :
-        sites.district(district).values().stream()
+        NativeSiteFixtures.sites(sites, district).values().stream()
             .filter(s -> s.allowedTypes().contains("GREEN_ROOF"))
             .sorted(Comparator.comparing(io.waterleague.installation.view.SiteView::cellId))
             .toList()) {
@@ -673,7 +632,11 @@ class SharedInstallationTests extends PostgresIntegrationTest {
     var start = new CountDownLatch(1);
     try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
       var futures = new ArrayList<Future<String>>();
-      for (String cell : List.of("G2", "G3")) {
+      for (String cell :
+          List.of(
+              NativeSiteFixtures.cell(sites, district, FacilityType.PERMEABLE_PAVEMENT, 1).cellId(),
+              NativeSiteFixtures.cell(sites, district, FacilityType.PERMEABLE_PAVEMENT, 2)
+                  .cellId())) {
         futures.add(
             executor.submit(
                 () -> {
@@ -700,7 +663,11 @@ class SharedInstallationTests extends PostgresIntegrationTest {
         service.install(
             other.username(),
             new InstallRequest(
-                district, "G4", FacilityType.PERMEABLE_PAVEMENT, new BigDecimal("20")));
+                district,
+                NativeSiteFixtures.cell(sites, district, FacilityType.PERMEABLE_PAVEMENT, 3)
+                    .cellId(),
+                FacilityType.PERMEABLE_PAVEMENT,
+                new BigDecimal("20")));
     assertThat(budget.view(other.id()).remainingKrw()).isEqualByComparingTo("1997800000");
     assertThat(budget.view(null).personal()).isFalse();
     assertThat(budget.view(null).allocatedKrw()).isZero();
@@ -715,7 +682,7 @@ class SharedInstallationTests extends PostgresIntegrationTest {
                 "SELECT admission_snapshot FROM shared_installations WHERE id=?",
                 String.class,
                 independent.id()))
-        .contains("seoul-infrastructure-occupancy-20261019-v5", "historicalExistenceVerified");
+        .contains("seoul-native-infrastructure-20261020-v1", "historicalExistenceVerified");
     seasons.closeOwnerAt(other.id(), independent.seasonEndsAt());
     assertThat(budget.view(other.id()).remainingKrw()).isEqualByComparingTo("2000000000");
     assertThat(budget.view(owner.id()).remainingKrw()).isEqualByComparingTo("1050000");
@@ -723,8 +690,8 @@ class SharedInstallationTests extends PostgresIntegrationTest {
 
   @Test
   void rejectsUnknownSitesAndInvalidAreaAndPreservesGlobalCoordinates() {
-    var a = account("2410520");
-    var reference = service.site("2410520", "G1");
+    var a = account("11680");
+    var reference = NativeSiteFixtures.cell(sites, "11680", FacilityType.PERMEABLE_PAVEMENT, 0);
     assertThat(reference.unitCosts().get("GREEN_ROOF")).isEqualByComparingTo("350000");
     assertThat(
             reference
@@ -739,39 +706,44 @@ class SharedInstallationTests extends PostgresIntegrationTest {
                 service.install(
                     a.username(),
                     new InstallRequest(
-                        "2410520", "G99", FacilityType.PERMEABLE_PAVEMENT, BigDecimal.ONE)))
-        .isInstanceOf(DomainException.class);
-    assertThatThrownBy(
-            () ->
-                service.install(
-                    a.username(),
-                    new InstallRequest("2410520", "G1", FacilityType.GREEN_ROOF, BigDecimal.ONE)))
+                        "11680", "G99", FacilityType.PERMEABLE_PAVEMENT, BigDecimal.ONE)))
         .isInstanceOf(DomainException.class);
     assertThatThrownBy(
             () ->
                 service.install(
                     a.username(),
                     new InstallRequest(
-                        "2410520", "G1", FacilityType.PERMEABLE_PAVEMENT, new BigDecimal("25.01"))))
+                        "11680", reference.cellId(), FacilityType.GREEN_ROOF, BigDecimal.ONE)))
+        .isInstanceOf(DomainException.class);
+    assertThatThrownBy(
+            () ->
+                service.install(
+                    a.username(),
+                    new InstallRequest(
+                        "11680",
+                        NativeSiteFixtures.cell(sites, "11680", FacilityType.PERMEABLE_PAVEMENT, 0)
+                            .cellId(),
+                        FacilityType.PERMEABLE_PAVEMENT,
+                        reference.maxAreaM2().add(new BigDecimal("0.01")))))
         .isInstanceOf(DomainException.class);
     var overview = service.sites(null, 0, 0, 0, null, false);
     assertThat(overview.districtCounts()).hasSize(25);
     assertThat(overview.districtCounts().values().stream().mapToInt(Integer::intValue).sum())
-        .isEqualTo(696270);
-    var page = service.sites("2410520", 7239.5, -7741.5, 0, null, false);
+        .isEqualTo(1021578);
+    var page = service.sites("11680", 7239.5, -7741.5, 0, null, false);
     assertThat(page.sites()).hasSize(200);
     assertThat(page.matchedCount()).isGreaterThan(1000);
-    var site = service.site("2410520", "G5");
-    assertThat(site.center()).containsExactly(7239.5, -7741.5);
+    var site = page.sites().getFirst();
+    assertThat(service.site(site.districtId(), site.cellId()).polygons())
+        .isEqualTo(site.polygons());
     assertThat(service.active()).isEmpty();
   }
 
   @Test
   void expandedSitesUseFrozenCatalogAndShareBudgetAndOccupancy() {
-    var a = account("2410520");
-    var page = service.sites("2410520", 7239.5, -7741.5, 0, FacilityType.GREEN_ROOF, true);
-    var site =
-        page.sites().stream().filter(s -> s.cellId().startsWith("RW")).findFirst().orElseThrow();
+    var a = account("11680");
+    var page = service.sites("11680", 7239.5, -7741.5, 0, FacilityType.GREEN_ROOF, true);
+    var site = page.sites().stream().filter(s -> s.kind().equals("ROOF")).findFirst().orElseThrow();
     var installed =
         service.install(
             a.username(),
@@ -780,13 +752,11 @@ class SharedInstallationTests extends PostgresIntegrationTest {
     assertThat(installed.modelHash()).isEqualTo(site.modelHash());
     assertThat(service.building(site.districtId(), site.sourceIds().getFirst()).cellId())
         .isEqualTo(site.cellId());
-    var legacy = service.site("2410520", "R1");
-    assertThat(service.building(legacy.districtId(), legacy.sourceIds().getFirst()).cellId())
-        .isEqualTo("R1");
+    assertThatThrownBy(() -> service.site("11680", "R1")).isInstanceOf(DomainException.class);
     assertThat(service.view(installed).center()).isEqualTo(site.center());
     assertThat(
             service
-                .sites("2410520", 7239.5, -7741.5, 0, FacilityType.GREEN_ROOF, true)
+                .sites("11680", 7239.5, -7741.5, 0, FacilityType.GREEN_ROOF, true)
                 .matchedCount())
         .isEqualTo(page.matchedCount());
     assertThatThrownBy(
@@ -799,7 +769,7 @@ class SharedInstallationTests extends PostgresIntegrationTest {
                         FacilityType.RAIN_GARDEN,
                         BigDecimal.ONE)))
         .isInstanceOf(DomainException.class);
-    assertThatThrownBy(() -> service.sites("2410520", Double.NaN, 0, 0, null, false))
+    assertThatThrownBy(() -> service.sites("11680", Double.NaN, 0, 0, null, false))
         .isInstanceOf(DomainException.class);
   }
 }

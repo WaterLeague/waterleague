@@ -31,3 +31,19 @@ def archive(policy, directory):
     # 새 정책을 이전 기록에 덧씌우지 않고 저장된 버전의 경계·교차 근거를 보존한다.
     (directory/'public-asset-policy.json').write_bytes(raw)
     (directory/'admission.py').write_bytes(Path(__file__).read_bytes())
+
+
+NATIVE_VERSION = 'seoul-native-infrastructure-20261020-v1'
+NATIVE_SHA256 = '386b77e33b647a879527251c7dceb091ab4507479ee77b189b35f8cd3da7b44f'
+
+
+def archive_native(policy, directory):
+    if not isinstance(policy, dict) or policy.get('version') != NATIVE_VERSION or policy.get('sha256') != NATIVE_SHA256:
+        raise ValueError('INSTALLATION_POLICY_INVALID')
+    raw = (ROOT / 'backend/src/main/resources/infrastructure/native-v1/associations.json').read_bytes()
+    value = json.loads(raw)
+    if hashlib.sha256(raw).hexdigest() != NATIVE_SHA256 or any(policy.get(key) != value.get(key) for key in
+            ('sourceSha256', 'siteCatalogSha256', 'scope', 'historicalExistenceVerified')):
+        raise ValueError('INSTALLATION_POLICY_SOURCE_INVALID')
+    (directory / 'public-asset-policy.json').write_bytes(raw)
+    (directory / 'admission.py').write_bytes(Path(__file__).read_bytes())

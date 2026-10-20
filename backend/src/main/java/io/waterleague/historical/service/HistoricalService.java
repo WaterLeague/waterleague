@@ -8,7 +8,7 @@ import io.waterleague.historical.entity.HistoricalExperiment;
 import io.waterleague.historical.repository.HistoricalRepository;
 import io.waterleague.historical.view.HistoricalView;
 import io.waterleague.installation.repository.SiteCatalogRepository;
-import io.waterleague.model.repository.LabModelRepository;
+import io.waterleague.rainfall.repository.ObservedGameRepository;
 import io.waterleague.simulation.repository.SimulationRepository;
 import io.waterleague.strategy.entity.*;
 import io.waterleague.strategy.service.PlacementValidationService;
@@ -27,7 +27,7 @@ public class HistoricalService {
   private final SimulationRepository admission;
   private final SiteCatalogRepository sites;
   private final DistrictRepository districts;
-  private final LabModelRepository models;
+  private final ObservedGameRepository models;
   private final PlacementValidationService validation;
   private final JsonService json;
   private final io.waterleague.disaster.service.DisasterService disasters;
@@ -40,7 +40,7 @@ public class HistoricalService {
       SimulationRepository admission,
       SiteCatalogRepository sites,
       DistrictRepository districts,
-      LabModelRepository models,
+      ObservedGameRepository models,
       PlacementValidationService validation,
       JsonService json,
       io.waterleague.disaster.service.DisasterService disasters,
@@ -87,8 +87,15 @@ public class HistoricalService {
 
   private HistoricalView guestView(HistoricalExperiment job) {
     var value = view(job);
-    return new HistoricalView(value.id(), value.districtId(), value.modelHash(), value.state(),
-        value.createdAt(), value.placements(), GuestResultPolicy.preview(json, value.result()), value.message());
+    return new HistoricalView(
+        value.id(),
+        value.districtId(),
+        value.modelHash(),
+        value.state(),
+        value.createdAt(),
+        value.placements(),
+        GuestResultPolicy.preview(json, value.result()),
+        value.message());
   }
 
   public HistoricalView guestGet(String guest, UUID id) {

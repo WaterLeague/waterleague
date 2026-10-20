@@ -4,7 +4,7 @@
 
 ## 서울 25개 구 전환 계약
 
-2026-10-20 서울 25개 구의 `수치지형도v2.0(1:1000)` SHP ZIP과 데이터 설명서를 `data/private/vworld-seoul-topography-20260307/originals/`에 복사했다. [원본 목록](../data/manifests/vworld-seoul-topography-20260307.json)의 프로젝트 상대 경로·크기·SHA-256을 기준으로 읽으며 개인 다운로드 경로에 의존하지 않는다. 공통 입력·원 레코드 공간·객체 카탈로그와 지도 파일 생성 경로를 구현했으며 일반 게임의 OSM 교체는 [P0 구현 계획](09-delivery.md#p0--서울-수치지형도-전환과-공통-공간-기반)의 미완료 항목이다. 아래 성수 4도엽의 기존 적용·재현 기록은 그대로 구분한다.
+2026-10-20 서울 25개 구의 `수치지형도v2.0(1:1000)` SHP ZIP과 데이터 설명서를 `data/private/vworld-seoul-topography-20260307/originals/`에 복사했다. [원본 목록](../data/manifests/vworld-seoul-topography-20260307.json)의 프로젝트 상대 경로·크기·SHA-256을 기준으로 읽으며 개인 다운로드 경로에 의존하지 않는다. 공통 입력·원 레코드 공간·객체 카탈로그에서 일반 게임 지도·후보/API·워커를 연결했다. 현재 결속은 [서비스 연결](#현재-서비스의-원형-공간-연결), 전체 완료의 잔여 검사는 [P0](09-delivery.md#p0--서울-수치지형도-전환과-공통-공간-기반)를 따른다. 아래 성수 4도엽의 기존 적용·재현 기록은 그대로 구분한다.
 
 사전 검사: ZIP 25개 540,518,560바이트, 도엽 참조 3,075개, 고유 도엽 2,488개, 반복 참조 587개. 반복된 같은 도엽의 SHA-256 충돌은 없고 원본/고유 도엽 내부 CRC 검사 통과, 레이어는 121종이다. 선택한 건물·도로경계·교량·등고선·표고점의 PRJ 10,847건은 EPSG:5186이다. 이는 모든 레이어의 CRS·도형 유효성·서울 전역 피복·필드값의 완전성·실측 정확도 통과가 아니다. 상세 검사 파일은 원본 목록에 경로·해시로 결속했다.
 
@@ -78,7 +78,7 @@ simulation/.venv/bin/python scripts/verify_seoul_spatial.py \
 
 `prepare_topography_scene.py`는 같은 객체 ID·소속·원 면적/길이·배치 상태로 시야별 파일을 생성한다. 고정 원점 `[198128,551989]`을 뺀 EPSG:5186 미터 좌표를 사용하며 원 도형·구멍·다중 도형을 타일 경계로 자르거나 반올림하지 않는다. 대표점으로 파일을 배정하되 각 파일의 조회 범위는 객체 전체의 경계를 포함한다. 타일 좌표만으로 파일을 선택해 경계를 가로지르는 객체를 누락시키지 않는다. 계산은 이 표시 파일에서 재구성하지 않고 해시가 연결된 원 객체를 사용한다.
 
-건물 층수×3.2m는 표시 가정이고 유효한 정수 층수가 없으면 `UNKNOWN_HEIGHT_FLAT_DISPLAY`의 0.3m 평면 표시다. 도로의 일방통행 여부만으로 정/역방향을 추론하지 않고, 원 도로폭의 단위 미확인을 유지한다. 실제 주차 칸·교량 고도·시공 적합성·관망 연결을 생성하지 않는다. [지도 파생 요약](../data/manifests/seoul-topography-scene-v1.json)의 `serviceMigrated=false`는 일반 게임·후보/API/워커 전환과 브라우저 성능 시험이 남았음을 뜻한다. 현재 서비스 사용 자료가 바뀌기 전까지 프론트 데이터 페이지의 OSM 출처를 교체하지 않는다.
+건물 층수×3.2m는 표시 가정이고 유효한 정수 층수가 없으면 `UNKNOWN_HEIGHT_FLAT_DISPLAY`의 0.3m 평면 표시다. 도로의 일방통행 여부만으로 정/역방향을 추론하지 않고, 원 도로폭의 단위 미확인을 유지한다. 실제 주차 칸·교량 고도·시공 적합성·관망 연결을 생성하지 않는다. [지도 파생 요약](../data/manifests/seoul-topography-scene-v1.json)의 `serviceMigrated=false`는 해당 생성 시점의 상태로 보존한다. 현재 서비스·데이터 페이지의 원형 공간 연결과 잔여 성능 검사는 [현재 연결](#현재-서비스의-원형-공간-연결)로 구분한다.
 
 ```sh
 simulation/.venv/bin/python scripts/fetch_seoul_observations.py district-boundaries
@@ -104,7 +104,7 @@ simulation/.venv/bin/python scripts/verify_topography_scene.py \
 
 계산용 `geometry`는 절대 EPSG:5186 원 좌표의 Polygon/MultiPolygon이다. `waterleague_sim.spatial.geometry`는 열린 링·잘못된 구멍·자기교차·중복 면·비유한/3차원 좌표를 거부하고 면적·상한·유출 폭/장축 입력을 검사한다. 표시 도형이나 외곽선만으로 구멍 면적을 다시 더하지 않는다. 장축 기반 폭은 기존 탐색 설계의 집약 매개변수이며 실제 유출 방향·다중 면 사이의 배수 연결을 뜻하지 않는다. 관망/집수 경로는 별도 검증 대상이다.
 
-SWMM 연속 입력은 전체 `geometry`가 있으면 `geometryCrs=EPSG:5186`과 같은 도형에서 계산한 면적·폭만 받는다. 원형 검사 코드 해시를 엔진 식별에 결속하고 결과/초기화 민감도 재현 묶음에도 코드를 보존한다. 과거 수치 재현의 단일 `coordinates` 입력은 원 생성기와 구분해 유지한다. 현재 일반 게임의 OSM 지도·후보와 운영 모델 등록은 아직 전환하지 않았다.
+SWMM 연속 입력은 전체 `geometry`가 있으면 `geometryCrs=EPSG:5186`과 같은 도형에서 계산한 면적·폭만 받는다. 원형 검사 코드 해시를 엔진 식별에 결속하고 결과/초기화 민감도 재현 묶음에도 코드를 보존한다. 과거 수치 재현의 단일 `coordinates` 입력은 원 생성기와 구분해 유지한다. 이 단계의 두 사례 대조와 현재 일반 게임의 원형 공간 연결·공개 운영 유역 등록을 구분한다.
 
 ```sh
 simulation/.venv/bin/python scripts/prepare_topography_sites.py
@@ -114,7 +114,7 @@ simulation/.venv/bin/python scripts/verify_topography_site_engine.py \
   --output data/private/vworld-seoul-topography-20260307/sites-engine-v1
 ```
 
-마지막 명령은 구멍/다중 면을 가진 실제 옥상·도로 설계 영역 두 곳에 보관 AWS 421 관측과 기존 탐색 수문 조건을 적용한 엔진 연결 대조다. 해당 위치의 현장 강우·물성·경사 대조가 아니며 점수/순위·공개 연결 유역 모델로 등록하지 않는다. 지도·후보·시설 조건·모델/API를 함께 전환하기 전까지 프론트 데이터 페이지의 실제 사용 자료를 교체하지 않는다.
+마지막 명령은 구멍/다중 면을 가진 실제 옥상·도로 설계 영역 두 곳에 보관 AWS 421 관측과 기존 탐색 수문 조건을 적용한 엔진 연결 대조다. 해당 위치의 현장 강우·물성·경사 대조가 아니며 점수/순위·공개 연결 유역 모델로 등록하지 않는다. 현재 프론트 데이터 페이지는 아래 서비스 전환에서 실제 사용하는 서울 원형 자료·공통 참조 조건을 안내한다.
 
 ### 원형 후보의 시설·공통 문헌 조건 결속
 
@@ -156,6 +156,26 @@ PYTHONPATH=simulation simulation/.venv/bin/python scripts/prepare_native_game.py
 PYTHONPATH=simulation simulation/.venv/bin/python scripts/verify_native_game.py \
   --report tmp/native-game-runtime.json
 ```
+
+### 현재 서비스의 원형 공간 연결
+
+2026-10-20 일반 지도·주간/재해 설치 API·워커를 위 원형 공간으로 연결했다. 앞선 생성 요약의 `serviceMigrated:false`와 당시 검증 기록은 보존하며 현재 연결 증거로 덮어쓰지 않는다. 현재 결속은 다음 파일·검사로 구분한다.
+
+- 지도는 `frontend/public/data/seoul-native-v1/`의 686개 gzip 타일·건물 1,014,532개·기타 객체 1,018,444개다. 원 객체의 구멍·다중 면·정점·소속·면적/길이·미확인 높이 상태를 보존한다. 원문 합계 1,446,417,404바이트·압축 합계 328,127,905바이트이며 최초 화면에서 전부 읽지 않는다. [전체 화면 입력 대조](../data/benchmarks/native-scene-frontend-v1.json)는 실제 Zod/mapper와 686개 원문·압축 해시, 전체 원 객체 형상, 지원 후보 1,021,578개의 대응 ID/허용 마스크, 옥상 후보 712,879개의 계산 형상을 검사했다. 지상 308,699개는 원면에서 제외 영역을 뺀 파생 도형이므로 배경 원면과 같은 면적이라고 검사하지 않는다. 지상 계산 형상은 원형 후보 DB와 API/워커 대조를 따른다.
+- 주간·재해의 설치 `siteModelHash`는 `4ec7535e7cbaf41dc73f73519d77ba11f956f4c75c1a574fffa08f16625919b7`, 관측 목록은 v2 `f08b92fa00db08126e86b379583299a831764b958a4f131de4647ebde95e6fdb`다. 화면은 상대 미터 좌표, 조회·계산의 원형은 절대 EPSG:5186으로 구분한다. 이전 셀 ID·OSM 모델은 현재 워커의 대체 입력으로 사용하지 않는다.
+- 재해의 선행/사건 기상은 `native-weather/v1`의 공개 원문 1,790개와 고정 계산 코드 10개를 해시 검사한 묶음에서 읽는다. [실제 API·워커 보관 증거](../data/benchmarks/native-primary-runtime-v1.json)는 6종 시설의 서버 원가·7일 초기화·설치 시각 이후 프레임·원 체적 차이·음수 효과·게스트 최종 결과 잠금·타 세션 404를 검증한다. [현재 Java/Python 대조](../data/benchmarks/native-play-runtime-v2.json)는 별도 25개 구 후보 1,787개 전체 JSON과 6종 실제 EPA 직접 강우 체적 대조다.
+- 공개 시설은 EPSG:5186 근거를 확인한 위치점 9종을 새 카탈로그에 결속한다. 1,604개 표시 위치점과 후보 점 포함 대응 1,104개는 참고 정보이며 확인된 시설 부지·설치 제외는 0개다. 기존 OSM 저류/펌프 도형은 보관 근거로 남기고 현재 공간에 혼합하지 않는다. 원 설비 이력과 위치점의 출처 해시는 보존한다.
+- 높낮이 배경은 [Copernicus 파생](../data/manifests/seoul-terrain-native-v1.json)의 90m 평균 DSM 격자와 원 수치지형도 수면, 인구는 [공개 구 코드 파생](../data/manifests/city-population-native-v1.json)을 사용한다. 지형·인구 생성은 공개 원문 해시·도구 버전·결측을 보존하며 OSM 경계/녹지/주차장으로 복귀하지 않는다. 도로 폭 단위·미확인 일방 방향·보행 연결·주차 칸·교량 고도를 생성하지 않는다. 차량 표시는 명시적 양방향 도로중심선 범위에 한정한다.
+- 현재 연구 API·워커의 `models/current/catalog.json`은 기존 수치지형도 연구 모델 4개만 등록한다. 일반 게임 원형 후보를 과거 OSM 연구 모델로 변환하지 않는다. 보관 모델·원 생성기·수치 재현 증거는 현재 서비스 목록과 분리해 유지한다. V30의 소속 구·종료/예산·설계 버전 분리는 [데이터 모델](05-data-model.md)을 따른다.
+
+브라우저 상세 지도·녹화지붕 설치/예산·시간축·2D/3D·게스트 최종 잠금과 데이터 페이지 390px 표시를 확인했다. 전체 대상 기기의 시간/메모리/FPS 측정·도엽 접합/표고 해석의 전체 승인·주간/회원 제출 전체 흐름은 P0/P6의 잔여 검증이다. 연결 유역·실측 토양/경사·시공·현장 침수 정확도는 이 전환으로 승인하지 않는다.
+
+```sh
+node scripts/verify_native_scene_frontend.mjs --report tmp/native-scene-frontend.json
+simulation/.venv/bin/python scripts/verify_native_primary_runtime.py --report tmp/native-primary-runtime.json
+```
+
+첫 명령은 원 장면 카탈로그와 해시 고정 원형 DB의 로컬 복원이 필요하다. 두 번째 명령은 로컬 API·실제 워커의 독립 게스트 시험을 실행한다. 기존 보고서와 재현 원본은 덮어쓰지 않는다.
 
 ## 수치지형도 플레이 모델 연결
 

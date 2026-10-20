@@ -4,11 +4,9 @@ import io.waterleague.common.exception.*;
 import io.waterleague.common.service.JsonService;
 import io.waterleague.disaster.view.DisasterView;
 import io.waterleague.district.repository.DistrictRepository;
-import io.waterleague.model.repository.LabModelRepository;
-import java.nio.charset.StandardCharsets;
+import io.waterleague.rainfall.repository.ObservedGameRepository;
 import java.time.OffsetDateTime;
 import java.util.*;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -17,15 +15,13 @@ public class DisasterRepository {
   private final Map<String, String> districtsByHash;
 
   public DisasterRepository(
-      JsonService json, LabModelRepository models, DistrictRepository districts)
+      JsonService json, ObservedGameRepository models, DistrictRepository districts)
       throws java.io.IOException {
     var events = new ArrayList<DisasterView.Event>();
     var hashes = new HashMap<String, String>();
     var ids = new HashSet<String>();
-    try (var in = new ClassPathResource("disasters/seoul-events-v1.json").getInputStream()) {
-      byte[] bytes = in.readNBytes(1024 * 1024 + 1);
-      if (bytes.length > 1024 * 1024) throw new IllegalStateException("재해 목록 크기 초과");
-      var catalog = json.tree(new String(bytes, StandardCharsets.UTF_8));
+    {
+      var catalog = models.events();
       if (catalog.path("schemaVersion").asInt() != 1 || !catalog.path("events").isArray())
         throw new IllegalStateException("재해 목록 형식 오류");
       for (var e : catalog.path("events")) {
@@ -87,7 +83,7 @@ public class DisasterRepository {
                   total,
                   List.copyOf(depths)));
         }
-        if (regions.isEmpty() || regions.size() > 25) throw new IllegalStateException("재해 지역 누락");
+        if (regions.size() != 25) throw new IllegalStateException("재해 지역 누락");
         events.add(
             new DisasterView.Event(
                 id,

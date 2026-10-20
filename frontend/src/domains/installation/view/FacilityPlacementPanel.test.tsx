@@ -1,6 +1,7 @@
 import { expect, it } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
-import rawSite from './fixtures/basinSite.json';
+import nativeSites from '../__tests__/fixtures/nativeSites.json';
+const rawSite = nativeSites.reference;
 import { siteDto } from '../dto/installationDto';
 import { FacilityPlacementPanel, type FacilityPlacementProps } from './FacilityPlacementPanel';
 
@@ -22,15 +23,13 @@ const props: FacilityPlacementProps = {
   canInstall: true,
 };
 
-it('주간·재해 공통 패널에서 공개 경계 교차 사유 표시와 신규 배치 폼 제외', () => {
+it('주간·재해는 공개 위치점과 부지 미확인을 안내하고 원형 후보 설치 폼 제공', () => {
   for (const research of [false, true]) {
     const html = renderToStaticMarkup(<FacilityPlacementPanel {...props} research={research} />);
-    expect(html).toContain('공개 지도 시설 영역 · 신규 설치 제외');
-    expect(html).toContain('잠실유수지');
-    expect(html).toContain('교차 100 m²');
-    expect(html).not.toContain('<form');
-    expect(html).not.toContain('이 위치에 설치');
-    expect(html).not.toContain('연구 설계에 추가');
+    expect(html).toContain('공개 시설 위치점 1개');
+    expect(html).toContain('실제 부지·수직 위치·운영 여부');
+    expect(html).toContain('<form');
+    expect(html).not.toContain('공개 지도 시설 영역 · 신규 설치 제외');
   }
 });
 
@@ -115,7 +114,7 @@ it('식생수로는 주간·재해 모두 폭 기준 한도 초과 설치 거부
       runoffWidthM: 5,
       widthMethod: 'FOOTPRINT_AREA_OVER_LONG_AXIS',
       slopePercent: 1,
-      slopeMethod: 'NGII_2025_90M_HORN_TERRAIN_PROXY',
+      slopeMethod: 'PUBLIC_REFERENCE_SURFACE_SCENARIO',
       surfaceTag: null,
       imperviousBasis: 'SURFACE_UNKNOWN_ASSUMPTION',
       soilStatus: 'TEXTURE_CLASS_LITERATURE_ESTIMATE',
@@ -186,7 +185,7 @@ it('침투 트렌치는 주간·재해 모두 폭 기준 한도 초과 설치 �
       runoffWidthM: 5,
       widthMethod: 'FOOTPRINT_AREA_OVER_LONG_AXIS',
       slopePercent: 1,
-      slopeMethod: 'NGII_2025_90M_HORN_TERRAIN_PROXY',
+      slopeMethod: 'PUBLIC_REFERENCE_SURFACE_SCENARIO',
       surfaceTag: null,
       imperviousBasis: 'SURFACE_UNKNOWN_ASSUMPTION',
       soilStatus: 'TEXTURE_CLASS_LITERATURE_ESTIMATE',
