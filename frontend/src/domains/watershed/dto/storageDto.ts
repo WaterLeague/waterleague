@@ -1,6 +1,21 @@
 import { z } from 'zod';
 const number = z.number().finite();
 const hash = z.string().regex(/^[a-f0-9]{64}$/);
+const outletPipeLedger = z
+  .strictObject({
+    nodeId: z.string(),
+    linkId: z.string(),
+    receiverNodeId: z.string(),
+    initialDepthM: number.nonnegative(),
+    finalDepthM: number.nonnegative(),
+    floodingM3: number.nonnegative(),
+    numericalStatus: z.enum(['PASSED', 'FAILED']),
+    scope: z.literal('UNCONNECTED_OUTLET_FLOODING_ALREADY_INCLUDED_IN_NETWORK'),
+  })
+  .superRefine((v, ctx) => {
+    if ((v.numericalStatus === 'PASSED') !== v.floodingM3 <= 1e-9)
+      ctx.addIssue({ code: 'custom', message: '배수 접속부 월류와 검증 상태 불일치' });
+  });
 const node = z.object({ id: z.string(), invertM: number, maxDepthM: number.positive() });
 export const storageCatalogDto = z.object({
   id: z.literal('SEOUL_PUBLIC_NETWORK_STORAGE_CONNECTIONS_V1'),
@@ -69,6 +84,13 @@ export const storageSummaryDto = z
     rankingEligible: z.literal(false),
     wholeRunLedger: z.object({
       numericalStatus: z.enum(['PASSED', 'FAILED']),
+      outletPipes: z
+        .strictObject({
+          drain: outletPipeLedger.optional(),
+          overflow: outletPipeLedger.optional(),
+        })
+        .refine((v) => Boolean(v.drain || v.overflow), '배수 연결관 원장 누락')
+        .optional(),
       inletPipe: z
         .object({
           nodeId: z.string(),
@@ -139,7 +161,10 @@ export const storageSummaryDto = z
   })
   .superRefine((v, ctx) => {
     if (
-      v.wholeRunLedger.inletPipe?.numericalStatus === 'FAILED' &&
+      (v.wholeRunLedger.inletPipe?.numericalStatus === 'FAILED' ||
+        Object.values(v.wholeRunLedger.outletPipes ?? {}).some(
+          (p) => p?.numericalStatus === 'FAILED'
+        )) &&
       (v.numericalStatus === 'PASSED' || v.wholeRunLedger.numericalStatus === 'PASSED')
     )
       ctx.addIssue({ code: 'custom', message: '집수 입구 월류의 효과 비교 보류 누락' });

@@ -68,6 +68,19 @@ export function WatershedResult({ job }: { job: WatershedJob }) {
           {number(job.design.cistern.inletPipe.upstreamMaxDepthM)} m
         </p>
       )}
+      {(['drain', 'overflow'] as const).map((kind) => {
+        const pipe = job.design.cistern?.[kind === 'drain' ? 'drainPipe' : 'overflowPipe'];
+        return (
+          pipe && (
+            <p key={kind}>
+              {kind === 'drain' ? '일반 배수' : '비상 배수'} 연결관 · 길이 {number(pipe.lengthM)} m
+              · 직경 {number(pipe.diameterM)} m · Manning 조도 {number(pipe.roughness)} · 관 바닥{' '}
+              {number(pipe.upstreamInvertM)} → {number(pipe.downstreamInvertM)} m · 접속부 월류 깊이{' '}
+              {number(pipe.upstreamMaxDepthM)} m
+            </p>
+          )
+        );
+      })}
       {job.design.conduits?.placements.map((p) => (
         <div key={p.id} className="watershed-facility-state">
           <strong>{p.conduitId} · 배수관·암거 개량</strong>

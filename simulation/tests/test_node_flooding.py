@@ -71,3 +71,14 @@ class NodeFloodingTests(unittest.TestCase):
             if changed == 'partial': del end['nodes']['Tank1']['floodingSeconds']
             with self.subTest(changed=changed), self.assertRaises(FloodModelError):
                 summarize(start, end, self.layout)
+
+    def test_only_declared_outlet_junctions_are_retained_without_fake_coordinates(self):
+        self.start['nodes']['Outlet'] = {'type': 0, 'floodingM3': 0}
+        self.end['nodes']['Outlet'] = {'type': 0, 'floodingM3': 2}
+        self.end['totals']['floodingM3'] += 2
+        with self.assertRaisesRegex(FloodModelError, 'LOCATION_MISSING'):
+            summarize(self.start, self.end, self.layout)
+        report = summarize(self.start, self.end, self.layout, outlet_nodes=['Outlet'])
+        self.assertEqual(report['totalFloodingM3'], 7)
+        self.assertEqual(report['nodes'][-1],
+            {'id': 'Outlet', 'kind': 'JUNCTION', 'mapped': False, 'floodingM3': 2})

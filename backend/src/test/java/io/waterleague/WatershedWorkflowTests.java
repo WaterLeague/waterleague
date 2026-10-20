@@ -789,7 +789,7 @@ class WatershedWorkflowTests extends PostgresIntegrationTest {
 
   @org.junit.jupiter.params.ParameterizedTest
   @org.junit.jupiter.params.provider.ValueSource(
-      strings = {"S9", "S1", "S9-closed", "S9-pipe", "S9-narrow"})
+      strings = {"S9", "S1", "S9-closed", "S9-pipe", "S9-narrow", "S9-outlets", "S9-outletflood"})
   void bindsDisjointCisternCaptureCoverAndLidsFromTheSameOriginalCatchment(String scenario)
       throws Exception {
     String host = scenario.startsWith("S9") ? "S9" : "S1";
@@ -837,13 +837,43 @@ class WatershedWorkflowTests extends PostgresIntegrationTest {
               item.drain(),
               item.overflow(),
               false,
-              new WatershedRequest.CisternInletPipe(
+              new WatershedRequest.CisternPipe(
                   new BigDecimal("10"),
                   new BigDecimal(scenario.endsWith("-narrow") ? "0.001" : "0.1"),
                   new BigDecimal("0.013"),
                   new BigDecimal("14.4"),
                   new BigDecimal("0.3"),
                   new BigDecimal("14.2")));
+    if (scenario.endsWith("-outlets") || scenario.endsWith("-outletflood")) {
+      boolean flood = scenario.endsWith("-outletflood");
+      item =
+          new WatershedRequest.CisternItem(
+              item.id(),
+              host,
+              item.captureAreaM2(),
+              item.areaM2(),
+              item.invertM(),
+              item.depthM(),
+              flood ? new BigDecimal("0.300") : item.initialDepthM(),
+              item.drain(),
+              item.overflow(),
+              false,
+              null,
+              new WatershedRequest.CisternPipe(
+                  new BigDecimal("10"),
+                  new BigDecimal(flood ? "0.001" : "0.100"),
+                  new BigDecimal("0.013"),
+                  new BigDecimal("12.750"),
+                  new BigDecimal(flood ? "0.100" : "3.500"),
+                  new BigDecimal("12.750")),
+              new WatershedRequest.CisternPipe(
+                  new BigDecimal("10"),
+                  new BigDecimal("0.200"),
+                  new BigDecimal("0.013"),
+                  new BigDecimal("12.750"),
+                  new BigDecimal("3.500"),
+                  new BigDecimal("12.750")));
+    }
     var dto =
         new WatershedRequest(
             UUID.randomUUID(),
@@ -932,7 +962,7 @@ class WatershedWorkflowTests extends PostgresIntegrationTest {
             new String[] {"10", ".1", ".0001", "14.4", ".3", "14.2"})) {
       var v = Arrays.stream(values).map(BigDecimal::new).toList();
       var pipe =
-          new WatershedRequest.CisternInletPipe(
+          new WatershedRequest.CisternPipe(
               v.get(0), v.get(1), v.get(2), v.get(3), v.get(4), v.get(5));
       var item =
           new WatershedRequest.CisternItem(
@@ -959,7 +989,7 @@ class WatershedWorkflowTests extends PostgresIntegrationTest {
     }
     assertThat(
             validator.validate(
-                new WatershedRequest.CisternInletPipe(
+                new WatershedRequest.CisternPipe(
                     BigDecimal.TEN,
                     BigDecimal.ONE,
                     null,
@@ -968,6 +998,80 @@ class WatershedWorkflowTests extends PostgresIntegrationTest {
                     BigDecimal.TEN)))
         .isNotEmpty();
     assertThat(service.list(owner)).isEmpty();
+  }
+
+  @Test
+  void rejectsInvalidOutletPipesAndClosedDrainBeforeSaving() {
+    var source = hydraulicCistern("Cistern1", "S9", "10");
+    for (String[] values :
+        List.of(
+            new String[] {"0", "0.1", "0.013", "12.75", "2", "12.75"},
+            new String[] {"10", "0.1", "0.0001", "12.75", "2", "12.75"},
+            new String[] {"10", "0.1", "0.013", "12.85", "2", "12.75"},
+            new String[] {"10", "0.1", "0.013", "12.75", "0.08", "12.75"},
+            new String[] {"10", "0.1", "0.013", "12.75", "2", "12.7"},
+            new String[] {"10", "0.1", "0.013", "12.75", "2", "12.8"})) {
+      var v = Arrays.stream(values).map(BigDecimal::new).toList();
+      var pipe =
+          new WatershedRequest.CisternPipe(
+              v.get(0), v.get(1), v.get(2), v.get(3), v.get(4), v.get(5));
+      var item =
+          new WatershedRequest.CisternItem(
+              source.id(),
+              source.catchmentId(),
+              source.captureAreaM2(),
+              source.areaM2(),
+              source.invertM(),
+              source.depthM(),
+              source.initialDepthM(),
+              source.drain(),
+              source.overflow(),
+              false,
+              null,
+              pipe,
+              null);
+      assertThatThrownBy(
+              () ->
+                  CisternDesignService.compile(
+                      new WatershedRequest.CisternRequest(
+                          WatershedCatalogRepository.STORAGE_HASH, item),
+                      catalog,
+                      new HashSet<>(),
+                      List.of()))
+          .isInstanceOf(DomainException.class);
+    }
+    var pipe =
+        new WatershedRequest.CisternPipe(
+            new BigDecimal("10"),
+            new BigDecimal("0.1"),
+            new BigDecimal("0.013"),
+            new BigDecimal("12.75"),
+            new BigDecimal("2"),
+            new BigDecimal("12.75"));
+    var closed =
+        new WatershedRequest.CisternItem(
+            source.id(),
+            source.catchmentId(),
+            source.captureAreaM2(),
+            source.areaM2(),
+            source.invertM(),
+            source.depthM(),
+            source.initialDepthM(),
+            null,
+            source.overflow(),
+            true,
+            null,
+            pipe,
+            null);
+    assertThatThrownBy(
+            () ->
+                CisternDesignService.compile(
+                    new WatershedRequest.CisternRequest(
+                        WatershedCatalogRepository.STORAGE_HASH, closed),
+                    catalog,
+                    new HashSet<>(),
+                    List.of()))
+        .isInstanceOf(DomainException.class);
   }
 
   @Test

@@ -143,6 +143,7 @@ export function CisternDesignForm({
               setDraft({
                 ...draft,
                 drainClosed: e.target.value === 'closed',
+                drainPipe: null,
                 drain:
                   e.target.value === 'closed'
                     ? null
@@ -166,16 +167,28 @@ export function CisternDesignForm({
           </p>
         )}
         {draft.drain && (
-          <HydraulicPortFields
-            label="일반 배수구"
-            value={draft.drain}
-            onChange={(drain) => setDraft({ ...draft, drain })}
-          />
+          <>
+            <HydraulicPortFields
+              label="일반 배수구"
+              value={draft.drain}
+              onChange={(drain) => setDraft({ ...draft, drain })}
+            />
+            <CisternInletFields
+              kind="drain"
+              value={draft.drainPipe}
+              onChange={(drainPipe) => setDraft({ ...draft, drainPipe })}
+            />
+          </>
         )}
         <HydraulicPortFields
           label="비상 배수구"
           value={draft.overflow}
           onChange={(overflow) => setDraft({ ...draft, overflow })}
+        />
+        <CisternInletFields
+          kind="overflow"
+          value={draft.overflowPipe}
+          onChange={(overflowPipe) => setDraft({ ...draft, overflowPipe })}
         />
       </fieldset>
       <p className="watershed-warning">

@@ -1,0 +1,481 @@
+{
+  "schemaVersion": 1,
+  "checkedOn": "2026-10-20",
+  "status": "API_WORKER_REPLAY_DTO_STATIC_RENDER_PASSED_BROWSER_NOT_VERIFIED",
+  "scope": "공개 서초 연구 관망의 명시적 이용조 배수·월류 접속관 설계. 실제 서울 지도 설치·현장 배관 검증 아님",
+  "designConditions": {
+    "ordinary": {
+      "lengthM": 10,
+      "drainDiameterM": 0.1,
+      "overflowDiameterM": 0.2,
+      "roughness": 0.013,
+      "upstreamMaxDepthM": 3.5
+    },
+    "flooding": {
+      "drainDiameterM": 0.001,
+      "drainUpstreamMaxDepthM": 0.1,
+      "initialTankDepthM": 0.3
+    },
+    "basis": "EXPLICIT_NUMERICAL_DESIGNS_NOT_LH_FIELD_DIMENSIONS"
+  },
+  "publicReferenceManifest": "data/manifests/lh-rainwater-housing-2020.json",
+  "validation": {
+    "pythonRegressionTests": 31,
+    "serverTests": 25,
+    "realWorkerIntegrationTests": 8,
+    "authenticatedHttpTests": 1,
+    "httpOutletsAndCacheViews": 4,
+    "frontendFiles": 137,
+    "frontendTests": 465,
+    "frontendTestEvidence": "OBSERVED_SUCCESSFUL_COMMAND_OUTPUT",
+    "frontendTypeAndBuild": "PASSED",
+    "backendPackage": "PASSED",
+    "sourceCountsUnchanged": true
+  },
+  "preliminaryLowJunctionCase": {
+    "file": "tmp/cistern-outlet-public-diagnostic-v1/result.json",
+    "sha256": "3489a65cd868683ea71fe46be66af32ec5aba96848e00d1b3cb695c4c667f455",
+    "upstreamMaxDepthM": 2,
+    "numericalStatus": "FAILED",
+    "outletPipes": {
+      "drain": {
+        "nodeId": "WLCT_Cistern1_DJ",
+        "linkId": "WLCT_Cistern1_DC",
+        "receiverNodeId": "J22",
+        "initialDepthM": 0.0,
+        "finalDepthM": 1.9999999999999998,
+        "floodingM3": 1815.8009549108904,
+        "numericalStatus": "FAILED",
+        "scope": "UNCONNECTED_OUTLET_FLOODING_ALREADY_INCLUDED_IN_NETWORK"
+      },
+      "overflow": {
+        "nodeId": "WLCT_Cistern1_OJ",
+        "linkId": "WLCT_Cistern1_OC",
+        "receiverNodeId": "J22",
+        "initialDepthM": 0.0,
+        "finalDepthM": 1.9999999999999998,
+        "floodingM3": 10119.356116792565,
+        "numericalStatus": "FAILED",
+        "scope": "UNCONNECTED_OUTLET_FLOODING_ALREADY_INCLUDED_IN_NETWORK"
+      }
+    },
+    "interpretation": "원 하류 역압에 따른 접속부 넘침 보존. 정상 사례의 3.5m는 별도 명시적 설계이며 현장 높이 보정 아님"
+  },
+  "publicRuns": [
+    {
+      "scenario": "S9-outlets",
+      "artifactDirectory": "tmp/member-shared-cistern-0923e9d9-a48c-4bb9-ab86-f02a8fe35b49",
+      "manifestSha256": "b73ff7d145be5e68fe5808d796afbe4f7ea873b4f8478fbcfbb2ab362842641a",
+      "resultSha256": "4b63a55c15a9d846aa524c6c3b610d42c55363cae0df750e509ec88b641bbc89",
+      "numericalStatus": "PASSED",
+      "signedReductionM3": {
+        "outflowM3": 4.894814826082438,
+        "floodingM3": 11.106144854100421
+      },
+      "outletPipes": {
+        "drain": {
+          "nodeId": "WLCT_Cistern1_DJ",
+          "linkId": "WLCT_Cistern1_DC",
+          "receiverNodeId": "J22",
+          "initialDepthM": 0.0,
+          "finalDepthM": 2.9839760795728965,
+          "floodingM3": 0.0,
+          "numericalStatus": "PASSED",
+          "scope": "UNCONNECTED_OUTLET_FLOODING_ALREADY_INCLUDED_IN_NETWORK"
+        },
+        "overflow": {
+          "nodeId": "WLCT_Cistern1_OJ",
+          "linkId": "WLCT_Cistern1_OC",
+          "receiverNodeId": "J22",
+          "initialDepthM": 0.0,
+          "finalDepthM": 2.9840785027782535,
+          "floodingM3": 0.0,
+          "numericalStatus": "PASSED",
+          "scope": "UNCONNECTED_OUTLET_FLOODING_ALREADY_INCLUDED_IN_NETWORK"
+        }
+      },
+      "nativeCases": [
+        {
+          "id": "baseline",
+          "execution": "COMPUTED",
+          "inputSha256": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+          "outputSha256": "682eeb8bb19391dde81c640bc68f91de924852787689c89cbd46a3c771006c18"
+        },
+        {
+          "id": "strategy",
+          "execution": "COMPUTED",
+          "inputSha256": "5ffce14a264119f1ca399a3e2f301924b0bfe5f8048e860abddc4ca52c1efa0f",
+          "outputSha256": "402ab2075f165aafa95a44eabaa3c3078c94cfb4a90b954f570845a4e9c79893"
+        }
+      ]
+    },
+    {
+      "scenario": "S9-outletflood",
+      "artifactDirectory": "tmp/member-shared-cistern-cdfccbc1-e6e5-4cad-b514-eeab41764cec",
+      "manifestSha256": "29c7e3cfd69a1b34e3f2bafd7207369ad7b7f42e5cd8f66bad83f67c96a8bfec",
+      "resultSha256": "626125077956db4701f3b02e839f4e6e789b97beee38e03df1be64559278d0ce",
+      "numericalStatus": "FAILED",
+      "signedReductionM3": null,
+      "outletPipes": {
+        "drain": {
+          "nodeId": "WLCT_Cistern1_DJ",
+          "linkId": "WLCT_Cistern1_DC",
+          "receiverNodeId": "J22",
+          "initialDepthM": 0.0,
+          "finalDepthM": 0.1,
+          "floodingM3": 3.0690062432765024,
+          "numericalStatus": "FAILED",
+          "scope": "UNCONNECTED_OUTLET_FLOODING_ALREADY_INCLUDED_IN_NETWORK"
+        },
+        "overflow": {
+          "nodeId": "WLCT_Cistern1_OJ",
+          "linkId": "WLCT_Cistern1_OC",
+          "receiverNodeId": "J22",
+          "initialDepthM": 0.0,
+          "finalDepthM": 2.984073883962038,
+          "floodingM3": 0.0,
+          "numericalStatus": "PASSED",
+          "scope": "UNCONNECTED_OUTLET_FLOODING_ALREADY_INCLUDED_IN_NETWORK"
+        }
+      },
+      "nativeCases": [
+        {
+          "id": "baseline",
+          "execution": "COMPUTED",
+          "inputSha256": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+          "outputSha256": "682eeb8bb19391dde81c640bc68f91de924852787689c89cbd46a3c771006c18"
+        },
+        {
+          "id": "strategy",
+          "execution": "COMPUTED",
+          "inputSha256": "27bef619e4a85bb7a5855df0705dfdce64ecd413e98541c89a2a1ec76ee25a6d",
+          "outputSha256": "4ec744caaf52278ebbc70b5b28a99ceb726765f4bab79423573e237d5c59fa1e"
+        }
+      ]
+    },
+    {
+      "scenario": "S9-outlets-reused",
+      "artifactDirectory": "tmp/member-shared-cistern-ad9f7e8e-f027-49dc-96a1-973545a74da3",
+      "manifestSha256": "eb37c49b1fb5e9c60f68a4234121487ab9416fc9b6517d7ad12ef4c0e443a816",
+      "resultSha256": "96100db94b5a5c4157a020f297a7b8245a22ae01522535b74a8ad0490bb616e6",
+      "numericalStatus": "PASSED",
+      "signedReductionM3": {
+        "outflowM3": 4.894814826082438,
+        "floodingM3": 11.106144854100421
+      },
+      "outletPipes": {
+        "drain": {
+          "nodeId": "WLCT_Cistern1_DJ",
+          "linkId": "WLCT_Cistern1_DC",
+          "receiverNodeId": "J22",
+          "initialDepthM": 0.0,
+          "finalDepthM": 2.9839760795728965,
+          "floodingM3": 0.0,
+          "numericalStatus": "PASSED",
+          "scope": "UNCONNECTED_OUTLET_FLOODING_ALREADY_INCLUDED_IN_NETWORK"
+        },
+        "overflow": {
+          "nodeId": "WLCT_Cistern1_OJ",
+          "linkId": "WLCT_Cistern1_OC",
+          "receiverNodeId": "J22",
+          "initialDepthM": 0.0,
+          "finalDepthM": 2.9840785027782535,
+          "floodingM3": 0.0,
+          "numericalStatus": "PASSED",
+          "scope": "UNCONNECTED_OUTLET_FLOODING_ALREADY_INCLUDED_IN_NETWORK"
+        }
+      },
+      "nativeCases": [
+        {
+          "id": "baseline",
+          "execution": "REUSED",
+          "inputSha256": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+          "outputSha256": "682eeb8bb19391dde81c640bc68f91de924852787689c89cbd46a3c771006c18"
+        },
+        {
+          "id": "strategy",
+          "execution": "REUSED",
+          "inputSha256": "5ffce14a264119f1ca399a3e2f301924b0bfe5f8048e860abddc4ca52c1efa0f",
+          "outputSha256": "402ab2075f165aafa95a44eabaa3c3078c94cfb4a90b954f570845a4e9c79893"
+        }
+      ]
+    },
+    {
+      "scenario": "S9-outletflood-reused",
+      "artifactDirectory": "tmp/member-shared-cistern-7be938a7-6517-45df-ade8-5b69f6bccc5a",
+      "manifestSha256": "7b69555ff9c9251ed343dfad858c4f4d91f940d142d34ad539de08573627447b",
+      "resultSha256": "4d4327f23656e5d22aa9972ad5cb820fea43f2aae252b7952c924207424b98e4",
+      "numericalStatus": "FAILED",
+      "signedReductionM3": null,
+      "outletPipes": {
+        "drain": {
+          "nodeId": "WLCT_Cistern1_DJ",
+          "linkId": "WLCT_Cistern1_DC",
+          "receiverNodeId": "J22",
+          "initialDepthM": 0.0,
+          "finalDepthM": 0.1,
+          "floodingM3": 3.0690062432765024,
+          "numericalStatus": "FAILED",
+          "scope": "UNCONNECTED_OUTLET_FLOODING_ALREADY_INCLUDED_IN_NETWORK"
+        },
+        "overflow": {
+          "nodeId": "WLCT_Cistern1_OJ",
+          "linkId": "WLCT_Cistern1_OC",
+          "receiverNodeId": "J22",
+          "initialDepthM": 0.0,
+          "finalDepthM": 2.984073883962038,
+          "floodingM3": 0.0,
+          "numericalStatus": "PASSED",
+          "scope": "UNCONNECTED_OUTLET_FLOODING_ALREADY_INCLUDED_IN_NETWORK"
+        }
+      },
+      "nativeCases": [
+        {
+          "id": "baseline",
+          "execution": "REUSED",
+          "inputSha256": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+          "outputSha256": "682eeb8bb19391dde81c640bc68f91de924852787689c89cbd46a3c771006c18"
+        },
+        {
+          "id": "strategy",
+          "execution": "REUSED",
+          "inputSha256": "27bef619e4a85bb7a5855df0705dfdce64ecd413e98541c89a2a1ec76ee25a6d",
+          "outputSha256": "4ec744caaf52278ebbc70b5b28a99ceb726765f4bab79423573e237d5c59fa1e"
+        }
+      ]
+    }
+  ],
+  "replay": [
+    {
+      "file": "tmp/cistern-outlet-replay-v1/replay.json",
+      "sha256": "09df43e042ff5c8d0dc68b6c689ad565d6f9dff737b3fd5eef729f495ae90aab",
+      "cases": [
+        {
+          "id": "baseline",
+          "outSha256": "682eeb8bb19391dde81c640bc68f91de924852787689c89cbd46a3c771006c18",
+          "binaryEqual": true,
+          "metricsEqual": true,
+          "floodingDurationEqual": true,
+          "nodeFloodingEqual": true
+        },
+        {
+          "id": "strategy",
+          "outSha256": "402ab2075f165aafa95a44eabaa3c3078c94cfb4a90b954f570845a4e9c79893",
+          "binaryEqual": true,
+          "metricsEqual": true,
+          "floodingDurationEqual": true,
+          "nodeFloodingEqual": true
+        }
+      ]
+    },
+    {
+      "file": "tmp/cistern-outletflood-replay-v1/replay.json",
+      "sha256": "37da6b373e23b9274e07508cd1257de09c796a611b1f48a578f96965d5602e48",
+      "cases": [
+        {
+          "id": "baseline",
+          "outSha256": "682eeb8bb19391dde81c640bc68f91de924852787689c89cbd46a3c771006c18",
+          "binaryEqual": true,
+          "metricsEqual": true,
+          "floodingDurationEqual": true,
+          "nodeFloodingEqual": true
+        },
+        {
+          "id": "strategy",
+          "outSha256": "4ec744caaf52278ebbc70b5b28a99ceb726765f4bab79423573e237d5c59fa1e",
+          "binaryEqual": true,
+          "metricsEqual": true,
+          "floodingDurationEqual": true,
+          "nodeFloodingEqual": true
+        }
+      ]
+    }
+  ],
+  "readback": {
+    "schemaVersion": 1,
+    "rows": [
+      {
+        "scenario": "S9-outlets",
+        "sourceResponseFile": "tmp/waterleague_queue_test_0261c57603254bf49681356c4fe701ec.fixtures/api-view-S9-outlets.json",
+        "sourceResponseSha256": "3ff4599afffa5875bf2fa1743975bd2fd00c19b91156dc8c11d31620d9725c0e",
+        "numericalStatus": "PASSED",
+        "outletPipes": {
+          "drain": {
+            "nodeId": "WLCT_Cistern1_DJ",
+            "linkId": "WLCT_Cistern1_DC",
+            "receiverNodeId": "J22",
+            "initialDepthM": 0,
+            "finalDepthM": 2.9839760795728965,
+            "floodingM3": 0,
+            "numericalStatus": "PASSED",
+            "scope": "UNCONNECTED_OUTLET_FLOODING_ALREADY_INCLUDED_IN_NETWORK"
+          },
+          "overflow": {
+            "nodeId": "WLCT_Cistern1_OJ",
+            "linkId": "WLCT_Cistern1_OC",
+            "receiverNodeId": "J22",
+            "initialDepthM": 0,
+            "finalDepthM": 2.9840785027782535,
+            "floodingM3": 0,
+            "numericalStatus": "PASSED",
+            "scope": "UNCONNECTED_OUTLET_FLOODING_ALREADY_INCLUDED_IN_NETWORK"
+          }
+        },
+        "dtoAndStaticRenderPassed": true
+      },
+      {
+        "scenario": "S9-outletflood",
+        "sourceResponseFile": "tmp/waterleague_queue_test_0261c57603254bf49681356c4fe701ec.fixtures/api-view-S9-outletflood.json",
+        "sourceResponseSha256": "06eed82a5309d8d266457294d6d0dee8c1bbd182560d0028fef538cb0bfa43b4",
+        "numericalStatus": "FAILED",
+        "outletPipes": {
+          "drain": {
+            "nodeId": "WLCT_Cistern1_DJ",
+            "linkId": "WLCT_Cistern1_DC",
+            "receiverNodeId": "J22",
+            "initialDepthM": 0,
+            "finalDepthM": 0.1,
+            "floodingM3": 3.0690062432765024,
+            "numericalStatus": "FAILED",
+            "scope": "UNCONNECTED_OUTLET_FLOODING_ALREADY_INCLUDED_IN_NETWORK"
+          },
+          "overflow": {
+            "nodeId": "WLCT_Cistern1_OJ",
+            "linkId": "WLCT_Cistern1_OC",
+            "receiverNodeId": "J22",
+            "initialDepthM": 0,
+            "finalDepthM": 2.984073883962038,
+            "floodingM3": 0,
+            "numericalStatus": "PASSED",
+            "scope": "UNCONNECTED_OUTLET_FLOODING_ALREADY_INCLUDED_IN_NETWORK"
+          }
+        },
+        "dtoAndStaticRenderPassed": true
+      },
+      {
+        "scenario": "S9-outlets-reused",
+        "sourceResponseFile": "tmp/waterleague_queue_test_0261c57603254bf49681356c4fe701ec.fixtures/api-view-S9-outlets-reused.json",
+        "sourceResponseSha256": "2a9afa9b65bc7cbc88420c317b95cede788ce3f9162cef122a3c20ecbd2d52c6",
+        "numericalStatus": "PASSED",
+        "outletPipes": {
+          "drain": {
+            "nodeId": "WLCT_Cistern1_DJ",
+            "linkId": "WLCT_Cistern1_DC",
+            "receiverNodeId": "J22",
+            "initialDepthM": 0,
+            "finalDepthM": 2.9839760795728965,
+            "floodingM3": 0,
+            "numericalStatus": "PASSED",
+            "scope": "UNCONNECTED_OUTLET_FLOODING_ALREADY_INCLUDED_IN_NETWORK"
+          },
+          "overflow": {
+            "nodeId": "WLCT_Cistern1_OJ",
+            "linkId": "WLCT_Cistern1_OC",
+            "receiverNodeId": "J22",
+            "initialDepthM": 0,
+            "finalDepthM": 2.9840785027782535,
+            "floodingM3": 0,
+            "numericalStatus": "PASSED",
+            "scope": "UNCONNECTED_OUTLET_FLOODING_ALREADY_INCLUDED_IN_NETWORK"
+          }
+        },
+        "dtoAndStaticRenderPassed": true
+      },
+      {
+        "scenario": "S9-outletflood-reused",
+        "sourceResponseFile": "tmp/waterleague_queue_test_0261c57603254bf49681356c4fe701ec.fixtures/api-view-S9-outletflood-reused.json",
+        "sourceResponseSha256": "5e55ca93f97526289b1ce0152c74731e71df00305aefe423911f5fcfc6e6f39a",
+        "numericalStatus": "FAILED",
+        "outletPipes": {
+          "drain": {
+            "nodeId": "WLCT_Cistern1_DJ",
+            "linkId": "WLCT_Cistern1_DC",
+            "receiverNodeId": "J22",
+            "initialDepthM": 0,
+            "finalDepthM": 0.1,
+            "floodingM3": 3.0690062432765024,
+            "numericalStatus": "FAILED",
+            "scope": "UNCONNECTED_OUTLET_FLOODING_ALREADY_INCLUDED_IN_NETWORK"
+          },
+          "overflow": {
+            "nodeId": "WLCT_Cistern1_OJ",
+            "linkId": "WLCT_Cistern1_OC",
+            "receiverNodeId": "J22",
+            "initialDepthM": 0,
+            "finalDepthM": 2.984073883962038,
+            "floodingM3": 0,
+            "numericalStatus": "PASSED",
+            "scope": "UNCONNECTED_OUTLET_FLOODING_ALREADY_INCLUDED_IN_NETWORK"
+          }
+        },
+        "dtoAndStaticRenderPassed": true
+      }
+    ]
+  },
+  "runtime": {
+    "apiPid": 59144,
+    "workerPid": 59160,
+    "health": "UP",
+    "scorePolicySha256": "b6bd6ed622e62a251cae445a54ef22f5a2357e0ae158ba0142ea21bfc8130b21",
+    "sourceCountsUnchanged": true,
+    "before": [
+      13,
+      2,
+      0,
+      0,
+      0
+    ],
+    "after": [
+      13,
+      2,
+      0,
+      0,
+      0
+    ],
+    "publicCisternCatalogPreserved": true,
+    "jarSha256": "d8d2dc614b2be48f04459b3ddecc8689ad1d39072a9284f007ff8433b29ad0be"
+  },
+  "logs": {
+    "tmp/cistern-outlet-regression-v1.log": "eac80a1057a9b4a4e479c90735eea9da1e1eaeaf71d44a831912d4376bfad07b",
+    "tmp/waterleague_queue_test_0261c57603254bf49681356c4fe701ec.log": "24e2635b85879f3c1bb0a40f809f73761f73a043187b07e9154709b121c14621",
+    "tmp/cistern-outlet-frontend-build-v1.log": "8c2a98ffdc0348e7f6f24614d026f26d148b2d3c1b8a542e1708b55d385fc2ee",
+    "tmp/cistern-outlet-backend-package-v1.log": "8e281358eed2b1f724c77684efee683711f273cf37f80157b8e1788528e192ff"
+  },
+  "sourceHashes": {
+    "backend/src/main/java/io/waterleague/watershed/dto/WatershedRequest.java": "9b5ef16b42ff52be0b8ded14402cb22959a7f563d18779da812da31336ca1f07",
+    "backend/src/main/java/io/waterleague/watershed/service/CisternDesignService.java": "1f656baa4657188e4800ddd97d637fe065f41d53bbc9ebf31c620d667a4dcfd8",
+    "backend/src/main/resources/evaluation/game-score-policy-v1.json": "b6bd6ed622e62a251cae445a54ef22f5a2357e0ae158ba0142ea21bfc8130b21",
+    "backend/src/test/java/io/waterleague/WatershedReadbackTests.java": "9a38de15bd2692e206192ee5b151859f8686ffab8fb37f2cd4c36fe6dcfc2b86",
+    "backend/src/test/java/io/waterleague/WatershedWorkflowTests.java": "d48ae4bdfe42388774ab380ac71994c143a20ac9c9b46815d9f1ecdaedcdfaac",
+    "data/manifests/lh-rainwater-housing-2020.json": "0e52a8ef18060bce5a9689a60489676d3457f04c46d8f9f4501678907fff5641",
+    "frontend/src/domains/catalog/service/dataSourceService.ts": "babc7302b578e727b56350d802f53a5f9b0a94e501d2768f4d7096508c3c966e",
+    "frontend/src/domains/watershed/dto/cisternDto.ts": "4f53c2553de2bc4cc37ac0396b3a8e06bf58d26aa043f4f7df15a5ab82b25f0b",
+    "frontend/src/domains/watershed/dto/storageDto.ts": "99d5c0c6bd9708764409065d2ca10d6c3d6f0a1bcd9d3bb2f8f65513c378cb15",
+    "frontend/src/domains/watershed/dto/watershedDto.ts": "b96a026743972b95f0c0fda573321990458360161b5aad6014fafa97d4e1294c",
+    "frontend/src/domains/watershed/service/cisternDesign.test.tsx": "c83f22b9bbb317c4f5333e6e844ac4e96e5af28f0610cf31720badc1aafd8f5c",
+    "frontend/src/domains/watershed/service/cisternDesign.ts": "69ed3b7fca3fde9420af6846d28cc51162b77d7efafd82cff0d96c9334646ebf",
+    "frontend/src/domains/watershed/view/CisternDesignForm.tsx": "9103635fcd2437bce8bf50d7be7f6c632eb916fd5249a982a3ab97e2764bad43",
+    "frontend/src/domains/watershed/view/CisternInletFields.tsx": "3ac40d93a02dc245ab06fc61f6d29f4e1c07069ed066c5ccacf7a592cc42af3d",
+    "frontend/src/domains/watershed/view/CisternOutletResult.test.tsx": "f1f580032d5201ec0d06038bb79b0252e105967c8c7dc3c93b01197a4436d45e",
+    "frontend/src/domains/watershed/view/StorageLedger.tsx": "60b8f7367a7592b8f470956d1bf1d1fa6c6d0acc961c3b769a1f56a22d99963d",
+    "frontend/src/domains/watershed/view/WatershedResult.tsx": "3e52f2c1611e3d0b58d903e735ae82d1cb2b84f23bd3a9c71c1909e13a75f381",
+    "frontend/src/domains/watershed/view/fixtures/public-cistern-outletflood-job-v1.json": "1d977703a3e65f258f56335d6426d5a7ca797fd7cadf2531b6de7ac0dc68a057",
+    "frontend/src/domains/watershed/view/fixtures/public-cistern-outlets-job-v1.json": "3a493cafcf3aec6ff81f3082e346857f7f5847c2a6c54326eb5ac76357c0d76e",
+    "scripts/verify_cistern_outlet_readback.mjs": "69d2538cf24c890409d26793c31b0fedfeb7458a4e099397ca751cf3f55cdb1f",
+    "simulation/integration/test_watershed.py": "50a2d6c0564b194917aa0c870217d3c19e469a2623f527968e3c3b88bd0cf76a",
+    "simulation/tests/test_cistern_outlet.py": "2babfe46d4261d9b4cc244dbad8f05e73f01b3be88eb604a3c286345c91d21cd",
+    "simulation/tests/test_node_flooding.py": "830023a5f95c923e45f0593d5f8caccdd905e491b7c7248559d2189e1d5b8c74",
+    "simulation/waterleague_sim/engine/cistern_network.py": "f773c32b700de5931cec48262f36ad7c697d7f98adc4b8a067baf3ade1578243",
+    "simulation/waterleague_sim/engine/cistern_outlet.py": "d9cb8de7428ae0e50fc8bbbf1603d9c90e1ed04de7b17d129f70868e2724c342",
+    "simulation/waterleague_sim/engine/connected_storage.py": "9490be65dfd45a11b09c19a2c85bec1167c9f2837c41b76f5855a86c16ad451d",
+    "simulation/waterleague_sim/presentation/node_flooding.py": "26711689f695192a92754e132cde1786704d651db837577dbe325cc07903d1d3",
+    "simulation/waterleague_sim/run_watershed_job.py": "d851456a818e9a3864bc30ffc5df89252120b4ad65a53c244b561f6a22d203e8"
+  },
+  "limitations": [
+    "일반 지도 확정 설치·예산·소형 규격·현장 수요/비용 미완료",
+    "새 접속부의 실제 좌표 미생성; 원 관망도에는 미매핑 절점으로 기록",
+    "초기 접속부 수심·추가 압력고·지표 저류 면적·관 국부 손실 0, 관 역류 방지 없음의 설계 가정",
+    "합성 수치 진단의 비수렴·물수지 실패 보존; 운영 허용 기준 완화 없음",
+    "브라우저 화면·레이아웃·FPS 미검증"
+  ]
+}

@@ -57,7 +57,37 @@ public record WatershedRequest(
       @Valid Port drain,
       @NotNull @Valid Port overflow,
       Boolean drainClosed,
-      @Valid CisternInletPipe inletPipe) {
+      @Valid CisternPipe inletPipe,
+      @Valid CisternPipe drainPipe,
+      @Valid CisternPipe overflowPipe) {
+    public CisternItem(
+        String id,
+        String catchmentId,
+        BigDecimal captureAreaM2,
+        BigDecimal areaM2,
+        BigDecimal invertM,
+        BigDecimal depthM,
+        BigDecimal initialDepthM,
+        Port drain,
+        Port overflow,
+        Boolean drainClosed,
+        CisternPipe inletPipe) {
+      this(
+          id,
+          catchmentId,
+          captureAreaM2,
+          areaM2,
+          invertM,
+          depthM,
+          initialDepthM,
+          drain,
+          overflow,
+          drainClosed,
+          inletPipe,
+          null,
+          null);
+    }
+
     public CisternItem(
         String id,
         String catchmentId,
@@ -109,11 +139,11 @@ public record WatershedRequest(
     @AssertTrue
     @JsonIgnore
     public boolean isDrainConfigurationValid() {
-      return Boolean.TRUE.equals(drainClosed) ? drain == null : drain != null;
+      return Boolean.TRUE.equals(drainClosed) ? drain == null && drainPipe == null : drain != null;
     }
   }
 
-  public record CisternInletPipe(
+  public record CisternPipe(
       @NotNull @DecimalMin("0.001") @DecimalMax("10000") @Digits(integer = 5, fraction = 3)
           BigDecimal lengthM,
       @NotNull @DecimalMin("0.001") @DecimalMax("100") @Digits(integer = 3, fraction = 3)

@@ -274,7 +274,10 @@ export const watershedResultDto = z
                   !(
                     n.kind === 'JUNCTION' &&
                     (c.pumpOperation?.pumps.some((p) => p.deliveryNodeId === n.id) ||
-                      c.networkCistern?.wholeRunLedger.inletPipe?.nodeId === n.id)
+                      c.networkCistern?.wholeRunLedger.inletPipe?.nodeId === n.id ||
+                      Object.values(c.networkCistern?.wholeRunLedger.outletPipes ?? {}).some(
+                        (p) => p?.nodeId === n.id
+                      ))
                   )) ||
                 layout.layout.nodes.some((p) => p.id === n.id)
           )
@@ -413,6 +416,32 @@ export const watershedJobDto = z
       for (const c of value.result.cases) {
         const ledger = c.networkCistern?.wholeRunLedger.facilities;
         const inlet = c.networkCistern?.wholeRunLedger.inletPipe;
+        for (const [kind, suffix] of [
+          ['drain', 'D'],
+          ['overflow', 'O'],
+        ] as const) {
+          const pipe = c.networkCistern?.wholeRunLedger.outletPipes?.[kind];
+          const design = tank?.[kind === 'drain' ? 'drainPipe' : 'overflowPipe'];
+          if (
+            c.networkCistern &&
+            (Boolean(pipe) !== Boolean(design) ||
+              (pipe &&
+                (pipe.nodeId !== 'WLCT_' + tank?.id + '_' + suffix + 'J' ||
+                  pipe.linkId !== 'WLCT_' + tank?.id + '_' + suffix + 'C' ||
+                  !value.result.networkLayout?.layout.catchments.some(
+                    (c) => c.id === tank?.subcatchmentId && c.outletNodeId === pipe.receiverNodeId
+                  ) ||
+                  (c.nodeFlooding &&
+                    !c.nodeFlooding.nodes.some(
+                      (n) =>
+                        n.id === pipe.nodeId &&
+                        n.kind === 'JUNCTION' &&
+                        !n.mapped &&
+                        floodAmountClose(n.floodingM3, pipe.floodingM3)
+                    )))))
+          )
+            ctx.addIssue({ code: 'custom', message: '배수 연결관 설계와 접속부 월류 원장 불일치' });
+        }
         if (
           c.networkCistern &&
           (Boolean(inlet) !== Boolean(tank?.inletPipe) ||

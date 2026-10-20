@@ -51,10 +51,54 @@ it('집수 연결관의 높이·길이·정밀도 검증과 미확정 입력 보
   const html = renderToStaticMarkup(<CisternInletFields value={inletPipe} onChange={() => {}} />);
   expect(html).toContain('관 내부 직경');
   expect(html).toContain('Manning 조도');
-  expect(html).toContain('입구가 넘치면 효과 비교를 보류');
+  expect(html).toContain('넘치면 효과 비교를 보류');
   expect(renderToStaticMarkup(<CisternInletFields onChange={() => {}} />)).toContain(
     '통수 용량은 계산하지 않습니다'
   );
+});
+it('배수 연결관의 원 하류·접속부 높이와 배출 중지 조건 검증', () => {
+  const pipe = {
+    lengthM: 10,
+    diameterM: 0.1,
+    roughness: 0.013,
+    upstreamInvertM: 12.75,
+    upstreamMaxDepthM: 2,
+    downstreamInvertM: 12.75,
+  };
+  expect(
+    validateCombinedDesign(catalog, [], [], [], [], {
+      ...tank,
+      drainPipe: pipe,
+      overflowPipe: pipe,
+    })
+  ).toBe('');
+  for (const patch of [
+    { lengthM: 0 },
+    { roughness: 0.0001 },
+    { upstreamInvertM: 12.85 },
+    { upstreamMaxDepthM: 0.08 },
+    { downstreamInvertM: 12.7 },
+    { downstreamInvertM: 12.8 },
+  ]) {
+    expect(
+      validateCombinedDesign(catalog, [], [], [], [], { ...tank, drainPipe: { ...pipe, ...patch } })
+    ).toContain('배수·월류 연결관');
+  }
+  expect(
+    validateCombinedDesign(catalog, [], [], [], [], {
+      ...tank,
+      drain: null,
+      drainClosed: true,
+      drainPipe: pipe,
+    })
+  ).toContain('일반 배출 중지');
+  for (const kind of ['drain', 'overflow'] as const) {
+    const html = renderToStaticMarkup(
+      <CisternInletFields kind={kind} value={pipe} onChange={() => {}} />
+    );
+    expect(html).toContain('하류 절점 쪽 관 바닥');
+    expect(html).toContain('배출구 뒤 접속부');
+  }
 });
 it('공개 적격 집수·면적·배수 높이·다른 시설 중복 제한', () => {
   expect(cisternCatchments(catalog)).toHaveLength(14);

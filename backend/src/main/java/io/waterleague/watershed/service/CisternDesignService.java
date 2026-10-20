@@ -79,8 +79,15 @@ public final class CisternDesignService {
             Map.of("depthM", BigDecimal.ZERO, "areaM2", number(p.areaM2())),
             Map.of("depthM", number(p.depthM()), "areaM2", number(p.areaM2()))));
     result.put(
-        "drain", closed ? Map.of("mode", "CLOSED_NO_WITHDRAWAL") : port(p.drain(), receiver, p));
-    result.put("overflow", port(p.overflow(), receiver, p));
+        "drain",
+        closed
+            ? Map.of("mode", "CLOSED_NO_WITHDRAWAL")
+            : port(p.drain(), receiver, p, p.drainPipe()));
+    result.put("overflow", port(p.overflow(), receiver, p, p.overflowPipe()));
+    if (p.drainPipe() != null)
+      result.put("drainPipe", outletPipe(p.drainPipe(), p.drain(), receiver));
+    if (p.overflowPipe() != null)
+      result.put("overflowPipe", outletPipe(p.overflowPipe(), p.overflow(), receiver));
     if (p.inletPipe() != null) {
       var pipe = p.inletPipe();
       if (!range(pipe.lengthM(), "0.001", "10000")
@@ -125,9 +132,15 @@ public final class CisternDesignService {
   }
 
   private static Map<String, Object> port(
-      WatershedRequest.Port port, JsonNode node, WatershedRequest.CisternItem tank) {
-    var floor = node.path("invertM").decimalValue();
-    var top = floor.add(node.path("maxDepthM").decimalValue());
+      WatershedRequest.Port port,
+      JsonNode node,
+      WatershedRequest.CisternItem tank,
+      WatershedRequest.CisternPipe pipe) {
+    var floor = pipe == null ? node.path("invertM").decimalValue() : tank.invertM();
+    var top =
+        pipe == null
+            ? floor.add(node.path("maxDepthM").decimalValue())
+            : tank.invertM().add(tank.depthM());
     if (port.crestM().compareTo(floor.max(tank.invertM())) < 0
         || port.diameterM().signum() <= 0
         || port.dischargeCoefficient().signum() <= 0
@@ -144,5 +157,44 @@ public final class CisternDesignService {
             number(port.dischargeCoefficient()),
             "flapGate",
             port.flapGate()));
+  }
+
+  private static Map<String, Object> outletPipe(
+      WatershedRequest.CisternPipe pipe, WatershedRequest.Port port, JsonNode receiver) {
+    if (!range(pipe.lengthM(), "0.001", "10000")
+        || !range(pipe.diameterM(), "0.001", "100")
+        || !range(pipe.roughness(), "0.001", "1")
+        || !range(pipe.upstreamInvertM(), "-1000", "10000")
+        || !range(pipe.upstreamMaxDepthM(), "0.001", "100")
+        || !range(pipe.downstreamInvertM(), "-1000", "10000"))
+      throw new DomainException(ErrorCode.PLACEMENT_INVALID);
+    var drop = pipe.upstreamInvertM().subtract(pipe.downstreamInvertM());
+    var floor = receiver.path("invertM").decimalValue();
+    var top = floor.add(receiver.path("maxDepthM").decimalValue());
+    if (pipe.upstreamMaxDepthM().compareTo(pipe.diameterM()) < 0
+        || pipe.upstreamInvertM().compareTo(port.crestM()) > 0
+        || port.crestM()
+                .add(port.diameterM())
+                .compareTo(pipe.upstreamInvertM().add(pipe.upstreamMaxDepthM()))
+            > 0
+        || pipe.downstreamInvertM().compareTo(floor) < 0
+        || pipe.downstreamInvertM().add(pipe.diameterM()).compareTo(top) > 0
+        || drop.signum() < 0
+        || drop.compareTo(pipe.lengthM()) > 0)
+      throw new DomainException(ErrorCode.PLACEMENT_INVALID);
+    return new TreeMap<>(
+        Map.of(
+            "lengthM",
+            number(pipe.lengthM()),
+            "diameterM",
+            number(pipe.diameterM()),
+            "roughness",
+            number(pipe.roughness()),
+            "upstreamInvertM",
+            number(pipe.upstreamInvertM()),
+            "upstreamMaxDepthM",
+            number(pipe.upstreamMaxDepthM()),
+            "downstreamInvertM",
+            number(pipe.downstreamInvertM())));
   }
 }

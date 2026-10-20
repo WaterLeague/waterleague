@@ -1,5 +1,5 @@
 import type { CisternPlacement } from '../dto/cisternDto';
-import { cisternInletPipeDto, validInletElevation } from '../dto/cisternDto';
+import { cisternInletPipeDto, validInletElevation, validOutletElevation } from '../dto/cisternDto';
 import type { WatershedCatalog, NetworkPlacement } from '../dto/watershedDto';
 export function cisternCatchments(catalog: WatershedCatalog) {
   const nodes = new Map(
@@ -63,9 +63,20 @@ export function validateCistern(
       !validInletElevation(p.inletPipe, p.invertM, p.depthM))
   )
     return '집수 연결관의 길이·직경·마찰·높이를 확인해 주세요. 관 전체가 입구와 이용조 안에 들어가야 합니다.';
-  if (p.drainClosed === true ? p.drain !== null : p.drain === null)
+  if (p.drainClosed === true ? p.drain !== null || Boolean(p.drainPipe) : p.drain === null)
     return '일반 배출 중지 여부와 배수구 설정을 확인해 주세요.';
-  for (const r of [...(p.drain ? [p.drain] : []), p.overflow]) {
+  for (const [r, pipe] of [
+    [p.drain, p.drainPipe],
+    [p.overflow, p.overflowPipe],
+  ] as const) {
+    if (!r) continue;
+    if (
+      pipe &&
+      (!cisternInletPipeDto.safeParse(pipe).success ||
+        !Object.values(pipe).every((v) => precision(v, 3)) ||
+        !validOutletElevation(pipe, r, n))
+    )
+      return '배수·월류 연결관의 길이·직경·마찰·높이를 확인해 주세요. 배출구와 관이 접속부·하류 절점 안에 들어가야 합니다.';
     if (
       ![r.crestM, r.diameterM, r.dischargeCoefficient].every((v) => precision(v, 3)) ||
       r.diameterM < 0.001 ||
@@ -74,8 +85,10 @@ export function validateCistern(
       r.dischargeCoefficient > 1 ||
       r.crestM < -1000 ||
       r.crestM > 10000 ||
-      r.crestM < Math.max(n.invertM, p.invertM) ||
-      r.crestM + r.diameterM > Math.min(n.invertM + n.maxDepthM, p.invertM + p.depthM) + 1e-9
+      r.crestM < (pipe ? p.invertM : Math.max(n.invertM, p.invertM)) ||
+      r.crestM + r.diameterM >
+        (pipe ? p.invertM + p.depthM : Math.min(n.invertM + n.maxDepthM, p.invertM + p.depthM)) +
+          1e-9
     )
       return '배수구 전체가 이용조와 연결 절점의 바닥·상단 사이에 들어가야 합니다.';
   }

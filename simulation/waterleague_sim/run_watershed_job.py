@@ -188,8 +188,9 @@ def calculate(request, directory, cache_root=None):
                 case['pumpOperation'] = result['pumpOperation']
             deliveries = [p['deliveryNodeId'] for p in transformation.get('connectedPumps', {}).get('facilities', [])] if name == 'strategy' else []
             inlet = transformation.get('networkCistern', {}).get('inletPipe') if name == 'strategy' else None
+            outlets = transformation.get('networkCistern', {}).get('outletPipes', {}) if name == 'strategy' else {}
             case['nodeFlooding'] = node_flooding(result['initial'], result['final'], layout_snapshot['layout'],
-                deliveries, [inlet['nodeId']] if inlet else [])
+                deliveries, [inlet['nodeId']] if inlet else [], [p['nodeId'] for p in outlets.values()])
             if 'conduits' in design:
                 case['conduits']=[{'id':p['id'],'conduitId':p['conduitId'],**result['final']['links'][p['conduitId']]} for p in design['conduits']['placements']]
                 case['conduitStateTimeSeconds']=result['final']['totals']['timeSeconds']

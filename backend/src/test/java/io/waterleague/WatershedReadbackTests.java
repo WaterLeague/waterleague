@@ -116,7 +116,8 @@ class WatershedReadbackTests extends PostgresIntegrationTest {
       assertThat(value.path("design").path("cistern").path("schemaVersion").asInt()).isEqualTo(3);
       String scenario = job.path("host").asString().replace("-reused", "");
       if (job.path("host").asString().endsWith("-reused")) {
-        assertThat(value.path("result").path("cases").get(0).path("execution").path("mode").asString())
+        assertThat(
+                value.path("result").path("cases").get(0).path("execution").path("mode").asString())
             .isEqualTo("REUSED");
       }
       if (scenario.endsWith("-pipe") || scenario.endsWith("-narrow")) {
@@ -143,6 +144,31 @@ class WatershedReadbackTests extends PostgresIntegrationTest {
         if (flooded) {
           assertThat(value.path("result").path("signedReductionM3").isNull()).isTrue();
           assertThat(inlet.path("floodingM3").decimalValue()).isPositive();
+        }
+      }
+      if (scenario.endsWith("-outlets") || scenario.endsWith("-outletflood")) {
+        var outlets =
+            value
+                .path("result")
+                .path("cases")
+                .get(1)
+                .path("networkCistern")
+                .path("wholeRunLedger")
+                .path("outletPipes");
+        for (String kind : List.of("drain", "overflow")) {
+          assertThat(
+                  value
+                      .path("design")
+                      .path("cistern")
+                      .path(kind + "Pipe")
+                      .path("lengthM")
+                      .decimalValue())
+              .isEqualByComparingTo("10");
+          assertThat(outlets.path(kind).path("receiverNodeId").asString()).isEqualTo("J22");
+        }
+        if (scenario.endsWith("-outletflood")) {
+          assertThat(outlets.path("drain").path("floodingM3").decimalValue()).isPositive();
+          assertThat(value.path("result").path("signedReductionM3").isNull()).isTrue();
         }
       }
       if (scenario.endsWith("-closed")) {

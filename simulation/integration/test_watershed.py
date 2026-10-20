@@ -365,7 +365,8 @@ class WatershedTests(unittest.TestCase):
         archives = []
         readback = []
         originals = {}
-        for label in ('S9','S1','S9-closed','S9-pipe','S9-narrow','S9-reused','S9-narrow-reused'):
+        for label in ('S9','S1','S9-closed','S9-pipe','S9-narrow','S9-outlets','S9-outletflood',
+                      'S9-reused','S9-narrow-reused','S9-outlets-reused','S9-outletflood-reused'):
             scenario = label.removesuffix('-reused')
             host = scenario.split('-')[0]
             closed = scenario.endswith('-closed')
@@ -378,7 +379,7 @@ class WatershedTests(unittest.TestCase):
             row=self.conn.execute('SELECT * FROM watershed_experiments WHERE id=%s',(identity,)).fetchone()
             self.assertEqual(row['state'],'SUCCEEDED',row['error_code'])
             result=json.loads(row['result'])
-            self.assertEqual(result['numericalStatus'],'FAILED' if scenario.endswith('-narrow') else 'PASSED',result)
+            self.assertEqual(result['numericalStatus'],'FAILED' if scenario.endswith(('-narrow', '-outletflood')) else 'PASSED',result)
             folder=self.artifacts/'watersheds'/str(identity)/str(job['lease_token'])
             if label.endswith('-reused'):
                 original, original_folder = originals[scenario]
@@ -427,7 +428,22 @@ class WatershedTests(unittest.TestCase):
             self.assertEqual(stored['capacityM3'],4.7)
             self.assertEqual(stored['floodingM3'],0)
             from waterleague_sim.engine.connected_storage import CMS_STORAGE_VOLUME_SCALE
-            self.assertAlmostEqual(stored['initialStorageM3'],0.705*CMS_STORAGE_VOLUME_SCALE if host=='S1' or closed else 0)
+            self.assertAlmostEqual(stored['initialStorageM3'],0.705*CMS_STORAGE_VOLUME_SCALE if host=='S1' or closed or scenario.endswith('-outletflood') else 0)
+            if scenario.endswith(('-outlets', '-outletflood')):
+                outlets = result['cases'][1]['networkCistern']['wholeRunLedger']['outletPipes']
+                self.assertEqual(set(outlets), {'drain', 'overflow'})
+                for kind, pipe in outlets.items():
+                    self.assertEqual(pipe['receiverNodeId'], 'J22')
+                    mapped = next(n for n in result['cases'][1]['nodeFlooding']['nodes'] if n['id'] == pipe['nodeId'])
+                    self.assertFalse(mapped['mapped'])
+                    self.assertEqual(mapped['floodingM3'], pipe['floodingM3'])
+                if scenario.endswith('-outletflood'):
+                    self.assertGreater(outlets['drain']['floodingM3'], 0)
+                    self.assertEqual(outlets['drain']['numericalStatus'], 'FAILED')
+                    self.assertIsNone(result['signedReductionM3'])
+                    self.assertIsNone(result['signedPeakReductionM3s'])
+                else:
+                    self.assertTrue(all(p['numericalStatus'] == 'PASSED' for p in outlets.values()))
             self.assertEqual(stored['drainOperation'], 'CLOSED_NO_WITHDRAWAL' if closed else 'GRAVITY_ORIFICE')
             if closed:
                 self.assertNotIn(b'WLCT_Cistern1_D ', (folder/'strategy-input.inp').read_bytes())

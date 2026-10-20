@@ -50,6 +50,17 @@ export function StorageLedger({
             : '효과 비교 보류'}
         </p>
       )}
+      {Object.entries(summary.wholeRunLedger.outletPipes ?? {}).map(
+        ([kind, pipe]) =>
+          pipe && (
+            <p key={kind}>
+              {kind === 'drain' ? '일반 배수' : '비상 배수'} 연결관 접속부 · 초기 수심{' '}
+              {number(pipe.initialDepthM)} → 최종 수심 {number(pipe.finalDepthM)} m · 미연결 월류{' '}
+              {number(pipe.floodingM3)} m³ ·
+              {pipe.numericalStatus === 'PASSED' ? '통과' : '효과 비교 보류'}
+            </p>
+          )
+      )}
       <p>
         이 체적은 관망 전체 물수지에 포함됩니다. 수지 실패나 지표로 넘친 물의 미연결이 있으면 효과
         비교를 보류합니다.

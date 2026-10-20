@@ -189,6 +189,7 @@ def compile_storage(raw, design):
 
 def storage_ledger(metadata, origin, final):
     from .cistern_inlet import inlet_ledger
+    from .cistern_outlet import outlet_ledgers
     start, end = origin['totals']['timeSeconds'], final['totals']['timeSeconds']
     require(0 <= start < end, 'STORAGE_LEDGER_CLOCK_INVALID')
     rows = []
@@ -221,11 +222,14 @@ def storage_ledger(metadata, origin, final):
                         drainOperation=metadata.get('drainOperation', 'GRAVITY_ORIFICE'))
         rows.append(item)
     inlet = inlet_ledger(metadata, origin, final)
+    outlets = outlet_ledgers(metadata, origin, final)
     return {'startSeconds': start, 'endSeconds': end, 'facilities': rows,
         **({'inletPipe': inlet} if inlet else {}),
+        **({'outletPipes': outlets} if outlets else {}),
         'scope': 'NATIVE_STORAGE_NODE_BALANCE_ALREADY_INCLUDED_IN_NETWORK_ROUTING',
         'numericalStatus': 'PASSED' if all(row['numericalStatus'] == 'PASSED' for row in rows)
-            and (inlet is None or inlet['numericalStatus'] == 'PASSED') else 'FAILED'}
+            and (inlet is None or inlet['numericalStatus'] == 'PASSED')
+            and all(pipe['numericalStatus'] == 'PASSED' for pipe in outlets.values()) else 'FAILED'}
 
 
 def result_summary(metadata, initial, final, evaluation_origin=None):

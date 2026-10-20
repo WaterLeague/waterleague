@@ -12,6 +12,8 @@ export interface CisternPlacement {
   drainClosed?: boolean;
   overflow: StoragePort;
   inletPipe?: CisternInletPipe | null;
+  drainPipe?: CisternInletPipe | null;
+  overflowPipe?: CisternInletPipe | null;
 }
 const number = z.number().finite();
 export const cisternInletPipeDto = z.strictObject({
@@ -31,6 +33,23 @@ export function validInletElevation(pipe: CisternInletPipe, invert: number, dept
     pipe.downstreamInvertM + pipe.diameterM <= invert + depth + 1e-9 &&
     drop >= -1e-9 &&
     drop <= pipe.lengthM + 1e-9
+  );
+}
+export function validOutletElevation(
+  pipe: CisternInletPipe,
+  port: StoragePort,
+  receiver?: { invertM: number; maxDepthM: number }
+) {
+  const drop = pipe.upstreamInvertM - pipe.downstreamInvertM;
+  return (
+    pipe.upstreamMaxDepthM >= pipe.diameterM &&
+    pipe.upstreamInvertM <= port.crestM + 1e-9 &&
+    port.crestM + port.diameterM <= pipe.upstreamInvertM + pipe.upstreamMaxDepthM + 1e-9 &&
+    drop >= -1e-9 &&
+    drop <= pipe.lengthM + 1e-9 &&
+    (!receiver ||
+      (pipe.downstreamInvertM >= receiver.invertM &&
+        pipe.downstreamInvertM + pipe.diameterM <= receiver.invertM + receiver.maxDepthM + 1e-9))
   );
 }
 const port = z.strictObject({
@@ -56,6 +75,8 @@ export const cisternDesignDto = z
     drain: z.union([port, z.strictObject({ mode: z.literal('CLOSED_NO_WITHDRAWAL') })]),
     overflow: port,
     inletPipe: cisternInletPipeDto.optional(),
+    drainPipe: cisternInletPipeDto.optional(),
+    overflowPipe: cisternInletPipeDto.optional(),
   })
   .superRefine((v, ctx) => {
     const [a, b] = v.depthAreaCurve;
@@ -65,7 +86,9 @@ export const cisternDesignDto = z
       a.areaM2 !== b.areaM2 ||
       a.areaM2 !== v.footprintM2 ||
       v.initialDepthM > b.depthM ||
-      (v.inletPipe && !validInletElevation(v.inletPipe, v.invertM, b.depthM))
+      (v.inletPipe && !validInletElevation(v.inletPipe, v.invertM, b.depthM)) ||
+      (v.drainPipe && ('mode' in v.drain || !validOutletElevation(v.drainPipe, v.drain))) ||
+      (v.overflowPipe && !validOutletElevation(v.overflowPipe, v.overflow))
     )
       ctx.addIssue({ code: 'custom', message: '이용조 단면과 저류 용량 불일치' });
   });

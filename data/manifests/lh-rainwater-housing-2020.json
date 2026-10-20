@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "lh-rainwater-housing-2020",
+  "retrievedOn": "2026-10-20",
+  "title": "기후변화를 고려한 빗물이용 활성화 방안 연구 — 주거단지를 중심으로",
+  "publisher": "LH 토지주택연구원",
+  "reportNumber": "연구지원 2020-120",
+  "classification": "PUBLIC_RESEARCH_DESIGN_REFERENCE_NOT_AS_BUILT_HYDRAULIC_INPUT",
+  "file": {
+    "path": "data/private/facility-reference-20261020/lh-rainwater-housing-2020.pdf",
+    "url": "https://www.codil.or.kr/filebank/original/RK/OTKCRK200515/OTKCRK200515.pdf?stream=T",
+    "bytes": 18054565,
+    "sha256": "3b6743d1d5ea47e3e0b670adae4965842cabd4426bebb5616931d2d1f1bd06d2",
+    "pages": 205
+  },
+  "evidence": {
+    "case": "서울 강북구 번동3단지 공동주택",
+    "pages": [
+      178,
+      179,
+      180
+    ],
+    "drawingDate": "2017-01-31",
+    "nominalTankVolumeM3": 20,
+    "collectionSources": [
+      "아파트 지붕",
+      "텃밭 유출·침투 트렌치"
+    ],
+    "overflowRoute": "저장조와 전처리부에서 우수 맨홀로 연결",
+    "internalDepthAreaCurve": null,
+    "actualPipeLengthsAndInverts": null,
+    "timeSeriesReuseDemand": null,
+    "completeInstallationCostKrw": null
+  },
+  "application": [
+    "집수·저류·월류 배관을 별도 구성요소로 다룰 공개 설계 참고",
+    "실제 치수·운전·가격 입력이나 설치 가능 규격으로 자동 전환하지 않음",
+    "원본 PDF·도면은 저장소에 재배포하지 않고 URL·해시·확인 사실만 보관"
+  ]
+}

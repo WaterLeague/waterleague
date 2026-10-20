@@ -1,0 +1,2978 @@
+{
+  "evidence": "ACTUAL_AUTHENTICATED_HTTP_WORKER_PROJECTION_NOT_BROWSER",
+  "sourceResponseFile": "tmp/waterleague_queue_test_0261c57603254bf49681356c4fe701ec.fixtures/api-view-S9-outletflood.json",
+  "sourceResponseSha256": "06eed82a5309d8d266457294d6d0dee8c1bbd182560d0028fef538cb0bfa43b4",
+  "job": {
+    "id": "cdfccbc1-e6e5-4cad-b514-eeab41764cec",
+    "catalogHash": "beaddba8868b6f1f6bbf35b1d53d4695a94db99498d8988f90d62013cf8f053c",
+    "state": "SUCCEEDED",
+    "createdAt": "2026-10-20T14:45:42.570980Z",
+    "design": {
+      "cistern": {
+        "schemaVersion": 3,
+        "catalogHash": "f2df891f3914de02c37ff7ae09f6d5a849ef6f69dae85e25e562e5a44cffc105",
+        "sourceNetworkSha256": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+        "id": "Cistern1",
+        "subcatchmentId": "S9",
+        "captureAreaM2": 10,
+        "footprintM2": 2.35,
+        "invertM": 12.75,
+        "initialDepthM": 0.3,
+        "depthAreaCurve": [
+          {
+            "depthM": 0,
+            "areaM2": 2.35
+          },
+          {
+            "depthM": 2,
+            "areaM2": 2.35
+          }
+        ],
+        "drain": {
+          "crestM": 12.8,
+          "diameterM": 0.04,
+          "dischargeCoefficient": 0.65,
+          "flapGate": true
+        },
+        "overflow": {
+          "crestM": 14.3,
+          "diameterM": 0.2,
+          "dischargeCoefficient": 0.65,
+          "flapGate": true
+        },
+        "drainPipe": {
+          "lengthM": 10,
+          "diameterM": 0.001,
+          "roughness": 0.013,
+          "upstreamInvertM": 12.75,
+          "upstreamMaxDepthM": 0.1,
+          "downstreamInvertM": 12.75
+        },
+        "overflowPipe": {
+          "lengthM": 10,
+          "diameterM": 0.2,
+          "roughness": 0.013,
+          "upstreamInvertM": 12.75,
+          "upstreamMaxDepthM": 3.5,
+          "downstreamInvertM": 12.75
+        }
+      },
+      "costing": {
+        "schemaVersion": 1,
+        "catalogHash": "9a182d390c74c8adad4f14eb6d575e1a556057fb69b87e5b802ca131dcfc5739",
+        "classification": "HISTORICAL_PUBLIC_PLAN_REFERENCE_NOT_CURRENT_QUOTE",
+        "source": {
+          "title": "진주상평 일반산업단지 저탄소 그린산업단지 조성사업 사업계획서",
+          "url": "https://jinjucci.korcham.net/file/dext5uploaddata/2022/0718_%EC%A7%84%EC%A3%BC%EC%8B%9C_%EC%A0%80%ED%83%84%EC%86%8C%20%EA%B7%B8%EB%A6%B0%EC%82%B0%EC%97%85%EB%8B%A8%EC%A7%80%20%EC%A1%B0%EC%84%B1%EC%82%AC%EC%97%85_%EC%82%AC%EC%97%85%EA%B3%84%ED%9A%8D%EC%84%9C%20(%EC%9E%85%EC%A3%BC%EA%B8%B0%EC%97%85%ED%98%91%EC%9D%98%EC%B2%B4).pdf",
+          "year": 2022,
+          "sha256": "0efc54c3c884441d810ce28abb8928d758d98eb152fb71aac38791327b2d7414",
+          "pdfPages": [11, 12]
+        },
+        "limitations": [
+          "2022년 진주 사업계획의 참고 공사비이며 현재 서울 견적이나 2010년 당시 가격이 아님",
+          "별도 설계·토공·철거·폐기물·스마트시스템·유지관리·성능평가 등의 사업 총액을 개별 시설에 임의 배분하지 않음",
+          "부가세 포함 여부·공종별 단가·현장 시공 조건 미확인",
+          "면적 외삽 참고 금액만 집계하며 미산정 시설과 부대공사는 0원으로 간주하지 않음",
+          "전체 설치비·예산 차감·순위 자격은 미확정 상태 유지"
+        ],
+        "items": [
+          {
+            "placementId": "Bio1",
+            "facilityType": "BIORETENTION",
+            "areaM2": 20,
+            "status": "AREA_REFERENCE_ONLY",
+            "referenceAmountKrw": 11200000,
+            "notes": [
+              "원문 3개소 × 9m × 9m = 243m², 하부층 깊이 0.9m",
+              "면적에 따른 참고 외삽이며 적용 EPA 단면과 시공 규격 일치 미확인"
+            ]
+          }
+        ],
+        "knownReferenceSubtotalKrw": 11200000,
+        "unpricedPlacementIds": [],
+        "completeInstalledCostKrw": null,
+        "budgetChargedKrw": null
+      },
+      "cisternCosting": {
+        "schemaVersion": 1,
+        "catalogHash": "63186839053e9a254bc42ba25765dfb78831d5621a3382e5abe0d110ddb7fe3b",
+        "method": "CAPACITY_EQUIVALENT_QUOTES_NOT_ASSEMBLY_MATCH_V1",
+        "unitCapacityM3": 2.35,
+        "source": {
+          "title": "친환경시범마을의 LID 적용에 따른 물순환 효과 및 비용편익 분석",
+          "url": "https://journal.cricit.kr/jkswe/XmlViewer/f253405",
+          "publicationYear": 2018,
+          "priceYear": null,
+          "quoteDate": null,
+          "sha256": "28f0c3969bbc2f1dd08e03fec2fddb70bfdecdfc4032bd871158eb3a1734e207",
+          "reference": "2.4.2.1, 2.5.1.1, Table 9",
+          "licence": "CC BY-NC 3.0",
+          "licenceUrl": "http://creativecommons.org/licenses/by-nc/3.0/"
+        },
+        "limitations": [
+          "2.35m³ 단위 설비 견적이며 임의 용량의 비례 단가가 아님",
+          "공개 업체 견적 세 건의 범위이며 확률적 신뢰구간이나 현재 시장 가격 범위가 아님",
+          "견적 용량 일치는 자재 규격·시공 조건·계산 단면의 일치 증거가 아님",
+          "원문의 미기재 항목은 null이며 무상 자재 또는 공사비 0으로 해석하지 않음",
+          "펌프 견적 포함은 펌프 곡선·재이용 수요·수질 성능의 확보를 뜻하지 않음",
+          "논문의 보조율을 차감하지 않으며 별도 미확정 공종·세금은 총공사비로 포함되지 않음",
+          "문헌의 연간 유지비 가정은 물리 계산의 실제 전력·운전·재이용량과 독립",
+          "현재 사업 한도·재해 당시 예산·가격 또는 운영 설치 승인으로 사용하지 않음"
+        ],
+        "completeInstalledCostKrw": null,
+        "budgetChargedKrw": null,
+        "items": [
+          {
+            "placementId": "Cistern1",
+            "capacityM3": 4.7,
+            "equivalentUnits": 2,
+            "status": "CAPACITY_EQUIVALENT_ONLY",
+            "quotes": [
+              {
+                "id": "A",
+                "quotedSubtotalKrw": 10894000,
+                "materialsKrw": 10298000,
+                "components": {
+                  "BARREL": 6204000,
+                  "PIPE": 1694000,
+                  "PUMP": 1476000,
+                  "LOG": 594000,
+                  "ETC": 330000
+                },
+                "unclassifiedDifferenceKrw": 596000,
+                "annualComponentsKrw": {
+                  "ELECTRICITY": 32682,
+                  "MONITORING": 76258,
+                  "REPAIR_LABOUR_ETC": 108940,
+                  "CLEANING": 100000
+                },
+                "annualEstimateKrw": 317880
+              },
+              {
+                "id": "B",
+                "quotedSubtotalKrw": 7024000,
+                "materialsKrw": 5922000,
+                "components": {
+                  "BARREL": 2842000,
+                  "PIPE": 1430000,
+                  "PUMP": 1100000,
+                  "LOG": 550000,
+                  "ETC": null
+                },
+                "unclassifiedDifferenceKrw": 1102000,
+                "annualComponentsKrw": {
+                  "ELECTRICITY": 21072,
+                  "MONITORING": 49168,
+                  "REPAIR_LABOUR_ETC": 70240,
+                  "CLEANING": 100000
+                },
+                "annualEstimateKrw": 240480
+              },
+              {
+                "id": "C",
+                "quotedSubtotalKrw": 5714000,
+                "materialsKrw": 5714000,
+                "components": {
+                  "BARREL": 2466000,
+                  "PIPE": 1084000,
+                  "PUMP": 900000,
+                  "LOG": null,
+                  "ETC": 1264000
+                },
+                "unclassifiedDifferenceKrw": 0,
+                "annualComponentsKrw": {
+                  "ELECTRICITY": 17142,
+                  "MONITORING": 39998,
+                  "REPAIR_LABOUR_ETC": 57140,
+                  "CLEANING": 100000
+                },
+                "annualEstimateKrw": 214280
+              }
+            ]
+          }
+        ]
+      },
+      "placements": [
+        {
+          "id": "Bio1",
+          "facilityType": "BIORETENTION",
+          "subcatchmentId": "S9",
+          "parameters": {
+            "drain": {
+              "delayHours": 0,
+              "diameterMm": 25,
+              "dischargeCoefficient": 0.6,
+              "offsetMm": 152.4
+            },
+            "nativeSeepageBasis": "DESIGN_ASSUMPTION",
+            "nativeSeepageMmH": 4,
+            "soilDepthMm": 609.6,
+            "storageDepthMm": 304.8,
+            "storagePorosity": 0.3,
+            "surfaceDepthMm": 152.4,
+            "vegetationFraction": 0.1
+          },
+          "areaM2": 20,
+          "treatedImperviousM2": 100
+        }
+      ]
+    },
+    "result": {
+      "schemaVersion": 2,
+      "catalogHash": "beaddba8868b6f1f6bbf35b1d53d4695a94db99498d8988f90d62013cf8f053c",
+      "classification": "PUBLIC_NETWORK_REFERENCE_DESIGN_COMPARISON",
+      "networkLayout": {
+        "sha256": "fa3e4d833650df5c40d933bd0b289dd029a54e0beb73fad9b9d3ef239cb0236d",
+        "layout": {
+          "schemaVersion": 1,
+          "id": "SEOCHO_PUBLISHED_NATIVE_LAYOUT_V1",
+          "sourceOriginalSha256": "8ce278a3d2b58df3c2a5fd1232160bcabb324389746ee0c878792acf91abbdbb",
+          "sourceUrl": "https://doi.org/10.17632/dzzwvd8rjk.3",
+          "classification": "PUBLISHED_MODEL_COORDINATES_NOT_GEOREFERENCED",
+          "coordinateUnitsDeclared": "Meters",
+          "horizontalCrs": null,
+          "nodes": [
+            {
+              "id": "J1",
+              "kind": "JUNCTION",
+              "coordinate": [202601.168, 442961.602]
+            },
+            {
+              "id": "J2",
+              "kind": "JUNCTION",
+              "coordinate": [202521.561, 443170.109]
+            },
+            {
+              "id": "J3",
+              "kind": "JUNCTION",
+              "coordinate": [202498.399, 443231.836]
+            },
+            {
+              "id": "J4",
+              "kind": "JUNCTION",
+              "coordinate": [202288.408, 443151.411]
+            },
+            {
+              "id": "J5",
+              "kind": "JUNCTION",
+              "coordinate": [202648.524, 443285.61]
+            },
+            {
+              "id": "J6",
+              "kind": "JUNCTION",
+              "coordinate": [202350.733, 443619.418]
+            },
+            {
+              "id": "J7",
+              "kind": "JUNCTION",
+              "coordinate": [202281.609, 443802.428]
+            },
+            {
+              "id": "J8",
+              "kind": "JUNCTION",
+              "coordinate": [202208.801, 443995.636]
+            },
+            {
+              "id": "J9",
+              "kind": "JUNCTION",
+              "coordinate": [202146.481, 444160.221]
+            },
+            {
+              "id": "J10",
+              "kind": "JUNCTION",
+              "coordinate": [201989.452, 444319.27]
+            },
+            {
+              "id": "J11",
+              "kind": "JUNCTION",
+              "coordinate": [202328.778, 442933.839]
+            },
+            {
+              "id": "J12",
+              "kind": "JUNCTION",
+              "coordinate": [202382.604, 443078.32]
+            },
+            {
+              "id": "J13",
+              "kind": "JUNCTION",
+              "coordinate": [202371.272, 443116.282]
+            },
+            {
+              "id": "J14",
+              "kind": "JUNCTION",
+              "coordinate": [202164.182, 443548.877]
+            },
+            {
+              "id": "J15",
+              "kind": "JUNCTION",
+              "coordinate": [201971.124, 444100.137]
+            },
+            {
+              "id": "J16",
+              "kind": "JUNCTION",
+              "coordinate": [201850.463, 444275.498]
+            },
+            {
+              "id": "J17",
+              "kind": "JUNCTION",
+              "coordinate": [202780.566, 442940.071]
+            },
+            {
+              "id": "J18",
+              "kind": "JUNCTION",
+              "coordinate": [202709.175, 443127.331]
+            },
+            {
+              "id": "J19",
+              "kind": "JUNCTION",
+              "coordinate": [202569.509, 443491.651]
+            },
+            {
+              "id": "J20",
+              "kind": "JUNCTION",
+              "coordinate": [202499.818, 443675.794]
+            },
+            {
+              "id": "J21",
+              "kind": "JUNCTION",
+              "coordinate": [202586.507, 443709.79]
+            },
+            {
+              "id": "J22",
+              "kind": "JUNCTION",
+              "coordinate": [202524.74, 443870.059]
+            },
+            {
+              "id": "J23",
+              "kind": "JUNCTION",
+              "coordinate": [202448.825, 444071.843]
+            },
+            {
+              "id": "J24",
+              "kind": "JUNCTION",
+              "coordinate": [202378.78, 444252.87]
+            },
+            {
+              "id": "J25",
+              "kind": "JUNCTION",
+              "coordinate": [202313.055, 444425.682]
+            },
+            {
+              "id": "J26",
+              "kind": "JUNCTION",
+              "coordinate": [202129.294, 444365.884]
+            },
+            {
+              "id": "Out1",
+              "kind": "OUTFALL",
+              "coordinate": [201689.304, 444365.884]
+            },
+            {
+              "id": "Out2",
+              "kind": "OUTFALL",
+              "coordinate": [202023.274, 444489.398]
+            }
+          ],
+          "links": [
+            {
+              "id": "C1",
+              "fromNode": "J1",
+              "toNode": "J2",
+              "points": [
+                [202601.168, 442961.602],
+                [202521.561, 443170.109]
+              ],
+              "lengthDeclaredM": 200
+            },
+            {
+              "id": "C2",
+              "fromNode": "J2",
+              "toNode": "J3",
+              "points": [
+                [202521.561, 443170.109],
+                [202498.399, 443231.836]
+              ],
+              "lengthDeclaredM": 65
+            },
+            {
+              "id": "C3",
+              "fromNode": "J11",
+              "toNode": "J12",
+              "points": [
+                [202328.778, 442933.839],
+                [202382.604, 443078.32]
+              ],
+              "lengthDeclaredM": 200
+            },
+            {
+              "id": "C4",
+              "fromNode": "J12",
+              "toNode": "J13",
+              "points": [
+                [202382.604, 443078.32],
+                [202371.272, 443116.282]
+              ],
+              "lengthDeclaredM": 40
+            },
+            {
+              "id": "C5",
+              "fromNode": "J13",
+              "toNode": "J2",
+              "points": [
+                [202371.272, 443116.282],
+                [202521.561, 443170.109]
+              ],
+              "lengthDeclaredM": 160
+            },
+            {
+              "id": "C6",
+              "fromNode": "J4",
+              "toNode": "J3",
+              "points": [
+                [202288.408, 443151.411],
+                [202498.399, 443231.836]
+              ],
+              "lengthDeclaredM": 200
+            },
+            {
+              "id": "C7",
+              "fromNode": "J3",
+              "toNode": "J5",
+              "points": [
+                [202498.399, 443231.836],
+                [202648.524, 443285.61]
+              ],
+              "lengthDeclaredM": 160
+            },
+            {
+              "id": "C8",
+              "fromNode": "J17",
+              "toNode": "J18",
+              "points": [
+                [202780.566, 442940.071],
+                [202709.175, 443127.331]
+              ],
+              "lengthDeclaredM": 200
+            },
+            {
+              "id": "C9",
+              "fromNode": "J18",
+              "toNode": "J5",
+              "points": [
+                [202709.175, 443127.331],
+                [202648.524, 443285.61]
+              ],
+              "lengthDeclaredM": 200
+            },
+            {
+              "id": "C10",
+              "fromNode": "J5",
+              "toNode": "J19",
+              "points": [
+                [202648.524, 443285.61],
+                [202569.509, 443491.651]
+              ],
+              "lengthDeclaredM": 200
+            },
+            {
+              "id": "C11",
+              "fromNode": "J19",
+              "toNode": "J20",
+              "points": [
+                [202569.509, 443491.651],
+                [202499.818, 443675.794]
+              ],
+              "lengthDeclaredM": 200
+            },
+            {
+              "id": "C12",
+              "fromNode": "J20",
+              "toNode": "J21",
+              "points": [
+                [202499.818, 443675.794],
+                [202586.507, 443709.79]
+              ],
+              "lengthDeclaredM": 100
+            },
+            {
+              "id": "C13",
+              "fromNode": "J21",
+              "toNode": "J22",
+              "points": [
+                [202586.507, 443709.79],
+                [202524.74, 443870.059]
+              ],
+              "lengthDeclaredM": 200
+            },
+            {
+              "id": "C14",
+              "fromNode": "J22",
+              "toNode": "J23",
+              "points": [
+                [202524.74, 443870.059],
+                [202448.825, 444071.843]
+              ],
+              "lengthDeclaredM": 200
+            },
+            {
+              "id": "C15",
+              "fromNode": "J23",
+              "toNode": "J24",
+              "points": [
+                [202448.825, 444071.843],
+                [202378.78, 444252.87]
+              ],
+              "lengthDeclaredM": 200
+            },
+            {
+              "id": "C16",
+              "fromNode": "J24",
+              "toNode": "J25",
+              "points": [
+                [202378.78, 444252.87],
+                [202313.055, 444425.682]
+              ],
+              "lengthDeclaredM": 200
+            },
+            {
+              "id": "C17",
+              "fromNode": "J25",
+              "toNode": "J26",
+              "points": [
+                [202313.055, 444425.682],
+                [202129.294, 444365.884]
+              ],
+              "lengthDeclaredM": 120
+            },
+            {
+              "id": "C18",
+              "fromNode": "J26",
+              "toNode": "J10",
+              "points": [
+                [202129.294, 444365.884],
+                [201989.452, 444319.27]
+              ],
+              "lengthDeclaredM": 130
+            },
+            {
+              "id": "C19",
+              "fromNode": "J14",
+              "toNode": "J6",
+              "points": [
+                [202164.182, 443548.877],
+                [202350.733, 443619.418]
+              ],
+              "lengthDeclaredM": 200
+            },
+            {
+              "id": "C20",
+              "fromNode": "J6",
+              "toNode": "J7",
+              "points": [
+                [202350.733, 443619.418],
+                [202281.609, 443802.428]
+              ],
+              "lengthDeclaredM": 200
+            },
+            {
+              "id": "C21",
+              "fromNode": "J7",
+              "toNode": "J8",
+              "points": [
+                [202281.609, 443802.428],
+                [202208.801, 443995.636]
+              ],
+              "lengthDeclaredM": 200
+            },
+            {
+              "id": "C22",
+              "fromNode": "J8",
+              "toNode": "J9",
+              "points": [
+                [202208.801, 443995.636],
+                [202146.481, 444160.221]
+              ],
+              "lengthDeclaredM": 200
+            },
+            {
+              "id": "C23",
+              "fromNode": "J15",
+              "toNode": "J9",
+              "points": [
+                [201971.124, 444100.137],
+                [202146.481, 444160.221]
+              ],
+              "lengthDeclaredM": 200
+            },
+            {
+              "id": "C24",
+              "fromNode": "J9",
+              "toNode": "Out2",
+              "points": [
+                [202146.481, 444160.221],
+                [202023.274, 444489.398]
+              ],
+              "lengthDeclaredM": 400
+            },
+            {
+              "id": "C25",
+              "fromNode": "J10",
+              "toNode": "J16",
+              "points": [
+                [201989.452, 444319.27],
+                [201850.463, 444275.498]
+              ],
+              "lengthDeclaredM": 200
+            },
+            {
+              "id": "C26",
+              "fromNode": "J16",
+              "toNode": "Out1",
+              "points": [
+                [201850.463, 444275.498],
+                [201689.304, 444365.884]
+              ],
+              "lengthDeclaredM": 200
+            }
+          ],
+          "catchments": [
+            {
+              "id": "S1",
+              "outletNodeId": "J4",
+              "points": [
+                [202197.011, 443099.082],
+                [202493.661, 443213.432],
+                [202508.581, 443172.002],
+                [202363.561, 443119.792],
+                [202375.991, 443080.022],
+                [202277.381, 442813.192],
+                [202197.011, 443099.082]
+              ]
+            },
+            {
+              "id": "S2",
+              "outletNodeId": "J11",
+              "points": [
+                [202515.08, 443163.21],
+                [202375.45, 443114.73],
+                [202387.88, 443078.69],
+                [202309.99, 442874.01],
+                [202283.47, 442801.09],
+                [202313.72, 442688.4],
+                [202629.02, 442744.33],
+                [202592.14, 442958.53],
+                [202515.08, 443163.21]
+              ]
+            },
+            {
+              "id": "S3",
+              "outletNodeId": "J1",
+              "points": [
+                [202513.01, 443220.8],
+                [202650.15, 443272.59],
+                [202795.16, 442883.54],
+                [202834.52, 442780.38],
+                [202647.66, 442746.82],
+                [202609.55, 442967.24],
+                [202513.01, 443220.8]
+              ]
+            },
+            {
+              "id": "S5",
+              "outletNodeId": "J14",
+              "points": [
+                [202075.48, 443503.37],
+                [202346.45, 443606.95],
+                [202482.35, 443244.83],
+                [202186.52, 443128.82],
+                [202075.48, 443503.37]
+              ]
+            },
+            {
+              "id": "S6",
+              "outletNodeId": "J19",
+              "points": [
+                [202365.51, 443614.41],
+                [202498.09, 443663.3],
+                [202636.48, 443299.52],
+                [202503.89, 443250.63],
+                [202365.51, 443614.41]
+              ]
+            },
+            {
+              "id": "S7",
+              "outletNodeId": "J15",
+              "points": [
+                [201908.1, 444050.69],
+                [202143.43, 444141.84],
+                [202337.34, 443627.25],
+                [202069.68, 443521.19],
+                [201908.1, 444050.69]
+              ]
+            },
+            {
+              "id": "S8",
+              "outletNodeId": "J7",
+              "points": [
+                [202160.83, 444149.3],
+                [202378.77, 444233.82],
+                [202576.81, 443715.92],
+                [202357.22, 443631.4],
+                [202160.83, 444149.3]
+              ]
+            },
+            {
+              "id": "S9",
+              "outletNodeId": "J22",
+              "points": [
+                [202457.9, 444065.19],
+                [202492.71, 444079.69],
+                [202622.8, 443732.49],
+                [202589.24, 443718.4],
+                [202457.9, 444065.19]
+              ]
+            },
+            {
+              "id": "S10",
+              "outletNodeId": "J23",
+              "points": [
+                [202391.61, 444237.55],
+                [202451.69, 444082.18],
+                [202486.08, 444094.19],
+                [202425.59, 444249.57],
+                [202391.61, 444237.55]
+              ]
+            },
+            {
+              "id": "S11",
+              "outletNodeId": "J16",
+              "points": [
+                [201844.29, 444249.98],
+                [202072.17, 444328.7],
+                [202127.69, 444172.92],
+                [201897.32, 444087.57],
+                [201844.29, 444249.98]
+              ]
+            },
+            {
+              "id": "S12",
+              "outletNodeId": "J26",
+              "points": [
+                [202091.23, 444329.53],
+                [202310.4, 444412.39],
+                [202366.34, 444270.28],
+                [202145.92, 444185.35],
+                [202091.23, 444329.53]
+              ]
+            },
+            {
+              "id": "S13",
+              "outletNodeId": "J25",
+              "points": [
+                [202322.01, 444417.78],
+                [202374.21, 444274.84],
+                [202411.5, 444289.76],
+                [202357.64, 444431.45],
+                [202322.01, 444417.78]
+              ]
+            },
+            {
+              "id": "S4",
+              "outletNodeId": "J17",
+              "points": [
+                [202846.85, 442783.11],
+                [202977.86, 442805.45],
+                [202779.85, 443322.39],
+                [202657.29, 443275],
+                [202846.85, 442783.11]
+              ]
+            },
+            {
+              "id": "S14",
+              "outletNodeId": "J20",
+              "points": [
+                [202646.12, 443304.96],
+                [202769.23, 443351.26],
+                [202630.59, 443714.32],
+                [202508.58, 443668.84],
+                [202646.12, 443304.96]
+              ]
+            }
+          ],
+          "limitations": [
+            "원본 INP의 좌표와 집수 경계를 그대로 표시; 서울 지도 좌표 변환 미적용",
+            "집수구역은 계산 경계이며 실제 시설 부지·시공 가능 면적이 아님",
+            "화살표는 관로의 정의 방향이며 계산 유량·역류 방향이 아님",
+            "구역별 설계 개수는 면적 배분이며 개별 시설의 실제 위치를 뜻하지 않음"
+          ]
+        }
+      },
+      "engine": {
+        "engineVersion": "5.2.4"
+      },
+      "numericalProfile": {
+        "id": "slot-62-5ms"
+      },
+      "numericalStatus": "FAILED",
+      "cases": [
+        {
+          "execution": {
+            "schema": 1,
+            "scope": "PUBLIC_NETWORK_CASE_V1",
+            "mode": "COMPUTED",
+            "computationKey": "9c8908d8bf6311d01b1dc48c4583c55b4ac95e237e1e9d8b6fc9cb0b362cdf99"
+          },
+          "nodeFlooding": {
+            "schemaVersion": 1,
+            "method": "NATIVE_ROUTING_STEP_FLOODING_TRAPEZOIDAL_INTEGRAL",
+            "durationMethod": "NATIVE_EXTERNAL_FLOODING_END_STEP_SECONDS_V1",
+            "layoutSha256": "fa3e4d833650df5c40d933bd0b289dd029a54e0beb73fad9b9d3ef239cb0236d",
+            "startSeconds": 0,
+            "endSeconds": 86339,
+            "nodes": [
+              {
+                "id": "J1",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 0,
+                "floodingSeconds": 0
+              },
+              {
+                "id": "J2",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 0,
+                "floodingSeconds": 0
+              },
+              {
+                "id": "J3",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 897.6866419442144,
+                "floodingSeconds": 454.8940000000148
+              },
+              {
+                "id": "J4",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 0,
+                "floodingSeconds": 0
+              },
+              {
+                "id": "J5",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 64.14032070511955,
+                "floodingSeconds": 166.84200000001874
+              },
+              {
+                "id": "J6",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 0,
+                "floodingSeconds": 0
+              },
+              {
+                "id": "J7",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 0,
+                "floodingSeconds": 0
+              },
+              {
+                "id": "J8",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 0,
+                "floodingSeconds": 0
+              },
+              {
+                "id": "J9",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 244.14453493970424,
+                "floodingSeconds": 1868.9280000000072
+              },
+              {
+                "id": "J10",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 109918.59811781252,
+                "floodingSeconds": 24193.76399999998
+              },
+              {
+                "id": "J11",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 0,
+                "floodingSeconds": 0
+              },
+              {
+                "id": "J12",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 0,
+                "floodingSeconds": 0
+              },
+              {
+                "id": "J13",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 0,
+                "floodingSeconds": 0
+              },
+              {
+                "id": "J14",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 0,
+                "floodingSeconds": 0
+              },
+              {
+                "id": "J15",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 0,
+                "floodingSeconds": 0
+              },
+              {
+                "id": "J16",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 298620.2031132404,
+                "floodingSeconds": 19608.553999999996
+              },
+              {
+                "id": "J17",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 0,
+                "floodingSeconds": 0
+              },
+              {
+                "id": "J18",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 0,
+                "floodingSeconds": 0
+              },
+              {
+                "id": "J19",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 90.75686803778727,
+                "floodingSeconds": 502.20000000004075
+              },
+              {
+                "id": "J20",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 65198.225233518875,
+                "floodingSeconds": 17975.10199999999
+              },
+              {
+                "id": "J21",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 367321.35430941416,
+                "floodingSeconds": 19725.176000000014
+              },
+              {
+                "id": "J22",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 146493.95459466407,
+                "floodingSeconds": 23833.791999999987
+              },
+              {
+                "id": "J23",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 190476.70667910887,
+                "floodingSeconds": 43592.200000000004
+              },
+              {
+                "id": "J24",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 20.81103560715516,
+                "floodingSeconds": 10384.503999999994
+              },
+              {
+                "id": "J25",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 257178.76254941762,
+                "floodingSeconds": 19559.140000000007
+              },
+              {
+                "id": "J26",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 71377.12492669026,
+                "floodingSeconds": 24357.133999999984
+              },
+              {
+                "id": "Out1",
+                "kind": "OUTFALL",
+                "mapped": true,
+                "floodingM3": 0,
+                "floodingSeconds": 0
+              },
+              {
+                "id": "Out2",
+                "kind": "OUTFALL",
+                "mapped": true,
+                "floodingM3": 0,
+                "floodingSeconds": 0
+              }
+            ],
+            "totalFloodingM3": 1507902.468925209,
+            "sumNodeFloodingM3": 1507902.4689251008,
+            "balanceDifferenceM3": -1.0826624929904938e-7
+          },
+          "id": "baseline",
+          "numericalStatus": "PASSED",
+          "complete": true,
+          "evaluationMetrics": {
+            "specificationSha256": "d1d16a03051f33f0bfe03343dd7862c21a2e796442175798e85d664ff4cc72c2",
+            "complete": true,
+            "method": "NATIVE_ROUTING_STEP_DIRECTIONAL_TRAPEZOIDAL_INTEGRAL",
+            "peakMethod": "SIMULTANEOUS_SELECTED_OUTFALL_SUM",
+            "specification": {
+              "schemaVersion": 1,
+              "policyVersion": "PUBLIC_NETWORK_ALL_OUTFALLS_v1",
+              "startMilliseconds": 0,
+              "endMilliseconds": 86339000,
+              "networkOutfalls": ["Out1", "Out2"]
+            },
+            "outfalls": {
+              "Out1": {
+                "outwardVolumeM3": 1698113.0619242836,
+                "inwardVolumeM3": 0,
+                "peakOutwardM3s": 21.6348078727807,
+                "peakInwardM3s": 0,
+                "peakOutwardTimeSeconds": 51893.095,
+                "peakInwardTimeSeconds": 0,
+                "coveredSeconds": 86339,
+                "nativeSteps": 1392566
+              },
+              "Out2": {
+                "outwardVolumeM3": 482636.79340946407,
+                "inwardVolumeM3": 0,
+                "peakOutwardM3s": 17.406227075478647,
+                "peakInwardM3s": 0,
+                "peakOutwardTimeSeconds": 57599.699,
+                "peakInwardTimeSeconds": 0,
+                "coveredSeconds": 86339,
+                "nativeSteps": 1392566
+              }
+            },
+            "combined": {
+              "outwardVolumeM3": 2180749.8553501973,
+              "inwardVolumeM3": 0,
+              "peakOutwardM3s": 39.04103494825935,
+              "peakInwardM3s": 0,
+              "peakOutwardTimeSeconds": 57599.699,
+              "peakInwardTimeSeconds": 0,
+              "coveredSeconds": 86339,
+              "nativeSteps": 1392566
+            },
+            "floodingDuration": {
+              "schemaVersion": 1,
+              "method": "NATIVE_EXTERNAL_FLOODING_ANY_NODE_WINDOW_SECONDS_V1",
+              "floodingSeconds": 43592.200000000004,
+              "startSeconds": 0,
+              "endSeconds": 86339,
+              "coveredSeconds": 86339,
+              "nativeSteps": 1392566,
+              "complete": true
+            }
+          },
+          "totals": {
+            "floodingM3": 1507902.468925209,
+            "outflowM3": 2180749.855360638,
+            "storageM3": 11131.689178989987,
+            "balanceResidualM3": -605.9004902264769
+          },
+          "calendarShortfallSeconds": 1,
+          "runoffContinuityPercent": -0.09872203320264816,
+          "routingContinuityPercent": -0.016379326581954956,
+          "convergence": {
+            "nonConvergedSteps": 0
+          },
+          "facilities": []
+        },
+        {
+          "execution": {
+            "schema": 1,
+            "scope": "PUBLIC_NETWORK_CASE_V1",
+            "mode": "COMPUTED",
+            "computationKey": "3bbeb0591409ea1cab1785c34a0bc1500267a23e2263d2c20eeeb01352ac7393"
+          },
+          "nodeFlooding": {
+            "schemaVersion": 1,
+            "method": "NATIVE_ROUTING_STEP_FLOODING_TRAPEZOIDAL_INTEGRAL",
+            "durationMethod": "NATIVE_EXTERNAL_FLOODING_END_STEP_SECONDS_V1",
+            "layoutSha256": "fa3e4d833650df5c40d933bd0b289dd029a54e0beb73fad9b9d3ef239cb0236d",
+            "startSeconds": 0,
+            "endSeconds": 86339,
+            "nodes": [
+              {
+                "id": "WLCT_Cistern1_DJ",
+                "kind": "JUNCTION",
+                "mapped": false,
+                "floodingM3": 3.0690062432765024,
+                "floodingSeconds": 38033.58999999943
+              },
+              {
+                "id": "WLCT_Cistern1_OJ",
+                "kind": "JUNCTION",
+                "mapped": false,
+                "floodingM3": 0,
+                "floodingSeconds": 0
+              },
+              {
+                "id": "J1",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 0,
+                "floodingSeconds": 0
+              },
+              {
+                "id": "J2",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 0,
+                "floodingSeconds": 0
+              },
+              {
+                "id": "J3",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 897.3254883484763,
+                "floodingSeconds": 454.2740000000267
+              },
+              {
+                "id": "J4",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 0,
+                "floodingSeconds": 0
+              },
+              {
+                "id": "J5",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 64.15687281812366,
+                "floodingSeconds": 166.22200000001612
+              },
+              {
+                "id": "J6",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 0,
+                "floodingSeconds": 0
+              },
+              {
+                "id": "J7",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 0,
+                "floodingSeconds": 0
+              },
+              {
+                "id": "J8",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 0,
+                "floodingSeconds": 0
+              },
+              {
+                "id": "J9",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 244.14453393661202,
+                "floodingSeconds": 1868.9280000000072
+              },
+              {
+                "id": "J10",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 109918.59811781262,
+                "floodingSeconds": 24193.76399999998
+              },
+              {
+                "id": "J11",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 0,
+                "floodingSeconds": 0
+              },
+              {
+                "id": "J12",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 0,
+                "floodingSeconds": 0
+              },
+              {
+                "id": "J13",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 0,
+                "floodingSeconds": 0
+              },
+              {
+                "id": "J14",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 0,
+                "floodingSeconds": 0
+              },
+              {
+                "id": "J15",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 0,
+                "floodingSeconds": 0
+              },
+              {
+                "id": "J16",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 298620.2031132404,
+                "floodingSeconds": 19608.553999999996
+              },
+              {
+                "id": "J17",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 0,
+                "floodingSeconds": 0
+              },
+              {
+                "id": "J18",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 0,
+                "floodingSeconds": 0
+              },
+              {
+                "id": "J19",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 90.9662592189111,
+                "floodingSeconds": 502.5720000000365
+              },
+              {
+                "id": "J20",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 65196.65599677173,
+                "floodingSeconds": 17975.35000000002
+              },
+              {
+                "id": "J21",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 367321.3058871423,
+                "floodingSeconds": 19724.990000000005
+              },
+              {
+                "id": "J22",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 146480.8230087483,
+                "floodingSeconds": 23833.544000000016
+              },
+              {
+                "id": "J23",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 190478.84515774797,
+                "floodingSeconds": 43591.58
+              },
+              {
+                "id": "J24",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 20.811035607157294,
+                "floodingSeconds": 10384.503999999994
+              },
+              {
+                "id": "J25",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 257178.76254941762,
+                "floodingSeconds": 19559.140000000007
+              },
+              {
+                "id": "J26",
+                "kind": "JUNCTION",
+                "mapped": true,
+                "floodingM3": 71377.12492668962,
+                "floodingSeconds": 24357.133999999984
+              },
+              {
+                "id": "Out1",
+                "kind": "OUTFALL",
+                "mapped": true,
+                "floodingM3": 0,
+                "floodingSeconds": 0
+              },
+              {
+                "id": "Out2",
+                "kind": "OUTFALL",
+                "mapped": true,
+                "floodingM3": 0,
+                "floodingSeconds": 0
+              },
+              {
+                "id": "WLCT_Cistern1",
+                "kind": "STORAGE",
+                "mapped": false,
+                "floodingM3": 0,
+                "floodingSeconds": 0
+              }
+            ],
+            "totalFloodingM3": 1507892.7919539385,
+            "sumNodeFloodingM3": 1507892.7919537432,
+            "balanceDifferenceM3": -1.9534491002559662e-7
+          },
+          "networkCistern": {
+            "numericalStatus": "FAILED",
+            "routingBalanceAlreadyIncludesStorageAndFlows": true,
+            "rankingEligible": false,
+            "wholeRunLedger": {
+              "numericalStatus": "FAILED",
+              "outletPipes": {
+                "drain": {
+                  "nodeId": "WLCT_Cistern1_DJ",
+                  "linkId": "WLCT_Cistern1_DC",
+                  "receiverNodeId": "J22",
+                  "initialDepthM": 0,
+                  "finalDepthM": 0.1,
+                  "floodingM3": 3.0690062432765024,
+                  "numericalStatus": "FAILED",
+                  "scope": "UNCONNECTED_OUTLET_FLOODING_ALREADY_INCLUDED_IN_NETWORK"
+                },
+                "overflow": {
+                  "nodeId": "WLCT_Cistern1_OJ",
+                  "linkId": "WLCT_Cistern1_OC",
+                  "receiverNodeId": "J22",
+                  "initialDepthM": 0,
+                  "finalDepthM": 2.984073883962038,
+                  "floodingM3": 0,
+                  "numericalStatus": "PASSED",
+                  "scope": "UNCONNECTED_OUTLET_FLOODING_ALREADY_INCLUDED_IN_NETWORK"
+                }
+              },
+              "facilities": [
+                {
+                  "id": "Cistern1",
+                  "nodeId": "WLCT_Cistern1",
+                  "capacityM3": 4.7,
+                  "nativeCapacityM3": 4.699476658983051,
+                  "volumeBasis": "EPA_CMS_STORAGE_VOLUME_TO_EXACT_SI_V1",
+                  "initialAvailableM3": 3.9945551601355933,
+                  "finalAvailableM3": 4.464431279998872,
+                  "reuseM3": null,
+                  "reuseStatus": "NOT_CALCULATED_NO_USE_DEMAND",
+                  "drainOperation": "GRAVITY_ORIFICE",
+                  "initialStorageM3": 0.7049214988474577,
+                  "inflowM3": 2.596165171746039,
+                  "outflowIncludingFloodingM3": 3.077700772364969,
+                  "floodingM3": 0,
+                  "finalStorageM3": 0.23504537898417843,
+                  "balanceResidualM3": -0.01165948075565093,
+                  "allowedResidualM3": 0.033127461513491475,
+                  "numericalStatus": "PASSED"
+                }
+              ]
+            }
+          },
+          "id": "strategy",
+          "numericalStatus": "FAILED",
+          "complete": true,
+          "evaluationMetrics": {
+            "specificationSha256": "d1d16a03051f33f0bfe03343dd7862c21a2e796442175798e85d664ff4cc72c2",
+            "complete": true,
+            "method": "NATIVE_ROUTING_STEP_DIRECTIONAL_TRAPEZOIDAL_INTEGRAL",
+            "peakMethod": "SIMULTANEOUS_SELECTED_OUTFALL_SUM",
+            "specification": {
+              "schemaVersion": 1,
+              "policyVersion": "PUBLIC_NETWORK_ALL_OUTFALLS_v1",
+              "startMilliseconds": 0,
+              "endMilliseconds": 86339000,
+              "networkOutfalls": ["Out1", "Out2"]
+            },
+            "outfalls": {
+              "Out1": {
+                "outwardVolumeM3": 1698111.1388332378,
+                "inwardVolumeM3": 0,
+                "peakOutwardM3s": 21.6348078727807,
+                "peakInwardM3s": 0,
+                "peakOutwardTimeSeconds": 51893.095,
+                "peakInwardTimeSeconds": 0,
+                "coveredSeconds": 86339,
+                "nativeSteps": 1392566
+              },
+              "Out2": {
+                "outwardVolumeM3": 482636.7936862583,
+                "inwardVolumeM3": 0,
+                "peakOutwardM3s": 17.406227075478647,
+                "peakInwardM3s": 0,
+                "peakOutwardTimeSeconds": 57599.699,
+                "peakInwardTimeSeconds": 0,
+                "coveredSeconds": 86339,
+                "nativeSteps": 1392566
+              }
+            },
+            "combined": {
+              "outwardVolumeM3": 2180747.932537462,
+              "inwardVolumeM3": 0,
+              "peakOutwardM3s": 39.04103494825935,
+              "peakInwardM3s": 0,
+              "peakOutwardTimeSeconds": 57599.699,
+              "peakInwardTimeSeconds": 0,
+              "coveredSeconds": 86339,
+              "nativeSteps": 1392566
+            },
+            "floodingDuration": {
+              "schemaVersion": 1,
+              "method": "NATIVE_EXTERNAL_FLOODING_ANY_NODE_WINDOW_SECONDS_V1",
+              "floodingSeconds": 47740.806000000215,
+              "startSeconds": 0,
+              "endSeconds": 86339,
+              "coveredSeconds": 86339,
+              "nativeSteps": 1392566,
+              "complete": true
+            }
+          },
+          "totals": {
+            "floodingM3": 1507892.7919539385,
+            "outflowM3": 2180747.932537073,
+            "storageM3": 11132.370264414345,
+            "balanceResidualM3": -600.6558753937679
+          },
+          "calendarShortfallSeconds": 1,
+          "runoffContinuityPercent": -0.09873099625110626,
+          "routingContinuityPercent": -0.016237573698163033,
+          "convergence": {
+            "nonConvergedSteps": 0
+          },
+          "facilities": [
+            {
+              "swmmId": "WL_Bio1",
+              "subcatchmentId": "S9",
+              "areaM2": 20,
+              "surfaceDepthMm": 0,
+              "soilMoisture": 0.4700411691945146,
+              "finalStorageM3": 6.701044238060436,
+              "balanceResidualM3": -0.027341121242464794,
+              "numericalStatus": "PASSED"
+            }
+          ]
+        }
+      ],
+      "signedReductionM3": null,
+      "signedPeakReductionM3s": null,
+      "rankingEligible": false,
+      "historicalReconstructionEligible": false,
+      "completeInstalledCostKrw": null,
+      "budgetChargedKrw": null,
+      "costing": {
+        "schemaVersion": 1,
+        "catalogHash": "9a182d390c74c8adad4f14eb6d575e1a556057fb69b87e5b802ca131dcfc5739",
+        "classification": "HISTORICAL_PUBLIC_PLAN_REFERENCE_NOT_CURRENT_QUOTE",
+        "source": {
+          "title": "진주상평 일반산업단지 저탄소 그린산업단지 조성사업 사업계획서",
+          "url": "https://jinjucci.korcham.net/file/dext5uploaddata/2022/0718_%EC%A7%84%EC%A3%BC%EC%8B%9C_%EC%A0%80%ED%83%84%EC%86%8C%20%EA%B7%B8%EB%A6%B0%EC%82%B0%EC%97%85%EB%8B%A8%EC%A7%80%20%EC%A1%B0%EC%84%B1%EC%82%AC%EC%97%85_%EC%82%AC%EC%97%85%EA%B3%84%ED%9A%8D%EC%84%9C%20(%EC%9E%85%EC%A3%BC%EA%B8%B0%EC%97%85%ED%98%91%EC%9D%98%EC%B2%B4).pdf",
+          "year": 2022,
+          "sha256": "0efc54c3c884441d810ce28abb8928d758d98eb152fb71aac38791327b2d7414",
+          "pdfPages": [11, 12]
+        },
+        "limitations": [
+          "2022년 진주 사업계획의 참고 공사비이며 현재 서울 견적이나 2010년 당시 가격이 아님",
+          "별도 설계·토공·철거·폐기물·스마트시스템·유지관리·성능평가 등의 사업 총액을 개별 시설에 임의 배분하지 않음",
+          "부가세 포함 여부·공종별 단가·현장 시공 조건 미확인",
+          "면적 외삽 참고 금액만 집계하며 미산정 시설과 부대공사는 0원으로 간주하지 않음",
+          "전체 설치비·예산 차감·순위 자격은 미확정 상태 유지"
+        ],
+        "items": [
+          {
+            "placementId": "Bio1",
+            "facilityType": "BIORETENTION",
+            "areaM2": 20,
+            "status": "AREA_REFERENCE_ONLY",
+            "referenceAmountKrw": 11200000,
+            "notes": [
+              "원문 3개소 × 9m × 9m = 243m², 하부층 깊이 0.9m",
+              "면적에 따른 참고 외삽이며 적용 EPA 단면과 시공 규격 일치 미확인"
+            ]
+          }
+        ],
+        "knownReferenceSubtotalKrw": 11200000,
+        "unpricedPlacementIds": [],
+        "completeInstalledCostKrw": null,
+        "budgetChargedKrw": null
+      },
+      "cisternCosting": {
+        "schemaVersion": 1,
+        "catalogHash": "63186839053e9a254bc42ba25765dfb78831d5621a3382e5abe0d110ddb7fe3b",
+        "method": "CAPACITY_EQUIVALENT_QUOTES_NOT_ASSEMBLY_MATCH_V1",
+        "unitCapacityM3": 2.35,
+        "source": {
+          "title": "친환경시범마을의 LID 적용에 따른 물순환 효과 및 비용편익 분석",
+          "url": "https://journal.cricit.kr/jkswe/XmlViewer/f253405",
+          "publicationYear": 2018,
+          "priceYear": null,
+          "quoteDate": null,
+          "sha256": "28f0c3969bbc2f1dd08e03fec2fddb70bfdecdfc4032bd871158eb3a1734e207",
+          "reference": "2.4.2.1, 2.5.1.1, Table 9",
+          "licence": "CC BY-NC 3.0",
+          "licenceUrl": "http://creativecommons.org/licenses/by-nc/3.0/"
+        },
+        "limitations": [
+          "2.35m³ 단위 설비 견적이며 임의 용량의 비례 단가가 아님",
+          "공개 업체 견적 세 건의 범위이며 확률적 신뢰구간이나 현재 시장 가격 범위가 아님",
+          "견적 용량 일치는 자재 규격·시공 조건·계산 단면의 일치 증거가 아님",
+          "원문의 미기재 항목은 null이며 무상 자재 또는 공사비 0으로 해석하지 않음",
+          "펌프 견적 포함은 펌프 곡선·재이용 수요·수질 성능의 확보를 뜻하지 않음",
+          "논문의 보조율을 차감하지 않으며 별도 미확정 공종·세금은 총공사비로 포함되지 않음",
+          "문헌의 연간 유지비 가정은 물리 계산의 실제 전력·운전·재이용량과 독립",
+          "현재 사업 한도·재해 당시 예산·가격 또는 운영 설치 승인으로 사용하지 않음"
+        ],
+        "completeInstalledCostKrw": null,
+        "budgetChargedKrw": null,
+        "items": [
+          {
+            "placementId": "Cistern1",
+            "capacityM3": 4.7,
+            "equivalentUnits": 2,
+            "status": "CAPACITY_EQUIVALENT_ONLY",
+            "quotes": [
+              {
+                "id": "A",
+                "quotedSubtotalKrw": 10894000,
+                "materialsKrw": 10298000,
+                "components": {
+                  "BARREL": 6204000,
+                  "PIPE": 1694000,
+                  "PUMP": 1476000,
+                  "LOG": 594000,
+                  "ETC": 330000
+                },
+                "unclassifiedDifferenceKrw": 596000,
+                "annualComponentsKrw": {
+                  "ELECTRICITY": 32682,
+                  "MONITORING": 76258,
+                  "REPAIR_LABOUR_ETC": 108940,
+                  "CLEANING": 100000
+                },
+                "annualEstimateKrw": 317880
+              },
+              {
+                "id": "B",
+                "quotedSubtotalKrw": 7024000,
+                "materialsKrw": 5922000,
+                "components": {
+                  "BARREL": 2842000,
+                  "PIPE": 1430000,
+                  "PUMP": 1100000,
+                  "LOG": 550000,
+                  "ETC": null
+                },
+                "unclassifiedDifferenceKrw": 1102000,
+                "annualComponentsKrw": {
+                  "ELECTRICITY": 21072,
+                  "MONITORING": 49168,
+                  "REPAIR_LABOUR_ETC": 70240,
+                  "CLEANING": 100000
+                },
+                "annualEstimateKrw": 240480
+              },
+              {
+                "id": "C",
+                "quotedSubtotalKrw": 5714000,
+                "materialsKrw": 5714000,
+                "components": {
+                  "BARREL": 2466000,
+                  "PIPE": 1084000,
+                  "PUMP": 900000,
+                  "LOG": null,
+                  "ETC": 1264000
+                },
+                "unclassifiedDifferenceKrw": 0,
+                "annualComponentsKrw": {
+                  "ELECTRICITY": 17142,
+                  "MONITORING": 39998,
+                  "REPAIR_LABOUR_ETC": 57140,
+                  "CLEANING": 100000
+                },
+                "annualEstimateKrw": 214280
+              }
+            ]
+          }
+        ]
+      },
+      "cisternLifeCycleCosts": {
+        "version": "DISCOUNTED_CASH_FLOW_V1",
+        "catalogHash": "63186839053e9a254bc42ba25765dfb78831d5621a3382e5abe0d110ddb7fe3b",
+        "policySha256": "ae835ccb4566f1ecb42bc58acd8cc17bf6529b351640484e1b0e7a434a1bc15b",
+        "items": [
+          {
+            "placementId": "Cistern1",
+            "quotes": [
+              {
+                "id": "A",
+                "report": {
+                  "version": "DISCOUNTED_CASH_FLOW_V1",
+                  "scenarioId": "JKSWE_2018_REPORTED_CISTERN_COST_ASSUMPTIONS",
+                  "status": "PARTIAL",
+                  "currency": "KRW",
+                  "studyPeriodYears": 40,
+                  "priceBaseYear": null,
+                  "priceBasis": "CONSTANT",
+                  "discountKind": "REAL",
+                  "discountRates": [
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089"
+                  ],
+                  "functionalUnit": "2 x 2.35 m3 CAPACITY_EQUIVALENT_ONLY",
+                  "classification": "PUBLISHED_DESIGN_COST_ASSUMPTION_NOT_OBSERVED_OPERATION",
+                  "timing": "INITIAL_AT_YEAR_ZERO_END_OF_YEAR",
+                  "precision": "DECIMAL_50_SUM_THEN_HALF_EVEN_2",
+                  "planSha256": "c5588ba16b0503ab913aa2a05aefdef6e71a07dbd83538ee7f20271e3cf72f58",
+                  "policySha256": "ae835ccb4566f1ecb42bc58acd8cc17bf6529b351640484e1b0e7a434a1bc15b",
+                  "comparisonKey": null,
+                  "lifeCycleCost": null,
+                  "knownPresentValue": "21552743.65",
+                  "annualRoundingDifference": "0.01",
+                  "categoryRoundingDifference": "0.00",
+                  "missingInputs": [
+                    "FUNCTIONAL_UNIT_UNVERIFIED",
+                    "INCOMPLETE_DISPOSAL",
+                    "INCOMPLETE_INITIAL",
+                    "INCOMPLETE_REPLACEMENT",
+                    "INCOMPLETE_RESIDUAL",
+                    "PRICE_BASE_YEAR_MISSING"
+                  ],
+                  "categories": [
+                    {
+                      "id": "INITIAL",
+                      "coverage": "PARTIAL",
+                      "presentValue": "10894000.00"
+                    },
+                    {
+                      "id": "OPERATION",
+                      "coverage": "COMPLETE",
+                      "presentValue": "3652836.08"
+                    },
+                    {
+                      "id": "INSPECTION_CLEANING",
+                      "coverage": "COMPLETE",
+                      "presentValue": "3353071.49"
+                    },
+                    {
+                      "id": "REPAIR",
+                      "coverage": "COMPLETE",
+                      "presentValue": "3652836.08"
+                    },
+                    {
+                      "id": "REPLACEMENT",
+                      "coverage": "UNPRICED",
+                      "presentValue": null
+                    },
+                    {
+                      "id": "DISPOSAL",
+                      "coverage": "UNPRICED",
+                      "presentValue": null
+                    },
+                    {
+                      "id": "RESIDUAL",
+                      "coverage": "UNPRICED",
+                      "presentValue": null
+                    }
+                  ],
+                  "annualCashflows": [
+                    {
+                      "year": 0,
+                      "cost": "10894000.00",
+                      "credit": "0.00",
+                      "presentValue": "10894000.00"
+                    },
+                    {
+                      "year": 1,
+                      "cost": "317880.00",
+                      "credit": "0.00",
+                      "presentValue": "315075.83"
+                    },
+                    {
+                      "year": 2,
+                      "cost": "317880.00",
+                      "credit": "0.00",
+                      "presentValue": "312296.39"
+                    },
+                    {
+                      "year": 3,
+                      "cost": "317880.00",
+                      "credit": "0.00",
+                      "presentValue": "309541.47"
+                    },
+                    {
+                      "year": 4,
+                      "cost": "317880.00",
+                      "credit": "0.00",
+                      "presentValue": "306810.85"
+                    },
+                    {
+                      "year": 5,
+                      "cost": "317880.00",
+                      "credit": "0.00",
+                      "presentValue": "304104.32"
+                    },
+                    {
+                      "year": 6,
+                      "cost": "317880.00",
+                      "credit": "0.00",
+                      "presentValue": "301421.67"
+                    },
+                    {
+                      "year": 7,
+                      "cost": "317880.00",
+                      "credit": "0.00",
+                      "presentValue": "298762.68"
+                    },
+                    {
+                      "year": 8,
+                      "cost": "317880.00",
+                      "credit": "0.00",
+                      "presentValue": "296127.15"
+                    },
+                    {
+                      "year": 9,
+                      "cost": "317880.00",
+                      "credit": "0.00",
+                      "presentValue": "293514.87"
+                    },
+                    {
+                      "year": 10,
+                      "cost": "317880.00",
+                      "credit": "0.00",
+                      "presentValue": "290925.63"
+                    },
+                    {
+                      "year": 11,
+                      "cost": "317880.00",
+                      "credit": "0.00",
+                      "presentValue": "288359.23"
+                    },
+                    {
+                      "year": 12,
+                      "cost": "317880.00",
+                      "credit": "0.00",
+                      "presentValue": "285815.48"
+                    },
+                    {
+                      "year": 13,
+                      "cost": "317880.00",
+                      "credit": "0.00",
+                      "presentValue": "283294.16"
+                    },
+                    {
+                      "year": 14,
+                      "cost": "317880.00",
+                      "credit": "0.00",
+                      "presentValue": "280795.08"
+                    },
+                    {
+                      "year": 15,
+                      "cost": "317880.00",
+                      "credit": "0.00",
+                      "presentValue": "278318.05"
+                    },
+                    {
+                      "year": 16,
+                      "cost": "317880.00",
+                      "credit": "0.00",
+                      "presentValue": "275862.87"
+                    },
+                    {
+                      "year": 17,
+                      "cost": "317880.00",
+                      "credit": "0.00",
+                      "presentValue": "273429.35"
+                    },
+                    {
+                      "year": 18,
+                      "cost": "317880.00",
+                      "credit": "0.00",
+                      "presentValue": "271017.30"
+                    },
+                    {
+                      "year": 19,
+                      "cost": "317880.00",
+                      "credit": "0.00",
+                      "presentValue": "268626.52"
+                    },
+                    {
+                      "year": 20,
+                      "cost": "317880.00",
+                      "credit": "0.00",
+                      "presentValue": "266256.83"
+                    },
+                    {
+                      "year": 21,
+                      "cost": "317880.00",
+                      "credit": "0.00",
+                      "presentValue": "263908.05"
+                    },
+                    {
+                      "year": 22,
+                      "cost": "317880.00",
+                      "credit": "0.00",
+                      "presentValue": "261579.99"
+                    },
+                    {
+                      "year": 23,
+                      "cost": "317880.00",
+                      "credit": "0.00",
+                      "presentValue": "259272.47"
+                    },
+                    {
+                      "year": 24,
+                      "cost": "317880.00",
+                      "credit": "0.00",
+                      "presentValue": "256985.30"
+                    },
+                    {
+                      "year": 25,
+                      "cost": "317880.00",
+                      "credit": "0.00",
+                      "presentValue": "254718.30"
+                    },
+                    {
+                      "year": 26,
+                      "cost": "317880.00",
+                      "credit": "0.00",
+                      "presentValue": "252471.31"
+                    },
+                    {
+                      "year": 27,
+                      "cost": "317880.00",
+                      "credit": "0.00",
+                      "presentValue": "250244.14"
+                    },
+                    {
+                      "year": 28,
+                      "cost": "317880.00",
+                      "credit": "0.00",
+                      "presentValue": "248036.61"
+                    },
+                    {
+                      "year": 29,
+                      "cost": "317880.00",
+                      "credit": "0.00",
+                      "presentValue": "245848.56"
+                    },
+                    {
+                      "year": 30,
+                      "cost": "317880.00",
+                      "credit": "0.00",
+                      "presentValue": "243679.81"
+                    },
+                    {
+                      "year": 31,
+                      "cost": "317880.00",
+                      "credit": "0.00",
+                      "presentValue": "241530.19"
+                    },
+                    {
+                      "year": 32,
+                      "cost": "317880.00",
+                      "credit": "0.00",
+                      "presentValue": "239399.53"
+                    },
+                    {
+                      "year": 33,
+                      "cost": "317880.00",
+                      "credit": "0.00",
+                      "presentValue": "237287.67"
+                    },
+                    {
+                      "year": 34,
+                      "cost": "317880.00",
+                      "credit": "0.00",
+                      "presentValue": "235194.44"
+                    },
+                    {
+                      "year": 35,
+                      "cost": "317880.00",
+                      "credit": "0.00",
+                      "presentValue": "233119.68"
+                    },
+                    {
+                      "year": 36,
+                      "cost": "317880.00",
+                      "credit": "0.00",
+                      "presentValue": "231063.21"
+                    },
+                    {
+                      "year": 37,
+                      "cost": "317880.00",
+                      "credit": "0.00",
+                      "presentValue": "229024.89"
+                    },
+                    {
+                      "year": 38,
+                      "cost": "317880.00",
+                      "credit": "0.00",
+                      "presentValue": "227004.55"
+                    },
+                    {
+                      "year": 39,
+                      "cost": "317880.00",
+                      "credit": "0.00",
+                      "presentValue": "225002.03"
+                    },
+                    {
+                      "year": 40,
+                      "cost": "317880.00",
+                      "credit": "0.00",
+                      "presentValue": "223017.18"
+                    }
+                  ],
+                  "termsEvidence": {
+                    "sha256": "28f0c3969bbc2f1dd08e03fec2fddb70bfdecdfc4032bd871158eb3a1734e207",
+                    "reference": "2.5, table 8; 2.5.1.1, table 9; 3.2, equation 3"
+                  },
+                  "limitations": [
+                    "40년은 논문의 철근콘크리트 건축물 기준 분석기간이며 물통·펌프의 수명 또는 교체주기 아님",
+                    "0.89%는 논문의 2007-2016년 평균 실질할인율이며 현재 서울의 공통 사업 할인율 아님",
+                    "별도 할인율은 표 8에 기재된 연도의 감도 사례이며 미래 예측·확률 구간·최소/최대 범위 아님",
+                    "원 견적 금액을 불변 가격으로 유지한 문헌 참고 계산이며 가격 기준연도·현재 물가로의 환산은 미확인",
+                    "부가세·추가 시공·교체·철거/처분·잔존가치 미확정으로 전체 생애주기비용과 경제성 순위 미산정",
+                    "강우 사건의 효과·저류량을 연간화하거나 생애 편익·재이용 수요·전력량으로 전환하지 않음"
+                  ],
+                  "budgetChargeChanged": false,
+                  "physicalEffectAnnualized": false,
+                  "scoreUsed": false,
+                  "sensitivity": [
+                    {
+                      "id": "REPORTED_2007_REAL_RATE",
+                      "label": "논문 2007년 실질할인율",
+                      "rate": "0.0245",
+                      "knownPresentValue": "18941284.90",
+                      "lifeCycleCost": null,
+                      "status": "PARTIAL",
+                      "planSha256": "e5146b8f05dbbcc461db39a8912017460c5a0bd1c198da2973669f3f9832558e"
+                    },
+                    {
+                      "id": "REPORTED_2016_REAL_RATE",
+                      "label": "논문 2016년 실질할인율",
+                      "rate": "0.0047",
+                      "knownPresentValue": "22460792.45",
+                      "lifeCycleCost": null,
+                      "status": "PARTIAL",
+                      "planSha256": "d2cef75bb3d7cd343e82263e4529dcced4513df78a2b8ae937b9c8c986975839"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "B",
+                "report": {
+                  "version": "DISCOUNTED_CASH_FLOW_V1",
+                  "scenarioId": "JKSWE_2018_REPORTED_CISTERN_COST_ASSUMPTIONS",
+                  "status": "PARTIAL",
+                  "currency": "KRW",
+                  "studyPeriodYears": 40,
+                  "priceBaseYear": null,
+                  "priceBasis": "CONSTANT",
+                  "discountKind": "REAL",
+                  "discountRates": [
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089"
+                  ],
+                  "functionalUnit": "2 x 2.35 m3 CAPACITY_EQUIVALENT_ONLY",
+                  "classification": "PUBLISHED_DESIGN_COST_ASSUMPTION_NOT_OBSERVED_OPERATION",
+                  "timing": "INITIAL_AT_YEAR_ZERO_END_OF_YEAR",
+                  "precision": "DECIMAL_50_SUM_THEN_HALF_EVEN_2",
+                  "planSha256": "ba3976f1b90609d477f7a6eb9bec44821b049340315ec8fcc44dfe8e1545032b",
+                  "policySha256": "ae835ccb4566f1ecb42bc58acd8cc17bf6529b351640484e1b0e7a434a1bc15b",
+                  "comparisonKey": null,
+                  "lifeCycleCost": null,
+                  "knownPresentValue": "15087466.31",
+                  "annualRoundingDifference": "-0.01",
+                  "categoryRoundingDifference": "0.00",
+                  "missingInputs": [
+                    "FUNCTIONAL_UNIT_UNVERIFIED",
+                    "INCOMPLETE_DISPOSAL",
+                    "INCOMPLETE_INITIAL",
+                    "INCOMPLETE_REPLACEMENT",
+                    "INCOMPLETE_RESIDUAL",
+                    "PRICE_BASE_YEAR_MISSING"
+                  ],
+                  "categories": [
+                    {
+                      "id": "INITIAL",
+                      "coverage": "PARTIAL",
+                      "presentValue": "7024000.00"
+                    },
+                    {
+                      "id": "OPERATION",
+                      "coverage": "COMPLETE",
+                      "presentValue": "2355197.41"
+                    },
+                    {
+                      "id": "INSPECTION_CLEANING",
+                      "coverage": "COMPLETE",
+                      "presentValue": "3353071.49"
+                    },
+                    {
+                      "id": "REPAIR",
+                      "coverage": "COMPLETE",
+                      "presentValue": "2355197.41"
+                    },
+                    {
+                      "id": "REPLACEMENT",
+                      "coverage": "UNPRICED",
+                      "presentValue": null
+                    },
+                    {
+                      "id": "DISPOSAL",
+                      "coverage": "UNPRICED",
+                      "presentValue": null
+                    },
+                    {
+                      "id": "RESIDUAL",
+                      "coverage": "UNPRICED",
+                      "presentValue": null
+                    }
+                  ],
+                  "annualCashflows": [
+                    {
+                      "year": 0,
+                      "cost": "7024000.00",
+                      "credit": "0.00",
+                      "presentValue": "7024000.00"
+                    },
+                    {
+                      "year": 1,
+                      "cost": "240480.00",
+                      "credit": "0.00",
+                      "presentValue": "238358.61"
+                    },
+                    {
+                      "year": 2,
+                      "cost": "240480.00",
+                      "credit": "0.00",
+                      "presentValue": "236255.93"
+                    },
+                    {
+                      "year": 3,
+                      "cost": "240480.00",
+                      "credit": "0.00",
+                      "presentValue": "234171.80"
+                    },
+                    {
+                      "year": 4,
+                      "cost": "240480.00",
+                      "credit": "0.00",
+                      "presentValue": "232106.06"
+                    },
+                    {
+                      "year": 5,
+                      "cost": "240480.00",
+                      "credit": "0.00",
+                      "presentValue": "230058.54"
+                    },
+                    {
+                      "year": 6,
+                      "cost": "240480.00",
+                      "credit": "0.00",
+                      "presentValue": "228029.08"
+                    },
+                    {
+                      "year": 7,
+                      "cost": "240480.00",
+                      "credit": "0.00",
+                      "presentValue": "226017.52"
+                    },
+                    {
+                      "year": 8,
+                      "cost": "240480.00",
+                      "credit": "0.00",
+                      "presentValue": "224023.71"
+                    },
+                    {
+                      "year": 9,
+                      "cost": "240480.00",
+                      "credit": "0.00",
+                      "presentValue": "222047.49"
+                    },
+                    {
+                      "year": 10,
+                      "cost": "240480.00",
+                      "credit": "0.00",
+                      "presentValue": "220088.70"
+                    },
+                    {
+                      "year": 11,
+                      "cost": "240480.00",
+                      "credit": "0.00",
+                      "presentValue": "218147.19"
+                    },
+                    {
+                      "year": 12,
+                      "cost": "240480.00",
+                      "credit": "0.00",
+                      "presentValue": "216222.81"
+                    },
+                    {
+                      "year": 13,
+                      "cost": "240480.00",
+                      "credit": "0.00",
+                      "presentValue": "214315.40"
+                    },
+                    {
+                      "year": 14,
+                      "cost": "240480.00",
+                      "credit": "0.00",
+                      "presentValue": "212424.82"
+                    },
+                    {
+                      "year": 15,
+                      "cost": "240480.00",
+                      "credit": "0.00",
+                      "presentValue": "210550.91"
+                    },
+                    {
+                      "year": 16,
+                      "cost": "240480.00",
+                      "credit": "0.00",
+                      "presentValue": "208693.54"
+                    },
+                    {
+                      "year": 17,
+                      "cost": "240480.00",
+                      "credit": "0.00",
+                      "presentValue": "206852.55"
+                    },
+                    {
+                      "year": 18,
+                      "cost": "240480.00",
+                      "credit": "0.00",
+                      "presentValue": "205027.81"
+                    },
+                    {
+                      "year": 19,
+                      "cost": "240480.00",
+                      "credit": "0.00",
+                      "presentValue": "203219.16"
+                    },
+                    {
+                      "year": 20,
+                      "cost": "240480.00",
+                      "credit": "0.00",
+                      "presentValue": "201426.46"
+                    },
+                    {
+                      "year": 21,
+                      "cost": "240480.00",
+                      "credit": "0.00",
+                      "presentValue": "199649.58"
+                    },
+                    {
+                      "year": 22,
+                      "cost": "240480.00",
+                      "credit": "0.00",
+                      "presentValue": "197888.37"
+                    },
+                    {
+                      "year": 23,
+                      "cost": "240480.00",
+                      "credit": "0.00",
+                      "presentValue": "196142.70"
+                    },
+                    {
+                      "year": 24,
+                      "cost": "240480.00",
+                      "credit": "0.00",
+                      "presentValue": "194412.43"
+                    },
+                    {
+                      "year": 25,
+                      "cost": "240480.00",
+                      "credit": "0.00",
+                      "presentValue": "192697.43"
+                    },
+                    {
+                      "year": 26,
+                      "cost": "240480.00",
+                      "credit": "0.00",
+                      "presentValue": "190997.55"
+                    },
+                    {
+                      "year": 27,
+                      "cost": "240480.00",
+                      "credit": "0.00",
+                      "presentValue": "189312.66"
+                    },
+                    {
+                      "year": 28,
+                      "cost": "240480.00",
+                      "credit": "0.00",
+                      "presentValue": "187642.65"
+                    },
+                    {
+                      "year": 29,
+                      "cost": "240480.00",
+                      "credit": "0.00",
+                      "presentValue": "185987.36"
+                    },
+                    {
+                      "year": 30,
+                      "cost": "240480.00",
+                      "credit": "0.00",
+                      "presentValue": "184346.67"
+                    },
+                    {
+                      "year": 31,
+                      "cost": "240480.00",
+                      "credit": "0.00",
+                      "presentValue": "182720.46"
+                    },
+                    {
+                      "year": 32,
+                      "cost": "240480.00",
+                      "credit": "0.00",
+                      "presentValue": "181108.59"
+                    },
+                    {
+                      "year": 33,
+                      "cost": "240480.00",
+                      "credit": "0.00",
+                      "presentValue": "179510.95"
+                    },
+                    {
+                      "year": 34,
+                      "cost": "240480.00",
+                      "credit": "0.00",
+                      "presentValue": "177927.39"
+                    },
+                    {
+                      "year": 35,
+                      "cost": "240480.00",
+                      "credit": "0.00",
+                      "presentValue": "176357.81"
+                    },
+                    {
+                      "year": 36,
+                      "cost": "240480.00",
+                      "credit": "0.00",
+                      "presentValue": "174802.07"
+                    },
+                    {
+                      "year": 37,
+                      "cost": "240480.00",
+                      "credit": "0.00",
+                      "presentValue": "173260.06"
+                    },
+                    {
+                      "year": 38,
+                      "cost": "240480.00",
+                      "credit": "0.00",
+                      "presentValue": "171731.64"
+                    },
+                    {
+                      "year": 39,
+                      "cost": "240480.00",
+                      "credit": "0.00",
+                      "presentValue": "170216.71"
+                    },
+                    {
+                      "year": 40,
+                      "cost": "240480.00",
+                      "credit": "0.00",
+                      "presentValue": "168715.15"
+                    }
+                  ],
+                  "termsEvidence": {
+                    "sha256": "28f0c3969bbc2f1dd08e03fec2fddb70bfdecdfc4032bd871158eb3a1734e207",
+                    "reference": "2.5, table 8; 2.5.1.1, table 9; 3.2, equation 3"
+                  },
+                  "limitations": [
+                    "40년은 논문의 철근콘크리트 건축물 기준 분석기간이며 물통·펌프의 수명 또는 교체주기 아님",
+                    "0.89%는 논문의 2007-2016년 평균 실질할인율이며 현재 서울의 공통 사업 할인율 아님",
+                    "별도 할인율은 표 8에 기재된 연도의 감도 사례이며 미래 예측·확률 구간·최소/최대 범위 아님",
+                    "원 견적 금액을 불변 가격으로 유지한 문헌 참고 계산이며 가격 기준연도·현재 물가로의 환산은 미확인",
+                    "부가세·추가 시공·교체·철거/처분·잔존가치 미확정으로 전체 생애주기비용과 경제성 순위 미산정",
+                    "강우 사건의 효과·저류량을 연간화하거나 생애 편익·재이용 수요·전력량으로 전환하지 않음"
+                  ],
+                  "budgetChargeChanged": false,
+                  "physicalEffectAnnualized": false,
+                  "scoreUsed": false,
+                  "sensitivity": [
+                    {
+                      "id": "REPORTED_2007_REAL_RATE",
+                      "label": "논문 2007년 실질할인율",
+                      "rate": "0.0245",
+                      "knownPresentValue": "13111866.72",
+                      "lifeCycleCost": null,
+                      "status": "PARTIAL",
+                      "planSha256": "bbce917e265b5917adaac5320e67e46fccfcc62ea09dd47cdc1f9e863eb1422f"
+                    },
+                    {
+                      "id": "REPORTED_2016_REAL_RATE",
+                      "label": "논문 2016년 실질할인율",
+                      "rate": "0.0047",
+                      "knownPresentValue": "15774416.03",
+                      "lifeCycleCost": null,
+                      "status": "PARTIAL",
+                      "planSha256": "1a51dc79227cb20ebefeec63a2a5f0da0e4c03e71de08b65a0000b6f54207945"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "C",
+                "report": {
+                  "version": "DISCOUNTED_CASH_FLOW_V1",
+                  "scenarioId": "JKSWE_2018_REPORTED_CISTERN_COST_ASSUMPTIONS",
+                  "status": "PARTIAL",
+                  "currency": "KRW",
+                  "studyPeriodYears": 40,
+                  "priceBaseYear": null,
+                  "priceBasis": "CONSTANT",
+                  "discountKind": "REAL",
+                  "discountRates": [
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089",
+                    "0.0089"
+                  ],
+                  "functionalUnit": "2 x 2.35 m3 CAPACITY_EQUIVALENT_ONLY",
+                  "classification": "PUBLISHED_DESIGN_COST_ASSUMPTION_NOT_OBSERVED_OPERATION",
+                  "timing": "INITIAL_AT_YEAR_ZERO_END_OF_YEAR",
+                  "precision": "DECIMAL_50_SUM_THEN_HALF_EVEN_2",
+                  "planSha256": "4a94e81fc192d953053d37180430f2de073b7cc8224d17591980d9179582ea55",
+                  "policySha256": "ae835ccb4566f1ecb42bc58acd8cc17bf6529b351640484e1b0e7a434a1bc15b",
+                  "comparisonKey": null,
+                  "lifeCycleCost": null,
+                  "knownPresentValue": "12898961.58",
+                  "annualRoundingDifference": "-0.01",
+                  "categoryRoundingDifference": "-0.01",
+                  "missingInputs": [
+                    "FUNCTIONAL_UNIT_UNVERIFIED",
+                    "INCOMPLETE_DISPOSAL",
+                    "INCOMPLETE_INITIAL",
+                    "INCOMPLETE_REPLACEMENT",
+                    "INCOMPLETE_RESIDUAL",
+                    "PRICE_BASE_YEAR_MISSING"
+                  ],
+                  "categories": [
+                    {
+                      "id": "INITIAL",
+                      "coverage": "PARTIAL",
+                      "presentValue": "5714000.00"
+                    },
+                    {
+                      "id": "OPERATION",
+                      "coverage": "COMPLETE",
+                      "presentValue": "1915945.05"
+                    },
+                    {
+                      "id": "INSPECTION_CLEANING",
+                      "coverage": "COMPLETE",
+                      "presentValue": "3353071.49"
+                    },
+                    {
+                      "id": "REPAIR",
+                      "coverage": "COMPLETE",
+                      "presentValue": "1915945.05"
+                    },
+                    {
+                      "id": "REPLACEMENT",
+                      "coverage": "UNPRICED",
+                      "presentValue": null
+                    },
+                    {
+                      "id": "DISPOSAL",
+                      "coverage": "UNPRICED",
+                      "presentValue": null
+                    },
+                    {
+                      "id": "RESIDUAL",
+                      "coverage": "UNPRICED",
+                      "presentValue": null
+                    }
+                  ],
+                  "annualCashflows": [
+                    {
+                      "year": 0,
+                      "cost": "5714000.00",
+                      "credit": "0.00",
+                      "presentValue": "5714000.00"
+                    },
+                    {
+                      "year": 1,
+                      "cost": "214280.00",
+                      "credit": "0.00",
+                      "presentValue": "212389.73"
+                    },
+                    {
+                      "year": 2,
+                      "cost": "214280.00",
+                      "credit": "0.00",
+                      "presentValue": "210516.14"
+                    },
+                    {
+                      "year": 3,
+                      "cost": "214280.00",
+                      "credit": "0.00",
+                      "presentValue": "208659.07"
+                    },
+                    {
+                      "year": 4,
+                      "cost": "214280.00",
+                      "credit": "0.00",
+                      "presentValue": "206818.39"
+                    },
+                    {
+                      "year": 5,
+                      "cost": "214280.00",
+                      "credit": "0.00",
+                      "presentValue": "204993.94"
+                    },
+                    {
+                      "year": 6,
+                      "cost": "214280.00",
+                      "credit": "0.00",
+                      "presentValue": "203185.59"
+                    },
+                    {
+                      "year": 7,
+                      "cost": "214280.00",
+                      "credit": "0.00",
+                      "presentValue": "201393.19"
+                    },
+                    {
+                      "year": 8,
+                      "cost": "214280.00",
+                      "credit": "0.00",
+                      "presentValue": "199616.60"
+                    },
+                    {
+                      "year": 9,
+                      "cost": "214280.00",
+                      "credit": "0.00",
+                      "presentValue": "197855.69"
+                    },
+                    {
+                      "year": 10,
+                      "cost": "214280.00",
+                      "credit": "0.00",
+                      "presentValue": "196110.31"
+                    },
+                    {
+                      "year": 11,
+                      "cost": "214280.00",
+                      "credit": "0.00",
+                      "presentValue": "194380.32"
+                    },
+                    {
+                      "year": 12,
+                      "cost": "214280.00",
+                      "credit": "0.00",
+                      "presentValue": "192665.60"
+                    },
+                    {
+                      "year": 13,
+                      "cost": "214280.00",
+                      "credit": "0.00",
+                      "presentValue": "190966.00"
+                    },
+                    {
+                      "year": 14,
+                      "cost": "214280.00",
+                      "credit": "0.00",
+                      "presentValue": "189281.40"
+                    },
+                    {
+                      "year": 15,
+                      "cost": "214280.00",
+                      "credit": "0.00",
+                      "presentValue": "187611.65"
+                    },
+                    {
+                      "year": 16,
+                      "cost": "214280.00",
+                      "credit": "0.00",
+                      "presentValue": "185956.64"
+                    },
+                    {
+                      "year": 17,
+                      "cost": "214280.00",
+                      "credit": "0.00",
+                      "presentValue": "184316.22"
+                    },
+                    {
+                      "year": 18,
+                      "cost": "214280.00",
+                      "credit": "0.00",
+                      "presentValue": "182690.28"
+                    },
+                    {
+                      "year": 19,
+                      "cost": "214280.00",
+                      "credit": "0.00",
+                      "presentValue": "181078.68"
+                    },
+                    {
+                      "year": 20,
+                      "cost": "214280.00",
+                      "credit": "0.00",
+                      "presentValue": "179481.30"
+                    },
+                    {
+                      "year": 21,
+                      "cost": "214280.00",
+                      "credit": "0.00",
+                      "presentValue": "177898.00"
+                    },
+                    {
+                      "year": 22,
+                      "cost": "214280.00",
+                      "credit": "0.00",
+                      "presentValue": "176328.68"
+                    },
+                    {
+                      "year": 23,
+                      "cost": "214280.00",
+                      "credit": "0.00",
+                      "presentValue": "174773.20"
+                    },
+                    {
+                      "year": 24,
+                      "cost": "214280.00",
+                      "credit": "0.00",
+                      "presentValue": "173231.44"
+                    },
+                    {
+                      "year": 25,
+                      "cost": "214280.00",
+                      "credit": "0.00",
+                      "presentValue": "171703.28"
+                    },
+                    {
+                      "year": 26,
+                      "cost": "214280.00",
+                      "credit": "0.00",
+                      "presentValue": "170188.60"
+                    },
+                    {
+                      "year": 27,
+                      "cost": "214280.00",
+                      "credit": "0.00",
+                      "presentValue": "168687.28"
+                    },
+                    {
+                      "year": 28,
+                      "cost": "214280.00",
+                      "credit": "0.00",
+                      "presentValue": "167199.21"
+                    },
+                    {
+                      "year": 29,
+                      "cost": "214280.00",
+                      "credit": "0.00",
+                      "presentValue": "165724.26"
+                    },
+                    {
+                      "year": 30,
+                      "cost": "214280.00",
+                      "credit": "0.00",
+                      "presentValue": "164262.33"
+                    },
+                    {
+                      "year": 31,
+                      "cost": "214280.00",
+                      "credit": "0.00",
+                      "presentValue": "162813.29"
+                    },
+                    {
+                      "year": 32,
+                      "cost": "214280.00",
+                      "credit": "0.00",
+                      "presentValue": "161377.04"
+                    },
+                    {
+                      "year": 33,
+                      "cost": "214280.00",
+                      "credit": "0.00",
+                      "presentValue": "159953.45"
+                    },
+                    {
+                      "year": 34,
+                      "cost": "214280.00",
+                      "credit": "0.00",
+                      "presentValue": "158542.42"
+                    },
+                    {
+                      "year": 35,
+                      "cost": "214280.00",
+                      "credit": "0.00",
+                      "presentValue": "157143.84"
+                    },
+                    {
+                      "year": 36,
+                      "cost": "214280.00",
+                      "credit": "0.00",
+                      "presentValue": "155757.60"
+                    },
+                    {
+                      "year": 37,
+                      "cost": "214280.00",
+                      "credit": "0.00",
+                      "presentValue": "154383.59"
+                    },
+                    {
+                      "year": 38,
+                      "cost": "214280.00",
+                      "credit": "0.00",
+                      "presentValue": "153021.69"
+                    },
+                    {
+                      "year": 39,
+                      "cost": "214280.00",
+                      "credit": "0.00",
+                      "presentValue": "151671.81"
+                    },
+                    {
+                      "year": 40,
+                      "cost": "214280.00",
+                      "credit": "0.00",
+                      "presentValue": "150333.84"
+                    }
+                  ],
+                  "termsEvidence": {
+                    "sha256": "28f0c3969bbc2f1dd08e03fec2fddb70bfdecdfc4032bd871158eb3a1734e207",
+                    "reference": "2.5, table 8; 2.5.1.1, table 9; 3.2, equation 3"
+                  },
+                  "limitations": [
+                    "40년은 논문의 철근콘크리트 건축물 기준 분석기간이며 물통·펌프의 수명 또는 교체주기 아님",
+                    "0.89%는 논문의 2007-2016년 평균 실질할인율이며 현재 서울의 공통 사업 할인율 아님",
+                    "별도 할인율은 표 8에 기재된 연도의 감도 사례이며 미래 예측·확률 구간·최소/최대 범위 아님",
+                    "원 견적 금액을 불변 가격으로 유지한 문헌 참고 계산이며 가격 기준연도·현재 물가로의 환산은 미확인",
+                    "부가세·추가 시공·교체·철거/처분·잔존가치 미확정으로 전체 생애주기비용과 경제성 순위 미산정",
+                    "강우 사건의 효과·저류량을 연간화하거나 생애 편익·재이용 수요·전력량으로 전환하지 않음"
+                  ],
+                  "budgetChargeChanged": false,
+                  "physicalEffectAnnualized": false,
+                  "scoreUsed": false,
+                  "sensitivity": [
+                    {
+                      "id": "REPORTED_2007_REAL_RATE",
+                      "label": "논문 2007년 실질할인율",
+                      "rate": "0.0245",
+                      "knownPresentValue": "11138601.13",
+                      "lifeCycleCost": null,
+                      "status": "PARTIAL",
+                      "planSha256": "775abc73326c20a47238d9b70541a5d019f3bfc9872f6c99d46f2f5810ee855c"
+                    },
+                    {
+                      "id": "REPORTED_2016_REAL_RATE",
+                      "label": "논문 2016년 실질할인율",
+                      "rate": "0.0047",
+                      "knownPresentValue": "13511068.98",
+                      "lifeCycleCost": null,
+                      "status": "PARTIAL",
+                      "planSha256": "7e6ebaff086d7835a71c7f9cab01a9cef01b945859cb5cdf759904b881be02e2"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "limitations": [
+        "논문 PDF·부록 원본은 아직 미보관, 공개 출판 본문 확인과 구분",
+        "EPSG·수직 기준·시설 유효 시점은 계속 미확인",
+        "문헌의 단면·유입 추정값과 사후 공간자료를 2010 실측 입력으로 표시하지 않음",
+        "원 관망의 2010 강우·추정 외부 유입·초기 상태를 보존한 문헌 단면 설계 비교",
+        "시설 면적과 처리 불투수 면적은 사용자의 가상 설계이며 현장 설치 가능 범위 미확인",
+        "초기 포화도 0·문헌 단면·하부 침투 4mm/h는 설계 조건이며 현장 실측값 아님",
+        "좌표 정합·지표 결합·가격 미확정: 주간 설치·예산 차감·순위 게시 제외",
+        "공개 문헌의 설계 범위이며 서울 현장 또는 특정 제품의 실측 제원이 아님",
+        "시설 위치·대체 면적·집수 연결·초기 포화도·배수구 규격·하부 침투율은 명시된 설계 입력",
+        "기존 집수구역 출구를 계승하며 새로운 무한 방류구를 생성하지 않음",
+        "SWMM LID 배수는 수신 관망 수두의 역압이나 지하수에 의한 침투 저하를 완전하게 연결하지 않음",
+        "덮개 이용조 면적의 직접 강우는 제외, 덮개에서 외부로 떨어지는 물의 별도 경로 미구현",
+        "이용조 방류는 관망 배수이며 수요·수질 근거 없는 재이용 점수 없음",
+        "공사비·입지·현장 연결 검증 전 신규 시설의 운영 설치 및 순위 미개방",
+        "전면 불투수 집수의 명시적 균질 분할; 실제 지붕·홈통 연결 관측 아님",
+        "기존 강우 면적·조도·요지저류·폭/면적 보존, 덮개 강우는 원 출구로 우회",
+        "집수 유출은 이용조 측방 유입으로 연결; 홈통 용량·막힘·역류의 지붕 재유입 미모형화",
+        "지정 배수·월류 접속관의 길이·내경·마찰·수두·역류 계산; 미지정 출구는 원 노드에 직접 연결",
+        "포화 토양·수질·수요·펌프 없는 재이용 저감점수 부여 금지",
+        "비상구 용량 초과에 따른 이용조 절점 월류는 실패로 보존",
+        "덮개·이용조 집수를 제외한 불투수 우회면만 다른 LID 배분 가능; 시설 배수 재포집 없음",
+        "출구 접속부는 초기 수심·추가 압력고·지표 저류 면적 0, 관 국부 손실 0·별도 역류 방지 없음의 설계 가정; 접속부 월류 시 효과 비교 보류",
+        "월류 체적은 지표 침수 깊이·면적·지속시간의 대체 지표가 아님",
+        "원본 EXTRAN 수치 실패를 보존하고 별도 SLOT 파생 입력으로 계산; 원본의 달력 종료보다 1초 짧은 엔진 평가 창",
+        "첨두는 같은 시각의 모든 외부 출구 유량 합의 최댓값이며 출구별 최댓값의 합이 아님",
+        "외부 출구 첨두는 공개 연구 관망의 계산값이며 실제 하류 침수 위험도·현장 효과 확정값이 아님; 필수 지표 침수 미확보로 총점 없음"
+      ],
+      "metricComparison": {
+        "schemaVersion": 1,
+        "method": "SIGNED_ABSOLUTE_PRIMARY_RELATIVE_AUXILIARY_V1",
+        "scope": "PUBLISHED_NETWORK_REFERENCE_DESIGN",
+        "window": {
+          "kind": "ELAPSED_SECONDS",
+          "start": 0,
+          "end": 86339,
+          "specificationSha256": "d1d16a03051f33f0bfe03343dd7862c21a2e796442175798e85d664ff4cc72c2"
+        },
+        "primaryMetricId": null,
+        "compositeScore": null,
+        "relativeUsedForRanking": false,
+        "metrics": [
+          {
+            "id": "surfaceDischargeM3",
+            "unit": "m3",
+            "boundary": "SELECTED_SURFACE_OUTLET",
+            "preferredDirection": "DECREASE",
+            "status": "UNAVAILABLE",
+            "reason": "DIFFERENT_EVALUATION_BOUNDARY",
+            "baseline": null,
+            "strategy": null,
+            "signedImprovement": null,
+            "relativeImprovementPercent": null,
+            "relativeStatus": "NOT_COMPARABLE"
+          },
+          {
+            "id": "surfaceAccountedVolumeM3",
+            "unit": "m3",
+            "boundary": "SELECTED_SURFACE_OUTLET_WITH_NET_STORAGE",
+            "preferredDirection": "DECREASE",
+            "status": "UNAVAILABLE",
+            "reason": "DIFFERENT_EVALUATION_BOUNDARY",
+            "baseline": null,
+            "strategy": null,
+            "signedImprovement": null,
+            "relativeImprovementPercent": null,
+            "relativeStatus": "NOT_COMPARABLE"
+          },
+          {
+            "id": "surfacePeakM3s",
+            "unit": "m3/s",
+            "boundary": "SELECTED_SURFACE_OUTLET",
+            "preferredDirection": "DECREASE",
+            "status": "UNAVAILABLE",
+            "reason": "DIFFERENT_EVALUATION_BOUNDARY",
+            "baseline": null,
+            "strategy": null,
+            "signedImprovement": null,
+            "relativeImprovementPercent": null,
+            "relativeStatus": "NOT_COMPARABLE"
+          },
+          {
+            "id": "networkOutflowM3",
+            "unit": "m3",
+            "boundary": "ALL_NETWORK_EXTERNAL_OUTFALLS",
+            "preferredDirection": "DECREASE",
+            "status": "WITHHELD",
+            "reason": "NUMERICAL_FAILURE",
+            "baseline": 2180749.855360638,
+            "strategy": 2180747.932537073,
+            "signedImprovement": null,
+            "relativeImprovementPercent": null,
+            "relativeStatus": "NOT_COMPARABLE"
+          },
+          {
+            "id": "networkPeakM3s",
+            "unit": "m3/s",
+            "boundary": "ALL_NETWORK_EXTERNAL_OUTFALLS",
+            "preferredDirection": "DECREASE",
+            "status": "WITHHELD",
+            "reason": "NUMERICAL_FAILURE",
+            "baseline": 39.04103494825935,
+            "strategy": 39.04103494825935,
+            "signedImprovement": null,
+            "relativeImprovementPercent": null,
+            "relativeStatus": "NOT_COMPARABLE"
+          },
+          {
+            "id": "networkFloodingM3",
+            "unit": "m3",
+            "boundary": "NETWORK_EXTERNAL_NODE_FLOODING",
+            "preferredDirection": "DECREASE",
+            "status": "WITHHELD",
+            "reason": "NUMERICAL_FAILURE",
+            "baseline": 1507902.468925209,
+            "strategy": 1507892.7919539385,
+            "signedImprovement": null,
+            "relativeImprovementPercent": null,
+            "relativeStatus": "NOT_COMPARABLE"
+          },
+          {
+            "id": "networkFloodingSeconds",
+            "unit": "s",
+            "boundary": "NETWORK_EXTERNAL_NODE_FLOODING",
+            "preferredDirection": "DECREASE",
+            "status": "WITHHELD",
+            "reason": "NUMERICAL_FAILURE",
+            "baseline": 43592.200000000004,
+            "strategy": 47740.806000000215,
+            "signedImprovement": null,
+            "relativeImprovementPercent": null,
+            "relativeStatus": "NOT_COMPARABLE"
+          },
+          {
+            "id": "surfaceDepthAreaTimeM3Hours",
+            "unit": "m3*h",
+            "boundary": "CONNECTED_SURFACE_GRID",
+            "preferredDirection": "DECREASE",
+            "status": "UNAVAILABLE",
+            "reason": "NO_SURFACE_GRID",
+            "baseline": null,
+            "strategy": null,
+            "signedImprovement": null,
+            "relativeImprovementPercent": null,
+            "relativeStatus": "NOT_COMPARABLE"
+          },
+          {
+            "id": "reusedVolumeM3",
+            "unit": "m3",
+            "boundary": "VERIFIED_USE_DEMAND",
+            "preferredDirection": "INCREASE",
+            "status": "UNAVAILABLE",
+            "reason": "NO_USE_DEMAND",
+            "baseline": null,
+            "strategy": null,
+            "signedImprovement": null,
+            "relativeImprovementPercent": null,
+            "relativeStatus": "NOT_COMPARABLE"
+          }
+        ]
+      }
+    },
+    "message": ""
+  }
+}

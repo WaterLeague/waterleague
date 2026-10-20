@@ -7,6 +7,7 @@ from .connected_storage import append_section, capacity, identifier, indexed, nu
 from .flood_errors import require
 from ..ingestion.published_network import digest, records
 from .cistern_inlet import compile_inlet
+from .cistern_outlet import compile_outlet
 
 METHOD = 'COVERED_CISTERN_IMPERVIOUS_CAPTURE_DYNWAVE_V1'
 MIXED_METHOD = 'COVERED_CISTERN_MIXED_SURFACE_CAPTURE_DYNWAVE_V2'
@@ -27,7 +28,8 @@ def compile_cistern(raw, design):
     required = {
         'schemaVersion', 'sourceNetworkSha256', 'id', 'subcatchmentId', 'captureAreaM2',
         'footprintM2', 'invertM', 'depthAreaCurve', 'initialDepthM', 'drain', 'overflow', 'evidence'}
-    require(isinstance(design, dict) and set(design) in (required, required | {'inletPipe'})
+    require(isinstance(design, dict) and required <= set(design)
+        and set(design) <= required | {'inletPipe', 'drainPipe', 'overflowPipe'}
         and type(design['schemaVersion']) is int and design['schemaVersion'] in (1, 2, 3)
         and design['sourceNetworkSha256'] == digest(raw), 'CISTERN_SOURCE_BINDING_INVALID')
     require(isinstance(design['evidence'], str) and design['evidence'].strip(), 'CISTERN_EVIDENCE_REQUIRED')
@@ -106,6 +108,9 @@ def compile_cistern(raw, design):
     names = {name.upper(), child.upper(), curve.upper(), (name+'_D').upper(), (name+'_O').upper()}
     if 'inletPipe' in design:
         names.update((name + suffix).upper() for suffix in ('_U', '_I'))
+    for kind, suffix in (('drain', 'D'), ('overflow', 'O')):
+        if kind + 'Pipe' in design:
+            names.update((name + '_' + suffix + ending).upper() for ending in ('J', 'C'))
     if mixed: names.add(bypass.upper())
     if split_cover: names.add(cover.upper())
     existing = {t.upper() for rows in sections.values() for r in rows for t in r['tokens']}
@@ -162,7 +167,9 @@ def compile_cistern(raw, design):
     for i, p in enumerate(design['depthAreaCurve']):
         added['CURVES'].append(f'{curve} {"STORAGE " if i == 0 else ""}{p["depthM"]:.15g} {p["areaM2"]:.15g}')
     ports = {}
+    outlet_pipes = {}
     closed = design['drain'] == {'mode': 'CLOSED_NO_WITHDRAWAL'}
+    require(not closed or 'drainPipe' not in design, 'CISTERN_CLOSED_DRAIN_PIPE_INVALID')
     for kind, suffix in (('drain', 'D'), ('overflow', 'O')):
         # 배출 중지 설계에는 가상 자연배수구를 추가하지 않는다.
         if kind == 'drain' and closed:
@@ -176,13 +183,24 @@ def compile_cistern(raw, design):
         require(type(p['flapGate']) is bool, 'CISTERN_FLAP_INVALID')
         target_invert, target_depth = source_number(internal[target][1]), source_number(internal[target][2])
         require(all(math.isfinite(v) for v in (target_invert, target_depth)) and target_depth > 0
-            and max(invert, target_invert) <= crest
-            and crest+diameter <= min(invert+depth, target_invert+target_depth), 'CISTERN_PORT_ELEVATION_INVALID')
+            and invert <= crest and crest+diameter <= invert+depth, 'CISTERN_PORT_ELEVATION_INVALID')
+        port_target = host[2]
+        if kind + 'Pipe' in design:
+            require(not sections.get('FILES'), 'CISTERN_EXTERNAL_STATE_UNSUPPORTED')
+            pipe_sections, pipe = compile_outlet(design[kind + 'Pipe'], name, suffix, p,
+                host[2], target_invert, target_depth)
+            for section, rows in pipe_sections.items():
+                added.setdefault(section, []).extend(rows)
+            outlet_pipes[kind] = pipe
+            port_target = pipe['nodeId']
+        else:
+            require(target_invert <= crest and crest+diameter <= target_invert+target_depth,
+                'CISTERN_PORT_ELEVATION_INVALID')
         link = name+'_'+suffix
-        added['ORIFICES'].append(f'{link} {name} {host[2]} SIDE {crest-invert:.15g} '
+        added['ORIFICES'].append(f'{link} {name} {port_target} SIDE {crest-invert:.15g} '
             f'{coefficient:.15g} {"YES" if p["flapGate"] else "NO"} 0')
         added['XSECTIONS'].append(f'{link} CIRCULAR {diameter:.15g} 0 0 0')
-        ports[kind] = {'linkId': link, 'nodeId': host[2], **deepcopy(p)}
+        ports[kind] = {'linkId': link, 'nodeId': port_target, **deepcopy(p)}
     if not closed:
         require(design['overflow']['crestM'] > design['drain']['crestM'], 'CISTERN_OVERFLOW_LEVEL_INVALID')
     ending = '\r\n' if '\r\n' in text else '\n'
@@ -229,13 +247,17 @@ def compile_cistern(raw, design):
         limitations[2] = '명시적 원형 집수 연결관의 마찰·수두·역류 계산; 실제 홈통 관측·막힘·지붕 재유입 미모형화'
         limitations[3] = '배수·비상구의 관망 수두 및 역류 반영; 출구 접속관 마찰은 별도 설계 필요'
         limitations.append('집수 입구는 초기 수심·추가 압력고·지표 저류 면적 0, 국부 손실 0·역류 방지 없음의 설계 가정; 입구 월류 시 효과 비교 보류')
+    if outlet_pipes:
+        limitations[3] = '지정 배수·월류 접속관의 길이·내경·마찰·수두·역류 계산; 미지정 출구는 원 노드에 직접 연결'
+        limitations.append('출구 접속부는 초기 수심·추가 압력고·지표 저류 면적 0, 관 국부 손실 0·별도 역류 방지 없음의 설계 가정; 접속부 월류 시 효과 비교 보류')
     method = SHARED_METHOD if split_cover else MIXED_METHOD if mixed else METHOD
     return result, {'schemaVersion': design['schemaVersion'], 'method': method,
-        'source': SOURCE | {'sections': [*SOURCE['sections'], '[JUNCTIONS]', '[CONDUITS]']} if inlet else SOURCE,
+        'source': SOURCE | {'sections': [*SOURCE['sections'], '[JUNCTIONS]', '[CONDUITS]']} if inlet or outlet_pipes else SOURCE,
         'sourceNetworkSha256': digest(raw), 'derivedNetworkSha256': digest(result),
         'compilerSha256': digest(Path(__file__).read_bytes()), 'design': deepcopy(design),
         'drainOperation': 'CLOSED_NO_WITHDRAWAL' if closed else 'GRAVITY_ORIFICE',
         **({'inletPipe': inlet} if inlet else {}),
+        **({'outletPipes': outlet_pipes} if outlet_pipes else {}),
         'catchmentPartition': partition,
         'facilities': [{'id': design['id'], 'nodeId': name, 'facilityType': 'RAINWATER_CISTERN',
             'capacityM3': volume, **volume_properties(volume), 'ports': ports, 'directRainfallM3': 0, 'evaporationFactor': 0,
