@@ -4,6 +4,7 @@ import {
   type SensitivityMetrics,
 } from '../dto/initializationSensitivityDto';
 import { InitializationEvidence } from './InitializationEvidence';
+import { CisternInitializationEvidence } from './CisternInitializationEvidence';
 import { physicalAmount as amount } from '../service/physicalValueFormat';
 import './initializationSensitivity.css';
 
@@ -35,6 +36,7 @@ export function InitializationSensitivityEvidence({
       </p>
     );
   const report = parsed.data;
+  if (report.schemaVersion === 3) return <CisternInitializationEvidence value={report} />;
   const swale = report.seedPolicy === 'NOT_APPLICABLE_FIXED_EMPTY_SURFACE';
   const seedLabel = (seed: number) =>
     swale ? '빈 표면 시작' : seed === 0 ? '건조 시작' : '포화 시작';

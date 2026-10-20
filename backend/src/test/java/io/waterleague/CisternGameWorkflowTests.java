@@ -86,7 +86,9 @@ class CisternGameWorkflowTests extends PostgresIntegrationTest {
         region.modelHash(), List.of(new HistoricalRequest.Item(site.cellId(),
             FacilityType.RAINWATER_CISTERN, new BigDecimal("235"),
             Instant.parse(region.start()).plusSeconds(137), site.modelHash())),
-        null, "INSTALLATION_TIME_EXPERIMENT_V1", null, design.revision(), event.id()));
+        site.cellId(), "INSTALLATION_TIME_EXPERIMENT_V1", null, design.revision(), event.id()));
+    assertThat(experiment.placements().get(0).path("initializationSensitivity").asString())
+        .isEqualTo("SELECTED_CISTERN_7_DAY_STORAGE_V3");
     var reference = new HistoricalDesignSubmissionRequest(UUID.randomUUID(),
         design.revision(), design.snapshotSha256());
     var submitted = submissions.submitSaved(owner, event.id(), reference);
@@ -129,6 +131,15 @@ class CisternGameWorkflowTests extends PostgresIntegrationTest {
     assertThat(experiment.state()).isEqualTo("SUCCEEDED");
     assertThat(experimentDemand.path("evaluationSeconds").asDouble()).isEqualTo(21403);
     assertThat(experimentDemand.path("observedReuseM3").isNull()).isTrue();
+    var sensitivity = experiment.result().path("initializationSensitivity");
+    assertThat(sensitivity.path("schemaVersion").asInt()).isEqualTo(3);
+    assertThat(sensitivity.path("status").asString()).isEqualTo("SUCCEEDED");
+    assertThat(sensitivity.path("cases").size()).isEqualTo(4);
+    for (var condition : sensitivity.path("cases")) {
+      assertThat(condition.path("status").asString()).isEqualTo("SUCCEEDED");
+      assertThat(condition.path("nativeSeedStorageM3").asDouble())
+          .isEqualTo(condition.path("seedSaturationPercent").asInt() == 0 ? 0 : 2.35);
+    }
     var comparison = actual.result().runoffComparison();
     assertThat(comparison.path("schemaVersion").asInt()).isEqualTo(3);
     assertThat(comparison.path("detention").path("status").asString()).isEqualTo("COMPARABLE");

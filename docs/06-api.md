@@ -280,3 +280,6 @@ RFC 9457 `application/problem+json`: type, title, status, detail, instance, code
 
 
 일반 이용조 수요 비교: 신규 주간 물리/회원 재해 실험/전체 사건 제출의 시설 `cistern.demandScenario`는 선택적 schemaVersion 1 객체다. 고정 시나리오 ID·카탈로그/INP 해시·근거·평가 시작/종료·평가 초·면적/용량·일수요·평가 수요·잠재 공급·부족·공급 비율·초기/최종 저류·유입·월류·물수지 잔차를 반환한다. `rankingEligible=false`, `observedReuseM3=null`이며 기본 `cistern.reuseM3=null`과 자연배수 계산은 보존한다. 미포함 과거 결과에 새 시나리오를 추정하여 채우지 않는다. 게스트 최종 결과 잠금은 그대로 적용한다.
+
+
+이용조 초기 저류 비교: 회원 `/historical`의 기존 `sensitivityCellId`로 이용조를 선택하면 서버가 `SELECTED_CISTERN_7_DAY_STORAGE_V3`를 동결한다. `initializationSensitivity` schemaVersion 3은 자연배수/문헌 수요 운전별 0/100% 초기 저류 4조건, 요청과 대조한 원 엔진 시드 저류, 동일 선행/평가 기간, 원 지표·탱크 수지·수요 공급·조건별 성공/실패와 운전별 차이를 제공한다. 임의 초기값·운전 ID·엔진 입력은 외부 요청으로 받지 않는다. 기존 일반 결과·비용·순위는 기본 선행 조건을 유지하며 게스트 결과 허용 목록에 이 비교를 추가하지 않는다. 재현 묶음 sensitivity 폴더에 4조건 입력/출력·상태·정책·코드를 보존한다. 기존 schema 1/2 자료는 그대로 읽는다.

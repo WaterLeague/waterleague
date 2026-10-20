@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class HistoricalService {
   private static final String SENSITIVITY_POLICY = "SELECTED_SURFACE_7_DAY_DRY_WET_V1";
+  private static final String CISTERN_STATE_POLICY = "SELECTED_CISTERN_7_DAY_STORAGE_V3";
   private static final String SWALE_STATE_POLICY = "SELECTED_SWALE_7_DAY_STATE_V2";
   private final HistoricalRepository jobs;
   private final io.waterleague.budget.service.BudgetService budget;
@@ -330,7 +331,7 @@ public class HistoricalService {
         boolean requestedSensitivity = candidate.get("cellId").equals(dto.sensitivityCellId());
         if (requestedSensitivity != entry.has("initializationSensitivity")
             || (requestedSensitivity
-                && !Set.of(SENSITIVITY_POLICY, SWALE_STATE_POLICY)
+                && !Set.of(SENSITIVITY_POLICY, SWALE_STATE_POLICY, CISTERN_STATE_POLICY)
                     .contains(entry.path("initializationSensitivity").asString())))
           throw new DomainException(ErrorCode.CONFLICT);
         boolean requestedPavement = candidate.get("cellId").equals(dto.pavementComparisonCellId());
@@ -444,7 +445,9 @@ public class HistoricalService {
             "initializationSensitivity",
             row.get("facilityType") == FacilityType.VEGETATIVE_SWALE
                 ? SWALE_STATE_POLICY
-                : SENSITIVITY_POLICY);
+                : row.get("facilityType") == FacilityType.RAINWATER_CISTERN
+                    ? CISTERN_STATE_POLICY
+                    : SENSITIVITY_POLICY);
       }
       if (row.get("cellId").equals(dto.pavementComparisonCellId())) {
         if (site.initializationPolicy() == null

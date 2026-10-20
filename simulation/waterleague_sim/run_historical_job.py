@@ -38,9 +38,12 @@ def calculate(request, directory):
                     != pavement_maintenance.CATALOG_SHA256):
             raise ValueError('HISTORICAL_PAVEMENT_COMPARISON_INVALID')
     if (len(selected) > 1 or any(p['initializationSensitivity'] not in
-            ('SELECTED_SURFACE_7_DAY_DRY_WET_V1', 'SELECTED_SWALE_7_DAY_STATE_V2') for p in selected)
+            ('SELECTED_SURFACE_7_DAY_DRY_WET_V1', 'SELECTED_SWALE_7_DAY_STATE_V2',
+             'SELECTED_CISTERN_7_DAY_STORAGE_V3') for p in selected)
             or any((p['initializationSensitivity'] == 'SELECTED_SWALE_7_DAY_STATE_V2')
-                   != (p['facilityType'] == 'VEGETATIVE_SWALE') for p in selected)):
+                   != (p['facilityType'] == 'VEGETATIVE_SWALE') for p in selected)
+            or any((p['initializationSensitivity'] == 'SELECTED_CISTERN_7_DAY_STORAGE_V3')
+                   != (p['facilityType'] == 'RAINWATER_CISTERN') for p in selected)):
         raise ValueError('HISTORICAL_SENSITIVITY_INVALID')
     directory.mkdir(parents=True, exist_ok=True)
     from .admission import archive_native as archive
@@ -141,6 +144,9 @@ def calculate(request, directory):
         from .engine.initialization_sensitivity import analyze
         physical = {k: selected[0][k] for k in ('cellId', 'facilityType', 'areaM2')}
         version = 2 if selected[0]['initializationSensitivity'] == 'SELECTED_SWALE_7_DAY_STATE_V2' else 1
+        if selected[0]['initializationSensitivity'] == 'SELECTED_CISTERN_7_DAY_STORAGE_V3':
+            from .engine.cistern_initialization import analyze
+            version = 3
         report = analyze(sensitivity_input, physical, evaporation, antecedent, directory/'sensitivity',
                          days=(7,), schema_version=version)
         output['initializationSensitivity'] = report

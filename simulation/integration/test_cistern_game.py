@@ -86,6 +86,20 @@ class CisternGameWorkflowTests(unittest.TestCase):
             self.assertEqual(row['state'], 'SUCCEEDED', row['error_code'])
             experiment_result = json.loads(row['result'])
             experiment_cistern = experiment_result['facilities'][0]['cistern']
+            sensitivity = experiment_result['initializationSensitivity']
+            self.assertEqual(sensitivity['schemaVersion'], 3)
+            self.assertEqual(sensitivity['status'], 'SUCCEEDED')
+            self.assertEqual(len(sensitivity['cases']), 4)
+            self.assertEqual(sensitivity['evaluationStart'], observed['rainfall']['start'])
+            self.assertEqual(sensitivity['evaluationEnd'], observed['rainfall']['end'])
+            for case in sensitivity['cases']:
+                self.assertEqual(case['status'], 'SUCCEEDED')
+                self.assertAlmostEqual(case['nativeSeedStorageM3'], 2.35 * case['seedSaturationPercent'] / 100)
+                self.assertTrue(case['initialization']['scoreExcludesWarmup'])
+            sensitivity_path = root / 'historical' / str(experiment['id']) / str(experiment['lease_token']) / 'sensitivity'
+            sensitivity_manifest = json.loads((sensitivity_path / 'manifest.json').read_text())
+            for name, sha in sensitivity_manifest.items():
+                self.assertEqual(hashlib.sha256((sensitivity_path / name).read_bytes()).hexdigest(), sha)
             experiment_demand = experiment_cistern['demandScenario']
             self.assertEqual(experiment_demand['evaluationSeconds'], 21403)
             self.assertEqual(datetime.fromisoformat(experiment_demand['evaluationStart']), start + timedelta(seconds=137))
@@ -119,5 +133,6 @@ class CisternGameWorkflowTests(unittest.TestCase):
                 'historicalCistern': facility['cistern'], 'differenceM3': final['differenceM3'],
                 'weeklyResult': weekly, 'designContract': facility['designContract'],
                 'experimentCistern': experiment_cistern,
+                'cisternInitializationSensitivity': sensitivity,
                 'installationAndBudgetVerified': True, 'submissionAndScorePublished': True,
             }, ensure_ascii=False, indent=2) + '\n')

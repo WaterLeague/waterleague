@@ -13,6 +13,10 @@ def apply(source, model, placement, *, demand_scenario=None):
             or model.get('facilityDesignSet') != rules()['facilityDesignSet']):
         raise SimulationQualityError('CISTERN_GAME_PLACEMENT_INVALID')
     rule = rules()
+    saturation = model['hydrology'].get('initialSaturationPercent')
+    if (type(saturation) not in (int, float) or not math.isfinite(saturation)
+            or not 0 <= saturation <= 100):
+        raise SimulationQualityError('CISTERN_GAME_INITIAL_STATE_INVALID')
     volume = area * rule['capacityPerRoofAreaM']
     tank_area = volume / (rule['storageDepthMm'] / 1000)
     if demand_scenario is not None:
@@ -54,5 +58,6 @@ def apply(source, model, placement, *, demand_scenario=None):
         f'WL_RB STORAGE {rule["storageDepthMm"]} 1 0 0 YES',
         f'WL_RB DRAIN {rule["drainCoefficient"]:.15g} {rule["drainExponent"]} '
         f'{rule["drainOffsetMm"]} {rule["drainDelayHours"]}']
-    sections['LID_USAGE'] = [f'WL_TANK WL_RB 1 {tank_area:.15g} 0 0 100 0 * OUT 0']
+    # 초기 저장수도 원 EPA 물수지에 포함되도록 InitSat 입력으로 전달한다.
+    sections['LID_USAGE'] = [f'WL_TANK WL_RB 1 {tank_area:.15g} 0 {saturation:.15g} 100 0 * OUT 0']
     return '\n\n'.join('[' + key + ']\n' + '\n'.join(rows) for key, rows in sections.items()) + '\n'

@@ -284,12 +284,16 @@ export function HistoricalPanel({
           >
             {placed.facilityType === 'VEGETATIVE_SWALE'
               ? '이 수로의 선행 상태 확인'
-              : '이 시설의 시작 수분 비교'}
+              : placed.facilityType === 'RAINWATER_CISTERN'
+                ? '이 이용조의 시작 저류 비교'
+                : '이 시설의 시작 수분 비교'}
           </button>
           <p>
             {placed.facilityType === 'VEGETATIVE_SWALE'
               ? '식생수로의 선행 관측 이후 상태를 확인합니다. 초기 포화도는 적용되지 않아 건습 비교를 제공하지 않습니다.'
-              : '선택 시설 한 곳의 건조·포화 시작 조건을 추가 계산합니다. 일반 계산보다 시간이 더 걸립니다.'}
+              : placed.facilityType === 'RAINWATER_CISTERN'
+                ? '자연배수·수요 인출 각각에서 빈 이용조와 가득 찬 이용조의 선행 7일 이후 상태를 비교합니다.'
+                : '선택 시설 한 곳의 건조·포화 시작 조건을 추가 계산합니다. 일반 계산보다 시간이 더 걸립니다.'}
           </p>
           {placed.facilityType === 'PERMEABLE_PAVEMENT' && (
             <>
@@ -339,7 +343,7 @@ export function HistoricalPanel({
           <p>작은 차이는 물수지 오차보다 작을 수 있습니다. 현장 효과로 확정하지 않습니다.</p>
           {s.currentResult.initializationSensitivity && (
             <details>
-              <summary>사건 전체 창의 시작 수분 비교 · 누적 효과와 별도</summary>
+              <summary>사건 전체 창의 시작 수분·저류 비교 · 누적 효과와 별도</summary>
               <InitializationSensitivityEvidence
                 value={s.currentResult.initializationSensitivity}
               />

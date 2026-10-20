@@ -1,20 +1,10 @@
 import { z } from 'zod';
 import { initializationDto } from './initializationDto';
+import { sensitivityMetricsDto } from './sensitivityMetricsDto';
+import { cisternInitializationDto } from './cisternInitializationDto';
 
 const value = z.number().finite();
-export const sensitivityMetricsDto = z.object({
-  initialSoilMoisture: value.nullable(),
-  initialStorageM3: value,
-  initialLidStorageM3: value.nullable(),
-  initialSurfaceDepthMm: value.nullable(),
-  initialPavementDepthMm: value.nullable(),
-  initialStorageDepthMm: value.nullable(),
-  evaluatedDischargeM3: value,
-  evaluatedEvaporationM3: value,
-  evaluatedInfiltrationM3: value,
-  peakDischargeMean1MinM3s: value,
-  contributionM3: value,
-});
+export { sensitivityMetricsDto } from './sensitivityMetricsDto';
 const condition = {
   days: z.literal(7),
   seedSaturationPercent: z.union([z.literal(0), z.literal(100)]),
@@ -28,7 +18,7 @@ const caseDto = z.discriminatedUnion('status', [
   }),
   z.object({ ...condition, status: z.literal('FAILED'), errorCode: z.string() }),
 ]);
-export const initializationSensitivityDto = z
+const surfaceInitializationSensitivityDto = z
   .object({
     schemaVersion: z.union([z.literal(1), z.literal(2)]),
     method: z.enum([
@@ -69,6 +59,7 @@ export const initializationSensitivityDto = z
             (swale ? 'NOT_APPLICABLE_FIXED_EMPTY_SURFACE' : 'LID_SATURATION_BOUNDARIES');
     return (
       versionValid &&
+      v.facilityType !== 'RAINWATER_CISTERN' &&
       v.cases.length === count &&
       new Set(v.cases.map((c) => c.seedSaturationPercent)).size === count &&
       (!swale || v.cases[0].seedSaturationPercent === 0) &&
@@ -77,5 +68,9 @@ export const initializationSensitivityDto = z
         v.comparison.seedDifferences.length === (swale ? 0 : 1))
     );
   });
+export const initializationSensitivityDto = z.union([
+  surfaceInitializationSensitivityDto,
+  cisternInitializationDto,
+]);
 export type InitializationSensitivityData = z.infer<typeof initializationSensitivityDto>;
 export type SensitivityMetrics = z.infer<typeof sensitivityMetricsDto>;

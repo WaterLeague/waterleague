@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>이용조 초기 저류 비교 · 로컬 검증</title>
+  </head>
+  <body style="margin: 0; background: #f2f3ee; font: 14px system-ui; color: #284133">
+    <header style="padding: 20px; border-bottom: 1px solid #cad5c5">
+      <strong>로컬 QA · 제품 빌드 제외</strong>
+      <p>2022. 08. 08 관측 강우 · 성동 공개 지붕 · 실제 워커의 선행 7일 비교</p>
+      <button id="success">실제 계산 결과</button>
+      <button id="failure">수요 운전 한 조건 실패 시험</button>
+      <p id="status" role="status">
+        실제 계산 결과 표시 · 아래 비교 버튼은 서버 제출 없이 요청 대상을 확인합니다.
+      </p>
+    </header>
+    <main style="max-width: 560px; padding: 16px; margin: auto">
+      <div id="action"></div>
+      <div id="root"></div>
+    </main>
+    <script type="module">
+      if (!import.meta.env.DEV || !['localhost', '127.0.0.1', '[::1]'].includes(location.hostname))
+        throw new Error('로컬 개발 환경 전용');
+      const [
+        { default: React },
+        { createRoot },
+        { HistoricalPanel },
+        { InitializationSensitivityEvidence },
+        { initializationSensitivityDto },
+        { loadSite },
+        { default: fixture },
+      ] = await Promise.all([
+        import('react'),
+        import('react-dom/client'),
+        import('/src/domains/historical/view/HistoricalPanel.tsx'),
+        import('/src/domains/physics/view/InitializationSensitivityEvidence.tsx'),
+        import('/src/domains/physics/dto/initializationSensitivityDto.ts'),
+        import('/src/domains/installation/repository/installationRepository.ts'),
+        import('/src/domains/physics/view/fixtures/cistern-initialization-v3.json'),
+        import('/src/shared/ui/base.css'),
+        import('/src/shared/ui/game.css'),
+        import('/src/domains/game/view/play.css'),
+        import('/src/domains/city/view/shared-play.css'),
+      ]);
+      const output = document.getElementById('status');
+      const site = await loadSite('11200', fixture.cellId);
+      const facilityType = 'RAINWATER_CISTERN';
+      const draft = {
+        site,
+        facilityType,
+        areaM2: fixture.areaM2,
+        marker: {
+          id: 'local-qa',
+          facilityType,
+          areaM2: fixture.areaM2,
+          cost: fixture.areaM2 * site.unitCosts[facilityType],
+          ownerName: '로컬 검증 설계',
+          installedAt: '2022-08-08T09:02:17Z',
+        },
+      };
+      createRoot(document.getElementById('action')).render(
+        React.createElement(HistoricalPanel, {
+          state: {
+            drafts: [draft],
+            design: { ready: true },
+            calculationsReady: true,
+            busy: false,
+            selectedRain: {},
+            budget: null,
+            remaining: 0,
+            elapsedSeconds: 200,
+            duration: 21540,
+            remove: () => {},
+            calculate: async (cell) => {
+              output.textContent = '요청 대상: ' + cell + ' · 서버 제출 없음';
+            },
+          },
+          site,
+          type: facilityType,
+          area: String(fixture.areaM2),
+          authenticated: true,
+          districtName: '성동구',
+          error: '',
+          onType: () => {},
+          onArea: () => {},
+        })
+      );
+      const root = createRoot(document.getElementById('root'));
+      function render(value) {
+        root.render(
+          React.createElement(InitializationSensitivityEvidence, {
+            value: initializationSensitivityDto.parse(value),
+          })
+        );
+      }
+      document.getElementById('success').onclick = () => {
+        output.textContent = '실제 계산 결과 표시';
+        render(fixture);
+      };
+      document.getElementById('failure').onclick = () => {
+        output.textContent = '표시 시험용 실패 조건 · 실제 계산 결과와 구분';
+        render({
+          ...fixture,
+          status: 'INCOMPLETE',
+          cases: [
+            ...fixture.cases.slice(0, 3),
+            {
+              days: 7,
+              seedSaturationPercent: 100,
+              operation: 'LITERATURE_DEMAND',
+              status: 'FAILED',
+              errorCode: 'LOCAL_TEST_FAILURE',
+            },
+          ],
+          comparisons: [
+            fixture.comparisons[0],
+            {
+              operation: 'LITERATURE_DEMAND',
+              comparison: { status: 'INCOMPLETE', ranges: null, seedDifferences: null },
+            },
+          ],
+        });
+      };
+      render(fixture);
+    </script>
+  </body>
+</html>
