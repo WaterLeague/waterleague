@@ -7,6 +7,7 @@ import { validateCombinedDesign } from '../service/storageDesign';
 import { HydraulicPortFields } from './HydraulicPortFields';
 import { WatershedDesignReview } from './WatershedDesignReview';
 import { WatershedLayout } from './WatershedLayout';
+import { CisternInletFields } from './CisternInletFields';
 import { physicalAmount as number } from '../../physics/service/physicalValueFormat';
 export function CisternDesignForm({
   catalog,
@@ -130,6 +131,10 @@ export function CisternDesignForm({
           {Number.isFinite(draft.areaM2 * draft.depthM) ? number(draft.areaM2 * draft.depthM) : '—'}{' '}
           m³
         </strong>
+        <CisternInletFields
+          value={draft.inletPipe}
+          onChange={(inletPipe) => setDraft({ ...draft, inletPipe })}
+        />
         <label>
           일반 배출 방식
           <select
@@ -174,8 +179,8 @@ export function CisternDesignForm({
         />
       </fieldset>
       <p className="watershed-warning">
-        관망 역압으로 배수가 막히거나 용량을 넘칠 수 있습니다. 홈통 수리·실제 지붕·선행 관측 초기
-        수심은 미확보이며, 넘친 물의 지표 연결이 없으면 효과 비교를 보류합니다.
+        관망 역압으로 배수가 막히거나 용량을 넘칠 수 있습니다. 실제 홈통·지붕·선행 관측 초기 수심은
+        미확보이며, 넘친 물의 지표 연결이 없으면 효과 비교를 보류합니다.
       </p>
       {error && <p role="alert">{error}</p>}
       {feedback && <p role="status">{feedback}</p>}

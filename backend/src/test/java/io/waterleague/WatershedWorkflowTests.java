@@ -788,7 +788,8 @@ class WatershedWorkflowTests extends PostgresIntegrationTest {
   }
 
   @org.junit.jupiter.params.ParameterizedTest
-  @org.junit.jupiter.params.provider.ValueSource(strings = {"S9", "S1", "S9-closed"})
+  @org.junit.jupiter.params.provider.ValueSource(
+      strings = {"S9", "S1", "S9-closed", "S9-pipe", "S9-narrow"})
   void bindsDisjointCisternCaptureCoverAndLidsFromTheSameOriginalCatchment(String scenario)
       throws Exception {
     String host = scenario.startsWith("S9") ? "S9" : "S1";
@@ -823,6 +824,26 @@ class WatershedWorkflowTests extends PostgresIntegrationTest {
               null,
               item.overflow(),
               true);
+    if (scenario.endsWith("-pipe") || scenario.endsWith("-narrow"))
+      item =
+          new WatershedRequest.CisternItem(
+              item.id(),
+              host,
+              item.captureAreaM2(),
+              item.areaM2(),
+              item.invertM(),
+              item.depthM(),
+              item.initialDepthM(),
+              item.drain(),
+              item.overflow(),
+              false,
+              new WatershedRequest.CisternInletPipe(
+                  new BigDecimal("10"),
+                  new BigDecimal(scenario.endsWith("-narrow") ? "0.001" : "0.1"),
+                  new BigDecimal("0.013"),
+                  new BigDecimal("14.4"),
+                  new BigDecimal("0.3"),
+                  new BigDecimal("14.2")));
     var dto =
         new WatershedRequest(
             UUID.randomUUID(),
@@ -894,6 +915,59 @@ class WatershedWorkflowTests extends PostgresIntegrationTest {
             new WatershedRequest.CisternRequest(
                 WatershedCatalogRepository.STORAGE_HASH, hydraulicCistern("Cistern1", "S9", "10")));
     assertThatThrownBy(() -> service.create(owner, covered)).isInstanceOf(DomainException.class);
+  }
+
+  @Test
+  void rejectsInvalidCisternPipeNumbersAndElevationsBeforeSaving() {
+    var source = hydraulicCistern("Cistern1", "S9", "10");
+    for (String[] values :
+        List.of(
+            new String[] {"0", ".1", ".013", "14.4", ".3", "14.2"},
+            new String[] {"10", ".1", "0", "14.4", ".3", "14.2"},
+            new String[] {"10", ".1", ".013", "14.4", ".01", "14.2"},
+            new String[] {"10", ".1", ".013", "14.4", ".3", "14.7"},
+            new String[] {"10", ".1", ".013", "14.4", ".3", "12"},
+            new String[] {"10", ".1", ".013", "14", ".3", "14.2"},
+            new String[] {".1", ".1", ".013", "14.4", ".3", "14.2"},
+            new String[] {"10", ".1", ".0001", "14.4", ".3", "14.2"})) {
+      var v = Arrays.stream(values).map(BigDecimal::new).toList();
+      var pipe =
+          new WatershedRequest.CisternInletPipe(
+              v.get(0), v.get(1), v.get(2), v.get(3), v.get(4), v.get(5));
+      var item =
+          new WatershedRequest.CisternItem(
+              source.id(),
+              source.catchmentId(),
+              source.captureAreaM2(),
+              source.areaM2(),
+              source.invertM(),
+              source.depthM(),
+              source.initialDepthM(),
+              source.drain(),
+              source.overflow(),
+              false,
+              pipe);
+      assertThatThrownBy(
+              () ->
+                  CisternDesignService.compile(
+                      new WatershedRequest.CisternRequest(
+                          WatershedCatalogRepository.STORAGE_HASH, item),
+                      catalog,
+                      new HashSet<>(),
+                      List.of()))
+          .isInstanceOf(DomainException.class);
+    }
+    assertThat(
+            validator.validate(
+                new WatershedRequest.CisternInletPipe(
+                    BigDecimal.TEN,
+                    BigDecimal.ONE,
+                    null,
+                    BigDecimal.TEN,
+                    BigDecimal.ONE,
+                    BigDecimal.TEN)))
+        .isNotEmpty();
+    assertThat(service.list(owner)).isEmpty();
   }
 
   @Test

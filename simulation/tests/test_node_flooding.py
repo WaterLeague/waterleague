@@ -32,3 +32,14 @@ class NodeFloodingTests(unittest.TestCase):
         d=copy.deepcopy(self.start);d['totals']['timeSeconds']=1;variants.append((d, self.end))
         for start,end in variants:
             with self.assertRaises(FloodModelError): summarize(start,end,self.layout)
+
+    def test_only_declared_cistern_inlet_is_allowed_without_inventing_coordinates(self):
+        self.start['nodes']['Inlet'] = {'type': 0, 'floodingM3': 0}
+        self.end['nodes']['Inlet'] = {'type': 0, 'floodingM3': 1}
+        self.end['totals']['floodingM3'] += 1
+        with self.assertRaisesRegex(FloodModelError, 'LOCATION_MISSING'):
+            summarize(self.start, self.end, self.layout)
+        report = summarize(self.start, self.end, self.layout, inlet_nodes=['Inlet'])
+        self.assertEqual(report['totalFloodingM3'], 6)
+        self.assertEqual(report['nodes'][-1],
+            {'id': 'Inlet', 'kind': 'JUNCTION', 'mapped': False, 'floodingM3': 1})

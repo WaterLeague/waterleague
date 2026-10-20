@@ -56,7 +56,33 @@ public record WatershedRequest(
           BigDecimal initialDepthM,
       @Valid Port drain,
       @NotNull @Valid Port overflow,
-      Boolean drainClosed) {
+      Boolean drainClosed,
+      @Valid CisternInletPipe inletPipe) {
+    public CisternItem(
+        String id,
+        String catchmentId,
+        BigDecimal captureAreaM2,
+        BigDecimal areaM2,
+        BigDecimal invertM,
+        BigDecimal depthM,
+        BigDecimal initialDepthM,
+        Port drain,
+        Port overflow,
+        Boolean drainClosed) {
+      this(
+          id,
+          catchmentId,
+          captureAreaM2,
+          areaM2,
+          invertM,
+          depthM,
+          initialDepthM,
+          drain,
+          overflow,
+          drainClosed,
+          null);
+    }
+
     public CisternItem(
         String id,
         String catchmentId,
@@ -86,6 +112,20 @@ public record WatershedRequest(
       return Boolean.TRUE.equals(drainClosed) ? drain == null : drain != null;
     }
   }
+
+  public record CisternInletPipe(
+      @NotNull @DecimalMin("0.001") @DecimalMax("10000") @Digits(integer = 5, fraction = 3)
+          BigDecimal lengthM,
+      @NotNull @DecimalMin("0.001") @DecimalMax("100") @Digits(integer = 3, fraction = 3)
+          BigDecimal diameterM,
+      @NotNull @DecimalMin("0.001") @DecimalMax("1") @Digits(integer = 1, fraction = 3)
+          BigDecimal roughness,
+      @NotNull @DecimalMin("-1000") @DecimalMax("10000") @Digits(integer = 5, fraction = 3)
+          BigDecimal upstreamInvertM,
+      @NotNull @DecimalMin("0.001") @DecimalMax("100") @Digits(integer = 3, fraction = 3)
+          BigDecimal upstreamMaxDepthM,
+      @NotNull @DecimalMin("-1000") @DecimalMax("10000") @Digits(integer = 5, fraction = 3)
+          BigDecimal downstreamInvertM) {}
 
   public WatershedRequest(
       UUID requestKey,

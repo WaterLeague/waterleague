@@ -1,0 +1,991 @@
+{
+  "schemaVersion": 1,
+  "id": "cistern-inlet-hydraulics-v1",
+  "verifiedOn": "2026-10-20",
+  "classification": "PUBLIC_RESEARCH_NETWORK_EXPLICIT_DESIGN_NOT_FIELD_VALIDATION",
+  "reference": {
+    "title": "EPA SWMM 5.2 User Manual",
+    "url": "https://nepis.epa.gov/Exe/ZyPURL.cgi?Dockey=P10145M6.TXT",
+    "sections": [
+      "JUNCTIONS",
+      "CONDUITS",
+      "XSECTIONS"
+    ],
+    "engineRevision": "7952ca837988b1c32f791812eccc9fd64547e093"
+  },
+  "codeSha256": {
+    "backend/src/main/java/io/waterleague/watershed/dto/WatershedRequest.java": "4abaf88a9a0796c9ac8397270c8bdd97cadbde85815d07afb82ad300382e6a21",
+    "backend/src/main/java/io/waterleague/watershed/service/CisternDesignService.java": "bc0c6973af6290bca9d87c2c35ca64bdd75a55a5fe036ea64cae4e5cdae394e6",
+    "simulation/waterleague_sim/engine/cistern_inlet.py": "6f0794c5d717f53dbabe1ce29c4a51921a1150c8df09ce5d179d4cd0ac92073c",
+    "simulation/waterleague_sim/engine/cistern_network.py": "dcec734c9c004bb97ccffb58ed20d51ea500889e663470d699dfe965c6f32496",
+    "simulation/waterleague_sim/engine/connected_storage.py": "4387005d32e46970adc537f52fd439761256505bda5703ed350fdb2130616037",
+    "simulation/waterleague_sim/engine/flow_connections.py": "41ecf6ddbb50e9189523e1222194f3558784b05425547490cd6fd4b30eaed9b1",
+    "simulation/waterleague_sim/presentation/node_flooding.py": "94026d80f53d8c3a6e0f62263b3ca6242715049b9940f1bc3edb7a8b01fd7fb8",
+    "simulation/waterleague_sim/run_watershed_job.py": "a6093e089de835a9ac59996f988fcf3606fd0a14b8c03e8c6e15a6a6dd2afe2f",
+    "simulation/tests/test_cistern_inlet.py": "46273fff34476a24393a415e3e2da2842f5576a0080ef67263d568deb541c90f",
+    "frontend/src/domains/watershed/dto/cisternDto.ts": "6fd0a505f942e815c49b11f56cef0573a2cabab9020ed418cff0624c799a2b77",
+    "frontend/src/domains/watershed/dto/storageDto.ts": "6d3051ff77290d0d4469386b9ac45f07e2ac45a3f1e0f5abbf20520e68b3394b",
+    "frontend/src/domains/watershed/dto/watershedDto.ts": "afaa178602f5171df4a4082e40c66fb38aa7a3672e7a27aa7f50135376c62e76",
+    "scripts/verify_cistern_inlet_readback.mjs": "6959d7d99836a865cce64ccc0049303dd8d92e7a7eb50f5bbb0a61d6a62fc012"
+  },
+  "checks": {
+    "cisternSimulationTests": 25,
+    "storageCompositionNodeFloodingPolicyTests": 20,
+    "isolatedServerTests": 22,
+    "actualWorkerTests": 8,
+    "ownerHttpReadbackTests": 1,
+    "frontendActualResponseCount": 5,
+    "finalInputsMatchExecutedInputs": [
+      {
+        "scenario": "S9",
+        "inputHash": "576cab30950d1c11f70d8fb3707b05ec3572317b81384706a2e69a9c557245f6",
+        "strategySha256": "77c8311ab50ce2f6c934212c5066e73ef71e6873c371b1ec6e552008fceab2cc",
+        "finalCompilerMatchesExecutedInputs": true
+      },
+      {
+        "scenario": "S1",
+        "inputHash": "3758bfb3b00c12e748618395a00e5fbbec7d9e7462db15d89f2921ef28c51376",
+        "strategySha256": "d37f0e5bb7418db7c2710c68c6b41907ca4a27f3e2aac9725aa02e593687fd0b",
+        "finalCompilerMatchesExecutedInputs": true
+      },
+      {
+        "scenario": "S9-closed",
+        "inputHash": "1c499ea4558b519c4b41323ea4a1940a7d0954f7144302e9ab81c268dec45aa4",
+        "strategySha256": "cf89a4cbea4624045b44d0277b102624f2993d1fd3ade8ad4355c27808dce0a4",
+        "finalCompilerMatchesExecutedInputs": true
+      },
+      {
+        "scenario": "S9-pipe",
+        "inputHash": "b6012c79f8cbb1308b6ffbfc80fd9fce50c4f341b851c3dac1022ad2ed8798c5",
+        "strategySha256": "5e04311ef80f503fb8cd371a213d3dccc5da0e1c28be9247c3aac0cc67edd6e6",
+        "finalCompilerMatchesExecutedInputs": true
+      },
+      {
+        "scenario": "S9-narrow",
+        "inputHash": "1fd42a338987f08874ec7ab457899f464d9e483fedadfa40046507e899412747",
+        "strategySha256": "7a820ed4593cfdce70e7cfe22c533628e86e2a2c614733dbde9612e4a7b2d705",
+        "finalCompilerMatchesExecutedInputs": true
+      }
+    ],
+    "sourceDatabaseCountsUnchanged": true,
+    "browserVerified": false,
+    "frontendTestFiles": 131,
+    "frontendTests": 440,
+    "backendTotalTests": 281,
+    "backendPassedTests": 274,
+    "backendConditionalSkippedTests": 7,
+    "frontendBuildAndFormatPassed": true,
+    "backendPackagePassed": true
+  },
+  "syntheticDiagnosticsNotObserved": true,
+  "nativeDiagnostics": [
+    {
+      "case": "wide",
+      "networkStatus": "PASSED",
+      "ledger": {
+        "startSeconds": 0.0,
+        "endSeconds": 120.0,
+        "facilities": [
+          {
+            "id": "Cistern",
+            "nodeId": "WLCT_Cistern",
+            "initialStorageM3": 0.0,
+            "inflowM3": 0.7734079135372459,
+            "outflowIncludingFloodingM3": 0.0,
+            "floodingM3": 0.0,
+            "finalStorageM3": 0.7733213303788247,
+            "capacityM3": 1.4,
+            "balanceResidualM3": 8.658315842124953e-05,
+            "allowedResidualM3": 0.007734079135372459,
+            "numericalStatus": "PASSED",
+            "nativeCapacityM3": 1.3998441111864406,
+            "volumeBasis": "EPA_CMS_STORAGE_VOLUME_TO_EXACT_SI_V1",
+            "initialAvailableM3": 1.3998441111864406,
+            "finalAvailableM3": 0.6265227808076159,
+            "reuseM3": null,
+            "reuseStatus": "NOT_CALCULATED_NO_USE_DEMAND",
+            "drainOperation": "CLOSED_NO_WITHDRAWAL"
+          }
+        ],
+        "inletPipe": {
+          "nodeId": "WLCT_Cistern_U",
+          "linkId": "WLCT_Cistern_I",
+          "initialDepthM": 0.0,
+          "finalDepthM": 0.029532182585842403,
+          "floodingM3": 0.318623138828371,
+          "numericalStatus": "FAILED",
+          "scope": "UNCONNECTED_INLET_FLOODING_ALREADY_INCLUDED_IN_NETWORK"
+        },
+        "scope": "NATIVE_STORAGE_NODE_BALANCE_ALREADY_INCLUDED_IN_NETWORK_ROUTING",
+        "numericalStatus": "FAILED"
+      },
+      "minimumInletFlowM3s": 0.0,
+      "sourceNetworkSha256": "3d2e7b8b588618e937709a4a146f17cbcf63e711f89b472ba5f44025cc7a8fa1",
+      "derivedNetworkSha256": "b851af0c0d1b871bb23abd2bad8fa8423a60070795dab5ec1e2150d49e8772ec",
+      "numericalQuality": {
+        "policyVersion": "network-continuity-convergence-v2",
+        "continuityLimitPercent": 1,
+        "routingBalance": {
+          "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+          "totalInM3": 10.753440077685843,
+          "totalOutIncludingStorageM3": 10.754765937482842,
+          "residualM3": -0.0013258597969993957,
+          "continuityPercent": -0.012329633935010709,
+          "absoluteToleranceM3": 1e-08,
+          "allowedResidualM3": 0.10753440077685843
+        },
+        "allowedNonConvergedSteps": 0,
+        "failureReasons": [],
+        "status": "PASSED"
+      }
+    },
+    {
+      "case": "narrow",
+      "networkStatus": "PASSED",
+      "ledger": {
+        "startSeconds": 0.0,
+        "endSeconds": 120.0,
+        "facilities": [
+          {
+            "id": "Cistern",
+            "nodeId": "WLCT_Cistern",
+            "initialStorageM3": 0.0,
+            "inflowM3": 0.0033976538910850678,
+            "outflowIncludingFloodingM3": 0.0,
+            "floodingM3": 0.0,
+            "finalStorageM3": 0.0033972551760392514,
+            "capacityM3": 1.4,
+            "balanceResidualM3": 3.987150458163724e-07,
+            "allowedResidualM3": 3.397653891085068e-05,
+            "numericalStatus": "PASSED",
+            "nativeCapacityM3": 1.3998441111864406,
+            "volumeBasis": "EPA_CMS_STORAGE_VOLUME_TO_EXACT_SI_V1",
+            "initialAvailableM3": 1.3998441111864406,
+            "finalAvailableM3": 1.3964468560104013,
+            "reuseM3": null,
+            "reuseStatus": "NOT_CALCULATED_NO_USE_DEMAND",
+            "drainOperation": "CLOSED_NO_WITHDRAWAL"
+          }
+        ],
+        "inletPipe": {
+          "nodeId": "WLCT_Cistern_U",
+          "linkId": "WLCT_Cistern_I",
+          "initialDepthM": 0.0,
+          "finalDepthM": 0.3,
+          "floodingM3": 1.1083028444016245,
+          "numericalStatus": "FAILED",
+          "scope": "UNCONNECTED_INLET_FLOODING_ALREADY_INCLUDED_IN_NETWORK"
+        },
+        "scope": "NATIVE_STORAGE_NODE_BALANCE_ALREADY_INCLUDED_IN_NETWORK_ROUTING",
+        "numericalStatus": "FAILED"
+      },
+      "minimumInletFlowM3s": 0.0,
+      "sourceNetworkSha256": "3d2e7b8b588618e937709a4a146f17cbcf63e711f89b472ba5f44025cc7a8fa1",
+      "derivedNetworkSha256": "02d1a535a83a6135791975683172a296d04e227a999aaf78002e3a3b41f6b5a1",
+      "numericalQuality": {
+        "policyVersion": "network-continuity-convergence-v2",
+        "continuityLimitPercent": 1,
+        "routingBalance": {
+          "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+          "totalInM3": 10.753437147560074,
+          "totalOutIncludingStorageM3": 10.75560167360238,
+          "residualM3": -0.002164526042305326,
+          "continuityPercent": -0.020128690135102066,
+          "absoluteToleranceM3": 1e-08,
+          "allowedResidualM3": 0.10753437147560074
+        },
+        "allowedNonConvergedSteps": 0,
+        "failureReasons": [],
+        "status": "PASSED"
+      }
+    },
+    {
+      "case": "backflow",
+      "networkStatus": "PASSED",
+      "ledger": {
+        "startSeconds": 0.0,
+        "endSeconds": 120.0,
+        "facilities": [
+          {
+            "id": "Cistern",
+            "nodeId": "WLCT_Cistern",
+            "initialStorageM3": 1.1998663810169492,
+            "inflowM3": 0.030285581581314336,
+            "outflowIncludingFloodingM3": 0.22203062180916008,
+            "floodingM3": 0.0,
+            "finalStorageM3": 1.00997313047484,
+            "capacityM3": 1.4,
+            "balanceResidualM3": -0.0018517896857366267,
+            "allowedResidualM3": 0.012320037522840001,
+            "numericalStatus": "PASSED",
+            "nativeCapacityM3": 1.3998441111864406,
+            "volumeBasis": "EPA_CMS_STORAGE_VOLUME_TO_EXACT_SI_V1",
+            "initialAvailableM3": 0.19997773016949139,
+            "finalAvailableM3": 0.38987098071160053,
+            "reuseM3": null,
+            "reuseStatus": "NOT_CALCULATED_NO_USE_DEMAND",
+            "drainOperation": "CLOSED_NO_WITHDRAWAL"
+          }
+        ],
+        "inletPipe": {
+          "nodeId": "WLCT_Cistern_U",
+          "linkId": "WLCT_Cistern_I",
+          "initialDepthM": 0.0,
+          "finalDepthM": 0.012225179353210009,
+          "floodingM3": 0.003620203636113368,
+          "numericalStatus": "FAILED",
+          "scope": "UNCONNECTED_INLET_FLOODING_ALREADY_INCLUDED_IN_NETWORK"
+        },
+        "scope": "NATIVE_STORAGE_NODE_BALANCE_ALREADY_INCLUDED_IN_NETWORK_ROUTING",
+        "numericalStatus": "FAILED"
+      },
+      "minimumInletFlowM3s": -0.004092792819929182,
+      "sourceNetworkSha256": "58c9a8266e278fe0620a425b579028068c10dd027088e44dd56d71266958d6e5",
+      "derivedNetworkSha256": "7dde9a298e11f387d8143ac12c5d1f8fadd504ffa9f63fd0d445a678fdde0169",
+      "numericalQuality": {
+        "policyVersion": "network-continuity-convergence-v2",
+        "continuityLimitPercent": 1,
+        "routingBalance": {
+          "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+          "totalInM3": 6.424357599921431,
+          "totalOutIncludingStorageM3": 6.434220544515899,
+          "residualM3": -0.009862944594467571,
+          "continuityPercent": -0.15352421531746915,
+          "absoluteToleranceM3": 1e-08,
+          "allowedResidualM3": 0.06424357599921432
+        },
+        "allowedNonConvergedSteps": 0,
+        "failureReasons": [],
+        "status": "PASSED"
+      }
+    },
+    {
+      "case": "replay",
+      "networkStatus": "PASSED",
+      "ledger": {
+        "startSeconds": 0.0,
+        "endSeconds": 120.0,
+        "facilities": [
+          {
+            "id": "Cistern",
+            "nodeId": "WLCT_Cistern",
+            "initialStorageM3": 0.0,
+            "inflowM3": 0.7734079135372459,
+            "outflowIncludingFloodingM3": 0.0,
+            "floodingM3": 0.0,
+            "finalStorageM3": 0.7733213303788247,
+            "capacityM3": 1.4,
+            "balanceResidualM3": 8.658315842124953e-05,
+            "allowedResidualM3": 0.007734079135372459,
+            "numericalStatus": "PASSED",
+            "nativeCapacityM3": 1.3998441111864406,
+            "volumeBasis": "EPA_CMS_STORAGE_VOLUME_TO_EXACT_SI_V1",
+            "initialAvailableM3": 1.3998441111864406,
+            "finalAvailableM3": 0.6265227808076159,
+            "reuseM3": null,
+            "reuseStatus": "NOT_CALCULATED_NO_USE_DEMAND",
+            "drainOperation": "CLOSED_NO_WITHDRAWAL"
+          }
+        ],
+        "inletPipe": {
+          "nodeId": "WLCT_Cistern_U",
+          "linkId": "WLCT_Cistern_I",
+          "initialDepthM": 0.0,
+          "finalDepthM": 0.029532182585842403,
+          "floodingM3": 0.318623138828371,
+          "numericalStatus": "FAILED",
+          "scope": "UNCONNECTED_INLET_FLOODING_ALREADY_INCLUDED_IN_NETWORK"
+        },
+        "scope": "NATIVE_STORAGE_NODE_BALANCE_ALREADY_INCLUDED_IN_NETWORK_ROUTING",
+        "numericalStatus": "FAILED"
+      },
+      "minimumInletFlowM3s": 0.0,
+      "sourceNetworkSha256": "3d2e7b8b588618e937709a4a146f17cbcf63e711f89b472ba5f44025cc7a8fa1",
+      "derivedNetworkSha256": "b851af0c0d1b871bb23abd2bad8fa8423a60070795dab5ec1e2150d49e8772ec",
+      "numericalQuality": {
+        "policyVersion": "network-continuity-convergence-v2",
+        "continuityLimitPercent": 1,
+        "routingBalance": {
+          "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+          "totalInM3": 10.753440077685843,
+          "totalOutIncludingStorageM3": 10.754765937482842,
+          "residualM3": -0.0013258597969993957,
+          "continuityPercent": -0.012329633935010709,
+          "absoluteToleranceM3": 1e-08,
+          "allowedResidualM3": 0.10753440077685843
+        },
+        "allowedNonConvergedSteps": 0,
+        "failureReasons": [],
+        "status": "PASSED"
+      }
+    },
+    {
+      "case": "ordinary",
+      "networkStatus": "PASSED",
+      "ledger": {
+        "startSeconds": 0.0,
+        "endSeconds": 120.0,
+        "facilities": [
+          {
+            "id": "Cistern",
+            "nodeId": "WLCT_Cistern",
+            "initialStorageM3": 0.0,
+            "inflowM3": 0.14612095685837417,
+            "outflowIncludingFloodingM3": 0.0,
+            "floodingM3": 0.0,
+            "finalStorageM3": 0.1461046839127514,
+            "capacityM3": 1.4,
+            "balanceResidualM3": 1.627294562278614e-05,
+            "allowedResidualM3": 0.0014612095685837417,
+            "numericalStatus": "PASSED",
+            "nativeCapacityM3": 1.3998441111864406,
+            "volumeBasis": "EPA_CMS_STORAGE_VOLUME_TO_EXACT_SI_V1",
+            "initialAvailableM3": 1.3998441111864406,
+            "finalAvailableM3": 1.2537394272736893,
+            "reuseM3": null,
+            "reuseStatus": "NOT_CALCULATED_NO_USE_DEMAND",
+            "drainOperation": "CLOSED_NO_WITHDRAWAL"
+          }
+        ],
+        "inletPipe": {
+          "nodeId": "WLCT_Cistern_U",
+          "linkId": "WLCT_Cistern_I",
+          "initialDepthM": 0.0,
+          "finalDepthM": 0.019764021649225385,
+          "floodingM3": 0.0,
+          "numericalStatus": "PASSED",
+          "scope": "UNCONNECTED_INLET_FLOODING_ALREADY_INCLUDED_IN_NETWORK"
+        },
+        "scope": "NATIVE_STORAGE_NODE_BALANCE_ALREADY_INCLUDED_IN_NETWORK_ROUTING",
+        "numericalStatus": "PASSED"
+      },
+      "minimumInletFlowM3s": 0.0,
+      "sourceNetworkSha256": "cc718855b8e840c71484a37382e57db3d80b57b59aeb01496180e4106774c28d",
+      "derivedNetworkSha256": "613e396c4e3fe51ec5cfab409229587a9d8e575904db8498b184ab5b75c8633c",
+      "numericalQuality": {
+        "policyVersion": "network-continuity-convergence-v2",
+        "continuityLimitPercent": 1,
+        "routingBalance": {
+          "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+          "totalInM3": 5.959817967546016,
+          "totalOutIncludingStorageM3": 5.965554144949174,
+          "residualM3": -0.005736177403157683,
+          "continuityPercent": -0.09624752692773236,
+          "absoluteToleranceM3": 1e-08,
+          "allowedResidualM3": 0.05959817967546016
+        },
+        "allowedNonConvergedSteps": 0,
+        "failureReasons": [],
+        "status": "PASSED"
+      }
+    },
+    {
+      "case": "rough",
+      "networkStatus": "PASSED",
+      "ledger": {
+        "startSeconds": 0.0,
+        "endSeconds": 120.0,
+        "facilities": [
+          {
+            "id": "Cistern",
+            "nodeId": "WLCT_Cistern",
+            "initialStorageM3": 0.0,
+            "inflowM3": 0.15186712644430742,
+            "outflowIncludingFloodingM3": 0.0,
+            "floodingM3": 0.0,
+            "finalStorageM3": 0.15184803312873066,
+            "capacityM3": 1.4,
+            "balanceResidualM3": 1.9093315576756975e-05,
+            "allowedResidualM3": 0.0015186712644430743,
+            "numericalStatus": "PASSED",
+            "nativeCapacityM3": 1.3998441111864406,
+            "volumeBasis": "EPA_CMS_STORAGE_VOLUME_TO_EXACT_SI_V1",
+            "initialAvailableM3": 1.3998441111864406,
+            "finalAvailableM3": 1.24799607805771,
+            "reuseM3": null,
+            "reuseStatus": "NOT_CALCULATED_NO_USE_DEMAND",
+            "drainOperation": "CLOSED_NO_WITHDRAWAL"
+          }
+        ],
+        "inletPipe": {
+          "nodeId": "WLCT_Cistern_U",
+          "linkId": "WLCT_Cistern_I",
+          "initialDepthM": 0.0,
+          "finalDepthM": 0.23312217036419539,
+          "floodingM3": 0.8535089834606918,
+          "numericalStatus": "FAILED",
+          "scope": "UNCONNECTED_INLET_FLOODING_ALREADY_INCLUDED_IN_NETWORK"
+        },
+        "scope": "NATIVE_STORAGE_NODE_BALANCE_ALREADY_INCLUDED_IN_NETWORK_ROUTING",
+        "numericalStatus": "FAILED"
+      },
+      "minimumInletFlowM3s": 0.0,
+      "sourceNetworkSha256": "3d2e7b8b588618e937709a4a146f17cbcf63e711f89b472ba5f44025cc7a8fa1",
+      "derivedNetworkSha256": "c85f3d9398196b29433ebe4dd70b8b195a4f1d4b648e7b052724c05dd5318544",
+      "numericalQuality": {
+        "policyVersion": "network-continuity-convergence-v2",
+        "continuityLimitPercent": 1,
+        "routingBalance": {
+          "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+          "totalInM3": 10.753440077685843,
+          "totalOutIncludingStorageM3": 10.701523256401009,
+          "residualM3": 0.051916821284834214,
+          "continuityPercent": 0.4827926775968681,
+          "absoluteToleranceM3": 1e-08,
+          "allowedResidualM3": 0.10753440077685843
+        },
+        "allowedNonConvergedSteps": 0,
+        "failureReasons": [],
+        "status": "PASSED"
+      }
+    },
+    {
+      "case": "long",
+      "networkStatus": "PASSED",
+      "ledger": {
+        "startSeconds": 0.0,
+        "endSeconds": 120.0,
+        "facilities": [
+          {
+            "id": "Cistern",
+            "nodeId": "WLCT_Cistern",
+            "initialStorageM3": 0.0,
+            "inflowM3": 0.6199474116085576,
+            "outflowIncludingFloodingM3": 0.0,
+            "floodingM3": 0.0,
+            "finalStorageM3": 0.619875427424865,
+            "capacityM3": 1.4,
+            "balanceResidualM3": 7.198418369258608e-05,
+            "allowedResidualM3": 0.006199474116085576,
+            "numericalStatus": "PASSED",
+            "nativeCapacityM3": 1.3998441111864406,
+            "volumeBasis": "EPA_CMS_STORAGE_VOLUME_TO_EXACT_SI_V1",
+            "initialAvailableM3": 1.3998441111864406,
+            "finalAvailableM3": 0.7799686837615756,
+            "reuseM3": null,
+            "reuseStatus": "NOT_CALCULATED_NO_USE_DEMAND",
+            "drainOperation": "CLOSED_NO_WITHDRAWAL"
+          }
+        ],
+        "inletPipe": {
+          "nodeId": "WLCT_Cistern_U",
+          "linkId": "WLCT_Cistern_I",
+          "initialDepthM": 0.0,
+          "finalDepthM": 0.05072553476881041,
+          "floodingM3": 0.41280859131628445,
+          "numericalStatus": "FAILED",
+          "scope": "UNCONNECTED_INLET_FLOODING_ALREADY_INCLUDED_IN_NETWORK"
+        },
+        "scope": "NATIVE_STORAGE_NODE_BALANCE_ALREADY_INCLUDED_IN_NETWORK_ROUTING",
+        "numericalStatus": "FAILED"
+      },
+      "minimumInletFlowM3s": 0.0,
+      "sourceNetworkSha256": "3d2e7b8b588618e937709a4a146f17cbcf63e711f89b472ba5f44025cc7a8fa1",
+      "derivedNetworkSha256": "a5203383975413b8181617debb03460ac8da4b63c08fc6e1163df69662b8023e",
+      "numericalQuality": {
+        "policyVersion": "network-continuity-convergence-v2",
+        "continuityLimitPercent": 1,
+        "routingBalance": {
+          "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+          "totalInM3": 10.753443369681666,
+          "totalOutIncludingStorageM3": 10.7597542084011,
+          "residualM3": -0.006310838719434386,
+          "continuityPercent": -0.05868667832693674,
+          "absoluteToleranceM3": 1e-08,
+          "allowedResidualM3": 0.10753443369681666
+        },
+        "allowedNonConvergedSteps": 0,
+        "failureReasons": [],
+        "status": "PASSED"
+      }
+    },
+    {
+      "case": "numerically-unstable",
+      "networkStatus": "FAILED",
+      "ledger": {
+        "startSeconds": 0.0,
+        "endSeconds": 120.0,
+        "facilities": [
+          {
+            "id": "Cistern",
+            "nodeId": "WLCT_Cistern",
+            "initialStorageM3": 0.0,
+            "inflowM3": 0.20344566730600652,
+            "outflowIncludingFloodingM3": 0.0,
+            "floodingM3": 0.0,
+            "finalStorageM3": 0.20341901420217587,
+            "capacityM3": 1.4,
+            "balanceResidualM3": 2.665310383065389e-05,
+            "allowedResidualM3": 0.002034456673060065,
+            "numericalStatus": "PASSED",
+            "nativeCapacityM3": 1.3998441111864406,
+            "volumeBasis": "EPA_CMS_STORAGE_VOLUME_TO_EXACT_SI_V1",
+            "initialAvailableM3": 1.3998441111864406,
+            "finalAvailableM3": 1.1964250969842647,
+            "reuseM3": null,
+            "reuseStatus": "NOT_CALCULATED_NO_USE_DEMAND",
+            "drainOperation": "CLOSED_NO_WITHDRAWAL"
+          }
+        ],
+        "inletPipe": {
+          "nodeId": "WLCT_Cistern_U",
+          "linkId": "WLCT_Cistern_I",
+          "initialDepthM": 0.0,
+          "finalDepthM": 0.12144117220976448,
+          "floodingM3": 0.0,
+          "numericalStatus": "PASSED",
+          "scope": "UNCONNECTED_INLET_FLOODING_ALREADY_INCLUDED_IN_NETWORK"
+        },
+        "scope": "NATIVE_STORAGE_NODE_BALANCE_ALREADY_INCLUDED_IN_NETWORK_ROUTING",
+        "numericalStatus": "PASSED"
+      },
+      "minimumInletFlowM3s": 0.0,
+      "sourceNetworkSha256": "3d2e7b8b588618e937709a4a146f17cbcf63e711f89b472ba5f44025cc7a8fa1",
+      "derivedNetworkSha256": "80f08e0ad340dd0796547591fbd74b91332462c4ce4ba3e522eaae1a5d5c3fa6",
+      "numericalQuality": {
+        "policyVersion": "network-continuity-convergence-v2",
+        "continuityLimitPercent": 1,
+        "routingBalance": {
+          "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+          "totalInM3": 10.75346970564825,
+          "totalOutIncludingStorageM3": 10.464065107793633,
+          "residualM3": 0.2894045978546167,
+          "continuityPercent": 2.6912671516860014,
+          "absoluteToleranceM3": 1e-08,
+          "allowedResidualM3": 0.1075346970564825
+        },
+        "allowedNonConvergedSteps": 0,
+        "failureReasons": [
+          "ROUTING_CONTINUITY_EXCEEDED",
+          "ROUTING_VOLUME_RESIDUAL_EXCEEDED"
+        ],
+        "status": "FAILED"
+      }
+    }
+  ],
+  "publicResearchCases": [
+    {
+      "scenario": "S9",
+      "sourceResponseSha256": "3ad02d1f42dc3a88aad1053808502249cbd9280995527a1f4ea1348f437c3b60",
+      "numericalStatus": "PASSED",
+      "ledger": {
+        "numericalStatus": "PASSED",
+        "facilities": [
+          {
+            "id": "Cistern1",
+            "nodeId": "WLCT_Cistern1",
+            "capacityM3": 4.7,
+            "nativeCapacityM3": 4.699476658983051,
+            "volumeBasis": "EPA_CMS_STORAGE_VOLUME_TO_EXACT_SI_V1",
+            "initialAvailableM3": 4.699476658983051,
+            "finalAvailableM3": 2.103600568028749,
+            "reuseM3": null,
+            "reuseStatus": "NOT_CALCULATED_NO_USE_DEMAND",
+            "drainOperation": "GRAVITY_ORIFICE",
+            "initialStorageM3": 0,
+            "inflowM3": 2.596165171746023,
+            "outflowIncludingFloodingM3": 0,
+            "floodingM3": 0,
+            "finalStorageM3": 2.595876090954302,
+            "balanceResidualM3": 0.00028908079172085266,
+            "allowedResidualM3": 0.02596165171746023,
+            "numericalStatus": "PASSED"
+          }
+        ]
+      },
+      "dtoAndStaticRenderPassed": true,
+      "resultSha256": "bb42a34467c0e8840350764e43a6baf97209f669c4ab6148274bb6dc6aaeb216",
+      "baselineInputSha256": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+      "strategyInputSha256": "77c8311ab50ce2f6c934212c5066e73ef71e6873c371b1ec6e552008fceab2cc",
+      "input": {
+        "captureAreaM2": 10,
+        "catalogHash": "f2df891f3914de02c37ff7ae09f6d5a849ef6f69dae85e25e562e5a44cffc105",
+        "depthAreaCurve": [
+          {
+            "areaM2": 2.35,
+            "depthM": 0
+          },
+          {
+            "areaM2": 2.35,
+            "depthM": 2
+          }
+        ],
+        "drain": {
+          "crestM": 12.8,
+          "diameterM": 0.04,
+          "dischargeCoefficient": 0.65,
+          "flapGate": true
+        },
+        "evidence": "회원 지정 집수·밀폐 이용조 설계; 실제 지붕·홈통·설치 높이 측정값 아님",
+        "footprintM2": 2.35,
+        "id": "Cistern1",
+        "initialDepthM": 0,
+        "invertM": 12.75,
+        "overflow": {
+          "crestM": 14.3,
+          "diameterM": 0.2,
+          "dischargeCoefficient": 0.65,
+          "flapGate": true
+        },
+        "schemaVersion": 3,
+        "sourceNetworkSha256": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+        "subcatchmentId": "S9"
+      },
+      "signedReductionM3": {
+        "outflowM3": -1.4418973992578685,
+        "floodingM3": 13.649714576546103
+      },
+      "artifactManifestFile": "tmp/member-shared-cistern-18b1b119-bc81-4b5b-89a5-b40048038948/manifest.json"
+    },
+    {
+      "scenario": "S1",
+      "sourceResponseSha256": "15541abf37fe2765d43c84513c51f1f1652f112ed80366804b2d6b115bae1d3a",
+      "numericalStatus": "PASSED",
+      "ledger": {
+        "numericalStatus": "PASSED",
+        "facilities": [
+          {
+            "id": "Cistern1",
+            "nodeId": "WLCT_Cistern1",
+            "capacityM3": 4.7,
+            "nativeCapacityM3": 4.699476658983051,
+            "volumeBasis": "EPA_CMS_STORAGE_VOLUME_TO_EXACT_SI_V1",
+            "initialAvailableM3": 3.9945551601355933,
+            "finalAvailableM3": 3.4768852999521442,
+            "reuseM3": null,
+            "reuseStatus": "NOT_CALCULATED_NO_USE_DEMAND",
+            "drainOperation": "GRAVITY_ORIFICE",
+            "initialStorageM3": 0.7049214988474577,
+            "inflowM3": 2.6006513599206116,
+            "outflowIncludingFloodingM3": 2.085244074906848,
+            "floodingM3": 0,
+            "finalStorageM3": 1.222591359030907,
+            "balanceResidualM3": -0.0022625751696858654,
+            "allowedResidualM3": 0.03307835433937755,
+            "numericalStatus": "PASSED"
+          }
+        ]
+      },
+      "dtoAndStaticRenderPassed": true,
+      "resultSha256": "55c94d40094c59f781b31722f4221708596eeb7d21586bdb5908d5c11d08d5de",
+      "baselineInputSha256": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+      "strategyInputSha256": "d37f0e5bb7418db7c2710c68c6b41907ca4a27f3e2aac9725aa02e593687fd0b",
+      "input": {
+        "captureAreaM2": 10,
+        "catalogHash": "f2df891f3914de02c37ff7ae09f6d5a849ef6f69dae85e25e562e5a44cffc105",
+        "depthAreaCurve": [
+          {
+            "areaM2": 2.35,
+            "depthM": 0
+          },
+          {
+            "areaM2": 2.35,
+            "depthM": 2
+          }
+        ],
+        "drain": {
+          "crestM": 16.53,
+          "diameterM": 0.04,
+          "dischargeCoefficient": 0.65,
+          "flapGate": true
+        },
+        "evidence": "회원 지정 집수·밀폐 이용조 설계; 실제 지붕·홈통·설치 높이 측정값 아님",
+        "footprintM2": 2.35,
+        "id": "Cistern1",
+        "initialDepthM": 0.3,
+        "invertM": 16.48,
+        "overflow": {
+          "crestM": 18.03,
+          "diameterM": 0.2,
+          "dischargeCoefficient": 0.65,
+          "flapGate": true
+        },
+        "schemaVersion": 3,
+        "sourceNetworkSha256": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+        "subcatchmentId": "S1"
+      },
+      "signedReductionM3": {
+        "outflowM3": -1.4442307194694877,
+        "floodingM3": 7.0989182847552
+      },
+      "artifactManifestFile": "tmp/member-shared-cistern-c791c351-1cfd-4ae2-a642-42bed238f6d8/manifest.json"
+    },
+    {
+      "scenario": "S9-closed",
+      "sourceResponseSha256": "5cc026d9c46288a280d49af3700bec20e76fd70600eb1ccdfc9f208da9daee6b",
+      "numericalStatus": "PASSED",
+      "ledger": {
+        "numericalStatus": "PASSED",
+        "facilities": [
+          {
+            "id": "Cistern1",
+            "nodeId": "WLCT_Cistern1",
+            "capacityM3": 4.7,
+            "nativeCapacityM3": 4.699476658983051,
+            "volumeBasis": "EPA_CMS_STORAGE_VOLUME_TO_EXACT_SI_V1",
+            "initialAvailableM3": 3.9945551601355933,
+            "finalAvailableM3": 1.398679069181353,
+            "reuseM3": null,
+            "reuseStatus": "NOT_CALCULATED_NO_USE_DEMAND",
+            "drainOperation": "CLOSED_NO_WITHDRAWAL",
+            "initialStorageM3": 0.7049214988474577,
+            "inflowM3": 2.596165171746039,
+            "outflowIncludingFloodingM3": 0,
+            "floodingM3": 0,
+            "finalStorageM3": 3.300797589801698,
+            "balanceResidualM3": 0.00028908079179856827,
+            "allowedResidualM3": 0.03301086670593496,
+            "numericalStatus": "PASSED"
+          }
+        ]
+      },
+      "dtoAndStaticRenderPassed": true,
+      "resultSha256": "cd4b248566ce1e554f3bc733bafd92ccfdb1c15a9f88468efeb1f28cf6bd5b72",
+      "baselineInputSha256": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+      "strategyInputSha256": "cf89a4cbea4624045b44d0277b102624f2993d1fd3ade8ad4355c27808dce0a4",
+      "input": {
+        "captureAreaM2": 10,
+        "catalogHash": "f2df891f3914de02c37ff7ae09f6d5a849ef6f69dae85e25e562e5a44cffc105",
+        "depthAreaCurve": [
+          {
+            "areaM2": 2.35,
+            "depthM": 0
+          },
+          {
+            "areaM2": 2.35,
+            "depthM": 2
+          }
+        ],
+        "drain": {
+          "mode": "CLOSED_NO_WITHDRAWAL"
+        },
+        "evidence": "회원 지정 집수·밀폐 이용조 설계; 실제 지붕·홈통·설치 높이 측정값 아님",
+        "footprintM2": 2.35,
+        "id": "Cistern1",
+        "initialDepthM": 0.3,
+        "invertM": 12.75,
+        "overflow": {
+          "crestM": 14.3,
+          "diameterM": 0.2,
+          "dischargeCoefficient": 0.65,
+          "flapGate": true
+        },
+        "schemaVersion": 3,
+        "sourceNetworkSha256": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+        "subcatchmentId": "S9"
+      },
+      "signedReductionM3": {
+        "outflowM3": -1.4436269393190742,
+        "floodingM3": 13.649720199638978
+      },
+      "artifactManifestFile": "tmp/member-shared-cistern-c555ada3-f1d8-43b9-99f1-a2ef7a70e4de/manifest.json"
+    },
+    {
+      "scenario": "S9-pipe",
+      "sourceResponseSha256": "9993c530439b055ecc771b7a6df6372d56057d63bf2410ff8ac99d038897d529",
+      "numericalStatus": "PASSED",
+      "ledger": {
+        "numericalStatus": "PASSED",
+        "inletPipe": {
+          "nodeId": "WLCT_Cistern1_U",
+          "linkId": "WLCT_Cistern1_I",
+          "initialDepthM": 0,
+          "finalDepthM": 0.0017989797029019437,
+          "floodingM3": 0,
+          "numericalStatus": "PASSED",
+          "scope": "UNCONNECTED_INLET_FLOODING_ALREADY_INCLUDED_IN_NETWORK"
+        },
+        "facilities": [
+          {
+            "id": "Cistern1",
+            "nodeId": "WLCT_Cistern1",
+            "capacityM3": 4.7,
+            "nativeCapacityM3": 4.699476658983051,
+            "volumeBasis": "EPA_CMS_STORAGE_VOLUME_TO_EXACT_SI_V1",
+            "initialAvailableM3": 4.699476658983051,
+            "finalAvailableM3": 2.105699743574886,
+            "reuseM3": null,
+            "reuseStatus": "NOT_CALCULATED_NO_USE_DEMAND",
+            "drainOperation": "GRAVITY_ORIFICE",
+            "initialStorageM3": 0,
+            "inflowM3": 2.594065591914518,
+            "outflowIncludingFloodingM3": 0,
+            "floodingM3": 0,
+            "finalStorageM3": 2.593776915408165,
+            "balanceResidualM3": 0.0002886765063530028,
+            "allowedResidualM3": 0.02594065591914518,
+            "numericalStatus": "PASSED"
+          }
+        ]
+      },
+      "dtoAndStaticRenderPassed": true,
+      "resultSha256": "06cc398607d4167e5a36dcae733d85bbab8006f488726055bfbaccb17135bddb",
+      "baselineInputSha256": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+      "strategyInputSha256": "5e04311ef80f503fb8cd371a213d3dccc5da0e1c28be9247c3aac0cc67edd6e6",
+      "input": {
+        "captureAreaM2": 10,
+        "catalogHash": "f2df891f3914de02c37ff7ae09f6d5a849ef6f69dae85e25e562e5a44cffc105",
+        "depthAreaCurve": [
+          {
+            "areaM2": 2.35,
+            "depthM": 0
+          },
+          {
+            "areaM2": 2.35,
+            "depthM": 2
+          }
+        ],
+        "drain": {
+          "crestM": 12.8,
+          "diameterM": 0.04,
+          "dischargeCoefficient": 0.65,
+          "flapGate": true
+        },
+        "evidence": "회원 지정 집수·밀폐 이용조 설계; 실제 지붕·홈통·설치 높이 측정값 아님",
+        "footprintM2": 2.35,
+        "id": "Cistern1",
+        "initialDepthM": 0,
+        "inletPipe": {
+          "diameterM": 0.1,
+          "downstreamInvertM": 14.2,
+          "lengthM": 10,
+          "roughness": 0.013,
+          "upstreamInvertM": 14.4,
+          "upstreamMaxDepthM": 0.3
+        },
+        "invertM": 12.75,
+        "overflow": {
+          "crestM": 14.3,
+          "diameterM": 0.2,
+          "dischargeCoefficient": 0.65,
+          "flapGate": true
+        },
+        "schemaVersion": 3,
+        "sourceNetworkSha256": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+        "subcatchmentId": "S9"
+      },
+      "signedReductionM3": {
+        "outflowM3": -1.4418973992578685,
+        "floodingM3": 13.649714576546103
+      },
+      "artifactManifestFile": "tmp/member-shared-cistern-73400a70-e18e-434f-bb41-bdfec3cb14a7/manifest.json"
+    },
+    {
+      "scenario": "S9-narrow",
+      "sourceResponseSha256": "02358476e277b9da904df71d92fc94396bc0f62394d94e99b57b155edbbcfd8c",
+      "numericalStatus": "FAILED",
+      "ledger": {
+        "numericalStatus": "FAILED",
+        "inletPipe": {
+          "nodeId": "WLCT_Cistern1_U",
+          "linkId": "WLCT_Cistern1_I",
+          "initialDepthM": 0,
+          "finalDepthM": 0.3,
+          "floodingM3": 2.23744324415577,
+          "numericalStatus": "FAILED",
+          "scope": "UNCONNECTED_INLET_FLOODING_ALREADY_INCLUDED_IN_NETWORK"
+        },
+        "facilities": [
+          {
+            "id": "Cistern1",
+            "nodeId": "WLCT_Cistern1",
+            "capacityM3": 4.7,
+            "nativeCapacityM3": 4.699476658983051,
+            "volumeBasis": "EPA_CMS_STORAGE_VOLUME_TO_EXACT_SI_V1",
+            "initialAvailableM3": 4.699476658983051,
+            "finalAvailableM3": 4.699476658983051,
+            "reuseM3": null,
+            "reuseStatus": "NOT_CALCULATED_NO_USE_DEMAND",
+            "drainOperation": "GRAVITY_ORIFICE",
+            "initialStorageM3": 0,
+            "inflowM3": 0,
+            "outflowIncludingFloodingM3": 0,
+            "floodingM3": 0,
+            "finalStorageM3": 0,
+            "balanceResidualM3": 0,
+            "allowedResidualM3": 1e-08,
+            "numericalStatus": "PASSED"
+          }
+        ]
+      },
+      "dtoAndStaticRenderPassed": true,
+      "resultSha256": "6f2fdb84a591d3a2a49bfd245fd8b36b0517864d4f87f539f06b35749cc682c0",
+      "baselineInputSha256": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+      "strategyInputSha256": "7a820ed4593cfdce70e7cfe22c533628e86e2a2c614733dbde9612e4a7b2d705",
+      "input": {
+        "captureAreaM2": 10,
+        "catalogHash": "f2df891f3914de02c37ff7ae09f6d5a849ef6f69dae85e25e562e5a44cffc105",
+        "depthAreaCurve": [
+          {
+            "areaM2": 2.35,
+            "depthM": 0
+          },
+          {
+            "areaM2": 2.35,
+            "depthM": 2
+          }
+        ],
+        "drain": {
+          "crestM": 12.8,
+          "diameterM": 0.04,
+          "dischargeCoefficient": 0.65,
+          "flapGate": true
+        },
+        "evidence": "회원 지정 집수·밀폐 이용조 설계; 실제 지붕·홈통·설치 높이 측정값 아님",
+        "footprintM2": 2.35,
+        "id": "Cistern1",
+        "initialDepthM": 0,
+        "inletPipe": {
+          "diameterM": 0.001,
+          "downstreamInvertM": 14.2,
+          "lengthM": 10,
+          "roughness": 0.013,
+          "upstreamInvertM": 14.4,
+          "upstreamMaxDepthM": 0.3
+        },
+        "invertM": 12.75,
+        "overflow": {
+          "crestM": 14.3,
+          "diameterM": 0.2,
+          "dischargeCoefficient": 0.65,
+          "flapGate": true
+        },
+        "schemaVersion": 3,
+        "sourceNetworkSha256": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+        "subcatchmentId": "S9"
+      },
+      "signedReductionM3": null,
+      "artifactManifestFile": "tmp/member-shared-cistern-7e32a40f-e832-445a-81ee-b082bda9f312/manifest.json"
+    }
+  ],
+  "limits": [
+    "명시적 집수 연결관 설계이며 실제 지붕·홈통 위치/치수 관측 아님",
+    "입구 초기 수심·추가 압력고·지표 저류 면적·국부 손실 0, 역류 방지 장치 없음",
+    "입구 미연결 월류·수치 오차 초과는 효과 보류, 관 저장량 중복 합산 없음",
+    "현장 지도 연결·정상 설치/예산/순위·사용 수요·출구 접속관·막힘·지붕 재유입 미완료",
+    "원 관망 최소 절점 수면적·시간 간격 등 수치 설정 계승, 실제 홈통 저장 용량 검증 아님"
+  ],
+  "runtime": {
+    "apiPid": 32055,
+    "workerPid": 32074,
+    "health": "UP",
+    "scorePolicySha256": "d989d92f561e7d720bef4c3a7712991dfce393178bb8cfa826f345e85a57aaf4",
+    "sourceCountsUnchanged": true,
+    "before": [
+      13,
+      2,
+      0,
+      0,
+      0
+    ],
+    "after": [
+      13,
+      2,
+      0,
+      0,
+      0
+    ],
+    "publicCisternCatalogPreserved": true,
+    "jarSha256": "fb5ac3633d10d83d79bbc17fc17bc1a7ee67ab7295270a4c986fe6213508e869"
+  }
+}

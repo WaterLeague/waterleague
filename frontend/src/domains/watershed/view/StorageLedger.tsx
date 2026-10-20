@@ -40,6 +40,16 @@ export function StorageLedger({
           </p>
         </div>
       ))}
+      {summary.wholeRunLedger.inletPipe && (
+        <p>
+          집수 연결관 입구 · 초기 수심 {number(summary.wholeRunLedger.inletPipe.initialDepthM)} →
+          최종 수심 {number(summary.wholeRunLedger.inletPipe.finalDepthM)} m · 미연결 월류{' '}
+          {number(summary.wholeRunLedger.inletPipe.floodingM3)} m³ ·
+          {summary.wholeRunLedger.inletPipe.numericalStatus === 'PASSED'
+            ? '통과'
+            : '효과 비교 보류'}
+        </p>
+      )}
       <p>
         이 체적은 관망 전체 물수지에 포함됩니다. 수지 실패나 지표로 넘친 물의 미연결이 있으면 효과
         비교를 보류합니다.

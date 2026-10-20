@@ -176,6 +176,8 @@ RFC 9457 `application/problem+json`: type, title, status, detail, instance, code
 
 공개 연결 관망 연구 API는 `MEMBER` 인증·현재 승인 상태와 기존 CSRF 검사를 적용한다. `GET /api/v1/watersheds/catalog`는 불변 카탈로그 원문·SHA-256, 실제 공개 연구 관망의 14집수 면적/출구·4종 문헌 제원·미확인 조건 제공. `POST /api/v1/watersheds`는 `requestKey`, `catalogHash`, `placements[{id,catchmentId,facilityType,areaM2,treatedImperviousM2}]`를 받아 202 반환. 시설 면적 전체를 불투수 면적으로 대체하는 이 버전의 규칙과 서버 제원·시드를 고정하며, 같은 집수의 시설/처리 면적 합산·중복 ID·소스 해시·회원별 2개/전체 공용 20개 큐 한도 검사. 요청 키의 입력 변경은 409. 가격·소속 구 점유·주간 예산 차감 없음.
 
+관망 이용조 요청 `cistern.placement.inletPipe`는 선택 입력이며 `lengthM`, `diameterM`, `roughness`, `upstreamInvertM`, `upstreamMaxDepthM`, `downstreamInvertM`을 모두 요구한다. 숫자는 소수 3자리 이내, 길이 0.001~10,000m·내경/입구 깊이 0.001~100m·Manning 조도 0.001~1·기준고 −1,000~10,000m이며 수치 입력 한도가 실제 시공 허용 범위는 아니다. 생략/null은 직접 집수 연결, 객체 입력은 원형 연결관 계산으로 저장한다. 서버·워커는 길이와 양 끝 높이·내경 포함 조건을 검사하며 결과 `networkCistern.wholeRunLedger.inletPipe`에 입구/관 ID·초기/최종 수심·미연결 월류·검증 상태를 반환한다. 입구 월류는 원 관망도에 가짜 위치를 부여하지 않고 `nodeFlooding`의 미매핑 절점으로도 기록한다. 월류/수치 실패는 보고서를 보존하되 개선량을 null로 반환하고 클라이언트가 설계·두 월류 기록·상태를 대조한다.
+
 `GET /api/v1/watersheds`는 본인 최근 50작업, `GET /api/v1/watersheds/{id}`는 본인 입력과 결과 조회. `SUCCEEDED`는 보고서 생성 완료이며, 수치 품질은 결과 `numericalStatus`로 별도 확인. 수치 실패는 두 조건과 원 파일을 보존하고 `signedReductionM3:null`; 음의 개선량·방류 증가 보존. 월류를 지표 침수나 총점으로 전용하지 않음. `GET /api/v1/watersheds/{id}/bundle`는 소유자 전용 원본/파생 INP·RPT·OUT·관망/시설 상태·변환/입력·엔진/소스·재생 코드 묶음. DB 결과에 고정된 파일 해시와 내용 대조, 64MiB 파일/ZIP·512MiB 총량 제한, 경로 이탈·심볼릭 링크·입력/결과/목록 동시 변조 거부. 같은 플랫폼에서 새 출력 폴더로 `python replay.py --output <새 폴더>` 실행 시 두 OUT의 원 해시 대조. 좌표계/수직 기준 미확정으로 지리 배치·당시 재현·순위 미개방.
 
 - `GET /api/v1/disasters`: 공개 재해 3건과 각 사건의 25개 구 강우 모델·시각·관측소·분량 제공.

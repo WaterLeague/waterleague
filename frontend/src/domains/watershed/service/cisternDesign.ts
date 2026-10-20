@@ -1,4 +1,5 @@
 import type { CisternPlacement } from '../dto/cisternDto';
+import { cisternInletPipeDto, validInletElevation } from '../dto/cisternDto';
 import type { WatershedCatalog, NetworkPlacement } from '../dto/watershedDto';
 export function cisternCatchments(catalog: WatershedCatalog) {
   const nodes = new Map(
@@ -55,6 +56,13 @@ export function validateCistern(
   )
     return '이용조의 높이·깊이·초기 수심을 입력해 주세요.';
   const n = host.receiver;
+  if (
+    p.inletPipe &&
+    (!cisternInletPipeDto.safeParse(p.inletPipe).success ||
+      !Object.values(p.inletPipe).every((v) => precision(v, 3)) ||
+      !validInletElevation(p.inletPipe, p.invertM, p.depthM))
+  )
+    return '집수 연결관의 길이·직경·마찰·높이를 확인해 주세요. 관 전체가 입구와 이용조 안에 들어가야 합니다.';
   if (p.drainClosed === true ? p.drain !== null : p.drain === null)
     return '일반 배출 중지 여부와 배수구 설정을 확인해 주세요.';
   for (const r of [...(p.drain ? [p.drain] : []), p.overflow]) {

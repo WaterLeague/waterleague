@@ -11,8 +11,28 @@ export interface CisternPlacement {
   drain: StoragePort | null;
   drainClosed?: boolean;
   overflow: StoragePort;
+  inletPipe?: CisternInletPipe | null;
 }
 const number = z.number().finite();
+export const cisternInletPipeDto = z.strictObject({
+  lengthM: number.min(0.001).max(10000),
+  diameterM: number.min(0.001).max(100),
+  roughness: number.min(0.001).max(1),
+  upstreamInvertM: number.min(-1000).max(10000),
+  upstreamMaxDepthM: number.min(0.001).max(100),
+  downstreamInvertM: number.min(-1000).max(10000),
+});
+export type CisternInletPipe = z.infer<typeof cisternInletPipeDto>;
+export function validInletElevation(pipe: CisternInletPipe, invert: number, depth: number) {
+  const drop = pipe.upstreamInvertM - pipe.downstreamInvertM;
+  return (
+    pipe.upstreamMaxDepthM >= pipe.diameterM &&
+    pipe.downstreamInvertM >= invert &&
+    pipe.downstreamInvertM + pipe.diameterM <= invert + depth + 1e-9 &&
+    drop >= -1e-9 &&
+    drop <= pipe.lengthM + 1e-9
+  );
+}
 const port = z.strictObject({
   crestM: number,
   diameterM: number.positive(),
@@ -35,6 +55,7 @@ export const cisternDesignDto = z
       .length(2),
     drain: z.union([port, z.strictObject({ mode: z.literal('CLOSED_NO_WITHDRAWAL') })]),
     overflow: port,
+    inletPipe: cisternInletPipeDto.optional(),
   })
   .superRefine((v, ctx) => {
     const [a, b] = v.depthAreaCurve;
@@ -43,7 +64,8 @@ export const cisternDesignDto = z
       b.depthM <= 0 ||
       a.areaM2 !== b.areaM2 ||
       a.areaM2 !== v.footprintM2 ||
-      v.initialDepthM > b.depthM
+      v.initialDepthM > b.depthM ||
+      (v.inletPipe && !validInletElevation(v.inletPipe, v.invertM, b.depthM))
     )
       ctx.addIssue({ code: 'custom', message: '이용조 단면과 저류 용량 불일치' });
   });

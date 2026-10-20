@@ -8,6 +8,7 @@ import { cisternCatchments } from './cisternDesign';
 import { validateCombinedDesign } from './storageDesign';
 import { previewCisternCosts } from './cisternCosts';
 import { CisternDesignForm } from '../view/CisternDesignForm';
+import { CisternInletFields } from '../view/CisternInletFields';
 const catalog = watershedCatalogDto.parse(catalogRaw);
 const tank = {
   id: 'Cistern1',
@@ -20,6 +21,41 @@ const tank = {
   drain: { crestM: 12.8, diameterM: 0.04, dischargeCoefficient: 0.65, flapGate: true },
   overflow: { crestM: 14.3, diameterM: 0.2, dischargeCoefficient: 0.65, flapGate: true },
 } satisfies CisternPlacement;
+it('집수 연결관의 높이·길이·정밀도 검증과 미확정 입력 보존', () => {
+  const inletPipe = {
+    lengthM: 10,
+    diameterM: 0.1,
+    roughness: 0.013,
+    upstreamInvertM: 14.4,
+    upstreamMaxDepthM: 0.3,
+    downstreamInvertM: 14.2,
+  };
+  expect(validateCombinedDesign(catalog, [], [], [], [], { ...tank, inletPipe })).toBe('');
+  for (const patch of [
+    { lengthM: 0 },
+    { roughness: 0 },
+    { roughness: 0.0001 },
+    { diameterM: NaN },
+    { upstreamMaxDepthM: 0.01 },
+    { upstreamInvertM: 14 },
+    { lengthM: 0.1 },
+    { downstreamInvertM: 12 },
+    { downstreamInvertM: 14.7 },
+  ])
+    expect(
+      validateCombinedDesign(catalog, [], [], [], [], {
+        ...tank,
+        inletPipe: { ...inletPipe, ...patch },
+      })
+    ).toContain('집수 연결관');
+  const html = renderToStaticMarkup(<CisternInletFields value={inletPipe} onChange={() => {}} />);
+  expect(html).toContain('관 내부 직경');
+  expect(html).toContain('Manning 조도');
+  expect(html).toContain('입구가 넘치면 효과 비교를 보류');
+  expect(renderToStaticMarkup(<CisternInletFields onChange={() => {}} />)).toContain(
+    '통수 용량은 계산하지 않습니다'
+  );
+});
 it('공개 적격 집수·면적·배수 높이·다른 시설 중복 제한', () => {
   expect(cisternCatchments(catalog)).toHaveLength(14);
   expect(validateCombinedDesign(catalog, [], [], [], [], tank)).toBe('');

@@ -6,6 +6,7 @@ from pathlib import Path
 from .connected_storage import append_section, capacity, identifier, indexed, number, SOURCE, volume_properties
 from .flood_errors import require
 from ..ingestion.published_network import digest, records
+from .cistern_inlet import compile_inlet
 
 METHOD = 'COVERED_CISTERN_IMPERVIOUS_CAPTURE_DYNWAVE_V1'
 MIXED_METHOD = 'COVERED_CISTERN_MIXED_SURFACE_CAPTURE_DYNWAVE_V2'
@@ -23,9 +24,10 @@ def source_number(value):
 
 def compile_cistern(raw, design):
     text, sections = records(raw)
-    require(isinstance(design, dict) and set(design) == {
+    required = {
         'schemaVersion', 'sourceNetworkSha256', 'id', 'subcatchmentId', 'captureAreaM2',
         'footprintM2', 'invertM', 'depthAreaCurve', 'initialDepthM', 'drain', 'overflow', 'evidence'}
+    require(isinstance(design, dict) and set(design) in (required, required | {'inletPipe'})
         and type(design['schemaVersion']) is int and design['schemaVersion'] in (1, 2, 3)
         and design['sourceNetworkSha256'] == digest(raw), 'CISTERN_SOURCE_BINDING_INVALID')
     require(isinstance(design['evidence'], str) and design['evidence'].strip(), 'CISTERN_EVIDENCE_REQUIRED')
@@ -102,16 +104,24 @@ def compile_cistern(raw, design):
     name = 'WLCT_' + identifier(design['id'])
     child, curve, bypass, cover = name + '_C', name + '_A', name + '_B', name + '_R'
     names = {name.upper(), child.upper(), curve.upper(), (name+'_D').upper(), (name+'_O').upper()}
+    if 'inletPipe' in design:
+        names.update((name + suffix).upper() for suffix in ('_U', '_I'))
     if mixed: names.add(bypass.upper())
     if split_cover: names.add(cover.upper())
     existing = {t.upper() for rows in sections.values() for r in rows for t in r['tokens']}
     require(not names.intersection(existing), 'CISTERN_ID_COLLISION')
     added = {'SUBCATCHMENTS': [], 'SUBAREAS': [], 'INFILTRATION': [], 'STORAGE': [],
              'CURVES': [], 'ORIFICES': [], 'XSECTIONS': []}
+    inlet = None
+    if 'inletPipe' in design:
+        require(not sections.get('FILES'), 'CISTERN_EXTERNAL_STATE_UNSUPPORTED')
+        pipe_sections, inlet = compile_inlet(design['inletPipe'], name, invert, depth)
+        for section, rows in pipe_sections.items():
+            added.setdefault(section, []).extend(rows)
     remaining = host[:]
     remaining[3], remaining[5] = format((area-capture)/10000, '.15g'), format(width*(area-capture)/area, '.15g')
     diverted = host[:]
-    diverted[0:3] = [child, host[1], name]
+    diverted[0:3] = [child, host[1], inlet['nodeId'] if inlet else name]
     diverted[3], diverted[5] = format(capture/10000, '.15g'), format(width*capture/area, '.15g')
     if mixed:
         # SWMM은 투수·불투수 각각의 면적에 같은 원 폭을 사용한다. 세 표면을 분리해야 두 유출 계수가 보존된다.
@@ -215,11 +225,17 @@ def compile_cistern(raw, design):
         limitations.append('덮개·이용조 집수를 제외한 불투수 우회면만 다른 LID 배분 가능; 시설 배수 재포집 없음')
     if closed:
         limitations.append('평가 전 기간 일반 배출 중지 설계; 자동 비움·펌프 운전·재이용 없음, 비상구만 관망 연결')
+    if inlet:
+        limitations[2] = '명시적 원형 집수 연결관의 마찰·수두·역류 계산; 실제 홈통 관측·막힘·지붕 재유입 미모형화'
+        limitations[3] = '배수·비상구의 관망 수두 및 역류 반영; 출구 접속관 마찰은 별도 설계 필요'
+        limitations.append('집수 입구는 초기 수심·추가 압력고·지표 저류 면적 0, 국부 손실 0·역류 방지 없음의 설계 가정; 입구 월류 시 효과 비교 보류')
     method = SHARED_METHOD if split_cover else MIXED_METHOD if mixed else METHOD
-    return result, {'schemaVersion': design['schemaVersion'], 'method': method, 'source': SOURCE,
+    return result, {'schemaVersion': design['schemaVersion'], 'method': method,
+        'source': SOURCE | {'sections': [*SOURCE['sections'], '[JUNCTIONS]', '[CONDUITS]']} if inlet else SOURCE,
         'sourceNetworkSha256': digest(raw), 'derivedNetworkSha256': digest(result),
         'compilerSha256': digest(Path(__file__).read_bytes()), 'design': deepcopy(design),
         'drainOperation': 'CLOSED_NO_WITHDRAWAL' if closed else 'GRAVITY_ORIFICE',
+        **({'inletPipe': inlet} if inlet else {}),
         'catchmentPartition': partition,
         'facilities': [{'id': design['id'], 'nodeId': name, 'facilityType': 'RAINWATER_CISTERN',
             'capacityM3': volume, **volume_properties(volume), 'ports': ports, 'directRainfallM3': 0, 'evaporationFactor': 0,

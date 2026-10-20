@@ -315,7 +315,7 @@ def published_network(original, baseline, strategy, design, transformation, sour
         bypass = key('catchment', t[0])
         if cistern and cistern['catchmentPartition']['hostId'].upper() == t[0].upper():
             partition = cistern['catchmentPartition']
-            target = key('node', cistern['facilities'][0]['nodeId'])
+            target = key('node', cistern.get('inletPipe', {}).get('nodeId', cistern['facilities'][0]['nodeId']))
             capture, cover = decimal(partition['captureAreaM2']), decimal(partition['coverAreaM2'])
             allocate('impervious', target, capture, 'CISTERN_ROUTED_RUNOFF_NOT_DIRECT_RAIN', 'cistern-capture')
             bypass = key('catchment', partition.get('imperviousBypassId', partition['hostId']))

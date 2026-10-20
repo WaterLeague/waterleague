@@ -240,7 +240,8 @@ export const watershedResultDto = z
               : (n.kind !== 'STORAGE' &&
                   !(
                     n.kind === 'JUNCTION' &&
-                    c.pumpOperation?.pumps.some((p) => p.deliveryNodeId === n.id)
+                    (c.pumpOperation?.pumps.some((p) => p.deliveryNodeId === n.id) ||
+                      c.networkCistern?.wholeRunLedger.inletPipe?.nodeId === n.id)
                   )) ||
                 layout.layout.nodes.some((p) => p.id === n.id)
           )
@@ -376,6 +377,23 @@ export const watershedJobDto = z
     if (value.result) {
       for (const c of value.result.cases) {
         const ledger = c.networkCistern?.wholeRunLedger.facilities;
+        const inlet = c.networkCistern?.wholeRunLedger.inletPipe;
+        if (
+          c.networkCistern &&
+          (Boolean(inlet) !== Boolean(tank?.inletPipe) ||
+            (inlet &&
+              (inlet.nodeId !== 'WLCT_' + tank?.id + '_U' ||
+                inlet.linkId !== 'WLCT_' + tank?.id + '_I' ||
+                (c.nodeFlooding &&
+                  !c.nodeFlooding.nodes.some(
+                    (n) =>
+                      n.id === inlet.nodeId &&
+                      n.kind === 'JUNCTION' &&
+                      !n.mapped &&
+                      floodAmountClose(n.floodingM3, inlet.floodingM3)
+                  )))))
+        )
+          ctx.addIssue({ code: 'custom', message: '집수 연결관 설계와 입구 월류 원장 불일치' });
         if (
           (ledger &&
             (c.id !== 'strategy' ||

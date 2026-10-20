@@ -81,12 +81,47 @@ public final class CisternDesignService {
     result.put(
         "drain", closed ? Map.of("mode", "CLOSED_NO_WITHDRAWAL") : port(p.drain(), receiver, p));
     result.put("overflow", port(p.overflow(), receiver, p));
+    if (p.inletPipe() != null) {
+      var pipe = p.inletPipe();
+      if (!range(pipe.lengthM(), "0.001", "10000")
+          || !range(pipe.diameterM(), "0.001", "100")
+          || !range(pipe.roughness(), "0.001", "1")
+          || !range(pipe.upstreamInvertM(), "-1000", "10000")
+          || !range(pipe.upstreamMaxDepthM(), "0.001", "100")
+          || !range(pipe.downstreamInvertM(), "-1000", "10000"))
+        throw new DomainException(ErrorCode.PLACEMENT_INVALID);
+      var drop = pipe.upstreamInvertM().subtract(pipe.downstreamInvertM());
+      if (pipe.upstreamMaxDepthM().compareTo(pipe.diameterM()) < 0
+          || pipe.downstreamInvertM().compareTo(p.invertM()) < 0
+          || pipe.downstreamInvertM().add(pipe.diameterM()).compareTo(p.invertM().add(p.depthM()))
+              > 0
+          || drop.signum() < 0
+          || drop.compareTo(pipe.lengthM()) > 0)
+        throw new DomainException(ErrorCode.PLACEMENT_INVALID);
+      result.put(
+          "inletPipe",
+          new TreeMap<>(
+              Map.of(
+                  "lengthM", number(pipe.lengthM()),
+                  "diameterM", number(pipe.diameterM()),
+                  "roughness", number(pipe.roughness()),
+                  "upstreamInvertM", number(pipe.upstreamInvertM()),
+                  "upstreamMaxDepthM", number(pipe.upstreamMaxDepthM()),
+                  "downstreamInvertM", number(pipe.downstreamInvertM()))));
+    }
     result.put("evidence", "회원 지정 집수·밀폐 이용조 설계; 실제 지붕·홈통·설치 높이 측정값 아님");
     return result;
   }
 
   private static BigDecimal number(BigDecimal value) {
     return new BigDecimal(value.stripTrailingZeros().toPlainString());
+  }
+
+  private static boolean range(BigDecimal value, String min, String max) {
+    return value != null
+        && value.compareTo(new BigDecimal(min)) >= 0
+        && value.compareTo(new BigDecimal(max)) <= 0
+        && value.stripTrailingZeros().scale() <= 3;
   }
 
   private static Map<String, Object> port(

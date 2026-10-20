@@ -305,7 +305,7 @@ class WatershedTests(unittest.TestCase):
         from waterleague_sim.ingestion.published_network import records
         archives = []
         readback = []
-        for scenario in ('S9','S1','S9-closed'):
+        for scenario in ('S9','S1','S9-closed','S9-pipe','S9-narrow'):
             host = scenario.split('-')[0]
             closed = scenario.endswith('-closed')
             request=json.loads((self.requests/('cistern-shared-'+scenario+'-server-request.json')).read_bytes())
@@ -317,7 +317,7 @@ class WatershedTests(unittest.TestCase):
             row=self.conn.execute('SELECT * FROM watershed_experiments WHERE id=%s',(identity,)).fetchone()
             self.assertEqual(row['state'],'SUCCEEDED',row['error_code'])
             result=json.loads(row['result'])
-            self.assertEqual(result['numericalStatus'],'PASSED',result)
+            self.assertEqual(result['numericalStatus'],'FAILED' if scenario.endswith('-narrow') else 'PASSED',result)
             folder=self.artifacts/'watersheds'/str(identity)/str(job['lease_token'])
             verify_graph(self,folder,result)
             transformed=json.loads((folder/'design-transformation.json').read_bytes())
@@ -334,6 +334,19 @@ class WatershedTests(unittest.TestCase):
             self.assertAlmostEqual(float(rows[lid['subcatchmentId']][5])/binding['remainingNonLidAreaM2'],
                                    partition['originalWidthM']/partition['originalImperviousAreaM2'])
             stored=result['cases'][1]['networkCistern']['wholeRunLedger']['facilities'][0]
+            if scenario.endswith(('-pipe', '-narrow')):
+                inlet = result['cases'][1]['networkCistern']['wholeRunLedger']['inletPipe']
+                self.assertEqual(rows[partition['captureId']][2], inlet['nodeId'])
+                mapped = next(n for n in result['cases'][1]['nodeFlooding']['nodes'] if n['id'] == inlet['nodeId'])
+                self.assertFalse(mapped['mapped'])
+                self.assertEqual(mapped['floodingM3'], inlet['floodingM3'])
+                self.assertEqual(inlet['numericalStatus'], 'FAILED' if scenario.endswith('-narrow') else 'PASSED')
+                if scenario.endswith('-narrow'):
+                    self.assertGreater(inlet['floodingM3'], 0)
+                    self.assertIsNone(result['signedReductionM3'])
+                    self.assertIsNone(result['signedPeakReductionM3s'])
+                else:
+                    self.assertEqual(inlet['floodingM3'], 0)
             self.assertEqual(stored['capacityM3'],4.7)
             self.assertEqual(stored['floodingM3'],0)
             from waterleague_sim.engine.connected_storage import CMS_STORAGE_VOLUME_SCALE

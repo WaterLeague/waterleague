@@ -114,6 +114,33 @@ class WatershedReadbackTests extends PostgresIntegrationTest {
       assertThat(value.path("state").asString()).isEqualTo("SUCCEEDED");
       assertThat(value.path("result")).isEqualTo(json.tree(raw));
       assertThat(value.path("design").path("cistern").path("schemaVersion").asInt()).isEqualTo(3);
+      if (job.path("host").asString().endsWith("-pipe")
+          || job.path("host").asString().endsWith("-narrow")) {
+        assertThat(
+                value
+                    .path("design")
+                    .path("cistern")
+                    .path("inletPipe")
+                    .path("lengthM")
+                    .decimalValue())
+            .isEqualByComparingTo("10");
+        var inlet =
+            value
+                .path("result")
+                .path("cases")
+                .get(1)
+                .path("networkCistern")
+                .path("wholeRunLedger")
+                .path("inletPipe");
+        assertThat(inlet.path("nodeId").asString()).isEqualTo("WLCT_Cistern1_U");
+        boolean flooded = job.path("host").asString().endsWith("-narrow");
+        assertThat(inlet.path("numericalStatus").asString())
+            .isEqualTo(flooded ? "FAILED" : "PASSED");
+        if (flooded) {
+          assertThat(value.path("result").path("signedReductionM3").isNull()).isTrue();
+          assertThat(inlet.path("floodingM3").decimalValue()).isPositive();
+        }
+      }
       if (job.path("host").asString().endsWith("-closed")) {
         assertThat(value.path("design").path("cistern").path("drain").path("mode").asString())
             .isEqualTo("CLOSED_NO_WITHDRAWAL");

@@ -37,6 +37,8 @@ export function WatershedDesignReview({
                   {number(state.cisternDraft.areaM2 * state.cisternDraft.depthM)} m³
                   {' · '}
                   {state.cisternDraft.drainClosed ? '일반 배출 중지' : '자연배수'}
+                  {' · '}
+                  {state.cisternDraft.inletPipe ? '집수 연결관 수리 계산' : '집수 직접 연결'}
                 </span>
               </div>
               <button

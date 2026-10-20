@@ -57,6 +57,16 @@ export function WatershedResult({ job }: { job: WatershedJob }) {
             : '관망 수두 기반 배수·역류'}
         </p>
       )}
+      {job.design.cistern?.inletPipe && (
+        <p>
+          집수 연결관 · 길이 {number(job.design.cistern.inletPipe.lengthM)} m · 직경{' '}
+          {number(job.design.cistern.inletPipe.diameterM)} m · Manning 조도{' '}
+          {number(job.design.cistern.inletPipe.roughness)} · 관 바닥{' '}
+          {number(job.design.cistern.inletPipe.upstreamInvertM)} →{' '}
+          {number(job.design.cistern.inletPipe.downstreamInvertM)} m · 입구 월류 깊이{' '}
+          {number(job.design.cistern.inletPipe.upstreamMaxDepthM)} m
+        </p>
+      )}
       {job.design.conduits?.placements.map((p) => (
         <div key={p.id} className="watershed-facility-state">
           <strong>{p.conduitId} · 배수관·암거 개량</strong>
