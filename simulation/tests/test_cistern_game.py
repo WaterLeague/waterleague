@@ -39,6 +39,9 @@ class CisternGameTests(unittest.TestCase):
                     self.assertAlmostEqual(cistern['inflowM3'], cistern['overflowM3']
                         + cistern['drainageM3'] + cistern['finalStorageM3'], delta=.001)
                     self.assertLess(abs(value['contribution'][-1]['cumulativeM3']), .001)
+                    detention = value['runoffComparison']['detention']
+                    self.assertEqual(detention['status'], 'COMPARABLE')
+                    self.assertGreater(detention['centroidDelaySeconds'], 0)
 
     def test_dry_run_and_extended_replay_do_not_invent_effect_or_reset_tank(self):
         with tempfile.TemporaryDirectory() as root:
@@ -46,6 +49,8 @@ class CisternGameTests(unittest.TestCase):
             dry = continuous.experiment(model, placement, Path(root) / 'dry')
             self.assertEqual(dry['contribution'][-1]['cumulativeM3'], 0)
             self.assertEqual(dry['cistern']['finalStorageM3'], 0)
+            self.assertEqual(dry['runoffComparison']['detention']['status'], 'UNAVAILABLE')
+            self.assertIsNone(dry['runoffComparison']['detention']['centroidDelaySeconds'])
             short, placement = fixture([1] * 60)
             long, _ = fixture([1] * 60 + [0] * 60)
             a = continuous.replay(short, [placement], root, 'short')

@@ -8,6 +8,10 @@
 - 신규 주간 설치의 `cost_snapshot` 원문·SHA-256은 같은 트랜잭션에 저장. 재해 신규 요청은 각 배치의 `costSnapshotRaw`·`costSnapshotSha256`을 서버가 생성해 입력 해시에 포함. 클라이언트가 가격을 제출하지 않음. 같은 요청 키의 과거 실행은 기존 원문 반환.
 - 워커는 설치 당시 후보/수량/시설/단가 자료와 스냅샷을 대조하고 원문을 `cost-snapshot.json`에 보존. 재해 결과의 시설별 `costRecord`는 검증한 같은 내역이며 기존 소유권·재현 다운로드 경계 적용. 완전한 공사비·가격 기준연도는 null, 현재/당시 가격 검증 여부 false. 기존 원화 예산 정책·단가·물리 계산 변경 없음.
 
+## 배출 중심시각 · 2026-10-21
+
+독립 표면의 새 `runoffComparison`은 v3이며 기존 `metricComparison`과 `designContract`를 유지한다. 각 `cases[].metrics.timing`에 원 유출 단계에서 적분한 1차 모멘트(m³·s), 평가 시작 기준 중심시각(s), 상태/사유를 보관한다. `detention.centroidDelaySeconds`는 설계안−기준안으로 양수·0·음수를 보존한다. 배출량 0은 `UNAVAILABLE/*_NO_DISCHARGE`, 음의 내부 성분 유량은 `WITHHELD/*_NEGATIVE_COMPONENT_RATE`와 null이며 보류가 무유출보다 우선한다. `evaluationWindowOnly=true`, `rankingEligible=false`다. 화면은 원 적분·중심시각·차이·상태의 일치를 검사하며 v3 필수값 누락과 구버전으로의 위장을 거부한다. v1/v2 기록의 미수집 시각을 분 출력으로 복원하지 않는다. 게스트의 전체 유출 비교 차단도 유지한다.
+
 ## 공통 계약
 
 공통 경로 `/api/v1`, 동일 출처 JSON, 서버 세션. 상태 변경 CSRF 필수. UTC ISO 8601·필드별 SI 단위. 금액은 KRW이며 면적×단가의 계산 비용·원장은 소수 둘째 자리까지 보존한다. 아래 표는 인증·연구 설계 API이며 공통 게임 API는 다음 절을 함께 본다.

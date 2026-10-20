@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "publisher": "서울특별시",
+  "title": "서울시 옥상녹화 가이드라인",
+  "sourceUrl": "https://parks.seoul.go.kr/story/data/detailView.do?bIdx=556",
+  "publishedAt": "2026-03-03",
+  "retrievedAt": "2026-10-20T19:15:42.264189+00:00",
+  "file": {
+    "url": "https://parks.seoul.go.kr/file/info/downloadFile.do?fIdx=272377",
+    "path": "data/raw/seoul-green-roof-2026-2b4e62c83c6c0eebca54aba64baa269a370b73cc64243d0457eb08467205f412.pdf",
+    "sha256": "2b4e62c83c6c0eebca54aba64baa269a370b73cc64243d0457eb08467205f412",
+    "bytes": 13937906
+  },
+  "findings": [
+    {
+      "pdfPage": 27,
+      "printedPage": 20,
+      "section": "2.1 경량형 녹화 (저관리형)",
+      "minimumSoilDepthMm": 100,
+      "recommendedSoilDepthMm": [
+        150,
+        200
+      ],
+      "currentModelSoilDepthMm": 150,
+      "application": "현재 문헌 토심 150mm의 범위 대조 근거. 새 현장 측정·시공 승인·물리 계수 보정 아님"
+    }
+  ]
+}

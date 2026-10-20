@@ -1,0 +1,526 @@
+{
+  "schemaVersion": 1,
+  "title": "2026년 8월 건설공사비지수(2020=100)",
+  "publisher": "한국건설기술연구원",
+  "sourceUrl": "https://cost.kict.re.kr/#/notice/file/detail/47229",
+  "publishedAt": "2026-09-30",
+  "retrievedAt": "2026-10-20T19:15:42.264189+00:00",
+  "files": [
+    {
+      "url": "https://cost.kict.re.kr/file/download?fileId=1790719895825&fileSeq=1",
+      "path": "data/raw/kict-index-202608-763dc705bb8aef5e89c7b9582691da3478554493c8b863c5122d1f46cd68ea90.xlsx",
+      "sha256": "763dc705bb8aef5e89c7b9582691da3478554493c8b863c5122d1f46cd68ea90",
+      "bytes": 59232
+    },
+    {
+      "url": "https://cost.kict.re.kr/file/download?fileId=1790719895825&fileSeq=4",
+      "path": "data/raw/kict-index-202608-a7bca3191ea8708e209d44ab927e718a42063b36143784d7909f133dc2908ff3.pdf",
+      "sha256": "a7bca3191ea8708e209d44ab927e718a42063b36143784d7909f133dc2908ff3",
+      "bytes": 278787
+    }
+  ],
+  "sheet": "건설공사비지수(2020=100)",
+  "baseYear": 2020,
+  "latestPeriod": "2026-08",
+  "latestProvisional": true,
+  "nextPublication": "2026-10-30",
+  "series": [
+    {
+      "label": "건설",
+      "cells": [
+        {
+          "periodLabel": "2022년 1월",
+          "cell": "JI2",
+          "value": 119.77
+        },
+        {
+          "periodLabel": "2022년 2월",
+          "cell": "JJ2",
+          "value": 120.14
+        },
+        {
+          "periodLabel": "2022년 3월",
+          "cell": "JK2",
+          "value": 121.46
+        },
+        {
+          "periodLabel": "2022년 4월",
+          "cell": "JL2",
+          "value": 123.27
+        },
+        {
+          "periodLabel": "2022년 5월",
+          "cell": "JM2",
+          "value": 124.6
+        },
+        {
+          "periodLabel": "2022년 6월",
+          "cell": "JN2",
+          "value": 124.92
+        },
+        {
+          "periodLabel": "2022년 7월",
+          "cell": "JO2",
+          "value": 125.01
+        },
+        {
+          "periodLabel": "2022년 8월",
+          "cell": "JP2",
+          "value": 124.34
+        },
+        {
+          "periodLabel": "2022년 9월",
+          "cell": "JQ2",
+          "value": 125.52
+        },
+        {
+          "periodLabel": "2022년 10월",
+          "cell": "JR2",
+          "value": 125.6
+        },
+        {
+          "periodLabel": "2022년 11월",
+          "cell": "JS2",
+          "value": 125.7
+        },
+        {
+          "periodLabel": "2022년 12월",
+          "cell": "JT2",
+          "value": 125.33
+        },
+        {
+          "periodLabel": "2026년 8월\n(잠정)",
+          "cell": "LL2",
+          "value": 138.74
+        }
+      ]
+    },
+    {
+      "label": "건물건설 및 건축보수",
+      "cells": [
+        {
+          "periodLabel": "2022년 1월",
+          "cell": "JI3",
+          "value": 119.59
+        },
+        {
+          "periodLabel": "2022년 2월",
+          "cell": "JJ3",
+          "value": 119.84
+        },
+        {
+          "periodLabel": "2022년 3월",
+          "cell": "JK3",
+          "value": 120.99
+        },
+        {
+          "periodLabel": "2022년 4월",
+          "cell": "JL3",
+          "value": 122.67
+        },
+        {
+          "periodLabel": "2022년 5월",
+          "cell": "JM3",
+          "value": 124.15
+        },
+        {
+          "periodLabel": "2022년 6월",
+          "cell": "JN3",
+          "value": 124.33
+        },
+        {
+          "periodLabel": "2022년 7월",
+          "cell": "JO3",
+          "value": 124.62
+        },
+        {
+          "periodLabel": "2022년 8월",
+          "cell": "JP3",
+          "value": 123.82
+        },
+        {
+          "periodLabel": "2022년 9월",
+          "cell": "JQ3",
+          "value": 124.84
+        },
+        {
+          "periodLabel": "2022년 10월",
+          "cell": "JR3",
+          "value": 124.81
+        },
+        {
+          "periodLabel": "2022년 11월",
+          "cell": "JS3",
+          "value": 124.93
+        },
+        {
+          "periodLabel": "2022년 12월",
+          "cell": "JT3",
+          "value": 124.69
+        },
+        {
+          "periodLabel": "2026년 8월\n(잠정)",
+          "cell": "LL3",
+          "value": 136.65
+        }
+      ]
+    },
+    {
+      "label": "토목건설",
+      "cells": [
+        {
+          "periodLabel": "2022년 1월",
+          "cell": "JI10",
+          "value": 120.21
+        },
+        {
+          "periodLabel": "2022년 2월",
+          "cell": "JJ10",
+          "value": 120.88
+        },
+        {
+          "periodLabel": "2022년 3월",
+          "cell": "JK10",
+          "value": 122.64
+        },
+        {
+          "periodLabel": "2022년 4월",
+          "cell": "JL10",
+          "value": 124.78
+        },
+        {
+          "periodLabel": "2022년 5월",
+          "cell": "JM10",
+          "value": 125.73
+        },
+        {
+          "periodLabel": "2022년 6월",
+          "cell": "JN10",
+          "value": 126.39
+        },
+        {
+          "periodLabel": "2022년 7월",
+          "cell": "JO10",
+          "value": 125.98
+        },
+        {
+          "periodLabel": "2022년 8월",
+          "cell": "JP10",
+          "value": 125.63
+        },
+        {
+          "periodLabel": "2022년 9월",
+          "cell": "JQ10",
+          "value": 127.23
+        },
+        {
+          "periodLabel": "2022년 10월",
+          "cell": "JR10",
+          "value": 127.6
+        },
+        {
+          "periodLabel": "2022년 11월",
+          "cell": "JS10",
+          "value": 127.62
+        },
+        {
+          "periodLabel": "2022년 12월",
+          "cell": "JT10",
+          "value": 126.95
+        },
+        {
+          "periodLabel": "2026년 8월\n(잠정)",
+          "cell": "LL10",
+          "value": 144.03
+        }
+      ]
+    },
+    {
+      "label": "도로시설",
+      "cells": [
+        {
+          "periodLabel": "2022년 1월",
+          "cell": "JI12",
+          "value": 120.99
+        },
+        {
+          "periodLabel": "2022년 2월",
+          "cell": "JJ12",
+          "value": 122.02
+        },
+        {
+          "periodLabel": "2022년 3월",
+          "cell": "JK12",
+          "value": 123.89
+        },
+        {
+          "periodLabel": "2022년 4월",
+          "cell": "JL12",
+          "value": 127.55
+        },
+        {
+          "periodLabel": "2022년 5월",
+          "cell": "JM12",
+          "value": 129.35
+        },
+        {
+          "periodLabel": "2022년 6월",
+          "cell": "JN12",
+          "value": 130.65
+        },
+        {
+          "periodLabel": "2022년 7월",
+          "cell": "JO12",
+          "value": 131.28
+        },
+        {
+          "periodLabel": "2022년 8월",
+          "cell": "JP12",
+          "value": 130.52
+        },
+        {
+          "periodLabel": "2022년 9월",
+          "cell": "JQ12",
+          "value": 131.63
+        },
+        {
+          "periodLabel": "2022년 10월",
+          "cell": "JR12",
+          "value": 131.94
+        },
+        {
+          "periodLabel": "2022년 11월",
+          "cell": "JS12",
+          "value": 132.14
+        },
+        {
+          "periodLabel": "2022년 12월",
+          "cell": "JT12",
+          "value": 131.09
+        },
+        {
+          "periodLabel": "2026년 8월\n(잠정)",
+          "cell": "LL12",
+          "value": 144.64
+        }
+      ]
+    },
+    {
+      "label": "하천사방",
+      "cells": [
+        {
+          "periodLabel": "2022년 1월",
+          "cell": "JI16",
+          "value": 116.71
+        },
+        {
+          "periodLabel": "2022년 2월",
+          "cell": "JJ16",
+          "value": 117.34
+        },
+        {
+          "periodLabel": "2022년 3월",
+          "cell": "JK16",
+          "value": 119.09
+        },
+        {
+          "periodLabel": "2022년 4월",
+          "cell": "JL16",
+          "value": 121.08
+        },
+        {
+          "periodLabel": "2022년 5월",
+          "cell": "JM16",
+          "value": 122.32
+        },
+        {
+          "periodLabel": "2022년 6월",
+          "cell": "JN16",
+          "value": 123.18
+        },
+        {
+          "periodLabel": "2022년 7월",
+          "cell": "JO16",
+          "value": 123.25
+        },
+        {
+          "periodLabel": "2022년 8월",
+          "cell": "JP16",
+          "value": 122.43
+        },
+        {
+          "periodLabel": "2022년 9월",
+          "cell": "JQ16",
+          "value": 123.93
+        },
+        {
+          "periodLabel": "2022년 10월",
+          "cell": "JR16",
+          "value": 124.38
+        },
+        {
+          "periodLabel": "2022년 11월",
+          "cell": "JS16",
+          "value": 124.82
+        },
+        {
+          "periodLabel": "2022년 12월",
+          "cell": "JT16",
+          "value": 124.08
+        },
+        {
+          "periodLabel": "2026년 8월\n(잠정)",
+          "cell": "LL16",
+          "value": 134.92
+        }
+      ]
+    },
+    {
+      "label": "상하수도시설",
+      "cells": [
+        {
+          "periodLabel": "2022년 1월",
+          "cell": "JI17",
+          "value": 120.7
+        },
+        {
+          "periodLabel": "2022년 2월",
+          "cell": "JJ17",
+          "value": 121.04
+        },
+        {
+          "periodLabel": "2022년 3월",
+          "cell": "JK17",
+          "value": 122.99
+        },
+        {
+          "periodLabel": "2022년 4월",
+          "cell": "JL17",
+          "value": 124.6
+        },
+        {
+          "periodLabel": "2022년 5월",
+          "cell": "JM17",
+          "value": 125.1
+        },
+        {
+          "periodLabel": "2022년 6월",
+          "cell": "JN17",
+          "value": 125.9
+        },
+        {
+          "periodLabel": "2022년 7월",
+          "cell": "JO17",
+          "value": 125.81
+        },
+        {
+          "periodLabel": "2022년 8월",
+          "cell": "JP17",
+          "value": 125.83
+        },
+        {
+          "periodLabel": "2022년 9월",
+          "cell": "JQ17",
+          "value": 128.05
+        },
+        {
+          "periodLabel": "2022년 10월",
+          "cell": "JR17",
+          "value": 128.79
+        },
+        {
+          "periodLabel": "2022년 11월",
+          "cell": "JS17",
+          "value": 127.92
+        },
+        {
+          "periodLabel": "2022년 12월",
+          "cell": "JT17",
+          "value": 126.89
+        },
+        {
+          "periodLabel": "2026년 8월\n(잠정)",
+          "cell": "LL17",
+          "value": 132.16
+        }
+      ]
+    },
+    {
+      "label": "도시토목",
+      "cells": [
+        {
+          "periodLabel": "2022년 1월",
+          "cell": "JI19",
+          "value": 120.1
+        },
+        {
+          "periodLabel": "2022년 2월",
+          "cell": "JJ19",
+          "value": 121.44
+        },
+        {
+          "periodLabel": "2022년 3월",
+          "cell": "JK19",
+          "value": 123.39
+        },
+        {
+          "periodLabel": "2022년 4월",
+          "cell": "JL19",
+          "value": 126.67
+        },
+        {
+          "periodLabel": "2022년 5월",
+          "cell": "JM19",
+          "value": 128.22
+        },
+        {
+          "periodLabel": "2022년 6월",
+          "cell": "JN19",
+          "value": 129.86
+        },
+        {
+          "periodLabel": "2022년 7월",
+          "cell": "JO19",
+          "value": 130.09
+        },
+        {
+          "periodLabel": "2022년 8월",
+          "cell": "JP19",
+          "value": 129.74
+        },
+        {
+          "periodLabel": "2022년 9월",
+          "cell": "JQ19",
+          "value": 131.04
+        },
+        {
+          "periodLabel": "2022년 10월",
+          "cell": "JR19",
+          "value": 131.32
+        },
+        {
+          "periodLabel": "2022년 11월",
+          "cell": "JS19",
+          "value": 131.34
+        },
+        {
+          "periodLabel": "2022년 12월",
+          "cell": "JT19",
+          "value": 129.77
+        },
+        {
+          "periodLabel": "2026년 8월\n(잠정)",
+          "cell": "LL19",
+          "value": 144.26
+        }
+      ]
+    }
+  ],
+  "application": "SOURCE_ACQUIRED_PRICE_POLICY_NOT_YET_APPLIED",
+  "limitations": [
+    "2026년 8월은 잠정 지수이며 다음 공표에서 수정될 수 있음",
+    "공종별 평균 물가 지수이며 특정 LID 시설의 설치 견적 아님",
+    "원 단가의 가격 시점·규격·포함 공종을 확인하거나 명시적 추정으로 분리한 후 환산 필요",
+    "가격 기준연도 미확인을 문서 발행연도로 확정하지 않음"
+  ]
+}

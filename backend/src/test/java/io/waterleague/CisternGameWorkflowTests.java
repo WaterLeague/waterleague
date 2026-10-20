@@ -100,10 +100,22 @@ class CisternGameWorkflowTests extends PostgresIntegrationTest {
     assertThat(actual.result()).isNotNull();
     assertThat(actual.result().cistern().path("capacityM3").asDouble()).isEqualTo(2.35);
     assertThat(actual.result().cistern().path("reuseM3").isNull()).isTrue();
+    var comparison = actual.result().runoffComparison();
+    assertThat(comparison.path("schemaVersion").asInt()).isEqualTo(3);
+    assertThat(comparison.path("detention").path("status").asString()).isEqualTo("COMPARABLE");
+    assertThat(comparison.path("detention").path("rankingEligible").asBoolean()).isFalse();
+    assertThat(comparison.path("cases").get(0).path("metrics").path("timing")
+        .path("centroidSeconds").isNumber()).isTrue();
     var record = submissions.get(UUID.fromString(data.path("ownerId").asString()),
         UUID.fromString(data.path("submissionId").asString()));
     assertThat(record.state()).isEqualTo("SUCCEEDED");
     assertThat(record.result().path("rankingStatus").asString()).isEqualTo("COMPARABLE");
+    var stored = json.tree(db.queryForObject(
+        "SELECT result::text FROM historical_experiments WHERE id=?", String.class, record.id()));
+    var submittedComparison = stored.path("districts").get(0).path("result")
+        .path("facilities").get(0).path("runoffComparison");
+    assertThat(submittedComparison.path("schemaVersion").asInt()).isEqualTo(3);
+    assertThat(submittedComparison.path("detention").path("centroidDelaySeconds").isNumber()).isTrue();
     assertThat(json.write(submissions.board(data.path("eventId").asString())))
         .contains(data.path("submissionId").asString());
   }

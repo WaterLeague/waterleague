@@ -1,0 +1,263 @@
+{
+  "classification": "PUBLIC_OBSERVED_NATIVE_SURFACES_NOT_FIELD_VALIDATION",
+  "warmupDays": 7,
+  "activationOffsetSeconds": 137,
+  "facilities": [
+    {
+      "facilityType": "RAIN_GARDEN",
+      "candidateId": "C0000fe65db41b6f0c5e9fa6d",
+      "districtId": "11290",
+      "forcingSha256": "4f77f0c2dab03c5b3bacf23af647243f3c48a147012e355935121fcbd3fdccaf",
+      "independentIntegralChecks": [
+        {
+          "id": "baseline",
+          "independentVolumeM3": 3.9091495631537834,
+          "independentFirstMomentM3Seconds": 4736.052184651947,
+          "firstMomentDifferenceM3Seconds": 2.7284841053187847e-12,
+          "outBytesIdentical": true
+        },
+        {
+          "id": "strategy",
+          "independentVolumeM3": 0.0,
+          "independentFirstMomentM3Seconds": 0.0,
+          "firstMomentDifferenceM3Seconds": 0.0,
+          "outBytesIdentical": true
+        }
+      ],
+      "detention": {
+        "schemaVersion": 1,
+        "method": "NATIVE_RUNOFF_VOLUME_CENTROID_V1",
+        "status": "UNAVAILABLE",
+        "reason": "STRATEGY_NO_DISCHARGE",
+        "centroidDelaySeconds": null,
+        "evaluationWindowOnly": true,
+        "rankingEligible": false
+      }
+    },
+    {
+      "facilityType": "PERMEABLE_PAVEMENT",
+      "candidateId": "C000086bc7be76a845f9a9592",
+      "districtId": "11350",
+      "forcingSha256": "9c7c37033f481dfdbe0a46f24b48ab13740f59a5372f5e9ec61b6e9550b5cb01",
+      "independentIntegralChecks": [
+        {
+          "id": "baseline",
+          "independentVolumeM3": 10.935591734061227,
+          "independentFirstMomentM3Seconds": 24426.495153036343,
+          "firstMomentDifferenceM3Seconds": 4.558387445285916e-09,
+          "outBytesIdentical": true
+        },
+        {
+          "id": "strategy",
+          "independentVolumeM3": 0.0,
+          "independentFirstMomentM3Seconds": 0.0,
+          "firstMomentDifferenceM3Seconds": 0.0,
+          "outBytesIdentical": true
+        }
+      ],
+      "detention": {
+        "schemaVersion": 1,
+        "method": "NATIVE_RUNOFF_VOLUME_CENTROID_V1",
+        "status": "UNAVAILABLE",
+        "reason": "STRATEGY_NO_DISCHARGE",
+        "centroidDelaySeconds": null,
+        "evaluationWindowOnly": true,
+        "rankingEligible": false
+      }
+    },
+    {
+      "facilityType": "GREEN_ROOF",
+      "candidateId": "C00000ce622e09957b3ff9d76",
+      "districtId": "11545",
+      "forcingSha256": "7b7f1dec7a57ca1d8e6a4053b2041179e98039dea9c7aee9080547d415d9e6b5",
+      "independentIntegralChecks": [
+        {
+          "id": "baseline",
+          "independentVolumeM3": 22.6587336208326,
+          "independentFirstMomentM3Seconds": 233087.65953225247,
+          "firstMomentDifferenceM3Seconds": -8.149072527885437e-10,
+          "outBytesIdentical": true
+        },
+        {
+          "id": "strategy",
+          "independentVolumeM3": 23.166681699073806,
+          "independentFirstMomentM3Seconds": 245509.06046442778,
+          "firstMomentDifferenceM3Seconds": 2.764863893389702e-09,
+          "outBytesIdentical": true
+        }
+      ],
+      "detention": {
+        "schemaVersion": 1,
+        "method": "NATIVE_RUNOFF_VOLUME_CENTROID_V1",
+        "status": "COMPARABLE",
+        "reason": null,
+        "centroidDelaySeconds": 310.62715050721636,
+        "evaluationWindowOnly": true,
+        "rankingEligible": false
+      }
+    },
+    {
+      "facilityType": "BIORETENTION",
+      "candidateId": "C0000fe65db41b6f0c5e9fa6d",
+      "districtId": "11290",
+      "forcingSha256": "4f77f0c2dab03c5b3bacf23af647243f3c48a147012e355935121fcbd3fdccaf",
+      "independentIntegralChecks": [
+        {
+          "id": "baseline",
+          "independentVolumeM3": 3.9091495631537834,
+          "independentFirstMomentM3Seconds": 4736.052184651947,
+          "firstMomentDifferenceM3Seconds": 2.7284841053187847e-12,
+          "outBytesIdentical": true
+        },
+        {
+          "id": "strategy",
+          "independentVolumeM3": 0.0,
+          "independentFirstMomentM3Seconds": 0.0,
+          "firstMomentDifferenceM3Seconds": 0.0,
+          "outBytesIdentical": true
+        }
+      ],
+      "detention": {
+        "schemaVersion": 1,
+        "method": "NATIVE_RUNOFF_VOLUME_CENTROID_V1",
+        "status": "UNAVAILABLE",
+        "reason": "STRATEGY_NO_DISCHARGE",
+        "centroidDelaySeconds": null,
+        "evaluationWindowOnly": true,
+        "rankingEligible": false
+      }
+    },
+    {
+      "facilityType": "VEGETATIVE_SWALE",
+      "candidateId": "C0000fe65db41b6f0c5e9fa6d",
+      "districtId": "11290",
+      "forcingSha256": "4f77f0c2dab03c5b3bacf23af647243f3c48a147012e355935121fcbd3fdccaf",
+      "independentIntegralChecks": [
+        {
+          "id": "baseline",
+          "independentVolumeM3": 3.9091495631537834,
+          "independentFirstMomentM3Seconds": 4736.052184651947,
+          "firstMomentDifferenceM3Seconds": 2.7284841053187847e-12,
+          "outBytesIdentical": true
+        },
+        {
+          "id": "strategy",
+          "independentVolumeM3": 4.012292806352237,
+          "independentFirstMomentM3Seconds": 5288.329234333325,
+          "firstMomentDifferenceM3Seconds": 3.1104718800634146e-10,
+          "outBytesIdentical": true
+        }
+      ],
+      "detention": {
+        "schemaVersion": 1,
+        "method": "NATIVE_RUNOFF_VOLUME_CENTROID_V1",
+        "status": "COMPARABLE",
+        "reason": null,
+        "centroidDelaySeconds": 106.5016765265309,
+        "evaluationWindowOnly": true,
+        "rankingEligible": false
+      }
+    },
+    {
+      "facilityType": "INFILTRATION_TRENCH",
+      "candidateId": "C0000fe65db41b6f0c5e9fa6d",
+      "districtId": "11290",
+      "forcingSha256": "4f77f0c2dab03c5b3bacf23af647243f3c48a147012e355935121fcbd3fdccaf",
+      "independentIntegralChecks": [
+        {
+          "id": "baseline",
+          "independentVolumeM3": 3.9091495631537834,
+          "independentFirstMomentM3Seconds": 4736.052184651947,
+          "firstMomentDifferenceM3Seconds": 2.7284841053187847e-12,
+          "outBytesIdentical": true
+        },
+        {
+          "id": "strategy",
+          "independentVolumeM3": 3.428822313285197,
+          "independentFirstMomentM3Seconds": 4114.775179908726,
+          "firstMomentDifferenceM3Seconds": -5.729816621169448e-11,
+          "outBytesIdentical": true
+        }
+      ],
+      "detention": {
+        "schemaVersion": 1,
+        "method": "NATIVE_RUNOFF_VOLUME_CENTROID_V1",
+        "status": "COMPARABLE",
+        "reason": null,
+        "centroidDelaySeconds": -11.475107710618204,
+        "evaluationWindowOnly": true,
+        "rankingEligible": false
+      }
+    },
+    {
+      "facilityType": "RAINWATER_CISTERN",
+      "candidateId": "C00000ce622e09957b3ff9d76",
+      "districtId": "11545",
+      "forcingSha256": "7b7f1dec7a57ca1d8e6a4053b2041179e98039dea9c7aee9080547d415d9e6b5",
+      "independentIntegralChecks": [
+        {
+          "id": "baseline",
+          "independentVolumeM3": 22.6587336208326,
+          "independentFirstMomentM3Seconds": 233087.65953225247,
+          "firstMomentDifferenceM3Seconds": -8.149072527885437e-10,
+          "outBytesIdentical": true
+        },
+        {
+          "id": "strategy",
+          "independentVolumeM3": 22.731697630843193,
+          "independentFirstMomentM3Seconds": 233957.31997673077,
+          "firstMomentDifferenceM3Seconds": -5.093170329928398e-09,
+          "outBytesIdentical": true
+        }
+      ],
+      "detention": {
+        "schemaVersion": 1,
+        "method": "NATIVE_RUNOFF_VOLUME_CENTROID_V1",
+        "status": "COMPARABLE",
+        "reason": null,
+        "centroidDelaySeconds": 5.23887290626044,
+        "evaluationWindowOnly": true,
+        "rankingEligible": false
+      }
+    }
+  ],
+  "archive": "data/runs/runoff-timing-v1",
+  "manifestSha256": "6cd5a6a1e680eab9380cc6bc631bf8033cf0a9c6dcb8e06aa72ff9755cc1722b",
+  "fixtureSha256": "3822803679a81468539c518e2a4e9fa74cae5d5fcfea15246de200bd680d3973",
+  "fileCount": 712,
+  "verification": {
+    "pythonUnitTests": 31,
+    "frontendTests": 480,
+    "frontendTestFiles": 140,
+    "javaExecutedTests": 2,
+    "realWorkerIntegrationTests": 1,
+    "sourceDatabaseCountsPreserved": true,
+    "evidenceFiles": [
+      {
+        "path": "tmp/runoff-timing-unit.log",
+        "sha256": "3b54651bd94ff9a61068220a9266a723fc08bd64b8b012cad58848490fc55f60"
+      },
+      {
+        "path": "tmp/runoff-timing-boundaries.log",
+        "sha256": "f3ba2b7a8c073ba51ff5ef0c52a331cdb15f87a733c0445b13552232a0fc34f1"
+      },
+      {
+        "path": "tmp/runoff-timing-frontend-tests.log",
+        "sha256": "8c43a8d9b9c3c51b345dd5b49b5503107e7e93d512f3d419fb13a56fc2dbce8f"
+      },
+      {
+        "path": "tmp/runoff-timing-frontend-build.log",
+        "sha256": "1f34d9f91ce124e0700407323db64aa410c67cae3bb15af6dac68cb1ddabe84c"
+      },
+      {
+        "path": "tmp/waterleague_league_test_3336b7267c704d0782d5e38af2247c6e.log",
+        "sha256": "201728b299d0c1188cac896ad6666dfa14982d127b2825a8f75abe799ef329ed"
+      },
+      {
+        "path": "tmp/runoff-timing-ui-detail.png",
+        "sha256": "cbb23ea9b849827a69431ff3cac70db0110aba6955df47fd6da63c4e34a733ec"
+      }
+    ],
+    "browserScope": "380px result panel; positive, negative and no-discharge cases; not a mobile device performance test"
+  }
+}

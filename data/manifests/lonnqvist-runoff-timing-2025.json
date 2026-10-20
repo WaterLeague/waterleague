@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "classification": "REVIEWED_PUBLISHED_METHOD_NOT_LOCAL_FULL_TEXT_ARCHIVE",
+  "title": "Green roof runoff reduction of 84 rain events: Comparing Sedum, life strategy-based vegetation, unvegetated and conventional roofs",
+  "authors": ["Joel Lönnqvist", "Ico Broekhuizen", "Maria Viklander", "Godecke Blecken"],
+  "journal": "Journal of Hydrology",
+  "volume": 646,
+  "article": "132325",
+  "publicationYear": 2025,
+  "availableOnline": "2024-11-17",
+  "doi": "10.1016/j.jhydrol.2024.132325",
+  "url": "https://doi.org/10.1016/j.jhydrol.2024.132325",
+  "reviewedFullTextUrl": "https://www.researchgate.net/publication/385897431_Green_roof_runoff_reduction_of_84_rain_events_Comparing_Sedum_life_strategy-based_vegetation_unvegetated_and_conventional_roofs",
+  "fullTextProvider": "Author-uploaded article, Joel Lönnqvist, 2024-12-13",
+  "reviewedOn": "2026-10-21",
+  "license": "CC BY 4.0",
+  "reference": "Table 2; sections 4.3.2, 4.3.3, 4.4",
+  "appliedMethod": "설계안 유출의 체적 중심시각에서 기준안 유출의 체적 중심시각을 뺀 차이",
+  "localFullTextFile": null,
+  "localFullTextSha256": null,
+  "limitations": [
+    "본문 열람 근거이며 완전한 PDF를 로컬 보관한 것으로 표시하지 않음",
+    "부분 다운로드 PDF와 접근 차단 HTML은 원문 근거 파일로 등록하지 않음",
+    "논문의 지연 분포·효과량·보정 계수를 서울 시설 입력으로 전용하지 않음",
+    "현재 구현은 평가 창 안의 배출량만 포함하며 잔여 저류의 창 이후 배출은 미포함",
+    "지연은 강우·선행 상태·설계·유출량 차이의 영향을 받으며 입자 체류시간·하류 침수 저감과 구별"
+  ]
+}

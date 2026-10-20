@@ -7,6 +7,7 @@ from pathlib import Path
 from .swmm import SimulationQualityError
 
 METHOD = 'NATIVE_RUNOFF_STEP_SURFACE_PLUS_DRAIN_V1'
+TIMING_METHOD = 'NATIVE_RUNOFF_VOLUME_CENTROID_V1'
 
 
 def require(condition):
@@ -21,6 +22,7 @@ class RunoffMetrics:
         self.expected_step = expected_step
         self.previous = 0.
         self.seconds = self.volume = self.compensation = 0.
+        self.moment = self.moment_compensation = 0.
         self.peak = self.max_step = 0.
         self.peak_at = None
         self.steps = 0
@@ -42,6 +44,13 @@ class RunoffMetrics:
             summed = self.volume + corrected
             self.compensation = (summed - self.volume) - corrected
             self.volume = summed
+            # 내부 구간 평균 유량의 1차 모멘트는 구간 중점을 사용하고 선행 시간을 뺀다.
+            moment = volume * (self.previous + step / 2 - self.start)
+            corrected_moment = moment - self.moment_compensation
+            summed_moment = self.moment + corrected_moment
+            self.moment_compensation = (summed_moment - self.moment) - corrected_moment
+            self.moment = summed_moment
+            require(math.isfinite(self.volume) and math.isfinite(self.moment))
             self.seconds += step
             self.steps += 1
             self.max_step = max(self.max_step, step)
@@ -53,6 +62,10 @@ class RunoffMetrics:
         require(abs(self.previous - self.end) <= 1e-7
                 and abs(self.seconds - (self.end - self.start)) <= 1e-7 and self.steps > 0)
         at = lambda t: (self.clock + timedelta(seconds=t)).isoformat()
+        reason = ('NEGATIVE_COMPONENT_RATE' if self.minimum_flow < 0
+                  else 'NO_DISCHARGE' if self.volume == 0 else None)
+        centroid = None if reason else self.moment / self.volume
+        require(centroid is None or math.isfinite(centroid) and 0 <= centroid <= self.seconds)
         return {'method': METHOD, 'scope': 'SELECTED_SURFACE_OUTLET_NOT_SEWER_OR_RIVER',
             'start': at(self.start), 'end': at(self.end), 'stepCount': self.steps,
             'maximumStepSeconds': self.max_step, 'observedSeconds': self.seconds,
@@ -60,6 +73,10 @@ class RunoffMetrics:
             'peakAt': None if self.peak_at is None else at(self.peak_at),
             'peakTimeConvention': 'END_OF_NATIVE_RUNOFF_INTERVAL',
             'minimumComponentRateM3s': self.minimum_flow,
+            'timing': {'method': TIMING_METHOD, 'firstMomentM3Seconds': self.moment,
+                'centroidSeconds': centroid,
+                'status': 'WITHHELD' if reason == 'NEGATIVE_COMPONENT_RATE' else 'UNAVAILABLE' if reason else 'COMPUTED',
+                'reason': reason},
             'implementationSha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest()}
 
 
@@ -80,15 +97,28 @@ def comparison(baseline, strategy):
             'nativeIntegralDifferenceM3': difference, 'metrics': metrics})
     a, b = cases
     require(a['metrics']['start'] == b['metrics']['start'] and a['metrics']['end'] == b['metrics']['end'])
-    value = {'schemaVersion': 2, 'method': METHOD, 'cases': cases,
+    timings = [c['metrics']['timing'] for c in cases]
+    invalid = next(((label, t) for label, t in zip(('BASELINE', 'STRATEGY'), timings)
+                    if t['status'] == 'WITHHELD'), None)
+    missing = next(((label, t) for label, t in zip(('BASELINE', 'STRATEGY'), timings)
+                    if t['status'] == 'UNAVAILABLE'), None)
+    blocker = invalid or missing
+    detention = {'schemaVersion': 1, 'method': TIMING_METHOD,
+        'status': 'WITHHELD' if invalid else 'UNAVAILABLE' if missing else 'COMPARABLE',
+        'reason': blocker[0] + '_' + blocker[1]['reason'] if blocker else None,
+        'centroidDelaySeconds': None if blocker else timings[1]['centroidSeconds'] - timings[0]['centroidSeconds'],
+        'evaluationWindowOnly': True, 'rankingEligible': False}
+    value = {'schemaVersion': 3, 'method': METHOD, 'cases': cases,
         'dischargeReductionM3': a['dischargeM3'] - b['dischargeM3'],
         'netStorageIncreaseM3': b['netStorageM3'] - a['netStorageM3'],
         'accountedReductionM3': a['accountedDischargeM3'] - b['accountedDischargeM3'],
         'peakReductionM3s': a['metrics']['peakM3s'] - b['metrics']['peakM3s'],
+        'detention': detention,
         'limitations': ['선택 표면 출구의 유출·하부배수 합이며 하수관·하천·구 전체 첨두 아님',
             '첨두는 내부 유출 계산 구간의 평균률 최대값과 그 구간 종료 시각',
             '선행 초기화 제외·평가 종료 후 방류 미포함; 잔여 저류를 영구 저감으로 취급하지 않음',
-            '개별 표면 첨두 합산으로 연결 유역 첨두를 만들지 않음']}
+            '개별 표면 첨두 합산으로 연결 유역 첨두를 만들지 않음',
+            '중심시각 지연은 평가 창 내 배출 시간 분포 차이; 종료 이후 배출·입자 체류시간·하류 침수 개선 아님']}
     from ..evaluation.raw_metrics import surface
     value['metricComparison'] = surface(value)
     return value

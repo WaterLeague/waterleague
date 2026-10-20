@@ -97,6 +97,37 @@ export function RunoffComparison({ value, contract }: { value: unknown; contract
         계산하지 않습니다.
       </p>
       <details>
+        <summary>물의 배출 시각 변화</summary>
+        {result.detention?.status === 'COMPARABLE' ? (
+          <>
+            <p>
+              유출량 중심시각 지연 {amount(result.detention.centroidDelaySeconds!)}초{' · '}양수는
+              늦어짐, 음수는 빨라짐
+            </p>
+            <p>
+              평가 시작부터 설치 전 {amount(before.metrics.timing!.centroidSeconds!)}초 · 설치 후{' '}
+              {amount(after.metrics.timing!.centroidSeconds!)}초
+            </p>
+          </>
+        ) : (
+          <p>
+            {result.detention?.status === 'WITHHELD'
+              ? '내부 유량에 음의 수치값이 있어 배출 시각 비교를 보류합니다.'
+              : result.detention
+                ? '한 조건 이상에서 배출량이 0이므로 중심시각 지연을 산정하지 않습니다.'
+                : '이전 기록에는 유출량 중심시각이 수집되지 않았습니다.'}
+          </p>
+        )}
+        <p>
+          배출량으로 가중한 평균 시각을 같은 평가 구간에서 비교합니다. 종료 시 남은 물의 이후 배출은
+          포함하지 않으며, 개별 물의 체류시간이나 하류 침수 개선을 뜻하지 않습니다. 지연 시간은 체적
+          점수에 더하지 않습니다.
+        </p>
+        <a href="https://doi.org/10.1016/j.jhydrol.2024.132325" target="_blank" rel="noreferrer">
+          2025년 녹화지붕 연구의 중심시각 비교 정의
+        </a>
+      </details>
+      <details>
         <summary>첨두 시각·물수지</summary>
         {[before, after].map((c) => (
           <p key={c.id}>

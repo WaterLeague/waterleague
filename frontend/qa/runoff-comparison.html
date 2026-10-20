@@ -8,9 +8,9 @@
   <body style="margin: 0; background: #f2f3ee; font: 14px system-ui; color: #284133">
     <header style="padding: 20px; border-bottom: 1px solid #cad5c5">
       <strong>로컬 QA · 제품 빌드 제외</strong>
-      <p>2022. 08. 08 집중호우 · 강남 공개 후보 · 20m² 시설의 실제 계산 결과</p>
-      <button id="bioretention">생물저류시설</button>
-      <button id="roof">녹화지붕</button>
+      <p>2022. 08. 08 관측 강우 · 현재 공개 후보 · 7일 선행 상태 · 설치 137초 이후 평가</p>
+      <label for="facility">시설</label>
+      <select id="facility"></select>
       <p id="status" role="status"></p>
     </header>
     <main id="root" style="max-width: 380px; padding: 16px; margin: auto"></main>
@@ -22,18 +22,39 @@
           import('react'),
           import('react-dom/client'),
           import('/src/domains/physics/view/RunoffComparison.tsx'),
-          import('/src/domains/physics/view/fixtures/publicRunoffComparison.json'),
+          import('/src/domains/physics/view/fixtures/runoffTiming.json'),
         ]);
       const root = createRoot(document.getElementById('root'));
+      const names = {
+        RAIN_GARDEN: '빗물정원',
+        PERMEABLE_PAVEMENT: '투수포장',
+        GREEN_ROOF: '녹화지붕',
+        BIORETENTION: '생물저류',
+        VEGETATIVE_SWALE: '식생수로',
+        INFILTRATION_TRENCH: '침투도랑',
+        RAINWATER_CISTERN: '빗물이용조',
+      };
+      const select = document.getElementById('facility');
+      fixture.cases.forEach((row, index) => {
+        const option = document.createElement('option');
+        option.value = String(index);
+        option.textContent = names[row.facilityType];
+        select.append(option);
+      });
       function render(index) {
         const value = fixture.cases[index];
         document.getElementById('status').textContent =
-          (index ? '녹화지붕' : '생물저류시설') + ' · ' + value.cellId;
-        root.render(React.createElement(RunoffComparison, { value: value.comparison }));
+          names[value.facilityType] + ' · ' + value.candidateId;
+        root.render(
+          React.createElement(RunoffComparison, {
+            value: value.comparison,
+            contract: value.contract,
+          })
+        );
       }
-      document.getElementById('bioretention').onclick = () => render(0);
-      document.getElementById('roof').onclick = () => render(1);
-      render(0);
+      select.onchange = () => render(Number(select.value));
+      select.value = '2';
+      render(2);
     </script>
   </body>
 </html>

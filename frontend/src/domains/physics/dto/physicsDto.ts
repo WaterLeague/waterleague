@@ -52,7 +52,7 @@ export const physicsDto = z
       .nullable(),
   })
   .refine(
-    (v) => v.result?.runoffComparison?.schemaVersion !== 2 || v.result.designContract != null,
+    (v) => (v.result?.runoffComparison?.schemaVersion ?? 1) < 2 || v.result?.designContract != null,
     { message: '현재 주간 결과의 공통 설계 근거 누락' }
   )
   .refine(
