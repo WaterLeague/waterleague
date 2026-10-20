@@ -34,6 +34,7 @@ class CisternMapPlanTests extends PostgresIntegrationTest {
 
   @Autowired AccountRepository accounts;
   @Autowired CisternPlanService service;
+  @Autowired io.waterleague.installation.repository.CisternPlanRepository plans;
   @Autowired InstallationService installations;
   @Autowired io.waterleague.weekly.service.WeeklySeasonService seasons;
   @Autowired SiteCatalogRepository sites;
@@ -248,12 +249,32 @@ class CisternMapPlanTests extends PostgresIntegrationTest {
   }
 
   @Test
+  void storedTimestampPrecisionKeepsCreateAndReadbackIdentical() {
+    var sourceOwner = account("11200");
+    service.save(sourceOwner.username(), request());
+    var source = plans.owned(sourceOwner.id()).getFirst();
+    var owner = account("11200");
+    for (int nanos : new int[] {123456001, 123456789, 999999999}) {
+      var instant = java.time.Instant.parse("2026-01-01T00:00:00Z").plusNanos(nanos);
+      var saved =
+          plans.add(
+              new io.waterleague.installation.entity.CisternPlan(
+                  UUID.randomUUID(), owner.id(), source.inputHash(), source.snapshot(), instant));
+      assertThat(saved.createdAt()).isNotEqualTo(instant);
+      assertThat(saved.createdAt().getNano() % 1000).isZero();
+      assertThat(plans.owned(owner.id()).getFirst()).isEqualTo(saved);
+      assertThat(plans.remove(owner.id(), saved.id())).isTrue();
+    }
+  }
+
+  @Test
   void immutableSourceCostsIdempotencyAndNoSpending() {
     var owner = account("11200");
     var before = budget.view(owner.id()).remainingKrw();
     var first = service.save(owner.username(), request());
     var again = service.save(owner.username(), request());
     assertThat(again.id()).isEqualTo(first.id());
+    assertThat(again).isEqualTo(first);
     assertThat(service.list(owner.username())).hasSize(1);
     var s = first.snapshot();
     assertThat(s.path("capacityM3").decimalValue()).isEqualByComparingTo("2.35");

@@ -175,8 +175,8 @@ public class CisternPlanService {
       if (old.inputHash().equals(hash)) return CisternPlanMapper.view(old, json);
     if (owned.size() >= 20) throw new CisternPlanException(ErrorCode.CONFLICT);
     var plan = new CisternPlan(UUID.randomUUID(), account.id(), hash, raw, Instant.now());
-    plans.add(plan);
-    return CisternPlanMapper.view(plan, json);
+    // DB의 시각 정밀도를 적용한 저장값으로 생성 응답과 재조회 응답을 일치시킨다.
+    return CisternPlanMapper.view(plans.add(plan), json);
   }
 
   @Transactional

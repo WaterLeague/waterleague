@@ -31,10 +31,11 @@ public class CisternPlanRepository {
         owner);
   }
 
-  public void add(CisternPlan value) {
-    db.update(
+  public CisternPlan add(CisternPlan value) {
+    return db.queryForObject(
         "INSERT INTO cistern_map_plans(id,owner_id,input_hash,snapshot_text,created_at)"
-            + " VALUES(?,?,?,?,?)",
+            + " VALUES(?,?,?,?,?) RETURNING *",
+        mapper,
         value.id(),
         value.ownerId(),
         value.inputHash(),
