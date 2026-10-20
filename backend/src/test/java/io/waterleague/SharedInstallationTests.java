@@ -580,6 +580,8 @@ class SharedInstallationTests extends PostgresIntegrationTest {
   @Test
   void oneMemberConcurrentSameSiteHasOneAllocation() throws Exception {
     var a = account("11680");
+    // 원형 후보의 최초 조회를 끝낸 뒤 같은 설치 요청의 경합만 측정한다.
+    var request = placement("11680");
     var start = new CountDownLatch(1);
     try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
       var futures = new ArrayList<Future<String>>();
@@ -589,7 +591,7 @@ class SharedInstallationTests extends PostgresIntegrationTest {
                 () -> {
                   start.await();
                   try {
-                    service.install(a.username(), placement("11680"));
+                    service.install(a.username(), request);
                     return "INSTALLED";
                   } catch (DomainException e) {
                     return e.code().name();
