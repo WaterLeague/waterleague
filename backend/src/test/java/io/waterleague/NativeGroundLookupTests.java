@@ -24,7 +24,7 @@ class NativeGroundLookupTests {
     assertThat(selected.polygons()).isEqualTo(candidate.polygons());
     assertThat(selected.sourceIds()).allMatch(id -> id.startsWith("ngii:"));
     assertThat(selected.modelHash())
-        .isEqualTo("4ec7535e7cbaf41dc73f73519d77ba11f956f4c75c1a574fffa08f16625919b7");
+        .isEqualTo("d2d9ea2a888ee01d59f253b3848c3c30fdf4b6b3f03662b1202dc9b7a48b88b9");
     var json =
         new io.waterleague.common.service.JsonService(new tools.jackson.databind.ObjectMapper());
     io.waterleague.installation.view.SiteView reference = null;
@@ -52,6 +52,21 @@ class NativeGroundLookupTests {
                     "roof",
                     NativeSiteFixtures.cell(sites, "11680", FacilityType.GREEN_ROOF, 0)))
             + "\n");
+  }
+
+  @Test
+  void restoresParkingCandidatesWithSourceNamesAndDedicatedSurfaceFilter() {
+    var parking = sites.require("11380", "Cfd3204429da79b5a6db2702b");
+    assertThat(parking.name()).isEqualTo("북한산성제1주차장 · 1");
+    assertThat(parking.sourceRole()).isEqualTo("PARKING_AREA");
+    assertThat(parking.allowedTypes()).containsExactly("PERMEABLE_PAVEMENT");
+    assertThat(sites.ground(parking.center().get(0), parking.center().get(1)).cellId())
+        .isEqualTo(parking.cellId());
+    var nearby = sites.nearest("11380", parking.center().get(0), parking.center().get(1),
+        0, FacilityType.PERMEABLE_PAVEMENT, false,
+        io.waterleague.installation.entity.SiteSurface.PARKING);
+    assertThat(nearby.sites()).allMatch(site -> site.sourceRole().equals("PARKING_AREA"));
+    assertThat(nearby.sites()).anyMatch(site -> site.cellId().equals(parking.cellId()));
   }
 
   @Test

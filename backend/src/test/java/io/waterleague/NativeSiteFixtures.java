@@ -4,6 +4,7 @@ import io.waterleague.common.service.JsonService;
 import io.waterleague.district.repository.DistrictRepository;
 import io.waterleague.infrastructure.repository.SurfaceOccupancyRepository;
 import io.waterleague.installation.repository.SiteCatalogRepository;
+import io.waterleague.installation.repository.SiteLabelRepository;
 import io.waterleague.installation.view.SiteView;
 import io.waterleague.rainfall.repository.ObservedGameRepository;
 import io.waterleague.spatial.repository.NativePlayBundle;
@@ -25,7 +26,8 @@ final class NativeSiteFixtures {
           json,
           new DistrictRepository(json, observations),
           nativeSites,
-          new SurfaceOccupancyRepository(json));
+          new SurfaceOccupancyRepository(json),
+          new SiteLabelRepository(json));
     } catch (Exception e) {
       throw new IllegalStateException("원형 시험 카탈로그 읽기 실패", e);
     }

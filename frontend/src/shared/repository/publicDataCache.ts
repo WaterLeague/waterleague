@@ -1,8 +1,19 @@
 import { CityError } from '../../domains/city/exception/CityError';
-const cacheName = 'waterleague-public-sha256-v1';
-const maximumCacheBytes = 128 * 1024 * 1024;
-let storedSizes: Map<string, number> | null = null;
-let maintenance: Promise<void> = Promise.resolve();
+type CacheNamespace = 'default' | 'topography';
+const cacheBuckets = {
+  default: {
+    name: 'waterleague-public-sha256-v1',
+    maximum: 128 * 1024 * 1024,
+    sizes: null as Map<string, number> | null,
+    maintenance: Promise.resolve(),
+  },
+  topography: {
+    name: 'waterleague-topography-sha256-v1',
+    maximum: 96 * 1024 * 1024,
+    sizes: null as Map<string, number> | null,
+    maintenance: Promise.resolve(),
+  },
+};
 async function digest(raw: ArrayBuffer) {
   return [...new Uint8Array(await crypto.subtle.digest('SHA-256', raw))]
     .map((v) => v.toString(16).padStart(2, '0'))
@@ -106,7 +117,8 @@ export async function readPublicData(
   path: string,
   expected: string,
   maximum: number,
-  signal: AbortSignal
+  signal: AbortSignal,
+  namespace: CacheNamespace = 'default'
 ): Promise<unknown> {
   if (
     !/^\/data\/[\w/.-]+\.json(?:\.gz)?$/.test(path) ||
@@ -118,10 +130,13 @@ export async function readPublicData(
   )
     throw new CityError('INVALID_DATA');
   signal.throwIfAborted();
+  if (namespace !== 'default' && namespace !== 'topography') throw new CityError('INVALID_DATA');
+  const bucket = cacheBuckets[namespace];
+  if (!bucket) throw new CityError('INVALID_DATA');
   let cache: Cache | undefined;
   const key = `${path}?sha256=${expected}`;
   try {
-    if (typeof caches !== 'undefined') cache = await caches.open(cacheName);
+    if (typeof caches !== 'undefined') cache = await caches.open(bucket.name);
   } catch {
     /* 저장소가 차단된 기기도 메모리 조회는 계속한다. */
   }
@@ -148,15 +163,15 @@ export async function readPublicData(
   if (cache) {
     const storage = cache;
     // 인증 응답은 저장하지 않고 원본 해시로 고정한 공개 지도만 용량 상한 안에서 보관한다.
-    maintenance = maintenance
+    bucket.maintenance = bucket.maintenance
       .then(async () => {
-        if (!storedSizes) {
-          storedSizes = new Map();
+        if (!bucket.sizes) {
+          bucket.sizes = new Map();
           for (const request of await storage.keys()) {
             const response = await storage.match(request);
-            storedSizes.set(
+            bucket.sizes.set(
               request.url,
-              Number(response?.headers.get('Content-Length') ?? maximumCacheBytes)
+              Number(response?.headers.get('Content-Length') ?? bucket.maximum)
             );
           }
         }
@@ -170,13 +185,13 @@ export async function readPublicData(
             },
           })
         );
-        storedSizes.delete(absolute);
-        storedSizes.set(absolute, raw.byteLength);
-        let bytes = [...storedSizes.values()].reduce((sum, n) => sum + n, 0);
-        for (const [oldest, size] of storedSizes) {
-          if (bytes <= maximumCacheBytes) break;
+        bucket.sizes.delete(absolute);
+        bucket.sizes.set(absolute, raw.byteLength);
+        let bytes = [...bucket.sizes.values()].reduce((sum, n) => sum + n, 0);
+        for (const [oldest, size] of bucket.sizes) {
+          if (bytes <= bucket.maximum) break;
           await storage.delete(oldest);
-          storedSizes.delete(oldest);
+          bucket.sizes.delete(oldest);
           bytes -= size;
         }
       })

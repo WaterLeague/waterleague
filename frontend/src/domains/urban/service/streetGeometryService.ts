@@ -1,8 +1,16 @@
+import { bridgeAxis, bridgePierPositions } from './nativeBridgeStructureService';
+import { bridgeArchitecture } from './bridgeArchitectureService';
+import { stairTriangles } from '../../../shared/service/polygonBandService';
 import { nativeSurfaceColor } from './nativeStreetService';
+import { nativeBridgeHeight, nativeBridgeProfileHeight, withinBridge } from './nativeBridgeService';
 import { Color, ShapeUtils, Vector2 } from 'three';
 import type { Street } from '../entity/urban';
 import type { Terrain } from '../../terrain/entity/terrain';
-import { drapeTriangle, terrainMeshHeight } from '../../terrain/service/terrainDrapeService';
+import {
+  drapeTriangle,
+  drapeSegment,
+  terrainMeshHeight,
+} from '../../terrain/service/terrainDrapeService';
 import { pathPosition, streetPath, sidewalkSides } from './streetLifeService';
 type Point = [number, number];
 // 실측 제원이 없는 교량은 공개 층·연결 관계를 보존한 표시 높이를 사용한다.
@@ -14,6 +22,18 @@ export function streetHeight(
   road: boolean | Street,
   segment?: number
 ) {
+  if (typeof road === 'object' && road.nativeWalkingDecks)
+    for (const deck of road.nativeWalkingDecks)
+      if (withinBridge(point, deck.polygons))
+        return nativeBridgeHeight(terrain, deck.deckPolygons, deck.deckLiftM) + 0.14;
+  if (typeof road === 'object' && road.nativeBridgeProfiles?.length)
+    return (
+      Math.max(
+        ...road.nativeBridgeProfiles.map((profile) =>
+          nativeBridgeProfileHeight(terrain, point, profile)
+        )
+      ) + 0.016
+    );
   if (typeof road === 'object' && road.elevationsM) {
     let nearest = Infinity,
       height = 0;
@@ -68,8 +88,9 @@ export function streetOffsets(points: Point[], offset: number): Point[] {
 export function streetGeometry(
   roads: Street[],
   terrain: Terrain | null,
-  detail: boolean,
-  parkingAisles: string[] = []
+  detailed: boolean,
+  parkingAisles: string[] = [],
+  detailCenter?: Point
 ) {
   const positions: number[] = [],
     colors: number[] = [],
@@ -89,29 +110,293 @@ export function streetGeometry(
       colors.push(color.r, color.g, color.b);
     }
   };
+  const beam = (a: number[], b: number[], width: number, depth: number, color: Color) => {
+    const dx = b[0] - a[0],
+      dy = b[1] - a[1],
+      dz = b[2] - a[2],
+      length = Math.hypot(dx, dy, dz);
+    if (length < 0.0001) return;
+    const horizontal = Math.hypot(dx, dz),
+      nx = horizontal ? -dz / horizontal : 1,
+      nz = horizontal ? dx / horizontal : 0;
+    const ux = (dy / length) * nz,
+      uy = (dz * nx - dx * nz) / length,
+      uz = (-dy / length) * nx;
+    const corners = (p: number[]) =>
+      [
+        [1, -1],
+        [-1, -1],
+        [-1, 1],
+        [1, 1],
+      ].map(([side, up]) => [
+        p[0] + ((nx * width) / 2) * side + ((ux * depth) / 2) * up,
+        p[1] + ((uy * depth) / 2) * up,
+        p[2] + ((nz * width) / 2) * side + ((uz * depth) / 2) * up,
+      ]);
+    const v = [...corners(a), ...corners(b)];
+    for (const q of [
+      [0, 1, 2, 3],
+      [4, 7, 6, 5],
+      [0, 4, 5, 1],
+      [3, 2, 6, 7],
+      [0, 3, 7, 4],
+      [1, 5, 6, 2],
+    ]) {
+      face(v[q[0]], v[q[1]], v[q[2]], color);
+      face(v[q[0]], v[q[2]], v[q[3]], color);
+    }
+  };
   for (const road of roads) {
+    const detail =
+      detailed &&
+      (!detailCenter ||
+        road.coordinates.some((p, i) => {
+          const q = road.coordinates[Math.max(0, i - 1)];
+          const dx = p[0] - q[0],
+            dy = p[1] - q[1];
+          const t = Math.max(
+            0,
+            Math.min(
+              1,
+              ((detailCenter[0] - q[0]) * dx + (detailCenter[1] - q[1]) * dy) /
+                (dx * dx + dy * dy || 1)
+            )
+          );
+          return (
+            Math.hypot(q[0] + dx * t - detailCenter[0], q[1] + dy * t - detailCenter[1]) < 1400
+          );
+        }));
     if (road.nativeSourceRole) {
-      if (road.nativePolygons)
-        for (const component of road.nativePolygons) {
+      const bridgeHeight =
+        road.bridge && road.nativePolygons && !road.nativeBridgeProfiles?.length
+          ? nativeBridgeHeight(
+              terrain,
+              road.nativeBridgeGroupPolygons ?? road.nativePolygons,
+              road.nativeDeckLiftM
+            )
+          : null;
+      const marking = road.nativeMarkingPolygons;
+      const surfaceLift = road.nativeSourceRole === 'SIDEWALK_AREA' ? 0.14 : 0.016;
+      const slabThickness = road.nativeSourceRole === 'SIDEWALK_AREA' ? 0.124 : bridgeDeckThickness;
+      if (bridgeHeight !== null) bridgeArchitecture(road, bridgeHeight + 0.016, beam, detail);
+      if (marking ? detail : road.nativePolygons)
+        for (const component of marking ?? road.nativePolygons ?? []) {
           const rings = component.map((ring) =>
             ring.slice(0, -1).map(([x, y]) => new Vector2(x, y))
           );
           const points = rings.flat();
-          const color = new Color(nativeSurfaceColor(road.nativeSourceRole));
+          const color = marking ? paint : new Color(nativeSurfaceColor(road.nativeSourceRole));
           for (const ids of ShapeUtils.triangulateShape(rings[0], rings.slice(1))) {
             const triangle = ids.map((id) => [points[id].x, points[id].y] as Point) as [
               Point,
               Point,
               Point,
             ];
-            drapeTriangle(triangle, terrain, (part) => {
+            const emit = (part: readonly (readonly [number, number])[]) => {
               for (const p of part) {
-                positions.push(p[0], terrainMeshHeight(terrain, p) + 0.008, -p[1]);
+                positions.push(
+                  p[0],
+                  (road.nativeBridgeProfiles?.length
+                    ? streetHeight(terrain, p, road) - 0.016
+                    : (bridgeHeight ?? terrainMeshHeight(terrain, p))) +
+                    (marking ? 0.055 : surfaceLift),
+                  -p[1]
+                );
                 colors.push(color.r, color.g, color.b);
               }
-            });
+            };
+            const profile = road.nativeBridgeProfiles?.[0];
+            if (profile?.steps && detail) {
+              const a = profile.coordinates[0],
+                b = profile.coordinates.at(-1)!,
+                dx = b[0] - a[0],
+                dy = b[1] - a[1],
+                length = Math.hypot(dx, dy),
+                axis: Point = [dx / length, dy / length],
+                origin = a[0] * axis[0] + a[1] * axis[1],
+                step = length / Math.max(1, Math.ceil(length / 0.32));
+              for (const section of stairTriangles(triangle, axis, origin, step)) {
+                const middle = Math.min(length, (section.band + 0.5) * step),
+                  height =
+                    nativeBridgeProfileHeight(
+                      terrain,
+                      [a[0] + axis[0] * middle, a[1] + axis[1] * middle],
+                      profile
+                    ) + 0.016;
+                for (let i = 1; i < section.points.length - 1; i++)
+                  face(
+                    [section.points[0][0], height, section.points[0][1]],
+                    [section.points[i][0], height, section.points[i][1]],
+                    [section.points[i + 1][0], height, section.points[i + 1][1]],
+                    color
+                  );
+                for (let i = 0; i < section.points.length; i++) {
+                  const p = section.points[i],
+                    q = section.points[(i + 1) % section.points.length],
+                    low = Math.max(terrainMeshHeight(terrain, p), height - bridgeDeckThickness);
+                  face([p[0], low, p[1]], [q[0], low, q[1]], [q[0], height, q[1]], color);
+                  face([p[0], low, p[1]], [q[0], height, q[1]], [p[0], height, p[1]], color);
+                }
+              }
+            } else if (profile) {
+              const split = (t: [Point, Point, Point], depth = 0) => {
+                const lengths = t.map((p, i) =>
+                    Math.hypot(p[0] - t[(i + 1) % 3][0], p[1] - t[(i + 1) % 3][1])
+                  ),
+                  longest = Math.max(...lengths),
+                  i = lengths.indexOf(longest);
+                if (longest <= (detail ? 5 : 40) || depth >= 14) {
+                  emit(t);
+                  return;
+                }
+                const a = t[i],
+                  b = t[(i + 1) % 3],
+                  c = t[(i + 2) % 3],
+                  mid: Point = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+                split([a, mid, c], depth + 1);
+                split([mid, b, c], depth + 1);
+              };
+              drapeTriangle(triangle, terrain, (t) =>
+                split(t.map((p) => [p[0], p[1]]) as [Point, Point, Point])
+              );
+            } else if (bridgeHeight !== null) {
+              emit(triangle);
+              const bottom = triangle.map((p) => [
+                p[0],
+                bridgeHeight + surfaceLift - slabThickness,
+                p[1],
+              ]);
+              face(bottom[0], bottom[2], bottom[1], underside);
+            } else drapeTriangle(triangle, terrain, emit);
+          }
+          if (road.nativeSourceRole === 'SIDEWALK_AREA' && !marking && bridgeHeight === null)
+            for (const ring of component)
+              for (let i = 1; i < ring.length; i++)
+                for (const [a, b] of drapeSegment(ring[i - 1], ring[i], terrain)) {
+                  const ha = terrainMeshHeight(terrain, a),
+                    hb = terrainMeshHeight(terrain, b);
+                  face([a[0], ha, a[1]], [b[0], hb, b[1]], [b[0], hb + 0.14, b[1]], walk);
+                  face([a[0], ha, a[1]], [b[0], hb + 0.14, b[1]], [a[0], ha + 0.14, a[1]], walk);
+                }
+          if (road.nativeBridgeProfiles?.length)
+            for (const ring of component)
+              for (let i = 1; i < ring.length; i++)
+                for (const [a, b] of drapeSegment(ring[i - 1], ring[i], terrain)) {
+                  const ha = streetHeight(terrain, a, road),
+                    hb = streetHeight(terrain, b, road),
+                    ga = Math.max(
+                      terrainMeshHeight(terrain, a),
+                      road.bridge ? ha - bridgeDeckThickness : -Infinity
+                    ),
+                    gb = Math.max(
+                      terrainMeshHeight(terrain, b),
+                      road.bridge ? hb - bridgeDeckThickness : -Infinity
+                    );
+                  face([a[0], ga, a[1]], [b[0], gb, b[1]], [b[0], hb, b[1]], concrete);
+                  face([a[0], ga, a[1]], [b[0], hb, b[1]], [a[0], ha, a[1]], concrete);
+                }
+          if (bridgeHeight !== null)
+            for (const ring of component)
+              for (let i = 1; i < ring.length; i++) {
+                const a = ring[i - 1],
+                  b = ring[i],
+                  top = bridgeHeight + surfaceLift,
+                  bottom = top - slabThickness;
+                face([a[0], top, a[1]], [b[0], top, b[1]], [a[0], bottom, a[1]], concrete);
+                face([a[0], bottom, a[1]], [b[0], top, b[1]], [b[0], bottom, b[1]], concrete);
+              }
+          if (detail && road.bridge && road.nativeSourceRole !== 'SIDEWALK_AREA') {
+            const axis = bridgeAxis(road.nativePolygons!);
+            const top = (p: Point) =>
+              bridgeHeight === null ? streetHeight(terrain, p, road) : bridgeHeight + 0.016;
+            for (const ring of component)
+              for (let i = 1; i < ring.length; i++) {
+                const a = ring[i - 1],
+                  b = ring[i],
+                  dx = b[0] - a[0],
+                  dy = b[1] - a[1],
+                  length = Math.hypot(dx, dy);
+                // 차량·보행 진출입 끝면을 막지 않고 상판 양옆에 표시 난간을 둔다.
+                if (length < 0.1 || Math.abs((dx * axis[0] + dy * axis[1]) / length) < 0.5)
+                  continue;
+                for (const h of [0.5, 1.0])
+                  beam([a[0], top(a) + h, a[1]], [b[0], top(b) + h, b[1]], 0.07, 0.07, barrier);
+                for (let offset = 0; offset < length; offset += 6) {
+                  const t = offset / length,
+                    point: Point = [a[0] + dx * t, a[1] + dy * t],
+                    height = top(point);
+                  beam(
+                    [point[0], height, point[1]],
+                    [point[0], height + 1.0, point[1]],
+                    0.08,
+                    0.08,
+                    barrier
+                  );
+                }
+              }
           }
         }
+      if (detail && road.bridge && road.nativePolygons && road.nativeSourceRole !== 'SIDEWALK_AREA')
+        for (const p of bridgePierPositions(road.nativePolygons)) {
+          const low = terrainMeshHeight(terrain, p),
+            high =
+              (bridgeHeight === null ? streetHeight(terrain, p, road) : bridgeHeight + 0.016) -
+              bridgeDeckThickness;
+          if (high - low >= 2) beam([p[0], low, p[1]], [p[0], high, p[1]], 1.4, 1.4, concrete);
+        }
+      if (detail && bridgeHeight !== null)
+        for (const lane of road.nativeLanePaths ?? []) {
+          const path = streetPath({ ...road, coordinates: lane.coordinates });
+          // 차로 수는 원본 속성, 도색 폭·간격은 표시 제원이다.
+          for (let divider = 1; divider < lane.lanes; divider++) {
+            const offset = (divider / lane.lanes - 0.5) * Math.max(0, lane.widthM - 1);
+            for (let s = lane.span[0]; s < lane.span[1]; s += 12) {
+              const a = pathPosition(path, s, offset, 1),
+                b = pathPosition(path, Math.min(s + 4, lane.span[1]), offset, 1);
+              if (
+                !withinBridge([a.x, a.y], road.nativePolygons!) ||
+                !withinBridge([b.x, b.y], road.nativePolygons!)
+              )
+                continue;
+              beam(
+                [a.x, bridgeHeight + 0.04, a.y],
+                [b.x, bridgeHeight + 0.04, b.y],
+                0.15,
+                0.012,
+                paint
+              );
+            }
+          }
+        }
+      for (const path of (detail ? road.nativeRailPaths : undefined) ?? []) {
+        for (const offset of [-0.7175, 0.7175]) {
+          const rail = streetOffsets(path, offset);
+          for (let i = 1; i < rail.length; i++) {
+            const a = rail[i - 1],
+              b = rail[i];
+            beam(
+              [a[0], streetHeight(terrain, a, road) + 0.18, a[1]],
+              [b[0], streetHeight(terrain, b, road) + 0.18, b[1]],
+              0.085,
+              0.16,
+              underside
+            );
+          }
+        }
+        for (let i = 1; i < path.length; i++) {
+          const a = path[i - 1],
+            b = path[i],
+            length = Math.hypot(b[0] - a[0], b[1] - a[1]);
+          for (let s = 0; s < length; s += 2.4) {
+            const t = s / length,
+              p: Point = [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+            const dx = -(b[1] - a[1]) / length,
+              dy = (b[0] - a[0]) / length;
+            const h = streetHeight(terrain, p, road) + 0.08;
+            beam([p[0] - dx, h, p[1] - dy], [p[0] + dx, h, p[1] + dy], 0.22, 0.12, concrete);
+          }
+        }
+      }
       ends.push(positions.length / 9);
       continue;
     }
@@ -149,42 +434,6 @@ export function streetGeometry(
           [b.x, b.y],
         ];
       strip(streetOffsets(points, width / 2), streetOffsets(points, -width / 2), paint, 0.008);
-    };
-    const beam = (a: number[], b: number[], width: number, depth: number, color: Color) => {
-      const dx = b[0] - a[0],
-        dy = b[1] - a[1],
-        dz = b[2] - a[2],
-        length = Math.hypot(dx, dy, dz);
-      if (length < 0.0001) return;
-      const horizontal = Math.hypot(dx, dz),
-        nx = horizontal ? -dz / horizontal : 1,
-        nz = horizontal ? dx / horizontal : 0;
-      const ux = (dy / length) * nz,
-        uy = (dz * nx - dx * nz) / length,
-        uz = (-dy / length) * nx;
-      const corners = (p: number[]) =>
-        [
-          [1, -1],
-          [-1, -1],
-          [-1, 1],
-          [1, 1],
-        ].map(([side, up]) => [
-          p[0] + ((nx * width) / 2) * side + ((ux * depth) / 2) * up,
-          p[1] + ((uy * depth) / 2) * up,
-          p[2] + ((nz * width) / 2) * side + ((uz * depth) / 2) * up,
-        ]);
-      const v = [...corners(a), ...corners(b)];
-      for (const q of [
-        [0, 1, 2, 3],
-        [4, 7, 6, 5],
-        [0, 4, 5, 1],
-        [3, 2, 6, 7],
-        [0, 3, 7, 4],
-        [1, 5, 6, 2],
-      ]) {
-        face(v[q[0]], v[q[1]], v[q[2]], color);
-        face(v[q[0]], v[q[2]], v[q[3]], color);
-      }
     };
     const left = streetOffsets(road.coordinates, road.widthM / 2),
       right = streetOffsets(road.coordinates, -road.widthM / 2);

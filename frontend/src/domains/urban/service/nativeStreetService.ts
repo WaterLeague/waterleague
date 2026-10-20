@@ -1,3 +1,4 @@
+import type { NativeBridgeGroup, NativeBridgeProfile } from '../dto/nativeBridgeDto';
 import type { CityTile } from '../../city/entity/city';
 import type { Street } from '../entity/urban';
 export function nativeSurfaceColor(role: string) {
@@ -11,11 +12,51 @@ export function nativeSurfaceColor(role: string) {
           ? '#8b9292'
           : '#667071';
 }
-export function nativeStreets(tiles: CityTile[]): Street[] {
+export function nativeStreets(tiles: CityTile[], groups?: NativeBridgeGroup[]): Street[] {
   const result: Street[] = [];
-  for (const tile of tiles)
+  const deckLift = (group: NativeBridgeGroup) =>
+    group.names?.includes('반포대교') ||
+    (group.names?.includes('청담대교') && !group.kinds?.includes('철교'))
+      ? 13.5
+      : 6.5;
+  const walkingDecks = new Map<string, NonNullable<Street['nativeWalkingDecks']>>();
+  const loadedWalkSources = new Set(
+    tiles.flatMap((t) => t.urban?.walkPaths.map((p) => p.sourceObjectId) ?? [])
+  );
+  for (const group of groups ?? [])
+    for (const sidewalk of group.sidewalks ?? []) {
+      if (!walkingDecks.has(sidewalk.sourceId)) walkingDecks.set(sidewalk.sourceId, []);
+      walkingDecks.get(sidewalk.sourceId)!.push({
+        polygons: sidewalk.polygons,
+        deckPolygons: group.polygons,
+        deckLiftM: deckLift(group),
+      });
+    }
+  const profileByRoad = new Map<string, NativeBridgeProfile[]>();
+  for (const group of groups ?? [])
+    for (const profile of group.profiles) {
+      const value = { ...profile, deckPolygons: group.polygons, deckLiftM: deckLift(group) };
+      for (const id of profile.roadIds) {
+        if (!profileByRoad.has(id)) profileByRoad.set(id, []);
+        profileByRoad.get(id)!.push(value);
+      }
+    }
+  for (const tile of tiles) {
     for (const feature of tile.nativeFeatures) {
-      if (['RIVER_WATER_AREA', 'LAKE_RESERVOIR_AREA', 'RAIL_CENTERLINE'].includes(feature.role))
+      if (groups && feature.role === 'BRIDGE_AREA') continue;
+      // 지표면은 전체 지형지물 타일이 한 번만 그려 건물 타일 제한과 면 중첩을 피한다.
+      if (
+        [
+          'ROAD_AREA',
+          'SIDEWALK_AREA',
+          'TUNNEL_AREA',
+          'RAILWAY_AREA',
+          'CULTIVATION_LANDSCAPE_AREA',
+          'RIVER_WATER_AREA',
+          'LAKE_RESERVOIR_AREA',
+          'RAIL_CENTERLINE',
+        ].includes(feature.role)
+      )
         continue;
       const base = {
         id: feature.id,
@@ -27,7 +68,7 @@ export function nativeStreets(tiles: CityTile[]): Street[] {
         motor: false,
         oneway: 0,
         sidewalk: '',
-        bridge: false,
+        bridge: feature.role === 'BRIDGE_AREA',
         nativeSourceRole: feature.role,
       };
       const geometry = feature.geometry;
@@ -38,7 +79,7 @@ export function nativeStreets(tiles: CityTile[]): Street[] {
       } else if (feature.role === 'ROAD_CENTERLINE') {
         const parts =
           geometry.type === 'LineString' ? [geometry.coordinates] : geometry.coordinates;
-        for (let index = 0; index < parts.length; index++)
+        for (let index = 0; index < parts.length; index++) {
           result.push({
             ...base,
             id: feature.id + ':part:' + index,
@@ -47,8 +88,184 @@ export function nativeStreets(tiles: CityTile[]): Street[] {
               feature.trafficDirection === 'BIDIRECTIONAL' &&
               feature.geometryEligibility === 'GEOMETRY_ONLY',
             nativeTrafficDirection: feature.trafficDirection ?? 'UNKNOWN',
+            nativeBridgeProfiles: profileByRoad.get(feature.id + ':part:' + index),
           });
+        }
       }
     }
+    for (const path of tile.urban?.walkPaths ?? [])
+      result.push({
+        id: path.id,
+        districtId: path.districtId,
+        coordinates: path.coordinates,
+        class: 'footway',
+        widthM: 0,
+        widthSource: 'NOT_CONFIRMED',
+        walk: true,
+        motor: false,
+        oneway: 0,
+        sidewalk: '',
+        bridge: false,
+        nativeSourceRole: 'SIDEWALK_DISPLAY_PATH',
+        nativeDisplayPath: true,
+        nativeWalkingDecks: walkingDecks.get(path.sourceObjectId),
+      });
+    for (const crossing of tile.urban?.crosswalks ?? [])
+      result.push({
+        id: crossing.id,
+        districtId: crossing.districtId,
+        coordinates: crossing.polygons[0][0],
+        class: 'footway',
+        widthM: 0,
+        widthSource: 'NOT_CONFIRMED',
+        walk: false,
+        motor: false,
+        oneway: 0,
+        sidewalk: '',
+        bridge: false,
+        nativeSourceRole: 'CROSSWALK_AREA',
+        nativePolygons: crossing.polygons,
+        nativeMarkingPolygons: crossing.stripes,
+      });
+  }
+  for (const group of groups ?? []) {
+    const common = {
+      class: group.role,
+      districtId: '',
+      widthM: 0,
+      widthSource: 'NOT_CONFIRMED' as const,
+      walk: false,
+      motor: false,
+      oneway: 0,
+      sidewalk: '',
+      bridge: true,
+      nativeDeckLiftM: deckLift(group),
+    };
+    const integralAccess: NativeBridgeProfile[] = [];
+    if (group.role === 'PEDESTRIAN_OVERPASS_AREA' && !group.profiles.some((p) => p.steps)) {
+      const points = group.polygons.flatMap((p) => p[0]);
+      let axis: [number, number] = [1, 0],
+        longest = 0;
+      for (const polygon of group.polygons)
+        for (let i = 1; i < polygon[0].length; i++) {
+          const a = polygon[0][i - 1],
+            b = polygon[0][i],
+            length = Math.hypot(b[0] - a[0], b[1] - a[1]);
+          if (length > longest) {
+            longest = length;
+            axis = [(b[0] - a[0]) / length, (b[1] - a[1]) / length];
+          }
+        }
+      const along = points.map((p) => p[0] * axis[0] + p[1] * axis[1]),
+        across = points.map((p) => -p[0] * axis[1] + p[1] * axis[0]),
+        start = Math.min(...along),
+        end = Math.max(...along),
+        middle = (Math.min(...across) + Math.max(...across)) / 2,
+        length = end - start;
+      if (length > 2) {
+        const at = (v: number): [number, number] => [
+            v * axis[0] - middle * axis[1],
+            v * axis[1] + middle * axis[0],
+          ],
+          access = Math.min(8, length * 0.25);
+        // 원본에 계단 면이 없는 육교는 자기 외곽 안의 양 끝에 표시 계단을 둔다.
+        integralAccess.push({
+          roadIds: [],
+          coordinates: [at(start), at(end)],
+          span: [access, length - access],
+          polygons: group.polygons,
+          displayWidthM: Math.max(...across) - Math.min(...across),
+          steps: true,
+          deckPolygons: group.polygons,
+        });
+      }
+    }
+    result.push({
+      ...common,
+      id: group.id,
+      coordinates: group.polygons[0][0],
+      nativeSourceRole: group.role,
+      nativePolygons: group.outlinePolygons ?? group.polygons,
+      bridgeName: group.names?.join(' · '),
+      nativeBridgeGroupPolygons: group.polygons,
+      nativeBridgeProfiles: integralAccess.length ? integralAccess : undefined,
+      nativeStructurePath: group.profiles.length
+        ? (() => {
+            const profile = [...group.profiles].sort(
+              (a, b) => b.span[1] - b.span[0] - (a.span[1] - a.span[0])
+            )[0];
+            return {
+              coordinates: profile.coordinates,
+              span: profile.span,
+              widthM: profile.displayWidthM,
+            };
+          })()
+        : undefined,
+      nativeLanePaths: group.profiles
+        .filter((p) => !p.rail && !p.steps && (p.lanes ?? 0) > 0)
+        .map((p) => ({
+          coordinates: p.coordinates,
+          lanes: p.lanes!,
+          widthM: p.displayWidthM,
+          span: p.span,
+        })),
+    });
+    for (const [n, sidewalk] of (group.sidewalks ?? []).entries()) {
+      result.push({
+        ...common,
+        id: group.id + ':sidewalk:' + n,
+        coordinates: sidewalk.polygons[0][0],
+        nativeSourceRole: 'SIDEWALK_AREA',
+        nativePolygons: sidewalk.polygons,
+        nativeBridgeGroupPolygons: group.polygons,
+      });
+      if (!loadedWalkSources.has(sidewalk.sourceId))
+        for (const [part, coordinates] of sidewalk.paths.entries())
+          result.push({
+            ...common,
+            id: group.id + ':walk:' + n + ':' + part,
+            coordinates,
+            bridge: false,
+            walk: true,
+            nativeSourceRole: 'SIDEWALK_DISPLAY_PATH',
+            nativeDisplayPath: true,
+            nativeWalkingDecks: [
+              {
+                polygons: sidewalk.polygons,
+                deckPolygons: group.polygons,
+                deckLiftM: deckLift(group),
+              },
+            ],
+          });
+    }
+    for (const [part, coordinates] of (group.walkPaths ?? []).entries())
+      result.push({
+        ...common,
+        id: group.id + ':walk:' + part,
+        coordinates,
+        walk: true,
+        nativeSourceRole: 'SIDEWALK_DISPLAY_PATH',
+        nativeDisplayPath: true,
+        nativeBridgeProfiles: integralAccess.length ? integralAccess : undefined,
+        nativeWalkingDecks: integralAccess.length
+          ? undefined
+          : [{ polygons: group.polygons, deckPolygons: group.polygons }],
+      });
+    group.profiles.forEach((profile, index) =>
+      result.push({
+        ...common,
+        bridge: false,
+        walk: profile.steps === true,
+        id: group.id + ':approach:' + index,
+        coordinates: profile.coordinates,
+        nativeSourceRole: profile.rail ? 'RAILWAY_AREA' : 'BRIDGE_APPROACH',
+        nativeRailPaths: profile.rail ? [profile.coordinates] : undefined,
+        nativePolygons: profile.polygons,
+        nativeBridgeProfiles: [
+          { ...profile, deckPolygons: group.polygons, deckLiftM: deckLift(group) },
+        ],
+      })
+    );
+  }
   return result;
 }

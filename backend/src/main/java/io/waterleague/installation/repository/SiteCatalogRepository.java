@@ -21,16 +21,19 @@ public class SiteCatalogRepository {
   private final DistrictRepository districts;
   private final SurfaceOccupancyRepository references;
   private final JsonService json;
+  private final SiteLabelRepository labels;
 
   public SiteCatalogRepository(
       JsonService json,
       DistrictRepository districts,
       NativePlayRepository nativeSites,
-      SurfaceOccupancyRepository references) {
+      SurfaceOccupancyRepository references,
+      SiteLabelRepository labels) {
     this.json = json;
     this.districts = districts;
     this.nativeSites = nativeSites;
     this.references = references;
+    this.labels = labels;
   }
 
   public Map<String, Integer> counts() {
@@ -123,11 +126,13 @@ public class SiteCatalogRepository {
     var sourceIds = iterable(cell.path("sourceIds")).stream().map(JsonNode::asString).toList();
     var center = cell.path("centerProjected");
     String districtId = cell.path("districtId").asString(), id = cell.path("id").asString();
+    var label = cell.path("displayName").isString()
+        ? new SiteLabelRepository.Label(cell.path("displayName").asString(), null)
+        : labels.require(id);
     return new SiteView(
         districtId,
         id,
-        districts.require(districtId).name()
-            + (cell.path("kind").asString().equals("ROOF") ? " 옥상 후보" : " 지상 후보"),
+        label.name(),
         cell.path("kind").asString(),
         List.copyOf(components),
         List.of(center.get(0).asDouble() - ORIGIN_X, center.get(1).asDouble() - ORIGIN_Y),
@@ -148,7 +153,8 @@ public class SiteCatalogRepository {
         metadata.path("initializationPolicy").deepCopy(),
         null,
         cell.path("role").asString(),
-        references.forCandidate(districtId, id));
+        references.forCandidate(districtId, id),
+        label.address());
   }
 
   private static List<JsonNode> iterable(JsonNode value) {

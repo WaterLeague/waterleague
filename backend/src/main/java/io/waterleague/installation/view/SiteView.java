@@ -27,7 +27,8 @@ public record SiteView(
     tools.jackson.databind.JsonNode initializationPolicy,
     tools.jackson.databind.JsonNode existingInfrastructure,
     String sourceRole,
-    tools.jackson.databind.JsonNode referenceInfrastructure) {
+    tools.jackson.databind.JsonNode referenceInfrastructure,
+    String address) {
   public BigDecimal maxAreaFor(io.waterleague.strategy.entity.FacilityType type) {
     String key =
         switch (type) {

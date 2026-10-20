@@ -35,7 +35,7 @@ def surface_scenario(cell, land_use):
     if cell.get('kind') == 'ROOF' and cell.get('role') == 'BUILDING_FOOTPRINT':
         return 'ROOF_REFERENCE'
     if cell.get('kind') == 'GROUND':
-        if cell.get('role') in ('ROAD_AREA', 'SIDEWALK_AREA'):
+        if cell.get('role') in ('ROAD_AREA', 'SIDEWALK_AREA', 'PARKING_AREA'):
             return 'PAVEMENT_REFERENCE'
         if cell.get('role') == 'CULTIVATION_LANDSCAPE_AREA':
             if land_use == '밭':

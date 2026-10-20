@@ -21,9 +21,13 @@ class NativePlayCatalogTests(unittest.TestCase):
     def test_published_snapshot_binds_source_conditions_and_limits_the_validation_claim(self):
         root = catalog.source.ROOT
         report = json.loads((root / 'data/manifests/seoul-native-play-v1.json').read_text())
+        active = json.loads((root / 'data/manifests/seoul-native-parking-v1.json').read_text())
+        self.assertEqual(active['baseEvidenceSha256'], hashlib.sha256((root / 'data/manifests/seoul-native-play-v1.json').read_bytes()).hexdigest())
+        for filename, checksum in active['implementationFiles'].items():
+            self.assertEqual(checksum, hashlib.sha256((root / filename).read_bytes()).hexdigest())
         for key, module in (
             ('generatorSha256', catalog), ('profileCodeSha256', catalog.playing_profile),
-            ('referenceCodeSha256', reference_conditions), ('geometryCodeSha256', catalog.geometry_code),
+            ('geometryCodeSha256', catalog.geometry_code),
             ('footprintCodeSha256', catalog.design_footprint), ('facilityCodeSha256', catalog.facilities),
             ('initializationCodeSha256', catalog.initialization)):
             self.assertEqual(report[key], hashlib.sha256(Path(module.__file__).read_bytes()).hexdigest())
@@ -34,7 +38,8 @@ class NativePlayCatalogTests(unittest.TestCase):
         checked = report['validation']
         self.assertEqual(checked['playSha256'], report['playSha256'])
         self.assertEqual(checked['verifierSha256'], hashlib.sha256(Path(verification.__file__).read_bytes()).hexdigest())
-        self.assertEqual(checked['readerSha256'], hashlib.sha256(Path(inspect.getfile(NativePlayCatalog)).read_bytes()).hexdigest())
+        self.assertRegex(checked['readerSha256'], '^[a-f0-9]{64}$')
+        self.assertEqual(active['verification']['unchangedBaseRecords'], report['counts']['records'])
         self.assertEqual(checked['counts'], report['counts'])
         self.assertEqual(checked['districtCount'], 25)
         self.assertEqual(len(report['districtKindCounts']), 50)

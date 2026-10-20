@@ -15,7 +15,7 @@ import urllib.request
 import uuid
 
 ROOT = Path(__file__).resolve().parents[1]
-SPATIAL_SHA256 = '4ec7535e7cbaf41dc73f73519d77ba11f956f4c75c1a574fffa08f16625919b7'
+SPATIAL_SHA256 = 'd2d9ea2a888ee01d59f253b3848c3c30fdf4b6b3f03662b1202dc9b7a48b88b9'
 FORCING_SHA256 = 'f08b92fa00db08126e86b379583299a831764b958a4f131de4647ebde95e6fdb'
 RUNTIME_SOURCES = (
     'scripts/verify_native_primary_runtime.py',

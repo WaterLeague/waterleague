@@ -3,6 +3,7 @@ import { CityError } from '../exception/CityError';
 import { mapCity, mapCityTile } from '../mapper/cityMapper';
 import type { City, CityTile, TileEntry } from '../entity/city';
 import { cityPlayDto } from '../dto/cityPlayDto';
+import { loadNativeUrbanTile } from '../../urban/repository/nativeUrbanRepository';
 export const CITY_HASH = '67a8b80b7036590973b7db99053521333f9405e1076a7939bfe491c43296dd6c';
 export const CITY_PATH = '/data/seoul-native-v1/city.json';
 const cache = new Map<string, CityTile>();
@@ -38,11 +39,11 @@ export async function loadCityTile(entry: TileEntry, signal: AbortSignal) {
     cache.set(entry.sha256, cached);
     return cached;
   }
-  const data = mapCityTile(
-    await read(`/data/seoul-native-v1/${entry.file}`, entry.sha256, signal, entry.bytes),
-    entry.id,
-    entry.buildingCount
-  );
+  const [raw, urban] = await Promise.all([
+    read(`/data/seoul-native-v1/${entry.file}`, entry.sha256, signal, entry.bytes),
+    loadNativeUrbanTile(entry.id, CITY_HASH, signal),
+  ]);
+  const data: CityTile = { ...mapCityTile(raw, entry.id, entry.buildingCount), urban };
   if (!signal.aborted) {
     cache.set(entry.sha256, data);
     while (cache.size > 24) cache.delete(cache.keys().next().value!);

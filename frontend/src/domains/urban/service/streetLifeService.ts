@@ -34,6 +34,15 @@ export function streetPath(road: Street) {
   return { road, cumulative, length: cumulative.at(-1)! };
 }
 export type StreetPath = ReturnType<typeof streetPath>;
+export function streetActorRoutes(path: StreetPath) {
+  const walking =
+    (path.road.walk && path.road.class !== 'cycleway') ||
+    (path.road.motor && hasInlineSidewalk(path.road) && !/motorway|trunk/.test(path.road.class));
+  return [
+    ...(walking ? [{ path, walking: true }] : []),
+    ...(path.road.motor ? [{ path, walking: false }] : []),
+  ];
+}
 export function distanceToStreet(path: StreetPath, x: number, y: number) {
   let nearest = Infinity;
   for (let i = 1; i < path.road.coordinates.length; i++) {

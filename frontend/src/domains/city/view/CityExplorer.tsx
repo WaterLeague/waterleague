@@ -1,3 +1,4 @@
+import { useTopography } from '../../topography/controller/useTopography';
 import { mapCursors } from '../service/mapCursor';
 import { useGameAudio } from '../../audio/controller/useGameAudio';
 import { createFloodField } from '../../urban/service/floodFieldService';
@@ -224,7 +225,9 @@ function Explorer({
   const [site, setSite] = useState<SharedSite | null>(null);
   const selectedSite = site?.cellId ?? '';
   const [type, setType] = useState<FacilityType | ''>('');
-  const [siteSurface, setSiteSurface] = useState<'' | 'ROADWAY' | 'WALKWAY' | 'OTHER'>('');
+  const [siteSurface, setSiteSurface] = useState<'' | 'ROADWAY' | 'WALKWAY' | 'PARKING' | 'OTHER'>(
+    ''
+  );
   const mapFacilityType = cisternOpen
     ? cistern.role === 'roof'
       ? 'GREEN_ROOF'
@@ -301,7 +304,8 @@ function Explorer({
     return () => observer.disconnect();
   }, []);
   const details = useCityTiles(city, camera);
-  const urban = useUrbanData(details.tiles);
+  const urban = useUrbanData(details.tiles, camera.center, camera.distance);
+  const topography = useTopography(camera.center, camera.distance, terrain, flat);
   const nativeBuildings = useMemo(
     () => [
       ...new Map(
@@ -750,6 +754,7 @@ function Explorer({
     <CityPlan
       parking={urban.parking}
       streets={urban.roads}
+      topography={topography}
       preview={preview}
       surfaceFrame={surface.frame}
       publicSurfaceFrames={publicSurface.frames}
@@ -1017,6 +1022,7 @@ function Explorer({
                   parking={urban.parking}
                   urbanClock={urbanClock}
                   streets={urban.roads}
+                  topography={topography}
                   population={urban.population}
                   livePlaces={liveUrban.places}
                   historical={researchMode}
@@ -1065,6 +1071,17 @@ function Explorer({
                 />
               </Suspense>
             </ErrorBoundary>
+          )}
+          <CityCoverageNotice center={camera.center} distance={camera.distance} />
+          {(details.busy || topography.busy) && (
+            <div className="city-map-loading" role="status">
+              주변 지형지물 불러오는 중
+            </div>
+          )}
+          {topography.error && (
+            <div className="city-map-loading" role="status">
+              {topography.error}
+            </div>
           )}
           {!flat && (
             <div ref={labelLayer} className="city-map-labels" aria-label="지도에서 자치구 선택">
@@ -1172,6 +1189,26 @@ function Explorer({
                     강·하천
                   </span>
                   <span>
+                    <i style={{ background: '#527c48' }} />
+                    가로수
+                  </span>
+                  <span>
+                    <i style={{ background: '#ae873c' }} />
+                    조명·신호등
+                  </span>
+                  <span>
+                    <i style={{ background: '#b95540' }} />
+                    소화전
+                  </span>
+                  <span>
+                    <i style={{ background: '#8e8171' }} />
+                    기타 지형지물·시설
+                  </span>
+                  <span>
+                    <i style={{ background: '#869276' }} />
+                    담장·옹벽·등고선·경계
+                  </span>
+                  <span>
                     <i className="flood-legend" />
                     계산 침수 · 수심/유속 색상
                   </span>
@@ -1276,6 +1313,7 @@ function Explorer({
                     <option value="">모든 지면</option>
                     <option value="ROADWAY">차도</option>
                     <option value="WALKWAY">인도·보행로</option>
+                    <option value="PARKING">주차장</option>
                   </select>
                 </label>
               )}
@@ -1589,12 +1627,14 @@ function Explorer({
             : terrainError
               ? '높이 자료 연결 실패 · 평면 표시'
               : '지표면 높이 연결 중'}{' '}
-          · 건물 높이 태그·층수 환산 포함 ·{' '}
+          · 건물 높이는 층수 환산 또는 미확인 평면 표시 ·{' '}
           {surface.frame || publicSurface.frames.length
             ? '계산 침수는 원 수심의 상대 높이·색상 표시 · 실제 수면 표고 아님'
             : '침수 깊이 표시 아님'}
           {' · 물결은 기상 기반 시각 효과 · 하천 실측 유속 아님'}
-          {' · 태양: 서울 좌표·재생 시각의 천문 계산 · 창문·가로등·차량·보행자: 게임 연출'}
+          {
+            ' · 조명·가로등: 수치지형도 원본 위치 · 태양: 서울 좌표·재생 시각의 천문 계산 · 창문·차량·보행자: 게임 연출'
+          }
           {researchMode
             ? eventId === 'seoul-20220808'
               ? ' · 인구 밀도: 2022-08-08~09 시간대별 생활인구(내국인)'
@@ -1603,18 +1643,24 @@ function Explorer({
           {!researchMode && (
             <LiveUrbanSource places={liveUrban.current} now={liveUrban.checkedAt} />
           )}
-          {' · 도로 폭 결측·보도·교량 높이는 표시 가정 · 과거 도로망 복원 아님'}
-          {' · 주차 칸·정차 차량 배치는 고정 게임 연출 · 실제 주차 점유율 아님'}
+          {' · 보도·교량·횡단보도·주차장 경계는 수치지형도 원형 · 도로 폭·통행 방향 미확인 유지'}
+          {' · 교량 높이·접속 경사·보행 선·정차 차량은 게임 연출 · 주차 칸·실제 점유율 제공 없음'}
+          {' · 입체 모형의 제원·교량 높이·접속 형태는 표시 가정'}
+          {' · 축소도는 원 건물의 100m/25m 격자별 대표 경계 상자 · 선택·계산은 확대 원형 사용'}
           {urban.error && ` · ${urban.error}`}
           {groundCandidates.error && ` · ${groundCandidates.error}`}
           {urban.populationError && ` · ${urban.populationError}`}
           {assetsEnabled &&
-            ' · 시설 위치: 서울특별시·강서구 / 공공누리 제1유형 · 시설 경계: OpenStreetMap / ODbL 1.0'}
+            ' · 시설 위치: 서울특별시·강서구·공공데이터포털 / 공공누리 제1유형 · 시설 부지 경계 미확인'}
           {terrain && (
             <>
               {' '}
               ·{' '}
-              <a href="/data/seoul-terrain-v1/attribution.txt" target="_blank" rel="noreferrer">
+              <a
+                href="/data/seoul-terrain-native-v1/attribution.txt"
+                target="_blank"
+                rel="noreferrer"
+              >
                 지표면 출처·이용조건
               </a>
             </>
@@ -1661,3 +1707,4 @@ export function CityExplorer({
     />
   );
 }
+import { CityCoverageNotice } from './CityCoverage';

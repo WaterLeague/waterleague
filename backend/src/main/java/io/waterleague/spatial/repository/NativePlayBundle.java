@@ -22,7 +22,7 @@ import tools.jackson.databind.JsonNode;
 @Component
 public class NativePlayBundle {
   public static final String MANIFEST_SHA256 =
-      "9cf8102058e282034d1f5f56d74c666e11703a9a6c3b83e94aee5be0a11d21dc";
+      "61967ce6a56593fed6d190cae49269f63e0e43a4301e8ead5d275b9207e917e0";
   private static final int CHUNK_BYTES = 32 * 1024 * 1024;
   private static final Object CACHE_LOCK = new Object();
   private final Path cache;

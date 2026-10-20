@@ -728,7 +728,7 @@ class SharedInstallationTests extends PostgresIntegrationTest {
     var overview = service.sites(null, 0, 0, 0, null, false);
     assertThat(overview.districtCounts()).hasSize(25);
     assertThat(overview.districtCounts().values().stream().mapToInt(Integer::intValue).sum())
-        .isEqualTo(1021578);
+        .isEqualTo(1022710);
     var page = service.sites("11680", 7239.5, -7741.5, 0, null, false);
     assertThat(page.sites()).hasSize(200);
     assertThat(page.matchedCount()).isGreaterThan(1000);

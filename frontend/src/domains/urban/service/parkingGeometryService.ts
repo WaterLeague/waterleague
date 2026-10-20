@@ -35,7 +35,7 @@ export function parkingGeometry(lots: ParkingLot[], terrain: Terrain | null) {
           );
       }
     hitEnds.push(hits.length / 9);
-    for (const slot of lot.slots)
+    for (const slot of lot.displayOnly ? [] : lot.slots)
       for (let i = 1; i < slot.corners.length; i++)
         for (const segment of drapeSegment(slot.corners[i - 1], slot.corners[i], terrain))
           for (const p of segment) lines.push(p[0], terrainMeshHeight(terrain, p) + 0.01, -p[1]);

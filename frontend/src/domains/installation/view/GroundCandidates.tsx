@@ -13,6 +13,7 @@ import {
 } from '../service/candidateTilesService';
 import { availableSiteColor } from '../../city/service/siteVisibilityService';
 import { streetAtFace } from '../../urban/service/streetGeometryService';
+import { CandidateDisplayError } from '../exception/CandidateDisplayError';
 type CandidateBuffers = {
   positions: Float32Array;
   masks: Float32Array;
@@ -51,6 +52,9 @@ export const GroundCandidates = memo(function GroundCandidates({
       transparent: true,
       opacity: 0.7,
       depthWrite: false,
+      polygonOffset: true,
+      polygonOffsetFactor: -1,
+      polygonOffsetUnits: -1,
       side: DoubleSide,
       toneMapped: false,
     });
@@ -144,7 +148,7 @@ export const GroundCandidates = memo(function GroundCandidates({
     a.needsUpdate = true;
     occupied.needsUpdate = true;
   }, [shape, ownDistrictId, occupiedSites]);
-  if (failed) throw new Error('설치 후보 표시 실패');
+  if (failed) throw new CandidateDisplayError();
   return shape ? (
     <mesh
       geometry={shape.geometry}

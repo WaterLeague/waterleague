@@ -73,6 +73,20 @@ class NativePlayCatalog:
     def metadata(self):
         return copy.deepcopy(self._metadata)
 
+    def accepts_catalog(self, checksum, site_id=None):
+        if checksum == self.sha256:
+            return True
+        for extension in self._metadata.get('extensions', []):
+            if checksum != extension.get('baseCatalogSha256'):
+                continue
+            if site_id is None:
+                return True
+            with closing(self.connection()) as database:
+                row = database.execute('SELECT fid FROM sites WHERE id=?', (site_id,)).fetchone()
+            # 이전 버전 설치는 바이트 보존을 대조한 원 레코드에만 허용한다.
+            return row is not None and row[0] <= extension.get('baseRecordCount', 0)
+        return False
+
     @staticmethod
     def district(value):
         if type(value) is not str or not re.fullmatch('11[0-9]{3}', value):
@@ -154,9 +168,10 @@ class NativePlayCatalog:
         keys = ('hydrology', 'unitCosts', 'costModel', 'costSourceSha256', 'budget', 'budgetPolicy',
                 'facilityDesignSet', 'initializationPolicy')
         model = {key: copy.deepcopy(self._metadata[key]) for key in keys}
+        sources = cell.get('geometrySources', self._metadata)
         model.update(cells=[cell], mapId='SEOUL_NGII_REFERENCE_PLAY_V1',
-            geometrySource={'playCatalogSha256': self.sha256, 'sitesSha256': self._metadata['sourceSitesSha256'],
-                'objectsSha256': self._metadata['sourceObjectsSha256'], 'geometrySha256': cell['geometrySha256'],
+            geometrySource={'playCatalogSha256': self.sha256, 'sitesSha256': sources.get('sitesSha256', self._metadata['sourceSitesSha256']),
+                'objectsSha256': sources.get('objectsSha256', self._metadata['sourceObjectsSha256']), 'geometrySha256': cell['geometrySha256'],
                 'coordinateSystem': 'EPSG:5186', 'sourceObjectId': cell['sourceObjectId']},
             sharedSiteSource={'districtId': district, 'siteCatalogHash': self.sha256,
                 'inflowPolicy': 'DIRECT_RAINFALL_ONLY'}, referenceScenario=copy.deepcopy(self._metadata['referenceScenario']),

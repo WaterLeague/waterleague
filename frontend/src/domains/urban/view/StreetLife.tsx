@@ -1,12 +1,12 @@
-import { streetLane } from '../service/streetLifeService';
+import { streetLane, streetActorRoutes } from '../service/streetLifeService';
 import type { AudioHandle, StreetSound } from '../../audio/entity/audio';
 import { memo, useEffect, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Color, InstancedMesh, MeshStandardMaterial, Object3D } from 'three';
+import { Color, InstancedMesh, Object3D } from 'three';
 import type { Street, UrbanTime, Population } from '../entity/urban';
 import type { City } from '../../city/entity/city';
 import type { Terrain } from '../../terrain/entity/terrain';
-import { streetHeight, hasInlineSidewalk } from '../service/streetGeometryService';
+import { streetHeight } from '../service/streetGeometryService';
 import {
   distanceToStreet,
   streetSpeed,
@@ -20,7 +20,6 @@ import { freshReading, livePlaceAt } from '../service/liveUrbanService';
 import { urbanTime } from '../service/urbanTimeService';
 import type { FloodField } from '../service/floodFieldService';
 import { floodMotion, emptyFloodStats, type FloodStats } from '../service/floodMovementService';
-import { useUrbanLighting } from './UrbanEnvironment';
 import type { ParkingData } from '../entity/parking';
 import { parkingTrafficPaths } from '../service/parkingService';
 const LIMIT = 500;
@@ -67,11 +66,6 @@ export const StreetLife = memo(function StreetLife({
   const lastSound = useRef(0);
   useEffect(() => () => audio?.current?.actors([]), [audio]);
   useEffect(() => () => onFloodStats?.(emptyFloodStats), [onFloodStats]);
-  const poles = useRef<InstancedMesh>(null),
-    lamps = useRef<InstancedMesh>(null),
-    pools = useRef<InstancedMesh>(null);
-  const glow = useRef<MeshStandardMaterial>(null),
-    light = useUrbanLighting();
   const model = useMemo(() => new Object3D(), []),
     color = useMemo(() => new Color(), []),
     lastTime = useRef<number | null>(null);
@@ -91,7 +85,9 @@ export const StreetLife = memo(function StreetLife({
     () =>
       roadPaths
         .map((path) => ({ path, distance: distanceToStreet(path, x, y) }))
-        .filter((p) => p.path.length > 25 && p.distance < radius)
+        .filter(
+          (p) => (p.path.road.walk ? p.path.length >= 5 : p.path.length > 25) && p.distance < radius
+        )
         .sort(
           (a, b) =>
             a.distance - b.distance || stableSeed(a.path.road.id) - stableSeed(b.path.road.id)
@@ -104,17 +100,11 @@ export const StreetLife = memo(function StreetLife({
     () =>
       paths
         .flatMap((path) => {
-          const walking =
-            (path.road.walk && path.road.class !== 'cycleway') ||
-            (path.road.motor &&
-              hasInlineSidewalk(path.road) &&
-              !/motorway|trunk/.test(path.road.class));
-          const routes = [
-            ...(walking ? [{ path, walking: true }] : []),
-            ...(path.road.motor && parking !== null
-              ? parkingTrafficPaths(path, parkingRoutes).map((path) => ({ path, walking: false }))
-              : []),
-          ];
+          const routes = streetActorRoutes(path).flatMap((route) =>
+            route.walking
+              ? [route]
+              : parkingTrafficPaths(path, parkingRoutes).map((path) => ({ path, walking: false }))
+          );
           return routes.flatMap(({ path, walking }) => {
             const count = Math.min(24, Math.max(1, Math.floor(path.length / (walking ? 30 : 45))));
             return Array.from({ length: count }, (_, i) => ({
@@ -138,25 +128,8 @@ export const StreetLife = memo(function StreetLife({
         .slice(0, 1600),
     [paths, parking, parkingRoutes]
   );
-  const streetlights = useMemo(
-    () =>
-      paths
-        .filter((p) => p.road.motor && p.road.class !== 'service')
-        .flatMap((path) =>
-          Array.from({ length: Math.min(60, Math.floor(path.length / 45)) }, (_, i) => ({
-            path,
-            at: (i + 0.5) * 45,
-          }))
-        )
-        .filter(({ path, at }) => {
-          const p = pathPosition(path, at, 0, 1);
-          return Math.hypot(p.x - x, p.y - y) < 1800;
-        })
-        .slice(0, LIMIT),
-    [paths, x, y]
-  );
   useFrame(() => {
-    if (!cars.current || !people.current || !poles.current) return;
+    if (!cars.current || !people.current) return;
     const at = urbanTime(clock);
     if (at == null) return;
     if (animate || lastTime.current == null || (clock.current.historical && !clock.current.playing))
@@ -455,16 +428,6 @@ export const StreetLife = memo(function StreetLife({
           cars.current.setColorAt(n, color);
         }
       }
-    let lampCount = 0;
-    if (distance < 8500)
-      for (const lamp of streetlights) {
-        const p = pathPosition(lamp.path, lamp.at, lamp.path.road.widthM / 2 + 0.7, 1);
-        const height = streetHeight(terrain, [p.x, p.y], lamp.path.road, p.segment);
-        const n = lampCount++;
-        put(poles.current, n, p.x, height + 3.7, -p.y, 0.14, 7.4, 0.14);
-        put(lamps.current, n, p.x, height + 7.45, -p.y, 0.85, 0.22, 0.42);
-        put(pools.current, n, p.x, height + 0.12, -p.y, 9, 0.025, 9);
-      }
     for (const [ref, count] of [
       [cars, carCount],
       [roofs, carCount],
@@ -475,9 +438,6 @@ export const StreetLife = memo(function StreetLife({
       [legs, personCount * 2],
       [arms, personCount * 2],
       [signals, signalCount],
-      [poles, lampCount],
-      [lamps, lampCount],
-      [pools, lampCount],
     ] as const) {
       if (ref.current) {
         ref.current.count = count;
@@ -499,8 +459,6 @@ export const StreetLife = memo(function StreetLife({
       lastSound.current = performance.now();
       audio?.current?.actors(sounds);
     }
-    if (glow.current) glow.current.emissiveIntensity = (light?.night.value ?? 0) * 3;
-    if (pools.current) pools.current.visible = (light?.night.value ?? 0) > 0.15;
   }, -0.2);
   const box = (
     ref: React.RefObject<InstancedMesh | null>,
@@ -543,17 +501,6 @@ export const StreetLife = memo(function StreetLife({
       >
         <octahedronGeometry args={[1, 0]} />
         <meshBasicMaterial toneMapped={false} />
-      </instancedMesh>
-      {box(poles, LIMIT, <meshStandardMaterial color="#46515a" />)}
-      {box(lamps, LIMIT, <meshStandardMaterial ref={glow} color="#d5cab2" emissive="#ffc880" />)}
-      <instancedMesh
-        ref={pools}
-        args={[undefined, undefined, LIMIT]}
-        frustumCulled={false}
-        raycast={() => {}}
-      >
-        <sphereGeometry args={[1, 12, 4]} />
-        <meshBasicMaterial color="#d9af65" transparent opacity={0.11} depthWrite={false} />
       </instancedMesh>
     </group>
   );

@@ -11,9 +11,9 @@ describe('서울 전역 자료와 부분 로딩', () => {
     for (const district of city.districts) {
       const tiles = nearbyTiles(city, district.center, 4800);
       expect(tiles.length).toBeGreaterThan(0);
-      expect(tiles.length).toBeLessThanOrEqual(9);
+      expect(tiles.length).toBeLessThanOrEqual(16);
       expect(tiles.reduce((sum, tile) => sum + tile.buildingCount, 0)).toBeLessThanOrEqual(
-        Math.max(7000, tiles[0].buildingCount)
+        Math.max(28000, tiles[0].buildingCount)
       );
       expect(nearbyTiles(city, district.center, 4800)).toEqual(tiles);
     }

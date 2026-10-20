@@ -49,12 +49,22 @@ export function useCityTiles(city: City, camera: { center: [number, number]; dis
     // 새 범위가 준비될 때까지 현재 메시를 유지하고 필요한 타일만 캐시에서 보충한다.
     async function run() {
       const next: CityTile[] = [];
+      const retained = new Set(wanted.map((t) => t.id));
       for (let i = 0; i < wanted.length; i += 4) {
         const batch = await Promise.all(
           wanted.slice(i, i + 4).map((t) => loadCityTile(t, controller.signal))
         );
         if (controller.signal.aborted) return;
         next.push(...batch);
+        if (i === 0 && wanted.length > 4) {
+          const ready = [...next],
+            ids = new Set(ready.map((t) => t.id));
+          setTiles((previous) =>
+            [...ready, ...previous.filter((t) => retained.has(t.id) && !ids.has(t.id))].sort(
+              (a, b) => a.id.localeCompare(b.id)
+            )
+          );
+        }
       }
       if (!controller.signal.aborted) setTiles(next.sort((a, b) => a.id.localeCompare(b.id)));
     }

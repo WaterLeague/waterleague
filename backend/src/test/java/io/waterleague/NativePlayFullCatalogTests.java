@@ -16,7 +16,7 @@ class NativePlayFullCatalogTests {
     var json = new JsonService(new ObjectMapper());
     var source = new NativePlayBundle(json, Path.of("../tmp/native-spatial").toAbsolutePath().normalize().toString());
     var repository = new NativePlayRepository(source, json);
-    assertThat(source.manifest().path("recordCount").asInt()).isEqualTo(1_023_100);
+    assertThat(source.manifest().path("recordCount").asInt()).isEqualTo(1_024_232);
     var districts = new TreeSet<String>();
     source.manifest().path("districtKindCounts").properties()
         .forEach(entry -> districts.add(entry.getKey().split(":")[0]));

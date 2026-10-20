@@ -69,6 +69,7 @@ export const siteDto = z.object({
   districtId: z.string(),
   cellId: z.string(),
   name: z.string(),
+  address: z.string().max(300).nullish(),
   kind: z.enum(['ROOF', 'GROUND']),
   polygons: z
     .array(z.array(z.array(point).min(4).max(20000)).min(1).max(500))
@@ -78,6 +79,7 @@ export const siteDto = z.object({
     'BUILDING_FOOTPRINT',
     'ROAD_AREA',
     'SIDEWALK_AREA',
+    'PARKING_AREA',
     'CULTIVATION_LANDSCAPE_AREA',
   ]),
   referenceInfrastructure: z

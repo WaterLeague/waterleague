@@ -11,7 +11,7 @@ export type SiteQuery = {
   offset: number;
   type: FacilityType | '';
   vacant: boolean;
-  surface?: 'ROADWAY' | 'WALKWAY' | 'OTHER' | '';
+  surface?: 'ROADWAY' | 'WALKWAY' | 'PARKING' | 'OTHER' | '';
 };
 export const loadSites = async (query: SiteQuery, signal?: AbortSignal) => {
   const params = new URLSearchParams({

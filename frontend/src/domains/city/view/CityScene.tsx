@@ -1,4 +1,5 @@
 import { scenePointer, clearScenePointer } from '../service/mapCursor';
+import { CityCoverage } from './CityCoverage';
 import type { AudioHandle } from '../../audio/entity/audio';
 import { CityAudioListener } from '../../audio/view/CityAudioListener';
 import { GroundCandidates } from '../../installation/view/GroundCandidates';
@@ -54,6 +55,7 @@ import { FacilityMesh } from '../../catalog/view/FacilityMesh';
 import { LiveRainScene } from '../../rainfall/view/LiveRainScene';
 import type { Terrain } from '../../terrain/entity/terrain';
 import { terrainHeight, terrainLine } from '../../terrain/service/terrainService';
+import { buildingBaseElevation } from '../service/buildingElevationService';
 import { TerrainSurface } from '../../terrain/view/TerrainSurface';
 import type { InfrastructureAsset } from '../../infrastructure/entity/infrastructure';
 import { InfrastructureMarkers } from '../../infrastructure/view/InfrastructureMarkers';
@@ -84,6 +86,10 @@ import { ParkingLayer } from '../../urban/view/ParkingLayer';
 import type { ParkingData } from '../../urban/entity/parking';
 import { useParkingLots } from '../../urban/controller/useParkingLots';
 import { emptyFloodStats } from '../../urban/service/floodMovementService';
+import { CityOverview } from './CityOverview';
+import { TopographyLayer } from '../../topography/view/TopographyLayer';
+import { TopographyLabels } from '../../topography/view/TopographyLabels';
+import type { TopographyView } from '../../topography/entity/topography';
 const TerrainContext = createContext<Terrain | null>(null);
 const mapEvents: Parameters<typeof Canvas>[0]['events'] = (state) => ({
   ...events(state),
@@ -126,7 +132,10 @@ function Buildings({
     if (!buildings.length) setRendered(null);
     else
       void requestBuildingMesh(
-        buildings.map((b) => ({ ...b, baseElevationM: terrainHeight(terrain, b.center) })),
+        buildings.map((b) => ({
+          ...b,
+          baseElevationM: buildingBaseElevation(terrain, b.polygons),
+        })),
         controller.signal
       )
         .then((data) => {
@@ -428,6 +437,7 @@ const CityScene = memo(function CityScene({
   audio,
   urbanClock,
   streets,
+  topography,
   parking,
   population,
   livePlaces,
@@ -479,6 +489,7 @@ const CityScene = memo(function CityScene({
   audio: AudioHandle;
   urbanClock: UrbanTime;
   streets: Street[];
+  topography: TopographyView;
   parking: ParkingData | null;
   population: Population | null;
   livePlaces: LivePlace[];
@@ -564,6 +575,7 @@ const CityScene = memo(function CityScene({
     [publicAssets]
   );
   const overviewIds = useMemo(() => new Set(city.overviewBuildings.map((b) => b.id)), [city]);
+  const detailTileIds = useMemo(() => new Set(tiles.map((tile) => tile.id)), [tiles]);
   const symbols = useMemo(
     () => installationSymbols(installations, sites, viewerId, rainCamera.distance),
     [installations, sites, viewerId, rainCamera.distance]
@@ -637,13 +649,23 @@ const CityScene = memo(function CityScene({
               <Surface polygons={city.boundary} color="#dfe3cf" />
             )}
             <Lines city={city} selected={selected} ownDistrictId={ownDistrictId} />
+            <CityOverview
+              center={rainCamera.center}
+              distance={rainCamera.distance}
+              terrain={terrain}
+              detailTileIds={detailTileIds}
+              ownDistrictId={ownDistrictId}
+            />
             <StreetLayer
               roads={streets}
+              center={rainCamera.center}
               parking={parking}
               terrain={terrain}
               detail={rainCamera.distance < 4500}
               onStreet={onStreet}
             />
+            <TopographyLayer value={topography} distance={rainCamera.distance} />
+            <TopographyLabels value={topography} terrain={terrain} distance={rainCamera.distance} />
             <StreetLife
               audio={audio}
               roads={streets}
@@ -678,6 +700,7 @@ const CityScene = memo(function CityScene({
               onSelect={onSite}
             />
             <RiverLayer city={city} terrain={terrain} weather={waterWeather} />
+            <CityCoverage terrain={terrain} distance={rainCamera.distance} />
             {!terrain &&
               city.surfaces
                 .filter((s) => s.kind !== 'water')
@@ -771,7 +794,9 @@ const CityScene = memo(function CityScene({
                         cell={{
                           ...site,
                           heightM:
-                            terrainHeight(terrain, site.center) +
+                            (site.kind === 'ROOF'
+                              ? buildingBaseElevation(terrain, site.polygons)
+                              : terrainHeight(terrain, site.center)) +
                             (site.kind === 'ROOF' ? site.heightM : 0.2),
                         }}
                         placement={installed}
@@ -793,7 +818,9 @@ const CityScene = memo(function CityScene({
                 cell={{
                   ...preview.site,
                   heightM:
-                    terrainHeight(terrain, preview.site.center) +
+                    (preview.site.kind === 'ROOF'
+                      ? buildingBaseElevation(terrain, preview.site.polygons)
+                      : terrainHeight(terrain, preview.site.center)) +
                     (preview.site.kind === 'ROOF' ? preview.site.heightM : 0.2),
                 }}
                 placement={preview.placement}
@@ -875,7 +902,9 @@ function SiteSurface({
           areaM2: site.maxAreaM2,
         }),
         site.kind === 'GROUND' ? terrain : null,
-        site.kind === 'GROUND' ? 0.013 : terrainHeight(terrain, site.center) + site.heightM + 0.11
+        site.kind === 'GROUND'
+          ? 0.18
+          : buildingBaseElevation(terrain, site.polygons) + site.heightM + 0.11
       ),
     [site, terrain]
   );

@@ -94,9 +94,12 @@ export function FacilityPlacementPanel(p: FacilityPlacementProps) {
                 ? '도로면 후보'
                 : site.sourceRole === 'SIDEWALK_AREA'
                   ? '보도면 후보'
-                  : '지상 후보'}
+                  : site.sourceRole === 'PARKING_AREA'
+                    ? '주차장 후보'
+                    : '지상 후보'}
           </span>
           <h2 className="shared-site-title">{site.name}</h2>
+          {site.address && <p className="shared-site-address">{site.address}</p>}
           {site.existingInfrastructure && (
             <div className="shared-readonly" role="note">
               <strong>공개 지도 시설 영역 · 신규 설치 제외</strong>

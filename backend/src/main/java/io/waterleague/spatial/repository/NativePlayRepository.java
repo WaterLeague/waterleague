@@ -195,7 +195,7 @@ public class NativePlayRepository {
         || offset < 0
         || offset > 300000
         || mask != null && !Set.of(1, 2, 4, 8, 16, 32).contains(mask)
-        || role != null && !Set.of("ROAD_AREA", "SIDEWALK_AREA", "OTHER").contains(role))
+        || role != null && !Set.of("ROAD_AREA", "SIDEWALK_AREA", "PARKING_AREA", "OTHER").contains(role))
       requestInvalid();
     String filter =
         "district_id=? AND allowed_mask<>0"
@@ -203,7 +203,7 @@ public class NativePlayRepository {
             + (role == null
                 ? ""
                 : role.equals("OTHER")
-                    ? " AND role NOT IN ('ROAD_AREA','SIDEWALK_AREA')"
+                    ? " AND role NOT IN ('ROAD_AREA','SIDEWALK_AREA','PARKING_AREA')"
                     : " AND role=?");
     if (!queries.tryAcquire()) throw new DomainException(ErrorCode.RATE_LIMITED);
     try (var connection = connection();

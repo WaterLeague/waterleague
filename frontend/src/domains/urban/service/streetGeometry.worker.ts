@@ -7,7 +7,8 @@ self.onmessage = (event) => {
       event.data.roads,
       event.data.terrain,
       event.data.detail,
-      event.data.parkingAisles
+      event.data.parkingAisles,
+      event.data.detailCenter
     );
     const geometry = new BufferGeometry();
     geometry.setAttribute('position', new BufferAttribute(data.positions, 3));

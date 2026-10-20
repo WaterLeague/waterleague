@@ -601,3 +601,44 @@
   color: #3a5752;
   cursor: pointer;
 }
+
+.city-map-loading {
+  position: absolute;
+  bottom: 82px;
+  left: 20px;
+  z-index: 5;
+  max-width: min(360px, 80%);
+  padding: 7px 12px;
+  border-radius: 12px;
+  background: rgba(250, 251, 246, 0.94);
+  color: #365a58;
+  font-size: 12px;
+  pointer-events: none;
+}
+.shared-site-address {
+  margin: -0.35rem 0 1rem;
+  color: var(--muted, #596860);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.city-coverage-notice {
+  position: absolute;
+  left: 14px;
+  bottom: 54px;
+  z-index: 4;
+  max-width: calc(100% - 28px);
+  padding: 8px 11px;
+  border: 1px solid #a6ada0;
+  border-radius: 8px;
+  color: #485242;
+  background: rgba(249, 250, 246, 0.94);
+  pointer-events: none;
+  font-size: 12px;
+}
+.city-coverage-notice span {
+  display: block;
+  margin-top: 3px;
+  font-size: 11px;
+  color: #68715f;
+}

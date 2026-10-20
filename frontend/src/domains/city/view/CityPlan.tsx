@@ -1,4 +1,5 @@
 import { nativeSurfaceColor } from '../../urban/service/nativeStreetService';
+import { CityCoveragePlan } from './CityCoverage';
 import { GroundCandidatesPlan } from '../../installation/view/GroundCandidatesPlan';
 import type { GroundCandidate } from '../../installation/service/candidateTilesService';
 import { InstallationSymbolsPlan } from '../../installation/view/InstallationSymbolsPlan';
@@ -46,8 +47,12 @@ import type { CisternGeometryPreview } from '../../installation/dto/cisternLayou
 import type { Street } from '../../urban/entity/urban';
 import type { ParkingData } from '../../urban/entity/parking';
 import { useParkingLots } from '../../urban/controller/useParkingLots';
+import { CityOverviewPlan } from './CityOverviewPlan';
+import { TopographyPlan } from '../../topography/view/TopographyPlan';
+import type { TopographyView } from '../../topography/entity/topography';
 
 type Props = {
+  topography: TopographyView;
   streets: Street[];
   parking: ParkingData | null;
   cisternGeometry?: CisternGeometryPreview | null;
@@ -90,6 +95,7 @@ type Props = {
   rainAmounts: ReadonlyMap<string, number | null>;
 };
 export const CityPlan = memo(function CityPlan({
+  topography,
   streets,
   parking,
   preview = null,
@@ -166,6 +172,7 @@ export const CityPlan = memo(function CityPlan({
         .map((r) => ({
           id: r.id,
           nativeFill: r.nativeSourceRole ? nativeSurfaceColor(r.nativeSourceRole) : null,
+          markings: r.nativeMarkingPolygons ? polygonPath(r.nativeMarkingPolygons) : null,
           width: r.widthM,
           walk: r.walk,
           bridge: r.bridge,
@@ -180,6 +187,7 @@ export const CityPlan = memo(function CityPlan({
         })),
     [streets]
   );
+  const detailTileIds = useMemo(() => new Set(tiles.map((tile) => tile.id)), [tiles]);
   const publicBuildings = useMemo(
     () => publicInfrastructureBuildingIds(publicAssets),
     [publicAssets]
@@ -362,18 +370,27 @@ export const CityPlan = memo(function CityPlan({
       {paths.surfaces.map((s, i) => (
         <path key={i} d={s.path} fill={s.kind === 'water' ? '#81b1ba' : '#b4c8a3'} />
       ))}
+      <CityOverviewPlan
+        center={camera.center}
+        distance={camera.distance}
+        detailTileIds={detailTileIds}
+        ownDistrictId={ownDistrictId}
+      />
+      <CityCoveragePlan distance={camera.distance} />
       <g pointerEvents="none">
         {parkingLots.map((lot) => (
           <g key={lot.id}>
             <path d={polygonPath(lot.surfacePolygons)} fill="#858780" fillRule="evenodd" />
             {lot.slots.map((slot, i) => (
               <g key={i}>
-                <path
-                  d={polygonPath([[slot.corners]])}
-                  fill="none"
-                  stroke="#e5e0cf"
-                  strokeWidth={0.12}
-                />
+                {!lot.displayOnly && (
+                  <path
+                    d={polygonPath([[slot.corners]])}
+                    fill="none"
+                    stroke="#e5e0cf"
+                    strokeWidth={0.12}
+                  />
+                )}
                 {slot.seed < 0.65 && (
                   <g
                     transform={`rotate(${(-slot.angle * 180) / Math.PI},${slot.center[0]},${-slot.center[1]})`}
@@ -400,6 +417,7 @@ export const CityPlan = memo(function CityPlan({
           </g>
         ))}
       </g>
+      <TopographyPlan value={topography} distance={camera.distance} />
       <g fill="none" pointerEvents="visiblePainted" strokeLinecap="round" strokeLinejoin="round">
         {roadPaths.map((r) => (
           <g key={r.id}>
@@ -407,8 +425,8 @@ export const CityPlan = memo(function CityPlan({
               <path d={r.path} stroke="#c6d0d2" strokeWidth={r.width + 1.1} pointerEvents="none" />
             )}
             <path
-              d={r.clipped ?? r.path}
-              fill={r.nativeFill ?? (r.clipped ? '#b3ae9f' : undefined)}
+              d={r.markings ?? r.clipped ?? r.path}
+              fill={r.markings ? '#e8e5d4' : (r.nativeFill ?? (r.clipped ? '#b3ae9f' : undefined))}
               fillRule="evenodd"
               strokeDasharray={r.crossing && !r.unmarked ? '.5 .7' : undefined}
               strokeLinecap={r.crossing ? 'butt' : undefined}

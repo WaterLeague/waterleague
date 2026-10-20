@@ -17,7 +17,7 @@ from ..engine.swmm import ROOT
 from .play_catalog import NativeCatalogError, NativePlayCatalog, file_hash
 
 BUNDLE = ROOT / 'backend/src/main/resources/native-play/v1'
-MANIFEST_SHA256 = '9cf8102058e282034d1f5f56d74c666e11703a9a6c3b83e94aee5be0a11d21dc'
+MANIFEST_SHA256 = '61967ce6a56593fed6d190cae49269f63e0e43a4301e8ead5d275b9207e917e0'
 CHUNK_BYTES = 32 * 1024**2
 _process_lock = threading.RLock()
 

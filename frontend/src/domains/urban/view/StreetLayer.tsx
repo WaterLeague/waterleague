@@ -3,10 +3,7 @@ import { buildingRaycast } from '../../city/service/buildingRaycastService';
 import { GeometryBufferCache } from '../../../shared/repository/geometryBufferCache';
 import { Sphere, Vector3 } from 'three';
 import { streetAtFace } from '../service/streetGeometryService';
-import { memo, useEffect, useState, useRef } from 'react';
-import { useFrame } from '@react-three/fiber';
-import { useUrbanLighting } from './UrbanEnvironment';
-import type { MeshStandardMaterial } from 'three';
+import { memo, useEffect, useState } from 'react';
 import { BufferAttribute, BufferGeometry, DoubleSide } from 'three';
 import type { Street } from '../entity/urban';
 import type { Terrain } from '../../terrain/entity/terrain';
@@ -26,28 +23,27 @@ export const StreetLayer = memo(function StreetLayer({
   roads,
   terrain,
   detail,
+  center,
   parking,
   onStreet,
 }: {
   roads: Street[];
   terrain: Terrain | null;
   detail: boolean;
+  center?: [number, number];
   parking?: ParkingData | null;
   onStreet?: (sourceId: string, point: [number, number]) => void;
 }) {
   const [geometry, setGeometry] = useState<BufferGeometry | null>(null);
   const [failed, setFailed] = useState(false);
-  const material = useRef<MeshStandardMaterial>(null),
-    light = useUrbanLighting();
-  useFrame(() => {
-    if (material.current) material.current.emissiveIntensity = (light?.night.value ?? 0) * 0.05;
-  }, -0.2);
+  const centerX = center ? Math.round(center[0] / 500) * 500 : undefined;
+  const centerY = center ? Math.round(center[1] / 500) * 500 : undefined;
   useEffect(() => () => geometry?.dispose(), [geometry]);
   useEffect(() => {
     setFailed(false);
     if (terrain && !terrainIds.has(terrain)) terrainIds.set(terrain, ++terrainId);
     if (parking && !terrainIds.has(parking)) terrainIds.set(parking, ++terrainId);
-    const variant = `${terrain ? terrainIds.get(terrain) : 0}:${detail}:${parking ? terrainIds.get(parking) : 0}`;
+    const variant = `${terrain ? terrainIds.get(terrain) : 0}:${detail}:${centerX}:${centerY}:${parking ? terrainIds.get(parking) : 0}`;
     const apply = (data: StreetBuffers) => {
       const mesh = new BufferGeometry();
       mesh.setAttribute('position', new BufferAttribute(data.positions, 3));
@@ -87,6 +83,7 @@ export const StreetLayer = memo(function StreetLayer({
       roads,
       terrain,
       detail,
+      detailCenter: centerX !== undefined && centerY !== undefined ? [centerX, centerY] : undefined,
       parkingAisles:
         parking?.routes
           .filter((route) => route.reason === 'OSM_PARKING_AISLE')
@@ -95,7 +92,7 @@ export const StreetLayer = memo(function StreetLayer({
     return () => {
       worker.terminate();
     };
-  }, [roads, terrain, detail, parking]);
+  }, [roads, terrain, detail, parking, centerX, centerY]);
   if (failed) throw new Error('도로 표시 실패');
   return geometry ? (
     <mesh
@@ -117,11 +114,12 @@ export const StreetLayer = memo(function StreetLayer({
       }
     >
       <meshStandardMaterial
-        ref={material}
         vertexColors
-        emissive="#8493a5"
         roughness={0.95}
         side={DoubleSide}
+        polygonOffset
+        polygonOffsetFactor={-1}
+        polygonOffsetUnits={-1}
       />
     </mesh>
   ) : null;

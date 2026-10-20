@@ -1,3 +1,4 @@
+import type { NativeBridgeProfile } from '../dto/nativeBridgeDto';
 import type { RefObject } from 'react';
 export type Street = {
   id: string;
@@ -8,6 +9,24 @@ export type Street = {
   nativeSourceRole?: string;
   nativeTrafficDirection?: 'BIDIRECTIONAL' | 'UNKNOWN';
   nativePolygons?: [number, number][][][];
+  nativeMarkingPolygons?: [number, number][][][];
+  nativeDisplayPath?: boolean;
+  nativeBridgeProfiles?: NativeBridgeProfile[];
+  nativeRailPaths?: [number, number][][];
+  nativeBridgeGroupPolygons?: [number, number][][][];
+  nativeWalkingDecks?: {
+    polygons: [number, number][][][];
+    deckPolygons: [number, number][][][];
+    deckLiftM?: number;
+  }[];
+  nativeDeckLiftM?: number;
+  nativeStructurePath?: { coordinates: [number, number][]; span: [number, number]; widthM: number };
+  nativeLanePaths?: {
+    coordinates: [number, number][];
+    lanes: number;
+    widthM: number;
+    span: [number, number];
+  }[];
   walk: boolean;
   motor: boolean;
   oneway: number;

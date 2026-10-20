@@ -7,6 +7,7 @@ export type ParkingSlot = {
 };
 export type ParkingLot = {
   id: string;
+  displayOnly?: boolean;
   polygons: MapPolygons;
   surfacePolygons: MapPolygons;
   supports: { center: [number, number]; angle: number; width: number }[];

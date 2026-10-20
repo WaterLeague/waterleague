@@ -11,7 +11,8 @@ def resolve(installation):
     if district not in registry:
         raise ValueError('LIVE_DISTRICT_INVALID')
     catalog = open_catalog()
-    if installation.get('model_hash') != catalog.sha256 or registry[district]['siteCatalogSha256'] != catalog.sha256:
+    if (not catalog.accepts_catalog(installation.get('model_hash'), installation.get('cell_id'))
+            or not catalog.accepts_catalog(registry[district]['siteCatalogSha256'])):
         raise ValueError('LIVE_INSTALLATION_MODEL_INVALID')
     model = catalog.model(installation.get('cell_id'), district=district)
     model['mapId'] = 'seoul-ngii-v1-' + district
