@@ -50,6 +50,8 @@ def engine_signature(network_result, surface_result, coupled_result):
     if 'dryExchangeRoundoff' in coupled_result:
         identity['dryExchangePolicy'] = {k: v for k, v in coupled_result['dryExchangeRoundoff'].items()
                                        if k != 'withdrawalShortfallM3'}
+    if 'publishedSurfaceConnection' in coupled_result:
+        identity['publicConnectionCompilerSha256'] = coupled_result['publishedSurfaceConnection']['compilerSha256']
     return digest(identity)
 
 
@@ -127,6 +129,11 @@ def _verify_initialization(model, network, surface, result, root):
 
 
 def _verify_surface_policy(model, surface, result, root):
+    accumulation = surface['engine'].get('exchangeAccumulationSha256')
+    if accumulation is not None:
+        require(is_hash(accumulation) and 'exchange-accumulation.py' in surface['files']
+                and file_digest(root/'surface/exchange-accumulation.py') == accumulation,
+                'EVALUATION_EXCHANGE_ACCUMULATION_MISMATCH')
     configuration = surface.get('numericalConfiguration')
     require(configuration == result.get('surfaceNumericalConfiguration'), 'EVALUATION_CONTEXT_MISMATCH')
     if model.get('surface', {}).get('schemaVersion') != 2:
@@ -326,6 +333,12 @@ def read_coupled_record(directory, expected_result_sha256, context):
         _verify_files(root / 'network', network['files'])
         _verify_files(root / 'surface', surface['files'])
         original_model = model
+        from .published_surface_connection import verify as verify_public_connection
+        verify_public_connection(model, result, root, _read, file_digest)
+        if 'publishedSurfaceConnection' in model:
+            require(context['modelGrade'] in ('DRAFT', 'EXPLORATORY')
+                    and context['comparisonKind'] != 'HISTORICAL_RECONSTRUCTION',
+                    'EVALUATION_PUBLIC_CONNECTION_GRADE_MISMATCH')
         from .rainfall_coverage import verify as verify_coverage
         verify_coverage(model, surface, result, root, _read, file_digest)
         model = _verify_surface_basins(model, surface, result, root)

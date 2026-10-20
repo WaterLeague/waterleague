@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "reviewedOn": "2026-10-21",
+  "classification": "PUBLIC_HYDRAULIC_METHODS_NOT_SEOUL_INLET_MEASUREMENTS",
+  "sources": [
+    {
+      "id": "epa-swmm-5.2-junction-orifice",
+      "url": "https://nepis.epa.gov/Exe/ZyPURL.cgi?Dockey=P10145M6.TXT",
+      "title": "Storm Water Management Model User's Manual Version 5.2",
+      "version": "EPA/600/R-22/030, revised February 2022",
+      "scope": "JUNCTIONS Ysur의 추가 허용 수두와 BOTTOM ORIFICE 교환",
+      "engineRevision": "7952ca837988b1c32f791812eccc9fd64547e093",
+      "sourceCodeUrl": "https://github.com/USEPA/Stormwater-Management-Model/blob/7952ca837988b1c32f791812eccc9fd64547e093/src/solver/link.c",
+      "application": "원 관저고·최대 깊이 보존. 추가 허용 수두는 연결 통로를 통한 교환 계산 가정이며 실제 밀폐 뚜껑의 내압 아님. EPA는 바닥 오리피스 때문에 절점 최대 깊이를 자동 증가시키지 않음."
+    },
+    {
+      "id": "infiltration-overland-sewer-coupling-2021",
+      "url": "https://www.mdpi.com/2073-4441/13/15/2028",
+      "doi": "10.3390/w13152028",
+      "title": "Modelling Infiltration Process, Overland Flow and Sewer System Interactions for Urban Flood Mitigation",
+      "year": 2021,
+      "location": "Section 2.5",
+      "retrieval": "PUBLISHER_INDEXED_TEXT; direct publisher request rate limited",
+      "reportedOrificeDischargeCoefficientRange": [0.6, 0.62],
+      "application": "등가 개방 오리피스의 0.62 참조. 현장 격자형 빗물받이 계수의 관측값으로 사용하지 않음."
+    },
+    {
+      "id": "tellez-alvarez-grated-inlets-2021",
+      "url": "https://www.mdpi.com/2306-5338/8/4/162",
+      "repositoryUrl": "https://upcommons.upc.edu/entities/publication/f2276a60-c496-4399-99d9-cdecfe87b06a",
+      "doi": "10.3390/hydrology8040162",
+      "title": "Numerical and Experimental Approaches to Estimate Discharge Coefficients and Energy Loss Coefficients in Pressurized Grated Inlets",
+      "year": 2021,
+      "retrieval": "PUBLISHER_AND_INSTITUTIONAL_REPOSITORY_INDEXED_TEXT; full PDF not retrieved",
+      "reportedPressurizedGratedInletCoefficientRange": [0.14, 0.41],
+      "application": "형상·흐름에 따른 계수 불확실성의 근거. 등가 원형 개구부에 이 범위를 서울 실측값으로 전용하지 않음."
+    },
+    {
+      "id": "sim-kim-mixed-precision-2026",
+      "url": "https://www.mdpi.com/2073-4441/18/20/2555",
+      "doi": "10.3390/w18202555",
+      "title": "Numerical Differences and Computational Performance Across Floating-Point Precision Configurations in a GPU-Accelerated 1D–2D Urban Flood Model",
+      "publishedOn": "2026-10-15",
+      "retrieval": "PUBLISHER_INDEXED_ABSTRACT_AND_METHODS; direct page unavailable",
+      "application": "장시간 교환 수치 정밀도와 국소 수심·교환량 차이 검사가 필요하다는 최신 근거. 진주 연구의 속도 향상·오차·계수를 현재 CPU/서초 모델의 성능으로 전용하지 않음."
+    }
+  ],
+  "assumptions": {
+    "openingDiameterM": {"value": 0.6, "classification": "EXPLICIT_EQUIVALENT_OPENING_SCENARIO_NOT_MEASURED"},
+    "surchargeHeadM": {"value": 100, "classification": "NUMERICAL_HEAD_CEILING_NOT_COVER_STRENGTH", "failurePolicy": "REJECT_ANY_UNMAPPED_NATIVE_FLOODING"},
+    "surfaceOffsetM": {"value": 0, "classification": "UNVERIFIED_COMMON_DATUM_SCENARIO"},
+    "exchangeCrest": "max(original junction rim, connected triangle mean bed); grid approximation retained separately",
+    "boundary": "REFLECTIVE_RECTANGLE_DIAGNOSTIC_NOT_WATERSHED_BOUNDARY",
+    "sourceForcing": "PUBLISHED_HOURLY_RAIN_UNKNOWN_STATION_TIMEZONE_AND_ESTIMATED_EXTERNAL_INFLOWS"
+  },
+  "rankingEligible": false,
+  "historicalReconstructionEligible": false
+}

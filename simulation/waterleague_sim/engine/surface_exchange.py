@@ -6,6 +6,7 @@ from pathlib import Path
 
 from waterleague_sim.engine.flood_errors import require
 from waterleague_sim.engine.surface import SurfaceSession
+from waterleague_sim.engine.accumulation import CompensatedSum
 
 DRY_EXCHANGE_POLICY = 'BOUNDED_DRY_TAIL_ROUNDOFF_V1'
 DRY_TRANSFER_TOLERANCE_M3 = 1e-9
@@ -16,9 +17,12 @@ class ExchangeSurfaceSession(SurfaceSession):
     def __init__(self, model, directory):
         super().__init__(model['surface'], directory)
         self.engine['exchangeAdapterSha256'] = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
+        accumulation = Path(__file__).with_name('accumulation.py').read_bytes()
+        self.engine['exchangeAccumulationSha256'] = hashlib.sha256(accumulation).hexdigest()
+        (self.directory / 'exchange-accumulation.py').write_bytes(accumulation)
         self.port_specs = model['ports']
         self.port_indices = {}
-        self.exchange_net = 0.
+        self.exchange_total = CompensatedSum()
         self.dry_policy = model.get('dryExchangePolicy')
         require(self.dry_policy in (None, DRY_EXCHANGE_POLICY), 'EXCHANGE_DRY_POLICY_INVALID')
         self.dry_shortfall = 0.
@@ -74,7 +78,8 @@ class ExchangeSurfaceSession(SurfaceSession):
         source = float(domain.get_fractional_step_volume_integral())
         result = {'timeSeconds': float(domain.get_time()), 'ports': ports, 'storageM3': storage,
                 'boundaryNetInflowM3': boundary, 'sourceNetInflowM3': source,
-                'exchangeNetInflowM3': self.exchange_net, 'externalSourceNetInflowM3': source - self.exchange_net,
+                'exchangeNetInflowM3': self.exchange_total.value,
+                'externalSourceNetInflowM3': source - self.exchange_total.value,
                 'balanceResidualM3': self.initial_volume + source + boundary - storage, **self.loss_ledger()}
         if self.dry_policy is not None:
             result['dryExchangeRoundoff'] = {'policy': self.dry_policy, 'withdrawalShortfallM3': self.dry_shortfall,
@@ -122,7 +127,7 @@ class ExchangeSurfaceSession(SurfaceSession):
             require(math.isclose(actual, volume, abs_tol=1e-9, rel_tol=1e-10),
                     'EXCHANGE_VOLUME_ROUNDOFF_EXCEEDED')
             domain.fractional_step_volume_integral += volume
-            self.exchange_net += volume
+            self.exchange_total.add(volume)
             self.dry_shortfall += shortfall
             records.append({'port': identifier, 'requestedM3': volume, 'appliedM3': actual,
                             'roundoffM3': actual - volume})

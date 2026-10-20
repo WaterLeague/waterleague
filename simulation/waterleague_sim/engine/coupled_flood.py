@@ -28,11 +28,16 @@ def _validate(model):
         from waterleague_sim.forcing.live_network_rainfall import FACILITY_OBSERVER
         require(model['networkObserverPolicy'] == FACILITY_OBSERVER, 'COUPLED_OBSERVER_POLICY_INVALID')
     surface, network = model['surface'], model['network']
+    public_connection = None
+    if 'publishedSurfaceConnection' in model:
+        from .published_surface_connection import validate as validate_connection
+        public_connection = validate_connection(model)
     require(model.get('dryExchangePolicy') in (None, DRY_EXCHANGE_POLICY), 'EXCHANGE_DRY_POLICY_INVALID')
     if surface.get('infiltration') is not None:
         validate_infiltration(surface['infiltration'], surface['rainfallOwner'])
     if 'terrainProvenance' in surface:
-        require(surface['terrainProvenance'].get('absoluteVerticalReferenceVerified') is True,
+        require(surface['terrainProvenance'].get('absoluteVerticalReferenceVerified') is True
+                or public_connection is not None,
                 'COUPLED_VERTICAL_REFERENCE_UNVERIFIED')
     for key in ('coordinateSystem', 'verticalDatum'):
         require(surface.get(key) and network.get(key) == surface[key], 'COUPLED_REFERENCE_MISMATCH')
@@ -96,8 +101,8 @@ def _validate(model):
 
 def _balance(network, surface, ports):
     n = network['totals']
-    outward = sum(p['networkToSurfaceM3'] for p in ports.values())
-    inward = sum(p['surfaceToNetworkM3'] for p in ports.values())
+    outward = math.fsum(p['networkToSurfaceM3'] for p in ports.values())
+    inward = math.fsum(p['surfaceToNetworkM3'] for p in ports.values())
     incoming = sum(n[k] for k in ('dryWeatherInflowM3', 'runoffInflowM3', 'groundwaterInflowM3',
                                   'rdiiInflowM3', 'externalInflowM3')) - inward
     outgoing = sum(n[k] for k in ('outflowM3', 'floodingM3', 'evaporationM3', 'seepageM3',
@@ -106,7 +111,7 @@ def _balance(network, surface, ports):
             'surfaceExternalNetInflowM3': surface['externalSourceNetInflowM3'] + surface['boundaryNetInflowM3'],
             'networkStorageM3': n['storageM3'], 'surfaceStorageM3': surface['storageM3'],
             'networkToSurfaceM3': outward, 'surfaceToNetworkM3': inward,
-            'exchangeCancellationResidualM3': outward - inward - surface['exchangeNetInflowM3']}
+            'exchangeCancellationResidualM3': math.fsum((outward, -inward, -surface['exchangeNetInflowM3']))}
     if 'infiltrationM3' in surface:
         result.update(surfaceRainfallM3=surface['rainfallM3'], surfaceInfiltrationM3=surface['infiltrationM3'],
                       surfaceBoundaryNetInflowM3=surface['boundaryNetInflowM3'])
@@ -211,6 +216,10 @@ def run_coupled(model, directory):
     require(not directory.exists(), 'COUPLED_OUTPUT_EXISTS')
     directory.mkdir(parents=True)
     _write(directory / 'coupled-input.json', original_model)
+    if 'publishedSurfaceConnection' in original_model:
+        from . import published_surface_connection
+        _write(directory / 'published-surface-connection.json', original_model['publishedSurfaceConnection']['summary'])
+        (directory / 'published_surface_connection.py').write_bytes(Path(published_surface_connection.__file__).read_bytes())
     if 'networkRainfallCoverage' in model:
         from waterleague_sim.terrain import rainfall_coverage
         _write(directory / 'rainfall-coverage.json', model['networkRainfallCoverage'])
@@ -464,6 +473,8 @@ def run_coupled(model, directory):
                     result['rainfallCoverage'] = model['networkRainfallCoverage']['totals'] | {
                         'method': 'GEOMETRIC_RAINFALL_PARTITION_V1',
                         'coverageSha256': model['surface']['rainfallPartition']['coverageSha256']}
+                if 'publishedSurfaceConnection' in original_model:
+                    result['publishedSurfaceConnection'] = original_model['publishedSurfaceConnection']['summary']
                 if model.get('dryExchangePolicy') is not None:
                     result['dryExchangeRoundoff'] = state['dryExchangeRoundoff']
                 if storage_summary is not None:

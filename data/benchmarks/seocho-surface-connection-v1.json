@@ -1,0 +1,1987 @@
+{
+  "bundle": {
+    "currentVerificationSourcesMatch": true,
+    "manifestSha256": "5a0ccb48763a46415b5b251500271b0e1391d1918473bd0127b2219d0aa198db",
+    "path": "data/runs/seocho-surface-connection-v1-20261021-final-v2",
+    "verifiedFiles": 189
+  },
+  "cases": {
+    "seocho-surface-connection-event-500ms-v2": {
+      "balance": {
+        "balanceResidualM3": -667.9061249315273,
+        "exchangeCancellationResidualM3": -8.731149137020111e-11,
+        "networkExternalInflowM3": 3699177.4420271376,
+        "networkExternalOutflowAndLossM3": 2989805.8576771817,
+        "networkStorageM3": 14420.319206276632,
+        "networkToSurfaceM3": 901145.6923934763,
+        "surfaceExternalNetInflowM3": 556547.8880173881,
+        "surfaceStorageM3": 1252167.3794783982,
+        "surfaceToNetworkM3": 205526.20088197952
+      },
+      "calendarDurationSeconds": 86340.0,
+      "durationSeconds": 86339,
+      "maximumFinalDepthM": 8.539974626387492,
+      "nativeCalendarShortfallSeconds": 1.0,
+      "nativeDurationSeconds": 86339.0,
+      "networkConvergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "nonConvergedPercent": 0.0,
+        "nonConvergedSteps": 0,
+        "routingSteps": 1554103
+      },
+      "networkQuality": {
+        "allowedNonConvergedSteps": 0,
+        "continuityLimitPercent": 1,
+        "failureReasons": [],
+        "policyVersion": "network-continuity-convergence-v2",
+        "routingBalance": {
+          "absoluteToleranceM3": 1e-08,
+          "allowedResidualM3": 39047.03963101518,
+          "continuityPercent": -0.01710516806724509,
+          "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+          "residualM3": -667.9061754168943,
+          "totalInM3": 3904703.9631015174,
+          "totalOutIncludingStorageM3": 3905371.8692769343
+        },
+        "status": "PASSED"
+      },
+      "parameters": {
+        "boundaryType": "REFLECTIVE",
+        "dischargeCoefficient": 0.62,
+        "durationSeconds": 86339,
+        "frameIntervalMilliseconds": 60000,
+        "maximumExchangeMilliseconds": 500,
+        "networkNumericalProfile": {
+          "id": "seocho-slot-explicit",
+          "options": {
+            "MAX_TRIALS": 200,
+            "MINIMUM_STEP": 0.01,
+            "ROUTING_STEP": 0.06,
+            "SURCHARGE_METHOD": "SLOT"
+          }
+        },
+        "openingDiameterM": 0.6,
+        "surchargeHeadM": 100.0,
+        "surfaceOffsetM": 0.0
+      },
+      "path": "data/runs/seocho-surface-connection-event-500ms-v2",
+      "record": {
+        "complete": true,
+        "context": {
+          "comparisonKind": "PAST_RAINFALL_STRESS_TEST",
+          "effectAreaId": "published-303ha-rectangle-not-damage-map",
+          "engineSha256": "653e45bfba2ff6db3098012a2e567817c608f560cee8fdba23699f072489b222",
+          "evidenceClass": "PUBLIC_DATA",
+          "forcingSha256": "d0e80c86a1cd98395a5fc3ea44828bf503874242c8d6807d104e50df3024e292",
+          "metricSpecificationSha256": "cec9ab32d377f86f0b670d1f440aa3a388e12860837604c9dabbd293d262e88c",
+          "modelGrade": "EXPLORATORY",
+          "scenarioSnapshotSha256": "cb651f5f46efaf3013973d3f050da2025b53878124b82bedae670abfd9b689ee",
+          "scopeId": "seocho-published-v3-public-terrain-window"
+        },
+        "inputSha256": "7c9b0007d53f7116e3bae1572d65f24665a495324f55b47ace7f0226c5f20b9b",
+        "numericalStatus": "PASSED",
+        "raw": {
+          "depthAreaTimeM3Hours": 9499548.076047007,
+          "outwardVolumeM3": 2989805.857677084,
+          "peakOutwardM3s": 79.48845564599522
+        },
+        "resultSha256": "e4fa3ed72d3c4c56321da376fdaf4af45840c2cc3ccbca73ab116cad92223571",
+        "schemaVersion": 1
+      },
+      "resultSha256": "e4fa3ed72d3c4c56321da376fdaf4af45840c2cc3ccbca73ab116cad92223571",
+      "smallestExchangeMilliseconds": 500,
+      "sourceConnection": {
+        "compilerSha256": "f359fb2dbe6d5ee51eb5cf45cb48dc0675c9ba1256a439e38d46d6c9aca16d47",
+        "limitations": [
+          "원 절점에 가정한 등가 원형 개구부이며 실제 빗물받이·뚜껑 개방 관측 아님",
+          "지형·관망 높이 기준과 개구부 크기·경계의 시나리오 민감도 필요",
+          "격자 평균 바닥보다 낮은 원 문턱은 교환 문턱만 높인 격자 근사",
+          "원 강우 관측소·시간대 미확인과 추정 외부 유입 보존; 관측 사건 복원 아님"
+        ],
+        "method": "PUBLISHED_SURFACE_CONNECTION_EXPLORATION_V1",
+        "nativeFloodingPolicy": "REJECT_ANY_UNMAPPED_FLOODING",
+        "originalNetworkSha256": "8ce278a3d2b58df3c2a5fd1232160bcabb324389746ee0c878792acf91abbdbb",
+        "parameters": {
+          "boundaryType": "REFLECTIVE",
+          "dischargeCoefficient": 0.62,
+          "durationSeconds": 86339,
+          "frameIntervalMilliseconds": 60000,
+          "maximumExchangeMilliseconds": 500,
+          "networkNumericalProfile": {
+            "id": "seocho-slot-explicit",
+            "options": {
+              "MAX_TRIALS": 200,
+              "MINIMUM_STEP": 0.01,
+              "ROUTING_STEP": 0.06,
+              "SURCHARGE_METHOD": "SLOT"
+            }
+          },
+          "openingDiameterM": 0.6,
+          "surchargeHeadM": 100.0,
+          "surfaceOffsetM": 0.0
+        },
+        "ports": [
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 21.71044503218586,
+            "gridCrestRaiseM": 0.09044503218585831,
+            "localCoordinateM": [
+              1021.167999999685,
+              -1638.398000000394
+            ],
+            "nodeId": "J1",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202601.16799999968,
+              542961.6019999996
+            ],
+            "sourceInvertM": 18.42,
+            "sourceRimM": 21.62,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 21.71044503218586,
+            "surfaceMinusRimM": 0.09044503218585831,
+            "surfaceTriangle": 12252
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 19.349999999999998,
+            "gridCrestRaiseM": 0.0,
+            "localCoordinateM": [
+              941.5610000001034,
+              -1429.8910000009928
+            ],
+            "nodeId": "J2",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202521.5610000001,
+              543170.108999999
+            ],
+            "sourceInvertM": 16.15,
+            "sourceRimM": 19.349999999999998,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 18.811994303386385,
+            "surfaceMinusRimM": -0.5380056966136131,
+            "surfaceTriangle": 10744
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 18.78,
+            "gridCrestRaiseM": 0.0,
+            "localCoordinateM": [
+              918.3990000005288,
+              -1368.1640000004554
+            ],
+            "nodeId": "J3",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202498.39900000053,
+              543231.8359999995
+            ],
+            "sourceInvertM": 15.58,
+            "sourceRimM": 18.78,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 16.51832069938868,
+            "surfaceMinusRimM": -2.26167930061132,
+            "surfaceTriangle": 10291
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 20.0,
+            "gridCrestRaiseM": 0.3200000000000003,
+            "localCoordinateM": [
+              708.4080000004615,
+              -1448.5889999993378
+            ],
+            "nodeId": "J4",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202288.40800000046,
+              543151.4110000007
+            ],
+            "sourceInvertM": 16.48,
+            "sourceRimM": 19.68,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 20.0,
+            "surfaceMinusRimM": 0.3200000000000003,
+            "surfaceTriangle": 10870
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 18.13978493157719,
+            "gridCrestRaiseM": 0.22978493157718916,
+            "localCoordinateM": [
+              1068.5239999990445,
+              -1314.390000000014
+            ],
+            "nodeId": "J5",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202648.52399999904,
+              543285.61
+            ],
+            "sourceInvertM": 14.71,
+            "sourceRimM": 17.91,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 18.13978493157719,
+            "surfaceMinusRimM": 0.22978493157718916,
+            "surfaceTriangle": 9857
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 15.33753948559329,
+            "gridCrestRaiseM": 0.6775394855932895,
+            "localCoordinateM": [
+              770.7329999995418,
+              -980.5819999992382
+            ],
+            "nodeId": "J6",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202350.73299999954,
+              543619.4180000008
+            ],
+            "sourceInvertM": 11.46,
+            "sourceRimM": 14.66,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 15.33753948559329,
+            "surfaceMinusRimM": 0.6775394855932895,
+            "surfaceTriangle": 7426
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 14.625564551685963,
+            "gridCrestRaiseM": 0.17556455168596408,
+            "localCoordinateM": [
+              701.6090000005497,
+              -797.5719999995781
+            ],
+            "nodeId": "J7",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202281.60900000055,
+              543802.4280000004
+            ],
+            "sourceInvertM": 11.25,
+            "sourceRimM": 14.45,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 14.625564551685963,
+            "surfaceMinusRimM": 0.17556455168596408,
+            "surfaceTriangle": 5920
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 15.0,
+            "gridCrestRaiseM": 1.3999999999999986,
+            "localCoordinateM": [
+              628.8010000009672,
+              -604.3639999993611
+            ],
+            "nodeId": "J8",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202208.80100000097,
+              543995.6360000006
+            ],
+            "sourceInvertM": 10.4,
+            "sourceRimM": 13.600000000000001,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 15.0,
+            "surfaceMinusRimM": 1.3999999999999986,
+            "surfaceTriangle": 4562
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 11.945127124576679,
+            "gridCrestRaiseM": 0.005127124576677744,
+            "localCoordinateM": [
+              566.480999998952,
+              -439.7789999989327
+            ],
+            "nodeId": "J9",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202146.48099999895,
+              544160.2210000011
+            ],
+            "sourceInvertM": 8.74,
+            "sourceRimM": 11.940000000000001,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 11.945127124576679,
+            "surfaceMinusRimM": 0.005127124576677744,
+            "surfaceTriangle": 3207
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 15.219999999999999,
+            "gridCrestRaiseM": 0.0,
+            "localCoordinateM": [
+              409.45200000022305,
+              -280.7300000003306
+            ],
+            "nodeId": "J10",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              201989.45200000022,
+              544319.2699999997
+            ],
+            "sourceInvertM": 12.02,
+            "sourceRimM": 15.219999999999999,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 15.0,
+            "surfaceMinusRimM": -0.21999999999999886,
+            "surfaceTriangle": 2140
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 23.903359476332962,
+            "gridCrestRaiseM": 0.4933594763329623,
+            "localCoordinateM": [
+              748.7779999994382,
+              -1666.1609999997308
+            ],
+            "nodeId": "J11",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202328.77799999944,
+              542933.8390000003
+            ],
+            "sourceInvertM": 20.21,
+            "sourceRimM": 23.41,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 23.903359476332962,
+            "surfaceMinusRimM": 0.4933594763329623,
+            "surfaceTriangle": 12524
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 21.22,
+            "gridCrestRaiseM": 0.0,
+            "localCoordinateM": [
+              802.6040000008943,
+              -1521.679999999702
+            ],
+            "nodeId": "J12",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202382.6040000009,
+              543078.3200000003
+            ],
+            "sourceInvertM": 18.02,
+            "sourceRimM": 21.22,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 20.04786575072836,
+            "surfaceMinusRimM": -1.1721342492716396,
+            "surfaceTriangle": 11480
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 20.83,
+            "gridCrestRaiseM": 0.0,
+            "localCoordinateM": [
+              791.2719999997935,
+              -1483.7179999988293
+            ],
+            "nodeId": "J13",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202371.2719999998,
+              543116.2820000012
+            ],
+            "sourceInvertM": 17.63,
+            "sourceRimM": 20.83,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 20.0,
+            "surfaceMinusRimM": -0.8299999999999983,
+            "surfaceTriangle": 11178
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 18.721829375960212,
+            "gridCrestRaiseM": 1.2018293759602123,
+            "localCoordinateM": [
+              584.1820000010193,
+              -1051.1229999997886
+            ],
+            "nodeId": "J14",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202164.18200000102,
+              543548.8770000002
+            ],
+            "sourceInvertM": 14.32,
+            "sourceRimM": 17.52,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 18.721829375960212,
+            "surfaceMinusRimM": 1.2018293759602123,
+            "surfaceTriangle": 7858
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 14.380173038361045,
+            "gridCrestRaiseM": 1.3101730383610448,
+            "localCoordinateM": [
+              391.12399999951595,
+              -499.8629999991972
+            ],
+            "nodeId": "J15",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              201971.12399999952,
+              544100.1370000008
+            ],
+            "sourceInvertM": 9.87,
+            "sourceRimM": 13.07,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 14.380173038361045,
+            "surfaceMinusRimM": 1.3101730383610448,
+            "surfaceTriangle": 3639
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 18.107585159100775,
+            "gridCrestRaiseM": 2.9275851591007758,
+            "localCoordinateM": [
+              270.4629999992321,
+              -324.5020000003278
+            ],
+            "nodeId": "J16",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              201850.46299999923,
+              544275.4979999997
+            ],
+            "sourceInvertM": 11.98,
+            "sourceRimM": 15.18,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 18.107585159100775,
+            "surfaceMinusRimM": 2.9275851591007758,
+            "surfaceTriangle": 2426
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 24.060797709740076,
+            "gridCrestRaiseM": 1.2107977097400777,
+            "localCoordinateM": [
+              1200.565999999526,
+              -1659.9290000008186
+            ],
+            "nodeId": "J17",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202780.56599999953,
+              542940.0709999992
+            ],
+            "sourceInvertM": 19.65,
+            "sourceRimM": 22.849999999999998,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 24.060797709740076,
+            "surfaceMinusRimM": 1.2107977097400777,
+            "surfaceTriangle": 12421
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 21.14,
+            "gridCrestRaiseM": 0.0,
+            "localCoordinateM": [
+              1129.1750000002503,
+              -1472.6689999999944
+            ],
+            "nodeId": "J18",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202709.17500000025,
+              543127.331
+            ],
+            "sourceInvertM": 17.94,
+            "sourceRimM": 21.14,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 20.0,
+            "surfaceMinusRimM": -1.1400000000000006,
+            "surfaceTriangle": 11063
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 19.778998691492763,
+            "gridCrestRaiseM": 2.2289986914927624,
+            "localCoordinateM": [
+              989.5089999996708,
+              -1108.3490000002785
+            ],
+            "nodeId": "J19",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202569.50899999967,
+              543491.6509999997
+            ],
+            "sourceInvertM": 14.35,
+            "sourceRimM": 17.55,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 19.778998691492763,
+            "surfaceMinusRimM": 2.2289986914927624,
+            "surfaceTriangle": 8348
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 16.9,
+            "gridCrestRaiseM": 0.0,
+            "localCoordinateM": [
+              919.8180000000866,
+              -924.2059999982594
+            ],
+            "nodeId": "J20",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202499.8180000001,
+              543675.7940000017
+            ],
+            "sourceInvertM": 13.7,
+            "sourceRimM": 16.9,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 14.307136920968018,
+            "surfaceMinusRimM": -2.5928630790319804,
+            "surfaceTriangle": 6991
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 16.8,
+            "gridCrestRaiseM": 0.0,
+            "localCoordinateM": [
+              1006.5070000002161,
+              -890.2100000010105
+            ],
+            "nodeId": "J21",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202586.50700000022,
+              543709.789999999
+            ],
+            "sourceInvertM": 13.6,
+            "sourceRimM": 16.8,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 15.94990443128169,
+            "surfaceMinusRimM": -0.8500955687183112,
+            "surfaceTriangle": 6700
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 17.18697111222916,
+            "gridCrestRaiseM": 1.2369711122291598,
+            "localCoordinateM": [
+              944.7399999992631,
+              -729.940999999526
+            ],
+            "nodeId": "J22",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202524.73999999926,
+              543870.0590000005
+            ],
+            "sourceInvertM": 12.75,
+            "sourceRimM": 15.95,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 17.18697111222916,
+            "surfaceMinusRimM": 1.2369711122291598,
+            "surfaceTriangle": 5494
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 16.96285099470313,
+            "gridCrestRaiseM": 1.262850994703129,
+            "localCoordinateM": [
+              868.8250000007392,
+              -528.1569999998901
+            ],
+            "nodeId": "J23",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202448.82500000074,
+              544071.8430000001
+            ],
+            "sourceInvertM": 12.5,
+            "sourceRimM": 15.7,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 16.96285099470313,
+            "surfaceMinusRimM": 1.262850994703129,
+            "surfaceTriangle": 3986
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 15.7,
+            "gridCrestRaiseM": 0.0,
+            "localCoordinateM": [
+              798.7799999991548,
+              -347.1300000004703
+            ],
+            "nodeId": "J24",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202378.77999999915,
+              544252.8699999995
+            ],
+            "sourceInvertM": 12.5,
+            "sourceRimM": 15.7,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 15.683742070300625,
+            "surfaceMinusRimM": -0.016257929699374785,
+            "surfaceTriangle": 2629
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 16.03193888218665,
+            "gridCrestRaiseM": 0.3319388821866518,
+            "localCoordinateM": [
+              733.0549999997311,
+              -174.31800000055227
+            ],
+            "nodeId": "J25",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202313.05499999973,
+              544425.6819999994
+            ],
+            "sourceInvertM": 12.5,
+            "sourceRimM": 15.7,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 16.03193888218665,
+            "surfaceMinusRimM": 0.3319388821866518,
+            "surfaceTriangle": 1273
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 15.399999999999999,
+            "gridCrestRaiseM": 0.0,
+            "localCoordinateM": [
+              549.2939999999653,
+              -234.11599999980535
+            ],
+            "nodeId": "J26",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202129.29399999997,
+              544365.8840000002
+            ],
+            "sourceInvertM": 12.2,
+            "sourceRimM": 15.399999999999999,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 15.0,
+            "surfaceMinusRimM": -0.3999999999999986,
+            "surfaceTriangle": 1705
+          }
+        ],
+        "preparedNetworkSha256": "98b3d82e6d0065cec148ce42b2d295e10cf5cb7b2a176fb63daf87447f1f67ff",
+        "rankingEligible": false,
+        "schemaVersion": 1,
+        "sourceForcingPreserved": true,
+        "sourceLocationSha256": "b46a1700424cbab1722748fbb870561dd6ff786e57300261f9da1a041ab4082b",
+        "sourceSurfaceSha256": "1c84fba6d627d4e97dbdebab9e29fa05330787c322b46b4ff1c2c220e34193e9",
+        "verticalReferenceAssumption": {
+          "evidence": "원 공개 관망·공개 지형·원 강우/추정 외부 유입 보존; 높이 기준 일치와 등가 원형 개구부는 가정",
+          "method": "SOURCE_BOUND_COMMON_DATUM_ASSUMPTION_V1",
+          "networkDatumVerified": false,
+          "networkOriginalSha256": "8ce278a3d2b58df3c2a5fd1232160bcabb324389746ee0c878792acf91abbdbb",
+          "rankingEligible": false,
+          "sourceLocationSha256": "b46a1700424cbab1722748fbb870561dd6ff786e57300261f9da1a041ab4082b",
+          "sourceSurfaceSha256": "1c84fba6d627d4e97dbdebab9e29fa05330787c322b46b4ff1c2c220e34193e9",
+          "surfaceDatumVerified": false,
+          "surfaceOffsetM": 0.0
+        }
+      },
+      "steps": 172678,
+      "surfaceQuality": {
+        "absoluteToleranceM3": 1e-08,
+        "failureCode": null,
+        "last": {
+          "balanceResidualM3": 5.0486763939261436e-05,
+          "boundaryNetInflowM3": 1.3978236726764477e-10,
+          "minimumDepthM": 0.0,
+          "relativeResidualPercent": 4.0319501022504325e-09,
+          "sourceNetInflowM3": 1252167.3795288848,
+          "storageM3": 1252167.3794783982,
+          "timeSeconds": 86339.0
+        },
+        "lastInternalTimeSeconds": 86339.0,
+        "maximumAbsoluteResidualM3": 5.882885307073593e-05,
+        "maximumRelativeResidualPercent": 5.687427167386174e-07,
+        "maximumStepSeconds": 0.5,
+        "minimumStepSeconds": 0.5,
+        "nativeSteps": 172678,
+        "policyVersion": "SURFACE_NATIVE_BALANCE_v1",
+        "relativeTolerancePercent": 1.0,
+        "sourceSha256": "cd0494c23e2eaa2e3f7cf7feac6484937cd842140e9ee1ddaf003ac35c9281f1",
+        "status": "PASSED"
+      },
+      "verifiedFiles": 22
+    },
+    "seocho-surface-connection-event-v2": {
+      "balance": {
+        "balanceResidualM3": -667.919567838544,
+        "exchangeCancellationResidualM3": 2.9103830456733704e-11,
+        "networkExternalInflowM3": 3699177.402278976,
+        "networkExternalOutflowAndLossM3": 2989828.546675465,
+        "networkStorageM3": 14420.874797966722,
+        "networkToSurfaceM3": 901198.2256922884,
+        "surfaceExternalNetInflowM3": 556547.8880160839,
+        "surfaceStorageM3": 1252144.1085818668,
+        "surfaceToNetworkM3": 205602.00512097948
+      },
+      "calendarDurationSeconds": 86340.0,
+      "durationSeconds": 86339,
+      "maximumFinalDepthM": 8.539944056178621,
+      "nativeCalendarShortfallSeconds": 1.0,
+      "nativeDurationSeconds": 86339.0,
+      "networkConvergence": {
+        "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+        "nonConvergedPercent": 0.0,
+        "nonConvergedSteps": 0,
+        "routingSteps": 1467764
+      },
+      "networkQuality": {
+        "allowedNonConvergedSteps": 0,
+        "continuityLimitPercent": 1,
+        "failureReasons": [],
+        "policyVersion": "network-continuity-convergence-v2",
+        "routingBalance": {
+          "absoluteToleranceM3": 1e-08,
+          "allowedResidualM3": 39047.79727592356,
+          "continuityPercent": -0.017105179292050503,
+          "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+          "residualM3": -667.9195733643137,
+          "totalInM3": 3904779.727592356,
+          "totalOutIncludingStorageM3": 3905447.6471657204
+        },
+        "status": "PASSED"
+      },
+      "parameters": {
+        "boundaryType": "REFLECTIVE",
+        "dischargeCoefficient": 0.62,
+        "durationSeconds": 86339,
+        "frameIntervalMilliseconds": 60000,
+        "maximumExchangeMilliseconds": 1000,
+        "networkNumericalProfile": {
+          "id": "seocho-slot-explicit",
+          "options": {
+            "MAX_TRIALS": 200,
+            "MINIMUM_STEP": 0.01,
+            "ROUTING_STEP": 0.06,
+            "SURCHARGE_METHOD": "SLOT"
+          }
+        },
+        "openingDiameterM": 0.6,
+        "surchargeHeadM": 100.0,
+        "surfaceOffsetM": 0.0
+      },
+      "path": "data/runs/seocho-surface-connection-event-v2",
+      "record": {
+        "complete": true,
+        "context": {
+          "comparisonKind": "PAST_RAINFALL_STRESS_TEST",
+          "effectAreaId": "published-303ha-rectangle-not-damage-map",
+          "engineSha256": "653e45bfba2ff6db3098012a2e567817c608f560cee8fdba23699f072489b222",
+          "evidenceClass": "PUBLIC_DATA",
+          "forcingSha256": "d0e80c86a1cd98395a5fc3ea44828bf503874242c8d6807d104e50df3024e292",
+          "metricSpecificationSha256": "cec9ab32d377f86f0b670d1f440aa3a388e12860837604c9dabbd293d262e88c",
+          "modelGrade": "EXPLORATORY",
+          "scenarioSnapshotSha256": "cb651f5f46efaf3013973d3f050da2025b53878124b82bedae670abfd9b689ee",
+          "scopeId": "seocho-published-v3-public-terrain-window"
+        },
+        "inputSha256": "2e634d5aad4f9ef4a9c1654e3c16b12712931f4eb2fc82e2909bd81fcb703c38",
+        "numericalStatus": "PASSED",
+        "raw": {
+          "depthAreaTimeM3Hours": 9499564.500644596,
+          "outwardVolumeM3": 2989828.5466753775,
+          "peakOutwardM3s": 79.48791629246395
+        },
+        "resultSha256": "9c659ea4c3235fadf1c6ae2e54e6515da3c2777115e66eb4f1b82bd7d6aa9e29",
+        "schemaVersion": 1
+      },
+      "resultSha256": "9c659ea4c3235fadf1c6ae2e54e6515da3c2777115e66eb4f1b82bd7d6aa9e29",
+      "smallestExchangeMilliseconds": 1000,
+      "sourceConnection": {
+        "compilerSha256": "f359fb2dbe6d5ee51eb5cf45cb48dc0675c9ba1256a439e38d46d6c9aca16d47",
+        "limitations": [
+          "원 절점에 가정한 등가 원형 개구부이며 실제 빗물받이·뚜껑 개방 관측 아님",
+          "지형·관망 높이 기준과 개구부 크기·경계의 시나리오 민감도 필요",
+          "격자 평균 바닥보다 낮은 원 문턱은 교환 문턱만 높인 격자 근사",
+          "원 강우 관측소·시간대 미확인과 추정 외부 유입 보존; 관측 사건 복원 아님"
+        ],
+        "method": "PUBLISHED_SURFACE_CONNECTION_EXPLORATION_V1",
+        "nativeFloodingPolicy": "REJECT_ANY_UNMAPPED_FLOODING",
+        "originalNetworkSha256": "8ce278a3d2b58df3c2a5fd1232160bcabb324389746ee0c878792acf91abbdbb",
+        "parameters": {
+          "boundaryType": "REFLECTIVE",
+          "dischargeCoefficient": 0.62,
+          "durationSeconds": 86339,
+          "frameIntervalMilliseconds": 60000,
+          "maximumExchangeMilliseconds": 1000,
+          "networkNumericalProfile": {
+            "id": "seocho-slot-explicit",
+            "options": {
+              "MAX_TRIALS": 200,
+              "MINIMUM_STEP": 0.01,
+              "ROUTING_STEP": 0.06,
+              "SURCHARGE_METHOD": "SLOT"
+            }
+          },
+          "openingDiameterM": 0.6,
+          "surchargeHeadM": 100.0,
+          "surfaceOffsetM": 0.0
+        },
+        "ports": [
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 21.71044503218586,
+            "gridCrestRaiseM": 0.09044503218585831,
+            "localCoordinateM": [
+              1021.167999999685,
+              -1638.398000000394
+            ],
+            "nodeId": "J1",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202601.16799999968,
+              542961.6019999996
+            ],
+            "sourceInvertM": 18.42,
+            "sourceRimM": 21.62,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 21.71044503218586,
+            "surfaceMinusRimM": 0.09044503218585831,
+            "surfaceTriangle": 12252
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 19.349999999999998,
+            "gridCrestRaiseM": 0.0,
+            "localCoordinateM": [
+              941.5610000001034,
+              -1429.8910000009928
+            ],
+            "nodeId": "J2",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202521.5610000001,
+              543170.108999999
+            ],
+            "sourceInvertM": 16.15,
+            "sourceRimM": 19.349999999999998,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 18.811994303386385,
+            "surfaceMinusRimM": -0.5380056966136131,
+            "surfaceTriangle": 10744
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 18.78,
+            "gridCrestRaiseM": 0.0,
+            "localCoordinateM": [
+              918.3990000005288,
+              -1368.1640000004554
+            ],
+            "nodeId": "J3",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202498.39900000053,
+              543231.8359999995
+            ],
+            "sourceInvertM": 15.58,
+            "sourceRimM": 18.78,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 16.51832069938868,
+            "surfaceMinusRimM": -2.26167930061132,
+            "surfaceTriangle": 10291
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 20.0,
+            "gridCrestRaiseM": 0.3200000000000003,
+            "localCoordinateM": [
+              708.4080000004615,
+              -1448.5889999993378
+            ],
+            "nodeId": "J4",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202288.40800000046,
+              543151.4110000007
+            ],
+            "sourceInvertM": 16.48,
+            "sourceRimM": 19.68,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 20.0,
+            "surfaceMinusRimM": 0.3200000000000003,
+            "surfaceTriangle": 10870
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 18.13978493157719,
+            "gridCrestRaiseM": 0.22978493157718916,
+            "localCoordinateM": [
+              1068.5239999990445,
+              -1314.390000000014
+            ],
+            "nodeId": "J5",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202648.52399999904,
+              543285.61
+            ],
+            "sourceInvertM": 14.71,
+            "sourceRimM": 17.91,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 18.13978493157719,
+            "surfaceMinusRimM": 0.22978493157718916,
+            "surfaceTriangle": 9857
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 15.33753948559329,
+            "gridCrestRaiseM": 0.6775394855932895,
+            "localCoordinateM": [
+              770.7329999995418,
+              -980.5819999992382
+            ],
+            "nodeId": "J6",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202350.73299999954,
+              543619.4180000008
+            ],
+            "sourceInvertM": 11.46,
+            "sourceRimM": 14.66,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 15.33753948559329,
+            "surfaceMinusRimM": 0.6775394855932895,
+            "surfaceTriangle": 7426
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 14.625564551685963,
+            "gridCrestRaiseM": 0.17556455168596408,
+            "localCoordinateM": [
+              701.6090000005497,
+              -797.5719999995781
+            ],
+            "nodeId": "J7",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202281.60900000055,
+              543802.4280000004
+            ],
+            "sourceInvertM": 11.25,
+            "sourceRimM": 14.45,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 14.625564551685963,
+            "surfaceMinusRimM": 0.17556455168596408,
+            "surfaceTriangle": 5920
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 15.0,
+            "gridCrestRaiseM": 1.3999999999999986,
+            "localCoordinateM": [
+              628.8010000009672,
+              -604.3639999993611
+            ],
+            "nodeId": "J8",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202208.80100000097,
+              543995.6360000006
+            ],
+            "sourceInvertM": 10.4,
+            "sourceRimM": 13.600000000000001,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 15.0,
+            "surfaceMinusRimM": 1.3999999999999986,
+            "surfaceTriangle": 4562
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 11.945127124576679,
+            "gridCrestRaiseM": 0.005127124576677744,
+            "localCoordinateM": [
+              566.480999998952,
+              -439.7789999989327
+            ],
+            "nodeId": "J9",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202146.48099999895,
+              544160.2210000011
+            ],
+            "sourceInvertM": 8.74,
+            "sourceRimM": 11.940000000000001,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 11.945127124576679,
+            "surfaceMinusRimM": 0.005127124576677744,
+            "surfaceTriangle": 3207
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 15.219999999999999,
+            "gridCrestRaiseM": 0.0,
+            "localCoordinateM": [
+              409.45200000022305,
+              -280.7300000003306
+            ],
+            "nodeId": "J10",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              201989.45200000022,
+              544319.2699999997
+            ],
+            "sourceInvertM": 12.02,
+            "sourceRimM": 15.219999999999999,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 15.0,
+            "surfaceMinusRimM": -0.21999999999999886,
+            "surfaceTriangle": 2140
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 23.903359476332962,
+            "gridCrestRaiseM": 0.4933594763329623,
+            "localCoordinateM": [
+              748.7779999994382,
+              -1666.1609999997308
+            ],
+            "nodeId": "J11",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202328.77799999944,
+              542933.8390000003
+            ],
+            "sourceInvertM": 20.21,
+            "sourceRimM": 23.41,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 23.903359476332962,
+            "surfaceMinusRimM": 0.4933594763329623,
+            "surfaceTriangle": 12524
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 21.22,
+            "gridCrestRaiseM": 0.0,
+            "localCoordinateM": [
+              802.6040000008943,
+              -1521.679999999702
+            ],
+            "nodeId": "J12",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202382.6040000009,
+              543078.3200000003
+            ],
+            "sourceInvertM": 18.02,
+            "sourceRimM": 21.22,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 20.04786575072836,
+            "surfaceMinusRimM": -1.1721342492716396,
+            "surfaceTriangle": 11480
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 20.83,
+            "gridCrestRaiseM": 0.0,
+            "localCoordinateM": [
+              791.2719999997935,
+              -1483.7179999988293
+            ],
+            "nodeId": "J13",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202371.2719999998,
+              543116.2820000012
+            ],
+            "sourceInvertM": 17.63,
+            "sourceRimM": 20.83,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 20.0,
+            "surfaceMinusRimM": -0.8299999999999983,
+            "surfaceTriangle": 11178
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 18.721829375960212,
+            "gridCrestRaiseM": 1.2018293759602123,
+            "localCoordinateM": [
+              584.1820000010193,
+              -1051.1229999997886
+            ],
+            "nodeId": "J14",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202164.18200000102,
+              543548.8770000002
+            ],
+            "sourceInvertM": 14.32,
+            "sourceRimM": 17.52,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 18.721829375960212,
+            "surfaceMinusRimM": 1.2018293759602123,
+            "surfaceTriangle": 7858
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 14.380173038361045,
+            "gridCrestRaiseM": 1.3101730383610448,
+            "localCoordinateM": [
+              391.12399999951595,
+              -499.8629999991972
+            ],
+            "nodeId": "J15",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              201971.12399999952,
+              544100.1370000008
+            ],
+            "sourceInvertM": 9.87,
+            "sourceRimM": 13.07,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 14.380173038361045,
+            "surfaceMinusRimM": 1.3101730383610448,
+            "surfaceTriangle": 3639
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 18.107585159100775,
+            "gridCrestRaiseM": 2.9275851591007758,
+            "localCoordinateM": [
+              270.4629999992321,
+              -324.5020000003278
+            ],
+            "nodeId": "J16",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              201850.46299999923,
+              544275.4979999997
+            ],
+            "sourceInvertM": 11.98,
+            "sourceRimM": 15.18,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 18.107585159100775,
+            "surfaceMinusRimM": 2.9275851591007758,
+            "surfaceTriangle": 2426
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 24.060797709740076,
+            "gridCrestRaiseM": 1.2107977097400777,
+            "localCoordinateM": [
+              1200.565999999526,
+              -1659.9290000008186
+            ],
+            "nodeId": "J17",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202780.56599999953,
+              542940.0709999992
+            ],
+            "sourceInvertM": 19.65,
+            "sourceRimM": 22.849999999999998,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 24.060797709740076,
+            "surfaceMinusRimM": 1.2107977097400777,
+            "surfaceTriangle": 12421
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 21.14,
+            "gridCrestRaiseM": 0.0,
+            "localCoordinateM": [
+              1129.1750000002503,
+              -1472.6689999999944
+            ],
+            "nodeId": "J18",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202709.17500000025,
+              543127.331
+            ],
+            "sourceInvertM": 17.94,
+            "sourceRimM": 21.14,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 20.0,
+            "surfaceMinusRimM": -1.1400000000000006,
+            "surfaceTriangle": 11063
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 19.778998691492763,
+            "gridCrestRaiseM": 2.2289986914927624,
+            "localCoordinateM": [
+              989.5089999996708,
+              -1108.3490000002785
+            ],
+            "nodeId": "J19",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202569.50899999967,
+              543491.6509999997
+            ],
+            "sourceInvertM": 14.35,
+            "sourceRimM": 17.55,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 19.778998691492763,
+            "surfaceMinusRimM": 2.2289986914927624,
+            "surfaceTriangle": 8348
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 16.9,
+            "gridCrestRaiseM": 0.0,
+            "localCoordinateM": [
+              919.8180000000866,
+              -924.2059999982594
+            ],
+            "nodeId": "J20",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202499.8180000001,
+              543675.7940000017
+            ],
+            "sourceInvertM": 13.7,
+            "sourceRimM": 16.9,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 14.307136920968018,
+            "surfaceMinusRimM": -2.5928630790319804,
+            "surfaceTriangle": 6991
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 16.8,
+            "gridCrestRaiseM": 0.0,
+            "localCoordinateM": [
+              1006.5070000002161,
+              -890.2100000010105
+            ],
+            "nodeId": "J21",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202586.50700000022,
+              543709.789999999
+            ],
+            "sourceInvertM": 13.6,
+            "sourceRimM": 16.8,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 15.94990443128169,
+            "surfaceMinusRimM": -0.8500955687183112,
+            "surfaceTriangle": 6700
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 17.18697111222916,
+            "gridCrestRaiseM": 1.2369711122291598,
+            "localCoordinateM": [
+              944.7399999992631,
+              -729.940999999526
+            ],
+            "nodeId": "J22",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202524.73999999926,
+              543870.0590000005
+            ],
+            "sourceInvertM": 12.75,
+            "sourceRimM": 15.95,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 17.18697111222916,
+            "surfaceMinusRimM": 1.2369711122291598,
+            "surfaceTriangle": 5494
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 16.96285099470313,
+            "gridCrestRaiseM": 1.262850994703129,
+            "localCoordinateM": [
+              868.8250000007392,
+              -528.1569999998901
+            ],
+            "nodeId": "J23",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202448.82500000074,
+              544071.8430000001
+            ],
+            "sourceInvertM": 12.5,
+            "sourceRimM": 15.7,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 16.96285099470313,
+            "surfaceMinusRimM": 1.262850994703129,
+            "surfaceTriangle": 3986
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 15.7,
+            "gridCrestRaiseM": 0.0,
+            "localCoordinateM": [
+              798.7799999991548,
+              -347.1300000004703
+            ],
+            "nodeId": "J24",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202378.77999999915,
+              544252.8699999995
+            ],
+            "sourceInvertM": 12.5,
+            "sourceRimM": 15.7,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 15.683742070300625,
+            "surfaceMinusRimM": -0.016257929699374785,
+            "surfaceTriangle": 2629
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 16.03193888218665,
+            "gridCrestRaiseM": 0.3319388821866518,
+            "localCoordinateM": [
+              733.0549999997311,
+              -174.31800000055227
+            ],
+            "nodeId": "J25",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202313.05499999973,
+              544425.6819999994
+            ],
+            "sourceInvertM": 12.5,
+            "sourceRimM": 15.7,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 16.03193888218665,
+            "surfaceMinusRimM": 0.3319388821866518,
+            "surfaceTriangle": 1273
+          },
+          {
+            "dischargeCoefficient": 0.62,
+            "exchangeCrestM": 15.399999999999999,
+            "gridCrestRaiseM": 0.0,
+            "localCoordinateM": [
+              549.2939999999653,
+              -234.11599999980535
+            ],
+            "nodeId": "J26",
+            "openingAreaM2": 0.2827433388230814,
+            "openingDiameterM": 0.6,
+            "regionAreaM2": 200.0,
+            "sourceCoordinate": [
+              202129.29399999997,
+              544365.8840000002
+            ],
+            "sourceInvertM": 12.2,
+            "sourceRimM": 15.399999999999999,
+            "surchargeHeadM": 100.0,
+            "surfaceCentroidBedM": 15.0,
+            "surfaceMinusRimM": -0.3999999999999986,
+            "surfaceTriangle": 1705
+          }
+        ],
+        "preparedNetworkSha256": "98b3d82e6d0065cec148ce42b2d295e10cf5cb7b2a176fb63daf87447f1f67ff",
+        "rankingEligible": false,
+        "schemaVersion": 1,
+        "sourceForcingPreserved": true,
+        "sourceLocationSha256": "b46a1700424cbab1722748fbb870561dd6ff786e57300261f9da1a041ab4082b",
+        "sourceSurfaceSha256": "1c84fba6d627d4e97dbdebab9e29fa05330787c322b46b4ff1c2c220e34193e9",
+        "verticalReferenceAssumption": {
+          "evidence": "원 공개 관망·공개 지형·원 강우/추정 외부 유입 보존; 높이 기준 일치와 등가 원형 개구부는 가정",
+          "method": "SOURCE_BOUND_COMMON_DATUM_ASSUMPTION_V1",
+          "networkDatumVerified": false,
+          "networkOriginalSha256": "8ce278a3d2b58df3c2a5fd1232160bcabb324389746ee0c878792acf91abbdbb",
+          "rankingEligible": false,
+          "sourceLocationSha256": "b46a1700424cbab1722748fbb870561dd6ff786e57300261f9da1a041ab4082b",
+          "sourceSurfaceSha256": "1c84fba6d627d4e97dbdebab9e29fa05330787c322b46b4ff1c2c220e34193e9",
+          "surfaceDatumVerified": false,
+          "surfaceOffsetM": 0.0
+        }
+      },
+      "steps": 86339,
+      "surfaceQuality": {
+        "absoluteToleranceM3": 1e-08,
+        "failureCode": null,
+        "last": {
+          "balanceResidualM3": 5.526002496480942e-06,
+          "boundaryNetInflowM3": 1.5437844080744066e-10,
+          "minimumDepthM": 0.0,
+          "relativeResidualPercent": 4.413232038215717e-10,
+          "sourceNetInflowM3": 1252144.1085873926,
+          "storageM3": 1252144.1085818668,
+          "timeSeconds": 86339.0
+        },
+        "lastInternalTimeSeconds": 86339.0,
+        "maximumAbsoluteResidualM3": 1.0941185792034958e-05,
+        "maximumRelativeResidualPercent": 2.6188168970143036e-07,
+        "maximumStepSeconds": 1.0,
+        "minimumStepSeconds": 9.953828703146428e-05,
+        "nativeSteps": 119274,
+        "policyVersion": "SURFACE_NATIVE_BALANCE_v1",
+        "relativeTolerancePercent": 1.0,
+        "sourceSha256": "cd0494c23e2eaa2e3f7cf7feac6484937cd842140e9ee1ddaf003ac35c9281f1",
+        "status": "PASSED"
+      },
+      "verifiedFiles": 23
+    }
+  },
+  "comparisons": {
+    "seocho-surface-connection-event-500ms-v2": {
+      "changedParameters": {
+        "maximumExchangeMilliseconds": {
+          "candidate": 500,
+          "reference": 1000
+        }
+      },
+      "maximumAbsoluteFinalDepthDifferenceM": 0.0013033575435272837,
+      "rawMetricCandidateMinusReference": {
+        "depthAreaTimeM3Hours": -16.424597589299083,
+        "outwardVolumeM3": -22.68899829359725,
+        "peakOutwardM3s": 0.0005393535312663289
+      },
+      "reference": "seocho-surface-connection-event-v2",
+      "surfaceStorageDifferenceM3": 23.270896531408653
+    }
+  },
+  "figure": {
+    "path": "data/benchmarks/seocho-surface-connection-v1.png",
+    "sha256": "97cefeb4a149efd3a675be8127f6da8a62760a9543f6959654a6f0031a1ff48a",
+    "visualReview": "PASSED"
+  },
+  "interruptedComparison": {
+    "classification": "INTENTIONALLY_INTERRUPTED_FOR_CONFIRMED_SUMMATION_FIX_NOT_HYDRAULIC_FAILURE",
+    "lastSynchronizedMilliseconds": 30688000,
+    "path": "data/runs/seocho-surface-connection-event-500ms-v1/coupled-failure.json",
+    "sha256": "f5509b1bfc70152a9deb5109c766f95806b124e49a657242cfac9e38c005c841"
+  },
+  "limitations": [
+    "미확인 공통 높이 기준·0.6m 등가 개구부·폐쇄 외곽 경계 가정",
+    "원 시간대/관측소 미확인 강우와 추정 외부 유입 보존",
+    "최종 수심 차이이며 전 시각 최대 차이/현장 오차가 아님",
+    "원 달력 창·실제 엔진 기간·평가 창을 구분하며 당시 재해 복원이 아님",
+    "지형 격자·기준고·개구부·조도·침투/증발·건물 피복과 게임 통합의 추가 검증 필요"
+  ],
+  "localRuntime": {
+    "activeJobsBeforeRestart": 0,
+    "currentCostSourceSha256": "864d0313414b1e5450b90df147eed292af9605d26c6efd051304435791dc1a2c",
+    "health": "UP",
+    "jobCountsUnchanged": true,
+    "personalBudgetKrw": 2000000000,
+    "scorePolicyMatched": true,
+    "scorePolicySha256": "5169c373bc28b08044faeba6b85604c8884ecc24086a7a4792d74fce64cfce08",
+    "unitCostsKrwPerM2": {
+      "BIORETENTION": 632381,
+      "GREEN_ROOF": 350000,
+      "INFILTRATION_TRENCH": 171429,
+      "PERMEABLE_PAVEMENT": 123733,
+      "RAINWATER_CISTERN": 12158,
+      "RAIN_GARDEN": 632381,
+      "VEGETATIVE_SWALE": 50817
+    }
+  },
+  "method": "PUBLISHED_SURFACE_CONNECTION_EXPLORATION_V1",
+  "rankingEligible": false,
+  "reference": {
+    "path": "data/manifests/published-surface-connection-reference-v1.json",
+    "sha256": "33e7b49c0f68b1e184e3390ccf9016265f509a3182d7d8ba4a6eb669ba9cce44"
+  },
+  "reproduce": {
+    "fine": "simulation/.venv/bin/python scripts/verify_seocho_surface_connection.py --partition data/runs/seocho-rainfall-partition-v1-20261021-final --seconds 86339 --exchange 500 --output data/runs/seocho-connection-replay-500ms",
+    "policy": "simulation/.venv/bin/python scripts/build_score_policy.py --check",
+    "reference": "simulation/.venv/bin/python scripts/verify_seocho_surface_connection.py --partition data/runs/seocho-rainfall-partition-v1-20261021-final --seconds 86339 --output data/runs/seocho-connection-replay-1s",
+    "summary": "simulation/.venv/bin/python scripts/verify_seocho_surface_connection.py --summarize data/runs/seocho-connection-replay-1s data/runs/seocho-connection-replay-500ms --output data/runs/seocho-connection-replay-summary",
+    "tests": "PYTHONPATH=simulation:scripts:simulation/tests simulation/.venv/bin/python -m unittest simulation.tests.test_exchange_accumulation simulation.tests.test_published_surface_connection simulation.tests.test_coupled_evaluation_adapter simulation.tests.test_rainfall_coverage simulation.tests.test_live_coupled_facilities simulation.tests.test_coupled_cistern simulation.tests.test_network_variant simulation.tests.test_score_policy simulation.tests.test_coupled_flood simulation.tests.test_flood_metrics simulation.tests.test_coupled_numerics simulation.tests.test_surface_quality -q"
+  },
+  "schemaVersion": 1,
+  "shortWindowFailures": {
+    "seocho-surface-connection-600-30ms-v1": {
+      "networkQuality": {
+        "allowedNonConvergedSteps": 0,
+        "continuityLimitPercent": 1,
+        "failureReasons": [
+          "ROUTING_CONTINUITY_EXCEEDED",
+          "ROUTING_VOLUME_RESIDUAL_EXCEEDED"
+        ],
+        "policyVersion": "network-continuity-convergence-v2",
+        "routingBalance": {
+          "absoluteToleranceM3": 1e-08,
+          "allowedResidualM3": 127.81204164664689,
+          "continuityPercent": -3.9615884158775936,
+          "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+          "residualM3": -506.33870359702087,
+          "totalInM3": 12781.204164664689,
+          "totalOutIncludingStorageM3": 13287.54286826171
+        },
+        "status": "FAILED"
+      },
+      "path": "data/runs/seocho-surface-connection-600-30ms-v1",
+      "resultSha256": "8a349b13b503abd62ed895cbe908964045b3c87f6e47b2133ef88de00c5e90d8",
+      "routingStepSeconds": 0.03,
+      "seconds": 600,
+      "status": "FAILED"
+    },
+    "seocho-surface-connection-600-v1": {
+      "networkQuality": {
+        "allowedNonConvergedSteps": 0,
+        "continuityLimitPercent": 1,
+        "failureReasons": [
+          "ROUTING_CONTINUITY_EXCEEDED",
+          "ROUTING_VOLUME_RESIDUAL_EXCEEDED"
+        ],
+        "policyVersion": "network-continuity-convergence-v2",
+        "routingBalance": {
+          "absoluteToleranceM3": 1e-08,
+          "allowedResidualM3": 127.81199812337321,
+          "continuityPercent": -3.9616762706001896,
+          "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+          "residualM3": -506.34976006336365,
+          "totalInM3": 12781.199812337321,
+          "totalOutIncludingStorageM3": 13287.549572400685
+        },
+        "status": "FAILED"
+      },
+      "path": "data/runs/seocho-surface-connection-600-v1",
+      "resultSha256": "8815402cd0ba67ab2a300cfc34c0fc3e3b3178d631199ba30d37306635db78d7",
+      "routingStepSeconds": 0.06,
+      "seconds": 600,
+      "status": "FAILED"
+    }
+  },
+  "startupIsolationDiagnostic": {
+    "original": {
+      "networkInputSha256": "1f5f1a3d231b19c058e74b4039ad687dfccac30c33e478c420df201b6cb5338b",
+      "numericalStatus": "FAILED",
+      "quality": {
+        "allowedNonConvergedSteps": 0,
+        "continuityLimitPercent": 1,
+        "failureReasons": [
+          "ROUTING_CONTINUITY_EXCEEDED",
+          "ROUTING_VOLUME_RESIDUAL_EXCEEDED"
+        ],
+        "policyVersion": "network-continuity-convergence-v2",
+        "routingBalance": {
+          "absoluteToleranceM3": 1e-08,
+          "allowedResidualM3": 127.81192396518551,
+          "continuityPercent": -3.961770699714174,
+          "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+          "residualM3": -506.3615354393678,
+          "totalInM3": 12781.19239651855,
+          "totalOutIncludingStorageM3": 13287.553931957918
+        },
+        "status": "FAILED"
+      }
+    },
+    "ports": {
+      "networkInputSha256": "ee56f46bb29373b281b07c2e926381577cb237e1bdb7ecec89527ceafbd17c1b",
+      "numericalStatus": "FAILED",
+      "quality": {
+        "allowedNonConvergedSteps": 0,
+        "continuityLimitPercent": 1,
+        "failureReasons": [
+          "ROUTING_CONTINUITY_EXCEEDED",
+          "ROUTING_VOLUME_RESIDUAL_EXCEEDED"
+        ],
+        "policyVersion": "network-continuity-convergence-v2",
+        "routingBalance": {
+          "absoluteToleranceM3": 1e-08,
+          "allowedResidualM3": 127.81192396518551,
+          "continuityPercent": -3.961640900028088,
+          "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+          "residualM3": -506.34494549175906,
+          "totalInM3": 12781.19239651855,
+          "totalOutIncludingStorageM3": 13287.53734201031
+        },
+        "status": "FAILED"
+      }
+    },
+    "ports-tight": {
+      "networkInputSha256": "2953f32b3919f582232cdd7d074b4c5dcce00eb23f26c72e1eb6b2f3a649f242",
+      "numericalStatus": "FAILED",
+      "quality": {
+        "allowedNonConvergedSteps": 0,
+        "continuityLimitPercent": 1,
+        "failureReasons": [
+          "ROUTING_CONTINUITY_EXCEEDED",
+          "ROUTING_VOLUME_RESIDUAL_EXCEEDED",
+          "ROUTING_NONCONVERGED"
+        ],
+        "policyVersion": "network-continuity-convergence-v2",
+        "routingBalance": {
+          "absoluteToleranceM3": 1e-08,
+          "allowedResidualM3": 127.81192396518551,
+          "continuityPercent": -3.9534266606698405,
+          "method": "UNSUPPRESSED_NATIVE_VOLUME_BALANCE",
+          "residualM3": -505.2950677554709,
+          "totalInM3": 12781.19239651855,
+          "totalOutIncludingStorageM3": 13286.487464274021
+        },
+        "status": "FAILED"
+      }
+    }
+  },
+  "summationFailureAndCorrection": {
+    "absoluteToleranceM3Unchanged": 1e-08,
+    "audit": {
+      "accurateM3": 556876.1235045654,
+      "accurateResidualM3": -5.820766091346741e-11,
+      "compensatedM3": 556876.1235045654,
+      "compensatedResidualM3": -5.820766091346741e-11,
+      "contributions": 1674660,
+      "naiveM3": 556876.1235045755,
+      "naiveResidualM3": -1.0128132998943329e-08,
+      "networkNetM3": 556876.1235045653,
+      "steps": 64410
+    },
+    "failedPath": "data/runs/seocho-surface-connection-event-v1",
+    "failureCode": "COUPLED_EXCHANGE_LEDGER_MISMATCH",
+    "failureSha256": "c77e432769530c9e3618555877ebd2b882f331d13575eb6b1c3ed04cc9daf2f8",
+    "ledgerSha256": "0af6c345306b3973adccc416c9dd3b1f41529e1045fcf535586dca3ee10812a7",
+    "physicalPrefix": {
+      "checks": {
+        "exchange-ledger.jsonl": {
+          "exactComparedRecordsSha256": "1ea2fe5785d1b18cd5a6fb86d7957bcaf272650bd2f2401a840e25a99902b364",
+          "matchedRecords": 64410
+        },
+        "network-frames.jsonl": {
+          "exactComparedRecordsSha256": "b87536a8034c1b6c93952cfd76cc51fa6d18922e8de42db0786f48365585b479",
+          "matchedRecords": 1073
+        }
+      },
+      "corrected": "data/runs/seocho-surface-connection-event-v2",
+      "interpretation": "보정 합산 전후 같은 원 물리 상태/교환량; 원장 누적만 변경",
+      "method": "BYTE_EXACT_PHYSICAL_PREFIX_BEFORE_LEDGER_FAILURE",
+      "reference": "data/runs/seocho-surface-connection-event-v1"
+    }
+  },
+  "tests": {
+    "files": {
+      "simulation/tests/test_coupled_cistern.py": "70a5f2f8dc103aa486d1096962e169cb89e0bf9b7bbcd435cad602b5b6a499ed",
+      "simulation/tests/test_coupled_evaluation_adapter.py": "7f12df99136413d6b9b8dcf220ec8342e490003c51ae70fcc774e333ef96c84b",
+      "simulation/tests/test_coupled_flood.py": "4732ebdeb1bfa5d3c6f58ba988b609f6609589d2c2c852920cfd6e6e338ae672",
+      "simulation/tests/test_coupled_numerics.py": "1841c58afb335e4062a9092604cc823f7d43047e88f5bb598562657136b25005",
+      "simulation/tests/test_exchange_accumulation.py": "52c1ab014d22f1b869a65f04c327db0a0c150d99bceed6dd1621470c1a8f8230",
+      "simulation/tests/test_flood_metrics.py": "721d55038208fef0c4f1d428bde1ece86c54dd10a7d3c598190bb3db01334102",
+      "simulation/tests/test_live_coupled_facilities.py": "05c095fbe43c96ee9362e1a4a2e9c8e01c7ba5bc257b942ae911a80519f9a6d3",
+      "simulation/tests/test_network_variant.py": "0c7f410664f556fd6ca0d88c2f1db4641608b3ef915cb6c3e612881a16164ff0",
+      "simulation/tests/test_published_surface_connection.py": "32b92bfa802aece22058ea8af681074081e1d7aa18c9f92a1f95bca185c8b2ab",
+      "simulation/tests/test_rainfall_coverage.py": "1430863ea1018f12cc587e9f2522fbe9934b93c41cc0689b404380a7cabb38a0",
+      "simulation/tests/test_score_policy.py": "f9788eb6cca5c5e28d1ef3376a47e0dd65bc2daf6acda69235f767fbe5da3667",
+      "simulation/tests/test_surface_quality.py": "a03a54f95fc6219be5541d9ac36197e6ba0cc8427d7c98d18a59ea47a212a3ec"
+    },
+    "logs": {
+      "tmp/exchange-compensated-regression.log": "405760051a8d23853fb00ee06cbce1430d8d44ea04b899d9ed892a8fbbc67084",
+      "tmp/public-connection-final-binding-tests.log": "d2797d7248317dbd3f4ddbda15c31effb390bc7b3a269643cde22b4770a5c486",
+      "tmp/public-connection-regression-final.log": "44a245e70edb18c5cf82c5e26a7f8bd7535e1ec55a05756e18e1192062098dfb"
+    },
+    "modules": {
+      "test_coupled_cistern": 3,
+      "test_coupled_evaluation_adapter": 9,
+      "test_coupled_flood": 9,
+      "test_coupled_numerics": 5,
+      "test_exchange_accumulation": 2,
+      "test_flood_metrics": 10,
+      "test_live_coupled_facilities": 3,
+      "test_network_variant": 3,
+      "test_published_surface_connection": 5,
+      "test_rainfall_coverage": 8,
+      "test_score_policy": 5,
+      "test_surface_quality": 5
+    },
+    "passed": 67
+  },
+  "verification": {
+    "backendPackage": "PASSED",
+    "fullEngineWindowRuns": 2,
+    "gameApiAndRankingIntegration": false,
+    "historicalReconstruction": false,
+    "nativePublicNetworkAndSurface": true
+  },
+  "verificationSource": {
+    "scripts/render_seocho_connection.py": "4553d922cc16df1027b84cf9c6b2ac1947815f5c378c4fce978c4d4a2496ea12",
+    "scripts/verify_seocho_surface_connection.py": "b9ff5e8c20e4fe165ac724ca7e393ae7bd72fc2f1f16b812d18a1d552bcbc7da",
+    "simulation/waterleague_sim/admission.py": "8b1efe4af4ac47859622606e779196879c0bfe1e60049298420c88c03b38917c",
+    "simulation/waterleague_sim/costing/__init__.py": "4a91a80bc7bbdadb94972408bf0d06af76b0b0099a8d6d06dd1e0a26b531ccf2",
+    "simulation/waterleague_sim/costing/cistern.py": "0f4360eaeb799cfc33c05d76b7bad791d98c57e85dd3d61e8dec850ab45012f7",
+    "simulation/waterleague_sim/costing/cistern_reference.py": "baf9aa12c90a0f171bd31e5ab33e1cbf9f583eefa4ac5dea8e895de69aea9cc7",
+    "simulation/waterleague_sim/costing/game_prices.py": "3f5838972110864e0034236deeed4428bc6b690f0cf4d918d104647d2df937f4",
+    "simulation/waterleague_sim/costing/life_cycle.py": "cc05062e25f613586d43e2e2ae48dde8a63c7702144e71853922d59ffe7e90f3",
+    "simulation/waterleague_sim/costing/snapshot.py": "0368dce0a80a65efe62e53217f6d98cb0e024f4bd157455868cce44f1bc9bc26",
+    "simulation/waterleague_sim/costing/watershed.py": "76e464998a76298144edd0220cccf5d3024ae5b5bf6fb9f0e8b98c9cc36d637c",
+    "simulation/waterleague_sim/current_model_catalog.py": "d7595e747221c0db9630226a037eaf60ef07892eb22bcfe828aa2d6015157e38",
+    "simulation/waterleague_sim/engine/accumulation.py": "af44f8f7591517b6899fb4197aab0acfe3d6f5c24af7490f19bf679f2162b450",
+    "simulation/waterleague_sim/engine/cistern_demand.py": "b9bc38efe25efe15a29ae78b4f65fcfc29ae277b576f5f37f04c6b91b2eceb08",
+    "simulation/waterleague_sim/engine/cistern_game.py": "8046b38e55e489df394773997b605ffdf2bb4bba934306e7afc4ae27083bb75b",
+    "simulation/waterleague_sim/engine/cistern_initialization.py": "941699a929a845837c589a39c7ed9932c5cbb1bf598b2fe46a96500cb30e6314",
+    "simulation/waterleague_sim/engine/cistern_inlet.py": "6f0794c5d717f53dbabe1ce29c4a51921a1150c8df09ce5d179d4cd0ac92073c",
+    "simulation/waterleague_sim/engine/cistern_network.py": "3bee1a2b78314502cf4da90479c6c9a20ea8e4d68c17ec16509fe9e3b822a2bd",
+    "simulation/waterleague_sim/engine/cistern_outlet.py": "d9cb8de7428ae0e50fc8bbbf1603d9c90e1ed04de7b17d129f70868e2724c342",
+    "simulation/waterleague_sim/engine/connected_facilities.py": "3e2a40622a929073cedb88f27be610b50fa104a6456c9652a36a393787b46958",
+    "simulation/waterleague_sim/engine/connected_inlets.py": "2b821a7ba754f491c6dc09b0475c81f1a64851a0a2223a84830d4221b88c4ed5",
+    "simulation/waterleague_sim/engine/connected_pumps.py": "c0d09b3cc04cf6608586505dff18a042262be7417a6a0bb0c2a601ad86cac1d0",
+    "simulation/waterleague_sim/engine/connected_storage.py": "9490be65dfd45a11b09c19a2c85bec1167c9f2837c41b76f5855a86c16ad451d",
+    "simulation/waterleague_sim/engine/continuous.py": "b2c395a77ce09c9dd9c6bc70cf7040379e3fe9e3f584fa1049ba0ecd5dc9c97d",
+    "simulation/waterleague_sim/engine/coupled_cistern.py": "7af65dd8d471e2e4f66ec147ec9d294ad0027f0bd7e4ddc9c52fb21a95d8dee8",
+    "simulation/waterleague_sim/engine/coupled_facility_network.py": "12e4c849fe606300f1eb7fe647cea567313d1b595d139798f49c082f4a631034",
+    "simulation/waterleague_sim/engine/coupled_flood.py": "4d860a2a76e182d32860dcb9647de3385f46bc13157135d25f23f0d838e3eae5",
+    "simulation/waterleague_sim/engine/coupled_numerics.py": "7bf36ccb65a505ac1da69bc64c1d4be86c11265ae069163a611e08693009aa5b",
+    "simulation/waterleague_sim/engine/coupled_pump_network.py": "cfe2fd6084816cc5c8d6072692c25600c72870d2473eae7c0f72a938b88ae080",
+    "simulation/waterleague_sim/engine/coupled_pumps.py": "24a48194dc2d669ef4e685a1edf2cc47e14ce1a5aa0934c127d0b706cf25f549",
+    "simulation/waterleague_sim/engine/coupled_rainfall_facility.py": "853d0bed3d165731e767e8adb9a4f6992f34d4653c2e7ef82ca20193d2970219",
+    "simulation/waterleague_sim/engine/direct_surface_contract.py": "d2604f1f048395b649b2f7fe957add208da8e19ff52798cefe82fbdd323e5914",
+    "simulation/waterleague_sim/engine/evapotranspiration.py": "4de54c4eea26ba0c48dd4ceb4403d699806d9b5a3531c5b2d3528582da506b69",
+    "simulation/waterleague_sim/engine/facilities.py": "7606ad82948813599fc9e4432c456e86a30677f274ec1869e344ec0305bb56ef",
+    "simulation/waterleague_sim/engine/facility_metrics.py": "ae6cb763d831cae6de367d180ee4d680acda9a841a1a48adb891c0fd104a72c5",
+    "simulation/waterleague_sim/engine/facility_network.py": "d8a17fe1650df27dc0a46f48deb92f6e4a04bf69fc6d17e383484ba962df75db",
+    "simulation/waterleague_sim/engine/flood_errors.py": "59e70440df55df54e83aa7a2787f12ef14b2541ac5c05f67a10e9addbe229155",
+    "simulation/waterleague_sim/engine/flood_metrics.py": "30f830d17bcd174129dcdb79e3b85f684d08dee5337b8e7a964f340902da6f3c",
+    "simulation/waterleague_sim/engine/flood_process.py": "33a8c7b2af758ba1d2ad839ab2a69994a63b3fd8b6df81349896a5ad6663492e",
+    "simulation/waterleague_sim/engine/flow_connections.py": "211c69ed36ab4d03aaeae8a9fcfe139108771d50bdf2bb2e6649ba80792ef20a",
+    "simulation/waterleague_sim/engine/initialization.py": "ca770523b30f41407ef60cd48f28fcd16b303e5f347e4b8ee57b504059eb48c6",
+    "simulation/waterleague_sim/engine/initialization_sensitivity.py": "014c7c14e8f2a97cc22402c096695eb79a6839e21acb1ee4a8061a806a7c1215",
+    "simulation/waterleague_sim/engine/initialized_cistern.py": "63274cc1a4ae3dd01f5cff711fad6169c749c4ab1328fb6af2f27f50f0ec1100",
+    "simulation/waterleague_sim/engine/initialized_facilities.py": "a878c6c33dbecfec8f4a71bb36933ba87f230f8f445a920fd72fd60f16966a59",
+    "simulation/waterleague_sim/engine/initialized_metrics.py": "2a3ed63cb597b772a1a929d6445c59845afc8e231552f6001d1299c0fbac0d89",
+    "simulation/waterleague_sim/engine/inlet_experiment.py": "ed1c13fa166d44d00018b15e1ab26741fa2ecd4bb3659c43a0e858fa188932cd",
+    "simulation/waterleague_sim/engine/inlet_network.py": "8ff94ec83956925941ffae18661b7ba57bb44381ebd78d9c21335af7d2105972",
+    "simulation/waterleague_sim/engine/network.py": "f9fa6734de7a3adc64f1bd456862d80260115c656a6bc1c0b090841883bfb0d7",
+    "simulation/waterleague_sim/engine/network_exchange.py": "d7249d37122807c88629560a7285f5afd485b7870ecd3048045bd0233e5d7322",
+    "simulation/waterleague_sim/engine/network_metrics.py": "f0219c6affedd4b95b049815c4242b7fe8f56abe917b97f8c2d55ca2c65802df",
+    "simulation/waterleague_sim/engine/network_quality.py": "c78323b383d37be56c34b8cc2d5084e4a92e3de6bbc2a818d914acbabf3eb930",
+    "simulation/waterleague_sim/engine/network_rainfall.py": "13cebeb67d3f733a757654dea33790dff219f4f8b1ff7c103db77d9300abffa6",
+    "simulation/waterleague_sim/engine/node_flood_duration.py": "beef1e8ef5c3e8dec33a2dfc7d8e3835af5ffea1724026538ca7b14decc28f2e",
+    "simulation/waterleague_sim/engine/pavement_maintenance.py": "f5474e2af175bf960148414b6136eab798fda108009d7542928b8dcdd460087c",
+    "simulation/waterleague_sim/engine/priced_facilities.py": "f4f4ea285c30b5ad3def3984de14d98abcb1180173f795f6bddad3df62b7669a",
+    "simulation/waterleague_sim/engine/published_surface_connection.py": "f359fb2dbe6d5ee51eb5cf45cb48dc0675c9ba1256a439e38d46d6c9aca16d47",
+    "simulation/waterleague_sim/engine/pump_network.py": "1e8fe516cd5bfc6b2a88550678f74ea44ba13985502d77abbf14be76932023b5",
+    "simulation/waterleague_sim/engine/runoff_metrics.py": "d984a86610df1154cee6a00ace8ddca8d5e6e9ed54f7263215b5018b6f01ceaa",
+    "simulation/waterleague_sim/engine/storage_composition.py": "af9ceb94cc9a161dc214592d7b29ad9d724c09992b5389b13f898335d9f8388a",
+    "simulation/waterleague_sim/engine/surface.py": "05c7dfeae33a865c3294e96b998012a96340e71554af786d367209041727a4f4",
+    "simulation/waterleague_sim/engine/surface_basin.py": "12e01dc52c79ebc1560365825ae8ab2d7840af5b7b8115ebea25f4e3e135a692",
+    "simulation/waterleague_sim/engine/surface_evaporation.py": "544990ff2a3ed628b14ed0e72ef0d71350d2eeefb0910d25a52793c9c298cb9a",
+    "simulation/waterleague_sim/engine/surface_exchange.py": "0c84b9cd6650dd7f70afe955b746cd8d0ef12b43b5b900d6dae049adcea1776e",
+    "simulation/waterleague_sim/engine/surface_frame_reader.py": "b774db7d6756c2440f48a1f4a660d4789a6197d7ea625c6d3492d4da332165ef",
+    "simulation/waterleague_sim/engine/surface_frames.py": "7070a7a7406fbe164f0a4258b1719c8d22199a2fdf16e363328effbb6f67d57f",
+    "simulation/waterleague_sim/engine/surface_infiltration.py": "15f540c9012f799cd330a05f10085a7fabf3396c2a4d525734faccd0dc6a99a1",
+    "simulation/waterleague_sim/engine/surface_quality.py": "cd0494c23e2eaa2e3f7cf7feac6484937cd842140e9ee1ddaf003ac35c9281f1",
+    "simulation/waterleague_sim/engine/surface_wind.py": "3b5854a424c34a981ed7d302d7cf0591b8b7c086d2b680348367b9891e4409a2",
+    "simulation/waterleague_sim/engine/swmm.py": "1754562f19f0860daa127f34e35c6336e2884d5779b9cd531d1811088f702823",
+    "simulation/waterleague_sim/engine/temporal.py": "c5a08a26e41fbf33461382e4d4f22493042104c21511aacd98e79baedf71acd0",
+    "simulation/waterleague_sim/evaluation/__init__.py": "b00686d692dd348fb4ad9eac061dd28151ce9a0e504acc8952f54a1161d23df1",
+    "simulation/waterleague_sim/evaluation/attribution.py": "72c52baabd3457a245f39b188d9055e42cea3552a422b6853f8d7dbb556d28d3",
+    "simulation/waterleague_sim/evaluation/cistern.py": "9273610a2394dc9ec9b4d948314dd3ba62d5a1ef943fdf32316eee22c0fb8874",
+    "simulation/waterleague_sim/evaluation/coupled_adapter.py": "67a5ee0a858a54ee328337497d1f8c97c833b704f67140f55ca108f72537ab49",
+    "simulation/waterleague_sim/evaluation/coupled_initialization_study.py": "86fbace616eb3771c4841ddd0e35ebb4a4a3c8fbe6364ee4f62b2fce22162633",
+    "simulation/waterleague_sim/evaluation/coupled_numerics.py": "a56d25d273dc0c4ccd72eda454eec88188af62567962da6e6fe9de3201f04622",
+    "simulation/waterleague_sim/evaluation/exception.py": "654f665575d7c102e8215dffe2f85eb6b0471d777667885adf92261bd7523658",
+    "simulation/waterleague_sim/evaluation/live_rainfall.py": "9a94f95ac059b3c67058d26ffc1b20f9bf4d657b7504d3f817d3fa033a0e0129",
+    "simulation/waterleague_sim/evaluation/published_surface_connection.py": "9765705c97c899147a9678a83980c172dd02ff16c2494b88f5f44885704d2a20",
+    "simulation/waterleague_sim/evaluation/pumps.py": "e566a5235d2045f50c6ca8733ac994ce6bed710eeef9e97dad64de751528e1f6",
+    "simulation/waterleague_sim/evaluation/rainfall_coverage.py": "604d2d29b63256ce7f4aadb8ba457af2c362824c5f93d30f24cf7becc7fddf2f",
+    "simulation/waterleague_sim/evaluation/raw_metrics.py": "eee548dcc9ee2ba0c58596718855e7644eb22ac15776155991bb2bc5c26d147a",
+    "simulation/waterleague_sim/evaluation/score_policy.py": "d9f8e9b422805dc7a26c4cadf5bda13b0ba081b30c1d3b6b79e4de1b24f5dd2c",
+    "simulation/waterleague_sim/evaluation/service.py": "c70a9ba227056369bfe4d94cc1f94f033467d1e643d978108cf5896db3d514fa",
+    "simulation/waterleague_sim/evaluation/values.py": "47876a36a3bf1d2c2afe93b1fc0e10652b06afd606f2555c8440d7a5ac3d8479",
+    "simulation/waterleague_sim/forcing/__init__.py": "8eeb67181b650bc778bd2d3910b0e4a59bf1198df4063c22f2d4cc89d259789f",
+    "simulation/waterleague_sim/forcing/antecedent_archive.py": "28834ed15d520182e828f15498def7dff569fedf358b8ee394003d2c1c0e3b50",
+    "simulation/waterleague_sim/forcing/archived_game_weather.py": "9a329ec4eb1217b57029a018d30e8267997f99633811da5e481b3aed59759f14",
+    "simulation/waterleague_sim/forcing/coupled_initialization.py": "d76615d0887494f18ed7c9b5328da9ae108f16e190b6af11a53dd90431dbe252",
+    "simulation/waterleague_sim/forcing/game_climate.py": "cc0b616ce2664f020d6a96adda4487600285655d65d42181ce739f7896713dac",
+    "simulation/waterleague_sim/forcing/live_network_rainfall.py": "fb1ce37e43b845e5299d5d5e3ad5b3d81469c2810ec16d8c8ec7b78003bae8e5",
+    "simulation/waterleague_sim/forcing/live_rainfall.py": "a3d96d0cbf2eae7d21b2e82fa6b4becd33fc4057bd43ca7ca37e89ade1dffcdc",
+    "simulation/waterleague_sim/forcing/network_initialization.py": "9f7c94e488545b4a31ae4d7dacb7c1a02eebec7b366bfd6071dee069b0cc6fb6",
+    "simulation/waterleague_sim/forcing/network_stage.py": "a5ec7ea84177e142c14bb6e9bf7203f266cc0109f130f195bc5d39d9aa972747",
+    "simulation/waterleague_sim/forcing/observed_rainfall.py": "bdf6e25586a0637d6347a10d695b30ee7b675479ad3af36fab209ea3e815ad5d",
+    "simulation/waterleague_sim/forcing/reconstruction.py": "d63c667145b5e2a85788a8240af1e0e4d571a7318d886427cfea2a4984b572c5",
+    "simulation/waterleague_sim/forcing/reference_evaporation.py": "5ad0a9fd818e8f74c8ed5c78ddf8ef8947b0bd950ae6dab395bae1d59cb8ddc0",
+    "simulation/waterleague_sim/forcing/stage.py": "b154811523460945456a9a3afc0312a7b0ab7d55c0e71f468eba3075592ba0cf",
+    "simulation/waterleague_sim/forcing/surface_evaporation.py": "197e49d2fef3602df3e5b78b683242361e7e5cd931e03f662ff5b8b1679c87f7",
+    "simulation/waterleague_sim/forcing/surface_initialization.py": "9c0bd53cad9822b8e4c91da84c8eeed0c3733ffae62f3d611a3d9fb7ff9d8830",
+    "simulation/waterleague_sim/forcing/surface_run.py": "ea24e4d93ac0dd70865702108a56ed5fd481fefe4b0d5793bd47eb26844a1bd1",
+    "simulation/waterleague_sim/forcing/surface_wind.py": "cf7245b5fc885b9c1271612da8f65613fe809494057f879848772e58ccc1b179",
+    "simulation/waterleague_sim/historical.py": "fcc751367a003ac40040dd333ffdd008ebce647662f6fb79ae52de8839e72657",
+    "simulation/waterleague_sim/historical_antecedent.py": "9dc1696563b4851fa569a5ff0ae8409ddca03211fc7b214667831f461f625c87",
+    "simulation/waterleague_sim/historical_evaporation.py": "59418c552f3aa424cd59729baa8cde35bf53c3a8ecbe2b7b9b160c6257ebaa97",
+    "simulation/waterleague_sim/ingestion/antecedent.py": "96b7c45d7c4965ff531fa9783575e7ba4c3a27c4cf142ce08f3edbed116de655",
+    "simulation/waterleague_sim/ingestion/conduit_refinement.py": "366aadd3f6522efcdadc04ae86d14a943b00fad4af0f5692da2b1f2bb75bd989",
+    "simulation/waterleague_sim/ingestion/daily_evaporation.py": "29de21fe5ccd574300f4631dc41b338c343eacedd9273ce555e3d32fab6dad9c",
+    "simulation/waterleague_sim/ingestion/evaporation.py": "370e5b4da571bbd6f39007afb7d339f3f0f6411546cf70d913ef364e473e2b9f",
+    "simulation/waterleague_sim/ingestion/hourly_rainfall.py": "6f22ee0c0fb0304e24f3751aae1f80306f95eb5b645385e5d434c9dd210794af",
+    "simulation/waterleague_sim/ingestion/kma.py": "908c094b6c1149cf725a4926646628255238fcdb2aecaa62ab7da769bce9d33f",
+    "simulation/waterleague_sim/ingestion/live.py": "e7c7fcf66f35391a44bc449e86c09d97a5ca438206ed6267d2d5cfc92cd2064c",
+    "simulation/waterleague_sim/ingestion/network_variant.py": "b42877b6cfe45ee95874c04006cdaf417b1715c1306f175327be7ff4b6551018",
+    "simulation/waterleague_sim/ingestion/published_network.py": "4f919fceee0df0cc3e4019f1ba605850de714dfd8fc7ad9e4184cafb981d5e7c",
+    "simulation/waterleague_sim/ingestion/rainfall.py": "7fb2c1b8d3b9e5be16743ceb1bc5934ca83ac44520c3b477625f2b13eb175f49",
+    "simulation/waterleague_sim/ingestion/seoul.py": "429231d0d30e8ab45c301ecd3f7b6da60d46ddf9d53c20d362193998062d6130",
+    "simulation/waterleague_sim/ingestion/seoul_biotope.py": "db2d1d0c6f3610a0a23c6224c61c15bebce03b590a3206c3e79cdd4dd3bc5131",
+    "simulation/waterleague_sim/ingestion/source_archive.py": "2ca647f23b014fe3cb1bf6889bd263ec7a1beb7160e5c84353c244f4c67e8e0c",
+    "simulation/waterleague_sim/ingestion/wamis_stage.py": "1049aaa8925e7ceb88d91f63838a96aa4ee10198f3709977db389be0e149fb65",
+    "simulation/waterleague_sim/installation_model.py": "ec29fc7f549b4f811240202b7a6b521764066a808b74da64365cff4ee45b57de",
+    "simulation/waterleague_sim/job_runtime.py": "f60ec8b63140c128036e68f5248da8fd4fabc627e012255d07421420d705c19e",
+    "simulation/waterleague_sim/model_catalog.py": "5d57c4e83e3455d7a0225930c869eb0a2655a368d3bc31c38fa5be85948f4275",
+    "simulation/waterleague_sim/optimization/__init__.py": "ab5025523a309f6bd488c6208adc74576f40eff73f1cb5b20bc1246cd0dcac5c",
+    "simulation/waterleague_sim/optimization/replay.py": "1f1bce7b41f040966935d7e20eb28589f31682911fb42179642474bb95508bbc",
+    "simulation/waterleague_sim/placement_validation.py": "32927afefcc3965700bb9189cf1b1398e90891df168b403dbd8b8beea9f0e42b",
+    "simulation/waterleague_sim/presentation/__init__.py": "06b8618f119250a6a951bedf0ea116839bd80ed31f7d313de683a60661349874",
+    "simulation/waterleague_sim/presentation/node_flooding.py": "26711689f695192a92754e132cde1786704d651db837577dbe325cc07903d1d3",
+    "simulation/waterleague_sim/presentation/surface_directions.py": "4d28ad35fe87a63e2dd9f81a304e01d27e760f250b660932bb7382de91f35cf2",
+    "simulation/waterleague_sim/presentation/surface_playback.py": "c58b7fcf817c8785eee3d5d7715e96688344753d0141c1cdacc5f8c7b07fbc0e",
+    "simulation/waterleague_sim/public_surface/__init__.py": "44b2059355dabfe71d27514b80da92b35ca635c06af4dbc63959f287d97d1af1",
+    "simulation/waterleague_sim/public_surface/recipe.py": "9336358d2b9fba0a2fc30e9f4d9285e8edeab6898c3761ee489ab9bfe6b199e0",
+    "simulation/waterleague_sim/public_surface/repository.py": "112e98573b33a047b098523f644bf0a81d29aedbf9cb3b33e654b7df521bd8c7",
+    "simulation/waterleague_sim/public_surface/run_job.py": "1100fc0762ea6b0b497086b6cfd808991fb77a28707ca7d7f72ebc79aae23f0f",
+    "simulation/waterleague_sim/public_surface/service.py": "5978efb3d564343ce94cd4bd1c5b3c73e2717395e62f0be01518df523104c714",
+    "simulation/waterleague_sim/pump_replay.py": "48c1427260812912379263dbcf6e25e94971fd7b31599036d99661903d2eda8b",
+    "simulation/waterleague_sim/queue.py": "498582a070553bafc2db2eb06e3f461685875086eba1a5966ee962c1095aa0a4",
+    "simulation/waterleague_sim/reference/__init__.py": "b6a5ae176a277f234a9121e41bd9290664df5c62bcac189c83ffda181f60d850",
+    "simulation/waterleague_sim/reference/cistern_network.py": "eb6835a991af973400cfa37c94c82080905d70108e337541957c6c42f37a642c",
+    "simulation/waterleague_sim/reference/connected_inlets.py": "65189bca85a57dd52b806810db3b77778ad2db4ceea5cef01636ba6ea45606af",
+    "simulation/waterleague_sim/reference/connected_pumps.py": "79136926655d3df40901f8e1281c70d2851171dd20a0382e8e431355b57e3b14",
+    "simulation/waterleague_sim/reference/connected_storage.py": "bb9bef329557c8c9501dbccea7983c4cc021f6178e9f127eb792d73d9d4e20ef",
+    "simulation/waterleague_sim/reference/coupled_facilities.py": "9dca8e48dbb84d42b65d396265db42c2a0543d70bbce323babba36e5730a5ccc",
+    "simulation/waterleague_sim/reference/coupled_pumps.py": "64c983566470ad1c0318bd3b18f023dec96af99a2c0b4b8f093c9abeaa67e729",
+    "simulation/waterleague_sim/reference/epa.py": "cbc737e5867eb72af81fe76cc527ed48e8102bbd631202b79fc24bf7d96d5245",
+    "simulation/waterleague_sim/reference/flood_cases.py": "de7fd2be4e51317d0fac94d3b2bceb59cd940fb4469210947eeb94019ef2563b",
+    "simulation/waterleague_sim/reference/initialized_coupling.py": "90dfebe32d827feab06460aadc39b4563d3c6c8ec08cfb81a733f8a1e67e2f1d",
+    "simulation/waterleague_sim/reference/initialized_facilities.py": "880a083ac695f5ebfc1ad9a3010cfc22b333c55253054386e14f8fad7dbebeae",
+    "simulation/waterleague_sim/reference/storage_composition.py": "2b7481df7c5ff65e8fd88419f523b3272f4042b27a4898836d749cee6309c1dc",
+    "simulation/waterleague_sim/reference/surface_basin.py": "233b42385a87960f322cc1874f6bb3594a0e6b0dee5cb496bb9ae46385111587",
+    "simulation/waterleague_sim/result_cache.py": "606dfaf5f56b057c8af5da4ba9a77d10ffdf792c7e06293abdc6a7ae20962401",
+    "simulation/waterleague_sim/run_cistern_network.py": "4990e387dd092f4c1c252d981f708e6b6b81bd609b78835812598901a395c05b",
+    "simulation/waterleague_sim/run_historical_job.py": "6c5318c44510b505d8c911d466fbe9be66595ca5ee348c6d7402591d7ef9c75a",
+    "simulation/waterleague_sim/run_historical_submission.py": "5dda8ae1a96c7b20622e42801c93264fd4ead6ddf1fca6c624be1268a9ff4e6e",
+    "simulation/waterleague_sim/run_job.py": "9573b55b7ea33df0fc081318b249dda74c0582dce50a4823732a4c64a82ae18d",
+    "simulation/waterleague_sim/run_live_job.py": "67a69b4d6d136df11ecb7d8808251d311a716c3c7092a9fb7d2b42bc863e8e01",
+    "simulation/waterleague_sim/run_pump_design.py": "c87c89af55e20084542829412249f6ff890ed5d36eed284a673b8aba7787b28a",
+    "simulation/waterleague_sim/run_watershed_job.py": "ebac17a115874009baf14bab726df3b4ce72c40fd02228d74f347c683d76cc8a",
+    "simulation/waterleague_sim/runtime.py": "30549bde70350aeb0b331ba781163f4bcebdb564c11bcde1fce2b78939fe9338",
+    "simulation/waterleague_sim/shared_model.py": "2c20f4405f4fdde6e1ccd6f3ec3b56da6919d0f60a02109425e2029ff394b633",
+    "simulation/waterleague_sim/shared_physics.py": "89b005b2440a8535cb70782fa7d805acc79cda4d2c60339f734e24d0ac4e887d",
+    "simulation/waterleague_sim/spatial/__init__.py": "e8201bc05310f37444d614e6ac1d897cc8faf1d15c63fd9da00216751b25030f",
+    "simulation/waterleague_sim/spatial/cistern_game.py": "ff2ee36c828a89a39a455afd4189e687b9e3956f5b12686753a22842ec3ffae5",
+    "simulation/waterleague_sim/spatial/design_footprint.py": "ae583da9acd71db6613ac1cd4e0c8d4f43d8adcd7fa02a461a64692a5175e18c",
+    "simulation/waterleague_sim/spatial/game_catalog.py": "c30740ec12804adee60b6ff223f3e9f03cd1ea61e003edebbfca4fa038d558e3",
+    "simulation/waterleague_sim/spatial/geometry.py": "60fcac3e39ef0fb0425d42f3fe34e014ff29112ad7c84d2f525856bdd72befff",
+    "simulation/waterleague_sim/spatial/play_bundle.py": "7e6486c9e89d30513af1aa2ee0965e2d66995c389ea7587a1a68b5bd8178b62d",
+    "simulation/waterleague_sim/spatial/play_catalog.py": "f0631ea56b0b1dc6abb5708acba2e154c0db1c3b981ce932bebb9f5a7e8106dc",
+    "simulation/waterleague_sim/spatial/playing_profile.py": "91449e980a75b7f5b5c01ad28afa368a13142fcb845194c52c313ec2bcf84f87",
+    "simulation/waterleague_sim/spatial/reference_conditions.py": "a1b986739914c32cdcc4f9519ba21ef4892ea060f6ce10782a3a59d274044d36",
+    "simulation/waterleague_sim/spatial/suitability.py": "e0f4e69d1ae353ac3fa85f748c316cf8291b197fe77d04dedc8e4d77fd51c2e0",
+    "simulation/waterleague_sim/terrain/__init__.py": "13082ab4b383cebe48b8ad2a598f78e568feb6c979b8a5debbc85c3621518abd",
+    "simulation/waterleague_sim/terrain/composition.py": "9466a8aeed7b8cf04d3bf3ed0ee7c22b17c2b7bd8db8f5b95dbe8ec18ba1f3a3",
+    "simulation/waterleague_sim/terrain/contours.py": "7684961411244f649aeef3b072a86fc058626df39c3b97774a38a25b19c55347",
+    "simulation/waterleague_sim/terrain/coverage.py": "1e8090321c74334bbf7417514e9783ce66e547360497b4bbbb3ac0c61f0a2758",
+    "simulation/waterleague_sim/terrain/drainage.py": "9f6e1eee97de277eba349d3a5a3bd11d57f0159627576b1969c4e08519cf1bce",
+    "simulation/waterleague_sim/terrain/grid.py": "04f5f5f7d139d96fe2a1d8d615b2267310360283bf0974fda31af3cb9268930a",
+    "simulation/waterleague_sim/terrain/rainfall_coverage.py": "c6731b7493f2b81721e8cdca1435787938516347a6c752b232d62a2038a39811",
+    "simulation/waterleague_sim/terrain/storage.py": "2380ab661f47e209f50b94666dba1c0f6eb992a689e6d713dd5dac7020457c35",
+    "simulation/waterleague_sim/terrain/topology.py": "33b99d2d31615f027dceaf6fe8c52afe2e2093c1de04423e1cf82272e0cc25ce",
+    "simulation/waterleague_sim/watershed.py": "a36a9ad5e2562e502b27f5e6e044f99b3afa7a7606bfa1cfc74f30c5aa2c95a9",
+    "simulation/waterleague_sim/watershed_cache.py": "5503424e9df6c0c67f8fe8dc669fd79ccfb44d89ca1afe4d24ccc9312e2154f6",
+    "simulation/waterleague_sim/watershed_cistern.py": "ed3783b4d262a78237f4ab19b39267e564b68bde524ec3c7cf25aaff6bbd5ec2",
+    "simulation/waterleague_sim/watershed_conduits.py": "27141299d8a17b64064c655b3ab12ebe33a3104d904f5474287fad175b78e229",
+    "simulation/waterleague_sim/watershed_location.py": "31e2bed52b63da0b56752690e49fe04b1367e75a5d09b82e2b446e286b47b4f1",
+    "simulation/waterleague_sim/watershed_pumps.py": "abb65856913c2295bd3a37b04d97d9a9814deb0fab9eafd6676bd84a12366951",
+    "simulation/waterleague_sim/watershed_replay.py": "8002a1eab8fe7afb2a99b92e6d314b5c3578d97fc8d1e89eb30709d42c638d5b",
+    "simulation/waterleague_sim/watershed_storage.py": "a3bd6dc416cf77d145c2ee6724565359106ab2d4790596520791b2b972beeb97",
+    "simulation/waterleague_sim/weekly.py": "158b86f1b9f630ab1a5023ae4d70eae6105d2b675f656460bd79678effcd8c37",
+    "simulation/waterleague_sim/worker.py": "34ac271d16fb493202743637f06952562af5639ea39edb65166a7fe183f177fd"
+  }
+}
