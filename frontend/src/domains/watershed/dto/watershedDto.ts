@@ -189,15 +189,40 @@ export const watershedResultDto = z
                     baseline?.evaluationMetrics?.combined.peakOutwardM3s,
                     strategy?.evaluationMetrics?.combined.peakOutwardM3s,
                   ]
-                : null;
+                : m.id === 'networkFloodingSeconds' &&
+                    (baseline?.evaluationMetrics?.floodingDuration ||
+                      strategy?.evaluationMetrics?.floodingDuration)
+                  ? [
+                      baseline?.evaluationMetrics?.floodingDuration?.floodingSeconds,
+                      strategy?.evaluationMetrics?.floodingDuration?.floodingSeconds,
+                    ]
+                  : null;
         if (
           raw
             ? m.baseline !== (raw[0] ?? null) ||
               m.strategy !== (raw[1] ?? null) ||
-              (m.status === 'COMPARABLE' && value.numericalStatus !== 'PASSED')
+              (m.status === 'COMPARABLE' &&
+                (value.numericalStatus !== 'PASSED' || raw.some((n) => n === undefined)))
             : m.status !== 'UNAVAILABLE'
         )
           ctx.addIssue({ code: 'custom', message: '원 관망 지표와 비교 원값 불일치' });
+      }
+      for (const c of value.cases) {
+        const duration = c.evaluationMetrics?.floodingDuration;
+        const nodes = c.nodeFlooding;
+        if (
+          duration &&
+          nodes?.durationMethod &&
+          duration.startSeconds === 0 &&
+          duration.endSeconds === nodes.endSeconds
+        ) {
+          const seconds = nodes.nodes.map((n) => n.floodingSeconds!);
+          if (
+            duration.floodingSeconds + 1e-6 < Math.max(...seconds) ||
+            duration.floodingSeconds > seconds.reduce((s, n) => s + n, 0) + 1e-6
+          )
+            ctx.addIssue({ code: 'custom', message: '관망·지점별 월류 시간 범위 불일치' });
+        }
       }
       const window = assessment.window,
         bm = baseline?.evaluationMetrics,
@@ -357,7 +382,8 @@ export const watershedJobDto = z
       value.result.metricComparison?.metrics.some(
         (m) =>
           m.id.startsWith('network') &&
-          m.id !== 'networkFloodingSeconds' &&
+          (m.id !== 'networkFloodingSeconds' ||
+            value.result?.cases.some((c) => c.evaluationMetrics?.floodingDuration)) &&
           (m.status !== 'WITHHELD' ||
             (m.reason !== 'UNMODELED_COVER_RAIN' && m.reason !== 'NUMERICAL_FAILURE'))
       )

@@ -88,6 +88,10 @@ class InletNativeTests(unittest.TestCase):
         self.assertEqual((root/'grade/network/network.out').read_bytes(), (original/'network.out').read_bytes())
         # 짧은 건조 시작 개수로는 공식 엔진에서도 수지가 실패한다. 관측기 검사를 물리 통과로 바꾸지 않는다.
         for result in results.values():
+            seconds = [n['floodingSeconds'] for n in result['final']['nodes'].values()]
+            duration = result['evaluationMetrics']['floodingDuration']['floodingSeconds']
+            self.assertGreaterEqual(duration + 1e-6, max(seconds))
+            self.assertLessEqual(duration, sum(seconds) + 1e-6)
             self.assertEqual(result['numericalStatus'], 'FAILED')
             self.assertIn('ROUTING_VOLUME_RESIDUAL_EXCEEDED', result['numericalQuality']['failureReasons'])
 

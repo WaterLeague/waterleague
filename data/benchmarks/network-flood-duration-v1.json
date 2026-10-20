@@ -1,0 +1,289 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-20",
+  "classification": "PUBLIC_RESEARCH_NETWORK_SIMULTANEOUS_FLOOD_DURATION_NOT_SURFACE_INUNDATION",
+  "rankingEligible": false,
+  "method": "NATIVE_EXTERNAL_FLOODING_ANY_NODE_WINDOW_SECONDS_V1",
+  "aggregation": "UNION_OF_EXTERNAL_FLOODING_NATIVE_STEPS_CLIPPED_TO_FIXED_EVALUATION_WINDOW",
+  "condition": "END_OF_NATIVE_STEP: ANY type != OUTFALL AND inlet != CAPTURE AND newVolume <= fullVolume AND overflow > 0",
+  "sourceHashes": {
+    ".github/workflows/verify.yml": "ce1a1e3d51560e54773e284c024846db5fd95edc32efe34ee8dab79872a2e933",
+    "frontend/src/domains/catalog/service/dataSourceService.ts": "3840cf9ef3c1c4dd0aca9225cfcc34e207275001f7d6872dbb0c68170275301c",
+    "frontend/src/domains/physics/dto/metricComparisonDto.ts": "89be9e69cc9a58a6160144afec8eadaa569be2ca060e5575838cdeb5e7f04d12",
+    "frontend/src/domains/watershed/dto/watershedDto.ts": "1663f953163e6ee059e3d9c73eb71e27fd3c31ea9d5b8eb7eef147acc95fda9e",
+    "frontend/src/domains/watershed/dto/watershedMetricsDto.ts": "52ee0ff9f2ac29b52531d4e140b663d365fb92cbef1638cd92c13e6f51de904a",
+    "frontend/src/domains/watershed/view/WatershedFloodDuration.test.tsx": "19b7289e0548735c9c820eb73057dd705a64f755bd91eeb767b86d606bc0100a",
+    "frontend/src/domains/watershed/view/WatershedFloodDuration.tsx": "3bc94412a69049978be1daa2df8eed52dd96cebe470e5ff35245b15c4328314d",
+    "frontend/src/domains/watershed/view/WatershedResult.tsx": "f3bf55bc9b1c9ca9a620606c69ea6869f17d315992ec41569ec032554481afa5",
+    "scripts/attach_node_flood_duration.py": "ae3b3a6a93703c32fb4e6fd795bdc831c1442f3bec456d7b2fbac9e0ab1ba2fb",
+    "scripts/verify_network_flood_duration.mjs": "29763e7604221103970eace295074bf5b8778168143063787b8db1e9ac94b202",
+    "simulation/integration/test_watershed.py": "e8df55a75f77f1b105442a4ea5160841852b0455e75db9e25679f3f3c25f41d8",
+    "simulation/native/node_flood_duration.inc": "36966a09ed0dad68b6cdca5770309ce3731bfedb1f00cd9dc5fe0a8e35e0d631",
+    "simulation/tests/test_connected_inlets.py": "0501e33fdca9301de478caf3a55096918d0c2d4ef844571febdb65cb62a6be43",
+    "simulation/tests/test_node_flood_duration.py": "236a1579882f613e9501d26da9cd1f4d66b5ed56c417efa9fb2a705c2d4dc3c9",
+    "simulation/tests/test_raw_metrics.py": "06ece561b79947d6aff78ed0981092ef09006d998a6bd8ccf40401b334260b77",
+    "simulation/waterleague_sim/engine/facility_metrics.py": "ae6cb763d831cae6de367d180ee4d680acda9a841a1a48adb891c0fd104a72c5",
+    "simulation/waterleague_sim/engine/node_flood_duration.py": "beef1e8ef5c3e8dec33a2dfc7d8e3835af5ffea1724026538ca7b14decc28f2e",
+    "simulation/waterleague_sim/evaluation/raw_metrics.py": "eee548dcc9ee2ba0c58596718855e7644eb22ac15776155991bb2bc5c26d147a",
+    "simulation/waterleague_sim/watershed_replay.py": "8002a1eab8fe7afb2a99b92e6d314b5c3578d97fc8d1e89eb30709d42c638d5b"
+  },
+  "bundle": {
+    "path": "tmp/flow-graph-network-00e57ae5-0d13-464f-aa0c-603868dd7bf3",
+    "resultSha256": "54d22d35d137f2fd078442682f05b6352b403c56032cd4fb363389558f3b9cab",
+    "manifestSha256": "d263ef2368a129625b8064d082c927c16bf371d166a7a14dad4545391f13c4fe",
+    "implementationArchiveSha256": "13258a031acd549f090c7fa47e8fd3ef16de47c9e36ae232edc17fbc195953c9",
+    "engineBuild": {
+      "schemaVersion": 1,
+      "engineVersion": "5.2.4",
+      "revision": "7952ca837988b1c32f791812eccc9fd64547e093",
+      "sourceArchiveSha256": "3f76a199573088ce47ff02491c529afb73d9953ee9d948dfc89dcd4981b4c0c0",
+      "nodeFloodDurationVersion": 2,
+      "nodeFloodDurationSha256": "36966a09ed0dad68b6cdca5770309ce3731bfedb1f00cd9dc5fe0a8e35e0d631",
+      "nodeFloodDurationBuilderSha256": "ae3b3a6a93703c32fb4e6fd795bdc831c1442f3bec456d7b2fbac9e0ab1ba2fb",
+      "metricsSha256": "9a90e94998318db8bc2e25997d4c076bd8b5f09b171df768de98c4ba1c6bd28d",
+      "observerSha256": "c320fa1849cb4b03254167b107d1a9fefc7171b10c6ce397a0b82bb5c08c53e7",
+      "facilityObserverSha256": "fd6692274cec934d4f832223c69d8e3bdf31112fb02b875b153f70366cf21869",
+      "facilityObserverVersion": 1,
+      "metricsVersion": 1,
+      "builderSha256": "5166d9bcac1151951558b422eff30edc5173e74b8c3e483d693724ce0fafe8cc",
+      "binarySha256": "76bf7d7bdda267ce67b5be88507c30100b86d856354fdfb1b85e705108f8a40c",
+      "modification": "READ_ONLY_LID_AND_NATIVE_OUTFALL_METRICS_NO_SOLVER_CHANGES"
+    }
+  },
+  "cases": [
+    {
+      "id": "baseline",
+      "inputSha256": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+      "duration": {
+        "floodingSeconds": 43592.200000000004,
+        "coveredSeconds": 86339.0,
+        "nativeSteps": 1392566.0,
+        "startSeconds": 0.0,
+        "endSeconds": 86339.0,
+        "schemaVersion": 1,
+        "method": "NATIVE_EXTERNAL_FLOODING_ANY_NODE_WINDOW_SECONDS_V1",
+        "complete": true
+      },
+      "nodeCount": 28,
+      "sumNodeSecondsDiagnosticOnly": 206222.23000000004,
+      "maximumNodeSecondsDiagnosticOnly": 43592.200000000004
+    },
+    {
+      "id": "strategy",
+      "inputSha256": "15efae167ee1e96279d3cc5f00881b883f38772b8111075c56c0e446c2bfeb98",
+      "duration": {
+        "floodingSeconds": 43600.88,
+        "coveredSeconds": 86339.0,
+        "nativeSteps": 1392566.0,
+        "startSeconds": 0.0,
+        "endSeconds": 86339.0,
+        "schemaVersion": 1,
+        "method": "NATIVE_EXTERNAL_FLOODING_ANY_NODE_WINDOW_SECONDS_V1",
+        "complete": true
+      },
+      "nodeCount": 28,
+      "sumNodeSecondsDiagnosticOnly": 206223.96599999984,
+      "maximumNodeSecondsDiagnosticOnly": 43600.88
+    }
+  ],
+  "metric": {
+    "id": "networkFloodingSeconds",
+    "unit": "s",
+    "boundary": "NETWORK_EXTERNAL_NODE_FLOODING",
+    "preferredDirection": "DECREASE",
+    "status": "COMPARABLE",
+    "reason": null,
+    "baseline": 43592.200000000004,
+    "strategy": 43600.88,
+    "signedImprovement": -8.679999999993015,
+    "relativeImprovementPercent": -0.019911819086884844,
+    "relativeStatus": "COMPUTED"
+  },
+  "replay": [
+    {
+      "id": "baseline",
+      "outSha256": "682eeb8bb19391dde81c640bc68f91de924852787689c89cbd46a3c771006c18",
+      "binaryEqual": true,
+      "metricsEqual": true,
+      "floodingDurationEqual": true,
+      "nodeFloodingEqual": true
+    },
+    {
+      "id": "strategy",
+      "outSha256": "769332420a751c772db450c3d29cfa6ddcb3b7b8b32ee44894149607b85c416f",
+      "binaryEqual": true,
+      "metricsEqual": true,
+      "floodingDurationEqual": true,
+      "nodeFloodingEqual": true
+    }
+  ],
+  "preservation": [
+    {
+      "case": "baseline",
+      "inputSha256": "a548612dadd455e49ce7727d630dc9fe04614c0914305d736bdd74bcb459b460",
+      "outSha256": "682eeb8bb19391dde81c640bc68f91de924852787689c89cbd46a3c771006c18",
+      "previousOfficialOutputUnchanged": true,
+      "previousPerNodeDurationsUnchanged": true
+    },
+    {
+      "case": "strategy",
+      "inputSha256": "15efae167ee1e96279d3cc5f00881b883f38772b8111075c56c0e446c2bfeb98",
+      "outSha256": "769332420a751c772db450c3d29cfa6ddcb3b7b8b32ee44894149607b85c416f",
+      "previousOfficialOutputUnchanged": true,
+      "previousPerNodeDurationsUnchanged": true
+    }
+  ],
+  "checks": {
+    "nativeAndPolicyTestsInitial": 29,
+    "initialPassed": 27,
+    "initialTestModeConfigurationErrors": 2,
+    "correctedDurationTestsPassed": 4,
+    "ciContractTestsPassed": 13,
+    "serverWorkflowTests": 22,
+    "workerIntegrationTests": 8,
+    "ownerHttpReadbackTests": 1,
+    "httpDtoStaticRenderResponses": 5,
+    "existingFrontendTestFiles": 131,
+    "existingFrontendTests": 444,
+    "addedFrontendTestFiles": 1,
+    "addedFrontendTests": 3,
+    "typeAndProductionBuild": "PASSED",
+    "format": "PASSED",
+    "runtimeHealth": "UP",
+    "sourceCountsUnchanged": true,
+    "finalFrontendTestFiles": 132,
+    "finalFrontendTests": 447,
+    "pendingJobComparisonWithheld": true
+  },
+  "reports": {
+    "tmp/network-duration-python-v1.log": "9c61c2d0220e6376221cd6d3cc56126ab4a158c000f82c947df331ba79c06dd8",
+    "tmp/network-duration-native-v2.log": "3b1234553f224af61a98ff0a16f5b9a42139290002b10a12ca6d04035069df8c",
+    "tmp/network-duration-ci-contract-v1.log": "2b75ac76764c26e610b6f6eaa09ca939cd8c4fcccc52896e186894ee121413ca",
+    "tmp/waterleague_queue_test_bc9879e1e7e94def93428364a69a19f3.log": "b45462dda5f51434f057f3d4ee22ccbcb1e40afed75fea0f6dd692aabe4d4c1d",
+    "tmp/network-duration-readback-v1.json": "a9e04ac31a4962dc8e87b2e578761413c8ea503928d0e5fe7926c8f5370973e5",
+    "tmp/network-duration-preservation-v1.json": "88ad608ce487aa181a1036869b4724825e4f0a31f546c2ff2e149e1af2ef1dac",
+    "tmp/network-duration-frontend-existing-v1.log": "06446578c7eb4afb387dd07ba8b69328113b316900ec5f46f7db304d1b9e5b4c",
+    "tmp/network-duration-frontend-new-v1.log": "223db75307a1f14aadb6447364a9d9e7d66b45d5334a6fb682015817b0211479",
+    "tmp/network-duration-frontend-build-v1.log": "820f663ec40c27214464796d41452fa5182dbf81be18af40e96ca80cbeea6d2b",
+    "tmp/network-duration-format-v1.log": "17aa973d3f004560237d9a95171210b0671deff23d61628eecf7322ff5938f20",
+    "tmp/network-duration-runtime-v1.json": "e73f4f85a25627d95f09a9358c92827ffd41efccd015cdac51469a973655f226",
+    "tmp/network-duration-frontend-final-v2.log": "47539466140201791aff10d5e1ea22575025c759ea6d4bd184b9205a4f92024d",
+    "tmp/network-duration-frontend-build-v2.log": "016d44a8cd2c202cf7ca35a64b8845f4c28863781f43ac3aeb05abdfa19963bb",
+    "tmp/network-duration-ui-v2.log": "f9b62a9b70b865292e9667a4f166c1ead2636b4ea5f54ec75cd4b00aa30cfbe2"
+  },
+  "httpReadback": {
+    "schemaVersion": 1,
+    "scope": "HTTP_WORKER_DTO_STATIC_RENDER_NOT_BROWSER",
+    "rows": [
+      {
+        "scenario": "S9",
+        "sourceResponseFile": "tmp/waterleague_queue_test_bc9879e1e7e94def93428364a69a19f3.fixtures/api-view-S9.json",
+        "sourceResponseSha256": "0d84ef9fbea1832068ebc4e4dec01ad2d401d8461c2553c34f2aadba5dc72062",
+        "numericalStatus": "PASSED",
+        "metric": {
+          "id": "networkFloodingSeconds",
+          "unit": "s",
+          "boundary": "NETWORK_EXTERNAL_NODE_FLOODING",
+          "preferredDirection": "DECREASE",
+          "status": "COMPARABLE",
+          "reason": null,
+          "baseline": 43592.200000000004,
+          "strategy": 43594.369999999995,
+          "signedImprovement": -2.169999999990978,
+          "relativeImprovementPercent": -0.00497795477170452,
+          "relativeStatus": "COMPUTED"
+        },
+        "dtoAndStaticRenderPassed": true
+      },
+      {
+        "scenario": "S1",
+        "sourceResponseFile": "tmp/waterleague_queue_test_bc9879e1e7e94def93428364a69a19f3.fixtures/api-view-S1.json",
+        "sourceResponseSha256": "25659178b00972eb3418812cb4f433c61e7a144f4f617fb76c13a4bb27cd4bf3",
+        "numericalStatus": "PASSED",
+        "metric": {
+          "id": "networkFloodingSeconds",
+          "unit": "s",
+          "boundary": "NETWORK_EXTERNAL_NODE_FLOODING",
+          "preferredDirection": "DECREASE",
+          "status": "COMPARABLE",
+          "reason": null,
+          "baseline": 43592.200000000004,
+          "strategy": 43594.12200000002,
+          "signedImprovement": -1.9220000000132131,
+          "relativeImprovementPercent": -0.004409045654986931,
+          "relativeStatus": "COMPUTED"
+        },
+        "dtoAndStaticRenderPassed": true
+      },
+      {
+        "scenario": "S9-closed",
+        "sourceResponseFile": "tmp/waterleague_queue_test_bc9879e1e7e94def93428364a69a19f3.fixtures/api-view-S9-closed.json",
+        "sourceResponseSha256": "e84aabe9f7f765f4715f5724750daf243a7db7429a11f453e2ff80f17c443718",
+        "numericalStatus": "PASSED",
+        "metric": {
+          "id": "networkFloodingSeconds",
+          "unit": "s",
+          "boundary": "NETWORK_EXTERNAL_NODE_FLOODING",
+          "preferredDirection": "DECREASE",
+          "status": "COMPARABLE",
+          "reason": null,
+          "baseline": 43592.200000000004,
+          "strategy": 43594.369999999995,
+          "signedImprovement": -2.169999999990978,
+          "relativeImprovementPercent": -0.00497795477170452,
+          "relativeStatus": "COMPUTED"
+        },
+        "dtoAndStaticRenderPassed": true
+      },
+      {
+        "scenario": "S9-pipe",
+        "sourceResponseFile": "tmp/waterleague_queue_test_bc9879e1e7e94def93428364a69a19f3.fixtures/api-view-S9-pipe.json",
+        "sourceResponseSha256": "ecc0b0fe5d294a8b583634300d5c15a58b5c9209f58b282f3a023ed003f74613",
+        "numericalStatus": "PASSED",
+        "metric": {
+          "id": "networkFloodingSeconds",
+          "unit": "s",
+          "boundary": "NETWORK_EXTERNAL_NODE_FLOODING",
+          "preferredDirection": "DECREASE",
+          "status": "COMPARABLE",
+          "reason": null,
+          "baseline": 43592.200000000004,
+          "strategy": 43594.369999999995,
+          "signedImprovement": -2.169999999990978,
+          "relativeImprovementPercent": -0.00497795477170452,
+          "relativeStatus": "COMPUTED"
+        },
+        "dtoAndStaticRenderPassed": true
+      },
+      {
+        "scenario": "S9-narrow",
+        "sourceResponseFile": "tmp/waterleague_queue_test_bc9879e1e7e94def93428364a69a19f3.fixtures/api-view-S9-narrow.json",
+        "sourceResponseSha256": "397806a7a65c6ee30faf9f7bdc7c671e61937261f657177befe82d327adf7590",
+        "numericalStatus": "FAILED",
+        "metric": {
+          "id": "networkFloodingSeconds",
+          "unit": "s",
+          "boundary": "NETWORK_EXTERNAL_NODE_FLOODING",
+          "preferredDirection": "DECREASE",
+          "status": "WITHHELD",
+          "reason": "NUMERICAL_FAILURE",
+          "baseline": 43592.200000000004,
+          "strategy": 45543.96000000001,
+          "signedImprovement": null,
+          "relativeImprovementPercent": null,
+          "relativeStatus": "NOT_COMPARABLE"
+        },
+        "dtoAndStaticRenderPassed": true
+      }
+    ]
+  },
+  "frontendFixtureSha256": "5edf9f38c799b4fc0d764c9feb374bc7441c4feef3eede5285ebb4aa82a385fb",
+  "limitations": [
+    "공개 연구 관망 계산값이며 현장 관측·서울 전역 침수 예측 아님",
+    "단계 끝 외부 월류 조건의 시간 이산화이며 실제 발생 시각의 실측 정밀도 아님",
+    "지표 저류·빗물받이 포착 절점의 반환은 제외하며 지표 침수 지속시간과 구분",
+    "네이티브 겹침 시험은 운영 관측과 구별되는 합성 수치 검증 사례",
+    "과거 결과와 순위·점수는 재작성하지 않음",
+    "HTTP·DTO·정적 출력 검증이며 브라우저 레이아웃·FPS 검증 아님"
+  ]
+}

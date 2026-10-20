@@ -54,7 +54,13 @@ def identity():
 class FacilityMetricsSession(node_flood_duration.NodeFloodDurationMixin, facility_network.FacilityNetworkSession):
     engine_path = staticmethod(library_path)
     engine_identity = staticmethod(identity)
-    metric_state = network_metrics.MetricsNetworkSession.metric_state
+    def metric_state(self):
+        metrics = network_metrics.MetricsNetworkSession.metric_state(self)
+        duration = self.flooding_duration_state()
+        require(duration['coveredSeconds'] == metrics['combined']['coveredSeconds']
+                and duration['nativeSteps'] == metrics['combined']['nativeSteps']
+                and duration['complete'] == metrics['complete'], 'NETWORK_FLOOD_DURATION_COVERAGE_MISMATCH')
+        return metrics | {'floodingDuration': duration}
 
     def __enter__(self):
         super().__enter__()
@@ -72,6 +78,8 @@ class FacilityMetricsSession(node_flood_duration.NodeFloodDurationMixin, facilit
             end = self.metric_spec['endMilliseconds'] / 1000
             nodes = (C.c_int * len(self.metric_outfalls))(*(self.nodes[n] for n in self.metric_outfalls))
             self._check(self.lib.wl_metricsBegin(start, end, nodes, len(nodes)))
+            self.lib.wl_floodDurationWindow.argtypes = [C.c_double, C.c_double]
+            self._check(self.lib.wl_floodDurationWindow(start, end))
             if self.original_model is not None and 'evaluationWindow' in self.original_model:
                 (self.directory / 'evaluation-window.json').write_text(
                     json.dumps(self.metric_spec, allow_nan=False, indent=2) + '\n')

@@ -1,5 +1,26 @@
 import { z } from 'zod';
 const positive = z.number().finite().nonnegative();
+const floodingDuration = z
+  .object({
+    schemaVersion: z.literal(1),
+    method: z.literal('NATIVE_EXTERNAL_FLOODING_ANY_NODE_WINDOW_SECONDS_V1'),
+    floodingSeconds: positive,
+    startSeconds: positive,
+    endSeconds: positive.positive(),
+    coveredSeconds: positive,
+    nativeSteps: positive.int(),
+    complete: z.boolean(),
+  })
+  .superRefine((v, ctx) => {
+    if (
+      v.endSeconds <= v.startSeconds ||
+      v.floodingSeconds > v.coveredSeconds ||
+      v.coveredSeconds > v.endSeconds - v.startSeconds + 1e-7 ||
+      v.nativeSteps > 0 !== v.coveredSeconds > 0 ||
+      v.complete !== Math.abs(v.coveredSeconds - (v.endSeconds - v.startSeconds)) <= 1e-7
+    )
+      ctx.addIssue({ code: 'custom', message: '관망 월류 시간·계산 구간 불일치' });
+  });
 const row = z.object({
   outwardVolumeM3: positive,
   inwardVolumeM3: positive,
@@ -25,6 +46,7 @@ export const watershedMetricsDto = z
     }),
     outfalls: z.record(z.string(), row),
     combined: row,
+    floodingDuration: floodingDuration.optional(),
   })
   .superRefine((v, ctx) => {
     const ids = v.specification.networkOutfalls;
@@ -51,5 +73,15 @@ export const watershedMetricsDto = z
         v.combined.inwardVolumeM3
       );
     if (invalid) ctx.addIssue({ code: 'custom', message: '출구 지표의 평가 범위·체적 불일치' });
+    const flood = v.floodingDuration;
+    if (
+      flood &&
+      (flood.startSeconds !== v.specification.startMilliseconds / 1000 ||
+        flood.endSeconds !== v.specification.endMilliseconds / 1000 ||
+        flood.coveredSeconds !== v.combined.coveredSeconds ||
+        flood.nativeSteps !== v.combined.nativeSteps ||
+        flood.complete !== v.complete)
+    )
+      ctx.addIssue({ code: 'custom', message: '월류 시간·출구 지표 평가 창 불일치' });
   });
 export type WatershedMetrics = z.infer<typeof watershedMetricsDto>;

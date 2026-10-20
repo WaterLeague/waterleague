@@ -21,7 +21,7 @@ def attach(raw, root):
                     b'static int wl_floodDurationBegin(void);\n'
                     b'static void wl_floodDurationObserve(double before);\n')
     return declarations + raw + b'\n' + duration, {
-        'nodeFloodDurationVersion': 1,
+        'nodeFloodDurationVersion': 2,
         'nodeFloodDurationSha256': hashlib.sha256(duration).hexdigest(),
         'nodeFloodDurationBuilderSha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
     }

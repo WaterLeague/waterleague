@@ -4,6 +4,7 @@ from fractions import Fraction
 import math
 
 from .exception import require
+from ..engine.node_flood_duration import WINDOW_METHOD
 
 METHOD = 'SIGNED_ABSOLUTE_PRIMARY_RELATIVE_AUXILIARY_V1'
 DEFINITIONS = {
@@ -89,6 +90,28 @@ def surface(comparison):
                    rows, 'surfaceAccountedVolumeM3')
 
 
+def network_duration(case):
+    metrics = case.get('evaluationMetrics', {})
+    value = metrics.get('floodingDuration')
+    if value is None:
+        return None
+    spec = metrics['specification']
+    numbers = [finite(value.get(k)) for k in
+               ('floodingSeconds', 'coveredSeconds', 'nativeSteps', 'startSeconds', 'endSeconds')]
+    seconds, covered, steps, start, end = numbers
+    require(type(value.get('schemaVersion')) is int and value.get('schemaVersion') == 1
+            and value.get('method') == WINDOW_METHOD
+            and type(value.get('complete')) is bool and start < end
+            and start == spec['startMilliseconds']/1000 and end == spec['endMilliseconds']/1000
+            and 0 <= seconds <= covered <= end-start+1e-7
+            and steps >= 0 and steps % 1 == 0 and (steps > 0) == (covered > 0)
+            and covered == metrics['combined']['coveredSeconds']
+            and steps == metrics['combined']['nativeSteps']
+            and value['complete'] == metrics['complete'] == math.isclose(covered, end-start, rel_tol=0, abs_tol=1e-7),
+            'RAW_METRIC_FLOOD_DURATION_INVALID')
+    return seconds
+
+
 def network(result):
     before, after = (next(c for c in result['cases'] if c['id'] == key)
                      for key in ('baseline', 'strategy'))
@@ -109,6 +132,9 @@ def network(result):
         'networkFloodingM3': tuple(c.get('totals', {}).get('floodingM3') for c in (before, after)),
         'networkPeakM3s': tuple(c.get('evaluationMetrics', {}).get('combined', {}).get('peakOutwardM3s') for c in (before, after)),
     }
+    durations = tuple(network_duration(c) for c in (before, after))
+    if any(v is not None for v in durations):
+        values['networkFloodingSeconds'] = durations
     rows = []
     for key in DEFINITIONS:
         if key in values:

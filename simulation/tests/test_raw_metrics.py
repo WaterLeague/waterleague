@@ -4,9 +4,57 @@ import unittest
 
 from waterleague_sim.evaluation.exception import EvaluationError
 from waterleague_sim.evaluation.raw_metrics import change, surface, network
+from waterleague_sim.engine.node_flood_duration import WINDOW_METHOD
 
 
 class RawMetricTests(unittest.TestCase):
+    def test_native_union_duration_keeps_raw_values_failure_reasons_and_missing_history(self):
+        cases = []
+        for name, seconds in (('baseline', 20), ('strategy', 22)):
+            cases.append({'id': name, 'complete': True, 'totals': {'outflowM3': 1, 'floodingM3': 1},
+                'evaluationMetrics': {'specification': {'startMilliseconds': 0, 'endMilliseconds': 60000},
+                    'specificationSha256': 'a'*64, 'complete': True,
+                    'combined': {'peakOutwardM3s': 1, 'coveredSeconds': 60, 'nativeSteps': 600},
+                    'floodingDuration': {'schemaVersion': 1, 'method': WINDOW_METHOD, 'complete': True,
+                        'startSeconds': 0, 'endSeconds': 60, 'coveredSeconds': 60, 'nativeSteps': 600,
+                        'floodingSeconds': seconds}}})
+        original = {'cases': cases, 'numericalStatus': 'PASSED', 'flowGraph': {'nodes': []}}
+        def row(value):
+            return next(m for m in network(value)['metrics'] if m['id'] == 'networkFloodingSeconds')
+        self.assertEqual(row(original)['signedImprovement'], -2)
+        self.assertEqual(row(original)['relativeImprovementPercent'], -10)
+        for reason, mutate in (
+            ('NUMERICAL_FAILURE', lambda v: v.update(numericalStatus='FAILED')),
+            ('BOUNDARY_MISMATCH', lambda v: v['cases'][1]['evaluationMetrics'].update(specificationSha256='b'*64)),
+            ('UNMODELED_COVER_RAIN', lambda v: v['flowGraph']['nodes'].append(
+                {'kind': 'LID_FACILITY', 'facilityType': 'RAINWATER_CISTERN'}))):
+            value = deepcopy(original); mutate(value); result = row(value)
+            self.assertEqual(result['reason'], reason)
+            self.assertIsNone(result['signedImprovement'])
+            self.assertEqual((result['baseline'], result['strategy']), (20, 22))
+        value = deepcopy(original)
+        metrics = value['cases'][1]['evaluationMetrics']
+        metrics.update(complete=False)
+        metrics['combined'].update(coveredSeconds=30, nativeSteps=300)
+        metrics['floodingDuration'].update(complete=False, coveredSeconds=30, nativeSteps=300)
+        self.assertEqual(row(value)['reason'], 'INCOMPLETE_RUN')
+        del value['cases'][1]['evaluationMetrics']['floodingDuration']
+        self.assertEqual(row(value)['status'], 'WITHHELD')
+        self.assertIsNone(row(value)['strategy'])
+        del value['cases'][0]['evaluationMetrics']['floodingDuration']
+        self.assertEqual(row(value)['reason'], 'NOT_COLLECTED')
+        self.assertEqual(row(value)['status'], 'UNAVAILABLE')
+        value = deepcopy(original)
+        for c in value['cases']: c['evaluationMetrics']['floodingDuration']['floodingSeconds'] = 0
+        self.assertEqual(row(value)['relativeStatus'], 'ZERO_BASELINE')
+        for key, changed in (('floodingSeconds', -1), ('floodingSeconds', float('nan')),
+                ('floodingSeconds', 61), ('coveredSeconds', 59), ('endSeconds', 61),
+                ('startSeconds', 1), ('method', 'SUM_NODE_DURATIONS'), ('nativeSteps', 599),
+                ('complete', False), ('schemaVersion', True)):
+            value = deepcopy(original)
+            value['cases'][1]['evaluationMetrics']['floodingDuration'][key] = changed
+            with self.subTest(key=key), self.assertRaises(EvaluationError): row(value)
+
     def test_absolute_signed_change_without_clipping_or_participant_normalization(self):
         for base, after, expected in ((0, 0, 0), (0, 2, -2), (-1, -2, 1), (2, -1, 3), (1, 4, -3), (1e-18, 2e-18, -1e-18)):
             with self.subTest(base=base, after=after):

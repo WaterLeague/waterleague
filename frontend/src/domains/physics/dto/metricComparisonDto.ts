@@ -121,7 +121,12 @@ export const metricComparisonDto = z
       comparable.some((m) =>
         surface
           ? !m.id.startsWith('surface') || m.id === 'surfaceDepthAreaTimeM3Hours'
-          : !['networkOutflowM3', 'networkPeakM3s', 'networkFloodingM3'].includes(m.id)
+          : ![
+              'networkOutflowM3',
+              'networkPeakM3s',
+              'networkFloodingM3',
+              'networkFloodingSeconds',
+            ].includes(m.id)
       ) ||
       (comparable.length > 0 && !v.window)
     )

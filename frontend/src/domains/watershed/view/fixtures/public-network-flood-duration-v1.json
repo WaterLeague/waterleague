@@ -1,0 +1,264 @@
+{
+  "evidence": "ACTUAL_HTTP_WORKER_RESULT_PROJECTION_NOT_BROWSER",
+  "scenario": "S9-pipe",
+  "sourceResponseFile": "tmp/waterleague_queue_test_bc9879e1e7e94def93428364a69a19f3.fixtures/api-view-S9-pipe.json",
+  "sourceResponseSha256": "ecc0b0fe5d294a8b583634300d5c15a58b5c9209f58b282f3a023ed003f74613",
+  "numericalStatus": "PASSED",
+  "metric": {
+    "id": "networkFloodingSeconds",
+    "unit": "s",
+    "boundary": "NETWORK_EXTERNAL_NODE_FLOODING",
+    "preferredDirection": "DECREASE",
+    "status": "COMPARABLE",
+    "reason": null,
+    "baseline": 43592.200000000004,
+    "strategy": 43594.369999999995,
+    "signedImprovement": -2.169999999990978,
+    "relativeImprovementPercent": -0.00497795477170452,
+    "relativeStatus": "COMPUTED"
+  },
+  "dtoAndStaticRenderPassed": true,
+  "comparison": {
+    "schemaVersion": 1,
+    "method": "SIGNED_ABSOLUTE_PRIMARY_RELATIVE_AUXILIARY_V1",
+    "scope": "PUBLISHED_NETWORK_REFERENCE_DESIGN",
+    "window": {
+      "kind": "ELAPSED_SECONDS",
+      "start": 0,
+      "end": 86339,
+      "specificationSha256": "d1d16a03051f33f0bfe03343dd7862c21a2e796442175798e85d664ff4cc72c2"
+    },
+    "primaryMetricId": null,
+    "compositeScore": null,
+    "relativeUsedForRanking": false,
+    "metrics": [
+      {
+        "id": "surfaceDischargeM3",
+        "unit": "m3",
+        "boundary": "SELECTED_SURFACE_OUTLET",
+        "preferredDirection": "DECREASE",
+        "status": "UNAVAILABLE",
+        "reason": "DIFFERENT_EVALUATION_BOUNDARY",
+        "baseline": null,
+        "strategy": null,
+        "signedImprovement": null,
+        "relativeImprovementPercent": null,
+        "relativeStatus": "NOT_COMPARABLE"
+      },
+      {
+        "id": "surfaceAccountedVolumeM3",
+        "unit": "m3",
+        "boundary": "SELECTED_SURFACE_OUTLET_WITH_NET_STORAGE",
+        "preferredDirection": "DECREASE",
+        "status": "UNAVAILABLE",
+        "reason": "DIFFERENT_EVALUATION_BOUNDARY",
+        "baseline": null,
+        "strategy": null,
+        "signedImprovement": null,
+        "relativeImprovementPercent": null,
+        "relativeStatus": "NOT_COMPARABLE"
+      },
+      {
+        "id": "surfacePeakM3s",
+        "unit": "m3/s",
+        "boundary": "SELECTED_SURFACE_OUTLET",
+        "preferredDirection": "DECREASE",
+        "status": "UNAVAILABLE",
+        "reason": "DIFFERENT_EVALUATION_BOUNDARY",
+        "baseline": null,
+        "strategy": null,
+        "signedImprovement": null,
+        "relativeImprovementPercent": null,
+        "relativeStatus": "NOT_COMPARABLE"
+      },
+      {
+        "id": "networkOutflowM3",
+        "unit": "m3",
+        "boundary": "ALL_NETWORK_EXTERNAL_OUTFALLS",
+        "preferredDirection": "DECREASE",
+        "status": "COMPARABLE",
+        "reason": null,
+        "baseline": 2180749.855360638,
+        "strategy": 2180751.297258037,
+        "signedImprovement": -1.4418973992578685,
+        "relativeImprovementPercent": -0.00006611933944250645,
+        "relativeStatus": "COMPUTED"
+      },
+      {
+        "id": "networkPeakM3s",
+        "unit": "m3/s",
+        "boundary": "ALL_NETWORK_EXTERNAL_OUTFALLS",
+        "preferredDirection": "DECREASE",
+        "status": "COMPARABLE",
+        "reason": null,
+        "baseline": 39.04103494825935,
+        "strategy": 39.04103494825935,
+        "signedImprovement": 0,
+        "relativeImprovementPercent": 0,
+        "relativeStatus": "COMPUTED"
+      },
+      {
+        "id": "networkFloodingM3",
+        "unit": "m3",
+        "boundary": "NETWORK_EXTERNAL_NODE_FLOODING",
+        "preferredDirection": "DECREASE",
+        "status": "COMPARABLE",
+        "reason": null,
+        "baseline": 1507902.468925209,
+        "strategy": 1507888.8192106325,
+        "signedImprovement": 13.649714576546103,
+        "relativeImprovementPercent": 0.0009052120318017147,
+        "relativeStatus": "COMPUTED"
+      },
+      {
+        "id": "networkFloodingSeconds",
+        "unit": "s",
+        "boundary": "NETWORK_EXTERNAL_NODE_FLOODING",
+        "preferredDirection": "DECREASE",
+        "status": "COMPARABLE",
+        "reason": null,
+        "baseline": 43592.200000000004,
+        "strategy": 43594.369999999995,
+        "signedImprovement": -2.169999999990978,
+        "relativeImprovementPercent": -0.00497795477170452,
+        "relativeStatus": "COMPUTED"
+      },
+      {
+        "id": "surfaceDepthAreaTimeM3Hours",
+        "unit": "m3*h",
+        "boundary": "CONNECTED_SURFACE_GRID",
+        "preferredDirection": "DECREASE",
+        "status": "UNAVAILABLE",
+        "reason": "NO_SURFACE_GRID",
+        "baseline": null,
+        "strategy": null,
+        "signedImprovement": null,
+        "relativeImprovementPercent": null,
+        "relativeStatus": "NOT_COMPARABLE"
+      },
+      {
+        "id": "reusedVolumeM3",
+        "unit": "m3",
+        "boundary": "VERIFIED_USE_DEMAND",
+        "preferredDirection": "INCREASE",
+        "status": "UNAVAILABLE",
+        "reason": "NO_USE_DEMAND",
+        "baseline": null,
+        "strategy": null,
+        "signedImprovement": null,
+        "relativeImprovementPercent": null,
+        "relativeStatus": "NOT_COMPARABLE"
+      }
+    ]
+  },
+  "baseline": {
+    "specificationSha256": "d1d16a03051f33f0bfe03343dd7862c21a2e796442175798e85d664ff4cc72c2",
+    "complete": true,
+    "method": "NATIVE_ROUTING_STEP_DIRECTIONAL_TRAPEZOIDAL_INTEGRAL",
+    "peakMethod": "SIMULTANEOUS_SELECTED_OUTFALL_SUM",
+    "specification": {
+      "schemaVersion": 1,
+      "policyVersion": "PUBLIC_NETWORK_ALL_OUTFALLS_v1",
+      "startMilliseconds": 0,
+      "endMilliseconds": 86339000,
+      "networkOutfalls": ["Out1", "Out2"]
+    },
+    "outfalls": {
+      "Out1": {
+        "outwardVolumeM3": 1698113.0619242836,
+        "inwardVolumeM3": 0,
+        "peakOutwardM3s": 21.6348078727807,
+        "peakInwardM3s": 0,
+        "peakOutwardTimeSeconds": 51893.095,
+        "peakInwardTimeSeconds": 0,
+        "coveredSeconds": 86339,
+        "nativeSteps": 1392566
+      },
+      "Out2": {
+        "outwardVolumeM3": 482636.79340946407,
+        "inwardVolumeM3": 0,
+        "peakOutwardM3s": 17.406227075478647,
+        "peakInwardM3s": 0,
+        "peakOutwardTimeSeconds": 57599.699,
+        "peakInwardTimeSeconds": 0,
+        "coveredSeconds": 86339,
+        "nativeSteps": 1392566
+      }
+    },
+    "combined": {
+      "outwardVolumeM3": 2180749.8553501973,
+      "inwardVolumeM3": 0,
+      "peakOutwardM3s": 39.04103494825935,
+      "peakInwardM3s": 0,
+      "peakOutwardTimeSeconds": 57599.699,
+      "peakInwardTimeSeconds": 0,
+      "coveredSeconds": 86339,
+      "nativeSteps": 1392566
+    },
+    "floodingDuration": {
+      "schemaVersion": 1,
+      "method": "NATIVE_EXTERNAL_FLOODING_ANY_NODE_WINDOW_SECONDS_V1",
+      "floodingSeconds": 43592.200000000004,
+      "startSeconds": 0,
+      "endSeconds": 86339,
+      "coveredSeconds": 86339,
+      "nativeSteps": 1392566,
+      "complete": true
+    }
+  },
+  "strategy": {
+    "specificationSha256": "d1d16a03051f33f0bfe03343dd7862c21a2e796442175798e85d664ff4cc72c2",
+    "complete": true,
+    "method": "NATIVE_ROUTING_STEP_DIRECTIONAL_TRAPEZOIDAL_INTEGRAL",
+    "peakMethod": "SIMULTANEOUS_SELECTED_OUTFALL_SUM",
+    "specification": {
+      "schemaVersion": 1,
+      "policyVersion": "PUBLIC_NETWORK_ALL_OUTFALLS_v1",
+      "startMilliseconds": 0,
+      "endMilliseconds": 86339000,
+      "networkOutfalls": ["Out1", "Out2"]
+    },
+    "outfalls": {
+      "Out1": {
+        "outwardVolumeM3": 1698114.5038116912,
+        "inwardVolumeM3": 0,
+        "peakOutwardM3s": 21.6348078727807,
+        "peakInwardM3s": 0,
+        "peakOutwardTimeSeconds": 51893.095,
+        "peakInwardTimeSeconds": 0,
+        "coveredSeconds": 86339,
+        "nativeSteps": 1392566
+      },
+      "Out2": {
+        "outwardVolumeM3": 482636.79341940687,
+        "inwardVolumeM3": 0,
+        "peakOutwardM3s": 17.406227075478647,
+        "peakInwardM3s": 0,
+        "peakOutwardTimeSeconds": 57599.699,
+        "peakInwardTimeSeconds": 0,
+        "coveredSeconds": 86339,
+        "nativeSteps": 1392566
+      }
+    },
+    "combined": {
+      "outwardVolumeM3": 2180751.2972476105,
+      "inwardVolumeM3": 0,
+      "peakOutwardM3s": 39.04103494825935,
+      "peakInwardM3s": 0,
+      "peakOutwardTimeSeconds": 57599.699,
+      "peakInwardTimeSeconds": 0,
+      "coveredSeconds": 86339,
+      "nativeSteps": 1392566
+    },
+    "floodingDuration": {
+      "schemaVersion": 1,
+      "method": "NATIVE_EXTERNAL_FLOODING_ANY_NODE_WINDOW_SECONDS_V1",
+      "floodingSeconds": 43594.369999999995,
+      "startSeconds": 0,
+      "endSeconds": 86339,
+      "coveredSeconds": 86339,
+      "nativeSteps": 1392566,
+      "complete": true
+    }
+  }
+}

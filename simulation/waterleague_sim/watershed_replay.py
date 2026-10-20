@@ -25,6 +25,13 @@ def observed_run(engine, paths, metrics, node_flooding=None, pump_operation=None
         ids = spec['networkOutfalls']
         indexes = (ctypes.c_int * len(ids))(*(engine.swmm_getIndex(2, n.encode()) for n in ids))
         check(engine.wl_metricsBegin(spec['startMilliseconds']/1000, spec['endMilliseconds']/1000, indexes, len(ids)))
+        duration_metric = metrics.get('floodingDuration')
+        if duration_metric is not None:
+            if duration_metric['method'] != 'NATIVE_EXTERNAL_FLOODING_ANY_NODE_WINDOW_SECONDS_V1':
+                raise ValueError('WATERSHED_REPLAY_DURATION_METHOD_INVALID')
+            engine.wl_floodDurationWindow.argtypes = [ctypes.c_double, ctypes.c_double]
+            engine.wl_floodDurationWindowRead.argtypes = [ctypes.POINTER(ctypes.c_double), ctypes.c_int]
+            check(engine.wl_floodDurationWindow(spec['startMilliseconds']/1000, spec['endMilliseconds']/1000))
         pumps = (pump_operation or {}).get('pumps', [])
         if pumps:
             curve_ids, section = [], ''
@@ -81,9 +88,16 @@ def observed_run(engine, paths, metrics, node_flooding=None, pump_operation=None
                     check(engine.wl_floodDurationRead(engine.swmm_getIndex(2, node['id'].encode()), duration, 3))
                     nodes_equal = (nodes_equal and duration[0] == node['floodingSeconds']
                         and abs(duration[1]-node_flooding['endSeconds']) <= 1e-6)
+        duration_equal = True
+        if duration_metric is not None:
+            raw_duration = (ctypes.c_double*5)()
+            check(engine.wl_floodDurationWindowRead(raw_duration, 5))
+            duration_equal = all(duration_metric[k] == v for k, v in zip(
+                ('floodingSeconds', 'coveredSeconds', 'nativeSteps', 'startSeconds', 'endSeconds'), raw_duration))
         check(engine.swmm_end())
         check(engine.swmm_report())
-        return (dict(zip(ids, rows[:-1])) == metrics['outfalls'] and rows[-1] == metrics['combined'], nodes_equal)
+        return (duration_equal and dict(zip(ids, rows[:-1])) == metrics['outfalls']
+                and rows[-1] == metrics['combined'], nodes_equal)
     finally:
         if pump_operation is not None: engine.wl_pumpsRelease()
         engine.wl_metricsRelease()
@@ -137,6 +151,8 @@ def replay(bundle, destination):
         rows.append({'id':name,'outSha256':sha,'binaryEqual':sha==expected[name+'/network.out']})
         if metrics:
             rows[-1]['metricsEqual'] = metrics_equal
+            if metrics.get('floodingDuration') is not None:
+                rows[-1]['floodingDurationEqual'] = metrics_equal
             if nodes_equal is not None:
                 rows[-1]['nodeFloodingEqual'] = nodes_equal
             if case.get('pumpOperation') is not None: rows[-1]['pumpLedgerEqual'] = True

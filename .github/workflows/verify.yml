@@ -145,6 +145,12 @@ jobs:
           simulation/.venv/bin/python scripts/prepare_ci_sources.py
           simulation/.venv/bin/python scripts/build_facility_metrics_swmm.py
           simulation/.venv/bin/python scripts/build_pump_network_swmm.py
+      - name: 관망 월류 시간의 동시성·평가 구간 검증
+        env:
+          PYTHONPATH: simulation:simulation/tests
+        run: >-
+          simulation/.venv/bin/python -m unittest
+          test_node_flood_duration test_node_flooding test_raw_metrics -v
       - name: 주간 연속 상태·경계·공통 설계 계약 검증
         run: simulation/.venv/bin/python scripts/verify_league_postgres.py --suite physics
       - name: 실제 재해 관측·초기화·전체 사건 제출 검증

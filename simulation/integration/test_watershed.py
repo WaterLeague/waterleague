@@ -49,6 +49,10 @@ class WatershedTests(unittest.TestCase):
             self.assertEqual(nodes['durationMethod'], 'NATIVE_EXTERNAL_FLOODING_END_STEP_SECONDS_V1')
             self.assertTrue(all(0 <= n['floodingSeconds'] <= nodes['endSeconds'] + 1e-6 for n in nodes['nodes']))
             self.assertTrue(any(n['floodingSeconds'] > 0 for n in nodes['nodes']))
+            duration = case['evaluationMetrics']['floodingDuration']
+            self.assertTrue(duration['complete'])
+            self.assertGreaterEqual(duration['floodingSeconds'], max(n['floodingSeconds'] for n in nodes['nodes']))
+            self.assertLess(duration['floodingSeconds'], sum(n['floodingSeconds'] for n in nodes['nodes']))
         self.assertFalse(result['rankingEligible'])
         self.assertIsNone(result['completeInstalledCostKrw'])
         self.assertEqual(result['costing'], design['costing'])
@@ -193,7 +197,7 @@ class WatershedTests(unittest.TestCase):
         self.assertIsNone(result['signedReductionM3'])
         self.assertIsNone(result['signedPeakReductionM3s'])
         withheld=[m for m in result['metricComparison']['metrics'] if m['status']=='WITHHELD']
-        self.assertEqual(len(withheld),3)
+        self.assertEqual(len(withheld),4)
         self.assertTrue(all(m['reason']=='UNMODELED_COVER_RAIN' and m['signedImprovement'] is None for m in withheld))
         self.assertIsNone(result['completeInstalledCostKrw'])
         self.assertIsNone(result['budgetChargedKrw'])

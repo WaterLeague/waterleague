@@ -7,6 +7,7 @@ import type { WatershedJob } from '../dto/watershedDto';
 import { WatershedCosts } from './WatershedCosts';
 import { WatershedPeaks } from './WatershedPeaks';
 import { WatershedFloodMap } from './WatershedFloodMap';
+import { WatershedFloodDuration } from './WatershedFloodDuration';
 import { networkNames } from '../service/watershedDesign';
 import { physicalAmount as number } from '../../physics/service/physicalValueFormat';
 import { RelativeImprovement } from '../../physics/view/RelativeImprovement';
@@ -157,6 +158,11 @@ export function WatershedResult({ job }: { job: WatershedJob }) {
           {strategy?.networkCistern && (
             <StorageLedger title="빗물이용조 물수지" summary={strategy.networkCistern} />
           )}
+          <WatershedFloodDuration
+            metric={result.metricComparison?.metrics.find((m) => m.id === 'networkFloodingSeconds')}
+            window={result.metricComparison?.window}
+            canCompare={Boolean(comparable)}
+          />
           {comparable && (
             <>
               {result.networkLayout && baseline?.nodeFlooding && strategy?.nodeFlooding && (
