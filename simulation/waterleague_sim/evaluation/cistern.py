@@ -28,6 +28,10 @@ def verify(original, model, network, result, root, read):
             'EVALUATION_CISTERN_CLOCK_MISMATCH')
     if spec['startMilliseconds'] == 0:
         require(origin == network['initial'], 'EVALUATION_CISTERN_INITIAL_STATE_MISMATCH')
+    if 'initialization' in original:
+        require(origin == read(root/'evaluation-initial-state.json')['network']
+                and final == read(root/'evaluation-final-state.json')['network'],
+                'EVALUATION_CISTERN_INITIALIZATION_STATE_MISMATCH')
     if spec['endMilliseconds'] == model['durationSeconds']*1000:
         require(final == network['final'], 'EVALUATION_CISTERN_FINAL_STATE_MISMATCH')
     expected = result_summary(metadata, network['initial'], network['final'])

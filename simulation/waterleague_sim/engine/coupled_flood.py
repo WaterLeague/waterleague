@@ -133,10 +133,6 @@ def run_coupled(model, directory):
         # 원 집수 강우를 먼저 결속한 뒤 시설을 배치해 같은 강우 면적과 원본 계보를 유지한다.
         rainfall_network, facility_rainfall = compile_network(model['network'], model['observedRainfall'])
         model = model | {'network': rainfall_network}
-    if 'connectedCisternDesign' in model:
-        from .coupled_cistern import compile as compile_cistern
-        cistern_raw, cistern_design = compile_cistern(original_model, model['network'])
-        model = model | {'network': model['network'] | {'inputText': cistern_raw.decode()}}
     if 'surfaceBasinDesign' in model:
         from waterleague_sim.engine.surface_basin import compile_basin
         model, basin_design = compile_basin(model)
@@ -166,7 +162,12 @@ def run_coupled(model, directory):
         from waterleague_sim.forcing.coupled_initialization import prepare_initialized_coupling
         initialization = prepare_initialized_coupling(model)
         model = initialization.model
-        _validate(model)
+        # 이용조는 원 집수 강우의 선행 결속 뒤 분할하며 원 설계 검사는 위에서 수행한다.
+        _validate({k: v for k, v in model.items() if k != 'connectedCisternDesign'})
+    if 'connectedCisternDesign' in model:
+        from .coupled_cistern import compile as compile_cistern
+        cistern_raw, cistern_design = compile_cistern(original_model, model['network'])
+        model = model | {'network': model['network'] | {'inputText': cistern_raw.decode()}}
     if 'connectedFacilityDesign' in model:
         require(model.get('evaluationMetrics') is not None, 'COUPLED_FACILITY_METRICS_REQUIRED')
         from .coupled_cistern import facilities

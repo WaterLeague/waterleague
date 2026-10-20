@@ -45,6 +45,8 @@ V30은 소속 구를 같은 이름의 공개 5자리 코드로 이관하고 현�
 
 이용조 초안 v3의 `request.equipment`는 공개 규격 ID·카탈로그 SHA-256·평면 이동/회전을 받는다. 서버의 `facilities/cistern-specifications-v1.json`에서 규격·외형을 조회해 `equipmentSpecification`·`equipmentGeometry`·명목 용량의 근거를 원문/해시에 보관한다. 외곽 전체가 원 지상 후보에 포함되어야 하며 구멍·오목 경계 침범을 거부한다. 직접 내부 단면 설계(v1/v2)의 면적·깊이·벽 두께와 동시 입력할 수 없다. 장비 외형의 체적을 유효 저류량으로 환산하지 않으며 내부 단면·배수/월류·펌프 곡선·사용 수요는 null이다. 공개 조회 `GET /api/v1/facilities/cistern-specifications-v1`은 해시 고정 원문을 반환하며 화면은 저장 규격도 이 원문과 대조한다. 발주 예산은 실거래 공사비·설치 예산으로 쓰지 않고 정상 설치는 계속 보류한다.
 
+결합 연구 입력의 `connectedCisternDesign`과 `initialization`은 보관 관측 선행 경로에서 함께 사용할 수 있다. 원 요청 → `initialized-coupled-input.json`의 원 집수 기상 → `cistern-network.inp` → 선택 공동 LID 실행 입력 순서로 생성하고, 이용조 `coupledBinding.initialization`에 기상 파생 해시·선행/평가 초·초기 수심 적용 시각·상태 연속 정책을 보관한다. `cistern-evaluation-initial/final.json`은 공통 `evaluation-initial/final-state.json`의 관망 상태와 같아야 한다. 현재 원장에 별도 DB 저장·점수·재이용량을 추가하지 않는다.
+
 관망 연구 요청의 `cistern.placement.drainClosed=true`는 `drain=null`과 함께 일반 배출 중지를 명시하며 필수 `overflow`는 유지한다. false 또는 생략 시 일반 배수구가 필요하다. 서버는 중지 설계를 `design.cistern.drain={"mode":"CLOSED_NO_WITHDRAWAL"}`로 고정하고, 워커는 일반 배수 링크 없이 계산한다. 신규 이용조 물수지의 `drainOperation`은 `GRAVITY_ORIFICE` 또는 `CLOSED_NO_WITHDRAWAL`이며 프론트가 원 설계와 대조한다. 배출 중지 설계에 원장 조건이 없거나 자연배수 원장이 연결되면 정상 결과로 표시하지 않는다.
 
 

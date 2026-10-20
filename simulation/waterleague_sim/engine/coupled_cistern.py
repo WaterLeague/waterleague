@@ -25,7 +25,7 @@ def facilities(raw, design, metadata=None):
 
 def validate(model):
     require(model.get('evaluationMetrics') is not None, 'COUPLED_CISTERN_METRICS_REQUIRED')
-    require(not any(k in model for k in ('initialization', 'connectedStorageDesign',
+    require(not any(k in model for k in ('connectedStorageDesign',
         'connectedPumpDesign', 'surfaceBasinDesign', 'networkNumericalProfile')),
         'COUPLED_CISTERN_COMPOSITION_UNSUPPORTED')
     raw, metadata = compile_cistern(model['network']['inputText'].encode(), model['connectedCisternDesign'])
@@ -38,11 +38,26 @@ def compile(model, network):
     raw, metadata = validate(model)
     original = model['network']['inputText'].encode()
     prepared = network['inputText'].encode()
-    if prepared != original:
+    initialization = None
+    if 'initialization' in model:
+        from ..forcing.network_initialization import prepare_initialized_network, METHOD
+        initialized = prepare_initialized_network(model['network'], model['observedRainfall'],
+            model['initialization'] | {'method': METHOD})
+        require(network == initialized.model, 'COUPLED_CISTERN_INITIALIZATION_BINDING_MISMATCH')
+        initialization = {
+            'method': 'CONTINUOUS_CISTERN_STATE_FROM_OBSERVED_ANTECEDENT_V1',
+            'forcingSha256': initialized.summary['derivedSha256'],
+            'warmupSeconds': initialized.summary['warmupSeconds'],
+            'evaluationSeconds': initialized.summary['evaluationSeconds'],
+            'initialDepthAppliesAt': initialized.summary['startUtc'],
+            'evaluationStatePolicy': 'SAME_LIVE_ENGINE_NO_STORAGE_RESET',
+        }
+    elif prepared != original:
         from ..forcing.live_network_rainfall import compile_network
         expected, _ = compile_network(model['network'], model['observedRainfall'])
         require(network == expected, 'COUPLED_CISTERN_RAIN_BINDING_MISMATCH')
-        # 검증한 강우 결속만 원본 해시를 바꿀 수 있으며 원 요청은 별도로 보존한다.
+    if prepared != original:
+        # 검증한 관측 파생본만 재결속하며 선행 계산과 사건 사이에 저류를 초기화하지 않는다.
         raw, metadata = compile_cistern(prepared,
             model['connectedCisternDesign'] | {'sourceNetworkSha256': digest(prepared)})
     metadata['coupledBinding'] = {
@@ -54,4 +69,6 @@ def compile(model, network):
         'partitionGeometry': 'UNIFORM_DESIGN_WITHIN_ORIGINAL_CATCHMENT_NOT_SURVEYED_ROOF',
         'surfaceRainfallOwnershipUnchanged': True,
     }
+    if initialization is not None:
+        metadata['coupledBinding']['initialization'] = initialization
     return raw, metadata
