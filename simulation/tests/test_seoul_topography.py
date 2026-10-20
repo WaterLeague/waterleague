@@ -27,6 +27,10 @@ def archive_bytes(members, compression=zipfile.ZIP_DEFLATED):
         warnings.simplefilter('ignore', UserWarning)
         with zipfile.ZipFile(target, 'w', compression=compression) as archive:
             for name, payload in members:
+                # 시험 ZIP의 현재 시각이 원문 보존 대조에 섞이지 않게 한다.
+                if isinstance(name, str):
+                    name = zipfile.ZipInfo(name, date_time=(1980, 1, 1, 0, 0, 0))
+                    name.compress_type = compression
                 archive.writestr(name, payload)
     return target.getvalue()
 
