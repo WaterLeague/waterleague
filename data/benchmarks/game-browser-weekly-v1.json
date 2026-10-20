@@ -1,0 +1,132 @@
+{
+  "schemaVersion": 1,
+  "verifiedAt": "2026-10-20T16:54:32.168859+00:00",
+  "implementationCommit": "fec02c95c056edb61e49d724d3eec7846de033dd",
+  "environment": {
+    "database": "isolated temporary PostgreSQL",
+    "api": "packaged real API",
+    "worker": "real KMA and SWMM worker",
+    "browser": "Chromium in-app browser",
+    "mockedObservations": false
+  },
+  "installation": {
+    "district_id": "11200",
+    "cell_id": "C289db0ff5ce17e109813d348",
+    "facility_type": "GREEN_ROOF",
+    "area_m2": "20.00",
+    "cost": "7000000.00",
+    "installed_at": "2026-10-21 01:48:27+09:00",
+    "physics_policy": "INSTALLATION_SECOND_V2"
+  },
+  "jobs": [
+    {
+      "state": "SUCCEEDED",
+      "requestedThrough": "2026-10-21T01:49:00+09:00",
+      "evaluatedSeconds": 33,
+      "durationSeconds": 68.695433,
+      "scoreM3Exact": "0.000007627",
+      "inputHash": "2a17b9c59051f99047ae23abe5977389eb27950f68cbce578d18e9076cbd4dcf",
+      "manifestSha256": "23755ff5956e48a4d00d5e00e149c64f7f0189446db45cff45eeecc2357140a6",
+      "manifestFileCount": 131,
+      "resultSha256": "2ee557e274fc7f1e7bd20236f2eef7d4b60efb34984d33ba9bba43ea16d1597e",
+      "antecedentSha256": "2bcc0a86014773980aec58fd24e7335b099106ef501744259b05ca4c111e4e63",
+      "forcingSha256": "fb0fe539a5c8146f1a4a0686633243c02a4f0822e6af554c3f669ec1b6907850"
+    },
+    {
+      "state": "SUCCEEDED",
+      "requestedThrough": "2026-10-21T01:50:00+09:00",
+      "evaluatedSeconds": 93,
+      "durationSeconds": 2.232661,
+      "scoreM3Exact": "0.000021494",
+      "inputHash": "8835eb67ab39413c3819b956357b8a912deedd946c6f97701963867d74d10430",
+      "manifestSha256": "b09f251ae7cce344c64e99bf87ed9df2d30f9ad33b0c6900968c737fe8a0cc89",
+      "manifestFileCount": 133,
+      "resultSha256": "542334202b3de17091939bc0e52b72f8b47bdf39ca6dfcdfcf95cbc198f0eee9",
+      "antecedentSha256": "2bcc0a86014773980aec58fd24e7335b099106ef501744259b05ca4c111e4e63",
+      "forcingSha256": "f9a8fbce0895336feeb9b3f80f86f2ae8ec136c79c4861039648ccf466d34bb2"
+    },
+    {
+      "state": "SUCCEEDED",
+      "requestedThrough": "2026-10-21T01:51:00+09:00",
+      "evaluatedSeconds": 153,
+      "durationSeconds": 2.281145,
+      "scoreM3Exact": "0.000035362",
+      "inputHash": "1dc962ae0a1c601369ac13dcdaa52ba1b763dda83c15cbd4f9e8435848f7327a",
+      "manifestSha256": "e7dcf967b56861b12603cc104b9122501128f727fc9b846be0bebc6c0b293c8a",
+      "manifestFileCount": 135,
+      "resultSha256": "297ba8e4d9ecbd72220ffff0d6e2e6bd6aba1be257b415a6bb4d538de6af58f1",
+      "antecedentSha256": "2bcc0a86014773980aec58fd24e7335b099106ef501744259b05ca4c111e4e63",
+      "forcingSha256": "02d7eef62adac985bf43ffe2114b6e7481cb73d0babed4d39e27622ea06c5663"
+    },
+    {
+      "state": "SUCCEEDED",
+      "requestedThrough": "2026-10-21T01:52:00+09:00",
+      "evaluatedSeconds": 213,
+      "durationSeconds": 2.210879,
+      "scoreM3Exact": "0.000049229",
+      "inputHash": "bcf9f30b566ca1467a970411ae068280a1c3268373cc482de52d2be2240e007e",
+      "manifestSha256": "cbcd692126c3e65a843cc0aeb6dc916c1fb58413aed430360a696d0614a94ae8",
+      "manifestFileCount": 137,
+      "resultSha256": "ab3eb0d3383047b8c8e9dee75c548f88587fe9deaab46798e7f27037af089e82",
+      "antecedentSha256": "2bcc0a86014773980aec58fd24e7335b099106ef501744259b05ca4c111e4e63",
+      "forcingSha256": "fcaf9a2a02581e6bb28c8c1a0d76bc69cd6d006fcf27361e89307b17b042aa8a"
+    }
+  ],
+  "scorePolicySha256": "9082b8afd40fc0d61ffd93f5dbdc481820bf3689bdb4270aee9abfffe168da11",
+  "comparisonGroupHash": "40b28b3fcdef5dc91aba264cfa55b9640bfc5375ab580650fbe02b01dbfdee0f",
+  "checks": {
+    "previousStateAndContributionPrefixPreserved": true,
+    "antecedentBytesReused": true,
+    "sevenDayObservedRainfallMm": 40,
+    "antecedentMinutes": 10080,
+    "antecedentRainfallSourceCount": 29,
+    "antecedentEvaporationSourceCount": 9,
+    "zeroCounterDerivedMinutes": 7,
+    "aggregateDerivedMinutes": 0,
+    "evaluationRainfallMm": 0,
+    "initialStorageM3": 1.0852223433317054,
+    "allSourceArchivesComplete": true,
+    "allArtifactHashesMatched": true,
+    "apiLedgerAndRawResultExactScoreMatched": true,
+    "memberAndDistrictRank": 1,
+    "otherDistrictsRemainUncalculated": true,
+    "uiObservedSeconds": 93,
+    "uiObservedScoreM3Exact": "0.000021494",
+    "bundleFileCount": 141,
+    "bundleSha256": "ef58e9fe6e93d881d8928abc727a6d6fc1da2eb265791cd2c20afc537530ded9",
+    "reloadedUiScoreM3Exact": "0.000049229",
+    "reloadPreservedInstallationAndBudget": true,
+    "budgetRemainingKRW": 1993000000
+  },
+  "limitations": [
+    "One local device and one green roof; no target-device FPS measurement.",
+    "Evaluation interval is dry; antecedent rainfall is 40 mm. Not a wet-event field validation.",
+    "Direct-rain independent surface. Connected basin and cistern installation remain incomplete.",
+    "Source retry recovery is separately unit-tested; this run does not prove a transient outage occurred."
+  ],
+  "localEvidence": {
+    "tmp/game-browser-weekly-v2/run.py": "764046ccfd1f02ee9dee635b02c2cc56c0b3598db0bc5c77aacaea9f063753f5",
+    "tmp/game-browser-weekly-v2/verify.py": "df5917b130eeac13697ed6ebe2a8fe1003872dbafc1e2a8bfa1987e0f187d4da",
+    "tmp/game-browser-weekly-v2/verification.json": "34a3273953d758c373f30f8998591124d037cb426590b7bd4cc3e2838d8080ff",
+    "tmp/game-browser-weekly-v2/weekly-calculated.png": "ad25fa004d2e01cdab60438659c0c114c0c3d567d4d2f8f05234c4395f59447c",
+    "tmp/game-browser-weekly-v2/weekly-leaderboard.png": "920124b2ae7bc7e660308c2aff732fa53d541eb0807efd26d7286a8aefa8d417",
+    "tmp/game-browser-weekly-v2/weekly-reloaded-leaderboard.png": "d46ae14c310135bc835a7aad3657cb551fdd54ffe22fb49a3df563296d66f15c",
+    "tmp/game-browser-weekly-v2/weekly-view.json": "00ec9dab6f0ef98db2df50ffad1b9181d85d4aca8872a3f54eba80b19c313cf7",
+    "tmp/game-browser-weekly-v2/record-view.json": "e746bda25cf1ac8201172d75d69728365d932faaa7ae81315081a6eca49677cb",
+    "tmp/game-browser-weekly-v2/weekly-bundle.zip": "ef58e9fe6e93d881d8928abc727a6d6fc1da2eb265791cd2c20afc537530ded9",
+    "tmp/game-browser-weekly-v2/cleanup.json": "35951bbd4b6cd209739e54553c0854c3e31655f4640783c840ce5b8300cab628",
+    "tmp/game-browser-weekly-v2/frontend-build.log": "fffd139f229e6a55b9283d03153320d6a9fa27a523a3faf8346dc650dc363e84",
+    "tmp/game-browser-weekly-v2/data-period.png": "cea0504807082f260d153d5e343c64c68e09c92bbd0dbfd140d2ec74e3539ff1"
+  },
+  "cleanup": {
+    "databaseDropped": true,
+    "sourceCountsUnchanged": true,
+    "processesStopped": true
+  },
+  "validation": {
+    "frontendTypecheckAndProductionBuild": true,
+    "focusedFrontendFormatting": true,
+    "scorePolicyUnchangedCheck": true,
+    "newUnitTestsAdded": false
+  }
+}
