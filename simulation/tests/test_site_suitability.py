@@ -9,7 +9,7 @@ from waterleague_sim.spatial.suitability import assess, require_explorable, Site
 from waterleague_sim.spatial.play_catalog import NativePlayCatalog, NativeCatalogError
 from waterleague_sim.placement_validation import cost
 from waterleague_sim.engine.continuous import input_source
-from waterleague_sim.engine.swmm import make_input, SimulationQualityError
+from waterleague_sim.engine.swmm import SimulationQualityError
 
 ROOT = Path(__file__).resolve().parents[2]
 CASES = json.loads((ROOT / 'simulation/tests/fixtures/site-suitability-v1.json').read_bytes())['cases']
@@ -64,8 +64,7 @@ class SiteSuitabilityTests(unittest.TestCase):
                                lambda: reader.model('TEST_ONLY', district='11110')):
                     with self.assertRaisesRegex(NativeCatalogError, 'SITE_SUITABILITY_RESTRICTED'):
                         action()
-            for action in (lambda: cost(model, [placement]), lambda: make_input(model, [placement])):
-                with self.assertRaisesRegex(SiteSuitabilityError, 'SITE_SUITABILITY_RESTRICTED'):
-                    action()
+            with self.assertRaisesRegex(SiteSuitabilityError, 'SITE_SUITABILITY_RESTRICTED'):
+                cost(model, [placement])
             with self.assertRaisesRegex(SimulationQualityError, 'SITE_SUITABILITY_RESTRICTED'):
                 input_source(model, [placement], None)

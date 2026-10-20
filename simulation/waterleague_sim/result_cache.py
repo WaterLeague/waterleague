@@ -15,6 +15,8 @@ import time
 import uuid
 
 from .engine import swmm
+from . import placement_validation
+from .spatial import suitability
 
 SCHEMA = 1
 MAX_ENTRY_BYTES = 64 * 1024 * 1024 - 1024 * 1024
@@ -28,6 +30,16 @@ RESULT_FIELDS = frozenset([
     'sensitivity', 'assumptions', 'engine', 'reportPrecision',
 ])
 MARKER = b'waterleague-result-cache-v1\n'
+
+def execution_policy():
+    # 수치 생성기의 고정 버전과 별개로 실행 허용 규칙을 캐시 식별자에 결속한다.
+    return {
+        'cacheSha256': digest(Path(__file__).read_bytes()),
+        'runnerSha256': digest(Path(__file__).with_name('run_job.py').read_bytes()),
+        'placementValidationSha256': digest(Path(placement_validation.__file__).read_bytes()),
+        'siteSuitabilitySha256': digest(Path(suitability.__file__).read_bytes()),
+        'siteSuitabilityPolicySha256': suitability.POLICY_SHA256,
+    }
 
 
 class CacheUnavailable(OSError):
@@ -78,7 +90,7 @@ def computation_identity(model_source, request):
     identity = {
         'schema': SCHEMA, 'modelHash': request['modelHash'], 'inputHash': request['inputHash'],
         'placementsSha256': digest(encoded(request['placements'])), 'engine': engine,
-        'executionPolicySha256': digest(Path(__file__).read_bytes() + Path(__file__).with_name('run_job.py').read_bytes()),
+        'executionPolicySha256': digest(encoded(execution_policy())),
         'python': sys.version, 'machine': platform.machine(),
     }
     return digest(encoded(identity)), identity
@@ -269,8 +281,8 @@ def execute(model_source, request, directory, cache_root=None):
     key, identity = computation_identity(model_source, request)
     if identity['engine']['generatorSha256'] != model['generatorSha256']:
         raise ValueError('GENERATOR_MISMATCH')
-    from .placement_validation import cost
-    cost(model, request['placements'])
+    # 과거 캐시의 성공 여부와 관계없이 현재 배치·안전 조건을 먼저 검사한다.
+    placement_validation.cost(model, request['placements'])
     cache = ResultCache(cache_root) if cache_root is not None else None
     files = cache.load(key, identity) if cache else None
     if files is not None:

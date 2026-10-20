@@ -155,6 +155,36 @@ class ResultCacheTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 self.cache.load('../outside', identity)
 
+    def test_keys_bind_site_policy_and_validation_implementation(self):
+        source = b'{"id":"TEST_ONLY"}'
+        request = {'modelHash': cache.digest(source), 'inputHash': '1' * 64, 'placements': []}
+        binary = Path(self.temp.name) / 'engine'
+        binary.write_bytes(b'ENGINE_TEST_ONLY')
+        with patch.object(swmm, 'library_path', return_value=binary):
+            key = cache.computation_identity(source, request)[0]
+            with patch.object(cache.suitability, 'POLICY_SHA256', '2' * 64):
+                self.assertNotEqual(key, cache.computation_identity(source, request)[0])
+            for module in (cache.placement_validation, cache.suitability):
+                changed = Path(self.temp.name) / 'validation.py'
+                changed.write_bytes(b'CHANGED_TEST_ONLY_VALIDATION')
+                with patch.object(module, '__file__', str(changed)):
+                    self.assertNotEqual(key, cache.computation_identity(source, request)[0])
+
+    @unittest.skipUnless(swmm.library_path().exists(), 'EPA 엔진 빌드 필요')
+    def test_current_restrictions_block_before_cache_read_or_engine_execution(self):
+        for status in ('PROHIBITED', 'CONDITIONAL'):
+            with self.subTest(status=status):
+                model = json.loads((swmm.ROOT / 'data/models/seongsu-lab.json').read_bytes())
+                next(cell for cell in model['cells'] if cell['id'] == 'G1')['siteEligibility'] = status
+                source = cache.encoded(model)
+                request = {'modelHash': cache.digest(source), 'inputHash': '1' * 64,
+                           'placements': [{'cellId': 'G1', 'facilityType': 'RAIN_GARDEN', 'areaM2': 20}]}
+                with patch.object(cache.ResultCache, 'load') as load, patch.object(swmm, 'experiment') as engine:
+                    with self.assertRaisesRegex(cache.suitability.SiteSuitabilityError, 'SITE_SUITABILITY_RESTRICTED'):
+                        cache.execute(source, request, Path(self.temp.name), self.root)
+                    load.assert_not_called()
+                    engine.assert_not_called()
+
     @unittest.skipUnless(swmm.library_path().exists(), 'EPA 엔진 빌드 필요')
     def test_real_engine_reuse_is_equal_and_target_request_and_files_are_independent(self):
         source = (swmm.ROOT / 'data/models/seongsu-lab.json').read_bytes()

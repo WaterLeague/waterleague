@@ -18,10 +18,6 @@ def library_path():
  return Path(os.environ.get('SWMM_LIBRARY',ROOT/'tmp/swmm-build/install/bin'/name))
 
 def make_input(model,placements,conductivity_factor=1.0,step_seconds=10):
- from ..spatial.suitability import require_explorable
- selected={p['cellId'] for p in placements}
- for cell in model['cells']:
-  if cell['id'] in selected:require_explorable(cell)
  rain=model['rainfall'];start=datetime.fromisoformat(rain['start']);end=datetime.fromisoformat(rain['end'])
  h=model['hydrology'];sections={}
  sections['TITLE']=['WATER LEAGUE EXPLORATORY; NOT A SITE-VALIDATED DRAINAGE MODEL']
