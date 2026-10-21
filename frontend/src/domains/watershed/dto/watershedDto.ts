@@ -4,6 +4,11 @@ import { cisternCostCatalogDto, cisternCostSnapshotDto } from './cisternCostDto'
 import { conduitCatalogDto, conduitDesignDto } from './conduitDto';
 import { storageCatalogDto, storageDesignDto, storageSummaryDto } from './storageDto';
 import { z } from 'zod';
+import {
+  surfaceConnectionDto,
+  watershedSurfaceProfileDto,
+  watershedSurfaceComparisonDto,
+} from './watershedSurfaceDto';
 import { watershedCostCatalogDto, watershedCostSnapshotDto } from './watershedCostDto';
 import { watershedLayoutDto } from './watershedLayoutDto';
 import {
@@ -27,6 +32,8 @@ export type NetworkFacility = z.infer<typeof networkFacilityDto>;
 export const watershedCatalogDto = z
   .object({
     catalogHash: hash,
+    surfaceProfileHash: hash.optional(),
+    surfaceProfile: watershedSurfaceProfileDto.optional(),
     pumpCatalogHash: hash.optional(),
     pumpCatalog: pumpCatalogDto.optional(),
     cisternCostCatalogHash: hash.optional(),
@@ -76,6 +83,13 @@ export const watershedCatalogDto = z
     }),
   })
   .superRefine((v, ctx) => {
+    if (
+      Boolean(v.surfaceProfile) !== Boolean(v.surfaceProfileHash) ||
+      (v.surfaceProfile &&
+        (v.surfaceProfile.sourceCatalogSha256 !== v.catalogHash ||
+          v.surfaceProfile.sourceFiles['georeference.json'] !== v.georeferenceHash))
+    )
+      ctx.addIssue({ code: 'custom', message: '지표 결합 조건과 관망·위치 자료 불일치' });
     const geo = v.georeference;
     if (
       Boolean(geo) !== Boolean(v.georeferenceHash) ||
@@ -173,6 +187,7 @@ const caseDto = z.object({
 });
 export const watershedResultDto = z
   .object({
+    surfaceComparison: watershedSurfaceComparisonDto.optional(),
     schemaVersion: z.union([z.literal(1), z.literal(2)]).default(1),
     catalogHash: hash,
     classification: z.literal('PUBLIC_NETWORK_REFERENCE_DESIGN_COMPARISON'),
@@ -383,6 +398,7 @@ export const watershedJobDto = z
     state: z.enum(['QUEUED', 'RUNNING', 'SUCCEEDED', 'FAILED', 'REJECTED']),
     createdAt: z.iso.datetime(),
     design: z.object({
+      surfaceConnection: surfaceConnectionDto.optional(),
       locationReference: locationReferenceDto.optional(),
       cistern: cisternDesignDto.optional(),
       conduits: conduitDesignDto.optional(),
@@ -405,6 +421,23 @@ export const watershedJobDto = z
     message: z.string(),
   })
   .superRefine((value, ctx) => {
+    if (
+      value.result &&
+      (Boolean(value.design.surfaceConnection) !== Boolean(value.result.surfaceComparison) ||
+        value.design.surfaceConnection?.profileSha256 !==
+          value.result.surfaceComparison?.profileSha256)
+    )
+      ctx.addIssue({ code: 'custom', message: '설계와 결과의 지표 결합 조건 불일치' });
+    if (
+      value.design.surfaceConnection &&
+      (!value.design.locationReference ||
+        value.design.storage ||
+        value.design.pumps ||
+        value.design.conduits ||
+        value.design.cistern ||
+        value.design.placements.some((p) => p.facilityType === 'RAINWATER_CISTERN'))
+    )
+      ctx.addIssue({ code: 'custom', message: '지원하지 않는 지표 결합 설계' });
     const references = value.design.cisternCosting;
     if (
       value.result &&

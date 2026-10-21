@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "id": "seocho-surface-design-v1",
+  "method": "PUBLISHED_SURFACE_CONNECTION_EXPLORATION_V1",
+  "title": "공개 지형·관망의 시설 설계 비교",
+  "sourceCatalogSha256": "beaddba8868b6f1f6bbf35b1d53d4695a94db99498d8988f90d62013cf8f053c",
+  "sourceDirectory": "data/runs/seocho-rainfall-partition-v1-20261021-final",
+  "sourceFiles": {
+    "surface-20m.json": "8d6986a051e9c1ce6d6af13be1147f92796122314386cffbb3f0d6511523139e",
+    "coverage-20m.json": "916edf4810e4b6a66fa65572a06cfbc0e394193db1e3c7b2debb24382ebc3f90",
+    "georeference.json": "36a477f877d0d0fc4518f5e7664497e6e36798299745880932d5b43148ac01ab",
+    "terrain/original-network.inp": "8ce278a3d2b58df3c2a5fd1232160bcabb324389746ee0c878792acf91abbdbb"
+  },
+  "parameters": {
+    "openingDiameterM": 0.6,
+    "dischargeCoefficient": 0.62,
+    "surchargeHeadM": 100.0,
+    "surfaceOffsetM": 0.0,
+    "boundaryType": "REFLECTIVE",
+    "durationSeconds": 86339,
+    "maximumExchangeMilliseconds": 1000,
+    "frameIntervalMilliseconds": 60000,
+    "networkNumericalProfile": {
+      "id": "seocho-public-coupling-slot-60ms",
+      "options": {
+        "SURCHARGE_METHOD": "SLOT",
+        "ROUTING_STEP": 0.06,
+        "MINIMUM_STEP": 0.01,
+        "MAX_TRIALS": 200
+      }
+    }
+  },
+  "allowedFacilityTypes": [
+    "BIORETENTION",
+    "INFILTRATION_TRENCH",
+    "VEGETATIVE_SWALE"
+  ],
+  "rankingEligible": false,
+  "historicalReconstructionEligible": false,
+  "evidence": "PUBLIC_TERRAIN_AND_PUBLISHED_NETWORK_WITH_EXPLICIT_COMMON_DATUM_ASSUMPTION",
+  "reference": "data/manifests/published-surface-connection-reference-v1.json",
+  "referenceSha256": "33e7b49c0f68b1e184e3390ccf9016265f509a3182d7d8ba4a6eb669ba9cce44",
+  "limitations": [
+    "폐쇄 외곽 경계의 계산 구역이며 실제 분수계·피해지도 아님",
+    "원 관망·지형의 공통 높이 기준과 지름 0.6m 등가 개구부·방류계수 0.62 가정",
+    "원 강우의 관측소·시간대 미확인 및 추정 외부 유입 보존",
+    "공개 지형 20m 격자; 직접 강우 영역의 추가 침투·증발·건물 장애물 미적용",
+    "생물저류·침투도랑·식생수로의 원 집수구역 내 설계 비교; 다른 수리 시설 합성은 별도 검증 필요",
+    "원 달력 창 86,340초 중 EPA 엔진 86,339초; 종료 1초 차이 보존",
+    "현재 주간·재해 예산과 순위에 합산하지 않음"
+  ]
+}

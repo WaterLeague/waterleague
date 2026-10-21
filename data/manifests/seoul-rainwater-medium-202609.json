@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "title": "2026년 서울시 중형 빗물이용시설 설치비 지원사업 변경 공고",
+  "sourceUrl": "https://news.seoul.go.kr/env/archives/570611",
+  "landingModifiedAt": "2026-09-04",
+  "retrievedAt": "2026-10-21T05:55:25.365650+00:00",
+  "landing": {
+    "path": "data/raw/seoul-rainwater-medium-202609-2baae00778fec75cb82280926dd48ff7342fcb7365ee4f249ef5628baf81e441.html",
+    "sha256": "2baae00778fec75cb82280926dd48ff7342fcb7365ee4f249ef5628baf81e441",
+    "bytes": 128807
+  },
+  "attachment": {
+    "url": "https://news.seoul.go.kr/env/files/2026/09/6a962eca0ff849.79021424.hwpx",
+    "path": "data/raw/seoul-rainwater-medium-202609-0c81dedbbbb83b61d60573c545bdcb6dc880ac89f49da415f7e577e9aa39873b.hwpx",
+    "sha256": "0c81dedbbbb83b61d60573c545bdcb6dc880ac89f49da415f7e577e9aa39873b",
+    "bytes": 88288,
+    "readStatus": "PROTECTED_FASOO_DRM_CONTENT_NOT_PARSED"
+  },
+  "verifiedFromLanding": {
+    "schoolAndApartmentMaximumSubsidyFraction": 0.9,
+    "districtAndCityInstitutionMaximumSubsidyFraction": 0.5,
+    "applicationEndDate": "2026-09-30"
+  },
+  "use": "후속 공개 지원정책 확인; 설치 단가·총사업비 근거로 전용하지 않음",
+  "unitCostUpdateSupported": false,
+  "gameBudgetChangeSupported": false,
+  "attachmentLabelDate": "2026-09-01"
+}

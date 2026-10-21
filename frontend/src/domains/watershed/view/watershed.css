@@ -1,6 +1,40 @@
 .watershed-panel[hidden] {
   display: none !important;
 }
+@media (min-width: 1100px) {
+  .game-shell.is-game
+    .shared-play-layout
+    > .shared-inspector.watershed-panel:has(.watershed-surface-result) {
+    width: 680px;
+    margin-top: calc(var(--map-controls-height) + 78px);
+    margin-bottom: 24px;
+  }
+}
+.watershed-table-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+}
+.watershed-surface-result table {
+  width: 100%;
+  min-width: 560px;
+  border-collapse: collapse;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+.watershed-surface-result th,
+.watershed-surface-result td {
+  padding: 9px 8px;
+  border-bottom: 1px solid #d5ddcd;
+  text-align: right;
+}
+.watershed-surface-result th:first-child {
+  text-align: left;
+}
+.watershed-surface-result caption {
+  padding: 8px 0;
+  text-align: left;
+  color: #65735f;
+}
 .watershed-panel {
   color: #29453d;
   font-size: 12px;

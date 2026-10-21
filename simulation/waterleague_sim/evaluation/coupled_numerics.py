@@ -28,10 +28,13 @@ def verify_numerical_profile(model, network, result, root, read):
     actual = {row['tokens'][0].upper(): row['tokens'][1] for row in
               records((root/'network/network.inp').read_bytes())[1]['OPTIONS']}
     declared = network['numericalConfiguration']['declaredInputOptions']
-    require(all(actual.get(k) == declared.get(k) == str(v) for k, v in options.items()),
+    expected_options = {row['tokens'][0].upper(): row['tokens'][1] for row in
+                        records(prepared['network']['inputText'].encode())[1]['OPTIONS']}
+    require(all(actual.get(k) == declared.get(k) == expected_options.get(k) for k in options),
             'EVALUATION_NUMERICAL_PROFILE_NATIVE_MISMATCH')
     fields = {'SURCHARGE_METHOD': 'surchargeMethod', 'ROUTING_STEP': 'maximumRoutingStepSeconds',
-        'MINIMUM_STEP': 'minimumRoutingStepSeconds', 'MAX_TRIALS': 'maximumTrials'}
+        'MINIMUM_STEP': 'minimumRoutingStepSeconds', 'MAX_TRIALS': 'maximumTrials',
+        'WET_STEP': 'wetRunoffStepSeconds', 'DRY_STEP': 'dryRunoffStepSeconds'}
     require(all(network['numericalConfiguration'].get(fields[k]) == v for k, v in options.items()),
             'EVALUATION_NUMERICAL_PROFILE_EFFECTIVE_MISMATCH')
     return prepared

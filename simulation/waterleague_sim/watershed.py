@@ -19,8 +19,14 @@ def process(conn, job, artifacts):
     env['PYTHONPATH']=str(ROOT/'simulation')
     result,error=None,'WATERSHED_ENGINE_FAILED'
     try:
+        design = json.loads(job['placements'])
+        timeout = 150
+        if 'surfaceConnection' in design:
+            from .watershed_surface import verify
+            verify(design)
+            timeout = 7200
         if run_process([sys.executable,'-m','waterleague_sim.run_watershed_job',str(directory)],
-                       env=env, timeout=150, heartbeat=lambda: renew(conn,job))==0:
+                       env=env, timeout=timeout, heartbeat=lambda: renew(conn,job))==0:
             result=read_result(directory/'result.json')
             if result.get('inputHash') != job['input_hash'] or result.get('catalogHash') != job['model_hash']:
                 raise ValueError('WATERSHED_RESULT_INVALID')

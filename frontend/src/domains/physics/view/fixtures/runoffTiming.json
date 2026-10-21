@@ -1319,7 +1319,7 @@
           "id": "baseline",
           "independentVolumeM3": 10.935591734061227,
           "independentFirstMomentM3Seconds": 24426.495153036343,
-          "firstMomentDifferenceM3Seconds": 4.558387445285916e-09,
+          "firstMomentDifferenceM3Seconds": 4.558387445285916e-9,
           "outBytesIdentical": true
         },
         {
@@ -1350,7 +1350,7 @@
             "precipitationM3": 22.68397931673123,
             "infiltrationM3": 0.0,
             "evaporationM3": 0.0031769594385919753,
-            "balanceResidualM3": -7.486781413490462e-05,
+            "balanceResidualM3": -7.486781413490462e-5,
             "nativeIntegralDifferenceM3": 6.039613253960852e-14,
             "metrics": {
               "method": "NATIVE_RUNOFF_STEP_SURFACE_PLUS_DRAIN_V1",
@@ -1413,7 +1413,7 @@
         ],
         "dischargeReductionM3": -0.5079480782412062,
         "netStorageIncreaseM3": -0.507987987770376,
-        "accountedReductionM3": 3.9909529167658775e-05,
+        "accountedReductionM3": 3.9909529167658775e-5,
         "peakReductionM3s": 0.00028263586450207046,
         "detention": {
           "schemaVersion": 1,
@@ -1466,7 +1466,7 @@
               "reason": null,
               "baseline": 22.680877225106773,
               "strategy": 22.680837315577605,
-              "signedImprovement": 3.9909529167658775e-05,
+              "signedImprovement": 3.9909529167658775e-5,
               "relativeImprovementPercent": 0.00017596113576894907,
               "relativeStatus": "COMPUTED"
             },
@@ -2073,7 +2073,7 @@
           "id": "strategy",
           "independentVolumeM3": 23.166681699073806,
           "independentFirstMomentM3Seconds": 245509.06046442778,
-          "firstMomentDifferenceM3Seconds": 2.764863893389702e-09,
+          "firstMomentDifferenceM3Seconds": 2.764863893389702e-9,
           "outBytesIdentical": true
         }
       ]
@@ -2837,7 +2837,7 @@
         "dischargeReductionM3": -0.10314324319845358,
         "netStorageIncreaseM3": 0.09609353442555568,
         "accountedReductionM3": -0.19923677762400915,
-        "peakReductionM3s": -2.8919405878615953e-05,
+        "peakReductionM3s": -2.8919405878615953e-5,
         "detention": {
           "schemaVersion": 1,
           "method": "NATIVE_RUNOFF_VOLUME_CENTROID_V1",
@@ -2902,7 +2902,7 @@
               "reason": null,
               "baseline": 0.0027896426640343667,
               "strategy": 0.0028185620699129827,
-              "signedImprovement": -2.8919405878615953e-05,
+              "signedImprovement": -2.8919405878615953e-5,
               "relativeImprovementPercent": -1.0366706191965411,
               "relativeStatus": "COMPUTED"
             },
@@ -4125,7 +4125,7 @@
             "precipitationM3": 22.68397931673123,
             "infiltrationM3": 0.0,
             "evaporationM3": 0.0031769594385919753,
-            "balanceResidualM3": -7.486781413490462e-05,
+            "balanceResidualM3": -7.486781413490462e-5,
             "nativeIntegralDifferenceM3": 6.039613253960852e-14,
             "metrics": {
               "method": "NATIVE_RUNOFF_STEP_SURFACE_PLUS_DRAIN_V1",
@@ -4189,7 +4189,7 @@
         "dischargeReductionM3": -0.07296401001059394,
         "netStorageIncreaseM3": -0.07317112943013857,
         "accountedReductionM3": 0.00020711941954587587,
-        "peakReductionM3s": 2.4284240651359368e-09,
+        "peakReductionM3s": 2.4284240651359368e-9,
         "detention": {
           "schemaVersion": 1,
           "method": "NATIVE_RUNOFF_VOLUME_CENTROID_V1",
@@ -4254,8 +4254,8 @@
               "reason": null,
               "baseline": 0.004858041572232173,
               "strategy": 0.0048580391438081075,
-              "signedImprovement": 2.4284240651359368e-09,
-              "relativeImprovementPercent": 4.9987716840803494e-05,
+              "signedImprovement": 2.4284240651359368e-9,
+              "relativeImprovementPercent": 4.9987716840803494e-5,
               "relativeStatus": "COMPUTED"
             },
             {
@@ -4852,7 +4852,7 @@
           "id": "strategy",
           "independentVolumeM3": 22.731697630843193,
           "independentFirstMomentM3Seconds": 233957.31997673077,
-          "firstMomentDifferenceM3Seconds": -5.093170329928398e-09,
+          "firstMomentDifferenceM3Seconds": -5.093170329928398e-9,
           "outBytesIdentical": true
         }
       ]

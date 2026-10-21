@@ -103,8 +103,27 @@ export function useWatershed(account: Account | null, open: boolean) {
       clearTimeout(timer);
     };
   }, [open, allowed, account?.id, revision]);
-  async function submit() {
+  async function submit(withSurface = false) {
     if (!allowed || !catalog || submitting.current) return;
+    if (
+      withSurface &&
+      (!catalog.surfaceProfileHash ||
+        !catalog.georeferenceHash ||
+        !drafts.length ||
+        storageDrafts.length ||
+        conduitDrafts.length ||
+        pumpDrafts.length ||
+        cisternDraft ||
+        drafts.some(
+          (p) =>
+            !catalog.surfaceProfile?.allowedFacilityTypes.includes(
+              p.facilityType as 'BIORETENTION' | 'INFILTRATION_TRENCH' | 'VEGETATIVE_SWALE'
+            )
+        ))
+    ) {
+      setSubmitError('지표 결합은 생물저류·침투도랑·식생수로 설계에서 선택할 수 있습니다.');
+      return;
+    }
     const invalid = validateCombinedDesign(
       catalog,
       drafts,
@@ -118,6 +137,7 @@ export function useWatershed(account: Account | null, open: boolean) {
       return;
     }
     const fingerprint = JSON.stringify([
+      withSurface ? catalog.surfaceProfileHash : null,
       catalog.georeferenceHash,
       designFingerprint(catalog.catalogHash, drafts, catalog.costCatalogHash),
       cisternDraft || drafts.some((p) => p.facilityType === 'RAINWATER_CISTERN')
@@ -164,7 +184,8 @@ export function useWatershed(account: Account | null, open: boolean) {
         cisternDraft && catalog.storageCatalogHash
           ? { catalogHash: catalog.storageCatalogHash, placement: cisternDraft }
           : undefined,
-        catalog.georeferenceHash
+        catalog.georeferenceHash,
+        withSurface ? catalog.surfaceProfileHash : undefined
       );
       if (!mounted.current || abort.signal.aborted) return;
       setJobs((previous) => [job, ...previous.filter((v) => v.id !== job.id)].slice(0, 50));

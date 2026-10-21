@@ -17,6 +17,8 @@ public class WatershedCatalogRepository {
       "fa3e4d833650df5c40d933bd0b289dd029a54e0beb73fad9b9d3ef239cb0236d";
   public static final String GEOREFERENCE_HASH =
       "36a477f877d0d0fc4518f5e7664497e6e36798299745880932d5b43148ac01ab";
+  public static final String SURFACE_HASH =
+      "94fca7deba98583792d05806c1f768047ffe4034b110894f09246dc9e2a7e6da";
   public static final String STORAGE_HASH =
       "f2df891f3914de02c37ff7ae09f6d5a849ef6f69dae85e25e562e5a44cffc105";
   public static final String CONDUIT_HASH =
@@ -26,6 +28,7 @@ public class WatershedCatalogRepository {
   private final JsonNode catalog;
   private final JsonNode layout;
   private final JsonNode georeference;
+  private final JsonNode surface;
 
   public WatershedCatalogRepository(JsonService json) throws java.io.IOException {
     pumps = load(json, "facilities/ksb-pump-curve-v1.json", PUMP_HASH);
@@ -36,6 +39,13 @@ public class WatershedCatalogRepository {
     catalog = load(json, "watersheds/seocho-published-v1.json", HASH);
     layout = load(json, "watersheds/seocho-layout-v1.json", LAYOUT_HASH);
     georeference = load(json, "watersheds/seocho-georeference-v1.json", GEOREFERENCE_HASH);
+    surface = load(json, "watersheds/seocho-surface-design-v2.json", SURFACE_HASH);
+    if (!surface.path("sourceCatalogSha256").asString().equals(HASH)
+        || !surface
+            .path("sourceFiles")
+            .path("georeference.json")
+            .asString()
+            .equals(GEOREFERENCE_HASH)) throw new IllegalStateException("관망·지표 원본 불일치");
     if (!storage.path("sourceCatalogSha256").asString().equals(HASH))
       throw new IllegalStateException("저류조 연결 원본 불일치");
     if (!layout.path("sourceOriginalSha256").equals(catalog.path("sourceOriginalSha256")))
@@ -79,5 +89,9 @@ public class WatershedCatalogRepository {
 
   public JsonNode georeference() {
     return georeference.deepCopy();
+  }
+
+  public JsonNode surface() {
+    return surface.deepCopy();
   }
 }

@@ -61,17 +61,33 @@ public class WatershedController {
   }
 
   @GetMapping("/{id}/bundle")
-  public ResponseEntity<byte[]> bundle(Principal p, @PathVariable UUID id) {
+  public void bundle(
+      Principal p, @PathVariable UUID id, jakarta.servlet.http.HttpServletResponse response)
+      throws java.io.IOException {
     var owner = accounts.current(p.getName()).id();
     rates.check("watershed-bundle:" + owner, 20, 3600);
-    var bytes = artifacts.bundle(service.require(owner, id));
-    accounts.current(p.getName());
-    return ResponseEntity.ok()
-        .cacheControl(CacheControl.noStore())
-        .header(
+    var job = service.require(owner, id);
+    if (service.view(job).result() != null && service.view(job).result().has("surfaceComparison")) {
+      try (var prepared = artifacts.prepareLargeBundle(job)) {
+        accounts.current(p.getName());
+        response.setContentType("application/zip");
+        response.setHeader(HttpHeaders.CACHE_CONTROL, "no-store");
+        response.setHeader(
             HttpHeaders.CONTENT_DISPOSITION,
-            "attachment; filename=waterleague-watershed-" + id + ".zip")
-        .contentType(MediaType.parseMediaType("application/zip"))
-        .body(bytes);
+            "attachment; filename=waterleague-watershed-" + id + ".zip");
+        response.setContentLengthLong(java.nio.file.Files.size(prepared.path()));
+        java.nio.file.Files.copy(prepared.path(), response.getOutputStream());
+      }
+      return;
+    }
+    var bytes = artifacts.bundle(job);
+    accounts.current(p.getName());
+    response.setContentType("application/zip");
+    response.setHeader(HttpHeaders.CACHE_CONTROL, "no-store");
+    response.setHeader(
+        HttpHeaders.CONTENT_DISPOSITION,
+        "attachment; filename=waterleague-watershed-" + id + ".zip");
+    response.setContentLength(bytes.length);
+    response.getOutputStream().write(bytes);
   }
 }

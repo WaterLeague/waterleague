@@ -12,6 +12,10 @@ def verify(model, result, root, read, file_digest):
     try:
         summary = validate(model)
         prepared, _ = compile_numerics(model)
+        if 'connectedFacilityDesign' in model:
+            from ..engine.connected_facilities import compile_design
+            raw, _ = compile_design(prepared['network']['inputText'].encode(), model['connectedFacilityDesign'])
+            prepared = prepared | {'network': prepared['network'] | {'inputText': raw.decode()}}
     except FloodModelError:
         raise EvaluationError('EVALUATION_PUBLIC_CONNECTION_INVALID') from None
     names = ('published-surface-connection.json', 'published_surface_connection.py')

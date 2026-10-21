@@ -22,11 +22,19 @@ def _write(path, value):
     path.write_text(json.dumps(value, ensure_ascii=False, allow_nan=False, indent=2) + '\n')
 
 
+def _file_digest(path):
+    with path.open('rb') as stream:
+        return hashlib.file_digest(stream, 'sha256').hexdigest()
+
+
 def _validate(model):
     require(model.get('schemaVersion') == 1 and model.get('evidence'), 'COUPLED_REFERENCE_REQUIRED')
     if 'networkObserverPolicy' in model:
         from waterleague_sim.forcing.live_network_rainfall import FACILITY_OBSERVER
-        require(model['networkObserverPolicy'] == FACILITY_OBSERVER, 'COUPLED_OBSERVER_POLICY_INVALID')
+        from .published_surface_connection import FACILITY_OBSERVER as PUBLIC_OBSERVER
+        require(model['networkObserverPolicy'] == FACILITY_OBSERVER or (
+            'publishedSurfaceConnection' in model and model['networkObserverPolicy'] == PUBLIC_OBSERVER),
+            'COUPLED_OBSERVER_POLICY_INVALID')
     surface, network = model['surface'], model['network']
     public_connection = None
     if 'publishedSurfaceConnection' in model:
@@ -137,7 +145,11 @@ def run_coupled(model, directory):
     facility_rainfall, rainfall_network = None, None
     direct_network = (model.get('observedRainfall', {}).get('schemaVersion') == 2
                       and has_network_rainfall(model))
-    require('networkObserverPolicy' not in model or direct_network, 'COUPLED_OBSERVER_POLICY_INVALID')
+    from .published_surface_connection import FACILITY_OBSERVER
+    public_observer = ('publishedSurfaceConnection' in model
+                       and model.get('networkObserverPolicy') == FACILITY_OBSERVER)
+    require('networkObserverPolicy' not in model or direct_network or public_observer,
+            'COUPLED_OBSERVER_POLICY_INVALID')
     if direct_network and any(k in model for k in ('connectedFacilityDesign', 'connectedCisternDesign')):
         from waterleague_sim.forcing.live_network_rainfall import validate_facility_binding, compile_network
         validate_facility_binding(model)
@@ -288,7 +300,7 @@ def run_coupled(model, directory):
     event_times = sorted(set(events) | stage_times | {duration})
     clock, nstate, state = 0, None, None
     network_engine = ('coupled_pump_network' if pump_design is not None else
-                      'coupled_facility_network' if facility_design is not None else
+                      'coupled_facility_network' if facility_design is not None or public_observer else
                       'network_metrics' if metric_spec is not None else 'network_exchange')
     if network_rainfall is not None:
         network_engine = ('coupled_rainfall_facility' if facility_design is not None or model.get('networkObserverPolicy') else
@@ -467,7 +479,7 @@ def run_coupled(model, directory):
                         '유입부 영역 평균 수두와 수평 운동량 없는 수직 유입 가정',
                         '관망 라우팅·지표 물수지 범위; 유역 토양·증발산 전체 수지 아님',
                         '연결되지 않은 노드 월류는 실패 처리, 임의 지표 위치 할당 없음'],
-                    'files': {str(p.relative_to(directory)): hashlib.sha256(p.read_bytes()).hexdigest()
+                    'files': {str(p.relative_to(directory)): _file_digest(p)
                               for p in sorted(directory.rglob('*')) if p.is_file()}}
                 if 'networkRainfallCoverage' in model:
                     result['rainfallCoverage'] = model['networkRainfallCoverage']['totals'] | {

@@ -13,6 +13,24 @@ PROFILE = {'id': 'slot-fine', 'options': {'SURCHARGE_METHOD': 'SLOT', 'ROUTING_S
 
 
 class NetworkVariantTests(unittest.TestCase):
+    def test_hydrology_refinement_is_explicit_and_keeps_original_hash_scope(self):
+        original = MINIMAL.replace(b'HEAD_TOLERANCE', b'WET_STEP 00:05:00\r\nDRY_STEP 00:05:00\r\nHEAD_TOLERANCE')
+        legacy, legacy_metadata = derive(original, PROFILE)
+        profile = {'id': 'hydrology-one-second', 'options': PROFILE['options'] | {'WET_STEP': 1, 'DRY_STEP': 1}}
+        refined, metadata = derive(original, profile)
+        self.assertIn(b'WET_STEP 00:00:01\r\n', refined)
+        self.assertIn(b'DRY_STEP 00:00:01\r\n', refined)
+        self.assertEqual(hydraulic_input_hash(original), legacy_metadata['hydraulicInputSha256'])
+        self.assertEqual(hydraulic_input_hash(original), hydraulic_input_hash(legacy))
+        self.assertNotEqual(hydraulic_input_hash(original), hydraulic_input_hash(refined))
+        self.assertEqual(hydraulic_input_hash(original, hydrology=True), metadata['hydraulicInputSha256'])
+        self.assertEqual(hydraulic_input_hash(original, hydrology=True), hydraulic_input_hash(refined, hydrology=True))
+        for options in ({'WET_STEP': 1}, {'WET_STEP': True, 'DRY_STEP': 1},
+                        {'WET_STEP': .5, 'DRY_STEP': 1}, {'WET_STEP': 2, 'DRY_STEP': 1},
+                        {'WET_STEP': 1, 'DRY_STEP': 301}):
+            with self.assertRaises(FloodModelError):
+                derive(original, {'id': 'invalid', 'options': options})
+
     def test_original_input_and_all_physical_tokens_remain_unchanged(self):
         before = digest(MINIMAL)
         raw, metadata = derive(MINIMAL, PROFILE)

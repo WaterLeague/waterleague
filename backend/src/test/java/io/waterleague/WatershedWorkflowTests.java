@@ -42,11 +42,90 @@ class WatershedWorkflowTests extends PostgresIntegrationTest {
   UUID owner;
 
   @Test
+  void freezesCoupledProfileAndRejectsChangedOrUnlocatedDesign() throws Exception {
+    var original = request(UUID.randomUUID(), "SurfaceBio", "S2", "100", "1000");
+    var coupled =
+        new WatershedRequest(
+            original.requestKey(),
+            original.catalogHash(),
+            original.placements(),
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            WatershedCatalogRepository.GEOREFERENCE_HASH,
+            WatershedCatalogRepository.SURFACE_HASH);
+    var job = service.create(owner, coupled);
+    var stored = service.require(owner, job.id());
+    assertThat(
+            json.tree(stored.placements())
+                .path("surfaceConnection")
+                .path("profileSha256")
+                .asString())
+        .isEqualTo(WatershedCatalogRepository.SURFACE_HASH);
+    assertThat(service.create(owner, coupled).id()).isEqualTo(job.id());
+    assertThatThrownBy(() -> service.create(owner, original)).isInstanceOf(DomainException.class);
+    for (String geo : Arrays.asList(null, "0".repeat(64))) {
+      var invalid =
+          new WatershedRequest(
+              UUID.randomUUID(),
+              original.catalogHash(),
+              original.placements(),
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              geo,
+              WatershedCatalogRepository.SURFACE_HASH);
+      assertThatThrownBy(() -> service.create(owner, invalid)).isInstanceOf(DomainException.class);
+    }
+    var unknown =
+        new WatershedRequest(
+            UUID.randomUUID(),
+            original.catalogHash(),
+            original.placements(),
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            WatershedCatalogRepository.GEOREFERENCE_HASH,
+            "0".repeat(64));
+    assertThatThrownBy(() -> service.create(owner, unknown)).isInstanceOf(DomainException.class);
+    assertThat(service.catalog())
+        .containsEntry("surfaceProfileHash", WatershedCatalogRepository.SURFACE_HASH);
+    Files.writeString(
+        outputDirectory.resolve("surface-server-request.json"),
+        json.write(
+            Map.of(
+                "modelHash",
+                stored.modelHash(),
+                "inputHash",
+                stored.inputHash(),
+                "placements",
+                stored.placements())));
+  }
+
+  @Test
   void freezesMapLocationAssumptionAndRejectsUnknownProfile() throws Exception {
     var original = request(UUID.randomUUID(), "MapBio", "S2", "100", "1000");
-    var mapped = new WatershedRequest(original.requestKey(), original.catalogHash(),
-        original.placements(), null, null, null, null, null, null,
-        WatershedCatalogRepository.GEOREFERENCE_HASH);
+    var mapped =
+        new WatershedRequest(
+            original.requestKey(),
+            original.catalogHash(),
+            original.placements(),
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            WatershedCatalogRepository.GEOREFERENCE_HASH);
     var job = service.create(owner, mapped);
     var stored = service.require(owner, job.id());
     var design = json.tree(stored.placements());
@@ -56,13 +135,31 @@ class WatershedWorkflowTests extends PostgresIntegrationTest {
     assertThat(design.path("placements").get(0).path("subcatchmentId").asString()).isEqualTo("S2");
     assertThat(service.create(owner, mapped).id()).isEqualTo(job.id());
     assertThatThrownBy(() -> service.create(owner, original)).isInstanceOf(DomainException.class);
-    var invalid = new WatershedRequest(UUID.randomUUID(), original.catalogHash(),
-        original.placements(), null, null, null, null, null, null, "0".repeat(64));
+    var invalid =
+        new WatershedRequest(
+            UUID.randomUUID(),
+            original.catalogHash(),
+            original.placements(),
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            "0".repeat(64));
     assertThatThrownBy(() -> service.create(owner, invalid)).isInstanceOf(DomainException.class);
-    assertThat(service.catalog()).containsEntry("georeferenceHash", WatershedCatalogRepository.GEOREFERENCE_HASH);
-    Files.writeString(outputDirectory.resolve("location-server-request.json"),
-        json.write(Map.of("modelHash", stored.modelHash(), "inputHash", stored.inputHash(),
-            "placements", stored.placements())));
+    assertThat(service.catalog())
+        .containsEntry("georeferenceHash", WatershedCatalogRepository.GEOREFERENCE_HASH);
+    Files.writeString(
+        outputDirectory.resolve("location-server-request.json"),
+        json.write(
+            Map.of(
+                "modelHash",
+                stored.modelHash(),
+                "inputHash",
+                stored.inputHash(),
+                "placements",
+                stored.placements())));
   }
 
   @AfterEach
@@ -530,6 +627,99 @@ class WatershedWorkflowTests extends PostgresIntegrationTest {
     Files.writeString(root.resolve("outside.bin"), files.get("engine.bin"));
     Files.createSymbolicLink(dir.resolve("engine.bin"), root.resolve("outside.bin"));
     assertThatThrownBy(() -> artifacts.bundle(job)).isInstanceOf(DomainException.class);
+  }
+
+  @Test
+  void spoolsCoupledArtifactsAndRejectsRehashedChangesAndParallelDownloads(
+      @org.junit.jupiter.api.io.TempDir Path root) throws Exception {
+    root = root.toRealPath();
+    UUID id = UUID.randomUUID(), lease = UUID.randomUUID();
+    Path dir = root.resolve("watersheds").resolve(id.toString()).resolve(lease.toString());
+    Files.createDirectories(dir);
+    String model = json.hash("CATALOG"), design = "{}", input = json.hash(model + "\n" + design);
+    var files = new TreeMap<String, String>();
+    files.put(
+        "request.json",
+        json.write(Map.of("modelHash", model, "inputHash", input, "placements", design)));
+    files.put("catalog.json", "CATALOG");
+    for (String name :
+        List.of(
+            "original.inp",
+            "implementation.zip",
+            "engine.bin",
+            "engine-build.json",
+            "engine-source.tar.gz",
+            "surface-comparison/profile.json",
+            "surface-comparison/comparison.json",
+            "surface-comparison/baseline/coupled-result.json",
+            "surface-comparison/strategy/coupled-result.json",
+            "surface-comparison/strategy/network/network.inp",
+            "surface-comparison/strategy/surface/surface.sww")) files.put(name, "전송 검사 " + name);
+    var hashes = new TreeMap<String, String>();
+    files.forEach((name, raw) -> hashes.put(name, json.hash(raw)));
+    String result = json.write(Map.of("artifactFiles", hashes, "surfaceComparison", Map.of()));
+    files.put("result.json", result);
+    hashes.put("result.json", json.hash(result));
+    for (var file : files.entrySet()) {
+      Path path = dir.resolve(file.getKey());
+      Files.createDirectories(path.getParent());
+      Files.writeString(path, file.getValue());
+    }
+    Files.writeString(dir.resolve("manifest.json"), json.write(hashes));
+    var job =
+        new WatershedExperiment(
+            id, owner, model, input, design, "SUCCEEDED", lease, Instant.now(), result);
+    var artifacts = new WatershedArtifactService(root.toString(), json);
+    Path exported;
+    try (var prepared = artifacts.prepareLargeBundle(job)) {
+      exported = prepared.path();
+      try (var zip = new java.util.zip.ZipFile(exported.toFile())) {
+        assertThat(zip.size()).isEqualTo(files.size() + 1);
+      }
+      assertThatThrownBy(() -> artifacts.prepareLargeBundle(job))
+          .isInstanceOf(DomainException.class);
+    }
+    assertThat(Files.exists(exported)).isFalse();
+    String forged =
+        json.write(
+            Map.of(
+                "artifactFiles",
+                json.tree(result).path("artifactFiles"),
+                "surfaceComparison",
+                Map.of("forged", true)));
+    hashes.put("result.json", json.hash(forged));
+    Files.writeString(dir.resolve("manifest.json"), json.write(hashes));
+    var duringExport = org.mockito.Mockito.spy(json);
+    var resultReads = new java.util.concurrent.atomic.AtomicInteger();
+    Path resultPath = dir.resolve("result.json");
+    org.mockito.Mockito.doAnswer(
+            invocation -> {
+              Object parsed = invocation.callRealMethod();
+              if (resultReads.incrementAndGet() == 3) Files.writeString(resultPath, forged);
+              return parsed;
+            })
+        .when(duringExport)
+        .tree(result);
+    var changing = new WatershedArtifactService(root.toString(), duringExport);
+    assertThatThrownBy(() -> changing.prepareLargeBundle(job)).isInstanceOf(DomainException.class);
+    assertThat(resultReads.get()).isEqualTo(3);
+    Files.writeString(resultPath, result);
+    hashes.put("result.json", json.hash(result));
+    String changed = "surface-comparison/strategy/network/network.inp";
+    Files.writeString(dir.resolve(changed), "변조");
+    hashes.put(changed, json.hash("변조"));
+    Files.writeString(dir.resolve("manifest.json"), json.write(hashes));
+    assertThatThrownBy(() -> artifacts.prepareLargeBundle(job)).isInstanceOf(DomainException.class);
+    Files.writeString(dir.resolve(changed), files.get(changed));
+    hashes.put(changed, json.hash(files.get(changed)));
+    Files.writeString(dir.resolve("manifest.json"), json.write(hashes));
+    try (var prepared = artifacts.prepareLargeBundle(job)) {
+      assertThat(Files.size(prepared.path())).isPositive();
+    }
+    Files.delete(dir.resolve(changed));
+    Files.writeString(root.resolve("outside.inp"), files.get(changed));
+    Files.createSymbolicLink(dir.resolve(changed), root.resolve("outside.inp"));
+    assertThatThrownBy(() -> artifacts.prepareLargeBundle(job)).isInstanceOf(DomainException.class);
   }
 
   WatershedRequest.PumpItem pump(String id, String from, String to) {

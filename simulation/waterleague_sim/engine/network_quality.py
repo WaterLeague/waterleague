@@ -14,13 +14,15 @@ def configuration_state(library, declared_options):
         values = {name: C.c_double.in_dll(library, name).value for name in doubles}
         method = C.c_int.in_dll(library, 'SurchargeMethod').value
         trials = C.c_int.in_dll(library, 'MaxTrials').value
+        wet_step = C.c_int.in_dll(library, 'WetStep').value
+        dry_step = C.c_int.in_dll(library, 'DryStep').value
     except ValueError:
         require(False, 'NETWORK_CONFIGURATION_UNAVAILABLE')
     require(all(math.isfinite(v) and v >= 0 for v in values.values())
             and values['RouteStep'] > 0 and values['MinRouteStep'] > 0
-            and method in (0, 1) and trials > 0, 'NETWORK_CONFIGURATION_INVALID')
+            and method in (0, 1) and trials > 0 and 0 < wet_step <= dry_step, 'NETWORK_CONFIGURATION_INVALID')
     names = ('SURCHARGE_METHOD', 'ROUTING_STEP', 'MINIMUM_STEP', 'VARIABLE_STEP',
-             'MIN_SURFAREA', 'HEAD_TOLERANCE', 'MAX_TRIALS')
+             'MIN_SURFAREA', 'HEAD_TOLERANCE', 'MAX_TRIALS', 'WET_STEP', 'DRY_STEP')
     return {'method': 'EPA_5_2_4_NATIVE_SETTINGS_READ_ONLY',
             'surchargeMethod': ('EXTRAN', 'SLOT')[method],
             'maximumRoutingStepSeconds': values['RouteStep'],
@@ -29,6 +31,8 @@ def configuration_state(library, declared_options):
             'minimumNumericalNodeAreaM2': values['MinSurfArea'] * .3048 ** 2,
             'headConvergenceToleranceM': values['HeadTol'] * .3048,
             'maximumTrials': trials,
+            'wetRunoffStepSeconds': wet_step,
+            'dryRunoffStepSeconds': dry_step,
             'declaredInputOptions': {key: declared_options[key] for key in names if key in declared_options},
             'defaultedInputOptions': [key for key in names if key not in declared_options]}
 

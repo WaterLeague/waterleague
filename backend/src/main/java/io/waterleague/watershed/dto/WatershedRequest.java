@@ -16,13 +16,54 @@ public record WatershedRequest(
     @Pattern(regexp = "[a-f0-9]{64}") String cisternCostCatalogHash,
     @Valid PumpRequest pumps,
     @Valid CisternRequest cistern,
-    @Pattern(regexp = "[a-f0-9]{64}") String georeferenceHash) {
+    @Pattern(regexp = "[a-f0-9]{64}") String georeferenceHash,
+    @Pattern(regexp = "[a-f0-9]{64}") String surfaceProfileHash) {
   public WatershedRequest(
-      UUID requestKey, String catalogHash, List<Item> placements, String costCatalogHash,
-      StorageRequest storage, ConduitRequest conduits, String cisternCostCatalogHash,
-      PumpRequest pumps, CisternRequest cistern) {
-    this(requestKey, catalogHash, placements, costCatalogHash, storage, conduits,
-        cisternCostCatalogHash, pumps, cistern, null);
+      UUID requestKey,
+      String catalogHash,
+      List<Item> placements,
+      String costCatalogHash,
+      StorageRequest storage,
+      ConduitRequest conduits,
+      String cisternCostCatalogHash,
+      PumpRequest pumps,
+      CisternRequest cistern,
+      String georeferenceHash) {
+    this(
+        requestKey,
+        catalogHash,
+        placements,
+        costCatalogHash,
+        storage,
+        conduits,
+        cisternCostCatalogHash,
+        pumps,
+        cistern,
+        georeferenceHash,
+        null);
+  }
+
+  public WatershedRequest(
+      UUID requestKey,
+      String catalogHash,
+      List<Item> placements,
+      String costCatalogHash,
+      StorageRequest storage,
+      ConduitRequest conduits,
+      String cisternCostCatalogHash,
+      PumpRequest pumps,
+      CisternRequest cistern) {
+    this(
+        requestKey,
+        catalogHash,
+        placements,
+        costCatalogHash,
+        storage,
+        conduits,
+        cisternCostCatalogHash,
+        pumps,
+        cistern,
+        null);
   }
 
   public WatershedRequest(

@@ -11,6 +11,7 @@ from ..terrain.rainfall_coverage import validate as validate_rainfall
 
 METHOD = 'PUBLISHED_SURFACE_CONNECTION_EXPLORATION_V1'
 DATUM_POLICY = 'SOURCE_BOUND_COMMON_DATUM_ASSUMPTION_V1'
+FACILITY_OBSERVER = 'PUBLISHED_COUPLED_FACILITY_OBSERVER_V1'
 
 
 def sha(raw):
@@ -188,6 +189,12 @@ def validate(model):
     binding = model.get('publishedSurfaceConnection')
     require(isinstance(binding, dict) and set(binding) == {'request', 'summary'}, 'PUBLIC_CONNECTION_BINDING_REQUIRED')
     expected = compile_connection(binding['request'])
-    require(set(model) <= set(expected) | {'dryExchangePolicy'}
+    require(set(model) <= set(expected) | {'dryExchangePolicy', 'connectedFacilityDesign', 'networkObserverPolicy'}
             and all(model.get(key) == value for key, value in expected.items()), 'PUBLIC_CONNECTION_BINDING_MISMATCH')
+    require('networkObserverPolicy' not in model or model['networkObserverPolicy'] == FACILITY_OBSERVER,
+            'PUBLIC_CONNECTION_OBSERVER_INVALID')
+    if 'connectedFacilityDesign' in model:
+        from .connected_facilities import compile_design
+        # 시설은 원 집수구역 안에서만 배분하며 지형·교환구·원 강우 결속을 바꾸지 않는다.
+        compile_design(expected['network']['inputText'].encode(), model['connectedFacilityDesign'])
     return expected['publishedSurfaceConnection']['summary']

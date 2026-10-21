@@ -160,6 +160,36 @@ export function WatershedDesignReview({
       >
         {state.busy ? '요청 중…' : '기준안과 관망 계산 비교'}
       </button>
+      {catalog.surfaceProfile && (
+        <>
+          <button
+            type="button"
+            className="watershed-submit"
+            disabled={
+              state.busy ||
+              !state.drafts.length ||
+              Boolean(state.cisternDraft) ||
+              state.storageDrafts.length > 0 ||
+              state.conduitDrafts.length > 0 ||
+              state.pumpDrafts.length > 0 ||
+              state.drafts.some((p) => p.facilityType === 'RAINWATER_CISTERN')
+            }
+            onClick={() => void state.submit(true)}
+          >
+            지표 수심까지 함께 비교
+          </button>
+          <p>
+            생물저류·침투도랑·식생수로는 공개 지형을 포함해 비교할 수 있습니다. 계산에는 수 분 이상
+            걸리며 창을 닫아도 계속됩니다.
+          </p>
+          <details>
+            <summary>지표 계산에 적용되는 가정</summary>
+            {catalog.surfaceProfile.limitations.map((text) => (
+              <p key={text}>{text}</p>
+            ))}
+          </details>
+        </>
+      )}
     </>
   );
 }

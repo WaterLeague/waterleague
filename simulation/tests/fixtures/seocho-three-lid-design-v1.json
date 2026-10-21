@@ -1,0 +1,79 @@
+{
+  "basis": "PUBLIC_REFERENCE_DESIGN_NOT_SITE_MEASURED",
+  "locationReference": {
+    "assumedSourceCrs": "EPSG:5181",
+    "evidenceSha256": "5b537d4b85533e2fb9d3e9928b52199aa07a8520fd5490289d47f94d39940071",
+    "horizontalCrs": "EPSG:5186",
+    "id": "SEOCHO_ROAD_SUPPORTED_LOCATION_V1",
+    "method": "ROAD_SUPPORTED_CRS_HYPOTHESIS_V1",
+    "profileSha256": "36a477f877d0d0fc4518f5e7664497e6e36798299745880932d5b43148ac01ab",
+    "sourceCrsVerified": false,
+    "sourceLayoutSha256": "fa3e4d833650df5c40d933bd0b289dd029a54e0beb73fad9b9d3ef239cb0236d",
+    "sourceOriginalSha256": "8ce278a3d2b58df3c2a5fd1232160bcabb324389746ee0c878792acf91abbdbb"
+  },
+  "placements": [
+    {
+      "areaM2": 100.0,
+      "facilityType": "BIORETENTION",
+      "id": "F1",
+      "initialSaturationPercent": 0,
+      "parameters": {
+        "drain": {
+          "delayHours": 0,
+          "diameterMm": 25,
+          "dischargeCoefficient": 0.6,
+          "offsetMm": 152.4
+        },
+        "nativeSeepageBasis": "DESIGN_ASSUMPTION",
+        "nativeSeepageMmH": 4,
+        "soilDepthMm": 609.6,
+        "storageDepthMm": 304.8,
+        "storagePorosity": 0.3,
+        "surfaceDepthMm": 152.4,
+        "vegetationFraction": 0.1
+      },
+      "replacedImperviousM2": 100.0,
+      "subcatchmentId": "S2",
+      "treatedImperviousM2": 1000.0
+    },
+    {
+      "areaM2": 25.0,
+      "facilityType": "INFILTRATION_TRENCH",
+      "id": "F2",
+      "initialSaturationPercent": 0,
+      "parameters": {
+        "drain": null,
+        "nativeSeepageBasis": "DESIGN_ASSUMPTION",
+        "nativeSeepageMmH": 4,
+        "storageDepthMm": 914.4,
+        "storagePorosity": 0.3,
+        "surfaceDepthMm": 152.4
+      },
+      "replacedImperviousM2": 25.0,
+      "subcatchmentId": "S1",
+      "treatedImperviousM2": 100.0
+    },
+    {
+      "areaM2": 25.0,
+      "facilityType": "VEGETATIVE_SWALE",
+      "id": "F3",
+      "initialSaturationPercent": 0,
+      "parameters": {
+        "bottomWidthM": 1.2192,
+        "roughness": 0.15,
+        "sideSlope": 3,
+        "slopePercent": 1,
+        "surfaceDepthMm": 304.8,
+        "vegetationFraction": 0.1
+      },
+      "replacedImperviousM2": 25.0,
+      "subcatchmentId": "S3",
+      "treatedImperviousM2": 100.0
+    }
+  ],
+  "schemaVersion": 1,
+  "surfaceConnection": {
+    "id": "seocho-surface-design-v1",
+    "profileSha256": "017a325234f482695cf8bcf4b9cd0eece772cf58dacdafdb389bd37159a2b0e7"
+  }
+}

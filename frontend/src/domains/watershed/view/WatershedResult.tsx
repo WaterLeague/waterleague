@@ -1,4 +1,5 @@
 import { StorageLedger } from './StorageLedger';
+import { WatershedSurfaceResult } from './WatershedSurfaceResult';
 import { PumpOperation } from './PumpOperation';
 import { WatershedPlayback } from './WatershedPlayback';
 import { CisternReferenceCosts } from './CisternReferenceCosts';
@@ -11,6 +12,20 @@ import { WatershedFloodDuration } from './WatershedFloodDuration';
 import { networkNames } from '../service/watershedDesign';
 import { physicalAmount as number } from '../../physics/service/physicalValueFormat';
 import { RelativeImprovement } from '../../physics/view/RelativeImprovement';
+import type { ReactNode } from 'react';
+function NetworkReference({ coupled, children }: { coupled: boolean; children: ReactNode }) {
+  if (!coupled) return <>{children}</>;
+  return (
+    <details className="watershed-network-reference">
+      <summary>지표를 연결하지 않은 관망만의 참고 비교</summary>
+      <p>
+        위의 결합 계산과 경계 조건이 다릅니다. 아래 유량·월류·재생은 이 별도 계산의 결과입니다.
+        지표에서 관망으로 되돌아오는 물은 포함하지 않습니다.
+      </p>
+      {children}
+    </details>
+  );
+}
 const totalAmount = (value: number) =>
   value !== 0 && Math.abs(value) < 0.000001
     ? number(value)
@@ -39,6 +54,13 @@ export function WatershedResult({ job }: { job: WatershedJob }) {
         <span className="watershed-status">{jobLabels[job.state]}</span>
       </header>
       <time dateTime={job.createdAt}>{new Date(job.createdAt).toLocaleString('ko-KR')}</time>
+      {job.design.surfaceConnection && !result && (
+        <p>
+          관망·지표의 기준안과 설계안을 함께 계산합니다. 작업이 끝나면 수심·출구 유량 비교가
+          표시됩니다.
+        </p>
+      )}
+      {result?.surfaceComparison && <WatershedSurfaceResult result={result.surfaceComparison} />}
       {job.design.locationReference && (
         <p>
           지도 위치 가정 {job.design.locationReference.assumedSourceCrs} · 제출 당시 원본 고정 · 원
@@ -152,153 +174,165 @@ export function WatershedResult({ job }: { job: WatershedJob }) {
       )}
       {result && (
         <>
-          <p
-            className={result.numericalStatus === 'PASSED' ? 'watershed-pass' : 'watershed-warning'}
-          >
-            {result.numericalStatus === 'PASSED'
-              ? '수치 검사 통과 · 현장 정확도 검증과 구분'
-              : '수치 검사 실패 · 효과 비교 보류'}
-          </p>
-          <PumpOperation job={job} />
-          {unmodeledCover && (
-            <p role="status">
-              덮개 강우의 별도 배수 경로가 없는 구형 이용조 설계입니다. 원 계산값은 보관하며 효과
-              비교를 보류합니다.
+          <NetworkReference coupled={Boolean(result.surfaceComparison)}>
+            <p
+              className={
+                result.numericalStatus === 'PASSED' ? 'watershed-pass' : 'watershed-warning'
+              }
+            >
+              {result.numericalStatus === 'PASSED'
+                ? '수치 검사 통과 · 현장 정확도 검증과 구분'
+                : '수치 검사 실패 · 효과 비교 보류'}
             </p>
-          )}
-          {job.state === 'SUCCEEDED' &&
-            result.networkLayout &&
-            result.cases.every((c) => c.complete) && (
-              <WatershedPlayback key={job.id} jobId={job.id} layout={result.networkLayout.layout} />
-            )}
-          {strategy?.connectedStorage && (
-            <StorageLedger title="저류조 물수지" summary={strategy.connectedStorage} />
-          )}
-          {strategy?.networkCistern && (
-            <StorageLedger title="빗물이용조 물수지" summary={strategy.networkCistern} />
-          )}
-          <WatershedFloodDuration
-            metric={result.metricComparison?.metrics.find((m) => m.id === 'networkFloodingSeconds')}
-            window={result.metricComparison?.window}
-            canCompare={Boolean(comparable)}
-          />
-          {comparable && (
-            <>
-              {result.networkLayout && baseline?.nodeFlooding && strategy?.nodeFlooding && (
-                <WatershedFloodMap
-                  key={job.id}
-                  layout={result.networkLayout.layout}
-                  baseline={baseline.nodeFlooding}
-                  strategy={strategy.nodeFlooding}
-                />
-              )}
-              {(['floodingM3', 'outflowM3'] as const).map((metric) => {
-                const reduction = comparable[metric];
-                return (
-                  <div
-                    className="watershed-effect"
-                    key={metric}
-                    data-direction={
-                      reduction < 0 ? 'increase' : reduction > 0 ? 'decrease' : 'equal'
-                    }
-                  >
-                    <span>{metric === 'floodingM3' ? '관망 월류량' : '외부 방류량'}</span>
-                    <strong>
-                      {number(Math.abs(reduction))} m³{' '}
-                      {reduction < 0 ? '증가' : reduction > 0 ? '감소' : '변화 없음'}
-                    </strong>
-                    <small>기준 − 설계: {number(reduction)} m³</small>
-                    <RelativeImprovement
-                      metric={result.metricComparison?.metrics.find(
-                        (m) =>
-                          m.id ===
-                          (metric === 'floodingM3' ? 'networkFloodingM3' : 'networkOutflowM3')
-                      )}
-                    />
-                    <small>
-                      기준 {totalAmount(baseline!.totals![metric])} → 설계{' '}
-                      {totalAmount(strategy!.totals![metric])} m³
-                    </small>
-                  </div>
-                );
-              })}
-              <p>
-                월류량은 지표 침수 깊이가 아닙니다. 방류량의 변화만으로 하류 침수 위험이나 첨두
-                감소를 판단할 수 없습니다.
+            <PumpOperation job={job} />
+            {unmodeledCover && (
+              <p role="status">
+                덮개 강우의 별도 배수 경로가 없는 구형 이용조 설계입니다. 원 계산값은 보관하며 효과
+                비교를 보류합니다.
               </p>
-              {baseline?.evaluationMetrics &&
-              strategy?.evaluationMetrics &&
-              result.signedPeakReductionM3s != null ? (
-                <WatershedPeaks
-                  baseline={baseline.evaluationMetrics}
-                  strategy={strategy.evaluationMetrics}
-                  reduction={result.signedPeakReductionM3s}
-                  metric={result.metricComparison?.metrics.find((m) => m.id === 'networkPeakM3s')}
+            )}
+            {job.state === 'SUCCEEDED' &&
+              result.networkLayout &&
+              result.cases.every((c) => c.complete) && (
+                <WatershedPlayback
+                  key={job.id}
+                  jobId={job.id}
+                  layout={result.networkLayout.layout}
                 />
-              ) : (
-                <p>이전 계산 기록에는 출구 첨두가 수집되지 않았습니다.</p>
               )}
-            </>
-          )}
-          <details>
-            <summary>계산 상태·시설 최종 상태</summary>
-            {result.cases.map((c) => (
-              <div key={c.id} className="watershed-case">
-                <strong>
-                  {c.id === 'baseline' ? '시설 없는 기준안' : '시설 설계안'} ·{' '}
-                  {c.numericalStatus === 'PASSED' ? '수치 검사 통과' : '실패'}
-                </strong>
-                {c.execution && (
-                  <p>
-                    {c.execution.mode === 'REUSED'
-                      ? '동일 조건의 검증된 계산 결과 재사용'
-                      : '이번 요청에서 새로 계산'}
-                  </p>
+            {strategy?.connectedStorage && (
+              <StorageLedger title="저류조 물수지" summary={strategy.connectedStorage} />
+            )}
+            {strategy?.networkCistern && (
+              <StorageLedger title="빗물이용조 물수지" summary={strategy.networkCistern} />
+            )}
+            <WatershedFloodDuration
+              metric={result.metricComparison?.metrics.find(
+                (m) => m.id === 'networkFloodingSeconds'
+              )}
+              window={result.metricComparison?.window}
+              canCompare={Boolean(comparable)}
+            />
+            {comparable && (
+              <>
+                {result.networkLayout && baseline?.nodeFlooding && strategy?.nodeFlooding && (
+                  <WatershedFloodMap
+                    key={job.id}
+                    layout={result.networkLayout.layout}
+                    baseline={baseline.nodeFlooding}
+                    strategy={strategy.nodeFlooding}
+                  />
                 )}
-                {c.convergence && (
-                  <p>비수렴 {c.convergence.nonConvergedSteps.toLocaleString('ko-KR')}회</p>
+                {(['floodingM3', 'outflowM3'] as const).map((metric) => {
+                  const reduction = comparable[metric];
+                  return (
+                    <div
+                      className="watershed-effect"
+                      key={metric}
+                      data-direction={
+                        reduction < 0 ? 'increase' : reduction > 0 ? 'decrease' : 'equal'
+                      }
+                    >
+                      <span>{metric === 'floodingM3' ? '관망 월류량' : '외부 방류량'}</span>
+                      <strong>
+                        {number(Math.abs(reduction))} m³{' '}
+                        {reduction < 0 ? '증가' : reduction > 0 ? '감소' : '변화 없음'}
+                      </strong>
+                      <small>기준 − 설계: {number(reduction)} m³</small>
+                      <RelativeImprovement
+                        metric={result.metricComparison?.metrics.find(
+                          (m) =>
+                            m.id ===
+                            (metric === 'floodingM3' ? 'networkFloodingM3' : 'networkOutflowM3')
+                        )}
+                      />
+                      <small>
+                        기준 {totalAmount(baseline!.totals![metric])} → 설계{' '}
+                        {totalAmount(strategy!.totals![metric])} m³
+                      </small>
+                    </div>
+                  );
+                })}
+                <p>
+                  월류량은 지표 침수 깊이가 아닙니다. 방류량의 변화만으로 하류 침수 위험이나 첨두
+                  감소를 판단할 수 없습니다.
+                </p>
+                {baseline?.evaluationMetrics &&
+                strategy?.evaluationMetrics &&
+                result.signedPeakReductionM3s != null ? (
+                  <WatershedPeaks
+                    baseline={baseline.evaluationMetrics}
+                    strategy={strategy.evaluationMetrics}
+                    reduction={result.signedPeakReductionM3s}
+                    metric={result.metricComparison?.metrics.find((m) => m.id === 'networkPeakM3s')}
+                  />
+                ) : (
+                  <p>이전 계산 기록에는 출구 첨두가 수집되지 않았습니다.</p>
                 )}
-                {c.totals && <p>관망 물수지 잔차 {number(c.totals.balanceResidualM3)} m³</p>}
-                {c.calendarShortfallSeconds !== undefined && (
-                  <p>입력 종료 시각보다 {number(c.calendarShortfallSeconds)}초 짧은 엔진 계산 창</p>
-                )}
-                {c.conduits?.map((p) => (
-                  <p key={p.id}>
-                    {p.conduitId} · 계산 종료 유량 {number(p.flowM3s)} m³/s · 내부 수심{' '}
-                    {number(p.depthM)} m · 시작 후 {number(c.conduitStateTimeSeconds!)}초. 양수는
-                    관로 정의 방향이며 첨두 유량이 아닙니다.
-                  </p>
-                ))}
-                {c.facilities?.map((f) => (
-                  <div className="watershed-facility-state" key={f.swmmId}>
-                    <strong>
-                      {f.subcatchmentId} · {f.swmmId.replace(/^WL_/, '')} · {number(f.areaM2)} m²
-                    </strong>
+              </>
+            )}
+            <details>
+              <summary>계산 상태·시설 최종 상태</summary>
+              {result.cases.map((c) => (
+                <div key={c.id} className="watershed-case">
+                  <strong>
+                    {c.id === 'baseline' ? '시설 없는 기준안' : '시설 설계안'} ·{' '}
+                    {c.numericalStatus === 'PASSED' ? '수치 검사 통과' : '실패'}
+                  </strong>
+                  {c.execution && (
                     <p>
-                      표면 수심 {number(f.surfaceDepthMm)} mm · 최종 저류 {number(f.finalStorageM3)}{' '}
-                      m³
+                      {c.execution.mode === 'REUSED'
+                        ? '동일 조건의 검증된 계산 결과 재사용'
+                        : '이번 요청에서 새로 계산'}
                     </p>
-                    {f.soilMoisture != null && <p>토양수분 {number(f.soilMoisture * 100)}%</p>}
+                  )}
+                  {c.convergence && (
+                    <p>비수렴 {c.convergence.nonConvergedSteps.toLocaleString('ko-KR')}회</p>
+                  )}
+                  {c.totals && <p>관망 물수지 잔차 {number(c.totals.balanceResidualM3)} m³</p>}
+                  {c.calendarShortfallSeconds !== undefined && (
                     <p>
-                      시설 수지 잔차 {number(f.balanceResidualM3)} m³ ·{' '}
-                      {f.numericalStatus === 'PASSED' ? '통과' : '실패'}
+                      입력 종료 시각보다 {number(c.calendarShortfallSeconds)}초 짧은 엔진 계산 창
                     </p>
-                  </div>
-                ))}
-              </div>
-            ))}
-            <p>
-              SWMM {result.engine.engineVersion} · {result.numericalProfile.id}
-            </p>
-          </details>
-          <details>
-            <summary>이 결과의 적용 범위·가정</summary>
-            <ul>
-              {result.limitations.map((text, i) => (
-                <li key={i}>{text}</li>
+                  )}
+                  {c.conduits?.map((p) => (
+                    <p key={p.id}>
+                      {p.conduitId} · 계산 종료 유량 {number(p.flowM3s)} m³/s · 내부 수심{' '}
+                      {number(p.depthM)} m · 시작 후 {number(c.conduitStateTimeSeconds!)}초. 양수는
+                      관로 정의 방향이며 첨두 유량이 아닙니다.
+                    </p>
+                  ))}
+                  {c.facilities?.map((f) => (
+                    <div className="watershed-facility-state" key={f.swmmId}>
+                      <strong>
+                        {f.subcatchmentId} · {f.swmmId.replace(/^WL_/, '')} · {number(f.areaM2)} m²
+                      </strong>
+                      <p>
+                        표면 수심 {number(f.surfaceDepthMm)} mm · 최종 저류{' '}
+                        {number(f.finalStorageM3)} m³
+                      </p>
+                      {f.soilMoisture != null && <p>토양수분 {number(f.soilMoisture * 100)}%</p>}
+                      <p>
+                        시설 수지 잔차 {number(f.balanceResidualM3)} m³ ·{' '}
+                        {f.numericalStatus === 'PASSED' ? '통과' : '실패'}
+                      </p>
+                    </div>
+                  ))}
+                </div>
               ))}
-            </ul>
-          </details>
+              <p>
+                SWMM {result.engine.engineVersion} · {result.numericalProfile.id}
+              </p>
+            </details>
+            <details>
+              <summary>이 결과의 적용 범위·가정</summary>
+              <ul>
+                {result.limitations.map((text, i) => (
+                  <li key={i}>{text}</li>
+                ))}
+              </ul>
+            </details>
+          </NetworkReference>
           {job.state === 'SUCCEEDED' && (
             <a
               className="watershed-download"

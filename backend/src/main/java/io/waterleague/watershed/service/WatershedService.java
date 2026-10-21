@@ -49,6 +49,8 @@ public class WatershedService {
 
   public Map<String, Object> catalog() {
     var result = new TreeMap<String, Object>();
+    result.put("surfaceProfileHash", WatershedCatalogRepository.SURFACE_HASH);
+    result.put("surfaceProfile", catalog.surface());
     result.put("pumpCatalogHash", WatershedCatalogRepository.PUMP_HASH);
     result.put("pumpCatalog", catalog.pumps());
     result.put("catalogHash", WatershedCatalogRepository.HASH);
@@ -187,10 +189,36 @@ public class WatershedService {
       var profile = catalog.georeference();
       var reference = new TreeMap<String, Object>();
       reference.put("profileSha256", dto.georeferenceHash());
-      for (String field : List.of("id", "method", "sourceLayoutSha256", "sourceOriginalSha256",
-          "evidenceSha256", "assumedSourceCrs", "horizontalCrs", "sourceCrsVerified"))
-        reference.put(field, profile.path(field));
+      for (String field :
+          List.of(
+              "id",
+              "method",
+              "sourceLayoutSha256",
+              "sourceOriginalSha256",
+              "evidenceSha256",
+              "assumedSourceCrs",
+              "horizontalCrs",
+              "sourceCrsVerified")) reference.put(field, profile.path(field));
       design.put("locationReference", reference);
+    }
+    if (dto.surfaceProfileHash() != null) {
+      if (!WatershedCatalogRepository.SURFACE_HASH.equals(dto.surfaceProfileHash())
+          || !WatershedCatalogRepository.GEOREFERENCE_HASH.equals(dto.georeferenceHash())
+          || storageCount + conduitCount + pumpCount + cisternCount != 0
+          || dto.placements().isEmpty()
+          || dto.placements().stream()
+              .anyMatch(
+                  p ->
+                      !Set.of("BIORETENTION", "INFILTRATION_TRENCH", "VEGETATIVE_SWALE")
+                          .contains(p.facilityType())))
+        throw new DomainException(ErrorCode.PLACEMENT_INVALID);
+      design.put(
+          "surfaceConnection",
+          Map.of(
+              "id",
+              catalog.surface().path("id").asString(),
+              "profileSha256",
+              dto.surfaceProfileHash()));
     }
     String body = json.write(design);
     String hash = json.hash(dto.catalogHash() + "\n" + body);

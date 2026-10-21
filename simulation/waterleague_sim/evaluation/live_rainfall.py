@@ -13,7 +13,9 @@ def verify(model, network, result, root, read):
     specification = model.get('observedRainfall', {})
     bound = specification.get('schemaVersion') == 2 and has_network_rainfall(model)
     if 'networkObserverPolicy' in model:
-        require(model['networkObserverPolicy'] == FACILITY_OBSERVER and bound
+        from ..engine.published_surface_connection import FACILITY_OBSERVER as PUBLIC_OBSERVER
+        public = 'publishedSurfaceConnection' in model and model['networkObserverPolicy'] == PUBLIC_OBSERVER
+        require(((model['networkObserverPolicy'] == FACILITY_OBSERVER and bound) or public)
                 and network['engine'].get('facilityObserverVersion') == 1,
                 'EVALUATION_NETWORK_OBSERVER_POLICY_MISMATCH')
     require((detail is not None) == bound, 'EVALUATION_NETWORK_RAIN_BINDING_MISMATCH')

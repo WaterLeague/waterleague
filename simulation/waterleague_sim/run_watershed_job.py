@@ -36,8 +36,11 @@ def inputs(request):
     design = json.loads(request['placements'])
     require(isinstance(design, dict) and isinstance(design.get('placements'), list)
             and design.get('schemaVersion') == 1 and design.get('basis') == catalog['designBasis']
-            and set(design) <= {'schemaVersion','basis','placements','costing','storage','conduits','cisternCosting','pumps','cistern','locationReference'}, 'WATERSHED_DESIGN_INVALID')
+            and set(design) <= {'schemaVersion','basis','placements','costing','storage','conduits','cisternCosting','pumps','cistern','locationReference','surfaceConnection'}, 'WATERSHED_DESIGN_INVALID')
     verify_location(design, catalog['sourceOriginalSha256'])
+    if 'surfaceConnection' in design:
+        from .watershed_surface import verify as verify_surface
+        verify_surface(design)
     storage = design.get('storage', {})
     require(isinstance(storage, dict) and isinstance(storage.get('placements', []), list), 'WATERSHED_STORAGE_PLACEMENTS_INVALID')
     conduit_design=design.get('conduits', {})
@@ -51,7 +54,7 @@ def inputs(request):
         require(template is not None and p['parameters'] == template['parameters']
                 and p['initialSaturationPercent'] == template['initialSaturationPercent']
                 and p['replacedImperviousM2'] == p['areaM2'], 'WATERSHED_TEMPLATE_CHANGED')
-    verify_costs({k: v for k, v in design.items() if k not in ('storage','conduits','cisternCosting','pumps','cistern','locationReference')})
+    verify_costs({k: v for k, v in design.items() if k not in ('storage','conduits','cisternCosting','pumps','cistern','locationReference','surfaceConnection')})
     from .costing.cistern_reference import verify as verify_cistern
     verify_cistern(design)
     manifest = ROOT/'data/manifests/mendeley-seocho-network-v3.json'
@@ -65,7 +68,14 @@ def inputs(request):
                  'imperviousM2':v['areaDeclared']*10000*v['imperviousPercent']/100,
                  'outletNodeId':v['outlet']} for v in audit['catchments']]
     require(catchments==catalog['catchments'], 'WATERSHED_CATCHMENT_SOURCE_MISMATCH')
-    base, numerical = derive(original, catalog['numericalProfile'])
+    profile = catalog['numericalProfile']
+    if 'surfaceConnection' in design:
+        surface = verify_surface(design)
+        hydrology = {k: v for k, v in surface['parameters']['networkNumericalProfile']['options'].items()
+                     if k in ('WET_STEP', 'DRY_STEP')}
+        if hydrology:
+            profile = {'id': profile['id']+'-hydrology-1s', 'options': profile['options'] | hydrology}
+    base, numerical = derive(original, profile)
     strategy, storage_metadata = base, None
     if 'storage' in design:
         from .watershed_storage import compile as compile_storage
@@ -87,7 +97,7 @@ def inputs(request):
     transformation = {'limitations': []}
     if design['placements']:
         from .watershed_cistern import prepare_lids
-        original_design = {k: v for k, v in design.items() if k not in ('costing','storage','conduits','cisternCosting','pumps','cistern','locationReference')}
+        original_design = {k: v for k, v in design.items() if k not in ('costing','storage','conduits','cisternCosting','pumps','cistern','locationReference','surfaceConnection')}
         strategy, execution_design, assignments, width_binding = prepare_lids(strategy, original_design, cistern_metadata)
         strategy, transformation = compile_design(strategy, execution_design)
         if assignments:
@@ -122,7 +132,7 @@ def calculate(request, directory, cache_root=None):
     location_raw = verify_location(design, catalog['sourceOriginalSha256'])
     if location_raw is not None:
         (directory/'location-profile.json').write_bytes(location_raw)
-    cost_raw = verify_costs({k: v for k, v in design.items() if k not in ('storage','conduits','cisternCosting','pumps','cistern','locationReference')})
+    cost_raw = verify_costs({k: v for k, v in design.items() if k not in ('storage','conduits','cisternCosting','pumps','cistern','locationReference','surfaceConnection')})
     from .costing.cistern_reference import verify as verify_cistern
     cistern_raw = verify_cistern(design)
     if cistern_raw is not None:
@@ -171,7 +181,11 @@ def calculate(request, directory, cache_root=None):
                  ROOT/'simulation/native/node_flood_duration.inc', ROOT/'scripts/attach_node_flood_duration.py',
                  ROOT/'scripts/build_facility_metrics_swmm.py', ROOT/'scripts/build_pump_network_swmm.py', ROOT/'simulation/native/pump_snapshot.inc', ROOT/'scripts/build_live_swmm.py',
                  ROOT/'simulation/pyproject.toml', ROOT/'simulation/uv.lock']
-        for path in files:
+        if 'surfaceConnection' in design:
+            files += [*sorted((ROOT/'simulation/native').glob('*.inc')),
+                      *sorted((ROOT/'scripts').glob('build_*swmm.py')),
+                      ROOT/'scripts/attach_node_flood_duration.py']
+        for path in sorted(set(files)):
             archive.write(path, str(path.relative_to(ROOT)))
     cases = []
     for name, raw in (('baseline', base), ('strategy', strategy)):
@@ -218,7 +232,7 @@ def calculate(request, directory, cache_root=None):
                   == cases[1]['evaluationMetrics']['specificationSha256'])
     result = {'schemaVersion': 2, 'catalogHash': CATALOG_HASH, 'inputHash': request['inputHash'],
         'classification': 'PUBLIC_NETWORK_REFERENCE_DESIGN_COMPARISON', 'engine': engine,
-        'numericalProfile': catalog['numericalProfile'],
+        'numericalProfile': numerical['profile'],
         'networkLayout': layout_snapshot,
         'hydraulicApproximationChanged': numerical['hydraulicApproximationChanged'],
         'numericalStatus': 'PASSED' if passed else 'FAILED', 'cases': cases,
@@ -251,23 +265,34 @@ def calculate(request, directory, cache_root=None):
     if any(m['status'] == 'WITHHELD' for m in result['metricComparison']['metrics']):
         result['signedReductionM3'] = result['signedPeakReductionM3s'] = None
     (directory/'raw_metrics.py').write_bytes((Path(__file__).parent/'evaluation/raw_metrics.py').read_bytes())
+    if 'surfaceConnection' in design:
+        from .watershed_surface import calculate as calculate_surface
+        result['surfaceComparison'] = calculate_surface(design, directory/'surface-comparison')
     require(watershed_cache.implementation_hash() == implementation_hash, 'WATERSHED_IMPLEMENTATION_CHANGED')
     return result
 
 
 def main():
     os.umask(0o077)
-    resource.setrlimit(resource.RLIMIT_CPU, (75,75))
-    resource.setrlimit(resource.RLIMIT_FSIZE, (64*1024*1024,64*1024*1024))
+    directory=Path(sys.argv[1])
+    request = json.loads((directory/'request.json').read_text())
+    design = json.loads(request['placements'])
+    coupled = 'surfaceConnection' in design
+    if coupled:
+        from .watershed_surface import verify as verify_surface
+        verify_surface(design)
+    cpu, size = (3600, 2*1024**3) if coupled else (75, 64*1024**2)
+    resource.setrlimit(resource.RLIMIT_CPU, (cpu,cpu))
+    resource.setrlimit(resource.RLIMIT_FSIZE, (size,size))
     if sys.platform.startswith('linux'):
         resource.setrlimit(resource.RLIMIT_AS, (1536*1024*1024,1536*1024*1024))
-    directory=Path(sys.argv[1])
-    result=calculate(json.loads((directory/'request.json').read_text()), directory,
+    result=calculate(request, directory,
                      watershed_cache.configured_root())
-    result['artifactFiles']={str(p.relative_to(directory)): digest(p.read_bytes())
+    from .evaluation.coupled_adapter import file_digest
+    result['artifactFiles']={str(p.relative_to(directory)): file_digest(p)
         for p in sorted(directory.rglob('*')) if p.is_file()}
     write(directory/'result.json', result)
-    write(directory/'manifest.json', {str(p.relative_to(directory)): digest(p.read_bytes())
+    write(directory/'manifest.json', {str(p.relative_to(directory)): file_digest(p)
         for p in sorted(directory.rglob('*')) if p.is_file() and p != directory/'manifest.json'})
 
 

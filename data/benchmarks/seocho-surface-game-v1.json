@@ -1,0 +1,660 @@
+{
+  "schemaVersion": 1,
+  "verifiedAt": "2026-10-21T06:20:27.977106+00:00",
+  "scope": "FIRST_RELEASE_MEMBER_PUBLIC_COUPLED_DESIGN_COMPARISON_V1_V2",
+  "singleBioretentionV1": {
+    "direct": {
+      "path": "data/runs/seocho-surface-game-v1",
+      "manifestSha256": "5de6d0201640252edb3a8cbcb290ddef0ce1752ee93985960e1523d3aaa7ed85",
+      "resultSha256": "0d4b7360bbb03db88c14543505a256da6e3ff29a2404a110590db015114d93cc",
+      "verifiedFiles": 88
+    },
+    "member": {
+      "path": "data/runs/watersheds/d9d48663-65ab-4544-8354-743388bebb5c/525735f4-ec20-4b3a-892a-9e9ffd15eba7",
+      "manifestSha256": "dade45a61be14cb64135a63bc99c3c5141d78be5f30e93e3d4feb87a3bafb7ac",
+      "resultSha256": "6faf961c41f08c94c17b98b14a12f895e2fcda6070f55dc415ced4a3fd7618ee",
+      "verifiedFiles": 90
+    },
+    "actualHttp": {
+      "jobId": "d9d48663-65ab-4544-8354-743388bebb5c",
+      "state": "SUCCEEDED",
+      "samePhysicalOutputAsDirectRun": true,
+      "anonymousStatus": [
+        401,
+        401
+      ],
+      "bundleBytes": 950882836,
+      "bundleSha256": "0e23cac550b69e3c9de8406e06d5668f8b82930ce489a6b869043ce1398184ef",
+      "bundleEntries": 91,
+      "allArchiveHashesVerified": true,
+      "downloadAndVerifySeconds": 52.17438629199751,
+      "fixtureSha256": "36e13285b9bd9806a853eb334e2a5465af8f7d51cd581387c2734ddb8eb522a0",
+      "formattedFixtureSha256": "5d52e3b6fcf6e21d98feae0e2ec33b519e8a70aac670c582e47c7339b79dd1ee"
+    },
+    "physicalCasesEqual": true,
+    "result": {
+      "schemaVersion": 1,
+      "classification": "PUBLIC_COUPLED_DESIGN_COMPARISON",
+      "profileSha256": "017a325234f482695cf8bcf4b9cd0eece772cf58dacdafdb389bd37159a2b0e7",
+      "designSha256": "efc96d19ff2d4e6d34d925055e7a126f3fa724fccce57351a4f7f9faf8563628",
+      "numericalStatus": "PASSED",
+      "cases": [
+        {
+          "id": "baseline",
+          "resultSha256": "59abdcd2c0d2eff257939f8875520f22b85f789c8741c2c0eb3405ecef5c5026",
+          "numericalStatus": "PASSED",
+          "complete": true,
+          "durationSeconds": 86339,
+          "context": {
+            "scopeId": "seocho-published-v3-public-terrain-window",
+            "modelGrade": "EXPLORATORY",
+            "evidenceClass": "PUBLIC_DATA",
+            "comparisonKind": "PAST_RAINFALL_STRESS_TEST",
+            "effectAreaId": "published-303ha-rectangle-not-damage-map",
+            "scenarioSnapshotSha256": "303cfab895eecd2a06b5e3ba8e52a3543029283d2e6dd843b7731685c7cf8253",
+            "forcingSha256": "9bd98296f3a8894af9959f5c5791722e63d03434d9d09f7b95d443490795cb56",
+            "engineSha256": "15584ed8085d782d44327004a3f77d02771b9d9efa7bd2d3288b22ac477529b3",
+            "metricSpecificationSha256": "cec9ab32d377f86f0b670d1f440aa3a388e12860837604c9dabbd293d262e88c"
+          },
+          "raw": {
+            "outwardVolumeM3": 2989828.5466753775,
+            "peakOutwardM3s": 79.48791629246395,
+            "depthAreaTimeM3Hours": 9499564.500644596,
+            "maximumDepthM": 8.637995678127874,
+            "maximumWetAreaM2": 1341000.0,
+            "maximumWetDurationSeconds": 84930.55379737657
+          },
+          "balance": {
+            "networkExternalInflowM3": 3699177.402278976,
+            "networkExternalOutflowAndLossM3": 2989828.546675465,
+            "surfaceExternalNetInflowM3": 556547.8880160839,
+            "networkStorageM3": 14420.874797966722,
+            "surfaceStorageM3": 1252144.1085818668,
+            "networkToSurfaceM3": 901198.2256922884,
+            "surfaceToNetworkM3": 205602.00512097948,
+            "exchangeCancellationResidualM3": 2.9103830456733704e-11,
+            "balanceResidualM3": -667.919567838544
+          },
+          "networkConvergence": {
+            "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+            "routingSteps": 1467764,
+            "nonConvergedSteps": 0,
+            "nonConvergedPercent": 0.0
+          },
+          "networkRoutingContinuityPercent": -0.01710517890751362,
+          "networkNumericalStatus": "PASSED",
+          "surfaceNumericalStatus": "PASSED",
+          "calendarDurationSeconds": 86340.0,
+          "calendarShortfallSeconds": 1.0,
+          "finalMaximumDepthM": 8.539944056178621
+        },
+        {
+          "id": "strategy",
+          "resultSha256": "41f7b0da42032cd0d65959f54589dbe1a937feddc4552f55914e50ccc9e557c6",
+          "numericalStatus": "PASSED",
+          "complete": true,
+          "durationSeconds": 86339,
+          "context": {
+            "scopeId": "seocho-published-v3-public-terrain-window",
+            "modelGrade": "EXPLORATORY",
+            "evidenceClass": "PUBLIC_DATA",
+            "comparisonKind": "PAST_RAINFALL_STRESS_TEST",
+            "effectAreaId": "published-303ha-rectangle-not-damage-map",
+            "scenarioSnapshotSha256": "303cfab895eecd2a06b5e3ba8e52a3543029283d2e6dd843b7731685c7cf8253",
+            "forcingSha256": "9bd98296f3a8894af9959f5c5791722e63d03434d9d09f7b95d443490795cb56",
+            "engineSha256": "15584ed8085d782d44327004a3f77d02771b9d9efa7bd2d3288b22ac477529b3",
+            "metricSpecificationSha256": "cec9ab32d377f86f0b670d1f440aa3a388e12860837604c9dabbd293d262e88c"
+          },
+          "raw": {
+            "outwardVolumeM3": 2989812.558300704,
+            "peakOutwardM3s": 79.48778237702793,
+            "depthAreaTimeM3Hours": 9499256.794412084,
+            "maximumDepthM": 8.637933307929176,
+            "maximumWetAreaM2": 1341000.0,
+            "maximumWetDurationSeconds": 84930.55379737657
+          },
+          "balance": {
+            "networkExternalInflowM3": 3699132.314521512,
+            "networkExternalOutflowAndLossM3": 2989812.5583005566,
+            "surfaceExternalNetInflowM3": 556547.8880162763,
+            "networkStorageM3": 14421.32085929339,
+            "surfaceStorageM3": 1252114.5435296563,
+            "networkToSurfaceM3": 901162.6506198228,
+            "surfaceToNetworkM3": 205595.9951005112,
+            "exchangeCancellationResidualM3": -8.731149137020111e-11,
+            "balanceResidualM3": -667.8999593178742
+          },
+          "networkConvergence": {
+            "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+            "routingSteps": 1467764,
+            "nonConvergedSteps": 0,
+            "nonConvergedPercent": 0.0
+          },
+          "networkRoutingContinuityPercent": -0.017104901373386383,
+          "networkNumericalStatus": "PASSED",
+          "surfaceNumericalStatus": "PASSED",
+          "calendarDurationSeconds": 86340.0,
+          "calendarShortfallSeconds": 1.0,
+          "finalMaximumDepthM": 8.539893595648424
+        }
+      ],
+      "signedReduction": {
+        "outwardVolumeM3": 15.988374673295766,
+        "peakOutwardM3s": 0.00013391543602381262,
+        "depthAreaTimeM3Hours": 307.70623251236975,
+        "maximumDepthM": 6.23701986981473e-05,
+        "maximumWetAreaM2": 0.0,
+        "maximumWetDurationSeconds": 0.0
+      },
+      "parameters": {
+        "openingDiameterM": 0.6,
+        "dischargeCoefficient": 0.62,
+        "surchargeHeadM": 100.0,
+        "surfaceOffsetM": 0.0,
+        "boundaryType": "REFLECTIVE",
+        "durationSeconds": 86339,
+        "maximumExchangeMilliseconds": 1000,
+        "frameIntervalMilliseconds": 60000,
+        "networkNumericalProfile": {
+          "id": "seocho-public-coupling-slot-60ms",
+          "options": {
+            "SURCHARGE_METHOD": "SLOT",
+            "ROUTING_STEP": 0.06,
+            "MINIMUM_STEP": 0.01,
+            "MAX_TRIALS": 200
+          }
+        }
+      },
+      "sourceFiles": {
+        "surface-20m.json": "8d6986a051e9c1ce6d6af13be1147f92796122314386cffbb3f0d6511523139e",
+        "coverage-20m.json": "916edf4810e4b6a66fa65572a06cfbc0e394193db1e3c7b2debb24382ebc3f90",
+        "georeference.json": "36a477f877d0d0fc4518f5e7664497e6e36798299745880932d5b43148ac01ab",
+        "terrain/original-network.inp": "8ce278a3d2b58df3c2a5fd1232160bcabb324389746ee0c878792acf91abbdbb"
+      },
+      "rankingEligible": false,
+      "historicalReconstructionEligible": false,
+      "totalScore": null,
+      "limitations": [
+        "폐쇄 외곽 경계의 계산 구역이며 실제 분수계·피해지도 아님",
+        "원 관망·지형의 공통 높이 기준과 지름 0.6m 등가 개구부·방류계수 0.62 가정",
+        "원 강우의 관측소·시간대 미확인 및 추정 외부 유입 보존",
+        "공개 지형 20m 격자; 직접 강우 영역의 추가 침투·증발·건물 장애물 미적용",
+        "생물저류·침투도랑·식생수로의 원 집수구역 내 설계 비교; 다른 수리 시설 합성은 별도 검증 필요",
+        "원 달력 창 86,340초 중 EPA 엔진 86,339초; 종료 1초 차이 보존",
+        "현재 주간·재해 예산과 순위에 합산하지 않음"
+      ]
+    }
+  },
+  "replayV1": {
+    "audit": {
+      "physicalSummaryEqual": true,
+      "sourceResultSha256": "0d4b7360bbb03db88c14543505a256da6e3ff29a2404a110590db015114d93cc",
+      "reportClockExcluded": true,
+      "rankingEligible": false
+    },
+    "verifiedArchive": {
+      "source": "data/runs/seocho-surface-game-v1-replay",
+      "archive": "data/runs/seocho-surface-game-v1-replay.tar.gz",
+      "archiveSha256": "eba37888bd809b2b080d76aa66b6c21c6035db339fbf837d168419761546a9e5",
+      "allFileHashesVerified": true,
+      "originalBytes": 3159048425,
+      "archiveBytes": 1006116929
+    },
+    "verifiedFileCount": 58,
+    "physicalCasesEqual": true
+  },
+  "threeFacilityV1": {
+    "bundle": {
+      "path": "data/runs/watersheds/e153bda2-7541-4e61-a626-64e161dc54bb/2ee052cf-e496-473d-a97d-0ce98bba9afe",
+      "manifestSha256": "c21e2f4db8c9b0cb3095b580276caf2f0dc77b7ef4431724d8370bcd9a917a3b",
+      "resultSha256": "ffedd6d412d406dad3009e35d20e08207111c024e050e72a0f2a5fdd96656092",
+      "verifiedFiles": 90
+    },
+    "numericalStatus": "FAILED",
+    "signedReduction": null,
+    "normalNetworkFacilities": [
+      {
+        "hydrologyTimeSeconds": 86339.0,
+        "areaM2": 25.0,
+        "surfaceDepthMm": 152.2977404980693,
+        "soilMoisture": null,
+        "storageDepthMm": 914.4000000000001,
+        "inflowM3": 32.54685669532344,
+        "evaporationM3": 0.0,
+        "infiltrationM3": 1.393556840815431,
+        "surfaceOutflowM3": 20.487856342056297,
+        "drainOutflowM3": 0.0,
+        "initialStorageM3": 0.0,
+        "finalStorageM3": 10.666517443582384,
+        "number": 1.0,
+        "drainNodeIndex": 3.0,
+        "drainSubcatchmentIndex": -1.0,
+        "swmmId": "WL_F2",
+        "subcatchmentId": "S1",
+        "balanceResidualM3": -0.0010739311306693367,
+        "allowedResidualM3": 0.32547930626454114,
+        "continuityPercent": -0.00329953735920917,
+        "numericalStatus": "PASSED"
+      },
+      {
+        "hydrologyTimeSeconds": 86339.0,
+        "areaM2": 100.0,
+        "surfaceDepthMm": 62.72362326831575,
+        "soilMoisture": 0.52,
+        "storageDepthMm": 304.8,
+        "inflowM3": 285.8498699558597,
+        "evaporationM3": 0.0,
+        "infiltrationM3": 3.609566338668618,
+        "surfaceOutflowM3": 205.78200415196702,
+        "drainOutflowM3": 34.84677337107563,
+        "initialStorageM3": 4.876799999999999,
+        "finalStorageM3": 46.73020799343409,
+        "number": 1.0,
+        "drainNodeIndex": 10.0,
+        "drainSubcatchmentIndex": -1.0,
+        "swmmId": "WL_F1",
+        "subcatchmentId": "S2",
+        "balanceResidualM3": -0.24188189928565862,
+        "allowedResidualM3": 2.9096855185514534,
+        "continuityPercent": -0.08312991137477846,
+        "numericalStatus": "PASSED"
+      },
+      {
+        "hydrologyTimeSeconds": 86339.0,
+        "areaM2": 25.0,
+        "surfaceDepthMm": 2.833934219279575,
+        "soilMoisture": null,
+        "storageDepthMm": null,
+        "inflowM3": 32.47338859752038,
+        "evaporationM3": 0.0,
+        "infiltrationM3": 0.030218914773820157,
+        "surfaceOutflowM3": 101.48640532598849,
+        "drainOutflowM3": 0.0,
+        "initialStorageM3": 0.0,
+        "finalStorageM3": 0.026273041088856145,
+        "number": 1.0,
+        "drainNodeIndex": 0.0,
+        "drainSubcatchmentIndex": -1.0,
+        "swmmId": "WL_F3",
+        "subcatchmentId": "S3",
+        "balanceResidualM3": -69.06950868433078,
+        "allowedResidualM3": 1.0154289728185117,
+        "continuityPercent": -68.02002949809038,
+        "numericalStatus": "FAILED"
+      }
+    ],
+    "interpretation": "실패 보존; 개선량·순위 미게시"
+  },
+  "hydrologyRefinement": {
+    "benchmark": "data/benchmarks/seocho-lid-timestep-v1.json",
+    "sha256": "6155cb3147ee325b72732036c09caaca6d3bef7ac7f9480a12db2a6715f6740f",
+    "nativeCases": 10,
+    "newProfile": "seocho-surface-design-v2",
+    "profileSha256": "94fca7deba98583792d05806c1f768047ffe4034b110894f09246dc9e2a7e6da",
+    "fullCoupledValidationStatus": "PASSED",
+    "jobId": "2bee23a5-67fd-4962-aa64-71abe47fba05"
+  },
+  "browser": {
+    "v1Screenshot": "data/benchmarks/seocho-surface-game-v1.png",
+    "v1ScreenshotSha256": "265b7819c4bdf32891a21b84578d8e3418b75ad097ed35218f8bd928d5dc805a",
+    "v2Status": "LOCAL_BROWSER_CONTROL_DISABLED_STATIC_RENDER_AND_HTTP_ONLY"
+  },
+  "verification": {
+    "frontendFiles": 144,
+    "frontendTests": 499,
+    "frontendBuildPassed": true,
+    "pythonProfileAndCouplingTests": 14,
+    "apiProfileAndArchiveTests": 2,
+    "isolatedDatabaseSourceCountsUnchanged": true,
+    "rankingEligible": false,
+    "pythonNumericsScorePolicyAndCacheTests": 17,
+    "frontendFormatPassed": true,
+    "pythonNumericsScoreAndCacheTests": 17,
+    "latestCombinedPythonTests": 31,
+    "v2HttpRenderingTests": 6,
+    "finalTypeCheckPassed": true,
+    "reactEssentialReviewPassed": true
+  },
+  "limitations": [
+    "v1 생물저류 성공·세 시설 v1 실패·세 시설 v2 성공을 버전별 보존",
+    "v2 전체 결합 검증은 해당 세 시설 설계와 공개 사건의 범위",
+    "원 지형/관망 높이·폐쇄 경계·출판 강우·추정 외부 유입의 가정 보존",
+    "현재 관측 강우·나머지 시설 조합·사업 예산/순위 통합·LCC는 출시 후 과제",
+    "v2 별도 전체 재생·새 브라우저 조작은 이번 검증에 포함하지 않음"
+  ],
+  "archivedPriorChecks": {
+    "archive": "data/runs/seocho-surface-release-prior-checks.tar.gz",
+    "archiveSha256": "fbf0b4df4baa70d799e4135d438a34588d5109e694ece461bf33c45bdac33032",
+    "archiveBytes": 1592212411,
+    "originalBytes": 4794564662,
+    "verifiedFiles": 149,
+    "allVerified": true,
+    "archivedSourceDirectories": [
+      "data/runs/seocho-surface-game-v1",
+      "data/runs/watersheds/640e7694-3a1e-4866-8e1f-b6987b79b33e"
+    ],
+    "redundantDownloadRemoved": {
+      "sha256": "0e23cac550b69e3c9de8406e06d5668f8b82930ce489a6b869043ce1398184ef",
+      "bytes": 950882836,
+      "regenerableMemberSource": "data/runs/watersheds/d9d48663-65ab-4544-8354-743388bebb5c/525735f4-ec20-4b3a-892a-9e9ffd15eba7"
+    }
+  },
+  "threeFacilityV2": {
+    "bundle": {
+      "path": "data/runs/watersheds/2bee23a5-67fd-4962-aa64-71abe47fba05/903b0963-1f60-4b39-a3c2-f49f4de9da27",
+      "manifestSha256": "d149bf7af31d0afbde4a896cc9873609600e6b759c9b63250cfecdce91354e9d",
+      "resultSha256": "20381739763f365e8d4f567b0ff40d2786ba03750d836a2796b54e4132256f14",
+      "verifiedFiles": 90
+    },
+    "actualHttp": {
+      "state": "SUCCEEDED",
+      "resultMatchesBundle": true,
+      "idempotent": true,
+      "fixture": "frontend/src/domains/watershed/view/fixtures/public-surface-job-v2.json",
+      "formattedFixtureSha256": "eb95bc1e5f959ddd40549c1f2217bbe2d98cb8d62371fba293755f8587ccaea2"
+    },
+    "result": {
+      "schemaVersion": 1,
+      "classification": "PUBLIC_COUPLED_DESIGN_COMPARISON",
+      "profileSha256": "94fca7deba98583792d05806c1f768047ffe4034b110894f09246dc9e2a7e6da",
+      "designSha256": "63c1a5cdc17d3536cd418bb7f359e1e013c537940749a8f7a7e4d788b9231a89",
+      "numericalStatus": "PASSED",
+      "cases": [
+        {
+          "id": "baseline",
+          "resultSha256": "741c605a1874a6c67353be0f75d303f1397e72768d09f4ad13fd70a32cf9f707",
+          "numericalStatus": "PASSED",
+          "complete": true,
+          "durationSeconds": 86339,
+          "context": {
+            "scopeId": "seocho-published-v3-public-terrain-window",
+            "modelGrade": "EXPLORATORY",
+            "evidenceClass": "PUBLIC_DATA",
+            "comparisonKind": "PAST_RAINFALL_STRESS_TEST",
+            "effectAreaId": "published-303ha-rectangle-not-damage-map",
+            "scenarioSnapshotSha256": "6c27374fec41f6648d678c3d14716d6b980b4ec0982940cbf1c62b09e7e3d02a",
+            "forcingSha256": "9bd98296f3a8894af9959f5c5791722e63d03434d9d09f7b95d443490795cb56",
+            "engineSha256": "6e1552117665a097b5ef8d19235cbeacf92ee855c90d38e486b1e8a8564e0448",
+            "metricSpecificationSha256": "cec9ab32d377f86f0b670d1f440aa3a388e12860837604c9dabbd293d262e88c"
+          },
+          "raw": {
+            "outwardVolumeM3": 2989720.300181656,
+            "peakOutwardM3s": 79.48766085106861,
+            "depthAreaTimeM3Hours": 9499354.328163804,
+            "maximumDepthM": 8.637866385696304,
+            "maximumWetAreaM2": 1341200.0,
+            "maximumWetDurationSeconds": 84930.55379737657
+          },
+          "balance": {
+            "networkExternalInflowM3": 3698991.2295179255,
+            "networkExternalOutflowAndLossM3": 2989720.300181637,
+            "surfaceExternalNetInflowM3": 556547.8880162268,
+            "networkStorageM3": 14420.63854831341,
+            "surfaceStorageM3": 1252066.569215428,
+            "networkToSurfaceM3": 901126.14843681,
+            "surfaceToNetworkM3": 205607.4672314493,
+            "exchangeCancellationResidualM3": 2.9103830456733704e-11,
+            "balanceResidualM3": -668.0702188259456
+          },
+          "networkConvergence": {
+            "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+            "routingSteps": 1467764,
+            "nonConvergedSteps": 0,
+            "nonConvergedPercent": 0.0
+          },
+          "networkRoutingContinuityPercent": -0.017109829932451248,
+          "networkNumericalStatus": "PASSED",
+          "surfaceNumericalStatus": "PASSED",
+          "calendarDurationSeconds": 86340.0,
+          "calendarShortfallSeconds": 1.0,
+          "finalMaximumDepthM": 8.539806545761524
+        },
+        {
+          "id": "strategy",
+          "resultSha256": "1ad071920043a5337cb2e3188c2c1ca9702f1a69254d8b95dc27cba37d55620f",
+          "numericalStatus": "PASSED",
+          "complete": true,
+          "durationSeconds": 86339,
+          "context": {
+            "scopeId": "seocho-published-v3-public-terrain-window",
+            "modelGrade": "EXPLORATORY",
+            "evidenceClass": "PUBLIC_DATA",
+            "comparisonKind": "PAST_RAINFALL_STRESS_TEST",
+            "effectAreaId": "published-303ha-rectangle-not-damage-map",
+            "scenarioSnapshotSha256": "6c27374fec41f6648d678c3d14716d6b980b4ec0982940cbf1c62b09e7e3d02a",
+            "forcingSha256": "9bd98296f3a8894af9959f5c5791722e63d03434d9d09f7b95d443490795cb56",
+            "engineSha256": "6e1552117665a097b5ef8d19235cbeacf92ee855c90d38e486b1e8a8564e0448",
+            "metricSpecificationSha256": "cec9ab32d377f86f0b670d1f440aa3a388e12860837604c9dabbd293d262e88c"
+          },
+          "raw": {
+            "outwardVolumeM3": 2989700.422783534,
+            "peakOutwardM3s": 79.48751867662125,
+            "depthAreaTimeM3Hours": 9498972.444793865,
+            "maximumDepthM": 8.637789796633891,
+            "maximumWetAreaM2": 1341000.0,
+            "maximumWetDurationSeconds": 84930.55379737657
+          },
+          "balance": {
+            "networkExternalInflowM3": 3698934.1691821786,
+            "networkExternalOutflowAndLossM3": 2989700.4227834,
+            "surfaceExternalNetInflowM3": 556547.8880161747,
+            "networkStorageM3": 14421.064959965424,
+            "surfaceStorageM3": 1252028.849425017,
+            "networkToSurfaceM3": 901081.3057505445,
+            "surfaceToNetworkM3": 205600.3443363101,
+            "exchangeCancellationResidualM3": -5.820766091346741e-11,
+            "balanceResidualM3": -667.9597776287701
+          },
+          "networkConvergence": {
+            "method": "EPA_5_2_4_NATIVE_COUNTERS_READ_ONLY",
+            "routingSteps": 1467764,
+            "nonConvergedSteps": 0,
+            "nonConvergedPercent": 0.0
+          },
+          "networkRoutingContinuityPercent": -0.0171072818338871,
+          "networkNumericalStatus": "PASSED",
+          "surfaceNumericalStatus": "PASSED",
+          "calendarDurationSeconds": 86340.0,
+          "calendarShortfallSeconds": 1.0,
+          "finalMaximumDepthM": 8.539741635413842
+        }
+      ],
+      "signedReduction": {
+        "outwardVolumeM3": 19.877398122102022,
+        "peakOutwardM3s": 0.00014217444736175366,
+        "depthAreaTimeM3Hours": 381.88336993940175,
+        "maximumDepthM": 7.658906241303498e-05,
+        "maximumWetAreaM2": 200.0,
+        "maximumWetDurationSeconds": 0.0
+      },
+      "parameters": {
+        "openingDiameterM": 0.6,
+        "dischargeCoefficient": 0.62,
+        "surchargeHeadM": 100.0,
+        "surfaceOffsetM": 0.0,
+        "boundaryType": "REFLECTIVE",
+        "durationSeconds": 86339,
+        "maximumExchangeMilliseconds": 1000,
+        "frameIntervalMilliseconds": 60000,
+        "networkNumericalProfile": {
+          "id": "seocho-public-coupling-slot-60ms-hydrology-1s",
+          "options": {
+            "SURCHARGE_METHOD": "SLOT",
+            "ROUTING_STEP": 0.06,
+            "MINIMUM_STEP": 0.01,
+            "MAX_TRIALS": 200,
+            "WET_STEP": 1,
+            "DRY_STEP": 1
+          }
+        }
+      },
+      "sourceFiles": {
+        "surface-20m.json": "8d6986a051e9c1ce6d6af13be1147f92796122314386cffbb3f0d6511523139e",
+        "coverage-20m.json": "916edf4810e4b6a66fa65572a06cfbc0e394193db1e3c7b2debb24382ebc3f90",
+        "georeference.json": "36a477f877d0d0fc4518f5e7664497e6e36798299745880932d5b43148ac01ab",
+        "terrain/original-network.inp": "8ce278a3d2b58df3c2a5fd1232160bcabb324389746ee0c878792acf91abbdbb"
+      },
+      "rankingEligible": false,
+      "historicalReconstructionEligible": false,
+      "totalScore": null,
+      "limitations": [
+        "폐쇄 외곽 경계의 계산 구역이며 실제 분수계·피해지도 아님",
+        "원 관망·지형의 공통 높이 기준과 지름 0.6m 등가 개구부·방류계수 0.62 가정",
+        "원 강우의 관측소·시간대 미확인 및 추정 외부 유입 보존",
+        "공개 지형 20m 격자; 직접 강우 영역의 추가 침투·증발·건물 장애물 미적용",
+        "생물저류·침투도랑·식생수로의 원 집수구역 내 설계 비교; 다른 수리 시설 합성은 별도 검증 필요",
+        "원 달력 창 86,340초 중 EPA 엔진 86,339초; 종료 1초 차이 보존",
+        "현재 주간·재해 예산과 순위에 합산하지 않음",
+        "작은 식생수로의 300초 수문 간격 수지 실패를 보존하고 기준안·설계안 모두 1초로 세분; 형상·강우·수지 허용치는 유지"
+      ]
+    },
+    "nativeNumericalConfigurations": {
+      "baseline": {
+        "method": "EPA_5_2_4_NATIVE_SETTINGS_READ_ONLY",
+        "surchargeMethod": "SLOT",
+        "maximumRoutingStepSeconds": 0.06,
+        "minimumRoutingStepSeconds": 0.01,
+        "courantFactor": 0.75,
+        "minimumNumericalNodeAreaM2": 1.167,
+        "headConvergenceToleranceM": 0.0015,
+        "maximumTrials": 200,
+        "wetRunoffStepSeconds": 1,
+        "dryRunoffStepSeconds": 1,
+        "declaredInputOptions": {
+          "SURCHARGE_METHOD": "SLOT",
+          "ROUTING_STEP": "0.06",
+          "MINIMUM_STEP": "0.01",
+          "VARIABLE_STEP": "0.75",
+          "MIN_SURFAREA": "1.167",
+          "HEAD_TOLERANCE": "0.0015",
+          "MAX_TRIALS": "200",
+          "WET_STEP": "00:00:01",
+          "DRY_STEP": "00:00:01"
+        },
+        "defaultedInputOptions": []
+      },
+      "strategy": {
+        "method": "EPA_5_2_4_NATIVE_SETTINGS_READ_ONLY",
+        "surchargeMethod": "SLOT",
+        "maximumRoutingStepSeconds": 0.06,
+        "minimumRoutingStepSeconds": 0.01,
+        "courantFactor": 0.75,
+        "minimumNumericalNodeAreaM2": 1.167,
+        "headConvergenceToleranceM": 0.0015,
+        "maximumTrials": 200,
+        "wetRunoffStepSeconds": 1,
+        "dryRunoffStepSeconds": 1,
+        "declaredInputOptions": {
+          "SURCHARGE_METHOD": "SLOT",
+          "ROUTING_STEP": "0.06",
+          "MINIMUM_STEP": "0.01",
+          "VARIABLE_STEP": "0.75",
+          "MIN_SURFAREA": "1.167",
+          "HEAD_TOLERANCE": "0.0015",
+          "MAX_TRIALS": "200",
+          "WET_STEP": "00:00:01",
+          "DRY_STEP": "00:00:01"
+        },
+        "defaultedInputOptions": []
+      }
+    },
+    "normalNetworkFacilities": [
+      {
+        "hydrologyTimeSeconds": 86339.0,
+        "areaM2": 25.0,
+        "surfaceDepthMm": 152.32496819286354,
+        "soilMoisture": null,
+        "storageDepthMm": 914.4000000000001,
+        "inflowM3": 32.51380853595898,
+        "evaporationM3": 0.0,
+        "infiltrationM3": 1.3908586308350102,
+        "surfaceOutflowM3": 20.45682570030136,
+        "drainOutflowM3": 0.0,
+        "initialStorageM3": 0.0,
+        "finalStorageM3": 10.666128702532909,
+        "number": 1.0,
+        "drainNodeIndex": 3.0,
+        "drainSubcatchmentIndex": -1.0,
+        "swmmId": "WL_F2",
+        "subcatchmentId": "S1",
+        "balanceResidualM3": -4.497710300199742e-06,
+        "allowedResidualM3": 0.3251381303366928,
+        "continuityPercent": -1.3833229266411152e-05,
+        "numericalStatus": "PASSED"
+      },
+      {
+        "hydrologyTimeSeconds": 86339.0,
+        "areaM2": 100.0,
+        "surfaceDepthMm": 64.20643932162287,
+        "soilMoisture": 0.52,
+        "storageDepthMm": 304.8,
+        "inflowM3": 285.5838100425928,
+        "evaporationM3": 0.0,
+        "infiltrationM3": 3.6179723399106822,
+        "surfaceOutflowM3": 205.28706888273157,
+        "drainOutflowM3": 34.933789281000195,
+        "initialStorageM3": 4.876799999999999,
+        "finalStorageM3": 46.6227908173445,
+        "number": 1.0,
+        "drainNodeIndex": 10.0,
+        "drainSubcatchmentIndex": -1.0,
+        "swmmId": "WL_F1",
+        "subcatchmentId": "S2",
+        "balanceResidualM3": -0.001011278394173587,
+        "allowedResidualM3": 2.9046162132098696,
+        "continuityPercent": -0.00034816248342015233,
+        "numericalStatus": "PASSED"
+      },
+      {
+        "hydrologyTimeSeconds": 86339.0,
+        "areaM2": 25.0,
+        "surfaceDepthMm": 2.984611557703951,
+        "soilMoisture": null,
+        "storageDepthMm": null,
+        "inflowM3": 32.449605266695976,
+        "evaporationM3": 0.0,
+        "infiltrationM3": 0.029725209188764735,
+        "surfaceOutflowM3": 32.3898620704184,
+        "drainOutflowM3": 0.0,
+        "initialStorageM3": 0.0,
+        "finalStorageM3": 0.027063678896615158,
+        "number": 1.0,
+        "drainNodeIndex": 0.0,
+        "drainSubcatchmentIndex": -1.0,
+        "swmmId": "WL_F3",
+        "subcatchmentId": "S3",
+        "balanceResidualM3": 0.0029543081921943326,
+        "allowedResidualM3": 0.32449605266695974,
+        "continuityPercent": 0.009104296240011368,
+        "numericalStatus": "PASSED"
+      }
+    ]
+  },
+  "v2FirstAttempt": {
+    "jobId": "640e7694-3a1e-4866-8e1f-b6987b79b33e",
+    "state": "FAILED",
+    "stage": "BASELINE_RESULT_VALIDATION",
+    "reason": "WET_DRY_STEP_DECLARATION_AND_NATIVE_EFFECTIVE_SETTINGS_MISMATCH",
+    "resolution": "검증기가 컴파일된 HH:MM:SS와 원 엔진 정수 초 값을 대조하도록 수정; 원 실패 보존"
+  },
+  "runtime": {
+    "health": "UP",
+    "scorePolicyMatched": true,
+    "scorePolicySha256": "075629abd268240fcf5291247d1594fc76f3cbeef46b451271c8bfbcff4fad0d",
+    "jobCountsUnchanged": true,
+    "activeJobsBeforeRestart": 0,
+    "apiPid": 52675,
+    "workerPid": 52676,
+    "currentCostSourceSha256": "864d0313414b1e5450b90df147eed292af9605d26c6efd051304435791dc1a2c",
+    "unitCostsKrwPerM2": {
+      "BIORETENTION": 632381,
+      "GREEN_ROOF": 350000,
+      "INFILTRATION_TRENCH": 171429,
+      "PERMEABLE_PAVEMENT": 123733,
+      "RAINWATER_CISTERN": 12158,
+      "RAIN_GARDEN": 632381,
+      "VEGETATIVE_SWALE": 50817
+    },
+    "personalBudgetKrw": 2000000000
+  }
+}
