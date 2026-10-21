@@ -1977,3 +1977,11 @@ API 키를 비운 보관 원문 전용 재생성에서도 강우·증발산 52�
 - ARM64 로컬 Docker에서 PostgreSQL V34 마이그레이션, API/워커의 명시적 DB 권한, HTTPS 세션/CSRF, 원형 후보 162개·강우 100개 API/워커 일치, 실제 SWMM 성공·재현 파일 18개와 재시작 후 데이터 보존 확인. V33 계산 워커의 최소 계정/기관 열 허용 및 비밀번호/알림/대회 규칙 변경 거부 추가 검사.
 - 운영 Compose의 80/443 단독 게시·DB/API 비게시·운영 워커 수집 네트워크·Secret 파일 계약 검사, 평가 정책 해시 일치, 스테이징 변경의 기존 비밀값/개인키 미포함 검사 통과.
 - Oracle Ubuntu 24.04.4 ARM64·24GB·여유 디스크 약 181GB 확인. 가비아 A @→168.107.61.81 TTL 600 저장 후 공개 DNS와 외부 HTTP 응답 확인. GitHub production 환경의 main 배포 제한과 SSH/KMA Secret 등록 완료. 실제 공개 HTTPS/첫 CI 배포 결과는 후속 기록으로 구분.
+
+## 2026-10-22 Oracle 첫 운영 배포 완료
+
+- 관리자 비밀번호 최소 길이를 사용자 요청의 8자로 통일. 8자 허용·7자 거부의 CI 검사와 관리자 초기화 시험, 운영 알림·가입/MFA/설치/제출 32개 PostgreSQL 시험 통과. 기존 개발 DB 계수 보존.
+- `45b31eeaa69d433357d1747accf61ad3e704631a`의 [운영 배포 실행 39626445638](https://github.com/WaterLeague/waterleague/actions/runs/39626445638) 성공. ARM64 API·워커·웹 이미지를 GHCR에 게시하고 제공된 SSH 키와 추가 인증으로 Oracle 배포. PostgreSQL V34·활성 ADMIN 1개 확인, 관리자 평문 초기화 파일·임시 레지스트리 자격 삭제.
+- `https://waterleague.cloud`의 실제 인증서·HTTP→HTTPS 전환·홈/해시 자산·공개 health/districts/weekly/spatial API 200 확인. 비인증 관리자 API 401, `.env`·`.git`·actuator·누락된 JS 404, CSP/HSTS와 `__Host-waterleague` Secure/HttpOnly/SameSite=Lax/Path=/ 확인. 인증서 검증 우회 없음.
+- 실제 도메인의 내장 브라우저에서 홈·로그인 최소 8자·주간 서울 3D 지도 로드 및 콘솔 오류 없음 확인. 운영 DB에 가상 회원·설치·제출을 넣지 않았으며 일반회원/알림 기록은 0건. Discord 웹훅의 읽기 전용 메타데이터 HTTP 200 확인, 실제 활동 메시지 수신은 아직 발생 전.
+- API/DB/웹 healthy·워커 실행 확인. 지속 Secret의 파일 권한 0600과 컨테이너 최근 로그의 실제 비밀값 미포함 검사 통과. 동시 서버 부하·오프사이트 백업/복원까지 검증한 것으로 확대 해석하지 않음.

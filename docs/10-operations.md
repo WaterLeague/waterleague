@@ -44,7 +44,9 @@ simulation/.venv/bin/python scripts/verify_league_postgres.py --suite competitio
 
 검증 건수·해당 코드 시점은 [검증 이력](12-validation-log.md#2026-10-21-게임-대회관리자-결과페이지-경로-정리)에 둔다.
 
-## CI 재현 환경
+## CI 재현 환경 · 과거 검증 이력
+
+아래 대규모 검증 CI는 2026-10-22 사용자 요청으로 제거했다. 재현 도구와 시험 코드는 로컬에서 유지하며 현재 main은 이 문서 하단의 운영 배포 workflow를 사용한다.
 
 `main`, `dev`, `feat/**`, `fix/**` 푸시와 PR에서 `.github/workflows/verify.yml` 실행. 프론트 포맷·추적 중인 단위 시험·빌드·의존성 감사, PostgreSQL API 회귀, 큐·검색·복원, Linux amd64/arm64 HTTPS 컨테이너 계산을 검사한다.
 
@@ -107,11 +109,11 @@ API의 SQLite 네이티브 라이브러리는 이미지 빌드에서 해당 아�
 
 `simulation/.venv/bin/python scripts/verify_league_postgres.py`는 `.env.local`을 값 출력 없이 읽고 로컬 PostgreSQL에 UUID 이름의 독립 시험 DB를 생성. Java 25의 실제 HTTP·MFA·CSRF·트랜잭션 시험 후 성공/실패와 관계없이 자신이 생성한 DB를 삭제. 로컬 시험 계정의 CREATEDB 권한 필요; 운영 서비스 계정에 해당 권한을 부여하는 배포 지침이 아님. 원본 계산·공개 제출·리그 수 변화 검사, 0600 로그 경로와 통과 여부만 출력. 과학 모델 검증이나 기존 원본 DB의 쓰기 시험이 아님.
 
-CI도 별도 PostgreSQL 18.4 서비스 DB에서 같은 참가 통합 검사를 실행. CI의 공개 시험용 비밀번호는 서비스 컨테이너 전용이며 로컬·운영 비밀과 분리. 실제 Oracle 처리량·자원 제한은 별도 검증.
+기존 검증 CI는 별도 PostgreSQL 18.4 서비스 DB에서 같은 참가 통합 검사를 실행했다. CI의 공개 시험용 비밀번호는 서비스 컨테이너 전용이며 로컬·운영 비밀과 분리. 실제 Oracle 처리량·자원 제한은 별도 검증.
 
 ## 컨테이너 배포·로컬 HTTPS 검증 계약
 
-2026-10-17. 문서 07·10의 비밀 분리·권한·복원 기준을 실행 가능한 배포 구성으로 연결. Linux amd64/arm64 CI의 전체 검증 통과, Oracle 접속/도메인은 사용자 확인 대기. CI 검증을 실제 Oracle 배포·부하·외부 백업 완료로 표시하지 않음. 모델은 기존 EXPLORATORY 유지.
+2026-10-17. 문서 07·10의 비밀 분리·권한·복원 기준을 실행 가능한 배포 구성으로 연결. Linux amd64/arm64 CI의 전체 검증 통과, 당시 Oracle 접속/도메인은 사용자 확인 대기였으며 2026-10-22의 실제 운영 결과는 아래에 기록한다. CI 검증을 실제 Oracle 배포·부하·외부 백업 완료로 표시하지 않음. 모델은 기존 EXPLORATORY 유지.
 
 ### 구성과 권한
 
@@ -129,7 +131,7 @@ API는 Spring config tree, 워커는 `_FILE` 설정으로 DB 연결 비밀을 �
 
 파일 기반 Compose secret의 uid/gid 옵션은 bind mount에서 적용되지 않을 수 있으므로 실행 사용자는 호스트의 비root UID/GID와 일치. 상태 폴더 0700·비밀 파일 0600, 컨테이너와 호스트에서 읽기 권한 확인. API/워커는 같은 호스트 UID를 쓰지만 전달 비밀과 DB 역할·mount 쓰기 권한은 분리. PostgreSQL의 최초 entrypoint만 공식 이미지의 초기화 권한 사용, DB 본 프로세스는 postgres 사용자. 비밀 파일 누락/DB 비밀번호 불일치는 재생성으로 덮어쓰지 않고 실패.
 
-로컬 검증 명령: 저장소 루트에서 `python3 scripts/verify_containers.py`. Docker 엔진과 비root 계정 필요. 임의 프로젝트 이름·비공개 임시 폴더·loopback 임의 포트를 사용하고 기존 `.env.local`은 읽거나 수정하지 않음. `deploy/compose.yml`은 로컬 검증 구성. `Caddyfile.public`은 도메인 확보 후 검증할 초안이며 공개 포트/인증서 설정은 아직 운영 완료 범위 아님.
+로컬 검증 명령: 저장소 루트에서 `python3 scripts/verify_containers.py`. Docker 엔진과 비root 계정 필요. 임의 프로젝트 이름·비공개 임시 폴더·loopback 임의 포트를 사용하고 기존 `.env.local`은 읽거나 수정하지 않음. `deploy/compose.yml`은 로컬 검증 구성. `Caddyfile.public`의 실제 공개 포트/인증서 검증은 아래 Oracle 운영 배포 기록에 해당한다.
 
 워커 Python 3.14 의존성은 `deploy/requirements.lock`에 직접·전이 패키지 버전과 Linux amd64/arm64 wheel 해시 고정, `pip --require-hashes --only-binary` 사용. SWMM은 EPA 고정 commit tarball SHA256 확인 후 기존 실행과 동일하게 OpenMP로 빌드, 컴파일러가 연결한 libgomp 사본과 `$ORIGIN` RPATH 보존. 모델의 `THREADS 1`과 워커당 단일 작업 유지. 베이스 이미지 digest·Python wheel·Maven/pnpm 버전은 고정하되 빌드 단계 OS 도구 패키지까지 비트 단위 재현을 보장하지는 않음.
 
@@ -194,3 +196,9 @@ V34 DB 트리거가 신규 MEMBER 가입, 주간 신규 설치, 재해 최종 �
 API의 별도 스케줄러가 한 번에 한 건을 임대해 전송한다. Discord `wait=true`의 성공 응답 후 완료 처리, 전체 멘션 차단, TLS 검증, 리디렉션 차단, 연결 5초/요청 10초 제한을 적용한다. HTTP 408/429/5xx 및 통신 실패는 최대 8회 재시도하고 429의 Retry-After 동안 발송을 멈춘다. 전달 완료 후 DB 기록 전 장애 시 재발송될 수 있어 수신 측 기록 ID로 식별한다. 전송 완료 기록은 7일, 나머지 기록은 최대 30일 보관한다. 웹훅 URL·응답 본문·전송 사용자 정보는 일반 로그에 출력하지 않는다. 웹훅 미설정 로컬 환경은 발송하지 않는다.
 
 근거: [GitHub Actions 보안](https://docs.github.com/en/actions/reference/security/secure-use), [Discord webhook](https://docs.discord.com/developers/resources/webhook), [Caddy 자동 HTTPS](https://caddyserver.com/docs/automatic-https), [Docker Ubuntu 설치](https://docs.docker.com/engine/install/ubuntu/).
+
+### 첫 운영 배포 확인
+
+2026-10-22 KST, 커밋 `45b31eeaa69d433357d1747accf61ad3e704631a`의 [GitHub Actions 실행](https://github.com/WaterLeague/waterleague/actions/runs/39626445638)이 성공했다. `https://waterleague.cloud`의 공인 인증서 검증·HTTP→HTTPS 전환·실제 첫 화면/주간 지도 로드·API 상태 UP을 확인했다. API·DB·웹의 준비 상태와 워커 실행, V34 적용, 활성 ADMIN 1개·일반회원 0개, 초기화 비밀번호 파일 삭제를 확인했다. 관리자 첫 로그인 시 본인의 인증 앱 등록이 필요하다.
+
+Discord 웹훅 메타데이터 조회는 HTTP 200이며 일반 로그의 비밀값 미노출을 검사했다. 세 활동의 알림 생성·중복/롤백 처리는 독립 DB 시험으로 확인했고, 운영 DB에 검증용 가입·시설·재해 제출을 생성하지 않았다. 실제 사용자 활동의 Discord 수신은 아직 발생 전이다. 공개 HTTPS의 CSRF 세션 속성과 비인증 관리자 API 401, 비밀 경로 404도 확인했다. 문서만 갱신하는 완료 기록 커밋에는 `[skip ci]`를 사용해 동일 앱의 불필요한 재배포를 생략한다.
