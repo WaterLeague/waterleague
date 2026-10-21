@@ -12,6 +12,7 @@
 | 완료 범위·미지원·제외 조건 | [제공 범위](docs/09-delivery.md) |
 | 수치 의미·가정·검증 한계 | [연구 적합성](docs/02-scientific-validity.md) · [EPA 참조 검증](docs/20-epa-reference-validation.md) |
 | 공개자료·추가 확보 여부 | [출처](docs/03-data-provenance.md) · [자료 현황](docs/13-data-access.md) · [공간자료 검사](docs/19-spatial-source-audit.md) |
+| 현재 서울 1:1,000 수치자료의 레이어·속성·코드 | [데이터 설명서](docs/21-seoul-topography-data-dictionary.md) |
 | 강우·수위 자료와 비교 | [강우 카탈로그](docs/11-rainfall-catalog.md) · [서울 관측](docs/14-seoul-observations.md) · [관망·수위](docs/15-sewer-observations.md) |
 | 시스템·저장·API·보안 | [아키텍처](docs/04-architecture.md) · [데이터 모델](docs/05-data-model.md) · [API](docs/06-api.md) · [보안](docs/07-security.md) |
 | 현재 대회·관리자 결과 | [제품](docs/01-product.md#대회--2026-10-21) · [API](docs/06-api.md#대회와-관리자-결과--2026-10-21) |
