@@ -204,6 +204,7 @@ def check_http(stack, state):
     assert 'text/html' in headers['Content-Type']
     assert "frame-ancestors 'none'" in headers['Content-Security-Policy']
     assert headers['X-Content-Type-Options'] == 'nosniff'
+    assert headers['Permissions-Policy'] == 'camera=(), microphone=(), geolocation=(self)'
     assert headers['Cache-Control'] == 'no-cache'
     assert headers['Strict-Transport-Security'] and not headers.get('Server')
     assets = re.findall(r'(?:src|href)="(/assets/[^\"]+)"', page.decode())

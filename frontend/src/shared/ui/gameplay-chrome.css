@@ -514,6 +514,9 @@
 .game-shell .shared-play-layout .map-layer-bar .gameplay-toolbar {
   gap: 10px;
   background: transparent;
+  position: relative;
+  flex-wrap: wrap;
+  max-width: 100%;
 }
 .game-shell .gameplay-toolbar > label,
 .game-shell .gameplay-tools,
@@ -526,6 +529,43 @@
 }
 .game-shell .gameplay-toolbar > label {
   padding: 4px 8px;
+}
+.game-shell .gameplay-toolbar .current-location-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 13px 15px;
+  border: 1px solid #dce6da;
+  border-radius: 24px;
+  background: #fafcf5f5;
+  box-shadow: 0 4px 16px #294e5014;
+  white-space: nowrap;
+}
+.game-shell .current-location-button:hover:not(:disabled) {
+  background: #e5eee1;
+}
+.game-shell .map-location-notice {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  z-index: 90;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 260px;
+  max-width: calc(100vw - 48px);
+  padding: 12px 14px;
+  border: 1px solid #d7e3d5;
+  border-radius: 19px;
+  background: #fafcf6;
+  color: #355e63;
+  box-shadow: 0 12px 28px #24484e24;
+  font-size: 12px;
+}
+.game-shell .map-location-notice button {
+  display: flex;
+  flex-shrink: 0;
+  padding: 3px;
 }
 .game-shell .gameplay-tools > summary {
   padding: 13px 15px;
@@ -701,10 +741,10 @@
   gap: 11px;
   padding: 9px 15px;
   min-width: 236px;
-  border: 1px solid #d9e3d4;
+  border: 1px solid #dfb940;
   border-radius: 20px;
-  background: #fafcf4f5;
-  color: #355b60;
+  background: #ffe082;
+  color: #594412;
   box-shadow: 0 4px 16px #294e5012;
 }
 .game-shell .budget-dock > div {
@@ -721,14 +761,14 @@
 .game-shell .dock-budget-track {
   height: 5px;
   border-radius: 5px;
-  background: #dfe7d9;
+  background: #f0c858;
   margin: 5px 0;
   overflow: hidden;
 }
 .game-shell .dock-budget-track i {
   display: block;
   height: 100%;
-  background: #608d78;
+  background: #8a6514;
   border-radius: inherit;
   transition: width 250ms ease;
 }

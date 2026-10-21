@@ -7,6 +7,7 @@ import { createFloodField } from '../../urban/service/floodFieldService';
 import { infrastructureFocus } from '../../infrastructure/service/infrastructureFocus';
 import { GameSelect } from '../../../shared/ui/GameSelect';
 import { MapActionDock } from './MapActionDock';
+import { CurrentLocationButton } from './CurrentLocationButton';
 import { useGroundCandidates } from '../../installation/controller/useGroundCandidates';
 import { GameplayScoreboard } from './GameplayScoreboard';
 import { historicalTotal } from '../../historical/service/historicalTotal';
@@ -999,6 +1000,19 @@ function Explorer({
                 ]}
               />
             </label>
+            <CurrentLocationButton
+              city={city}
+              onLocate={({ center, districtId }) => {
+                const target = {
+                  center,
+                  distance: Math.min(navigationCamera.current.distance, 1000),
+                };
+                navigationCamera.current = target;
+                setSelected(districtId);
+                setCamera(target);
+                setFocus((previous) => ({ ...target, key: previous.key + 1, preserveAngle: true }));
+              }}
+            />
             <details
               className="gameplay-tools"
               onClick={(event) => {
