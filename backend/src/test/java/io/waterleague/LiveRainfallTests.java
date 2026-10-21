@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import io.waterleague.common.exception.*;
+import io.waterleague.common.repository.ExternalRequestStore.Response;
 import io.waterleague.district.repository.DistrictRepository;
 import io.waterleague.rainfall.mapper.KmaObservationMapper;
 import io.waterleague.rainfall.repository.KmaLiveRepository;
@@ -184,7 +185,7 @@ class LiveRainfallTests {
   }
 
   @Test
-  void fetchesEveryRequestAndNeverFallsBackAfterFailure() {
+  void sharesRequestsForSixtySecondsAndNeverFallsBackAfterFailedRefresh() {
     var source = mock(KmaLiveRepository.class);
     var districts = mock(DistrictRepository.class);
     when(districts.all())
@@ -192,11 +193,18 @@ class LiveRainfallTests {
             List.of(
                 new io.waterleague.district.entity.District(
                     "11140", "성동구", "map", "hash", List.of(0.0, 0.0), "421", "성동")));
+    var clock = mock(Clock.class);
+    Instant now = Instant.parse("2026-10-22T00:00:00Z");
+    when(clock.instant()).thenReturn(now);
     when(source.fetch(any()))
-        .thenAnswer(call -> response(row(call.getArgument(0), "0")))
+        .thenAnswer(call -> new Response(response(row(call.getArgument(0), "0")), now))
         .thenThrow(new DomainException(ErrorCode.RAINFALL_UNAVAILABLE));
-    var service = new LiveRainfallService(source, districts);
+    var service = new LiveRainfallService(source, districts, clock);
     assertThat(service.latest().districts().getFirst().status()).isEqualTo("CURRENT");
+    assertThat(service.latest().fetchedAt()).isEqualTo(now);
+    verify(source, times(1)).fetch(any());
+    when(clock.instant()).thenReturn(now.plusSeconds(60));
+    assertThatThrownBy(service::latest).isInstanceOf(DomainException.class);
     assertThatThrownBy(service::latest).isInstanceOf(DomainException.class);
     verify(source, times(2)).fetch(any());
   }

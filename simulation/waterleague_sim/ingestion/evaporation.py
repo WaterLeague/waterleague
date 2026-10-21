@@ -3,7 +3,7 @@ import hashlib
 import math
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from .live import KST, LiveSourceError, fetch_range, parse, read_response
+from .live import KST, LiveSourceError, fetch_range, parse, shared_response
 from ..engine import evapotranspiration as formula
 
 HOURLY_URL = 'https://apihub.kma.go.kr/api/typ01/url/kma_sfctm3.php'
@@ -16,9 +16,9 @@ MINUTE = timedelta(minutes=1)
 def fetch(endpoint, parameters, key, heartbeat=None):
     if not key or endpoint not in (HOURLY_URL, STATION_URL, 'https://apihub.kma.go.kr/api/typ01/url/kma_sfcdd3.php'):
         raise LiveSourceError('KMA_ACCESS_UNAVAILABLE')
-    raw = read_response(endpoint, parameters, key, heartbeat)
+    raw, acquisition = shared_response(endpoint, parameters, key, heartbeat)
     return raw, {'provider': 'KMA_ASOS_DIRECT', 'endpoint': endpoint, 'parameters': parameters,
-                 'fetchedAt': datetime.now(timezone.utc).isoformat(), 'sha256': hashlib.sha256(raw).hexdigest(),
+                 'fetchedAt': acquisition['fetchedAt'], 'sha256': hashlib.sha256(raw).hexdigest(),
                  'purpose': 'SIMULATION_USED_INPUT_ONLY'}
 
 

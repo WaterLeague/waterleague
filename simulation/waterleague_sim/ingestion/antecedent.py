@@ -38,7 +38,7 @@ def weather(start, end, key, daily_fetch=None, heartbeat=None):
 def fetch(station, evaluation_start, key, daily_fetch=None, heartbeat=None):
     start = evaluation_start-timedelta(minutes=MINUTES)
     rain, sources = live.observed_forcing(station, start, evaluation_start, key, chunk_hours=6,
-        antecedent_quality=True, heartbeat=heartbeat, allow_gaps=True)
+        antecedent_quality=True, heartbeat=heartbeat, allow_gaps=True, share_ranges=True)
     rain, supplements = seoul_live.supplement(rain, start, evaluation_start, heartbeat=heartbeat)
     sources.extend(supplements)
     pet, raw = weather(start, evaluation_start, key,

@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import io.waterleague.common.exception.*;
+import io.waterleague.common.repository.ExternalRequestStore.Response;
 import io.waterleague.common.service.JsonService;
 import io.waterleague.urban.mapper.UrbanLiveMapper;
 import io.waterleague.urban.repository.*;
@@ -112,7 +113,7 @@ class UrbanLiveTests {
     var source = mock(SeoulUrbanRepository.class);
     var catalog = new UrbanAreaRepository(json);
     String name = catalog.require("POI001").name();
-    when(source.population(name)).thenReturn(population(name));
+    when(source.population(name)).thenReturn(new Response(population(name), NOW));
     when(source.traffic(name)).thenThrow(new DomainException(ErrorCode.URBAN_UNAVAILABLE));
     var service = new UrbanLiveService(catalog, source, mapper, Clock.fixed(NOW, ZoneOffset.UTC));
     var result = service.latest(List.of("POI001")).places().getFirst();
@@ -132,10 +133,10 @@ class UrbanLiveTests {
         .thenAnswer(
             a -> {
               Thread.sleep(15);
-              return population(a.getArgument(0));
+              return new Response(population(a.getArgument(0)), NOW);
             });
     when(source.traffic(anyString()))
-        .thenAnswer(a -> traffic(a.getArgument(0), 15, "2026-10-19 23:00"));
+        .thenAnswer(a -> new Response(traffic(a.getArgument(0), 15, "2026-10-19 23:00"), NOW));
     var service = new UrbanLiveService(catalog, source, mapper, Clock.fixed(NOW, ZoneOffset.UTC));
     var ids = List.of("POI001", "POI002", "POI003", "POI004", "POI005", "POI006");
     try (var pool = Executors.newVirtualThreadPerTaskExecutor()) {

@@ -5,10 +5,12 @@ from datetime import datetime, timedelta, timezone
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from urllib.parse import urlencode
+from urllib.error import HTTPError
 from urllib.request import Request, build_opener
 
 from .live import KST, NoRedirect, LiveSourceError
 from .rainfall import RainfallQualityError
+from . import request_store
 
 ROOT = Path(__file__).resolve().parents[3]
 REGISTRY = ROOT / 'backend/src/main/resources/native-weather/v1/antecedent-fallback.json'
@@ -23,24 +25,35 @@ def fetch(station, heartbeat=None):
     parameters = {'srvType': 'S', 'infId': 'OA-23092', 'serviceKind': '0', 'pageNo': '1',
         'ssUserId': 'SAMPLE_VIEW', 'strWhere': '', 'strOrderby': 'DATA_CLCT_TM DESC',
         'filterCol': 'RF_CD', 'txtFilter': station, 'gridTotalCnt': '0'}
-    if heartbeat is not None:
-        heartbeat()
+    def retrieve():
+        if heartbeat is not None: heartbeat()
+        day = request_store.reserve('PUBLIC', LIMIT, provider='SEOUL_RAIN', max_calls=1000, max_bytes=1_000_000_000)
+        try:
+            request = Request(ENDPOINT, data=urlencode(parameters).encode(), headers={'Referer': DOCUMENTATION})
+            with build_opener(NoRedirect()).open(request, timeout=25) as response:
+                raw = response.read(LIMIT+1)
+            if len(raw)>LIMIT: raise LiveSourceError('SEOUL_RAIN_RESPONSE_TOO_LARGE')
+        except HTTPError as error:
+            status = error.code
+            from .live import retry_seconds
+            delay = retry_seconds(error.headers.get('Retry-After') if error.headers else None)
+            error.close()
+            request_store.block('PUBLIC', status, delay, provider='SEOUL_RAIN')
+            raise LiveSourceError('SEOUL_RAIN_UNAVAILABLE') from None
+        except Exception:
+            request_store.block('PUBLIC', provider='SEOUL_RAIN')
+            raise LiveSourceError('SEOUL_RAIN_UNAVAILABLE') from None
+        request_store.settle('PUBLIC', day, LIMIT, len(raw), provider='SEOUL_RAIN')
+        return raw
     try:
-        request = Request(ENDPOINT, data=urlencode(parameters).encode(),
-                          headers={'Referer': DOCUMENTATION})
-        with build_opener(NoRedirect()).open(request, timeout=25) as response:
-            raw = response.read(LIMIT + 1)
-        if len(raw) > LIMIT:
-            raise LiveSourceError('SEOUL_RAIN_RESPONSE_TOO_LARGE')
-    except LiveSourceError:
-        raise
+        raw, acquisition = request_store.acquire(ENDPOINT, parameters, 'PUBLIC', retrieve,
+            heartbeat, ttl=600, provider='SEOUL_RAIN')
     except Exception:
         raise LiveSourceError('SEOUL_RAIN_UNAVAILABLE') from None
-    if heartbeat is not None:
-        heartbeat()
+    if heartbeat is not None: heartbeat()
     return raw, {'provider': 'SEOUL_OPEN_DATA_DIRECT', 'endpoint': ENDPOINT,
         'parameters': parameters, 'method': 'POST', 'documentationUrl': DOCUMENTATION,
-        'fetchedAt': datetime.now(timezone.utc).isoformat(),
+        'fetchedAt': acquisition['fetchedAt'],
         'sha256': hashlib.sha256(raw).hexdigest(), 'purpose': 'ANTECEDENT_GAP_SUPPLEMENT_ONLY',
         'license': 'KOGL_TYPE_2_ATTRIBUTION_NONCOMMERCIAL'}
 

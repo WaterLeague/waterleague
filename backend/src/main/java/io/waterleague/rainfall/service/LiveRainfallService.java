@@ -19,8 +19,16 @@ public class LiveRainfallService {
   private final KmaLiveRepository source;
   private final DistrictRepository districts;
   private CompletableFuture<LiveRainfallView> inFlight;
+  private Instant expires = Instant.MIN;
+  private final Clock clock;
 
+  @org.springframework.beans.factory.annotation.Autowired
   public LiveRainfallService(KmaLiveRepository source, DistrictRepository districts) {
+    this(source, districts, Clock.systemUTC());
+  }
+
+  public LiveRainfallService(KmaLiveRepository source, DistrictRepository districts, Clock clock) {
+    this.clock = clock;
     this.source = source;
     this.districts = districts;
   }
@@ -29,8 +37,9 @@ public class LiveRainfallService {
     CompletableFuture<LiveRainfallView> current;
     boolean leader = false;
     synchronized (this) {
-      if (inFlight == null) {
+      if (inFlight == null || (inFlight.isDone() && !clock.instant().isBefore(expires))) {
         inFlight = new CompletableFuture<>();
+        expires = clock.instant().plusSeconds(60);
         leader = true;
       }
       current = inFlight;
@@ -40,10 +49,6 @@ public class LiveRainfallService {
         current.complete(fetch());
       } catch (Exception e) {
         current.completeExceptionally(e);
-      } finally {
-        synchronized (this) {
-          if (inFlight == current) inFlight = null;
-        }
       }
     }
     try {
@@ -56,19 +61,24 @@ public class LiveRainfallService {
 
   private LiveRainfallView fetch() {
     // 최신 분이 생산 중이면 같은 직접 조회 범위의 이전 유효 관측을 사용한다.
-    Instant requested = Instant.now().truncatedTo(ChronoUnit.MINUTES).minusSeconds(60);
+    Instant requested = clock.instant().truncatedTo(ChronoUnit.MINUTES).minusSeconds(60);
     Map<String, LiveObservation> values;
     Map<String, PresentWeather> weather;
+    Instant acquired = null;
     try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
       var present = executor.submit(() -> fetchPresentWeather(requested));
       DomainException rainFailure = null;
       try {
-        values = KmaObservationMapper.parse(source.fetch(requested), requested);
+        var response = source.fetch(requested);
+        acquired = response.fetchedAt();
+        values = KmaObservationMapper.parse(response.body(), requested);
       } catch (DomainException e) {
         values = Map.of();
         rainFailure = e;
       }
-      weather = present.get();
+      var result = present.get();
+      weather = result.values();
+      if (acquired == null || result.fetchedAt().isAfter(acquired)) acquired = result.fetchedAt();
       if (rainFailure != null && weather.isEmpty()) throw rainFailure;
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
@@ -77,15 +87,16 @@ public class LiveRainfallService {
       throw new DomainException(ErrorCode.RAINFALL_UNAVAILABLE);
     }
     var observedValues = values;
-    Instant fetched = Instant.now();
+    Instant fetched = acquired;
+    Instant checked = clock.instant();
     var rows =
         districts.all().stream()
             .map(
                 d -> {
                   var v = observedValues.get(d.stationId());
-                  var signal = RainSignalService.choose(v, weather.get(d.stationId()), fetched);
+                  var signal = RainSignalService.choose(v, weather.get(d.stationId()), checked);
                   Long age =
-                      v == null ? null : Duration.between(v.observedAt(), fetched).getSeconds();
+                      v == null ? null : Duration.between(v.observedAt(), checked).getSeconds();
                   String status =
                       v == null || !v.complete() ? "MISSING" : age > 300 ? "DELAYED" : "CURRENT";
                   return new LiveRainfallView.Station(
@@ -120,13 +131,18 @@ public class LiveRainfallService {
         rows);
   }
 
-  private Map<String, PresentWeather> fetchPresentWeather(Instant requested) {
+  private record WeatherResult(Map<String, PresentWeather> values, Instant fetchedAt) {}
+
+  private WeatherResult fetchPresentWeather(Instant requested) {
     try {
-      String raw = source.fetchPresentWeather(requested);
-      return raw == null ? Map.of() : KmaPresentWeatherMapper.parse(raw, requested);
+      var response = source.fetchPresentWeather(requested);
+      return response == null
+          ? new WeatherResult(Map.of(), Instant.MIN)
+          : new WeatherResult(
+              KmaPresentWeatherMapper.parse(response.body(), requested), response.fetchedAt());
     } catch (DomainException e) {
       // 보조 관측 장애로 정상 강수량까지 버리지 않는다.
-      return Map.of();
+      return new WeatherResult(Map.of(), Instant.MIN);
     }
   }
 }

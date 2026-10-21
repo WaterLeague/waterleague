@@ -1,9 +1,7 @@
-"""계산에 필요한 AWS 구간의 직접 조회·누적 강우 정규화. 최신 조회용 저장소 없음."""
+"""절대 시각의 AWS 관측 공유 수집·누적 강우 정규화."""
 import hashlib
 import math
-import random
-import ssl
-import time
+import sqlite3
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal, InvalidOperation
 from email.utils import parsedate_to_datetime
@@ -13,6 +11,7 @@ from urllib.parse import urlencode
 from urllib.request import HTTPRedirectHandler, build_opener
 
 from .rainfall import RainfallQualityError
+from . import request_store
 
 KST = timezone(timedelta(hours=9))
 ENDPOINT = 'https://apihub.kma.go.kr/api/typ01/cgi-bin/url/nph-aws2_min'
@@ -29,49 +28,63 @@ class NoRedirect(HTTPRedirectHandler):
         return None
 
 
-def retry_delay(value):
-    if value is None:
-        return random.uniform(.5, 1)
+def retry_seconds(value):
     try:
-        delay = float(int(value)) if value.isascii() and value.isdecimal() else (
+        delay = float(int(value)) if value and value.isascii() and value.isdecimal() else (
             parsedate_to_datetime(value)-datetime.now(timezone.utc)).total_seconds()
-        return max(0, delay) if math.isfinite(delay) and delay <= 2 else None
+        return max(60, delay) if math.isfinite(delay) else 60
     except (ValueError, TypeError, OverflowError):
-        return None
+        return 60
 
 
 def read_response(endpoint, parameters, key, heartbeat=None):
-    for attempt in range(2):
-        if heartbeat is not None:
-            heartbeat()
-        delay, reduce_range = None, True
+    if heartbeat is not None: heartbeat()
+    try:
+        day = request_store.reserve(key, 4_000_000)
         try:
             with build_opener(NoRedirect()).open(
                     endpoint+'?'+urlencode(parameters | {'authKey': key}), timeout=30) as response:
                 raw = response.read(4_000_001)
-            if len(raw) > 4_000_000 or key.encode() in raw:
-                raise LiveSourceError('KMA_RESPONSE_INVALID')
-            return raw
         except HTTPError as error:
             status = error.code
-            retry_after = error.headers.get('Retry-After') if error.headers else None
+            delay = retry_seconds(error.headers.get('Retry-After') if error.headers else None)
             error.close()
-            if status in (401, 403):
-                raise LiveSourceError('KMA_ACCESS_UNAVAILABLE') from None
-            if status in (408, 429, 500, 502, 503, 504):
-                delay = retry_delay(retry_after)
-            # 서버 대기 지시·호출 제한을 구간 분할 요청으로 우회하지 않는다.
-            reduce_range = status != 429 and retry_after is None and delay is not None
-        except (OSError, TimeoutError, IncompleteRead) as error:
-            if isinstance(getattr(error, 'reason', error), ssl.SSLCertVerificationError):
-                reduce_range = False
-            else:
-                delay = retry_delay(None)
-        if attempt or delay is None:
-            raise LiveSourceError('KMA_UNAVAILABLE', can_reduce_range=reduce_range) from None
-        if heartbeat is not None:
-            heartbeat()
-        time.sleep(delay)
+            request_store.block(key, status, delay)
+            code = 'KMA_ACCESS_UNAVAILABLE' if status in (401,403) else 'KMA_UNAVAILABLE'
+            raise LiveSourceError(code, can_reduce_range=False) from None
+        except (OSError, TimeoutError, IncompleteRead):
+            request_store.block(key)
+            raise LiveSourceError('KMA_UNAVAILABLE', can_reduce_range=False) from None
+        if len(raw) > 4_000_000 or key.encode() in raw:
+            request_store.block(key)
+            raise LiveSourceError('KMA_RESPONSE_INVALID', can_reduce_range=False)
+        request_store.settle(key, day, 4_000_000, len(raw))
+        return raw
+    except (request_store.RequestBlocked, OSError, sqlite3.Error):
+        raise LiveSourceError('KMA_REQUEST_BUDGET_BLOCKED', can_reduce_range=False) from None
+
+
+def shared_response(endpoint, parameters, key, heartbeat=None):
+    try:
+        return request_store.acquire(endpoint, parameters, key,
+            lambda: read_response(endpoint, parameters, key, heartbeat), heartbeat,
+            ttl=request_store.response_ttl(parameters))
+    except (request_store.RequestBlocked, OSError, sqlite3.Error):
+        raise LiveSourceError('KMA_REQUEST_BUDGET_BLOCKED', can_reduce_range=False) from None
+
+
+def canonical_range(start, end, now=None):
+    now = now or datetime.now(timezone.utc)
+    # 같은 지점의 선행 구간을 공유하되 계산에는 요청한 시각의 관측만 전달한다.
+    width = 21600 if end-start <= timedelta(hours=6) else 3600
+    first = datetime.fromtimestamp(int(start.timestamp())//width*width, timezone.utc)
+    last = datetime.fromtimestamp((int(end.timestamp())+width-1)//width*width, timezone.utc)
+    if last > now-timedelta(minutes=2):
+        last = end
+        common = datetime.fromtimestamp(int(end.timestamp())//21600*21600-21600, timezone.utc)
+        if start >= common: first = common
+    if last-first > timedelta(days=1): return start, end
+    return first, last
 
 
 def number(value, minimum, maximum):
@@ -224,23 +237,25 @@ def normalized(rows, start, end, allow_gaps=False, rolling_warnings=None, interv
     return result
 
 
-def fetch_range(station, start, end, key, heartbeat=None):
+def fetch_range(station, start, end, key, heartbeat=None, canonical=False):
     if not key:
         raise LiveSourceError('KMA_ACCESS_UNAVAILABLE')
     if (not station.isdigit() or not 1 <= len(station) <= 5 or start.utcoffset() is None
             or end.utcoffset() is None or start.second or end.second or start.microsecond
             or end.microsecond or not 0 < (end-start).total_seconds() <= 86400):
         raise LiveSourceError('KMA_RANGE_INVALID')
+    if canonical: start, end = canonical_range(start, end)
     parameters = {'tm1': start.astimezone(KST).strftime('%Y%m%d%H%M'),
                   'tm2': end.astimezone(KST).strftime('%Y%m%d%H%M'),
                   'stn': station, 'disp': '0', 'help': '1'}
-    raw = read_response(ENDPOINT, parameters, key, heartbeat)
+    raw, acquisition = shared_response(ENDPOINT, parameters, key, heartbeat)
     return raw, {'provider': 'KMA_AWS_DIRECT', 'endpoint': ENDPOINT, 'parameters': parameters,
-                 'fetchedAt': datetime.now(timezone.utc).isoformat(),
+                 'fetchedAt': acquisition['fetchedAt'],
+                 **({'responseStart': start.isoformat(), 'responseEnd': end.isoformat()} if canonical else {}),
                  'sha256': hashlib.sha256(raw).hexdigest(), 'purpose': 'SIMULATION_USED_INPUT_ONLY'}
 
 
-def observed_forcing(station, start, end, key, chunk_hours=23, antecedent_quality=False, heartbeat=None, allow_gaps=False):
+def observed_forcing(station, start, end, key, chunk_hours=23, antecedent_quality=False, heartbeat=None, allow_gaps=False, share_ranges=False):
     if not isinstance(chunk_hours, int) or not 1 <= chunk_hours <= 23:
         raise LiveSourceError('KMA_RANGE_INVALID')
     cursor = start-timedelta(minutes=61)
@@ -250,13 +265,18 @@ def observed_forcing(station, start, end, key, chunk_hours=23, antecedent_qualit
         if heartbeat is not None: heartbeat()
         while True:
             limit = min(end, cursor+timedelta(hours=hours))
+            if share_ranges and hours >= 6:
+                boundary = datetime.fromtimestamp((int(cursor.timestamp())//21600+1)*21600, timezone.utc)
+                limit = min(limit, boundary)
             try:
-                raw, meta = fetch_range(station, cursor, limit, key, heartbeat=heartbeat)
+                raw, meta = fetch_range(station, cursor, limit, key, heartbeat=heartbeat, **({'canonical': True} if share_ranges else {}))
                 break
             except LiveSourceError as error:
                 if str(error) != 'KMA_UNAVAILABLE' or not error.can_reduce_range or hours == 1: raise
                 hours = max(1,hours//2)
-        values = parse(raw, station, cursor, limit)
+        first = datetime.fromisoformat(meta['responseStart']) if 'responseStart' in meta else cursor
+        last = datetime.fromisoformat(meta['responseEnd']) if 'responseEnd' in meta else limit
+        values = {at: row for at,row in parse(raw, station, first, last).items() if cursor <= at <= limit}
         for at, value in values.items():
             if at in rows and rows[at] != value:
                 raise RainfallQualityError('AWS_OVERLAPPING_RESPONSE_CHANGED')

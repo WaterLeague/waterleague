@@ -177,8 +177,15 @@
         "count": 124
       }
     ],
-    "accessFailureRootCause": "UNCONFIRMED",
+    "accessFailureRootCause": "KMA_DAILY_20000_REQUEST_QUOTA_EXHAUSTED_CONFIRMED_BY_ACCOUNT_OWNER",
     "temporaryRecoveryWorkersRemoved": true,
-    "normalWorkerRunning": true
+    "normalWorkerRunning": true,
+    "incidentFollowup": {
+      "dateKst": "2026-10-22",
+      "additionalCallsStopped": true,
+      "budgetBlockedUntilKst": "2026-10-23T00:00:00+09:00",
+      "normalWorkerStoppedForFix": true,
+      "note": "05:32 운영 계수는 당시 기록. 한도 소진 원인은 계정 소유자가 이후 확인."
+    }
   }
 }

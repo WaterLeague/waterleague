@@ -91,7 +91,7 @@
 | GET /installations/sites/ground | 화면 상대 미터 x/y의 실제 점을 포함하는 후보·정규 소속 구 조회 |
 | POST /installations | 로그인·소속 구·본인 중복·면적·시설·예산·CSRF 검사 후 확정 |
 | DELETE /installations/{id} | 소유자 검사. 현재 주 잠긴 확정 시설의 취소 거부 |
-| GET /rainfall/live | 구별 현재 관측·유효 시각·결측 상태. 실제 무강우와 미확인 구분 |
+| GET /rainfall/live | 서버 수집 60초 공유, 구별 현재 관측·유효 시각·결측 상태. 실제 무강우와 미확인 구분 |
 | GET /weekly, /budget | 주간 순위/기여와 개인 예산. 상세는 아래 계약 |
 | GET/POST /guest-historical | 비회원 세션별 실험·진행 전용 결과. 제출·최종 점수 제외 |
 | GET/POST /historical | 회원 소유 재해 실험·결과 |
@@ -282,7 +282,7 @@ RFC 9457 `application/problem+json`: type, title, status, detail, instance, code
 
 ## 도시 현재 표시 자료 (2026-10-19)
 
-`GET /api/v1/urban/live?places=POI001,POI068`은 비회원 조회, IP당 분당 30회, ID 1~6개·중복/미등록 ID 거부, `Cache-Control: no-store`. 고정 카탈로그 해시·공식 출처 URL·장소별 인구/도로 값을 반환한다. `population`은 `minimum/maximum/sourceHourKst/congestion/retrievedAt/validUntil/sourceSha256`, `traffic`은 `speedKmh/observedAt/retrievedAt/validUntil/sourceSha256`. 인구의 조회 시각을 관측 시각으로 제공하지 않는다. 인구/교통 실패 필드는 각각 null과 일반화한 상태 코드이며 외부 HTML·내부 예외·키·URL 쿼리를 응답에 전달하지 않는다. 과거 사건 계산·점수·랭킹 입력에 사용하지 않는 현재 표시 자료다.
+`GET /api/v1/urban/live?places=POI001,POI068`은 비회원 조회, IP당 분당 30회, ID 1~6개·중복/미등록 ID 거부, `Cache-Control: no-store`. 고정 카탈로그 해시·공식 출처 URL·장소별 인구/도로 값을 반환한다. `population`은 `minimum/maximum/sourceHourKst/congestion/retrievedAt/validUntil/sourceSha256`, `traffic`은 `speedKmh/observedAt/retrievedAt/validUntil/sourceSha256`. 인구의 조회 시각을 관측 시각으로 제공하지 않는다. 인구/교통 실패 필드는 각각 null과 일반화한 상태 코드이며 외부 HTML·내부 예외·키·URL 쿼리를 응답에 전달하지 않는다. 과거 사건 계산·점수·랭킹 입력에 사용하지 않는 현재 표시 자료다. 원문은 서버에서 5분간 공유하며 재시작 뒤에도 원래 `retrievedAt`·`validUntil`을 유지한다. 유효 시각이 지난 자료는 반환하지 않는다. 외부 호출 예산·실패 대기는 모든 이용자에게 공통 적용한다.
 
 현재 원형 지상 선택: `/installations/sites`의 `surface=ROADWAY|WALKWAY|OTHER`는 각각 원 도로면·보도·그 외 원형 역할을 필터링하며 미지정은 전체다. `/installations/sites/ground?x=...&y=...`는 도시 원점 `[198128,551989]`에서 이동한 미터 좌표의 점을 포함하는 실제 지상 후보와 정규 소속 구를 반환한다. 클릭 지점의 행정구를 후보의 소속으로 강제하지 않는다. 후보 소속은 전체 형상의 최대 양의 구 교차 면적 규칙을 유지한다. 유한 좌표·범위를 검사하고 구멍·수면·제외 영역·먼 위치는 404다. 다른 후보까지 30m 확장하지 않는다. `/building?sourceId=ngii:{layer}:{sha256}`는 동일 원 객체의 옥상 후보를 조회한다. 과거 OSM `/street`·`/parking` 조회는 현재 제공하지 않는다. 시설 확정의 소속·시설 유형·면적·예산·CSRF는 서버에서 재검사한다.
 

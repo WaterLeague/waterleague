@@ -153,7 +153,7 @@ class SharedPhysicsTests(unittest.TestCase):
         self.assertIsNone(row['result'])
         self.assertFalse(physics.finish(self.conn, job, {'stale': True}, 'a'*64, None))
 
-    def forcing(self, station, start, end, key, heartbeat=None):
+    def forcing(self, station, start, end, key, heartbeat=None, share_ranges=False):
         if heartbeat is not None: heartbeat()
         def rows(begin, finish):
             return [{'end': (begin+timedelta(minutes=i)).isoformat(), 'depthMm': .3,

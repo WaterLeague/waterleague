@@ -83,6 +83,7 @@ services:
       DB_USER: wl_api
       ARTIFACTS_PATH: /artifacts
       NATIVE_SPATIAL_CACHE: /cache/native-spatial
+      EXTERNAL_REQUEST_STATE_DIR: /cache/external-requests
     secrets:
       - {source: wl_api-password, target: spring.datasource.password}
       - {source: mfa-key, target: waterleague.mfa-key}
@@ -109,6 +110,7 @@ services:
       ARTIFACTS_PATH: /artifacts
       SIMULATION_CACHE_PATH: /cache/results
       NATIVE_SPATIAL_CACHE: /cache/native-spatial
+      EXTERNAL_REQUEST_STATE_DIR: /cache/external-requests
     secrets: [database-url]
     volumes:
       - '${WL_STATE_DIR}/artifacts:/artifacts'

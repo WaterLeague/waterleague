@@ -20,6 +20,7 @@ from prepare_rainfall_catalog import statistics
 
 sys.path.insert(0, str(ROOT/'simulation'))
 from waterleague_sim.ingestion.kma import normalize, KST
+from waterleague_sim.ingestion.live import shared_response
 from waterleague_sim.ingestion.rainfall import RainfallQualityError
 
 WINDOWS = [('202406220001', '202406222359'), ('202407020001', '202407022359'),
@@ -52,25 +53,16 @@ def fetch(stem, endpoint, parameters, key, limit=4000000):
         if saved['sha256'] != digest(data) or saved['parameters'] != parameters or saved['endpoint'] != endpoint:
             raise ValueError('보관 원본 검증 실패: '+stem)
         return data
-    for attempt in range(2):
-        try:
-            with build_opener(NoRedirect()).open(endpoint+'?'+urlencode(parameters | {'authKey': key}), timeout=45) as response:
-                data = response.read(limit+1)
-            if key.encode() in data:
-                raise SystemExit('비밀값이 포함된 응답 저장 거부')
-            if len(data) > limit or b'#START7777' not in data or b'#7777END' not in data:
-                raise ValueError('원본 형식 검사 실패: '+stem)
-            break
-        except HTTPError as error:
-            if error.code in (401, 403) or attempt:
-                raise ValueError(f'기상청 HTTP {error.code}: '+stem) from None
-        except Exception:
-            if attempt:
-                raise ValueError('기상청 원본 수집 실패: '+stem) from None
+    try:
+        data, acquisition = shared_response(endpoint, parameters, key)
+        if len(data) > limit or b'#START7777' not in data or b'#7777END' not in data:
+            raise ValueError()
+    except Exception:
+        raise ValueError('기상청 원본 수집 실패 또는 공유 호출 한도 도달: '+stem) from None
     raw.parent.mkdir(parents=True, exist_ok=True)
     raw.write_bytes(data)
     save_json(manifest, {'provider': '기상청', 'endpoint': endpoint, 'parameters': parameters,
-                        'acquiredAt': datetime.now(timezone.utc).isoformat(), 'sha256': digest(data),
+                        'acquiredAt': acquisition['fetchedAt'], 'sha256': digest(data),
                         'bytes': len(data), 'sourceTimezone': 'Asia/Seoul'})
     return data
 

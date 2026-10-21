@@ -1,5 +1,8 @@
 """승인된 기상청 AWS 매분자료 수집. 인증 URL과 키 출력 금지."""
 from local_config import ROOT, load
+import sys
+sys.path.insert(0, str(ROOT/'simulation'))
+from waterleague_sim.ingestion.live import shared_response
 from urllib.request import build_opener, HTTPRedirectHandler
 from urllib.parse import urlencode
 from urllib.error import HTTPError
@@ -38,12 +41,9 @@ def main():
     base = 'https://apihub.kma.go.kr/api/typ01/cgi-bin/url/nph-aws2_min'
     params = {'tm1': args.start, 'tm2': args.end, 'stn': args.station, 'disp': '0', 'help': '1'}
     try:
-        with build_opener(NoRedirect()).open(base+'?'+urlencode(params | {'authKey': key}), timeout=50) as response:
-            data = response.read(4000001)
-    except HTTPError as e:
-        raise SystemExit(f'기상청 HTTP {e.code}; API 활용 승인 확인 필요') from None
+        data, acquisition = shared_response(base, params, key)
     except Exception:
-        raise SystemExit('기상청 통신 오류') from None
+        raise SystemExit('기상청 조회 불가 또는 공유 호출 한도 도달') from None
     if len(data) > 4000000 or b'#START7777' not in data or b'#7777END' not in data:
         raise SystemExit('응답 형식·길이 검사 실패')
     if key.encode() in data:
@@ -53,7 +53,7 @@ def main():
     out.parent.mkdir(exist_ok=True)
     out.write_bytes(data)
     manifest = {'provider': '기상청', 'endpoint': base, 'parameters': params,
-                'acquiredAt': datetime.now(timezone.utc).isoformat(),
+                'acquiredAt': acquisition['fetchedAt'],
                 'sha256': hashlib.sha256(data).hexdigest(), 'bytes': len(data),
                 'sourceTimezone': 'Asia/Seoul',
                 'sourceNotice': 'AWS 원본의 -50 이하 값은 결측·오류. 별도 품질 플래그 미포함.'}

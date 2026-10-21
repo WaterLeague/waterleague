@@ -12,7 +12,7 @@ from .engine.continuous import ROOT, digest, engine_identity
 from .ingestion.live import observed_forcing
 from .ingestion.evaporation import observed_evaporation, append_evaporation, reusable_observation_hour
 from .installation_model import resolve, with_observed_forcing
-from .ingestion import source_archive
+from .ingestion import source_archive, request_store
 from .weekly import aggregate as weekly_aggregate, publish as publish_weekly, RULE, SECOND_RULE, SECOND_POLICY
 from .evaluation import score_policy
 from .job_runtime import run_process, read_result
@@ -45,7 +45,7 @@ def claim(conn):
             finished_at=clock_timestamp(),lease_until=NULL WHERE state='RUNNING' AND lease_until<=clock_timestamp()""")
         installation = conn.execute("""
             SELECT i.* FROM shared_installations i
-            WHERE i.source_retired_at IS NULL AND date_trunc('minute',LEAST(COALESCE(i.removed_at,i.season_ends_at,clock_timestamp()),clock_timestamp()-interval '2 minutes'))
+            WHERE i.source_retired_at IS NULL AND date_trunc('minute',LEAST(COALESCE(i.removed_at,i.season_ends_at,clock_timestamp()),date_bin(interval '5 minutes',clock_timestamp()-interval '2 minutes',timestamptz '2000-01-01 00:00:00+00')))
                 > date_trunc('minute',i.installed_at)+CASE WHEN i.installed_at=date_trunc('minute',i.installed_at)
                     OR i.physics_policy='INSTALLATION_SECOND_V2' THEN interval '0 minutes' ELSE interval '1 minute' END
               AND NOT EXISTS(SELECT 1 FROM shared_physics_jobs j WHERE j.installation_id=i.id AND j.state='RUNNING')
@@ -53,7 +53,7 @@ def claim(conn):
               AND NOT EXISTS(SELECT 1 FROM shared_physics_jobs j WHERE j.installation_id=i.id AND j.state='FAILED'
                 AND COALESCE(j.finished_at,j.created_at)>clock_timestamp()-interval '5 minutes')
               AND NOT EXISTS(SELECT 1 FROM shared_physics_jobs j WHERE j.installation_id=i.id AND j.state='SUCCEEDED'
-                AND j.requested_through>=date_trunc('minute',LEAST(COALESCE(i.removed_at,i.season_ends_at,clock_timestamp()),clock_timestamp()-interval '2 minutes')))
+                AND j.requested_through>=date_trunc('minute',LEAST(COALESCE(i.removed_at,i.season_ends_at,clock_timestamp()),date_bin(interval '5 minutes',clock_timestamp()-interval '2 minutes',timestamptz '2000-01-01 00:00:00+00'))))
             ORDER BY EXISTS(SELECT 1 FROM shared_weekly_scores s WHERE s.installation_id=i.id
                 AND s.score_policy_sha256<>%s) DESC,
                 (SELECT max(j.created_at) FROM shared_physics_jobs j WHERE j.installation_id=i.id) NULLS FIRST,i.installed_at,i.id
@@ -74,7 +74,9 @@ def claim(conn):
             start += timedelta(minutes=1)
         covered = previous['requested_through'] if previous else start
         now = conn.execute('SELECT clock_timestamp() AS now').fetchone()['now']
-        end = min(floor_minute(now)-timedelta(minutes=2), covered+timedelta(hours=23))
+        current = floor_minute(now)-timedelta(minutes=2)
+        current -= timedelta(minutes=current.minute % 5)
+        end = min(current, covered+timedelta(hours=23))
         if stops := installation['removed_at'] or installation.get('season_ends_at'):
             end = min(end, floor_minute(stops))
         if end <= covered:
@@ -175,7 +177,7 @@ def process(conn, job, root):
             from .ingestion.antecedent import fetch as fetch_antecedent
             antecedent, antecedent_sources = fetch_antecedent(station, job['start'], os.environ.get('KMA_API_KEY', ''), heartbeat=lambda: renew(conn,job))
         renew(conn,job)
-        extension, sources = observed_forcing(station, covered, job['end'], os.environ.get('KMA_API_KEY', ''), heartbeat=lambda: renew(conn,job))
+        extension, sources = observed_forcing(station, covered, job['end'], os.environ.get('KMA_API_KEY', ''), heartbeat=lambda: renew(conn,job), share_ranges=True)
         renew(conn,job)
         saved_depths = {v['end']: v['depthMm'] for v in observations[-60:]}
         if any(v['end'] in saved_depths and v['depthMm'] != saved_depths[v['end']]
@@ -241,7 +243,7 @@ def process(conn, job, root):
         (path/'model-source.json').write_bytes(source)
         (path/'forcing.json').write_bytes(forcing_raw)
         (path/'request.json').write_bytes(request_raw)
-        for module in ('engine/evapotranspiration.py', 'ingestion/evaporation.py', 'ingestion/daily_evaporation.py', 'ingestion/antecedent.py', 'ingestion/live.py', 'ingestion/seoul_live.py', 'weekly.py'):
+        for module in ('engine/evapotranspiration.py', 'ingestion/evaporation.py', 'ingestion/daily_evaporation.py', 'ingestion/antecedent.py', 'ingestion/live.py', 'ingestion/request_store.py', 'ingestion/seoul_live.py', 'weekly.py'):
             (path/Path(module).name).write_bytes((Path(__file__).parent/module).read_bytes())
         env = {k: v for k, v in os.environ.items() if k in ('PATH', 'LANG', 'LC_ALL', 'LIVE_SWMM_LIBRARY','NATIVE_SPATIAL_CACHE')}
         env['PYTHONPATH'] = str(ROOT/'simulation')
@@ -287,6 +289,8 @@ def process(conn, job, root):
 
 
 def run_once(conn, root):
+    # 계정 전체가 차단된 동안 시설별 실패 작업을 쌓거나 외부 요청을 재시도하지 않는다.
+    if not request_store.available(os.environ.get('KMA_API_KEY', '')): return False
     job = claim(conn)
     if not job:
         return False

@@ -93,14 +93,21 @@ public class UrbanLiveService {
       UrbanLiveView.Traffic traffic = null;
       String pStatus = "CURRENT_WEB_ESTIMATE", tStatus = "CURRENT_AREA_AVERAGE";
       try {
-        population =
-            mapper.population(source.population(area.name()), area.name(), clock.instant());
+        var raw = source.population(area.name());
+        population = mapper.population(raw.body(), area.name(), raw.fetchedAt());
+        if (!clock.instant().isBefore(population.validUntil()))
+          throw new DomainException(ErrorCode.URBAN_UNAVAILABLE);
       } catch (DomainException e) {
+        population = null;
         pStatus = e.code().name();
       }
       try {
-        traffic = mapper.traffic(source.traffic(area.name()), area.name(), clock.instant());
+        var raw = source.traffic(area.name());
+        traffic = mapper.traffic(raw.body(), area.name(), raw.fetchedAt());
+        if (!clock.instant().isBefore(traffic.validUntil()))
+          throw new DomainException(ErrorCode.URBAN_UNAVAILABLE);
       } catch (DomainException e) {
+        traffic = null;
         tStatus = e.code().name();
       }
       return new UrbanLiveView.Place(area.id(), area.name(), population, traffic, pStatus, tStatus);
