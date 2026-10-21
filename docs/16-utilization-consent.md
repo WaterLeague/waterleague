@@ -34,7 +34,7 @@
 
 ## API·내보내기
 
-- `POST /api/v1/institution/utilization/requests`: 요청 생성, MFA·승인 조직·연구 동의·멱등 검증
+- `POST /api/v1/institution/utilization/requests`: 요청 생성, 승인 조직·연구 동의·멱등 검증
 - `GET /api/v1/utilization/requests`: 본인 소유 계산에 대한 요청 목록
 - `GET /api/v1/institution/utilization/requests`: 본 조직의 요청 목록
 - `GET /api/v1/utilization/requests/{id}`: 당사자 요청 상세·동의 결정 이력

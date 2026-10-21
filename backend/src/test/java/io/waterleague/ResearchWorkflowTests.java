@@ -60,7 +60,6 @@ class ResearchWorkflowTests extends PostgresIntegrationTest {
             "",
             "",
             true));
-    String secret = org == null ? null : mfa.provision(id);
     var a =
         new Actor(
             id,
@@ -70,7 +69,6 @@ class ResearchWorkflowTests extends PostgresIntegrationTest {
     var login = new HashMap<String, Object>();
     login.put("username", name);
     login.put("password", "test-password-1234");
-    if (secret != null) login.put("otp", MfaTests.otp(secret));
     assertThat(call(a, "POST", "/auth/login", login).statusCode()).isEqualTo(200);
     return a;
   }
@@ -282,32 +280,16 @@ class ResearchWorkflowTests extends PostgresIntegrationTest {
   }
 
   @Test
-  void requiresInstitutionMfaRejectsReplayAndCapsBody() throws Exception {
+  void allowsApprovedInstitutionWithoutOtpAndCapsBody() throws Exception {
     UUID org = UUID.randomUUID();
-    db.update("INSERT INTO organizations(id,name,approved) VALUES(?,?,true)", org, "MFA 시험 기관");
+    db.update("INSERT INTO organizations(id,name,approved) VALUES(?,?,true)", org, "비밀번호 로그인 기관");
     var a = actor(org);
-    String name =
-        db.queryForObject("SELECT username FROM accounts WHERE id=?", String.class, a.id());
-    var login = new HashMap<String, Object>();
-    login.put("username", name);
-    login.put("password", "test-password-1234");
-    assertThat(call(a, "POST", "/auth/login", login).statusCode()).isEqualTo(401);
-    String secret = mfa.provision(a.id());
-    String code = MfaTests.otp(secret);
-    login.put("otp", code);
+    var account = accounts.byId(a.id()).orElseThrow();
+    var login = Map.of("username", account.username(), "password", "test-password-1234");
     assertThat(call(a, "POST", "/auth/login", login).statusCode()).isEqualTo(200);
-    assertThat(call(a, "POST", "/auth/login", login).statusCode()).isEqualTo(401);
+    assertThat(call(a, "POST", "/auth/mfa/enrollment", login).statusCode()).isEqualTo(403);
     assertThat(call(a, "POST", "/strategies", Map.of("title", "x".repeat(70000))).statusCode())
         .isEqualTo(413);
-    var encrypted =
-        db.queryForObject(
-            "SELECT encrypted_secret FROM account_mfa WHERE account_id=?", String.class, a.id());
-    assertThat(encrypted).doesNotContain(secret);
-    var other = actor(org);
-    db.update(
-        "UPDATE account_mfa SET encrypted_secret=? WHERE account_id=?", encrypted, other.id());
-    assertThatThrownBy(() -> mfa.verify(other.id(), code))
-        .isInstanceOf(io.waterleague.common.exception.DomainException.class);
   }
 
   @Test
@@ -985,26 +967,12 @@ class ResearchWorkflowTests extends PostgresIntegrationTest {
         Map.of("decision", "APPROVE", "expectedStatus", "REJECTED", "reason", "소속 및 이용 목적 확인"),
         200);
     assertThat(ok(admin, "GET", path, null, 200).size()).isEqualTo(2);
-    var blocked = call(applicant, "POST", "/auth/login", credentials);
-    assertThat(blocked.statusCode()).isEqualTo(403);
-    assertThat(blocked.body()).contains("MFA_ENROLLMENT_REQUIRED");
-    var enrollment = ok(applicant, "POST", "/auth/mfa/enrollment", credentials, 200);
-    assertThat(call(applicant, "GET", "/research/strategies", null).statusCode()).isEqualTo(401);
-    String code = MfaTests.otp(enrollment.get("secret").asString());
-    var approved = ok(applicant, "POST", "/auth/mfa/confirm", Map.of("otp", code), 200);
+    var approved = ok(applicant, "POST", "/auth/login", credentials, 200);
     assertThat(approved.get("memberType").asString()).isEqualTo("BUSINESS");
     ok(applicant, "GET", "/research/strategies", null, 200);
     assertThat(call(applicant, "GET", "/admin/members", null).statusCode()).isEqualTo(403);
     assertThat(call(applicant, "POST", "/auth/mfa/enrollment", credentials).statusCode())
-        .isEqualTo(409);
-    assertThat(
-            call(
-                    applicant,
-                    "POST",
-                    "/auth/login",
-                    Map.of("username", username, "password", "test-password-1234", "otp", code))
-                .statusCode())
-        .isEqualTo(401);
+        .isEqualTo(403);
     ok(
         admin,
         "POST",

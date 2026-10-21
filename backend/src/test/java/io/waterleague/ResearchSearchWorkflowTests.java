@@ -77,7 +77,7 @@ class ResearchSearchWorkflowTests extends PostgresIntegrationTest {
             "",
             "",
             true));
-    String secret = org == null && !role.equals("ADMIN") ? null : mfa.provision(id);
+    String secret = role.equals("ADMIN") ? mfa.provision(id) : null;
     var a =
         new Actor(
             id,
@@ -822,7 +822,7 @@ class ResearchSearchWorkflowTests extends PostgresIntegrationTest {
   }
 
   @Test
-  void refusesAdministratorAndSessionWithoutVerifiedMfa() throws Exception {
+  void refusesAdministratorAndAllowsInstitutionWithoutMfa() throws Exception {
     var admin = actor(null, "ADMIN");
     assertThat(call(admin, "GET", "/research/searches", null).statusCode()).isEqualTo(403);
     var org = institution();
@@ -832,7 +832,7 @@ class ResearchSearchWorkflowTests extends PostgresIntegrationTest {
             + " session_primary_id IN (SELECT primary_id FROM spring_session WHERE"
             + " principal_name=?)",
         accounts.byId(org.id()).orElseThrow().username());
-    assertThat(call(org, "GET", "/research/searches", null).statusCode()).isEqualTo(401);
+    assertThat(call(org, "GET", "/research/searches", null).statusCode()).isEqualTo(200);
   }
 
   void python(java.nio.file.Path work, List<String> arguments) throws Exception {

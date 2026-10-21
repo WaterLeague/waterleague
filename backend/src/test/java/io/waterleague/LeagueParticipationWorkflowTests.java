@@ -73,7 +73,6 @@ class LeagueParticipationWorkflowTests extends PostgresIntegrationTest {
             "",
             "",
             true));
-    String secret = org == null ? null : mfa.provision(id);
     var a =
         new Actor(
             id,
@@ -83,7 +82,6 @@ class LeagueParticipationWorkflowTests extends PostgresIntegrationTest {
     var login = new HashMap<String, Object>();
     login.put("username", name);
     login.put("password", "test-password-1234");
-    if (secret != null) login.put("otp", MfaTests.otp(secret));
     assertThat(call(a, "POST", "/auth/login", login).statusCode()).isEqualTo(200);
     return a;
   }
@@ -648,7 +646,7 @@ class LeagueParticipationWorkflowTests extends PostgresIntegrationTest {
   }
 
   @Test
-  void paginatesParticipantsAndRejectsMissingMfaAndCsrf() throws Exception {
+  void paginatesParticipantsWithPasswordAndRejectsMissingCsrf() throws Exception {
     var org = institution();
     var l = league(org, "PUBLIC", "OPEN", false, 2, 0);
     UUID id = UUID.fromString(l.path("id").asString());
@@ -722,8 +720,8 @@ class LeagueParticipationWorkflowTests extends PostgresIntegrationTest {
                     "/auth/login",
                     Map.of("username", orgAccount.username(), "password", "test-password-1234"))
                 .statusCode())
-        .isEqualTo(401);
-    assertThat(call(guest, "GET", manage(l) + "/participants", null).statusCode()).isEqualTo(401);
+        .isEqualTo(200);
+    assertThat(call(guest, "GET", manage(l) + "/participants", null).statusCode()).isEqualTo(200);
   }
 
   @Test

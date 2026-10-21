@@ -53,7 +53,6 @@ class ComparisonWorkflowTests extends PostgresIntegrationTest {
             "",
             "",
             true));
-    String secret = org == null ? null : mfa.provision(id);
     var a =
         new Actor(
             id,
@@ -63,7 +62,6 @@ class ComparisonWorkflowTests extends PostgresIntegrationTest {
     var login = new HashMap<String, Object>();
     login.put("username", name);
     login.put("password", "test-password-1234");
-    if (secret != null) login.put("otp", MfaTests.otp(secret));
     assertThat(call(a, "POST", "/auth/login", login).statusCode()).isEqualTo(200);
     return a;
   }

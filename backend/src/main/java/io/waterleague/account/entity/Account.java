@@ -54,6 +54,6 @@ public record Account(
   }
 
   public boolean requiresMfa() {
-    return role.equals("ADMIN") || organizationMember();
+    return role.equals("ADMIN");
   }
 }

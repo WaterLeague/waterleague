@@ -65,6 +65,7 @@ public class AuthController {
     var a = accounts.login(dto);
     if (a.requiresMfa()) {
       if (!mfa.enrolled(a.id())) throw new DomainException(ErrorCode.MFA_ENROLLMENT_REQUIRED);
+      if (dto.otp() == null) throw new DomainException(ErrorCode.MFA_REQUIRED);
       mfa.verify(a.id(), dto.otp());
     }
     signIn(a, req, res);

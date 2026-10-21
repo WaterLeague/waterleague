@@ -83,7 +83,7 @@ class CompetitionWorkflowTests extends PostgresIntegrationTest {
             true,
             "11680",
             "AFFILIATED"));
-    String secret = org == null && !admin ? null : mfa.provision(id);
+    String secret = admin ? mfa.provision(id) : null;
     var a =
         new Actor(
             id,

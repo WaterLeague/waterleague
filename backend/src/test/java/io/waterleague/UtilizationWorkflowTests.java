@@ -64,7 +64,6 @@ class UtilizationWorkflowTests extends PostgresIntegrationTest {
     var input = new HashMap<String, Object>();
     input.put("username", name);
     input.put("password", "test-password-1234");
-    if (org != null) input.put("otp", MfaTests.otp(mfa.provision(id)));
     ok(actor, "POST", "/auth/login", input, 200);
     return actor;
   }

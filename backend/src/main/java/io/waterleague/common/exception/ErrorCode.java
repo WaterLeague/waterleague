@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
   CREDENTIALS_INVALID(HttpStatus.UNAUTHORIZED, "아이디 또는 비밀번호를 확인해 주세요"),
   ACCOUNT_NOT_APPROVED(HttpStatus.FORBIDDEN, "가입 승인 대기·반려 또는 이용 정지 상태입니다. 관리자 검토 후 이용할 수 있습니다"),
+  MFA_REQUIRED(HttpStatus.FORBIDDEN, "관리자 인증 앱 번호를 입력해 주세요"),
   MFA_ENROLLMENT_REQUIRED(HttpStatus.FORBIDDEN, "인증 앱 등록을 완료해 주세요"),
   ACCOUNT_UNAVAILABLE(HttpStatus.CONFLICT, "사용할 수 없는 아이디입니다"),
   RATE_LIMITED(HttpStatus.TOO_MANY_REQUESTS, "요청이 많습니다. 잠시 후 다시 시도해 주세요"),

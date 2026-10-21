@@ -76,3 +76,5 @@ V30은 소속 구를 같은 이름의 공개 5자리 코드로 이관하고 현�
 ## 운영 알림 큐 (V34)
 
 `notification_outbox`는 MEMBER_REGISTERED/WEEKLY_INSTALLED/DISASTER_SUBMITTED와 원 활동 UUID의 유일 조합, 최소 사용자 요약 JSON, 생성/다음 발송 시각, 시도 횟수, 임대 토큰, 전달/실패 시각, 비밀값 없는 HTTP 상태만 저장한다. 업무 테이블 AFTER INSERT 트리거가 동일 트랜잭션에서 생성한다. Discord URL·비밀번호·세션·OTP 원문은 저장하지 않는다. 전달된 기록은 7일, 전체는 최대 30일 보관한다. 계산 워커에 조회/변경 권한을 부여하지 않는다.
+
+2026-10-22 V35는 `account_mfa`의 ADMIN 이외 계정 기록을 삭제한다. 관리자의 암호화 비밀·확인 상태·사용 카운터는 보존한다. 신규 등록 API도 ADMIN만 허용하며 일반/조직 회원의 세션은 MFA 속성으로 거부하지 않는다.

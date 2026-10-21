@@ -17,7 +17,7 @@ SECURITY_TESTS = ','.join((
     'GuestHistoricalTests',
     'ResearchWorkflowTests#protectsOwnershipAndImmutableRevisionAndServerBudget'
     '+recomputesScoreAndRestrictsInstitutionAndRevocation'
-    '+requiresInstitutionMfaRejectsReplayAndCapsBody'
+    '+allowsApprovedInstitutionWithoutOtpAndCapsBody'
     '+rejectsChangedEngineAndUnavailableOrganization'
     '+separatesSingleAdminFromMembersAndEnforcesApprovalAndMfaEnrollment',
     'UtilizationWorkflowTests',
@@ -53,9 +53,9 @@ def source_counts(db):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--suite', choices=['deployment', 'competitions', 'prices', 'cistern-game', 'account', 'security', 'street-placement', 'guest-historical', 'historical-submit-design', 'historical-design-run', 'historical-design', 'public-surface', 'infrastructure', 'league', 'analysis', 'queue', 'budget', 'physics', 'weekly', 'historical', 'watershed', 'cistern-plan', 'shared-research', 'search', 'restore', 'backend', 'all'], default='league')
+    parser.add_argument('--suite', choices=['admin-otp', 'deployment', 'competitions', 'prices', 'cistern-game', 'account', 'security', 'street-placement', 'guest-historical', 'historical-submit-design', 'historical-design-run', 'historical-design', 'public-surface', 'infrastructure', 'league', 'analysis', 'queue', 'budget', 'physics', 'weekly', 'historical', 'watershed', 'cistern-plan', 'shared-research', 'search', 'restore', 'backend', 'all'], default='league')
     suite = parser.parse_args().suite
-    test_class = {'deployment': 'DiscordNotificationTests,DeploymentRuntimeTests,AccountFlowTests,MfaTests,ContainerPolicyTests,SharedInstallationTests,HistoricalSubmissionTests', 'competitions': 'CompetitionWorkflowTests,WeeklyWorkflowTests,HistoricalSubmissionTests', 'prices':'PriceVersionWorkflowTests', 'cistern-game': 'CisternGameWorkflowTests', 'account': 'AccountFlowTests,MfaTests', 'security': SECURITY_TESTS, 'street-placement': 'SharedInstallationTests,GuestHistoricalTests,HistoricalDesignTests,ApiSecurityTests', 'guest-historical': 'GuestHistoricalTests,HistoricalWorkflowTests,HistoricalSubmissionTests,ApiSecurityTests','historical-submit-design': 'HistoricalSubmissionTests,HistoricalDesignTests,ApiSecurityTests',
+    test_class = {'admin-otp': 'AdminOnlyMfaTests,AccountFlowTests,MfaTests,DeploymentRuntimeTests,ResearchWorkflowTests#allowsApprovedInstitutionWithoutOtpAndCapsBody+separatesSingleAdminFromMembersAndEnforcesApprovalAndMfaEnrollment,LeagueParticipationWorkflowTests,CompetitionWorkflowTests,ResearchSearchWorkflowTests#refusesAdministratorAndAllowsInstitutionWithoutMfa', 'deployment': 'DiscordNotificationTests,DeploymentRuntimeTests,AccountFlowTests,MfaTests,ContainerPolicyTests,SharedInstallationTests,HistoricalSubmissionTests', 'competitions': 'CompetitionWorkflowTests,WeeklyWorkflowTests,HistoricalSubmissionTests', 'prices':'PriceVersionWorkflowTests', 'cistern-game': 'CisternGameWorkflowTests', 'account': 'AccountFlowTests,MfaTests', 'security': SECURITY_TESTS, 'street-placement': 'SharedInstallationTests,GuestHistoricalTests,HistoricalDesignTests,ApiSecurityTests', 'guest-historical': 'GuestHistoricalTests,HistoricalWorkflowTests,HistoricalSubmissionTests,ApiSecurityTests','historical-submit-design': 'HistoricalSubmissionTests,HistoricalDesignTests,ApiSecurityTests',
                   'historical-design-run': 'HistoricalDesignTests,HistoricalWorkflowTests,HistoricalSubmissionTests,ApiSecurityTests',
                   'historical-design': 'HistoricalDesignTests,HistoricalWorkflowTests,HistoricalSubmissionTests,ApiSecurityTests',
                   'public-surface': 'PublicSurfaceTests,SurfacePlaybackTests,ApiSecurityTests',
@@ -104,7 +104,7 @@ def main():
         with path.open('x') as log:
             path.chmod(0o600)
             physical = ['-Dwaterleague.integration.python=' + sys.executable] if suite in {'search', 'restore'} else []
-            if suite not in {'backend', 'security'}:
+            if suite not in {'backend', 'security', 'admin-otp'}:
                 physical.append('-Dwaterleague.integration.preserve-fixtures=true')
             if suite == 'watershed':
                 path.with_suffix('.fixtures').mkdir(mode=0o700)

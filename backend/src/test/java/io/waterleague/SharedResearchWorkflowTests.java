@@ -110,7 +110,6 @@ class SharedResearchWorkflowTests extends PostgresIntegrationTest {
     var body = new HashMap<String, Object>();
     body.put("username", name);
     body.put("password", "test-password-1234");
-    if (org != null) body.put("otp", MfaTests.otp(mfa.provision(id)));
     assertThat(call(actor, "POST", "/auth/login", body).statusCode()).isEqualTo(200);
     return actor;
   }

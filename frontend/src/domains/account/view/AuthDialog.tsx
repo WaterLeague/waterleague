@@ -18,6 +18,7 @@ export function AuthDialog({
     [password, setPassword] = useState(''),
     [passwordConfirmation, setPasswordConfirmation] = useState(''),
     [otp, setOtp] = useState(''),
+    [challenge, setChallenge] = useState<{ username: string; password: string } | null>(null),
     [busy, setBusy] = useState(false),
     [error, setError] = useState(''),
     [notice, setNotice] = useState(''),
@@ -57,10 +58,20 @@ export function AuthDialog({
         <X size={20} />
       </button>
       <h2 id="auth-title">
-        {enrollment ? '인증 앱 연결' : mode === 'login' ? '로그인' : '회원가입'}
+        {enrollment
+          ? '인증 앱 연결'
+          : challenge
+            ? '관리자 인증'
+            : mode === 'login'
+              ? '로그인'
+              : '회원가입'}
       </h2>
-      <p>시설을 설치하고 플레이 기록을 저장하세요.</p>
-      {!enrollment && (
+      <p>
+        {challenge
+          ? '관리자 인증 앱의 6자리 번호를 입력하세요.'
+          : '시설을 설치하고 플레이 기록을 저장하세요.'}
+      </p>
+      {!enrollment && !challenge && (
         <div className="auth-tabs" role="group" aria-label="계정 메뉴">
           <button
             aria-pressed={mode === 'login'}
@@ -93,13 +104,19 @@ export function AuthDialog({
               onSuccess(await confirmEnrollment(otp));
               onClose();
             } else {
-              const account = await authenticate(mode, name, password, otp, {
-                memberType,
-                districtId,
-                affiliationType,
-                organizationName: memberType === 'PLAYER' ? '' : organizationName,
-                purpose: memberType === 'PLAYER' ? '' : purpose,
-              });
+              const account = await authenticate(
+                mode,
+                challenge?.username ?? name,
+                challenge?.password ?? password,
+                otp,
+                {
+                  memberType,
+                  districtId,
+                  affiliationType,
+                  organizationName: memberType === 'PLAYER' ? '' : organizationName,
+                  purpose: memberType === 'PLAYER' ? '' : purpose,
+                }
+              );
               if (account.approvalStatus === 'APPROVED') {
                 onSuccess(account);
                 onClose();
@@ -109,9 +126,17 @@ export function AuthDialog({
               }
             }
           } catch (e) {
-            if (e instanceof ApiError && e.code === 'MFA_ENROLLMENT_REQUIRED') {
+            if (e instanceof ApiError && e.code === 'MFA_REQUIRED') {
+              setChallenge({ username: name, password });
+            } else if (e instanceof ApiError && e.code === 'MFA_ENROLLMENT_REQUIRED') {
               try {
-                setEnrollment(await beginEnrollment(name, password));
+                setEnrollment(
+                  await beginEnrollment(
+                    challenge?.username ?? name,
+                    challenge?.password ?? password
+                  )
+                );
+                setChallenge(null);
                 setError('');
               } catch (setupError) {
                 setError(errorMessage(setupError));
@@ -125,7 +150,7 @@ export function AuthDialog({
           }
         }}
       >
-        {!enrollment && (
+        {!enrollment && !challenge && (
           <>
             <label>
               아이디
@@ -219,8 +244,8 @@ export function AuthDialog({
                       />
                     </label>
                     <p className="footnote">
-                      관리자 승인 후 인증 앱을 등록하면 이용할 수 있습니다. 신청 내용에 비밀번호나
-                      비밀키를 적지 마세요.
+                      관리자 승인 후 로그인하면 이용할 수 있습니다. 신청 내용에 비밀번호나 비밀키를
+                      적지 마세요.
                     </p>
                   </>
                 )}
@@ -242,18 +267,18 @@ export function AuthDialog({
             <p>등록키는 본인만 보관하세요. 5분 안에 인증번호를 입력하면 연결이 완료됩니다.</p>
           </div>
         )}
-        {mode === 'login' && (
+        {(enrollment || challenge) && (
           <label>
             {enrollment ? '등록 확인 인증번호' : '인증 앱 번호'}{' '}
             <input
-              required={!!enrollment}
+              required
               inputMode="numeric"
               pattern="[0-9]{6}"
               maxLength={6}
               autoComplete="one-time-code"
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
-              placeholder="관리자·기업·기관·정부 회원 · 6자리"
+              placeholder="관리자 인증번호 6자리"
             />
           </label>
         )}
@@ -276,6 +301,20 @@ export function AuthDialog({
           <ArrowRight size={16} />
         </button>
       </form>
+      {challenge && (
+        <button
+          type="button"
+          disabled={busy}
+          onClick={() => {
+            setChallenge(null);
+            setPassword('');
+            setOtp('');
+            setError('');
+          }}
+        >
+          다른 계정으로 로그인
+        </button>
+      )}
       <small>일반 플레이어는 즉시 가입, 기업·기관·정부 회원은 관리자 승인 후 이용합니다.</small>
     </dialog>
   );

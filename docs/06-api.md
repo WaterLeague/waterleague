@@ -64,15 +64,15 @@
 | GET /facilities/epa-designs-v1 … v4 | 해시 고정 공개 시설 제원·문헌 범위·출처, ETag·공개 캐시 |
 | GET /organizations | 승인된 기관 목록 |
 | GET /consents, PUT /consents/{organizationId} | 본인 기관별 동의 조회·부여·철회 |
-| GET /research/strategies | MFA 인증 승인 기관, 동의된 현재 모델 제출 최대 100건 |
+| GET /research/strategies | 승인 기관, 동의된 현재 모델 제출 최대 100건 |
 | GET /research/strategies/{jobId} | 승인 기관·동의, 제출 버전까지 이력과 계산 당시 모델 |
 | GET /research/strategies/{jobId}/bundle | 승인 기관·동의, 재인가 후 재현 ZIP |
-| GET/POST /research/comparisons | MFA 승인 조직의 동의된 제출 다강우 재계산 목록·생성, 기관별 멱등키 |
+| GET/POST /research/comparisons | 승인 조직의 동의된 제출 다강우 재계산 목록·생성, 기관별 멱등키 |
 | GET /research/comparisons/{id} | 현재 원본 동의·조직 승인 재검사, 원본과 파생 계산 결과 |
 | GET /research/comparisons/{id}/jobs/{jobId}/bundle | 현재 동의·기관 분석 그룹 연결 검사, 목적과 원본 연결 포함 ZIP |
 | POST /research/patterns | 동일 모델의 동의 제출 1~50개, 상위 고유 설계 1~20개와 경계 동점의 배치 기술 통계 |
 
-모델 검증·배포 권한은 조직 회원의 리그 운영과 분리. 내부 워커 endpoint 외부 노출 금지. 현장 승인 맵과 공개 참고 지도·탐색 모델은 구분한다. 관리자 역할은 ADMIN, 모든 일반/조직 회원 역할은 MEMBER. 조직 회원의 연구·리그 권한은 승인 상태·회원 유형·소속·MFA로 검사한다.
+모델 검증·배포 권한은 조직 회원의 리그 운영과 분리. 내부 워커 endpoint 외부 노출 금지. 현장 승인 맵과 공개 참고 지도·탐색 모델은 구분한다. 관리자 역할은 ADMIN, 모든 일반/조직 회원 역할은 MEMBER. 조직 회원의 연구·리그 권한은 승인 상태·회원 유형·소속으로 검사한다.
 
 원형 조회의 `minx,miny,maxx,maxy`와 응답 `geometry`는 절대 EPSG:5186 미터 좌표다. 시야의 가로/세로는 각각 2,000m 이하, `limit` 기본 512·최대 2,000이다. 선택 `districtId`는 공개 자치구 코드, `kind`는 ROOF/GROUND다. `includeUnsupported=false`가 기본이며 true일 때 빈 허용 목록의 미지원 표면도 조회한다. 구멍/다중 면을 보존한 실제 도형으로 교차 판정한다. 범위 인덱스 검사 20,000개·본문 처리 16MiB·결과 한도를 넘으면 일부를 정상 목록으로 반환하지 않고 `SPATIAL_VIEW_TOO_DENSE` 422를 반환한다. 접속 주소별 분당 300회·동시 시야 조회 4개 상한과 429 응답을 적용한다. 모든 응답의 `catalogSha256`은 같은 불변 원형 DB를 가리킨다. 현재 주간·재해 설치/제출은 같은 원형 DB 해시와 공개 5자리 구 코드를 사용한다. 설치 후보 ID는 `C`와 소문자 16진수 24자리다.
 
@@ -107,7 +107,7 @@
 
 | API | 권한·역할 |
 | --- | --- |
-| POST /auth/mfa/enrollment | 승인된 관리자·조직 회원 비밀번호 확인, 미등록 MFA 연결 시작; no-store·5분 등록 세션 |
+| POST /auth/mfa/enrollment | 관리자 비밀번호 확인, 미등록 MFA 연결 시작; no-store·5분 등록 세션 |
 | POST /auth/mfa/confirm | 등록 세션·CSRF·OTP 확인 후 업무 세션 발급 |
 | GET /admin/members?status=PENDING&after=UUID | 단일 ADMIN, 상태 필터·100건 커서 목록 |
 | GET/POST /admin/members/{id}/reviews | ADMIN, 검토 이력·승인/반려/정지·상태 경합 확인 |
@@ -136,7 +136,7 @@ schema 3은 초안에 `participation: {access, admission, entryMode, teamSizeLim
 | POST /leagues/invitations/preview | 플레이어, code 본문; 유효한 초대의 고정 규칙만 반환 |
 | GET/POST /leagues/{id}/participation | 플레이어 본인 상태·이벤트·팀·누적 횟수 / rulesHash·선택 code로 참가 |
 | POST /leagues/{id}/participation/withdraw | 본인, revision; 참가 철회, 제출 이력·횟수 보존 |
-| GET /institution/leagues/{id}/participants?after=UUID | MFA 주최 조직, 100건 items·nextCursor |
+| GET /institution/leagues/{id}/participants?after=UUID | 승인된 주최 조직, 100건 items·nextCursor |
 | GET /institution/leagues/{id}/participants/{owner}/events | 주최 조직, 해당 참가자의 최근 상태 이력 100건 |
 | POST /institution/leagues/{id}/participants/{owner}/decisions | 주최 조직, revision·state(APPROVED/REJECTED)·reason |
 | GET/POST/DELETE /institution/leagues/{id}/invitation | 주최 조직, 유효 여부·만료 조회 / 코드 신규 발급·회전 / 폐기 |
@@ -182,7 +182,7 @@ RFC 9457 `application/problem+json`: type, title, status, detail, instance, code
 - `GET /api/v1/lab/catalog`: 등록 모델의 해시·이름·강우 요약·예산·검증 등급, 기본 모델 해시
 - `GET /api/v1/lab?modelHash=…`: 등록 원문의 선택 모델. 생략하면 기존 기본 모델
 - `GET /api/v1/leaderboard?modelHash=…`: 해당 모델의 독립 탐색 순위
-- `GET /api/v1/research/strategies?modelHash=…`: 선택 조건의 동의된 연구 기록. 조직 승인·MFA 조건 유지
+- `GET /api/v1/research/strategies?modelHash=…`: 선택 조건의 동의된 연구 기록. 조직 승인 조건 유지
 - 기관 리그 초안 요청 `modelHash` 필수. 공개 후 불변, 카탈로그에 수록된 모든 조건의 신규 실행 지원
 - 전략의 기존 ID에 다른 모델 버전 추가 시 409. 다른 강우 비교는 새 전략 생성. 미등록 모델은 404
 
@@ -244,7 +244,7 @@ RFC 9457 `application/problem+json`: type, title, status, detail, instance, code
 
 공동 설치 연구 상세의 `budgetLedger`는 선택한 설치 1건의 원장 조회본. `capturedAt`·`evaluatedThrough`·설치 당시 비용·원 정책·배정/취소 발생 및 기록 시각·이관 여부 제공. `allocatedAtEvaluationKrw`는 실제 이벤트 발생 시각이 계산 종료 시각 이하인 원장 합, `allocatedAtCaptureKrw`는 조회 당시 해당 설치의 순배정액. 이후 취소를 계산 당시 배정액에 소급하지 않음. 전체 회원 지갑·다른 설치의 비용/정책 미포함. 원장이 없는 이전 기록은 `NOT_RECORDED`·금액 null, 설치 비용과 원장 금액/시설/시각/취소 연결이 다르면 503 `BUDGET_DATA_INVALID`. 실제 공사비 집행·환급이나 당시 원장 저장 상태의 완전 복원으로 표시하지 않음.
 
-공동 연구 ZIP은 원 물리 `manifest.json`·파일을 그대로 유지하며 `budget-ledger.json`(다운로드 시점 조회본)·`export-manifest.json` 추가. 내보내기 목록은 원 물리 매니페스트 SHA-256과 원 파일·원장·접근 범위 각각의 해시 포함, 자체 파일 해시는 제외. 원 산출물에 내보내기 예약 파일명이 있으면 거부. 원장/메타자료 추가는 원 물리 계산 해시나 점수 변경이 아님. 목록·상세·ZIP의 기존 동의·승인·MFA·조회 전후 재인가 유지, 동의 철회 후 추가 조회/다운로드 차단.
+공동 연구 ZIP은 원 물리 `manifest.json`·파일을 그대로 유지하며 `budget-ledger.json`(다운로드 시점 조회본)·`export-manifest.json` 추가. 내보내기 목록은 원 물리 매니페스트 SHA-256과 원 파일·원장·접근 범위 각각의 해시 포함, 자체 파일 해시는 제외. 원 산출물에 내보내기 예약 파일명이 있으면 거부. 원장/메타자료 추가는 원 물리 계산 해시나 점수 변경이 아님. 목록·상세·ZIP의 기존 동의·승인·조회 전후 재인가 유지, 동의 철회 후 추가 조회/다운로드 차단.
 
 ### 공개 기존 시설 참고 카탈로그
 
@@ -257,7 +257,7 @@ RFC 9457 `application/problem+json`: type, title, status, detail, instance, code
 - `GET /api/v1/historical/{id}/surface/catalog|frame`: 본인의 성공한 재해 실행.
 - `GET /api/v1/installations/{id}/surface/catalog|frame`: 본인 설치의 최신 성공 실행.
 - `GET /api/v1/installations/records/{id}/surface/catalog|frame`: 본인의 고정 실행 기록.
-- `GET /api/v1/research/installations/{id}/surface/catalog|frame`: 승인 기관·MFA·현재 공유 연구 동의가 있는 실행 기록.
+- `GET /api/v1/research/installations/{id}/surface/catalog|frame`: 승인 기관·현재 공유 연구 동의가 있는 실행 기록.
 - `catalog`는 원 계산/카탈로그 해시·실제 기록 시각·EPSG:5186 지도 원점·계산 등급·한계 반환. `frame`은 `index,minX,minY,maxX,maxY` 필수. 화면 좌표는 도시 공통 원점 이동 후 미터이며 원 계산 경계와 별개. 선택 시각 하나의 원 수심/운동량을 읽고 영역과 교차하는 격자의 수심·속력·도형 반환. 8,192격자 초과는 413이며 임의 생략 없음.
 - 요청마다 파일 조회 전후 소유/기관/동의 재검사, `no-store`, 회원당 분당 120요청. 게시된 지표 결과가 없으면 404; 다른 시설의 내부 수심을 지표 침수로 대체하지 않음. 파일 변조·심볼릭 링크·물수지 불일치는 공통 오류로 거부, 내부 경로 비노출.
 - 작업 결과의 선택적 `surfacePlayback` 참조는 `schemaVersion:1,catalogSha256,surfaceResultSha256`로 고정. 해당 작업의 서버 lease 디렉터리 아래 `surface-playback/`만 조회. 클라이언트 경로·파일명·원본 URL 입력 금지. 현재 기존 시설 유출 작업에는 이 참조가 없으며 연결 유역 작업의 생성·게시 연동은 별도 진행.
@@ -307,7 +307,7 @@ RFC 9457 `application/problem+json`: type, title, status, detail, instance, code
 | GET /competitions/catalog | 현재 구·시설·재해 사건 목록 |
 | GET /competitions?page= | 공개 대회 목록, 20건 페이지 |
 | GET /competitions/{id} | 고정 개최 조건·현재 참가/관리 가능 상태 |
-| POST /competitions | 승인된 BUSINESS/INSTITUTION/GOVERNMENT 회원·MFA·현재 소속 조직 검증 후 즉시 공개 |
+| POST /competitions | 승인된 BUSINESS/INSTITUTION/GOVERNMENT 회원·현재 소속 조직 검증 후 즉시 공개 |
 | POST /competitions/{id}/join | PLAYER의 본인 참가, `rulesHash` 동의; 실시간은 소속 구가 대회 범위에 포함되어야 함 |
 | POST /competitions/{id}/cancel | 주최 조직 또는 ADMIN, 마감 전 취소; 기록 보존 |
 | GET /competitions/{id}/candidates | 재해 대회 참가자의 본인 전체 사건 제출 중 조건에 맞는 후보 |
@@ -332,3 +332,5 @@ RFC 9457 `application/problem+json`: type, title, status, detail, instance, code
 관리자 생성/비밀번호 교체는 공개 HTTP API를 추가하지 않고 `bootstrap-admin` 일회성 배포 프로필에서 수행한다. ADMIN_USERNAME/ADMIN_PASSWORD GitHub Secret을 사용하며 기존 로그인·MFA 등록/확인·관리자 회원 관리·결과 조회 경로를 유지한다. 일반 가입으로 관리자 역할을 지정할 수 없다.
 
 회원가입, 주간 설치, 재해 최종 제출의 성공 응답 계약은 동일하다. Discord 발송 여부는 응답/활동 성공을 변경하지 않으며, DB에 활동과 함께 생성한 알림을 별도로 전송한다. 재해 단순 실험은 알림 대상에서 제외한다. 전송 데이터·재시도·보존 범위는 문서 10의 Discord 운영 알림 계약을 따른다.
+
+2026-10-22 OTP 범위 변경: `ADMIN`만 인증 앱 등록·로그인 OTP 검사를 수행한다. `/auth/login`은 관리자 비밀번호 확인 후 미등록이면 `MFA_ENROLLMENT_REQUIRED`, 등록 완료이나 OTP 미제공이면 `MFA_REQUIRED`(403)를 반환하며 업무 세션을 발급하지 않는다. 일반/기업/기관/정부 회원은 비밀번호 로그인만 사용하고 `/auth/mfa/enrollment`와 `/auth/mfa/confirm`으로 MFA를 등록할 수 없다. 회원 승인·소속·소유권 검사는 계속 서버에서 수행한다.
