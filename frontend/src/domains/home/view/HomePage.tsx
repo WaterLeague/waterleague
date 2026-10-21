@@ -18,6 +18,7 @@ import { DataSection } from '../../catalog/view/DataSection';
 import { useHomeMotion } from '../controller/useHomeMotion';
 import { GameStartDialog } from './GameStartDialog';
 import { HomeScoreGuide } from './HomeScoreGuide';
+import { HomeMapGuide } from './HomeMapGuide';
 import './home.css';
 
 function HomeLink({
@@ -168,8 +169,6 @@ export function HomePage({ accountId = null }: { accountId?: string | null }) {
         </p>
       </section>
 
-      <HomeScoreGuide />
-
       <section className="home-facilities" aria-labelledby="home-facilities-title">
         <div className="home-section-heading">
           <span className="home-eyebrow">시설 안내</span>
@@ -213,6 +212,9 @@ export function HomePage({ accountId = null }: { accountId?: string | null }) {
           </div>
         </div>
       </section>
+
+      <HomeMapGuide />
+      <HomeScoreGuide />
 
       <section className="home-features" aria-labelledby="home-features-title">
         <div className="home-section-heading">

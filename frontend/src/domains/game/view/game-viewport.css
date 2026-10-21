@@ -70,11 +70,6 @@ body:has(.game-shell.is-game) {
   overscroll-behavior: contain;
   padding: 10px 18px;
 }
-.game-shell.is-game .city-source-note {
-  margin: 0;
-  padding: 7px 18px;
-  font-size: 9px;
-}
 .game-shell.is-game > .shared-play-layout .play-hud.gameplay-hud {
   display: grid;
   grid-template-columns: auto minmax(210px, 1fr) auto;
@@ -442,22 +437,6 @@ body:has(.game-shell.is-game) {
   border-radius: 6px;
   background: transparent;
   cursor: pointer;
-}
-.city-source-note {
-  position: relative;
-}
-.city-source-note summary {
-  cursor: pointer;
-}
-.city-source-note details[open] {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 49;
-  padding: 14px;
-  background: #f5f8f1;
-  border-top: 1px solid #b6c7b3;
 }
 .game-shell.is-game .facility-install-dock {
   background: none;

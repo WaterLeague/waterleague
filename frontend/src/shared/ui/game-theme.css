@@ -460,11 +460,6 @@
   font-weight: 570;
   font-variant-numeric: tabular-nums;
 }
-.game-shell .city-source-note {
-  background: #e8eee9;
-  color: #657772;
-  border-color: #c5d2c9;
-}
 .game-shell .infrastructure-cluster {
   min-width: 25px;
   height: 25px;

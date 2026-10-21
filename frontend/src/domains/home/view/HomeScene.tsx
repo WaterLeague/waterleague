@@ -1,19 +1,32 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, type ReactNode } from 'react';
+import {
+  memo,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  type ReactNode,
+  type RefObject,
+} from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import type { Group } from 'three';
 import type { FacilityType } from '../../game/entity/game';
+import type { InfrastructureAsset } from '../../infrastructure/entity/infrastructure';
 import { facilitySymbolGeometry } from '../../catalog/service/facilitySymbolService';
 import { useReducedMotion } from '../../catalog/controller/useReducedMotion';
+import { HomeWeather } from './HomeWeather';
+import type { PreviewTimeline } from '../service/homePreviewService';
+import { HomeFloodRecord, HomeInfrastructureSymbol } from './HomeMapObjects';
+import { WaterScene } from '../../surface/view/WaterScene';
 
 function Turntable({
   angle,
-  facility,
+  selection,
   height,
   children,
 }: {
   angle: number;
-  facility: FacilityType;
+  selection: string;
   height: number;
   children: ReactNode;
 }) {
@@ -23,7 +36,7 @@ function Turntable({
   useLayoutEffect(() => {
     if (group.current) group.current.scale.setScalar(reduced ? 1 : 0.92);
     invalidate();
-  }, [facility, reduced, invalidate]);
+  }, [selection, reduced, invalidate]);
   useLayoutEffect(() => {
     if (reduced && group.current) group.current.rotation.y = angle;
     invalidate();
@@ -83,7 +96,7 @@ function Block({
   );
 }
 
-function Neighborhood({ rainy }: { rainy: boolean }) {
+function Neighborhood() {
   return (
     <group>
       <Block position={[0, -0.22, 0]} size={[5, 0.42, 3.8]} color="#9eb78c" />
@@ -96,66 +109,66 @@ function Neighborhood({ rainy }: { rainy: boolean }) {
       <Facility type="RAIN_GARDEN" position={[1.55, 0, 1.35]} scale={0.6} />
       <Facility type="PERMEABLE_PAVEMENT" position={[-1.1, 0, 1.4]} scale={0.6} />
       <Block position={[1.6, 0.5, -0.9]} size={[0.85, 1, 0.9]} color="#e7d5b8" />
-      {rainy ? (
-        <group>
-          {[
-            [-1.2, 2.8, -0.5],
-            [0, 2.95, -0.4],
-            [0.95, 2.75, -0.5],
-          ].map(([x, y, z], index) => (
-            <mesh key={index} position={[x, y, z]} scale={[1, 0.48, 0.55]}>
-              <sphereGeometry args={[0.85, 16, 12]} />
-              <meshStandardMaterial color="#adbdcd" />
-            </mesh>
-          ))}
-          {Array.from({ length: 12 }, (_, i) => (
-            <mesh
-              key={i}
-              position={[(i % 4) * 0.68 - 1, 1.7 + Math.floor(i / 4) * 0.22, (i % 3) * 0.55 - 0.8]}
-              rotation={[0, 0, -0.15]}
-            >
-              <cylinderGeometry args={[0.018, 0.018, 0.28, 5]} />
-              <meshStandardMaterial color="#69a6c5" />
-            </mesh>
-          ))}
-        </group>
-      ) : (
-        <mesh position={[1.7, 2.5, -1.4]}>
-          <sphereGeometry args={[0.42, 20, 16]} />
-          <meshStandardMaterial color="#f4cd68" emissive="#e3ac45" emissiveIntensity={0.25} />
-        </mesh>
-      )}
     </group>
   );
 }
 
-export default function HomeScene({
+const HomeScene = memo(function HomeScene({
   mode,
+  map,
+  infrastructure = 'STORM_PUMP',
   facility,
   angle,
+  timeline,
+  running,
 }: {
   mode?: 'weekly' | 'disaster';
+  map?: 'flood' | 'infrastructure';
+  infrastructure?: InfrastructureAsset['kind'];
   facility: FacilityType;
   angle: number;
+  timeline: RefObject<PreviewTimeline>;
+  running: boolean;
 }) {
+  const neighborhood = !!mode || map === 'flood';
   return (
     <Canvas
       frameloop="demand"
       dpr={[1, 1.5]}
-      camera={{ position: mode ? [6, 4.5, 7] : [3.6, 2.9, 4.2], fov: 38 }}
+      camera={{ position: neighborhood ? [6, 4.5, 7] : [3.6, 2.9, 4.2], fov: 38 }}
       gl={{ alpha: true, antialias: true, powerPreference: 'low-power' }}
       fallback={<p>이 기기에서는 3D 미리보기를 지원하지 않습니다.</p>}
     >
-      <ambientLight intensity={1.5} />
-      <directionalLight position={[4, 6, 3]} intensity={2.2} />
-      <directionalLight position={[-3, 2, -2]} intensity={0.6} color="#c1dbed" />
-      <Turntable angle={angle} facility={facility} height={mode ? -0.6 : -0.45}>
+      {!mode && (
+        <>
+          <ambientLight intensity={1.5} />
+          <directionalLight position={[4, 6, 3]} intensity={2.2} />
+          <directionalLight position={[-3, 2, -2]} intensity={0.6} color="#c1dbed" />
+        </>
+      )}
+      <Turntable
+        angle={angle}
+        selection={map === 'infrastructure' ? infrastructure : facility}
+        height={neighborhood ? -0.6 : -0.45}
+      >
         {mode ? (
-          <Neighborhood rainy={mode === 'disaster'} />
+          <>
+            <Neighborhood />
+            <HomeWeather mode={mode} timeline={timeline} running={running} />
+          </>
+        ) : map === 'flood' ? (
+          <WaterScene animate={false}>
+            <Neighborhood />
+            <HomeFloodRecord />
+          </WaterScene>
         ) : (
           <>
             <Block position={[0, -0.14, 0]} size={[2.8, 0.24, 2.4]} color="#d6c9ac" />
-            <Facility type={facility} />
+            {map === 'infrastructure' ? (
+              <HomeInfrastructureSymbol kind={infrastructure} />
+            ) : (
+              <Facility type={facility} />
+            )}
           </>
         )}
       </Turntable>
@@ -169,4 +182,6 @@ export default function HomeScene({
       />
     </Canvas>
   );
-}
+});
+
+export default HomeScene;

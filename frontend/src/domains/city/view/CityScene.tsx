@@ -1,5 +1,4 @@
 import { scenePointer, clearScenePointer } from '../service/mapCursor';
-import { CityCoverage } from './CityCoverage';
 import { WatershedMapMesh } from '../../watershed/view/WatershedMapMesh';
 import type { WatershedMapSelection } from '../../watershed/service/watershedMap';
 import type { AudioHandle } from '../../audio/entity/audio';
@@ -709,7 +708,6 @@ const CityScene = memo(function CityScene({
               onSelect={onSite}
             />
             <RiverLayer city={city} terrain={terrain} weather={waterWeather} />
-            <CityCoverage terrain={terrain} distance={rainCamera.distance} />
             {!terrain &&
               city.surfaces
                 .filter((s) => s.kind !== 'water')

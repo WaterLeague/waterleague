@@ -20,7 +20,6 @@ import { lazy, Suspense, useEffect, useCallback, useState, useRef, useMemo } fro
 import { useUrbanTime } from '../../urban/controller/useUrbanTime';
 import { emptyFloodStats, type FloodStats } from '../../urban/service/floodMovementService';
 import { useLiveUrban } from '../../urban/controller/useLiveUrban';
-import { LiveUrbanSource } from '../../urban/view/LiveUrbanSource';
 import { useUrbanData } from '../../urban/controller/useUrbanData';
 import {
   RotateCcw,
@@ -1169,9 +1168,21 @@ function Explorer({
               주변 지형지물 불러오는 중
             </div>
           )}
-          {topography.error && (
-            <div className="city-map-loading" role="status">
-              {topography.error}
+          {(topography.error ||
+            terrainError ||
+            urban.error ||
+            groundCandidates.error ||
+            urban.populationError) && (
+            <div className="city-map-loading" role="alert">
+              {[
+                topography.error,
+                terrainError && '높이 자료 연결 실패 · 평면 표시',
+                urban.error,
+                groundCandidates.error,
+                urban.populationError,
+              ]
+                .filter(Boolean)
+                .join(' · ')}
             </div>
           )}
           {!flat && (
@@ -1728,55 +1739,6 @@ function Explorer({
           />
         </section>
       )}
-      <footer className="city-source-note">
-        <details>
-          <summary>지도 자료·표시 범위</summary>
-          공개 형상 {city.sourceDate} ·{' '}
-          {terrain
-            ? 'Copernicus 공개 지표면 높이 · 90m 표시 격자'
-            : terrainError
-              ? '높이 자료 연결 실패 · 평면 표시'
-              : '지표면 높이 연결 중'}{' '}
-          · 건물 높이는 층수 환산 또는 미확인 평면 표시 ·{' '}
-          {surface.frame || publicSurface.frames.length
-            ? '계산 침수는 원 수심의 상대 높이·색상 표시 · 실제 수면 표고 아님'
-            : '침수 깊이 표시 아님'}
-          {' · 물결은 기상 기반 시각 효과 · 하천 실측 유속 아님'}
-          {
-            ' · 조명·가로등: 수치지형도 원본 위치 · 태양: 서울 좌표·재생 시각의 천문 계산 · 창문·차량·보행자: 게임 연출'
-          }
-          {researchMode
-            ? eventId === 'seoul-20220808'
-              ? ' · 인구 밀도: 2022-08-08~09 시간대별 생활인구(내국인)'
-              : ' · 해당 사건의 시간대별 인구 미확보: 일반 교통·보행 연출'
-            : ' · 인구 밀도: 서울시 공개 장소의 현재 인구 범위 · 장소 밖/자료 만료 시 2025 요일·시간대 참고값'}
-          {!researchMode && (
-            <LiveUrbanSource places={liveUrban.current} now={liveUrban.checkedAt} />
-          )}
-          {' · 보도·교량·횡단보도·주차장 경계는 수치지형도 원형 · 도로 폭·통행 방향 미확인 유지'}
-          {' · 교량 높이·접속 경사·보행 선·정차 차량은 게임 연출 · 주차 칸·실제 점유율 제공 없음'}
-          {' · 입체 모형의 제원·교량 높이·접속 형태는 표시 가정'}
-          {' · 축소도는 원 건물의 100m/25m 격자별 대표 경계 상자 · 선택·계산은 확대 원형 사용'}
-          {urban.error && ` · ${urban.error}`}
-          {groundCandidates.error && ` · ${groundCandidates.error}`}
-          {urban.populationError && ` · ${urban.populationError}`}
-          {assetsEnabled &&
-            ' · 시설 위치: 서울특별시·강서구·공공데이터포털 / 공공누리 제1유형 · 시설 부지 경계 미확인'}
-          {terrain && (
-            <>
-              {' '}
-              ·{' '}
-              <a
-                href="/data/seoul-terrain-native-v1/attribution.txt"
-                target="_blank"
-                rel="noreferrer"
-              >
-                지표면 출처·이용조건
-              </a>
-            </>
-          )}
-        </details>
-      </footer>
     </main>
   );
 }

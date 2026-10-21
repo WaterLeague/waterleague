@@ -332,9 +332,6 @@
 .shared-list-pages button:disabled {
   opacity: 0.35;
 }
-.shared-play-layout .city-source-note {
-  grid-column: 1/-1;
-}
 @media (max-width: 1050px) {
   .game-shell .shared-play-layout {
     grid-template-columns: minmax(0, 1fr) 280px;

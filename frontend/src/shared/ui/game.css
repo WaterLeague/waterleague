@@ -3149,13 +3149,6 @@ a:focus-visible {
   font-size: 10px;
   background: #e8e9ddaa;
 }
-.city-source-note {
-  grid-column: 1/-1;
-  padding: 8px 25px;
-  font-size: 10px;
-  color: #87907f;
-  border-top: 1px solid #d8dccf;
-}
 .city-district-label {
   border: 0;
   background: #f4f6ebda;
@@ -3259,9 +3252,6 @@ a:focus-visible {
   }
   .city-mission {
     margin-top: 10px;
-  }
-  .city-source-note {
-    order: 2;
   }
   .city-map-bottom small {
     display: none;

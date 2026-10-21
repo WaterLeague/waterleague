@@ -6,6 +6,7 @@ import { facilities } from '../../game/service/gameService';
 import { homeFacilities, homeModes } from '../service/homeContent';
 import { dataSources } from '../../catalog/service/dataSourceService';
 import { GameStartDialog } from './GameStartDialog';
+import { infrastructureNames } from '../../infrastructure/service/infrastructureService';
 
 test('홈에서 실제 설치 시설 7종과 두 게임 모드·각 기능으로 연결', () => {
   const html = renderToStaticMarkup(<HomePage />);
@@ -24,6 +25,9 @@ test('홈에서 실제 설치 시설 7종과 두 게임 모드·각 기능으로
   expect(html).toContain('aria-pressed="true"');
   expect(html).toContain('빗물정원 왼쪽으로 회전');
   expect(html).toContain('로그인 후 사건 전체 설계 제출');
+  expect(html).toContain('과거 침수 기록 3D 미리보기');
+  expect(html).toContain('빗물펌프장 3D 미리보기');
+  for (const name of Object.values(infrastructureNames)) expect(html).toContain(name);
   expect(html).not.toContain('지도에서 표시되는 허용 후보에 설치해요');
   expect(html).not.toContain('지도에서 배치해 보기');
 });
@@ -45,7 +49,9 @@ test('게임 시작은 선택 창을 열며 각 모드의 주소와 이용 조�
 test('홈에 점수식·예시·모드별 기간과 순위 한계를 소개', () => {
   const html = renderToStaticMarkup(<HomePage />);
   expect(html).toContain('id="home-score"');
-  expect(html.indexOf('id="home-score"')).toBeLessThan(html.indexOf('id="home-facilities-title"'));
+  expect(html.indexOf('id="home-modes"')).toBeLessThan(html.indexOf('id="home-facilities-title"'));
+  expect(html.indexOf('id="home-facilities-title"')).toBeLessThan(html.indexOf('id="home-map"'));
+  expect(html.indexOf('id="home-map"')).toBeLessThan(html.indexOf('id="home-score"'));
   for (const text of [
     '표면 유출 + 시설 배수 + 종료 저류량 − 시작 저류량',
     '설명용 예시',

@@ -284,6 +284,33 @@
   color: #718b80;
   pointer-events: none;
 }
+.home-preview-clock {
+  position: absolute;
+  top: 14px;
+  right: 19px;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 10px;
+  border-radius: 6px;
+  background: #fafcf5ed;
+  color: #365b54;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+.home-preview:is(.is-weekly, .is-disaster) .home-preview-label,
+.home-preview:is(.is-weekly, .is-disaster) .home-preview-controls span {
+  background: #fafcf5e6;
+  color: #476d64;
+  border-radius: 4px;
+  padding: 5px 7px;
+}
+.home-preview:is(.is-weekly, .is-disaster) .home-preview-label {
+  top: 17px;
+  left: 19px;
+}
 .home-preview-controls {
   position: absolute;
   bottom: 13px;
@@ -435,6 +462,68 @@
 .home-feature-grid .home-text-link {
   margin-top: auto;
 }
+.home-map-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 40px;
+}
+.home-map-grid .home-preview {
+  width: 100%;
+  margin-bottom: 24px;
+  border-radius: 10px;
+}
+.home-map-legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 11px;
+  font-weight: 650;
+  margin-bottom: 20px;
+}
+.home-map-legend.is-infrastructure {
+  color: #a94f25;
+}
+.home-map-facts {
+  margin: 0;
+  display: grid;
+  gap: 15px;
+  font-size: 12px;
+  line-height: 1.85;
+}
+.home-map-facts dt {
+  font-weight: 650;
+}
+.home-map-facts dd {
+  margin: 3px 0 0;
+  color: var(--site-muted);
+}
+.home-map-kinds {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  gap: 7px 14px;
+  padding: 0;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.8;
+}
+.home-map-kinds button {
+  padding: 7px 10px;
+  border: 1px solid #d6e1d4;
+  border-radius: 6px;
+  font: inherit;
+  color: var(--site-muted);
+  background: transparent;
+  cursor: pointer;
+}
+.home-map-kinds button[aria-pressed='true'] {
+  color: #8b4322;
+  border-color: #bb8d74;
+  background: #f2e8de;
+}
+.home-map-grid .home-map-note {
+  font-size: 11px;
+  margin: 18px 0 0;
+}
 .home-start {
   max-width: 1160px;
   margin: 25px auto 65px;
@@ -585,6 +674,9 @@
   }
   .home-feature-grid h3 {
     font-size: 14px;
+  }
+  .home-map-grid {
+    grid-template-columns: 1fr;
   }
   .home-start {
     margin: 15px 20px 40px;

@@ -66,7 +66,6 @@ const sceneModules = new Set(
     .flatMap((row) => row.modules),
 );
 const layers = [
-  ["city/view/CityCoveragePlan.tsx", "city/view/CityCoverage.tsx"],
   [
     "infrastructure/view/InfrastructureFootprintsPlan.tsx",
     "infrastructure/view/InfrastructureFootprints.tsx",

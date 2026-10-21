@@ -1,5 +1,4 @@
 import { nativeSurfaceColor } from '../../urban/service/nativeStreetService';
-import { CityCoveragePlan } from './CityCoveragePlan';
 import { GroundCandidatesPlan } from '../../installation/view/GroundCandidatesPlan';
 import type { GroundCandidate } from '../../installation/service/candidateTilesService';
 import { InstallationSymbolsPlan } from '../../installation/view/InstallationSymbolsPlan';
@@ -410,7 +409,6 @@ export const CityPlan = memo(function CityPlan({
         detailTileIds={detailTileIds}
         ownDistrictId={ownDistrictId}
       />
-      <CityCoveragePlan distance={camera.distance} />
       <g pointerEvents="none">
         {parkingLots.map((lot) => (
           <g key={lot.id}>
