@@ -23,12 +23,11 @@ it('실제 원형 워커의 평가체적 원값·선행 제외·서버 미산정
   expect(html).not.toContain('근거를 확인하지 못했습니다');
 });
 
-it('실제 소유자 HTTP 응답의 원 방류 악화·보조 비율과 종합점수 없음 유지', () => {
+it('실제 소유자 HTTP 응답의 원 방류 악화·보조 비율 유지', () => {
   expect(network.evidence).toBe('ACTUAL_AUTHENTICATED_HTTP_WORKER_DTO_PROJECTION');
   const job = watershedJobDto.parse(network.value);
   const assessment = job.result!.metricComparison!;
   expect(assessment.primaryMetricId).toBeNull();
-  expect(assessment.compositeScore).toBeNull();
   expect(assessment.relativeUsedForRanking).toBe(false);
   expect(
     assessment.metrics.find((m) => m.id === 'networkOutflowM3')!.signedImprovement

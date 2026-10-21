@@ -30,7 +30,6 @@ function board(scores: string[]) {
     title: '시험용 순위',
     policy: 'FULL_EVENT_INDEPENDENT_SURFACES_V1',
     modelGrade: 'CURRENT_GEOMETRY_HISTORICAL_RAINFALL_STRESS_TEST',
-    officialTotalScore: false,
     scorePolicy,
     withheldSubmissionCount: 0,
     groups: [

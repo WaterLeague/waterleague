@@ -16,7 +16,6 @@ export const scorePolicyDto = z.object({
   weeklyDistrictTieOrder: z.tuple([z.literal('districtName'), z.literal('districtId')]),
   submissionTieOrder: z.tuple([z.literal('submittedAt'), z.literal('id')]),
   relativeUsedForRanking: z.literal(false),
-  compositeScore: z.null(),
   missingPolicy: z.literal('UNAVAILABLE_WITH_REASON_NO_ZERO_OR_REDISTRIBUTION'),
   weeklyWindow: z.literal('KST_MONDAY_INSTALLATION_AFTER_CONFIRMED_OBSERVATION'),
   submissionWindow: z.literal('FULL_EVENT_AFTER_ANTECEDENT'),

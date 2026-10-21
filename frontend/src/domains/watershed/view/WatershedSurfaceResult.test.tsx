@@ -53,7 +53,6 @@ it('공개 지형의 전체 기간 실제 계산에서 여섯 지표와 작은 �
     '86,339',
   ])
     expect(html).toContain(label);
-  expect(html).not.toContain('100점');
   expect(html).toContain('전체 물수지 잔차');
   expect(html).toContain('작은 개선량의 유의성이 입증되지는 않습니다');
   expect(html).toContain('2,989,828.546675');

@@ -106,7 +106,6 @@ export const metricComparisonDto = z
     scope: z.enum(['SELECTED_INDEPENDENT_SURFACE', 'PUBLISHED_NETWORK_REFERENCE_DESIGN']),
     window: window.nullable(),
     primaryMetricId: z.literal('surfaceAccountedVolumeM3').nullable(),
-    compositeScore: z.null(),
     relativeUsedForRanking: z.literal(false),
     metrics: z.array(comparedMetricDto).length(9),
   })
