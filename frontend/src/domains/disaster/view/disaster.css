@@ -35,16 +35,15 @@
   position: relative;
   height: 170px;
   padding: 28px;
-  background: #233f48;
-  color: #c2d9d2;
+  background: #e1e9e4;
+  color: #557a77;
   overflow: hidden;
-  background-image: repeating-linear-gradient(115deg, transparent 0 22px, #b8d9d01c 23px 24px);
 }
 .disaster-card-1 .disaster-card-art {
-  background-color: #3f5045;
+  background-color: #e5e8df;
 }
 .disaster-card-2 .disaster-card-art {
-  background-color: #505447;
+  background-color: #e8e5df;
 }
 .disaster-card-art span {
   position: absolute;
@@ -72,12 +71,6 @@
   font-size: 13px;
   line-height: 1.85;
   color: #607063;
-}
-.disaster-card-copy small {
-  display: block;
-  margin-top: 12px;
-  color: #657667;
-  font-size: 11px;
 }
 .disaster-card-copy button {
   display: flex;

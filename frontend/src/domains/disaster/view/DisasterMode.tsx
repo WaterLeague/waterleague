@@ -70,7 +70,6 @@ export function DisasterMode(props: {
                 <span>집중호우 · 서울 {event.regions.length}개 구</span>
                 <h2>{event.eventDate.replaceAll('-', '. ')} 집중호우</h2>
                 <p>{event.summary}</p>
-                <small>공개 관측 구간 재생 · 기본 1배속</small>
                 <button
                   onClick={() => setSelected(event.id)}
                   aria-label={`${event.eventDate} 집중호우 시작`}

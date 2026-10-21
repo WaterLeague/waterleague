@@ -81,7 +81,6 @@ export function FacilityPlacementPanel(p: FacilityPlacementProps) {
           <strong>{p.feedback}</strong>
         </div>
       )}
-      {p.access}
       {site && (
         <>
           <span className="shared-site-kind">
@@ -280,6 +279,7 @@ export function FacilityPlacementPanel(p: FacilityPlacementProps) {
       )}
       {site && !occupied && <PhysicalInputEvidence site={site} />}
       {p.children}
+      {p.access}
     </aside>
   );
 }
