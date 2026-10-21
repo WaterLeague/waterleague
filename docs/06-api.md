@@ -93,7 +93,7 @@
 | GET/POST /historical | 회원 소유 재해 실험·결과 |
 | GET/PUT /historical/designs/{eventId} | 회원 재해 전체 구 설계·revision |
 | POST /historical/designs/{eventId}/submissions | 최신 저장본과 hash를 동결한 사건 전체 제출 |
-| GET /historical/leaderboard/{eventId} | 인증된 회원의 사건별 최종 기록 경쟁 |
+| GET /historical/leaderboard/{eventId} | 인증된 회원의 사건별 최종 랭킹 |
 | GET /surface/current | `index,minX,minY,maxX,maxY`로 현재 공개 지표 실행 목록 조회 |
 | GET /surface/current/{id}/frame | 같은 필수 범위/프레임 입력으로 공개 실행 프레임 조회 |
 
@@ -121,9 +121,9 @@
 
 리그 초안 추가 입력: `placementLimit`(배치 구역 수), `areaLimitM2`(합산 면적, 소수 두 자리), `award`(`prizeKrw`, `winnerCount`, `notice`). 참가 규칙을 포함한 schema 3에도 포함하며 공개 후 고정. 필드 생략 시 모델 상한·상금 없음 적용, 기존 버전 1 규칙 원문·hash 유지. 제출은 저장 배치의 개수·면적을 서버에서 재검사하며 초과 시 422 `LEAGUE_RULES_MISMATCH`. [제한·상금 계약](17-league-participation.md) 참조.
 
-## 리그 참가·팀전 서버 API
+## 보존된 연구 리그 참가·팀전 서버 API
 
-schema 3은 초안에 `participation: {access, admission, entryMode, teamSizeLimit}`를 포함. 값·이전 규칙 호환·개인/팀 한도는 [참가 계약](17-league-participation.md) 참조. 기관 리그 초안 구성요소는 schema 3 참가 방식을 명시하며 기존 schema 1/2 규칙은 그대로 열람·제출.
+schema 3은 초안에 `participation: {access, admission, entryMode, teamSizeLimit}`를 포함. 값·이전 규칙 호환·개인/팀 한도는 [참가 계약](17-league-participation.md) 참조. 구형 기관 리그 화면은 제거했다. 보존된 서버는 schema 3 참가 방식과 기존 schema 1/2 규칙의 열람·제출을 지원하며 새 게임 대회와 분리한다.
 
 | API | 입력·권한 |
 | --- | --- |
@@ -296,8 +296,29 @@ RFC 9457 `application/problem+json`: type, title, status, detail, instance, code
 
 ## 대회와 관리자 결과 · 2026-10-21
 
-`GET /competitions`는 20건 페이지, `/catalog`는 현재 구·시설·사건 목록, `/{id}`는 고정 개최 조건이다. `POST /competitions`는 승인 조직 회원/MFA와 소속 조직을 검증하며 요청 UUID로 멱등 처리한다. 공개 즉시 규칙·점수 정책 해시를 동결한다. `/{id}/join`은 본인 참가와 규칙 동의, `/{id}/submissions`는 본인 전체 사건 계산 ID와 대회 규칙 해시를 받는다. `/{id}/candidates`는 조건에 맞는 본인 제출만 제공한다. 대회당 참가 1,000명, 조직별 진행 대회 20개, 상금 합계 10억 원을 상한으로 검사한다.
+아래 주소의 기준 접두사는 `/api/v1`이다. 공개 카탈로그·목록·상세와 인증된 회원의 결과를 구분한다.
 
-실시간 결과는 참가·개최 후 설치한 허용 시설의 원 분별 누적 체적을 대회 종료 분에서 절단하고 주간 결과 게시와 같은 DB 트랜잭션에 저장한다. 주간 초기화·물리 계산·예산 원장은 변경하지 않는다. `/{id}/results?page=`는 참가자·주최 조직·관리자 전용이며 같은 계산 조건별 100명 페이지·공동 순위·계산 지연 상태를 제공한다. 기관 승인 취소는 신규 참가·제출을 차단한다. 개인정보·연구 원본 열람 동의를 대회 참가로 대체하지 않는다.
+| 메서드·주소 | 동작·권한 |
+| --- | --- |
+| GET /competitions/catalog | 현재 구·시설·재해 사건 목록 |
+| GET /competitions?page= | 공개 대회 목록, 20건 페이지 |
+| GET /competitions/{id} | 고정 개최 조건·현재 참가/관리 가능 상태 |
+| POST /competitions | 승인된 BUSINESS/INSTITUTION/GOVERNMENT 회원·MFA·현재 소속 조직 검증 후 즉시 공개 |
+| POST /competitions/{id}/join | PLAYER의 본인 참가, `rulesHash` 동의; 실시간은 소속 구가 대회 범위에 포함되어야 함 |
+| POST /competitions/{id}/cancel | 주최 조직 또는 ADMIN, 마감 전 취소; 기록 보존 |
+| GET /competitions/{id}/candidates | 재해 대회 참가자의 본인 전체 사건 제출 중 조건에 맞는 후보 |
+| POST /competitions/{id}/submissions | 본인 전체 사건 계산 `jobId`와 대회 `rulesHash` 제출 |
+| GET /competitions/{id}/results?page= | 참가자·승인된 주최 조직·ADMIN, 같은 계산 조건별 100명 페이지·공동 순위 |
+| GET /admin/results/seasons | ADMIN의 조회 가능한 주간 시즌 목록 |
+| GET /admin/results/weekly?week=YYYY-MM-DD&page= | ADMIN의 KST 월요일 기준 시즌 순위·시설 설치 시각, 100명 페이지 |
+| GET /admin/results/historical/{eventId}?page= | ADMIN의 사건 전체 기간 제출 순위, 조건별 100명 페이지 |
 
-관리자 `/admin/results/seasons`, `/admin/results/weekly?week=YYYY-MM-DD&page=`, `/admin/results/historical/{eventId}?page=`는 전체 시즌·사건의 순위와 주간 설치 시각을 조회한다. 관리자 권한은 서버와 세션 MFA에서 검증하며 일반 회원은 같은 주소로 조회할 수 없다.
+개최 요청은 UUID `requestKey`, `title`(100자), `description`(4,000자), `mode`(REALTIME/DISASTER), 재해의 `eventId`, `districtIds`(1~25개), `allowedTypes`(1~7종), 분 단위 UTC `opensAt/closesAt`, `awards`(최대 20개), `awardNotice`(2,000자)를 받는다. 종료는 시작 이후이면서 생성 시점부터 366일 이내여야 한다. 서버 카탈로그의 구·시설·사건만 허용한다. 시상은 상 이름·중복 없는 1~1,000위 구간·1인당 원화 상금이며 총액은 10억 원 이하, 시상 항목이 있으면 공백 제거 후 10자 이상의 안내가 필요하다. 실제 상금 결제·지급 API는 제공하지 않는다.
+
+동일 생성자/요청 키는 같은 조건일 때만 재사용한다. 공개 즉시 규칙·점수 정책 해시를 동결하며 조건 수정 API는 없다. 대회당 참가 1,000명, 조직별 진행 대회 20개, 회원별 시간당 개최 10회·참가 30회·제출 60회를 검사한다. 페이지는 0부터 시작하고 최대 1,000이다. 모든 상태 변경은 CSRF·계정 상태·소유권을 재검사한다.
+
+실시간 결과는 참가·개최 이후 설치한 허용 시설의 원 누적 체적을 대회 종료 분에서 절단하고 주간 결과 게시와 같은 DB 트랜잭션에 저장한다. 주간 초기화·물리 계산·예산 원장은 변경하지 않는다. 재해는 참가·개최 이후 생성한 본인의 전체 사건 제출만 허용하며 모든 배치의 구·시설·동결 점수 정책을 검사한다. 마감 전 연결한 대기/실행 중 작업은 마감 뒤 완료될 수 있다. 조건별 회원 최고 제출·공동 순위를 사용하고 계산 조건을 섞지 않는다.
+
+대회 기간 상태 `UPCOMING/OPEN/ENDED/CANCELLED`와 결과 상태 `UPCOMING/IN_PROGRESS/PROVISIONAL/WITHHELD/EMPTY/FINAL/CANCELLED`를 구분한다. 대기 계산은 잠정 결과, 조건 불일치는 보류이며 누락을 0점이나 확정 순위로 대체하지 않는다. 전체 비교 집단에서 순위를 계산한 뒤 페이지를 나눈다. 주간은 설치 시각을 제공하고 재해는 사건 전체 기간 평가이므로 별도 설치 기간 열을 제공하지 않는다.
+
+기관 승인 취소는 신규 참가·제출을 차단한다. 개인정보·연구 원본 열람 동의를 대회 참가로 대체하지 않는다. 관리자 결과는 서버 역할과 세션 MFA를 검사하며 일반 회원이 같은 주소로 우회할 수 없다. 비공개 결과 응답은 `no-store`로 제공한다.

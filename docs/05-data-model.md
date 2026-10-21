@@ -12,7 +12,8 @@ UUID, UTC 시각, 비용·면적의 고정 정밀도를 사용한다. FK·CHECK�
 | 저장 설계·계산 | `strategies`, `strategy_versions`, `simulation_jobs`, `queue_admission`, `submissions` |
 | 주간 설치·계산 | `shared_installations`, `shared_physics_jobs`, `shared_weekly_scores`, `budget_ledger_entries`, `shared_research_consents` |
 | 재해 설계·실험·제출 | `historical_design_revisions`, `historical_experiments`, `historical_submissions` |
-| 기관 리그 | `leagues`, `league_submissions`, `league_participants`, `league_participant_events`, `league_invitations`, `league_teams`, `league_team_members` |
+| 게임 대회 | `game_competitions`, `game_competition_participants`, `game_competition_submissions`, `game_competition_live_scores` |
+| 보존된 연구 리그 | `leagues`, `league_submissions`, `league_participants`, `league_participant_events`, `league_invitations`, `league_teams`, `league_team_members` |
 | 연구·목적별 동의 | `research_consents`, `utilization_requests`, `utilization_decisions`, `strategy_reviews` |
 | 비교·후보 탐색 | `rainfall_comparisons`, `rainfall_comparison_jobs`, `research_comparisons`, `research_searches`, `research_search_sources`, `research_candidates` |
 | 연결 유역·이용조 초안 | `watershed_experiments`, `cistern_map_plans` |
@@ -27,7 +28,7 @@ UUID, UTC 시각, 비용·면적의 고정 정밀도를 사용한다. FK·CHECK�
 
 작업은 lease·만료·fencing token·요청 해시를 보존한다. 결과 게시 시 현재 유효한 작업 점유를 다시 검사하고 산출물은 작업/토큰별 비공개 경로에 보관한다. 완료 결과를 새 데이터로 덮어쓰지 않는다. 원자료·분별 상태·요청·manifest의 해시를 확인해 재생한다. 계산 완료와 수치 품질 통과는 별도 상태다.
 
-현재 6종 독립 표면 계산은 `NATIVE_DIRECT_SURFACE_COMPARISON_V1`의 `design-contract.json`과 그 해시를 기존 작업 결과 JSON에 결속한다. 별도 상태 테이블이나 두 번째 점수 원장을 만들지 않는다. EPSG:5186 원형/객체/형상 해시·후보·구 소속, 전체 평가 표면/시설 면적, 제원/참조 조건, UTC 평가 창·초기화·단위·엔진/코드, 실제 모델/배치/기준·설계 INP 해시, 원가 스냅샷/출처·예산 정책을 같은 형식으로 보관한다. 외부 집수면·배수 노드·관망은 미연결 `null`과 `UNCONNECTED_SURFACE_EXPLORATION`으로 남기고 비용 누락은 `NOT_RECORDED`로 구분한다. 새 계산은 생애비용의 `UNAVAILABLE`/`PARTIAL`/`COMPLETE` 상태와 원장·결과·정책 해시를 `cost.lifeCycleCost`에 결속하며 미확정 총액은 null로 유지한다. 이전 계산의 `NOT_CALCULATED` 상태는 소급 생성하지 않는다. 주간은 결과의 `designContract`, 재해는 시설별 `designContract`를 사용하며 제출의 구별 결과에도 보존한다. 과거 완료 결과에 새 근거를 소급 생성하지 않는다.
+현재 일반 시설의 독립 표면 계산은 `NATIVE_DIRECT_SURFACE_COMPARISON_V1`의 `design-contract.json`과 그 해시를 기존 작업 결과 JSON에 결속한다. 설계 근거 자체를 위한 별도 상태 테이블이나 점수 원장을 만들지 않는다. EPSG:5186 원형/객체/형상 해시·후보·구 소속, 전체 평가 표면/시설 면적, 제원/참조 조건, UTC 평가 창·초기화·단위·엔진/코드, 실제 모델/배치/기준·설계 INP 해시, 원가 스냅샷/출처·예산 정책을 같은 형식으로 보관한다. 외부 집수면·배수 노드·관망은 미연결 `null`과 `UNCONNECTED_SURFACE_EXPLORATION`으로 남기고 비용 누락은 `NOT_RECORDED`로 구분한다. 새 계산은 생애비용의 `UNAVAILABLE`/`PARTIAL`/`COMPLETE` 상태와 원장·결과·정책 해시를 `cost.lifeCycleCost`에 결속하며 미확정 총액은 null로 유지한다. 이전 계산의 `NOT_CALCULATED` 상태는 소급 생성하지 않는다. 주간은 결과의 `designContract`, 재해는 시설별 `designContract`를 사용하며 제출의 구별 결과에도 보존한다. 과거 완료 결과에 새 근거를 소급 생성하지 않는다.
 
 후보 응답의 `suitability`는 `SITE_SUITABILITY_V1` 정책 해시·종합 상태·탐색 배치 허용·시공 승인 false와 조건별 판정/사유/공개 근거를 보관한다. 원 후보의 `siteConditions`에 없는 조건은 미확인으로 반환한다. 새 직접 강우 결과는 같은 표를 `designContract.suitability`에 고정하며 정책 원문·판정 코드도 재현 manifest에 포함한다. 금지·미충족 조건부는 설치 API, 저장 설계·실험·제출과 워커 입력/결과 보관에서 차단한다.
 
@@ -37,7 +38,15 @@ UUID, UTC 시각, 비용·면적의 고정 정밀도를 사용한다. FK·CHECK�
 
 독립 표면 v3의 배출 시각은 `cases[].metrics.timing`의 원 1차 모멘트·중심시각과 `detention`의 부호 있는 차이·비교 상태로 보관한다. 단위는 m³·s와 s이며 공통 평가 시작을 원점으로 한다. 기존 `runoff_metrics.py` 원문·해시를 재현 자료에 포함하고 새 DB 원장이나 시간 점수는 만들지 않는다. 주간 공개 조회·회원 재해 시설 결과에서 같은 필드를 읽으며 전체 사건 제출은 시설별 원 산출물에 보존한다. 무유출·음의 성분 유량·구형 미수집을 구별한다.
 
-V31은 기존 `shared_weekly_scores`·`historical_submissions`에 `score_policy_sha256`·`comparison_group_hash` 쌍을 추가한다. 과거 null은 그대로 보존하고 순위 조건을 소급 생성하지 않는다. 주간 요청/결과와 전체 사건 제출 요청/결과의 `scoreContext`는 정책·실행 환경·시간 규칙 또는 동결 제출 규칙을 묶으며 계산 전에 기록한다. `score-policy.json`·`score-context.json`·구현은 기존 산출물 manifest에 포함한다. 제출은 소수 18자리 HALF_EVEN 값을 명시적으로 게시하고 원 계산값을 유지한다. 회원별 최고 제출 선택·상위 100개·공동 순위는 규칙/계산 집단마다 독립 적용하며 주간의 조건 혼합은 합계 원장을 신설하지 않고 조회 단계에서 보류한다.
+V31은 기존 `shared_weekly_scores`·`historical_submissions`에 `score_policy_sha256`·`comparison_group_hash` 쌍을 추가한다. 과거 null은 그대로 보존하고 순위 조건을 소급 생성하지 않는다. 주간 요청/결과와 전체 사건 제출 요청/결과의 `scoreContext`는 정책·실행 환경·시간 규칙 또는 동결 제출 규칙을 묶으며 계산 전에 기록한다. `score-policy.json`·`score-context.json`·구현은 기존 산출물 manifest에 포함한다. 제출은 소수 18자리 HALF_EVEN 값을 명시적으로 게시하고 원 계산값을 유지한다. 회원별 최고 제출 선택·공개 상위 100개·공동 순위는 규칙/계산 집단마다 독립 적용한다. 관리자 조회는 전체 집단의 순위를 산정한 뒤 100건씩 페이지를 나누며 주간의 조건 혼합은 합계 원장을 신설하지 않고 조회 단계에서 보류한다.
+
+## 게임 대회 원장 · V33
+
+`game_competitions`는 주최 조직·생성자·요청 UUID·이름/정보·모드/사건·분 단위 UTC 개최 기간·고정 규칙 원문/해시·점수 정책·공개/취소 상태를 보관한다. 생성자/요청 키가 유일하며 공개 후 규칙 수정 API는 제공하지 않는다. 규칙에 구 목록·허용 시설·시상 순위 구간/1인당 원화 상금·안내를 고정한다.
+
+`game_competition_participants`는 대회/회원별 한 행으로 동의 규칙 해시와 참가 시각을 기록한다. `game_competition_submissions`는 본인의 기존 `historical_submissions.job_id`를 참조하고 참가 행에 외래키로 결속한다. 원 제출을 복제하거나 소유권을 이전하지 않는다.
+
+`game_competition_live_scores`는 대회/설치별 체적·평가 초/종료 시각·비교 집단/정책 해시·원 주간 작업 ID를 보관한다. 설치·참가·원 작업을 외래키로 연결하고 기존 주간 점수와 같은 트랜잭션에서 게시한다. 마감 이후 계산이 끝나도 평가 창은 마감에서 끝난다. 대회 결과는 조건별 회원 합계 또는 재해 최고 제출과 공동 순위를 조회하며 미완료·조건 불일치를 확정 점수로 만들지 않는다.
 
 ## 예산·설계 revision
 
