@@ -22,7 +22,7 @@ export function visibleInfrastructure(
   );
 }
 export const infrastructureColor = (asset: InfrastructureAsset) =>
-  asset.kind === 'STORM_PUMP' ? '#7061d8' : '#9762d9';
+  asset.kind === 'STORM_PUMP' ? '#a94f25' : '#b85b2b';
 
 export function infrastructureMarkers(
   assets: InfrastructureAsset[],

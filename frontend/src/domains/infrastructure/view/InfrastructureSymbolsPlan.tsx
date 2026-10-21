@@ -46,7 +46,7 @@ export function InfrastructureSymbolsPlan({
             <text
               y="-1.2"
               textAnchor="middle"
-              fill="#46266a"
+              fill="#713918"
               stroke="none"
               fontSize="1.3"
               fontWeight="800"

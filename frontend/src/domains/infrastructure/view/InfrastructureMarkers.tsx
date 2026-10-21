@@ -47,7 +47,10 @@ const KindSymbols = memo(function KindSymbols({
     last.current = '';
     if (!mesh.current) return;
     assets.forEach((a, i) =>
-      mesh.current!.setColorAt(i, scratch.color.set(a.id === selectedId ? '#ffd15b' : '#c5a7ff'))
+      mesh.current!.setColorAt(
+        i,
+        scratch.color.set(a.id === selectedId ? '#ffd15b' : infrastructureColor(a))
+      )
     );
     if (mesh.current.instanceColor) mesh.current.instanceColor.needsUpdate = true;
   }, [assets, selectedId, scratch]);
@@ -86,7 +89,7 @@ const KindSymbols = memo(function KindSymbols({
     >
       <meshStandardMaterial
         vertexColors
-        emissive="#b8a0d4"
+        emissive="#b85b2b"
         emissiveIntensity={0.45}
         depthTest={distance < 1600 && !!assets[0].footprint?.buildingId}
         depthWrite={false}

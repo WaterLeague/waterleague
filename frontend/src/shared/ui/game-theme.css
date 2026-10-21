@@ -252,7 +252,7 @@
   line-height: 1.6;
 }
 .game-shell .shared-map-legend .infrastructure-legend {
-  background: #8b69b5;
+  background: #b85b2b;
 }
 .game-shell .shared-map-legend .player-facility-legend {
   background: #7baf57;
@@ -924,10 +924,10 @@
   background: #fbfdf3f2;
 }
 .game-shell .infrastructure-cluster {
-  border: 1px solid #bea9d0;
-  background: #faf5ff !important;
-  color: #8969a0;
-  box-shadow: 0 2px 5px #5a36621a;
+  border: 1px solid #d3a17c;
+  background: #fff3e8 !important;
+  color: #91451e;
+  box-shadow: 0 2px 5px #7139181a;
 }
 @media (max-width: 700px) {
   .game-shell .topbar {
