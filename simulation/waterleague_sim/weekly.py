@@ -48,6 +48,8 @@ def publish(conn, job, weeks):
     if not context or context.get('mode') != 'WEEKLY':
         raise ValueError('LIVE_SCORE_CONTEXT_INVALID')
     verify(context, 'WEEKLY', context['binding'])
+    previous_context = job.get('previous_score_context', context)
+    accepted_contexts = {(value['sha256'], value['policySha256']) for value in (context, previous_context)}
     if any(value['rule'] != context['binding'] for value in weeks.values()):
         raise ValueError('LIVE_SCORE_CONTEXT_INVALID')
     previous = {r['week_start']: r for r in conn.execute(
@@ -55,8 +57,7 @@ def publish(conn, job, weeks):
     for week, old in previous.items():
         current = weeks.get(week)
         if (current is None or old['score_m3'] != current['prefixScore']
-                or old.get('comparison_group_hash') != context['sha256']
-                or old.get('score_policy_sha256') != context['policySha256']
+                or (old.get('comparison_group_hash'), old.get('score_policy_sha256')) not in accepted_contexts
                 or old['evaluated_minutes'] != current['prefixMinutes']
                 or old['evaluated_through'] != current['prefixThrough'] or old['rule_version'] != current['rule']
                 or (old.get('evaluated_seconds') or old['evaluated_minutes']*60) != current['prefixSeconds']):
@@ -67,6 +68,9 @@ def publish(conn, job, weeks):
             score_policy_sha256,comparison_group_hash) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
             ON CONFLICT(installation_id,week_start) DO UPDATE SET score_m3=EXCLUDED.score_m3,
             evaluated_minutes=EXCLUDED.evaluated_minutes,evaluated_seconds=EXCLUDED.evaluated_seconds,evaluated_through=EXCLUDED.evaluated_through,
-            source_job_id=EXCLUDED.source_job_id WHERE shared_weekly_scores.evaluated_through<EXCLUDED.evaluated_through''',
+            source_job_id=EXCLUDED.source_job_id,score_policy_sha256=EXCLUDED.score_policy_sha256,
+            comparison_group_hash=EXCLUDED.comparison_group_hash
+            WHERE shared_weekly_scores.evaluated_through<EXCLUDED.evaluated_through
+               OR shared_weekly_scores.comparison_group_hash<>EXCLUDED.comparison_group_hash''',
             (job['installation']['id'], week, value['score'], value['minutes'], value['through'], job['id'], value['rule'],
              value['seconds'] if value['rule'] == SECOND_RULE else None, context['policySha256'], context['sha256']))

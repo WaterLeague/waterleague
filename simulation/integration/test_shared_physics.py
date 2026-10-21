@@ -185,7 +185,7 @@ class SharedPhysicsTests(unittest.TestCase):
             calculation = json.loads((saved/'result.json').read_text())
             self.assertEqual(len(calculation['contribution']), int((job['end']-job['start']).total_seconds()/60))
 
-    def test_real_child_replays_preserved_input_and_refuses_revised_overlap(self):
+    def test_real_child_replays_preserved_input_and_refuses_revised_overlap(self, policy_change=False):
         first = physics.claim(self.conn)
         full_end = first['end']
         first['end'] -= timedelta(minutes=3)
@@ -194,15 +194,47 @@ class SharedPhysicsTests(unittest.TestCase):
             self.assertTrue(physics.process(self.conn, first, root))
             row = self.conn.execute('SELECT * FROM shared_physics_jobs WHERE id=%s', (first['id'],)).fetchone()
             self.assertEqual(row['state'], 'SUCCEEDED', row['error_code'])
+            if policy_change:
+                from waterleague_sim.evaluation import score_policy as policy
+                directory = Path(root)/'shared-physics'/str(first['id'])/str(first['lease_token'])
+                archived = json.loads((directory/'score-policy.json').read_bytes())
+                archived['files']['simulation/waterleague_sim/weekly.py'] = 'b'*64
+                (directory/'score-policy.json').write_bytes(policy.encode(archived))
+                context = first['score_context'] | {'policySha256': physics.digest((directory/'score-policy.json').read_bytes())}
+                context['sha256'] = policy.digest(policy.encode({k:v for k,v in context.items() if k!='sha256'}))
+                for name in ('request.json', 'result.json'):
+                    value = json.loads((directory/name).read_bytes())
+                    value['scoreContext'] = context
+                    (directory/name).write_bytes(physics.encode(value))
+                (directory/'score-context.json').write_bytes(policy.encode(context))
+                manifest = json.loads((directory/'manifest.json').read_bytes())
+                for name in ('request.json','result.json','score-policy.json','score-context.json'):
+                    manifest[name] = physics.digest((directory/name).read_bytes())
+                (directory/'manifest.json').write_bytes(physics.encode(manifest))
+                self.conn.execute('UPDATE shared_physics_jobs SET input_hash=%s,artifact_manifest_hash=%s WHERE id=%s',
+                    (physics.digest((directory/'request.json').read_bytes()),physics.digest((directory/'manifest.json').read_bytes()),first['id']))
+                self.conn.execute('UPDATE shared_weekly_scores SET score_policy_sha256=%s,comparison_group_hash=%s WHERE installation_id=%s',
+                    (context['policySha256'],context['sha256'],self.installation))
+                self.conn.execute('''INSERT INTO shared_installations(id,occupied_site,district_id,cell_id,
+                    owner_id,model_hash,facility_type,area_m2,cost,installed_at)
+                    SELECT %s,%s,district_id,%s,owner_id,model_hash,facility_type,area_m2,cost,installed_at
+                    FROM shared_installations WHERE id=%s''',
+                    (uuid.uuid4(),'11290:'+self.second_cell,self.second_cell,self.installation))
             self.conn.execute("UPDATE shared_physics_jobs SET created_at=now()-interval '61 seconds' WHERE id=%s", (first['id'],))
             if first['installation'].get('physics_policy') == physics.SECOND_POLICY:
                 self.conn.execute("SET TIME ZONE 'UTC'")
             second = physics.claim(self.conn)
+            self.assertEqual(second['installation']['id'], self.installation)
             self.assertEqual(second['start'], first['start'])
             self.assertGreaterEqual(second['end'], full_end)
             self.assertTrue(physics.process(self.conn, second, root))
             row = self.conn.execute('SELECT * FROM shared_physics_jobs WHERE id=%s', (second['id'],)).fetchone()
             self.assertEqual(row['state'], 'SUCCEEDED', row['error_code'])
+            if policy_change:
+                stored = self.conn.execute('SELECT score_policy_sha256,comparison_group_hash FROM shared_weekly_scores WHERE installation_id=%s', (self.installation,)).fetchone()
+                self.assertEqual(stored['score_policy_sha256'], second['score_context']['policySha256'])
+                self.assertEqual(stored['comparison_group_hash'], second['score_context']['sha256'])
+                self.assertEqual(self.conn.execute("SELECT count(*) n FROM shared_physics_jobs WHERE state='SUCCEEDED' AND installation_id=%s", (self.installation,)).fetchone()['n'], 2)
             def artifact(job, name):
                 return json.loads((Path(root)/'shared-physics'/str(job['id'])/str(job['lease_token'])/name).read_text())
             prefix = artifact(first, 'result.json')['strategy']['samples']
@@ -253,6 +285,9 @@ class SharedPhysicsTests(unittest.TestCase):
                           (self.native.sha256, self.installation))
         self.test_real_child_replays_preserved_input_and_refuses_revised_overlap()
         self.warmup_fetch.assert_called_once()
+
+    def test_code_policy_transition_replays_old_observations_and_preserves_all_scores(self):
+        self.test_real_child_replays_preserved_input_and_refuses_revised_overlap(policy_change=True)
 
     def test_weather_hour_reuse_preserves_state_with_new_rainfall_queries(self):
         start=datetime.now(timezone.utc).replace(minute=10,second=0,microsecond=0)-timedelta(hours=1)

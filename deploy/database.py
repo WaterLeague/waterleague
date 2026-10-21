@@ -72,7 +72,7 @@ def grant():
         db.execute('GRANT SELECT,INSERT ON game_competition_live_scores TO wl_worker')
         db.execute('GRANT UPDATE(score_m3,evaluated_seconds,evaluated_through,source_job_id) ON game_competition_live_scores TO wl_worker')
         db.execute('GRANT SELECT,INSERT ON shared_weekly_scores TO wl_worker')
-        db.execute('GRANT UPDATE(score_m3,evaluated_minutes,evaluated_seconds,evaluated_through,source_job_id) ON shared_weekly_scores TO wl_worker')
+        db.execute('GRANT UPDATE(score_m3,evaluated_minutes,evaluated_seconds,evaluated_through,source_job_id,score_policy_sha256,comparison_group_hash) ON shared_weekly_scores TO wl_worker')
         db.execute('GRANT SELECT ON shared_installations TO wl_worker')
         db.execute('GRANT UPDATE(id) ON shared_installations TO wl_worker')
         db.execute('GRANT SELECT,INSERT ON shared_physics_jobs TO wl_worker')

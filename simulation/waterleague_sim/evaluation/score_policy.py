@@ -98,6 +98,24 @@ def verify(context, mode, binding):
     return context
 
 
+def replay_context(directory, previous, current):
+    """같은 지표·실행 조건의 코드 갱신만 기존 관측 재생 후보로 허용."""
+    try:
+        raw = (Path(directory)/'score-policy.json').read_bytes()
+        archived = json.loads(raw)
+        _, active = verified_policy()
+        if (previous['sha256'] != digest(encode({k: v for k, v in previous.items() if k != 'sha256'}))
+                or previous['policySha256'] != digest(raw)
+                or {k: v for k, v in previous.items() if k not in ('sha256', 'policySha256')}
+                    != {k: v for k, v in current.items() if k not in ('sha256', 'policySha256')}
+                or {k: v for k, v in archived.items() if k != 'files'}
+                    != {k: v for k, v in active.items() if k != 'files'}):
+            raise ValueError()
+        return previous
+    except (OSError, KeyError, TypeError, ValueError):
+        raise ValueError('LIVE_PREVIOUS_INPUT_INVALID') from None
+
+
 def archive(directory, context):
     raw, _ = verified_policy()
     directory = Path(directory)

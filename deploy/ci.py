@@ -32,6 +32,7 @@ def validate():
 
 
 def build():
+    run(sys.executable, 'scripts/build_score_policy.py', '--check')
     sha = os.environ['GITHUB_SHA']
     if not re.fullmatch('[0-9a-f]{40}', sha):
         raise ValueError('REVISION_INVALID')

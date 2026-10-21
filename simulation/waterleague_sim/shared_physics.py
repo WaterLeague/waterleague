@@ -26,7 +26,20 @@ def floor_minute(at):
     return at.replace(second=0, microsecond=0)
 
 
+def verify_replayed_prefix(previous, current):
+    # 정책 갱신 시 기존 전 구간의 상태·점수가 그대로 재생된 경우에만 이어 게시한다.
+    count = len(previous['contribution'])
+    if not count or current['contribution'][:count] != previous['contribution']:
+        raise ValueError('LIVE_PREVIOUS_STATE_CHANGED')
+    for run in ('baseline', 'strategy'):
+        if (len(previous[run]['samples']) != count
+                or current[run]['samples'][:count] != previous[run]['samples']
+                or current[run]['samples'][count-1] != previous[run]['final']):
+            raise ValueError('LIVE_PREVIOUS_STATE_CHANGED')
+
+
 def claim(conn):
+    policy_hash = digest(score_policy.verified_policy()[0])
     with conn.transaction():
         conn.execute("""UPDATE shared_physics_jobs SET state='FAILED',error_code='LIVE_LEASE_EXPIRED',
             finished_at=clock_timestamp(),lease_until=NULL WHERE state='RUNNING' AND lease_until<=clock_timestamp()""")
@@ -41,9 +54,11 @@ def claim(conn):
                 AND COALESCE(j.finished_at,j.created_at)>clock_timestamp()-interval '5 minutes')
               AND NOT EXISTS(SELECT 1 FROM shared_physics_jobs j WHERE j.installation_id=i.id AND j.state='SUCCEEDED'
                 AND j.requested_through>=date_trunc('minute',LEAST(COALESCE(i.removed_at,i.season_ends_at,clock_timestamp()),clock_timestamp()-interval '2 minutes')))
-            ORDER BY (SELECT max(j.created_at) FROM shared_physics_jobs j WHERE j.installation_id=i.id) NULLS FIRST,i.installed_at,i.id
+            ORDER BY EXISTS(SELECT 1 FROM shared_weekly_scores s WHERE s.installation_id=i.id
+                AND s.score_policy_sha256<>%s) DESC,
+                (SELECT max(j.created_at) FROM shared_physics_jobs j WHERE j.installation_id=i.id) NULLS FIRST,i.installed_at,i.id
             FOR UPDATE OF i SKIP LOCKED LIMIT 1
-            """).fetchone()
+            """, (policy_hash,)).fetchone()
         if not installation:
             return None
         # 설치 행 잠금 뒤 새 스냅샷으로 중복 임대 여부를 다시 확인한다.
@@ -127,7 +142,6 @@ def process(conn, job, root):
             req = json.loads(req_raw)
             forcing = json.loads(raw)
             if (digest(req_raw) != previous['input_hash'] or digest(raw) != req['forcingSha256']
-                    or req.get('scoreContext') != comparison_context
                     or {k:v for k,v in req['engine'].items() if k!='adapterSha256'} != {k:v for k,v in engine.items() if k!='adapterSha256'}
                     or req.get('weeklyRuleVersion', RULE) != rule
                     or (timed and datetime.fromisoformat(req.get('installedAt', '')) != score_start)
@@ -135,6 +149,7 @@ def process(conn, job, root):
                     or forcing['stationId'] != station or datetime.fromisoformat(forcing['start']) != job['start']
                     or datetime.fromisoformat(forcing['end']) != previous['requested_through']):
                 raise ValueError('LIVE_PREVIOUS_INPUT_INVALID')
+            previous_context = score_policy.replay_context(old, req.get('scoreContext'), comparison_context)
             result_raw = (old/'result.json').read_bytes()
             if previous.get('artifact_manifest_hash'):
                 manifest_raw = (old/'manifest.json').read_bytes()
@@ -144,6 +159,8 @@ def process(conn, job, root):
                         or manifest.get('result.json') != digest(result_raw)):
                     raise ValueError('LIVE_PREVIOUS_RESULT_INVALID')
             previous_result = json.loads(result_raw)
+            if previous_result.get('scoreContext') != previous_context:
+                raise ValueError('LIVE_PREVIOUS_RESULT_INVALID')
             observations, source_hashes = forcing['observations'], forcing['sourceHashes']
             previous_evaporation = forcing.get('evaporation')
             covered = previous['requested_through']
@@ -208,6 +225,8 @@ def process(conn, job, root):
         if timed:
             request['installedAt'] = score_start.isoformat()
             request['installationClock'] = 'SERVER_SECOND_RESOLUTION_V1'
+        if previous_result is not None:
+            request['previousScoreContext'] = previous_context
         if job['installation'].get('admission_snapshot') is not None:
             request['publicAssetPolicy'] = json.loads(job['installation']['admission_snapshot'])
         if job['installation'].get('cost_snapshot') is not None:
@@ -237,11 +256,8 @@ def process(conn, job, root):
             raise ValueError('LIVE_SCORE_CONTEXT_INVALID')
         score_policy.verify(comparison_context, 'WEEKLY', rule)
         if previous_result is not None:
-            # 어댑터 수정 후에도 기존 관측 구간의 최종 상태가 같아야 연속 결과를 게시한다.
-            prefix_index = int((covered-job['start']).total_seconds()/60)-1
-            for run in ('baseline','strategy'):
-                if result[run]['samples'][prefix_index] != previous_result[run]['final']:
-                    raise ValueError('LIVE_PREVIOUS_STATE_CHANGED')
+            verify_replayed_prefix(previous_result, result)
+            job['previous_score_context'] = previous_context
         state = result['strategy']['final']
         public = {'stationId': station, 'stationName': station_name, 'simulationStart': score_start.isoformat(),
                   'simulatedThrough': job['end'].isoformat(), 'engineVersion': '5.2.4', 'validationLevel': 'EXPLORATORY',
