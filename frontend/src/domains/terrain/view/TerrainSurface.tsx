@@ -4,14 +4,20 @@ import type { Terrain } from '../entity/terrain';
 import { createTerrainGeometry } from '../service/terrainMeshService';
 export function TerrainSurface({
   terrain,
+  districtIds,
   ownDistrictId,
   selected,
 }: {
   terrain: Terrain;
+  districtIds?: string[];
   ownDistrictId: string | null;
   selected: string;
 }) {
-  const geometry = useMemo(() => createTerrainGeometry(terrain), [terrain]);
+  const districtKey = districtIds?.slice().sort().join(',') ?? '';
+  const geometry = useMemo(
+    () => createTerrainGeometry(terrain, districtIds),
+    [terrain, districtKey]
+  );
   useEffect(() => {
     const colors = geometry.getAttribute('color') as THREE.BufferAttribute;
     const palette = ['#d5d9c6', '#9bb18a', '#81b1ba'].map((c) => new THREE.Color(c));

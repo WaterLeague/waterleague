@@ -50,13 +50,25 @@ export function terrainMeshData(terrain: Terrain): MeshData {
   return value;
 }
 
-export function createTerrainGeometry(terrain: Terrain): BufferGeometry {
+export function createTerrainGeometry(terrain: Terrain, districtIds?: string[]): BufferGeometry {
   const data = terrainMeshData(terrain);
   const geometry = new BufferGeometry();
   // 불변 좌표·법선만 재사용하고 색상·GPU 속성은 장면마다 소유하여 해제 충돌을 막는다.
   geometry.setAttribute('position', new BufferAttribute(data.positions, 3));
   geometry.setAttribute('normal', new BufferAttribute(data.normals, 3));
-  geometry.setIndex(new BufferAttribute(data.indices, 1));
+  let indices = data.indices;
+  if (districtIds && districtIds.length < terrain.districtIds.length) {
+    const allowed = new Set(
+      districtIds.map((id) => terrain.districtIds.indexOf(id) + 1).filter((i) => i > 0)
+    );
+    const selected: number[] = [];
+    for (let i = 0; i < indices.length; i += 3) {
+      const triangle = [indices[i], indices[i + 1], indices[i + 2]];
+      if (triangle.every((v) => allowed.has(terrain.districts[v]))) selected.push(...triangle);
+    }
+    indices = new Uint32Array(selected);
+  }
+  geometry.setIndex(new BufferAttribute(indices, 1));
   geometry.setAttribute(
     'color',
     new BufferAttribute(new Float32Array(terrain.width * terrain.height * 4), 4)

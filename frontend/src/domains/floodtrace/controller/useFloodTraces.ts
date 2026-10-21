@@ -1,10 +1,16 @@
+import { scopeIntersects, type MapScope } from '../../../shared/service/mapScope';
 import { useEffect, useMemo, useState } from 'react';
 import type { TraceCatalog, TraceTile } from '../entity/floodTrace';
 import type { PlanView } from '../../city/service/planNavigationService';
 import { loadTraceCatalog, loadTraceTile } from '../repository/floodTraceRepository';
-import { visibleTraceTiles } from '../service/floodTraceService';
+import { visibleTraceTiles, scopeTraceTile } from '../service/floodTraceService';
 
-export function useFloodTraces(enabled: boolean, eventId: string, camera: PlanView) {
+export function useFloodTraces(
+  enabled: boolean,
+  eventId: string,
+  camera: PlanView,
+  scope?: MapScope
+) {
   const [catalog, setCatalog] = useState<TraceCatalog | null>(null);
   const [loaded, setLoaded] = useState<TraceTile[]>([]);
   const [error, setError] = useState(false),
@@ -27,6 +33,7 @@ export function useFloodTraces(enabled: boolean, eventId: string, camera: PlanVi
   }, [enabled, revision]);
   const event = catalog?.events.find((e) => e.id === eventId);
   const keys = visibleTraceTiles(event, camera)
+    .filter((t) => scopeIntersects(t.bounds, scope))
     .map((t) => t.id)
     .join(',');
   useEffect(() => {
@@ -49,7 +56,7 @@ export function useFloodTraces(enabled: boolean, eventId: string, camera: PlanVi
       while (active && !failed && index < requested.length) {
         const tile = requested[index++];
         try {
-          results.push(await loadTraceTile(eventId, tile));
+          results.push(scopeTraceTile(await loadTraceTile(eventId, tile), scope));
         } catch (error) {
           failed = true;
           throw error;
@@ -73,7 +80,7 @@ export function useFloodTraces(enabled: boolean, eventId: string, camera: PlanVi
     return () => {
       active = false;
     };
-  }, [enabled, event, eventId, keys, revision]);
+  }, [enabled, event, eventId, keys, revision, scope]);
   const tiles = useMemo(
     () => (enabled ? loaded.filter((t) => t.eventId === eventId) : []),
     [enabled, loaded, eventId]

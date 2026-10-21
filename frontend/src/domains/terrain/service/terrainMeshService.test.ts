@@ -44,3 +44,23 @@ test('같은 지형의 좌표·법선 재사용과 장면별 색상·GPU 속성 
   second.dispose();
   original.dispose();
 });
+
+test('대회에서 제외한 구의 지형 삼각형을 GPU 색인에서 제외', () => {
+  const terrain: Terrain = {
+    width: 3,
+    height: 2,
+    origin: [0, 1],
+    spacing: [1, -1],
+    districtIds: ['11110', '11680'],
+    heights: new Float32Array(6),
+    districts: new Uint8Array([1, 1, 2, 1, 1, 2]),
+    cover: new Uint8Array(6),
+  };
+  const before = createTerrainGeometry(terrain);
+  const selected = createTerrainGeometry(terrain, ['11110']);
+  expect([...selected.index!.array]).toEqual([0, 3, 1, 1, 3, 4]);
+  expect(before.index!.array.length).toBe(12);
+  expect(selected.getAttribute('position').array).toBe(before.getAttribute('position').array);
+  before.dispose();
+  selected.dispose();
+});

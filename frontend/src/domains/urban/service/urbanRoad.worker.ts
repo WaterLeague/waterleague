@@ -1,3 +1,7 @@
+import type { MapScope } from '../../../shared/service/mapScope';
+import { competitionStreets } from './competitionStreetService';
+import { railServices } from './railLifeService';
+import { streetPath } from './streetLifeService';
 import type { Street } from '../entity/urban';
 import { readNativeBridges } from '../repository/nativeBridgeDataSource';
 import { readNativeTransport } from '../repository/nativeTransportDataSource';
@@ -16,9 +20,10 @@ self.onmessage = async (
     tileIds?: string[];
     center: [number, number];
     distance: number;
+    scope?: MapScope;
   }>
 ) => {
-  const { id, center, distance } = event.data;
+  const { id, center, distance, scope } = event.data;
   latest = id;
   try {
     if (event.data.tileIds) {
@@ -44,9 +49,14 @@ self.onmessage = async (
     const roads = builder.build(tiles, center, distance);
     self.postMessage({
       id,
-      ...(roads !== sentRoads ? { roads } : {}),
+      ...(roads !== sentRoads ? { roads: competitionStreets(roads, scope) } : {}),
       ...(!sentRail
-        ? { railTraffic: builder.railTraffic, railServices: builder.railServices }
+        ? {
+            railTraffic: competitionStreets(builder.railTraffic, scope),
+            railServices: scope
+              ? railServices(competitionStreets(builder.railTraffic, scope).map(streetPath))
+              : builder.railServices,
+          }
         : {}),
     });
     sentRoads = roads;

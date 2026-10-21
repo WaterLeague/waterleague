@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>선택 구 대회 지도 · 로컬 검증</title>
+  </head>
+  <body>
+    <div id="root" class="game-shell is-game"></div>
+    <aside
+      style="
+        position: fixed;
+        bottom: 8px;
+        left: 8px;
+        z-index: 9999;
+        background: white;
+        padding: 10px;
+        font: 12px system-ui;
+      "
+    >
+      로컬 검증 · 종로구 소속 / 강남·송파 대회 · 서버 쓰기 없음
+    </aside>
+    <script type="module">
+      if (!import.meta.env.DEV || !['localhost', '127.0.0.1', '[::1]'].includes(location.hostname))
+        throw new Error('로컬 개발 환경 전용');
+      const id = '10000000-0000-4000-8000-000000000001';
+      history.replaceState(null, '', location.pathname + '?competition=' + id);
+      const now = Date.now(),
+        sha = '0'.repeat(64);
+      const competition = {
+        id,
+        title: '선택 구 설치 검증',
+        description: '로컬 검증',
+        organizationName: '시험 기관',
+        mode: 'REALTIME',
+        eventId: null,
+        opensAt: new Date(now - 3600000).toISOString(),
+        closesAt: new Date(now + 3600000).toISOString(),
+        phase: 'OPEN',
+        rulesHash: sha,
+        canManage: false,
+        joinedAt: new Date(now - 3000000).toISOString(),
+        participantCount: 1,
+        rules: {
+          budgetMode: 'CUSTOM',
+          personalBudgetKrw: 2000000000,
+          districtIds: ['11680', '11710'],
+          allowedTypes: [
+            'RAIN_GARDEN',
+            'PERMEABLE_PAVEMENT',
+            'GREEN_ROOF',
+            'BIORETENTION',
+            'VEGETATIVE_SWALE',
+            'INFILTRATION_TRENCH',
+            'RAINWATER_CISTERN',
+          ],
+          awards: [],
+          awardNotice: '',
+          scorePolicySha256: sha,
+        },
+      };
+      const original = window.fetch.bind(window);
+      window.fetch = async (input, init = {}) => {
+        const url = new URL(String(input), location.href);
+        if (!url.pathname.startsWith('/api/')) return original(input, init);
+        if ((init.method ?? 'GET') !== 'GET') throw new Error('로컬 검증에서 서버 쓰기 금지');
+        if (url.pathname === '/api/v1/competitions/' + id) return Response.json(competition);
+        if (url.pathname.endsWith('/results'))
+          return Response.json({
+            competition,
+            status: 'IN_PROGRESS',
+            page: 0,
+            hasMore: false,
+            missingSeconds: 0,
+            pendingCalculations: false,
+            generatedAt: new Date().toISOString(),
+            groups: [],
+          });
+        if (url.pathname === '/api/v1/installations') return Response.json([]);
+        if (url.pathname === '/api/v1/budget')
+          return Response.json({
+            policy: {
+              limitKrw: 2000000000,
+              personalLimitKrw: 2000000000,
+              allocationScope: 'MEMBER',
+              referenceYear: 2026,
+              sourceTitle: '로컬 검증',
+              sourceUrl: 'https://waterleague.cloud',
+              sourceSha256: sha,
+              ruleVersion: 'COMPETITION_PERSONAL_V1',
+              note: '로컬 검증',
+            },
+            allocatedKrw: 0,
+            remainingKrw: 2000000000,
+            personal: true,
+            accounting: { version: 'local', programs: [], facilities: [] },
+          });
+        return Response.json(
+          { code: 'LOCAL_QA', detail: '로컬 검증: 외부 조회·서버 쓰기 없음' },
+          { status: 503 }
+        );
+      };
+      const [{ default: React }, { createRoot }, { CityExplorer }] = await Promise.all([
+        import('react'),
+        import('react-dom/client'),
+        import('/src/domains/city/view/CityExplorer.tsx'),
+        import('/src/shared/ui/base.css'),
+        import('/src/shared/ui/game.css'),
+        import('/src/domains/game/view/play.css'),
+        import('/src/domains/game/view/game-viewport.css'),
+        import('/src/shared/ui/game-theme.css'),
+        import('/src/shared/ui/gameplay-chrome.css'),
+      ]);
+      const account = {
+        id: '10000000-0000-4000-8000-000000000002',
+        username: 'local-map',
+        displayName: '로컬 검증',
+        role: 'MEMBER',
+        memberType: 'PLAYER',
+        approvalStatus: 'APPROVED',
+        districtId: '11110',
+        affiliationType: 'RESIDENT',
+        organizationId: null,
+      };
+      createRoot(document.getElementById('root')).render(
+        React.createElement(CityExplorer, { account, onAccount: () => {}, onLogin: () => {} })
+      );
+    </script>
+  </body>
+</html>

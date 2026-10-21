@@ -57,8 +57,10 @@ def backup(release):
                 '-d', 'waterleague', '--format=custom', '--no-owner', '--no-acl'], stdout=output, stderr=subprocess.PIPE)
         if result.returncode or dump.stat().st_size == 0:
             raise RuntimeError('DATABASE_BACKUP_FAILED')
+        external = STATE / 'cache/external-requests'
+        extra = ['state/cache/external-requests'] if external.is_dir() and not external.is_symlink() else []
         archive = subprocess.Popen(['tar', '-cf', '-', '-C', directory, 'database.dump',
-            '-C', str(BASE), 'state/secrets', 'state/artifacts', 'releases/' + release.name], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            '-C', str(BASE), 'state/secrets', 'state/artifacts', 'releases/' + release.name, *extra], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         encrypted = subprocess.run(['age', '-r', recipient, '-o', str(target)], stdin=archive.stdout, capture_output=True)
         archive.stdout.close()
         archive.communicate()

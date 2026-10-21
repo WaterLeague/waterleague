@@ -1,3 +1,4 @@
+import type { MapScope } from '../../../shared/service/mapScope';
 import type { CityTile } from '../../city/entity/city';
 import type { Street } from '../entity/urban';
 import type { RailService } from '../service/railLifeService';
@@ -16,7 +17,7 @@ export class UrbanRoadSession {
     private readonly failed: () => void
   ) {}
 
-  update(tiles: CityTile[], center: [number, number], distance: number) {
+  update(tiles: CityTile[], center: [number, number], distance: number, scope?: MapScope) {
     if (this.disposed) return;
     try {
       if (!this.worker) {
@@ -50,6 +51,7 @@ export class UrbanRoadSession {
         id: ++this.sequence,
         center,
         distance,
+        scope,
         ...(tiles !== this.tiles
           ? {
               tileIds: tiles.map((tile) => tile.id),

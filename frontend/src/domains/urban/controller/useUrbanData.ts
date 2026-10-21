@@ -1,9 +1,15 @@
+import type { MapScope } from '../../../shared/service/mapScope';
 import { startTransition, useEffect, useMemo, useRef, useState } from 'react';
 import type { CityTile } from '../../city/entity/city';
 import type { Population } from '../entity/urban';
 import { loadPopulation } from '../repository/urbanRepository';
 import { UrbanRoadSession, type UrbanRoads } from '../repository/urbanRoadRepository';
-export function useUrbanData(tiles: CityTile[], center: [number, number], distance: number) {
+export function useUrbanData(
+  tiles: CityTile[],
+  center: [number, number],
+  distance: number,
+  scope?: MapScope
+) {
   const [data, setData] = useState<UrbanRoads>({ roads: [], railTraffic: [], railServices: [] });
   const [error, setError] = useState('');
   const session = useRef<UrbanRoadSession | null>(null);
@@ -22,8 +28,8 @@ export function useUrbanData(tiles: CityTile[], center: [number, number], distan
     };
   }, []);
   useEffect(() => {
-    session.current?.update(tiles, center, distance);
-  }, [tiles, center, distance]);
+    session.current?.update(tiles, center, distance, scope);
+  }, [tiles, center, distance, scope]);
   const parking = useMemo(
     () => ({
       lots: tiles.flatMap((tile) => tile.urban?.parkingLots ?? []),

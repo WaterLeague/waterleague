@@ -650,7 +650,12 @@ const CityScene = memo(function CityScene({
               onSelect={onAsset}
             />
             {terrain ? (
-              <TerrainSurface terrain={terrain} ownDistrictId={ownDistrictId} selected={selected} />
+              <TerrainSurface
+                districtIds={city.districts.map((d) => d.id)}
+                terrain={terrain}
+                ownDistrictId={ownDistrictId}
+                selected={selected}
+              />
             ) : ownDistrictId ? (
               city.districts.map((d) => (
                 <Surface
@@ -665,6 +670,7 @@ const CityScene = memo(function CityScene({
             )}
             <Lines city={city} selected={selected} ownDistrictId={ownDistrictId} />
             <CityOverview
+              districtIds={city.districts.map((d) => d.id)}
               center={rainCamera.center}
               distance={rainCamera.distance}
               terrain={terrain}

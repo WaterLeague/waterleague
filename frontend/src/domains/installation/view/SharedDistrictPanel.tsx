@@ -14,6 +14,7 @@ import { PhysicsPanel } from '../../physics/view/PhysicsPanel';
 import { InstallationCostRecord } from '../../cost/view/CostRecordEvidence';
 export function SharedDistrictPanel({
   onClose,
+  competition,
   account,
   districtId,
   districtName,
@@ -34,6 +35,7 @@ export function SharedDistrictPanel({
   onLocate,
   feedback,
 }: {
+  competition?: { permits: boolean };
   account: Account | null;
   districtId: string;
   districtName: string;
@@ -59,7 +61,10 @@ export function SharedDistrictPanel({
     [affiliation, setAffiliation] = useState<AffiliationType>('RESIDENT'),
     [saving, setSaving] = useState(false),
     [membershipError, setMembershipError] = useState('');
-  const own = !!account && account.role === 'MEMBER' && account.districtId === districtId;
+  const own =
+    !!account &&
+    account.role === 'MEMBER' &&
+    (competition ? competition.permits : account.districtId === districtId);
   return (
     <FacilityPlacementPanel
       onClose={onClose}
@@ -69,7 +74,7 @@ export function SharedDistrictPanel({
       onType={onType}
       onArea={onArea}
       districtName={districtName}
-      context={own ? '내 소속 구' : '상태 조회'}
+      context={competition ? '대회 설치 구' : own ? '내 소속 구' : '상태 조회'}
       feedback={feedback}
       budget={budget}
       remaining={remaining}
@@ -78,9 +83,11 @@ export function SharedDistrictPanel({
       busy={busy}
       canInstall={own}
       readOnlyMessage={
-        account
-          ? '내 소속 구에서만 설치할 수 있습니다.'
-          : '로그인 후 내 소속 구에 설치할 수 있습니다.'
+        competition
+          ? '대회 참가 여부와 개최 기간·허용 구를 확인해 주세요.'
+          : account
+            ? '내 소속 구에서만 설치할 수 있습니다.'
+            : '로그인 후 내 소속 구에 설치할 수 있습니다.'
       }
       onInstall={() => {
         if (site && type) void onInstall(site, type, Number(area));
@@ -92,9 +99,9 @@ export function SharedDistrictPanel({
           {' '}
           {!account ? (
             <button className="solid-button shared-join" onClick={onLogin}>
-              로그인하고 우리 구에 설치
+              {competition ? '로그인하고 대회에 참가' : '로그인하고 우리 구에 설치'}
             </button>
-          ) : account.role === 'MEMBER' && !account.districtId ? (
+          ) : !competition && account.role === 'MEMBER' && !account.districtId ? (
             <form
               onSubmit={async (e) => {
                 e.preventDefault();
@@ -120,7 +127,7 @@ export function SharedDistrictPanel({
               </button>
               {membershipError && <p role="alert">{membershipError}</p>}
             </form>
-          ) : !own && account.districtId ? (
+          ) : !competition && !own && account.districtId ? (
             <button className="outline-button shared-join" onClick={onLocate}>
               내 소속 구로 이동 <MapPin size={14} />
             </button>
@@ -128,7 +135,7 @@ export function SharedDistrictPanel({
         </>
       }
     >
-      {site && (
+      {site && !competition && (
         <SiteScores
           key={site.districtId + ':' + site.cellId}
           districtId={site.districtId}

@@ -1,8 +1,14 @@
+import { scopeIntersects, type MapScope } from '../../../shared/service/mapScope';
 import { useEffect, useState } from 'react';
 import type { LivePlace } from '../entity/liveUrban';
 import { loadLiveAreas, loadLivePlaces } from '../repository/liveUrbanRepository';
 import { freshReading, visibleLiveAreas } from '../service/liveUrbanService';
-export function useLiveUrban(center: [number, number], distance: number, historical: boolean) {
+export function useLiveUrban(
+  center: [number, number],
+  distance: number,
+  historical: boolean,
+  scope?: MapScope
+) {
   const [places, setPlaces] = useState<LivePlace[]>([]);
   const [checkedAt, setCheckedAt] = useState(Date.now);
   const x = Math.round(center[0] / 250) * 250,
@@ -19,7 +25,11 @@ export function useLiveUrban(center: [number, number], distance: number, histori
       const signal = controller.signal;
       try {
         const areas = await loadLiveAreas(signal);
-        const selected = visibleLiveAreas(areas, [x, y], scale);
+        const selected = visibleLiveAreas(
+          areas.filter((a) => scopeIntersects(a.bounds, scope)),
+          [x, y],
+          scale
+        );
         const values = await loadLivePlaces(selected, signal);
         if (!signal.aborted && !disposed) {
           setPlaces((previous) =>
@@ -56,7 +66,7 @@ export function useLiveUrban(center: [number, number], distance: number, histori
       controller?.abort();
       document.removeEventListener('visibilitychange', visibility);
     };
-  }, [x, y, scale, historical]);
+  }, [x, y, scale, historical, scope]);
   // 만료 경계에서는 공개 응답이 늦어져도 화면의 ‘현재’ 표시를 제거한다.
   useEffect(() => {
     const expiry = places

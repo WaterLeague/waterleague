@@ -10,16 +10,18 @@ export const CityOverview = memo(function CityOverview({
   terrain,
   detailTileIds,
   ownDistrictId,
+  districtIds,
 }: {
   center: [number, number];
   distance: number;
   terrain: Terrain | null;
   detailTileIds: ReadonlySet<string>;
   ownDistrictId: string | null;
+  districtIds?: string[];
 }) {
   const mesh = useRef<InstancedMesh>(null),
     invalidate = useThree((state) => state.invalidate);
-  const { data, visible, failed } = useCityOverview(center, distance, detailTileIds);
+  const { data, visible, failed } = useCityOverview(center, distance, detailTileIds, districtIds);
   useLayoutEffect(() => {
     if (!mesh.current || !data) return;
     const object = new Object3D(),

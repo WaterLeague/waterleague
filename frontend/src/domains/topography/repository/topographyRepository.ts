@@ -1,3 +1,4 @@
+import { type MapScope } from '../../../shared/service/mapScope';
 import { NATIVE_TRANSPORT_HASH } from '../../urban/repository/nativeTransportDataSource';
 import { readPublicData } from '../../../shared/repository/publicDataCache';
 import {
@@ -35,6 +36,7 @@ type Job = {
   terrain: Terrain | null;
   terrainKey: number;
   plan: boolean;
+  scope?: MapScope;
   key: string;
   subscribers: Set<Subscriber>;
 };
@@ -115,13 +117,14 @@ function drain() {
     while (pending.length && active.size < CONCURRENCY) {
       const job = pending.shift()!;
       active.set(job.id, job);
-      const { id, entry, layers, terrainKey, terrain, plan } = job;
+      const { id, entry, layers, terrainKey, terrain, plan, scope } = job;
       worker.postMessage({
         id,
         entry,
         layers,
         terrainKey,
         plan,
+        scope,
         ...(sentTerrain !== terrainKey ? { terrain } : {}),
       });
       sentTerrain = terrainKey;
@@ -135,11 +138,12 @@ export function requestTopographyTile(
   layers: TopographyIndex['layers'],
   terrain: Terrain | null,
   plan: boolean,
-  signal: AbortSignal
+  signal: AbortSignal,
+  scope?: MapScope
 ) {
   if (terrain && !terrainIds.has(terrain)) terrainIds.set(terrain, ++terrainSequence);
   const terrainKey = terrain ? terrainIds.get(terrain)! : 0,
-    key = `${entry.sha256}:${terrainKey}:${plan}:${plan ? '' : NATIVE_BRIDGE_HASH + NATIVE_TRANSPORT_HASH}`;
+    key = `${scope?.ids.join(',') ?? 'all'}:${entry.sha256}:${terrainKey}:${plan}:${plan ? '' : NATIVE_BRIDGE_HASH + NATIVE_TRANSPORT_HASH}`;
   return new Promise<TopographyBuffers>((resolve, reject) => {
     if (signal.aborted) {
       reject(new DOMException('Aborted', 'AbortError'));
@@ -161,6 +165,7 @@ export function requestTopographyTile(
         terrain,
         terrainKey,
         plan,
+        scope,
         key,
         subscribers: new Set(),
       };

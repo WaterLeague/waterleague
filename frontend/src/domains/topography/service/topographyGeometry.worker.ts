@@ -1,3 +1,5 @@
+import type { MapScope } from '../../../shared/service/mapScope';
+import { scopeTopography } from '../../city/service/competitionMapService';
 import { readNativeTransport } from '../../urban/repository/nativeTransportDataSource';
 import { NativeGroundCuts } from '../../urban/service/nativeGroundCutService';
 import { readPublicData } from '../../../shared/repository/publicDataCache';
@@ -41,9 +43,10 @@ self.onmessage = async (
     terrainKey: number;
     terrain?: Terrain | null;
     plan: boolean;
+    scope?: MapScope;
   }>
 ) => {
-  const { id, cancel, entry, layers, terrainKey, terrain, plan } = event.data;
+  const { id, cancel, entry, layers, terrainKey, terrain, plan, scope } = event.data;
   if (cancel) {
     requests.get(id)?.abort();
     return;
@@ -75,7 +78,14 @@ self.onmessage = async (
     request.signal.throwIfAborted();
     const bindings = plan ? undefined : await loadTransport();
     request.signal.throwIfAborted();
-    const data = topographyGeometry(tile, layers, selectedTerrain, plan, true, bindings);
+    const data = topographyGeometry(
+      scopeTopography(tile, scope),
+      layers,
+      selectedTerrain,
+      plan,
+      true,
+      bindings
+    );
     request.signal.throwIfAborted();
     const transfer = Object.values(data)
       .filter((value): value is Float32Array => value instanceof Float32Array)

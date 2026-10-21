@@ -120,10 +120,6 @@ export function InfrastructureEvidence({
       </small>
       <dl>
         <div>
-          <dt>파일 수정일</dt>
-          <dd>{source.fileModifiedAt ?? '미제공'}</dd>
-        </div>
-        <div>
           <dt>포털 갱신일</dt>
           <dd>{source.portalUpdatedAt ?? '미제공'}</dd>
         </div>

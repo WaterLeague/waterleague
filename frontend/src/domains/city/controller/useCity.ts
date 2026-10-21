@@ -1,3 +1,5 @@
+import type { MapScope } from '../../../shared/service/mapScope';
+import { scopeCityTile } from '../service/competitionMapService';
 import { useEffect, useMemo, useState } from 'react';
 import type { City, CityTile } from '../entity/city';
 import { loadCity, loadCityTile, loadCityPlayRegions } from '../repository/cityRepository';
@@ -33,7 +35,11 @@ export function useCity() {
   }, [attempt]);
   return { city, regions, error, retry: () => setAttempt((v) => v + 1) };
 }
-export function useCityTiles(city: City, camera: { center: [number, number]; distance: number }) {
+export function useCityTiles(
+  city: City,
+  camera: { center: [number, number]; distance: number },
+  scope?: MapScope
+) {
   const [tiles, setTiles] = useState<CityTile[]>([]),
     [error, setError] = useState(''),
     [busy, setBusy] = useState(false);
@@ -55,7 +61,7 @@ export function useCityTiles(city: City, camera: { center: [number, number]; dis
           wanted.slice(i, i + 4).map((t) => loadCityTile(t, controller.signal))
         );
         if (controller.signal.aborted) return;
-        next.push(...batch);
+        next.push(...batch.map((tile) => scopeCityTile(tile, scope)));
         if (i === 0 && wanted.length > 4) {
           const ready = [...next],
             ids = new Set(ready.map((t) => t.id));
@@ -77,6 +83,6 @@ export function useCityTiles(city: City, camera: { center: [number, number]; dis
       });
     return () => controller.abort();
     // 선택 타일 목록이 같으면 카메라 좌표 변경으로 다시 요청하지 않음.
-  }, [city, key]);
+  }, [city, key, scope]);
   return { tiles, error, busy };
 }

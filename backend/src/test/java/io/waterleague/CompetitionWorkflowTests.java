@@ -428,6 +428,51 @@ class CompetitionWorkflowTests extends PostgresIntegrationTest {
   @Autowired io.waterleague.budget.service.BudgetService budgets;
 
   @Test
+  void realtimeCompetitionAllowsOtherDistrictsButWeeklyAndMapLimitsRemain() throws Exception {
+    var organizer = host();
+    var player = actor(null);
+    db.update("UPDATE accounts SET district_id='11110' WHERE id=?", player.id());
+    var competition = create(organizer, "REALTIME");
+    join(player, competition);
+    var site =
+        NativeSiteFixtures.sites(sites, "11680").values().stream()
+            .filter(
+                v ->
+                    v.existingInfrastructure() == null
+                        && v.allowedTypes().contains("RAIN_GARDEN")
+                        && v.maxAreaM2().compareTo(BigDecimal.ONE) >= 0)
+            .findFirst()
+            .orElseThrow();
+    var placement =
+        Map.of(
+            "districtId",
+            "11680",
+            "cellId",
+            site.cellId(),
+            "facilityType",
+            "RAIN_GARDEN",
+            "areaM2",
+            1);
+    var path = "/installations?competitionId=" + competition.path("id").asString();
+    var installed = ok(player, "POST", path, placement, 201);
+    assertThat(installed.path("districtId").asString()).isEqualTo("11680");
+    assertThat(call(player, "POST", "/installations", placement).statusCode()).isEqualTo(403);
+    var outside = new HashMap<String, Object>(placement);
+    outside.put("districtId", "11110");
+    assertThat(call(player, "POST", path, outside).statusCode()).isEqualTo(422);
+    var unaffiliated = actor(null);
+    db.update(
+        "UPDATE accounts SET district_id=NULL,affiliation_type=NULL WHERE id=?", unaffiliated.id());
+    join(unaffiliated, competition);
+    ok(unaffiliated, "POST", path, placement, 201);
+    assertThat(call(unaffiliated, "POST", "/installations", placement).statusCode()).isEqualTo(409);
+    assertThat(
+            db.queryForObject(
+                "SELECT district_id FROM accounts WHERE id=?", String.class, player.id()))
+        .isEqualTo("11110");
+  }
+
+  @Test
   void validatesFrozenBudgetAndSerializesSpendingWithoutTouchingGeneralBudget() throws Exception {
     var h = host();
     var player = actor(null);

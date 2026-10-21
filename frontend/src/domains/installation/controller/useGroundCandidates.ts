@@ -1,3 +1,4 @@
+import { scopeIntersects, type MapScope } from '../../../shared/service/mapScope';
 import { useEffect, useMemo, useState } from 'react';
 import { CandidateDisplayError } from '../exception/CandidateDisplayError';
 import {
@@ -10,7 +11,7 @@ import {
   nearbyCandidateTiles,
   type GroundCandidate,
 } from '../service/candidateTilesService';
-export function useGroundCandidates(center: [number, number], distance: number) {
+export function useGroundCandidates(center: [number, number], distance: number, scope?: MapScope) {
   const [index, setIndex] = useState<CandidateDisplayIndex | null>(null);
   const [rows, setRows] = useState<GroundCandidate[]>([]),
     [error, setError] = useState('');
@@ -26,8 +27,13 @@ export function useGroundCandidates(center: [number, number], distance: number) 
     return () => request.abort();
   }, []);
   const entries = useMemo(
-    () => (index ? nearbyCandidateTiles(index.tiles, center, distance) : []),
-    [index, center, distance]
+    () =>
+      index
+        ? nearbyCandidateTiles(index.tiles, center, distance).filter((t) =>
+            scopeIntersects(t.bounds, scope)
+          )
+        : [],
+    [index, center, distance, scope]
   );
   const key = entries
     .map((t) => t.id)
@@ -49,13 +55,14 @@ export function useGroundCandidates(center: [number, number], distance: number) 
           ))
         );
       }
-      if (!request.signal.aborted) setRows(mergeCandidateParts(parts));
+      if (!request.signal.aborted)
+        setRows(mergeCandidateParts(parts).filter((row) => !scope || scope.ids.includes(row[1])));
     }
     void run().catch(() => {
       if (!request.signal.aborted) setError(new CandidateDisplayError().message);
     });
     return () => request.abort();
     // 같은 타일 안의 카메라 이동은 후보 형상 재생성을 일으키지 않는다.
-  }, [key]);
+  }, [key, scope]);
   return { rows, error };
 }

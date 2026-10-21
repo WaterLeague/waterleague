@@ -5,13 +5,15 @@ export const CityOverviewPlan = memo(function CityOverviewPlan({
   distance,
   detailTileIds,
   ownDistrictId,
+  districtIds,
 }: {
   center: [number, number];
   distance: number;
   detailTileIds: ReadonlySet<string>;
   ownDistrictId: string | null;
+  districtIds?: string[];
 }) {
-  const { data, visible, failed } = useCityOverview(center, distance, detailTileIds);
+  const { data, visible, failed } = useCityOverview(center, distance, detailTileIds, districtIds);
   const paths = useMemo(() => {
     const groups = new Map<number, string[]>();
     for (const [x, y, width, depth, , district] of visible) {

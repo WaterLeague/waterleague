@@ -6,15 +6,17 @@ export const overviewInstanceLimit = 130000;
 export function useCityOverview(
   center: [number, number],
   distance: number,
-  detailTileIds: ReadonlySet<string>
+  detailTileIds: ReadonlySet<string>,
+  districtIds?: string[]
 ) {
   const [coarse, setCoarse] = useState<CityOverview | null>(null),
     [fine, setFine] = useState<CityOverview | null>(null);
   const [failed, setFailed] = useState(false);
+  const districtKey = districtIds?.slice().sort().join(',') ?? '';
   const fineNeeded = distance < 10000;
   useEffect(() => {
     const request = new AbortController();
-    void loadCityOverview(100, CITY_HASH, request.signal)
+    void loadCityOverview(100, CITY_HASH, request.signal, districtIds)
       .then((data) => {
         if (!request.signal.aborted) setCoarse(data);
       })
@@ -22,11 +24,11 @@ export function useCityOverview(
         if (!request.signal.aborted) setFailed(true);
       });
     return () => request.abort();
-  }, []);
+  }, [districtKey]);
   useEffect(() => {
     if (!fineNeeded) return;
     const request = new AbortController();
-    void loadCityOverview(25, CITY_HASH, request.signal)
+    void loadCityOverview(25, CITY_HASH, request.signal, districtIds)
       .then((data) => {
         if (!request.signal.aborted) setFine(data);
       })
@@ -34,7 +36,7 @@ export function useCityOverview(
         if (!request.signal.aborted) setFailed(true);
       });
     return () => request.abort();
-  }, [fineNeeded]);
+  }, [fineNeeded, districtKey]);
   const x = Math.round(center[0] / 500) * 500,
     y = Math.round(center[1] / 500) * 500;
   const radius = Math.ceil(Math.max(1500, distance * 0.9) / 500) * 500;

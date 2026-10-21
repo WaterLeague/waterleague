@@ -1,3 +1,5 @@
+import { mapScope } from '../../../shared/service/mapScope';
+import { competitionCity, competitionOverview } from '../service/competitionMapService';
 import { useCompetitionGame } from '../../competition/controller/useCompetitionGame';
 import { followLink } from '../../../shared/controller/useAppLocation';
 import { useTopography } from '../../topography/controller/useTopography';
@@ -109,6 +111,7 @@ type PlayProps = {
 function Explorer({
   city,
   regions,
+  contest,
   account,
   onLogin,
   onAccount,
@@ -116,9 +119,23 @@ function Explorer({
   initialDistrictId = '',
   eventId = '',
   onExit,
-}: { city: City; regions: CityPlayRegion[] } & PlayProps) {
+}: {
+  city: City;
+  regions: CityPlayRegion[];
+  contest: ReturnType<typeof useCompetitionGame>;
+} & PlayProps) {
   const researchMode = mode === 'historical';
-  const contest = useCompetitionGame(account?.id, researchMode, eventId);
+  const scope = useMemo(
+    () => (city.districts.length < 25 ? mapScope(city.districts) : undefined),
+    [city]
+  );
+  const overview = useMemo(
+    () =>
+      contest.id
+        ? competitionOverview(city)
+        : { center: [0, 0] as [number, number], distance: 35000 },
+    [city, contest.id]
+  );
   const [floodStats, setFloodStats] = useState<FloodStats>(emptyFloodStats);
   const onFloodStats = useCallback(
     (value: FloodStats) =>
@@ -128,7 +145,16 @@ function Explorer({
     []
   );
   const { terrain, error: terrainError } = useTerrain();
-  const infrastructure = useInfrastructure();
+  const loadedInfrastructure = useInfrastructure();
+  const infrastructure = {
+    ...loadedInfrastructure,
+    catalog: useMemo(() => {
+      const catalog = loadedInfrastructure.catalog;
+      return catalog && scope
+        ? { ...catalog, assets: catalog.assets.filter((a) => scope.ids.includes(a.districtId)) }
+        : catalog;
+    }, [loadedInfrastructure.catalog, scope]),
+  };
   const [infrastructureOpen, setInfrastructureOpen] = useState(false);
   const [facilityExpansionOpen, setFacilityExpansionOpen] = useState(false);
   const [connectedOpen, setConnectedOpen] = useState(false);
@@ -169,7 +195,7 @@ function Explorer({
   const [selectedAssetId, setSelectedAssetId] = useState('');
   const [budgetRevision, setBudgetRevision] = useState(0);
   const budget = useBudget(budgetRevision, account?.id ?? null, contest.id);
-  const weekly = useWeekly(!researchMode, account?.id ?? null);
+  const weekly = useWeekly(!researchMode && !contest.id, account?.id ?? null);
   const districtScore = (id: string) => {
     if (contest.id) return '';
     if (weekly.error) return '순위 갱신 지연';
@@ -182,10 +208,7 @@ function Explorer({
   };
   const [selected, setSelected] = useState(initialDistrictId);
   const [showCandidates, setShowCandidates] = useState(false);
-  const [camera, setCamera] = useState<PlanView>({
-    center: [0, 0],
-    distance: 35000,
-  });
+  const [camera, setCamera] = useState<PlanView>(overview);
   const navigationCamera = useRef(camera);
   const viewedDistrict = useMemo(
     () => (camera.distance >= 20000 ? undefined : viewingDistrict(city.districts, camera.center)),
@@ -208,7 +231,7 @@ function Explorer({
     research.event?.regions[0]?.start
   );
   const [rankingOpen, setRankingOpen] = useState(false);
-  const ownDistrictId = researchMode ? null : account?.districtId;
+  const ownDistrictId = researchMode || contest.id ? null : account?.districtId;
   const viewerId = researchMode
     ? (account?.id ?? '00000000-0000-0000-0000-000000000000')
     : account?.id;
@@ -306,8 +329,7 @@ function Explorer({
   const [flat, setFlat] = useState(false),
     [failed, setFailed] = useState(false);
   const [focus, setFocus] = useState<CityFocus>({
-    center: [0, 0],
-    distance: 35000,
+    ...overview,
     key: 0,
     overview: true,
   });
@@ -354,9 +376,9 @@ function Explorer({
     observer.observe(controlsBar.current);
     return () => observer.disconnect();
   }, []);
-  const details = useCityTiles(city, camera);
-  const urban = useUrbanData(details.tiles, camera.center, camera.distance);
-  const topography = useTopography(camera.center, camera.distance, terrain, flat);
+  const details = useCityTiles(city, camera, scope);
+  const urban = useUrbanData(details.tiles, camera.center, camera.distance, scope);
+  const topography = useTopography(camera.center, camera.distance, terrain, flat, scope);
   const nativeBuildings = useMemo(
     () => [
       ...new Map(
@@ -367,9 +389,9 @@ function Explorer({
     ],
     [city.overviewBuildings, details.tiles]
   );
-  const groundCandidates = useGroundCandidates(camera.center, camera.distance);
-  const liveUrban = useLiveUrban(camera.center, camera.distance, researchMode);
-  const traces = useFloodTraces(true, researchMode ? eventId : comparisonEventId, camera);
+  const groundCandidates = useGroundCandidates(camera.center, camera.distance, scope);
+  const liveUrban = useLiveUrban(camera.center, camera.distance, researchMode, scope);
+  const traces = useFloodTraces(true, researchMode ? eventId : comparisonEventId, camera, scope);
   const eligibleRoofs = useMemo(
     () =>
       new Set(
@@ -759,12 +781,12 @@ function Explorer({
   );
   const reset = useCallback(() => {
     setSelected('');
-    setCamera({ center: [0, 0], distance: 35000 });
+    setCamera(overview);
     setSite(null);
     setOffset(0);
     selectionRequest.current++;
-    setFocus((p) => ({ center: [0, 0], distance: 35000, key: p.key + 1, overview: true }));
-  }, []);
+    setFocus((p) => ({ ...overview, key: p.key + 1, overview: true }));
+  }, [overview]);
   const locateCistern = (value: SharedSite) => {
     const current = navigationCamera.current;
     const target = selectionView(
@@ -820,13 +842,15 @@ function Explorer({
               const score = weekly.value?.current.districts.find((v) => v.districtId === d.id);
               return [
                 d.id,
-                weekly.error
-                  ? '순위 갱신 지연'
-                  : `시설 ${shared.installations.filter((i) => i.districtId === d.id).length}개 · ${score ? (score.scoreM3 === null ? '점수 없음' : `총 점수 ${scoreFormat.format(score.scoreM3)} m³`) : '점수 조회 중'}`,
+                contest.id
+                  ? `시설 ${shared.installations.filter((i) => i.districtId === d.id).length}개`
+                  : weekly.error
+                    ? '순위 갱신 지연'
+                    : `시설 ${shared.installations.filter((i) => i.districtId === d.id).length}개 · ${score ? (score.scoreM3 === null ? '점수 없음' : `총 점수 ${scoreFormat.format(score.scoreM3)} m³`) : '점수 조회 중'}`,
               ];
             })
           ),
-    [city, researchMode, weekly.value, weekly.error, shared.installations]
+    [city, researchMode, weekly.value, weekly.error, shared.installations, contest.id]
   );
   const plan = (
     <CityPlan
@@ -945,7 +969,9 @@ function Explorer({
           <h1>
             {researchMode
               ? `${research.event?.eventDate.replaceAll('-', '. ') ?? ''} 집중호우`
-              : '주간 서울 대항전'}
+              : contest.id
+                ? '실시간 대회'
+                : '주간 서울 대항전'}
           </h1>
           {contest.id && (
             <a
@@ -1014,7 +1040,7 @@ function Explorer({
                   value={viewedDistrictId}
                   onChange={(id) => (id ? select(id) : reset())}
                   options={[
-                    { value: '', label: '서울 전체' },
+                    { value: '', label: contest.id ? '대회 전체 지도' : '서울 전체' },
                     ...city.districts
                       .filter(
                         (d) => !contest.value || contest.value.rules.districtIds.includes(d.id)
@@ -1135,7 +1161,11 @@ function Explorer({
           )}
           <FullscreenButton target={workspace} />
         </div>
-        <section ref={stage} className="city-stage" aria-label="서울 전역 3D 지도">
+        <section
+          ref={stage}
+          className="city-stage"
+          aria-label={contest.id ? '대회 선택 구 지도' : '서울 전역 3D 지도'}
+        >
           {flat ? (
             plan
           ) : (
@@ -1302,7 +1332,10 @@ function Explorer({
               <button onClick={() => zoomMap(1 / 0.6)} aria-label="지도 축소" title="지도 축소">
                 <Minus size={16} />
               </button>
-              <button onClick={reset} aria-label="서울 전체 보기">
+              <button
+                onClick={reset}
+                aria-label={contest.id ? '대회 전체 지도 보기' : '서울 전체 보기'}
+              >
                 <RotateCcw size={15} />
               </button>
               <details ref={legendMenu} className="map-legend-menu">
@@ -1727,6 +1760,7 @@ function Explorer({
         />
       ) : (
         <SharedDistrictPanel
+          competition={contest.id ? { permits: contest.permits(selected) } : undefined}
           onClose={closeInstallation}
           account={account}
           districtId={selected}
@@ -1800,15 +1834,30 @@ export function CityExplorer({
   initialDistrictId,
 }: PlayProps) {
   const { city, regions, error, retry } = useCity();
+  const contest = useCompetitionGame(account?.id, mode === 'historical', eventId ?? '');
+  const districtKey = contest.value?.rules.districtIds.slice().sort().join(',') ?? '';
+  const scopedCity = useMemo(
+    () =>
+      city && (!contest.id || districtKey)
+        ? contest.id
+          ? competitionCity(city, districtKey.split(','))
+          : city
+        : null,
+    [city, contest.id, districtKey]
+  );
+  const scopedRegions = useMemo(
+    () => regions.filter((r) => !contest.id || districtKey.split(',').includes(r.districtId)),
+    [regions, contest.id, districtKey]
+  );
   useEffect(() => {
     // 도시 기본 자료를 기다리는 동안 3D 코드도 받아 첫 장면의 추가 대기를 줄인다.
     void loadCityScene().catch(() => {});
   }, []);
-  if (!city)
+  if (!scopedCity)
     return (
-      <main className="empty-state" role={error ? 'alert' : 'status'}>
+      <main className="empty-state" role={error || contest.error ? 'alert' : 'status'}>
         <h1>{error ? '서울 지도를 불러오지 못했습니다' : '서울 지도를 준비하고 있습니다'}</h1>
-        <p>{error || '저장된 공개 공간자료를 불러오는 중'}</p>
+        <p>{error || contest.error || '저장된 공개 공간자료를 불러오는 중'}</p>
         {error && (
           <button className="outline-button" onClick={retry}>
             다시 불러오기
@@ -1818,13 +1867,18 @@ export function CityExplorer({
     );
   return (
     <Explorer
-      key={mode}
+      key={`${mode}:${contest.id ?? ''}:${districtKey}`}
+      contest={contest}
       mode={mode}
-      initialDistrictId={initialDistrictId}
+      initialDistrictId={
+        initialDistrictId && scopedCity.districts.some((d) => d.id === initialDistrictId)
+          ? initialDistrictId
+          : ''
+      }
       eventId={eventId}
       onExit={onExit}
-      city={city}
-      regions={regions}
+      city={scopedCity}
+      regions={scopedRegions}
       account={account}
       onLogin={onLogin}
       onAccount={onAccount}

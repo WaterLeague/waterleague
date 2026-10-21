@@ -404,7 +404,7 @@ export const CityPlan = memo(function CityPlan({
       data-map-dragging={dragging}
       viewBox={`${box.x} ${box.y} ${box.width} ${box.height}`}
       role="group"
-      aria-label="서울 25개 구 플레이 지도"
+      aria-label={`서울 ${city.districts.length}개 구 플레이 지도`}
     >
       <path d={paths.boundary} fill="#dfe3cf" />
       {city.districts.map((d) => (
@@ -424,6 +424,7 @@ export const CityPlan = memo(function CityPlan({
         <path key={i} d={s.path} fill={s.kind === 'water' ? '#81b1ba' : '#b4c8a3'} />
       ))}
       <CityOverviewPlan
+        districtIds={city.districts.map((d) => d.id)}
         center={camera.center}
         distance={camera.distance}
         detailTileIds={detailTileIds}

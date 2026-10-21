@@ -249,9 +249,6 @@ public class CompetitionService {
         || !repo.now().isBefore(c.closesAt())
         || !organizations.approved(c.organizationId()))
       throw new DomainException(ErrorCode.CONFLICT);
-    if (c.mode().equals("REALTIME")
-        && (a.districtId() == null || !strings(c, "districtIds").contains(a.districtId())))
-      throw new DomainException(ErrorCode.DISTRICT_ACCESS_DENIED);
     if (repo.participants(id) >= 1000) throw new DomainException(ErrorCode.RATE_LIMITED);
     repo.join(id, a.id(), hash);
     organizations.audit(a.id(), "COMPETITION_JOINED", id);

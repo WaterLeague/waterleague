@@ -156,14 +156,17 @@ public class InstallationService {
     var account = accounts.lock(auth.current(username).id());
     if (!account.usable() || !account.role().equals("MEMBER"))
       throw new InstallationException(ErrorCode.ACCESS_DENIED);
-    if (account.districtId() == null) throw new InstallationException(ErrorCode.DISTRICT_REQUIRED);
-    if (!account.districtId().equals(request.districtId()))
-      throw new InstallationException(ErrorCode.DISTRICT_ACCESS_DENIED);
-    seasons.closeOwner(account.id());
     var contest = competitions.require(account.id(), competitionId, "REALTIME", null, true);
+    if (contest == null) {
+      if (account.districtId() == null)
+        throw new InstallationException(ErrorCode.DISTRICT_REQUIRED);
+      if (!account.districtId().equals(request.districtId()))
+        throw new InstallationException(ErrorCode.DISTRICT_ACCESS_DENIED);
+    }
+    seasons.closeOwner(account.id());
     competitions.permits(contest, request.districtId(), request.facilityType());
     var selectedBudget = competitions.policy(contest);
-    var district = districts.require(account.districtId());
+    var district = districts.require(request.districtId());
     var placement = new Placement(request.cellId(), request.facilityType(), request.areaM2());
     var own = installations.owned(account.id(), competitionId);
     if (own.stream().anyMatch(i -> i.cellId().equals(request.cellId())))
@@ -230,9 +233,7 @@ public class InstallationService {
         installations
             .find(id)
             .orElseThrow(() -> new InstallationException(ErrorCode.RESOURCE_NOT_FOUND));
-    if (!account.usable()
-        || !value.ownerId().equals(account.id())
-        || !value.districtId().equals(account.districtId()))
+    if (!account.usable() || !value.ownerId().equals(account.id()))
       throw new InstallationException(ErrorCode.ACCESS_DENIED);
     if (value.seasonEndsAt() != null) {
       if (seasons.now().isBefore(value.seasonEndsAt()))

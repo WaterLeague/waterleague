@@ -1,3 +1,4 @@
+import { scopeIntersects, type MapScope } from '../../../shared/service/mapScope';
 import { startTransition, useEffect, useMemo, useState } from 'react';
 import type { Terrain } from '../../terrain/entity/terrain';
 import type { TopographyIndex } from '../dto/topographyDto';
@@ -9,7 +10,8 @@ export function useTopography(
   center: [number, number],
   distance: number,
   terrain: Terrain | null,
-  plan: boolean
+  plan: boolean,
+  scope?: MapScope
 ) {
   const [index, setIndex] = useState<TopographyIndex | null>(null),
     [tiles, setTiles] = useState<{ id: string; data: TopographyBuffers }[]>([]);
@@ -27,8 +29,13 @@ export function useTopography(
     return () => request.abort();
   }, []);
   const entries = useMemo(
-    () => (index ? nearbyTopographyTiles(index, center, distance) : []),
-    [index, center, distance]
+    () =>
+      index
+        ? nearbyTopographyTiles(index, center, distance).filter((t) =>
+            scopeIntersects(t.bounds, scope)
+          )
+        : [],
+    [index, center, distance, scope]
   );
   const key = entries
     .map((entry) => entry.id)
@@ -67,7 +74,8 @@ export function useTopography(
             index!.layers,
             terrain,
             plan,
-            request.signal
+            request.signal,
+            scope
           );
           if (request.signal.aborted) return;
           ready.set(entry.id, data);
@@ -96,6 +104,6 @@ export function useTopography(
       if (frame !== undefined) cancelAnimationFrame(frame);
     };
     // 같은 타일 목록에서는 카메라 이동으로 작업을 취소하거나 형상을 다시 만들지 않는다.
-  }, [index, key, terrain, plan]);
+  }, [index, key, terrain, plan, scope]);
   return { index, tiles, error, busy };
 }

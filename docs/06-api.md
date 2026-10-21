@@ -89,7 +89,7 @@
 | GET /installations/sites/{districtId}/{cellId} | 공개 후보 상세 |
 | GET /installations/sites/{districtId}/building | 원 건물 sourceId로 후보 조회 |
 | GET /installations/sites/ground | 화면 상대 미터 x/y의 실제 점을 포함하는 후보·정규 소속 구 조회 |
-| POST /installations | 로그인·소속 구·본인 중복·면적·시설·예산·CSRF 검사 후 확정 |
+| POST /installations | 로그인·본인 중복·면적·시설·예산·CSRF 검사; 주간은 소속 구, 대회는 참가·개최 기간·허용 구 검사 후 확정 |
 | DELETE /installations/{id} | 소유자 검사. 현재 주 잠긴 확정 시설의 취소 거부 |
 | GET /rainfall/live | 서버 수집 60초 공유, 구별 현재 관측·유효 시각·결측 상태. 실제 무강우와 미확인 구분 |
 | GET /weekly, /budget | 주간 순위/기여와 개인 예산. 상세는 아래 계약 |
@@ -308,7 +308,7 @@ RFC 9457 `application/problem+json`: type, title, status, detail, instance, code
 | GET /competitions?page= | 공개 대회 목록, 20건 페이지 |
 | GET /competitions/{id} | 고정 개최 조건·현재 참가/관리 가능 상태 |
 | POST /competitions | 승인된 BUSINESS/INSTITUTION/GOVERNMENT 회원·현재 소속 조직 검증 후 즉시 공개 |
-| POST /competitions/{id}/join | PLAYER의 본인 참가, `rulesHash` 동의; 실시간은 소속 구가 대회 범위에 포함되어야 함 |
+| POST /competitions/{id}/join | PLAYER의 본인 참가, `rulesHash` 동의; 소속 구와 관계없이 참가 가능 |
 | POST /competitions/{id}/cancel | 주최 조직 또는 ADMIN, 마감 전 취소; 기록 보존 |
 | GET /competitions/{id}/candidates | 재해 대회 참가자의 본인 전체 사건 제출 중 조건에 맞는 후보 |
 | POST /competitions/{id}/submissions | 본인 전체 사건 계산 `jobId`와 대회 `rulesHash` 제출 |
@@ -346,3 +346,5 @@ RFC 9457 `application/problem+json`: type, title, status, detail, instance, code
 인증된 재해 랭킹 응답은 `ownEntries`에 평가 집단별 자신의 최고 기록과 실제 전체 순위를 제공한다. 일반 목록의 상위 100개·정밀 점수 정렬은 그대로 유지한다.
 
 대회 시설 조회는 참가자·승인된 주최 조직·관리자에게만 허용한다. 대회 결과의 그룹별 `ownEntries`는 현재 페이지 밖 본인 순위도 반환한다. 대회 지도 시설 점수는 주간 구간이 아닌 해당 대회의 누적 원장으로 조회한다.
+
+2026-10-22 설치 범위: 소속 구 제한은 일반 주간 서울 대항전에만 적용한다. 실시간 대회는 소속 구 미지정 회원도 참가할 수 있으며, 소속 구와 무관하게 개최 규칙의 모든 `districtIds`에 설치한다. 대회 밖 구·불허 시설·미참가·개최 기간 밖 요청은 서버에서 거부한다. 기존 소속 구나 점수·예산 원장은 변경하지 않는다.
