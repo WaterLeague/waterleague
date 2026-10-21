@@ -1,8 +1,52 @@
-import { useEffect, useMemo } from 'react';
-import { Canvas } from '@react-three/fiber';
+import { useEffect, useLayoutEffect, useMemo, useRef, type ReactNode } from 'react';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
+import type { Group } from 'three';
 import type { FacilityType } from '../../game/entity/game';
 import { facilitySymbolGeometry } from '../../catalog/service/facilitySymbolService';
+import { useReducedMotion } from '../../catalog/controller/useReducedMotion';
+
+function Turntable({
+  angle,
+  facility,
+  height,
+  children,
+}: {
+  angle: number;
+  facility: FacilityType;
+  height: number;
+  children: ReactNode;
+}) {
+  const group = useRef<Group>(null);
+  const invalidate = useThree((state) => state.invalidate);
+  const reduced = useReducedMotion();
+  useLayoutEffect(() => {
+    if (group.current) group.current.scale.setScalar(reduced ? 1 : 0.92);
+    invalidate();
+  }, [facility, reduced, invalidate]);
+  useLayoutEffect(() => {
+    if (reduced && group.current) group.current.rotation.y = angle;
+    invalidate();
+  }, [angle, reduced, invalidate]);
+  useFrame((_, delta) => {
+    const target = group.current;
+    if (!target || reduced) return;
+    const step = 1 - Math.exp(-Math.min(delta, 0.05) * 12);
+    target.rotation.y += (angle - target.rotation.y) * step;
+    target.scale.setScalar(target.scale.x + (1 - target.scale.x) * step);
+    // 전환이 끝나면 다음 프레임 요청을 끊어 유휴 GPU 사용을 막는다.
+    if (Math.abs(angle - target.rotation.y) > 0.001 || 1 - target.scale.x > 0.001) invalidate();
+    else {
+      target.rotation.y = angle;
+      target.scale.setScalar(1);
+    }
+  });
+  return (
+    <group ref={group} position={[0, height, 0]}>
+      {children}
+    </group>
+  );
+}
 
 function Facility({
   type,
@@ -105,7 +149,7 @@ export default function HomeScene({
       <ambientLight intensity={1.5} />
       <directionalLight position={[4, 6, 3]} intensity={2.2} />
       <directionalLight position={[-3, 2, -2]} intensity={0.6} color="#c1dbed" />
-      <group rotation={[0, angle, 0]} position={[0, mode ? -0.6 : -0.45, 0]}>
+      <Turntable angle={angle} facility={facility} height={mode ? -0.6 : -0.45}>
         {mode ? (
           <Neighborhood rainy={mode === 'disaster'} />
         ) : (
@@ -114,7 +158,7 @@ export default function HomeScene({
             <Facility type={facility} />
           </>
         )}
-      </group>
+      </Turntable>
       <OrbitControls
         enableZoom={false}
         enablePan={false}

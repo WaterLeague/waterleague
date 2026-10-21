@@ -6,7 +6,7 @@ import prices from '../../../../../backend/src/main/resources/facilities/game-pr
 import maintenance from '../../../../../data/facilities/maintenance-reference-v1.json';
 import suitability from '../../../../../backend/src/main/resources/facilities/site-suitability-v1.json';
 import { dataSources } from '../service/dataSourceService';
-import './data-page.css';
+import './data-section.css';
 
 const sourceIcons = {
   weather: CloudRain,
@@ -27,12 +27,13 @@ const suitabilityLabels: Record<string, { label: string; condition: string }> = 
   ELIGIBLE: { label: '허용', condition: '해당 위치의 모든 필수 조건에 허용 근거 확보' },
 };
 
-export function DataPage({ accountId }: { accountId: string | null }) {
+export function DataSection({ accountId }: { accountId: string | null }) {
   const budget = useBudget(0, accountId);
   return (
-    <section className="full-page evidence-page data-page" aria-labelledby="data-title">
-      <header className="data-page-heading">
-        <h1 id="data-title">데이터</h1>
+    <section id="home-data" className="home-data data-section" aria-labelledby="data-title">
+      <header className="data-section-heading">
+        <span className="home-eyebrow">게임의 근거를 함께 살펴봐요</span>
+        <h2 id="data-title">자료와 계산 근거</h2>
         <p>사용 데이터·문헌과 게임 적용 범위</p>
       </header>
       <div className="data-source-grid">
@@ -42,12 +43,12 @@ export function DataPage({ accountId }: { accountId: string | null }) {
             <article className="data-source" key={id}>
               <div className="data-source-title">
                 <Icon size={20} aria-hidden="true" />
-                <h2>{title}</h2>
+                <h3>{title}</h3>
               </div>
               <p className="data-provider">{provider}</p>
               <p>{description}</p>
               <p className="data-detail">{detail}</p>
-              <h3>사용 데이터·문헌</h3>
+              <h4>사용 데이터·문헌</h4>
               <ul className="data-dataset-list">
                 {datasets.map((dataset) => (
                   <li key={dataset.name}>
@@ -64,7 +65,7 @@ export function DataPage({ accountId }: { accountId: string | null }) {
         })}
       </div>
       <section className="data-costs" aria-labelledby="data-budget-title">
-        <h2 id="data-budget-title">예산·설치비</h2>
+        <h3 id="data-budget-title">예산·설치비</h3>
         <div className="data-budget">
           <span>모드별 개인 예산</span>
           <strong>{budget.value ? won(budget.value.policy.personalLimitKrw) : '—'}</strong>
@@ -178,7 +179,7 @@ export function DataPage({ accountId }: { accountId: string | null }) {
               </tbody>
             </table>
           </div>
-          <h3>관리 상태를 판단할 수 있는 근거</h3>
+          <h4>관리 상태를 판단할 수 있는 근거</h4>
           <dl className="data-assessment-rules">
             {maintenance.decisionRules.map((rule) => (
               <div key={rule.id}>
@@ -230,7 +231,7 @@ export function DataPage({ accountId }: { accountId: string | null }) {
         </details>
       </section>
       <section className="data-calculation" aria-labelledby="data-calculation-title">
-        <h2 id="data-calculation-title">점수·침수 계산 범위</h2>
+        <h3 id="data-calculation-title">점수·침수 계산 범위</h3>
         <dl>
           <div>
             <dt>현재 점수</dt>

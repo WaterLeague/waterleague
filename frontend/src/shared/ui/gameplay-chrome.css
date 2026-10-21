@@ -278,19 +278,13 @@
   color: white;
 }
 .game-shell .competition-page > .weekly-board,
-.game-shell .competition-page > .full-page,
-.game-shell > .evidence-page {
+.game-shell .competition-page > .full-page {
   border: 1px solid var(--ui-line);
   border-radius: 28px;
   background: var(--ui-paper);
   padding: 30px;
   color: var(--ui-ink);
   box-shadow: 0 6px 24px #294e5006;
-}
-.game-shell > .evidence-page {
-  width: calc(100% - 48px);
-  max-width: 1132px;
-  margin: 28px auto 48px;
 }
 .game-shell .full-page :is(h1, h2, h3),
 .game-shell .weekly-board :is(h2, h3) {
@@ -314,9 +308,7 @@
   margin-top: 12px;
 }
 .game-shell .weekly-tables > div,
-.game-shell .evidence-grid > article,
-.game-shell .evidence-page .spatial-comparison,
-.game-shell .evidence-page .scope-note {
+.game-shell .evidence-grid > article {
   background: #f0f4eb;
   border: 1px solid var(--ui-line);
   border-radius: 22px;
@@ -331,20 +323,8 @@
 .game-shell .weekly-board tr.own {
   background: #dceadd;
 }
-.game-shell .evidence-page :is(.state, .page-eyebrow > span) {
-  border-radius: 12px;
-  padding: 6px 10px;
-}
-.game-shell .evidence-page :is(button, input, select, textarea),
 .game-shell .competition-page :is(select, .solid-button, .outline-button) {
   border-radius: 14px;
-}
-.game-shell .evidence-page .placement-table,
-.game-shell .evidence-page .evidence-checks {
-  border: 1px solid var(--ui-line);
-  border-radius: 20px;
-  background: #f4f6ef;
-  padding: 10px 18px;
 }
 @media (max-width: 1100px) {
   .game-shell.is-game > .shared-play-layout .play-hud.gameplay-hud {
@@ -388,14 +368,9 @@
     margin-top: 18px;
   }
   .game-shell .competition-page > .weekly-board,
-  .game-shell .competition-page > .full-page,
-  .game-shell > .evidence-page {
+  .game-shell .competition-page > .full-page {
     padding: 20px;
     border-radius: 24px;
-  }
-  .game-shell > .evidence-page {
-    width: calc(100% - 32px);
-    margin-top: 18px;
   }
 }
 @media (max-width: 520px) {
@@ -904,7 +879,7 @@
 .game-shell .disaster-card:hover .disaster-card-art svg {
   transform: translate(5px, -4px) rotate(-5deg);
 }
-.game-shell :is(.competition-page, .evidence-page, .disaster-lobby) {
+.game-shell :is(.competition-page, .disaster-lobby) {
   animation: game-page-arrive 320ms ease both;
 }
 .game-shell :is(.evidence-grid > article, .weekly-tables > div) {
@@ -985,7 +960,6 @@
   .game-shell
     :is(
       .competition-page,
-      .evidence-page,
       .disaster-lobby,
       .disaster-card,
       .disaster-card-art svg,

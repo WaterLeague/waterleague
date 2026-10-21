@@ -14,6 +14,10 @@ import { facilities } from '../../game/service/gameService';
 import { facilityIcons } from '../../facility/view/facilityIcons';
 import { homeFacilities, homeModes } from '../service/homeContent';
 import { HomePreview } from './HomePreview';
+import { DataSection } from '../../catalog/view/DataSection';
+import { useHomeMotion } from '../controller/useHomeMotion';
+import { GameStartDialog } from './GameStartDialog';
+import { HomeScoreGuide } from './HomeScoreGuide';
 import './home.css';
 
 function HomeLink({
@@ -32,11 +36,13 @@ function HomeLink({
   );
 }
 
-export function HomePage() {
+export function HomePage({ accountId = null }: { accountId?: string | null }) {
+  const motion = useHomeMotion();
   const [facilityIndex, setFacilityIndex] = useState(0);
+  const [choosingMode, setChoosingMode] = useState(false);
   const selected = homeFacilities[facilityIndex];
   return (
-    <main className="home-page">
+    <main className="home-page" ref={motion}>
       <section className="home-hero" aria-labelledby="home-title">
         <div className="home-hero-copy">
           <span className="home-eyebrow">서울에서 시작하는 빗물 전략 게임</span>
@@ -52,12 +58,17 @@ export function HomePage() {
             <br />
             실제 관측된 비로 설계의 변화를 확인해요.
             <br />
-            수달과 물총새가 첫걸음을 함께할게요.
+            여울이와 가람이가 첫걸음을 함께할게요.
           </p>
           <div className="home-actions">
-            <HomeLink href="/weekly" className="home-button primary">
+            <button
+              type="button"
+              className="home-button primary"
+              aria-haspopup="dialog"
+              onClick={() => setChoosingMode(true)}
+            >
               게임 시작하기 <ArrowUpRight size={18} />
-            </HomeLink>
+            </button>
             <a href="#home-modes" className="home-button secondary">
               먼저 둘러보기 <ArrowRight size={16} />
             </a>
@@ -67,7 +78,7 @@ export function HomePage() {
         <figure className="home-hero-art">
           <img
             src="/brand/seoul-hero.png"
-            alt="한강과 남산을 배경으로 수달과 물총새가 함께하는 WATER LEAGUE"
+            alt="한강과 남산을 배경으로 수달 여울이와 물총새 가람이가 함께하는 WATER LEAGUE"
             width="1650"
             height="953"
             fetchPriority="high"
@@ -88,10 +99,10 @@ export function HomePage() {
               width="300"
               height="299"
               loading="lazy"
-              alt="물방울 지팡이를 든 수달 안내자"
+              alt="물방울 지팡이를 든 수달 여울이"
             />
             <div>
-              <span className="home-guide-name">수달의 첫 번째 안내</span>
+              <span className="home-guide-name">수달 여울이의 첫 번째 안내</span>
               <h3>“빗물이 잠시 머물 곳을 만들어줘!”</h3>
               <p>
                 지붕과 도로, 식재 공간을 찾아 시설을 놓아보세요. 예산 안에서 종류와 면적을 고르고,
@@ -105,10 +116,10 @@ export function HomePage() {
               width="1383"
               height="1137"
               loading="lazy"
-              alt="바위 위의 파란 물총새 안내자"
+              alt="바위 위의 파란 물총새 가람이"
             />
             <div>
-              <span className="home-guide-name">물총새의 두 번째 안내</span>
+              <span className="home-guide-name">물총새 가람이의 두 번째 안내</span>
               <h3>“같은 비에도 설계는 달라질 수 있어!”</h3>
               <p>
                 지도를 살펴보고, 시간을 돌려 보고, 다른 기록과 비교해 보세요. 실제 공개 지도와 관측
@@ -157,6 +168,8 @@ export function HomePage() {
         </p>
       </section>
 
+      <HomeScoreGuide />
+
       <section className="home-facilities" aria-labelledby="home-facilities-title">
         <div className="home-section-heading">
           <span className="home-eyebrow">나만의 빗물 도구 상자</span>
@@ -183,25 +196,20 @@ export function HomePage() {
         <div className="home-facility-detail" id="home-facility-detail">
           <HomePreview facility={selected.type} label={facilities[selected.type].name} />
           <div className="home-facility-copy" aria-live="polite">
-            <span className="home-eyebrow">
-              FACILITY {String(facilityIndex + 1).padStart(2, '0')} / 07
-            </span>
-            <h3>{facilities[selected.type].name}</h3>
-            <p>{selected.action}</p>
-            <div className="home-placement">
-              <Compass size={18} />
-              <div>
-                <span>어디에 설치하나요?</span>
-                <strong>{selected.place}</strong>
+            <div className="home-facility-description" key={selected.type}>
+              <span className="home-eyebrow">
+                FACILITY {String(facilityIndex + 1).padStart(2, '0')} / 07
+              </span>
+              <h3>{facilities[selected.type].name}</h3>
+              <p>{selected.action}</p>
+              <div className="home-placement">
+                <Compass size={18} />
+                <div>
+                  <span>어디에 설치하나요?</span>
+                  <strong>{selected.place}</strong>
+                </div>
               </div>
             </div>
-            <p className="home-caption">
-              지도에서 표시되는 허용 후보에 설치해요. 모형은 시설의 역할을 설명하며 실제 시공
-              제원이나 가능 여부를 뜻하지 않아요.
-            </p>
-            <HomeLink href="/weekly" className="home-text-link">
-              지도에서 배치해 보기 <ArrowUpRight size={18} />
-            </HomeLink>
           </div>
         </div>
       </section>
@@ -238,7 +246,7 @@ export function HomePage() {
               Icon: Database,
               title: '게임의 근거까지 투명하게',
               text: '지도·강우·시설 비용은 어디에서 왔는지, 자료와 계산의 근거를 확인해요.',
-              href: '/data',
+              href: '/#home-data',
               link: '데이터 살펴보기',
             },
           ].map(({ Icon, title, text, href, link }) => (
@@ -269,6 +277,7 @@ export function HomePage() {
           무료로 체험하기 <ArrowUpRight size={19} />
         </HomeLink>
       </section>
+      <DataSection accountId={accountId} />
       <footer className="home-footer">
         <img src="/brand/wordmark.png" alt="WATER LEAGUE" width="160" height="64" />
         <p>
@@ -276,10 +285,11 @@ export function HomePage() {
           <br />
           게임의 효과는 탐색 계산이며 실제 현장 침수 예측이나 시공 승인을 대신하지 않습니다.
         </p>
-        <HomeLink href="/data">
+        <HomeLink href="/#home-data">
           자료와 계산 근거 <ArrowUpRight size={14} />
         </HomeLink>
       </footer>
+      {choosingMode && <GameStartDialog onClose={() => setChoosingMode(false)} />}
     </main>
   );
 }

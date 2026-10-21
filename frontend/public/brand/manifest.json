@@ -33,5 +33,17 @@
     "prompt": "Create a clean production website wordmark by isolating the supplied image's existing WATER LEAGUE typography. Preserve the exact bold geometric uppercase letter shapes, arrangement WATER on first line and LEAGUE on second line, and line proportions from the image. Recolor ALL letters to solid very dark teal #2d5258 for use on a light website. Put ONLY those solid flat letters on a completely uniform pure white #ffffff background. The letter edges must be sharp and clean. Leave a small equal margin. No scenery, no characters, no icon, no shadows, no outline, no weathering, no speckles, no artifacts, no gradients. The space between letters and the holes inside A and R must be pure white. Exact two-line text: WATER / LEAGUE.",
     "background": "white",
     "display": "밝은 UI에서 multiply 합성, 글자만 표시. 두 줄 배치와 글자 형태 유지, 짙은 청록색 적용."
-  }
+  },
+  "characters": [
+    {
+      "name": "여울이",
+      "species": "수달",
+      "file": "otter.png"
+    },
+    {
+      "name": "가람이",
+      "species": "물총새",
+      "file": "kingfisher.png"
+    }
+  ]
 }

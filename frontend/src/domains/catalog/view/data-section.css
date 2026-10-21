@@ -1,4 +1,4 @@
-.data-page-heading > p {
+.data-section-heading > p {
   margin: 0 0 28px;
   color: var(--ui-muted);
   font-size: 14px;
@@ -31,12 +31,12 @@
   align-items: center;
   gap: 10px;
 }
-.game-shell .data-source h2 {
+.game-shell .data-source h3 {
   margin: 0;
   font-size: 18px;
 }
-.data-page p,
-.data-page dd {
+.data-section p,
+.data-section dd {
   font-size: 13px;
   line-height: 1.8;
 }
@@ -45,18 +45,18 @@
   color: var(--ui-accent);
   font-size: 12px;
 }
-.data-page .data-detail {
+.data-section .data-detail {
   color: var(--ui-muted);
   font-size: 12px;
 }
-.data-page a {
+.data-section a {
   display: inline-flex;
   align-items: center;
   gap: 4px;
   color: var(--ui-accent);
   font-size: 12px;
 }
-.data-source h3 {
+.data-source h4 {
   margin: 10px 0 8px;
   font-size: 12px;
   color: var(--ui-muted);
@@ -79,7 +79,7 @@
   flex-shrink: 0;
   margin-top: 2px;
 }
-.data-page .data-dataset-list p {
+.data-section .data-dataset-list p {
   margin: 3px 0 0;
   color: var(--ui-muted);
   font-size: 11px;
@@ -147,7 +147,7 @@
   font-size: 14px;
   font-weight: 600;
 }
-.data-maintenance-reference h3,
+.data-maintenance-reference h4,
 .data-assessment-rules dt {
   font-size: 13px;
   font-weight: 600;

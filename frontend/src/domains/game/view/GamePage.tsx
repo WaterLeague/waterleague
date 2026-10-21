@@ -8,7 +8,6 @@ import { RankingPage } from '../../ranking/view/RankingPage';
 import { CompetitionPage } from '../../competition/view/CompetitionPage';
 import { ResultsPage } from '../../administration/view/ResultsPage';
 import { useAppLocation, navigate, followLink } from '../../../shared/controller/useAppLocation';
-import { DataPage } from '../../catalog/view/DataPage';
 import { DisasterMode } from '../../disaster/view/DisasterMode';
 import { CityExplorer } from '../../city/view/CityExplorer';
 import { HomePage } from '../../home/view/HomePage';
@@ -21,7 +20,6 @@ const tabs = {
   missions: '/disaster',
   leaderboard: '/rankings',
   competitions: '/competitions',
-  data: '/data',
   admin: '/admin/members',
   results: '/admin/results',
 } as const;
@@ -31,18 +29,24 @@ export function GamePage() {
   useGameInteractions();
   const session = useAccountSession();
   const location = useAppLocation();
-  const path = location.split('?')[0].replace(/\/$/, '') || '/';
+  const path = location.split(/[?#]/)[0].replace(/\/$/, '') || '/';
+  const anchor = location.split('#')[1];
   const tab = (Object.entries(tabs).find(
     ([, url]) =>
       path === url ||
       ((url === '/competitions' || url === '/disaster') && path.startsWith(url + '/'))
-  )?.[0] ?? 'missing') as Tab | 'missing';
+  )?.[0] ?? (path === '/data' ? 'home' : 'missing')) as Tab | 'missing';
   const setTab = (id: Tab) => navigate(tabs[id]);
   const [cityDistrict, setCityDistrict] = useState('');
   const [auth, setAuth] = useState(false);
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'instant' });
-  }, [tab]);
+    if (path === '/data') navigate('/#home-data', true);
+  }, [path]);
+  useEffect(() => {
+    if (anchor)
+      document.getElementById(anchor)?.scrollIntoView({ block: 'start', behavior: 'instant' });
+    else window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [tab, anchor]);
   return (
     <div className={`game-shell${['city', 'missions'].includes(tab) ? ' is-game' : ''}`}>
       <header className="topbar">
@@ -61,7 +65,6 @@ export function GamePage() {
                 ['admin', '회원 관리'],
                 ['results', '결과 관리'],
                 ['competitions', '대회'],
-                ['data', '데이터'],
               ] as const)
             : ([
                 ['home', '홈'],
@@ -69,7 +72,6 @@ export function GamePage() {
                 ['missions', '재해 모드'],
                 ['leaderboard', '랭킹'],
                 ['competitions', '대회'],
-                ['data', '데이터'],
               ] as const)
           ).map(([id, label]) => (
             <a
@@ -122,7 +124,7 @@ export function GamePage() {
         </div>
       )}
       {tab === 'home' ? (
-        <HomePage />
+        <HomePage accountId={session.account?.id ?? null} />
       ) : tab === 'admin' && session.account?.role === 'ADMIN' ? (
         <ApprovalPage key={session.account.id} />
       ) : tab === 'results' && session.account?.role === 'ADMIN' ? (
@@ -156,8 +158,6 @@ export function GamePage() {
             setTab('city');
           }}
         />
-      ) : tab === 'data' ? (
-        <DataPage accountId={session.account?.id ?? null} />
       ) : (
         <main className="full-page">
           <h1>{tab === 'missing' ? '페이지를 찾을 수 없습니다' : '관리자 로그인이 필요합니다'}</h1>

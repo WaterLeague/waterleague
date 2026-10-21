@@ -5,7 +5,7 @@ afterEach(() => vi.unstubAllGlobals());
 function location() {
   const events: Event[] = [];
   const fake = {
-    location: { origin: 'http://localhost:5173' },
+    location: { origin: 'http://localhost:5173', pathname: '/', search: '', hash: '' },
     history: { pushState: vi.fn(), replaceState: vi.fn() },
     dispatchEvent: (e: Event) => {
       events.push(e);
@@ -17,6 +17,25 @@ function location() {
   return { fake, events };
 }
 describe('독립 페이지 주소 이동', () => {
+  it('같은 데이터 링크를 다시 눌러도 위치를 이동하고 방문 이력을 중복하지 않는다', () => {
+    const { fake } = location();
+    fake.location.hash = '#home-data';
+    const scrollIntoView = vi.fn();
+    const getElementById = vi.fn(() => ({ scrollIntoView }));
+    vi.stubGlobal('document', { getElementById });
+    navigate('/#home-data');
+    expect(getElementById).toHaveBeenCalledWith('home-data');
+    expect(scrollIntoView).toHaveBeenCalledOnce();
+    expect(fake.history.pushState).not.toHaveBeenCalled();
+  });
+  it('홈 데이터 앵커와 검색 조건을 보존하며 이전 주소를 교체한다', () => {
+    const { fake, events } = location();
+    navigate('/#home-data', true);
+    navigate('/?from=weekly#home-data');
+    expect(fake.history.replaceState).toHaveBeenCalledWith(null, '', '/#home-data');
+    expect(fake.history.pushState).toHaveBeenCalledWith(null, '', '/?from=weekly#home-data');
+    expect(events).toHaveLength(2);
+  });
   it('검색 조건을 보존하고 주소 교체와 신규 방문을 구분한다', () => {
     const { fake, events } = location();
     navigate('/weekly', true);
