@@ -42,18 +42,86 @@ export function rainSamplingWindow(center: Point, distance: number) {
     scale,
   };
 }
-function inRing([x, y]: Point, ring: Point[]) {
+type RingIndex = {
+  ring: Point[];
+  bounds: [number, number, number, number];
+  rows: number[][];
+};
+const areaIndexes = new WeakMap<RainPolygons, { rings: RingIndex[][]; bounds: number[] }>();
+function indexRing(ring: Point[]): RingIndex {
+  const bounds: [number, number, number, number] = [Infinity, Infinity, -Infinity, -Infinity];
+  for (const [x, y] of ring) {
+    bounds[0] = Math.min(bounds[0], x);
+    bounds[1] = Math.min(bounds[1], y);
+    bounds[2] = Math.max(bounds[2], x);
+    bounds[3] = Math.max(bounds[3], y);
+  }
+  const rows = Array.from(
+    { length: Math.max(1, Math.min(256, Math.ceil(ring.length / 8))) },
+    () => [] as number[]
+  );
+  const span = bounds[3] - bounds[1];
+  if (span > 0) {
+    for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+      const a = ring[i][1],
+        b = ring[j][1];
+      if (a === b) continue;
+      const first = Math.max(0, Math.floor(((Math.min(a, b) - bounds[1]) / span) * rows.length));
+      const last = Math.min(
+        rows.length - 1,
+        Math.floor(((Math.max(a, b) - bounds[1]) / span) * rows.length)
+      );
+      for (let row = first; row <= last; row++) rows[row].push(i);
+    }
+  }
+  return { ring, bounds, rows };
+}
+function areaIndex(polygons: RainPolygons) {
+  let value = areaIndexes.get(polygons);
+  if (!value) {
+    const rings = polygons.map((polygon) => polygon.map(indexRing));
+    const bounds = [Infinity, Infinity, -Infinity, -Infinity];
+    for (const polygon of rings) {
+      const outer = polygon[0].bounds;
+      bounds[0] = Math.min(bounds[0], outer[0]);
+      bounds[1] = Math.min(bounds[1], outer[1]);
+      bounds[2] = Math.max(bounds[2], outer[2]);
+      bounds[3] = Math.max(bounds[3], outer[3]);
+    }
+    value = { rings, bounds };
+    areaIndexes.set(polygons, value);
+  }
+  return value;
+}
+function inIndexedRing([x, y]: Point, { ring, bounds, rows }: RingIndex) {
+  if (x < bounds[0] || x > bounds[2] || y < bounds[1] || y >= bounds[3]) return false;
+  const row = Math.min(
+    rows.length - 1,
+    Math.floor(((y - bounds[1]) / (bounds[3] - bounds[1])) * rows.length)
+  );
   let inside = false;
-  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+  // 원 선분과 교차식을 유지하고 같은 높이를 통과하는 선분만 검사한다.
+  for (const i of rows[row]) {
     const [a, b] = ring[i],
-      [c, d] = ring[j];
+      [c, d] = ring[(i + ring.length - 1) % ring.length];
     if (b > y !== d > y && x < ((c - a) * (y - b)) / (d - b) + a) inside = !inside;
   }
   return inside;
 }
+export function rainAreaOverlaps(polygons: RainPolygons, x: number, y: number, radius: number) {
+  return areaIndex(polygons).rings.some(
+    ([{ bounds }]) =>
+      bounds[2] >= x - radius &&
+      bounds[0] <= x + radius &&
+      bounds[3] >= y - radius &&
+      bounds[1] <= y + radius
+  );
+}
 export function insideRainArea(point: Point, polygons: RainPolygons) {
-  return polygons.some(
-    (p) => inRing(point, p[0]) && !p.slice(1).some((hole) => inRing(point, hole))
+  return areaIndex(polygons).rings.some(
+    (rings) =>
+      inIndexedRing(point, rings[0]) &&
+      !rings.some((ring, i) => i > 0 && inIndexedRing(point, ring))
   );
 }
 
@@ -64,17 +132,8 @@ export function rainParticleSeeds(
   radius: number,
   count: number
 ) {
-  let west = Infinity,
-    east = -Infinity,
-    south = Infinity,
-    north = -Infinity;
-  for (const polygon of polygons)
-    for (const [x, y] of polygon[0]) {
-      west = Math.min(west, x);
-      east = Math.max(east, x);
-      south = Math.min(south, y);
-      north = Math.max(north, y);
-    }
+  const bounds = areaIndex(polygons).bounds;
+  let [west, south, east, north] = bounds;
   west = Math.max(west, center[0] - radius);
   east = Math.min(east, center[0] + radius);
   south = Math.max(south, center[1] - radius);

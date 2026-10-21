@@ -1,10 +1,10 @@
 import { expect, it, vi, afterEach, beforeEach } from 'vitest';
 import registryText from '../../../../public/data/seoul-native-v1/game.json?raw';
 import city from '../../../../public/data/seoul-native-v1/city.json';
-let loadCityPlayRegions: typeof import('../repository/cityRepository').loadCityPlayRegions;
+let loadCityPlayRegions: typeof import('../repository/cityDataSource').loadCityPlayRegions;
 beforeEach(async () => {
   vi.resetModules();
-  ({ loadCityPlayRegions } = await import('../repository/cityRepository'));
+  ({ loadCityPlayRegions } = await import('../repository/cityDataSource'));
 });
 import { cityPlayDto } from '../dto/cityPlayDto';
 afterEach(() => vi.unstubAllGlobals());

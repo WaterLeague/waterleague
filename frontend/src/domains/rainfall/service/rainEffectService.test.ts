@@ -112,3 +112,43 @@ it('비 입자는 구 경계 안이며 구멍과 카메라 범위 밖을 제외'
   expect(insideRainArea([5, 5], polygons)).toBe(false);
   expect(rainParticleSeeds(polygons, [100, 100], 5, 240)).toHaveLength(0);
 });
+
+it('경계 색인은 오목면·구멍·떨어진 면·꼭짓점에서 원 교차식과 동일', () => {
+  const ring: [number, number][] = Array.from({ length: 2048 }, (_, i) => {
+    const angle = (i / 2048) * Math.PI * 2,
+      radius = 80 + 15 * Math.sin(i * 0.07);
+    return [Math.cos(angle) * radius, Math.sin(angle) * radius];
+  });
+  const hole: [number, number][] = [
+    [-20, -20],
+    [20, -20],
+    [20, 20],
+    [-20, 20],
+  ];
+  const areas: RainPolygons = [
+    [ring, hole],
+    [
+      [
+        [120, 0],
+        [140, 0],
+        [140, 30],
+        [120, 30],
+      ],
+    ],
+  ];
+  const legacyRing = ([x, y]: [number, number], r: [number, number][]) => {
+    let inside = false;
+    for (let i = 0, j = r.length - 1; i < r.length; j = i++) {
+      const [a, b] = r[i],
+        [c, d] = r[j];
+      if (b > y !== d > y && x < ((c - a) * (y - b)) / (d - b) + a) inside = !inside;
+    }
+    return inside;
+  };
+  const points: [number, number][] = [...ring, ...hole];
+  for (let x = -100; x <= 150; x += 3) for (let y = -100; y <= 100; y += 7) points.push([x, y]);
+  for (const point of points)
+    expect(insideRainArea(point, areas)).toBe(
+      areas.some((p) => legacyRing(point, p[0]) && !p.slice(1).some((h) => legacyRing(point, h)))
+    );
+});

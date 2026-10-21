@@ -161,3 +161,42 @@ test('손상된 압축 응답은 브라우저 내부 오류 대신 지도 무결
     readPublicData('/data/tile.json.gz', await sha('{}'), 100, new AbortController().signal)
   ).rejects.toThrow(new CityError('INVALID_DATA'));
 });
+
+test('지도 전용 기기 캐시는 새 작업 스레드에서도 재사용하고 저장소 거부 시 조회 유지', async () => {
+  vi.resetModules();
+  const entries = new Map<string, Response>();
+  let saved: () => void = () => {};
+  const stored = new Promise<void>((resolve) => {
+    saved = resolve;
+  });
+  const storage = {
+    match: async (key: string) => entries.get(key)?.clone(),
+    keys: async () => [],
+    delete: async (key: string) => entries.delete(key),
+    put: async (key: string, response: Response) => {
+      entries.set(key, response);
+      saved();
+    },
+  };
+  const open = vi.fn(async () => storage);
+  vi.stubGlobal('caches', { open });
+  const fetcher = vi.fn(async () => new Response('{"map":1}'));
+  vi.stubGlobal('fetch', fetcher);
+  const hash = await sha('{"map":1}'),
+    signal = new AbortController().signal;
+  let source = await import('./publicDataCache');
+  await source.readPublicData('/data/map.json', hash, 50, signal, 'city');
+  await stored;
+  vi.resetModules();
+  source = await import('./publicDataCache');
+  expect(await source.readPublicData('/data/map.json', hash, 50, signal, 'city')).toEqual({
+    map: 1,
+  });
+  expect(fetcher).toHaveBeenCalledOnce();
+  expect(open).toHaveBeenCalledWith('waterleague-city-sha256-v1');
+  open.mockRejectedValue(new Error('저장소 차단'));
+  expect(await source.readPublicData('/data/map.json', hash, 50, signal, 'city')).toEqual({
+    map: 1,
+  });
+  expect(fetcher).toHaveBeenCalledTimes(2);
+});

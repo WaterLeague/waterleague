@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
-import * as THREE from 'three';
+import { createRainGeometry, createRainMaterial } from '../service/rainGeometryService';
 import type { UrbanTime } from '../../urban/entity/urban';
 import { urbanAnimationTime } from '../../urban/service/urbanTimeService';
 import type { Terrain } from '../../terrain/entity/terrain';
@@ -8,6 +8,7 @@ import { terrainHeight } from '../../terrain/service/terrainService';
 import type { City } from '../../city/entity/city';
 import {
   rainParticleSeeds,
+  rainAreaOverlaps,
   rainSamplingWindow,
   rainVisualDensity,
 } from '../service/rainEffectService';
@@ -36,18 +37,7 @@ export function LiveRainScene({
   const { x, y, radius, scale } = rainSamplingWindow(center, distance);
   const near = distance < 9000;
   const seeds = useMemo(() => {
-    const visible = districts.filter((d) =>
-      d.polygons.some((polygon) => {
-        const xs = polygon[0].map((p) => p[0]),
-          ys = polygon[0].map((p) => p[1]);
-        return (
-          Math.max(...xs) >= x - radius &&
-          Math.min(...xs) <= x + radius &&
-          Math.max(...ys) >= y - radius &&
-          Math.min(...ys) <= y + radius
-        );
-      })
-    );
+    const visible = districts.filter((d) => rainAreaOverlaps(d.polygons, x, y, radius));
     const counts = visible.map((d) =>
       Math.round((near ? 1000 : 200) * rainVisualDensity(amounts.get(d.id)))
     );
@@ -65,16 +55,9 @@ export function LiveRainScene({
   }, [districts, amounts, x, y, radius, near, terrain]);
   const height = Math.max(120, Math.min(1800, scale * 0.3));
   const length = Math.max(3.5, Math.min(height * 0.2, scale * 0.018));
-  const geometry = useMemo(() => {
-    const value = new THREE.BufferGeometry();
-    const initial = new Float32Array(seeds.length * 6);
-    seeds.forEach(({ point: [x, y], phase, elevation }, i) => {
-      const top = elevation + height * (1 - phase);
-      initial.set([x, top + length, -y, x, top, -y], i * 6);
-    });
-    value.setAttribute('position', new THREE.BufferAttribute(initial, 3));
-    return value;
-  }, [seeds, height, length]);
+  const geometry = useMemo(() => createRainGeometry(seeds, length), [seeds, length]);
+  const { material, uniforms } = useMemo(createRainMaterial, []);
+  useEffect(() => () => material.dispose(), [material]);
   useEffect(() => () => geometry.dispose(), [geometry]);
   useEffect(() => {
     if (externalClock || !animate || !seeds.length) return;
@@ -86,18 +69,16 @@ export function LiveRainScene({
     if (timeline)
       animationTime.current = urbanAnimationTime(timeline, animationTime.current, animate);
     else if (animate) animationTime.current = clock.elapsedTime;
-    else return;
-    const positions = geometry.getAttribute('position') as THREE.BufferAttribute;
-    seeds.forEach(({ point: [x, y], phase, elevation }, i) => {
-      const top = elevation + height * (1 - ((animationTime.current / 1.7 + phase) % 1));
-      positions.setXYZ(i * 2, x, top + length, -y);
-      positions.setXYZ(i * 2 + 1, x, top, -y);
-    });
-    positions.needsUpdate = true;
+    // 입자 버퍼를 다시 전송하지 않고 같은 낙하 주기를 GPU에서 적용한다.
+    uniforms.rainCycle.value = (animationTime.current / 1.7) % 1;
+    uniforms.rainHeight.value = height;
   }, -0.15);
   return seeds.length ? (
-    <lineSegments geometry={geometry} frustumCulled={false} raycast={() => {}}>
-      <lineBasicMaterial color="#365f75" transparent opacity={0.65} depthWrite={false} />
-    </lineSegments>
+    <lineSegments
+      geometry={geometry}
+      material={material}
+      frustumCulled={false}
+      raycast={() => {}}
+    />
   ) : null;
 }

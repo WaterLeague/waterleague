@@ -1,6 +1,12 @@
 import { CityError } from '../../domains/city/exception/CityError';
-type CacheNamespace = 'default' | 'topography';
+export type CacheNamespace = 'default' | 'topography' | 'city';
 const cacheBuckets = {
+  city: {
+    name: 'waterleague-city-sha256-v1',
+    maximum: 256 * 1024 * 1024,
+    sizes: null as Map<string, number> | null,
+    maintenance: Promise.resolve(),
+  },
   default: {
     name: 'waterleague-public-sha256-v1',
     maximum: 128 * 1024 * 1024,
@@ -130,7 +136,8 @@ export async function readPublicData(
   )
     throw new CityError('INVALID_DATA');
   signal.throwIfAborted();
-  if (namespace !== 'default' && namespace !== 'topography') throw new CityError('INVALID_DATA');
+  if (namespace !== 'default' && namespace !== 'topography' && namespace !== 'city')
+    throw new CityError('INVALID_DATA');
   const bucket = cacheBuckets[namespace];
   if (!bucket) throw new CityError('INVALID_DATA');
   let cache: Cache | undefined;

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { readPublicData } from '../../../shared/repository/publicDataCache';
 import { CityError } from '../../city/exception/CityError';
-import { CITY_HASH } from '../../city/repository/cityRepository';
+import { CITY_HASH } from '../../city/repository/cityVersion';
 import { nativeBridgesDto } from '../dto/nativeBridgeDto';
 const sha = z.string().regex(/^[a-f0-9]{64}$/);
 const indexDto = z.object({

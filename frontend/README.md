@@ -16,3 +16,5 @@ pnpm dev
 `GamePage`와 `shared/controller/useAppLocation.ts`가 History API로 [페이지별 주소](../docs/08-experience.md#페이지-주소)를 처리한다. 기본 링크의 새 탭 동작과 뒤로/앞으로 이동을 유지하고, Vite·Caddy의 SPA 처리가 상세 주소 새로고침을 지원한다. 전체화면 대상은 `CityExplorer`의 게임 상단 바·지도·게임 조작부이며 버튼은 게임 시각 오른쪽에 둔다.
 
 공개 지도·표시용 형상/물결·계산 프레임을 구분한다. 카메라 이동은 재계산을 유발하지 않으며 설치·예산·점수·권한은 서버가 검증한다. 토큰을 localStorage에 저장하지 않는다. 실제 기기 성능과 접근성 검증 결과는 [검증 기록](../docs/12-validation-log.md)에 남긴다.
+
+지도 원문 해석·검증은 전용 Web Worker에서 수행하고 도시 지도용 기기 캐시를 최대 256MiB로 보관한다. 비 입자는 원 경계 색인과 GPU 낙하를 사용해 입자 수·위치를 유지한다. 저장소 실패·취소·해시 검증과 측정 범위는 [캐시 계약](../docs/04-architecture.md#지도-장애-복구와-캐시), [성능 검증](../data/benchmarks/rain-render-performance-v1.json)을 따른다.
