@@ -167,6 +167,8 @@ Corretto 빌드 단계의 unzip으로 Maven Wrapper의 ZIP 형식과 저장소 S
 
 사용자 요청으로 `168.107.61.81`의 Ubuntu 24.04 ARM64·24GB 인스턴스에 배포하며, 도메인은 `waterleague.cloud`다. 가비아 A 레코드는 `@ → 168.107.61.81`, TTL 600이다. 공개 운영 요청이 과거 문서의 도메인/승인 대기 상태를 대체한다. 메일 인증·외부 백업 완료를 구현 완료로 간주하지 않는다.
 
+`www.waterleague.cloud`는 가비아 CNAME `www → waterleague.cloud.`(TTL 600)으로 같은 서버에 연결한다. Caddy가 두 호스트의 공인 인증서를 각각 관리하고, `www` 요청은 경로·쿼리를 보존한 HTTP 308로 `https://waterleague.cloud`에 전달한다. 앱·로그인 세션의 기준 출처는 기본 도메인으로 유지한다. DNS 등록과 별도로 실제 HTTPS 인증서·리디렉션을 확인한다.
+
 `.github/workflows/deploy.yml`은 main push와 main 수동 실행만 처리한다. 기존 대규모 테스트 check workflow는 사용자 요청으로 제거하고 로컬 검증 도구/시험 코드는 유지한다. CI는 SHA 고정 checkout, 읽기 전용 저장소 권한, 이미지 게시 권한, 직렬 배포를 사용한다. ARM64 API·워커·웹 이미지를 GitHub Container Registry에 커밋별로 게시하고 원격 호스트는 digest로 받는다. 오류 시 빌드·배포 단계가 실패한다.
 
 ### GitHub Actions Secrets
