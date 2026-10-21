@@ -21,6 +21,8 @@ class AccountFlowTests extends PostgresIntegrationTest {
 
   @Autowired ObjectMapper json;
   @Autowired JdbcTemplate db;
+  @Autowired io.waterleague.account.repository.AccountRepository accounts;
+  @Autowired org.springframework.security.crypto.password.PasswordEncoder passwords;
   HttpClient client =
       HttpClient.newBuilder()
           .cookieHandler(new CookieManager(null, CookiePolicy.ACCEPT_ALL))
@@ -125,5 +127,51 @@ class AccountFlowTests extends PostgresIntegrationTest {
                     csrf())
                 .statusCode())
         .isEqualTo(401);
+  }
+
+  @Test
+  void allowsProvisionedTestPrefixLoginButRejectsPublicTestRegistration() throws Exception {
+    String name = "TEST_" + UUID.randomUUID().toString().substring(0, 8);
+    var registration =
+        Map.of(
+            "username",
+            name,
+            "password",
+            "Test8pw!",
+            "memberType",
+            "PLAYER",
+            "organizationName",
+            "",
+            "purpose",
+            "",
+            "districtId",
+            "11680",
+            "affiliationType",
+            "RESIDENT");
+    assertThat(call("/auth/register", json.writeValueAsString(registration), csrf()).statusCode())
+        .isEqualTo(400);
+    accounts.add(
+        new io.waterleague.account.entity.Account(
+            UUID.randomUUID(),
+            name,
+            "TEST_로그인",
+            passwords.encode("Test8pw!"),
+            "MEMBER",
+            "PLAYER",
+            "APPROVED",
+            null,
+            "",
+            "",
+            true,
+            "11680",
+            "RESIDENT"));
+    assertThat(
+            call(
+                    "/auth/login",
+                    json.writeValueAsString(Map.of("username", name, "password", "Test8pw!")),
+                    csrf())
+                .statusCode())
+        .isEqualTo(200);
+    assertThat(call("/auth/me", null, null).body()).contains(name);
   }
 }

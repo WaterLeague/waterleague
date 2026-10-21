@@ -157,7 +157,9 @@ export function AuthDialog({
               <input
                 ref={nameInput}
                 required
-                pattern="[a-z0-9_]{4,32}"
+                pattern={
+                  mode === 'login' ? '(?:[a-z0-9_]{4,32}|TEST_[a-z0-9_]{1,27})' : '[a-z0-9_]{4,32}'
+                }
                 minLength={4}
                 maxLength={32}
                 autoComplete="username"
