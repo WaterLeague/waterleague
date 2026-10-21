@@ -25,6 +25,7 @@ def source_policy():
         'simulation/pyproject.toml', 'simulation/uv.lock', 'simulation/native/lid_snapshot.inc',
         'backend/src/main/resources/native-game/v2/catalog.json',
         'backend/src/main/resources/native-play/v1/manifest.json',
+        'backend/src/main/resources/native-weather/v1/antecedent-fallback.json',
         'backend/src/main/resources/facilities/reference-surfaces-v1.json',
         'backend/src/main/resources/facilities/life-cycle-method-v1.json',
         'backend/src/main/resources/facilities/site-suitability-v1.json',

@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>대회 개최 · 로컬 화면 검증</title>
+  </head>
+  <body>
+    <p style="padding: 12px">로컬 화면 검증 · 대회 공개 요청은 전송하지 않습니다.</p>
+    <main id="root" class="site-page contests-page"></main>
+    <pre id="request" style="white-space: pre-wrap; padding: 20px"></pre>
+    <script type="module">
+      if (!import.meta.env.DEV || !['localhost', '127.0.0.1', '[::1]'].includes(location.hostname))
+        throw new Error('로컬 개발 환경 전용');
+      const [{ default: React }, { createRoot }, { CompetitionForm }, { HomeScoreGuide }] =
+        await Promise.all([
+          import('react'),
+          import('react-dom/client'),
+          import('/src/domains/competition/view/CompetitionForm.tsx'),
+          import('/src/domains/home/view/HomeScoreGuide.tsx'),
+          import('/src/shared/ui/base.css'),
+          import('/src/shared/ui/site.css'),
+          import('/src/domains/competition/view/competition.css'),
+          import('/src/domains/home/view/home.css'),
+        ]);
+      const [{ default: districtMap }, { facilities }] = await Promise.all([
+        import('/src/domains/district/repository/districtMap.json'),
+        import('/src/domains/game/service/gameService.ts'),
+      ]);
+      const catalog = {
+        districts: districtMap.districts.map(({ id, name }) => ({ id, name })),
+        facilityTypes: Object.keys(facilities),
+        events: [{ id: 'local-ui-only', title: '화면 검증용 사건' }],
+        serverNow: new Date().toISOString(),
+        defaultPersonalBudgetKrw: 2000000000,
+      };
+      const original = window.fetch.bind(window);
+      window.fetch = async (url, options) => {
+        if (String(url).startsWith('/api/')) {
+          if (String(url) === '/api/v1/auth/csrf')
+            return Response.json({ token: 'local-ui-test', headerName: 'X-CSRF-TOKEN' });
+          if (options?.method === 'POST')
+            document.getElementById('request').textContent = options.body;
+          return Response.json(
+            { detail: '로컬 검증: 요청 내용을 아래에 표시했습니다.' },
+            { status: 400 }
+          );
+        }
+        return original(url, options);
+      };
+      createRoot(document.getElementById('root')).render(
+        React.createElement(
+          React.Fragment,
+          null,
+          React.createElement(CompetitionForm, { catalog, onCreated() {}, onClose() {} }),
+          React.createElement(HomeScoreGuide)
+        )
+      );
+    </script>
+  </body>
+</html>

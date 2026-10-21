@@ -240,7 +240,7 @@ def fetch_range(station, start, end, key, heartbeat=None):
                  'sha256': hashlib.sha256(raw).hexdigest(), 'purpose': 'SIMULATION_USED_INPUT_ONLY'}
 
 
-def observed_forcing(station, start, end, key, chunk_hours=23, antecedent_quality=False, heartbeat=None):
+def observed_forcing(station, start, end, key, chunk_hours=23, antecedent_quality=False, heartbeat=None, allow_gaps=False):
     if not isinstance(chunk_hours, int) or not 1 <= chunk_hours <= 23:
         raise LiveSourceError('KMA_RANGE_INVALID')
     cursor = start-timedelta(minutes=61)
@@ -265,7 +265,7 @@ def observed_forcing(station, start, end, key, chunk_hours=23, antecedent_qualit
         cursor = limit
     warnings = [] if antecedent_quality else None
     intervals = [] if antecedent_quality else None
-    observations = normalized(rows, start, end, rolling_warnings=warnings, interval_averages=intervals)
+    observations = normalized(rows, start, end, allow_gaps=allow_gaps, rolling_warnings=warnings, interval_averages=intervals)
     return {'stationId': station, 'start': start.isoformat(), 'end': end.isoformat(),
             'intervalSeconds': 60, 'observations': observations,
             'overlapObservations': normalized(rows, start-timedelta(minutes=60), start, allow_gaps=True, rolling_warnings=warnings),

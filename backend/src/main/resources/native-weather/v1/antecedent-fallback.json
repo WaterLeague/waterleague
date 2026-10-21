@@ -1,0 +1,524 @@
+{
+  "version": "SEOUL_NEAREST_GAUGE_ANTECEDENT_V1",
+  "selection": "NEAREST_WGS84_DISTANCE_BEFORE_RAINFALL_LOOKUP_WITHIN_10KM",
+  "effectiveFromKst": "2026-10-01T00:00:00+09:00",
+  "locationSource": {
+    "provider": "서울특별시",
+    "sourcePage": "https://data.seoul.go.kr/dataList/OA-22824/F/1/datasetView.do",
+    "endpoint": "https://datafile.seoul.go.kr/bigfile/iot/inf/nio_download.do?&useCache=false",
+    "method": "POST",
+    "parameters": {
+      "infId": "OA-22824",
+      "seqNo": "",
+      "seq": "2",
+      "infSeq": "1"
+    },
+    "filename": "seoul-rain-stations-20260915.xlsx",
+    "sha256": "4fcab24fd5803fde5620a682cd1260b59a0046888fbdb5c3594ea2018c73b5ba",
+    "bytes": 14512,
+    "acquiredAt": "2026-10-15T18:43:14.787504+00:00"
+  },
+  "primaryLocationTimeKst": "202610220000",
+  "bindings": {
+    "108": {
+      "primary": {
+        "provider": "기상청",
+        "stationId": "108",
+        "stationName": "서울",
+        "longitude": 126.9658,
+        "latitude": 37.57142,
+        "elevationM": 85.67,
+        "crs": "EPSG:4326",
+        "requestedTimeKst": "202610220000",
+        "sourceSha256": "70662f7f101f1157b3db62502c22adc5a2463504c1524d321998980eb5d637bc",
+        "sourceManifest": "kma-stations-aws-202610220000.json",
+        "sourceUrl": "https://apihub.kma.go.kr/apiList.do?seqApi=2&seqApiSub=317",
+        "historicalValidity": "API_TIME_QUERY_CONFIRMED",
+        "limitation": "2026-10-22 조회 좌표; 전체 이전 이력·부지 강우 대표성 미검증"
+      },
+      "secondary": {
+        "districtName": "중구",
+        "name": "서소문",
+        "stationId": "1104",
+        "longitude": 126.97444129761,
+        "latitude": 37.5643077843421
+      },
+      "distanceM": 1098.143
+    },
+    "400": {
+      "primary": {
+        "provider": "기상청",
+        "stationId": "400",
+        "stationName": "강남",
+        "longitude": 127.08162,
+        "latitude": 37.4982,
+        "elevationM": 12.66,
+        "crs": "EPSG:4326",
+        "requestedTimeKst": "202610220000",
+        "sourceSha256": "70662f7f101f1157b3db62502c22adc5a2463504c1524d321998980eb5d637bc",
+        "sourceManifest": "kma-stations-aws-202610220000.json",
+        "sourceUrl": "https://apihub.kma.go.kr/apiList.do?seqApi=2&seqApiSub=317",
+        "historicalValidity": "API_TIME_QUERY_CONFIRMED",
+        "limitation": "2026-10-22 조회 좌표; 전체 이전 이력·부지 강우 대표성 미검증"
+      },
+      "secondary": {
+        "districtName": "강남구",
+        "name": "개포2동",
+        "stationId": "103",
+        "longitude": 127.068210886575,
+        "latitude": 37.4897834015665
+      },
+      "distanceM": 1509.546
+    },
+    "401": {
+      "primary": {
+        "provider": "기상청",
+        "stationId": "401",
+        "stationName": "서초",
+        "longitude": 127.02601,
+        "latitude": 37.48462,
+        "elevationM": 33.05,
+        "crs": "EPSG:4326",
+        "requestedTimeKst": "202610220000",
+        "sourceSha256": "70662f7f101f1157b3db62502c22adc5a2463504c1524d321998980eb5d637bc",
+        "sourceManifest": "kma-stations-aws-202610220000.json",
+        "sourceUrl": "https://apihub.kma.go.kr/apiList.do?seqApi=2&seqApiSub=317",
+        "historicalValidity": "API_TIME_QUERY_CONFIRMED",
+        "limitation": "2026-10-22 조회 좌표; 전체 이전 이력·부지 강우 대표성 미검증"
+      },
+      "secondary": {
+        "districtName": "서초구",
+        "name": "서초구청",
+        "stationId": "2401",
+        "longitude": 127.032586495842,
+        "latitude": 37.4837429229676
+      },
+      "distanceM": 589.742
+    },
+    "402": {
+      "primary": {
+        "provider": "기상청",
+        "stationId": "402",
+        "stationName": "강동",
+        "longitude": 127.14498,
+        "latitude": 37.55556,
+        "elevationM": 55.29,
+        "crs": "EPSG:4326",
+        "requestedTimeKst": "202610220000",
+        "sourceSha256": "70662f7f101f1157b3db62502c22adc5a2463504c1524d321998980eb5d637bc",
+        "sourceManifest": "kma-stations-aws-202610220000.json",
+        "sourceUrl": "https://apihub.kma.go.kr/apiList.do?seqApi=2&seqApiSub=317",
+        "historicalValidity": "API_TIME_QUERY_CONFIRMED",
+        "limitation": "2026-10-22 조회 좌표; 전체 이전 이력·부지 강우 대표성 미검증"
+      },
+      "secondary": {
+        "districtName": "강동구",
+        "name": "고덕2동",
+        "stationId": "202",
+        "longitude": 127.164379611472,
+        "latitude": 37.5605506892051
+      },
+      "distanceM": 1801.366
+    },
+    "403": {
+      "primary": {
+        "provider": "기상청",
+        "stationId": "403",
+        "stationName": "송파",
+        "longitude": 127.12538,
+        "latitude": 37.47426,
+        "elevationM": 54.05,
+        "crs": "EPSG:4326",
+        "requestedTimeKst": "202610220000",
+        "sourceSha256": "70662f7f101f1157b3db62502c22adc5a2463504c1524d321998980eb5d637bc",
+        "sourceManifest": "kma-stations-aws-202610220000.json",
+        "sourceUrl": "https://apihub.kma.go.kr/apiList.do?seqApi=2&seqApiSub=317",
+        "historicalValidity": "API_TIME_QUERY_CONFIRMED",
+        "limitation": "2026-10-22 조회 좌표; 전체 이전 이력·부지 강우 대표성 미검증"
+      },
+      "secondary": {
+        "districtName": "강남구",
+        "name": "세곡동",
+        "stationId": "102",
+        "longitude": 127.107021202036,
+        "latitude": 37.4690764663005
+      },
+      "distanceM": 1722.888
+    },
+    "405": {
+      "primary": {
+        "provider": "기상청",
+        "stationId": "405",
+        "stationName": "양천",
+        "longitude": 126.87937,
+        "latitude": 37.52823,
+        "elevationM": 22.75,
+        "crs": "EPSG:4326",
+        "requestedTimeKst": "202610220000",
+        "sourceSha256": "70662f7f101f1157b3db62502c22adc5a2463504c1524d321998980eb5d637bc",
+        "sourceManifest": "kma-stations-aws-202610220000.json",
+        "sourceUrl": "https://apihub.kma.go.kr/apiList.do?seqApi=2&seqApiSub=317",
+        "historicalValidity": "API_TIME_QUERY_CONFIRMED",
+        "limitation": "2026-10-22 조회 좌표; 전체 이전 이력·부지 강우 대표성 미검증"
+      },
+      "secondary": {
+        "districtName": "양천구",
+        "name": "목동P",
+        "stationId": "1802",
+        "longitude": 126.877803142028,
+        "latitude": 37.5278442686238
+      },
+      "distanceM": 144.964
+    },
+    "406": {
+      "primary": {
+        "provider": "기상청",
+        "stationId": "406",
+        "stationName": "도봉",
+        "longitude": 127.03042,
+        "latitude": 37.66557,
+        "elevationM": 56.65,
+        "crs": "EPSG:4326",
+        "requestedTimeKst": "202610220000",
+        "sourceSha256": "70662f7f101f1157b3db62502c22adc5a2463504c1524d321998980eb5d637bc",
+        "sourceManifest": "kma-stations-aws-202610220000.json",
+        "sourceUrl": "https://apihub.kma.go.kr/apiList.do?seqApi=2&seqApiSub=317",
+        "historicalValidity": "API_TIME_QUERY_CONFIRMED",
+        "limitation": "2026-10-22 조회 좌표; 전체 이전 이력·부지 강우 대표성 미검증"
+      },
+      "secondary": {
+        "districtName": "도봉구",
+        "name": "도봉구청",
+        "stationId": "301",
+        "longitude": 127.047099430311,
+        "latitude": 37.6687058693517
+      },
+      "distanceM": 1512.192
+    },
+    "408": {
+      "primary": {
+        "provider": "기상청",
+        "stationId": "408",
+        "stationName": "동대문",
+        "longitude": 127.06036,
+        "latitude": 37.58463,
+        "elevationM": 53.96,
+        "crs": "EPSG:4326",
+        "requestedTimeKst": "202610220000",
+        "sourceSha256": "70662f7f101f1157b3db62502c22adc5a2463504c1524d321998980eb5d637bc",
+        "sourceManifest": "kma-stations-aws-202610220000.json",
+        "sourceUrl": "https://apihub.kma.go.kr/apiList.do?seqApi=2&seqApiSub=317",
+        "historicalValidity": "API_TIME_QUERY_CONFIRMED",
+        "limitation": "2026-10-22 조회 좌표; 전체 이전 이력·부지 강우 대표성 미검증"
+      },
+      "secondary": {
+        "districtName": "동대문구",
+        "name": "휘경P",
+        "stationId": "802",
+        "longitude": 127.069167327221,
+        "latitude": 37.5912687550697
+      },
+      "distanceM": 1071.451
+    },
+    "409": {
+      "primary": {
+        "provider": "기상청",
+        "stationId": "409",
+        "stationName": "중랑",
+        "longitude": 127.08682,
+        "latitude": 37.58551,
+        "elevationM": 39.09,
+        "crs": "EPSG:4326",
+        "requestedTimeKst": "202610220000",
+        "sourceSha256": "70662f7f101f1157b3db62502c22adc5a2463504c1524d321998980eb5d637bc",
+        "sourceManifest": "kma-stations-aws-202610220000.json",
+        "sourceUrl": "https://apihub.kma.go.kr/apiList.do?seqApi=2&seqApiSub=317",
+        "historicalValidity": "API_TIME_QUERY_CONFIRMED",
+        "limitation": "2026-10-22 조회 좌표; 전체 이전 이력·부지 강우 대표성 미검증"
+      },
+      "secondary": {
+        "districtName": "중랑구",
+        "name": "면목P",
+        "stationId": "702",
+        "longitude": 127.080019653415,
+        "latitude": 37.5812500658268
+      },
+      "distanceM": 764.414
+    },
+    "411": {
+      "primary": {
+        "provider": "기상청",
+        "stationId": "411",
+        "stationName": "마포",
+        "longitude": 126.92915,
+        "latitude": 37.55165,
+        "elevationM": 100.67,
+        "crs": "EPSG:4326",
+        "requestedTimeKst": "202610220000",
+        "sourceSha256": "70662f7f101f1157b3db62502c22adc5a2463504c1524d321998980eb5d637bc",
+        "sourceManifest": "kma-stations-aws-202610220000.json",
+        "sourceUrl": "https://apihub.kma.go.kr/apiList.do?seqApi=2&seqApiSub=317",
+        "historicalValidity": "API_TIME_QUERY_CONFIRMED",
+        "limitation": "2026-10-22 조회 좌표; 전체 이전 이력·부지 강우 대표성 미검증"
+      },
+      "secondary": {
+        "districtName": "마포구",
+        "name": "봉원P",
+        "stationId": "1502",
+        "longitude": 126.930143328141,
+        "latitude": 37.5437723647578
+      },
+      "distanceM": 878.718
+    },
+    "412": {
+      "primary": {
+        "provider": "기상청",
+        "stationId": "412",
+        "stationName": "서대문",
+        "longitude": 126.94078,
+        "latitude": 37.57047,
+        "elevationM": 103.08,
+        "crs": "EPSG:4326",
+        "requestedTimeKst": "202610220000",
+        "sourceSha256": "70662f7f101f1157b3db62502c22adc5a2463504c1524d321998980eb5d637bc",
+        "sourceManifest": "kma-stations-aws-202610220000.json",
+        "sourceUrl": "https://apihub.kma.go.kr/apiList.do?seqApi=2&seqApiSub=317",
+        "historicalValidity": "API_TIME_QUERY_CONFIRMED",
+        "limitation": "2026-10-22 조회 좌표; 전체 이전 이력·부지 강우 대표성 미검증"
+      },
+      "secondary": {
+        "districtName": "서대문구",
+        "name": "서대문구청",
+        "stationId": "1401",
+        "longitude": 126.936591502415,
+        "latitude": 37.5791662479941
+      },
+      "distanceM": 1033.672
+    },
+    "413": {
+      "primary": {
+        "provider": "기상청",
+        "stationId": "413",
+        "stationName": "광진",
+        "longitude": 127.08524,
+        "latitude": 37.5366,
+        "elevationM": 28.0,
+        "crs": "EPSG:4326",
+        "requestedTimeKst": "202610220000",
+        "sourceSha256": "70662f7f101f1157b3db62502c22adc5a2463504c1524d321998980eb5d637bc",
+        "sourceManifest": "kma-stations-aws-202610220000.json",
+        "sourceUrl": "https://apihub.kma.go.kr/apiList.do?seqApi=2&seqApiSub=317",
+        "historicalValidity": "API_TIME_QUERY_CONFIRMED",
+        "limitation": "2026-10-22 조회 좌표; 전체 이전 이력·부지 강우 대표성 미검증"
+      },
+      "secondary": {
+        "districtName": "광진구",
+        "name": "광진구청",
+        "stationId": "1201",
+        "longitude": 127.0824483994,
+        "latitude": 37.5384195147922
+      },
+      "distanceM": 318.833
+    },
+    "415": {
+      "primary": {
+        "provider": "기상청",
+        "stationId": "415",
+        "stationName": "용산",
+        "longitude": 126.97629,
+        "latitude": 37.51955,
+        "elevationM": 31.73,
+        "crs": "EPSG:4326",
+        "requestedTimeKst": "202610220000",
+        "sourceSha256": "70662f7f101f1157b3db62502c22adc5a2463504c1524d321998980eb5d637bc",
+        "sourceManifest": "kma-stations-aws-202610220000.json",
+        "sourceUrl": "https://apihub.kma.go.kr/apiList.do?seqApi=2&seqApiSub=317",
+        "historicalValidity": "API_TIME_QUERY_CONFIRMED",
+        "limitation": "2026-10-22 조회 좌표; 전체 이전 이력·부지 강우 대표성 미검증"
+      },
+      "secondary": {
+        "districtName": "동작구",
+        "name": "흑석P",
+        "stationId": "2102",
+        "longitude": 126.9634810248,
+        "latitude": 37.5094420851578
+      },
+      "distanceM": 1594.028
+    },
+    "419": {
+      "primary": {
+        "provider": "기상청",
+        "stationId": "419",
+        "stationName": "중구",
+        "longitude": 126.98736,
+        "latitude": 37.55236,
+        "elevationM": 267.05,
+        "crs": "EPSG:4326",
+        "requestedTimeKst": "202610220000",
+        "sourceSha256": "70662f7f101f1157b3db62502c22adc5a2463504c1524d321998980eb5d637bc",
+        "sourceManifest": "kma-stations-aws-202610220000.json",
+        "sourceUrl": "https://apihub.kma.go.kr/apiList.do?seqApi=2&seqApiSub=317",
+        "historicalValidity": "API_TIME_QUERY_CONFIRMED",
+        "limitation": "2026-10-22 조회 좌표; 전체 이전 이력·부지 강우 대표성 미검증"
+      },
+      "secondary": {
+        "districtName": "중구",
+        "name": "중구청",
+        "stationId": "1101",
+        "longitude": 126.997994348605,
+        "latitude": 37.5636356875681
+      },
+      "distanceM": 1564.946
+    },
+    "421": {
+      "primary": {
+        "provider": "기상청",
+        "stationId": "421",
+        "stationName": "성동",
+        "longitude": 127.03885,
+        "latitude": 37.54721,
+        "elevationM": 34.73,
+        "crs": "EPSG:4326",
+        "requestedTimeKst": "202610220000",
+        "sourceSha256": "70662f7f101f1157b3db62502c22adc5a2463504c1524d321998980eb5d637bc",
+        "sourceManifest": "kma-stations-aws-202610220000.json",
+        "sourceUrl": "https://apihub.kma.go.kr/apiList.do?seqApi=2&seqApiSub=317",
+        "historicalValidity": "API_TIME_QUERY_CONFIRMED",
+        "limitation": "2026-10-22 조회 좌표; 전체 이전 이력·부지 강우 대표성 미검증"
+      },
+      "secondary": {
+        "districtName": "성동구",
+        "name": "뚝섬P",
+        "stationId": "902",
+        "longitude": 127.041515486832,
+        "latitude": 37.5506883644629
+      },
+      "distanceM": 452.239
+    },
+    "437": {
+      "primary": {
+        "provider": "기상청",
+        "stationId": "437",
+        "stationName": "광명",
+        "longitude": 126.86531,
+        "latitude": 37.47867,
+        "elevationM": 52.69,
+        "crs": "EPSG:4326",
+        "requestedTimeKst": "202610220000",
+        "sourceSha256": "70662f7f101f1157b3db62502c22adc5a2463504c1524d321998980eb5d637bc",
+        "sourceManifest": "kma-stations-aws-202610220000.json",
+        "sourceUrl": "https://apihub.kma.go.kr/apiList.do?seqApi=2&seqApiSub=317",
+        "historicalValidity": "API_TIME_QUERY_CONFIRMED",
+        "limitation": "2026-10-22 조회 좌표; 전체 이전 이력·부지 강우 대표성 미검증"
+      },
+      "secondary": {
+        "districtName": "금천구",
+        "name": "가산2P",
+        "stationId": "2202",
+        "longitude": 126.878614060563,
+        "latitude": 37.4755957154546
+      },
+      "distanceM": 1225.244
+    },
+    "509": {
+      "primary": {
+        "provider": "기상청",
+        "stationId": "509",
+        "stationName": "관악",
+        "longitude": 126.95015,
+        "latitude": 37.45284,
+        "elevationM": 141.64,
+        "crs": "EPSG:4326",
+        "requestedTimeKst": "202610220000",
+        "sourceSha256": "70662f7f101f1157b3db62502c22adc5a2463504c1524d321998980eb5d637bc",
+        "sourceManifest": "kma-stations-aws-202610220000.json",
+        "sourceUrl": "https://apihub.kma.go.kr/apiList.do?seqApi=2&seqApiSub=317",
+        "historicalValidity": "API_TIME_QUERY_CONFIRMED",
+        "limitation": "2026-10-22 조회 좌표; 전체 이전 이력·부지 강우 대표성 미검증"
+      },
+      "secondary": {
+        "districtName": "관악구",
+        "name": "관악구청",
+        "stationId": "2301",
+        "longitude": 126.951755286716,
+        "latitude": 37.4782044708104
+      },
+      "distanceM": 2818.691
+    },
+    "510": {
+      "primary": {
+        "provider": "기상청",
+        "stationId": "510",
+        "stationName": "영등포",
+        "longitude": 126.90705,
+        "latitude": 37.52706,
+        "elevationM": 25.38,
+        "crs": "EPSG:4326",
+        "requestedTimeKst": "202610220000",
+        "sourceSha256": "70662f7f101f1157b3db62502c22adc5a2463504c1524d321998980eb5d637bc",
+        "sourceManifest": "kma-stations-aws-202610220000.json",
+        "sourceUrl": "https://apihub.kma.go.kr/apiList.do?seqApi=2&seqApiSub=317",
+        "historicalValidity": "API_TIME_QUERY_CONFIRMED",
+        "limitation": "2026-10-22 조회 좌표; 전체 이전 이력·부지 강우 대표성 미검증"
+      },
+      "secondary": {
+        "districtName": "영등포구",
+        "name": "영등포구청",
+        "stationId": "1901",
+        "longitude": 126.895952775619,
+        "latitude": 37.5262632760651
+      },
+      "distanceM": 984.906
+    },
+    "540": {
+      "primary": {
+        "provider": "기상청",
+        "stationId": "540",
+        "stationName": "고양",
+        "longitude": 126.892,
+        "latitude": 37.6373,
+        "elevationM": 44.71,
+        "crs": "EPSG:4326",
+        "requestedTimeKst": "202610220000",
+        "sourceSha256": "70662f7f101f1157b3db62502c22adc5a2463504c1524d321998980eb5d637bc",
+        "sourceManifest": "kma-stations-aws-202610220000.json",
+        "sourceUrl": "https://apihub.kma.go.kr/apiList.do?seqApi=2&seqApiSub=317",
+        "historicalValidity": "API_TIME_QUERY_CONFIRMED",
+        "limitation": "2026-10-22 조회 좌표; 전체 이전 이력·부지 강우 대표성 미검증"
+      },
+      "secondary": {
+        "districtName": "은평구",
+        "name": "갈현1동",
+        "stationId": "1303",
+        "longitude": 126.916741623219,
+        "latitude": 37.6236745537413
+      },
+      "distanceM": 2656.454
+    },
+    "889": {
+      "primary": {
+        "provider": "기상청",
+        "stationId": "889",
+        "stationName": "현충원",
+        "longitude": 126.97652,
+        "latitude": 37.50036,
+        "elevationM": 16.23,
+        "crs": "EPSG:4326",
+        "requestedTimeKst": "202610220000",
+        "sourceSha256": "70662f7f101f1157b3db62502c22adc5a2463504c1524d321998980eb5d637bc",
+        "sourceManifest": "kma-stations-aws-202610220000.json",
+        "sourceUrl": "https://apihub.kma.go.kr/apiList.do?seqApi=2&seqApiSub=317",
+        "historicalValidity": "API_TIME_QUERY_CONFIRMED",
+        "limitation": "2026-10-22 조회 좌표; 전체 이전 이력·부지 강우 대표성 미검증"
+      },
+      "secondary": {
+        "districtName": "동작구",
+        "name": "흑석P",
+        "stationId": "2102",
+        "longitude": 126.9634810248,
+        "latitude": 37.5094420851578
+      },
+      "distanceM": 1531.416
+    }
+  }
+}

@@ -20,7 +20,6 @@ export function HomeScoreGuide() {
       </div>
       <div className="home-score-example">
         <div>
-          <span className="home-eyebrow">숫자로 이해하기</span>
           <h3>설치 전 30m³, 설치 후 26m³라면?</h3>
           <p>설치 후 표면 유출 18 + 배수 4 + 종료 저류 5 − 시작 저류 1 = 26m³</p>
           <small>계산식 설명용 예시이며 실제 관측·플레이 기록이 아닙니다.</small>

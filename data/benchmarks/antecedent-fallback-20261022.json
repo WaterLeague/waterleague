@@ -1,0 +1,133 @@
+{
+  "checkedDateKst": "2026-10-22",
+  "scope": "REAL_SOURCE_ANTECEDENT_GAP_RECOVERY_AND_LOCAL_SWMM",
+  "productionDeployment": "PENDING",
+  "window": {
+    "startKst": "2026-10-15T01:20:00+09:00",
+    "endKst": "2026-10-22T01:20:00+09:00"
+  },
+  "stationProbes": [
+    {
+      "station": "401",
+      "missingBefore": 710,
+      "minutesAfter": 10080,
+      "totalDepthMm": 45.5,
+      "supplementMinutes": 710,
+      "secondary": "서초구청"
+    },
+    {
+      "station": "402",
+      "missingBefore": 1438,
+      "minutesAfter": 10080,
+      "totalDepthMm": 42.5,
+      "supplementMinutes": 1438,
+      "secondary": "고덕2동"
+    },
+    {
+      "station": "406",
+      "missingBefore": 849,
+      "minutesAfter": 10080,
+      "totalDepthMm": 64.5,
+      "supplementMinutes": 849,
+      "secondary": "도봉구청"
+    },
+    {
+      "station": "408",
+      "missingBefore": 733,
+      "minutesAfter": 10080,
+      "totalDepthMm": 47.5,
+      "supplementMinutes": 733,
+      "secondary": "휘경P"
+    },
+    {
+      "station": "411",
+      "missingBefore": 712,
+      "minutesAfter": 10080,
+      "totalDepthMm": 36.0,
+      "supplementMinutes": 712,
+      "secondary": "봉원P"
+    },
+    {
+      "station": "412",
+      "missingBefore": 659,
+      "minutesAfter": 10080,
+      "totalDepthMm": 55.6,
+      "supplementMinutes": 659,
+      "secondary": "서대문구청"
+    },
+    {
+      "station": "413",
+      "missingBefore": 702,
+      "minutesAfter": 10080,
+      "totalDepthMm": 39.0,
+      "supplementMinutes": 702,
+      "secondary": "광진구청"
+    },
+    {
+      "station": "415",
+      "missingBefore": 522,
+      "minutesAfter": 10080,
+      "totalDepthMm": 33.5,
+      "supplementMinutes": 522,
+      "secondary": "흑석P"
+    },
+    {
+      "station": "509",
+      "missingBefore": 1525,
+      "minutesAfter": 10080,
+      "totalDepthMm": 47.0,
+      "supplementMinutes": 1525,
+      "secondary": "관악구청"
+    },
+    {
+      "station": "889",
+      "missingBefore": 966,
+      "minutesAfter": 10080,
+      "totalDepthMm": 42.0,
+      "supplementMinutes": 966,
+      "secondary": "흑석P"
+    }
+  ],
+  "engine": {
+    "stationId": "415",
+    "facilityType": "RAIN_GARDEN",
+    "areaM2": 10,
+    "evaluationMinutes": 15,
+    "warmupMinutes": 10080,
+    "warmupRainMm": 33.5,
+    "scoreExcludesWarmup": true,
+    "supplement": {
+      "provider": "SEOUL_OPEN_DATA",
+      "stationId": "2102",
+      "stationName": "흑석P",
+      "distanceM": 1594.028,
+      "minutes": 522,
+      "fraction": 0.05178571428571429,
+      "sourceSha256": "30dc79e8950af49f022f39150cfc75aa70e22ddb047101c3e8a3037c8e9ca22e",
+      "registrySha256": "a8d0e87527fab6119eca348e75ca6d6e3206e039dfea81bad32914c3a821ef7a"
+    },
+    "finalContribution": {
+      "at": "2026-10-21T16:35:00+00:00",
+      "incrementM3": 0.0,
+      "cumulativeM3": 2.8757361614228927e-07
+    },
+    "resultSha256": "f66510b3e4ba59f122df52308d499ed00f3889eec7c99236b5708d2fe5c051b2"
+  },
+  "tests": {
+    "seoulSupplement": 8,
+    "awsNormalization": 7,
+    "antecedentSources": 3,
+    "policyReplay": 2,
+    "surfaceInitialization": 5,
+    "scorePolicy": 5,
+    "isolatedPostgresJava": 16,
+    "isolatedPostgresWorker": 13,
+    "isolatedPostgresHttpReadback": 1,
+    "sourceDatabaseCountsUnchanged": true
+  },
+  "implementationHashes": {
+    "simulation/waterleague_sim/ingestion/seoul_live.py": "665dea05c54a3e3b2b887d48e54a212a88eb2e75e8a2c1cede12f4f3e3a7772f",
+    "simulation/waterleague_sim/ingestion/antecedent.py": "4b69f7ee1d45812aa85d7b64659809e2e848d26e08f39dd5392cc1f8030ee8c8",
+    "backend/src/main/resources/native-weather/v1/antecedent-fallback.json": "2549f71afe7a58603b675807b9d2c037319662219c79f30e683b3217a28cf99d"
+  }
+}

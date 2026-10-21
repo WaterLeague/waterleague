@@ -53,6 +53,16 @@ def prepend(model, evaporation, antecedent, *, warmup_minutes=MINUTES, seed_perc
         value['initialization']['limitations'].append('선행 강우 일누적 차분과 이동합 불일치 경고 보존; 원문 일누적을 우선한 초기화')
     if prior.get('aggregatedRainIntervals'):
         value['initialization']['limitations'].append('선행 통신 결측은 누적 관측 또는 동일 지점 시간 강우의 총량을 평균 강도로 적용; 분별 관측 복원 아님')
+    if supplement := prior.get('supplement'):
+        binding = supplement['binding']
+        value['initialization']['rainfallSupplement'] = {
+            'provider': 'SEOUL_OPEN_DATA', 'stationId': binding['secondary']['stationId'],
+            'stationName': binding['secondary']['name'], 'distanceM': binding['distanceM'],
+            'minutes': supplement['minutes'], 'fraction': supplement['fraction'],
+            'sourceSha256': supplement['sourceSha256'], 'registrySha256': supplement['registrySha256']}
+        value['initialization']['limitations'].append(
+            f"선행 결측 {supplement['minutes']}분은 AWS에서 {binding['distanceM']/1000:.3f}km 떨어진 "
+            f"서울시 {binding['secondary']['name']}의 10분 관측을 평균 강도로 적용; 현장·분별 실측값 아님")
     value['hydrology']['initialSaturationPercent'] = seed_percent
     value['assumptions'] = [s for s in value['assumptions'] if '초기 포화' not in s and '초기 수분' not in s]
     value['assumptions'] += value['initialization']['limitations']

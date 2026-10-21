@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { Plus, X } from 'lucide-react';
-import { facilities, won } from '../../game/service/gameService';
+import { won } from '../../game/service/gameService';
 import { errorMessage } from '../../../shared/exception/ApiError';
 import { createCompetition } from '../repository/competitionRepository';
 import type {
@@ -9,6 +9,8 @@ import type {
   CompetitionCatalog,
   CompetitionCreate,
 } from '../dto/competitionDto';
+import { CompetitionDistrictPicker } from './CompetitionDistrictPicker';
+import { CompetitionFacilityPicker } from './CompetitionFacilityPicker';
 const kstInput = (time: number) => new Date(time + 9 * 3600000).toISOString().slice(0, 16);
 export function CompetitionForm({
   catalog,
@@ -20,9 +22,10 @@ export function CompetitionForm({
   onClose: () => void;
 }) {
   const [budgetMode, setBudgetMode] = useState<'DEFAULT' | 'CUSTOM'>('DEFAULT');
+  const [customBudget, setCustomBudget] = useState('');
   const [mode, setMode] = useState<Competition['mode']>('REALTIME');
-  const [districts, setDistricts] = useState(catalog.districts.map((d) => d.id));
-  const [types, setTypes] = useState(catalog.facilityTypes);
+  const [districts, setDistricts] = useState<string[]>([]);
+  const [types, setTypes] = useState<CompetitionCatalog['facilityTypes']>([]);
   const [awards, setAwards] = useState<(Award & { key: string })[]>([]);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
@@ -45,6 +48,16 @@ export function CompetitionForm({
     const data = new FormData(form);
     if (!districts.length || !types.length) {
       setError('지역과 시설을 각각 하나 이상 선택해 주세요.');
+      return;
+    }
+    const personalBudgetKrw = budgetMode === 'CUSTOM' ? Number(customBudget) : null;
+    if (
+      personalBudgetKrw !== null &&
+      (!Number.isSafeInteger(personalBudgetKrw) ||
+        personalBudgetKrw < 1 ||
+        personalBudgetKrw > 1_000_000_000_000)
+    ) {
+      setError('1인당 예산은 1원부터 1조 원까지의 정수로 입력해 주세요.');
       return;
     }
     const opensAt = new Date(`${data.get('opensAt')}:00+09:00`).toISOString();
@@ -76,7 +89,7 @@ export function CompetitionForm({
       description: String(data.get('description')).trim(),
       mode,
       budgetMode,
-      personalBudgetKrw: budgetMode === 'CUSTOM' ? Number(data.get('personalBudgetKrw')) : null,
+      personalBudgetKrw,
       eventId: mode === 'DISASTER' ? String(data.get('eventId')) : null,
       districtIds: districts,
       allowedTypes: types,
@@ -170,41 +183,67 @@ export function CompetitionForm({
           </p>
           <fieldset>
             <legend>1인당 예산</legend>
-            <label className="contest-check">
-              <input
-                type="radio"
-                name="budgetMode"
-                checked={budgetMode === 'DEFAULT'}
-                onChange={() => setBudgetMode('DEFAULT')}
-              />
-              기본 예산 사용
-              {catalog.defaultPersonalBudgetKrw
-                ? ` · ${won(catalog.defaultPersonalBudgetKrw)}`
-                : ''}
-            </label>
-            <label className="contest-check">
-              <input
-                type="radio"
-                name="budgetMode"
-                checked={budgetMode === 'CUSTOM'}
-                onChange={() => setBudgetMode('CUSTOM')}
-              />
-              예산 설정
-            </label>
-            {budgetMode === 'CUSTOM' && (
-              <label>
-                1인당 금액 · 원
+            <div className="contest-budget-options">
+              <label
+                className={`contest-budget-option${budgetMode === 'DEFAULT' ? ' is-selected' : ''}`}
+              >
                 <input
-                  name="personalBudgetKrw"
-                  type="number"
-                  min={1}
-                  max={1000000000000}
-                  step={1}
-                  required
-                  placeholder="금액 입력"
+                  type="radio"
+                  name="budgetMode"
+                  value="DEFAULT"
+                  checked={budgetMode === 'DEFAULT'}
+                  onChange={() => setBudgetMode('DEFAULT')}
                 />
+                <span>
+                  <strong>기본 예산 사용</strong>
+                  <small>
+                    {catalog.defaultPersonalBudgetKrw
+                      ? won(catalog.defaultPersonalBudgetKrw)
+                      : '기본 게임 예산'}
+                  </small>
+                </span>
               </label>
-            )}
+              <label
+                className={`contest-budget-option${budgetMode === 'CUSTOM' ? ' is-selected' : ''}`}
+              >
+                <input
+                  type="radio"
+                  name="budgetMode"
+                  value="CUSTOM"
+                  checked={budgetMode === 'CUSTOM'}
+                  onChange={() => setBudgetMode('CUSTOM')}
+                />
+                <span>
+                  <strong>예산 직접 설정</strong>
+                  <small>참가자 한 명당 사용할 금액</small>
+                </span>
+              </label>
+            </div>
+            <label className="contest-budget-amount">
+              1인당 금액 · 원
+              <input
+                name="personalBudgetKrw"
+                type="number"
+                min={1}
+                max={1000000000000}
+                step={1}
+                required={budgetMode === 'CUSTOM'}
+                disabled={budgetMode === 'DEFAULT'}
+                value={
+                  budgetMode === 'DEFAULT' ? (catalog.defaultPersonalBudgetKrw ?? '') : customBudget
+                }
+                onChange={(event) => setCustomBudget(event.target.value)}
+                placeholder="금액 입력"
+                aria-describedby="contest-budget-value"
+              />
+              <span id="contest-budget-value" className="contest-selection-hint">
+                {budgetMode === 'CUSTOM' && customBudget && Number.isFinite(Number(customBudget))
+                  ? won(Number(customBudget))
+                  : budgetMode === 'CUSTOM'
+                    ? '1원 ~ 1조 원'
+                    : '기본 예산이 모든 참가자에게 적용됩니다.'}
+              </span>
+            </label>
             <p className="contest-note">
               모든 참가자에게 같은 금액을 적용합니다. 일반 게임·다른 대회의 예산과 별도로 사용하며
               공개 후에는 변경할 수 없습니다.
@@ -212,49 +251,21 @@ export function CompetitionForm({
           </fieldset>
           <fieldset>
             <legend>대회 맵</legend>
-            <label className="contest-check">
-              <input
-                type="checkbox"
-                checked={districts.length === catalog.districts.length}
-                onChange={(e) =>
-                  setDistricts(e.target.checked ? catalog.districts.map((d) => d.id) : [])
-                }
-              />
-              서울 전체
-            </label>
-            <div className="contest-options">
-              {catalog.districts.map((d) => (
-                <label className="contest-check" key={d.id}>
-                  <input
-                    type="checkbox"
-                    checked={districts.includes(d.id)}
-                    onChange={(e) =>
-                      setDistricts((v) =>
-                        e.target.checked ? [...v, d.id] : v.filter((id) => id !== d.id)
-                      )
-                    }
-                  />
-                  {d.name}
-                </label>
-              ))}
-            </div>
+            <CompetitionDistrictPicker
+              districts={catalog.districts}
+              selected={districts}
+              onChange={setDistricts}
+              disabled={busy}
+            />
           </fieldset>
           <fieldset>
             <legend>설치 가능 시설</legend>
-            <div className="contest-options">
-              {catalog.facilityTypes.map((t) => (
-                <label className="contest-check" key={t}>
-                  <input
-                    type="checkbox"
-                    checked={types.includes(t)}
-                    onChange={(e) =>
-                      setTypes((v) => (e.target.checked ? [...v, t] : v.filter((id) => id !== t)))
-                    }
-                  />
-                  {facilities[t].name}
-                </label>
-              ))}
-            </div>
+            <CompetitionFacilityPicker
+              types={catalog.facilityTypes}
+              selected={types}
+              onChange={setTypes}
+              disabled={busy}
+            />
           </fieldset>
           <div className="contest-form-grid">
             <label>

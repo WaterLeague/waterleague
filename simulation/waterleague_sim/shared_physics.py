@@ -241,7 +241,7 @@ def process(conn, job, root):
         (path/'model-source.json').write_bytes(source)
         (path/'forcing.json').write_bytes(forcing_raw)
         (path/'request.json').write_bytes(request_raw)
-        for module in ('engine/evapotranspiration.py', 'ingestion/evaporation.py', 'ingestion/daily_evaporation.py', 'ingestion/antecedent.py', 'ingestion/live.py', 'weekly.py'):
+        for module in ('engine/evapotranspiration.py', 'ingestion/evaporation.py', 'ingestion/daily_evaporation.py', 'ingestion/antecedent.py', 'ingestion/live.py', 'ingestion/seoul_live.py', 'weekly.py'):
             (path/Path(module).name).write_bytes((Path(__file__).parent/module).read_bytes())
         env = {k: v for k, v in os.environ.items() if k in ('PATH', 'LANG', 'LC_ALL', 'LIVE_SWMM_LIBRARY','NATIVE_SPATIAL_CACHE')}
         env['PYTHONPATH'] = str(ROOT/'simulation')

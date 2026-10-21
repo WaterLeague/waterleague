@@ -902,6 +902,7 @@
   color: #7b8d80;
 }
 .home-score-example {
+  border-top: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;

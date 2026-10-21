@@ -1,7 +1,7 @@
 """7일 선행 관측 강우·기상 입력. 최신 화면의 날씨 캐시로 사용하지 않음."""
 from datetime import timedelta
 from functools import partial
-from . import evaporation, live
+from . import evaporation, live, seoul_live
 from .daily_evaporation import observed_daily
 from ..engine.initialization import MINUTES
 
@@ -37,9 +37,13 @@ def weather(start, end, key, daily_fetch=None, heartbeat=None):
 
 def fetch(station, evaluation_start, key, daily_fetch=None, heartbeat=None):
     start = evaluation_start-timedelta(minutes=MINUTES)
-    rain, sources = live.observed_forcing(station, start, evaluation_start, key, chunk_hours=6, antecedent_quality=True, heartbeat=heartbeat)
+    rain, sources = live.observed_forcing(station, start, evaluation_start, key, chunk_hours=6,
+        antecedent_quality=True, heartbeat=heartbeat, allow_gaps=True)
+    rain, supplements = seoul_live.supplement(rain, start, evaluation_start, heartbeat=heartbeat)
+    sources.extend(supplements)
     pet, raw = weather(start, evaluation_start, key,
                        daily_fetch or partial(evaporation.fetch, heartbeat=heartbeat), heartbeat)
     return {'rainfall': {k: rain[k] for k in ('start','end','stationId','intervalSeconds','sourceHashes','evidence','qualityWarnings','qualityPolicy','aggregatedRainIntervals')}
+        | ({'supplement': rain['supplement']} if 'supplement' in rain else {})
         | {'depthsMm': [r['depthMm'] for r in rain['observations']], 'depthMethods': [r['method'] for r in rain['observations']],
            'reconstructedMinutes': sum(r['method'].startswith('OBSERVED_ZERO_') for r in rain['observations'])}, 'evaporation': pet}, sources+raw

@@ -1,0 +1,154 @@
+{
+  "checkedDateKst": "2026-10-22",
+  "purpose": "SOURCE_COMPARISON_ONLY",
+  "sources": [
+    {
+      "provider": "KMA_AWS_DIRECT",
+      "endpoint": "https://apihub.kma.go.kr/api/typ01/cgi-bin/url/nph-aws2_min",
+      "parameters": {
+        "tm1": "202610161400",
+        "tm2": "202610170110",
+        "stn": "415",
+        "disp": "0",
+        "help": "1"
+      },
+      "fetchedAt": "2026-10-21T19:27:09.905548+00:00",
+      "sha256": "20bc2102b811fbb2b6d61e25a4d0f50bf00bfd67a418a14293943e0b7218259f",
+      "station": "415",
+      "rows": 671,
+      "missingDailyCounterRows": 524,
+      "missingStartKst": "202610161517",
+      "missingEndKst": "202610170000",
+      "validDailyCounterValuesMm": [
+        0.0
+      ],
+      "missingOtherFields": {
+        "temperature": 0,
+        "humidity": 0,
+        "wind": 0,
+        "pressure": 0
+      }
+    },
+    {
+      "provider": "KMA_AWS_DIRECT",
+      "endpoint": "https://apihub.kma.go.kr/api/typ01/cgi-bin/url/nph-aws2_min",
+      "parameters": {
+        "tm1": "202610161400",
+        "tm2": "202610170110",
+        "stn": "108",
+        "disp": "0",
+        "help": "1"
+      },
+      "fetchedAt": "2026-10-21T19:27:16.931549+00:00",
+      "sha256": "aa92c8fa1671957c34ca8709fddd9f23c5cbf185da8823cccc68eed38c86db75",
+      "station": "108",
+      "rows": 671,
+      "missingDailyCounterRows": 0,
+      "missingStartKst": null,
+      "missingEndKst": null,
+      "validDailyCounterValuesMm": [
+        0.0
+      ],
+      "missingOtherFields": {
+        "temperature": 0,
+        "humidity": 0,
+        "wind": 0,
+        "pressure": 0
+      }
+    },
+    {
+      "endpoint": "https://apihub.kma.go.kr/api/typ01/url/sfc_aws_day.php",
+      "parameters": {
+        "tm1": "20261016",
+        "tm2": "20261016",
+        "stn": "415",
+        "obs": "rn_day",
+        "help": "1"
+      },
+      "sha256": "206019cdeed48ed0065c7a3f3e86dc310c68c6f8859165a242b25171c9c6752a",
+      "result": "DAILY_TOTAL_0_MM_NO_COMPLETENESS_FLAG"
+    },
+    {
+      "endpoint": "https://apihub.kma.go.kr/api/typ01/cgi-bin/url/nph-aws2_min_o",
+      "parameters": {
+        "tm1": "202610161510",
+        "tm2": "202610161530",
+        "stn": "415",
+        "disp": "0",
+        "help": "1"
+      },
+      "sha256": "a11bc8a418160165480bd2de8ee10a65fcd5fc63435de66c17fc875855704a10",
+      "result": "STATION_NOT_LISTED"
+    },
+    {
+      "provider": "SEOUL_OPEN_DATA",
+      "dataset": "OA-23092",
+      "service": "AiRainfallService",
+      "documentationUrl": "https://data.seoul.go.kr/dataList/OA-23092/S/1/datasetView.do",
+      "endpoint": "https://datafile.seoul.go.kr/bigfile/iot/sheet/json/download.do",
+      "method": "POST",
+      "parameters": {
+        "srvType": "S",
+        "infId": "OA-23092",
+        "serviceKind": "0",
+        "pageNo": "1",
+        "ssUserId": "SAMPLE_VIEW",
+        "strWhere": "",
+        "strOrderby": "DATA_CLCT_TM DESC",
+        "filterCol": "GU_NM",
+        "txtFilter": "용산구",
+        "gridTotalCnt": "0"
+      },
+      "sha256": "eb0c0d68c00e2344dae2d906a3dd84850b03f1d46866c3844066a34401b8d0aa",
+      "rows": 14738,
+      "latestObservedAtKst": "2026-10-22 04:09",
+      "stations": [
+        {
+          "station": 1601,
+          "name": "용산구청",
+          "dateKst": "2026-10-16",
+          "validTenMinuteIntervals": 144,
+          "sumMm": 0.0,
+          "duplicateOrMissingIntervals": 0
+        },
+        {
+          "station": 1602,
+          "name": "한남P",
+          "dateKst": "2026-10-16",
+          "validTenMinuteIntervals": 144,
+          "sumMm": 0.0,
+          "duplicateOrMissingIntervals": 0
+        }
+      ],
+      "license": "KOGL_TYPE_2_ATTRIBUTION_NONCOMMERCIAL",
+      "interpretation": "10분 누적량. xx:09 표기는 xx:00부터 xx:09:59까지."
+    }
+  ],
+  "unavailableProbes": [
+    {
+      "endpoint": "https://apihub.kma.go.kr/api/typ01/url/awsh.php",
+      "parameters": {
+        "var": "RN",
+        "tm": "202610161800",
+        "stn": "415",
+        "help": "1",
+        "disp": "1"
+      },
+      "status": "HTTP_403_CURRENT_KEY"
+    },
+    {
+      "service": "AiRainfallService",
+      "status": "DIRECT_HTTPS_CONNECTION_FAILED_OFFICIAL_HTTPS_DOWNLOAD_SUCCEEDED"
+    }
+  ],
+  "decision": {
+    "finding": "용산 AWS 분 강우만 결측이며 같은 지점의 일 통계와 서울시 두 용산 관측소의 완전한 10분 기록은 모두 0mm. 무강우와 부합하나 AWS 결측 원인은 확인되지 않음.",
+    "initialProbeLimitations": [
+      "일 통계 응답에 분 관측의 완전성·품질 플래그 없음",
+      "서울시 관측소와 AWS 415는 서로 다른 지점",
+      "서로 다른 관측소·시간 해상도의 자료를 점수별 임의 대체하지 않음"
+    ]
+  },
+  "probeChangedProductionInput": false,
+  "followupImplementation": "data/benchmarks/antecedent-fallback-20261022.json"
+}
