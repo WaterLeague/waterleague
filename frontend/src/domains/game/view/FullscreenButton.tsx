@@ -1,16 +1,19 @@
 import { useEffect, useState, type RefObject } from 'react';
 import { Maximize, Minimize } from 'lucide-react';
-export function FullscreenButton({ target }: { target: RefObject<HTMLDivElement | null> }) {
+export function FullscreenButton({ target }: { target: RefObject<HTMLElement | null> }) {
   const [active, setActive] = useState(false);
   const [error, setError] = useState('');
   useEffect(() => {
     const changed = () => setActive(document.fullscreenElement === target.current);
+    changed();
     document.addEventListener('fullscreenchange', changed);
     return () => document.removeEventListener('fullscreenchange', changed);
   }, [target]);
   return (
     <div className="fullscreen-control">
       <button
+        type="button"
+        aria-pressed={active}
         aria-label={active ? '전체화면 종료' : '게임 전체화면'}
         title={active ? '전체화면 종료 · Esc' : '게임 전체화면'}
         onClick={async () => {

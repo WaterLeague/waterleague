@@ -1,40 +1,58 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ArrowUpRight, LogOut, X } from 'lucide-react';
 import { useAccountSession } from '../../account/controller/useAccountSession';
 import { memberTypeNames } from '../../account/entity/account';
 import { AuthDialog } from '../../account/view/AuthDialog';
 import { ApprovalPage } from '../../administration/view/ApprovalPage';
-import { CompetitionPage } from '../../league/view/CompetitionPage';
+import { RankingPage } from '../../ranking/view/RankingPage';
+import { CompetitionPage } from '../../competition/view/CompetitionPage';
+import { ResultsPage } from '../../administration/view/ResultsPage';
+import { useAppLocation, navigate, followLink } from '../../../shared/controller/useAppLocation';
 import { DataPage } from '../../catalog/view/DataPage';
 import { DisasterMode } from '../../disaster/view/DisasterMode';
 import { CityExplorer } from '../../city/view/CityExplorer';
-import { FullscreenButton } from './FullscreenButton';
 import { useGameInteractions } from '../../../shared/ui/useGameInteractions';
 import './game-viewport.css';
 
-type Tab = 'city' | 'missions' | 'leaderboard' | 'data' | 'admin';
+const tabs = {
+  city: '/weekly',
+  missions: '/disaster',
+  leaderboard: '/rankings',
+  competitions: '/competitions',
+  data: '/data',
+  admin: '/admin/members',
+  results: '/admin/results',
+} as const;
+type Tab = keyof typeof tabs;
 
 export function GamePage() {
   useGameInteractions();
   const session = useAccountSession();
-  const shell = useRef<HTMLDivElement>(null);
+  const location = useAppLocation();
+  const path = location.split('?')[0].replace(/\/$/, '') || '/';
+  const tab = (Object.entries(tabs).find(
+    ([, url]) =>
+      path === url ||
+      ((url === '/competitions' || url === '/disaster') && path.startsWith(url + '/'))
+  )?.[0] ?? (path === '/' ? 'city' : 'missing')) as Tab | 'missing';
+  const setTab = (id: Tab) => navigate(tabs[id]);
   const [cityDistrict, setCityDistrict] = useState('');
-  const [tab, setTab] = useState<Tab>('city');
   const [auth, setAuth] = useState(false);
   useEffect(() => {
-    if (session.account?.role === 'ADMIN') setTab('admin');
-    else setTab((current) => (current === 'admin' ? 'missions' : current));
-  }, [session.account?.id, session.account?.role]);
+    if (path === '/') navigate('/weekly', true);
+  }, [path]);
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, [tab]);
   return (
-    <div
-      ref={shell}
-      className={`game-shell${['city', 'missions'].includes(tab) ? ' is-game' : ''}`}
-    >
+    <div className={`game-shell${['city', 'missions'].includes(tab) ? ' is-game' : ''}`}>
       <header className="topbar">
-        <a className="wordmark" href="/" aria-label="WATER LEAGUE 홈">
+        <a
+          className="wordmark"
+          href="/weekly"
+          onClick={(e) => followLink(e, '/weekly')}
+          aria-label="WATER LEAGUE 홈"
+        >
           <svg width="31" height="31" viewBox="0 0 32 32" fill="none" aria-hidden="true">
             <path
               d="M3 10c5-6 10 6 15 0s8 0 11 0M3 17c5-6 10 6 15 0s8 0 11 0M3 24c5-6 10 6 15 0s8 0 11 0"
@@ -50,30 +68,33 @@ export function GamePage() {
           {(session.account?.role === 'ADMIN'
             ? ([
                 ['admin', '회원 관리'],
+                ['results', '결과 관리'],
+                ['competitions', '대회'],
                 ['data', '데이터'],
               ] as const)
             : ([
                 ['city', '주간 서울 대항전'],
                 ['missions', '재해 모드'],
-                ['leaderboard', '기록 경쟁'],
+                ['leaderboard', '랭킹'],
+                ['competitions', '대회'],
                 ['data', '데이터'],
               ] as const)
           ).map(([id, label]) => (
-            <button
+            <a
+              href={tabs[id]}
               key={id}
               aria-current={tab === id ? 'page' : undefined}
               className={tab === id ? 'active' : ''}
-              onClick={() => {
+              onClick={(e) => {
                 if (id === 'city') setCityDistrict('');
-                setTab(id);
+                followLink(e, tabs[id]);
               }}
             >
               {label}
-            </button>
+            </a>
           ))}
         </nav>
         <div className="topbar-end">
-          {['city', 'missions'].includes(tab) && <FullscreenButton target={shell} />}
           {session.account ? (
             <>
               <span className="account-name">
@@ -110,6 +131,14 @@ export function GamePage() {
       )}
       {tab === 'admin' && session.account?.role === 'ADMIN' ? (
         <ApprovalPage key={session.account.id} />
+      ) : tab === 'results' && session.account?.role === 'ADMIN' ? (
+        <ResultsPage key={session.account.id} />
+      ) : tab === 'competitions' ? (
+        <CompetitionPage
+          key={session.account?.id ?? 'guest'}
+          account={session.account}
+          onLogin={() => setAuth(true)}
+        />
       ) : tab === 'city' ? (
         <CityExplorer
           key="shared"
@@ -125,7 +154,7 @@ export function GamePage() {
           onAccount={session.setAccount}
         />
       ) : tab === 'leaderboard' ? (
-        <CompetitionPage
+        <RankingPage
           account={session.account}
           onLogin={() => setAuth(true)}
           onWeeklyDistrict={(id) => {
@@ -133,8 +162,15 @@ export function GamePage() {
             setTab('city');
           }}
         />
-      ) : (
+      ) : tab === 'data' ? (
         <DataPage accountId={session.account?.id ?? null} />
+      ) : (
+        <main className="full-page">
+          <h1>{tab === 'missing' ? '페이지를 찾을 수 없습니다' : '관리자 로그인이 필요합니다'}</h1>
+          <a href="/weekly" onClick={(e) => followLink(e, '/weekly')}>
+            게임으로 돌아가기
+          </a>
+        </main>
       )}
       {auth && <AuthDialog onClose={() => setAuth(false)} onSuccess={session.setAccount} />}
     </div>

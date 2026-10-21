@@ -11,10 +11,11 @@ body:has(.game-shell.is-game) {
   flex-direction: column;
   overflow: hidden;
 }
-.game-shell:fullscreen {
+.shared-play-layout:fullscreen {
   width: 100%;
   height: 100dvh;
-  overflow: auto;
+  overflow: hidden;
+  background: #edf3ed;
 }
 .game-shell.is-game .topbar {
   flex: 0 0 auto;
@@ -256,7 +257,7 @@ body:has(.game-shell.is-game) {
     gap: 20px;
     height: 34px;
   }
-  .game-shell.is-game .topbar nav button {
+  .game-shell.is-game .topbar nav :is(button, a) {
     white-space: nowrap;
   }
   .game-shell.is-game > .shared-play-layout {
@@ -474,4 +475,15 @@ body:has(.game-shell.is-game) {
 }
 .game-shell.is-game .facility-install-dock button:hover {
   background: #236b58;
+}
+
+.map-layer-bar > .fullscreen-control {
+  margin-left: 4px;
+  flex: 0 0 auto;
+}
+.game-shell.is-game > .shared-play-layout:fullscreen {
+  width: 100vw;
+  height: 100dvh;
+  min-height: 100dvh;
+  flex: none;
 }

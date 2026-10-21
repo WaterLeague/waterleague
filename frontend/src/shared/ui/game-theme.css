@@ -38,14 +38,14 @@
 .game-shell .wordmark small {
   display: none;
 }
-.game-shell .topbar nav button {
+.game-shell .topbar nav :is(button, a) {
   position: relative;
   border: 0;
   color: #687278;
   font-weight: 520;
   letter-spacing: -0.025em;
 }
-.game-shell .topbar nav button.active {
+.game-shell .topbar nav :is(button, a).active {
   font-weight: 650;
 }
 .game-shell .login-button {
@@ -704,21 +704,21 @@
   align-items: center;
   gap: 5px;
 }
-.game-shell .topbar nav button {
+.game-shell .topbar nav :is(button, a) {
   padding: 9px 13px;
   border-radius: 20px;
   font-size: 12px;
 }
-.game-shell .topbar nav button.active {
+.game-shell .topbar nav :is(button, a).active {
   background: #f5e4d9;
   color: #9e5038;
   box-shadow: none;
 }
-.game-shell .topbar nav button:hover {
+.game-shell .topbar nav :is(button, a):hover {
   background: #edece6;
   color: #2d5258;
 }
-.game-shell .topbar nav button.active::after {
+.game-shell .topbar nav :is(button, a).active::after {
   display: none;
 }
 .game-shell .login-button {
@@ -936,7 +936,7 @@
   .game-shell .topbar nav {
     gap: 2px;
   }
-  .game-shell .topbar nav button {
+  .game-shell .topbar nav :is(button, a) {
     padding: 7px 8px;
     font-size: 11px;
   }

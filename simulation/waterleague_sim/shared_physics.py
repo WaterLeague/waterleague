@@ -95,6 +95,9 @@ def finish(conn, job, result, input_hash, error, weeks=None, manifest_hash=None)
             if weeks is None:
                 raise ValueError('LIVE_WEEKLY_INPUT_MISSING')
             publish_weekly(conn, job, weeks)
+            if job.get("competition_frames") is not None:
+                from .competition_scores import publish as publish_competitions
+                publish_competitions(conn, job, job["competition_frames"])
         return saved
 
 
@@ -257,6 +260,7 @@ def process(conn, job, root):
                   'cistern': result.get('cistern'),
                   'areaLimitBasis': model['cells'][0].get('areaLimitBasis','LEGACY_DESIGN_RATIO')}
         weeks = weekly_aggregate(result['contribution'], score_start, job['end'], max(covered, score_start), rule=rule)
+        job['competition_frames'] = result['contribution']
         saved = finish(conn, job, public, digest(request_raw), None, weeks, digest((path/'manifest.json').read_bytes()))
     except Exception as e:
         code = str(e)

@@ -1,3 +1,5 @@
+import { useCompetitionGame } from '../../competition/controller/useCompetitionGame';
+import { followLink } from '../../../shared/controller/useAppLocation';
 import { useTopography } from '../../topography/controller/useTopography';
 import { mapCursors } from '../service/mapCursor';
 import { useGameAudio } from '../../audio/controller/useGameAudio';
@@ -72,6 +74,7 @@ import { useBudget } from '../../budget/controller/useBudget';
 import { useWeekly } from '../../weekly/controller/useWeekly';
 import { WeeklyBoard, scoreFormat } from '../../weekly/view/WeeklyBoard';
 import { useTerrain } from '../../terrain/controller/useTerrain';
+import { FullscreenButton } from '../../game/view/FullscreenButton';
 import { GameClock } from '../../game/view/GameClock';
 import { useInfrastructure } from '../../infrastructure/controller/useInfrastructure';
 import { useVisibleInfrastructure } from '../../infrastructure/controller/useVisibleInfrastructure';
@@ -115,6 +118,7 @@ function Explorer({
   onExit,
 }: { city: City; regions: CityPlayRegion[] } & PlayProps) {
   const researchMode = mode === 'historical';
+  const contest = useCompetitionGame(account?.id, researchMode, eventId);
   const [floodStats, setFloodStats] = useState<FloodStats>(emptyFloodStats);
   const onFloodStats = useCallback(
     (value: FloodStats) =>
@@ -558,6 +562,22 @@ function Explorer({
     (value: SharedSite, inspect = false, fromMap = false) => {
       const inspecting =
         inspect || (!cisternOpen && !mapFacilityType && installationBySite.has(siteKey(value)));
+      if (!inspecting && contest.id) {
+        if (!contest.permits(value.districtId)) {
+          setSelectionError(contest.error || '대회에서 허용한 구를 선택해 주세요.');
+          return;
+        }
+        value = {
+          ...value,
+          allowedTypes: value.allowedTypes.filter((t) =>
+            contest.value?.rules.allowedTypes.includes(t)
+          ),
+        };
+        if (!value.allowedTypes.length) {
+          setSelectionError('이 위치에는 대회에서 허용한 시설을 설치할 수 없습니다.');
+          return;
+        }
+      }
       if (
         !inspecting &&
         (!fromMap || cisternOpen) &&
@@ -607,6 +627,10 @@ function Explorer({
     },
     [
       type,
+      contest.id,
+      contest.value,
+      contest.ready,
+      contest.error,
       cisternOpen,
       cistern.busy,
       cistern.select,
@@ -902,6 +926,16 @@ function Explorer({
               ? `${research.event?.eventDate.replaceAll('-', '. ') ?? ''} 집중호우`
               : '주간 서울 대항전'}
           </h1>
+          {contest.id && (
+            <a
+              className="contest-game-link"
+              href={`/competitions/${encodeURIComponent(contest.id)}`}
+              onClick={(e) => followLink(e, `/competitions/${encodeURIComponent(contest.id!)}`)}
+            >
+              {contest.error || contest.value?.title || '대회 조건 확인 중'} · 대회 조건·접수·결과
+              보기
+            </a>
+          )}
         </div>
         <div className="play-resources">
           {researchMode ? (
@@ -956,10 +990,12 @@ function Explorer({
                 onChange={(id) => (id ? select(id) : reset())}
                 options={[
                   { value: '', label: '서울 전체' },
-                  ...city.districts.map((d) => ({
-                    value: d.id,
-                    label: d.name + (d.id === ownDistrictId ? ' · 내 소속 구' : ''),
-                  })),
+                  ...city.districts
+                    .filter((d) => !contest.value || contest.value.rules.districtIds.includes(d.id))
+                    .map((d) => ({
+                      value: d.id,
+                      label: d.name + (d.id === ownDistrictId ? ' · 내 소속 구' : ''),
+                    })),
                 ]}
               />
             </label>
@@ -1044,6 +1080,7 @@ function Explorer({
           ) : (
             <GameClock />
           )}
+          <FullscreenButton target={workspace} />
         </div>
         <section ref={stage} className="city-stage" aria-label="서울 전역 3D 지도">
           {flat ? (
@@ -1113,7 +1150,6 @@ function Explorer({
               </Suspense>
             </ErrorBoundary>
           )}
-          <CityCoverageNotice center={camera.center} distance={camera.distance} />
           {(details.busy || topography.busy) && (
             <div className="city-map-loading" role="status">
               주변 지형지물 불러오는 중
@@ -1521,6 +1557,9 @@ function Explorer({
           ))}
       </div>
       <FacilityExpansionPanel
+        allowedTypes={
+          contest.id ? (contest.ready ? contest.value?.rules.allowedTypes : []) : undefined
+        }
         onConnectedDesign={() => {
           closeInstallation();
           setInfrastructureOpen(false);
@@ -1544,6 +1583,10 @@ function Explorer({
         onClose={closeInstallation}
         onLogin={onLogin}
         onMapFacility={(t) => {
+          if (contest.id && (!contest.ready || !contest.value?.rules.allowedTypes.includes(t))) {
+            setSelectionError(contest.error || '대회에서 허용하지 않은 시설입니다.');
+            return;
+          }
           setCisternOpen(false);
           setFacilityExpansionOpen(false);
           setInfrastructureOpen(false);
@@ -1597,6 +1640,7 @@ function Explorer({
           onInstalled={sound.installed}
           onClose={closeInstallation}
           state={research}
+          canInstall={!contest.id || (!!site && !!type && contest.permits(site.districtId, type))}
           districtName={district?.name ?? ''}
           site={site}
           type={type}
@@ -1631,6 +1675,10 @@ function Explorer({
           error={shared.error || selectionError || budget.error}
           feedback={feedback}
           onInstall={async (s, t, a) => {
+            if (!contest.permits(s.districtId, t)) {
+              setSelectionError(contest.error || '대회 조건에 맞지 않는 설치입니다.');
+              return false;
+            }
             const ok = await shared.install(s, t, a);
             setBudgetRevision((v) => v + 1);
             if (ok) {
@@ -1759,4 +1807,3 @@ export function CityExplorer({
     />
   );
 }
-import { CityCoverageNotice } from './CityCoveragePlan';

@@ -7,8 +7,10 @@ import { physicalAmount } from '../../physics/service/physicalValueFormat';
 import type { HistoricalBoard as Board } from '../entity/historicalSubmission';
 import { loadHistoricalBoard } from '../repository/submissionRepository';
 import './historical.css';
+import { Pagination } from '../../competition/view/CompetitionShared';
 
-export function HistoricalBoard() {
+export function HistoricalBoard({ admin = false }: { admin?: boolean }) {
+  const [page, setPage] = useState(0);
   const [catalog, setCatalog] = useState<DisasterCatalog | null>(null);
   const [eventId, setEventId] = useState(''),
     [error, setError] = useState('');
@@ -39,7 +41,7 @@ export function HistoricalBoard() {
       if (pending || document.hidden) return;
       pending = true;
       try {
-        const value = await loadHistoricalBoard(eventId);
+        const value = await loadHistoricalBoard(eventId, admin, page);
         if (alive) {
           setBoard(value);
           setError('');
@@ -56,17 +58,20 @@ export function HistoricalBoard() {
       alive = false;
       clearInterval(timer);
     };
-  }, [eventId]);
+  }, [eventId, admin, page]);
   return (
-    <section className="full-page historical-board" aria-label="재해 실험 기록 경쟁">
-      <h1>재해 실험 기록 경쟁</h1>
+    <section className="full-page historical-board" aria-label="재해 모드 랭킹">
+      <h1>재해 모드 랭킹</h1>
       <p>현재 형상·과거 강우 스트레스 시험 · 독립 표면 평가체적 감소 순위</p>
       <label>
         재해 사건{' '}
         <select
-          aria-label="기록 경쟁 재해 사건"
+          aria-label="랭킹 재해 사건"
           value={eventId}
-          onChange={(e) => setEventId(e.target.value)}
+          onChange={(e) => {
+            setEventId(e.target.value);
+            setPage(0);
+          }}
         >
           {catalog?.events.map((e) => (
             <option key={e.id} value={e.id}>
@@ -132,6 +137,13 @@ export function HistoricalBoard() {
             </div>
           </section>
         ))
+      )}
+      {admin && board && (
+        <Pagination
+          page={page}
+          hasMore={board.groups.some((g) => g.entries.length === 100)}
+          onPage={setPage}
+        />
       )}
     </section>
   );

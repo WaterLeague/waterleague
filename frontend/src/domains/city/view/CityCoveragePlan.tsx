@@ -32,28 +32,3 @@ export function CityCoveragePlan({ distance }: { distance: number }) {
     </g>
   );
 }
-
-export function CityCoverageNotice({
-  center,
-  distance,
-}: {
-  center: [number, number];
-  distance: number;
-}) {
-  const { areas, failed } = useCityCoverage();
-  const radius = Math.max(500, distance);
-  const nearby = areas.filter(
-    (a) =>
-      a.bounds[0] <= center[0] + radius &&
-      a.bounds[2] >= center[0] - radius &&
-      a.bounds[1] <= center[1] + radius &&
-      a.bounds[3] >= center[1] - radius
-  );
-  if (!failed && !nearby.length) return null;
-  return (
-    <div className="city-coverage-notice" role="status">
-      {failed ? '지도 지원 범위 확인 지연' : '▨ 사선 영역: 상세 지도 미지원'}
-      {!failed && <span>확보한 원자료에 없는 지물은 표시하지 않습니다.</span>}
-    </div>
-  );
-}

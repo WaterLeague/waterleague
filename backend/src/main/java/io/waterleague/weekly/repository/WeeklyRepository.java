@@ -55,6 +55,11 @@ public class WeeklyRepository {
   }
 
   public List<WeeklyContribution> contributions(LocalDate week, Instant start, Instant through) {
+    return contributions(week, start, through, false);
+  }
+
+  public List<WeeklyContribution> contributions(
+      LocalDate week, Instant start, Instant through, boolean archive) {
     return db.query(
         """
         WITH periods AS (
@@ -63,7 +68,7 @@ public class WeeklyRepository {
               WHEN i.installed_at=date_trunc('minute',i.installed_at) THEN interval '0 minutes'
               ELSE interval '1 minute' END END,?::timestamptz) AS begins,
             LEAST(date_trunc('minute',COALESCE(i.removed_at,i.season_ends_at,?::timestamptz)),?::timestamptz) AS ends
-          FROM shared_installations i WHERE i.source_retired_at IS NULL AND i.installed_at<?::timestamptz
+          FROM shared_installations i WHERE (? OR i.source_retired_at IS NULL) AND i.installed_at<?::timestamptz
             AND (COALESCE(i.removed_at,i.season_ends_at) IS NULL OR COALESCE(i.removed_at,i.season_ends_at)>?::timestamptz)
         )
         SELECT p.owner_id,a.display_name,p.district_id,COALESCE(SUM(s.score_m3),0) AS score,
@@ -86,19 +91,26 @@ public class WeeklyRepository {
         Timestamp.from(start),
         Timestamp.from(through),
         Timestamp.from(through),
+        archive,
         Timestamp.from(through),
         Timestamp.from(start),
         java.sql.Date.valueOf(week));
   }
 
   public List<String> comparisonGroups(LocalDate week, Instant start, Instant through) {
+    return comparisonGroups(week, start, through, false);
+  }
+
+  public List<String> comparisonGroups(
+      LocalDate week, Instant start, Instant through, boolean archive) {
     return db.query(
         "SELECT DISTINCT s.comparison_group_hash FROM shared_weekly_scores s JOIN"
             + " shared_installations i ON i.id=s.installation_id WHERE s.week_start=? AND"
-            + " i.source_retired_at IS NULL AND i.installed_at<? AND"
+            + " (? OR i.source_retired_at IS NULL) AND i.installed_at<? AND"
             + " COALESCE(i.removed_at,i.season_ends_at,?::timestamptz)>?",
         (r, n) -> r.getString(1),
         java.sql.Date.valueOf(week),
+        archive,
         Timestamp.from(through),
         Timestamp.from(through),
         Timestamp.from(start));

@@ -40,6 +40,9 @@ public class SecurityConfiguration {
                     .hasRole("MEMBER")
                     .requestMatchers(
                         HttpMethod.GET,
+                        "/api/v1/competitions",
+                        "/api/v1/competitions/catalog",
+                        "/api/v1/competitions/{id}",
                         "/api/v1/catalog",
                         "/api/v1/districts",
                         "/api/v1/spatial/play",
@@ -92,6 +95,8 @@ public class SecurityConfiguration {
                         "/api/v1/auth/mfa/enrollment",
                         "/api/v1/auth/mfa/confirm")
                     .permitAll()
+                    .requestMatchers("/api/v1/competitions/**", "/api/v1/competitions")
+                    .authenticated()
                     .requestMatchers("/api/v1/research/**", "/api/v1/institution/**")
                     .hasAuthority("ORGANIZATION_MEMBER")
                     .requestMatchers("/api/v1/admin/**")

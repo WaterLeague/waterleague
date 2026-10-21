@@ -6,13 +6,17 @@ import { loadDisasters } from '../repository/disasterRepository';
 import { errorMessage } from '../../../shared/exception/ApiError';
 import { CityExplorer } from '../../city/view/CityExplorer';
 import './disaster.css';
+import { navigate, useAppLocation } from '../../../shared/controller/useAppLocation';
 export function DisasterMode(props: {
   account: Account | null;
   onLogin: () => void;
   onAccount: (a: Account) => void;
 }) {
   const [catalog, setCatalog] = useState<DisasterCatalog | null>(null);
-  const [selected, setSelected] = useState<string | null>(null);
+  const location = useAppLocation();
+  const selected = location.split('?')[0].split('/')[2] || null;
+  const setSelected = (id: string | null) =>
+    navigate(id ? '/disaster/' + encodeURIComponent(id) : '/disaster');
   const [error, setError] = useState('');
   const [attempt, setAttempt] = useState(0);
   useEffect(() => {
@@ -29,7 +33,7 @@ export function DisasterMode(props: {
       active = false;
     };
   }, [attempt]);
-  if (selected)
+  if (selected && catalog?.events.some((e) => e.id === selected))
     return (
       <CityExplorer
         {...props}

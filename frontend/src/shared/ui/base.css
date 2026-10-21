@@ -90,17 +90,17 @@ h3 {
   display: flex;
   gap: 28px;
 }
-.topbar nav button {
+.topbar nav :is(button, a) {
   font-weight: 600;
   font-size: 13px;
   position: relative;
   color: #6a7865;
   padding: 0 3px;
 }
-.topbar nav button.active {
+.topbar nav :is(button, a).active {
   color: #244e36;
 }
-.topbar nav button.active:after {
+.topbar nav :is(button, a).active:after {
   content: '';
   height: 3px;
   background: #285c3c;

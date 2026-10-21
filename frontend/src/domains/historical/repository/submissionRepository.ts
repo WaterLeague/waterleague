@@ -8,10 +8,12 @@ export const listSubmissions = (eventId: string) =>
   api('/historical/submissions?eventId=' + encodeURIComponent(eventId)).then((v) =>
     historicalSubmissionDto.array().parse(v)
   );
-export const loadHistoricalBoard = (eventId: string) =>
-  api('/historical/leaderboard/' + encodeURIComponent(eventId)).then((v) =>
-    historicalBoardDto.parse(v)
-  );
+export const loadHistoricalBoard = (eventId: string, admin = false, page = 0) =>
+  api(
+    (admin ? '/admin/results/historical/' : '/historical/leaderboard/') +
+      encodeURIComponent(eventId) +
+      (admin ? `?page=${page}` : '')
+  ).then((v) => historicalBoardDto.parse(v));
 export type SubmissionDesign = { revision: number; snapshotSha256: string };
 export const submitSavedHistorical = (
   eventId: string,

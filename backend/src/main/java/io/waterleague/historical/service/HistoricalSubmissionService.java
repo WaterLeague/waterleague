@@ -287,19 +287,18 @@ public class HistoricalSubmissionService {
   }
 
   public Object board(String eventId) {
+    return board(eventId, 0);
+  }
+
+  public Object board(String eventId, int page) {
+    if (page < 0 || page > 1000) throw new DomainException(ErrorCode.REQUEST_INVALID);
     var event = event(eventId);
     var groups = new LinkedHashMap<String, List<Map<String, Object>>>();
-    for (var row : submissions.board(eventId)) {
+    for (var row : submissions.board(eventId, page)) {
       String key = row.get("rulesHash") + ":" + row.get("comparisonGroupHash");
       var group = groups.computeIfAbsent(key, k -> new ArrayList<>());
       if (group.size() >= 100) continue;
       var entry = new LinkedHashMap<>(row);
-      int rank = group.size() + 1;
-      if (!group.isEmpty()
-          && ((BigDecimal) group.getLast().get("differenceM3"))
-                  .compareTo((BigDecimal) row.get("differenceM3"))
-              == 0) rank = (int) group.getLast().get("rank");
-      entry.put("rank", rank);
       group.add(entry);
     }
     return Map.of(

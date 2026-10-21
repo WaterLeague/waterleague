@@ -67,19 +67,34 @@ public class WeeklyService {
         page, rows.size() > 50 ? page.getLast().id() : null);
   }
 
+  @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ)
+  public WeeklyView.Period archived(LocalDate week, int page) {
+    if (page < 0
+        || page > 1000
+        || week.getDayOfWeek() != DayOfWeek.MONDAY
+        || week.isAfter(scores.now().atZone(KST).toLocalDate()))
+      throw new DomainException(ErrorCode.REQUEST_INVALID);
+    return period(week, scores.now(), null, page, true);
+  }
+
   private WeeklyView.Period period(LocalDate week, Instant now, UUID own) {
+    return period(week, now, own, 0, false);
+  }
+
+  private WeeklyView.Period period(
+      LocalDate week, Instant now, UUID own, int page, boolean archive) {
     Instant start = week.atStartOfDay(KST).toInstant(),
         end = week.plusWeeks(1).atStartOfDay(KST).toInstant();
     Instant target = now.minusSeconds(120).truncatedTo(ChronoUnit.MINUTES);
     if (target.isAfter(end)) target = end;
     if (target.isBefore(start)) target = start;
-    var rows = scores.contributions(week, start, target);
+    var rows = scores.contributions(week, start, target, archive);
     if (rows.stream()
         .anyMatch(r -> r.evaluatedSeconds() > r.expectedSeconds() || r.evaluatedSeconds() < 0))
       throw new DomainException(ErrorCode.SIMULATION_UNAVAILABLE);
     long expected = rows.stream().mapToLong(WeeklyContribution::expectedSeconds).sum();
     long evaluated = rows.stream().mapToLong(WeeklyContribution::evaluatedSeconds).sum();
-    var contexts = scores.comparisonGroups(week, start, target);
+    var contexts = scores.comparisonGroups(week, start, target, archive);
     boolean withheld = evaluated > 0 && (contexts.size() != 1 || contexts.contains(null));
     String comparisonStatus = evaluated == 0 ? "UNAVAILABLE" : withheld ? "WITHHELD" : "COMPARABLE";
     String comparisonReason =
@@ -157,7 +172,7 @@ public class WeeklyService {
               row.evaluatedSeconds(),
               row.expectedSeconds());
       if (row.playerId().equals(own)) self = player;
-      if (players.size() < 100) players.add(player);
+      if (index > page * 100 && players.size() < 100) players.add(player);
       if (row.evaluatedSeconds() > 0) last = row.scoreM3();
     }
     boolean closed = !now.isBefore(end);

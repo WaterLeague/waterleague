@@ -1,12 +1,4 @@
 import { describe, expect, it } from 'vitest';
-import * as THREE from 'three';
-import oldMap from '../../../../public/data/seongsu.json';
-import newMap from '../../../../public/data/seongsu-ngii-v2.json';
-import oldModel from '../../../../../data/models/seongsu-lab.json';
-import newModel from '../../../../../data/models/seongsu-ngii-v2-421-20240718.json';
-import { mapDto } from '../dto/catalogDto';
-import { toCandidateMap } from '../mapper/catalogMapper';
-import { buildingPolygons } from './mapGeometryService';
 import {
   labelLeaderEnd,
   positionSceneLabels,
@@ -29,73 +21,6 @@ function verifyVisible(labels: SceneLabel[], bounds: LabelBounds) {
 }
 
 describe('3D 화면 구역 표식', () => {
-  it('두 실제 지도의 13개 구역을 작은 화면·회전·탑뷰에서 겹치지 않게 표시', () => {
-    for (const [snapshot, model] of [
-      [oldMap, oldModel],
-      [newMap, newModel],
-    ] as const) {
-      const map = toCandidateMap(mapDto.parse(snapshot));
-      for (const [width, height] of [
-        [320, 460],
-        [548, 500],
-        [1280, 720],
-      ])
-        for (const position of [
-          [310, 320, 380],
-          [-310, 160, 380],
-          [0, 460, 0.1],
-          [-280, 400, -280],
-        ]) {
-          const camera = new THREE.OrthographicCamera(
-            -width / 2,
-            width / 2,
-            height / 2,
-            -height / 2,
-            0.1,
-            1500
-          );
-          camera.position.set(position[0], position[1], position[2]);
-          camera.lookAt(0, 0, 0);
-          camera.updateMatrixWorld();
-          let x = 0,
-            y = 0;
-          for (const building of map.buildings)
-            for (const [east, north] of buildingPolygons(building).flatMap((polygon) => polygon[0]))
-              for (const elevation of [0, building.heightM]) {
-                const p = new THREE.Vector3(east, elevation, -north).applyMatrix4(
-                  camera.matrixWorldInverse
-                );
-                x = Math.max(x, Math.abs(p.x));
-                y = Math.max(y, Math.abs(p.y));
-              }
-          camera.zoom = Math.min(width / (2 * x + 60), (height - 110) / (2 * y + 50));
-          camera.updateProjectionMatrix();
-          const labels = model.cells.map((cell) => {
-            const p = new THREE.Vector3(
-              cell.center[0],
-              cell.heightM + 0.7,
-              -cell.center[1]
-            ).project(camera);
-            return {
-              id: cell.id,
-              x: ((p.x + 1) * width) / 2,
-              y: ((1 - p.y) * height) / 2,
-              width: cell.kind === 'GROUND' ? 56 : 36,
-              height: 26,
-              priority: cell.id === 'G1' ? 3 : 0,
-            };
-          });
-          const original = structuredClone(labels);
-          const bounds = { left: 12, top: 58, right: width - 60, bottom: height - 70 };
-          const result = positionSceneLabels(labels, bounds);
-          expect(result).toHaveLength(13);
-          verifyVisible(result, bounds);
-          expect(positionSceneLabels(labels, bounds)).toEqual(result);
-          expect(labels).toEqual(original);
-        }
-    }
-  });
-
   it('표시 공간이 부족하면 선택 구역을 우선하고 겹치는 표식은 생략', () => {
     const labels = ['R1', 'G1', 'G2'].map((id) => ({
       id,

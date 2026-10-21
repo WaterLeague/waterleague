@@ -293,3 +293,11 @@ RFC 9457 `application/problem+json`: type, title, status, detail, instance, code
 
 
 이용조 초기 저류 비교: 회원 `/historical`의 기존 `sensitivityCellId`로 이용조를 선택하면 서버가 `SELECTED_CISTERN_7_DAY_STORAGE_V3`를 동결한다. `initializationSensitivity` schemaVersion 3은 자연배수/문헌 수요 운전별 0/100% 초기 저류 4조건, 요청과 대조한 원 엔진 시드 저류, 동일 선행/평가 기간, 원 지표·탱크 수지·수요 공급·조건별 성공/실패와 운전별 차이를 제공한다. 임의 초기값·운전 ID·엔진 입력은 외부 요청으로 받지 않는다. 기존 일반 결과·비용·순위는 기본 선행 조건을 유지하며 게스트 결과 허용 목록에 이 비교를 추가하지 않는다. 재현 묶음 sensitivity 폴더에 4조건 입력/출력·상태·정책·코드를 보존한다. 기존 schema 1/2 자료는 그대로 읽는다.
+
+## 대회와 관리자 결과 · 2026-10-21
+
+`GET /competitions`는 20건 페이지, `/catalog`는 현재 구·시설·사건 목록, `/{id}`는 고정 개최 조건이다. `POST /competitions`는 승인 조직 회원/MFA와 소속 조직을 검증하며 요청 UUID로 멱등 처리한다. 공개 즉시 규칙·점수 정책 해시를 동결한다. `/{id}/join`은 본인 참가와 규칙 동의, `/{id}/submissions`는 본인 전체 사건 계산 ID와 대회 규칙 해시를 받는다. `/{id}/candidates`는 조건에 맞는 본인 제출만 제공한다. 대회당 참가 1,000명, 조직별 진행 대회 20개, 상금 합계 10억 원을 상한으로 검사한다.
+
+실시간 결과는 참가·개최 후 설치한 허용 시설의 원 분별 누적 체적을 대회 종료 분에서 절단하고 주간 결과 게시와 같은 DB 트랜잭션에 저장한다. 주간 초기화·물리 계산·예산 원장은 변경하지 않는다. `/{id}/results?page=`는 참가자·주최 조직·관리자 전용이며 같은 계산 조건별 100명 페이지·공동 순위·계산 지연 상태를 제공한다. 기관 승인 취소는 신규 참가·제출을 차단한다. 개인정보·연구 원본 열람 동의를 대회 참가로 대체하지 않는다.
+
+관리자 `/admin/results/seasons`, `/admin/results/weekly?week=YYYY-MM-DD&page=`, `/admin/results/historical/{eventId}?page=`는 전체 시즌·사건의 순위와 주간 설치 시각을 조회한다. 관리자 권한은 서버와 세션 MFA에서 검증하며 일반 회원은 같은 주소로 조회할 수 없다.

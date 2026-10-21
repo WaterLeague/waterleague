@@ -1779,7 +1779,7 @@ a:focus-visible {
     margin: 0;
     gap: 4px;
   }
-  .game-shell .topbar nav button {
+  .game-shell .topbar nav :is(button, a) {
     padding: 10px;
     font-size: 11px;
   }

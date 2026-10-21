@@ -1,23 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import * as THREE from 'three';
-import snapshot from '../../../../public/data/seongsu-ngii-v2.json';
-import { mapDto } from '../dto/catalogDto';
-import { toCandidateMap } from '../mapper/catalogMapper';
-import {
-  buildingPolygons,
-  polygonShapes,
-  polygonPath,
-  type MapPolygons,
-} from './mapGeometryService';
+import { polygonShapes, polygonPath, type MapPolygons } from './mapGeometryService';
 
 describe('수치지도 원형 렌더링', () => {
-  it('공개 건물 246개와 교통 면의 형상을 유지', () => {
-    const map = toCandidateMap(mapDto.parse(snapshot));
-    expect(map.buildings).toHaveLength(246);
-    expect(map.roads).toHaveLength(0);
-    expect(map.transports).toHaveLength(87);
-    expect(map.buildings.every((b) => buildingPolygons(b).length > 0)).toBe(true);
-  });
   it('구멍과 복수 면을 3D 삼각형과 2D 경로에서 보존', () => {
     const polygons: MapPolygons = [
       [

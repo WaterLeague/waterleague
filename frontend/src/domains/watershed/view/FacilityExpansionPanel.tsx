@@ -94,6 +94,7 @@ export function FacilityExpansionPanel({
   selectedMapFacility = '',
   budget,
   onConnectedDesign,
+  allowedTypes,
 }: {
   account: Account | null;
   open: boolean;
@@ -103,6 +104,7 @@ export function FacilityExpansionPanel({
   onLogin: () => void;
   budget?: Budget | null;
   onConnectedDesign?: () => void;
+  allowedTypes?: FacilityType[];
 }) {
   return (
     <aside
@@ -142,7 +144,7 @@ export function FacilityExpansionPanel({
                   <button
                     key={id}
                     type="button"
-                    disabled={!type}
+                    disabled={!type || (!!allowedTypes && !allowedTypes.includes(type))}
                     aria-pressed={!!type && selectedMapFacility === type}
                     onClick={() => {
                       if (type) onMapFacility(type);
@@ -151,6 +153,9 @@ export function FacilityExpansionPanel({
                     <Icon size={22} />
                     <strong>{name}</strong>
                     <span>{descriptions[id]}</span>
+                    {type && allowedTypes && !allowedTypes.includes(type) && (
+                      <small>대회 사용 불가</small>
+                    )}
                     {!type && (
                       <small>
                         <LockKeyhole size={12} /> 준비 중
