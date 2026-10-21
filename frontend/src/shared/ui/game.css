@@ -1744,9 +1744,6 @@ a:focus-visible {
   .game-shell .topbar {
     padding: 0 20px;
   }
-  .wordmark small {
-    display: none;
-  }
   .full-page {
     padding: 40px 25px;
   }
@@ -1764,12 +1761,6 @@ a:focus-visible {
     flex-wrap: wrap;
     padding: 14px 17px 0;
     gap: 13px;
-  }
-  .game-shell .wordmark {
-    font-size: 12px;
-  }
-  .game-shell .wordmark svg {
-    width: 23px;
   }
   .game-shell .topbar nav {
     order: 3;
@@ -2029,9 +2020,6 @@ a:focus-visible {
   }
   .full-page .scope-note {
     font-size: 12px;
-  }
-  .game-shell .wordmark > span {
-    font-size: 13px;
   }
   .account-name {
     max-width: 120px;

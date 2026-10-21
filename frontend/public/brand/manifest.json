@@ -1,0 +1,37 @@
+{
+  "version": "2026-10-21",
+  "purpose": "사용자 제공 브랜드 이미지와 홈 소개. 지도·관측·계산 자료가 아님.",
+  "assets": [
+    {
+      "file": "kingfisher.png",
+      "source": "USER_PROVIDED",
+      "sha256": "81a95253e2ef0b1071d73d5ee3e0e93fb7f0b07f5ed9ef3ceead8e0ae59dfa9c",
+      "bytes": 1632522
+    },
+    {
+      "file": "otter.png",
+      "source": "USER_PROVIDED",
+      "sha256": "b124a58d2cb0397483b29036a8d9a4c18eacd17144b1f07c53ab4bbb00c2bf1e",
+      "bytes": 132301
+    },
+    {
+      "file": "seoul-hero.png",
+      "source": "USER_PROVIDED",
+      "sha256": "32513f1cd62df94c239da9c50a53de023fcd26c7d4511bce8d3d3cbbbc720211",
+      "bytes": 3202902
+    },
+    {
+      "file": "wordmark.png",
+      "source": "IMAGE_GEN_EDIT",
+      "sha256": "c0f6525938b3a17a95380e08d1e36e3a19a67ecf8fe3277c894be13178cae24a",
+      "bytes": 1159164
+    }
+  ],
+  "wordmark": {
+    "source": "seoul-hero.png",
+    "tool": "built-in image_gen",
+    "prompt": "Create a clean production website wordmark by isolating the supplied image's existing WATER LEAGUE typography. Preserve the exact bold geometric uppercase letter shapes, arrangement WATER on first line and LEAGUE on second line, and line proportions from the image. Recolor ALL letters to solid very dark teal #2d5258 for use on a light website. Put ONLY those solid flat letters on a completely uniform pure white #ffffff background. The letter edges must be sharp and clean. Leave a small equal margin. No scenery, no characters, no icon, no shadows, no outline, no weathering, no speckles, no artifacts, no gradients. The space between letters and the holes inside A and R must be pure white. Exact two-line text: WATER / LEAGUE.",
+    "background": "white",
+    "display": "밝은 UI에서 multiply 합성, 글자만 표시. 두 줄 배치와 글자 형태 유지, 짙은 청록색 적용."
+  }
+}

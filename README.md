@@ -27,7 +27,7 @@ React 19·TypeScript·Vite·R3F/Three.js 프론트, Java 25·Spring Boot API, Po
 
 [프론트 실행](frontend/README.md) · [API 실행](backend/README.md) · [계산 워커](simulation/README.md) · [데이터 관리](data/README.md)
 
-현재 페이지 주소는 `/weekly`, `/disaster`, `/rankings`, `/competitions`, `/data`이며 관리자는 `/admin/members`, `/admin/results`를 사용한다. 재해 사건과 대회 상세도 개별 주소를 갖는다. 직접 접근·새로고침·뒤로 가기 계약은 [화면 문서](docs/08-experience.md#페이지-주소)에 둔다.
+현재 페이지 주소는 소개 홈 `/`, `/weekly`, `/disaster`, `/rankings`, `/competitions`, `/data`이며 관리자는 `/admin/members`, `/admin/results`를 사용한다. 홈에는 제공된 캐릭터·텍스트 로고와 게임/시설의 3D 소개를 둔다. 재해 사건과 대회 상세도 개별 주소를 갖는다. 직접 접근·새로고침·뒤로 가기 계약은 [화면 문서](docs/08-experience.md#페이지-주소)에 둔다.
 
 ## 로컬 실행
 

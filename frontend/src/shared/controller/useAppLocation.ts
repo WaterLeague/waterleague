@@ -16,5 +16,5 @@ export function followLink(event: MouseEvent<HTMLAnchorElement>, path: string) {
   navigate(path);
 }
 export function useAppLocation() {
-  return useSyncExternalStore(subscribe, current, () => '/weekly');
+  return useSyncExternalStore(subscribe, current, () => '/');
 }

@@ -11,10 +11,12 @@ import { useAppLocation, navigate, followLink } from '../../../shared/controller
 import { DataPage } from '../../catalog/view/DataPage';
 import { DisasterMode } from '../../disaster/view/DisasterMode';
 import { CityExplorer } from '../../city/view/CityExplorer';
+import { HomePage } from '../../home/view/HomePage';
 import { useGameInteractions } from '../../../shared/ui/useGameInteractions';
 import './game-viewport.css';
 
 const tabs = {
+  home: '/',
   city: '/weekly',
   missions: '/disaster',
   leaderboard: '/rankings',
@@ -34,13 +36,10 @@ export function GamePage() {
     ([, url]) =>
       path === url ||
       ((url === '/competitions' || url === '/disaster') && path.startsWith(url + '/'))
-  )?.[0] ?? (path === '/' ? 'city' : 'missing')) as Tab | 'missing';
+  )?.[0] ?? 'missing') as Tab | 'missing';
   const setTab = (id: Tab) => navigate(tabs[id]);
   const [cityDistrict, setCityDistrict] = useState('');
   const [auth, setAuth] = useState(false);
-  useEffect(() => {
-    if (path === '/') navigate('/weekly', true);
-  }, [path]);
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, [tab]);
@@ -49,30 +48,23 @@ export function GamePage() {
       <header className="topbar">
         <a
           className="wordmark"
-          href="/weekly"
-          onClick={(e) => followLink(e, '/weekly')}
+          href="/"
+          onClick={(e) => followLink(e, '/')}
           aria-label="WATER LEAGUE 홈"
         >
-          <svg width="31" height="31" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-            <path
-              d="M3 10c5-6 10 6 15 0s8 0 11 0M3 17c5-6 10 6 15 0s8 0 11 0M3 24c5-6 10 6 15 0s8 0 11 0"
-              stroke="currentColor"
-              strokeWidth="3.4"
-            />
-          </svg>
-          <span>
-            WATER LEAGUE<small>시민의 설계, 도시의 변화</small>
-          </span>
+          <img src="/brand/wordmark.png" alt="WATER LEAGUE" width="125" height="52" />
         </a>
         <nav aria-label="주요 화면">
           {(session.account?.role === 'ADMIN'
             ? ([
+                ['home', '홈'],
                 ['admin', '회원 관리'],
                 ['results', '결과 관리'],
                 ['competitions', '대회'],
                 ['data', '데이터'],
               ] as const)
             : ([
+                ['home', '홈'],
                 ['city', '주간 서울 대항전'],
                 ['missions', '재해 모드'],
                 ['leaderboard', '랭킹'],
@@ -129,7 +121,9 @@ export function GamePage() {
           </button>
         </div>
       )}
-      {tab === 'admin' && session.account?.role === 'ADMIN' ? (
+      {tab === 'home' ? (
+        <HomePage />
+      ) : tab === 'admin' && session.account?.role === 'ADMIN' ? (
         <ApprovalPage key={session.account.id} />
       ) : tab === 'results' && session.account?.role === 'ADMIN' ? (
         <ResultsPage key={session.account.id} />
