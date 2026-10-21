@@ -1,11 +1,12 @@
 import { ApiError } from '../../../shared/exception/ApiError';
+import { backendFetch } from '../../../shared/repository/backendFetch';
 import {
   CISTERN_SPECIFICATIONS_HASH,
   cisternSpecificationCatalogDto,
 } from '../dto/cisternSpecificationDto';
 const invalid = () => new ApiError(502, 'INVALID_DATA', '공개 이용조 규격을 확인하지 못했습니다.');
 export async function loadCisternSpecifications(signal: AbortSignal) {
-  const response = await fetch('/api/v1/facilities/cistern-specifications-v1', {
+  const response = await backendFetch('/api/v1/facilities/cistern-specifications-v1', {
     signal,
     credentials: 'same-origin',
   });

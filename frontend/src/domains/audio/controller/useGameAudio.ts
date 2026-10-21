@@ -7,6 +7,7 @@ import type { UrbanTime } from '../../urban/entity/urban';
 import type { FloodField } from '../../urban/service/floodFieldService';
 import type { SharedSite } from '../../installation/entity/installation';
 import { GameAudioEngine } from '../service/gameAudioEngine';
+import { useServerConnected } from '../../../shared/controller/serverConnectionContext';
 
 const preference = 'waterleague.sound.enabled';
 function savedPreference() {
@@ -25,6 +26,8 @@ export function useGameAudio(settings: {
   rain: number;
   flat: boolean;
 }) {
+  const connected = useServerConnected();
+  const connectedRef = useRef(connected);
   const [enabled, setEnabled] = useState(savedPreference);
   const [unavailable, setUnavailable] = useState(false);
   const engine = useRef<GameAudioEngine | null>(null);
@@ -36,7 +39,7 @@ export function useGameAudio(settings: {
   });
 
   const activate = useCallback(() => {
-    if (!enabledRef.current || document.hidden) return;
+    if (!enabledRef.current || document.hidden || !connectedRef.current) return;
     try {
       if (!context.current) {
         const next = new AudioContext({ latencyHint: 'interactive' });
@@ -48,7 +51,7 @@ export function useGameAudio(settings: {
               return;
             }
             engine.current = audio;
-            audio.mute(!enabledRef.current || document.hidden);
+            audio.mute(!enabledRef.current || document.hidden || !connectedRef.current);
           })
           .catch(() => {
             if (context.current === next) {
@@ -63,6 +66,16 @@ export function useGameAudio(settings: {
       setUnavailable(true);
     }
   }, []);
+
+  useEffect(() => {
+    connectedRef.current = connected;
+    if (connected) {
+      if (navigator.userActivation?.hasBeenActive) activate();
+    } else {
+      engine.current?.mute(true);
+      void context.current?.suspend().catch(() => {});
+    }
+  }, [connected, activate]);
 
   useEffect(() => {
     let suspension: ReturnType<typeof setTimeout> | undefined;
@@ -85,7 +98,13 @@ export function useGameAudio(settings: {
     if (navigator.userActivation?.hasBeenActive) activate();
     const update = () => {
       const audio = engine.current;
-      if (!audio?.active || document.hidden || context.current?.state !== 'running') return;
+      if (
+        !audio?.active ||
+        document.hidden ||
+        !connectedRef.current ||
+        context.current?.state !== 'running'
+      )
+        return;
       const { camera, clock, terrain, flood, rain, flat } = current.current;
       const view = camera.current;
       const height = terrainHeight(terrain, view.center);
@@ -152,7 +171,13 @@ export function useGameAudio(settings: {
     if (next) activate();
   };
   const installed = useCallback((site: Pick<SharedSite, 'center' | 'heightM'>) => {
-    if (!enabledRef.current || document.hidden || context.current?.state !== 'running') return;
+    if (
+      !enabledRef.current ||
+      document.hidden ||
+      !connectedRef.current ||
+      context.current?.state !== 'running'
+    )
+      return;
     engine.current?.installed([
       site.center[0],
       terrainHeight(current.current.terrain, site.center) + site.heightM,

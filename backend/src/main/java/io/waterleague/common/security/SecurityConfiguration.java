@@ -40,6 +40,7 @@ public class SecurityConfiguration {
                     .hasRole("MEMBER")
                     .requestMatchers(
                         HttpMethod.GET,
+                        "/api/v1/health",
                         "/api/v1/competitions",
                         "/api/v1/competitions/catalog",
                         "/api/v1/competitions/{id}",

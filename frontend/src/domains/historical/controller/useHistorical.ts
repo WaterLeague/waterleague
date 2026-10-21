@@ -28,6 +28,7 @@ import {
 } from '../service/temporalService';
 import { useHistoricalSubmission } from './useHistoricalSubmission';
 import { useHistoricalDesign } from './useHistoricalDesign';
+import { useServerConnected } from '../../../shared/controller/serverConnectionContext';
 
 export function useHistorical(
   enabled: boolean,
@@ -36,6 +37,7 @@ export function useHistorical(
   budget: Budget | null,
   initialEventId: string
 ) {
+  const connected = useServerConnected();
   const [catalog, setCatalog] = useState<DisasterCatalog | null>(null);
   const eventId = initialEventId;
   const submission = useHistoricalSubmission(enabled, account?.id, eventId);
@@ -141,13 +143,17 @@ export function useHistorical(
   }, [enabled, account?.id, event, design.restoreId]);
   useEffect(() => {
     if (!playing || !frameCount || !enabled) return;
+    if (!connected) {
+      setPlaying(false);
+      return;
+    }
     const beganAt = performance.now();
     const beganSecond = clockAnchor.current;
     const timer = setInterval(() => {
       setElapsedSeconds(playbackSecond(beganSecond, performance.now() - beganAt, speed, duration));
     }, 250);
     return () => clearInterval(timer);
-  }, [enabled, playing, frameCount, speed, duration, seekRevision, eventId]);
+  }, [enabled, playing, frameCount, speed, duration, seekRevision, eventId, connected]);
   useEffect(() => {
     if (duration && elapsedSeconds >= duration) setPlaying(false);
   }, [elapsedSeconds, duration]);

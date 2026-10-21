@@ -1,4 +1,5 @@
 import { ApiError } from '../exception/ApiError';
+import { backendFetch } from './backendFetch';
 type Csrf = { token: string; headerName: string };
 let csrf: Csrf | null = null;
 let pendingCsrf: Promise<Csrf> | null = null;
@@ -23,7 +24,10 @@ export function refreshCsrf(): Promise<Csrf> {
   if (pendingCsrf) return pendingCsrf;
   const epoch = sessionEpoch;
   const request = (async () => {
-    const r = await fetch('/api/v1/auth/csrf', { credentials: 'same-origin', cache: 'no-store' });
+    const r = await backendFetch('/api/v1/auth/csrf', {
+      credentials: 'same-origin',
+      cache: 'no-store',
+    });
     if (!r.ok) throw new ApiError(r.status, 'CSRF_UNAVAILABLE', '서버 연결을 확인해 주세요.');
     const token = (await r.json()) as Csrf;
     if (epoch !== sessionEpoch) throw sessionChanged();
@@ -52,7 +56,7 @@ export async function api<T>(
     if (epoch !== sessionEpoch) throw sessionChanged();
     headers[token.headerName] = token.token;
   }
-  const response = await fetch('/api/v1' + path, {
+  const response = await backendFetch('/api/v1' + path, {
     method,
     headers,
     credentials: 'same-origin',

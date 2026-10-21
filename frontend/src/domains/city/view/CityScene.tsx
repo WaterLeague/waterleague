@@ -90,6 +90,7 @@ import type { ParkingData } from '../../urban/entity/parking';
 import { useParkingLots } from '../../urban/controller/useParkingLots';
 import { emptyFloodStats } from '../../urban/service/floodMovementService';
 import { CityOverview } from './CityOverview';
+import { useServerConnected } from '../../../shared/controller/serverConnectionContext';
 import { TopographyLayer } from '../../topography/view/TopographyLayer';
 import { TopographyLabels } from '../../topography/view/TopographyLabels';
 import type { TopographyView } from '../../topography/entity/topography';
@@ -552,6 +553,7 @@ const CityScene = memo(function CityScene({
     sites,
     installationBySite
   );
+  const connected = useServerConnected();
   const reactions = useRef({ traffic: emptyFloodStats, parking: emptyFloodStats });
   const reporters = useMemo(
     () =>
@@ -595,7 +597,7 @@ const CityScene = memo(function CityScene({
       }}
       shadows
       events={mapEvents}
-      frameloop="demand"
+      frameloop={connected ? 'demand' : 'never'}
       dpr={[1, 1.5]}
       camera={{ position: [0, 30000, 22000], near: 5, far: 250000, fov: 45 }}
       gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}

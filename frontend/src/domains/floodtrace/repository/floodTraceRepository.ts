@@ -1,12 +1,13 @@
 import { traceCatalogDto, traceTileDto } from '../dto/floodTraceDto';
 import type { TraceCatalog, TraceTile, TraceTileIndex } from '../entity/floodTrace';
 import { FloodTraceError } from '../exception/FloodTraceError';
+import { backendFetch } from '../../../shared/repository/backendFetch';
 
 const base = '/api/v1/flood-traces/seoul-flood-traces-20261018-v1';
 let catalog: Promise<TraceCatalog> | undefined;
 const tiles = new Map<string, Promise<TraceTile>>();
 export function loadTraceCatalog() {
-  catalog ??= fetch(base + '/catalog', { cache: 'force-cache', credentials: 'omit' })
+  catalog ??= backendFetch(base + '/catalog', { cache: 'force-cache', credentials: 'omit' })
     .then(async (r) => {
       if (!r.ok) throw new FloodTraceError();
       return traceCatalogDto.parse(await r.json()).catalog;
@@ -21,10 +22,13 @@ export function loadTraceTile(eventId: string, tile: TraceTileIndex): Promise<Tr
   const key = `${eventId}/${tile.id}`;
   const cached = tiles.get(key);
   if (cached) return cached;
-  const pending = fetch(`${base}/${encodeURIComponent(eventId)}/${encodeURIComponent(tile.id)}`, {
-    cache: 'force-cache',
-    credentials: 'omit',
-  })
+  const pending = backendFetch(
+    `${base}/${encodeURIComponent(eventId)}/${encodeURIComponent(tile.id)}`,
+    {
+      cache: 'force-cache',
+      credentials: 'omit',
+    }
+  )
     .then(async (r) => {
       if (!r.ok) throw new FloodTraceError();
       const bytes = await r.arrayBuffer();
