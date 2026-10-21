@@ -15,6 +15,7 @@ export const bridgeProfileDto = z
     span: z.tuple([z.number().finite().nonnegative(), z.number().finite().positive()]),
     polygons: z.array(z.array(z.array(point).min(4).max(100000)).min(1).max(1000)).max(10000),
     steps: z.boolean().optional(),
+    islandConnection: z.boolean().optional(),
     rail: z.boolean().optional(),
     lanes: z.number().int().min(0).max(32).optional(),
     displayWidthM: z.number().finite().positive().max(1000),
@@ -42,6 +43,36 @@ export const nativeBridgeGroupDto = z.object({
   polygons,
   outlinePolygons: polygons.optional(),
   groundCutPolygons: polygons.optional(),
+  attachmentPolygons: polygons.optional(),
+  sourceSurfaceCuts: z
+    .array(
+      z.object({ sourceFids: z.array(z.number().int().positive()).min(1).max(10000), polygons })
+    )
+    .max(10000)
+    .optional(),
+  surfaceCuts: z
+    .array(
+      z.object({
+        roles: z
+          .array(
+            z.enum([
+              'ROAD_AREA',
+              'INTERSECTION_AREA',
+              'INTERCHANGE_AREA',
+              'CROSSWALK_AREA',
+              'TRAFFIC_SAFETY_AREA',
+              'SIDEWALK_AREA',
+              'RAILWAY_AREA',
+            ])
+          )
+          .min(1)
+          .max(7),
+        polygons,
+      })
+    )
+    .max(3)
+    .optional(),
+  preservedUnderpassPolygons: polygons.optional(),
   names: z.array(z.string().max(200)).max(1).optional(),
   kinds: z.array(z.string().max(50)).max(2).optional(),
   profiles: z.array(bridgeProfileDto).max(10000),
@@ -113,6 +144,7 @@ export type ProfileConnection = {
   gapM: number;
   deckPolygons: z.infer<typeof polygons>;
   deckLiftM: number;
+  endpointTarget?: NativeBridgeProfile & { point: [number, number] };
 };
 export type NativeBridgeProfile = z.infer<typeof bridgeProfileDto> & {
   deckPolygons: NativeBridgeGroup['polygons'];

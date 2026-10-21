@@ -1,6 +1,9 @@
+import { createFloodField } from '../src/domains/urban/service/floodFieldService';
+import { StreetLife } from '../src/domains/urban/view/StreetLife';
 import { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Canvas } from '@react-three/fiber';
+import { Canvas, useThree } from '@react-three/fiber';
+import { Mesh, Raycaster, Vector2 } from 'three';
 import { OrbitControls } from '@react-three/drei';
 import { loadCity } from '../src/domains/city/repository/cityRepository';
 import { useCityTiles } from '../src/domains/city/controller/useCity';
@@ -21,6 +24,20 @@ import type { UrbanTime } from '../src/domains/urban/entity/urban';
 if (!import.meta.env.DEV || !['localhost', '127.0.0.1', '[::1]'].includes(location.hostname))
   throw new Error('로컬 검증 전용');
 const places = [
+  { name: '양화대교 남단 하부 횡단부', center: [-7035, -3320] as [number, number], distance: 65 },
+  { name: '양화대교 남단 진입부', center: [-6990, -3240] as [number, number], distance: 160 },
+  { name: '양화대교 북단 진입부', center: [-6140, -2330] as [number, number], distance: 210 },
+  {
+    name: '강남대로·한남대교 접속부',
+    center: [2874.296, -4283.443] as [number, number],
+    distance: 180,
+  },
+  {
+    name: '강남대로 강남역 교차로',
+    center: [4314.38, -7713.15] as [number, number],
+    distance: 240,
+  },
+  { name: '남산3호터널 입구', center: [840, -2510] as [number, number], distance: 180 },
   { name: '가양대교 남단·수면', center: [-10630, -220] as [number, number], distance: 420 },
   { name: '성산대교 남단·수면', center: [-7880, -2050] as [number, number], distance: 420 },
   { name: '노들섬 연결 전체', center: [-1760, -5550] as [number, number], distance: 650 },
@@ -28,15 +45,59 @@ const places = [
   { name: '잠수교 하층', center: [1570, -5860] as [number, number], distance: 240 },
   { name: '청담대교 하층 전철', center: [7530, -4650] as [number, number], distance: 180 },
   { name: '도심 도로 차선', center: [-1590, -4920] as [number, number], distance: 250 },
+  { name: '가양대교 육지 접속부', center: [-10820, -540] as [number, number], distance: 220 },
+  { name: '노들섬 중앙 연결부', center: [-1760, -5530] as [number, number], distance: 280 },
+  { name: '선유도·양화대교 통과부', center: [-6630, -2750] as [number, number], distance: 400 },
+  { name: '밤섬·서강대교 통과부', center: [-4790, -3580] as [number, number], distance: 400 },
 ];
+function GeometryProbe({ onPoint }: { onPoint: (text: string) => void }) {
+  const { gl, camera, scene } = useThree();
+  useEffect(() => {
+    const pick = (event: PointerEvent) => {
+      if (event.button !== 0) return;
+      const rect = gl.domElement.getBoundingClientRect(),
+        ray = new Raycaster();
+      ray.setFromCamera(
+        new Vector2(
+          ((event.clientX - rect.left) / rect.width) * 2 - 1,
+          (-(event.clientY - rect.top) / rect.height) * 2 + 1
+        ),
+        camera
+      );
+      const hits: { point: { x: number; y: number; z: number }; distance: number }[] = [];
+      scene.traverse((node) => {
+        if (
+          !(node instanceof Mesh) ||
+          'isInstancedMesh' in node ||
+          !node.visible ||
+          Array.isArray(node.material) ||
+          !node.material.colorWrite
+        )
+          return;
+        const mesh = new Mesh(node.geometry, node.material);
+        mesh.matrixWorld.copy(node.matrixWorld);
+        mesh.raycast(ray, hits as never);
+      });
+      hits.sort((a, b) => a.distance - b.distance);
+      if (hits[0]) {
+        const p = hits[0].point;
+        onPoint(`표시 면 @ ${p.x.toFixed(3)}, ${(-p.z).toFixed(3)} · 높이 ${p.y.toFixed(3)}`);
+      }
+    };
+    gl.domElement.addEventListener('pointerup', pick);
+    return () => gl.domElement.removeEventListener('pointerup', pick);
+  }, [gl, camera, scene, onPoint]);
+  return null;
+}
 function Map({ city, terrain }: { city: City; terrain: Terrain }) {
+  const [probe, setProbe] = useState('');
   const [selected, setSelected] = useState(0),
     [playing, setPlaying] = useState(true);
   const camera = places[selected],
     center = camera.center,
     distance = camera.distance;
   const { tiles, error: tileError, busy } = useCityTiles(city, camera);
-  const { roads, error } = useUrbanData(tiles, center, distance);
+  const { roads, railTraffic, error } = useUrbanData(tiles, center, distance);
   const topography = useTopography(center, distance, terrain, false);
   const clock = useRef({
     historical: false,
@@ -73,7 +134,7 @@ function Map({ city, terrain }: { city: City; terrain: Terrain }) {
           ))}
         </select>
         <button onClick={() => setPlaying(!playing)}>
-          {playing ? '열차 일시정지' : '열차 재생'}
+          {playing ? '이동체 일시정지' : '이동체 재생'}
         </button>
         <p style={{ marginBottom: 0, fontSize: 12 }}>
           원본 선형 · 높이·차선 간격·열차 운행은 표시 가정
@@ -84,6 +145,11 @@ function Map({ city, terrain }: { city: City; terrain: Terrain }) {
             topography.error ||
             `${busy || topography.busy ? '불러오는 중' : '준비 완료'} · 도로 ${roads.length} · 철도 ${roads.filter((r) => r.nativeRailKind).length} · 원 타일 ${topography.tiles.length}`}
         </output>
+        {probe && (
+          <output style={{ display: 'block', maxWidth: 420, overflowWrap: 'anywhere' }}>
+            {probe}
+          </output>
+        )}
       </header>
       <Canvas
         key={selected}
@@ -101,13 +167,32 @@ function Map({ city, terrain }: { city: City; terrain: Terrain }) {
         <color attach="background" args={['#d8e1df']} />
         <hemisphereLight args={['#fffbe9', '#7e8f81', 2.2]} />
         <directionalLight position={[100, 500, 200]} intensity={2} />
+        <GeometryProbe onPoint={setProbe} />
         <WaterScene animate={playing} clock={clock}>
           <TerrainSurface terrain={terrain} ownDistrictId={null} selected="" />
-          <StreetLayer roads={roads} terrain={terrain} detail center={center} />
+          <StreetLayer
+            roads={roads}
+            terrain={terrain}
+            detail
+            center={center}
+            onStreet={() => undefined}
+          />
           <TopographyLayer value={topography} distance={distance} />
           <RiverLayer city={city} terrain={terrain} weather={calmWater} />
-          <RailLife
+          <StreetLife
             roads={roads}
+            terrain={terrain}
+            center={center}
+            distance={distance}
+            clock={clock}
+            population={null}
+            livePlaces={[]}
+            flood={createFloodField([], [], false)}
+            city={city}
+            animate={playing}
+          />
+          <RailLife
+            roads={railTraffic}
             terrain={terrain}
             center={center}
             distance={distance}
@@ -135,4 +220,6 @@ function App() {
   }, []);
   return data ? <Map {...data} /> : <p>원본 지도 불러오는 중</p>;
 }
-createRoot(document.getElementById('root')!).render(<App />);
+const root = createRoot(document.getElementById('root')!);
+root.render(<App />);
+if (import.meta.hot) import.meta.hot.dispose(() => root.unmount());

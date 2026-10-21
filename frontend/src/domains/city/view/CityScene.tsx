@@ -443,6 +443,7 @@ const CityScene = memo(function CityScene({
   audio,
   urbanClock,
   streets,
+  railTraffic,
   topography,
   parking,
   population,
@@ -472,6 +473,7 @@ const CityScene = memo(function CityScene({
   ownDistrictId,
   sites,
   groundCandidates,
+  showCandidates = false,
   occupiedSites,
   installations,
   installationBySite,
@@ -497,6 +499,7 @@ const CityScene = memo(function CityScene({
   audio: AudioHandle;
   urbanClock: UrbanTime;
   streets: Street[];
+  railTraffic: Street[];
   topography: TopographyView;
   parking: ParkingData | null;
   population: Population | null;
@@ -526,6 +529,7 @@ const CityScene = memo(function CityScene({
   onUnavailable: () => void;
   ownDistrictId: string | null;
   groundCandidates: GroundCandidate[];
+  showCandidates?: boolean;
   occupiedSites: ReadonlySet<string>;
   sites: SharedSite[];
   installations: SharedInstallation[];
@@ -691,7 +695,7 @@ const CityScene = memo(function CityScene({
               animate={animateRain}
             />
             <RailLife
-              roads={streets}
+              roads={railTraffic}
               terrain={terrain}
               center={rainCamera.center}
               distance={rainCamera.distance}
@@ -710,6 +714,7 @@ const CityScene = memo(function CityScene({
             />
             <GroundCandidates
               rows={groundCandidates}
+              showColors={showCandidates}
               occupiedSites={occupiedSites}
               terrain={terrain}
               type={facilityType}
@@ -732,6 +737,7 @@ const CityScene = memo(function CityScene({
               publicBuildings={publicBuildings}
               facilityType={facilityType}
               eligibleRoofs={eligibleRoofs}
+              showCandidates={showCandidates}
               occupiedRoofs={occupiedRoofs}
               buildings={city.overviewBuildings}
               ownDistrictId={ownDistrictId}
@@ -744,6 +750,7 @@ const CityScene = memo(function CityScene({
                 facilityType={facilityType}
                 key={t.id}
                 eligibleRoofs={eligibleRoofs}
+                showCandidates={showCandidates}
                 occupiedRoofs={occupiedRoofs}
                 buildings={t.buildings}
                 onBuilding={onBuilding}
@@ -992,7 +999,9 @@ function DistrictBuildings({
   eligibleRoofs,
   occupiedRoofs,
   facilityType,
+  showCandidates = false,
 }: {
+  showCandidates?: boolean;
   buildings: CityBuilding[];
   publicBuildings: ReadonlySet<string>;
   ownDistrictId: string | null;
@@ -1026,16 +1035,24 @@ function DistrictBuildings({
           key={key}
           buildings={values.buildings}
           available={
+            showCandidates &&
             values.eligible &&
             (!facilityType || facilityType === 'GREEN_ROOF' || facilityType === 'RAINWATER_CISTERN')
           }
-          opacity={buildingOpacity(
-            values.eligible &&
-              (!facilityType ||
-                facilityType === 'GREEN_ROOF' ||
-                facilityType === 'RAINWATER_CISTERN'),
-            values.other
-          )}
+          opacity={
+            showCandidates
+              ? buildingOpacity(
+                  showCandidates &&
+                    values.eligible &&
+                    (!facilityType ||
+                      facilityType === 'GREEN_ROOF' ||
+                      facilityType === 'RAINWATER_CISTERN'),
+                  values.other
+                )
+              : values.other
+                ? otherDistrictOpacity
+                : 1
+          }
           onSelect={selectBuilding}
         />
       ))}

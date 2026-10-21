@@ -2,6 +2,7 @@ import { afterEach, expect, test, vi } from 'vitest';
 import { BufferAttribute, BufferGeometry } from 'three';
 import type { Street } from '../entity/urban';
 import type { Terrain } from '../../terrain/entity/terrain';
+import type { NativeBridgeProfile } from '../dto/nativeBridgeDto';
 import { partBounds } from '../../../shared/repository/meshBounds';
 import { streetGeometry } from './streetGeometryService';
 import { StreetMeshBuilder } from './streetMeshService';
@@ -24,6 +25,56 @@ const road = (id: string, x = 0): Street => ({
 });
 const signal = () => new AbortController().signal;
 afterEach(() => vi.restoreAllMocks());
+
+test('순환 접속 그래프의 워커 복제·메시 캐시 재사용과 대상 높이 변경 반영', async () => {
+  const polygons: [number, number][][][] = [
+    [
+      [
+        [10, -5],
+        [20, -5],
+        [20, 5],
+        [10, 5],
+        [10, -5],
+      ],
+    ],
+  ];
+  const profile: NativeBridgeProfile = {
+    roadIds: ['road'],
+    coordinates: [
+      [0, 0],
+      [30, 0],
+    ],
+    span: [10, 20],
+    polygons,
+    displayWidthM: 10,
+    deckPolygons: polygons,
+    deckLiftM: 8,
+  };
+  const target = { ...profile, point: [0, 0] as [number, number] };
+  profile.connections = [
+    { side: 0, gapM: 10, deckPolygons: polygons, deckLiftM: 8, endpointTarget: target },
+  ];
+  target.connections = profile.connections;
+  const roads = [
+    {
+      ...road('cyclic'),
+      nativeSourceRole: 'BRIDGE_APPROACH',
+      nativePolygons: polygons,
+      nativeBridgeProfiles: [profile],
+    },
+  ];
+  const builder = new StreetMeshBuilder();
+  const first = await builder.build(structuredClone(roads), null, true, [], undefined, signal());
+  expect(first.positions.length).toBeGreaterThan(0);
+  expect(first.positions.every(Number.isFinite)).toBe(true);
+  expect(await builder.build(structuredClone(roads), null, true, [], undefined, signal())).toEqual(
+    first
+  );
+  expect(builder.statistics).toMatchObject({ generated: 1, reused: 1 });
+  target.deckLiftM = 12;
+  await builder.build(structuredClone(roads), null, true, [], undefined, signal());
+  expect(builder.statistics.generated).toBe(2);
+});
 
 function reference(
   roads: Street[],

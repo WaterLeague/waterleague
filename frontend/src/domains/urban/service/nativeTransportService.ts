@@ -1,7 +1,7 @@
 import type { NativeTransport } from '../dto/nativeTransportDto';
 import type { NativeBridgeGroup } from '../dto/nativeBridgeDto';
 import type { Street } from '../entity/urban';
-import { bridgeTransportBindings, waterDeckBindings } from './nativeBridgeTransportService';
+import { bridgeTransportBindings } from './nativeBridgeTransportService';
 export function nativeRailStreets(
   data: NativeTransport | undefined,
   groups: NativeBridgeGroup[] | undefined
@@ -20,9 +20,9 @@ export function nativeRailStreets(
     sidewalk: '',
     bridge: false,
     coordinates: route.coordinates,
-    nativeWaterDecks: waterDeckBindings(groups ?? [], route.coordinates),
     nativeGroundCutPolygons: groups?.[0]?.displayWaterPolygons,
     nativeRailKind: route.kind,
+    nativeRailName: route.name,
     nativeSourceRole: 'RAIL_DISPLAY_PATH',
     nativeBridgeProfiles: [...new Set(route.sourceFids.flatMap((fid) => bindings.get(fid) ?? []))],
   }));

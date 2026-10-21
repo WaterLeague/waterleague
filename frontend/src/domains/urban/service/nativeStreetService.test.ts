@@ -4,6 +4,7 @@ import { nativeStreets } from './nativeStreetService';
 import { streetActorRoutes, streetPath } from './streetLifeService';
 import { streetGeometry } from './streetGeometryService';
 import { nativeUrbanTileDto } from '../dto/nativeUrbanDto';
+import type { NativeBridgeGroup } from '../dto/nativeBridgeDto';
 const id = (layer: string) => `ngii:${layer}:${'a'.repeat(64)}`;
 const ring: [number, number][] = [
   [0, 0],
@@ -73,7 +74,7 @@ test('원 보도 내부 경로와 공개 양방향 도로의 사람·차량 경�
     },
   };
   const before = structuredClone(tile),
-    roads = nativeStreets([tile]);
+    roads = nativeStreets([tile], [], new Map([[id('N1L_A0020000'), 2]]));
   const routes = roads.flatMap((road) => streetActorRoutes(streetPath(road)));
   expect(routes.map((route) => route.walking).sort()).toEqual([false, true]);
   expect(routes.find((route) => route.walking)?.path.road.coordinates).toEqual([
@@ -135,4 +136,63 @@ test('주차 칸 제공·지원하지 않는 보행 원형 대응과 중복 식�
   expect(nativeUrbanTileDto.safeParse(tile).success).toBe(true);
   tile.walkPaths.push({ ...tile.walkPaths[0] });
   expect(nativeUrbanTileDto.safeParse(tile).success).toBe(false);
+});
+test('겹치는 교량 프로필에서도 차선과 차량은 원 도로별 차로 수를 한 번만 사용', () => {
+  const source = id('N1L_A0020000');
+  const coordinates: [number, number][] = [
+    [0, 5],
+    [60, 5],
+  ];
+  const common = {
+    districtId: '11200',
+    center: [30, 5] as [number, number],
+    geometryEligibility: 'GEOMETRY_ONLY' as const,
+    sourceAreaM2: null,
+    sourceLengthM: 60,
+    candidateId: null,
+    allowedMask: 0,
+  };
+  const tile: CityTile = {
+    schemaVersion: 2,
+    id: '0_0',
+    buildings: [],
+    nativeFeatures: [
+      {
+        ...common,
+        id: source,
+        role: 'ROAD_CENTERLINE',
+        trafficDirection: 'BIDIRECTIONAL',
+        geometry: { type: 'LineString', coordinates },
+      },
+      {
+        ...common,
+        id: id('N1A_A0010000'),
+        role: 'ROAD_AREA',
+        geometry: { type: 'Polygon', coordinates: [ring] },
+      },
+    ],
+  };
+  const bridge: NativeBridgeGroup = {
+    id: id('N1A_A0070000'),
+    role: 'BRIDGE_AREA',
+    sourceIds: [id('N1A_A0070000')],
+    sourceFids: [1],
+    bounds: [0, 0, 60, 10],
+    polygons: [[ring]],
+    profiles: [4, 6].map((lanes) => ({
+      roadIds: [source + ':part:0'],
+      coordinates,
+      span: [10, 50],
+      polygons: [[ring]],
+      displayWidthM: 10,
+      lanes,
+    })),
+  };
+  const roads = nativeStreets([tile], [bridge], new Map([[source, 2]]), new Map([[source, 10]]));
+  const painted = roads.filter((road) => road.nativeLanePaths?.length);
+  expect(painted).toHaveLength(1);
+  expect(painted[0].nativeLanePaths?.map((path) => path.lanes)).toEqual([2]);
+  expect(painted[0].nativeLaneClipPolygons).toEqual([[ring]]);
+  expect(painted[0].motor).toBe(true);
+  expect(painted[0].lanes).toBe(2);
 });

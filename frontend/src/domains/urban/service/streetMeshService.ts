@@ -14,6 +14,18 @@ export type StreetBuffers = {
 };
 type Part = Omit<StreetBuffers, 'ends' | 'sphere'>;
 const yieldTask = () => new Promise<void>((resolve) => setTimeout(resolve, 0));
+function shapeKey(value: unknown) {
+  const references = new WeakMap<object, number>();
+  let sequence = 0;
+  // 순환 진입로와 공유 상판 참조를 보존하면서 같은 연결 그래프에 같은 캐시 키를 부여한다.
+  return JSON.stringify(value, (_key, item: unknown) => {
+    if (!item || typeof item !== 'object') return item;
+    const reference = references.get(item);
+    if (reference !== undefined) return { $geometryReference: reference };
+    references.set(item, sequence++);
+    return item;
+  });
+}
 
 export class StreetMeshBuilder {
   private readonly cache = new Map<string, { part: Part; bytes: number }>();
@@ -58,7 +70,7 @@ export class StreetMeshBuilder {
         !road.nativePolygons &&
         !road.nativeRailPaths &&
         (!road.nativeLanePaths || road.nativeLaneClipPolygons);
-      const key = JSON.stringify([
+      const key = shapeKey([
         {
           ...shape,
           ...(road.nativeLanePaths?.length && !road.nativeLaneClipPolygons

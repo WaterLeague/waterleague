@@ -19,11 +19,21 @@ def verify(report):
  assert spatial.file_sha256(source.ROOT/'scripts/prepare_native_transport.py')==index['generatorSha256']
  body=json.loads(raw);maximum=0
  with closing(sqlite3.connect('file:'+str(BASE/'objects-v1/objects.sqlite')+'?mode=ro',uri=True)) as objects:
-  for oid,count in body['lanes']:
+  for oid,count,width in body['lanes']:
    rows=objects.execute('SELECT a.properties,o.attribute_status FROM attribute_variants a JOIN objects o ON o.object_id=a.object_id WHERE a.object_id=?',(oid,)).fetchall()
    assert len(rows)==1 and rows[0][1]=='CONSISTENT' and int(json.loads(rows[0][0])['차로수'])==count
+   if width is not None: assert float(json.loads(rows[0][0])['도로폭'])==width
  with closing(sqlite3.connect('file:'+str(BASE/'spatial-v1/spatial.sqlite')+'?mode=ro',uri=True)) as db:
   cache={}
+  from shapely.geometry import Polygon
+  for tunnel in body.get('tunnels',[]):
+   row=db.execute("SELECT geometry_wkb,properties FROM features WHERE fid=? AND layer='N1A_A0110020' AND deleted=0 AND geometry_status='VALID'",(tunnel['sourceFid'],)).fetchone()
+   assert row
+   shape=translate(shapely.from_wkb(row[0]),-ORIGIN[0],-ORIGIN[1])
+   displayed=shapely.union_all([Polygon(p[0],p[1:]) for p in tunnel['polygons']])
+   assert displayed.symmetric_difference(shape).area<.00001
+   if tunnel['clearanceM'] is not None: assert float(json.loads(row[1])['높이'])==tunnel['clearanceM']
+   for profile in tunnel['profiles']: assert LineString(profile['coordinates']).difference(shape.buffer(.00001)).length<.0001
   for route in body['routes']:
    parts=[]
    for fid in route['sourceFids']:

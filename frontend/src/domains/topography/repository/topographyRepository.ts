@@ -1,3 +1,4 @@
+import { NATIVE_TRANSPORT_HASH } from '../../urban/repository/nativeTransportDataSource';
 import { readPublicData } from '../../../shared/repository/publicDataCache';
 import {
   topographyIndexDto,
@@ -125,7 +126,7 @@ export function requestTopographyTile(
 ) {
   if (terrain && !terrainIds.has(terrain)) terrainIds.set(terrain, ++terrainSequence);
   const terrainKey = terrain ? terrainIds.get(terrain)! : 0,
-    key = `${entry.sha256}:${terrainKey}:${plan}:${plan ? '' : NATIVE_BRIDGE_HASH}`;
+    key = `${entry.sha256}:${terrainKey}:${plan}:${plan ? '' : NATIVE_BRIDGE_HASH + NATIVE_TRANSPORT_HASH}`;
   return new Promise<TopographyBuffers>((resolve, reject) => {
     if (signal.aborted) {
       reject(new DOMException('Aborted', 'AbortError'));

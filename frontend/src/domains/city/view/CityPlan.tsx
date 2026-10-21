@@ -76,6 +76,7 @@ type Props = {
   ownDistrictId: string | null;
   viewerId: string | null;
   groundCandidates: GroundCandidate[];
+  showCandidates?: boolean;
   occupiedSites: ReadonlySet<string>;
   sites: SharedSite[];
   installations: SharedInstallation[];
@@ -119,6 +120,7 @@ export const CityPlan = memo(function CityPlan({
   viewerId,
   sites,
   groundCandidates,
+  showCandidates = false,
   occupiedSites,
   installations,
   installationBySite,
@@ -225,20 +227,28 @@ export const CityPlan = memo(function CityPlan({
           key={b.id}
           d={path}
           fill={
+            showCandidates &&
             eligibleRoofs.has(b.id) &&
             !occupiedRoofs.has(b.id) &&
             (!facilityType || facilityType === 'GREEN_ROOF' || facilityType === 'RAINWATER_CISTERN')
               ? availableSiteColor
               : '#d9d8cb'
           }
-          opacity={buildingOpacity(
-            (!facilityType ||
-              facilityType === 'GREEN_ROOF' ||
-              facilityType === 'RAINWATER_CISTERN') &&
-              eligibleRoofs.has(b.id) &&
-              !occupiedRoofs.has(b.id),
-            otherBuilding(b)
-          )}
+          opacity={
+            showCandidates
+              ? buildingOpacity(
+                  showCandidates &&
+                    (!facilityType ||
+                      facilityType === 'GREEN_ROOF' ||
+                      facilityType === 'RAINWATER_CISTERN') &&
+                    eligibleRoofs.has(b.id) &&
+                    !occupiedRoofs.has(b.id),
+                  otherBuilding(b)
+                )
+              : otherBuilding(b)
+                ? 0.16
+                : 1
+          }
           stroke="#9eac96"
           strokeWidth={0.5}
           vectorEffect="non-scaling-stroke"
@@ -247,7 +257,15 @@ export const CityPlan = memo(function CityPlan({
           <title>{b.id} · 건물 선택</title>
         </path>
       )),
-    [buildings, facilityType, eligibleRoofs, occupiedRoofs, ownDistrictId, onBuilding]
+    [
+      buildings,
+      facilityType,
+      eligibleRoofs,
+      occupiedRoofs,
+      ownDistrictId,
+      onBuilding,
+      showCandidates,
+    ]
   );
   const facilityLayer = useMemo(() => {
     const values: { site: SharedSite; placement: Placement; preview: boolean }[] = sites.flatMap(
@@ -533,6 +551,7 @@ export const CityPlan = memo(function CityPlan({
         ))}
       <GroundCandidatesPlan
         rows={groundCandidates}
+        showColors={showCandidates}
         occupiedSites={occupiedSites}
         type={facilityType}
         ownDistrictId={ownDistrictId}

@@ -1,2 +1,2 @@
 export const NATIVE_BRIDGE_HASH =
-  '4acecb62cb564f691b56ee1a4e17cc997a7701bd870df1874e4c8d4ae13b6970';
+  '09dfa6600c8801b4f26316ce33db6bbca8e1fab187b855dc9f04e7aac617364a';

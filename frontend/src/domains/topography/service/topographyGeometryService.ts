@@ -1,3 +1,4 @@
+import { NativeGroundCuts } from '../../urban/service/nativeGroundCutService';
 import bridgeIndex from '../../../../public/data/seoul-bridges-v1/index.json';
 import { stairTriangles } from '../../../shared/service/polygonBandService';
 import { BufferGeometry, Color, Float32BufferAttribute, ShapeUtils, Vector2 } from 'three';
@@ -11,7 +12,8 @@ import { nativeBridgeHeight } from '../../urban/service/nativeBridgeService';
 import {
   bridgeTransportHeight,
   bridgeAttachmentHeight,
-  bridgeWaterSupports,
+  bridgeAttachmentSupports,
+  bridgeSurfaceSupports,
   type NativeBridgeTransport,
 } from '../../urban/service/nativeBridgeTransportService';
 import {
@@ -37,6 +39,14 @@ export function topographyGeometry(
     string,
     { kind: PointModelKind; cell: [number, number]; values: number[] }
   >();
+  const roadAreas = tile.areas
+    .filter(([layer]) => layers[layer].role === 'ROAD_AREA')
+    .flatMap(([, , p]) => p);
+  const sidewalkAreas = tile.areas
+    .filter(([layer]) => layers[layer].role === 'SIDEWALK_AREA')
+    .flatMap(([, , p]) => p);
+  const roadCoverage = new NativeGroundCuts([], roadAreas);
+  const sidewalkCoverage = new NativeGroundCuts([], sidewalkAreas);
   const structures = structureWriter(positions, colors, terrain);
   const labels: TopographyBuffers['labels'] = [],
     plans = new Map<number, { areas: string[]; lines: string[]; points: string[] }>();
@@ -69,9 +79,12 @@ export function topographyGeometry(
             'MIRROR',
             'TOLL',
           ].includes(model);
-          const water = attachment ? transport?.groundCuts?.at(point) : undefined;
-          const decks = water ? bridgeWaterSupports(water, point) : undefined;
-          if (attachment && transport?.groundCuts?.contains(point) && !decks?.length) continue;
+          const water = attachment
+            ? (transport?.attachmentCuts ?? transport?.groundCuts)?.at(point)
+            : undefined;
+          const onWater = transport?.groundCuts?.contains(point) ?? false;
+          const decks = water ? bridgeAttachmentSupports(water, point) : undefined;
+          if (attachment && onWater && !decks?.length) continue;
           const elevation = decks?.length
             ? bridgeAttachmentHeight(decks, terrain)(point)
             : terrainMeshHeight(terrain, point);
@@ -92,25 +105,61 @@ export function topographyGeometry(
     const color = style[layer];
     const rail = ['A015', 'A017'].includes(layers[layer].id.slice(4, 8));
     const attachment = ['C052', 'C053', 'B002'].includes(layers[layer].id.slice(4, 8));
+    if (!plan && attachment && transport?.attachmentCuts) {
+      const cuts = transport.attachmentCuts;
+      for (const part of parts) {
+        for (const ground of cuts
+          .line(part)
+          .flatMap((p) => transport.groundCuts?.line(p, false, 'ATTACHMENT_OUTSIDE') ?? [p]))
+          structures.line(layers[layer].id, ground, color);
+        for (const segment of cuts.line(part, true)) {
+          const a = segment[0],
+            b = segment.at(-1)!;
+          const middle: Point = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+          const groups = bridgeAttachmentSupports(cuts.at(middle), middle, [a, b]);
+          if (!groups.length && transport.groundCuts?.contains(middle)) continue;
+          const height = groups.length ? bridgeAttachmentHeight(groups, terrain) : undefined;
+          structureWriter(positions, colors, terrain, height).line(
+            layers[layer].id,
+            segment,
+            color
+          );
+        }
+      }
+      continue;
+    }
     if (!plan && (attachment || rail) && transport?.groundCuts) {
       const sourceHeight = rail ? bridgeTransportHeight(transport.get(fid), terrain) : undefined;
       const groundWriter = sourceHeight
         ? structureWriter(positions, colors, terrain, sourceHeight)
         : structures;
       for (const part of parts) {
-        for (const ground of transport.groundCuts.line(part))
+        for (const ground of transport.groundCuts.line(
+          part,
+          false,
+          rail ? 'RAILWAY_AREA' : undefined
+        ))
           groundWriter.line(layers[layer].id, ground, color);
-        for (const deck of transport.groundCuts.line(part, true)) {
+        for (const deck of transport.groundCuts.line(
+          part,
+          true,
+          rail ? 'RAILWAY_AREA' : undefined
+        )) {
           const a = deck[0],
             b = deck.at(-1)!;
           const middle: Point = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
-          const groups = bridgeWaterSupports(transport.groundCuts.at(middle), middle);
-          if (!groups.length) continue;
-          structureWriter(positions, colors, terrain, bridgeAttachmentHeight(groups, terrain)).line(
-            layers[layer].id,
-            deck,
-            color
+          const groups = bridgeSurfaceSupports(
+            transport.groundCuts.at(middle),
+            middle,
+            transport.groundCuts.contains(middle)
           );
+          if (!groups.length || (rail && !sourceHeight)) continue;
+          structureWriter(
+            positions,
+            colors,
+            terrain,
+            rail ? sourceHeight : bridgeAttachmentHeight(groups, terrain)
+          ).line(layers[layer].id, deck, color);
         }
       }
       continue;
@@ -118,10 +167,24 @@ export function topographyGeometry(
     const height = plan ? undefined : bridgeTransportHeight(transport?.get(fid), terrain);
     const writer = height ? structureWriter(positions, colors, terrain, height) : structures;
     const transportLine = /^N1L_A(?:001|002|003|015|017)/.test(layers[layer].id);
-    const visibleParts =
+    let visibleParts =
       !plan && transportLine && transport?.groundCuts
-        ? parts.flatMap((part) => transport.groundCuts!.line(part))
+        ? parts.flatMap((part) =>
+            transport.groundCuts!.line(
+              part,
+              false,
+              layers[layer].id.slice(4, 8) === 'A003' ? 'SIDEWALK_AREA' : 'ROAD_AREA'
+            )
+          )
         : parts;
+    if (!plan && transportLine && transport?.tunnelCuts)
+      visibleParts = visibleParts.flatMap((p) => transport.tunnelCuts!.line(p));
+    const code = layers[layer].id.slice(4, 8);
+    // 원 포장 면이 있는 구간에 중심선 고정 폭 포장을 다시 만들지 않는다.
+    if (!plan && (code === 'A002' || code === 'A003'))
+      visibleParts = visibleParts.flatMap((p) =>
+        (code === 'A002' ? roadCoverage : sidewalkCoverage).line(p)
+      );
     for (const part of visibleParts) {
       if (plan) group(layer).lines.push(path(part));
       if (plan) continue;
@@ -140,32 +203,40 @@ export function topographyGeometry(
   }
   for (const [layer, fid, polygons] of tile.areas) {
     if (structuresLoaded && !plan && bridgeStairFids.has(fid)) continue;
+    // 교량 전용 레이어가 소유한 원 상판은 일반 지면 레이어에 다시 그리지 않는다.
+    if (
+      structuresLoaded &&
+      !plan &&
+      ['BRIDGE_AREA', 'PEDESTRIAN_OVERPASS_AREA', 'GRADE_SEPARATED_INTERSECTION_AREA'].includes(
+        layers[layer].role
+      )
+    )
+      continue;
+    if (!plan && transport?.tunnelCuts && layers[layer].role === 'TUNNEL_AREA') continue;
     const color = style[layer];
     const transportArea = [
       'ROAD_AREA',
       'SIDEWALK_AREA',
       'RAILWAY_AREA',
       'INTERSECTION_AREA',
+      'INTERCHANGE_AREA',
       'CROSSWALK_AREA',
       'TRAFFIC_SAFETY_AREA',
     ].includes(layers[layer].role);
-    const visiblePolygons =
+    let visiblePolygons =
       !plan && transportArea && transport?.groundCuts
-        ? transport.groundCuts.surface(polygons)
+        ? transport.groundCuts.surface(polygons, layers[layer].role, fid)
         : polygons;
+    if (!plan && transportArea && layers[layer].role !== 'RAILWAY_AREA' && transport?.tunnelCuts)
+      visiblePolygons = transport.tunnelCuts.surface(visiblePolygons);
+    if (!plan && ['INTERSECTION_AREA', 'INTERCHANGE_AREA'].includes(layers[layer].role))
+      visiblePolygons = roadCoverage.surface(visiblePolygons);
     for (const polygon of visiblePolygons) {
       if (plan)
         group(layer)[styles[layer].fill ? 'areas' : 'lines'].push(
           polygon.map((ring) => path(ring, true)).join('')
         );
       if (plan) continue;
-      if (
-        structuresLoaded &&
-        ['PEDESTRIAN_OVERPASS_AREA', 'GRADE_SEPARATED_INTERSECTION_AREA'].includes(
-          layers[layer].role
-        )
-      )
-        continue;
       const rings = polygon.map((ring) => ring.slice(0, -1).map(([x, y]) => new Vector2(x, y))),
         vertices = rings.flat();
       const lift = areaLift(layers[layer].id);
@@ -237,17 +308,22 @@ export function topographyGeometry(
           walked += length;
         }
       }
-      for (const ring of polygon)
-        for (let i = 1; i < ring.length; i++)
-          for (const segment of drapeSegment(ring[i - 1], ring[i], terrain))
-            for (const point of segment) {
-              lines.push(
-                point[0],
-                (deck ?? terrainMeshHeight(terrain, point)) + lift + 0.003,
-                -point[1]
-              );
-              lineColors.push(color.r * 0.8, color.g * 0.8, color.b * 0.8);
-            }
+      if (
+        !['ROAD_AREA', 'INTERSECTION_AREA', 'INTERCHANGE_AREA', 'SIDEWALK_AREA'].includes(
+          layers[layer].role
+        )
+      )
+        for (const ring of polygon)
+          for (let i = 1; i < ring.length; i++)
+            for (const segment of drapeSegment(ring[i - 1], ring[i], terrain))
+              for (const point of segment) {
+                lines.push(
+                  point[0],
+                  (deck ?? terrainMeshHeight(terrain, point)) + lift + 0.003,
+                  -point[1]
+                );
+                lineColors.push(color.r * 0.8, color.g * 0.8, color.b * 0.8);
+              }
     }
   }
   const geometry = new BufferGeometry();

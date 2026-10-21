@@ -132,7 +132,7 @@ export async function readPublicData(
     !/^[a-f0-9]{64}$/.test(expected) ||
     !Number.isSafeInteger(maximum) ||
     maximum < 1 ||
-    maximum > 32 * 1024 * 1024
+    maximum > 64 * 1024 * 1024
   )
     throw new CityError('INVALID_DATA');
   signal.throwIfAborted();

@@ -137,3 +137,12 @@ export function drapeSegment(a: Point, b: Point, terrain: Terrain | null): [Poin
   const all = [...cuts].sort((x, y) => x - y);
   return all.slice(0, -1).map((t, i) => [at(t), at(all[i + 1])]);
 }
+
+export function terrainMeshContains(terrain: Terrain | null, [x, y]: Point): boolean {
+  if (!terrain || !terrain.districts.length) return true;
+  const col = Math.floor((x - terrain.origin[0]) / terrain.spacing[0]),
+    row = Math.floor((y - terrain.origin[1]) / terrain.spacing[1]);
+  if (col < 0 || row < 0 || col >= terrain.width - 1 || row >= terrain.height - 1) return false;
+  const i = row * terrain.width + col;
+  return [i, i + 1, i + terrain.width, i + terrain.width + 1].some((n) => terrain.districts[n] > 0);
+}

@@ -4,8 +4,115 @@ import sampleSource from '../__tests__/fixtures/native-layer-samples-v1.json';
 import { topographyIndexDto, topographyTileDto } from '../dto/topographyDto';
 import { topographyGeometry } from './topographyGeometryService';
 import { nearbyTopographyTiles } from './topographyVisibilityService';
+import { bridgeTransportBindings } from '../../urban/service/nativeBridgeTransportService';
+import type { NativeBridgeGroup } from '../../urban/dto/nativeBridgeDto';
 const index = topographyIndexDto.parse(indexSource),
   samples = topographyTileDto.parse(sampleSource);
+
+test('하부 차도 위에 겹친 상부 보도·난간은 한 번만 올리고 횡단하는 하부 난간은 지면 유지', () => {
+  const rect = (x: number, y: number, w: number, h: number): [number, number][][][] => [
+    [
+      [
+        [x, y],
+        [x + w, y],
+        [x + w, y + h],
+        [x, y + h],
+        [x, y],
+      ],
+    ],
+  ];
+  const group = {
+    polygons: rect(0, -5, 100, 10),
+    profiles: [
+      {
+        coordinates: [
+          [0, 0],
+          [100, 0],
+        ],
+        span: [0, 100],
+        roadIds: ['road'],
+        polygons: [],
+        displayWidthM: 10,
+      },
+    ],
+    sidewalks: [{ polygons: rect(0, 3, 100, 2) }],
+    preservedUnderpassPolygons: rect(47, -5, 6, 10),
+    surfaceCuts: [{ roles: ['SIDEWALK_AREA'], polygons: rect(0, 3, 100, 2) }],
+  } as unknown as NativeBridgeGroup;
+  const bindings = bridgeTransportBindings([group]);
+  const layer = index.layers.findIndex((l) => l.id.startsWith('N1L_C053'));
+  for (const [part, upper] of [
+    [
+      [
+        [20, 4],
+        [80, 4],
+      ],
+      true,
+    ],
+    [
+      [
+        [48, -20],
+        [48, 20],
+      ],
+      false,
+    ],
+  ] as const) {
+    const mesh = topographyGeometry(
+      {
+        schemaVersion: 1,
+        id: '0_0',
+        areas: [],
+        points: [],
+        lines: [[layer, 1, [part.map((p) => [...p] as [number, number])], null]],
+      },
+      index.layers,
+      null,
+      false,
+      true,
+      bindings
+    );
+    const heights = Array.from(mesh.positions).filter((_, i) => i % 3 === 1);
+    expect(heights.length).toBeGreaterThan(0);
+    if (upper) expect(Math.min(...heights)).toBeGreaterThan(6.5);
+    else expect(Math.max(...heights)).toBeLessThan(1.2);
+  }
+  const sidewalk = index.layers.findIndex((l) => l.role === 'SIDEWALK_AREA');
+  const ground = topographyGeometry(
+    {
+      schemaVersion: 1,
+      id: '0_0',
+      points: [],
+      lines: [],
+      areas: [[sidewalk, 2, rect(47, 3, 6, 2), null]],
+    },
+    index.layers,
+    null,
+    false,
+    true,
+    bindings
+  );
+  expect(ground.positions.length).toBe(0);
+});
+test('교량 전용 레이어 사용 시 원 교량·육교·입체교차부 지면 사본을 생성하지 않고 2D 유지', () => {
+  for (const role of [
+    'BRIDGE_AREA',
+    'PEDESTRIAN_OVERPASS_AREA',
+    'GRADE_SEPARATED_INTERSECTION_AREA',
+  ]) {
+    const tile = {
+      ...samples,
+      points: [],
+      lines: [],
+      areas: samples.areas.filter(([layer]) => index.layers[layer].role === role),
+    };
+    expect(tile.areas.length).toBeGreaterThan(0);
+    const mesh = topographyGeometry(tile, index.layers, null, false, true);
+    expect(mesh.positions.length + mesh.lines.length).toBe(0);
+    expect(topographyGeometry(tile, index.layers, null, true, true).plan.some((p) => p.areas)).toBe(
+      true
+    );
+  }
+});
 test('121종 실제 원본 대표 도형의 2D·3D 표시와 원형 불변 검증', () => {
   const before = structuredClone(samples);
   for (let layer = 0; layer < 121; layer++) {
@@ -67,7 +174,7 @@ test('시야 타일은 가까운 순서이며 임의 건수 상한으로 일부 
   expect(new Set(wanted.map((tile) => tile.id))).toEqual(new Set(expected.map((tile) => tile.id)));
   expect(nearbyTopographyTiles(index, [NaN, 0], 100)).toEqual([]);
 });
-test('도로면·교차로·보도는 서로 다른 깊이의 면으로 생성', () => {
+test('도로면·교차로는 동일 높이로 접합하고 보도와 배경 도로의 깊이 구분', () => {
   const elevations: number[] = [];
   for (const name of ['N3A_A0010000', 'N1A_A0010000', 'N1A_A0080000', 'N1A_A0033320']) {
     const layer = index.layers.findIndex((row) => row.id === name);
@@ -84,7 +191,8 @@ test('도로면·교차로·보도는 서로 다른 깊이의 면으로 생성',
     elevations.push(Math.max(...tops));
   }
   expect(elevations).toEqual([...elevations].sort((a, b) => a - b));
-  expect(new Set(elevations).size).toBe(4);
+  expect(elevations[1]).toBe(elevations[2]);
+  expect(new Set(elevations).size).toBe(3);
 });
 test('원 도로중심선과 보행 선형은 입체 면으로 표시', () => {
   for (const id of ['N1L_A0020000', 'N1L_A0033330']) {

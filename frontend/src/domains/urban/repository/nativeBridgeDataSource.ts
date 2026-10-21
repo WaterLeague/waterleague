@@ -44,6 +44,8 @@ export async function readNativeBridges(signal: AbortSignal) {
   if (
     !body.success ||
     body.data.groups.length !== index.data.counts.groups ||
+    body.data.groups.reduce((sum, g) => sum + g.profiles.length, 0) !==
+      index.data.counts.profiles ||
     body.data.groups.reduce((sum, g) => sum + g.sourceIds.length, 0) !==
       index.data.counts.sourceObjects
   )

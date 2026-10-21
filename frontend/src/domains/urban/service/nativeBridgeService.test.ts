@@ -1,7 +1,15 @@
 import { expect, test } from 'vitest';
-import { nativeBridgeHeight, nativeBridgeProfileHeight } from './nativeBridgeService';
+import {
+  connectBridgeDatums,
+  nativeBridgeHeight,
+  nativeBridgeProfileHeight,
+} from './nativeBridgeService';
 import { nativeStreets } from './nativeStreetService';
-import { bridgeTransportBindings } from './nativeBridgeTransportService';
+import {
+  bridgeTransportBindings,
+  bridgeAttachmentHeight,
+  bridgeSurfaceSupports,
+} from './nativeBridgeTransportService';
 import { topographyGeometry } from '../../topography/service/topographyGeometryService';
 import { topographyIndexDto } from '../../topography/dto/topographyDto';
 import sourceIndex from '../../../../public/data/seoul-features-v1/index.json';
@@ -58,6 +66,27 @@ const terrain: Terrain = {
   districts: new Uint8Array(8),
   cover: new Uint8Array(8),
 };
+test('원 경로 길이의 미소 반올림 차이 때문에 섬 연결 끝점이 지면으로 꺼지지 않음', () => {
+  const connected = {
+    ...profile,
+    coordinates: [
+      [0, 0],
+      [100, 0],
+    ] as [number, number][],
+    span: [0, 100 - 1e-12] as [number, number],
+  };
+  expect(nativeBridgeProfileHeight(terrain, [100, 0], connected)).toBeCloseTo(
+    nativeBridgeHeight(terrain, group.polygons)
+  );
+});
+test('육상 접속부의 조명은 경사면에 놓고 수면으로 연장된 표시 접속부는 지지로 쓰지 않음', () => {
+  const point: [number, number] = [-50, 0];
+  expect(bridgeSurfaceSupports([group], point, false)).toEqual([group]);
+  expect(bridgeSurfaceSupports([group], point, true)).toEqual([]);
+  expect(bridgeAttachmentHeight([group], terrain)(point)).toBeCloseTo(
+    nativeBridgeProfileHeight(terrain, point, profile)
+  );
+});
 test('인접 상판 조각·접속부·이동체가 같은 높이를 사용하고 지면으로 연속 접속', () => {
   const roads = nativeStreets([], [group]),
     deck = nativeBridgeHeight(terrain, group.polygons);
@@ -199,4 +228,113 @@ test('반포대교 상층과 잠수교 하층을 같은 평면으로 합치지 �
   expect(streetHeight(null, [50, 0], upper[1]) - streetHeight(null, [50, 0], lower[1])).toBeCloseTo(
     7
   );
+});
+
+test('접속 경로가 다음 상판 내부까지 겹쳐도 실제 상판 간격으로 같은 높이 연결', () => {
+  const first: NativeBridgeGroup = {
+    ...group,
+    polygons: [[ring(0, 100)]],
+    profiles: [{ ...group.profiles[0] }],
+  };
+  const second: NativeBridgeGroup = {
+    ...group,
+    id: id('d'),
+    polygons: [[ring(150, 250)]],
+    profiles: [
+      {
+        ...group.profiles[0],
+        coordinates: [
+          [50, 0],
+          [150, 0],
+          [250, 0],
+          [350, 0],
+        ],
+        span: [100, 200],
+      },
+    ],
+  };
+  const joined = connectBridgeDatums([first, second]);
+  const a = { ...joined[0].profiles[0], deckPolygons: first.polygons };
+  const b = { ...joined[1].profiles[0], deckPolygons: second.polygons };
+  expect(a.connections?.find((c) => c.side === 1)?.gapM).toBe(50);
+  expect(b.connections?.find((c) => c.side === 0)?.gapM).toBe(50);
+  for (const x of [100, 110, 125, 140, 150])
+    expect(nativeBridgeProfileHeight(terrain, [x, 0], a)).toBeCloseTo(
+      nativeBridgeProfileHeight(terrain, [x, 0], b)
+    );
+});
+
+test('같은 이름이어도 원 도로 연결이 없는 구조의 높이 기준은 분리', () => {
+  const first = { ...group, names: ['동명 교량'] };
+  const second = {
+    ...group,
+    id: id('e'),
+    names: ['동명 교량'],
+    polygons: [[ring(200, 300)]],
+    profiles: group.profiles.map((p) => ({ ...p, roadIds: ['other-road'] })),
+  };
+  const joined = connectBridgeDatums([first, second]);
+  expect(joined[0].displayDatumPolygons).not.toBe(joined[1].displayDatumPolygons);
+});
+
+test('다른 원 도로의 끝점이 본선 접속부 중간에 합류하면 높이 연속', () => {
+  const main = {
+    ...group,
+    profiles: [
+      {
+        ...group.profiles[0],
+        coordinates: [
+          [-100, 0],
+          [-50, 0],
+          [0, 0],
+          [100, 0],
+          [200, 0],
+        ] as [number, number][],
+      },
+    ],
+  };
+  const branch = {
+    ...group,
+    id: id('f'),
+    polygons: [
+      [
+        [
+          [-55, 40],
+          [-45, 40],
+          [-45, 100],
+          [-55, 100],
+          [-55, 40],
+        ],
+      ],
+    ] as [number, number][][][],
+    profiles: [
+      {
+        ...group.profiles[0],
+        roadIds: ['other-road'],
+        coordinates: [
+          [-50, 0],
+          [-50, 40],
+          [-50, 100],
+          [-50, 150],
+        ] as [number, number][],
+        span: [40, 100] as [number, number],
+      },
+    ],
+  };
+  const [a, b] = connectBridgeDatums([main, branch]);
+  expect(b.profiles[0].connections?.[0].endpointTarget).toBeDefined();
+  for (const x of [-54, -50, -46]) {
+    const at: [number, number] = [x, 0];
+    expect(
+      nativeBridgeProfileHeight(terrain, at, {
+        ...b.profiles[0],
+        deckPolygons: b.displayDatumPolygons!,
+      })
+    ).toBeCloseTo(
+      nativeBridgeProfileHeight(terrain, at, {
+        ...a.profiles[0],
+        deckPolygons: a.displayDatumPolygons!,
+      })
+    );
+  }
 });

@@ -27,6 +27,8 @@ try {
   const {NATIVE_BRIDGE_HASH}=await server.ssrLoadModule('/src/domains/urban/repository/nativeBridgeVersion.ts');
   const {nativeStreets}=await server.ssrLoadModule('/src/domains/urban/service/nativeStreetService.ts');
   const {streetGeometry,streetHeight}=await server.ssrLoadModule('/src/domains/urban/service/streetGeometryService.ts');
+  const {StreetMeshBuilder}=await server.ssrLoadModule('/src/domains/urban/service/streetMeshService.ts');
+  const builder=new StreetMeshBuilder();
   const {bridgePierPositions}=await server.ssrLoadModule('/src/domains/urban/service/nativeBridgeStructureService.ts');
   const {nativeBridgeHeight,connectBridgeDatums}=await server.ssrLoadModule('/src/domains/urban/service/nativeBridgeService.ts');
   const {terrainMeshHeight}=await server.ssrLoadModule('/src/domains/terrain/service/terrainDrapeService.ts');
@@ -37,9 +39,9 @@ try {
   assert.equal(hash(data),index.sha256);
   const body=nativeBridgesDto.parse(JSON.parse(data));
   const names=new Set(['한강대교','잠수교','방화대교','행주대교','마포대교','반포대교','한남대교','동호대교','한강철교','당산철교','잠실철교',
-    '양화대교','서강대교','성산대교','월드컵대교','가양대교','성수대교','청담대교','영동대교','잠실대교','올림픽대교']);
+    '동작대교','원효대교','천호대교','강동대교','구리암사대교','고덕대교','노량대교','구행주대교','양화대교','서강대교','성산대교','월드컵대교','가양대교','성수대교','청담대교','영동대교','잠실대교','올림픽대교']);
   body.groups=connectBridgeDatums(body.groups,body.waterPolygons);
-  const groups=body.groups.filter(g=>g.role==='PEDESTRIAN_OVERPASS_AREA'||g.names?.some(n=>names.has(n)));
+  const groups=body.groups.filter(g=>g.role==='PEDESTRIAN_OVERPASS_AREA'||g.names?.some(n=>n.includes('대교')||n.includes('철교')));
   const checks=[];
   for (const group of groups) {
     assert(group.names.length<=1 && new Set(group.kinds.map(k=>k==='고가차도'?'도로교':k)).size<=1);
@@ -58,6 +60,8 @@ try {
     const start=performance.now(), fine=streetGeometry(streets,terrain,true), fineMs=performance.now()-start;
     const coarseStart=performance.now(), coarse=streetGeometry(streets,terrain,false), coarseMs=performance.now()-coarseStart;
     assert(fine.positions.every(Number.isFinite) && fine.colors.every(Number.isFinite));
+    const workerMesh=await builder.build(structuredClone(streets),terrain,true,[],undefined,new AbortController().signal);
+    assert.deepEqual(workerMesh.positions,fine.positions,'워커 메시 캐시와 직접 생성 불일치');
     assert(fine.positions.length>0 && fine.ends.length===streets.length);
     assert(coarse.positions.length<=fine.positions.length);
     const piers=bridgePierPositions(group.outlinePolygons??group.polygons);
@@ -72,7 +76,7 @@ try {
   assert(checks.some(g=>g.names.includes('마포대교')&&g.maximumSourcePathSpanM>1000));
   assert(checks.some(g=>g.names.includes('당산철교')&&g.maximumSourcePathSpanM>1000));
   const report={schemaVersion:1,status:'PASS',indexSha256:hash(raw),groups:body.groups.length,
-    testedHanRiverGroups:groups.filter(g=>g.names?.some(n=>names.has(n))).length,testedFootbridgeGroups:groups.filter(g=>g.role==='PEDESTRIAN_OVERPASS_AREA').length,checks,scope:'원본과 실제 지형을 사용한 CPU 형상·연결 검사. 현장 제원 또는 브라우저 FPS 검증과 구분'};
+    testedNamedBridgeGroups:groups.filter(g=>g.role!=='PEDESTRIAN_OVERPASS_AREA').length,testedHanRiverGroups:groups.filter(g=>g.names?.some(n=>names.has(n))).length,testedFootbridgeGroups:groups.filter(g=>g.role==='PEDESTRIAN_OVERPASS_AREA').length,checks,scope:'원본과 실제 지형을 사용한 CPU 형상·연결 검사. 현장 제원 또는 브라우저 FPS 검증과 구분'};
   await writeFile(path.resolve(values.report),JSON.stringify(report)+'\n',{flag:'wx'});
   console.log(JSON.stringify({status:report.status,groups:report.groups,testedHanRiverGroups:report.testedHanRiverGroups,testedFootbridgeGroups:report.testedFootbridgeGroups,pedestrianSamples:checks.reduce((n,c)=>n+c.pedestrianSamples,0)}));
 } finally { await server.close(); }

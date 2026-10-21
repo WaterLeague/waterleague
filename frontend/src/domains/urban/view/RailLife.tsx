@@ -5,7 +5,7 @@ import type { Street, UrbanTime } from '../entity/urban';
 import type { Terrain } from '../../terrain/entity/terrain';
 import { distanceToStreet, streetPath } from '../service/streetLifeService';
 import { streetHeight, submergedSourcePath } from '../service/streetGeometryService';
-import { trainCarriages } from '../service/railLifeService';
+import { activeRailTrains, railServices } from '../service/railLifeService';
 import { urbanAnimationTime } from '../service/urbanTimeService';
 const LIMIT = 128;
 export const RailLife = memo(function RailLife({
@@ -34,16 +34,17 @@ export const RailLife = memo(function RailLife({
   const paths = useMemo(() => roads.filter((r) => r.nativeRailKind).map(streetPath), [roads]);
   const x = Math.round(center[0] / 100) * 100,
     y = Math.round(center[1] / 100) * 100;
+  const services = useMemo(() => railServices(paths), [paths]);
   const nearby = useMemo(
     () =>
       paths
         .map((path) => ({ path, d: distanceToStreet(path, x, y) }))
         .filter((p) => p.d < 2800)
         .sort((a, b) => a.d - b.d || a.path.road.id.localeCompare(b.path.road.id))
-        .slice(0, 32)
-        .map((p) => p.path),
+        .map((p) => p.path.road.id),
     [paths, x, y]
   );
+  const visible = useMemo(() => new Set(nearby), [nearby]);
   useFrame(() => {
     last.current = urbanAnimationTime(clock, last.current, animate);
     const seconds = last.current;
@@ -68,8 +69,9 @@ export const RailLife = memo(function RailLife({
       mesh.setMatrixAt(index, model.matrix);
     };
     if (distance < 8500)
-      for (const path of nearby)
-        for (const car of trainCarriages(path, seconds)) {
+      for (const { path, cars } of activeRailTrains(services, seconds)) {
+        if (!visible.has(path.road.id)) continue;
+        for (const car of cars) {
           if (count === LIMIT) break;
           if (
             [car.center, car.front, car.back].some((p) =>
@@ -133,6 +135,7 @@ export const RailLife = memo(function RailLife({
           body.current?.setColorAt(count, path.road.nativeRailKind === 'subway' ? blue : red);
           count++;
         }
+      }
     for (const ref of [body, windows, roof, bogies])
       if (ref.current) {
         ref.current.count = count;

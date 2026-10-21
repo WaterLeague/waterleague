@@ -87,6 +87,9 @@ def build(output, reuse=None):
         last={find(k) for k,path in enumerate(paths) if path.intersection(geometries[j]).length>1}
         if not first.intersection(last):raise ValueError('노들섬 원 도로 연결 검증 실패')
         parents[b]=a;names[a]|=names[b];kinds[a]|=kinds[b]
+    # 노들섬 중앙의 공통 원 도로를 양방향 교량이 다른 높이로 각각 생성하지 않는다.
+    a,b=root(by_fid[1823862]),root(by_fid[1823863])
+    parents[b]=a;names[a]|=names[b];kinds[a]|=kinds[b]
     groups=defaultdict(list)
     for i in range(len(bridges)):groups[root(i)].append(bridges[i])
     cache={}
@@ -187,7 +190,8 @@ def build(output, reuse=None):
                 intervals=[line.project(Point(p)) for part in spans for p in [part.coords[0],part.coords[-1]]]
                 s0,s1=min(intervals),max(intervals)
                 if (s0>1e-6 and union.boundary.distance(line.interpolate(s0))>1e-6) or (s1<line.length-1e-6 and union.boundary.distance(line.interpolate(s1))>1e-6):continue
-                center=line.interpolate((s0+s1)/2);near=line.interpolate(min(line.length,(s0+s1)/2+1));before=line.interpolate(max(0,(s0+s1)/2-1))
+                # 여러 상판 사이의 섬 중심에서 폭을 재면 교량 전체 접속 경로가 누락된다.
+                center=span.interpolate(.5,normalized=True);middle=line.project(center);near=line.interpolate(min(line.length,middle+1));before=line.interpolate(max(0,middle-1))
                 dx,dy=near.x-before.x,near.y-before.y;length=math.hypot(dx,dy)
                 if length<.1:continue
                 normal=(-dy/length,dx/length)

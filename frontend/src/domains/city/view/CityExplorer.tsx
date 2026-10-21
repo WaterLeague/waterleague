@@ -180,6 +180,7 @@ function Explorer({
       : '점수 조회 중';
   };
   const [selected, setSelected] = useState(initialDistrictId);
+  const [showCandidates, setShowCandidates] = useState(false);
   const [camera, setCamera] = useState<PlanView>({
     center: [0, 0],
     distance: 35000,
@@ -836,6 +837,7 @@ function Explorer({
       viewerId={viewerId ?? null}
       sites={visibleSites}
       groundCandidates={groundCandidates.rows}
+      showCandidates={showCandidates}
       occupiedSites={ownSiteKeys}
       installations={shared.installations}
       installationBySite={layout.bySite}
@@ -982,23 +984,39 @@ function Explorer({
       <div className="design-main shared-map-column">
         <div ref={controlsBar} className="map-layer-bar">
           <div className="shared-toolbar gameplay-toolbar">
-            <label>
-              <MapPin size={15} />
-              <GameSelect
-                label="서울 자치구 선택"
-                value={viewedDistrictId}
-                onChange={(id) => (id ? select(id) : reset())}
-                options={[
-                  { value: '', label: '서울 전체' },
-                  ...city.districts
-                    .filter((d) => !contest.value || contest.value.rules.districtIds.includes(d.id))
-                    .map((d) => ({
-                      value: d.id,
-                      label: d.name + (d.id === ownDistrictId ? ' · 내 소속 구' : ''),
-                    })),
-                ]}
-              />
-            </label>
+            <div className="district-candidate-controls">
+              <label>
+                <MapPin size={15} />
+                <GameSelect
+                  label="서울 자치구 선택"
+                  value={viewedDistrictId}
+                  onChange={(id) => (id ? select(id) : reset())}
+                  options={[
+                    { value: '', label: '서울 전체' },
+                    ...city.districts
+                      .filter(
+                        (d) => !contest.value || contest.value.rules.districtIds.includes(d.id)
+                      )
+                      .map((d) => ({
+                        value: d.id,
+                        label: d.name + (d.id === ownDistrictId ? ' · 내 소속 구' : ''),
+                      })),
+                  ]}
+                />
+              </label>
+              <button
+                type="button"
+                className="candidate-visibility-toggle"
+                role="switch"
+                aria-checked={showCandidates}
+                onClick={() => setShowCandidates((visible) => !visible)}
+              >
+                <span className="candidate-toggle-track" aria-hidden="true">
+                  <span className="candidate-toggle-thumb" />
+                </span>
+                <span>설치 가능 구역 표시</span>
+              </button>
+            </div>
             <CurrentLocationButton
               city={city}
               onLocate={({ center, districtId }) => {
@@ -1113,6 +1131,7 @@ function Explorer({
                   parking={urban.parking}
                   urbanClock={urbanClock}
                   streets={urban.roads}
+                  railTraffic={urban.railTraffic}
                   topography={topography}
                   population={urban.population}
                   livePlaces={liveUrban.places}
@@ -1146,6 +1165,7 @@ function Explorer({
                   ownDistrictId={ownDistrictId ?? null}
                   sites={visibleSites}
                   groundCandidates={groundCandidates.rows}
+                  showCandidates={showCandidates}
                   occupiedSites={ownSiteKeys}
                   installations={shared.installations}
                   installationBySite={layout.bySite}

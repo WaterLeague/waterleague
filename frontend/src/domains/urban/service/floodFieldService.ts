@@ -1,4 +1,4 @@
-import { streetLane } from './streetLifeService';
+import { streetLane, pathPosition } from './streetLifeService';
 import type { SurfaceFrame } from '../../surface/entity/surface';
 import type { TraceTile } from '../../floodtrace/entity/floodTrace';
 import type { StreetPath } from './streetLifeService';
@@ -172,23 +172,25 @@ function field(key: string, sources: (SurfaceFrame | TraceTile)[]) {
             found = found ? stronger(found, triangle.contact) : triangle.contact;
       return found;
     },
-    route(path: StreetPath, walking: boolean, direction: number): FloodRoute {
-      const mode = walking + ':' + direction,
+    route(
+      path: StreetPath,
+      walking: boolean,
+      direction: number,
+      lane = streetLane(path.road, walking, direction)
+    ): FloodRoute {
+      const mode = walking + ':' + direction + ':' + lane,
         saved = cache.get(path)?.get(mode);
       if (saved) return saved;
       const bands: FloodBand[] = [];
       // 교량의 실제 노면 표고 없이 지표 수심을 교량 위 피해로 전용하지 않는다.
       if (!path.road.bridge) {
-        const lane = streetLane(path.road, walking, direction);
         for (let i = 1; i < path.road.coordinates.length; i++) {
-          const a = path.road.coordinates[i - 1],
-            b = path.road.coordinates[i],
-            length = path.cumulative[i] - path.cumulative[i - 1];
+          const length = path.cumulative[i] - path.cumulative[i - 1];
           if (length < 1e-8) continue;
-          const ox = ((b[1] - a[1]) / length) * lane * direction,
-            oy = (-(b[0] - a[0]) / length) * lane * direction;
-          const start: Point = [a[0] + ox, a[1] + oy],
-            end: Point = [b[0] + ox, b[1] + oy];
+          const a = pathPosition(path, path.cumulative[i - 1], lane, direction),
+            b = pathPosition(path, path.cumulative[i], lane, direction);
+          const start: Point = [a.x, a.y],
+            end: Point = [b.x, b.y];
           for (const index of indices)
             for (const triangle of index(start, end)) {
               const hit = triangleIntersection(start, end, triangle.vertices);

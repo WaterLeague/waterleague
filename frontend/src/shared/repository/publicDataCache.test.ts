@@ -4,6 +4,20 @@ const sha = async (s: string) =>
   [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)))]
     .map((n) => n.toString(16).padStart(2, '0'))
     .join('');
+test('교량 원본 결속 묶음의 32MiB 초과 예산 허용과 64MiB 상한 유지', async () => {
+  vi.resetModules();
+  vi.stubGlobal('caches', undefined);
+  const fetcher = vi.fn(async () => new Response('{}'));
+  vi.stubGlobal('fetch', fetcher);
+  const { readPublicData } = await import('./publicDataCache');
+  const signal = new AbortController().signal,
+    hash = await sha('{}');
+  expect(await readPublicData('/data/bridges.json', hash, 64000000, signal)).toEqual({});
+  await expect(
+    readPublicData('/data/bridges.json', hash, 64 * 1024 * 1024 + 1, signal)
+  ).rejects.toThrow();
+  expect(fetcher).toHaveBeenCalledOnce();
+});
 test('공개 해시 파일은 기기 저장소 재사용, 손상된 캐시는 원본 재검증', async () => {
   vi.resetModules();
   const entries = new Map<string, Response>();

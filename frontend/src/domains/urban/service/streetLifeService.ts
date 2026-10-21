@@ -9,8 +9,16 @@ export function sidewalkSides(road: Street) {
 export function hasInlineSidewalk(road: Street) {
   return sidewalkSides(road).some(Boolean);
 }
-export function streetLane(road: Street, walking: boolean, direction: number) {
-  if (!walking) return Math.min(2.5, road.widthM * 0.23);
+export function streetLane(road: Street, walking: boolean, direction: number, seed = 0) {
+  if (!walking) {
+    const count = road.lanes ?? Math.max(1, Math.round(road.widthM / 3.25));
+    const width = Math.max(0, road.widthM - (road.nativeSourceRole ? 1 : 0));
+    const laneWidth = width / count;
+    if (road.oneway) return (Math.floor(seed * count) + 0.5) * laneWidth - width / 2;
+    if (count < 2) return 0;
+    const lane = Math.min(Math.floor(count / 2) - 1, Math.floor(seed * Math.floor(count / 2)));
+    return (lane + (count % 2 ? 1 : 0.5)) * laneWidth;
+  }
   if (!road.motor) return 0;
   const [left, right] = sidewalkSides(road),
     offset = road.widthM / 2 + 0.7;
@@ -66,18 +74,39 @@ export function pathPosition(path: StreetPath, distance: number, lane: number, d
     if (path.cumulative[m] < d) low = m + 1;
     else high = m;
   }
-  const a = path.road.coordinates[low - 1],
-    b = path.road.coordinates[low];
   const length = path.cumulative[low] - path.cumulative[low - 1];
   const t = length > 0 ? (d - path.cumulative[low - 1]) / length : 0;
-  const dx = length > 0 ? (b[0] - a[0]) / length : 1,
-    dy = length > 0 ? (b[1] - a[1]) / length : 0;
-  // 한국의 우측 통행은 진행 방향의 오른쪽으로 이동시킨다.
+  const offsetAt = (index: number) => {
+    const points = path.road.coordinates,
+      p = points[index];
+    const normal = (a: number, b: number) => {
+      const dx = points[b][0] - points[a][0],
+        dy = points[b][1] - points[a][1],
+        length = Math.hypot(dx, dy) || 1;
+      return [dy / length, -dx / length];
+    };
+    const n = normal(Math.max(0, index - 1), index === 0 ? 1 : index),
+      m = normal(
+        index === points.length - 1 ? index - 1 : index,
+        Math.min(points.length - 1, index + 1)
+      );
+    const length = Math.hypot(n[0] + m[0], n[1] + m[1]) || 1,
+      nx = (n[0] + m[0]) / length,
+      ny = (n[1] + m[1]) / length;
+    const scale =
+      Math.min(Math.abs(lane) * 2.5, Math.abs(lane) / Math.max(0.2, nx * m[0] + ny * m[1])) *
+      Math.sign(lane) *
+      direction;
+    return [p[0] + nx * scale, p[1] + ny * scale];
+  };
+  const left = offsetAt(low - 1),
+    right = offsetAt(low);
+  // 도색과 이동체가 같은 코너 이음 좌표를 사용해 선분 경계에서 옆 차로로 뛰지 않는다.
   return {
     segment: low - 1,
-    x: a[0] + (b[0] - a[0]) * t + dy * lane * direction,
-    y: a[1] + (b[1] - a[1]) * t - dx * lane * direction,
-    angle: Math.atan2(dx * direction, -dy * direction),
+    x: left[0] + (right[0] - left[0]) * t,
+    y: left[1] + (right[1] - left[1]) * t,
+    angle: Math.atan2((right[0] - left[0]) * direction, -(right[1] - left[1]) * direction),
   };
 }
 export function streetSpeed(path: StreetPath, seed: number, walking: boolean) {
@@ -102,6 +131,6 @@ export function travellingPosition(
 ) {
   const direction = (!walking && path.road.oneway) || (seed > 0.5 ? 1 : -1);
   const distance = (((travel + seed * path.length) % path.length) + path.length) % path.length;
-  const lane = streetLane(path.road, walking, direction);
+  const lane = streetLane(path.road, walking, direction, seed);
   return pathPosition(path, direction < 0 ? path.length - distance : distance, lane, direction);
 }

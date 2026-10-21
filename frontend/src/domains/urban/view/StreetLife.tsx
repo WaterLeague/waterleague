@@ -106,10 +106,17 @@ export const StreetLife = memo(function StreetLife({
               : parkingTrafficPaths(path, parkingRoutes).map((path) => ({ path, walking: false }))
           );
           return routes.flatMap(({ path, walking }) => {
-            const count = Math.min(24, Math.max(1, Math.floor(path.length / (walking ? 30 : 45))));
+            const count = Math.min(
+              24,
+              Math.max(
+                !walking && !path.road.oneway ? 2 : 1,
+                Math.floor(path.length / (walking ? 30 : 45))
+              )
+            );
             return Array.from({ length: count }, (_, i) => ({
               path,
               walking,
+              direction: (!walking && path.road.oneway) || (i % 2 === 0 ? 1 : -1),
               queue: i * 6,
               reaction: {
                 key: '',
@@ -121,7 +128,7 @@ export const StreetLife = memo(function StreetLife({
                 heading: 1,
               },
               seed: (i + 0.25 + stableSeed(path.road.id + ':' + walking + ':' + i) * 0.5) / count,
-              budget: stableSeed(path.road.id + ':budget:' + walking + ':' + i),
+              budget: stableSeed(path.road.id + ':budget:' + walking + ':' + Math.floor(i / 2)),
             }));
           });
         })
@@ -191,11 +198,10 @@ export const StreetLife = memo(function StreetLife({
     }
     if (distance < 8500)
       for (const agent of agents) {
-        const baseDirection =
-          (!agent.walking && agent.path.road.oneway) || (agent.seed > 0.5 ? 1 : -1);
-        const lane = streetLane(agent.path.road, agent.walking, baseDirection);
+        const baseDirection = agent.direction;
+        const lane = streetLane(agent.path.road, agent.walking, baseDirection, agent.seed);
         const normalSpeed = streetSpeed(agent.path, agent.seed, agent.walking);
-        const route = flood.route(agent.path, agent.walking, baseDirection);
+        const route = flood.route(agent.path, agent.walking, baseDirection, lane);
         let home =
           baseDirection > 0 ? agent.seed * agent.path.length : (1 - agent.seed) * agent.path.length;
         let travel = Math.max(0, time - (clock.current.origin ?? 0) / 1000) * normalSpeed;
@@ -246,9 +252,8 @@ export const StreetLife = memo(function StreetLife({
           agent.reaction.arc = response.arc;
           agent.reaction.heading = response.direction;
         }
-        const position = pathPosition(agent.path, response.arc, lane, baseDirection);
+        const position = pathPosition(agent.path, response.arc, lane, response.direction);
         if (submergedSourcePath(agent.path.road, terrain, [position.x, position.y])) continue;
-        if (response.direction !== baseDirection) position.angle += Math.PI;
         const place = clock.current.historical
           ? undefined
           : livePlaceAt(currentPlaces, position.x, position.y);

@@ -3,7 +3,13 @@ import type { NativeBridgeGroup } from '../dto/nativeBridgeDto';
 import { withinBridge } from './nativeBridgeService';
 type Point = [number, number];
 type Polygons = Point[][][];
-type Cut = { polygon: Point[][]; bounds: number[]; group?: NativeBridgeGroup };
+type Cut = {
+  polygon: Point[][];
+  bounds: number[];
+  group?: NativeBridgeGroup;
+  roles?: string[];
+  sourceFids?: number[];
+};
 const CELL = 500;
 // 파생 교차점의 부동소수점 잡음을 0.1mm 표시 격자로 맞춰 겹친 경계의 순환을 막는다.
 function snapped(polygons: Polygons): Polygons {
@@ -25,15 +31,44 @@ function bounds(polygons: Polygons) {
 export class NativeGroundCuts {
   private cells = new Map<string, Cut[]>();
   private sourceWater: boolean;
-  constructor(groups: NativeBridgeGroup[], waterPolygons = groups[0]?.displayWaterPolygons) {
+  constructor(
+    groups: NativeBridgeGroup[],
+    waterPolygons = groups[0]?.displayWaterPolygons,
+    snap = true
+  ) {
     this.sourceWater = !!waterPolygons;
     for (const entry of [
-      ...groups.map((group) => ({ group, polygons: group.groundCutPolygons ?? [] })),
-      { group: undefined, polygons: waterPolygons ?? [] },
+      ...groups
+        .filter((g) => !g.kinds?.includes('지하차도'))
+        .flatMap((group) => [
+          {
+            group,
+            polygons: group.groundCutPolygons ?? [],
+            roles: undefined as string[] | undefined,
+            sourceFids: undefined as number[] | undefined,
+          },
+          ...(group.surfaceCuts ?? []).map((cut) => ({
+            group,
+            sourceFids: undefined as number[] | undefined,
+            ...cut,
+          })),
+          ...(group.sourceSurfaceCuts ?? []).map((cut) => ({
+            group,
+            roles: undefined as string[] | undefined,
+            ...cut,
+          })),
+        ]),
+      { group: undefined, polygons: waterPolygons ?? [], roles: undefined, sourceFids: undefined },
     ])
-      for (const polygon of snapped(entry.polygons)) {
+      for (const polygon of snap ? snapped(entry.polygons) : entry.polygons) {
         const b = bounds([polygon]),
-          cut = { polygon, bounds: b, group: entry.group };
+          cut = {
+            polygon,
+            bounds: b,
+            group: entry.group,
+            roles: entry.roles,
+            sourceFids: entry.sourceFids,
+          };
         for (let x = Math.floor(b[0] / CELL); x <= Math.floor(b[2] / CELL); x++)
           for (let y = Math.floor(b[1] / CELL); y <= Math.floor(b[3] / CELL); y++) {
             const key = x + ',' + y;
@@ -60,27 +95,41 @@ export class NativeGroundCuts {
     return [
       ...new Set(
         this.nearby([point[0], point[1], point[0], point[1]])
-          .filter((c) => withinBridge(point, [c.polygon]))
+          .filter((c) => !c.sourceFids && withinBridge(point, [c.polygon]))
           .flatMap((c) => (c.group ? [c.group] : []))
       ),
     ];
   }
   contains(point: readonly [number, number]) {
-    return this.nearby([point[0], point[1], point[0], point[1]]).some((c) =>
-      withinBridge(point, [c.polygon])
+    return this.nearby([point[0], point[1], point[0], point[1]]).some(
+      (c) =>
+        !c.roles &&
+        !c.sourceFids &&
+        (!this.sourceWater || !c.group) &&
+        withinBridge(point, [c.polygon])
     );
   }
-  surface(polygons: Polygons): Polygons {
-    const cuts = this.nearby(bounds(polygons))
-      .filter((c) => !this.sourceWater || !c.group)
-      .map((c) => c.polygon);
-    return cuts.length
-      ? (polygonClipping.difference(snapped(polygons), cuts) as Polygons)
-      : polygons;
+  private owns(cut: Cut, role?: string, fid?: number) {
+    if (cut.sourceFids) return fid !== undefined && cut.sourceFids.includes(fid);
+    return cut.roles ? !role || cut.roles.includes(role) : !this.sourceWater || !cut.group;
   }
-  line(points: Point[], inside = false): Point[][] {
+  surface(polygons: Polygons, role?: string, fid?: number): Polygons {
+    const cuts = this.nearby(bounds(polygons))
+      .filter((c) => this.owns(c, role, fid))
+      .map((c) => c.polygon);
+    if (!cuts.length) return polygons;
+    const [x, y] = bounds(polygons);
+    // 교차점 오차가 큰 절대 좌표 대신 해당 면 기준 1mm 정수 격자에서 표시 차집합을 계산한다.
+    const local = (shape: Polygons): Polygons =>
+      shape.map((p) =>
+        p.map((r) => r.map((q) => [Math.round((q[0] - x) * 1000), Math.round((q[1] - y) * 1000)]))
+      );
+    const result = polygonClipping.difference(local(polygons), local(cuts)) as Polygons;
+    return result.map((p) => p.map((r) => r.map((q) => [q[0] / 1000 + x, q[1] / 1000 + y])));
+  }
+  line(points: Point[], inside = false, role?: string): Point[][] {
     const nearby = this.nearby(bounds([[points]]));
-    const cuts = nearby.filter((c) => !this.sourceWater || !c.group).map((c) => c.polygon);
+    const cuts = nearby.filter((c) => this.owns(c, role)).map((c) => c.polygon);
     if (!cuts.length) return inside ? [] : [points];
     const boundaries = inside
       ? [
@@ -88,6 +137,7 @@ export class NativeGroundCuts {
           ...[...new Set(nearby.flatMap((c) => (c.group ? [c.group] : [])))].flatMap((g) => [
             ...g.polygons,
             ...(g.sidewalks ?? []).flatMap((s) => s.polygons),
+            ...g.profiles.flatMap((p) => p.polygons),
           ]),
         ]
       : cuts;

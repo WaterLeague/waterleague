@@ -16,6 +16,8 @@ import { nativeBridgesDto } from '../src/domains/urban/dto/nativeBridgeDto';
 import {
   connectBridgeDatums,
   nativeBridgeHeight,
+  nativeBridgeProfileHeight,
+  nativeDeckLift,
   withinBridge,
 } from '../src/domains/urban/service/nativeBridgeService';
 import {
@@ -45,6 +47,46 @@ const terrain: Terrain = {
   districts: new Uint8Array(),
   cover: new Uint8Array(),
 };
+
+test('전체 원 교량의 연속·순환 진입로 합류점 높이가 대상 도로와 일치', () => {
+  const records = groups.flatMap((g) => g.profiles.map((p) => ({ g, p })));
+  const owners = new Map(records.map((r) => [r.p.coordinates, r]));
+  let checked = 0;
+  for (const { g, p } of records)
+    for (const c of p.connections ?? []) {
+      if (!c.endpointTarget) continue;
+      const other = owners.get(c.endpointTarget.coordinates)!;
+      const point = c.endpointTarget.point;
+      const a = nativeBridgeProfileHeight(terrain, point, {
+        ...p,
+        deckPolygons: g.displayDatumPolygons!,
+        deckLiftM: nativeDeckLift(g),
+      });
+      const b = nativeBridgeProfileHeight(terrain, point, {
+        ...other.p,
+        deckPolygons: other.g.displayDatumPolygons!,
+        deckLiftM: nativeDeckLift(other.g),
+      });
+      expect(Math.abs(a - b), g.id).toBeLessThan(0.001);
+      checked++;
+    }
+  expect(checked).toBeGreaterThanOrEqual(120);
+});
+
+test('양화대교 북단 원 진입로 합류점과 인접 무명 교량 높이 연결', () => {
+  const main = groups.find((g) => g.id.endsWith('4a56a83ebb92'))!;
+  const a = groups.find((g) => g.id.endsWith('f42401f18042'))!;
+  const b = groups.find((g) => g.id.endsWith('1f1732401cd0'))!;
+  expect(a.displayDatumPolygons).toBe(b.displayDatumPolygons);
+  const point = b.profiles[0].coordinates[0];
+  const height = (g: typeof main) =>
+    nativeBridgeProfileHeight(terrain, point, {
+      ...g.profiles[0],
+      deckPolygons: g.displayDatumPolygons!,
+    });
+  expect(height(b)).toBeCloseTo(height(main), 3);
+  expect(height(a)).toBeCloseTo(height(main), 3);
+});
 
 test('실제 반포·청담 원본에서 하층 상판·보행로·선로가 수면 위에 있고 상층과 7m 분리', () => {
   const selected = groups.filter((g) => g.lowerDeck);
@@ -157,6 +199,42 @@ test('노들섬 양쪽 한강대교는 노량대교와 분리되고 같은 상�
   }
 });
 
+test('노들섬 원 중앙 도로가 양쪽 상판과 같은 높이로 연결되고 원 교량 아래 사본 없음', () => {
+  const group = groups.find((g) => g.sourceFids.includes(1823862))!;
+  expect(group.sourceFids).toEqual(expect.arrayContaining([1823862, 1823863, 1823864, 1823865]));
+  expect(group.profiles.filter((p) => !p.islandConnection).length).toBeGreaterThan(0);
+  const patches = nativeStreets([], [group]).filter((s) =>
+    s.nativeBridgeProfiles?.some((p) => p.islandConnection)
+  );
+  expect(patches.length).toBeGreaterThan(0);
+  const point: [number, number] = [-1761.97, -5531.851];
+  const middle = patches.filter((s) => withinBridge(point, s.nativePolygons ?? []));
+  expect(middle.length).toBe(1);
+  const deck = nativeBridgeHeight(terrain, group.polygons) + 0.016;
+  expect(streetHeight(terrain, point, middle[0])).toBeCloseTo(deck, 5);
+  const mesh = streetGeometry(patches, terrain, true);
+  const geometry = new BufferGeometry();
+  geometry.setAttribute('position', new BufferAttribute(mesh.positions, 3));
+  const material = new MeshBasicMaterial({ side: DoubleSide });
+  const rays = new Raycaster(new Vector3(point[0], deck + 100, -point[1]), new Vector3(0, -1, 0));
+  const hits = rays.intersectObject(new Mesh(geometry, material));
+  expect(hits.length).toBeGreaterThan(0);
+  expect(hits[0].point.y).toBeCloseTo(deck, 4);
+  geometry.dispose();
+  material.dispose();
+  for (const profile of group.profiles.filter((p) => p.islandConnection)) {
+    const height = bridgeTransportHeight([{ ...profile, deckPolygons: group.polygons }], terrain)!;
+    for (const p of profile.coordinates) expect(height(p)).toBeCloseTo(deck - 0.016, 5);
+  }
+});
+
+test('원 지하차도를 고가 교량으로 생성하지 않음', () => {
+  const underground = groups.filter((g) => g.kinds?.includes('지하차도'));
+  expect(underground.length).toBeGreaterThan(0);
+  expect(nativeStreets([], underground)).toEqual([]);
+  expect(bridgeTransportBindings(underground).size).toBe(0);
+});
+
 test('모든 교량의 표시 접속로는 수면 안으로 연장된 중복 면과 철길을 생성하지 않음', () => {
   let tested = 0;
   const all = nativeStreets([], groups);
@@ -182,3 +260,13 @@ test('모든 교량의 표시 접속로는 수면 안으로 연장된 중복 면
   }
   expect(tested).toBeGreaterThan(1000);
 }, 30000);
+
+test('분리된 양화대교 남단과 본교의 높이 기준 일치', () => {
+  const selected = groups.filter((g) => g.names?.includes('양화대교'));
+  expect(selected.length).toBeGreaterThan(1);
+  const datums = new Set(selected.map((g) => g.displayDatumPolygons));
+  expect(datums.size).toBe(1);
+  expect(
+    new Set(selected.map((g) => nativeBridgeHeight(terrain, g.displayDatumPolygons!))).size
+  ).toBe(1);
+});

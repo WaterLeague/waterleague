@@ -5,7 +5,9 @@ export type Street = {
   class: string;
   districtId: string;
   widthM: number;
-  widthSource: 'OSM_WIDTH_TAG' | 'DISPLAY_ASSUMPTION' | 'NOT_CONFIRMED';
+  widthSource: 'NGII_WIDTH_ATTRIBUTE' | 'OSM_WIDTH_TAG' | 'DISPLAY_ASSUMPTION' | 'NOT_CONFIRMED';
+  nativeTunnels?: import('../service/nativeTunnelService').NativeTunnel[];
+  nativeJunctionPolygons?: [number, number][][][];
   nativeSourceRole?: string;
   nativeTrafficDirection?: 'BIDIRECTIONAL' | 'UNKNOWN';
   nativePolygons?: [number, number][][][];
@@ -14,6 +16,7 @@ export type Street = {
   nativeBridgeProfiles?: NativeBridgeProfile[];
   nativeRailPaths?: [number, number][][];
   nativeRailKind?: 'rail' | 'subway';
+  nativeRailName?: string;
   nativeLaneClipPolygons?: [number, number][][][];
   nativeGroundCutPolygons?: [number, number][][][];
   nativeWaterDecks?: {
@@ -23,6 +26,7 @@ export type Street = {
     deckLiftM: number;
   }[];
   nativeBridgeGroupPolygons?: [number, number][][][];
+  nativeUnderpassPolygons?: [number, number][][][];
   nativeWalkingDecks?: {
     polygons: [number, number][][][];
     deckPolygons: [number, number][][][];

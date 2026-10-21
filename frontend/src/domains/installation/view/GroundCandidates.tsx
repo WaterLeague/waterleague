@@ -26,6 +26,7 @@ const terrainIds = new WeakMap<object, number>();
 let terrainId = 0;
 export const GroundCandidates = memo(function GroundCandidates({
   rows,
+  showColors = false,
   terrain,
   type,
   ownDistrictId,
@@ -33,6 +34,7 @@ export const GroundCandidates = memo(function GroundCandidates({
   onSelect,
 }: {
   rows: GroundCandidate[];
+  showColors?: boolean;
   occupiedSites?: ReadonlySet<string>;
   terrain: Terrain | null;
   type: FacilityType | '';
@@ -156,6 +158,7 @@ export const GroundCandidates = memo(function GroundCandidates({
         shape.rows[0]?.[0].startsWith('overview-') ? () => {} : shape.geometry.userData.raycast
       }
       material={material}
+      material-colorWrite={showColors}
       renderOrder={4}
       onPointerMove={(event) => {
         const i = streetAtFace(shape.ends, event.faceIndex ?? -1);

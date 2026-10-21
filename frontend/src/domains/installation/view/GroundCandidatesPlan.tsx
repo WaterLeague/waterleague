@@ -8,12 +8,14 @@ import {
 import { availableSiteColor } from '../../city/service/siteVisibilityService';
 export const GroundCandidatesPlan = memo(function GroundCandidatesPlan({
   rows,
+  showColors = false,
   type,
   ownDistrictId,
   occupiedSites,
   onSelect,
 }: {
   rows: GroundCandidate[];
+  showColors?: boolean;
   occupiedSites: ReadonlySet<string>;
   type: FacilityType | '';
   ownDistrictId: string | null;
@@ -43,7 +45,7 @@ export const GroundCandidatesPlan = memo(function GroundCandidatesPlan({
             fillRule="evenodd"
             pointerEvents={row[0].startsWith('overview-') ? 'none' : undefined}
             fill={matches ? availableSiteColor : '#9caaa1'}
-            fillOpacity={0.7}
+            fillOpacity={showColors ? 0.7 : 0}
             opacity={(matches ? 1 : 0.2) * (ownDistrictId && row[1] !== ownDistrictId ? 0.16 : 1)}
             onClick={(e) => {
               e.stopPropagation();

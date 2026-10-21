@@ -1,3 +1,4 @@
+import { attachNativeTunnels, nativeTunnelStreets } from '../service/nativeTunnelService';
 import { useEffect, useMemo, useState } from 'react';
 import type { CityTile } from '../../city/entity/city';
 import type { Population } from '../entity/urban';
@@ -24,8 +25,25 @@ export function useUrbanData(tiles: CityTile[], center: [number, number], distan
       });
     return () => request.abort();
   }, []);
-  const lanes = useMemo(() => new Map(transport?.lanes), [transport]);
+  const lanes = useMemo(
+    () => new Map(transport?.lanes.map(([id, count]) => [id, count])),
+    [transport]
+  );
+  const widths = useMemo(
+    () => new Map(transport?.lanes.filter((r) => r[2]).map(([id, , width]) => [id, width!])),
+    [transport]
+  );
   const railways = useMemo(() => nativeRailStreets(transport, bridges), [transport, bridges]);
+  const railTraffic = useMemo(
+    () => [
+      ...railways,
+      ...nativeStreets(
+        [],
+        bridges?.filter((g) => g.lowerDeck?.rail)
+      ).filter((r) => r.nativeRailKind),
+    ],
+    [railways, bridges]
+  );
   useEffect(() => {
     const request = new AbortController();
     void loadNativeBridges(request.signal)
@@ -66,10 +84,27 @@ export function useUrbanData(tiles: CityTile[], center: [number, number], distan
     [railways, center, distance]
   );
   const railKey = nearRail.map((r) => r.id).join(',');
-  const roads = useMemo(
-    () => [...nativeStreets(tiles, visible, lanes), ...nearRail],
-    [tiles, bridgeKey, lanes, railKey]
+  const tunnels = useMemo(
+    () =>
+      (transport?.tunnels ?? []).filter((t) =>
+        t.polygons.some((p) =>
+          p[0].some(
+            (q) => Math.hypot(q[0] - center[0], q[1] - center[1]) < Math.max(2000, distance)
+          )
+        )
+      ),
+    [transport, center, distance]
   );
+  const tunnelKey = tunnels.map((t) => t.id).join(',');
+  const roads = useMemo(() => {
+    return [
+      ...attachNativeTunnels(
+        [...nativeStreets(tiles, visible, lanes, widths), ...nearRail],
+        tunnels
+      ),
+      ...nativeTunnelStreets(tunnels),
+    ];
+  }, [tiles, bridgeKey, lanes, widths, railKey, transport, tunnelKey]);
   const parking = useMemo(
     () => ({
       lots: tiles.flatMap((tile) => tile.urban?.parkingLots ?? []),
@@ -91,5 +126,12 @@ export function useUrbanData(tiles: CityTile[], center: [number, number], distan
       });
     return () => request.abort();
   }, []);
-  return { roads, parking, population, error: bridgeError || transportError, populationError };
+  return {
+    roads,
+    railTraffic,
+    parking,
+    population,
+    error: bridgeError || transportError,
+    populationError,
+  };
 }

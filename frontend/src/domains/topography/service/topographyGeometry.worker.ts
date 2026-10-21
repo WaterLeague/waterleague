@@ -1,3 +1,5 @@
+import { readNativeTransport } from '../../urban/repository/nativeTransportDataSource';
+import { NativeGroundCuts } from '../../urban/service/nativeGroundCutService';
 import { readPublicData } from '../../../shared/repository/publicDataCache';
 import { topographyTileDto } from '../dto/topographyDto';
 import { topographyGeometry } from './topographyGeometryService';
@@ -11,8 +13,18 @@ import {
 let transport: Promise<NativeBridgeTransport> | undefined;
 function loadTransport() {
   // 교통 결속 자료는 작업 간 공유하고 개별 타일 취소로 다른 작업을 끊지 않는다.
-  return (transport ??= readNativeBridges(new AbortController().signal)
-    .then(bridgeTransportBindings)
+  return (transport ??= Promise.all([
+    readNativeBridges(new AbortController().signal),
+    readNativeTransport(new AbortController().signal),
+  ])
+    .then(([groups, data]) => {
+      const bindings = bridgeTransportBindings(groups);
+      bindings.tunnelCuts = new NativeGroundCuts(
+        [],
+        data.tunnels.filter((t) => t.profiles.length).flatMap((t) => t.polygons)
+      );
+      return bindings;
+    })
     .catch((error: unknown) => {
       transport = undefined;
       throw error;

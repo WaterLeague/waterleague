@@ -1,3 +1,4 @@
+import { insideTunnel, tunnelHeight } from './nativeTunnelService';
 import { bridgeAxis, bridgePierPositions } from './nativeBridgeStructureService';
 import { bridgeArchitecture } from './bridgeArchitectureService';
 import { stairTriangles } from '../../../shared/service/polygonBandService';
@@ -12,6 +13,7 @@ import {
   drapeTriangle,
   drapeSegment,
   terrainMeshHeight,
+  terrainMeshContains,
 } from '../../terrain/service/terrainDrapeService';
 import { pathPosition, streetPath, sidewalkSides } from './streetLifeService';
 type Point = [number, number];
@@ -39,6 +41,10 @@ export function streetHeight(
   road: boolean | Street,
   segment?: number
 ) {
+  if (typeof road === 'object') {
+    const tunnel = insideTunnel(road, point);
+    if (tunnel) return tunnelHeight(tunnel, point, terrain) + 0.016;
+  }
   if (typeof road === 'object' && road.nativeWaterDecks?.length) {
     const decks = road.nativeWaterDecks.filter(
       (d) => withinBridge(point, d.polygons) && withinBridge(point, d.waterPolygons)
@@ -58,6 +64,11 @@ export function streetHeight(
             : nativeBridgeHeight(terrain, deck.deckPolygons, deck.deckLiftM)) + 0.14
         );
   if (typeof road === 'object' && road.nativeRailKind)
+    return (
+      (bridgeTransportHeight(road.nativeBridgeProfiles, terrain)?.(point) ??
+        terrainMeshHeight(terrain, point)) + 0.016
+    );
+  if (typeof road === 'object' && road.nativeSourceRole === 'ROAD_CENTERLINE')
     return (
       (bridgeTransportHeight(road.nativeBridgeProfiles, terrain)?.(point) ??
         terrainMeshHeight(terrain, point)) + 0.016
@@ -243,16 +254,32 @@ export function streetGeometry(
               Point,
             ];
             const emit = (part: readonly (readonly [number, number])[]) => {
+              if (
+                road.nativeSourceRole === 'TUNNEL_AREA' &&
+                !terrainMeshContains(terrain, [
+                  part.reduce((n, p) => n + p[0], 0) / part.length,
+                  part.reduce((n, p) => n + p[1], 0) / part.length,
+                ])
+              )
+                return;
               for (const p of part) {
                 positions.push(
                   p[0],
-                  (road.nativeBridgeProfiles?.length
+                  (road.nativeBridgeProfiles?.length || road.nativeTunnels?.length
                     ? streetHeight(terrain, p, road) - surfaceLift
                     : (bridgeHeight ?? terrainMeshHeight(terrain, p))) +
                     (marking ? 0.055 : surfaceLift),
                   -p[1]
                 );
                 colors.push(color.r, color.g, color.b);
+              }
+              if (road.nativeSourceRole === 'TUNNEL_AREA') {
+                const roof = part.map((p) => [
+                  p[0],
+                  streetHeight(terrain, p, road) + (road.nativeTunnels?.[0]?.clearanceM ?? 4.8),
+                  p[1],
+                ]);
+                face(roof[0], roof[1], roof[2], concrete);
               }
               if (road.nativeBridgeProfiles?.length && !road.nativeBridgeProfiles[0].steps) {
                 const bottom = part.map((p) => [
@@ -344,6 +371,36 @@ export function streetGeometry(
                   face([a[0], ha, a[1]], [b[0], hb, b[1]], [b[0], hb + 0.14, b[1]], walk);
                   face([a[0], ha, a[1]], [b[0], hb + 0.14, b[1]], [a[0], ha + 0.14, a[1]], walk);
                 }
+          if (road.nativeSourceRole === 'TUNNEL_AREA') {
+            const clearance = road.nativeTunnels?.[0]?.clearanceM ?? 4.8;
+            for (const ring of component)
+              for (let i = 1; i < ring.length; i++) {
+                const a = ring[i - 1],
+                  b = ring[i],
+                  ha = streetHeight(terrain, a, road),
+                  hb = streetHeight(terrain, b, road);
+                // 원 터널 외곽에 통로 측벽을 두며 입구를 막는 횡단 벽은 제외한다.
+                if (!terrainMeshContains(terrain, [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2])) continue;
+                const tunnel = road.nativeTunnels?.[0];
+                const ends =
+                  tunnel?.profiles.flatMap((p) => [p.coordinates[0], p.coordinates.at(-1)!]) ?? [];
+                if (
+                  ends.some(
+                    (p) =>
+                      Math.hypot(p[0] - (a[0] + b[0]) / 2, p[1] - (a[1] + b[1]) / 2) <
+                      Math.hypot(b[0] - a[0], b[1] - a[1]) / 2 + 1
+                  )
+                )
+                  continue;
+                face([a[0], ha, a[1]], [b[0], hb, b[1]], [b[0], hb + clearance, b[1]], concrete);
+                face(
+                  [a[0], ha, a[1]],
+                  [b[0], hb + clearance, b[1]],
+                  [a[0], ha + clearance, a[1]],
+                  concrete
+                );
+              }
+          }
           if (road.nativeBridgeProfiles?.length)
             for (const ring of component)
               for (let i = 1; i < ring.length; i++)
@@ -365,7 +422,13 @@ export function streetGeometry(
                 face([a[0], top, a[1]], [b[0], top, b[1]], [a[0], bottom, a[1]], concrete);
                 face([a[0], bottom, a[1]], [b[0], top, b[1]], [b[0], bottom, b[1]], concrete);
               }
-          if (detail && road.bridge && road.nativeSourceRole !== 'SIDEWALK_AREA') {
+          // 도로교 난간은 원 C053 선이 소유하며, 접속면 절단 경계에 가짜 난간을 만들지 않는다.
+          if (
+            detail &&
+            road.bridge &&
+            (road.nativeSourceRole === 'PEDESTRIAN_OVERPASS_AREA' ||
+              (road.nativeDeckLevel === 'lower' && road.nativeSourceRole !== 'SIDEWALK_AREA'))
+          ) {
             const axis = bridgeAxis(road.nativePolygons!);
             const top = (p: Point) =>
               bridgeHeight === null ? streetHeight(terrain, p, road) : bridgeHeight + 0.016;
@@ -401,6 +464,7 @@ export function streetGeometry(
           road.nativePolygons,
           road.nativeDeckLevel === 'upper'
         )) {
+          if (withinBridge(p, road.nativeUnderpassPolygons ?? [])) continue;
           const low = terrainMeshHeight(terrain, p),
             high =
               (bridgeHeight === null ? streetHeight(terrain, p, road) : bridgeHeight + 0.016) -
@@ -416,6 +480,12 @@ export function streetGeometry(
             for (let s = lane.span[0]; s < lane.span[1]; s += 12) {
               const a = pathPosition(path, s, offset, 1),
                 b = pathPosition(path, Math.min(s + 4, lane.span[1]), offset, 1);
+              if (
+                [a, b, { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }].some((p) =>
+                  submergedSourcePath(road, terrain, [p.x, p.y])
+                )
+              )
+                continue;
               if (
                 road.nativeGroundCutPolygons &&
                 !road.nativeLaneClipPolygons &&
@@ -435,6 +505,13 @@ export function streetGeometry(
                 !withinBridge(
                   [(a.x + b.x) / 2, (a.y + b.y) / 2],
                   road.nativeLaneClipPolygons ?? road.nativePolygons ?? []
+                )
+              )
+                continue;
+              if (
+                road.nativeJunctionPolygons &&
+                [a, b, { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }].some((p) =>
+                  withinBridge([p.x, p.y], road.nativeJunctionPolygons!)
                 )
               )
                 continue;

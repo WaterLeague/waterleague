@@ -30,7 +30,7 @@ export function structureWriter(
     a: readonly [number, number],
     b: readonly [number, number],
     bottom: number,
-    height: number,
+    beamHeight: number,
     width: number,
     color: Color
   ) => {
@@ -42,15 +42,19 @@ export function structureWriter(
       ar: Point = [a[0] - dx, a[1] - dy],
       bl: Point = [b[0] + dx, b[1] + dy],
       br: Point = [b[0] - dx, b[1] - dy];
+    // 부재 양쪽 모서리는 중심선 높이를 공유해 상판 경계에서 한쪽만 지면으로 꺾이지 않게 한다.
+    const ha = height(a),
+      hb = height(b);
+    const at = (p: Point, base: number, lift: number): Vertex => [p[0], base + lift, -p[1]];
     const v = [
-      vertex(al, bottom),
-      vertex(ar, bottom),
-      vertex(br, bottom),
-      vertex(bl, bottom),
-      vertex(al, bottom + height),
-      vertex(ar, bottom + height),
-      vertex(br, bottom + height),
-      vertex(bl, bottom + height),
+      at(al, ha, bottom),
+      at(ar, ha, bottom),
+      at(br, hb, bottom),
+      at(bl, hb, bottom),
+      at(al, ha, bottom + beamHeight),
+      at(ar, ha, bottom + beamHeight),
+      at(br, hb, bottom + beamHeight),
+      at(bl, hb, bottom + beamHeight),
     ];
     for (const [i, j, k, l] of [
       [0, 1, 5, 4],
@@ -199,7 +203,7 @@ export function areaLift(id: string) {
   // 겹치는 지표 종류에 일정한 높이 순서를 부여해 같은 깊이의 면 충돌을 피한다.
   if (code === 'D001') return 0.008;
   if (code === 'A001') return id.startsWith('N3') ? 0.012 : 0.016;
-  if (code === 'A008' || code === 'A009' || code === 'A010') return 0.026;
+  if (code === 'A008' || code === 'A009' || code === 'A010') return 0.016;
   if (code === 'A011') return 0.036;
   if (code === 'A016') return 0.046;
   if (code === 'C017' || code === 'C018') return 2.4;

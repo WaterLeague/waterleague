@@ -127,7 +127,7 @@ test('주간 비교 흔적 제외·재해 사건 흔적 포함·건조 계산 �
 
 test('실제 차선·보행 위치별 교차 및 동일 자료의 인덱스 재사용', () => {
   const source = frame(),
-    path = streetPath(road),
+    path = streetPath({ ...road, oneway: 0 }),
     field = createFloodField([source], [], false);
   expect(createFloodField([source], [], false)).toBe(field);
   const car = field.route(path, false, 1),
