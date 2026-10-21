@@ -60,9 +60,9 @@ export function HistoricalBoard({ admin = false }: { admin?: boolean }) {
     };
   }, [eventId, admin, page]);
   return (
-    <section className="full-page historical-board" aria-label="재해 모드 랭킹">
-      <h1>재해 모드 랭킹</h1>
-      <p>현재 형상·과거 강우 스트레스 시험 · 독립 표면 평가체적 감소 순위</p>
+    <section className="historical-board" aria-label="재해 모드 랭킹">
+      <h2>재해 모드 랭킹</h2>
+      <p>같은 사건과 계산 조건에서 제출한 설계의 평가체적 감소량을 비교합니다.</p>
       <label>
         재해 사건{' '}
         <select
@@ -90,9 +90,8 @@ export function HistoricalBoard({ admin = false }: { admin?: boolean }) {
         </p>
       )}
       <p>
-        음수는 평가체적 증가입니다. 미세한 차이는 수치 오차보다 작을 수 있습니다. 연결 유역
-        침수·첨두 지표가 없어 총점은 보류합니다. 표시값은 반올림하며 순위는 소수 18자리 저장값으로
-        계산합니다.
+        음수는 평가체적 증가입니다. 미세한 차이는 수치 오차보다 작을 수 있습니다. 표시값은
+        반올림하며 순위는 소수 18자리 저장값으로 계산합니다.
       </p>
       {error ? (
         <p role="alert">{error}</p>

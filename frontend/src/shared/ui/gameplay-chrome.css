@@ -249,11 +249,6 @@
   background: var(--ui-paper);
   border-color: var(--ui-line);
 }
-.game-shell .competition-page {
-  max-width: 1180px;
-  margin: 28px auto 48px;
-  padding: 0 24px;
-}
 .game-shell .competition-switch {
   display: flex;
   width: fit-content;
@@ -277,26 +272,9 @@
   background: var(--ui-accent);
   color: white;
 }
-.game-shell .competition-page > .weekly-board,
-.game-shell .competition-page > .full-page {
-  border: 1px solid var(--ui-line);
-  border-radius: 28px;
-  background: var(--ui-paper);
-  padding: 30px;
-  color: var(--ui-ink);
-  box-shadow: 0 6px 24px #294e5006;
-}
-.game-shell .full-page :is(h1, h2, h3),
 .game-shell .weekly-board :is(h2, h3) {
   color: var(--ui-ink);
   letter-spacing: -0.035em;
-}
-.game-shell .full-page h1 {
-  font-size: clamp(25px, 3vw, 34px);
-  margin-top: 12px;
-}
-.game-shell .full-page .lead {
-  color: var(--ui-muted);
 }
 .game-shell .weekly-tabs {
   background: var(--ui-soft);
@@ -322,9 +300,6 @@
 }
 .game-shell .weekly-board tr.own {
   background: #dceadd;
-}
-.game-shell .competition-page :is(select, .solid-button, .outline-button) {
-  border-radius: 14px;
 }
 @media (max-width: 1100px) {
   .game-shell.is-game > .shared-play-layout .play-hud.gameplay-hud {
@@ -362,15 +337,6 @@
   }
   .game-shell .gameplay-tools > div {
     left: -100px;
-  }
-  .game-shell .competition-page {
-    padding-inline: 16px;
-    margin-top: 18px;
-  }
-  .game-shell .competition-page > .weekly-board,
-  .game-shell .competition-page > .full-page {
-    padding: 20px;
-    border-radius: 24px;
   }
 }
 @media (max-width: 520px) {
@@ -837,51 +803,6 @@
 .game-shell .city-stage canvas:active {
   cursor: grabbing;
 }
-.game-shell .disaster-card {
-  border: 1px solid #d4e1d3;
-  border-top: 1px solid #d4e1d3;
-  border-radius: 27px;
-  background: #fafcf5;
-  box-shadow: 0 4px 18px #2a514b0b;
-  transition:
-    transform 220ms ease,
-    box-shadow 220ms ease,
-    border-color 220ms ease;
-}
-.game-shell .disaster-card-art {
-  display: block;
-  height: 155px;
-  background: #dceade;
-  color: #547b72;
-  padding: 26px;
-}
-.game-shell .disaster-card-1 .disaster-card-art {
-  background: #dde8ed;
-  color: #557880;
-}
-.game-shell .disaster-card-2 .disaster-card-art {
-  background: #eee3d1;
-  color: #8c785b;
-}
-.game-shell .disaster-card-art svg {
-  transition: transform 300ms ease;
-}
-.game-shell .disaster-card-copy button {
-  border-radius: 17px;
-  background: #426f73;
-}
-.game-shell .disaster-card:hover,
-.game-shell .disaster-card:focus-within {
-  transform: translateY(-6px);
-  box-shadow: 0 16px 32px #31564f20;
-  border-color: #9ebfac;
-}
-.game-shell .disaster-card:hover .disaster-card-art svg {
-  transform: translate(5px, -4px) rotate(-5deg);
-}
-.game-shell :is(.competition-page, .disaster-lobby) {
-  animation: game-page-arrive 320ms ease both;
-}
 .game-shell :is(.evidence-grid > article, .weekly-tables > div) {
   transition:
     transform 200ms ease,
@@ -908,10 +829,6 @@
   }
 }
 @media (max-width: 850px) {
-  .game-shell .disaster-card-art {
-    height: 100%;
-    min-height: 150px;
-  }
   .game-shell.is-game .shared-play-layout > :is(.shared-inspector, .infrastructure-panel) {
     align-self: end;
     width: min(420px, calc(100% - 32px));
@@ -952,29 +869,8 @@
   .game-shell .map-layer-bar {
     inset-inline: 10px;
   }
-  .game-shell .disaster-card-art {
-    height: 120px;
-  }
 }
 @media (prefers-reduced-motion: reduce) {
-  .game-shell
-    :is(
-      .competition-page,
-      .disaster-lobby,
-      .disaster-card,
-      .disaster-card-art svg,
-      .evidence-grid > article,
-      .weekly-tables > div,
-      .dock-budget-track,
-      .install-action > button,
-      .submit-action
-    ) {
-    animation: none;
-    transition: none;
-  }
-  .game-shell .disaster-card:hover,
-  .game-shell .disaster-card:focus-within,
-  .game-shell .disaster-card:hover .disaster-card-art svg,
   .game-shell :is(.evidence-grid > article, .weekly-tables > div):hover {
     transform: none;
   }
@@ -993,16 +889,6 @@
   border-radius: 20px;
   background: #fff8ee;
   padding: 12px 16px;
-}
-
-.game-shell .disaster-card-copy {
-  padding: 24px;
-}
-.game-shell .disaster-card {
-  overflow: hidden;
-}
-.game-shell .disaster-card-art {
-  border-radius: 0;
 }
 .game-shell .shared-map-legend {
   top: calc(var(--map-controls-height) + 78px);

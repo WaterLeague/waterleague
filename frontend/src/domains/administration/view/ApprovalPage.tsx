@@ -3,18 +3,18 @@ import { ShieldCheck, ArrowRight } from 'lucide-react';
 import { useApprovals } from '../controller/useApprovals';
 import { approvalNames, decisionNames, decisionsFor } from '../service/approvalService';
 import { memberTypeNames } from '../../account/entity/account';
+import { SitePageHeader } from '../../../shared/ui/SitePageHeader';
 export function ApprovalPage() {
   const a = useApprovals(),
     [decision, setDecision] = useState('APPROVE'),
     [reason, setReason] = useState(''),
     [organization, setOrganization] = useState('');
   return (
-    <section className="full-page approval-page">
-      <div className="page-eyebrow">
-        MEMBER REVIEW <span>ADMINISTRATOR</span>
-      </div>
-      <h1>함께 연구할 회원을 확인합니다.</h1>
-      <p className="lead">기업·기관·정부 회원의 소속과 이용 목적을 검토하고 결과를 기록합니다.</p>
+    <main className="site-page approval-page">
+      <SitePageHeader
+        title="회원 관리"
+        description="기업·기관·정부 회원의 소속과 이용 목적을 검토하고 결과를 기록합니다."
+      />
       <div className="scope-note">
         <ShieldCheck />
         <p>
@@ -80,7 +80,7 @@ export function ApprovalPage() {
         <aside className="approval-detail">
           {a.selected ? (
             <>
-              <span className="eyebrow">MEMBERSHIP APPLICATION</span>
+              <span className="eyebrow">가입 신청</span>
               <h2>{a.selected.organizationName || a.selected.displayName}</h2>
               <dl>
                 <div>
@@ -176,6 +176,6 @@ export function ApprovalPage() {
           )}
         </aside>
       </div>
-    </section>
+    </main>
   );
 }

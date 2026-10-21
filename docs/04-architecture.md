@@ -10,6 +10,8 @@
 
 일반 화면의 `GamePage`는 소개 홈·주간·재해·랭킹·대회·관리자 진입과 계정 세션만 조정한다. 사용하지 않는 설계실 분기/컨트롤러와 시작 시 연구 모델·구형 설계 목록 조회를 제거했다. 계정 도메인의 `AccountSessionService`와 `useAccountSession`은 초기 요청 공유·세션 만료·로그인/로그아웃의 세대 검사를 맡고, 늦은 응답이 새 계정/소속을 덮어쓰지 않게 한다. 일반 화면은 연구 모델 조회를 진입 조건으로 사용하지 않는다. 현재 Native 연구/기관 서버 API와 원 수치 재현 자료는 각 도메인에서 유지한다.
 
+일반 페이지의 색·글자·여백·폼·탭·표·모달은 `shared/ui/site.css`의 범위 선택자와 공통 `SitePageHeader`가 맡는다. `site-page`, `site-content`, `site-dialog`를 사용해 게임 지도/HUD와 스타일을 분리하고, 폐기한 `full-page`·`competition-page`와 재해 카드의 중복 테마 규칙은 제거한다. 화면별 CSS에는 해당 도메인의 배치와 콘텐츠 표현을 둔다.
+
 `home` 도메인은 게임/시설 소개 내용과 뷰·가시성 컨트롤러를 분리한다. 시설 7종의 이름·아이콘·3D 기호는 기존 게임 정의를 재사용한다. 장면 코드는 지연 로드하며 IntersectionObserver로 화면 밖 Canvas를 해제하고 `frameloop="demand"`로 등장·시설 전환·회전 조작이 진행되는 동안만 프레임을 요청하고 전환 완료 후 중단한다. 회전 버튼과 설명은 3D 실패에도 유지한다. 제공된 브랜드 이미지·텍스트 로고는 `frontend/public/brand`에 보관하며 [에셋 목록](../frontend/public/brand/manifest.json)에 해시·출처·최종 이미지 편집 프롬프트와 캐릭터 이름(수달 여울이·물총새 가람이)을 기록한다. 홈의 예시 도시·캐릭터는 관측·계산 자료가 아니다. `useHomeMotion`과 `homeMotionService`는 IntersectionObserver·Web Animations API로 한 번의 순차 등장을 제어한다. 화면 밖/숨긴 탭의 애니메이션 일시정지, 모션 축소 시 취소, 키보드 포커스 즉시 표시, 종료 시 관찰자·리스너·애니메이션 정리를 수행한다. 캐릭터 인사는 총 3.8초, 첫 이미지 전환은 4초이며 무한 반복하지 않는다. 데이터는 `catalog/view/DataSection`으로 홈 마지막에 배치하고 기존 서버 예산·비용·출처 정의를 재사용한다. URL 상태는 해시와 `hashchange`를 포함하며 `/data`는 `/#home-data`로 주소를 교체한다.
 
 ## 도시 장면 도메인 (2026-10-19)

@@ -49,7 +49,7 @@ export function GamePage() {
   }, [tab, anchor]);
   return (
     <div className={`game-shell${['city', 'missions'].includes(tab) ? ' is-game' : ''}`}>
-      <header className="topbar">
+      <header className="topbar site-nav">
         <a
           className="wordmark"
           href="/"
@@ -159,7 +159,7 @@ export function GamePage() {
           }}
         />
       ) : (
-        <main className="full-page">
+        <main className="site-page site-empty">
           <h1>{tab === 'missing' ? '페이지를 찾을 수 없습니다' : '관리자 로그인이 필요합니다'}</h1>
           <a href="/weekly" onClick={(e) => followLink(e, '/weekly')}>
             게임으로 돌아가기

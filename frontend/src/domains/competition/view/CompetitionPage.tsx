@@ -9,6 +9,7 @@ import { CompetitionForm } from './CompetitionForm';
 import { CompetitionDetail } from './CompetitionDetail';
 import { Pagination, competitionTime, phaseNames } from './CompetitionShared';
 import './competition.css';
+import { SitePageHeader } from '../../../shared/ui/SitePageHeader';
 export function CompetitionPage({
   account,
   onLogin,
@@ -49,7 +50,7 @@ export function CompetitionPage({
     return () => abort.abort();
   }, [page, detail, retry]);
   return (
-    <main className="full-page contests-page">
+    <main className="site-page contests-page">
       {error && (
         <div role="alert" className="contest-error">
           {error}{' '}
@@ -62,23 +63,22 @@ export function CompetitionPage({
         <CompetitionDetail key={id} id={id} account={account} catalog={catalog} onLogin={onLogin} />
       ) : (
         <>
-          <div className="contest-heading">
-            <div>
-              <small>WATER LEAGUE COMPETITIONS</small>
-              <h1>대회</h1>
-              <p>도시를 위한 설계, 함께 도전하세요.</p>
-            </div>
-            {isOrganizationMember(account) && (
-              <button
-                className="solid-button"
-                disabled={!catalog}
-                onClick={() => setCreating((v) => !v)}
-              >
-                <Plus size={17} />
-                대회 개최
-              </button>
-            )}
-          </div>
+          <SitePageHeader
+            title="대회"
+            description="정해진 지역과 시설, 기간 안에서 설계를 겨뤄보세요."
+            action={
+              isOrganizationMember(account) && (
+                <button
+                  className="solid-button"
+                  disabled={!catalog}
+                  onClick={() => setCreating((v) => !v)}
+                >
+                  <Plus size={17} />
+                  대회 개최
+                </button>
+              )
+            }
+          />
           {creating && catalog && (
             <CompetitionForm
               catalog={catalog}
@@ -99,7 +99,7 @@ export function CompetitionPage({
             <div className="contest-empty">
               <Trophy size={28} />
               <h2>아직 공개된 대회가 없습니다</h2>
-              <p>새로운 도전이 이곳에서 시작됩니다.</p>
+              <p>개최된 대회는 이곳에서 일정과 참가 조건을 확인할 수 있습니다.</p>
             </div>
           ) : (
             <div className="contest-cards">

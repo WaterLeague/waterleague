@@ -42,23 +42,23 @@ export function HomePage({ accountId = null }: { accountId?: string | null }) {
   const [choosingMode, setChoosingMode] = useState(false);
   const selected = homeFacilities[facilityIndex];
   return (
-    <main className="home-page" ref={motion}>
+    <main className="home-page site-content" ref={motion}>
       <section className="home-hero" aria-labelledby="home-title">
         <div className="home-hero-copy">
           <span className="home-eyebrow">서울에서 시작하는 빗물 전략 게임</span>
           <h1 id="home-title">
-            작은 설계로,
+            서울에 내리는 비,
             <br />
-            도시의 물길을
+            내 설계로
             <br />
-            <em>바꿔볼까요?</em>
+            <em>다르게 흐르다.</em>
           </h1>
           <p>
-            우리 동네에 빗물 시설을 놓고,
+            서울 지도에 빗물 시설을 배치하고,
             <br />
-            실제 관측된 비로 설계의 변화를 확인해요.
+            실제 관측된 강우로 효과를 비교하는 전략 게임.
             <br />
-            여울이와 가람이가 첫걸음을 함께할게요.
+            여울이·가람이와 함께 시작하세요.
           </p>
           <div className="home-actions">
             <button
@@ -70,7 +70,7 @@ export function HomePage({ accountId = null }: { accountId?: string | null }) {
               게임 시작하기 <ArrowUpRight size={18} />
             </button>
             <a href="#home-modes" className="home-button secondary">
-              먼저 둘러보기 <ArrowRight size={16} />
+              게임 알아보기 <ArrowRight size={16} />
             </a>
           </div>
           <span className="home-hero-note">서울 25개 구 · 두 가지 게임 모드 · 7종의 시설</span>
@@ -88,9 +88,9 @@ export function HomePage({ accountId = null }: { accountId?: string | null }) {
 
       <section className="home-guides" aria-labelledby="home-guide-title">
         <div className="home-section-heading">
-          <span className="home-eyebrow">처음이라도 괜찮아요</span>
-          <h2 id="home-guide-title">빗물의 여행을 함께 바꿔요.</h2>
-          <p>어디에 놓을지, 무엇을 놓을지. 여러분의 선택에서 시작됩니다.</p>
+          <span className="home-eyebrow">게임 소개</span>
+          <h2 id="home-guide-title">배치하고, 비를 재생하고, 비교하세요.</h2>
+          <p>예산 안에서 시설의 종류와 위치를 고르는 것이 이 게임의 시작입니다.</p>
         </div>
         <div className="home-guide-grid">
           <article className="home-guide otter">
@@ -102,8 +102,8 @@ export function HomePage({ accountId = null }: { accountId?: string | null }) {
               alt="물방울 지팡이를 든 수달 여울이"
             />
             <div>
-              <span className="home-guide-name">수달 여울이의 첫 번째 안내</span>
-              <h3>“빗물이 잠시 머물 곳을 만들어줘!”</h3>
+              <span className="home-guide-name">수달 여울이</span>
+              <h3>어디에 시설을 놓을까?</h3>
               <p>
                 지붕과 도로, 식재 공간을 찾아 시설을 놓아보세요. 예산 안에서 종류와 면적을 고르고,
                 설치 전후 빗물의 변화를 비교하는 게임이에요.
@@ -119,8 +119,8 @@ export function HomePage({ accountId = null }: { accountId?: string | null }) {
               alt="바위 위의 파란 물총새 가람이"
             />
             <div>
-              <span className="home-guide-name">물총새 가람이의 두 번째 안내</span>
-              <h3>“같은 비에도 설계는 달라질 수 있어!”</h3>
+              <span className="home-guide-name">물총새 가람이</span>
+              <h3>얼마나 달라졌을까?</h3>
               <p>
                 지도를 살펴보고, 시간을 돌려 보고, 다른 기록과 비교해 보세요. 실제 공개 지도와 관측
                 강우를 바탕으로 나만의 배치를 찾아갈 수 있어요.
@@ -132,8 +132,8 @@ export function HomePage({ accountId = null }: { accountId?: string | null }) {
 
       <section className="home-modes" id="home-modes" aria-labelledby="home-modes-title">
         <div className="home-section-heading">
-          <span className="home-eyebrow">두 가지 플레이 방식</span>
-          <h2 id="home-modes-title">오늘의 비, 그리고 그날의 비.</h2>
+          <span className="home-eyebrow">게임 모드</span>
+          <h2 id="home-modes-title">함께 겨루거나, 혼자 실험하거나.</h2>
           <p>우리 구와 한 주를 함께하거나, 과거의 호우에 새로운 설계로 도전하세요.</p>
         </div>
         <div className="home-mode-grid">
@@ -172,8 +172,8 @@ export function HomePage({ accountId = null }: { accountId?: string | null }) {
 
       <section className="home-facilities" aria-labelledby="home-facilities-title">
         <div className="home-section-heading">
-          <span className="home-eyebrow">나만의 빗물 도구 상자</span>
-          <h2 id="home-facilities-title">7가지 시설, 서로 다른 역할.</h2>
+          <span className="home-eyebrow">시설 안내</span>
+          <h2 id="home-facilities-title">빗물을 다루는 7가지 방법</h2>
           <p>시설을 골라 3D로 돌려 보고, 어디에서 어떤 역할을 하는지 알아보세요.</p>
         </div>
         <div className="home-facility-picker" role="group" aria-label="소개할 시설 선택">
@@ -198,14 +198,14 @@ export function HomePage({ accountId = null }: { accountId?: string | null }) {
           <div className="home-facility-copy" aria-live="polite">
             <div className="home-facility-description" key={selected.type}>
               <span className="home-eyebrow">
-                FACILITY {String(facilityIndex + 1).padStart(2, '0')} / 07
+                시설 {String(facilityIndex + 1).padStart(2, '0')} / 07
               </span>
               <h3>{facilities[selected.type].name}</h3>
               <p>{selected.action}</p>
               <div className="home-placement">
                 <Compass size={18} />
                 <div>
-                  <span>어디에 설치하나요?</span>
+                  <span>설치 위치</span>
                   <strong>{selected.place}</strong>
                 </div>
               </div>
@@ -216,35 +216,35 @@ export function HomePage({ accountId = null }: { accountId?: string | null }) {
 
       <section className="home-features" aria-labelledby="home-features-title">
         <div className="home-section-heading">
-          <span className="home-eyebrow">플레이를 더 넓게</span>
-          <h2 id="home-features-title">살펴보고, 비교하고, 함께 도전해요.</h2>
+          <span className="home-eyebrow">주요 기능</span>
+          <h2 id="home-features-title">지도부터 대회까지</h2>
         </div>
         <div className="home-feature-grid">
           {[
             {
               Icon: Layers3,
-              title: '내가 사는 서울을 입체로',
+              title: '서울 2D·3D 지도',
               text: '2D·3D 지도, 현재 위치 이동, 공개 시설과 강우 정보를 함께 살펴봐요.',
               href: '/weekly',
               link: '서울 지도 열기',
             },
             {
               Icon: Trophy,
-              title: '기록으로 만나는 다른 설계',
+              title: '주간·재해 랭킹',
               text: '주간 우리 구 순위와 과거 재해의 제출 기록을 같은 조건끼리 비교해요.',
               href: '/rankings',
               link: '랭킹 보기',
             },
             {
               Icon: Flag,
-              title: '함께 만드는 대회',
+              title: '기관·기업 대회',
               text: '대회에 참가하고 정해진 조건에 도전하세요. 승인된 기업·기관은 직접 개최할 수 있어요.',
               href: '/competitions',
               link: '대회 둘러보기',
             },
             {
               Icon: Database,
-              title: '게임의 근거까지 투명하게',
+              title: '데이터와 계산 근거',
               text: '지도·강우·시설 비용은 어디에서 왔는지, 자료와 계산의 근거를 확인해요.',
               href: '/#home-data',
               link: '데이터 살펴보기',
@@ -265,16 +265,11 @@ export function HomePage({ accountId = null }: { accountId?: string | null }) {
 
       <section className="home-start">
         <div>
-          <span className="home-eyebrow">첫 번째 시설을 놓을 시간</span>
-          <h2>
-            우리 동네의 물길,
-            <br />
-            지금 함께 바꿔봐요.
-          </h2>
+          <h2>첫 설계를 시작해 보세요.</h2>
           <p>재해 모드는 로그인 없이도 시설 배치를 체험할 수 있어요.</p>
         </div>
         <HomeLink href="/disaster" className="home-button primary">
-          무료로 체험하기 <ArrowUpRight size={19} />
+          재해 모드 체험하기 <ArrowUpRight size={19} />
         </HomeLink>
       </section>
       <DataSection accountId={accountId} />

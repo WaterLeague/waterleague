@@ -7,6 +7,7 @@ import { errorMessage } from '../../../shared/exception/ApiError';
 import { CityExplorer } from '../../city/view/CityExplorer';
 import './disaster.css';
 import { navigate, useAppLocation } from '../../../shared/controller/useAppLocation';
+import { SitePageHeader } from '../../../shared/ui/SitePageHeader';
 export function DisasterMode(props: {
   account: Account | null;
   onLogin: () => void;
@@ -43,14 +44,11 @@ export function DisasterMode(props: {
       />
     );
   return (
-    <main className="disaster-lobby">
-      <header>
-        <h1>재해 기록 선택</h1>
-        <p>
-          실제 관측이 남아 있는 재난을 선택하세요. 서울 25개 구에서 당시의 비를 재생하며 시설을
-          배치합니다.
-        </p>
-      </header>
+    <main className="site-page disaster-lobby">
+      <SitePageHeader
+        title="재해 모드"
+        description="과거 호우를 선택하고 서울 25개 구에 시설을 배치해 보세요. 당시 관측된 비로 효과를 계산합니다."
+      />
       {error ? (
         <div role="alert">
           {error}
@@ -77,7 +75,7 @@ export function DisasterMode(props: {
                   onClick={() => setSelected(event.id)}
                   aria-label={`${event.eventDate} 집중호우 시작`}
                 >
-                  이 재난으로 시작 <ArrowUpRight size={18} />
+                  이 사건으로 시작 <ArrowUpRight size={18} />
                 </button>
                 <a href={event.evidenceUrl} target="_blank" rel="noreferrer">
                   {event.evidenceTitle} ↗

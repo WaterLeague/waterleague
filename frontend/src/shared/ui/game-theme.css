@@ -527,69 +527,6 @@
   border-color: #bacac2;
   font-size: 11px;
 }
-.game-shell .disaster-lobby {
-  background: #f1f3ee;
-  color: #2a3b40;
-}
-.game-shell .disaster-lobby header {
-  margin-bottom: 42px;
-}
-.game-shell .disaster-lobby h1 {
-  font-size: clamp(28px, 3vw, 40px);
-  font-weight: 550;
-  letter-spacing: -0.055em;
-}
-.game-shell .disaster-lobby header p {
-  color: #6c7c75;
-  font-size: 13px;
-}
-.game-shell .disaster-cards {
-  gap: 28px;
-}
-.game-shell .disaster-card {
-  background: transparent;
-  border: 0;
-  border-top: 1px solid #9daea5;
-  border-radius: 0;
-  overflow: visible;
-  box-shadow: none;
-}
-.game-shell .disaster-card-art {
-  height: 130px;
-  background: #e1e9e4;
-  background-image: none;
-  color: #4d6c72;
-  padding: 20px;
-}
-.game-shell .disaster-card-1 .disaster-card-art {
-  background: #e5e8df;
-}
-.game-shell .disaster-card-2 .disaster-card-art {
-  background: #e8e5df;
-}
-.game-shell .disaster-card-art svg {
-  width: 45px;
-  height: 45px;
-}
-.game-shell .disaster-card-art span {
-  font-size: 96px;
-  font-weight: 450;
-  opacity: 0.16;
-  letter-spacing: -0.06em;
-}
-.game-shell .disaster-card-copy {
-  padding: 24px 0;
-}
-.game-shell .disaster-card-copy h2 {
-  font-size: 22px;
-  font-weight: 570;
-}
-.game-shell .disaster-card-copy p {
-  color: #667970;
-}
-.game-shell .disaster-card-copy button {
-  border-color: #b5c6bc;
-}
 @keyframes game-panel-enter {
   from {
     opacity: 0;
@@ -678,9 +615,6 @@
 }
 .game-shell {
   font-family: 'Pretendard Variable', 'Apple SD Gothic Neo', system-ui, sans-serif;
-}
-.game-shell .disaster-card-copy button {
-  font-weight: 550;
 }
 .game-shell {
   --game-accent: #cb7455;
@@ -900,18 +834,6 @@
 }
 .game-shell .disaster-back {
   border-radius: 16px;
-}
-.game-shell .disaster-card-art {
-  border-radius: 24px 24px 24px 5px;
-}
-.game-shell .disaster-card-copy button {
-  border-radius: 17px;
-  background: #3d6d73;
-  border: 0;
-  color: #fff;
-}
-.game-shell .disaster-card-copy button:hover {
-  background: #315a61;
 }
 .installation-nameplate {
   border: 1px solid #dae7db;

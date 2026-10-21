@@ -12,6 +12,7 @@ import {
   type SeasonResults,
 } from '../repository/resultsRepository';
 import '../../competition/view/competition.css';
+import { SitePageHeader } from '../../../shared/ui/SitePageHeader';
 const statuses: Record<string, string> = {
   EMPTY: '기록 없음',
   IN_PROGRESS: '진행 중 순위',
@@ -58,17 +59,16 @@ export function ResultsPage() {
     return () => abort.abort();
   }, [week, page, mode, revision]);
   return (
-    <main className="full-page contests-page">
-      <div className="contest-heading">
-        <div>
-          <small>ADMINISTRATION</small>
-          <h1>결과 관리</h1>
-          <p>주간 시즌, 재해 기록과 대회 결과를 확인합니다.</p>
-        </div>
-        <button className="outline-button" onClick={() => setRevision((v) => v + 1)}>
-          새로고침
-        </button>
-      </div>
+    <main className="site-page contests-page">
+      <SitePageHeader
+        title="결과 관리"
+        description="주간 시즌, 재해 기록과 대회 결과를 확인합니다."
+        action={
+          <button className="outline-button" onClick={() => setRevision((v) => v + 1)}>
+            새로고침
+          </button>
+        }
+      />
       <div className="competition-switch" role="group" aria-label="관리 결과 유형">
         {[
           ['weekly', '주간 서울 대항전'],

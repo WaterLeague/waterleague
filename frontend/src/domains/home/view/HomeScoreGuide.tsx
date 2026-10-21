@@ -2,8 +2,8 @@ export function HomeScoreGuide() {
   return (
     <section className="home-scoring" id="home-score" aria-labelledby="home-score-title">
       <div className="home-section-heading">
-        <span className="home-eyebrow">내 설계는 어떻게 점수가 될까요?</span>
-        <h2 id="home-score-title">같은 비, 설치 전후의 차이.</h2>
+        <span className="home-eyebrow">점수 계산</span>
+        <h2 id="home-score-title">설치 전후, 줄어든 물의 양</h2>
         <p>
           같은 위치·면적·강우 조건에서 시설이 없는 경우와 설치한 경우를 계산해요. 점수는 두 경우의
           평가체적 차이이며, 단위는 m³입니다. 차이가 클수록 높은 순위예요.
@@ -32,7 +32,7 @@ export function HomeScoreGuide() {
       <div className="home-score-modes">
         <article>
           <span className="home-eyebrow">주간 서울 대항전</span>
-          <h3>설치한 순간부터 한 주의 기여로</h3>
+          <h3>설치 이후의 효과 누적</h3>
           <p>
             서버에 기록된 설치 시각부터 이번 주의 확보된 관측 구간까지 누적해요. 내 시설들의 점수를
             합하면 개인 점수, 소속 구 회원들의 점수를 합하면 구 점수예요. 월요일 00:00에 새 시즌을
@@ -45,7 +45,7 @@ export function HomeScoreGuide() {
         </article>
         <article>
           <span className="home-eyebrow">재해 모드</span>
-          <h3>제출한 설계로 사건 전체를 비교</h3>
+          <h3>사건 전체 기간으로 평가</h3>
           <p>
             플레이 중에는 설치한 시각 이후의 효과를 보지만, 제출하면 같은 설계가 선택 사건의 전체
             평가 기간에 존재한 조건으로 다시 계산해요. 모든 구·시설의 계산이 성공해야 합계를
@@ -59,7 +59,7 @@ export function HomeScoreGuide() {
         </article>
       </div>
       <div className="home-score-rules">
-        <h3>순위를 볼 때 함께 알아두세요</h3>
+        <h3>순위 기준</h3>
         <ul>
           <li>
             0은 차이가 없다는 뜻이고, 음수는 설치 후 평가체적이 더 커졌다는 뜻이에요. 음수도 그대로

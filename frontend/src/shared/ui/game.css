@@ -1008,41 +1008,6 @@
 .empty-state small {
   font-size: 10px;
 }
-.full-page {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 60px 50px 80px;
-}
-.page-eyebrow {
-  font-size: 10px;
-  letter-spacing: 1.9px;
-  color: #7d9271;
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-}
-.page-eyebrow > span {
-  font-size: 8px;
-  letter-spacing: 1.1px;
-  border: 1px solid #d1dec6;
-  padding: 4px 7px;
-  border-radius: 3px;
-  color: #8ea07d;
-}
-.full-page h1 {
-  font-size: 39px;
-  line-height: 1.35;
-  font-weight: 500;
-  letter-spacing: -1.8px;
-  margin: 28px 0 16px;
-  color: #3e5f40;
-}
-.full-page .lead {
-  font-size: 13px;
-  line-height: 1.9;
-  color: #8b9880;
-  margin: 0 0 30px;
-}
 .page-heading {
   display: flex;
   justify-content: space-between;
@@ -1111,18 +1076,6 @@
   line-height: 1.9;
   color: #97a38b;
   margin-top: 27px;
-}
-.full-page h2 {
-  font-size: 19px;
-  letter-spacing: -0.5px;
-  font-weight: 500;
-  color: #536d48;
-  margin: 28px 0 15px;
-}
-.full-page h3 {
-  font-size: 14px;
-  color: #647a56;
-  font-weight: 500;
 }
 .research-layout {
   display: grid;
@@ -1744,15 +1697,6 @@ a:focus-visible {
   .game-shell .topbar {
     padding: 0 20px;
   }
-  .full-page {
-    padding: 40px 25px;
-  }
-  .page-eyebrow {
-    font-size: 9px;
-  }
-  .full-page h1 {
-    font-size: 31px;
-  }
 }
 @media (max-width: 680px) {
   .game-shell .topbar {
@@ -1851,15 +1795,6 @@ a:focus-visible {
   .scene-controls {
     right: 14px;
   }
-  .full-page {
-    padding: 32px 20px 60px;
-  }
-  .page-eyebrow > span {
-    font-size: 7px;
-  }
-  .full-page h1 {
-    font-size: 28px;
-  }
   .page-heading {
     align-items: flex-start;
     flex-direction: column;
@@ -1871,9 +1806,6 @@ a:focus-visible {
   .page-heading .outline-button {
     align-self: flex-end;
     margin: 0 0 10px;
-  }
-  .full-page .lead {
-    font-size: 12px;
   }
   .data-table th {
     padding: 12px 6px;
@@ -1932,7 +1864,6 @@ a:focus-visible {
 .facility-description,
 .scope-badge p,
 .result-card p,
-.full-page .lead,
 .footnote,
 .assumption-list,
 .evidence-grid p,
@@ -2017,9 +1948,6 @@ a:focus-visible {
   }
   .data-table td {
     overflow-wrap: anywhere;
-  }
-  .full-page .scope-note {
-    font-size: 12px;
   }
   .account-name {
     max-width: 120px;

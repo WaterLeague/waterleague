@@ -43,7 +43,7 @@ export const homeModes = [
     id: 'weekly',
     number: '01',
     title: '주간 서울 대항전',
-    tag: '지금 내리는 비와 함께',
+    tag: '실시간 관측 강우',
     href: '/weekly',
     intro: '우리 구에 시설을 놓고, 한 주 동안 빗물에 어떤 변화가 생기는지 확인하세요.',
     rules: [
@@ -57,7 +57,7 @@ export const homeModes = [
     id: 'disaster',
     number: '02',
     title: '재해 모드',
-    tag: '과거의 비에 다시 도전',
+    tag: '과거 호우 재생',
     href: '/disaster',
     intro: '2010·2011·2022년 호우를 골라 시간을 돌려 보고, 나만의 시설 배치를 실험하세요.',
     rules: [

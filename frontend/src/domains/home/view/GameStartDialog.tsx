@@ -15,7 +15,7 @@ export function GameStartDialog({ onClose }: { onClose: () => void }) {
   return (
     <dialog
       ref={ref}
-      className="home-start-dialog"
+      className="home-start-dialog site-dialog"
       aria-labelledby="game-start-title"
       onCancel={onClose}
     >
@@ -27,9 +27,9 @@ export function GameStartDialog({ onClose }: { onClose: () => void }) {
       >
         <X size={20} />
       </button>
-      <span className="home-eyebrow">어떤 비를 만나볼까요?</span>
+
       <h2 id="game-start-title">게임 모드를 선택하세요</h2>
-      <p>오늘의 서울을 함께 지키거나, 과거의 호우에 도전해 보세요.</p>
+      <p>실시간 관측 강우로 경쟁하거나, 과거 호우로 설계를 실험하세요.</p>
       <div className="home-start-options">
         {homeModes.map((mode, index) => {
           const Icon = mode.id === 'weekly' ? Sun : CloudRain;

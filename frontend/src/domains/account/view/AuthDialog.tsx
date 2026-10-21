@@ -47,22 +47,31 @@ export function AuthDialog({
     return () => el?.close();
   }, []);
   return (
-    <dialog ref={ref} aria-labelledby="auth-title" className="auth-dialog" onCancel={onClose}>
+    <dialog
+      ref={ref}
+      aria-labelledby="auth-title"
+      className="auth-dialog site-dialog"
+      onCancel={onClose}
+    >
       <button className="icon-button close" aria-label="로그인 창 닫기" onClick={onClose}>
         <X size={20} />
       </button>
-      <span className="eyebrow">WATER LEAGUE ACCOUNT</span>
       <h2 id="auth-title">
-        {mode === 'login' ? '다시, 더 나은 설계로.' : '도시를 바꾸는 첫 설계.'}
+        {enrollment ? '인증 앱 연결' : mode === 'login' ? '로그인' : '회원가입'}
       </h2>
-      <p>우리 구에 시설을 설치하고 서울 주간 리그에 함께 도전하세요.</p>
+      <p>시설을 설치하고 플레이 기록을 저장하세요.</p>
       {!enrollment && (
-        <div className="auth-tabs">
-          <button className={mode === 'login' ? 'active' : ''} onClick={() => setMode('login')}>
+        <div className="auth-tabs" role="group" aria-label="계정 메뉴">
+          <button
+            aria-pressed={mode === 'login'}
+            className={mode === 'login' ? 'active' : ''}
+            onClick={() => setMode('login')}
+          >
             로그인
           </button>
           <button
             className={mode === 'register' ? 'active' : ''}
+            aria-pressed={mode === 'register'}
             onClick={() => setMode('register')}
           >
             회원 가입
