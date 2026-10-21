@@ -377,8 +377,10 @@ class HistoricalSubmissionTests extends PostgresIntegrationTest {
             "100000000000000.000000000000000002",
             "100000000000000.000000000000000001",
             "100000000000000.000000000000000001");
+    UUID lastParticipant = null;
     for (String score : scores) {
       var participant = UUID.randomUUID();
+      lastParticipant = participant;
       accounts.add(
           new Account(
               participant,
@@ -405,6 +407,9 @@ class HistoricalSubmissionTests extends PostgresIntegrationTest {
           "d".repeat(64),
           job.id());
     }
+    var own = json.tree(json.write(service.board(eventId, 1, lastParticipant))).path("ownEntries");
+    assertThat(own.size()).isEqualTo(1);
+    assertThat(own.get(0).path("rank").asInt()).isEqualTo(2);
     var entries =
         json.tree(json.write(service.board(eventId))).path("groups").get(0).path("entries");
     assertThat(entries.get(0).path("rank").asInt()).isEqualTo(1);

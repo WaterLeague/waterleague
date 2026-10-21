@@ -66,24 +66,44 @@ public class BudgetService {
     return policy.personalLimitKrw();
   }
 
+  private BudgetAllocationPolicy allocation(BudgetPolicy selected) {
+    if (selected == policy) return allocationPolicy;
+    return new BudgetAllocationPolicy(
+        "COMPETITION_ACCOUNTING_V1",
+        selected.ruleVersion(),
+        List.of(
+            new BudgetAllocationPolicy.Program(
+                "SEOUL_RAINWATER",
+                selected.sourceTitle(),
+                selected.personalLimitKrw(),
+                selected.sourceSha256())),
+        allocationPolicy.facilities());
+  }
+
   public BudgetPolicy policy() {
     return policy;
   }
 
   @Transactional
   public BudgetView view(UUID ownerId) {
+    return view(ownerId, null, policy);
+  }
+
+  @Transactional
+  public BudgetView view(UUID ownerId, UUID competitionId, BudgetPolicy selected) {
     if (ownerId != null) seasons.closeOwner(ownerId);
     var accounting =
         BudgetAllocationService.calculate(
-            allocationPolicy, ownerId == null ? Map.of() : repository.allocatedByFacility(ownerId));
+            allocation(selected),
+            ownerId == null ? Map.of() : repository.allocatedByFacility(ownerId, competitionId));
     var allocated =
         accounting.programs().stream()
             .map(BudgetAccountingView.Program::allocatedKrw)
             .reduce(BigDecimal.ZERO, BigDecimal::add);
     return new BudgetView(
-        policy,
+        selected,
         allocated,
-        limit().subtract(allocated).max(BigDecimal.ZERO),
+        selected.personalLimitKrw().subtract(allocated).max(BigDecimal.ZERO),
         ownerId != null,
         accounting);
   }
@@ -95,28 +115,50 @@ public class BudgetService {
 
   @Transactional(propagation = Propagation.MANDATORY)
   public void requireAvailable(UUID ownerId, FacilityType type, BigDecimal amount) {
+    requireAvailable(ownerId, type, amount, null, policy);
+  }
+
+  @Transactional(propagation = Propagation.MANDATORY)
+  public void requireAvailable(
+      UUID ownerId,
+      FacilityType type,
+      BigDecimal amount,
+      UUID competitionId,
+      BudgetPolicy selected) {
     repository.lock(ownerId);
-    var projected = repository.allocatedByFacility(ownerId);
+    var projected = repository.allocatedByFacility(ownerId, competitionId);
     if (amount == null || amount.signum() <= 0 || amount.scale() > 2)
       throw new BudgetException(ErrorCode.REQUEST_INVALID);
     projected.merge(type, amount, BigDecimal::add);
-    validateDesign(projected);
+    validateDesign(projected, selected);
   }
 
   public BudgetAccountingView validateDesign(Map<FacilityType, BigDecimal> amounts) {
-    var accounting = BudgetAllocationService.calculate(allocationPolicy, amounts);
+    return validateDesign(amounts, policy);
+  }
+
+  public BudgetAccountingView validateDesign(
+      Map<FacilityType, BigDecimal> amounts, BudgetPolicy selected) {
+    var accounting = BudgetAllocationService.calculate(allocation(selected), amounts);
     BudgetAllocationService.requireWithinLimits(accounting);
     return accounting;
   }
 
   @Transactional(propagation = Propagation.MANDATORY)
   public void allocate(UUID ownerId, UUID installationId, FacilityType type) {
+    allocate(ownerId, installationId, type, policy);
+  }
+
+  @Transactional(propagation = Propagation.MANDATORY)
+  public void allocate(
+      UUID ownerId, UUID installationId, FacilityType type, BudgetPolicy selected) {
+    var allocation = allocation(selected);
     var rule =
-        allocationPolicy.facilities().stream()
+        allocation.facilities().stream()
             .filter(f -> f.facilityType() == type)
             .findFirst()
             .orElseThrow(() -> new BudgetException(ErrorCode.BUDGET_DATA_INVALID));
-    repository.allocate(installationId, ownerId, rule.programId(), allocationPolicy.version());
+    repository.allocate(installationId, ownerId, rule.programId(), allocation.version());
   }
 
   @Transactional(propagation = Propagation.MANDATORY)

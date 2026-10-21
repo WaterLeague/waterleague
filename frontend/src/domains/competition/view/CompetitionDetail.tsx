@@ -168,6 +168,17 @@ export function CompetitionDetail({
                 </dd>
               </div>
               <div>
+                <dt>1인당 예산</dt>
+                <dd>
+                  {c.rules.budgetMode === 'CUSTOM' ? '주최자 설정' : '기본 예산'} ·{' '}
+                  {c.rules.personalBudgetKrw != null
+                    ? won(c.rules.personalBudgetKrw)
+                    : catalog.defaultPersonalBudgetKrw != null
+                      ? won(catalog.defaultPersonalBudgetKrw)
+                      : '조회 중'}
+                </dd>
+              </div>
+              <div>
                 <dt>허용 시설</dt>
                 <dd>{c.rules.allowedTypes.map((t) => facilities[t].name).join(' · ')}</dd>
               </div>
@@ -191,7 +202,7 @@ export function CompetitionDetail({
             <p className="contest-prose">{c.rules.awardNotice}</p>
             <p className="contest-note">
               {c.mode === 'REALTIME'
-                ? '참가 후 대회 기간에 새로 설치한 주간 시설의 기여를 자동 집계합니다. 소속 구·주간 예산·월요일 초기화가 적용되며 대회 종료 시점까지만 계산합니다.'
+                ? '참가 후 대회 기간에 새로 설치한 시설의 기여를 자동 집계합니다. 소속 구에 대회 전용 예산으로 설치하고 종료 시점까지만 계산합니다.'
                 : '참가 후 지정 재해의 전체 기간 설계를 계산하고, 아래에서 대회 기록으로 접수해 주세요. 종료 전에 접수한 계산은 종료 후 완료되어도 집계됩니다.'}
             </p>
             <div className="contest-heading">

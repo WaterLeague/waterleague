@@ -32,6 +32,7 @@ public class HistoricalService {
   private final ObservedGameRepository models;
   private final PlacementValidationService validation;
   private final JsonService json;
+  private final io.waterleague.competition.service.CompetitionBudgetService competitions;
   private final io.waterleague.disaster.service.DisasterService disasters;
   private final io.waterleague.cost.service.CostService costRecords;
   private final io.waterleague.historical.repository.HistoricalDesignRepository designs;
@@ -49,7 +50,8 @@ public class HistoricalService {
       io.waterleague.disaster.service.DisasterService disasters,
       io.waterleague.cost.service.CostService costRecords,
       io.waterleague.historical.repository.HistoricalDesignRepository designs,
-      FacilityRepository facilities) {
+      FacilityRepository facilities,
+      io.waterleague.competition.service.CompetitionBudgetService competitions) {
     this.jobs = jobs;
     this.budget = budget;
     this.admission = admission;
@@ -58,6 +60,7 @@ public class HistoricalService {
     this.models = models;
     this.validation = validation;
     this.json = json;
+    this.competitions = competitions;
     this.disasters = disasters;
     this.costRecords = costRecords;
     this.designs = designs;
@@ -83,7 +86,12 @@ public class HistoricalService {
   }
 
   public List<HistoricalView> list(UUID owner) {
-    return jobs.list(owner).stream().map(this::view).toList();
+    return list(owner, null);
+  }
+
+  public List<HistoricalView> list(UUID owner, UUID competitionId) {
+    competitions.require(owner, competitionId, null, null, false);
+    return jobs.list(owner, competitionId).stream().map(this::view).toList();
   }
 
   public List<HistoricalView> guestList(String guest) {
@@ -194,17 +202,24 @@ public class HistoricalService {
     var snapshot =
         json.write(
             Map.of("eventId", dto.eventId(), "placements", sorted, "budgetAccounting", accounting));
-    return createInternal(null, request, guest, snapshot);
+    return createInternal(null, request, guest, snapshot, null);
   }
 
   @Transactional
   public HistoricalView create(UUID owner, HistoricalRequest dto) {
-    return createInternal(owner, dto, null, null);
+    return create(owner, dto, null);
+  }
+
+  @Transactional
+  public HistoricalView create(UUID owner, HistoricalRequest dto, UUID competitionId) {
+    return createInternal(owner, dto, null, null, competitionId);
   }
 
   private HistoricalView createInternal(
-      UUID owner, HistoricalRequest dto, String guest, String guestSnapshot) {
+      UUID owner, HistoricalRequest dto, String guest, String guestSnapshot, UUID competitionId) {
     boolean savedDesign = dto.designRevision() != null;
+    if (competitionId != null && !savedDesign)
+      throw new DomainException(ErrorCode.PLACEMENT_INVALID);
     if (savedDesign != (dto.eventId() != null) || (savedDesign && dto.temporalPolicy() == null))
       throw new DomainException(ErrorCode.PLACEMENT_INVALID);
     if (dto.sensitivityCellId() != null
@@ -240,7 +255,8 @@ public class HistoricalService {
     }
     if (dto.parentExperimentId() != null) {
       var parent = require(owner, dto.parentExperimentId());
-      if (!parent.modelHash().equals(dto.modelHash())
+      if (!Objects.equals(jobs.competition(parent.id()), competitionId)
+          || !parent.modelHash().equals(dto.modelHash())
           || !parent.districtId().equals(dto.districtId()))
         throw new DomainException(ErrorCode.PLACEMENT_INVALID);
     }
@@ -293,6 +309,8 @@ public class HistoricalService {
     if (previous.isPresent()) {
       // 원장 추가 전 입력도 같은 사용자 요청이면 기존 실행을 반환한다.
       var old = previous.get();
+      if (!Objects.equals(jobs.competition(old.id()), competitionId))
+        throw new DomainException(ErrorCode.CONFLICT);
       var oldPlacements = json.tree(old.placements());
       if (guest != null
           && !Objects.equals(
@@ -357,11 +375,16 @@ public class HistoricalService {
       }
       return guest == null ? view(previous.get()) : guestView(previous.get());
     }
+    var contest = competitions.require(owner, competitionId, "DISASTER", dto.eventId(), true);
+    var selectedBudget = competitions.policy(contest);
+    for (var p : dto.placements())
+      competitions.permits(contest, dto.districtId(), p.facilityType());
+    for (var row : frozen) row.put("budgetPolicy", selectedBudget);
     var savedRows = new HashMap<String, tools.jackson.databind.JsonNode>();
     if (savedDesign) {
       var saved =
           designs
-              .latest(owner, dto.eventId())
+              .latest(owner, dto.eventId(), competitionId)
               .orElseThrow(() -> new DomainException(ErrorCode.RESOURCE_NOT_FOUND));
       if (saved.revision() != dto.designRevision())
         throw new DomainException(ErrorCode.HISTORICAL_DESIGN_CONFLICT);
@@ -381,7 +404,7 @@ public class HistoricalService {
         }
       }
       // 다른 구의 계산을 순차 실행해도 설계 전체에 한 번 부여한 예산을 나눠 중복 사용하지 않는다.
-      var wholeAccounting = budget.validateDesign(whole);
+      var wholeAccounting = budget.validateDesign(whole, selectedBudget);
       if (savedRows.size() != dto.placements().size())
         throw new DomainException(ErrorCode.PLACEMENT_INVALID);
       for (var p : dto.placements()) {
@@ -431,7 +454,7 @@ public class HistoricalService {
                       site.cellId(),
                       new PlacementCell(site.cellId(), types, site.maxAreaFor(type), true)),
                   units,
-                  budget.limit(),
+                  selectedBudget.personalLimitKrw(),
                   1)
               .setScale(2);
       allocated.merge(type, amount, BigDecimal::add);
@@ -475,7 +498,7 @@ public class HistoricalService {
         row.put("costSnapshotSha256", record.sha256());
       }
     }
-    frozen.getFirst().put("budgetAccounting", budget.validateDesign(allocated));
+    frozen.getFirst().put("budgetAccounting", budget.validateDesign(allocated, selectedBudget));
     if (guest != null) {
       frozen.getFirst().put("guestDesignSnapshotRaw", guestSnapshot);
       frozen.getFirst().put("guestDesignSnapshotSha256", json.hash(guestSnapshot));
@@ -498,7 +521,7 @@ public class HistoricalService {
             Instant.now(),
             null,
             null);
-    if (guest == null) jobs.add(j, dto.requestKey());
+    if (guest == null) jobs.add(j, dto.requestKey(), competitionId);
     else jobs.addGuest(j, dto.requestKey(), guest);
     // 최초 응답도 DB의 시각 정밀도를 사용해 멱등 재요청과 일치시킨다.
     return guest == null

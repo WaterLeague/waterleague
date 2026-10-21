@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react';
 import type { Budget } from '../dto/budgetDto';
 import { loadBudget } from '../repository/budgetRepository';
-export function useBudget(revision: number, accountId: string | null) {
+export function useBudget(
+  revision: number,
+  accountId: string | null,
+  competitionId?: string | null
+) {
   const [value, setValue] = useState<Budget | null>(null);
   const [error, setError] = useState('');
   useEffect(() => {
@@ -12,7 +16,7 @@ export function useBudget(revision: number, accountId: string | null) {
       if (document.hidden || pending) return;
       pending = true;
       try {
-        const next = await loadBudget();
+        const next = await loadBudget(competitionId);
         if (active) {
           setValue(next);
           setError('');
@@ -31,6 +35,6 @@ export function useBudget(revision: number, accountId: string | null) {
       clearInterval(timer);
       document.removeEventListener('visibilitychange', refresh);
     };
-  }, [revision, accountId]);
+  }, [revision, accountId, competitionId]);
   return { value, error };
 }

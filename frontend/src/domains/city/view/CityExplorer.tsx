@@ -168,14 +168,15 @@ function Explorer({
   const traceFailed = useCallback(() => setTraceRenderError(true), []);
   const [selectedAssetId, setSelectedAssetId] = useState('');
   const [budgetRevision, setBudgetRevision] = useState(0);
-  const budget = useBudget(budgetRevision, account?.id ?? null);
+  const budget = useBudget(budgetRevision, account?.id ?? null, contest.id);
   const weekly = useWeekly(!researchMode, account?.id ?? null);
   const districtScore = (id: string) => {
+    if (contest.id) return '';
     if (weekly.error) return '순위 갱신 지연';
     const score = weekly.value?.current.districts.find((d) => d.districtId === id);
     return score
       ? score.scoreM3 === null
-        ? '점수 미계산'
+        ? '점수 없음'
         : `${score.rank ? `${score.rank}위 · ` : ''}총 점수 ${scoreFormat.format(score.scoreM3)} m³`
       : '점수 조회 중';
   };
@@ -191,7 +192,14 @@ function Explorer({
     [city.districts, camera.center, camera.distance]
   );
   const viewedDistrictId = viewedDistrict?.id ?? '';
-  const research = useHistorical(researchMode, selected, account, budget.value, eventId);
+  const research = useHistorical(
+    researchMode,
+    selected,
+    account,
+    budget.value,
+    eventId,
+    contest.id
+  );
   const urbanClock = useUrbanTime(
     researchMode,
     research.at,
@@ -258,6 +266,7 @@ function Explorer({
   const [site, setSite] = useState<SharedSite | null>(null);
   const selectedSite = site?.cellId ?? '';
   const [type, setType] = useState<FacilityType | ''>('');
+  const [installationIntent, setInstallationIntent] = useState<FacilityType | ''>('');
   const [siteSurface, setSiteSurface] = useState<'' | 'ROADWAY' | 'WALKWAY' | 'PARKING' | 'OTHER'>(
     ''
   );
@@ -379,6 +388,7 @@ function Explorer({
     setConnectedOpen(false);
     setCisternOpen(false);
     setType('');
+    setInstallationIntent('');
     selectionRequest.current++;
     setSite(null);
     setSelectionError('');
@@ -412,7 +422,8 @@ function Explorer({
       surface: !cisternOpen && mapFacilityType === 'PERMEABLE_PAVEMENT' ? siteSurface : '',
       vacant: false,
     },
-    !researchMode || cisternOpen
+    !researchMode || cisternOpen,
+    contest.id
   );
   const researchVisibleKey = research.drafts
     .filter((d) => research.at && Date.parse(d.marker.installedAt) <= Date.parse(research.at))
@@ -527,6 +538,7 @@ function Explorer({
     setCisternOpen(false);
     setSite(null);
     setType('');
+    setInstallationIntent('');
     setSiteSurface('');
     setOffset(0);
     setSelectionError('');
@@ -611,11 +623,11 @@ function Explorer({
       const chosen =
         cisternOpen || inspecting
           ? ''
-          : value.allowedTypes.includes(type as FacilityType)
-            ? type
-            : value.allowedTypes[0];
+          : installationIntent && value.allowedTypes.includes(installationIntent)
+            ? installationIntent
+            : '';
       setType(chosen);
-      setArea(String(Math.min(20, placementAreaLimit(value, chosen))));
+      setArea(chosen ? String(Math.min(20, placementAreaLimit(value, chosen))) : '');
       setFeedback('');
       setListOpen(cisternOpen && cistern.role === 'roof');
       setOffset(0);
@@ -628,6 +640,7 @@ function Explorer({
     },
     [
       type,
+      installationIntent,
       contest.id,
       contest.value,
       contest.ready,
@@ -761,6 +774,7 @@ function Explorer({
     setSelected(value.districtId);
     setSite(value);
     setType('');
+    setInstallationIntent('');
     setOffset(0);
     setListOpen(false);
     navigationCamera.current = target;
@@ -808,7 +822,7 @@ function Explorer({
                 d.id,
                 weekly.error
                   ? '순위 갱신 지연'
-                  : `시설 ${shared.installations.filter((i) => i.districtId === d.id).length}개 · ${score ? (score.scoreM3 === null ? '점수 미계산' : `총 점수 ${scoreFormat.format(score.scoreM3)} m³`) : '점수 조회 중'}`,
+                  : `시설 ${shared.installations.filter((i) => i.districtId === d.id).length}개 · ${score ? (score.scoreM3 === null ? '점수 없음' : `총 점수 ${scoreFormat.format(score.scoreM3)} m³`) : '점수 조회 중'}`,
               ];
             })
           ),
@@ -850,6 +864,11 @@ function Explorer({
       wetDistricts={wetDistricts}
       animateRain={animateRain}
       districtScores={districtScores}
+      leadingDistrictIds={
+        !researchMode && !contest.id
+          ? weekly.value?.current.districts.filter((d) => d.rank === 1).map((d) => d.districtId)
+          : []
+      }
       onDistrict={select}
       onSite={selectSite}
       onBuilding={selectBuilding}
@@ -958,8 +977,9 @@ function Explorer({
           )}
           <GameplayScoreboard
             historical={researchMode}
+            competition={!!contest.id}
             authenticated={!!account}
-            weekly={researchMode ? null : weekly.value}
+            weekly={researchMode || contest.id ? null : weekly.value}
             district={weekly.value?.current.districts.find(
               (d) => d.districtId === account?.districtId
             )}
@@ -973,9 +993,11 @@ function Explorer({
             score={
               researchMode
                 ? disasterTotal.score
-                : account && weekly.value
-                  ? (weekly.value.current.own?.scoreM3 ?? null)
-                  : null
+                : contest.id
+                  ? (contest.own?.scoreM3 ?? null)
+                  : account && weekly.value
+                    ? (weekly.value.current.own?.scoreM3 ?? null)
+                    : null
             }
             locked={researchMode && disasterTotal.locked}
           />
@@ -1215,7 +1237,7 @@ function Explorer({
                     if (element) labels.current.set(d.id, element);
                     else labels.current.delete(d.id);
                   }}
-                  className={`city-district-label${d.id === selected ? ' selected' : ''}${ownDistrictId === d.id ? ' own-district' : ownDistrictId ? ' other-district' : ''}`}
+                  className={`city-district-label${!researchMode && !contest.id && weekly.value?.current.districts.some((v) => v.districtId === d.id && v.rank === 1) ? ' is-leading' : ''}${d.id === selected ? ' selected' : ''}${ownDistrictId === d.id ? ' own-district' : ownDistrictId ? ' other-district' : ''}`}
                   onClick={() => select(d.id)}
                 >
                   <span aria-hidden="true">● </span>
@@ -1412,6 +1434,7 @@ function Explorer({
                     value={type}
                     onChange={(e) => {
                       setType(e.target.value as FacilityType | '');
+                      setInstallationIntent(e.target.value as FacilityType | '');
                       setOffset(0);
                     }}
                   >
@@ -1639,6 +1662,7 @@ function Explorer({
           setInfrastructureOpen(false);
           setSelectedAssetId('');
           setType(t);
+          setInstallationIntent(t);
           setOffset(0);
           setSite(null);
           setFeedback('');
@@ -1694,6 +1718,7 @@ function Explorer({
           area={area}
           onType={(next) => {
             setType(next);
+            if (installationIntent) setInstallationIntent(next);
             if (site) setArea(String(Math.min(Number(area) || 20, placementAreaLimit(site, next))));
           }}
           onArea={setArea}
@@ -1712,6 +1737,7 @@ function Explorer({
           area={area}
           onType={(next) => {
             setType(next);
+            if (installationIntent) setInstallationIntent(next);
             if (site) setArea(String(Math.min(Number(area) || 20, placementAreaLimit(site, next))));
           }}
           onArea={setArea}

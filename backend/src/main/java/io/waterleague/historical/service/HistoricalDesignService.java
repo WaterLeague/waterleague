@@ -31,6 +31,7 @@ public class HistoricalDesignService {
   private final CostService costs;
   private final PlacementValidationService validation;
   private final JsonService json;
+  private final io.waterleague.competition.service.CompetitionBudgetService competitions;
 
   public HistoricalDesignService(
       HistoricalDesignRepository designs,
@@ -40,7 +41,8 @@ public class HistoricalDesignService {
       BudgetService budget,
       CostService costs,
       PlacementValidationService validation,
-      JsonService json) {
+      JsonService json,
+      io.waterleague.competition.service.CompetitionBudgetService competitions) {
     this.designs = designs;
     this.locks = locks;
     this.disasters = disasters;
@@ -49,6 +51,7 @@ public class HistoricalDesignService {
     this.costs = costs;
     this.validation = validation;
     this.json = json;
+    this.competitions = competitions;
   }
 
   private DisasterView.Event event(String id) {
@@ -74,22 +77,39 @@ public class HistoricalDesignService {
   }
 
   public HistoricalDesignView get(UUID owner, String event) {
+    return get(owner, event, null);
+  }
+
+  public HistoricalDesignView get(UUID owner, String event, UUID competitionId) {
+    competitions.require(owner, competitionId, "DISASTER", event, false);
     event(event);
     return designs
-        .latest(owner, event)
+        .latest(owner, event, competitionId)
         .map(this::view)
         .orElse(new HistoricalDesignView(event, 0, null, null, null));
   }
 
   public HistoricalDesignView revision(UUID owner, String event, long revision) {
+    return revision(owner, event, revision, null);
+  }
+
+  public HistoricalDesignView revision(
+      UUID owner, String event, long revision, UUID competitionId) {
+    competitions.require(owner, competitionId, "DISASTER", event, false);
     return view(
         designs
-            .revision(owner, event, revision)
+            .revision(owner, event, revision, competitionId)
             .orElseThrow(() -> new DomainException(ErrorCode.RESOURCE_NOT_FOUND)));
   }
 
   @Transactional
   public HistoricalDesignView save(UUID owner, String eventId, HistoricalDesignRequest dto) {
+    return save(owner, eventId, dto, null);
+  }
+
+  @Transactional
+  public HistoricalDesignView save(
+      UUID owner, String eventId, HistoricalDesignRequest dto, UUID competitionId) {
     if (dto.placements() == null
         || dto.placements().size() > 50
         || dto.baseRevision() < 0
@@ -118,6 +138,11 @@ public class HistoricalDesignService {
                     "request",
                     new HistoricalDesignRequest(
                         dto.requestKey(), dto.baseRevision(), dto.elapsedSeconds(), sorted))));
+    if (competitionId != null) {
+      var requestNode = (tools.jackson.databind.node.ObjectNode) json.tree(request);
+      requestNode.put("competitionId", competitionId.toString());
+      request = json.write(requestNode);
+    }
     // 같은 회원의 버전 확인과 추가를 잠금 안에서 수행하여 다른 창의 취소·설치를 덮어쓰지 않는다.
     locks.lockOwner(owner);
     var duplicate = designs.byKey(owner, dto.requestKey());
@@ -126,7 +151,9 @@ public class HistoricalDesignService {
         throw new DomainException(ErrorCode.HISTORICAL_DESIGN_CONFLICT);
       return view(duplicate.get());
     }
-    var previous = designs.latest(owner, eventId);
+    var contest = competitions.require(owner, competitionId, "DISASTER", eventId, true);
+    var selectedBudget = competitions.policy(contest);
+    var previous = designs.latest(owner, eventId, competitionId);
     if (previous.map(HistoricalDesign::revision).orElse(0L) != dto.baseRevision())
       throw new DomainException(ErrorCode.HISTORICAL_DESIGN_CONFLICT);
     var event = event(eventId);
@@ -145,6 +172,7 @@ public class HistoricalDesignService {
     var ids = new HashSet<UUID>();
     var locations = new HashSet<String>();
     for (var item : sorted) {
+      competitions.permits(contest, item.districtId(), item.facilityType());
       var region = regions.get(item.districtId());
       if (region == null
           || item.id() == null
@@ -178,7 +206,7 @@ public class HistoricalDesignService {
                       new PlacementCell(
                           item.cellId(), types, site.maxAreaFor(item.facilityType()), true)),
                   units,
-                  budget.limit(),
+                  selectedBudget.personalLimitKrw(),
                   1)
               .setScale(2);
       var cost = costs.snapshot(site, item.facilityType(), item.areaM2(), amount);
@@ -198,7 +226,7 @@ public class HistoricalDesignService {
               region.modelHash()));
       allocated.merge(item.facilityType(), amount, BigDecimal::add);
     }
-    var accounting = budget.validateDesign(allocated);
+    var accounting = budget.validateDesign(allocated, selectedBudget);
     String raw =
         json.write(
             Map.of(
@@ -211,11 +239,16 @@ public class HistoricalDesignService {
                 "placements",
                 frozen,
                 "budgetPolicy",
-                budget.policy(),
+                selectedBudget,
                 "budgetAccounting",
                 accounting,
                 "publicAssetPolicy",
                 sites.publicAssetPolicy()));
+    if (competitionId != null) {
+      var snapshotNode = (tools.jackson.databind.node.ObjectNode) json.tree(raw);
+      snapshotNode.put("competitionId", competitionId.toString());
+      raw = json.write(snapshotNode);
+    }
     var value =
         new HistoricalDesign(
             owner,
@@ -226,7 +259,7 @@ public class HistoricalDesignService {
             raw,
             json.hash(raw),
             Instant.now());
-    designs.add(value);
+    designs.add(value, competitionId);
     return view(value);
   }
 }

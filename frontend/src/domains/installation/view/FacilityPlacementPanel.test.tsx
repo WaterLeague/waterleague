@@ -266,3 +266,18 @@ it('침투 트렌치는 주간·재해 모두 폭 기준 한도 초과 설치 �
       if (area === '10') expect(html).toContain('1,714,290원');
     }
 });
+
+it('시설 미선택은 면적 입력과 슬라이더를 잠그고 선택 후 활성화', () => {
+  for (const type of ['', 'PERMEABLE_PAVEMENT'] as const) {
+    const html = renderToStaticMarkup(
+      <FacilityPlacementPanel {...props} type={type} area={type ? '1' : ''} />
+    );
+    const inputs = html.match(/<input[^>]+>/g) ?? [];
+    for (const kind of ['number', 'range']) {
+      const input = inputs.find((value) => value.includes(`type="${kind}"`));
+      expect(input).toBeDefined();
+      expect(input!.includes('disabled')).toBe(!type);
+    }
+    expect(html.includes('aria-pressed="true"')).toBe(!!type);
+  }
+});

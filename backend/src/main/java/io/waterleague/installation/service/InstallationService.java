@@ -18,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class InstallationService {
   private final InstallationRepository installations;
+  private final io.waterleague.competition.service.CompetitionBudgetService competitions;
+  private final io.waterleague.notification.repository.NotificationRepository notifications;
   private final io.waterleague.weekly.service.WeeklySeasonService seasons;
   private final io.waterleague.budget.service.BudgetService budget;
   private final DistrictRepository districts;
@@ -30,6 +32,8 @@ public class InstallationService {
 
   public InstallationService(
       InstallationRepository i,
+      io.waterleague.competition.service.CompetitionBudgetService competitions,
+      io.waterleague.notification.repository.NotificationRepository notifications,
       io.waterleague.weekly.service.WeeklySeasonService seasons,
       io.waterleague.budget.service.BudgetService budget,
       DistrictRepository d,
@@ -40,6 +44,8 @@ public class InstallationService {
       io.waterleague.strategy.service.PlacementValidationService validation,
       io.waterleague.cost.service.CostService costRecords) {
     installations = i;
+    this.competitions = competitions;
+    this.notifications = notifications;
     this.seasons = seasons;
     this.budget = budget;
     districts = d;
@@ -56,6 +62,19 @@ public class InstallationService {
   }
 
   public List<io.waterleague.installation.view.InstallationView> activeViews() {
+    return activeViews(null);
+  }
+
+  public List<io.waterleague.installation.view.InstallationView> activeViews(
+      String username, UUID competitionId) {
+    if (competitionId != null) {
+      if (username == null) throw new InstallationException(ErrorCode.AUTHENTICATION_REQUIRED);
+      competitions.requireViewer(auth.current(username).id(), competitionId);
+    }
+    return activeViews(competitionId);
+  }
+
+  public List<io.waterleague.installation.view.InstallationView> activeViews(UUID competitionId) {
     var week =
         seasons
             .now()
@@ -63,8 +82,11 @@ public class InstallationService {
             .toLocalDate()
             .with(java.time.temporal.TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY));
     // 지도 전체의 점수를 한 번에 조회해 표식별 추가 요청을 피한다.
-    var scores = installations.currentScores(week);
-    return active().stream()
+    var scores =
+        competitionId == null
+            ? installations.currentScores(week)
+            : installations.competitionScores(competitionId);
+    return installations.active(competitionId).stream()
         .map(
             i -> {
               var value = view(i);
@@ -126,6 +148,11 @@ public class InstallationService {
 
   @Transactional
   public SharedInstallation install(String username, InstallRequest request) {
+    return install(username, request, null);
+  }
+
+  @Transactional
+  public SharedInstallation install(String username, InstallRequest request, UUID competitionId) {
     var account = accounts.lock(auth.current(username).id());
     if (!account.usable() || !account.role().equals("MEMBER"))
       throw new InstallationException(ErrorCode.ACCESS_DENIED);
@@ -133,9 +160,12 @@ public class InstallationService {
     if (!account.districtId().equals(request.districtId()))
       throw new InstallationException(ErrorCode.DISTRICT_ACCESS_DENIED);
     seasons.closeOwner(account.id());
+    var contest = competitions.require(account.id(), competitionId, "REALTIME", null, true);
+    competitions.permits(contest, request.districtId(), request.facilityType());
+    var selectedBudget = competitions.policy(contest);
     var district = districts.require(account.districtId());
     var placement = new Placement(request.cellId(), request.facilityType(), request.areaM2());
-    var own = installations.owned(account.id());
+    var own = installations.owned(account.id(), competitionId);
     if (own.stream().anyMatch(i -> i.cellId().equals(request.cellId())))
       throw new InstallationException(ErrorCode.SITE_OCCUPIED);
     var site = sites.requireInstallable(district.id(), request.cellId());
@@ -155,8 +185,10 @@ public class InstallationService {
             io.waterleague.strategy.entity.FacilityType.class);
     site.unitCosts()
         .forEach((t, c) -> costs.put(io.waterleague.strategy.entity.FacilityType.valueOf(t), c));
-    var cost = validation.validate(List.of(placement), cells, costs, budget.limit(), 1);
-    budget.requireAvailable(account.id(), request.facilityType(), cost);
+    var cost =
+        validation.validate(List.of(placement), cells, costs, selectedBudget.personalLimitKrw(), 1);
+    budget.requireAvailable(
+        account.id(), request.facilityType(), cost, competitionId, selectedBudget);
     // 게임 설치 시각과 물리 평가 경계를 같은 1초 해상도로 고정한다.
     var now = seasons.now().truncatedTo(java.time.temporal.ChronoUnit.SECONDS);
     var value =
@@ -172,18 +204,22 @@ public class InstallationService {
             cost,
             now,
             null,
-            io.waterleague.weekly.service.WeeklySeasonService.endFor(now));
+            contest == null
+                ? io.waterleague.weekly.service.WeeklySeasonService.endFor(now)
+                : contest.closesAt());
     // 회원별 위치와 예산을 잠그며 다른 회원의 같은 위치 설계는 독립 허용한다.
     try {
       installations.add(
           value,
-          json.write(budget.policy()),
+          json.write(selectedBudget),
           json.write(sites.publicAssetPolicy()),
-          costRecords.snapshot(site, request.facilityType(), request.areaM2(), cost));
+          costRecords.snapshot(site, request.facilityType(), request.areaM2(), cost),
+          competitionId);
     } catch (DuplicateKeyException e) {
       throw new InstallationException(ErrorCode.SITE_OCCUPIED);
     }
-    budget.allocate(account.id(), value.id(), value.facilityType());
+    notifications.location(value.id(), site.name(), site.address(), district.name());
+    budget.allocate(account.id(), value.id(), value.facilityType(), selectedBudget);
     return value;
   }
 

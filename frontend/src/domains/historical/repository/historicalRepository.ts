@@ -1,8 +1,11 @@
+import { competitionScope } from '../../competition/repository/competitionScope';
 import { api } from '../../../shared/repository/apiClient';
 import type { HistoricalJob, HistoricalDraft } from '../entity/historical';
 import { temporalPolicy } from '../service/temporalService';
-export const listHistorical = (guest = false) =>
-  api<HistoricalJob[]>(guest ? '/guest-historical' : '/historical');
+export const listHistorical = (guest = false, competitionId?: string | null) =>
+  api<HistoricalJob[]>(
+    guest ? '/guest-historical' : competitionScope('/historical', competitionId)
+  );
 export const loadHistorical = (id: string, guest = false) =>
   api<HistoricalJob>((guest ? '/guest-historical/' : '/historical/') + id);
 export const runHistorical = (
@@ -13,9 +16,10 @@ export const runHistorical = (
   sensitivityCellId?: string,
   parentExperimentId?: string,
   design?: { revision: number; eventId: string },
-  pavementComparisonCellId?: string
+  pavementComparisonCellId?: string,
+  competitionId?: string | null
 ) =>
-  api<HistoricalJob>('/historical', 'POST', {
+  api<HistoricalJob>(competitionScope('/historical', competitionId), 'POST', {
     requestKey,
     districtId,
     modelHash,

@@ -16,6 +16,19 @@ public class NotificationRepository {
     this.db = db;
   }
 
+  public void location(UUID installationId, String name, String address, String districtName) {
+    db.update(
+        """
+        UPDATE notification_outbox SET payload=payload || jsonb_build_object(
+          'siteName',?::text,'siteAddress',?::text,'districtName',?::text)
+        WHERE event_type='WEEKLY_INSTALLED' AND source_id=? AND delivered_at IS NULL
+        """,
+        name,
+        address == null || address.isBlank() ? "공개자료에 주소 없음" : address,
+        districtName,
+        installationId);
+  }
+
   public Optional<Delivery> claim() {
     return db
         .query(

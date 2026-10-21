@@ -36,14 +36,39 @@ public class InstallationRepository {
   }
 
   public List<SharedInstallation> active() {
+    return active(null);
+  }
+
+  public List<SharedInstallation> active(UUID competitionId) {
     return db.query(
         "SELECT i.*,a.display_name FROM shared_installations i JOIN accounts a ON a.id=i.owner_id"
             + " WHERE source_retired_at IS NULL AND removed_at IS NULL AND (season_ends_at IS NULL"
-            + " OR season_ends_at>CURRENT_TIMESTAMP) ORDER BY district_id,cell_id",
-        mapper);
+            + " OR season_ends_at>CURRENT_TIMESTAMP) AND competition_id IS NOT DISTINCT FROM"
+            + " ?::uuid ORDER BY district_id,cell_id",
+        mapper,
+        competitionId);
   }
 
   public record Score(UUID id, java.math.BigDecimal scoreM3, Instant through) {}
+
+  public Map<UUID, Score> competitionScores(UUID competitionId) {
+    var result = new HashMap<UUID, Score>();
+    db.query(
+        "SELECT installation_id,score_m3,evaluated_through FROM game_competition_live_scores WHERE"
+            + " competition_id=?",
+        (org.springframework.jdbc.core.RowCallbackHandler)
+            r -> {
+              var id = r.getObject("installation_id", UUID.class);
+              result.put(
+                  id,
+                  new Score(
+                      id,
+                      r.getBigDecimal("score_m3"),
+                      r.getTimestamp("evaluated_through").toInstant()));
+            },
+        competitionId);
+    return result;
+  }
 
   public Map<UUID, Score> currentScores(java.time.LocalDate week) {
     var result = new HashMap<UUID, Score>();
@@ -71,12 +96,18 @@ public class InstallationRepository {
   }
 
   public List<SharedInstallation> owned(UUID owner) {
+    return owned(owner, null);
+  }
+
+  public List<SharedInstallation> owned(UUID owner, UUID competitionId) {
     return db.query(
         "SELECT i.*,a.display_name FROM shared_installations i JOIN accounts a ON a.id=i.owner_id"
             + " WHERE source_retired_at IS NULL AND removed_at IS NULL AND (season_ends_at IS NULL"
-            + " OR season_ends_at>CURRENT_TIMESTAMP) AND owner_id=?",
+            + " OR season_ends_at>CURRENT_TIMESTAMP) AND owner_id=? AND competition_id IS NOT"
+            + " DISTINCT FROM ?::uuid",
         mapper,
-        owner);
+        owner,
+        competitionId);
   }
 
   public Optional<SharedInstallation> find(UUID id) {
@@ -95,12 +126,26 @@ public class InstallationRepository {
       String budgetPolicy,
       String admissionSnapshot,
       io.waterleague.cost.entity.CostSnapshot cost) {
+    add(i, budgetPolicy, admissionSnapshot, cost, null);
+  }
+
+  public void add(
+      SharedInstallation i,
+      String budgetPolicy,
+      String admissionSnapshot,
+      io.waterleague.cost.entity.CostSnapshot cost,
+      UUID competitionId) {
     db.update(
         "INSERT INTO"
-            + " shared_installations(id,occupied_site,district_id,cell_id,owner_id,model_hash,facility_type,area_m2,cost,installed_at,budget_policy,admission_snapshot,cost_snapshot,cost_snapshot_sha256,season_ends_at,physics_policy)"
-            + " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,'INSTALLATION_SECOND_V2')",
+            + " shared_installations(id,occupied_site,district_id,cell_id,owner_id,model_hash,facility_type,area_m2,cost,installed_at,budget_policy,admission_snapshot,cost_snapshot,cost_snapshot_sha256,season_ends_at,physics_policy,competition_id)"
+            + " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,'INSTALLATION_SECOND_V2',?)",
         i.id(),
-        i.ownerId() + ":" + i.districtId() + ":" + i.cellId(),
+        i.ownerId()
+            + ":"
+            + (competitionId == null ? "" : competitionId + ":")
+            + i.districtId()
+            + ":"
+            + i.cellId(),
         i.districtId(),
         i.cellId(),
         i.ownerId(),
@@ -113,7 +158,8 @@ public class InstallationRepository {
         admissionSnapshot,
         cost.raw(),
         cost.sha256(),
-        i.seasonEndsAt() == null ? null : Timestamp.from(i.seasonEndsAt()));
+        i.seasonEndsAt() == null ? null : Timestamp.from(i.seasonEndsAt()),
+        competitionId);
   }
 
   public boolean remove(UUID id, UUID owner, Instant at) {

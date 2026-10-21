@@ -47,20 +47,23 @@ public class HistoricalController {
   public ResponseEntity<io.waterleague.historical.view.HistoricalSubmissionView> submitSaved(
       Principal p,
       @PathVariable String eventId,
-      @Valid @RequestBody io.waterleague.historical.dto.HistoricalDesignSubmissionRequest dto) {
+      @Valid @RequestBody io.waterleague.historical.dto.HistoricalDesignSubmissionRequest dto,
+      @RequestParam(required = false) UUID competitionId) {
     var owner = accounts.current(p.getName()).id();
     rates.check("historical-submit:" + owner, 20, 3600);
     return ResponseEntity.accepted()
         .cacheControl(CacheControl.noStore())
-        .body(submissions.submitSaved(owner, eventId, dto));
+        .body(submissions.submitSaved(owner, eventId, dto, competitionId));
   }
 
   @GetMapping("/submissions")
   public ResponseEntity<List<io.waterleague.historical.view.HistoricalSubmissionView>> submissions(
-      Principal p, @RequestParam String eventId) {
+      Principal p,
+      @RequestParam String eventId,
+      @RequestParam(required = false) UUID competitionId) {
     return ResponseEntity.ok()
         .cacheControl(CacheControl.noStore())
-        .body(submissions.list(accounts.current(p.getName()).id(), eventId));
+        .body(submissions.list(accounts.current(p.getName()).id(), eventId, competitionId));
   }
 
   @GetMapping("/submissions/{id}")
@@ -72,17 +75,18 @@ public class HistoricalController {
   }
 
   @GetMapping("/leaderboard/{eventId}")
-  public ResponseEntity<Object> board(@PathVariable String eventId) {
+  public ResponseEntity<Object> board(Principal p, @PathVariable String eventId) {
     return ResponseEntity.ok()
         .cacheControl(CacheControl.noStore())
-        .body(submissions.board(eventId));
+        .body(submissions.board(eventId, 0, p == null ? null : accounts.current(p.getName()).id()));
   }
 
   @GetMapping
-  public ResponseEntity<List<HistoricalView>> list(Principal p) {
+  public ResponseEntity<List<HistoricalView>> list(
+      Principal p, @RequestParam(required = false) UUID competitionId) {
     return ResponseEntity.ok()
         .cacheControl(CacheControl.noStore())
-        .body(service.list(accounts.current(p.getName()).id()));
+        .body(service.list(accounts.current(p.getName()).id(), competitionId));
   }
 
   @GetMapping("/{id}")
@@ -94,11 +98,13 @@ public class HistoricalController {
 
   @PostMapping
   public ResponseEntity<HistoricalView> create(
-      Principal p, @Valid @RequestBody HistoricalRequest dto) {
+      Principal p,
+      @Valid @RequestBody HistoricalRequest dto,
+      @RequestParam(required = false) UUID competitionId) {
     rates.check("historical:" + accounts.current(p.getName()).id(), 40, 3600);
     return ResponseEntity.accepted()
         .cacheControl(CacheControl.noStore())
-        .body(service.create(accounts.current(p.getName()).id(), dto));
+        .body(service.create(accounts.current(p.getName()).id(), dto, competitionId));
   }
 
   @GetMapping("/{id}/bundle")

@@ -1,3 +1,4 @@
+import '../../weekly/view/weekly.css';
 import type { CompetitionCatalog, CompetitionResults as Results } from '../dto/competitionDto';
 import { InstallationTimes, Pagination, competitionTime, resultNames } from './CompetitionShared';
 import { scoreFormat } from '../../weekly/service/scoreFormat';
@@ -34,6 +35,18 @@ export function CompetitionResults({
             {g.comparisonGroup === 'WITHHELD' ? '계산 대기 · 비교 보류' : `평가 그룹 ${index + 1}`}{' '}
             <small>{g.count}명</small>
           </h3>
+          {g.ownEntries?.map((r) => (
+            <div key={r.playerId} className="weekly-pinned" aria-label="내 대회 순위">
+              <span className="weekly-pinned-rank">{r.rank === null ? '—' : `${r.rank}위`}</span>
+              <span>
+                {r.nickname}
+                <small>내 기록</small>
+              </span>
+              <strong>
+                {r.scoreM3 === null ? '점수 없음' : `${scoreFormat.format(r.scoreM3)} m³`}
+              </strong>
+            </div>
+          ))}
           <div className="contest-table-scroll">
             <table>
               <thead>
@@ -46,13 +59,14 @@ export function CompetitionResults({
               </thead>
               <tbody>
                 {g.entries.map((r, i) => (
-                  <tr key={`${r.playerId}:${i}`}>
+                  <tr
+                    key={`${r.playerId}:${i}`}
+                    className={
+                      g.ownEntries?.some((own) => own.playerId === r.playerId) ? 'own' : ''
+                    }
+                  >
                     <td>{r.rank ?? '—'}</td>
-                    <th scope="row">
-                      {r.nickname}
-                      {r.evaluatedSeconds !== undefined &&
-                        r.evaluatedSeconds < (r.expectedSeconds ?? 0) && <small>일부 미평가</small>}
-                    </th>
+                    <th scope="row">{r.nickname}</th>
                     <td title={r.scoreM3Exact === null ? undefined : `${r.scoreM3Exact} m³`}>
                       {r.scoreM3 === null ? '미확정' : scoreFormat.format(r.scoreM3)}
                     </td>

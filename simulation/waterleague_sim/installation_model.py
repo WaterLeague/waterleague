@@ -1,6 +1,7 @@
 """현재 게임 설치의 원형 공간·공통 설계 조건·관측소 결속."""
 import copy
 import json
+import re
 from .spatial import game_catalog
 from .spatial.play_bundle import open_catalog
 
@@ -23,7 +24,15 @@ def resolve(installation):
         if isinstance(policy, str):
             policy = json.loads(policy)
         expected = model['budgetPolicy']
-        if (not isinstance(policy, dict) or policy != expected
+        if isinstance(policy, dict) and policy.get('ruleVersion') == 'COMPETITION_PERSONAL_V1':
+            limit = policy.get('personalLimitKrw')
+            if (type(limit) not in (int, float) or not 1 <= limit <= 1_000_000_000_000 or int(limit) != limit
+                    or policy.get('limitKrw') != limit or policy.get('allocationScope') != 'MEMBER'
+                    or not re.fullmatch(r'[a-f0-9]{64}', policy.get('sourceSha256', ''))
+                    or not re.fullmatch(r'https://waterleague\.cloud/competitions/[a-f0-9-]{36}', policy.get('sourceUrl', ''))):
+                raise ValueError('LIVE_BUDGET_POLICY_INVALID')
+            model['budget'] = limit
+        elif (not isinstance(policy, dict) or policy != expected
                 or policy.get('ruleVersion') != 'SEOUL_PERSONAL_FULL_2026_V3'
                 or policy.get('personalLimitKrw') != 2_000_000_000 or policy.get('allocationScope') != 'MEMBER'):
             raise ValueError('LIVE_BUDGET_POLICY_INVALID')

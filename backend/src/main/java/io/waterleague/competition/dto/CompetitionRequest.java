@@ -17,7 +17,10 @@ public record CompetitionRequest(
     @NotNull Instant opensAt,
     @NotNull Instant closesAt,
     @NotNull @Size(max = 20) List<@NotNull @Valid Award> awards,
-    @NotNull @Size(max = 2000) String awardNotice) {
+    @NotNull @Size(max = 2000) String awardNotice,
+    @Pattern(regexp = "DEFAULT|CUSTOM") String budgetMode,
+    @DecimalMin("1") @DecimalMax("1000000000000") @Digits(integer = 13, fraction = 0)
+        java.math.BigDecimal personalBudgetKrw) {
   public record Award(
       @NotBlank @Size(max = 80) String title,
       @Min(1) @Max(1000) int rankFrom,

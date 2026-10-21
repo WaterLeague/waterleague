@@ -1,3 +1,4 @@
+import '../../weekly/view/weekly.css';
 import { useEffect, useState } from 'react';
 import { errorMessage } from '../../../shared/exception/ApiError';
 import { loadDisasters } from '../../disaster/repository/disasterRepository';
@@ -104,6 +105,26 @@ export function HistoricalBoard({ admin = false }: { admin?: boolean }) {
           <section key={`${group.rulesHash}:${group.comparisonGroupHash}`}>
             <h2>평가 규칙 {group.rulesHash.slice(0, 12)}</h2>
             <p>계산 조건 {group.comparisonGroupHash.slice(0, 12)} · 같은 저장값은 공동 순위</p>
+            {!admin &&
+              (() => {
+                const own = board.ownEntries?.find(
+                  (e) =>
+                    e.rulesHash === group.rulesHash &&
+                    e.comparisonGroupHash === group.comparisonGroupHash
+                );
+                return (
+                  <div className="weekly-pinned" aria-label="내 재해 순위">
+                    <span className="weekly-pinned-rank">{own ? `${own.rank}위` : '—'}</span>
+                    <span>
+                      {own?.displayName ?? '내 기록'}
+                      <small>나</small>
+                    </span>
+                    <strong title={own ? `${own.differenceM3Exact} m³` : undefined}>
+                      {own ? `${physicalAmount(own.differenceM3)} m³` : '점수 없음'}
+                    </strong>
+                  </div>
+                );
+              })()}
             <div className="historical-board-scroll">
               <table>
                 <thead>
@@ -117,7 +138,12 @@ export function HistoricalBoard({ admin = false }: { admin?: boolean }) {
                 </thead>
                 <tbody>
                   {group.entries.map((entry) => (
-                    <tr key={entry.id}>
+                    <tr
+                      key={entry.id}
+                      className={
+                        board.ownEntries?.some((e) => e.id === entry.id) ? 'own' : undefined
+                      }
+                    >
                       <td>{entry.rank}</td>
                       <td>{entry.displayName}</td>
                       <td title={`${entry.differenceM3Exact} m³`}>

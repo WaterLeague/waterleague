@@ -25,13 +25,19 @@ public class HistoricalDesignRepository {
   }
 
   public Optional<HistoricalDesign> latest(UUID owner, String event) {
+    return latest(owner, event, null);
+  }
+
+  public Optional<HistoricalDesign> latest(UUID owner, String event, UUID competitionId) {
     return db
         .query(
             "SELECT * FROM historical_design_revisions WHERE source_dataset='SEOUL_NGII_GAME_V2'"
-                + " AND owner_id=? AND event_id=? ORDER BY revision DESC LIMIT 1",
+                + " AND owner_id=? AND event_id=? AND competition_id IS NOT DISTINCT FROM ?::uuid"
+                + " ORDER BY revision DESC LIMIT 1",
             mapper,
             owner,
-            event)
+            event,
+            competitionId)
         .stream()
         .findFirst();
   }
@@ -49,23 +55,34 @@ public class HistoricalDesignRepository {
   }
 
   public Optional<HistoricalDesign> revision(UUID owner, String event, long revision) {
+    return revision(owner, event, revision, null);
+  }
+
+  public Optional<HistoricalDesign> revision(
+      UUID owner, String event, long revision, UUID competitionId) {
     return db
         .query(
             "SELECT * FROM historical_design_revisions WHERE source_dataset='SEOUL_NGII_GAME_V2'"
-                + " AND owner_id=? AND event_id=? AND revision=?",
+                + " AND owner_id=? AND event_id=? AND revision=? AND competition_id IS NOT DISTINCT"
+                + " FROM ?::uuid",
             mapper,
             owner,
             event,
-            revision)
+            revision,
+            competitionId)
         .stream()
         .findFirst();
   }
 
   public void add(HistoricalDesign value) {
+    add(value, null);
+  }
+
+  public void add(HistoricalDesign value, UUID competitionId) {
     db.update(
         "INSERT INTO"
-            + " historical_design_revisions(owner_id,event_id,revision,request_key,request_raw,snapshot_raw,snapshot_sha256,created_at)"
-            + " VALUES(?,?,?,?,?,?,?,?)",
+            + " historical_design_revisions(owner_id,event_id,revision,request_key,request_raw,snapshot_raw,snapshot_sha256,created_at,competition_id)"
+            + " VALUES(?,?,?,?,?,?,?,?,?)",
         value.ownerId(),
         value.eventId(),
         value.revision(),
@@ -73,6 +90,7 @@ public class HistoricalDesignRepository {
         value.requestRaw(),
         value.snapshotRaw(),
         value.snapshotSha256(),
-        java.sql.Timestamp.from(value.createdAt()));
+        java.sql.Timestamp.from(value.createdAt()),
+        competitionId);
   }
 }

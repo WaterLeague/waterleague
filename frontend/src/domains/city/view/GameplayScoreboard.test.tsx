@@ -3,9 +3,9 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { GameplayScoreboard } from './GameplayScoreboard';
 import { installationScore } from '../../installation/service/installationScore';
 
-it('미계산·계산된 0·악화 점수를 지도 점수판에서 구분', () => {
+it('점수 없음·계산된 0·악화 점수를 지도 점수판에서 구분', () => {
   for (const [score, text] of [
-    [null, '미계산'],
+    [null, '점수 없음'],
     [0, '0'],
     [-0.125, '-0.125'],
     [-1e-9, '-1.00e-9'],
@@ -32,18 +32,18 @@ it('미계산·계산된 0·악화 점수를 지도 점수판에서 구분', () 
       />
     );
     if (score === null) {
-      expect(html.match(/미계산/g)).toHaveLength(2);
+      expect(html.match(/점수 없음/g)).toHaveLength(2);
       expect(html).not.toContain('>0<');
       expect(html).not.toContain('> m³<');
     } else {
-      expect(html).not.toContain('미계산');
+      expect(html).not.toContain('점수 없음');
       expect(html.split(`>${text}<`).length - 1).toBe(2);
     }
   }
 });
 
 it('설치 목록의 미반영 점수와 실제 0 및 음수 보존', () => {
-  expect(installationScore({ scoreM3: null })).toBe('미계산 · 반영 기록 없음');
+  expect(installationScore({ scoreM3: null })).toBe('점수 없음');
   expect(installationScore({ scoreM3: 0 })).toBe('0 m³');
   expect(installationScore({ scoreM3: -0.125 })).toBe('-0.125 m³');
   expect(installationScore({ scoreM3: -1e-9 })).toBe('-1.00e-9 m³');

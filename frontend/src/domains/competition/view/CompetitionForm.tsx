@@ -19,6 +19,7 @@ export function CompetitionForm({
   onCreated: (v: Competition) => void;
   onClose: () => void;
 }) {
+  const [budgetMode, setBudgetMode] = useState<'DEFAULT' | 'CUSTOM'>('DEFAULT');
   const [mode, setMode] = useState<Competition['mode']>('REALTIME');
   const [districts, setDistricts] = useState(catalog.districts.map((d) => d.id));
   const [types, setTypes] = useState(catalog.facilityTypes);
@@ -74,6 +75,8 @@ export function CompetitionForm({
       title: String(data.get('title')).trim(),
       description: String(data.get('description')).trim(),
       mode,
+      budgetMode,
+      personalBudgetKrw: budgetMode === 'CUSTOM' ? Number(data.get('personalBudgetKrw')) : null,
       eventId: mode === 'DISASTER' ? String(data.get('eventId')) : null,
       districtIds: districts,
       allowedTypes: types,
@@ -162,9 +165,51 @@ export function CompetitionForm({
           </div>
           <p className="contest-note">
             {mode === 'REALTIME'
-              ? '참가 신청과 대회 시작 이후 설치한 주간 시설을 집계합니다. 기존 소속 구·주간 예산·월요일 초기화가 적용됩니다.'
+              ? '참가 신청과 대회 시작 이후 설치한 시설을 집계합니다. 소속 구에 대회 전용 예산으로 설치하며 종료 시각까지 집계합니다.'
               : '지정 재해의 전체 기간을 계산한 설계를 제출합니다. 같은 평가 조건별로 회원의 최고 기록을 비교합니다.'}
           </p>
+          <fieldset>
+            <legend>1인당 예산</legend>
+            <label className="contest-check">
+              <input
+                type="radio"
+                name="budgetMode"
+                checked={budgetMode === 'DEFAULT'}
+                onChange={() => setBudgetMode('DEFAULT')}
+              />
+              기본 예산 사용
+              {catalog.defaultPersonalBudgetKrw
+                ? ` · ${won(catalog.defaultPersonalBudgetKrw)}`
+                : ''}
+            </label>
+            <label className="contest-check">
+              <input
+                type="radio"
+                name="budgetMode"
+                checked={budgetMode === 'CUSTOM'}
+                onChange={() => setBudgetMode('CUSTOM')}
+              />
+              예산 설정
+            </label>
+            {budgetMode === 'CUSTOM' && (
+              <label>
+                1인당 금액 · 원
+                <input
+                  name="personalBudgetKrw"
+                  type="number"
+                  min={1}
+                  max={1000000000000}
+                  step={1}
+                  required
+                  placeholder="금액 입력"
+                />
+              </label>
+            )}
+            <p className="contest-note">
+              모든 참가자에게 같은 금액을 적용합니다. 일반 게임·다른 대회의 예산과 별도로 사용하며
+              공개 후에는 변경할 수 없습니다.
+            </p>
+          </fieldset>
           <fieldset>
             <legend>대회 맵</legend>
             <label className="contest-check">
@@ -325,7 +370,7 @@ export function CompetitionForm({
           </label>
           <label className="contest-check">
             <input type="checkbox" required />
-            모드·맵·시설·기간·시상 조건을 확인했으며, 이 조건으로 대회를 공개합니다.
+            모드·맵·시설·예산·기간·시상 조건을 확인했으며, 이 조건으로 대회를 공개합니다.
           </label>
           {error && (
             <p role="alert" className="contest-error">

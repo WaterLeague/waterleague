@@ -50,3 +50,18 @@ it('보류 사유·비교 집단·동점 규칙·저장값 변조 거부', () =>
   changed.scorePolicy.relativeUsedForRanking = true as false;
   expect(weeklyDto.safeParse(changed).success).toBe(false);
 });
+
+it('내 구와 상위 목록 밖 개인 기록을 별도 카드로 먼저 표시하고 목록 순서 유지', () => {
+  const value = weeklyDto.parse(fixture.value);
+  const d = value.current.districts[0];
+  const player = value.current.players[0];
+  value.current.own = { ...player, nickname: '내 별도 기록', rank: 123 };
+  const html = renderToStaticMarkup(
+    <WeeklyBoard value={value} error="" ownDistrictId={d.districtId} onDistrict={() => {}} />
+  );
+  expect(html.indexOf('aria-label="내 구 순위"')).toBeLessThan(html.indexOf('<table>'));
+  expect(html.indexOf('aria-label="내 개인 순위"')).toBeLessThan(html.lastIndexOf('<table>'));
+  expect(html).toContain('123위');
+  expect(html).toContain('내 별도 기록');
+  expect(html).not.toContain('일부 미평가');
+});

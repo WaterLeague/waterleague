@@ -239,8 +239,8 @@ export function HomePage({ accountId = null }: { accountId?: string | null }) {
             },
             {
               Icon: Flag,
-              title: '기관·기업 대회',
-              text: '대회에 참가하고 정해진 조건에 도전하세요. 승인된 기업·기관은 직접 개최할 수 있어요.',
+              title: '기관·기업·정부 대회',
+              text: '대회에 참가하고 정해진 조건에 도전하세요. 승인된 기관·기업·정부는 기간·시설·1인당 예산을 정해 개최할 수 있어요.',
               href: '/competitions',
               link: '대회 둘러보기',
             },

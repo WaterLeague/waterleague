@@ -896,3 +896,78 @@
 .game-shell .shared-location-items button small {
   color: #72877d;
 }
+
+.installation-nameplate {
+  background: #173b43;
+  color: #fff;
+  border: 2px solid #fff;
+  box-shadow:
+    0 2px 9px #0009,
+    0 0 0 1px #173b43;
+}
+.installation-nameplate strong {
+  color: #fff;
+}
+.installation-nameplate.is-own {
+  background: #07564d;
+  border-color: #71ffe0;
+}
+.installation-nameplate.is-own strong {
+  color: #b7fff0;
+}
+.installation-nameplate.is-selected {
+  border-color: #ffdc73;
+}
+.installation-nameplate i {
+  background: #fff;
+  box-shadow: 0 0 0 2px #173b43;
+}
+
+.shared-play-layout .city-district-label.is-leading {
+  background: linear-gradient(135deg, #fff5d4, #ffcf8e);
+  border: 2px solid #ee852e;
+  color: #682700;
+  box-shadow:
+    0 0 0 3px #ffbc5b42,
+    0 0 20px #ff962e8a;
+  animation: district-fever 2.6s ease-in-out infinite;
+}
+.city-district-label.is-leading::after {
+  content: '1위';
+  position: absolute;
+  top: -12px;
+  right: 8px;
+  border: 1px solid #ffd788;
+  border-radius: 9px;
+  background: #a83d00;
+  color: #fff8df;
+  padding: 2px 7px;
+  font-size: 10px;
+  font-weight: 800;
+}
+@keyframes district-fever {
+  50% {
+    box-shadow:
+      0 0 0 4px #ffb55366,
+      0 0 27px #ff8b39aa;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .shared-play-layout .city-district-label.is-leading {
+    animation: none;
+  }
+}
+.historical-board tr.own,
+.contest-result-group tr.own {
+  background: #e8f4ee;
+}
+
+.city-plan-leading {
+  filter: drop-shadow(0 0 5px #ff9d38b0);
+}
+
+.area-input input:disabled,
+.area-slider:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}

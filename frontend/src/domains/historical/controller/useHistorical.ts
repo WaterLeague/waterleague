@@ -35,13 +35,14 @@ export function useHistorical(
   districtId: string,
   account: Account | null,
   budget: Budget | null,
-  initialEventId: string
+  initialEventId: string,
+  competitionId?: string | null
 ) {
   const connected = useServerConnected();
   const [catalog, setCatalog] = useState<DisasterCatalog | null>(null);
   const eventId = initialEventId;
-  const submission = useHistoricalSubmission(enabled, account?.id, eventId);
-  const design = useHistoricalDesign(enabled, eventId, account?.id);
+  const submission = useHistoricalSubmission(enabled, account?.id, eventId, competitionId);
+  const design = useHistoricalDesign(enabled, eventId, account?.id, competitionId);
   const drafts = design.drafts;
   const [restoredJobs, setRestoredJobs] = useState('');
   const [jobs, setJobs] = useState<Record<string, HistoricalJob>>({});
@@ -104,7 +105,7 @@ export function useHistorical(
     autoAttempts.current.clear();
     setCalculationErrors({});
     epoch.current++;
-  }, [eventId]);
+  }, [eventId, competitionId]);
   useEffect(() => {
     if (accountId.current !== account?.id) {
       epoch.current++;
@@ -128,7 +129,7 @@ export function useHistorical(
     if (!enabled || !event || !design.restoreId) return;
     let active = true;
     const models = new Set(event.regions.map((r) => r.modelHash));
-    void listHistorical(!account)
+    void listHistorical(!account, competitionId)
       .then((values) => {
         if (!active) return;
         setJobs(restoreHistoricalJobs(values, models, drafts));
@@ -305,7 +306,8 @@ export function useHistorical(
             sensitivityCellId,
             pending.parent,
             { revision: design.revision, eventId },
-            pavementComparisonCellId
+            pavementComparisonCellId,
+            competitionId
           );
       if (generation === epoch.current)
         setJobs((previous) => ({ ...previous, [next.modelHash]: next }));

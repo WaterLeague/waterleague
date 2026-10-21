@@ -1,4 +1,4 @@
-import { evaluatedSeconds, expectedSeconds } from '../service/scoreDuration';
+import { evaluatedSeconds } from '../service/scoreDuration';
 import { useState } from 'react';
 import { Trophy } from 'lucide-react';
 import type { WeeklySnapshot } from '../dto/weeklyDto';
@@ -86,28 +86,31 @@ export function WeeklyBoard({
                     : '지난주 확정 우승 구 없음'}
             </span>
           </div>
-          {period.own && (
-            <p className="weekly-own">
-              내 기록 ·{' '}
-              {period.status === 'WITHHELD'
-                ? '순위 보류'
-                : period.own.rank === null
-                  ? '계산 대기'
-                  : `${period.own.rank}위`}{' '}
-              ·{' '}
-              {period.own.scoreM3 !== null
-                ? `${scoreFormat.format(period.own.scoreM3)}m³`
-                : period.status === 'WITHHELD'
-                  ? '합산 보류'
-                  : '미계산'}
-              {evaluatedSeconds(period.own) < expectedSeconds(period.own)
-                ? ' · 일부 구간 미평가'
-                : ''}
-            </p>
-          )}
           <div className="weekly-tables">
             <div>
               <h3>구별 순위</h3>
+              {period.districts.find((d) => d.districtId === ownDistrictId) &&
+                (() => {
+                  const d = period.districts.find((d) => d.districtId === ownDistrictId)!;
+                  return (
+                    <div className="weekly-pinned" aria-label="내 구 순위">
+                      <span className="weekly-pinned-rank">
+                        {d.rank === null ? '—' : `${d.rank}위`}
+                      </span>
+                      <button onClick={() => onDistrict(d.districtId)}>
+                        {d.districtName}
+                        <small>내 구</small>
+                      </button>
+                      <strong title={d.scoreM3Exact === null ? undefined : `${d.scoreM3Exact} m³`}>
+                        {d.scoreM3 === null
+                          ? period.status === 'WITHHELD' && evaluatedSeconds(d) > 0
+                            ? '합산 보류'
+                            : '점수 없음'
+                          : `${scoreFormat.format(d.scoreM3)} m³`}
+                      </strong>
+                    </div>
+                  );
+                })()}
               <div className="weekly-scroll">
                 <table>
                   <thead>
@@ -129,13 +132,12 @@ export function WeeklyBoard({
                             {d.districtName}
                             {d.districtId === ownDistrictId ? ' · 내 구' : ''}
                           </button>
-                          {evaluatedSeconds(d) < expectedSeconds(d) && <small>일부 미평가</small>}
                         </th>
                         <td title={d.scoreM3Exact === null ? undefined : `${d.scoreM3Exact} m³`}>
                           {d.scoreM3 === null
                             ? period.status === 'WITHHELD' && evaluatedSeconds(d) > 0
                               ? '합산 보류'
-                              : '미계산'
+                              : '점수 없음'
                             : scoreFormat.format(d.scoreM3)}
                         </td>
                       </tr>
@@ -149,6 +151,30 @@ export function WeeklyBoard({
                 개인 순위{' '}
                 <small>{period.participantCount.toLocaleString('ko-KR')}명 · 상위 100명</small>
               </h3>
+              {(period.own || ownDistrictId) && (
+                <div className="weekly-pinned" aria-label="내 개인 순위">
+                  <span className="weekly-pinned-rank">
+                    {period.own?.rank == null ? '—' : `${period.own.rank}위`}
+                  </span>
+                  <span>
+                    {period.own?.nickname ?? '내 기록'}
+                    <small>나</small>
+                  </span>
+                  <strong
+                    title={
+                      period.own?.scoreM3Exact == null ? undefined : `${period.own.scoreM3Exact} m³`
+                    }
+                  >
+                    {period.own?.scoreM3 == null
+                      ? period.status === 'WITHHELD' &&
+                        period.own &&
+                        evaluatedSeconds(period.own) > 0
+                        ? '합산 보류'
+                        : '점수 없음'
+                      : `${scoreFormat.format(period.own.scoreM3)} m³`}
+                  </strong>
+                </div>
+              )}
               {!period.players.length ? (
                 <p className="weekly-empty">
                   아직 평가된 플레이 기록이 없습니다.
@@ -179,14 +205,13 @@ export function WeeklyBoard({
                                 period.districts.find((d) => d.districtId === p.districtId)
                                   ?.districtName
                               }
-                              {evaluatedSeconds(p) < expectedSeconds(p) ? ' · 일부 미평가' : ''}
                             </small>
                           </th>
                           <td title={p.scoreM3Exact === null ? undefined : `${p.scoreM3Exact} m³`}>
                             {p.scoreM3 === null
                               ? period.status === 'WITHHELD' && evaluatedSeconds(p) > 0
                                 ? '합산 보류'
-                                : '미계산'
+                                : '점수 없음'
                               : scoreFormat.format(p.scoreM3)}
                           </td>
                         </tr>

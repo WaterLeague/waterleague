@@ -62,7 +62,16 @@ export const InstallationNameplatesPlan = memo(function InstallationNameplatesPl
             strokeWidth={1}
             pointerEvents="none"
           />
-          <rect x={-75} y={-20} width={150} height={40} rx={7} fill="#163a31" stroke="#aaffd8" />
+          <rect
+            x={-75}
+            y={-20}
+            width={150}
+            height={40}
+            rx={7}
+            fill={value.ownerId === viewerId ? '#07564d' : '#16333e'}
+            stroke={value.ownerId === viewerId ? '#71ffe0' : '#ffffff'}
+            strokeWidth={2}
+          />
           <text x={-65} y={-5} fill="#e8fff4" fontSize={10}>
             {value.ownerId === viewerId ? '내 시설 · ' : ''}
             {value.ownerName.slice(0, 12)}

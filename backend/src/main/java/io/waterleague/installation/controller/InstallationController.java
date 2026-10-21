@@ -27,8 +27,9 @@ public class InstallationController {
   }
 
   @GetMapping
-  public List<InstallationView> list() {
-    return service.activeViews();
+  public List<InstallationView> list(
+      Principal p, @RequestParam(required = false) UUID competitionId) {
+    return service.activeViews(p == null ? null : p.getName(), competitionId);
   }
 
   @GetMapping("/sites")
@@ -72,9 +73,12 @@ public class InstallationController {
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public InstallationView install(Principal p, @Valid @RequestBody InstallRequest dto) {
+  public InstallationView install(
+      Principal p,
+      @Valid @RequestBody InstallRequest dto,
+      @RequestParam(required = false) UUID competitionId) {
     rates.check("shared-install:" + json.hash(p.getName()), 60, 60);
-    return service.view(service.install(p.getName(), dto));
+    return service.view(service.install(p.getName(), dto, competitionId));
   }
 
   @DeleteMapping("/{id}")

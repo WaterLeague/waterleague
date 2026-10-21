@@ -59,6 +59,9 @@ public class DiscordNotifications {
             "memberType",
             "districtId",
             "approvalStatus",
+            "districtName",
+            "siteName",
+            "siteAddress",
             "facilityType",
             "areaM2",
             "installedAt",
@@ -99,6 +102,9 @@ public class DiscordNotifications {
       case "memberType" -> "회원 유형";
       case "districtId" -> "소속·설치 구 코드";
       case "approvalStatus" -> "승인 상태";
+      case "districtName" -> "설치 구";
+      case "siteName" -> "설치 위치 · 식별 이름";
+      case "siteAddress" -> "주소";
       case "facilityType" -> "시설 종류";
       case "areaM2" -> "면적 (m²)";
       case "installedAt" -> "설치 시각";

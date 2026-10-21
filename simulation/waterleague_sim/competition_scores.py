@@ -35,10 +35,11 @@ def publish(conn, job, frames):
           AND c.opens_at<=%s AND c.closes_at>%s AND p.joined_at<=%s
           AND a.enabled=true AND a.approval_status='APPROVED' AND o.approved=true
           AND c.score_policy_sha256=%s
+          AND (c.id=%s OR (%s::uuid IS NULL AND COALESCE((c.rules::jsonb->>'schemaVersion')::int,1)=1))
           AND jsonb_exists(c.rules::jsonb->'districtIds',%s)
           AND jsonb_exists(c.rules::jsonb->'allowedTypes',%s)
         ''', (installation['owner_id'], installation['installed_at'], installation['installed_at'],
-              installation['installed_at'], context['policySha256'], installation['district_id'],
+              installation['installed_at'], context['policySha256'], installation.get('competition_id'), installation.get('competition_id'), installation['district_id'],
               installation['facility_type'])).fetchall()
     for competition in competitions:
         score = period_score(frames, installation['installed_at'], min(job['end'], competition['closes_at']))

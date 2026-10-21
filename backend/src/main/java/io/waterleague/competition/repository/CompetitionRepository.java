@@ -146,7 +146,7 @@ public class CompetitionRepository {
   public List<Map<String, Object>> historicalJobs(UUID owner, String event) {
     return db.query(
         "SELECT"
-            + " j.id,j.state,j.placements,j.created_at,s.score_policy_sha256,s.difference_m3,s.rules_hash,s.comparison_group_hash"
+            + " j.id,j.state,j.placements,j.created_at,s.score_policy_sha256,s.difference_m3,s.rules_hash,s.comparison_group_hash,j.competition_id,s.cost"
             + " FROM historical_experiments j JOIN historical_submissions s ON s.job_id=j.id WHERE"
             + " j.owner_id=? AND s.event_id=? AND j.source_dataset='SEOUL_NGII_GAME_V2' ORDER BY"
             + " j.created_at DESC,j.id LIMIT 100",
@@ -157,6 +157,8 @@ public class CompetitionRepository {
           v.put("placements", r.getString("placements"));
           v.put("createdAt", r.getTimestamp("created_at").toInstant());
           v.put("policy", r.getString("score_policy_sha256"));
+          v.put("competitionId", r.getObject("competition_id", UUID.class));
+          v.put("cost", r.getBigDecimal("cost"));
           return v;
         },
         owner,
@@ -209,7 +211,7 @@ public class CompetitionRepository {
         FROM game_competitions c JOIN game_competition_participants p ON p.competition_id=c.id
         JOIN accounts a ON a.id=p.owner_id JOIN shared_installations i ON i.owner_id=p.owner_id
         LEFT JOIN game_competition_live_scores s ON s.competition_id=c.id AND s.installation_id=i.id
-        WHERE c.id=? AND i.installed_at>=c.opens_at AND i.installed_at>=p.joined_at AND i.installed_at<c.closes_at
+        WHERE c.id=? AND (i.competition_id=c.id OR (i.competition_id IS NULL AND COALESCE((c.rules::jsonb->>'schemaVersion')::int,1)=1)) AND i.installed_at>=c.opens_at AND i.installed_at>=p.joined_at AND i.installed_at<c.closes_at
           AND i.physics_policy='INSTALLATION_SECOND_V2' AND a.enabled=true AND a.approval_status='APPROVED'
           AND jsonb_exists(c.rules::jsonb->'districtIds',i.district_id) AND jsonb_exists(c.rules::jsonb->'allowedTypes',i.facility_type)
         ORDER BY i.owner_id,i.installed_at,i.id

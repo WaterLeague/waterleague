@@ -27,17 +27,23 @@ public class BudgetRepository {
   }
 
   public Map<FacilityType, BigDecimal> allocatedByFacility(UUID ownerId) {
+    return allocatedByFacility(ownerId, null);
+  }
+
+  public Map<FacilityType, BigDecimal> allocatedByFacility(UUID ownerId, UUID competitionId) {
     var amounts = new EnumMap<FacilityType, BigDecimal>(FacilityType.class);
     db.query(
         "SELECT facility_type,SUM(CASE WHEN event_type='ALLOCATE' THEN amount_krw ELSE -amount_krw"
-            + " END) AS allocated FROM budget_ledger_entries WHERE owner_id=? GROUP BY"
-            + " facility_type",
+            + " END) AS allocated FROM budget_ledger_entries WHERE owner_id=? AND installation_id"
+            + " IN (SELECT id FROM shared_installations WHERE competition_id IS NOT DISTINCT FROM"
+            + " ?::uuid) GROUP BY facility_type",
         (org.springframework.jdbc.core.RowCallbackHandler)
             r ->
                 amounts.put(
                     FacilityType.valueOf(r.getString("facility_type")),
                     r.getBigDecimal("allocated")),
-        ownerId);
+        ownerId,
+        competitionId);
     return amounts;
   }
 

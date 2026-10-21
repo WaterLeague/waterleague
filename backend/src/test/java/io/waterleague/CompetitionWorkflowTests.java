@@ -235,8 +235,8 @@ class CompetitionWorkflowTests extends PostgresIntegrationTest {
     var job = UUID.randomUUID();
     db.update(
         "INSERT INTO"
-            + " shared_installations(id,district_id,cell_id,owner_id,model_hash,facility_type,area_m2,cost,installed_at,removed_at,season_ends_at,physics_policy)"
-            + " VALUES(?,?,?,?,?,?,1,560000,?,?,?,?)",
+            + " shared_installations(id,district_id,cell_id,owner_id,model_hash,facility_type,area_m2,cost,installed_at,removed_at,season_ends_at,physics_policy,competition_id)"
+            + " VALUES(?,?,?,?,?,?,1,560000,?,?,?,?,?)",
         id,
         "11680",
         "TEST_" + id,
@@ -246,7 +246,8 @@ class CompetitionWorkflowTests extends PostgresIntegrationTest {
         Timestamp.from(at),
         Timestamp.from(end),
         Timestamp.from(end),
-        "INSTALLATION_SECOND_V2");
+        "INSTALLATION_SECOND_V2",
+        UUID.fromString(c.path("id").asString()));
     db.update(
         "INSERT INTO"
             + " shared_physics_jobs(id,installation_id,simulation_start,requested_through,state,lease_token,created_at,finished_at,input_hash,result)"
@@ -311,6 +312,9 @@ class CompetitionWorkflowTests extends PostgresIntegrationTest {
     install(a, c, installed, end, "GREEN_ROOF", "999");
     var results = ok(owner, "GET", base(c) + "/results", null, 200);
     assertThat(results.path("status").asString()).isEqualTo("FINAL");
+    var own = ok(a, "GET", base(c) + "/results?page=1", null, 200).path("groups").get(0);
+    assertThat(own.path("entries").size()).isZero();
+    assertThat(own.path("ownEntries").get(0).path("rank").asInt()).isEqualTo(1);
     var rows = results.path("groups").get(0).path("entries");
     assertThat(rows.size()).isEqualTo(2);
     for (var row : rows) {
@@ -330,8 +334,8 @@ class CompetitionWorkflowTests extends PostgresIntegrationTest {
             .toLocalDate()
             .with(java.time.temporal.TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
     var archive = ok(admin, "GET", "/admin/results/weekly?week=" + week, null, 200);
-    assertThat(archive.path("installations").size()).isGreaterThanOrEqualTo(4);
-    assertThat(archive.path("period").path("players").size()).isGreaterThanOrEqualTo(2);
+    assertThat(archive.path("installations").size()).isZero();
+    assertThat(archive.path("period").path("players").size()).isZero();
     assertThat(call(owner, "POST", base(c) + "/cancel", null).statusCode()).isEqualTo(409);
   }
 
@@ -344,8 +348,8 @@ class CompetitionWorkflowTests extends PostgresIntegrationTest {
                 Map.of("districtId", "11680", "facilityType", type, "submissionRulesRaw", frozen)));
     db.update(
         "INSERT INTO"
-            + " historical_experiments(id,owner_id,request_key,district_id,model_hash,input_hash,placements,state,created_at,source_dataset)"
-            + " VALUES(?,?,?,?,?,?,?,?,?,?)",
+            + " historical_experiments(id,owner_id,request_key,district_id,model_hash,input_hash,placements,state,created_at,source_dataset,competition_id)"
+            + " VALUES(?,?,?,?,?,?,?,?,?,?,?)",
         id,
         a.id(),
         UUID.randomUUID(),
@@ -355,7 +359,8 @@ class CompetitionWorkflowTests extends PostgresIntegrationTest {
         placements,
         state,
         Timestamp.from(created),
-        "SEOUL_NGII_GAME_V2");
+        "SEOUL_NGII_GAME_V2",
+        UUID.fromString(c.path("id").asString()));
     db.update(
         "INSERT INTO"
             + " historical_submissions(job_id,event_id,rules_hash,request_raw,cost,difference_m3,score_policy_sha256,comparison_group_hash)"
@@ -416,5 +421,276 @@ class CompetitionWorkflowTests extends PostgresIntegrationTest {
     assertThat(entry.has("installations")).isFalse();
     var admin = actor(null, true);
     ok(admin, "GET", "/admin/results/historical/" + c.path("eventId").asString(), null, 200);
+  }
+
+  @Autowired io.waterleague.installation.repository.SiteCatalogRepository sites;
+  @Autowired io.waterleague.historical.service.HistoricalDesignService designService;
+  @Autowired io.waterleague.budget.service.BudgetService budgets;
+
+  @Test
+  void validatesFrozenBudgetAndSerializesSpendingWithoutTouchingGeneralBudget() throws Exception {
+    var h = host();
+    var player = actor(null);
+    var stranger = actor(null);
+    var siteRows =
+        NativeSiteFixtures.sites(sites, "11680").values().stream()
+            .filter(
+                v ->
+                    v.existingInfrastructure() == null
+                        && v.allowedTypes().contains("RAIN_GARDEN")
+                        && v.maxAreaM2().compareTo(BigDecimal.ONE) >= 0)
+            .limit(2)
+            .toList();
+    assertThat(siteRows).hasSize(2);
+    long cap =
+        siteRows
+            .getFirst()
+            .unitCosts()
+            .get("RAIN_GARDEN")
+            .multiply(new BigDecimal("1.5"))
+            .setScale(0, java.math.RoundingMode.CEILING)
+            .longValueExact();
+    var body = request("REALTIME");
+    body.put("budgetMode", "CUSTOM");
+    body.put("personalBudgetKrw", cap);
+    var c = ok(h, "POST", "/competitions", body, 200);
+    join(player, c);
+    var id = c.path("id").asString();
+    assertThat(c.path("rules").path("personalBudgetKrw").asLong()).isEqualTo(cap);
+    body.put("personalBudgetKrw", cap + 1);
+    assertThat(call(h, "POST", "/competitions", body).statusCode()).isEqualTo(409);
+    var bad = request("REALTIME");
+    bad.put("budgetMode", "CUSTOM");
+    assertThat(call(h, "POST", "/competitions", bad).statusCode()).isEqualTo(400);
+    bad.put("personalBudgetKrw", 0);
+    assertThat(call(h, "POST", "/competitions", bad).statusCode()).isEqualTo(400);
+    bad.put("personalBudgetKrw", 1.5);
+    assertThat(call(h, "POST", "/competitions", bad).statusCode()).isEqualTo(400);
+    var large = request("REALTIME");
+    large.put("budgetMode", "CUSTOM");
+    large.put("personalBudgetKrw", 3000000000L);
+    var larger = ok(h, "POST", "/competitions", large, 200);
+    join(player, larger);
+    assertThat(
+            ok(player, "GET", "/budget?competitionId=" + larger.path("id").asString(), null, 200)
+                .path("remainingKrw")
+                .asLong())
+        .isEqualTo(3000000000L);
+    assertThat(call(stranger, "GET", "/budget?competitionId=" + id, null).statusCode())
+        .isEqualTo(403);
+    assertThat(call(stranger, "GET", "/installations?competitionId=" + id, null).statusCode())
+        .isEqualTo(403);
+    var first = siteRows.getFirst();
+    var install =
+        Map.of(
+            "districtId",
+            "11680",
+            "cellId",
+            first.cellId(),
+            "facilityType",
+            "RAIN_GARDEN",
+            "areaM2",
+            1);
+    ok(player, "POST", "/installations", install, 201);
+    assertThat(call(stranger, "POST", "/installations?competitionId=" + id, install).statusCode())
+        .isEqualTo(403);
+    var before = ok(player, "GET", "/budget", null, 200).path("remainingKrw");
+    var futures =
+        siteRows.stream()
+            .map(
+                site ->
+                    java.util.concurrent.CompletableFuture.supplyAsync(
+                        () -> {
+                          try {
+                            return call(
+                                    player,
+                                    "POST",
+                                    "/installations?competitionId=" + id,
+                                    Map.of(
+                                        "districtId",
+                                        "11680",
+                                        "cellId",
+                                        site.cellId(),
+                                        "facilityType",
+                                        "RAIN_GARDEN",
+                                        "areaM2",
+                                        1))
+                                .statusCode();
+                          } catch (Exception e) {
+                            throw new RuntimeException(e);
+                          }
+                        }))
+            .toList();
+    var statuses = futures.stream().map(java.util.concurrent.CompletableFuture::join).toList();
+    assertThat(statuses.stream().filter(code -> code == 201).count()).isEqualTo(1);
+    assertThat(statuses.stream().filter(code -> code >= 400).count()).isEqualTo(1);
+    assertThat(ok(player, "GET", "/budget", null, 200).path("remainingKrw")).isEqualTo(before);
+    assertThat(ok(player, "GET", "/installations?competitionId=" + id, null, 200).size())
+        .isEqualTo(1);
+    assertThat(ok(player, "GET", "/installations", null, 200).size()).isEqualTo(1);
+    var close = Instant.parse(c.path("closesAt").asString());
+    assertThat(
+            db.queryForObject(
+                    "SELECT season_ends_at FROM shared_installations WHERE competition_id=?",
+                    Timestamp.class,
+                    UUID.fromString(id))
+                .toInstant())
+        .isEqualTo(close);
+  }
+
+  @Test
+  void isolatesDisasterDesignsJobsAndSubmissionBudgetsAcrossCompetitions() throws Exception {
+    var h = host();
+    var p = actor(null);
+    var event = disasters.catalog().events().getFirst();
+    var site =
+        NativeSiteFixtures.sites(sites, "11680").values().stream()
+            .filter(
+                v ->
+                    v.existingInfrastructure() == null
+                        && v.allowedTypes().contains("RAIN_GARDEN")
+                        && v.maxAreaM2().compareTo(BigDecimal.TEN) >= 0)
+            .findFirst()
+            .orElseThrow();
+    var body = request("DISASTER");
+    body.put("budgetMode", "CUSTOM");
+    body.put("personalBudgetKrw", 1000000000L);
+    var c = ok(h, "POST", "/competitions", body, 200);
+    join(p, c);
+    String scope = "?competitionId=" + c.path("id").asString();
+    String path = "/historical/designs/" + event.id();
+    var item =
+        Map.of(
+            "id",
+            UUID.randomUUID(),
+            "districtId",
+            "11680",
+            "cellId",
+            site.cellId(),
+            "facilityType",
+            "RAIN_GARDEN",
+            "areaM2",
+            10,
+            "installedAt",
+            Instant.parse(event.regions().getFirst().start()).plusSeconds(60));
+    var designRequest =
+        Map.of(
+            "requestKey",
+            UUID.randomUUID(),
+            "baseRevision",
+            0,
+            "elapsedSeconds",
+            120,
+            "placements",
+            List.of(item));
+    var saved = ok(p, "PUT", path + scope, designRequest, 200);
+    assertThat(saved.path("snapshot").path("budgetPolicy").path("personalLimitKrw").asLong())
+        .isEqualTo(1000000000L);
+    assertThat(ok(p, "GET", path, null, 200).path("revision").asInt()).isZero();
+    ok(
+        p,
+        "PUT",
+        path,
+        Map.of(
+            "requestKey",
+            UUID.randomUUID(),
+            "baseRevision",
+            0,
+            "elapsedSeconds",
+            120,
+            "placements",
+            List.of(item)),
+        200);
+    assertThat(ok(p, "GET", path + scope, null, 200).path("snapshotSha256"))
+        .isEqualTo(saved.path("snapshotSha256"));
+    String model =
+        event.regions().stream()
+            .filter(v -> v.districtId().equals("11680"))
+            .findFirst()
+            .orElseThrow()
+            .modelHash();
+    var run =
+        Map.of(
+            "requestKey",
+            UUID.randomUUID(),
+            "districtId",
+            "11680",
+            "modelHash",
+            model,
+            "eventId",
+            event.id(),
+            "designRevision",
+            1,
+            "temporalPolicy",
+            "INSTALLATION_TIME_EXPERIMENT_V1",
+            "placements",
+            List.of(
+                Map.of(
+                    "cellId",
+                    site.cellId(),
+                    "facilityType",
+                    "RAIN_GARDEN",
+                    "areaM2",
+                    10,
+                    "installedAt",
+                    item.get("installedAt"),
+                    "siteModelHash",
+                    site.modelHash())));
+    var play = ok(p, "POST", "/historical" + scope, run, 202);
+    assertThat(
+            play.path("placements").get(0).path("budgetPolicy").path("personalLimitKrw").asLong())
+        .isEqualTo(1000000000L);
+    assertThat(call(p, "POST", "/historical", run).statusCode()).isEqualTo(409);
+    var submitted =
+        ok(
+            p,
+            "POST",
+            path + "/submissions" + scope,
+            Map.of(
+                "requestKey",
+                UUID.randomUUID(),
+                "revision",
+                1,
+                "snapshotSha256",
+                saved.path("snapshotSha256").asString()),
+            202);
+    assertThat(ok(p, "GET", "/historical/submissions?eventId=" + event.id(), null, 200).size())
+        .isZero();
+    assertThat(
+            ok(
+                    p,
+                    "GET",
+                    "/historical/submissions?eventId="
+                        + event.id()
+                        + "&competitionId="
+                        + c.path("id").asString(),
+                    null,
+                    200)
+                .size())
+        .isEqualTo(1);
+    ok(
+        p,
+        "POST",
+        base(c) + "/submissions",
+        Map.of(
+            "jobId", submitted.path("id").asString(), "rulesHash", c.path("rulesHash").asString()),
+        200);
+    var otherBody = request("DISASTER");
+    otherBody.put("budgetMode", "CUSTOM");
+    otherBody.put("personalBudgetKrw", 2000000000L);
+    var other = ok(h, "POST", "/competitions", otherBody, 200);
+    join(p, other);
+    assertThat(
+            call(
+                    p,
+                    "POST",
+                    base(other) + "/submissions",
+                    Map.of(
+                        "jobId",
+                        submitted.path("id").asString(),
+                        "rulesHash",
+                        other.path("rulesHash").asString()))
+                .statusCode())
+        .isEqualTo(400);
   }
 }

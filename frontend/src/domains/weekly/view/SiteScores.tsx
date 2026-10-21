@@ -19,7 +19,9 @@ export function SiteScoreRows({
           </b>
           <p>
             {i.areaM2.toLocaleString('ko-KR')} m² · 누적 기여{' '}
-            <strong>{i.scoreM3 === null ? '미계산' : `${scoreFormat.format(i.scoreM3)} m³`}</strong>
+            <strong>
+              {i.scoreM3 === null ? '점수 없음' : `${scoreFormat.format(i.scoreM3)} m³`}
+            </strong>
           </p>
           <small>
             설치 {new Date(i.installedAt).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })} KST

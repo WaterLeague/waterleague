@@ -592,8 +592,8 @@ const CityScene = memo(function CityScene({
   const overviewIds = useMemo(() => new Set(city.overviewBuildings.map((b) => b.id)), [city]);
   const detailTileIds = useMemo(() => new Set(tiles.map((tile) => tile.id)), [tiles]);
   const symbols = useMemo(
-    () => installationSymbols(installations, sites, viewerId, rainCamera.distance),
-    [installations, sites, viewerId, rainCamera.distance]
+    () => installationSymbols(installations, viewerId),
+    [installations, viewerId]
   );
   return (
     <Canvas
@@ -861,6 +861,7 @@ const CityScene = memo(function CityScene({
             )}
             <InstallationSymbols
               installations={symbols}
+              viewerId={viewerId}
               facilityType={facilityType}
               selectedKey={`${selected}:${selectedSite}`}
               ownDistrictId={ownDistrictId}

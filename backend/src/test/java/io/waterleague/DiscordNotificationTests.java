@@ -46,10 +46,14 @@ class DiscordNotificationTests {
                     UUID.randomUUID(),
                     "WEEKLY_INSTALLED",
                     UUID.randomUUID(),
-                    "{\"username\":\"player\",\"displayName\":\"@everyone\",\"areaM2\":25,\"password\":\"never-send\"}",
+                    "{\"username\":\"player\",\"displayName\":\"@everyone\",\"siteName\":\"종로구 지상"
+                        + " 후보\",\"siteAddress\":\"서울 종로구 세종대로"
+                        + " 1\",\"areaM2\":25,\"password\":\"never-send\"}",
                     1,
                     UUID.randomUUID())));
     assertThat(message.path("allowed_mentions").path("parse").size()).isZero();
-    assertThat(message.toString()).contains("신규 설치", "25").doesNotContain("never-send", "password");
+    assertThat(message.toString())
+        .contains("신규 설치", "25", "종로구 지상 후보", "서울 종로구 세종대로 1")
+        .doesNotContain("never-send", "password");
   }
 }

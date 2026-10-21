@@ -11,7 +11,7 @@ pnpm build
 pnpm dev
 ```
 
-`/api`는 로컬 8080 API로 프록시한다. 계산에는 Python 워커가 필요하다. [공통 화면·조작](../docs/08-experience.md), [지도 캐시·장애 복구](../docs/04-architecture.md), [1차 출시 범위·후속 개선](../docs/09-delivery.md)을 기준으로 수정한다.
+`/api`는 로컬 8080 API로 프록시한다. 계산에는 Python 워커가 필요하다. [공통 화면·조작](../docs/08-experience.md), [지도 캐시·장애 복구](../docs/04-architecture.md), [1차 출시 범위·후속 개선](../docs/01-product.md)을 기준으로 수정한다.
 
 `GamePage`와 `shared/controller/useAppLocation.ts`가 History API로 [페이지별 주소](../docs/08-experience.md#페이지-주소)를 처리한다. 기본 링크의 새 탭 동작과 뒤로/앞으로 이동을 유지하고, Vite·Caddy의 SPA 처리가 상세 주소 새로고침을 지원한다. 전체화면 대상은 `CityExplorer`의 게임 상단 바·지도·게임 조작부이며 버튼은 게임 시각 오른쪽에 둔다.
 

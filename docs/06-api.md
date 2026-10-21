@@ -10,7 +10,7 @@
 
 2026-10-21 연결 유역 위치 계약: 회원용 `GET /api/v1/watersheds/catalog`은 선택적 쌍 `georeferenceHash`·`georeference`를 제공한다. 원 `layout`·`layoutHash`는 변경하지 않는다. 새 위치 자료는 원 도형/원 INP 해시·도로 대조 근거·EPSG:5181 가정·EPSG:5186 표시 좌표를 보관하고 `sourceCrsVerified=false`, `rankingEligible=false`다. 화면은 ID·연결·선언 길이·가산값 100km 변환의 일치를 검사한다. `POST /api/v1/watersheds`의 선택적 `georeferenceHash`를 서버 허용 버전과 비교한 뒤 `design.locationReference`에 원본/근거/위치 해시와 가정 분류를 고정하고 입력 해시·멱등 비교에 포함한다. 위치 버전을 생략한 기존 입력은 유지한다. 워커는 같은 분류와 원본을 재검사하고 `result.locationReference`·`location-profile.json` 및 매니페스트에 보존한다. 화면은 설계/결과의 위치 버전 불일치·한쪽 누락·확정 좌표계 위장을 거부한다. 기존 소유권·조회 권한·CSRF·작업 제한은 유지하며 계정 전환 때 초안/기록/진행 중 응답을 격리한다.
 
-기준일: 2026-10-20. 현재 서버 계약이다. 연구/구형 설계 endpoint의 존재는 기본 UI 노출을 뜻하지 않는다. 아래 이전 schema 응답 설명은 현재 구현 사실이며 후속 구조 통합의 호환 의무가 아니다. 제품 규칙은 [제품](01-product.md), 확장은 [구현 목표](09-delivery.md)를 따른다.
+기준일: 2026-10-20. 현재 서버 계약이다. 연구/구형 설계 endpoint의 존재는 기본 UI 노출을 뜻하지 않는다. 아래 이전 schema 응답 설명은 현재 구현 사실이며 후속 구조 통합의 호환 의무가 아니다. 제품 규칙은 [제품](01-product.md), 확장은 [구현 목표](01-product.md)를 따른다.
 
 ## 서버 연결 확인
 
@@ -101,7 +101,7 @@
 | GET /surface/current | `index,minX,minY,maxX,maxY`로 현재 공개 지표 실행 목록 조회 |
 | GET /surface/current/{id}/frame | 같은 필수 범위/프레임 입력으로 공개 실행 프레임 조회 |
 
-현재 공개 지표 registry의 `models`는 비어 있다. API가 존재해도 서울 전역 실시간 침수 결과가 제공된다는 뜻은 아니다. 원자료/운영 모형의 검증과 등록은 [확장 계획](09-delivery.md)에 둔다.
+현재 공개 지표 registry의 `models`는 비어 있다. API가 존재해도 서울 전역 실시간 침수 결과가 제공된다는 뜻은 아니다. 원자료/운영 모형의 검증과 등록은 [확장 계획](01-product.md)에 둔다.
 
 ## 회원 승인·리그
 
@@ -267,7 +267,7 @@ RFC 9457 `application/problem+json`: type, title, status, detail, instance, code
 
 `GET|POST /api/v1/installations/cistern-plans`, `DELETE /api/v1/installations/cistern-plans/{id}`는 사용 가능한 MEMBER의 본인 계획에 한정. POST의 선택적 `mode`가 없거나 `WEEKLY`이면 소속 구와 현재 공유 설치 점유를 검사한다. `HISTORICAL`은 소속 구가 없어도 서울 전 구에서 저장 가능하며 현재 주간 설치의 점유와 독립적이다. 두 모드 모두 같은 구의 지붕/지상 후보 종류·원본 해시·공개 면적·입지 안전 조건을 검사한다. 면적 소수 둘째 자리·깊이 소수 셋째 자리 입력, 깊이 100m는 입력 범위 방어이며 현장 설계 허용치가 아님. 본인 잠금과 활성 입력 해시 고유 제약으로 동시 재시도에 같은 계획 반환, 두 모드를 합쳐 활성 계획 20개 한도. 삭제는 원 스냅샷을 보존하는 논리 삭제.
 
-응답의 `snapshot`은 두 후보 원 자료·설계 입력·단면적×깊이 용량·수평 중심 거리·공개 용량 참고 견적을 고정하며 `inputHash`는 저장 JSON 바이트의 SHA-256. `HISTORICAL`을 요청에 보존하고 명시적 `WEEKLY`는 기존 모드 생략 형식으로 정규화해 이전 주간 해시·재시도를 유지한다. 조회 때 해시 재검사, 클라이언트도 위치·원본 해시·용량·견적 및 저장 요청/응답의 모드·설계 일치를 검사한다. 모드 전환 시 선택·저장 상태와 이전 요청 결과를 격리하며, 복원 계획은 현재 모드의 위치 제한을 다시 검사한다. `status=SPATIAL_DRAFT_NOT_INSTALLED`, `installationReady=false`, `positionReserved=false` 고정. 특정 사건 당시 시설 복원·설치·계산 작업을 생성하지 않으며 기존 설치·예산·점수와 분리된다. 확정 설치와 두 게임 모드 통합은 [P2 범위 제외](09-delivery.md#p2--빗물이용시설-완성)로 확정한 미지원 기능이다.
+응답의 `snapshot`은 두 후보 원 자료·설계 입력·단면적×깊이 용량·수평 중심 거리·공개 용량 참고 견적을 고정하며 `inputHash`는 저장 JSON 바이트의 SHA-256. `HISTORICAL`을 요청에 보존하고 명시적 `WEEKLY`는 기존 모드 생략 형식으로 정규화해 이전 주간 해시·재시도를 유지한다. 조회 때 해시 재검사, 클라이언트도 위치·원본 해시·용량·견적 및 저장 요청/응답의 모드·설계 일치를 검사한다. 모드 전환 시 선택·저장 상태와 이전 요청 결과를 격리하며, 복원 계획은 현재 모드의 위치 제한을 다시 검사한다. `status=SPATIAL_DRAFT_NOT_INSTALLED`, `installationReady=false`, `positionReserved=false` 고정. 특정 사건 당시 시설 복원·설치·계산 작업을 생성하지 않으며 기존 설치·예산·점수와 분리된다. 확정 설치와 두 게임 모드 통합은 [P2 범위 제외](01-product.md)로 확정한 미지원 기능이다.
 
 
 지도 계획 POST의 선택적 `tankLayout`은 내부 `widthM`, 벽 `wallThicknessM`, 후보 중심에서의 `offsetXM/offsetYM`, 지도 가로축 기준 반시계 `rotationDeg`를 받는다. 전체 유효성·정밀도와 원 도형 포함 검사 후 `schemaVersion=2` 및 계산한 `tankGeometry`를 고정 저장. 클라이언트가 전송한 임의 외곽 좌표를 신뢰하지 않는다. 값이 없는 기존 요청은 같은 v1 직렬화·해시·재시도 반환을 유지하며 v1 응답에는 형상 없음. 새 화면의 저장은 유효한 외곽 배치를 요구한다. 기초/여유고·구조·수리 연결을 검사한 설치 API가 아니며 위치 점유·예산 지출 없음.
@@ -336,3 +336,13 @@ RFC 9457 `application/problem+json`: type, title, status, detail, instance, code
 2026-10-22 OTP 범위 변경: `ADMIN`만 인증 앱 등록·로그인 OTP 검사를 수행한다. `/auth/login`은 관리자 비밀번호 확인 후 미등록이면 `MFA_ENROLLMENT_REQUIRED`, 등록 완료이나 OTP 미제공이면 `MFA_REQUIRED`(403)를 반환하며 업무 세션을 발급하지 않는다. 일반/기업/기관/정부 회원은 비밀번호 로그인만 사용하고 `/auth/mfa/enrollment`와 `/auth/mfa/confirm`으로 MFA를 등록할 수 없다. 회원 승인·소속·소유권 검사는 계속 서버에서 수행한다.
 
 2026-10-22 사용자 요청의 운영 더미 계정은 `TEST_` 아이디·닉네임으로 식별한다. 23개 구에 각 3계정·계정별 3시설을 생성하고 중구(11140)·강북구(11305)는 비워둔다. 10계정은 2022년 호우를 실제 계산·제출한다. 운영용 계정은 비공개 일괄 생성으로만 만들며 공개 가입의 소문자 규칙은 유지한다. 로그인은 기존 소문자 아이디와 `TEST_[a-z0-9_]{1,27}`을 허용한다. 사용자 활동을 모방하는 가상 관측·효과·점수를 넣지 않고 설치 시각·기상·계산·순위를 원래 서비스 경로에서 생성한다. 계정 자격·운영 활동의 개인별 식별자는 비공개 실행 기록으로 보관한다.
+
+### 대회 개인 예산과 게임 범위
+
+`POST /competitions`의 `budgetMode`는 `DEFAULT|CUSTOM`, 직접 설정 때 `personalBudgetKrw`는 1~1,000,000,000,000원 정수다. 기본 선택은 금액을 보내지 않으며 서버 기본 예산을 규칙 스냅샷에 고정한다. 카탈로그에 `defaultPersonalBudgetKrw`를 제공한다. 공개 뒤 금액 변경은 불가하다.
+
+대회 게임은 `competitionId` query로 `/budget`, `/installations` 조회·설치, `/historical` 목록·계산, `/historical/designs/{eventId}` 조회·저장·revision·제출, `/historical/submissions` 목록을 구분한다. 참가 계정·모드·사건·개최 기간·허용 구/시설·예산을 서버에서 검증한다. 대회 설치는 대회 종료까지 유지하고 원장·설계 revision·계산 목록·일반 순위를 분리한다. 회원 잠금으로 같은 예산의 동시 초과를 차단한다. 일반 요청은 대회 ID 없이 기존 계약을 유지한다.
+
+인증된 재해 랭킹 응답은 `ownEntries`에 평가 집단별 자신의 최고 기록과 실제 전체 순위를 제공한다. 일반 목록의 상위 100개·정밀 점수 정렬은 그대로 유지한다.
+
+대회 시설 조회는 참가자·승인된 주최 조직·관리자에게만 허용한다. 대회 결과의 그룹별 `ownEntries`는 현재 페이지 밖 본인 순위도 반환한다. 대회 지도 시설 점수는 주간 구간이 아닌 해당 대회의 누적 원장으로 조회한다.

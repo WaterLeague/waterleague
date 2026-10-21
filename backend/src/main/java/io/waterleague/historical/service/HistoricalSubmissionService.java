@@ -35,6 +35,7 @@ public class HistoricalSubmissionService {
   private final CostService costs;
   private final PlacementValidationService validation;
   private final JsonService json;
+  private final io.waterleague.competition.service.CompetitionBudgetService competitions;
   private final HistoricalDesignRepository designs;
   private final io.waterleague.evaluation.service.ScorePolicyService scorePolicy;
 
@@ -50,7 +51,8 @@ public class HistoricalSubmissionService {
       PlacementValidationService validation,
       JsonService json,
       HistoricalDesignRepository designs,
-      io.waterleague.evaluation.service.ScorePolicyService scorePolicy) {
+      io.waterleague.evaluation.service.ScorePolicyService scorePolicy,
+      io.waterleague.competition.service.CompetitionBudgetService competitions) {
     this.jobs = jobs;
     this.submissions = submissions;
     this.history = history;
@@ -61,6 +63,7 @@ public class HistoricalSubmissionService {
     this.costs = costs;
     this.validation = validation;
     this.json = json;
+    this.competitions = competitions;
     this.designs = designs;
     this.scorePolicy = scorePolicy;
   }
@@ -74,18 +77,30 @@ public class HistoricalSubmissionService {
 
   @Transactional
   public HistoricalSubmissionView submit(UUID owner, HistoricalSubmissionRequest dto) {
-    return create(owner, dto, null);
+    return create(owner, dto, null, null);
   }
 
   @Transactional
   public HistoricalSubmissionView submitSaved(
       UUID owner, String eventId, HistoricalDesignSubmissionRequest dto) {
+    return submitSaved(owner, eventId, dto, null);
+  }
+
+  @Transactional
+  public HistoricalSubmissionView submitSaved(
+      UUID owner, String eventId, HistoricalDesignSubmissionRequest dto, UUID competitionId) {
     return create(
-        owner, new HistoricalSubmissionRequest(dto.requestKey(), eventId, List.of()), dto);
+        owner,
+        new HistoricalSubmissionRequest(dto.requestKey(), eventId, List.of()),
+        dto,
+        competitionId);
   }
 
   private HistoricalSubmissionView create(
-      UUID owner, HistoricalSubmissionRequest dto, HistoricalDesignSubmissionRequest reference) {
+      UUID owner,
+      HistoricalSubmissionRequest dto,
+      HistoricalDesignSubmissionRequest reference,
+      UUID competitionId) {
     if (reference == null
         && (dto.placements() == null || dto.placements().isEmpty() || dto.placements().size() > 50))
       throw new DomainException(ErrorCode.PLACEMENT_INVALID);
@@ -107,6 +122,11 @@ public class HistoricalSubmissionService {
                         dto.eventId(),
                         "request",
                         reference)));
+    if (competitionId != null) {
+      var requestNode = (tools.jackson.databind.node.ObjectNode) json.tree(raw);
+      requestNode.put("competitionId", competitionId.toString());
+      raw = json.write(requestNode);
+    }
     admission.lockAdmission();
     admission.lockOwner(owner);
     var previous = jobs.byKey(owner, dto.requestKey());
@@ -115,13 +135,15 @@ public class HistoricalSubmissionService {
         throw new DomainException(ErrorCode.CONFLICT);
       return summary(previous.get());
     }
+    var contest = competitions.require(owner, competitionId, "DISASTER", dto.eventId(), true);
+    var selectedBudget = competitions.policy(contest);
     var event = event(dto.eventId());
     HistoricalDesign saved = null;
     var savedRows = new HashMap<String, tools.jackson.databind.JsonNode>();
     if (reference != null) {
       saved =
           designs
-              .latest(owner, dto.eventId())
+              .latest(owner, dto.eventId(), competitionId)
               .orElseThrow(() -> new DomainException(ErrorCode.RESOURCE_NOT_FOUND));
       if (reference.revision() != saved.revision()
           || !reference.snapshotSha256().equals(saved.snapshotSha256()))
@@ -129,7 +151,7 @@ public class HistoricalSubmissionService {
       if (!json.hash(saved.snapshotRaw()).equals(saved.snapshotSha256()))
         throw new DomainException(ErrorCode.HISTORICAL_DESIGN_INVALID);
       var snapshot = json.tree(saved.snapshotRaw());
-      if (!snapshot.path("budgetPolicy").equals(json.tree(json.write(budget.policy())))
+      if (!snapshot.path("budgetPolicy").equals(json.tree(json.write(selectedBudget)))
           || !snapshot
               .path("publicAssetPolicy")
               .equals(json.tree(json.write(sites.publicAssetPolicy()))))
@@ -163,6 +185,7 @@ public class HistoricalSubmissionService {
     var allocated = new EnumMap<FacilityType, BigDecimal>(FacilityType.class);
     var seen = new HashSet<String>();
     for (var p : sorted) {
+      competitions.permits(contest, p.districtId(), p.facilityType());
       var region = regions.get(p.districtId());
       if (region == null
           || p.installedAt() == null
@@ -198,7 +221,7 @@ public class HistoricalSubmissionService {
                   p.cellId(),
                   new PlacementCell(p.cellId(), types, site.maxAreaFor(p.facilityType()), true)),
               units,
-              budget.limit(),
+              selectedBudget.personalLimitKrw(),
               1);
       allocated.merge(p.facilityType(), amount, BigDecimal::add);
       var cost = costs.snapshot(site, p.facilityType(), p.areaM2(), amount.setScale(2));
@@ -216,7 +239,7 @@ public class HistoricalSubmissionService {
       row.put("areaM2", p.areaM2());
       row.put("siteModelHash", site.modelHash());
       row.put("rainfallModelHash", region.modelHash());
-      row.put("budgetPolicy", budget.policy());
+      row.put("budgetPolicy", selectedBudget);
       row.put("publicAssetPolicy", sites.publicAssetPolicy());
       row.put(
           "costSnapshotRaw",
@@ -229,17 +252,18 @@ public class HistoricalSubmissionService {
       frozen.add(row);
     }
     // 여러 구를 선택해도 회원 한 명의 사업군 한도를 한 번만 적용한다.
-    var accounting = budget.validateDesign(allocated);
+    var accounting = budget.validateDesign(allocated, selectedBudget);
     var rules = new TreeMap<String, Object>();
     rules.put("policy", POLICY);
+    if (competitionId != null) rules.put("competitionId", competitionId);
     rules.put("eventId", event.id());
     rules.put("modelGrade", "CURRENT_GEOMETRY_HISTORICAL_RAINFALL_STRESS_TEST");
     rules.put("engineVersion", "5.2.4");
     rules.put("metric", "BASELINE_MINUS_STRATEGY_RUNOFF_DRAINAGE_AND_NET_STORAGE_M3");
     rules.put("officialTotalScore", false);
     rules.put("scorePolicy", scorePolicy.descriptor());
-    rules.put("budgetPolicy", budget.policy());
-    rules.put("budgetAccountingPolicy", budget.validateDesign(Map.of()));
+    rules.put("budgetPolicy", selectedBudget);
+    rules.put("budgetAccountingPolicy", budget.validateDesign(Map.of(), selectedBudget));
     rules.put("siteCatalogs", sites.versions());
     rules.put("publicAssetPolicy", sites.publicAssetPolicy());
     var forcing = new TreeMap<String, String>();
@@ -276,7 +300,7 @@ public class HistoricalSubmissionService {
             Instant.now(),
             null,
             null);
-    jobs.add(job, dto.requestKey());
+    jobs.add(job, dto.requestKey(), competitionId);
     submissions.add(
         job.id(),
         event.id(),
@@ -291,6 +315,10 @@ public class HistoricalSubmissionService {
   }
 
   public Object board(String eventId, int page) {
+    return board(eventId, page, null);
+  }
+
+  public Object board(String eventId, int page, UUID owner) {
     if (page < 0 || page > 1000) throw new DomainException(ErrorCode.REQUEST_INVALID);
     var event = event(eventId);
     var groups = new LinkedHashMap<String, List<Map<String, Object>>>();
@@ -314,6 +342,8 @@ public class HistoricalSubmissionService {
         false,
         "scorePolicy",
         scorePolicy.descriptor(),
+        "ownEntries",
+        owner == null ? List.of() : submissions.board(eventId, 0, owner),
         "withheldSubmissionCount",
         submissions.withheldCount(eventId),
         "groups",
@@ -333,8 +363,13 @@ public class HistoricalSubmissionService {
   }
 
   public List<HistoricalSubmissionView> list(UUID owner, String eventId) {
+    return list(owner, eventId, null);
+  }
+
+  public List<HistoricalSubmissionView> list(UUID owner, String eventId, UUID competitionId) {
+    competitions.require(owner, competitionId, "DISASTER", eventId, false);
     event(eventId);
-    return jobs.submissions(owner, eventId).stream().map(this::summary).toList();
+    return jobs.submissions(owner, eventId, competitionId).stream().map(this::summary).toList();
   }
 
   public HistoricalSubmissionView get(UUID owner, UUID id) {

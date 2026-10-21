@@ -113,6 +113,18 @@ class SharedInstallationTests extends PostgresIntegrationTest {
                 installed.id(),
                 owner.username()))
         .isEqualTo(1);
+    var location =
+        json.tree(
+            db.queryForObject(
+                "SELECT payload::text FROM notification_outbox WHERE event_type='WEEKLY_INSTALLED'"
+                    + " AND source_id=?",
+                String.class,
+                installed.id()));
+    assertThat(location.path("siteName").asString()).isEqualTo(site.name());
+    assertThat(location.path("siteAddress").asString())
+        .isEqualTo(
+            site.address() == null || site.address().isBlank() ? "공개자료에 주소 없음" : site.address());
+    assertThat(location.path("districtName").asString()).isEqualTo("강남구");
     assertThat(installed.cost())
         .isEqualByComparingTo(site.unitCosts().get("PERMEABLE_PAVEMENT").multiply(BigDecimal.TEN));
     assertThatThrownBy(

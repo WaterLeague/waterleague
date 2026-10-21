@@ -28,6 +28,7 @@ public class CompetitionService {
   private final DisasterService disasters;
   private final ScorePolicyService policy;
   private final JsonService json;
+  private final io.waterleague.budget.service.BudgetService budget;
 
   public CompetitionService(
       CompetitionRepository repo,
@@ -36,7 +37,8 @@ public class CompetitionService {
       DistrictRepository districts,
       DisasterService disasters,
       ScorePolicyService policy,
-      JsonService json) {
+      JsonService json,
+      io.waterleague.budget.service.BudgetService budget) {
     this.repo = repo;
     this.organizations = organizations;
     this.accounts = accounts;
@@ -44,6 +46,7 @@ public class CompetitionService {
     this.disasters = disasters;
     this.policy = policy;
     this.json = json;
+    this.budget = budget;
   }
 
   private Account lock(Account a) {
@@ -114,6 +117,8 @@ public class CompetitionService {
             .toList(),
         "facilityTypes",
         FacilityType.values(),
+        "defaultPersonalBudgetKrw",
+        budget.limit(),
         "serverNow",
         repo.now());
   }
@@ -136,7 +141,12 @@ public class CompetitionService {
 
   private String rules(CompetitionRequest d, String sha) {
     var v = new TreeMap<String, Object>();
-    v.put("schemaVersion", 1);
+    v.put("schemaVersion", 2);
+    String mode = d.budgetMode() == null ? "DEFAULT" : d.budgetMode();
+    if (mode.equals("CUSTOM") ? d.personalBudgetKrw() == null : d.personalBudgetKrw() != null)
+      throw new DomainException(ErrorCode.REQUEST_INVALID);
+    v.put("budgetMode", mode);
+    v.put("personalBudgetKrw", mode.equals("CUSTOM") ? d.personalBudgetKrw() : budget.limit());
     v.put("title", d.title().strip());
     v.put("description", d.description().strip());
     v.put("mode", d.mode());
@@ -153,7 +163,7 @@ public class CompetitionService {
     v.put("awardNotice", d.awardNotice().strip());
     v.put("scorePolicySha256", sha);
     v.put("scoreRule", "BASELINE_MINUS_ACCOUNTED_VOLUME_M3");
-    v.put("realtimePolicy", "JOINED_PERIOD_WEEKLY_INSTALLATIONS_V1");
+    v.put("realtimePolicy", "DEDICATED_COMPETITION_INSTALLATIONS_V2");
     return json.write(v);
   }
 
@@ -166,8 +176,17 @@ public class CompetitionService {
     var previous = repo.byKey(a.id(), d.requestKey());
     if (previous.isPresent()) {
       var c = previous.get();
-      if (!c.rules().equals(rules(d, c.scorePolicySha256())))
-        throw new DomainException(ErrorCode.CONFLICT);
+      String requested = rules(d, c.scorePolicySha256());
+      if (json.tree(c.rules()).path("schemaVersion").asInt() == 1) {
+        var legacy = (tools.jackson.databind.node.ObjectNode) json.tree(requested);
+        if ("CUSTOM".equals(d.budgetMode())) throw new DomainException(ErrorCode.CONFLICT);
+        legacy.remove("budgetMode");
+        legacy.remove("personalBudgetKrw");
+        legacy.put("schemaVersion", 1);
+        legacy.put("realtimePolicy", "JOINED_PERIOD_WEEKLY_INSTALLATIONS_V1");
+        requested = json.write(legacy);
+      }
+      if (!c.rules().equals(requested)) throw new DomainException(ErrorCode.CONFLICT);
       return view(c, a);
     }
     var now = repo.now();
@@ -258,6 +277,14 @@ public class CompetitionService {
 
   private boolean eligible(Competition c, Map<String, Object> job, Instant joined) {
     if (joined == null) return false;
+    var rules = json.tree(c.rules());
+    if (rules.path("schemaVersion").asInt() >= 2 && !c.id().equals(job.get("competitionId")))
+      return false;
+    var limit =
+        rules.path("personalBudgetKrw").isNumber()
+            ? rules.path("personalBudgetKrw").decimalValue()
+            : budget.limit();
+    if (job.get("cost") instanceof BigDecimal cost && cost.compareTo(limit) > 0) return false;
     var created = (Instant) job.get("createdAt");
     if (created.isBefore(joined)
         || created.isBefore(c.opensAt())
@@ -436,7 +463,9 @@ public class CompetitionService {
               "entries",
               values.stream().skip(page * 100L).limit(100).toList(),
               "count",
-              values.size()));
+              values.size(),
+              "ownEntries",
+              values.stream().filter(v -> a.id().equals(v.get("playerId"))).toList()));
     }
     String phase = phase(c, now);
     String status =

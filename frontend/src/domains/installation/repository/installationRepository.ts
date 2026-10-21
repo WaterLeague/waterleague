@@ -1,9 +1,12 @@
+import { competitionScope } from '../../competition/repository/competitionScope';
 import { z } from 'zod';
 import { api } from '../../../shared/repository/apiClient';
 import { installationDto, siteDto, sitePageDto } from '../dto/installationDto';
 import type { FacilityType } from '../../game/entity/game';
-export const loadInstallations = async () =>
-  z.array(installationDto).parse(await api<unknown>('/installations'));
+export const loadInstallations = async (competitionId?: string | null) =>
+  z
+    .array(installationDto)
+    .parse(await api<unknown>(competitionScope('/installations', competitionId)));
 export type SiteQuery = {
   districtId: string;
   x: number;
@@ -38,10 +41,16 @@ export const installSite = async (
   districtId: string,
   cellId: string,
   facilityType: FacilityType,
-  areaM2: number
+  areaM2: number,
+  competitionId?: string | null
 ) =>
   installationDto.parse(
-    await api<unknown>('/installations', 'POST', { districtId, cellId, facilityType, areaM2 })
+    await api<unknown>(competitionScope('/installations', competitionId), 'POST', {
+      districtId,
+      cellId,
+      facilityType,
+      areaM2,
+    })
   );
 export const removeInstallation = (id: string) =>
   api<void>('/installations/' + encodeURIComponent(id), 'DELETE');

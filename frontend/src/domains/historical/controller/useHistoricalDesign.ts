@@ -21,8 +21,13 @@ type State = {
   restoredSecond: number;
   restoreId: number;
 };
-export function useHistoricalDesign(enabled: boolean, eventId: string, ownerId?: string) {
-  const key = `${ownerId ?? 'guest'}/${eventId}`;
+export function useHistoricalDesign(
+  enabled: boolean,
+  eventId: string,
+  ownerId?: string,
+  competitionId?: string | null
+) {
+  const key = `${ownerId ?? 'guest'}/${eventId}/${competitionId ?? 'general'}`;
   const [state, setState] = useState<State | null>(null);
   const latest = useRef(state);
   latest.current = state;
@@ -62,7 +67,7 @@ export function useHistoricalDesign(enabled: boolean, eventId: string, ownerId?:
             });
           return;
         }
-        const value = await loadDesign(eventId);
+        const value = await loadDesign(eventId, competitionId);
         if (active)
           setState({
             ...initial,
@@ -96,7 +101,7 @@ export function useHistoricalDesign(enabled: boolean, eventId: string, ownerId?:
     setState((s) => (s?.key === key ? { ...s, saving: true, pending: request, error: '' } : s));
     const operation = (async () => {
       try {
-        const saved = await saveDesign(eventId, request);
+        const saved = await saveDesign(eventId, request, competitionId);
         const drafts = restoreDesign(saved, ownerId);
         setState((s) =>
           s?.key === key && s.restoreId === restoreId

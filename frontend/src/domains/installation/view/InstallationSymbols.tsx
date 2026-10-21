@@ -16,12 +16,14 @@ type Props = {
   installations: SharedInstallation[];
   selectedKey: string;
   ownDistrictId: string | null;
+  viewerId: string | null;
   terrain: Terrain | null;
   onSelect: (key: string) => void;
 };
 const KindSymbols = memo(function KindSymbols({
   installations,
   selectedKey,
+  viewerId,
   terrain,
   onSelect,
   opacity,
@@ -49,11 +51,13 @@ const KindSymbols = memo(function KindSymbols({
     installations.forEach((i, index) =>
       mesh.current!.setColorAt(
         index,
-        scratch.color.set(siteKey(i) === selectedKey ? '#ffd15b' : '#ffffff')
+        scratch.color.set(
+          siteKey(i) === selectedKey ? '#ffdc73' : i.ownerId === viewerId ? '#71ffe0' : '#ffffff'
+        )
       )
     );
     if (mesh.current.instanceColor) mesh.current.instanceColor.needsUpdate = true;
-  }, [installations, positions, selectedKey, scratch]);
+  }, [installations, positions, selectedKey, viewerId, scratch]);
   useFrame(({ camera, size }) => {
     if (!mesh.current || !(camera instanceof PerspectiveCamera)) return;
     const signature = `${camera.matrixWorld.elements.join(',')}:${camera.fov}:${size.height}`;
@@ -64,7 +68,7 @@ const KindSymbols = memo(function KindSymbols({
       const depth = -scratch.point.copy(position).applyMatrix4(camera.matrixWorldInverse).z;
       const scale =
         depth > camera.near
-          ? depth * perPixel * (siteKey(installations[index]) === selectedKey ? 16 : 12)
+          ? depth * perPixel * (siteKey(installations[index]) === selectedKey ? 21 : 17)
           : 0;
       mesh.current!.setMatrixAt(
         index,
@@ -90,13 +94,12 @@ const KindSymbols = memo(function KindSymbols({
         onSelect(siteKey(installations[event.instanceId]));
       }}
     >
-      <meshStandardMaterial
+      <meshBasicMaterial
         vertexColors
         transparent={opacity < 1}
         opacity={opacity}
         depthTest={false}
         depthWrite={false}
-        roughness={0.9}
         toneMapped={false}
       />
     </instancedMesh>
@@ -107,9 +110,12 @@ export const InstallationSymbols = memo(function InstallationSymbols(props: Prop
   const groups = useMemo(() => {
     const buckets = new Map<string, { installations: SharedInstallation[]; opacity: number }>();
     for (const i of props.installations) {
-      const opacity = buildingOpacity(
-        !props.facilityType || i.facilityType === props.facilityType,
-        !!props.ownDistrictId && i.districtId !== props.ownDistrictId
+      const opacity = Math.max(
+        0.72,
+        buildingOpacity(
+          !props.facilityType || i.facilityType === props.facilityType,
+          !!props.ownDistrictId && i.districtId !== props.ownDistrictId
+        )
       );
       const key = `${i.facilityType}:${opacity}`;
       if (!buckets.has(key)) buckets.set(key, { installations: [], opacity });

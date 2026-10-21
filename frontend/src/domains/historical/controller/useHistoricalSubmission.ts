@@ -11,7 +11,8 @@ import {
 export function useHistoricalSubmission(
   enabled: boolean,
   owner: string | undefined,
-  eventId: string
+  eventId: string,
+  competitionId?: string | null
 ) {
   const [records, setRecords] = useState<HistoricalSubmission[]>([]);
   const [busy, setBusy] = useState(false),
@@ -27,7 +28,7 @@ export function useHistoricalSubmission(
     setConflict(false);
     pending.current = null;
     if (enabled && owner && eventId)
-      void listSubmissions(eventId)
+      void listSubmissions(eventId, competitionId)
         .then((v) => {
           if (epoch.current === generation)
             setRecords((old) => [...old, ...v.filter((x) => !old.some((y) => y.id === x.id))]);
@@ -38,7 +39,7 @@ export function useHistoricalSubmission(
     return () => {
       epoch.current++;
     };
-  }, [enabled, owner, eventId]);
+  }, [enabled, owner, eventId, competitionId]);
   useEffect(() => {
     const active = records.filter((j) => ['QUEUED', 'RUNNING'].includes(j.state));
     if (!active.length) return;
@@ -79,7 +80,7 @@ export function useHistoricalSubmission(
     setError('');
     setConflict(false);
     try {
-      const next = await submitSavedHistorical(eventId, key, design);
+      const next = await submitSavedHistorical(eventId, key, design, competitionId);
       if (generation === epoch.current) {
         if (pending.current?.key === key) pending.current.jobId = next.id;
         setRecords((old) => [next, ...old.filter((j) => j.id !== next.id)]);

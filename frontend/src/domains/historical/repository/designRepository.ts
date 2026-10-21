@@ -1,3 +1,4 @@
+import { competitionScope } from '../../competition/repository/competitionScope';
 import { z } from 'zod';
 import { api } from '../../../shared/repository/apiClient';
 import { siteDto } from '../../installation/dto/installationDto';
@@ -70,10 +71,16 @@ function path(eventId: string) {
   if (!/^seoul-[0-9]{8}$/.test(eventId)) throw new Error('재해 사건을 확인해 주세요.');
   return '/historical/designs/' + eventId;
 }
-export const loadDesign = async (eventId: string) =>
-  historicalDesignDto.parse(await api(path(eventId)));
-export const saveDesign = async (eventId: string, request: DesignRequest) =>
-  historicalDesignDto.parse(await api(path(eventId), 'PUT', request));
+export const loadDesign = async (eventId: string, competitionId?: string | null) =>
+  historicalDesignDto.parse(await api(competitionScope(path(eventId), competitionId)));
+export const saveDesign = async (
+  eventId: string,
+  request: DesignRequest,
+  competitionId?: string | null
+) =>
+  historicalDesignDto.parse(
+    await api(competitionScope(path(eventId), competitionId), 'PUT', request)
+  );
 export function restoreDesign(value: HistoricalDesign, ownerId: string): HistoricalDraft[] {
   return (
     value.snapshot?.placements.map(({ item, site, cost }) => {

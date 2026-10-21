@@ -88,6 +88,7 @@ type Props = {
   wetDistricts: City['districts'];
   animateRain: boolean;
   districtScores: Map<string, string> | null;
+  leadingDistrictIds?: string[];
   onDistrict: (id: string) => void;
   onSite: (key: string) => void;
   onBuilding: (districtId: string, building: CityBuilding) => void;
@@ -131,6 +132,7 @@ export const CityPlan = memo(function CityPlan({
   wetDistricts,
   animateRain,
   districtScores,
+  leadingDistrictIds = [],
   onDistrict,
   onSite,
   onBuilding,
@@ -159,8 +161,8 @@ export const CityPlan = memo(function CityPlan({
     installationBySite
   );
   const symbols = useMemo(
-    () => installationSymbols(installations, sites, viewerId, focus.distance),
-    [installations, sites, viewerId, focus.distance]
+    () => installationSymbols(installations, viewerId),
+    [installations, viewerId]
   );
   const paths = useMemo(
     () => ({
@@ -539,9 +541,19 @@ export const CityPlan = memo(function CityPlan({
             y={-d.center[1]}
             textAnchor="middle"
             fontSize={overview ? 420 : focus.distance * 0.035}
-            fill="#233c35"
+            fill={leadingDistrictIds.includes(d.id) ? '#8e3500' : '#233c35'}
+            stroke={leadingDistrictIds.includes(d.id) ? '#ffe3a6' : 'none'}
+            strokeWidth={
+              leadingDistrictIds.includes(d.id) ? (overview ? 40 : focus.distance * 0.003) : 0
+            }
+            paintOrder="stroke"
+            fontWeight={leadingDistrictIds.includes(d.id) ? 800 : 500}
+            className={leadingDistrictIds.includes(d.id) ? 'city-plan-leading' : undefined}
           >
-            <tspan x={d.center[0]}>{d.name}</tspan>
+            <tspan x={d.center[0]}>
+              {d.name}
+              {leadingDistrictIds.includes(d.id) ? ' · 1위' : ''}
+            </tspan>
             {districtScores && (
               <tspan x={d.center[0]} dy="1.3em" fontSize="0.72em">
                 {districtScores.get(d.id) ?? ''}
@@ -574,6 +586,7 @@ export const CityPlan = memo(function CityPlan({
         ))}
       <InstallationSymbolsPlan
         installations={symbols}
+        viewerId={viewerId}
         facilityType={facilityType}
         selectedKey={`${selected}:${selectedSite}`}
         ownDistrictId={ownDistrictId}

@@ -30,6 +30,8 @@ export const competitionDto = z.object({
   joinedAt: z.iso.datetime().nullable(),
   participantCount: z.number().int(),
   rules: z.object({
+    budgetMode: z.enum(['DEFAULT', 'CUSTOM']).optional(),
+    personalBudgetKrw: z.number().int().positive().optional(),
     districtIds: z.array(z.string()),
     allowedTypes: z.array(facilityTypeDto),
     awards: z.array(awardDto),
@@ -42,6 +44,7 @@ export const catalogDto = z.object({
   events: z.array(z.object({ id: z.string(), title: z.string() })),
   facilityTypes: z.array(facilityTypeDto),
   serverNow: z.iso.datetime(),
+  defaultPersonalBudgetKrw: z.number().positive().optional(),
 });
 export const installationDto = z.object({
   id: z.uuid(),
@@ -50,6 +53,18 @@ export const installationDto = z.object({
   facilityType: facilityTypeDto,
   areaM2: z.number(),
   installedAt: z.iso.datetime(),
+});
+const resultEntryDto = z.object({
+  playerId: z.uuid(),
+  nickname: z.string(),
+  rank: z.number().int().nullable(),
+  scoreM3: z.number().nullable(),
+  scoreM3Exact: z.string().nullable(),
+  comparable: z.boolean(),
+  submittedAt: z.iso.datetime().optional(),
+  installations: z.array(installationDto).optional(),
+  evaluatedSeconds: z.number().optional(),
+  expectedSeconds: z.number().optional(),
 });
 export const resultDto = z.object({
   competition: competitionDto,
@@ -71,20 +86,8 @@ export const resultDto = z.object({
     z.object({
       comparisonGroup: z.string(),
       count: z.number(),
-      entries: z.array(
-        z.object({
-          playerId: z.uuid(),
-          nickname: z.string(),
-          rank: z.number().int().nullable(),
-          scoreM3: z.number().nullable(),
-          scoreM3Exact: z.string().nullable(),
-          comparable: z.boolean(),
-          submittedAt: z.iso.datetime().optional(),
-          installations: z.array(installationDto).optional(),
-          evaluatedSeconds: z.number().optional(),
-          expectedSeconds: z.number().optional(),
-        })
-      ),
+      ownEntries: z.array(resultEntryDto).optional(),
+      entries: z.array(resultEntryDto),
     })
   ),
 });
@@ -113,4 +116,6 @@ export type CompetitionCreate = {
   closesAt: string;
   awards: Award[];
   awardNotice: string;
+  budgetMode?: 'DEFAULT' | 'CUSTOM';
+  personalBudgetKrw?: number | null;
 };

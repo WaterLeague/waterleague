@@ -90,7 +90,7 @@ export const budgetDto = z.object({
     sourceTitle: z.string(),
     sourceUrl: z.url().startsWith('https://'),
     sourceSha256: z.string().regex(/^[a-f0-9]{64}$/),
-    ruleVersion: z.literal('SEOUL_PERSONAL_FULL_2026_V3'),
+    ruleVersion: z.enum(['SEOUL_PERSONAL_FULL_2026_V3', 'COMPETITION_PERSONAL_V1']),
     note: z.string(),
   }),
   allocatedKrw: z.number().nonnegative(),

@@ -14,17 +14,28 @@ import org.springframework.web.bind.annotation.*;
 public class BudgetController {
   private final BudgetService service;
   private final AccountService accounts;
+  private final io.waterleague.competition.service.CompetitionBudgetService competitions;
 
-  public BudgetController(BudgetService service, AccountService accounts) {
+  public BudgetController(
+      BudgetService service,
+      AccountService accounts,
+      io.waterleague.competition.service.CompetitionBudgetService competitions) {
     this.service = service;
     this.accounts = accounts;
+    this.competitions = competitions;
   }
 
   @GetMapping
-  public ResponseEntity<BudgetView> view(Principal principal) {
+  public ResponseEntity<BudgetView> view(
+      Principal principal, @RequestParam(required = false) java.util.UUID competitionId) {
+    var owner = principal == null ? null : accounts.current(principal.getName()).id();
+    if (competitionId != null && owner == null)
+      throw new io.waterleague.common.exception.DomainException(
+          io.waterleague.common.exception.ErrorCode.AUTHENTICATION_REQUIRED);
+    var c = competitions.require(owner, competitionId, null, null, false);
     return ResponseEntity.ok()
         .cacheControl(CacheControl.noStore())
-        .body(service.view(principal == null ? null : accounts.current(principal.getName()).id()));
+        .body(service.view(owner, competitionId, competitions.policy(c)));
   }
 
   @GetMapping("/ledger")

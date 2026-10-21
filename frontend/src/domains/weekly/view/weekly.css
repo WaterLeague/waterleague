@@ -190,3 +190,39 @@
 .weekly-site-scores button {
   margin: 4px 0;
 }
+
+.weekly-pinned {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 62px;
+  padding: 12px;
+  margin-bottom: 10px;
+  border: 1px solid #87bcb1;
+  border-radius: 12px;
+  background: #dcf1ea;
+  color: #174a43;
+  font-size: 12px;
+}
+.weekly-pinned-rank {
+  font-size: 17px;
+  font-weight: 750;
+}
+.weekly-pinned strong {
+  margin-left: auto;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.weekly-pinned small {
+  display: block;
+  margin-top: 4px;
+  font-size: 10px;
+}
+.weekly-pinned button {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}

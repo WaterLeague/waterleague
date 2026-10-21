@@ -3,6 +3,7 @@ import { scoreFormat } from '../../weekly/service/scoreFormat';
 
 export function GameplayScoreboard({
   historical,
+  competition = false,
   authenticated,
   district,
   weekly,
@@ -11,6 +12,7 @@ export function GameplayScoreboard({
   locked = false,
 }: {
   historical: boolean;
+  competition?: boolean;
   authenticated: boolean;
   district?: WeeklySnapshot['current']['districts'][number];
   weekly: WeeklySnapshot | null;
@@ -19,8 +21,11 @@ export function GameplayScoreboard({
   locked?: boolean;
 }) {
   return (
-    <div className="game-scoreboard" aria-label={historical ? '내 재해 기록' : '주간 대항전 기록'}>
-      {!historical && (
+    <div
+      className="game-scoreboard"
+      aria-label={competition ? '내 대회 기록' : historical ? '내 재해 기록' : '주간 대항전 기록'}
+    >
+      {!historical && !competition && (
         <div className="game-score-group" aria-label="우리 구 기록">
           <span>
             {district?.districtName ?? '우리 구'} 순위
@@ -32,7 +37,7 @@ export function GameplayScoreboard({
               {district?.scoreM3 == null
                 ? weekly?.current.status === 'WITHHELD'
                   ? '합산 보류'
-                  : '미계산'
+                  : '점수 없음'
                 : scoreFormat.format(district.scoreM3)}
               {district?.scoreM3 != null && <small> m³</small>}
             </b>
@@ -55,7 +60,7 @@ export function GameplayScoreboard({
               : !historical && weekly?.current.status === 'WITHHELD'
                 ? '합산 보류'
                 : score == null
-                  ? '미계산'
+                  ? '점수 없음'
                   : scoreFormat.format(score)}
             {!locked && score !== null && <small> m³</small>}
           </b>

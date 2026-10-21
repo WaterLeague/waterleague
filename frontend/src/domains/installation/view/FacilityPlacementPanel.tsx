@@ -189,6 +189,8 @@ export function FacilityPlacementPanel(p: FacilityPlacementProps) {
                     <span>
                       <input
                         type="number"
+                        disabled={!type || p.busy}
+                        placeholder="시설 선택"
                         min="0.01"
                         max={maxArea}
                         step="0.01"
@@ -203,6 +205,7 @@ export function FacilityPlacementPanel(p: FacilityPlacementProps) {
                     className="area-slider"
                     aria-label="설치 면적 조절"
                     type="range"
+                    disabled={!type || p.busy}
                     min="0.01"
                     max={maxArea}
                     step="0.01"

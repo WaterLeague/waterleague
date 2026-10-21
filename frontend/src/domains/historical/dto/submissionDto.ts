@@ -97,6 +97,7 @@ export const historicalBoardDto = z
     scorePolicy: scorePolicyDto,
     withheldSubmissionCount: z.number().int().nonnegative(),
     groups: z.array(group),
+    ownEntries: z.array(entry).optional(),
   })
   .refine(
     (v) =>

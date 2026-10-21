@@ -51,12 +51,23 @@ public class HistoricalRepository {
         .findFirst();
   }
 
+  public UUID competition(UUID job) {
+    return db.queryForObject(
+        "SELECT competition_id FROM historical_experiments WHERE id=?", UUID.class, job);
+  }
+
   public List<HistoricalExperiment> list(UUID owner) {
+    return list(owner, null);
+  }
+
+  public List<HistoricalExperiment> list(UUID owner, UUID competitionId) {
     return db.query(
         "SELECT * FROM historical_experiments WHERE source_dataset='SEOUL_NGII_GAME_V2' AND"
-            + " owner_id=? ORDER BY created_at DESC,id DESC LIMIT 50",
+            + " owner_id=? AND competition_id IS NOT DISTINCT FROM ?::uuid ORDER BY created_at"
+            + " DESC,id DESC LIMIT 50",
         mapper,
-        owner);
+        owner,
+        competitionId);
   }
 
   public int active(UUID owner) {
@@ -68,13 +79,19 @@ public class HistoricalRepository {
   }
 
   public List<HistoricalExperiment> submissions(UUID owner, String event) {
+    return submissions(owner, event, null);
+  }
+
+  public List<HistoricalExperiment> submissions(UUID owner, String event, UUID competitionId) {
     return db.query(
         "SELECT j.* FROM historical_experiments j JOIN historical_submissions s ON s.job_id=j.id"
-            + " WHERE j.source_dataset='SEOUL_NGII_GAME_V2' AND j.owner_id=? AND s.event_id=? ORDER"
-            + " BY j.created_at DESC,j.id DESC LIMIT 50",
+            + " WHERE j.source_dataset='SEOUL_NGII_GAME_V2' AND j.owner_id=? AND s.event_id=? AND"
+            + " j.competition_id IS NOT DISTINCT FROM ?::uuid ORDER BY j.created_at DESC,j.id DESC"
+            + " LIMIT 50",
         mapper,
         owner,
-        event);
+        event,
+        competitionId);
   }
 
   public Optional<HistoricalExperiment> guestGet(String guest, UUID id) {
@@ -133,10 +150,14 @@ public class HistoricalRepository {
   }
 
   public void add(HistoricalExperiment j, UUID key) {
+    add(j, key, null);
+  }
+
+  public void add(HistoricalExperiment j, UUID key, UUID competitionId) {
     db.update(
         "INSERT INTO"
-            + " historical_experiments(id,owner_id,request_key,district_id,model_hash,input_hash,placements,state,created_at)"
-            + " VALUES(?,?,?,?,?,?,?,'QUEUED',?)",
+            + " historical_experiments(id,owner_id,request_key,district_id,model_hash,input_hash,placements,state,created_at,competition_id)"
+            + " VALUES(?,?,?,?,?,?,?,'QUEUED',?,?)",
         j.id(),
         j.ownerId(),
         key,
@@ -144,6 +165,7 @@ public class HistoricalRepository {
         j.modelHash(),
         j.inputHash(),
         j.placements(),
-        java.sql.Timestamp.from(j.createdAt()));
+        java.sql.Timestamp.from(j.createdAt()),
+        competitionId);
   }
 }

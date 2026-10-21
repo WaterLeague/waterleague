@@ -99,7 +99,7 @@ export const InstallationNameplates = memo(function InstallationNameplates({
               if (element) labels.current.set(i.id, element);
               else labels.current.delete(i.id);
             }}
-            className="installation-nameplate"
+            className={`installation-nameplate${i.ownerId === viewerId ? ' is-own' : ''}${siteKey(i) === selectedKey ? ' is-selected' : ''}`}
             onClick={() => onSelect(siteKey(i))}
           >
             <span>{i.ownerId === viewerId ? `내 시설 · ${i.ownerName}` : i.ownerName}</span>
