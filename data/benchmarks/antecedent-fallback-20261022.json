@@ -1,7 +1,7 @@
 {
   "checkedDateKst": "2026-10-22",
-  "scope": "REAL_SOURCE_ANTECEDENT_GAP_RECOVERY_AND_LOCAL_SWMM",
-  "productionDeployment": "PENDING",
+  "scope": "REAL_SOURCE_ANTECEDENT_GAP_RECOVERY_LOCAL_SWMM_AND_PRODUCTION",
+  "productionDeployment": "SUCCEEDED",
   "window": {
     "startKst": "2026-10-15T01:20:00+09:00",
     "endKst": "2026-10-22T01:20:00+09:00"
@@ -129,5 +129,56 @@
     "simulation/waterleague_sim/ingestion/seoul_live.py": "665dea05c54a3e3b2b887d48e54a212a88eb2e75e8a2c1cede12f4f3e3a7772f",
     "simulation/waterleague_sim/ingestion/antecedent.py": "4b69f7ee1d45812aa85d7b64659809e2e848d26e08f39dd5392cc1f8030ee8c8",
     "backend/src/main/resources/native-weather/v1/antecedent-fallback.json": "2549f71afe7a58603b675807b9d2c037319662219c79f30e683b3217a28cf99d"
+  },
+  "production": {
+    "revision": "1d3e2544a9159a4a3538e003c619ec75393959ff",
+    "workflowUrl": "https://github.com/WaterLeague/waterleague/actions/runs/39666141786",
+    "workerStartedAt": "2026-10-21T20:07:10.415677703Z",
+    "policySha256": "73531df7e7026c29f870e8183eed71e2553cd4d563617417dfde8fb1c7c56391",
+    "activeFacilities": 208,
+    "missingScoresBeforeRecovery": 109,
+    "recoveryStatus": "PARTIAL_UPSTREAM_ACCESS_UNAVAILABLE",
+    "example": {
+      "awsStation": "402",
+      "supplement": {
+        "provider": "SEOUL_OPEN_DATA",
+        "stationId": "202",
+        "stationName": "고덕2동",
+        "distanceM": 1801.366,
+        "minutes": 1438,
+        "fraction": 0.14265873015873015,
+        "sourceSha256": "4ba1e35a89248b378900b46a77f916b13919351b200f3f1c88eeb844cbf5b487",
+        "registrySha256": "2549f71afe7a58603b675807b9d2c037319662219c79f30e683b3217a28cf99d"
+      },
+      "scoreExcludesWarmup": true,
+      "antecedentMinutes": 10080,
+      "sourceArchiveComplete": true,
+      "manifestVerifiedFiles": 136,
+      "resultSha256": "dc2429e8138adce8483bcf34420599cdd0ec97b03632e322d7bb30018fabeb94",
+      "artifactManifestSha256": "c8fe3f9dc629d11aabfdff5e7069e0b23a87ab86edd42105f4c51378d259214f",
+      "policySha256": "73531df7e7026c29f870e8183eed71e2553cd4d563617417dfde8fb1c7c56391"
+    },
+    "homeRainfallSupplementVisible": true,
+    "checkedAt": "2026-10-21T20:32:16.851483+00:00",
+    "recoveredMissingScores": 105,
+    "scoresAfterRecovery": 204,
+    "remainingMissingScores": 4,
+    "remainingDistrictIds": [
+      "11650"
+    ],
+    "scoredDistricts": 23,
+    "newJobErrors": [
+      {
+        "error_code": "KMA_UNAVAILABLE",
+        "count": 1
+      },
+      {
+        "error_code": "KMA_ACCESS_UNAVAILABLE",
+        "count": 124
+      }
+    ],
+    "accessFailureRootCause": "UNCONFIRMED",
+    "temporaryRecoveryWorkersRemoved": true,
+    "normalWorkerRunning": true
   }
 }
