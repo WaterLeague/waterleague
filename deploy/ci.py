@@ -25,7 +25,7 @@ def validate():
         raise ValueError('OCI_TARGET_INVALID')
     if not re.fullmatch(r'[a-z0-9_]{4,32}', os.environ['ADMIN_USERNAME']):
         raise ValueError('ADMIN_USERNAME_INVALID')
-    if not 16 <= len(os.environ['ADMIN_PASSWORD']) <= 128 or '\x00' in os.environ['ADMIN_PASSWORD']:
+    if not 8 <= len(os.environ['ADMIN_PASSWORD']) <= 128 or '\x00' in os.environ['ADMIN_PASSWORD']:
         raise ValueError('ADMIN_PASSWORD_INVALID')
     if not re.fullmatch(r'https://discord\.com/api/(?:v10/)?webhooks/[0-9]{10,25}/[A-Za-z0-9_-]{40,200}', os.environ['DISCORD_WEBHOOK_URL']):
         raise ValueError('DISCORD_WEBHOOK_INVALID')

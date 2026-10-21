@@ -76,14 +76,16 @@ class DeploymentRuntimeTests extends PostgresIntegrationTest {
   void administratorIsUniqueMfaRequiredAndPasswordRotationIsAudited() {
     var provision = new DeploymentAdminProvisioning(accounts, db, tx, encoder, env, null);
     String username = "deploy_admin";
-    provision.provision(username, "initial-admin-password-test");
+    assertThatThrownBy(() -> provision.provision(username, "Test7pw"))
+        .hasMessage("ADMIN_CONFIGURATION_INVALID");
+    provision.provision(username, "Test8pw!");
     var before = accounts.byUsername(username).orElseThrow();
     assertThat(before.requiresMfa()).isTrue();
     assertThat(
             db.queryForObject(
                 "SELECT count(*) FROM account_mfa WHERE account_id=?", Integer.class, before.id()))
         .isZero();
-    provision.provision(username, "initial-admin-password-test");
+    provision.provision(username, "Test8pw!");
     assertThat(accounts.byUsername(username).orElseThrow().passwordHash())
         .isEqualTo(before.passwordHash());
     assertThatThrownBy(() -> provision.provision("another_admin", "other-admin-password-test"))

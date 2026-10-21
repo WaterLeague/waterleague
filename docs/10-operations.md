@@ -175,7 +175,7 @@ Corretto 빌드 단계의 unzip으로 Maven Wrapper의 ZIP 형식과 저장소 S
 | `OCI_SSH_PASSWORD` | 현재 SSH의 키 인증 뒤 추가 비밀번호 | SSH_ASKPASS로만 전달 |
 | `OCI_KNOWN_HOSTS` | 접속 확인한 호스트 공개키 | StrictHostKeyChecking 필수 |
 | `ADMIN_USERNAME` | 관리자 로그인 아이디 | 소문자·숫자·밑줄 4~32자 |
-| `ADMIN_PASSWORD` | 관리자 비밀번호 | 16~128자, 사용자 설정 |
+| `ADMIN_PASSWORD` | 관리자 비밀번호 | 8~128자, 사용자 설정 |
 | `DISCORD_WEBHOOK_URL` | 운영 Discord 알림 목적지 | HTTPS discord.com 웹훅만 허용 |
 | `KMA_API_KEY` | 주간 관측 수집 | 확보한 키 재사용 |
 

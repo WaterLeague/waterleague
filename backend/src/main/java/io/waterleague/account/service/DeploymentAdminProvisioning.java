@@ -45,7 +45,7 @@ public class DeploymentAdminProvisioning implements ApplicationRunner {
   }
 
   public void provision(String username, String password) {
-    if (!username.matches("[a-z0-9_]{4,32}") || password.length() < 16 || password.length() > 128)
+    if (!username.matches("[a-z0-9_]{4,32}") || password.length() < 8 || password.length() > 128)
       throw new IllegalStateException("ADMIN_CONFIGURATION_INVALID");
     tx.executeWithoutResult(
         status -> {
