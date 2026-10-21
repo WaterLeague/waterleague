@@ -97,7 +97,7 @@ function Map({ city, terrain }: { city: City; terrain: Terrain }) {
     center = camera.center,
     distance = camera.distance;
   const { tiles, error: tileError, busy } = useCityTiles(city, camera);
-  const { roads, railTraffic, error } = useUrbanData(tiles, center, distance);
+  const { roads, railTraffic, railServices, error } = useUrbanData(tiles, center, distance);
   const topography = useTopography(center, distance, terrain, false);
   const clock = useRef({
     historical: false,
@@ -193,6 +193,7 @@ function Map({ city, terrain }: { city: City; terrain: Terrain }) {
           />
           <RailLife
             roads={railTraffic}
+            preparedServices={railServices}
             terrain={terrain}
             center={center}
             distance={distance}

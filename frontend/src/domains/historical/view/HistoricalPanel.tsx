@@ -235,6 +235,10 @@ export function HistoricalPanel({
   const placed = s.drafts.find(
     (d) => d.site.districtId === site?.districtId && d.site.cellId === site?.cellId
   );
+  const selected = s.facilityStates.find((value) => value.draft.marker.id === placed?.marker.id);
+  const result = selected?.result;
+  const calculation = selected?.calculation;
+  const score = selected?.before ? null : selected?.score;
   const working =
     !s.calculationsReady || s.busy || s.job?.state === 'QUEUED' || s.job?.state === 'RUNNING';
   const finalLocked = !authenticated && s.duration > 0 && s.elapsedSeconds >= s.duration;
@@ -316,80 +320,84 @@ export function HistoricalPanel({
           )}
         </div>
       )}
-      {s.currentResult && !finalLocked && (
+      {placed && !result && !finalLocked && (
+        <p role="status">
+          {selected?.before
+            ? '설치 전입니다.'
+            : selected?.requestError ||
+                selected?.state === 'FAILED' ||
+                selected?.state === 'REJECTED'
+              ? '이 시설의 누적 효과를 계산하지 못했습니다.'
+              : '이 시설의 누적 효과 계산을 기다리는 중입니다.'}
+        </p>
+      )}
+      {placed && result && calculation && !finalLocked && (
         <section className="historical-result" aria-label="과거 강우 비교 결과">
-          <h3>재생 시각까지 누적 효과</h3>
+          <h3>이 시설의 재생 시각까지 누적 효과</h3>
           {authenticated && (
-            <a className="text-button" href={`/api/v1/historical/${s.job!.id}/bundle`}>
+            <a className="text-button" href={`/api/v1/historical/${selected.jobId}/bundle`}>
               재현 자료 다운로드
             </a>
           )}
-          <strong data-effect={(s.currentScore?.differenceM3 ?? 0) < 0 ? 'increase' : 'decrease'}>
-            {s.currentScore
-              ? `${physicalAmount(s.currentScore.differenceM3)} m³`
-              : '누적 기록 없음'}
+          <strong data-effect={(score?.differenceM3 ?? 0) < 0 ? 'increase' : 'decrease'}>
+            {score
+              ? `${physicalAmount(score.differenceM3)} m³`
+              : selected.before
+                ? '설치 전'
+                : '누적 기록 없음'}
           </strong>
           <p>시설 없는 조건 대비 평가체적 감소</p>
-          {s.currentScore && <p>{time(s.currentScore.at)}까지 · 분 종료 기록 · 미래 결과 제외</p>}
-          {(s.currentScore?.differenceM3 ?? 0) < 0 && <p>음수는 평가체적 증가를 뜻합니다.</p>}
+          {score && <p>{time(score.at)}까지 · 분 종료 기록 · 미래 결과 제외</p>}
+          {(score?.differenceM3 ?? 0) < 0 && <p>음수는 평가체적 증가를 뜻합니다.</p>}
           <dl>
             <dt>시설 없음</dt>
-            <dd>{s.currentScore ? physicalAmount(s.currentScore.baselineAccountedM3) : '—'}m³</dd>
-            <dt>내 실험 설계</dt>
-            <dd>{s.currentScore ? physicalAmount(s.currentScore.designAccountedM3) : '—'}m³</dd>
+            <dd>{score ? physicalAmount(score.baselineAccountedM3) : '—'}m³</dd>
+            <dt>이 시설 설치</dt>
+            <dd>{score ? physicalAmount(score.designAccountedM3) : '—'}m³</dd>
           </dl>
           <p>
             선택한 표면의 유출·배수·순저류 합 비교입니다. 구 전체 유출량이나 실제 침수 예측이
             아닙니다.
           </p>
           <p>작은 차이는 물수지 오차보다 작을 수 있습니다. 현장 효과로 확정하지 않습니다.</p>
-          {s.currentResult.initializationSensitivity && (
+          {calculation.initializationSensitivity?.cellId === placed.site.cellId && (
             <details>
               <summary>사건 전체 창의 시작 수분·저류 비교 · 누적 효과와 별도</summary>
-              <InitializationSensitivityEvidence
-                value={s.currentResult.initializationSensitivity}
-              />
+              <InitializationSensitivityEvidence value={calculation.initializationSensitivity} />
             </details>
           )}
-          {s.currentResult.pavementMaintenanceComparison && (
+          {calculation.pavementMaintenanceComparison?.cellId === placed.site.cellId && (
             <details>
               <summary>사건 전체 창의 투수포장 막힘 비교 · 누적 효과와 별도</summary>
-              <PavementMaintenanceEvidence value={s.currentResult.pavementMaintenanceComparison} />
+              <PavementMaintenanceEvidence value={calculation.pavementMaintenanceComparison} />
             </details>
           )}
-          {s.currentResult.facilities
-            ?.filter((f) => !site || f.cellId === site.cellId)
-            .map(
-              (f) =>
-                f.runoffComparison && (
-                  <details key={f.cellId}>
-                    <summary>{f.cellId} · 설치부터 종료까지 전체 계산 상세</summary>
-                    <RunoffComparison value={f.runoffComparison} contract={f.designContract} />
-                    {f.cistern && <CisternGameEvidence value={f.cistern} />}
-                  </details>
-                )
-            )}
+          {result.runoffComparison && (
+            <details>
+              <summary>{result.cellId} · 설치부터 종료까지 전체 계산 상세</summary>
+              <RunoffComparison value={result.runoffComparison} contract={result.designContract} />
+              {result.cistern && <CisternGameEvidence value={result.cistern} />}
+            </details>
+          )}
           <details>
             <summary>계산 조건</summary>
-            {s.currentResult.facilities
-              ?.filter((f) => !site || f.cellId === site.cellId)
-              .map(
-                (f) =>
-                  (f.initialization || f.facilityDesign || f.costRecord) && (
-                    <details key={f.cellId}>
-                      <summary>{f.cellId} · 시작 수분·시설 제원</summary>
-                      {f.initialization && <InitializationEvidence value={f.initialization} />}
-                      {f.facilityDesign && <FacilityProfileEvidence {...f.facilityDesign} />}
-                      {f.costRecord && (
-                        <CostRecordEvidence value={f.costRecord} lifeCycleCost={f.lifeCycleCost} />
-                      )}
-                    </details>
-                  )
-              )}
-            {s.currentResult.assumptions.map((v) => (
+            {(result.initialization || result.facilityDesign || result.costRecord) && (
+              <details>
+                <summary>{result.cellId} · 시작 수분·시설 제원</summary>
+                {result.initialization && <InitializationEvidence value={result.initialization} />}
+                {result.facilityDesign && <FacilityProfileEvidence {...result.facilityDesign} />}
+                {result.costRecord && (
+                  <CostRecordEvidence
+                    value={result.costRecord}
+                    lifeCycleCost={result.lifeCycleCost}
+                  />
+                )}
+              </details>
+            )}
+            {calculation.assumptions.map((v) => (
               <p key={v}>{v}</p>
             ))}
-            <p>EPA SWMM {s.currentResult.engineVersion} · 현장 보정 전</p>
+            <p>EPA SWMM {calculation.engineVersion} · 현장 보정 전</p>
           </details>
         </section>
       )}

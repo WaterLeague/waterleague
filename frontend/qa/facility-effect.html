@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>선택 시설 누적 효과 · 로컬 QA</title>
+  </head>
+  <body>
+    <header style="padding: 20px; background: #fff5d8">
+      <strong>로컬 UI 검사 · 합성 점수 · 운영 계산과 저장 없음</strong>
+      <p>시설 A: 12m³ · 시설 B: -7m³ · 구 합계 999m³를 입력해 선택 시설 연결 검사</p>
+    </header>
+    <main id="root" class="game-shell"></main>
+    <script type="module">
+      if (!import.meta.env.DEV || !['localhost', '127.0.0.1', '[::1]'].includes(location.hostname))
+        throw new Error('로컬 전용');
+      const [
+        { default: React },
+        { createRoot },
+        { HistoricalPanel },
+        { historicalFacilityStates, temporalPolicy },
+        { default: sites },
+        { siteDto },
+      ] = await Promise.all([
+        import('react'),
+        import('react-dom/client'),
+        import('/src/domains/historical/view/HistoricalPanel.tsx'),
+        import('/src/domains/historical/service/temporalService.ts'),
+        import('/src/domains/installation/__tests__/fixtures/nativeSites.json'),
+        import('/src/domains/installation/dto/installationDto.ts'),
+        import('/src/shared/ui/base.css'),
+        import('/src/shared/ui/game.css'),
+        import('/src/shared/ui/game-theme.css'),
+        import('/src/shared/ui/gameplay-chrome.css'),
+      ]);
+      const site = siteDto.parse(sites.reference),
+        h = React.createElement;
+      const drafts = ['first', 'second'].map((id, i) => ({
+        site: { ...site, cellId: id, name: '시험 시설 ' + (i ? 'B' : 'A') },
+        facilityType: 'PERMEABLE_PAVEMENT',
+        areaM2: 235,
+        marker: {
+          id,
+          facilityType: 'PERMEABLE_PAVEMENT',
+          areaM2: 235,
+          cost: 2857130,
+          ownerName: '로컬 시험',
+          installedAt: '2022-08-08T09:02:17Z',
+        },
+      }));
+      const job = {
+        id: 'local-ui-only',
+        districtId: site.districtId,
+        modelHash: 'region',
+        state: 'SUCCEEDED',
+        placements: drafts.map((d) => ({
+          districtId: site.districtId,
+          cellId: d.site.cellId,
+          siteModelHash: site.modelHash,
+          facilityType: d.facilityType,
+          areaM2: d.areaM2,
+          temporalPolicy,
+          installedAt: d.marker.installedAt,
+        })),
+        result: {
+          engineVersion: '5.2.4',
+          assumptions: ['화면 선택 검사용 합성 값'],
+          temporalPolicy,
+          facilities: drafts.map((d, i) => ({
+            cellId: d.site.cellId,
+            installedAt: d.marker.installedAt,
+            frames: [
+              {
+                at: '2022-08-08T09:03:00Z',
+                differenceM3: i ? -7 : 12,
+                baselineAccountedM3: 30,
+                designAccountedM3: i ? 37 : 18,
+              },
+            ],
+          })),
+        },
+      };
+      function App() {
+        const [selected, setSelected] = React.useState(0),
+          [before, setBefore] = React.useState(false);
+        const at = before ? '2022-08-08T09:02:00Z' : '2022-08-08T09:03:20Z';
+        const state = {
+          drafts,
+          facilityStates: historicalFacilityStates(
+            [{ districtId: site.districtId, modelHash: 'region' }],
+            drafts,
+            { region: job },
+            at
+          ).map((v) => ({ ...v, requestError: '' })),
+          design: { ready: true },
+          calculationsReady: true,
+          duration: 3600,
+          elapsedSeconds: 200,
+          at,
+          remaining: 0,
+          currentResult: job.result,
+          currentScore: { differenceM3: 999 },
+          job,
+        };
+        return h(
+          React.Fragment,
+          null,
+          h(
+            'nav',
+            { style: { display: 'flex', gap: 12, padding: 20 } },
+            ...['설치 시설 A', '설치 시설 B', '새 설치 후보'].map((label, i) =>
+              h(
+                'button',
+                { onClick: () => setSelected(i), 'aria-pressed': selected === i, key: label },
+                label
+              )
+            ),
+            h(
+              'button',
+              { onClick: () => setBefore(!before), 'aria-pressed': before },
+              '설치 이전 시각'
+            )
+          ),
+          h(
+            'div',
+            { style: { maxWidth: 520, margin: '20px auto' } },
+            h(HistoricalPanel, {
+              state,
+              site: selected < 2 ? drafts[selected].site : site,
+              type: 'PERMEABLE_PAVEMENT',
+              area: '235',
+              onType: () => {},
+              onArea: () => {},
+              authenticated: false,
+              error: '',
+              districtName: '성동구',
+            })
+          )
+        );
+      }
+      createRoot(document.getElementById('root')).render(h(App));
+    </script>
+  </body>
+</html>

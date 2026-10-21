@@ -22,6 +22,7 @@ let worker: Worker | null = null,
   sequence = 0,
   terrainSequence = 0,
   sentTerrain = -1;
+let sentRoads: Street[] | undefined;
 const pending: Job[] = [];
 const terrains = new WeakMap<Terrain, number>();
 const cache = new GeometryBufferCache<StreetBuffers>();
@@ -35,6 +36,7 @@ function fail() {
   }
   worker = null;
   sentTerrain = -1;
+  sentRoads = undefined;
   const jobs = [...(active ? [active] : []), ...pending.splice(0)];
   active = null;
   for (const job of jobs) if (!job.canceled) job.reject(new CityError('INVALID_DATA'));
@@ -69,7 +71,7 @@ function drain() {
     const { id, roads, terrain, terrainKey, detail, parkingAisles, center } = active;
     worker.postMessage({
       id,
-      roads,
+      ...(sentRoads === roads ? {} : { roads }),
       terrainKey,
       detail,
       parkingAisles,
@@ -77,6 +79,7 @@ function drain() {
       ...(sentTerrain === terrainKey ? {} : { terrain }),
     });
     sentTerrain = terrainKey;
+    sentRoads = roads;
   } catch {
     fail();
   }

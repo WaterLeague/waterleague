@@ -15,7 +15,7 @@ export function nativeSurfaceColor(role: string) {
         : '#667071';
 }
 export function nativeStreets(
-  tiles: CityTile[],
+  tiles: Pick<CityTile, 'id' | 'nativeFeatures' | 'urban'>[],
   groups?: NativeBridgeGroup[],
   lanes?: Map<string, number>,
   widths?: Map<string, number>

@@ -27,6 +27,7 @@ export async function loadTopographyIndex(signal: AbortSignal) {
   if (!signal.aborted) index = parsed.data;
   return parsed.data;
 }
+type Subscriber = { resolve: (data: TopographyBuffers) => void; reject: (error: Error) => void };
 type Job = {
   id: number;
   entry: TopographyEntry;
@@ -35,27 +36,30 @@ type Job = {
   terrainKey: number;
   plan: boolean;
   key: string;
-  canceled: boolean;
-  resolve: (data: TopographyBuffers) => void;
-  reject: (error: Error) => void;
+  subscribers: Set<Subscriber>;
 };
 let worker: Worker | null = null,
-  active: Job | null = null,
   sequence = 0,
   terrainSequence = 0,
   sentTerrain = -1,
   cacheBytes = 0;
 const pending: Job[] = [],
+  active = new Map<number, Job>(),
+  jobs = new Map<string, Job>(),
   terrainIds = new WeakMap<object, number>(),
   cache = new Map<string, { data: TopographyBuffers; bytes: number }>();
 const MAXIMUM = 96 * 1024 * 1024;
+const CONCURRENCY = 4;
 function stop() {
   worker?.terminate();
   worker = null;
   sentTerrain = -1;
-  const jobs = [...(active ? [active] : []), ...pending.splice(0)];
-  active = null;
-  for (const job of jobs) if (!job.canceled) job.reject(new TopographyError());
+  const all = [...jobs.values()];
+  pending.length = 0;
+  active.clear();
+  jobs.clear();
+  for (const job of all)
+    for (const subscriber of job.subscribers) subscriber.reject(new TopographyError());
 }
 function remember(key: string, data: TopographyBuffers) {
   const bytes =
@@ -69,6 +73,11 @@ function remember(key: string, data: TopographyBuffers) {
       0
     );
   if (bytes > MAXIMUM) return;
+  const previous = cache.get(key);
+  if (previous) {
+    cacheBytes -= previous.bytes;
+    cache.delete(key);
+  }
   while (cacheBytes + bytes > MAXIMUM && cache.size) {
     const first = cache.keys().next().value!;
     cacheBytes -= cache.get(first)!.bytes;
@@ -78,7 +87,7 @@ function remember(key: string, data: TopographyBuffers) {
   cacheBytes += bytes;
 }
 function drain() {
-  if (active || !pending.length) return;
+  if (active.size >= CONCURRENCY || !pending.length) return;
   try {
     if (!worker) {
       worker = new Worker(new URL('../service/topographyGeometry.worker.ts', import.meta.url), {
@@ -88,31 +97,35 @@ function drain() {
       worker.onmessage = (
         event: MessageEvent<{ id: number; data?: TopographyBuffers; failed?: boolean }>
       ) => {
-        if (worker !== current || !active || active.id !== event.data.id) return;
-        const job = active;
-        active = null;
-        if (!job.canceled) {
-          if (event.data.data) {
-            remember(job.key, event.data.data);
-            job.resolve(event.data.data);
-          } else job.reject(new TopographyError());
-        }
+        if (worker !== current) return;
+        const job = active.get(event.data.id);
+        if (!job) return;
+        active.delete(job.id);
+        jobs.delete(job.key);
+        if (event.data.data) {
+          remember(job.key, event.data.data);
+          for (const subscriber of job.subscribers) subscriber.resolve(event.data.data);
+        } else for (const subscriber of job.subscribers) subscriber.reject(new TopographyError());
         drain();
       };
-      worker.onerror = stop;
-      worker.onmessageerror = stop;
+      worker.onerror = worker.onmessageerror = () => {
+        if (worker === current) stop();
+      };
     }
-    active = pending.shift()!;
-    const { id, entry, layers, terrainKey, terrain, plan } = active;
-    worker.postMessage({
-      id,
-      entry,
-      layers,
-      terrainKey,
-      plan,
-      ...(sentTerrain !== terrainKey ? { terrain } : {}),
-    });
-    sentTerrain = terrainKey;
+    while (pending.length && active.size < CONCURRENCY) {
+      const job = pending.shift()!;
+      active.set(job.id, job);
+      const { id, entry, layers, terrainKey, terrain, plan } = job;
+      worker.postMessage({
+        id,
+        entry,
+        layers,
+        terrainKey,
+        plan,
+        ...(sentTerrain !== terrainKey ? { terrain } : {}),
+      });
+      sentTerrain = terrainKey;
+    }
   } catch {
     stop();
   }
@@ -139,22 +152,33 @@ export function requestTopographyTile(
       resolve(found.data);
       return;
     }
+    let job = jobs.get(key);
+    if (!job) {
+      job = {
+        id: ++sequence,
+        entry,
+        layers,
+        terrain,
+        terrainKey,
+        plan,
+        key,
+        subscribers: new Set(),
+      };
+      jobs.set(key, job);
+      pending.push(job);
+    }
+    const shared = job;
     const cancel = () => {
-      job.canceled = true;
-      const at = pending.indexOf(job);
-      if (at >= 0) pending.splice(at, 1);
-      if (active === job) worker?.postMessage({ id: job.id, cancel: true });
-      job.reject(new DOMException('Aborted', 'AbortError'));
+      shared.subscribers.delete(subscriber);
+      const at = pending.indexOf(shared);
+      if (!shared.subscribers.size && at >= 0) {
+        pending.splice(at, 1);
+        jobs.delete(key);
+      }
+      // 진행 중인 공개 타일은 마무리해 캐시에 보관하고 다음 시야 요청과 공유한다.
+      subscriber.reject(new DOMException('Aborted', 'AbortError'));
     };
-    const job: Job = {
-      id: ++sequence,
-      entry,
-      layers,
-      terrain,
-      terrainKey,
-      plan,
-      key,
-      canceled: false,
+    const subscriber: Subscriber = {
       resolve: (data) => {
         signal.removeEventListener('abort', cancel);
         resolve(data);
@@ -164,8 +188,8 @@ export function requestTopographyTile(
         reject(error);
       },
     };
+    shared.subscribers.add(subscriber);
     signal.addEventListener('abort', cancel, { once: true });
-    pending.push(job);
     drain();
   });
 }

@@ -49,10 +49,12 @@ test('카메라 이동 시 작업 스레드와 지형 전송을 재사용하고 
   const first = requestStreetMesh(roads, terrain, true, [], [0, 0], signal);
   const worker = MockWorker.instances[0];
   expect(worker.postMessage.mock.calls[0][0].terrain).toBe(terrain);
+  expect(worker.postMessage.mock.calls[0][0].roads).toBe(roads);
   worker.complete();
   await first;
   const second = requestStreetMesh(roads, terrain, true, [], [500, 0], signal);
   expect(worker.postMessage.mock.calls[1][0]).not.toHaveProperty('terrain');
+  expect(worker.postMessage.mock.calls[1][0]).not.toHaveProperty('roads');
   worker.complete();
   await second;
   const nextTerrain = structuredClone(terrain);
@@ -126,6 +128,7 @@ test('오류 뒤 새 작업을 재개하고 이전 스레드의 늦은 오류와
   delayedResult({ data: { id: 2, data: empty() } });
   expect(fresh.terminate).not.toHaveBeenCalled();
   expect(fresh.postMessage.mock.calls[0][0].terrain).toBe(terrain);
+  expect(fresh.postMessage.mock.calls[0][0].roads).toBe(roads);
   fresh.complete();
   await next;
   expect(worker.terminate).toHaveBeenCalledOnce();

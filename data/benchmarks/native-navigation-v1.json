@@ -1,0 +1,178 @@
+{
+  "sourceHashes": {
+    "frontend/src/domains/urban/service/streetMeshService.ts": "74f158370a6045ae5847ed5d95be8df9404b64c6041d04a29175a148d8b6737d",
+    "frontend/src/domains/urban/service/urbanRoadService.ts": "356284e86591125250745b540a262a8942daf9001b4b671e5d021b8d480ac033",
+    "frontend/src/domains/urban/service/railLifeService.ts": "5caa3e6317713a4c3d25a3277c4d75e367a90b3865cd1f9003c145fca7b40a7b",
+    "frontend/src/domains/urban/service/nativeBridgeService.ts": "0181b975ab4193bfb8f268c8ba421050280f75cfa62fa2dcc49b347f3ba0d964",
+    "frontend/src/domains/urban/service/nativeStreetService.ts": "c8d446a19df25d7aaa36d08bf4bc10fc31280de4e630c1f5278d72be7c7e3944",
+    "frontend/src/domains/urban/service/streetGeometryService.ts": "7c6b8133cea20accd2872e78115c0857f20ae5cdddc9f2b54180a7f0a006e875",
+    "frontend/public/data/seoul-native-v1/city.json": "67a8b80b7036590973b7db99053521333f9405e1076a7939bfe491c43296dd6c",
+    "frontend/public/data/seoul-bridges-v1/index.json": "09dfa6600c8801b4f26316ce33db6bbca8e1fab187b855dc9f04e7aac617364a",
+    "frontend/public/data/seoul-transport-v1/index.json": "fcd2a5b2f7e090192ffdd4b691c1294c3ae9be489045cf11c9b2a1010824d098"
+  },
+  "schemaVersion": 1,
+  "baselineCommit": "99b963a831680011a1826ae21f011437490910e9",
+  "measuredAt": "2026-10-21T14:46:14.164Z",
+  "runtime": "v22.13.1",
+  "cpu": "Apple M4 Pro",
+  "scope": "실제 공개 원형 자료의 도로 파생 전체 필드 및 CPU 메시/복제 비교. 지형 null. 네트워크·브라우저 FPS·GPU 완료 시간과 구분",
+  "elementsReduced": false,
+  "results": [
+    {
+      "name": "양화대교",
+      "center": [
+        -7035,
+        -3320
+      ],
+      "distance": 1200,
+      "tiles": [
+        {
+          "id": "-8_-4",
+          "sha256": "3f5b8858e76af7670b10c83483f2d4ae8fe67b87b11cab130cae8967ec09f776"
+        },
+        {
+          "id": "-7_-4",
+          "sha256": "e6d293b53fc2112c4311b8dc20c7b85685e65ae7528d79efdb53896faea257f2"
+        },
+        {
+          "id": "-7_-3",
+          "sha256": "8bfa1ea0f17d31537aac411fc55929e543b515b463f87eda8c1d1ce96c33ed4a"
+        },
+        {
+          "id": "-8_-3",
+          "sha256": "fb6f45a78cc84f6c98b4ae0d1de8fd81de875bcd9a5b822aef5275661a7fb1d6"
+        },
+        {
+          "id": "-7_-5",
+          "sha256": "18c09b1739645a0c6b38b4c652faee63e24eb3115d136e522f980b4c918e1552"
+        },
+        {
+          "id": "-8_-5",
+          "sha256": "85328b0a932ca74a02f6b7370461b858c27b5c374b04477ce9eda3ca196599c5"
+        },
+        {
+          "id": "-9_-4",
+          "sha256": "e004d5f8b9a5561da41aeb30996ecff827523b03f33fec4cd99f04dac44e5426"
+        },
+        {
+          "id": "-9_-3",
+          "sha256": "606b86f6ec37f45ca0d62960ca2ddf9a4ac99e4e65937d09b1a3460fa5b57ef9"
+        },
+        {
+          "id": "-9_-5",
+          "sha256": "d5f7aa71d6748c63b2abf4e864443e76b77f1a92f4982efa048af65229ee6a8b"
+        }
+      ],
+      "roads": 8513,
+      "railTraffic": 3211,
+      "formerMainThreadDeriveMs": 179.89933400000018,
+      "workerDeriveMs": 157.76,
+      "originalFirstMs": 1779.937625,
+      "optimizedFirstMs": 1674.0306670000004,
+      "originalMs": [
+        1202.2532499999998,
+        885.2543330000008,
+        1221.9341250000007
+      ],
+      "optimizedMs": [
+        87.38766599999963,
+        179.04120800000055,
+        62.73541600000135
+      ],
+      "originalMedianMs": 1202.2532499999998,
+      "optimizedMedianMs": 87.38766599999963,
+      "geometry": [
+        {
+          "vertices": 929076,
+          "sha256": "1ec76eb660bfc434ece4e34c648a7c1facf19b45c76bcb7becfaeff65811bbc3"
+        },
+        {
+          "vertices": 781689,
+          "sha256": "212752a601336587820c88925d4fe02189ac43ba13b616cfbe5c9768b4cc8db5"
+        },
+        {
+          "vertices": 929076,
+          "sha256": "1ec76eb660bfc434ece4e34c648a7c1facf19b45c76bcb7becfaeff65811bbc3"
+        }
+      ]
+    },
+    {
+      "name": "강남역",
+      "center": [
+        4314,
+        -7713
+      ],
+      "distance": 1200,
+      "tiles": [
+        {
+          "id": "4_-8",
+          "sha256": "7d6f13dc969a0148e79311f7736df007ea700b289b13325abe79e98f1ebc11cf"
+        },
+        {
+          "id": "4_-9",
+          "sha256": "12f2482a34c0800bc33cac66894c17eb6911b269d915456fe5a84cde2b543fbc"
+        },
+        {
+          "id": "3_-8",
+          "sha256": "0e09c18ed01785396da8628cd4f8bcd3307eca2053a027cf3c007a57a8e3a67b"
+        },
+        {
+          "id": "3_-9",
+          "sha256": "5abb664d1ec54fb883007837328923b2d0669d30be807bc27e7464031f49b8bd"
+        },
+        {
+          "id": "4_-7",
+          "sha256": "5a696ecd123b99caf673ba12412f67ef3e4e1b7cf51516fad933e403c82d7c4a"
+        },
+        {
+          "id": "5_-8",
+          "sha256": "0b43d47a7f101046902fb29ebd8e2e649f2ba7ce69e7ebb4c784d1fc0ebd76ff"
+        },
+        {
+          "id": "5_-9",
+          "sha256": "fe29f9be20d5b6b619489a9260c5fb0aaa5557a735f8921951a4ffc26a472d26"
+        },
+        {
+          "id": "3_-7",
+          "sha256": "a4890cf3371202994b0560ab0b4c04e576ee234c061d2c7e85636b4f9f5a0ea5"
+        },
+        {
+          "id": "5_-7",
+          "sha256": "7a865f4fcc42716f23eeb1d31d5790677cf0e55be6766e270c5a5f30431294f4"
+        }
+      ],
+      "roads": 15258,
+      "railTraffic": 3211,
+      "formerMainThreadDeriveMs": 85.76649999999972,
+      "workerDeriveMs": 73.30025000000023,
+      "originalFirstMs": 505.1865830000006,
+      "optimizedFirstMs": 560.5430840000008,
+      "originalMs": [
+        315.6564589999998,
+        475.25233300000036,
+        522.9984589999985
+      ],
+      "optimizedMs": [
+        17.54229099999975,
+        141.22408300000097,
+        23.884792000000743
+      ],
+      "originalMedianMs": 475.25233300000036,
+      "optimizedMedianMs": 23.884792000000743,
+      "geometry": [
+        {
+          "vertices": 414534,
+          "sha256": "915138adcd0b078d66d513dd269d4182e224093dfc87f338d2f4cf078da90ed4"
+        },
+        {
+          "vertices": 427041,
+          "sha256": "94db495f8fa8f622c6ed53b4c1c05637dae61883fd35e853e31878153ef4eecf"
+        },
+        {
+          "vertices": 414534,
+          "sha256": "915138adcd0b078d66d513dd269d4182e224093dfc87f338d2f4cf078da90ed4"
+        }
+      ]
+    }
+  ]
+}

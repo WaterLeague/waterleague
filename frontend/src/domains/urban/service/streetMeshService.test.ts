@@ -242,3 +242,38 @@ test('이동 중 취소는 남은 도로 계산을 멈추고 완성된 부분만
   ).rejects.toMatchObject({ name: 'AbortError' });
   expect(builder.statistics.generated).toBe(2);
 });
+
+test('큰 공유 교량 연결 그래프의 키를 압축해 형상 캐시 공간 보존', async () => {
+  const polygons: [number, number][][][] = Array.from({ length: 500 }, (_, i) => [
+    [
+      [i, 0],
+      [i + 1, 0],
+      [i + 1, 1],
+      [i, 1],
+      [i, 0],
+    ],
+  ]);
+  const profile: NativeBridgeProfile = {
+    roadIds: ['shared'],
+    coordinates: [
+      [0, 0],
+      [30, 0],
+    ],
+    span: [0, 30],
+    polygons,
+    deckPolygons: polygons,
+    deckLiftM: 8,
+    displayWidthM: 10,
+  };
+  const roads = Array.from({ length: 50 }, (_, i) => ({
+    ...road(String(i)),
+    nativeSourceRole: 'ROAD_CENTERLINE',
+    nativeBridgeProfiles: [profile],
+  }));
+  const builder = new StreetMeshBuilder();
+  const first = await builder.build(roads, null, true, [], undefined, signal());
+  expect(builder.statistics.bytes).toBeLessThan(100000);
+  expect(first.positions.length).toBe(0);
+  expect(await builder.build(roads, null, true, [], undefined, signal())).toEqual(first);
+  expect(builder.statistics).toMatchObject({ generated: 50, reused: 50 });
+});

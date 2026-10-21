@@ -1132,6 +1132,7 @@ function Explorer({
                   urbanClock={urbanClock}
                   streets={urban.roads}
                   railTraffic={urban.railTraffic}
+                  railServices={urban.railServices}
                   topography={topography}
                   population={urban.population}
                   livePlaces={liveUrban.places}

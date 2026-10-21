@@ -444,6 +444,7 @@ const CityScene = memo(function CityScene({
   urbanClock,
   streets,
   railTraffic,
+  railServices,
   topography,
   parking,
   population,
@@ -500,6 +501,7 @@ const CityScene = memo(function CityScene({
   urbanClock: UrbanTime;
   streets: Street[];
   railTraffic: Street[];
+  railServices?: import('../../urban/service/railLifeService').RailService[];
   topography: TopographyView;
   parking: ParkingData | null;
   population: Population | null;
@@ -696,6 +698,7 @@ const CityScene = memo(function CityScene({
             />
             <RailLife
               roads={railTraffic}
+              preparedServices={railServices}
               terrain={terrain}
               center={rainCamera.center}
               distance={rainCamera.distance}

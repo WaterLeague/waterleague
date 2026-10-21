@@ -133,6 +133,8 @@ export function historicalFacilityStates(
       draft,
       state: job?.state,
       jobId: job?.id,
+      result,
+      calculation: result ? job?.result : undefined,
       before: !!at && Date.parse(at) < Date.parse(draft.marker.installedAt),
       score: at && result?.frames ? scoreAt(result.frames, at) : null,
     };

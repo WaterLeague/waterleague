@@ -4,6 +4,7 @@ import { StreetMeshBuilder } from './streetMeshService';
 
 const builder = new StreetMeshBuilder();
 let active: { id: number; controller: AbortController } | null = null;
+let roads: Street[] = [];
 let terrain: Terrain | null = null,
   terrainKey = -1;
 self.onmessage = async (
@@ -12,7 +13,7 @@ self.onmessage = async (
     | {
         id: number;
         cancel?: false;
-        roads: Street[];
+        roads?: Street[];
         terrain?: Terrain | null;
         terrainKey: number;
         detail: boolean;
@@ -26,7 +27,7 @@ self.onmessage = async (
     if (active?.id === message.id) active.controller.abort();
     return;
   }
-  const { id, roads, detail, parkingAisles, center } = message;
+  const { id, detail, parkingAisles, center } = message;
   const controller = new AbortController();
   active = { id, controller };
   try {
@@ -35,6 +36,7 @@ self.onmessage = async (
       terrainKey = message.terrainKey;
     }
     if (terrainKey !== message.terrainKey) throw new Error('지형 연결 누락');
+    if (message.roads) roads = message.roads;
     const data = await builder.build(
       roads,
       terrain,

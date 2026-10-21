@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { startTransition, useEffect, useMemo, useState } from 'react';
 import type { Terrain } from '../../terrain/entity/terrain';
 import type { TopographyIndex } from '../dto/topographyDto';
 import type { TopographyBuffers } from '../entity/topography';
@@ -36,32 +36,53 @@ export function useTopography(
     .join(',');
   useEffect(() => {
     if (!index) return;
-    const request = new AbortController(),
-      next: { id: string; data: TopographyBuffers }[] = [];
+    const request = new AbortController();
+    const ready = new Map<string, TopographyBuffers>();
+    let frame: number | undefined;
     setError('');
     setBusy(entries.length > 0);
+    const publish = (complete: boolean) => {
+      if (request.signal.aborted) return;
+      const next = entries.flatMap((entry) => {
+        const data = ready.get(entry.id);
+        return data ? [{ id: entry.id, data }] : [];
+      });
+      startTransition(() =>
+        setTiles((previous) => {
+          // 이동 중 부분 교체는 빈 영역과 반복 인스턴싱을 만들므로 완료된 시야를 함께 교체한다.
+          if (!complete && previous.length) return previous;
+          const values = next;
+          return values.length === previous.length &&
+            values.every((tile, i) => tile.id === previous[i].id && tile.data === previous[i].data)
+            ? previous
+            : values;
+        })
+      );
+    };
     async function run() {
-      const wanted = new Set(entries.map((entry) => entry.id));
-      setTiles((previous) => previous.filter((tile) => wanted.has(tile.id)));
-      for (const entry of entries) {
-        const data = await requestTopographyTile(
-          entry,
-          index!.layers,
-          terrain,
-          plan,
-          request.signal
-        );
-        if (request.signal.aborted) return;
-        next.push({ id: entry.id, data });
-        const ready = [...next];
-        setTiles((previous) => [
-          ...ready,
-          ...previous.filter(
-            (tile) => !ready.some((value) => value.id === tile.id) && wanted.has(tile.id)
-          ),
-        ]);
+      await Promise.all(
+        entries.map(async (entry) => {
+          const data = await requestTopographyTile(
+            entry,
+            index!.layers,
+            terrain,
+            plan,
+            request.signal
+          );
+          if (request.signal.aborted) return;
+          ready.set(entry.id, data);
+          if (frame === undefined)
+            frame = requestAnimationFrame(() => {
+              frame = undefined;
+              publish(false);
+            });
+        })
+      );
+      if (frame !== undefined) {
+        cancelAnimationFrame(frame);
+        frame = undefined;
       }
-      if (!request.signal.aborted) setTiles(next);
+      publish(true);
     }
     void run()
       .catch(() => {
@@ -70,7 +91,10 @@ export function useTopography(
       .finally(() => {
         if (!request.signal.aborted) setBusy(false);
       });
-    return () => request.abort();
+    return () => {
+      request.abort();
+      if (frame !== undefined) cancelAnimationFrame(frame);
+    };
     // 같은 타일 목록에서는 카메라 이동으로 작업을 취소하거나 형상을 다시 만들지 않는다.
   }, [index, key, terrain, plan]);
   return { index, tiles, error, busy };

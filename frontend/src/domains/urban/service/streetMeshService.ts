@@ -29,6 +29,7 @@ function shapeKey(value: unknown) {
 
 export class StreetMeshBuilder {
   private readonly cache = new Map<string, { part: Part; bytes: number }>();
+  private keys = new WeakMap<Street, Map<string, string>>();
   private terrain: Terrain | null | undefined;
   private bytes = 0;
   private generated = 0;
@@ -51,13 +52,24 @@ export class StreetMeshBuilder {
     signal.throwIfAborted();
     if (terrain !== this.terrain) {
       this.cache.clear();
+      this.keys = new WeakMap();
       this.bytes = 0;
       this.terrain = terrain;
     }
     const aisleIds = new Set(parkingAisles);
-    const entries = roads.map((road) => {
+    const hashes: Promise<void>[] = [];
+    const encoder = new TextEncoder();
+    const entries: { road: Street; detail: boolean; parking: boolean; key: string }[] = [];
+    for (const road of roads) {
+      signal.throwIfAborted();
       const detail = streetDetailEnabled(road, detailed, center);
       const parking = aisleIds.has(road.id);
+      const variant = `${detail}:${parking}`;
+      const saved = this.keys.get(road)?.get(variant);
+      if (saved) {
+        entries.push({ road, detail, parking, key: saved });
+        continue;
+      }
       // 이동체 전용 수면·상판 참조를 도로마다 문자열로 복제하지 않는다.
       const {
         nativeWaterDecks: _waterDecks,
@@ -83,8 +95,26 @@ export class StreetMeshBuilder {
         detail,
         parking,
       ]);
-      return { road, detail, parking, key };
-    });
+      const entry = { road, detail, parking, key };
+      entries.push(entry);
+      // 큰 키를 병렬 해시하되 동시에 보관하는 원문 수를 제한한다.
+      if (key.length > 256) {
+        hashes.push(
+          crypto.subtle.digest('SHA-256', encoder.encode(key)).then((digest) => {
+            entry.key =
+              'sha256:' +
+              Array.from(new Uint8Array(digest), (value) =>
+                value.toString(16).padStart(2, '0')
+              ).join('');
+          })
+        );
+        if (hashes.length === 32) {
+          await Promise.all(hashes);
+          hashes.length = 0;
+        }
+      }
+    }
+    if (hashes.length) await Promise.all(hashes);
     const wanted = new Set(entries.map((entry) => entry.key));
     const evictable = [...this.cache.keys()].filter((key) => !wanted.has(key));
     let evictionIndex = 0;
@@ -120,6 +150,7 @@ export class StreetMeshBuilder {
             const oldest = evictable[evictionIndex++];
             this.bytes -= this.cache.get(oldest)!.bytes;
             this.cache.delete(oldest);
+            this.keys = new WeakMap();
           }
           // 현재 시야 전체가 한도를 넘을 때 필요한 캐시끼리 밀어내며 전부 재생성하지 않는다.
           if (this.bytes + bytes <= this.maximumBytes) {
@@ -127,6 +158,12 @@ export class StreetMeshBuilder {
             this.bytes += bytes;
           }
         }
+      }
+      // 상한 안에 보관한 형상만 키를 재사용하고 퇴출 시 참조를 함께 비운다.
+      if (this.cache.has(key)) {
+        const variants = this.keys.get(road) ?? new Map<string, string>();
+        variants.set(`${detail}:${parking}`, key);
+        this.keys.set(road, variants);
       }
       parts.push(part);
       if (performance.now() - lastYield >= 8) {

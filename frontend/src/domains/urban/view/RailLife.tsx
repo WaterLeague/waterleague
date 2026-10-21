@@ -5,11 +5,12 @@ import type { Street, UrbanTime } from '../entity/urban';
 import type { Terrain } from '../../terrain/entity/terrain';
 import { distanceToStreet, streetPath } from '../service/streetLifeService';
 import { streetHeight, submergedSourcePath } from '../service/streetGeometryService';
-import { activeRailTrains, railServices } from '../service/railLifeService';
+import { activeRailTrains, railServices, type RailService } from '../service/railLifeService';
 import { urbanAnimationTime } from '../service/urbanTimeService';
 const LIMIT = 128;
 export const RailLife = memo(function RailLife({
   roads,
+  preparedServices,
   terrain,
   center,
   distance,
@@ -17,6 +18,7 @@ export const RailLife = memo(function RailLife({
   animate,
 }: {
   roads: Street[];
+  preparedServices?: RailService[];
   terrain: Terrain | null;
   center: [number, number];
   distance: number;
@@ -34,7 +36,10 @@ export const RailLife = memo(function RailLife({
   const paths = useMemo(() => roads.filter((r) => r.nativeRailKind).map(streetPath), [roads]);
   const x = Math.round(center[0] / 100) * 100,
     y = Math.round(center[1] / 100) * 100;
-  const services = useMemo(() => railServices(paths), [paths]);
+  const services = useMemo(
+    () => preparedServices ?? railServices(paths),
+    [paths, preparedServices]
+  );
   const nearby = useMemo(
     () =>
       paths

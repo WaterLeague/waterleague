@@ -1,110 +1,29 @@
-import { attachNativeTunnels, nativeTunnelStreets } from '../service/nativeTunnelService';
-import { useEffect, useMemo, useState } from 'react';
+import { startTransition, useEffect, useMemo, useRef, useState } from 'react';
 import type { CityTile } from '../../city/entity/city';
 import type { Population } from '../entity/urban';
-import { nativeStreets } from '../service/nativeStreetService';
-import { loadNativeBridges } from '../repository/nativeBridgeRepository';
-import type { NativeBridgeGroup } from '../dto/nativeBridgeDto';
 import { loadPopulation } from '../repository/urbanRepository';
-import { loadNativeTransport } from '../repository/nativeTransportRepository';
-import type { NativeTransport } from '../dto/nativeTransportDto';
-import { nativeRailStreets } from '../service/nativeTransportService';
+import { UrbanRoadSession, type UrbanRoads } from '../repository/urbanRoadRepository';
 export function useUrbanData(tiles: CityTile[], center: [number, number], distance: number) {
-  const [bridges, setBridges] = useState<NativeBridgeGroup[] | undefined>(),
-    [bridgeError, setBridgeError] = useState('');
-  const [transport, setTransport] = useState<NativeTransport>();
-  const [transportError, setTransportError] = useState('');
+  const [data, setData] = useState<UrbanRoads>({ roads: [], railTraffic: [], railServices: [] });
+  const [error, setError] = useState('');
+  const session = useRef<UrbanRoadSession | null>(null);
   useEffect(() => {
-    const request = new AbortController();
-    void loadNativeTransport(request.signal)
-      .then((value) => {
-        if (!request.signal.aborted) setTransport(value);
-      })
-      .catch(() => {
-        if (!request.signal.aborted) setTransportError('철도·차선 자료 불러오기 지연');
-      });
-    return () => request.abort();
-  }, []);
-  const lanes = useMemo(
-    () => new Map(transport?.lanes.map(([id, count]) => [id, count])),
-    [transport]
-  );
-  const widths = useMemo(
-    () => new Map(transport?.lanes.filter((r) => r[2]).map(([id, , width]) => [id, width!])),
-    [transport]
-  );
-  const railways = useMemo(() => nativeRailStreets(transport, bridges), [transport, bridges]);
-  const railTraffic = useMemo(
-    () => [
-      ...railways,
-      ...nativeStreets(
-        [],
-        bridges?.filter((g) => g.lowerDeck?.rail)
-      ).filter((r) => r.nativeRailKind),
-    ],
-    [railways, bridges]
-  );
-  useEffect(() => {
-    const request = new AbortController();
-    void loadNativeBridges(request.signal)
-      .then((value) => {
-        if (!request.signal.aborted) setBridges(value);
-      })
-      .catch(() => {
-        if (!request.signal.aborted) setBridgeError('교량 구조 불러오기 지연');
-      });
-    return () => request.abort();
-  }, []);
-  const visible = useMemo(() => {
-    const radius = Math.max(750, distance * 0.85);
-    return bridges?.filter(
-      (g) =>
-        g.bounds[0] <= center[0] + radius &&
-        g.bounds[2] >= center[0] - radius &&
-        g.bounds[1] <= center[1] + radius &&
-        g.bounds[3] >= center[1] - radius
+    const current = new UrbanRoadSession(
+      (value) => {
+        setError('');
+        startTransition(() => setData(value));
+      },
+      () => setError('교량·도로·철도 자료 불러오기 지연')
     );
-  }, [bridges, center, distance]);
-  const bridgeKey = visible?.map((g) => g.id).join(',');
-  // 같은 구조 목록이면 카메라 이동 중 도로 버퍼와 이동체를 재생성하지 않는다.
-  const nearRail = useMemo(
-    () =>
-      railways.filter((r) =>
-        r.coordinates.some((p, i) => {
-          const a = r.coordinates[Math.max(0, i - 1)],
-            radius = Math.max(750, distance * 0.85);
-          return (
-            Math.min(a[0], p[0]) <= center[0] + radius &&
-            Math.max(a[0], p[0]) >= center[0] - radius &&
-            Math.min(a[1], p[1]) <= center[1] + radius &&
-            Math.max(a[1], p[1]) >= center[1] - radius
-          );
-        })
-      ),
-    [railways, center, distance]
-  );
-  const railKey = nearRail.map((r) => r.id).join(',');
-  const tunnels = useMemo(
-    () =>
-      (transport?.tunnels ?? []).filter((t) =>
-        t.polygons.some((p) =>
-          p[0].some(
-            (q) => Math.hypot(q[0] - center[0], q[1] - center[1]) < Math.max(2000, distance)
-          )
-        )
-      ),
-    [transport, center, distance]
-  );
-  const tunnelKey = tunnels.map((t) => t.id).join(',');
-  const roads = useMemo(() => {
-    return [
-      ...attachNativeTunnels(
-        [...nativeStreets(tiles, visible, lanes, widths), ...nearRail],
-        tunnels
-      ),
-      ...nativeTunnelStreets(tunnels),
-    ];
-  }, [tiles, bridgeKey, lanes, widths, railKey, transport, tunnelKey]);
+    session.current = current;
+    return () => {
+      current.dispose();
+      session.current = null;
+    };
+  }, []);
+  useEffect(() => {
+    session.current?.update(tiles, center, distance);
+  }, [tiles, center, distance]);
   const parking = useMemo(
     () => ({
       lots: tiles.flatMap((tile) => tile.urban?.parkingLots ?? []),
@@ -127,11 +46,12 @@ export function useUrbanData(tiles: CityTile[], center: [number, number], distan
     return () => request.abort();
   }, []);
   return {
-    roads,
-    railTraffic,
+    roads: data.roads,
+    railTraffic: data.railTraffic,
+    railServices: data.railServices,
     parking,
     population,
-    error: bridgeError || transportError,
+    error,
     populationError,
   };
 }

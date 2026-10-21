@@ -56,6 +56,7 @@ self.onmessage = async (
       terrains.set(terrainKey, terrain);
     }
     if (!terrains.has(terrainKey)) throw new Error('지형 연결 누락');
+    const selectedTerrain = terrains.get(terrainKey)!;
     const raw = await readPublicData(
       '/data/seoul-features-v1/' + entry.file,
       entry.sha256,
@@ -74,7 +75,7 @@ self.onmessage = async (
     request.signal.throwIfAborted();
     const bindings = plan ? undefined : await loadTransport();
     request.signal.throwIfAborted();
-    const data = topographyGeometry(tile, layers, terrains.get(terrainKey)!, plan, true, bindings);
+    const data = topographyGeometry(tile, layers, selectedTerrain, plan, true, bindings);
     request.signal.throwIfAborted();
     const transfer = Object.values(data)
       .filter((value): value is Float32Array => value instanceof Float32Array)
