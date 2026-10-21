@@ -1,12 +1,81 @@
 import type { NativeBridgeGroup, NativeBridgeProfile } from '../dto/nativeBridgeDto';
 import type { Terrain } from '../../terrain/entity/terrain';
 import { terrainMeshHeight } from '../../terrain/service/terrainDrapeService';
-import { nativeBridgeProfileHeight, nativeDeckLift } from './nativeBridgeService';
+import {
+  nativeBridgeHeight,
+  nativeBridgeProfileHeight,
+  nativeDeckLift,
+  withinBridge,
+} from './nativeBridgeService';
+import { NativeGroundCuts } from './nativeGroundCutService';
+import type { Street } from '../entity/urban';
 
 type Point = readonly [number, number];
-export type NativeBridgeTransport = Map<number, NativeBridgeProfile[]>;
+export function bridgeWaterSupports(groups: NativeBridgeGroup[], point: Point) {
+  return groups.filter(
+    (g) =>
+      withinBridge(point, g.polygons) || g.sidewalks?.some((s) => withinBridge(point, s.polygons))
+  );
+}
+export function waterDeckBindings(
+  groups: NativeBridgeGroup[],
+  coordinates: [number, number][]
+): Street['nativeWaterDecks'] {
+  const bounds = coordinates.reduce(
+    (b, p) => [
+      Math.min(b[0], p[0]),
+      Math.min(b[1], p[1]),
+      Math.max(b[2], p[0]),
+      Math.max(b[3], p[1]),
+    ],
+    [Infinity, Infinity, -Infinity, -Infinity]
+  );
+  return groups
+    .filter(
+      (g) =>
+        g.groundCutPolygons &&
+        g.bounds[0] <= bounds[2] &&
+        g.bounds[2] >= bounds[0] &&
+        g.bounds[1] <= bounds[3] &&
+        g.bounds[3] >= bounds[1]
+    )
+    .map((g) => ({
+      polygons: g.polygons,
+      waterPolygons: g.groundCutPolygons!,
+      deckPolygons: g.displayDatumPolygons ?? g.polygons,
+      deckLiftM: nativeDeckLift(g),
+    }));
+}
+export function bridgeAttachmentHeight(groups: NativeBridgeGroup[], terrain: Terrain | null) {
+  return (point: Point) =>
+    Math.max(
+      terrainMeshHeight(terrain, point),
+      ...groups.map((group) => {
+        const deckPolygons = group.displayDatumPolygons ?? group.polygons;
+        const deckLiftM = nativeDeckLift(group);
+        if (
+          withinBridge(point, group.polygons) ||
+          group.sidewalks?.some((s) => withinBridge(point, s.polygons))
+        )
+          return nativeBridgeHeight(terrain, deckPolygons, deckLiftM);
+        const profiles = group.profiles.filter((p) => withinBridge(point, p.polygons));
+        // 층 속성이 없는 원 부속물은 수면과 겹치는 교량·접속 면 위에 한 번만 배치한다.
+        return profiles.length
+          ? Math.max(
+              ...profiles.map((p) =>
+                nativeBridgeProfileHeight(terrain, point, { ...p, deckPolygons, deckLiftM })
+              )
+            )
+          : nativeBridgeHeight(terrain, deckPolygons, deckLiftM);
+      })
+    );
+}
+export type NativeBridgeTransport = Map<number, NativeBridgeProfile[]> & {
+  groundCuts?: NativeGroundCuts;
+};
 export function bridgeTransportBindings(groups: NativeBridgeGroup[]): NativeBridgeTransport {
   const result: NativeBridgeTransport = new Map();
+  result.groundCuts = new NativeGroundCuts(groups);
   for (const group of groups)
     for (const profile of group.profiles) {
       const value = {

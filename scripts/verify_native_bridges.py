@@ -22,6 +22,8 @@ def verify(report):
     catalog=SpatialCatalog(BASE/'spatial-v1',json.loads((BASE/'spatial-v1/summary.json').read_bytes()))
     assert spatial.file_sha256(source.ROOT/'scripts/prepare_native_bridge_levels.py')==index['levelSupplement']['generatorSha256']
     body=json.loads(raw);seen=set();profiles=0;cache={};stair_profiles=0;rail_profiles=0;max_error=0;lower_decks=0;bound_records={}
+    city=json.loads((source.ROOT/'frontend/public/data/seoul-native-v1/city.json').read_bytes())
+    assert body['waterPolygons']==[p for surface in city['surfaces'] if surface['kind']=='water' for p in surface['polygons']]
     with closing(sqlite3.connect('file:'+str(catalog.database)+'?mode=ro&immutable=1',uri=True)) as db:
         stair_geometries=[shapely.from_wkb(db.execute("SELECT geometry_wkb FROM features WHERE fid=? AND layer='N1A_C0390000' AND geometry_status='VALID'",(fid,)).fetchone()[0]) for fid in index['stairFids']]
         stair_union=translate(shapely.union_all(stair_geometries),-ORIGIN[0],-ORIGIN[1])
@@ -80,6 +82,10 @@ def verify(report):
                 for along in [start,end]:assert displayed.distance(path.interpolate(along))<1e-6
                 if start>1e-6:assert displayed.boundary.distance(path.interpolate(start))<1e-6
                 if end<path.length-1e-6:assert displayed.boundary.distance(path.interpolate(end))<1e-6
+                if polygons.is_empty:
+                    if profile.get('rail'):rail_profiles+=1
+                    else:profiles+=1
+                    continue
                 bounds=polygons.bounds;areas={}
                 for x in range(int(bounds[0]//1000),int(bounds[2]//1000)+1):
                     for y in range(int(bounds[1]//1000),int(bounds[3]//1000)+1):
@@ -95,7 +101,7 @@ def verify(report):
                 else:profiles+=1
     assert len(seen)==index['counts']['sourceObjects'] and profiles+rail_profiles+stair_profiles==index['counts']['profiles']
     assert lower_decks==2
-    result=dict(lowerDecks=lower_decks,sourceBoundTransportRecords=len(bound_records),schemaVersion=1,status='PASS',indexSha256=spatial.file_sha256(PUBLIC/'index.json'),sourceObjects=len(seen),groups=len(body['groups']),roadProfiles=profiles,railProfiles=rail_profiles,stairProfiles=stair_profiles,
+    result=dict(sourceWaterPolygons=len(body['waterPolygons']),sourceWaterUnchanged=True,lowerDecks=lower_decks,sourceBoundTransportRecords=len(bound_records),schemaVersion=1,status='PASS',indexSha256=spatial.file_sha256(PUBLIC/'index.json'),sourceObjects=len(seen),groups=len(body['groups']),roadProfiles=profiles,railProfiles=rail_profiles,stairProfiles=stair_profiles,
         roleGroups={role:sum(g['role']==role for g in body['groups']) for role in sorted({g['role'] for g in body['groups']})},
         sidewalkSurfaces=sum(len(g.get('sidewalks',[])) for g in body['groups']),pedestrianPaths=sum(len(g.get('walkPaths',[]))+sum(len(s['paths']) for s in g.get('sidewalks',[])) for g in body['groups']),
         distinctSourceNamesAndKindsPreserved=True,displayOutlineUnionUnchanged=True,

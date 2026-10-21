@@ -3,6 +3,8 @@ import { bridgeArchitecture } from './bridgeArchitectureService';
 import { stairTriangles } from '../../../shared/service/polygonBandService';
 import { nativeSurfaceColor } from './nativeStreetService';
 import { nativeBridgeHeight, nativeBridgeProfileHeight, withinBridge } from './nativeBridgeService';
+import { bridgeTransportHeight } from './nativeBridgeTransportService';
+import { NativeGroundCuts } from './nativeGroundCutService';
 import { Color, ShapeUtils, Vector2 } from 'three';
 import type { Street } from '../entity/urban';
 import type { Terrain } from '../../terrain/entity/terrain';
@@ -13,6 +15,21 @@ import {
 } from '../../terrain/service/terrainDrapeService';
 import { pathPosition, streetPath, sidewalkSides } from './streetLifeService';
 type Point = [number, number];
+const waterMasks = new WeakMap<object, NativeGroundCuts>();
+export function submergedSourcePath(road: Street, terrain: Terrain | null, point: Point) {
+  const polygons = road.nativeGroundCutPolygons;
+  if (
+    !polygons?.length ||
+    streetHeight(terrain, point, road) > terrainMeshHeight(terrain, point) + 0.25
+  )
+    return false;
+  let mask = waterMasks.get(polygons);
+  if (!mask) {
+    mask = new NativeGroundCuts([], polygons);
+    waterMasks.set(polygons, mask);
+  }
+  return mask.contains(point);
+}
 // 실측 제원이 없는 교량은 공개 층·연결 관계를 보존한 표시 높이를 사용한다.
 export const bridgeDeckHeight = 6.5;
 export const bridgeDeckThickness = 0.65;
@@ -22,17 +39,36 @@ export function streetHeight(
   road: boolean | Street,
   segment?: number
 ) {
+  if (typeof road === 'object' && road.nativeWaterDecks?.length) {
+    const decks = road.nativeWaterDecks.filter(
+      (d) => withinBridge(point, d.polygons) && withinBridge(point, d.waterPolygons)
+    );
+    if (decks.length)
+      return (
+        Math.max(...decks.map((d) => nativeBridgeHeight(terrain, d.deckPolygons, d.deckLiftM))) +
+        (road.walk ? 0.14 : 0.016)
+      );
+  }
   if (typeof road === 'object' && road.nativeWalkingDecks)
     for (const deck of road.nativeWalkingDecks)
       if (withinBridge(point, deck.polygons))
-        return nativeBridgeHeight(terrain, deck.deckPolygons, deck.deckLiftM) + 0.14;
+        return (
+          (deck.profile
+            ? nativeBridgeProfileHeight(terrain, point, deck.profile)
+            : nativeBridgeHeight(terrain, deck.deckPolygons, deck.deckLiftM)) + 0.14
+        );
+  if (typeof road === 'object' && road.nativeRailKind)
+    return (
+      (bridgeTransportHeight(road.nativeBridgeProfiles, terrain)?.(point) ??
+        terrainMeshHeight(terrain, point)) + 0.016
+    );
   if (typeof road === 'object' && road.nativeBridgeProfiles?.length)
     return (
       Math.max(
         ...road.nativeBridgeProfiles.map((profile) =>
           nativeBridgeProfileHeight(terrain, point, profile)
         )
-      ) + 0.016
+      ) + (road.nativeSourceRole === 'SIDEWALK_AREA' ? 0.14 : 0.016)
     );
   if (typeof road === 'object' && road.bridge && road.nativePolygons)
     return (
@@ -211,7 +247,7 @@ export function streetGeometry(
                 positions.push(
                   p[0],
                   (road.nativeBridgeProfiles?.length
-                    ? streetHeight(terrain, p, road) - 0.016
+                    ? streetHeight(terrain, p, road) - surfaceLift
                     : (bridgeHeight ?? terrainMeshHeight(terrain, p))) +
                     (marking ? 0.055 : surfaceLift),
                   -p[1]
@@ -294,7 +330,12 @@ export function streetGeometry(
               face(bottom[0], bottom[2], bottom[1], underside);
             } else drapeTriangle(triangle, terrain, emit);
           }
-          if (road.nativeSourceRole === 'SIDEWALK_AREA' && !marking && bridgeHeight === null)
+          if (
+            road.nativeSourceRole === 'SIDEWALK_AREA' &&
+            !marking &&
+            bridgeHeight === null &&
+            !road.nativeBridgeProfiles?.length
+          )
             for (const ring of component)
               for (let i = 1; i < ring.length; i++)
                 for (const [a, b] of drapeSegment(ring[i - 1], ring[i], terrain)) {
@@ -366,7 +407,7 @@ export function streetGeometry(
               bridgeDeckThickness;
           if (high - low >= 2) beam([p[0], low, p[1]], [p[0], high, p[1]], 1.4, 1.4, concrete);
         }
-      if (detail && bridgeHeight !== null)
+      if (detail)
         for (const lane of road.nativeLanePaths ?? []) {
           const path = streetPath({ ...road, coordinates: lane.coordinates });
           // 차로 수는 원본 속성, 도색 폭·간격은 표시 제원이다.
@@ -376,13 +417,30 @@ export function streetGeometry(
               const a = pathPosition(path, s, offset, 1),
                 b = pathPosition(path, Math.min(s + 4, lane.span[1]), offset, 1);
               if (
-                !withinBridge([a.x, a.y], road.nativePolygons!) ||
-                !withinBridge([b.x, b.y], road.nativePolygons!)
+                road.nativeGroundCutPolygons &&
+                !road.nativeLaneClipPolygons &&
+                (withinBridge([a.x, a.y], road.nativeGroundCutPolygons) ||
+                  withinBridge([b.x, b.y], road.nativeGroundCutPolygons))
+              )
+                continue;
+              if (
+                !withinBridge(
+                  [a.x, a.y],
+                  road.nativeLaneClipPolygons ?? road.nativePolygons ?? []
+                ) ||
+                !withinBridge(
+                  [b.x, b.y],
+                  road.nativeLaneClipPolygons ?? road.nativePolygons ?? []
+                ) ||
+                !withinBridge(
+                  [(a.x + b.x) / 2, (a.y + b.y) / 2],
+                  road.nativeLaneClipPolygons ?? road.nativePolygons ?? []
+                )
               )
                 continue;
               beam(
-                [a.x, bridgeHeight + 0.04, a.y],
-                [b.x, bridgeHeight + 0.04, b.y],
+                [a.x, streetHeight(terrain, [a.x, a.y], road) + 0.04, a.y],
+                [b.x, streetHeight(terrain, [b.x, b.y], road) + 0.04, b.y],
                 0.15,
                 0.012,
                 paint

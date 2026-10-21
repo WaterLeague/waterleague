@@ -128,6 +128,29 @@ test('캐시 한도 초과 형상은 보관하지 않고 빈 목록도 유효한
   );
 });
 
+test('이동체가 공유하는 수면 목록을 개별 메시 캐시 키에 반복 복제하지 않음', async () => {
+  const polygons: [number, number][][][] = Array.from({ length: 2000 }, (_, i) => [
+    [
+      [i, 0],
+      [i + 1, 0],
+      [i + 1, 1],
+      [i, 1],
+      [i, 0],
+    ],
+  ]);
+  const roads = Array.from({ length: 50 }, (_, i) => ({
+    ...road(String(i)),
+    nativeSourceRole: 'RAIL_DISPLAY_PATH',
+    nativeGroundCutPolygons: polygons,
+  }));
+  const builder = new StreetMeshBuilder();
+  const mesh = await builder.build(roads, null, true, [], undefined, signal());
+  expect(mesh.positions.length).toBe(0);
+  expect(builder.statistics.bytes).toBeLessThan(100000);
+  await builder.build(structuredClone(roads), null, true, [], undefined, signal());
+  expect(builder.statistics.reused).toBe(50);
+});
+
 test('현재 시야가 캐시 한도보다 커도 보관된 도로를 서로 밀어내지 않음', async () => {
   const sample = new StreetMeshBuilder();
   await sample.build([road('a')], null, true, [], undefined, signal());

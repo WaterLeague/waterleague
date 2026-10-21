@@ -1267,6 +1267,7 @@ function Explorer({
                   <CircleHelp size={17} />
                 </summary>
                 <div className="shared-map-legend" role="region" aria-label="지도 표시 안내">
+                  {!flat && <span>열차·지하철: 원 선형 기반 표시용 운행</span>}
                   {!flat && !failed && Object.values(floodStats).some((value) => value > 0) && (
                     <span
                       className="flood-response-legend"

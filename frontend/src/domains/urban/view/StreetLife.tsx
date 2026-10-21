@@ -6,7 +6,7 @@ import { Color, InstancedMesh, Object3D } from 'three';
 import type { Street, UrbanTime, Population } from '../entity/urban';
 import type { City } from '../../city/entity/city';
 import type { Terrain } from '../../terrain/entity/terrain';
-import { streetHeight } from '../service/streetGeometryService';
+import { streetHeight, submergedSourcePath } from '../service/streetGeometryService';
 import {
   distanceToStreet,
   streetSpeed,
@@ -247,6 +247,7 @@ export const StreetLife = memo(function StreetLife({
           agent.reaction.heading = response.direction;
         }
         const position = pathPosition(agent.path, response.arc, lane, baseDirection);
+        if (submergedSourcePath(agent.path.road, terrain, [position.x, position.y])) continue;
         if (response.direction !== baseDirection) position.angle += Math.PI;
         const place = clock.current.historical
           ? undefined

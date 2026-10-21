@@ -46,7 +46,32 @@ export class StreetMeshBuilder {
     const entries = roads.map((road) => {
       const detail = streetDetailEnabled(road, detailed, center);
       const parking = aisleIds.has(road.id);
-      return { road, detail, parking, key: JSON.stringify([road, detail, parking]) };
+      // 이동체 전용 수면·상판 참조를 도로마다 문자열로 복제하지 않는다.
+      const {
+        nativeWaterDecks: _waterDecks,
+        nativeWalkingDecks: _walkingDecks,
+        nativeGroundCutPolygons,
+        ...shape
+      } = road;
+      const actorOnlySupport =
+        road.nativeSourceRole &&
+        !road.nativePolygons &&
+        !road.nativeRailPaths &&
+        (!road.nativeLanePaths || road.nativeLaneClipPolygons);
+      const key = JSON.stringify([
+        {
+          ...shape,
+          ...(road.nativeLanePaths?.length && !road.nativeLaneClipPolygons
+            ? { nativeGroundCutPolygons }
+            : {}),
+          ...(!actorOnlySupport
+            ? { nativeWaterDecks: _waterDecks, nativeWalkingDecks: _walkingDecks }
+            : {}),
+        },
+        detail,
+        parking,
+      ]);
+      return { road, detail, parking, key };
     });
     const wanted = new Set(entries.map((entry) => entry.key));
     const evictable = [...this.cache.keys()].filter((key) => !wanted.has(key));

@@ -13,11 +13,21 @@ export type Street = {
   nativeDisplayPath?: boolean;
   nativeBridgeProfiles?: NativeBridgeProfile[];
   nativeRailPaths?: [number, number][][];
+  nativeRailKind?: 'rail' | 'subway';
+  nativeLaneClipPolygons?: [number, number][][][];
+  nativeGroundCutPolygons?: [number, number][][][];
+  nativeWaterDecks?: {
+    polygons: [number, number][][][];
+    waterPolygons: [number, number][][][];
+    deckPolygons: [number, number][][][];
+    deckLiftM: number;
+  }[];
   nativeBridgeGroupPolygons?: [number, number][][][];
   nativeWalkingDecks?: {
     polygons: [number, number][][][];
     deckPolygons: [number, number][][][];
     deckLiftM?: number;
+    profile?: NativeBridgeProfile;
   }[];
   nativeDeckLiftM?: number;
   nativeDeckLevel?: 'upper' | 'lower';

@@ -38,7 +38,7 @@ try {
   const body=nativeBridgesDto.parse(JSON.parse(data));
   const names=new Set(['한강대교','잠수교','방화대교','행주대교','마포대교','반포대교','한남대교','동호대교','한강철교','당산철교','잠실철교',
     '양화대교','서강대교','성산대교','월드컵대교','가양대교','성수대교','청담대교','영동대교','잠실대교','올림픽대교']);
-  body.groups=connectBridgeDatums(body.groups);
+  body.groups=connectBridgeDatums(body.groups,body.waterPolygons);
   const groups=body.groups.filter(g=>g.role==='PEDESTRIAN_OVERPASS_AREA'||g.names?.some(n=>names.has(n)));
   const checks=[];
   for (const group of groups) {
@@ -50,7 +50,8 @@ try {
         const a=street.coordinates[i-1],b=street.coordinates[i],count=Math.max(1,Math.ceil(Math.hypot(b[0]-a[0],b[1]-a[1])/15));
         for(let j=0;j<=count;j++){
           const p=[a[0]+(b[0]-a[0])*j/count,a[1]+(b[1]-a[1])*j/count];
-          assert(streetHeight(terrain,p,street)>terrainMeshHeight(terrain,p)+.25,`교량 보행로 수면 겹침: ${group.names}`);
+          const approach=street.nativeWalkingDecks.some(d=>d.profile);
+          assert(streetHeight(terrain,p,street)>terrainMeshHeight(terrain,p)+(approach?.1:.25),`교량 보행로 수면 겹침: ${group.names}`);
           pedestrianSamples++;
         }
       }

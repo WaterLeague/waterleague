@@ -48,5 +48,5 @@ export async function readNativeBridges(signal: AbortSignal) {
       index.data.counts.sourceObjects
   )
     throw new CityError('INVALID_DATA');
-  return connectBridgeDatums(body.data.groups);
+  return connectBridgeDatums(body.data.groups, body.data.waterPolygons);
 }

@@ -84,6 +84,7 @@ import {
   minimumGroundClearance,
 } from '../service/cameraDepthService';
 import { StreetLife } from '../../urban/view/StreetLife';
+import { RailLife } from '../../urban/view/RailLife';
 import { ParkingLayer } from '../../urban/view/ParkingLayer';
 import type { ParkingData } from '../../urban/entity/parking';
 import { useParkingLots } from '../../urban/controller/useParkingLots';
@@ -687,6 +688,14 @@ const CityScene = memo(function CityScene({
               flood={flood}
               onFloodStats={reporters.traffic}
               city={city}
+              animate={animateRain}
+            />
+            <RailLife
+              roads={streets}
+              terrain={terrain}
+              center={rainCamera.center}
+              distance={rainCamera.distance}
+              clock={urbanClock}
               animate={animateRain}
             />
             <ParkingLayer

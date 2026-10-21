@@ -1,11 +1,15 @@
 import type { Terrain } from '../../terrain/entity/terrain';
 import { terrainMeshHeight } from '../../terrain/service/terrainDrapeService';
+import { connectBridgeProfiles } from './nativeBridgeConnectionService';
 type Polygons = [number, number][][][];
 const flat = {};
 const cache = new WeakMap<object, WeakMap<object, number>>();
 const groupCache = new WeakMap<object, WeakMap<object, number>>();
 export const nativeBridgeLiftM = 6.5;
-export function connectBridgeDatums(groups: import('../dto/nativeBridgeDto').NativeBridgeGroup[]) {
+export function connectBridgeDatums(
+  groups: import('../dto/nativeBridgeDto').NativeBridgeGroup[],
+  waterPolygons?: Polygons
+) {
   const byName = new Map<string, Polygons>();
   for (const group of groups)
     for (const name of group.names ?? [])
@@ -14,10 +18,17 @@ export function connectBridgeDatums(groups: import('../dto/nativeBridgeDto').Nat
         byName.get(name)!.push(...group.polygons);
       }
   // 도엽·교량/고가 분류 경계에서도 복층 상판의 높이 기준을 공유한다.
-  return groups.map((group) => {
-    const datum = byName.get(group.names?.[0] ?? '');
-    return datum ? { ...group, displayDatumPolygons: datum } : group;
-  });
+  return connectBridgeProfiles(
+    groups.map((group) => {
+      const datum = byName.get(group.names?.[0] ?? '');
+      return {
+        ...group,
+        ...(datum ? { displayDatumPolygons: datum } : {}),
+        ...(waterPolygons ? { displayWaterPolygons: waterPolygons } : {}),
+      };
+    }),
+    nativeDeckLift
+  );
 }
 export function nativeDeckLift(group: import('../dto/nativeBridgeDto').NativeBridgeGroup) {
   return group.names?.includes('반포대교') ||
@@ -121,6 +132,12 @@ export function nativeBridgeProfileHeight(
     walked += length;
   }
   const [start, end] = profile.span;
+  const connection = profile.connections?.find((c) => c.side === (along < start ? 0 : 1));
+  if (connection && (along < start || along > end)) {
+    const distance = along < start ? start - along : along - end;
+    const other = nativeBridgeHeight(terrain, connection.deckPolygons, connection.deckLiftM);
+    return Math.max(ground, deck + (other - deck) * Math.min(1, distance / connection.gapM));
+  }
   let mix =
     along < start
       ? start

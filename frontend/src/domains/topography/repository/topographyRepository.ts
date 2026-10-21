@@ -9,6 +9,7 @@ import type { TopographyBuffers } from '../entity/topography';
 import type { Terrain } from '../../terrain/entity/terrain';
 import { CITY_HASH } from '../../city/repository/cityRepository';
 import { NATIVE_URBAN_HASH } from '../../urban/repository/nativeUrbanRepository';
+import { NATIVE_BRIDGE_HASH } from '../../urban/repository/nativeBridgeVersion';
 export const TOPOGRAPHY_HASH = 'ec7854f72185d8023c15f95438f80cbfacfc2114690d21c705621bcf716b94f7';
 let index: TopographyIndex | undefined;
 export async function loadTopographyIndex(signal: AbortSignal) {
@@ -124,7 +125,7 @@ export function requestTopographyTile(
 ) {
   if (terrain && !terrainIds.has(terrain)) terrainIds.set(terrain, ++terrainSequence);
   const terrainKey = terrain ? terrainIds.get(terrain)! : 0,
-    key = `${entry.sha256}:${terrainKey}:${plan}`;
+    key = `${entry.sha256}:${terrainKey}:${plan}:${plan ? '' : NATIVE_BRIDGE_HASH}`;
   return new Promise<TopographyBuffers>((resolve, reject) => {
     if (signal.aborted) {
       reject(new DOMException('Aborted', 'AbortError'));

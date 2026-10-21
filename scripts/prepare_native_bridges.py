@@ -26,7 +26,12 @@ def parts(g,kind):
     if g.geom_type==kind:return [g]
     return [p for child in getattr(g,'geoms',[]) for p in parts(child,kind)]
 def relative(g):return mapping(translate(g,-ORIGIN[0],-ORIGIN[1]))['coordinates']
-def build(output):
+def direction(g):
+    ring=list(g.minimum_rotated_rectangle.exterior.coords)
+    a,b=max(zip(ring,ring[1:]),key=lambda e:Point(e[0]).distance(Point(e[1])))
+    dx,dy=b[0]-a[0],b[1]-a[1];length=math.hypot(dx,dy)
+    return dx/length,dy/length
+def build(output, reuse=None):
     if output.exists() or output.is_symlink():raise ValueError('기존 교량 묶음 덮어쓰기 금지')
     started=time.monotonic()
     summary=json.loads((BASE/'spatial-v1/summary.json').read_bytes())
@@ -42,6 +47,7 @@ def build(output):
                 names={name.strip()} if isinstance(name,str) and name.strip() else set(),
                 kinds={kind.strip()} if isinstance(kind,str) and kind.strip() else set()))
     geometries=[b['geometry'] for b in bridges];tree=STRtree(geometries);parents=list(range(len(bridges)))
+    axes=[direction(g) for g in geometries]
     names=[set(b['names']) for b in bridges];kinds=[set(b['kinds']) for b in bridges]
     def root(i):
         while parents[i]!=i:parents[i]=parents[parents[i]];i=parents[i]
@@ -50,6 +56,8 @@ def build(output):
         for j in tree.query(g):
             j=int(j)
             if j<=i or not g.intersects(geometries[j]):continue
+            # 무명 교량의 평면 교차를 접속으로 오인하면 한강대교 남단이 노량대교에 흡수된다.
+            if (not bridges[i]['names'] or not bridges[j]['names']) and abs(sum(a*b for a,b in zip(axes[i],axes[j])))<.65:continue
             if bridges[i]['layer']!=bridges[j]['layer']:
                 pair={bridges[i]['layer'],bridges[j]['layer']}
                 if pair!={'N1A_A0070000','N1A_A0090000'} or not bridges[i]['names'] or bridges[i]['names']!=bridges[j]['names']:continue
@@ -59,6 +67,26 @@ def build(output):
             compatible_kinds={'도로교' if k=='고가차도' else k for k in kinds[a]|kinds[b]}
             if len(names[a]|names[b])>1 or len(compatible_kinds)>1:continue
             parents[b]=a;names[a]|=names[b];kinds[a]|=kinds[b]
+    by_fid={b['fid']:i for i,b in enumerate(bridges)}
+    # 노들섬 양쪽 원 상판은 원 도로 중심선의 끝점 연결을 확인한 뒤 같은 높이를 사용한다.
+    for north,south in [(1823862,1823865),(1823863,1823864)]:
+        i,j=by_fid[north],by_fid[south];a,b=root(i),root(j)
+        area=shapely.union_all([geometries[i],geometries[j]]).envelope.buffer(2)
+        rows=catalog.query(area.bounds,['N1L_A0020000'])
+        paths=[p for row in rows for p in parts(row['geometry'],'LineString')]
+        owners=list(range(len(paths)));ends={}
+        def find(k):
+            while owners[k]!=k:owners[k]=owners[owners[k]];k=owners[k]
+            return k
+        for k,path in enumerate(paths):
+            for point in [path.coords[0],path.coords[-1]]:
+                key=(round(point[0],3),round(point[1],3))
+                if key in ends:owners[find(k)]=find(ends[key])
+                else:ends[key]=k
+        first={find(k) for k,path in enumerate(paths) if path.intersection(geometries[i]).length>1}
+        last={find(k) for k,path in enumerate(paths) if path.intersection(geometries[j]).length>1}
+        if not first.intersection(last):raise ValueError('노들섬 원 도로 연결 검증 실패')
+        parents[b]=a;names[a]|=names[b];kinds[a]|=kinds[b]
     groups=defaultdict(list)
     for i in range(len(bridges)):groups[root(i)].append(bridges[i])
     cache={}
@@ -71,8 +99,19 @@ def build(output):
                     cache[key]=catalog.query((x*1000,y*1000,(x+1)*1000,(y+1)*1000),['N1A_A0010000','N1L_A0020000','N1A_A0160024','N1L_A0150000','N1A_A0033320'])
                 for row in cache[key]:rows[row['id']]=row
         return list(rows.values())
-    output.mkdir();result=[];profile_count=0;stair_fids=set()
+    previous={};reused_index=None;reused_stairs=[]
+    if reuse:
+        reused_index=json.loads((reuse/'index.json').read_bytes())
+        if reused_index['sourceSpatialSha256']!=summary['spatialSha256']:raise ValueError('재사용 원본 버전 불일치')
+        raw=gzip.decompress((reuse/reused_index['file']).read_bytes())
+        if source.digest(raw)!=reused_index['sha256']:raise ValueError('재사용 교량 해시 불일치')
+        previous={tuple(sorted(g['sourceIds'])):g for g in json.loads(raw)['groups']}
+        reused_stairs=reused_index['stairFids']
+    output.mkdir();result=[];profile_count=0;stair_fids=set(reused_stairs)
     for members in groups.values():
+        known=previous.get(tuple(sorted(b['id'] for b in members)))
+        if known:
+            result.append(known);profile_count+=len(known['profiles']);continue
         union=shapely.union_all([b['geometry'] for b in members]);bounds=union.bounds
         polygon_parts=[p for b in members for p in parts(b['geometry'],'Polygon')]
         profiles=[];sidewalks=[];sidewalk_ids=set()
@@ -162,13 +201,11 @@ def build(output):
                 first=max(0,s0-100);last=min(path.length,s1+100)
                 from shapely.ops import substring
                 path=substring(path,first,last);s0-=first;s1-=first
-                if road_union is None:continue
-                approach=path.buffer(min(width/2,40),cap_style='flat',join_style='mitre').intersection(road_union).difference(union)
+                approach=path.buffer(min(width/2,40),cap_style='flat',join_style='mitre').intersection(road_union).difference(union) if road_union is not None else shapely.GeometryCollection()
                 polygons=parts(approach,'Polygon')
-                if not polygons:continue
                 profiles.append(dict(roadIds=sorted(ids[i] for i in linked),coordinates=relative(path),span=[s0,s1],
                     polygons=[relative(p) for p in polygons],displayWidthM=width,rail=rail,
-                    lanes=max([int(road_props[ids[i]].get('차로수') or 0) for i in linked if str(road_props[ids[i]].get('차로수') or '').isdigit()]+[0])))
+                    lanes=min(max(1,int(width/2.7)),max([int(road_props[ids[i]].get('차로수') or 0) for i in linked if str(road_props[ids[i]].get('차로수') or '').isdigit()]+[0]))))
                 used.update(linked)
         if members[0]['layer']=='N1A_A0063321':
             stair_rows=catalog.query((bounds[0]-1,bounds[1]-1,bounds[2]+1,bounds[3]+1),['N1A_C0390000'])
@@ -206,7 +243,8 @@ def build(output):
         counts=dict(sourceObjects=len(bridges),groups=len(result),profiles=profile_count),stairFids=sorted(stair_fids),policy=dict(displayOnly=True,sourcePolygonsUnchanged=True,grouping='INTERSECTING_COMPATIBLE_SOURCE_NAME_KIND_WITH_NAMED_ROAD_BRIDGE_GRADE_UNION',
             approachClip='SOURCE_TRANSPORT_AREA',connections='SOURCE_ENDPOINTS_ONLY',underpassFilter='SPAN_LENGTH_AT_LEAST_1_8_CROSS_SECTION',
             deckLiftM=6.5,deckThicknessM=.65,maximumApproachM=100,hydraulicInputsChanged=False))
+    if reuse:index['reusedBaseIndexSha256']=spatial.file_sha256(reuse/'index.json')
     (output/'index.json').write_text(source.canonical(index)+'\n')
     print(source.canonical(dict(indexSha256=spatial.file_sha256(output/'index.json'),**index['counts'],bytes=len(raw),seconds=round(time.monotonic()-started,1))),flush=True)
 if __name__=='__main__':
-    parser=argparse.ArgumentParser();parser.add_argument('--output',type=Path,default=PUBLIC/'seoul-bridges-v1');build(parser.parse_args().output.absolute())
+    parser=argparse.ArgumentParser();parser.add_argument('--output',type=Path,default=PUBLIC/'seoul-bridges-v1');parser.add_argument('--reuse',type=Path);args=parser.parse_args();build(args.output.absolute(),args.reuse)

@@ -10,6 +10,8 @@ import { areaLift, structureWriter } from './structureGeometryService';
 import { nativeBridgeHeight } from '../../urban/service/nativeBridgeService';
 import {
   bridgeTransportHeight,
+  bridgeAttachmentHeight,
+  bridgeWaterSupports,
   type NativeBridgeTransport,
 } from '../../urban/service/nativeBridgeTransportService';
 import {
@@ -57,12 +59,26 @@ export function topographyGeometry(
       if (!plan) {
         const model = pointModelKind(layers[layer].id) ?? (!label ? 'SURVEY' : null);
         if (model) {
+          const attachment = [
+            'BUS_STOP',
+            'LAMP',
+            'UTILITY_POLE',
+            'SIGNAL',
+            'SIGN',
+            'BARRIER',
+            'MIRROR',
+            'TOLL',
+          ].includes(model);
+          const water = attachment ? transport?.groundCuts?.at(point) : undefined;
+          const decks = water ? bridgeWaterSupports(water, point) : undefined;
+          if (attachment && transport?.groundCuts?.contains(point) && !decks?.length) continue;
+          const elevation = decks?.length
+            ? bridgeAttachmentHeight(decks, terrain)(point)
+            : terrainMeshHeight(terrain, point);
           const cell: [number, number] = [Math.floor(x / 100), Math.floor(y / 100)],
             key = model + ':' + cell.join(',');
           if (!models.has(key)) models.set(key, { kind: model, cell, values: [] });
-          models
-            .get(key)!
-            .values.push(...modelMatrix(x, terrainMeshHeight(terrain, point) + 0.08, -y, 0));
+          models.get(key)!.values.push(...modelMatrix(x, elevation + 0.08, -y, 0));
         }
       }
       if (plan)
@@ -74,16 +90,50 @@ export function topographyGeometry(
   }
   for (const [layer, fid, parts] of tile.lines) {
     const color = style[layer];
+    const rail = ['A015', 'A017'].includes(layers[layer].id.slice(4, 8));
+    const attachment = ['C052', 'C053', 'B002'].includes(layers[layer].id.slice(4, 8));
+    if (!plan && (attachment || rail) && transport?.groundCuts) {
+      const sourceHeight = rail ? bridgeTransportHeight(transport.get(fid), terrain) : undefined;
+      const groundWriter = sourceHeight
+        ? structureWriter(positions, colors, terrain, sourceHeight)
+        : structures;
+      for (const part of parts) {
+        for (const ground of transport.groundCuts.line(part))
+          groundWriter.line(layers[layer].id, ground, color);
+        for (const deck of transport.groundCuts.line(part, true)) {
+          const a = deck[0],
+            b = deck.at(-1)!;
+          const middle: Point = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+          const groups = bridgeWaterSupports(transport.groundCuts.at(middle), middle);
+          if (!groups.length) continue;
+          structureWriter(positions, colors, terrain, bridgeAttachmentHeight(groups, terrain)).line(
+            layers[layer].id,
+            deck,
+            color
+          );
+        }
+      }
+      continue;
+    }
     const height = plan ? undefined : bridgeTransportHeight(transport?.get(fid), terrain);
     const writer = height ? structureWriter(positions, colors, terrain, height) : structures;
-    for (const part of parts) {
+    const transportLine = /^N1L_A(?:001|002|003|015|017)/.test(layers[layer].id);
+    const visibleParts =
+      !plan && transportLine && transport?.groundCuts
+        ? parts.flatMap((part) => transport.groundCuts!.line(part))
+        : parts;
+    for (const part of visibleParts) {
       if (plan) group(layer).lines.push(path(part));
       if (plan) continue;
       if (writer.line(layers[layer].id, part, color)) continue;
       for (let i = 1; i < part.length; i++)
         for (const segment of drapeSegment(part[i - 1], part[i], terrain))
           for (const point of segment) {
-            lines.push(point[0], terrainMeshHeight(terrain, point) + 0.09, -point[1]);
+            lines.push(
+              point[0],
+              (height?.(point) ?? terrainMeshHeight(terrain, point)) + 0.09,
+              -point[1]
+            );
             lineColors.push(color.r, color.g, color.b);
           }
     }
@@ -91,7 +141,19 @@ export function topographyGeometry(
   for (const [layer, fid, polygons] of tile.areas) {
     if (structuresLoaded && !plan && bridgeStairFids.has(fid)) continue;
     const color = style[layer];
-    for (const polygon of polygons) {
+    const transportArea = [
+      'ROAD_AREA',
+      'SIDEWALK_AREA',
+      'RAILWAY_AREA',
+      'INTERSECTION_AREA',
+      'CROSSWALK_AREA',
+      'TRAFFIC_SAFETY_AREA',
+    ].includes(layers[layer].role);
+    const visiblePolygons =
+      !plan && transportArea && transport?.groundCuts
+        ? transport.groundCuts.surface(polygons)
+        : polygons;
+    for (const polygon of visiblePolygons) {
       if (plan)
         group(layer)[styles[layer].fill ? 'areas' : 'lines'].push(
           polygon.map((ring) => path(ring, true)).join('')

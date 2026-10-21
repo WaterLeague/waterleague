@@ -13,7 +13,7 @@ export const bridgeProfileDto = z
     sourceFids: z.array(z.number().int().positive()).max(10000).optional(),
     coordinates: z.array(point).min(2).max(100000),
     span: z.tuple([z.number().finite().nonnegative(), z.number().finite().positive()]),
-    polygons,
+    polygons: z.array(z.array(z.array(point).min(4).max(100000)).min(1).max(1000)).max(10000),
     steps: z.boolean().optional(),
     rail: z.boolean().optional(),
     lanes: z.number().int().min(0).max(32).optional(),
@@ -41,6 +41,7 @@ export const nativeBridgeGroupDto = z.object({
   bounds: z.tuple([coordinate, coordinate, coordinate, coordinate]),
   polygons,
   outlinePolygons: polygons.optional(),
+  groundCutPolygons: polygons.optional(),
   names: z.array(z.string().max(200)).max(1).optional(),
   kinds: z.array(z.string().max(50)).max(2).optional(),
   profiles: z.array(bridgeProfileDto).max(10000),
@@ -71,13 +72,27 @@ export const nativeBridgeGroupDto = z.object({
         sourceFids: z.array(z.number().int().positive()).max(10000).optional(),
         polygons,
         paths: z.array(z.array(point).min(2).max(100000)).max(10000),
+        approaches: z
+          .array(
+            z.object({
+              profileIndex: z.number().int().nonnegative(),
+              polygons,
+              paths: z.array(z.array(point).min(2).max(100000)).max(10000),
+            })
+          )
+          .max(10000)
+          .optional(),
       })
     )
     .max(10000)
     .optional(),
 });
 export const nativeBridgesDto = z
-  .object({ schemaVersion: z.literal(1), groups: z.array(nativeBridgeGroupDto).max(10000) })
+  .object({
+    schemaVersion: z.literal(1),
+    groups: z.array(nativeBridgeGroupDto).max(10000),
+    waterPolygons: polygons.optional(),
+  })
   .superRefine((value, context) => {
     const ids = value.groups.flatMap((g) => g.sourceIds);
     if (
@@ -88,10 +103,19 @@ export const nativeBridgesDto = z
     )
       context.addIssue({ code: 'custom', message: '교량 원본 대응 오류' });
   });
-export type NativeBridgeGroup = z.infer<typeof nativeBridgeGroupDto> & {
+export type NativeBridgeGroup = Omit<z.infer<typeof nativeBridgeGroupDto>, 'profiles'> & {
   displayDatumPolygons?: z.infer<typeof polygons>;
+  displayWaterPolygons?: z.infer<typeof polygons>;
+  profiles: (z.infer<typeof bridgeProfileDto> & { connections?: ProfileConnection[] })[];
+};
+export type ProfileConnection = {
+  side: 0 | 1;
+  gapM: number;
+  deckPolygons: z.infer<typeof polygons>;
+  deckLiftM: number;
 };
 export type NativeBridgeProfile = z.infer<typeof bridgeProfileDto> & {
   deckPolygons: NativeBridgeGroup['polygons'];
   deckLiftM?: number;
+  connections?: ProfileConnection[];
 };

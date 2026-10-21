@@ -8,13 +8,16 @@ from pathlib import Path
 import sqlite3
 
 import shapely
-from shapely.geometry import LineString, Polygon, mapping
+from shapely.affinity import translate
+from shapely.geometry import LineString, Polygon, Point, mapping
+import math
 from shapely.ops import substring
 
 import prepare_seoul_topography as source
 import prepare_seoul_spatial as spatial
 from prepare_topography_objects import object_key
 from prepare_native_street_life import walk_paths
+from prepare_topography_scene import ORIGIN
 
 BASE = source.ROOT / 'data/private/vworld-seoul-topography-20260307/spatial-v1'
 SOURCES = {
@@ -47,22 +50,71 @@ def build(input_dir, output):
     if spatial.file_sha256(BASE / 'spatial.sqlite') != index['sourceSpatialSha256']:
         raise ValueError('원 공간 자료 해시 불일치')
     body = json.loads(raw)
+    from shapely.strtree import STRtree
+    city = json.loads((source.ROOT / 'frontend/public/data/seoul-native-v1/city.json').read_bytes())
+    body['waterPolygons'] = [p for surface in city['surfaces'] if surface['kind']=='water' for p in surface['polygons']]
+    waters = [Polygon(p[0],p[1:]) for surface in city['surfaces'] if surface['kind']=='water' for p in surface['polygons']]
+    water_tree = STRtree(waters)
     wanted = {s['sourceId'] for g in body['groups'] for s in g.get('sidewalks', [])}
     wanted.update(r.split(':part:')[0] for g in body['groups'] for p in g['profiles'] for r in p['roadIds'])
     fids = defaultdict(list)
+    sidewalk_shapes = {}
+    rail_records = {}
     with closing(sqlite3.connect('file:' + str(BASE / 'spatial.sqlite') + '?mode=ro&immutable=1', uri=True)) as db:
         for fid, layer, wkb in db.execute("SELECT fid,layer,geometry_wkb FROM features WHERE layer IN ('N1L_A0020000','N1L_A0150000','N1A_A0033320') AND geometry_status='VALID' AND deleted=0 ORDER BY fid"):
             key = object_key(layer, shapely.from_wkb(wkb))
+            if layer == 'N1L_A0150000':
+                item = rail_records.setdefault(key,dict(geometry=translate(shapely.from_wkb(wkb),-ORIGIN[0],-ORIGIN[1]),fids=[]))
+                item['fids'].append(fid)
             if key in wanted:
                 fids[key].append(fid)
+                if layer == 'N1A_A0033320':
+                    sidewalk_shapes[key] = translate(shapely.from_wkb(wkb), -ORIGIN[0], -ORIGIN[1])
     if wanted - fids.keys():
         raise ValueError('교량 교통 원본 레코드 대응 누락')
     levels = []
+    rail_keys = list(rail_records)
+    rail_tree = STRtree([rail_records[k]['geometry'] for k in rail_keys])
+    extra_rail_profiles = 0
     for group in body['groups']:
         for profile in group['profiles']:
             profile['sourceFids'] = sorted({fid for rid in profile['roadIds'] for fid in fids[rid.split(':part:')[0]]})
+        outline = shapely.union_all([Polygon(p[0],p[1:]) for p in group['polygons']])
+        if group['role']=='BRIDGE_AREA':
+            used_rails={fid for p in group['profiles'] if p.get('rail') for fid in p['sourceFids']}
+            for index_rail in rail_tree.query(outline):
+                key=rail_keys[int(index_rail)];record=rail_records[key]
+                if used_rails.intersection(record['fids']):continue
+                for part,line in enumerate(parts(record['geometry'],'LineString')):
+                    spans=parts(line.intersection(outline),'LineString')
+                    if not spans:continue
+                    longest=max(spans,key=lambda p:p.length)
+                    s0,s1=sorted([line.project(Point(longest.coords[0])),line.project(Point(longest.coords[-1]))])
+                    middle=line.interpolate((s0+s1)/2);a=line.interpolate(max(0,(s0+s1)/2-1));b=line.interpolate(min(line.length,(s0+s1)/2+1))
+                    dx,dy=b.x-a.x,b.y-a.y;length=math.hypot(dx,dy)
+                    if length<.1:continue
+                    cross=LineString([(middle.x-dy/length*100,middle.y+dx/length*100),(middle.x+dy/length*100,middle.y-dx/length*100)]).intersection(outline)
+                    sections=[s for s in parts(cross,'LineString') if s.distance(middle)<.01]
+                    if not sections:continue
+                    width=max(s.length for s in sections)
+                    if longest.length<max(10,width*1.8):continue
+                    group['profiles'].append(dict(roadIds=[key+':part:'+str(part)],sourceFids=record['fids'],coordinates=list(line.coords),span=[s0,s1],polygons=[],displayWidthM=width,rail=True,lanes=0))
+                    extra_rail_profiles+=1
         for sidewalk in group.get('sidewalks', []):
             sidewalk['sourceFids'] = fids[sidewalk['sourceId']]
+            approaches = []
+            for n, p in enumerate(group['profiles']):
+                if p.get('rail') or p.get('steps') or not p['polygons']:continue
+                corridor = LineString(p['coordinates']).buffer(min(p['displayWidthM']/2+4,44),cap_style='flat')
+                surface = sidewalk_shapes[sidewalk['sourceId']].intersection(corridor).difference(shapely.union_all([Polygon(q[0],q[1:]) for q in group['polygons']]))
+                if surface.area < .1:continue
+                approaches.append(dict(profileIndex=n, polygons=polygons(surface), paths=[list(q.coords) for q in walk_paths(surface)]))
+            if approaches:sidewalk['approaches'] = approaches
+        raised = shapely.union_all([Polygon(p[0],p[1:]) for p in group['polygons']] + [Polygon(p[0],p[1:]) for profile in group['profiles'] for p in profile['polygons']] + [Polygon(p[0],p[1:]) for s in group.get('sidewalks',[]) for a in s.get('approaches',[]) for p in a['polygons']])
+        water = shapely.union_all([waters[int(i)] for i in water_tree.query(raised)])
+        # 이미 상판으로 옮긴 수면 위 구간의 지면 사본만 제거하며 육상의 하부 도로는 보존한다.
+        cuts = polygons(raised.intersection(water))
+        if cuts:group['groundCutPolygons'] = cuts
         names = group.get('names', [])
         if group['role'] != 'BRIDGE_AREA' or not names or names[0] not in SOURCES:
             continue
@@ -114,13 +166,14 @@ def build(input_dir, output):
     packed = gzip.compress(raw, compresslevel=6, mtime=0)
     (output / index['file']).write_bytes(packed)
     index.update(sha256=source.digest(raw), bytes=len(raw), storedSha256=source.digest(packed), storedBytes=len(packed))
+    index['counts']['profiles'] = sum(len(g['profiles']) for g in body['groups'])
     index['levelSupplement'] = dict(generatorSha256=spatial.file_sha256(__file__),
         sourceBridgeIndexSha256=source.digest(index_raw), sourceUrls=SOURCES, lowerDecks=levels,
         geometryIsDisplayAssumption=True, upperLiftM=13.5, lowerLiftM=6.5,
         banpoWidthSource='SEOUL_PUBLISHED_18M', cheongdamWidthSource='DISPLAY_ASSUMPTION_10M',
         lowerApproachSource='BANPO_EXISTING_ROAD_APPROACH_PROJECTION',
         railAlignmentSource='CHEONGDAM_UPPER_ROAD_AXIS_PROJECTION',
-        sourceBoundObjects=len(fids), hydraulicInputsChanged=False)
+        sourceBoundObjects=len(fids), additionalSourceRailProfiles=extra_rail_profiles, groundCopyRemoval='SOURCE_CITY_WATER_WITH_SOURCE_BRIDGE_SUPPORT', sourceWaterPolygons=len(body['waterPolygons']), hydraulicInputsChanged=False)
     (output / 'index.json').write_text(source.canonical(index) + '\n')
     print(source.canonical(dict(indexSha256=spatial.file_sha256(output / 'index.json'), sourceBoundObjects=len(fids), lowerDecks=levels)), flush=True)
 

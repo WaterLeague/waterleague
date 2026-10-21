@@ -9,6 +9,8 @@ import {
   MeshBasicMaterial,
   Raycaster,
   Vector3,
+  Vector2,
+  ShapeUtils,
 } from 'three';
 import { nativeBridgesDto } from '../src/domains/urban/dto/nativeBridgeDto';
 import {
@@ -25,13 +27,12 @@ import { streetGeometry, streetHeight } from '../src/domains/urban/service/stree
 import { terrainMeshHeight } from '../src/domains/terrain/service/terrainDrapeService';
 import type { Terrain } from '../src/domains/terrain/entity/terrain';
 const base = new URL('../public/data/', import.meta.url);
-const groups = connectBridgeDatums(
-  nativeBridgesDto.parse(
-    JSON.parse(
-      gunzipSync(readFileSync(new URL('seoul-bridges-v1/structures.json.gz', base))).toString()
-    )
-  ).groups
+const body = nativeBridgesDto.parse(
+  JSON.parse(
+    gunzipSync(readFileSync(new URL('seoul-bridges-v1/structures.json.gz', base))).toString()
+  )
 );
+const groups = connectBridgeDatums(body.groups, body.waterPolygons);
 const info = JSON.parse(
   readFileSync(new URL('seoul-terrain-native-v1/terrain.json', base), 'utf8')
 );
@@ -112,7 +113,7 @@ test('청담대교 원본 교량·고가 분류 경계의 상판 높이 기준 �
   ).toBe(1);
 });
 
-test('원 레코드로 결속된 중심선만 상판으로 올리고 반포 아래 올림픽대로는 지상 유지', () => {
+test('원 레코드로 결속된 중심선만 상판으로 올리고 반포 아래 도로는 상층과 분리', () => {
   const bindings = bridgeTransportBindings(groups);
   expect(bindings.size).toBeGreaterThan(1000);
   const group = groups.find((g) => g.lowerDeck?.name === '잠수교')!;
@@ -120,8 +121,11 @@ test('원 레코드로 결속된 중심선만 상판으로 올리고 반포 아�
   const height = bridgeTransportHeight(bindings.get(profile.sourceFids![0]), terrain)!;
   const p = profile.coordinates.at(-1)!;
   expect(height(p)).toBeCloseTo(nativeBridgeHeight(terrain, group.displayDatumPolygons!, 13.5));
-  expect(bindings.has(1839612)).toBe(false);
-  expect(bridgeTransportHeight(bindings.get(1839612), terrain)).toBeUndefined();
+  expect(bridgeTransportBindings([group]).has(1839612)).toBe(false);
+  const underpass: [number, number] = [1735.0020790235994, -6343.088847466795];
+  expect(bridgeTransportHeight(bindings.get(1839612), terrain)!(underpass)).toBeLessThan(
+    nativeBridgeHeight(terrain, group.displayDatumPolygons!, 13.5) - 1
+  );
 });
 
 test('교량 접속부가 하층을 가리는 지면까지의 수직 벽을 만들지 않음', () => {
@@ -135,4 +139,46 @@ test('교량 접속부가 하층을 가리는 지면까지의 수직 벽을 만�
       if (height > ground + 2) expect(mesh.positions[i + 1]).toBeGreaterThan(ground + 1);
     }
   }
+}, 30000);
+
+test('노들섬 양쪽 한강대교는 노량대교와 분리되고 같은 상판 높이 기준 사용', () => {
+  for (const [north, south] of [
+    [1823862, 1823865],
+    [1823863, 1823864],
+  ]) {
+    const group = groups.find((g) => g.sourceFids.includes(north))!;
+    expect(group.sourceFids).toContain(south);
+    expect(group.names).not.toContain('노량대교');
+    expect(group.sourceFids).not.toContain(1835242);
+    const streets = nativeStreets([], [group]);
+    const bridge = streets.find((s) => s.id === group.id)!;
+    const points = group.polygons.map((p) => p[0][0]);
+    expect(new Set(points.map((p) => streetHeight(terrain, p, bridge))).size).toBe(1);
+  }
 });
+
+test('모든 교량의 표시 접속로는 수면 안으로 연장된 중복 면과 철길을 생성하지 않음', () => {
+  let tested = 0;
+  const all = nativeStreets([], groups);
+  for (const group of groups.filter((g) => g.groundCutPolygons?.length)) {
+    for (const road of all.filter(
+      (s) => s.id.startsWith(group.id + ':') && s.nativeBridgeProfiles?.length && !s.bridge
+    )) {
+      expect(road.nativeRailPaths).toBeUndefined();
+      for (const polygon of road.nativePolygons ?? []) {
+        const rings = polygon.map((r) => r.slice(0, -1).map((p) => new Vector2(...p))),
+          vertices = rings.flat();
+        for (const ids of ShapeUtils.triangulateShape(rings[0], rings.slice(1))) {
+          const [a, b, c] = ids.map((i) => vertices[i]);
+          if (Math.abs((b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x)) < 0.2) continue;
+          expect(
+            withinBridge([(a.x + b.x + c.x) / 3, (a.y + b.y + c.y) / 3], group.groundCutPolygons!),
+            JSON.stringify({ id: road.id, a, b, c })
+          ).toBe(false);
+          tested++;
+        }
+      }
+    }
+  }
+  expect(tested).toBeGreaterThan(1000);
+}, 30000);

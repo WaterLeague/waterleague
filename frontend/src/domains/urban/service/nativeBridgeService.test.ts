@@ -1,6 +1,10 @@
 import { expect, test } from 'vitest';
 import { nativeBridgeHeight, nativeBridgeProfileHeight } from './nativeBridgeService';
 import { nativeStreets } from './nativeStreetService';
+import { bridgeTransportBindings } from './nativeBridgeTransportService';
+import { topographyGeometry } from '../../topography/service/topographyGeometryService';
+import { topographyIndexDto } from '../../topography/dto/topographyDto';
+import sourceIndex from '../../../../public/data/seoul-features-v1/index.json';
 import { streetGeometry, streetHeight } from './streetGeometryService';
 import type { NativeBridgeGroup, NativeBridgeProfile } from '../dto/nativeBridgeDto';
 import type { Terrain } from '../../terrain/entity/terrain';
@@ -105,7 +109,7 @@ test('원 도로 식별자가 없는 하부 교차 도로는 상판 높이로 �
     streetHeight(null, [50, 0], { ...roads[0], bridge: false, nativeBridgeProfiles: undefined })
   ).toBeCloseTo(0.004);
 });
-test('철교 선로는 원 철도 경로를 따라 접속부와 상판 위에 연속 생성', () => {
+test('철교 레일은 원 철도 레이어에서만 접속부·상판 높이로 연속 생성', () => {
   const railGroup: NativeBridgeGroup = {
     ...group,
     names: ['시험 철교'],
@@ -113,12 +117,28 @@ test('철교 선로는 원 철도 경로를 따라 접속부와 상판 위에 �
     profiles: group.profiles.map((p) => ({
       ...p,
       rail: true,
+      sourceFids: [1],
       roadIds: p.roadIds.map((id) => id.replace('A0020000', 'A0150000')),
     })),
   };
   const roads = nativeStreets([], [railGroup]);
-  expect(roads[1].nativeRailPaths).toEqual([group.profiles[0].coordinates]);
-  const mesh = streetGeometry([roads[1]], null, true);
+  expect(roads.every((road) => !road.nativeRailPaths)).toBe(true);
+  const index = topographyIndexDto.parse(sourceIndex);
+  const layer = index.layers.findIndex((l) => l.id === 'N1L_A0150000');
+  const mesh = topographyGeometry(
+    {
+      schemaVersion: 1,
+      id: '0_0',
+      points: [],
+      areas: [],
+      lines: [[layer, 1, [group.profiles[0].coordinates], null]],
+    },
+    index.layers,
+    null,
+    false,
+    true,
+    bridgeTransportBindings([railGroup])
+  );
   const middle: number[] = [];
   for (let i = 0; i < mesh.positions.length; i += 3)
     if (mesh.positions[i] > 20 && mesh.positions[i] < 80) middle.push(mesh.positions[i + 1]);
