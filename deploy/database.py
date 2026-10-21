@@ -13,7 +13,8 @@ TABLES = (
     'league_participant_events league_invitations league_teams league_team_members '
     'research_comparisons research_searches research_search_sources research_candidates shared_installations '
     'shared_physics_jobs shared_weekly_scores historical_experiments shared_research_consents '
-    'budget_ledger_entries watershed_experiments cistern_map_plans historical_submissions historical_design_revisions'
+    'budget_ledger_entries watershed_experiments cistern_map_plans historical_submissions historical_design_revisions '
+    'game_competitions game_competition_participants game_competition_submissions game_competition_live_scores notification_outbox'
 ).split()
 MUTABLE_QUEUE_COLUMNS = 'state attempts lease_token lease_until finished_at error_code result'.split()
 
@@ -63,8 +64,13 @@ def grant():
         db.execute('REVOKE ALL ON SCHEMA public FROM PUBLIC, wl_api, wl_worker')
         db.execute('GRANT USAGE ON SCHEMA public TO wl_api, wl_worker')
         db.execute(sql.SQL('GRANT SELECT,INSERT,UPDATE,DELETE ON {} TO wl_api')
-                   .format(sql.SQL(',').join(map(sql.Identifier, (t for t in TABLES if t not in ('shared_physics_jobs','shared_weekly_scores'))))))
-        db.execute('GRANT SELECT ON shared_physics_jobs,shared_weekly_scores TO wl_api')
+                   .format(sql.SQL(',').join(map(sql.Identifier, (t for t in TABLES if t not in ('shared_physics_jobs','shared_weekly_scores','game_competition_live_scores'))))))
+        db.execute('GRANT SELECT ON shared_physics_jobs,shared_weekly_scores,game_competition_live_scores TO wl_api')
+        db.execute('GRANT SELECT ON game_competitions,game_competition_participants TO wl_worker')
+        db.execute('GRANT SELECT(id,enabled,approval_status) ON accounts TO wl_worker')
+        db.execute('GRANT SELECT(id,approved) ON organizations TO wl_worker')
+        db.execute('GRANT SELECT,INSERT ON game_competition_live_scores TO wl_worker')
+        db.execute('GRANT UPDATE(score_m3,evaluated_seconds,evaluated_through,source_job_id) ON game_competition_live_scores TO wl_worker')
         db.execute('GRANT SELECT,INSERT ON shared_weekly_scores TO wl_worker')
         db.execute('GRANT UPDATE(score_m3,evaluated_minutes,evaluated_seconds,evaluated_through,source_job_id) ON shared_weekly_scores TO wl_worker')
         db.execute('GRANT SELECT ON shared_installations TO wl_worker')

@@ -201,6 +201,14 @@ class HistoricalSubmissionTests extends PostgresIntegrationTest {
       assertThat(a.get(30, TimeUnit.SECONDS)).isEqualTo(b.get(30, TimeUnit.SECONDS));
     }
     assertThat(service.list(owner, eventId)).hasSize(1);
+    assertThat(
+            db.queryForObject(
+                "SELECT count(*) FROM notification_outbox WHERE event_type='DISASTER_SUBMITTED' AND"
+                    + " source_id=? AND payload->>'userId'=?",
+                Integer.class,
+                service.list(owner, eventId).getFirst().id(),
+                owner.toString()))
+        .isEqualTo(1);
     UUID foreign = UUID.randomUUID();
     accounts.add(
         new Account(

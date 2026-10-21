@@ -93,12 +93,18 @@ for role in ('wl_api', 'wl_worker'):
                        'DELETE FROM simulation_jobs WHERE false',
                        'SELECT * FROM budget_ledger_entries',
                        'SELECT * FROM historical_design_revisions',
+                       'SELECT * FROM notification_outbox',
+                       'SELECT password_hash FROM accounts',
+                       "UPDATE game_competition_live_scores SET comparison_group_hash='changed' WHERE false",
+                       'DELETE FROM game_competition_live_scores WHERE false',
                        "UPDATE watershed_experiments SET placements='[]' WHERE false",
                        "UPDATE historical_submissions SET rules_hash='changed' WHERE false",
                        "UPDATE historical_submissions SET cost=0 WHERE false",
                        "DELETE FROM historical_submissions WHERE false",
                        "UPDATE shared_weekly_scores SET rule_version='changed' WHERE false",
                        'UPDATE accounts SET enabled=false WHERE false']
+        else:
+            denied += ['UPDATE game_competition_live_scores SET score_m3=0 WHERE false']
         for statement in denied:
             try:
                 with db.transaction():
@@ -113,6 +119,8 @@ for role in ('wl_api', 'wl_worker'):
             db.execute("UPDATE research_candidates SET state='FAILED',result=NULL WHERE false")
             db.execute("UPDATE watershed_experiments SET state='FAILED',result=NULL WHERE false")
             if role == 'wl_worker':
+                db.execute('SELECT c.id,p.owner_id,a.enabled,a.approval_status,o.approved FROM game_competitions c JOIN game_competition_participants p ON p.competition_id=c.id JOIN accounts a ON a.id=p.owner_id JOIN organizations o ON o.id=c.organization_id WHERE false')
+                db.execute('UPDATE game_competition_live_scores SET score_m3=0,evaluated_seconds=1,evaluated_through=CURRENT_TIMESTAMP,source_job_id=NULL WHERE false')
                 db.execute("UPDATE historical_submissions SET difference_m3=0,score_policy_sha256=repeat('a',64),comparison_group_hash=repeat('b',64) WHERE false")
                 db.execute('UPDATE shared_weekly_scores SET evaluated_seconds=1 WHERE false')
         flags = db.execute('SELECT rolsuper,rolcreatedb,rolcreaterole,rolbypassrls FROM pg_roles WHERE rolname=current_user').fetchone()

@@ -20,10 +20,13 @@ frontend/qa/
 !simulation/waterleague_sim/**
 !simulation/native/
 !simulation/native/lid_snapshot.inc
+!simulation/native/*.inc
 !scripts/
 !scripts/local_config.py
 !scripts/build_live_swmm.py
 !scripts/build_score_policy.py
+!scripts/build_*swmm.py
+!scripts/attach_node_flood_duration.py
 !data/
 !data/models/
 !data/models/**
@@ -34,6 +37,9 @@ frontend/qa/
 !data/derived/
 !data/derived/cpu-reference.json
 !data/derived/cpu-reference-ngii-v2.json
+!data/derived/pavement-cleaning-v1.json
+!data/facilities/
+!data/facilities/maintenance-reference-v1.json
 !deploy/
 !deploy/**
 **/.env

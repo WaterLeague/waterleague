@@ -105,6 +105,14 @@ class SharedInstallationTests extends PostgresIntegrationTest {
             new InstallRequest(
                 site.districtId(), site.cellId(), FacilityType.PERMEABLE_PAVEMENT, BigDecimal.TEN));
     assertThat(installed.modelHash()).isEqualTo(site.modelHash());
+    assertThat(
+            db.queryForObject(
+                "SELECT count(*) FROM notification_outbox WHERE event_type='WEEKLY_INSTALLED' AND"
+                    + " source_id=? AND payload->>'username'=?",
+                Integer.class,
+                installed.id(),
+                owner.username()))
+        .isEqualTo(1);
     assertThat(installed.cost())
         .isEqualByComparingTo(site.unitCosts().get("PERMEABLE_PAVEMENT").multiply(BigDecimal.TEN));
     assertThatThrownBy(

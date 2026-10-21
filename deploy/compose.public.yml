@@ -1,0 +1,49 @@
+services:
+  api:
+    secrets:
+      - {source: discord-webhook-url, target: waterleague.discord-webhook-url}
+      - {source: kma-api-key, target: waterleague.kma-key}
+    mem_limit: 5g
+    cpus: 1.5
+  worker:
+    command: [python, /app/deploy/worker-entrypoint.py]
+    secrets: [kma-api-key]
+    networks: [database, egress]
+    mem_limit: 4g
+    cpus: 1.5
+  db:
+    mem_limit: 4g
+  web:
+    command: [caddy, run, --config, /etc/caddy/Caddyfile.public, --adapter, caddyfile]
+    environment:
+      WATERLEAGUE_DOMAIN: waterleague.cloud
+    ports: !override ['80:8080', '443:8443', '443:8443/udp']
+  admin:
+    image: ${WL_API_IMAGE:?API 이미지 필요}
+    profiles: [maintenance]
+    user: '${WL_RUNTIME_UID}:${WL_RUNTIME_GID}'
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    init: true
+    pids_limit: 128
+    tmpfs: ['/tmp:rw,noexec,nosuid,size=134217728,mode=1777']
+    environment:
+      SPRING_PROFILES_ACTIVE: container,bootstrap-admin
+      DB_URL: jdbc:postgresql://db:5432/waterleague
+      DB_USER: wl_api
+    secrets:
+      - {source: wl_api-password, target: spring.datasource.password}
+      - {source: mfa-key, target: waterleague.mfa-key}
+      - {source: admin-username, target: waterleague.admin-username}
+      - {source: admin-password, target: waterleague.admin-password}
+    networks: [database]
+    mem_limit: 1g
+    cpus: 1
+networks:
+  egress: {}
+secrets:
+  discord-webhook-url: {file: '${WL_STATE_DIR}/secrets/discord-webhook-url'}
+  kma-api-key: {file: '${WL_STATE_DIR}/secrets/kma-api-key'}
+  admin-username: {file: '${WL_STATE_DIR}/secrets/admin-username'}
+  admin-password: {file: '${WL_STATE_DIR}/secrets/admin-password'}

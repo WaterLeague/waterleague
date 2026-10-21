@@ -1,0 +1,55 @@
+name: 운영 배포
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: waterleague-production
+  cancel-in-progress: false
+jobs:
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 60
+    environment:
+      name: production
+      url: https://waterleague.cloud
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: 운영 비밀 확인
+        env:
+          OCI_HOST: ${{ secrets.OCI_HOST }}
+          OCI_USER: ${{ secrets.OCI_USER }}
+          OCI_SSH_KEY: ${{ secrets.OCI_SSH_KEY }}
+          OCI_KNOWN_HOSTS: ${{ secrets.OCI_KNOWN_HOSTS }}
+          ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          KMA_API_KEY: ${{ secrets.KMA_API_KEY }}
+        run: python3 deploy/ci.py validate
+      - name: ARM64 운영 이미지 빌드·게시
+        env:
+          GHCR_TOKEN: ${{ github.token }}
+        run: python3 deploy/ci.py build
+      - name: 백업·마이그레이션·관리자 초기화·배포
+        env:
+          GHCR_TOKEN: ${{ github.token }}
+          OCI_HOST: ${{ secrets.OCI_HOST }}
+          OCI_USER: ${{ secrets.OCI_USER }}
+          OCI_SSH_KEY: ${{ secrets.OCI_SSH_KEY }}
+          OCI_SSH_PASSWORD: ${{ secrets.OCI_SSH_PASSWORD }}
+          OCI_KNOWN_HOSTS: ${{ secrets.OCI_KNOWN_HOSTS }}
+          ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          KMA_API_KEY: ${{ secrets.KMA_API_KEY }}
+        run: python3 deploy/ci.py deploy
+      - name: 공개 HTTPS 확인
+        run: curl --fail --silent --show-error --retry 12 --retry-delay 10 --retry-all-errors --max-time 20 https://waterleague.cloud/api/v1/health

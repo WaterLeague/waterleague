@@ -326,3 +326,9 @@ RFC 9457 `application/problem+json`: type, title, status, detail, instance, code
 대회 기간 상태 `UPCOMING/OPEN/ENDED/CANCELLED`와 결과 상태 `UPCOMING/IN_PROGRESS/PROVISIONAL/WITHHELD/EMPTY/FINAL/CANCELLED`를 구분한다. 대기 계산은 잠정 결과, 조건 불일치는 보류이며 누락을 0점이나 확정 순위로 대체하지 않는다. 전체 비교 집단에서 순위를 계산한 뒤 페이지를 나눈다. 주간은 설치 시각을 제공하고 재해는 사건 전체 기간 평가이므로 별도 설치 기간 열을 제공하지 않는다.
 
 기관 승인 취소는 신규 참가·제출을 차단한다. 개인정보·연구 원본 열람 동의를 대회 참가로 대체하지 않는다. 관리자 결과는 서버 역할과 세션 MFA를 검사하며 일반 회원이 같은 주소로 우회할 수 없다. 비공개 결과 응답은 `no-store`로 제공한다.
+
+## 운영 관리자와 활동 알림 (2026-10-22)
+
+관리자 생성/비밀번호 교체는 공개 HTTP API를 추가하지 않고 `bootstrap-admin` 일회성 배포 프로필에서 수행한다. ADMIN_USERNAME/ADMIN_PASSWORD GitHub Secret을 사용하며 기존 로그인·MFA 등록/확인·관리자 회원 관리·결과 조회 경로를 유지한다. 일반 가입으로 관리자 역할을 지정할 수 없다.
+
+회원가입, 주간 설치, 재해 최종 제출의 성공 응답 계약은 동일하다. Discord 발송 여부는 응답/활동 성공을 변경하지 않으며, DB에 활동과 함께 생성한 알림을 별도로 전송한다. 재해 단순 실험은 알림 대상에서 제외한다. 전송 데이터·재시도·보존 범위는 문서 10의 Discord 운영 알림 계약을 따른다.

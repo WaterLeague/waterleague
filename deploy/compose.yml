@@ -40,7 +40,7 @@ services:
 
   bootstrap:
     <<: *runtime
-    image: ${WL_PROJECT}-worker:local
+    image: ${WL_WORKER_IMAGE:-${WL_PROJECT}-worker:local}
     build: {context: .., dockerfile: deploy/worker.Dockerfile}
     command: [python, /app/deploy/database.py, bootstrap]
     secrets: [wl_admin-password, wl_owner-password, wl_api-password, wl_worker-password]
@@ -51,7 +51,7 @@ services:
 
   migrate:
     <<: *runtime
-    image: ${WL_PROJECT}-api:local
+    image: ${WL_API_IMAGE:-${WL_PROJECT}-api:local}
     build: {context: .., dockerfile: deploy/api.Dockerfile}
     environment:
       SPRING_PROFILES_ACTIVE: container,migrate
@@ -66,7 +66,7 @@ services:
 
   grant:
     <<: *runtime
-    image: ${WL_PROJECT}-worker:local
+    image: ${WL_WORKER_IMAGE:-${WL_PROJECT}-worker:local}
     command: [python, /app/deploy/database.py, grant]
     secrets: [wl_owner-password]
     networks: [database]
@@ -76,7 +76,7 @@ services:
 
   api:
     <<: *runtime
-    image: ${WL_PROJECT}-api:local
+    image: ${WL_API_IMAGE:-${WL_PROJECT}-api:local}
     environment:
       SPRING_PROFILES_ACTIVE: container
       DB_URL: jdbc:postgresql://db:5432/waterleague
@@ -103,7 +103,7 @@ services:
 
   worker:
     <<: *runtime
-    image: ${WL_PROJECT}-worker:local
+    image: ${WL_WORKER_IMAGE:-${WL_PROJECT}-worker:local}
     environment:
       DATABASE_URL_FILE: /run/secrets/database-url
       ARTIFACTS_PATH: /artifacts
@@ -122,7 +122,7 @@ services:
 
   web:
     <<: *runtime
-    image: ${WL_PROJECT}-web:local
+    image: ${WL_WEB_IMAGE:-${WL_PROJECT}-web:local}
     build: {context: .., dockerfile: deploy/web.Dockerfile}
     ports: ['127.0.0.1:${WL_HTTPS_PORT:-8443}:8443']
     volumes:

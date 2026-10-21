@@ -51,6 +51,7 @@ COPY backend/src/main/resources/districts /app/backend/src/main/resources/distri
 COPY backend/src/main/resources/budget /app/backend/src/main/resources/budget
 COPY backend/src/main/resources/evaluation /app/backend/src/main/resources/evaluation
 COPY deploy/database.py /app/deploy/database.py
+COPY deploy/worker-entrypoint.py /app/deploy/worker-entrypoint.py
 ENV PYTHONPATH=/app/simulation PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 SWMM_LIBRARY=/opt/swmm/bin/libswmm5.so LIVE_SWMM_LIBRARY=/opt/live-swmm/bin/libswmm5.so
 USER 10001:10001
 CMD ["python", "-m", "waterleague_sim.worker"]
