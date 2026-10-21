@@ -20,6 +20,7 @@ export type Street = {
     deckLiftM?: number;
   }[];
   nativeDeckLiftM?: number;
+  nativeDeckLevel?: 'upper' | 'lower';
   nativeStructurePath?: { coordinates: [number, number][]; span: [number, number]; widthM: number };
   nativeLanePaths?: {
     coordinates: [number, number][];

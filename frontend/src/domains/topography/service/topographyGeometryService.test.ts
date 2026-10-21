@@ -119,3 +119,86 @@ test('원 도로중심선과 보행 선형은 입체 면으로 표시', () => {
     expect(mesh.positions.every(Number.isFinite)).toBe(true);
   }
 });
+
+test('터널·지하도 입구는 빈 통행 공간을 가진 문틀, 잔교는 폭과 상판을 가진 구조', () => {
+  for (const [name, top] of [
+    ['N1L_A0123373', 5.3],
+    ['N1L_C0463374', 3.1],
+    ['N1L_C0080000', 1.05],
+  ] as const) {
+    const layer = index.layers.findIndex((l) => l.id === name);
+    const mesh = topographyGeometry(
+      {
+        schemaVersion: 1,
+        id: '0_0',
+        points: [],
+        areas: [],
+        lines: [
+          [
+            layer,
+            1,
+            [
+              [
+                [0, 0],
+                [10, 0],
+              ],
+            ],
+            null,
+          ],
+        ],
+      },
+      index.layers,
+      null,
+      false
+    );
+    expect(mesh.lines.length).toBe(0);
+    const heights = Array.from(mesh.positions).filter((_, i) => i % 3 === 1);
+    expect(Math.max(...heights)).toBeCloseTo(top);
+    const middleHeights: number[] = [];
+    for (let i = 0; i < mesh.positions.length; i += 3)
+      if (mesh.positions[i] > 1 && mesh.positions[i] < 9) middleHeights.push(mesh.positions[i + 1]);
+    if (name !== 'N1L_C0080000') expect(middleHeights.every((h) => h >= top - 0.51)).toBe(true);
+    else
+      expect(Math.max(...Array.from(mesh.positions).filter((_, i) => i % 3 === 2))).toBeCloseTo(
+        1.2
+      );
+  }
+});
+
+test('승강장 지붕은 지면까지 채운 블록 없이 기둥과 얇은 지붕으로 생성', () => {
+  const layer = index.layers.findIndex((l) => l.id === 'N1A_A0201222');
+  const mesh = topographyGeometry(
+    {
+      schemaVersion: 1,
+      id: '0_0',
+      points: [],
+      lines: [],
+      areas: [
+        [
+          layer,
+          1,
+          [
+            [
+              [
+                [0, 0],
+                [30, 0],
+                [30, 10],
+                [0, 10],
+                [0, 0],
+              ],
+            ],
+          ],
+          null,
+        ],
+      ],
+    },
+    index.layers,
+    null,
+    false
+  );
+  const heights = Array.from(mesh.positions).filter((_, i) => i % 3 === 1);
+  expect(Math.max(...heights)).toBeCloseTo(4.2);
+  expect(heights.some((h) => Math.abs(h - 3.95) < 1e-5)).toBe(true);
+  expect(heights.some((h) => Math.abs(h - 0.65) < 1e-5)).toBe(true);
+  expect(heights.every((h) => h >= 0.64)).toBe(true);
+});

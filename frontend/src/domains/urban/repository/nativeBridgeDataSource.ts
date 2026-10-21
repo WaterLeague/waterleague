@@ -3,6 +3,7 @@ import { readPublicData } from '../../../shared/repository/publicDataCache';
 import { CityError } from '../../city/exception/CityError';
 import { CITY_HASH } from '../../city/repository/cityVersion';
 import { nativeBridgesDto } from '../dto/nativeBridgeDto';
+import { connectBridgeDatums } from '../service/nativeBridgeService';
 const sha = z.string().regex(/^[a-f0-9]{64}$/);
 const indexDto = z.object({
   schemaVersion: z.literal(1),
@@ -47,5 +48,5 @@ export async function readNativeBridges(signal: AbortSignal) {
       index.data.counts.sourceObjects
   )
     throw new CityError('INVALID_DATA');
-  return body.data.groups;
+  return connectBridgeDatums(body.data.groups);
 }

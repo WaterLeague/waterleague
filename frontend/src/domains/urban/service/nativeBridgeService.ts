@@ -5,12 +5,40 @@ const flat = {};
 const cache = new WeakMap<object, WeakMap<object, number>>();
 const groupCache = new WeakMap<object, WeakMap<object, number>>();
 export const nativeBridgeLiftM = 6.5;
+export function connectBridgeDatums(groups: import('../dto/nativeBridgeDto').NativeBridgeGroup[]) {
+  const byName = new Map<string, Polygons>();
+  for (const group of groups)
+    for (const name of group.names ?? [])
+      if (name === '반포대교' || name === '청담대교') {
+        if (!byName.has(name)) byName.set(name, []);
+        byName.get(name)!.push(...group.polygons);
+      }
+  // 도엽·교량/고가 분류 경계에서도 복층 상판의 높이 기준을 공유한다.
+  return groups.map((group) => {
+    const datum = byName.get(group.names?.[0] ?? '');
+    return datum ? { ...group, displayDatumPolygons: datum } : group;
+  });
+}
+export function nativeDeckLift(group: import('../dto/nativeBridgeDto').NativeBridgeGroup) {
+  return group.names?.includes('반포대교') ||
+    (group.names?.includes('청담대교') && !group.kinds?.includes('철교'))
+    ? 13.5
+    : nativeBridgeLiftM;
+}
 export function withinBridge(point: readonly [number, number], polygons: Polygons) {
   const inside = (ring: [number, number][]) => {
     let value = false;
     for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
       const a = ring[i],
         b = ring[j];
+      const dx = b[0] - a[0],
+        dy = b[1] - a[1],
+        length2 = dx * dx + dy * dy;
+      const t = Math.max(
+        0,
+        Math.min(1, ((point[0] - a[0]) * dx + (point[1] - a[1]) * dy) / (length2 || 1))
+      );
+      if (Math.hypot(point[0] - a[0] - t * dx, point[1] - a[1] - t * dy) < 1e-5) return true;
       if (
         a[1] > point[1] !== b[1] > point[1] &&
         point[0] < ((b[0] - a[0]) * (point[1] - a[1])) / (b[1] - a[1]) + a[0]

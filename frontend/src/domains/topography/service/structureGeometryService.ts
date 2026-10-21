@@ -4,7 +4,13 @@ import { drapeSegment, terrainMeshHeight } from '../../terrain/service/terrainDr
 import { streetOffsets } from '../../urban/service/streetGeometryService';
 type Point = [number, number];
 type Vertex = [number, number, number];
-export function structureWriter(positions: number[], colors: number[], terrain: Terrain | null) {
+export function structureWriter(
+  positions: number[],
+  colors: number[],
+  terrain: Terrain | null,
+  height: (point: readonly [number, number]) => number = (point) =>
+    terrainMeshHeight(terrain, point)
+) {
   const triangle = (a: Vertex, b: Vertex, c: Vertex, color: Color) => {
     for (const p of [a, b, c]) {
       positions.push(...p);
@@ -17,7 +23,7 @@ export function structureWriter(positions: number[], colors: number[], terrain: 
   };
   const vertex = (p: readonly [number, number], lift: number): Vertex => [
     p[0],
-    terrainMeshHeight(terrain, p) + lift,
+    height(p) + lift,
     -p[1],
   ];
   const beam = (
@@ -58,6 +64,32 @@ export function structureWriter(positions: number[], colors: number[], terrain: 
   };
   const line = (id: string, part: Point[], color: Color) => {
     const code = id.slice(4, 8);
+    if (code === 'A012' || code === 'C046') {
+      const first = part[0],
+        last = part.at(-1)!;
+      // 입구 원 선형 위에 문틀을 세우고 통행 공간은 비워 둔다.
+      const clearance = code === 'A012' ? 4.8 : 2.6;
+      for (let i = 1; i < part.length; i++) beam(part[i - 1], part[i], clearance, 0.5, 0.6, color);
+      for (const p of [first, last]) beam(p, [p[0] + 0.1, p[1]], 0, clearance, 0.6, color);
+      return true;
+    }
+    if (code === 'C008') {
+      for (let i = 1; i < part.length; i++) {
+        for (const [a, b] of drapeSegment(part[i - 1], part[i], terrain))
+          beam(a, b, 0.8, 0.25, 2.4, color);
+        const a = part[i - 1],
+          b = part[i],
+          length = Math.hypot(b[0] - a[0], b[1] - a[1]);
+        for (let s = 0; s < length; s += 8) {
+          const p: Point = [
+            a[0] + ((b[0] - a[0]) * s) / length,
+            a[1] + ((b[1] - a[1]) * s) / length,
+          ];
+          beam(p, [p[0] + 0.1, p[1]], 0, 0.8, 0.3, color);
+        }
+      }
+      return true;
+    }
     if (code === 'A002' || code === 'A003') {
       const width = code === 'A003' ? 1.8 : 2.8;
       const left = streetOffsets(part, -width / 2),
@@ -88,9 +120,7 @@ export function structureWriter(positions: number[], colors: number[], terrain: 
       'C005',
       'C006',
       'C007',
-      'C008',
       'C032',
-      'C046',
       'C052',
       'C053',
       'E006',
@@ -131,7 +161,7 @@ export function structureWriter(positions: number[], colors: number[], terrain: 
               a,
               b,
               0,
-              code === 'C052' ? 0.55 : code === 'C008' ? 0.35 : code === 'F004' ? 1.5 : 1.1,
+              code === 'C052' ? 0.55 : code === 'F004' ? 1.5 : 1.1,
               code === 'C005' ? 1 : 0.22,
               color
             );
@@ -156,11 +186,11 @@ export function structureWriter(positions: number[], colors: number[], terrain: 
       }
     return true;
   };
-  const sides = (polygon: Point[][], lift: number, color: Color) => {
+  const sides = (polygon: Point[][], lift: number, color: Color, bottom = 0) => {
     for (const ring of polygon)
       for (let i = 1; i < ring.length; i++)
         for (const [a, b] of drapeSegment(ring[i - 1], ring[i], terrain))
-          quad(vertex(a, 0), vertex(b, 0), vertex(b, lift), vertex(a, lift), color);
+          quad(vertex(a, bottom), vertex(b, bottom), vertex(b, lift), vertex(a, lift), color);
   };
   return { triangle, quad, vertex, beam, line, sides };
 }
@@ -174,7 +204,8 @@ export function areaLift(id: string) {
   if (code === 'A016') return 0.046;
   if (code === 'C017' || code === 'C018') return 2.4;
   if (code === 'C047') return 1.2;
-  if (code === 'A019' || code === 'A020') return 0.65;
+  if (code === 'A019') return 0.65;
+  if (code === 'A020') return 4.2;
   if (code === 'A003') return 0.14;
   if (code === 'B001') return 0.2;
   if (code === 'C003') return 0.35;

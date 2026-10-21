@@ -9,6 +9,10 @@ import { topographyStyle } from './topographyStyleService';
 import { areaLift, structureWriter } from './structureGeometryService';
 import { nativeBridgeHeight } from '../../urban/service/nativeBridgeService';
 import {
+  bridgeTransportHeight,
+  type NativeBridgeTransport,
+} from '../../urban/service/nativeBridgeTransportService';
+import {
   drapeTriangle,
   drapeSegment,
   terrainMeshHeight,
@@ -20,7 +24,8 @@ export function topographyGeometry(
   layers: TopographyIndex['layers'],
   terrain: Terrain | null,
   plan: boolean,
-  structuresLoaded = false
+  structuresLoaded = false,
+  transport?: NativeBridgeTransport
 ): TopographyBuffers {
   const positions: number[] = [],
     colors: number[] = [],
@@ -67,12 +72,14 @@ export function topographyGeometry(
       if (label) labels.push({ point, text: label, layer });
     }
   }
-  for (const [layer, , parts] of tile.lines) {
+  for (const [layer, fid, parts] of tile.lines) {
     const color = style[layer];
+    const height = plan ? undefined : bridgeTransportHeight(transport?.get(fid), terrain);
+    const writer = height ? structureWriter(positions, colors, terrain, height) : structures;
     for (const part of parts) {
       if (plan) group(layer).lines.push(path(part));
       if (plan) continue;
-      if (structures.line(layers[layer].id, part, color)) continue;
+      if (writer.line(layers[layer].id, part, color)) continue;
       for (let i = 1; i < part.length; i++)
         for (const segment of drapeSegment(part[i - 1], part[i], terrain))
           for (const point of segment) {
@@ -101,6 +108,7 @@ export function topographyGeometry(
         vertices = rings.flat();
       const lift = areaLift(layers[layer].id);
       const stairs = layers[layer].id.slice(4, 8) === 'C039';
+      const canopy = layers[layer].id.slice(4, 8) === 'A020';
       let axis: Point = [1, 0],
         longest = 0;
       for (const ring of polygon)
@@ -151,7 +159,22 @@ export function topographyGeometry(
         else if (deck === null) drapeTriangle(triangle, terrain, emit);
         else emit(triangle);
       }
-      if (!stairs && lift > 0.055) structures.sides(polygon, lift, color);
+      if (!stairs && lift > 0.055) structures.sides(polygon, lift, color, canopy ? lift - 0.25 : 0);
+      if (canopy) {
+        let walked = 0,
+          next = 0;
+        for (let i = 1; i < polygon[0].length; i++) {
+          const a = polygon[0][i - 1],
+            b = polygon[0][i];
+          const length = Math.hypot(b[0] - a[0], b[1] - a[1]);
+          for (; next < walked + length; next += 12) {
+            const t = (next - walked) / length;
+            const p: Point = [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+            structures.beam(p, [p[0] + 0.1, p[1]], 0.65, lift - 0.9, 0.2, color);
+          }
+          walked += length;
+        }
+      }
       for (const ring of polygon)
         for (let i = 1; i < ring.length; i++)
           for (const segment of drapeSegment(ring[i - 1], ring[i], terrain))

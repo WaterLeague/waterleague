@@ -19,7 +19,7 @@ export function bridgeAxis(polygons: Polygons): Point {
   const angle = Math.atan2(2 * xy, xx - yy) / 2;
   return [Math.cos(angle), Math.sin(angle)];
 }
-export function bridgePierPositions(polygons: Polygons): Point[] {
+export function bridgePierPositions(polygons: Polygons, edges = false): Point[] {
   const axis = bridgeAxis(polygons),
     normal: Point = [-axis[1], axis[0]];
   const along = (p: Point) => p[0] * axis[0] + p[1] * axis[1];
@@ -57,11 +57,12 @@ export function bridgePierPositions(polygons: Polygons): Point[] {
     }
     for (const [a, b] of merged)
       if (b - a >= 2) {
-        const middle = (a + b) / 2;
-        points.push([
-          axis[0] * station + normal[0] * middle,
-          axis[1] * station + normal[1] * middle,
-        ]);
+        // 복층 상판의 지지대가 하층 통행면 중앙을 관통하지 않도록 양옆에 둔다.
+        for (const lateral of edges && b - a > 4 ? [a + 1, b - 1] : [(a + b) / 2])
+          points.push([
+            axis[0] * station + normal[0] * lateral,
+            axis[1] * station + normal[1] * lateral,
+          ]);
       }
   }
   return points;

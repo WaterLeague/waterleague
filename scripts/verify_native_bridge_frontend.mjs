@@ -21,14 +21,14 @@ for (const [name, entry] of Object.entries(info.files)) {
 }
 const terrain={...info,heights:new Float32Array(files['height-f32le.bin']),
   districts:new Uint8Array(files['district-u8.bin']),cover:new Uint8Array(files['cover-u8.bin'])};
-const server=await createServer({root:path.join(root,'frontend'),server:{middlewareMode:true},appType:'custom'});
+const server=await createServer({root:path.join(root,'frontend'),server:{middlewareMode:true,hmr:false},appType:'custom'});
 try {
   const {nativeBridgesDto}=await server.ssrLoadModule('/src/domains/urban/dto/nativeBridgeDto.ts');
   const {NATIVE_BRIDGE_HASH}=await server.ssrLoadModule('/src/domains/urban/repository/nativeBridgeVersion.ts');
   const {nativeStreets}=await server.ssrLoadModule('/src/domains/urban/service/nativeStreetService.ts');
   const {streetGeometry,streetHeight}=await server.ssrLoadModule('/src/domains/urban/service/streetGeometryService.ts');
   const {bridgePierPositions}=await server.ssrLoadModule('/src/domains/urban/service/nativeBridgeStructureService.ts');
-  const {nativeBridgeHeight}=await server.ssrLoadModule('/src/domains/urban/service/nativeBridgeService.ts');
+  const {nativeBridgeHeight,connectBridgeDatums}=await server.ssrLoadModule('/src/domains/urban/service/nativeBridgeService.ts');
   const {terrainMeshHeight}=await server.ssrLoadModule('/src/domains/terrain/service/terrainDrapeService.ts');
   assert.equal(hash(raw),NATIVE_BRIDGE_HASH);
   const packed=await readFile(path.join(base,'seoul-bridges-v1',index.file));
@@ -38,6 +38,7 @@ try {
   const body=nativeBridgesDto.parse(JSON.parse(data));
   const names=new Set(['한강대교','잠수교','방화대교','행주대교','마포대교','반포대교','한남대교','동호대교','한강철교','당산철교','잠실철교',
     '양화대교','서강대교','성산대교','월드컵대교','가양대교','성수대교','청담대교','영동대교','잠실대교','올림픽대교']);
+  body.groups=connectBridgeDatums(body.groups);
   const groups=body.groups.filter(g=>g.role==='PEDESTRIAN_OVERPASS_AREA'||g.names?.some(n=>names.has(n)));
   const checks=[];
   for (const group of groups) {
@@ -64,7 +65,7 @@ try {
     checks.push({sourceId:group.id,names:group.names,kinds:group.kinds,
       extentM:length,sourcePieces:group.sourceIds.length,profiles:group.profiles.length,
       maximumSourcePathSpanM:Math.max(0,...group.profiles.map(p=>p.span[1]-p.span[0])),
-      pierCount:piers.length,pedestrianSamples,displayDeckHeightM:nativeBridgeHeight(terrain,group.polygons,streets.find(s=>s.nativeDeckLiftM)?.nativeDeckLiftM),
+      pierCount:piers.length,pedestrianSamples,displayDeckHeightM:nativeBridgeHeight(terrain,group.displayDatumPolygons??group.polygons,streets.find(s=>s.nativeDeckLiftM)?.nativeDeckLiftM),
       fineVertices:fine.positions.length/3,coarseVertices:coarse.positions.length/3,fineMs,coarseMs});
   }
   assert(checks.some(g=>g.names.includes('마포대교')&&g.maximumSourcePathSpanM>1000));

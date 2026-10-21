@@ -12,7 +12,7 @@ assert(values.report&&values.samples);
 const hash=(raw)=>createHash('sha256').update(raw).digest('hex');
 const reportPath=path.resolve(values.report),sampleRaw=await readFile(path.resolve(values.samples));
 const indexRaw=await readFile(path.join(root,'frontend/public/data/seoul-features-v1/index.json'));
-const server=await createServer({root:path.join(root,'frontend'),server:{middlewareMode:true},appType:'custom'});
+const server=await createServer({root:path.join(root,'frontend'),server:{middlewareMode:true,hmr:false},appType:'custom'});
 try{
   const {topographyIndexDto,topographyTileDto}=await server.ssrLoadModule('/src/domains/topography/dto/topographyDto.ts');
   const {topographyGeometry}=await server.ssrLoadModule('/src/domains/topography/service/topographyGeometryService.ts');
@@ -31,6 +31,13 @@ try{
     layers.push({id:index.layers[layer].id,renderer:index.layers[layer].renderer,mesh:true,plan:true});
   }
   assert.equal(JSON.stringify(samples),before,'원형 좌표·배열 변경 금지');
+  const {nativeBridgesDto}=await server.ssrLoadModule('/src/domains/urban/dto/nativeBridgeDto.ts');
+  const {connectBridgeDatums}=await server.ssrLoadModule('/src/domains/urban/service/nativeBridgeService.ts');
+  const {bridgeTransportBindings}=await server.ssrLoadModule('/src/domains/urban/service/nativeBridgeTransportService.ts');
+  const bridgeIndex=JSON.parse(await readFile(path.join(root,'frontend/public/data/seoul-bridges-v1/index.json')));
+  const bridgeRaw=gunzipSync(await readFile(path.join(root,'frontend/public/data/seoul-bridges-v1/structures.json.gz')));
+  assert.equal(hash(bridgeRaw),bridgeIndex.sha256);
+  const bindings=bridgeTransportBindings(connectBridgeDatums(nativeBridgesDto.parse(JSON.parse(bridgeRaw)).groups));
   const stress=[];
   const terrainBase=path.join(root,'frontend/public/data/seoul-terrain-native-v1');
   const terrainInfo=JSON.parse(await readFile(path.join(terrainBase,'terrain.json'))),terrainFiles={};
@@ -44,14 +51,14 @@ try{
     const packed=await readFile(path.join(root,'frontend/public/data/seoul-features-v1',entry.file));
     const raw=gunzipSync(packed,{maxOutputLength:entry.bytes});assert.equal(hash(raw),entry.sha256);
     const started=performance.now(),tile=topographyTileDto.parse(JSON.parse(raw));
-    const validated=performance.now(),mesh=topographyGeometry(tile,index.layers,terrain,false),finished=performance.now();
+    const validated=performance.now(),mesh=topographyGeometry(tile,index.layers,terrain,false,true,bindings),finished=performance.now();
     assert(mesh.positions.every(Number.isFinite)&&mesh.lines.every(Number.isFinite));
     const bytes=Object.values(mesh).reduce((sum,value)=>sum+(ArrayBuffer.isView(value)?value.byteLength:0),0)+mesh.models.reduce((n,m)=>n+m.matrices.byteLength,0);
     stress.push({id:entry.id,sourceBytes:entry.bytes,validationMs:validated-started,geometryMs:finished-validated,bufferBytes:bytes,
       displayRecords:mesh.counts});
   }
   const report={schemaVersion:1,status:'PASS',indexSha256:hash(indexRaw),samplesSha256:hash(sampleRaw),
-    layers,layersWithRealSource2dAnd3d:layers.length,sourceCoordinatesUnchanged:true,stress,
+    layers,layersWithRealSource2dAnd3d:layers.length,sourceBoundTransportRecords:bindings.size,sourceCoordinatesUnchanged:true,stress,
     stressTerrainScope:'실제 표시 지형과 큰 타일 3개의 CPU 형상·원문 해독 검사, 브라우저 프레임 성능과 구분'};
   await writeFile(reportPath,JSON.stringify(report)+'\n',{flag:'wx'});
   console.log(JSON.stringify({status:report.status,layers:layers.length,stress}));

@@ -20,10 +20,18 @@ def verify(report):
     assert source.digest(packed)==index['storedSha256']
     raw=gzip.decompress(packed);assert len(raw)==index['bytes'] and source.digest(raw)==index['sha256']
     catalog=SpatialCatalog(BASE/'spatial-v1',json.loads((BASE/'spatial-v1/summary.json').read_bytes()))
-    body=json.loads(raw);seen=set();profiles=0;cache={};stair_profiles=0;rail_profiles=0;max_error=0
+    assert spatial.file_sha256(source.ROOT/'scripts/prepare_native_bridge_levels.py')==index['levelSupplement']['generatorSha256']
+    body=json.loads(raw);seen=set();profiles=0;cache={};stair_profiles=0;rail_profiles=0;max_error=0;lower_decks=0;bound_records={}
     with closing(sqlite3.connect('file:'+str(catalog.database)+'?mode=ro&immutable=1',uri=True)) as db:
         stair_geometries=[shapely.from_wkb(db.execute("SELECT geometry_wkb FROM features WHERE fid=? AND layer='N1A_C0390000' AND geometry_status='VALID'",(fid,)).fetchone()[0]) for fid in index['stairFids']]
         stair_union=translate(shapely.union_all(stair_geometries),-ORIGIN[0],-ORIGIN[1])
+        def check_fids(fids, identifiers):
+            assert fids
+            for fid in fids:
+                if fid not in bound_records:
+                    layer,wkb=db.execute("SELECT layer,geometry_wkb FROM features WHERE fid=? AND deleted=0 AND geometry_status='VALID'",(fid,)).fetchone()
+                    bound_records[fid]=object_key(layer,shapely.from_wkb(wkb))
+                assert bound_records[fid] in identifiers
         for group in body['groups']:
             original=[];names=set();kinds=set()
             for fid,identifier in zip(group['sourceFids'],group['sourceIds'],strict=True):
@@ -44,10 +52,25 @@ def verify(report):
             for coordinates in group.get('walkPaths',[]):
                 assert LineString(coordinates).difference(displayed).length<1e-7
             for sidewalk in group.get('sidewalks',[]):
+                check_fids(sidewalk['sourceFids'],{sidewalk['sourceId']})
                 surface=shapely.union_all([shape({'type':'Polygon','coordinates':p}) for p in sidewalk['polygons']])
                 assert surface.difference(displayed).area<1e-7
                 for coordinates in sidewalk['paths']:assert LineString(coordinates).difference(surface).length<1e-7
+            lower=group.get('lowerDeck')
+            if lower:
+                lower_decks+=1
+                surface=shapely.union_all([shape({'type':'Polygon','coordinates':p}) for p in lower['polygons']])
+                sidewalk=shapely.union_all([shape({'type':'Polygon','coordinates':p}) for p in lower['sidewalks']])
+                assert surface.difference(displayed).area<1e-6
+                assert sidewalk.difference(surface).area<1e-6
+                assert lower['displayOnly'] and lower['geometryBasis']=='SOURCE_AXIS_CLIPPED_TO_SOURCE_BRIDGE'
+                for line in lower['walkPaths']:assert LineString(line).difference(sidewalk).length<1e-6
+                for line in lower['railPaths']:assert LineString(line).difference(surface).length<1e-6
+                allowed=shapely.union_all([shape({'type':'Polygon','coordinates':p}) for profile in group['profiles'] for p in profile['polygons']])
+                for approach in lower['approaches']:
+                    for p in approach['polygons']:assert shape({'type':'Polygon','coordinates':p}).difference(allowed).area<1e-6
             for profile in group['profiles']:
+                if not profile.get('steps'):check_fids(profile['sourceFids'],{r.split(':part:')[0] for r in profile['roadIds']})
                 path=LineString(profile['coordinates']);start,end=profile['span'];assert 0<=start<end<=path.length+.01
                 polygons=shapely.union_all([shape({'type':'Polygon','coordinates':p}) for p in profile['polygons']])
                 if profile.get('steps'):
@@ -71,7 +94,8 @@ def verify(report):
                 if profile.get('rail'):rail_profiles+=1
                 else:profiles+=1
     assert len(seen)==index['counts']['sourceObjects'] and profiles+rail_profiles+stair_profiles==index['counts']['profiles']
-    result=dict(schemaVersion=1,status='PASS',indexSha256=spatial.file_sha256(PUBLIC/'index.json'),sourceObjects=len(seen),groups=len(body['groups']),roadProfiles=profiles,railProfiles=rail_profiles,stairProfiles=stair_profiles,
+    assert lower_decks==2
+    result=dict(lowerDecks=lower_decks,sourceBoundTransportRecords=len(bound_records),schemaVersion=1,status='PASS',indexSha256=spatial.file_sha256(PUBLIC/'index.json'),sourceObjects=len(seen),groups=len(body['groups']),roadProfiles=profiles,railProfiles=rail_profiles,stairProfiles=stair_profiles,
         roleGroups={role:sum(g['role']==role for g in body['groups']) for role in sorted({g['role'] for g in body['groups']})},
         sidewalkSurfaces=sum(len(g.get('sidewalks',[])) for g in body['groups']),pedestrianPaths=sum(len(g.get('walkPaths',[]))+sum(len(s['paths']) for s in g.get('sidewalks',[])) for g in body['groups']),
         distinctSourceNamesAndKindsPreserved=True,displayOutlineUnionUnchanged=True,

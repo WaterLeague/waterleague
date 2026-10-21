@@ -16,6 +16,9 @@ import {
 import { TopographyLayer } from '../src/domains/topography/view/TopographyLayer';
 import type { TopographyBuffers } from '../src/domains/topography/entity/topography';
 import type { NativeBridgeGroup } from '../src/domains/urban/dto/nativeBridgeDto';
+import { loadCity } from '../src/domains/city/repository/cityRepository';
+import { riverGeometry } from '../src/domains/surface/service/riverGeometry';
+import type { City } from '../src/domains/city/entity/city';
 import type { Terrain } from '../src/domains/terrain/entity/terrain';
 if (!import.meta.env.DEV || !['localhost', '127.0.0.1', '[::1]'].includes(location.hostname))
   throw new Error('로컬 개발 검증 전용');
@@ -31,11 +34,15 @@ function Scene({
   terrain,
   focus,
   features,
+  city,
+  lowerOnly,
 }: {
   group: NativeBridgeGroup;
   terrain: Terrain;
   focus: 'bridge' | 'objects';
   features: TopographyBuffers | null;
+  city: City;
+  lowerOnly: boolean;
 }) {
   const center = useMemo(() => {
     if (focus === 'objects' && features) {
@@ -45,7 +52,7 @@ function Scene({
     const p = group.profiles.find((p) => !p.steps) ?? group.profiles[0];
     if (p) {
       let walked = 0;
-      const target = p.span[0];
+      const target = group.lowerDeck ? (p.span[0] + p.span[1]) / 2 : p.span[0];
       for (let i = 1; i < p.coordinates.length; i++) {
         const a = p.coordinates[i - 1],
           b = p.coordinates[i],
@@ -63,9 +70,14 @@ function Scene({
     ];
   }, [group, focus, features]);
   const ground = terrainMeshHeight(terrain, center),
-    span = focus === 'bridge' ? 180 : 55;
+    span = focus === 'bridge' ? (group.lowerDeck ? 95 : 180) : 55;
   const meshes = useMemo(() => {
-    const bridge = streetGeometry(nativeStreets([], [group]), terrain, true),
+    const streets = nativeStreets([], [group]);
+    const bridge = streetGeometry(
+        lowerOnly ? streets.filter((s) => s.nativeDeckLevel !== 'upper') : streets,
+        terrain,
+        true
+      ),
       positions: number[] = [];
     for (let x = center[0] - 400; x < center[0] + 400; x += 10)
       for (let y = center[1] - 400; y < center[1] + 400; y += 10)
@@ -82,13 +94,28 @@ function Scene({
       bridge: geometry(bridge.positions, bridge.colors),
       ground: geometry(new Float32Array(positions)),
     };
-  }, [group, terrain, center]);
+  }, [group, terrain, center, lowerOnly]);
+  const water = useMemo(() => {
+    const data = riverGeometry(
+      city.surfaces.filter((s) => s.kind === 'water').map((s) => s.polygons),
+      terrain
+    );
+    return geometry(data.positions);
+  }, [city, terrain]);
+  useEffect(() => () => water.dispose(), [water]);
   useEffect(() => () => Object.values(meshes).forEach((m) => m.dispose()), [meshes]);
   return (
     <Canvas
       key={center.join(',') + focus}
       camera={{
-        position: [center[0] + span * 0.65, ground + span * 0.55, -center[1] + span * 0.8],
+        position: [
+          center[0] + span * 0.65,
+          (focus === 'bridge'
+            ? nativeBridgeHeight(terrain, group.displayDatumPolygons ?? group.polygons)
+            : ground) +
+            span * 0.3,
+          -center[1] + span * 0.8,
+        ],
         near: 0.2,
         far: 50000,
       }}
@@ -99,6 +126,9 @@ function Scene({
       <directionalLight position={[100, 500, 200]} intensity={2} />
       <mesh geometry={meshes.ground}>
         <meshStandardMaterial color="#c5ceb8" side={DoubleSide} />
+      </mesh>
+      <mesh geometry={water}>
+        <meshStandardMaterial color="#287b91" side={DoubleSide} roughness={0.35} />
       </mesh>
       <mesh geometry={meshes.bridge}>
         <meshStandardMaterial vertexColors side={DoubleSide} roughness={0.9} />
@@ -112,7 +142,9 @@ function Scene({
       <OrbitControls
         target={[
           center[0],
-          focus === 'bridge' ? nativeBridgeHeight(terrain, group.polygons) : ground,
+          focus === 'bridge'
+            ? nativeBridgeHeight(terrain, group.displayDatumPolygons ?? group.polygons)
+            : ground,
           -center[1],
         ]}
         minDistance={5}
@@ -122,17 +154,29 @@ function Scene({
   );
 }
 function App() {
-  const [data, setData] = useState<{ groups: NativeBridgeGroup[]; terrain: Terrain } | null>(null),
+  const [data, setData] = useState<{
+      groups: NativeBridgeGroup[];
+      terrain: Terrain;
+      city: City;
+    } | null>(null),
     [features, setFeatures] = useState<TopographyBuffers | null>(null),
     [selected, setSelected] = useState(0),
     [focus, setFocus] = useState<'bridge' | 'objects'>('bridge'),
-    [error, setError] = useState('');
+    [error, setError] = useState(''),
+    [lowerOnly, setLowerOnly] = useState(false);
   useEffect(() => {
     const request = new AbortController();
-    void Promise.all([loadNativeBridges(request.signal), loadTerrain(request.signal)])
-      .then(([groups, terrain]) => {
-        groups.sort((a, b) => b.sourceIds.length - a.sourceIds.length);
-        setData({ groups, terrain });
+    void Promise.all([
+      loadNativeBridges(request.signal),
+      loadTerrain(request.signal),
+      loadCity(request.signal),
+    ])
+      .then(([groups, terrain, city]) => {
+        groups.sort(
+          (a, b) =>
+            Number(!!b.lowerDeck) - Number(!!a.lowerDeck) || b.sourceIds.length - a.sourceIds.length
+        );
+        setData({ groups, terrain, city });
         return loadTopographyIndex(request.signal).then((index) => {
           const tile = index.tiles.find((t) => t.id === '-1_-8')!;
           return requestTopographyTile(tile, index.layers, terrain, false, request.signal).then(
@@ -162,15 +206,24 @@ function App() {
           <button onClick={() => setFocus('bridge')}>교량 접속부</button>
           <button onClick={() => setFocus('objects')}>도심 입체 지물</button>
         </div>
+        <label>
+          <input
+            type="checkbox"
+            checked={lowerOnly}
+            onChange={(e) => setLowerOnly(e.target.checked)}
+          />
+          하층만 보기
+        </label>
         {data && (
           <select
             aria-label="원본 교량 선택"
             value={selected}
             onChange={(e) => setSelected(Number(e.target.value))}
           >
-            {data.groups.slice(0, 100).map((g, i) => (
+            {data.groups.map((g, i) => (
               <option key={g.id} value={i}>
-                구조 {i + 1} · 원본 {g.sourceIds.length}조각 · 접속 {g.profiles.length}개
+                {g.names?.join(' · ') || `구조 ${i + 1}`} · 원본 {g.sourceIds.length}조각 · 접속{' '}
+                {g.profiles.length}개
               </option>
             ))}
           </select>
@@ -191,6 +244,8 @@ function App() {
           terrain={data.terrain}
           focus={focus}
           features={features}
+          city={data.city}
+          lowerOnly={lowerOnly}
         />
       )}
     </main>

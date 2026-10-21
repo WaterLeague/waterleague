@@ -1,6 +1,7 @@
 import type { NativeBridgeGroup, NativeBridgeProfile } from '../dto/nativeBridgeDto';
 import type { CityTile } from '../../city/entity/city';
 import type { Street } from '../entity/urban';
+import { nativeDeckLift as deckLift } from './nativeBridgeService';
 export function nativeSurfaceColor(role: string) {
   return role === 'SIDEWALK_AREA'
     ? '#b3ae9f'
@@ -14,11 +15,6 @@ export function nativeSurfaceColor(role: string) {
 }
 export function nativeStreets(tiles: CityTile[], groups?: NativeBridgeGroup[]): Street[] {
   const result: Street[] = [];
-  const deckLift = (group: NativeBridgeGroup) =>
-    group.names?.includes('반포대교') ||
-    (group.names?.includes('청담대교') && !group.kinds?.includes('철교'))
-      ? 13.5
-      : 6.5;
   const walkingDecks = new Map<string, NonNullable<Street['nativeWalkingDecks']>>();
   const loadedWalkSources = new Set(
     tiles.flatMap((t) => t.urban?.walkPaths.map((p) => p.sourceObjectId) ?? [])
@@ -28,14 +24,18 @@ export function nativeStreets(tiles: CityTile[], groups?: NativeBridgeGroup[]): 
       if (!walkingDecks.has(sidewalk.sourceId)) walkingDecks.set(sidewalk.sourceId, []);
       walkingDecks.get(sidewalk.sourceId)!.push({
         polygons: sidewalk.polygons,
-        deckPolygons: group.polygons,
+        deckPolygons: group.displayDatumPolygons ?? group.polygons,
         deckLiftM: deckLift(group),
       });
     }
   const profileByRoad = new Map<string, NativeBridgeProfile[]>();
   for (const group of groups ?? [])
     for (const profile of group.profiles) {
-      const value = { ...profile, deckPolygons: group.polygons, deckLiftM: deckLift(group) };
+      const value = {
+        ...profile,
+        deckPolygons: group.displayDatumPolygons ?? group.polygons,
+        deckLiftM: deckLift(group),
+      };
       for (const id of profile.roadIds) {
         if (!profileByRoad.has(id)) profileByRoad.set(id, []);
         profileByRoad.get(id)!.push(value);
@@ -140,6 +140,7 @@ export function nativeStreets(tiles: CityTile[], groups?: NativeBridgeGroup[]): 
       sidewalk: '',
       bridge: true,
       nativeDeckLiftM: deckLift(group),
+      nativeDeckLevel: group.lowerDeck ? ('upper' as const) : undefined,
     };
     const integralAccess: NativeBridgeProfile[] = [];
     if (group.role === 'PEDESTRIAN_OVERPASS_AREA' && !group.profiles.some((p) => p.steps)) {
@@ -176,7 +177,7 @@ export function nativeStreets(tiles: CityTile[], groups?: NativeBridgeGroup[]): 
           polygons: group.polygons,
           displayWidthM: Math.max(...across) - Math.min(...across),
           steps: true,
-          deckPolygons: group.polygons,
+          deckPolygons: group.displayDatumPolygons ?? group.polygons,
         });
       }
     }
@@ -187,7 +188,7 @@ export function nativeStreets(tiles: CityTile[], groups?: NativeBridgeGroup[]): 
       nativeSourceRole: group.role,
       nativePolygons: group.outlinePolygons ?? group.polygons,
       bridgeName: group.names?.join(' · '),
-      nativeBridgeGroupPolygons: group.polygons,
+      nativeBridgeGroupPolygons: group.displayDatumPolygons ?? group.polygons,
       nativeBridgeProfiles: integralAccess.length ? integralAccess : undefined,
       nativeStructurePath: group.profiles.length
         ? (() => {
@@ -217,7 +218,7 @@ export function nativeStreets(tiles: CityTile[], groups?: NativeBridgeGroup[]): 
         coordinates: sidewalk.polygons[0][0],
         nativeSourceRole: 'SIDEWALK_AREA',
         nativePolygons: sidewalk.polygons,
-        nativeBridgeGroupPolygons: group.polygons,
+        nativeBridgeGroupPolygons: group.displayDatumPolygons ?? group.polygons,
       });
       if (!loadedWalkSources.has(sidewalk.sourceId))
         for (const [part, coordinates] of sidewalk.paths.entries())
@@ -232,7 +233,7 @@ export function nativeStreets(tiles: CityTile[], groups?: NativeBridgeGroup[]): 
             nativeWalkingDecks: [
               {
                 polygons: sidewalk.polygons,
-                deckPolygons: group.polygons,
+                deckPolygons: group.displayDatumPolygons ?? group.polygons,
                 deckLiftM: deckLift(group),
               },
             ],
@@ -249,7 +250,12 @@ export function nativeStreets(tiles: CityTile[], groups?: NativeBridgeGroup[]): 
         nativeBridgeProfiles: integralAccess.length ? integralAccess : undefined,
         nativeWalkingDecks: integralAccess.length
           ? undefined
-          : [{ polygons: group.polygons, deckPolygons: group.polygons }],
+          : [
+              {
+                polygons: group.polygons,
+                deckPolygons: group.displayDatumPolygons ?? group.polygons,
+              },
+            ],
       });
     group.profiles.forEach((profile, index) =>
       result.push({
@@ -262,10 +268,71 @@ export function nativeStreets(tiles: CityTile[], groups?: NativeBridgeGroup[]): 
         nativeRailPaths: profile.rail ? [profile.coordinates] : undefined,
         nativePolygons: profile.polygons,
         nativeBridgeProfiles: [
-          { ...profile, deckPolygons: group.polygons, deckLiftM: deckLift(group) },
+          {
+            ...profile,
+            deckPolygons: group.displayDatumPolygons ?? group.polygons,
+            deckLiftM: deckLift(group),
+          },
         ],
       })
     );
+    const lower = group.lowerDeck;
+    if (lower) {
+      const base = {
+        ...common,
+        nativeDeckLevel: 'lower' as const,
+        nativeDeckLiftM: lower.deckLiftM,
+        nativeBridgeGroupPolygons: group.displayDatumPolygons ?? group.polygons,
+      };
+      result.push({
+        ...base,
+        id: group.id + ':lower',
+        coordinates: lower.polygons[0][0],
+        nativeSourceRole: lower.rail ? 'RAILWAY_AREA' : 'ROAD_AREA',
+        nativePolygons: lower.polygons,
+        nativeRailPaths: lower.railPaths,
+      });
+      if (lower.sidewalks.length)
+        result.push({
+          ...base,
+          id: group.id + ':lower:sidewalk',
+          coordinates: lower.sidewalks[0][0],
+          nativeSourceRole: 'SIDEWALK_AREA',
+          nativePolygons: lower.sidewalks,
+        });
+      for (const [i, coordinates] of lower.walkPaths.entries())
+        result.push({
+          ...base,
+          id: group.id + ':lower:walk:' + i,
+          coordinates,
+          walk: true,
+          nativeSourceRole: 'SIDEWALK_DISPLAY_PATH',
+          nativeDisplayPath: true,
+          nativeWalkingDecks: [
+            {
+              polygons: lower.sidewalks,
+              deckPolygons: group.displayDatumPolygons ?? group.polygons,
+              deckLiftM: lower.deckLiftM,
+            },
+          ],
+        });
+      for (const [i, approach] of lower.approaches.entries())
+        result.push({
+          ...base,
+          id: group.id + ':lower:approach:' + i,
+          bridge: false,
+          coordinates: approach.coordinates,
+          nativeSourceRole: 'BRIDGE_APPROACH',
+          nativePolygons: approach.polygons,
+          nativeBridgeProfiles: [
+            {
+              ...approach,
+              deckPolygons: group.displayDatumPolygons ?? group.polygons,
+              deckLiftM: lower.deckLiftM,
+            },
+          ],
+        });
+    }
   }
   return result;
 }

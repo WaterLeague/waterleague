@@ -34,6 +34,14 @@ export function streetHeight(
         )
       ) + 0.016
     );
+  if (typeof road === 'object' && road.bridge && road.nativePolygons)
+    return (
+      nativeBridgeHeight(
+        terrain,
+        road.nativeBridgeGroupPolygons ?? road.nativePolygons,
+        road.nativeDeckLiftM
+      ) + (road.nativeSourceRole === 'SIDEWALK_AREA' ? 0.14 : 0.016)
+    );
   if (typeof road === 'object' && road.elevationsM) {
     let nearest = Infinity,
       height = 0;
@@ -210,6 +218,17 @@ export function streetGeometry(
                 );
                 colors.push(color.r, color.g, color.b);
               }
+              if (road.nativeBridgeProfiles?.length && !road.nativeBridgeProfiles[0].steps) {
+                const bottom = part.map((p) => [
+                  p[0],
+                  Math.max(
+                    terrainMeshHeight(terrain, p),
+                    streetHeight(terrain, p, road) - slabThickness
+                  ),
+                  p[1],
+                ]);
+                face(bottom[0], bottom[2], bottom[1], underside);
+              }
             };
             const profile = road.nativeBridgeProfiles?.[0];
             if (profile?.steps && detail) {
@@ -290,14 +309,8 @@ export function streetGeometry(
                 for (const [a, b] of drapeSegment(ring[i - 1], ring[i], terrain)) {
                   const ha = streetHeight(terrain, a, road),
                     hb = streetHeight(terrain, b, road),
-                    ga = Math.max(
-                      terrainMeshHeight(terrain, a),
-                      road.bridge ? ha - bridgeDeckThickness : -Infinity
-                    ),
-                    gb = Math.max(
-                      terrainMeshHeight(terrain, b),
-                      road.bridge ? hb - bridgeDeckThickness : -Infinity
-                    );
+                    ga = Math.max(terrainMeshHeight(terrain, a), ha - bridgeDeckThickness),
+                    gb = Math.max(terrainMeshHeight(terrain, b), hb - bridgeDeckThickness);
                   face([a[0], ga, a[1]], [b[0], gb, b[1]], [b[0], hb, b[1]], concrete);
                   face([a[0], ga, a[1]], [b[0], hb, b[1]], [a[0], ha, a[1]], concrete);
                 }
@@ -343,7 +356,10 @@ export function streetGeometry(
           }
         }
       if (detail && road.bridge && road.nativePolygons && road.nativeSourceRole !== 'SIDEWALK_AREA')
-        for (const p of bridgePierPositions(road.nativePolygons)) {
+        for (const p of bridgePierPositions(
+          road.nativePolygons,
+          road.nativeDeckLevel === 'upper'
+        )) {
           const low = terrainMeshHeight(terrain, p),
             high =
               (bridgeHeight === null ? streetHeight(terrain, p, road) : bridgeHeight + 0.016) -

@@ -3,6 +3,21 @@ import { topographyTileDto } from '../dto/topographyDto';
 import { topographyGeometry } from './topographyGeometryService';
 import type { TopographyIndex, TopographyEntry } from '../dto/topographyDto';
 import type { Terrain } from '../../terrain/entity/terrain';
+import { readNativeBridges } from '../../urban/repository/nativeBridgeDataSource';
+import {
+  bridgeTransportBindings,
+  type NativeBridgeTransport,
+} from '../../urban/service/nativeBridgeTransportService';
+let transport: Promise<NativeBridgeTransport> | undefined;
+function loadTransport() {
+  // 교통 결속 자료는 작업 간 공유하고 개별 타일 취소로 다른 작업을 끊지 않는다.
+  return (transport ??= readNativeBridges(new AbortController().signal)
+    .then(bridgeTransportBindings)
+    .catch((error: unknown) => {
+      transport = undefined;
+      throw error;
+    }));
+}
 const requests = new Map<number, AbortController>(),
   terrains = new Map<number, Terrain | null>();
 self.onmessage = async (
@@ -45,7 +60,9 @@ self.onmessage = async (
     )
       throw new Error('지형지물 타일 대응 오류');
     request.signal.throwIfAborted();
-    const data = topographyGeometry(tile, layers, terrains.get(terrainKey)!, plan, true);
+    const bindings = plan ? undefined : await loadTransport();
+    request.signal.throwIfAborted();
+    const data = topographyGeometry(tile, layers, terrains.get(terrainKey)!, plan, true, bindings);
     request.signal.throwIfAborted();
     const transfer = Object.values(data)
       .filter((value): value is Float32Array => value instanceof Float32Array)
