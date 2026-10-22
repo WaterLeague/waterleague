@@ -43,14 +43,6 @@ public class HistoricalSubmissionRepository {
   }
 
   public List<Map<String, Object>> board(String event, int page, UUID owner) {
-    return board(event, page, owner, false);
-  }
-
-  public List<Map<String, Object>> analysisRows(String event) {
-    return board(event, 0, null, true);
-  }
-
-  private List<Map<String, Object>> board(String event, int page, UUID owner, boolean all) {
     return db.query(
         "SELECT * FROM (SELECT ranked.*,RANK() OVER(PARTITION BY rules_hash,comparison_group_hash"
             + " ORDER BY difference_m3 DESC) board_rank,ROW_NUMBER() OVER(PARTITION BY"
@@ -64,9 +56,8 @@ public class HistoricalSubmissionRepository {
             + " IS NULL AND j.state='SUCCEEDED' AND s.difference_m3 IS NOT NULL AND"
             + " s.comparison_group_hash IS NOT NULL AND s.score_policy_sha256 IS NOT NULL AND"
             + " a.enabled=true AND a.approval_status='APPROVED') ranked WHERE choice=1) board WHERE"
-            + " (? OR (?::uuid IS NULL AND board_position>? AND board_position<=?) OR"
-            + " owner_id=?::uuid) ORDER BY rules_hash,comparison_group_hash,difference_m3"
-            + " DESC,created_at,id",
+            + " ((?::uuid IS NULL AND board_position>? AND board_position<=?) OR owner_id=?::uuid)"
+            + " ORDER BY rules_hash,comparison_group_hash,difference_m3 DESC,created_at,id",
         (r, n) ->
             Map.<String, Object>of(
                 "rank",
@@ -90,7 +81,6 @@ public class HistoricalSubmissionRepository {
                 "costKrw",
                 r.getBigDecimal("cost")),
         event,
-        all,
         owner,
         page * 100,
         (page + 1) * 100,

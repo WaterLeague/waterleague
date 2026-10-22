@@ -95,11 +95,16 @@ public class GameAnalysisService {
       throw new DomainException(ErrorCode.RESOURCE_NOT_FOUND);
     var rows = repo.historical(event, null);
     var scores = new TreeMap<String, List<BigDecimal>>();
-    for (var r : historical.analysisRows(event))
-      scores
-          .computeIfAbsent(
-              r.get("rulesHash") + ":" + r.get("comparisonGroupHash"), k -> new ArrayList<>())
-          .add((BigDecimal) r.get("differenceM3"));
+    // 고정된 순위 계산 코드는 유지하고 같은 스냅샷에서 모든 페이지를 집계한다.
+    for (int page = 0; ; page++) {
+      var ranked = historical.board(event, page);
+      if (ranked.isEmpty()) break;
+      for (var r : ranked)
+        scores
+            .computeIfAbsent(
+                r.get("rulesHash") + ":" + r.get("comparisonGroupHash"), k -> new ArrayList<>())
+            .add((BigDecimal) r.get("differenceM3"));
+    }
     return historicalSnapshot(
         "historical",
         event,

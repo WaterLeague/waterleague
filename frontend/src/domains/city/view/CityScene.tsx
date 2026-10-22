@@ -33,7 +33,9 @@ import type { City, CityBuilding, CityFocus, CityTile } from '../entity/city';
 import type { CityPlayRegion } from '../dto/cityPlayDto';
 import { polygonShapes } from '../../catalog/service/mapGeometryService';
 import { watchContextLoss } from '../../catalog/service/sceneLifecycleService';
-import { positionSceneLabels } from '../../catalog/service/sceneLabelService';
+import { labelLeaderEnd, positionSceneLabels } from '../../catalog/service/sceneLabelService';
+import { positionDistrictLabels } from '../service/districtLabelService';
+import { districtLabelBounds, overviewCamera } from '../service/overviewCameraService';
 
 import type {
   SharedSite,
@@ -275,12 +277,14 @@ function Controls({
   onCamera,
   onNavigate,
   onUnavailable,
+  onOverview,
 }: {
   focus: CityFocus;
   bounds: City['bounds'];
   onCamera: (state: CameraState) => void;
   onNavigate: (state: CameraState) => void;
   onUnavailable: () => void;
+  onOverview: (value: boolean) => void;
 }) {
   const terrain = useContext(TerrainContext);
   const controls = useRef<ComponentRef<typeof OrbitControls> | null>(null),
@@ -340,17 +344,24 @@ function Controls({
       return;
     }
     appliedFocus.current = focus.key;
+    onOverview(focus.overview === true);
     let [x, y] = focus.center;
     let distance = focus.distance;
     if (focus.overview && camera instanceof THREE.PerspectiveCamera) {
-      x = (bounds[0] + bounds[2]) / 2;
-      y = (bounds[1] + bounds[3]) / 2;
-      const halfWidth = (bounds[2] - bounds[0]) / 2;
-      const halfHeight = (bounds[3] - bounds[1]) / 2;
-      const tangent = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * 0.88;
-      distance =
-        Math.max(halfWidth / ((tangent * size.width) / size.height), (halfHeight * 0.8) / tangent) +
-        halfHeight * 0.6;
+      const area = districtLabelBounds(
+        gl.domElement.closest('.city-stage'),
+        size.width,
+        size.height
+      );
+      // 전체 보기의 지도와 라벨을 조작부·예산창 사이에 맞춘다.
+      const view = overviewCamera(bounds, size.width, size.height, camera.fov, {
+        left: area.left + 28,
+        right: area.right - 28,
+        top: area.top + 22,
+        bottom: area.bottom - 22,
+      });
+      [x, y] = view.center;
+      distance = view.distance;
     }
     const elevation = terrainHeight(terrain, [x, y]) + (focus.heightM ?? 0);
     if (focus.preserveAngle && controls.current) {
@@ -363,17 +374,18 @@ function Controls({
     controls.current?.update();
     report(true);
     invalidate();
-  }, [camera, focus, bounds, size.width, size.height, invalidate, report, terrain]);
+  }, [camera, focus, bounds, size.width, size.height, invalidate, report, terrain, onOverview, gl]);
   return (
     <OrbitControls
       ref={controls}
       makeDefault
       minDistance={minimumMapDistance}
-      maxDistance={150000}
+      maxDistance={350000}
       maxPolarAngle={Math.PI * 0.46}
       screenSpacePanning={false}
       enableDamping
       dampingFactor={0.12}
+      onStart={() => onOverview(false)}
       onChange={() => report()}
       onEnd={() => report()}
     />
@@ -384,20 +396,34 @@ function ProjectedLabels({
   regions,
   labels,
   selected,
+  overview,
 }: {
   city: City;
   regions: CityPlayRegion[];
   labels: Map<string, HTMLElement>;
   selected: string;
+  overview: boolean;
 }) {
   const terrain = useContext(TerrainContext);
+  const invalidate = useThree((s) => s.invalidate);
   const controls = useThree((s) => s.controls) as ComponentRef<typeof OrbitControls> | null;
   const point = useMemo(() => new THREE.Vector3(), []);
   const last = useRef('');
   const dirty = useRef(true);
   useEffect(() => {
     dirty.current = true;
-  }, [city, regions, labels, selected, terrain, controls]);
+    invalidate();
+  }, [city, regions, labels, selected, terrain, controls, overview, invalidate]);
+  useEffect(() => {
+    const layer = labels.values().next().value?.parentElement;
+    if (!layer) return;
+    const observer = new MutationObserver(() => {
+      dirty.current = true;
+      invalidate();
+    });
+    observer.observe(layer, { subtree: true, childList: true, characterData: true });
+    return () => observer.disconnect();
+  }, [labels, invalidate]);
   useFrame(({ camera, size }) => {
     const signature = `${camera.matrixWorld.elements.join(',')}:${camera.projectionMatrix.elements.join(',')}:${size.width}:${size.height}:${labels.size}`;
     if (!dirty.current && last.current === signature) return;
@@ -406,8 +432,8 @@ function ProjectedLabels({
     const candidates = [];
     for (const element of labels.values()) element.style.display = 'none';
     const distance = controls ? camera.position.distanceTo(controls.target) : Infinity;
-    if (distance < detailLabelDistance) return;
-    const near = distance < 9000;
+    if (!overview && distance < detailLabelDistance) return;
+    const near = !overview && distance < 9000;
     const locations = near
       ? regions.map((r) => ({ id: r.mapId, districtId: r.districtId, center: r.center }))
       : city.districts.map((d) => ({ ...d, districtId: d.id }));
@@ -415,26 +441,55 @@ function ProjectedLabels({
       point
         .set(location.center[0], terrainHeight(terrain, location.center) + 60, -location.center[1])
         .project(camera);
-      if (Math.abs(point.x) > 1 || Math.abs(point.y) > 1 || Math.abs(point.z) > 1) continue;
+      if (!overview && (Math.abs(point.x) > 1 || Math.abs(point.y) > 1 || Math.abs(point.z) > 1))
+        continue;
+      const element = labels.get(location.id);
+      if (!element) continue;
+      element.style.display = 'block';
+      element.title = element.textContent ?? '';
+      element.classList.remove('is-compact');
       candidates.push({
         id: location.id,
         x: ((point.x + 1) * size.width) / 2,
         y: ((1 - point.y) * size.height) / 2,
-        width: near ? 210 : 172,
-        height: 44,
+        width: 0,
+        height: 0,
         priority: location.districtId === selected ? 2 : 0,
       });
     }
-    for (const label of positionSceneLabels(candidates, {
-      left: 12,
-      top: 130,
-      right: size.width - 12,
-      bottom: size.height - 110,
-    })) {
+    for (const label of candidates) {
+      const element = labels.get(label.id)!;
+      label.width = element.offsetWidth;
+      label.height = element.offsetHeight + (element.classList.contains('is-leading') ? 12 : 0);
+    }
+    const stage = labels.values().next().value?.parentElement?.parentElement;
+    const bounds = districtLabelBounds(stage, size.width, size.height);
+    let placed = near
+      ? positionSceneLabels(candidates, bounds)
+      : positionDistrictLabels(candidates, bounds);
+    if (!near && placed.length < candidates.length) {
+      for (const label of candidates) labels.get(label.id)!.classList.add('is-compact');
+      for (const label of candidates) {
+        const element = labels.get(label.id)!;
+        label.width = element.offsetWidth;
+        label.height = element.offsetHeight;
+      }
+      placed = positionDistrictLabels(candidates, bounds);
+    }
+    for (const label of candidates) labels.get(label.id)!.style.display = 'none';
+    for (const label of placed) {
       const element = labels.get(label.id);
       if (!element) continue;
       element.style.display = 'block';
       element.style.transform = `translate(${label.x}px,${label.y}px) translate(-50%,-50%)`;
+      const anchor = candidates.find((v) => v.id === label.id)!;
+      const end = labelLeaderEnd(anchor, label);
+      const dx = anchor.x - end.x,
+        dy = anchor.y - end.y;
+      element.style.setProperty('--leader-left', `${end.x - label.x + label.width / 2}px`);
+      element.style.setProperty('--leader-top', `${end.y - label.y + label.height / 2}px`);
+      element.style.setProperty('--leader-width', `${near ? 0 : Math.hypot(dx, dy)}px`);
+      element.style.setProperty('--leader-angle', `${Math.atan2(dy, dx)}rad`);
     }
   });
   return null;
@@ -589,6 +644,7 @@ const CityScene = memo(function CityScene({
     () => publicInfrastructureBuildingIds(publicAssets),
     [publicAssets]
   );
+  const [overviewActive, setOverviewActive] = useState(focus.overview === true);
   const overviewIds = useMemo(() => new Set(city.overviewBuildings.map((b) => b.id)), [city]);
   const detailTileIds = useMemo(() => new Set(tiles.map((tile) => tile.id)), [tiles]);
   const symbols = useMemo(
@@ -605,7 +661,7 @@ const CityScene = memo(function CityScene({
       events={mapEvents}
       frameloop={connected ? 'demand' : 'never'}
       dpr={[1, 1.5]}
-      camera={{ position: [0, 30000, 22000], near: 5, far: 250000, fov: 45 }}
+      camera={{ position: [0, 30000, 22000], near: 5, far: 600000, fov: 45 }}
       gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
     >
       <TerrainContext.Provider value={terrain}>
@@ -884,7 +940,13 @@ const CityScene = memo(function CityScene({
               animate={animateRain}
               terrain={terrain}
             />
-            <ProjectedLabels city={city} regions={regions} labels={labels} selected={selected} />
+            <ProjectedLabels
+              city={city}
+              regions={regions}
+              labels={labels}
+              selected={selected}
+              overview={overviewActive}
+            />
             {!facilityType && (
               <InstallationNameplates
                 center={rainCamera.center}
@@ -902,6 +964,7 @@ const CityScene = memo(function CityScene({
               onCamera={onCamera}
               onNavigate={onNavigate}
               onUnavailable={onUnavailable}
+              onOverview={setOverviewActive}
             />
           </WaterScene>
         </UrbanEnvironment>

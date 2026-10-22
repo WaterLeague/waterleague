@@ -1272,7 +1272,9 @@ function Explorer({
                 >
                   <span aria-hidden="true">● </span>
                   {d.name}
-                  {ownDistrictId === d.id ? ' · 내 구' : ''}{' '}
+                  {ownDistrictId === d.id && (
+                    <span className="district-own-note"> · 내 구</span>
+                  )}{' '}
                   {wetIds.has(d.id) && (
                     <CloudRain
                       size={13}

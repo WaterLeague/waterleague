@@ -232,6 +232,33 @@
   color: #5c6f73;
   font-weight: 440;
 }
+.city-district-label::before {
+  content: '';
+  position: absolute;
+  left: var(--leader-left, 0);
+  top: var(--leader-top, 0);
+  width: var(--leader-width, 0);
+  height: 1px;
+  background: #8ca3b8;
+  box-shadow: 0 0 1px #fff;
+  transform: rotate(var(--leader-angle, 0rad));
+  transform-origin: left center;
+  pointer-events: none;
+}
+.game-shell .shared-play-layout .city-district-label.is-compact {
+  min-height: 30px;
+  padding: 4px 6px;
+  font-size: 10px;
+}
+.game-shell .city-district-label.is-compact :is(small, .district-own-note, [aria-hidden]) {
+  display: none;
+}
+.city-district-label.is-compact::after {
+  display: none;
+}
+.city-map-labels {
+  z-index: 20;
+}
 .game-shell .city-district-label.selected {
   background: #eef4ff;
   border-color: #285bc3;
