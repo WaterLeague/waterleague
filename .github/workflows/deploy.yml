@@ -33,7 +33,6 @@ jobs:
           ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           KMA_API_KEY: ${{ secrets.KMA_API_KEY }}
-          KMA_API_KEY_BACKUP: ${{ secrets.KMA_API_KEY_BACKUP }}
         run: python3 deploy/ci.py validate
       - name: ARM64 운영 이미지 빌드·게시
         env:
@@ -51,7 +50,6 @@ jobs:
           ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           KMA_API_KEY: ${{ secrets.KMA_API_KEY }}
-          KMA_API_KEY_BACKUP: ${{ secrets.KMA_API_KEY_BACKUP }}
         run: python3 deploy/ci.py deploy
       - name: 공개 HTTPS 확인
         run: curl --fail --silent --show-error --retry 12 --retry-delay 10 --retry-all-errors --max-time 20 https://waterleague.cloud/api/v1/health

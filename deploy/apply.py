@@ -138,10 +138,10 @@ def main():
             if not isinstance(value, str) or not value:
                 raise ValueError('RUNTIME_SECRET_MISSING')
             private(secret_dir / name, value, UID)
-        backup_key = runtime['secrets'].get('KMA_API_KEY_BACKUP', '')
-        if not isinstance(backup_key, str):
-            raise ValueError('RUNTIME_SECRET_INVALID')
-        private(secret_dir / 'kma-api-key-backup', backup_key.strip(), UID)
+        # 이전 릴리스로 복귀해도 폐기한 키를 다시 사용하지 않도록 빈 파일만 남긴다.
+        retired = secret_dir / 'kma-api-key-backup'
+        if retired.exists():
+            private(retired, '', UID)
         compose(release, 'up', '-d', '--no-build', '--wait', '--wait-timeout', '120', 'db')
         for service in ('bootstrap', 'migrate', 'grant', 'admin'):
             compose(release, 'run', '--rm', '--no-deps', '-T', service)
@@ -168,6 +168,8 @@ def main():
     finally:
         (secret_dir / 'admin-password').unlink(missing_ok=True)
         (secret_dir / 'admin-username').unlink(missing_ok=True)
+    # 새 릴리스의 정상 시작을 확인한 뒤 이전 Secret 마운트 파일을 제거한다.
+    (secret_dir / 'kma-api-key-backup').unlink(missing_ok=True)
 
 
 if __name__ == '__main__':

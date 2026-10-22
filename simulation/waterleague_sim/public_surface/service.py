@@ -77,7 +77,7 @@ def snapshot(directory,bundle,manifest):
 
 
 def run_engine(directory):
-    environment={k:v for k,v in os.environ.items() if k in ('PATH','LANG','LC_ALL','HOME','TMPDIR','KMA_API_KEY','KMA_API_KEY_BACKUP','EXTERNAL_REQUEST_STATE_DIR')}
+    environment={k:v for k,v in os.environ.items() if k in ('PATH','LANG','LC_ALL','HOME','TMPDIR','KMA_API_KEY','EXTERNAL_REQUEST_STATE_DIR')}
     environment['PYTHONPATH']=str(repo.ROOT/'simulation')
     try:
         code=run_process([sys.executable,'-m','waterleague_sim.public_surface.run_job',str(directory)],

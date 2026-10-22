@@ -190,7 +190,7 @@ public class ExternalRequestStore {
     return body;
   }
 
-  // 인증키 전환 뒤에도 같은 관측 원문과 진행 중인 수집을 공유한다.
+  // 동일 관측의 원문과 진행 중인 수집을 API·워커 요청에서 재사용한다.
   public Response acquireCached(
       Policy policy, String request, Duration ttl, int maximum, Supplier<String> loader) {
     String id = hash(request.getBytes(StandardCharsets.UTF_8)),

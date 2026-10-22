@@ -289,8 +289,8 @@ def process(conn, job, root):
 
 
 def run_once(conn, root):
-    # 기본·예비 계정 모두 차단되면 시설별 실패 작업을 추가하지 않는다.
-    if not request_store.kma_available(os.environ.get('KMA_API_KEY', '')): return False
+    # 관측 호출이 차단되면 시설별 실패 작업을 추가하지 않는다.
+    if not request_store.available(os.environ.get('KMA_API_KEY', '')): return False
     job = claim(conn)
     if not job:
         return False

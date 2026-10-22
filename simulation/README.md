@@ -98,7 +98,7 @@ PYTHONPATH=simulation tmp/flood-venv/bin/python scripts/compare_connected_facili
 
 ## 직접 AWS 응답의 지표 계산
 
-`run_live_surface.py`는 입력 JSON의 `mode`(`surface`/`coupled`), 명시적인 `model`, `rainfall`의 `startUtc`·`endUtc`·`stationByTriangle`·`assignmentEvidence`를 사용한다. 현재 관측은 공식 API에서 가져오며 서버의 유효한 동일 원문을 공유하고, 시간대/시계/소유권/분 관측을 검사한 뒤 실행 입력에 보존한다. 기본 `KMA_API_KEY`의 소진·접근/통신 실패에는 선택 설정 `KMA_API_KEY_BACKUP`으로 한 번 전환한다. 별도 계정 키마다 API·워커 합계 일 20,000회·5GB를 관리한다. 인증키를 저장 입력·로그·수치 엔진 자식 프로세스에 넣지 않는다.
+`run_live_surface.py`는 입력 JSON의 `mode`(`surface`/`coupled`), 명시적인 `model`, `rainfall`의 `startUtc`·`endUtc`·`stationByTriangle`·`assignmentEvidence`를 사용한다. 현재 관측은 공식 API에서 가져오며 서버의 유효한 동일 원문을 공유하고, 시간대/시계/소유권/분 관측을 검사한 뒤 실행 입력에 보존한다. 기본 `KMA_API_KEY` 하나만 사용하며 API·워커 합계 일 18,000회·4.5GB에서 수집을 중단한다. 공식 20,000회·5GB 한도에 10% 여유를 두고 소진·접근 실패 시 다른 키로 전환하지 않는다. 인증키를 저장 입력·로그·수치 엔진 자식 프로세스에 넣지 않는다.
 
 ```sh
 tmp/flood-venv/bin/python scripts/run_live_surface.py \
