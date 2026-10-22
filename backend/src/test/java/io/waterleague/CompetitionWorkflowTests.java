@@ -162,6 +162,24 @@ class CompetitionWorkflowTests extends PostgresIntegrationTest {
   }
 
   @Test
+  void immediateRealtimeInstallationUsesSameSecondAsParticipation() throws Exception {
+    var player = actor(null);
+    var c = create(host(), "REALTIME");
+    join(player, c);
+    var id = UUID.fromString(c.path("id").asString());
+    var joined = competitionRepo.joined(id, player.id());
+    assertThat(joined).isEqualTo(joined.truncatedTo(ChronoUnit.SECONDS));
+    var installation =
+        install(
+            player, c, joined, Instant.parse(c.path("closesAt").asString()), "RAIN_GARDEN", "1");
+    var entries =
+        ok(player, "GET", base(c) + "/results", null, 200).path("groups").get(0).path("entries");
+    assertThat(entries.size()).isEqualTo(1);
+    assertThat(entries.get(0).path("installations").get(0).path("id").asString())
+        .isEqualTo(installation.toString());
+  }
+
+  @Test
   void enforcesHostApprovalFrozenRulesIdempotencyAndPrivateResults() throws Exception {
     var owner = host();
     var other = host();

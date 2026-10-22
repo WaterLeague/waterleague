@@ -116,12 +116,15 @@ public class CompetitionRepository {
   }
 
   public void join(UUID id, UUID owner, String hash) {
+    // 실시간 설치와 참가 시각을 같은 초 단위로 비교해 직후 설치 누락을 막는다.
     db.update(
-        "INSERT INTO game_competition_participants(competition_id,owner_id,rules_hash)"
-            + " VALUES(?,?,?)",
-        id,
+        "INSERT INTO game_competition_participants(competition_id,owner_id,rules_hash,joined_at)"
+            + " SELECT id,?,?,CASE WHEN mode='REALTIME' THEN"
+            + " date_trunc('second',clock_timestamp()) ELSE clock_timestamp() END"
+            + " FROM game_competitions WHERE id=?",
         owner,
-        hash);
+        hash,
+        id);
   }
 
   public boolean entered(UUID id, UUID job, UUID owner) {
