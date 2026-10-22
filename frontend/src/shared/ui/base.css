@@ -1,7 +1,7 @@
 :root {
   font-family: 'Avenir Next', 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif;
-  color: #263c2f;
-  background: #f7f8f2;
+  color: #263d55;
+  background: #f5f8fc;
   font-synthesis: none;
   font-size: 14px;
   -webkit-font-smoothing: antialiased;
@@ -41,7 +41,7 @@ a:focus-visible,
 input:focus-visible,
 textarea:focus-visible,
 select:focus-visible {
-  outline: 2px solid #24563a;
+  outline: 2px solid #416f9e;
   outline-offset: 3px;
 }
 a {
@@ -63,14 +63,14 @@ h3 {
   align-items: center;
   gap: 60px;
   padding: 0 28px;
-  border-bottom: 1px solid #dce1d7;
+  border-bottom: 1px solid #dae3ee;
 }
 .wordmark {
   display: flex;
   align-items: center;
   gap: 12px;
   white-space: nowrap;
-  color: #233f31;
+  color: #263d55;
 }
 .topbar nav {
   align-self: stretch;
@@ -81,16 +81,16 @@ h3 {
   font-weight: 600;
   font-size: 13px;
   position: relative;
-  color: #6a7865;
+  color: #62758b;
   padding: 0 3px;
 }
 .topbar nav :is(button, a).active {
-  color: #244e36;
+  color: #315a82;
 }
 .topbar nav :is(button, a).active:after {
   content: '';
   height: 3px;
-  background: #285c3c;
+  background: #416f9e;
   position: absolute;
   bottom: 0;
   left: 0;
@@ -113,7 +113,7 @@ h3 {
   font-size: 10px;
   letter-spacing: 1.7px;
   font-weight: 700;
-  color: #687a5e;
+  color: #617b96;
   display: flex;
   justify-content: space-between;
 }
@@ -121,13 +121,13 @@ h3 {
   display: flex;
   align-items: center;
   gap: 6px;
-  color: #65775d;
+  color: #627890;
 }
 .section-label {
   display: flex;
   justify-content: space-between;
   font-size: 11px;
-  color: #65795b;
+  color: #627890;
 }
 .section-label > span {
   font-size: 10px;
@@ -137,26 +137,26 @@ h3 {
   align-items: center;
   gap: 8px;
   font-size: 12px;
-  color: #416442;
+  color: #416a93;
 }
 .outline-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid #b9c9ad;
+  border: 1px solid #bdccdf;
   border-radius: 4px;
   padding: 10px 15px;
-  color: #46673b;
+  color: #456f99;
   font-size: 12px;
   gap: 8px;
-  background: #fafcf6;
+  background: #f8fbff;
 }
 .primary-button {
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  background: #2b553b;
+  background: #416f9e;
   border-radius: 4px;
   padding: 14px 17px;
   color: #fff;
@@ -166,58 +166,58 @@ h3 {
 .primary-button:hover,
 .simulate-button:hover {
   color: #fff;
-  background: #3d6849;
+  background: #315a82;
 }
 .source-credit {
   display: flex;
   align-items: center;
   gap: 6px;
-  color: #607253;
+  color: #62758b;
 }
 .state {
   font-size: 10px;
   padding: 4px 7px;
-  border: 1px solid #bacbad;
+  border: 1px solid #bdccdd;
   border-radius: 3px;
 }
 .scene-label {
   font-size: 11px;
-  background: #fafcf2e8;
-  border: 1px solid #a9bda0;
+  background: #f8fbffe8;
+  border: 1px solid #a5bad1;
   padding: 5px 9px;
   border-radius: 4px;
   white-space: nowrap;
-  color: #426037;
+  color: #416a93;
 }
 .panel-intro {
   line-height: 1.8;
-  color: #5a6b52;
+  color: #62758b;
 }
 .intro-steps > div {
   display: flex;
   align-items: center;
   gap: 18px;
   padding: 24px 0;
-  border-bottom: 1px solid #e0e7d8;
+  border-bottom: 1px solid #dce5ef;
 }
 .intro-steps span {
   font-size: 22px;
-  color: #91a181;
+  color: #7890aa;
   font-weight: 300;
 }
 .intro-steps p {
   font-size: 12px;
   line-height: 1.8;
-  color: #738565;
+  color: #6b829c;
 }
 .intro-steps b {
   font-weight: 500;
-  color: #46613b;
+  color: #416a93;
 }
 .micro-note {
   font-size: 11px;
   line-height: 1.8;
-  color: #617457;
+  color: #62758b;
   margin-top: 15px;
 }
 .error-view {

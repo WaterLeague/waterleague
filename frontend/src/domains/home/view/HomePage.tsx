@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { Fragment, useState, type ReactNode } from 'react';
 import {
   ArrowRight,
   ArrowUpRight,
@@ -19,6 +19,8 @@ import { useHomeMotion } from '../controller/useHomeMotion';
 import { GameStartDialog } from './GameStartDialog';
 import { HomeScoreGuide } from './HomeScoreGuide';
 import { HomeMapGuide } from './HomeMapGuide';
+import { HomeSeoulGuide } from './HomeSeoulGuide';
+import { HomeGameImage } from './HomeGameImage';
 import './home.css';
 
 function HomeLink({
@@ -70,7 +72,7 @@ export function HomePage({ accountId = null }: { accountId?: string | null }) {
             >
               게임 시작하기 <ArrowUpRight size={18} />
             </button>
-            <a href="#home-modes" className="home-button secondary">
+            <a href="#home-seoul" className="home-button secondary">
               게임 알아보기 <ArrowRight size={16} />
             </a>
           </div>
@@ -131,6 +133,8 @@ export function HomePage({ accountId = null }: { accountId?: string | null }) {
         </div>
       </section>
 
+      <HomeSeoulGuide />
+
       <section className="home-modes" id="home-modes" aria-labelledby="home-modes-title">
         <div className="home-section-heading">
           <span className="home-eyebrow">게임 모드</span>
@@ -139,33 +143,56 @@ export function HomePage({ accountId = null }: { accountId?: string | null }) {
         </div>
         <div className="home-mode-grid">
           {homeModes.map((mode) => (
-            <article className="home-mode" key={mode.id}>
-              <HomePreview mode={mode.id} label={mode.title} />
-              <div className="home-mode-copy">
-                <span className="home-eyebrow">
-                  {mode.number} / {mode.tag}
-                </span>
-                <h3>{mode.title}</h3>
-                <p>{mode.intro}</p>
-                <ul>
-                  {mode.rules.map((rule) => (
-                    <li key={rule}>
-                      <Check size={15} />
-                      {rule}
-                    </li>
-                  ))}
-                </ul>
-                <HomeLink href={mode.href} className="home-text-link">
-                  {mode.link}
-                  <ArrowUpRight size={18} />
-                </HomeLink>
-              </div>
-            </article>
+            <Fragment key={mode.id}>
+              <article className={`home-mode home-mode-${mode.id}`}>
+                <HomeGameImage {...mode.image} />
+                <div className="home-mode-copy">
+                  <span className="home-eyebrow">
+                    {mode.number} / {mode.tag}
+                  </span>
+                  <h3>{mode.title}</h3>
+                  <p>{mode.intro}</p>
+                  <ul>
+                    {mode.rules.map((rule) => (
+                      <li key={rule}>
+                        <Check size={15} />
+                        {rule}
+                      </li>
+                    ))}
+                  </ul>
+                  <HomeLink href={mode.href} className="home-text-link">
+                    {mode.link}
+                    <ArrowUpRight size={18} />
+                  </HomeLink>
+                </div>
+              </article>
+              {mode.id === 'weekly' && (
+                <article className="home-shared-story">
+                  <div className="home-story-copy">
+                    <span className="home-eyebrow">같은 지도에서 함께</span>
+                    <h3>다른 사람이 설치한 시설도 보여요.</h3>
+                    <p>
+                      내 시설뿐 아니라 다른 플레이어가 설치한 시설도 지도에서 확인할 수 있어요. 누가
+                      어디에 어떤 시설을 놓았는지, 그 시설의 누적 점수까지 함께 살펴보세요.
+                    </p>
+                    <HomeLink href="/weekly" className="home-text-link">
+                      설치된 시설 살펴보기 <ArrowUpRight size={18} />
+                    </HomeLink>
+                  </div>
+                  <HomeGameImage
+                    src="/home/game/shared-installations.png"
+                    alt="여러 플레이어의 닉네임과 시설별 누적 점수가 함께 표시된 도봉구 설치 지도"
+                    width={2148}
+                    height={1294}
+                    caption="다른 플레이어의 설치 시설과 누적 점수 · 게임 화면"
+                  />
+                </article>
+              )}
+            </Fragment>
           ))}
         </div>
         <p className="home-caption">
-          3D 장면은 게임 방식의 이해를 돕는 모형입니다. 실제 관측·계산 결과는 게임에서 확인할 수
-          있어요.
+          이미지는 실제 게임의 촬영 화면입니다. 현재 순위와 점수는 게임에서 확인하세요.
         </p>
       </section>
 

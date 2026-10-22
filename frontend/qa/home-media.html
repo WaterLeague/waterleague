@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>홈 서울 지도 촬영 · 로컬</title>
+    <style>
+      body {
+        margin: 0;
+        font: 14px system-ui;
+        background: #eef2ef;
+        color: #294d51;
+      }
+      header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px;
+        height: 48px;
+      }
+      button,
+      input {
+        font: inherit;
+        padding: 8px;
+      }
+      input {
+        width: 80px;
+      }
+      #capture {
+        width: 1600px;
+        height: 900px;
+      }
+      #capture canvas {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="./homeMedia.tsx"></script>
+  </body>
+</html>

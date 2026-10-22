@@ -14,7 +14,7 @@ test('홈에서 실제 설치 시설 7종과 두 게임 모드·각 기능으로
   for (const item of homeFacilities) expect(html).toContain(facilities[item.type].name);
   for (const mode of homeModes) {
     expect(html).toContain(`href="${mode.href}"`);
-    expect(html).toContain(`${mode.title} 3D 미리보기`);
+    expect(html).toContain(mode.image.src);
   }
   for (const href of ['/rankings', '/competitions', '/#home-data'])
     expect(html).toContain(`href="${href}"`);

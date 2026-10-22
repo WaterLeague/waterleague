@@ -1,11 +1,11 @@
 :root {
-  --site-background: #f8f9f6;
+  --site-background: #f5f8fc;
   --site-paper: #fff;
-  --site-ink: #263f43;
-  --site-muted: #62716e;
-  --site-accent: #35666b;
-  --site-line: #dce2dc;
-  --site-soft: #eef2ee;
+  --site-ink: #263d55;
+  --site-muted: #62758b;
+  --site-accent: #416f9e;
+  --site-line: #dae3ee;
+  --site-soft: #eaf1f9;
   --site-radius: 8px;
 }
 /* 게임 내부 조작부와 분리해 일반 페이지와 모달에만 적용한다. */
@@ -65,7 +65,7 @@
 }
 .game-shell .site-nav nav a:hover {
   color: var(--site-accent);
-  background: #eef2ee;
+  background: #eaf1f9;
 }
 .game-shell .site-nav .login-button {
   border-radius: var(--site-radius);
@@ -132,11 +132,11 @@
 }
 .game-shell :is(.site-page, .site-dialog) .outline-button {
   background: var(--site-paper);
-  border-color: #bdcbc5;
+  border-color: #bdccdd;
   color: var(--site-ink);
 }
 .game-shell :is(.site-page, .site-dialog) :is(.solid-button, .primary-button):hover:enabled {
-  background: #285359;
+  background: #315a82;
 }
 .game-shell :is(.site-page, .site-dialog) .outline-button:hover:enabled {
   background: var(--site-soft);
@@ -146,7 +146,7 @@
   min-width: 0;
   max-width: 100%;
   padding: 10px 12px;
-  border: 1px solid #c7d2cc;
+  border: 1px solid #c7d3e1;
   border-radius: var(--site-radius);
   background: var(--site-paper);
   color: var(--site-ink);
@@ -159,7 +159,7 @@
   color: var(--site-ink);
 }
 .game-shell :is(.site-page, .site-dialog) input::placeholder {
-  color: #77847e;
+  color: #6d8095;
   font-size: 12px;
 }
 .game-shell
@@ -231,7 +231,7 @@
 .game-shell .site-page .weekly-tabs button[aria-pressed='true'] {
   background: #fff;
   color: var(--site-ink);
-  box-shadow: 0 1px 3px #263f4314;
+  box-shadow: 0 1px 3px #263d5514;
 }
 .game-shell .site-page .weekly-tables {
   gap: 32px;
@@ -267,10 +267,10 @@
   font-weight: 550;
 }
 .game-shell .site-page .weekly-board tr.own {
-  background: #e8f1ec;
+  background: #e6eff9;
 }
 .game-shell .site-page .weekly-board tbody tr:hover {
-  background: #eff3ee;
+  background: #f0f5fb;
 }
 .game-shell .site-page .historical-board > :is(p, label) {
   display: block;
@@ -296,7 +296,7 @@
 }
 .game-shell .site-page .contest-card:hover {
   transform: none;
-  border-color: #8ba69b;
+  border-color: #8ba8c6;
 }
 .game-shell .site-page :is(.contest-note, .scope-note) {
   padding: 14px 18px;
@@ -311,7 +311,7 @@
 }
 .game-shell .site-page :is(.contest-empty, .empty-state, .site-empty) {
   padding: 56px 24px;
-  border: 1px dashed #c7d2cc;
+  border: 1px dashed #c7d3e1;
   border-radius: 12px;
   background: transparent;
   color: var(--site-muted);
@@ -326,7 +326,7 @@
 }
 .game-shell .site-page .contest-options .contest-check:has(input:checked) {
   border-color: var(--site-accent);
-  background: #e8f1ec;
+  background: #e6eff9;
 }
 .game-shell .site-page .contest-admin-filters label {
   display: flex;
@@ -342,7 +342,7 @@
   text-align: left;
 }
 .game-shell .site-page .research-row[aria-pressed='true'] {
-  background: #e8f1ec;
+  background: #e6eff9;
   border-color: var(--site-accent);
 }
 .game-shell .site-page .research-row span,
@@ -367,7 +367,7 @@
   transition: border-color 180ms;
 }
 .game-shell .site-page .disaster-card:hover {
-  border-color: #8ba69b;
+  border-color: #8ba8c6;
   transform: none;
   box-shadow: none;
 }
@@ -402,12 +402,12 @@
   border: 1px solid var(--site-line);
   border-radius: 12px;
   background: var(--site-paper);
-  box-shadow: 0 20px 70px #18343830;
+  box-shadow: 0 20px 70px #203c5a30;
   max-height: calc(100dvh - 40px);
   overflow: auto;
 }
 .game-shell .site-dialog::backdrop {
-  background: #18343870;
+  background: #203c5a70;
   backdrop-filter: blur(3px);
 }
 .game-shell .site-dialog h2 {
