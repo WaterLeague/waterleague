@@ -29,6 +29,10 @@ def validate():
         raise ValueError('ADMIN_PASSWORD_INVALID')
     if not re.fullmatch(r'https://discord\.com/api/(?:v10/)?webhooks/[0-9]{10,25}/[A-Za-z0-9_-]{40,200}', os.environ['DISCORD_WEBHOOK_URL']):
         raise ValueError('DISCORD_WEBHOOK_INVALID')
+    for name in ('KMA_API_KEY', 'KMA_API_KEY_BACKUP'):
+        value = os.environ.get(name, '').strip()
+        if len(value) > 4096 or any(ord(c) < 33 or ord(c) > 126 for c in value):
+            raise ValueError('KMA_SECRET_INVALID')
 
 
 def build():
@@ -71,7 +75,7 @@ def deploy():
         askpass = private('askpass', '#!/bin/sh\nprintf "%s\\n" "$OCI_SSH_PASSWORD"\n', 0o700)
         runtime = private('runtime.json', json.dumps(release | {
             'registryUser': os.environ['GITHUB_ACTOR'], 'registryToken': os.environ['GHCR_TOKEN'],
-            'secrets': {key: os.environ[key] for key in ('ADMIN_USERNAME', 'ADMIN_PASSWORD', 'DISCORD_WEBHOOK_URL', 'KMA_API_KEY')}
+            'secrets': {key: os.environ.get(key, '') for key in ('ADMIN_USERNAME', 'ADMIN_PASSWORD', 'DISCORD_WEBHOOK_URL', 'KMA_API_KEY', 'KMA_API_KEY_BACKUP')}
         }))
         bundle = directory / 'release.tar.gz'
         with tarfile.open(bundle, 'w:gz') as archive:

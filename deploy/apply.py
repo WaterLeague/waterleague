@@ -138,6 +138,10 @@ def main():
             if not isinstance(value, str) or not value:
                 raise ValueError('RUNTIME_SECRET_MISSING')
             private(secret_dir / name, value, UID)
+        backup_key = runtime['secrets'].get('KMA_API_KEY_BACKUP', '')
+        if not isinstance(backup_key, str):
+            raise ValueError('RUNTIME_SECRET_INVALID')
+        private(secret_dir / 'kma-api-key-backup', backup_key.strip(), UID)
         compose(release, 'up', '-d', '--no-build', '--wait', '--wait-timeout', '120', 'db')
         for service in ('bootstrap', 'migrate', 'grant', 'admin'):
             compose(release, 'run', '--rm', '--no-deps', '-T', service)

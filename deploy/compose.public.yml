@@ -3,11 +3,12 @@ services:
     secrets:
       - {source: discord-webhook-url, target: waterleague.discord-webhook-url}
       - {source: kma-api-key, target: waterleague.kma-key}
+      - {source: kma-api-key-backup, target: waterleague.kma-backup-key}
     mem_limit: 5g
     cpus: 1.5
   worker:
     command: [python, /app/deploy/worker-entrypoint.py]
-    secrets: [kma-api-key]
+    secrets: [kma-api-key, kma-api-key-backup]
     networks: [database, egress]
     mem_limit: 4g
     cpus: 1.5
@@ -45,5 +46,6 @@ networks:
 secrets:
   discord-webhook-url: {file: '${WL_STATE_DIR}/secrets/discord-webhook-url'}
   kma-api-key: {file: '${WL_STATE_DIR}/secrets/kma-api-key'}
+  kma-api-key-backup: {file: '${WL_STATE_DIR}/secrets/kma-api-key-backup'}
   admin-username: {file: '${WL_STATE_DIR}/secrets/admin-username'}
   admin-password: {file: '${WL_STATE_DIR}/secrets/admin-password'}

@@ -11,8 +11,8 @@ from pathlib import Path
 
 KST = timezone(timedelta(hours=9))
 ROOT = Path(__file__).resolve().parents[3]
-MAX_CALLS = 10000
-MAX_BYTES = 3_000_000_000
+MAX_CALLS = 20000
+MAX_BYTES = 5_000_000_000
 SCHEMA = (
     'CREATE TABLE IF NOT EXISTS budget(account TEXT,day TEXT,calls INTEGER NOT NULL,bytes INTEGER NOT NULL,blocked_until REAL NOT NULL,PRIMARY KEY(account,day))',
     'CREATE TABLE IF NOT EXISTS responses(account TEXT,id TEXT,raw BLOB,sha TEXT,fetched REAL,expires REAL,lease TEXT,lease_until REAL,PRIMARY KEY(account,id))',
@@ -141,6 +141,15 @@ def available(key, now=None):
         return blocked <= now and (row is None or (row[0] < MAX_CALLS and row[1]+4_000_000 <= MAX_BYTES))
     except (OSError, sqlite3.Error, RequestBlocked):
         return False
+
+
+def kma_keys(primary):
+    return tuple(dict.fromkeys(key.strip() for key in
+        (primary, os.environ.get('KMA_API_KEY_BACKUP', '')) if key.strip()))
+
+
+def kma_available(primary, now=None):
+    return any(available(key, now) for key in kma_keys(primary))
 
 
 def response_ttl(parameters):

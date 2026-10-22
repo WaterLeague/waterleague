@@ -9,6 +9,8 @@ import java.net.*;
 import java.net.http.*;
 import java.nio.charset.StandardCharsets;
 import java.time.*;
+import java.util.List;
+import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
@@ -16,20 +18,31 @@ import org.springframework.stereotype.Repository;
 public class KmaLiveRepository {
   private static final String ENDPOINT =
       "https://apihub.kma.go.kr/api/typ01/cgi-bin/url/nph-aws2_min";
-  private final String key;
+  private static final int MAXIMUM = 2 * 1024 * 1024;
+  private final List<String> keys;
   private final ExternalRequestStore store;
-  private final ExternalRequestStore.Policy policy;
-  private final HttpClient client =
-      HttpClient.newBuilder()
-          .connectTimeout(Duration.ofSeconds(5))
-          .followRedirects(HttpClient.Redirect.NEVER)
-          .build();
+  private final HttpClient client;
 
+  @org.springframework.beans.factory.annotation.Autowired
   public KmaLiveRepository(
-      @Value("${waterleague.kma-key:}") String key, ExternalRequestStore store) {
-    this.key = key;
+      @Value("${waterleague.kma-key:}") String key,
+      @Value("${waterleague.kma-backup-key:}") String backup,
+      ExternalRequestStore store) {
+    this(
+        key,
+        backup,
+        store,
+        HttpClient.newBuilder()
+            .connectTimeout(Duration.ofSeconds(5))
+            .followRedirects(HttpClient.Redirect.NEVER)
+            .build());
+  }
+
+  KmaLiveRepository(String key, String backup, ExternalRequestStore store, HttpClient client) {
+    this.keys =
+        Stream.of(key, backup).map(String::strip).filter(v -> !v.isEmpty()).distinct().toList();
     this.store = store;
-    this.policy = ExternalRequestStore.policy("KMA", key, 10000, 3_000_000_000L);
+    this.client = client;
   }
 
   public Response fetch(Instant at) {
@@ -41,40 +54,53 @@ public class KmaLiveRepository {
   }
 
   private Response fetch(String endpoint, Instant at, String extra) {
-    if (key.isBlank()) throw new RainfallException(ErrorCode.RAINFALL_ACCESS_UNAVAILABLE);
+    if (keys.isEmpty()) throw new RainfallException(ErrorCode.RAINFALL_ACCESS_UNAVAILABLE);
     String previous =
         KmaObservationMapper.TIME.format(at.minusSeconds(240).atZone(KmaObservationMapper.KST));
     String time = KmaObservationMapper.TIME.format(at.atZone(KmaObservationMapper.KST));
-    var uri =
-        URI.create(
-            endpoint
-                + "?tm1="
-                + previous
-                + "&tm2="
-                + time
-                + "&stn=0&disp=0&help=1"
-                + extra
-                + "&authKey="
-                + URLEncoder.encode(key, StandardCharsets.UTF_8));
+    String request =
+        endpoint + "?tm1=" + previous + "&tm2=" + time + "&stn=0&disp=0&help=1" + extra;
     try {
-      return store.acquire(
-          policy,
-          endpoint + "?tm1=" + previous + "&tm2=" + time + "&stn=0&disp=0&help=1" + extra,
+      return store.acquireCached(
+          policy(keys.getFirst()),
+          request,
           Duration.ofSeconds(60),
-          2 * 1024 * 1024,
-          () -> request(uri));
+          MAXIMUM,
+          () -> fetchAvailable(request));
     } catch (ExternalRequestStore.Unavailable e) {
       throw new RainfallException(ErrorCode.RAINFALL_UNAVAILABLE);
     }
   }
 
-  private String request(URI uri) {
+  private ExternalRequestStore.Policy policy(String key) {
+    return ExternalRequestStore.policy("KMA", key, 20000, 5_000_000_000L);
+  }
+
+  private String fetchAvailable(String request) {
+    for (String key : keys) {
+      var policy = policy(key);
+      try {
+        var uri =
+            URI.create(request + "&authKey=" + URLEncoder.encode(key, StandardCharsets.UTF_8));
+        return store.request(policy, MAXIMUM, () -> request(uri, policy));
+      } catch (ExternalRequestStore.Unavailable e) {
+        // 소진·차단된 키는 HTTP 요청 없이 예비 키로 넘어간다.
+      } catch (RainfallException e) {
+        if (e.code() != ErrorCode.RAINFALL_ACCESS_UNAVAILABLE
+            && e.code() != ErrorCode.RAINFALL_UNAVAILABLE) throw e;
+      }
+      if (Thread.currentThread().isInterrupted()) break;
+    }
+    throw new RainfallException(ErrorCode.RAINFALL_UNAVAILABLE);
+  }
+
+  private String request(URI uri, ExternalRequestStore.Policy policy) {
     try {
       var response =
           client.send(
               HttpRequest.newBuilder(uri).timeout(Duration.ofSeconds(15)).GET().build(),
               HttpResponse.BodyHandlers.limiting(
-                  HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8), 2 * 1024 * 1024));
+                  HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8), MAXIMUM));
       if (response.statusCode() != 200)
         store.block(
             policy,
@@ -83,8 +109,11 @@ public class KmaLiveRepository {
                 response.headers().firstValue("Retry-After").orElse("")));
       if (response.statusCode() == 401 || response.statusCode() == 403)
         throw new RainfallException(ErrorCode.RAINFALL_ACCESS_UNAVAILABLE);
-      if (response.statusCode() != 200) throw new RainfallException(ErrorCode.RAINFALL_UNAVAILABLE);
-      if (response.body().contains(key))
+      if (response.statusCode() == 408
+          || response.statusCode() == 429
+          || response.statusCode() >= 500)
+        throw new RainfallException(ErrorCode.RAINFALL_UNAVAILABLE);
+      if (response.statusCode() != 200 || keys.stream().anyMatch(response.body()::contains))
         throw new RainfallException(ErrorCode.RAINFALL_DATA_INVALID);
       return response.body();
     } catch (RainfallException e) {

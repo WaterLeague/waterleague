@@ -18,9 +18,10 @@ ENDPOINT = 'https://apihub.kma.go.kr/api/typ01/cgi-bin/url/nph-aws2_min'
 
 
 class LiveSourceError(ValueError):
-    def __init__(self, code, *, can_reduce_range=True):
+    def __init__(self, code, *, can_reduce_range=True, can_use_backup=False):
         super().__init__(code)
         self.can_reduce_range = can_reduce_range
+        self.can_use_backup = can_use_backup
 
 
 class NoRedirect(HTTPRedirectHandler):
@@ -38,6 +39,18 @@ def retry_seconds(value):
 
 
 def read_response(endpoint, parameters, key, heartbeat=None):
+    keys = request_store.kma_keys(key)
+    if not keys:
+        raise LiveSourceError('KMA_ACCESS_UNAVAILABLE', can_reduce_range=False)
+    for index, credential in enumerate(keys):
+        try:
+            return _read_response(endpoint, parameters, credential, heartbeat, keys)
+        except LiveSourceError as error:
+            if not error.can_use_backup or index == len(keys)-1:
+                raise
+
+
+def _read_response(endpoint, parameters, key, heartbeat=None, secrets=()):
     if heartbeat is not None: heartbeat()
     try:
         day = request_store.reserve(key, 4_000_000)
@@ -51,17 +64,18 @@ def read_response(endpoint, parameters, key, heartbeat=None):
             error.close()
             request_store.block(key, status, delay)
             code = 'KMA_ACCESS_UNAVAILABLE' if status in (401,403) else 'KMA_UNAVAILABLE'
-            raise LiveSourceError(code, can_reduce_range=False) from None
+            raise LiveSourceError(code, can_reduce_range=False,
+                can_use_backup=status in (401,403,408,429) or status >= 500) from None
         except (OSError, TimeoutError, IncompleteRead):
             request_store.block(key)
-            raise LiveSourceError('KMA_UNAVAILABLE', can_reduce_range=False) from None
-        if len(raw) > 4_000_000 or key.encode() in raw:
+            raise LiveSourceError('KMA_UNAVAILABLE', can_reduce_range=False, can_use_backup=True) from None
+        if len(raw) > 4_000_000 or any(secret.encode() in raw for secret in (secrets or (key,))):
             request_store.block(key)
             raise LiveSourceError('KMA_RESPONSE_INVALID', can_reduce_range=False)
         request_store.settle(key, day, 4_000_000, len(raw))
         return raw
     except (request_store.RequestBlocked, OSError, sqlite3.Error):
-        raise LiveSourceError('KMA_REQUEST_BUDGET_BLOCKED', can_reduce_range=False) from None
+        raise LiveSourceError('KMA_REQUEST_BUDGET_BLOCKED', can_reduce_range=False, can_use_backup=True) from None
 
 
 def shared_response(endpoint, parameters, key, heartbeat=None):

@@ -169,6 +169,30 @@ public class ExternalRequestStore {
 
   public Response acquire(
       Policy policy, String request, Duration ttl, int maximum, Supplier<String> loader) {
+    return acquireCached(policy, request, ttl, maximum, () -> request(policy, maximum, loader));
+  }
+
+  public String request(Policy policy, int maximum, Supplier<String> loader) {
+    String day = reserve(policy, maximum);
+    String body;
+    try {
+      body = loader.get();
+    } catch (RuntimeException e) {
+      block(policy, 0, 60);
+      throw e;
+    }
+    byte[] raw = body.getBytes(StandardCharsets.UTF_8);
+    if (raw.length > maximum) {
+      block(policy, 0, 60);
+      throw new Unavailable();
+    }
+    settle(policy, day, maximum, raw.length);
+    return body;
+  }
+
+  // 인증키 전환 뒤에도 같은 관측 원문과 진행 중인 수집을 공유한다.
+  public Response acquireCached(
+      Policy policy, String request, Duration ttl, int maximum, Supplier<String> loader) {
     String id = hash(request.getBytes(StandardCharsets.UTF_8)),
         token = UUID.randomUUID().toString();
     long deadline = System.nanoTime() + Duration.ofSeconds(35).toNanos();
@@ -209,20 +233,11 @@ public class ExternalRequestStore {
         if (System.nanoTime() >= deadline) throw new Unavailable();
         Thread.sleep(100);
       }
-      String day = reserve(policy, maximum);
-      String body;
-      try {
-        body = loader.get();
-      } catch (RuntimeException e) {
-        block(policy, 0, 60);
-        throw e;
-      }
+      String body = loader.get();
       byte[] raw = body.getBytes(StandardCharsets.UTF_8);
       if (raw.length > maximum) {
-        block(policy, 0, 60);
         throw new Unavailable();
       }
-      settle(policy, day, maximum, raw.length);
       Instant fetched = clock.instant().truncatedTo(java.time.temporal.ChronoUnit.MILLIS);
       double fetchedSeconds = fetched.toEpochMilli() / 1000.0;
       try (var db = database()) {
