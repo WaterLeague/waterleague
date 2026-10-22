@@ -24,7 +24,11 @@
       if (!import.meta.env.DEV || !['localhost', '127.0.0.1', '[::1]'].includes(location.hostname))
         throw new Error('로컬 개발 환경 전용');
       const id = '10000000-0000-4000-8000-000000000001';
-      history.replaceState(null, '', location.pathname + '?competition=' + id);
+      const weekly = new URLSearchParams(location.search).has('weekly');
+      if (weekly)
+        document.querySelector('aside').textContent =
+          '로컬 검증 · 주간 서울 전체 지도 · 서버 쓰기 없음';
+      else history.replaceState(null, '', location.pathname + '?competition=' + id);
       const now = Date.now(),
         sha = '0'.repeat(64);
       const competition = {

@@ -121,7 +121,10 @@ export async function loadCityOverview(
         return data.data.buildings;
       })
     );
-    for (const batch of batches) buildings.push(...batch);
+    // 서울 전체 확대 자료는 함수 인자 개수 한도를 넘으므로 한 항목씩 병합한다.
+    for (const batch of batches) {
+      for (const building of batch) buildings.push(building);
+    }
   }
   const value = { buildings, districts: index.districts, tileIds: index.tileIds };
   if (!signal.aborted) cache.set(key, value);

@@ -34,6 +34,23 @@ test('선택 구별 건물만 내려받고 전체 축소도 및 다른 구 요�
   ).toBe(value);
   expect(requests.length).toBe(3);
 });
+test('서울 전체 확대 자료 381499개를 누락 없이 읽고 재사용', async () => {
+  const index = JSON.parse(readFileSync('public/data/seoul-overview-v1/index.json', 'utf8'));
+  const expected = JSON.parse(
+    gunzipSync(readFileSync('public/data/seoul-overview-v1/25.json.gz')).toString()
+  ).buildings;
+  const value = await loadCityOverview(
+    25,
+    CITY_HASH,
+    new AbortController().signal,
+    index.districts
+  );
+  expect(value.buildings).toEqual(expected);
+  expect(value.buildings).toHaveLength(381499);
+  const requestCount = requests.length;
+  expect(await loadCityOverview(25, CITY_HASH, new AbortController().signal)).toBe(value);
+  expect(requests).toHaveLength(requestCount);
+});
 
 import {
   competitionCity,
