@@ -162,6 +162,88 @@ class CompetitionWorkflowTests extends PostgresIntegrationTest {
   }
 
   @Test
+  void managerAnalyticsUsesAllRecordsAndRejectsParticipantsAndOtherOrganizations()
+      throws Exception {
+    var owner = host();
+    var other = host();
+    var player = actor(null);
+    var admin = actor(null, true);
+    var c = create(owner, "REALTIME");
+    join(player, c);
+    Instant at = competitionRepo.joined(UUID.fromString(c.path("id").asString()), player.id());
+    var competitionId = UUID.fromString(c.path("id").asString());
+    var passwordHash = accounts.byId(player.id()).orElseThrow().passwordHash();
+    for (int i = 0; i < 103; i++) {
+      var selected = player;
+      if (i > 0) {
+        var id = UUID.randomUUID();
+        accounts.add(
+            new Account(
+                id,
+                "qa_analysis_" + i,
+                "분석검증" + i,
+                passwordHash,
+                "MEMBER",
+                "PLAYER",
+                "APPROVED",
+                null,
+                "",
+                "",
+                true,
+                "11680",
+                "AFFILIATED"));
+        competitionRepo.join(competitionId, id, c.path("rulesHash").asString());
+        selected = new Actor(id, player.client());
+      }
+      Instant joined = competitionRepo.joined(competitionId, selected.id());
+      install(selected, c, joined, joined.plusSeconds(60), "RAIN_GARDEN", null);
+    }
+    var path = base(c) + "/analytics";
+    var data = ok(owner, "GET", path, null, 200);
+    assertThat(data.path("facts").path("records").longValue()).isEqualTo(103);
+    assertThat(data.path("facts").path("participants").longValue()).isEqualTo(103);
+    assertThat(data.path("facts").path("facilities").get(0).path("count").longValue())
+        .isEqualTo(103);
+    assertThat(data.path("facts").path("scoredRecords").longValue()).isZero();
+    assertThat(data.path("facts").path("scoreGroups").size()).isZero();
+    assertThat(call(owner, "GET", path, null).headers().firstValue("Cache-Control"))
+        .hasValue("no-store");
+    assertThat(data.toString()).doesNotContain(player.id().toString(), "nickname", "playerId");
+    ok(admin, "GET", path, null, 200);
+    assertThat(call(player, "GET", path, null).statusCode()).isEqualTo(404);
+    assertThat(call(other, "GET", path, null).statusCode()).isEqualTo(404);
+    assertThat(
+            call(
+                    player,
+                    "POST",
+                    path + "/summary",
+                    Map.of("snapshotHash", data.path("snapshotHash").asString()))
+                .statusCode())
+        .isEqualTo(404);
+    assertThat(
+            call(player, "GET", "/admin/results/weekly/analytics?week=2026-10-19", null)
+                .statusCode())
+        .isEqualTo(403);
+    var week =
+        at.atZone(ZoneId.of("Asia/Seoul"))
+            .toLocalDate()
+            .with(java.time.temporal.TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+    assertThat(
+            ok(admin, "GET", "/admin/results/weekly/analytics?week=" + week, null, 200)
+                .path("facts")
+                .path("records")
+                .longValue())
+        .isZero();
+    var event = disasters.catalog().events().getFirst().id();
+    assertThat(
+            ok(admin, "GET", "/admin/results/historical/" + event + "/analytics", null, 200)
+                .path("facts")
+                .path("records")
+                .longValue())
+        .isZero();
+  }
+
+  @Test
   void immediateRealtimeInstallationUsesSameSecondAsParticipation() throws Exception {
     var player = actor(null);
     var c = create(host(), "REALTIME");

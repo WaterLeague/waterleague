@@ -22,6 +22,9 @@ public enum ErrorCode {
   MODEL_NOT_ELIGIBLE(HttpStatus.UNPROCESSABLE_CONTENT, "모델 검증이 필요합니다"),
   COMPARISON_INCOMPATIBLE(HttpStatus.UNPROCESSABLE_CONTENT, "강우 외의 모델 조건이 달라 동일 배치를 비교할 수 없습니다"),
   ANALYSIS_INCOMPATIBLE(HttpStatus.UNPROCESSABLE_CONTENT, "같은 모델의 유효한 제출 기록을 선택해 주세요"),
+  GAME_SUMMARY_UNAVAILABLE(
+      HttpStatus.SERVICE_UNAVAILABLE, "AI 요약을 불러오지 못했습니다. 통계와 그래프는 계속 확인할 수 있습니다"),
+  GAME_SUMMARY_EMPTY(HttpStatus.CONFLICT, "분석할 플레이 기록이 아직 없습니다"),
   SEARCH_SAMPLE_INSUFFICIENT(HttpStatus.UNPROCESSABLE_CONTENT, "서로 다른 물리 배치가 두 개 이상 필요합니다"),
   CANDIDATE_SPACE_EXHAUSTED(
       HttpStatus.UNPROCESSABLE_CONTENT, "정해진 탐색 횟수 안에 새 후보를 채우지 못했습니다. 예산과 후보 수를 조정해 주세요"),

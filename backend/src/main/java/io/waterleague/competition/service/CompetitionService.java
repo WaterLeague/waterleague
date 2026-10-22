@@ -355,6 +355,24 @@ public class CompetitionService {
       isolation = org.springframework.transaction.annotation.Isolation.REPEATABLE_READ)
   public Object results(Account a, UUID id, int page) {
     checkPage(page);
+    return results(a, id, page, false);
+  }
+
+  public Competition requireManager(Account a, UUID id) {
+    var c = require(id, false);
+    if (!manages(a, c)) throw new DomainException(ErrorCode.RESOURCE_NOT_FOUND);
+    return c;
+  }
+
+  @Transactional(
+      readOnly = true,
+      isolation = org.springframework.transaction.annotation.Isolation.REPEATABLE_READ)
+  public Object analysisResults(Account a, UUID id) {
+    requireManager(a, id);
+    return results(a, id, 0, true);
+  }
+
+  private Object results(Account a, UUID id, int page, boolean all) {
     var c = require(id, false);
     if (!manages(a, c) && repo.joined(id, a.id()) == null)
       throw new DomainException(ErrorCode.RESOURCE_NOT_FOUND);
@@ -458,7 +476,10 @@ public class CompetitionService {
               "comparisonGroup",
               g.getKey(),
               "entries",
-              values.stream().skip(page * 100L).limit(100).toList(),
+              values.stream()
+                  .skip(all ? 0 : page * 100L)
+                  .limit(all ? Long.MAX_VALUE : 100)
+                  .toList(),
               "count",
               values.size(),
               "ownEntries",

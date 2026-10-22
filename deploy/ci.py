@@ -17,7 +17,7 @@ def run(*args, **kwargs):
 
 def validate():
     required = ('OCI_HOST', 'OCI_USER', 'OCI_SSH_KEY', 'OCI_KNOWN_HOSTS', 'ADMIN_USERNAME',
-                'ADMIN_PASSWORD', 'DISCORD_WEBHOOK_URL', 'KMA_API_KEY')
+                'ADMIN_PASSWORD', 'DISCORD_WEBHOOK_URL', 'KMA_API_KEY', 'UPSTAGE_API_KEY')
     missing = [key for key in required if not os.environ.get(key, '').strip()]
     if missing:
         raise ValueError('MISSING_SECRETS: ' + ', '.join(missing))
@@ -32,6 +32,8 @@ def validate():
     value = os.environ['KMA_API_KEY'].strip()
     if len(value) > 4096 or any(ord(c) < 33 or ord(c) > 126 for c in value):
         raise ValueError('KMA_SECRET_INVALID')
+    if not re.fullmatch(r'[A-Za-z0-9_.-]{16,512}', os.environ['UPSTAGE_API_KEY'].strip()):
+        raise ValueError('UPSTAGE_SECRET_INVALID')
 
 
 def build():
@@ -74,7 +76,7 @@ def deploy():
         askpass = private('askpass', '#!/bin/sh\nprintf "%s\\n" "$OCI_SSH_PASSWORD"\n', 0o700)
         runtime = private('runtime.json', json.dumps(release | {
             'registryUser': os.environ['GITHUB_ACTOR'], 'registryToken': os.environ['GHCR_TOKEN'],
-            'secrets': {key: os.environ.get(key, '') for key in ('ADMIN_USERNAME', 'ADMIN_PASSWORD', 'DISCORD_WEBHOOK_URL', 'KMA_API_KEY')}
+            'secrets': {key: os.environ.get(key, '') for key in ('ADMIN_USERNAME', 'ADMIN_PASSWORD', 'DISCORD_WEBHOOK_URL', 'KMA_API_KEY', 'UPSTAGE_API_KEY')}
         }))
         bundle = directory / 'release.tar.gz'
         with tarfile.open(bundle, 'w:gz') as archive:

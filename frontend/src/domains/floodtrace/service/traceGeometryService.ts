@@ -1,6 +1,7 @@
 import type { TraceTile } from '../entity/floodTrace';
 import type { Terrain } from '../../terrain/entity/terrain';
 import { drapeTriangle, terrainMeshHeight } from '../../terrain/service/terrainDrapeService';
+import { floodTraceSurfaceLift } from '../../terrain/service/surfaceDisplayService';
 
 export function tracePositions(
   tiles: Pick<TraceTile, 'triangleVertices'>[],
@@ -16,7 +17,7 @@ export function tracePositions(
         if (positions.length >= 9000000) throw new Error('침수 기록 표시 한도 초과');
         // 기록에 없는 깊이를 만들지 않고 도로 위·계산 수면 아래의 표시 오프셋만 사용한다.
         for (const p of triangle)
-          positions.push(p[0], terrainMeshHeight(terrain, p) + 0.016, -p[1]);
+          positions.push(p[0], terrainMeshHeight(terrain, p) + floodTraceSurfaceLift, -p[1]);
       });
     }
   }

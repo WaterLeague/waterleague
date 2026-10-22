@@ -3,6 +3,7 @@ services:
     secrets:
       - {source: discord-webhook-url, target: waterleague.discord-webhook-url}
       - {source: kma-api-key, target: waterleague.kma-key}
+      - {source: upstage-api-key, target: waterleague.upstage-key}
     mem_limit: 5g
     cpus: 1.5
   worker:
@@ -45,5 +46,6 @@ networks:
 secrets:
   discord-webhook-url: {file: '${WL_STATE_DIR}/secrets/discord-webhook-url'}
   kma-api-key: {file: '${WL_STATE_DIR}/secrets/kma-api-key'}
+  upstage-api-key: {file: '${WL_STATE_DIR}/secrets/upstage-api-key'}
   admin-username: {file: '${WL_STATE_DIR}/secrets/admin-username'}
   admin-password: {file: '${WL_STATE_DIR}/secrets/admin-password'}

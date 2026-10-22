@@ -9,6 +9,7 @@ import type { HistoricalBoard as Board } from '../entity/historicalSubmission';
 import { loadHistoricalBoard } from '../repository/submissionRepository';
 import './historical.css';
 import { Pagination } from '../../competition/view/CompetitionShared';
+import { GameAnalysisPanel } from '../../gameanalysis/view/GameAnalysisPanel';
 
 export function HistoricalBoard({ admin = false }: { admin?: boolean }) {
   const [page, setPage] = useState(0);
@@ -81,6 +82,11 @@ export function HistoricalBoard({ admin = false }: { admin?: boolean }) {
           ))}
         </select>
       </label>
+      {admin && eventId && (
+        <GameAnalysisPanel
+          endpoint={`/admin/results/historical/${encodeURIComponent(eventId)}/analytics`}
+        />
+      )}
       <p>
         사건 평가 창 전체를 계산한 제출만 게시합니다. 같은 입력·예산 규칙·계산 조건끼리 비교하고
         회원별 최고 기록을 표시합니다.

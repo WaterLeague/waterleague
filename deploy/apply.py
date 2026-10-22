@@ -133,7 +133,8 @@ def main():
             stopped = True
             backup(previous)
         for source, name in {'ADMIN_USERNAME': 'admin-username', 'ADMIN_PASSWORD': 'admin-password',
-                             'DISCORD_WEBHOOK_URL': 'discord-webhook-url', 'KMA_API_KEY': 'kma-api-key'}.items():
+                             'DISCORD_WEBHOOK_URL': 'discord-webhook-url', 'KMA_API_KEY': 'kma-api-key',
+                             'UPSTAGE_API_KEY': 'upstage-api-key'}.items():
             value = runtime['secrets'][source]
             if not isinstance(value, str) or not value:
                 raise ValueError('RUNTIME_SECRET_MISSING')

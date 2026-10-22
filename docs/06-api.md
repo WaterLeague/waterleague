@@ -350,3 +350,11 @@ RFC 9457 `application/problem+json`: type, title, status, detail, instance, code
 2026-10-22 설치 범위: 소속 구 제한은 일반 주간 서울 대항전에만 적용한다. 실시간 대회는 소속 구 미지정 회원도 참가할 수 있으며, 소속 구와 무관하게 개최 규칙의 모든 `districtIds`에 설치한다. 대회 밖 구·불허 시설·미참가·개최 기간 밖 요청은 서버에서 거부한다. 기존 소속 구나 점수·예산 원장은 변경하지 않는다.
 
 실시간 대회의 참가 시각은 설치 시각과 같은 1초 해상도로 저장한다. 참가 직후 같은 초에 설치한 시설도 집계 대상이다. 참가를 먼저 검증하는 설치 권한·기간 검사는 유지하며 재해 대회의 참가 시각 정밀도는 바꾸지 않는다.
+
+### 게임 분석·AI 요약
+
+관리자 전용 `GET /admin/results/weekly/analytics?week=YYYY-MM-DD`, `GET /admin/results/historical/{eventId}/analytics`와 대회 관리자/승인 주최 조직 전용 `GET /competitions/{id}/analytics`를 제공한다. 응답은 `scope`, `scopeId`, `generatedAt`, `snapshotHash`, `summaryAvailable`, `facts`다. `facts`는 전체 범위의 참여자/설치 또는 제출/점수 보유 수, 유형·구별 시설 수/면적, 한국 날짜별 활동 수, 비교 그룹별 개인 점수 합계·최소·최대·음수/0/양수 수다. 일반 대회 참가자에게 분석 권한을 부여하지 않는다.
+
+각 GET 경로 뒤에 `/summary`를 붙인 POST로 `{snapshotHash}`를 보내면 AI 요약을 생성한다. 주간 query는 유지한다. 서버가 통계를 다시 집계해 해시 불일치를 409로 거부하고 클라이언트의 통계·자유 프롬프트를 받지 않는다. 같은 집계/모델/프롬프트 버전의 응답은 서버 영속 저장소에서 30일간 공유하며 병렬 생성은 한 번으로 합친다. 모든 응답은 `no-store`, POST는 세션·CSRF와 계정당 시간당 12회 제한을 적용한다. 서버 전체 Upstage 요청은 KST 하루 100회·응답 예약 6,553,600바이트 이하이며 제공자 계정 한도를 대신하지 않는다. 자동 재시도 없이 일시 오류는 5분 이상, 401/403은 다음 KST 자정까지 차단한다. 저장된 응답은 차단 중에도 재사용한다.
+
+요약은 `model`, `generatedAt`, `snapshotHash`, `overview`, 근거 분류가 있는 `findings`, `cautions`를 반환한다. 미설정·통신·응답 검증·한도 실패는 `GAME_SUMMARY_UNAVAILABLE`(503), 빈 범위는 `GAME_SUMMARY_EMPTY`(409)다. 분석 GET과 기존 결과 표는 AI 성공을 요구하지 않는다.

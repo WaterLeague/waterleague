@@ -19,6 +19,7 @@ import { followLink } from '../../../shared/controller/useAppLocation';
 import { errorMessage } from '../../../shared/exception/ApiError';
 import { facilities, won } from '../../game/service/gameService';
 import { CompetitionResults } from './CompetitionResults';
+import { GameAnalysisPanel } from '../../gameanalysis/view/GameAnalysisPanel';
 import { competitionTime, phaseNames } from './CompetitionShared';
 const jobNames: Record<string, string> = {
   QUEUED: '계산 대기',
@@ -309,6 +310,12 @@ export function CompetitionDetail({
                 </ul>
               )}
             </section>
+          )}
+          {c.canManage && (
+            <GameAnalysisPanel
+              endpoint={`/competitions/${encodeURIComponent(c.id)}/analytics`}
+              key={`${c.id}:${revision}`}
+            />
           )}
           {results && <CompetitionResults value={results} catalog={catalog} onPage={setPage} />}
         </>

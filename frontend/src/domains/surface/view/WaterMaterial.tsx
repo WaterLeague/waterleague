@@ -116,7 +116,14 @@ const fragmentShader = `
     return (axis * a + across * b * 0.65) * visible;
   }
   void main() {
-    if (vFace < -0.5) {
+    if (record > 0.5) {
+      // 깊이 없는 과거 범위에 가상 물결·반사를 만들지 않고 원 지도 위에 일정한 색을 겹친다.
+      vec3 tint = vWaterColor * mix(0.22, 1.0, daylightFactor);
+      vec3 ground = tint;
+      if (waterCaptureReady > 0.5)
+        ground = texture2D(waterSceneColor, gl_FragCoord.xy / waterResolution).rgb;
+      gl_FragColor = vec4(mix(ground, tint, 0.58), 1.0);
+    } else if (vFace < -0.5) {
       gl_FragColor = vec4(vWaterColor, 1.0);
     } else {
       vec2 p = vWorld.xz - vFlow * waterTime;
@@ -201,6 +208,9 @@ export const WaterMaterial = memo(function WaterMaterial({
       vertexColors: true,
       depthWrite: true,
       depthTest: true,
+      polygonOffset: record,
+      polygonOffsetFactor: record ? -2 : 0,
+      polygonOffsetUnits: record ? -2 : 0,
       side: DoubleSide,
       uniforms: {
         ...capture.uniforms,

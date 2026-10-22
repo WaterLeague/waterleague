@@ -13,6 +13,7 @@ import {
 } from '../repository/resultsRepository';
 import '../../competition/view/competition.css';
 import { SitePageHeader } from '../../../shared/ui/SitePageHeader';
+import { GameAnalysisPanel } from '../../gameanalysis/view/GameAnalysisPanel';
 const statuses: Record<string, string> = {
   EMPTY: '기록 없음',
   IN_PROGRESS: '진행 중 순위',
@@ -126,6 +127,12 @@ export function ResultsPage() {
             </label>
             {result && <span className="contest-badge">{statuses[result.period.status]}</span>}
           </div>
+          {week && (
+            <GameAnalysisPanel
+              endpoint={`/admin/results/weekly/analytics?week=${encodeURIComponent(week)}`}
+              key={`${week}:${revision}`}
+            />
+          )}
           {!result || !catalog ? (
             <p role="status">시즌 기록을 불러오는 중입니다.</p>
           ) : (
