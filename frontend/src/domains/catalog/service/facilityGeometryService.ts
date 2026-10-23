@@ -57,14 +57,16 @@ const onSegment = (a: MapPoint, b: MapPoint, p: MapPoint) =>
   );
 
 export function polygonArea(points: MapPoint[]): number {
-  return (
-    Math.abs(
-      points.reduce((sum, point, i) => {
-        const next = points[(i + 1) % points.length];
-        return sum + point[0] * next[1] - next[0] * point[1];
-      }, 0)
-    ) / 2
-  );
+  let area = 0,
+    correction = 0;
+  // 큰 투영 좌표의 상쇄 오차를 피하도록 첫 꼭짓점을 기준으로 면적을 합산한다.
+  for (let i = 1; i + 1 < points.length; i++) {
+    const term = cross(points[0], points[i], points[i + 1]) - correction;
+    const next = area + term;
+    correction = next - area - term;
+    area = next;
+  }
+  return Math.abs(area) / 2;
 }
 
 function intersects(a: MapPoint, b: MapPoint, c: MapPoint, d: MapPoint) {
@@ -151,7 +153,7 @@ export function facilityPolygonFootprint(
     });
     const area =
       polygonArea(rings[0]) - rings.slice(1).reduce((sum, ring) => sum + polygonArea(ring), 0);
-    if (!Number.isFinite(area) || area <= epsilon) throw new CatalogError('INVALID_DATA');
+    if (!Number.isFinite(area) || area <= 0) throw new CatalogError('INVALID_DATA');
     originalArea += area;
     const flat = rings.flat();
     points.push(...flat);
@@ -164,8 +166,10 @@ export function facilityPolygonFootprint(
     }
   }
   if (
+    !Number.isFinite(originalArea) ||
+    originalArea * ratio <= epsilon ||
     Math.abs(triangles.reduce((sum, t) => sum + polygonArea(t), 0) - originalArea) >
-    Math.max(epsilon, originalArea * 1e-9)
+      Math.max(epsilon, originalArea * 1e-9)
   )
     throw new CatalogError('INVALID_DATA');
   const min = [Infinity, Infinity],
@@ -187,7 +191,7 @@ export function facilityPolygonFootprint(
   }
   const polygons = (
     ratio === 1 ? triangles : triangles.map((t) => clip(t, axis, (low + high) / 2))
-  ).filter((p) => p.length >= 3 && polygonArea(p) > epsilon);
+  ).filter((p) => p.length >= 3 && polygonArea(p) > 0);
   const edges = new Map<string, [MapPoint, MapPoint]>();
   const key = (p: MapPoint) => p.map((n) => Math.round(n * 1e7)).join(',');
   for (const polygon of polygons)

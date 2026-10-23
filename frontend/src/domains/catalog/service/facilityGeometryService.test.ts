@@ -1,7 +1,13 @@
 import { placementFootprint } from './facilityGeometryService';
+import mapo from '../__tests__/fixtures/mapo-native-facility-v1.json';
 import model from '../../../../../data/models/seongsu-lab.json';
 import { describe, expect, it } from 'vitest';
-import { facilityFootprint, plantingMarkers, polygonArea } from './facilityGeometryService';
+import {
+  facilityFootprint,
+  facilityPolygonFootprint,
+  plantingMarkers,
+  polygonArea,
+} from './facilityGeometryService';
 import type { MapPoint } from '../entity/facilityFootprint';
 import { CatalogError } from '../exception/CatalogError';
 
@@ -36,6 +42,51 @@ function contains(ring: MapPoint[], [x, y]: MapPoint) {
 }
 
 describe('시설 표시 경계', () => {
+  it('마포구 원형의 작은 양수 구성면도 보존하고 설치·전체 표시 면적을 재현한다', () => {
+    const site = { ...mapo.site, polygons: mapo.site.polygons as MapPoint[][][] };
+    const before = structuredClone(site);
+    for (const areaM2 of [mapo.placement.areaM2, site.maxAreaM2]) {
+      const result = placementFootprint(site, {
+        cellId: site.cellId,
+        facilityType: 'PERMEABLE_PAVEMENT',
+        areaM2,
+      });
+      expect(result.area).toBeCloseTo(areaM2, 8);
+    }
+    const full = facilityPolygonFootprint(site.polygons, 1);
+    const small = site.polygons[0][0].slice(0, -1);
+    expect(
+      full.polygons.some((piece) =>
+        small.every(([x, y]) => piece.some((p) => p[0] === x && p[1] === y))
+      )
+    ).toBe(true);
+    expect(site).toEqual(before);
+  });
+
+  it('큰 투영 좌표에서도 작은 면적의 상쇄 오차를 피한다', () => {
+    const points: MapPoint[] = [
+      [100000000, 100000000],
+      [100000000.001, 100000000],
+      [100000000, 100000000.001],
+    ];
+    expect(polygonArea(points)).toBeCloseTo(0.0000005, 10);
+    expect(() =>
+      facilityPolygonFootprint(
+        [
+          [
+            [
+              [0, 0],
+              [1, 0],
+              [2, 0],
+              [0, 0],
+            ],
+          ],
+        ],
+        1
+      )
+    ).toThrow(CatalogError);
+  });
+
   it('오목한 구역과 분리된 절단면에서 면적 비율·내포·원본을 보존한다', () => {
     const before = structuredClone(concave);
     for (const ring of [
