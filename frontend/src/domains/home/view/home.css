@@ -117,7 +117,8 @@
 .home-modes,
 .home-facilities,
 .home-scoring,
-.home-features {
+.home-features,
+.home-competitions {
   max-width: 1240px;
   padding: 60px 40px;
   margin: 0 auto;
@@ -224,10 +225,26 @@
 .home-mode-copy {
   padding: 12px 0;
 }
-.home-mode-copy h3 {
-  font-size: 25px;
+.home-mode-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
   margin: 12px 0 14px;
+}
+.home-mode-heading h3 {
+  min-width: 0;
+  font-size: 25px;
+  margin: 0;
+  line-height: 1.4;
   letter-spacing: -0.03em;
+}
+.home-mode-play {
+  flex-shrink: 0;
+  min-height: 44px;
+  padding: 10px 14px;
+  gap: 8px;
+  font-size: 12px;
 }
 .home-mode-copy p {
   color: var(--site-muted);
@@ -357,8 +374,31 @@
   margin-top: 12px;
   font-size: 11px;
 }
-.home-story-copy .home-text-link {
-  margin-top: 24px;
+.home-competitions {
+  border-top: 1px solid var(--site-line);
+}
+.home-competition-gallery {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 28px;
+  margin-top: 28px;
+}
+.home-competitions .home-game-image-open {
+  aspect-ratio: 4 / 3;
+}
+.home-competitions .home-game-image-open img {
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+}
+.home-competition-analysis {
+  margin-top: 60px;
+}
+.home-competition-analysis .home-game-image-open {
+  aspect-ratio: 1;
+}
+.home-competition-analysis .home-game-image-open img {
+  object-position: center 49%;
 }
 .home-image-dialog.site-dialog {
   width: min(1480px, calc(100% - 40px));
@@ -739,7 +779,8 @@
   .home-seoul,
   .home-modes,
   .home-facilities,
-  .home-features {
+  .home-features,
+  .home-competitions {
     padding: 45px 28px;
   }
   .home-facility-copy {
@@ -778,7 +819,8 @@
   .home-seoul,
   .home-modes,
   .home-facilities,
-  .home-features {
+  .home-features,
+  .home-competitions {
     padding: 35px 20px;
   }
   .home-guide-grid,
@@ -786,6 +828,7 @@
   .home-mode,
   .home-street-story,
   .home-shared-story,
+  .home-competition-gallery,
   .home-facility-detail {
     grid-template-columns: 1fr;
   }

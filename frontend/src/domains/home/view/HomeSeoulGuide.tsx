@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { ArrowUpRight, Moon, Sun } from 'lucide-react';
-import { followLink } from '../../../shared/controller/useAppLocation';
+import { Moon, Sun } from 'lucide-react';
 import { HomeGameImage } from './HomeGameImage';
 
 export function HomeSeoulGuide() {
@@ -48,13 +47,6 @@ export function HomeSeoulGuide() {
             움직임을 조절합니다.
           </p>
           <p className="home-story-note">개별 사람·차량의 실제 위치를 보여주는 것은 아닙니다.</p>
-          <a
-            href="/weekly"
-            className="home-text-link"
-            onClick={(event) => followLink(event, '/weekly')}
-          >
-            서울 지도 둘러보기 <ArrowUpRight size={17} />
-          </a>
         </div>
       </div>
     </section>

@@ -59,7 +59,6 @@ export const homeModes = [
       height: 1322,
       caption: '구별 누적 점수와 실시간 랭킹 · 게임 화면',
     },
-    link: '우리 구에서 시작하기',
   },
   {
     id: 'disaster',
@@ -81,6 +80,5 @@ export const homeModes = [
       height: 1286,
       caption: '과거 호우 기록을 살펴보며 시설 배치 실험 · 게임 화면',
     },
-    link: '재해 모드 체험하기',
   },
 ] as const;

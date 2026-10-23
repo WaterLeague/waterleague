@@ -21,19 +21,27 @@ import { HomeScoreGuide } from './HomeScoreGuide';
 import { HomeMapGuide } from './HomeMapGuide';
 import { HomeSeoulGuide } from './HomeSeoulGuide';
 import { HomeGameImage } from './HomeGameImage';
+import { HomeCompetitionGuide } from './HomeCompetitionGuide';
 import './home.css';
 
 function HomeLink({
   href,
   children,
   className = '',
+  ariaLabel,
 }: {
   href: string;
   children: ReactNode;
   className?: string;
+  ariaLabel?: string;
 }) {
   return (
-    <a className={className} href={href} onClick={(event) => followLink(event, href)}>
+    <a
+      className={className}
+      href={href}
+      aria-label={ariaLabel}
+      onClick={(event) => followLink(event, href)}
+    >
       {children}
     </a>
   );
@@ -150,7 +158,16 @@ export function HomePage({ accountId = null }: { accountId?: string | null }) {
                   <span className="home-eyebrow">
                     {mode.number} / {mode.tag}
                   </span>
-                  <h3>{mode.title}</h3>
+                  <div className="home-mode-heading">
+                    <h3>{mode.title}</h3>
+                    <HomeLink
+                      href={mode.href}
+                      className="home-button primary home-mode-play"
+                      ariaLabel={`${mode.title} 플레이`}
+                    >
+                      플레이 <ArrowUpRight size={16} aria-hidden="true" />
+                    </HomeLink>
+                  </div>
                   <p>{mode.intro}</p>
                   <ul>
                     {mode.rules.map((rule) => (
@@ -160,10 +177,6 @@ export function HomePage({ accountId = null }: { accountId?: string | null }) {
                       </li>
                     ))}
                   </ul>
-                  <HomeLink href={mode.href} className="home-text-link">
-                    {mode.link}
-                    <ArrowUpRight size={18} />
-                  </HomeLink>
                 </div>
               </article>
               {mode.id === 'weekly' && (
@@ -175,9 +188,6 @@ export function HomePage({ accountId = null }: { accountId?: string | null }) {
                       내 시설뿐 아니라 다른 플레이어가 설치한 시설도 지도에서 확인할 수 있어요. 누가
                       어디에 어떤 시설을 놓았는지, 그 시설의 누적 점수까지 함께 살펴보세요.
                     </p>
-                    <HomeLink href="/weekly" className="home-text-link">
-                      설치된 시설 살펴보기 <ArrowUpRight size={18} />
-                    </HomeLink>
                   </div>
                   <HomeGameImage
                     src="/home/game/shared-installations.png"
@@ -302,6 +312,7 @@ export function HomePage({ accountId = null }: { accountId?: string | null }) {
         </HomeLink>
       </section>
       <DataSection accountId={accountId} />
+      <HomeCompetitionGuide />
       <footer className="home-footer">
         <img src="/brand/wordmark.png" alt="WATER LEAGUE" width="160" height="64" />
         <p>
@@ -309,9 +320,7 @@ export function HomePage({ accountId = null }: { accountId?: string | null }) {
           <br />
           게임의 효과는 탐색 계산이며 실제 현장 침수 예측이나 시공 승인을 대신하지 않습니다.
         </p>
-        <HomeLink href="/#home-data">
-          자료와 계산 근거 <ArrowUpRight size={14} />
-        </HomeLink>
+        <a href="mailto:1233day@naver.com">문의: 1233day@naver.com</a>
       </footer>
       {choosingMode && <GameStartDialog onClose={() => setChoosingMode(false)} />}
     </main>
