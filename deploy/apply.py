@@ -48,7 +48,8 @@ def backup(release):
         identity.chmod(0o600)
     recipient = command(['age-keygen', '-y', str(identity)], text=True).strip()
     stamp = datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%SZ')
-    target = backups / (stamp + '-' + release.name[:12] + '.tar.age')
+    target = backups / (stamp + '-' + release.name[:12] + '.tar.gz.age')
+    pending = target.with_suffix(target.suffix + '.partial')
     with tempfile.TemporaryDirectory(prefix='backup-', dir=BASE) as directory:
         dump = Path(directory) / 'database.dump'
         with dump.open('wb') as output:
@@ -59,16 +60,18 @@ def backup(release):
             raise RuntimeError('DATABASE_BACKUP_FAILED')
         external = STATE / 'cache/external-requests'
         extra = ['state/cache/external-requests'] if external.is_dir() and not external.is_symlink() else []
-        archive = subprocess.Popen(['tar', '-cf', '-', '-C', directory, 'database.dump',
+        # 반복되는 관측·계산 JSON을 먼저 압축해 암호화 백업의 공간 사용을 줄인다.
+        archive = subprocess.Popen(['tar', '--use-compress-program=gzip -1', '-cf', '-', '-C', directory, 'database.dump',
             '-C', str(BASE), 'state/secrets', 'state/artifacts', 'releases/' + release.name, *extra], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        encrypted = subprocess.run(['age', '-r', recipient, '-o', str(target)], stdin=archive.stdout, capture_output=True)
+        encrypted = subprocess.run(['age', '-r', recipient, '-o', str(pending)], stdin=archive.stdout, capture_output=True)
         archive.stdout.close()
         archive.communicate()
         if encrypted.returncode or archive.returncode:
-            target.unlink(missing_ok=True)
+            pending.unlink(missing_ok=True)
             raise RuntimeError('ENCRYPTED_BACKUP_FAILED')
-    target.chmod(0o600)
-    for old in sorted(backups.glob('*.tar.age'))[:-7]:
+    pending.chmod(0o600)
+    pending.replace(target)
+    for old in sorted([*backups.glob('*.tar.age'), *backups.glob('*.tar.gz.age')])[:-7]:
         if old.is_file() and not old.is_symlink():
             old.unlink()
     print('ENCRYPTED_BACKUP_OK', flush=True)
