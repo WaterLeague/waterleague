@@ -12,6 +12,8 @@ import subprocess
 import sys
 import tempfile
 import time
+from storage import BACKUP_KEEP, install as install_storage, prune_backups
+import runtime_identity
 
 BASE = Path('/opt/waterleague')
 STATE = BASE / 'state'
@@ -71,9 +73,7 @@ def backup(release):
             raise RuntimeError('ENCRYPTED_BACKUP_FAILED')
     pending.chmod(0o600)
     pending.replace(target)
-    for old in sorted([*backups.glob('*.tar.age'), *backups.glob('*.tar.gz.age')])[:-7]:
-        if old.is_file() and not old.is_symlink():
-            old.unlink()
+    prune_backups(BASE, BACKUP_KEEP)
     print('ENCRYPTED_BACKUP_OK', flush=True)
 
 
@@ -129,28 +129,45 @@ def main():
         for image in runtime['images'].values():
             command(['docker', 'pull', image])
     os.environ.pop('DOCKER_CONFIG', None)
+    inspected = {}
+    def inspect(image):
+        if image not in inspected:
+            inspected[image] = json.loads(command(['docker', 'image', 'inspect', '--format', '{{json .}}', image]))
+        return inspected[image]
+    web_only = previous is not None and runtime_identity.matches(
+        BASE, previous, release, runtime['images'], runtime['secrets'], inspect)
     stopped = False
     try:
-        if previous:
-            compose(previous, 'stop', 'web', 'api', 'worker')
-            stopped = True
-            backup(previous)
-        for source, name in {'ADMIN_USERNAME': 'admin-username', 'ADMIN_PASSWORD': 'admin-password',
-                             'DISCORD_WEBHOOK_URL': 'discord-webhook-url', 'KMA_API_KEY': 'kma-api-key',
-                             'UPSTAGE_API_KEY': 'upstage-api-key'}.items():
-            value = runtime['secrets'][source]
-            if not isinstance(value, str) or not value:
-                raise ValueError('RUNTIME_SECRET_MISSING')
-            private(secret_dir / name, value, UID)
-        # 이전 릴리스로 복귀해도 폐기한 키를 다시 사용하지 않도록 빈 파일만 남긴다.
-        retired = secret_dir / 'kma-api-key-backup'
-        if retired.exists():
-            private(retired, '', UID)
-        compose(release, 'up', '-d', '--no-build', '--wait', '--wait-timeout', '120', 'db')
-        for service in ('bootstrap', 'migrate', 'grant', 'admin'):
-            compose(release, 'run', '--rm', '--no-deps', '-T', service)
-            print(service.upper() + '_OK', flush=True)
-        compose(release, 'up', '-d', '--no-build', '--no-deps', '--wait', '--wait-timeout', '240', 'api', 'worker', 'web')
+        if web_only:
+            prior = runtime_identity.release_images(previous)
+            for service in ('api', 'worker'):
+                env['WL_'+service.upper()+'_IMAGE'] = prior[service]
+            if runtime_identity.execution(inspect(prior['web'])) == runtime_identity.execution(inspect(runtime['images']['web'])):
+                env['WL_WEB_IMAGE'] = prior['web']
+            private(release / 'release.env', ''.join(k+'='+v+'\n' for k,v in env.items()))
+            compose(release, 'up', '-d', '--no-build', '--no-deps', '--wait', '--wait-timeout', '240', 'web')
+            print('WEB_ONLY_DEPLOYMENT', flush=True)
+        else:
+            if previous:
+                compose(previous, 'stop', 'web', 'api', 'worker')
+                stopped = True
+                backup(previous)
+            for source, name in {'ADMIN_USERNAME': 'admin-username', 'ADMIN_PASSWORD': 'admin-password',
+                                 'DISCORD_WEBHOOK_URL': 'discord-webhook-url', 'KMA_API_KEY': 'kma-api-key',
+                                 'UPSTAGE_API_KEY': 'upstage-api-key'}.items():
+                value = runtime['secrets'][source]
+                if not isinstance(value, str) or not value:
+                    raise ValueError('RUNTIME_SECRET_MISSING')
+                private(secret_dir / name, value, UID)
+            # 이전 릴리스로 복귀해도 폐기한 키를 다시 사용하지 않도록 빈 파일만 남긴다.
+            retired = secret_dir / 'kma-api-key-backup'
+            if retired.exists():
+                private(retired, '', UID)
+            compose(release, 'up', '-d', '--no-build', '--wait', '--wait-timeout', '120', 'db')
+            for service in ('bootstrap', 'migrate', 'grant', 'admin'):
+                compose(release, 'run', '--rm', '--no-deps', '-T', service)
+                print(service.upper() + '_OK', flush=True)
+            compose(release, 'up', '-d', '--no-build', '--no-deps', '--wait', '--wait-timeout', '240', 'api', 'worker', 'web')
         for attempt in range(30):
             check = subprocess.run(['curl', '--fail', '--silent', '--show-error', '--max-time', '10',
                 '--resolve', 'waterleague.cloud:443:127.0.0.1', 'https://waterleague.cloud/api/v1/health'], capture_output=True)
@@ -159,13 +176,15 @@ def main():
             time.sleep(5)
         else:
             raise RuntimeError('PUBLIC_TLS_HEALTH_FAILED')
+        install_storage(BASE)
+        runtime_identity.remember(BASE, release, runtime['images'], runtime['secrets'], inspect)
         pending = BASE / 'current.next'
         pending.unlink(missing_ok=True)
         pending.symlink_to(release, target_is_directory=True)
         pending.replace(current)
         print('DEPLOYED ' + revision, flush=True)
     except Exception:
-        if previous and stopped:
+        if previous and (stopped or web_only):
             compose(previous, 'up', '-d', '--no-build', '--no-deps', '--wait', '--wait-timeout', '240', 'api', 'worker', 'web')
             print('PREVIOUS_RELEASE_RESTORED', flush=True)
         raise

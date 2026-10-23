@@ -80,7 +80,7 @@ def deploy():
         }))
         bundle = directory / 'release.tar.gz'
         with tarfile.open(bundle, 'w:gz') as archive:
-            for name in ('compose.yml', 'compose.public.yml', 'apply.py'):
+            for name in ('compose.yml', 'compose.public.yml', 'apply.py', 'storage.py', 'runtime_identity.py'):
                 archive.add(ROOT / 'deploy' / name, arcname=name)
             archive.add(runtime, arcname='runtime.json')
         bundle.chmod(0o600)

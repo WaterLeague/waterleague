@@ -704,31 +704,6 @@
   font-size: 11px;
   margin: 18px 0 0;
 }
-.home-start {
-  max-width: 1160px;
-  margin: 25px auto 65px;
-  padding: 42px 50px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 25px;
-  border-radius: 12px;
-  background: #e8f0f9;
-}
-.home-start h2 {
-  font-size: 32px;
-  line-height: 1.45;
-  letter-spacing: -0.04em;
-  margin: 12px 0;
-}
-.home-start p {
-  color: var(--site-muted);
-  font-size: 12px;
-  line-height: 1.8;
-}
-.home-start .home-button {
-  flex-shrink: 0;
-}
 .home-footer {
   border-top: 1px solid var(--site-line);
   max-width: 1240px;
@@ -785,9 +760,6 @@
   }
   .home-facility-copy {
     padding: 28px;
-  }
-  .home-start {
-    margin-inline: 28px;
   }
   .home-feature-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -882,15 +854,6 @@
   }
   .home-map-grid {
     grid-template-columns: 1fr;
-  }
-  .home-start {
-    margin: 15px 20px 40px;
-    padding: 30px 25px;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .home-start h2 {
-    font-size: 27px;
   }
   .home-footer {
     padding: 25px 20px;

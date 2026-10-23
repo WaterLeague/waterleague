@@ -302,15 +302,6 @@ export function HomePage({ accountId = null }: { accountId?: string | null }) {
         </div>
       </section>
 
-      <section className="home-start">
-        <div>
-          <h2>첫 설계를 시작해 보세요.</h2>
-          <p>재해 모드는 로그인 없이도 시설 배치를 체험할 수 있어요.</p>
-        </div>
-        <HomeLink href="/disaster" className="home-button primary">
-          재해 모드 체험하기 <ArrowUpRight size={19} />
-        </HomeLink>
-      </section>
       <DataSection accountId={accountId} />
       <HomeCompetitionGuide />
       <footer className="home-footer">

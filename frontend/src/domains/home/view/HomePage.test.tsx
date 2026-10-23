@@ -78,7 +78,7 @@ test('기본 주소는 소개 홈이며 새 텍스트 로고가 홈으로 연결
 test('데이터의 모든 출처와 비용·계산 설명을 홈 하단에 유지', () => {
   const html = renderToStaticMarkup(<HomePage />);
   const section = html.slice(html.indexOf('id="home-data"'), html.indexOf('<footer'));
-  expect(html.indexOf('id="home-data"')).toBeGreaterThan(html.indexOf('class="home-start"'));
+  expect(html.indexOf('id="home-data"')).toBeGreaterThan(html.indexOf('id="home-features-title"'));
   for (const source of dataSources) {
     expect(section).toContain(source.title);
     for (const dataset of source.datasets) {

@@ -3,15 +3,24 @@ const motionTargets = [
   '.home-hero-art',
   '.home-section-heading',
   '.home-guide',
-  '.home-mode',
-  '.home-seoul-view',
-  '.home-street-story',
-  '.home-shared-story',
+  '.home-mode > .home-game-image',
+  '.home-mode-copy',
+  '.home-seoul-toolbar',
+  '.home-seoul-view > .home-game-image',
+  '.home-street-story > *',
+  '.home-shared-story > *',
   '.home-facility-picker',
   '.home-facility-detail',
   '.home-feature-grid > article',
-  '.home-start',
+  '.home-score-formula',
+  '.home-score-example',
+  '.home-score-modes > article',
+  '.home-score-rules',
+  '.home-competition-gallery > .home-game-image',
+  '.home-competitions > .home-story-copy',
   '.data-section-heading',
+  '.data-source-grid > article',
+  '.home-data > section > h3',
 ].join(',');
 
 export function startHomeMotion(root: HTMLElement): () => void {
@@ -33,20 +42,28 @@ export function startHomeMotion(root: HTMLElement): () => void {
           seen.add(element);
           if (!media.matches && element.animate) {
             const sibling = [...(element.parentElement?.children ?? [])].indexOf(element);
+            const image = element.matches('.home-game-image, .home-hero-art');
+            const copy = element.matches('.home-mode-copy, .home-story-copy');
+            const x = copy ? (sibling === 0 ? -14 : 14) : 0;
             const animation = element.animate(
               [
-                { opacity: 0, transform: 'translate3d(0, 24px, 0)' },
-                { opacity: 1, transform: 'translate3d(0, 0, 0)' },
+                {
+                  opacity: 0,
+                  transform: `translate3d(${x}px, ${image ? 32 : 18}px, 0) scale(${image ? 0.975 : 1})`,
+                },
+                { opacity: 1, transform: 'translate3d(0, 0, 0) scale(1)' },
               ],
               {
-                duration: 700,
-                delay: Math.min(Math.max(sibling, 0), 3) * 65,
-                easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+                duration: image ? 760 : 580,
+                delay: Math.min(Math.max(sibling, 0), 2) * 55,
+                easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
                 fill: 'backwards',
               }
             );
             animations.set(element, animation);
-            animation.onfinish = () => animations.delete(element);
+            animation.onfinish = () => {
+              if (animations.get(element) === animation) animations.delete(element);
+            };
           }
         }
         const animation = animations.get(element);
@@ -54,7 +71,20 @@ export function startHomeMotion(root: HTMLElement): () => void {
         else animation?.play();
       }
     },
-    { threshold: 0.06 }
+    { threshold: 0.08, rootMargin: '0px 0px 48px 0px' }
+  );
+  const resetObserver = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        const element = entry.target as HTMLElement;
+        // 화면 경계의 작은 왕복에는 반복하지 않고 충분히 벗어난 뒤 다시 등장시킨다.
+        if (!entry.isIntersecting && !element.contains(document.activeElement)) {
+          seen.delete(element);
+          cancel(element);
+        }
+      }
+    },
+    { rootMargin: '240px 0px', threshold: 0 }
   );
   const visibility = () => {
     root.dataset.motionPaused = String(document.hidden);
@@ -75,13 +105,17 @@ export function startHomeMotion(root: HTMLElement): () => void {
       }
     }
   };
-  elements.forEach((element) => observer.observe(element));
+  elements.forEach((element) => {
+    observer.observe(element);
+    resetObserver.observe(element);
+  });
   visibility();
   document.addEventListener('visibilitychange', visibility);
   media.addEventListener('change', preference);
   root.addEventListener('focusin', focus);
   return () => {
     observer.disconnect();
+    resetObserver.disconnect();
     document.removeEventListener('visibilitychange', visibility);
     media.removeEventListener('change', preference);
     root.removeEventListener('focusin', focus);

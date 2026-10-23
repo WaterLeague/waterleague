@@ -19,7 +19,7 @@ try:
         directory = Path(directory)
         with tarfile.open(bundle) as archive:
             members = archive.getmembers()
-            names = {'compose.yml', 'compose.public.yml', 'apply.py', 'runtime.json'}
+            names = {'compose.yml', 'compose.public.yml', 'apply.py', 'storage.py', 'runtime_identity.py', 'runtime.json'}
             if len(members) != len(names) or {m.name for m in members} != names:
                 raise ValueError('DEPLOY_BUNDLE_FILES_INVALID')
             for member in members:

@@ -30,14 +30,7 @@ public class SharedResearchArtifactService {
   }
 
   private byte[] read(Path p, int max) throws IOException {
-    if (!Files.isRegularFile(p, LinkOption.NOFOLLOW_LINKS)
-        || !p.toRealPath().equals(p)
-        || Files.size(p) > max) throw invalid();
-    try (var in = Files.newInputStream(p, LinkOption.NOFOLLOW_LINKS)) {
-      var bytes = in.readNBytes(max + 1);
-      if (bytes.length > max) throw invalid();
-      return bytes;
-    }
+    return io.waterleague.common.storage.ArtifactFiles.read(p, max);
   }
 
   private String hash(byte[] bytes) {
