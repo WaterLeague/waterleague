@@ -622,7 +622,21 @@ class SharedResearchWorkflowTests extends PostgresIntegrationTest {
     assertThat(detail.toString()).doesNotContain("DO_NOT_EXPORT", "OTHER_ACCOUNTING", "ownerId");
     assertThat(call(other, "GET", path, null).statusCode()).isEqualTo(404);
     byte[] originalManifest = Files.readAllBytes(job.path().resolve("manifest.json"));
+    // 이전 계산을 압축해도 동의 범위·화면과 내려받기 원문을 유지해야 한다.
+    for (String name : List.of("forcing.json", "result.json")) {
+      var original = job.path().resolve(name);
+      try (var out =
+          new java.util.zip.GZIPOutputStream(
+              Files.newOutputStream(original.resolveSibling(name + ".gz")))) {
+        out.write(Files.readAllBytes(original));
+      }
+      Files.delete(original);
+    }
+    assertThat(get(org, "/research/installations/" + job.id()).path("frames"))
+        .isEqualTo(detail.path("frames"));
     var files = unzip(org, "/research/installations/" + job.id() + "/bundle");
+    assertThat(files).containsKeys("forcing.json", "result.json");
+    assertThat(files).doesNotContainKeys("forcing.json.gz", "result.json.gz");
     assertThat(files.get("manifest.json")).isEqualTo(originalManifest);
     assertThat(Files.readAllBytes(job.path().resolve("manifest.json"))).isEqualTo(originalManifest);
     var exported =
