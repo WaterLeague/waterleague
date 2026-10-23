@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 import runpy
 
+runpy.run_path('/app/deploy/reconcile_weekly.py', run_name='__main__')
 key = Path('/run/secrets/kma-api-key').read_text().strip()
 if not key:
     raise SystemExit('KMA_SECRET_MISSING')

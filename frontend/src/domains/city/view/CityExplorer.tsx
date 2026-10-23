@@ -1,4 +1,5 @@
 import { mapScope } from '../../../shared/service/mapScope';
+import { districtScoreLabel } from '../../weekly/service/districtScoreLabel';
 import { competitionCity, competitionOverview } from '../service/competitionMapService';
 import { useCompetitionGame } from '../../competition/controller/useCompetitionGame';
 import { followLink } from '../../../shared/controller/useAppLocation';
@@ -74,7 +75,7 @@ import { isRaining } from '../../rainfall/service/rainEffectService';
 import { useReducedMotion } from '../../catalog/controller/useReducedMotion';
 import { useBudget } from '../../budget/controller/useBudget';
 import { useWeekly } from '../../weekly/controller/useWeekly';
-import { WeeklyBoard, scoreFormat } from '../../weekly/view/WeeklyBoard';
+import { WeeklyBoard } from '../../weekly/view/WeeklyBoard';
 import { useTerrain } from '../../terrain/controller/useTerrain';
 import { FullscreenButton } from '../../game/view/FullscreenButton';
 import { GameClock } from '../../game/view/GameClock';
@@ -200,11 +201,7 @@ function Explorer({
     if (contest.id) return '';
     if (weekly.error) return '순위 갱신 지연';
     const score = weekly.value?.current.districts.find((d) => d.districtId === id);
-    return score
-      ? score.scoreM3 === null
-        ? '점수 없음'
-        : `${score.rank ? `${score.rank}위 · ` : ''}총 점수 ${scoreFormat.format(score.scoreM3)} m³`
-      : '점수 조회 중';
+    return districtScoreLabel(score, weekly.value?.current.status === 'WITHHELD');
   };
   const [selected, setSelected] = useState(initialDistrictId);
   const [showCandidates, setShowCandidates] = useState(false);
@@ -846,7 +843,7 @@ function Explorer({
                   ? `시설 ${shared.installations.filter((i) => i.districtId === d.id).length}개`
                   : weekly.error
                     ? '순위 갱신 지연'
-                    : `시설 ${shared.installations.filter((i) => i.districtId === d.id).length}개 · ${score ? (score.scoreM3 === null ? '점수 없음' : `총 점수 ${scoreFormat.format(score.scoreM3)} m³`) : '점수 조회 중'}`,
+                    : `시설 ${shared.installations.filter((i) => i.districtId === d.id).length}개 · ${districtScoreLabel(score, weekly.value?.current.status === 'WITHHELD', false)}`,
               ];
             })
           ),

@@ -18,6 +18,74 @@ from native_contract_evidence import verify as verify_contract
 
 
 class SharedPhysicsTests(unittest.TestCase):
+    def reconciliation_fixture(self, root):
+        from waterleague_sim.evaluation import score_policy as policy
+        self.conn.execute("UPDATE shared_installations SET physics_policy=%s,installed_at=installed_at+interval '17 seconds',season_ends_at=installed_at+interval '7 days',occupied_site=owner_id::text||':'||district_id||':'||cell_id WHERE id=%s",
+                          (physics.SECOND_POLICY, self.installation))
+        first = physics.claim(self.conn)
+        with patch.object(physics, 'observed_forcing', side_effect=self.forcing):
+            self.assertTrue(physics.process(self.conn, first, root))
+        stored = self.conn.execute('SELECT * FROM shared_physics_jobs WHERE id=%s', (first['id'],)).fetchone()
+        self.assertEqual(stored['state'], 'SUCCEEDED', stored['error_code'])
+        directory = Path(root)/'shared-physics'/str(first['id'])/str(first['lease_token'])
+        archived = json.loads((directory/'score-policy.json').read_bytes())
+        archived['files']['simulation/waterleague_sim/ingestion/live.py'] = 'b'*64
+        (directory/'score-policy.json').write_bytes(policy.encode(archived))
+        context = first['score_context'] | {'policySha256': physics.digest((directory/'score-policy.json').read_bytes())}
+        context['sha256'] = policy.digest(policy.encode({k:v for k,v in context.items() if k!='sha256'}))
+        for name in ('request.json', 'result.json'):
+            value = json.loads((directory/name).read_bytes()) | {'scoreContext': context}
+            (directory/name).write_bytes(physics.encode(value))
+        (directory/'score-context.json').write_bytes(policy.encode(context))
+        manifest = json.loads((directory/'manifest.json').read_bytes())
+        for name in ('request.json','result.json','score-policy.json','score-context.json'):
+            manifest[name] = physics.digest((directory/name).read_bytes())
+        (directory/'manifest.json').write_bytes(physics.encode(manifest))
+        public = json.loads(stored['result']) | {'scoreContext': context}
+        self.conn.execute('UPDATE shared_physics_jobs SET result=%s,input_hash=%s,artifact_manifest_hash=%s WHERE id=%s',
+            (json.dumps(public), physics.digest((directory/'request.json').read_bytes()),
+             physics.digest((directory/'manifest.json').read_bytes()), first['id']))
+        self.conn.execute('UPDATE shared_weekly_scores SET score_policy_sha256=%s,comparison_group_hash=%s WHERE installation_id=%s',
+            (context['policySha256'],context['sha256'],self.installation))
+        self.conn.execute('UPDATE shared_installations SET season_ends_at=%s WHERE id=%s', (first['end'], self.installation))
+        return directory
+
+    def test_offline_reconciliation_preserves_actual_states_and_scores_without_new_weather(self):
+        import importlib.util
+        spec = importlib.util.spec_from_file_location('reconcile_weekly', physics.ROOT/'deploy/reconcile_weekly.py')
+        reconcile = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(reconcile)
+        with tempfile.TemporaryDirectory() as root:
+            self.reconciliation_fixture(root)
+            before = self.conn.execute('SELECT * FROM shared_weekly_scores WHERE installation_id=%s', (self.installation,)).fetchall()
+            job = reconcile.claim(self.conn)
+            self.assertIsNotNone(job)
+            self.assertEqual(job['end'], job['previous']['requested_through'])
+            self.assertIsNone(physics.claim(self.conn))
+            with patch.object(physics, 'observed_forcing', side_effect=AssertionError('새 관측 호출 금지')):
+                self.assertTrue(reconcile.replay(self.conn, job, root))
+            after = self.conn.execute('SELECT * FROM shared_weekly_scores WHERE installation_id=%s', (self.installation,)).fetchall()
+            for old, new in zip(before, after, strict=True):
+                for key in ('score_m3','evaluated_seconds','evaluated_minutes','evaluated_through','rule_version'):
+                    self.assertEqual(old[key], new[key])
+                self.assertEqual(new['score_policy_sha256'], job['score_context']['policySha256'])
+                self.assertNotEqual(old['comparison_group_hash'], new['comparison_group_hash'])
+            self.assertIsNone(reconcile.claim(self.conn))
+
+    def test_offline_reconciliation_rejects_damaged_archive_without_publishing(self):
+        import importlib.util
+        spec = importlib.util.spec_from_file_location('reconcile_weekly', physics.ROOT/'deploy/reconcile_weekly.py')
+        reconcile = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(reconcile)
+        with tempfile.TemporaryDirectory() as root:
+            directory = self.reconciliation_fixture(root)
+            before = self.conn.execute('SELECT * FROM shared_weekly_scores WHERE installation_id=%s', (self.installation,)).fetchall()
+            (directory/'forcing.json').write_bytes(b'{}')
+            job = reconcile.claim(self.conn)
+            self.assertFalse(reconcile.replay(self.conn, job, root))
+            self.assertEqual(before, self.conn.execute('SELECT * FROM shared_weekly_scores WHERE installation_id=%s', (self.installation,)).fetchall())
+            self.assertIsNone(reconcile.claim(self.conn))
+
     @classmethod
     def setUpClass(cls):
         queue_fixture.WorkerQueueTests.setUpClass.__func__(cls)
