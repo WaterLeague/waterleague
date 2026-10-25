@@ -37,5 +37,6 @@ public record PhysicsView(
       JsonNode designContract,
       JsonNode scoreContext,
       JsonNode lifeCycleCost,
-      JsonNode cistern) {}
+      JsonNode cistern,
+      JsonNode rainfallQuality) {}
 }
