@@ -182,6 +182,25 @@ class SharedPhysicsTests(unittest.TestCase):
         self.assertTrue(physics.finish(self.conn, new, None, None, 'KMA_UNAVAILABLE'))
         self.assertEqual(self.conn.execute('SELECT error_code FROM shared_physics_jobs WHERE id=%s', (old['id'],)).fetchone()['error_code'], 'LIVE_LEASE_EXPIRED')
 
+    def test_closed_season_settlement_precedes_new_installations_and_keeps_failure_backoff(self):
+        self.conn.execute("UPDATE shared_installations SET season_ends_at=installed_at+interval '4 minutes',occupied_site=owner_id::text||':'||district_id||':'||cell_id WHERE id=%s",
+                          (self.installation,))
+        self.conn.execute("""INSERT INTO shared_physics_jobs(id,installation_id,simulation_start,requested_through,
+            state,lease_token,created_at,finished_at,error_code)
+            SELECT %s,id,installed_at,season_ends_at,'FAILED',%s,now()-interval '10 minutes',
+            now()-interval '10 minutes','AWS_REQUIRED_MINUTE_MISSING' FROM shared_installations WHERE id=%s""",
+            (uuid.uuid4(),uuid.uuid4(),self.installation))
+        fresh = uuid.uuid4()
+        self.conn.execute("""INSERT INTO shared_installations(id,occupied_site,district_id,cell_id,owner_id,
+            model_hash,facility_type,area_m2,cost,installed_at)
+            SELECT %s,%s,district_id,%s,owner_id,model_hash,facility_type,area_m2,cost,installed_at
+            FROM shared_installations WHERE id=%s""", (fresh,'11290:'+self.second_cell,self.second_cell,self.installation))
+        closed = physics.claim(self.conn)
+        self.assertEqual(closed['installation']['id'], self.installation)
+        physics.finish(self.conn, closed, None, None, 'AWS_REQUIRED_MINUTE_MISSING')
+        next_job = physics.claim(self.conn)
+        self.assertEqual(next_job['installation']['id'], fresh)
+
     def test_long_failed_fetch_waits_after_finish_without_delaying_other_installations(self):
         job = physics.claim(self.conn)
         self.conn.execute("UPDATE shared_physics_jobs SET created_at=now()-interval '20 minutes' WHERE id=%s", (job['id'],))
@@ -221,7 +240,7 @@ class SharedPhysicsTests(unittest.TestCase):
         self.assertIsNone(row['result'])
         self.assertFalse(physics.finish(self.conn, job, {'stale': True}, 'a'*64, None))
 
-    def forcing(self, station, start, end, key, heartbeat=None, share_ranges=False):
+    def forcing(self, station, start, end, key, heartbeat=None, share_ranges=False, verified_zero_gaps=False, allow_gaps=False):
         if heartbeat is not None: heartbeat()
         def rows(begin, finish):
             return [{'end': (begin+timedelta(minutes=i)).isoformat(), 'depthMm': .3,
@@ -233,6 +252,39 @@ class SharedPhysicsTests(unittest.TestCase):
             'intervalSeconds': 60, 'observations': rows(start, end),
             'overlapObservations': rows(start-timedelta(minutes=60), start),
             'sourceHashes': [sha], 'evidence': 'SYNTHETIC_TEST_ONLY'}, [(raw, {'sha256': sha, 'purpose': 'SYNTHETIC_TEST_ONLY'})]
+
+    def test_score_gap_supplement_is_archived_and_published_with_location_assumption(self):
+        from waterleague_sim.ingestion import seoul_live
+        end = datetime.now(timezone.utc).replace(second=0, microsecond=0)-timedelta(minutes=2)
+        end -= timedelta(minutes=end.minute % 10)
+        self.conn.execute("""UPDATE shared_installations SET installed_at=%s,season_ends_at=%s,
+            occupied_site=owner_id::text||':'||district_id||':'||cell_id WHERE id=%s""",
+            (end-timedelta(minutes=10),end,self.installation))
+        job = physics.claim(self.conn)
+        def incomplete(station, start, end, key, **kwargs):
+            rain, sources = self.forcing(station, start, end, key, **kwargs)
+            rain['observations'].pop(0)
+            return rain, sources
+        def secondary(station, heartbeat=None):
+            registry = json.loads(seoul_live.REGISTRY.read_bytes())
+            binding = next(b['secondary'] for b in registry['bindings'].values() if b['secondary']['stationId'] == station)
+            right = (job['start']+timedelta(minutes=1)).astimezone(seoul_live.KST)
+            right = right.replace(minute=(right.minute//10)*10) + (timedelta(minutes=10) if right.minute % 10 else timedelta())
+            raw = json.dumps({'DATA': [{'rf_cd': station, 'rf_nm': binding['name'], 'gu_nm': binding['districtName'],
+                'data_clct_tm': (right-timedelta(minutes=1)).strftime('%Y-%m-%d %H:%M'), 'rn_10m': 0}]}).encode()
+            return raw, {'sha256': physics.digest(raw), 'purpose': 'SYNTHETIC_TEST_ONLY'}
+        with tempfile.TemporaryDirectory() as root, patch.object(physics, 'observed_forcing', side_effect=incomplete), patch.object(seoul_live, 'fetch', side_effect=secondary):
+            self.assertTrue(physics.process(self.conn, job, root))
+            row = self.conn.execute('SELECT * FROM shared_physics_jobs WHERE id=%s', (job['id'],)).fetchone()
+            self.assertEqual(row['state'], 'SUCCEEDED', row['error_code'])
+            quality = json.loads(row['result'])['rainfallQuality']
+            self.assertEqual(quality['substituteMinutes'], 1)
+            self.assertEqual(len(quality['substituteStations']), 1)
+            path = Path(root)/'shared-physics'/str(job['id'])/str(job['lease_token'])
+            forcing = json.loads((path/'forcing.json').read_bytes())
+            self.assertTrue(forcing['sourceArchive']['complete'])
+            self.assertEqual(forcing['rainfallSupplements'][0]['scope'], 'WEEKLY_SCORE_ZERO_ONLY')
+            self.assertEqual(forcing['observations'][0]['method'], 'SEOUL_NEAREST_10M_ZERO_ASSUMPTION')
 
     def test_new_footprint_boundary_runs_without_unverified_external_inflow(self):
         new_hash=self.native.sha256

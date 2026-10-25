@@ -54,7 +54,8 @@ def claim(conn):
                 AND COALESCE(j.finished_at,j.created_at)>clock_timestamp()-interval '5 minutes')
               AND NOT EXISTS(SELECT 1 FROM shared_physics_jobs j WHERE j.installation_id=i.id AND j.state='SUCCEEDED'
                 AND j.requested_through>=date_trunc('minute',LEAST(COALESCE(i.removed_at,i.season_ends_at,clock_timestamp()),date_bin(interval '5 minutes',clock_timestamp()-interval '2 minutes',timestamptz '2000-01-01 00:00:00+00'))))
-            ORDER BY EXISTS(SELECT 1 FROM shared_weekly_scores s WHERE s.installation_id=i.id
+            ORDER BY (i.competition_id IS NULL AND COALESCE(i.removed_at,i.season_ends_at)<=clock_timestamp()) DESC NULLS LAST,
+                EXISTS(SELECT 1 FROM shared_weekly_scores s WHERE s.installation_id=i.id
                 AND s.score_policy_sha256<>%s) DESC,
                 (SELECT max(j.created_at) FROM shared_physics_jobs j WHERE j.installation_id=i.id) NULLS FIRST,i.installed_at,i.id
             FOR UPDATE OF i SKIP LOCKED LIMIT 1
