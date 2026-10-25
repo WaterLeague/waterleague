@@ -75,6 +75,22 @@ export function PhysicsPanel({ installationId }: { installationId: string }) {
             <summary>계산 조건</summary>
             {result.lifeCycleCost && <LifeCycleCostEvidence value={result.lifeCycleCost} />}
             {result.initialization && <InitializationEvidence value={result.initialization} />}
+            {!!result.rainfallQuality?.observedZeroMinutes && (
+              <p>
+                기상청 누적 관측으로 무강우를 확인한{' '}
+                {result.rainfallQuality.observedZeroMinutes.toLocaleString()}분을 복구했습니다.
+              </p>
+            )}
+            {!!result.rainfallQuality?.substituteMinutes && (
+              <p>
+                기상청 결측 {result.rainfallQuality.substituteMinutes.toLocaleString()}분은 서울시{' '}
+                {result.rainfallQuality.substituteStations
+                  .map((s) => `${s.name}(${(s.distanceM / 1000).toFixed(2)}km)`)
+                  .join(' · ')}
+                의 완결된 10분 무강우 관측으로 보강했습니다. 인접 관측소를 대용한 가정이며, 기상청
+                지점이나 시설 위치의 실제 무강우를 확정한 값은 아닙니다.
+              </p>
+            )}
             {result.facilityDesign && <FacilityProfileEvidence {...result.facilityDesign} />}
             <p>
               EPA SWMM {result.engineVersion} · {at(result.simulationStart)} 이후 연속 계산

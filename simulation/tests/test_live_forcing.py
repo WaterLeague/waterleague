@@ -119,6 +119,50 @@ class LiveForcingTests(unittest.TestCase):
         with self.assertRaises(RainfallQualityError):
             normalized(rows,start+timedelta(minutes=50),start+timedelta(minutes=180))
 
+    def test_weekly_dry_outage_uses_same_day_counter_without_distributing_rain(self):
+        start = datetime(2026, 10, 22, 9, 0, tzinfo=KST)
+        rows = {start+timedelta(minutes=n): {'dayMm': Decimal('2.5'),
+            'fifteenMinuteMm': None, 'sixtyMinuteMm': None} for n in range(181)}
+        for n in range(30, 123):
+            rows[start+timedelta(minutes=n)]['dayMm'] = None
+        result = normalized(rows, start, start+timedelta(hours=3), verified_zero_gaps=True)
+        self.assertEqual(len(result), 180)
+        self.assertEqual(sum(v['depthMm'] for v in result), 0)
+        self.assertEqual(result[29]['method'], 'OBSERVED_ZERO_COUNTER_GAP')
+        rows[start+timedelta(minutes=123)]['dayMm'] += Decimal('.5')
+        with self.assertRaises(RainfallQualityError):
+            normalized(rows, start, start+timedelta(hours=3), verified_zero_gaps=True)
+
+    def test_weekly_zero_recovery_preserves_observed_rain_and_rejects_conflict(self):
+        rows, start = self.fixture()
+        end = start+timedelta(minutes=180)
+        original = normalized(rows, start+timedelta(minutes=50), end)
+        recovered = normalized(rows, start+timedelta(minutes=50), end, verified_zero_gaps=True)
+        self.assertEqual([v['depthMm'] for v in original], [v['depthMm'] for v in recovered])
+        del rows[start+timedelta(minutes=120)]
+        recovered = normalized(rows, start+timedelta(minutes=50), end, verified_zero_gaps=True)
+        self.assertEqual(sum(v['depthMm'] for v in recovered), 10)
+        del rows[start+timedelta(minutes=63)]
+        with self.assertRaises(RainfallQualityError):
+            normalized(rows, start+timedelta(minutes=50), end, verified_zero_gaps=True)
+        rows, start = self.fixture()
+        rows[start+timedelta(minutes=65)]['sixtyMinuteMm'] = Decimal(0)
+        with self.assertRaisesRegex(RainfallQualityError, 'AWS_ROLLING_TOTAL_MISMATCH'):
+            normalized(rows, start+timedelta(minutes=50), end, verified_zero_gaps=True)
+
+    def test_weekly_zero_counter_does_not_cross_midnight_or_extrapolate(self):
+        start = datetime(2026, 10, 22, 23, 50, tzinfo=KST)
+        row = {'dayMm': Decimal(0), 'fifteenMinuteMm': None, 'sixtyMinuteMm': None}
+        for end in (start+timedelta(minutes=20), start+timedelta(hours=7)):
+            with self.assertRaisesRegex(RainfallQualityError, 'AWS_REQUIRED_MINUTE_MISSING'):
+                normalized({start: row, end: row}, start, end, verified_zero_gaps=True)
+        noon = start.replace(hour=12)
+        with self.assertRaisesRegex(RainfallQualityError, 'AWS_REQUIRED_MINUTE_MISSING'):
+            normalized({noon: row, noon+timedelta(hours=7): row}, noon,
+                noon+timedelta(hours=7), verified_zero_gaps=True)
+        with self.assertRaisesRegex(RainfallQualityError, 'AWS_REQUIRED_MINUTE_MISSING'):
+            normalized({noon: row}, noon, noon+timedelta(minutes=1), verified_zero_gaps=True)
+
 
 if __name__ == '__main__':
     unittest.main()

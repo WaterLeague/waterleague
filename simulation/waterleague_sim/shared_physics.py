@@ -131,6 +131,7 @@ def process(conn, job, root):
         job['score_context'] = comparison_context
         engine = engine_identity()
         observations, source_hashes, previous_ref, previous_result = [], [], None, None
+        rainfall_supplements = []
         previous_evaporation = None
         previous_directory = None
         previous_manifest = {}
@@ -164,6 +165,7 @@ def process(conn, job, root):
             if previous_result.get('scoreContext') != previous_context:
                 raise ValueError('LIVE_PREVIOUS_RESULT_INVALID')
             observations, source_hashes = forcing['observations'], forcing['sourceHashes']
+            rainfall_supplements = forcing.get('rainfallSupplements', [])
             previous_evaporation = forcing.get('evaporation')
             covered = previous['requested_through']
             previous_ref = {'jobId': str(previous['id']), 'leaseToken': str(previous['lease_token']),
@@ -177,7 +179,15 @@ def process(conn, job, root):
             from .ingestion.antecedent import fetch as fetch_antecedent
             antecedent, antecedent_sources = fetch_antecedent(station, job['start'], os.environ.get('KMA_API_KEY', ''), heartbeat=lambda: renew(conn,job))
         renew(conn,job)
-        extension, sources = observed_forcing(station, covered, job['end'], os.environ.get('KMA_API_KEY', ''), heartbeat=lambda: renew(conn,job), share_ranges=True)
+        weekly = job['installation'].get('competition_id') is None
+        extension, sources = observed_forcing(station, covered, job['end'], os.environ.get('KMA_API_KEY', ''), heartbeat=lambda: renew(conn,job), share_ranges=True, verified_zero_gaps=True, allow_gaps=weekly)
+        if weekly:
+            from .ingestion.seoul_live import supplement
+            extension, extra_sources = supplement(extension, covered, job['end'],
+                heartbeat=lambda: renew(conn,job), scope='WEEKLY_SCORE_ZERO_ONLY')
+            sources.extend(extra_sources)
+            if extra_sources:
+                rainfall_supplements = rainfall_supplements + [extension['supplement']]
         renew(conn,job)
         saved_depths = {v['end']: v['depthMm'] for v in observations[-60:]}
         if any(v['end'] in saved_depths and v['depthMm'] != saved_depths[v['end']]
@@ -192,7 +202,10 @@ def process(conn, job, root):
         forcing = extension | {'start': job['start'].isoformat(),
                                'observations': observations+extension['observations'],
                                'sourceHashes': source_hashes+extension['sourceHashes'], 'previousInput': previous_ref,
-                               'evaporation': evaporation}
+                               'evaporation': evaporation, 'rainfallSupplements': rainfall_supplements}
+        if rainfall_supplements:
+            forcing['evidence'] = 'AWS_OBSERVATIONS_WITH_SEOUL_NEAREST_GAUGE_GAP_ASSUMPTION'
+            forcing['qualityPolicy'] = 'AWS_PRIMARY_FIXED_NEAREST_SEOUL_10M_WEEKLY_SCORE_ZERO_ONLY_V1'
         for raw, meta in sources+weather_sources+antecedent_sources:
             source_archive.store(root,path/(meta['sha256']+'.txt'),raw,meta['sha256'])
             (path/(meta['sha256']+'.json')).write_bytes(encode(meta))
@@ -270,6 +283,7 @@ def process(conn, job, root):
                   'evaporationMethod': result['evaporation']['method'],
                   'initialState': result.get('initialization', {}).get('method', 'ASSUMED_DESIGN_START'),
                   'initialization': result.get('initialization'), 'facilityDesign': result.get('facilityDesign'),
+                  'rainfallQuality': rainfall_quality(forcing),
                   'runoffComparison': result.get('runoffComparison'),
                   'designContract': result['designContract'],
                   'scoreContext': result['scoreContext'],
@@ -282,10 +296,23 @@ def process(conn, job, root):
         saved = finish(conn, job, public, digest(request_raw), None, weeks, digest((path/'manifest.json').read_bytes()))
     except Exception as e:
         code = str(e)
-        if not re.fullmatch(r'(AWS|KMA|LIVE)_[A-Z_]{1,48}', code):
+        if not re.fullmatch(r'(AWS|KMA|LIVE|SEOUL)_[A-Z_]{1,48}', code):
             code = 'LIVE_CALCULATION_FAILED'
         saved = finish(conn, job, None, None, code)
     return saved
+
+
+def rainfall_quality(forcing):
+    stations = {}
+    for supplement in forcing.get('rainfallSupplements', []):
+        binding = supplement['binding']
+        secondary = binding['secondary']
+        stations[secondary['stationId']] = {'stationId': secondary['stationId'],
+            'name': secondary['name'], 'distanceM': binding['distanceM']}
+    return {'policy': 'OBSERVED_ZERO_AND_FIXED_SEOUL_ZERO_V1',
+        'observedZeroMinutes': sum(v.get('method', '').startswith('OBSERVED_ZERO_') for v in forcing['observations']),
+        'substituteMinutes': sum(v.get('method', '') == 'SEOUL_NEAREST_10M_ZERO_ASSUMPTION' for v in forcing['observations']),
+        'substituteStations': list(stations.values())}
 
 
 def run_once(conn, root):

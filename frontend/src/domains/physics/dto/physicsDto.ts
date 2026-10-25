@@ -34,6 +34,20 @@ export const physicsDto = z
         evaporationMethod: z.string(),
         initialState: z.string(),
         initialization: initializationDto.nullish(),
+        rainfallQuality: z
+          .object({
+            policy: z.literal('OBSERVED_ZERO_AND_FIXED_SEOUL_ZERO_V1'),
+            observedZeroMinutes: z.number().int().nonnegative(),
+            substituteMinutes: z.number().int().nonnegative(),
+            substituteStations: z.array(
+              z.object({
+                stationId: z.string(),
+                name: z.string(),
+                distanceM: z.number().finite().nonnegative(),
+              })
+            ),
+          })
+          .nullish(),
         facilityDesign: facilityEvidenceDto.nullish(),
         cistern: cisternGameDto.nullish(),
         runoffComparison: runoffComparisonDto.nullish(),

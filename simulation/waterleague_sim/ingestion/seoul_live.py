@@ -1,4 +1,4 @@
-"""선행 상태의 AWS 결측만 사전 고정한 서울시 10분 관측으로 보강."""
+"""AWS 결측을 사전 고정한 서울시 관측으로 보강하며 선행·점수 범위를 구분."""
 import hashlib
 import json
 from datetime import datetime, timedelta, timezone
@@ -91,7 +91,9 @@ def parse(raw, binding, start, end):
         raise RainfallQualityError('SEOUL_RAIN_SOURCE_INVALID') from None
 
 
-def supplement(rain, start, end, fetcher=None, heartbeat=None):
+def supplement(rain, start, end, fetcher=None, heartbeat=None, scope='ANTECEDENT'):
+    if scope not in ('ANTECEDENT', 'WEEKLY_SCORE_ZERO_ONLY'):
+        raise RainfallQualityError('SEOUL_RAIN_SCOPE_INVALID')
     minute = timedelta(minutes=1)
     expected = int((end-start).total_seconds()/60)
     existing = {datetime.fromisoformat(row['end']): row for row in rain['observations']}
@@ -111,6 +113,8 @@ def supplement(rain, start, end, fetcher=None, heartbeat=None):
     if hashlib.sha256(raw).hexdigest() != metadata['sha256']:
         raise RainfallQualityError('SEOUL_RAIN_SOURCE_HASH_INVALID')
     intervals = parse(raw, binding['secondary'], start, end)
+    purpose = 'WEEKLY_SCORE_ZERO_GAP_SUPPLEMENT_ONLY' if scope == 'WEEKLY_SCORE_ZERO_ONLY' else 'ANTECEDENT_GAP_SUPPLEMENT_ONLY'
+    metadata = metadata | {'purpose': purpose}
     applied = {}
     for at in missing:
         local = at.astimezone(KST)
@@ -119,6 +123,9 @@ def supplement(rain, start, end, fetcher=None, heartbeat=None):
         if right not in intervals:
             raise RainfallQualityError('SEOUL_RAIN_REQUIRED_INTERVAL_MISSING')
         total = intervals[right]
+        # 운영 점수의 강우 발생 시각을 만들어내지 않도록 보조 관측 0인 구간만 허용한다.
+        if scope == 'WEEKLY_SCORE_ZERO_ONLY' and total != 0:
+            raise RainfallQualityError('SEOUL_RAIN_POSITIVE_SCORE_GAP')
         # 양의 10분 총량은 평균 강도 가정이며 실제 분 관측으로 표시하지 않는다.
         existing[at] = {'end': at.isoformat(), 'depthMm': float(total/10),
             'method': 'SEOUL_NEAREST_10M_MEAN_ASSUMPTION' if total else 'SEOUL_NEAREST_10M_ZERO_ASSUMPTION',
@@ -130,14 +137,16 @@ def supplement(rain, start, end, fetcher=None, heartbeat=None):
         'appliedDepthMm': float(intervals[right]*len(instants)/10),
         'timeDistribution': 'UNIFORM_10M_NOT_MINUTE_OBSERVATIONS'} for right, instants in sorted(applied.items())]
     registry_meta = {'provider': 'FROZEN_STATION_SELECTION', 'sha256': hashlib.sha256(registry_raw).hexdigest(),
-        'purpose': 'ANTECEDENT_GAP_SUPPLEMENT_ONLY', 'file': str(REGISTRY.relative_to(ROOT))}
+        'purpose': purpose, 'file': str(REGISTRY.relative_to(ROOT))}
     result = rain | {'observations': [existing[start+minute*i] for i in range(1, expected+1)],
         'sourceHashes': rain['sourceHashes'] + [metadata['sha256'], registry_meta['sha256']],
         'evidence': 'AWS_OBSERVATIONS_WITH_SEOUL_NEAREST_GAUGE_GAP_ASSUMPTION',
-        'qualityPolicy': 'AWS_PRIMARY_FIXED_NEAREST_SEOUL_10M_ANTECEDENT_V1',
-        'supplement': {'binding': binding, 'selectionVersion': registry['version'],
+        'qualityPolicy': 'AWS_PRIMARY_FIXED_NEAREST_SEOUL_10M_' + scope + '_V1',
+        'supplement': {'binding': binding, 'selectionVersion': registry['version'], 'scope': scope,
             'sourceSha256': metadata['sha256'], 'registrySha256': registry_meta['sha256'],
             'minutes': len(missing), 'fraction': len(missing)/expected, 'intervals': records,
             'assumptions': ['인접 관측소의 강우를 AWS 결측 구간에 대용; 부지 강우 대표성 미검증',
-                '10분 총량의 균일 분배; 정상 AWS 분 관측 유지; 완결되지 않은 구간 제외']}}
+                ('완결된 10분 무강우 관측만 대용; AWS 지점의 무강우 확정은 아님; 양의 강우 보간 금지'
+                 if scope == 'WEEKLY_SCORE_ZERO_ONLY' else
+                 '10분 총량의 균일 분배; 정상 AWS 분 관측 유지; 완결되지 않은 구간 제외')]}}
     return result, [(raw, metadata), (registry_raw, registry_meta)]

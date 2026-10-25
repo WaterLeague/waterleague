@@ -95,3 +95,34 @@ class SeoulLiveTests(unittest.TestCase):
         with self.assertRaisesRegex(RainfallQualityError, 'SEOUL_RAIN_LOCATION_PERIOD_UNSUPPORTED'):
             seoul_live.supplement(self.rain, self.start-timedelta(days=30), self.end-timedelta(days=30), fetch)
         fetch.assert_not_called()
+
+    def test_weekly_score_only_accepts_fixed_station_zero_and_marks_scope(self):
+        zero = self.row | {'rn_10m': '0'}
+        saved = {'end': (self.start+timedelta(minutes=1)).isoformat(), 'depthMm': 0.2,
+                 'method': 'DAILY_DIFFERENCE', 'weather': {}}
+        self.rain['observations'] = [saved]
+        result, sources = seoul_live.supplement(self.rain, self.start, self.end,
+            self.fetcher([zero]), scope='WEEKLY_SCORE_ZERO_ONLY')
+        self.assertEqual(result['observations'][0], saved)
+        self.assertEqual(result['supplement']['minutes'], 9)
+        self.assertEqual(result['supplement']['scope'], 'WEEKLY_SCORE_ZERO_ONLY')
+        self.assertTrue(all(m['purpose'] == 'WEEKLY_SCORE_ZERO_GAP_SUPPLEMENT_ONLY' for _, m in sources))
+        self.assertEqual(sum(v['depthMm'] for v in result['observations']), .2)
+        with self.assertRaisesRegex(RainfallQualityError, 'SEOUL_RAIN_POSITIVE_SCORE_GAP'):
+            seoul_live.supplement(self.rain, self.start, self.end,
+                self.fetcher([self.row]), scope='WEEKLY_SCORE_ZERO_ONLY')
+        with self.assertRaisesRegex(RainfallQualityError, 'SEOUL_RAIN_REQUIRED_INTERVAL_MISSING'):
+            seoul_live.supplement(self.rain, self.start, self.end-timedelta(minutes=1),
+                self.fetcher([zero]), scope='WEEKLY_SCORE_ZERO_ONLY')
+
+    def test_weekly_recovery_summary_keeps_prior_supplements(self):
+        from waterleague_sim.shared_physics import rainfall_quality
+        zero = self.row | {'rn_10m': '0'}
+        result, _ = seoul_live.supplement(self.rain, self.start, self.end,
+            self.fetcher([zero]), scope='WEEKLY_SCORE_ZERO_ONLY')
+        forcing = result | {'rainfallSupplements': [result['supplement']],
+            'observations': result['observations'] + [{'depthMm': 0, 'method': 'OBSERVED_ZERO_COUNTER_GAP'}]}
+        quality = rainfall_quality(forcing)
+        self.assertEqual(quality['substituteMinutes'], 10)
+        self.assertEqual(quality['observedZeroMinutes'], 1)
+        self.assertEqual(quality['substituteStations'], [{'stationId': '2102', 'name': '흑석P', 'distanceM': 1594.028}])
