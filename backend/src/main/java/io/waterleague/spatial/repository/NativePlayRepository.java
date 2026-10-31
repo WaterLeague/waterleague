@@ -25,11 +25,6 @@ public class NativePlayRepository {
   private final Set<String> districts;
   private final Semaphore queries = new Semaphore(4);
   private volatile Map<String, Integer> counts;
-  private final Map<SiteKey, Marker> markers = new LinkedHashMap<>(256, .75f, true);
-
-  public record SiteKey(String districtId, String cellId) {}
-
-  public record Marker(double x, double y, double heightM) {}
 
   public NativePlayRepository(
       NativePlayBundle bundle,
@@ -87,7 +82,7 @@ public class NativePlayRepository {
     }
   }
 
-  private Path checkedDatabase() throws Exception {
+  public Connection connection() throws Exception {
     var value = state();
     var database = value.database();
     var identity = value.identity();
@@ -98,67 +93,7 @@ public class NativePlayRepository {
         || current.size() != identity.size()
         || !Objects.equals(current.fileKey(), identity.fileKey())
         || !current.lastModifiedTime().equals(identity.lastModifiedTime())) invalid();
-    return database;
-  }
-
-  public Connection connection() throws Exception {
-    return open(checkedDatabase());
-  }
-
-  public synchronized Map<SiteKey, Marker> markers(Collection<SiteKey> requested) {
-    var keys = new LinkedHashSet<>(requested);
-    for (var key : keys) {
-      district(key.districtId());
-      if (key.cellId() == null || !key.cellId().matches("C[a-f0-9]{24}")) requestInvalid();
-    }
-    if (keys.isEmpty()) return Map.of();
-    try {
-      // 해시 검증된 불변 자료의 좌표만 공유하며 캐시 적중 시에도 파일 교체를 검사한다.
-      Path database = checkedDatabase();
-      var result = new HashMap<SiteKey, Marker>();
-      var missing = new ArrayList<SiteKey>();
-      for (var key : keys) {
-        var marker = markers.get(key);
-        if (marker == null) missing.add(key);
-        else result.put(key, marker);
-      }
-      if (!missing.isEmpty()) {
-        try (var connection = open(database)) {
-          for (int start = 0; start < missing.size(); start += 250) {
-            var batch = missing.subList(start, Math.min(start + 250, missing.size()));
-            var placeholders = String.join(",", Collections.nCopies(batch.size(), "?"));
-            try (var query = connection.prepareStatement(
-                "SELECT district_id,id,cx,cy,json_extract(body,'$.heightM'),allowed_mask"
-                    + " FROM sites WHERE id IN (" + placeholders + ")")) {
-              int index = 1;
-              for (var key : batch) {
-                query.setString(index++, key.cellId());
-              }
-              try (var rows = query.executeQuery()) {
-                while (rows.next()) {
-                  var key = new SiteKey(rows.getString(1), rows.getString(2));
-                  if (!keys.contains(key)) throw new DomainException(ErrorCode.RESOURCE_NOT_FOUND);
-                  double x = rows.getDouble(3), y = rows.getDouble(4), height = rows.getDouble(5);
-                  if (rows.wasNull() || !Double.isFinite(x) || !Double.isFinite(y)
-                      || Math.abs(x) > 10_000_000 || Math.abs(y) > 10_000_000
-                      || !Double.isFinite(height) || height < 0) invalid();
-                  if (rows.getInt(6) == 0) throw new DomainException(ErrorCode.PLACEMENT_INVALID);
-                  result.put(key, new Marker(x, y, height));
-                }
-              }
-            }
-          }
-        }
-      }
-      if (result.size() != keys.size()) throw new DomainException(ErrorCode.RESOURCE_NOT_FOUND);
-      markers.putAll(result);
-      while (markers.size() > 8192) markers.remove(markers.keySet().iterator().next());
-      return Map.copyOf(result);
-    } catch (DomainException e) {
-      throw e;
-    } catch (Exception e) {
-      throw new DomainException(ErrorCode.SPATIAL_DATA_INVALID);
-    }
+    return open(database);
   }
 
   private static Connection open(Path database) throws Exception {

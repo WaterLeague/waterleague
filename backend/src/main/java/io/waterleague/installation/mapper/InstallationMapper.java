@@ -7,7 +7,7 @@ public final class InstallationMapper {
   private InstallationMapper() {}
 
   public static InstallationView view(
-      SharedInstallation i, io.waterleague.installation.repository.SiteCatalogRepository.Marker site) {
+      SharedInstallation i, io.waterleague.installation.repository.InstallationMarkerRepository.Marker site) {
     return new InstallationView(
         i.id(),
         i.districtId(),

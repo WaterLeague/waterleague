@@ -3,6 +3,8 @@ package io.waterleague;
 import static org.assertj.core.api.Assertions.*;
 
 import io.waterleague.common.service.JsonService;
+import io.waterleague.installation.repository.InstallationMarkerRepository;
+import io.waterleague.installation.repository.SiteCatalogRepository;
 import io.waterleague.spatial.repository.*;
 import java.nio.file.*;
 import java.util.*;
@@ -17,7 +19,8 @@ class NativePlayFullCatalogTests {
     var repository = new NativePlayRepository(source, json,
         new io.waterleague.installation.repository.CisternGameCatalog(json),
         new io.waterleague.cost.repository.GamePriceCatalog(json));
-    var expected = new HashMap<NativePlayRepository.SiteKey, NativePlayRepository.Marker>();
+    var markers = new InstallationMarkerRepository(repository);
+    var expected = new HashMap<InstallationMarkerRepository.SiteKey, InstallationMarkerRepository.Marker>();
     try (var connection = repository.connection(); var query = connection.prepareStatement(
         "SELECT id,body FROM sites WHERE district_id=? AND allowed_mask<>0 LIMIT 32")) {
       for (var district : repository.supportedCounts().keySet()) {
@@ -25,17 +28,18 @@ class NativePlayFullCatalogTests {
         try (var rows = query.executeQuery()) {
           while (rows.next()) {
             var cell = json.tree(rows.getString(2));
-            expected.put(new NativePlayRepository.SiteKey(district, rows.getString(1)),
-                new NativePlayRepository.Marker(cell.path("centerProjected").get(0).asDouble(),
-                    cell.path("centerProjected").get(1).asDouble(), cell.path("heightM").asDouble()));
+            expected.put(new InstallationMarkerRepository.SiteKey(district, rows.getString(1)),
+                new InstallationMarkerRepository.Marker(List.of(
+                    cell.path("centerProjected").get(0).asDouble() - SiteCatalogRepository.ORIGIN_X,
+                    cell.path("centerProjected").get(1).asDouble() - SiteCatalogRepository.ORIGIN_Y), cell.path("heightM").asDouble()));
           }
         }
       }
     }
     assertThat(expected).hasSize(800);
-    var actual = repository.markers(expected.keySet());
+    var actual = markers.markers(expected.keySet());
     assertThat(actual).isEqualTo(expected);
-    assertThat(repository.markers(expected.keySet())).isEqualTo(expected);
+    assertThat(markers.markers(expected.keySet())).isEqualTo(expected);
   }
 
   @Test

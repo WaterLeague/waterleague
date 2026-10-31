@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class InstallationService {
   private final InstallationRepository installations;
+  private final io.waterleague.installation.repository.InstallationMarkerRepository markers;
   private final io.waterleague.competition.service.CompetitionBudgetService competitions;
   private final io.waterleague.notification.repository.NotificationRepository notifications;
   private final io.waterleague.weekly.service.WeeklySeasonService seasons;
@@ -32,6 +33,7 @@ public class InstallationService {
 
   public InstallationService(
       InstallationRepository i,
+      io.waterleague.installation.repository.InstallationMarkerRepository markers,
       io.waterleague.competition.service.CompetitionBudgetService competitions,
       io.waterleague.notification.repository.NotificationRepository notifications,
       io.waterleague.weekly.service.WeeklySeasonService seasons,
@@ -44,6 +46,7 @@ public class InstallationService {
       io.waterleague.strategy.service.PlacementValidationService validation,
       io.waterleague.cost.service.CostService costRecords) {
     installations = i;
+    this.markers = markers;
     this.competitions = competitions;
     this.notifications = notifications;
     this.seasons = seasons;
@@ -99,11 +102,11 @@ public class InstallationService {
             ? installations.currentScores(week)
             : installations.competitionScores(competitionId);
     var active = installations.active(competitionId);
-    var markers = sites.markers(active);
+    var locations = markers.forInstallations(active);
     return active.stream()
         .map(
             i -> {
-              var value = io.waterleague.installation.mapper.InstallationMapper.view(i, markers.get(i.id()));
+              var value = io.waterleague.installation.mapper.InstallationMapper.view(i, locations.get(i.id()));
               var score = scores.get(i.id());
               return score == null
                   ? value
@@ -157,7 +160,7 @@ public class InstallationService {
 
   public io.waterleague.installation.view.InstallationView view(SharedInstallation i) {
     return io.waterleague.installation.mapper.InstallationMapper.view(
-        i, sites.markers(List.of(i)).get(i.id()));
+        i, markers.forInstallations(List.of(i)).get(i.id()));
   }
 
   @Transactional

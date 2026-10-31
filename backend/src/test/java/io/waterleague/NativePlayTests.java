@@ -8,6 +8,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import io.waterleague.common.exception.*;
 import io.waterleague.common.security.RateLimitService;
 import io.waterleague.common.service.JsonService;
+import io.waterleague.installation.repository.InstallationMarkerRepository;
+import io.waterleague.installation.repository.SiteCatalogRepository;
 import io.waterleague.spatial.controller.NativePlayController;
 import io.waterleague.spatial.repository.*;
 import io.waterleague.spatial.service.NativeGeometry;
@@ -68,23 +70,24 @@ class NativePlayTests {
     assertThatThrownBy(() -> repository.bounds(0, 0, Double.NaN, 1, null, null, 2000, false))
         .isInstanceOf(DomainException.class);
     var id = repository.bounds(0, 0, 1, 1, "11110", null, 100, false).getFirst().path("id").asString();
-    var key = new NativePlayRepository.SiteKey("11110", id);
-    var marker = repository.markers(List.of(key, key)).get(key);
+    var markers = new InstallationMarkerRepository(repository);
+    var key = new InstallationMarkerRepository.SiteKey("11110", id);
+    var marker = markers.markers(List.of(key, key)).get(key);
     var cell = repository.require("11110", id);
-    assertThat(marker.x()).isEqualTo(cell.path("centerProjected").get(0).asDouble());
-    assertThat(marker.y()).isEqualTo(cell.path("centerProjected").get(1).asDouble());
+    assertThat(marker.center().get(0)).isEqualTo(cell.path("centerProjected").get(0).asDouble() - SiteCatalogRepository.ORIGIN_X);
+    assertThat(marker.center().get(1)).isEqualTo(cell.path("centerProjected").get(1).asDouble() - SiteCatalogRepository.ORIGIN_Y);
     assertThat(marker.heightM()).isEqualTo(cell.path("heightM").asDouble());
-    assertThat(repository.markers(List.of(key))).hasSize(1);
-    assertThat(repository.markers(List.of(key)).get(key)).isSameAs(marker);
-    assertThatThrownBy(() -> repository.markers(List.of(new NativePlayRepository.SiteKey("11140", id))))
+    assertThat(markers.markers(List.of(key))).hasSize(1);
+    assertThat(markers.markers(List.of(key)).get(key)).isSameAs(marker);
+    assertThatThrownBy(() -> markers.markers(List.of(new InstallationMarkerRepository.SiteKey("11140", id))))
         .isInstanceOf(DomainException.class);
-    assertThatThrownBy(() -> repository.markers(List.of(new NativePlayRepository.SiteKey("11110", "C" + "0".repeat(24)))))
+    assertThatThrownBy(() -> markers.markers(List.of(new InstallationMarkerRepository.SiteKey("11110", "C" + "0".repeat(24)))))
         .isInstanceOfSatisfying(DomainException.class, e -> assertThat(e.code()).isEqualTo(ErrorCode.RESOURCE_NOT_FOUND));
     assertThatThrownBy(() -> repository.require("11140", id)).isInstanceOf(DomainException.class);
     assertThatThrownBy(() -> repository.require("11110", "C" + "0".repeat(24)))
         .isInstanceOfSatisfying(DomainException.class, e -> assertThat(e.code()).isEqualTo(ErrorCode.RESOURCE_NOT_FOUND));
     Files.setLastModifiedTime(source.database(), FileTime.fromMillis(System.currentTimeMillis() + 10000));
-    assertThatThrownBy(() -> repository.markers(List.of(key))).isInstanceOf(DomainException.class);
+    assertThatThrownBy(() -> markers.markers(List.of(key))).isInstanceOf(DomainException.class);
     assertThatThrownBy(() -> repository.require("11110", id)).isInstanceOf(DomainException.class);
   }
 
