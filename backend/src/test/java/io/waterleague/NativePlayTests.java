@@ -68,10 +68,23 @@ class NativePlayTests {
     assertThatThrownBy(() -> repository.bounds(0, 0, Double.NaN, 1, null, null, 2000, false))
         .isInstanceOf(DomainException.class);
     var id = repository.bounds(0, 0, 1, 1, "11110", null, 100, false).getFirst().path("id").asString();
+    var key = new NativePlayRepository.SiteKey("11110", id);
+    var marker = repository.markers(List.of(key, key)).get(key);
+    var cell = repository.require("11110", id);
+    assertThat(marker.x()).isEqualTo(cell.path("centerProjected").get(0).asDouble());
+    assertThat(marker.y()).isEqualTo(cell.path("centerProjected").get(1).asDouble());
+    assertThat(marker.heightM()).isEqualTo(cell.path("heightM").asDouble());
+    assertThat(repository.markers(List.of(key))).hasSize(1);
+    assertThat(repository.markers(List.of(key)).get(key)).isSameAs(marker);
+    assertThatThrownBy(() -> repository.markers(List.of(new NativePlayRepository.SiteKey("11140", id))))
+        .isInstanceOf(DomainException.class);
+    assertThatThrownBy(() -> repository.markers(List.of(new NativePlayRepository.SiteKey("11110", "C" + "0".repeat(24)))))
+        .isInstanceOfSatisfying(DomainException.class, e -> assertThat(e.code()).isEqualTo(ErrorCode.RESOURCE_NOT_FOUND));
     assertThatThrownBy(() -> repository.require("11140", id)).isInstanceOf(DomainException.class);
     assertThatThrownBy(() -> repository.require("11110", "C" + "0".repeat(24)))
         .isInstanceOfSatisfying(DomainException.class, e -> assertThat(e.code()).isEqualTo(ErrorCode.RESOURCE_NOT_FOUND));
     Files.setLastModifiedTime(source.database(), FileTime.fromMillis(System.currentTimeMillis() + 10000));
+    assertThatThrownBy(() -> repository.markers(List.of(key))).isInstanceOf(DomainException.class);
     assertThatThrownBy(() -> repository.require("11110", id)).isInstanceOf(DomainException.class);
   }
 

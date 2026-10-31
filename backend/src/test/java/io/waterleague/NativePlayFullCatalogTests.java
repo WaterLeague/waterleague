@@ -11,6 +11,34 @@ import tools.jackson.databind.ObjectMapper;
 
 class NativePlayFullCatalogTests {
   @Test
+  void batchMarkersPreservePublishedCoordinatesAcrossAllDistricts() throws Exception {
+    var json = new JsonService(new ObjectMapper());
+    var source = new NativePlayBundle(json, Path.of("../tmp/native-spatial").toAbsolutePath().normalize().toString());
+    var repository = new NativePlayRepository(source, json,
+        new io.waterleague.installation.repository.CisternGameCatalog(json),
+        new io.waterleague.cost.repository.GamePriceCatalog(json));
+    var expected = new HashMap<NativePlayRepository.SiteKey, NativePlayRepository.Marker>();
+    try (var connection = repository.connection(); var query = connection.prepareStatement(
+        "SELECT id,body FROM sites WHERE district_id=? AND allowed_mask<>0 LIMIT 32")) {
+      for (var district : repository.supportedCounts().keySet()) {
+        query.setString(1, district);
+        try (var rows = query.executeQuery()) {
+          while (rows.next()) {
+            var cell = json.tree(rows.getString(2));
+            expected.put(new NativePlayRepository.SiteKey(district, rows.getString(1)),
+                new NativePlayRepository.Marker(cell.path("centerProjected").get(0).asDouble(),
+                    cell.path("centerProjected").get(1).asDouble(), cell.path("heightM").asDouble()));
+          }
+        }
+      }
+    }
+    assertThat(expected).hasSize(800);
+    var actual = repository.markers(expected.keySet());
+    assertThat(actual).isEqualTo(expected);
+    assertThat(repository.markers(expected.keySet())).isEqualTo(expected);
+  }
+
+  @Test
   void readsAllDistrictsFromThePublishedBundleAndExportsExactApiCellsForWorkerComparison()
       throws Exception {
     var json = new JsonService(new ObjectMapper());

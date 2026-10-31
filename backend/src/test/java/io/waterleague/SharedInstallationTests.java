@@ -402,6 +402,10 @@ class SharedInstallationTests extends PostgresIntegrationTest {
     var before = service.activeViews();
     assertThat(before).hasSize(1);
     assertThat(before.getFirst().scoreM3()).isNull();
+    assertThat(service.activeCounts(null, null)).hasSize(25).containsEntry("11680", 1).containsEntry("11110", 0);
+    var site = service.site(installed.districtId(), installed.cellId());
+    assertThat(before.getFirst().center()).isEqualTo(site.center());
+    assertThat(before.getFirst().heightM()).isEqualTo(site.heightM());
     var through = installed.installedAt().plusSeconds(1);
     var job = UUID.randomUUID();
     db.update(
@@ -437,6 +441,24 @@ class SharedInstallationTests extends PostgresIntegrationTest {
     assertThat(scored.scoreM3()).isEqualByComparingTo("1.25");
     assertThat(scored.evaluatedThrough()).isEqualTo(through);
     assertThat(scored.center()).isEqualTo(before.getFirst().center());
+  }
+
+  @Test
+  void countsExcludeRemovedRetiredAndExpiredInstallationsWithoutLosingRealZero() {
+    assertThat(service.activeCounts(null, null).values()).allMatch(count -> count == 0);
+    var owner = account("11680");
+    var installed = service.install(owner.username(), placement("11680"));
+    for (String column : List.of("removed_at", "source_retired_at", "season_ends_at")) {
+      db.update("UPDATE shared_installations SET " + column + "=CURRENT_TIMESTAMP"
+          + (column.equals("removed_at") ? ",occupied_site=NULL" : "") + " WHERE id=?", installed.id());
+      assertThat(service.activeCounts(null, null)).containsEntry("11680", 0);
+      assertThat(service.activeViews()).isEmpty();
+      db.update("UPDATE shared_installations SET " + column + "=?,occupied_site=? WHERE id=?",
+          column.equals("season_ends_at") ? java.sql.Timestamp.from(installed.seasonEndsAt()) : null,
+          owner.id() + ":" + installed.districtId() + ":" + installed.cellId(),
+          installed.id());
+      assertThat(service.activeCounts(null, null)).containsEntry("11680", 1);
+    }
   }
 
   Account account(String district) {

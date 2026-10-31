@@ -46,6 +46,12 @@ public class InstallationController {
     return service.sites(districtId, x, y, offset, type, vacant, surface);
   }
 
+  @GetMapping("/counts")
+  public Map<String, Integer> counts(
+      Principal p, @RequestParam(required = false) UUID competitionId) {
+    return service.activeCounts(p == null ? null : p.getName(), competitionId);
+  }
+
   @GetMapping("/sites/{districtId}/building")
   public io.waterleague.installation.view.SiteView building(
       @PathVariable String districtId, @RequestParam String sourceId, HttpServletRequest request) {

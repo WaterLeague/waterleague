@@ -99,6 +99,22 @@ public class SiteCatalogRepository {
     return site;
   }
 
+  public record Marker(List<Double> center, double heightM) {}
+
+  public Map<UUID, Marker> markers(
+      Collection<io.waterleague.installation.entity.SharedInstallation> installations) {
+    var values = nativeSites.markers(installations.stream()
+        .map(i -> new NativePlayRepository.SiteKey(i.districtId(), i.cellId())).toList());
+    var result = new HashMap<UUID, Marker>();
+    for (var installation : installations) {
+      var value = values.get(new NativePlayRepository.SiteKey(
+          installation.districtId(), installation.cellId()));
+      result.put(installation.id(), new Marker(
+          List.of(value.x() - ORIGIN_X, value.y() - ORIGIN_Y), value.heightM()));
+    }
+    return Map.copyOf(result);
+  }
+
   public JsonNode publicAssetPolicy() {
     return references.evidence();
   }

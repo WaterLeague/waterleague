@@ -7,6 +7,10 @@ export const loadInstallations = async (competitionId?: string | null) =>
   z
     .array(installationDto)
     .parse(await api<unknown>(competitionScope('/installations', competitionId)));
+export const loadInstallationCounts = async (competitionId?: string | null) =>
+  z
+    .record(z.string().regex(/^\d{5}$/), z.number().int().nonnegative())
+    .parse(await api<unknown>(competitionScope('/installations/counts', competitionId)));
 export type SiteQuery = {
   districtId: string;
   x: number;

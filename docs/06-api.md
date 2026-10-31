@@ -85,6 +85,7 @@
 | API | 현재 계약 |
 | --- | --- |
 | GET /installations | 활성 주간 시설·공개 닉네임·위치·이번 주 점수/평가 시각. 계산 전 점수는 null |
+| GET /installations/counts | 같은 활성 조건의 구별 시설 수. 서울 25개 구의 실제 0 포함, `competitionId` 지정 시 해당 대회 열람 권한 검사 |
 | GET /installations/sites | 구·시야 x/y·offset·시설 type·vacant·surface로 후보 조회 |
 | GET /installations/sites/{districtId}/{cellId} | 공개 후보 상세 |
 | GET /installations/sites/{districtId}/building | 원 건물 sourceId로 후보 조회 |
@@ -277,6 +278,8 @@ RFC 9457 `application/problem+json`: type, title, status, detail, instance, code
 
 
 2026-10-19 지도 점수 응답: GET `/api/v1/installations`에 `scoreM3`(이번 KST 주간 서버 계산값, 미반영 null), `evaluatedThrough`(반영 원시각, 미반영 null) 추가. 기존 공개 설치 소유자 닉네임·위치 조회 권한 유지. 점수는 활성 시설에 대해 일괄 조회하고 클라이언트가 생성한 효과 수치 사용 금지. GET `/api/v1/rainfall/live`에 `windDirectionDeg`(AWS WD10, 0~360 또는 null) 추가. 360 무풍 코드는 시각 유향으로 변환하지 않으며 기존 WS10 풍속·관측 시각과 같은 행을 사용한다.
+
+지도 시설 목록은 원본 공간자료에서 중심 좌표·높이만 일괄 조회한다. 주소·도형·설치 조건은 후보 상세 요청에서 검증·구성하며 목록 응답의 필드·점수 의미는 유지한다. `/installations/counts`는 공간자료나 점수 계산 없이 DB에서 집계하고 목록과 같은 철거·자료 폐기·시즌 만료·대회 범위를 적용한다. 두 응답은 브라우저에 영구 저장하지 않으며 대회 집계에도 기존 참가자·주최 조직·관리자 열람 검사를 적용한다.
 
 게스트 재해 GET 목록·개별 조회·POST 멱등 재응답은 진행 전용 결과를 반환한다. 최초 생성 응답도 DB 저장 행을 사용하여 PostgreSQL의 마이크로초 시각과 재요청 응답을 일치시킨다. 사건 전체 합계 3종·시설별 전체 기간 유출 비교·마지막 시계열 구간은 서버에서 제외한다. 원 계산 결과와 재현 원본은 DB에 보존하고 로그인 후 제출·최종 기록 경로는 기존 소유권·CSRF 검증을 유지한다.
 

@@ -51,6 +51,18 @@ public class InstallationRepository {
 
   public record Score(UUID id, java.math.BigDecimal scoreM3, Instant through) {}
 
+  public Map<String, Integer> activeCounts(UUID competitionId) {
+    var result = new TreeMap<String, Integer>();
+    db.query(
+        "SELECT district_id,COUNT(*) AS count FROM shared_installations"
+            + " WHERE source_retired_at IS NULL AND removed_at IS NULL AND (season_ends_at IS NULL"
+            + " OR season_ends_at>CURRENT_TIMESTAMP) AND competition_id IS NOT DISTINCT FROM"
+            + " ?::uuid GROUP BY district_id",
+        (RowCallbackHandler) r -> result.put(r.getString("district_id"), r.getInt("count")),
+        competitionId);
+    return Map.copyOf(result);
+  }
+
   public Map<UUID, Score> competitionScores(UUID competitionId) {
     var result = new HashMap<UUID, Score>();
     db.query(

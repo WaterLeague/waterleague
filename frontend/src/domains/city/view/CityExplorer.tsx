@@ -54,6 +54,10 @@ import { ErrorBoundary } from '../../../shared/exception/ErrorBoundary';
 import { CityPlan } from './CityPlan';
 import type { Account } from '../../account/entity/account';
 import { useInstallations } from '../../installation/controller/useInstallations';
+import {
+  countInstallations,
+  installationCountLabel,
+} from '../../installation/service/installationCounts';
 import { SharedDistrictPanel } from '../../installation/view/SharedDistrictPanel';
 import type { SharedSite } from '../../installation/entity/installation';
 import type { FacilityType } from '../../game/entity/game';
@@ -469,6 +473,10 @@ function Explorer({
     ...sharedData,
     installations: researchMode ? researchMarkers : sharedData.installations,
   };
+  const installationCounts = useMemo(
+    () => (researchMode ? countInstallations(researchMarkers) : sharedData.installationCounts),
+    [researchMode, researchMarkers, sharedData.installationCounts]
+  );
   const installationBySite = useMemo(
     () => representativeInstallations(shared.installations, viewerId ?? null),
     [shared.installations, viewerId]
@@ -840,14 +848,14 @@ function Explorer({
               return [
                 d.id,
                 contest.id
-                  ? `시설 ${shared.installations.filter((i) => i.districtId === d.id).length}개`
+                  ? installationCountLabel(installationCounts, d.id, shared.error)
                   : weekly.error
                     ? '순위 갱신 지연'
-                    : `시설 ${shared.installations.filter((i) => i.districtId === d.id).length}개 · ${districtScoreLabel(score, weekly.value?.current.status === 'WITHHELD', false)}`,
+                    : `${installationCountLabel(installationCounts, d.id, shared.error)} · ${districtScoreLabel(score, weekly.value?.current.status === 'WITHHELD', false)}`,
               ];
             })
           ),
-    [city, researchMode, weekly.value, weekly.error, shared.installations, contest.id]
+    [city, researchMode, weekly.value, weekly.error, installationCounts, shared.error, contest.id]
   );
   const plan = (
     <CityPlan
@@ -1279,7 +1287,7 @@ function Explorer({
                     />
                   )}
                   <small>
-                    시설 {shared.installations.filter((i) => i.districtId === d.id).length}개
+                    {installationCountLabel(installationCounts, d.id, shared.error)}
                     {!researchMode && districtScore(d.id) && ` · ${districtScore(d.id)}`}
                   </small>
                 </button>
@@ -1295,8 +1303,8 @@ function Explorer({
                   onClick={() => select(r.districtId)}
                   aria-label={`${r.districtName} 공유 설치 상태 보기`}
                 >
-                  ● {r.districtName} · 시설{' '}
-                  {shared.installations.filter((i) => i.districtId === r.districtId).length}개
+                  ● {r.districtName} ·{' '}
+                  {installationCountLabel(installationCounts, r.districtId, shared.error)}
                   {!researchMode &&
                     districtScore(r.districtId) &&
                     ` · ${districtScore(r.districtId)}`}

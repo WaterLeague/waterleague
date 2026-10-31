@@ -55,6 +55,7 @@ public class SecurityConfiguration {
                         "/api/v1/guest-historical",
                         "/api/v1/guest-historical/{id}",
                         "/api/v1/installations",
+                        "/api/v1/installations/counts",
                         "/api/v1/installations/sites",
                         "/api/v1/installations/sites/ground",
                         "/api/v1/installations/sites/{districtId}/{cellId}",

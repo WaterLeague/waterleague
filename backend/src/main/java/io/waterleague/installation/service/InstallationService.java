@@ -67,11 +67,23 @@ public class InstallationService {
 
   public List<io.waterleague.installation.view.InstallationView> activeViews(
       String username, UUID competitionId) {
+    requireViewer(username, competitionId);
+    return activeViews(competitionId);
+  }
+
+  private void requireViewer(String username, UUID competitionId) {
     if (competitionId != null) {
       if (username == null) throw new InstallationException(ErrorCode.AUTHENTICATION_REQUIRED);
       competitions.requireViewer(auth.current(username).id(), competitionId);
     }
-    return activeViews(competitionId);
+  }
+
+  public Map<String, Integer> activeCounts(String username, UUID competitionId) {
+    requireViewer(username, competitionId);
+    var result = new TreeMap<String, Integer>();
+    districts.all().forEach(district -> result.put(district.id(), 0));
+    result.putAll(installations.activeCounts(competitionId));
+    return Map.copyOf(result);
   }
 
   public List<io.waterleague.installation.view.InstallationView> activeViews(UUID competitionId) {
@@ -86,10 +98,12 @@ public class InstallationService {
         competitionId == null
             ? installations.currentScores(week)
             : installations.competitionScores(competitionId);
-    return installations.active(competitionId).stream()
+    var active = installations.active(competitionId);
+    var markers = sites.markers(active);
+    return active.stream()
         .map(
             i -> {
-              var value = view(i);
+              var value = io.waterleague.installation.mapper.InstallationMapper.view(i, markers.get(i.id()));
               var score = scores.get(i.id());
               return score == null
                   ? value
@@ -143,7 +157,7 @@ public class InstallationService {
 
   public io.waterleague.installation.view.InstallationView view(SharedInstallation i) {
     return io.waterleague.installation.mapper.InstallationMapper.view(
-        i, sites.require(i.districtId(), i.cellId()));
+        i, sites.markers(List.of(i)).get(i.id()));
   }
 
   @Transactional

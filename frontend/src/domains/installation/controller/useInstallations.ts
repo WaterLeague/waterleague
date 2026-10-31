@@ -1,5 +1,10 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { loadInstallations, installSite } from '../repository/installationRepository';
+import {
+  loadInstallations,
+  loadInstallationCounts,
+  installSite,
+} from '../repository/installationRepository';
+import { countInstallations } from '../service/installationCounts';
 import type { SharedInstallation, SharedSite } from '../entity/installation';
 import type { FacilityType } from '../../game/entity/game';
 import { errorMessage } from '../../../shared/exception/ApiError';
@@ -12,6 +17,7 @@ export function useInstallations(query: SiteQuery, live = true, competitionId?: 
     [busy, setBusy] = useState(false),
     [revision, setRevision] = useState(0);
   const [ready, setReady] = useState(false);
+  const [installationCounts, setInstallationCounts] = useState<Record<string, number> | null>(null);
   const context = useInstallationSites(mapSiteQuery(query), revision);
   const filtered = useInstallationSites(
     query,
@@ -29,14 +35,27 @@ export function useInstallations(query: SiteQuery, live = true, competitionId?: 
         await loading.current;
         if (!force) return;
       }
-      const request = loadInstallations(competitionId).then((v) => {
+      let listReceived = false;
+      const current = () => alive.current && generation.current === requestGeneration;
+      // 집계가 먼저 도착하면 즉시 표시하고, 상세 목록 수신 뒤에는 같은 목록의 개수를 사용한다.
+      const countsRequest = loadInstallationCounts(competitionId)
+        .then((counts) => {
+          if (current() && !listReceived) setInstallationCounts(counts);
+        })
+        .catch(() => {});
+      const listRequest = loadInstallations(competitionId).then((v) => {
         if (alive.current && generation.current === requestGeneration) {
+          listReceived = true;
+          setInstallationCounts(countInstallations(v));
           setInstallations((previous) =>
             JSON.stringify(previous) === JSON.stringify(v) ? previous : v
           );
           setError('');
           setReady(true);
         }
+      });
+      const request = Promise.allSettled([listRequest, countsRequest]).then(([list]) => {
+        if (list.status === 'rejected') throw list.reason;
       });
       loading.current = request;
       try {
@@ -51,6 +70,8 @@ export function useInstallations(query: SiteQuery, live = true, competitionId?: 
     generation.current++;
     loading.current = null;
     setInstallations([]);
+    setInstallationCounts(null);
+    setError('');
     setReady(false);
     if (!live) return;
     alive.current = true;
@@ -92,6 +113,7 @@ export function useInstallations(query: SiteQuery, live = true, competitionId?: 
   };
   return {
     ready,
+    installationCounts,
     sites: page.sites,
     mapSites: context.sites,
     counts: context.counts,

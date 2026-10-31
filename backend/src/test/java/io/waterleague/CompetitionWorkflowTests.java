@@ -625,6 +625,11 @@ class CompetitionWorkflowTests extends PostgresIntegrationTest {
         .isEqualTo(403);
     assertThat(call(stranger, "GET", "/installations?competitionId=" + id, null).statusCode())
         .isEqualTo(403);
+    assertThat(call(stranger, "GET", "/installations/counts?competitionId=" + id, null).statusCode())
+        .isEqualTo(403);
+    var guest = new Actor(UUID.randomUUID(), HttpClient.newHttpClient());
+    assertThat(call(guest, "GET", "/installations/counts?competitionId=" + id, null).statusCode())
+        .isEqualTo(401);
     var first = siteRows.getFirst();
     var install =
         Map.of(
@@ -673,6 +678,9 @@ class CompetitionWorkflowTests extends PostgresIntegrationTest {
     assertThat(ok(player, "GET", "/installations?competitionId=" + id, null, 200).size())
         .isEqualTo(1);
     assertThat(ok(player, "GET", "/installations", null, 200).size()).isEqualTo(1);
+    assertThat(ok(player, "GET", "/installations/counts?competitionId=" + id, null, 200).path("11680").asInt())
+        .isEqualTo(1);
+    assertThat(ok(guest, "GET", "/installations/counts", null, 200).path("11680").asInt()).isEqualTo(1);
     var close = Instant.parse(c.path("closesAt").asString());
     assertThat(
             db.queryForObject(
