@@ -44,13 +44,13 @@ class StorageTests(unittest.TestCase):
     def compact(self, directories, apply=True):
         return storage.compact(self.base, directories, apply=apply, owners=(os.getuid(),))
 
-    def test_mixed_backup_formats_keep_newest_three_and_ignore_partial(self):
+    def test_mixed_backup_formats_keep_newest_two_and_ignore_partial(self):
         files = self.backups(7)
         partial = self.write(self.base/'backups/unfinished.tar.gz.age.partial', b'unfinished')
         result = storage.prune_backups(self.base)
-        self.assertEqual(result['removedBackups'], 4)
-        self.assertTrue(all(not p.exists() for p in files[:-3]))
-        self.assertTrue(all(p.exists() for p in files[-3:]))
+        self.assertEqual(result['removedBackups'], 5)
+        self.assertTrue(all(not p.exists() for p in files[:-2]))
+        self.assertTrue(all(p.exists() for p in files[-2:]))
         self.assertTrue(partial.exists())
         self.assertEqual(storage.prune_backups(self.base)['removedBackups'], 0)
 
@@ -68,7 +68,7 @@ class StorageTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             storage.prune_backups(self.base)
         with self.assertRaises(ValueError):
-            storage.prune_backups(self.base, keep=2)
+            storage.prune_backups(self.base, keep=1)
         self.assertTrue(files[1].exists())
 
     def test_complete_files_preserve_manifests_paths_and_open_readers(self):

@@ -14,7 +14,7 @@ import subprocess
 import time
 import uuid
 
-BACKUP_KEEP = 3
+BACKUP_KEEP = 2
 BACKUP_NAME = re.compile(r'\d{8}T\d{6}Z-[a-f0-9]{12}\.tar(?:\.gz)?\.age')
 AGE_HEADER = b'age-encryption.org/v1\n'
 MAX_FILE_BYTES = 64 * 1024**2
@@ -37,7 +37,7 @@ def regular(path):
 
 
 def prune_backups(base, keep=BACKUP_KEEP):
-    if keep < 3:
+    if keep < 2:
         raise ValueError('STORAGE_BACKUP_MINIMUM_REQUIRED')
     root = Path(base) / 'backups'
     if root.is_symlink() or root.resolve() != root.absolute():
