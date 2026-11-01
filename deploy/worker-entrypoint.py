@@ -8,4 +8,4 @@ key = Path('/run/secrets/kma-api-key').read_text().strip()
 if not key:
     raise SystemExit('KMA_SECRET_MISSING')
 os.environ['KMA_API_KEY'] = key
-runpy.run_module('waterleague_sim.worker', run_name='__main__')
+runpy.run_path('/app/deploy/settlement_worker.py', run_name='__main__')

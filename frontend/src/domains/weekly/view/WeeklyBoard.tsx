@@ -58,16 +58,35 @@ export function WeeklyBoard({
             </span>
             <strong>
               {period.status === 'FINAL'
-                ? '집계 완료'
+                ? (period.settlement?.excludedSeconds ?? 0) > 0
+                  ? '집계 완료 · 결측 제외'
+                  : '집계 완료'
                 : period.status === 'WITHHELD'
                   ? '평가 조건 확인 · 순위 보류'
                   : period.status === 'PROVISIONAL'
-                    ? '누락 구간 계산 대기'
+                    ? '관측 확인 구간 정산 중'
                     : period.status === 'EMPTY'
                       ? '평가 기록 없음'
                       : '진행 중'}
             </strong>
           </div>
+          {(period.settlement?.excludedSeconds ?? 0) > 0 && (
+            <details className="weekly-exclusions">
+              <summary>결측 제외 내역 · 시설 {period.settlement!.installationCount}개</summary>
+              <p>
+                관측이 확인된 구간의 점수만 합산했습니다. 아래 결측 구간은 점수와 평가 시간에서
+                제외했습니다.
+              </p>
+              <ul>
+                {period.settlement!.periods.map((p) => (
+                  <li key={`${p.districtId}-${p.startsAt}-${p.endsAt}`}>
+                    {p.districtName} · 관측소 {p.stationId} · {date(p.startsAt)} — {date(p.endsAt)}{' '}
+                    KST · 시설 {p.installationCount}개
+                  </li>
+                ))}
+              </ul>
+            </details>
+          )}
           {period.status === 'WITHHELD' && (
             <p role="status">
               평가 조건이 다르거나 확인되지 않은 기록이 있어 합산·순위를 보류합니다. 시설별 원
@@ -80,7 +99,7 @@ export function WeeklyBoard({
               {winners
                 ? `지난주 우승 · ${winners}`
                 : value?.previous.status === 'PROVISIONAL'
-                  ? '지난주 결과는 미평가 구간이 있어 잠정 상태입니다.'
+                  ? '지난주 관측 확인 구간을 정산 중입니다.'
                   : value?.previous.status === 'WITHHELD'
                     ? '지난주 결과는 평가 조건 확인으로 보류 상태입니다.'
                     : '지난주 확정 우승 구 없음'}

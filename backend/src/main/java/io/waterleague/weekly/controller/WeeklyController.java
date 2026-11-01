@@ -9,9 +9,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/weekly")
 public class WeeklyController {
   private final WeeklyService service;
+  private final io.waterleague.weekly.service.WeeklySettlementService settlement;
 
-  public WeeklyController(WeeklyService service) {
+  public WeeklyController(
+      WeeklyService service, io.waterleague.weekly.service.WeeklySettlementService settlement) {
     this.service = service;
+    this.settlement = settlement;
   }
 
   @GetMapping("/sites/{district}/{cell}")
@@ -24,6 +27,6 @@ public class WeeklyController {
 
   @GetMapping
   public WeeklyView dashboard(Principal principal) {
-    return service.dashboard(principal == null ? null : principal.getName());
+    return settlement.dashboard(principal == null ? null : principal.getName());
   }
 }

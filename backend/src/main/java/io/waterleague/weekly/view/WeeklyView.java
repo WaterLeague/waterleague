@@ -28,7 +28,43 @@ public record WeeklyView(
       List<Player> players,
       long participantCount,
       Player own,
-      List<String> winnerDistrictIds) {
+      List<String> winnerDistrictIds,
+      Settlement settlement) {
+    public Period(
+        LocalDate weekStart,
+        Instant startsAt,
+        Instant endsAt,
+        Instant evaluatedTarget,
+        String status,
+        String comparisonStatus,
+        String comparisonReason,
+        String comparisonGroupHash,
+        long evaluatedSeconds,
+        long expectedSeconds,
+        List<District> districts,
+        List<Player> players,
+        long participantCount,
+        Player own,
+        List<String> winnerDistrictIds) {
+      this(
+          weekStart,
+          startsAt,
+          endsAt,
+          evaluatedTarget,
+          status,
+          comparisonStatus,
+          comparisonReason,
+          comparisonGroupHash,
+          evaluatedSeconds,
+          expectedSeconds,
+          districts,
+          players,
+          participantCount,
+          own,
+          winnerDistrictIds,
+          new Settlement("CLOSED_WEEK_MISSING_SUFFIX_V1", 0, 0, List.of()));
+    }
+
     @com.fasterxml.jackson.annotation.JsonProperty
     public long evaluatedMinutes() {
       return (evaluatedSeconds + 59) / 60;
@@ -39,6 +75,21 @@ public record WeeklyView(
       return (expectedSeconds + 59) / 60;
     }
   }
+
+  public record ExcludedPeriod(
+      String districtId,
+      String districtName,
+      String stationId,
+      Instant startsAt,
+      Instant endsAt,
+      long installationCount,
+      long excludedSeconds) {}
+
+  public record Settlement(
+      String ruleVersion,
+      long excludedSeconds,
+      long installationCount,
+      List<ExcludedPeriod> periods) {}
 
   public record District(
       String districtId,

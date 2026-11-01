@@ -65,3 +65,35 @@ it('내 구와 상위 목록 밖 개인 기록을 별도 카드로 먼저 표시
   expect(html).toContain('내 별도 기록');
   expect(html).not.toContain('일부 미평가');
 });
+
+it('확인된 결측 제외 내역을 표시하고 평가 원장 시간을 보존', () => {
+  const value = weeklyDto.parse(fixture.value);
+  const p = value.current;
+  p.status = 'FINAL';
+  p.expectedSeconds = (p.evaluatedSeconds ?? p.evaluatedMinutes * 60) + 60;
+  p.settlement = {
+    ruleVersion: 'CLOSED_WEEK_MISSING_SUFFIX_V1',
+    excludedSeconds: 60,
+    installationCount: 1,
+    periods: [
+      {
+        districtId: '11260',
+        districtName: '중랑구',
+        stationId: '409',
+        startsAt: p.startsAt,
+        endsAt: p.endsAt,
+        installationCount: 1,
+        excludedSeconds: 60,
+      },
+    ],
+  };
+  expect(weeklyDto.safeParse(value).success).toBe(true);
+  const html = renderToStaticMarkup(
+    <WeeklyBoard value={value} error="" ownDistrictId={null} onDistrict={() => {}} />
+  );
+  expect(html).toContain('집계 완료 · 결측 제외');
+  expect(html).toContain('결측 제외 내역 · 시설 1개');
+  expect(html).toContain('관측소 409');
+  p.settlement.excludedSeconds = 61;
+  expect(weeklyDto.safeParse(value).success).toBe(false);
+});

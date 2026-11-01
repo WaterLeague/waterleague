@@ -226,3 +226,17 @@
   text-align: left;
   cursor: pointer;
 }
+
+.weekly-exclusions {
+  margin-block: 0.75rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid #cbd8e5;
+  border-radius: 0.75rem;
+}
+.weekly-exclusions summary {
+  cursor: pointer;
+}
+.weekly-exclusions p,
+.weekly-exclusions li {
+  font-size: 0.875rem;
+}

@@ -65,7 +65,7 @@ def main():
                   'queue': 'QueueCapacityTests',
                   'budget': 'BudgetAllocationTests,BudgetLedgerWorkflowTests,SharedInstallationTests,HistoricalWorkflowTests',
                   'physics': 'PhysicsWorkflowTests,SharedInstallationTests',
-                  'weekly': 'WeeklyWorkflowTests',
+                  'weekly': 'WeeklyWorkflowTests,WeeklySettlementTests',
                   'historical': 'HistoricalWorkflowTests,HistoricalSubmissionTests',
                   'watershed': 'WatershedWorkflowTests',
                   'cistern-plan': 'CisternMapPlanTests,CisternLayoutTests',
@@ -137,6 +137,12 @@ def main():
                 [str(ROOT / 'backend/mvnw'), '--batch-mode', '-Dtest=' + test_class,
                  '-Dwaterleague.integration.jdbc=' + jdbc, *physical, 'verify' if suite == 'backend' else 'test'],
                 cwd=ROOT / 'backend', env=env, stdout=log, stderr=subprocess.STDOUT, timeout=600)
+            if suite == 'weekly' and result.returncode == 0:
+                worker_env = env | {'WL_WORKER_TEST_DSN': make_conninfo(**(config | {'dbname': test_name})),
+                    'PYTHONPATH': str(ROOT/'simulation')}
+                result = subprocess.run([sys.executable,'-m','unittest','discover','-s','deploy/tests',
+                    '-p','test_weekly_settlement.py','-v'],cwd=ROOT,env=worker_env,
+                    stdout=log,stderr=subprocess.STDOUT,timeout=180)
             if suite == 'prices' and result.returncode == 0:
                 worker_env = env | {'WL_WORKER_TEST_DSN': make_conninfo(**(config | {'dbname': test_name})),
                     'PYTHONPATH': str(ROOT/'simulation'), 'WL_PRICE_FIXTURE': str(path.with_suffix('.prices.json')),

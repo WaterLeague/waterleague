@@ -4,7 +4,7 @@ import io.waterleague.account.entity.Account;
 import io.waterleague.administration.repository.ResultsRepository;
 import io.waterleague.common.exception.*;
 import io.waterleague.historical.service.HistoricalSubmissionService;
-import io.waterleague.weekly.service.WeeklyService;
+import io.waterleague.weekly.service.WeeklySettlementService;
 import java.time.LocalDate;
 import java.util.Map;
 import org.springframework.stereotype.Service;
@@ -13,11 +13,13 @@ import org.springframework.transaction.annotation.*;
 @Service
 public class ResultsService {
   private final ResultsRepository repo;
-  private final WeeklyService weekly;
+  private final WeeklySettlementService weekly;
   private final HistoricalSubmissionService historical;
 
   public ResultsService(
-      ResultsRepository repo, WeeklyService weekly, HistoricalSubmissionService historical) {
+      ResultsRepository repo,
+      WeeklySettlementService weekly,
+      HistoricalSubmissionService historical) {
     this.repo = repo;
     this.weekly = weekly;
     this.historical = historical;

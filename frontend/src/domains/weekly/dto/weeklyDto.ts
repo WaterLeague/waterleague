@@ -52,6 +52,24 @@ const period = z
     participantCount: z.number().int().nonnegative(),
     own: player.nullable(),
     winnerDistrictIds: z.array(z.string()),
+    settlement: z
+      .object({
+        ruleVersion: z.literal('CLOSED_WEEK_MISSING_SUFFIX_V1'),
+        excludedSeconds: z.number().int().nonnegative(),
+        installationCount: z.number().int().nonnegative(),
+        periods: z.array(
+          z.object({
+            districtId: z.string(),
+            districtName: z.string(),
+            stationId: z.string(),
+            startsAt: z.iso.datetime(),
+            endsAt: z.iso.datetime(),
+            installationCount: z.number().int().positive(),
+            excludedSeconds: z.number().int().positive(),
+          })
+        ),
+      })
+      .optional(),
   })
   .superRefine((v, ctx) => {
     const seconds = v.evaluatedSeconds ?? v.evaluatedMinutes * 60;
@@ -78,6 +96,13 @@ const period = z
               seconds === 0 &&
               v.comparisonReason === 'NO_EVALUATED_RECORDS');
     if (!valid) ctx.addIssue({ code: 'custom', message: '주간 평가 조건·합산 상태 불일치' });
+    const excluded = v.settlement?.excludedSeconds ?? 0;
+    if (
+      excluded > (v.expectedSeconds ?? v.expectedMinutes * 60) - seconds ||
+      (v.settlement &&
+        excluded !== v.settlement.periods.reduce((sum, p) => sum + p.excludedSeconds, 0))
+    )
+      ctx.addIssue({ code: 'custom', message: '주간 결측 제외 시간 불일치' });
   });
 export const weeklyDto = z.object({
   generatedAt: z.iso.datetime(),
